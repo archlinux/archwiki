@@ -5,15 +5,20 @@
 			"Boke",
 			"Cakkaparla",
 			"Nay Thu Rin",
-			"YaThaWinTha"
+			"YaThaWinTha",
+			"Tejoebāsa"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ပြန်ပြောပါ",
+	"discussiontools-newtopic-missing-title": "ကျေးဇူးပြု၍ {{GENDER:|သင်ဧ့}} ဆွေးနွီးမှုခေါင်းစိုင်အတွက် ခေါင်းစိုင်တစ်ခုပီးပါ။",
+	"discussiontools-newtopic-placeholder-title": "အကြောင်းအရာ",
 	"discussiontools-replylink": "{{GENDER:|ပြန်ကြားချက်}}",
 	"discussiontools-replywidget-advanced": "အဆင့်မြင့်",
 	"discussiontools-replywidget-cancel": "မလုပ်ယာ",
 	"discussiontools-replywidget-mode-source": "နဂိုမူလအရင်းအမြစ်",
 	"discussiontools-replywidget-mode-visual": "မြင်ကွင်း",
+	"discussiontools-replywidget-newtopic": "အကြောင်းအရာသစ် {{GENDER:|ထပ်ထည့်ရန်}}",
+	"discussiontools-replywidget-placeholder-newtopic": "ဖော်ပြစွာ",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ပြန်ကြားချက်}}သို့ {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "စမ်းလို့လုပ်ကြေ့ပါ",
 	"discussiontools-replywidget-reply": "{{GENDER:|ပြန်ကြားချက်}}",

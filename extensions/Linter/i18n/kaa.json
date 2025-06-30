@@ -1,9 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ajiniyaz Nurniyazov"
+			"Ajiniyaz Nurniyazov",
+			"Janabaevazizbek"
 		]
 	},
 	"linterrors": "Lint qátelikleri",
-	"linter-page-edit": "redaktorlaw"
+	"linter-category-deletable-table-tag": "Óshiriliwi kerek bolǵan keste tegi",
+	"linter-category-night-mode-unaware-background-color": "Sáykes tekst reńine iye bolmaǵan qatar ishindegi fon reńiniń format qollanbası bar",
+	"linter-category-stripped-tag": "Alıp taslanǵan tegler",
+	"linter-page-edit": "redaktorlaw",
+	"pageinfo-linter": "Lint qáteleri",
+	"pageinfo-linter-moreinfo": "Linttegi qáteler haqqında tolıq maǵlıwmatlardı kóriw."
 }

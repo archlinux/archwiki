@@ -20,5 +20,6 @@
 	"scribunto-limitreport-memusage": "Lua-ს მეხსიერების გამოყენება",
 	"scribunto-limitreport-profile": "Lua-ს პროფილი",
 	"scribunto-limitreport-profile-ms": "$1 მლ/წმ",
-	"scribunto-limitreport-logs": "Lua-ს ჟურნალი"
+	"scribunto-limitreport-logs": "Lua-ს ჟურნალი",
+	"nstab-module": "მოდული"
 }

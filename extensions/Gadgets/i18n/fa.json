@@ -62,7 +62,7 @@
 	"gadgets-validate-invalidjson": "با توجه به مدل محتوای نامعتبر «$2»، از صفحهٔ دادهٔ $1 استفاده نمی‌شود.",
 	"gadgets-validate-nopeer": "از ابزار همتای «$1» چشم‌پوشی می‌شود، زیرا موجود نیست.",
 	"gadgets-validate-invalidpeer": "از ابزار همتای «$1» چشم‌پوشی می‌شود، زیرا یک ابزار سبک نیست.",
-	"gadgets-validate-invalidactions": "این {{PLURAL:$2|عمل|عمل‌ها}} شناسایی {{PLURAL:$2|نشد|نشدند}}: $1",
+	"gadgets-validate-invalidactions": "این {{PLURAL:$2|کنش|کنش‌ها}} شناسایی {{PLURAL:$2|نشد|نشدند}}: $1",
 	"gadgets-validate-invalidcontentmodels": "این {{PLURAL:$2|مدل محتوا|مدل‌های محتوایی}} موجود {{PLURAL:$2|نیست|نیستند}}:  $1",
 	"gadgets-validate-invalidnamespaces": "این {{PLURAL:$2|شمارهٔ|شماره‌های}} فضای نام موجود {{PLURAL:$2|نیست|نیستند}}: $1",
 	"gadgets-validate-invalidskins": "این {{PLURAL:$2|پوسته|پوسته‌ها}} موجود {{PLURAL:$2|نیست|نیستند}}: $1",

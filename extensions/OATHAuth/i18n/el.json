@@ -27,7 +27,7 @@
 	"oathauth-disabledoath": "Απενεργοποίηση ελέγχου ταυτότητας δύο παραγόντων",
 	"oathauth-prefs-label": "Ταυτοποίηση μέσω δύο παραγόντων:",
 	"oathauth-step1": "Βήμα 1: Κάντε λήψη ενός προγράμματος ελέγχου ταυτότητας δύο παραγόντων",
-	"oathauth-step1-test": "Κατεβάστε ένα πρόγραμμα για έλεγχο ταυτότητας δύο παραγόντων. Αυτό μπορεί να είναι μια εφαρμογή για φορητές συσκευές ή επιτραπέζιους υπολογιστές, όπως [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/ answer/1066447 Google Authenticator] ή [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator]. Μια επέκταση προγράμματος περιήγησης. Ή έναν διαχειριστή κωδικών πρόσβασης, όπως [https://1password.com/ 1Password].",
+	"oathauth-step1-test": "Κατεβάστε ένα πρόγραμμα για έλεγχο ταυτότητας δύο παραγόντων. Αυτό μπορεί να είναι μια εφαρμογή για φορητές συσκευές ή επιτραπέζιους υπολογιστές, όπως [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/ answer/1066447 Google Authenticator] ή [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator]. Μια επέκταση προγράμματος περιήγησης. Ή έναν διαχειριστή κωδικών πρόσβασης, όπως [https://1password.com/ 1Password].",
 	"oathauth-step2": "Βήμα 2: Σκάρετε τον QR κώδικα",
 	"oathauth-step2-qrcode": "Σαρώστε τον κωδικό QR χρησιμοποιώντας την εφαρμογή ή την επέκταση προγράμματος περιήγησης που κατεβάσατε στο βήμα 1 για έλεγχο ταυτότητας δύο παραγόντων.",
 	"oathauth-step2alt": "Εάν δεν μπορείτε να κάνετε σάρωση του κωδικού QR, εισάγετε το μυστικό κλειδί και το όνομα του λογαριασμού χειροκίνητα:",

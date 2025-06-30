@@ -2,13 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Karen",
-			"Tochiprecious"
+			"Tochiprecious",
+			"Victor chukwuemerie Mbah"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck na-eche na agbakwunyere ọdịnaya ọhụrụ na peeji nke",
+	"tag-editcheck-newreference-description": "A na-agbakwunye ihe nchọgharị weebụ na peeji nke.",
+	"tag-editcheck-references-description": "EditCheck na-eche na ọ ga-adị mkpa ka a na-ezo aka",
+	"tag-editcheck-references-activated-description": "EditCheck na-eche na ọ ga-abụ na ọ dị mkpa, ma gosipụta UI",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ndezi nke anya na-ele]]",
 	"tag-visualeditor-description": "Mmezigharịa eji [[{{MediaWiki:visualeditor-descriptionpagelink}}|ndezi anya na-ahụ]] wee mee",
+	"tag-visualeditor-needcheck-description": "Mezigharịa site na iji [[{{MediaWiki:visualeditor-descriptionpagelink}}|onye nchịkọta akụkọ]] ebe sistemụ ahụ chọpụtara wikitext nwere ike inwe mgbanwe ndị na-atụghị anya ya.",
 	"tag-visualeditor-wikitext": "Ndezi ebe osi nke 2017",
 	"tag-visualeditor-wikitext-description": "Edezi eji 2017 wikitext editọ wee mee",
+	"tag-visualeditor-switched-description": "Onye ọrụ malitere idezi site na iji nchịkọta akụkọ anya, wee gbanwee gaa na nchịkọta wikitext.",
+	"visualeditor-feedback-link": "Ọrụ: VisualEditor/Nzaghachi",
 	"visualeditor-feedback-tool": "Hapụ nzaghachi maka ngwanrọ a",
 	"visualeditor-help-label": "Gụọ ntuziaka onye ọrụ",
 	"visualeditor-welcomedialog-action": "Malite ndezi",

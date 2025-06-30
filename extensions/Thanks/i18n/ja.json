@@ -26,7 +26,7 @@
 	"thanks-error-undefined": "感謝の操作に失敗しました (エラーコード: $1)。もう一度やり直してください。",
 	"thanks-error-invalid-log-id": "記録が見つかりません",
 	"thanks-error-invalid-log-type": "記録タイプ「$1」は、許可された記録タイプのリストにありません。",
-	"thanks-error-log-deleted": "要求された記録は削除されており、感謝をすることができません。",
+	"thanks-error-log-deleted": "指定された記録は削除されており、感謝を伝えられません。",
 	"thanks-error-invalidrevision": "版 ID が無効です。",
 	"thanks-error-revdeleted": "指定した版が削除されたため感謝を送れません",
 	"thanks-error-notitle": "ページ名を取得できませんでした",

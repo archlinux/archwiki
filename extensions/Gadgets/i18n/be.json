@@ -28,9 +28,9 @@
 	"gadgets-editdescription": "Правіць апісанне",
 	"gadgets-viewdescription": "Паглядзець апісанне",
 	"gadgets-uses": "Выкарыстоўвае",
-	"gadgets-required-rights": "Патрабуе {{PLURAL:$2|1=права|наступныя правы}}:\n\n$1",
+	"gadgets-required-rights": "Патрабуе {{PLURAL:$2|1=права|наступныя правы}}: $1.",
 	"gadgets-required-skins": "Даступны ў {{PLURAL:$2|1=вокладцы $1|наступных вокладках: $1}}.",
-	"gadgets-required-actions": "Працуе ў {{PLURAL:$2|дзеянні старонкі «$1»|наступных дзеяннях старонкі: $1}}.",
+	"gadgets-required-actions": "Працуе толькі ў {{PLURAL:$2|дзеянні старонкі «$1»|наступных дзеяннях старонкі: $1}}.",
 	"gadgets-default": "Прадвызначана, уключаны для ўсіх.",
 	"gadgets-legacy": "Гаджэт не загружаны. Калі ласка, перанясіце яго на ResourceLoader ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Даведацца болей]).",
 	"gadgets-packaged": "Гэты гаджэт [https://www.mediawiki.org/wiki/ResourceLoader/Package_files запакаваны], кропка ўваходу — $1.",
@@ -41,6 +41,6 @@
 	"gadgets-export-download": "Спампаваць",
 	"gadgets-requires-es6": "Гэты гаджэт падтрымліваецца толькі ў браўзерах, сумяшчальных з ES6",
 	"gadgets-validate-notset": "Уласцівасць <code>$1</code> не зададзеная.",
-	"gadgets-validate-wrongtype": "Уласцівасць <code>$1</code> мусіць быць тыпу <code>$2</code>, а не <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Уласцівасць <code>$1</code> мусіць быць тыпу <code>$2</code>.",
 	"gadgets-supports-urlload": "Гэты гаджэт падтрымлівае загрузку праз URL з параметрам запыту <code>?withgadget</code>."
 }

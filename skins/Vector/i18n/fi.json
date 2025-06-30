@@ -102,7 +102,7 @@
 	"vector-night-mode-issue-reporting-notice-tooltip": "Ilmoita, jos tumman tilan värit tekevät lukemisesta vaikeaa.",
 	"vector-night-mode-issue-reporting-link-label": "Ilmoita ongelmasta tummassa tilassa",
 	"vector-night-mode-issue-reporting-link-notification": "Ilmoitus vastaanotettu!",
-	"vector-night-mode-issue-reporting-preload-title": "virhe tummassa tilassa sivulla $1",
+	"vector-night-mode-issue-reporting-preload-title": "Virhe tummassa tilassa sivulla $1",
 	"vector-night-mode-issue-reporting-preload-content": "<!--\nOhjeet\nKuvaile, miten värit tumman tilassa tekevät Wikipediasta hankalasti luettavan.\nKerro myös, minkä artikkelin osiosta löysit kyseisen ongelman.\n-->\n'''Ongelman kuvaus'''",
 	"vector-night-mode-beta-tag": "(beeta)"
 }

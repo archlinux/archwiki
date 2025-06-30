@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"EdoAug"
 		]
 	},
 	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha]-modul for Confirm Edit",
 	"hcaptcha-edit": "Vi ber deg løse følgende hCaptcha for å beskytte wikien mot automatisk spam:",
-	"hcaptcha-addurl": "Redigeringen din inkluderer eksterne lenker. For å beskytte wikien mot automatisk spam ber vi deg løse følgende CAPTCHA:",
+	"hcaptcha-addurl": "Redigeringen din inkluderer eksterne lenker. For å beskytte wikien mot automatisk spam ber vi deg løse følgende hCaptcha:",
 	"hcaptcha-badlogin": "For å beskytte wikien mot automatisk passordknekking ber vi deg løse følgende hCaptcha:",
 	"hcaptcha-createaccount": "Vi ber deg løse følgende hCaptcha for å beskytte wikien mot automatisk kontooppretting:",
 	"hcaptcha-createaccount-fail": "Det ser ut som du ikke har løst hCaptcha-en.",

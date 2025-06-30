@@ -18,7 +18,7 @@
 	"discussiontools-replywidget-mode-visual": "Bisual",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Add}} a topiko",
 	"discussiontools-replywidget-placeholder-newtopic": "Deskripsion",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Sungbatan}} iti {{BIDI: $1 }}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Sungbatan}} iti {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Ipadas",
 	"discussiontools-replywidget-reply": "{{GENDER:|Sungbatan}}",
 	"discussiontools-replywidget-summary": "Pakabuklan",

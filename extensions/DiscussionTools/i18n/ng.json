@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"!!asa,njgh"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "eYamukulo",
+	"discussiontools-replywidget-advanced": "Aduvansi",
+	"discussiontools-replywidget-preview": "oWete tango",
+	"discussiontools-replywidget-summary": "eNgongo",
+	"discussiontools-replywidget-watchthis": "Hoha epandja eno [[Special:Watchlist|elandulathano lyolangela]]oye",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|omuntu|aantu}} moonkundathana"
+}

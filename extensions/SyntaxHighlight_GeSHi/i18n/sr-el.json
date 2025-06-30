@@ -17,5 +17,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Računarski kod",
 	"syntaxhighlight-error-pygments-invocation-failure": "Nisam uspeo da pozovem Pygments",
 	"syntaxhighlight-error-unknown-language": "Nepoznat jezik „$1“",
-	"syntaxhighlight-error-exceeds-size-limit": "Trenutna veličina koda  ($1 {{PLURAL:$1|bajt|bajta|bajtova}}) prekoračava gornju granicu od $2 {{PLURAL:$1|bajt|bajta|bajtova}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Trenutna veličina koda  ($1 {{PLURAL:$1|bajt|bajta|bajtova}}) prekoračava gornju granicu od $2 {{PLURAL:$1|bajt|bajta|bajtova}}",
+	"syntaxhighlight-button-copy": "Kopiraj",
+	"syntaxhighlight-button-copied": "Kopirano!"
 }

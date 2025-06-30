@@ -131,7 +131,8 @@
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\DisableOATHForUser",
 			"services": [
 				"OATHUserRepository",
-				"UserFactory"
+				"UserFactory",
+				"CentralIdLookup"
 			]
 		},
 		"OATHManage": {

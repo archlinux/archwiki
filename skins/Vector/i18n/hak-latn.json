@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"vector-action-addsection": "Kâ-ngi̍p fa-thì",
+	"vector-action-delete": "San-chhù",
+	"vector-action-move": "Yì-thûng",
+	"vector-action-protect": "Pó-fu",
+	"vector-view-create": "Kien-li̍p",
+	"vector-view-edit": "Phiên-siá",
+	"vector-view-history": "Khon li̍t-sṳ́",
+	"vector-view-view": "Thu̍k",
+	"vector-view-viewsource": "Khon ngièn-sṳ́-mâ",
+	"vector-more-actions": "Kiên-tô"
+}

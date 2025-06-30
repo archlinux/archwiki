@@ -17,7 +17,8 @@
 			"Xiplus",
 			"予弦",
 			"捍粵者",
-			"神樂坂秀吉"
+			"神樂坂秀吉",
+			"Lakejason0"
 		]
 	},
 	"oathauth-desc": "提供基於 HMAC 的一次性密碼驗證支援",
@@ -57,6 +58,7 @@
 	"action-oathauth-enable": "啟用雙重認證",
 	"oathauth-auth-token-label": "權杖",
 	"oathauth-auth-token-help": "用作雙重認證第二因子的一次性密碼。",
+	"oathauth-auth-token-help-ui": "輸入您的身分認證裝置提供的代碼，或是輸入恢復代碼",
 	"oathauth-auth-ui": "請輸入您認證裝置上顯示的驗證碼。",
 	"oathauth-throttled": "驗證次數過多，請稍等 $1。",
 	"oathauth-login-failed": "驗證失敗",

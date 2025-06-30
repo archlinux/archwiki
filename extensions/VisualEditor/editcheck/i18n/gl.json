@@ -5,5 +5,23 @@
 		]
 	},
 	"editcheck-dialog-action-no": "Non",
-	"editcheck-dialog-action-yes": "Si"
+	"editcheck-dialog-action-yes": "Si",
+	"editcheck-dialog-addref-description": "Axuda aos lectores a comprender de onde provén esta información engadindo unha cita.",
+	"editcheck-dialog-addref-reject-question": "Por que non engades unha cita?",
+	"editcheck-dialog-addref-reject-description": "As demais persoas editoras queren saber máis sobre a túa decisión non engadir unha cita.",
+	"editcheck-dialog-addref-reject-irrelevant": "Non creo que as citas sexan relevantes para o cambio que estou a facer",
+	"editcheck-dialog-addref-reject-common-knowledge": "A información que estou a engadir é amplamente coñecida",
+	"editcheck-dialog-addref-reject-uncertain": "Non teño certeza de que cita engadir",
+	"editcheck-dialog-addref-reject-other": "Outro",
+	"editcheck-dialog-addref-success-notify": "Grazas por engadires unha cita!",
+	"editcheck-dialog-addref-title": "Engadir unha cita",
+	"editcheck-dialog-title": "Antes de publicares",
+	"tag-editcheck-reference-decline-common-knowledge": "Verificación de edición (referencias) rexeitada (coñecemento común)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "A referencia da verificación de edición rexeitouse por ser un coñecemento común",
+	"tag-editcheck-reference-decline-irrelevant": "Verificación de edición (referencias) rexeitada (irrelevante)",
+	"tag-editcheck-reference-decline-irrelevant-description": "A referencia da verificación de edición rexeitouse por ser irrelevante",
+	"tag-editcheck-reference-decline-other": "Verificación de edición (referencias) rexeitada (outro)",
+	"tag-editcheck-reference-decline-other-description": "A referencia da verificación de edición rexeitouse por un motivo non indicado",
+	"tag-editcheck-reference-decline-uncertain": "Verificación de edición (referencias) rexeitada (incerteza)",
+	"tag-editcheck-reference-decline-uncertain-description": "A referencia da verificación de edición rexeitouse por non ter certeza"
 }

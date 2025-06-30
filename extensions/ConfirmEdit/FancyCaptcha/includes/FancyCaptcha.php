@@ -256,8 +256,8 @@ class FancyCaptcha extends SimpleCaptcha {
 		}
 
 		// pick a random subdir
-		$place = mt_rand( 0, count( $dirs ) - 1 );
-		// In case all dirs are not filled, cycle through next digits...
+		$place = random_int( 0, count( $dirs ) - 1 );
+		// In case all dirs are not filled, cycle through the next digits...
 		$fancyCount = count( $dirs );
 		for ( $j = 0; $j < $fancyCount; $j++ ) {
 			$char = $dirs[( $place + $j ) % count( $dirs )];
@@ -344,7 +344,7 @@ class FancyCaptcha extends SimpleCaptcha {
 		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 
 		// pick a random file
-		$place = mt_rand( 0, count( $files ) - 1 );
+		$place = random_int( 0, count( $files ) - 1 );
 		// number of files in listing that don't actually exist
 		$misses = 0;
 		$fancyImageCount = count( $files );

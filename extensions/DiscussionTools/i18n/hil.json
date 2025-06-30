@@ -17,7 +17,6 @@
 	"discussiontools-replywidget-placeholder-newtopic": "Paglaragway",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} to {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Ipakita subong",
-	"discussiontools-replywidget-reply": "{{GENDER:|Reply}}",
 	"discussiontools-replywidget-summary": "Sumaryo",
 	"discussiontools-replywidget-watchthis": "Idugang ini nga pahina sa imo [[Special:Watchlist|watchlist]]",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|tawo|mga tawo}} sa paghinun-anon",

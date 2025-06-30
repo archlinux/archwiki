@@ -24,7 +24,7 @@
 	"discussiontools-topicsubscription-button-unsubscribe": "heitta kirjutust",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Heitä kirjutust",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Sinä}} saškanded vestid uziden kirjutusiden polhe neciš paginas.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Sinä\n}} oled kirjutanus!",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Sinä}} oled kirjutanus!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Sinä}} ed saškande vestid uziden kirjutusiden polhe neciš paginas.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Sinä}} ed ole kirjutanus uzištoile."
 }

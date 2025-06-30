@@ -43,8 +43,8 @@
 	"discussiontools-topicsubscription-button-unsubscribe": "Se desabonar",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Se desabonar",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|}} Recebretz de notificacions a prepaus dei comentaris novèus sus aquest subjècte.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|}} Siatz abonat !",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|}} Recebretz plus de notificacions sus lei comentaris regardant aquest subjècte.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Siatz {{GENDER:|abonat}} !",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Recebretz}} plus de notificacions sus lei comentaris regardant aquest subjècte.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|}} Siatz desabonat.",
 	"discussiontools-topicsubscription-special-title": "Subscripcions de tèmas"
 }

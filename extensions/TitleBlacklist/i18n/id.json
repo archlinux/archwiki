@@ -4,13 +4,14 @@
 			"Daud I.F. Argana",
 			"IvanLanin",
 			"Kenrick95",
-			"Rex"
+			"Rex",
+			"Rachmat04"
 		]
 	},
 	"action-tboverride": "mengabaikan daftar judul atau nama pengguna yang dilarang",
 	"action-tboverride-account": "mengabaikan daftar nama pengguna yang dilarang",
 	"action-titleblacklistlog": "melihat catatan daftar judul yang dilarang",
-	"log-name-titleblacklist": "Catatan daftar judul yang dilarang",
+	"log-name-titleblacklist": "Log daftar judul yang dilarang",
 	"titleblacklist-desc": "Mengizinkan pencegahan pembuatan halaman dan akun pengguna dengan judul tertentu menurut daftar judul yang [[MediaWiki:Titleblacklist|dilarang]] dan [[MediaWiki:Titlewhitelist|dibolehkan]]",
 	"titleblacklist": "# Ini adalah daftar hitam judul. Judul dan nama pengguna yang berkesamaan dengan suatu regex berikut ini tidak dapat dibuat.\n# Gunakan \"#\" untuk komentar.\n# Daftar ini secara standar tidak memandang huruf besar-huruf kecil.",
 	"titlewhitelist": "# Ini adalah daftar putih judul. Gunakan \"#\" untuk komentar.\n# Daftar ini secara standar tidak memandang huruf besar-huruf kecil.",

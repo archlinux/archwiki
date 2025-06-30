@@ -28,7 +28,7 @@
 	"thanks": "Merci soen",
 	"thanks-submit": "Merci soen",
 	"echo-pref-subscription-edit-thank": "„Mercie“ fir meng Ännerung",
-	"echo-pref-tooltip-edit-thank": "Mech Informéiere wann ee mir fir eng Ännerung déi ech gemaach hu Merci seet.",
+	"echo-pref-tooltip-edit-thank": "Mech informéieren, wann ee mir fir eng Ännerung, déi ech gemaach, hu Merci seet.",
 	"echo-category-title-edit-thank": "Merci",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|huet}} {{GENDER:$4|Iech}} fir Är Ännerung op <strong>$3</strong> Merci gesot.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|huet}} {{GENDER:$4|Iech}} fir d'Uleeë vun <strong>$3</strong> Merci gesot.",

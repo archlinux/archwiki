@@ -5,7 +5,8 @@
 			"Kizule",
 			"Milicevic01",
 			"Obsuser",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"Aca"
 		]
 	},
 	"oathauth-desc": "Обезбеђује подршку за потврду идентитета помоћу једнократних лозинки заснованих на HMAC-у.",
@@ -24,12 +25,12 @@
 	"oathauth-recoverycodes-copy-success": "Кодови за опоравак су копирани у ваш међуспремник!",
 	"oathauth-disable": "Онемогућавање двофакторске потврде идентитета",
 	"oathauth-validatedoath": "Ваљаност двофакторских акредитива је проверена. Одсад ће се спроводити двофакторска потврда идентитета.",
-	"oathauth-noscratchforvalidation": "Не можете да користите код за опоравак за потврђивање двофакторске провере идентитета. Кодови за опоравак служе само за прављење резервне копије и случајну употребу. Молимо користите код за верификацију из апликације за двофакторску аутентификацију (као нпр. [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/security/mobile-authenticator-app Microsoft Authenticator] или [https://1password.com/ 1Password]).",
+	"oathauth-noscratchforvalidation": "Не можете да користите код за опоравак за потврђивање двофакторске провере идентитета. Кодови за опоравак служе само за прављење резервне копије и случајну употребу. Молимо користите код за верификацију из апликације за двофакторску аутентификацију (као нпр. [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] или [https://1password.com/ 1Password]).",
 	"oathauth-failedtovalidateoath": "Провера ваљаности двофакторских акредитива није успела",
 	"oathauth-disabledoath": "Онемогућена двофакторска потврда идентитета",
 	"oathauth-prefs-label": "Двофакторска потврда идентитета:",
 	"oathauth-step1": "1. корак: преузмите програм за двофакторску потврду идентитета",
-	"oathauth-step1-test": "Преузмите програм за двофакторску потврду идентитета. То може бити апликација за мобилни уређај или рачунар, као што су [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] или [https://1password.com/ 1Password].",
+	"oathauth-step1-test": "Преузмите програм за двофакторску потврду идентитета. То може бити апликација за мобилни уређај или рачунар, као што су [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] или [https://1password.com/ 1Password].",
 	"oathauth-step2": "2. корак: скенирајте QR код",
 	"oathauth-step2alt": "Ако нисте у могућности да скенирате QR код, унесите тајни кључ и име налога ручно:",
 	"oathauth-step3": "3. корак: запишите кодове за опоравк",

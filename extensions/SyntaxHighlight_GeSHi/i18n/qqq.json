@@ -15,7 +15,7 @@
 			"Nemoralis"
 		]
 	},
-	"syntaxhighlight-desc": "{{desc|name=Syntax Highlight GeSHi|url=https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi}}",
+	"syntaxhighlight-desc": "{{desc|name=Syntax Highlight GeSHi|url=https://www.mediawiki.org/wiki/Extension:SyntaxHighlight}}",
 	"syntaxhighlight-error-category": "{{tracking category name}}\nTracking category for pages with syntax highlighting errors",
 	"syntaxhighlight-error-category-desc": "Description on [[Special:TrackingCategories]] for the {{msg-mw|syntaxhighlight-error-category}} tracking category.",
 	"syntaxhighlight-enclose-category": "{{doc-important|Do not translate the word \"<code>enclose</code>\".}}\n{{tracking category name}}\nTracking category for pages using the deprecated \"enclose\" attribute.",

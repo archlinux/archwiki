@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Finizio"
+			"Finizio",
+			"Cryptex nap"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Rispunne",
+	"discussiontools-newtopic-placeholder-title": "Uggietto",
 	"discussiontools-replylink": "{{GENDER:|rispunne}}",
 	"discussiontools-replywidget-advanced": "Avanzate",
 	"discussiontools-replywidget-cancel": "Scancella",

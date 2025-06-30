@@ -15,6 +15,7 @@
 	"multimediaviewer-multiple-authors": "кхин {{PLURAL:$1|цхьаъ автор|$1 автор}}",
 	"multimediaviewer-multiple-authors-combine": "$1 $2 тӀе",
 	"multimediaviewer-metadata-error": "Суьртан хаамаш гайта цабелира (гӀалат: $1)",
+	"multimediaviewer-file-not-found-error": "Бехк ма билла, $1 файл гайта йиш йац, хӀунда аьлча иза карарчу агӀонан тӀехь йац.",
 	"multimediaviewer-thumbnail-error": "Бехк ма билла, файл гайта йиш йац",
 	"multimediaviewer-thumbnail-error-description": "Цхьа техникин проблема йолчух тера ду. $1 йиш йу хьан, нагахь санна иза карладаьлча. ГӀалат: $2.",
 	"multimediaviewer-thumbnail-error-retry": "йухагӀорта",

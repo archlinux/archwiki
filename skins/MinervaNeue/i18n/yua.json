@@ -2,12 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"26agcp",
-			"Languaeditor"
+			"Languaeditor",
+			"Abby95",
+			"ChenchoYucateco"
 		]
 	},
 	"mobile-frontend-editor-edit": "Kꞌeexe",
+	"mobile-frontend-history": "U yilpajal tuláakal u tsóolil xaak´al le kúchila´",
 	"mobile-frontend-home-button": "Káajbal",
 	"mobile-frontend-language-article-heading": "T'aanil",
 	"mobile-frontend-main-menu-login": "Ooken",
-	"mobile-frontend-placeholder": "Kaxan {{SITENAME}}"
+	"mobile-frontend-main-menu-nearby": "Naats'",
+	"mobile-frontend-main-menu-settings": "U kúuchíil útskinaj ba'alo'ob",
+	"mobile-frontend-placeholder": "Kaxan {{SITENAME}}",
+	"mobile-frontend-random-button": "Xáak'a'am ba'al'ob",
+	"minerva-page-actions-overflow": "U la'ak'"
 }

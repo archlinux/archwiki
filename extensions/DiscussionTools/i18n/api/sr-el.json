@@ -3,8 +3,12 @@
 		"authors": []
 	},
 	"apierror-discussiontools-commentid-notfound": "Komentar sa ID-om '$1' nije pronađen.",
-	"apihelp-discussiontoolsedit-param-wikitext": "Vikitekst",
+	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Dozvoljava postavljanje novog odeljka bez naslova.",
+	"apihelp-discussiontoolsedit-param-wikitext": "Vikitekst; ne može se koristiti <var>html</var>",
 	"apihelp-discussiontoolsedit-summary": "Objavljivanje poruke na stranici za diskusiju.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "ID komentara ili ime",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Broj izmene za upotrebu (podrazumevano: poslednja izmena)",
-	"apihelp-discussiontoolspageinfo-summary": "Prikazuje metapodatke potrebne za pokretanje alatka za razgovor."
+	"apihelp-discussiontoolspageinfo-summary": "Prikazuje metapodatke potrebne za pokretanje alatka za razgovor.",
+	"apihelp-discussiontoolspreview-param-type": "Tip poruke za pregled",
+	"apihelp-discussiontoolspreview-param-wikitext": "Sadržaj za pregled, kao vikitekst."
 }

@@ -22,7 +22,8 @@
 			"Vlad5250",
 			"WindEwriX",
 			"Александр Сигачёв",
-			"Лилиә"
+			"Лилиә",
+			"MidnightLG"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -65,10 +66,13 @@
 	"gadgets-validate-es6default": "Гаджеты, требующие ES6, не могут быть включены по умолчанию.",
 	"gadgets-validate-noentrypoint": "Флаг упакованного гаджета проигнорирован, так как не указано файлов скриптов.",
 	"gadgets-validate-noscripts": "Скрипты проигнорированы, так как у этого гаджета указан <code>type=styles</code>.",
+	"gadgets-validate-stylepeers": "Связанные гаджеты игнорируются, поскольку это гаджет предназначен только для стилей. Установите <code>type=general</code>, чтобы переопределить.",
 	"gadgets-validate-scriptsnotallowed": "Скрипты и файлы данных не использованы, так как у этого гаджета указан <code>type=styles</code>.",
 	"gadgets-validate-invalidjs": "Скрипт $1 не использован из-за неверной модели содержимого «$2».",
 	"gadgets-validate-invalidcss": "Стиль $1 не использован из-за неверной модели содержимого «$2».",
 	"gadgets-validate-invalidjson": "Страница данных $1 не использована из-за неверной модели содержимого «$2».",
+	"gadgets-validate-nopeer": "Связанный гаджет «$1» не найден, поэтому был проигнорирован.",
+	"gadgets-validate-invalidpeer": "Связанный гаджет «$1» предназначен только для стилей, поэтому был проигнорирован.",
 	"gadgets-validate-invalidactions": "{{PLURAL:$2|Следующее действие неизвестно|Следующие действия неизвестны}}: $1",
 	"gadgets-validate-invalidcontentmodels": "{{PLURAL:$2|Следующая модель содержимого не существует|Следующие модели содержимого не существуют}}: $1",
 	"gadgets-validate-invalidnamespaces": "{{PLURAL:$2|Следующее пространство имён не существует|Следующие пространства имён не существуют}}: $1",
@@ -76,6 +80,7 @@
 	"gadgets-validate-invalidrights": "{{PLURAL:$2|Следующее право не существует|Следующие права не существуют}}: $1",
 	"gadgets-validate-invalidtitle": "Заголовок страницы «$1» неверен",
 	"gadgets-validate-unknownpages": "Содержит одну или больше страниц без суффиксов .js, .css или .json. Они не будут использованы.",
+	"gadgets-validate-duplicate": "Найдено повторное определение гаджета $1, оно будет проигнорировано.",
 	"gadgets-validate-nopage": "Страница «$1» не существует.",
 	"gadgets-supports-urlload": "Гаджет поддерживает загрузку с использованием параметра <code>?withgadget</code> в URL."
 }

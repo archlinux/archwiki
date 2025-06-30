@@ -3,13 +3,34 @@
 		"authors": [
 			"ElangoRamanujam",
 			"Fahimrazick",
-			"Siddhan"
+			"Siddhan",
+			"Matrix"
 		]
 	},
-	"discussiontools-replylink": "{{GENDER:|பதிலளி}}",
+	"discussiontools-defaultsummary-reply": "பதில்",
+	"discussiontools-newtopic-missing-title": "உங்கள் விவாத தலைப்புக்கு ஒரு தலைப்பை வழங்கவும்.",
+	"discussiontools-newtopic-placeholder-title": "பொருள்",
+	"discussiontools-replylink": "பதிலளி",
+	"discussiontools-replywidget-advanced": "மேம்பட்ட",
 	"discussiontools-replywidget-cancel": "கைவிடு",
 	"discussiontools-replywidget-mode-source": "மூலம்",
 	"discussiontools-replywidget-mode-visual": "காட்சி",
+	"discussiontools-replywidget-newtopic": "தலைப்பு சேர்க்க",
+	"discussiontools-replywidget-placeholder-newtopic": "விளக்கம்",
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}க்கு பதிலளிக்க",
-	"discussiontools-replywidget-reply": "பதிலளி"
+	"discussiontools-replywidget-preview": "முன்தோற்றம்",
+	"discussiontools-replywidget-reply": "பதிலளி",
+	"discussiontools-replywidget-summary": "சுருக்கம்",
+	"discussiontools-replywidget-watchthis": "இந்தப் பக்கத்தை உங்கள் [[Special:Watchlist|கண்காணிப்புப்பட்டியல்]]-இல் சேர்க்கவும்.",
+	"discussiontools-topicheader-authorcount": "விவாதத்தில் $1 {{PLURAL:$1| நபர்|மக்கள்}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|கருத்து|கருத்துகள்}}",
+	"discussiontools-topicheader-latestcomment": "சமீபத்திய கருத்து: $1",
+	"discussiontools-topicsubscription-button-subscribe": "குழுசேர்",
+	"discussiontools-topicsubscription-button-subscribe-label": "குழுசேர்",
+	"discussiontools-topicsubscription-button-unsubscribe": "குழுவிலக",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "குழுவிலக",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|நீங்கள்}} இந்த தலைப்பில் புதிய கருத்துகள் பற்றிய அறிவிப்புகளைப் பெறுவீர்கள்.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|நீங்கள்}} குழுசேர்ந்துள்ளீர்கள்!!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|இந்தத் தலைப்பில் புதிய கருத்துகள் குறித்த அறிவிப்புகளை நீங்கள்}} இனி பெறமாட்டீர்கள்.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|நீங்கள்}} குழுவிலகிவிட்டீர்கள்."
 }

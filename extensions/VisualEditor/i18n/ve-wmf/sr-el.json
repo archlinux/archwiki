@@ -5,6 +5,9 @@
 			"Сербијана"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck misli da je nov sadržaj dodat stranici",
+	"tag-editcheck-newreference-description": "Referenca je dodata na stranicu",
+	"tag-editcheck-references-description": "EditCheck misli da je potrebna referenca",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizuelno uređivanje]]",
 	"tag-visualeditor-description": "Izmena načinjena [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuelnim uređivačem]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuelni uređivač: proveriti]]",
@@ -17,7 +20,7 @@
 	"visualeditor-feedback-tool": "Povratne informacije",
 	"visualeditor-help-label": "Korisnički vodič",
 	"visualeditor-welcomedialog-action": "Započni uređivanje",
-	"visualeditor-welcomedialog-content": "Ovde svako može da uređuje i poboljšava sadržaj.",
+	"visualeditor-welcomedialog-content": "Ovde svako može da uređuje i unapređuje sadržaj.",
 	"visualeditor-welcomedialog-content-thanks": "Hvala vam što pomažete u širenju znanja!",
 	"visualeditor-welcomedialog-switch": "Prebaci me na uređivanje izvora",
 	"visualeditor-welcomedialog-switch-ve": "Prebaci me na vizuelni uređivač",

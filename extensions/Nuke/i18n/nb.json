@@ -5,7 +5,8 @@
 			"Event",
 			"Jon Harald Søby",
 			"Kingu",
-			"Nghtwlkr"
+			"Nghtwlkr",
+			"EdoAug"
 		]
 	},
 	"nuke": "Massesletting",
@@ -15,6 +16,7 @@
 	"nuke-list": "Følgende sider ble nylig opprettet av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]. Velg hvilke sider som skal slettes, angi en begrunnelse, og trykk på «Slett valgte» for å starte sideslettingen.\n\nOmdirigeringer vises i kursiv.",
 	"nuke-list-multiple": "Følgende sider ble opprettet nylig. Velg hvilke sider som skal slettes, angi en begrunnelse, og trykk på «Slett valgte» for å starte sideslettingen.\n\nOmdirigeringer vises i kursiv.",
 	"nuke-defaultreason": "Massesletting av sider lagt inn av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
+	"nuke-defaultreason-tempaccount": "Massesletting av sider lagt til av midlertidige kontoer",
 	"nuke-multiplepeople": "Massesletting av nylig opprettede sider",
 	"nuke-tools": "Dette verktøyet muliggjør massesletting av sider som nylig er opprettet av gitt bruker eller IP-adresse.\nSkriv et brukernavn eller en IP-adresse for å få en liste over sider som kan slettes, eller angi tomt for alle brukere.",
 	"nuke-tools-tempaccount": "Dette verktøyet gjør det mulig å masseslette sider som nylig har blitt lagt til av en gitt bruker eller midlertidig konto. Skriv inn et brukernavn eller ei IP-adresse for å få ei liste over sider som skal slettes, eller la feltet være tomt for å liste opp sider av alle brukere. Hvis du skriver inn ei IP-adresse vil verktøyet liste opp alle sider som er opprettet av den IP-adressa, eller sider opprettet av midlertidige kontoer som har brukt den IP-adressa.",

@@ -11,7 +11,8 @@
 			"Suleiman the Magnificent Television",
 			"ToePeu",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"Tensama0415"
 		]
 	},
 	"nuke": "문서 대량 삭제",
@@ -24,6 +25,7 @@
 	"nuke-defaultreason-tempaccount": "임시 계정이 추가한 문서의 대량 삭제",
 	"nuke-multiplepeople": "최근 작성된 문서를 대량 삭제함",
 	"nuke-tools": "이 도구를 이용해 특정 사용자나 IP 사용자가 최근에 만든 문서를 대량으로 삭제할 수 있습니다.\n삭제할 문서 목록을 가져오려면 계정 이름이나 IP 주소를 입력하세요. 입력하지 않으면 모든 사용자를 대상으로 합니다.",
+	"nuke-tools-tempaccount": "이 도구를 이용해 특정 사용자나 임시 계정이 최근에 만든 문서를 대량으로 삭제할 수 있습니다. 삭제할 문서 목록을 가져오려면 계정 이름이나 IP 주소를 입력하세요. 입력하지 않으면 모든 사용자를 대상으로 합니다. IP 주소를 입력하면 해당 IP 주소 또는 해당 IP 주소에서 사용된 임시 계정이 만든 모든 문서를 나열합니다.",
 	"nuke-submit-user": "문서 나열",
 	"nuke-submit-delete": "선택한 문서 삭제",
 	"right-nuke": "문서 대량 삭제",

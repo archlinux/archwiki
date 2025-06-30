@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Samatics"
+			"Samatics",
+			"Pingponging"
 		]
 	},
 	"vector-languages": "Langwej-dem",
@@ -16,8 +17,27 @@
 	"vector-view-history": "See wetin don hapun hie",
 	"vector-view-view": "Read-am",
 	"vector-more-actions": "Si oda tins:",
+	"vector-appearance-label": "Hau e go bi",
+	"vector-feature-limited-width-name": "Width",
+	"vector-feature-limited-width-0-label": "Waid",
+	"vector-feature-limited-width-1-label": "Standad",
+	"vector-feature-custom-font-size-name": "Text",
+	"vector-feature-custom-font-size-0-label": "Smol",
+	"vector-feature-custom-font-size-1-label": "Standad",
+	"vector-feature-custom-font-size-2-label": "Big",
+	"skin-theme-name": "Kolo",
+	"skin-theme-day-label": "Lait",
+	"skin-theme-night-label": "Dak",
+	"skin-theme-os-label": "Otomatik",
+	"skin-theme-exclusion-notice": "Dis pej dey olwez bi for lait mod.",
 	"vector-searchsuggest-containing": "Find pej-dem wey get <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Wetin dey hie",
+	"vector-toc-beginning": "Stat",
+	"vector-anon-user-menu-pages": "Pej dem wey dey for editos wey no dey insaid",
+	"vector-main-menu-label": "Main menu",
+	"vector-feature-custom-font-size-exclusion-notice": "Dis pej dey olwez yuz smol font saiz",
 	"vector-page-tools-label": "Tins wey you go yuz wok",
 	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Wetin to du",
 	"vector-unpin-element-label": "hide-am"
 }

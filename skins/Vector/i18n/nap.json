@@ -5,7 +5,8 @@
 			"Chelin",
 			"Finizio",
 			"Ruthven",
-			"Sannita"
+			"Sannita",
+			"Cryptex nap"
 		]
 	},
 	"vector-skin-desc": "Verziona muderna 'e MonoBook cu n'aspetto nuovo nuovo e tante migliuramente d'uso",
@@ -24,8 +25,20 @@
 	"vector-view-view": "Liegge",
 	"vector-view-viewsource": "Vire sorgente",
 	"vector-more-actions": "'E 'cchiù",
+	"vector-appearance-label": "Aspietto",
+	"vector-feature-limited-width-name": "Larghezza",
+	"vector-feature-custom-font-size-name": "Scritto",
+	"vector-feature-custom-font-size-0-label": "Piccerillo",
+	"vector-feature-custom-font-size-1-label": "Medio",
+	"vector-feature-custom-font-size-2-label": "Gruosso",
+	"skin-theme-name": "Culore",
+	"skin-theme-day-label": "Chiaro",
+	"skin-theme-night-label": "Scuro",
+	"skin-theme-os-label": "Automatico",
 	"vector-searchsuggest-containing": "Truova 'e paggene ca teneno <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Cuntenute",
+	"vector-main-menu-label": "Menú princepale",
+	"vector-feature-custom-font-size-exclusion-notice": "Dinto a sta pagena sta sempe scritto piccerillo",
 	"vector-page-tools-label": "Strumiente",
 	"vector-page-tools-general-label": "Generale",
 	"vector-unpin-element-label": "annascunne"

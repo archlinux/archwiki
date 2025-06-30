@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sauit"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Эппиэт",
+	"discussiontools-newtopic-missing-title": "Эһиги ырытыыгыт аатын һуруйун.",
+	"discussiontools-newtopic-placeholder-title": "Тиэмэ",
+	"discussiontools-replylink": "{{GENDER:|эппиэттээ}}",
+	"discussiontools-replywidget-advanced": "Кэӈитиллибит",
+	"discussiontools-replywidget-cancel": "Бүт",
+	"discussiontools-replywidget-mode-source": "Куод",
+	"discussiontools-replywidget-mode-visual": "Визуально",
+	"discussiontools-replywidget-newtopic": "Тиэмэни {{GENDER:|эп}}",
+	"discussiontools-replywidget-placeholder-newtopic": "Ис коһооно",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Эппиэттээ}} {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Предпросмотр",
+	"discussiontools-replywidget-reply": "{{GENDER:|Эппиэттээ}}",
+	"discussiontools-replywidget-summary": "Быһаарыы",
+	"discussiontools-replywidget-watchthis": "Бу һырайы бэйэн [[Special:Watchlist|кэтиир испииһэккэр]] эп",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|киһи|дьон}} ырыытыыга",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|һуруйуу|һуруйуулар}}",
+	"discussiontools-topicheader-latestcomment": "Кэнники һуруйуу: $1",
+	"discussiontools-topicsubscription-button-subscribe": "һурутуу",
+	"discussiontools-topicsubscription-button-subscribe-label": "Һурутуу",
+	"discussiontools-topicsubscription-button-unsubscribe": "һурутууттан аккаастан",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Һурутууттан аккаастан",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Эһиги}} бу тиэмэгэ һуруллубут һаӈа эппиэттэрин туһунан биллэрии ылар буоллугут.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Эһиги}} һуруттардыгыт!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Эһиги}} бу тиэмэгэ һуруллубут һаӈа эппиэттэрин туһунан биллэрии ылан бүттүгүт.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Эһиги}} һуруттарыыгын токтоттун."
+}

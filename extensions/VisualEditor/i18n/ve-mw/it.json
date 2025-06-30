@@ -179,6 +179,7 @@
 	"visualeditor-dialog-transclusion-template-title-nonexistent": "Questo template non esiste.",
 	"visualeditor-dialog-transclusion-template-widget-aria": "Premi Spazio per selezionare il template.",
 	"visualeditor-dialog-transclusion-add-wikitext": "Aggiungi wikitesto",
+	"visualeditor-dialog-transclusion-add-param-error-deprecated": "Non è possibile aggiungere \"$1\" perché il parametro è stato contrassegnato come [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#deprecated obsoleto]",
 	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "Impossibile aggiungere il parametro \"$2\" due volte.",
 	"visualeditor-dialog-transclusion-add-param-help": "Se ne sei a conoscenza, puoi inserire nomi di [//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Adding_undocumented_parameters parametri non documentati]. Nota che solamente i parametri previsti dal template avranno effetto. Puoi trovare informazioni sui parametri previsti nella [[$1|pagina del template]].",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Nome del parametro",

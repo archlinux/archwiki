@@ -7,6 +7,7 @@
 	"cite-desc": "<code>&lt;ref&gt;</code> а, <code>&lt;references/&gt;</code> а тегаш тӀетовжарийн тӀетуху",
 	"cite_error": "Цитатийн гӀалат: $1",
 	"cite_error_ref_invalid_dir": "Нийса доцу маьӀна <code>dir=\"$1\"</code>, хила деза <code>ltr</code> йа <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "Цхьана <code>&lt;ref&gt;</code> тегах «$1» цӀе йолуш нийса йоцу dir атрибут йу.",
 	"cite_error_ref_numeric_key": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nцӀе дуьззина терахь хилийла дац. Лелайе текстан цӀе",
 	"cite_error_ref_no_key": "Схьайоьлу тег <code>&lt;ref&gt;</code> — нийса йац йа цӀе гӀалате йу.",
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> тег чохь нийса йоцу параметр",

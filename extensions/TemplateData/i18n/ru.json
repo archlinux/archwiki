@@ -22,7 +22,8 @@
 			"Striking Blue",
 			"Sunpriat",
 			"UniCollab",
-			"Cabadeck"
+			"Cabadeck",
+			"Mitte27"
 		]
 	},
 	"templatedata-desc": "Реализация хранилища данных для параметров шаблона (с помощью JSON)",

@@ -44,6 +44,7 @@
 	"discussiontools-limitreport-errorreqid": "Ahawpa ID pâpa BiepachianaChhaichhizy",
 	"discussiontools-limitreport-timeusage": "BiepachianaChhaichhizy daihti hmâna",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekâ|sekâzy}}",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|Nâma}} na pachiapa kyh châta a chôtlâhpi soh bei la.",
 	"discussiontools-newtopic-placeholder-title": "Athâtih",
 	"discussiontools-notification-removed-topic-view": "Hmia palâ",
 	"discussiontools-notification-removed-topic-disable": "He hawhpa pahnosana a vaw tlapa he chalihsa",

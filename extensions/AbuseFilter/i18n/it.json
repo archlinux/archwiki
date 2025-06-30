@@ -239,7 +239,7 @@
 	"abusefilter-edit-enabled": "Attiva questo filtro",
 	"abusefilter-edit-deleted": "Segna come cancellato",
 	"abusefilter-edit-hidden": "Nascondi i dettagli di questo filtro al pubblico",
-	"abusefilter-edit-protected-variable-already-protected": "I dettagli di questo filtro sono nascosti agli utenti che non possono visualizzare le variabili protette",
+	"abusefilter-edit-protected-variable-already-protected": "I dettagli di questo filtro sono nascosti agli utenti che non possono visualizzare variabili protette",
 	"abusefilter-edit-global": "Filtro globale",
 	"abusefilter-edit-rules": "Condizioni:",
 	"abusefilter-edit-field-conditions": "condizioni",

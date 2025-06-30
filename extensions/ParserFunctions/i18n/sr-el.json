@@ -21,8 +21,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Greška u izrazu: nepoznati interpunkcijski karakter „$1“.",
 	"pfunc_expr_unclosed_bracket": "Greška u izrazu: nezatvorena srednja zagrada.",
 	"pfunc_expr_division_by_zero": "Deljenje sa nulom.",
-	"pfunc_expr_invalid_argument": "Loš argument: $1 je < -1 ili > 1",
-	"pfunc_expr_invalid_argument_ln": "Loš argument: ln <= 0",
+	"pfunc_expr_invalid_argument": "Loš argument za $1: je manje od -1 ili ili veće od 1.",
+	"pfunc_expr_invalid_argument_ln": "Loš argument za ln: manje ili jednako nuli.",
 	"pfunc_expr_unknown_error": "Greška u izrazu: Nepoznata greška ($1)",
 	"pfunc_expr_not_a_number": "Rezultat u $1 nije broj.",
 	"pfunc_string_too_long": "Greška: reč prekoračuje $1  slova, što je postavljeno ograničenje"

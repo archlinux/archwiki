@@ -18,7 +18,8 @@
 			"Rodney Araujo",
 			"Themasterriot",
 			"Tiberius1701",
-			"ZebaX2010"
+			"ZebaX2010",
+			"MatyGamingHD"
 		]
 	},
 	"multimediaviewer-desc": "Expande las miniaturas a un tamaño mayor en una vista de pantalla completa",
@@ -79,17 +80,17 @@
 	"multimediaviewer-embed-wt": "Wikitexto",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "Utiliza este código para incrustar el archivo",
-	"multimediaviewer-text-embed-credit-text-bl": "De $1, $2, $3",
-	"multimediaviewer-text-embed-credit-text-b": "De $1, $2",
-	"multimediaviewer-html-embed-credit-text-bl": "De $1, $2, $3",
-	"multimediaviewer-html-embed-credit-text-b": "De $1, $2",
+	"multimediaviewer-text-embed-credit-text-bl": "Por $1, $2, $3",
+	"multimediaviewer-text-embed-credit-text-b": "Por $1, $2",
+	"multimediaviewer-html-embed-credit-text-bl": "Por $1, $2, $3",
+	"multimediaviewer-html-embed-credit-text-b": "Por $1, $2",
 	"multimediaviewer-html-embed-credit-link-text": "Enlace",
 	"multimediaviewer-embed-byline": "Por $1",
 	"multimediaviewer-embed-license": "Disponible bajo la licencia $1.",
 	"multimediaviewer-embed-via": "Vía $1.",
 	"multimediaviewer-default-embed-dimensions": "Tamaño de miniaturas predeterminado",
 	"multimediaviewer-original-embed-dimensions": "Archivo original, $1",
-	"multimediaviewer-xl-embed-dimensions": "Extra grande $1",
+	"multimediaviewer-xl-embed-dimensions": "Extra grande, $1",
 	"multimediaviewer-large-embed-dimensions": "Grande, $1",
 	"multimediaviewer-medium-embed-dimensions": "Mediano, $1",
 	"multimediaviewer-small-embed-dimensions": "Pequeño, $1",
@@ -129,5 +130,6 @@
 	"multimediaviewer-enable-alert": "Se ha desactivado el visor multimedia",
 	"multimediaviewer-disable-info-title": "Has desactivado el visor multimedia",
 	"multimediaviewer-disable-info": "Aún puede ver archivos individuales con el Visor Multimedia.",
-	"multimediaviewer-errorreport-privacywarning": "El informe contiene detalles del error que serán visibles públicamente. Si ello no te inspira confianza, puedes modificar el informe para quitarle cualquier dato que no quieras compartir."
+	"multimediaviewer-errorreport-privacywarning": "El informe contiene detalles del error que serán visibles públicamente. Si ello no te inspira confianza, puedes modificar el informe para quitarle cualquier dato que no quieras compartir.",
+	"multimediaviewer-loading": "Cargando el visor multimedia."
 }

@@ -56,7 +56,7 @@
 	"echo-log": "Offentlig logg",
 	"echo-new-messages": "Du har ett nytt meddelande på diskussionssidan",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Redigering|Redigeringar}} på min diskussionsida",
-	"echo-category-title-edit-user-page": "{{PLURAL:$1|Redigering|Redigeringar}} till min användarsida",
+	"echo-category-title-edit-user-page": "{{PLURAL:$1|Redigering|Redigeringar}} på min användarsida",
 	"echo-category-title-article-linked": "Sid{{PLURAL:$1|länkning|länkningar}}",
 	"echo-category-title-reverted": "Redigerings{{PLURAL:$1|återställning|återställningar}}",
 	"echo-category-title-mention": "{{PLURAL:$1|Omnämnande|Omnämnanden}}",

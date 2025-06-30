@@ -48,6 +48,7 @@
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Pripojil|Pripojila}} sa dňa $1",
 	"mobile-frontend-user-page-talk": "Diskusia",
 	"minerva-user-menu-button": "Používateľské menu",
+	"minerva-page-actions-editfull": "Upraviť celú stránku",
 	"minerva-page-actions-overflow": "Viac",
 	"minerva-page-actions-language-switcher": "Jazyky",
 	"minerva-page-actions-history": "História",

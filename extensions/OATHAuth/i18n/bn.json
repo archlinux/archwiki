@@ -29,7 +29,7 @@
 	"oathauth-disabledoath": "দুই-ধাপের প্রমাণীকরণ নিষ্ক্রিয় করা হয়েছে।",
 	"oathauth-prefs-label": "দুই-ধাপের প্রমাণীকরণ:",
 	"oathauth-step1": "ধাপ ১: দুই-ধাপের প্রমাণীকরণের একটি প্রোগ্রাম ডাউনলোড করুন",
-	"oathauth-step1-test": "দুই-ধাপের প্রমাণীকরণের জন্য একটি প্রোগ্রাম ডাউনলোড করুন। এটি হতে পারে একটি মোবাইল অ্যাপ্লিকেশন কিংবা একটি ডেস্কটপ অ্যাপ্লিকেশন, যেমন [https://authy.com/ আথি], [https://freeotp.github.io/ ফ্রিওটিপি], [https://support.google.com/accounts/answer/1066447 গুগল প্রমাণীকরণকারী], [https://www.microsoft.com/en-us/account/authenticator/ মাইক্রোসফট প্রমাণীকরণকারী] বা [https://1password.com/ ১পাসওয়ার্ড]।",
+	"oathauth-step1-test": "দুই-ধাপের প্রমাণীকরণের জন্য একটি প্রোগ্রাম ডাউনলোড করুন। এটি হতে পারে একটি মোবাইল অ্যাপ্লিকেশন কিংবা একটি ডেস্কটপ অ্যাপ্লিকেশন, যেমন [https://www.authy.com/ আথি], [https://freeotp.github.io/ ফ্রিওটিপি], [https://support.google.com/accounts/answer/1066447 গুগল প্রমাণীকরণকারী], [https://www.microsoft.com/en-us/account/authenticator/ মাইক্রোসফট প্রমাণীকরণকারী] বা [https://1password.com/ ১পাসওয়ার্ড]।",
 	"oathauth-step2": "ধাপ ২: কিউআর কোডটি স্ক্যান করুন",
 	"oathauth-step2-qrcode": "দুই-ধাপের প্রমাণীকরণের জন্য ১ নং ধাপে আপনার ডাউনলোড করা অ্যাপ্লিকেশন বা ব্রাউজার এক্সটেনশন ব্যবহার করে QR কোডটি স্ক্যান করুন।",
 	"oathauth-step2alt": "আপনি যদি কিউআর কোডটি স্ক্যান করতে না পারেন, তাহলে গোপন চাবি এবং অ্যাকাউন্টের নাম ম্যানুয়ালি লিখুন:",

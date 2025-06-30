@@ -7,7 +7,8 @@
 			"McAang",
 			"McDutchie",
 			"SaldırganSincap",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Gadir"
 		]
 	},
 	"syntaxhighlight-desc": "[https://pygments.org/ Pygments - Python sözdizimi vurgulayıcısı] kullanarak <code>&lt;syntaxhighlight&gt;</code> öğesini vurgulayarak sözdizimi sağlar",
@@ -25,5 +26,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kod bloğu",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments çağrılaması başarısız oldu",
 	"syntaxhighlight-error-unknown-language": "Bilinmeyen \"$1\" dili",
-	"syntaxhighlight-error-exceeds-size-limit": "$1 baytın kod büyüklüğü izin verilen maksimum $2 {{PLURAL:$2|baytı}} aşıyor"
+	"syntaxhighlight-error-exceeds-size-limit": "$1 baytın kod büyüklüğü izin verilen maksimum $2 {{PLURAL:$2|baytı}} aşıyor",
+	"syntaxhighlight-button-copy": "Kopyala",
+	"syntaxhighlight-button-copied": "Kopyalandı!"
 }

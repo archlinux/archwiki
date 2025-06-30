@@ -11,13 +11,13 @@
 		]
 	},
 	"fancycaptcha-desc": "Obogaćen stvarač slikovnog koda za potvrdu uređivanja",
-	"fancycaptcha-addurl": "Vaša izmena sadrži nove spoljašnje veze.\nU cilju zaštite vikija od automatizovanog nepoželjnog sadržaja, unesite reči, koje se pojavljuju ispod, u polje ([[Special:Captcha/help|više informacija]]):",
+	"fancycaptcha-addurl": "Vaša izmena sadrži nove spoljašnje veze.\nU cilju zaštite vikija od automatizovanog spama unesite reči koje se prikazuju u polje ispod ([[Special:Captcha/help|više informacija]]):",
 	"fancycaptcha-badlogin": "U cilju zaštite vikija od automatizovanog probijanja lozinki, unesite reč sa slike u polje ispod ([[Special:Captcha/help|više informacija]]):",
-	"fancycaptcha-captcha": "bezbednosna provera",
+	"fancycaptcha-captcha": "sigurnosna provera",
 	"fancycaptcha-accountcreate": "Radi zaštite projekta od automatizovanog otvaranja naloga molimo vas da unesite reči sa slike u polje ispod ([[Special:Captcha/help|detaljnije]]):",
-	"fancycaptcha-create": "Da biste napravili stranicu, unesite reči, koje se pojavljuju ispod, u polje ([[Special:Captcha/help|više informacija]]):",
-	"fancycaptcha-edit": "Da biste uredili ovu stranicu, unesite reči, koje se pojavljuju ispod, u polje ([[Special:Captcha/help|više informacija]]):",
+	"fancycaptcha-create": "Da biste napravili ovu stranicu, unesite reči sa slike u polje ispod ([[Special:Captcha/help|više informacija]]):",
+	"fancycaptcha-edit": "Da biste uredili ovu stranicu, unesite reči sa slike u polje ispod ([[Special:Captcha/help|više informacija]]):",
 	"fancycaptcha-imgcaptcha-ph": "Unesite tekst sa slike",
-	"fancycaptcha-sendemail": "U cilju zaštite vikija od automatizovanog slanja nepoželjnih poruka, unesite reči, koje se pojavljuju ispod, u polje ([[Special:Captcha/help|više informacija]]):",
+	"fancycaptcha-sendemail": "U cilju zaštite vikija od automatizovanog spama unesite reči koje se prikazuju u polje ispod ([[Special:Captcha/help|više informacija]]):",
 	"fancycaptcha-reload-text": "Osveži"
 }

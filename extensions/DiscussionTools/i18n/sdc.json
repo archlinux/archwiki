@@ -16,7 +16,7 @@
 	"discussiontools-replywidget-mode-visual": "Visuàri",
 	"discussiontools-replywidget-newtopic": "Aggiungì oggettu",
 	"discussiontools-replywidget-placeholder-newtopic": "Deschrizioni",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Ripundì}} a {{BIDI\n:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Ripundì}} a {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Prifirenzi",
 	"discussiontools-replywidget-preview": "Antiprimma",
 	"discussiontools-replywidget-reply": "{{GENDER:|Ripondi}}",

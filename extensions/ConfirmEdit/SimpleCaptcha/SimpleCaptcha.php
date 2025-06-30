@@ -100,12 +100,12 @@ class SimpleCaptcha {
 	 * @return array
 	 */
 	public function getCaptcha() {
-		$a = mt_rand( 0, 100 );
-		$b = mt_rand( 0, 10 );
+		$a = random_int( 0, 100 );
+		$b = random_int( 0, 10 );
 
 		/* Minus sign is used in the question. UTF-8,
 		   since the api uses text/plain, not text/html */
-		$op = mt_rand( 0, 1 ) ? '+' : '−';
+		$op = random_int( 0, 1 ) ? '+' : '−';
 
 		// No space before and after $op, to ensure correct
 		// directionality.
@@ -1114,8 +1114,8 @@ class SimpleCaptcha {
 	 */
 	public function storeCaptcha( $info ) {
 		if ( !isset( $info['index'] ) ) {
-			// Assign random index if we're not udpating
-			$info['index'] = strval( mt_rand() );
+			// Assign random index if we're not updating
+			$info['index'] = (string)random_int( 0, PHP_INT_MAX );
 		}
 		CaptchaStore::get()->store( $info['index'], $info );
 		return $info['index'];

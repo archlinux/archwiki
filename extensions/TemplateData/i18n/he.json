@@ -4,7 +4,8 @@
 			"Amire80",
 			"Guycn2",
 			"LaG roiL",
-			"תומר ט"
+			"תומר ט",
+			"מיכי י-ם"
 		]
 	},
 	"templatedata-desc": "מימוש אחסון נתונים לפרמטרים של תבניות (באמצעות JSON)",
@@ -80,7 +81,7 @@
 	"templatedata-modal-format-null": "בלתי־מוגדר",
 	"templatedata-modal-format-placeholder": "מחרוזת עיצוב פרמטר תבנית",
 	"templatedata-modal-json-error-replace": "החלפה",
-	"templatedata-modal-notice-import-numparams": "{{PLURAL:$1|יובא פרמטר חדש אחד|יובאו $1 פרמטרים חדשים}}: $2",
+	"templatedata-modal-notice-import-numparams": "{{PLURAL:$1|נוסף פרמטר חדש אחד|נוספו $1 פרמטרים חדשים}}: $2",
 	"templatedata-modal-placeholder-add-new-map-input": "הוספת מפה חדשה...",
 	"templatedata-modal-placeholder-paramkey": "שם הפרמטר",
 	"templatedata-modal-placeholder-mapinfo": "בתבנית הזאת אין עצם מפה",

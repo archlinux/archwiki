@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"TAKAHASHI Shuuji"
+		]
+	},
+	"apihelp-scribunto-console-summary": "ScribuntoコンソールからのXHRリクエストを処理するための内部モジュール。",
+	"apihelp-scribunto-console-param-title": "テストするモジュールのタイトル。",
+	"apihelp-scribunto-console-param-content": "モジュールの新しいコンテンツ。",
+	"apihelp-scribunto-console-param-session": "セッショントークン。",
+	"apihelp-scribunto-console-param-question": "次の行をスクリプトとして評価する。",
+	"apihelp-scribunto-console-param-clear": "現在のセッション状態をクリアするように設定。"
+}

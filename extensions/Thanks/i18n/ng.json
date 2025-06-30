@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"!!asa,njgh"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|hambelela}}}}"
+}

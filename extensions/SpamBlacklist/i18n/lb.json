@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"spam-blacklisted-email": "Gespaarten Mail-Adress",
-	"spam-blacklisted-email-text": "Är Mailadress ass elo gespaart fir anere Benotzer Mailen ze schécken.",
+	"spam-blacklisted-email-text": "Et ass am Moment net erlaabt vun Ärer E-Mail-Adress ass aus E-Mailen un aner Benotzer ze schécken.",
 	"spam-blacklisted-email-signup": "D'Mailadress déi Dir uginn hutt ass elo gespaart fir anere Benotzer Mailen ze schécken.",
 	"spam-blacklist-desc": "Op regulären Ausdréck (Regex) opgebauten Tool deen et erlaabt URLe vu Säiten op eng schwaarz Lëscht ze setzen an e-Mail-Adresssen vu registréierte Benotzer"
 }

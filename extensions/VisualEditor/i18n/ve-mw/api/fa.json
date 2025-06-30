@@ -46,7 +46,7 @@
 	"apihelp-visualeditoredit-param-needcheck": "در زمان ذخيره كردن اگر نسخه مشكلات رفت و برگشت داشت، پاراسويد را تنظيم كن. اين عمل در برچسب ويرايش داشتن تاثير دارد.",
 	"apihelp-visualeditoredit-param-oldid": "شماره نسخه استفاده شود. پيش فرض بر آخرين نسخه است. صفحات تازه ٠ است",
 	"apihelp-visualeditoredit-param-paction": "عمل برای انجام‌دادن.",
-	"apihelp-visualeditoredit-param-page": "صفحه برای انجام‌دادن عمل‌ها بر روی آن.",
+	"apihelp-visualeditoredit-param-page": "صفحه برای انجام‌دادن کنش‌ها بر روی آن.",
 	"apihelp-visualeditoredit-param-section": "بخشی که برای انجام‌دادن است.",
 	"apihelp-visualeditoredit-param-sectiontitle": "عنوان برای بخش جدید.",
 	"apihelp-visualeditoredit-param-starttimestamp": "در زمان ذخیره کردن، این را برای زمان بارگیری نسخه تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",

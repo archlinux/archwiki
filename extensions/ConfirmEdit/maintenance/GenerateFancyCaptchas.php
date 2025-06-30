@@ -141,7 +141,7 @@ class GenerateFancyCaptchas extends Maintenance {
 		$captchaTime = -microtime( true );
 		$result = Shell::command( [] )
 			->params( $cmd )
-			->limits( [ 'time' => 0 ] )
+			->limits( [ 'time' => 0, 'memory' => 0, 'walltime' => 0, 'filesize' => 0 ] )
 			->disableSandbox()
 			->execute();
 		if ( $result->getExitCode() !== 0 ) {
@@ -159,28 +159,13 @@ class GenerateFancyCaptchas extends Maintenance {
 
 		$this->output(
 			sprintf(
-				"\nGenerated %d captchas in %.1f seconds\n",
+				"\nGeneration script for %d captchas ran in %.1f seconds\n",
 				$countGen,
 				$captchaTime
 			)
 		);
 
-		$filesToDelete = [];
-		if ( $deleteOldCaptchas ) {
-			$this->output( "Getting a list of old captchas to delete..." );
-			$path = $backend->getRootStoragePath() . '/' . $instance->getStorageDir();
-			foreach ( $backend->getFileList( [ 'dir' => $path ] ) as $file ) {
-				$filesToDelete[] = [
-					'op' => 'delete',
-					'src' => $path . '/' . $file,
-				];
-			}
-			$this->output( " Done.\n" );
-		}
-
-		$this->output( "Copying the new captchas to storage..." );
-
-		$storeTime = -microtime( true );
+		$tmpCountTime = -microtime( true );
 		$iter = new RecursiveIteratorIterator(
 			new RecursiveDirectoryIterator(
 				$tmpDir,
@@ -205,7 +190,37 @@ class GenerateFancyCaptchas extends Maintenance {
 				'dst' => $dest,
 			];
 		}
+		$tmpCountTime += microtime( true );
+		$this->output(
+			sprintf(
+				"\nEnumerated %d temporary captchas in %.1f seconds\n",
+				$captchasGenerated,
+				$tmpCountTime
+			)
+		);
 
+		if ( $captchasGenerated === 0 ) {
+			wfRecursiveRemoveDir( $tmpDir );
+			$this->error( "No generated captchas found in temporary directory; did captcha.py actually succeed?" );
+		} elseif ( $captchasGenerated < $countGen ) {
+			$this->output( "Expecting $countGen new captchas, only $captchasGenerated found on disk; continuing\n." );
+		}
+
+		$filesToDelete = [];
+		if ( $deleteOldCaptchas ) {
+			$this->output( "Getting a list of old captchas to delete..." );
+			$path = $backend->getRootStoragePath() . '/' . $instance->getStorageDir();
+			foreach ( $backend->getFileList( [ 'dir' => $path ] ) as $file ) {
+				$filesToDelete[] = [
+					'op' => 'delete',
+					'src' => $path . '/' . $file,
+				];
+			}
+			$this->output( " Done.\n" );
+		}
+
+		$this->output( "Copying the new captchas to storage..." );
+		$storeTime = -microtime( true );
 		$ret = $backend->doQuickOperations( $filesToStore );
 
 		$storeTime += microtime( true );

@@ -15,7 +15,8 @@
 			"Revi",
 			"Ykhwong",
 			"메이",
-			"아라"
+			"아라",
+			"Whatback11"
 		]
 	},
 	"skinname-vector": "벡터 레거시 (2010)",
@@ -55,7 +56,7 @@
 	"vector-feature-limited-width-name": "너비",
 	"vector-feature-limited-width-0-label": "넓게",
 	"vector-feature-limited-width-1-label": "표준",
-	"vector-feature-custom-font-size-name": "텍스트",
+	"vector-feature-custom-font-size-name": "글",
 	"vector-feature-custom-font-size-0-label": "작음",
 	"vector-feature-custom-font-size-1-label": "표준",
 	"vector-feature-custom-font-size-2-label": "큼",

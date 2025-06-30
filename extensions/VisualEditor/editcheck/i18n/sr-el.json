@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"editcheck-dialog-action-no": "Ne",
+	"editcheck-dialog-action-yes": "Da",
+	"editcheck-dialog-addref-description": "Pomozite čitaocima da znaju odakle informacija dolazi dodavanjem reference.",
+	"editcheck-dialog-addref-reject-question": "Zašto ne dodajete referencu?",
+	"editcheck-dialog-addref-reject-description": "Ostali urednici rado bi znali zašto ste odlučili ne dodati referencu.",
+	"editcheck-dialog-addref-reject-irrelevant": "Referenciranje je nebitno za moju izmenu",
+	"editcheck-dialog-addref-reject-common-knowledge": "Informacija koju dodajem je opšte poznata",
+	"editcheck-dialog-addref-reject-uncertain": "Ne znam koju referencu navesti",
+	"editcheck-dialog-addref-reject-other": "Drugo",
+	"editcheck-dialog-addref-success-notify": "Hvala na dodavanju reference!",
+	"editcheck-dialog-addref-title": "Dodavanje reference",
+	"editcheck-dialog-title": "Pre objavljivanja",
+	"tag-editcheck-reference-decline-common-knowledge": "Edit Check referenciranje odbačeno (opšte znanje)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Referenciranje je odbačeno zato što je u pitanju opšte znanje",
+	"tag-editcheck-reference-decline-irrelevant": "Edit Check referenciranje odbačeno (nerelevantno)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Referenciranje je nebitno za konkretnu izmenu",
+	"tag-editcheck-reference-decline-other": "Edit Check referenciranje odbačeno (drugo)",
+	"tag-editcheck-reference-decline-other-description": "Referenciranje je odbačeno iz nekog drugog razloga",
+	"tag-editcheck-reference-decline-uncertain": "Edit Check referenciranje odbačeno (nisam siguran/na)",
+	"tag-editcheck-reference-decline-uncertain-description": "Referenciranje je odbačeno iz neznanja"
+}

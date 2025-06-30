@@ -3,5 +3,11 @@
 		"authors": [
 			"Don Alessandro"
 		]
-	}
+	},
+	"visualeditor-welcomedialog-action": "Yazmağa başla",
+	"visualeditor-welcomedialog-content": "Er kes deñiştirip ola ve er eyileştirüv leyhağa yardım ete.",
+	"visualeditor-welcomedialog-content-thanks": "Er kesniñ daa çoq şey ögrenmesine yardım etkeniñiz içün sağ oluñız!",
+	"visualeditor-welcomedialog-switch": "Viki-metin türlendirgiçine keç",
+	"visualeditor-welcomedialog-switch-ve": "Vizual türlendirgiçke keç",
+	"visualeditor-welcomedialog-title": "$2 saytına {{GENDER:$1|hoş keldiñiz}}"
 }

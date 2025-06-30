@@ -30,7 +30,8 @@
 			"Yusuke1109",
 			"おはぐろ蜻蛉",
 			"ネイ",
-			"春春眠眠"
+			"春春眠眠",
+			"Ryoya3"
 		]
 	},
 	"echo-desc": "イベントおよびメッセージについて、利用者に通知するシステム",
@@ -62,7 +63,7 @@
 	"echo-pref-dont-email-read-notifications": "要約メールに既読の通知を含めない",
 	"echo-learn-more": "詳細",
 	"echo-log": "公開記録",
-	"echo-new-messages": "あなたの会話ページに新着メッセージがあります",
+	"echo-new-messages": "あなたのトークページに新着メッセージがあります",
 	"echo-category-title-edit-user-talk": "トークページでの{{PLURAL:$1|編集}}",
 	"echo-category-title-edit-user-page": "利用者ページでの{{PLURAL:$1|編集}}",
 	"echo-category-title-article-linked": "ページへの{{PLURAL:$1|リンク}}",

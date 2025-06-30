@@ -5,14 +5,15 @@
 			"Ant176",
 			"Shirayuki",
 			"Sou0012",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Foomin10"
 		]
 	},
-	"apihelp-query+pageimages-summary": "Returns information about images on the page, such as thumbnail and presence of photos.",
+	"apihelp-query+pageimages-summary": "サムネイルや写真の有無など、ページ上の画像に関する情報を返します。",
 	"apihelp-query+pageimages-example-1": "ページ <kbd>Albert Einstein</kbd> 上の画像の名前と <kbd>100</kbd> ピクセルのサムネイルを取得する。",
 	"apihelp-query+pageimages-param-prop": "どの情報を返すか:",
 	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "ページに関連付けられたサムネイル画像のURLとサイズ（存在する場合）。",
-	"apihelp-query+pageimages-paramvalue-prop-original": "ページに関連付けられたイメージのURLと元のサイズ（存在する場合）。",
+	"apihelp-query+pageimages-paramvalue-prop-original": "ページに関連付けられた画像のURLと元のサイズ（存在する場合）。",
 	"apihelp-query+pageimages-paramvalue-prop-name": "画像のタイトル。",
 	"apihelp-query+pageimages-param-thumbsize": "サムネイル画像の最大幅（ピクセル単位）。",
 	"apihelp-query+pageimages-param-langcode": "多言語に対応している場合、画像を表示する言語のコード",

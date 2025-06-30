@@ -11,7 +11,7 @@
 	"discussiontools-replywidget-cancel": "Ойталал",
 	"discussiontools-replywidget-mode-source": "Код",
 	"discussiontools-replywidget-mode-visual": "Визуалдыг",
-	"discussiontools-replywidget-placeholder-reply": " {{BIDI:$1}} {{GENDER:|харыылаар}}",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} {{GENDER:|харыылаар}}",
 	"discussiontools-replywidget-preview": "Чижеглей көөрү",
 	"discussiontools-replywidget-reply": "{{GENDER:|Харыылаар}}",
 	"discussiontools-replywidget-summary": "Түңнел",

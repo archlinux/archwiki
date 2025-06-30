@@ -243,7 +243,7 @@ class MathRestbaseInterfaceTest extends MediaWikiIntegrationTestCase {
 		$rbi->getMathML();
 	}
 
-	public static function dataProviderForTestGetUrl() {
+	public static function provideTestGetUrl() {
 		$path = 'media/math/render/svg/2uejd9dj3jd';
 		$config = [
 			'MathFullRestbaseURL' => 'https://myWiki.test/',
@@ -266,7 +266,7 @@ class MathRestbaseInterfaceTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider dataProviderForTestGetUrl
+	 * @dataProvider provideTestGetUrl
 	 * @param string $path
 	 * @param bool $internal
 	 * @param array $config

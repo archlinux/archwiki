@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Belkacem77"
+			"Belkacem77",
+			"ButterflyOfFire"
 		]
 	},
 	"minerva-last-modified-date": "Abeddel aneggaru di $1, ɣef $2",
@@ -12,7 +13,7 @@
 	"mobile-frontend-editor-redlink-leave": "Uhu, tanemmirt.",
 	"mobile-frontend-history": "Wali amazray n teẓrigt n usebter-agi.",
 	"mobile-frontend-home-button": "Agejdan",
-	"mobile-frontend-language-article-heading": "Ɣer di tutlayt-nniḍen",
+	"mobile-frontend-language-article-heading": "Tutlayt",
 	"mobile-frontend-languages-not-available": "Asebter-agi ulac-it di tutlayt-nniḍen.",
 	"mobile-frontend-main-menu-button-tooltip": "Ldi umuɣ agejdan",
 	"mobile-frontend-main-menu-contributions": "Ittekkiyen",
@@ -37,5 +38,6 @@
 	"mobile-frontend-user-page-contributions": "Ittekkiyen",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Yedd-ad|Tedda-d}} di $1",
 	"mobile-frontend-user-page-talk": "Asqerdec",
+	"minerva-page-actions-overflow": "Ugar",
 	"minerva-skin-desc": "Acebbeḥ amyugaw yettwafeṣṣlen i uziraz"
 }

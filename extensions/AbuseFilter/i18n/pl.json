@@ -327,7 +327,7 @@
 	"abusefilter-edit-syntaxok": "Nie wykryto błędów składni.",
 	"abusefilter-edit-syntaxerr": "Wykryto błąd składni – $1",
 	"abusefilter-edit-warn-leave": "Opuszczenie strony spowoduje utratę wszystkich zmian wprowadzonych w tym filtrze.",
-	"abusefilter-edit-bad-tags": "Co najmniej jedno ze znaczników jest niepoprawne.\nNazwy znaczników powinny być krótkie i nie mogą zawierać znaków specjalnych, oraz nie mogą być wykorzystywane przez inne oprogramowanie. Spróbuj wybrać inną nazwę dla znacznika.",
+	"abusefilter-edit-bad-tags": "Co najmniej jeden ze znaczników jest niepoprawny.\nNazwy znaczników powinny być krótkie i nie mogą zawierać znaków specjalnych, oraz nie mogą być wykorzystywane przez inne oprogramowanie. Spróbuj wybrać inną nazwę dla znacznika.",
 	"abusefilter-edit-notallowed": "Nie posiadasz uprawnienia do tworzenia lub edytowania filtrów nadużyć",
 	"abusefilter-edit-notallowed-global": "Nie posiadasz uprawnienia do tworzenia lub edytowania globalnych filtrów nadużyć",
 	"abusefilter-edit-notallowed-global-custom-msg": "Niestandardowe komunikaty ostrzegające bądź odrzucające akcje nie są obsługiwane przez filtry globalne",

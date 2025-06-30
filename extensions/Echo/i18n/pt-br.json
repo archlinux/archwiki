@@ -29,7 +29,9 @@
 			"TheEduGobi",
 			"TheGabrielZaum",
 			"Vonil55",
-			"YuriNikolai"
+			"YuriNikolai",
+			"EGobi",
+			"Stanglavine"
 		]
 	},
 	"echo-desc": "Sistema para notificar usuários sobre eventos e mensagens",
@@ -109,7 +111,7 @@
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Métodos de notificação necessários",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Quais os métodos de notificação são obrigatórios para cada categoria",
 	"echo-specialpage": "Notificações",
-	"echo-specialpage-section-markread": "Marcar como grupo como lido",
+	"echo-specialpage-section-markread": "Marcar grupo como lido",
 	"echo-specialpage-markasread": "Notificação: Marcar como lida",
 	"echo-specialpage-markasread-invalid-id": "ID do evento inválido",
 	"echo-specialpage-pagefilterwidget-aria-label": "Filtrar por wiki e título da página",

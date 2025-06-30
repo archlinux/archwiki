@@ -3,9 +3,12 @@
 		"authors": [
 			"Markingdots",
 			"Ykhwong",
-			"밥풀떼기"
+			"밥풀떼기",
+			"YeBoy371"
 		]
 	},
+	"editcheck-dialog-action-no": "아니오",
+	"editcheck-dialog-action-yes": "예",
 	"editcheck-dialog-addref-reject-question": "인용을 추가하지 않으신 이유는 무엇인가요?",
 	"editcheck-dialog-addref-reject-description": "출처 인용이 누락된 이유를 다른 편집자들이 알 수 있도록 알려주세요.",
 	"editcheck-dialog-addref-reject-irrelevant": "출처 인용과는 관련 없는 편집입니다",

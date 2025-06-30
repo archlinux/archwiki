@@ -37,5 +37,6 @@
 	"confirmedit-preview-validity": "Platnost",
 	"confirmedit-preview-valid": "platný",
 	"confirmedit-preview-invalid": "neplatný",
-	"confirmedit-preview-description": "Následující tabulka zobrazuje seznam řádků na této stránce a zda se jedná o platné IP adresy či rozsahy adres. Pokud je řádka platná IP adresa nebo rozsah, bude osvobozena od CAPTCHA, ale neplatné řádky budou ignorovány. Příkladem platného rozsahu IP adres by bylo 69.208.0.0/16, což pokrývá adresy od 69.208.0.0 do 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Více informací] k počítání rozsahů IP adres."
+	"confirmedit-preview-description": "Následující tabulka zobrazuje seznam řádků na této stránce a zda se jedná o platné IP adresy či rozsahy adres. Pokud je řádka platná IP adresa nebo rozsah, bude osvobozena od CAPTCHA, ale neplatné řádky budou ignorovány. Příkladem platného rozsahu IP adres by bylo 69.208.0.0/16, což pokrývá adresy od 69.208.0.0 do 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Více informací] k počítání rozsahů IP adres.",
+	"abusefilter-edit-action-showcaptcha": "Pro pokračování v akci vyžadovat po uživateli splnění CAPTCHA. Výjimku mají uživatelé s oprávněním přeskakovat CAPTCHA."
 }

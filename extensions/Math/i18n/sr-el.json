@@ -10,6 +10,7 @@
 		]
 	},
 	"math-desc": "Renderuje matematičke formule između oznaka <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math": "Matematika",
 	"math-visualeditor-mwchemdialog-title": "Hemijska formula",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Brzo uredi",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formula",
@@ -60,6 +61,8 @@
 	"math-visualeditor-symbol-group-math-unsorted": "Nesvrstano",
 	"math_failure": "Raščlanjivanje nije uspelo",
 	"math_syntax_error": "greška u sintaksi",
+	"math-test-fail": "Test ''$1'' nije uspeo.",
+	"math-test-success": "Test ''$1'' uspešan.",
 	"math-tracking-category-error": "Strane sa matematičkim greškama",
 	"math-tracking-category-mhchem-deprecation": "Stranice koje koriste zastareli format hemijskih oznaka",
 	"math-tracking-category-mhchem-deprecation-desc": "Stranice sa zastarelim formatom hemijskih oznaka",
@@ -68,6 +71,7 @@
 	"math_unknown_function": "nepoznata funkcija „$1“",
 	"mw-math-latexml": "LaTeXML (eksprimentalno; koristi MathML)",
 	"mw-math-mathml": "SVG (MathML se može uključiti preko plugina za pregledač)",
+	"mw-math-native": "MathML (eksperimentalno; bez slika)",
 	"mw-math-source": "LaTeX izvor (za tekstualne pregledače)",
 	"prefs-math": "Prikaz matematičkih formula",
 	"mathstatus": "Stanje prikaza matematičkih formula",
@@ -80,7 +84,7 @@
 	"math-wikibase-formula-information": "Informacije o matematičkoj formuli",
 	"math-wikibase-formula-link-header": "Izvor podatka",
 	"math-wikibase-formula-elements-header": "Elementi formule",
-	"math-wikibase-special-form-header": "Navedi ime formule:",
+	"math-wikibase-special-form-header": "Ime formule:",
 	"math-wikibase-special-form-placeholder": "Naziv formule",
 	"math-wikibase-special-form-button": "Zatraži informaciju",
 	"math-wikibase-special-error-header": "Greška"

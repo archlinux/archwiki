@@ -4,5 +4,30 @@
 			"HackerPunki"
 		]
 	},
-	"discussiontools-replywidget-watchthis": "Añidil esta página a la tu [[Special:Watchlist|lista de seguimientu]]"
+	"discussiontools-defaultsummary-reply": "Contiesta",
+	"discussiontools-newtopic-missing-title": "Has el favol de dal un títalu pala tu tema de conversa.",
+	"discussiontools-newtopic-placeholder-title": "Assuntu",
+	"discussiontools-replylink": "{{GENDER:|contiestal}}",
+	"discussiontools-replywidget-advanced": "Alantrau",
+	"discussiontools-replywidget-cancel": "Suspendel",
+	"discussiontools-replywidget-mode-source": "Huenti",
+	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-newtopic": "Añidil tema",
+	"discussiontools-replywidget-placeholder-newtopic": "Descrición",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Contiesta}} a {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Antevista",
+	"discussiontools-replywidget-reply": "{{GENDER:|Contiestal}}",
+	"discussiontools-replywidget-summary": "Ressumi",
+	"discussiontools-replywidget-watchthis": "Añidil esta página ala tu [[Special:Watchlist|lista de seguimientu]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|esuariu|esuarius}} ena carava",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|messagi|messagis}}",
+	"discussiontools-topicheader-latestcomment": "Comentación cabera: $1",
+	"discussiontools-topicsubscription-button-subscribe": "apontal-si",
+	"discussiontools-topicsubscription-button-subscribe-label": "Apontal-si",
+	"discussiontools-topicsubscription-button-unsubscribe": "despontal-si",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Despontal-si",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Tú}} recebirás enteracionis sobri comentacionis nueas al tentu dessi tema.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "S'á apontau!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Ya no golvedrá a acebil enteracionis a tentu de messagis nuevus nesti tema.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "S'á despontau."
 }

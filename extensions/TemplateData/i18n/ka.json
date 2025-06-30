@@ -5,7 +5,8 @@
 			"David1010",
 			"MIKHEIL",
 			"Otogi",
-			"Გიო ოქრო"
+			"Გიო ოქრო",
+			"Mehman97"
 		]
 	},
 	"templatedata-desc": "მონაცემთა საცავის რეალიზაცია თარგის პარამეტრებისათვის (JSON-ის გამოყენებით)",
@@ -46,6 +47,7 @@
 	"templatedata-errormsg-insertblank": "დარწმუნებული ხართ, რომ გსურთ თარგის მონაცემების ჩასმა ინფორმაციის გარეშე?",
 	"templatedata-exists-on-related-page": "მიაქციეთ ყურადღება: უკვე არსებობს თარგის მონაცემების ბლოკი დაკავშირებულ გვერდზე „[[$1]]“.",
 	"templatedata-helplink": "ინფორმაცია თარგის მონაცემების შესახებ",
+	"templatedata-invalid-unnamed-parameter": "პარამეტრის სახელი არ შეიძლება იყოს ცარიელი. უსახელო პარამეტრების აღსაწერად გამოიყენეთ მათი შიდა ნომრები „1“, „2“ და ა.შ.",
 	"templatedata-invalid-duplicate-value": "თვისება „$1“ („$3“) არის „$2“-ის დუბლიკატი.",
 	"templatedata-invalid-empty-array": "თვისება „$1“-ს თავის მასივში უნდა ჰქონდეს სულ მცირე ერთი მნიშვნელობა.",
 	"templatedata-invalid-format": "თვისება „$1“ უნდა იყოს „inline“, „block“ ან სწორი ფორმატის სტრიქონი.",
@@ -89,6 +91,7 @@
 	"templatedata-modal-table-param-aliases": "ფსევდონიმები",
 	"templatedata-modal-table-param-autovalue": "ავტომატური მნიშვნელობა",
 	"templatedata-modal-table-param-default": "ნაგულისხმები მნიშვნელობა ($1)",
+	"templatedata-modal-table-param-status": "სტატუსი",
 	"templatedata-modal-table-param-deprecated": "მოძველებული",
 	"templatedata-modal-table-param-deprecatedValue": "ინფორმაცია მოძველების თაობაზე",
 	"templatedata-modal-table-param-description": "აღწერა ($1)",

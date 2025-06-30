@@ -20,7 +20,7 @@
 	"visualeditor-annotations-default-description": "Iste parte del pagina face parte de un intervallo annotate.",
 	"visualeditor-annotations-default-end": "Fin del intervallo annotate",
 	"visualeditor-annotations-default-start": "Initio del intervallo annotate",
-	"visualeditor-annotations-extended-documentation": "Iste rango annotate ha essite extendite perque le contento que illo includeva non esseva ben annidate. Es recommendate assecurar se que le contento annotate es ben annidate ante de modificar lo; alteremente, un intervallo plus grande que expectate poterea esser annotate.",
+	"visualeditor-annotations-extended-documentation": "Iste intervallo de annotation ha essite extendite perque le contento que illo includeva non esseva ben annidate. Es recommendate assecurar se que le contento annotate es ben annidate ante de modificar lo; alteremente, un intervallo plus grande que expectate poterea esser annotate.",
 	"visualeditor-autosave-modified-prompt-accept": "Reprender modification",
 	"visualeditor-autosave-modified-prompt-message": "Iste pagina ha essite modificate post que tu lo cargava pro le ultime vice. Vole tu reprender tu modification del version ancian, o comenciar un nove modification del ultime version?",
 	"visualeditor-autosave-modified-prompt-reject": "Comenciar un nove modification",

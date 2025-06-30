@@ -2,14 +2,36 @@
 	"@metadata": {
 		"authors": [
 			"Salifu Ramatu",
-			"Hasslaebetch"
+			"Hasslaebetch",
+			"Avenger",
+			"Biema",
+			"Yaw-kan"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Bonu",
+	"discussiontools-newtopic-missing-title": "Jande ma i nɔaniɛ tii {{GENDER:|your}} anzama n tii",
 	"discussiontools-newtopic-placeholder-title": "jɔrɛ tii",
+	"discussiontools-replylink": "{{GENDER:|bɔnu }}",
+	"discussiontools-replywidget-advanced": "Bo wɔ kɔ i nyunu",
 	"discussiontools-replywidget-cancel": "Kpiɛnu",
+	"discussiontools-replywidget-mode-source": "Fiteeri biri",
+	"discussiontools-replywidget-mode-visual": "Niɛ ŋuuwa",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|bukasu}} nɔaniɛ tii",
+	"discussiontools-replywidget-placeholder-newtopic": "Kekerenu",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|bɔnu}} fa kɔ {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Kaaki niɛ nu",
+	"discussiontools-replywidget-reply": "{{GENDER:|bɔnu }}",
+	"discussiontools-replywidget-summary": "Nyanyawa",
+	"discussiontools-replywidget-watchthis": "Fa ahin bue n buka u [[Special:Watchlist|watchlist]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|sɔnɔ|minɛm}} bu wo anzama su",
 	"discussiontools-topicheader-commentcount": "Jôlêm {{PLURAL:$1||.}}",
 	"discussiontools-topicheader-latestcomment": "Jôlê bé  i ba kassiein: $1",
 	"discussiontools-topicsubscription-button-subscribe": "klè ô douman na a sou yê su",
+	"discussiontools-topicsubscription-button-subscribe-label": "Fa u ŋu buka su",
+	"discussiontools-topicsubscription-button-unsubscribe": "Yi u ŋu fite nu",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Yi u ŋu fite nu",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|a}} nya l su fa kɔ jɔrɛ fɔfɔrɛ ahin jɔrɛ ti n su",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|A }} tɔɔ kaari dada !",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|a}} nya l su fa kɔ jɔrɛ fɔfɔrɛ ahin jɔrɛ ti n su",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|a}} nounnouka wua fètê yɛ sou."
 }

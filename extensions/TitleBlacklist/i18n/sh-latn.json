@@ -2,16 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
 	"action-tboverride": "zaobilaženje zabranjenih naslova ili korisničkih imena",
 	"action-tboverride-account": "zaobilaženje zabranjenih korisničkih imena",
-	"action-titleblacklistlog": "pregled evidencije zabranjenih naslova",
-	"log-name-titleblacklist": "Evidencija zabranjenih naslova",
+	"action-titleblacklistlog": "pregledate dnevnik liste nedopuštenih naslova",
+	"log-name-titleblacklist": "Dnevnik liste nedopuštenih naslova",
 	"log-description-titleblacklist": "Ovi događaji prate popis zabranjenih naslova.",
 	"titleblacklist-override": "Zanemari listu nedopuštenih imena",
 	"right-tboverride": "Zaobilaženje zabranjenih naslova ili korisničkih imena",
 	"right-tboverride-account": "Zaobilaženje zabranjenih korisničkih imena",
-	"right-titleblacklistlog": "Pregled evidencije zabranjenih naslova"
+	"right-titleblacklistlog": "Pregledanje dnevnika liste nedopuštenih naslova"
 }

@@ -4,7 +4,10 @@
 			"Умар"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck-на хетарехь, агӀонна тӀе керла чулацам тӀетоьхна .",
 	"tag-editcheck-newreference-description": "АгӀонна хьажорг тӀетоьхна",
+	"tag-editcheck-references-description": "EditCheck-на хетарехь, хьажорг оьшуш хила тарло",
+	"tag-editcheck-references-activated-description": "EditCheck-на хетарехь, хьажоргаш оьшуш хила тарло, ткъа UI гайтина",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|БӀаьран редактор]]",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|БӀаьран редакторца]] дина нисдарш",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|БӀаьран редактор]]: талла",

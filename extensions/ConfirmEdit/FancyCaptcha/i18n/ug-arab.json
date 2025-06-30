@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Uzdil"
+			"Uzdil",
+			"Sahran"
 		]
 	},
 	"fancycaptcha-captcha": "بىخەتەرلىك تەكشۈرۈش",
+	"fancycaptcha-accountcreate": "ئاپتوماتىك ھېسابات قۇرۇشنىڭ ئالدىنى ئېلىپ ۋىكىنى قوغداش ئۈچۈن، تۆۋەندىكى كاتەكچىدە كۆرۈنگەن خەتنى كىرگۈزۈڭ ([[Special:Captcha/help|تەپسىلىي ئۇچۇر]]):",
 	"fancycaptcha-imgcaptcha-ph": "ئۈستىدىكى رەسىمدە كۆرگەن يېزىقنى كىرگۈزۈڭ",
 	"fancycaptcha-reload-text": "يېڭىلاش"
 }

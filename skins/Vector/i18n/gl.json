@@ -55,7 +55,7 @@
 	"skin-theme-os-label": "Automática",
 	"skin-theme-exclusion-notice": "Esta páxina está sempre en modo claro.",
 	"vector-search-loader": "Cargando as suxestións de busca",
-	"vector-searchsuggest-containing": "Procurar as páxinas que conteñan \"<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>\"",
+	"vector-searchsuggest-containing": "Procurar as páxinas que conteñan «<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>»",
 	"vector-intro-page": "Help:Introdución",
 	"vector-toc-label": "Contidos",
 	"vector-toc-beginning": "Inicio",

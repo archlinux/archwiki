@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Weekeejames"
+			"Weekeejames",
+			"Noooote"
 		]
 	},
-	"categorytree": "El pono de maga categoria",
+	"categorytree": "El pono del categoria",
 	"categorytree-category": "Categoria:",
 	"categorytree-collapse": "esconde",
 	"categorytree-expand": "extende"

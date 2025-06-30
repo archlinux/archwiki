@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"vector-action-undelete": "恢復",
+	"vector-action-unprotect": "更改保護"
+}

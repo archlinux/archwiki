@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"01miki10",
-			"Nike"
+			"Nike",
+			"Samoasambia"
 		]
 	},
 	"codeeditor-desc": "Lisää syntaksinkorostuksen JavaScript ja CSS-sivuille käyttäen [https://ace.c9.io/ Ace-muokkainta]",
@@ -17,5 +18,6 @@
 	"codeeditor-gotoline-prompt": "Syötä rivin numero",
 	"codeeditor-indent": "Sisennä",
 	"codeeditor-outdent": "Poista sisennys",
+	"codeeditor-error-title": "Riippuvuus epäonnistui",
 	"codeeditor-error-message": "CodeEditor tarvitsee WikiEditorin lataamisen."
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"BadDog",
 			"Vlad5250",
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
 	"abusefilter-desc": "Izvršava automatsko heurističko filtriranje u izmenama",
@@ -534,9 +535,9 @@
 	"abusefilter-topnav-recentchanges": "Nedavne promjene u filtrima",
 	"abusefilter-topnav-test": "Grupno isprobavanje",
 	"abusefilter-topnav-examine": "Ispitaj prošle izmjene",
-	"abusefilter-topnav-log": "Evidencija zloupotreba",
+	"abusefilter-topnav-log": "Dnevnik zloupotreba",
 	"abusefilter-topnav-tools": "Alati za debagovanje",
-	"abusefilter-log-name": "Evidencija filtera zloupotrebe",
+	"abusefilter-log-name": "Dnevnik filtera zloupotreba",
 	"abusefilter-log-header": "Ovde je prikazan sažetak izmena koje su napravili filteri.\nZa više informacija pogledajte [[Special:AbuseFilter/history|pregled]] skorašnjih izmjena.",
 	"abusefilter-logentry-create": "$1 {{GENDER:$2|stvorio je|stvorila je}} $4 ($5)",
 	"abusefilter-logentry-modify": "$1 {{GENDER:$2|izmijenio je|izmijenila je}} $4 ($5)",
@@ -575,11 +576,12 @@
 	"abusefilter-log-ip-not-available": "Nedostupna",
 	"abusefilter-tag-reserved": "Oznaka <code>abusefilter-condition-limit</code> je rezervirana za internu upotrebu u Filtru za zlouporabu.",
 	"tag-abusefilter-condition-limit": "dostignuta granica uvjeta",
-	"tag-abusefilter-condition-limit-description": "Izmjene ili druge radnje koje nije bilo moguće provjeriti pomoću svih aktivnih [[Special:AbuseFilter|filtera zloupotreba]] ([[mw:Extension:AbuseFilter/Conditions|pomoć]]).",
+	"tag-abusefilter-condition-limit-description": "Izmjene ili druge radnje koje nije bilo moguće provjeriti pomoću svih aktivnih [[Special:AbuseFilter|filtera zloupotreba]] ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions pomoć]).",
 	"notification-header-throttle-filter": "Filter zloupotrebe $2 koji {{GENDER:$1|ste}} nedavno uredili je prigušen.",
 	"notification-header-throttle-filter-actions": "Filter zloupotrebe $2 koji {{GENDER:$1|vi ste}} nedavno uredili ima visoku stopu podudaranja, i {{PLURAL:$4|sljedeća radnja je bila automatski onemogućena|sljedeće radnje su bile automatski onemogućene}}: $3.",
 	"notification-header-throttle-filter-no-actions": "Filter zloupotrebe $2 koji {{GENDER:$1|vi ste}} nedavno uredili ima visoku stopu podudaranja, ali nijedna radnja nije bila automatski onemogućena.",
 	"notification-link-text-show-filter": "Prikaži filter",
 	"right-abusefilter-modify-blocked-external-domains": "Pravljenje ili promjena vanjskih domena za koje je blokirano povezivanje",
-	"action-abusefilter-modify-blocked-external-domains": "pravljenje ili promjena vanjskih domena za koje je blokirano povezivanje"
+	"action-abusefilter-modify-blocked-external-domains": "pravljenje ili promjena vanjskih domena za koje je blokirano povezivanje",
+	"log-action-filter-abusefilter-protected-vars": "Vrsta radnje:"
 }

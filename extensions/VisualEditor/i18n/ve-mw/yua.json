@@ -1,8 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lorenzoitza"
+			"Lorenzoitza",
+			"Juanchuy0",
+			"VicenteCancheM"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "A'al tu'ux u taal",
+	"visualeditor-ca-createsource": "A'al tu'ux u taal",
+	"visualeditor-ca-editsource": "k'ex le coodigóo",
 	"visualeditor-ca-editsource-section": "k'ex le koodigo'"
 }

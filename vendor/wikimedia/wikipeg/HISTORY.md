@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.2 (2025-04-28)
+* Same as 4.0.0
+
+## 4.0.1 (2025-04-28)
+* Unpublished.
+
 ## 4.0.0 (2024-03-04)
 * Use a class instead of an assoc array for cache entry
 * Switch phan to special library mode

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ayour2002"
+			"Ayour2002",
+			"AguzulH"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Rar",
 	"discussiontools-replylink": "{{GENDER:|rar}}",
 	"discussiontools-replywidget-preview": "Timẓṛit",
-	"discussiontools-replywidget-reply": "Rar",
+	"discussiontools-replywidget-reply": "{{GENDER:|Rar}}",
 	"discussiontools-replywidget-summary": "Azgzl",
 	"discussiontools-topicsubscription-button-subscribe": "ḍfṛ",
 	"discussiontools-topicsubscription-button-subscribe-label": "Ḍfṛ",

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Don Alessandro"
+		]
+	},
+	"echo-category-title-login-fail": "Muvafaqiyetsiz kirişler",
+	"echo-pref-tooltip-login-fail": "Birisi qullanıcı esabımda kirip olamağanda maña bildir.",
+	"echo-category-title-login-success": "Tanış olmağan bir cihazdan kiriş",
+	"echo-pref-tooltip-login-success": "Birisi esabıma evelleri qullanılmağan bir cihaz ve ya IP adresinden kirgende maña bildir."
+}

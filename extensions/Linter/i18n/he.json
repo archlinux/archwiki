@@ -3,7 +3,8 @@
 		"authors": [
 			"Amire80",
 			"Guycn2",
-			"IKhitron"
+			"IKhitron",
+			"YaronSh"
 		]
 	},
 	"linterrors": "שגיאות ניקיון",
@@ -32,7 +33,7 @@
 	"linter-category-missing-end-tag-in-heading": "תג מסיים חסר בכותרת",
 	"linter-category-missing-end-tag-in-heading-desc": "לדפים האלה חסרים תגים מסיימים בכותרות.",
 	"linter-category-missing-image-alt-text": "חסר טקסט חלופי לתמונה",
-	"linter-category-missing-image-alt-text-desc": "בדפים אלה יש תמונות ללא טקסט חלופי נגיש.",
+	"linter-category-missing-image-alt-text-desc": "בדפים האלה יש תמונות ללא טקסט חלופי נגיש.",
 	"linter-category-multi-colon-escape": "חילוף נקודתיים מרובים",
 	"linter-category-multi-colon-escape-desc": "בדפים האלה יש קישורים עם נקודתיים מרובים בהתחלה.",
 	"linter-category-multiline-html-table-in-list": "טבלה עם שורות מרובות ברשימה",

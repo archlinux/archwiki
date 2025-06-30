@@ -2,12 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Jason924tw",
-			"LNDDYL"
+			"LNDDYL",
+			"WAN233"
 		]
 	},
 	"abusefilter-log-search": "尋濫誌",
+	"abusefilter-log-search-user": "用戶:",
 	"abusefilter-log-search-submit": "尋",
+	"abusefilter-tools-reautoconfirm-user": "用戶:",
 	"abusefilter-edit-history": "誌：",
+	"abusefilter-history-user": "用戶",
+	"abusefilter-history-select-user": "用戶:",
 	"abusefilter-action-tag": "標",
 	"abusefilter-examine-submit": "尋"
 }

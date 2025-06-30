@@ -7,6 +7,8 @@
 		]
 	},
 	"mobile-frontend-editor-edit": "Deñiştir",
+	"mobile-frontend-editor-redlink-create": "Saife yarat",
+	"mobile-frontend-editor-redlink-explain": "Bu saife alâ daa yaratılmağan.",
 	"mobile-frontend-editor-redlink-leave": "Yoq, sağ oluñız.",
 	"mobile-frontend-history": "Bu saifeniñ deñiştirilme tarihını köster.",
 	"mobile-frontend-home-button": "Baş Saife",
@@ -22,5 +24,11 @@
 	"mobile-frontend-talk-back-to-page": "“$1” saifesine keri qayt.",
 	"mobile-frontend-talk-back-to-userpage": "“{{GENDER:$1|$1}}” qullanıcı saifesine keri qayt.",
 	"mobile-frontend-user-page-member-since": "$1 {{GENDER:$2|qoşuldı}}",
-	"minerva-page-actions-editfull": "Bütün saifeni deñiştir"
+	"minerva-page-actions-editfull": "Bütün saifeni deñiştir",
+	"skin-minerva-time-ago-seconds": "$1 {{PLURAL:$1|saniye}} evel",
+	"skin-minerva-time-ago-minutes": "$1 {{PLURAL:$1|daqqa}} evel",
+	"skin-minerva-time-ago-hours": "$1 {{PLURAL:$1|saat}} evel",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 kün}} evel",
+	"skin-minerva-time-ago-months": "$1 {{PLURAL:$1|ay}} evel",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 yıl}} evel"
 }

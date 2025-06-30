@@ -2,15 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Brahim-essaidi",
-			"ⵕⴰⵊⵉ"
+			"ⵕⴰⵊⵉ",
+			"Lhoussine AIT TAYFST"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ⵔⴰⵔ",
+	"discussiontools-newtopic-missing-title": "ⵎⴽ ⴰⵙ ⵜⵓⴼⵉⴷ ⴼⴽ ⴰⵣⵡⵍ ⵉ ⵉⵎⵔⵙⵉ ⵏ ⵓⵎⵙⴰⵡⴰⵍ {{GENDER:|ⵏⵏⴽ|ⵏⵏⵎ}}.",
+	"discussiontools-newtopic-placeholder-title": "ⵉⵎⵔⵙⵉ",
 	"discussiontools-replylink": "{{GENDER:|}}ⵔⴰⵔ",
 	"discussiontools-replywidget-advanced": "ⵓⵜⵜⵉⵢ",
 	"discussiontools-replywidget-cancel": "ⴼⴼⵖ",
 	"discussiontools-replywidget-mode-source": "ⴰⵖⴱⴰⵍⵓ",
 	"discussiontools-replywidget-mode-visual": "ⵉⵎⵥⵕⵉ",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|ⵔⵏⵓ}} ⵉⵎⵔⵙⵉ",
+	"discussiontools-replywidget-placeholder-newtopic": "ⴰⴳⵍⴰⵎ",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|}}ⵔⴰⵔ ⵖⴼ {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "ⵜⴰⵎⵓⵖⵍⵉ",
 	"discussiontools-replywidget-reply": "{{GENDER:|}}ⵔⴰⵔ",

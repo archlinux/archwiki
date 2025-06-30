@@ -4,9 +4,18 @@
 			"LesVisages",
 			"Robin van der Vliet",
 			"Tbodt",
-			"Tamzin"
+			"Tamzin",
+			"Juwan~backup"
 		]
 	},
+	"visualeditor-autosave-modified-prompt-accept": "o awen e ante pini",
+	"visualeditor-autosave-modified-prompt-message": "sina kama ala lukin e lipu ni la, jan ante li ante e ona. {{GENDER:|sina}} wile ala wile awen e ante pini sina?",
+	"visualeditor-autosave-modified-prompt-reject": "o open e ante sin",
+	"visualeditor-autosave-modified-prompt-title": "{{GENDER:|sina}} wile ala wile awen e ante pini?",
+	"visualeditor-autosave-not-recovered-text": "mi ken ala kama sin e ante sina lon tenpo ni.",
+	"visualeditor-autosave-not-recovered-title": "ante li kama sin la pakala",
+	"visualeditor-autosave-recovered-text": "sina pana ala e ante la, mi kama e ona lon tenpo sin.",
+	"visualeditor-autosave-recovered-title": "ante li kama sin",
 	"visualeditor-ca-createlocaldescriptionsource": "lipu ni la o pana e lipu sona kepeken toki ilo",
 	"visualeditor-ca-createsource": "o pali e toki ilo",
 	"visualeditor-ca-editsource": "o ante e toki ilo",

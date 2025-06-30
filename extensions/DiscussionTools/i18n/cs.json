@@ -13,7 +13,8 @@
 			"Patriccck",
 			"Patrik L.",
 			"Robins7",
-			"Woytecr"
+			"Woytecr",
+			"Luky001"
 		]
 	},
 	"discussiontools": "Diskusní nástroje",
@@ -67,6 +68,7 @@
 	"discussiontools-newtopic-missing-title": "Prosíme, vyplňte nadpis {{GENDER:|svého}} diskusního tématu.",
 	"discussiontools-newtopic-placeholder-title": "Předmět",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Odebírat",
+	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Neodebírat",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Jedno nové téma|$1 nová témata|$1 nových témat|100=Více než 99 nových témat}} na stránce „<strong>$2</strong>“.",
 	"discussiontools-notification-added-topic-view": "Zobrazit téma",
 	"discussiontools-notification-removed-topic-body": "Je možné, že již nebudete dostávat oznámení o {{PLURAL:$1|tomto tématu|těchto tématech}}.",

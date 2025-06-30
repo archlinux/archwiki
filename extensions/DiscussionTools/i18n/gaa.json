@@ -12,7 +12,7 @@
 	"discussiontools-replywidget-cancel": "Foo mli",
 	"discussiontools-replywidget-mode-source": "He ni ejɛ",
 	"discussiontools-replywidget-mode-visual": "Mfoniri",
-	"discussiontools-replywidget-placeholder-reply": "{{Hii kɛ yei:|Hetoo}} kɛya {{BIDI: $1 }}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Hetoo}} kɛya {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Kwɛmɔ shi kome daŋ",
 	"discussiontools-replywidget-reply": "{{GENDER:|Hetoo}}",
 	"discussiontools-replywidget-summary": "Sanenaabuamɔ",

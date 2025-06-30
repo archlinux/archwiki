@@ -34,5 +34,6 @@
 	"mobile-frontend-user-page-contributions": "Bydraes",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Aangesluit}} op $1",
 	"mobile-frontend-user-page-talk": "Bespreking",
-	"minerva-user-navigation": "Gebruikersnavigasie"
+	"minerva-user-navigation": "Gebruikersnavigasie",
+	"minerva-page-actions-overflow": "Meer"
 }

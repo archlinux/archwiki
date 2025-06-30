@@ -27,7 +27,9 @@
 			"Zcqsc06",
 			"Zetud",
 			"Escargot bleu",
-			"Mahabarata"
+			"Mahabarata",
+			"NicoScribe",
+			"Od1n"
 		]
 	},
 	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
@@ -49,7 +51,7 @@
 	"gadgets-editdescription": "Modifier la description",
 	"gadgets-viewdescription": "Afficher la description",
 	"gadgets-uses": "Utilise",
-	"gadgets-required-rights": "Nécessite le{{PLURAL:$2| droit suivant|s droits suivants}}: $1.",
+	"gadgets-required-rights": "Nécessite {{PLURAL:$2|le droit suivant|les droits suivants}} : $1.",
 	"gadgets-required-skins": "Disponible sur {{PLURAL:$2|l’habillage suivant|les habillages suivants}} : $1.",
 	"gadgets-required-actions": "Limité {{PLURAL:$2|à l’action de page « $1 »|aux actions de page suivantes : $1}}.",
 	"gadgets-required-namespaces": "Limité {{PLURAL:$2|à l’espace de noms $1|aux espaces de nom : $1}}.",

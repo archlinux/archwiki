@@ -47,7 +47,7 @@
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$2|mengirimkan terima kasih}} kepada {{GENDER:$3|Anda}}.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Satu orang|$1 orang|100=99+ orang}} berterima kasih kepada {{GENDER:$3|Anda}} atas suntingan di <strong>$2</strong>.",
 	"notification-bundle-header-log-thank": "{{PLURAL:$1|Satu orang|$1 orang|100=99+ orang}} berterima kasih kepada {{GENDER:$3|Anda}} atas tindakan Anda terkait dengan <strong>$2</strong>/.",
-	"log-name-thanks": "Catatan terima kasih",
+	"log-name-thanks": "Log terima kasih",
 	"log-description-thanks": "Di bawah ini adalah daftar pengguna yang menerima terima kasih dari pengguna lain.",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|berterima kasih}} kepada {{GENDER:$4|$3}}",
 	"logeventslist-thanks-log": "Log terima kasih",

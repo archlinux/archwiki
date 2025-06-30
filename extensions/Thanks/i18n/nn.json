@@ -43,5 +43,6 @@
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Du}} takka $1 for kommentaren {{GENDER:$2|hans|hennar|deira}}.",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$5|deg}} for kommentaren din på «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$3|deg}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Éin person|$1 personar|100=fleire enn 99 personar}} takka {{GENDER:$3|deg}} for kommentaren din på «<strong>$2</strong>»."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Éin person|$1 personar|100=fleire enn 99 personar}} takka {{GENDER:$3|deg}} for kommentaren din på «<strong>$2</strong>».",
+	"ipb-action-thanks": "Senda takk"
 }

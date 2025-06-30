@@ -14,7 +14,7 @@
 	"cite_error_ref_invalid_dir": "Няслушны <code>dir=\"$1\"</code>, мусіць быць <code>ltr</code> ці <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Няслушны тэг <code>&lt;ref&gt;</code>; назва не можа быць проста лікам. Ужывайце апісальную назву",
 	"cite_error_ref_no_key": "Пачатковы тэг <code>&lt;ref&gt;</code> няслушны або мае благую назву",
-	"cite_error_ref_too_many_keys": "Няслушны тэг <code>&lt;ref&gt;</code>; няслушныя імёны, магчыма, зашмат",
+	"cite_error_ref_too_many_keys": "Няслушны параметр у тэгу <code>&lt;ref&gt;</code>",
 	"cite_error_ref_nested_extends": "Паглыбленне тэгаў <code>&lt;ref&gt;</code> больш чым на адзін узровень не дапускаецца",
 	"cite_error_ref_no_input": "Няслушны тэг <code>&lt;ref&gt;</code>; крыніцы без назваў мусяць мець змест",
 	"cite_error_references_duplicate_key": "памылковы тэг <code>&lt;ref&gt;</code>; імя \"$1\" вызначана некалькі разоў з розным зместам",

@@ -105,6 +105,7 @@
 	"right-abusefilter-hide-log": "Сокрытие записей в журнале злоупотреблений",
 	"right-abusefilter-hidden-log": "Просмотр скрытых записей в журнале фильтра злоупотреблений",
 	"right-abusefilter-modify-global": "Создание или изменение глобальных фильтров злоупотреблений",
+	"right-abusefilter-protected-vars-log": "Просмотр журналов, связанных с доступом к значениям защищённых переменных",
 	"action-abusefilter-modify": "изменение фильтров злоупотреблений",
 	"action-abusefilter-view": "просмотр фильтров злоупотреблений",
 	"action-abusefilter-log": "просмотр журнала злоупотреблений",
@@ -115,6 +116,7 @@
 	"action-abusefilter-revert": "отмена всех действий, выполненных фильтром злоупотреблений",
 	"action-abusefilter-view-private": "просмотр фильтров злоупотреблений, отмеченных как скрытые",
 	"action-abusefilter-log-private": "просмотр частных журналов фильтра злоупотреблений",
+	"action-abusefilter-log-protected": "просмотр журналов фильтров злоупотреблений, отмеченных как защищённые",
 	"action-abusefilter-hide-log": "сокрытие записей в журнале злоупотреблений",
 	"action-abusefilter-hidden-log": "просмотр скрытых записей в журнале фильтра злоупотреблений",
 	"action-abusefilter-modify-global": "создание или изменение глобальных фильтров злоупотреблений",
@@ -283,6 +285,7 @@
 	"abusefilter-edit-enabled": "Включить этот фильтр",
 	"abusefilter-edit-deleted": "Отметить как удалённый",
 	"abusefilter-edit-hidden": "Скрыть подробности этого фильтра от обычных участников",
+	"abusefilter-edit-protected-variable-already-protected": "Подробности этого фильтра скрыты от участников, которые не могут видеть защищённые переменные",
 	"abusefilter-edit-global": "Глобальный фильтр",
 	"abusefilter-edit-rules": "Условия:",
 	"abusefilter-edit-field-conditions": "условия",
@@ -691,6 +694,8 @@
 	"right-abusefilter-access-protected-vars": "Просмотр и создание фильтров с использованием защищённых переменных",
 	"action-abusefilter-access-protected-vars": "просмотр и создание фильтров, использующих защищённые переменные",
 	"prefs-abusefilter": "Фильтр злоупотреблений",
+	"abusefilter-protected-vars-log-name": "Журнал защищённых переменных фильтра злоупотреблений",
 	"log-action-filter-abusefilter-protected-vars": "Тип действия:",
-	"log-action-filter-abusefilter-protected-vars-change-access": "Изменить доступ"
+	"log-action-filter-abusefilter-protected-vars-change-access": "Изменить доступ",
+	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "Просмотр значений защищённых переменных"
 }

@@ -1,10 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mirlim"
+			"Mirlim",
+			"Lam Takuma"
 		]
 	},
+	"mobile-frontend-history": "Keléh sjaroh nnyuténg muko ni.",
 	"mobile-frontend-home-button": "Muko Utamo",
+	"mobile-frontend-language-article-heading": "Bahaso",
 	"mobile-frontend-main-menu-login": "Log masók",
-	"mobile-frontend-random-button": "Kók sé"
+	"mobile-frontend-main-menu-nearby": "Hok ddekak",
+	"mobile-frontend-main-menu-settings": "Tetakpe",
+	"mobile-frontend-placeholder": "Cari dale {{SITENAME}}",
+	"mobile-frontend-random-button": "Kók sé",
+	"minerva-page-actions-overflow": "Lagi"
 }

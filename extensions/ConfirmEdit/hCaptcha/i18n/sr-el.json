@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"hcaptcha-edit": "Da bi zaštitili viki od automatizovanog uređivanja, ljubazno Vas molimo da rešite sledeću kapču:",
+	"hcaptcha-addurl": "Vaša izmena sadrži novu spoljašnju vezu. Da bi zaštitili viki od automatizovanog spama, ljubazno Vas molimo da rešite sledeću kapču:",
+	"hcaptcha-badlogin": "Da bi zaštitili viki od automatizovanog provaljivanja lozinki, ljubazno Vas molimo da rešite sledeću kapču:",
+	"hcaptcha-createaccount": "Da bi zaštitili viki od automatizovanog otvaranja naloga, ljubazno Vas molimo da rešite sledeću kapču:",
+	"hcaptcha-createaccount-fail": "Izgleda da niste rešili kapču.",
+	"hcaptcha-create": "Da bi zaštitili viki od automatizovanog pravljenja stranica, ljubazno Vas molimo da rešite sledeću kapču:"
+}

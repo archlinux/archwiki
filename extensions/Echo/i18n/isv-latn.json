@@ -232,8 +232,8 @@
 	"notification-header-foreign-all": "Veče uvědomjenij iz {{PLURAL:$5|drugoj viki|drugyh viki}}",
 	"right-echo-create": "Posylanje uvědomjenij drugym",
 	"action-echo-create": "Posylanje uvědomjenij drugym",
-	"right-manage-all-push-subscriptions": "Upravjanje vsimi podpiskami na ush-uvědomjenja",
-	"action-manage-all-push-subscriptions": "Upravjanje vsimi podpiskami na ush-uvědomjenja",
+	"right-manage-all-push-subscriptions": "Upravjanje vsimi podpiskami na push-uvědomjenja",
+	"action-manage-all-push-subscriptions": "Upravjanje vsimi podpiskami na push-uvědomjenja",
 	"group-push-subscription-manager": "Menedžeri push-podpisok",
 	"group-push-subscription-manager-member": "{{GENDER:$1|menedžer push-podpisok}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Menedžeri push-podpisok"

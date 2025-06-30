@@ -8,6 +8,8 @@
 			"Zolgoyo"
 		]
 	},
+	"minerva-last-modified-date": "ئاخىرقى قېتىم $1، $2 دە تەھرىرلەندى",
+	"minerva-watchlist-cta": "بۇ بەت ۋە ئۇنىڭ بارلىق ئۆزگىرىشىنى ئىزلايدۇ.",
 	"mobile-frontend-editor-edit": "تەھرىر",
 	"mobile-frontend-history": "بۇ بەتنىڭ تەھرىرلەش تارىخىنى كۆرۈڭ.",
 	"mobile-frontend-home-button": "باش بەت",
@@ -19,5 +21,6 @@
 	"mobile-frontend-main-menu-watchlist": "كۆزەت تىزىملىكى",
 	"mobile-frontend-placeholder": "{{SITENAME}} ئىزدە",
 	"mobile-frontend-random-button": "خالىغان",
+	"minerva-page-actions-overflow": "كۆپ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "تۈرلەر"
 }

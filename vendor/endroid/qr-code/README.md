@@ -16,7 +16,7 @@ as PNG, SVG, EPS or in binary format.
 
 ## Sponsored by
 
-[![Blackfire.io](assets/blackfire.png)](https://www.blackfire.io)
+[![Blackfire.io](.github/blackfire.png)](https://www.blackfire.io)
 
 ## Installation
 
@@ -24,7 +24,7 @@ Use [Composer](https://getcomposer.org/) to install the library. Also make sure 
 [GD extension](https://www.php.net/manual/en/book.image.php) if you want to generate images.
 
 ``` bash
-$ composer require endroid/qr-code
+ composer require endroid/qr-code
 ```
 
 ## Usage: using the builder
@@ -32,10 +32,10 @@ $ composer require endroid/qr-code
 ```php
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\LabelAlignment;
 use Endroid\QrCode\Label\Font\NotoSans;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 
 $result = Builder::create()
@@ -43,14 +43,16 @@ $result = Builder::create()
     ->writerOptions([])
     ->data('Custom QR code contents')
     ->encoding(new Encoding('UTF-8'))
-    ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+    ->errorCorrectionLevel(ErrorCorrectionLevel::High)
     ->size(300)
     ->margin(10)
-    ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+    ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
     ->logoPath(__DIR__.'/assets/symfony.png')
+    ->logoResizeToWidth(50)
+    ->logoPunchoutBackground(true)
     ->labelText('This is the label')
     ->labelFont(new NotoSans(20))
-    ->labelAlignment(new LabelAlignmentCenter())
+    ->labelAlignment(LabelAlignment::Center)
     ->validateResult(false)
     ->build();
 ```
@@ -60,11 +62,11 @@ $result = Builder::create()
 ```php
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
+use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\Logo\Logo;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\ValidationException;
 
@@ -73,16 +75,18 @@ $writer = new PngWriter();
 // Create QR code
 $qrCode = QrCode::create('Life is too short to be generating QR codes')
     ->setEncoding(new Encoding('UTF-8'))
-    ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
+    ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
     ->setSize(300)
     ->setMargin(10)
-    ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
+    ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
     ->setForegroundColor(new Color(0, 0, 0))
     ->setBackgroundColor(new Color(255, 255, 255));
 
 // Create generic logo
 $logo = Logo::create(__DIR__.'/assets/symfony.png')
-    ->setResizeToWidth(50);
+    ->setResizeToWidth(50)
+    ->setPunchoutBackground(true)
+;
 
 // Create generic label
 $label = Label::create('Label')
@@ -109,14 +113,38 @@ $result->saveToFile(__DIR__.'/qrcode.png');
 $dataUri = $result->getDataUri();
 ```
 
-![QR Code](https://endroid.nl/qr-code/default/Life%20is%20too%20short%20to%20be%20generating%20QR%20codes)
+![QR Code](.github/example.png)
 
 ### Writer options
+
+Some writers provide writer options. Each available writer option is can be
+found as a constant prefixed with WRITER_OPTION_ in the writer class.
+
+* `PdfWriter`
+  * `unit`: unit of measurement (default: mm)
+  * `fpdf`: PDF to place the image in (default: new PDF)
+  * `x`: image offset (default: 0)
+  * `y`: image offset (default: 0)
+  * `link`: a URL or an identifier returned by `AddLink()`.
+* `PngWriter`
+  * `compression_level`: compression level (0-9, default: -1 = zlib default)
+* `SvgWriter`
+  * `block_id`: id of the block element for external reference (default: block)
+  * `exclude_xml_declaration`: exclude XML declaration (default: false)
+  * `exclude_svg_width_and_height`: exclude width and height (default: false)
+  * `force_xlink_href`: forces xlink namespace in case of compatibility issues (default: false)
+  * `compact`: create using `path` element, otherwise use `defs` and `use` (default: true)
+* `WebPWriter`
+  * `quality`: image quality (0-100, default: 80)
+
+You can provide any writer options like this.
 
 ```php
 use Endroid\QrCode\Writer\SvgWriter;
 
-$builder->setWriterOptions([SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true]);
+$builder->writerOptions([
+    SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true
+]);
 ```
 
 ### Encoding
@@ -172,7 +200,7 @@ integrates the QR code library in Symfony for an even better experience.
 * Support for multiple configurations and injection via aliases
 * Generate QR codes for defined configurations via URL like /qr-code/<config>/Hello
 * Generate QR codes or URLs directly from Twig using dedicated functions
- 
+
 Read the [bundle documentation](https://github.com/endroid/qr-code-bundle)
 for more information.
 

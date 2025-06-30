@@ -27,7 +27,8 @@
 			"シェン,アーナリー,ン,アーバァ.",
 			"ネイ",
 			"バレロン",
-			"青子守歌"
+			"青子守歌",
+			"Shulmj"
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> タグで囲まれた数式をレンダリング",
@@ -102,7 +103,8 @@
 	"math_unknown_error": "不明なエラー",
 	"math_unknown_function": "不明な関数「$1」",
 	"mw-math-latexml": "LaTeXML (開発中。MathML を使用)",
-	"mw-math-mathml": "SVG（ブラウザのプラグインで MathML を有効にすることができます）",
+	"mw-math-mathjax": "クライアントサイド MathJax レンダリング（MathML のサポートが制限されているブラウザ向け）",
+	"mw-math-mathml": "SVG (ブラウザーのプラグインで MathML を有効にできます)",
 	"mw-math-native": "MathML (実験的; 画像なし)",
 	"mw-math-source": "LaTeX ソース (テキストブラウザ向け)",
 	"prefs-math": "数式",

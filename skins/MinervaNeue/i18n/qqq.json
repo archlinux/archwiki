@@ -14,7 +14,8 @@
 			"Shirayuki",
 			"Siebrand",
 			"Umherirrender",
-			"Xiplus"
+			"Xiplus",
+			"Foomin10"
 		]
 	},
 	"minerva-last-modified-date": "Text that displays the date the page was last modified. Parameters:\n* $1 - date\n* $2 - time\n{{Related|Mobile-frontend-last-modified}}",
@@ -36,7 +37,7 @@
 	"mobile-frontend-main-menu-nearby": "Nearby link text in main menu. Clicking this will show links to content about nearby topics, based on GPS coordinates.\n{{Identical|Nearby}}",
 	"mobile-frontend-main-menu-settings": "Settings link text in the mobile web main menu.\n{{Identical|Settings}}",
 	"mobile-frontend-main-menu-watchlist": "Text for watchlist link in main menu.\n{{Identical|Watchlist}}",
-	"mobile-frontend-meta-data-issues": "Header of a collapsed section which, when tapped, displays some hidden content. The message is expected to generically state that the page could be better in some or several ways of unspecified nature, as reported by some or several cleanup/warning templates which this header hides. \n\nThe button, when clicked, opens an overlay with heading {{msg-mw|mobile-frontend-meta-data-issues-header}}\n\nThis header is shown when the user clicks on a ambox template on a article.",
+	"mobile-frontend-meta-data-issues": "Header of a collapsed section which, when tapped, displays some hidden content. The message is expected to generically state that the page could be better in some or several ways of unspecified nature, as reported by some or several cleanup/warning templates which this header hides. \n\nThe button, when clicked, opens an overlay with heading {{msg-mw|mobile-frontend-meta-data-issues-header}}\n\nThis header is shown when the user clicks on a ambox template on a article.\n\n{{Identical|Issue}}",
 	"mobile-frontend-meta-data-issues-categories": "Label to appear in button that opens issue overlay on categories.",
 	"mobile-frontend-meta-data-issues-header": "Heading for overlay listing all cleanup templates\n{{Identical|Issue}}",
 	"minerva-meta-data-issues-section-header": "Heading for overlay listing all cleanup templates in a section \n{{Identical|Issue}}",

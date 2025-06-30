@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku"
+			"Tofeiku",
+			"Hakimi97"
 		]
 	},
+	"skinname-vector": "ليڬسي ۏيكتور (2010)",
 	"skinname-vector-2022": "ۏيکتور (2022)",
 	"vector-specialversion-name": "ۏيکتور",
 	"vector-opt-out": "توکر کواجه لاما",
@@ -43,5 +45,9 @@
 	"vector-page-tools-actions-label": "تيندقن",
 	"vector-pin-element-label": "ڤينده کبر سيسي",
 	"vector-unpin-element-label": "سوروق",
-	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|ڤربينچڠن]]"
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|ڤربينچڠن]]",
+	"vector-night-mode-issue-reporting-notice-tooltip": "لاڤوركن اڤابيلا مود ڬلڤ مڽببكن كسوکرن اڤابيلا ممباچ.",
+	"vector-night-mode-issue-reporting-link-label": "لاڤوركن ايسو مود ڬلڤ",
+	"vector-night-mode-issue-reporting-link-notification": "لاڤورن دتريما!",
+	"vector-night-mode-issue-reporting-preload-title": "$1 رالت مود ڬلڤ"
 }

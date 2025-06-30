@@ -132,7 +132,7 @@
 	"discussiontools-replywidget-newcomments-button": "Εμφάνιση $1 νέου {{PLURAL:$1| σχόλιο|σχόλια}}",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Προσθήκη}} θέματος",
 	"discussiontools-replywidget-placeholder-newtopic": "Περιγραφή",
-	"discussiontools-replywidget-placeholder-reply": "Απάντηση {{GENDER:|στον|στη|σε}} {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Απάντηση}} {{GENDER:$1|στον|στη|σε}} {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Προτιμήσεις",
 	"discussiontools-replywidget-preview": "Προεπισκόπηση",
 	"discussiontools-replywidget-reply": "{{GENDER:|Απάντηση}}",

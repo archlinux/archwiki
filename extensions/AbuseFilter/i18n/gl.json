@@ -9,7 +9,8 @@
 			"Iváns",
 			"Maria zaos",
 			"Matma Rex",
-			"Toliño"
+			"Toliño",
+			"Codename Noreste"
 		]
 	},
 	"abusefilter-desc": "Aplica heurísticas automáticas ás edicións",
@@ -81,9 +82,9 @@
 	"abusefilter-log-search-action-taken-label": "Acción feita:",
 	"abusefilter-log-search-action-taken-any": "Calquera",
 	"abusefilter-log-search-submit": "Procurar",
-	"abusefilter-log-entry": "$1: $2 {{GENDER:$8|accionou}} un filtro de abusos, ao {{GENDER:$8|levar}} a cabo a acción \"$3\" na páxina \"$4\".\nMedidas tomadas: $5.\nDescrición do filtro: $6",
-	"abusefilter-log-entry-withdiff": "$1: $2 {{GENDER:$8|accionou}} un filtro de abusos, ao {{GENDER:$8|levar}} a cabo a acción \"$3\" na páxina \"$4\".\nMedidas tomadas: $5.\nDescrición do filtro: $6 ($7)",
-	"abusefilter-log-detailedentry-meta": "$1: $2 {{GENDER:$9|accionou}} $3, ao {{GENDER:$9|levar}} a cabo a acción \"$4\" na páxina \"$5\".\nMedidas tomadas: $6.\nDescrición do filtro: $7 ($8)",
+	"abusefilter-log-entry": "$1: $2 {{GENDER:$8|accionou}} un filtro de abusos, ao {{GENDER:$8|levar}} a cabo a acción «$3» na páxina «$4».\nMedidas tomadas: $5.\nDescrición do filtro: $6",
+	"abusefilter-log-entry-withdiff": "$1: $2 {{GENDER:$8|accionou}} un filtro de abusos, ao {{GENDER:$8|levar}} a cabo a acción «$3» na páxina «$4».\nMedidas tomadas: $5.\nDescrición do filtro: $6 ($7)",
+	"abusefilter-log-detailedentry-meta": "$1: $2 {{GENDER:$9|accionou}} $3, ao {{GENDER:$9|levar}} a cabo a acción «$4» na páxina «$5».\nMedidas tomadas: $6.\nDescrición do filtro: $7 ($8)",
 	"abusefilter-log-detailedentry-global": "filtro global $1",
 	"abusefilter-log-detailedentry-local": "filtro $1",
 	"abusefilter-log-detailslink": "detalles",
@@ -130,7 +131,7 @@
 	"abusefilter-log-hide-done-show": "{{PLURAL:$1|revelada|reveladas}}",
 	"abusefilter-log-entry-suppress": "$1 {{GENDER:$2|agochou}} $3",
 	"abusefilter-log-entry-unsuppress": "$1 {{GENDER:$2|revelou}} $3",
-	"logentry-abusefilter-hit": "$1 {{GENDER:$2|accionou}} $4, ao {{GENDER:$2|levar}} a cabo a acción \"$5\" na páxina \"$3\". Medidas tomadas: $6 ($7)",
+	"logentry-abusefilter-hit": "$1 {{GENDER:$2|accionou}} $4, ao {{GENDER:$2|levar}} a cabo a acción «$5» na páxina «$3». Medidas tomadas: $6 ($7)",
 	"log-action-filter-abusefilter": "Tipo de cambio de filtro:",
 	"log-action-filter-abusefilter-create": "Creación de novo filtro",
 	"log-action-filter-abusefilter-modify": "Modificación de filtro",

@@ -3,7 +3,8 @@
 		"authors": [
 			"BadDog",
 			"Kizule",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"Aca"
 		]
 	},
 	"apihelp-query+oath-param-user": "Корисник за којег је потребно добити информацију. Подразумеван је тренутни корисник.",

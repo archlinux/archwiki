@@ -87,7 +87,7 @@
 	"discussiontools-replywidget-newcomments-button": "Prikaži $1 {{PLURAL:$1|novi komentar|nova komentara|novih komentara}}",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Dodaj}} temu",
 	"discussiontools-replywidget-placeholder-newtopic": "Opis",
-	"discussiontools-replywidget-placeholder-reply": "Odgovor {{GENDER:$1|korisniku|korisnici|osobi}} {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "Odgovor {{GENDER:|korisniku|korisnici|osobi}} {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Postavke",
 	"discussiontools-replywidget-preview": "Pregled",
 	"discussiontools-replywidget-reply": "{{GENDER:|Odgovori}}",

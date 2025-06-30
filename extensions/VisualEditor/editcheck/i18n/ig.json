@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Victor chukwuemerie Mbah"
+		]
+	},
+	"editcheck-dialog-action-no": "Mba",
+	"editcheck-dialog-action-yes": "Eeh",
+	"editcheck-dialog-addref-description": "Nyere ndị na-agụ akwụkwọ aka ịghọta ebe ozi a si abịa site na ịgbakwunye nkwupụta.",
+	"editcheck-dialog-addref-reject-question": "Kedu ihe kpatara na ị naghị agbakwunye nkwupụta?",
+	"editcheck-dialog-addref-reject-description": "Ndị editọ ndị ọzọ ga-enwe mmasị ịmụtakwu banyere mkpebi gị ịchụpụ nkwupụta ahụ.",
+	"editcheck-dialog-addref-reject-irrelevant": "Ekwetaghị m na ihe ndị a na-agbanwe agbanwe na-agbanwe agbanwe nke m na-eme",
+	"editcheck-dialog-addref-reject-common-knowledge": "Ozi m na-agbakwunye bụ nke a maara nke ọma.",
+	"editcheck-dialog-addref-reject-uncertain": "Amaghị m ihe m ga-agbakwunye",
+	"editcheck-dialog-addref-reject-other": "Nke ozor",
+	"editcheck-dialog-addref-success-notify": "Kedu ihe kpatara na ị naghị agbakwunye nkwupụta?",
+	"editcheck-dialog-addref-title": "Tinye edensibịa",
+	"editcheck-dialog-title": "Tupu ebipụta ya",
+	"tag-editcheck-reference-decline-common-knowledge": "Nyocha edezi (Edensibịa) jụrụ (ihe ọmụma a na-ahụkarị)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "A jụrụ Edensibịa EditCheck dị ka ihe ọmụma nkịtị",
+	"tag-editcheck-reference-decline-irrelevant": "Dezie nlele (Edensibịa) jụrụ (adịghị mkpa)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Ajụjụ Edensibịa EditCheck ka ọ dịghị mkpa",
+	"tag-editcheck-reference-decline-other": "Dezie Lelee (Edensibịa) jụrụ (ndị ọzọ)",
+	"tag-editcheck-reference-decline-other-description": "A jụrụ Edensibịa EditCheck maka ihe a na-edeghị aha",
+	"tag-editcheck-reference-decline-uncertain": "Dezie Lelee (Edensibịa) jụrụ (ndị ọzọ)",
+	"tag-editcheck-reference-decline-uncertain-description": "Ajụjụ Edensibịa EditCheck ka ọ dịghị mkpa"
+}

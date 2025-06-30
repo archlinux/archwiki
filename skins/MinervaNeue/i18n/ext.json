@@ -6,12 +6,14 @@
 			"Julio Nepote"
 		]
 	},
-	"mobile-frontend-editor-edit": "Eital",
-	"mobile-frontend-history": "Vel estorial de edicionis d'esta página",
-	"mobile-frontend-home-button": "Encetu",
+	"mobile-frontend-editor-edit": "Dital",
+	"mobile-frontend-history": "Vél l'estorial d'adicionis desta página",
+	"mobile-frontend-home-button": "Prencipiu",
 	"mobile-frontend-language-article-heading": "Idioma",
+	"mobile-frontend-main-menu-login": "Prencipial sessión",
 	"mobile-frontend-main-menu-nearby": "Cercanus",
-	"mobile-frontend-main-menu-settings": "Ajustis",
+	"mobile-frontend-main-menu-settings": "Ajustamientus",
 	"mobile-frontend-placeholder": "Precural {{SITENAME}}",
-	"mobile-frontend-random-button": "Aleatóriu"
+	"mobile-frontend-random-button": "Aleatoriu",
+	"minerva-page-actions-overflow": "Más"
 }

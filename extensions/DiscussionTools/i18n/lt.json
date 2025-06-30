@@ -118,7 +118,7 @@
 	"discussiontools-replywidget-newcomments-button": "Rodyti $1 naują {{PLURAL:$1| komentarą|komentarus}}",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Pridėti}} temą",
 	"discussiontools-replywidget-placeholder-newtopic": "Aprašymas",
-	"discussiontools-replywidget-placeholder-reply": "Atsakyti {{BIDI: $1 }}",
+	"discussiontools-replywidget-placeholder-reply": "Atsakyti {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Nustatymai",
 	"discussiontools-replywidget-preview": "Peržiūra",
 	"discussiontools-replywidget-reply": "Atsakyti",

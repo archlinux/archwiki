@@ -6,6 +6,14 @@
 	},
 	"editcheck-dialog-action-no": "არა",
 	"editcheck-dialog-action-yes": "დიახ",
-	"editcheck-dialog-addref-description": "დამოწმების დამატებით დაეხმარეთ მკითხველებს გაიგონ, საიდან მოდის ეს ინფორმაცია.",
-	"editcheck-dialog-addref-reject-question": "დამოწმებას რატომ არ ამატებთ?"
+	"editcheck-dialog-addref-description": "წყაროს დამატებით დაეხმარეთ მკითხველებს გაიგონ, საიდან მოდის ეს ინფორმაცია.",
+	"editcheck-dialog-addref-reject-question": "წყაროს რატომ არ ამატებთ?",
+	"editcheck-dialog-addref-reject-description": "სხვა რედაქტორებისათვის სასარგებლო იქნება გაიგონ, თუ რატომ გადაწყვიტეთ, რომ წყარო არ დაგემატებინათ.",
+	"editcheck-dialog-addref-reject-irrelevant": "არ მგონია, რომ წყარო იყოს შესაბამისი იმ ცვლილებასთან, რომელიც მე გავაკეთე",
+	"editcheck-dialog-addref-reject-common-knowledge": "ინფორმაცია, რომელიც დავამატე, ფართოდაა ცნობილია.",
+	"editcheck-dialog-addref-reject-uncertain": "არ ვიცი რომელი წყარო დავამატო",
+	"editcheck-dialog-addref-reject-other": "სხვა",
+	"editcheck-dialog-addref-success-notify": "გმადლობთ წყაროს დამატებისთვის!",
+	"editcheck-dialog-addref-title": "წყაროს დამატება",
+	"editcheck-dialog-title": "გამოქვეყნებამდე"
 }

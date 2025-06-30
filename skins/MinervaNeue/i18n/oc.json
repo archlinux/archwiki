@@ -8,8 +8,10 @@
 			"Quentí"
 		]
 	},
+	"minerva-watchlist-cta": "Seguissètz aquesta pagina e totes los cambiaments aponduts.",
 	"mobile-frontend-editor-edit": "Modificar",
-	"mobile-frontend-editor-redlink-explain": "Aquesta pagina es pas encara estada creada.",
+	"minerva-download": "Descargar lo PDF",
+	"mobile-frontend-editor-redlink-explain": "Non s'a encara creat aquesta pagina.",
 	"mobile-frontend-history": "Afichar l’istoric de las modificacions d'aquesta pagina",
 	"mobile-frontend-home-button": "Acuèlh",
 	"mobile-frontend-language-article-heading": "Lenga",
@@ -26,6 +28,7 @@
 	"mobile-frontend-pageaction-edit-tooltip": "Modificar la seccion d'introduccion d'aquesta pagina",
 	"mobile-frontend-placeholder": "Recercar sus {{SITENAME}}",
 	"mobile-frontend-random-button": "A l'azard",
+	"mobile-frontend-redirected-from": "Redirigit dempuèi «[[$1]]»",
 	"mobile-frontend-user-newmessages": "Avètz de messatges novèls sus vòstra pagina de discussion",
 	"minerva-user-menu-button": "Menut d'utilizator",
 	"minerva-page-actions-editfull": "Modificar tota la pagina"

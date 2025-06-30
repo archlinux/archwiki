@@ -8,7 +8,7 @@
 	"discussiontools-replylink": "{{GENDER:|ຕອບກັບ}}",
 	"discussiontools-replywidget-advanced": "ຂັ້ນສູງ",
 	"discussiontools-replywidget-cancel": "ຍົກເລີກ",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ຕອບກັບ}} ຫາ {{BIDI: $1 }}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ຕອບກັບ}} ຫາ {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "ເບິ່ງຕົວຢ່າງ",
 	"discussiontools-replywidget-reply": "{{GENDER:|ຕອບກັບ}}",
 	"discussiontools-replywidget-summary": "ສະຫຼຸບ",

@@ -9,7 +9,8 @@
 			"Samat",
 			"Tacsipacsi",
 			"Tgr",
-			"Woytecr"
+			"Woytecr",
+			"Dj"
 		]
 	},
 	"discussiontools": "Vitalapi eszközök",
@@ -60,7 +61,7 @@
 	"discussiontools-ledesection-button": "További információk erről a lapról",
 	"discussiontools-ledesection-title": "Erről a vitalapról",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|másodperc}}",
-	"discussiontools-newtopic-missing-title": "Add meg a témád címét. A „{{int:discussiontools-replywidget-newtopic}}” gombra kattintva a téma cím nélkül lesz hozzáadva.",
+	"discussiontools-newtopic-missing-title": "Add meg a témád címét.",
 	"discussiontools-newtopic-placeholder-title": "Tárgy",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Feliratkozás",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Iratkozz fel, hogy értesítést kapj, amikor valaki új témát indít ezen a lapon.",

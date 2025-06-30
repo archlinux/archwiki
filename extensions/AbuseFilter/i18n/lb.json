@@ -145,7 +145,7 @@
 	"abusefilter-view-specific": "Missbrauchsfilter $1: $2 weisen",
 	"abusefilter-edit-subtitle": "Ännere vum Filter $1",
 	"abusefilter-edit-subtitle-new": "Filter uleeën",
-	"abusefilter-edit-token-not-match": "D'Ännerung gouf net gespäichert! Späichert et wgl. nach eng Kéier.",
+	"abusefilter-edit-token-not-match": "D'Ännerung gouf net gespäichert! Späichert wgl. nach eng Kéier.",
 	"abusefilter-edit-oldwarning": "<strong>Dir sidd am Gaang eng al Versioun vum Filter z'änneren.\nD'Statistike sinn déi vun der leschter Versioun vum Filter.\nWann Dir Är Ännerunge späichert dann iwwerschreiwt Dir all Ännerungen zënter der Versioun déi Dir elo ännert. </strong> &bull;\n[[Special:AbuseFilter/history/$2|Zréck op d'Versiounsgeschicht vun dësem Filter]].",
 	"abusefilter-edit-status-label": "Statistiken:",
 	"abusefilter-edit-status": "Dëse Filter huet bei {{PLURAL:$1|der leschter Aktioun|de leschte(n) $1 Aktiounen}}, $2 mol ($3%) ugeschloen.\nAm Duerchschnëtt leeft en $4 Milli-Sekonnen an e benotzt {{PLURAL:$5|eng Konditioun|$5 Konditioune}} vun der Konditiouns-Limite.",

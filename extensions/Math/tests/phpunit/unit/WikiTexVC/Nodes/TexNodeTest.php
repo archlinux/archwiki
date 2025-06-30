@@ -74,7 +74,7 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 			'Should contain a method stub for extracting subscripts' );
 	}
 
-	public static function providNegativeMatches() {
+	public static function provideNegativeMatches() {
 		return [
 			[ 'asd', 'sda' ],
 			[ [ 'asd', 'ert' ], 'sda' ],
@@ -83,13 +83,13 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider providNegativeMatches
+	 * @dataProvider provideNegativeMatches
 	 */
 	public function testMatchFails( $target, string $str ) {
 		$this->assertFalse( TexNode::match( $target, $str ) );
 	}
 
-	public static function providPositiveMatches() {
+	public static function providePositiveMatches() {
 		return [
 			[ '', '' ],
 			[ 'asd', 'asd' ],
@@ -102,7 +102,7 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider providPositiveMatches
+	 * @dataProvider providePositiveMatches
 	 */
 	public function testMatchSucceeds( $target, string $str ) {
 		$this->assertSame( $str, TexNode::match( $target, $str ) );

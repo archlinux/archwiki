@@ -632,7 +632,7 @@
 	"abusefilter-blocked-domains-domain-added-comment": "הוספת תחום חיצוני חסום $1 עם הערות: $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "הסרת תחום חיצוני חסום $1 עם הערות: $2",
 	"log-description-abusefilterprivatedetails": "היומן הזה מציגה רשימה של הפעמים שבהן משתמש ניגש לנתונים פרטיים של יומן ההשחתות.",
-	"log-description-abusefilterblockeddomainhit": "האירועים האלה עוקבים אחר פעולות הוספת קישורים ב[[Special:BlockedExternalDomains|לתחומים חסומים]].",
+	"log-description-abusefilterblockeddomainhit": "האירועים האלה עוקבים אחר פעולות הוספת קישורים ל[[Special:BlockedExternalDomains|תחומים חסומים]].",
 	"abusefilter-noreason": "אזהרה: כדי לצפות בנתונים פרטיים ביומן הזה, יש להקליד סיבה.",
 	"abusefilter-log-ip-not-available": "לא זמין",
 	"abusefilter-tag-reserved": "התגית <code>abusefilter-condition-limit</code> שמורה לשימוש פנימי של מסנן ההשחתות.",

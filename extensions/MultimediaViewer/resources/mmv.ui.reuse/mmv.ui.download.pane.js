@@ -80,7 +80,7 @@ class DownloadPane extends UiElement {
 			.attr( 'target', '_blank' )
 			.attr( 'download', '' )
 			.addClass( 'cdx-button cdx-button--weight-primary cdx-button--action-progressive cdx-button--fake-button cdx-button--fake-button--enabled' )
-			.html( '<span class="cdx-button__icon cdx-button__icon--download" aria-hidden="true"></span>' + mw.msg( 'multimediaviewer-download' ) )
+			.html( '<span class="cdx-button__icon cdx-button__icon--download" aria-hidden="true"></span>' + mw.message( 'multimediaviewer-download' ).escaped() )
 			.appendTo( $container );
 	}
 
@@ -105,7 +105,7 @@ class DownloadPane extends UiElement {
 		this.$previewLink = $( '<a>' )
 			.attr( 'target', '_blank' )
 			.addClass( 'cdx-docs-link' )
-			.html( mw.msg( 'multimediaviewer-download-preview-link-title' ) )
+			.text( mw.msg( 'multimediaviewer-download-preview-link-title' ) )
 			.appendTo( $container );
 	}
 

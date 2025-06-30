@@ -18,6 +18,8 @@
 	"prefs-vector-enable-vector-1-label": "Përdor Vector-in e vjetër",
 	"prefs-vector-enable-vector-1-help": "Gjatë viteve në vijim, ne do të aktualizojmë gradualisht mbulesën Vector. Vector i Vjetër do t'ju lejojë të shikoni versionin e vjetër të Vector (që nga dhjetori 2019). Për të mësuar më shumë rreth përditësimeve, shkoni te [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements faqen e projektit].",
 	"vector-opt-out": "Kthehu tek mbulesa e vjetër",
+	"vector-opt-out-tooltip": "Ndryshoni parametrat që t'i ktheheni petkut të vjetër (Vector i vjetër)",
+	"vector-action-toggle-sidebar": "Aktivizoni shiritin",
 	"vector-languages": "Gjuhë",
 	"vector-language-button-aria-label": "Shkoni te një artikull në një gjuhë tjetër. Gjendet në {{PLURAL:$1|$1 gjuhë|$1 gjuhë}}",
 	"vector-language-button-label": "$1 gjuhë",

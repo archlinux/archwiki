@@ -54,7 +54,7 @@
 	"discussiontools-replywidget-mode-visual": "കാണേണ്ട രീതി",
 	"discussiontools-replywidget-newtopic": "സംവാദം {{GENDER:|ചേർക്കുക}}",
 	"discussiontools-replywidget-placeholder-newtopic": "വിവരണം",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI: $1}} എന്നതിനുള്ള {{GENDER:|മറുപടി}}",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} എന്നതിനുള്ള {{GENDER:|മറുപടി}}",
 	"discussiontools-replywidget-preferences": "ക്രമീകരണങ്ങൾ",
 	"discussiontools-replywidget-preview": "എങ്ങനെയുണ്ടെന്നു കാണുക",
 	"discussiontools-replywidget-reply": "{{GENDER:|മറുപടി}}",

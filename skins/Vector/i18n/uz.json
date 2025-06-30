@@ -7,7 +7,8 @@
 			"CoderSI",
 			"Malikxan",
 			"Nataev",
-			"Sociologist"
+			"Sociologist",
+			"Mainculprit"
 		]
 	},
 	"skinname-vector": "Vektor (2010)",
@@ -46,6 +47,11 @@
 	"vector-feature-custom-font-size-0-label": "Kichik",
 	"vector-feature-custom-font-size-1-label": "Standart",
 	"vector-feature-custom-font-size-2-label": "Katta",
+	"skin-theme-name": "Rang",
+	"skin-theme-day-label": "Yorqin mavzu",
+	"skin-theme-night-label": "Tungi mavzu",
+	"skin-theme-os-label": "Avtomatik",
+	"skin-theme-exclusion-notice": "Ushbu sahifani faqat yorqin mavzuda koʻrish mumkin.",
 	"vector-search-loader": "Qidiruv takliflari yuklanmoqda",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>ni oʻz ichiga olgan sahifalar uchun qidiruv",
 	"vector-intro-page": "Help:Mundarija",
@@ -58,6 +64,7 @@
 	"vector-toc-menu-tooltip": "Mundarija",
 	"vector-site-nav-label": "Sayt",
 	"vector-main-menu-label": "Asosiy menyu",
+	"vector-feature-custom-font-size-exclusion-notice": "Ushbu sahifada faqat kichik shrift oʻlchami ishlatiladi",
 	"vector-page-tools-label": "Asboblar",
 	"vector-page-tools-general-label": "Umumiy",
 	"vector-page-tools-actions-label": "Amallar",

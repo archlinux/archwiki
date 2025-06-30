@@ -4,9 +4,28 @@
 			"Song GK"
 		]
 	},
+	"abusefilter-log-search-user": "Pengena:",
+	"abusefilter-log-search-group-any": "Sebarang",
 	"abusefilter-log-search-wiki": "Wiki:",
 	"abusefilter-log-search-impact": "Empas:",
 	"abusefilter-log-search-impact-all": "Semua pengereja",
 	"abusefilter-log-search-entries-all": "Semua entri",
-	"abusefilter-log-search-submit": "Giga"
+	"abusefilter-log-search-action-other": "Ke bukai",
+	"abusefilter-log-search-submit": "Giga",
+	"abusefilter-log-noactions-filter": "Nadai",
+	"abusefilter-unhidden": "Rama",
+	"abusefilter-enabled": "Diaktifka",
+	"abusefilter-deleted": "Dibuai",
+	"abusefilter-disabled": "Dimatika",
+	"abusefilter-list-options-searchoptions": "Mod pengiga:",
+	"abusefilter-tools-reautoconfirm-user": "Pengena:",
+	"abusefilter-edit-builder-op-arithmetic-addition": "Penambah ($1)",
+	"abusefilter-edit-builder-op-arithmetic-pow": "Kuasa ($1)",
+	"abusefilter-action-block": "Alit",
+	"abusefilter-action-degroup": "Buai ari raban",
+	"abusefilter-revert-reasonfield": "Kebuah:",
+	"abusefilter-test-search-type-all": "Semua pengereja",
+	"abusefilter-test-search-type-edit": "Edit",
+	"abusefilter-diff-item": "Item",
+	"abusefilter-blocked-domains-notes-header": "Nota"
 }

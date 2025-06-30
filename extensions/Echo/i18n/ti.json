@@ -35,7 +35,7 @@
 	"echo-notification-placeholder": "መፍለጢታት የለዉን።",
 	"echo-notification-markasread": "ከም እተነበበ ኣመልክት",
 	"echo-notification-markasunread": "ከም ዘይተነበበ ኣመልክት",
-	"echo-notification-markasread-tooltip": "ከም ዘይተነበበ ኣመልክት",
+	"echo-notification-markasread-tooltip": "ከም ዝተነበብ ኣመልክት",
 	"echo-notification-more-options-tooltip": "ተወሳኺ ኣማራጽታት",
 	"notification-link-text-expand-all": "ዘርግሕ",
 	"notification-link-text-expand-alert-count": "{{PLURAL:$1|$1 መጠንቀቕታ|$1 መጠንቀቕታታት}} ርኣይ",

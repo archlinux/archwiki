@@ -43,7 +43,7 @@
 	"echo-category-title-mention": "{{PLURAL:$1|Споменување|Споменувања}}",
 	"echo-category-title-mention-failure": "{{PLURAL:$1|Неуспешно споменување|Неуспешни споменувања}}",
 	"echo-category-title-mention-success": "{{PLURAL:$1|Успешно споменување|Успешни споменувања}}",
-	"echo-category-title-other": "{{PLURAL:$1|Друго}}",
+	"echo-category-title-other": "{{PLURAL:$1|Друго|Други}}",
 	"echo-category-title-system": "{{PLURAL:$1|Систем}}",
 	"echo-category-title-system-noemail": "{{PLURAL:$1|Систем}}",
 	"echo-category-title-system-emailonly": "{{PLURAL:$1|Систем}}",
