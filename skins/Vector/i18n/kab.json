@@ -3,10 +3,13 @@
 		"authors": [
 			"Belkacem77",
 			"Mmistmurt",
-			"YouvaDjouadi"
+			"YouvaDjouadi",
+			"ButterflyOfFire"
 		]
 	},
 	"vector-skin-desc": "Lqem atrar n MonoBook s wudem ilemẓi akked ddeqs n usnerni ucbiḥ",
+	"vector-languages": "Tutlayin",
+	"vector-no-language-button-label": "Rnu tutlayin",
 	"vector-action-addsection": "Rnu-d asentel",
 	"vector-action-delete": "Mḥu",
 	"vector-action-move": "Snifel isem",
@@ -18,5 +21,18 @@
 	"vector-view-history": "Wali amazray",
 	"vector-view-view": "Ɣeṛ",
 	"vector-view-viewsource": "Ẓer aɣbalu",
-	"vector-more-actions": "Ugar"
+	"vector-more-actions": "Ugar",
+	"vector-feature-limited-width-name": "Tehri",
+	"vector-feature-custom-font-size-name": "Aḍris",
+	"vector-feature-custom-font-size-0-label": "Ameẓyan",
+	"skin-theme-name": "Ini",
+	"skin-theme-day-label": "Aceɛlal",
+	"skin-theme-night-label": "Aberkan",
+	"skin-theme-os-label": "Awurman",
+	"vector-toc-label": "Igburen",
+	"vector-main-menu-label": "Umuɣ agejdan",
+	"vector-page-tools-label": "Ifecka",
+	"vector-page-tools-general-label": "Amatu",
+	"vector-page-tools-actions-label": "Tigawin",
+	"vector-unpin-element-label": "ffer"
 }

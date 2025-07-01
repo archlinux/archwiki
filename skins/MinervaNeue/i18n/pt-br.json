@@ -12,7 +12,8 @@
 			"Macofe",
 			"Opraco",
 			"Peter Fernando",
-			"TheEduGobi"
+			"TheEduGobi",
+			"EGobi"
 		]
 	},
 	"minerva-last-modified-date": "Modificado pela última vez em $1 às $2",
@@ -53,12 +54,23 @@
 	"mobile-frontend-user-page-talk": "Discussão",
 	"minerva-user-menu-button": "Menu do usuário",
 	"minerva-user-navigation": "Navegação do usuário",
+	"minerva-page-actions-editfull": "Editar página completa",
 	"minerva-page-actions-overflow": "Mais",
 	"minerva-page-actions-language-switcher": "Idiomas",
 	"minerva-page-actions-history": "Histórico",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discussão]",
 	"minerva-skin-desc": "Um tema responsivo otimizado para dispositivos móveis",
 	"skin-minerva-issue-learn-more": "Saiba mais",
+	"skin-minerva-time-ago-seconds": "há {{PLURAL:$1|um segundo|$1 segundos}}",
+	"skin-minerva-time-ago-minutes": "há {{PLURAL:$1|um minuto|$1 minutos}}",
+	"skin-minerva-time-ago-hours": "há {{PLURAL:$1|uma hora|$1 horas}}",
+	"skin-minerva-time-ago-days": "há {{PLURAL:$1|um dia|$1 dias}}",
+	"skin-minerva-time-ago-months": "há {{PLURAL:$1|um mês|$1 meses}}",
+	"skin-minerva-time-ago-years": "há {{PLURAL:$1|um ano|$1 anos}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorias",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Mostra as categorias das páginas",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infelizmente, o agrupamento de resultados por página não está disponível na versão de acesso móvel. Se pretende usar a funcionalidade de agrupamento por página visite a versão do ''site'' para acesso por computador de secretária."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infelizmente, o agrupamento de resultados por página não está disponível na versão de acesso móvel. Se pretende usar a funcionalidade de agrupamento por página visite a versão do ''site'' para acesso por computador de secretária.",
+	"skin-minerva-night-mode-unavailable": "Página disponível somente no tema de cor “Light”.",
+	"minerva.css": "/* Todo o CSS aqui será carregado para os usuários da skin MinervaNeue */",
+	"minerva.js": "/* Todo o JavaScript aqui será carregado para os usuários da skin MinervaNeue */"
 }

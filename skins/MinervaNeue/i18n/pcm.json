@@ -1,14 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Samatics"
+			"Samatics",
+			"Pingponging"
 		]
 	},
 	"mobile-frontend-history": "See di chenj-dem wey don hapun for dis pej",
 	"mobile-frontend-home-button": "Domot",
 	"mobile-frontend-language-article-heading": "Langwej",
 	"mobile-frontend-main-menu-login": "Enta inside",
+	"mobile-frontend-main-menu-nearby": "Niebai",
 	"mobile-frontend-main-menu-settings": "How you like am",
 	"mobile-frontend-placeholder": "Find-am for {{SITENAME}}",
-	"mobile-frontend-random-button": "Eni pej"
+	"mobile-frontend-random-button": "Eni pej",
+	"minerva-page-actions-overflow": "Oda tins wey dey"
 }

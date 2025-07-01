@@ -1,10 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Salifu Ramatu"
+			"Salifu Ramatu",
+			"Avenger",
+			"Biema",
+			"Nachim",
+			"Yaw-kan"
 		]
 	},
+	"mobile-frontend-history": "Niɛ fifiti ahin awɔrɛ n nɔaniɛ",
 	"mobile-frontend-home-button": "Awulu",
 	"mobile-frontend-language-article-heading": "Aniem",
-	"mobile-frontend-main-menu-nearby": "Udodofɔ"
+	"mobile-frontend-main-menu-login": "Teke wura",
+	"mobile-frontend-main-menu-nearby": "Udodofɔ",
+	"mobile-frontend-main-menu-settings": "Awɔrɛ bo deke be su yo",
+	"mobile-frontend-placeholder": "Niɛniɛ {{SITENAME}}",
+	"mobile-frontend-random-button": "Totoronu",
+	"minerva-page-actions-overflow": "Dɔngu"
 }

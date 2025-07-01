@@ -24,7 +24,7 @@ function addDefaultPortlet( portlet ) {
 		const labelDiv = document.createElement( 'div' );
 		labelDiv.id = labelId;
 		labelDiv.classList.add( 'vector-menu-heading' );
-		labelDiv.innerHTML = label.textContent || '';
+		labelDiv.textContent = label.textContent || '';
 		portlet.insertBefore( labelDiv, label );
 		label.remove();
 		portlet.setAttribute( 'aria-labelledby', labelId );

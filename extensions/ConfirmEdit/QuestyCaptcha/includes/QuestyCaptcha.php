@@ -71,7 +71,7 @@ class QuestyCaptcha extends SimpleCaptcha {
 
 		// Backwards compatibility
 		if ( $wgCaptchaQuestions === array_values( $wgCaptchaQuestions ) ) {
-			return $wgCaptchaQuestions[ mt_rand( 0, count( $wgCaptchaQuestions ) - 1 ) ];
+			return $wgCaptchaQuestions[ random_int( 0, count( $wgCaptchaQuestions ) - 1 ) ];
 		}
 
 		$question = array_rand( $wgCaptchaQuestions, 1 );

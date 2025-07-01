@@ -45,7 +45,7 @@
 	"vector-action-toggle-sidebar": "تبديل الشريط الجانبي",
 	"vector-languages": "لغات",
 	"vector-language-button-aria-label": "{{GENDER:|اذهب|اذهبي}} إلى المقالة في لغةٍ أخرى. مُتاحة في {{PLURAL:$1|لا لغة|لغة واحدة|لغتين|$1 لغات|$1 لغة}}",
-	"vector-language-button-label": "{{PLURAL:$1|لا لغات|لغة واحدة|لغتان|$1 لغات|$1 لغة}}",
+	"vector-language-button-label": "{{PLURAL:$1|لغة واحدة|$1 لغة}}",
 	"vector-no-language-button-label": "أضف لغات",
 	"vector-no-language-button-aria-label": "هذه المقالة تتواجد فقط في هذه اللغة. أضفها إلى اللغات الأخرى.",
 	"vector-language-variant-switcher-label": "غيّر لهجة اللغة",

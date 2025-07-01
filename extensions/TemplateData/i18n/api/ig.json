@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Victor chukwuemerie Mbah"
+		]
+	},
+	"apihelp-templatedata-summary": "Weta data echekwara site na TemplateData ndọtị.",
+	"apihelp-templatedata-example-1": "Weghachite TemplateData maka [[Template:Foobar]], nwere nsonaazụ ma ọ bụrụ na ndebiri adịghị ma ọ bụ dị adị mana enweghị TemplateData",
+	"apihelp-templatedata-example-2": "Weghachite TemplateData maka [[Template:Phabricator]], na-enweghị nsonaazụ ọ bụrụ na ndebiri adịghị ma ọ bụ dị adị mana enweghị TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "Weghachite data banyere utu aha ọbụlagodi ma ọ bụrụ na ha na-efu ma ọ bụ na-enweghị TemplateData. Site na ndabara, a na-eweghachite utu aha naanị ma ọ bụrụ na ha dị ma nwee TemplateData.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Weghachite data banyere utu aha ọbụlagodi ma ọ bụrụ na ha na-efu ma ọ bụ na-enweghị TemplateData. Site na ndabara (maka ndakọrịta azụ) a na-eweghachi utu aha naanị ma ọ bụrụ na ha dị ma nwee TemplateData.",
+	"apihelp-templatedata-param-lang": "Weghachite ụkpụrụ ndị dị n'ógbè n'asụsụ a. Site na ndabara, a na-eweghachite nsụgharị niile dịnụ.",
+	"apierror-templatedata-corrupt": "Ibe #$1 templatedata nwere data ezighi ezi: $2",
+	"apiwarn-templatedata-deprecation-format": "Usoro mmepụta ndabara ga-agbanwe na <kbd>JSONFM</kbd> n'ọdịnihu. Biko kọwaa <kbd>format = json</kbd> n'ụzọ doro anya."
+}

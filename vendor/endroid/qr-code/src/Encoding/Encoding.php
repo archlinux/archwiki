@@ -6,15 +6,18 @@ namespace Endroid\QrCode\Encoding;
 
 final class Encoding implements EncodingInterface
 {
-    private string $value;
+    public function __construct(
+        private readonly string $value
+    ) {
+        if ('UTF-8' !== $value) {
+            if (!function_exists('mb_list_encodings')) {
+                throw new \Exception('Unable to validate encoding: make sure the mbstring extension is installed and enabled');
+            }
 
-    public function __construct(string $value)
-    {
-        if (!in_array($value, mb_list_encodings())) {
-            throw new \Exception(sprintf('Invalid encoding "%s"', $value));
+            if (!in_array($value, mb_list_encodings())) {
+                throw new \Exception(sprintf('Invalid encoding "%s": choose one of '.implode(', ', mb_list_encodings()), $value));
+            }
         }
-
-        $this->value = $value;
     }
 
     public function __toString(): string

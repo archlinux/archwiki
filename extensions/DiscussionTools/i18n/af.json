@@ -105,7 +105,7 @@
 	"discussiontools-replywidget-mode-source": "Bron",
 	"discussiontools-replywidget-mode-visual": "Visueel",
 	"discussiontools-replywidget-newcomments-button": "Wys $1 nuwe {{PLURAL:$1|opmerking|opmerkings}}",
-	"discussiontools-replywidget-newtopic": "Voeg onderwerp by",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Voeg}} onderwerp by",
 	"discussiontools-replywidget-placeholder-newtopic": "Beskrywing",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Antwoord}} op {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Voorkeure",

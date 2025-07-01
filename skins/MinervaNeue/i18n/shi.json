@@ -3,7 +3,8 @@
 		"authors": [
 			"Amara-Amaziɣ",
 			"Ayour2002",
-			"Lhoussine AIT TAYFST"
+			"Lhoussine AIT TAYFST",
+			"AguzulH"
 		]
 	},
 	"mobile-frontend-editor-edit": "snfl",
@@ -14,5 +15,6 @@
 	"mobile-frontend-main-menu-settings": "Tisɣal",
 	"mobile-frontend-main-menu-watchlist": "Talgamt n uḍffur",
 	"mobile-frontend-placeholder": "Siggl ɣ {{SITENAME}}",
-	"mobile-frontend-random-button": "S udhmas"
+	"mobile-frontend-random-button": "S udhmas",
+	"minerva-page-actions-overflow": "Uggar"
 }

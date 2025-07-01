@@ -20,5 +20,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Кодан блок",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments кхойкхучу хенахь галйалар",
 	"syntaxhighlight-error-unknown-language": "Боьвзуш боцу мотт \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "Кодан барам ($1 {{PLURAL:$1|байтал}}) совбаьлла магийначу лимитал $2 {{PLURAL:$2|байт}}."
+	"syntaxhighlight-error-exceeds-size-limit": "Кодан барам ($1 {{PLURAL:$1|байтал}}) совбаьлла магийначу лимитал $2 {{PLURAL:$2|байт}}.",
+	"syntaxhighlight-button-copy": "Копийан",
+	"syntaxhighlight-button-copied": "Копийина!"
 }

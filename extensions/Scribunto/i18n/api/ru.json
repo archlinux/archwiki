@@ -2,9 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"MaxBioHazard",
-			"Okras"
+			"Okras",
+			"MidnightLG"
 		]
 	},
+	"apihelp-scribunto-console-summary": "Внутренний модуль для обработки XHR-запросов из консоли Scribunto.",
+	"apihelp-scribunto-console-param-title": "Название тестируемого модуля.",
 	"apihelp-scribunto-console-param-content": "Новое содержимое модуля.",
-	"apihelp-scribunto-console-param-session": "Токен сессии."
+	"apihelp-scribunto-console-param-session": "Токен сессии.",
+	"apihelp-scribunto-console-param-question": "Следующая строка для выполнения как скрипта.",
+	"apihelp-scribunto-console-param-clear": "Установите для очистки состояния текущего сеанса."
 }

@@ -44,7 +44,7 @@
 	"discussiontools-ledesection-button": "Lær mere om denne side",
 	"discussiontools-ledesection-title": "Om denne diskussionsside",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekund|sekunder}}",
-	"discussiontools-newtopic-missing-title": "Angiv venligst en titel for diskussionen. Hvis {{GENDER:|du}} trykker på \"{{int:discussiontools-replywidget-newtopic}}\" bliver emnet tilføjer uden en titel.",
+	"discussiontools-newtopic-missing-title": "Angiv venligst en titel for diskussionen.",
 	"discussiontools-newtopic-placeholder-title": "Emne",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Abonnér",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Abonnér for at modtage beskeder, når der oprettes nye diskussioner på denne side",

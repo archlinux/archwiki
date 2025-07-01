@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"apihelp-echomarkread-summary": "Marcar les notificaciones como lleíes pal usuariu actual.",
@@ -15,7 +16,7 @@
 	"apihelp-echomarkseen-summary": "Marcar les notificaciones como vistes pal usuariu actual.",
 	"apihelp-echomarkseen-example-1": "Marcar los avisos de tolos tipos como lleíos",
 	"apihelp-echomarkseen-param-type": "Tipu d'avisos pa marcar como lleíos: 'alert' (alerta), 'message' (mensaxe) o 'all' (toos).",
-	"apihelp-echomarkseen-param-timestampFormat": "Formatu de la marca de tiempu a usar pa la salida, 'ISO_8601' o 'MW'. 'MW' tá anticuao equí, de mou que tolos clientes tendríen de cambiase a 'ISO_8601'. Esti parámetru va desaniciase, y 'ISO_8601' sedrá l'únicu formatu de salida.",
+	"apihelp-echomarkseen-param-timestampFormat": "Formatu de la marca de tiempu a usar pa la salida, 'ISO_8601' o 'MW'. 'MW' tá anticuao equí, de mou que tolos clientes tendríen de cambiase a 'ISO_8601'. Esti parámetru va desaniciase, y 'ISO_8601' va ser l'únicu formatu de salida.",
 	"apihelp-query+notifications-summary": "Recibir les notificaciones n'espera pal usuariu actual.",
 	"apihelp-query+notifications-param-prop": "Detalles a solicitar.",
 	"apihelp-query+notifications-param-sections": "Les secciones d'avisu a consultar (esto ye, dalguna combinación de 'alert' y 'message').",

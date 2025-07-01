@@ -4,13 +4,15 @@
 			"El-hussain14"
 		]
 	},
-	"discussiontools-defaultsummary-reply": "Reply",
+	"discussiontools-defaultsummary-reply": "Matiti",
 	"discussiontools-replylink": "{{GENDER:|matiti}}",
 	"discussiontools-replywidget-advanced": "Intima dom",
 	"discussiontools-replywidget-cancel": "Guko",
 	"discussiontools-replywidget-mode-source": "Zalshe",
 	"discussiontools-replywidget-mode-visual": "I inne",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} to {{BIDI:$1}}",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Sauwadi}} labar",
+	"discussiontools-replywidget-placeholder-newtopic": "Bayani",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Matiti}} to {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Kaya enne",
 	"discussiontools-replywidget-reply": "{{GENDER:|Matiti}}",
 	"discussiontools-replywidget-summary": "Taƙaito",

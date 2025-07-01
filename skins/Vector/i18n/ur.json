@@ -9,7 +9,8 @@
 			"Tahir mq",
 			"عثمان خان شاہ",
 			"عرفان ارشد",
-			"محبوب عالم"
+			"محبوب عالم",
+			"BukhariSaeed"
 		]
 	},
 	"skinname-vector": "ویکٹر قدیم (2010ء)",
@@ -38,6 +39,7 @@
 	"vector-jumptosearch": "خانۂ تلاش میں جائیں",
 	"vector-jumptocontent": "مندرجات کا رخ کریں",
 	"vector-more-actions": "مزید",
+	"skin-theme-description": "[تجرباتی نسخہ، غیر متوقع مشکلات کا قوی امکان ہے] ڈیوائس کی اسکرین سے خارج ہونے والی روشنی کو کم کرتا ہے۔",
 	"vector-search-loader": "تجاویزِ تلاش کھل رہی ہیں",
 	"vector-intro-page": "Help:تعارف",
 	"vector-toc-label": "مندرجات",

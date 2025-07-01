@@ -3,11 +3,12 @@
 		"authors": [
 			"Darafsh",
 			"Ibrahim",
-			"ZulfiqorF"
+			"ZulfiqorF",
+			"Farorud"
 		]
 	},
 	"vector-languages": "Забонҳо",
-	"vector-language-button-label": "{{PLURAL:$1|$1 забон|$1 забон}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 забон}}",
 	"vector-no-language-button-label": "Иловаи забонҳо",
 	"vector-action-addsection": "Иловаи унвон",
 	"vector-action-delete": "Ҳазф",
@@ -22,6 +23,8 @@
 	"vector-view-viewsource": "Намоиши манбаъ",
 	"vector-more-actions": "Бештар",
 	"vector-appearance-label": "Зоҳир",
+	"vector-feature-limited-width-name": "Паҳно",
+	"vector-feature-limited-width-0-label": "Паҳн",
 	"vector-feature-limited-width-1-label": "Стандарт",
 	"vector-feature-custom-font-size-name": "Матн",
 	"vector-feature-custom-font-size-0-label": "Хурд",
@@ -35,8 +38,11 @@
 	"vector-searchsuggest-containing": "Ҷустуҷӯи саҳифаҳои дорои <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Муҳтавоҳо",
 	"vector-toc-beginning": "Ибтидо",
+	"vector-anon-user-menu-pages": "Саҳифаҳо барои корбарони ворид наушда",
 	"vector-main-menu-label": "Оғоза",
+	"vector-feature-custom-font-size-exclusion-notice": "Дар ин саҳифа ҳамеша андозаи хурди матн истифода мешавад",
 	"vector-page-tools-label": "Абзорҳо",
 	"vector-page-tools-general-label": "Умумӣ",
+	"vector-page-tools-actions-label": "Амалҳо",
 	"vector-unpin-element-label": "Пинҳон кардан"
 }

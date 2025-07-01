@@ -13,6 +13,7 @@
 	"apierror-discussiontools-commentid-notfound": "'$1' kimliğine sahip yorum bulunamadı.",
 	"apierror-discussiontools-commentname-ambiguous": "'$1' adında birden fazla yorum bulundu, <var>commentid</var> gerekli.",
 	"apierror-discussiontools-commentname-notfound": "'$1' isimli yorum bulunamadı.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Sayfa hiç tartışma içermemiş.",
 	"apierror-discussiontools-formtoken-used": "Yorum zaten yayımlandı. Görmek için sayfayı yenileyin.",
 	"apierror-discussiontools-subscription-failed-add": "Bu konuya abone olunamadı.",
 	"apierror-discussiontools-subscription-failed-remove": "Bu konunun aboneliğinden çıkılamadı.",

@@ -6,16 +6,19 @@ namespace Endroid\QrCode\Builder;
 
 use Endroid\QrCode\Color\ColorInterface;
 use Endroid\QrCode\Encoding\EncodingInterface;
+use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelInterface;
 use Endroid\QrCode\Exception\ValidationException;
 use Endroid\QrCode\Label\Alignment\LabelAlignmentInterface;
 use Endroid\QrCode\Label\Font\FontInterface;
 use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Label\LabelAlignment;
 use Endroid\QrCode\Label\LabelInterface;
 use Endroid\QrCode\Label\Margin\MarginInterface;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\Logo\LogoInterface;
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeInterface;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\Result\ResultInterface;
@@ -25,7 +28,7 @@ use Endroid\QrCode\Writer\WriterInterface;
 class Builder implements BuilderInterface
 {
     /**
-     * @var array<mixed>{
+     * @var array<string, mixed>{
      *     data: string,
      *     writer: WriterInterface,
      *     writerOptions: array,
@@ -78,7 +81,7 @@ class Builder implements BuilderInterface
         return $this;
     }
 
-    /** @param array<mixed> $writerOptions */
+    /** @param array<string, mixed> $writerOptions */
     public function writerOptions(array $writerOptions): BuilderInterface
     {
         $this->options['writerOptions'] = $writerOptions;
@@ -100,7 +103,7 @@ class Builder implements BuilderInterface
         return $this;
     }
 
-    public function errorCorrectionLevel(ErrorCorrectionLevelInterface $errorCorrectionLevel): BuilderInterface
+    public function errorCorrectionLevel(ErrorCorrectionLevel $errorCorrectionLevel): BuilderInterface
     {
         $this->options['errorCorrectionLevel'] = $errorCorrectionLevel;
 
@@ -121,7 +124,7 @@ class Builder implements BuilderInterface
         return $this;
     }
 
-    public function roundBlockSizeMode(RoundBlockSizeModeInterface $roundBlockSizeMode): BuilderInterface
+    public function roundBlockSizeMode(RoundBlockSizeMode $roundBlockSizeMode): BuilderInterface
     {
         $this->options['roundBlockSizeMode'] = $roundBlockSizeMode;
 
@@ -184,7 +187,7 @@ class Builder implements BuilderInterface
         return $this;
     }
 
-    public function labelAlignment(LabelAlignmentInterface $labelAlignment): BuilderInterface
+    public function labelAlignment(LabelAlignment $labelAlignment): BuilderInterface
     {
         $this->options['labelAlignment'] = $labelAlignment;
 

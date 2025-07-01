@@ -298,8 +298,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			$result = $ruleChecker->checkConditions( $this->testPattern )->getResult();
 
 			if ( $result || $formData['ShowNegative'] ) {
-				// Stash result in RC item
-				$rc->filterResult = $result;
+				$changesList->setRCResult( $rc, $result );
 				$rc->counter = $counter++;
 				$output .= $changesList->recentChangesLine( $rc, false );
 			}

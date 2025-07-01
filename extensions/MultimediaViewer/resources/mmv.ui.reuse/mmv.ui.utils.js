@@ -50,7 +50,7 @@ class Utils {
 			.addClass( 'mw-mmv-pt-0 mw-mmv-pb-0' ) // override padding provided by ".oo-ui-buttonElement-framed.oo-ui-labelElement > .oo-ui-buttonElement-button, button"
 			.attr( 'title', title )
 			.append( $( '<span>' ).addClass( 'cdx-button__icon cdx-button__icon--copy' ).attr( 'aria-hidden', 'true' ) )
-			.append( mw.msg( 'multimediaviewer-copy-button' ) )
+			.append( mw.message( 'multimediaviewer-copy-button' ).escaped() )
 			.on( 'click', () => {
 				// navigator.clipboard() is not supported in Safari 11.1, iOS Safari 11.3-11.4
 				if ( navigator.clipboard && navigator.clipboard.writeText ) {

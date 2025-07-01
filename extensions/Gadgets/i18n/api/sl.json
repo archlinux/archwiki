@@ -14,7 +14,7 @@
 	"apihelp-query+gadgetcategories-example-1": "Pridobi seznam obstoječih kategorij pripomočkov",
 	"apihelp-query+gadgetcategories-example-2": "Pridobite vse informacije o kategorijah z imenom »foo« in »bar«",
 	"apihelp-query+gadgets-summary": "Vrne seznam pripomočkov, ki se uporabljajo v tem vikiju.",
-	"apihelp-query+gadgets-param-prop": "Kateri podatkeli o pripomočku naj se pridobijo:",
+	"apihelp-query+gadgets-param-prop": "Kateri podatki o pripomočku naj se pridobijo:",
 	"apihelp-query+gadgets-paramvalue-prop-id": "Interna oznaka pripomočka.",
 	"apihelp-query+gadgets-paramvalue-prop-metadata": "Metapodatki pripomočka.",
 	"apihelp-query+gadgets-paramvalue-prop-desc": "Opis pripomočka, pretvorjen v HTML (lahko je počasno; uporabite samo, če je to res potrebno).",

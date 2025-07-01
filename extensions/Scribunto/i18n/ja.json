@@ -8,9 +8,12 @@
 			"Shirayuki",
 			"Whym",
 			"Yusuke1109",
-			"Qwrop"
+			"Qwrop",
+			"TAKAHASHI Shuuji",
+			"Foomin10"
 		]
 	},
+	"content-model-scribunto": "Scribuntoモジュール",
 	"scribunto-desc": "スクリプト言語を MediaWiki ページに埋め込むためのフレームワーク",
 	"scribunto-line": "$1 行目",
 	"scribunto-module-line": "$1 内、$2 行目",
@@ -20,7 +23,7 @@
 	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''このモジュールについての説明文ページを [[$1]] に作成できます''",
 	"scribunto-doc-page-header": "'''このページは、[[$1]]の説明文を記述するページです。'''",
-	"scribunto-console-intro": "* モジュールのエクスポートは、保存していない変更も含めて、「p」という変数として利用できます。\n* 式として評価するには、行頭に「=」をつけるか print() を使ってください。テーブルには mw.logObject() を使用します。\n* モジュールのコードからこのコンソールにメッセージを送信するには mw.log() および mw.logObject() を使ってください。",
+	"scribunto-console-intro": "* モジュールのエクスポートは、保存していない変更も含めて、「p」という変数として利用できます。\n* 式として評価するには、行頭に「=」をつけるか print() を使ってください。テーブルには mw.logObject() を使用します。\n* モジュールのコードからこのコンソールにメッセージを送信するには mw.log() と mw.logObject() を使ってください。",
 	"scribunto-console-title": "デバッグコンソール",
 	"scribunto-console-too-large": "このコンソールセッションは大きすぎます。コンソール履歴を消去するか、モジュールのサイズを減らしてください。",
 	"scribunto-console-current-src": "コンソール入力",
@@ -43,6 +46,7 @@
 	"scribunto-lua-error-location": "Lua エラー $1: $2",
 	"scribunto-lua-error": "Lua エラー: $2",
 	"scribunto-lua-notarrayreturn": "スクリプトエラー: モジュールが値 $2 を返しました。書き出しテーブルを返すことになっています。",
+	"scribunto-lua-warning": "スクリプトの警告: $1",
 	"scribunto-luastandalone-proc-error": "Lua エラー: プロセスを作成できません。",
 	"scribunto-luastandalone-proc-error-msg": "Lua エラー: プロセスを作成できません: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua エラー: プロセスを作成できません: proc_open を利用できません。PHP の「disable_function」ディレクティブを確認してください。",
@@ -67,5 +71,7 @@
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Lua のログ",
 	"nstab-module": "モジュール",
-	"tooltip-ca-nstab-module": "モジュールページを表示"
+	"tooltip-ca-nstab-module": "モジュールページを表示",
+	"namespaceinfo-description-ns828": "ウィキページとその文書ページから呼び出すことができる、Luaコードモジュールの名前空間。",
+	"namespaceinfo-description-ns829": "モジュールと文書のトークページ"
 }

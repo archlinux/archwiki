@@ -11,5 +11,6 @@
 	"hcaptcha-createaccount": "{{notranslate}}",
 	"hcaptcha-createaccount-fail": "Error message, when the CAPTCHA isn't solved correctly.\n{{related|ConfirmEdit-createaccount-fail}}",
 	"hcaptcha-create": "Message above the CAPTCHA for create (user creates a new page) action.\n{{related|ConfirmEdit-create}}",
-	"hcaptcha-help": "Explanation of how to solve the CAPTCHA for API clients."
+	"hcaptcha-help": "Explanation of how to solve the CAPTCHA for API clients.",
+	"hcaptcha-privacy-policy": "Links to hCaptcha Privacy Policy and Terms of Service to be displayed when the hCaptcha could be shown on an action"
 }

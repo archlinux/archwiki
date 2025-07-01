@@ -12,13 +12,13 @@
         }
     ],
     "require": {
-        "php": "^7.4||^8.0",
-        "bacon/bacon-qr-code": "^2.0.5"
+        "php": "^8.1",
+        "bacon/bacon-qr-code": "^3.0"
     },
     "require-dev": {
         "ext-gd": "*",
-        "endroid/quality": "dev-master",
-        "khanamiryan/qrcode-detector-decoder": "^1.0.4",
+        "endroid/quality": "dev-main",
+        "khanamiryan/qrcode-detector-decoder": "^2.0.2",
         "setasign/fpdf": "^1.8.2"
     },
     "suggest": {
@@ -41,11 +41,14 @@
         "sort-packages": true,
         "preferred-install": {
             "endroid/*": "source"
+        },
+        "allow-plugins": {
+            "endroid/installer": true
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "4.x-dev"
+            "dev-main": "5.x-dev"
         }
     }
 }

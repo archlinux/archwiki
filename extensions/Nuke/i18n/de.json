@@ -7,7 +7,8 @@
 			"Metalhead64",
 			"Purodha",
 			"Raimond Spekking",
-			"SVG"
+			"SVG",
+			"Doc Taxon"
 		]
 	},
 	"nuke": "Massenlöschung von Seiten",
@@ -29,7 +30,7 @@
 	"nuke-maxpages": "Anzahl der abzurufenden Seiten (maximal 500):",
 	"nuke-editby": "Erstellt von [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Seite „$1“ wurde gelöscht.",
-	"nuke-deletion-queued": "Die Seite '''$1''' steht für die Löschung in der Warteschlange.",
+	"nuke-deletion-queued": "Seite '''$1''' wurde zum Löschen vorgemerkt.",
 	"nuke-not-deleted": "Seite [[:$1]] '''konnte nicht''' gelöscht werden.",
 	"nuke-delete-more": "[[Special:Nuke|Weitere Seiten löschen]]",
 	"nuke-pattern": "SQL-LIKE-Muster (z.&nbsp;B. %) für den Seitennamen:",

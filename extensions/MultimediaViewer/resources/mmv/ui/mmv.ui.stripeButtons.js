@@ -75,7 +75,7 @@ class StripeButtons extends UiElement {
 
 		this.$descriptionPage.empty()
 			.append( $( '<span>' ).addClass( 'cdx-button__icon' ) )
-			.append( mw.msg( 'multimediaviewer-repository-local' ) )
+			.append( mw.message( 'multimediaviewer-repository-local' ).escaped() )
 			.attr( 'href', descriptionUrl )
 			.removeClass( 'empty' )
 			.toggleClass( 'mw-mmv-repo-button-commons', isCommons );

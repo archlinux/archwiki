@@ -2,8 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Liuxinyu970226",
-			"StephDC"
+			"StephDC",
+			"WAN233"
 		]
 	},
-	"templatedata-doc-param-type-unknown": "未知"
+	"templatedata-doc-param-type-unknown": "未知",
+	"templatedata-doc-param-type-wiki-user-name": "用戶"
 }

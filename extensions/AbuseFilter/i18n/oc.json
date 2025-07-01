@@ -391,7 +391,7 @@
 	"abusefilter-topnav-tools": "Aisinas de debogatge",
 	"abusefilter-log-name": "Jornal del filtre antiabuses",
 	"abusefilter-log-header": "Aqueste jornal aficha un somari de las modificacions faitas als filtres.\nPer mai de detalhs, vejatz [[Special:AbuseFilter/history|la lista]] dels darrièrs cambiaments del filtre.",
-	"abusefilter-log-noresults": "Non i a cap de resultat",
+	"abusefilter-log-noresults": "Non i a cap de coïncidéncia amb los critèris de la recèrca",
 	"abusefilter-diff-title": "Diferéncias entre las versions",
 	"abusefilter-diff-item": "Article",
 	"abusefilter-diff-version": "Version del $1 {{GENDER:$3|per}} $2",

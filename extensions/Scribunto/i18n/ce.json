@@ -4,6 +4,7 @@
 			"Умар"
 		]
 	},
+	"content-model-scribunto": "Scribunto модуль",
 	"scribunto-desc": "MediaWiki агӀонашкахь скриптийн мотт лато хӀума",
 	"scribunto-line": "$1 могӀанан тӀехь",
 	"scribunto-module-line": "$1 чохь $2  могӀанан тӀехь",
@@ -60,5 +61,7 @@
 	"scribunto-limitreport-profile-ms": "$1 мс",
 	"scribunto-limitreport-logs": "Lua журналаш",
 	"nstab-module": "Модуль",
-	"tooltip-ca-nstab-module": "Модулан агӀо хьажа"
+	"tooltip-ca-nstab-module": "Модулан агӀо хьажа",
+	"namespaceinfo-description-ns828": "ЦӀерийн меттиг Lua кодийн модулашна, уьш кхайкха йиш йу вики агӀонаш тӀера, церан документацин агӀонаш тӀера",
+	"namespaceinfo-description-ns829": "Модулийн а, документацин а дийцарийн агӀонаш"
 }

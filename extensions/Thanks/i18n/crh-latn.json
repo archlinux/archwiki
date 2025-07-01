@@ -7,9 +7,23 @@
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|teşekkür et}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|teşekkür etildi}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Teşekkür et}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Teşekkür etildi}}}}",
-	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Bir kişi|$1 kişi|100=99+ kişi}} <strong>$2</strong> saifesini tüzettiñiz  içün {{GENDER:$3|sizge}} teşekkür etti.",
+	"thanks-confirmation2": "Er keske açıq teşekkür {{GENDER:$1|yiberilsinmi}}?",
+	"thanks-thanked-notice": "{{GENDER:$2|$1}} qullanıcısına teşekkür {{GENDER:$3|ettiñiz}}.",
+	"echo-pref-tooltip-edit-thank": "Birisi deñiştirgenlerim içün meni teşekkür etse maña bildir.",
+	"echo-category-title-edit-thank": "Teşekkürler",
+	"notification-header-rev-thank": "$1, <strong>$3</strong> saifesindeki deñiştirmeñiz içün {{GENDER:$4|sizge}} {{GENDER:$2|teşekkür bildirdi}}.",
+	"notification-header-creation-thank": "$1, <strong>$3</strong> saifesini yaratqanıñız içün {{GENDER:$4|sizge}} teşekkür {{GENDER:$2|bildirdi}}.",
+	"notification-compact-header-edit-thank": "$1, {{GENDER:$3|sizge}} teşekkür {{GENDER:$2|bildirdi}}.",
+	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Bir kişi|$1 kişi|100=99+ kişi}} <strong>$2</strong> saifesini deñiştirgeniñiz  içün {{GENDER:$3|sizge}} teşekkür bildirdi.",
+	"notification-bundle-header-log-thank": "{{PLURAL:$1|Bir adam|$1 adam|100=99+ adam}} <strong>$2</strong> ile bağlı areketiñiz içün {{GENDER:$3|sizge}} teşekkür bildirdi.",
 	"logeventslist-thanks-log": "Teşekkür jurnalı",
-	"notification-link-text-view-logentry": "Jurnal qaydını köster"
+	"thanks-confirmation-special-log": "Bu areket içün er keske açıq olaraq teşekkür etmek isteysiñizmi?",
+	"thanks-confirmation-special-rev": "Bu deñiştirme içün er keske açıq olaraq teşekkür etmek isteysiñizmi?",
+	"notification-link-text-view-logentry": "Jurnal qaydını köster",
+	"flow-thanks-confirmation-special": "Bu tefsir içün er keske açıq olaraq teşekkür etmek isteysiñizmi?",
+	"flow-thanks-thanked-notice": "$1 {{GENDER:$2|qullanıcısına}} tefsiri içün {{GENDER:$3|teşekkür ettiñiz}}.",
+	"notification-compact-header-flow-thank": "$1, {{GENDER:$3|sizge}} teşekkür {{GENDER:$2|bildirdi}}."
 }

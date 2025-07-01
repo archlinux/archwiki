@@ -383,7 +383,7 @@ class MultimediaViewerBootstrap {
 			.addClass( 'mw-mmv-view-expanded cdx-button' )
 			.append( $( '<span>' ).addClass( 'cdx-button__icon' ) )
 			.append( ' ' )
-			.append( mw.msg( 'multimediaviewer-view-expanded' ) );
+			.append( mw.message( 'multimediaviewer-view-expanded' ).escaped() );
 
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.fullMedia' ).append( $mmvButton );

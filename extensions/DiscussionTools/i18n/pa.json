@@ -62,7 +62,7 @@
 	"discussiontools-replywidget-mode-visual": "ਵਿਜ਼ੂਅਲ",
 	"discussiontools-replywidget-newtopic": "ਵਿਸ਼ਾ {{GENDER:|ਜੋੜੋ}}",
 	"discussiontools-replywidget-placeholder-newtopic": "ਵੇਰਵਾ",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI: $1 }} ਨੂੰ {{GENDER:|ਜਵਾਬ}}",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} ਨੂੰ {{GENDER:|ਜਵਾਬ}}",
 	"discussiontools-replywidget-preferences": "ਤਰਜੀਹਾਂ",
 	"discussiontools-replywidget-preview": "ਝਲਕ",
 	"discussiontools-replywidget-reply": "{{GENDER:|ਜਵਾਬ}}",

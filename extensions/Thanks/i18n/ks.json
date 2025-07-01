@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|شُکرِیا}}}}",
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|شُکرِیا}}}}",
+	"echo-category-title-edit-thank": "شُکرِیا"
+}

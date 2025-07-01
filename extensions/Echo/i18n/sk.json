@@ -107,6 +107,7 @@
 	"echo-notification-markasunread": "Označiť ako neprečítané",
 	"echo-notification-markasread-tooltip": "Označiť ako prečítané",
 	"echo-notification-more-options-tooltip": "Viac možností",
+	"notification-dynamic-actions-mute-page-linked": "{{GENDER:$2|Stíšiť}} oznámenia na odkazy na „$1“",
 	"notification-link-text-expand-all": "Rozbaliť",
 	"notification-link-text-expand-alert-count": "Zobraziť $1 {{PLURAL:$1|upozornenie|upozornenia|upozornení}}",
 	"notification-link-text-expand-notice-count": "Zobraziť $1 {{PLURAL:$1|oznámenie|oznámenia|oznámení}}",

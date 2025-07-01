@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
 	"thanks-desc": "د سمونونو، تبصرو او نور کړنو پخاطر له کارنانو څخه د مننې کولو تړنې ورگډوي.",
@@ -15,8 +16,8 @@
 	"thanks-thank-tooltip": "دې {{GENDER:$2|کارن}} ته د مننې يو پيغام {{GENDER:$1|ورلېږل}}",
 	"thanks-thank-tooltip-no": "د مننې يادگيرنه {{GENDER:$1|ناگارل}}",
 	"thanks-thank-tooltip-yes": "د مننې يادگيرنه {{GENDER:$1|لېږل}}",
-	"thanks-confirmation2": "دې سمون ته يوه عامه مننه {{GENDER:$1|ورلېږې}} ؟",
-	"thanks-thanked-notice": "$1 د {{GENDER:$2|هغه|هغې|هغوی}} سمونونو پخاطر ستاسې مننه ترلاسه کړه.",
+	"thanks-confirmation2": "ښکاره مننه {{GENDER:$1|ورولېږل}} شي؟",
+	"thanks-thanked-notice": "{{GENDER:$3|تاسو}} له {{GENDER:$2|$1}} مننه وکړه.",
 	"thanks": "مننه لېږل",
 	"thanks-submit": "مننه لېږل",
 	"echo-pref-subscription-edit-thank": "زه د سمون پخاطر زما منندوی شه",

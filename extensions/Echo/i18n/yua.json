@@ -2,9 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Languaeditor",
-			"Lorenzoitza"
+			"Lorenzoitza",
+			"Lucero09"
 		]
 	},
+	"echo-desc": "U sistema utia'al u ts'áabal ojéeltbil ti' le máaxo'ob ku meyajtiko'ob yóok'ol k'inbesajo'ob yéetel mensajes.",
+	"prefs-description-echo": "Yéey ba'ax notificaciones a k'aat a k'áamej yéetel bix a k'at a k'amej.",
+	"prefs-echosubscriptions": "K'a'asten ba'ax k'iin yaan k'inbesajo'ob.",
+	"prefs-mutedpageslist": "Páginas mina'an u juum utia'al u k'a'asik u enlace ti' página.",
+	"prefs-echopollupdates": "K'a'asajo'ob tu súutukil u yúuchul",
 	"echo-category-title-mention-failure": "K'aschaji {{PLURAL:$1|mention|mentions}}",
 	"echo-pref-tooltip-mention-failure": "Aꞌaten le ken kꞌexaꞌak aꞌalakten men maax maꞌ patal tin kꞌexiꞌ",
 	"notification-link-text-view-mention-failure": "{{PLURAL:$1|Il maax ku t'aan yóolal|Il maax t'anik}}",

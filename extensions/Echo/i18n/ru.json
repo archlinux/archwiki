@@ -48,7 +48,8 @@
 			"Лилиә",
 			"ЛосЯш",
 			"Умар",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"Mitte27"
 		]
 	},
 	"echo-desc": "Система уведомления участников о событиях и сообщениях",
@@ -190,8 +191,8 @@
 	"notification-header-mention-agent-talkpage-nosection": "$1 упомянул{{GENDER:$2||а}} {{GENDER:$3|вас}} на <strong>{{GENDER:$2|его|её|своей}} странице обсуждения</strong>.",
 	"notification-header-mention-article-talkpage": "$1 упомянул{{GENDER:$2||а}} {{GENDER:$3|вас}} на странице обсуждения «<strong>$4</strong>» в разделе «<strong>$5</strong>».",
 	"notification-header-mention-article-talkpage-nosection": "$1 упомянул{{GENDER:$2||а}} {{GENDER:$3|вас}} на странице обсуждения «$4».",
-	"notification-header-mention-failure-user-unknown": "{{GENDER:$2|Ваше}} упоминание <strong>$3</strong> не было отправлено, так как эта учётная запись не найдена.",
-	"notification-header-mention-failure-user-anonymous": "{{GENDER:$2|Ваше}} упоминание <strong>$3</strong> не было отправлено, так как эта учётная запись анонимна.",
+	"notification-header-mention-failure-user-unknown": "Невозможно отправить {{GENDER:$2|ваше}} упоминание <strong>$3</strong>, так как учётная запись с таким именем не существует.",
+	"notification-header-mention-failure-user-anonymous": "Невозможно отправить {{GENDER:$2|ваше}} упоминание <strong>$3</strong>, так как этот участник анонимен.",
 	"notification-header-mention-failure-too-many": "{{GENDER:$2|Вы}} попытались упомянуть более $3 {{PLURAL:$3|участника|участников}}. Все упоминания выше этого лимита не были разосланы.",
 	"notification-header-mention-failure-bundle": "{{PLURAL:$3|Упоминание|$3 упоминания|$3 упоминаний}} {{PLURAL:$3|сделанное|сделанные|сделанных}} {{GENDER:$2|вами}} на странице обсуждений <strong>$4</strong> не {{PLURAL:$3|может|могут}} быть отправлены.",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>Имя участника не существует:</strong> $1",

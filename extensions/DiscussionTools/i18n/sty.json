@@ -12,7 +12,7 @@
 	"discussiontools-replywidget-cancel": "Пулмайын иткәле",
 	"discussiontools-replywidget-mode-source": "Эценнән",
 	"discussiontools-replywidget-mode-visual": "Ҡарап",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}ға {{GENDER:|Йауап пиргәле}}",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}ға {{GENDER:|йауап пиргәле}}",
 	"discussiontools-replywidget-preview": "Алттан ҡарау",
 	"discussiontools-replywidget-reply": "{{GENDER:|Йауап пиргәле}}",
 	"discussiontools-replywidget-summary": "Ҡысҡа аңнатыу",

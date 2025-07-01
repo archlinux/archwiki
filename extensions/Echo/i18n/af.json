@@ -4,7 +4,8 @@
 			"Biggs ZA",
 			"Fwolff",
 			"Naudefj",
-			"Servien"
+			"Servien",
+			"Pkeciy"
 		]
 	},
 	"echo-desc": "Kennisgewing-stelsel",
@@ -24,7 +25,7 @@
 	"echo-pref-email-frequency-weekly": "Weeklikse opsomming van kennisgewings",
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Eenvoudige teks",
-	"echo-learn-more": "Leer meer",
+	"echo-learn-more": "Meer inligting",
 	"echo-new-messages": "U het nuwe boodskappe",
 	"echo-category-title-edit-user-talk": "Boodskap{{PLURAL:$1||pe}} op u besprekingsblad",
 	"echo-category-title-article-linked": "Bladsyskakel{{PLURAL:$1||s}}",

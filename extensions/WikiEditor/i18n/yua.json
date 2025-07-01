@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Azul25",
+			"Chab2079",
+			"Primavera11"
+		]
+	},
+	"wikieditor": "Interfaz avanzada u edición wikitexto",
+	"wikieditor-desc": "Ku ts'aik jump'éel interfaz avanzada yéetel extensible u edición wikitexto",
+	"wikieditor-toolbar": "Barra de nu'ukulo'ob edición",
+	"wikieditor-toolbar-desc": "Editar barra nu'ukulo'ob u linki abas kaambal yéetel usabilidad mejorada",
+	"wikieditor-toolbar-preference": "u ts'a' kaambal nu'ukulil ts'íib",
+	"wikieditor-toolbar-preference-help": "Yaan k'iine' ku ya'ala'al ti' le 'editor wikitexto 2010'.",
+	"wikieditor-toolbar-tool-bold": "chan boox",
+	"wikieditor-toolbar-tool-bold-example": "Analte'o' boox",
+	"wikieditor-toolbar-tool-italic": "joro'onts'ìib",
+	"wikieditor-toolbar-tool-italic-example": "Analte'o' cursiva",
+	"wikieditor-toolbar-tool-link": "nuup",
+	"wikieditor-toolbar-tool-link-title": "ts'àa nuup",
+	"wikieditor-toolbar-tool-link-int": "Ti' jump'éel linki a kaambal ti' wiki",
+	"wikieditor-toolbar-tool-link-int-target": "u linki xuuli",
+	"wikieditor-toolbar-tool-link-int-target-tooltip": "u k'aaba' le linki xuuli",
+	"wikieditor-toolbar-tool-link-int-text": "u k'aaba' u nuup",
+	"wikieditor-toolbar-tool-link-int-text-tooltip": "Analte'o' yaan u ye'esa'al",
+	"wikieditor-toolbar-tool-link-ext": "Ti' jump'éel linki abas kaambal web externa",
+	"wikieditor-toolbar-tool-link-ext-target": "URL ti' nuup",
+	"wikieditor-toolbar-tool-link-ext-text": "Analte'o' enlace:",
+	"wikieditor-toolbar-tool-link-insert": "ts'àa nuup",
+	"wikieditor-toolbar-tool-link-cancel": "lùuk's",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "le linka' ku chìikpajal ti' {{SISTENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Le linka' ma' tu chìikpajal ti' {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Le k'aaba' ts'o'ok u ya'ala'alo' ma' jach jaaj",
+	"wikieditor-toolbar-tool-link-int-target-status-external": "tàanxelil liink",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "lela' ma' jump'èel linki abas kaambal ti' contenido, ba'ale' jump'èel  tsoolol yiit yèetel k'aaba'obo' nuup  wa similares.",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "Le URL ta ts'àajo' ku chìikpajal bey jump'èel enlace ti' ulàak' linki abas kaambal ti' wiki. ¿A k'àat a beet jump'èl enlace interno?",
+	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "tàanxelil liink",
+	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "tàanxelil liink",
+	"wikieditor-toolbar-tool-file": "wìimvala' yèetel multimedia",
+	"wikieditor-toolbar-tool-file-title": "ts'àa archivo"
+}

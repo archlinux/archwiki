@@ -19,7 +19,8 @@
 			"علاء",
 			"محمد أحمد عبد الفتاح",
 			"Matma Rex",
-			"XIDME"
+			"XIDME",
+			"Mohammed Qays"
 		]
 	},
 	"discussiontools": "أدوات النقاش",
@@ -92,7 +93,7 @@
 	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|شخص واحد|$1 أشخاص|100=99+ أشخاص}} شكر {{GENDER:$3|ك|كِ}} على تعليقك في \"<strong>$2</strong>\".",
 	"discussiontools-notification-comment-thank-header-compact": "$1 {{GENDER:$2|شكر|شكرت}}{{GENDER:$3|ك}}.",
 	"discussiontools-notification-removed-topic-body": "قد لا تتلقى إشعاراتٍ بعد الآن حول {{PLURAL:$1|هذا الموضوع|هذه المواضيع}}.",
-	"discussiontools-notification-removed-topic-header": "تمت أرشفة الموضوع «<strong>$4</strong>» أو تمت إزالته من $3.",
+	"discussiontools-notification-removed-topic-header": "أُرشف الموضوع «<strong>$4</strong>» أو أزيل من $3.",
 	"discussiontools-notification-removed-topic-header-bundled": "تمت أرشفة أو إزالة {{PLURAL:$1|موضوع واحد|$1 من المواضيع|100=99+ موضوعًا}}  من $2.",
 	"discussiontools-notification-removed-topic-header-compact": "تمت أرشفة أو إزالة الموضوع «<strong>$4</strong>».",
 	"discussiontools-notification-removed-topic-view": "عرض الصفحة",
@@ -153,7 +154,7 @@
 	"discussiontools-replywidget-mention-tool-title": "إشارة إلى مستخدم",
 	"discussiontools-replywidget-mode-source": "مصدري",
 	"discussiontools-replywidget-mode-visual": "مرئي",
-	"discussiontools-replywidget-newcomments-button": "إظهار {{PLURAL:$1|لا تعليق جديد|تعليق واحد جديد|تعليقين جديدين|$1 تعليقات جديدة|$1 تعليقا جديدا|$1 تعليق جديد}}",
+	"discussiontools-replywidget-newcomments-button": "إظهار $1 {{PLURAL:$1|تعليق جديد|تعليقات جديدة}}",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|أضف|أضيفي}} موضوعًا",
 	"discussiontools-replywidget-placeholder-newtopic": "تفصيل الموضوع",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|رُدَّ|رُدِّي}} على {{BIDI:$1}}",
@@ -175,7 +176,7 @@
 	"discussiontools-target-comment-found-moved": "لا يُمكن العثور على هذا التعليق في هذه الصفحة، ولكنه موجود على {{PLURAL:$1|الصفحة التالية|الصفحات التالية}}:",
 	"discussiontools-target-heading-found-moved": "لا يُمكن العثور على هذا الموضوع في هذه الصفحة، ولكنه موجود على {{PLURAL:$1|الصفحة التالية|الصفحات التالية}}:",
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|لا أحد|شخص واحد|شخصان|$1 أشخاص|$1 شخصا|$1 شخص}} في النقاش",
-	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|لا توجد تعليقات|تعليق واحد|تعليقان|$1 تعليقات|$1 تعليقا|$1 تعليق}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|تعليق|تعليقات}}",
 	"discussiontools-topicheader-latestcomment": "التعليق الأخير: $1",
 	"discussiontools-topicsubscription-action-subscribe-button": "اشتراك",
 	"discussiontools-topicsubscription-action-subscribe-prompt": "الاشتراك في هذا الموضوع؟",

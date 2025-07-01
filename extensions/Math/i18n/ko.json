@@ -17,7 +17,8 @@
 			"Revi",
 			"Ykhwong",
 			"아라",
-			"Tensama0415"
+			"Tensama0415",
+			"YeBoy371"
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> 태그 사이에 수학 수식을 렌더합니다",
@@ -102,11 +103,11 @@
 	"math-tracking-category-render-error-desc": "이 분류에 속한 문서는 수식 태그에 렌더링 오류가 있습니다.",
 	"math_unknown_error": "알 수 없는 오류",
 	"math_unknown_function": "알 수 없는 함수 \"$1\"",
-	"mw-math-latexml": "LaTeXML(시험용, MathML을 사용)",
+	"mw-math-latexml": "LaTeXML (시험용, MathML을 사용)",
 	"mw-math-mathjax": "클라이언트 사이드 MathJax 렌더링 (MathML 지원에 제한이 있는 브라우저용)",
 	"mw-math-mathml": "SVG (브라우저 플러그인을 통해 MathML 활성화 가능)",
 	"mw-math-native": "MathML (실험 기능, 이미지 없음)",
-	"mw-math-source": "LaTeX 소스(텍스트 브라우저용)",
+	"mw-math-source": "LaTeX 소스 (텍스트 브라우저용)",
 	"prefs-math": "수식",
 	"mathstatus": "수식 상태",
 	"mathwikibase": "수학 공식 정보",

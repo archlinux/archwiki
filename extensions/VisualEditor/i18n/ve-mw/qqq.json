@@ -106,7 +106,7 @@
 	"visualeditor-dialog-media-info-meta-artist": "Label for the author information for the image in the media dialog.\n\nParameters:\n* $1 - Author name.",
 	"visualeditor-dialog-media-info-moreinfo": "Label for the link to more information in the image data panel.\n{{Identical|More information}}",
 	"visualeditor-dialog-media-info-readmore": "Label for the link to expand the text in the image data panel.\n{{Identical|Read more}}",
-	"visualeditor-dialog-media-info-separator": "Character separating information in the image info panel in the media dialog.\n{{Optional}}",
+	"visualeditor-dialog-media-info-separator": "{{Optional}}\nCharacter separating information in the image info panel in the media dialog.",
 	"visualeditor-dialog-media-info-uploaded": "Label for the image upload date in the media dialog.\n\nParameters:\n* $1 - Date of last upload.\n{{Identical|Uploaded}}",
 	"visualeditor-dialog-media-page-advanced": "Label for the advanced settings page in the media edit dialog.\n{{Identical|Advanced settings}}",
 	"visualeditor-dialog-media-page-general": "Label for the general settings page in the media edit dialog.\n{{Identical|General settings}}",

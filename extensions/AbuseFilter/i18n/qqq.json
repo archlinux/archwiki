@@ -683,7 +683,7 @@
 	"abusefilter-preference-protected-vars-view-agreement": "Agreement shown on [[Special:Preferences]] that the user can acknowledge via checkbox.",
 	"abusefilter-protected-vars-log-name": "{{doc-logpage}}\n\nThe page name of [[Special:Log/abusefilter-protected-vars]]. Appears in the drop down menu of the [[Special:Log]] page and subpages.",
 	"abusefilter-protected-vars-log-header": "Appears on top of [[Special:Log/abusefilter-protected-vars]].",
-	"logentry-abusefilter-protected-vars-change-access-enable": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if a user's state of access was enabled.\n\n{{Doc-singularthey}}",
+	"logentry-abusefilter-protected-vars-change-access-enable": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if a user's state of access was enabled.\n\nNote: This log entry is no longer generated, but this message is kept to support historical log entries.\n\n{{Doc-singularthey}}",
 	"logentry-abusefilter-protected-vars-change-access-disable": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if a user's state of access was disabled.",
 	"logentry-abusefilter-protected-vars-view-protected-var-value": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if user viewed the value of a protected variable.\n\nThis log entry message is only kept for historical logs. No new log entries are being created for this log.",
 	"log-action-filter-abusefilter-protected-vars": "{{doc-log-action-filter-type|abusefilter-protected-vars}}\n{{related|Log-action-filter}}",

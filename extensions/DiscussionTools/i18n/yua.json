@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Abby95",
+			"Patoasado97",
+			"Juanchuy0",
+			"Shadow.666",
+			"VicenteCancheM"
+		]
+	},
+	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} yaan u k'amik jump'éel notificación ken yaan máax ku ts'íibtik jump'éel túumben ts'íibiltuukul te'el tsikbala'. Je'el u páajtal a wutskíinsik u configuración notificaciones ti' preferencias.",
+	"discussiontools-autotopicsubpopup-dismiss": "Ma'alob, tin na'ataj",
+	"discussiontools-defaultsummary-reply": "Jeel áale",
+	"discussiontools-newtopic-missing-title": "Béet ts'áa jump'éel k'aaba' uti'al {{GENDER:|a}} chun tuukulo' tsikbal.",
+	"discussiontools-newtopic-placeholder-title": "Máaxil",
+	"discussiontools-replylink": "{{GENER:|núukik}}",
+	"discussiontools-replywidget-advanced": "Áabansado",
+	"discussiontools-replywidget-cancel": "káanselar",
+	"discussiontools-replywidget-mode-source": "Chíikul",
+	"discussiontools-replywidget-mode-visual": "Bisual",
+	"discussiontools-replywidget-newtopic": "Ts'áaj uláak' ba'ax",
+	"discussiontools-replywidget-placeholder-newtopic": "Bixil",
+	"discussiontools-replywidget-placeholder-reply": "Núuk ti' {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Yáax e'esajil",
+	"discussiontools-replywidget-reply": "{{GENER:|Núukik}}",
+	"discussiontools-replywidget-summary": "Kóomts'íib",
+	"discussiontools-replywidget-watchthis": "Ts'áa le linki abas kaambal ti' a [[Special:Watchlist|watchlist]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|máak|wíiniko'ob}} ti' tsikbal",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ts'aaj t'aan|ts'aaj t'aano'ob}}",
+	"discussiontools-topicheader-latestcomment": "U ts'ook t'aan: $1",
+	"discussiontools-topicsubscription-button-subscribe": "Ts'íibtabáaj",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ts'íibtabáaj",
+	"discussiontools-topicsubscription-button-unsubscribe": "Lu'us a ts'íibtmilabáaj",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Lu'us a ts'íibtmilabáaj",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Tech}} yaan u k'amik notificaciones yóok'ol túumben comentarios ti' le chun tuukulo'.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|You}} ts'o'ok u suscribirkuba.",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Tech}} ma' ken a k'amik túumben t'aano'ob yóok'ol le chun tuukulo'.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} ts'o'ok u p'atik u ts'íibta'al."
+}

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Axel xadolik",
-			"Wikimistusik"
+			"Wikimistusik",
+			"Lisyeng"
 		]
 	},
 	"vector-action-addsection": "Loplekura va detce",
@@ -14,5 +15,7 @@
 	"vector-view-history": "Wira va izvot",
 	"vector-view-view": "Belira",
 	"vector-view-viewsource": "klitawira",
-	"vector-more-actions": "Loon"
+	"vector-more-actions": "Loon",
+	"skin-theme-name": "Kseva",
+	"vector-page-tools-actions-label": "Tegira"
 }

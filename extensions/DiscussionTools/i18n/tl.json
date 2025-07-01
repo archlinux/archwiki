@@ -6,7 +6,8 @@
 			"Jojit fb",
 			"Kunokuno",
 			"Filipinayzd",
-			"Exec8"
+			"Exec8",
+			"Ysrael214"
 		]
 	},
 	"discussiontools": "Mga kagamitan para usapan",
@@ -25,7 +26,7 @@
 	"discussiontools-replywidget-mode-visual": "Visual",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Magdagdag}} ng paksa",
 	"discussiontools-replywidget-placeholder-newtopic": "Paglalarawan",
-	"discussiontools-replywidget-placeholder-reply": "Sumagot kay {{BIDI: $1 }}",
+	"discussiontools-replywidget-placeholder-reply": "Sumagot kay {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Pasilip",
 	"discussiontools-replywidget-reply": "Sumagot",
 	"discussiontools-replywidget-summary": "Buod",
@@ -33,10 +34,10 @@
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|tao|(na) tao}} ang nasa usapan",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komento|(na) komento}}",
 	"discussiontools-topicheader-latestcomment": "Pinakabagong komento: $1",
-	"discussiontools-topicsubscription-button-subscribe": "mag-sub",
-	"discussiontools-topicsubscription-button-subscribe-label": "Mag-sub",
-	"discussiontools-topicsubscription-button-unsubscribe": "wag mag-sub",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Wag na'ng mag-sub",
+	"discussiontools-topicsubscription-button-subscribe": "mag-subscribe",
+	"discussiontools-topicsubscription-button-subscribe-label": "Mag-subscribe",
+	"discussiontools-topicsubscription-button-unsubscribe": "huwag mag-subscribe",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Huwag nang mag-subscribe",
 	"discussiontools-topicsubscription-notify-subscribed-body": "Makakatanggap ka ng mga abiso tungkol sa mga bagong komento sa paksang ito.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "Nakapag-subscribe ka na!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Hindi ka na makakatanggap ng mga abiso tungkol sa mga bagong komento sa paksang ito.",

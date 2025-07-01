@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Torontál-vármegye"
+		]
+	},
+	"templatedata-doc-param-default": "Alapértelmezett",
+	"templatedata-doc-param-desc": "Leírás",
+	"templatedata-doc-param-desc-empty": "nincs leírás",
+	"templatedata-doc-param-name": "Paraméter",
+	"templatedata-doc-param-status": "Státusz",
+	"templatedata-doc-param-status-deprecated": "elavult",
+	"templatedata-doc-param-status-optional": "opcionális",
+	"templatedata-doc-param-status-required": "szükséges",
+	"templatedata-doc-param-status-suggested": "ajánlott",
+	"templatedata-doc-param-suggestedvalues": "Ajánlott értékek",
+	"templatedata-doc-param-type": "Típus",
+	"templatedata-doc-param-type-boolean": "Boolean",
+	"templatedata-doc-param-type-content": "Tartalom",
+	"templatedata-doc-param-type-date": "Dátum",
+	"templatedata-doc-param-type-number": "Szám",
+	"templatedata-doc-param-type-string": "Szöveg",
+	"templatedata-doc-param-type-wiki-template-name": "Sablon",
+	"templatedata-doc-param-type-wiki-user-name": "Felhasználó",
+	"templatedata-doc-params": "Sablonparaméterek",
+	"templatedata-modal-table-param-name": "Név",
+	"templatedata-modal-table-param-suggested": "Javasolt",
+	"templatedata-modal-title-choose-language": "Válasszon nyelvet",
+	"templatedata-modal-title-language": "Nyelv"
+}

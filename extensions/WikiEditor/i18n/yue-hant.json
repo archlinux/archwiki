@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"H78c67c"
 		]
 	},
 	"wikieditor": "進階維基文字編輯界面",
@@ -95,7 +96,7 @@
 	"wikieditor-toolbar-tool-replace-invalidregex": "你打入嘅運算係錯嘅：$1",
 	"wikieditor-toolbar-section-characters": "特別字元",
 	"wikieditor-toolbar-section-help": "幫手",
-	"wikieditor-toolbar-help-heading-description": "说明",
+	"wikieditor-toolbar-help-heading-description": "描述",
 	"wikieditor-toolbar-help-heading-syntax": "你輸入啲乜",
 	"wikieditor-toolbar-help-heading-result": "你拎到啲乜",
 	"wikieditor-toolbar-help-page-format": "格式",

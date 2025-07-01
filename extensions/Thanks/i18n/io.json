@@ -11,6 +11,7 @@
 	"thanks-confirmation2": "Dankar {{GENDER:$1|publike}}?",
 	"thanks-thanked-notice": "{{GENDER:$3|Vu}} dankis {{GENDER:$2|$1}} publike.",
 	"thanks": "Dankar",
+	"echo-pref-tooltip-edit-thank": "Avizez me se ulu dankos me por ula redakturo.",
 	"echo-category-title-edit-thank": "Dankar",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|dankis}} {{GENDER:$4|vu}} pro vua redakto en <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|dankis}} {{GENDER:$4|vu}} pro vua kreo di <strong>$3</strong>.",

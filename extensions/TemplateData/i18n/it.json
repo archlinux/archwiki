@@ -10,7 +10,8 @@
 			"Mannivu",
 			"McDutchie",
 			"Nivit",
-			"Ruthven"
+			"Ruthven",
+			"Sannita"
 		]
 	},
 	"templatedata-desc": "Implementa la memorizzazione dei dati per i parametri dei template (utilizzando JSON)",
@@ -51,6 +52,7 @@
 	"templatedata-errormsg-insertblank": "Sei proprio sicuro di voler inserire i dati del modello senza nessuna informazione?",
 	"templatedata-exists-on-related-page": "Attenzione: esiste già un blocco dati del modello nella relativa pagina \"[[$1]]\".",
 	"templatedata-helplink": "Informazioni sui dati del modello",
+	"templatedata-invalid-unnamed-parameter": "I nomi dei parametri non possono essere vuoti. Per documentare parametri senza nome, utilizzare i numeri interni \"1\", \"2\" e così via.",
 	"templatedata-invalid-duplicate-value": "La proprietà \"$1\" (\"$3\") è un duplicato di \"$2\".",
 	"templatedata-invalid-empty-array": "La proprietà \"$1\" deve avere almeno un valore nella sua matrice.",
 	"templatedata-invalid-format": "Proprietà \"$1\" dovrebbe essere \"inline\", \"block\" o una stringa di formato valido.",
@@ -86,7 +88,10 @@
 	"templatedata-modal-format-placeholder": "Parametro template in formato stringa",
 	"templatedata-modal-json-error-replace": "Sostituisci",
 	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|nuovo parametro è stato importato|nuovi parametri sono stati importati}}: $2.",
+	"templatedata-modal-placeholder-add-new-map-input": "Aggiungendo una nuova mappa...",
 	"templatedata-modal-placeholder-paramkey": "Nome del parametro",
+	"templatedata-modal-placeholder-mapinfo": "Questo template non contiene un oggetto mappa",
+	"templatedata-modal-placeholder-prompt-map-name": "Inserisci il nome della mappa",
 	"templatedata-modal-search-input-placeholder": "Cerca per nome della lingua o codice",
 	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Valore automatico",

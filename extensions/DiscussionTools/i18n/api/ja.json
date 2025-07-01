@@ -13,7 +13,7 @@
 	"apierror-discussiontools-commentid-notfound": "ID「$1」のコメントが見つかりませんでした。",
 	"apierror-discussiontools-commentname-ambiguous": "「$1」という名前のコメントが複数見つかりました。<var>commentid</var>が必要です。",
 	"apierror-discussiontools-commentname-notfound": "「$1」という名前のコメントが見つかりません。",
-	"apierror-discussiontools-formtoken-used": "コメントはすでに投稿されています。表示するにはページを再読み込みしてください。",
+	"apierror-discussiontools-formtoken-used": "コメントは既に投稿されています。表示するにはページを再読み込みしてください。",
 	"apierror-discussiontools-subscription-failed-add": "このトピックを購読できませんでした。",
 	"apierror-discussiontools-subscription-failed-remove": "このトピックの購読を解除できませんでした。",
 	"apihelp-discussiontoolsedit-param-commentid": "返信するコメントのID。<var>paction</var> が <var>addcomment</var> の場合にのみ使用されます。<var>commentname</var>よりも優先されます。",

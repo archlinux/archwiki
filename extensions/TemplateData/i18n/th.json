@@ -22,7 +22,7 @@
 	"templatedata-doc-param-name": "พารามิเตอร์",
 	"templatedata-doc-param-status": "สถานะ",
 	"templatedata-doc-param-status-deprecated": "เลิกใช้แล้ว",
-	"templatedata-doc-param-status-optional": "เลือกได้",
+	"templatedata-doc-param-status-optional": "ไม่บังคับ",
 	"templatedata-doc-param-status-required": "จำเป็น",
 	"templatedata-doc-param-status-suggested": "แนะนำ",
 	"templatedata-doc-param-suggestedvalues": "ค่าที่แนะนำ",

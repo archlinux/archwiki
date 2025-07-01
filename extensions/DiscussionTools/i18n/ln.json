@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lydie maliki"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Kopesa eyano",
+	"discussiontools-newtopic-missing-title": "Svp pesa titre pona {{GENDER:|yo}} sujet ya masolo.",
+	"discussiontools-newtopic-placeholder-title": "Moto ya likambo",
+	"discussiontools-replylink": "{{GENDER:|koyanola}}",
+	"discussiontools-replywidget-advanced": "Kokende liboso",
+	"discussiontools-replywidget-cancel": "Kolongola",
+	"discussiontools-replywidget-mode-source": "Esika",
+	"discussiontools-replywidget-mode-visual": "Ya komona",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Bakisa}} motó ya likambo",
+	"discussiontools-replywidget-placeholder-newtopic": "Ndimbola",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Koyanola}} na {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Botali liboso",
+	"discussiontools-replywidget-reply": "{{GENDER:|Koyanola}}",
+	"discussiontools-replywidget-summary": "Na mokuse",
+	"discussiontools-replywidget-watchthis": "Bakisa lokasa oyo na [[Special:Liste ya bokengeli|liste ya bokengeli]] na yo.",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| moto|bato}} na masolo",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1| commentaire|ba commentaires}}",
+	"discussiontools-topicheader-latestcomment": "Likanisi ya sika: $1",
+	"discussiontools-topicsubscription-button-subscribe": "bosala abonnément",
+	"discussiontools-topicsubscription-button-subscribe-label": "Mokomi ya abonema",
+	"discussiontools-topicsubscription-button-unsubscribe": "kolongolaka abonnément",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Longola abonnément",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Yo}} okozwa mayebisi na ntina ya makanisi ya sika na likambo oyo.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Yo}} osali abonné!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Yo}} okozwa lisusu mayebisi te na ntina ya makanisi ya sika na likambo oyo.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Yo}} olongoli abonema."
+}

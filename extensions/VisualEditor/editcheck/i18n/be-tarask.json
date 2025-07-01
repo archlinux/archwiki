@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Renessaince"
+		]
+	},
+	"editcheck-dialog-action-no": "Не",
+	"editcheck-dialog-action-yes": "Так",
+	"editcheck-dialog-addref-description": "Дапамажыце чытачам зразумець, адкуль узятая гэтая інфармацыя, дадаўшы крыніцу.",
+	"editcheck-dialog-addref-reject-question": "Чаму вы не дадалі крыніцу?",
+	"editcheck-dialog-addref-reject-description": "Іншыя рэдактары хацелі б даведацца прычыны, зь якіх вы не дадалі крыніцу.",
+	"editcheck-dialog-addref-reject-irrelevant": "Я не лічу, што да маіх зьмяненьняў прыдатныя крыніцы",
+	"editcheck-dialog-addref-reject-common-knowledge": "Дададзеная мною інфармацыя шырока вядомая",
+	"editcheck-dialog-addref-reject-uncertain": "Я пэўна ня ведаю, якую крыніцу дадаць",
+	"editcheck-dialog-addref-reject-other": "Іншае",
+	"editcheck-dialog-addref-success-notify": "Дзякуем, што дадалі крыніцу!",
+	"editcheck-dialog-addref-title": "Дадаць цытату",
+	"editcheck-dialog-title": "Перад публікацыяй",
+	"tag-editcheck-reference-decline-common-knowledge": "Праверка рэдагаваньня (крыніцы) адхіленая (агульныя веды)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Праверка рэдагаваньня была адхіленая, бо гэта агульныя веды",
+	"tag-editcheck-reference-decline-irrelevant": "Праверка рэдагаваньня (крыніцы) адхіленая (не датычыцца)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Праверка рэдагаваньня была адхіленая, бо не датычыць",
+	"tag-editcheck-reference-decline-other": "Праверка рэдагаваньня (крыніцы) адхіленая (іншае)",
+	"tag-editcheck-reference-decline-other-description": "Праверка рэдагаваньня (крыніцы) адхіленая зь іншай прычыны",
+	"tag-editcheck-reference-decline-uncertain": "Праверка рэдагаваньня (крыніцы) адхіленая (няпэўна)",
+	"tag-editcheck-reference-decline-uncertain-description": "Праверка рэдагаваньня (крыніцы) адхіленая як няпэўная"
+}

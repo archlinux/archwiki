@@ -8,7 +8,7 @@
 		]
 	},
 	"citethispage": "ციტირება",
-	"citethispage-desc": "ამატებს [[Special:Cite|ციტირების]] სპეციალურ გვერდს ხელსაწყოებში",
+	"citethispage-desc": "ამატებს [[Special:CiteThisPage|ციტირების]] სპეციალურ გვერდს და ბმულს ხელსაწყოებში",
 	"citethispage-link": "გვერდის ციტირება",
 	"tooltip-citethispage": "ინფორმაცია ამ გვერდის ციტირების შესახებ",
 	"citethispage-change-submit": "ციტირება",

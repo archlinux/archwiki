@@ -7,11 +7,16 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "جاۋاب",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|سىزنىڭ}} سۆھبەت تېمىڭىزغا ماۋزۇ تەمىنلەڭ.",
+	"discussiontools-newtopic-placeholder-title": "تېما",
 	"discussiontools-replylink": "{{GENDER:|جاۋاب}}",
 	"discussiontools-replywidget-advanced": "ئالىي",
 	"discussiontools-replywidget-cancel": "ۋاز كەچ",
 	"discussiontools-replywidget-mode-source": "مەنبە",
 	"discussiontools-replywidget-mode-visual": "كۆرۈنىدىغان قىلىش",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|قوش}} تېما",
+	"discussiontools-replywidget-placeholder-newtopic": "چۈشەندۈرۈش",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}غا {{GENDER:|جاۋاب}}",
 	"discussiontools-replywidget-preview": "ئالدىن كۆزەت",
 	"discussiontools-replywidget-reply": "{{GENDER:|جاۋاب}}",
 	"discussiontools-replywidget-summary": "ئۈزۈندە",
@@ -22,5 +27,9 @@
 	"discussiontools-topicsubscription-button-subscribe": "مۇشتەرى بول",
 	"discussiontools-topicsubscription-button-subscribe-label": "مۇشتەرى بول",
 	"discussiontools-topicsubscription-button-unsubscribe": "مۇشتەرى بولما",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "مۇشتەرى بولما"
+	"discussiontools-topicsubscription-button-unsubscribe-label": "مۇشتەرى بولما",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|سىز}} بۇ تېما ھەققىدىكى يېڭى جاۋاب توغرىسىدا ئۇقتۇرۇش تاپشۇرۇۋالىسىز.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|سىز}} مۇشتەرى بولدىڭىز!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|سىز}} بۇ تېما ھەققىدىكى يېڭى جاۋاب توغرىسىدا ئەمدى ئۇقتۇرۇش تاپشۇرۇۋالمايسىز.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|سىز}} مۇشتەرىلىكتىن چېكىندىڭىز."
 }

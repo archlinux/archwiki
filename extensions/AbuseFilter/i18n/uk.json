@@ -29,7 +29,8 @@
 			"Vlad5250",
 			"Ата",
 			"Максим Підліснюк",
-			"Тест"
+			"Тест",
+			"MonX94"
 		]
 	},
 	"abusefilter-desc": "Застосовує до редагувань автоматичні евристики.",
@@ -578,7 +579,7 @@
 	"abusefilter-examine-vars": "Змінні, створені для цієї зміни",
 	"abusefilter-examine-test": "Перевірити цю зміну у фільтрі",
 	"abusefilter-examine-test-button": "Випробувати фільтр",
-	"abusefilter-examine-match": "Ця змін підпадає під фільтр.",
+	"abusefilter-examine-match": "Ця зміна підпадає під фільтр.",
 	"abusefilter-examine-nomatch": "Ця зміна не підпадає під фільтр.",
 	"abusefilter-examine-syntaxerror": "Синтаксична помилка у фільтрі",
 	"abusefilter-examine-notfound": "Вказану вами зміну не знайдено.",

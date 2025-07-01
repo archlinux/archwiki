@@ -34,5 +34,8 @@
 	"categorytree-not-found": "Категори «$1» ца карийна.",
 	"categorytree-error": "Хаамаш чубахаран гӀалат.",
 	"categorytree-retry": "Дехар до, собар а дийна, йуха а гӀорта.",
-	"categorytree-onlyroot-message": "meter <code>onlyroot</code> is deprecated.Ih a-aparametrou 1024x768, iherr's dtepricedated хӀокхунна метта лелайе <code>depth=\"0\"</code>. Хьажийна меттиг санна лелайе \"dept=\"1."
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Параметр <code>onlyroot</code> ширйелла йу. Цуьнан метта <code>depth=\"0\"</code> лелайе.",
+	"categorytree-deprecation-warning": "'''Тергам:''' ХӀокху агӀоно лелайо <<code>&lt;categorytree&gt;</code> ширйелла параметрца.",
+	"categorytree-deprecation-category": "АгӀонаш лелош categorytree ширйелла параметраш",
+	"categorytree-deprecation-category-desc": "АгӀонехь лелайо categorytree ширйелла параметраш <code>onlyroot</code> санна."
 }

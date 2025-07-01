@@ -137,7 +137,7 @@
 	"echo-overlay-link": "Alle meldingar og varsel",
 	"echo-overlay-title": "<b>Meldingar og varsel</b>",
 	"echo-mark-all-as-read": "Merk {{PLURAL:$1|0=|1=|2=båe|alle}} som {{PLURAL:$1|lese|lesne}}",
-	"echo-mark-all-as-read-confirmation": "$1 {{PLURAL:$1|varsel}} merka som {{PLURAL:$1|lese|lesne}}",
+	"echo-mark-all-as-read-confirmation": "$1 varsel {{PLURAL:$1|merkt som lese|merkte som lesne}}",
 	"echo-mark-wiki-as-read": "Merk {{PLURAL:$2|0=|1=|2=båe|alle}} som {{PLURAL:$1|lese|lesne}} i den valde wikien: $1",
 	"echo-displaysnippet-title": "Nytt varsel",
 	"echo-date-today": "I dag",

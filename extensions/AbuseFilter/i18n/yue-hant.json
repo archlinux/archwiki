@@ -170,7 +170,7 @@
 	"abusefilter-edit-disallow-preview": "顯示/收埋揀咗嘅訊息嘅預覽",
 	"abusefilter-edit-disallow-edit": "開/編輯揀咗嘅訊息",
 	"abusefilter-edit-tag-tag": "[[Special:Tags|摘]]嘅名：",
-	"abusefilter-edit-block-anon-durations": "匿名用戶封鎖持續時間：",
+	"abusefilter-edit-block-anon-durations": "未註冊用戶封鎖持續時間：",
 	"abusefilter-edit-block-user-durations": "註冊用戶封鎖持續時間：",
 	"abusefilter-block-anon": "封鎖匿名用戶",
 	"abusefilter-block-user": "封鎖註冊用戶",

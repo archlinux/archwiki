@@ -2,34 +2,34 @@
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
-            "version": "2.0.8",
-            "version_normalized": "2.0.8.0",
+            "version": "v3.0.1",
+            "version_normalized": "3.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconQrCode.git",
-                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22"
+                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/8674e51bb65af933a5ffaf1c308a660387c35c22",
-                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22",
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/f9cc1f52b5a463062251d666761178dbdb6b544f",
+                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f",
                 "shasum": ""
             },
             "require": {
                 "dasprid/enum": "^1.0.3",
                 "ext-iconv": "*",
-                "php": "^7.1 || ^8.0"
+                "php": "^8.1"
             },
             "require-dev": {
-                "phly/keep-a-changelog": "^2.1",
-                "phpunit/phpunit": "^7 | ^8 | ^9",
-                "spatie/phpunit-snapshot-assertions": "^4.2.9",
-                "squizlabs/php_codesniffer": "^3.4"
+                "phly/keep-a-changelog": "^2.12",
+                "phpunit/phpunit": "^10.5.11 || 11.0.4",
+                "spatie/phpunit-snapshot-assertions": "^5.1.5",
+                "squizlabs/php_codesniffer": "^3.9"
             },
             "suggest": {
                 "ext-imagick": "to generate QR code images"
             },
-            "time": "2022-12-07T17:46:57+00:00",
+            "time": "2024-10-01T13:55:55+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -53,7 +53,7 @@
             "homepage": "https://github.com/Bacon/BaconQrCode",
             "support": {
                 "issues": "https://github.com/Bacon/BaconQrCode/issues",
-                "source": "https://github.com/Bacon/BaconQrCode/tree/2.0.8"
+                "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.1"
             },
             "install-path": "../bacon/bacon-qr-code"
         },
@@ -312,27 +312,27 @@
         },
         {
             "name": "endroid/qr-code",
-            "version": "4.6.1",
-            "version_normalized": "4.6.1.0",
+            "version": "5.1.0",
+            "version_normalized": "5.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/endroid/qr-code.git",
-                "reference": "a75c913b0e4d6ad275e49a2c1de1cacffc6c2184"
+                "reference": "393fec6c4cbdc1bd65570ac9d245704428010122"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/endroid/qr-code/zipball/a75c913b0e4d6ad275e49a2c1de1cacffc6c2184",
-                "reference": "a75c913b0e4d6ad275e49a2c1de1cacffc6c2184",
+                "url": "https://api.github.com/repos/endroid/qr-code/zipball/393fec6c4cbdc1bd65570ac9d245704428010122",
+                "reference": "393fec6c4cbdc1bd65570ac9d245704428010122",
                 "shasum": ""
             },
             "require": {
-                "bacon/bacon-qr-code": "^2.0.5",
-                "php": "^7.4||^8.0"
+                "bacon/bacon-qr-code": "^3.0",
+                "php": "^8.1"
             },
             "require-dev": {
-                "endroid/quality": "dev-master",
+                "endroid/quality": "dev-main",
                 "ext-gd": "*",
-                "khanamiryan/qrcode-detector-decoder": "^1.0.4",
+                "khanamiryan/qrcode-detector-decoder": "^2.0.2",
                 "setasign/fpdf": "^1.8.2"
             },
             "suggest": {
@@ -341,11 +341,11 @@
                 "roave/security-advisories": "Makes sure package versions with known security issues are not installed",
                 "setasign/fpdf": "Enables you to use the PDF writer"
             },
-            "time": "2022-10-26T08:48:17+00:00",
+            "time": "2024-09-08T08:52:55+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.x-dev"
+                    "dev-main": "5.x-dev"
                 }
             },
             "installation-source": "dist",
@@ -375,7 +375,7 @@
             ],
             "support": {
                 "issues": "https://github.com/endroid/qr-code/issues",
-                "source": "https://github.com/endroid/qr-code/tree/4.6.1"
+                "source": "https://github.com/endroid/qr-code/tree/5.1.0"
             },
             "funding": [
                 {
@@ -725,12 +725,12 @@
             "version_normalized": "2.0.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Jakobo/hotp-php.git",
+                "url": "https://github.com/thecodedrift/hotp-php.git",
                 "reference": "ff2f13d1918001e54b3f49deb1d366bcfcc98437"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jakobo/hotp-php/zipball/ff2f13d1918001e54b3f49deb1d366bcfcc98437",
+                "url": "https://api.github.com/repos/thecodedrift/hotp-php/zipball/ff2f13d1918001e54b3f49deb1d366bcfcc98437",
                 "reference": "ff2f13d1918001e54b3f49deb1d366bcfcc98437",
                 "shasum": ""
             },
@@ -763,8 +763,8 @@
             ],
             "description": "HOTP simplifies One Time Password systems for PHP Authentication",
             "support": {
-                "issues": "https://github.com/Jakobo/hotp-php/issues",
-                "source": "https://github.com/Jakobo/hotp-php/tree/v2.0.0"
+                "issues": "https://github.com/thecodedrift/hotp-php/issues",
+                "source": "https://github.com/thecodedrift/hotp-php/tree/v2.0.0"
             },
             "install-path": "../jakobo/hotp-php"
         },
@@ -1981,12 +1981,12 @@
             "time": "2023-01-24T14:02:46+00:00",
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
                 "branch-alias": {
                     "dev-main": "2.5-dev"
-                },
-                "thanks": {
-                    "name": "symfony/contracts",
-                    "url": "https://github.com/symfony/contracts"
                 }
             },
             "installation-source": "dist",
@@ -2031,168 +2031,6 @@
             "install-path": "../symfony/deprecation-contracts"
         },
         {
-            "name": "symfony/polyfill-php80",
-            "version": "v1.31.0",
-            "version_normalized": "1.31.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
-                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2"
-            },
-            "time": "2024-09-09T11:45:10+00:00",
-            "type": "library",
-            "extra": {
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php80\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ion Bazan",
-                    "email": "ion.bazan@gmail.com"
-                },
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.31.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "install-path": "../symfony/polyfill-php80"
-        },
-        {
-            "name": "symfony/polyfill-php81",
-            "version": "v1.31.0",
-            "version_normalized": "1.31.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php81.git",
-                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
-                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2"
-            },
-            "time": "2024-09-09T11:45:10+00:00",
-            "type": "library",
-            "extra": {
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php81\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php81/tree/v1.31.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "install-path": "../symfony/polyfill-php81"
-        },
-        {
             "name": "symfony/polyfill-php82",
             "version": "v1.31.0",
             "version_normalized": "1.31.0.0",
@@ -2214,8 +2052,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "installation-source": "dist",
@@ -2293,8 +2131,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "installation-source": "dist",
@@ -2860,10 +2698,10 @@
             "time": "2023-04-15T19:07:00+00:00",
             "type": "composer-plugin",
             "extra": {
+                "class": "Wikimedia\\Composer\\Merge\\V2\\MergePlugin",
                 "branch-alias": {
                     "dev-master": "2.x-dev"
-                },
-                "class": "Wikimedia\\Composer\\Merge\\V2\\MergePlugin"
+                }
             },
             "installation-source": "dist",
             "autoload": {
@@ -3441,17 +3279,17 @@
         },
         {
             "name": "wikimedia/parsoid",
-            "version": "v0.20.2",
-            "version_normalized": "0.20.2.0",
+            "version": "v0.20.3",
+            "version_normalized": "0.20.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/mediawiki-services-parsoid.git",
-                "reference": "7b69b27dfa01f9180f4652e221ecd651e95c76ab"
+                "reference": "c31cc6f74c422926bae5f2d0e19b6b7ccaf053fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/7b69b27dfa01f9180f4652e221ecd651e95c76ab",
-                "reference": "7b69b27dfa01f9180f4652e221ecd651e95c76ab",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/c31cc6f74c422926bae5f2d0e19b6b7ccaf053fa",
+                "reference": "c31cc6f74c422926bae5f2d0e19b6b7ccaf053fa",
                 "shasum": ""
             },
             "require": {
@@ -3470,7 +3308,7 @@
                 "wikimedia/ip-utils": "^5.0.0",
                 "wikimedia/json-codec": "^3.0.1",
                 "wikimedia/object-factory": "^5.0.1",
-                "wikimedia/remex-html": "^4.0.1",
+                "wikimedia/remex-html": "4.1.1",
                 "wikimedia/scoped-callback": "^4.0.0 || ^5.0.0",
                 "wikimedia/wikipeg": "^4.0.0",
                 "wikimedia/zest-css": "^3.0.1"
@@ -3497,7 +3335,7 @@
             "suggest": {
                 "wikimedia/langconv": "Provides script conversion support"
             },
-            "time": "2025-03-06T02:32:43+00:00",
+            "time": "2025-06-03T22:33:21+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3523,7 +3361,7 @@
             ],
             "support": {
                 "irc": "irc://irc.libera.chat/mediawiki-parsoid",
-                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.20.2",
+                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.20.3",
                 "wiki": "https://www.mediawiki.org/wiki/Parsoid"
             },
             "install-path": "../wikimedia/parsoid"
@@ -4220,17 +4058,17 @@
         },
         {
             "name": "wikimedia/wikipeg",
-            "version": "4.0.0",
-            "version_normalized": "4.0.0.0",
+            "version": "4.0.2",
+            "version_normalized": "4.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/wikipeg.git",
-                "reference": "d9cdf02401e0625b1561efd495bc8292827f08c8"
+                "reference": "d1fc85f7896368def625a99c2a97f6803bc795d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/wikipeg/zipball/d9cdf02401e0625b1561efd495bc8292827f08c8",
-                "reference": "d9cdf02401e0625b1561efd495bc8292827f08c8",
+                "url": "https://api.github.com/repos/wikimedia/wikipeg/zipball/d1fc85f7896368def625a99c2a97f6803bc795d7",
+                "reference": "d1fc85f7896368def625a99c2a97f6803bc795d7",
                 "shasum": ""
             },
             "require": {
@@ -4248,7 +4086,7 @@
                 "phpunit/phpunit": "9.6.16",
                 "wikimedia/update-history": "^1.0"
             },
-            "time": "2024-03-05T00:19:27+00:00",
+            "time": "2025-04-28T22:47:37+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -4262,7 +4100,7 @@
             ],
             "description": "Parser generator for JavaScript and PHP",
             "support": {
-                "source": "https://github.com/wikimedia/wikipeg/tree/4.0.0"
+                "source": "https://github.com/wikimedia/wikipeg/tree/4.0.2"
             },
             "install-path": "../wikimedia/wikipeg"
         },

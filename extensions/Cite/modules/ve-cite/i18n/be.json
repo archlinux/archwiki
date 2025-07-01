@@ -7,7 +7,8 @@
 			"Mikalai Udodau",
 			"Plaga med",
 			"Дзяніс Тутэйшы",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"No Sleep till Krupki"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Кніга",
@@ -49,7 +50,7 @@
 	"cite-ve-referenceslist-isempty-default": "На гэтай старонцы няма зносак, якія можна ўключыць в гэты спіс.",
 	"cite-ve-referenceslist-missingref": "Гэтая зноска вызначаная ў шаблоне ці іншым створаным блоку і пакуль яна можа быць змененая толькі ў зыходным тэксце.",
 	"cite-ve-referenceslist-missingref-in-list": "Гэтая зноска вызначаная ў шаблоне ці іншым створаным блоку і пакуль яна можа быць перадпаказаная толькі ў рэжыме праўкі зыходнага тэксту.",
-	"cite-ve-referenceslist-missingreflist": "Гэты спіс зносак створаны шаблонам і пакуль яго можна правіць толькі ў рэжыме зыходнага тэксту.",
+	"cite-ve-referenceslist-missingreflist": "Гэты спіс зносак створаны шаблонам.",
 	"cite-ve-toolbar-group-label": "Зноскі",
 	"cite-ve-othergroup-item": "$1 зноска"
 }

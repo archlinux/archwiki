@@ -25,7 +25,7 @@ function addDefaultPortlet( portlet, isDropdown ) {
 		const labelDiv = document.createElement( 'div' );
 		labelDiv.classList.add( 'vector-menu-heading' );
 		if ( !isDropdown ) {
-			labelDiv.innerHTML = label.textContent || '';
+			labelDiv.textContent = label.textContent || '';
 			portlet.insertBefore( labelDiv, label );
 			label.remove();
 		}

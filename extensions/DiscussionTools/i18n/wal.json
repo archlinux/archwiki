@@ -131,7 +131,7 @@
 	"discussiontools-replywidget-newcomments-button": "Ooratta $1 bessa {{PLURAL:$1|qofaa|qofata}}",
 	"discussiontools-replywidget-newtopic": "Huuphe yohuwaa {{GENDER:|gujja}}",
 	"discussiontools-replywidget-placeholder-newtopic": "Qonccissuwaa",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}ssi {{GENDER:|Zaara}}",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}gaakko {{GENDER:|zaara}}",
 	"discussiontools-replywidget-preferences": "Doorota",
 	"discussiontools-replywidget-preview": "Kaseti be'uwaa",
 	"discussiontools-replywidget-reply": "{{GENDER:|Zaara}}",

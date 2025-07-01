@@ -6,5 +6,6 @@
 	"apihelp-query+extracts-param-chars": "Koliko slova treba vratiti. Tekst koji se zapravo vraća može biti malo duži.",
 	"apihelp-query+extracts-param-sentences": "Koliko rečenica treba vratiti.",
 	"apihelp-query+extracts-param-intro": "Vrati samo sadržaj pre prve sekcije.",
+	"apihelp-query+extracts-paramvalue-sectionformat-plain": "Bez formatiranja.",
 	"apiwarn-textextracts-unsupportedmodel": "$1 ima model sadržaja $2, koji nije podržan; vraća se prazan sažetak."
 }

@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
-	"timeless-desc": "يو ټايملېس پوښۍ د وېنټر نمونې وروسته د برانډن حارث او WMFy بېلابېلو ډولونو لخوا سکښتل شوې.",
+	"timeless-desc": "يو بې‌وخته پوښۍ چې د برانډون هاريس او ويکيمېډيا بنسټ له خوا د ژمي لومړنۍ‌بڼې د بېلابېلو ښودبڼو وروسته سکښتل شوی",
 	"timeless-anonymous": "ورکنومی",
 	"timeless-loggedinas": "د '''$1''' په توگه ورننوتئ",
 	"timeless-notloggedin": "غونډال کې نه ياست ننوتي",

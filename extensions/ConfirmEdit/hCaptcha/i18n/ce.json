@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Умар"
+		]
+	},
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] хийцар тӀечӀагӀдаран модуль",
+	"hcaptcha-edit": "Вики авто спамах ларйан, оха доьху шуьга хӀара капча йазйан:",
+	"hcaptcha-addurl": "Хьан хийцамехь керла арахьара хьажоргаш йу. Авто спамах ларйан, дехар до, хӀара капча йазйе:",
+	"hcaptcha-badlogin": "Авто пароль дӀасайаржарх вики ларйархьама, оха доьху шуьга хӀара hCaptcha дӀайайар:",
+	"hcaptcha-createaccount": "Аккаунташ авто кхолларах вики ларйархьама, оха доьху шуьга хӀара hCaptcha дӀайазйар:",
+	"hcaptcha-createaccount-fail": "Хетарехь, ахь hCaptcha дӀа ца йаьккхина.",
+	"hcaptcha-create": "АгӀо авто кхолларах вики ларйархьама, оха доьху шуьга хӀара hCaptcha дӀайазйар:",
+	"hcaptcha-help": "Дехар до, hCaptcha дӀайазйе, жоьпан маьӀна captchaWord санна йухадерзаде.",
+	"hcaptcha-privacy-policy": "ХӀара сайт ларйо hCaptcha, цуьнан [https://www.hcaptcha.com/privacy Конфиденциаллалин политика] а, [https://www.hcaptcha.com/terms Лелоран биллам] а лело."
+}

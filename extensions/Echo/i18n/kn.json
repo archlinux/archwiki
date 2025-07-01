@@ -31,8 +31,6 @@
 	"echo-category-title-article-linked": "ಪುಟ {{PLURAL:$1|link|links}}",
 	"echo-category-title-reverted": "{{PLURAL:$1|revert|reverts}} ಸಂಪಾದಿಸಿ",
 	"echo-category-title-mention": "{{PLURAL:$1|Mention|Mentions}}",
-	"echo-category-title-other": "{{PLURAL:$1|Other}}",
-	"echo-category-title-system": "{{PLURAL:$1|System}}",
 	"echo-pref-tooltip-edit-user-talk": "ಯಾರಾದರೂ ನನಗೆ ಸಂದೇಶ ಪೋಸ್ಟ್ ಮಾಡಿದರೆ ಅಥವಾ ನನ್ನ ಚರ್ಚಾಪುಟದಲ್ಲಿ ಉತ್ತರಿಸಿದರೆ ತಿಳಿಸಿ.",
 	"echo-pref-tooltip-article-linked": "ನಾನು ತಯಾರಿಸಿದ ಪುಟಕ್ಕೆ ಯಾರಾದರೂ ಬೇರೆ ಪುಟದಿಂದ ಕೊಂಡಿ ನೀಡಿದರೆ ನನಗೆ ತಿಳಿಸಿ.",
 	"echo-pref-tooltip-reverted": "ನಾನು ಮಾಡಿದ ಸಂಪಾದನೆಯನ್ನು ಯಾರಾದರು ಹಿಂದಿನಂತೆ ಮಾಡಿದರೆ ನನಗೆ ತಿಳಿಸಿ",

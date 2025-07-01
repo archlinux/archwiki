@@ -128,7 +128,7 @@
 	"notification-inbox-filter-unread": "უკითხირუ",
 	"notification-inbox-filter-all": "არძა",
 	"echo-email-html-footer-preference-link-text": "ქეგნაჯინით {{GENDER:$1|თქვანი}} კონფიგურაციას",
-	"echo-notification-alert-text-only": "მოშნუეფი",
+	"echo-notification-alert-text-only": "მოშინუეფი",
 	"echo-notification-notice-text-only": "გინაფეფი",
 	"echo-overlay-link": "არძა გინაფა",
 	"echo-overlay-title": "<b>გინაფეფი</b>",

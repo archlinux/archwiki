@@ -5,6 +5,7 @@
 			"Macofe"
 		]
 	},
+	"popups-settings-option-math-tooltip": "Kursor üzerine ketirgende riyaziy formulalarnı açıqla.",
 	"math_failure": "Ayırıştırılıp olamadı",
 	"math_syntax_error": "sintaksis hatası",
 	"math_unknown_error": "bilinmegen hata",

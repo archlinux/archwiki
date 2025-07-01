@@ -4,7 +4,9 @@
 			"Abdul Fatawu 352",
 			"Hasslaebetch",
 			"Raizkgh",
-			"Soumaya"
+			"Soumaya",
+			"Avenger",
+			"Biema"
 		]
 	},
 	"vector-skin-desc": "A kõta 2 Vector skin: * 2011 - MonoBook sẽn yaa seb-paalã sẽn yaa seb sẽn yaa sõma n paas n paas n maneg a sẽn tõe n maan bũmb ninsã. * 2022 - B maana Vɛktorã WMF tʋʋm-no-kãnga pʋgẽ [[mw:Desktop Improvements]].",
@@ -42,6 +44,11 @@
 	"vector-feature-custom-font-size-0-label": "bilfu",
 	"vector-feature-custom-font-size-1-label": "A sẽn yaa bilfã",
 	"vector-feature-custom-font-size-2-label": "Bedré",
+	"skin-theme-name": "Nzue",
+	"skin-theme-day-label": "Wein",
+	"skin-theme-night-label": "Awosin",
+	"skin-theme-os-label": "Doori",
+	"skin-theme-exclusion-notice": "Sanga kɛrɛ ahin awɔrɛ N da wein wɔ",
 	"vector-search-loader": "Sõng-y n ges-y bũmb nins y sẽn dat n maan n bao n bãng bũmb ningã",
 	"vector-searchsuggest-containing": "Bao nemse n tar <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",

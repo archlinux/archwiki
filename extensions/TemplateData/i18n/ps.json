@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
 	"templatedata-doc-param-default": "تلواليز",
@@ -14,11 +15,11 @@
 	"templatedata-doc-param-type-number": "شمېره",
 	"templatedata-doc-param-type-unknown": "ناجوت",
 	"templatedata-doc-param-type-wiki-file-name": "دوتنه",
-	"templatedata-doc-param-type-wiki-page-name": "مخ",
+	"templatedata-doc-param-type-wiki-page-name": "مخ نوم",
 	"templatedata-doc-param-type-wiki-template-name": "کينډۍ",
 	"templatedata-doc-param-type-wiki-user-name": "کارن",
-	"templatedata-editbutton": "TemplateData مهارول",
-	"templatedata-helplink": "د TemplateData اړونده مالومات",
+	"templatedata-editbutton": "کينډۍ اومتوک سمول",
+	"templatedata-helplink": "د کينډۍ اومتوک اړوند مالومات",
 	"templatedata-modal-button-add-language": "ژبه ورگډول",
 	"templatedata-modal-button-cancel": "ناگارل",
 	"templatedata-modal-button-changelang": "ژبه بدلول",
@@ -32,7 +33,7 @@
 	"templatedata-modal-table-param-example": "بېلگه ($1)",
 	"templatedata-modal-table-param-name": "نوم",
 	"templatedata-modal-table-param-required": "اړين مالومات",
-	"templatedata-modal-title": "کينډۍ لاسوند سمونگر",
+	"templatedata-modal-title": "کينډۍ اومتوک سمونگر",
 	"templatedata-modal-title-choose-language": "ژبه ټاکل",
 	"templatedata-modal-title-language": "ژبه",
 	"templatedata-modal-title-templatedesc": "د کينډۍ څرگندونه ($1)"

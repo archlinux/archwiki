@@ -1,19 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
+	"tag-editcheck-newcontent-description": "سمون‌کتنه فکر کوي چې دې مخ کې نوې منځپانگه ورگډه شوې",
+	"tag-editcheck-newreference-description": "مخ کې يوه سرچينه ورگډه شوې",
+	"tag-editcheck-references-description": "سمون‌کتنه فکر کوي چې يوې سرچينې ته شايد اړتيا وي",
+	"tag-editcheck-references-activated-description": "سمون‌کتنه فکر کوي چې شايد يوې سرچينې ته اړتيا کېدای شي او ک‌م ښودل شوې",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ليدنيز سمون]]",
 	"tag-visualeditor-description": "دا سمون د [[{{MediaWiki:visualeditor-descriptionpagelink}}|ليدنيز سمونگر]] په مرسته شوی",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ليدنيز سمون: کره کتنه]]",
-	"visualeditor-feedback-link": "Project:ليدنيزسمونگر/ستاسې نظرونه",
-	"visualeditor-feedback-tool": "د دې ساوترې اړونده نظر پرېښودل",
+	"tag-visualeditor-needcheck-description": "دا سمون د [[{{MediaWiki:visualeditor-descriptionpagelink}}|ليدنيز سمونگر]] په وسيله شوی  چېرته چې غونډال د ويکي‌ليک شوني غيرارادي بدلونونه وموندل.",
+	"tag-visualeditor-wikitext": "۲۰۱۷ سرچينې سمون",
+	"tag-visualeditor-wikitext-description": "دا سمون د ۲۰۱۷ ويکي‌ليک سمونگر کارولو سره شوی",
+	"tag-visualeditor-switched-description": "کارن د ليدنيز سمونگر په کارولو سره سمون پيل کړی، وروسته يې ويکي‌ليک سمونگر ته بدل کړی دی.",
+	"visualeditor-feedback-link": "پروژه:ليدنيزسمونگر/غبرگون",
+	"visualeditor-feedback-tool": "د دې پوستغالي اړوند خپل غبرگون پرېښودل",
 	"visualeditor-help-label": "کارن لارښود ولولئ",
 	"visualeditor-welcomedialog-action": "سمون پيلول",
 	"visualeditor-welcomedialog-content": "هر څوک يې سمولی شي، او هر پرمختگ مرسته کوي.",
 	"visualeditor-welcomedialog-content-thanks": "د نړۍ سره د ډېر نور څه پېژندلو په مرسته کې له تاسې څخه مننه کوو!",
-	"visualeditor-welcomedialog-switch": "د سرچينې سمونگر ته ور اړول",
-	"visualeditor-welcomedialog-switch-ve": "ليدنيز سمونگر ته ور اړول",
-	"visualeditor-welcomedialog-title": "$2 ته {{GENDER:$1|ښه راغلې}}"
+	"visualeditor-welcomedialog-switch": "سرچينې سمونگر چارنول",
+	"visualeditor-welcomedialog-switch-ve": "ليدنيز سمونگر چارنول",
+	"visualeditor-welcomedialog-title": "$2 ته {{GENDER:$1|ښه راغلاست}}"
 }

@@ -4,5 +4,7 @@
 			"محک"
 		]
 	},
-	"scribunto-lua-error": "لوآ خطا: $2."
+	"scribunto-lua-error": "لوآ خطا: $2.",
+	"nstab-module": "ماژول",
+	"tooltip-ca-nstab-module": "ماژول ره هارشی‌ین"
 }

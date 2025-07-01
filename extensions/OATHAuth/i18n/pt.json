@@ -24,7 +24,7 @@
 	"oathauth-disabledoath": "A autenticação de dois fatores foi desativada.",
 	"oathauth-prefs-label": "Autenticação de dois fatores:",
 	"oathauth-step1": "Passo 1: Descarregue um programa de autenticação de dois fatores",
-	"oathauth-step1-test": "Descarregue um programa para autenticação de dois fatores. Tanto pode ser uma aplicação móvel ou de ambiente de trabalho, como [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator] ou [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator], uma extensão de ''browser'' ou um gestor de palavras-passe como [https://1password.com/ 1Password].",
+	"oathauth-step1-test": "Descarregue um programa para autenticação de dois fatores. Tanto pode ser uma aplicação móvel ou de ambiente de trabalho, como [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator] ou [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator], uma extensão de ''browser'' ou um gestor de palavras-passe como [https://1password.com/ 1Password].",
 	"oathauth-step2": "Passo 2: Faça o ''scan'' do código QR",
 	"oathauth-step2-qrcode": "Leia o código QR usando a aplicação ou extensão do ''browser'' que descarregou no passo 1 para a autenticação de dois fatores.",
 	"oathauth-step2alt": "Se não conseguir ler o código QR, introduza a chave secreta e o nome da conta manualmente:",

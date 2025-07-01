@@ -9,6 +9,7 @@
 		]
 	},
 	"abusefilter-desc": "Aplikas automatala heuristiko a la redakturi",
+	"abusefilter": "Figuro dil filtrilo pri misuzo",
 	"abusefilter-intro": "Bonveno a la kontrol interfacio dil filtrilo di misuzo. La filtrilo di misuzo esas automatala mekanismo di softwaro qua aplikas automatala heuristiko ad omna agadi.\n\nIca interfacio* montras listo pri definita filtrili, e permisas modifikar li.",
 	"abusefilter-warning": "'''Averto''': Ca agado automatale identifikesis kom nociva.\nDestruktiva agadi rapide inversigesos, e grandega o iterata destruktiva redakti rezultos blokuso de vua IP-adreso.\nSe vu kredas ke ca agado esas konstruktiva, vu povas itere sendar ol por konfirmado.\nLa regulo pri abuzo referanta a vua agado deskriptesas koncize hike: $1",
 	"abusefilter-degrouped": "Ica agado automatale identifikesis kom danjerosa.\nDo, ol ne permisesis, e pro existar suspekto pri transakto per vua konto, omna ek vua yuri revokesis.\nSe vu kredas ke to esas eroro, voluntez kontaktar burokrato ed explikar ica agado, do vua yuri restauresos.\nKurta deskripto pri la reguli kontre abuzi qua koincidas kun vua agado esas: $1.",

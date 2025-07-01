@@ -4,7 +4,8 @@
 			"Af420",
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
-			"Baloch Khan"
+			"Baloch Khan",
+			"شاه زمان پټان"
 		]
 	},
 	"nuke": "ټول ړنگېدنه",
@@ -14,10 +15,10 @@
 	"nuke-submit-delete": "ټاکل شوی ړنگول",
 	"right-nuke": "د ډله ايز ړنگون مخونه",
 	"nuke-userorip": "کارن-نوم، آي پي پته يا تش:",
-	"nuke-maxpages": "د حد اکثر شمېر مخونه:",
+	"nuke-maxpages": "راوړل کېدونکو مخونو شمېر(ډېرشمېر ۵۰۰):",
 	"nuke-deleted": "د '''$1''' مخ ړنگ شو.",
 	"nuke-not-deleted": "د [[:$1]] مخ '''نشي''' ړنګېدلی.",
 	"nuke-delete-more": "[[Special:Nuke|لا نور مخونه ړنگول]]",
-	"nuke-viewchanges": "بدلونونه کتل",
+	"nuke-viewchanges": "پېښليک",
 	"nuke-linkoncontribs": "ټول ړنگېدنه"
 }

@@ -21,6 +21,11 @@ class AbuseFilterChangesList extends OldChangesList {
 	private $testFilter;
 
 	/**
+	 * @var array<int,bool> Maps RC IDs to a boolean indicating whether the RC would match a filter that is being tested
+	 */
+	private array $rcResults = [];
+
+	/**
 	 * @param IContextSource $context
 	 * @param string $testFilter
 	 */
@@ -51,7 +56,8 @@ class AbuseFilterChangesList extends OldChangesList {
 			$examineParams['testfilter'] = $this->testFilter;
 		}
 
-		$title = SpecialPage::getTitleFor( 'AbuseFilter', 'examine/' . $rc->getAttribute( 'rc_id' ) );
+		$rcid = $rc->getAttribute( 'rc_id' );
+		$title = SpecialPage::getTitleFor( 'AbuseFilter', 'examine/' . $rcid );
 		$examineLink = $this->linkRenderer->makeLink(
 			$title,
 			new HtmlArmor( $this->msg( 'abusefilter-changeslist-examine' )->parse() ),
@@ -62,8 +68,8 @@ class AbuseFilterChangesList extends OldChangesList {
 		$s .= ' ' . $this->msg( 'parentheses' )->rawParams( $examineLink )->escaped();
 
 		// Add CSS classes for match and not match
-		if ( isset( $rc->filterResult ) ) {
-			$class = $rc->filterResult ?
+		if ( isset( $this->rcResults[$rcid] ) ) {
+			$class = $this->rcResults[$rcid] ?
 				'mw-abusefilter-changeslist-match' :
 				'mw-abusefilter-changeslist-nomatch';
 
@@ -157,5 +163,10 @@ class AbuseFilterChangesList extends OldChangesList {
 	 */
 	public function insertRollback( &$s, &$rc ) {
 		// Kill rollback links.
+	}
+
+	public function setRCResult( RecentChange $rc, bool $matches ): void {
+		$id = $rc->getAttribute( 'rc_id' );
+		$this->rcResults[$id] = $matches;
 	}
 }

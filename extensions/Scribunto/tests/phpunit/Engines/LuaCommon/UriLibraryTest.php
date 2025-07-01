@@ -6,6 +6,7 @@ use MediaWiki\MainConfigNames;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaCommon\UriLibrary
+ * @group Database
  */
 class UriLibraryTest extends LuaEngineTestBase {
 	/** @inheritDoc */

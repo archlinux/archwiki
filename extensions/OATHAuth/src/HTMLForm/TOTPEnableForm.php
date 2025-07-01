@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeNone;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\SvgWriter;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
@@ -64,8 +64,8 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			->writerOptions( [ SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true ] )
 			->data( $qrcodeUrl )
 			->encoding( new Encoding( 'UTF-8' ) )
-			->errorCorrectionLevel( new ErrorCorrectionLevelHigh() )
-			->roundBlockSizeMode( new RoundBlockSizeModeNone() )
+			->errorCorrectionLevel( ErrorCorrectionLevel::High )
+			->roundBlockSizeMode( RoundBlockSizeMode::None )
 			->size( 256 )
 			->margin( 0 )
 			->build();
@@ -183,7 +183,8 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 
 	private function createCopyButton(): string {
 		return Html::rawElement( 'button', [
-			'class' => 'cdx-button mw-oathauth-recoverycodes-copy-button'
+			'class' => 'cdx-button mw-oathauth-recoverycodes-copy-button',
+			'type' => 'button',
 		], Html::element( 'span', [
 			'class' => 'cdx-button__icon',
 			'aria-hidden' => 'true',

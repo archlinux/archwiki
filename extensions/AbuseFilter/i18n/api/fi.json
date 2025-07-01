@@ -5,7 +5,8 @@
 			"MITO",
 			"Markus Mikkonen",
 			"Pxos",
-			"Pyscowicz"
+			"Pyscowicz",
+			"Samoasambia"
 		]
 	},
 	"apihelp-abusefilterchecksyntax-summary": "Tarkista väärinkäyttösuodattimen syntaksi.",
@@ -18,8 +19,8 @@
 	"apihelp-query+abusefilters-example-1": "Luetteloi käytössä olevat julkiset suodattimet",
 	"apihelp-query+abusefilters-example-2": "Näytä joitain tietoja suodattimista",
 	"apihelp-query+abuselog-example-1": "Näytä viimeisimmät lokimerkinnät",
-	"apierror-abusefilter-canttest": "Sinulla ei ole oikeuksia testata väärinkäyttösuodattimia.",
-	"apierror-abusefilter-cantcheck": "Sinulla ei ole oikeuksia tarkastella syntaksia väärinkäyttösuodattimissa.",
+	"apierror-abusefilter-canttest": "Sinulla ei ole oikeutta testata väärinkäyttösuodattimia.",
+	"apierror-abusefilter-cantcheck": "Sinulla ei ole oikeutta tarkastella syntaksia väärinkäyttösuodattimissa.",
 	"apierror-abusefilter-nosuchlogid": "Väärinkäyttösuodattimessa ei ole lokimerkintää tunnisteella $1.",
 	"apierror-abusefilter-badsyntax": "Suodattimella on virheellinen syntaksi."
 }

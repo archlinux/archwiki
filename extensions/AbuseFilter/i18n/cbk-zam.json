@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Aristorkle"
+			"Aristorkle",
+			"Noooote"
 		]
 	},
-	"abusefilter-log-linkonhistory": "mira con el registro de maga abuso",
-	"abusefilter-log-linkonhistory-text": "Mira con el registro de maga abuso de este pagina",
-	"abusefilter-log-linkonundelete": "mira con el registro de maga abuso",
-	"abusefilter-log-linkonundelete-text": "Mira con el registro de maga abuso de este pagina"
+	"abusefilter-log-linkonhistory": "mira con el log de abuso",
+	"abusefilter-log-linkonhistory-text": "Mira con el log de abuso de este pagina",
+	"abusefilter-log-linkonundelete": "Mira con el log de abuso",
+	"abusefilter-log-linkonundelete-text": "Mira con el log de abuso de este pagina"
 }

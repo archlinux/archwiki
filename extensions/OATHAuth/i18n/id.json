@@ -25,7 +25,7 @@
 	"oathauth-disabledoath": "Nonaktifkan otentikasi dua faktor.",
 	"oathauth-prefs-label": "Otentikasi dua faktor:",
 	"oathauth-step1": "Langkah 1: Unduh aplikasi otentikasi dua faktor",
-	"oathauth-step1-test": "Unduh program untuk autentikasi dua faktor. Bisa berupa aplikasi seluler atau desktop, seperti [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator] atau [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator]. Ekstensi peramban. Atau pengelola kata sandi seperti [https://1password.com/ 1Password].",
+	"oathauth-step1-test": "Unduh program untuk autentikasi dua faktor. Bisa berupa aplikasi seluler atau desktop, seperti [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator] atau [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator]. Ekstensi peramban. Atau pengelola kata sandi seperti [https://1password.com/ 1Password].",
 	"oathauth-step2": "Langkah 2: Scan kode QR",
 	"oathauth-step2-qrcode": "Pindai kode QR menggunakan aplikasi atau ekstensi peramban yang Anda unduh pada langkah 1 untuk autentikasi dua faktor.",
 	"oathauth-step2alt": "Jika Anda tidak dapat memindai kode QR, masukkan kunci rahasia dan nama akun secara manual:",

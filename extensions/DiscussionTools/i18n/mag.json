@@ -29,6 +29,7 @@
 	"discussiontools-ledesection-title": "ई बार्तापन्ना क बारेमे",
 	"discussiontools-limitreport-errorreqid": "DiscussionTools त्रुटि अनुरोध आईडी",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|सेकेण्ड}}",
+	"discussiontools-newtopic-missing-title": "कृपया {{GENDER:|अपन}} चर्चा विषयला एक शीर्षक प्रदान करहु ।",
 	"discussiontools-newtopic-placeholder-title": "बिषय",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "सदस्यता ली",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "सदस्यता छोड़ी",

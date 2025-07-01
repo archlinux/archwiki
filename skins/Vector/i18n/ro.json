@@ -42,6 +42,7 @@
 	"vector-jumptocontent": "Sari la conținut",
 	"vector-more-actions": "Mai mult",
 	"vector-appearance-label": "Aspect",
+	"vector-appearance-tooltip": "Schimbă aspectul mărimii fontului, lățimii și culorii paginii",
 	"vector-feature-limited-width-name": "Lățime",
 	"vector-feature-limited-width-0-label": "Lat",
 	"vector-feature-limited-width-1-label": "Standard",

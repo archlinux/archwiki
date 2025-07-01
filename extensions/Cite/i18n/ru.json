@@ -24,7 +24,8 @@
 			"Wikisaurus",
 			"Wileyfoxyx",
 			"Александр Сигачёв",
-			"Cabadeck"
+			"Cabadeck",
+			"MidnightLG"
 		]
 	},
 	"cite-desc": "Добавляет для сносок теги <code>&lt;ref&gt;</code> и <code>&lt;references/&gt;</code>",
@@ -70,6 +71,9 @@
 	"cite-wikieditor-help-content-rereference-description": "Дополнительное использование той же ссылки",
 	"cite-wikieditor-help-content-extended-reference-description": "Дополнительное использование той же ссылки с дополнительными подробностями",
 	"cite-wikieditor-help-content-showreferences-description": "Показывать примечания",
+	"cite-wikieditor-help-content-reference-example-text1": "Текст страницы. $1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Текст ссылки], ещё текст.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст ссылки]",
 	"cite-wikieditor-help-content-reference-example-extra-details": "Очень подробные детали",
 	"popups-prefs-navpopups-gadget-conflict-info": "У вас включен гаджет [[$1|всплывающих навигационных окон]], поэтому вы не увидите окно предпросмотра, предоставляемое этой функцией. В зависимости от вашей вики, гаджет может иметь немного другое название. Если вы продолжаете испытывать проблемы, пожалуйста, проверьте вашими гаджеты и пользовательские скрипты, в том числе глобальные.",
 	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "У вас включены гаджеты [[$1|всплывающих навигационных окошек]] и [[$1|всплывающей подсказки с примечаниями]], поэтому вы не увидите окно предпросмотра, предоставляемое этой функцией. В зависимости от вашей вики, гаджеты могут иметь немного другие названия. Если вы продолжаете испытывать проблемы, пожалуйста, проверьте вашими гаджеты и пользовательские скрипты, в том числе глобальные.",

@@ -53,7 +53,9 @@
 			"Yasten",
 			"Zebulon84",
 			"Mahabarata",
-			"JLTRY"
+			"JLTRY",
+			"EmDashUser002",
+			"Derugon"
 		]
 	},
 	"echo-desc": "Système pour avertir les utilisateurs des événements et messages",
@@ -225,7 +227,7 @@
 	"notification-header-watchlist-multiuser-moved": "<strong>$1</strong>, une page sur {{GENDER:$2|}}votre liste de suivi, a été renommée $3 fois{{PLURAL:$3|}}.",
 	"notification-header-watchlist-multiuser-restored": "<strong>$1</strong>, une page sur {{GENDER:$2|}}votre liste de suivi, a été restaurée pour la $3<sup>e</sup> fois{{PLURAL:$3|}}.",
 	"notification-tooltip-api-triggered": "Cette notification vous a été envoyée par $1",
-	"notification-body-watchlist-once": "Il n’y aura pas d’autre notification par courriel en cas d’activité ultérieure à moins que {{GENDER:$1|}}vous visitiez cette page une fois connecté.",
+	"notification-body-watchlist-once": "Il n’y aura pas d’autre notification par courriel en cas d’activité ultérieure à moins que {{GENDER:$1|}}vous ne visitiez cette page une fois connecté.",
 	"notification-welcome-linktext": "Bienvenue",
 	"notification-header-thank-you-1-edit": "{{GENDER:$2|}}Vous venez d’effectuer {{GENDER:$2|}}votre première modification. {{GENDER:$2|}}Merci et bienvenue !",
 	"notification-header-thank-you-10-edit": "{{GENDER:$2|}}Vous venez d’effectuer {{GENDER:$2|}}votre dixième modification. {{GENDER:$2|}}Merci, continuez ainsi !",

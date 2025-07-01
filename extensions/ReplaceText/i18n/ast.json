@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"replacetext": "Reemplazar testu",
@@ -33,7 +34,7 @@
 	"replacetext_nosuchcategory": "Nun esiste denguna categoría col nome «$1».",
 	"replacetext_return": "Volver al formulariu.",
 	"replacetext_warning": "'''Avisu:''' Hai {{PLURAL:$1|una páxina|$1 páxines}} que yá {{PLURAL:$1|contién|contienen}} la cadena de sustitución «$2». Si faes esta sustitución nun podrás distinguir los tos cambios d'estes cadenes.",
-	"replacetext_blankwarning": "'''Avisu:''' Como la cadena de sustitución ta balera, esta operación nun sedrá reversible.",
+	"replacetext_blankwarning": "'''Avisu:''' Como la cadena de sustitución ta balera, esta operación nun va poder desfacese.",
 	"replacetext_continue": "Siguir",
 	"replacetext_editsummary": "Sustitución de testu - de «$1» a «$2»",
 	"replacetext_reminder": "Pa cambiar tamién los enllaces a esta páxina n'otres páxines, por favor, visita $1.",

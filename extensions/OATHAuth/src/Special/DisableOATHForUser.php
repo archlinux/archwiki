@@ -11,6 +11,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Message\Message;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MWException;
@@ -23,17 +24,21 @@ class DisableOATHForUser extends FormSpecialPage {
 
 	private UserFactory $userFactory;
 
+	private CentralIdLookup $centralIdLookup;
+
 	/**
 	 * @param OATHUserRepository $userRepo
 	 * @param UserFactory $userFactory
+	 * @param CentralIdLookup $centralIdLookup
 	 */
-	public function __construct( $userRepo, $userFactory ) {
+	public function __construct( $userRepo, $userFactory, $centralIdLookup ) {
 		// messages used: disableoathforuser (display "name" on Special:SpecialPages),
 		// right-oathauth-disable-for-user, action-oathauth-disable-for-user
 		parent::__construct( 'DisableOATHForUser', 'oathauth-disable-for-user' );
 
 		$this->userRepo = $userRepo;
 		$this->userFactory = $userFactory;
+		$this->centralIdLookup = $centralIdLookup;
 	}
 
 	/**
@@ -130,7 +135,9 @@ class DisableOATHForUser extends FormSpecialPage {
 	 */
 	public function onSubmit( array $formData ) {
 		$user = $this->userFactory->newFromName( $formData['user'] );
-		if ( !$user || ( $user->getId() === 0 ) ) {
+		// T393253 - Check the username is valid, but don't check if it exists on the local wiki.
+		// Instead, check there is a valid central ID.
+		if ( !$user || $this->centralIdLookup->centralIdFromName( $formData['user'] ) === 0 ) {
 			return [ 'oathauth-user-not-found' ];
 		}
 

@@ -6,7 +6,7 @@
 			"Zoranzoki21"
 		]
 	},
-	"loginnotify-desc": "Obavestite korisnike o sumnjivim prijavama s nepoznatih uređaja i/ili IP adresa",
+	"loginnotify-desc": "Obaveštava korisnike o sumnjivim prijavama s nepoznatih uređaja i/ili IP adresa",
 	"echo-category-title-login-fail": "Neuspeli pokušaji prijave",
 	"echo-pref-tooltip-login-fail": "Obaveštava vas kada je bilo neuspešnih pokušaja prijave na vaš nalog.",
 	"echo-category-title-login-success": "Prijava sa nepoznatog uređaja",

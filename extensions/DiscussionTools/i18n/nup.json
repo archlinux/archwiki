@@ -2,20 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Misbahu umar",
-			"Umar Ahmad2345"
+			"Umar Ahmad2345",
+			"787IYO"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Kudan dozhi",
 	"discussiontools-replylink": "{{GENDER:|zhegan}}",
-	"discussiontools-replywidget-advanced": "Kpeye/lo nin",
+	"discussiontools-replywidget-advanced": "Kpeye",
 	"discussiontools-replywidget-cancel": "Nuya",
 	"discussiontools-replywidget-mode-source": "Gbere",
 	"discussiontools-replywidget-mode-visual": "Lileye",
-	"discussiontools-replywidget-placeholder-reply": "{{EBA/YIWO:|zhegan}} lo {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} lo {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Cincinle",
-	"discussiontools-replywidget-reply": "{{EBA/YIWO:|zhegan}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|Zhegan}}",
 	"discussiontools-replywidget-summary": "Kukeba",
-	"discussiontools-replywidget-watchthis": "La fere nana be [[Special:Watchlist|watchlist]]",
+	"discussiontools-replywidget-watchthis": "La Kperegi nana be [[Special:Watchlist|watchlist]]",
 	"discussiontools-topicheader-authorcount": "$1 {{pLURAL:$1|eza|ezazhi}} dan eza'o",
 	"discussiontools-topicheader-commentcount": "$1 {{pLURAL:$1|eza|ezazhi}}",
 	"discussiontools-topicheader-latestcomment": "Eza worozhi:$1",
@@ -23,8 +24,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Jin subscribe",
 	"discussiontools-topicsubscription-button-unsubscribe": "unsubscribe",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Unsubscribe",
-	"discussiontools-topicsubscription-notify-subscribed-body": "{{EBA/YIWO:|wo'e}}ah de  sanwo eti ezazhi eti egan nana'o.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{EBA/YIWO:|wo'e}}ah subscribe'a ni!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{EBA/YIWO: wo'e}}ah de sanwo eti ezazhi eti egan nana'o be'a.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{EBA/YIWO: wo'e}}ah unsubscribe'a ni."
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|You}} ah de sanwo eti ezazhi eti egan nana'o.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|You}} ah subscribe'a ni!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|You}} ah de sanwo eti ezazhi eti egan nana'o be'a.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} ah unsubscribe'a ni."
 }

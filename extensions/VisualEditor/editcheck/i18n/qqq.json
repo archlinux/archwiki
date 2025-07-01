@@ -7,8 +7,8 @@
 		]
 	},
 	"editcheck-config.json": "{{notranslate}}\n{{ignored}}\nJSON object configuring some edit check behavior.",
-	"editcheck-dialog-action-no": "Label for the no option when asking users if they want to add a citation.\n\n{{Identical|No}}",
-	"editcheck-dialog-action-yes": "Label for the no option when asking users if they want to add a citation.\n\n{{Identical|Yes}}",
+	"editcheck-dialog-action-no": "Label for the no option when asking users if they want to act on a check.\n\n{{Identical|No}}",
+	"editcheck-dialog-action-yes": "Label for the yes option when asking users if they want to act on a check.\n\n{{Identical|Yes}}",
 	"editcheck-dialog-addref-description": "Help text explaining why it is helpful to add a citation.",
 	"editcheck-dialog-addref-reject-question": "Heading for form question asking why the user didn't add a citation.",
 	"editcheck-dialog-addref-reject-description": "Help text for form question asking why the user didn't add a citation.",

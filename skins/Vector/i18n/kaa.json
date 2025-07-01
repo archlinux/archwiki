@@ -4,7 +4,8 @@
 			"Ajiniyaz Nurniyazov",
 			"Atabek",
 			"Inabat Allanova",
-			"Nurlan"
+			"Nurlan",
+			"Janabaevazizbek"
 		]
 	},
 	"skinname-vector": "Vektor, eski (2010)",
@@ -38,6 +39,7 @@
 	"vector-jumptocontent": "Kontentke ótiw",
 	"vector-more-actions": "Jáne",
 	"vector-appearance-label": "Kórinis",
+	"vector-appearance-tooltip": "Bettiń shrift ólshemi, eni hám reńiniń kórinisin ózgertiń",
 	"vector-feature-limited-width-name": "Keńlik",
 	"vector-feature-limited-width-0-label": "Enli",
 	"vector-feature-limited-width-1-label": "Standart",
@@ -85,6 +87,7 @@
 	"vector-2022-beta-preview-label": "Oqıw ushın qolaylılıq (Vector 2022)",
 	"vector-2022-beta-preview-description": "Tipografiyanıń jaqsılanıwı hám túngi rejim sıyaqlı jańa oqıw qolaylılıǵı funkciyalarınan házir-aq paydalanıń.",
 	"vector-night-mode-gadget-warning": "Siz usı funkciyaǵa tásir etetuǵın túngi rejimdegi gadjetten paydalanıp atırsız. Túngi rejimge ótiw ushın [[Arnawlı:Preferences#mw-prefsection-gadgets|gadjetti óshiriń]].",
+	"vector-night-mode-issue-reporting-notice-tooltip": "Qarańǵı rejimdegi reńler bir nárseni oqıwǵa qıyınlastırsa, bul haqqında xabar beriń.",
 	"vector-night-mode-issue-reporting-link-label": "Túngi rejimdegi mashqala haqqında xabar beriń",
 	"vector-night-mode-issue-reporting-link-notification": "Mashqalańız qabıl etildi!",
 	"vector-night-mode-issue-reporting-preload-title": "Túngi rejimde qáteshilik $1",

@@ -10,7 +10,8 @@
 			"Robby",
 			"Sunpriat",
 			"Umherirrender",
-			"Verdy p"
+			"Verdy p",
+			"Foomin10"
 		]
 	},
 	"linterrors": "{{doc-special|LintErrors}}",
@@ -91,7 +92,7 @@
 	"linter-pager-details-header": "Table column heading for the linter error details",
 	"linter-pager-duplicate-ids-details": "Table column heading",
 	"linter-pager-fostered-details": "Table column heading.",
-	"linter-pager-fostered-transparent-details": "Table column heading.\n* '''“Rendering-transparent content” means: content that is invisible in output rendering.'''\n* '''“Fostered content” means: content located in a table but misplaced, i.e., not in table cells, table headings, or captions.'''",
+	"linter-pager-fostered-transparent-details": "Table column heading.\n* “Rendering-transparent content” means: content that is invisible in output rendering.\n* “Fostered content” means: content located in a table but misplaced, i.e., not in table cells, table headings, or captions.",
 	"linter-pager-html5-misnesting-details": "Table column heading.",
 	"linter-pager-inline-media-caption-details": "Table column heading.",
 	"linter-pager-large-tables-details": "Table column heading",

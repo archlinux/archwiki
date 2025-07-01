@@ -15,6 +15,8 @@
 	"visualeditor-dialog-meta-categories-addcategory-label": "Bu saifege bir kategoriya qoş",
 	"visualeditor-dialog-meta-categories-input-placeholder": "Bir kategoriya qoş",
 	"visualeditor-dialog-meta-languages-link-label": "Bağlanğan saife",
+	"visualeditor-mweditmodesource-tool-current": "Viki metnini deñiştirüv",
+	"visualeditor-mweditmodeve-tool-current": "Vizual deñiştirüv",
 	"visualeditor-preference-visualeditor": "Vizual türlendirgiçni işlet",
 	"visualeditor-preference-newwikitexteditor-enable": "Ayrı bir vikimetin türlendirgiçi yerine vizual türlendirgiçniñ içindeki vikimetin rejimini qullan",
 	"visualeditor-preference-newwikitexteditor-help": "Bu funktsiyağa bazıda \"2017 vikimetin türlendirgiçi\" de aytıla.",
@@ -28,5 +30,6 @@
 	"visualeditor-savedialog-review-visual": "Vizual",
 	"visualeditor-savedialog-review-wikitext": "Vikimetin",
 	"visualeditor-savedialog-title-conflict": "Çatışma",
-	"visualeditor-savedialog-title-preview": "Yapqan deñiştirmeleriñizni baqıp çıqıñız"
+	"visualeditor-savedialog-title-preview": "Yapqan deñiştirmeleriñizni baqıp çıqıñız",
+	"visualeditor-special-characters-group-other": "Sıq qullanılğan"
 }

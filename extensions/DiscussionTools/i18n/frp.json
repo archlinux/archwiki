@@ -12,7 +12,7 @@
 	"discussiontools-replywidget-mode-visual": "Visuâl",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|}}Rèpondre a {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Apèrçu",
-	"discussiontools-replywidget-reply": "{{GENDER:|}}Rèpondre",
+	"discussiontools-replywidget-reply": "{{GENDER:|Rèpondre}}",
 	"discussiontools-replywidget-summary": "Rèsumâ",
 	"discussiontools-replywidget-watchthis": "Apondre cela pâge a voutra [[Special:Watchlist|lista de gouârda]]",
 	"discussiontools-topicheader-authorcount": "$1 participent{{PLURAL:$1||s}} a la discussion",
@@ -25,5 +25,5 @@
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|}}Vos recevréd de notificacions sus los novéls comentèros sus cela chousa.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "Vos éte abonâ{{GENDER:||ye}} !",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|}}Vos recevréd gins de notificacions sus los novéls comentèros sus cela chousa.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Vos éte pas més abonâ{{GENDER:||ye}}."
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Vos éte pas més {{GENDER:|abonâ|abonâye}}."
 }

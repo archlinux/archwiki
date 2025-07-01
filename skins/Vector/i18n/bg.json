@@ -50,7 +50,7 @@
 	"skin-theme-day-label": "Светъл",
 	"skin-theme-night-label": "Тъмен",
 	"skin-theme-os-label": "Автоматичен",
-	"skin-theme-exclusion-notice": "Тази страница винаги е в светъл режим.",
+	"skin-theme-exclusion-notice": "Тази страница е винаги в светъл режим.",
 	"vector-search-loader": "Зареждане на предложенията за търсене",
 	"vector-searchsuggest-containing": "Търсене на страници съдържащи <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Въведение",

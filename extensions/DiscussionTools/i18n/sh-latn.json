@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "odgovor",
@@ -58,7 +59,7 @@
 	"discussiontools-replywidget-feedback": "{{GENDER:|Povratne informacije}} o ovoj funkciji",
 	"discussiontools-replywidget-mode-source": "Izvor",
 	"discussiontools-replywidget-mode-visual": "Vizualno",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Odgovor}} korisniku/-ci {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Odgovor}} korisniku/korisnici {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Pregled",
 	"discussiontools-replywidget-reply": "{{GENDER:|Odgovori}}",
 	"discussiontools-replywidget-summary": "Sažetak",

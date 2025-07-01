@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Moyogo"
+			"Moyogo",
+			"Lydie maliki"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "Bakisa source ya description ya esika",
+	"visualeditor-ca-createsource": "Bosala source",
 	"visualeditor-ca-editsource": "Kobɔngisa mosólo",
 	"visualeditor-ca-editsource-section": "kobɔngisa mosólo",
 	"visualeditor-dialog-transclusion-contextitem-description": "Ekelámí útá: $1"

@@ -1,13 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Aristorkle"
+			"Aristorkle",
+			"Noooote"
 		]
 	},
-	"cite_error": "Error de cita: $1",
+	"cite-desc": "Ta aumenta maga tags de <code>&lt;ref&gt;</code> y <code>lt;references&gt;</code> para na maga citacion",
+	"cite_error": "Error de citada: $1",
+	"cite_error_ref_invalid_dir": "Invalido <code>dir=$1</code>, debe <code>ltr</code> o <code>rtl</code> ele",
+	"cite_error_ref_conflicting_dir": "Uno del tag de <code>&lt;ref&gt</code> que tiene nombre \"$1\" tiene man conflicting dir attribute.",
+	"cite_error_ref_numeric_key": "Invalido tag de <code>&lt;ref&gt;</code>; el nombre no puede queda un simple integer. Usa un titulo descriptivo",
+	"cite_error_ref_no_key": "El opening <code>&lt;ref&gt;</code> tag malformao o tiene nombre umal",
+	"cite_error_ref_too_many_keys": "Parametro invalido na <code>&lt;ref&gt;</code> tag",
 	"cite-reference-previews-reference": "Referencia",
 	"cite-reference-previews-book": "Libro de referencia",
-	"cite-reference-previews-journal": "Periodico de referencia",
+	"cite-reference-previews-journal": "Referencia del journal",
 	"cite-reference-previews-news": "Noticias de referencia",
 	"cite-reference-previews-note": "Nota",
 	"cite-reference-previews-web": "Web de referencia",

@@ -8,11 +8,12 @@
 			"Schu",
 			"Shirayuki",
 			"Sou0012",
-			"青子守歌"
+			"青子守歌",
+			"Foomin10"
 		]
 	},
 	"replacetext": "文字列の置換",
-	"replacetext-desc": "管理者がウィキ内の全記事で、ある文字列に一致する部分すべてを置換できるようにする[[Special:ReplaceText|特別ページ]]を提供する",
+	"replacetext-desc": "管理者がウィキ内の全コンテンツページで、ある文字列に一致する部分すべてを置換できるようにする[[Special:ReplaceText|特別ページ]]を提供する",
 	"replacetext_docu": "このウィキ上のすべての標準ページについて、ある文字列を別の文字列に置換するには、2 つの文字列をここに入力して「{{int:replacetext_continue}}」を押します。\n検索した文字列を含むページが列挙されますので、置換したいページを選択してください。\n置換すると、その編集を担当した利用者としてあなたの名前が、ページ履歴に表示されます。",
 	"replacetext_originaltext": "置換前の文字列:",
 	"replacetext_replacementtext": "置換後の文字列:",

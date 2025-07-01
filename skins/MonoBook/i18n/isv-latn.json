@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"monobook-desc": "Klasična vizualna tema MediaWiki od 2004 g., imenovana po črno-běloj fotografiji knigy v pozadju",
+	"monobook-jumptotop": "nazad na vrh",
+	"monobook-jumptopersonal": "koristničske orudja",
+	"monobook-jumptonavigation": "Prějdti k navigaciji",
+	"monobook-jumptosearch": "Prějdti k iskanju",
+	"monobook-more-actions": "Veče",
+	"cactions-mobile": "Dějanja na stranici",
+	"monobook-cactions-label": "Dějanja na stranici",
+	"monobook-notifications-link": "Uvědomjenja ($1)",
+	"monobook-notifications-link-none": "Uvědomjenja",
+	"monobook-view-history": "Historija",
+	"monobook-action-undelete": "Vratiti {{PLURAL:$1|jednu pravku|$1 pravky|$1 pravok}}"
+}

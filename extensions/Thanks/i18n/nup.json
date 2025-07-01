@@ -4,5 +4,5 @@
 			"Umar Ahmad2345"
 		]
 	},
-	"thanks-thank": "{{EBA/YIWO:$1|{{EBA/YIWO:$2|ebojin}}}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ebojin}}}}"
 }

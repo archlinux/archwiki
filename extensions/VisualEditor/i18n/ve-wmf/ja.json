@@ -14,12 +14,14 @@
 			"Whym",
 			"おはぐろ蜻蛉",
 			"아라",
-			"Chqaz"
+			"Chqaz",
+			"Shulmj"
 		]
 	},
-	"tag-editcheck-newcontent-description": "編集チェックは新しいコンテンツがページに追加されたことを示します",
-	"tag-editcheck-newreference-description": "ページに出典が追加されました",
-	"tag-editcheck-references-description": "編集チェックは出典が必要である可能性があることを示します",
+	"tag-editcheck-newcontent-description": "編集チェックは新しいコンテンツがページに追加されたと判断した",
+	"tag-editcheck-newreference-description": "ページに出典が追加",
+	"tag-editcheck-references-description": "編集チェックは出典が必要だと判断した",
+	"tag-editcheck-references-activated-description": "編集チェックは出典が必要だと判断したため、UIが表示された",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ビジュアルエディター]]",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ビジュアルエディター]]を使用した編集",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ビジュアルエディター: 要確認]]",

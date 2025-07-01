@@ -2,14 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"01miki10",
-			"Actuallyisjoha"
+			"Actuallyisjoha",
+			"Samoasambia"
 		]
 	},
 	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha]-moduuli Confirm Editiin",
 	"hcaptcha-edit": "Automaattisten spämmimuokkausten estämiseksi pyydämme sinua ratkaisemaan seuraavan CAPTCHAn:",
-	"hcaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä. Automaattisen spämmin estämiseksi pyydämme sinua ratkaisemaan seuraavan CAPTCHAn:",
+	"hcaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä. Automaattisesti lisättyjen mainoslinkkien estämiseksi pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
 	"hcaptcha-badlogin": "Wiki on suojattu estämään automaattinen salasanojen murtaminen. Pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
 	"hcaptcha-createaccount": "Wiki on suojattu estämään automaattinen tunnusten luonti. Pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
 	"hcaptcha-createaccount-fail": "Vaikuttaa, että et ole ratkaissut hCaptchaa.",
-	"hcaptcha-create": "Wiki on suojattu estämään automaattinen sivujen luonti. Pyydämme sinua ratkaisemaan seuraavan hCaptchan:"
+	"hcaptcha-create": "Wiki on suojattu estämään automaattinen sivujen luonti. Pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
+	"hcaptcha-help": "Ratkaise hCaptcha-tehtävä ja palauta vastaus captchaWord-tyyppinä.",
+	"hcaptcha-privacy-policy": "Tätä sivustoa suojaa hCaptcha, ja siihen sovelletaan sen [https://www.hcaptcha.com/privacy tietosuojakäytäntöä] ja [https://www.hcaptcha.com/terms käyttöehtoja]."
 }

@@ -8,40 +8,19 @@ use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Color\ColorInterface;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\Encoding\EncodingInterface;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelInterface;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeInterface;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 
 final class QrCode implements QrCodeInterface
 {
-    private string $data;
-    private EncodingInterface $encoding;
-    private ErrorCorrectionLevelInterface $errorCorrectionLevel;
-    private int $size;
-    private int $margin;
-    private RoundBlockSizeModeInterface $roundBlockSizeMode;
-    private ColorInterface $foregroundColor;
-    private ColorInterface $backgroundColor;
-
     public function __construct(
-        string $data,
-        EncodingInterface $encoding = null,
-        ErrorCorrectionLevelInterface $errorCorrectionLevel = null,
-        int $size = 300,
-        int $margin = 10,
-        RoundBlockSizeModeInterface $roundBlockSizeMode = null,
-        ColorInterface $foregroundColor = null,
-        ColorInterface $backgroundColor = null
+        private string $data,
+        private EncodingInterface $encoding = new Encoding('UTF-8'),
+        private ErrorCorrectionLevel $errorCorrectionLevel = ErrorCorrectionLevel::Low,
+        private int $size = 300,
+        private int $margin = 10,
+        private RoundBlockSizeMode $roundBlockSizeMode = RoundBlockSizeMode::Margin,
+        private ColorInterface $foregroundColor = new Color(0, 0, 0),
+        private ColorInterface $backgroundColor = new Color(255, 255, 255)
     ) {
-        $this->data = $data;
-        $this->encoding = $encoding ?? new Encoding('UTF-8');
-        $this->errorCorrectionLevel = $errorCorrectionLevel ?? new ErrorCorrectionLevelLow();
-        $this->size = $size;
-        $this->margin = $margin;
-        $this->roundBlockSizeMode = $roundBlockSizeMode ?? new RoundBlockSizeModeMargin();
-        $this->foregroundColor = $foregroundColor ?? new Color(0, 0, 0);
-        $this->backgroundColor = $backgroundColor ?? new Color(255, 255, 255);
     }
 
     public static function create(string $data): self
@@ -73,12 +52,12 @@ final class QrCode implements QrCodeInterface
         return $this;
     }
 
-    public function getErrorCorrectionLevel(): ErrorCorrectionLevelInterface
+    public function getErrorCorrectionLevel(): ErrorCorrectionLevel
     {
         return $this->errorCorrectionLevel;
     }
 
-    public function setErrorCorrectionLevel(ErrorCorrectionLevelInterface $errorCorrectionLevel): self
+    public function setErrorCorrectionLevel(ErrorCorrectionLevel $errorCorrectionLevel): self
     {
         $this->errorCorrectionLevel = $errorCorrectionLevel;
 
@@ -109,12 +88,12 @@ final class QrCode implements QrCodeInterface
         return $this;
     }
 
-    public function getRoundBlockSizeMode(): RoundBlockSizeModeInterface
+    public function getRoundBlockSizeMode(): RoundBlockSizeMode
     {
         return $this->roundBlockSizeMode;
     }
 
-    public function setRoundBlockSizeMode(RoundBlockSizeModeInterface $roundBlockSizeMode): self
+    public function setRoundBlockSizeMode(RoundBlockSizeMode $roundBlockSizeMode): self
     {
         $this->roundBlockSizeMode = $roundBlockSizeMode;
 

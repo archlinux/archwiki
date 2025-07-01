@@ -22,7 +22,8 @@
 			"YahyA",
 			"Yahya",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Asked42"
 		]
 	},
 	"collabpad-doctitle": "কোলাবপ্যাড: $1",
@@ -308,6 +309,7 @@
 	"visualeditor-preference-tabs-prefer-ve": "সবসময় দৃশ্যমান সম্পাদনা ব্যবহার করুন, যদি সম্ভব হয়",
 	"visualeditor-preference-tabs-prefer-wt": "সবসময় উৎস সম্পাদক ব্যবহার করুন",
 	"visualeditor-preference-tabs-remember-last": "আমার সর্বশেষ সম্পাদক মনে রেখো",
+	"visualeditor-preference-collab-label": "সহযোগিতামূলক সম্পাদনা",
 	"visualeditor-rebase-client-export": "রপ্তানি",
 	"visualeditor-rebase-client-export-start": "রপ্তানি...",
 	"visualeditor-rebase-client-import": "আমদানি করুন",

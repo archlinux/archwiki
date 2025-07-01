@@ -6,7 +6,7 @@
 		]
 	},
 	"thanks-desc": "Määd lengks en et Wikki för sesch bei Metmaacher för jät ze bedangke.",
-	"thanks-thank": "Dank{{GENDER:$1|}}{{GENDER:$2|}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|Dank}}}}",
 	"thanks-thanked": "bedank{{GENDER:$1|}}{{GENDER:$2|}}",
 	"thanks-button-thank": "Bedangke{{GENDER:$1|}}{{GENDER:$2|}}",
 	"thanks-button-thanked": "Bedangk.{{GENDER:$1|}}{{GENDER:$2|}}",

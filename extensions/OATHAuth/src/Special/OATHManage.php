@@ -390,8 +390,8 @@ class OATHManage extends SpecialPage {
 		}
 
 		$nextStepMessage = $isSwitch ?
-			$this->msg( 'oathauth-switch-method-next-step', $currentDisplayName ) :
-			$this->msg( 'oathauth-disable-method-next-step', $currentDisplayName, $newDisplayName );
+			$this->msg( 'oathauth-switch-method-next-step', $currentDisplayName, $newDisplayName ) :
+			$this->msg( 'oathauth-disable-method-next-step', $currentDisplayName );
 
 		$panel->appendContent( new HtmlSnippet(
 			$nextStepMessage->parseAsBlock()

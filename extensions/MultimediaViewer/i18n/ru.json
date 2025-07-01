@@ -35,6 +35,7 @@
 	"multimediaviewer-multiple-authors": "ещё {{PLURAL:$1|один автор|$1 автора|$1 авторов}}",
 	"multimediaviewer-multiple-authors-combine": "$1 и $2",
 	"multimediaviewer-metadata-error": "Не удалось загрузить сведения об изображении (ошибка: $1)",
+	"multimediaviewer-file-not-found-error": "Извините, файл $1 не может быть отображён, так как он отсутствует на текущей странице.",
 	"multimediaviewer-thumbnail-error": "Извините, файл не может быть отображён",
 	"multimediaviewer-thumbnail-error-description": "Похоже, возникла какая-то техническая проблема. Вы можете $1, если она будет повторяться. Ошибка: $2",
 	"multimediaviewer-thumbnail-error-retry": "повторить",

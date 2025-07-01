@@ -2,10 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Beta16",
-			"Gianfranco"
+			"Gianfranco",
+			"Sannita"
 		]
 	},
+	"apihelp-templatedata-summary": "Recupera i dati memorizzati dall'estensione TemplateData.",
 	"apihelp-templatedata-example-1": "Mostra TemplateData per [[Template:Foobar]], con risultati se il template non esiste o esiste ma non ha TemplateData",
+	"apihelp-templatedata-example-2": "Restituisce TemplateData per [[Template:Phabricator]], senza risultati se il template non esiste o esiste ma non ha TemplateData",
 	"apihelp-templatedata-param-includeMissingTitles": "Restituisce i dati riguardanti i titoli anche se perduti o mancano di TemplateData. Di default i titoli vengono restituiti solo se esistono e hanno TemplateData.",
-	"apihelp-templatedata-param-lang": "Mostra valori localizzati in questa lingua. Per impostazione predefinita, sono mostrate tutte le traduzioni disponibili."
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Restituisce i dati riguardanti i titoli anche se assenti o se non c'è TemplateData. Di default (per compatibilità con le versioni precedenti) i titoli vengono restituiti solo se esistono e hanno TemplateData.",
+	"apihelp-templatedata-param-lang": "Mostra valori localizzati in questa lingua. Per impostazione predefinita, sono mostrate tutte le traduzioni disponibili.",
+	"apierror-templatedata-corrupt": "Pagina #$1 templatedata contiene dati non validi: $2",
+	"apiwarn-templatedata-deprecation-format": "Il formato di output predefinito cambierà in <kbd>jsonfm</kbd> in futuro. Specificare esplicitamente <kbd>format=json</kbd>."
 }

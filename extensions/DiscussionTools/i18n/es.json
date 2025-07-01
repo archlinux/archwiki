@@ -31,7 +31,8 @@
 			"Woytecr",
 			"PoLuX124",
 			"-jem-",
-			"Dgstranz"
+			"Dgstranz",
+			"JaimeDes"
 		]
 	},
 	"discussiontools": "Herramientas de discusión",
@@ -135,7 +136,7 @@
 	"discussiontools-preference-replytool-help": "Esto te mostrará un enlace para responder a comentarios de una página de discusión en un clic.",
 	"discussiontools-preference-sourcemodetoolbar": "Habilitar herramientas experimentales el modo de edición de código",
 	"discussiontools-preference-sourcemodetoolbar-help": "Esto agregará una barra de herramientas a los modos de código de las funciones de respuesta rápida y adición rápida de temas que incluye accesos directos para hacer ping y añadir enlaces.",
-	"discussiontools-preference-summary": "Puedes aprender más sobre estas características leyendo el [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary resumen de características].",
+	"discussiontools-preference-summary": "Obtén más información sobre estas funciones leyendo el [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary resumen de funciones].",
 	"discussiontools-preference-topicsubscription": "Habilitar suscripción del tema",
 	"discussiontools-preference-topicsubscription-help": "Esto te permitirá suscribirte para recibir notificaciones sobre comentarios en temas individuales.",
 	"discussiontools-preference-visualenhancements": "Mostrar actividad de la discusión",

@@ -464,7 +464,7 @@ class MetadataPanel extends UiElement {
 					.text( mw.msg( 'multimediaviewer-multiple-authors', authorCount - 1 ) )
 					.attr( 'href', filepageUrl )
 			);
-			$wrapper.append( mw.msg( 'multimediaviewer-multiple-authors-combine', author, moreText ) );
+			$wrapper.append( mw.message( 'multimediaviewer-multiple-authors-combine', author, moreText ).escaped() );
 		} else {
 			$wrapper.append( author );
 		}

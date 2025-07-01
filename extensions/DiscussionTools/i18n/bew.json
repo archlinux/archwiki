@@ -55,7 +55,7 @@
 	"discussiontools-limitreport-errorreqid": "ID rekès kengabluan DiscussionTools",
 	"discussiontools-limitreport-timeusage": "Pemakéan waktu DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekon}}",
-	"discussiontools-newtopic-missing-title": "Dimohon kadi judul bakal {{GENDER:|lu punya}} topik perhadring. Kalo lu ngeklik \"{{int:discussiontools-replywidget-newtopic}}\", lu punya topik bakal ditambahin sonder judul.",
+	"discussiontools-newtopic-missing-title": "Tulung lu kasi, dah, judul bakal {{GENDER:|lu punya}} pasalan perhadring.",
 	"discussiontools-newtopic-placeholder-title": "Perihal",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Langganan",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Langganan nerima ma'lumat pas topik dimulain di ni halaman.",

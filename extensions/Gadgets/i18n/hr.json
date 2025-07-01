@@ -24,6 +24,7 @@
 	"gadgetusage-default": "zadano uključeno",
 	"gadgets-title": "Dodatci",
 	"gadgets-pagetext": "Slijedi popis posebnih JavaScript dodataka koje suradnici mogu omogućiti u svojim [[Special:Preferences#mw-prefsection-gadgets|postavkama]], kako je definirano stranicom [[MediaWiki:Gadgets-definition|definicija]].\nOvaj pregled omogućava lak pristup porukama sustava koje opisuju dodatke i njihov kod.",
+	"gadgets-editdescription": "Uredi opis",
 	"gadgets-uses": "Rabi",
 	"gadgets-required-rights": "Zahtijeva {{PLURAL:$2|$1 pravo|sljedeća prava: $1}}.",
 	"gadgets-export": "Izvezi",

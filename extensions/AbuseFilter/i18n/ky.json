@@ -101,5 +101,6 @@
 	"abusefilter-diff-title": "Жоромолдордун айырмасы",
 	"abusefilter-diff-item": "Элемент",
 	"abusefilter-diff-info": "Негизги маалымат",
-	"abusefilter-group-default": "Демейки"
+	"abusefilter-group-default": "Демейки",
+	"abusefilter-log-ip-not-available": "Жеткиликтүү эмес"
 }

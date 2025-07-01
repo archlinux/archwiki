@@ -25,7 +25,7 @@
 	"oathauth-disabledoath": "Đã tắt xác thực dùng hai nhân tố.",
 	"oathauth-prefs-label": "Xác thực dùng hai nhân tố:",
 	"oathauth-step1": "Bước 1: Tải về ứng dụng xác thực dùng hai nhân tố",
-	"oathauth-step1-test": "Tải một chương trình có chức năng xác thực dùng hai nhân tố. Đó có thể là một ứng dụng di động hoặc một ứng dụng dành cho máy tính để bàn như [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], hoặc [https://www.microsoft.com/vi-vn/account/authenticator/ Microsoft Authenticator]; một tiện ích mở rộng trình duyệt; hoặc một trình quản lý mật khẩu như [https://1password.com/ 1Password].",
+	"oathauth-step1-test": "Tải một chương trình có chức năng xác thực dùng hai nhân tố. Đó có thể là một ứng dụng di động hoặc một ứng dụng dành cho máy tính để bàn như [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], hoặc [https://www.microsoft.com/vi-vn/account/authenticator/ Microsoft Authenticator]; một tiện ích mở rộng trình duyệt; hoặc một trình quản lý mật khẩu như [https://1password.com/ 1Password].",
 	"oathauth-step2": "Bước 2: Quét mã QR",
 	"oathauth-step2-qrcode": "Quét mã QR dùng ứng dụng hoặc tiện ích mở rộng trình duyệt mà bạn đã tải về ở bước 1 để xác thực dùng hai nhân tố.",
 	"oathauth-step2alt": "Nếu bạn không thể quét mã QR, hãy nhập mật mã và tên tài khoản thủ công:",

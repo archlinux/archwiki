@@ -18,9 +18,11 @@
 			"Ole Yves",
 			"Patrick Star",
 			"Stjn",
-			"Qwrop"
+			"Qwrop",
+			"MidnightLG"
 		]
 	},
+	"content-model-scribunto": "Модуль Scribunto",
 	"scribunto-desc": "Средство для включения скриптовых языков на страницах MediaWiki",
 	"scribunto-line": "на строке $1",
 	"scribunto-module-line": "в $1 на строке $2",
@@ -68,11 +70,16 @@
 	"scribunto-limitreport-timeusage": "Время использования Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 секунд",
 	"scribunto-limitreport-virtmemusage": "Виртуальный размер Lua",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|байт|байта|байт}}",
 	"scribunto-limitreport-estmemusage": "Предположительное использование памяти Lua",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|байт|байта|байт}}",
 	"scribunto-limitreport-memusage": "Использование памяти Lua",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|байт|байта|байт}}",
 	"scribunto-limitreport-profile": "Профиль Lua",
 	"scribunto-limitreport-profile-ms": "$1 мс",
 	"scribunto-limitreport-logs": "Журналы Lua",
 	"nstab-module": "Модуль",
-	"tooltip-ca-nstab-module": "Просмотреть страницу модуля"
+	"tooltip-ca-nstab-module": "Просмотреть страницу модуля",
+	"namespaceinfo-description-ns828": "Пространство имен для Lua модулей, которые можно вызывать со страниц вики и их страниц документации",
+	"namespaceinfo-description-ns829": "Страницы обсуждения модулей и документации"
 }

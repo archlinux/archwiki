@@ -10,7 +10,8 @@
 			"Ykhwong",
 			"렌즈",
 			"밝은소년",
-			"Tensama0415"
+			"Tensama0415",
+			"아라"
 		]
 	},
 	"discussiontools": "토론 도구",
@@ -40,7 +41,7 @@
 	"discussiontools-error-comment-disappeared-reload": "페이지를 다시 로드한 다음 다시 시도해 주십시오.",
 	"discussiontools-error-comment-is-transcluded": "이 의견에 답변하는 데에 \"{{int:discussiontools-replylink}}\" 링크를 사용할 수 없습니다. 답변을 하고자 하신다면 \"$1\"을 클릭하여 전체 위키텍스트 편집기를 이용해 주세요.",
 	"discussiontools-error-comment-is-transcluded-title": "이 의견에 답변하는 데에 \"{{int:discussiontools-replylink}}\" 링크를 사용할 수 없습니다. 의견이 다른 문서에서 로드되고 있습니다. 답변을 하려면 [[$1]] 문서로 이동해 주세요.",
-	"discussiontools-error-comment-not-saved": "당신의 댓글을 최신 버전의 문서에 게시할 수 없습니다. 최신 변경 사항을 보려면 초안 댓글을 복사한 다음 브라우저를 사용하여 페이지를 새로 고치세요.",
+	"discussiontools-error-comment-not-saved": "{{GENDER:|당신}}의 댓글을 최신 버전의 문서에 게시할 수 없습니다. 최신 변경사항을 보려면 초안 댓글을 복사한 다음 브라우저를 사용하여 페이지를 새로 고치세요.",
 	"discussiontools-error-lint": "위키텍스트에 오류가 존재하여 이 문서에 답변을 남길 수 없습니다. 이 오류에 대해 자세히 알아보려면 [$1 미디어위키 설명문서]를 읽어보시거나, [$2 이곳]에 도움을 요청하시거나, 또는 [$3 전체 문서 편집기]를 열어 위키텍스트 오류를 고쳐 주세요.",
 	"discussiontools-error-noswitchtove": "작성하신 의견에서 <b>$1</b> 코드가 검출되어 시각 모드로 전환할 수 없습니다. 자세한 사항은 [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:DiscussionTools/Reply_tool_visual_mode_limitations 미디어위키 홈페이지]에서 확인해 주시기 바랍니다.",
 	"discussiontools-error-noswitchtove-extension": "확장기능 또는 각주 구문",
