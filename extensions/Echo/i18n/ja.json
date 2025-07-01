@@ -31,7 +31,8 @@
 			"おはぐろ蜻蛉",
 			"ネイ",
 			"春春眠眠",
-			"Ryoya3"
+			"Ryoya3",
+			"YeBoy371"
 		]
 	},
 	"echo-desc": "イベントおよびメッセージについて、利用者に通知するシステム",
@@ -201,6 +202,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|自身}}の編集",
 	"notification-link-text-view-edit": "編集内容を閲覧",
 	"notification-link-article-reminder": "ページを閲覧",
+	"notification-link-api-triggered": "ページを閲覧",
 	"notification-header-reverted": "{{PLURAL:$4|<strong>$3</strong> でのあなたの編集}}が{{GENDER:$2|差し戻されました}}",
 	"notification-header-emailuser": "$1 があなたにメールを{{GENDER:$2|送信しました}}。",
 	"notification-edit-talk-page-email-subject2": "{{SITENAME}}で $1 があなたのトークページにメッセージを{{GENDER:$2|投稿しました}}",

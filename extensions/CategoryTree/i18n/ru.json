@@ -9,7 +9,8 @@
 			"Pacha Tchernof",
 			"Putnik",
 			"Александр Сигачёв",
-			"Yurina Tatiana"
+			"Yurina Tatiana",
+			"Engineer56"
 		]
 	},
 	"categorytree": "Дерево категорий",
@@ -40,5 +41,8 @@
 	"categorytree-not-found": "Категория «$1» не найдена.",
 	"categorytree-error": "Ошибка загрузки данных.",
 	"categorytree-retry": "Пожалуйста, подождите и попробуйте ещё раз.",
-	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Параметр <code>onlyroot</code> является устаревшим. Вместо него используйте <code>depth=\"0\"</code>."
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Параметр <code>onlyroot</code> является устаревшим. Вместо него используйте <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Внимание:''' На этой странице используется <code>&lt;categorytree&lt;</code> с устаревшим параметром.",
+	"categorytree-deprecation-category": "Страницы, использующие устаревшие параметры categorytree",
+	"categorytree-deprecation-category-desc": "На странице используются устаревшие параметры categorytree, такие как <code>onlyroot</code> ."
 }

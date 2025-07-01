@@ -13,7 +13,7 @@
 	"tag-editcheck-newreference-description": "Na stranicu je dodana referencija",
 	"tag-editcheck-references-description": "EditCheck pretpostavlja da je bila potrebna referencija",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Edit Check pokrenut za referencije]]",
-	"tag-editcheck-references-activated-description": "EditCheck je pretpostavio da je bila potrebna referencija pa je prikazano korisničko sučelje",
+	"tag-editcheck-references-activated-description": "EditCheck je pretpostavio da je bila potrebna referencija pa je prikazana poruka u sučelju.",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
 	"tag-visualeditor-description": "Uređivanje napravljeno [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditorom]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualno uređivanje: provjera]]",

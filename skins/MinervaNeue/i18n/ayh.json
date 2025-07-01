@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Abo Yemen"
+		]
+	},
+	"mobile-frontend-history": "شف تاريخ تعديلات الصفحة",
+	"mobile-frontend-home-button": "الصفحة الرئيسية",
+	"mobile-frontend-language-article-heading": "اللغة",
+	"mobile-frontend-main-menu-login": "دْخل حسابك",
+	"mobile-frontend-main-menu-nearby": "قريب منك",
+	"mobile-frontend-main-menu-settings": "الإعدادات",
+	"mobile-frontend-placeholder": "دوّر عليه في {{SITENAME}}",
+	"mobile-frontend-random-button": "صفحة عشوائية",
+	"minerva-page-actions-overflow": "الباقي"
+}

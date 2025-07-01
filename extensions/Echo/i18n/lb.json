@@ -89,7 +89,7 @@
 	"echo-specialpage": "Notifikatiounen",
 	"echo-specialpage-section-markread": "D'Grupp als gelies markéieren",
 	"echo-specialpage-markasread": "Notifikatioun: Als gelies markéieren",
-	"echo-specialpage-markasread-invalid-id": "Net valabel ID vun engem Evenement",
+	"echo-specialpage-markasread-invalid-id": "Ongülteg Evenement-ID",
 	"echo-specialpage-pagefilterwidget-aria-label": "No Wiki a Säitentitel filteren",
 	"echo-specialpage-special-help-menu-widget-aria-label": "Zousätzlech Optiounen an Astellunge fir Notifikatiounen.",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|Notifikatioun|Notifikatiounen}}",

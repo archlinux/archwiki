@@ -5,6 +5,8 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Matiti",
+	"discussiontools-newtopic-missing-title": "Please provide a title for {{GENDER:|your}} discussion topic.",
+	"discussiontools-newtopic-placeholder-title": "Subject",
 	"discussiontools-replylink": "{{GENDER:|matiti}}",
 	"discussiontools-replywidget-advanced": "Intima dom",
 	"discussiontools-replywidget-cancel": "Guko",

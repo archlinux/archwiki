@@ -16,10 +16,13 @@
 	"timeless-sitetools": "ويکي اوزارونه",
 	"timeless-pageactions": "د مخ اوزارونه",
 	"timeless-userpagetools": "د کارن مخ اوزارونه",
+	"timeless-action-addsection": "نوې سکالو",
+	"timeless-view-view": "لوستل",
 	"timeless-pagemisc": "نور",
 	"timeless-namespaces": "نوم‌تشيالونه",
 	"timeless-pagetools": "د مخ چارې",
 	"timeless-languages": "ژبې",
+	"timeless-projects": "نورې پروژې",
 	"timeless-view-history": "پېښليک",
 	"timeless-action-undelete": "{{PLURAL:$1|يو سمون|$1 سمونې}} ناړنگول"
 }

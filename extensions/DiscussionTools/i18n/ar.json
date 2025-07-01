@@ -176,7 +176,7 @@
 	"discussiontools-target-comment-found-moved": "لا يُمكن العثور على هذا التعليق في هذه الصفحة، ولكنه موجود على {{PLURAL:$1|الصفحة التالية|الصفحات التالية}}:",
 	"discussiontools-target-heading-found-moved": "لا يُمكن العثور على هذا الموضوع في هذه الصفحة، ولكنه موجود على {{PLURAL:$1|الصفحة التالية|الصفحات التالية}}:",
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|لا أحد|شخص واحد|شخصان|$1 أشخاص|$1 شخصا|$1 شخص}} في النقاش",
-	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|تعليق|تعليقات}}",
+	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|تعليق واحد|تعليقان|$1 تعليقات|$1 تعليقًا|$1 تعليق}}",
 	"discussiontools-topicheader-latestcomment": "التعليق الأخير: $1",
 	"discussiontools-topicsubscription-action-subscribe-button": "اشتراك",
 	"discussiontools-topicsubscription-action-subscribe-prompt": "الاشتراك في هذا الموضوع؟",

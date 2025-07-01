@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hamilton Abreu"
+			"Hamilton Abreu",
+			"Dreamy Jazz"
 		]
 	},
 	"hcaptcha-desc": "Módulo [https://www.hcaptcha.com/ hCaptcha] para Confirm Edit",

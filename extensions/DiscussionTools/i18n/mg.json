@@ -14,7 +14,7 @@
 	"discussiontools-replywidget-preview": "Topi-maso",
 	"discussiontools-replywidget-reply": "{{GENDER:|Hamaly}}",
 	"discussiontools-replywidget-summary": "Ambangovangony",
-	"discussiontools-replywidget-watchthis": "Hanampy ity pejy ity amin'ny [[Special:Watchlist|lisitry ny pejy arahanao]]",
+	"discussiontools-replywidget-watchthis": "Hanampy ity pejy ity amin'ny [[Special:Watchlist|lisitry ny pejy arahinao]]",
 	"discussiontools-topicheader-authorcount": "Mpandray anjara {{PLURAL:$1|tokana|miisa $1}}",
 	"discussiontools-topicheader-commentcount": "Fanehoan-kevitra {{PLURAL:$1|iray|$1}}",
 	"discussiontools-topicheader-latestcomment": "Fanehoan-kevitra farany: $1",

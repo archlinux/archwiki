@@ -59,7 +59,7 @@
 	"discussiontools-emptystate-desc-self-temp": "{{SITENAME}}上的人们可以使用此[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|讨论页]]给{{GENDER:|您}}发布公开留言。\n\n最终，[[{{MediaWiki:tempuser-helppage}}|此页面会到期失效]]。要继续接收通知以及使用其他功能，请[$1 创建账号]或[$2 登录]。",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|讨论页]]是人们讨论如何改善{{SITENAME}}上的内容的地方。发起新讨论来{{GENDER:{{PAGENAME}}|与}}[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]交流和合作。{{GENDER:|您}}在这里的留言会向他人公开。",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|讨论页]]是人们讨论如何改善{{SITENAME}}上的内容的地方。使用此页面发起有关此IP地址所作编辑的讨论。{{GENDER:|您}}在这里的留言会向他人公开。许多IP地址会定期更改，并且通常由多人共用。",
-	"discussiontools-emptystate-desc-user-temp": "使用此[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|讨论页]]发起{{GENDER:{{PAGENAME}}|与}}[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]的有关如何改进{{SITENAME}}的讨论。{{GENDER:|您}}的留言会对他人公开。因为[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]是[[{{MediaWiki:tempuser-helppage}}|临时账号]]，此讨论页最终会到期失效。[[{{MediaWiki:tempuser-helppage}}|了解更多]]。",
+	"discussiontools-emptystate-desc-user-temp": "使用此[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|讨论页]]{{GENDER:{{PAGENAME}}|与}}[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]发起如何改进{{SITENAME}}的讨论。{{GENDER:|您}}的留言会向他人公开。因为[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]是[[{{MediaWiki:tempuser-helppage}}|临时账号]]，此讨论页最终会到期失效。[[{{MediaWiki:tempuser-helppage}}|了解更多]]。",
 	"discussiontools-emptystate-title": "发起有关{{SUBJECTPAGENAME}}的讨论",
 	"discussiontools-emptystate-title-self": "{{GENDER:|欢迎}}来到您的讨论页",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|欢迎}}来到此讨论页",

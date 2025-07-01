@@ -1137,7 +1137,7 @@
 								.append( Util.parseMsg( 'apisandbox-results-login-suppressed' ) )
 								.appendTo( $result );
 						}
-						let loadTime, match;
+						let loadTime;
 						if ( /^text\/mediawiki-api-prettyprint-wrapped(?:;|$)/.test( ct ) ) {
 							try {
 								data = JSON.parse( data );

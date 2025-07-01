@@ -36,7 +36,8 @@
 			"ProtoplasmaKid",
 			"JaimeDes",
 			"Cenzontle25",
-			"Laquin"
+			"Laquin",
+			"Virum Mundi"
 		]
 	},
 	"skinname-vector": "Versión heredada de Vector (2010)",
@@ -57,7 +58,7 @@
 	"vector-no-language-button-aria-label": "Este artículo existe sólo en este idioma. Añade el artículo para otros idiomas",
 	"vector-language-variant-switcher-label": "Cambiar la variante del idioma",
 	"vector-action-addsection": "Añadir tema",
-	"vector-action-delete": "Eliminar",
+	"vector-action-delete": "Borrar",
 	"vector-action-move": "Trasladar",
 	"vector-action-protect": "Proteger",
 	"vector-action-undelete": "Restaurar",

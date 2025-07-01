@@ -51,6 +51,7 @@
 	"templatedata-helplink": "টেমপ্লেটের উপাত্ত সম্পর্কে তথ্য",
 	"templatedata-invalid-format": "বিশিষ্ট \"$1\" \"inline\", \"block\", বা একটি বৈধ বিন্যাসের স্ট্রিং হতে হবে।",
 	"templatedata-invalid-length": "সংরক্ষণ করার জন্য উপাত্ত খুব বড় ($1 {{PLURAL:$1|বাইট}}, {{PLURAL:$2|সর্বোচ্চ সীমা}} হল $2)",
+	"templatedata-invalid-missing": "আবশ্যিক বৈশিষ্ট্য \"$1\" পাওয়া যায়নি।",
 	"templatedata-invalid-parse": "JSON-এর মধ্যে বাক্যগঠনে ত্রুটি।",
 	"templatedata-modal-button-add-language": "ভাষা যোগ করুন",
 	"templatedata-modal-button-addparam": "প্যারামিটার যোগ করুন",

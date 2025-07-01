@@ -55,6 +55,7 @@
 	"gadgets-validate-invalidjs": "유효하지 않은 \"$2\" 콘텐츠 모델로 인해 $1 스크립트는 사용되지 않습니다.",
 	"gadgets-validate-invalidcss": "유효하지 않은 \"$2\" 콘텐츠 모델로 인해 $1 스타일시트는 사용되지 않습니다.",
 	"gadgets-validate-invalidjson": "유효하지 않은 \"$2\" 콘텐츠 모델로 인해 $1 데이터 문서는 사용되지 않습니다.",
+	"gadgets-validate-nopeer": "\"$1\" 피어 소도구는 존재하지 않으므로 무시되었습니다.",
 	"gadgets-validate-invalidactions": "다음의 {{PLURAL:$2|동작이}} 인식되지 않습니다: $1",
 	"gadgets-validate-invalidcontentmodels": "다음의 콘텐츠 {{PLURAL:$2|모델이}} 존재하지 않습니다: $1",
 	"gadgets-validate-invalidnamespaces": "다음의 이름공간 {{PLURAL:$2|번호가}} 존재하지 않습니다: $1",

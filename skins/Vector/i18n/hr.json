@@ -13,7 +13,7 @@
 		]
 	},
 	"skinname-vector": "Vector (stara inačica iz 2010.)",
-	"vector-skin-desc": "Postoje dvije inačice Vectora:\n* 2011. - Moderna inačica MonoBooka s osvježenim izgledom i mnogim poboljšanjima.\n* 2022. - Vector izrađen kao dio WMF-ova projekta [[mw:Desktop Improvements|Desktop Improvements]].",
+	"vector-skin-desc": "Postoje dvije inačice Vectora:\n* 2011. – Moderna inačica MonoBooka s osvježenim izgledom i mnogim poboljšanjima.\n* 2022. – Vector izrađen kao dio WMF-ova projekta [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements].",
 	"prefs-vector-enable-vector-1-label": "Rabi staru inačicu izgleda Vector",
 	"prefs-vector-enable-vector-1-help": "Izgled sučelja Vector osvježavat će se tijekom nekoliko godina. Ova postavka omogućit će Vam upotrebu inačice Vectora iz prosinca 2019. Više o tehnološkome osuvremenjavanju saznajte na [[mw:Reading/Web/Desktop_Improvements|stranici  projekta na MediaWikiju]].",
 	"vector-opt-out": "Prebaci na stari izgled",
@@ -43,6 +43,7 @@
 	"vector-jumptocontent": "Prijeđi na sadržaj",
 	"vector-more-actions": "Više",
 	"vector-appearance-label": "Izgled",
+	"vector-appearance-tooltip": "Promijenite veličinu slova, širinu stranice ili boje",
 	"vector-feature-limited-width-name": "Širina",
 	"vector-feature-limited-width-0-label": "Povećana",
 	"vector-feature-limited-width-1-label": "Uobičajena",
@@ -86,5 +87,12 @@
 	"vector-toc-unpinned-popup": "Sadržaj je premješten ovdje.",
 	"vector-page-tools-unpinned-popup": "Pomagala su premještena ovdje.",
 	"vector-main-menu-unpinned-popup": "Glavni izbornik premješten je ovdje.",
-	"vector-appearance-unpinned-popup": "Izbornik izgleda premješten je ovdje."
+	"vector-appearance-unpinned-popup": "Izbornik izgleda premješten je ovdje.",
+	"vector-night-mode-gadget-warning": "Koristite dodatak za tamnu pozadinu temu koji ometa ovu značajku. [[Special:Preferences#mw-prefsection-gadgets|Onemogućite dodatak]] da biste koristili ugrađenu tamnu temu.",
+	"vector-night-mode-issue-reporting-notice-tooltip": "Prijavite kada boje u tamnoj temi otežavaju čitanje.",
+	"vector-night-mode-issue-reporting-link-label": "Prijavite probleme s tamnom temom",
+	"vector-night-mode-issue-reporting-link-notification": "Primili smo prijavu!",
+	"vector-night-mode-issue-reporting-preload-title": "Pogreška u tamnoj temi na stranici »$1«",
+	"vector-night-mode-issue-reporting-preload-content": "<!--\nOpišite kako boje u temnoj temi smanjuju čitljivost teksta. Napišite naslov odjeljka u kojemu ste naišli na problem.\n--> \n'''Opis problema'''",
+	"vector-night-mode-beta-tag": "(beta)"
 }
