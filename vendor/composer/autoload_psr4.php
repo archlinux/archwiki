@@ -29,6 +29,8 @@ return array(
     'Wikimedia\\AtEase\\' => array($vendorDir . '/wikimedia/at-ease/src'),
     'Wikimedia\\Assert\\' => array($vendorDir . '/wikimedia/assert/src'),
     'Wikimedia\\' => array($vendorDir . '/wikimedia/ip-utils/src', $vendorDir . '/wikimedia/php-session-serializer/src', $vendorDir . '/wikimedia/relpath/src', $vendorDir . '/wikimedia/running-stat/src', $vendorDir . '/wikimedia/scoped-callback/src', $vendorDir . '/wikimedia/wait-condition-loop/src', $vendorDir . '/wikimedia/wrappedstring/src'),
+    'Symfony\\Polyfill\\Php83\\' => array($vendorDir . '/symfony/polyfill-php83'),
+    'Symfony\\Polyfill\\Php82\\' => array($vendorDir . '/symfony/polyfill-php82'),
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Shellbox\\' => array($vendorDir . '/wikimedia/shellbox/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
