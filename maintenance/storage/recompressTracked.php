@@ -133,7 +133,7 @@ class RecompressTracked {
 		return new self( $jobOptions );
 	}
 
-	public function __construct( $options ) {
+	public function __construct( array $options ) {
 		foreach ( $options as $name => $value ) {
 			$this->$name = $value;
 		}
@@ -174,7 +174,7 @@ class RecompressTracked {
 		}
 	}
 
-	private function logToFile( $msg, $file ) {
+	private function logToFile( string $msg, string $file ) {
 		$header = '[' . date( 'd\TH:i:s' ) . '] ' . wfHostname() . ' ' . posix_getpid();
 		if ( $this->childId !== false ) {
 			$header .= "({$this->childId})";
@@ -250,6 +250,7 @@ class RecompressTracked {
 			if ( $cmdOption == 'child-id' ) {
 				continue;
 			}
+			// @phan-suppress-next-line MediaWikiNoIssetIfDefined
 			if ( in_array( $cmdOption, self::$optionsWithArgs ) && isset( $this->$classOption ) ) {
 				// @phan-suppress-next-line PhanTypeMismatchArgument False positive
 				$cmd .= " --$cmdOption " . Shell::escape( $this->$classOption );

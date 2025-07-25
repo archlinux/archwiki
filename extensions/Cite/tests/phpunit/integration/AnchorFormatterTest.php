@@ -18,37 +18,37 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::FragmentMode, [ 'html5' ] );
 	}
 
-	public function testRefKey() {
+	public function testBackLink() {
 		$formatter = new AnchorFormatter();
 
 		$this->assertSame(
-			'cite_ref-key',
-			$formatter->backLink( 'key', null ) );
+			'cite_ref-1',
+			$formatter->backLink( null, 1, 0 ) );
 		$this->assertSame(
-			'cite_ref-key_2',
-			$formatter->backLink( 'key', '2' ) );
+			'cite_ref-name_2-0',
+			$formatter->backLink( 'name', 2, 1 ) );
 	}
 
-	public function testGetReferencesKey() {
+	public function testJumpLink() {
 		$formatter = new AnchorFormatter();
 
 		$this->assertSame(
-			'cite_note-key',
-			$formatter->jumpLink( 'key' ) );
+			'cite_note-name-1',
+			$formatter->jumpLink( 'name', 1 ) );
 	}
 
 	/**
-	 * @dataProvider provideKeyNormalizations
+	 * @dataProvider provideFragmentIdentifierNormalizations
 	 */
-	public function testNormalizeKey( $key, $expected ) {
+	public function testFragmentIdentifierNormalization( string $id, string $expected ) {
 		/** @var AnchorFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new AnchorFormatter() );
-		$normalized = $formatter->normalizeKey( $key );
+		$normalized = $formatter->normalizeFragmentIdentifier( $id );
 		$encoded = Sanitizer::safeEncodeAttribute( Sanitizer::escapeIdForLink( $normalized ) );
 		$this->assertSame( $expected, $encoded );
 	}
 
-	public static function provideKeyNormalizations() {
+	public static function provideFragmentIdentifierNormalizations() {
 		return [
 			[ 'a b', 'a_b' ],
 			[ 'a  __  b', 'a_b' ],

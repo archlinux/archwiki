@@ -116,10 +116,6 @@ class DataOutputFormatter {
 			$output['bundledIds'] = $bundledIds;
 		}
 
-		if ( $event->getVariant() ) {
-			$output['variant'] = $event->getVariant();
-		}
-
 		$title = $event->getTitle();
 		if ( $title ) {
 			$output['title'] = [
@@ -169,7 +165,8 @@ class DataOutputFormatter {
 			}
 			$output['*'] = $formatted;
 
-			if ( $notification->getBundledNotifications() &&
+			$bundledNotifications = $notification->getBundledNotifications();
+			if ( $bundledNotifications &&
 				Services::getInstance()->getAttributeManager()->isBundleExpandable( $event->getType() )
 			) {
 				$output['bundledNotifications'] = array_values( array_filter( array_map(
@@ -181,7 +178,7 @@ class DataOutputFormatter {
 						$notification->getEvent()->setBundledEvents( [] );
 						return self::formatOutput( $notification, $format, $user, $lang );
 					},
-					array_merge( [ $notification ], $notification->getBundledNotifications() )
+					array_merge( [ $notification ], $bundledNotifications )
 				) ) );
 			}
 		}

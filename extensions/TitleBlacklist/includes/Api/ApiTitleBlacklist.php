@@ -24,6 +24,7 @@
 namespace MediaWiki\Extension\TitleBlacklist\Api;
 
 use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\TitleBlacklist\TitleBlacklist;
 use MediaWiki\Extension\TitleBlacklist\TitleBlacklistEntry;
 use MediaWiki\Title\Title;
@@ -37,7 +38,7 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiTitleBlacklist extends ApiBase {
 
-	public function __construct( $mainModule, $moduleName ) {
+	public function __construct( ApiMain $mainModule, string $moduleName ) {
 		parent::__construct( $mainModule, $moduleName, 'tb' );
 	}
 
@@ -86,6 +87,7 @@ class ApiTitleBlacklist extends ApiBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'title' => [

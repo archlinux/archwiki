@@ -5,7 +5,6 @@
 CREATE TABLE echo_event (
   event_id SERIAL NOT NULL,
   event_type TEXT NOT NULL,
-  event_variant TEXT DEFAULT NULL,
   event_agent_id INT DEFAULT NULL,
   event_agent_ip TEXT DEFAULT NULL,
   event_extra TEXT DEFAULT NULL,

@@ -10,8 +10,7 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * then forwards the event through to the supplied handler.
  */
 class TreeMutationTracer implements TreeHandler {
-	/** @var TreeHandler */
-	private $handler;
+	private TreeHandler $handler;
 
 	/** @var callable */
 	private $callback;
@@ -39,7 +38,7 @@ class TreeMutationTracer implements TreeHandler {
 	 * @param string $msg
 	 */
 	private function trace( $msg ) {
-		call_user_func( $this->callback, "[Tree] $msg" );
+		( $this->callback )( "[Tree] $msg" );
 	}
 
 	/**
@@ -49,19 +48,19 @@ class TreeMutationTracer implements TreeHandler {
 	 * @param array $args
 	 */
 	private function traceEvent( $funcName, $args ) {
-		$this->trace( call_user_func_array( [ TraceFormatter::class, $funcName ], $args ) );
+		$this->trace( TraceFormatter::$funcName( ...$args ) );
 	}
 
-	private function handleMutation( $funcName, $args ) {
+	private function handleMutation( string $funcName, array $args ) {
 		$this->traceEvent( $funcName, $args );
 		$this->before();
-		call_user_func_array( [ $this->handler, $funcName ], $args );
+		$this->handler->$funcName( ...$args );
 		$this->after();
 	}
 
-	private function handleSimple( $funcName, $args ) {
+	private function handleSimple( string $funcName, array $args ) {
 		$this->traceEvent( $funcName, $args );
-		call_user_func_array( [ $this->handler, $funcName ], $args );
+		$this->handler->$funcName( ...$args );
 	}
 
 	/**

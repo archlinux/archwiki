@@ -6,9 +6,9 @@
  * This file is a LESS @import match for "mediawiki.skin.variables.less"
  * when Vector 2022 is the active skin.
  * Please note, that legacy Vector is handled by
- * "mediwiki.less.legacy/mediawiki.skin.variables.less".
+ * "mediawiki.less.legacy/mediawiki.skin.variables.less".
  *
- * Please also note, that both current Wikimedia Design Style Guide based skins,
+ * Please also note, that both current Codex, design system for Wikimedia based skins,
  * Vector 2022 and Minerva Neue are using the same variable values respectively in their
  * repositories.
  */
@@ -27,3 +27,9 @@
 // Arial on Windows, Roboto on Android.
 // FIXME: Use Codex's OS specific default sans-serif fonts.
 @font-family-sans: @font-family-sans--fallback; // Codex: 'Helvetica Neue', 'Helvetica', 'Liberation Sans', 'Arial', sans-serif;
+
+// Line height specific former values in preparation of new font modes, see T389900.
+// TODO: These variables can be removed once the new font modes typographic styles are
+// fully implemented.
+@line-height-xx-small: 1.375;
+@line-height-medium: 1.6;

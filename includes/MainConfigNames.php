@@ -130,12 +130,6 @@ class MainConfigNames {
 	public const StyleDirectory = 'StyleDirectory';
 
 	/**
-	 * Name constant for the BaseDirectory setting, for use with Config::get()
-	 * @see MainConfigSchema::BaseDirectory
-	 */
-	public const BaseDirectory = 'BaseDirectory';
-
-	/**
 	 * Name constant for the ArticlePath setting, for use with Config::get()
 	 * @see MainConfigSchema::ArticlePath
 	 */
@@ -792,6 +786,18 @@ class MainConfigNames {
 	public const ThumbnailNamespaces = 'ThumbnailNamespaces';
 
 	/**
+	 * Name constant for the ThumbnailSteps setting, for use with Config::get()
+	 * @see MainConfigSchema::ThumbnailSteps
+	 */
+	public const ThumbnailSteps = 'ThumbnailSteps';
+
+	/**
+	 * Name constant for the ThumbnailStepsRatio setting, for use with Config::get()
+	 * @see MainConfigSchema::ThumbnailStepsRatio
+	 */
+	public const ThumbnailStepsRatio = 'ThumbnailStepsRatio';
+
+	/**
 	 * Name constant for the ThumbnailBuckets setting, for use with Config::get()
 	 * @see MainConfigSchema::ThumbnailBuckets
 	 */
@@ -1260,6 +1266,18 @@ class MainConfigNames {
 	public const PageLinksSchemaMigrationStage = 'PageLinksSchemaMigrationStage';
 
 	/**
+	 * Name constant for the FileSchemaMigrationStage setting, for use with Config::get()
+	 * @see MainConfigSchema::FileSchemaMigrationStage
+	 */
+	public const FileSchemaMigrationStage = 'FileSchemaMigrationStage';
+
+	/**
+	 * Name constant for the CategoryLinksSchemaMigrationStage setting, for use with Config::get()
+	 * @see MainConfigSchema::CategoryLinksSchemaMigrationStage
+	 */
+	public const CategoryLinksSchemaMigrationStage = 'CategoryLinksSchemaMigrationStage';
+
+	/**
 	 * Name constant for the ExternalLinksDomainGaps setting, for use with Config::get()
 	 * @see MainConfigSchema::ExternalLinksDomainGaps
 	 */
@@ -1546,6 +1564,18 @@ class MainConfigNames {
 	 * @see MainConfigSchema::ParserCacheExpireTime
 	 */
 	public const ParserCacheExpireTime = 'ParserCacheExpireTime';
+
+	/**
+	 * Name constant for the ParserCacheAsyncExpireTime setting, for use with Config::get()
+	 * @see MainConfigSchema::ParserCacheAsyncExpireTime
+	 */
+	public const ParserCacheAsyncExpireTime = 'ParserCacheAsyncExpireTime';
+
+	/**
+	 * Name constant for the ParserCacheAsyncRefreshJobs setting, for use with Config::get()
+	 * @see MainConfigSchema::ParserCacheAsyncRefreshJobs
+	 */
+	public const ParserCacheAsyncRefreshJobs = 'ParserCacheAsyncRefreshJobs';
 
 	/**
 	 * Name constant for the OldRevisionParserCacheExpireTime setting, for use with Config::get()
@@ -1928,6 +1958,7 @@ class MainConfigNames {
 	/**
 	 * Name constant for the AllowRawHtmlCopyrightMessages setting, for use with Config::get()
 	 * @see MainConfigSchema::AllowRawHtmlCopyrightMessages
+	 * @deprecated since 1.44
 	 */
 	public const AllowRawHtmlCopyrightMessages = 'AllowRawHtmlCopyrightMessages';
 
@@ -2098,12 +2129,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::ResourceLoaderMaxage
 	 */
 	public const ResourceLoaderMaxage = 'ResourceLoaderMaxage';
-
-	/**
-	 * Name constant for the ResourceLoaderUseObjectCacheForDeps setting, for use with Config::get()
-	 * @see MainConfigSchema::ResourceLoaderUseObjectCacheForDeps
-	 */
-	public const ResourceLoaderUseObjectCacheForDeps = 'ResourceLoaderUseObjectCacheForDeps';
 
 	/**
 	 * Name constant for the ResourceLoaderDebug setting, for use with Config::get()
@@ -2371,6 +2396,12 @@ class MainConfigNames {
 	public const ParsoidSettings = 'ParsoidSettings';
 
 	/**
+	 * Name constant for the ParsoidExperimentalParserFunctionOutput setting, for use with Config::get()
+	 * @see MainConfigSchema::ParsoidExperimentalParserFunctionOutput
+	 */
+	public const ParsoidExperimentalParserFunctionOutput = 'ParsoidExperimentalParserFunctionOutput';
+
+	/**
 	 * Name constant for the ParserEnableLegacyMediaDOM setting, for use with Config::get()
 	 * @see MainConfigSchema::ParserEnableLegacyMediaDOM
 	 * @deprecated since 1.41
@@ -2380,6 +2411,7 @@ class MainConfigNames {
 	/**
 	 * Name constant for the ParserEnableLegacyHeadingDOM setting, for use with Config::get()
 	 * @see MainConfigSchema::ParserEnableLegacyHeadingDOM
+	 * @deprecated since 1.44
 	 */
 	public const ParserEnableLegacyHeadingDOM = 'ParserEnableLegacyHeadingDOM';
 
@@ -2703,6 +2735,12 @@ class MainConfigNames {
 	public const AutoCreateTempUser = 'AutoCreateTempUser';
 
 	/**
+	 * Name constant for the AutoblockExemptions setting, for use with Config::get()
+	 * @see MainConfigSchema::AutoblockExemptions
+	 */
+	public const AutoblockExemptions = 'AutoblockExemptions';
+
+	/**
 	 * Name constant for the AutoblockExpiry setting, for use with Config::get()
 	 * @see MainConfigSchema::AutoblockExpiry
 	 */
@@ -2875,6 +2913,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::AutopromoteOnceLogInRC
 	 */
 	public const AutopromoteOnceLogInRC = 'AutopromoteOnceLogInRC';
+
+	/**
+	 * Name constant for the AutopromoteOnceRCExcludedGroups setting, for use with Config::get()
+	 * @see MainConfigSchema::AutopromoteOnceRCExcludedGroups
+	 */
+	public const AutopromoteOnceRCExcludedGroups = 'AutopromoteOnceRCExcludedGroups';
 
 	/**
 	 * Name constant for the AddGroups setting, for use with Config::get()
@@ -3559,6 +3603,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::GitRepositoryViewers
 	 */
 	public const GitRepositoryViewers = 'GitRepositoryViewers';
+
+	/**
+	 * Name constant for the InstallerInitialPages setting, for use with Config::get()
+	 * @see MainConfigSchema::InstallerInitialPages
+	 */
+	public const InstallerInitialPages = 'InstallerInitialPages';
 
 	/**
 	 * Name constant for the RCMaxAge setting, for use with Config::get()
@@ -4480,5 +4530,11 @@ class MainConfigNames {
 	 * @see MainConfigSchema::OutputPipelineStages
 	 */
 	public const OutputPipelineStages = 'OutputPipelineStages';
+
+	/**
+	 * Name constant for the FeatureShutdown setting, for use with Config::get()
+	 * @see MainConfigSchema::FeatureShutdown
+	 */
+	public const FeatureShutdown = 'FeatureShutdown';
 
 }

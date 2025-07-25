@@ -37,34 +37,33 @@ class ContentUtils {
 	 *
 	 * @param Node $node
 	 * @param array $options
+	 *   Data attribute options, see DOMDataUtils::storeDataAttribs() for
+	 *   details.  In addition, setting `$options['fragment']` to true
+	 *   should be used when serializing a DocumentFragment unconnected to
+	 *   the parent document; this ensures that we don't mistakenly mark
+	 *   the top level document as "unloaded" if we were just serializing
+	 *   a fragment.
+	 *
+	 *   Eventually most places which serialize using the `fragment` option
+	 *   should be converted to store the DocumentFragment natively, instead
+	 *   of as a string (T348161).
+	 *
 	 * @return string
 	 */
 	public static function ppToXML( Node $node, array $options = [] ): string {
+		$doc = $node->ownerDocument ?? $node;
 		DOMDataUtils::visitAndStoreDataAttribs( $node, $options );
+		if ( !( $options['fragment'] ?? false ) ) {
+			DOMDataUtils::getBag( $doc )->loaded = false;
+		}
 		return self::toXML( $node, $options );
 	}
 
 	/**
-	 * XXX: Don't use this outside of testing.  It shouldn't be necessary
-	 * to create new documents when parsing or serializing.  A document lives
-	 * on the environment which can be used to create fragments.  The bag added
-	 * as a dynamic property to the PHP wrapper around the libxml doc
-	 * is at risk of being GC-ed.
+	 * Create a new prepared document with the given HTML and load the
+	 * data attributes.
 	 *
-	 * @param string $html
-	 * @param bool $validateXMLNames
-	 * @return Document
-	 */
-	public static function createDocument(
-		string $html = '', bool $validateXMLNames = false
-	): Document {
-		$doc = DOMUtils::parseHTML( $html, $validateXMLNames );
-		DOMDataUtils::prepareDoc( $doc );
-		return $doc;
-	}
-
-	/**
-	 * XXX: Don't use this outside of testing.  It shouldn't be necessary
+	 * Don't use this inside of the parser pipeline: it shouldn't be necessary
 	 * to create new documents when parsing or serializing.  A document lives
 	 * on the environment which can be used to create fragments.  The bag added
 	 * as a dynamic property to the PHP wrapper around the libxml doc
@@ -77,10 +76,13 @@ class ContentUtils {
 	public static function createAndLoadDocument(
 		string $html, array $options = []
 	): Document {
-		$doc = self::createDocument( $html, $options['validateXMLNames'] ?? false );
+		$options += [ 'markNew' => true, 'validateXMLNames' => true ];
+		$doc = DOMUtils::parseHTML( $html, $options['validateXMLNames'] );
+		DOMDataUtils::prepareDoc( $doc );
 		DOMDataUtils::visitAndLoadDataAttribs(
 			DOMCompat::getBody( $doc ), $options
 		);
+		DOMDataUtils::getBag( $doc )->loaded = true;
 		return $doc;
 	}
 
@@ -97,21 +99,6 @@ class ContentUtils {
 		DOMUtils::setFragmentInnerHTML( $domFragment, $html );
 		DOMDataUtils::visitAndLoadDataAttribs( $domFragment, $options );
 		return $domFragment;
-	}
-
-	/**
-	 * Pull the data-parsoid script element out of the doc before serializing.
-	 *
-	 * @param Node $node
-	 * @param array $options XMLSerializer options.
-	 * @return array
-	 */
-	public static function extractDpAndSerialize( Node $node, array $options = [] ): array {
-		$doc = DOMUtils::isBody( $node ) ? $node->ownerDocument : $node;
-		$pb = DOMDataUtils::extractPageBundle( $doc );
-		$out = XMLSerializer::serialize( $node, $options );
-		$out['pb'] = $pb;
-		return $out;
 	}
 
 	/**
@@ -156,6 +143,62 @@ class ContentUtils {
 	 *
 	 * Ex: inline media captions that aren't rendered, language variant markup,
 	 *     attributes that are transcluded. More scenarios might be added later.
+	 *
+	 * @param ParsoidExtensionAPI $extAPI
+	 * @param Element $elt The node whose data attributes need to be examined
+	 * @param callable(DocumentFragment):bool $proc
+	 *        The processor that will process the embedded HTML.
+	 *        This processor will be provided a DocumentFragment
+	 *        and is expected to return true if that fragment was modified.
+	 */
+	public static function processAttributeEmbeddedDom(
+		ParsoidExtensionAPI $extAPI, Element $elt, callable $proc
+	): void {
+		$str2df2str = static function ( string $html ) use ( $extAPI, $proc ): string {
+			$dom = $extAPI->htmlToDom( $html );
+			$ret = $proc( $dom );
+			return $ret ? $extAPI->domToHtml( $dom, true, true ) : $html;
+		};
+		// @phan-suppress-next-line PhanDeprecatedFunction internal use
+		self::processAttributeEmbeddedHTML( $extAPI, $elt, $str2df2str );
+
+		if ( WTUtils::isInlineMedia( $elt ) ) {
+			$caption = DOMDataUtils::getDataMw( $elt )->caption ?? null;
+			if ( $caption !== null ) {
+				$proc( $caption );
+			}
+		}
+
+		// Process extension-specific embedded DocumentFragments
+		$extTagName = WTUtils::getExtTagName( $elt );
+		if ( $extTagName ) {
+			$extConfig = $extAPI->getSiteConfig()->getExtTagConfig( $extTagName );
+			if ( $extConfig['options']['wt2html']['embedsDomInAttributes'] ?? false ) {
+				$tagHandler = $extAPI->getSiteConfig()->getExtTagImpl( $extTagName );
+				$tagHandler->processAttributeEmbeddedDom( $extAPI, $elt, $proc );
+			}
+		}
+		$key = WTUtils::getPFragmentHandlerKey( $elt );
+		if ( $key ) {
+			$config = $extAPI->getSiteConfig()->getPFragmentHandlerConfig( $key );
+			if ( $config['options']['embedsDomInAttributes'] ?? false ) {
+				$handler = $extAPI->getSiteConfig()->getPFragmentHandlerImpl( $key );
+				$handler->processAttributeEmbeddedDom( $extAPI, $elt, $proc );
+			}
+		}
+	}
+
+	/**
+	 * Extensions might be interested in examining their content embedded
+	 * in data-mw attributes that don't otherwise show up in the DOM.
+	 *
+	 * Ex: inline media captions that aren't rendered, language variant markup,
+	 *     attributes that are transcluded. More scenarios might be added later.
+	 *
+	 * @deprecated
+	 * Don't use this directly: use ::processAttributeEmbeddedDom().
+	 * This method may omit content which is embedded natively as
+	 * DocumentFragments instead of as HTML strings.
 	 *
 	 * @param ParsoidExtensionAPI $extAPI
 	 * @param Element $elt The node whose data attributes need to be examined
@@ -211,15 +254,6 @@ class ContentUtils {
 			}
 		}
 
-		// Inline media -- look inside the data-mw attribute
-		if ( WTUtils::isInlineMedia( $elt ) ) {
-			$dmw = DOMDataUtils::getDataMw( $elt );
-			$caption = $dmw->caption ?? null;
-			if ( $caption ) {
-				$dmw->caption = $proc( $caption );
-			}
-		}
-
 		// Process extension-specific embedded HTML
 		$extTagName = WTUtils::getExtTagName( $elt );
 		if ( $extTagName ) {
@@ -243,13 +277,8 @@ class ContentUtils {
 		Env $env, Node $rootNode, callable $dsrFunc, ParsoidExtensionAPI $extAPI
 	): Node {
 		$doc = $rootNode->ownerDocument;
-		$convertString = static function ( $str ) {
-			// Stub $convertString out to allow definition of a pair of
-			// mutually-recursive functions.
-			return $str;
-		};
 		$convertNode = static function ( Node $node ) use (
-			$env, $extAPI, $dsrFunc, &$convertString, &$convertNode
+			$env, $extAPI, $dsrFunc, &$convertNode
 		) {
 			if ( !( $node instanceof Element ) ) {
 				return;
@@ -282,7 +311,12 @@ class ContentUtils {
 			}
 
 			// Handle embedded HTML in attributes
-			self::processAttributeEmbeddedHTML( $extAPI, $node, $convertString );
+			self::processAttributeEmbeddedDom(
+				$extAPI, $node,
+				static function ( DocumentFragment $df ) use ( $convertNode ): bool {
+					DOMPostOrder::traverse( $df, $convertNode );
+					return true;
+				} );
 
 			// DOMFragments will have already been unpacked when DSR shifting is run
 			if ( DOMUtils::hasTypeOf( $node, 'mw:DOMFragment' ) ) {
@@ -299,11 +333,6 @@ class ContentUtils {
 					DOMPostOrder::traverse( $domFragment, $convertNode );
 				}
 			}
-		};
-		$convertString = function ( string $str ) use ( $doc, $env, $convertNode ): string {
-			$node = self::createAndLoadDocumentFragment( $doc, $str );
-			DOMPostOrder::traverse( $node, $convertNode );
-			return self::ppToXML( $node, [ 'innerXML' => true ] );
 		};
 		DOMPostOrder::traverse( $rootNode, $convertNode );
 		return $rootNode; // chainable

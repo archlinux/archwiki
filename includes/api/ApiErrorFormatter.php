@@ -23,7 +23,7 @@
 
 namespace MediaWiki\Api;
 
-use ILocalizedException;
+use MediaWiki\Exception\ILocalizedException;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
@@ -127,7 +127,6 @@ class ApiErrorFormatter {
 
 	/**
 	 * Fetch a dummy title to set on Messages
-	 * @return PageReference
 	 */
 	protected function getDummyTitle(): PageReference {
 		if ( self::$dummyTitle === null ) {

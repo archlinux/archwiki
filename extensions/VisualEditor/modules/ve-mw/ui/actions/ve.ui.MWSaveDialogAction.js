@@ -129,7 +129,10 @@ ve.ui.commandRegistry.register(
 
 /* Triggers & command help */
 
-( function () {
+// Avoid "Failed to register ctrl+option+(accesskey-save) Error: Incomplete trigger"
+// given that tests run with uselang=qqx.
+// TODO: Use content language?
+if ( !window.QUnit ) {
 	const accessKeyPrefix = $.fn.updateTooltipAccessKeys.getAccessKeyPrefix().replace( /-/g, '+' ),
 		shortcuts = [
 			{
@@ -186,4 +189,4 @@ ve.ui.commandRegistry.register(
 			ve.ui.MWCommandHelpDialog.static.commandGroups.other.demote.push( shortcut.command );
 		}
 	} );
-}() );
+}

@@ -181,7 +181,12 @@ class PhpSessionSerializer {
 	private static function unserializeValue( &$string ) {
 		$error = null;
 		set_error_handler( static function ( $errno, $errstr ) use ( &$error ) {
-			$error = $errstr;
+			if ( $errno === E_WARNING && strpos( $errstr, 'unserialize(): Extra data starting at offset' ) === 0 ) {
+				// Since php8.3 unserialize() emits E_WARNING when the input string has unconsumed data.
+				// Ignore this error
+			} else {
+				$error = $errstr;
+			}
 			return true;
 		} );
 		$ret = unserialize( $string );

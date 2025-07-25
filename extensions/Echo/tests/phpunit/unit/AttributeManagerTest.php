@@ -3,6 +3,8 @@
 namespace MediaWiki\Extension\Notifications\Test\Unit;
 
 use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Notifications\UserLocator;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
@@ -36,14 +38,16 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @return UserIdentity
-	 */
 	protected function getUser(): UserIdentity {
 		return new UserIdentityValue( 1, 'ExampleUserName' );
 	}
 
 	public static function getUserLocatorsProvider() {
+		$defaultLocator = [
+			[ UserLocator::class, 'locateFromEventExtra' ],
+			[ Event::RECIPIENTS_IDX ]
+		];
+
 		return [
 			[
 				'No errors when requesting unknown type',
@@ -54,11 +58,21 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				// notification configuration
 				[],
 			],
-
+			[
+				"When locator not specified, returns default, eg `recipients` key from extra array",
+				// expected result
+				[ $defaultLocator ],
+				// event type
+				'test-event',
+				// notification configuration
+				[
+					'test-event' => []
+				]
+			],
 			[
 				'Returns selected notification configuration',
 				// expected result
-				[ 'woot!' ],
+				[ 'woot!', $defaultLocator ],
 				// event type
 				'magic',
 				// notification configuration
@@ -75,7 +89,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 			[
 				'Accepts user-locators as string and returns array',
 				// expected result
-				[ 'sagen' ],
+				[ 'sagen', $defaultLocator ],
 				// event type
 				'challah',
 				// notification configuration

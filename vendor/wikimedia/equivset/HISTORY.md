@@ -1,5 +1,11 @@
 # Release History
 
+## 1.7.1
+* Add a few more look-alikes from Latin Extended-D range (Umherirrender)
+* build: Updating phpunit/phpunit to 9.6.21 ([BOT] libraryupgrader)
+* build: Updating mediawiki/mediawiki-phan-config to 0.15.1 ([BOT] libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 46.0.0 ([BOT] libraryupgrader)
+
 ## 1.7.0
 * Add a HISTORY.md file tracking previous commits (James D. Forrester)
 * Add format controls from Mongolian range as invisible (Umherirrender)

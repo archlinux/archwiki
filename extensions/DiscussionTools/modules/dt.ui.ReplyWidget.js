@@ -475,17 +475,29 @@ ReplyWidget.prototype.onWindowScroll = function () {
 ReplyWidget.prototype.setPending = function ( pending ) {
 	this.pending = pending;
 	if ( pending ) {
-		this.replyButton.setDisabled( true );
 		this.cancelButton.setDisabled( true );
 		this.replyBodyWidget.setReadOnly( true );
 		this.replyBodyWidget.pushPending();
 	} else {
-		this.replyButton.setDisabled( false );
 		this.cancelButton.setDisabled( false );
 		this.replyBodyWidget.setReadOnly( false );
 		this.replyBodyWidget.popPending();
-		this.updateButtons();
 	}
+	this.updateButtons();
+};
+
+/**
+ * Display an error and prevent this reply from being saved.
+ *
+ * @param {string} code Error code
+ * @param {Object} data Error data
+ */
+ReplyWidget.prototype.setLoadingError = function ( code, data ) {
+	this.setSaveErrorMessage( code, data );
+	this.loadingFailed = true;
+	this.updateButtons();
+	// Hide mode switcher - not using setDisabled() because it has weird styles that make both buttons look selected
+	this.modeTabSelect.toggle( false );
 };
 
 ReplyWidget.prototype.saveEditMode = function ( mode ) {
@@ -789,15 +801,22 @@ ReplyWidget.prototype.onKeyDown = function ( e ) {
 		return false;
 	}
 
-	// VE surfaces already handle CTRL+Enter, but this will catch
-	// the plain surface, and the edit summary input.
-	// Require CTRL+Enter even on single line inputs per T326500.
 	if ( e.which === OO.ui.Keys.ENTER ) {
 		if ( e.ctrlKey || e.metaKey ) {
-			this.onReplyClick();
-			return false;
-		} else if ( e.target.tagName === 'INPUT' && !this.$bodyWrapper[ 0 ].contains( e.target ) && !this.replyButton.isDisabled() ) {
-			// The body wrapper can contain VE UI widgets that you may need to press enter within
+			// VE surfaces already handle CTRL+Enter, but this will catch
+			// the plain surface, and the edit summary input.
+			// Check we are in one of the form inputs, as the user can focus a link and
+			// press CTRL+Enter to open it in a new tab (T382401)
+			if ( this.$bodyWrapper[ 0 ].contains( e.target ) || e.target.tagName === 'INPUT' ) {
+				this.onReplyClick();
+				return false;
+			}
+		} else if (
+			// Require CTRL+Enter even on single line inputs per T326500.
+			e.target.tagName === 'INPUT' && !this.replyButton.isDisabled() &&
+			// Ignore the body wrapper as it can contain VE UI widgets that you may need to press enter within
+			!this.$bodyWrapper[ 0 ].contains( e.target )
+		) {
 			this.showEnterWarning();
 			return false;
 		}
@@ -881,7 +900,7 @@ ReplyWidget.prototype.preparePreview = function ( wikitext ) {
  * Update buttons when widget state has changed
  */
 ReplyWidget.prototype.updateButtons = function () {
-	this.replyButton.setDisabled( this.isEmpty() );
+	this.replyButton.setDisabled( this.pending || this.isEmpty() || this.loadingFailed );
 };
 
 /**
@@ -1061,7 +1080,7 @@ ReplyWidget.prototype.createErrorMessage = function ( message ) {
  * @fires submit
  */
 ReplyWidget.prototype.onReplyClick = function () {
-	if ( this.pending || this.isEmpty() ) {
+	if ( this.pending || this.isEmpty() || this.loadingFailed ) {
 		return;
 	}
 

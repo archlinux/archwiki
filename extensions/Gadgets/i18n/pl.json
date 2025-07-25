@@ -6,13 +6,13 @@
 			"Marcin Łukasz Kiejzik",
 			"Matma Rex",
 			"Msz2001",
+			"PanWor",
 			"Peter Bowman",
 			"Rail",
 			"Railfail536",
 			"Sovq",
 			"Sp5uhe",
-			"Woytecr",
-			"PanWor"
+			"Woytecr"
 		]
 	},
 	"gadgets-desc": "Pozwala użytkownikom wybrać [[Special:Gadgets|gadżety CSS i JavaScript]] na [[Special:Preferences#mw-prefsection-gadgets|stronie preferencji]]",
@@ -71,5 +71,8 @@
 	"gadgets-validate-unknownpages": "Zawiera jedną lub więcej stron bez końcówki .js, .css lub .json. Te strony nie zostaną załadowane.",
 	"gadgets-validate-duplicate": "Została wykryta druga definicja gadżetu $1 i zostanie zignorowana",
 	"gadgets-validate-nopage": "Strona „$1” nie istnieje.",
-	"gadgets-supports-urlload": "Ten gadżet obsługuje ładowanie przez adres URL z parametrem <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "Brakuje {{PLURAL:$2|następującej|następujących}} zależności: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Następująca zależność jest przestarzała|Następujące zależności są przestarzałe}}: $1.",
+	"gadgets-supports-urlload": "Ten gadżet obsługuje ładowanie przez adres URL z parametrem <code>?withgadget</code>.",
+	"gadgets-hidden": "Ten gadżet jest [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden ukryty], co oznacza, że nie będzie wyświetlany na stronie preferencji."
 }

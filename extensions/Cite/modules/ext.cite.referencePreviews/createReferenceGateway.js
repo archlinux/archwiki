@@ -2,7 +2,7 @@
  * @module gateway/reference
  */
 
-const { TYPE_REFERENCE } = require( './constants.js' );
+const TYPE_REFERENCE = 'reference';
 
 /**
  * @return {Gateway}
@@ -29,11 +29,11 @@ module.exports = function createReferenceGateway() {
 	 * @return {HTMLElement|null}
 	 */
 	function findParentReferenceTextElement( el ) {
-		// This finds either the inner <ol class="mw-extended-references">, or the outer
+		// This finds either the inner <ol class="mw-subreference-list">, or the outer
 		// <ol class="references">
 		const ol = el.closest( 'ol' );
 
-		return ol && ol.classList.contains( 'mw-extended-references' ) ?
+		return ol && ol.classList.contains( 'mw-subreference-list' ) ?
 			ol.parentElement.querySelector( '.mw-reference-text, .reference-text' ) :
 			null;
 	}
@@ -74,7 +74,7 @@ module.exports = function createReferenceGateway() {
 			}
 			const classNames = element.className.split( /\s+/ );
 			for ( let i = classNames.length; i--; ) {
-				if ( KNOWN_TYPES.indexOf( classNames[ i ] ) !== -1 ) {
+				if ( KNOWN_TYPES.includes( classNames[ i ] ) ) {
 					type = classNames[ i ];
 					return false;
 				}

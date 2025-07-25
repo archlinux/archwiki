@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Derugon",
+			"EmDashUser002",
 			"Epok",
 			"Fitoschido",
 			"Gomoko",
 			"JackPotte",
 			"KATRINE1992",
 			"Ltrlg",
+			"Mahabarata",
 			"MarcoAurelio",
 			"McDutchie",
 			"Méthodes Bulebe Hangi",
@@ -18,8 +20,7 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92",
-			"Mahabarata"
+			"Wladek92"
 		]
 	},
 	"linterrors": "Erreurs d’analyse Lint",
@@ -31,6 +32,8 @@
 	"linter-category-deletable-table-tag-desc": "Ces pages ont des balises de tableau qui devraient être supprimées.",
 	"linter-category-duplicate-ids": "Identifiants en double",
 	"linter-category-duplicate-ids-desc": "Ces pages contiennent des éléments avec des attributs d'identification en double.",
+	"linter-category-empty-heading": "Titres vides",
+	"linter-category-empty-heading-desc": "Ces pages contiennent des titres vides.",
 	"linter-category-fostered": "Contenu mal placé",
 	"linter-category-fostered-desc": "Ces pages ont du contenu mal placé.",
 	"linter-category-fostered-transparent": "Contenu invisible et égaré dans un tableau",
@@ -99,6 +102,7 @@
 	"linter-pager-deletable-table-tag-details": "Balise de tableau qui devrait être supprimée",
 	"linter-pager-details-header": "Informations supplémentaires",
 	"linter-pager-duplicate-ids-details": "Identifiants en double",
+	"linter-pager-empty-heading-details": "Titres vides",
 	"linter-pager-fostered-details": "Contenu mal placé",
 	"linter-pager-fostered-transparent-details": "Contenu invisible et égaré dans un tableau",
 	"linter-pager-html5-misnesting-details": "Mauvaise imbrication (maintenant hors service)",

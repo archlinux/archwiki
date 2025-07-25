@@ -665,8 +665,6 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "연결이 차단된 외부 도메인을 생성하거나 수정하려면 [[Special:BlockedExternalDomains|특수문서]]를 통해 수행해야 합니다.",
 	"right-abusefilter-access-protected-vars": "보호된 변수를 사용하는 필터 보기 및 생성",
 	"action-abusefilter-access-protected-vars": "보호된 변수를 사용하는 필터를 보고 생성할",
-	"prefs-abusefilter": "편집필터",
-	"abusefilter-preference-protected-vars-view-agreement": "편집 필터에서 임시 계정의 IP 주소 표시 활성화",
 	"abusefilter-protected-vars-log-name": "편집 필터 보호 변수 기록",
 	"abusefilter-protected-vars-log-header": "이것은 다음의 기록입니다:\n# 기록 세부 정보에서 보호된 변수를 조회\n# 보호된 변수를 보기 위한 사용자 접근 권한 수준을 변경",
 	"logentry-abusefilter-protected-vars-change-access-enable": "$1님이 {{GENDER:$2|자신}}에게 보호된 변수를 볼 권한을 활성화함",

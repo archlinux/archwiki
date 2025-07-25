@@ -10,7 +10,7 @@ mw.hook( 'wikipage.content' ).add( ( $content ) => {
 	const accessibilityLabelOne = mw.msg( 'cite_references_link_accessibility_label' );
 	const accessibilityLabelMany = mw.msg( 'cite_references_link_many_accessibility_label' );
 
-	$content.find( '.mw-cite-backlink' ).each( ( i, el ) => {
+	$content.find( '.mw-cite-backlink' ).each( ( _, el ) => {
 		const $links = $( el ).find( 'a' );
 
 		if ( $links.length > 1 ) {

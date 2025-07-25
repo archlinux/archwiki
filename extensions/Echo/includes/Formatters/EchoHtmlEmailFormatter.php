@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 
@@ -27,6 +28,7 @@ class EchoHtmlEmailFormatter extends EchoEventFormatter {
 		'font-family: Arial, Helvetica, sans-serif;' .
 		'color: #72777D;';
 
+	/** @inheritDoc */
 	protected function formatModel( EchoEventPresentationModel $model ) {
 		$subject = $model->getSubjectMessage()->parse();
 
@@ -46,10 +48,10 @@ class EchoHtmlEmailFormatter extends EchoEventFormatter {
 			$actions[] = $this->renderLink( $secondaryLink, self::SECONDARY_LINK_STYLE );
 		}
 
-		$iconUrl = wfExpandUrl(
+		$iconUrl = MediaWikiServices::getInstance()->getUrlUtils()->expand(
 			EchoIcon::getRasterizedUrl( $model->getIconType(), $this->language->getCode() ),
 			PROTO_CANONICAL
-		);
+		) ?? '';
 
 		$body = $this->renderBody(
 			$this->language,
@@ -66,7 +68,9 @@ class EchoHtmlEmailFormatter extends EchoEventFormatter {
 		];
 	}
 
-	private function renderBody( Language $lang, $emailIcon, $summary, $action, $intro, $footer ) {
+	private function renderBody(
+		Language $lang, string $emailIcon, string $summary, string $action, string $intro, string $footer
+	): string {
 		$alignStart = $lang->alignStart();
 		$langCode = $lang->getHtmlCode();
 		$langDir = $lang->getDir();
@@ -172,11 +176,11 @@ EOF;
 		return $footer;
 	}
 
-	private function renderLink( $link, $style ) {
+	private function renderLink( array $link, string $style ): string {
 		return Html::element(
 			'a',
 			[
-				'href' => wfExpandUrl( $link['url'], PROTO_CANONICAL ),
+				'href' => MediaWikiServices::getInstance()->getUrlUtils()->expand( $link['url'], PROTO_CANONICAL ),
 				'style' => $style,
 			],
 			$link['label']

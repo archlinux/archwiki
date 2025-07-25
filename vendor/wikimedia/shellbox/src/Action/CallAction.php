@@ -27,7 +27,7 @@ class CallAction extends MultipartAction {
 			$params = $this->getParam( 'params', [] );
 		}
 		$this->runSources();
-		$result = call_user_func_array( $functionName, $params );
+		$result = $functionName( ...$params );
 
 		if ( $binary ) {
 			$this->writeResult( [], [ 'returnValue' => (string)$result ] );

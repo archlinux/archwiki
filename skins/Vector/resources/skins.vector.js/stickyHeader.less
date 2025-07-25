@@ -1,5 +1,5 @@
 @spacing-search-title-divider: 30px;
-@font-size-sticky-header-links: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
+@font-size-sticky-header-links: unit( ( 14 / @font-size-browser ), em ); // Equals `0.875em`.
 @import '../skins.vector.styles/variables.less';
 
 .vector-sticky-header-container {
@@ -50,7 +50,7 @@
 	// Components
 	//
 	&-context-bar {
-		border-left: @border-width-base @border-style-base #c8c8c8;
+		border-left: @border-subtle;
 		padding-left: @spacing-search-title-divider;
 		min-width: 0;
 		margin-left: @spacing-search-title-divider;
@@ -145,7 +145,7 @@
 
 		.vector-sticky-pinned-container {
 			top: ~'calc( @{height-header} + @{grid-row-gap} )';
-			max-height: ~'calc( 100vh - @{height-header} - (@{grid-row-gap} * 2) )';
+			max-height: ~'calc( 100vh - @{height-header} - ( @{grid-row-gap} * 2 ) )';
 		}
 
 		// - T289817 `.mw-sticky-header-element` provides an API for template developers

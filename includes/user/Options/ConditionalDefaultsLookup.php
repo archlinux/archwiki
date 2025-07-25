@@ -4,6 +4,7 @@ namespace MediaWiki\User\Options;
 
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\User\UserGroupManager;
@@ -20,6 +21,7 @@ class ConditionalDefaultsLookup {
 		MainConfigNames::ConditionalUserOptions,
 	];
 
+	private HookRunner $hookRunner;
 	private ServiceOptions $options;
 	private UserRegistrationLookup $userRegistrationLookup;
 	private UserIdentityUtils $userIdentityUtils;
@@ -28,22 +30,22 @@ class ConditionalDefaultsLookup {
 	 * @var callable
 	 */
 	private $userGroupManagerCallback;
-	private array $extraConditions;
+	private ?array $extraConditions = null;
 
 	public function __construct(
+		HookRunner $hookRunner,
 		ServiceOptions $options,
 		UserRegistrationLookup $userRegistrationLookup,
 		UserIdentityUtils $userIdentityUtils,
-		callable $userGroupManagerCallback,
-		array $extraConditions = []
+		callable $userGroupManagerCallback
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 
+		$this->hookRunner = $hookRunner;
 		$this->options = $options;
 		$this->userRegistrationLookup = $userRegistrationLookup;
 		$this->userIdentityUtils = $userIdentityUtils;
 		$this->userGroupManagerCallback = $userGroupManagerCallback;
-		$this->extraConditions = $extraConditions;
 	}
 
 	/**
@@ -112,6 +114,14 @@ class ConditionalDefaultsLookup {
 		return true;
 	}
 
+	private function getExtraConditions(): array {
+		if ( !$this->extraConditions ) {
+			$this->extraConditions = [];
+			$this->hookRunner->onConditionalDefaultOptionsAddCondition( $this->extraConditions );
+		}
+		return $this->extraConditions;
+	}
+
 	/**
 	 * Is ONE condition satisfied for the given user?
 	 *
@@ -138,10 +148,7 @@ class ConditionalDefaultsLookup {
 					return false;
 				}
 
-				return (
-					(int)ConvertibleTimestamp::convert( TS_UNIX, $registration ) -
-					(int)ConvertibleTimestamp::convert( TS_UNIX, $cond[0] )
-				) > 0;
+				return $registration > ConvertibleTimestamp::convert( TS_MW, $cond[0] );
 			case CUDCOND_ANON:
 				return !$userIdentity->isRegistered();
 			case CUDCOND_NAMED:
@@ -152,8 +159,9 @@ class ConditionalDefaultsLookup {
 				$userGroupManager = $userGroupManagerCallback();
 				return in_array( $cond[0], $userGroupManager->getUserEffectiveGroups( $userIdentity ) );
 			default:
-				if ( array_key_exists( $condName, $this->extraConditions ) ) {
-					return call_user_func( $this->extraConditions[$condName], $userIdentity, $cond );
+				$extraConditions = $this->getExtraConditions();
+				if ( array_key_exists( $condName, $extraConditions ) ) {
+					return $extraConditions[$condName]( $userIdentity, $cond );
 				}
 				throw new InvalidArgumentException( 'Unsupported condition ' . $condName );
 		}

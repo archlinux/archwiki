@@ -35,6 +35,7 @@ class DeprecatedHooks {
 	 * @phpcs-require-sorted-array
 	 */
 	private $deprecatedHooks = [
+		'AbortTalkPageEmailNotification' => [ 'deprecatedVersion' => '1.44' ],
 		'AddNewAccount' => [ 'deprecatedVersion' => '1.27' ],
 		'ArticleDelete' => [ 'deprecatedVersion' => '1.37', 'silent' => true ],
 		'ArticleDeleteComplete' => [ 'deprecatedVersion' => '1.37', 'silent' => true ],
@@ -46,13 +47,13 @@ class DeprecatedHooks {
 		'LocalFile::getHistory' => [ 'deprecatedVersion' => '1.37' ],
 		'MagicWordwgVariableIDs' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
 		'MessageCache::get' => [ 'deprecatedVersion' => '1.41' ],
-		'OutputPageMakeCategoryLinks' => [ 'deprecatedVersion' => '1.43' ],
-		'PageContentSave' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
+		'PageContentSave' => [ 'deprecatedVersion' => '1.35' ],
+		'PermissionErrorAudit' => [ 'deprecatedVersion' => '1.44' ],
 		'PrefixSearchBackend' => [ 'deprecatedVersion' => '1.27' ],
 		'ProtectionForm::buildForm' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
 		'RollbackComplete' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
 		'SearchDataForIndex' => [ 'deprecatedVersion' => '1.40', 'silent' => true ],
-		'SkinCopyrightFooter' => [ 'deprecatedVersion' => '1.43', 'silent' => true ],
+		'SkinCopyrightFooter' => [ 'deprecatedVersion' => '1.43' ],
 		'userCan' => [ 'deprecatedVersion' => '1.37' ],
 		'UserCanSendEmail' => [ 'deprecatedVersion' => '1.41', 'silent' => true ],
 		'WikiPageDeletionUpdates' => [ 'deprecatedVersion' => '1.32', 'silent' => true ],

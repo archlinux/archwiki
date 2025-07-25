@@ -1,5 +1,5 @@
 !! options
-parsoid-compatible
+parsoid-compatible=wt2html,wt2wt
 version=2
 !! end
 
@@ -265,17 +265,17 @@ Scribunto: no such module
 !! options
 parsoid={ "modes": ["wt2html","wt2wt"] }
 cat
-extension=ScribuntoErrors-5e10d413
+extension=ScribuntoErrors-af3e8c22
 !! wikitext
 {{#invoke:foo|bar}}
 !! metadata
 cat=Pages_with_script_errors sort=
-extension[ScribuntoErrors-5e10d413]="<p>Script error: No such module \"foo\".</p><p>No further details are available.</p>"
+extension[ScribuntoErrors-af3e8c22]="<p>Script error: No such module \"foo\".</p><p>No details about the code location available.</p>"
 !! html/php
-<p><strong class="error"><span class="scribunto-error mw-scribunto-error-5e10d413">Script error: No such module &quot;foo&quot;.</span></strong>
+<p><strong class="error"><span class="scribunto-error mw-scribunto-error-af3e8c22">Script error: No such module &quot;foo&quot;.</span></strong>
 </p>
 !! html/parsoid
-<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:foo","function":"invoke"},"params":{"1":{"wt":"bar"}},"i":0}}]}'><span class="scribunto-error mw-scribunto-error-5e10d413">Script error: No such module <span typeof="mw:Entity">"</span>foo<span typeof="mw:Entity">"</span>.</span></strong></p>
+<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:foo","function":"invoke"},"params":{"1":{"wt":"bar"}},"i":0}}]}'><span class="scribunto-error mw-scribunto-error-af3e8c22">Script error: No such module <span typeof="mw:Entity">"</span>foo<span typeof="mw:Entity">"</span>.</span></strong></p>
 !! end
 
 !! test
@@ -283,17 +283,17 @@ Scribunto: no such function
 !! options
 parsoid={ "modes": ["wt2html","wt2wt"] }
 cat
-extension=ScribuntoErrors-d64a22ba
+extension=ScribuntoErrors-dcf21d8d
 !! wikitext
 {{#invoke:test|blah}}
 !! metadata
 cat=Pages_with_script_errors sort=
-extension[ScribuntoErrors-d64a22ba]="<p>Script error: The function \"blah\" does not exist.</p><p>No further details are available.</p>"
+extension[ScribuntoErrors-dcf21d8d]="<p>Script error: The function \"blah\" does not exist.</p><p>No details about the code location available.</p>"
 !! html/php
-<p><strong class="error"><span class="scribunto-error mw-scribunto-error-d64a22ba">Script error: The function &quot;blah&quot; does not exist.</span></strong>
+<p><strong class="error"><span class="scribunto-error mw-scribunto-error-dcf21d8d">Script error: The function &quot;blah&quot; does not exist.</span></strong>
 </p>
 !! html/parsoid
-<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"blah"}},"i":0}}]}'><span class="scribunto-error mw-scribunto-error-d64a22ba">Script error: The function <span typeof="mw:Entity">"</span>blah<span typeof="mw:Entity">"</span> does not exist.</span></strong></p>
+<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"blah"}},"i":0}}]}'><span class="scribunto-error mw-scribunto-error-dcf21d8d">Script error: The function <span typeof="mw:Entity">"</span>blah<span typeof="mw:Entity">"</span> does not exist.</span></strong></p>
 !! end
 
 !! test

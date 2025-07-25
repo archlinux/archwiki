@@ -16,13 +16,13 @@
 			"아라"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
+	"tag-visualeditor": "editor visual",
 	"tag-visualeditor-description": "Modificació feta amb l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Edició visual: a comprovar]]",
+	"tag-visualeditor-needcheck": "Edició visual: a comprovar",
 	"tag-visualeditor-needcheck-description": "Edició feta amb l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]], en la qual el sistema ha detectat que el text wiki pot contenir canvis no desitjats.",
 	"tag-visualeditor-wikitext": "editor de codi 2017",
 	"tag-visualeditor-wikitext-description": "Modificació feta utilitzant l'editor de text wiki 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|edició visual: canviat]]",
+	"tag-visualeditor-switched": "edició visual: canviat",
 	"tag-visualeditor-switched-description": "L'usuari ha començar a editar utilitzant l'editor visual i després ha canviat a l'editor wikitext.",
 	"visualeditor-feedback-link": "Project:Editor visual/Comentaris",
 	"visualeditor-feedback-tool": "Deixeu comentaris sobre aquest programari",

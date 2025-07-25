@@ -28,6 +28,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\AbuseFilterTokenizer;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPTreeParser;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\SyntaxChecker;
+use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\Stats\NullStatsdDataFactory;
@@ -47,7 +48,7 @@ use Wikimedia\Stats\NullStatsdDataFactory;
  * @covers \MediaWiki\Extension\AbuseFilter\Parser\AFPToken
  * @covers \MediaWiki\Extension\AbuseFilter\Parser\AFPData
  */
-class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
+class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param string $excep The expected exception or an empty string
 	 * @param string $expr The expression to test

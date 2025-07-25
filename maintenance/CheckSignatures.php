@@ -19,7 +19,12 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Parser\ParserOptions;
+
+// @codeCoverageIgnoreStart
+require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to list users with invalid signatures.
@@ -83,4 +88,5 @@ class CheckSignatures extends Maintenance {
 
 // @codeCoverageIgnoreStart
 $maintClass = CheckSignatures::class;
+require_once RUN_MAINTENANCE_IF_MAIN;
 // @codeCoverageIgnoreEnd

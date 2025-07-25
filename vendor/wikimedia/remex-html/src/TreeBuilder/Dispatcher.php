@@ -49,10 +49,8 @@ class Dispatcher implements TokenHandler {
 
 	/**
 	 * The handler class for each insertion mode
-	 *
-	 * @var array
 	 */
-	protected static $handlerClasses = [
+	protected const HANDLER_CLASSES = [
 		self::INITIAL => Initial::class,
 		self::BEFORE_HTML => BeforeHtml::class,
 		self::BEFORE_HEAD => BeforeHead::class,
@@ -96,8 +94,7 @@ class Dispatcher implements TokenHandler {
 	/** @var InForeignContent */
 	public $inForeign;
 
-	/** @var TreeBuilder */
-	protected $builder;
+	protected TreeBuilder $builder;
 
 	/**
 	 * The InsertionMode object for the current insertion mode in HTML content
@@ -137,10 +134,8 @@ class Dispatcher implements TokenHandler {
 
 	/**
 	 * The stack of template insertion modes
-	 *
-	 * @var TemplateModeStack
 	 */
-	public $templateModeStack;
+	public TemplateModeStack $templateModeStack;
 
 	/**
 	 * @param TreeBuilder $builder
@@ -341,9 +336,10 @@ class Dispatcher implements TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
 	public function startDocument( Tokenizer $tokenizer, $namespace, $name ) {
 		$this->dispatchTable = [];
-		foreach ( self::$handlerClasses as $mode => $class ) {
+		foreach ( self::HANDLER_CLASSES as $mode => $class ) {
 			$this->dispatchTable[$mode] = new $class( $this->builder, $this );
 		}
 
@@ -384,10 +380,12 @@ class Dispatcher implements TokenHandler {
 		$this->inForeign = null;
 	}
 
+	/** @inheritDoc */
 	public function error( $text, $pos ) {
 		$this->builder->error( $text, $pos );
 	}
 
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$current = $this->dispatcherCurrentNode();
 		if ( !$current
@@ -402,6 +400,7 @@ class Dispatcher implements TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$this->ack = false;
 		$current = $this->dispatcherCurrentNode();
@@ -426,6 +425,7 @@ class Dispatcher implements TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$current = $this->dispatcherCurrentNode();
 		if ( !$current || $current->namespace === HTMLData::NS_HTML ) {
@@ -435,6 +435,7 @@ class Dispatcher implements TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$current = $this->dispatcherCurrentNode();
 		if ( !$current || $current->namespace === HTMLData::NS_HTML ) {
@@ -446,6 +447,7 @@ class Dispatcher implements TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
 	public function comment( $text, $sourceStart, $sourceLength ) {
 		$current = $this->dispatcherCurrentNode();
 		if ( !$current || $current->namespace === HTMLData::NS_HTML ) {

@@ -62,7 +62,7 @@ ve.ui.MWWikitextStringTransferHandler.static.matchFunction = function ( item ) {
 			if ( registry.registry[ i ].test( text ) ) {
 				return true;
 			}
-		} else if ( text.indexOf( rule ) !== -1 ) {
+		} else if ( text.includes( rule ) ) {
 			return true;
 		}
 	}

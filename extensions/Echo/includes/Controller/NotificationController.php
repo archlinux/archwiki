@@ -150,9 +150,9 @@ class NotificationController {
 			}
 			$hookRunner->onEchoGetNotificationTypes( $user, $event, $userNotifyTypes );
 
-			// types such as web, email, etc
-			foreach ( $userNotifyTypes as $type ) {
-				self::doNotification( $event, $user, $type );
+			// types such as web, email, etc.
+			foreach ( $userNotifyTypes as $deliveryType ) {
+				self::doNotification( $event, $user, $deliveryType );
 			}
 
 			$userIdsCount++;
@@ -163,9 +163,12 @@ class NotificationController {
 				$userIdsCount = 0;
 			}
 
-			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-			$stats->increment( 'echo.notification.all' );
-			$stats->increment( "echo.notification.$type" );
+			$stats = $services->getStatsFactory()->withComponent( 'Echo' );
+			// TODO remove copyToStatsdAt once new dashboards are created, T359347
+			$stats->getCounter( 'notifications_total' )
+				->setLabel( 'notification_type', $type )
+				->copyToStatsdAt( [ 'echo.notification.all' ] )
+				->increment();
 		}
 
 		// process the userIds left in the array
@@ -191,9 +194,9 @@ class NotificationController {
 		if ( !$rev ) {
 			$logger = LoggerFactory::getInstance( 'Echo' );
 			$logger->debug(
-				'Notifying for event {eventId}. Revision \'{revId}\' not found.',
+				'Notifying for event type \'{eventType}\'. Revision \'{revId}\' not found.',
 				[
-					'eventId' => $event->getId(),
+					'eventType' => $event->getType(),
 					'revId' => $revId,
 				]
 			);
@@ -253,7 +256,10 @@ class NotificationController {
 		$rootJobSignature = $event->getExtraParam( 'rootJobSignature' );
 		$rootJobTimestamp = $event->getExtraParam( 'rootJobTimestamp' );
 
-		return [ 'eventId' => $event->getId() ]
+		$params = $event->getId()
+			? [ 'eventId' => $event->getId() ]
+			: [ 'eventData' => $event->toDbArray() ];
+		return $params
 			+ ( $delay ? [ 'jobReleaseTimestamp' => (int)wfTimestamp() + $delay ] : [] )
 			+ ( $rootJobSignature ? [ 'rootJobSignature' => $rootJobSignature ] : [] )
 			+ ( $rootJobTimestamp ? [ 'rootJobTimestamp' => $rootJobTimestamp ] : [] );
@@ -261,8 +267,6 @@ class NotificationController {
 
 	/**
 	 * Push $event onto the mediawiki job queue
-	 *
-	 * @param Event $event
 	 */
 	public static function enqueueEvent( Event $event ) {
 		$queue = MediaWikiServices::getInstance()->getJobQueueGroup();

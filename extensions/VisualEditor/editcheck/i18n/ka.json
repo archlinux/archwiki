@@ -15,5 +15,8 @@
 	"editcheck-dialog-addref-reject-other": "სხვა",
 	"editcheck-dialog-addref-success-notify": "გმადლობთ წყაროს დამატებისთვის!",
 	"editcheck-dialog-addref-title": "წყაროს დამატება",
-	"editcheck-dialog-title": "გამოქვეყნებამდე"
+	"editcheck-dialog-title": "გამოქვეყნებამდე",
+	"editcheck-copyvio-title": "ჩასმული შიგთავსი",
+	"editcheck-copyvio-description": "ზოგადი წესია, რომ არ უნდა გადმოწეროთ ტექსტი სხვა წყაროებიდან. ამგვარი ქმედება როგორც საავტორო უფლებების დარღვევას, ისე პლაგიატიზმს წარმოადგენს.",
+	"editcheck-review-title": "ცვლილებების გადახედვა"
 }

@@ -1,8 +1,10 @@
 <?php
 
+use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\MainConfigNames;
 use MediaWiki\RCFeed\FormattedRCFeed;
 use MediaWiki\RCFeed\JSONRCFeedFormatter;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
@@ -10,7 +12,7 @@ use MediaWiki\Title\Title;
  * @group medium
  * @group Database
  * @covers \MediaWiki\RCFeed\FormattedRCFeed
- * @covers \RecentChange
+ * @covers \MediaWiki\RecentChanges\RecentChange
  * @covers \MediaWiki\RCFeed\JSONRCFeedFormatter
  * @covers \MediaWiki\RCFeed\MachineReadableRCFeedFormatter
  * @covers \MediaWiki\RCFeed\RCFeed

@@ -16,6 +16,7 @@
 			"Markus Mikkonen",
 			"Matma Rex",
 			"Mediawikitranslator",
+			"Minilammas",
 			"Nedergard",
 			"Nike",
 			"Nwme",
@@ -37,8 +38,7 @@
 			"Vililikku",
 			"Vlad5250",
 			"Zache",
-			"ZeiP",
-			"Minilammas"
+			"ZeiP"
 		]
 	},
 	"abusefilter-desc": "Mahdollistaa muokkausten suodattamisen automaattisella heuristiikalla.",
@@ -244,7 +244,9 @@
 	"abusefilter-edit-enabled": "Ota käyttöön tämä suodatin",
 	"abusefilter-edit-deleted": "Merkitse poistetuksi",
 	"abusefilter-edit-hidden": "Piilota suodattimen yksityiskohdat julkiselta näkyvyydeltä",
+	"abusefilter-edit-protected": "<strong>Ota käyttöön mahdollisuus käyttää [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables suojattuja muuttujia] tässä suodattimessa</strong>",
 	"abusefilter-edit-protected-variable-already-protected": "Tämän suodattimen tiedot on piilotettu käyttäjiltä, joilla ei ole oikeutta tarkastella suojattuja muuttujia.",
+	"abusefilter-edit-protected-help-message": "Tämän suodattimen tiedot piilotetaan käyttäjiltä, joilla ei ole oikeutta tarkastella suojattuja muuttujia. Tämä toiminto on pysyvä eikä sitä voi peruuttaa.",
 	"abusefilter-edit-global": "Järjestelmänlaajuinen suodatin",
 	"abusefilter-edit-rules": "Ehtolauseet:",
 	"abusefilter-edit-field-conditions": "ehdot",
@@ -304,6 +306,7 @@
 	"abusefilter-edit-deleting-enabled": "Et voi merkitä aktiivista suodatinta poistetuksi.",
 	"abusefilter-edit-restricted": "Et voi muuttaa tätä suodatinta, koska se sisältää yhden tai useamman rajoitetun toiminnon.\nPyydä rajoitettujen toimintojen lisäämiseen tarvittavien oikeuksien haltijalta, että tämä tekee muutoksen puolestasi.",
 	"abusefilter-edit-protected-variable": "Et voi tallentaa tätä suodatinta, koska sinulla ei ole oikeutta käyttää seuraavia muuttujia: $1",
+	"abusefilter-edit-protected-variable-not-protected": "Suodatintasi ei tallennettu, koska se käyttää {{PLURAL:$1|seuraavaa|seuraavia}} [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables {{PLURAL:$1|suojattua muuttujaa|suojattuja muuttujia}}]: $1. Ole hyvä ja ota käyttöön suojatut muuttujat. Tämä toiminto piilottaa suodattimen tiedot pysyvästi käyttäjiltä, joilla ei ole oikeutta tarkastella suojattuja muuttujia.",
 	"abusefilter-edit-viewhistory": "Näytä tämän suodattimen historia",
 	"abusefilter-edit-history": "Historia:",
 	"abusefilter-edit-check": "Tarkista syntaksi",
@@ -615,8 +618,6 @@
 	"action-abusefilter-bypass-blocked-external-domains": "ohittaa estettyjä ulkoisia domain-nimiä",
 	"right-abusefilter-access-protected-vars": "Katsoa ja luoda suodattimia, jotka käyttävät suojattuja muuttujia",
 	"action-abusefilter-access-protected-vars": "katsoa ja luoda suodattimia, jotka käyttävät suojattuja muuttujia",
-	"prefs-abusefilter": "Väärinkäyttösuodatin",
-	"abusefilter-preference-protected-vars-view-agreement": "Ota käyttöön tilapäisten tunnusten IP-osoitteiden paljastaminen väärinkäyttösuodattimessa",
 	"abusefilter-protected-vars-log-name": "Väärinkäyttösuodattimen suojattujen muuttujien loki",
 	"log-action-filter-abusefilter-protected-vars": "Toiminnon tyyppi:"
 }

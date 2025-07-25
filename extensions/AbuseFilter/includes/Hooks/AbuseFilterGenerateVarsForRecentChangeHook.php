@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\User\User;
-use RecentChange;
 
 interface AbuseFilterGenerateVarsForRecentChangeHook {
 	/**

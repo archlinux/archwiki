@@ -56,6 +56,7 @@
 	"notifications": "अधिसूचना",
 	"tooltip-pt-notifications-alert": "{{GENDER:|आपले}} सजगतेचे संदेश",
 	"tooltip-pt-notifications-notice": "{{GENDER:|आपल्या}} सूचना",
+	"tooltip-pt-notifications": "आपल्या अधिसूचना",
 	"echo-displaynotificationsconfiguration": "अधिसूचनांचे विन्यास दर्शवा",
 	"echo-displaynotificationsconfiguration-summary": "या विकिवर अधिसूचना कशा माअंडल्या जातात याचे हे अवलोकन आहे.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "वर्गानूसार अधिसूचना",

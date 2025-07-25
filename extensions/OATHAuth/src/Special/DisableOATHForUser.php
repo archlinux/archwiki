@@ -2,21 +2,21 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use ManualLogEntry;
 use MediaWiki\CheckUser\Hooks as CheckUserHooks;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Message\Message;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use MWException;
-use UserBlockedError;
-use UserNotLoggedIn;
 
 class DisableOATHForUser extends FormSpecialPage {
 
@@ -48,6 +48,7 @@ class DisableOATHForUser extends FormSpecialPage {
 		return 'users';
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}

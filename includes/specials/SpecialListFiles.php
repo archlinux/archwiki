@@ -21,14 +21,15 @@
 namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Pager\ImageListPager;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRigorOptions;
-use RepoGroup;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -43,25 +44,16 @@ class SpecialListFiles extends IncludableSpecialPage {
 	private CommentStore $commentStore;
 	private UserNameUtils $userNameUtils;
 	private UserNamePrefixSearch $userNamePrefixSearch;
-	private CommentFormatter $commentFormatter;
+	private RowCommentFormatter $rowCommentFormatter;
 	private LinkBatchFactory $linkBatchFactory;
 
-	/**
-	 * @param RepoGroup $repoGroup
-	 * @param IConnectionProvider $dbProvider
-	 * @param CommentStore $commentStore
-	 * @param UserNameUtils $userNameUtils
-	 * @param UserNamePrefixSearch $userNamePrefixSearch
-	 * @param CommentFormatter $commentFormatter
-	 * @param LinkBatchFactory $linkBatchFactory
-	 */
 	public function __construct(
 		RepoGroup $repoGroup,
 		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
-		CommentFormatter $commentFormatter,
+		RowCommentFormatter $rowCommentFormatter,
 		LinkBatchFactory $linkBatchFactory
 	) {
 		parent::__construct( 'Listfiles' );
@@ -70,7 +62,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 		$this->commentStore = $commentStore;
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
-		$this->commentFormatter = $commentFormatter;
+		$this->rowCommentFormatter = $rowCommentFormatter;
 		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
@@ -107,7 +99,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 			$this->dbProvider,
 			$this->repoGroup,
 			$this->userNameUtils,
-			$this->commentFormatter,
+			$this->rowCommentFormatter,
 			$this->linkBatchFactory,
 			$userName,
 			$search,
@@ -118,15 +110,16 @@ class SpecialListFiles extends IncludableSpecialPage {
 		$out = $this->getOutput();
 		$out->setPageTitleMsg( $pageTitle );
 		$out->addModuleStyles( 'mediawiki.special' );
+		$parserOptions = ParserOptions::newFromContext( $this->getContext() );
 		if ( $this->including() ) {
-			$out->addParserOutputContent( $pager->getBodyOutput() );
+			$out->addParserOutputContent( $pager->getBodyOutput(), $parserOptions );
 		} else {
 			$user = $pager->getRelevantUser();
 			if ( $user ) {
 				$this->getSkin()->setRelevantUser( $user );
 			}
 			$pager->getForm();
-			$out->addParserOutputContent( $pager->getFullOutput() );
+			$out->addParserOutputContent( $pager->getFullOutput(), $parserOptions );
 		}
 	}
 

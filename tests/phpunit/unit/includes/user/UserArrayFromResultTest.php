@@ -2,6 +2,7 @@
 
 use MediaWiki\User\User;
 use MediaWiki\User\UserArrayFromResult;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * @author Addshore
@@ -9,8 +10,8 @@ use MediaWiki\User\UserArrayFromResult;
  */
 class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 
-	private function getMockResultWrapper( $row = null, $numRows = 1 ) {
-		$resultWrapper = $this->createMock( Wikimedia\Rdbms\IResultWrapper::class );
+	private function getMockResultWrapper( $row, int $numRows = 1 ): IResultWrapper {
+		$resultWrapper = $this->createMock( IResultWrapper::class );
 		$resultWrapper->expects( $this->atLeastOnce() )
 			->method( 'current' )
 			->willReturn( $row );
@@ -22,38 +23,31 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 		return $resultWrapper;
 	}
 
-	private function getRowWithUsername( $username = 'fooUser' ) {
+	private static function getRowWithUsername( string $username = 'fooUser' ): stdClass {
 		return (object)[ 'user_name' => $username ];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\UserArrayFromResult::__construct
-	 */
 	public function testConstructionWithFalseRow() {
 		$row = false;
 		$resultWrapper = $this->getMockResultWrapper( $row );
 
 		$object = new UserArrayFromResult( $resultWrapper );
 
-		$this->assertEquals( $resultWrapper, $object->res );
-		$this->assertSame( 0, $object->key );
-		$this->assertEquals( $row, $object->current );
+		$this->assertFalse( $object->valid() );
+		$this->assertSame( 0, $object->key() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\UserArrayFromResult::__construct
-	 */
 	public function testConstructionWithRow() {
 		$username = 'addshore';
-		$row = $this->getRowWithUsername( $username );
+		$row = self::getRowWithUsername( $username );
 		$resultWrapper = $this->getMockResultWrapper( $row );
 
 		$object = new UserArrayFromResult( $resultWrapper );
 
-		$this->assertEquals( $resultWrapper, $object->res );
-		$this->assertSame( 0, $object->key );
-		$this->assertInstanceOf( User::class, $object->current );
-		$this->assertEquals( $username, $object->current->mName );
+		$this->assertTrue( $object->valid() );
+		$this->assertSame( 0, $object->key() );
+		$this->assertInstanceOf( User::class, $object->current() );
+		$this->assertEquals( $username, $object->current()->mName );
 	}
 
 	public static function provideNumberOfRows() {
@@ -66,93 +60,75 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideNumberOfRows
-	 * @covers \MediaWiki\User\UserArrayFromResult::count
 	 */
-	public function testCountWithVaryingValues( $numRows ) {
+	public function testCountWithVaryingValues( int $numRows ) {
 		$object = new UserArrayFromResult( $this->getMockResultWrapper(
-			$this->getRowWithUsername(),
+			self::getRowWithUsername(),
 			$numRows
 		) );
 		$this->assertEquals( $numRows, $object->count() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\UserArrayFromResult::current
-	 */
 	public function testCurrentAfterConstruction() {
 		$username = 'addshore';
-		$userRow = $this->getRowWithUsername( $username );
+		$userRow = self::getRowWithUsername( $username );
 		$object = new UserArrayFromResult( $this->getMockResultWrapper( $userRow ) );
 		$this->assertInstanceOf( User::class, $object->current() );
 		$this->assertEquals( $username, $object->current()->mName );
 	}
 
-	public function provideTestValid() {
+	public static function provideTestValid() {
 		return [
-			[ $this->getRowWithUsername(), true ],
+			[ self::getRowWithUsername(), true ],
 			[ false, false ],
 		];
 	}
 
 	/**
 	 * @dataProvider provideTestValid
-	 * @covers \MediaWiki\User\UserArrayFromResult::valid
 	 */
-	public function testValid( $input, $expected ) {
+	public function testValid( $input, bool $expected ) {
 		$object = new UserArrayFromResult( $this->getMockResultWrapper( $input ) );
-		$this->assertEquals( $expected, $object->valid() );
+		$this->assertSame( $expected, $object->valid() );
 	}
 
-	public function provideTestKey() {
+	public static function provideTestKey() {
 		return [
-			[ $this->getRowWithUsername(), 0 ],
-			[ $this->getRowWithUsername( 'xSavitar' ), 0 ],
+			[ self::getRowWithUsername(), 0 ],
+			[ self::getRowWithUsername( 'xSavitar' ), 0 ],
 			[ (object)[], 0 ],
-			[ false, false ],
+			[ false, 0 ],
 		];
 	}
 
 	/**
 	 * @dataProvider provideTestKey
-	 * @covers \MediaWiki\User\UserArrayFromResult::key
 	 */
-	public function testKey( $input, $expected ) {
+	public function testKey( $input, int $expected ) {
 		$object = new UserArrayFromResult( $this->getMockResultWrapper( $input ) );
-		$this->assertEquals( $expected, $object->key() );
+		$this->assertSame( $expected, $object->key() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\UserArrayFromResult::next
-	 */
 	public function testNextOnce() {
 		$object = new UserArrayFromResult(
-			$this->getMockResultWrapper( $this->getRowWithUsername() )
+			$this->getMockResultWrapper( self::getRowWithUsername() )
 		);
 		$object->next();
 		$this->assertSame( 1, $object->key() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\UserArrayFromResult::next
-	 * @covers \MediaWiki\User\UserArrayFromResult::key
-	 */
 	public function testNextTwice() {
 		$object = new UserArrayFromResult(
-			$this->getMockResultWrapper( $this->getRowWithUsername() )
+			$this->getMockResultWrapper( self::getRowWithUsername() )
 		);
 		$object->next(); // once
 		$object->next(); // twice
 		$this->assertSame( 2, $object->key() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\UserArrayFromResult::rewind
-	 * @covers \MediaWiki\User\UserArrayFromResult::next
-	 * @covers \MediaWiki\User\UserArrayFromResult::key
-	 */
 	public function testRewind() {
 		$object = new UserArrayFromResult(
-			$this->getMockResultWrapper( $this->getRowWithUsername() )
+			$this->getMockResultWrapper( self::getRowWithUsername() )
 		);
 
 		$object->next();

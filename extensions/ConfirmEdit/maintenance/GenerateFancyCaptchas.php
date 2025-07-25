@@ -54,10 +54,6 @@ class GenerateFancyCaptchas extends Maintenance {
 			"verbose",
 			"Show debugging information when running the captcha python script"
 		);
-		$this->addOption(
-			"oldcaptcha",
-			"DEPRECATED: Whether to use captcha-old.py which doesn't have OCR fighting improvements"
-		);
 		$this->addOption( "delete", "Deletes all the old captchas" );
 		$this->addOption( "threads", "The number of threads to use to generate the images",
 			false, true );
@@ -109,16 +105,9 @@ class GenerateFancyCaptchas extends Maintenance {
 			$this->fatalError( "Could not create temp directory.\n", 1 );
 		}
 
-		$captchaScript = 'captcha.py';
-
-		if ( $this->hasOption( 'oldcaptcha' ) ) {
-			$this->output( "Using --oldcaptcha is deprecated, and captcha-old.py will be removed in the future!" );
-			$captchaScript = 'captcha-old.py';
-		}
-
 		$cmd = [
 			"python3",
-			dirname( __DIR__ ) . '/' . $captchaScript,
+			dirname( __DIR__ ) . '/captcha.py',
 			"--key",
 			$wgCaptchaSecret,
 			"--output",
@@ -149,7 +138,7 @@ class GenerateFancyCaptchas extends Maintenance {
 			wfRecursiveRemoveDir( $tmpDir );
 
 			$this->fatalError(
-				"An error occurred when running $captchaScript:\n{$result->getStderr()}\n",
+				"An error occurred when running captcha.py:\n{$result->getStderr()}\n",
 				1
 			);
 		}

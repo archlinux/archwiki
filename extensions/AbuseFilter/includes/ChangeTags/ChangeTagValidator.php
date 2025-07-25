@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Status\Status;
 
 /**

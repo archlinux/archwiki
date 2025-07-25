@@ -27,6 +27,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWikiIntegrationTestCase;
+use Psr\Log\NullLogger;
 use Wikimedia\Equivset\Equivset;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\Stats\NullStatsdDataFactory;
@@ -55,7 +56,7 @@ class ParserEquivsetTest extends MediaWikiIntegrationTestCase {
 		// and setLogger if they want to test any of those.
 		$contLang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$cache = new EmptyBagOStuff();
-		$logger = new \Psr\Log\NullLogger();
+		$logger = new NullLogger();
 		$keywordsManager = AbuseFilterServices::getKeywordsManager();
 		$varManager = new VariablesManager(
 			$keywordsManager,

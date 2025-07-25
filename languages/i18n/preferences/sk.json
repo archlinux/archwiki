@@ -80,7 +80,7 @@
 	"prefs-help-email": "E-mailová adresa je nepovinný údaj, umožní ale zaslanie nového hesla v prípade, že svoje heslo zabudnete.",
 	"prefs-help-email-required": "Vyžaduje sa e-mailová adresa.",
 	"prefs-help-email-others": "Môžete tiež umožniť ostatným kontaktovať vás e-mailom pomocou odkazu z vašej používateľskej alebo diskusnej stránky.\nKeď vás ostatní používatelia kontaktujú, vaša e-mailová adresa nebude prezradená.",
-	"tog-requireemail": "Zaslanie emailu na resetovanie hesla je možné len vtedy ak je poskytnutá aj emailová adresa a užívateľské meno.",
+	"tog-requireemail": "Zaslanie emailu na resetovanie hesla je možné len vtedy ak je poskytnutá aj emailová adresa a užívateľské meno",
 	"prefs-help-requireemail": "Toto zlepšuje súkromie a pomáha zabrániť nevyžiadaným emailom.",
 	"noemailprefs": "Tieto nástroje budú prístupné po vyplnení e-mailovej adresy vo vašich nastaveniach.",
 	"emailnotauthenticated": "Vaša e-mailová adresa ešte nebola overená.\nPreto nemôžete prijať e-maily pre žiadnu z nasledovných funkcií.",
@@ -222,6 +222,7 @@
 	"search-thumbnail-extra-namespaces-label": "Zobraziť náhľady na stránke Špeciálne:Hľadanie v desktopovej verzii",
 	"search-thumbnail-extra-namespaces-message": "Zobraziť náhľady z {{PLURAL:$2|menného priestoru|menných priestorov}} $1 na stránke {{#special:search}}",
 	"prefs-advancedsearchoptions": "Rozšírené možnosti",
+	"prefs-misc": "Rôzne",
 	"prefs-reset-intro": "Túto stránku môžete použiť na vrátenie predvolených hodnôt vašich nastavení.\nTúto operáciu nemožno vrátiť.",
 	"restoreprefs": "Obnoviť všetky predvolené nastavenia"
 }

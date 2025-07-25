@@ -21,13 +21,13 @@
 namespace MediaWiki\User;
 
 use InvalidArgumentException;
-use JobQueueGroup;
 use LogicException;
-use ManualLogEntry;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\Authority;
@@ -46,8 +46,10 @@ use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
- * Manages user groups.
+ * Manage user group memberships.
+ *
  * @since 1.35
+ * @ingroup User
  */
 class UserGroupManager {
 
@@ -61,6 +63,7 @@ class UserGroupManager {
 		MainConfigNames::Autopromote,
 		MainConfigNames::AutopromoteOnce,
 		MainConfigNames::AutopromoteOnceLogInRC,
+		MainConfigNames::AutopromoteOnceRCExcludedGroups,
 		MainConfigNames::EmailAuthentication,
 		MainConfigNames::ImplicitGroups,
 		MainConfigNames::GroupInheritsPermissions,
@@ -655,7 +658,6 @@ class UserGroupManager {
 			default:
 				$result = null;
 				$this->hookRunner->onAutopromoteCondition( $cond[0],
-					// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
 					array_slice( $cond, 1 ), $user, $result );
 				if ( $result === null ) {
 					throw new InvalidArgumentException(
@@ -668,7 +670,7 @@ class UserGroupManager {
 	}
 
 	/**
-	 * Add the user to the group if he/she meets given criteria.
+	 * Add the user to the group if they meet given criteria.
 	 *
 	 * Contrary to autopromotion by $wgAutopromote, the group will be
 	 *   possible to remove manually via Special:UserRights. In such case it
@@ -720,7 +722,8 @@ class UserGroupManager {
 		// TODO: deprecate passing full User object to hook
 		$this->hookRunner->onUserGroupsChanged(
 			$userObj,
-			$toPromote, [],
+			$toPromote,
+			[],
 			false,
 			false,
 			$oldUGMs,
@@ -735,7 +738,14 @@ class UserGroupManager {
 			'5::newgroups' => $newGroups,
 		] );
 		$logid = $logEntry->insert();
-		if ( $this->options->get( MainConfigNames::AutopromoteOnceLogInRC ) ) {
+
+		// Allow excluding autopromotions into select groups from RecentChanges (T377829).
+		$groupsToShowInRC = array_diff(
+			$toPromote,
+			$this->options->get( MainConfigNames::AutopromoteOnceRCExcludedGroups )
+		);
+
+		if ( $this->options->get( MainConfigNames::AutopromoteOnceLogInRC ) && count( $groupsToShowInRC ) ) {
 			$logEntry->publish( $logid );
 		}
 
@@ -1192,8 +1202,6 @@ class UserGroupManager {
 
 	/**
 	 * Cleans cached group memberships for a given user
-	 *
-	 * @param UserIdentity $user
 	 */
 	public function clearCache( UserIdentity $user ) {
 		$user->assertWiki( $this->wikiId );

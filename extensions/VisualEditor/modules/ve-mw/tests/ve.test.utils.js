@@ -106,22 +106,17 @@
 		// On load, teardown overrides so the first core tests run correctly
 		teardownOverrides();
 
-		// Deprecated, use ve.test.utils.newMwEnvironment
-		ve.test.utils.mwEnvironment = {
-			beforeEach: setupOverrides,
-			afterEach: teardownOverrides
-		};
 		ve.test.utils.newMwEnvironment = function ( env ) {
 			env = env || {};
 			return QUnit.newMwEnvironment( ve.extendObject( {}, env, {
 				beforeEach: function () {
-					setupOverrides.call( this );
+					setupOverrides();
 					if ( env.beforeEach ) {
 						env.beforeEach.call( this );
 					}
 				},
 				afterEach: function () {
-					teardownOverrides.call( this );
+					teardownOverrides();
 					if ( env.afterEach ) {
 						env.afterEach.call( this );
 					}

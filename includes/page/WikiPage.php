@@ -18,6 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\Page;
+
+use BadMethodCallException;
+use InvalidArgumentException;
+use MediaWiki\Actions\InfoAction;
 use MediaWiki\Category\Category;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
@@ -27,26 +32,25 @@ use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
+use MediaWiki\JobQueue\Jobs\RefreshLinksJob;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\DeletePage;
-use MediaWiki\Page\ExistingPageRecord;
-use MediaWiki\Page\PageIdentity;
-use MediaWiki\Page\PageRecord;
-use MediaWiki\Page\PageReference;
-use MediaWiki\Page\PageStoreRecord;
-use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\DerivedPageDataUpdater;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Storage\PageUpdaterFactory;
 use MediaWiki\Storage\PageUpdateStatus;
@@ -55,10 +59,14 @@ use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
 use MediaWiki\User\User;
+use MediaWiki\User\UserArray;
 use MediaWiki\User\UserArrayFromResult;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
+use RuntimeException;
+use stdClass;
+use Stringable;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\NonSerializable\NonSerializableTrait;
@@ -164,9 +172,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 */
 	private $derivedDataUpdater = null;
 
-	/**
-	 * @param PageIdentity $pageIdentity
-	 */
 	public function __construct( PageIdentity $pageIdentity ) {
 		$pageIdentity->assertWiki( PageIdentity::LOCAL );
 
@@ -207,9 +212,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 		}
 	}
 
-	/**
-	 * @return PageUpdaterFactory
-	 */
 	private function getPageUpdaterFactory(): PageUpdaterFactory {
 		return MediaWikiServices::getInstance()->getPageUpdaterFactory();
 	}
@@ -736,7 +738,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 
 	/**
 	 * Set the latest revision
-	 * @param RevisionRecord $revRecord
 	 */
 	private function setLastEdit( RevisionRecord $revRecord ) {
 		$this->mLastRevision = $revRecord;
@@ -893,9 +894,15 @@ class WikiPage implements Stringable, Page, PageRecord {
 	}
 
 	/**
-	 * Determine whether a page would be suitable for being counted as an
-	 * article in the site_stats table based on the title & its content
+	 * Whether the page may count towards the the site's number of "articles".
 	 *
+	 * This is tracked in the `site_stats` table, and calculated based on the
+	 * namespace, page metadata, and content.
+	 *
+	 * @see $wgArticleCountMethod
+	 * @see SlotRoleHandler::supportsArticleCount
+	 * @see Content::isCountable
+	 * @see WikitextContent::isCountable
 	 * @param PreparedEdit|PreparedUpdate|false $editInfo (false):
 	 *   An object returned by prepareTextForEdit() or getCurrentUpdate() respectively;
 	 *   If false is given, the current database state will be used.
@@ -932,11 +939,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 			// nasty special case to avoid re-parsing to detect links
 
 			if ( $editInfo ) {
-				// ParserOutput::getLinks() is a 2D array of page links, so
-				// to be really correct we would need to recurse in the array
-				// but the main array should only have items in it if there are
-				// links.
-				$hasLinks = (bool)count( $editInfo->output->getLinks() );
+				$hasLinks = $editInfo->output->hasLinks();
 			} else {
 				// NOTE: keep in sync with RevisionRenderer::getLinkCount
 				// NOTE: keep in sync with DerivedPageDataUpdater::isCountable
@@ -1037,7 +1040,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	/**
 	 * Get a list of users who have edited this article, not including the user who made
 	 * the most recent revision, which you can get from $article->getUser() if you want it
-	 * @return UserArrayFromResult
+	 * @return UserArray
 	 */
 	public function getContributors() {
 		// @todo: This is expensive; cache this info somewhere.
@@ -1289,7 +1292,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 			$conditions['page_latest'] = $lastRevision;
 		}
 
-		$model = $revision->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel();
+		$model = $revision->getMainContentModel();
 
 		$row = [ /* SET */
 			'page_latest'        => $revId,
@@ -1545,66 +1548,14 @@ class WikiPage implements Stringable, Page, PageRecord {
 	}
 
 	/**
-	 * Returns a PageUpdater for creating new revisions on this page (or creating the page).
-	 *
-	 * The PageUpdater can also be used to detect the need for edit conflict resolution,
-	 * and to protected such conflict resolution from concurrent edits using a check-and-set
-	 * mechanism.
-	 *
-	 * @since 1.32
-	 *
-	 * @note Once extensions no longer rely on WikiPage to get access to the state of an ongoing
-	 * edit via prepareContentForEdit() and WikiPage::getCurrentUpdate(),
-	 * this method should be deprecated and callers should be migrated to using
-	 * PageUpdaterFactory::newPageUpdater() instead.
-	 *
-	 * @param Authority|UserIdentity $performer
-	 * @param RevisionSlotsUpdate|null $forUpdate If given, allows any cached ParserOutput
-	 *        that may already have been returned via getDerivedDataUpdater to be re-used.
-	 *
-	 * @return PageUpdater
-	 */
-	public function newPageUpdater( $performer, ?RevisionSlotsUpdate $forUpdate = null ) {
-		if ( $performer instanceof Authority ) {
-			// TODO: Deprecate this. But better get rid of this method entirely.
-			$performer = $performer->getUser();
-		}
-
-		$pageUpdater = $this->getPageUpdaterFactory()->newPageUpdaterForDerivedPageDataUpdater(
-			$this,
-			$performer,
-			$this->getDerivedDataUpdater( $performer, null, $forUpdate, true )
-		);
-
-		return $pageUpdater;
-	}
-
-	/**
 	 * Change an existing article or create a new article. Updates RC and all necessary caches,
 	 * optionally via the deferred update array.
-	 *
-	 * @deprecated since 1.36, use PageUpdater::saveRevision instead. Note that the new method
-	 * expects callers to take care of checking EDIT_MINOR against the minoredit right, and to
-	 * apply the autopatrol right as appropriate.
 	 *
 	 * @param Content $content New content
 	 * @param Authority $performer doing the edit
 	 * @param string|CommentStoreComment $summary Edit summary
-	 * @param int $flags Bitfield:
-	 *      EDIT_NEW
-	 *          Article is known or assumed to be non-existent, create a new one
-	 *      EDIT_UPDATE
-	 *          Article is known or assumed to be pre-existing, update it
-	 *      EDIT_MINOR
-	 *          Mark this edit minor, if the user is allowed to do so
-	 *      EDIT_SUPPRESS_RC
-	 *          Do not log the change in recentchanges
-	 *      EDIT_FORCE_BOT
-	 *          Mark the edit a "bot" edit regardless of user rights
-	 *      EDIT_AUTOSUMMARY
-	 *          Fill in blank summaries with generated text where possible
-	 *      EDIT_INTERNAL
-	 *          Signal that the page retrieve/save cycle happened entirely in this request.
+	 * @param int $flags Bitfield, see the EDIT_XXX constants such as EDIT_NEW
+	 *        or EDIT_FORCE_BOT.
 	 *
 	 * If neither EDIT_NEW nor EDIT_UPDATE is specified, the status of the
 	 * article will be detected. If EDIT_UPDATE is specified and the article
@@ -1636,6 +1587,10 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 *  $return->value will contain an associative array with members as follows:
 	 *     new: Boolean indicating if the function attempted to create a new article.
 	 *     revision-record: The revision record object for the inserted revision, or null.
+	 *
+	 * @deprecated since 1.36, use PageUpdater::saveRevision instead. Note that the new method
+	 * expects callers to take care of checking EDIT_MINOR against the minoredit right, and to
+	 * apply the autopatrol right as appropriate.
 	 *
 	 * @since 1.36
 	 */
@@ -1670,9 +1625,10 @@ class WikiPage implements Stringable, Page, PageRecord {
 		// prepareContentForEdit will generally use the DerivedPageDataUpdater that is also
 		// used by this PageUpdater. However, there is no guarantee for this.
 		$updater = $this->newPageUpdater( $performer, $slotsUpdate )
-				->setContent( SlotRecord::MAIN, $content )
+			->setContent( SlotRecord::MAIN, $content )
 			->setOriginalRevisionId( $originalRevId );
 		if ( $undidRevId ) {
+			$updater->setCause( PageUpdateCauses::CAUSE_UNDO );
 			$updater->markAsRevert(
 				EditResult::REVERT_UNDO,
 				$undidRevId,
@@ -1707,6 +1663,41 @@ class WikiPage implements Stringable, Page, PageRecord {
 		}
 
 		return $updater->getStatus();
+	}
+
+	/**
+	 * Returns a PageUpdater for creating new revisions on this page (or creating the page).
+	 *
+	 * The PageUpdater can also be used to detect the need for edit conflict resolution,
+	 * and to protected such conflict resolution from concurrent edits using a check-and-set
+	 * mechanism.
+	 *
+	 * @since 1.32
+	 *
+	 * @note Once extensions no longer rely on WikiPage to get access to the state of an ongoing
+	 * edit via prepareContentForEdit() and WikiPage::getCurrentUpdate(),
+	 * this method should be deprecated and callers should be migrated to using
+	 * PageUpdaterFactory::newPageUpdater() instead.
+	 *
+	 * @param Authority|UserIdentity $performer
+	 * @param RevisionSlotsUpdate|null $forUpdate If given, allows any cached ParserOutput
+	 *        that may already have been returned via getDerivedDataUpdater to be re-used.
+	 *
+	 * @return PageUpdater
+	 */
+	public function newPageUpdater( $performer, ?RevisionSlotsUpdate $forUpdate = null ) {
+		if ( $performer instanceof Authority ) {
+			// TODO: Deprecate this. But better get rid of this method entirely.
+			$performer = $performer->getUser();
+		}
+
+		$pageUpdater = $this->getPageUpdaterFactory()->newPageUpdaterForDerivedPageDataUpdater(
+			$this,
+			$performer,
+			$this->getDerivedDataUpdater( $performer, null, $forUpdate, true )
+		);
+
+		return $pageUpdater;
 	}
 
 	/**
@@ -1804,37 +1795,27 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 * Update links tables, site stats, search index and message cache.
 	 * Purges pages that include this page if the text was changed here.
 	 * Every 100th edit, prune the recent changes table.
+	 * Does not emit domain events.
 	 *
-	 * @deprecated since 1.32 (soft), use DerivedPageDataUpdater::doUpdates instead.
+	 * @deprecated since 1.32, use DerivedPageDataUpdater::doUpdates instead.
+	 *             Emitting warnings since 1.44
 	 *
 	 * @param RevisionRecord $revisionRecord (Switched from the old Revision class to
 	 *    RevisionRecord since 1.35)
 	 * @param UserIdentity $user User object that did the revision
-	 * @param array $options Array of options, following indexes are used:
-	 * - changed: bool, whether the revision changed the content (default true)
-	 * - created: bool, whether the revision created the page (default false)
-	 * - moved: bool, whether the page was moved (default false)
-	 * - restored: bool, whether the page was undeleted (default false)
-	 * - oldrevision: RevisionRecord object for the pre-update revision (default null)
-	 * - oldcountable: bool, null, or string 'no-change' (default null):
-	 *   - bool: whether the page was counted as an article before that
-	 *     revision, only used in changed is true and created is false
-	 *   - null: if created is false, don't update the article count; if created
-	 *     is true, do update the article count
-	 *   - 'no-change': don't update the article count, ever
-	 *  - causeAction: an arbitrary string identifying the reason for the update.
-	 *    See DataUpdate::getCauseAction(). (default 'edit-page')
-	 *  - causeAgent: name of the user who caused the update. See DataUpdate::getCauseAgent().
-	 *    (string, defaults to the passed user)
+	 * @param array $options Array of options, see DerivedPageDataUpdater::prepareUpdate.
 	 */
 	public function doEditUpdates(
 		RevisionRecord $revisionRecord,
 		UserIdentity $user,
 		array $options = []
 	) {
+		wfDeprecated( __METHOD__, '1.32' ); // emitting warnings since 1.44
+
 		$options += [
 			'causeAction' => 'edit-page',
 			'causeAgent' => $user->getName(),
+			'emitEvents' => false // prior page state is unknown, can't emit events
 		];
 
 		$updater = $this->getDerivedDataUpdater( $user, $revisionRecord );
@@ -2014,12 +1995,12 @@ class WikiPage implements Stringable, Page, PageRecord {
 		// Null revision (used for change tag insertion)
 		$nullRevisionRecord = null;
 
-		if ( $id ) { // Protection of existing page
-			$legacyUser = $services->getUserFactory()->newFromUserIdentity( $user );
-			if ( !$this->getHookRunner()->onArticleProtect( $this, $legacyUser, $limit, $reason ) ) {
-				return Status::newGood();
-			}
+		$legacyUser = $services->getUserFactory()->newFromUserIdentity( $user );
+		if ( !$this->getHookRunner()->onArticleProtect( $this, $legacyUser, $limit, $reason ) ) {
+			return Status::newGood();
+		}
 
+		if ( $id ) { // Protection of existing page
 			// Only certain restrictions can cascade...
 			$editrestriction = isset( $limit['edit'] )
 				? [ $limit['edit'] ]
@@ -2046,8 +2027,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 				$cascade = false;
 			}
 
-			// insert null revision to identify the page protection change as edit summary
-			$latest = $this->getLatest();
+			// insert dummy revision to identify the page protection change as edit summary
 			$nullRevisionRecord = $this->insertNullProtectionRevision(
 				$revCommentMsg,
 				$limit,
@@ -2104,11 +2084,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 					];
 				}
 			}
-
-			$this->getHookRunner()->onRevisionFromEditComplete(
-				$this, $nullRevisionRecord, $latest, $user, $tags );
-
-			$this->getHookRunner()->onArticleProtectComplete( $this, $legacyUser, $limit, $reason );
 		} else { // Protection of non-existing page (also known as "title protection")
 			// Cascade protection is meaningless in this case
 			$cascade = false;
@@ -2142,6 +2117,8 @@ class WikiPage implements Stringable, Page, PageRecord {
 					->caller( __METHOD__ )->execute();
 			}
 		}
+
+		$this->getHookRunner()->onArticleProtectComplete( $this, $legacyUser, $limit, $reason );
 
 		$services->getRestrictionStore()->flushRestrictions( $this->mTitle );
 
@@ -2207,7 +2184,8 @@ class WikiPage implements Stringable, Page, PageRecord {
 	}
 
 	/**
-	 * Insert a new null revision for this page.
+	 * Insert a new dummy revision (aka null revision) for this page,
+	 * to mark a change in page protection.
 	 *
 	 * @since 1.35
 	 *
@@ -2227,8 +2205,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 		string $reason,
 		UserIdentity $user
 	): ?RevisionRecord {
-		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
-
 		// Prepare a null revision to be added to the history
 		$editComment = wfMessage(
 			$revCommentMsg,
@@ -2251,28 +2227,9 @@ class WikiPage implements Stringable, Page, PageRecord {
 			)->inContentLanguage()->text();
 		}
 
-		$revStore = $this->getRevisionStore();
-		$comment = CommentStoreComment::newUnsavedComment( $editComment );
-		$nullRevRecord = $revStore->newNullRevision(
-			$dbw,
-			$this->getTitle(),
-			$comment,
-			true,
-			$user
-		);
-
-		if ( $nullRevRecord ) {
-			$inserted = $revStore->insertRevisionOn( $nullRevRecord, $dbw );
-
-			// Update page record and touch page
-			$oldLatest = $inserted->getParentId();
-
-			$this->updateRevisionOn( $dbw, $inserted, $oldLatest );
-
-			return $inserted;
-		} else {
-			return null;
-		}
+		return $this->newPageUpdater( $user )
+			->setCause( PageUpdater::CAUSE_PROTECTION_CHANGE )
+			->saveDummyRevision( $editComment, EDIT_SILENT | EDIT_MINOR );
 	}
 
 	/**
@@ -2446,7 +2403,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 * @since 1.27
 	 */
 	public function lockAndGetLatest() {
-		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
+		$dbw = $this->getConnectionProvider()->getPrimaryDatabase();
 		return (int)$dbw->newSelectQueryBuilder()
 			->select( 'page_latest' )
 			->forUpdate()
@@ -2485,7 +2442,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 		$hcu->purgeTitleUrls( [ $title, $other ], $hcu::PURGE_INTENT_TXROUND_REFLECTED );
 
 		$title->touchLinks();
-		$title->deleteTitleProtection();
+		$services->getRestrictionStore()->deleteCreateProtection( $title );
 
 		$services->getLinkCache()->invalidateTitle( $title );
 
@@ -2507,6 +2464,9 @@ class WikiPage implements Stringable, Page, PageRecord {
 	/**
 	 * Clears caches when article is deleted
 	 *
+	 * @internal for use by DeletePage and MovePage.
+	 * @todo pull this into DeletePage
+	 *
 	 * @param Title $title
 	 */
 	public static function onArticleDelete( Title $title ) {
@@ -2525,16 +2485,15 @@ class WikiPage implements Stringable, Page, PageRecord {
 
 		InfoAction::invalidateCache( $title );
 
-		// Messages
-		if ( $title->getNamespace() === NS_MEDIAWIKI ) {
-			$services->getMessageCache()->updateMessageOverride( $title, null );
-		}
-
 		// Invalidate caches of articles which include this page
 		DeferredUpdates::addCallableUpdate( static function () use ( $title ) {
 			self::queueBacklinksJobs( $title, true, true, 'delete-page' );
 		} );
 
+		// TODO: Move to ChangeTrackingEventIngress when ready,
+		// but make sure it happens on deletions and page moves by adding
+		// the appropriate assertions to ChangeTrackingEventIngressSpyTrait.
+		// Messages
 		// User talk pages
 		if ( $title->getNamespace() === NS_USER_TALK ) {
 			$user = User::newFromName( $title->getText(), false );
@@ -2545,6 +2504,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 			}
 		}
 
+		// TODO: Create MediaEventIngress and move this there.
 		// Image redirects
 		$services->getRepoGroup()->getLocalRepo()->invalidateImageRedirect( $title );
 
@@ -2598,7 +2558,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	}
 
 	private static function queueBacklinksJobs(
-		Title $title, $mainSlotChanged, $maybeRedirectChanged, $causeAction
+		Title $title, bool $mainSlotChanged, bool $maybeRedirectChanged, string $causeAction
 	) {
 		$services = MediaWikiServices::getInstance();
 		$backlinkCache = $services->getBacklinkCacheFactory()->getBacklinkCache( $title );
@@ -2642,8 +2602,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 
 	/**
 	 * Purge the check key for cross-wiki cache entries referencing this page
-	 *
-	 * @param Title $title
 	 */
 	private static function purgeInterwikiCheckKey( Title $title ) {
 		$enableScaryTranscluding = MediaWikiServices::getInstance()->getMainConfig()->get(
@@ -2705,7 +2663,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 			return [];
 		}
 
-		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+		$dbr = $this->getConnectionProvider()->getReplicaDatabase();
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'cl_to' ] )
 			->from( 'categorylinks' )
@@ -2761,7 +2719,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 			$removeFields["cat_{$type}s"] = new RawSQLValue( "cat_{$type}s - 1" );
 		}
 
-		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
+		$dbw = $this->getConnectionProvider()->getPrimaryDatabase();
 		$res = $dbw->newSelectQueryBuilder()
 			->select( [ 'cat_id', 'cat_title' ] )
 			->from( 'category' )
@@ -2874,10 +2832,23 @@ class WikiPage implements Stringable, Page, PageRecord {
 			MediaWikiServices::getInstance()->getJobQueueGroup()->lazyPush(
 				RefreshLinksJob::newPrioritized( $this->mTitle, $params )
 			);
-		} elseif ( !$config->get( MainConfigNames::MiserMode ) &&
-			$parserOutput->hasReducedExpiry()
+		} elseif (
+			(
+				// "Dynamic" content (eg time/random magic words)
+				!$config->get( MainConfigNames::MiserMode ) &&
+				$parserOutput->hasReducedExpiry()
+			)
+			||
+			(
+				// Asynchronous content
+				$config->get( MainConfigNames::ParserCacheAsyncRefreshJobs ) &&
+				$parserOutput->getOutputFlag( ParserOutputFlags::HAS_ASYNC_CONTENT ) &&
+				!$parserOutput->getOutputFlag( ParserOutputFlags::ASYNC_NOT_READY )
+			)
 		) {
-			// Assume the output contains "dynamic" time/random based magic words.
+			// Assume the output contains "dynamic" time/random based magic words
+			// or asynchronous content that wasn't "ready" the first time the
+			// page was parsed.
 			// Only update pages that expired due to dynamic content and NOT due to edits
 			// to referenced templates/files. When the cache expires due to dynamic content,
 			// page_touched is unchanged. We want to avoid triggering redundant jobs due to
@@ -3041,4 +3012,14 @@ class WikiPage implements Stringable, Page, PageRecord {
 		);
 	}
 
+	/**
+	 * @return \Wikimedia\Rdbms\IConnectionProvider
+	 */
+	private function getConnectionProvider(): \Wikimedia\Rdbms\IConnectionProvider {
+		return MediaWikiServices::getInstance()->getConnectionProvider();
+	}
+
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( WikiPage::class, 'WikiPage' );

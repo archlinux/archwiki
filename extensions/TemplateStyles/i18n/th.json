@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Patsagorn Y."
+		]
+	},
+	"templatestyles-desc": "ใช้สไตล์ชีตต่อแม่แบบ",
+	"templatestyles-missing-src": "แอตทริบิว <code>src</code> ต้องไม่เป็นค่าว่าง",
+	"templatestyles-invalid-src": "ชื่อหน้าไม่ถูกสำหรับสไตล์แม่แบบในแอตทริบิว <code>src</code>",
+	"templatestyles-invalid-wrapper": "ค่าไม่ถูกต้องสำหรับสไตล์แม่แบบในแอตทริบิว <code>wrapper</code>",
+	"templatestyles-bad-src-missing": "หน้า [[:$1|$2]] ไม่มีเนื้อหา",
+	"templatestyles-bad-src": "หน้า [[:$1|$2]] ต้องมีรูปแบบเนื้อหาหน้าเป็น \"{{int:content-model-sanitized-css}}\" เพื่อใช้งานกับสไตล์แม่แบบ (รูปแบบเนื้อหาปัจจุบันคือ \"$3\")",
+	"templatestyles-errorcomment": "ข้อผิดพลาดขณะประมวลผลสไตล์ชีตของหน้า [[:$1|$1]] (รุ่น $2):\n$3",
+	"templatestyles-size-exceeded": "สไตล์ชีตมีขนาดใหญ่เกินขนาดสูงสุดที่ $2",
+	"content-model-sanitized-css": "Sanitized CSS",
+	"templatestyles-stylesheet-error-category": "สไตล์ชีตของสไตล์แม่แบบที่มีข้อผิดพลาด",
+	"templatestyles-stylesheet-error-category-desc": "สไตล์แม่แบบที่มีข้อผิดพลาดรอการแก้ไข",
+	"templatestyles-page-error-category": "หน้าที่มีข้อผิดพลาดกับสไตล์แม่แบบ",
+	"templatestyles-page-error-category-desc": "เกิดข้อผิดพลาดขณะกำลังประมวลผลแท็ก <code><nowiki><templatestyle/></nowiki></code> บนหน้า",
+	"templatestyles-error-at-rule-block-not-allowed": "บล็อกที่ไม่อนุญาต <code>@$3</code> ที่บรรทัด $1 อักขระที่ $2",
+	"templatestyles-error-at-rule-block-required": "บล็อกที่จำเป็นขาด <code>@$3</code> ที่บรรทัด $1 อักขระที่ $2",
+	"templatestyles-error-bad-character-in-url": "ตัวอักขระยูอาร์แอลไม่ถูกต้องที่บรรทัด $1 อักขระที่ $2",
+	"templatestyles-error-bad-escape": "อักขระไม่ถูกต้องใน escape ที่บรรทัด $1 อักขระที่ $2"
+}

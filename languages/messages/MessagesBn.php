@@ -52,6 +52,8 @@ $digitTransformTable = [
 
 $digitGroupingPattern = "#,##,##0.###";
 
+$numberingSystem = 'beng';
+
 /** @phpcs-require-sorted-array */
 $specialPageAliases = [
 	'Activeusers'               => [ 'সক্রিয়_ব্যবহারকারী' ],
@@ -91,6 +93,7 @@ $specialPageAliases = [
 	'Filepath'                  => [ 'ফাইলের_পথ' ],
 	'GoToInterwiki'             => [ 'আন্ত-উইকিতে_চলুন', 'আন্তউইকিতে_চলুন', 'আন্তঃউইকিতে_চলুন' ],
 	'Import'                    => [ 'আমদানি' ],
+	'Interwiki'                 => [ 'আন্তঃউইকি' ],
 	'Invalidateemail'           => [ 'অবৈধ_ইমেইল' ],
 	'JavaScriptTest'            => [ 'জাভাস্ক্রিপ্ট_পরীক্ষা' ],
 	'LinkAccounts'              => [ 'অ্যাকাউন্টের_তালিকা' ],

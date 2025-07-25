@@ -5,14 +5,14 @@
 			"Nirajan pant",
 			"Parbat subedi",
 			"RajeshPandey",
-			"बडा काजी",
-			"पर्वत सुबेदी"
+			"पर्वत सुबेदी",
+			"बडा काजी"
 		]
 	},
 	"nuke": "धेरैवटा हटाउने",
 	"action-nuke": "न्युक पृष्ठहरू",
 	"nuke-multiplepeople": "भर्खरै थपिएका पृष्ठहरूलाई सामूहिक मेटाउने",
-	"nuke-submit-user": "जाउ",
+	"nuke-submit-list": "जाउ",
 	"nuke-userorip": "प्रयोगकर्ता, आइपी ठेगाना वा खाली:",
 	"nuke-maxpages": "पृष्ठहरूको उच्चतम संख्या:",
 	"nuke-editby": "[[Special:Contributions/$1|$1]] द्वारा सिर्जना गरिएको",

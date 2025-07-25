@@ -4,7 +4,9 @@
 			"Anterdc99",
 			"LittlePaw365",
 			"SCP-2000",
-			"星海"
+			"星海",
+			"Hakimi97",
+			"Peterxy12"
 		]
 	},
 	"editcheck-dialog-action-no": "否",
@@ -19,6 +21,9 @@
 	"editcheck-dialog-addref-success-notify": "感谢您添加引证！",
 	"editcheck-dialog-addref-title": "添加引证",
 	"editcheck-dialog-title": "发布前",
+	"editcheck-copyvio-title": "粘贴的内容",
+	"editcheck-copyvio-description": "一般来说，不要从其他来源复制文本。这样做通常既构成侵犯版权，也构成抄袭。",
+	"editcheck-review-title": "查看更改",
 	"tag-editcheck-reference-decline-common-knowledge": "拒绝（参考资料）编辑检查（常识）",
 	"tag-editcheck-reference-decline-common-knowledge-description": "参考资料编辑检查以常识作为原因而拒绝",
 	"tag-editcheck-reference-decline-irrelevant": "拒绝（参考资料）编辑检查（无关）",

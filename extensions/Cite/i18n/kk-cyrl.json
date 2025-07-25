@@ -15,12 +15,13 @@
 	"cite_error_ref_too_many_keys": "Жарамсыз <code>&lt;ref&gt;</code> белгіше; \nжарамсыз атаулар, мысалы, тым көп",
 	"cite_error_ref_no_input": "Жарамсыз <code>&lt;ref&gt;</code> белгіше;\nатаусыз дереккөздерде мағлұматы болуы қажет",
 	"cite_error_references_invalid_parameters": "Жарамсыз <code>&lt;references&gt;</code> белгіше;\nеш параметр рұқсат етілмейді, \nбылай <code>&lt;references /&gt;</code> қолданыңыз",
-	"cite_error_references_no_backlink_label": "Баптаулы кері сілтеме таңбалары бітті. [[MediaWiki:Cite references link many format backlink labels]] хабарында көбірек тағайындаңыз.",
-	"cite_error_no_link_label_group": "\"$1\" тобы үшін баптаулы сілтеме таңбалары бітті. [[MediaWiki:$2]] хабарында көбірек тағайындаңыз.",
 	"cite_error_references_no_text": "Жарамсыз <code>&lt;ref&gt;</code> тегі;\nno text was provided for refs named <code>$1</code>",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> тегін <code>&lt;/ref&gt;</code> тегімен жабуды қажет етеді",
 	"cite_error_group_refs_without_references": "\"$1\" деп аталған дереккөз тобында <code>&lt;ref&gt;</code> тегі бар, бірақ тиісті <code>&lt;references group=\"$1\"/&gt;</code> тегі табылмады, немесе <code>&lt;/ref&gt;</code> жабу тегін қажет етеді",
 	"cite-tracking-category-cite-error": "Қате сілтемелері бар беттер",
+	"cite-reference-previews-gadget-conflict-info-navpopups": "Сізде [[$1|Қалқымалы навигация терезесі]] гаджеті қосулы болғандықтан, бұл мүмкіндік берген алдын ала көру терезесін көрмейсіз. Уикиіңізге байланысты, гаджеттің атауы сәл басқаша болуы мүмкін. Қатеге тап бола берсеңіз, гаджеттеріңіз бен қолданушы скриптеріңізді, соның ішінде глобалды скриптерді, тексеріңіз.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "Сізде [[$1|дереккөз кеңестері]] гаджеті қосулы болғандықтан, сіз дереккөз алдын ала көру терезесін көрмейсіз, бірақ бет алдын ала көру терезелерін көре бересіз. Уикиіңізге байланысты, гаджеттің атауы сәл басқаша болуы мүмкін. Қатеге тап бола берсеңіз, гаджеттеріңіз бен қолданушы скриптеріңізді, соның ішінде глобалды скриптерді, тексеріңіз.",
+	"cite-reference-previews-gadget-conflict-info-navpopups-reftooltips": "N",
 	"cite_references_link_accessibility_label": "Жоғарыға көтеріліңіз",
 	"cite_references_link_many_accessibility_label": "Мынаған өту:",
 	"cite_section_preview_references": "Дереккөздерді алдын ала қарау",
@@ -29,8 +30,5 @@
 	"cite-wikieditor-help-content-reference-description": "Дереккөз",
 	"cite-wikieditor-help-content-named-reference-description": "Аталған дереккөз",
 	"cite-wikieditor-help-content-rereference-description": "Кейбір дереккөздердің қосымша қолданылуы",
-	"cite-wikieditor-help-content-showreferences-description": "Дереккөзін көрсету",
-	"popups-prefs-navpopups-gadget-conflict-info": "Сізде [[$1|Қалқымалы навигация терезесі]] гаджеті қосулы болғандықтан, бұл мүмкіндік берген алдын ала көру терезесін көрмейсіз. Уикиіңізге байланысты, гаджеттің атауы сәл басқаша болуы мүмкін. Қатеге тап бола берсеңіз, гаджеттеріңіз бен қолданушы скриптеріңізді, соның ішінде глобалды скриптерді, тексеріңіз.",
-	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "N",
-	"popups-prefs-reftooltips-gadget-conflict-info": "Сізде [[$1|дереккөз кеңестері]] гаджеті қосулы болғандықтан, сіз дереккөз алдын ала көру терезесін көрмейсіз, бірақ бет алдын ала көру терезелерін көре бересіз. Уикиіңізге байланысты, гаджеттің атауы сәл басқаша болуы мүмкін. Қатеге тап бола берсеңіз, гаджеттеріңіз бен қолданушы скриптеріңізді, соның ішінде глобалды скриптерді, тексеріңіз."
+	"cite-wikieditor-help-content-showreferences-description": "Дереккөзін көрсету"
 }

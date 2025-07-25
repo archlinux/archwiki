@@ -74,7 +74,7 @@
 	"prefs-help-email": "Tola so tola lö'ö alamat email, bahiza moguna ia na ö'andrö ena'ö nonokusi (password) sibohou, ba ginötö olifu ndra'ugö nonokusi si no so.",
 	"prefs-help-email-required": "Moguna mube'e alamat email.",
 	"prefs-help-email-others": "Tola göi öbe ena'ö lafa'ohe'ö khöu duria ira sangoguna bö'ö faoma khai-khai si so ba nga'örö huhuo zangoguna khöu. Lö sa te'oroma'ö khöra alamat emailmö.",
-	"tog-requireemail": "Fa'ohe'ö surel wamulö'ö nono kusi (password) ha na so alamat surel ba töi zangoguna.",
+	"tog-requireemail": "Fa'ohe'ö surel wamulö'ö nono kusi (password) ha na so alamat surel awö döi zangoguna.",
 	"prefs-help-requireemail": "Moguna da'a ena'ö terorogö privasi ba teba'agö email si lö faudu.",
 	"noemailprefs": "Be alamat email bakha ba preferensi ena'ö tola te'oguna'ö fitur andrö.",
 	"emailnotauthenticated": "Lö nasa tefaduhu'ö alamat email-mö.\nBörö da'ö lö tefa'ohe'ö khöu duria sanandrösa ba da'e tou.",
@@ -221,6 +221,7 @@
 	"search-thumbnail-extra-namespaces-label": "Oroma'ö gambara side-ide ba Special:Search on Desktop",
 	"search-thumbnail-extra-namespaces-message": "Oroma'ö gambara side-ide $1 {{PLURAL:$2|ruang nama}} ba nga'örö {{#special:search}}",
 	"prefs-advancedsearchoptions": "Opsi bö'ö",
+	"prefs-misc": "Tanöbö'önia",
 	"prefs-reset-intro": "Ba nga'örö andre tola öfangawuli furi preferensi khöu ba wangatulö'ö si tohöna",
 	"prefs-reset-confirm": "Lau, omasido ufangawuli furi preferensi khögu.",
 	"restoreprefs": "Fangawuli fefu ba stelan si tohöna"

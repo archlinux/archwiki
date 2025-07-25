@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Yupik"
+		]
+	},
+	"checkuser": "Čujuhusaid dárkkisteapmi",
+	"group-checkuser": "Čujuhusaid dárkkisteaddjit",
+	"right-checkuser": "Dárkkistit geavaheddjiid IP-čujuhusaid ja eará dieđuid",
+	"checkuser-clienthints-name-architecture": "Arkkitehtuur",
+	"checkuser-reason": "Mäinn:",
+	"checkuser-query": "Ooʒʒ ođđsumus muttsid",
+	"checkuser-target": "IP-addrõs leʹbe õõʹnninõmm:",
+	"checkuser-period": "Pââʹjj:",
+	"checkuser-all": "puk",
+	"checkuser-nomatch": "Ij käunnʼjam ni mii.",
+	"checkuser-nomatch-edits": "Ij käunnʼjam ni mii.\nMââimõs muuttâs leäi $1 čiâss $2.",
+	"checkuser-search-submit": "Ooʒʒ",
+	"checkuser-investigateblock-target": "Õõʹnninõõm da IP-addrõõzz",
+	"checkuser-investigateblock-reason": "Mäinn",
+	"checkuser-investigate-subtitle-cancel-button-label": "Jõõsk",
+	"checkuser-investigate-subtitle-continue-button-label": "Jueʹtǩ",
+	"checkuser-investigate-notice-no-results": "Ij käunnʼjam ni mii.",
+	"checkuser-investigate-targets-label": "Õõʹnninõõm leʹbe IP-addrõõzz:",
+	"checkuser-investigate-targets-placeholder": "Õõʹnninõmm leʹbe 1.1.1.1",
+	"checkuser-investigate-duration-label": "Pââʹjj",
+	"checkuser-investigate-reason-label": "Mäinn",
+	"checkuser-investigate-preliminary-table-cell-edits": "{{PLURAL:$1|$1 muttsed|1=õhtt muuttâs|2=$1 muttâz|3=$1 muttâz|4=$1 muttâz|5=$1 muttâz|6=$1 muttâz}}",
+	"checkuser-investigate-preliminary-table-header-editcount": "Muttâz",
+	"checkuser-investigate-preliminary-table-header-name": "Õõʹnninõmm",
+	"checkuser-investigate-preliminary-table-cell-wiki-nowiki": "Wiki ij käunnʼjam",
+	"checkuser-investigate-filters-legend": "Siʹllʼjeei",
+	"checkuser-investigate-compare-copy-button-label": "Čuäʹjet wikiteeʹkst",
+	"checkuser-investigate-compare-copy-button-label-hide": "Čiõǥǥ wikiteeʹkst",
+	"checkuser-investigate-compare-table-button-contribs-label": "Muttâz",
+	"checkuser-investigate-compare-table-header-username": "Õõʹnninõmm"
+}

@@ -1,0 +1,41 @@
+[
+	{
+		"name": "cuci_user",
+		"comment": "A central index table that allows looking up which wikis have actions in their CheckUser result tables for a given central ID. This index may not be complete, as some users (such as bots) may be excluded from the index.",
+		"columns": [
+			{
+				"name": "ciu_central_id",
+				"comment": "The central ID associated with this row. The central ID is the ID provided by the CentralIdLookup service, which is the 'user_id' column of the 'user' table without CentralAuth and the 'gu_id' column from the 'globaluser' table with CentralAuth. Both of these columns are integers, so this column is an integer.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "ciu_ciwm_id",
+				"comment": "ID for a row in the cuci_wiki_map table. That row holds the wiki ID associated with this row.",
+				"type": "smallint",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "ciu_timestamp",
+				"comment": "The most recent timestamp for actions associated with this central ID and IP.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "ciu_timestamp",
+				"columns": [ "ciu_timestamp" ],
+				"unique": false,
+				"comment": "Used to find rows that should be deleted as the rows they reference will have been purged."
+			},
+			{
+				"name": "ciu_central_id_timestamp",
+				"columns": [ "ciu_central_id", "ciu_timestamp" ],
+				"unique": false,
+				"comment": "Used to find which wikis had the most recent actions for a given central ID."
+			}
+		],
+		"pk": [ "ciu_central_id", "ciu_ciwm_id" ]
+	}
+]

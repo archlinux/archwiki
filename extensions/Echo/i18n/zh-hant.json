@@ -101,6 +101,7 @@
 	"notifications": "通知",
 	"tooltip-pt-notifications-alert": "{{GENDER:|您的}}提醒",
 	"tooltip-pt-notifications-notice": "{{GENDER:|您的}}一般通知",
+	"tooltip-pt-notifications": "您的通知",
 	"echo-displaynotificationsconfiguration": "顯示通知設定",
 	"echo-displaynotificationsconfiguration-summary": "本頁概述此 wiki 上的通知設定。",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "各類別的通知",

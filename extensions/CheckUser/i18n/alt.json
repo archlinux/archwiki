@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz"
+		]
+	},
+	"checkuser-investigateblock-warning-confirmaction": "Слер чындап мыны эдерге турган болзор, алдында \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" темдекти тургузар."
+}

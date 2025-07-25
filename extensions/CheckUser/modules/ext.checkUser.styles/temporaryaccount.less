@@ -1,0 +1,80 @@
+/* stylelint-disable selector-max-id */
+@import 'mediawiki.skin.variables.less';
+
+.ext-checkuser-tempaccount-reveal-ip-button.oo-ui-buttonElement {
+	padding-top: 0;
+	padding-bottom: 0;
+	min-height: 0;
+	margin-top: -8px;
+	margin-bottom: -6px;
+	margin-right: 0;
+}
+
+// Reduce spacing around the block details info icon to match the appearance
+// of IPInfo's info icon.
+// This needs high specificity to override OOUI defaults.
+.ext-checkuser-blockDetailsPopupButtonWidget {
+	&.oo-ui-buttonElement.oo-ui-popupButtonWidget {
+		vertical-align: top;
+
+		& > .oo-ui-buttonElement-button {
+			min-width: 20px;
+			min-height: 22px;
+			padding: 0;
+
+			& > .oo-ui-iconElement-icon {
+				left: 0;
+			}
+		}
+	}
+
+	&-loadingIndicator {
+		margin-top: @spacing-75;
+	}
+}
+
+// Subtitle styles set a smaller line height
+.mw-content-subtitle,
+#contentSub,
+#contentSub2 {
+	.ext-checkuser-tempaccount-reveal-ip-button.oo-ui-buttonElement {
+		margin-right: -3px;
+
+		.oo-ui-buttonElement-button {
+			min-height: 0;
+			height: 18px;
+			padding: 1px;
+		}
+	}
+}
+
+.ext-checkuser-tempaccount-reveal-ip {
+	margin-left: 5px;
+
+	&::before {
+		content: '@{msg-parentheses-start}';
+	}
+
+	&::after {
+		content: '@{msg-parentheses-end}';
+	}
+}
+
+span.ext-checkuser-tempaccount-reveal-ip-button,
+.ext-checkuser-tempaccount-reveal-ip {
+	font-style: normal;
+}
+
+@media print {
+	// Need high specificity to override OOUI button defaults.
+	.oo-ui-buttonElement.ext-checkuser-tempaccount-reveal-ip-button {
+		&&::before {
+			content: ' ';
+			white-space: pre;
+		}
+
+		> .oo-ui-buttonElement-button {
+			display: none;
+		}
+	}
+}

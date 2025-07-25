@@ -102,8 +102,11 @@ class SiteConfig extends ISiteConfig {
 	/** @var int */
 	private $maxDepth = 40;
 
-	private $featureDetectionDone = false;
-	private $hasVideoInfo = false;
+	private bool $featureDetectionDone = false;
+	private bool $hasVideoInfo = false;
+
+	/** If set, generate experimental Parsoid HTML v3 parser function output */
+	private bool $v3pf;
 
 	/** @var string[] Base parameters for a siteinfo query */
 	public const SITE_CONFIG_QUERY_PARAMS = [
@@ -138,6 +141,8 @@ class SiteConfig extends ISiteConfig {
 				$this->html2wtLimits, $opts['html2wtLimits']
 			);
 		}
+
+		$this->v3pf = $opts['v3pf'] ?? false;
 	}
 
 	protected function reset() {
@@ -207,6 +212,17 @@ class SiteConfig extends ISiteConfig {
 	}
 
 	/**
+	 * Let us do standalone development testing of features that need
+	 * custom siteconfig. For now, we need new magic words defined.
+	 * In the future, this file could include other custom config.
+	 *
+	 * @return string
+	 */
+	protected function getCustomSiteConfigFileName(): string {
+		return __DIR__ . "/standalone.siteconfig.json";
+	}
+
+	/**
 	 * Load site data from the Action API, if necessary
 	 */
 	private function loadSiteData(): void {
@@ -239,6 +255,13 @@ class SiteConfig extends ISiteConfig {
 		$bsws = [];
 		$this->paramMWs = [];
 		$this->allMWs = [];
+
+		// Fold custom magic words into the API response
+		$f = $this->getCustomSiteConfigFileName();
+		if ( file_exists( $f ) ) {
+			$config = json_decode( file_get_contents( $f ), true );
+			PHPUtils::pushArray( $data['magicwords'], $config['magicwords'] );
+		}
 
 		// Recast the API results in the format that core MediaWiki returns internally
 		// This enables us to use the Production SiteConfig without changes and add the
@@ -516,6 +539,9 @@ class SiteConfig extends ISiteConfig {
 			case 'CiteResponsiveReferencesThreshold':
 				return 10;
 
+			case 'ParsoidExperimentalParserFunctionOutput':
+				return $this->v3pf;
+
 			// We can add more hardcoded keys based on testing needs
 			// but null is the default for keys unsupported in this mode.
 			default:
@@ -620,7 +646,7 @@ class SiteConfig extends ISiteConfig {
 		return false;
 	}
 
-	private static $noHashFunctions = null;
+	private static ?array $noHashFunctions = null;
 
 	/** @inheritDoc */
 	protected function updateFunctionSynonym( string $func, string $magicword, bool $caseSensitive ): void {
@@ -634,25 +660,62 @@ class SiteConfig extends ISiteConfig {
 				// and also doesn't reflect no-hash functions registered by extensions
 				// via setFunctionHook calls. As such, you might run into GOTCHAs during
 				// debugging of production issues in standalone / API config mode.
+				// Keep this in sync with CoreParserFunctions::register in core.
 				self::$noHashFunctions = PHPUtils::makeSet( [
 					'ns', 'nse', 'urlencode', 'lcfirst', 'ucfirst', 'lc', 'uc',
 					'localurl', 'localurle', 'fullurl', 'fullurle', 'canonicalurl',
-					'canonicalurle', 'formatnum', 'grammar', 'gender', 'plural', 'bidi',
-					'numberofpages', 'numberofusers', 'numberofactiveusers',
-					'numberofarticles', 'numberoffiles', 'numberofadmins',
-					'numberingroup', 'numberofedits', 'language',
+					'canonicalurle', 'formatnum', 'grammar', 'gender', 'plural', 'formal',
+					'bidi', 'numberingroup', 'language',
 					'padleft', 'padright', 'anchorencode', 'defaultsort', 'filepath',
 					'pagesincategory', 'pagesize', 'protectionlevel', 'protectionexpiry',
-					'namespacee', 'namespacenumber', 'talkspace', 'talkspacee',
-					'subjectspace', 'subjectspacee', 'pagename', 'pagenamee',
-					'fullpagename', 'fullpagenamee', 'rootpagename', 'rootpagenamee',
-					'basepagename', 'basepagenamee', 'subpagename', 'subpagenamee',
-					'talkpagename', 'talkpagenamee', 'subjectpagename',
-					'subjectpagenamee', 'pageid', 'revisionid', 'revisionday',
+					# The following are the "parser function" forms of magic
+					# variables defined in CoreMagicVariables.  The no-args form will
+					# go through the magic variable code path (and be cached); the
+					# presence of arguments will cause the parser function form to
+					# be invoked. (Note that the actual implementation will pass
+					# a Parser object as first argument, in addition to the
+					# parser function parameters.)
+
+					# For this group, the first parameter to the parser function is
+					# "page title", and the no-args form (and the magic variable)
+					# defaults to "current page title".
+					'pagename', 'pagenamee',
+					'fullpagename', 'fullpagenamee',
+					'subpagename', 'subpagenamee',
+					'rootpagename', 'rootpagenamee',
+					'basepagename', 'basepagenamee',
+					'talkpagename', 'talkpagenamee',
+					'subjectpagename', 'subjectpagenamee',
+					'pageid', 'revisionid', 'revisionday',
 					'revisionday2', 'revisionmonth', 'revisionmonth1', 'revisionyear',
-					'revisiontimestamp', 'revisionuser', 'cascadingsources',
-					// Special callbacks in core
-					'namespace', 'int', 'displaytitle', 'pagesinnamespace',
+					'revisiontimestamp',
+					'revisionuser',
+					'cascadingsources',
+					'namespace', 'namespacee', 'namespacenumber', 'talkspace', 'talkspacee',
+					'subjectspace', 'subjectspacee',
+
+						# More parser functions corresponding to CoreMagicVariables.
+					# For this group, the first parameter to the parser function is
+					# "raw" (uses the 'raw' format if present) and the no-args form
+					# (and the magic variable) defaults to 'not raw'.
+					'numberofarticles', 'numberoffiles',
+					'numberofusers',
+					'numberofactiveusers',
+					'numberofpages',
+					'numberofadmins',
+					'numberofedits',
+
+					# These magic words already contain the hash, and the no-args form
+					# is the same as passing an empty first argument
+					'bcp47',
+					'dir',
+					'interwikilink',
+					'interlanguagelink',
+
+					# ###############################################
+					# The following are not from core's $noHash list
+					# but are instead special callbacks from core:
+					'int', 'displaytitle', 'pagesinnamespace',
 				] );
 			}
 

@@ -46,7 +46,7 @@
 	"prefs-setemail": "Nyia̱ seti a̱vwuonswat imet",
 	"prefs-changeemail": "Shai ke a turung a̱vwuonswat ta̱m-i",
 	"prefs-help-email-required": "Á̱ cat a̱vwuonswat imet.",
-	"tog-requireemail": "Ta̱m ma̱ng tá̱m-i bu-nyia̱-seti swáng-nwuai ja ma̱nyin ka̱nang á̱ ta̱m ndyo a̱vwuonswat ta̱m-i ma̱ng a̱lyoot-a̱tyunta̱m.",
+	"tog-requireemail": "Ta̱m ma̱ng tá̱m-i bu-nyia̱-seti mat swáng-nwuai ma̱nyin ka̱nang á̱ ta̱m ma̱ng a̱vwuonswat ta̱m-i ka ma̱ng a̱lyoot-a̱tyunta̱m.",
 	"emailconfirmlink": "Nwuak a̱vwuonswat ta̱m-i ang ji shim",
 	"prefs-emailconfirm-label": "Nwuat shim ta̱m-i:",
 	"emailauthenticated": "Á̱ nwuak a̱vwuonswat ta̱m-i ang ka shim ma̱ $2 ma̱ $3.",
@@ -166,5 +166,6 @@
 	"prefs-searchoptions": "Zop",
 	"prefs-searchmisc": "Kuzangka̱i",
 	"prefs-advancedsearchoptions": "A̱ca̱cet nkhai",
+	"prefs-misc": "Nkyang njhyang",
 	"restoreprefs": "Bwuok ma̱ng a̱mgba̱m a̱yaaseti gbangbang ba"
 }

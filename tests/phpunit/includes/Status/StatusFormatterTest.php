@@ -1,8 +1,10 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\MessageParser;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Status\StatusFormatter;
 use MediaWiki\User\User;
 use Psr\Log\Test\TestLogger;
@@ -36,11 +38,11 @@ class StatusFormatterTest extends MediaWikiLangTestCase {
 			}
 		};
 
-		$cache = $this->createNoOpMock( MessageCache::class, [ 'parse' ] );
+		$cache = $this->createNoOpMock( MessageParser::class, [ 'parse' ] );
 		$cache->method( 'parse' )->willReturnCallback(
-			static function ( $text ) {
+			static function ( $text, ...$args ) {
 				$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5 );
-				return "<p>" . trim( $text ) . "\n</p>";
+				return new ParserOutput( "<p>" . trim( $text ) . "\n</p>" );
 			}
 		);
 

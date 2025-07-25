@@ -3,5 +3,6 @@
 		"authors": [
 			"Joeamj"
 		]
-	}
+	},
+	"loginnotify-unknown-ip": "Umejaribu kuingia kutoka kwa anwani ya IP isiyojulikana, na {{JINA LA TUVITO}} kwa sasa imesanidiwa ili kuzuia kuingia kutoka kwa anwani za IP zisizojulikana."
 }

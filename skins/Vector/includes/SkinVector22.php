@@ -6,6 +6,8 @@ use MediaWiki\Html\Html;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Skin\SkinMustache;
+use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\Skins\Vector\Components\VectorComponentAppearance;
 use MediaWiki\Skins\Vector\Components\VectorComponentButton;
 use MediaWiki\Skins\Vector\Components\VectorComponentDropdown;
@@ -21,8 +23,6 @@ use MediaWiki\Skins\Vector\Components\VectorComponentVariants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManagerFactory;
 use RuntimeException;
-use SkinMustache;
-use SkinTemplate;
 
 /**
  * @ingroup Skins
@@ -255,22 +255,8 @@ class SkinVector22 extends SkinMustache {
 		$original = parent::getHtmlElementAttributes();
 		$featureManager = $this->getFeatureManager();
 		$original['class'] .= ' ' . implode( ' ', $featureManager->getFeatureBodyClass() );
-
-		if ( $featureManager->isFeatureEnabled( Constants::FEATURE_STICKY_HEADER ) ) {
-			// T290518: Add scroll padding to root element when the sticky header is
-			// enabled. This class needs to be server rendered instead of added from
-			// JS in order to correctly handle situations where the sticky header
-			// isn't visible yet but we still need scroll padding applied (e.g. when
-			// the user navigates to a page with a hash fragment in the URI). For this
-			// reason, we can't rely on the `vector-sticky-header-visible` class as it
-			// is added too late.
-			//
-			// Please note that this class applies scroll padding which does not work
-			// when applied to the body tag in Chrome, Safari, and Firefox (and
-			// possibly others). It must instead be applied to the html tag.
-			$original['class'] = implode( ' ', [ $original['class'] ?? '', self::STICKY_HEADER_ENABLED_CLASS ] );
-		}
-		$original['class'] = trim( $original['class'] );
+		// The sticky header is now always enabled, so we apply the class unconditionally.
+		$original['class'] = trim( implode( ' ', [ $original['class'] ?? '', self::STICKY_HEADER_ENABLED_CLASS ] ) );
 
 		return $original;
 	}
@@ -372,6 +358,9 @@ class SkinVector22 extends SkinMustache {
 					'vector-page-titlebar-toc vector-button-flush-left',
 					// icon
 					'listBullet',
+					Html::expandAttributes( [
+						'title' => $this->msg( 'vector-toc-menu-tooltip' )->text(),
+					] )
 				),
 				'data-page-titlebar-toc-pinnable-container' => new VectorComponentPinnableContainer(
 					'vector-page-titlebar-toc',
@@ -457,7 +446,10 @@ class SkinVector22 extends SkinMustache {
 				VectorComponentMainMenu::ID . '-dropdown',
 				$this->msg( VectorComponentMainMenu::ID . '-label' )->text(),
 				VectorComponentMainMenu::ID . '-dropdown' . ' vector-button-flush-left vector-button-flush-right',
-				'menu'
+				'menu',
+				Html::expandAttributes( [
+					'title' => $this->msg( 'vector-main-menu-tooltip' )->text(),
+				] )
 			),
 			'data-page-tools' => new VectorComponentPageTools(
 				array_merge( [ $portlets['data-actions'] ?? [] ], $pageToolsMenu ),
@@ -479,9 +471,7 @@ class SkinVector22 extends SkinMustache {
 					'title' => $this->msg( 'vector-appearance-tooltip' ),
 				] )
 			),
-			'data-vector-sticky-header' => $featureManager->isFeatureEnabled(
-				Constants::FEATURE_STICKY_HEADER
-			) ? new VectorComponentStickyHeader(
+			'data-vector-sticky-header' => new VectorComponentStickyHeader(
 				$localizer,
 				new VectorComponentSearchBox(
 					$parentData['data-search-box'],
@@ -505,10 +495,10 @@ class SkinVector22 extends SkinMustache {
 							'tabindex' => '-1',
 							'data-event-name' => 'ui.dropdown-p-lang-btn-sticky-header'
 						],
-						'quiet',
+						'quiet'
 					) : null,
 				$this->isVisualEditorTabPositionFirst( $portlets[ 'data-views' ] )
-			) : null,
+			),
 		];
 
 		foreach ( $components as $key => $component ) {

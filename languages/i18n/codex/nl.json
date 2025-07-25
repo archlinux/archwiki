@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Catrope",
-			"Siebrand",
-			"McDutchie"
+			"McDutchie",
+			"Siebrand"
 		]
 	},
 	"cdx-chip-input-chip-added": "Het trefwoord $1 is toegevoegd.",
@@ -12,6 +12,7 @@
 	"cdx-dialog-close-button-label": "Sluiten",
 	"cdx-label-optional-flag": "(optioneel)",
 	"cdx-message-dismiss-button-label": "Sluiten",
+	"cdx-popover-close-button-label": "Sluiten",
 	"cdx-search-input-search-button-label": "Zoeken",
 	"cdx-table-select-all-label": "Alle rijen selecteren",
 	"cdx-table-select-row-label": "Rij $1 van $2 selecteren",
@@ -28,5 +29,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Resultaten $1-$2 van vele",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1-$2 van vele",
 	"cdx-table-pagination-status-message-indeterminate-final": "{{PLURAL:$1|Het laatste resultaat|De laatste $1 resultaten}}",
-	"cdx-table-pagination-status-message-pending": "Bezig met het laden van resultaten..."
+	"cdx-table-pagination-status-message-pending": "Bezig met het laden van resultaten...",
+	"cdx-table-no-data-message": "Er zijn geen gegevens beschikbaar."
 }

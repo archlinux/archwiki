@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\ChangeTags;
+
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
@@ -63,8 +65,11 @@ class ChangeTagsRevisionItem extends RevisionItem {
 				$this->list->getContext()
 			);
 			$content .= " $tagSummary";
-			$attribs['class'] = implode( ' ', $classes );
+			$attribs['class'] = $classes;
 		}
 		return Html::rawElement( 'li', $attribs, $content );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ChangeTagsRevisionItem::class, 'ChangeTagsRevisionItem' );

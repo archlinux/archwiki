@@ -6,7 +6,6 @@
  */
 
 html {
-	-ms-text-size-adjust: 100%;
 	-webkit-text-size-adjust: 100%;
 }
 
@@ -22,35 +21,14 @@ body {
 	 ========================================================================== */
 
 /**
- * Correct 'block' display not defined in IE 8/9.
- */
-
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-main,
-nav,
-section,
-summary {
-	display: block;
-}
-
-/**
- * 1. Correct 'inline-block' display not defined in IE 8/9.
- * 2. Normalize vertical alignment of 'progress' in Chrome, Firefox, and Opera.
+ * Normalize vertical alignment of 'progress' in Chrome, Firefox, and Opera.
  */
 
 audio,
 canvas,
 progress,
 video {
-	display: inline-block; /* 1 */
-	vertical-align: baseline; /* 2 */
+	vertical-align: baseline;
 }
 
 /**
@@ -61,27 +39,6 @@ video {
 audio:not([controls]) {
 	display: none;
 	height: 0;
-}
-
-/**
- * Address '[hidden]' styling not present in IE 8/9.
- * Hide the 'template' element in IE, Safari, and Firefox < 22.
- */
-
-[hidden],
-template {
-	display: none;
-}
-
-/* Links
-	 ========================================================================== */
-
-/**
- * Remove the gray background color from active links in IE 10.
- */
-
-a {
-	background: transparent;
 }
 
 /* Text-level semantics
@@ -130,15 +87,6 @@ h1 {
 }
 
 /**
- * Address styling not present in IE 8/9.
- */
-
-mark {
-	background: #ff0;
-	color: #000;
-}
-
-/**
  * Address inconsistent and variable font size in all browsers.
  */
 
@@ -169,33 +117,12 @@ sub {
 /* Embedded content
 	 ========================================================================== */
 
-/**
- * Remove border when inside 'a' element in IE 8/9.
- */
-
 img {
-	border: 0;
 	vertical-align: middle;
-}
-
-/**
- * Correct overflow displayed oddly in IE 9.
- */
-
-svg:not(:root) {
-	overflow: hidden;
 }
 
 /* Grouping content
 	 ========================================================================== */
-
-/**
- * Address margin not present in IE 8/9 and Safari 5.
- */
-
-figure {
-	margin: 1em 40px;
-}
 
 /**
  * Address differences between Firefox and other browsers.
@@ -248,17 +175,9 @@ textarea {
 }
 
 /**
- * Address 'overflow' set to 'hidden' in IE 8/9/10.
- */
-
-button {
-	overflow: visible;
-}
-
-/**
  * Address inconsistent 'text-transform' inheritance for 'button' and 'select'.
  * All other form control elements do not inherit 'text-transform' values.
- * Correct 'button' style inheritance in Firefox, IE 8+, and Opera
+ * Correct 'button' style inheritance in Firefox, and Opera
  * Correct 'select' style inheritance in Firefox.
  */
 
@@ -312,20 +231,6 @@ input {
 }
 
 /**
- * It's recommended that you don't attempt to style these elements.
- * Firefox's implementation doesn't respect box-sizing, padding, or width.
- *
- * 1. Address box sizing set to 'content-box' in IE 8/9/10.
- * 2. Remove excess padding in IE 8/9/10.
- */
-
-input[type="checkbox"],
-input[type="radio"] {
-	box-sizing: border-box; /* 1 */
-	padding: 0; /* 2 */
-}
-
-/**
  * Fix the cursor style for Chrome's increment/decrement buttons. For certain
  * 'font-size' values of the 'input', it causes the cursor style of the
  * decrement button to change from 'default' to 'text'.
@@ -369,21 +274,11 @@ fieldset {
 }
 
 /**
- * 1. Correct 'color' not being inherited in IE 6/7/8/9.
- * 2. Remove padding so people aren't caught out if they zero out fieldsets.
+ * Remove padding so people aren't caught out if they zero out fieldsets.
  */
 
 legend {
-	border: 0; /* 1 */
-	padding: 0; /* 2 */
-}
-
-/**
- * Remove default vertical scrollbar in IE 8/9.
- */
-
-textarea {
-	overflow: auto;
+	padding: 0;
 }
 
 /**

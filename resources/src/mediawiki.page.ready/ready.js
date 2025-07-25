@@ -76,7 +76,7 @@ $( () => {
 		// (these values correspond to @min-width-breakpoint-tablet and @min-width-breakpoint-desktop
 		// See https://doc.wikimedia.org/codex/main/design-tokens/breakpoint.html
 		if ( window.innerWidth >= 640 && window.innerWidth < 1120 &&
-			content && content.indexOf( 'initial-scale' ) === -1
+			content && !content.includes( 'initial-scale' )
 		) {
 			// Note:
 			// - The `width` value must be equal to @min-width-breakpoint-desktop above
@@ -199,20 +199,24 @@ $( () => {
 			url.searchParams.append( 'wasTempUser', 1 );
 			href = url;
 		}
-		api.postWithToken( 'csrf', {
-			action: 'logout'
-		} ).then(
-			() => {
-				location.href = href;
-			},
-			( err, data ) => {
-				mw.notify(
-					api.getErrorMessage( data ),
-					{ type: 'error', tag: 'logout', autoHide: false }
-				);
-			}
-		);
+		// Allow hooks to extend data that is sent along with the logout request.
+		api.prepareExtensibleApiRequest( 'extendLogout' ).then( ( params ) => {
+			// Include any additional params set by implementations of the extendLogout hook
+			const logoutParams = Object.assign( {}, params, { action: 'logout' } );
+			api.postWithToken( 'csrf', logoutParams ).then(
+				() => {
+					location.href = href;
+				},
+				( err, data ) => {
+					mw.notify(
+						api.getErrorMessage( data ),
+						{ type: 'error', tag: 'logout', autoHide: false }
+					);
+				}
+			);
+		} );
 	}
+
 	// Turn logout to a POST action
 	mw.hook( LOGOUT_EVENT ).add( logoutViaPost );
 	$( config.selectorLogoutLink ).on( 'click', function ( e ) {
@@ -241,33 +245,8 @@ function isSearchInput( element ) {
  * @param {string} moduleName Name of a module
  */
 function loadSearchModule( moduleName ) {
-	// T251544: Collect search performance metrics to compare Vue search with
-	// mediawiki.searchSuggest performance. Marks and Measures will only be
-	// recorded on the Vector skin.
-	//
-	// Vue search isn't loaded through this function so we are only collecting
-	// legacy search performance metrics here.
-
-	const shouldTestSearch = !!( moduleName === 'mediawiki.searchSuggest' &&
-		mw.config.get( 'skin' ) === 'vector' &&
-		window.performance &&
-		performance.mark &&
-		performance.measure &&
-
-		performance.getEntriesByName ),
-		loadStartMark = 'mwVectorLegacySearchLoadStart',
-		loadEndMark = 'mwVectorLegacySearchLoadEnd';
-
 	function requestSearchModule() {
-		if ( shouldTestSearch ) {
-			performance.mark( loadStartMark );
-		}
-		mw.loader.using( moduleName, () => {
-			if ( shouldTestSearch && performance.getEntriesByName( loadStartMark ).length ) {
-				performance.mark( loadEndMark );
-				performance.measure( 'mwVectorLegacySearchLoadStartToLoadEnd', loadStartMark, loadEndMark );
-			}
-		} );
+		mw.loader.using( moduleName );
 	}
 
 	// Load the module once a search input is focussed.

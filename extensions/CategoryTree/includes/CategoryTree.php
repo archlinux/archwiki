@@ -39,8 +39,7 @@ use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * Core functions for the CategoryTree extension, an AJAX based gadget
- * to display the category structure of a wiki
+ * Core functions for the CategoryTree extension, which displays the category structure of a wiki
  */
 class CategoryTree {
 	public OptionManager $optionManager;
@@ -71,7 +70,7 @@ class CategoryTree {
 
 	/**
 	 * Custom tag implementation. This is called by Hooks::parserHook, which is used to
-	 * load CategoryTreeFunctions.php on demand.
+	 * load CategoryTree on demand.
 	 * @param string $category
 	 * @param bool $hideroot
 	 * @param array $attr
@@ -92,7 +91,6 @@ class CategoryTree {
 			$attr['class'] = 'CategoryTreeTag';
 		}
 
-		$attr['data-ct-mode'] = $this->optionManager->getOption( 'mode' );
 		$attr['data-ct-options'] = $this->optionManager->getOptionsAsJsStructure();
 
 		if ( !$title->getArticleID() ) {
@@ -352,10 +350,8 @@ class CategoryTree {
 				$attr['class'] = 'CategoryTreeEmptyBullet';
 			} else {
 				$linkattr = [
-					// href and role will be added client-side
 					'class' => 'CategoryTreeToggle',
 					'data-ct-title' => $key,
-					'href' => $title->getLocalURL(),
 				];
 
 				if ( $children === 0 ) {

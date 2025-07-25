@@ -56,5 +56,6 @@
 	"apierror-abusefilter-cantcheck": "Non tes permiso para comprobar a sintaxe dos filtros de abusos.",
 	"apierror-abusefilter-canteval": "Non tes permiso para avaliar expresións do filtro de abusos.",
 	"apierror-abusefilter-nosuchlogid": "Non existe ningunha entrada no rexistro de abusos co ID $1.",
+	"apierror-abusefilter-incompatible": "O cambio solicitado non é compatible co filtro de abusos.",
 	"apierror-abusefilter-badsyntax": "O filtro ten unha sintaxe non válida."
 }

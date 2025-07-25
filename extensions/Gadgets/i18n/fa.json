@@ -71,5 +71,8 @@
 	"gadgets-validate-unknownpages": "حاوی یک یا چند صفحه بدون پسوند .js، .css یا .json است. این آن‌ها استفاده نخواهد شد.",
 	"gadgets-validate-duplicate": "توصیف دومی برای ابزار $1 شناسایی شد و باید از آن چشم‌پوشی شود",
 	"gadgets-validate-nopage": "صفحهٔ «$1» موجود نیست.",
-	"gadgets-supports-urlload": "این ابزار از بارگیری به‌واسطهٔ نشانی وب با استفاده از پارامتر پرسمان <code dir=\"ltr\">?withgadget</code> پشتیبانی می‌کند."
+	"gadgets-validate-invaliddependencies": "این {{PLURAL:$2|وابستگی|وابستگی‌ها}} موجود {{PLURAL:$2|نیست|نیستند}}: $1.",
+	"gadgets-validate-deprecateddependencies": "این {{PLURAL:$2|وابستگی|وابستگی‌ها}} منسوخ {{PLURAL:$2|شده است|شده‌اند}}: $1.",
+	"gadgets-supports-urlload": "این ابزار از بارگیری به‌واسطهٔ نشانی وب با استفاده از پارامتر پرسمان <code dir=\"ltr\">?withgadget</code> پشتیبانی می‌کند.",
+	"gadgets-hidden": "این ابزار [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden پنهان] است، به این معنی که در صفحهٔ ترجیحات نمایش داده نخواهد شد."
 }

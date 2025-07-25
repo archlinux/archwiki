@@ -26,15 +26,16 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals( $html, $actualHtml );
 		$actualWt = WTUtils::decodeComment( $html );
 		$this->assertEquals( $wikitext, $actualWt );
-		$doc = DOMCompat::newDocument( true );
-		$doc->loadHTML( "<html><body><!--$html--></body></html>" );
+		$doc = ContentUtils::createAndLoadDocument(
+			"<html><body><!--$html--></body></html>"
+		);
 		$body = $doc->getElementsByTagName( "body" )->item( 0 );
 		$node = $body->childNodes->item( 0 );
 		$actualLen = WTUtils::decodedCommentLength( $node );
 		$this->assertEquals( $length, $actualLen );
 	}
 
-	public function provideCommentEncoding(): array {
+	public static function provideCommentEncoding(): array {
 		// length includes the length of the <!-- and --> delimiters
 		return [
 			[ 'abc', 'abc', 10 ],
@@ -55,7 +56,7 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		DOMDataUtils::visitAndStoreDataAttribs( $fragment, [ 'discardDataParsoid' => true ] );
 		$actualHtml = DOMUtils::getFragmentInnerHTML( $fragment );
 		$expectedHtml = '<span typeof="mw:I18n" ' .
-			'data-mw-i18n=\'{"/":{"lang":"x-page","key":"key.of.message","params":null}}\'></span>';
+			'data-mw-i18n=\'{"/":{"lang":"x-page","key":"key.of.message"}}\'></span>';
 		self::assertEquals( $expectedHtml, $actualHtml );
 	}
 
@@ -82,7 +83,7 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		DOMDataUtils::visitAndStoreDataAttribs( $fragment, [ 'discardDataParsoid' => true ] );
 		$actualHtml = DOMUtils::getFragmentInnerHTML( $fragment );
 		$expectedHtml = '<span typeof="mw:I18n" ' .
-			'data-mw-i18n=\'{"/":{"lang":"fr","key":"key.of.message","params":null}}\'></span>';
+			'data-mw-i18n=\'{"/":{"lang":"fr","key":"key.of.message"}}\'></span>';
 		self::assertEquals( $expectedHtml, $actualHtml );
 	}
 
@@ -101,10 +102,43 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		DOMDataUtils::visitAndStoreDataAttribs( $doc, [ 'discardDataParsoid' => true ] );
 		$actualHtml = DOMCompat::getInnerHTML( DOMCompat::getBody( $doc ) );
 		$expectedHtml = '<span typeof="mw:LocalizedAttrs" ' .
-			'data-mw-i18n=\'{"param1":{"lang":"x-page","key":"key1","params":null},' .
+			'data-mw-i18n=\'{"param1":{"lang":"x-page","key":"key1"},' .
 			'"param2":{"lang":"x-user","key":"key2","params":["Foo"]},' .
-			'"param3":{"lang":"fr","key":"key3","params":null}}\'>hello</span>';
+			'"param3":{"lang":"fr","key":"key3"}}\'>hello</span>';
 		self::assertEquals( $expectedHtml, $actualHtml );
+	}
+
+	/**
+	 * @covers ::addInterfaceI18nAttribute
+	 * @covers ::addPageContentI18nAttribute
+	 * @return void
+	 */
+	public function testAddI18nAttributesNumeric() {
+		// Passing this test depends on Ie63649f5b6717eb8e1c8fbaa030ea0042de59b3a
+		// which is in wikimedia/json-codec 3.0.2
+		$doc = ContentUtils::createAndLoadDocument(
+			"<html><body><span>hello</span></body></html>"
+		);
+		$span = DOMCompat::getBody( $doc )->firstChild;
+		WTUtils::addPageContentI18nAttribute( $span, '0', 'key1' );
+		WTUtils::addInterfaceI18nAttribute( $span, '1', 'key2', [ 'Foo' ] );
+		DOMDataUtils::visitAndStoreDataAttribs( $doc, [ 'discardDataParsoid' => true ] );
+		$actualHtml = DOMCompat::getInnerHTML( DOMCompat::getBody( $doc ) );
+		$expectedHtml = '<span typeof="mw:LocalizedAttrs" ' .
+			'data-mw-i18n=\'{' .
+			'"0":{"lang":"x-page","key":"key1"},' .
+			'"1":{"lang":"x-user","key":"key2","params":["Foo"]}' .
+			// Note that this was serialized as an object even though
+			// the keys are all numeric.
+			'}\'>hello</span>';
+		self::assertEquals( $expectedHtml, $actualHtml );
+
+		DOMDataUtils::visitAndLoadDataAttribs( $doc );
+		$span = DOMCompat::getBody( $doc )->firstChild;
+		$attrI18n = DOMDataUtils::getDataAttrI18n( $span, '0' );
+		self::assertNotNull( $attrI18n );
+		$attrI18n = DOMDataUtils::getDataAttrI18n( $span, '1' );
+		self::assertNotNull( $attrI18n );
 	}
 
 	/**
@@ -139,11 +173,12 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 	 * @covers ::decodedCommentLength
 	 */
 	public function testDecodedCommentLength() {
-		$doc = DOMCompat::newDocument( true );
-		$doc->loadHTML( "<html><body><div>" .
+		$doc = ContentUtils::createAndLoadDocument(
+			"<html><body><div>" .
 			"<p><!--c1--></p>" .
 			"a <meta typeof='mw:Placeholder/UnclosedComment'/><!--c2\n-->" .
-			"</body></html>" );
+			"</body></html>"
+		);
 		$body = DOMCompat::getBody( $doc );
 		$body->setAttribute( 'hasUnclosedComment', "1" );
 		$div = $body->firstChild;

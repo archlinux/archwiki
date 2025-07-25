@@ -174,6 +174,7 @@ trait MediaList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\MediaList $this';
 		// @var \Wikimedia\IDLeDOM\MediaList $this

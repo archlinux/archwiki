@@ -211,7 +211,9 @@
 	"abusefilter-edit-enabled": "Luba see filter",
 	"abusefilter-edit-deleted": "Märgi kustutatuks",
 	"abusefilter-edit-hidden": "Peida selle filtri üksikasjad avalikust vaatest",
+	"abusefilter-edit-protected": "<strong>Luba selles filtris [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables kaitstud muutujate] kasutamine</strong>",
 	"abusefilter-edit-protected-variable-already-protected": "Selle filtri üksikasjad on peidetud kasutajate eest, kes ei saa vaadata kaitstud muutujaid",
+	"abusefilter-edit-protected-help-message": "Selle filtri üksikasjad on peidetud kasuatajate eest, kes ei näe kaitstud muutujaid. See toiming on jääv ja seda ei saa tagasi pöörata.",
 	"abusefilter-edit-global": "Globaalne filter",
 	"abusefilter-edit-rules": "Tingimused:",
 	"abusefilter-edit-field-conditions": "tingimused",
@@ -274,6 +276,7 @@
 	"abusefilter-edit-deleting-enabled": "Aktiivset filtrit ei saa kustutatuks märkida.",
 	"abusefilter-edit-restricted": "Sa ei saa seda filtrit muuta, sest see sisaldab üht või enamat piiratud ligipääsuga toimingut.\nPalu muudatus teha kasutajal, kellel on õigus lisada piiratud ligipääsuga toiminguid.",
 	"abusefilter-edit-protected-variable": "Sa ei saa seda filtrit salvestada, sest sul pole õigust kasutada {{PLURAL:$1|järgmist muutujat|järgmiseid muutujaid}}: $1",
+	"abusefilter-edit-protected-variable-not-protected": "Sinu filtrit ei salvestatud, sest see kasutab {{PLURAL:$1|järgmist|järgmiseid}} [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables kaitstud {{PLURAL:$1|muutujat|muutujaid}}]: $1. Palun luba kaitstud muutujate kasutamine. See toiming peidab filtri üksikasjad jäädavalt kasutajate eest, kes ei saa kaitstud muutujaid vaadata.",
 	"abusefilter-edit-viewhistory": "Vaata selle filtri ajalugu",
 	"abusefilter-edit-history": "Ajalugu:",
 	"abusefilter-edit-check": "Kontrolli süntaksit",
@@ -597,7 +600,5 @@
 	"action-abusefilter-bypass-blocked-external-domains": "välisdomeenide blokeeringuid eirata",
 	"abusefilter-blocked-domains-cannot-edit-directly": "Välisdomeene, millele linkimine on blokeeritud, tuleb lisada ja muuta [[Special:BlockedExternalDomains|erilehekülje]] kaudu.",
 	"right-abusefilter-access-protected-vars": "Vaadata ja luua filtreid, mis kasutavad kaitstud muutujaid",
-	"action-abusefilter-access-protected-vars": "vaadata ega luua filtreid, mis kasutavad kaitstud muutujaid",
-	"prefs-abusefilter": "Väärtarvitusfilter",
-	"abusefilter-preference-protected-vars-view-agreement": "Luba näidata väärtarvitusfiltris ajutiste kontode IP-aadresse"
+	"action-abusefilter-access-protected-vars": "vaadata ega luua filtreid, mis kasutavad kaitstud muutujaid"
 }

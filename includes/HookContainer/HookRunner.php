@@ -2,37 +2,38 @@
 
 namespace MediaWiki\HookContainer;
 
-use Article;
-use File;
 use MailAddress;
-use ManualLogEntry;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\JsonContent;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Mail\UserEmailContact;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Session\Session;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use SearchEngine;
-use Skin;
 use StatusValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
-use WikiPage;
 
 /**
  * This class provides an implementation of the core hook interfaces,
@@ -49,6 +50,7 @@ use WikiPage;
  */
 class HookRunner implements
 	\MediaWiki\Actions\Hook\GetActionNameHook,
+	\MediaWiki\Auth\Hook\AuthenticationAttemptThrottledHook,
 	\MediaWiki\Auth\Hook\AuthManagerFilterProvidersHook,
 	\MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook,
 	\MediaWiki\Auth\Hook\AuthManagerVerifyAuthenticationHook,
@@ -147,6 +149,7 @@ class HookRunner implements
 	\MediaWiki\Hook\CategoryViewer__generateLinkHook,
 	\MediaWiki\Hook\ChangesListInitRowsHook,
 	\MediaWiki\Hook\ChangesListInsertArticleLinkHook,
+	\MediaWiki\Hook\ChangesListInsertLogEntryHook,
 	\MediaWiki\Hook\ChangeUserGroupsHook,
 	\MediaWiki\Hook\Collation__factoryHook,
 	\MediaWiki\Hook\ContentSecurityPolicyDefaultSourceHook,
@@ -285,7 +288,6 @@ class HookRunner implements
 	\MediaWiki\Output\Hook\OutputPageBeforeHTMLHook,
 	\MediaWiki\Output\Hook\OutputPageBodyAttributesHook,
 	\MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook,
-	\MediaWiki\Output\Hook\OutputPageMakeCategoryLinksHook,
 	\MediaWiki\Output\Hook\OutputPageParserOutputHook,
 	\MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook,
 	\MediaWiki\Hook\PageHistoryBeforeListHook,
@@ -490,6 +492,7 @@ class HookRunner implements
 	\MediaWiki\Page\Hook\WikiPageDeletionUpdatesHook,
 	\MediaWiki\Page\Hook\WikiPageFactoryHook,
 	\MediaWiki\Permissions\Hook\PermissionErrorAuditHook,
+	\MediaWiki\Permissions\Hook\PermissionStatusAuditHook,
 	\MediaWiki\Permissions\Hook\GetUserPermissionsErrorsExpensiveHook,
 	\MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook,
 	\MediaWiki\Permissions\Hook\TitleQuickPermissionsHook,
@@ -934,6 +937,12 @@ class HookRunner implements
 		);
 	}
 
+	public function onAuthenticationAttemptThrottled( string $type, ?string $username, ?string $ip ) {
+		return $this->container->run(
+			'AuthenticationAttemptThrottled', [ $type, $username, $ip ]
+		);
+	}
+
 	public function onAutopromoteCondition( $type, $args, $user, &$result ) {
 		return $this->container->run(
 			'AutopromoteCondition',
@@ -1133,6 +1142,13 @@ class HookRunner implements
 		return $this->container->run(
 			'ChangesListInsertArticleLink',
 			[ $changesList, &$articlelink, &$s, $rc, $unpatrolled, $watched ]
+		);
+	}
+
+	public function onChangesListInsertLogEntry( $entry, $context, &$html, &$classes, &$attribs ) {
+		return $this->container->run(
+			'ChangesListInsertLogEntry',
+			[ $entry, $context, &$html, &$classes, &$attribs ]
 		);
 	}
 
@@ -2023,6 +2039,20 @@ class HookRunner implements
 		);
 	}
 
+	public function onPermissionStatusAudit(
+		LinkTarget $title,
+		UserIdentity $user,
+		string $action,
+		string $rigor,
+		PermissionStatus $status
+	): void {
+		$this->container->run(
+			'PermissionStatusAudit',
+			[ $title, $user, $action, $rigor, $status ],
+			[ 'abortable' => false ]
+		);
+	}
+
 	public function onGetUserPermissionsErrors( $title, $user, $action, &$result ) {
 		return $this->container->run(
 			'getUserPermissionsErrors',
@@ -2756,13 +2786,6 @@ class HookRunner implements
 		return $this->container->run(
 			'OutputPageCheckLastModified',
 			[ &$modifiedTimes, $out ]
-		);
-	}
-
-	public function onOutputPageMakeCategoryLinks( $out, $categories, &$links ) {
-		return $this->container->run(
-			'OutputPageMakeCategoryLinks',
-			[ $out, $categories, &$links ]
 		);
 	}
 

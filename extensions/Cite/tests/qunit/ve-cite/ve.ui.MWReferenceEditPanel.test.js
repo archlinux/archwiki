@@ -89,7 +89,7 @@
 
 		assert.false( editPanel.reuseWarning.isVisible() );
 		assert.true( editPanel.extendsWarning.isVisible() );
-		assert.false( editPanel.extendsWarning.getLabel().text().indexOf( 'cite-ve-dialog-reference-missing-parent-ref' ) !== -1 );
+		assert.false( editPanel.extendsWarning.getLabel().text().includes( 'cite-ve-dialog-reference-missing-parent-ref' ) );
 		// TODO improve node mock to check content insertion for the parent
 		// assert.true( editPanel.extendsWarning.getLabel().text().indexOf( 'Bar' ) !== -1 );
 
@@ -100,6 +100,6 @@
 
 		assert.false( editPanel.reuseWarning.isVisible() );
 		assert.true( editPanel.extendsWarning.isVisible() );
-		assert.true( editPanel.extendsWarning.getLabel().text().indexOf( 'cite-ve-dialog-reference-missing-parent-ref' ) !== -1 );
+		assert.true( editPanel.extendsWarning.getLabel().text().includes( 'cite-ve-dialog-reference-missing-parent-ref' ) );
 	} );
 }() );

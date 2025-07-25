@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Consequences\Consequence;
 
-use LogPage;
 use MediaWiki\Block\BlockUserFactory;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Status\Status;
 use MessageLocalizer;
 use Psr\Log\LoggerInterface;
@@ -91,8 +91,8 @@ abstract class BlockingConsequence extends Consequence implements HookAborterCon
 			]
 		);
 		if (
-			strpos( $this->parameters->getAction(), 'createaccount' ) !== false &&
-			IPUtils::isIPAddress( $target )
+			str_contains( $this->parameters->getAction(), 'createaccount' )
+			&& IPUtils::isIPAddress( $target )
 		) {
 			$blockUser->setLogDeletionFlags( LogPage::SUPPRESSED_ACTION );
 		}

@@ -75,7 +75,7 @@ interface IEditObject {
 
 	/**
 	 * Status: no edit summary given and the user has forceeditsummary set and the user is not
-	 * editing in his own userspace or talkspace and wpIgnoreBlankSummary == false
+	 * editing in their own userspace or talkspace and wpIgnoreBlankSummary == false
 	 */
 	public const AS_SUMMARY_NEEDED = 226;
 
@@ -117,4 +117,10 @@ interface IEditObject {
 
 	/** Status: edit rejected because server was unable to acquire a temporary account name for this user */
 	public const AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT = 243;
+
+	/** Status: user tried to create a redirect to a nonexistent page and wpIgnoreBrokenRedirects is false */
+	public const AS_BROKEN_REDIRECT = 244;
+
+	/** Status: user tried to create a redirect to another redirect and wpIgnoreDoubleRedirects is false */
+	public const AS_DOUBLE_REDIRECT = 245;
 }

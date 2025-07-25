@@ -66,6 +66,6 @@ interface NamedNodeMap extends \ArrayAccess, \IteratorAggregate, \Countable {
 	/**
 	 * @return \Iterator<Attr> Value iterator returning Attr items
 	 */
-	public function getIterator();
+	public function getIterator(): \Iterator;
 
 }

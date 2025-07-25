@@ -21,9 +21,9 @@
 
 namespace MediaWiki\Pager;
 
-use File;
-use LocalRepo;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
@@ -46,13 +46,6 @@ class UploadStashPager extends TablePager {
 	/** @var File[] */
 	private array $files = [];
 
-	/**
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param IConnectionProvider $dbProvider
-	 * @param UploadStash $stash
-	 * @param LocalRepo $localRepo
-	 */
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
@@ -62,7 +55,7 @@ class UploadStashPager extends TablePager {
 	) {
 		$this->setContext( $context );
 
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
 
 		parent::__construct( $context, $linkRenderer );
@@ -97,6 +90,8 @@ class UploadStashPager extends TablePager {
 				'us_key',
 				'us_size',
 				'us_path',
+				'us_sha1',
+				'us_mime',
 			],
 			'conds' => [ 'us_user' => $this->getUser()->getId() ],
 			'options' => [],
@@ -156,12 +151,17 @@ class UploadStashPager extends TablePager {
 	private function getCurrentFile(): File {
 		$fileKey = $this->mCurrentRow->us_key;
 		return $this->files[$fileKey]
-			?? new UploadStashFile( $this->localRepo, $this->mCurrentRow->us_path, $fileKey );
+			?? new UploadStashFile(
+				$this->localRepo,
+				$this->mCurrentRow->us_path,
+				$fileKey,
+				$this->mCurrentRow->us_sha1,
+				$this->mCurrentRow->us_mime ?? false
+			);
 	}
 
 	/**
 	 * Escape the options list
-	 * @return array
 	 */
 	private function getEscapedLimitSelectList(): array {
 		$list = $this->getLimitSelectList();

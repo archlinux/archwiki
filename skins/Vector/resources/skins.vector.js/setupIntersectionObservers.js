@@ -283,18 +283,12 @@ const setupTableOfContents = ( tocElement, bodyContent, initSectionObserverFn ) 
  * @return {void}
  */
 const main = () => {
-	const isIntersectionObserverSupported = 'IntersectionObserver' in window;
-
 	//
 	//  Table of contents
 	//
 	const tocElement = document.getElementById( TOC_ID );
 	const bodyContent = document.getElementById( BODY_CONTENT_ID );
-
-	const isToCUpdatingAllowed = isIntersectionObserverSupported &&
-		window.requestAnimationFrame;
-	const tableOfContents = isToCUpdatingAllowed ?
-		setupTableOfContents( tocElement, bodyContent, initSectionObserver ) : null;
+	const tableOfContents = setupTableOfContents( tocElement, bodyContent, initSectionObserver );
 
 	//
 	// Sticky header
@@ -311,8 +305,7 @@ const main = () => {
 		!!stickyIntersection &&
 		!!userLinksDropdown &&
 		allowedNamespace &&
-		allowedAction &&
-		isIntersectionObserverSupported;
+		allowedAction;
 
 	const { showStickyHeader } = initStickyHeaderABTests(
 		ABTestConfig,

@@ -3,13 +3,13 @@
 		"authors": [
 			"Fitoschido",
 			"Ikiwaner",
+			"Joeamj",
 			"Kisare",
 			"Kwisha",
 			"Lloffiwr",
 			"Rance",
 			"Stephenwanjau",
-			"Wangombe",
-			"Joeamj"
+			"Wangombe"
 		]
 	},
 	"right-abusefilter-modify": "Rekebisha cinchungi vya unyanyasaji",
@@ -18,6 +18,7 @@
 	"abusefilter-log-search-title": "Kichwa:",
 	"abusefilter-log-search-wiki": "Wiki:",
 	"abusefilter-log-search-submit": "Tafuta",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1 : $2 {{GENDER:$9| triggered}} $3 , {{GENDER:$9| performing}} kitendo \" $4 \" kwenye $5 .\nHatua zilizochukuliwa: $6 ;\nMaelezo ya kichujio: $7",
 	"abusefilter-log-detailslink": "Maelezo zaidi",
 	"abusefilter-log-details-var": "Kibadili",
 	"abusefilter-log-details-val": "Thamani",

@@ -41,7 +41,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "ime korisnika",
 	"templatedata-doc-params": "Parametri šablona",
 	"templatedata-editbutton": "Uredi podatke o šablonu",
-	"templatedata-errormsg-jsonbadformat": "Neispravan JSON format. Otkažite ovu radnju, ispravite format, izbrišite trenutne oznake <templatedata> pa pokušajte ponovo. Alternativno, možete nastaviti da biste zamenili trenutne podatke šablona s novim.",
+	"templatedata-errormsg-jsonbadformat": "Neispravan JSON format. Možete otkazati ovu radnju radi ispravke, brisanja ili nastaviti da biste zamenili trenutne podatke šablona s novim.",
 	"templatedata-errormsg-insertblank": "Želite li zaista da umetnete podatke o šablonu bez informacija?",
 	"templatedata-exists-on-related-page": "Napomena: Podaci o šablonu već postoje na stranici „[[$1]]”.",
 	"templatedata-helplink": "Informacije za podatke o šablonu",
@@ -69,6 +69,7 @@
 	"templatedata-modal-button-removemap": "Ukloni mapu",
 	"templatedata-modal-button-saveparam": "Sačuvaj",
 	"templatedata-modal-confirmcancel": "Želite li zaista da odbacite izmene?",
+	"templatedata-modal-button-discard": "Odbaci",
 	"templatedata-modal-current-language": "Trenutni jezik: $1",
 	"templatedata-modal-errormsg": "Pronađene greške. Proverite da nema praznih ili duplih imena parametara i da ime ne sadrži „$1”, „$2” ili „$3”.",
 	"templatedata-modal-errormsg-duplicate-name": "Pronađena greška. Odabrano ime već koristi drugi parametar.",
@@ -111,5 +112,6 @@
 	"templatedata-modal-title-templateformat": "Preferirano formatiranje parametara",
 	"templatedata-modal-title-templateformatstring": "Niska prilagođenog formata",
 	"templatedata-modal-title-templateparam-details": "Detalji parametra: $1",
-	"templatedata-modal-title-templateparams": "Parametri šablona"
+	"templatedata-modal-title-templateparams": "Parametri šablona",
+	"templatedata-search-list-header": "Omiljeno"
 }

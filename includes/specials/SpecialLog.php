@@ -20,15 +20,16 @@
 
 namespace MediaWiki\Specials;
 
-use ChangeTags;
-use LogEventsList;
-use LogFormatterFactory;
-use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTags;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\ListToggle;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogFormatterFactory;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\LogPager;
@@ -38,7 +39,6 @@ use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\MWTimestamp;
-use PermissionsError;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Timestamp\TimestampException;
@@ -62,14 +62,6 @@ class SpecialLog extends SpecialPage {
 
 	private LogFormatterFactory $logFormatterFactory;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param ActorNormalization $actorNormalization
-	 * @param UserIdentityLookup $userIdentityLookup
-	 * @param UserNameUtils $userNameUtils
-	 * @param LogFormatterFactory $logFormatterFactory
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
@@ -91,7 +83,6 @@ class SpecialLog extends SpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 		$out = $this->getOutput();
-		$out->addModules( 'mediawiki.userSuggest' );
 		$out->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 		$this->addHelpLink( 'Help:Log' );
 
@@ -175,7 +166,7 @@ class SpecialLog extends SpecialPage {
 				if ( IPUtils::isValidRange( $target->getText() ) ) {
 					$page = IPUtils::sanitizeRange( $target->getText() );
 				}
-				# User forgot to add 'User:', we are adding it for him
+				# User forgot to add 'User:', we are adding it for them
 				$target = Title::makeTitleSafe( NS_USER, $page );
 			} elseif ( $target && $target->getNamespace() === NS_USER
 				&& IPUtils::isValidRange( $target->getText() )
@@ -330,7 +321,7 @@ class SpecialLog extends SpecialPage {
 		}
 	}
 
-	private function getActionButtons( $formcontents ) {
+	private function getActionButtons( string $formcontents ): string {
 		$canRevDelete = $this->getAuthority()
 			->isAllowedAll( 'deletedhistory', 'deletelogentry' );
 		$showTagEditUI = ChangeTags::showTagEditingUI( $this->getAuthority() );

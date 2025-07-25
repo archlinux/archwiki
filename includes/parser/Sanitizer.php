@@ -31,13 +31,13 @@ use LogicException;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Tidy\RemexCompatFormatter;
-use StringUtils;
 use UnexpectedValueException;
 use Wikimedia\RemexHtml\HTMLData;
 use Wikimedia\RemexHtml\Serializer\Serializer as RemexSerializer;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer as RemexTokenizer;
 use Wikimedia\RemexHtml\TreeBuilder\Dispatcher as RemexDispatcher;
 use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder as RemexTreeBuilder;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * HTML sanitizer for MediaWiki
@@ -287,7 +287,7 @@ class Sanitizer {
 				$t = strtolower( $t );
 				if ( isset( $htmlelements[$t] ) ) {
 					if ( is_callable( $processCallback ) ) {
-						call_user_func_array( $processCallback, [ &$params, $args ] );
+						$processCallback( $params, $args );
 					}
 
 					if ( $brace == '/>' && !( isset( $htmlsingle[$t] ) || isset( $htmlsingleonly[$t] ) ) ) {
@@ -528,6 +528,9 @@ class Sanitizer {
 			# Escape HTML id attributes
 			if ( $attribute === 'id' ) {
 				$value = self::escapeIdForAttribute( $value, self::ID_PRIMARY );
+				if ( $value === false || $value === '' ) {
+					continue;
+				}
 			}
 
 			# Escape HTML id reference lists
@@ -610,6 +613,8 @@ class Sanitizer {
 	 * will be combined (if they're both strings).
 	 *
 	 * @todo implement merging for other attributes such as style
+	 * @deprecated since 1.44, use array_merge() for attribute arrays and
+	 *   Html::addClass() / Html::expandClassList() for class lists
 	 */
 	public static function mergeAttributes( array $a, array $b ): array {
 		$out = array_merge( $a, $b );
@@ -1624,12 +1629,11 @@ class Sanitizer {
 			// don't ignore char refs, we want them to be decoded
 			'ignoreNulls' => true,
 			'skipPreprocess' => true,
+			// We ignore all attributes, don't bother to parse them
+			'lazyAttributes' => true,
 		] );
 		$tokenizer->execute();
-		$text = $handler->getResult();
-
-		$text = self::normalizeWhitespace( $text );
-		return $text;
+		return self::normalizeWhitespace( $handler->getResult() );
 	}
 
 	/**

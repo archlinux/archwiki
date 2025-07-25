@@ -9,6 +9,7 @@ use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
  * The "before head" insertion mode
  */
 class BeforeHead extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		// Ignore whitespace
 		[ $part1, $part2 ] = $this->splitInitialMatch(
@@ -24,6 +25,7 @@ class BeforeHead extends InsertionMode {
 			->characters( $text, $start, $length, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		if ( $name === 'html' ) {
 			$this->dispatcher->inBody->startTag( $name, $attrs, $selfClose,
@@ -40,6 +42,7 @@ class BeforeHead extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$allowed = [ "head" => true, "body" => true, "html" => true, "br" => true ];
 		if ( !isset( $allowed[$name] ) ) {
@@ -52,6 +55,7 @@ class BeforeHead extends InsertionMode {
 			->endTag( $name, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->builder->headElement = $this->builder->insertElement(
 			'head', new PlainAttributes, false, $pos, 0 );

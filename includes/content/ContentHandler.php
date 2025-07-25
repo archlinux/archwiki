@@ -1,8 +1,5 @@
 <?php
-
 /**
- * Base class for content handling.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,21 +15,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @since 1.21
- *
  * @file
- * @ingroup Content
- *
- * @author Daniel Kinzler
  */
 
 namespace MediaWiki\Content;
 
-use Action;
 use DifferenceEngine;
 use DifferenceEngineSlotDiffRenderer;
 use InvalidArgumentException;
 use LogicException;
+use MediaWiki\Actions\Action;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreloadTransformParams;
@@ -41,6 +33,9 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
+use MediaWiki\Exception\MWContentSerializationException;
+use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Language\ILanguageConverter;
@@ -49,6 +44,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
@@ -56,9 +52,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRenderingProvider;
 use MediaWiki\Search\ParserOutputSearchDataExtractor;
 use MediaWiki\Title\Title;
-use MWContentSerializationException;
-use MWException;
-use MWUnknownContentModelException;
 use SearchEngine;
 use SearchIndexField;
 use SlotDiffRenderer;
@@ -68,9 +61,10 @@ use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\ScopedCallback;
-use WikiPage;
 
 /**
+ * Base class for content handling.
+ *
  * A content handler knows how do deal with a specific type of content on a wiki
  * page. Content is stored in the database in a serialized form (using a
  * serialization format a.k.a. MIME type) and is unserialized into its native
@@ -88,8 +82,9 @@ use WikiPage;
  * the future.
  *
  * @stable to extend
- *
+ * @since 1.21
  * @ingroup Content
+ * @author Daniel Kinzler
  */
 abstract class ContentHandler {
 	use ProtectedHookAccessorTrait;
@@ -406,7 +401,6 @@ abstract class ContentHandler {
 	 *
 	 * @stable to override
 	 * @since 1.21
-	 *
 	 * @return Content
 	 */
 	abstract public function makeEmptyContent();
@@ -438,7 +432,6 @@ abstract class ContentHandler {
 	 * ContentHandler can handle. Use with the CONTENT_MODEL_XXX constants.
 	 *
 	 * @since 1.21
-	 *
 	 * @return string The model ID
 	 */
 	public function getModelID() {
@@ -447,11 +440,8 @@ abstract class ContentHandler {
 
 	/**
 	 * @since 1.21
-	 *
 	 * @param string $model_id The model to check
-	 *
-	 * @throws MWException If the model ID is not the ID of the content model supported by this
-	 * ContentHandler.
+	 * @throws MWException If the provided model ID differs from this ContentHandler
 	 */
 	protected function checkModelID( $model_id ) {
 		if ( $model_id !== $this->mModelID ) {
@@ -468,7 +458,6 @@ abstract class ContentHandler {
 	 *
 	 * @stable to override
 	 * @since 1.21
-	 *
 	 * @return string[] List of serialization formats as MIME type like strings
 	 */
 	public function getSupportedFormats() {
@@ -484,7 +473,6 @@ abstract class ContentHandler {
 	 *
 	 * @stable to override
 	 * @since 1.21
-	 *
 	 * @return string The name of the default serialization format as a MIME type
 	 */
 	public function getDefaultFormat() {
@@ -1075,15 +1063,19 @@ abstract class ContentHandler {
 		$blank = false;
 
 		// If the page is blank, use the text from the previous revision,
-		// which can only be blank if there's a move/import/protect dummy
-		// revision involved
 		if ( !$content || $content->isEmpty() ) {
 			$prev = $revStore->getPreviousRevision( $revRecord );
 
 			if ( $prev ) {
-				$revRecord = $prev;
-				$content = $prev->getContent( SlotRecord::MAIN );
-				$blank = true;
+				$prevContent = $prev->getContent( SlotRecord::MAIN );
+				if ( $prevContent && !$prevContent->isEmpty() ) {
+					$revRecord = $prev;
+					$content = $prevContent;
+					$blank = true;
+				}
+				// Else since the previous revision is also blank or revdelled
+				// (the blank case only happen due to a move/import/protect dummy revision)
+				// skip the "before blanking" logic and fall back to just `content was ""`
 			}
 		}
 
@@ -1122,8 +1114,6 @@ abstract class ContentHandler {
 
 		// Generate the summary with a '$1' placeholder
 		if ( $blank ) {
-			// The current revision is blank and the one before is also
-			// blank. It's just not our lucky day
 			$reason = wfMessage( 'exbeforeblank', '$1' )->inContentLanguage()->text();
 		} else {
 			if ( $onlyAuthor ) {
@@ -1145,6 +1135,12 @@ abstract class ContentHandler {
 		// Max content length = max comment length - length of the comment (excl. $1)
 		$maxLength = CommentStore::COMMENT_CHARACTER_LIMIT - ( strlen( $reason ) - 2 );
 		$text = $content ? $content->getTextForSummary( $maxLength ) : '';
+		if ( $blank && !$text ) {
+			// Don't display "content before blanking was ''" as misleading
+			// This can happen if the content before blanking was two unclosed square brackets, for example
+			// Do display `content was ""` if the page was always blank, though
+			return false;
+		}
 
 		// Now replace the '$1' placeholder
 		$reason = str_replace( '$1', $text, $reason );
@@ -1666,7 +1662,12 @@ abstract class ContentHandler {
 		$parserOptions = $cpoParams->getParserOptions();
 
 		if ( $parserOptions->getIsPreview() ) {
-			$scopedCallback = $parserOptions->setupFakeRevision( $title, $content, $parserOptions->getUserIdentity() );
+			$scopedCallback = $parserOptions->setupFakeRevision(
+				$title,
+				$content,
+				$parserOptions->getUserIdentity(),
+				$cpoParams->getRevId() ?: 0
+			);
 		}
 
 		$hookRunner = new HookRunner( $services->getHookContainer() );

@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"GuoPC",
 			"Lakejason0",
 			"LittlePaw365",
-			"沈澄心",
-			"Winston Sung"
+			"Winston Sung",
+			"沈澄心"
 		]
 	},
 	"cdx-chip-input-chip-added": "已添加标签$1。",
@@ -13,6 +14,7 @@
 	"cdx-dialog-close-button-label": "关闭",
 	"cdx-label-optional-flag": "（可选）",
 	"cdx-message-dismiss-button-label": "关闭",
+	"cdx-popover-close-button-label": "关闭",
 	"cdx-search-input-search-button-label": "搜索",
 	"cdx-table-select-all-label": "选择所有行",
 	"cdx-table-select-row-label": "选择第$1行（共$2行）",
@@ -29,5 +31,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "显示$1至$2的多个结果",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1至$2的多个结果",
 	"cdx-table-pagination-status-message-indeterminate-final": "显示最后{{PLURAL:$1|$1}}个结果",
-	"cdx-table-pagination-status-message-pending": "正在加载结果……"
+	"cdx-table-pagination-status-message-pending": "正在加载结果……",
+	"cdx-table-no-data-message": "无可用数据。"
 }

@@ -12,8 +12,8 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Wikitext\Consts;
+use Wikimedia\Parsoid\Wt2Html\TreeBuilder\DOMBuilder;
 use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
-use Wikimedia\RemexHtml\DOM\DOMBuilder;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
 use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
 use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder;
@@ -28,9 +28,9 @@ class DOMUtils {
 	/**
 	 * Parse HTML, return the tree.
 	 *
-	 * @param string $html
-	 * @param bool $validateXMLNames
-	 * @return Document
+	 * @note The resulting document is not "prepared and loaded"; use
+	 * ContentUtils::prepareAndLoadDocument() instead if that's what
+	 * you need.
 	 */
 	public static function parseHTML(
 		string $html, bool $validateXMLNames = false
@@ -42,19 +42,7 @@ class DOMUtils {
 			$html = '<body>' . $html;
 		}
 
-		$domBuilder = new class( [
-			'suppressHtmlNamespace' => true,
-		] ) extends DOMBuilder {
-			/** @inheritDoc */
-			protected function createDocument(
-				?string $doctypeName = null,
-				?string $public = null,
-				?string $system = null
-			) {
-				// @phan-suppress-next-line PhanTypeMismatchReturn
-				return DOMCompat::newDocument( false );
-			}
-		};
+		$domBuilder = new DOMBuilder; // our DOMBuilder, not remex's
 		$treeBuilder = new TreeBuilder( $domBuilder, [ 'ignoreErrors' => true ] );
 		$dispatcher = new Dispatcher( $treeBuilder );
 		$tokenizer = new Tokenizer( $dispatcher, $html, [ 'ignoreErrors' => true ] );
@@ -113,8 +101,12 @@ class DOMUtils {
 	public static function migrateChildrenBetweenDocs(
 		Node $from, Node $to, ?Node $beforeNode = null
 	): void {
-		$n = $from->firstChild;
 		$destDoc = $to->ownerDocument;
+		if ( $destDoc === $from->ownerDocument ) {
+			self::migrateChildren( $from, $to, $beforeNode );
+			return;
+		}
+		$n = $from->firstChild;
 		while ( $n ) {
 			$to->insertBefore( $destDoc->importNode( $n, true ), $beforeNode );
 			$n = $n->nextSibling;
@@ -137,10 +129,6 @@ class DOMUtils {
 		return true;
 	}
 
-	/**
-	 * @param ?Node $node
-	 * @return bool
-	 */
 	public static function isRemexBlockNode( ?Node $node ): bool {
 		return $node instanceof Element &&
 			!isset( Consts::$HTML['OnlyInlineElements'][DOMCompat::nodeName( $node )] ) &&
@@ -148,18 +136,12 @@ class DOMUtils {
 			!self::isMetaDataTag( $node );
 	}
 
-	/**
-	 * @param ?Node $node
-	 * @return bool
-	 */
 	public static function isWikitextBlockNode( ?Node $node ): bool {
 		return $node && TokenUtils::isWikitextBlockTag( DOMCompat::nodeName( $node ) );
 	}
 
 	/**
 	 * Determine whether this is a formatting DOM element.
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isFormattingElt( ?Node $node ): bool {
 		return $node && isset( Consts::$HTML['FormattingTags'][DOMCompat::nodeName( $node )] );
@@ -167,8 +149,6 @@ class DOMUtils {
 
 	/**
 	 * Determine whether this is a quote DOM element.
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isQuoteElt( ?Node $node ): bool {
 		return $node && isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $node )] );
@@ -176,8 +156,6 @@ class DOMUtils {
 
 	/**
 	 * Determine whether this is the <body> DOM element.
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isBody( ?Node $node ): bool {
 		return $node && DOMCompat::nodeName( $node ) === 'body';
@@ -185,8 +163,6 @@ class DOMUtils {
 
 	/**
 	 * Determine whether this is a removed DOM node but Node object yet
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isRemoved( ?Node $node ): bool {
 		return !$node || !isset( $node->nodeType );
@@ -210,8 +186,6 @@ class DOMUtils {
 	/**
 	 * Compute the edge length of the path from $node to the root.
 	 * Root document is at depth 0, <html> at 1, <body> at 2.
-	 * @param Node $node
-	 * @return int
 	 */
 	public static function nodeDepth( Node $node ): int {
 		$edges = 0;
@@ -258,11 +232,9 @@ class DOMUtils {
 	/**
 	 * Check that a node 'n1' is an ancestor of another node 'n2' in
 	 * the DOM. Returns true if n1 === n2.
-	 * $n1 is the suspected ancestor.
-	 * $n2 The suspected descendant.
 	 *
-	 * @param Node $n1
-	 * @param Node $n2
+	 * @param Node $n1 the suspected ancestor.
+	 * @param Node $n2 the suspected descendant.
 	 * @return bool
 	 */
 	public static function isAncestorOf( Node $n1, Node $n2 ): bool {
@@ -274,10 +246,6 @@ class DOMUtils {
 
 	/**
 	 * Find an ancestor of $node with nodeName $name.
-	 *
-	 * @param Node $node
-	 * @param string $name
-	 * @return ?Element
 	 */
 	public static function findAncestorOfName( Node $node, string $name ): ?Element {
 		$node = $node->parentNode;
@@ -290,10 +258,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether $node has $name or has an ancestor named $name.
-	 *
-	 * @param Node $node
-	 * @param string $name
-	 * @return bool
 	 */
 	public static function hasNameOrHasAncestorOfName( Node $node, string $name ): bool {
 		return DOMCompat::nodeName( $node ) === $name || self::findAncestorOfName( $node, $name ) !== null;
@@ -460,9 +424,6 @@ class DOMUtils {
 	 * Add a type to the rel attribute.  This method should almost always
 	 * be used instead of `setAttribute`, to ensure we don't overwrite existing
 	 * rel information.
-	 *
-	 * @param Element $node node
-	 * @param string $rel type
 	 */
 	public static function addRel( Element $node, string $rel ): void {
 		self::addValueToMultivalAttr( $node, 'rel', $rel );
@@ -520,9 +481,6 @@ class DOMUtils {
 
 	/**
 	 * Remove a type from the typeof attribute.
-	 *
-	 * @param Element $node node
-	 * @param string $type type
 	 */
 	public static function removeTypeOf( Element $node, string $type ): void {
 		self::removeValueFromMultivalAttr( $node, 'typeof', $type );
@@ -530,9 +488,6 @@ class DOMUtils {
 
 	/**
 	 * Remove a type from the rel attribute.
-	 *
-	 * @param Element $node node
-	 * @param string $rel rel
 	 */
 	public static function removeRel( Element $node, string $rel ): void {
 		self::removeValueFromMultivalAttr( $node, 'rel', $rel );
@@ -540,9 +495,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is in a fosterable position.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isFosterablePosition( ?Node $n ): bool {
 		return $n && isset( Consts::$HTML['FosterablePosition'][DOMCompat::nodeName( $n->parentNode )] );
@@ -550,9 +502,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is a heading.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isHeading( ?Node $n ): bool {
 		return $n && preg_match( '/^h[1-6]$/D', DOMCompat::nodeName( $n ) );
@@ -560,9 +509,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is a list.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isList( ?Node $n ): bool {
 		return $n && isset( Consts::$HTML['ListTags'][DOMCompat::nodeName( $n )] );
@@ -570,9 +516,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is a list item.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isListItem( ?Node $n ): bool {
 		return $n && isset( Consts::$HTML['ListItemTags'][DOMCompat::nodeName( $n )] );
@@ -580,9 +523,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is a list or list item.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isListOrListItem( ?Node $n ): bool {
 		return self::isList( $n ) || self::isListItem( $n );
@@ -590,9 +530,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is nestee in a list item.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isNestedInListItem( ?Node $n ): bool {
 		$parentNode = $n->parentNode;
@@ -607,9 +544,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether `node` is a nested list or a list item.
-	 *
-	 * @param ?Node $n
-	 * @return bool
 	 */
 	public static function isNestedListOrListItem( ?Node $n ): bool {
 		return self::isListOrListItem( $n ) && self::isNestedInListItem( $n );
@@ -617,10 +551,6 @@ class DOMUtils {
 
 	/**
 	 * Check a node to see whether it's a meta with some typeof.
-	 *
-	 * @param Node $n
-	 * @param string $type
-	 * @return bool
 	 */
 	public static function isMarkerMeta( Node $n, string $type ): bool {
 		return self::hasNameAndTypeOf( $n, 'meta', $type );
@@ -628,9 +558,6 @@ class DOMUtils {
 
 	/**
 	 * Check whether a node has any children that are elements.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function hasElementChild( Node $node ): bool {
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
@@ -643,9 +570,6 @@ class DOMUtils {
 
 	/**
 	 * Check if a node has a block-level element descendant.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function hasBlockElementDescendant( Node $node ): bool {
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
@@ -661,9 +585,6 @@ class DOMUtils {
 
 	/**
 	 * Is a node representing inter-element whitespace?
-	 *
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isIEW( ?Node $node ): bool {
 		// ws-only
@@ -672,9 +593,6 @@ class DOMUtils {
 
 	/**
 	 * Is a node a document fragment?
-	 *
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isDocumentFragment( ?Node $node ): bool {
 		return $node && $node->nodeType === XML_DOCUMENT_FRAG_NODE;
@@ -682,19 +600,13 @@ class DOMUtils {
 
 	/**
 	 * Is a node at the top?
-	 *
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function atTheTop( ?Node $node ): bool {
-		return self::isDocumentFragment( $node ) || self::isBody( $node );
+		return self::isBody( $node ) || self::isDocumentFragment( $node );
 	}
 
 	/**
 	 * Are all children of this node text or comment nodes?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function allChildrenAreTextOrComments( Node $node ): bool {
 		$child = $node->firstChild;
@@ -735,9 +647,6 @@ class DOMUtils {
 
 	/**
 	 * Is node a table tag (table, tbody, td, tr, etc.)?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isTableTag( Node $node ): bool {
 		return isset( Consts::$HTML['TableTags'][DOMCompat::nodeName( $node )] );
@@ -745,9 +654,6 @@ class DOMUtils {
 
 	/**
 	 * Returns a media element nested in `node`
-	 *
-	 * @param Element $node
-	 * @return Element|null
 	 */
 	public static function selectMediaElt( Element $node ): ?Element {
 		return DOMCompat::querySelector( $node, 'img, video, audio' );
@@ -797,10 +703,6 @@ class DOMUtils {
 		}
 	}
 
-	/**
-	 * @param Document $doc
-	 * @return string|null
-	 */
 	public static function extractInlinedContentVersion( Document $doc ): ?string {
 		$el = DOMCompat::querySelector( $doc,
 			'meta[property="mw:htmlVersion"], meta[property="mw:html:version"]' );
@@ -852,13 +754,8 @@ class DOMUtils {
 	 * innerHTML and outerHTML are not defined on DocumentFragment.
 	 *
 	 * Defined similarly to DOMCompat::getInnerHTML()
-	 *
-	 * @param DocumentFragment $frag
-	 * @return string
 	 */
-	public static function getFragmentInnerHTML(
-		DocumentFragment $frag
-	): string {
+	public static function getFragmentInnerHTML( DocumentFragment $frag ): string {
 		return XMLSerializer::serialize(
 			$frag, [ 'innerXML' => true ]
 		)['html'];
@@ -867,46 +764,26 @@ class DOMUtils {
 	/**
 	 * innerHTML and outerHTML are not defined on DocumentFragment.
 	 * @see DOMCompat::setInnerHTML() for the Element version
-	 *
-	 * @param DocumentFragment $frag
-	 * @param string $html
 	 */
-	public static function setFragmentInnerHTML(
-		DocumentFragment $frag, string $html
-	): void {
+	public static function setFragmentInnerHTML( DocumentFragment $frag, string $html ): void {
 		// FIXME: This should be an HTML5 template element
 		$body = $frag->ownerDocument->createElement( 'body' );
 		DOMCompat::setInnerHTML( $body, $html );
 		self::migrateChildren( $body, $frag );
 	}
 
-	/**
-	 * @param Document $doc
-	 * @param string $html
-	 * @return DocumentFragment
-	 */
-	public static function parseHTMLToFragment(
-		Document $doc, string $html
-	): DocumentFragment {
+	public static function parseHTMLToFragment( Document $doc, string $html ): DocumentFragment {
 		$frag = $doc->createDocumentFragment();
 		self::setFragmentInnerHTML( $frag, $html );
 		return $frag;
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	public static function isRawTextElement( Node $node ): bool {
 		return isset( Consts::$HTML['RawTextElements'][DOMCompat::nodeName( $node )] );
 	}
 
 	/**
-	 * Is 'n' a block tag, or does the subtree rooted at 'n' have a block tag
-	 * in it?
-	 *
-	 * @param Node $n
-	 * @return bool
+	 * Is $n a block tag OR does the subtree rooted at $n have a block tag in it?
 	 */
 	public static function hasBlockTag( Node $n ): bool {
 		if ( self::isRemexBlockNode( $n ) ) {
@@ -947,10 +824,6 @@ class DOMUtils {
 		return $result;
 	}
 
-	/**
-	 * @param Element $node
-	 * @return bool
-	 */
 	public static function isMetaDataTag( Element $node ): bool {
 		return isset( Consts::$HTML['MetaDataTags'][DOMCompat::nodeName( $node )] );
 	}

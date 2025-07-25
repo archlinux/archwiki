@@ -553,11 +553,11 @@ Parser.prototype = {
 			// singles with the same effect.
 			const target = parsedResult[ 1 ].length === 1 ?
 				parsedResult[ 1 ][ 0 ] :
-				[ 'CONCAT' ].concat( parsedResult[ 1 ] );
+				[ 'CONCAT', ...parsedResult[ 1 ] ];
 			return [
 				'EXTLINK',
 				target,
-				[ 'CONCAT' ].concat( parsedResult[ 3 ] )
+				[ 'CONCAT', ...parsedResult[ 3 ] ]
 			];
 		}
 		const pipe = makeStringParser( '|' );
@@ -591,7 +591,7 @@ Parser.prototype = {
 			}
 			const expr = result[ 1 ];
 			// use a CONCAT operator if there are multiple nodes, otherwise return the first node, raw.
-			return expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[ 0 ];
+			return expr.length > 1 ? [ 'CONCAT', ...expr ] : expr[ 0 ];
 		}
 
 		function templateNameWithParam() {
@@ -605,7 +605,7 @@ Parser.prototype = {
 			}
 			const expr = result[ 2 ];
 			// use a CONCAT operator if there are multiple nodes, otherwise return the first node, raw.
-			return [ result[ 0 ], expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[ 0 ] ];
+			return [ result[ 0 ], expr.length > 1 ? [ 'CONCAT', ...expr ] : expr[ 0 ] ];
 		}
 		colon = makeStringParser( ':' );
 		templateContents = choice( [
@@ -614,7 +614,7 @@ Parser.prototype = {
 					templateNameWithParam,
 					nOrMore( 0, templateParam )
 				] );
-				return result === null ? null : result[ 0 ].concat( result[ 1 ] );
+				return result === null ? null : [ ...result[ 0 ], ...result[ 1 ] ];
 			},
 			function () {
 				const result = sequence( [
@@ -624,7 +624,7 @@ Parser.prototype = {
 				if ( result === null ) {
 					return null;
 				}
-				return [ result[ 0 ] ].concat( result[ 1 ] );
+				return [ result[ 0 ], ...result[ 1 ] ];
 			}
 		] );
 
@@ -635,8 +635,8 @@ Parser.prototype = {
 				nOrMore( 1, expression )
 			] );
 			return result === null ? null : [
-				[ 'CONCAT' ].concat( result[ 0 ] ),
-				[ 'CONCAT' ].concat( result[ 2 ] )
+				[ 'CONCAT', ...result[ 0 ] ],
+				[ 'CONCAT', ...result[ 2 ] ]
 			];
 		}
 
@@ -645,7 +645,7 @@ Parser.prototype = {
 				nOrMore( 1, paramExpression )
 			] );
 			return result === null ? null : [
-				[ 'CONCAT' ].concat( result[ 0 ] )
+				[ 'CONCAT', ...result[ 0 ] ]
 			];
 		}
 
@@ -662,7 +662,7 @@ Parser.prototype = {
 				wikilinkContents,
 				closeWikilink
 			] );
-			return parsedResult === null ? null : [ 'WIKILINK' ].concat( parsedResult[ 1 ] );
+			return parsedResult === null ? null : [ 'WIKILINK', ...parsedResult[ 1 ] ];
 		}
 
 		// TODO: Support data- if appropriate
@@ -715,7 +715,7 @@ Parser.prototype = {
 		function isAllowedHtml( startTagName, endTagName, attributes ) {
 			startTagName = startTagName.toLowerCase();
 			endTagName = endTagName.toLowerCase();
-			if ( startTagName !== endTagName || settings.allowedHtmlElements.indexOf( startTagName ) === -1 ) {
+			if ( startTagName !== endTagName || !settings.allowedHtmlElements.includes( startTagName ) ) {
 				return false;
 			}
 
@@ -724,8 +724,8 @@ Parser.prototype = {
 			let attributeName;
 			for ( let i = 0, len = attributes.length; i < len; i += 2 ) {
 				attributeName = attributes[ i ];
-				if ( settings.allowedHtmlCommonAttributes.indexOf( attributeName ) === -1 &&
-					( settings.allowedHtmlAttributesByElement[ startTagName ] || [] ).indexOf( attributeName ) === -1 ) {
+				if ( !settings.allowedHtmlCommonAttributes.includes( attributeName ) &&
+					!( settings.allowedHtmlAttributesByElement[ startTagName ] || [] ).includes( attributeName ) ) {
 					return false;
 				}
 				if ( attributeName === 'style' && attributes[ i + 1 ].search( badStyle ) !== -1 ) {
@@ -783,8 +783,8 @@ Parser.prototype = {
 
 			if ( parsedCloseTagResult === null ) {
 				// Closing tag failed.  Return the start tag and contents.
-				return [ 'CONCAT', input.slice( startOpenTagPos, endOpenTagPos ) ]
-					.concat( parsedHtmlContents );
+				return [ 'CONCAT', input.slice( startOpenTagPos, endOpenTagPos ),
+					...parsedHtmlContents ];
 			}
 
 			const endCloseTagPos = pos;
@@ -792,8 +792,8 @@ Parser.prototype = {
 			const wrappedAttributes = parsedOpenTagResult[ 2 ];
 			const attributes = wrappedAttributes.slice( 1 );
 			if ( isAllowedHtml( startTagName, endTagName, attributes ) ) {
-				return [ 'HTMLELEMENT', startTagName, wrappedAttributes ]
-					.concat( parsedHtmlContents );
+				return [ 'HTMLELEMENT', startTagName, wrappedAttributes,
+					...parsedHtmlContents ];
 			}
 			// HTML is not allowed, so contents will remain how
 			// it was, while HTML markup at this level will be
@@ -807,8 +807,8 @@ Parser.prototype = {
 			// parsed HTML link.
 			//
 			// Concatenate everything from the tag, flattening the contents.
-			return [ 'CONCAT', input.slice( startOpenTagPos, endOpenTagPos ) ]
-				.concat( parsedHtmlContents, input.slice( startCloseTagPos, endCloseTagPos ) );
+			return [ 'CONCAT', input.slice( startOpenTagPos, endOpenTagPos ),
+				...parsedHtmlContents, input.slice( startCloseTagPos, endCloseTagPos ) ];
 		}
 
 		// <nowiki>...</nowiki> tag. The tags are stripped and the contents are returned unparsed.
@@ -819,7 +819,7 @@ Parser.prototype = {
 				makeRegexParser( /^.*?(?=<\/nowiki>)/ ),
 				makeStringParser( '</nowiki>' )
 			] );
-			return parsedResult === null ? null : [ 'CONCAT' ].concat( parsedResult[ 1 ] );
+			return parsedResult === null ? null : [ 'CONCAT', ...parsedResult[ 1 ] ];
 		}
 
 		nonWhitespaceExpression = choice( [
@@ -872,7 +872,7 @@ Parser.prototype = {
 			if ( result === null ) {
 				return null;
 			}
-			return [ 'CONCAT' ].concat( result );
+			return [ 'CONCAT', ...result ];
 		}
 		// everything above this point is supposed to be stateless/static, but
 		// I am deferring the work of turning it into prototypes & objects. It's quite fast enough
@@ -902,14 +902,13 @@ Parser.prototype = {
  * @param {Object.<string,string>} [magic]
  */
 function HtmlEmitter( language, magic ) {
-	const jmsg = this;
 	this.language = language;
-	Object.keys( magic || {} ).forEach( ( key ) => {
+	for ( const key in ( magic || {} ) ) {
 		const val = magic[ key ];
-		jmsg[ key.toLowerCase() ] = function () {
+		this[ key.toLowerCase() ] = function () {
 			return val;
 		};
-	} );
+	}
 
 	/**
 	 * (We put this method definition here, and not in prototype, to make sure it's not overwritten by any magic.)
@@ -919,7 +918,7 @@ function HtmlEmitter( language, magic ) {
 	 * @param {Array} replacements for $1, $2, ... $n
 	 * @return {any} single-string node or array of nodes suitable for jQuery appending
 	 */
-	this.emit = function ( node, replacements ) {
+	this.emit = ( node, replacements ) => {
 		switch ( typeof node ) {
 			case 'string':
 			case 'number':
@@ -929,10 +928,10 @@ function HtmlEmitter( language, magic ) {
 			case 'object': {
 				// node is an array of nodes
 				// eslint-disable-next-line no-jquery/no-map-util
-				const subnodes = $.map( node.slice( 1 ), ( n ) => jmsg.emit( n, replacements ) );
+				const subnodes = $.map( node.slice( 1 ), ( n ) => this.emit( n, replacements ) );
 				const operation = node[ 0 ].toLowerCase();
-				if ( typeof jmsg[ operation ] === 'function' ) {
-					return jmsg[ operation ]( subnodes, replacements );
+				if ( typeof this[ operation ] === 'function' ) {
+					return this[ operation ]( subnodes, replacements );
 				} else {
 					throw new Error( 'Unknown operation "' + operation + '"' );
 				}
@@ -1396,6 +1395,29 @@ HtmlEmitter.prototype = {
 			return this.language.convertNumber( number, isInteger );
 		}
 		return number;
+	},
+
+	/**
+	 * Takes a pagename and optional URL queries and returns a full URL to that
+	 * page (with URL queries).
+	 *
+	 * @param {Array} nodes List of nodes
+	 * @return {string} A URL string
+	 */
+	fullurl: function ( nodes ) {
+		const targetPage = textify( nodes[ 0 ] ),
+			queryObject = {};
+		let queryStrings = nodes[ 1 ];
+
+		if ( queryStrings ) {
+			queryStrings = textify( queryStrings );
+			queryStrings = new URLSearchParams( queryStrings );
+			for ( const [ key, value ] of queryStrings.entries() ) {
+				queryObject[ key ] = value;
+			}
+		}
+
+		return mw.config.get( 'wgServer' ) + util.getUrl( targetPage, queryObject );
 	},
 
 	/**

@@ -1,0 +1,62 @@
+@import 'mediawiki.skin.variables.less';
+
+// NOTE: @param-is-button-icon lets us change the icon color
+// with background-color by using mask-image.
+// over specified so that it overrides the minerva-icon default.
+.minerva-icon.minerva-icon--modified-history {
+	.cdx-mixin-css-icon( @cdx-icon-history, @param-is-button-icon: true );
+}
+
+.minerva-icon.minerva-icon--expand {
+	.cdx-mixin-css-icon( @cdx-icon-next, @param-is-button-icon: true );
+}
+
+.minerva-icon.minerva-icon--newspaper {
+	.cdx-mixin-css-icon(@cdx-icon-newspaper, @param-is-button-icon: true);
+}
+
+.minerva-icon.minerva-icon-size-small {
+	.cdx-mixin-css-icon-background( @size-icon-small );
+	.cdx-mixin-css-icon-size( @size-icon-small );
+}
+
+// Start T374145
+.minerva-icon {
+	.cdx-mixin-css-icon('none');
+	background-color: @color-subtle;
+}
+
+.minerva-icon--language-disabled {
+	background-color: @color-disabled;
+}
+
+// Dark mode adjustments
+@media screen {
+	html.skin-theme-clientpref-night {
+		// Disable inversion for icons in dark mode, except where explicitly defined
+		.toggle-list .minerva-icon {
+			filter: none;
+		}
+
+		// Invert only branding images (e.g., logo) inside the branding-box in dark mode
+		.branding-box img {
+			filter: invert( 1 );
+		}
+	}
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		// Disable inversion for OS-level dark mode as well
+		.toggle-list .minerva-icon {
+			filter: none;
+		}
+
+		// Branding image inversion for OS-level dark mode
+		.branding-box img {
+			filter: invert( 1 );
+		}
+	}
+}
+
+// End T374145

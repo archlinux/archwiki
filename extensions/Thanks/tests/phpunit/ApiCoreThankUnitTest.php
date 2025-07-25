@@ -2,6 +2,7 @@
 
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\UserBlockTarget;
 use MediaWiki\Extension\Thanks\Api\ApiCoreThank;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\User\User;
@@ -24,21 +25,22 @@ class ApiCoreThankUnitTest extends ApiTestCase {
 			new ApiMain(),
 			'thank',
 			$services->getPermissionManager(),
+			$services->getService( 'ThanksLogStore' ),
+			$services->getNotificationService(),
 			$services->getRevisionStore(),
-			$services->getUserFactory(),
-			$services->getService( 'ThanksLogStore' )
+			$services->getUserFactory()
 		);
 	}
 
-	private static function createBlock( $options ) {
+	private static function makeBlockParams( $options ) {
 		$options = array_merge( [
-			'address' => 'Test user',
+			'target' => new UserBlockTarget( new UserIdentityValue( 2, 'Test user' ) ),
 			'by' => new UserIdentityValue( 1, 'TestUser' ),
 			'reason' => __METHOD__,
 			'timestamp' => wfTimestamp( TS_MW ),
 			'expiry' => 'infinity',
 		], $options );
-		return new DatabaseBlock( $options );
+		return $options;
 	}
 
 	/**
@@ -49,7 +51,7 @@ class ApiCoreThankUnitTest extends ApiTestCase {
 	public function testDieOnBadUser(
 		$mockisNamed,
 		$mockPingLimited,
-		$mockBlock,
+		$mockBlockParams,
 		$dieMethod,
 		$expectedError
 	) {
@@ -64,7 +66,8 @@ class ApiCoreThankUnitTest extends ApiTestCase {
 				->method( 'pingLimiter' )
 				->willReturn( $mockPingLimited );
 		}
-		if ( $mockBlock !== null ) {
+		if ( $mockBlockParams !== null ) {
+			$mockBlock = new DatabaseBlock( $mockBlockParams );
 			$user->expects( $this->once() )
 				->method( 'getBlock' )
 				->willReturn( $mockBlock );
@@ -102,14 +105,14 @@ class ApiCoreThankUnitTest extends ApiTestCase {
 			'sitewide blocked' => [
 				null,
 				null,
-				self::createBlock( [] ),
+				self::makeBlockParams( [] ),
 				'dieOnUserBlockedFromThanks',
 				'blocked'
 			],
 			'partial blocked' => [
 				null,
 				null,
-				self::createBlock( [ 'sitewide' => false ] ),
+				self::makeBlockParams( [ 'sitewide' => false ] ),
 				'dieOnUserBlockedFromThanks',
 				false
 			],

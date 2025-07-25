@@ -14,8 +14,8 @@ namespace MediaWiki\Extension\VisualEditor;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Skin\Skin;
 use MediaWiki\User\UserIdentity;
-use Skin;
 
 class VisualEditorHookRunner implements
 	VisualEditorApiVisualEditorEditPreSaveHook,

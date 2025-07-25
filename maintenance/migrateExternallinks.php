@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\ExternalLinks\LinkFilter;
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -27,10 +28,12 @@ class MigrateExternallinks extends LoggedUpdateMaintenance {
 		$this->setBatchSize( 1000 );
 	}
 
+	/** @inheritDoc */
 	protected function getUpdateKey() {
 		return __CLASS__;
 	}
 
+	/** @inheritDoc */
 	protected function doDBUpdates() {
 		$dbw = $this->getDB( DB_PRIMARY );
 		$table = 'externallinks';
@@ -69,7 +72,7 @@ class MigrateExternallinks extends LoggedUpdateMaintenance {
 		return true;
 	}
 
-	private function handleBatch( $lowId ) {
+	private function handleBatch( int $lowId ): int {
 		$batchSize = $this->getBatchSize();
 		// range is inclusive, let's subtract one.
 		$highId = $lowId + $batchSize - 1;

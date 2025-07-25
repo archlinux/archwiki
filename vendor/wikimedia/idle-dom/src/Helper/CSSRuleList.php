@@ -112,6 +112,7 @@ trait CSSRuleList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\CSSRuleList $this';
 		// @var \Wikimedia\IDLeDOM\CSSRuleList $this

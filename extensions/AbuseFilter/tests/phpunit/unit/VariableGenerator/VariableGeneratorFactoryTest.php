@@ -6,13 +6,13 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWikiUnitTestCase;
-use RecentChange;
-use RepoGroup;
 use Wikimedia\Mime\MimeAnalyzer;
 
 /**

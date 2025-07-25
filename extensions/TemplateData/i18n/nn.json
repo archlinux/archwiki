@@ -51,5 +51,8 @@
 	"templatedata-modal-title-choose-language": "Vel språk",
 	"templatedata-modal-title-language": "Språk",
 	"templatedata-modal-title-templatedesc": "Malskildring ($1)",
-	"templatedata-modal-title-templateparams": "Malparametrar"
+	"templatedata-modal-title-templateparams": "Malparametrar",
+	"templatedata-favorite-add": "Legg til malen som favoritt",
+	"templatedata-favorite-added": "Malen vart lagd til som favoritt",
+	"templatedata-favorite-removed": "Malen vart fjerna som favoritt"
 }

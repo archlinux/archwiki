@@ -12,7 +12,7 @@ use Wikimedia\Parsoid\Utils\Title;
  */
 class PageConfigTest extends \PHPUnit\Framework\TestCase {
 
-	private static $pageConfigs = [];
+	private static array $pageConfigs = [];
 
 	protected function getPageConfig( string $id ): PageConfig {
 		if ( !self::$pageConfigs ) {
@@ -82,16 +82,6 @@ class PageConfigTest extends \PHPUnit\Framework\TestCase {
 	public function testGetRevisionTimestamp() {
 		$this->assertNull( $this->getPageConfig( 'missing' )->getRevisionTimestamp() );
 		$this->assertSame( '20180829005516', $this->getPageConfig( 'existing' )->getRevisionTimestamp() );
-	}
-
-	public function testGetRevisionUser() {
-		$this->assertNull( $this->getPageConfig( 'missing' )->getRevisionUser() );
-		$this->assertSame( 'JCW-CleanerBot', $this->getPageConfig( 'existing' )->getRevisionUser() );
-	}
-
-	public function testGetRevisionUserId() {
-		$this->assertNull( $this->getPageConfig( 'missing' )->getRevisionUserId() );
-		$this->assertSame( 31737083, $this->getPageConfig( 'existing' )->getRevisionUserId() );
 	}
 
 	public function testGetRevisionSha1() {

@@ -35,6 +35,7 @@
 	"echo-pref-tooltip-mention": "कस्यचित् चर्चापुटस्य सम्पर्कतन्तुः मम योजकपुटेन सह योज्यते चेत् सूच्यताम् |",
 	"notifications": "सूचनाः",
 	"tooltip-pt-notifications-alert": "{{GENDER:|भवतः/भवत्याः}} जागरूकतासन्देशाः",
+	"tooltip-pt-notifications": "भवतः सूचनाः",
 	"echo-specialpage": "सूचनाः",
 	"echo-none": "भवते सूचनाः न विद्यन्ते |",
 	"notification-link-text-view-message": "सन्देशः दृश्यताम्",

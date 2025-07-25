@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 class HashLibrary extends LibraryBase {
 
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'listAlgorithms' => [ $this, 'listAlgorithms' ],

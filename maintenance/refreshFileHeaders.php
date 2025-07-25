@@ -24,6 +24,8 @@
  */
 
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 // @codeCoverageIgnoreStart
@@ -72,19 +74,19 @@ class RefreshFileHeaders extends Maintenance {
 			$queryBuilder = FileSelectQueryBuilder::newForFile( $dbr );
 
 			$queryBuilder->where( $dbr->expr( 'img_name', '>', $start ) );
-			if ( strlen( $end ) ) {
+			if ( $end !== '' ) {
 				$queryBuilder->andWhere( $dbr->expr( 'img_name', '<=', $end ) );
 			}
 
-			if ( strlen( $media_type ) ) {
+			if ( $media_type !== '' ) {
 				$queryBuilder->andWhere( [ 'img_media_type' => $media_type ] );
 			}
 
-			if ( strlen( $major_mime ) ) {
+			if ( $major_mime !== '' ) {
 				$queryBuilder->andWhere( [ 'img_major_mime' => $major_mime ] );
 			}
 
-			if ( strlen( $minor_mime ) ) {
+			if ( $minor_mime !== '' ) {
 				$queryBuilder->andWhere( [ 'img_minor_mime' => $minor_mime ] );
 			}
 

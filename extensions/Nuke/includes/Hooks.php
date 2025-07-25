@@ -38,7 +38,7 @@ class Hooks implements ContributionsToolLinksHook {
 	 * @param string[] &$tags
 	 */
 	public static function onRegisterTags( array &$tags ): bool {
-		$tags[] = 'Nuke';
+		$tags[] = 'nuke';
 		return true;
 	}
 }

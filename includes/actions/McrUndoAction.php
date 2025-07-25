@@ -5,16 +5,24 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
+use DifferenceEngine;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\MWContentSerializationException;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\Article;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
@@ -23,6 +31,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
@@ -98,7 +107,7 @@ class McrUndoAction extends FormAction {
 	public function show() {
 		// Send a cookie so anons get talk message notifications
 		// (copied from SubmitAction)
-		MediaWiki\Session\SessionManager::getGlobalSession()->persist();
+		\MediaWiki\Session\SessionManager::getGlobalSession()->persist();
 
 		// Some stuff copied from EditAction
 		$this->useTransactionalTimeLimit();
@@ -277,7 +286,7 @@ class McrUndoAction extends FormAction {
 		return $newRev;
 	}
 
-	private function generateDiffOrPreview() {
+	private function generateDiffOrPreview(): string {
 		$newRev = $this->getNewRevision();
 		if ( $newRev->hasSameContent( $this->curRev ) ) {
 			throw new ErrorPageError( 'mcrundofailed', 'undo-nochange' );
@@ -417,6 +426,7 @@ class McrUndoAction extends FormAction {
 				}
 			}
 
+			$updater->setCause( PageUpdateCauses::CAUSE_UNDO );
 			$updater->markAsRevert( EditResult::REVERT_UNDO, $this->undo, $this->undoafter );
 
 			if ( $this->useRCPatrol && $this->getAuthority()
@@ -527,3 +537,6 @@ class McrUndoAction extends FormAction {
 		return '<div style="clear:both"></div>';
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( McrUndoAction::class, 'McrUndoAction' );

@@ -55,6 +55,7 @@
 	"notifications": "សារជូនដំណឹង",
 	"tooltip-pt-notifications-alert": "សារជូនដំណឹងសំខាន់{{GENDER:|មកអ្នក}}",
 	"tooltip-pt-notifications-notice": "សារជូនដំណឹងធម្មតា{{GENDER:|មកអ្នក}}",
+	"tooltip-pt-notifications": "សារជូនដំណឹងសម្រាប់អ្នក",
 	"echo-displaynotificationsconfiguration": "បង្ហាញការកំណត់អំពីសារជូនដំណឹង",
 	"echo-displaynotificationsconfiguration-summary": "នេះជាសេចក្ដីសង្ខេបអំពីរបៀបកំណត់សារជូនដំណឹងនៅលើវិគីនេះ។",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "សារជូនដំណឹងតាមចំណាត់ថ្នាក់ក្រុម",

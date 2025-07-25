@@ -29,10 +29,14 @@ OO.inheritClass( ve.ui.MWPreTextInputWidget, ve.ui.WhitespacePreservingTextInput
  */
 ve.ui.MWPreTextInputWidget.prototype.setValueAndWhitespace = function ( value ) {
 	this.whitespace[ 0 ] = value.match( /^\n?/ )[ 0 ];
-	value = value.slice( this.whitespace[ 0 ].length );
+	if ( this.whitespace[ 0 ] ) {
+		value = value.slice( this.whitespace[ 0 ].length );
+	}
 
 	this.whitespace[ 1 ] = value.match( /\n?$/ )[ 0 ];
-	value = value.slice( 0, value.length - this.whitespace[ 1 ].length );
+	if ( this.whitespace[ 1 ] ) {
+		value = value.slice( 0, -this.whitespace[ 1 ].length );
+	}
 
 	this.setValue( value );
 };

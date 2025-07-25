@@ -5,8 +5,10 @@ namespace MediaWiki\Rest\Module;
 use AppendIterator;
 use ArrayIterator;
 use Iterator;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Rest\BasicAccess\BasicAuthorizerInterface;
 use MediaWiki\Rest\Handler\RedirectHandler;
+use MediaWiki\Rest\JsonLocalizer;
 use MediaWiki\Rest\PathTemplateMatcher\ModuleConfigurationException;
 use MediaWiki\Rest\Reporter\ErrorReporter;
 use MediaWiki\Rest\ResponseFactory;
@@ -78,7 +80,6 @@ class ExtraRoutesModule extends MatcherBasedModule {
 	/** @var int[]|null */
 	private ?array $routeFileTimestamps = null;
 
-	/** @var string|null */
 	private ?string $configHash = null;
 
 	/**
@@ -97,7 +98,8 @@ class ExtraRoutesModule extends MatcherBasedModule {
 		BasicAuthorizerInterface $basicAuth,
 		ObjectFactory $objectFactory,
 		Validator $restValidator,
-		ErrorReporter $errorReporter
+		ErrorReporter $errorReporter,
+		HookContainer $hookContainer
 	) {
 		parent::__construct(
 			$router,
@@ -106,7 +108,8 @@ class ExtraRoutesModule extends MatcherBasedModule {
 			$basicAuth,
 			$objectFactory,
 			$restValidator,
-			$errorReporter
+			$errorReporter,
+			$hookContainer
 		);
 		$this->routeFiles = $routeFiles;
 		$this->extraRoutes = $extraRoutes;
@@ -114,8 +117,6 @@ class ExtraRoutesModule extends MatcherBasedModule {
 
 	/**
 	 * Get a config version hash for cache invalidation
-	 *
-	 * @return string
 	 */
 	protected function getConfigHash(): string {
 		if ( $this->configHash === null ) {
@@ -246,9 +247,10 @@ class ExtraRoutesModule extends MatcherBasedModule {
 	public function getOpenApiInfo() {
 		// Note that mwapi-1.0 is based on OAS 3.0, so it doesn't support the
 		// "summary" property introduced in 3.1.
+		$localizer = new JsonLocalizer( $this->responseFactory );
 		return [
-			'title' => 'Extra Routes',
-			'description' => 'REST endpoints not associated with a module',
+			'title' => $localizer->getFormattedMessage( 'rest-module-extra-routes-title' ),
+			'description' => $localizer->getFormattedMessage( 'rest-module-extra-routes-desc' ),
 			'version' => 'undefined',
 		];
 	}

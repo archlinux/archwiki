@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Moshtank",
+			"Mostafadaneshvar",
+			"Sultanselim baloch"
+		]
+	},
+	"checkuser-desc": "کاربرانء اجازت دن  گون مناسبین اجازت آدرسان آی پی یک کاربری و دگه اطلاعاتء کنترل بکنت",
+	"checkuser": "کنترل کاربر",
+	"checkuserlog": "آمار کنترل کاربر",
+	"group-checkuser": "کنترل کابران",
+	"group-checkuser-member": "کنترل کاربر",
+	"right-checkuser": "کنترل کن آی پی کاربران و دگه اطلاعاتء",
+	"grouppage-checkuser": "{{ns:project}}:کنترل کاربر",
+	"checkuser-reason": "دلیل:",
+	"checkuser-showlog": "آمار پیش دار",
+	"checkuser-query": "درخواست نوکین تغییرات",
+	"checkuser-target": "کاربر یا آی پی",
+	"checkuser-users": "بگر کابرانء",
+	"checkuser-ips": "آی پی آن گر",
+	"checkuser-empty": "آمار شمال هچ آیتمی نهنت.",
+	"checkuser-nomatch": "هچ همدابی در نکپت",
+	"checkuser-check": "کنترل",
+	"checkuser-blocked": "محدود",
+	"checkuser-search": "گردگ",
+	"checkuser-search-submit": "شۏھاز",
+	"checkuser-ipeditcount": "~$1 چه کلی کابران",
+	"checkuser-showmain": "په فرم اصلی کنترل کاربر تر"
+}

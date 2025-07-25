@@ -109,6 +109,10 @@ class HTMLTitlesMultiselectField extends HTMLTitleTextField {
 		if ( isset( $this->mParams['excludeDynamicNamespaces'] ) ) {
 			$params['excludeDynamicNamespaces'] = $this->mParams['excludeDynamicNamespaces'];
 		}
+		if ( $this->mParams['namespace'] !== false ) {
+			$params['namespace'] = $this->mParams['namespace'];
+		}
+		$params['relative'] = $this->mParams['relative'];
 		if ( isset( $this->mParams['allowEditTags'] ) ) {
 			$params['allowEditTags'] = $this->mParams['allowEditTags'];
 		}

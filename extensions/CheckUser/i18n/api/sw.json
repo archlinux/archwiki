@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joeamj"
+		]
+	},
+	"apihelp-query+globalcontributions-summary": "Onyesha mabadiliko ya hivi karibuni kwenye wiki zote kwa mtumiaji aliyesajiliwa.",
+	"apihelp-query+globalcontributions-param-target": "Jina la mtumiaji la kutafuta (lazima lisiwe IP).",
+	"apihelp-query+globalcontributions-param-limit": "Ukomo wa safu.",
+	"apihelp-query+globalcontributions-param-offset": "Muendelezo kukabiliana na kuendelea kuhesabu kutoka.",
+	"apihelp-query+globalcontributions-example-1": "Onyesha mabadiliko ya hivi karibuni kwenye wiki zote kwa mtumiaji fulani.",
+	"apihelp-query+globalcontributions-example-2": "Onyesha masahihisho ya hivi majuzi kwenye wiki zote kwa mtumiaji fulani kutoka kwa mwendelezo fulani, na kikomo maalum."
+}

@@ -84,6 +84,7 @@
 	"notifications": "Ενημερώσεις",
 	"tooltip-pt-notifications-alert": "Οι ειδοποιήσεις {{GENDER:|σας}}",
 	"tooltip-pt-notifications-notice": "Οι ενημερώσεις {{GENDER:|σας}}",
+	"tooltip-pt-notifications": "Οι ειδοποιήσεις σας",
 	"echo-displaynotificationsconfiguration": "Εμφάνιση διαμόρφωσης Ενημερώσεων",
 	"echo-displaynotificationsconfiguration-summary": "Αυτή είναι μια επισκόπηση του τρόπου με τον οποίο έχουν ρυθμιστεί οι Ενημερώσεις σε αυτό το wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Ενημερώσεις ανά κατηγορία",

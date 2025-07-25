@@ -70,6 +70,7 @@
 	"notifications": "Meddelelser",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Dine}} alarmer",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Dine}} meddelelser",
+	"tooltip-pt-notifications": "Dine meddelelser",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "Sortering af typer",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Aktiveret som standard",
 	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Eksisterende brugere",

@@ -31,12 +31,6 @@ div.mw-notification-area {
 }
 
 #mw-header-container {
-	/* Stupid IE10+ bug requires defining the height property for this to work
-	 * the way it is intended; without doing that this'll break horribly under
-	 * IE10 and IE11.
-	 * @see https://phabricator.wikimedia.org/T173769
-	 */
-	height: 0;
 	position: fixed;
 	z-index: @z-index-fixed;
 	top: 0;

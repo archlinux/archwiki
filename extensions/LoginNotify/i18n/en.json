@@ -12,6 +12,7 @@
 	"echo-category-title-login-success": "Login from an unfamiliar device",
 	"echo-pref-tooltip-login-success": "Notify me whenever somebody logs into my account from an unfamiliar device and IP address.",
 	"loginnotify-primary-link": "Help",
+	"loginnotify-unknown-ip": "You have attempted to log in from an unfamiliar IP address, and {{SITENAME}} is currently configured to prevent logins from unfamiliar IP addresses.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Failed attempt|Multiple failed attempts}} to log in to {{SITENAME}} as $1",
 	"notification-loginnotify-login-success-email-subject": "Login to {{SITENAME}} as $1 from a device {{GENDER:$1|you}} have not recently used",
 	"notification-header-login-success": "Someone (probably {{GENDER:$1|you}}) recently logged in to your account from a new device. If this was you, then you can disregard this message. If it wasn't you, then it's recommended that you change your password, and check your account activity.",

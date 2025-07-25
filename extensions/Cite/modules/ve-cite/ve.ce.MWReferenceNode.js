@@ -88,7 +88,7 @@ ve.ce.MWReferenceNode.prototype.onTeardown = function () {
  */
 ve.ce.MWReferenceNode.prototype.onInternalListUpdate = function ( groupsChanged ) {
 	// Only update if this group has been changed
-	if ( groupsChanged.indexOf( this.model.getAttribute( 'listGroup' ) ) !== -1 ) {
+	if ( groupsChanged.includes( this.model.getAttribute( 'listGroup' ) ) ) {
 		this.update();
 	}
 };

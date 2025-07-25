@@ -1427,33 +1427,31 @@ ace.define("ace/worker/mirror",[], function(require, exports, module) {
 
 /* eslint-enable */
 /* global ace */
-window.addEventListener( 'message', function ( e ) {
-	var msg = e.data;
+window.addEventListener( 'message', ( e ) => {
+	const msg = e.data;
 	if ( msg.apipath ) {
 		self.mwapipath = msg.apipath;
 	}
 } );
-ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ace/lib/oop', 'ace/worker/mirror' ], function ( require, exports ) {
+ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ace/lib/oop', 'ace/worker/mirror' ], ( require, exports ) => {
 	'use strict';
 
-	var oop = require( 'ace/lib/oop' ),
+	const oop = require( 'ace/lib/oop' ),
 		Mirror = require( 'ace/worker/mirror' ).Mirror;
 
-	var AbuseFilterWorker = exports.AbuseFilterWorker = function ( sender ) {
+	const AbuseFilterWorker = exports.AbuseFilterWorker = function ( sender ) {
 		Mirror.call( this, sender );
 		// How many seconds after the change to wait before running the validation
 		this.setTimeout( 1000 );
 	};
 	oop.inherits( AbuseFilterWorker, Mirror );
 
-	var parseCode = function ( code ) {
-		var xhr, data;
-
+	const parseCode = function ( code ) {
 		if ( !self.mwapipath ) {
 			// No API available? Pretend everything is fine.
 			return true;
 		}
-		xhr = new XMLHttpRequest();
+		const xhr = new XMLHttpRequest();
 		xhr.open(
 			'GET',
 			self.mwapipath + '?action=abusefilterchecksyntax&format=json&filter=' + encodeURIComponent( code ),
@@ -1463,6 +1461,7 @@ ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ac
 		if ( xhr.status !== 200 ) {
 			return true;
 		}
+		let data;
 		try {
 			data = JSON.parse( xhr.responseText );
 		} catch ( e ) {
@@ -1478,16 +1477,16 @@ ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ac
 
 	( function () {
 		this.onUpdate = function () {
-			var results = parseCode( this.doc.getValue() );
+			const results = parseCode( this.doc.getValue() );
 
 			if ( results === true ) {
 				// API error or something similar.
 				this.sender.emit( 'annotate', [] );
 				return;
 			}
-			var position;
-			var errors = [];
-			for ( var warning in results.warnings || {} ) {
+			let position;
+			const errors = [];
+			for ( const warning in results.warnings || {} ) {
 				position = this.doc.indexToPosition( results.warnings[ warning ].character );
 				errors.push( {
 					row: position.row,

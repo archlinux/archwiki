@@ -79,7 +79,7 @@ function renderReferencePreview(
 		( a ) => {
 			a.target = '_blank';
 			// Don't let the external site access and possibly manipulate window.opener.location
-			a.rel = `${ a.rel ? `${ a.rel } ` : '' }noopener`;
+			a.rel = ( a.rel ? a.rel + ' ' : '' ) + 'noopener';
 		}
 	);
 

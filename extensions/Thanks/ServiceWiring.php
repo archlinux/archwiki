@@ -11,7 +11,8 @@ return [
 		): ThanksQueryHelper {
 			return new ThanksQueryHelper(
 				$services->getTitleFactory(),
-				$services->getConnectionProvider()
+				$services->getConnectionProvider(),
+				$services->getActorNormalization()
 			);
 	},
 	'ThanksLogStore' => static function ( MediaWikiServices $services ): LogStore {

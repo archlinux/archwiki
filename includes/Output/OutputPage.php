@@ -22,11 +22,8 @@
 
 namespace MediaWiki\Output;
 
-use Article;
 use CSSJanus;
 use Exception;
-use File;
-use HtmlArmor;
 use InvalidArgumentException;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
@@ -38,6 +35,7 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
@@ -46,12 +44,14 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -61,6 +61,8 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Skin\QuickTemplate;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
@@ -68,10 +70,10 @@ use MediaWiki\Utils\MWTimestamp;
 use OOUI\Element;
 use OOUI\Theme;
 use RuntimeException;
-use Skin;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
-use Wikimedia\LightweightObjectStore\ExpirationAwareness;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Parsoid\Core\TOCData;
@@ -89,9 +91,6 @@ use Wikimedia\WrappedStringList;
  * applied to the output parameters (links, javascript, html, categories ...).
  *
  * @todo FIXME: Another class handles sending the whole page to the client.
- *
- * Some comments comes from a pairing session between Zak Greant and Antoine Musso
- * in November 2010.
  *
  * @todo document
  */
@@ -192,16 +191,10 @@ class OutputPage extends ContextSource {
 	 */
 	protected $mLastModified = '';
 
-	/**
-	 * @var string[][]
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
+	/** @var array<string,string[]> */
 	private $mCategoryLinks = [];
 
-	/**
-	 * @var string[][]
-	 * @deprecated since 1.38, will be made private (T301020)
-	 */
+	/** @var array<string,string[]> */
 	private $mCategories = [
 		'hidden' => [],
 		'normal' => [],
@@ -225,11 +218,8 @@ class OutputPage extends ContextSource {
 	 */
 	private bool $mCategoriesSorted = true;
 
-	/**
-	 * @var string[]
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
-	private $mIndicators = [];
+	/** @var array<string,string> */
+	private array $mIndicators = [];
 
 	/**
 	 * Used for JavaScript (predates ResourceLoader)
@@ -250,8 +240,8 @@ class OutputPage extends ContextSource {
 	protected $mAdditionalHtmlClasses = [];
 
 	/**
-	 * @var string[] Array of elements in "<head>". Parser might add its own headers!
-	 * @deprecated since 1.38; will be made private (T301020)
+	 * @var array<string,string> Array of additional elements for the HTML <head>. Parser might add
+	 *  its own headers!
 	 */
 	private $mHeadItems = [];
 
@@ -259,14 +249,12 @@ class OutputPage extends ContextSource {
 	protected $mAdditionalBodyClasses = [];
 
 	/**
-	 * @var array
-	 * @deprecated since 1.38; will be made private (T301020)
+	 * @var string[]
 	 */
 	private $mModules = [];
 
 	/**
-	 * @var array
-	 * @deprecated since 1.38; will be made private (T301020)
+	 * @var string[]
 	 */
 	private $mModuleStyles = [];
 
@@ -282,16 +270,10 @@ class OutputPage extends ContextSource {
 	/** @var array */
 	private $rlExemptStyleModules;
 
-	/**
-	 * @var array
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
+	/** @var array<string,mixed> */
 	private $mJsConfigVars = [];
 
-	/**
-	 * @var array<int,array<string,int>>
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
+	/** @var array<int,array<string,int>> */
 	private $mTemplateIds = [];
 
 	/** @var array */
@@ -320,8 +302,9 @@ class OutputPage extends ContextSource {
 	/**
 	 * lazy initialised, use parserOptions()
 	 * @var ParserOptions
+	 * @deprecated since 1.44; see ::parserOptions()
 	 */
-	protected $mParserOptions = null;
+	private $mParserOptions = null;
 
 	/**
 	 * Handles the Atom / RSS links.
@@ -335,32 +318,11 @@ class OutputPage extends ContextSource {
 	 * @var bool Set to false to send no-cache headers, disabling
 	 * client-side caching. (This variable should really be named
 	 * in the opposite sense; see ::disableClientCache().)
-	 * @deprecated since 1.38; will be made private (T301020)
 	 */
 	private $mEnableClientCache = true;
 
 	/** @var bool Flag if output should only contain the body of the article. */
 	private $mArticleBodyOnly = false;
-
-	/**
-	 * @var bool
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
-	private $mNewSectionLink = false;
-
-	/**
-	 * @var bool
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
-	private $mHideNewSectionLink = false;
-
-	/**
-	 * @var bool Comes from the parser. This was probably made to load CSS/JS
-	 * only if we had "<gallery>". Used directly in CategoryViewer.php.
-	 * Looks like ResourceLoader can replace this.
-	 * @deprecated since 1.38; will be made private (T301020)
-	 */
-	private $mNoGallery = false;
 
 	/** @var int Cache stuff. Looks like mEnableClientCache */
 	protected $mCdnMaxage = 0;
@@ -372,9 +334,6 @@ class OutputPage extends ContextSource {
 
 	/** @var bool|null */
 	private $mRevisionIsCurrent = null;
-
-	/** @var string */
-	private $mRevisionTimestamp = null;
 
 	/** @var array */
 	protected $mFileVersion = null;
@@ -466,7 +425,7 @@ class OutputPage extends ContextSource {
 	private string $cspOutputMode = self::CSP_HEADERS;
 
 	/**
-	 * To eliminate redundancy between information kept in OutputPage
+	 * To eliminate the redundancy between information kept in OutputPage
 	 * for non-article pages and metadata kept by the Parser for
 	 * article pages, we create a ParserOutput for the OutputPage
 	 * which will collect metadata such as categories, index policy,
@@ -476,37 +435,40 @@ class OutputPage extends ContextSource {
 	private ParserOutput $metadata;
 
 	/**
-	 * @var array A cache of the names of the cookies that will influence the cache
+	 * @var array A cache of the cookie names that will influence the cache
 	 */
 	private static $cacheVaryCookies = null;
 
+	/** @var int|null */
+	private $debugMode = null;
+
 	/**
 	 * Constructor for OutputPage. This should not be called directly.
-	 * Instead a new RequestContext should be created and it will implicitly create
-	 * a OutputPage tied to that context.
-	 * @param IContextSource $context
+	 * Instead, a new RequestContext should be created, and it will implicitly create
+	 * an OutputPage tied to that context.
 	 */
 	public function __construct( IContextSource $context ) {
 		$this->deprecatePublicProperty( 'mCategoryLinks', '1.38', __CLASS__ );
 		$this->deprecatePublicProperty( 'mCategories', '1.38', __CLASS__ );
 		$this->deprecatePublicProperty( 'mIndicators', '1.38', __CLASS__ );
 		$this->deprecatePublicProperty( 'mHeadItems', '1.38', __CLASS__ );
-		$this->deprecatePublicProperty( 'mModules', '1.38', __CLASS__ );
-		$this->deprecatePublicProperty( 'mModuleStyles', '1.38', __CLASS__ );
 		$this->deprecatePublicProperty( 'mJsConfigVars', '1.38', __CLASS__ );
 		$this->deprecatePublicProperty( 'mTemplateIds', '1.38', __CLASS__ );
 		$this->deprecatePublicProperty( 'mEnableClientCache', '1.38', __CLASS__ );
-		$this->deprecatePublicProperty( 'mNewSectionLink', '1.38', __CLASS__ );
-		$this->deprecatePublicProperty( 'mHideNewSectionLink', '1.38', __CLASS__ );
-		$this->deprecatePublicProperty( 'mNoGallery', '1.38', __CLASS__ );
+		$this->deprecatePublicProperty( 'mParserOptions', '1.44', __CLASS__ );
 		$this->setContext( $context );
 		$this->metadata = new ParserOutput( null );
-		$this->metadata->setPreventClickjacking( true ); // OutputPage default
+		// OutputPage default
+		$this->metadata->setPreventClickjacking( true );
 		$this->CSP = new ContentSecurityPolicy(
 			$context->getRequest()->response(),
 			$context->getConfig(),
 			$this->getHookContainer()
 		);
+		$this->metadata->setNoGallery( false );
+		$this->metadata->setNewSection( false );
+		$this->metadata->setHideNewSection( false );
+		$this->metadata->setRevisionTimestamp( null );
 	}
 
 	/**
@@ -554,7 +516,6 @@ class OutputPage extends ContextSource {
 	/**
 	 * Return a ParserOutput that can be used to set metadata properties
 	 * for the current page.
-	 * @return ParserOutput
 	 */
 	public function getMetadata(): ParserOutput {
 		// We can deprecate the redundant
@@ -662,7 +623,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Filter an array of modules to remove insufficiently trustworthy members, and modules
+	 * Filter an array of modules to remove members not considered to be trustworthy, and modules
 	 * which are no longer registered (eg a page is cached before an extension is disabled)
 	 * @param string[] $modules
 	 * @param string|null $position Unused
@@ -688,16 +649,39 @@ class OutputPage extends ContextSource {
 	/**
 	 * Get the list of modules to include on this page
 	 *
-	 * @param bool $filter Whether to filter out insufficiently trustworthy modules
-	 * @param string|null $position Unused
-	 * @param string $param
-	 * @param string $type
+	 * @param bool $filter Whether to filter out any modules that are not considered to be sufficiently trusted
+	 * @param ?string ...$args Additional arguments deprecated since 1.44
 	 * @return string[] Array of module names
 	 */
-	public function getModules( $filter = false, $position = null, $param = 'mModules',
-		$type = RL\Module::TYPE_COMBINED
+	public function getModules(
+		$filter = false, ...$args
 	) {
-		$modules = array_values( array_unique( $this->$param ) );
+		// Deprecate all arguments other than the first
+		if ( count( $args ) > 0 ) {
+			wfDeprecated( __METHOD__ . ' with >1 argument', '1.44' );
+		}
+		$position = $args[0] ?? null;
+		$param = $args[1] ?? 'mModules';
+		$type = $args[2] ?? RL\Module::TYPE_COMBINED;
+		return $this->getModulesInternal(
+			$filter,
+			$param,
+			$type
+		);
+	}
+
+	/**
+	 * Helper function to get a list of modules to load on this page.
+	 *
+	 * @param bool $filter Whether to filter out any modules that are not considered to be sufficiently trusted
+	 * @param string $param Either 'mModules' or 'mModuleStyles'
+	 * @param string $type Whether to return all modules or just style modules
+	 * @return string[] Array of module names
+	 */
+	private function getModulesInternal(
+		bool $filter, string $param, string $type
+	) {
+		$modules = array_values( $this->$param );
 		return $filter
 			? $this->filterModules( $modules, null, $type )
 			: $modules;
@@ -706,22 +690,28 @@ class OutputPage extends ContextSource {
 	/**
 	 * Load one or more ResourceLoader modules on this page.
 	 *
-	 * @param string|array $modules Module name (string) or array of module names
+	 * @param string|string[] $modules Module name (string) or array of module names
 	 */
 	public function addModules( $modules ) {
-		$this->mModules = array_merge( $this->mModules, (array)$modules );
+		foreach ( (array)$modules as $moduleName ) {
+			$this->mModules[$moduleName] = $moduleName;
+		}
 	}
 
 	/**
 	 * Get the list of style-only modules to load on this page.
 	 *
-	 * @param bool $filter
-	 * @param string|null $position Unused
+	 * @param bool $filter Whether to filter out any modules that are not considered to be sufficiently trusted
+	 * @param ?string ...$args Additional arguments deprecated since 1.44
 	 * @return string[] Array of module names
 	 */
-	public function getModuleStyles( $filter = false, $position = null ) {
-		return $this->getModules( $filter, null, 'mModuleStyles',
-			RL\Module::TYPE_STYLES
+	public function getModuleStyles( $filter = false, ...$args ) {
+		// Deprecate all arguments other than the first
+		if ( count( $args ) > 0 ) {
+			wfDeprecated( __METHOD__ . ' with >1 argument', '1.44' );
+		}
+		return $this->getModulesInternal(
+			$filter, 'mModuleStyles', RL\Module::TYPE_STYLES
 		);
 	}
 
@@ -732,10 +722,12 @@ class OutputPage extends ContextSource {
 	 * using a standard `<link rel=stylesheet>` HTML tag, rather than as a combined
 	 * Javascript and CSS package. Thus, they will even load when JavaScript is disabled.
 	 *
-	 * @param string|array $modules Module name (string) or array of module names
+	 * @param string|string[] $modules Module name (string) or array of module names
 	 */
 	public function addModuleStyles( $modules ) {
-		$this->mModuleStyles = array_merge( $this->mModuleStyles, (array)$modules );
+		foreach ( (array)$modules as $moduleName ) {
+			$this->mModuleStyles[$moduleName] = $moduleName;
+		}
 	}
 
 	/**
@@ -788,9 +780,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Get an array of head items
-	 *
-	 * @return string[]
+	 * @return array<string,string> Array of additional elements for the HTML <head>
 	 */
 	public function getHeadItemsArray() {
 		return $this->mHeadItems;
@@ -1057,8 +1047,6 @@ class OutputPage extends ContextSource {
 	/**
 	 * Get the robots policy content attribute for the page
 	 * as a string in the form <index policy>,<follow policy>,<options>.
-	 *
-	 * @return string
 	 */
 	private function getRobotsContent(): string {
 		$robotOptionString = $this->formatRobotsOptions();
@@ -1163,8 +1151,6 @@ class OutputPage extends ContextSource {
 
 	/**
 	 * Set $mRedirectedFrom, the page which redirected us to the current page.
-	 *
-	 * @param PageReference $t
 	 */
 	public function setRedirectedFrom( PageReference $t ) {
 		$this->mRedirectedFrom = $t;
@@ -1238,7 +1224,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Same as page title but only contains name of the page, not any other text.
+	 * Same as page title but only contains the name of the page, not any other text.
 	 *
 	 * @since 1.32
 	 * @param string $html Page title text.
@@ -1251,7 +1237,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Returns page display title.
 	 *
-	 * Performs some normalization, but this not as strict the magic word.
+	 * Performs some normalization, but this is not as strict the magic word.
 	 *
 	 * @since 1.32
 	 * @return string HTML
@@ -1266,7 +1252,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Returns page display title without namespace prefix if possible.
+	 * Returns page display title without the namespace prefix if possible.
 	 *
 	 * This method is unreliable and best avoided. (T314399)
 	 *
@@ -1302,8 +1288,6 @@ class OutputPage extends ContextSource {
 
 	/**
 	 * Set the Title object to use
-	 *
-	 * @param PageReference $t
 	 */
 	public function setTitle( PageReference $t ) {
 		$t = Title::newFromPageReference( $t );
@@ -1422,18 +1406,22 @@ class OutputPage extends ContextSource {
 	 * Show an "add new section" link?
 	 *
 	 * @return bool
+	 * @deprecated since 1.44, use ::getOutputFlag(ParserOutputFlags::NEW_SECTION)
 	 */
 	public function showNewSectionLink() {
-		return $this->mNewSectionLink;
+		wfDeprecated( __METHOD__, '1.44' );
+		return $this->metadata->getNewSection();
 	}
 
 	/**
 	 * Forcibly hide the new section link?
 	 *
 	 * @return bool
+	 * @deprecated since 1.44, use ::getOutputFlag(ParserOutputFlags::HIDE_NEW_SECTION)
 	 */
 	public function forceHideNewSectionLink() {
-		return $this->mHideNewSectionLink;
+		wfDeprecated( __METHOD__, '1.44' );
+		return $this->metadata->getHideNewSection();
 	}
 
 	/**
@@ -1633,10 +1621,11 @@ class OutputPage extends ContextSource {
 	 * Get the "no gallery" flag
 	 *
 	 * Used directly only in CategoryViewer.php
-	 * @internal
+	 * @deprecated since 1.44; use ::getOutputFlag(ParserOutputFlags::NO_GALLERY)
 	 */
 	public function getNoGallery(): bool {
-		return $this->mNoGallery;
+		wfDeprecated( __METHOD__, '1.44' );
+		return $this->metadata->getNoGallery();
 	}
 
 	/**
@@ -1667,53 +1656,46 @@ class OutputPage extends ContextSource {
 		}
 
 		# Add the remaining categories to the skin
-		if ( $this->getHookRunner()->onOutputPageMakeCategoryLinks(
-			$this, $categories, $this->mCategoryLinks )
-		) {
-			$services = MediaWikiServices::getInstance();
-			$linkRenderer = $services->getLinkRenderer();
-			$languageConverter = $services->getLanguageConverterFactory()
-				->getLanguageConverter( $services->getContentLanguage() );
-			$collation = $services->getCollationFactory()->getCategoryCollation();
-			foreach ( $categories as $category => $type ) {
-				// array keys will cast numeric category names to ints, so cast back to string
-				$category = (string)$category;
-				$origcategory = $category;
-				if ( array_key_exists( $category, $pageData ) ) {
-					$title = Title::newFromRow( $pageData[$category] );
-				} else {
-					$title = Title::makeTitleSafe( NS_CATEGORY, $category );
-				}
-				if ( !$title ) {
-					continue;
-				}
-				$languageConverter->findVariantLink( $category, $title, true );
-
-				if ( $category != $origcategory && array_key_exists( $category, $categories ) ) {
-					continue;
-				}
-				$text = $languageConverter->convertHtml( $title->getText() );
-				$link = null;
-				$this->getHookRunner()->onOutputPageRenderCategoryLink( $this, $title->toPageIdentity(), $text, $link );
-				if ( $link === null ) {
-					$link = $linkRenderer->makeLink( $title, new HtmlArmor( $text ) );
-				}
-				$this->mCategoryData[] = [
-					'sortKey' => $collation->getSortKey( $text ),
-					'type' => $type,
-					'title' => $title->getText(),
-					'link' => $link,
-				];
-				$this->mCategoriesSorted = false;
-				// Setting mCategories and mCategoryLinks is redundant here,
-				// but it is needed for compatibility until mCategories and
-				// mCategoryLinks are made private (T301020)
-				$this->mCategories[$type][] = $title->getText();
-				$this->mCategoryLinks[$type][] = $link;
+		$services = MediaWikiServices::getInstance();
+		$linkRenderer = $services->getLinkRenderer();
+		$languageConverter = $services->getLanguageConverterFactory()
+			->getLanguageConverter( $services->getContentLanguage() );
+		$collation = $services->getCollationFactory()->getCategoryCollation();
+		foreach ( $categories as $category => $type ) {
+			// array keys will cast numeric category names to ints, so cast back to string
+			$category = (string)$category;
+			$origcategory = $category;
+			if ( array_key_exists( $category, $pageData ) ) {
+				$title = Title::newFromRow( $pageData[$category] );
+			} else {
+				$title = Title::makeTitleSafe( NS_CATEGORY, $category );
 			}
-		} else {
-			// Conservatively assume the hook left the categories unsorted.
+			if ( !$title ) {
+				continue;
+			}
+			$languageConverter->findVariantLink( $category, $title, true );
+
+			if ( $category != $origcategory && array_key_exists( $category, $categories ) ) {
+				continue;
+			}
+			$text = $languageConverter->convertHtml( $title->getText() );
+			$link = null;
+			$this->getHookRunner()->onOutputPageRenderCategoryLink( $this, $title->toPageIdentity(), $text, $link );
+			if ( $link === null ) {
+				$link = $linkRenderer->makeLink( $title, new HtmlArmor( $text ) );
+			}
+			$this->mCategoryData[] = [
+				'sortKey' => $collation->getSortKey( $text ),
+				'type' => $type,
+				'title' => $title->getText(),
+				'link' => $link,
+			];
 			$this->mCategoriesSorted = false;
+			// Setting mCategories and mCategoryLinks is redundant here,
+			// but is needed for compatibility until mCategories and
+			// mCategoryLinks are made private (T301020)
+			$this->mCategories[$type][] = $title->getText();
+			$this->mCategoryLinks[$type][] = $link;
 		}
 	}
 
@@ -1775,7 +1757,7 @@ class OutputPage extends ContextSource {
 	 * hidden categories) and $link a HTML fragment with a link to the category
 	 * page
 	 *
-	 * @return string[][]
+	 * @return array<string,string[]>
 	 * @return-taint none
 	 */
 	public function getCategoryLinks() {
@@ -1850,13 +1832,13 @@ class OutputPage extends ContextSource {
 	 * Add an array of indicators, with their identifiers as array
 	 * keys and HTML contents as values.
 	 *
-	 * In case of duplicate keys, existing values are overwritten.
+	 * In the case of duplicate keys, existing values are overwritten.
 	 *
 	 * @note External code which calls this method should ensure that
 	 * any indicators sourced from parsed wikitext are wrapped with
 	 * the appropriate class; see note in ::getIndicators().
 	 *
-	 * @param string[] $indicators
+	 * @param array<string,string> $indicators
 	 * @param-taint $indicators exec_html
 	 * @since 1.25
 	 */
@@ -1871,7 +1853,7 @@ class OutputPage extends ContextSource {
 	 *
 	 * The array will be internally ordered by item keys.
 	 *
-	 * @return string[] Keys: identifiers, values: HTML contents
+	 * @return array<string,string> Maps identifiers to HTML contents
 	 * @since 1.25
 	 */
 	public function getIndicators(): array {
@@ -1888,7 +1870,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Adds help link with an icon via page indicators.
+	 * Adds a help link with an icon via page indicators.
 	 * Link target can be overridden by a local message containing a wikilink:
 	 * the message key is: lowercase action or special page name + '-helppage'.
 	 * @param string $to Target MediaWiki.org page title or encoded URL.
@@ -2029,8 +2011,11 @@ class OutputPage extends ContextSource {
 	 * Get/set the ParserOptions object to use for wikitext parsing
 	 *
 	 * @return ParserOptions
+	 * @deprecated since 1.44; instead use
+	 * ParserOptions::newFromContext( $outputPage->getContext() )
 	 */
 	public function parserOptions() {
+		wfDeprecated( __METHOD__, '1.44' );
 		if ( !$this->mParserOptions ) {
 			if ( !$this->getUser()->isSafeToLoad() ) {
 				// Context user isn't unstubbable yet, so don't try to get a
@@ -2046,6 +2031,24 @@ class OutputPage extends ContextSource {
 		}
 
 		return $this->mParserOptions;
+	}
+
+	/**
+	 * Get/set the ParserOptions object to use for wikitext parsing
+	 */
+	private function internalParserOptions( bool $interface ): ParserOptions {
+		if ( !$this->getUser()->isSafeToLoad() ) {
+			// Context user isn't unstubbable yet, so don't try to get a
+			// ParserOptions for it. And don't cache this ParserOptions
+			// either.
+			$parserOptions = ParserOptions::newFromAnon();
+		} else {
+			$parserOptions = ParserOptions::newFromContext( $this->getContext() );
+		}
+		$parserOptions->setAllowUnsafeRawHtml( false );
+		$parserOptions->setSuppressSectionEditLinks();
+		$parserOptions->setInterfaceMessage( $interface );
+		return $parserOptions;
 	}
 
 	/**
@@ -2072,8 +2075,6 @@ class OutputPage extends ContextSource {
 	/**
 	 * Set whether the revision displayed (as set in ::setRevisionId())
 	 * is the latest revision of the page.
-	 *
-	 * @param bool $isCurrent
 	 */
 	public function setRevisionIsCurrent( bool $isCurrent ): void {
 		$this->mRevisionIsCurrent = $isCurrent;
@@ -2099,9 +2100,13 @@ class OutputPage extends ContextSource {
 	 *
 	 * @param string|null $timestamp
 	 * @return mixed Previous value
+	 * @deprecated since 1.44, use ::getMetadata()->setRevisionTimestamp(...)
 	 */
 	public function setRevisionTimestamp( $timestamp ) {
-		return wfSetVar( $this->mRevisionTimestamp, $timestamp, true );
+		wfDeprecated( __METHOD__, '1.44' );
+		$previousValue = $this->metadata->getRevisionTimestamp();
+		$this->metadata->setRevisionTimestamp( $timestamp );
+		return $previousValue;
 	}
 
 	/**
@@ -2109,9 +2114,10 @@ class OutputPage extends ContextSource {
 	 * This will be null if not filled by setRevisionTimestamp().
 	 *
 	 * @return string|null
+	 * @deprecated since 1.44, use ::getMetadata()->getRevisionTimestamp()
 	 */
 	public function getRevisionTimestamp() {
-		return $this->mRevisionTimestamp;
+		return $this->metadata->getRevisionTimestamp();
 	}
 
 	/**
@@ -2178,7 +2184,7 @@ class OutputPage extends ContextSource {
 		if ( $title === null ) {
 			throw new RuntimeException( 'No title in ' . __METHOD__ );
 		}
-		$this->addWikiTextTitleInternal( $text, $title, $linestart, /*interface*/true );
+		$this->addWikiTextTitleInternal( $text, $title, $linestart, true );
 	}
 
 	/**
@@ -2187,23 +2193,37 @@ class OutputPage extends ContextSource {
 	 * wrapper.  The result will not be language-converted, as user
 	 * interface messages as already localized into a specific
 	 * variant.  The $text will be parsed in start-of-line context.
-	 * Output will be tidy.
+	 * Output will be tidy and wrapped.
 	 *
-	 * @param string $wrapperClass The class attribute value for the <div>
-	 *   wrapper in the output HTML
+	 * @param string $wrapperClass The class attribute value for
+	 *   the <div> wrapper in the output HTML, should not be empty
 	 * @param string $text Wikitext in the user interface language
 	 * @since 1.32
+	 * @phan-param non-empty-string $wrapperClass
 	 */
 	public function wrapWikiTextAsInterface(
 		$wrapperClass, $text
 	) {
+		if ( $wrapperClass === '' ) {
+			// I don't think anyone actually uses this corner case,
+			// but if you call wrapWikiTextAsInterface with
+			// `$wrapperClass===''` the result won't actually be
+			// wrapped. (Since
+			// ParserOptions::getInterfaceMessage()===true the default
+			// 'mw-parser-output' class is suppressed; ordinarily its
+			// presence would ensure the wrapper was created even if
+			// $wrapperClass was empty.)
+			wfDeprecated( __METHOD__ . ' with empty wrapper class', '1.44' );
+		}
 		$title = $this->getTitle();
 		if ( $title === null ) {
 			throw new RuntimeException( 'No title in ' . __METHOD__ );
 		}
 		$this->addWikiTextTitleInternal(
-			$text, $title,
-			/*linestart*/true, /*interface*/true,
+			$text,
+			$title,
+			true,
+			true,
 			$wrapperClass
 		);
 	}
@@ -2228,32 +2248,31 @@ class OutputPage extends ContextSource {
 		if ( !$title ) {
 			throw new RuntimeException( 'No title in ' . __METHOD__ );
 		}
-		$this->addWikiTextTitleInternal( $text, $title, $linestart, /*interface*/false );
+		$this->addWikiTextTitleInternal( $text, $title, $linestart, false );
 	}
 
 	/**
 	 * Add wikitext with a custom Title object.
-	 * Output is unwrapped.
+	 * Output is unwrapped unless $wrapperClass is non-null.
 	 *
 	 * @param string $text Wikitext
 	 * @param PageReference $title
 	 * @param bool $linestart Is this the start of a line?@param
 	 * @param bool $interface Whether it is an interface message
 	 *   (for example disables conversion)
-	 * @param string|null $wrapperClass if not empty, wraps the output in
+	 * @param string|null $wrapperClass if not null, wraps the output in
 	 *   a `<div class="$wrapperClass">`
 	 */
 	private function addWikiTextTitleInternal(
 		string $text, PageReference $title, bool $linestart, bool $interface,
 		?string $wrapperClass = null
 	) {
-		$parserOutput = $this->parseInternal(
-			$text, $title, $linestart, $interface
+		[ $parserOutput, $parserOptions ] = $this->parseInternal(
+			$text, $title, $linestart, $interface, true, /*allowTOC*/
+			$wrapperClass, false/*postprocess*/
 		);
 
-		$this->addParserOutput( $parserOutput, [
-			'enableSectionEditLinks' => false,
-			'wrapperDivClass' => $wrapperClass ?? '',
+		$this->addParserOutput( $parserOutput, $parserOptions, [
 		] );
 	}
 
@@ -2373,8 +2392,23 @@ class OutputPage extends ContextSource {
 	public function addParserOutputMetadata( ParserOutput $parserOutput ) {
 		// T301020 This should eventually use the standard "merge ParserOutput"
 		// function between $parserOutput and $this->metadata.
-		$this->addLanguageLinks( $parserOutput->getLanguageLinks() );
-		$this->addCategoryLinks( $parserOutput->getCategoryMap() );
+		$links = [];
+		foreach (
+			$parserOutput->getLinkList( ParserOutputLinkTypes::LANGUAGE )
+			as [ 'link' => $link ]
+		) {
+			$links[] = $link;
+		}
+		$this->addLanguageLinks( $links );
+
+		$cats = [];
+		foreach (
+			$parserOutput->getLinkList( ParserOutputLinkTypes::CATEGORY )
+			as [ 'link' => $link, 'sort' => $sort ]
+		) {
+			$cats[$link->getDBkey()] = $sort;
+		}
+		$this->addCategoryLinks( $cats );
 
 		// Parser-generated indicators get wrapped like other parser output.
 		$wrapClass = $parserOutput->getWrapperDivClass();
@@ -2400,9 +2434,9 @@ class OutputPage extends ContextSource {
 		// be migrated to an injection pattern. (T301020, T300979)
 		// (Note that OutputPage::getOutputFlag() also contains this
 		// information, with flags from each $parserOutput all OR'ed together.)
-		$this->mNewSectionLink = $parserOutput->getNewSection();
-		$this->mHideNewSectionLink = $parserOutput->getHideNewSection();
-		$this->mNoGallery = $parserOutput->getNoGallery();
+		$this->metadata->setNewSection( $parserOutput->getNewSection() );
+		$this->metadata->setHideNewSection( $parserOutput->getHideNewSection() );
+		$this->metadata->setNoGallery( $parserOutput->getNoGallery() );
 
 		if ( !$parserOutput->isCacheable() ) {
 			$this->disableClientCache();
@@ -2429,7 +2463,7 @@ class OutputPage extends ContextSource {
 
 		// If $wgImagePreconnect is true, and if the output contains images, give the user-agent
 		// a hint about a remote hosts from which images may be served. Launched in T123582.
-		if ( $this->getConfig()->get( MainConfigNames::ImagePreconnect ) && count( $parserOutput->getImages() ) ) {
+		if ( $this->getConfig()->get( MainConfigNames::ImagePreconnect ) && $parserOutput->hasImages() ) {
 			$preconnect = [];
 			// Optimization: Instead of processing each image, assume that wikis either serve both
 			// foreign and local from the same remote hostname (e.g. public wikis at WMF), or that
@@ -2508,13 +2542,18 @@ class OutputPage extends ContextSource {
 		}
 	}
 
-	private function getParserOutputText( ParserOutput $parserOutput, array $poOptions = [] ): string {
+	private function getParserOutputText(
+		ParserOutput $parserOutput,
+		ParserOptions $parserOptions,
+		array $poOptions
+	): string {
 		// Add default options from the skin
 		$skin = $this->getSkin();
 		$skinOptions = $skin->getOptions();
 		$oldText = $parserOutput->getRawText();
 		$poOptions += [
-			'allowClone' => false, // T371022
+			// T371022
+			'allowClone' => false,
 			'skin' => $skin,
 			'injectTOC' => $skinOptions['toc'],
 		];
@@ -2522,7 +2561,13 @@ class OutputPage extends ContextSource {
 		// Note: this path absolutely expects the metadata of $parserOutput to be mutated by the pipeline,
 		// but the raw text should not be, see T353257
 		// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
-		$text = $pipeline->run( $parserOutput, $this->parserOptions(), $poOptions )->getContentHolderText();
+		$text = $pipeline->run(
+			$parserOutput,
+			// This should be the same parser options that generated
+			// $parserOutput
+			$parserOptions,
+			$poOptions
+		)->getContentHolderText();
 		$parserOutput->setRawText( $oldText );
 		return $text;
 	}
@@ -2533,10 +2578,25 @@ class OutputPage extends ContextSource {
 	 *
 	 * @since 1.24
 	 * @param ParserOutput $parserOutput
-	 * @param array $poOptions Options to OutputTransformPipeline::run() (to be deprecated)
+	 * @param ParserOptions|null $parserOptions (since 1.44)
+	 *   Passing null has been deprecated since MW 1.44.
+	 * @param array|null $poOptions Options to OutputTransformPipeline::run() (to be deprecated)
 	 */
-	public function addParserOutputContent( ParserOutput $parserOutput, $poOptions = [] ) {
-		$text = $this->getParserOutputText( $parserOutput, $poOptions );
+	public function addParserOutputContent( ParserOutput $parserOutput, $parserOptions = null, $poOptions = null ) {
+		// For backward compatibility, accept $poOptions in the $parserOptions
+		// argument. This will also trigger the deprecation warning below.
+		if ( is_array( $parserOptions ) ) {
+			$poOptions = $parserOptions;
+			$parserOptions = null;
+		}
+		if ( $parserOptions === null ) {
+			wfDeprecated( __METHOD__ . ' without ParserOptions argument', '1.44' );
+			// XXX: This isn't guaranteed to be the same parser options that
+			// generated $parserOutput.
+			$parserOptions = $this->internalParserOptions( false );
+		}
+		$poOptions ??= [];
+		$text = $this->getParserOutputText( $parserOutput, $parserOptions, $poOptions );
 		$this->addParserOutputText( $text, $poOptions );
 
 		$this->addModules( $parserOutput->getModules() );
@@ -2555,7 +2615,8 @@ class OutputPage extends ContextSource {
 	public function addParserOutputText( $text, $poOptions = [] ) {
 		if ( $text instanceof ParserOutput ) {
 			wfDeprecated( __METHOD__ . ' with ParserOutput as first arg', '1.42' );
-			$text = $this->getParserOutputText( $text, $poOptions );
+			$parserOptions = $this->internalParserOptions( false );
+			$text = $this->getParserOutputText( $text, $parserOptions, $poOptions );
 		}
 		$this->getHookRunner()->onOutputPageBeforeHTML( $this, $text );
 		$this->addHTML( $text );
@@ -2565,10 +2626,25 @@ class OutputPage extends ContextSource {
 	 * Add everything from a ParserOutput object.
 	 *
 	 * @param ParserOutput $parserOutput
-	 * @param array $poOptions Options to OutputTransformPipeline::run() (to be deprecated)
+	 * @param ParserOptions|null $parserOptions (since 1.44)
+	 *   Passing null has been deprecated since MW 1.44.
+	 * @param array|null $poOptions Options to OutputTransformPipeline::run() (to be deprecated)
 	 */
-	public function addParserOutput( ParserOutput $parserOutput, $poOptions = [] ) {
-		$text = $this->getParserOutputText( $parserOutput, $poOptions );
+	public function addParserOutput( ParserOutput $parserOutput, $parserOptions = null, $poOptions = null ) {
+		// For backward compatibility, accept $poOptions in the $parserOptions
+		// argument. This will also trigger the deprecation warning below.
+		if ( is_array( $parserOptions ) ) {
+			$poOptions = $parserOptions;
+			$parserOptions = null;
+		}
+		if ( $parserOptions === null ) {
+			wfDeprecated( __METHOD__ . ' without ParserOptions argument', '1.44' );
+			// XXX: This isn't guaranteed to be the same parser options that
+			// generated $parserOutput.
+			$parserOptions = $this->internalParserOptions( false );
+		}
+		$poOptions ??= [];
+		$text = $this->getParserOutputText( $parserOutput, $parserOptions, $poOptions );
 		$this->addParserOutputMetadata( $parserOutput );
 		$this->addParserOutputText( $text, $poOptions );
 	}
@@ -2576,7 +2652,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Add the output of a QuickTemplate to the output buffer
 	 *
-	 * @param \QuickTemplate &$template
+	 * @param QuickTemplate &$template
 	 */
 	public function addTemplate( &$template ) {
 		$this->addHTML( $template->getHTML() );
@@ -2585,7 +2661,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Parse wikitext *in the page content language* and return the HTML.
 	 * The result will be language-converted to the user's preferred variant.
-	 * Output will be tidy.
+	 * Output will be tidy and unwrapped.
 	 *
 	 * @param string $text Wikitext in the page content language
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
@@ -2597,24 +2673,19 @@ class OutputPage extends ContextSource {
 		if ( $title === null ) {
 			throw new RuntimeException( 'No title in ' . __METHOD__ );
 		}
-		$po = $this->parseInternal(
-			$text, $title, $linestart, /*interface*/false
+		[ $po, ] = $this->parseInternal(
+			$text, $title, $linestart,
+			/*interface*/false, /*allowTOC*/false, /*wrapperDivClass*/null,
+			/*postprocess*/true
 		);
-		$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
-		// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
-		return $pipeline->run( $po, $this->parserOptions(), [
-			'allowTOC' => false,
-			'enableSectionEditLinks' => false,
-			'wrapperDivClass' => '',
-			'userLang' => $this->getContext()->getLanguage(),
-		] )->getContentHolderText();
+		return $po->getContentHolderText();
 	}
 
 	/**
 	 * Parse wikitext *in the user interface language* and return the HTML.
 	 * The result will not be language-converted, as user interface messages
 	 * are already localized into a specific variant.
-	 * Output will be tidy.
+	 * Output will be tidy and unwrapped.
 	 *
 	 * @param string $text Wikitext in the user interface language
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
@@ -2626,17 +2697,12 @@ class OutputPage extends ContextSource {
 		if ( $title === null ) {
 			throw new RuntimeException( 'No title in ' . __METHOD__ );
 		}
-		$po = $this->parseInternal(
-			$text, $title, $linestart, /*interface*/true
+		[ $po, ] = $this->parseInternal(
+			$text, $title, $linestart,
+			/*interface*/true, false/*allowTOC*/, /*wrapperDivClass*/null,
+			/*postprocess*/true
 		);
-		$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
-		// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
-		return $pipeline->run( $po, $this->parserOptions(), [
-			'allowTOC' => false,
-			'enableSectionEditLinks' => false,
-			'wrapperDivClass' => '',
-			'userLang' => $this->getContext()->getLanguage(),
-		] )->getContentHolderText();
+		return $po->getContentHolderText();
 	}
 
 	/**
@@ -2667,14 +2733,17 @@ class OutputPage extends ContextSource {
 	 * @param bool $interface Use interface language (instead of content language) while parsing
 	 *   language sensitive magic words like GRAMMAR and PLURAL.  This also disables
 	 *   LanguageConverter.
-	 * @return ParserOutput
+	 * @param bool $allowTOC Whether to allow a TOC to be generated
+	 * @param ?string $wrapperClass Wrapper class to use, or `null` for
+	 *   unwrapped output.
+	 * @return array{0:ParserOutput,1:ParserOptions}
 	 */
 	private function parseInternal(
-		string $text, PageReference $title, bool $linestart, bool $interface
+		string $text, PageReference $title,
+		bool $linestart, bool $interface, bool $allowTOC, ?string $wrapperClass,
+		bool $postprocess
 	) {
-		$popts = $this->parserOptions();
-
-		$oldInterface = $popts->setInterfaceMessage( $interface );
+		$popts = $this->internalParserOptions( $interface );
 
 		$parserOutput = MediaWikiServices::getInstance()->getParserFactory()->getInstance()
 			->parse(
@@ -2682,9 +2751,31 @@ class OutputPage extends ContextSource {
 				$linestart, true, $this->mRevisionId
 			);
 
-		$popts->setInterfaceMessage( $oldInterface );
+		// Set wrapper class directly on ParserOutput, since otherwise
+		// ParserOptions::getWrapOutputClass() is ignored if $interface=true;
+		// see ParserOutput::setFromParserOptions()
+		if ( $wrapperClass !== null ) {
+			$parserOutput->addWrapperDivClass( $wrapperClass );
+		} else {
+			$parserOutput->clearWrapperDivClass();
+		}
 
-		return $parserOutput;
+		if ( !$allowTOC ) {
+			$parserOutput->setOutputFlag( ParserOutputFlags::NO_TOC );
+			$parserOutput->setSections( [] );
+		}
+
+		if ( $postprocess ) {
+			$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
+			// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
+			$parserOutput = $pipeline->run(
+				$parserOutput, $popts, [
+					'userLang' => $this->getContext()->getLanguage(),
+				]
+			);
+		}
+
+		return [ $parserOutput, $popts ];
 	}
 
 	/**
@@ -2715,7 +2806,7 @@ class OutputPage extends ContextSource {
 	 *
 	 * This sets and returns $minTTL if $mtime is false or null. Otherwise,
 	 * the TTL is higher the older the $mtime timestamp is. Essentially, the
-	 * TTL is 90% of the age of the object, subject to the min and max.
+	 * TTL is 90% of the objects age, subject to the min and max.
 	 *
 	 * @param string|int|float|false|null $mtime Last-Modified timestamp
 	 * @param int $minTTL Minimum TTL in seconds [default: 1 minute]
@@ -2723,11 +2814,12 @@ class OutputPage extends ContextSource {
 	 * @since 1.28
 	 */
 	public function adaptCdnTTL( $mtime, $minTTL = 0, $maxTTL = 0 ) {
-		$minTTL = $minTTL ?: ExpirationAwareness::TTL_MINUTE;
+		$minTTL = $minTTL ?: 60;
 		$maxTTL = $maxTTL ?: $this->getConfig()->get( MainConfigNames::CdnMaxAge );
 
 		if ( $mtime === null || $mtime === false ) {
-			return; // entity does not exist
+			// entity does not exist
+			return;
 		}
 
 		$age = MWTimestamp::time() - (int)wfTimestamp( TS_UNIX, $mtime );
@@ -2948,6 +3040,7 @@ class OutputPage extends ContextSource {
 		return false;
 	}
 
+	/** @return string|false */
 	private function getReportTo() {
 		$config = $this->getConfig();
 
@@ -2972,7 +3065,7 @@ class OutputPage extends ContextSource {
 		return json_encode( $output, JSON_UNESCAPED_SLASHES );
 	}
 
-	private function getFeaturePolicyReportOnly() {
+	private function getFeaturePolicyReportOnly(): string {
 		$config = $this->getConfig();
 
 		$features = $config->get( MainConfigNames::FeaturePolicyReportOnly );
@@ -3182,7 +3275,7 @@ class OutputPage extends ContextSource {
 			MWDebug::addModules( $this );
 
 			// Hook that allows last minute changes to the output page, e.g.
-			// adding of CSS or Javascript by extensions, adding CSP sources.
+			// adding of CSS or JavaScript by extensions, adding CSP sources.
 			$this->getHookRunner()->onBeforePageDisplay( $this, $sk );
 
 			if ( $this->cspOutputMode === self::CSP_HEADERS ) {
@@ -3358,7 +3451,8 @@ class OutputPage extends ContextSource {
 				$msg = 'nocreatetext';
 			} elseif ( $action == 'upload' ) {
 				$msg = 'uploadnologintext';
-			} else { # Read
+			} else {
+				# Read
 				$msg = 'loginreqpagetext';
 				$displayReturnto = Title::newMainPage();
 			}
@@ -3369,7 +3463,7 @@ class OutputPage extends ContextSource {
 				$query['returnto'] = $returnto->getPrefixedText();
 
 				if ( !$request->wasPosted() ) {
-					$returntoquery = $request->getValues();
+					$returntoquery = $request->getQueryValues();
 					unset( $returntoquery['title'] );
 					unset( $returntoquery['returnto'] );
 					unset( $returntoquery['returntoquery'] );
@@ -3432,6 +3526,7 @@ class OutputPage extends ContextSource {
 		if ( $status->isGood() ) {
 			return '';
 		}
+
 		return $this->formatPermissionInternal(
 			array_map( fn ( $msg ) => $this->msg( $msg ), $status->getMessages() ),
 			$action
@@ -3439,28 +3534,8 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Format a list of error messages
-	 *
-	 * @deprecated since 1.36. Use ::formatPermissionStatus instead
-	 * @param array $errors Array of arrays returned by PermissionManager::getPermissionErrors
-	 * @param-taint $errors none
-	 * @phan-param non-empty-array[] $errors
-	 * @param string|null $action Action that was denied or null if unknown
-	 * @return string The wikitext error-messages, formatted into a list.
-	 * @return-taint tainted
-	 */
-	public function formatPermissionsErrorMessage( array $errors, $action = null ) {
-		wfDeprecated( __METHOD__, '1.36' );
-		return $this->formatPermissionInternal(
-			// @phan-suppress-next-line PhanParamTooFewUnpack Elements of $errors already annotated as non-empty
-			array_map( fn ( $err ) => $this->msg( ...$err ), $errors ),
-			$action
-		);
-	}
-
-	/**
-	 * Helper for formatPermissionStatus() and deprecated formatPermissionsErrorMessage(),
-	 * should be inlined when the deprecated method is removed.
+	 * Helper for formatPermissionStatus() that was meant to be inlined when formatPermissionsErrorMessage()
+	 * was removed, but is also being called from showPermissionInternal() too.
 	 *
 	 * @param Message[] $messages
 	 * @param-taint $messages none
@@ -3517,7 +3592,8 @@ class OutputPage extends ContextSource {
 	public function showLagWarning( $lag ) {
 		$config = $this->getConfig();
 		if ( $lag >= $config->get( MainConfigNames::DatabaseReplicaLagWarning ) ) {
-			$lag = floor( $lag ); // floor to avoid nano seconds to display
+			// floor to avoid nano seconds to display
+			$lag = floor( $lag );
 			$message = $lag < $config->get( MainConfigNames::DatabaseReplicaLagCritical )
 				? 'lag-warn-normal'
 				: 'lag-warn-high';
@@ -3583,7 +3659,7 @@ class OutputPage extends ContextSource {
 
 		// We don't want people to return to external interwiki. That
 		// might potentially be used as part of a phishing scheme
-		if ( !is_object( $linkTarget ) || $linkTarget->isExternal() ) {
+		if ( !$linkTarget || $linkTarget->isExternal() ) {
 			$linkTarget = Title::newMainPage();
 		}
 
@@ -3604,7 +3680,9 @@ class OutputPage extends ContextSource {
 	 *  or ResourceLoader available; this should ideally be to a page that provides similar
 	 *  functionality without requiring JavaScript
 	 * @param string|MessageSpecifier $msg Message key (string) for page text, or a MessageSpecifier
-	 * @param mixed ...$params Message parameters; ignored if $msg is a Message object
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   Message parameters; ignored if $msg is a Message object
 	 */
 	public function showPendingTakeover(
 		$fallbackUrl, $msg, ...$params
@@ -3639,7 +3717,28 @@ class OutputPage extends ContextSource {
 		) );
 	}
 
-	private function getRlClientContext() {
+	/**
+	 * Determine whether debug mode is on.
+	 *
+	 * Order of priority is:
+	 * - 1) Request parameter,
+	 * - 2) Cookie,
+	 * - 3) Site configuration.
+	 *
+	 * @return int
+	 */
+	private function inDebugMode() {
+		if ( $this->debugMode === null ) {
+			$resourceLoaderDebug = $this->getConfig()->get(
+				MainConfigNames::ResourceLoaderDebug );
+			$str = $this->getRequest()->getRawVal( 'debug' ) ??
+				$this->getRequest()->getCookie( 'resourceLoaderDebug', '', $resourceLoaderDebug ? 'true' : '' );
+			$this->debugMode = RL\Context::debugFromString( $str );
+		}
+		return $this->debugMode;
+	}
+
+	private function getRlClientContext(): RL\Context {
 		if ( !$this->rlClientContext ) {
 			$query = ResourceLoader::makeLoaderQuery(
 				[], // modules; not relevant
@@ -3647,7 +3746,7 @@ class OutputPage extends ContextSource {
 				$this->getSkin()->getSkinName(),
 				$this->getUser()->isRegistered() ? $this->getUser()->getName() : null,
 				null, // version; not relevant
-				ResourceLoader::inDebugMode(),
+				$this->inDebugMode(),
 				null, // only; not relevant
 				$this->isPrintable()
 			);
@@ -3718,7 +3817,7 @@ class OutputPage extends ContextSource {
 			$moduleStyles = $this->getModuleStyles( /*filter*/ true );
 
 			// Preload getTitleInfo for isKnownEmpty calls below and in RL\ClientHtml
-			// Separate user-specific batch for improved cache-hit ratio.
+			// Separate user-specific batch for an improved cache-hit ratio.
 			$userBatch = [ 'user.styles', 'user' ];
 			$siteBatch = array_diff( $moduleStyles, $userBatch );
 			RL\WikiModule::preloadTitleInfo( $context, $siteBatch );
@@ -3794,11 +3893,20 @@ class OutputPage extends ContextSource {
 		$services = MediaWikiServices::getInstance();
 		$sitedir = $services->getContentLanguage()->getDir();
 
+		$rlHtmlAtribs = $this->getRlClient()->getDocumentAttributes();
+		$skinHtmlAttribs = $sk->getHtmlElementAttributes();
+		// Combine the classes from different sources, and convert to a string, which is needed below
+		$htmlClass = Html::expandClassList( [
+			Html::expandClassList( $rlHtmlAtribs['class'] ?? [] ),
+			Html::expandClassList( $skinHtmlAttribs['class'] ?? [] ),
+			Html::expandClassList( $this->mAdditionalHtmlClasses )
+		] );
+		if ( $htmlClass === '' ) {
+			$htmlClass = null;
+		}
+		$htmlAttribs = array_merge( $rlHtmlAtribs, $skinHtmlAttribs, [ 'class' => $htmlClass ] );
+
 		$pieces = [];
-		$htmlAttribs = Sanitizer::mergeAttributes( Sanitizer::mergeAttributes(
-			$this->getRlClient()->getDocumentAttributes(),
-			$sk->getHtmlElementAttributes()
-		), [ 'class' => implode( ' ', $this->mAdditionalHtmlClasses ) ] );
 		$pieces[] = Html::htmlHeader( $htmlAttribs );
 		$pieces[] = Html::openElement( 'head' );
 
@@ -3819,7 +3927,7 @@ class OutputPage extends ContextSource {
 		}
 
 		$pieces[] = Html::element( 'title', [], $this->getHTMLTitle() );
-		$pieces[] = $this->getRlClient()->getHeadHtml( $htmlAttribs['class'] ?? null );
+		$pieces[] = $this->getRlClient()->getHeadHtml( $htmlClass );
 		$pieces[] = $this->buildExemptModules();
 		$pieces = array_merge( $pieces, array_values( $this->getHeadLinksArray() ) );
 		$pieces = array_merge( $pieces, array_values( $this->mHeadItems ) );
@@ -3859,9 +3967,9 @@ class OutputPage extends ContextSource {
 		}
 
 		$bodyAttrs = [];
-		// While the implode() is not strictly needed, it's used for backwards compatibility
+		// While the expandClassList() is not strictly needed, it's used for backwards compatibility
 		// (this used to be built as a string and hooks likely still expect that).
-		$bodyAttrs['class'] = implode( ' ', $bodyClasses );
+		$bodyAttrs['class'] = Html::expandClassList( $bodyClasses );
 
 		$this->getHookRunner()->onOutputPageBodyAttributes( $this, $sk, $bodyAttrs );
 
@@ -3934,7 +4042,7 @@ class OutputPage extends ContextSource {
 		$chunks[] = $this->mScripts;
 
 		// Keep hostname and backend time as the first variables for quick view-source access.
-		// This other variables will form a very long inline blob.
+		// These other variables will form a very long inline blob.
 		$vars = [];
 		if ( $this->getConfig()->get( MainConfigNames::ShowHostnames ) ) {
 			$vars['wgHostname'] = wfHostname();
@@ -3964,7 +4072,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Get the javascript config vars to include on this page
 	 *
-	 * @return array Array of javascript config vars
+	 * @return array<string,mixed> Maps config variable names to values
 	 * @since 1.23
 	 */
 	public function getJsConfigVars() {
@@ -3974,7 +4082,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Add one or more variables to be set in mw.config in JavaScript
 	 *
-	 * @param string|array $keys Key or array of key/value pairs
+	 * @param string|array<string,mixed> $keys Key or array of key/value pairs
 	 * @param mixed|null $value [optional] Value of the configuration variable
 	 */
 	public function addJsConfigVars( $keys, $value = null ) {
@@ -4009,7 +4117,8 @@ class OutputPage extends ContextSource {
 	public function getJSVars( ?int $flag = null ) {
 		$curRevisionId = 0;
 		$articleId = 0;
-		$canonicalSpecialPageName = false; # T23115
+		// T23115
+		$canonicalSpecialPageName = false;
 		$services = MediaWikiServices::getInstance();
 
 		$title = $this->getTitle();
@@ -4025,7 +4134,7 @@ class OutputPage extends ContextSource {
 		$relevantTitle = $sk->getRelevantTitle();
 
 		if ( $ns === NS_SPECIAL ) {
-			[ $canonicalSpecialPageName, /*...*/ ] =
+			[ $canonicalSpecialPageName, ] =
 				$services->getSpecialPageFactory()->
 					resolveAlias( $title->getDBkey() );
 		} elseif ( $this->canUseWikiPage() ) {
@@ -4288,7 +4397,7 @@ class OutputPage extends ContextSource {
 			] );
 		}
 
-		# Browser based phonenumber detection
+		# Browser based phone number detection
 		if ( $config->get( MainConfigNames::BrowserFormatDetection ) !== false ) {
 			$tags['meta-format-detection'] = Html::element( 'meta', [
 				'name' => 'format-detection',
@@ -4331,12 +4440,12 @@ class OutputPage extends ContextSource {
 			}
 		}
 
-		# Generally the order of the favicon and apple-touch-icon links
+		# Generally, the order of the favicon and apple-touch-icon links
 		# should not matter, but Konqueror (3.5.9 at least) incorrectly
 		# uses whichever one appears later in the HTML source. Make sure
 		# apple-touch-icon is specified first to avoid this.
 		$appleTouchIconHref = $config->get( MainConfigNames::AppleTouchIcon );
-		# Browser look for those by default, unnessecary to set a link tag
+		# Browser look for those by default, unnecessary to set a link tag
 		if (
 			$appleTouchIconHref !== false &&
 			$appleTouchIconHref !== '/apple-touch-icon.png' &&
@@ -4349,7 +4458,7 @@ class OutputPage extends ContextSource {
 		}
 
 		$faviconHref = $config->get( MainConfigNames::Favicon );
-		# Browser look for those by default, unnessecary to set a link tag
+		# Browser look for those by default, unnecessary to set a link tag
 		if ( $faviconHref !== false && $faviconHref !== '/favicon.ico' ) {
 			$tags['favicon'] = Html::element( 'link', [
 				'rel' => 'icon',
@@ -4825,7 +4934,7 @@ class OutputPage extends ContextSource {
 	 * @return string URL
 	 */
 	public static function transformResourcePath( Config $config, $path ) {
-		$localDir = $config->get( MainConfigNames::BaseDirectory );
+		$localDir = MW_INSTALL_PATH;
 		$remotePathPrefix = $config->get( MainConfigNames::ResourceBasePath );
 		if ( $remotePathPrefix === '' ) {
 			// The configured base path is required to be empty string for
@@ -4921,7 +5030,8 @@ class OutputPage extends ContextSource {
 	 * Add a wikitext-formatted message to the output.
 	 *
 	 * @param string|MessageSpecifier $name Message key
-	 * @param mixed ...$args Message parameters. Unlike wfMessage(), this method only accepts
+	 * @param MessageParam|MessageSpecifier|string|int|float ...$args
+	 *     Message parameters. Unlike wfMessage(), this method only accepts
 	 *     variadic parameters (they can't be passed as a single array parameter).
 	 */
 	public function addWikiMsg( $name, ...$args ) {
@@ -4932,7 +5042,8 @@ class OutputPage extends ContextSource {
 	 * Add a wikitext-formatted message to the output.
 	 *
 	 * @param string|MessageSpecifier $name Message key
-	 * @param array $args Message parameters. Unlike wfMessage(), this method only accepts
+	 * @param list<MessageParam|MessageSpecifier|string|int|float> $args
+	 *     Message parameters. Unlike wfMessage(), this method only accepts
 	 *     the parameters as an array (they can't be passed as variadic parameters),
 	 *     or just a single parameter (this only works by accident, don't rely on it).
 	 */
@@ -4989,6 +5100,19 @@ class OutputPage extends ContextSource {
 	 */
 	public function isTOCEnabled() {
 		return $this->mEnableTOC;
+	}
+
+	/**
+	 * Helper function to add a Table of Contents to the output.
+	 * @param TOCData $tocData Table of Contents data to add
+	 * @since 1.44
+	 */
+	public function addTOCPlaceholder( TOCData $tocData ): void {
+		$pout = new ParserOutput;
+		$pout->setTOCData( $tocData );
+		$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
+		$pout->setRawText( Parser::TOC_PLACEHOLDER );
+		$this->addParserOutput( $pout, $this->internalParserOptions( false ) );
 	}
 
 	/**

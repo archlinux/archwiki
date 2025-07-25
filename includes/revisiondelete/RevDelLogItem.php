@@ -20,12 +20,18 @@
  */
 
 use MediaWiki\Api\ApiResult;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
+use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogFormatter;
+use MediaWiki\Logging\LogFormatterFactory;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\RevisionList\RevisionListBase;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -155,9 +161,9 @@ class RevDelLogItem extends RevDelItem {
 				$this->list->getContext()
 			);
 			$content .= " $tagSummary";
-			$attribs['class'] = implode( ' ', $classes );
+			$attribs['class'] = $classes;
 		}
-		return Xml::tags( 'li', $attribs, $content );
+		return Html::rawElement( 'li', $attribs, $content );
 	}
 
 	public function getApiData( ApiResult $result ) {

@@ -2,22 +2,21 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
-use MediaWiki\Parser\Sanitizer;
-use MediaWiki\Revision\RevisionRecord;
 
 class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 
+	/** @inheritDoc */
 	public function canRender() {
 		return (bool)$this->event->getTitle();
 	}
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'edit-user-page';
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		return [
 			'url' => $this->getDiffLinkUrl(),
@@ -25,6 +24,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		if ( $this->isBundled() ) {
 			return [];
@@ -33,6 +33,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		if ( $this->isBundled() ) {
 			$msg = $this->msg( 'notification-bundle-header-edit-user-page' );
@@ -49,28 +50,22 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getCompactHeaderMessage() {
 		$msg = $this->getMessageWithAgent( 'notification-compact-header-edit-user-page' );
 		$msg->params( $this->getViewingUserForGender() );
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
-		$revision = $this->event->getRevision();
-		if ( $revision && $revision->getComment() && $this->userCan( RevisionRecord::DELETED_COMMENT ) ) {
-			$summary = $revision->getComment()->text;
-			$summary = MediaWikiServices::getInstance()->getCommentFormatter()->format( $summary );
-			$summary = Sanitizer::stripAllTags( $summary );
-		} else {
-			$summary = $this->msg( 'rev-deleted-comment' )->text();
+		if ( $this->isBundled() ) {
+			return false;
 		}
-		if ( !$this->isBundled() ) {
-			return new RawMessage( '$1', [ Message::plaintextParam( $summary ) ] );
-		}
-		return false;
+		return $this->getRevisionCommentMessage();
 	}
 
-	private function getDiffLinkUrl() {
+	private function getDiffLinkUrl(): string {
 		$revId = $this->event->getExtraParam( 'revid' );
 		$oldId = $this->isBundled() ? $this->getRevBeforeFirstNotification() : 'prev';
 		$query = [
@@ -80,7 +75,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 		return $this->event->getTitle()->getFullURL( $query );
 	}
 
-	private function getRevBeforeFirstNotification() {
+	private function getRevBeforeFirstNotification(): int {
 		$events = $this->getBundledEvents();
 		$firstNotificationRevId = end( $events )->getExtraParam( 'revid' );
 		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
@@ -91,6 +86,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 		return $oldRevisionID;
 	}
 
+	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
 		return 'notification-edit-user-page-email-subject';
 	}

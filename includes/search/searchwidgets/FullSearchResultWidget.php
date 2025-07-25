@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Search\SearchWidgets;
 
-use File;
-use HtmlArmor;
 use MediaTransformOutput;
 use MediaWiki\Category\Category;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -17,9 +17,9 @@ use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWiki\Specials\SpecialSearch;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
-use RepoGroup;
 use SearchResult;
 use ThumbnailImage;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * Renders a 'full' multi-line search result with metadata.
@@ -32,20 +32,15 @@ class FullSearchResultWidget implements SearchResultWidget {
 
 	public const THUMBNAIL_SIZE = 90;
 
-	/** @var SpecialSearch */
-	protected $specialPage;
-	/** @var LinkRenderer */
-	protected $linkRenderer;
-	/** @var HookRunner */
-	private $hookRunner;
-	/** @var RepoGroup */
-	private $repoGroup;
-	/** @var SearchResultThumbnailProvider */
-	private $thumbnailProvider;
+	protected SpecialSearch $specialPage;
+	protected LinkRenderer $linkRenderer;
+	private HookRunner $hookRunner;
+	private RepoGroup $repoGroup;
+	private SearchResultThumbnailProvider $thumbnailProvider;
+	private UserOptionsManager $userOptionsManager;
+
 	/** @var string */
 	private $thumbnailPlaceholderHtml;
-	/** @var UserOptionsManager */
-	private $userOptionsManager;
 
 	public function __construct(
 		SpecialSearch $specialPage,
@@ -442,9 +437,6 @@ class FullSearchResultWidget implements SearchResultWidget {
 		return $img->transform( [ 'width' => $optimalThumbnailWidth ] );
 	}
 
-	/**
-	 * @return string
-	 */
 	private function generateThumbnailPlaceholderHtml(): string {
 		if ( $this->thumbnailPlaceholderHtml ) {
 			return $this->thumbnailPlaceholderHtml;

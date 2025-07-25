@@ -3,13 +3,15 @@
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\WikitextContent;
+use MediaWiki\JobQueue\Jobs\RefreshLinksJob;
 use MediaWiki\Page\PageAssertionException;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\Stats\StatsFactory;
 
 /**
- * @covers \RefreshLinksJob
+ * @covers \MediaWiki\JobQueue\Jobs\RefreshLinksJob
  *
  * @group JobQueue
  * @group Database

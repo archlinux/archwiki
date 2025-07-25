@@ -22,14 +22,13 @@
 
 namespace MediaWiki\Linker;
 
-use File;
-use HtmlArmor;
 use MediaTransformError;
 use MediaTransformOutput;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlHelper;
@@ -44,10 +43,9 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\UserIdentityValue;
-use MediaWiki\Xml\Xml;
 use MessageLocalizer;
 use Wikimedia\Assert\Assert;
-use Wikimedia\IPUtils;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
@@ -1167,6 +1165,8 @@ class Linker {
 	 * @param string[] $attributes Extra HTML attributes. See Linker::link.
 	 * @return string HTML fragment
 	 * @since 1.16.3. $altUserName was added in 1.19. $attributes was added in 1.40.
+	 *
+	 * @deprecated since 1.44, use {@link UserLinkRenderer::userLink()} instead.
 	 */
 	public static function userLink(
 		$userId,
@@ -1180,36 +1180,13 @@ class Linker {
 			return wfMessage( 'empty-username' )->parse();
 		}
 
-		$classes = 'mw-userlink';
-		if ( MediaWikiServices::getInstance()->getTempUserConfig()->isTempName( $userName ) ) {
-			$classes .= ' mw-tempuserlink';
-			$page = SpecialPage::getTitleValueFor( 'Contributions', $userName );
-		} elseif ( $userId == 0 ) {
-			$page = ExternalUserNames::getUserLinkTitle( $userName );
-
-			if ( ExternalUserNames::isExternal( $userName ) ) {
-				$classes .= ' mw-extuserlink';
-			} elseif ( $altUserName === false ) {
-				$altUserName = IPUtils::prettifyIP( $userName );
-			}
-			$classes .= ' mw-anonuserlink'; // Separate link class for anons (T45179)
-		} else {
-			$page = TitleValue::tryNew( NS_USER, strtr( $userName, ' ', '_' ) );
-		}
-
-		// Wrap the output with <bdi> tags for directionality isolation
-		$linkText =
-			'<bdi>' . htmlspecialchars( $altUserName !== false ? $altUserName : $userName ) . '</bdi>';
-
-		if ( isset( $attributes['class'] ) ) {
-			$attributes['class'] .= ' ' . $classes;
-		} else {
-			$attributes['class'] = $classes;
-		}
-
-		return $page
-			? self::link( $page, $linkText, $attributes )
-			: Html::rawElement( 'span', $attributes, $linkText );
+		return MediaWikiServices::getInstance()->getUserLinkRenderer()
+			->userLink(
+				new UserIdentityValue( $userId, (string)$userName ),
+				RequestContext::getMain(),
+				$altUserName === false ? null : (string)$altUserName,
+				$attributes
+			);
 	}
 
 	/**
@@ -1672,7 +1649,7 @@ class Linker {
 	 * This function will return the link only in case the revision can be reverted
 	 * (not all revisions are by the same user, and the last revision by a different
 	 * user is visible). Please note that due to performance limitations it might be
-	 * assumed that a user isn't the only contributor of a page while (s)he is, which
+	 * assumed that a user isn't the only contributor of a page while they are, which
 	 * will lead to useless rollback links. Furthermore this won't work if
 	 * $wgShowRollbackEditCount is disabled, so this can only function as an
 	 * additional check.
@@ -2070,7 +2047,7 @@ class Linker {
 		$html = wfMessage( $msgKey )->escaped();
 		$tag = $restricted ? 'strong' : 'span';
 		$link = self::link( $sp, $html, [], $query, [ 'known', 'noclasses' ] );
-		return Xml::tags(
+		return Html::rawElement(
 			$tag,
 			[ 'class' => 'mw-revdelundel-link' ],
 			wfMessage( 'parentheses' )->rawParams( $link )->escaped()
@@ -2092,7 +2069,7 @@ class Linker {
 		$msgKey = $delete ? 'rev-delundel' : 'rev-showdeleted';
 		$html = wfMessage( $msgKey )->escaped();
 		$htmlParentheses = wfMessage( 'parentheses' )->rawParams( $html )->escaped();
-		return Xml::tags( 'span', [ 'class' => 'mw-revdelundel-link' ], $htmlParentheses );
+		return Html::rawElement( 'span', [ 'class' => 'mw-revdelundel-link' ], $htmlParentheses );
 	}
 
 	/**
@@ -2147,12 +2124,9 @@ class Linker {
 		if ( $tooltip === false ) {
 			return '';
 		}
-		return Xml::expandAttributes( [
+		return Html::expandAttributes( [
 			'title' => $tooltip
 		] );
 	}
 
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( Linker::class, 'Linker' );

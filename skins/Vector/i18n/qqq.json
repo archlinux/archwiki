@@ -53,6 +53,7 @@
 	"vector-more-actions": "Label in the Vector skin's menu for the less-important or rarer actions which are not shown as tabs (like moving the page, or for sysops deleting or protecting the page), as well as (for users with a narrow viewing window in their browser) the less-important tab actions which the user's browser is unable to fit in. {{Identical|More}}",
 	"vector-appearance-label": "Heading for appearance menu.",
 	"vector-appearance-tooltip": "Tooltip for appearance menu.",
+	"vector-personal-tools-tooltip": "Used as title attribute for personal settings icon on hover.",
 	"vector-feature-limited-width-name": "Heading label for limited width. The title of a list that includes the following items:\n* {{msg-mw|vector-feature-limited-width-1-label}}\n* {{msg-mw|vector-feature-limited-width-0-label}}",
 	"vector-feature-limited-width-0-label": "Label for option to disable limited width. An item in a list that has the title {{msg-mw|Vector-feature-limited-width-name}} and that includes the following items:\n* {{msg-mw|vector-feature-limited-width-1-label}}\n* {{msg-mw|vector-feature-limited-width-0-label}}",
 	"vector-feature-limited-width-1-label": "Label for option to enable limited width. An item in a list that has the title {{msg-mw|Vector-feature-limited-width-name}} and that includes the following items:\n* {{msg-mw|vector-feature-limited-width-1-label}}\n* {{msg-mw|vector-feature-limited-width-0-label}}",

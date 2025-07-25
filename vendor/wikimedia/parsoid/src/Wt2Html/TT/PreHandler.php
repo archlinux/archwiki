@@ -18,7 +18,7 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * PRE-handling relies on the following 6-state FSM.
@@ -114,18 +114,15 @@ class PreHandler extends TokenHandler {
 
 	/**
 	 * debug string output of FSM states
-	 * @return array
 	 */
-	private static function stateStr(): array {
-		return [
-			1 => 'sol          ',
-			2 => 'pre          ',
-			3 => 'pre_collect  ',
-			4 => 'sol_after_pre',
-			5 => 'multiline_pre',
-			6 => 'ignore       '
-		];
-	}
+	private const STATE_STR = [
+		1 => 'sol          ',
+		2 => 'pre          ',
+		3 => 'pre_collect  ',
+		4 => 'sol_after_pre',
+		5 => 'multiline_pre',
+		6 => 'ignore       '
+	];
 
 	/**
 	 * Create a token to represent the indent-pre whitespace character.
@@ -176,10 +173,10 @@ class PreHandler extends TokenHandler {
 	}
 
 	/**
-	 * @param TokenTransformManager $manager manager enviroment
+	 * @param TokenHandlerPipeline $manager manager enviroment
 	 * @param array $options various configuration options
 	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 		if ( !empty( $this->options['inlineContext'] ) ) {
 			$this->disabled = true;
@@ -219,7 +216,7 @@ class PreHandler extends TokenHandler {
 	/**
 	 * Wrap buffered tokens with <pre>..</pre>
 	 *
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function genPre(): array {
 		$ret = [];
@@ -291,7 +288,7 @@ class PreHandler extends TokenHandler {
 	 * Get results and cleanup state
 	 *
 	 * @param Token|string $token
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function purgeBuffers( $token ): array {
 		$this->processCurrLine( $token, true );
@@ -305,7 +302,7 @@ class PreHandler extends TokenHandler {
 	 * Discard pre on this line. Generate pre formatting for previous lines, if any.
 	 *
 	 * @param Token|string $token
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function discardCurrLinePre( $token ): array {
 		$ret = $this->genPre();
@@ -328,15 +325,11 @@ class PreHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onNewline( NlTk $token ): ?TokenHandlerResult {
+	public function onNewline( NlTk $token ): ?array {
 		$env = $this->env;
 
-		$env->log( 'trace/pre', $this->pipelineId, 'NL    |',
-			$this->state, ':',
-			self::stateStr()[$this->state], '|',
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
+		$env->trace( 'pre', $this->pipelineId, 'NL    |',
+			self::STATE_STR[$this->state], '| ', $token
 		);
 
 		// Whenever we move into SOL-state, init preTSR to
@@ -365,7 +358,9 @@ class PreHandler extends TokenHandler {
 				break;
 
 			case self::STATE_IGNORE:
-				$ret = null; // Signals unmodified token
+				// Returning null will invoke the onAny handler
+				// Since we want to skip it, return [ $token ].
+				$ret = [ $token ];
 				$this->reset();
 				$this->preTSR = self::initPreTSR( $token );
 				break;
@@ -376,25 +371,17 @@ class PreHandler extends TokenHandler {
 		}
 
 		$env->log( 'debug/pre', $this->pipelineId, 'saved :', $this->tokens );
-		$env->log( 'debug/pre', $this->pipelineId, '---->  ',
-			static function () use ( $ret ) {
-				return PHPUtils::jsonEncode( $ret );
-			}
-		);
+		$env->log( 'debug/pre', $this->pipelineId, '---->   ', $ret );
 
-		return new TokenHandlerResult( $ret, true );
+		return $ret;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
-		$this->env->log( 'trace/pre', $this->pipelineId, 'eof   |',
-			$this->state, ':',
-			self::stateStr()[$this->state], '|',
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
+	public function onEnd( EOFTk $token ): ?array {
+		$this->env->trace( 'pre', $this->pipelineId, 'eof   |',
+			self::STATE_STR[$this->state], '| ', $token
 		);
 
 		switch ( $this->state ) {
@@ -415,7 +402,9 @@ class PreHandler extends TokenHandler {
 				break;
 
 			case self::STATE_IGNORE:
-				$ret = null;
+				// Returning null will invoke the onAny handler.
+				// Since we want to skip it, return [ $token ].
+				$ret = [ $token ];
 				break;
 
 			default:
@@ -424,13 +413,9 @@ class PreHandler extends TokenHandler {
 		}
 
 		$this->env->log( 'debug/pre', $this->pipelineId, 'saved :', $this->tokens );
-		$this->env->log( 'debug/pre', $this->pipelineId, '---->  ',
-			static function () use ( $ret ){
-				return PHPUtils::jsonEncode( $ret );
-			}
-		);
+		$this->env->log( 'debug/pre', $this->pipelineId, '---->   ', $ret );
 
-		return new TokenHandlerResult( $ret, true );
+		return $ret;
 	}
 
 	/**
@@ -457,21 +442,17 @@ class PreHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
+	public function onAny( $token ): ?array {
 		$env = $this->env;
 
-		$env->log( 'trace/pre', $this->pipelineId, 'any   |',
-			$this->state, ':',
-			self::stateStr()[$this->state], '|',
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
+		$env->trace( 'pre', $this->pipelineId, 'any   |',
+			self::STATE_STR[$this->state], '|', $token
 		);
 
 		if ( $this->state === self::STATE_IGNORE ) {
-			$env->log( 'error', static function () use ( $token ) {
-				return '!ERROR! IGNORE! Cannot get here: ' . PHPUtils::jsonEncode( $token );
-			} );
+			$env->log( 'error',
+				'!ERROR! IGNORE! Cannot get here: ' . PHPUtils::jsonEncode( $token )
+			);
 			return null;
 		}
 
@@ -547,12 +528,8 @@ class PreHandler extends TokenHandler {
 		}
 
 		$env->log( 'debug/pre', $this->pipelineId, 'saved :', $this->tokens );
-		$env->log( 'debug/pre', $this->pipelineId, '---->  ',
-			static function () use ( $ret ) {
-				return PHPUtils::jsonEncode( $ret );
-			}
-		);
+		$env->log( 'debug/pre', $this->pipelineId, '---->   ', $ret );
 
-		return new TokenHandlerResult( $ret );
+		return $ret;
 	}
 }

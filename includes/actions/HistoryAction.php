@@ -21,18 +21,22 @@
  * @ingroup Actions
  */
 
-use MediaWiki\Feed\AtomFeed;
+namespace MediaWiki\Actions;
+
+use MediaWiki\Cache\HTMLFileCache;
+use MediaWiki\Feed\ChannelFeed;
 use MediaWiki\Feed\FeedItem;
 use MediaWiki\Feed\FeedUtils;
-use MediaWiki\Feed\RSSFeed;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\HistoryPager;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\MWTimestamp;
+use stdClass;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -98,6 +102,7 @@ class HistoryAction extends FormlessAction {
 	 */
 	private function preCacheMessages() {
 		// Precache various messages
+		// @phan-suppress-next-line MediaWikiNoIssetIfDefined False positives when documented as nullable
 		if ( !isset( $this->message ) ) {
 			$this->message = [];
 			$msgs = [
@@ -385,7 +390,7 @@ class HistoryAction extends FormlessAction {
 		$request = $this->getRequest();
 
 		$feedClasses = $this->context->getConfig()->get( MainConfigNames::FeedClasses );
-		/** @var RSSFeed|AtomFeed $feed */
+		/** @var ChannelFeed $feed */
 		$feed = new $feedClasses[$type](
 			$this->getTitle()->getPrefixedText() . ' - ' .
 			$this->msg( 'history-feed-title' )->inContentLanguage()->text(),
@@ -419,7 +424,7 @@ class HistoryAction extends FormlessAction {
 		$feed->outFooter();
 	}
 
-	private function feedEmpty() {
+	private function feedEmpty(): FeedItem {
 		return new FeedItem(
 			$this->msg( 'nohistory' )->inContentLanguage()->text(),
 			$this->msg( 'history-feed-empty' )->inContentLanguage()->parseAsBlock(),
@@ -476,3 +481,6 @@ class HistoryAction extends FormlessAction {
 		);
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( HistoryAction::class, 'HistoryAction' );

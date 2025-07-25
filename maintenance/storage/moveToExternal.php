@@ -22,10 +22,12 @@
  */
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Maintenance\UndoLog;
 use MediaWiki\Storage\SqlBlobStore;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
 
 // @codeCoverageIgnoreStart
@@ -80,6 +82,7 @@ class MoveToExternal extends Maintenance {
 		$this->addArg( 'location', 'e.g. "cluster12" or "global-swift"' );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$this->resolveStubs = new ResolveStubs;
 		$this->esType = $this->getArg( 0 ); // e.g. "DB" or "mwstore"
@@ -128,7 +131,7 @@ class MoveToExternal extends Maintenance {
 		return $this->doMoveToExternal();
 	}
 
-	private function doMoveToExternal() {
+	private function doMoveToExternal(): bool {
 		$success = true;
 		$dbr = $this->getReplicaDB();
 
@@ -252,7 +255,7 @@ class MoveToExternal extends Maintenance {
 		return $success;
 	}
 
-	private function compress( $text, $flags ) {
+	private function compress( string $text, array $flags ): array {
 		if ( $this->gzip && !in_array( 'gzip', $flags ) ) {
 			$flags[] = 'gzip';
 			$text = gzdeflate( $text );
@@ -260,7 +263,7 @@ class MoveToExternal extends Maintenance {
 		return [ $text, $flags ];
 	}
 
-	private function resolveLegacyEncoding( $text, $flags ) {
+	private function resolveLegacyEncoding( string $text, array $flags ): array {
 		if ( $this->legacyEncoding !== null
 			&& !in_array( 'utf-8', $flags )
 			&& !in_array( 'utf8', $flags )
@@ -289,7 +292,7 @@ class MoveToExternal extends Maintenance {
 		return [ $text, $flags ];
 	}
 
-	private function resolveStubs( $stubIDs ) {
+	private function resolveStubs( array $stubIDs ) {
 		if ( $this->dryRun ) {
 			print "Note: resolving stubs in dry run mode is expected to fail, " .
 				"because the main blobs have not been moved to external storage.\n";
@@ -319,7 +322,7 @@ class MoveToExternal extends Maintenance {
 		$this->output( "$numResolved of $numTotal stubs resolved\n" );
 	}
 
-	protected function getConditions( $blockStart, $blockEnd, $dbr ) {
+	protected function getConditions( int $blockStart, int $blockEnd, IReadableDatabase $dbr ): array {
 		return [
 			$dbr->expr( 'old_id', '>=', $blockStart ),
 			$dbr->expr( 'old_id', '>=', $blockEnd ),
@@ -328,7 +331,7 @@ class MoveToExternal extends Maintenance {
 		];
 	}
 
-	protected function resolveText( $text, $flags ) {
+	protected function resolveText( string $text, array $flags ): array {
 		return [ $text, $flags ];
 	}
 }

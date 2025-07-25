@@ -8,11 +8,13 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in select in table" insertion mode
  */
 class InSelectInTable extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->dispatcher->inSelect->characters(
 			$text, $start, $length, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$dispatcher = $this->dispatcher;
@@ -39,6 +41,7 @@ class InSelectInTable extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -70,6 +73,7 @@ class InSelectInTable extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->dispatcher->inSelect->endDocument( $pos );
 	}

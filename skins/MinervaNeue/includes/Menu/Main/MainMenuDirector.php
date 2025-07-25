@@ -39,14 +39,14 @@ final class MainMenuDirector {
 	/**
 	 * Returns a data representation of the main menus
 	 *
-	 * @param array $contentNavUrls result of buildContentNavigationUrls
+	 * @param array $userMenuPortletData
 	 * @param array $sidebar
 	 * @return array
 	 */
-	public function getMenuData( array $contentNavUrls, array $sidebar ): array {
+	public function getMenuData( array $userMenuPortletData, array $sidebar ): array {
 		if ( $this->menuData === null ) {
 			$this->menuData = $this->buildMenu(
-				$contentNavUrls,
+				$userMenuPortletData,
 				$sidebar
 			);
 		}
@@ -56,11 +56,11 @@ final class MainMenuDirector {
 	/**
 	 * Build the menu data array that can be passed to views/javascript
 	 *
-	 * @param array $contentNavUrls
+	 * @param array $userMenuPortletData
 	 * @param array $sidebar
 	 * @return array
 	 */
-	private function buildMenu( array $contentNavUrls, array $sidebar ): array {
+	private function buildMenu( array $userMenuPortletData, array $sidebar ): array {
 		$builder = $this->builder;
 		$menuData = [
 			'items' => [
@@ -73,7 +73,7 @@ final class MainMenuDirector {
 			// sidebar comes from MediaWiki:Sidebar so we can't assume it doesn't exist.
 			$builder->getDiscoveryGroup( $sidebar['navigation'] ?? [] ),
 			$builder->getInteractionToolsGroup(),
-			$builder->getPersonalToolsGroup( $contentNavUrls['user-menu'] ),
+			$builder->getPersonalToolsGroup( $userMenuPortletData ),
 			$builder->getSettingsGroup(),
 			$builder->getDonateGroup(),
 		];

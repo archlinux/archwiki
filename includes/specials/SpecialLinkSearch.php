@@ -25,10 +25,10 @@ use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\UrlUtils;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -54,17 +54,12 @@ class SpecialLinkSearch extends QueryPage {
 
 	private UrlUtils $urlUtils;
 
-	private function setParams( $params ) {
+	private function setParams( array $params ) {
 		$this->mQuery = $params['query'];
 		$this->mNs = $params['namespace'];
 		$this->mProt = $params['protocol'];
 	}
 
-	/**
-	 * @param IConnectionProvider $dbProvider
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param UrlUtils $urlUtils
-	 */
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,

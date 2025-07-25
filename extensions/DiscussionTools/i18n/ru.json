@@ -29,8 +29,8 @@
 			"Vlad5250",
 			"WhatamIdoing",
 			"WindEwriX",
-			"Умар",
-			"Woytecr"
+			"Woytecr",
+			"Умар"
 		]
 	},
 	"discussiontools": "Инструменты обсуждений",
@@ -92,7 +92,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "{{GENDER:|Вы}} подписались!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "{{GENDER:|Вы}} больше не будете получать уведомления о создании новых тем на этой странице.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Вы}} отписались.",
-	"discussiontools-notification-added-topic-header": "$2 создал(а) новую тему «<strong>$4</strong>» на странице <strong>$3</strong>.",
+	"discussiontools-notification-added-topic-header": "$1 {{GENDER:$2|создал|создала}} новую тему «<strong>$4</strong>» на странице <strong>$3</strong>.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|$1 новая тема|$1 новых тем|100=99+ новых тем}} на <strong>$2</strong>",
 	"discussiontools-notification-added-topic-view": "Просмотр темы",
 	"discussiontools-notification-comment-thank-header": "$1 поблагодарил{{GENDER:$2||а}} {{GENDER:$4|вас}} за комментарий в теме «<strong>$3</strong>».",
@@ -217,9 +217,9 @@
 	"tag-discussiontools-description": "Правка совершена с помощью DiscussionTools",
 	"tag-discussiontools-edit": "редактирование сообщения",
 	"tag-discussiontools-edit-description": "Пользователь отредактировал существующее сообщение с помощью DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} новая тема]",
+	"tag-discussiontools-newtopic": "новая тема",
 	"tag-discussiontools-newtopic-description": "Пользователь добавил новую тему на страницу с помощью DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} ответ]",
+	"tag-discussiontools-reply": "ответ",
 	"tag-discussiontools-reply-description": "Пользователь ответил на сообщение с помощью DiscussionTools",
 	"tag-discussiontools-source-description": "DiscussionTools был в режиме правки кода",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools был в расширенном режиме исходного кода с панелью инструментов.",

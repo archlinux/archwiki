@@ -179,6 +179,7 @@
 				source: data.source
 			} );
 		} );
+		this.suppressWarnings(); // Skipped unavailable module
 
 		mw.loader.load( 'test.load.circleC' );
 		assert.deepEqual(
@@ -202,6 +203,7 @@
 				source: data.source
 			} );
 		} );
+		this.suppressWarnings(); // Skipped unavailable module
 
 		mw.loader.load( 'test.load.circleDirect' );
 		assert.deepEqual(
@@ -246,6 +248,7 @@
 				source: data.source
 			} );
 		} );
+		this.suppressWarnings(); // Skipped unavailable module
 
 		mw.loader.register( [
 			[ 'test.load.missingdep1', '0', [ 'test.load.missingdep2' ] ],
@@ -1173,6 +1176,13 @@
 				assert.strictEqual( String( e ), null, 'require works asynchrously in debug mode' );
 			}
 		} );
+	} );
+
+	QUnit.test( '.require() relative file without packageFiles', ( assert ) => {
+		// T386833
+		assert.throws( () => {
+			mw.loader.require( './hello.js' );
+		}, /Module names cannot start with ".\/" or "..\/"/ );
 	} );
 
 	QUnit.test( 'Implicit dependencies', ( assert ) => {

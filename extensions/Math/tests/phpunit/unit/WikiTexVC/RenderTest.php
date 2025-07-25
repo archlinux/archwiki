@@ -10,7 +10,7 @@ use MediaWikiUnitTestCase;
  */
 class RenderTest extends MediaWikiUnitTestCase {
 
-	public function provideTestCases() {
+	public static function provideTestCases() {
 		return [
 			[
 				'in' => '',

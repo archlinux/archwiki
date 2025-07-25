@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Դավիթ Սարոյան",
-			"Kareyac"
+			"Kareyac",
+			"Դավիթ Սարոյան"
 		]
 	},
 	"nuke": "Զանգվածային ջնջում",
 	"action-nuke": "էջերի զանգվածային ջնջում",
+	"nuke-submit-continue": "Շարունակել",
+	"nuke-submit-delete": "Ջնջել",
 	"nuke-linkoncontribs": "զանգվածային ջնջում"
 }

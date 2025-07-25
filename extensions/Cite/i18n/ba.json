@@ -17,8 +17,6 @@
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> тамғаһы дөрөҫ түгел;\nисемһеҙ төшөрмәнең эстәлеге булырға тейеш.",
 	"cite_error_references_duplicate_key": "<code>&lt;ref&gt;</code> тег дөрөҫ түгел: «$1» исеме бер нисә тапҡыр төрлө йөкмәткегә бирелгән",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> тамғаһында рөхсәт ителмәгән параметр бар",
-	"cite_error_references_no_backlink_label": "Кире ҡайтарыу гиперһылтанмалары өсөн символдар етмәй. [[MediaWiki:Cite references link many format backlink labels]] система хәбәрен киңәйтергә кәрәк.",
-	"cite_error_no_link_label_group": "\"$1\" төркөмө өсөн ҡатнашыусы һылтанмалары билдәләре етмәй. [[MediaWiki:$2]] система хәбәрендә күберәк тәғәйенләгеҙ.",
 	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> тамғаһы дөрөҫ түгел;\n<code>$1</code> төшөрмәләре өсөн текст юҡ",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> тамғаһы өсөн <code>&lt;/ref&gt;</code> ябыу тамғаһы юҡ",
 	"cite_error_group_refs_without_references": "\"$1\" төркөмөнөң ғәмәлдәге <code>&lt;ref&gt;</code> тамғалары өсөн кәрәкле <code>&lt;references group=\"$1\"/&gt;</code> тамғаһы табылманы",

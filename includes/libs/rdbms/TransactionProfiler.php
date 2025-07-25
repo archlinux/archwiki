@@ -19,6 +19,7 @@
  */
 namespace Wikimedia\Rdbms;
 
+use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -58,7 +59,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 
 	/**
 	 * @var array[][] Map of (trx ID => list of (query name, start time, end time))
-	 * @phan-var array<string,array<int,array{0:string,1:float,2:float}>>
+	 * @phan-var array<string,array<int,array{0:string|GeneralizedSQL,1:float,2:float}>>
 	 */
 	private $dbTrxMethodTimes;
 
@@ -115,7 +116,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 		$this->statsFactory = StatsFactory::newNull();
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -243,6 +244,29 @@ class TransactionProfiler implements LoggerAwareInterface {
 	}
 
 	/**
+	 * Get the expectation associated with a specific event name.
+	 *
+	 * This will return the value of the expectation even if the event is silenced.
+	 *
+	 * Use this to check if a specific event is allowed before performing it, such as checking
+	 * if the request will allow writes before performing them and instead deferring the writes
+	 * to outside the request.
+	 *
+	 * @since 1.44
+	 * @param string $event Event name. Valid event names are defined in {@see self::EVENT_NAMES}
+	 * @return float|int Maximum event count, event value, or total event value
+	 *    depending on the type of event.
+	 * @throws InvalidArgumentException If the provided event name is not one in {@see self::EVENT_NAMES}
+	 */
+	public function getExpectation( string $event ) {
+		if ( !isset( $this->expect[$event] ) ) {
+			throw new InvalidArgumentException( "Unrecognised event name '$event' provided." );
+		}
+
+		return $this->expect[$event][self::FLD_LIMIT];
+	}
+
+	/**
 	 * Mark a DB as having been connected to with a new handle
 	 *
 	 * Note that there can be multiple connections to a single DB.
@@ -303,7 +327,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 *
 	 * This assumes that all queries are synchronous (non-overlapping)
 	 *
-	 * @param string|GeneralizedSql|Query $query Function name or generalized SQL
+	 * @param string|GeneralizedSql $query Function name or generalized SQL
 	 * @param float $sTime Starting UNIX wall time
 	 * @param bool $isWrite Whether this is a write query
 	 * @param int|null $rowCount Number of affected/read rows
@@ -491,7 +515,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 
 	/**
 	 * @param string $event
-	 * @param string|GeneralizedSql|Query $query
+	 * @param string|GeneralizedSql $query
 	 * @param float|int $actual
 	 * @param string|null $trxId Transaction id
 	 * @param string|null $serverName db host name like db1234
@@ -541,24 +565,18 @@ class TransactionProfiler implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @param GeneralizedSql|string|Query $query
+	 * @param GeneralizedSql|string $query
 	 * @return string
 	 */
 	private function getGeneralizedSql( $query ) {
-		if ( $query instanceof Query ) {
-			return $query->getCleanedSql();
-		}
 		return $query instanceof GeneralizedSql ? $query->stringify() : $query;
 	}
 
 	/**
-	 * @param GeneralizedSql|string|Query $query
+	 * @param GeneralizedSql|string $query
 	 * @return string
 	 */
 	private function getRawSql( $query ) {
-		if ( $query instanceof Query ) {
-			return $query->getSQL();
-		}
 		return $query instanceof GeneralizedSql ? $query->getRawSql() : $query;
 	}
 

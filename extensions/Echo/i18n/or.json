@@ -34,6 +34,7 @@
 	"echo-pref-tooltip-mention": "ମୋର ବ୍ୟବହାରକାରୀ ପୃଷ୍ଠାକୁ କେହି ଜଣେ କୌଣସି ଆଲୋଚନା ପୃଷ୍ଠାରୁ ସଂଯୋଗ କଲେ ମୋତେ ସୂଚୀତ କରନ୍ତୁ",
 	"notifications": "ସୂଚନା",
 	"tooltip-pt-notifications-alert": "{{GENDER:|ଆପଣଙ୍କ}} ପାଇଁ ସୂଚନା",
+	"tooltip-pt-notifications": "ଆପଣଙ୍କ ପାଇଁ ସୂଚନା",
 	"echo-specialpage": "ସୂଚନା",
 	"echo-none": "ଆପଣଙ୍କ ନିମନ୍ତେ କୌଣସି ସୂଚନା ନାହିଁ",
 	"notification-link-text-view-message": "ସନ୍ଦେଶ ଦେଖନ୍ତୁ",

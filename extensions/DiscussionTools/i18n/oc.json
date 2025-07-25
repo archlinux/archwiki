@@ -46,5 +46,6 @@
 	"discussiontools-topicsubscription-notify-subscribed-title": "Siatz {{GENDER:|abonat}} !",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Recebretz}} plus de notificacions sus lei comentaris regardant aquest subjècte.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|}} Siatz desabonat.",
-	"discussiontools-topicsubscription-special-title": "Subscripcions de tèmas"
+	"discussiontools-topicsubscription-special-title": "Subscripcions de tèmas",
+	"tag-discussiontools-newtopic": "Tèma nòu"
 }

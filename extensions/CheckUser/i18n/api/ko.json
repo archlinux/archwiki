@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kwj2772",
+			"McDutchie",
+			"Revi",
+			"Ykhwong",
+			"아라"
+		]
+	},
+	"apihelp-query+checkuser-summary": "특정한 사용자가 어떤 IP 주소를 썼는지 확인하거나 특정한 IP 주소를 사용한 계정 이름을 확인합니다.",
+	"apihelp-query+checkuser-param-request": "검사관 요청의 유형:",
+	"apihelp-query+checkuser-paramvalue-request-userips": "대상 사용자의 IP 주소를 가져옵니다.",
+	"apihelp-query+checkuser-paramvalue-request-actions": "대상 IP 주소 또는 대역이 수행한 동작을 가져옵니다.",
+	"apihelp-query+checkuser-paramvalue-request-ipusers": "대상 IP 주소 또는 대역에서 사용자를 가져옵니다.",
+	"apihelp-query+checkuser-param-target": "검사할 계정 이름, IP 주소 혹은 CIDR 범위",
+	"apihelp-query+checkuser-param-reason": "검사 이유.",
+	"apihelp-query+checkuser-param-limit": "검사 한도",
+	"apihelp-query+checkuser-param-timecond": "사용자 데이터의 시간 제약 (예: \"-2 weeks\" 또는 \"2 weeks ago\").",
+	"apihelp-query+checkuser-param-xff": "IP 주소 대신 XFF 데이터를 이용.",
+	"apihelp-query+checkuser-example-1": "[[User:Example]]에 대해 IP 주소 가져오기",
+	"apihelp-query+checkuser-example-2": "192.0.2.0/24가 수행한 동작을 가져오기",
+	"apihelp-query+checkuserlog-summary": "검사관 기록에서 항목을 가져옵니다.",
+	"apihelp-query+checkuserlog-param-user": "검사관의 사용자 이름",
+	"apihelp-query+checkuserlog-param-target": "검사된 사용자, IP 주소, CIDR 범위",
+	"apihelp-query+checkuserlog-param-reason": "검사 이유입니다.",
+	"apihelp-query+checkuserlog-param-limit": "검사 한도",
+	"apihelp-query+checkuserlog-param-from": "나열을 시작할 타임스탬프",
+	"apihelp-query+checkuserlog-param-to": "나열을 끝낼 타임스탬프",
+	"apihelp-query+checkuserlog-example-1": "[[User:Example]]에 대한 검사 보기",
+	"apihelp-query+checkuserlog-example-2": "192.0.2.0/24에 대한 2011-10-15T23:00:00Z 이후의 검사 보기",
+	"apierror-checkuser-missingsummary": "검사 이유를 지정해야 합니다.",
+	"apierror-checkuser-timelimit": "올바른 시간 형식(\"-2 weeks\" 혹은 \"2 weeks ago\"과 같이)으로 사용하셔야 합니다.",
+	"apierror-checkuser-invalidmode": "잘못된 요청 모드",
+	"apierror-checkuser-nosuchuser": "이 사용자 이름에 대한 해당 사용자가 없습니다",
+	"checkuser-api-help-param-direction": "정렬할 방향입니다:",
+	"checkuser-api-useragent-clienthints-revision-user-mismatch": "$1 사용자는 $2 판의 작성자가 아닙니다",
+	"checkuser-api-useragent-clienthints-mappings-exist": "$1 $2에 대해 클라이언트 힌트 매핑이 이미 존재합니다",
+	"checkuser-api-useragent-clienthints-called-too-late": "$1 $2 식별자는 클라이언트 힌트 데이터를 기록할 수 없을 만큼 너무 오래되었습니다",
+	"checkuser-api-useragent-clienthints-nonexistent-id": "$1의 $2 ID가 존재하지 않습니다",
+	"apihelp-logout-param-checkuserclienthints": "클라이언트는 ApiLogout에 대한 요청과 함께 제공된 데이터를 힌트합니다. 전적으로 내부용입니다."
+}

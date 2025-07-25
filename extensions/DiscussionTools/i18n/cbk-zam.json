@@ -8,7 +8,7 @@
 	"discussiontools-defaultsummary-reply": "Responde",
 	"discussiontoolsdebug-pagetitle": "Titulo del pagina",
 	"discussiontools-emptystate-button": "Escribi un mensaje",
-	"discussiontools-replylink": "{{responde}}",
+	"discussiontools-replylink": "responde",
 	"discussiontools-replywidget-cancel": "Cancela",
 	"discussiontools-replywidget-mode-source": "Source",
 	"discussiontools-replywidget-reply": "{{GENDER:|Responde}}",

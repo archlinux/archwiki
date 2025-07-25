@@ -104,7 +104,7 @@
 	"prefs-help-email": "Vapaaehtoinen, mutta tarvitaan uuden salasanan pyytämiseen, jos unohdat salasanasi.",
 	"prefs-help-email-required": "Sähköpostiosoite on pakollinen.",
 	"prefs-help-email-others": "Voit myös antaa muiden käyttäjien ottaa yhteyttä sinuun sähköpostilla. Osoitteesi ei paljastu toisen käyttäjän ottaessa sinuun yhteyttä.",
-	"tog-requireemail": "Lähetä salasanan nollausviesti vain, kun sekä sähköpostiosoite että käyttäjänimi on annettu.",
+	"tog-requireemail": "Lähetä salasanan nollausviesti vain, kun sekä sähköpostiosoite että käyttäjänimi on annettu",
 	"prefs-help-requireemail": "Tämä parantaa yksityisyyttä ja auttaa estämään epätoivottuja sähköposteja.",
 	"noemailprefs": "Sähköpostiosoitetta ei ole määritelty.",
 	"emailnotauthenticated": "Sähköpostiosoitettasi ei ole vielä varmennettu.\nSähköpostia ei lähetetä liittyen alla oleviin toimintoihin.",
@@ -251,6 +251,7 @@
 	"search-thumbnail-extra-namespaces-label": "Näytä hakutulosten pienoiskuvat työpöytänäkymässä",
 	"search-thumbnail-extra-namespaces-message": "Näyttää pienoiskuvat {{PLURAL:$2|nimiavaruuden|nimiavaruuksien}} $1 hakutuloksille sivulla {{#special:search}}",
 	"prefs-advancedsearchoptions": "Lisäasetukset",
+	"prefs-misc": "Muut",
 	"prefs-reset-intro": "Voit käyttää tätä sivua palauttaaksesi kaikki asetuksesi sivuston oletusasetuksiin. Tätä ei voi kumota.",
 	"prefs-reset-confirm": "Kyllä, haluan nollata asetukseni.",
 	"restoreprefs": "Palauta kaikki oletusasetuksiin"

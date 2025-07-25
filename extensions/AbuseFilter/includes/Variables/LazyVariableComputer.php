@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Variables;
 
+use InvalidArgumentException;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
@@ -10,6 +11,8 @@ use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\Language\Language;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
@@ -37,7 +40,6 @@ use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\SelectQueryBuilder;
-use WikiPage;
 
 /**
  * Service used to compute lazy-loaded variable.
@@ -275,7 +277,7 @@ class LazyVariableComputer {
 				self::$profilingExtraTime += ( microtime( true ) - $startTime );
 				break;
 			case 'links-from-database':
-				/** @var WikiPage $article */
+				/** @var PageIdentity $article */
 				$article = $parameters['article'];
 				$this->logger->debug( 'Loading old_links from DB' );
 				$result = $this->getLinksFromDB( $article );
@@ -302,19 +304,29 @@ class LazyVariableComputer {
 					} else {
 						// Note: as of core change r727361, the PP limit comments (which we don't want to be here)
 						// are already excluded.
-						$result = $editInfo->getOutput()->getText();
+						$popts = $editInfo->popts;
+						$result = $editInfo->getOutput()->runOutputPipeline( $popts, [] )->getContentHolderText();
 					}
 					self::$profilingExtraTime += ( microtime( true ) - $startTime );
 				} else {
 					$result = '';
 				}
 				break;
+			case 'pst-from-update':
+				/** @var PreparedUpdate $update */
+				$update = $parameters['update'];
+				$result = $this->textExtractor->revisionToString(
+					$update->getRevision(),
+					$parameters['contextUser']
+				);
+				break;
 			case 'html-from-update':
 				/** @var PreparedUpdate $update */
 				$update = $parameters['update'];
 				// Shared with the edit, don't count it in profiling
 				$startTime = microtime( true );
-				$result = $update->getCanonicalParserOutput()->getText();
+				$popts = $update->getRenderedRevision()->getOptions();
+				$result = $update->getCanonicalParserOutput()->runOutputPipeline( $popts, [] )->getContentHolderText();
 				self::$profilingExtraTime += ( microtime( true ) - $startTime );
 				break;
 			case 'strip-html':
@@ -435,39 +447,14 @@ class LazyVariableComputer {
 				$asOf = $parameters['asof'];
 				$result = (int)wfTimestamp( TS_UNIX, $asOf ) - (int)wfTimestamp( TS_UNIX, $firstRevisionTime );
 				break;
-			case 'revision-age-by-id':
-				$timestamp = $this->revisionLookup->getTimestampFromId( $parameters['revid'] );
-				if ( !$timestamp ) {
-					$result = null;
-					break;
-				}
-				$asOf = $parameters['asof'];
-				$result = (int)wfTimestamp( TS_UNIX, $asOf ) - (int)wfTimestamp( TS_UNIX, $timestamp );
-				break;
-			case 'revision-age-by-title':
-				/** @var Title $title */
-				$title = $parameters['title'];
-				$revRec = $this->revisionLookup->getRevisionByTitle( $title );
+			case 'revision-age':
+				$revRec = $this->getRevisionFromParameters( $parameters );
 				if ( !$revRec ) {
 					$result = null;
 					break;
 				}
 				$asOf = $parameters['asof'];
 				$result = (int)wfTimestamp( TS_UNIX, $asOf ) - (int)wfTimestamp( TS_UNIX, $revRec->getTimestamp() );
-				break;
-			case 'previous-revision-age':
-				$revRec = $this->revisionLookup->getRevisionById( $parameters['revid'] );
-				if ( !$revRec ) {
-					$result = null;
-					break;
-				}
-				$prev = $this->revisionLookup->getPreviousRevision( $revRec );
-				if ( !$prev ) {
-					$result = null;
-					break;
-				}
-				$asOf = $parameters['asof'] ?? $revRec->getTimestamp();
-				$result = (int)wfTimestamp( TS_UNIX, $asOf ) - (int)wfTimestamp( TS_UNIX, $prev->getTimestamp() );
 				break;
 			case 'length':
 				$s = $getVarCB( $parameters['length-var'] )->toString();
@@ -478,12 +465,12 @@ class LazyVariableComputer {
 				$v2 = $getVarCB( $parameters['val2-var'] )->toInt();
 				$result = $v1 - $v2;
 				break;
-			case 'content-model-by-id':
-				$revRec = $this->revisionLookup->getRevisionById( $parameters['revid'] );
+			case 'content-model':
+				$revRec = $this->getRevisionFromParameters( $parameters );
 				$result = $this->getContentModelFromRevision( $revRec );
 				break;
-			case 'revision-text-by-id':
-				$revRec = $this->revisionLookup->getRevisionById( $parameters['revid'] );
+			case 'revision-text':
+				$revRec = $this->getRevisionFromParameters( $parameters );
 				$result = $this->textExtractor->revisionToString( $revRec, $parameters['contextUser'] );
 				break;
 			case 'get-wiki-name':
@@ -507,11 +494,11 @@ class LazyVariableComputer {
 	}
 
 	/**
-	 * @param WikiPage $article
+	 * @param PageIdentity $page
 	 * @return array
 	 */
-	private function getLinksFromDB( WikiPage $article ) {
-		$id = $article->getId();
+	private function getLinksFromDB( PageIdentity $page ): array {
+		$id = $page->getId();
 		if ( !$id ) {
 			return [];
 		}
@@ -573,6 +560,26 @@ class LazyVariableComputer {
 				return array_keys( $users );
 			}
 		);
+	}
+
+	/**
+	 * @param array{revid?:int,title?:Title,parent?:true} $params
+	 * @return ?RevisionRecord
+	 */
+	private function getRevisionFromParameters( array $params ): ?RevisionRecord {
+		if ( isset( $params['revid'] ) ) {
+			$revision = $this->revisionLookup->getRevisionById( $params['revid'] );
+		} elseif ( isset( $params['title'] ) ) {
+			$revision = $this->revisionLookup->getRevisionByTitle( $params['title'] );
+		} else {
+			throw new InvalidArgumentException(
+				"Either 'revid' or 'title' are mandatory revision specifiers"
+			);
+		}
+		if ( ( $params['parent'] ?? false ) && $revision !== null ) {
+			$revision = $this->revisionLookup->getPreviousRevision( $revision );
+		}
+		return $revision;
 	}
 
 	/**

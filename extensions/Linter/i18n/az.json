@@ -18,6 +18,8 @@
 	"linter-category-deletable-table-tag-desc": "Bu səhifələrdə silinməli olan cədvəl teqləri var.",
 	"linter-category-duplicate-ids": "Dublikat idlər",
 	"linter-category-duplicate-ids-desc": "Bu səhifələrdə dublikat id atributları olan elementlər var.",
+	"linter-category-empty-heading": "Boş başlıqlar",
+	"linter-category-empty-heading-desc": "Bu səhifələrdə boş başlıqlar var.",
 	"linter-category-fostered": "Təşviq edilmiş məzmun",
 	"linter-category-fostered-desc": "Bu səhifələrin məzmunu təşviq edilib.",
 	"linter-category-fostered-transparent": "Renderdə görünməyən məzmun",

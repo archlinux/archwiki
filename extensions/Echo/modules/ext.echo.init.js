@@ -235,7 +235,12 @@ function initDesktop() {
 			const echoApi = new mw.echo.api.EchoApi();
 			echoApi.fetchNotifications( clickedSection )
 				.then( ( data ) => {
-					mw.track( 'timing.MediaWiki.echo.overlay.api', mw.now() - timeOfClick );
+					const now = mw.now();
+					mw.track( 'stats.mediawiki_echo_overlay_seconds', now - timeOfClick, {
+						component: 'api'
+					} );
+					// TODO remove graphite compatible call once new dashboards are created, T359347
+					mw.track( 'timing.MediaWiki.echo.overlay.api', now - timeOfClick );
 					return data;
 				} );
 
@@ -244,16 +249,33 @@ function initDesktop() {
 				const selectedWidget = clickedSection === 'alert' ? mw.echo.ui.alertWidget : mw.echo.ui.messageWidget;
 				selectedWidget.once( 'finishLoading', () => {
 					// Log timing after notifications are shown
-					mw.track( 'timing.MediaWiki.echo.overlay', mw.now() - timeOfClick );
+					const notificationsLoadedTime = mw.now();
+					mw.track( 'stats.mediawiki_echo_overlay_seconds', notificationsLoadedTime - timeOfClick, {
+						component: 'none'
+					} );
+					// TODO remove graphite compatible call once new dashboards are created, T359347
+					mw.track( 'timing.MediaWiki.echo.overlay', notificationsLoadedTime - timeOfClick );
 				} );
 				selectedWidget.popup.toggle( true );
-				mw.track( 'timing.MediaWiki.echo.overlay.ooui', mw.now() - timeOfClick );
+				const now = mw.now();
+				mw.track( 'stats.mediawiki_echo_overlay_seconds', now - timeOfClick, {
+					component: 'ooui'
+				} );
+				// TODO remove graphite compatible call once new dashboards are created, T359347
+				mw.track( 'timing.MediaWiki.echo.overlay.ooui', now - timeOfClick );
 
 				if ( hasUnseenAlerts || hasUnseenMessages ) {
 					// Clicked on the flyout due to having unread notifications
 					// This is part of tracking how likely users are to click a badge with unseen notifications.
 					// The other part is the 'echo.unseen' counter, see EchoHooks::onSkinTemplateNavigationUniversal().
+					// TODO: remove the dedicated Graphite metric counter.MediaWiki.echo.unseen.click once
+					// dashboard consuming Prometheus is setup, T381607
 					mw.track( 'counter.MediaWiki.echo.unseen.click' );
+					mw.track( 'stats.mediawiki_echo_unseen_click_total', 1, {
+						wiki: mw.config.get( 'wgDBname' ),
+						// eslint-disable-next-line camelcase
+						user_type: getUserTypeForStats()
+					} );
 				}
 			}, () => {
 				// Un-dim badge if loading failed
@@ -281,6 +303,23 @@ function initDesktop() {
 
 	} );
 
+}
+
+/**
+ * Get the user type for stats metrics
+ * Needs to be in sync with Echo/includes/Hooks.php
+ *
+ * @return {string}
+ */
+function getUserTypeForStats() {
+	if ( mw.user.isAnon() ) {
+		return 'ip';
+	} else if ( mw.user.isTemp() ) {
+		return 'temp';
+	} else if ( mw.user.isNamed() ) {
+		return 'registered';
+	}
+	return 'unknown';
 }
 
 /**

@@ -21,36 +21,50 @@
 namespace MediaWiki\Extension\OATHAuth;
 
 use InvalidArgumentException;
+use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class OATHAuthModuleRegistry {
 
 	private IConnectionProvider $dbProvider;
+	private ObjectFactory $objectFactory;
 
 	/** @var array */
-	private $modules;
+	private array $modules;
 
 	/** @var array|null */
-	private $moduleIds;
+	private ?array $moduleIds = null;
 
 	public function __construct(
 		IConnectionProvider $dbProvider,
+		ObjectFactory $objectFactory,
 		array $modules
 	) {
 		$this->dbProvider = $dbProvider;
+		$this->objectFactory = $objectFactory;
 		$this->modules = $modules;
 	}
 
-	public function getModuleByKey( string $key ): ?IModule {
-		if ( isset( $this->getModules()[$key] ) ) {
-			$module = call_user_func_array( $this->getModules()[$key], [] );
-			if ( !$module instanceof IModule ) {
-				return null;
-			}
-			return $module;
+	public function moduleExists( string $moduleKey ): bool {
+		return isset( $this->getModules()[$moduleKey] );
+	}
+
+	public function getModuleByKey( string $key ): IModule {
+		if ( !isset( $this->getModules()[$key] ) ) {
+			throw new InvalidArgumentException( "No such two-factor module $key" );
 		}
 
-		return null;
+		$data = $this->getModules()[$key];
+		if ( is_callable( $data ) ) {
+			$module = $data();
+		} else {
+			$module = $this->objectFactory->createObject(
+				$data,
+				[ 'assertClass' => IModule::class ]
+			);
+		}
+
+		return $module;
 	}
 
 	/**
@@ -61,11 +75,7 @@ class OATHAuthModuleRegistry {
 	public function getAllModules(): array {
 		$modules = [];
 		foreach ( $this->getModules() as $key => $callback ) {
-			$module = $this->getModuleByKey( $key );
-			if ( !( $module instanceof IModule ) ) {
-				continue;
-			}
-			$modules[$key] = $module;
+			$modules[$key] = $this->getModuleByKey( $key );
 		}
 		return $modules;
 	}

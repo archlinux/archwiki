@@ -24,16 +24,16 @@ use MediaWiki\Content\JavaScriptContent;
 use MediaWiki\Content\JavaScriptContentHandler;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Content\WikitextContentHandler;
+use MediaWiki\JobQueue\Jobs\RefreshLinksJob;
 use MediaWiki\Linter\LintUpdate;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
-use RefreshLinksJob;
-use WikiPage;
 
 /**
  * @group Database
@@ -86,7 +86,7 @@ class LintUpdateTest extends MediaWikiIntegrationTestCase {
 		$contentHandlers = $this->getConfVar( MainConfigNames::ContentHandlers );
 		$this->overrideConfigValue( MainConfigNames::ContentHandlers, [
 			CONTENT_MODEL_JAVASCRIPT => [
-				'factory' => fn () => $contentHandler,
+				'factory' => static fn () => $contentHandler,
 			],
 		] + $contentHandlers );
 
@@ -133,7 +133,7 @@ class LintUpdateTest extends MediaWikiIntegrationTestCase {
 		$contentHandlers = $this->getConfVar( MainConfigNames::ContentHandlers );
 		$this->overrideConfigValue( MainConfigNames::ContentHandlers, [
 			CONTENT_MODEL_WIKITEXT => [
-				'factory' => fn () => $contentHandler,
+				'factory' => static fn () => $contentHandler,
 			],
 		] + $contentHandlers );
 

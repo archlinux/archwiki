@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"129femtoseconds",
+			"Kokage si",
 			"Marine-Blue",
 			"MathXplore",
 			"Ochaochaocha3",
@@ -15,7 +16,6 @@
 			"Yusuke1109",
 			"ネイ",
 			"春春眠眠",
-			"Kokage si",
 			"Foomin10"
 		]
 	},
@@ -81,7 +81,6 @@
 	"log-action-filter-oath-verify": "二要素認証が有効になっているかどうかを確認する",
 	"log-action-filter-oath-disable-other": "別の利用者の二要素認証の無効化",
 	"oathauth-ui-no-module": "有効になっていません",
-	"oathauth-module-invalid": "利用者が登録した OATHAuth モジュールが無効です。",
 	"oathauth-module-totp-label": "TOTP（ワンタイムトークン）",
 	"oathauth-ui-manage": "管理",
 	"oathmanage": "二要素認証の管理",
@@ -100,9 +99,6 @@
 	"oathauth-disable-method-warning-button-label": "確認して続行",
 	"oathauth-disable-method-warning": "二要素認証方法 $1 を無効にすると、ログイン時にこの方法を使用できなくなり、この認証方法に関連付けられているすべてのデータが削除されます。",
 	"oathauth-disable-method-next-step": "次の手順では、二要素認証を無効にするために、現在の二要素認証方法 ($1) を使用して認証する必要があります。",
-	"oathauth-switch-method-warning-header": "別の認証方法への切り替えを確認",
-	"oathauth-switch-method-warning": "認証方式を$2に切り替えると現在の認証方式（$1）は無効化されます。現在の認証方式に関連付けられているすべてのデータは削除されます。",
-	"oathauth-switch-method-next-step": "次のステップでは、 二要素認証方法 $2に切り替えるために、現在の二要素認証方法 ($1) で認証する必要があります。",
 	"oathauth-totp-disable-warning": "このアカウントに登録されている認証デバイスは使用できなくなります。このアカウントに関連付けられたすべてのリカバリーコードは無効になります。",
 	"oathauth-invalidrequest": "無効なリクエスト",
 	"notification-header-oathauth-disable": "{{GENDER:$2|あなたのアカウント}}で二要素認証が無効になりました。",

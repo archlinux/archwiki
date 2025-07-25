@@ -23,12 +23,12 @@
 
 namespace MediaWiki\SpecialPage;
 
-use LogEventsList;
 use MediaWiki\Block\Block;
 use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\Field\HTMLMultiSelectField;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\ContribsPager;
 use MediaWiki\Pager\ContributionsPager;
@@ -66,6 +66,9 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * @since 1.43 Refactored from SpecialContributions
  */
 class ContributionsSpecialPage extends IncludableSpecialPage {
+
+	use ContributionsRangeTrait;
+
 	/** @var array */
 	protected $opts = [];
 	/** @var bool */
@@ -123,6 +126,17 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 	 * @inheritDoc
 	 */
 	public function execute( $par ) {
+		$request = $this->getRequest();
+		$target = $request->getText( 'target' );
+
+		if ( $target !== '' ) {
+			// Update the value in the request so that code reading it
+			// directly form the request gets the trimmed value (T378279).
+			$request->setVal( 'target', trim( $target ) );
+		}
+
+		$target = trim( $par ?? $target );
+
 		$this->setHeaders();
 		$this->outputHeader();
 		$this->checkPermissions();
@@ -140,11 +154,6 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			'mediawiki.page.ready'
 		] );
 		$this->addHelpLink( 'Help:User contributions' );
-
-		$request = $this->getRequest();
-
-		$target = $par ?? $request->getVal( 'target', '' );
-		'@phan-var string $target'; // getVal does not return null here
 
 		// Normalize underscores that may be present in the target parameter
 		// if it was passed in as a path param, rather than a query param
@@ -225,8 +234,15 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			$out->addHTML( $this->getForm( $this->opts ) );
 			return;
 		}
+		// Add warning message if user doesn't exist
+		$this->addContributionsSubWarning( $userObj );
+
 		$out->addSubtitle( $this->contributionsSub( $userObj, $target ) );
-		$out->setPageTitleMsg( $this->msg( $this->getResultsPageTitleMessageKey( $userObj ), $target ) );
+		$out->setPageTitleMsg(
+			$this->msg( $this->getResultsPageTitleMessageKey( $userObj ) )
+				->rawParams( Html::element( 'bdi', [], $target ) )
+				->params( $target )
+		);
 
 		# For IP ranges, we want the contributionsSub, but not the skin-dependent
 		# links under 'Tools', which may include irrelevant links like 'Logs'.
@@ -315,11 +331,12 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			$userIdentity = $notExternal ? $userObj :
 				$this->userIdentityLookup->getUserIdentityByName( $target ) ?? $userObj;
 			$pager = $this->getPager( $userIdentity );
-			if ( IPUtils::isValidRange( $target ) &&
-				!ContribsPager::isQueryableRange( $target, $this->getConfig() )
+			if (
+				IPUtils::isValidRange( $target ) &&
+				!$this->isQueryableRange( $target, $this->getConfig() )
 			) {
 				// Valid range, but outside CIDR limit.
-				$limits = $this->getConfig()->get( MainConfigNames::RangeContributionsCIDRLimit );
+				$limits = $this->getQueryableRangeLimit( $this->getConfig() );
 				$limit = $limits[ IPUtils::isIPv4( $target ) ? 'IPv4' : 'IPv6' ];
 				$out->addWikiMsg( 'sp-contributions-outofrange', $limit );
 			} else {
@@ -333,28 +350,25 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 				}
 				$work = new PoolCounterWorkViaCallback( 'Special' . $this->mName, $poolKey, [
 					'doWork' => function () use ( $pager, $out, $target ) {
-						if ( !$pager->getNumRows() ) {
-							$out->addWikiMsg( 'nocontribs', $target );
-						} else {
-							# Show a message about replica DB lag, if applicable
-							$lag = $pager->getDatabase()->getSessionLagStatus()['lag'];
-							if ( $lag > 0 ) {
-								$out->showLagWarning( $lag );
-							}
-
-							$output = $pager->getBody();
-							if ( !$this->including() ) {
-								$output = $pager->getNavigationBar() .
-									$output .
-									$pager->getNavigationBar();
-							}
-							$out->addHTML( $output );
+						# Show a message about replica DB lag, if applicable
+						$lag = $pager->getDatabase()->getSessionLagStatus()['lag'];
+						if ( $lag > 0 ) {
+							$out->showLagWarning( $lag );
 						}
+
+						$output = $pager->getBody();
+						if ( !$this->including() ) {
+							$output = $pager->getNavigationBar() .
+								$output .
+								$pager->getNavigationBar();
+						}
+						$out->addHTML( $output );
 					},
 					'error' => function () use ( $out ) {
 						$msg = $this->getUser()->isAnon()
 							? 'sp-contributions-concurrency-ip'
 							: 'sp-contributions-concurrency-user';
+						$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 						$out->addHTML(
 							Html::errorBox(
 								$out->msg( $msg )->parse()
@@ -368,8 +382,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			$out->setPreventClickjacking( $pager->getPreventClickjacking() );
 
 			# Show the appropriate "footer" message - WHOIS tools, etc.
-			if ( IPUtils::isValidRange( $target ) &&
-				ContribsPager::isQueryableRange( $target, $this->getConfig() )
+			if ( $this->isQueryableRange( $target, $this->getConfig() )
 			) {
 				$message = 'sp-contributions-footer-anon-range';
 			} elseif ( IPUtils::isIPAddress( $target ) ) {
@@ -404,50 +417,11 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 	 * @return string Appropriately-escaped HTML to be output literally
 	 */
 	protected function contributionsSub( $userObj, $targetName ) {
-		$isAnon = $userObj->isAnon();
-		if ( !$isAnon && $userObj->isHidden() &&
-			!$this->permissionManager->userHasRight( $this->getUser(), 'hideuser' )
-		) {
-			// T120883 if the user is hidden and the viewer cannot see hidden
-			// users, pretend like it does not exist at all.
-			$isAnon = true;
-		}
+		$out = $this->getOutput();
+		$user = $this->getUserLink( $userObj );
 
-		if ( $isAnon ) {
-			// Show a warning message that the user being searched for doesn't exist.
-			// UserNameUtils::isIP returns true for IP address and usemod IPs like '123.123.123.xxx',
-			// but returns false for IP ranges. We don't want to suggest either of these are
-			// valid usernames which we would with the 'contributions-userdoesnotexist' message.
-			if ( !$this->userNameUtils->isIP( $userObj->getName() )
-				&& !IPUtils::isValidRange( $userObj->getName() )
-			) {
-				$this->getOutput()->addHTML( Html::warningBox(
-					$this->getOutput()->msg( 'contributions-userdoesnotexist',
-						wfEscapeWikiText( $userObj->getName() ) )->parse(),
-					'mw-userpage-userdoesnotexist'
-				) );
-				if ( !$this->including() ) {
-					$this->getOutput()->setStatusCode( 404 );
-				}
-			}
-			$user = htmlspecialchars( $userObj->getName() );
-		} else {
-			$user = $this->getLinkRenderer()->makeLink( $userObj->getUserPage(), $userObj->getName() );
-		}
-		$nt = $userObj->getUserPage();
-		$talk = $userObj->getTalkPage();
 		$links = '';
-
-		// T211910. Don't show action links if a range is outside block limit
-		$showForIp = IPUtils::isValid( $userObj ) ||
-			( IPUtils::isValidRange( $userObj ) && ContribsPager::isQueryableRange( $userObj, $this->getConfig() ) );
-
-		// T276306. if the user is hidden and the viewer cannot see hidden, pretend that it does not exist
-		$registeredAndVisible = $userObj->isRegistered() && ( !$userObj->isHidden()
-				|| $this->permissionManager->userHasRight( $this->getUser(), 'hideuser' ) );
-
-		$shouldShowLinks = $talk && ( $registeredAndVisible || $showForIp );
-		if ( $shouldShowLinks ) {
+		if ( $this->shouldDisplayActionLinks( $userObj ) ) {
 			$tools = $this->getUserLinks(
 				$this,
 				$userObj
@@ -466,43 +440,58 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 				// For IP ranges you must give DatabaseBlock::newFromTarget the CIDR string
 				// and not a user object.
 				if ( IPUtils::isValidRange( $userObj->getName() ) ) {
-					$block = $this->blockStore
-						->newFromTarget( $userObj->getName(), $userObj->getName() );
+					$blocks = $this->blockStore->newListFromTarget(
+						$userObj->getName(), $userObj->getName(), false,
+						DatabaseBlockStore::AUTO_NONE );
 				} else {
-					$block = $this->blockStore->newFromTarget( $userObj, $userObj );
+					$blocks = $this->blockStore->newListFromTarget(
+						$userObj, $userObj, false, DatabaseBlockStore::AUTO_NONE );
 				}
 
-				if ( $block !== null && $block->getType() != Block::TYPE_AUTO ) {
-					if ( $block->getType() == Block::TYPE_RANGE ) {
-						$nt = $this->namespaceInfo->getCanonicalName( NS_USER )
-							. ':' . $block->getTargetName();
+				$sitewide = false;
+				$logTargetPage = '';
+				foreach ( $blocks as $block ) {
+					if ( $block->isSitewide() ) {
+						$sitewide = true;
 					}
+					$logTargetPage = $this->namespaceInfo->getCanonicalName( NS_USER ) .
+						':' . $block->getTargetName();
+				}
 
-					$out = $this->getOutput(); // showLogExtract() wants first parameter by reference
-					if ( $userObj->isAnon() ) {
-						$msgKey = $block->isSitewide() ?
-							'sp-contributions-blocked-notice-anon' :
-							'sp-contributions-blocked-notice-anon-partial';
+				if ( count( $blocks ) ) {
+					if ( count( $blocks ) === 1 ) {
+						if ( $userObj->isAnon() ) {
+							$msgKey = $sitewide ?
+								'sp-contributions-blocked-notice-anon' :
+								'sp-contributions-blocked-notice-anon-partial';
+						} else {
+							$msgKey = $sitewide ?
+								'sp-contributions-blocked-notice' :
+								'sp-contributions-blocked-notice-partial';
+						}
 					} else {
-						$msgKey = $block->isSitewide() ?
-							'sp-contributions-blocked-notice' :
-							'sp-contributions-blocked-notice-partial';
+						if ( $userObj->isAnon() ) {
+							$msgKey = 'sp-contributions-blocked-notice-anon-multi';
+						} else {
+							$msgKey = 'sp-contributions-blocked-notice-multi';
+						}
 					}
 					// Allow local styling overrides for different types of block
-					$class = $block->isSitewide() ?
+					$class = $sitewide ?
 						'mw-contributions-blocked-notice' :
 						'mw-contributions-blocked-notice-partial';
 					LogEventsList::showLogExtract(
 						$out,
 						'block',
-						$nt,
+						$logTargetPage,
 						'',
 						[
 							'lim' => 1,
 							'showIfEmpty' => false,
 							'msgKey' => [
 								$msgKey,
-								$userObj->getName() # Support GENDER in 'sp-contributions-blocked-notice'
+								$userObj->getName(), # Support GENDER in 'sp-contributions-blocked-notice'
+								count( $blocks )
 							],
 							'offset' => '', # don't use WebRequest parameter offset
 							'wrap' => Html::rawElement(
@@ -519,12 +508,14 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		// First subheading. "For Username (talk | block log | logs | etc.)"
 		$userName = $userObj->getName();
 		$subHeadingsHtml = Html::rawElement( 'div', [ 'class' => 'mw-contributions-user-tools' ],
-			$this->msg( 'contributions-subtitle' )->rawParams( $user )->params( $userName )
+			$this->msg( 'contributions-subtitle' )->rawParams(
+				Html::rawElement( 'bdi', [], $user )
+			)->params( $userName )
 			. ' ' . $links
 		);
 
 		// Second subheading. "A user with 37,208 edits. Account created on 2008-09-17."
-		if ( $talk && $registeredAndVisible ) {
+		if ( $this->shouldDisplayAccountInformation( $userObj ) ) {
 			$editCount = $userObj->getEditCount();
 			$userInfo = $this->msg( 'contributions-edit-count' )
 				->params( $userName )
@@ -549,6 +540,90 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		}
 
 		return $subHeadingsHtml;
+	}
+
+	/**
+	 * Generate and append the "user not registered" warning message if the target does not exist and is a username
+	 *
+	 * @param User $userObj User object for the target
+	 */
+	protected function addContributionsSubWarning( $userObj ) {
+		$out = $this->getOutput();
+		$isAnon = $userObj->isAnon();
+
+		// Show a warning message that the user being searched for doesn't exist.
+		// UserNameUtils::isIP returns true for IP address and usemod IPs like '123.123.123.xxx',
+		// but returns false for IP ranges. We don't want to suggest either of these are
+		// valid usernames which we would with the 'contributions-userdoesnotexist' message.
+		if (
+			$isAnon &&
+			!$this->userNameUtils->isIP( $userObj->getName() )
+			&& !IPUtils::isValidRange( $userObj->getName() )
+		) {
+			$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+			$out->addHTML( Html::warningBox(
+				$out->msg( 'contributions-userdoesnotexist',
+					wfEscapeWikiText( $userObj->getName() ) )->parse(),
+				'mw-userpage-userdoesnotexist'
+			) );
+			if ( !$this->including() ) {
+				$out->setStatusCode( 404 );
+			}
+		}
+	}
+
+	/**
+	 * Determine whether or not to show the user action links
+	 *
+	 * @param User $userObj User object for the target
+	 * @return bool
+	 */
+	protected function shouldDisplayActionLinks( User $userObj ): bool {
+		// T211910. Don't show action links if a range is outside block limit
+		$showForIp = $this->isValidIPOrQueryableRange( $userObj, $this->getConfig() );
+
+		$talk = $userObj->getTalkPage();
+
+		// T276306. if the user is hidden and the viewer cannot see hidden, pretend that it does not exist
+		$registeredAndVisible = $userObj->isRegistered() && ( !$userObj->isHidden()
+				|| $this->permissionManager->userHasRight( $this->getUser(), 'hideuser' ) );
+
+		return $talk && ( $registeredAndVisible || $showForIp );
+	}
+
+	/**
+	 * Determine whether or not to show account information
+	 *
+	 * @param User $userObj User object for the target
+	 * @return bool
+	 */
+	protected function shouldDisplayAccountInformation( User $userObj ): bool {
+		$talk = $userObj->getTalkPage();
+
+		// T276306. if the user is hidden and the viewer cannot see hidden, pretend that it does not exist
+		$registeredAndVisible = $userObj->isRegistered() && (
+			!$userObj->isHidden() ||
+			$this->permissionManager->userHasRight( $this->getUser(), 'hideuser' )
+		);
+
+		return $talk && $registeredAndVisible;
+	}
+
+	/**
+	 * Get a link to the user if they exist
+	 *
+	 * @param User $userObj Target user object
+	 * @return string
+	 */
+	protected function getUserLink( User $userObj ): string {
+		if (
+			$userObj->isAnon() ||
+			( $userObj->isHidden() && !$this->getAuthority()->isAllowed( 'hideuser' ) )
+		) {
+			return htmlspecialchars( $userObj->getName() );
+		} else {
+			return $this->getLinkRenderer()->makeLink( $userObj->getUserPage(), $userObj->getName() );
+		}
 	}
 
 	/**
@@ -582,19 +657,27 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			);
 		}
 
-		# Block / Change block / Unblock links
+		# Block links
 		if ( $this->permissionManager->userHasRight( $sp->getUser(), 'block' ) ) {
 			if ( $target->getBlock() && $target->getBlock()->getType() != Block::TYPE_AUTO ) {
-				$tools['block'] = $linkRenderer->makeKnownLink( # Change block link
-					SpecialPage::getTitleFor( 'Block', $username ),
-					$sp->msg( 'change-blocklink' )->text(),
-					[ 'class' => 'mw-contributions-link-change-block' ]
-				);
-				$tools['unblock'] = $linkRenderer->makeKnownLink( # Unblock link
-					SpecialPage::getTitleFor( 'Unblock', $username ),
-					$sp->msg( 'unblocklink' )->text(),
-					[ 'class' => 'mw-contributions-link-unblock' ]
-				);
+				if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ) {
+					$tools['block'] = $linkRenderer->makeKnownLink( # Manage block link
+						SpecialPage::getTitleFor( 'Block', $username ),
+						$sp->msg( 'manage-blocklink' )->text(),
+						[ 'class' => 'mw-contributions-link-manage-block' ]
+					);
+				} else {
+					$tools['block'] = $linkRenderer->makeKnownLink( # Change block link
+						SpecialPage::getTitleFor( 'Block', $username ),
+						$sp->msg( 'change-blocklink' )->text(),
+						[ 'class' => 'mw-contributions-link-change-block' ]
+					);
+					$tools['unblock'] = $linkRenderer->makeKnownLink( # Unblock link
+						SpecialPage::getTitleFor( 'Unblock', $username ),
+						$sp->msg( 'unblocklink' )->text(),
+						[ 'class' => 'mw-contributions-link-unblock' ]
+					);
+				}
 			} else { # User is not blocked
 				$tools['block'] = $linkRenderer->makeKnownLink( # Block link
 					SpecialPage::getTitleFor( 'Block', $username ),
@@ -758,7 +841,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		$target = $this->opts['target'] ?? '';
 		$fields['target'] = $this->getTargetField( $target );
 
-		$ns = $this->opts['namespace'] ?? null;
+		$ns = $this->opts['namespace'] ?? 'all';
 		$fields['namespace'] = [
 			'type' => 'namespaceselect',
 			'label' => $this->msg( 'namespace' )->text(),
@@ -876,6 +959,9 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			'section' => 'contribs-date',
 		];
 
+		// Allow children classes to modify field options before generating HTML
+		$this->modifyFields( $fields );
+
 		$htmlForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
 		$htmlForm
 			->setMethod( 'get' )
@@ -906,6 +992,16 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		}
 
 		return $htmlForm->getHTML( $result );
+	}
+
+	/**
+	 * Allow children classes to call this function and make modifications to the
+	 * field options before they're used to create the form in getForm.
+	 *
+	 * @since 1.44
+	 * @param array &$fields
+	 */
+	protected function modifyFields( &$fields ) {
 	}
 
 	/**

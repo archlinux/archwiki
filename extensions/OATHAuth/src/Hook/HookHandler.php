@@ -5,7 +5,9 @@ namespace MediaWiki\Extension\OATHAuth\Hook;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\OATHAuth\IAuthKey;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
+use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
@@ -22,6 +24,8 @@ use MediaWiki\User\UserGroupMembership;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
+use Wikimedia\Message\ListParam;
+use Wikimedia\Message\ListType;
 
 class HookHandler implements
 	AuthChangeFormFieldsHook,
@@ -30,34 +34,21 @@ class HookHandler implements
 	UserEffectiveGroupsHook,
 	UserGetRightsHook
 {
-	/**
-	 * @var OATHUserRepository
-	 */
-	private $userRepo;
+	private OATHUserRepository $userRepo;
+	private OATHAuthModuleRegistry $moduleRegistry;
+	private PermissionManager $permissionManager;
+	private Config $config;
+	private UserGroupManager $userGroupManager;
 
-	/**
-	 * @var PermissionManager
-	 */
-	private $permissionManager;
-
-	/**
-	 * @var UserGroupManager
-	 */
-	private $userGroupManager;
-
-	/**
-	 * @var Config
-	 */
-	private $config;
-
-	/**
-	 * @param OATHUserRepository $userRepo
-	 * @param PermissionManager $permissionManager
-	 * @param Config $config
-	 * @param UserGroupManager $userGroupManager
-	 */
-	public function __construct( $userRepo, $permissionManager, $config, $userGroupManager ) {
+	public function __construct(
+		OATHUserRepository $userRepo,
+		OATHAuthModuleRegistry $moduleRegistry,
+		PermissionManager $permissionManager,
+		Config $config,
+		UserGroupManager $userGroupManager
+	) {
 		$this->userRepo = $userRepo;
+		$this->moduleRegistry = $moduleRegistry;
 		$this->permissionManager = $permissionManager;
 		$this->config = $config;
 		$this->userGroupManager = $userGroupManager;
@@ -108,11 +99,25 @@ class HookHandler implements
 			return true;
 		}
 
-		$module = $oathUser->getModule();
+		$modules = array_unique( array_map(
+			static fn ( IAuthKey $key ) => $key->getModule(),
+			$oathUser->getKeys(),
+		) );
+		$moduleNames = array_map(
+			fn ( string $moduleId ) => $this->moduleRegistry
+				->getModuleByKey( $moduleId )
+				->getDisplayName(),
+			$modules
+		);
 
-		$moduleLabel = $module === null ?
-			wfMessage( 'oathauth-ui-no-module' ) :
-			$module->getDisplayName();
+		if ( count( $moduleNames ) > 1 ) {
+			$moduleLabel = wfMessage( 'rawmessage' )
+				->params( new ListParam( ListType::AND, $moduleNames ) );
+		} elseif ( $moduleNames ) {
+			$moduleLabel = $moduleNames[0];
+		} else {
+			$moduleLabel = wfMessage( 'oathauth-ui-no-module' );
+		}
 
 		$manageButton = new ButtonWidget( [
 			'href' => SpecialPage::getTitleFor( 'OATHManage' )->getLocalURL(),
@@ -120,7 +125,7 @@ class HookHandler implements
 		] );
 
 		$currentModuleLabel = new LabelWidget( [
-			'label' => $moduleLabel->text()
+			'label' => $moduleLabel->text(),
 		] );
 
 		$control = new HorizontalLayout( [

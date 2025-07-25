@@ -60,6 +60,7 @@
 	"notifications": "Tebliği",
 	"tooltip-pt-notifications-alert": "Hayê {{GENDER:|şıma}}",
 	"tooltip-pt-notifications-notice": "Pêhesnayışê {{GENDER:|şıma}}",
+	"tooltip-pt-notifications": "Beyanatê {{GENDER:|to}}",
 	"echo-displaynotificationsconfiguration": "Eyaranê pêhesnayışa bıasne",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Gorey kategoriya pêhesnayışi",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "Rêziya tewra",

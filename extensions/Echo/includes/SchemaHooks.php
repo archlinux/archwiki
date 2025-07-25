@@ -85,6 +85,13 @@ class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
 		if ( $wgEchoSharedTrackingCluster === false && $wgEchoSharedTrackingDB === false ) {
 			$updater->addExtensionTable( 'echo_unread_wikis', "$dir/$dbType/tables-sharedtracking-generated.sql" );
 		}
+
+		// 1.44
+		$updater->dropExtensionField(
+			'echo_event',
+			'event_variant',
+			"$dir/$dbType/patch-echo_event-event_variant.sql"
+		);
 	}
 
 }

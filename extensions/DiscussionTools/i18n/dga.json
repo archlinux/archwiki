@@ -5,9 +5,9 @@
 			"Joachim Yirkang",
 			"Linus Konkor",
 			"NgmenRaphael",
+			"Woytecr",
 			"Yirkang",
-			"Zakaria Tunsung",
-			"Woytecr"
+			"Zakaria Tunsung"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Fo}} na nyɛ la duoro ka neɛ kaŋa wa wa di dɛmo paalaa a dɛmo a dɛmmo diibo zie ŋa. Fo na toɔŋ leɛre la fo duori danworo waaloŋ a yi a pɛrɛfɛrɛnsere zieŋ.",
@@ -190,9 +190,9 @@
 	"tag-discussiontools-description": "Maale emmo e yineŋ dɛmmoboma",
 	"tag-discussiontools-edit": "Maale eŋ yelteɛbo",
 	"tag-discussiontools-edit-description": "Tontonaa maale eŋe yelteɛbo neŋ dɛmmobom",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}}yelzu saama]",
+	"tag-discussiontools-newtopic": "yelzu saama",
 	"tag-discussiontools-newtopic-description": "Tontonneba eŋ la yelzu paala a gampɛle neŋ dɛmmoboma",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} nɔ-iri]",
+	"tag-discussiontools-reply": "nɔ-iri",
 	"tag-discussiontools-reply-description": "Tontona sage la a yɛlɛ a yɛlɛ dieŋ poɔ",
 	"tag-discussiontools-source-description": "Kya kya ŋa da be la a yɛlɛ yizie",
 	"tag-discussiontools-source-enhanced-description": "Yelle yaga gane ŋa da be la a sɛgebie yɛlɛ zieŋ",

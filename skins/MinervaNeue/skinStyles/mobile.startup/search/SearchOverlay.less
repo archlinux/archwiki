@@ -29,7 +29,7 @@
 
 // Calculate padding based off icon and branding box widths,
 // accounting for `box-sizing: border-box` on the icon
-@spacing-search-horizontal-ems: unit( @spacing-horizontal-button / @font-size-browser, ems );
+@spacing-search-horizontal-ems: unit( ( @spacing-horizontal-button / @font-size-browser ), em );
 
 @media all and ( min-width: @min-width-breakpoint-tablet ) {
 	.overlay.search-overlay {

@@ -75,6 +75,7 @@
 	"notifications": "การแจ้งเตือน",
 	"tooltip-pt-notifications-alert": "การเตือนของ{{GENDER:|คุณ}}",
 	"tooltip-pt-notifications-notice": "ประกาศของ{{GENDER:|คุณ}}",
+	"tooltip-pt-notifications": "การแจ้งเตือนของคุณ",
 	"echo-displaynotificationsconfiguration": "แสดงการกำหนดค่าการแจ้งเตือน",
 	"echo-displaynotificationsconfiguration-summary": "นี่เป็นภาพรวมว่าการแจ้งเตือนบนวิกินี้ถูกกำหนดค่าอย่างไร",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "การแจ้งเตือนแบ่งตามหมวดหมู่",

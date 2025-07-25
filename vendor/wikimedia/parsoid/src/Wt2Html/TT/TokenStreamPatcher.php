@@ -15,7 +15,7 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * This class is an attempt to fixup the token stream to reparse strings
@@ -46,10 +46,7 @@ class TokenStreamPatcher extends TokenHandler {
 	/** @var SelfclosingTagTk|null */
 	private $tplStartToken = null;
 
-	/** @var NlTk|null */
-	private $discardableNlTk = null;
-
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		$newOptions = [ 'tsp' => true ] + $options;
 		parent::__construct( $manager, $newOptions );
 		$this->tokenizer = new PegTokenizer( $this->env );
@@ -87,9 +84,9 @@ class TokenStreamPatcher extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onNewline( NlTk $token ): ?TokenHandlerResult {
+	public function onNewline( NlTk $token ): ?array {
 		$self = $this;
-		$this->env->log( 'trace/tsp', $this->pipelineId,
+		$this->env->trace( 'tsp', $this->pipelineId,
 			static function () use ( $self, $token ) {
 				return "(indep=" . ( $self->inIndependentParse ? "yes" : "no " ) .
 					";sol=" . ( $self->sol ? "yes" : "no " ) . ') ' .
@@ -97,27 +94,15 @@ class TokenStreamPatcher extends TokenHandler {
 			}
 		);
 		$this->srcOffset = $token->dataParsoid->tsr->end ?? null;
-		if ( $this->sol && $this->tplStartToken ) {
-			// When using core preprocessor, start-of-line start is forced by
-			// inserting a newline in certain cases (the "T2529 hack"). In the
-			// legacy parser, the T2529 hack is never applied if the template was
-			// already at the start of the line (the `!$piece['lineStart']`
-			// check in Parser::braceSubstitution where T2529 is handled), but
-			// that context (`$this->sol`) isn't passed through when Parsoid
-			// invokes the core preprocessor. Thus, when $this->sol is true,
-			// prepare to (if the following tokens warrant it) remove an unnecessary
-			// T2529 newline added by the legacy preprocessor.
-			$this->discardableNlTk = $token;
-		}
 		$this->tokenBuf[] = $token;
 		$this->sol = true;
-		return new TokenHandlerResult( [] );
+		return [];
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
+	public function onEnd( EOFTk $token ): ?array {
 		$res = $this->onAny( $token );
 		$this->reset();
 		return $res;
@@ -139,7 +124,7 @@ class TokenStreamPatcher extends TokenHandler {
 	 * @param int|false $srcOffset See TokenUtils::shiftTokenTSR, which has b/c for null
 	 * @param array $toks
 	 * @param bool $popEOF
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function reprocessTokens( $srcOffset, array $toks, bool $popEOF = false ): array {
 		// Update tsr
@@ -163,6 +148,9 @@ class TokenStreamPatcher extends TokenHandler {
 		return $toks;
 	}
 
+	/**
+	 * @return array<string|Token>
+	 */
 	private function convertTokenToString( Token $token ): array {
 		$da = $token->dataParsoid;
 		$tsr = $da->tsr ?? null;
@@ -176,12 +164,11 @@ class TokenStreamPatcher extends TokenHandler {
 		} elseif ( !empty( $da->autoInsertedStart ) && !empty( $da->autoInsertedEnd ) ) {
 			return [ '' ];
 		} else {
-			// SSS FIXME: What about "!!" and "||"??
 			switch ( $token->getName() ) {
 				case 'td':
-					return [ '|' ];
+					return [ ( $token->dataParsoid->stx ?? '' ) === 'row' ? '||' : '|' ];
 				case 'th':
-					return [ '!' ];
+					return [ ( $token->dataParsoid->stx ?? '' ) === 'row' ? '!!' : '!' ];
 				case 'tr':
 					return [ '|-' ];
 				case 'caption':
@@ -192,7 +179,6 @@ class TokenStreamPatcher extends TokenHandler {
 					return [ implode( '', $token->getAttributeV( 'bullets' ) ) ];
 			}
 
-			// No conversion if we get here
 			return [ $token ];
 		}
 	}
@@ -200,13 +186,12 @@ class TokenStreamPatcher extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
+	public function onAny( $token ): ?array {
 		try {
 			return $this->onAnyInternal( $token );
 		} finally {
-			// Ensure we always clean up discardableNlTk and tplStartToken even
+			// Ensure we always clean up tplStartToken even
 			// in the presence of exceptions.
-			$this->discardableNlTk = null;
 			if ( $this->tplStartToken !== $token ) {
 				$this->tplStartToken = null;
 			}
@@ -214,62 +199,12 @@ class TokenStreamPatcher extends TokenHandler {
 	}
 
 	/**
-	 * The legacy parser's "T2529 hack" attempts to ensure templates are
-	 * always evaluated in start-of-line context by prepending a newline
-	 * if necessary.  However, it is inconsistent: in particular it
-	 * only treats }| : ; # * as SOL-sensitive tokens, neglecting ==
-	 * (headings) and ! | |} (in table context).
-	 *
-	 * If we're using the core preprocessor for template expansion:
-	 *  - The core preprocessor as invoked by Parsoid will always insert the
-	 *    newline in the "T2529 cases" (even though it's not necessary; Parsoid
-	 *    is already in SOL mode) *HOWEVER*
-	 *  - As described in ::onNewline() above, the newline insertion is
-	 *    /supposed/ to be suppressed if the template was *already*
-	 *    at the start of the line.  So we need to strip the unnecessarily
-	 *    added NlTk to avoid "extra" whitespace in Parsoid's expansion.
-	 *     Ex: "{{my-tpl}}" in sol-context which will get expanded to "\n*foo"
-	 *     but the "\n" wasn't necessary
-	 *
-	 * If we're in native preprocessor mode:
-	 *  - If we are in SOL state, we don't need to add a newline.
-	 *  - If we are not in SOL state, we need to insert a newline in 'T2529' cases.
-	 *    Ex: "{{my-tpl}}" in sol-context which expands to "*foo" but in
-	 *    non-sol context expands to "\n*foo"
-	 *
-	 * @param string $tokenName
+	 * @param string|Token $token
+	 * @return ?array<string|Token>
 	 */
-	private function handleT2529Hack( string $tokenName ): void {
-		// Core's
-		if ( $tokenName === 'table' || $tokenName === 'listItem' ) {
-			// We're in a context when the core preprocessor would apply
-			// the "T2529 hack" to ensure start-of-line context.
-			if ( $this->discardableNlTk ) {
-				// We're using core preprocessor and were already at
-				// the start of the line, so the core preprocessor wouldn't
-				// actually have inserted a newline here.  Swallow up ours.
-				array_pop( $this->tokenBuf );
-			} elseif ( !$this->sol &&
-				$this->tplStartToken &&
-				$this->env->nativeTemplateExpansionEnabled()
-			) {
-				// Native preprocessor; add a newline in "T2529 cases"
-				// for correct whitespace. (Remember that this only happens
-				// if we weren't already at the start of the line.)
-				// Add a newline & force SOL
-				$this->tokenBuf[] = new NlTk( null );
-				$this->sol = true;
-			}
-		}
-	}
-
-	/**
-	 * @param mixed $token
-	 * @return ?TokenHandlerResult
-	 */
-	public function onAnyInternal( $token ): ?TokenHandlerResult {
+	public function onAnyInternal( $token ): ?array {
 		$self = $this;
-		$this->env->log( 'trace/tsp', $this->pipelineId,
+		$this->env->trace( 'tsp', $this->pipelineId,
 			static function () use ( $self, $token ) {
 				return "(indep=" . ( $self->inIndependentParse ? "yes" : "no " ) .
 					";sol=" . ( $self->sol ? "yes" : "no " ) . ') ' .
@@ -286,7 +221,7 @@ class TokenStreamPatcher extends TokenHandler {
 				// white-space as well.
 				if ( count( $this->tokenBuf ) > 0 && preg_match( '/^\s*$/D', $token ) ) {
 					$this->tokenBuf[] = $token;
-					return new TokenHandlerResult( [] );
+					return [];
 				}
 
 				// This is only applicable where we use Parsoid's (broken) native preprocessor.
@@ -367,7 +302,7 @@ class TokenStreamPatcher extends TokenHandler {
 						// If we have buffered newlines, we might very well encounter
 						// a category link, so continue buffering.
 						$this->tokenBuf[] = $token;
-						return new TokenHandlerResult( [] );
+						return [];
 					}
 				} elseif ( TokenUtils::isSolTransparentLinkTag( $token ) ) {
 					// Replace buffered newline & whitespace tokens with mw:EmptyLine
@@ -414,7 +349,6 @@ class TokenStreamPatcher extends TokenHandler {
 			case 'TagTk':
 				if ( $this->inIndependentParse && !TokenUtils::isHTMLTag( $token ) ) {
 					$tokenName = $token->getName();
-					$this->handleT2529Hack( $tokenName );
 					if ( $tokenName === 'listItem' && isset( $this->options['attrExpansion'] ) ) {
 						// Convert list items back to bullet wikitext in attribute context
 						$tokens = $this->convertTokenToString( $token );
@@ -458,7 +392,11 @@ class TokenStreamPatcher extends TokenHandler {
 		if ( count( $this->tokenBuf ) > 0 ) {
 			$tokens = array_merge( $this->tokenBuf, $tokens );
 			$this->tokenBuf = [];
+		} elseif ( $tokens === [ $token ] ) {
+			// Adhere to convention: if input is unmodified, return null.
+			$tokens = null;
 		}
-		return new TokenHandlerResult( $tokens );
+
+		return $tokens;
 	}
 }

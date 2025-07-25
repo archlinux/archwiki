@@ -19,115 +19,63 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use ErrorPageError;
-use JobQueueGroup;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Watchlist\WatchlistManager;
 use OOUI;
-use PermissionsError;
 use SearchEngineConfig;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 class SpecialReplaceText extends SpecialPage {
-	/** @var string */
-	private $target;
-	/** @var string */
-	private $targetString;
-	/** @var string */
-	private $replacement;
-	/** @var bool */
-	private $use_regex;
-	/** @var string */
-	private $category;
-	/** @var string */
-	private $prefix;
-	/** @var string|int */
-	private $pageLimit;
-	/** @var bool */
-	private $edit_pages;
-	/** @var bool */
-	private $move_pages;
+	private string $target;
+	private string $targetString;
+	private string $replacement;
+	private bool $use_regex;
+	private string $category;
+	private string $prefix;
+	private int $pageLimit;
+	private bool $edit_pages;
+	private bool $move_pages;
 	/** @var int[] */
-	private $selected_namespaces;
-	/** @var bool */
-	private $botEdit;
-
-	/** @var HookHelper */
-	private $hookHelper;
-
-	/** @var IConnectionProvider */
-	private $dbProvider;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var JobQueueGroup */
-	private $jobQueueGroup;
-
-	/** @var LinkRenderer */
-	private $linkRenderer;
-
-	/** @var MovePageFactory */
-	private $movePageFactory;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-
-	/** @var SearchEngineConfig */
-	private $searchEngineConfig;
-
-	/** @var NameTableStore */
-	private $slotRoleStore;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
+	private array $selected_namespaces;
+	private bool $botEdit;
+	private string $editSummary;
+	private HookHelper $hookHelper;
+	private IConnectionProvider $dbProvider;
+	private Language $contentLanguage;
+	private JobQueueGroup $jobQueueGroup;
+	private LinkRenderer $linkRenderer;
+	private MovePageFactory $movePageFactory;
+	private NamespaceInfo $namespaceInfo;
+	private PermissionManager $permissionManager;
+	private ReadOnlyMode $readOnlyMode;
+	private SearchEngineConfig $searchEngineConfig;
+	private NameTableStore $slotRoleStore;
+	private UserFactory $userFactory;
+	private UserOptionsLookup $userOptionsLookup;
 	private WatchlistManager $watchlistManager;
 	private WikiPageFactory $wikiPageFactory;
+	private Search $search;
 
-	/** @var Search */
-	private $search;
-
-	/**
-	 * @param HookContainer $hookContainer
-	 * @param IConnectionProvider $dbProvider
-	 * @param Language $contentLanguage
-	 * @param JobQueueGroup $jobQueueGroup
-	 * @param LinkRenderer $linkRenderer
-	 * @param MovePageFactory $movePageFactory
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param PermissionManager $permissionManager
-	 * @param ReadOnlyMode $readOnlyMode
-	 * @param SearchEngineConfig $searchEngineConfig
-	 * @param NameTableStore $slotRoleStore
-	 * @param UserFactory $userFactory
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param WatchlistManager $watchlistManager
-	 * @param WikiPageFactory $wikiPageFactory
-	 */
 	public function __construct(
 		HookContainer $hookContainer,
 		IConnectionProvider $dbProvider,
@@ -170,14 +118,14 @@ class SpecialReplaceText extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	public function doesWrites() {
+	public function doesWrites(): bool {
 		return true;
 	}
 
 	/**
 	 * @param null|string $query
 	 */
-	function execute( $query ) {
+	public function execute( $query ): void {
 		if ( !$this->getUser()->isAllowed( 'replacetext' ) ) {
 			throw new PermissionsError( 'replacetext' );
 		}
@@ -194,9 +142,9 @@ class SpecialReplaceText extends SpecialPage {
 		$out = $this->getOutput();
 
 		if ( $this->readOnlyMode->isReadOnly() ) {
-			$permissionErrors = [ [ 'readonlytext', [ $this->readOnlyMode->getReason() ] ] ];
+			$permissionFailure = PermissionStatus::newFatal( 'readonlytext', [ $this->readOnlyMode->getReason() ] );
 			$out->setPageTitleMsg( $this->msg( 'badaccess' ) );
-			$out->addWikiTextAsInterface( $out->formatPermissionsErrorMessage( $permissionErrors, 'replacetext' ) );
+			$out->addWikiTextAsInterface( $out->formatPermissionStatus( $permissionFailure, 'replacetext' ) );
 			return;
 		}
 
@@ -208,7 +156,7 @@ class SpecialReplaceText extends SpecialPage {
 	/**
 	 * @return array namespaces selected for search
 	 */
-	function getSelectedNamespaces() {
+	private function getSelectedNamespaces(): array {
 		$all_namespaces = $this->searchEngineConfig->searchableNamespaces();
 		$selected_namespaces = [];
 		foreach ( $all_namespaces as $ns => $name ) {
@@ -222,7 +170,7 @@ class SpecialReplaceText extends SpecialPage {
 	/**
 	 * Do the actual display and logic of Special:ReplaceText.
 	 */
-	function doSpecialReplaceText() {
+	private function doSpecialReplaceText(): void {
 		$out = $this->getOutput();
 		$request = $this->getRequest();
 
@@ -232,21 +180,19 @@ class SpecialReplaceText extends SpecialPage {
 		$this->use_regex = $request->getBool( 'use_regex' );
 		$this->category = $request->getText( 'category' );
 		$this->prefix = $request->getText( 'prefix' );
-		$this->pageLimit = $request->getText( 'pageLimit' );
+		$pageLimit = $request->getInt( 'pageLimit' );
+		$this->pageLimit = $pageLimit >= 1
+			? $pageLimit
+			: $this->getConfig()->get( 'ReplaceTextResultsLimit' );
 		$this->edit_pages = $request->getBool( 'edit_pages' );
 		$this->move_pages = $request->getBool( 'move_pages' );
 		$this->botEdit = $request->getBool( 'botEdit' );
+		$this->editSummary = $request->getText( 'wpSummary' );
 		$this->selected_namespaces = $this->getSelectedNamespaces();
 
 		if ( $request->getCheck( 'continue' ) && $this->target === '' ) {
 			$this->showForm( 'replacetext_givetarget' );
 			return;
-		}
-
-		if ( $request->getCheck( 'continue' ) && $this->pageLimit === '' ) {
-			$this->pageLimit = $this->getConfig()->get( 'ReplaceTextResultsLimit' );
-		} else {
-			$this->pageLimit = (int)$this->pageLimit;
 		}
 
 		if ( $request->getCheck( 'replace' ) ) {
@@ -370,7 +316,7 @@ class SpecialReplaceText extends SpecialPage {
 	 *
 	 * @return array jobs
 	 */
-	function createJobsForTextReplacements() {
+	private function createJobsForTextReplacements(): array {
 		$replacement_params = [
 			'user_id' => $this->getReplaceTextUser()->getId(),
 			'target_str' => $this->target,
@@ -380,10 +326,15 @@ class SpecialReplaceText extends SpecialPage {
 			'watch_page' => false,
 			'botEdit' => $this->botEdit
 		];
-		$replacement_params['edit_summary'] = $this->msg(
-			'replacetext_editsummary',
-			$this->targetString, $this->replacement
-		)->inContentLanguage()->plain();
+
+		if ( $this->editSummary === '' ) {
+			$replacement_params['edit_summary'] = $this->msg(
+				'replacetext_editsummary',
+				$this->targetString, $this->replacement
+			)->inContentLanguage()->plain();
+		} else {
+			$replacement_params['edit_summary'] = $this->editSummary;
+		}
 
 		$request = $this->getRequest();
 		foreach ( $request->getValues() as $key => $value ) {
@@ -447,7 +398,7 @@ class SpecialReplaceText extends SpecialPage {
 	 *
 	 * @return array The set of Titles and their search context strings
 	 */
-	function getTitlesForEditingWithContext() {
+	private function getTitlesForEditingWithContext(): array {
 		$titles_for_edit = [];
 
 		$res = $this->search->doSearchQuery(
@@ -491,7 +442,7 @@ class SpecialReplaceText extends SpecialPage {
 	 *
 	 * @return array
 	 */
-	function getTitlesForMoveAndUnmoveableTitles() {
+	private function getTitlesForMoveAndUnmoveableTitles(): array {
 		$titles_for_move = [];
 		$unmoveable_titles = [];
 
@@ -552,7 +503,10 @@ class SpecialReplaceText extends SpecialPage {
 	 * @param array $titles_for_move
 	 * @return string|null Warning message, if any
 	 */
-	function getAnyWarningMessageBeforeReplace( $titles_for_edit, $titles_for_move ) {
+	private function getAnyWarningMessageBeforeReplace(
+		array $titles_for_edit,
+		array $titles_for_move
+	): ?string {
 		if ( $this->replacement === '' ) {
 			return $this->msg( 'replacetext_blankwarning' )->parse();
 		} elseif ( $this->use_regex ) {
@@ -598,7 +552,7 @@ class SpecialReplaceText extends SpecialPage {
 	/**
 	 * @param string|null $warning_msg Message to be shown at top of form
 	 */
-	function showForm( $warning_msg = null ) {
+	private function showForm( ?string $warning_msg = null ): void {
 		$out = $this->getOutput();
 
 		$out->addHTML(
@@ -700,9 +654,6 @@ class SpecialReplaceText extends SpecialPage {
 		$category_search_label = $this->msg( 'replacetext_categorysearch' )->escaped();
 		$prefix_search_label = $this->msg( 'replacetext_prefixsearch' )->escaped();
 		$page_limit_label = $this->msg( 'replacetext_pagelimit' )->escaped();
-		$this->pageLimit = $this->pageLimit === 0
-			? $this->getConfig()->get( 'ReplaceTextResultsLimit' )
-			: $this->pageLimit;
 		$out->addHTML(
 			"<fieldset class=\"ext-replacetext-searchoptions\">\n" .
 			Html::element( 'h4', [], $this->msg( 'replacetext_optionalfilters' )->text() ) .
@@ -750,35 +701,13 @@ class SpecialReplaceText extends SpecialPage {
 	}
 
 	/**
-	 * This function is not currently used, but it may get used in the
-	 * future if the "1st screen" interface changes to use OOUI.
-	 *
-	 * @param string $label
-	 * @param string $name
-	 * @param bool $selected
-	 * @return string HTML
-	 */
-	function checkLabel( $label, $name, $selected = false ) {
-		$checkbox = new OOUI\CheckboxInputWidget( [
-			'name' => $name,
-			'value' => 1,
-			'selected' => $selected
-		] );
-		$layout = new OOUI\FieldLayout( $checkbox, [
-			'align' => 'inline',
-			'label' => $label
-		] );
-		return $layout;
-	}
-
-	/**
 	 * Copied almost exactly from MediaWiki's SpecialSearch class, i.e.
 	 * the search page
 	 * @param string[] $namespaces
 	 * @param int $rowsPerTable
 	 * @return string HTML
 	 */
-	function namespaceTables( $namespaces, $rowsPerTable = 3 ) {
+	private function namespaceTables( array $namespaces, int $rowsPerTable = 3 ): string {
 		// Group namespaces into rows according to subject.
 		// Try not to make too many assumptions about namespace numbering.
 		$rows = [];
@@ -813,13 +742,12 @@ class SpecialReplaceText extends SpecialPage {
 		return $tables;
 	}
 
-	/**
-	 * @param array $titles_for_edit
-	 * @param array $titles_for_move
-	 * @param array $uneditable_titles
-	 * @param array $unmoveable_titles
-	 */
-	function pageListForm( $titles_for_edit, $titles_for_move, $uneditable_titles, $unmoveable_titles ) {
+	private function pageListForm(
+		array $titles_for_edit,
+		array $titles_for_move,
+		array $uneditable_titles,
+		array $unmoveable_titles
+	): void {
 		$out = $this->getOutput();
 
 		$formOpts = [
@@ -921,6 +849,17 @@ class SpecialReplaceText extends SpecialPage {
 			$out->addHTML( '<br />' );
 		}
 
+		$out->addWikiMsg( 'replacetext-summary-label' );
+		$out->addHTML( new OOUI\TextInputWidget( [
+				'name' => 'wpSummary',
+				'id' => 'wpSummary',
+				'class' => 'ext-replacetext-editSummary',
+				'maxLength' => CommentStore::COMMENT_CHARACTER_LIMIT,
+				'infusable' => true,
+			] )
+		);
+		$out->addHTML( '<br />' );
+
 		$submitButton = new OOUI\ButtonInputWidget( [
 			'type' => 'submit',
 			'flags' => [ 'primary', 'progressive' ],
@@ -951,12 +890,8 @@ class SpecialReplaceText extends SpecialPage {
 	 * Extract context and highlights search text
 	 *
 	 * @todo The bolding needs to be fixed for regular expressions.
-	 * @param string $text
-	 * @param string $target
-	 * @param bool $use_regex
-	 * @return string
 	 */
-	function extractContext( $text, $target, $use_regex = false ) {
+	private function extractContext( string $text, string $target, bool $use_regex = false ): string {
 		$cw = $this->userOptionsLookup->getOption( $this->getUser(), 'contextchars', 40, true );
 
 		// Get all indexes
@@ -1024,15 +959,12 @@ class SpecialReplaceText extends SpecialPage {
 
 	/**
 	 * Extracts the role name
-	 *
-	 * @param int $role_id
-	 * @return string
 	 */
-	private function extractRole( $role_id ) {
+	private function extractRole( int $role_id ): string {
 		return $this->slotRoleStore->getName( $role_id );
 	}
 
-	private function convertWhiteSpaceToHTML( $message ) {
+	private function convertWhiteSpaceToHTML( string $message ): string {
 		$msg = htmlspecialchars( $message );
 		$msg = preg_replace( '/^ /m', "\u{00A0} ", $msg );
 		$msg = preg_replace( '/ $/m', " \u{00A0}", $msg );
@@ -1041,10 +973,13 @@ class SpecialReplaceText extends SpecialPage {
 		return $msg;
 	}
 
-	private function getReplaceTextUser() {
+	private function getReplaceTextUser(): User {
 		$replaceTextUser = $this->getConfig()->get( 'ReplaceTextUser' );
 		if ( $replaceTextUser !== null ) {
-			return $this->userFactory->newFromName( $replaceTextUser );
+			$user = $this->userFactory->newFromName( $replaceTextUser );
+			if ( $user ) {
+				return $user;
+			}
 		}
 
 		return $this->getUser();
@@ -1053,7 +988,7 @@ class SpecialReplaceText extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function getGroupName() {
+	protected function getGroupName(): string {
 		return 'wiki';
 	}
 

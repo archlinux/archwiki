@@ -62,12 +62,14 @@ use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\Xml\XmlSelect;
 use NumberFormatter;
 use RuntimeException;
-use StringUtils;
 use UtfNormal\Validator as UtfNormalValidator;
-use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\DebugInfo\DebugInfoTrait;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\StringUtils\StringUtils;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Base class for language-specific code.
@@ -307,6 +309,8 @@ class Language implements Bcp47Code {
 	private const LRE = "\u{202A}"; // U+202A LEFT-TO-RIGHT EMBEDDING
 	private const RLE = "\u{202B}"; // U+202B RIGHT-TO-LEFT EMBEDDING
 	private const PDF = "\u{202C}"; // U+202C POP DIRECTIONAL FORMATTING
+	// https://en.wikipedia.org/wiki/Arabic_letter_mark (Unicode 6.3.0)
+	private const ALM = "\u{061C}"; // U+061C ARABIC LETTER MARK
 
 	/**
 	 * Directionality test regex for embedBidi(). Matches the first strong directionality codepoint:
@@ -326,68 +330,18 @@ class Language implements Bcp47Code {
 	// @codeCoverageIgnoreEnd
 
 	/**
-	 * @internal Calling this directly is deprecated. Use LanguageFactory instead.
-	 *
-	 * @param string|null $code Which code to use. Passing null is deprecated in 1.35, hard-deprecated since 1.43.
-	 * @param NamespaceInfo|null $namespaceInfo
-	 * @param LocalisationCache|null $localisationCache
-	 * @param LanguageNameUtils|null $langNameUtils
-	 * @param LanguageFallback|null $langFallback
-	 * @param LanguageConverterFactory|null $converterFactory
-	 * @param HookContainer|null $hookContainer
-	 * @param Config|null $config
+	 * @internal Use LanguageFactory instead.
 	 */
 	public function __construct(
-		$code = null,
-		?NamespaceInfo $namespaceInfo = null,
-		?LocalisationCache $localisationCache = null,
-		?LanguageNameUtils $langNameUtils = null,
-		?LanguageFallback $langFallback = null,
-		?LanguageConverterFactory $converterFactory = null,
-		?HookContainer $hookContainer = null,
-		?Config $config = null
+		string $code,
+		NamespaceInfo $namespaceInfo,
+		LocalisationCache $localisationCache,
+		LanguageNameUtils $langNameUtils,
+		LanguageFallback $langFallback,
+		LanguageConverterFactory $converterFactory,
+		HookContainer $hookContainer,
+		Config $config
 	) {
-		if ( !func_num_args() ) {
-			// Old calling convention, deprecated
-			wfDeprecatedMsg(
-				__METHOD__ . ' without providing all services is deprecated',
-				'1.35'
-			);
-			if ( static::class === 'Language' ) {
-				$this->mCode = 'en';
-			} else {
-				$this->mCode = str_replace( '_', '-', strtolower( substr( static::class, 8 ) ) );
-			}
-
-			$services = MediaWikiServices::getInstance();
-			$this->namespaceInfo = $services->getNamespaceInfo();
-			$this->localisationCache = $services->getLocalisationCache();
-			$this->langNameUtils = $services->getLanguageNameUtils();
-			$this->langFallback = $services->getLanguageFallback();
-			$this->converterFactory = $services->getLanguageConverterFactory();
-			$this->hookContainer = $services->getHookContainer();
-			$this->hookRunner = new HookRunner( $this->hookContainer );
-			$this->config = $services->getMainConfig();
-			return;
-		}
-
-		Assert::parameter( $code !== null, '$code',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $namespaceInfo !== null, '$namespaceInfo',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $localisationCache !== null, '$localisationCache',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $langNameUtils !== null, '$langNameUtils',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $langFallback !== null, '$langFallback',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $converterFactory !== null, '$converterFactory',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $hookContainer !== null, '$hookContainer',
-			'Parameters cannot be null unless all are omitted' );
-		Assert::parameter( $config !== null, '$config',
-			'Parameters cannot be null unless all are omitted' );
-
 		$this->mCode = $code;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->localisationCache = $localisationCache;
@@ -749,7 +703,9 @@ class Language implements Bcp47Code {
 	 * Gets the Message object from this language. Only for use inside this class.
 	 *
 	 * @param string $msg Message name
-	 * @param mixed ...$params Message parameters
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 */
 	protected function msg( $msg, ...$params ) {
@@ -2000,6 +1956,367 @@ class Language implements Bcp47Code {
 	}
 
 	/**
+	 * Convert a format string as consumed by sprintfDate() to an options array
+	 * as used by the client-side mediawiki.DateFormatter.
+	 *
+	 * @param string $format
+	 * @return array An associative array with the following keys:
+	 *   - pattern: A string with parameters surrounded by braces, like {year},
+	 *       where the parameter names are those returned by Intl.DateTimeFormat.formatToParts(),
+	 *       with a few custom extensions, specifically:
+	 *       - mwMonth: The month name message text
+	 *       - mwMonthGen: The genitive month name message text
+	 *       - mwMonthAbbrev:  The abbreviated month name message text
+	 *   - locale: A fixed locale to override the default one
+	 *   - options: Associative options to pass to the Intl.DateTimeFormat constructor
+	 */
+	private function convertDateFormatToJs( $format ) {
+		// CLDR calendar IDs by format code
+		$calendars = [
+			'j' => 'hebrew',
+			'i' => 'persian', // Iranian
+			'm' => 'islamic', // Hijri
+			'k' => 'buddhist', // Thai
+			'o' => 'roc', // Minguo
+			't' => 'japanese' // Tenno
+		];
+
+		$s = '';
+		$mwOpts = [];
+		$intlOpts = [
+			'numberingSystem' => $this->localisationCache
+				->getItem( $this->mCode, 'numberingSystem' ) ?? 'latn'
+		];
+		$unsupported = [];
+		$formatLength = strlen( $format );
+
+		for ( $p = 0; $p < $formatLength; $p++ ) {
+			$code = $format[$p];
+			if ( $code == 'x' && $p < $formatLength - 1 ) {
+				$code .= $format[++$p];
+			}
+
+			if ( ( $code === 'xi'
+					|| $code === 'xj'
+					|| $code === 'xk'
+					|| $code === 'xm'
+					|| $code === 'xo'
+					|| $code === 'xt' )
+				&& $p < $formatLength - 1
+			) {
+				$code .= $format[++$p];
+			}
+
+			switch ( $code ) {
+				case 'xx':
+					$s .= 'x';
+					break;
+
+				case 'xn':
+				case 'xN':
+					// Raw number -- usually safe enough in ISO 8601 styles
+					// although we don't support switching
+					$mwOpts['locale'] = 'en';
+					unset( $intlOpts['numberingSystem'] );
+					break;
+
+				case 'xr':
+					// Roman numerals
+					// Multiple numbering systems are usually used in the one format,
+					// which is unsupported. Also, browsers do not implement it.
+					$unsupported[] = $code;
+					break;
+
+				case 'xh':
+					// Hebrew numerals. Browsers do not implement it as of 2025,
+					// and usually multiple numbering systems are desired in a
+					// single format.
+					$unsupported[] = $code;
+					$intlOpts['numberingSystem'] = 'hebr';
+					break;
+
+				case 'xg':
+					// Genitive month name
+					$intlOpts['month'] = 'long';
+					$s .= '{mwMonthGen}';
+					break;
+
+				case 'xjx':
+					// Genitive month name in Hebrew calendar
+					$intlOpts['calendar'] = 'hebrew';
+					$intlOpts['month'] = 'long';
+					$s .= '{mwMonthGen}';
+					break;
+
+				case 'd':
+					$intlOpts['day'] = '2-digit';
+					$s .= '{day}';
+					break;
+
+				case 'D':
+					$intlOpts['weekday'] = 'short';
+					$s .= '{weekday}';
+					break;
+
+				case 'j':
+					$intlOpts['day'] = 'numeric';
+					$s .= '{day}';
+					break;
+
+				case 'xij':
+				case 'xmj':
+				case 'xjj':
+					// Day number in special calendar
+					$intlOpts['day'] = 'numeric';
+					$intlOpts['calendar'] = $calendars[$code[1]];
+					$s .= '{day}';
+					break;
+
+				case 'l':
+					$intlOpts['weekday'] = 'long';
+					$s .= '{weekday}';
+					break;
+
+				case 'F':
+					$intlOpts['month'] = 'long';
+					$s .= '{mwMonth}';
+					break;
+
+				case 'xiF':
+				case 'xmF':
+				case 'xjF':
+					// Full month name in special calendar
+					$intlOpts['month'] = 'long';
+					$intlOpts['calendar'] = $calendars[$code[1]];
+					$s .= '{month}';
+					break;
+
+				case 'm':
+					$intlOpts['month'] = '2-digit';
+					$s .= '{month}';
+					break;
+
+				case 'M':
+					$intlOpts['month'] = 'short';
+					$s .= '{mwMonthAbbrev}';
+					break;
+
+				case 'n':
+					$intlOpts['month'] = 'numeric';
+					$s .= '{month}';
+					break;
+
+				case 'xin':
+				case 'xmn':
+				case 'xjn':
+					// Numeric month in special calendar
+					$intlOpts['month'] = 'numeric';
+					$intlOpts['calendar'] = $calendars[$code[1]];
+					$s .= '{month}';
+					break;
+
+				case 'xjt':
+					// Number of days in the given Hebrew month -- not supported
+					$unsupported[] = $code;
+					break;
+
+				case 'Y':
+					$intlOpts['year'] = 'numeric';
+					$s .= '{year}';
+					break;
+
+				case 'xiY':
+				case 'xmY':
+				case 'xjY':
+				case 'xkY':
+				case 'xoY':
+					// Year number in special calendar
+					$intlOpts['year'] = 'numeric';
+					$intlOpts['calendar'] = $calendars[$code[1]];
+					$s .= '{year}';
+					break;
+
+				case 'xtY':
+					// Japanese year needs to be prefixed with the era name to
+					// be consistent with tsToJapaneseGengo()
+					$intlOpts['era'] = 'short';
+					$intlOpts['year'] = 'numeric';
+					$intlOpts['calendar'] = $calendars[$code[1]];
+					$s .= '{era}{year}';
+					break;
+
+				case 'y':
+					$intlOpts['year'] = '2-digit';
+					$s .= '{year}';
+					break;
+
+				case 'xiy':
+					// Iranian 2-digit year
+					$intlOpts['calendar'] = 'persian';
+					$intlOpts['year'] = '2-digit';
+					$s .= '{year}';
+					break;
+
+				case 'xit':
+					// Number of days in Iranian month -- not supported
+					$unsupported[] = $code;
+					break;
+
+				case 'xiz':
+					// Day of the year -- not supported
+					$unsupported[] = $code;
+					break;
+
+				case 'a':
+				case 'A':
+					// AM/PM
+					$intlOpts['hour12'] = true;
+					$s .= '{dayPeriod}';
+					break;
+
+				case 'g':
+					// Hour in 12-hour clock, without leading zero
+					$intlOpts['hour'] = 'numeric';
+					$intlOpts['hour12'] = true;
+					$s .= '{hour}';
+					break;
+
+				case 'G':
+					// Hour in 24-hour clock, without leading zero
+					$intlOpts['hour'] = 'numeric';
+					$s .= '{hour}';
+					break;
+
+				case 'h':
+					// Hour in 12-hour clock, with leading zero
+					$intlOpts['hour'] = '2-digit';
+					$intlOpts['hour12'] = true;
+					$s .= '{hour}';
+					break;
+
+				case 'H':
+					// Hour in 24-hour clock, without leading zero
+					$intlOpts['hour'] = '2-digit';
+					$intlOpts['hour12'] = false;
+					$s .= '{hour}';
+					break;
+
+				case 'i':
+					$intlOpts['minute'] = '2-digit';
+					$s .= '{minute}';
+					break;
+
+				case 's':
+					$intlOpts['second'] = '2-digit';
+					$s .= '{second}';
+					break;
+
+				case 'c':
+					// ISO 8601
+					$mwOpts['locale'] = 'en';
+					$intlOpts += [
+						'year' => 'numeric', 'month' => '2-digit', 'day' => '2-digit',
+						'hour' => '2-digit', 'minute' => '2-digit', 'second' => '2-digit',
+						'hour12' => false, 'timeZoneName' => 'longOffset'
+					];
+					$s .= '{year}-{month}-{day}T{hour}:{minute}:{second}{timeZoneName}';
+					break;
+
+				case 'r':
+					// RFC 2822
+					$mwOpts['locale'] = 'en';
+					$intlOpts += [
+						'year' => 'numeric', 'month' => 'short', 'day' => 'numeric',
+						'hour' => '2-digit', 'minute' => '2-digit', 'second' => '2-digit',
+						'hour12' => false, 'weekday' => 'short', 'timeZoneName' => 'longOffset',
+					];
+					$s .= '{weekday}, {day} {month} {year} {hour}:{minute}:{second} {timeZoneName}';
+					break;
+
+				case 'e':
+					// Time zone identifier -- not supported, fall through to offset
+				case 'O':
+					// Offset without colon not supported
+					$unsupported[] = $code;
+					// Fall through to with colon
+				case 'P':
+					$intlOpts['timeZoneName'] = 'longOffset';
+					$s .= '{timeZoneName}';
+					break;
+
+				case 'T':
+					// Time zone abbreviation
+					$intlOpts['timeZoneName'] = 'short';
+					$s .= '{timeZoneName}';
+					break;
+
+				case 'w':
+				case 'N':
+					// Numeric day of week -- not supported
+					$unsupported[] = $code;
+					$intlOpts['weekday'] = 'short';
+					$s .= '{weekday}';
+					break;
+
+				case 'z':
+					// Day of year
+				case 'W':
+					// Week number
+				case 't':
+					// Number of days in month
+				case 'L':
+					// Leap year flag
+				case 'o':
+					// ISO week numbering year
+				case 'U':
+					// Seconds since UNIX epoch
+				case 'I':
+					// DST flag
+				case 'Z':
+					// Timezone offset in seconds
+					$unsupported[] = $code;
+					break;
+
+				case '\\':
+					# Backslash escaping
+					if ( $p < $formatLength - 1 ) {
+						$s .= $format[++$p];
+					} else {
+						$s .= '\\';
+					}
+					break;
+
+				case '"':
+					# Quoted literal
+					if ( $p < $formatLength - 1 ) {
+						$endQuote = strpos( $format, '"', $p + 1 );
+						if ( $endQuote === false ) {
+							# No terminating quote, assume literal "
+							$s .= '"';
+						} else {
+							$s .= substr( $format, $p + 1, $endQuote - $p - 1 );
+							$p = $endQuote;
+						}
+					} else {
+						# Quote at the end of the string, assume literal "
+						$s .= '"';
+					}
+					break;
+
+				default:
+					$s .= $format[$p];
+			}
+		}
+		$mwOpts['options'] = $intlOpts;
+		$mwOpts['pattern'] = $s;
+		if ( $unsupported ) {
+			$mwOpts['error'] = 'Unsupported format code(s): ' .
+				implode( ', ', $unsupported );
+		}
+		return $mwOpts;
+	}
+
+	/**
 	 * Convenience function to convert a PHP DateTime object to a 14-character MediaWiki timestamp,
 	 * falling back to the specified timestamp if the DateTime object holds a too large date (T32148, T277809).
 	 * This is a private utility method as it is only really useful for {@link userAdjust}.
@@ -2188,8 +2505,13 @@ class Language implements Bcp47Code {
 		$sortedTimestamps = [ $timestamp1, $timestamp2 ];
 		sort( $sortedTimestamps );
 
-		$date1 = ( new DateTimeImmutable() )->setTimestamp( $sortedTimestamps[0] );
-		$date2 = ( new DateTimeImmutable() )->setTimestamp( $sortedTimestamps[1] );
+		$tz = new DateTimeZone( 'UTC' );
+		$date1 = ( new DateTimeImmutable() )
+			->setTimezone( $tz )
+			->setTimestamp( $sortedTimestamps[0] );
+		$date2 = ( new DateTimeImmutable() )
+			->setTimezone( $tz )
+			->setTimestamp( $sortedTimestamps[1] );
 
 		$interval = $date1->diff( $date2 );
 
@@ -3136,19 +3458,18 @@ class Language implements Bcp47Code {
 	 * @return string
 	 */
 	public function formatNum( $number ) {
-		return $this->formatNumInternal( (string)$number, false, false );
+		return $this->formatNumInternal( (string)$number, false );
 	}
 
 	/**
 	 * Internal implementation function, shared between formatNum and formatNumNoSeparators.
 	 *
 	 * @param string $number The stringification of a valid PHP number
-	 * @param bool $noTranslate Whether to translate digits and separators
 	 * @param bool $noSeparators Whether to add separators
 	 * @return string
 	 */
 	private function formatNumInternal(
-		string $number, bool $noTranslate, bool $noSeparators
+		string $number, bool $noSeparators
 	): string {
 		$translateNumerals = $this->config->get( MainConfigNames::TranslateNumerals );
 
@@ -3177,8 +3498,8 @@ class Language implements Bcp47Code {
 			// numbers in the string. Don't split on NAN/INF in this legacy
 			// case as they are likely to be found embedded inside non-numeric
 			// text.
-			return preg_replace_callback( "/{$validNumberRe}/", function ( $m )  use ( $noTranslate, $noSeparators ) {
-				return $this->formatNumInternal( $m[0], $noTranslate, $noSeparators );
+			return preg_replace_callback( "/{$validNumberRe}/", function ( $m )  use ( $noSeparators ) {
+				return $this->formatNumInternal( $m[0], $noSeparators );
 			}, $number );
 		}
 
@@ -3204,15 +3525,11 @@ class Language implements Bcp47Code {
 				// enough.  We still need to do decimal separator
 				// transformation, though. For example, 1234.56 becomes 1234,56
 				// in pl with $minimumGroupingDigits = 2.
-				if ( !$noTranslate ) {
-					$number = strtr( $number, $separatorTransformTable ?: [] );
-				}
+				$number = strtr( $number, $separatorTransformTable ?: [] );
 			} elseif ( $number === '-0' ) {
 				// Special case to ensure we don't lose the minus sign by
 				// converting to an int.
-				if ( !$noTranslate ) {
-					$number = strtr( $number, $separatorTransformTable ?: [] );
-				}
+				$number = strtr( $number, $separatorTransformTable ?: [] );
 			} else {
 				// NumberFormatter supports separator transformation,
 				// but it does not know all languages MW
@@ -3220,16 +3537,7 @@ class Language implements Bcp47Code {
 				// customisation. So manually set it.
 				$fmt = clone $fmt;
 
-				if ( $noTranslate ) {
-					$fmt->setSymbol(
-						NumberFormatter::DECIMAL_SEPARATOR_SYMBOL,
-						'.'
-					);
-					$fmt->setSymbol(
-						NumberFormatter::GROUPING_SEPARATOR_SYMBOL,
-						','
-					);
-				} elseif ( $separatorTransformTable ) {
+				if ( $separatorTransformTable ) {
 					$fmt->setSymbol(
 						NumberFormatter::DECIMAL_SEPARATOR_SYMBOL,
 						$separatorTransformTable[ '.' ] ?? '.'
@@ -3253,29 +3561,25 @@ class Language implements Bcp47Code {
 			}
 		}
 
-		if ( !$noTranslate ) {
-			if ( $translateNumerals ) {
-				// This is often unnecessary: PHP's NumberFormatter will often
-				// do the digit transform itself (T267614)
-				$s = $this->digitTransformTable();
-				if ( $s ) {
-					$number = strtr( $number, $s );
-				}
+		if ( $translateNumerals ) {
+			// This is often unnecessary: PHP's NumberFormatter will often
+			// do the digit transform itself (T267614)
+			$s = $this->digitTransformTable();
+			if ( $s ) {
+				$number = strtr( $number, $s );
 			}
-			# T10327: Make our formatted numbers prettier by using a
-			# proper Unicode 'minus' character.
-			$number = strtr( $number, [ '-' => "\u{2212}" ] );
 		}
+		# T10327: Make our formatted numbers prettier by using a
+		# proper Unicode 'minus' character.
+		$number = strtr( $number, [ '-' => "\u{2212}" ] );
 
 		// Remove any LRM or RLM characters generated from NumberFormatter,
 		// since directionality is handled outside of this context.
-		// Similarly remove \u61C, the "Arabic Letter mark" (unicode 6.3.0)
-		// https://en.wikipedia.org/wiki/Arabic_letter_mark
-		// which is added starting PHP 7.3+
+		// Similarly remove \u61C (ALM) which is added starting PHP 7.3+
 		return strtr( $number, [
-			"\u{200E}" => '', // LRM
-			"\u{200F}" => '', // RLM
-			"\u{061C}" => '', // ALM
+			self::LRM => '',
+			self::RLM => '',
+			self::ALM => '',
 		] );
 	}
 
@@ -3288,7 +3592,7 @@ class Language implements Bcp47Code {
 	 * @return string
 	 */
 	public function formatNumNoSeparators( $number ) {
-		return $this->formatNumInternal( (string)$number, false, true );
+		return $this->formatNumInternal( (string)$number, true );
 	}
 
 	/**
@@ -3353,8 +3657,6 @@ class Language implements Bcp47Code {
 	 * For example, Polish has minimumGroupingDigits = 2, which with a grouping
 	 * size of 3 causes 4-digit numbers to be written like 9999, but 5-digit
 	 * numbers are written like "10 000".
-	 *
-	 * @return int
 	 */
 	public function minimumGroupingDigits(): int {
 		return $this->localisationCache->getItem( $this->mCode, 'minimumGroupingDigits' ) ?? 1;
@@ -4063,6 +4365,13 @@ class Language implements Bcp47Code {
 				// wfTimestamp() handles 0 as current time instead of epoch.
 				$time = '19700101000000';
 			}
+
+			// Return the timestamp as-is if it is in an unknown format to ConvertibleTimestamp (T354663)
+			$time = ConvertibleTimestamp::convert( TS_MW, $time );
+			if ( $time === false ) {
+				return $str;
+			}
+
 			if ( $user ) {
 				return $this->userTimeAndDate( $time, $user );
 			}
@@ -4127,10 +4436,8 @@ class Language implements Bcp47Code {
 	 *
 	 * NOTE: The return value of this function is NOT HTML-safe and must be escaped with
 	 * htmlspecialchars() or similar
-	 *
-	 * @return string
 	 */
-	public function getCode() {
+	public function getCode(): string {
 		return $this->mCode;
 	}
 
@@ -4634,6 +4941,59 @@ class Language implements Bcp47Code {
 			'fallbackLanguages' => $this->getFallbackLanguages(),
 			'bcp47Map' => LanguageCode::getNonstandardLanguageCodeMapping(),
 		];
+	}
+
+	/**
+	 * @internal For DateFormatterConfig
+	 * @return array
+	 */
+	public function getJsDateFormats() {
+		$jsLcFormats = $this->localisationCache->getItem( $this->mCode, 'jsDateFormats' );
+		$phpLcFormats = $this->localisationCache->getItem( $this->mCode, 'dateFormats' );
+
+		$styles = $this->getDatePreferences() ?: [];
+		$default = $this->getDefaultDateFormat();
+		// Always include the default style
+		if ( !in_array( $default, $styles, true ) ) {
+			$styles[] = $default;
+		}
+		$results = [];
+		foreach ( $styles as $style ) {
+			if ( $style === 'default' ) {
+				// Default is not a real style for our purposes
+				continue;
+			}
+			foreach ( [ 'time', 'date', 'both', 'pretty' ] as $type ) {
+				$key = "$style $type";
+				$resolvedType = $type;
+				$resolvedStyle = $style;
+				$resolvedKey = $key;
+
+				// If the PHP localisation lacks the "pretty" type, fall back to "date"
+				if ( !isset( $phpLcFormats[$key] ) && $type === 'pretty' ) {
+					$resolvedType = 'date';
+					$resolvedKey = "$resolvedStyle $resolvedType";
+				}
+
+				// If $jsDateFormats has an alias, follow it.
+				// This is used to gracefully remove formats that don't work in the browser.
+				$alias = $jsLcFormats[$resolvedKey]['alias'] ?? '';
+				if ( preg_match( '/^(.*) ([^ ]*)$/', $alias, $m ) ) {
+					$resolvedType = $m[2];
+					$resolvedStyle = $m[1];
+					$resolvedKey = "$resolvedStyle $resolvedType";
+				}
+
+				$jsFormat = $this->convertDateFormatToJs(
+					$this->getDateFormatString( $resolvedType, $resolvedStyle ) );
+				if ( isset( $jsLcFormats[$resolvedKey] ) ) {
+					$results[$key] = array_merge_recursive( $jsFormat, $jsLcFormats[$resolvedKey] );
+				} else {
+					$results[$key] = $jsFormat;
+				}
+			}
+		}
+		return $results;
 	}
 }
 

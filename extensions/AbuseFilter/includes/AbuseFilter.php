@@ -2,6 +2,10 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\LikeValue;
+
 class AbuseFilter {
 
 	/**
@@ -20,5 +24,27 @@ class AbuseFilter {
 		'af_id' => 'afh_filter',
 		'af_group' => 'afh_group',
 	];
+
+	/**
+	 * Convenience wrapper around IReadableDatabase::expr simulating MySQL's FIND_IN_SET.
+	 *
+	 * This method returns an IExpression corresponding to a FIND_IN_SET(needle, field)
+	 * SQL condition, which checks if the string `$needle` is present
+	 * in the comma-separated list stored in the column `$field`.
+	 */
+	public static function findInSet( IReadableDatabase $db, string $field, string $needle ): IExpression {
+		return $db->expr( $field, '=', $needle )
+			->or( $field, IExpression::LIKE, new LikeValue(
+				$needle, ',', $db->anyString()
+			) )
+			->or( $field, IExpression::LIKE, new LikeValue(
+				$db->anyString(), ',', $needle
+			) )
+			->or( $field, IExpression::LIKE, new LikeValue(
+				$db->anyString(),
+				',', $needle, ',',
+				$db->anyString()
+			) );
+	}
 
 }

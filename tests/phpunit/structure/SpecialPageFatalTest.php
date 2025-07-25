@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\User\UserIdentityValue;
@@ -48,15 +49,8 @@ class SpecialPageFatalTest extends MediaWikiIntegrationTestCase {
 
 		try {
 			$executor->executeSpecialPage( $page, '', null, 'qqx', $authority );
-		} catch ( \PHPUnit\Framework\Error\Error $error ) {
-			// Let phpunit settings working:
-			// - convertDeprecationsToExceptions="true"
-			// - convertErrorsToExceptions="true"
-			// - convertNoticesToExceptions="true"
-			// - convertWarningsToExceptions="true"
-			throw $error;
-		} catch ( Exception $e ) {
-			// Other exceptions are allowed
+		} catch ( ErrorPageError $_ ) {
+			// Only checked exceptions are allowed
 		}
 
 		// If the page fataled phpunit will have already died

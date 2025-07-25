@@ -1,12 +1,10 @@
 @import 'mediawiki.skin.variables.less';
 @import '../mmv.variables.less';
-@import '../mmv.mixins.less';
 
 @background-color: @background-color-base;
 @dialog-width: 450px;
 
 /* Flexbox gap not supported in all browsers */
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 .mw-mmv-dialog {
 	position: fixed;
 	right: @buttons-offset-edge + @buttons-offset-each + ( @arrow-size / 2 );

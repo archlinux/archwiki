@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kaleem Bhatti",
-			"Mehtab ahmed",
-			"Matma Rex"
+			"Matma Rex",
+			"Mehtab ahmed"
 		]
 	},
 	"discussiontools": "بحث جا اوزار",
@@ -159,9 +159,9 @@
 	"tag-discussiontools-description": "سنوار بحث-جا-اوزار استعمال ڪندي ڪئي وئي",
 	"tag-discussiontools-edit": "سنواريل راءِ",
 	"tag-discussiontools-edit-description": "واپرائيندڙ موجود راءِ کي بحث-جا-اوزار استعمال ڪندي سنواريو",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} نئون موضوع]",
+	"tag-discussiontools-newtopic": "نئون موضوع",
 	"tag-discussiontools-newtopic-description": "واپرائيندڙ صفحي ۾ بحث-جا-اوزار استعمال ڪندي ھڪ نئون موضوع وڌو",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} ورندي]",
+	"tag-discussiontools-reply": "ورندي",
 	"tag-discussiontools-reply-description": "واپرائيندڙ بحث-جا-اوزار استعمال ڪندي ھڪ راءِ جي ورندي ڏني",
 	"tag-discussiontools-source-description": "بحث-جا-اوزار ذريعي موڊ ۾ ھيا",
 	"tag-discussiontools-source-enhanced-description": "بحث-جا-اوزار سڌريل ذريعاتي موڊ ۾ اوزار-پٽي سميت ھيا",

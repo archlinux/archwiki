@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huslåke",
+			"Jyllanj"
+		]
+	},
+	"checkuser-summary": "Detj wärktye scanne Siensti øndrenge for å finj IP'e brugtj å i bestemtj bruge, elle for å wis redigiirengs- elle brugedata for i IP.\nBruge å redigiirenge fra i klient-IP kan hentjs via XFF-headers we å tilfye \"/xff\" te IP'i. Ipv4 (CIRD $1-32) å IPv6 (CIDR $2-128) ä unjestøtten.\nFor å siker programmes ye-ewn kan maksimalt 5000 redigiirenge djenförs.\nBrug kons detj wärktye i öwe-iensstæmmels mä djäljenje politike på {{SITENAME}}.",
+	"checkuser-desc": "Djie bruga mä den rett guetjennels mulihede for å tjekk brugaris IP-adresse å ånj informasjon",
+	"checkuser": "Tjekkbruge",
+	"checkuserlog": "Tjekkbrugelogg",
+	"group-checkuser": "Tjekkbruga",
+	"group-checkuser-member": "Check user",
+	"grouppage-checkuser": "{{ns:project}}:Tjekkbruge",
+	"checkuser-reason": "Begrunjels:",
+	"checkuser-showlog": "Wis logg",
+	"checkuser-query": "Syeg i siensti øndrenge",
+	"checkuser-target": "Bruger æller IP",
+	"checkuser-users": "Hentj bruga!",
+	"checkuser-ips": "Hentj IP-e",
+	"checkuser-empty": "Loggi inholje ien poste.",
+	"checkuser-nomatch": "Ien öwe-iensstæmmenje resultate bløw funjen.",
+	"checkuser-check": "Tjekk",
+	"checkuser-blocked": "Blokiirtj",
+	"checkuser-search": "Syeg",
+	"checkuser-search-submit": "Syeg",
+	"checkuser-showmain": "Gå tilbage til hovedformularen for checkbruger"
+}

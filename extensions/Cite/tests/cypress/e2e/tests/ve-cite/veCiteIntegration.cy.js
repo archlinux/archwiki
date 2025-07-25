@@ -49,7 +49,7 @@ describe( 'Visual Editor Cite Integration', () => {
 
 	it( 'should display existing references in the Cite re-use dialog', () => {
 		if ( usesCitoid ) {
-			veHelper.openVECiteoidReuseDialog();
+			veHelper.openVECitoidReuseDialog();
 
 		} else {
 			veHelper.openVECiteReuseDialog();

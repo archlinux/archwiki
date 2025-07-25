@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Afalau",
+			"Ceirios"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Gwirio pa gyfeiriadau IP sy'n cael eu defnyddio gan enw defnyddiwr penodol, neu pa enwau defnyddiwr sy'n cael eu defnyddio gan gyfeiriad IP penodol.",
+	"apihelp-query+checkuser-param-request": "Math o gais GwirioDefnyddiwr:\n;userips:Gweld cyfeiriad IP y defnyddiwr targed.\n;edits:Gweld newidiadau o gyfeiriad neu ystod IP targed.\n;ipusers: Gweld defnyddwyr o gyfeiriad neu ystod IP targed.",
+	"apihelp-query+checkuser-param-target": "Enw defnyddiwr, cyfeiriad IP, neu ystod CIDR i'w wirio.",
+	"apihelp-query+checkuser-param-reason": "Rheswm dros wirio.",
+	"apihelp-query+checkuser-param-limit": "Terfyn y rhesi.",
+	"apihelp-query+checkuser-param-xff": "Defnyddio data XFF yn lle cyfeiriad IP.",
+	"apihelp-query+checkuser-example-1": "Gwirio cyfeiriadau IP ar gyfer [[User:Example]]",
+	"apihelp-query+checkuser-example-2": "Gwirio golygiadau gan 192.0.2.0/24",
+	"apihelp-query+checkuserlog-summary": "Gweld cofnodion y log GwirioDefnyddiwr.",
+	"apihelp-query+checkuserlog-param-user": "Enw defnyddiwr y GwirioDefnyddiwr.",
+	"apihelp-query+checkuserlog-param-limit": "Terfyn y rhesi.",
+	"apihelp-query+checkuserlog-example-1": "Dangos gwiriadau [[User:Example]]",
+	"apihelp-query+checkuserlog-example-2": "Dangos gwiriadau 192.0.2.0/24 ar ôl 2011-10-15T23:00:00Z",
+	"apierror-checkuser-missingsummary": "Rhaid ichi nodi rheswm dros wirio."
+}

@@ -18,6 +18,9 @@
  * @file
  */
 
+namespace MediaWiki\Exception;
+
+use LoginHelper;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\SpecialPage\SpecialPage;
 
@@ -129,7 +132,7 @@ class UserNotLoggedIn extends ErrorPageError {
 		}
 
 		$output = $context->getOutput();
-		$query = $context->getRequest()->getValues();
+		$query = $context->getRequest()->getQueryValues();
 		// Title will be overridden by returnto
 		unset( $query['title'] );
 		// Redirect to Special:Userlogin
@@ -147,3 +150,6 @@ class UserNotLoggedIn extends ErrorPageError {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( UserNotLoggedIn::class, 'UserNotLoggedIn' );

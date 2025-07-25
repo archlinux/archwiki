@@ -63,37 +63,25 @@ class DOMDiff {
 		return $node->nextSibling;
 	}
 
-	/**
-	 * @param mixed ...$args
-	 */
-	private function debug( ...$args ): void {
-		$this->env->log( 'trace/domdiff', ...$args );
-	}
-
 	public function __construct( Env $env ) {
 		$this->env = $env;
 		$this->extApi = new ParsoidExtensionAPI( $env );
 		$this->specializedAttribHandlers = [
-			'data-mw' => static function ( $nodeA, $dmwA, $nodeB, $dmwB ) {
+			'data-mw' => function ( $nodeA, $dmwA, $nodeB, $dmwB ) {
+				if ( isset( $dmwA->caption ) && isset( $dmwB->caption ) ) {
+					if ( !$this->treeEquals( $dmwA->caption, $dmwB->caption, true ) ) {
+						return false;
+					}
+					$dmwA = (array)$dmwA;
+					$dmwB = (array)$dmwB;
+					unset( $dmwA['caption'] );
+					unset( $dmwB['caption'] );
+				}
 				return $dmwA == $dmwB;
 			},
 			'data-parsoid' => static function ( $nodeA, $dpA, $nodeB, $dpB ) {
 				return $dpA == $dpB;
 			},
-			// TODO(T254502): This is added temporarily for backwards
-			// compatibility and can be removed when versions up to 2.1.0
-			// are no longer stored
-			'typeof' => static function ( $nodeA, $valA, $nodeB, $valB ) {
-				if ( $valA === $valB ) {
-					return true;
-				} elseif ( $valA === 'mw:DisplaySpace' ) {
-					return $valB === 'mw:DisplaySpace mw:Placeholder';
-				} elseif ( $valB === 'mw:DisplaySpace' ) {
-					return $valA === 'mw:DisplaySpace mw:Placeholder';
-				} else {
-					return false;
-				}
-			}
 		];
 	}
 
@@ -111,12 +99,8 @@ class DOMDiff {
 			'Expected to be diff\'ing different documents.'
 		);
 
-		$this->debug( static function () use( $nodeA, $nodeB ) {
-			return "ORIG:\n" .
-				DOMCompat::getOuterHTML( $nodeA ) .
-				"\nNEW :\n" .
-				DOMCompat::getOuterHTML( $nodeB );
-		} );
+		$this->env->trace( 'domdiff', "ORIG:\n", $nodeA );
+		$this->env->trace( 'domdiff', "NEW :\n", $nodeB );
 
 		// The root nodes are equal, call recursive differ
 		$foundChange = $this->doDOMDiff( $nodeA, $nodeB );
@@ -231,7 +215,7 @@ class DOMDiff {
 			$this->debugOut( $baseNode, $newNode );
 			// shallow check first
 			if ( !$this->treeEquals( $baseNode, $newNode, false ) ) {
-				$this->debug( '-- not equal --' );
+				$this->env->trace( 'domdiff', '-- not equal --' );
 				$savedNewNode = $newNode;
 				$foundDiff = false;
 
@@ -240,7 +224,7 @@ class DOMDiff {
 
 				// look-ahead in *new* DOM to detect insertions
 				if ( DiffDOMUtils::isContentNode( $baseNode ) ) {
-					$this->debug( '--lookahead in new dom--' );
+					$this->env->trace( 'domdiff', '--lookahead in new dom--' );
 					$lookaheadNode = $newNode->nextSibling;
 					while ( $lookaheadNode ) {
 						$this->debugOut( $baseNode, $lookaheadNode, 'new' );
@@ -250,7 +234,7 @@ class DOMDiff {
 							// mark skipped-over nodes as inserted
 							$markNode = $newNode;
 							while ( $markNode !== $lookaheadNode ) {
-								$this->debug( '--found diff: inserted--' );
+								$this->env->trace( 'domdiff', '--found diff: inserted--' );
 								$this->markNode( $markNode, DiffMarkers::INSERTED );
 								$markNode = $markNode->nextSibling;
 							}
@@ -265,14 +249,14 @@ class DOMDiff {
 				// look-ahead in *base* DOM to detect deletions
 				if ( !$foundDiff && DiffDOMUtils::isContentNode( $newNode ) ) {
 					$isBlockNode = WTUtils::isBlockNodeWithVisibleWT( $baseNode );
-					$this->debug( '--lookahead in old dom--' );
+					$this->env->trace( 'domdiff', '--lookahead in old dom--' );
 					$lookaheadNode = $baseNode->nextSibling;
 					while ( $lookaheadNode ) {
 						$this->debugOut( $lookaheadNode, $newNode, 'old' );
 						if ( DiffDOMUtils::isContentNode( $lookaheadNode ) &&
 							$this->treeEquals( $lookaheadNode, $newNode, true )
 						) {
-							$this->debug( '--found diff: deleted--' );
+							$this->env->trace( 'domdiff', '--found diff: deleted--' );
 							// mark skipped-over nodes as deleted
 							$this->markNode( $newNode, DiffMarkers::DELETED, $isBlockNode );
 							$baseNode = $lookaheadNode;
@@ -292,7 +276,7 @@ class DOMDiff {
 
 				if ( !$foundDiff ) {
 					if ( !( $savedNewNode instanceof Element ) ) {
-						$this->debug( '--found diff: modified text/comment--' );
+						$this->env->trace( 'domdiff', '--found diff: modified text/comment--' );
 						$this->markNode(
 							$savedNewNode, DiffMarkers::DELETED,
 							WTUtils::isBlockNodeWithVisibleWT( $baseNode )
@@ -304,7 +288,7 @@ class DOMDiff {
 					) {
 						// Identical wrapper-type, but modified.
 						// Mark modified-wrapper, and recurse.
-						$this->debug( '--found diff: modified-wrapper--' );
+						$this->env->trace( 'domdiff', '--found diff: modified-wrapper--' );
 						$this->markNode( $savedNewNode, DiffMarkers::MODIFIED_WRAPPER );
 						$this->subtreeDiffers( $baseNode, $savedNewNode );
 					} else {
@@ -322,7 +306,7 @@ class DOMDiff {
 				}
 
 				// Record the fact that direct children changed in the parent node
-				$this->debug( '--found diff: children-changed--' );
+				$this->env->trace( 'domdiff', '--found diff: children-changed--' );
 				$this->markNode( $newParentNode, DiffMarkers::CHILDREN_CHANGED );
 
 				$foundDiffOverall = true;
@@ -341,7 +325,7 @@ class DOMDiff {
 
 		// mark extra new nodes as inserted
 		while ( $newNode ) {
-			$this->debug( '--found trailing new node: inserted--' );
+			$this->env->trace( 'domdiff', '--found trailing new node: inserted--' );
 			$this->markNode( $newNode, DiffMarkers::INSERTED );
 			$foundDiffOverall = true;
 			$newNode = self::nextAnalyzableSibling( $newNode );
@@ -350,7 +334,7 @@ class DOMDiff {
 		// If there are extra base nodes, something was deleted. Mark the parent as
 		// having lost children for now.
 		if ( $baseNode ) {
-			$this->debug( '--found trailing base nodes: deleted--' );
+			$this->env->trace( 'domdiff', '--found trailing base nodes: deleted--' );
 			$this->markNode( $newParentNode, DiffMarkers::CHILDREN_CHANGED );
 			// SSS FIXME: WTS checks for zero children in a few places
 			// That code would have to be upgraded if we emit mw:DiffMarker
@@ -383,7 +367,7 @@ class DOMDiff {
 		$newEncapsulated = WTUtils::isEncapsulationWrapper( $newNode );
 
 		if ( !$baseEncapsulated && !$newEncapsulated ) {
-			$this->debug( '--shallow equal: recursing--' );
+			$this->env->trace( 'domdiff', '--shallow equal: recursing--' );
 			// Recursively diff subtrees if not template-like content
 			$subtreeDiffers = $this->doDOMDiff( $baseNode, $newNode );
 		} elseif ( $baseEncapsulated && $newEncapsulated ) {
@@ -398,7 +382,7 @@ class DOMDiff {
 			}
 
 			if ( $ext && ( $baseExtTagName === WTUtils::getExtTagName( $newNode ) ) ) {
-				$this->debug( '--diffing extension content--' );
+				$this->env->trace( 'domdiff', '--diffing extension content--' );
 				$subtreeDiffers = $ext->diffHandler(
 					$this->extApi, [ $this, 'doDOMDiff' ], $baseNode, $newNode
 				);
@@ -406,7 +390,7 @@ class DOMDiff {
 				// Otherwise, for encapsulated content, we don't know about the subtree.
 				$subtreeDiffers = false;
 			} else {
-				$this->debug( '--shallow equal (encapsulated): recursing--' );
+				$this->env->trace( 'domdiff', '--shallow equal (encapsulated): recursing--' );
 				// Recursively diff subtrees if not template-like content
 				$subtreeDiffers = $this->doDOMDiff( $baseNode, $newNode );
 			}
@@ -419,7 +403,7 @@ class DOMDiff {
 		}
 
 		if ( $subtreeDiffers ) {
-			$this->debug( '--found diff: subtree-changed--' );
+			$this->env->trace( 'domdiff', '--found diff: subtree-changed--' );
 			$this->markNode( $newNode, DiffMarkers::SUBTREE_CHANGED );
 		}
 		return $subtreeDiffers;
@@ -445,18 +429,15 @@ class DOMDiff {
 	}
 
 	private function debugOut( Node $nodeA, Node $nodeB, string $laPrefix = '' ): void {
-		$prefix = 'trace/domdiff';
-		$this->env->log( $prefix,
-			static fn () => '--> A' . $laPrefix . ':' .
-				( $nodeA instanceof Element
-					? DOMCompat::getOuterHTML( $nodeA )
-					: PHPUtils::jsonEncode( $nodeA->nodeValue ) )
+		$this->env->trace(
+			'domdiff',
+			'--> A', $laPrefix, ':',
+			static fn () => ( $nodeA instanceof Element ? $nodeA : PHPUtils::jsonEncode( $nodeA->nodeValue ) )
 		);
-		$this->env->log( $prefix,
-			static fn () => '--> B' . $laPrefix . ':' .
-				( $nodeB instanceof Element
-					? DOMCompat::getOuterHTML( $nodeB )
-					: PHPUtils::jsonEncode( $nodeB->nodeValue ) )
+		$this->env->trace(
+			'domdiff',
+			'--> B', $laPrefix, ':',
+			static fn () => ( $nodeB instanceof Element ? $nodeB : PHPUtils::jsonEncode( $nodeB->nodeValue ) )
 		);
 	}
 }

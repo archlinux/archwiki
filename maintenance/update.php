@@ -35,6 +35,8 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Installer\DatabaseInstaller;
 use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Installer;
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\DatabaseSqlite;
@@ -71,6 +73,7 @@ class UpdateMediaWiki extends Maintenance {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}
@@ -259,7 +262,7 @@ class UpdateMediaWiki extends Maintenance {
 		parent::validateParamsAndArgs();
 	}
 
-	private function formatWarnings( array $warnings ) {
+	private function formatWarnings( array $warnings ): string {
 		$text = '';
 		foreach ( $warnings as $warning ) {
 			$warning = wordwrap( $warning, 75, "\n  " );

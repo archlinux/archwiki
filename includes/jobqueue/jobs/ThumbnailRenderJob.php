@@ -18,6 +18,12 @@
  * @file
  */
 
+namespace MediaWiki\JobQueue\Jobs;
+
+use MediaTransformError;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\JobQueue\Job;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
@@ -147,12 +153,12 @@ class ThumbnailRenderJob extends Job {
 		return false;
 	}
 
-	private function maybeEnqueueNextPage( $transformParams ) {
+	private function maybeEnqueueNextPage( array $transformParams ) {
 		if (
 			( $this->params['enqueueNextPage'] ?? false ) &&
 			( $transformParams['page'] ?? 0 ) < ( $this->params['pageLimit'] ?? 0 )
 		) {
-			$transformParams['page'] += 1;
+			$transformParams['page']++;
 			$job = new ThumbnailRenderJob(
 				$this->getTitle(),
 				[
@@ -178,3 +184,6 @@ class ThumbnailRenderJob extends Job {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ThumbnailRenderJob::class, 'ThumbnailRenderJob' );

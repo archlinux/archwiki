@@ -24,6 +24,8 @@ namespace MediaWiki\Api;
 
 use MediaWiki\Block\Block;
 use MediaWiki\Block\BlockPermissionCheckerFactory;
+use MediaWiki\Block\BlockTargetFactory;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\UnblockUserFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
@@ -32,6 +34,7 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
+use RuntimeException;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 
@@ -50,6 +53,8 @@ class ApiUnblock extends ApiBase {
 	private UnblockUserFactory $unblockUserFactory;
 	private UserIdentityLookup $userIdentityLookup;
 	private WatchedItemStoreInterface $watchedItemStore;
+	private DatabaseBlockStore $blockStore;
+	private BlockTargetFactory $blockTargetFactory;
 
 	public function __construct(
 		ApiMain $main,
@@ -59,7 +64,9 @@ class ApiUnblock extends ApiBase {
 		UserIdentityLookup $userIdentityLookup,
 		WatchedItemStoreInterface $watchedItemStore,
 		WatchlistManager $watchlistManager,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		DatabaseBlockStore $blockStore,
+		BlockTargetFactory $blockTargetFactory
 	) {
 		parent::__construct( $main, $action );
 
@@ -74,6 +81,8 @@ class ApiUnblock extends ApiBase {
 			$this->getConfig()->get( MainConfigNames::WatchlistExpiryMaxDuration );
 		$this->watchlistManager = $watchlistManager;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->blockStore = $blockStore;
+		$this->blockTargetFactory = $blockTargetFactory;
 	}
 
 	/**
@@ -94,17 +103,31 @@ class ApiUnblock extends ApiBase {
 			if ( !$identity ) {
 				$this->dieWithError( [ 'apierror-nosuchuserid', $params['userid'] ], 'nosuchuserid' );
 			}
-			$params['user'] = $identity->getName();
+			$params['user'] = $identity;
 		}
 
-		$target = $params['id'] === null ? $params['user'] : "#{$params['id']}";
+		$blockToRemove = null;
+		if ( $params['id'] !== null ) {
+			$blockToRemove = $this->blockStore->newFromID( $params['id'], true );
+			if ( !$blockToRemove ) {
+				$this->dieWithError(
+					[ 'apierror-nosuchblockid', $params['id'] ],
+					'nosuchblockid' );
+			}
+			$target = $blockToRemove->getRedactedTarget();
+			if ( !$target ) {
+				throw new RuntimeException( 'Block has no target' );
+			}
+		} else {
+			$target = $this->blockTargetFactory->newFromUser( $params['user'] );
+		}
 
 		# T17810: blocked admins should have limited access here
 		$status = $this->permissionCheckerFactory
-			->newBlockPermissionChecker(
-				$target,
+			->newChecker(
 				$this->getAuthority()
-			)->checkBlockPermissions();
+			)->checkBlockPermissions( $target );
+
 		if ( $status !== true ) {
 			$this->dieWithError(
 				$status,
@@ -114,12 +137,21 @@ class ApiUnblock extends ApiBase {
 			);
 		}
 
-		$status = $this->unblockUserFactory->newUnblockUser(
-			$target,
-			$this->getAuthority(),
-			$params['reason'],
-			$params['tags'] ?? []
-		)->unblock();
+		if ( $blockToRemove !== null ) {
+			$status = $this->unblockUserFactory->newRemoveBlock(
+				$blockToRemove,
+				$this->getAuthority(),
+				$params['reason'],
+				$params['tags'] ?? []
+			)->unblock();
+		} else {
+			$status = $this->unblockUserFactory->newUnblockUser(
+				$target,
+				$this->getAuthority(),
+				$params['reason'],
+				$params['tags'] ?? []
+			)->unblock();
+		}
 
 		if ( !$status->isOK() ) {
 			$this->dieStatus( $status );
@@ -147,6 +179,7 @@ class ApiUnblock extends ApiBase {
 			'reason' => $params['reason'],
 			'watchuser' => $watchuser,
 		];
+
 		if ( $watchlistExpiry !== null ) {
 			$res['watchlistexpiry'] = $this->getWatchlistExpiry(
 				$this->watchedItemStore,
@@ -154,6 +187,7 @@ class ApiUnblock extends ApiBase {
 				$this->getUser()
 			);
 		}
+
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
 	}
 
@@ -173,6 +207,7 @@ class ApiUnblock extends ApiBase {
 			'user' => [
 				ParamValidator::PARAM_TYPE => 'user',
 				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'cidr', 'id' ],
+				UserDef::PARAM_RETURN_OBJECT => true,
 			],
 			'userid' => [
 				ParamValidator::PARAM_TYPE => 'integer',

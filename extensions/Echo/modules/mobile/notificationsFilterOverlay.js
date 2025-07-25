@@ -31,12 +31,11 @@ function notificationsFilterOverlay( options ) {
 		options.$crossWikiUnreadFilter
 	);
 
-	const overlay = Overlay.make( {
+	return Overlay.make( {
 		onBeforeExit: options.onBeforeExit,
 		heading: '<strong>' + mw.message( 'echo-mobile-notifications-filter-title' ).escaped() + '</strong>',
 		className: 'overlay notifications-filter-overlay notifications-overlay navigation-drawer'
 	}, { $el: $content } );
-	return overlay;
 }
 
 module.exports = notificationsFilterOverlay;

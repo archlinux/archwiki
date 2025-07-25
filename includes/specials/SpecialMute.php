@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Preferences\MultiUsernameFilter;
@@ -52,12 +52,6 @@ class SpecialMute extends FormSpecialPage {
 	private UserIdentityLookup $userIdentityLookup;
 	private UserIdentityUtils $userIdentityUtils;
 
-	/**
-	 * @param CentralIdLookup $centralIdLookup
-	 * @param UserOptionsManager $userOptionsManager
-	 * @param UserIdentityLookup $userIdentityLookup
-	 * @param UserIdentityUtils $userIdentityUtils
-	 */
 	public function __construct(
 		CentralIdLookup $centralIdLookup,
 		UserOptionsManager $userOptionsManager,
@@ -136,9 +130,6 @@ class SpecialMute extends FormSpecialPage {
 		return $this->msg( 'specialmute' );
 	}
 
-	/**
-	 * @return UserIdentity|null
-	 */
 	private function getTarget(): ?UserIdentity {
 		return $this->target;
 	}

@@ -27,6 +27,7 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
 use MediaWiki\Diff\TextDiffer\TextDiffer;
+use MediaWiki\Exception\FatalError;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -205,9 +206,6 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 		$this->format = $format;
 	}
 
-	/**
-	 * @param TextDiffer $textDiffer
-	 */
 	public function setTextDiffer( TextDiffer $textDiffer ) {
 		$this->textDiffer = $textDiffer;
 	}
@@ -215,8 +213,6 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 	/**
 	 * Get the current TextDiffer, or throw an exception if setTextDiffer() has
 	 * not been called.
-	 *
-	 * @return TextDiffer
 	 */
 	private function getTextDiffer(): TextDiffer {
 		return $this->textDiffer;
@@ -265,7 +261,7 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 		$showDiffToggleSwitch = $this->inlineToggleEnabled && $this->getTextDiffer()->hasFormat( 'inline' );
 		// If we support the inline type, add a toggle switch
 		if ( $showDiffToggleSwitch ) {
-			$values = $context->getRequest()->getValues();
+			$values = $context->getRequest()->getQueryValues();
 			$isInlineDiffType = $this->format === 'inline';
 			$values[ 'diff-type' ] = $isInlineDiffType ? 'table' : 'inline';
 			unset( $values[ 'title' ] );

@@ -18,6 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo\File;
+
+use MediaHandler;
+use MediaTransformOutput;
+use MediaWiki\FileRepo\ForeignAPIRepo;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Title\Title;
@@ -193,9 +198,6 @@ class ForeignAPIFile extends File {
 		return false;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getMetadataArray(): array {
 		if ( isset( $this->mInfo['metadata'] ) ) {
 			return self::parseMetadata( $this->mInfo['metadata'] );
@@ -300,7 +302,7 @@ class ForeignAPIFile extends File {
 	 */
 	public function getSha1() {
 		return isset( $this->mInfo['sha1'] )
-			? Wikimedia\base_convert( strval( $this->mInfo['sha1'] ), 16, 36, 31 )
+			? \Wikimedia\base_convert( strval( $this->mInfo['sha1'] ), 16, 36, 31 )
 			: null;
 	}
 
@@ -387,7 +389,7 @@ class ForeignAPIFile extends File {
 
 	private function purgeDescriptionPage() {
 		$services = MediaWikiServices::getInstance();
-		$langCode = $services->getContentLanguage()->getCode();
+		$langCode = $services->getContentLanguageCode()->toString();
 
 		// Key must match File::getDescriptionText
 		$key = $this->repo->getLocalCacheKey( 'file-remote-description', $langCode, md5( $this->getName() ) );
@@ -429,3 +431,6 @@ class ForeignAPIFile extends File {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ForeignAPIFile::class, 'ForeignAPIFile' );

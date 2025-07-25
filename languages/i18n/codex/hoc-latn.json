@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "Rikuṕdanaṅe",
 	"cdx-label-optional-flag": "(salabagenaḱ)",
 	"cdx-message-dismiss-button-label": "Rikuṕdanaṅe",
+	"cdx-popover-close-button-label": "Rikuṕdanaṅe",
 	"cdx-search-input-search-button-label": "Nelsangarè",
 	"cdx-table-select-all-label": "Saben Ganḍigene salaè",
 	"cdx-table-select-row-label": "$2 re $1 Ganḍigene salaè",
@@ -25,5 +26,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Sangi Sangarnamḱ reaḱ $1–$2 uduṕoḱ tana",
 	"cdx-table-pagination-status-message-indeterminate-short": "Sangi reaḱ $1–$2",
 	"cdx-table-pagination-status-message-indeterminate-final": "Canaba {{PLURAL:$1|$1a Sangarnamnaḱ|$1a Sangarnamnaḱ ko|2=$1a Sangarnamnaḱ kin}} uduṕoḱ tana",
-	"cdx-table-pagination-status-message-pending": "Sangarnamnaḱ ko aguoḱ tana..."
+	"cdx-table-pagination-status-message-pending": "Sangarnamnaḱ ko aguoḱ tana...",
+	"cdx-table-no-data-message": "Data banoḱa."
 }

@@ -47,6 +47,7 @@
 	"abusefilter-log-entry": "$1: $2 het 'n misbruik filter {{GENDER:$8|geaktiveer}}, deur die aksie \"$3\" op $4 {{GENDER:$8|uit te voer}}.\nAksies uitgevoer: $5;\nFilter beskrywing: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 het 'n misbruik filter {{GENDER:$8|geaktiveer}}, deur die aksie \"$3\" op $4 {{GENDER:$8|uit te voer}}.\nAksies uitgevoer: $5;\nFilter beskrywing: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 {{GENDER:$9|aktiveer}} $3, deur die {{GENDER:$9|uitvoering}} van die aksie \"$4\" op $5.\nAksies uitgevoer: $6;\nFilter beskrywing: $7 ($8)",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1: $2 {{GENDER:$9|aktiveer}} $3, deur die {{GENDER:$9|uitvoering}} van die aksie \"$4\" op $5.\nAksies uitgevoer: $6;\nFilter beskrywing: $7",
 	"abusefilter-log-detailedentry-global": "globale filter $1",
 	"abusefilter-log-detailedentry-local": "filter $1",
 	"abusefilter-log-detailslink": "details",

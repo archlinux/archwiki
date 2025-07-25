@@ -193,7 +193,6 @@ class CategoryTreePage extends SpecialPage {
 		$output->addHTML( Html::rawElement( 'div',
 			[
 				'class' => 'CategoryTreeResult CategoryTreeTag',
-				'data-ct-mode' => $this->tree->optionManager->getOption( 'mode' ),
 				'data-ct-options' => $this->tree->optionManager->getOptionsAsJsStructure(),
 			],
 			$this->tree->renderNode( $title, 1 )

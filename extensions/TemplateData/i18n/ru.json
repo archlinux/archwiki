@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Cabadeck",
 			"Eakarpov",
 			"IKhitron",
 			"INS Pirat",
@@ -22,7 +23,6 @@
 			"Striking Blue",
 			"Sunpriat",
 			"UniCollab",
-			"Cabadeck",
 			"Mitte27"
 		]
 	},
@@ -60,10 +60,11 @@
 	"templatedata-doc-param-type-wiki-user-name": "Имя участника",
 	"templatedata-doc-params": "Параметры шаблона",
 	"templatedata-editbutton": "Править данные шаблона",
-	"templatedata-errormsg-jsonbadformat": "Некорректный формат JSON. Вы можете отменить эту операцию, чтобы исправить его: удалите текущие теги <templatedata> и повторите попытку, или же вы можете продолжить, чтобы заменить текущий шаблон данных новым.",
+	"templatedata-errormsg-jsonbadformat": "Некорректный формат JSON. Вы можете отменить эту операцию, чтобы исправить или удалить JSON, или продолжить, чтобы заменить текущие данные шаблона новыми.",
 	"templatedata-errormsg-insertblank": "Вы уверены, что хотите вставить данные шаблона без информации?",
 	"templatedata-exists-on-related-page": "Обратите внимание: уже имеется блок данных шаблона на связанной странице «[[$1]]».",
 	"templatedata-helplink": "Информация о данных в шаблоне",
+	"templatedata-invalid-unnamed-parameter": "Имена параметров не могут быть пустыми. Для документирования безымянных параметров используйте их внутренние номера «1», «2» и т. д.",
 	"templatedata-invalid-duplicate-value": "Свойство «$1» («$3») — дубликат «$2».",
 	"templatedata-invalid-empty-array": "Свойство «$1» должно иметь по крайней мере одно значение в своём массиве.",
 	"templatedata-invalid-format": "Предполагается, что значением свойства \"$1\" должно быть \"inline\", \"block\" или строка корректного формата.",
@@ -88,6 +89,7 @@
 	"templatedata-modal-button-removemap": "Удалить маппинг",
 	"templatedata-modal-button-saveparam": "Сохранить",
 	"templatedata-modal-confirmcancel": "Вы уверены, что хотите отменить внесённые изменения?",
+	"templatedata-modal-button-discard": "Отменить",
 	"templatedata-modal-current-language": "Текущий язык: $1",
 	"templatedata-modal-errormsg": "Были обнаружены ошибки. Пожалуйста, убедитесь, что имена параметров не являются пустыми, не дублируются и не содержат «$1», «$2» или «$3».",
 	"templatedata-modal-errormsg-duplicate-name": "Найдена ошибка. Выбранное имя уже используется другим параметром.",
@@ -130,5 +132,17 @@
 	"templatedata-modal-title-templateformat": "Предлагаемое форматирование вики-текста",
 	"templatedata-modal-title-templateformatstring": "Нестандартный формат",
 	"templatedata-modal-title-templateparam-details": "Описание параметра: $1",
-	"templatedata-modal-title-templateparams": "Параметры шаблона"
+	"templatedata-modal-title-templateparams": "Параметры шаблона",
+	"templatedata-search-title": "Поиск шаблона",
+	"templatedata-search-list-header": "Избранное",
+	"templatedata-search-list-empty": "Здесь появятся шаблоны, которые вы пометили как избранные",
+	"templatedata-template-discovery-disabled": "Обнаружение шаблонов на этом вики-сайте отключено.",
+	"templatediscovery": "Обнаружение шаблонов",
+	"templatedata-favorite-disabled": "Чтобы добавить шаблон в число избранных, сначала нужно войти под своей учётной записью",
+	"templatedata-favorite-add": "Добавить шаблон в избранные",
+	"templatedata-favorite-added": "Шаблон добавлен в избранные",
+	"templatedata-favorite-remove": "Удалить шаблон из избранных",
+	"templatedata-favorite-removed": "Шаблон удалён из избранных",
+	"templatedata-favorite-error": "Невозможно сохранить избранное",
+	"templatedata-favorite-maximum-reached": "Вы достигли максимального количества ($1) избранных шаблонов. Прежде чем добавлять новые, придётся удалить какие-то из своего списка."
 }

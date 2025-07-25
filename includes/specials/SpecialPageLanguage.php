@@ -20,15 +20,16 @@
 
 namespace MediaWiki\Specials;
 
-use LogEventsList;
-use LogPage;
-use ManualLogEntry;
 use MediaWiki\Api\ApiMessage;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionStatus;
@@ -36,7 +37,6 @@ use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 use SearchEngineFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -59,12 +59,6 @@ class SpecialPageLanguage extends FormSpecialPage {
 	private IConnectionProvider $dbProvider;
 	private SearchEngineFactory $searchEngineFactory;
 
-	/**
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param IConnectionProvider $dbProvider
-	 * @param SearchEngineFactory $searchEngineFactory
-	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
 		LanguageNameUtils $languageNameUtils,
@@ -314,9 +308,9 @@ class SpecialPageLanguage extends FormSpecialPage {
 		$this->getOutput()->redirect( $this->goToUrl );
 	}
 
-	private function showLogFragment( $title ) {
+	private function showLogFragment( string $title ): string {
 		$moveLogPage = new LogPage( 'pagelang' );
-		$out1 = Xml::element( 'h2', null, $moveLogPage->getName()->text() );
+		$out1 = Html::element( 'h2', [], $moveLogPage->getName()->text() );
 		$out2 = '';
 		LogEventsList::showLogExtract( $out2, 'pagelang', $title );
 		return $out1 . $out2;

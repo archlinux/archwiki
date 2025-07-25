@@ -52,5 +52,6 @@
 	"apierror-abusefilter-cantcheck": "Tu non ha le permission de verificar le syntaxe de filtros anti-abuso.",
 	"apierror-abusefilter-canteval": "Tu non ha le permission de evalutar le expressiones del filtro anti-abuso.",
 	"apierror-abusefilter-nosuchlogid": "Il non ha un entrata con ID $1 in le registro de abusos.",
+	"apierror-abusefilter-incompatible": "Le cambiamento requestate non es supportate per le filtro anti-abuso.",
 	"apierror-abusefilter-badsyntax": "Le filtro ha un syntaxe invalide."
 }

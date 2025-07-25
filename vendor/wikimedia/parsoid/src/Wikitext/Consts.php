@@ -6,25 +6,25 @@ namespace Wikimedia\Parsoid\Wikitext;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 
 class Consts {
-	public static $Media;
-	public static $Sanitizer;
-	public static $WikitextTagsWithTrimmableWS;
-	public static $HTMLTagsRequiringSOLContext;
-	public static $WTQuoteTags;
-	public static $SolSpaceSensitiveTags;
-	public static $HTML;
-	public static $WTTagsWithNoClosingTags;
-	public static $Output;
-	public static $WtTagWidths;
-	public static $ZeroWidthWikitextTags;
-	public static $LCFlagMap;
-	public static $LCNameMap;
-	public static $blockElems;
-	public static $antiBlockElems;
-	public static $alwaysBlockElems;
-	public static $neverBlockElems;
-	public static $wikitextBlockElems;
-	public static $strippedUrlCharacters;
+	public static array $Media;
+	public static array $Sanitizer;
+	public static array $WikitextTagsWithTrimmableWS;
+	public static array $HTMLTagsRequiringSOLContext;
+	public static array $WTQuoteTags;
+	public static array $SolSpaceSensitiveTags;
+	public static array $HTML;
+	public static array $WTTagsWithNoClosingTags;
+	public static array $Output;
+	public static array $WtTagWidths;
+	public static array $ZeroWidthWikitextTags;
+	public static array $LCFlagMap;
+	public static array $LCNameMap;
+	public static array $blockElems;
+	public static array $antiBlockElems;
+	public static array $alwaysBlockElems;
+	public static array $neverBlockElems;
+	public static array $wikitextBlockElems;
+	public static string $strippedUrlCharacters;
 
 	public static function init() {
 		/*
@@ -208,14 +208,13 @@ class Consts {
 			 * From \\MediaWiki\Tidy\RemexCompatMunger::$onlyInlineElements
 			 */
 			'OnlyInlineElements' => PHPUtils::makeSet( [
-				'a', 'abbr', 'acronym', 'applet', 'b', 'basefont', 'bdo',
-				'big', 'br', 'button', 'cite', 'code', 'del', 'dfn', 'em',
+				'a', 'abbr', 'acronym', 'applet', 'audio', 'b', 'basefont', 'bdi', 'bdo',
+				'big', 'br', 'button', 'cite', 'code', 'data', 'del', 'dfn', 'em',
 				'font', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label',
-				'legend', 'map', 'object', 'param', 'q', 'rb', 'rbc', 'rp',
-				'rt', 'rtc', 'ruby', 's', 'samp', 'select', 'small', 'span',
-				'strike', 'strong', 'sub', 'sup', 'textarea', 'tt', 'u', 'var',
-				// Those defined in tidy.conf
-				'video', 'audio', 'bdi', 'data', 'time', 'mark',
+				'legend', 'map', 'mark', 'object', 'param', 'q', 'rb', 'rbc', 'rp',
+				'rt', 'rtc', 'ruby', 's', 'samp', 'select', 'small', 'source', 'span',
+				'strike', 'strong', 'sub', 'sup', 'textarea', 'time', 'track', 'tt', 'u',
+				'var', 'video', 'wbr'
 			] ),
 
 			'ListTags' => PHPUtils::makeSet( [ 'ul', 'ol', 'dl' ] ),

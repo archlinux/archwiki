@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар",
-			"Исмаил Садуев"
+			"Исмаил Садуев",
+			"Умар"
 		]
 	},
 	"templatedata-desc": "Кепийн параметрашна лерина хаамаш латторан меттиг кхочушйар (JSON лелош)",
@@ -39,7 +39,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Декъашхо",
 	"templatedata-doc-params": "Кепан параметраш",
 	"templatedata-editbutton": "Кепан хаамаш хийца",
-	"templatedata-errormsg-jsonbadformat": "Нийса йоцу JSON-формат. И нисйе йа карара тегаш <templatedata> дӀайаха тӀакха йуха гӀорта.",
+	"templatedata-errormsg-jsonbadformat": "Нийса йоцу JSON формат йу. Ахь дӀайаккха мегар ду и операци, ахь иза нисйан йа дӀайаккха йиш хилийта, йа кхидӀа а хийца карарчу хенахь кепан хаамаш керлачуьнца.",
 	"templatedata-errormsg-insertblank": "Баккъалла а лаьий хьуна, цхьа а информаци йоцуш кепан хаамаш чубаха?",
 	"templatedata-exists-on-related-page": "Тидам бе: хӀинцале а йу кепийн хаамийн блок гергара «[[$1]]» агӀонан тӀехь.",
 	"templatedata-helplink": "Кепан хаамех лаьцна информаци",
@@ -68,6 +68,7 @@
 	"templatedata-modal-button-removemap": "ДӀадаккха карта",
 	"templatedata-modal-button-saveparam": "Ӏалашйан",
 	"templatedata-modal-confirmcancel": "Лаьий хьуна, бина хийцамаш дӀабаха?",
+	"templatedata-modal-button-discard": "Йухадаккха",
 	"templatedata-modal-current-language": "Карара мотт: $1",
 	"templatedata-modal-errormsg": "Карийна гӀалаташ. Дехар до, параметрийн цӀерш йаьсса йуьй а цхьатерра йуьй «$1», «$2» йа «$3» хьажар.",
 	"templatedata-modal-errormsg-duplicate-name": "Карийна гӀалат. Хаьржина цӀе кхечу параметро лелош йу.",
@@ -110,5 +111,19 @@
 	"templatedata-modal-title-templateformat": "Викийозан кховдийна формат",
 	"templatedata-modal-title-templateformatstring": "Кепан йоцу формат",
 	"templatedata-modal-title-templateparam-details": "Параметрах лаьцна: $1",
-	"templatedata-modal-title-templateparams": "Кепан параметраш"
+	"templatedata-modal-title-templateparams": "Кепан параметраш",
+	"templatedata-search-title": "Кеп лахар",
+	"templatedata-search-description": "Хьайна чуйаккха лууш йолу кеп лаха, билгалдоккхуш долу коьрта дош лехча. Хаамаш болу кепаш дика болх бан йиш йолуш йу.",
+	"templatedata-search-placeholder": "Кеп лаха",
+	"templatedata-search-list-header": "Хаьржинарг",
+	"templatedata-search-list-empty": "Ахь хаьржина санна билгалйаьхна кепаш кхузахь гучуйовлу",
+	"templatedata-template-discovery-disabled": "Кеп карор дӀадаьккхина ду хӀокху вики тӀехь.",
+	"templatediscovery": "Кеп карор",
+	"templatedata-favorite-disabled": "Кеп хаьржиначарна йукъатоха ахь системин тӀехь авторизаци йан йеза",
+	"templatedata-favorite-add": "Хаьржиначарна тӀетоха кеп",
+	"templatedata-favorite-added": "Хаьржиначарна тӀетоьхна кеп",
+	"templatedata-favorite-remove": "Хаьржиначарна йукъара дӀайаккха кеп",
+	"templatedata-favorite-removed": "Хаьржиначарна йукъара дӀайаьккхина кеп",
+	"templatedata-favorite-error": "Хаьржинарг Ӏалашйан йиш йац",
+	"templatedata-favorite-maximum-reached": "Хьо кхаьчна максимум кепийн терахье ($1). Дехар до, цхьадерш дӀадаха хьайн могӀаман тӀера, кхин а тӀетохале."
 }

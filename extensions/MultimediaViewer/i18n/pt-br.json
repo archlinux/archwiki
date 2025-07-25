@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Araceletorres",
+			"EGobi",
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
@@ -10,8 +11,7 @@
 			"Macofe",
 			"Oona",
 			"Ptrke",
-			"TheEduGobi",
-			"EGobi"
+			"TheEduGobi"
 		]
 	},
 	"multimediaviewer-desc": "Expandir miniaturas em tamanho maior numa interface em tela cheia",

@@ -28,6 +28,11 @@ $specialPageAliases['arz'] = [
 	'Thanks' => [ 'شكرا' ],
 ];
 
+/** Azerbaijani (Azərbaycanca) */
+$specialPageAliases['az'] = [
+	'Thanks' => [ 'Təşəkkür' ],
+];
+
 /** Western Balochi (بلوچی رخشانی) */
 $specialPageAliases['bgn'] = [
 	'Thanks' => [ 'سپاس', 'منتوارن', 'تشکر' ],

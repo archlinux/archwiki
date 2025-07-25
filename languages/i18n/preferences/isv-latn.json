@@ -75,7 +75,7 @@
 	"prefs-help-email": "Adres e-pošty ne jest obvezny, ale jest neobhodimy za resetovanje vašej paroly v slučaju, že ju zabudete.",
 	"prefs-help-email-required": "Adres e-pošty jest obvezny.",
 	"prefs-help-email-others": "Takože imajete možnost, že drugi koristniki kontaktujut vas črěz e-poštu posrědstvom linka na vašej koristničskoj ili besědnoj stranici.\nVaš adres e-pošty ne bude izjavjeny, kogda pišut k vam drugi koristniki.",
-	"tog-requireemail": "Poslati pisma za resetovanje paroly jedino togda, kogda ukazane sut i adres e-pošty i koristničsko ime.",
+	"tog-requireemail": "Poslati pisma za resetovanje paroly jedino togda, kogda ukazane sut i adres e-pošty i koristničsko ime",
 	"prefs-help-requireemail": "To ulěpšaje privatnost i pomagaje izběgti neželanu e-poštu.",
 	"noemailprefs": "Za umožnjenje raboty tutyh funkcij, vvedite adres e-pošty v svojih nastavjenjah.",
 	"emailnotauthenticated": "Vaš adres e-pošty ješče ne jest potvrdženy.\nNe bude poslana e-pošta za kojkoli iz slědujučih funkcij.",
@@ -222,6 +222,7 @@
 	"search-thumbnail-extra-namespaces-label": "Pokazyvati miniatury v {{#special:search}} v kompjuternoj versiji",
 	"search-thumbnail-extra-namespaces-message": "Pokazyvaje miniatury za rezultaty v {{PLURAL:$2|imennom prostoru|imennyh prostorah}} $1 na stranici {{#special:search}}",
 	"prefs-advancedsearchoptions": "Razširjene opcije",
+	"prefs-misc": "Razne",
 	"prefs-reset-intro": "Na tutoj stranici možete resetovati svoje nastavjenja, vračajuči prědustavjene nastavjenja sajta. \nČuvanje: odčinjenje togo dějanja bude nemožno.",
 	"prefs-reset-confirm": "Da, ja hoču resetovati svoje nastavjenja.",
 	"restoreprefs": "Vratiti vse prědustavjene nastavjenja"

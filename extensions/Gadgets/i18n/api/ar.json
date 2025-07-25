@@ -2,16 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"Abanima",
+			"Cigaryno",
 			"Maroen1990",
-			"Meno25",
-			"Cigaryno"
+			"Meno25"
 		]
 	},
-	"apihelp-query+gadgetcategories-summary": "يرجع قائمة بتصنيفات الإضافات.",
-	"apihelp-query+gadgetcategories-param-prop": "ما هي المعلومات التي يجب الحصول عليها:",
-	"apihelp-query+gadgetcategories-param-names": "أسماء التصنيفات للاسترداد.",
-	"apihelp-query+gadgetcategories-example-1": "الحصول على قائمة بتصنيفات الإضافات الموجودة",
-	"apihelp-query+gadgetcategories-example-2": "الحصول على كل المعلومات حول التصنيفات المسماة \"foo\" و \"bar\"",
+	"apihelp-query+gadgetcategories-summary": "يرجع قائمة بأقسام الإضافات.",
+	"apihelp-query+gadgetcategories-param-prop": "ما هي معلومات قسم الإضافة التي يجب الحصول عليها:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "اسم القسم الداخلي.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "عنوان القسم.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "عدد الإضافات في القسم.",
+	"apihelp-query+gadgetcategories-param-names": "أسماء الأقسام للاسترداد.",
+	"apihelp-query+gadgetcategories-example-1": "الحصول على قائمة بأقسام الإضافات الموجودة",
+	"apihelp-query+gadgetcategories-example-2": "الحصول على كل المعلومات حول الأقسام المسماة \"foo\" و \"bar\"",
 	"apihelp-query+gadgets-summary": "يرجع قائمة بالإضافات المستخدمة في هذة الويكي.",
 	"apihelp-query+gadgets-param-prop": "ما هي معلومات الأداة التي يجب الحصول عليها:",
 	"apihelp-query+gadgets-paramvalue-prop-id": "معرف الإضافة الداخلي.",

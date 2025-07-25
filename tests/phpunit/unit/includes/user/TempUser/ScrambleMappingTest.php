@@ -3,17 +3,23 @@
 namespace MediaWiki\Tests\User\TempUser;
 
 use MediaWiki\User\TempUser\ScrambleMapping;
+use MediaWikiUnitTestCase;
 use OutOfBoundsException;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \MediaWiki\User\TempUser\ScrambleMapping
  */
-class ScrambleMappingTest extends TestCase {
-	public function testMap() {
+class ScrambleMappingTest extends MediaWikiUnitTestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+
 		if ( !extension_loaded( 'gmp' ) && !extension_loaded( 'bcmath' ) ) {
-			$this->markTestSkipped( 'need extension gmp or bcmath' );
+			$this->markTestSkipped( 'ScrambleMapping requires the gmp or bcmath PHP extensions' );
 		}
+	}
+
+	public function testMap() {
 		$map = new ScrambleMapping( [] );
 		$duplicates = 0;
 		// This has been verified up to 1e8 but for CI purposes we will use 200

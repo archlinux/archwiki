@@ -3,8 +3,8 @@
 		"authors": [
 			"H78c67c",
 			"Ktchankt",
-			"Winston Sung",
 			"SCP-2000",
+			"Winston Sung",
 			"Woytecr"
 		]
 	},
@@ -84,7 +84,7 @@
 	"tag-discussiontools-added-comment-description": "呢次編輯加咗討論版留言",
 	"tag-discussiontools-edit": "改註解",
 	"tag-discussiontools-edit-description": "用戶用DiscussionTools改咗個現有嘅留言",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} 加主題]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} 回覆]",
+	"tag-discussiontools-newtopic": "加主題",
+	"tag-discussiontools-reply": "回覆",
 	"tag-discussiontools-reply-description": "用戶用DiscussionTools回覆留言"
 }

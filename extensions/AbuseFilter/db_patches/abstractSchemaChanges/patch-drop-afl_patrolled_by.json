@@ -1,0 +1,244 @@
+{
+	"comment": "Drop unused afl_patrolled_by column (T391027)",
+	"before": {
+		"name": "abuse_filter_log",
+		"columns": [
+			{
+				"name": "afl_id",
+				"type": "bigint",
+				"options": { "notnull": true, "autoincrement": true, "unsigned": true }
+			},
+			{
+				"name": "afl_global",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1 }
+			},
+			{
+				"name": "afl_filter_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user_text",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_ip",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_action",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_actions",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_var_dump",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "afl_timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_namespace",
+				"type": "integer",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_wiki",
+				"type": "binary",
+				"options": { "notnull": false, "length": 64 }
+			},
+			{
+				"name": "afl_deleted",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "afl_patrolled_by",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "afl_rev_id",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "afl_filter_timestamp_full",
+				"columns": [ "afl_global", "afl_filter_id", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_user_timestamp",
+				"columns": [ "afl_user", "afl_user_text", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_timestamp",
+				"columns": [ "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_page_timestamp",
+				"columns": [ "afl_namespace", "afl_title", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_ip_timestamp",
+				"columns": [ "afl_ip", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_rev_id",
+				"columns": [ "afl_rev_id" ],
+				"unique": false
+			},
+			{
+				"name": "afl_wiki_timestamp",
+				"columns": [ "afl_wiki", "afl_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "afl_id" ]
+	},
+	"after": {
+		"name": "abuse_filter_log",
+		"columns": [
+			{
+				"name": "afl_id",
+				"type": "bigint",
+				"options": { "notnull": true, "autoincrement": true, "unsigned": true }
+			},
+			{
+				"name": "afl_global",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1 }
+			},
+			{
+				"name": "afl_filter_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user_text",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_ip",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_action",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_actions",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_var_dump",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "afl_timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_namespace",
+				"type": "integer",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_wiki",
+				"type": "binary",
+				"options": { "notnull": false, "length": 64 }
+			},
+			{
+				"name": "afl_deleted",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "afl_rev_id",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "afl_filter_timestamp_full",
+				"columns": [ "afl_global", "afl_filter_id", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_user_timestamp",
+				"columns": [ "afl_user", "afl_user_text", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_timestamp",
+				"columns": [ "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_page_timestamp",
+				"columns": [ "afl_namespace", "afl_title", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_ip_timestamp",
+				"columns": [ "afl_ip", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_rev_id",
+				"columns": [ "afl_rev_id" ],
+				"unique": false
+			},
+			{
+				"name": "afl_wiki_timestamp",
+				"columns": [ "afl_wiki", "afl_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "afl_id" ]
+	}
+}

@@ -43,6 +43,7 @@ use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
 use stdClass;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -456,7 +457,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 
 				if ( $this->fld_parsedcomment ) {
 					$vals['parsedcomment'] = $this->commentFormatter->format(
-						$comment, Title::newFromLinkTarget( $revision->getPageAsLinkTarget() )
+						$comment, $revision->getPageAsLinkTarget()
 					);
 				}
 			}
@@ -634,7 +635,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	 */
 	private function extractDeprecatedContent( Content $content, RevisionRecord $revision ) {
 		$vals = [];
-		$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
+		$title = Title::newFromPageIdentity( $revision->getPage() );
 
 		if ( $this->fld_parsetree || ( $this->fld_content && $this->generateXML ) ) {
 			if ( $content->getModel() === CONTENT_MODEL_WIKITEXT ) {
@@ -788,7 +789,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		return $vals;
 	}
 
-	private function getUserForPreview() {
+	private function getUserForPreview(): UserIdentity {
 		$user = $this->getUser();
 		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
 			return $this->userFactory->newUnsavedTempUser(

@@ -11,7 +11,6 @@ use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 
 class ApiDiscussionToolsCompare extends ApiBase {
 
@@ -89,12 +88,16 @@ class ApiDiscussionToolsCompare extends ApiBase {
 			return;
 		}
 
-		try {
-			$fromItemSet = HookUtils::parseRevisionParsoidHtml( $fromRev, __METHOD__ );
-			$toItemSet = HookUtils::parseRevisionParsoidHtml( $toRev, __METHOD__ );
-		} catch ( ResourceLimitExceededException $e ) {
-			$this->dieWithException( $e );
+		$fromStatus = HookUtils::parseRevisionParsoidHtml( $fromRev, __METHOD__ );
+		$toStatus = HookUtils::parseRevisionParsoidHtml( $toRev, __METHOD__ );
+		if ( !$fromStatus->isOK() ) {
+			$this->dieStatus( $fromStatus );
 		}
+		if ( !$toStatus->isOK() ) {
+			$this->dieStatus( $toStatus );
+		}
+		$fromItemSet = $fromStatus->getValueOrThrow();
+		$toItemSet = $toStatus->getValueOrThrow();
 
 		$removedComments = [];
 		foreach ( $fromItemSet->getCommentItems() as $fromComment ) {

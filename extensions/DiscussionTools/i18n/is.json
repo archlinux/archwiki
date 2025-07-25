@@ -6,8 +6,8 @@
 			"Snævar",
 			"Stefán Örvar Sigmundsson",
 			"Sveinn í Felli",
-			"Þjarkur",
 			"Woytecr",
+			"Þjarkur",
 			"Sveinki"
 		]
 	},
@@ -37,6 +37,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Þú ert að fylgjast með!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Þú munt ekki lengur fá tilkynningar þegar nýjar umræður eru stofnaðar á þessari síðu.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Þú ert {{GENDER:|hættur|hætt|hætt(ur)}} að fylgjast með.",
+	"discussiontools-notification-added-topic-header": "$1 stofnaðu nýja umræðu á <strong>$3</strong>: „$4“",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Eitt nýtt umræðuefni|$1 ný umræðuefni|100=99+ ný umræðuefni}} á „<strong>$2</strong>2“.",
 	"discussiontools-notification-added-topic-view": "Sjá umræðu",
 	"discussiontools-notification-comment-thank-header": "$1 þakkaði þér fyrir innlegg þitt í „<strong>$3</strong>“.",
@@ -95,6 +96,6 @@
 	"echo-category-title-dt-subscription": "{{PLURAL:$1|Áskrift|Áskriftir}} spjallsíðu",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Geymsla}} spjallsíðu",
 	"discussiontools-comments-before-first-heading-category-desc": "Umræðusíðan inniheldur athugasemdir í aðalhlutanum (á undan fyrstu fyrirsögninni). Þetta getur valdið því að aðalhlutinn eða athugasemdirnar birtist rangt, sérstaklega í farsímaútgáfunni og í farsímaöppum.",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nýr hluti]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Svar]"
+	"tag-discussiontools-newtopic": "Nýr hluti",
+	"tag-discussiontools-reply": "Svar"
 }

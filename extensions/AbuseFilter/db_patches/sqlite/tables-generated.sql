@@ -49,7 +49,6 @@ CREATE TABLE /*_*/abuse_filter_log (
   afl_title BLOB NOT NULL,
   afl_wiki BLOB DEFAULT NULL,
   afl_deleted SMALLINT DEFAULT 0 NOT NULL,
-  afl_patrolled_by INTEGER UNSIGNED DEFAULT 0 NOT NULL,
   afl_rev_id INTEGER UNSIGNED DEFAULT NULL
 );
 

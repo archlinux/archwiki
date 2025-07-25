@@ -4,8 +4,7 @@
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 CREATE TABLE /*_*/echo_event (
   event_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  event_type BLOB NOT NULL, event_variant BLOB DEFAULT NULL,
-  event_agent_id INTEGER UNSIGNED DEFAULT NULL,
+  event_type BLOB NOT NULL, event_agent_id INTEGER UNSIGNED DEFAULT NULL,
   event_agent_ip BLOB DEFAULT NULL,
   event_extra BLOB DEFAULT NULL, event_page_id INTEGER UNSIGNED DEFAULT NULL,
   event_deleted SMALLINT UNSIGNED DEFAULT 0 NOT NULL

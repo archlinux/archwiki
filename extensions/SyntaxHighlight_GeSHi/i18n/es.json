@@ -3,12 +3,12 @@
 		"authors": [
 			"Chris TR",
 			"Crazymadlover",
+			"Dgstranz",
 			"Fitoschido",
 			"Macofe",
 			"Muro de Aguas",
 			"Remember the dot",
-			"Sanbec",
-			"Dgstranz"
+			"Sanbec"
 		]
 	},
 	"syntaxhighlight-desc": "Permite resaltar el código fuente usando la etiqueta <code>&lt;syntaxhighlight&gt;</code>. Esta extensión usa [http://pygments.org/ Pygments - Resaltador de sintaxis en Python]",

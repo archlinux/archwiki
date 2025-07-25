@@ -56,5 +56,6 @@
 	"apierror-abusefilter-cantcheck": "ليس لديك الصلاحية للتحقق من بناء مرشحات الإساءة.",
 	"apierror-abusefilter-canteval": "ليس لديك صلاحية لتقييم تعبيرات مرشح الإساءة",
 	"apierror-abusefilter-nosuchlogid": "ليس هناك إدخال سجل إساءة بالمعرف $1.",
+	"apierror-abusefilter-incompatible": "التغيير المطلوب لا يدعمه مرشح الإساءة.",
 	"apierror-abusefilter-badsyntax": "يحتوي المرشح على بنية غير صالحة."
 }

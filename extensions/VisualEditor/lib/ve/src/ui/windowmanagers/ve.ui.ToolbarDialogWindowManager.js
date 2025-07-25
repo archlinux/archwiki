@@ -17,7 +17,7 @@
  */
 ve.ui.ToolbarDialogWindowManager = function VeUiToolbarDialogWindowManager( surface, config ) {
 	// Parent constructor
-	ve.ui.ToolbarDialogWindowManager.super.call( this, surface, config );
+	ve.ui.ToolbarDialogWindowManager.super.call( this, surface, ve.extendObject( { modal: false }, config ) );
 };
 
 /* Inheritance */
@@ -41,6 +41,14 @@ ve.ui.ToolbarDialogWindowManager.static.sizes = {
 		width: 400
 	}
 };
+
+/**
+ * All possible toolbar positions.
+ *
+ * @static
+ * @type {string[]}
+ */
+ve.ui.ToolbarDialogWindowManager.static.positions = [ 'above', 'below', 'side', 'inline' ];
 
 /* Methods */
 

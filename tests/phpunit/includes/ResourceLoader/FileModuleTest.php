@@ -9,9 +9,9 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\FilePath;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use RuntimeException;
-use SkinFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -169,18 +169,10 @@ class FileModuleTest extends ResourceLoaderTestCase {
 			'localBasePath' => __DIR__ . '/../../data/resourceloader',
 			'remoteBasePath' => '/w/something',
 			'styles' => [ 'simple.css' ],
-			'scripts' => [ 'script-comment.js' ],
 		] );
 		$module->setName( 'testing' );
 		$module->setConfig( $ctx->getResourceLoader()->getConfig() );
 
-		$this->assertEquals(
-			[
-				'https://example.org/w/something/script-comment.js'
-			],
-			$module->getScriptURLsForDebug( $ctx ),
-			'script urls'
-		);
 		$this->assertEquals(
 			[ 'all' => [
 				'/w/something/simple.css'
@@ -291,14 +283,8 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		] );
 		$expectedModule->setName( 'testing' );
 
-		$contextLtr = $this->getResourceLoaderContext( [
-			'lang' => 'en',
-			'dir' => 'ltr',
-		] );
-		$contextRtl = $this->getResourceLoaderContext( [
-			'lang' => 'he',
-			'dir' => 'rtl',
-		] );
+		$contextLtr = $this->getResourceLoaderContext( [ 'lang' => 'en' ] );
+		$contextRtl = $this->getResourceLoaderContext( [ 'lang' => 'he' ] );
 
 		// Since we want to compare the effect of @noflip+@embed against the effect of just @embed, and
 		// the @noflip annotations are always preserved, we need to strip them first.
@@ -321,13 +307,13 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		] );
 		$plain->setName( 'test' );
 
-		$context = $this->getResourceLoaderContext( [ 'lang' => 'en', 'dir' => 'ltr' ] );
+		$context = $this->getResourceLoaderContext( [ 'lang' => 'en' ] );
 		$this->assertEquals(
 			[ 'all' => ".example { text-align: left; }\n" ],
 			$plain->getStyles( $context ),
 			'Unchanged styles in LTR mode'
 		);
-		$context = $this->getResourceLoaderContext( [ 'lang' => 'he', 'dir' => 'rtl' ] );
+		$context = $this->getResourceLoaderContext( [ 'lang' => 'he' ] );
 		$this->assertEquals(
 			[ 'all' => ".example { text-align: right; }\n" ],
 			$plain->getStyles( $context ),
@@ -936,59 +922,65 @@ class FileModuleTest extends ResourceLoaderTestCase {
 
 	/**
 	 * @covers \Wikimedia\DependencyStore\DependencyStore
-	 * @covers \Wikimedia\DependencyStore\KeyValueDependencyStore
 	 */
 	public function testIndirectDependencies() {
 		$context = $this->getResourceLoaderContext();
-		$moduleInfo = [ 'dir' => __DIR__ . '/../../data/less/module',
-		'lessVars' => [ 'foo' => '2px', 'Foo' => '#eeeeee' ], 'name' => 'styles-dependencies' ];
+		$moduleInfo = [
+			'dir' => __DIR__ . '/../../data/less/module',
+			'lessVars' => [ 'foo' => '2px', 'Foo' => '#eeeeee' ],
+			'name' => 'styles-dependencies'
+		];
 
 		$module = $this->newModuleRequest( $moduleInfo, $context );
 		$module->getStyles( $context );
 
 		$module = $this->newModuleRequest( $moduleInfo, $context );
-		$dependencies = $module->getFileDependencies( $context );
-
-		$expectedDependencies = [ realpath( __DIR__ . '/../../data/less/common/test.common.mixins.less' ),
-		realpath( __DIR__ . '/../../data/less/module/dependency.less' ) ];
-
-		$this->assertEquals( $expectedDependencies, $dependencies );
+		$this->assertEquals(
+			[
+				'tests/phpunit/data/less/common/test.common.mixins.less',
+				'tests/phpunit/data/less/module/dependency.less'
+			],
+			$module->getFileDependencies( $context )
+		);
 	}
 
 	/**
 	 * @covers \Wikimedia\DependencyStore\DependencyStore
-	 * @covers \Wikimedia\DependencyStore\KeyValueDependencyStore
 	 */
 	public function testIndirectDependenciesUpdate() {
 		$context = $this->getResourceLoaderContext();
 		$tempDir = $this->getNewTempDirectory();
-		$moduleInfo = [ 'dir' => $tempDir, 'name' => 'new-dependencies' ];
+		$moduleDir = "$tempDir/resources/mymodule";
+		mkdir( $moduleDir, 0777, true );
+		$this->setMwGlobals( 'IP', $tempDir );
+		$moduleInfo = [ 'dir' => $moduleDir, 'name' => 'new-dependencies' ];
 
-		file_put_contents( "$tempDir/styles.less", "@import './test.less';" );
-		file_put_contents( "$tempDir/test.less", "div { color: red; } " );
-
+		// Version 1
+		file_put_contents( "$moduleDir/styles.less", "@import './test.less';" );
+		file_put_contents( "$moduleDir/test.less", "div { color: red; } " );
+		// Request A: Discover dependencies and save them
 		$module = $this->newModuleRequest( $moduleInfo, $context );
 		$module->getStyles( $context );
-
+		// Request B: Retrieve saved dependencies
 		$module = $this->newModuleRequest( $moduleInfo, $context );
-		$dependencies = $module->getFileDependencies( $context );
+		$this->assertEquals(
+			[ 'resources/mymodule/test.less' ],
+			$module->getFileDependencies( $context )
+		);
 
-		$expectedDependencies = [ realpath( $tempDir . '/test.less' ) ];
-
-		$this->assertEquals( $expectedDependencies, $dependencies );
-
-		file_put_contents( "$tempDir/styles.less", "@import './pink.less';" );
-		file_put_contents( "$tempDir/pink.less", "div { color: pink; } " );
-
+		// Version 2
+		file_put_contents( "$moduleDir/styles.less", "@import './pink.less';" );
+		file_put_contents( "$moduleDir/pink.less", "div { color: pink; } " );
+		// Request C: Discover new dependencies and save them
 		$module = $this->newModuleRequest( $moduleInfo, $context );
 		$module->getStyles( $context );
-
+		// Request D: Retreive new dependencies,
+		// which should have replaced (not adding to) the previous ones.
 		$module = $this->newModuleRequest( $moduleInfo, $context );
-		$dependencies = $module->getFileDependencies( $context );
-
-		$expectedDependencies = [ realpath( $tempDir . '/pink.less' ) ];
-
-		$this->assertEquals( $expectedDependencies, $dependencies );
+		$this->assertEquals(
+			[ 'resources/mymodule/pink.less' ],
+			$module->getFileDependencies( $context )
+		);
 	}
 
 	public function newModuleRequest( $moduleInfo, $context ) {
@@ -1000,10 +992,6 @@ class FileModuleTest extends ResourceLoaderTestCase {
 
 		$module->setName( $moduleInfo['name'] );
 		$module->setConfig( $context->getResourceLoader()->getConfig() );
-		$module->setDependencyAccessCallbacks(
-			[ $context->getResourceLoader(), 'loadModuleDependenciesInternal' ],
-			[ $context->getResourceLoader(), 'saveModuleDependenciesInternal' ]
-		);
 		$wrapper = TestingAccessWrapper::newFromObject( $module );
 		return $wrapper;
 	}

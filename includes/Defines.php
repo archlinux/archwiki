@@ -34,7 +34,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.43.2' );
+define( 'MW_VERSION', '1.44.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -124,14 +124,35 @@ define( 'RC_CATEGORIZE', 6 );
 /** @{
  * Article edit flags
  */
+/** Article is assumed to be non-existent, fail if it exists. */
 define( 'EDIT_NEW', 1 );
+
+/** Article is assumed to be pre-existing, fail if it doesn't exist. */
 define( 'EDIT_UPDATE', 2 );
+
+/** Mark this edit minor, if the user is allowed to do so */
 define( 'EDIT_MINOR', 4 );
-define( 'EDIT_SUPPRESS_RC', 8 );
+
+/** Do not notify other users (e.g. via RecentChanges or watchlist) */
+define( 'EDIT_SILENT', 8 );
+
+/** @deprecated since 1.44, use EDIT_SILENT instead */
+define( 'EDIT_SUPPRESS_RC', EDIT_SILENT );
+
+/** Mark the edit a "bot" edit regardless of user rights */
 define( 'EDIT_FORCE_BOT', 16 );
-define( 'EDIT_DEFER_UPDATES', 32 ); // Unused since 1.27
+
+/** @deprecated since 1.27, updates are always deferred */
+define( 'EDIT_DEFER_UPDATES', 32 );
+
+/** Fill in blank summaries with generated text where possible */
 define( 'EDIT_AUTOSUMMARY', 64 );
+
+/** Signal that the page retrieve/save cycle happened entirely in this request. */
 define( 'EDIT_INTERNAL', 128 );
+
+/** The edit is a side effect and does not represent an active user contribution. */
+define( 'EDIT_IMPLICIT', 256 );
 /** @} */
 
 /** @{
@@ -145,6 +166,12 @@ define( 'MW_EDITFILTERMERGED_SUPPORTS_API', 1 );
 
 /** Support for $wgResourceModules */
 define( 'MW_SUPPORTS_RESOURCE_MODULES', 1 );
+
+/**
+ * Indicate that the Interwiki extension should not be loaded (it is now
+ * in core).
+ */
+define( 'MW_HAS_SPECIAL_INTERWIKI', 1 );
 
 /** @{
  * Allowed values for Parser::$mOutputType
@@ -299,6 +326,10 @@ define( 'SCHEMA_COMPAT_NEW', SCHEMA_COMPAT_WRITE_NEW | SCHEMA_COMPAT_READ_NEW );
  * schema to a new schema. The numeric values of these constants are compatible with the
  * SCHEMA_COMPAT_XXX bitfield semantics. High bits are used to ensure that the numeric
  * ordering follows the order in which the migration stages should be used.
+ *
+ * Do not use these constants to query the feature flag.  If you wish to check if your
+ * code should perform a particular kind of read or write operation, use the appropriate
+ * SCHEMA_COMPAT_XXX flag.  It is generally an error to use MIGRATION_XXX constants in a bitwise operation.
  *
  * - MIGRATION_OLD: Only read and write the old schema. The new schema need not
  *   even exist. This is used from when the patch is merged until the schema

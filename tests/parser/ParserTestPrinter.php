@@ -144,8 +144,6 @@ class ParserTestPrinter extends TestRecorder {
 	/**
 	 * Print a failure message and provide some explanatory output
 	 * about what went wrong if so configured.
-	 *
-	 * @param ParserTestResult $testResult
 	 */
 	private function showFailure( ParserTestResult $testResult ): void {
 		if ( $this->showFailure ) {
@@ -253,7 +251,7 @@ class ParserTestPrinter extends TestRecorder {
 			$text );
 	}
 
-	private function wellFormed( $text ) {
+	private function wellFormed( string $text ): bool {
 		$html =
 			Sanitizer::hackDocType() .
 				'<html>' .
@@ -280,7 +278,7 @@ class ParserTestPrinter extends TestRecorder {
 		return true;
 	}
 
-	private function extractFragment( $text, $position ) {
+	private function extractFragment( string $text, int $position ): string {
 		$start = max( 0, $position - 10 );
 		$before = $position - $start;
 		$fragment = '...' .
@@ -307,7 +305,6 @@ class ParserTestPrinter extends TestRecorder {
 
 	/**
 	 * Show a warning to the user
-	 * @param string $message
 	 */
 	public function warning( string $message ) {
 		echo "$message\n";

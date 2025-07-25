@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Imre",
 			"Kghbln",
 			"Metalhead64",
 			"MichaelFrey",
 			"Raimond Spekking",
 			"The Evil IP address",
-			"Umherirrender",
-			"Brettchenweber"
+			"Umherirrender"
 		]
 	},
 	"captcha-edit": "Zur Bearbeitung der Seite löse bitte die nachfolgende Aufgabe und trage die Antwort in das Feld ein [[Special:Captcha/help|(Fragen oder Probleme?)]].",

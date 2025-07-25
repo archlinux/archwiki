@@ -47,7 +47,6 @@ CREATE TABLE /*_*/abuse_filter_log (
   afl_title VARBINARY(255) NOT NULL,
   afl_wiki VARBINARY(64) DEFAULT NULL,
   afl_deleted TINYINT(1) DEFAULT 0 NOT NULL,
-  afl_patrolled_by INT UNSIGNED DEFAULT 0 NOT NULL,
   afl_rev_id INT UNSIGNED DEFAULT NULL,
   INDEX afl_filter_timestamp_full (
     afl_global, afl_filter_id, afl_timestamp

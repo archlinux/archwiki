@@ -74,6 +74,7 @@
 	"notifications": "Upozornenia",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Vaše}} upozornenia",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Vaše}} oznámenia",
+	"tooltip-pt-notifications": "Vaše upozornenia",
 	"echo-displaynotificationsconfiguration": "Zobrazenie konfigurácie Oznámení",
 	"echo-displaynotificationsconfiguration-summary": "Toto je prehľad konfigurácie Oznámení na tejto wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Oznámenia podľa kategórie",

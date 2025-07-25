@@ -20,11 +20,12 @@
 
 namespace MediaWiki\Specials;
 
-use LogEventsList;
-use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Page\MergeHistoryFactory;
 use MediaWiki\Pager\MergeHistoryPager;
 use MediaWiki\Revision\RevisionStore;
@@ -81,23 +82,18 @@ class SpecialMergeHistory extends SpecialPage {
 	private IConnectionProvider $dbProvider;
 	private RevisionStore $revisionStore;
 	private CommentFormatter $commentFormatter;
+	private ChangeTagsStore $changeTagsStore;
 
 	/** @var Status */
 	private $mStatus;
 
-	/**
-	 * @param MergeHistoryFactory $mergeHistoryFactory
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param RevisionStore $revisionStore
-	 * @param CommentFormatter $commentFormatter
-	 */
 	public function __construct(
 		MergeHistoryFactory $mergeHistoryFactory,
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		ChangeTagsStore $changeTagsStore
 	) {
 		parent::__construct( 'MergeHistory', 'mergehistory' );
 		$this->mergeHistoryFactory = $mergeHistoryFactory;
@@ -105,6 +101,7 @@ class SpecialMergeHistory extends SpecialPage {
 		$this->dbProvider = $dbProvider;
 		$this->revisionStore = $revisionStore;
 		$this->commentFormatter = $commentFormatter;
+		$this->changeTagsStore = $changeTagsStore;
 	}
 
 	public function doesWrites() {
@@ -252,6 +249,7 @@ class SpecialMergeHistory extends SpecialPage {
 			$this->dbProvider,
 			$this->revisionStore,
 			$this->commentFormatter,
+			$this->changeTagsStore,
 			[],
 			$this->mTargetObj,
 			$this->mDestObj,
@@ -339,8 +337,6 @@ class SpecialMergeHistory extends SpecialPage {
 		$mergeLogPage = new LogPage( 'merge' );
 		$out->addHTML( '<h2>' . $mergeLogPage->getName()->escaped() . "</h2>\n" );
 		LogEventsList::showLogExtract( $out, 'merge', $this->mTargetObj );
-
-		return true;
 	}
 
 	/**

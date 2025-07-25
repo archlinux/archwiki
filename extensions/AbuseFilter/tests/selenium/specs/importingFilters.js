@@ -86,8 +86,7 @@ describe( 'When importing a filter', () => {
 
 		it( 'the imported data can be saved', async () => {
 			await ViewEditPage.submit();
-			const filterNotice = await ViewListPage.filterSavedNotice;
-			assert( filterNotice.isDisplayed() );
+			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
 		} );
 	} );
 } );

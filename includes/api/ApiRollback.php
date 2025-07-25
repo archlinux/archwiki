@@ -22,7 +22,7 @@
 
 namespace MediaWiki\Api;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\RollbackPageFactory;
@@ -176,11 +176,6 @@ class ApiRollback extends ApiBase {
 		return 'rollback';
 	}
 
-	/**
-	 * @param array $params
-	 *
-	 * @return UserIdentity
-	 */
 	private function getRbUser( array $params ): UserIdentity {
 		if ( $this->mUser !== null ) {
 			return $this->mUser;

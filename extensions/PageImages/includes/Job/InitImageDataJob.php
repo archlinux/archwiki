@@ -2,9 +2,9 @@
 
 namespace PageImages\Job;
 
-use Job;
+use MediaWiki\Exception\MWExceptionHandler;
+use MediaWiki\JobQueue\Job;
 use MediaWiki\Title\Title;
-use MWExceptionHandler;
 use RefreshLinks;
 use Wikimedia\Rdbms\LBFactory;
 

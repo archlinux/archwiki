@@ -5,18 +5,21 @@ namespace Wikimedia\Parsoid\Logger;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Wikimedia\JsonCodec\JsonCodec;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Utils\CompatJsonCodec;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
 
 class ParsoidLogger {
-	/* @var Logger */
-	private $backendLogger;
+	private LoggerInterface $backendLogger;
+	private JsonCodec $codec;
 
-	/* @var string|null Null means nothing is enabled */
-	private $enabledRE = null;
+	/** Null means nothing is enabled */
+	private ?string $enabledRE = null;
 
 	/** PORT-FIXME: Not yet implemented. Monolog supports sampling as well! */
-	/* @var string */
-	private $samplingRE;
+	private string $samplingRE;
 
 	private const PRETTY_LOGTYPE_MAP = [
 		'debug' => '[DEBUG]',
@@ -37,8 +40,8 @@ class ParsoidLogger {
 		'trace/selser' => '[SELSER]',
 		'trace/domdiff' => '[DOM-DIFF]',
 		'trace/wt-escape' => '[wt-esc]',
-		'trace/ttm:2' => '[2-TTM]',
-		'trace/ttm:3' => '[3-TTM]',
+		'trace/thp:2' => '[2-THP]',
+		'trace/thp:3' => '[3-THP]',
 	];
 
 	/**
@@ -63,6 +66,7 @@ class ParsoidLogger {
 	 */
 	public function __construct( LoggerInterface $backendLogger, array $options ) {
 		$this->backendLogger = $backendLogger;
+		$this->codec = new CompatJsonCodec;
 
 		$rePatterns = $options['logLevels'];
 		if ( $options['traceFlags'] ) {
@@ -72,7 +76,7 @@ class ParsoidLogger {
 			$rePatterns[] = $this->buildLoggingRE( $options['debugFlags'], 'debug' );
 		}
 		if ( $options['dumpFlags'] ) {
-			// For tracing, Parsoid simply calls $env->log( "trace/SOMETHING", ... );
+			// For tracing, Parsoid simply calls $env->trace( "SOMETHING", ... );
 			// The filtering based on whether a trace is enabled is handled by this class.
 			// This is done via the regexp pattern being constructed above.
 			// However, for dumping, at some point before / during the port from JS to PHP,
@@ -150,13 +154,35 @@ class ParsoidLogger {
 		foreach ( $args as $arg ) {
 			// don't use is_callable, it would return true for any string that happens to be a function name
 			if ( $arg instanceof \Closure ) {
-				$output .= ' ' . $arg();
-			} elseif ( is_string( $arg ) ) {
+				// Allow expensive arguments to be deferred.
+				$arg = $arg();
+			}
+			// Formatting conveniences -- this also facilitates deferring
+			// formatting until/unless we know this log will be done.
+			if ( is_string( $arg ) ) {
 				if ( strlen( $arg ) ) {
 					$output .= ' ' . $arg;
 				}
+			} elseif ( $arg instanceof Node ) {
+				$output .= ' ' .
+					XMLSerializer::serialize( $arg, [ 'saveData' => true ] )['html'];
 			} else {
-				$output .= PHPUtils::jsonEncode( $arg );
+				$encode = fn ( $x ) => $this->codec->toJsonArray(
+					$x,
+					// Provide a class hint matching the value to
+					// reduce verbosity (otherwise we'll get a _type_ in
+					// the output)
+					is_object( $x ) ? get_class( $x ) : null
+				);
+				if ( is_array( $arg ) ) {
+					// Commonly we are given an array of values of mixed
+					// type at top level; to further reduce verbosity we'll
+					// effectively type-hint at the element level.
+					$a = array_map( $encode, $arg );
+				} else {
+					$a = $encode( $arg );
+				}
+				$output .= PHPUtils::jsonEncode( $a );
 			}
 		}
 

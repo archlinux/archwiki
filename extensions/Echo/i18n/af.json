@@ -35,6 +35,7 @@
 	"notifications": "Kennisgewings",
 	"tooltip-pt-notifications-alert": "{{GENDER:|U}} kennisgewings",
 	"tooltip-pt-notifications-notice": "{{GENDER:|U}} boodskappe",
+	"tooltip-pt-notifications": "U kennisgewings",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Nuwe gebruikers",
 	"echo-specialpage": "Kennisgewings",
 	"echo-specialpage-section-markread": "Merk groep as gelees",

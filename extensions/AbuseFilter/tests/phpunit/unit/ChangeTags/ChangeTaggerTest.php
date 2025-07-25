@@ -6,10 +6,10 @@ use Generator;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagger;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagsManager;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use RecentChange;
 
 /**
  * @group Test
@@ -29,7 +29,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return Generator
 	 */
-	public function getActionData(): Generator {
+	public function provideActionData(): Generator {
 		$titleText = 'FOO';
 		$title = new TitleValue( NS_MAIN, $titleText );
 		$userName = 'Foobar';
@@ -93,7 +93,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param ActionSpecifier $specifier
 	 * @param RecentChange $rc
-	 * @dataProvider getActionData
+	 * @dataProvider provideActionData
 	 */
 	public function testTagsToSetWillNotContainDuplicates( ActionSpecifier $specifier, RecentChange $rc ) {
 		$tagger = $this->getTagger();
@@ -108,7 +108,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param ActionSpecifier $specifier
 	 * @param RecentChange $rc
-	 * @dataProvider getActionData
+	 * @dataProvider provideActionData
 	 */
 	public function testClearBuffer( ActionSpecifier $specifier, RecentChange $rc ) {
 		$tagger = $this->getTagger();
@@ -121,7 +121,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param ActionSpecifier $specifier
 	 * @param RecentChange $rc
-	 * @dataProvider getActionData
+	 * @dataProvider provideActionData
 	 */
 	public function testAddConditionsLimitTag( ActionSpecifier $specifier, RecentChange $rc ) {
 		$tagger = $this->getTagger();
@@ -133,7 +133,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param ActionSpecifier $specifier
 	 * @param RecentChange $rc
-	 * @dataProvider getActionData
+	 * @dataProvider provideActionData
 	 */
 	public function testAddGetTags( ActionSpecifier $specifier, RecentChange $rc ) {
 		$tagger = $this->getTagger();
@@ -146,7 +146,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param ActionSpecifier $specifier
 	 * @param RecentChange $rc
-	 * @dataProvider getActionData
+	 * @dataProvider provideActionData
 	 */
 	public function testAddTags_multiple( ActionSpecifier $specifier, RecentChange $rc ) {
 		$tagger = $this->getTagger();
@@ -161,7 +161,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param ActionSpecifier $specifier
 	 * @param RecentChange $rc
-	 * @dataProvider getActionData
+	 * @dataProvider provideActionData
 	 */
 	public function testGetTags_clear( ActionSpecifier $specifier, RecentChange $rc ) {
 		$tagger = $this->getTagger();

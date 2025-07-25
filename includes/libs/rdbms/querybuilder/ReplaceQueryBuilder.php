@@ -39,14 +39,11 @@ class ReplaceQueryBuilder {
 	 */
 	private $uniqueIndexFields = [];
 
-	/** @var IDatabase */
-	protected $db;
+	protected IDatabase $db;
 
 	/**
 	 * Only for use in subclasses. To create a ReplaceQueryBuilder instance,
 	 * use `$db->newReplaceQueryBuilder()` instead.
-	 *
-	 * @param IDatabase $db
 	 */
 	public function __construct( IDatabase $db ) {
 		$this->db = $db;

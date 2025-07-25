@@ -18,7 +18,6 @@ class SuppressionMaintenanceTest extends MediaWikiIntegrationTestCase {
 		$input = [
 			'event_id' => 2,
 			'event_type' => 'mention',
-			'event_variant' => null,
 			'event_agent_id' => 3,
 			'event_agent_ip' => null,
 			'event_page_title' => '',
@@ -142,7 +141,7 @@ class SuppressionMaintenanceTest extends MediaWikiIntegrationTestCase {
 	public function testUpdateRow( $message, array $expected, array $input, ?callable $callable = null ) {
 		$gen = new SuppressionRowUpdateGenerator;
 		if ( $callable ) {
-			call_user_func( $callable, $this, $gen );
+			$callable( $this, $gen );
 		}
 		$update = $gen->update( (object)$input );
 		$this->assertEquals( $expected, $update, $message );

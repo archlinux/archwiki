@@ -15,8 +15,6 @@
 	"cite_error_ref_no_input": "Neplatná značka <code>&lt;ref&gt;</code>; referencie bez parametra ''name'' musia mať obsah",
 	"cite_error_references_duplicate_key": "Neplatná značka <code>&lt;ref&gt;</code>; názov „$1“ je použitý viackrát s rôznym obsahom",
 	"cite_error_references_invalid_parameters": "Neplatný parameter v značke <code>&lt;references&gt;</code>",
-	"cite_error_references_no_backlink_label": "Minuli sa generované návestia spätných odkazov, definujte viac v správe [[MediaWiki:Cite references link many format backlink labels]]",
-	"cite_error_no_link_label_group": "Vyčerpané prispôsobené označenia odkazov pre skupinu „$1“. Definujte ďalšie v správe [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Neplatná značka <code>&lt;ref&gt;</code>; nebol zadaný text pre referencie s názvom <code>$1</code>",
 	"cite_error_included_ref": "Chýba zakončenie značky <code>&lt;ref&gt;</code> (<code>&lt;/ref&gt;</code>)",
 	"cite_error_group_refs_without_references": "Značky <code>&lt;ref&gt;</code> pre skupinu „$1“ sú prítomné, ale nebola nájdená zodpovedajúca značka  <code>&lt;references group=\"$1\"/&gt;</code>",
@@ -31,6 +29,7 @@
 	"cite-reference-previews-journal": "Časopisová referencia",
 	"cite-reference-previews-news": "Spravodajská referencia",
 	"cite-reference-previews-web": "Webová referencia",
+	"cite-reference-previews-preference-label": "Zapnúť náhľady referencií (pri čítaní stránky poskytne rýchle náhľady referencií)",
 	"cite_references_link_accessibility_label": "Prejsť nahor",
 	"cite_references_link_many_accessibility_label": "Prejsť nahor k:",
 	"cite_section_preview_references": "Náhľad referencií",
@@ -40,6 +39,5 @@
 	"cite-wikieditor-help-page-references": "Referencie",
 	"cite-wikieditor-help-content-reference-description": "Referencie",
 	"cite-wikieditor-help-content-rereference-description": "Ďalšie použitie rovnakej referencie",
-	"cite-wikieditor-help-content-showreferences-description": "Zobraziť referencie",
-	"popups-refpreview-user-preference-label": "Zapnúť náhľady referencií (pri čítaní stránky poskytne rýchle náhľady referencií)"
+	"cite-wikieditor-help-content-showreferences-description": "Zobraziť referencie"
 }

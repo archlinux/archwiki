@@ -4,10 +4,10 @@ namespace Wikimedia\Tests;
 
 use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
-use StringUtils;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
- * @covers \StringUtils
+ * @covers \Wikimedia\StringUtils\StringUtils
  */
 class StringUtilsTest extends TestCase {
 
@@ -150,7 +150,7 @@ class StringUtilsTest extends TestCase {
 		$this->assertSame( $replacement, $result );
 	}
 
-	public function provideRegexReplacements() {
+	public static function provideRegexReplacements() {
 		return [
 			'meaningless characters' => [ ' "()*+-./?[]^a{|}ä' ],
 			'backslash' => [ '\\1' ],

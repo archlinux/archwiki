@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Skin;
+
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\MediaWikiServices;
@@ -120,8 +122,6 @@ abstract class QuickTemplate {
 
 	/**
 	 * Checks if the template key is deprecated
-	 *
-	 * @param string $name
 	 */
 	private function checkDeprecationStatus( string $name ) {
 		$deprecated = $this->deprecated[ $name ] ?? false;
@@ -191,8 +191,7 @@ abstract class QuickTemplate {
 	 * @return bool
 	 */
 	protected function haveMsg( $msgKey ) {
-		$msg = wfMessage( $msgKey );
-		return $msg->exists() && !$msg->isDisabled();
+		return !wfMessage( $msgKey )->isDisabled();
 	}
 
 	/**
@@ -218,3 +217,6 @@ abstract class QuickTemplate {
 		return $html;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( QuickTemplate::class, 'QuickTemplate' );

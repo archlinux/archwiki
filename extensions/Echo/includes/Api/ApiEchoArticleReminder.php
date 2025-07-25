@@ -60,6 +60,7 @@ class ApiEchoArticleReminder extends ApiBase {
 		$this->getResult()->addValue( 'query', $this->getModuleName(), $result );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'pageid' => [
@@ -81,14 +82,17 @@ class ApiEchoArticleReminder extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
@@ -111,6 +115,7 @@ class ApiEchoArticleReminder extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Echo_(Notifications)/API';
 	}

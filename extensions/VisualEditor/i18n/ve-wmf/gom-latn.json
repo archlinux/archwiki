@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer",
-			"QW90"
+			"QW90",
+			"The Discoverer"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Dixtti sompadon]]",
+	"tag-visualeditor": "Dixtti sompadon",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Dixtti sompadoka]] vorvim kel'lem sompadon",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Dixtti sompadon: Topas]]",
+	"tag-visualeditor-needcheck": "Dixtti sompadon: Topas",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Dixtti sompadok]]  vaprun kel'lem sompadon zoim pronallik wikimozkur  melltta zaka tozvit korunk naslole bodol asat",
 	"tag-visualeditor-wikitext": "2017 mull sompadon",
 	"tag-visualeditor-wikitext-description": "2017 wikimozkur sompadoka vorvim kel'lem sompadon",

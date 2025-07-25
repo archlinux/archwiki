@@ -7,14 +7,17 @@ use MediaWiki\Language\RawMessage;
 use MediaWiki\Title\Title;
 
 class EchoFlowThanksPresentationModel extends FlowPresentationModel {
+	/** @inheritDoc */
 	public function canRender() {
 		return (bool)$this->event->getTitle();
 	}
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'thanks';
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		if ( $this->isBundled() ) {
 			$msg = $this->msg( 'notification-bundle-header-flow-thank' );
@@ -33,6 +36,7 @@ class EchoFlowThanksPresentationModel extends FlowPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getCompactHeaderMessage() {
 		// The following message is used here:
 		// * notification-compact-header-flow-thank
@@ -41,6 +45,7 @@ class EchoFlowThanksPresentationModel extends FlowPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		$excerpt = $this->event->getExtraParam( 'excerpt' );
 		if ( $excerpt ) {
@@ -50,6 +55,7 @@ class EchoFlowThanksPresentationModel extends FlowPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		$title = Title::makeTitleSafe( NS_TOPIC, $this->event->getExtraParam( 'workflow' ) );
 		if ( !$title ) {
@@ -66,6 +72,7 @@ class EchoFlowThanksPresentationModel extends FlowPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		if ( $this->isBundled() ) {
 			return [ $this->getBoardLink() ];

@@ -20,17 +20,18 @@
 
 namespace MediaWiki\Specials;
 
-use ChangesList;
-use ChangesListBooleanFilter;
-use ChangesListStringOptionsFilterGroup;
-use ChangeTags;
-use HtmlArmor;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\MessageParser;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\RecentChanges\ChangesList;
+use MediaWiki\RecentChanges\ChangesListBooleanFilter;
+use MediaWiki\RecentChanges\ChangesListStringOptionsFilterGroup;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -38,11 +39,9 @@ use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
-use MediaWiki\Xml\Xml;
-use MessageCache;
 use OOUI\ButtonWidget;
 use OOUI\HtmlSnippet;
-use RecentChange;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\RawSQLExpression;
@@ -59,24 +58,16 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	private $watchlistFilterGroupDefinition;
 
 	private WatchedItemStoreInterface $watchedItemStore;
-	private MessageCache $messageCache;
+	private MessageParser $messageParser;
 	private UserOptionsLookup $userOptionsLookup;
 
 	/** @var int */
 	public $denseRcSizeThreshold = 10000;
 	private ChangeTagsStore $changeTagsStore;
 
-	/**
-	 * @param WatchedItemStoreInterface|null $watchedItemStore
-	 * @param MessageCache|null $messageCache
-	 * @param UserOptionsLookup|null $userOptionsLookup
-	 * @param ChangeTagsStore|null $changeTagsStore
-	 * @param UserIdentityUtils|null $userIdentityUtils
-	 * @param TempUserConfig|null $tempUserConfig
-	 */
 	public function __construct(
 		?WatchedItemStoreInterface $watchedItemStore = null,
-		?MessageCache $messageCache = null,
+		?MessageParser $messageParser = null,
 		?UserOptionsLookup $userOptionsLookup = null,
 		?ChangeTagsStore $changeTagsStore = null,
 		?UserIdentityUtils $userIdentityUtils = null,
@@ -92,7 +83,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			$tempUserConfig ?? $services->getTempUserConfig()
 		);
 		$this->watchedItemStore = $watchedItemStore ?? $services->getWatchedItemStore();
-		$this->messageCache = $messageCache ?? $services->getMessageCache();
+		$this->messageParser = $messageParser ?? $services->getMessageParser();
 		$this->userOptionsLookup = $userOptionsLookup ?? $services->getUserOptionsLookup();
 		$this->changeTagsStore = $changeTagsStore ?? $services->getChangeTagsStore();
 
@@ -239,8 +230,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	/**
 	 * Whether or not the current query needs to use watchlist data: check that the current user can
 	 * use their watchlist and that this special page isn't being transcluded.
-	 *
-	 * @return bool
 	 */
 	private function needsWatchlistFeatures(): bool {
 		return !$this->including()
@@ -652,7 +641,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			if ( is_array( $optionRow ) ) {
 				$out .= Html::rawElement(
 					'td',
-					[ 'class' => 'mw-label mw-' . $name . '-label' ],
+					[ 'class' => [ 'mw-label', 'mw-' . $name . '-label' ] ],
 					$optionRow[0]
 				);
 				$out .= Html::rawElement(
@@ -682,10 +671,13 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$panel[] = $form;
 		$panelString = implode( "\n", $panel );
 
-		$rcoptions = Xml::fieldset(
-			$this->msg( 'recentchanges-legend' )->text(),
-			$panelString,
-			[ 'class' => 'rcoptions cloptions' ]
+		$rcoptions = Html::rawElement(
+			'fieldset',
+			[ 'class' => 'rcoptions cloptions' ],
+			Html::element(
+				'legend', [],
+				$this->msg( 'recentchanges-legend' )->text()
+			) . $panelString
 		);
 
 		// Insert a placeholder for RCFilters
@@ -734,18 +726,16 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			// Parse the message in this weird ugly way to preserve the ability to include interlanguage
 			// links in it (T172461). In the future when T66969 is resolved, perhaps we can just use
 			// $message->parse() instead. This code is copied from Message::parseText().
-			$parserOutput = $this->messageCache->parse(
+			$parserOutput = $this->messageParser->parse(
 				$message->plain(),
 				$this->getPageTitle(),
-				/*linestart*/true,
+				/*linestart*/ true,
 				// Message class sets the interface flag to false when parsing in a language different than
 				// user language, and this is wiki content language
-				/*interface*/false,
+				/*interface*/ false,
 				$contLang
 			);
-			$content = $parserOutput->getText( [
-				'enableSectionEditLinks' => false,
-			] );
+			$content = $parserOutput->getContentHolderText();
 			// Add only metadata here (including the language links), text is added below
 			$this->getOutput()->addParserOutputMetadata( $parserOutput );
 
@@ -774,7 +764,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 
 				$contentWrapper = Html::rawElement( 'div',
 					array_merge(
-						[ 'class' => 'mw-recentchanges-toplinks-content mw-collapsible-content' ],
+						[ 'class' => [ 'mw-recentchanges-toplinks-content', 'mw-collapsible-content' ] ],
 						$langAttributes
 					),
 					$content
@@ -978,6 +968,12 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$links = [];
 
 		foreach ( $this->getLegacyShowHideFilters() as $key => $filter ) {
+			if ( !MediaWikiServices::getInstance()
+				->getPermissionManager()
+				->isEveryoneAllowed( "edit" ) &&
+				( $filter->getName() == "hideliu" || $filter->getName() == "hideanons" ) ) {
+				continue;
+			}
 			$msg = $filter->getShowHide();
 			$linkMessage = $this->msg( $msg . '-' . $showhide[1 - $options[$key]] );
 			// Extensions can define additional filters, but don't need to define the corresponding
@@ -1052,30 +1048,18 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		return $systemPrefValue;
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getLimitPreferenceName(): string {
 		return 'rcfilters-limit'; // Use RCFilters-specific preference
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getSavedQueriesPreferenceName(): string {
 		return 'rcfilters-saved-queries';
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getDefaultDaysPreferenceName(): string {
 		return 'rcdays'; // Use general RecentChanges preference
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getCollapsedPreferenceName(): string {
 		return 'rcfilters-rc-collapsed';
 	}

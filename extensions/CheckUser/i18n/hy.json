@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kareyac",
+			"Togaed",
+			"Սերգեյ Սաֆարյան"
+		]
+	},
+	"checkuser-clienthints-name-architecture": "Ճարտարապետություն",
+	"checkuser-clienthints-value-yes": "Այո",
+	"checkuser-clienthints-value-no": "Ոչ",
+	"checkuser-search": "Որոնել օգտվողի ստուգման մատյանի գրառումներում",
+	"checkuser-search-submit": "Որոնել",
+	"checkuser-helper-user": "Մասնակից",
+	"checkuser-investigateblock-reason": "Պատճառ",
+	"checkuser-investigateblock-options": "Լրացուցիչ ընտրանքներ",
+	"checkuser-investigateblock-notice-text-label": "Վիքիտեքստ",
+	"checkuser-investigate-subtitle-cancel-button-label": "Չեղարկել",
+	"checkuser-investigate-subtitle-continue-button-label": "Շարունակել",
+	"checkuser-investigate-duration-label": "Տևողություն",
+	"checkuser-investigate-duration-option-all": "Բոլորը",
+	"checkuser-investigate-duration-option-1w": "Անցած շաբաթ",
+	"checkuser-investigate-duration-option-2w": "Անցած շաբաթ",
+	"checkuser-investigate-duration-option-30d": "Վերջին 30 օրը",
+	"checkuser-investigate-reason-label": "Պատճառ",
+	"checkuser-investigate-preliminary-table-header-editcount": "խմբագրումներ",
+	"checkuser-investigate-preliminary-table-header-groups": "Խմբեր",
+	"checkuser-investigate-preliminary-table-header-name": "Մասնակցային անուն",
+	"checkuser-investigate-preliminary-table-header-wiki": "Վիքի",
+	"checkuser-investigate-filters-legend": "Զտիչներ",
+	"checkuser-investigate-compare-copy-button-label": "Ցույց տալ վիքիտեքստը",
+	"checkuser-investigate-compare-copy-button-label-hide": "Թաքցնել վիքիտեքստը",
+	"checkuser-investigate-compare-table-header-username": "Մասնակցային անուն",
+	"checkuser-tempaccount-reveal-ip-button-label": "Ցույց տալ IP-ն",
+	"checkuser-tempaccount-reveal-ip-missing": "անհասանելի"
+}

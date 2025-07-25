@@ -37,7 +37,7 @@ class AbstractFilter {
 	) {
 		$this->specs = clone $specs;
 		$this->flags = clone $flags;
-		Assert::parameterType( 'callable|array', $actions, '$actions' );
+		Assert::parameterType( [ 'callable', 'array' ], $actions, '$actions' );
 		if ( is_callable( $actions ) ) {
 			$this->actionsCallback = $actions;
 		} elseif ( is_array( $actions ) ) {
@@ -142,7 +142,7 @@ class AbstractFilter {
 	 */
 	public function getActions(): array {
 		if ( $this->actions === null ) {
-			$this->setActions( call_user_func( $this->actionsCallback ) );
+			$this->setActions( ( $this->actionsCallback )() );
 			// This is to ease testing
 			$this->actionsCallback = null;
 		}

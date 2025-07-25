@@ -68,10 +68,6 @@ class PageConfig extends IPageConfig {
 		$this->pageLanguageDir = $pageLanguageDir;
 	}
 
-	/**
-	 * Get content model
-	 * @return string
-	 */
 	public function getContentModel(): string {
 		// @todo Check just the main slot, or all slots, or what?
 		$rev = $this->getRevision();
@@ -134,9 +130,6 @@ class PageConfig extends IPageConfig {
 		return $stuff['revision-record'] ?? null;
 	}
 
-	/**
-	 * @return ?RevisionRecord
-	 */
 	private function getRevision(): ?RevisionRecord {
 		return $this->revision;
 	}

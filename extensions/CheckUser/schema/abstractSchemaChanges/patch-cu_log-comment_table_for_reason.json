@@ -1,0 +1,196 @@
+{
+	"before": {
+		"name": "cu_log",
+		"columns": [
+			{
+				"name": "cul_id",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cul_user",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_user_text",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "cul_reason",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "cul_type",
+				"type": "binary",
+				"options": { "notnull": true, "length": 30 }
+			},
+			{
+				"name": "cul_target_id",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cul_target_text",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cul_target_hex",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_start",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_end",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cul_user",
+				"columns": [ "cul_user", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_type_target",
+				"columns": [ "cul_type", "cul_target_id", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_target_hex",
+				"columns": [ "cul_target_hex", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_range_start",
+				"columns": [ "cul_range_start", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_timestamp",
+				"columns": [ "cul_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cul_id" ]
+	},
+	"after": {
+		"name": "cu_log",
+		"columns": [
+			{
+				"name": "cul_id",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cul_user",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_user_text",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "cul_reason",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "cul_reason_id",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_reason_plaintext_id",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_type",
+				"type": "binary",
+				"options": { "notnull": true, "length": 30 }
+			},
+			{
+				"name": "cul_target_id",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cul_target_text",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cul_target_hex",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_start",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_end",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cul_user",
+				"columns": [ "cul_user", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_type_target",
+				"columns": [ "cul_type", "cul_target_id", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_target_hex",
+				"columns": [ "cul_target_hex", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_range_start",
+				"columns": [ "cul_range_start", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_timestamp",
+				"columns": [ "cul_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cul_id" ]
+	}
+}

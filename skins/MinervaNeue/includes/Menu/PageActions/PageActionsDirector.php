@@ -70,6 +70,7 @@ final class PageActionsDirector {
 				'item-id' => 'page-actions-overflow',
 				'checkboxID' => $checkboxID,
 				'toggleID' => $toggleID,
+				'event' => 'ui.overflowmenu',
 				'data-btn' => [
 					'tag-name' => 'label',
 					'data-icon' => [
@@ -89,14 +90,10 @@ final class PageActionsDirector {
 							'key' => 'aria-hidden',
 							'value' => 'true'
 						],
-						[
-							'key' => 'data-event-name',
-							'value' => 'ui.overflowmenu',
-						],
 					],
 					// class = toggle-list__toggle {{toggleClass}}
 					// data-event-name="{{analyticsEventName}}">
-					'label' => $this->messageLocalizer->msg( 'minerva-page-actions-overflow' ),
+					'label' => $this->messageLocalizer->msg( 'minerva-page-actions-overflow' )->text(),
 				],
 				'listID' => $overflowMenu->getId(),
 				'listClass' => 'page-actions-overflow-list toggle-list__list--drop-down',

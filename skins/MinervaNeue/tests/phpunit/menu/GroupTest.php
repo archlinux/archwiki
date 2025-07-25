@@ -83,6 +83,7 @@ class GroupTest extends MediaWikiIntegrationTestCase {
 						'data-icon' => [
 							'icon' => 'home',
 						],
+						'isButton' => true,
 					]
 				 ],
 			],
@@ -144,10 +145,11 @@ class GroupTest extends MediaWikiIntegrationTestCase {
 						'classes' => 'menu__item--nearby',
 						'data-icon' => [
 							'icon' => 'nearby',
-						]
+						],
+						'isButton' => true,
 					]
 				],
-				'class' => 'skin-minerva-list-item-jsonly'
+				'class' => 'skin-minerva-list-item-jsonly',
 			],
 		];
 

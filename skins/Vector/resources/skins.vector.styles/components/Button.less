@@ -31,6 +31,7 @@
 .cdx-button.cdx-button--icon-only {
 	span + span {
 		.mixin-screen-reader-text();
+		.user-select( none );
 	}
 }
 
@@ -55,15 +56,14 @@
 }
 
 // Handle button styles in checkbox hack, copied from Codex
-// FIXME: Remove these styles when Codex supports the checkbox hack in T333394
-input:hover + .cdx-button:not( .cdx-button--action-progressive ) + .cdx-button:not( .vector-page-titlebar-toc ) {
-	background-color: @background-color-button-quiet--hover;
+// FIXME: Remove these styles when Codex removes the checkbox hack in favor of details/summary T333394
+input:hover + .cdx-button--weight-quiet:not( .cdx-button--action-progressive ) {
+	background-color: @background-color-interactive-subtle--hover;
 }
 
-input:active + .cdx-button:not( .cdx-button--action-progressive ) + .cdx-button:not( .vector-page-titlebar-toc ) {
-	background-color: @background-color-button-quiet--active;
+input:active + .cdx-button--weight-quiet:not( .cdx-button--action-progressive ) {
+	background-color: @background-color-interactive-subtle--active;
 	color: @color-emphasized;
-	border-color: @border-color-interactive;
 }
 
 input:focus:not( :active ) + .cdx-button:not( .cdx-button--action-progressive ) {
@@ -71,18 +71,18 @@ input:focus:not( :active ) + .cdx-button:not( .cdx-button--action-progressive ) 
 	box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus;
 }
 
-input:hover + .cdx-button.cdx-button--action-progressive {
+input:hover + .cdx-button--weight-quiet.cdx-button--action-progressive {
 	background-color: @background-color-progressive-subtle;
 	color: @color-progressive--hover;
 }
 
-input:active + .cdx-button.cdx-button--action-progressive {
+input:active + .cdx-button--weight-quiet.cdx-button--action-progressive {
 	background-color: @background-color-progressive--active;
 	color: @color-inverted;
 	border-color: @border-color-progressive--active;
 }
 
-input:focus:not( :active ) + .cdx-button.cdx-button--action-progressive {
+input:focus:not( :active ) + .cdx-button--action-progressive {
 	border-color: @border-color-progressive--focus;
 	box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus @box-shadow-inset-medium @box-shadow-color-inverted;
 }

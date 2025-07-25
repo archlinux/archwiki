@@ -22,12 +22,12 @@
  * @ingroup Media
  */
 
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 
 /**
  * Media transform output for images
@@ -223,6 +223,6 @@ class ThumbnailImage extends MediaTransformOutput {
 		( new HookRunner( $services->getHookContainer() ) )
 			->onThumbnailBeforeProduceHTML( $this, $attribs, $linkAttribs );
 
-		return $this->linkWrap( $linkAttribs, Xml::element( 'img', $attribs ) );
+		return $this->linkWrap( $linkAttribs, Html::element( 'img', $attribs ) );
 	}
 }

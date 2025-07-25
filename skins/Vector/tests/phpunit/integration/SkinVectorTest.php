@@ -28,29 +28,10 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @return SkinVectorLegacy
 	 */
-	private function provideVectorTemplateObject() {
+	private function createVectorTemplateObject() {
 		$skinFactory = $this->getServiceContainer()->getSkinFactory();
 		$template = $skinFactory->makeSkin( 'vector' );
 		return $template;
-	}
-
-	/**
-	 * @param string $nodeString an HTML of the node we want to verify
-	 * @param string $tag Tag of the element we want to check
-	 * @param string $attribute Attribute of the element we want to check
-	 * @param string $search Value of the attribute we want to verify
-	 * @return bool
-	 */
-	private function expectNodeAttribute( $nodeString, $tag, $attribute, $search ) {
-		$node = new \DOMDocument();
-		$node->loadHTML( $nodeString );
-		$element = $node->getElementsByTagName( $tag )->item( 0 );
-		if ( !$element ) {
-			return false;
-		}
-
-		$values = explode( ' ', $element->getAttribute( $attribute ) );
-		return in_array( $search, $values );
 	}
 
 	/**
@@ -65,7 +46,7 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 		$context->setAuthority( $this->mockAnonNullAuthority() );
 		$context->setLanguage( 'fr' );
 		$context->setActionName( 'view' );
-		$vectorTemplate = $this->provideVectorTemplateObject();
+		$vectorTemplate = $this->createVectorTemplateObject();
 		$vectorTemplate->setContext( $context );
 		$this->setTemporaryHook( 'SkinTemplateNavigation::Universal',
 			static function ( &$skinTemplate, &$content_navigation ) {

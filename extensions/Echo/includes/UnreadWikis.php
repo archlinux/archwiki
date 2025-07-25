@@ -38,17 +38,13 @@ class UnreadWikis {
 	 * Use the user id provided by the CentralIdLookup
 	 *
 	 * @param UserIdentity $user
-	 * @return UnreadWikis|false
+	 * @return UnreadWikis|null
 	 */
 	public static function newFromUser( UserIdentity $user ) {
 		$id = MediaWikiServices::getInstance()
 			->getCentralIdLookup()
 			->centralIdFromLocalUser( $user, CentralIdLookup::AUDIENCE_RAW );
-		if ( !$id ) {
-			return false;
-		}
-
-		return new self( $id );
+		return $id ? new self( $id ) : null;
 	}
 
 	/**

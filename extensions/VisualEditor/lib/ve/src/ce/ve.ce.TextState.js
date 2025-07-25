@@ -43,21 +43,22 @@ ve.ce.TextState.static.getChunks = function ( element ) {
 	 * Add to chunks, merging content with the same elements/type into the same chunk
 	 *
 	 * @param {string} text Plain text
-	 * @param {string} [type] If this is a unicorn then 'unicorn', else 'text' (default)
+	 * @param {string} [type="text"] If this is a unicorn then 'unicorn', else 'text' (default)
 	 */
 	function add( text, type ) {
-		if (
-			!chunks.length ||
-			chunks[ chunks.length - 1 ].elements !== elementListStack[ stackTop ] ||
-			chunks[ chunks.length - 1 ].type !== type
+		type = type || 'text';
+		const last = chunks[ chunks.length - 1 ];
+		if ( last &&
+			last.elements === elementListStack[ stackTop ] &&
+			last.type === type
 		) {
+			last.text += text;
+		} else {
 			chunks.push( new ve.ce.TextStateChunk(
 				text,
 				elementListStack[ stackTop ],
-				type || 'text'
+				type
 			) );
-		} else {
-			chunks[ chunks.length - 1 ].text += text;
 		}
 	}
 
@@ -279,8 +280,8 @@ ve.ce.TextState.prototype.getChangeTransaction = function ( prev, modelDoc, mode
 		if ( i === change.start ) {
 			data = data.slice( textStart );
 		}
-		if ( i === iLen - 1 ) {
-			data = data.slice( 0, data.length - textEnd );
+		if ( i === iLen - 1 && textEnd > 0 ) {
+			data = data.slice( 0, -textEnd );
 		}
 		if ( data.length === 0 ) {
 			// There is nothing to add, because textStart/textEnd causes all the

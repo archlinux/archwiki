@@ -1,9 +1,11 @@
 <?php
 
+use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\MainConfigNames;
 
 /**
- * @covers \MWException
+ * @covers \MediaWiki\Exception\MWException
  * @author Antoine Musso
  */
 class MWExceptionTest extends MediaWikiIntegrationTestCase {
@@ -23,29 +25,6 @@ class MWExceptionTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $e->isLoggable() );
 	}
 
-	/**
-	 * Verify the exception classes are JSON serializabe.
-	 *
-	 * @dataProvider provideExceptionClasses
-	 */
-	public function testJsonSerializeExceptions( $exception_class ) {
-		$json = MWExceptionHandler::jsonSerializeException(
-			new $exception_class()
-		);
-		$this->assertIsString( $json,
-			"The $exception_class exception should be JSON serializable, got false." );
-	}
-
-	public static function provideExceptionClasses() {
-		return [
-			[ Exception::class ],
-			[ MWException::class ],
-		];
-	}
-
-	/**
-	 * @covers \MWException::report
-	 */
 	public function testReport() {
 		// Turn off to keep mw-error.log file empty in CI (and thus avoid build failure)
 		$this->overrideConfigValue( MainConfigNames::DebugLogGroups, [] );

@@ -32,7 +32,7 @@ class DatabaseIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testUniformTablePrefix() {
 		global $IP;
-		$path = "$IP/maintenance/tables.json";
+		$path = "$IP/sql/tables.json";
 		$tables = json_decode( file_get_contents( $path ), true );
 
 		// @todo Remove exception once these tables are fixed
@@ -70,39 +70,6 @@ class DatabaseIntegrationTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$this->assertSame( [], $prefixes );
-	}
-
-	public function automaticSqlGenerationParams() {
-		return [
-			[ 'mysql' ],
-			[ 'sqlite' ],
-			[ 'postgres' ],
-		];
-	}
-
-	/**
-	 * @dataProvider automaticSqlGenerationParams
-	 */
-	public function testAutomaticSqlGeneration( $type ) {
-		global $IP;
-		$abstractSchemaPath = "$IP/maintenance/tables.json";
-		if ( $type === 'mysql' ) {
-			$oldPath = "$IP/maintenance/tables-generated.sql";
-		} else {
-			$oldPath = "$IP/maintenance/$type/tables-generated.sql";
-		}
-		$oldContent = file_get_contents( $oldPath );
-		$newPath = $this->getNewTempFile();
-		$maintenanceScript = new GenerateSchemaSql();
-		$maintenanceScript->loadWithArgv(
-			[ '--json=' . $abstractSchemaPath, '--sql=' . $newPath, '--type=' . $type, '--quiet' ]
-		);
-		$maintenanceScript->execute();
-		$this->assertEquals(
-			$oldContent,
-			file_get_contents( $newPath ),
-			"The generated schema in '$type' type has to be the same"
-		);
 	}
 
 	/**

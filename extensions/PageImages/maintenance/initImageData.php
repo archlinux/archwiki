@@ -6,6 +6,7 @@ if ( $IP === false ) {
 }
 require_once "$IP/maintenance/Maintenance.php";
 
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use PageImages\Job\InitImageDataJob;

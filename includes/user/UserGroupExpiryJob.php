@@ -18,13 +18,15 @@
  * @file
  */
 
+use MediaWiki\JobQueue\GenericParameterJob;
+use MediaWiki\JobQueue\Job;
 use MediaWiki\MediaWikiServices;
 
 /**
- * Job that purges expired user group memberships.
+ * Purge expired user group memberships.
  *
  * @internal For use by \MediaWiki\User\UserGroupManager
- * @ingroup JobQueue
+ * @ingroup User
  */
 class UserGroupExpiryJob extends Job implements GenericParameterJob {
 	public function __construct( array $params ) {

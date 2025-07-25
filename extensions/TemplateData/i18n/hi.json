@@ -71,6 +71,7 @@
 	"templatedata-modal-button-removemap": "नक्शा हटाएँ",
 	"templatedata-modal-button-saveparam": "सहेजें",
 	"templatedata-modal-confirmcancel": "क्या आप सच में अपने बदलाव रद्द करना चाहते हैं?",
+	"templatedata-modal-button-discard": "रद्द करें",
 	"templatedata-modal-current-language": "वर्तमान भाषा: $1",
 	"templatedata-modal-errormsg": "त्रुटियाँ मिली। कृपया सुनिश्चित करें कि कोई खाली या प्रतिलिपि पैरामीटर का नाम नहीं है, और यह कि पैरामीटर के नाम में \"$1\", \"$2\" या \"$3\" नहीं है।",
 	"templatedata-modal-errormsg-duplicate-name": "त्रुटि मिली। यह नाम पहले से ही एक दूसरे पैरामीटर को दिया जा चुका है।",
@@ -113,5 +114,6 @@
 	"templatedata-modal-title-templateformat": "सुझावित विकिटेक्स्ट प्रारूपण",
 	"templatedata-modal-title-templateformatstring": "अनुकूलित प्रारूपण का स्ट्रिंग",
 	"templatedata-modal-title-templateparam-details": "पैरामीटर का विस्तार: $1",
-	"templatedata-modal-title-templateparams": "साँचे के पैरामीटर्स"
+	"templatedata-modal-title-templateparams": "साँचे के पैरामीटर्स",
+	"templatedata-search-list-header": "पसंदीदा"
 }

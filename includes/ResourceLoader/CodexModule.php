@@ -155,12 +155,12 @@ class CodexModule extends FileModule {
 	 *         }
 	 *     ]
 	 *
-	 * @param Context $context
+	 * @param Context|null $context
 	 * @param Config $config
 	 * @param string[] $iconNames Names of icons to fetch
 	 * @return array
 	 */
-	public static function getIcons( Context $context, Config $config, array $iconNames = [] ): array {
+	public static function getIcons( ?Context $context, Config $config, array $iconNames = [] ): array {
 		static $cachedIcons = null;
 		static $cachedIconFilePath = null;
 
@@ -173,7 +173,7 @@ class CodexModule extends FileModule {
 		return array_intersect_key( $cachedIcons, array_flip( $iconNames ) );
 	}
 
-	private static function getIconFilePath( Config $config ) {
+	private static function getIconFilePath( Config $config ): string {
 		$devDir = $config->get( MainConfigNames::CodexDevelopmentDir );
 		$iconsDir = $devDir !== null ?
 			"$devDir/packages/codex-icons/dist" :
@@ -316,11 +316,11 @@ class CodexModule extends FileModule {
 		return $this->makeFilePath( '' )->getLocalPath();
 	}
 
-	private function isDevelopmentMode() {
+	private function isDevelopmentMode(): bool {
 		return $this->getConfig()->get( MainConfigNames::CodexDevelopmentDir ) !== null;
 	}
 
-	private function getDevelopmentWarning() {
+	private function getDevelopmentWarning(): string {
 		return $this->isDevelopmentMode() ?
 			Html::encodeJsCall( 'mw.log.warn', [
 				"You are using a local development version of Codex, which may not match the latest version. " .
@@ -575,8 +575,6 @@ class CodexModule extends FileModule {
 
 	/**
 	 * For loading the entire Codex library, rather than a subset module of it.
-	 *
-	 * @param Context $context
 	 */
 	private function loadFullCodexLibrary( Context $context ) {
 		// Add all Codex JS files to the module's package

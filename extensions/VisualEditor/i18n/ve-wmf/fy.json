@@ -5,13 +5,13 @@
 			"PiefPafPier"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Fisuële bewurking]]",
+	"tag-visualeditor": "Fisuële bewurking",
 	"tag-visualeditor-description": "Bewurking dien mei de [[{{MediaWiki:visualeditor-descriptionpagelink}}|fisuële tekstbewurker]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Fisuële bewurking: Neisjen]]",
+	"tag-visualeditor-needcheck": "Fisuële bewurking: Neisjen",
 	"tag-visualeditor-needcheck-description": "Bewurking dien mei de [[{{MediaWiki:visualeditor-descriptionpagelink}}|fisuële tekstbewurker]], wêrby't it systeem mooglik net-bedoelde feroarings yn 'e wikitekst ûntdutsen hat.",
 	"tag-visualeditor-wikitext": "Boarnebewurker 2017",
 	"tag-visualeditor-wikitext-description": "Bewurking dien mei de wikitekstbewurker 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Fisuële bewurking: Omskeakele]]",
+	"tag-visualeditor-switched": "Fisuële bewurking: Omskeakele",
 	"tag-visualeditor-switched-description": "Meidogger begûn it bewurkjen mei de fisuële tekstbewurker, en gong dêrnei oer op de wikitekstbewurker.",
 	"visualeditor-feedback-link": "Project:Fisuële tekstbewurker/Weromkeppeling",
 	"visualeditor-feedback-tool": "Weromkeppelje oer dit programma",

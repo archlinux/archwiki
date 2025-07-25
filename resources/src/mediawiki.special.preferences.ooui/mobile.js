@@ -51,7 +51,6 @@
 
 		OO.inheritClass( PrefDialog, OO.ui.ProcessDialog );
 		PrefDialog.static.name = sectionId;
-		PrefDialog.static.escapable = true;
 		PrefDialog.static.size = 'larger';
 		PrefDialog.static.title = sectionTitle;
 		PrefDialog.static.actions = [
@@ -65,10 +64,9 @@
 			this.$body.addClass( 'mw-mobile-pref-dialog-body' );
 		};
 		PrefDialog.prototype.getActionProcess = function ( action ) {
-			const dialog = this;
 			if ( action ) {
 				return new OO.ui.Process( () => {
-					dialog.close( { action: action } );
+					this.close( { action: action } );
 				} );
 			}
 			return PrefDialog.super.prototype.getActionProcess.call( this, action );

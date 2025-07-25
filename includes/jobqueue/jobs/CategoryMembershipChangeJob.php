@@ -18,9 +18,16 @@
  * @file
  */
 
+namespace MediaWiki\JobQueue\Jobs;
+
+use MediaWiki\JobQueue\Job;
+use MediaWiki\JobQueue\JobSpecification;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPage;
+use MediaWiki\RecentChanges\CategoryMembershipChange;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Title\Title;
@@ -233,7 +240,7 @@ class CategoryMembershipChangeJob extends Job {
 
 	private function getExplicitCategoriesChanges(
 		WikiPage $page, RevisionRecord $newRev, ?RevisionRecord $oldRev = null
-	) {
+	): array {
 		// Inject the same timestamp for both revision parses to avoid seeing category changes
 		// due to time-based parser functions. Inject the same page title for the parses too.
 		// Note that REPEATABLE-READ makes template/file pages appear unchanged between parses.
@@ -288,3 +295,6 @@ class CategoryMembershipChangeJob extends Job {
 		return $info;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( CategoryMembershipChangeJob::class, 'CategoryMembershipChangeJob' );

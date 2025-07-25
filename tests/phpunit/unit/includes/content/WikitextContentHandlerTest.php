@@ -5,6 +5,7 @@ namespace MediaWiki\Tests\Unit;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Content\WikitextContentHandler;
+use MediaWiki\Exception\MWException;
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
@@ -22,7 +23,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWikiUnitTestCase;
 use MockTitleTrait;
-use MWException;
 use ReflectionClass;
 use Wikimedia\UUID\GlobalIdGenerator;
 
@@ -83,7 +83,7 @@ class WikitextContentHandlerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( '', $content->getText() );
 	}
 
-	public function dataIsSupportedFormat() {
+	public static function provideIsSupportedFormat() {
 		return [
 			[ null, true ],
 			[ CONTENT_FORMAT_WIKITEXT, true ],
@@ -92,7 +92,7 @@ class WikitextContentHandlerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider dataIsSupportedFormat
+	 * @dataProvider provideIsSupportedFormat
 	 */
 	public function testIsSupportedFormat( $format, $supported ) {
 		$handler = $this->newWikitextContentHandler();

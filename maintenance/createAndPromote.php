@@ -29,12 +29,17 @@ require_once __DIR__ . '/Maintenance.php';
 
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Deferred\SiteStatsUpdate;
+use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Password\PasswordError;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 
 /**
  * Maintenance script to create an account and grant it rights.
+ *
+ * Note that, if CentralAuth is loaded and $wgCentralAuthAutomaticGlobalGroups is
+ * configured, this script will not update the global groups automatically.
  *
  * @ingroup Maintenance
  */
@@ -80,6 +85,13 @@ class CreateAndPromote extends Maintenance {
 		$user = $services->getUserFactory()->newFromName( $username );
 		if ( !is_object( $user ) ) {
 			$this->fatalError( 'invalid username.' );
+		}
+
+		if ( $services->getUserNameUtils()->isTemp( $user->getName() ) ) {
+			$this->fatalError(
+				'Temporary accounts cannot have groups or a password, so this script should not be used ' .
+				'to create a temporary account. Temporary accounts can be created by making an edit while logged out.'
+			);
 		}
 
 		$exists = ( $user->idForName() !== 0 );

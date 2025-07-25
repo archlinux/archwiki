@@ -18,9 +18,15 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo;
+
+use InvalidArgumentException;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
+use MWFileProps;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Mime\MimeAnalyzer;
 use Wikimedia\ObjectCache\WANObjectCache;
 
@@ -97,7 +103,7 @@ class RepoGroup {
 	 *                   before.
 	 *   latest:         If true, load from the latest available data into File objects
 	 * @phpcs:ignore Generic.Files.LineLength
-	 * @phan-param array{time?:mixed,ignoreRedirect?:bool,private?:bool|MediaWiki\Permissions\Authority,latest?:bool} $options
+	 * @phan-param array{time?:mixed,ignoreRedirect?:bool,private?:bool|\MediaWiki\Permissions\Authority,latest?:bool} $options
 	 * @return File|false False if title is not found
 	 */
 	public function findFile( $title, $options = [] ) {
@@ -197,10 +203,7 @@ class RepoGroup {
 
 		foreach ( $this->foreignRepos as $repo ) {
 			// Remove found files from $items
-			foreach ( $images as $name => $image ) {
-				unset( $items[$name] );
-			}
-
+			$items = array_diff_key( $items, $images );
 			$images = array_merge( $images, $repo->findFiles( $items, $flags ) );
 		}
 
@@ -471,3 +474,6 @@ class RepoGroup {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RepoGroup::class, 'RepoGroup' );

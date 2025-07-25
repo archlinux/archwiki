@@ -1,7 +1,7 @@
 <?php
 namespace MediaWiki\Skins\Vector;
 
-use FatalError;
+use MediaWiki\Exception\FatalError;
 
 /**
  * A namespace for Vector constants for internal Vector usage only. **Do not rely on this file as an
@@ -77,21 +77,6 @@ final class Constants {
 	public const REQUIREMENT_LANGUAGE_IN_HEADER = 'LanguageInHeader';
 
 	/**
-	 * @var string
-	 */
-	public const CONFIG_STICKY_HEADER = 'VectorStickyHeader';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_STICKY_HEADER = 'StickyHeader';
-
-	/**
-	 * @var string
-	 */
-	public const FEATURE_STICKY_HEADER = 'StickyHeader';
-
-	/**
 	 * Defines whether an A/B test is running.
 	 *
 	 * @var string
@@ -142,11 +127,6 @@ final class Constants {
 	 * @var string
 	 */
 	public const FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER = 'LanguageInMainPageHeader';
-
-	/**
-	 * @var string
-	 */
-	public const WEB_AB_TEST_ARTICLE_ID_FACTORY_SERVICE = 'WikimediaEvents.WebABTestArticleIdFactory';
 
 	/**
 	 * @var string

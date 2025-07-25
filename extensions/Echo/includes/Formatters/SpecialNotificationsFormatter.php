@@ -15,6 +15,7 @@ use OOUI\IconWidget;
  * also call OutputPage::enableOOUI() before calling this formatter.
  */
 class SpecialNotificationsFormatter extends EchoEventFormatter {
+	/** @inheritDoc */
 	protected function formatModel( EchoEventPresentationModel $model ) {
 		$markReadSpecialPage = new SpecialNotificationsMarkRead();
 		$id = $model->getEventId();
@@ -112,7 +113,7 @@ class SpecialNotificationsFormatter extends EchoEventFormatter {
 		);
 	}
 
-	private function getIconUrl( EchoEventPresentationModel $model ) {
+	private function getIconUrl( EchoEventPresentationModel $model ): string {
 		return EchoIcon::getUrl(
 			$model->getIconType(),
 			$this->language->getDir()

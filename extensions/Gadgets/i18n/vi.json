@@ -3,10 +3,10 @@
 		"authors": [
 			"Meno25",
 			"Minh Nguyen",
+			"NguyenHung",
 			"Nguyên Lê",
 			"Prenn",
-			"Vinhtantran",
-			"NguyenHung"
+			"Vinhtantran"
 		]
 	},
 	"gadgets-desc": "Để các thành viên chọn những [[Special:Gadgets|tiện ích]] đặc chế bằng CSS và JavaScript trong [[Special:Preferences#mw-prefsection-gadgets|tùy chọn]]",

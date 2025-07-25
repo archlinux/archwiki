@@ -7,7 +7,7 @@ use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\HTMLForm\HTMLNestedFilterable;
 use MediaWiki\HTMLForm\OOUIHTMLForm;
 use MediaWiki\Request\WebRequest;
-use MediaWiki\Xml\Xml;
+use MediaWiki\Widget\MenuTagMultiselectWidget;
 use RuntimeException;
 
 /**
@@ -16,8 +16,10 @@ use RuntimeException;
  * @stable to extend
  */
 class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable {
-	/** @var string */
-	private $mPlaceholder;
+
+	private bool $mDropdown = false;
+
+	private ?string $mPlaceholder = null;
 
 	/**
 	 * @stable to call
@@ -30,6 +32,8 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 	 *   - flatlist: If given, the options will be displayed on a single line (wrapping to following
 	 *     lines if necessary), rather than each one on a line of its own. This is desirable mostly
 	 *     for very short lists of concisely labelled options.
+	 *   - max: Maximum number of elements that can be selected. On the client-side, this is only
+	 *     enforced when using a dropdown.
 	 */
 	public function __construct( $params ) {
 		parent::__construct( $params );
@@ -40,7 +44,7 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 		}
 
 		if ( isset( $params['dropdown'] ) ) {
-			$this->mClass .= ' mw-htmlform-dropdown';
+			$this->mDropdown = true;
 			if ( isset( $params['placeholder'] ) ) {
 				$this->mPlaceholder = $params['placeholder'];
 			} elseif ( isset( $params['placeholder-message'] ) ) {
@@ -70,6 +74,17 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 
 		// Reject nested arrays (T274955)
 		$value = array_filter( $value, 'is_scalar' );
+
+		if ( isset( $this->mParams['required'] )
+			&& $this->mParams['required'] !== false
+			&& $value === []
+		) {
+			return $this->msg( 'htmlform-required' );
+		}
+
+		if ( isset( $this->mParams['max'] ) && ( count( $value ) > $this->mParams['max'] ) ) {
+			return $this->msg( 'htmlform-multiselect-toomany', $this->mParams['max'] );
+		}
 
 		# If all options are valid, array_intersect of the valid options
 		# and the provided options will return the provided options.
@@ -138,27 +153,40 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 		if ( $this->mParent instanceof OOUIHTMLForm ) {
 			throw new RuntimeException( __METHOD__ . ' is not supported' );
 		} else {
-			$elementFunc = [ Html::class, $this->mOptionsLabelsNotFromMessage ? 'rawElement' : 'element' ];
 			$checkbox =
-				Xml::check( "{$this->mName}[]", $checked, $attribs ) .
+				Html::check( "{$this->mName}[]", $checked, $attribs ) .
 				"\u{00A0}" .
-				call_user_func( $elementFunc,
+				Html::rawElement(
 					'label',
 					[ 'for' => $attribs['id'] ],
-					$label
+					$this->escapeLabel( $label )
 				);
 			return $checkbox;
 		}
 	}
 
-	/**
-	 * Get options and make them into arrays suitable for OOUI.
-	 * @stable to override
-	 */
 	public function getOptionsOOUI() {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		// Sections make this difficult. See getInputOOUI().
-		throw new RuntimeException( __METHOD__ . ' is not supported' );
+		$optionsOouiSections = [];
+		$options = $this->getOptions();
+
+		// If the options are supposed to be split into sections, each section becomes a separate
+		// CheckboxMultiselectInputWidget.
+		foreach ( $options as $label => $section ) {
+			if ( is_array( $section ) ) {
+				$optionsOouiSections[ $label ] = Html::listDropdownOptionsOoui( $section );
+				unset( $options[$label] );
+			}
+		}
+
+		// If anything remains in the array, they are sectionless options. Put them at the beginning.
+		if ( $options ) {
+			$optionsOouiSections = array_merge(
+				[ '' => Html::listDropdownOptionsOoui( $options ) ],
+				$optionsOouiSections
+			);
+		}
+
+		return $optionsOouiSections;
 	}
 
 	/**
@@ -170,55 +198,34 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 	 * @stable to override
 	 * @since 1.28
 	 * @param string[] $value
-	 * @return string|\OOUI\CheckboxMultiselectInputWidget
+	 * @return \OOUI\Widget|string
 	 * @suppress PhanParamSignatureMismatch
 	 */
 	public function getInputOOUI( $value ) {
 		$this->mParent->getOutput()->addModules( 'oojs-ui-widgets' );
+		if ( $this->mDropdown ) {
+			$this->mParent->getOutput()->addModuleStyles( 'mediawiki.widgets.TagMultiselectWidget.styles' );
+		}
 
 		// Reject nested arrays (T274955)
 		$value = array_filter( $value, 'is_scalar' );
 
-		$hasSections = false;
-		$optionsOouiSections = [];
-		$options = $this->getOptions();
-		// If the options are supposed to be split into sections, each section becomes a separate
-		// CheckboxMultiselectInputWidget.
-		foreach ( $options as $label => $section ) {
-			if ( is_array( $section ) ) {
-				$optionsOouiSections[ $label ] = Html::listDropdownOptionsOoui( $section );
-				unset( $options[$label] );
-				$hasSections = true;
-			}
-		}
-		// If anything remains in the array, they are sectionless options. Put them in a separate widget
-		// at the beginning.
-		if ( $options ) {
-			$optionsOouiSections = array_merge(
-				[ '' => Html::listDropdownOptionsOoui( $options ) ],
-				$optionsOouiSections
-			);
-		}
-		'@phan-var array[][] $optionsOouiSections';
-
 		$out = [];
-		foreach ( $optionsOouiSections as $sectionLabel => $optionsOoui ) {
+		$optionsSections = $this->getOptionsOOUI();
+		foreach ( $optionsSections as $sectionLabel => &$groupedOptions ) {
 			$attr = [];
 			$attr['name'] = "{$this->mName}[]";
 
 			$attr['value'] = $value;
 
-			$options = $optionsOoui;
-			foreach ( $options as &$option ) {
+			foreach ( $groupedOptions as &$option ) {
 				$option['disabled'] = in_array( $option['data'], $this->mParams['disabled-options'], true );
 			}
-			if ( $this->mOptionsLabelsNotFromMessage ) {
-				foreach ( $options as &$option ) {
-					$option['label'] = new \OOUI\HtmlSnippet( $option['label'] );
-				}
+			foreach ( $groupedOptions as &$option ) {
+				$option['label'] = $this->makeLabelSnippet( $option['label'] );
 			}
 			unset( $option );
-			$attr['options'] = $options;
+			$attr['options'] = $groupedOptions;
 
 			$attr += \OOUI\Element::configFromHtmlAttributes(
 				$this->getAttributes( [ 'disabled', 'tabindex' ] )
@@ -230,31 +237,48 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 
 			$widget = new \OOUI\CheckboxMultiselectInputWidget( $attr );
 			if ( $sectionLabel ) {
-				if ( $this->mOptionsLabelsNotFromMessage ) {
-					// @phan-suppress-next-line SecurityCheck-XSS Can't track conditional escaping via a property
-					$sectionLabel = new \OOUI\HtmlSnippet( $sectionLabel );
-				}
 				$out[] = new \OOUI\FieldsetLayout( [
 					'items' => [ $widget ],
-					'label' => $sectionLabel,
+					'label' => $this->makeLabelSnippet( $sectionLabel ),
 				] );
 			} else {
 				$out[] = $widget;
 			}
 		}
+		unset( $groupedOptions );
 
-		if ( !$hasSections && $out ) {
-			if ( $this->mPlaceholder ) {
-				$out[0]->setData( ( $out[0]->getData() ?: [] ) + [
-					'placeholder' => $this->mPlaceholder,
-				] );
-			}
+		$params = [];
+		if ( $this->mPlaceholder ) {
+			$params['placeholder'] = $this->mPlaceholder;
+		}
+		if ( isset( $this->mParams['max'] ) ) {
+			$params['tagLimit'] = $this->mParams['max'];
+		}
+		if ( $this->mDropdown ) {
+			return new MenuTagMultiselectWidget( [
+				'name' => $this->mName,
+				'options' => $optionsSections,
+				'default' => $value,
+				'noJsFallback' => $out,
+				'allowReordering' => false,
+			] + $params );
+		} elseif ( count( $out ) === 1 ) {
+			$firstFieldData = $out[0]->getData() ?: [];
+			$out[0]->setData( $firstFieldData + $params );
 			// Directly return the only OOUI\CheckboxMultiselectInputWidget.
 			// This allows it to be made infusable and later tweaked by JS code.
 			return $out[0];
 		}
 
 		return implode( '', $out );
+	}
+
+	protected function getOOUIModules() {
+		return $this->mDropdown ? [ 'mediawiki.widgets.MenuTagMultiselectWidget' ] : [];
+	}
+
+	protected function shouldInfuseOOUI() {
+		return $this->mDropdown;
 	}
 
 	/**

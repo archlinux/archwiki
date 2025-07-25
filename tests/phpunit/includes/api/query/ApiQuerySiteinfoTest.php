@@ -9,10 +9,10 @@ use MediaWiki\MainConfigSchema;
 use MediaWiki\Message\Message;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SiteStats\SiteStats;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
-use Skin;
 use Wikimedia\Composer\ComposerInstalled;
 use Wikimedia\Rdbms\LoadBalancer;
 use Wikimedia\TestingAccessWrapper;
@@ -22,7 +22,7 @@ use Wikimedia\TestingAccessWrapper;
  * @group medium
  * @group Database
  *
- * @covers MediaWiki\Api\ApiQuerySiteinfo
+ * @covers \MediaWiki\Api\ApiQuerySiteinfo
  */
 class ApiQuerySiteinfoTest extends ApiTestCase {
 	use TempUserTestTrait;
@@ -329,23 +329,29 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	 * @dataProvider groupsProvider
 	 */
 	public function testUserGroups( $numInGroup ) {
-		global $wgGroupPermissions, $wgAutopromote;
+		global $wgAutopromote;
 
-		$this->setGroupPermissions( 'viscount', 'perambulate', 'yes' );
-		$this->setGroupPermissions( 'viscount', 'legislate', '0' );
+		$this->setGroupPermissions( [
+			'viscount' => [
+				'perambulate' => true,
+				'legislate' => false,
+			],
+		] );
 		$this->overrideConfigValues( [
 			MainConfigNames::AddGroups => [ 'viscount' => true, 'bot' => [] ],
 			MainConfigNames::RemoveGroups => [ 'viscount' => [ 'sysop' ], 'bot' => [ '*', 'earl' ] ],
 			MainConfigNames::GroupsAddToSelf => [ 'bot' => [ 'bureaucrat', 'sysop' ] ],
 			MainConfigNames::GroupsRemoveFromSelf => [ 'bot' => [ 'bot' ] ],
+			MainConfigNames::GroupInheritsPermissions => [ 'viscountess' => 'viscount' ],
 		] );
 
 		$data = $this->doQuery( 'usergroups', $numInGroup ? [ 'sinumberingroup' => '' ] : [] );
 
 		$names = array_column( $data, 'name' );
 
-		$this->assertSame( array_keys( $wgGroupPermissions ), $names );
 		$userAllGroups = $this->getServiceContainer()->getUserGroupManager()->listAllGroups();
+		$userAllImplicitGroups = $this->getServiceContainer()->getUserGroupManager()->listAllImplicitGroups();
+		$this->assertSame( array_merge( $userAllImplicitGroups, $userAllGroups ), $names );
 
 		foreach ( $data as $val ) {
 			if ( !$numInGroup ) {
@@ -367,6 +373,9 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 			if ( $val['name'] === 'viscount' ) {
 				$this->assertSame( [ 'perambulate' ], $val['rights'] );
 				$this->assertSame( $userAllGroups, $val['add'] );
+			} elseif ( $val['name'] === 'viscountess' ) {
+				$this->assertSame( [ 'perambulate' ], $val['rights'] );
+				$this->assertArrayNotHasKey( 'add', $val );
 			} elseif ( $val['name'] === 'bot' ) {
 				$this->assertArrayNotHasKey( 'add', $val );
 				$this->assertArrayNotHasKey( 'remove', $val );
@@ -443,7 +452,9 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 			array_values( $expected )
 		);
 
-		$this->assertSame( $expected, $this->doQuery( 'libraries' ) );
+		// We don't care about the arrays being equal, just that actual contains
+		// expected values...
+		$this->assertArrayContains( $expected, $this->doQuery( 'libraries' ) );
 	}
 
 	public function testExtensions() {
@@ -659,7 +670,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		}
 	}
 
-	public function skinsProvider() {
+	public static function skinsProvider() {
 		return [
 			'No language specified' => [ null ],
 			'Czech' => [ 'cs' ],

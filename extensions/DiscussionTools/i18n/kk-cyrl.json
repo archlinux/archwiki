@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Ajiniyaz Nurniyazov",
+			"Amankel'dy",
 			"Arystanbek",
 			"Batyrbek.kz",
 			"Casserium",
 			"Hedeyohu22",
-			"СеніңШешең",
 			"Woytecr",
-			"Amankel'dy"
+			"СеніңШешең"
 		]
 	},
 	"discussiontools": "Талқылау құралдары",
@@ -64,7 +64,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Сіз жазылдыңыз!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Бұл бетте жаңа тақырыптар басталғанда, сіз одан әрі хабарландыру алмайсыз.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Сіз жазылудан бас тарттыңыз.",
-	"discussiontools-notification-added-topic-header": "$2 <strong>$3</strong> бетінде \"<strong>$4</strong>\" деген жаңа тақырыпты бастады.",
+	"discussiontools-notification-added-topic-header": "$2 <strong>$3</strong> бетінде \"<strong>$4</strong>\" деген жаңа тақырыпты $1 {{GENDER:$2|бастады}}.",
 	"discussiontools-notification-added-topic-view": "Тақырыпты көру",
 	"discussiontools-notification-removed-topic-body": "Мүмкін {{PLURAL:$1|осы тақырыптан}} ендігәрі хабарлама {{GENDER:|алмайсыз}}.",
 	"discussiontools-notification-removed-topic-header": "\"<strong>$4</strong>\" тақырыбы $3 бетінен мұрағатталды немесе өшірілді.",
@@ -179,9 +179,9 @@
 	"tag-discussiontools-description": "Өңдеме DiscussionTools қолданып жасалған",
 	"tag-discussiontools-edit": "Өңделген пікір",
 	"tag-discussiontools-edit-description": "DiscussionTools қолданып қатысушы бар пікірді өңдеді",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Жаңа тақырып]",
+	"tag-discussiontools-newtopic": "Жаңа тақырып",
 	"tag-discussiontools-newtopic-description": "Қатысушы DiscussionTools қолданып жаңа тақырып қосты",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Жауап беру]",
+	"tag-discussiontools-reply": "Жауап беру",
 	"tag-discussiontools-reply-description": "Қатысушы DiscussionTools қолданып пікірге жауап берді",
 	"tag-discussiontools-source-description": "DiscussionTools қайнары модында болған",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools құралдар тақтасымен жетілдірілген қайнар модында болған",

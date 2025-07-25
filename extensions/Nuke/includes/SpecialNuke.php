@@ -2,40 +2,31 @@
 
 namespace MediaWiki\Extension\Nuke;
 
-use DeletePageJob;
-use ErrorPageError;
-use JobQueueGroup;
+use DateTime;
 use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
-use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Extension\Nuke\Form\SpecialNukeHTMLFormUIRenderer;
+use MediaWiki\Extension\Nuke\Form\SpecialNukeUIRenderer;
 use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
-use MediaWiki\Html\Html;
-use MediaWiki\Html\ListToggle;
-use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\FileRepo\RepoGroup;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\DeletePageJob;
 use MediaWiki\Language\Language;
 use MediaWiki\Page\File\FileDeleteForm;
+use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\Xml\Xml;
-use OOUI\DropdownInputWidget;
-use OOUI\FieldLayout;
-use OOUI\TextInputWidget;
-use PermissionsError;
-use RepoGroup;
-use UserBlockedError;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
-use Wikimedia\Rdbms\IExpression;
-use Wikimedia\Rdbms\LikeMatch;
-use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class SpecialNuke extends SpecialPage {
 
@@ -46,14 +37,42 @@ class SpecialNuke extends SpecialPage {
 	private IConnectionProvider $dbProvider;
 	private PermissionManager $permissionManager;
 	private RepoGroup $repoGroup;
-	private UserFactory $userFactory;
 	private UserOptionsLookup $userOptionsLookup;
 	private UserNamePrefixSearch $userNamePrefixSearch;
 	private UserNameUtils $userNameUtils;
 	private NamespaceInfo $namespaceInfo;
 	private Language $contentLanguage;
+	private RedirectLookup $redirectLookup;
 	/** @var CheckUserTemporaryAccountsByIPLookup|null */
 	private $checkUserTemporaryAccountsByIPLookup = null;
+
+	/**
+	 * Action keyword for the "prompt" step.
+	 */
+	public const ACTION_PROMPT = 'prompt';
+	/**
+	 * Action keyword for the "list" step.
+	 */
+	public const ACTION_LIST = 'list';
+	/**
+	 * Action keyword for the "confirm" step.
+	 */
+	public const ACTION_CONFIRM = 'confirm';
+	/**
+	 * Action keyword for the "delete/results" step.
+	 */
+	public const ACTION_DELETE = 'delete';
+
+	/**
+	 * Separator for the hidden "page list" fields.
+	 */
+	public const PAGE_LIST_SEPARATOR = '|';
+
+	/**
+	 * Separator for the namespace list. This constant comes from the separator used by
+	 * HTMLNamespacesMultiselectField.
+	 */
+	public const NAMESPACE_LIST_SEPARATOR = "\n";
 
 	/**
 	 * @inheritDoc
@@ -63,25 +82,25 @@ class SpecialNuke extends SpecialPage {
 		IConnectionProvider $dbProvider,
 		PermissionManager $permissionManager,
 		RepoGroup $repoGroup,
-		UserFactory $userFactory,
 		UserOptionsLookup $userOptionsLookup,
 		UserNamePrefixSearch $userNamePrefixSearch,
 		UserNameUtils $userNameUtils,
 		NamespaceInfo $namespaceInfo,
 		Language $contentLanguage,
+		RedirectLookup $redirectLookup,
 		$checkUserTemporaryAccountsByIPLookup = null
 	) {
-		parent::__construct( 'Nuke', 'nuke' );
+		parent::__construct( 'Nuke' );
 		$this->jobQueueGroup = $jobQueueGroup;
 		$this->dbProvider = $dbProvider;
 		$this->permissionManager = $permissionManager;
 		$this->repoGroup = $repoGroup;
-		$this->userFactory = $userFactory;
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
 		$this->userNameUtils = $userNameUtils;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->contentLanguage = $contentLanguage;
+		$this->redirectLookup = $redirectLookup;
 		$this->checkUserTemporaryAccountsByIPLookup = $checkUserTemporaryAccountsByIPLookup;
 	}
 
@@ -98,72 +117,225 @@ class SpecialNuke extends SpecialPage {
 	 */
 	public function execute( $par ) {
 		$this->setHeaders();
-		$this->checkPermissions();
 		$this->checkReadOnly();
 		$this->outputHeader();
 		$this->addHelpLink( 'Help:Extension:Nuke' );
 
 		$currentUser = $this->getUser();
-		$block = $currentUser->getBlock();
-
-		// appliesToRight is presently a no-op, since there is no handling for `delete`,
-		// and so will return `null`. `true` will be returned if the block actively
-		// applies to `delete`, and both `null` and `true` should result in an error
-		if ( $block && ( $block->isSitewide() ||
-			( $block->appliesToRight( 'delete' ) !== false ) )
-		) {
-			throw new UserBlockedError( $block );
-		}
 
 		$req = $this->getRequest();
+		$nukeContext = $this->getNukeContextFromRequest( $req, $par );
+
+		if ( $nukeContext->validatePrompt() !== true ) {
+			// Something is wrong with filters. Immediately return the prompt form again.
+			$this->showPromptForm( $nukeContext );
+			return;
+		}
+
+		switch ( $nukeContext->getAction() ) {
+			case self::ACTION_DELETE:
+			case self::ACTION_CONFIRM:
+				if ( !$req->wasPosted()
+					|| !$currentUser->matchEditToken( $req->getVal( 'wpEditToken' ) )
+				) {
+					// If the form was not posted or the edit token didn't match, something
+					// must have gone wrong. Show the prompt form again.
+					$this->showPromptForm( $nukeContext );
+					break;
+				}
+
+				if ( !$nukeContext->hasPages() ) {
+					if ( !$nukeContext->hasOriginalPages() ) {
+						// No pages were requested. This is an early confirm attempt without having
+						// listed the pages at all. Show the list form again.
+						$this->showPromptForm( $nukeContext );
+					} else {
+						// Pages were not requested but a page list exists. The user did not select any
+						// pages. Show the list form again.
+						$this->showListForm( $nukeContext );
+					}
+					break;
+				}
+
+				if ( $nukeContext->getAction() === self::ACTION_DELETE ) {
+					$deletedPageStatuses = $this->doDelete( $nukeContext );
+					$this->showResultPage( $nukeContext, $deletedPageStatuses );
+				} else {
+					$this->showConfirmForm( $nukeContext );
+				}
+				break;
+			case self::ACTION_LIST:
+				$this->showListForm( $nukeContext );
+				break;
+			default:
+				$this->showPromptForm( $nukeContext );
+				break;
+		}
+	}
+
+	/**
+	 * Return a list of temporary accounts that are known to have edited from the context's target.
+	 * Calls to this method result in a log entry being generated for the logged-in user account
+	 * making the request.
+	 *
+	 * @param NukeContext $context
+	 * @return string[] A list of temporary account usernames associated with the IP address
+	 */
+	protected function getTempAccounts( NukeContext $context ): array {
+		if ( !$this->checkUserTemporaryAccountsByIPLookup ) {
+			return [];
+		}
+		$status = $this->checkUserTemporaryAccountsByIPLookup->get(
+			$context->getTarget(),
+			$this->getAuthority(),
+			true
+		);
+		if ( $status->isGood() ) {
+			return $status->getValue();
+		}
+		return [];
+	}
+
+	/**
+	 * Load the Nuke context from request data ({@link SpecialPage::getRequest}).
+	 *
+	 * @param WebRequest $req The request to use
+	 * @param string|null $par The parameter to use as the target, if any
+	 * @return NukeContext
+	 */
+	protected function getNukeContextFromRequest(
+		WebRequest $req,
+		?string $par = null
+	): NukeContext {
 		$target = trim( $req->getText( 'target', $par ?? '' ) );
 
 		// Normalise name
 		if ( $target !== '' ) {
-			$user = $this->userFactory->newFromName( $target );
-			if ( $user ) {
-				$target = $user->getName();
-			}
-		}
-
-		$reason = $this->getDeleteReason( $this->getRequest(), $target );
-
-		$limit = $req->getInt( 'limit', 500 );
-		$namespace = $req->getIntOrNull( 'namespace' );
-
-		if ( $req->wasPosted()
-			&& $currentUser->matchEditToken( $req->getVal( 'wpEditToken' ) )
-		) {
-			if ( $req->getRawVal( 'action' ) === 'delete' ) {
-				$pages = $req->getArray( 'pages' );
-
-				if ( $pages ) {
-					$this->doDelete( $pages, $reason );
-					return;
-				}
-			} elseif ( $req->getRawVal( 'action' ) === 'submit' ) {
-				// if the target is an ip addresss and temp account lookup is available,
-				// list pages created by the ip user or by temp accounts associated with the ip address
-				if (
-					$this->checkUserTemporaryAccountsByIPLookup &&
-					IPUtils::isValid( $target )
-				) {
-					$this->assertUserCanAccessTemporaryAccounts( $currentUser );
-					$tempnames = $this->getTempAccountData( $target );
-					$reason = $this->getDeleteReason( $this->getRequest(), $target, true );
-					$this->listForm( $target, $reason, $limit, $namespace, $tempnames );
-				} else {
-					// otherwise just list pages normally
-					$this->listForm( $target, $reason, $limit, $namespace );
-				}
+			if ( IPUtils::isValid( $target ) ) {
+				$target = IPUtils::sanitizeIP( $target );
+				// IPUtils::sanitizeIP returns null only for bad input
+				'@phan-var string $target';
 			} else {
-				$this->promptForm();
+				$target = $this->userNameUtils->getCanonical( $target ) ?: $target;
 			}
-		} elseif ( $target === '' ) {
-			$this->promptForm();
-		} else {
-			$this->listForm( $target, $reason, $limit, $namespace );
 		}
+
+		$namespaces = $this->loadNamespacesFromRequest( $req );
+		// Set $namespaces to null if it's empty
+		if ( count( $namespaces ) == 0 ) {
+			$namespaces = null;
+		}
+
+		$action = $req->getRawVal( 'action' );
+		if ( !$action ) {
+			if ( $target !== '' ) {
+				// Target was supplied but action was not. Imply 'list' action.
+				$action = self::ACTION_LIST;
+			} else {
+				$action = self::ACTION_PROMPT;
+			}
+		}
+
+		// This uses a string value to avoid having to generate hundreds of hidden <input>s.
+		$originalPages = explode(
+			self::PAGE_LIST_SEPARATOR,
+			$req->getText( 'originalPageList' )
+		);
+		if ( count( $originalPages ) == 1 && $originalPages[0] == "" ) {
+			$originalPages = [];
+		}
+
+		// Retrieve the maximum page size in kilobytes
+		$maxPageSizeKB = $this->getConfig()->get( 'MaxArticleSize' );
+
+		// Convert the size to bytes
+		$maxPageSizeBytes = $maxPageSizeKB * 1024;
+
+		$maxSizeUserConfig = $maxPageSizeBytes;
+
+		// getInt doesn't treat "" as null, so we need to manually do this instead of parsing
+		// $maxSizeUserConfig directly to getInt as the fallback
+		if ( $req->getRawVal( 'maxPageSize' ) != "" ) {
+			$maxSizeUserConfig = $req->getInt( 'maxPageSize', $maxSizeUserConfig );
+		}
+
+		return new NukeContext( [
+			'requestContext' => $this->getContext(),
+			'useTemporaryAccounts' => $this->checkUserTemporaryAccountsByIPLookup != null,
+			'nukeAccessStatus' => $this->getNukeAccessStatus( $this->getUser() ),
+
+			'action' => $action,
+			'target' => $target,
+			'listedTarget' => trim( $req->getText( 'listedTarget', $target ) ),
+			'pattern' => $req->getText( 'pattern' ),
+			'limit' => $req->getInt( 'limit', 500 ),
+			'namespaces' => $namespaces,
+
+			'dateFrom' => $req->getText( 'wpdateFrom' ),
+			'dateTo' => $req->getText( 'wpdateTo' ),
+
+			'includeTalkPages' => $req->getBool( 'includeTalkPages' ),
+			'includeRedirects' => $req->getBool( 'includeRedirects' ),
+
+			'pages' => $req->getArray( 'pages', [] ),
+			'associatedPages' => $req->getArray( 'associatedPages', [] ),
+			'originalPages' => $originalPages,
+
+			// default to 0 (no limit) if the parameters are not set
+			'minPageSize' => $req->getInt( 'minPageSize', 0 ),
+			'maxPageSize' => $maxSizeUserConfig,
+		] );
+	}
+
+	/**
+	 * Get the UI renderer for a given type.
+	 *
+	 * @param NukeContext $context
+	 * @return SpecialNukeUIRenderer
+	 */
+	protected function getUIRenderer(
+		NukeContext $context
+	): SpecialNukeUIRenderer {
+		// Permit overriding the UI type with the `?nukeUI=` query parameter.
+		$formType = $this->getRequest()->getText( 'nukeUI' );
+		if ( !$formType ) {
+			$formType = $this->getConfig()->get( NukeConfigNames::UIType ) ?? 'htmlform';
+		}
+
+		// Possible values: 'codex', 'htmlform'
+		switch ( $formType ) {
+			// case 'codex': to be implemented (T153988)
+			case 'htmlform':
+			default:
+				return new SpecialNukeHTMLFormUIRenderer(
+					$context,
+					$this,
+					$this->repoGroup,
+					$this->getLinkRenderer(),
+					$this->namespaceInfo,
+					$this->redirectLookup
+				);
+		}
+	}
+
+	/**
+	 * Load namespaces from the provided request and return them as an array. This also performs
+	 * validation, ensuring that only valid namespaces are returned.
+	 *
+	 * @param WebRequest $req The request
+	 * @return array An array of namespace IDs
+	 */
+	private function loadNamespacesFromRequest( WebRequest $req ): array {
+		$validNamespaces = $this->namespaceInfo->getValidNamespaces();
+
+		return array_map(
+			'intval', array_filter(
+				explode( self::NAMESPACE_LIST_SEPARATOR, $req->getText( "namespace" ) ),
+				static function ( $ns ) use ( $validNamespaces ) {
+					return is_numeric( $ns ) && in_array( intval( $ns ), $validNamespaces );
+				}
+			)
+		);
 	}
 
 	/**
@@ -199,406 +371,365 @@ class SpecialNuke extends SpecialPage {
 	}
 
 	/**
-	 * Given an IP address, return a list of temporary accounts that are known to have edited from the IP.
-	 *
-	 * Calls to this method result in a log entry being generated for the logged-in user account making the request.
-	 * @param string $ip The IP address used for looking up temporary account names.
-	 * The address will be normalized in the IP lookup service.
-	 * @return string[] A list of temporary account usernames associated with the IP address
-	 */
-	private function getTempAccountData( string $ip ): array {
-		// Requires CheckUserTemporaryAccountsByIPLookup service
-		if ( !$this->checkUserTemporaryAccountsByIPLookup ) {
-			return [];
-		}
-		$status = $this->checkUserTemporaryAccountsByIPLookup->get(
-			$ip,
-			$this->getAuthority(),
-			true
-		);
-		if ( $status->isGood() ) {
-			return $status->getValue();
-		}
-		return [];
-	}
-
-	/**
 	 * Prompt for a username or IP address.
 	 *
-	 * @param string $userName
+	 * @param NukeContext $context
 	 */
-	protected function promptForm( string $userName = '' ): void {
-		$out = $this->getOutput();
-
-		if ( $this->checkUserTemporaryAccountsByIPLookup ) {
-			$out->addWikiMsg( 'nuke-tools-tempaccount' );
-		} else {
-			$out->addWikiMsg( 'nuke-tools' );
-		}
-
-		$formDescriptor = [
-			'nuke-target' => [
-				'id' => 'nuke-target',
-				'default' => $userName,
-				'label' => $this->msg( 'nuke-userorip' )->text(),
-				'type' => 'user',
-				'name' => 'target',
-				'autofocus' => true
-			],
-			'nuke-pattern' => [
-				'id' => 'nuke-pattern',
-				'label' => $this->msg( 'nuke-pattern' )->text(),
-				'maxLength' => 40,
-				'type' => 'text',
-				'name' => 'pattern'
-			],
-			'namespace' => [
-				'id' => 'nuke-namespace',
-				'type' => 'namespaceselect',
-				'label' => $this->msg( 'nuke-namespace' )->text(),
-				'all' => 'all',
-				'name' => 'namespace'
-			],
-			'limit' => [
-				'id' => 'nuke-limit',
-				'maxLength' => 7,
-				'default' => 500,
-				'label' => $this->msg( 'nuke-maxpages' )->text(),
-				'type' => 'int',
-				'name' => 'limit'
-			]
-		];
-
-		HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
-			->setName( 'massdelete' )
-			->setFormIdentifier( 'massdelete' )
-			->setWrapperLegendMsg( 'nuke' )
-			->setSubmitTextMsg( 'nuke-submit-user' )
-			->setSubmitName( 'nuke-submit-user' )
-			->setAction( $this->getPageTitle()->getLocalURL( 'action=submit' ) )
-			->prepareForm()
-			->displayForm( false );
+	public function showPromptForm( NukeContext $context ): void {
+		$this->getUIRenderer( $context )
+			->showPromptForm();
 	}
 
 	/**
-	 * Display list of pages to delete.
+	 * Display the prompt form and a list of pages to delete.
 	 *
-	 * @param string $username
-	 * @param string $reason
-	 * @param int $limit
-	 * @param int|null $namespace
-	 * @param string[] $tempnames
+	 * @param NukeContext $context
 	 */
-	protected function listForm( $username, $reason, $limit, $namespace = null, $tempnames = [] ): void {
-		$out = $this->getOutput();
-
-		$pages = $this->getNewPages( $username, $limit, $namespace, $tempnames );
-
-		if ( !$pages ) {
-			if ( $username === '' ) {
-				$out->addWikiMsg( 'nuke-nopages-global' );
-			} else {
-				$out->addWikiMsg( 'nuke-nopages', $username );
-			}
-
-			$this->promptForm( $username );
-			return;
+	public function showListForm( NukeContext $context ): void {
+		// Check for temporary accounts, if applicable.
+		$tempAccounts = [];
+		if (
+			$this->checkUserTemporaryAccountsByIPLookup &&
+			IPUtils::isValid( $context->getTarget() )
+		) {
+			// if the target is an ip address and temp account lookup is available,
+			// list pages created by the ip user or by temp accounts associated with the ip address
+			$this->assertUserCanAccessTemporaryAccounts( $this->getUser() );
+			$tempAccounts = $this->getTempAccounts( $context );
 		}
 
-		$out->addModules( 'ext.nuke.confirm' );
-		$out->addModuleStyles( [ 'ext.nuke.styles', 'mediawiki.interface.helpers.styles' ] );
+		// Get list of pages to show the user.
+		$hasExcludedResults = false;
+		$pageGroups = $this->getNewPages( $context, $hasExcludedResults, $tempAccounts );
 
-		if ( $username === '' ) {
-			$out->addWikiMsg( 'nuke-list-multiple' );
-		} elseif ( $tempnames ) {
-			$out->addWikiMsg( 'nuke-list-tempaccount', $username );
-		} else {
-			$out->addWikiMsg( 'nuke-list', $username );
-		}
+		// Calculate the search notices to show the user.
+		$notices = $context->calculateSearchNotices();
 
-		$nuke = $this->getPageTitle();
+		$this->getUIRenderer( $context )
+			->showListForm( $pageGroups, $hasExcludedResults, $notices );
+	}
 
-		$options = Xml::listDropdownOptions(
-			$this->msg( 'deletereason-dropdown' )->inContentLanguage()->text(),
-			[ 'other' => $this->msg( 'deletereasonotherlist' )->inContentLanguage()->text() ]
-		);
+	/**
+	 * Display a page confirming all pages to be deleted.
+	 *
+	 * @param NukeContext $context
+	 *
+	 * @return void
+	 */
+	public function showConfirmForm( NukeContext $context ): void {
+		$this->getUIRenderer( $context )
+			->showConfirmForm();
+	}
 
-		$dropdown = new FieldLayout(
-			new DropdownInputWidget( [
-				'name' => 'wpDeleteReasonList',
-				'inputId' => 'wpDeleteReasonList',
-				'tabIndex' => 1,
-				'infusable' => true,
-				'value' => '',
-				'options' => Xml::listDropdownOptionsOoui( $options ),
-			] ),
-			[
-				'label' => $this->msg( 'deletecomment' )->text(),
-				'align' => 'top',
-			]
-		);
-		$reasonField = new FieldLayout(
-			new TextInputWidget( [
-				'name' => 'wpReason',
-				'inputId' => 'wpReason',
-				'tabIndex' => 2,
-				'maxLength' => CommentStore::COMMENT_CHARACTER_LIMIT,
-				'infusable' => true,
-				'value' => $reason,
-				'autofocus' => true,
-			] ),
-			[
-				'label' => $this->msg( 'deleteotherreason' )->text(),
-				'align' => 'top',
-			]
-		);
-
-		$out->enableOOUI();
-		$out->addHTML(
-			Html::openElement( 'form', [
-					'action' => $nuke->getLocalURL( 'action=delete' ),
-					'method' => 'post',
-					'name' => 'nukelist' ]
-			) .
-			Html::hidden( 'wpEditToken', $this->getUser()->getEditToken() ) .
-			$dropdown .
-			$reasonField .
-			// Select: All, None, Invert
-			( new ListToggle( $this->getOutput() ) )->getHTML() .
-			'<ul>'
-		);
-
-		$wordSeparator = $this->msg( 'word-separator' )->escaped();
-		$commaSeparator = $this->msg( 'comma-separator' )->escaped();
-		$pipeSeparator = $this->msg( 'pipe-separator' )->escaped();
-
-		$linkRenderer = $this->getLinkRenderer();
-		$localRepo = $this->repoGroup->getLocalRepo();
-		foreach ( $pages as [ $title, $userName ] ) {
-			/**
-			 * @var $title Title
-			 */
-
-			$image = $title->inNamespace( NS_FILE ) ? $localRepo->newFile( $title ) : false;
-			$thumb = $image && $image->exists() ?
-				$image->transform( [ 'width' => 120, 'height' => 120 ], 0 ) :
-				false;
-
-			$userNameText = $userName ?
-				' <span class="mw-changeslist-separator"></span> ' . $this->msg( 'nuke-editby', $userName )->parse() :
-				'';
-			$changesLink = $linkRenderer->makeKnownLink(
-				$title,
-				$this->msg( 'nuke-viewchanges' )->text(),
-				[],
-				[ 'action' => 'history' ]
-			);
-
-			$talkPageText = $this->namespaceInfo->isTalk( $title->getNamespace() ) ?
-				'' :
-				$linkRenderer->makeLink(
-					$this->namespaceInfo->getTalkPage( $title ),
-					$this->msg( 'sp-contributions-talk' )->text(),
-					[],
-					[],
-				) . $wordSeparator . $pipeSeparator;
-
-			$query = $title->isRedirect() ? [ 'redirect' => 'no' ] : [];
-			$attributes = $title->isRedirect() ? [ 'class' => 'ext-nuke-italicize' ] : [];
-			$out->addHTML( '<li>' .
-				Html::check(
-					'pages[]',
-					true,
-					[ 'value' => $title->getPrefixedDBkey() ]
-				) . "\u{00A0}" .
-				( $thumb ? $thumb->toHtml( [ 'desc-link' => true ] ) : '' ) .
-				$linkRenderer->makeKnownLink( $title, null, $attributes, $query ) . $wordSeparator .
-				$this->msg( 'parentheses' )->rawParams( $talkPageText . $changesLink )->escaped() . $wordSeparator .
-				"<span class='ext-nuke-italicize'>" . $userNameText . "</span>" .
-				"</li>\n" );
-		}
-
-		$out->addHTML(
-			"</ul>\n" .
-			Html::submitButton( $this->msg( 'nuke-submit-delete' )->text() ) .
-			'</form>'
-		);
+	/**
+	 * Show the result page, showing what pages were deleted and what pages were skipped by the
+	 * user.
+	 *
+	 * @param NukeContext $context
+	 *   deletion. Can be either `"job"` to indicate that the page was queued for deletion, a
+	 *   {@link Status} to indicate if the page was successfully deleted, or `false` if the user
+	 *   did not select the page for deletion.
+	 * @param (Status|string|boolean)[] $deletedPageStatuses The status for each page queued for
+	 * @return void
+	 */
+	public function showResultPage( NukeContext $context, array $deletedPageStatuses ): void {
+		$this->getUIRenderer( $context )
+			->showResultPage( $deletedPageStatuses );
 	}
 
 	/**
 	 * Gets a list of new pages by the specified user or everyone when none is specified.
 	 *
-	 * @param string $username
-	 * @param int $limit
-	 * @param int|null $namespace
-	 * @param string[] $tempnames
+	 * This returns an array of arrays of more arrays, following the following general structure:
+	 *  - Each element in the outermost array is a "page group".
+	 *  - Each page group consists of one or more pages.
+	 *  - The first element of each page group represents the "main page", which the other
+	 *    pages in that array are associated with.
+	 *  - Each page is represented by an array with the following elements:
+	 *    - The page title
+	 *    - The actor name
+	 *    - (if an associated page) "talk" or "redirect", to indicate the type of page
 	 *
-	 * @return array{0:Title,1:string|false}[]
+	 * @param NukeContext $context
+	 * @param bool &$hasExcludedResults Will be set to `true` if some results had to be excluded
+	 *   due to the user-defined limit.
+	 * @param string[] $tempAccounts Temporary accounts to search for. This is passed directly
+	 *   instead of through context to ensure permissions checks happen first.
+	 *
+	 * @return array{0:Title,1:string|false,2?:string,3?:Title}[][]
 	 */
-	protected function getNewPages( $username, $limit, $namespace = null, $tempnames = [] ): array {
+	protected function getNewPages(
+		NukeContext $context, bool &$hasExcludedResults, array $tempAccounts = []
+	): array {
 		$dbr = $this->dbProvider->getReplicaDatabase();
-		$queryBuilder = $dbr->newSelectQueryBuilder()
-			->select( [ 'page_title', 'page_namespace' ] )
-			->from( 'recentchanges' )
-			->join( 'actor', null, 'actor_id=rc_actor' )
-			->join( 'page', null, 'page_id=rc_cur_id' )
-			->where(
-				$dbr->expr( 'rc_source', '=', 'mw.new' )->orExpr(
-					$dbr->expr( 'rc_log_type', '=', 'upload' )
-						->and( 'rc_log_action', '=', 'upload' )
-				)
-			)
-			->orderBy( 'rc_timestamp', SelectQueryBuilder::SORT_DESC )
-			->limit( $limit );
 
-		if ( $username === '' ) {
-			$queryBuilder->field( 'actor_name', 'rc_user_text' );
+		$nukeMaxAge = $context->getNukeMaxAge();
+
+		$min = $context->getDateFrom();
+		if ( !$min || $min->getTimestamp() < time() - $nukeMaxAge ) {
+			// Requested $min is way too far in the past (or null). Set it to the earliest possible
+			// value.
+			$min = time() - $nukeMaxAge;
 		} else {
-			$actornames = array_filter( [ $username, ...$tempnames ] );
-			if ( $actornames ) {
-				$queryBuilder->andWhere( [ 'actor_name' => $actornames ] );
-			}
+			$min = $min->getTimestamp();
 		}
 
-		if ( $namespace !== null ) {
-			$queryBuilder->andWhere( [ 'page_namespace' => $namespace ] );
+		$max = $context->getDateTo();
+		if ( $max ) {
+			// Increment by 1 day to include all edits from that day.
+			$max = ( clone $max )
+				->modify( "+1 day" )
+				->getTimestamp();
+		}
+		// $min and $max are int|null here.
+
+		if ( $max && $max < $min ) {
+			// Impossible range. Skip the query and fail gracefully.
+			return [];
+		}
+		if ( $min > time() ) {
+			// Improbable range (since revisions cannot be in the future).
+			// Skip the query and fail gracefully.
+			return [];
+		}
+		$maxPossibleDate = ( new DateTime() )
+			->modify( "+1 day" )
+			->getTimestamp();
+		if ( $max > $maxPossibleDate ) {
+			// Truncate to the current day, since there shouldn't be any future revisions.
+			$max = $maxPossibleDate;
 		}
 
-		$pattern = $this->getRequest()->getText( 'pattern' );
-		if ( $pattern !== null && trim( $pattern ) !== '' ) {
-			$addedWhere = false;
+		$target = $context->getTarget();
+		if ( $context->hasTarget() ) {
+			// Enable revision table searches only when a target has been specified.
+			// Running queries on the revision table when there's no actor causes timeouts, since
+			// the entirety of the `page` table needs to be scanned. (T380846)
+			$nukeQueryBuilder = new NukeQueryBuilder(
+				$dbr,
+				$this->getConfig(),
+				$this->namespaceInfo,
+				$this->contentLanguage,
+				NukeQueryBuilder::TABLE_REVISION
+			);
+		} else {
+			// Switch to `recentchanges` table searching when running an all-user search. (T380846)
+			$nukeQueryBuilder = new NukeQueryBuilder(
+				$dbr,
+				$this->getConfig(),
+				$this->namespaceInfo,
+				$this->contentLanguage,
+				NukeQueryBuilder::TABLE_RECENTCHANGES
+			);
+		}
 
-			$pattern = trim( $pattern );
-			$pattern = preg_replace( '/ +/', '`_', $pattern );
-			$pattern = preg_replace( '/\\\\([%_])/', '`$1', $pattern );
+		// Follow the `$wgNukeMaxAge` config variable, or the user-specified minimum date.
+		$nukeQueryBuilder->filterFromTimestamp( $min );
 
-			if ( $namespace !== null ) {
-				// Custom namespace requested
-				// If that namespace capitalizes titles, capitalize the first character
-				// to match the DB title.
-				$pattern = $this->namespaceInfo->isCapitalized( $namespace ) ?
-					$this->contentLanguage->ucfirst( $pattern ) : $pattern;
-			} else {
-				// All namespaces requested
+		// Follow the user-specified maximum date, if applicable.
+		if ( $max ) {
+			$nukeQueryBuilder->filterToTimestamp( $max );
+		}
 
-				$overriddenNamespaces = [];
-				$capitalLinks = $this->getConfig()->get( 'CapitalLinks' );
-				$capitalLinkOverrides = $this->getConfig()->get( 'CapitalLinkOverrides' );
-				// If there are any capital-overridden namespaces, keep track of them. "overridden"
-				// here means the namespace-specific value is not equal to $wgCapitalLinks.
-				foreach ( $capitalLinkOverrides as $k => $v ) {
-					if ( $v !== $capitalLinks ) {
-						$overriddenNamespaces[] = $k;
+		// Limit the number of rows that can be returned by the query.
+		$limit = $context->getLimit();
+		$nukeQueryBuilder->limit( $limit );
+
+		// Filter by actors, if applicable.
+		$nukeQueryBuilder->filterActor( array_filter( [ $target, ...$tempAccounts ] ) );
+
+		// Filter by namespace, if applicable.
+		$namespaces = $context->getNamespaces();
+		$nukeQueryBuilder->filterNamespaces( $namespaces );
+
+		// Filter by pattern, if applicable
+		$pattern = $context->getPattern();
+		$nukeQueryBuilder->filterPattern(
+			$pattern,
+			$namespaces
+		);
+
+		$nukeQueryBuilder->filterByMinPageSize( $context->getMinPageSize() );
+		$nukeQueryBuilder->filterByMaxPageSize( $context->getMaxPageSize() );
+
+		$result = $nukeQueryBuilder
+			->build()
+			->caller( __METHOD__ )
+			->fetchResultSet();
+
+		// Organize all the pages we collect into "groups". This ensures that we properly
+		// associate talk pages or redirects with their main page.
+		//
+		// The first element of each group must always be the main page.
+		// This array is keyed by the main page ID.
+		/** @var array{0:Title,1:string|false,2?:string,3?:Title}[][] $pageGroups */
+		$pageGroups = [];
+
+		// A summative list of pages, to be used for associated queries.
+		/** @var Title[] $pageGroups */
+		$pages = [];
+
+		foreach ( $result as $row ) {
+			// [ [ page title, actor name ], [ page title, actor name ], ... ]
+			$mainPage = [
+				Title::makeTitle( $row->page_namespace, $row->page_title ),
+				$row->actor_name
+			];
+			$pageGroups[ $row->page_id ] = [ $mainPage ];
+			$pages[] = $mainPage[0];
+		}
+
+		if ( !$pageGroups ) {
+			// No results were found. Return early.
+			return [];
+		}
+
+		$associatedQueryBuilder = new NukeAssociatedQueryBuilder(
+			$dbr,
+			$this->getConfig(),
+			$this->namespaceInfo
+		);
+		if ( $context->getIncludeTalkPages() ) {
+			// Include talk pages in the results.
+			$talkPagesResult = $associatedQueryBuilder->getTalkPages( $pages )
+				->caller( __METHOD__ )
+				->fetchResultSet();
+			foreach ( $talkPagesResult as $talkPageRow ) {
+				if ( array_key_exists( $talkPageRow->page_id, $pageGroups ) ) {
+					// This page was already included in the first query. Merge it and
+					// its associated pages into their main page, and then have its
+					// entry in $pageGroups reference that new merged array.
+
+					// Merging in these arrays manually instead of using array_merge
+					// to preserve references across $pageGroups elements.
+					foreach ( $pageGroups[ $talkPageRow->page_id ] as $talkAndAssociatedPages ) {
+						$pageGroups[ $talkPageRow->subject_page_id ][] = $talkAndAssociatedPages;
 					}
-				}
-
-				if ( count( $overriddenNamespaces ) ) {
-					// If there are overridden namespaces, they have to be converted
-					// on a case-by-case basis.
-
-					$validNamespaces = $this->namespaceInfo->getValidNamespaces();
-					$nonOverriddenNamespaces = [];
-					foreach ( $validNamespaces as $ns ) {
-						if ( !in_array( $ns, $overriddenNamespaces ) ) {
-							// Put all namespaces that aren't overridden in $nonOverriddenNamespaces
-							$nonOverriddenNamespaces[] = $ns;
-						}
-					}
-
-					$patternSpecific = $this->namespaceInfo->isCapitalized( $overriddenNamespaces[0] ) ?
-						$this->contentLanguage->ucfirst( $pattern ) : $pattern;
-					$orConditions = [
-						$dbr->expr(
-							'page_title', IExpression::LIKE, new LikeValue(
-								new LikeMatch( $patternSpecific )
-							)
-						)->and(
-							// IN condition
-							'page_namespace', '=', $overriddenNamespaces
-						)
-					];
-					if ( count( $nonOverriddenNamespaces ) ) {
-						$patternStandard = $this->namespaceInfo->isCapitalized( $nonOverriddenNamespaces[0] ) ?
-							$this->contentLanguage->ucfirst( $pattern ) : $pattern;
-						$orConditions[] = $dbr->expr(
-							'page_title', IExpression::LIKE, new LikeValue(
-								new LikeMatch( $patternStandard )
-							)
-						)->and(
-							// IN condition, with the non-overridden namespaces.
-							// If the default is case-sensitive namespaces, $pattern's first
-							// character is turned lowercase. Otherwise, it is turned uppercase.
-							'page_namespace', '=', $nonOverriddenNamespaces
-						);
-					}
-					$queryBuilder->andWhere( $dbr->orExpr( $orConditions ) );
-					$addedWhere = true;
+					$pageGroups[ $talkPageRow->page_id ] =
+						&$pageGroups[ $talkPageRow->subject_page_id ];
 				} else {
-					// No overridden namespaces; just convert all titles.
-					$pattern = $this->namespaceInfo->isCapitalized( NS_MAIN ) ?
-						$this->contentLanguage->ucfirst( $pattern ) : $pattern;
+					// [ [ page title, actor name, "talk" ], ... ]
+					$pageGroups[ $talkPageRow->subject_page_id ][] = [
+						Title::makeTitle(
+							$talkPageRow->page_namespace,
+							$talkPageRow->page_title
+						),
+						$talkPageRow->actor_name,
+						"talk"
+					];
 				}
 			}
+		}
+		if ( $context->getIncludeRedirects() ) {
+			// Include redirect pages in the results.
+			$redirectPagesResult = $associatedQueryBuilder->getRedirectPages( $pages )
+				->caller( __METHOD__ )
+				->fetchResultSet();
+			foreach ( $redirectPagesResult as $redirectPageRow ) {
+				if ( array_key_exists( $redirectPageRow->page_id, $pageGroups ) ) {
+					// This page was already included in previous queries. Merge it and
+					// its associated pages into their main page, and then have its
+					// entry in $pageGroups reference that new merged array.
 
-			if ( !$addedWhere ) {
-				$queryBuilder->andWhere(
-					$dbr->expr(
-						'page_title',
-						IExpression::LIKE,
-						new LikeValue(
-							new LikeMatch( $pattern )
-						)
-					)
+					// Merging in these arrays manually instead of using array_merge
+					// to preserve references across $pageGroups elements.
+					foreach ( $pageGroups[ $redirectPageRow->page_id ] as $rdAndAssociatedPages ) {
+						$pageGroups[ $redirectPageRow->target_page_id ][] = $rdAndAssociatedPages;
+					}
+					$pageGroups[ $redirectPageRow->page_id ] =
+						&$pageGroups[ $redirectPageRow->target_page_id ];
+				} else {
+					// [ [ page title, actor name, "redirect" ], ... ]
+					$pageGroups[$redirectPageRow->target_page_id][] = [
+						Title::makeTitle(
+							$redirectPageRow->page_namespace,
+							$redirectPageRow->page_title
+						),
+						$redirectPageRow->actor_name,
+						"redirect"
+					];
+				}
+			}
+		}
+
+		// Allows other extensions to provide pages to be mass-deleted that
+		// don't use the revision table the way mediawiki-core does.
+		foreach ( array_unique( $pageGroups, SORT_REGULAR ) as $pageGroup ) {
+			if ( $namespaces ) {
+				foreach ( $namespaces as $namespace ) {
+					$this->getNukeHookRunner()->onNukeGetNewPages(
+						$target,
+						$pattern,
+						$namespace,
+						$limit,
+						$pageGroup
+					);
+				}
+			} else {
+				$this->getNukeHookRunner()->onNukeGetNewPages(
+					$target,
+					$pattern,
+					null,
+					$limit,
+					$pageGroup
 				);
 			}
 		}
 
-		$result = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
-		/** @var array{0:Title,1:string|false}[] $pages */
-		$pages = [];
-		foreach ( $result as $row ) {
-			$pages[] = [
-				Title::makeTitle( $row->page_namespace, $row->page_title ),
-				$username === '' ? $row->rc_user_text : false
-			];
+		// Now compile a list of page groups that we can show to the user. When a page group is
+		// too big to include in the results (due to the limit), we'll exclude it from the results.
+		// The admin can then later re-run the query, and (assuming that the page does not have an
+		// extremely large amount of associated pages) the page will be included in the results.
+		//
+		// A page group will never be included in the results without all of its associated pages.
+		// An associated page will also never appear in a group without its main page.
+		$finalPageGroups = [];
+		$includedPages = 0;
+		$hasExcludedResults = false;
+		foreach ( array_unique( $pageGroups, SORT_REGULAR ) as $pageGroup ) {
+			if ( $includedPages + count( $pageGroup ) > $limit ) {
+				$hasExcludedResults = true;
+				continue;
+			}
+			$finalPageGroups[] = $pageGroup;
+			$includedPages += count( $pageGroup );
 		}
 
-		// Allows other extensions to provide pages to be nuked that don't use
-		// the recentchanges table the way mediawiki-core does
-		$this->getNukeHookRunner()->onNukeGetNewPages( $username, $pattern, $namespace, $limit, $pages );
-
-		// Re-enforcing the limit *after* the hook because other extensions
-		// may add and/or remove pages. We need to make sure we don't end up
-		// with more pages than $limit.
-		if ( count( $pages ) > $limit ) {
-			$pages = array_slice( $pages, 0, $limit );
-		}
-
-		return $pages;
+		return $finalPageGroups;
 	}
 
 	/**
 	 * Does the actual deletion of the pages.
 	 *
-	 * @param array $pages The pages to delete
-	 * @param string $reason
+	 * @return array An associative array of statuses (or the string "job") keyed by the page title
 	 * @throws PermissionsError
 	 */
-	protected function doDelete( array $pages, $reason ): void {
-		$res = [];
+	protected function doDelete( NukeContext $context ): array {
+		$statuses = [];
 		$jobs = [];
 		$user = $this->getUser();
 
+		$baseReason = $context->getDeleteReason();
 		$localRepo = $this->repoGroup->getLocalRepo();
-		foreach ( $pages as $page ) {
+		$associatedPages = $context->getAssociatedPages();
+		foreach ( $context->getAllPages() as $page ) {
 			$title = Title::newFromText( $page );
+
+			if ( in_array( $page, $associatedPages ) ) {
+				$reason = $this->msg( 'delete-talk-summary-prefix', $baseReason )
+					->inContentLanguage()
+					->text();
+			} else {
+				$reason = $baseReason;
+			}
 
 			$deletionResult = false;
 			if ( !$this->getNukeHookRunner()->onNukeDeletePage( $title, $reason, $deletionResult ) ) {
-				$res[] = $this->msg(
-					$deletionResult ? 'nuke-deleted' : 'nuke-not-deleted',
-					wfEscapeWikiText( $title->getPrefixedText() )
-				)->parse();
+				$statuses[$title->getPrefixedDBkey()] = $deletionResult ?
+					Status::newGood() :
+					Status::newFatal(
+						$this->msg( 'nuke-not-deleted' )
+					);
 				continue;
 			}
 
@@ -628,36 +759,21 @@ class SpecialNuke extends SpecialPage {
 					'userId' => $user->getId(),
 					'wikiPageId' => $title->getId(),
 					'suppress' => false,
-					'tags' => '["Nuke"]',
+					'tags' => '["nuke"]',
 					'logsubtype' => 'delete',
 				] );
 				$jobs[] = $job;
 				$status = 'job';
 			}
 
-			if ( $status === 'job' ) {
-				$res[] = $this->msg(
-					'nuke-deletion-queued',
-					wfEscapeWikiText( $title->getPrefixedText() )
-				)->parse();
-			} else {
-				$res[] = $this->msg(
-					$status->isOK() ? 'nuke-deleted' : 'nuke-not-deleted',
-					wfEscapeWikiText( $title->getPrefixedText() )
-				)->parse();
-			}
+			$statuses[$title->getPrefixedDBkey()] = $status;
 		}
 
 		if ( $jobs ) {
 			$this->jobQueueGroup->push( $jobs );
 		}
 
-		$this->getOutput()->addHTML(
-			"<ul>\n<li>" .
-			implode( "</li>\n<li>", $res ) .
-			"</li>\n</ul>\n"
-		);
-		$this->getOutput()->addWikiMsg( 'nuke-delete-more' );
+		return $statuses;
 	}
 
 	/**
@@ -690,31 +806,36 @@ class SpecialNuke extends SpecialPage {
 		return 'pagetools';
 	}
 
-	private function getDeleteReason( WebRequest $request, string $target, bool $tempaccount = false ): string {
-		if ( $tempaccount ) {
-			$defaultReason = $this->msg( 'nuke-defaultreason-tempaccount' );
-		} else {
-			$defaultReason = $target === ''
-				? $this->msg( 'nuke-multiplepeople' )->inContentLanguage()->text()
-				: $this->msg( 'nuke-defaultreason', $target )->inContentLanguage()->text();
-		}
-
-		$dropdownSelection = $request->getText( 'wpDeleteReasonList', 'other' );
-		$reasonInput = $request->getText( 'wpReason', $defaultReason );
-
-		if ( $dropdownSelection === 'other' ) {
-			return $reasonInput;
-		} elseif ( $reasonInput !== '' ) {
-			// Entry from drop down menu + additional comment
-			$separator = $this->msg( 'colon-separator' )->inContentLanguage()->text();
-			return $dropdownSelection . $separator . $reasonInput;
-		} else {
-			return $dropdownSelection;
-		}
-	}
-
 	private function getNukeHookRunner(): NukeHookRunner {
 		$this->hookRunner ??= new NukeHookRunner( $this->getHookContainer() );
 		return $this->hookRunner;
+	}
+
+	/**
+	 * Check the status of the current user's access to Nuke.
+	 *
+	 * Returns a number based on the user's access to Nuke,
+	 * you can use the NUKE_ACCESS_* constants to compare the result.
+	 *
+	 * @param User $currentUser
+	 *
+	 * @return int
+	 */
+	private function getNukeAccessStatus( User $currentUser ): int {
+		if ( !$currentUser->isAllowed( 'nuke' ) ) {
+			return NukeContext::NUKE_ACCESS_NO_PERMISSION;
+		}
+
+		// appliesToRight is presently a no-op, since there is no handling for `delete`,
+		// and so will return `null`. `true` will be returned if the block actively
+		// applies to `delete`, and both `null` and `true` should result in an error
+		$block = $currentUser->getBlock();
+		if ( $block && ( $block->isSitewide() ||
+			( $block->appliesToRight( 'delete' ) !== false ) )
+		) {
+			return NukeContext::NUKE_ACCESS_BLOCKED;
+		}
+
+		return NukeContext::NUKE_ACCESS_GRANTED;
 	}
 }

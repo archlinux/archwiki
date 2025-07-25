@@ -177,6 +177,24 @@ class CommentModifierTest extends IntegrationTestCase {
 	}
 
 	/**
+	 * @dataProvider providePrepareHtmlReply
+	 */
+	public function testPrepareHtmlReply( string $msg, string $html, string $expected ): void {
+		$doc = static::createDocument( '' );
+		$container = CommentModifier::prepareHtmlReply( $doc, $html );
+
+		static::assertEquals(
+			$expected,
+			XMLSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'],
+			$msg
+		);
+	}
+
+	public static function providePrepareHtmlReply(): array {
+		return static::getJson( '../cases/prepareHtmlReply.json' );
+	}
+
+	/**
 	 * @dataProvider provideSanitizeWikitextLinebreaks
 	 */
 	public function testSanitizeWikitextLinebreaks( string $msg, string $wikitext, string $expected ): void {

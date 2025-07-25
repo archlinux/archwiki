@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Page\Hook;
 
-use File;
-use ImageHistoryList;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\Page\ImageHistoryList;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.

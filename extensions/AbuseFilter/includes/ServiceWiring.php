@@ -3,11 +3,12 @@
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager as PermManager;
-use MediaWiki\Extension\AbuseFilter\AbuseLogger;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainFilter;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainFilter;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\IBlockedDomainFilter;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\NoopBlockedDomainFilter;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagger;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagsManager;
@@ -36,6 +37,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
+use MediaWiki\Extension\AbuseFilter\Variables\AbuseFilterProtectedVariablesLookup;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
@@ -73,12 +75,9 @@ return [
 	},
 	PermManager::SERVICE_NAME => static function ( MediaWikiServices $services ): PermManager {
 		return new PermManager(
-			new ServiceOptions(
-				PermManager::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig(),
-				[ 'AbuseFilterProtectedVariables' => [] ]
-			),
-			$services->getUserOptionsLookup()
+			$services->get( AbuseFilterProtectedVariablesLookup::SERVICE_NAME ),
+			$services->get( RuleCheckerFactory::SERVICE_NAME ),
+			$services->get( AbuseFilterHookRunner::SERVICE_NAME )
 		);
 	},
 	ChangeTagger::SERVICE_NAME => static function ( MediaWikiServices $services ): ChangeTagger {
@@ -173,8 +172,7 @@ return [
 			$services->get( PermManager::SERVICE_NAME ),
 			new ServiceOptions(
 				FilterValidator::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig(),
-				[ 'AbuseFilterProtectedVariables' => [] ]
+				$services->getMainConfig()
 			)
 		);
 	},
@@ -213,6 +211,7 @@ return [
 			),
 			LoggerFactory::getInstance( 'AbuseFilter' ),
 			$services->getBlockUserFactory(),
+			$services->getUnblockUserFactory(),
 			$services->getDatabaseBlockStore(),
 			$services->getUserGroupManager(),
 			$services->getMainObjectStash(),
@@ -254,15 +253,19 @@ return [
 			$services->get( VariablesBlobStore::SERVICE_NAME ),
 			$services->get( VariablesManager::SERVICE_NAME ),
 			$services->get( EditRevUpdater::SERVICE_NAME ),
+			$services->get( PermManager::SERVICE_NAME ),
+			$services->get( RuleCheckerFactory::SERVICE_NAME ),
 			$services->getDBLoadBalancerFactory(),
 			$services->getActorStore(),
+			$services->getTitleFactory(),
 			new ServiceOptions(
-				AbuseLogger::CONSTRUCTOR_OPTIONS,
+				AbuseLoggerFactory::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
 			WikiMap::getCurrentWikiDbDomain()->getId(),
 			RequestContext::getMain()->getRequest()->getIP(),
-			LoggerFactory::getInstance( 'AbuseFilter' )
+			LoggerFactory::getInstance( 'AbuseFilter' ),
+			$services->get( AbuseFilterHookRunner::SERVICE_NAME )
 		);
 	},
 	UpdateHitCountWatcher::SERVICE_NAME => static function ( MediaWikiServices $services ): UpdateHitCountWatcher {
@@ -303,7 +306,6 @@ return [
 			$services->get( ConsExecutorFactory::SERVICE_NAME ),
 			$services->get( AbuseLoggerFactory::SERVICE_NAME ),
 			$services->get( VariablesManager::SERVICE_NAME ),
-			$services->get( VariableGeneratorFactory::SERVICE_NAME ),
 			$services->get( EmergencyCache::SERVICE_NAME ),
 			$services->get( UpdateHitCountWatcher::SERVICE_NAME ),
 			$services->get( EmergencyWatcher::SERVICE_NAME ),
@@ -390,12 +392,25 @@ return [
 			$services->getUrlUtils()
 		);
 	},
-	BlockedDomainFilter::SERVICE_NAME => static function (
+	IBlockedDomainFilter::SERVICE_NAME => static function (
 		MediaWikiServices $services
-	): BlockedDomainFilter {
-		return new BlockedDomainFilter(
-			$services->get( VariablesManager::SERVICE_NAME ),
-			$services->get( BlockedDomainStorage::SERVICE_NAME )
+	): IBlockedDomainFilter {
+		if ( $services->getMainConfig()->get( 'AbuseFilterEnableBlockedExternalDomain' ) ) {
+			return new BlockedDomainFilter(
+				$services->get( VariablesManager::SERVICE_NAME ),
+				$services->get( BlockedDomainStorage::SERVICE_NAME )
+			);
+		} else {
+			return new NoopBlockedDomainFilter();
+		}
+	},
+	AbuseFilterProtectedVariablesLookup::SERVICE_NAME => static function ( MediaWikiServices $services ) {
+		return new AbuseFilterProtectedVariablesLookup(
+			new ServiceOptions(
+				AbuseFilterProtectedVariablesLookup::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->get( AbuseFilterHookRunner::SERVICE_NAME )
 		);
 	},
 	// b/c for extensions

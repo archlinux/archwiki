@@ -20,14 +20,14 @@
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
-use PermissionsError;
-use RepoGroup;
 
 /**
  * Redirect dispatcher for user IDs, thumbnails, and various permalinks.
@@ -64,10 +64,6 @@ class SpecialRedirect extends FormSpecialPage {
 	private RepoGroup $repoGroup;
 	private UserFactory $userFactory;
 
-	/**
-	 * @param RepoGroup $repoGroup
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
 		RepoGroup $repoGroup,
 		UserFactory $userFactory

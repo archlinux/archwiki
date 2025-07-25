@@ -1,0 +1,23 @@
+<svg width="510" height="256" viewBox="0 0 510 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="510" height="256" fill="#DCE3F9"/>
+<rect width="301" height="170" transform="matrix(-1 0 0 1 459 53)" fill="white"/>
+<rect width="67" height="8" transform="matrix(-1 0 0 1 447 134)" fill="#C8CCD1"/>
+<rect width="86" height="8" transform="matrix(-1 0 0 1 447 198)" fill="#C8CCD1"/>
+<rect width="127" height="8" transform="matrix(-1 0 0 1 387 134)" fill="#C8CCD1"/>
+<rect width="116" height="8" transform="matrix(-1 0 0 1 376 198)" fill="#C8CCD1"/>
+<rect width="77" height="12" transform="matrix(-1 0 0 1 447 104)" fill="#C8CCD1"/>
+<rect width="132" height="8" transform="matrix(-1 0 0 1 447 150)" fill="#C8CCD1"/>
+<rect width="51" height="8" transform="matrix(-1 0 0 1 320 150)" fill="#C8CCD1"/>
+<rect width="110" height="8" transform="matrix(-1 0 0 1 370 166)" fill="#C8CCD1"/>
+<rect x="1" y="-1" width="40" height="10" rx="3" transform="matrix(-1 0 0 1 255 166)" fill="#C8CCD1" stroke="#3366CC" stroke-width="2"/>
+<rect width="86" height="8" transform="matrix(-1 0 0 1 447 166)" fill="#C8CCD1"/>
+<rect width="127" height="8" transform="matrix(-1 0 0 1 447 182)" fill="#C8CCD1"/>
+<rect width="110" height="8" transform="matrix(-1 0 0 1 327 182)" fill="#C8CCD1"/>
+<line y1="-0.5" x2="256" y2="-0.5" transform="matrix(-1 8.74228e-08 8.74228e-08 1 447 124)" stroke="#A2A9B1"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M207 169C207 172.314 204.314 175 201 175C197.686 175 195 172.314 195 169C195 165.686 197.686 163 201 163C204.314 163 207 165.686 207 169ZM201 161C205.418 161 209 164.582 209 169C209 173.418 205.418 177 201 177C196.582 177 193 173.418 193 169C193 164.582 196.582 161 201 161ZM200 168V173H202V168H200ZM200 167V165H202V167H200Z" fill="#202122"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M200.345 156L187.608 147.748L174.872 139.496H174.315H53.827C52.8192 139.496 52 138.709 52 137.739V31.7575C52 30.7776 52.8117 30 53.827 30H229.173C230.181 30 231 30.787 231 31.7575V137.739C231 138.719 230.188 139.496 229.173 139.496H200.345V156Z" fill="white" stroke="#72777D" stroke-width="2"/>
+<rect width="67" height="10" transform="matrix(-1 0 0 1 167 63)" fill="#C8CCD1"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M190 61.0126C193.223 60.8613 196.361 62.0764 198.643 64.3595C200.924 66.6427 202.139 69.7823 201.987 73.0076C201.987 76.786 198.991 80.5044 197.492 82.0038C195.994 83.5032 190 91 190 91C190 91 184.006 83.5032 182.508 82.0038C181.009 80.5044 178.013 76.786 178.013 73.0076C177.861 69.7823 179.076 66.6427 181.357 64.3595C183.639 62.0764 186.777 60.8613 190 61.0126ZM190 77.8805C192.69 77.8805 194.87 75.6988 194.87 73.0076C194.87 70.3163 192.69 68.1346 190 68.1346C187.31 68.1346 185.13 70.3163 185.13 73.0076C185.13 75.6988 187.31 77.8805 190 77.8805Z" fill="#3366CC"/>
+<rect width="83" height="10" transform="matrix(-1 0 0 1 167 79)" fill="#C8CCD1"/>
+<rect width="61" height="10" transform="matrix(-1 0 0 1 167 95)" fill="#C8CCD1"/>
+</svg>

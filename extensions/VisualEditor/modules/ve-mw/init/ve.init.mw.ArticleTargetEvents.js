@@ -150,7 +150,7 @@ ve.init.mw.ArticleTargetEvents.prototype.trackSaveError = function ( code ) {
 		specialTypes = [ 'editconflict' ];
 
 	let key = 'performance.user.saveError';
-	if ( specialTypes.indexOf( code ) !== -1 ) {
+	if ( specialTypes.includes( code ) ) {
 		key += '.' + code;
 	}
 	this.trackTiming( key, {

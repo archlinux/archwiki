@@ -4,13 +4,13 @@
 			"Giromin Cangiaxo"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Modiffica visuale]]",
+	"tag-visualeditor": "Modiffica visuale",
 	"tag-visualeditor-description": "Modiffica fæta dœuviando l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor vixoâ]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Modiffica vixoâ: controlâ]]",
+	"tag-visualeditor-needcheck": "Modiffica vixoâ: controlâ",
 	"tag-visualeditor-needcheck-description": "Modiffica fæta dœuviando l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor vixoâ]] donde-o scistema o l'ha rilevou de poscibbile modiffiche non vosciue into wikitesto.",
 	"tag-visualeditor-wikitext": "Editor wikitesto 2017",
 	"tag-visualeditor-wikitext-description": "Modiffica fæta dœuviando l'editor wikitesto 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Modiffica vixoâ: Cangiou]]",
+	"tag-visualeditor-switched": "Modiffica vixoâ: Cangiou",
 	"tag-visualeditor-switched-description": "L'utente o l'ha inçou e modiffiche dœuviando l'editor vixoâ, doppo o l'è passou a l'editor de wikitesto.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Commenti",
 	"visualeditor-feedback-tool": "Scrivi un commento sciu questo software",

@@ -107,8 +107,7 @@ MWUsernameCompletionAction.prototype.getSequenceLength = function () {
 
 MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 	const title = mw.Title.makeTitle( mw.config.get( 'wgNamespaceIds' ).user, input ),
-		validatedInput = title ? input : '',
-		action = this;
+		validatedInput = title ? input : '';
 
 	this.api.abort(); // Abort all unfinished API requests
 	let apiPromise;
@@ -125,8 +124,8 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 		} ).then( ( response ) => {
 			const suggestions = response.query.allusers.filter(
 				// API doesn't return IPs
-				( user ) => !hasUser( action.localUsers, user.name ) &&
-					!hasUser( action.remoteUsers, user.name ) &&
+				( user ) => !hasUser( this.localUsers, user.name ) &&
+					!hasUser( this.remoteUsers, user.name ) &&
 					// Exclude users with indefinite sitewide blocks:
 					// The only place such users could reply is on their
 					// own user talk page, and in that case the user
@@ -137,10 +136,10 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 				displayNames: []
 			} ) );
 
-			action.remoteUsers.push.apply( action.remoteUsers, suggestions );
-			action.remoteUsers.sort( sortAuthors );
+			this.remoteUsers.push.apply( this.remoteUsers, suggestions );
+			this.remoteUsers.sort( sortAuthors );
 
-			action.searchedPrefixes[ input ] = true;
+			this.searchedPrefixes[ input ] = true;
 		} );
 	} else {
 		apiPromise = ve.createDeferred().resolve().promise();
@@ -150,10 +149,10 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 		// By concatenating on-thread authors and remote-fetched authors, both
 		// sorted alphabetically, we'll get our suggestion popup sorted so all
 		// on-thread matches come first.
-		() => action.filterSuggestionsForInput(
-			action.localUsers
+		() => this.filterSuggestionsForInput(
+			this.localUsers
 				// Show no remote users if no input provided
-				.concat( input.length > 0 ? action.remoteUsers : [] ),
+				.concat( input.length > 0 ? this.remoteUsers : [] ),
 			// TODO: Consider showing IP users
 			// * Change link to Special:Contributions/<ip> (localised)
 			// * Let users know that mentioning an IP will not create a notification?
@@ -173,7 +172,7 @@ MWUsernameCompletionAction.prototype.compareSuggestionToInput = function ( sugge
 			.map( ( displayName ) => displayName.toLowerCase() ).join( ' ' );
 
 	return {
-		isMatch: normalizedSearchIndex.indexOf( normalizedInput ) !== -1,
+		isMatch: normalizedSearchIndex.includes( normalizedInput ),
 		isExact: normalizedSuggestion === normalizedInput
 	};
 };

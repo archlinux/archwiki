@@ -4,7 +4,7 @@
 	// @max-width-content-container is defined in ems, so the final width depends on font-size,
 	// but this element is nested in an element with a different font-size. Divide by the
 	// current font-size to get the intended result (as if font-size wasn't changed).
-	max-width: ( @max-width-content-container / @font-size-small );
+	max-width: calc( @max-width-content-container / @font-size-small );
 }
 
 .mw-editform {

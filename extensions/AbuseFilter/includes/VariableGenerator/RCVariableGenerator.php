@@ -5,14 +5,14 @@ namespace MediaWiki\Extension\AbuseFilter\VariableGenerator;
 use LogicException;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MWFileProps;
-use RecentChange;
-use RepoGroup;
 use Wikimedia\Mime\MimeAnalyzer;
 
 /**
@@ -120,9 +120,13 @@ class RCVariableGenerator extends VariableGenerator {
 
 		$this->vars->setLazyLoadVar(
 			'moved_from_last_edit_age',
-			'previous-revision-age',
-			// rc_last_oldid is zero (RecentChange::newLogEntry)
-			[ 'revid' => $this->rc->getAttribute( 'rc_this_oldid' ) ]
+			'revision-age',
+			[
+				// rc_last_oldid is zero (RecentChange::newLogEntry)
+				'revid' => $this->rc->getAttribute( 'rc_this_oldid' ),
+				'parent' => true,
+				'asof' => $this->rc->getAttribute( 'rc_timestamp' ),
+			]
 		);
 		// TODO: add moved_to_last_edit_age (is it possible?)
 		// TODO: add old_wikitext etc. (T320347)
@@ -195,9 +199,13 @@ class RCVariableGenerator extends VariableGenerator {
 
 		$this->vars->setLazyLoadVar(
 			'page_last_edit_age',
-			'previous-revision-age',
-			// rc_last_oldid is zero (RecentChange::newLogEntry)
-			[ 'revid' => $this->rc->getAttribute( 'rc_this_oldid' ) ]
+			'revision-age',
+			[
+				// rc_last_oldid is zero (RecentChange::newLogEntry)
+				'revid' => $this->rc->getAttribute( 'rc_this_oldid' ),
+				'parent' => true,
+				'asof' => $this->rc->getAttribute( 'rc_timestamp' ),
+			]
 		);
 
 		$time = $this->rc->getParam( 'img_timestamp' );
@@ -229,6 +237,22 @@ class RCVariableGenerator extends VariableGenerator {
 		$bits = $mwProps->getPropsFromPath( $file->getLocalRefPath(), true )['bits'];
 		$this->vars->setVar( 'file_bits_per_channel', $bits );
 
+		$this->vars->setLazyLoadVar( 'new_wikitext', 'revision-text',
+			[ 'revid' => $this->rc->getAttribute( 'rc_this_oldid' ), 'contextUser' => $this->contextUser ] );
+		$this->vars->setLazyLoadVar( 'old_wikitext', 'revision-text',
+			[
+				// rc_last_oldid is zero (RecentChange::newLogEntry)
+				'revid' => $this->rc->getAttribute( 'rc_this_oldid' ),
+				'parent' => true,
+				'contextUser' => $this->contextUser,
+			] );
+
+		$this->addEditVars(
+			$this->wikiPageFactory->newFromTitle( $title ),
+			$this->contextUser,
+			false
+		);
+
 		return $this;
 	}
 
@@ -245,18 +269,18 @@ class RCVariableGenerator extends VariableGenerator {
 		$this->vars->setVar( 'action', 'edit' );
 		$this->vars->setVar( 'summary', $this->rc->getAttribute( 'rc_comment' ) );
 
-		$this->vars->setLazyLoadVar( 'new_wikitext', 'revision-text-by-id',
+		$this->vars->setLazyLoadVar( 'new_wikitext', 'revision-text',
 			[ 'revid' => $this->rc->getAttribute( 'rc_this_oldid' ), 'contextUser' => $this->contextUser ] );
-		$this->vars->setLazyLoadVar( 'new_content_model', 'content-model-by-id',
+		$this->vars->setLazyLoadVar( 'new_content_model', 'content-model',
 			[ 'revid' => $this->rc->getAttribute( 'rc_this_oldid' ) ] );
 
 		$parentId = $this->rc->getAttribute( 'rc_last_oldid' );
 		if ( $parentId ) {
-			$this->vars->setLazyLoadVar( 'old_wikitext', 'revision-text-by-id',
+			$this->vars->setLazyLoadVar( 'old_wikitext', 'revision-text',
 				[ 'revid' => $parentId, 'contextUser' => $this->contextUser ] );
-			$this->vars->setLazyLoadVar( 'old_content_model', 'content-model-by-id',
+			$this->vars->setLazyLoadVar( 'old_content_model', 'content-model',
 				[ 'revid' => $parentId ] );
-			$this->vars->setLazyLoadVar( 'page_last_edit_age', 'revision-age-by-id',
+			$this->vars->setLazyLoadVar( 'page_last_edit_age', 'revision-age',
 				[ 'revid' => $parentId, 'asof' => $this->rc->getAttribute( 'rc_timestamp' ) ] );
 		} else {
 			$this->vars->setVar( 'old_wikitext', '' );

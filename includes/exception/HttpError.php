@@ -18,8 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\Exception;
+
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Message\Message;
+use Wikimedia\Http\HttpStatus;
 
 /**
  * Show an error that looks like an HTTP server error.
@@ -138,3 +141,6 @@ class HttpError extends MWException {
 		"<body><h1>$titleHtml</h1><p>$contentHtml</p></body></html>\n";
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( HttpError::class, 'HttpError' );

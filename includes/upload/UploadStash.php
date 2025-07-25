@@ -21,6 +21,9 @@
  */
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
@@ -546,7 +549,8 @@ class UploadStash {
 			$this->repo,
 			$this->fileMetadata[$key]['us_path'],
 			$key,
-			$this->fileMetadata[$key]['us_sha1']
+			$this->fileMetadata[$key]['us_sha1'],
+			$this->fileMetadata[$key]['us_mime'] ?? false
 		);
 		if ( $file->getSize() === 0 ) {
 			throw new UploadStashZeroLengthFileException(

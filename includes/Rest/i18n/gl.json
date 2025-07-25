@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Elisardojm",
-			"Toliño"
+			"Toliño",
+			"Xosecalvo"
 		]
 	},
 	"rest-prefix-mismatch": "O camiño solicitado ($1) non estaba no interior do camiño base da API REST ($2)",
@@ -74,7 +75,7 @@
 	"rest-unmapped-action-error": "Erro do módulo de acción sen asignar: $1",
 	"rest-unsupported-transform-input": "Entrada non admitida: $1",
 	"rest-bad-etag": "Etiqueta incorrecta: $1",
-	"rest-no-stashed-content": "Non se atopou ningún contido agochado para \"$1\"",
+	"rest-no-stashed-content": "Non se atopou ningún contido agochado para \"$1\". O máis probable é que caducase a túa sesión. Copia os cambios, recarga a páxina e inténtao de novo.",
 	"rest-unsupported-profile-version": "Versión de perfil non compatible: $1",
 	"rest-no-json-decode": "O JSON da carga útil non decodifica nunha matriz",
 	"rest-parsoid-unsupported-media": "Tipo de soporte non compatible",
@@ -87,5 +88,16 @@
 	"rest-unsupported-language-conversion": "Conversión de lingua non compatible: $1 a $2",
 	"rest-unknown-content-model": "Modelo de contido descoñecido: $1",
 	"rest-page-bundle-validation-error": "PageBundle non coincide con contentVersion: $1",
-	"rest-param-desc-revision-id": "ID da revisión"
+	"rest-module": "Módulo",
+	"rest-module-default": "Módulo predeterminado",
+	"rest-module-extra-routes-title": "API REST de MediaWiki",
+	"rest-module-extra-routes-desc": "Extremos REST non asociados a ningún módulo",
+	"rest-module-specs.v0-title": "Especificacións",
+	"rest-module-specs.v0-desc": "Módulo de autodocumentación que proporciona descubrimento, especificacións e esquemas para todos os módulos dispoñibles.",
+	"rest-module-content.v1-title": "Contido da páxina",
+	"rest-module-content.v1-desc": "Ofrece acceso ao contido e metadatos das páxinas e revisións",
+	"rest-param-desc-revision-id": "Identificador da revisión",
+	"rest-param-desc-source": "Contido da páxina no formato especificado pola propiedade content_model",
+	"rest-property-desc-revision-content-model": "Tipo de contido",
+	"rest-property-desc-revision-page": "A páxina á que pertence a revisión"
 }

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Khun Kt",
-			"咽頭べさ",
-			"Matma Rex"
+			"Matma Rex",
+			"咽頭べさ"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "လိုꩻလင်တဖြာꩻ မိဉ်ႏတဲမ်းသော့ꩻတောင်ꩻသေꩻတသာတဗာႏ အိုင်ကိုမ်ချက်ကိုယိုခိင်ႏနဝ်ꩻ နာꩻအီႏလက်ခံႏလꩻ ဖေႏသေချက်နဝ်ꩻသွူ။ နာꩻခိဉ်ႏထူႏနွောင်ꩻဒျာႏ ဖေႏသေချက် အပွိုင်အဆေင်ဖိုင်ႏ လွိုက်ခရာႏကိုသွူ။",
@@ -91,9 +91,9 @@
 	"tag-discussiontools-description": "သွုံꩻအီတွမ်ႏ အုံကွံမုꩻကိရိယာႏဖုံႏတဲင် မာꩻခြပ်ချော်ꩻ",
 	"tag-discussiontools-edit": "မွဉ်းဖျင်လဲဉ်း တောင်ꩻသေꩻ",
 	"tag-discussiontools-edit-description": "ကအဝ်ႏထွူလဲဉ်းဒါႏ သုင်ꩻသပ်ချက်တဗာႏယို ကေားသုင်ꩻသား မွဉ်းဖျင်အီလဲဉ်း တောမ်ႏ DiscussionTools သွူ။",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} အကျောင်ꩻခရာႏတသာ]",
+	"tag-discussiontools-newtopic": "အကျောင်ꩻခရာႏတသာ",
 	"tag-discussiontools-newtopic-description": "အကျောင်ꩻခရာႏ တသာတဗာႏယို ကေားသုင်ꩻသား ထဲမ်သော့ꩻလွေꩻလဲဉ်း လိတ်မဲ့ငါထျꩻ တောမ်ႏ DiscussionTools သွူ။",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} လဝ်းပြန်ႏချာ]",
+	"tag-discussiontools-reply": "လဝ်းပြန်ႏချာ",
 	"tag-discussiontools-reply-description": "သုင်ꩻသပ်ချက်တဗာႏယို ကေားသုင်ꩻသား လဝ်းပြန်ႏချာလဲဉ်း တောမ်ႏ DiscussionTools သွူ။",
 	"tag-discussiontools-source-description": "DiscussionTools နဝ်ꩻ ထွာဒျာႏ မွဉ်းဖျင်အရွီးခိုႏသွူ။",
 	"tag-discussiontools-visual-description": "DiscussionTools နဝ်ꩻ ထွာဒျာႏ မွဉ်းဖျင်ထာꩻထီႏသွူ။"

@@ -33,7 +33,7 @@
 		 * @return {jQuery.Promise} Promise resolved with deflated HTML
 		 */
 		deflate: function ( html ) {
-			return mw.loader.using( 'mediawiki.deflate' ).then( () => mw.deflate( html ) );
+			return mw.loader.using( 'mediawiki.deflate' ).then( () => mw.deflateAsync( html ) );
 
 		},
 

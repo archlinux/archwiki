@@ -12,9 +12,9 @@ use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Hook\RecentChange_saveHook;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use RecentChange;
 
 class Hooks implements
 	AuthManagerLoginAuthenticateAuditHook,

@@ -4,8 +4,9 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wikitext;
 
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
+use Wikimedia\Parsoid\Fragments\PFragment;
+use Wikimedia\Parsoid\Fragments\StripState;
+use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 
 /**
  * This class represents core wikitext concepts that are currently represented
@@ -32,64 +33,34 @@ class Wikitext {
 	 * are breached.
 	 *
 	 * @param Env $env
-	 * @param string $wt
-	 * @return array
-	 *  - 'error' did we hit resource limits?
-	 *  - 'src' expanded wikitext OR error message to print
-	 *     FIXME: Maybe error message should be localizable
+	 * @param PFragment $fragment input wikitext, possibly with embedded
+	 *  strip markers.
+	 * @param ?bool &$error Set to true if we hit resource limits
+	 * @return PFragment Expanded wikitext OR error message to print
 	 */
-	public static function preprocess( Env $env, string $wt ): array {
-		$start = microtime( true );
-		$ret = $env->getDataAccess()->preprocessWikitext( $env->getPageConfig(), $env->getMetadata(), $wt );
-
-		// FIXME: Should this bump be len($ret) - len($wt)?
-		// I could argue both ways.
-		if ( !$env->bumpWt2HtmlResourceUse( 'wikitextSize', strlen( $ret ) ) ) {
-			return [
-				'error' => true,
-				'src' => "wt2html: wikitextSize limit exceeded",
-			];
+	public static function preprocessFragment( Env $env, PFragment $fragment, ?bool &$error = null ): PFragment {
+		$error = false;
+		$start = hrtime( true );
+		# $originalSize = strlen( $fragment->asMarkedWikitext( StripState::new() ) );
+		$ret = $env->getDataAccess()->preprocessWikitext( $env->getPageConfig(), $env->getMetadata(), $fragment );
+		if ( is_string( $ret ) ) {
+			$ret = WikitextPFragment::newFromWt( $ret, null );
+		}
+		$wikitextSize = strlen( $ret->asMarkedWikitext( StripState::new() ) );
+		// FIXME: Should this bump be $wikitextSize - $originalSize?
+		// We should try to figure out what core does and match it.
+		if ( !$env->bumpWt2HtmlResourceUse( 'wikitextSize', $wikitextSize ) ) {
+			$error = true;
+			return WikitextPFragment::newFromLiteral(
+				"wt2html: wikitextSize limit exceeded", null
+			);
 		}
 
 		if ( $env->profiling() ) {
 			$profile = $env->getCurrentProfile();
-			$profile->bumpMWTime( "Template", 1000 * ( microtime( true ) - $start ), "api" );
+			$profile->bumpMWTime( "Template", hrtime( true ) - $start, "api" );
 			$profile->bumpCount( "Template" );
 		}
-
-		return [
-			'error' => false,
-			'src' => $ret,
-		];
-	}
-
-	/**
-	 * Perform pre-save transformations
-	 *
-	 * @param Env $env
-	 * @param string $wt
-	 * @param bool $substTLTemplates Prefix each top-level template with 'subst'
-	 * @return string
-	 */
-	public static function pst( Env $env, string $wt, bool $substTLTemplates = false ) {
-		if ( $substTLTemplates ) {
-			// To make sure we do this for the correct templates, tokenize the
-			// starting wikitext and use that to detect top-level templates.
-			// Then, substitute each starting '{{' with '{{subst' using the
-			// template token's tsr.
-			$tokenizer = new PegTokenizer( $env );
-			$tokens = $tokenizer->tokenizeSync( $wt, [ 'sol' => true ] );
-			$tsrIncr = 0;
-			foreach ( $tokens as $token ) {
-				/** @var Token $token */
-				if ( $token->getName() === 'template' ) {
-					$tsr = $token->dataParsoid->tsr;
-					$wt = substr( $wt, 0, $tsr->start + $tsrIncr )
-						. '{{subst:' . substr( $wt, $tsr->start + $tsrIncr + 2 );
-					$tsrIncr += 6;
-				}
-			}
-		}
-		return $env->getDataAccess()->doPst( $env->getPageConfig(), $wt );
+		return $ret;
 	}
 }

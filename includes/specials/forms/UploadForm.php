@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -67,15 +68,6 @@ class UploadForm extends HTMLForm {
 	private NamespaceInfo $nsInfo;
 	private HookRunner $hookRunner;
 
-	/**
-	 * @param array $options
-	 * @param IContextSource|null $context
-	 * @param LinkRenderer|null $linkRenderer
-	 * @param LocalRepo|null $localRepo
-	 * @param Language|null $contentLanguage
-	 * @param NamespaceInfo|null $nsInfo
-	 * @param HookContainer|null $hookContainer
-	 */
 	public function __construct(
 		array $options = [],
 		?IContextSource $context = null,
@@ -216,7 +208,7 @@ class UploadForm extends HTMLForm {
 			'label-message' => 'sourcefilename',
 			'upload-type' => 'File',
 			'radio' => &$radio,
-			'help' => $help,
+			'help-raw' => $help,
 			'checked' => $selectedSourceType == 'file',
 		];
 
@@ -230,7 +222,7 @@ class UploadForm extends HTMLForm {
 				'label-message' => 'sourceurl',
 				'upload-type' => 'url',
 				'radio' => &$radio,
-				'help' => $this->msg( 'upload-maxfilesize' )->sizeParams( $this->mMaxUploadSize['url'] )->parse() .
+				'help-raw' => $this->msg( 'upload-maxfilesize' )->sizeParams( $this->mMaxUploadSize['url'] )->parse() .
 					$this->msg( 'word-separator' )->escaped() .
 					$this->msg( 'upload_source_url' )->parse(),
 				'checked' => $selectedSourceType == 'url',

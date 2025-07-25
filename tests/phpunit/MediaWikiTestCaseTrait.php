@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\DomainEvent\DomainEventDispatcher;
+use MediaWiki\DomainEvent\EventDispatchEngine;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Message\Message;
@@ -125,6 +127,23 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
+	 * Create an initially empty DoainEventDispatcher with an empty service
+	 * container attached. Register only the listeners specified in the parameter.
+	 *
+	 * @param array<string, callable> $listeners
+	 * @return DomainEventDispatcher
+	 */
+	protected function createEventDispatcher( $listeners = [] ) {
+		$eventDispatcher = new EventDispatchEngine(
+			$this->createSimpleObjectFactory()
+		);
+		foreach ( $listeners as $name => $callback ) {
+			$eventDispatcher->registerListener( $name, $callback );
+		}
+		return $eventDispatcher;
+	}
+
+	/**
 	 * Skip the test if not running the necessary php version
 	 *
 	 * @since 1.42 (also backported to 1.39.8, 1.40.4 and 1.41.2)
@@ -178,9 +197,9 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
-	 * @after
+	 * @postCondition
 	 */
-	public function checkExpectedDeprecationsOnTearDown(): void {
+	public function expectedDeprecationsPostConditions(): void {
 		if ( $this->expectedDeprecations ) {
 			$this->assertSame( [],
 				array_diff( $this->expectedDeprecations, $this->actualDeprecations ),
@@ -215,10 +234,24 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
-	 * Assert that an associative array contains the subset of an expected array.
+	 * Assert that an array contains a given expected array.
 	 *
-	 * The internal key order does not matter.
 	 * Values are compared with strict equality.
+	 *
+	 * When comparing two flat lists, the actual array must contain at least
+	 * each value in the expected array. The order of the values does not matter.
+	 *
+	 * When comparing associative arrays, multi-dimensional arrays, or nested
+	 * lists, then the actual array must contain at least each of the expected
+	 * key-value pairs. In this case keys must match exactly, including the
+	 * index of values in nested lists. The internal index order of associative
+	 * array keys does not matter.
+	 *
+	 * See also:
+	 * - Remove assertArraySubset.
+	 *   https://github.com/sebastianbergmann/phpunit/issues/3494
+	 *   https://github.com/sebastianbergmann/phpunit/issues/3495
+	 * - assertContains lacks actual value. https://github.com/sebastianbergmann/phpunit/issues/3061
 	 *
 	 * @since 1.41
 	 * @param array $expected
@@ -230,32 +263,53 @@ trait MediaWikiTestCaseTrait {
 		array $actual,
 		$message = ''
 	) {
-		$patched = array_replace_recursive( $actual, $expected );
+		$isList = array_is_list( $expected ) && array_is_list( $actual );
+		$isFlatList = true;
 
-		ksort( $patched );
-		ksort( $actual );
-		$result = ( $actual === $patched );
-
-		if ( !$result ) {
-			$comparisonFailure = new ComparisonFailure(
-				$patched,
-				$actual,
-				var_export( $patched, true ),
-				var_export( $actual, true )
-			);
-
-			$failureDescription = 'Failed asserting that array contains the expected submap.';
-			if ( $message != '' ) {
-				$failureDescription = $message . "\n" . $failureDescription;
+		// Flat list
+		if ( $isList ) {
+			$reduced = $actual;
+			foreach ( $expected as $value ) {
+				if ( is_array( $value ) ) {
+					// Nested array
+					$isFlatList = false;
+					break;
+				}
+				$i = array_search( $value, $reduced, true );
+				if ( $i === false ) {
+					throw new ExpectationFailedException(
+						( $message !== '' ? "$message\n" : '' )
+							. sprintf(
+								'Failed asserting that %s contains expected %s.',
+								var_export( $actual, true ),
+								var_export( $expected, true ),
+							)
+					);
+				}
+				// Remove matched item from the reduced list, so that if a duplicate
+				// is expected, we not mistakenly match the same entry twice.
+				array_splice( $reduced, $i, 1 );
 			}
-
-			throw new ExpectationFailedException(
-				$failureDescription,
-				$comparisonFailure
-			);
-		} else {
-			$this->assertTrue( true, $message );
 		}
+		if ( !$isList || !$isFlatList ) {
+			// Associative or nested array
+			$patched = array_replace_recursive( $actual, $expected );
+			ksort( $patched );
+			ksort( $actual );
+			if ( $actual !== $patched ) {
+				throw new ExpectationFailedException(
+					( $message !== '' ? "$message\n" : '' )
+						. 'Failed asserting that array contains the expected submap.',
+					new ComparisonFailure(
+						$patched,
+						$actual,
+						var_export( $patched, true ),
+						var_export( $actual, true )
+					)
+				);
+			}
+		}
+		$this->assertTrue( true, $message );
 	}
 
 	/**
@@ -311,9 +365,9 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
-	 * @after
+	 * @postCondition
 	 */
-	protected function phpErrorFilterTearDown() {
+	protected function phpErrorFilterPostConditions() {
 		$phpErrorFilter = error_reporting();
 
 		if ( $phpErrorFilter !== $this->originalPhpErrorFilter ) {
@@ -385,7 +439,7 @@ trait MediaWikiTestCaseTrait {
 		return $msg;
 	}
 
-	private function failStatus( StatusValue $status, $reason, $message = '' ) {
+	private function failStatus( StatusValue $status, string $reason, string $message = '' ) {
 		$reason = $message === '' ? $reason : "$message\n$reason";
 		$this->fail( "$reason\n$status" );
 	}

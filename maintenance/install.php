@@ -24,6 +24,7 @@
 use MediaWiki\Installer\Installer;
 use MediaWiki\Installer\InstallerOverrides;
 use MediaWiki\Installer\InstallException;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
 use Wikimedia\AtEase\AtEase;
 
@@ -117,6 +118,7 @@ class CommandLineInstaller extends Maintenance {
 		Installer::overrideConfig( $settingsBuilder );
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		if ( $this->hasOption( 'env-checks' ) ) {
 			return Maintenance::DB_NONE;
@@ -124,6 +126,7 @@ class CommandLineInstaller extends Maintenance {
 		return parent::getDbType();
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		global $IP;
 
@@ -181,6 +184,10 @@ class CommandLineInstaller extends Maintenance {
 			$this->setOption( 'dbuser', $dbUser );
 			$this->setOption( 'dbpass', $dbPass );
 			$this->setOption( 'dbserver', $dbServer );
+			if ( !$this->promptYesNo( 'Do you want to continue with the installation?', true ) ) {
+				$this->output( "Installation aborted.\n" );
+				return false;
+			}
 		}
 
 		$siteName = $this->getArg( 0, 'MediaWiki' ); // Will not be set if used with --env-checks
@@ -225,7 +232,7 @@ class CommandLineInstaller extends Maintenance {
 		return true;
 	}
 
-	private function generateStrongPassword() {
+	private function generateStrongPassword(): string {
 		$strongPassword = '';
 		$strongPasswordLength = 20;
 		$strongPasswordChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-={}|;:,.<>?';

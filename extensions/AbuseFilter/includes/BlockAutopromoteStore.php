@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use ManualLogEntry;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;

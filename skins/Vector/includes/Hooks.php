@@ -8,12 +8,12 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
 use MediaWiki\Skins\Vector\Hooks\HookRunner;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use RuntimeException;
-use SkinTemplate;
 
 /**
  * Presentation hook handlers for Vector skin.
@@ -286,6 +286,9 @@ class Hooks implements
 			}
 			if ( isset( $content_navigation['user-menu']['createaccount'] ) ) {
 				$content_navigation['user-menu']['createaccount']['collapsible'] = true;
+			}
+			if ( isset( $content_navigation['user-menu']['sitesupport'] ) ) {
+				$content_navigation['user-menu']['sitesupport']['collapsible'] = true;
 			}
 
 			// Anon editor links handled manually in new anon editor menu

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Martin Urbanec"
+		]
+	},
+	"apihelp-query+checkuser-param-request": "Typ požadavku CheckUser:",
+	"apihelp-query+checkuser-param-reason": "Důvod kontroly.",
+	"apihelp-query+checkuser-param-limit": "Omezení počtu výsledků.",
+	"apihelp-query+checkuserlog-param-limit": "Omezení počtu výsledků.",
+	"apierror-checkuser-missingsummary": "Musíte uvést důvod kontroly.",
+	"apierror-checkuser-invalidmode": "Neznámý režim požadavku"
+}

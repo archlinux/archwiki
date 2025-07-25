@@ -2,10 +2,8 @@
 
 namespace Wikimedia\Message;
 
-use MediaWiki\Json\JsonDeserializable;
-use MediaWiki\Json\JsonDeserializableTrait;
-use MediaWiki\Json\JsonDeserializer;
-use Stringable;
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
 
 /**
  * Value object representing a message for i18n.
@@ -18,14 +16,13 @@ use Stringable;
  *
  * @newable
  */
-class MessageValue implements JsonDeserializable, MessageSpecifier {
-	use JsonDeserializableTrait;
+class MessageValue implements MessageSpecifier, JsonCodecable {
+	use JsonCodecableTrait;
 
-	/** @var string */
-	private $key;
+	private string $key;
 
 	/** @var MessageParam[] */
-	private $params;
+	private array $params;
 
 	/**
 	 * @stable to call
@@ -34,7 +31,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param (MessageParam|MessageSpecifier|string|int|float)[] $params Values that are not instances
 	 *  of MessageParam are wrapped using ParamType::TEXT.
 	 */
-	public function __construct( $key, $params = [] ) {
+	public function __construct( string $key, array $params = [] ) {
 		$this->key = $key;
 		$this->params = [];
 		$this->params( ...$params );
@@ -46,7 +43,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param (MessageParam|MessageSpecifier|string|int|float)[] $params
 	 * @return MessageValue
 	 */
-	public static function new( $key, $params = [] ) {
+	public static function new( string $key, array $params = [] ): MessageValue {
 		return new MessageValue( $key, $params );
 	}
 
@@ -59,7 +56,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param MessageSpecifier $spec
 	 * @return MessageValue
 	 */
-	public static function newFromSpecifier( MessageSpecifier $spec ) {
+	public static function newFromSpecifier( MessageSpecifier $spec ): MessageValue {
 		if ( $spec instanceof MessageValue ) {
 			return $spec;
 		}
@@ -68,10 +65,8 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 
 	/**
 	 * Get the message key
-	 *
-	 * @return string
 	 */
-	public function getKey() {
+	public function getKey(): string {
 		return $this->key;
 	}
 
@@ -80,7 +75,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *
 	 * @return MessageParam[]
 	 */
-	public function getParams() {
+	public function getParams(): array {
 		return $this->params;
 	}
 
@@ -90,7 +85,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param MessageParam|MessageSpecifier|string|int|float ...$values
 	 * @return $this
 	 */
-	public function params( ...$values ) {
+	public function params( ...$values ): MessageValue {
 		foreach ( $values as $value ) {
 			if ( $value instanceof MessageParam ) {
 				$this->params[] = $value;
@@ -108,24 +103,9 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param MessageSpecifier|string|int|float ...$values Scalar values
 	 * @return $this
 	 */
-	public function textParamsOfType( $type, ...$values ) {
+	public function textParamsOfType( string $type, ...$values ): MessageValue {
 		foreach ( $values as $value ) {
 			$this->params[] = new ScalarParam( $type, $value );
-		}
-		return $this;
-	}
-
-	/**
-	 * Chainable mutator which adds object parameters
-	 *
-	 * @deprecated since 1.43
-	 * @param Stringable ...$values stringable object values
-	 * @return $this
-	 */
-	public function objectParams( ...$values ) {
-		wfDeprecated( __METHOD__, '1.43' );
-		foreach ( $values as $value ) {
-			$this->params[] = new ScalarParam( ParamType::OBJECT, $value );
 		}
 		return $this;
 	}
@@ -138,7 +118,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *  is an array of items suitable to pass as $params to ListParam::__construct()
 	 * @return $this
 	 */
-	public function listParamsOfType( $listType, ...$values ) {
+	public function listParamsOfType( string $listType, ...$values ): MessageValue {
 		foreach ( $values as $value ) {
 			$this->params[] = new ListParam( $listType, $value );
 		}
@@ -151,7 +131,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param MessageSpecifier|string|int|float ...$values
 	 * @return $this
 	 */
-	public function textParams( ...$values ) {
+	public function textParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::TEXT, ...$values );
 	}
 
@@ -161,7 +141,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param int|float ...$values
 	 * @return $this
 	 */
-	public function numParams( ...$values ) {
+	public function numParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::NUM, ...$values );
 	}
 
@@ -175,7 +155,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param int|float ...$values
 	 * @return $this
 	 */
-	public function longDurationParams( ...$values ) {
+	public function longDurationParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::DURATION_LONG, ...$values );
 	}
 
@@ -189,7 +169,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param int|float ...$values
 	 * @return $this
 	 */
-	public function shortDurationParams( ...$values ) {
+	public function shortDurationParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::DURATION_SHORT, ...$values );
 	}
 
@@ -200,7 +180,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *  or "infinity"
 	 * @return $this
 	 */
-	public function expiryParams( ...$values ) {
+	public function expiryParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::EXPIRY, ...$values );
 	}
 
@@ -211,7 +191,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param string ...$values Timestamp as accepted by the Wikimedia\Timestamp library.
 	 * @return $this
 	 */
-	public function dateTimeParams( ...$values ) {
+	public function dateTimeParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::DATETIME, ...$values );
 	}
 
@@ -222,7 +202,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param string ...$values Timestamp as accepted by the Wikimedia\Timestamp library.
 	 * @return $this
 	 */
-	public function dateParams( ...$values ) {
+	public function dateParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::DATE, ...$values );
 	}
 
@@ -233,7 +213,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param string ...$values Timestamp as accepted by the Wikimedia\Timestamp library.
 	 * @return $this
 	 */
-	public function timeParams( ...$values ) {
+	public function timeParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::TIME, ...$values );
 	}
 
@@ -244,7 +224,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param string ...$values User Groups
 	 * @return $this
 	 */
-	public function userGroupParams( ...$values ) {
+	public function userGroupParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::GROUP, ...$values );
 	}
 
@@ -254,7 +234,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param int ...$values
 	 * @return $this
 	 */
-	public function sizeParams( ...$values ) {
+	public function sizeParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::SIZE, ...$values );
 	}
 
@@ -265,7 +245,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param int|float ...$values
 	 * @return $this
 	 */
-	public function bitrateParams( ...$values ) {
+	public function bitrateParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::BITRATE, ...$values );
 	}
 
@@ -279,7 +259,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param string ...$values
 	 * @return $this
 	 */
-	public function rawParams( ...$values ) {
+	public function rawParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::RAW, ...$values );
 	}
 
@@ -293,7 +273,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param string ...$values
 	 * @return $this
 	 */
-	public function plaintextParams( ...$values ) {
+	public function plaintextParams( ...$values ): MessageValue {
 		return $this->textParamsOfType( ParamType::PLAINTEXT, ...$values );
 	}
 
@@ -307,7 +287,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *  is an array of items suitable to pass as $params to ListParam::__construct()
 	 * @return $this
 	 */
-	public function commaListParams( ...$values ) {
+	public function commaListParams( ...$values ): MessageValue {
 		return $this->listParamsOfType( ListType::COMMA, ...$values );
 	}
 
@@ -321,7 +301,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *  is an array of items suitable to pass as $params to ListParam::__construct()
 	 * @return $this
 	 */
-	public function semicolonListParams( ...$values ) {
+	public function semicolonListParams( ...$values ): MessageValue {
 		return $this->listParamsOfType( ListType::SEMICOLON, ...$values );
 	}
 
@@ -335,7 +315,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *  is an array of items suitable to pass as $params to ListParam::__construct()
 	 * @return $this
 	 */
-	public function pipeListParams( ...$values ) {
+	public function pipeListParams( ...$values ): MessageValue {
 		return $this->listParamsOfType( ListType::PIPE, ...$values );
 	}
 
@@ -349,7 +329,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 * @param (MessageParam|string)[] ...$values
 	 * @return $this
 	 */
-	public function textListParams( ...$values ) {
+	public function textListParams( ...$values ): MessageValue {
 		return $this->listParamsOfType( ListType::AND, ...$values );
 	}
 
@@ -358,7 +338,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 	 *
 	 * @return string
 	 */
-	public function dump() {
+	public function dump(): string {
 		$contents = '';
 		foreach ( $this->params as $param ) {
 			$contents .= $param->dump();
@@ -367,7 +347,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 			$contents . '</message>';
 	}
 
-	protected function toJsonArray(): array {
+	public function toJsonArray(): array {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		return [
@@ -376,7 +356,7 @@ class MessageValue implements JsonDeserializable, MessageSpecifier {
 		];
 	}
 
-	public static function newFromJsonArray( JsonDeserializer $deserializer, array $json ) {
+	public static function newFromJsonArray( array $json ): MessageValue {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		return new self( $json['key'], $json['params'] );

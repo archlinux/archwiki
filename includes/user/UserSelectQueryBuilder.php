@@ -30,10 +30,12 @@ use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+/**
+ * @ingroup User
+ */
 class UserSelectQueryBuilder extends SelectQueryBuilder {
 
-	/** @var ActorStore */
-	private $actorStore;
+	private ActorStore $actorStore;
 	private TempUserConfig $tempUserConfig;
 	private HideUserUtils $hideUserUtils;
 
@@ -41,9 +43,6 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 
 	/**
 	 * @internal
-	 * @param IReadableDatabase $db
-	 * @param ActorStore $actorStore
-	 * @param TempUserConfig $tempUserConfig
 	 */
 	public function __construct(
 		IReadableDatabase $db,
@@ -206,6 +205,9 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 * @return UserSelectQueryBuilder
 	 */
 	public function named(): self {
+		// All named accounts must be registered
+		$this->registered();
+
 		if ( !$this->tempUserConfig->isKnown() ) {
 			// nothing to do: getMatchCondition throws if temp accounts aren't known
 			return $this;

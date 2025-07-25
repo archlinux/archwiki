@@ -1,0 +1,40 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alex Khimich",
+			"Base",
+			"Mykola7",
+			"Piramidion",
+			"Ата",
+			"Vlad5250"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Перевірка того, які IP-адреси використовуються даним іменем користувача, або які імена користувачів використовуються даною IP-адресою.",
+	"apihelp-query+checkuser-param-request": "Тип запиту перевірки користувача:",
+	"apihelp-query+checkuser-paramvalue-request-userips": "Отримати IP-адреси цільового користувача.",
+	"apihelp-query+checkuser-paramvalue-request-ipusers": "Отримати користувачів з цільової IP-адреси або діапазону.",
+	"apihelp-query+checkuser-param-target": "Ім'я користувача, IP-адреса, або CIDR-діапазон для перевірки.",
+	"apihelp-query+checkuser-param-reason": "Причина перевірки.",
+	"apihelp-query+checkuser-param-limit": "Обмеження рядків.",
+	"apihelp-query+checkuser-param-timecond": "Обмеження часу для даних користувача (як то \"-2 weeks\" чи \"2 weeks ago\").",
+	"apihelp-query+checkuser-param-xff": "Використовуйте XFF-дані замість IP-адреси.",
+	"apihelp-query+checkuser-example-1": "Отримати IP-адреси для [[User:Example]]",
+	"apihelp-query+checkuser-example-2": "Отримати дії, виконані 192.0.2.0/24",
+	"apihelp-query+checkuserlog-summary": "Отримати записи з журналу перевірки користувачів.",
+	"apihelp-query+checkuserlog-param-user": "Ім'я користувача перевіряльника користувачів.",
+	"apihelp-query+checkuserlog-param-target": "Перевірений користувач, IP-адреса чи CIDR-діапазон.",
+	"apihelp-query+checkuserlog-param-limit": "Обмеження рядків.",
+	"apihelp-query+checkuserlog-param-from": "Часова мітка початку переліку.",
+	"apihelp-query+checkuserlog-param-to": "Часова мітка завершення переліку.",
+	"apihelp-query+checkuserlog-example-1": "Показати перевірки [[User:Example]]",
+	"apihelp-query+checkuserlog-example-2": "Показати перевірки 192.0.2.0/24 після 2011-10-15T23:00:00Z",
+	"apihelp-query+globalcontributions-param-target": "Ім'я користувача для пошуку (не повинно бути IP-адресою).",
+	"apihelp-query+globalcontributions-param-limit": "Обмеження рядків.",
+	"apihelp-query+globalcontributions-example-1": "Показати найновіші редагування у всіх вікі для даного користувача.",
+	"apierror-checkuser-missingsummary": "Вам необхідно зазначити причину для перевірки.",
+	"apierror-checkuser-timelimit": "Вам необхідно використовувати правильне обмеження за часом (наприклад, \"-2 weeks\" або \"2 weeks ago\").",
+	"apierror-checkuser-invalidmode": "Неправильний параметр запиту",
+	"checkuser-api-help-param-direction": "У якому напрямку перелічувати:",
+	"checkuser-api-help-paramvalue-direction-newer": "Спочатку найстаріші. Примітка: значення $1from повинне бути до $1to.",
+	"checkuser-api-help-paramvalue-direction-older": "Спочатку найновіші (за замовчуванням). Примітка: значення $1from повинно бути після $1to."
+}

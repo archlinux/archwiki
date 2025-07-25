@@ -30,7 +30,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MemoizedCallable;
@@ -230,7 +229,7 @@ class WikiModule extends Module {
 		PageIdentity $page, Context $context, $maxRedirects = 1
 	) {
 		$overrideCallback = $context->getContentOverrideCallback();
-		$content = $overrideCallback ? call_user_func( $overrideCallback, $page ) : null;
+		$content = $overrideCallback ? $overrideCallback( $page ) : null;
 		if ( $content ) {
 			if ( !$content instanceof Content ) {
 				$this->getLogger()->error(
@@ -246,7 +245,7 @@ class WikiModule extends Module {
 			if ( !$revision ) {
 				return null;
 			}
-			$content = $revision->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
+			$content = $revision->getMainContentRaw();
 
 			if ( !$content ) {
 				$this->getLogger()->error(
@@ -276,7 +275,7 @@ class WikiModule extends Module {
 		if ( $overrideCallback && $this->getSource() === 'local' ) {
 			foreach ( $this->getPages( $context ) as $page => $info ) {
 				$title = Title::newFromText( $page );
-				if ( $title && call_user_func( $overrideCallback, $title ) !== null ) {
+				if ( $title && $overrideCallback( $title ) !== null ) {
 					return true;
 				}
 			}
@@ -492,11 +491,11 @@ class WikiModule extends Module {
 		return count( $revisions ) === 0;
 	}
 
-	private function setTitleInfo( $batchKey, array $titleInfo ) {
+	private function setTitleInfo( string $batchKey, array $titleInfo ) {
 		$this->titleInfo[$batchKey] = $titleInfo;
 	}
 
-	private static function makeTitleKey( LinkTarget $title ) {
+	private static function makeTitleKey( LinkTarget $title ): string {
 		// Used for keys in titleInfo.
 		return "{$title->getNamespace()}:{$title->getDBkey()}";
 	}
@@ -521,7 +520,7 @@ class WikiModule extends Module {
 		if ( $overrideCallback ) {
 			foreach ( $pageNames as $page ) {
 				$title = Title::newFromText( $page );
-				$content = $title ? call_user_func( $overrideCallback, $title ) : null;
+				$content = $title ? $overrideCallback( $title ) : null;
 				if ( $content !== null ) {
 					$titleInfo[$title->getPrefixedText()] = [
 						'page_len' => $content->getSize(),
@@ -687,14 +686,14 @@ class WikiModule extends Module {
 		// TODO: MCR: differentiate between page functionality and content model!
 		//       Not all pages containing CSS or JS have to be modules! [PageType]
 		if ( $old ) {
-			$oldModel = $old->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel();
+			$oldModel = $old->getMainContentModel();
 			if ( in_array( $oldModel, $models ) ) {
 				$purge = true;
 			}
 		}
 
 		if ( !$purge && $new ) {
-			$newModel = $new->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel();
+			$newModel = $new->getMainContentModel();
 			if ( in_array( $newModel, $models ) ) {
 				$purge = true;
 			}

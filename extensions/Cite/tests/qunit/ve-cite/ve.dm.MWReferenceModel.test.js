@@ -53,7 +53,7 @@ QUnit.test( 'insert new ref', ( assert ) => {
 	refModel.insertInternalItem( surface );
 	assert.strictEqual( internalList.getItemNodeCount(), oldNodeCount + 1, 'internalItem added' );
 
-	surface.setSelection( new ve.dm.LinearSelection( new ve.Range( 1 ) ) );
+	surface.setLinearSelection( new ve.Range( 1 ) );
 	refModel.insertReferenceNode( surface.getFragment().collapseToEnd() );
 	assert.strictEqual( doc.getLength(), oldDocLength + 6, 'mwReference added to document' );
 
@@ -77,7 +77,7 @@ QUnit.test( 'insert ref reuse', ( assert ) => {
 	refModel.insertInternalItem( surface );
 	assert.strictEqual( internalList.getItemNodeCount(), oldNodeCount + 1, 'internalItem added' );
 
-	surface.setSelection( new ve.dm.LinearSelection( new ve.Range( 1 ) ) );
+	surface.setLinearSelection( new ve.Range( 1 ) );
 	refModel.insertReferenceNode( surface.getFragment().collapseToEnd() );
 	assert.strictEqual( doc.getLength(), oldDocLength + 10, 'mwReference added to document' );
 

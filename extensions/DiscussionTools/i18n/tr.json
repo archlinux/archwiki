@@ -10,6 +10,7 @@
 			"Incelemeelemani",
 			"Jelican9",
 			"Joseph",
+			"Leo",
 			"Melissadilara",
 			"MuratTheTurkish",
 			"Rapsar",
@@ -20,8 +21,7 @@
 			"Sezgin İbiş",
 			"ToprakM",
 			"Victor Trevor",
-			"Vito Genovese",
-			"Leo"
+			"Vito Genovese"
 		]
 	},
 	"discussiontools": "Tartışma araçları",
@@ -86,7 +86,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Abone oldun!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Bu sayfada yeni bir konu açıldığında artık bildirim almayacaksın.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Abonelikten çıktın.",
-	"discussiontools-notification-added-topic-header": "$2 adlı kullanıcı tarafından <strong>$3</strong> sayfasında \"<strong>$4</strong>\" konusu oluşturuldu.",
+	"discussiontools-notification-added-topic-header": "Yeni konu \"<strong>$4</strong>\", $1 tarafından <strong>$3</strong> sayfasında {{GENDER:$2|oluşturuldu}}.",
 	"discussiontools-notification-added-topic-header-bundled": "\"<strong>$2</strong>\" sayfasında {{PLURAL:$1|Bir|$1|100=99+}} yeni konu.",
 	"discussiontools-notification-added-topic-view": "Konuyu görüntüle",
 	"discussiontools-notification-comment-thank-header": "$1, \"<strong>$3</strong>\" yorumunuza {{GENDER:$2|teşekkür}} {{GENDER:$4|etti}}.",
@@ -210,9 +210,9 @@
 	"tag-discussiontools-description": "DiscussionTools kullanılarak yapılan düzenleme",
 	"tag-discussiontools-edit": "Düzenlenmiş yorum",
 	"tag-discussiontools-edit-description": "Kullanıcı, DiscussionTools ile mevcut bir yorumu düzenledi",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Yeni konu]",
+	"tag-discussiontools-newtopic": "Yeni konu",
 	"tag-discussiontools-newtopic-description": "Kullanıcı, DiscussionTools ile sayfaya yeni bir konu ekledi",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Yanıt]",
+	"tag-discussiontools-reply": "Yanıt",
 	"tag-discussiontools-reply-description": "Kullanıcı DiscussionTools ile bir yorumu yanıtladı",
 	"tag-discussiontools-source-description": "DiscussionTools kaynak modundaydı",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools, araç çubuğu ile gelişmiş kaynak modundaydı",

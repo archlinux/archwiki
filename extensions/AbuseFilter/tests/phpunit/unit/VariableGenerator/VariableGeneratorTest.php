@@ -8,12 +8,12 @@ use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
-use WikiPage;
 
 /**
  * @group Test
@@ -160,15 +160,15 @@ class VariableGeneratorTest extends MediaWikiUnitTestCase {
 		$this->assertArrayEquals( $expectedKeys, array_keys( $actualVars ) );
 	}
 
-	public static function provideForFilter() {
+	public static function provideLinksFromDatabase() {
 		yield [ true ];
 		yield [ false ];
 	}
 
 	/**
-	 * @dataProvider provideForFilter
+	 * @dataProvider provideLinksFromDatabase
 	 */
-	public function testAddEditVars( bool $forFilter ) {
+	public function testAddEditVars( bool $linksFromDatabase ) {
 		$expectedKeys = [
 			'edit_diff',
 			'edit_diff_pst',
@@ -193,7 +193,7 @@ class VariableGeneratorTest extends MediaWikiUnitTestCase {
 		$actualVars = $generator->addEditVars(
 			$this->createMock( WikiPage::class ),
 			$this->createMock( UserIdentity::class ),
-			$forFilter
+			$linksFromDatabase
 		)->getVariableHolder()->getVars();
 		$this->assertArrayEquals( $expectedKeys, array_keys( $actualVars ) );
 		$this->assertContainsOnlyInstancesOf( LazyLoadedVariable::class, $actualVars, 'lazy-loaded vars' );

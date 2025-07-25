@@ -4,7 +4,7 @@ namespace MediaWiki\Minerva\Hooks;
 
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Minerva\SkinOptions;
-use Skin;
+use MediaWiki\Skin\Skin;
 
 /**
  * This is a hook runner class, see docs/Hooks.md in core.

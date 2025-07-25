@@ -30,6 +30,9 @@
 
 	> .cdx-button,
 	> .mw-portlet-lang {
+		// Don't allow these to get clipped by a long title, see T386749.
+		flex-shrink: 0;
+
 		&:last-child {
 			.cdx-mixin-button-layout-flush( 'end' );
 		}

@@ -24,7 +24,9 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 	/** @var Authority */
 	private static $admin;
 	/** @var User */
-	private static $user;
+	private static $hiddenUser;
+	/** @var User */
+	private static $topUser;
 	/** @var User */
 	private static $zeroUser;
 	private static int $useModWikiIPRevId;
@@ -50,10 +52,20 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 			'Edit failed for admin'
 		);
 
-		self::$user = $this->getTestUser()->getUser();
+		self::$hiddenUser = $this->getTestUser()->getUser();
 		$this->assertTrue(
 			$this->editPage(
-				'Test', 'Test Content', 'test', NS_MAIN, self::$user
+				'Test', 'Test Content', 'test', NS_MAIN, self::$hiddenUser
+			)->isOK(),
+			'Edit failed for user'
+		);
+
+		// self::$topUser made the last edit to 'TopTest'. It should
+		// not be edited by a different user after this.
+		self::$topUser = $this->getTestUser( 'TopUser' )->getUser();
+		$this->assertTrue(
+			$this->editPage(
+				'TopTest', 'Test Content', 'test', NS_MAIN, self::$topUser
 			)->isOK(),
 			'Edit failed for user'
 		);
@@ -76,7 +88,7 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 
 		$blockStatus = $this->getServiceContainer()->getBlockUserFactory()
 			->newBlockUser(
-				self::$user->getName(),
+				self::$hiddenUser->getName(),
 				self::$admin,
 				'infinity',
 				'',
@@ -94,6 +106,48 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( 'mw-pager-body', $html );
 	}
 
+	/**
+	 * @dataProvider executeForUserWithWhitespacesDataProvider
+	 */
+	public function testExecuteForUserWithWhitespaces(
+		string $expected,
+		string $target
+	): void {
+		[ $html ] = $this->executeSpecialPage( $target );
+
+		// Assert that the Javascript code in the page contains the quoted
+		// username with the whitespaces removed.
+		$this->assertStringContainsString(
+			sprintf( '"%s"', $expected ),
+			$html
+		);
+	}
+
+	public static function executeForUserWithWhitespacesDataProvider(): array {
+		return [
+			'With an empty target' => [
+				'expected' => '',
+				'target' => ''
+			],
+			'With a target with no whitespaces' => [
+				'expected' => 'TopUser',
+				'target' => 'TopUser'
+			],
+			'With a target with leading whitespaces' => [
+				'expected' => 'TopUser',
+				'target' => ' TopUser'
+			],
+			'With a target with trailing whitespaces' => [
+				'expected' => 'TopUser',
+				'target' => 'TopUser '
+			],
+			'With a target with whitespaces at both sides' => [
+				'expected' => 'TopUser',
+				'target' => ' TopUser '
+			],
+		];
+	}
+
 	public function testExecuteEmptyTarget() {
 		[ $html ] = $this->executeSpecialPage();
 		// This 'topOnly' filter should always be added to Special:Contributions
@@ -103,14 +157,14 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 
 	public function testExecuteHiddenTarget() {
 		[ $html ] = $this->executeSpecialPage(
-			self::$user->getName()
+			self::$hiddenUser->getName()
 		);
-		$this->assertStringNotContainsString( 'mw-pager-body', $html );
+		$this->assertStringNotContainsString( 'mw-contributions-list', $html );
 	}
 
 	public function testExecuteHiddenTargetWithPermissions() {
 		[ $html ] = $this->executeSpecialPage(
-			self::$user->getName(),
+			self::$hiddenUser->getName(),
 			null,
 			'qqx',
 			// This is necessary because permission checks aren't actually
@@ -145,7 +199,7 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 		}
 		[ $html ] = $this->executeSpecialPage( '4.3.2.1', null, null, null, true );
 		$specialPageDocument = DOMUtils::parseHTML( $html );
-		$contentHtml = DOMCompat::querySelector( $specialPageDocument, '.mw-content-container' )->nodeValue;
+		$contentHtml = DOMCompat::querySelector( $specialPageDocument, '#content' )->nodeValue;
 		$this->assertStringNotContainsString( 'mw-pager-body', $contentHtml );
 		$this->assertStringContainsString( "($expectedPageTitleMessageKey: 4.3.2.1", $contentHtml );
 	}
@@ -292,6 +346,13 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( 'tagfilter', $url );
 		$this->assertStringContainsString( 'year', $url );
 		$this->assertStringContainsString( 'month', $url );
+	}
+
+	public function testCSSClasses() {
+		// Regression test for T378132
+		[ $html ] = $this->executeSpecialPage( self::$topUser->getName() );
+
+		$this->assertStringContainsString( "mw-contributions-current", $html );
 	}
 
 	/**

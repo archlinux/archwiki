@@ -1,0 +1,37 @@
+[
+	{
+		"cssClass": ".ext-checkuser-investigate-subtitle-continue-button",
+		"visibleOnLoad": false,
+		"visibleAfterBlockClick": true,
+		"visibleAfterCancelClick": false,
+		"msg": "The continue button"
+	},
+	{
+		"cssClass": ".ext-checkuser-investigate-subtitle-cancel-button",
+		"visibleOnLoad": false,
+		"visibleAfterBlockClick": true,
+		"visibleAfterCancelClick": false,
+		"msg": "The cancel button"
+	},
+	{
+		"cssClass": ".ext-checkuser-investigate-subtitle-targets-widget",
+		"visibleOnLoad": false,
+		"visibleAfterBlockClick": true,
+		"visibleAfterCancelClick": false,
+		"msg": "The targets widget"
+	},
+	{
+		"cssClass": ".ext-checkuser-investigate-subtitle-block-accounts-button",
+		"visibleOnLoad": true,
+		"visibleAfterBlockClick": false,
+		"visibleAfterCancelClick": true,
+		"msg": "The Block accounts button"
+	},
+	{
+		"cssClass": ".ext-checkuser-investigate-subtitle-block-ips-button",
+		"visibleOnLoad": true,
+		"visibleAfterBlockClick": false,
+		"visibleAfterCancelClick": true,
+		"msg": "The Block IPs button"
+	}
+]

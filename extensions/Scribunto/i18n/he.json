@@ -33,7 +33,7 @@
 	"scribunto-common-timeout": "הזמן שהוקצה להרצת תסריטים פג.",
 	"scribunto-common-oom": "הזיכרון שהוקצה להרצת תסריטים אזל.",
 	"scribunto-common-backtrace": "מחסנית קריאות:",
-	"scribunto-common-no-details": "פרטים נוספים אינם זמינים.",
+	"scribunto-common-no-details": "פרטים על מיקום הקוד אינם זמינים.",
 	"scribunto-lua-in-function": "בפונקציה \"$1\"",
 	"scribunto-lua-in-main": "בפלח העיקרי",
 	"scribunto-lua-in-function-at": "בפונקציה $1 בשורה $2",

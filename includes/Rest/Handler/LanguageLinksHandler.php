@@ -5,6 +5,7 @@ namespace MediaWiki\Rest\Handler;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -72,9 +73,6 @@ class LanguageLinksHandler extends SimpleHandler {
 		);
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	private function getPage(): ?ExistingPageRecord {
 		if ( $this->page === false ) {
 			$this->page = $this->pageLookup->getExistingPageByText(
@@ -124,7 +122,7 @@ class LanguageLinksHandler extends SimpleHandler {
 			->createJson( $this->fetchLinks( $page->getId() ) );
 	}
 
-	private function fetchLinks( $pageId ) {
+	private function fetchLinks( int $pageId ): array {
 		$result = [];
 		$res = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
 			->select( [ 'll_title', 'll_lang' ] )
@@ -158,13 +156,11 @@ class LanguageLinksHandler extends SimpleHandler {
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-language-links-title' ),
 			],
 		];
 	}
 
-	/**
-	 * @return string|null
-	 */
 	protected function getETag(): ?string {
 		$page = $this->getPage();
 		if ( !$page ) {
@@ -175,9 +171,6 @@ class LanguageLinksHandler extends SimpleHandler {
 		return '"' . $page->getLatest() . '@' . wfTimestamp( TS_MW, $page->getTouched() ) . '"';
 	}
 
-	/**
-	 * @return string|null
-	 */
 	protected function getLastModified(): ?string {
 		$page = $this->getPage();
 		return $page ? $page->getTouched() : null;
@@ -190,4 +183,14 @@ class LanguageLinksHandler extends SimpleHandler {
 		return (bool)$this->getPage();
 	}
 
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+		return $spec;
+	}
+
+	public function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/PageLanguageLinks.json';
+	}
 }

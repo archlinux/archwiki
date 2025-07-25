@@ -3,7 +3,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Gallery;
 
-use stdClass;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\Core\DomSourceRange;
@@ -19,6 +18,7 @@ use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\Utils;
+use Wikimedia\Parsoid\NodeData\DataMwBody;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
@@ -242,12 +242,12 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			// Self-closed tags don't have a body but unsetting on it induces one
 			isset( $dataMw->body )
 		) {
-			unset( $dataMw->body->extsrc );
+			$dataMw->body->extsrc = null;
 		}
 
 		// Remove the caption since it's redundant with the HTML
 		// and we prefer editing it there.
-		unset( $dataMw->attrs->caption );
+		$dataMw->setExtAttrib( 'caption', null );
 
 		DOMDataUtils::setDataMw( $domFragment->firstChild, $dataMw );
 
@@ -337,12 +337,14 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		ParsoidExtensionAPI $extApi, Element $node, bool $wrapperUnmodified
 	) {
 		$dataMw = DOMDataUtils::getDataMw( $node );
-		$dataMw->attrs ??= new stdClass;
 		// Handle the "gallerycaption" first
 		$galcaption = DOMCompat::querySelector( $node, 'li.gallerycaption' );
 		if ( $galcaption ) {
-			$dataMw->attrs->caption = $extApi->domChildrenToWikitext(
-				$galcaption, $extApi::IN_IMG_CAPTION | $extApi::IN_OPTION
+			$dataMw->setExtAttrib(
+				'caption',
+				$extApi->domChildrenToWikitext(
+					$galcaption, $extApi::IN_IMG_CAPTION | $extApi::IN_OPTION
+				)
 			);
 			// Destructive to the DOM!
 			// However, removing it simplifies some of the logic below.
@@ -356,7 +358,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		//
 		// This relies on the caption having been removed above
 		if ( DiffDOMUtils::firstNonSepChild( $node ) !== null ) {
-			$dataMw->body ??= new stdClass;
+			$dataMw->body ??= new DataMwBody;
 		}
 
 		$startTagSrc = $extApi->extStartTagToWikitext( $node );
@@ -394,6 +396,6 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		ParsoidExtensionAPI $extApi, callable $domDiff, Element $origNode,
 		Element $editedNode
 	): bool {
-		return call_user_func( $domDiff, $origNode, $editedNode );
+		return $domDiff( $origNode, $editedNode );
 	}
 }

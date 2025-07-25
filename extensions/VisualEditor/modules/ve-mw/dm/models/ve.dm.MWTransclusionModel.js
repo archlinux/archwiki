@@ -303,7 +303,7 @@
 					// Skip already cached data
 					!hasOwn.call( specCache, title ) &&
 					// Skip duplicate titles in the same batch
-					titles.indexOf( title ) === -1
+					!titles.includes( title )
 				) {
 					titles.push( title );
 				}

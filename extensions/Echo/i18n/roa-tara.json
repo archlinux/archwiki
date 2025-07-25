@@ -69,6 +69,7 @@
 	"notifications": "Notifeche",
 	"tooltip-pt-notifications-alert": "Avvise {{GENDER:|tune}}",
 	"tooltip-pt-notifications-notice": "Le notizie {{GENDER:|tune}}",
+	"tooltip-pt-notifications": "Le notifiche tune",
 	"echo-displaynotificationsconfiguration": "Fà 'ndrucà 'a configurazione de le notifeche",
 	"echo-displaynotificationsconfiguration-summary": "Queste jè 'na panorameche de cumme le notifeche so configurate sus a sta uicchi.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Notifeche pe categorije",

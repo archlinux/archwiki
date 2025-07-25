@@ -5,11 +5,11 @@ namespace MediaWiki\Extension\Scribunto;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Html\Html;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
+use ObjectCacheFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -18,19 +18,17 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiScribuntoConsole extends ApiBase {
 	private const SC_MAX_SIZE = 500000;
 	private const SC_SESSION_EXPIRY = 3600;
+	private ObjectCacheFactory $objectCacheFactory;
 	private ParserFactory $parserFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param ParserFactory $parserFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
+		ObjectCacheFactory $objectCacheFactory,
 		ParserFactory $parserFactory
 	) {
 		parent::__construct( $main, $action );
+		$this->objectCacheFactory = $objectCacheFactory;
 		$this->parserFactory = $parserFactory;
 	}
 
@@ -51,9 +49,7 @@ class ApiScribuntoConsole extends ApiBase {
 			$sessionId = mt_rand( 0, 0x7fffffff );
 		}
 
-		$services = MediaWikiServices::getInstance();
-
-		$cache = $services->getObjectCacheFactory()->getInstance( CACHE_ANYTHING );
+		$cache = $this->objectCacheFactory->getInstance( CACHE_ANYTHING );
 		$sessionKey = $cache->makeKey( 'scribunto-console', $this->getUser()->getId(), $sessionId );
 		$session = null;
 		$sessionIsNew = false;

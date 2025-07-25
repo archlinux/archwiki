@@ -20,20 +20,20 @@
 
 namespace MediaWiki\Actions;
 
-use Article;
-use DeleteAction;
-use ErrorPageError;
-use File;
-use LocalFile;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\File\OldLocalFile;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\File\FileDeleteForm;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use OldLocalFile;
-use PermissionsError;
 
 /**
  * Handle file deletion
@@ -131,10 +131,15 @@ class FileDeleteAction extends DeleteAction {
 		);
 
 		if ( !$status->isGood() ) {
-			$outputPage->wrapWikiTextAsInterface(
-				'error',
-				$status->getWikiText( 'filedeleteerror-short', 'filedeleteerror-long' )
+			$outputPage->setPageTitleMsg(
+				$this->msg( 'cannotdelete-title' )->plaintextParams( $title->getPrefixedText() )
 			);
+			$outputPage->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+			foreach ( $status->getMessages() as $msg ) {
+				$outputPage->addHTML( Html::errorBox(
+					$context->msg( $msg )->parse()
+				) );
+			}
 		}
 		if ( $status->isOK() ) {
 			$outputPage->setPageTitleMsg( $context->msg( 'actioncomplete' ) );
@@ -212,9 +217,6 @@ class FileDeleteAction extends DeleteAction {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getFormAction(): string {
 		$q = [];
 		$q['action'] = 'delete';

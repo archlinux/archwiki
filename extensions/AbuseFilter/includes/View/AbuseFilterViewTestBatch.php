@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use LogEventsList;
-use LogPage;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
@@ -14,9 +12,12 @@ use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\Message\Message;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
-use RecentChange;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -100,6 +101,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			$usedVars = $ruleChecker->getUsedVars( $this->testPattern );
 			if ( $this->afPermManager->getForbiddenVariables( $this->getAuthority(), $usedVars ) ) {
 				$this->testPattern = '';
+				$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 				$out->addHtml(
 					Html::errorBox( $this->msg( 'abusefilter-test-protectedvarerr' )->parse() )
 				);
@@ -108,7 +110,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 
 		$out->setPageTitleMsg( $this->msg( 'abusefilter-test' ) );
 		$out->addHelpLink( 'Extension:AbuseFilter/Rules format' );
-		$out->addWikiMsg( 'abusefilter-test-intro', self::$mChangeLimit );
+		$out->addWikiMsg( 'abusefilter-test-intro', Message::numParam( self::$mChangeLimit ) );
 		$out->enableOOUI();
 
 		$boxBuilder = $this->boxBuilderFactory->newEditBoxBuilder( $this, $this->getAuthority(), $out );
@@ -182,6 +184,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		} );
 		$allFields = array_merge( $rulesFields, $optionsFields );
 
+		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		HTMLForm::factory( 'ooui', $allFields, $this->getContext() )
 			->setTitle( $this->getTitle( 'test' ) )
 			->setId( 'wpFilterForm' )

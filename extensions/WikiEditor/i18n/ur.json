@@ -1,19 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aafi",
 			"BMRG14",
 			"BukhariSaeed",
 			"Ebraminio",
 			"Muhammad Shuaib",
 			"TheAafi",
 			"محبوب عالم",
-			"පසිඳු කාවින්ද",
-			"Aafi"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"wikieditor": "ویکی متن کی ترمیم کے ليے اضافی خصوصیات سے آراستہ انٹرفیس",
 	"wikieditor-desc": "ویکی متن میں ترمیم کے لیے اضافی خصوصیات سے آراستہ انٹرفیس فراہم کرتا ہے",
-	"wikieditor-wikitext-tab": "ویکی متن",
 	"wikieditor-toolbar": "ترمیمی خانہ آلات",
 	"wikieditor-toolbar-preference": "ترمیمی خانہ آلات فعال کریں",
 	"wikieditor-toolbar-preference-help": "بسا اوقات اسے '2010ء کا خانہ ترمیم' بھی کہا جاتا ہے۔",

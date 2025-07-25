@@ -8,7 +8,6 @@
 
 namespace MediaWiki\Extension\TitleBlacklist;
 
-use ManualLogEntry;
 use MediaWiki\Api\ApiMessage;
 use MediaWiki\Api\ApiResult;
 use MediaWiki\Context\RequestContext;
@@ -17,9 +16,13 @@ use MediaWiki\Hook\EditFilterHook;
 use MediaWiki\Hook\MovePageCheckPermissionsHook;
 use MediaWiki\Hook\TitleGetEditNoticesHook;
 use MediaWiki\Html\Html;
+use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\GrantsInfo;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsExpensiveHook;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
@@ -28,7 +31,6 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use StatusValue;
 use Wikimedia\Message\MessageSpecifier;
-use WikiPage;
 
 /**
  * Hooks for the TitleBlacklist class
@@ -43,13 +45,14 @@ class Hooks implements
 	PageSaveCompleteHook
 {
 
-	public static function onRegistration() {
-		global $wgGrantRiskGroups;
+	public static function onRegistration( array $extInfo, SettingsBuilder $settings ) {
+		$grantRiskGroups = $settings->getConfig()->get( MainConfigNames::GrantRiskGroups );
 		// Make sure the risk rating is at least 'security'. TitleBlacklist adds the
 		// tboverride-account right to the createaccount grant, which makes it possible
 		// to use it for social engineering attacks with restricted usernames.
-		if ( $wgGrantRiskGroups['createaccount'] !== GrantsInfo::RISK_INTERNAL ) {
-			$wgGrantRiskGroups['createaccount'] = GrantsInfo::RISK_SECURITY;
+		if ( $grantRiskGroups['createaccount'] !== GrantsInfo::RISK_INTERNAL ) {
+			$grantRiskGroups['createaccount'] = GrantsInfo::RISK_SECURITY;
+			$settings->overrideConfigValue( MainConfigNames::GrantRiskGroups, $grantRiskGroups );
 		}
 	}
 
@@ -227,7 +230,7 @@ class Hooks implements
 	public function onEditFilter( $editor, $text, $section, &$error, $summary ) {
 		$title = $editor->getTitle();
 
-		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getDBkey() == 'Titleblacklist' ) {
+		if ( $title->getNamespace() === NS_MEDIAWIKI && $title->getDBkey() === 'Titleblacklist' ) {
 			$blackList = TitleBlacklist::singleton();
 			$bl = TitleBlacklist::parseBlacklist( $text, 'page' );
 			$ok = $blackList->validate( $bl );

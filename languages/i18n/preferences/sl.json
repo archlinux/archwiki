@@ -79,7 +79,7 @@
 	"prefs-help-email": "E-poštni naslov ni obvezen, vendar je potreben za ponastavitev gesla, če bi pozabili geslo.",
 	"prefs-help-email-required": "E-poštni naslov je obvezen.",
 	"prefs-help-email-others": "Omogočite lahko tudi možnost, da vam lahko ostali uporabniki pošiljajo e-pošto prek vaše uporabniške ali pogovorne strani.\nKo vas bodo drugi uporabniki kontaktirali, jim vašega e-poštnega naslova ne bomo razkrili.",
-	"tog-requireemail": "Pošlji e-pošto za ponastavitev gesla samo, ko sta vnesena e-poštni naslov in uporabniško ime.",
+	"tog-requireemail": "Pošlji e-pošto za ponastavitev gesla samo, ko sta vnesena e-poštni naslov in uporabniško ime",
 	"prefs-help-requireemail": "To izboljša zasebnost in pomaga preprečevati neželeno e-pošto.",
 	"noemailprefs": "E-poštnega naslova niste vnesli, zato naslednje možnosti ne bodo delovale.",
 	"emailnotauthenticated": "Vaš e-poštni naslov še ni potrjen.\nZa naslednje možnosti e-pošta ne bo poslana.",
@@ -226,6 +226,7 @@
 	"search-thumbnail-extra-namespaces-label": "Prikaži sličice v Posebno:Iskanje na namizju",
 	"search-thumbnail-extra-namespaces-message": "Prikaže sličice za {{PLURAL:$2|imenski prostor|imenska prostora|imenske prostore}} $1 na strani {{#special:search}}.",
 	"prefs-advancedsearchoptions": "Napredne možnosti",
+	"prefs-misc": "Druge nastavitve",
 	"prefs-reset-intro": "To stran lahko uporabite za ponastavitev nastavitev na privzete za to spletno mesto.\nTega ni mogoče razveljaviti.",
 	"prefs-reset-confirm": "Da, želim ponastaviti svoje nastavitve.",
 	"restoreprefs": "Obnovi vse privzete nastavitve"

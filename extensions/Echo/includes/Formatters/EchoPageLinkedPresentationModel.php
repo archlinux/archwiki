@@ -13,6 +13,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 	/** @var Title|null */
 	private $pageFrom;
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'linked';
 	}
@@ -30,6 +31,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		return (bool)$pageTo && (bool)$pageFrom;
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		if ( $this->isBundled() ) {
 			return false;
@@ -49,6 +51,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		$whatLinksHereLink = [
 			'url' => SpecialPage::getTitleFor( 'Whatlinkshere', $this->event->getTitle()->getPrefixedText() )
@@ -62,6 +65,9 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		return [ $whatLinksHereLink, $this->getMuteLink() ];
 	}
 
+	/**
+	 * @return array|null
+	 */
 	protected function getMuteLink() {
 		if ( !MediaWikiServices::getInstance()->getMainConfig()->get( 'EchoPerUserBlacklist' ) ) {
 			return null;
@@ -115,6 +121,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getHeaderMessageKey() {
 		if ( $this->getBundleCount( true, [ $this, 'getLinkedPageId' ] ) > 1 ) {
 			return 'notification-bundle-header-page-linked';
@@ -122,6 +129,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		return 'notification-header-page-linked';
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		$msg = parent::getHeaderMessage();
 		$msg->params( $this->getTruncatedTitleText( $this->event->getTitle(), true ) );
@@ -132,6 +140,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getCompactHeaderMessage() {
 		$msg = $this->msg( parent::getCompactHeaderMessageKey() );
 		$msg->params( $this->getTruncatedTitleText( $this->getPageFrom(), true ) );
@@ -158,6 +167,9 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		return 0;
 	}
 
+	/**
+	 * @return Title
+	 */
 	private function getPageFrom() {
 		if ( !$this->pageFrom ) {
 			$this->pageFrom = Title::newFromID( $this->getLinkedPageId( $this->event ) );
@@ -165,6 +177,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		return $this->pageFrom;
 	}
 
+	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
 		return 'notification-page-linked-email-subject';
 	}

@@ -99,7 +99,7 @@ class QueryBuilderFromRawSql {
 		);
 	}
 
-	private static function isWriteQuery( $rawSql ) {
+	private static function isWriteQuery( string $rawSql ): bool {
 		// Treat SELECT queries without FOR UPDATE queries as non-writes. This matches
 		// how MySQL enforces read_only (FOR SHARE and LOCK IN SHADE MODE are allowed).
 		// Handle (SELECT ...) UNION (SELECT ...) queries in a similar fashion.
@@ -133,7 +133,7 @@ class QueryBuilderFromRawSql {
 		// @phan-suppress-next-line PhanRedundantCondition https://github.com/phan/phan/issues/4720
 		if ( !isset( self::$queryVerbRegex ) ) {
 			$multiwordVerbsRegex = implode( '|', array_map(
-				fn ( $words ) => str_replace( ' ', '\s+', $words ),
+				static fn ( $words ) => str_replace( ' ', '\s+', $words ),
 				Query::MULTIWORD_VERBS
 			) );
 			self::$queryVerbRegex = "/^\s*($multiwordVerbsRegex|[a-z]+)/i";

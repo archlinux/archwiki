@@ -31,14 +31,11 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Specials\SpecialVersion;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\ExtensionInfo;
-use SkinFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
@@ -192,11 +189,7 @@ class ApiHelp extends ApiBase {
 		$haveModules = [];
 		$html = self::getHelpInternal( $context, $modules, $options, $haveModules );
 		if ( !empty( $options['toc'] ) && $haveModules ) {
-			$pout = new ParserOutput;
-			$pout->setTOCData( TOCData::fromLegacy( array_values( $haveModules ) ) );
-			$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-			$pout->setText( Parser::TOC_PLACEHOLDER );
-			$out->addParserOutput( $pout );
+			$out->addTOCPlaceholder( TOCData::fromLegacy( array_values( $haveModules ) ) );
 		}
 		$out->addHTML( $html );
 

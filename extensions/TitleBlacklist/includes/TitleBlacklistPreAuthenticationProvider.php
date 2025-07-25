@@ -14,6 +14,9 @@ class TitleBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationP
 	/** @var bool */
 	protected $blockAutoAccountCreation;
 
+	/**
+	 * @param array $params
+	 */
 	public function __construct( $params = [] ) {
 		global $wgTitleBlacklistBlockAutoAccountCreation;
 
@@ -24,6 +27,7 @@ class TitleBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationP
 		$this->blockAutoAccountCreation = (bool)$params['blockAutoAccountCreation'];
 	}
 
+	/** @inheritDoc */
 	public function getAuthenticationRequests( $action, array $options ) {
 		$needOverrideOption = false;
 		switch ( $action ) {
@@ -36,6 +40,7 @@ class TitleBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationP
 		return $needOverrideOption ? [ new TitleBlacklistAuthenticationRequest() ] : [];
 	}
 
+	/** @inheritDoc */
 	public function testForAccountCreation( $user, $creator, array $reqs ) {
 		/** @var TitleBlacklistAuthenticationRequest $req */
 		$req = AuthenticationRequest::getRequestByClass( $reqs,
@@ -51,6 +56,7 @@ class TitleBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationP
 		return Hooks::testUserName( $user->getName(), $creator, $override, true );
 	}
 
+	/** @inheritDoc */
 	public function testUserForCreation( $user, $autocreate, array $options = [] ) {
 		$sv = StatusValue::newGood();
 		$creator = RequestContext::getMain()->getUser();

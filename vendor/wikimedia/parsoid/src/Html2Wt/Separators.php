@@ -302,7 +302,7 @@ class Separators {
 			'debug/wts/sep',
 			'make-new   |',
 			static function () use ( $nlConstraints, $sepNlCount, $minNls, $sep, $origSep ) {
-				$constraints = Utils::clone( $nlConstraints, true, true );
+				$constraints = Utils::cloneArray( $nlConstraints );
 				unset( $constraints['constraintInfo'] );
 				return PHPUtils::jsonEncode( $sep ) . ', ' . PHPUtils::jsonEncode( $origSep ) . ', ' .
 					$minNls . ', ' . $sepNlCount . ', ' . PHPUtils::jsonEncode( $constraints );
@@ -549,7 +549,7 @@ class Separators {
 			'debug/wts/sep',
 			'ipre-safe  |',
 			static function () use ( $sep, $nlConstraints ) {
-				$constraints = Utils::clone( $nlConstraints, true, true );
+				$constraints = Utils::cloneArray( $nlConstraints );
 				unset( $constraints['constraintInfo'] );
 				return PHPUtils::jsonEncode( $sep ) . ', ' . PHPUtils::jsonEncode( $constraints );
 			}
@@ -744,7 +744,7 @@ class Separators {
 	public function recoverTrimmedWhitespace( Node $node, bool $leading ): ?string {
 		// Deal with scenarios where leading / trailing whitespace were trimmed.
 		// We now need to figure out if we need to add any leading / trailing WS back.
-		if ( $this->state->useWhitespaceHeuristics && $this->state->selserMode ) {
+		if ( $this->state->selserMode ) {
 			if ( $leading ) {
 				return $this->fetchLeadingTrimmedSpace( $node );
 			} else {
@@ -905,19 +905,19 @@ class Separators {
 							// Both have the same dsr range, so there can't be any
 							// separators between them
 							$sep = '';
-						} elseif ( isset( $dsrA->openWidth ) && $state->isValidDSR( $dsrA, true ) ) {
+						} elseif ( $dsrA->openWidth !== null && $state->isValidDSR( $dsrA, true ) ) {
 							// B in A, from parent to child
 							$sep = $state->getOrigSrc( $dsrA->openRange()->to( $dsrB ) );
 						}
 					} elseif ( $dsrA->end <= $dsrB->start ) {
 						// B following A (siblingish)
 						$sep = $state->getOrigSrc( $dsrA->to( $dsrB ) );
-					} elseif ( isset( $dsrB->closeWidth ) && $state->isValidDSR( $dsrB, true ) ) {
+					} elseif ( $dsrB->closeWidth !== null && $state->isValidDSR( $dsrB, true ) ) {
 						// A in B, from child to parent
 						$sep = $state->getOrigSrc( $dsrA->to( $dsrB->closeRange() ) );
 					}
 				} elseif ( $dsrA->end <= $dsrB->end ) {
-					if ( isset( $dsrB->closeWidth ) && $state->isValidDSR( $dsrB, true ) ) {
+					if ( $dsrB->closeWidth !== null && $state->isValidDSR( $dsrB, true ) ) {
 						// A in B, from child to parent
 						$sep = $state->getOrigSrc( $dsrA->to( $dsrB->closeRange() ) );
 					}

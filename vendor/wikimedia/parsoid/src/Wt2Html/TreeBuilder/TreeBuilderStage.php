@@ -34,6 +34,7 @@ use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\PipelineStage;
+use Wikimedia\RemexHtml\TreeBuilder\Marker;
 
 class TreeBuilderStage extends PipelineStage {
 	/** @var int */
@@ -105,22 +106,42 @@ class TreeBuilderStage extends PipelineStage {
 		$profile = null;
 		if ( $this->env->profiling() ) {
 			$profile = $this->env->getCurrentProfile();
-			$s = microtime( true );
+			$s = hrtime( true );
 		}
 		$n = count( $tokens );
-		for ( $i = 0;  $i < $n;  $i++ ) {
-			$this->processToken( $tokens[$i] );
+		$i = 0;
+		while ( $i < $n ) {
+			$token = $tokens[$i];
+			// if there are exactly two newlines directly after the paragraph end, and if we have active
+			// formatting elements, we process one of the new lines inside the paragraph (before the EndTk)
+			// rather than after (T368720)
+			$nlIndex = $i + 1;
+			if ( $token instanceof EndTagTk && $token->getName() === 'p' && $this->hasAfe() ) {
+				while ( $nlIndex < $n && $tokens[$nlIndex] instanceof NlTk ) {
+					$nlIndex++;
+				}
+			}
+			if ( $nlIndex === $i + 3 ) {
+				$this->processToken( $tokens[$i + 1] );
+				$this->processToken( $tokens[$i + 2] );
+				$this->processToken( $token );
+				$i += 3;
+			} else {
+				$this->processToken( $token );
+				$i += 1;
+			}
 		}
+
 		if ( $profile ) {
 			$profile->bumpTimeUse(
-				'HTML5 TreeBuilder', 1000 * ( microtime( true ) - $s ), 'HTML5' );
+				'HTML5 TreeBuilder', hrtime( true ) - $s, 'HTML5' );
 		}
 	}
 
 	public function finalizeDOM(): Node {
 		// Check if the EOFTk actually made it all the way through, and flag the
 		// page where it did not!
-		if ( isset( $this->lastToken ) && !( $this->lastToken instanceof EOFTk ) ) {
+		if ( $this->lastToken !== null && !( $this->lastToken instanceof EOFTk ) ) {
 			$this->env->log(
 				'error', 'EOFTk was lost in page',
 				$this->env->getContextTitle()->getPrefixedText()
@@ -131,7 +152,7 @@ class TreeBuilderStage extends PipelineStage {
 			// This is similar to DOMCompat::setInnerHTML() in that we can
 			// consider it equivalent to the fragment parsing algorithm,
 			// https://html.spec.whatwg.org/#html-fragment-parsing-algorithm
-			$node = $this->env->topLevelDoc->createDocumentFragment();
+			$node = $this->env->getTopLevelDoc()->createDocumentFragment();
 			DOMUtils::migrateChildrenBetweenDocs(
 				DOMCompat::getBody( $this->remexPipeline->doc ), $node
 			);
@@ -165,7 +186,7 @@ class TreeBuilderStage extends PipelineStage {
 			$data->mw = $dataMw;
 		}
 		// Store in the top level doc since we'll be importing the nodes after treebuilding
-		$nodeId = DOMDataUtils::stashObjectInDoc( $this->env->topLevelDoc, $data );
+		$nodeId = DOMDataUtils::stashObjectInDoc( $this->env->getTopLevelDoc(), $data );
 		$attribs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] = (string)$nodeId;
 		return $attribs;
 	}
@@ -186,7 +207,7 @@ class TreeBuilderStage extends PipelineStage {
 		}
 
 		$dispatcher = $this->remexPipeline->dispatcher;
-		$attribs = isset( $token->attribs ) ? $this->kvArrToAttr( $token->attribs ) : [];
+		$attribs = !is_string( $token ) && $token->attribs !== null ? $this->kvArrToAttr( $token->attribs ) : [];
 		$dataParsoid = !is_string( $token ) ? $token->dataParsoid : new DataParsoid;
 		$dataMw = $token->dataMw ?? null;
 		$tmp = $dataParsoid->getTemp();
@@ -200,9 +221,7 @@ class TreeBuilderStage extends PipelineStage {
 			$tmp->tagId = $this->tagId++;
 		}
 
-		$this->env->log( 'trace/html', $this->pipelineId, static function () use ( $token ) {
-			return PHPUtils::jsonEncode( $token );
-		} );
+		$this->env->trace( 'html', $this->pipelineId, $token );
 
 		// Store the last token
 		$this->lastToken = $token;
@@ -481,5 +500,13 @@ class TreeBuilderStage extends PipelineStage {
 		} else {
 			yield $this->process( $input, $opts );
 		}
+	}
+
+	private function hasAfe(): bool {
+		$afe = $this->remexPipeline->treeBuilder->afe->getTail();
+		while ( $afe !== null && $afe instanceof Marker ) {
+			$afe = $afe->prevAFE;
+		}
+		return $afe !== null;
 	}
 }

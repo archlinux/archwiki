@@ -15,6 +15,7 @@
 	"echo-category-title-login-success": "Logowanie z nieznanego urządzenia",
 	"echo-pref-tooltip-login-success": "Powiadom mnie, gdy ktoś zaloguje się na moje konto z nieznanego urządzenia i adresu IP.",
 	"loginnotify-primary-link": "Pomoc",
+	"loginnotify-unknown-ip": "Podjęto próbę zalogowania się na {{GRAMMAR:B.lp|{{SITENAME}}}} z nieznanego adresu IP. {{GRAMMAR:M.lp|{{SITENAME}}}} jest skonfigurowana, aby nie zezwalać na logowanie z nieznanych adresów IP.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Nieudana próba|Nieudane próby}} zalogowania się na {{GRAMMAR:B.lp|{{SITENAME}}}} jako $1",
 	"notification-loginnotify-login-success-email-subject": "Zalogowano się na {{GRAMMAR:B.lp|{{SITENAME}}}} jako $1 z urządzenia, które nie było ostatnio do tego celu używane",
 	"notification-header-login-success": "Ktoś (prawdopodobnie Ty) ostatnio zalogował się na Twoje konto z nowego urządzenia. Jeżeli to był{{GENDER:$1|e|a}}ś Ty, możesz zignorować tę wiadomość. Jeżeli to nie Ty, zalecana jest zmiana hasła i przejrzenie aktywności na koncie.",

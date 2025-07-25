@@ -7,14 +7,17 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
+use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\Fragments\PFragment;
 use Wikimedia\Parsoid\Logger\ParsoidLogger;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -35,37 +38,26 @@ use Wikimedia\Parsoid\Wt2Html\TreeBuilder\RemexPipeline;
  * and provides certain other services.
  */
 class Env {
+	private SiteConfig $siteConfig;
+	private PageConfig $pageConfig;
+	private DataAccess $dataAccess;
+	private ContentMetadataCollector $metadata;
 
-	/** @var SiteConfig */
-	private $siteConfig;
-
-	/** @var PageConfig */
-	private $pageConfig;
-
-	/** @var DataAccess */
-	private $dataAccess;
-
-	/** @var ContentMetadataCollector */
-	private $metadata;
-
-	/** @var TOCData Table of Contents metadata for the article */
-	private $tocData;
+	/** Table of Contents metadata for the article */
+	private TOCData $tocData;
 
 	/**
-	 * The top-level frame for this conversion.  This largely wraps the
-	 * PageConfig.
-	 *
-	 * In the future we may replace PageConfig with the Frame, and add
-	 * a
-	 * @var Frame
+	 * The top-level frame for this conversion.
+	 * This largely wraps the PageConfig.
+	 * In the future we may replace PageConfig with the Frame
 	 */
-	public $topFrame;
+	public Frame $topFrame;
 	// XXX In the future, perhaps replace PageConfig with the Frame, and
-	// add $this->currentFrame (relocated from TokenTransformManager) if/when
+	// add $this->currentFrame (relocated from TokenHandlerPipeline) if/when
 	// we've removed async parsing.
 
 	/**
-	 * @var bool Are we using native template expansion?
+	 * Are we using native template expansion?
 	 *
 	 * Parsoid implements native template expansion, which is currently
 	 * only used during parser tests; in production, template expansion
@@ -74,176 +66,126 @@ class Env {
 	 * FIXME: Hopefully this distinction can be removed when we're entirely
 	 * in PHP land.
 	 */
-	private $nativeTemplateExpansion;
+	private bool $nativeTemplateExpansion;
 
 	/** @var array<string,int> */
-	private $wt2htmlUsage = [];
+	private array $wt2htmlUsage = [];
 
 	/** @var array<string,int> */
-	private $html2wtUsage = [];
-
-	/** @var bool */
-	private $profiling = false;
+	private array $html2wtUsage = [];
+	private bool $profiling = false;
 
 	/** @var array<Profile> */
-	private $profileStack = [];
+	private array $profileStack = [];
+	private bool $wrapSections;
 
-	/** @var bool */
-	private $wrapSections;
+	/** @var ('byte'|'ucs2'|'char') */
+	private string $requestOffsetType = 'byte';
 
-	/** @var string */
-	private $requestOffsetType = 'byte';
-
-	/** @var string */
-	private $currentOffsetType = 'byte';
-
-	/** @var bool */
-	private $skipLanguageConversionPass = false;
+	/** @var ('byte'|'ucs2'|'char') */
+	private string $currentOffsetType = 'byte';
+	private bool $skipLanguageConversionPass = false;
 
 	/** @var array<string,mixed> */
-	private $behaviorSwitches = [];
+	private array $behaviorSwitches = [];
 
 	/**
 	 * Maps fragment id to the fragment forest (array of Nodes).
 	 * @var array<string,DocumentFragment>
 	 */
-	private $fragmentMap = [];
+	private array $fragmentMap = [];
 
 	/**
-	 * @var int used to generate fragment ids as needed during parse
+	 * Maps pfragment id to a PFragment.
+	 * @var array<string,PFragment>
 	 */
-	private $fid = 1;
+	private array $pFragmentMap = [];
 
-	/** @var int used to generate uids as needed during this parse */
-	private $uid = 1;
+	/**
+	 * Used to generate fragment ids as needed during parse
+	 */
+	private int $fid = 1;
 
-	/** @var int used to generate annotation uids as needed during this parse */
-	private $annUid = 0;
+	/** Used to generate uids as needed during this parse */
+	private int $uid = 1;
 
-	/** @var array[] Lints recorded */
-	private $lints = [];
+	/** Used to generate annotation uids as needed during this parse */
+	private int $annUid = 0;
 
-	/** @var bool logLinterData */
-	public $logLinterData = false;
-
-	/** @var array linterOverrides */
-	private $linterOverrides = [];
-
-	/** @var bool[] */
-	private $traceFlags;
+	/** Lints recorded */
+	private array $lints = [];
+	public bool $logLinterData = false;
+	private array $linterOverrides = [];
 
 	/** @var bool[] */
-	private $dumpFlags;
+	private array $traceFlags;
 
 	/** @var bool[] */
-	private $debugFlags;
+	private array $dumpFlags;
 
-	/** @var ParsoidLogger */
-	private $parsoidLogger;
+	/** @var bool[] */
+	private array $debugFlags;
+	private ParsoidLogger $parsoidLogger;
 
 	/**
 	 * The default content version that Parsoid assumes it's serializing or
 	 * updating in the pb2pb endpoints
-	 *
-	 * @var string
 	 */
-	private $inputContentVersion;
+	private string $inputContentVersion;
 
 	/**
 	 * The default content version that Parsoid will generate.
-	 *
-	 * @var string
 	 */
-	private $outputContentVersion;
+	private string $outputContentVersion;
 
 	/**
 	 * If non-null, the language variant used for Parsoid HTML;
 	 * we convert to this if wt2html, or from this if html2wt.
-	 * @var ?Bcp47Code
 	 */
-	private $htmlVariantLanguage;
+	private ?Bcp47Code $htmlVariantLanguage;
 
 	/**
 	 * If non-null, the language variant to be used for wikitext.
 	 * If null, heuristics will be used to identify the original wikitext variant
 	 * in wt2html mode, and in html2wt mode new or edited HTML will be left unconverted.
-	 * @var ?Bcp47Code
 	 */
-	private $wtVariantLanguage;
-
-	/** @var ParserPipelineFactory */
-	private $pipelineFactory;
+	private ?Bcp47Code $wtVariantLanguage;
+	private ParserPipelineFactory $pipelineFactory;
 
 	/**
 	 * FIXME Used in DedupeStyles::dedupe()
-	 * @var array
 	 */
-	public $styleTagKeys = [];
-
-	/** @var bool */
-	public $pageBundle;
-
-	/** @var bool */
-	public $discardDataParsoid = false;
-
-	/** @var Document */
-	private $domDiff;
-
-	/** @var bool */
-	public $hasAnnotations;
+	public array $styleTagKeys = [];
 
 	/**
-	 * PORT-FIXME: public currently
-	 * Cache of wikitext source for a title
-	 * @var array
+	 * The DomPageBundle holding the JSON data for data-parsoid and data-mw
+	 * attributes, or `null` if these are to be encoded as inline HTML
+	 * attributes.
 	 */
-	public $pageCache = [];
+	public ?DomPageBundle $pageBundle = null;
+	private ?Document $domDiff = null;
+	public bool $hasAnnotations = false;
 
 	/**
-	 * PORT-FIXME: public currently
-	 * HTML Cache of expanded transclusions to support
-	 * reusing expansions from HTML of previous revision.
-	 * @var array
+	 * Cache of wikitext source for a title; only used for ParserTests.
 	 */
-	public $transclusionCache = [];
-
-	/**
-	 * PORT-FIXME: public currently
-	 * HTML Cache of expanded media wikiext to support
-	 * reusing expansions from HTML of previous revision.
-	 * @var array
-	 */
-	public $mediaCache = [];
-
-	/**
-	 * PORT-FIXME: public currently
-	 * HTML Cache of expanded extension tags to support
-	 * reusing expansions from HTML of previous revision.
-	 * @var array
-	 */
-	public $extensionCache = [];
+	public array $pageCache = [];
 
 	/**
 	 * The current top-level document. During wt2html, this will be the document
 	 * associated with the RemexPipeline. During html2wt, this will be the
 	 * input document, typically passed as a constructor option.
 	 *
-	 * @var Document
+	 * This document should be prepared and loaded; see
+	 * ContentUtils::createAndLoadDocument().
 	 */
-	public $topLevelDoc;
+	private Document $topLevelDoc;
 
 	/**
 	 * The RemexPipeline used during a wt2html operation.
-	 *
-	 * @var RemexPipeline|null
 	 */
-	private $remexPipeline;
-
-	/**
-	 * @var WikitextContentModelHandler
-	 */
-	private $wikitextContentModelHandler;
-
+	private ?RemexPipeline $remexPipeline;
+	private WikitextContentModelHandler $wikitextContentModelHandler;
 	private ?Title $cachedContextTitle = null;
 
 	/**
@@ -253,12 +195,12 @@ class Env {
 	 * @param ContentMetadataCollector $metadata
 	 * @param ?array $options
 	 *  - wrapSections: (bool) Whether `<section>` wrappers should be added.
-	 *  - pageBundle: (bool) Sets ids on nodes and stores data-* attributes in a JSON blob.
+	 *  - pageBundle: (bool) When true, sets ids on nodes and stores
+	 *      data-* attributes in a JSON blob in Env::$pageBundle
 	 *  - traceFlags: (array) Flags indicating which components need to be traced
 	 *  - dumpFlags: (bool[]) Dump flags
 	 *  - debugFlags: (bool[]) Debug flags
 	 *  - nativeTemplateExpansion: boolean
-	 *  - discardDataParsoid: boolean
 	 *  - offsetType: 'byte' (default), 'ucs2', 'char'
 	 *                See `Parsoid\Wt2Html\DOM\Processors\ConvertOffsets`.
 	 *  - logLinterData: (bool) Should we log linter data if linting is enabled?
@@ -276,8 +218,9 @@ class Env {
 	 *      wikitext variant in wt2html mode, and in html2wt mode new
 	 *      or edited HTML will be left unconverted.
 	 *  - logLevels: (string[]) Levels to log
-	 *  - topLevelDoc: (Document) Set explicitly when serializing otherwise
-	 *      it gets initialized for parsing.
+	 *  - topLevelDoc: Document Set explicitly
+	 *      when serializing otherwise it gets initialized for parsing.
+	 *      This should be a "prepared & loaded" document.
 	 */
 	public function __construct(
 		SiteConfig $siteConfig,
@@ -295,7 +238,6 @@ class Env {
 		$this->tocData = new TOCData();
 		$this->topFrame = new PageConfigFrame( $this, $pageConfig, $siteConfig );
 		$this->wrapSections = (bool)( $options['wrapSections'] ?? true );
-		$this->pageBundle = (bool)( $options['pageBundle'] ?? false );
 		$this->pipelineFactory = new ParserPipelineFactory( $this );
 		$defaultContentVersion = Parsoid::defaultHTMLVersion();
 		$this->inputContentVersion = $options['inputContentVersion'] ?? $defaultContentVersion;
@@ -321,7 +263,6 @@ class Env {
 				true, $this->siteConfig->getLogger()
 			) : null;
 		$this->nativeTemplateExpansion = !empty( $options['nativeTemplateExpansion'] );
-		$this->discardDataParsoid = !empty( $options['discardDataParsoid'] );
 		$this->requestOffsetType = $options['offsetType'] ?? 'byte';
 		$this->logLinterData = !empty( $options['logLinterData'] );
 		$this->linterOverrides = $options['linterOverrides'] ?? [];
@@ -338,6 +279,11 @@ class Env {
 			$this->profiling = true;
 		}
 		$this->setupTopLevelDoc( $options['topLevelDoc'] ?? null );
+		if ( $options['pageBundle'] ?? false ) {
+			$this->pageBundle = DomPageBundle::newEmpty(
+				$this->topLevelDoc
+			);
+		}
 		// NOTE:
 		// Don't try to do this in setupTopLevelDoc since it is called on existing Env objects
 		// in a couple of places. That then leads to a multiple-write to tocdata property on
@@ -545,7 +491,7 @@ class Env {
 	 * other formats when we output wt2html or input for html2wt.
 	 *
 	 * @see Parsoid\Wt2Html\DOM\Processors\ConvertOffsets
-	 * @return string 'byte', 'ucs2', or 'char'
+	 * @return ('byte'|'ucs2'|'char')
 	 */
 	public function getRequestOffsetType(): string {
 		return $this->requestOffsetType;
@@ -558,7 +504,7 @@ class Env {
 	 * `getRequestOffsetType`) yet.
 	 *
 	 * @see Parsoid\Wt2Html\DOM\Processors\ConvertOffsets
-	 * @return string 'byte', 'ucs2', or 'char'
+	 * @return ('byte'|'ucs2'|'char')
 	 */
 	public function getCurrentOffsetType(): string {
 		return $this->currentOffsetType;
@@ -567,7 +513,7 @@ class Env {
 	/**
 	 * Update the current offset type. Only
 	 * Parsoid\Wt2Html\DOM\Processors\ConvertOffsets should be doing this.
-	 * @param string $offsetType 'byte', 'ucs2', or 'char'
+	 * @param ('byte'|'ucs2'|'char') $offsetType 'byte', 'ucs2', or 'char'
 	 */
 	public function setCurrentOffsetType( string $offsetType ) {
 		$this->currentOffsetType = $offsetType;
@@ -652,23 +598,6 @@ class Env {
 	}
 
 	/**
-	 * Convert a Title to a string
-	 * @param Title $title
-	 * @param bool $ignoreFragment
-	 * @return string
-	 */
-	private function titleToString( Title $title, bool $ignoreFragment = false ): string {
-		$ret = $title->getPrefixedDBKey();
-		if ( !$ignoreFragment ) {
-			$fragment = $title->getFragment();
-			if ( $fragment !== '' ) {
-				$ret .= '#' . $fragment;
-			}
-		}
-		return $ret;
-	}
-
-	/**
 	 * Get normalized title key for a title string.
 	 *
 	 * @param string $str Should be in url-decoded format.
@@ -683,7 +612,9 @@ class Env {
 		if ( !$title ) {
 			return null;
 		}
-		return $this->titleToString( $title, $ignoreFragment );
+		return $ignoreFragment ?
+			$title->getPrefixedDBKey() :
+			$title->getFullDBKey();
 	}
 
 	/**
@@ -737,13 +668,16 @@ class Env {
 	}
 
 	/**
-	 * Make a link to a Title
+	 * Make a link to a local Title
 	 * @param Title $title
 	 * @return string
 	 */
 	public function makeLink( Title $title ): string {
+		// T380676: This method *should* be used only for local titles,
+		// (ie $title->getInterwiki() should be '') but apparently we
+		// are using it for interwiki/interlanguage links as well.
 		return $this->getSiteConfig()->relativeLinkPrefix() . Sanitizer::sanitizeTitleURI(
-			$this->titleToString( $title ),
+			$title->getFullDBKey(),
 			false
 		);
 	}
@@ -771,14 +705,6 @@ class Env {
 	}
 
 	/**
-	 * Generate a new object id
-	 * @return string
-	 */
-	public function newObjectId(): string {
-		return "mwt" . $this->generateUID();
-	}
-
-	/**
 	 * Generate a new annotation uid
 	 * @return int
 	 */
@@ -799,7 +725,7 @@ class Env {
 	 * @return string
 	 */
 	public function newAboutId(): string {
-		return "#" . $this->newObjectId();
+		return '#mwt' . $this->generateUID();
 	}
 
 	/**
@@ -830,17 +756,49 @@ class Env {
 	 * When an environment is constructed, we initialize a document (and
 	 * RemexPipeline) to be used throughout the parse.
 	 *
-	 * @param ?Document $topLevelDoc
+	 * @param ?Document $topLevelDoc if non-null,
+	 *  the document should be prepared and loaded.
 	 */
-	public function setupTopLevelDoc( ?Document $topLevelDoc = null ) {
+	public function setupTopLevelDoc( ?Document $topLevelDoc = null ): void {
 		if ( $topLevelDoc ) {
 			$this->remexPipeline = null;
+			// This is a prepared & loaded Document.
+			Assert::invariant(
+				DOMDataUtils::isPreparedAndLoaded( $topLevelDoc ),
+				"toplevelDoc should be prepared and loaded already"
+			);
 			$this->topLevelDoc = $topLevelDoc;
 		} else {
 			$this->remexPipeline = new RemexPipeline( $this );
 			$this->topLevelDoc = $this->remexPipeline->doc;
+			// Prepare and load.
+			// (Loading should be easy since the doc is expected to be empty.)
+			$options = [
+				'validateXMLNames' => true,
+				 // Don't mark the <body> tag as new!
+				'markNew' => false,
+			];
+			DOMDataUtils::prepareDoc( $this->topLevelDoc );
+			DOMDataUtils::visitAndLoadDataAttribs(
+				DOMCompat::getBody( $this->topLevelDoc ), $options
+			);
+			// Mark the document as loaded so we can try to catch errors which
+			// might try to reload this again later.
+			DOMDataUtils::getBag( $this->topLevelDoc )->loaded = true;
 		}
-		DOMDataUtils::prepareDoc( $this->topLevelDoc );
+	}
+
+	/**
+	 * Return the current top-level document. During wt2html, this
+	 * will be the document associated with the RemexPipeline. During
+	 * html2wt, this will be the input document, typically passed as a
+	 * constructor option.
+	 *
+	 * This document will be prepared and loaded; see
+	 * ContentUtils::createAndLoadDocument().
+	 */
+	public function getTopLevelDoc(): Document {
+		return $this->topLevelDoc;
 	}
 
 	public function fetchRemexPipeline( bool $toFragment ): RemexPipeline {
@@ -901,6 +859,10 @@ class Env {
 	public function setDOMFragment(
 		string $id, DocumentFragment $forest
 	): void {
+		Assert::invariant(
+			$forest->ownerDocument === $this->topLevelDoc,
+			"fragment should belong to the top level document"
+		);
 		$this->fragmentMap[$id] = $forest;
 	}
 
@@ -910,6 +872,28 @@ class Env {
 			!$domFragment->hasChildNodes(), 'Fragment should be empty.'
 		);
 		unset( $this->fragmentMap[$id] );
+	}
+
+	public function getPFragment( string $id ): PFragment {
+		return $this->pFragmentMap[$id];
+	}
+
+	/** @param array<string,PFragment> $mapping */
+	public function addToPFragmentMap( array $mapping ): void {
+		$this->pFragmentMap += $mapping;
+	}
+
+	/**
+	 * @internal
+	 * Serialize pfragment map to string for debugging dumps
+	 */
+	public function pFragmentMapToString(): string {
+		$codec = DOMDataUtils::getCodec( $this->getTopLevelDoc() );
+		$buf = '';
+		foreach ( $this->pFragmentMap as $k => $v ) {
+			$buf .= "$k = " . $codec->toJsonString( $v, PFragment::hint() );
+		}
+		return $buf;
 	}
 
 	/**
@@ -965,6 +949,17 @@ class Env {
 	 */
 	public function log( string $prefix, ...$args ): void {
 		$this->parsoidLogger->log( $prefix, ...$args );
+	}
+
+	/**
+	 * Shortcut helper that also allows early exit if tracing is not enabled.
+	 * @param string $prefix
+	 * @param mixed ...$args
+	 */
+	public function trace( string $prefix, ...$args ): void {
+		if ( $this->traceFlags ) {
+			$this->parsoidLogger->log( $prefix ? "trace/$prefix" : "trace", ...$args );
+		}
 	}
 
 	/**
@@ -1166,7 +1161,7 @@ class Env {
 	 * Whether to enable linter Backend.
 	 * Consults the allow list and block list from ::getLinterConfig().
 	 *
-	 * @param null $type If $type is null or omitted, returns true if *any* linting
+	 * @param string|null $type If $type is null or omitted, returns true if *any* linting
 	 *   type is enabled; otherwise returns true only if the specified
 	 *   linting type is enabled.
 	 * @return bool If $type is null or omitted, returns true if *any* linting

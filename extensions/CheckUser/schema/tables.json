@@ -1,0 +1,559 @@
+[
+	{
+		"name": "cu_changes",
+		"columns": [
+			{
+				"name": "cuc_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_namespace",
+				"comment": "When pages are renamed, their RC entries do _not_ change.",
+				"type": "integer",
+				"options": { "notnull": true, "default": 0 }
+			},
+			{
+				"name": "cuc_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_actor",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_comment_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_minor",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "cuc_page_id",
+				"comment": "Key to page_id (was cur_id prior to 1.5). This will keep links working after moves while retaining the at-the-time name in the changes list.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_this_oldid",
+				"comment": "rev_id of the given revision",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_last_oldid",
+				"comment": "rev_id of the prior revision, for generating diff links.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_type",
+				"comment": "RecentChange type identifiers: RC_EDIT, RC_NEW or RC_LOG",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "unsigned": true, "length": 3, "default": 0 }
+			},
+			{
+				"name": "cuc_timestamp",
+				"comment": "Event timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cuc_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_ip_hex",
+				"comment": "IP address as hexidecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_xff_hex",
+				"comment": "XFF header, last IP, as hexidecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this change.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cuc_ip_hex_time",
+				"columns": [ "cuc_ip_hex", "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_xff_hex_time",
+				"columns": [ "cuc_xff_hex", "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_timestamp",
+				"columns": [ "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_actor_ip_time",
+				"columns": [ "cuc_actor", "cuc_ip", "cuc_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cuc_id" ]
+	},
+	{
+		"name": "cu_log_event",
+		"comment": "Table for log events that have an associated log ID in the logging table.",
+		"columns": [
+			{
+				"name": "cule_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cule_log_id",
+				"comment": "The log_id to the logging table entry associated with the current entry.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cule_actor",
+				"comment": "Actor ID. Same as the actor ID in the associated logging row. Included here for indexing purposes.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cule_timestamp",
+				"comment": "Event timestamp. Same as the timestamp in the associated logging row. Included here for indexing purposes.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cule_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cule_ip_hex",
+				"comment": "IP address as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cule_xff_hex",
+				"comment": "XFF header, last IP, as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this log event.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cule_ip_hex_time",
+				"columns": [ "cule_ip_hex", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_xff_hex_time",
+				"columns": [ "cule_xff_hex", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_timestamp",
+				"columns": [ "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_actor_ip_time",
+				"columns": [ "cule_actor", "cule_ip", "cule_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cule_id" ]
+	},
+	{
+		"name": "cu_private_event",
+		"comment": "Table for events that are not logged in the logging table, and thus do not have a log ID (such as logins).",
+		"columns": [
+			{
+				"name": "cupe_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cupe_namespace",
+				"comment": "Key to the namespace of the page affected",
+				"type": "integer",
+				"options": { "notnull": true, "default": 0 }
+			},
+			{
+				"name": "cupe_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_actor",
+				"type": "bigint",
+				"options": { "notnull": false, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_log_type",
+				"comment": "Very similar to logging table's log_type.",
+				"type": "binary",
+				"options": { "notnull": true, "default": "", "length": 32 }
+			},
+			{
+				"name": "cupe_log_action",
+				"comment": "Very similar to logging table's log_action.",
+				"type": "binary",
+				"options": { "notnull": true, "default": "", "length": 32 }
+			},
+			{
+				"name": "cupe_params",
+				"comment": "Very similar to logging table's log_params. LF separated list (old system) or serialized PHP array (new system).",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cupe_comment_id",
+				"comment": "Very similar to logging table's log_comment_id. References a comment ID in the comment table.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_page",
+				"comment": "Key to page_id.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_timestamp",
+				"comment": "Event timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cupe_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_ip_hex",
+				"comment": "IP address as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_xff_hex",
+				"comment": "XFF header, last IP, as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this log event.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_private",
+				"comment": "Private Data",
+				"type": "blob",
+				"options": { "notnull": false, "length": 16777215 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cupe_ip_hex_time",
+				"columns": [ "cupe_ip_hex", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_xff_hex_time",
+				"columns": [ "cupe_xff_hex", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_timestamp",
+				"columns": [ "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_actor_ip_time",
+				"columns": [ "cupe_actor", "cupe_ip", "cupe_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cupe_id" ]
+	},
+	{
+		"name": "cu_useragent",
+		"comment": "The user agent string header provided by the browser for requests is stored here for de-duplication. There MAY be rows with the same user agent string.",
+		"columns": [
+			{
+				"name": "cuua_id",
+				"comment": "Unique ID to identify each user agent",
+				"type": "bigint",
+				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "cuua_text",
+				"comment": "The user agent string",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cuua_text",
+				"columns": [ "cuua_text" ],
+				"unique": false,
+				"comment": "Used to find rows with a given user agent string when attempting to insert a new row to one of cu_changes, cu_log_event, cu_private_event, or cu_private_event_no_actor."
+			}
+		],
+		"pk": [ "cuua_id" ]
+	},
+	{
+		"name": "cu_useragent_clienthints",
+		"columns": [
+			{
+				"name": "uach_id",
+				"comment": "Primary key",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "uach_name",
+				"comment": "Name of the user-agent client hint. See https://wicg.github.io/ua-client-hints/#http-ua-hints for a list.",
+				"type": "string",
+				"options": { "notnull": true, "length": 32 }
+			},
+			{
+				"name": "uach_value",
+				"comment": "Value of the user-agent client hint, see https://wicg.github.io/ua-client-hints/#http-ua-hints for a list of client hint names.",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "uach_name_value",
+				"columns": [ "uach_name", "uach_value" ],
+				"unique": true
+			}
+		],
+		"pk": [ "uach_id" ]
+	},
+	{
+		"name": "cu_useragent_clienthints_map",
+		"columns": [
+			{
+				"name": "uachm_uach_id",
+				"comment": "Foreign key to cu_useragent_clienthints uach_id.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "uachm_reference_id",
+				"comment": "Foreign key to one of cu_changes, cu_log_event, or cu_private_event. Consult uachm_reference_type to determine which table this row relates to.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "uachm_reference_type",
+				"comment": "Integer mapping identifier specifying which table the data in this row relates to. See UserAgentClientHintsManager for the mapping.",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			}
+		],
+		"indexes": [
+			{ "name": "uachm_reference_id", "columns": [ "uachm_reference_id" ], "unique": false }
+		],
+		"pk": [ "uachm_uach_id", "uachm_reference_type", "uachm_reference_id" ]
+	},
+	{
+		"name": "cu_log",
+		"columns": [
+			{
+				"name": "cul_id",
+				"comment": "Unique identifier",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_timestamp",
+				"comment": "Timestamp of CheckUser action",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cul_actor",
+				"comment": "User who performed the action",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "cul_reason_id",
+				"comment": "Reason for the check stored as a comment_id.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "cul_reason_plaintext_id",
+				"comment": "Reason for the check with wikitext removed stored as a comment_id.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "cul_result_id",
+				"comment": "Comment summarising the result of the check associated with this log entry.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_result_plaintext_id",
+				"comment": "Plaintext version of the comment summarising the result of the check associated with this log entry.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_type",
+				"comment": "String indicating the type of query, may be: 'useredits', 'userips', 'ipedits', 'ipusers', 'ipedits-xff', 'ipusers-xff' or 'investigate' if the check was performed from Special:Investigate",
+				"type": "binary",
+				"options": { "notnull": true, "length": 30 }
+			},
+			{
+				"name": "cul_target_id",
+				"comment": " Integer target, interpretation depends on cul_type For username targets, this is the user_id",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cul_target_text",
+				"comment": "Text target, interpretation depends on cul_type",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cul_target_hex",
+				"comment": "If the target was an IP address, this contains the hexadecimal form of the IP",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_start",
+				"comment": "If the target was an IP range, this field contain the start, in hex form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_end",
+				"comment": "If the target was an IP range, this field contain the end, in hex form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cul_actor_time",
+				"columns": [ "cul_actor", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_type_target",
+				"columns": [ "cul_type", "cul_target_id", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_target_hex",
+				"columns": [ "cul_target_hex", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_range_start",
+				"columns": [ "cul_range_start", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_timestamp",
+				"columns": [ "cul_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cul_id" ]
+	}
+]

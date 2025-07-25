@@ -25,7 +25,7 @@
 	"echo-pref-email-frequency-daily": "ملخص اشعارات يوميه",
 	"echo-pref-email-frequency-weekly": "ملخص اشعارات كل اسبوع",
 	"echo-pref-cross-wiki-notifications": "طلع الاشعارات من ويكيات ثانيه",
-	"echo-pref-notifications-blacklist": "لا تطلع اشعارات من ذول النفرات. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute افتهم زياده])",
+	"echo-pref-notifications-blacklist": "لا تطلع اشعارات من ذول الناس\n([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute افتهم زياده])",
 	"echo-pref-dont-email-read-notifications": "لا تخلي الاشعارات القريتهه بالملخصات عالايميل",
 	"echo-learn-more": "افتهم زياده",
 	"echo-new-messages": "عدك رساله جديده بصفحه الكلام",

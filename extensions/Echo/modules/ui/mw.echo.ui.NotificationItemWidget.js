@@ -1,449 +1,447 @@
-( function () {
-	/* global moment:false */
-	/**
-	 * A base widget for displaying notification items.
-	 *
-	 * @class
-	 * @abstract
-	 * @extends OO.ui.Widget
-	 *
-	 * @constructor
-	 * @param {mw.echo.Controller} controller Echo controller
-	 * @param {mw.echo.dm.NotificationItem} model Notification item model
-	 * @param {Object} [config] Configuration options
-	 * @param {jQuery} [config.$overlay] A jQuery element functioning as an overlay
-	 *  for popups.
-	 * @param {boolean} [config.bundle=false] This notification item is part of a bundle.
-	 */
-	mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( controller, model, config ) {
-		config = config || {};
+/* global moment:false */
+/**
+ * A base widget for displaying notification items.
+ *
+ * @class
+ * @abstract
+ * @extends OO.ui.Widget
+ *
+ * @constructor
+ * @param {mw.echo.Controller} controller Echo controller
+ * @param {mw.echo.dm.NotificationItem} model Notification item model
+ * @param {Object} [config={}]
+ * @param {jQuery} [config.$overlay] A jQuery element functioning as an overlay
+ *  for popups.
+ * @param {boolean} [config.bundle=false] This notification item is part of a bundle.
+ */
+mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( controller, model, config ) {
+	config = config || {};
 
-		// Parent constructor
-		mw.echo.ui.NotificationItemWidget.super.call( this, Object.assign( { data: model.getId() }, config ) );
+	// Parent constructor
+	mw.echo.ui.NotificationItemWidget.super.call( this, Object.assign( { data: model.getId() }, config ) );
 
-		this.controller = controller;
-		this.model = model;
+	this.controller = controller;
+	this.model = model;
 
-		this.$overlay = config.$overlay || this.$element;
-		this.bundle = !!config.bundle;
+	this.$overlay = config.$overlay || this.$element;
+	this.bundle = !!config.bundle;
 
-		this.$content = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content' );
-		this.$actions = $( '<div>' )
-			.addClass( 'mw-echo-ui-notificationItemWidget-content-actions' );
+	this.$content = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content' );
+	this.$actions = $( '<div>' )
+		.addClass( 'mw-echo-ui-notificationItemWidget-content-actions' );
 
-		// Mark as read
-		this.markAsReadButton = new mw.echo.ui.ToggleReadCircleButtonWidget( {
-			framed: false,
-			classes: [ 'mw-echo-ui-notificationItemWidget-markAsReadButton' ],
-			markAsRead: !this.model.isRead()
-		} );
+	// Mark as read
+	this.markAsReadButton = new mw.echo.ui.ToggleReadCircleButtonWidget( {
+		framed: false,
+		classes: [ 'mw-echo-ui-notificationItemWidget-markAsReadButton' ],
+		markAsRead: !this.model.isRead()
+	} );
 
-		let $icon;
-		const iconUrl = this.model.getIconUrl();
-		// Icon
-		if ( iconUrl ) {
-			// Only invert non colored images
-			/* eslint-disable es-x/no-array-prototype-includes */
-			const invertIconClass =
-				iconUrl.includes( 'progressive' ) ||
-				iconUrl.includes( 'constructive' ) ||
-				iconUrl.includes( 'failure' ) ? '' : 'skin-invert';
-			/* eslint-disable-next-line mediawiki/class-doc */
-			$icon = $( '<div>' )
-				.addClass( `mw-echo-ui-notificationItemWidget-icon ${ invertIconClass }` )
-				.append( $( '<img>' ).attr( {
-					src: this.model.getIconUrl(),
-					role: 'presentation',
-					alt: ' '
-				} ) );
-		}
+	let $icon;
+	const iconUrl = this.model.getIconUrl();
+	// Icon
+	if ( iconUrl ) {
+		// Only invert non colored images
 
-		const $message = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content-message' );
-		// Content
+		const invertIconClass =
+			iconUrl.includes( 'progressive' ) ||
+			iconUrl.includes( 'constructive' ) ||
+			iconUrl.includes( 'failure' ) ? '' : 'skin-invert';
+		/* eslint-disable-next-line mediawiki/class-doc */
+		$icon = $( '<div>' )
+			.addClass( `mw-echo-ui-notificationItemWidget-icon ${ invertIconClass }` )
+			.append( $( '<img>' ).attr( {
+				src: this.model.getIconUrl(),
+				role: 'presentation',
+				alt: ' '
+			} ) );
+	}
+
+	const $message = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content-message' );
+	// Content
+	$message.append(
+		$( '<div>' )
+			.addClass( 'mw-echo-ui-notificationItemWidget-content-message-header-wrapper' )
+			.append(
+				$( '<div>' )
+					.addClass( 'mw-echo-ui-notificationItemWidget-content-message-header' )
+					.append( this.model.getContentHeader() )
+			)
+	);
+	if ( !this.bundle && this.model.getContentBody() ) {
 		$message.append(
 			$( '<div>' )
-				.addClass( 'mw-echo-ui-notificationItemWidget-content-message-header-wrapper' )
+				.addClass( 'mw-echo-ui-notificationItemWidget-content-message-body' )
+				.append( this.model.getContentBody() )
+				// dir=auto has a similar effect to wrapping the content in <bdi>, but
+				// makes text-overflow: ellipsis; behave less strangely
+				.attr( 'dir', 'auto' )
+		);
+	}
+
+	// Actions menu
+	this.actionsButtonSelectWidget = new OO.ui.ButtonSelectWidget( {
+		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-buttons' ],
+		tabIndex: -1
+	} );
+
+	// Popup menu
+	this.menuPopupButtonWidget = new mw.echo.ui.ActionMenuPopupWidget( {
+		framed: false,
+		icon: 'ellipsis',
+		$overlay: this.$overlay,
+		horizontalPosition: this.bundle ? 'end' : 'auto',
+		title: mw.msg( 'echo-notification-more-options-tooltip' ),
+		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-menu' ]
+	} );
+
+	// Timestamp
+	// We want to use extra-short timestamp strings; we change the locale
+	// to our echo-defined one and use that instead of the normal moment locale
+	const echoMoment = moment.utc( this.model.getTimestamp() );
+	echoMoment.locale( 'echo-shortRelativeTime' );
+	echoMoment.local();
+
+	this.timestampWidget = new OO.ui.LabelWidget( {
+		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-timestamp' ],
+		// Get the time 'fromNow' without the suffix 'ago'
+		label: echoMoment.fromNow( true )
+	} );
+
+	// Build the actions line
+	if ( this.bundle ) {
+		// In a bundled item, the timestamp should go before the menu
+		this.$actions.append(
+			$( '<div>' )
+				// We are wrapping the actions in a 'row' div so that the
+				// internal pieces are also a table layout
+				.addClass( 'mw-echo-ui-notificationItemWidget-content-actions-row' )
 				.append(
-					$( '<div>' )
-						.addClass( 'mw-echo-ui-notificationItemWidget-content-message-header' )
-						.append( this.model.getContentHeader() )
+					this.actionsButtonSelectWidget.$element,
+					this.timestampWidget.$element,
+					this.menuPopupButtonWidget.$element
 				)
 		);
-		if ( !this.bundle && this.model.getContentBody() ) {
-			$message.append(
-				$( '<div>' )
-					.addClass( 'mw-echo-ui-notificationItemWidget-content-message-body' )
-					.append( this.model.getContentBody() )
-					// dir=auto has a similar effect to wrapping the content in <bdi>, but
-					// makes text-overflow: ellipsis; behave less strangely
-					.attr( 'dir', 'auto' )
-			);
-		}
+	} else {
+		this.$actions.append(
+			this.actionsButtonSelectWidget.$element,
+			this.menuPopupButtonWidget.$element,
+			this.timestampWidget.$element
+		);
+	}
 
-		// Actions menu
-		this.actionsButtonSelectWidget = new OO.ui.ButtonSelectWidget( {
-			classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-buttons' ],
-			tabIndex: -1
-		} );
+	// Actions
+	let outsideMenuItemCounter = 0;
+	const secondaryUrls = this.model.getSecondaryUrls();
+	for ( let i = 0; i < secondaryUrls.length; i++ ) {
+		const urlObj = secondaryUrls[ i ];
 
-		// Popup menu
-		this.menuPopupButtonWidget = new mw.echo.ui.ActionMenuPopupWidget( {
-			framed: false,
-			icon: 'ellipsis',
-			$overlay: this.$overlay,
-			horizontalPosition: this.bundle ? 'end' : 'auto',
-			title: mw.msg( 'echo-notification-more-options-tooltip' ),
-			classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-menu' ]
-		} );
-
-		// Timestamp
-		// We want to use extra-short timestamp strings; we change the locale
-		// to our echo-defined one and use that instead of the normal moment locale
-		const echoMoment = moment.utc( this.model.getTimestamp() );
-		echoMoment.locale( 'echo-shortRelativeTime' );
-		echoMoment.local();
-
-		this.timestampWidget = new OO.ui.LabelWidget( {
-			classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-timestamp' ],
-			// Get the time 'fromNow' without the suffix 'ago'
-			label: echoMoment.fromNow( true )
-		} );
-
-		// Build the actions line
-		if ( this.bundle ) {
-			// In a bundled item, the timestamp should go before the menu
-			this.$actions.append(
-				$( '<div>' )
-					// We are wrapping the actions in a 'row' div so that the
-					// internal pieces are also a table layout
-					.addClass( 'mw-echo-ui-notificationItemWidget-content-actions-row' )
-					.append(
-						this.actionsButtonSelectWidget.$element,
-						this.timestampWidget.$element,
-						this.menuPopupButtonWidget.$element
-					)
-			);
-		} else {
-			this.$actions.append(
-				this.actionsButtonSelectWidget.$element,
-				this.menuPopupButtonWidget.$element,
-				this.timestampWidget.$element
-			);
-		}
-
-		// Actions
-		let outsideMenuItemCounter = 0;
-		const secondaryUrls = this.model.getSecondaryUrls();
-		for ( let i = 0; i < secondaryUrls.length; i++ ) {
-			const urlObj = secondaryUrls[ i ];
-
-			// Items are placed outside the dotdotdot menu if they are
-			// prioritized explicitly, *except* for items inside a bundle
-			// (where all actions are inside the menu) or there are more than
-			// two prioritized actions (all others go into the menu)
-			const isOutsideMenu = !this.bundle &&
+		// Items are placed outside the dotdotdot menu if they are
+		// prioritized explicitly, *except* for items inside a bundle
+		// (where all actions are inside the menu) or there are more than
+		// two prioritized actions (all others go into the menu)
+		const isOutsideMenu = !this.bundle &&
+			(
 				(
-					(
-						// Make sure we don't have too many prioritized items
-						urlObj.prioritized &&
-						outsideMenuItemCounter < mw.echo.config.maxPrioritizedActions
-					) ||
-					// If the number of total items are equal to or less than the
-					// maximum allowed, they all go outside the menu
-					// mw.echo.config.maxPrioritizedActions is 2 on desktop and 1 on mobile.
-					secondaryUrls.length <= mw.echo.config.maxPrioritizedActions
-				);
-
-			const linkButton = new mw.echo.ui.MenuItemWidget( {
-				type: urlObj.type,
-				actionData: urlObj.data,
-				icon: urlObj.icon || 'next',
-				label: urlObj.label,
-				tooltip: urlObj.tooltip,
-				description: urlObj.description,
-				url: urlObj.url,
-				prioritized: isOutsideMenu
-			} );
-
-			// Limit to 2 items outside the menu
-			if ( isOutsideMenu ) {
-				this.actionsButtonSelectWidget.addItems( [ linkButton ] );
-				this.actionsButtonSelectWidget.setTabIndex( 0 );
-				outsideMenuItemCounter++;
-			} else {
-				this.menuPopupButtonWidget.getMenu().addItems( [ linkButton ] );
-			}
-		}
-
-		if ( this.bundle ) {
-			// In a bundle, we have table layout, so the icon is
-			// inserted into the content, and the 'mark as read'
-			// button is not floating, and should be at the end
-			this.$content.append(
-				$icon,
-				$message,
-				this.$actions,
-				this.markAsReadButton.$element
+					// Make sure we don't have too many prioritized items
+					urlObj.prioritized &&
+					outsideMenuItemCounter < mw.echo.config.maxPrioritizedActions
+				) ||
+				// If the number of total items are equal to or less than the
+				// maximum allowed, they all go outside the menu
+				// mw.echo.config.maxPrioritizedActions is 2 on desktop and 1 on mobile.
+				secondaryUrls.length <= mw.echo.config.maxPrioritizedActions
 			);
-			this.$element.append( this.$content );
+
+		const linkButton = new mw.echo.ui.MenuItemWidget( {
+			type: urlObj.type,
+			actionData: urlObj.data,
+			icon: urlObj.icon || 'next',
+			label: urlObj.label,
+			tooltip: urlObj.tooltip,
+			description: urlObj.description,
+			url: urlObj.url,
+			prioritized: isOutsideMenu
+		} );
+
+		// Limit to 2 items outside the menu
+		if ( isOutsideMenu ) {
+			this.actionsButtonSelectWidget.addItems( [ linkButton ] );
+			this.actionsButtonSelectWidget.setTabIndex( 0 );
+			outsideMenuItemCounter++;
 		} else {
-			this.$content.append(
-				this.markAsReadButton.$element,
-				$message,
-				this.$actions
-			);
-			this.$element.append( $icon, this.$content );
+			this.menuPopupButtonWidget.getMenu().addItems( [ linkButton ] );
 		}
+	}
 
-		// Events
-		this.actionsButtonSelectWidget.connect( this, { choose: 'onPopupButtonWidgetChoose' } );
-		this.menuPopupButtonWidget.getMenu().connect( this, { choose: 'onPopupButtonWidgetChoose' } );
-		this.markAsReadButton.connect( this, { click: 'onMarkAsReadButtonClick' } );
+	if ( this.bundle ) {
+		// In a bundle, we have table layout, so the icon is
+		// inserted into the content, and the 'mark as read'
+		// button is not floating, and should be at the end
+		this.$content.append(
+			$icon,
+			$message,
+			this.$actions,
+			this.markAsReadButton.$element
+		);
+		this.$element.append( this.$content );
+	} else {
+		this.$content.append(
+			this.markAsReadButton.$element,
+			$message,
+			this.$actions
+		);
+		this.$element.append( $icon, this.$content );
+	}
 
+	// Events
+	this.actionsButtonSelectWidget.connect( this, { choose: 'onPopupButtonWidgetChoose' } );
+	this.menuPopupButtonWidget.getMenu().connect( this, { choose: 'onPopupButtonWidgetChoose' } );
+	this.markAsReadButton.connect( this, { click: 'onMarkAsReadButtonClick' } );
+
+	this.$element
+		.addClass( 'mw-echo-ui-notificationItemWidget' )
+		.toggleClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen', !this.model.isSeen() && !this.bundle )
+		.toggleClass( 'mw-echo-ui-notificationItemWidget-bundled', this.bundle );
+
+	if ( this.model.getPrimaryUrl() ) {
 		this.$element
-			.addClass( 'mw-echo-ui-notificationItemWidget' )
-			.toggleClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen', !this.model.isSeen() && !this.bundle )
-			.toggleClass( 'mw-echo-ui-notificationItemWidget-bundled', this.bundle );
+			.attr( 'href', this.model.getPrimaryUrl() )
+			.on( 'click', this.onPrimaryLinkClick.bind( this ) )
+			.on( 'auxclick', this.onPrimaryLinkAuxclick.bind( this ) );
+	}
+};
 
-		if ( this.model.getPrimaryUrl() ) {
-			this.$element
-				.attr( 'href', this.model.getPrimaryUrl() )
-				.on( 'click', this.onPrimaryLinkClick.bind( this ) )
-				.on( 'auxclick', this.onPrimaryLinkAuxclick.bind( this ) );
-		}
-	};
+OO.inheritClass( mw.echo.ui.NotificationItemWidget, OO.ui.Widget );
 
-	OO.inheritClass( mw.echo.ui.NotificationItemWidget, OO.ui.Widget );
+// Make the whole item a link to get native link behaviour
+mw.echo.ui.NotificationItemWidget.static.tagName = 'a';
 
-	// Make the whole item a link to get native link behaviour
-	mw.echo.ui.NotificationItemWidget.static.tagName = 'a';
+/**
+ * Respond to primary link click.
+ * Override this in the descendents.
+ *
+ * @return {boolean} true
+ */
+mw.echo.ui.NotificationItemWidget.prototype.onPrimaryLinkClick = function () {
+	return true;
+};
 
-	/**
-	 * Respond to primary link click.
-	 * Override this in the descendents.
-	 *
-	 * @return {boolean} true
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.onPrimaryLinkClick = function () {
-		return true;
-	};
-
-	/**
-	 * Respond to primary link middle-click by immediately marking as read,
-	 * then let the browser open the link in a new tab as normal.
-	 * Opening the link would also mark as read, but this way the user gets immediate feedback.
-	 *
-	 * @param {Event} event
-	 *
-	 * @return {boolean} true
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.onPrimaryLinkAuxclick = function ( event ) {
-		if ( event.button === 1 ) {
-			this.$element.removeClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen' );
-			this.markRead( true );
-		}
-		// Don't prevent default action, let the browser take care of opening a new tab.
-		return true;
-	};
-
-	/**
-	 * Manage a click on a dynamic secondary link.
-	 * We can't know what the link intends us to do in the API, so we trust the 'apiParams'
-	 * to tell the controller. When the link is clicked, we will pass the information on
-	 * to the controller, which will manage whatever promise and action is needed.
-	 *
-	 * NOTE: The messages are parsed as HTML. If user-input is expected
-	 * please make sure to properly escape it.
-	 *
-	 * @param {OO.ui.ButtonOptionWidget} item The selected item
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.onPopupButtonWidgetChoose = function ( item ) {
-		if ( !( item instanceof mw.echo.ui.MenuItemWidget ) ) {
-			// Other kinds of items may be added by subclasses
-			return;
-		}
-
-		const actionData = item && item.getActionData(),
-			messages = item && item.getConfirmationMessages();
-
-		// Send to controller
-		item.pushPending();
-		this.controller.performDynamicAction( actionData, this.getModel().getSource() )
-			.then( () => {
-				const $title = $( '<p>' )
-						.addClass( 'mw-echo-ui-notificationItemWidget-notify-title' )
-						.append( $.parseHTML( messages.title ) ),
-					$description = $( '<p>' )
-						.addClass( 'mw-echo-ui-notificationItemWidget-notify-description' )
-						.append( $.parseHTML( messages.description ) );
-
-				// Get rid of the button
-				if ( item.isPrioritized() ) {
-					this.actionsButtonSelectWidget.removeItems( [ item ] );
-				} else {
-					// It's inside the popup menu
-					this.menuPopupButtonWidget.getMenu().removeItems( [ item ] );
-				}
-
-				// Make sure to hide either piece if it is empty
-				$title.toggle( !!$title.text() );
-				$description.toggle( !!$description.text() );
-
-				// Display confirmation
-				const $confirmation = $( '<div>' )
-					.append( $title, $description );
-
-				// Send to mw.notify
-				mw.notify( $confirmation );
-			} );
-	};
-
-	/**
-	 * Respond to mark as read button click
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.onMarkAsReadButtonClick = function () {
-		// If we're marking read or unread, the notification was already seen.
-		// Remove the animation class
+/**
+ * Respond to primary link middle-click by immediately marking as read,
+ * then let the browser open the link in a new tab as normal.
+ * Opening the link would also mark as read, but this way the user gets immediate feedback.
+ *
+ * @param {Event} event
+ *
+ * @return {boolean} true
+ */
+mw.echo.ui.NotificationItemWidget.prototype.onPrimaryLinkAuxclick = function ( event ) {
+	if ( event.button === 1 ) {
 		this.$element.removeClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen' );
-		this.markRead( !this.model.isRead() );
-	};
+		this.markRead( true );
+	}
+	// Don't prevent default action, let the browser take care of opening a new tab.
+	return true;
+};
 
-	/**
-	 * Mark this notification as read
-	 *
-	 * @method
-	 * @abstract
-	 * @param {boolean} [isRead=true] Notification is marked as read
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.markRead = null;
+/**
+ * Manage a click on a dynamic secondary link.
+ * We can't know what the link intends us to do in the API, so we trust the 'apiParams'
+ * to tell the controller. When the link is clicked, we will pass the information on
+ * to the controller, which will manage whatever promise and action is needed.
+ *
+ * NOTE: The messages are parsed as HTML. If user-input is expected
+ * please make sure to properly escape it.
+ *
+ * @param {OO.ui.ButtonOptionWidget} item The selected item
+ */
+mw.echo.ui.NotificationItemWidget.prototype.onPopupButtonWidgetChoose = function ( item ) {
+	if ( !( item instanceof mw.echo.ui.MenuItemWidget ) ) {
+		// Other kinds of items may be added by subclasses
+		return;
+	}
 
-	/**
-	 * Get the notification link
-	 *
-	 * @return {string} Notification link
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.getPrimaryUrl = function () {
-		return this.model.getPrimaryUrl();
-	};
+	const actionData = item && item.getActionData(),
+		messages = item && item.getConfirmationMessages();
 
-	/**
-	 * Get the item id
-	 *
-	 * @return {number} Notification id
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.getTimestamp = function () {
-		return this.model.getTimestamp();
-	};
+	// Send to controller
+	item.pushPending();
+	this.controller.performDynamicAction( actionData, this.getModel().getSource() )
+		.then( () => {
+			const $title = $( '<p>' )
+					.addClass( 'mw-echo-ui-notificationItemWidget-notify-title' )
+					.append( $.parseHTML( messages.title ) ),
+				$description = $( '<p>' )
+					.addClass( 'mw-echo-ui-notificationItemWidget-notify-description' )
+					.append( $.parseHTML( messages.description ) );
 
-	/**
-	 * Get the notification Id
-	 *
-	 * @return {number} Notification id
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.getId = function () {
-		return this.model.getId();
-	};
+			// Get rid of the button
+			if ( item.isPrioritized() ) {
+				this.actionsButtonSelectWidget.removeItems( [ item ] );
+			} else {
+				// It's inside the popup menu
+				this.menuPopupButtonWidget.getMenu().removeItems( [ item ] );
+			}
 
-	/**
-	 * Check whether this item is seen.
-	 *
-	 * @return {boolean} Item is seen
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.isSeen = function () {
-		return this.model.isSeen();
-	};
+			// Make sure to hide either piece if it is empty
+			$title.toggle( !!$title.text() );
+			$description.toggle( !!$description.text() );
 
-	/**
-	 * Check whether this item is read.
-	 *
-	 * @return {boolean} Item is read
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.isRead = function () {
-		return this.model.isRead();
-	};
+			// Display confirmation
+			const $confirmation = $( '<div>' )
+				.append( $title, $description );
 
-	/**
-	 * Check whether this item is foreign.
-	 *
-	 * @return {boolean} Item is foreign
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.isForeign = function () {
-		return this.model.isForeign();
-	};
+			// Send to mw.notify
+			mw.notify( $confirmation );
+		} );
+};
 
-	/**
-	 * Toggle the function of the 'mark as read' buttons from 'mark as read' to 'mark as unread'
-	 * and vice versa.
-	 *
-	 * @param {boolean} [showMarkAsRead] Show the 'mark as read' buttons
-	 *  - "false" means that the item is marked as read, whereby we show the user 'mark unread'
-	 *    buttons.
-	 *  - "true" means that the item is marked as unread and we show the user 'mark as read'
-	 *    buttons
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.toggleMarkAsReadButtons = function ( showMarkAsRead ) {
-		showMarkAsRead = showMarkAsRead !== undefined ? showMarkAsRead : !this.model.isRead();
+/**
+ * Respond to mark as read button click
+ */
+mw.echo.ui.NotificationItemWidget.prototype.onMarkAsReadButtonClick = function () {
+	// If we're marking read or unread, the notification was already seen.
+	// Remove the animation class
+	this.$element.removeClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen' );
+	this.markRead( !this.model.isRead() );
+};
 
-		this.markAsReadButton.toggleState( showMarkAsRead );
-		this.menuPopupButtonWidget.toggle( !this.menuPopupButtonWidget.getMenu().isEmpty() );
-	};
+/**
+ * Mark this notification as read
+ *
+ * @method
+ * @abstract
+ * @param {boolean} [isRead=true] Notification is marked as read
+ */
+mw.echo.ui.NotificationItemWidget.prototype.markRead = null;
 
-	/**
-	 * Toggle the read state of the widget
-	 *
-	 * @param {boolean} [read] The current read state. If not given, the state will
-	 *  become the opposite of its current state.
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.toggleRead = function ( read ) {
-		this.read = read !== undefined ? read : !this.read;
+/**
+ * Get the notification link
+ *
+ * @return {string} Notification link
+ */
+mw.echo.ui.NotificationItemWidget.prototype.getPrimaryUrl = function () {
+	return this.model.getPrimaryUrl();
+};
 
-		this.$element.toggleClass( 'mw-echo-ui-notificationItemWidget-unread', !this.read );
-		this.toggleMarkAsReadButtons( !this.read );
-	};
+/**
+ * Get the item id
+ *
+ * @return {number} Notification id
+ */
+mw.echo.ui.NotificationItemWidget.prototype.getTimestamp = function () {
+	return this.model.getTimestamp();
+};
 
-	/**
-	 * Toggle the seen state of the widget
-	 *
-	 * @param {boolean} [seen] The current seen state. If not given, the state will
-	 *  become the opposite of its current state.
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.toggleSeen = function ( seen ) {
-		this.seen = seen !== undefined ? seen : !this.seen;
+/**
+ * Get the notification Id
+ *
+ * @return {number} Notification id
+ */
+mw.echo.ui.NotificationItemWidget.prototype.getId = function () {
+	return this.model.getId();
+};
 
-		this.$element
-			.toggleClass( 'mw-echo-ui-notificationItemWidget-unseen', !this.seen );
-	};
+/**
+ * Check whether this item is seen.
+ *
+ * @return {boolean} Item is seen
+ */
+mw.echo.ui.NotificationItemWidget.prototype.isSeen = function () {
+	return this.model.isSeen();
+};
 
-	/**
-	 * Get the model associated with this widget.
-	 *
-	 * @return {mw.echo.dm.NotificationItem} Item model
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.getModel = function () {
-		return this.model;
-	};
+/**
+ * Check whether this item is read.
+ *
+ * @return {boolean} Item is read
+ */
+mw.echo.ui.NotificationItemWidget.prototype.isRead = function () {
+	return this.model.isRead();
+};
 
-	/**
-	 * Disconnect events when widget is destroyed.
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.destroy = function () {
-		this.model.disconnect( this );
-	};
+/**
+ * Check whether this item is foreign.
+ *
+ * @return {boolean} Item is foreign
+ */
+mw.echo.ui.NotificationItemWidget.prototype.isForeign = function () {
+	return this.model.isForeign();
+};
 
-	/**
-	 * Remove the 'initiallyUnseen' class, which was only used for the
-	 * unseen animation when the user has first seen it.
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.resetInitiallyUnseen = function () {
-		this.$element.removeClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen' );
-	};
+/**
+ * Toggle the function of the 'mark as read' buttons from 'mark as read' to 'mark as unread'
+ * and vice versa.
+ *
+ * @param {boolean} [showMarkAsRead] Show the 'mark as read' buttons
+ *  - "false" means that the item is marked as read, whereby we show the user 'mark unread'
+ *    buttons.
+ *  - "true" means that the item is marked as unread and we show the user 'mark as read'
+ *    buttons
+ */
+mw.echo.ui.NotificationItemWidget.prototype.toggleMarkAsReadButtons = function ( showMarkAsRead ) {
+	showMarkAsRead = showMarkAsRead !== undefined ? showMarkAsRead : !this.model.isRead();
 
-	/**
-	 * Declares whether this widget is a cloned fake.
-	 *
-	 * @return {boolean} false
-	 */
-	mw.echo.ui.NotificationItemWidget.prototype.isFake = function () {
-		return false;
-	};
-}() );
+	this.markAsReadButton.toggleState( showMarkAsRead );
+	this.menuPopupButtonWidget.toggle( !this.menuPopupButtonWidget.getMenu().isEmpty() );
+};
+
+/**
+ * Toggle the read state of the widget
+ *
+ * @param {boolean} [read] The current read state. If not given, the state will
+ *  become the opposite of its current state.
+ */
+mw.echo.ui.NotificationItemWidget.prototype.toggleRead = function ( read ) {
+	this.read = read !== undefined ? read : !this.read;
+
+	this.$element.toggleClass( 'mw-echo-ui-notificationItemWidget-unread', !this.read );
+	this.toggleMarkAsReadButtons( !this.read );
+};
+
+/**
+ * Toggle the seen state of the widget
+ *
+ * @param {boolean} [seen] The current seen state. If not given, the state will
+ *  become the opposite of its current state.
+ */
+mw.echo.ui.NotificationItemWidget.prototype.toggleSeen = function ( seen ) {
+	this.seen = seen !== undefined ? seen : !this.seen;
+
+	this.$element
+		.toggleClass( 'mw-echo-ui-notificationItemWidget-unseen', !this.seen );
+};
+
+/**
+ * Get the model associated with this widget.
+ *
+ * @return {mw.echo.dm.NotificationItem} Item model
+ */
+mw.echo.ui.NotificationItemWidget.prototype.getModel = function () {
+	return this.model;
+};
+
+/**
+ * Disconnect events when widget is destroyed.
+ */
+mw.echo.ui.NotificationItemWidget.prototype.destroy = function () {
+	this.model.disconnect( this );
+};
+
+/**
+ * Remove the 'initiallyUnseen' class, which was only used for the
+ * unseen animation when the user has first seen it.
+ */
+mw.echo.ui.NotificationItemWidget.prototype.resetInitiallyUnseen = function () {
+	this.$element.removeClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen' );
+};
+
+/**
+ * Declares whether this widget is a cloned fake.
+ *
+ * @return {boolean} false
+ */
+mw.echo.ui.NotificationItemWidget.prototype.isFake = function () {
+	return false;
+};

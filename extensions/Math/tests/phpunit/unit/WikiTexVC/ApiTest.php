@@ -22,7 +22,7 @@ class ApiTest extends MediaWikiUnitTestCase {
 		$this->texVC = new TexVC();
 	}
 
-	public function provideTestCases() {
+	public static function provideTestCases() {
 		$testCases = [
 			[
 				'in' => '\\newcommand{\\text{do evil things}}',

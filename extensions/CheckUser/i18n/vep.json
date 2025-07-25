@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Игорь Бродский"
+		]
+	},
+	"checkuser": "Kodvda kävutajad",
+	"checkuserlog": "Kävutajiden kodvindan aigkirj",
+	"group-checkuser": "Kodvda kävutajid",
+	"checkuser-reason": "Sü:",
+	"checkuser-showlog": "Ozutada aigkirj",
+	"checkuser-query": "Ozutada veresid toižetusid",
+	"checkuser-target": "Kävutai vai IP-adres",
+	"checkuser-users": "Sada kävutajid",
+	"checkuser-all": "kaik",
+	"checkuser-blocked": "Blokiruidud",
+	"checkuser-locked": "Luklostadud",
+	"checkuser-search": "Ectä",
+	"checkuser-search-submit": "Ectä"
+}

@@ -33,14 +33,10 @@ use ReflectionObject;
 use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
- * @covers \MediaWiki\Parser\Parser::__construct
+ * @covers \MediaWiki\Parser\Parser
  */
 class ParserTest extends MediaWikiIntegrationTestCase {
-	/**
-	 * Helper method to create mocks
-	 * @return array
-	 */
-	private function createConstructorArguments() {
+	private function createConstructorArguments(): array {
 		$options = new ServiceOptions(
 			Parser::CONSTRUCTOR_OPTIONS,
 			array_fill_keys( Parser::CONSTRUCTOR_OPTIONS, null )
@@ -85,18 +81,15 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\Parser\Parser::__construct
-	 */
 	public function testConstructorArguments() {
 		$args = $this->createConstructorArguments();
 
 		// Fool Parser into thinking we are constructing via a ParserFactory
-		ParserFactory::$inParserFactory += 1;
+		ParserFactory::$inParserFactory++;
 		try {
 			$parser = new Parser( ...$args );
 		} finally {
-			ParserFactory::$inParserFactory -= 1;
+			ParserFactory::$inParserFactory--;
 		}
 
 		$refObject = new ReflectionObject( $parser );
@@ -125,24 +118,16 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 			'found on the Parser object' );
 	}
 
-	/**
-	 * @return Parser
-	 */
-	private function newParser() {
+	private function newParser(): Parser {
 		$args = $this->createConstructorArguments();
-		ParserFactory::$inParserFactory += 1;
+		ParserFactory::$inParserFactory++;
 		try {
 			return new Parser( ...$args );
 		} finally {
-			ParserFactory::$inParserFactory -= 1;
+			ParserFactory::$inParserFactory--;
 		}
 	}
 
-	/**
-	 * @covers \MediaWiki\Parser\Parser::setPage
-	 * @covers \MediaWiki\Parser\Parser::getPage
-	 * @covers \MediaWiki\Parser\Parser::getTitle
-	 */
 	public function testSetPage() {
 		$parser = $this->newParser();
 
@@ -153,11 +138,6 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 		$this->assertInstanceOf( Title::class, $parser->getTitle() );
 	}
 
-	/**
-	 * @covers \MediaWiki\Parser\Parser::setPage
-	 * @covers \MediaWiki\Parser\Parser::getPage
-	 * @covers \MediaWiki\Parser\Parser::getTitle
-	 */
 	public function testSetTitle() {
 		$parser = $this->newParser();
 

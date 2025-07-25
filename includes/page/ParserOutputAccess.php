@@ -20,7 +20,6 @@
 namespace MediaWiki\Page;
 
 use InvalidArgumentException;
-use MapCacheLRU;
 use MediaWiki\Logger\Spi as LoggerSpi;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -30,6 +29,7 @@ use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Parser\RevisionOutputCache;
+use MediaWiki\PoolCounter\PoolCounterFactory;
 use MediaWiki\PoolCounter\PoolCounterWork;
 use MediaWiki\PoolCounter\PoolWorkArticleView;
 use MediaWiki\PoolCounter\PoolWorkArticleViewCurrent;
@@ -42,10 +42,13 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Assert\Assert;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\SpanInterface;
+use Wikimedia\Telemetry\TracerInterface;
 
 /**
  * Service for getting rendered output of a given page.
@@ -141,6 +144,8 @@ class ParserOutputAccess {
 	private LoggerSpi $loggerSpi;
 	private WikiPageFactory $wikiPageFactory;
 	private TitleFormatter $titleFormatter;
+	private TracerInterface $tracer;
+	private PoolCounterFactory $poolCounterFactory;
 
 	public function __construct(
 		ParserCacheFactory $parserCacheFactory,
@@ -151,7 +156,9 @@ class ParserOutputAccess {
 		ChronologyProtector $chronologyProtector,
 		LoggerSpi $loggerSpi,
 		WikiPageFactory $wikiPageFactory,
-		TitleFormatter $titleFormatter
+		TitleFormatter $titleFormatter,
+		TracerInterface $tracer,
+		PoolCounterFactory $poolCounterFactory
 	) {
 		$this->parserCacheFactory = $parserCacheFactory;
 		$this->revisionLookup = $revisionLookup;
@@ -162,6 +169,8 @@ class ParserOutputAccess {
 		$this->loggerSpi = $loggerSpi;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->titleFormatter = $titleFormatter;
+		$this->tracer = $tracer;
+		$this->poolCounterFactory = $poolCounterFactory;
 
 		$this->localCache = new MapCacheLRU( 10 );
 	}
@@ -206,13 +215,12 @@ class ParserOutputAccess {
 	}
 
 	/**
-	 * Returns the rendered output for the given page if it is present in the cache.
+	 * Get the rendered output for the given page if it is present in the cache.
 	 *
 	 * @param PageRecord $page
 	 * @param ParserOptions $parserOptions
 	 * @param RevisionRecord|null $revision
 	 * @param int $options Bitfield using the OPT_XXX constants
-	 *
 	 * @return ParserOutput|null
 	 */
 	public function getCachedParserOutput(
@@ -221,6 +229,7 @@ class ParserOutputAccess {
 		?RevisionRecord $revision = null,
 		int $options = 0
 	): ?ParserOutput {
+		$span = $this->startOperationSpan( __FUNCTION__, $page, $revision );
 		$isOld = $revision && $revision->getId() !== $page->getLatest();
 		$useCache = $this->shouldUseCache( $page, $revision );
 		$primaryCache = $this->getPrimaryCache( $parserOptions );
@@ -238,7 +247,8 @@ class ParserOutputAccess {
 			$output = null;
 		}
 
-		$notHitReason = 'miss';
+		$statType = $statReason = $output ? 'hit' : 'miss';
+
 		if (
 			$output && !( $options & self::OPT_IGNORE_PROFILE_VERSION ) &&
 			$parserOptions->getUseParsoid()
@@ -252,7 +262,8 @@ class ParserOutputAccess {
 				$cachedVersion !== null && // T325137: BadContentModel, no sense in reparsing
 				$cachedVersion !== Parsoid::defaultHTMLVersion()
 			) {
-				$notHitReason = 'obsolete';
+				$statType = 'miss';
+				$statReason = 'obsolete';
 				$output = null;
 			}
 		}
@@ -261,23 +272,13 @@ class ParserOutputAccess {
 			$this->localCache->setField( $classCacheKey, $page->getLatest(), $output );
 		}
 
-		if ( $output ) {
-			$this->statsFactory
-				->getCounter( 'parseroutputaccess_cache' )
-				->setLabel( 'cache', $useCache )
-				->setLabel( 'reason', 'hit' )
-				->setLabel( 'type', 'hit' )
-				->copyToStatsdAt( "ParserOutputAccess.Cache.$useCache.hit" )
-				->increment();
-		} else {
-			$this->statsFactory
-				->getCounter( 'parseroutputaccess_cache' )
-				->setLabel( 'reason', $notHitReason )
-				->setLabel( 'cache', $useCache )
-				->setLabel( 'type', 'miss' )
-				->copyToStatsdAt( "ParserOutputAccess.Cache.$useCache.$notHitReason" )
-				->increment();
-		}
+		$this->statsFactory
+			->getCounter( 'parseroutputaccess_cache_total' )
+			->setLabel( 'cache', $useCache )
+			->setLabel( 'reason', $statReason )
+			->setLabel( 'type', $statType )
+			->copyToStatsdAt( "ParserOutputAccess.Cache.$useCache.$statReason" )
+			->increment();
 
 		return $output ?: null; // convert false to null
 	}
@@ -310,6 +311,7 @@ class ParserOutputAccess {
 		?RevisionRecord $revision = null,
 		int $options = 0
 	): Status {
+		$span = $this->startOperationSpan( __FUNCTION__, $page, $revision );
 		$error = $this->checkPreconditions( $page, $revision, $options );
 		if ( $error ) {
 			$this->statsFactory
@@ -416,9 +418,11 @@ class ParserOutputAccess {
 		int $options,
 		?ParserOutput $previousOutput = null
 	): Status {
-		$this->statsFactory->getCounter( 'parseroutputaccess_poolwork' )
-			->copyToStatsdAt( 'ParserOutputAccess.PoolWork.None' )
+		$span = $this->startOperationSpan( __FUNCTION__, $page, $revision );
+		$this->statsFactory->getCounter( 'parseroutputaccess_render_total' )
+			->setLabel( 'pool', 'none' )
 			->setLabel( 'cache', self::CACHE_NONE )
+			->copyToStatsdAt( 'ParserOutputAccess.PoolWork.None' )
 			->increment();
 
 		$useCache = $this->shouldUseCache( $page, $revision );
@@ -552,12 +556,19 @@ class ParserOutputAccess {
 	): PoolCounterWork {
 		$useCache = $this->shouldUseCache( $page, $revision );
 
+		$statCacheLabelLegacy = [
+			self::CACHE_PRIMARY => 'Current',
+			self::CACHE_SECONDARY => 'Old',
+		][$useCache] ?? 'Uncached';
+
+		$this->statsFactory->getCounter( 'parseroutputaccess_render_total' )
+			->setLabel( 'pool', 'articleview' )
+			->setLabel( 'cache', $useCache )
+			->copyToStatsdAt( "ParserOutputAccess.PoolWork.$statCacheLabelLegacy" )
+			->increment();
+
 		switch ( $useCache ) {
 			case self::CACHE_PRIMARY:
-				$this->statsFactory->getCounter( 'parseroutputaccess_poolwork' )
-					->setLabel( 'cache', self::CACHE_PRIMARY )
-					->copyToStatsdAt( 'ParserOutputAccess.PoolWork.Current' )
-					->increment();
 				$primaryCache = $this->getPrimaryCache( $parserOptions );
 				$parserCacheMetadata = $primaryCache->getMetadata( $page );
 				$cacheKey = $primaryCache->makeParserOutputKey( $page, $parserOptions,
@@ -566,8 +577,9 @@ class ParserOutputAccess {
 
 				$workKey = $cacheKey . ':revid:' . $revision->getId();
 
+				$pool = $this->poolCounterFactory->create( 'ArticleView', $workKey );
 				return new PoolWorkArticleViewCurrent(
-					$workKey,
+					$pool,
 					$page,
 					$revision,
 					$parserOptions,
@@ -582,14 +594,11 @@ class ParserOutputAccess {
 				);
 
 			case self::CACHE_SECONDARY:
-				$this->statsFactory->getCounter( 'parseroutputaccess_poolwork' )
-					->setLabel( 'cache', self::CACHE_SECONDARY )
-					->copyToStatsdAt( 'ParserOutputAccess.PoolWork.Old' )
-					->increment();
 				$secondaryCache = $this->getSecondaryCache( $parserOptions );
 				$workKey = $secondaryCache->makeParserOutputKey( $revision, $parserOptions );
+				$pool = $this->poolCounterFactory->create( 'ArticleView', $workKey );
 				return new PoolWorkArticleViewOld(
-					$workKey,
+					$pool,
 					$secondaryCache,
 					$revision,
 					$parserOptions,
@@ -598,14 +607,13 @@ class ParserOutputAccess {
 				);
 
 			default:
-				$this->statsFactory->getCounter( 'parseroutputaccess_poolwork' )
-					->setLabel( 'cache', self::CACHE_NONE )
-					->copyToStatsdAt( 'ParserOutputAccess.PoolWork.Uncached' )
-					->increment();
+				// Without caching, using poolcounter is pointless
+				// The name of the metric is a bit confusing now
 				$secondaryCache = $this->getSecondaryCache( $parserOptions );
 				$workKey = $secondaryCache->makeParserOutputKeyOptionalRevId( $revision, $parserOptions );
+				$pool = $this->poolCounterFactory->create( 'ArticleView', $workKey );
 				return new PoolWorkArticleView(
-					$workKey,
+					$pool,
 					$revision,
 					$parserOptions,
 					$this->revisionRenderer,
@@ -640,4 +648,25 @@ class ParserOutputAccess {
 		);
 	}
 
+	private function startOperationSpan(
+		string $opName,
+		PageRecord $page,
+		?RevisionRecord $revision = null
+	): SpanInterface {
+		$span = $this->tracer->createSpan( "ParserOutputAccess::$opName" );
+		if ( $span->getContext()->isSampled() ) {
+			$span->setAttributes( [
+				'org.wikimedia.parser.page' => $page->__toString(),
+				'org.wikimedia.parser.page.id' => $page->getId(),
+				'org.wikimedia.parser.page.wiki' => $page->getWikiId(),
+			] );
+			if ( $revision ) {
+				$span->setAttributes( [
+					'org.wikimedia.parser.revision.id' => $revision->getId(),
+					'org.wikimedia.parser.revision.parent_id' => $revision->getParentId(),
+				] );
+			}
+		}
+		return $span->start()->activate();
+	}
 }

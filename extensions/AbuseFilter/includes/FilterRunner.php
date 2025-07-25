@@ -11,7 +11,6 @@ use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
-use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
@@ -58,8 +57,6 @@ class FilterRunner {
 	private $logger;
 	/** @var VariablesManager */
 	private $varManager;
-	/** @var VariableGeneratorFactory */
-	private $varGeneratorFactory;
 	/** @var ServiceOptions */
 	private $options;
 
@@ -98,7 +95,6 @@ class FilterRunner {
 	 * @param ConsequencesExecutorFactory $consExecutorFactory
 	 * @param AbuseLoggerFactory $abuseLoggerFactory
 	 * @param VariablesManager $varManager
-	 * @param VariableGeneratorFactory $varGeneratorFactory
 	 * @param EmergencyCache $emergencyCache
 	 * @param Watcher[] $watchers
 	 * @param EditStashCache $stashCache
@@ -119,7 +115,6 @@ class FilterRunner {
 		ConsequencesExecutorFactory $consExecutorFactory,
 		AbuseLoggerFactory $abuseLoggerFactory,
 		VariablesManager $varManager,
-		VariableGeneratorFactory $varGeneratorFactory,
 		EmergencyCache $emergencyCache,
 		array $watchers,
 		EditStashCache $stashCache,
@@ -138,7 +133,6 @@ class FilterRunner {
 		$this->consExecutorFactory = $consExecutorFactory;
 		$this->abuseLoggerFactory = $abuseLoggerFactory;
 		$this->varManager = $varManager;
-		$this->varGeneratorFactory = $varGeneratorFactory;
 		$this->emergencyCache = $emergencyCache;
 		$this->watchers = $watchers;
 		$this->stashCache = $stashCache;
@@ -174,8 +168,6 @@ class FilterRunner {
 			$this->title,
 			$this->user
 		);
-		$generator = $this->varGeneratorFactory->newGenerator( $this->vars );
-		$this->vars = $generator->addGenericVars()->getVariableHolder();
 		$this->ruleChecker = $this->ruleCheckerFactory->newRuleChecker( $this->vars );
 	}
 

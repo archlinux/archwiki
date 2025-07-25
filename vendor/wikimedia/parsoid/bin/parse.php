@@ -10,6 +10,7 @@ require_once __DIR__ . '/../tools/Maintenance.php';
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title as MWTitle;
 use Wikimedia\Parsoid\Config\Api\ApiHelper;
 use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
@@ -29,12 +30,9 @@ use Wikimedia\Parsoid\ParserTests\DummyAnnotation;
 use Wikimedia\Parsoid\ParserTests\TestUtils;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tools\ExtendedOptsProcessor;
-use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMDataUtils;
-use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
-use Wikimedia\Parsoid\Utils\Title;
+use Wikimedia\Parsoid\Utils\Title as ParsoidTitle;
 
 // phpcs:ignore MediaWiki.Files.ClassMatchesFilename.WrongCase
 class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
@@ -119,24 +117,44 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			true
 		);
 		$this->addOption(
-			'pageName',
-			'The page name, returned for {{PAGENAME}}. If no input is given ' .
-			'(ie. empty/stdin closed), it downloads and parses the page. ' .
+			'title',
+			'The title of the page the input belongs to, returned for ' .
+			'{{PAGENAME}}. ' .
 			'This should be the actual title of the article (that is, not ' .
 			'including any URL-encoding that might be necessary in wikitext).',
 			false,
 			true
 		);
 		$this->addOption(
+			'page',
+			'Instead of parsing stdin, fetch and parse the content of this ' .
+			'page.  Cannot be used together with title. ' .
+			'This should be the actual title of the article (that is, not ' .
+			'including any URL-encoding that might be necessary in wikitext).',
+			false,
+			true
+		);
+		$this->addOption(
+			'pageName',
+			'Backward-compatibility alias for --page if no input is given, ' .
+			'or --title if inout is provided on stdin.',
+			false,
+			true
+		);
+		$this->addOption(
 			'restURL',
 			'Parses a RESTBase API URL (as supplied in our logs) and ' .
-			'sets --domain and --pageName.  Debugging aid.',
+			'sets --domain and --page.  Debugging aid.',
 			false,
 			true
 		);
 		$this->addOption(
 			'pageBundle',
 			'Output pagebundle JSON'
+		);
+		$this->addOption(
+			'fragmentbank',
+			'Use fragment bank representation for embedded HTML'
 		);
 		$this->addOption(
 			'wrapSections',
@@ -258,6 +276,22 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			'metrics',
 			'Dump a log of the metrics methods that were called from a MockMetrics.'
 		);
+		$this->addOption( 'v3pf', 'Generate Experimental Parsoid HTML v3 parser function output' );
+		$this->addOption(
+			'record',
+			'Record HTTP requests for later replay'
+		);
+		$this->addOption(
+			'replay',
+			'Replay recorded HTTP requests for offline testing or benchmarking.'
+		);
+		$this->addOption(
+			'record-dir',
+			'Specify a desired storage directory for --record/--replay; ' .
+				'defaults to .record',
+			false,
+			true
+		);
 		$this->setAllowUnregisteredOptions( false );
 	}
 
@@ -278,7 +312,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$pcFactory = $services->getParsoidPageConfigFactory();
 		// XXX we're ignoring 'pageLanguage' & 'pageLanguageDir' in $configOpts
 		$title = isset( $configOpts['title'] )
-			? \Title::newFromText( $configOpts['title'] )
+			? MWTitle::newFromText( $configOpts['title'] )
 			: $siteConfig->mainPageLinkTarget();
 
 		$wikitextOverride = $configOpts['pageContent'] ?? null;
@@ -324,7 +358,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$dataAccess = new DataAccess( $api, $siteConfig, $configOpts );
 		$this->siteConfig = $siteConfig;
 		$configOpts['title'] = isset( $configOpts['title'] )
-			? Title::newFromText( $configOpts['title'], $siteConfig )
+			? ParsoidTitle::newFromText( $configOpts['title'], $siteConfig )
 			: $siteConfig->mainPageLinkTarget();
 
 		$this->pageConfig = new PageConfig( $api, $siteConfig, $configOpts + [
@@ -477,20 +511,29 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 				return;
 			}
 		} else {
-			if ( $this->hasOption( 'restURL' ) ) {
-				$input = '';
+			if ( $this->hasOption( 'restURL' ) || $this->hasOption( 'page' ) ) {
+				$input = null; // fetch
 			} else {
 				$input = file_get_contents( 'php://stdin' );
+				if ( $this->hasOption( 'pageName' ) ) {
+					$pageName = $this->getOption( 'pageName' );
+					if ( strlen( $input ) === 0 ) {
+						// implicitly sets the option by supplying a default
+						$this->getOption( 'page', $pageName );
+						$input = null; // fetch
+					} else {
+						// implicitly sets the option by supplying a default
+						$this->getOption( 'title', $pageName );
+					}
+				}
 			}
-			if ( strlen( $input ) === 0 ) {
+			if ( $input === null ) {
 				// Parse page if no input
 				if ( $this->hasOption( 'html2wt' ) || $this->hasOption( 'html2html' ) ) {
 					$this->error(
 						'Fetching page content is only supported when starting at wikitext.'
 					);
 					return;
-				} else {
-					$input = null;
 				}
 			}
 		}
@@ -518,7 +561,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			}
 			# Calling it with the default implicitly sets it as well.
 			$this->getOption( 'domain', $matches[1] );
-			$this->getOption( 'pageName', urldecode( $matches[2] ) );
+			$this->getOption( 'page', urldecode( $matches[2] ) );
 			if ( isset( $matches[3] ) ) {
 				$this->getOption( 'revid', $matches[3] );
 			}
@@ -539,14 +582,36 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 				$this->hasOption( 'wt2lint' ),
 			"mock" => $this->hasOption( 'mock' )
 		];
-		if ( $this->hasOption( 'pageName' ) ) {
-			$configOpts['title'] = $this->getOption( 'pageName' );
+		if ( $this->hasOption( 'title' ) ) {
+			$configOpts['title'] = $this->getOption( 'title' );
+		}
+		if ( $this->hasOption( 'page' ) ) {
+			$configOpts['title'] = $this->getOption( 'page' );
 		}
 		if ( $this->hasOption( 'revid' ) ) {
 			$configOpts['revid'] = (int)$this->getOption( 'revid' );
 		}
 		if ( $this->hasOption( 'maxdepth' ) ) {
 			$configOpts['maxDepth'] = (int)$this->getOption( 'maxdepth' );
+		}
+		if ( $this->hasOption( 'v3pf' ) ) {
+			$configOpts['v3pf'] = true;
+		}
+		if ( $this->hasOption( 'record' ) || $this->hasOption( 'replay' ) ) {
+			$cacheDir = __DIR__ . '/../.record';
+			$cacheDir = $this->getOption( 'record-dir', $cacheDir );
+			if ( !is_dir( $cacheDir ) ) {
+				mkdir( $cacheDir, 0777, true );
+			}
+			$configOpts['cacheDir'] = $cacheDir;
+			if ( $this->hasOption( 'record' ) ) {
+				$configOpts['writeToCache'] = true; # or 'pretty'
+			} elseif ( $this->hasOption( 'replay' ) ) {
+				// Specifying --record --replay together will silently fetch
+				// any missing API requests; otherwise with just --replay
+				// we'll throw an error if we're missing anything.
+				$configOpts['onlyCached'] = true;
+			}
 		}
 
 		$parsoidOpts += [
@@ -556,6 +621,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			"pageBundle" =>
 			$this->hasOption( 'pageBundle' ) || $this->hasOption( 'pboutfile' ),
 		];
+		if ( $this->hasOption( 'fragmentbank' ) ) {
+			$parsoidOpts['useFragmentBank'] = true;
+			$parsoidOpts['body_only'] = false;
+		}
 		foreach ( [
 			'offsetType', 'outputContentVersion',
 			'wtVariantLanguage', 'htmlVariantLanguage',
@@ -635,11 +704,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			if ( $this->hasOption( 'delay' ) ) {
 				usleep( $this->getOption( 'delay' ) * 1000 );
 			}
-			$startTime = microtime( true );
+			$startTime = hrtime( true );
 			for ( $i = 0; $i < $count; $i++ ) {
 				$callback();
 			}
-			$total = ( microtime( true ) - $startTime ) * 1000;
+			$total = ( hrtime( true ) - $startTime ) / 1000000;
 			$this->output( "Total time: $total ms\n" );
 			if ( $count > 1 ) {
 				$mean = $total / $count;
@@ -741,7 +810,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		if ( !$this->hasOption( 'pbin' ) && !$this->hasOption( 'pbinfile' ) ) {
 			return null;
 		}
-		$doc = DOMUtils::parseHTML( $input );
 		if ( $this->hasOption( 'pbinfile' ) ) {
 			$json = file_get_contents( $this->getOption( 'pbinfile' ) );
 		} else {
@@ -749,12 +817,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 		$pb = PHPUtils::jsonDecode( $json );
 		$pb = new PageBundle(
-			'',
+			$input,
 			$pb['parsoid'] ?? null,
 			[ 'ids' => [] ]  // FIXME: ^999.0.0
 		);
-		PageBundle::apply( $doc, $pb );
-		return ContentUtils::toXML( $doc );
+		return $pb->toInlineAttributeHtml();
 	}
 
 	/**
@@ -782,24 +849,19 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$this->output( $this->wt2Lint( $configOpts, $parsoidOpts, $input ) );
 		} elseif ( $parsoidOpts['pageBundle'] ?? false ) {
 			if ( $this->hasOption( 'pboutfile' ) ) {
-				$html = $this->wt2Html( $configOpts, $parsoidOpts, $input );
+				$pb = $this->wt2Html( $configOpts, $parsoidOpts, $input );
 				file_put_contents(
 					$this->getOption( 'pboutfile' ),
 					PHPUtils::jsonEncode( [
-						'parsoid' => $html->parsoid,
-						'mw' => $html->mw,
+						'parsoid' => $pb->parsoid,
+						'mw' => $pb->mw,
 					] )
 				);
-				$html = $html->html;
+				$html = $pb->html;
 			} elseif ( $this->hasOption( 'pageBundle' ) ) {
-				$html = $this->wt2Html( $configOpts, $parsoidOpts, $input );
+				$pb = $this->wt2Html( $configOpts, $parsoidOpts, $input );
 				// Stitch this back in, even though it was just extracted
-				$doc = DOMUtils::parseHTML( $html->html );
-				DOMDataUtils::injectPageBundle(
-					$doc,
-					new PageBundle( '', $html->parsoid, $html->mw )
-				);
-				$html = ContentUtils::toXML( $doc );
+				$html = $pb->toSingleDocumentHtml();
 			}
 			$this->output( $this->maybeNormalize( $html ) );
 		} else {

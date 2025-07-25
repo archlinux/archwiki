@@ -14,6 +14,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 
 class CommentUtils {
 
@@ -85,7 +86,7 @@ class CommentUtils {
 	 */
 	public static function isOurGeneratedNode( Node $node ): bool {
 		return $node instanceof Element && (
-			DOMCompat::getClassList( $node )->contains( 'ext-discussiontools-init-replylink-buttons' ) ||
+			DOMUtils::hasClass( $node, 'ext-discussiontools-init-replylink-buttons' ) ||
 			$node->hasAttribute( 'data-mw-comment-start' ) ||
 			$node->hasAttribute( 'data-mw-comment-end' )
 		);
@@ -164,15 +165,10 @@ class CommentUtils {
 			return true;
 		}
 
-		$classList = DOMCompat::getClassList( $node );
-		if (
-			// Anything marked as not containing comments
-			$classList->contains( 'mw-notalk' ) ||
-			// {{outdent}} templates
-			$classList->contains( 'outdent-template' ) ||
-			// {{tracked}} templates (T313097)
-			$classList->contains( 'mw-trackedTemplate' )
-		) {
+		// Anything marked as not containing comments
+		// {{outdent}} templates
+		// {{tracked}} templates (T313097)
+		if ( DOMUtils::hasClass( $node, 'mw-notalk|outdent-template|mw-trackedTemplate' ) ) {
 			return true;
 		}
 

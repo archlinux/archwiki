@@ -214,10 +214,10 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	/**
 	 * Creates an instance of this class from definition in MediaWiki:Gadgets-definition
 	 * @param string $definition Gadget definition
-	 * @param string $category
+	 * @param string $section
 	 * @return Gadget|false Instance of Gadget class or false if $definition is invalid
 	 */
-	public function newFromDefinition( $definition, $category ) {
+	public function newFromDefinition( $definition, $section ) {
 		if ( !preg_match(
 			'/^\*+ *([a-zA-Z](?:[-_:.\w ]*[a-zA-Z0-9])?)(\s*\[.*?\])?\s*((\|[^|]*)+)\s*$/',
 			$definition,
@@ -239,7 +239,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		}
 
 		$info = [
-			'category' => $category,
+			'section' => $section,
 			'name' => $name,
 			'definition' => $definition,
 		];

@@ -20,10 +20,10 @@
 
 namespace MediaWiki\Api;
 
-use ILocalizedException;
 use InvalidArgumentException;
+use MediaWiki\Exception\ILocalizedException;
+use MediaWiki\Exception\MWException;
 use MediaWiki\Status\Status;
-use MWException;
 use StatusValue;
 use Stringable;
 use Throwable;
@@ -45,7 +45,6 @@ class ApiUsageException extends MWException implements Stringable, ILocalizedExc
 	protected $status;
 
 	/**
-	 *
 	 * @stable to call
 	 * @param ApiBase|null $module API module responsible for the error, if known
 	 * @param StatusValue $status Status holding errors

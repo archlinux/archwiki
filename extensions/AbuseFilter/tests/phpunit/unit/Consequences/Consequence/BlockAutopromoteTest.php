@@ -6,6 +6,7 @@ use ConsequenceGetMessageTestTrait;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\BlockAutopromote;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
+use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
@@ -93,7 +94,8 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 			$this->getMsgLocalizer(),
 			$userIdentityUtils
 		);
-		$this->assertSame( $success, $blockAutopromote->revert( $performer, 'reason' ) );
+		$result = $blockAutopromote->revert( new SimpleAuthority( $performer, [] ), 'reason' );
+		$this->assertSame( $success, $result );
 	}
 
 	/**

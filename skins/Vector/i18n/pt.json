@@ -4,6 +4,7 @@
 			"Athena in Wonderland",
 			"Caiofernandes",
 			"Crazymadlover",
+			"Fúlvio",
 			"Giro720",
 			"GoEThe",
 			"Hamilton Abreu",
@@ -14,8 +15,7 @@
 			"Qgustavor",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious",
-			"Fúlvio"
+			"Waldyrious"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -52,6 +52,7 @@
 	"vector-more-actions": "Mais",
 	"vector-appearance-label": "Aspeto",
 	"vector-appearance-tooltip": "Alterar o aspeto do tamanho da fonte, a largura e a cor da página",
+	"vector-personal-tools-tooltip": "Configurações pessoais",
 	"vector-feature-limited-width-name": "Largura",
 	"vector-feature-limited-width-0-label": "Largo",
 	"vector-feature-limited-width-1-label": "Padrão",

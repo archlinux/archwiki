@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Ernác",
+			"Iltever",
+			"Къарачайлы"
+		]
+	},
+	"group-checkuser": "Къошулуучуланы тинтиучюле",
+	"checkuser-investigateblock-warning-confirmaction": "Буну кертиден этерге излегенигизге ишексиз эсегиз, тилейбиз, эм тюбюндеги \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" тиекни белгилегиз.",
+	"checkuser-global-contributions-link": "глобал къошумла",
+	"checkuser-global-contributions-link-sidebar": "Глобал къошумла",
+	"checkuser-global-contributions": "Глобал къошумланы изле",
+	"checkuser-global-contributions-search-form-wrapper": "Глобал къошумланы изле"
+}

@@ -8,17 +8,19 @@ use InvalidArgumentException;
 
 /**
  * @method false|mixed callback(string $getArg)
+ * @method false|mixed cancel_required(string $getArg)
+ * @method false|string color(string $getArg)
+ * @method false|mixed delimiter(string $getArg)
+ * @method false|mixed identifier(string $getArg)
  * @method false|mixed is_literal(string $litArg)
  * @method false|mixed latex_function_names(string $getArg)
- * @method false|mixed nullary_macro(string $litArg)
- * @method false|mixed operator(string $getArg)
- * @method false|mixed cancel_required(string $getArg)
- * @method false|mixed nullary_macro_in_mbox(string $getArg)
- * @method false|mixed unicode_char(string $getArg)
- * @method false|mixed identifier(string $getArg)
- * @method false|mixed delimiter(string $getArg)
  * @method false|string mathchar(string $getArg)
- * @method false|string color(string $getArg)
+ * @method false|mixed nullary_macro(string $litArg)
+ * @method false|mixed nullary_macro_in_mbox(string $getArg)
+ * @method false|mixed operator(string $getArg)
+ * @method false|array operator_infix(string $getArg)
+ * @method false|mixed operator_rendering(string $getArg)
+ * @method false|mixed unicode_char(string $getArg)
  */
 class TexUtil {
 	/** @var self|null */

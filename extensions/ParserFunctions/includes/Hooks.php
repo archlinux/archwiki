@@ -4,35 +4,21 @@ namespace MediaWiki\Extension\ParserFunctions;
 
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Parser\Parser;
 use MediaWiki\SpecialPage\SpecialPageFactory;
-use RepoGroup;
 
 class Hooks implements
 	\MediaWiki\Hook\ParserFirstCallInitHook,
 	\MediaWiki\Hook\ParserTestGlobalsHook
 {
+	private Config $config;
+	private ParserFunctions $parserFunctions;
 
-	/** @var Config */
-	private $config;
-
-	/** @var ParserFunctions */
-	private $parserFunctions;
-
-	/**
-	 * @param Config $config
-	 * @param HookContainer $hookContainer
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param LinkCache $linkCache
-	 * @param RepoGroup $repoGroup
-	 * @param SpecialPageFactory $specialPageFactory
-	 */
 	public function __construct(
 		Config $config,
 		HookContainer $hookContainer,

@@ -9,7 +9,7 @@
 	'use strict';
 
 	// @var {jQuery} Syntax result div
-	var $syntaxResult;
+	let $syntaxResult;
 
 	/**
 	 * Processes the results of the filter test
@@ -19,7 +19,7 @@
 	function examinerTestProcess( data ) {
 		$.removeSpinner( 'filter-check' );
 
-		var msg, exClass;
+		let msg, exClass;
 		if ( data.abusefiltercheckmatch.result ) {
 			exClass = 'mw-abusefilter-examine-match';
 			msg = 'abusefilter-examine-match';
@@ -44,7 +44,7 @@
 	function examinerTestProcessFailure( error, details ) {
 		$.removeSpinner( 'filter-check' );
 
-		var msg;
+		let msg;
 		if ( error === 'badsyntax' ) {
 			$syntaxResult.attr(
 				'class', 'mw-abusefilter-syntaxresult-error'
@@ -76,7 +76,7 @@
 	 * @param {jQuery.Event} e The event fired when the function is called
 	 */
 	function examinerTestFilter() {
-		var filter = $( '#wpFilterRules' ).val(),
+		const filter = $( '#wpFilterRules' ).val(),
 			examine = mw.config.get( 'abuseFilterExamine' ),
 			params = {
 				action: 'abusefiltercheckmatch',
@@ -93,7 +93,7 @@
 			.fail( examinerTestProcessFailure );
 	}
 
-	$( function initialize() {
+	$( () => {
 		$syntaxResult = $( '#mw-abusefilter-syntaxresult' );
 		$( '#mw-abusefilter-examine-test' ).on( 'click', examinerTestFilter );
 	} );

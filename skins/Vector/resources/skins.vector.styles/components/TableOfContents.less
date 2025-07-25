@@ -16,7 +16,8 @@
 		display: none;
 		transition: @transition-duration-base;
 		position: absolute;
-		left: -@size-toc-subsection-toggle/2;
+		// Use `calc()` for negative calculation to not rely on Less, but standard CSS.
+		left: calc( -1 * @size-toc-subsection-toggle / 2 );
 		// Visual centering.
 		top: 1px;
 		// Override .cdx-button styles

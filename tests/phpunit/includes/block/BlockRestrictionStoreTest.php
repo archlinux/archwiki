@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Block;
 
 use MediaWiki\Block\BlockRestrictionStore;
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\Restriction;
@@ -440,7 +439,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->assertSame( $expected, $this->blockRestrictionStore->equals( $a, $b ) );
 	}
 
-	public function equalsDataProvider() {
+	public static function equalsDataProvider() {
 		return [
 			[
 				[
@@ -525,17 +524,14 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 
-		$block = new DatabaseBlock( [
-			'address' => $badActor,
-			'by' => $sysop,
-			'expiry' => 'infinity',
-			'sitewide' => 0,
-			'enableAutoblock' => true,
-		] );
-
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
-
-		return $block;
+		return $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'address' => $badActor,
+				'by' => $sysop,
+				'expiry' => 'infinity',
+				'sitewide' => 0,
+				'enableAutoblock' => true,
+			] );
 	}
 
 	protected function insertRestriction( $blockId, $type, $value ) {

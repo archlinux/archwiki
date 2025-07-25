@@ -1,6 +1,5 @@
 'use strict';
 
-const { iSeeAnOverlay } = require( './common_steps' );
 const { ArticlePage } = require( '../support/world.js' );
 const ArticlePageWithOverlay = require( '../support/pages/article_page_with_overlay' );
 
@@ -25,17 +24,12 @@ const iClickASearchWatchstar = async () => {
 	await iSeeSearchResults();
 	const watchThisArticle = ArticlePageWithOverlay.overlay_element
 		.$( '.watch-this-article' );
-	watchThisArticle.waitForExist( 5000 );
-	watchThisArticle.click();
-};
-
-const iSeeTheSearchOverlay = async () => {
-	await iSeeAnOverlay();
+	await watchThisArticle.waitForExist( 5000 );
+	await watchThisArticle.click();
 };
 
 module.exports = {
 	iClickTheSearchIcon,
 	iTypeIntoTheSearchBox,
-	iClickASearchWatchstar,
-	iSeeTheSearchOverlay
+	iClickASearchWatchstar
 };

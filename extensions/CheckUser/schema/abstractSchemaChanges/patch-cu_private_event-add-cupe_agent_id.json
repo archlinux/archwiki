@@ -1,0 +1,254 @@
+{
+	"before": {
+		"name": "cu_private_event",
+		"comment": "Table for events that are not logged in the logging table, and thus do not have a log ID (such as logins).",
+		"columns": [
+			{
+				"name": "cupe_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cupe_namespace",
+				"comment": "Key to the namespace of the page affected",
+				"type": "integer",
+				"options": { "notnull": true, "default": 0 }
+			},
+			{
+				"name": "cupe_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_actor",
+				"type": "bigint",
+				"options": { "notnull": false, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_log_type",
+				"comment": "Very similar to logging table's log_type.",
+				"type": "binary",
+				"options": { "notnull": true, "default": "", "length": 32 }
+			},
+			{
+				"name": "cupe_log_action",
+				"comment": "Very similar to logging table's log_action.",
+				"type": "binary",
+				"options": { "notnull": true, "default": "", "length": 32 }
+			},
+			{
+				"name": "cupe_params",
+				"comment": "Very similar to logging table's log_params. LF separated list (old system) or serialized PHP array (new system).",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cupe_comment_id",
+				"comment": "Very similar to logging table's log_comment_id. References a comment ID in the comment table.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_page",
+				"comment": "Key to page_id.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_timestamp",
+				"comment": "Event timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cupe_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_ip_hex",
+				"comment": "IP address as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_xff_hex",
+				"comment": "XFF header, last IP, as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_private",
+				"comment": "Private Data",
+				"type": "blob",
+				"options": { "notnull": false, "length": 16777215 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cupe_ip_hex_time",
+				"columns": [ "cupe_ip_hex", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_xff_hex_time",
+				"columns": [ "cupe_xff_hex", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_timestamp",
+				"columns": [ "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_actor_ip_time",
+				"columns": [ "cupe_actor", "cupe_ip", "cupe_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cupe_id" ]
+	},
+	"after": {
+		"name": "cu_private_event",
+		"comment": "Table for events that are not logged in the logging table, and thus do not have a log ID (such as logins).",
+		"columns": [
+			{
+				"name": "cupe_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cupe_namespace",
+				"comment": "Key to the namespace of the page affected",
+				"type": "integer",
+				"options": { "notnull": true, "default": 0 }
+			},
+			{
+				"name": "cupe_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_actor",
+				"type": "bigint",
+				"options": { "notnull": false, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_log_type",
+				"comment": "Very similar to logging table's log_type.",
+				"type": "binary",
+				"options": { "notnull": true, "default": "", "length": 32 }
+			},
+			{
+				"name": "cupe_log_action",
+				"comment": "Very similar to logging table's log_action.",
+				"type": "binary",
+				"options": { "notnull": true, "default": "", "length": 32 }
+			},
+			{
+				"name": "cupe_params",
+				"comment": "Very similar to logging table's log_params. LF separated list (old system) or serialized PHP array (new system).",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cupe_comment_id",
+				"comment": "Very similar to logging table's log_comment_id. References a comment ID in the comment table.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_page",
+				"comment": "Key to page_id.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_timestamp",
+				"comment": "Event timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cupe_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_ip_hex",
+				"comment": "IP address as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cupe_xff_hex",
+				"comment": "XFF header, last IP, as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cupe_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this log event.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cupe_private",
+				"comment": "Private Data",
+				"type": "blob",
+				"options": { "notnull": false, "length": 16777215 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cupe_ip_hex_time",
+				"columns": [ "cupe_ip_hex", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_xff_hex_time",
+				"columns": [ "cupe_xff_hex", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_timestamp",
+				"columns": [ "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_actor_ip_time",
+				"columns": [ "cupe_actor", "cupe_ip", "cupe_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cupe_id" ]
+	}
+}

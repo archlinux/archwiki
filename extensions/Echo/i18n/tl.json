@@ -40,6 +40,7 @@
 	"echo-pref-tooltip-article-reminder": "PakiTawag-Pansin mo ako kapag ito ay naitanong.",
 	"notifications": "Mga pagpapabatid",
 	"tooltip-pt-notifications-alert": "Mga alerto mo",
+	"tooltip-pt-notifications": "Mga pabatid mo",
 	"echo-specialpage": "Mga pabatid",
 	"echo-none": "Wala kang mga pabatid.",
 	"echo-notification-loginrequired": "Kailangan mong mag-login upang makita ang iyong mga pabatid.",

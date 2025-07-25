@@ -145,6 +145,10 @@ class IndexLayout extends MenuLayout {
 	 * @param TabPanelLayout[] $tabPanels Tab panels to add
 	 */
 	public function addTabPanels( array $tabPanels ) {
+		if ( !$tabPanels ) {
+			return;
+		}
+
 		$tabItems = [];
 		foreach ( $tabPanels as $tabPanel ) {
 			$this->tabPanels[ $tabPanel->getName() ] = $tabPanel;

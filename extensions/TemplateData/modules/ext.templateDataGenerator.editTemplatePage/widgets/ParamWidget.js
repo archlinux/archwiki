@@ -5,23 +5,24 @@
  * @extends OO.ui.DecoratedOptionWidget
  * @mixes OO.ui.mixin.DraggableElement
  *
- * @param {Object} data Parameter data
- * @param {Object} [config] Configuration object
+ * @param {Object} config
+ * @param {string} config.key
+ * @param {string} [config.label=key]
+ * @param {string[]} [config.aliases=[]]
+ * @param {string} [config.description=""]
  */
-function ParamWidget( data, config ) {
-	config = config || {};
-
+function ParamWidget( config ) {
 	// Parent constructor
-	ParamWidget.super.call( this, Object.assign( {}, config, { data: data.key, icon: 'menu' } ) );
+	ParamWidget.super.call( this, { data: config.key, icon: 'menu' } );
 
 	// Mixin constructors
 	OO.ui.mixin.DraggableElement.call( this, $.extend( { $handle: this.$icon } ) );
 	OO.ui.mixin.TabIndexedElement.call( this, { $tabIndexed: this.$element } );
 
-	this.key = data.key;
-	this.label = data.label;
-	this.aliases = data.aliases || [];
-	this.description = data.description;
+	this.key = config.key;
+	this.label = config.label;
+	this.aliases = config.aliases || [];
+	this.description = config.description;
 
 	// Events
 	this.$element.on( 'keydown', this.onKeyDown.bind( this ) );
@@ -37,6 +38,15 @@ OO.inheritClass( ParamWidget, OO.ui.DecoratedOptionWidget );
 
 OO.mixinClass( ParamWidget, OO.ui.mixin.DraggableElement );
 OO.mixinClass( ParamWidget, OO.ui.mixin.TabIndexedElement );
+
+/* Events */
+
+/**
+ * @event choose
+ * @param {ParamWidget} paramWidget
+ */
+
+/* Methods */
 
 /**
  * @param {jQuery.Event} e Key down event

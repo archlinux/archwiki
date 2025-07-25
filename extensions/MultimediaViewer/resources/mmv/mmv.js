@@ -156,7 +156,7 @@ class MultimediaViewer {
 			} );
 		}
 
-		this.ui.updateControls( this.thumbs.length > 1 );
+		this.ui.updateControls( this.currentIndex, this.thumbs.length );
 	}
 
 	/**
@@ -168,7 +168,7 @@ class MultimediaViewer {
 	 */
 	setImage( thumbnail, imageElement, imageWidths ) {
 		this.ui.canvas.setImageAndMaxDimensions( thumbnail, imageElement, imageWidths );
-		this.ui.updateControls( this.thumbs.length > 1 );
+		this.ui.updateControls( this.currentIndex, this.thumbs.length );
 	}
 
 	/**

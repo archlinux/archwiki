@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Title\TitleValue;
@@ -7,6 +9,7 @@ use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
 use Wikimedia\FileBackend\FSFileBackend;
+use Wikimedia\TestingAccessWrapper;
 
 class FileTest extends MediaWikiMediaTestCase {
 
@@ -14,7 +17,7 @@ class FileTest extends MediaWikiMediaTestCase {
 	 * @param string $filename
 	 * @param bool $expected
 	 * @dataProvider providerCanAnimate
-	 * @covers \File::canAnimateThumbIfAppropriate
+	 * @covers \MediaWiki\FileRepo\File\File::canAnimateThumbIfAppropriate
 	 */
 	public function testCanAnimateThumbIfAppropriate( $filename, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::MaxAnimatedGifArea, 9000 );
@@ -40,7 +43,7 @@ class FileTest extends MediaWikiMediaTestCase {
 
 	/**
 	 * @dataProvider getThumbnailBucketProvider
-	 * @covers \File::getThumbnailBucket
+	 * @covers \MediaWiki\FileRepo\File\File::getThumbnailBucket
 	 */
 	public function testGetThumbnailBucket( $data ) {
 		$this->overrideConfigValues( [
@@ -143,7 +146,7 @@ class FileTest extends MediaWikiMediaTestCase {
 
 	/**
 	 * @dataProvider getThumbnailSourceProvider
-	 * @covers \File::getThumbnailSource
+	 * @covers \MediaWiki\FileRepo\File\File::getThumbnailSource
 	 */
 	public function testGetThumbnailSource( $data ) {
 		$backendMock = $this->getMockBuilder( FSFileBackend::class )
@@ -254,7 +257,7 @@ class FileTest extends MediaWikiMediaTestCase {
 
 	/**
 	 * @dataProvider generateBucketsIfNeededProvider
-	 * @covers \File::generateBucketsIfNeeded
+	 * @covers \MediaWiki\FileRepo\File\File::generateBucketsIfNeeded
 	 */
 	public function testGenerateBucketsIfNeeded( $data ) {
 		$this->overrideConfigValue( MainConfigNames::ThumbnailBuckets, $data['buckets'] );
@@ -313,7 +316,7 @@ class FileTest extends MediaWikiMediaTestCase {
 				$data['message'] );
 	}
 
-	public function generateBucketsIfNeededProvider() {
+	public static function generateBucketsIfNeededProvider() {
 		$defaultBuckets = [ 256, 512, 1024, 2048, 4096 ];
 
 		return [
@@ -322,12 +325,12 @@ class FileTest extends MediaWikiMediaTestCase {
 				'width' => 256,
 				'physicalWidth' => 256,
 				'physicalHeight' => 100,
-				'expectedGetBucketThumbPathCalls' => $this->never(),
-				'expectedFileExistsCalls' => $this->never(),
+				'expectedGetBucketThumbPathCalls' => self::never(),
+				'expectedFileExistsCalls' => self::never(),
 				'fileExistsReturn' => null,
-				'expectedMakeTransformTmpFile' => $this->never(),
+				'expectedMakeTransformTmpFile' => self::never(),
 				'makeTransformTmpFileReturn' => false,
-				'expectedGenerateAndSaveThumb' => $this->never(),
+				'expectedGenerateAndSaveThumb' => self::never(),
 				'generateAndSaveThumbReturn' => false,
 				'expectedResult' => false,
 				'message' => 'No bucket found, nothing to generate'
@@ -337,12 +340,12 @@ class FileTest extends MediaWikiMediaTestCase {
 				'width' => 5000,
 				'physicalWidth' => 300,
 				'physicalHeight' => 200,
-				'expectedGetBucketThumbPathCalls' => $this->once(),
-				'expectedFileExistsCalls' => $this->once(),
+				'expectedGetBucketThumbPathCalls' => self::once(),
+				'expectedFileExistsCalls' => self::once(),
 				'fileExistsReturn' => true,
-				'expectedMakeTransformTmpFile' => $this->never(),
+				'expectedMakeTransformTmpFile' => self::never(),
 				'makeTransformTmpFileReturn' => false,
-				'expectedGenerateAndSaveThumb' => $this->never(),
+				'expectedGenerateAndSaveThumb' => self::never(),
 				'generateAndSaveThumbReturn' => false,
 				'expectedResult' => false,
 				'message' => 'File already exists, no reason to generate buckets'
@@ -352,12 +355,12 @@ class FileTest extends MediaWikiMediaTestCase {
 				'width' => 5000,
 				'physicalWidth' => 300,
 				'physicalHeight' => 200,
-				'expectedGetBucketThumbPathCalls' => $this->once(),
-				'expectedFileExistsCalls' => $this->once(),
+				'expectedGetBucketThumbPathCalls' => self::once(),
+				'expectedFileExistsCalls' => self::once(),
 				'fileExistsReturn' => false,
-				'expectedMakeTransformTmpFile' => $this->once(),
+				'expectedMakeTransformTmpFile' => self::once(),
 				'makeTransformTmpFileReturn' => false,
-				'expectedGenerateAndSaveThumb' => $this->never(),
+				'expectedGenerateAndSaveThumb' => self::never(),
 				'generateAndSaveThumbReturn' => false,
 				'expectedResult' => false,
 				'message' => 'Cannot generate temp file for bucket'
@@ -367,12 +370,12 @@ class FileTest extends MediaWikiMediaTestCase {
 				'width' => 5000,
 				'physicalWidth' => 300,
 				'physicalHeight' => 200,
-				'expectedGetBucketThumbPathCalls' => $this->once(),
-				'expectedFileExistsCalls' => $this->once(),
+				'expectedGetBucketThumbPathCalls' => self::once(),
+				'expectedFileExistsCalls' => self::once(),
 				'fileExistsReturn' => false,
-				'expectedMakeTransformTmpFile' => $this->once(),
+				'expectedMakeTransformTmpFile' => self::once(),
 				'makeTransformTmpFileReturn' => new TempFSFile( '/tmp/foo' ),
-				'expectedGenerateAndSaveThumb' => $this->once(),
+				'expectedGenerateAndSaveThumb' => self::once(),
 				'generateAndSaveThumbReturn' => false,
 				'expectedResult' => false,
 				'message' => 'Bucket image could not be generated'
@@ -382,12 +385,12 @@ class FileTest extends MediaWikiMediaTestCase {
 				'width' => 5000,
 				'physicalWidth' => 300,
 				'physicalHeight' => 200,
-				'expectedGetBucketThumbPathCalls' => $this->once(),
-				'expectedFileExistsCalls' => $this->once(),
+				'expectedGetBucketThumbPathCalls' => self::once(),
+				'expectedFileExistsCalls' => self::once(),
 				'fileExistsReturn' => false,
-				'expectedMakeTransformTmpFile' => $this->once(),
+				'expectedMakeTransformTmpFile' => self::once(),
 				'makeTransformTmpFileReturn' => new TempFSFile( '/tmp/foo' ),
-				'expectedGenerateAndSaveThumb' => $this->once(),
+				'expectedGenerateAndSaveThumb' => self::once(),
 				'generateAndSaveThumbReturn' => new ThumbnailImage( false, 'bar', false, false ),
 				'expectedResult' => true,
 				'message' => 'Bucket image could not be generated'
@@ -396,7 +399,7 @@ class FileTest extends MediaWikiMediaTestCase {
 	}
 
 	/**
-	 * @covers \File::getDisplayWidthHeight
+	 * @covers \MediaWiki\FileRepo\File\File::getDisplayWidthHeight
 	 * @dataProvider providerGetDisplayWidthHeight
 	 * @param array $dim Array [maxWidth, maxHeight, width, height]
 	 * @param array $expected Array [width, height] The width and height we expect to display at
@@ -451,7 +454,7 @@ class FileTest extends MediaWikiMediaTestCase {
 	}
 
 	/**
-	 * @covers \File::normalizeTitle
+	 * @covers \MediaWiki\FileRepo\File\File::normalizeTitle
 	 * @dataProvider provideNormalizeTitle
 	 */
 	public function testNormalizeTitle( $title, $expected ) {
@@ -469,7 +472,7 @@ class FileTest extends MediaWikiMediaTestCase {
 	}
 
 	/**
-	 * @covers \File::normalizeTitle
+	 * @covers \MediaWiki\FileRepo\File\File::normalizeTitle
 	 * @dataProvider provideNormalizeTitleFails
 	 */
 	public function testNormalizeTitleFails( $title ) {
@@ -481,8 +484,8 @@ class FileTest extends MediaWikiMediaTestCase {
 	}
 
 	/**
-	 * @covers \File::setHandlerState
-	 * @covers \File::getHandlerState
+	 * @covers \MediaWiki\FileRepo\File\File::setHandlerState
+	 * @covers \MediaWiki\FileRepo\File\File::getHandlerState
 	 */
 	public function testSetHandlerState() {
 		$obj = (object)[];
@@ -493,5 +496,59 @@ class FileTest extends MediaWikiMediaTestCase {
 		$this->assertNull( $file->getHandlerState( 'test' ) );
 		$file->setHandlerState( 'test', $obj );
 		$this->assertSame( $obj, $file->getHandlerState( 'test' ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\FileRepo\File\File::thumbName
+	 * @covers \MediaWiki\FileRepo\File\File::generateThumbName
+	 */
+	public function testThumbNameSteps() {
+		$this->overrideConfigValue( MainConfigNames::ThumbnailSteps, [ 10, 100, 200 ] );
+		// Fully enabled
+		$this->overrideConfigValue( MainConfigNames::ThumbnailStepsRatio, 1 );
+
+		// Round up
+		$file = $this->dataFile( 'test.jpg', 'image/jpeg' );
+		$fileObj = TestingAccessWrapper::newFromObject( $file );
+		$fileObj->sizeAndMetadata = [ 'width' => 500, 'height' => 500, 'metadata' => [] ];
+		$actual = $fileObj->thumbName(
+			[ 'width' => 90, 'height' => 90, 'physicalWidth' => 90, 'physicalHeight' => 90 ],
+		);
+		$this->assertEquals( '100px-test.jpg', $actual );
+
+		// Beyond available steps
+		$file = $this->dataFile( 'test.jpg', 'image/jpeg' );
+		$fileObj = TestingAccessWrapper::newFromObject( $file );
+		$fileObj->sizeAndMetadata = [ 'width' => 500, 'height' => 500, 'metadata' => [] ];
+		$actual = $fileObj->thumbName(
+			[ 'width' => 250, 'height' => 250, 'physicalWidth' => 250, 'physicalHeight' => 250 ],
+		);
+		$this->assertEquals( '250px-test.jpg', $actual );
+	}
+
+	/**
+	 * @covers \MediaWiki\FileRepo\File\File::thumbName
+	 * @covers \MediaWiki\FileRepo\File\File::generateThumbName
+	 */
+	public function testThumbNameStepsRatio() {
+		$this->overrideConfigValue( MainConfigNames::ThumbnailSteps, [ 10, 100, 200 ] );
+		// Enable for 50%
+		$this->overrideConfigValue( MainConfigNames::ThumbnailStepsRatio, 0.5 );
+
+		$file = $this->dataFile( 'test1.jpg', 'image/jpeg' );
+		$fileObj = TestingAccessWrapper::newFromObject( $file );
+		$fileObj->sizeAndMetadata = [ 'width' => 500, 'height' => 500, 'metadata' => [] ];
+		$actual = $fileObj->thumbName(
+			[ 'width' => 90, 'height' => 90, 'physicalWidth' => 90, 'physicalHeight' => 90 ],
+		);
+		$this->assertEquals( '100px-test1.jpg', $actual );
+
+		$file = $this->dataFile( 'test2.jpg', 'image/jpeg' );
+		$fileObj = TestingAccessWrapper::newFromObject( $file );
+		$fileObj->sizeAndMetadata = [ 'width' => 500, 'height' => 500, 'metadata' => [] ];
+		$actual = $fileObj->thumbName(
+			[ 'width' => 90, 'height' => 90, 'physicalWidth' => 90, 'physicalHeight' => 90 ],
+		);
+		$this->assertEquals( '90px-test2.jpg', $actual );
 	}
 }

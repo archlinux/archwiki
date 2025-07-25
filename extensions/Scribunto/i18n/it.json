@@ -38,7 +38,7 @@
 	"scribunto-common-timeout": "Il tempo assegnato per l'esecuzione dello script è scaduto.",
 	"scribunto-common-oom": "La quantità di memoria consentita per l'esecuzione dello script è stata superata.",
 	"scribunto-common-backtrace": "Backtrace:",
-	"scribunto-common-no-details": "Ulteriori dettagli non sono disponibili.",
+	"scribunto-common-no-details": "Non sono disponibili dettagli sulla posizione del codice.",
 	"scribunto-lua-in-function": "nella funzione \"$1\"",
 	"scribunto-lua-in-main": "nel blocco principale",
 	"scribunto-lua-in-function-at": "nella funzione a $1:$2",

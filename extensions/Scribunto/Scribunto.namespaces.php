@@ -130,6 +130,11 @@ $namespaceNames['ca'] = [
 	829 => 'Mòdul_Discussió',
 ];
 
+$namespaceNames['cbk-zam'] = [
+	828 => 'Módulo',
+	829 => 'Discusión_del_módulo',
+];
+
 $namespaceNames['ce'] = [
 	828 => 'Модуль',
 	829 => 'Модуль_йийцар',
@@ -346,7 +351,11 @@ $namespaceNames['ka'] = [
 
 $namespaceNames['kn'] = [
 	828 => 'ಮಾಡ್ಯೂಲ್',
-	829 => 'ಮಾಡ್ಯೂಲ್_ಚರ್ಚೆ',
+	829 => 'ಮಾಡ್ಯೂಲ್_ಚರ್ಚೆಪುಟ',
+];
+
+$namespaceAliases['kn'] = [
+	'ಮಾಡ್ಯೂಲ್_ಚರ್ಚೆ' => 829,
 ];
 
 $namespaceNames['ko'] = [
@@ -367,6 +376,11 @@ $namespaceNames['ku'] = [
 $namespaceNames['ky'] = [
 	828 => 'Модуль',
 	829 => 'Модулду_талкуулоо',
+];
+
+$namespaceNames['la'] = [
+	828 => 'Modulus',
+	829 => 'Disputatio_Moduli'
 ];
 
 $namespaceNames['lb'] = [
@@ -622,6 +636,11 @@ $namespaceNames['szy'] = [
 $namespaceNames['tcy'] = [
 	828 => 'ಮೋಡ್ಯೂಲ್',
 	829 => 'ಮೋಡ್ಯೂಲ್_ಪಾತೆರ',
+];
+
+$namespaceNames['tdd'] = [
+	828 => 'ᥛᥨᥝᥱ_ᥓᥧᥰ',
+	829 => 'ᥟᥧᥙᥱ_ᥐᥧᥛᥴ_ᥛᥩᥱ_ᥓᥧᥰ',
 ];
 
 $namespaceNames['te'] = [

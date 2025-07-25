@@ -3,6 +3,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Config;
 
+use JsonSchema\Constraints\Constraint;
+use JsonSchema\Validator;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -26,9 +28,10 @@ use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\Gallery\Gallery;
 use Wikimedia\Parsoid\Ext\Indicator\Indicator;
 use Wikimedia\Parsoid\Ext\JSON\JSON;
-use Wikimedia\Parsoid\Ext\LST\LST;
 use Wikimedia\Parsoid\Ext\Nowiki\Nowiki;
+use Wikimedia\Parsoid\Ext\PFragmentHandler;
 use Wikimedia\Parsoid\Ext\Pre\Pre;
+use Wikimedia\Parsoid\Fragments\PFragment;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -58,8 +61,17 @@ abstract class SiteConfig {
 	/** @var array|null */
 	private $mediaOptions;
 
-	/** @var array|null */
-	protected $functionSynonyms;
+	/**
+	 * @var array{0:array<string,string>,1:array<string,string>}
+	 *   Localized aliases for legacy parser functions.
+	 */
+	protected array $functionSynonyms = [ [], [], ];
+
+	/**
+	 * @var array{0:array<string,string>,1:array<string,string>}
+	 *   Localized aliases for parser functions defined with PFragment handlers.
+	 */
+	protected array $pFragmentHandlerFuncSynonyms = [ [], [] ];
 
 	/** @var string[] */
 	private $protocolsRegexes = [];
@@ -94,21 +106,25 @@ abstract class SiteConfig {
 		Pre::class,
 		Gallery::class,
 		Indicator::class,
-		// The following implementations will move to their own repositories
-		// soon, but for now are implemented in the Parsoid repo.
-		LST::class
 	];
 
 	/**
-	 * Array specifying fully qualified class name for Parsoid-compatible extensions
+	 * Array mapping parsoid internal extension ID to ExtensionModule object.
 	 * @var ?array<int,ExtensionModule>
 	 */
-	private $extModules = null;
+	private ?array $extModules = null;
+
 	/**
-	 * Private counter to assign IDs to $extModules
-	 * @var int
+	 * Array mapping parsoid internal extension ID to mediawiki Extension
+	 * name.
+	 * @var array<int,string>
 	 */
-	private $extModuleNextId = 0;
+	private array $extModuleOwner = [];
+
+	/**
+	 * Private counter to assign IDs to $extModules / $extModuleOwner
+	 */
+	private int $extModuleNextId = 0;
 
 	// phpcs:disable Generic.Files.LineLength.TooLong
 
@@ -124,6 +140,14 @@ abstract class SiteConfig {
 	 */
 	final public function registerExtensionModule( $configOrSpec ): int {
 		$this->getExtensionModules(); // ensure it's initialized w/ core modules
+		// MediaWiki core passes along the name of the MediaWiki extension
+		// which registered this extension module as 'extension-name'
+		$extensionName = null;
+		if ( !is_string( $configOrSpec ) ) {
+			$extensionName = $configOrSpec['extension-name'] ?? null;
+			unset( $configOrSpec['extension-name'] );
+		}
+
 		if ( is_string( $configOrSpec ) || isset( $configOrSpec['class'] ) || isset( $configOrSpec['factory'] ) ) {
 			// Treat this as an object factory spec for an ExtensionModule
 			// ObjectFactory::createObject accepts an array, not just a callable (phan bug)
@@ -151,6 +175,7 @@ abstract class SiteConfig {
 		}
 		$extId = $this->extModuleNextId++;
 		$this->extModules[$extId] = $module;
+		$this->extModuleOwner[$extId] = $extensionName;
 		// remove cached extConfig to ensure this registration is picked up
 		$this->extConfig = null;
 		return $extId;
@@ -167,7 +192,10 @@ abstract class SiteConfig {
 	 */
 	final public function unregisterExtensionModule( int $extId ): void {
 		unset( $this->extModules[$extId] );
-		$this->extConfig = null; // remove cached extConfig
+		unset( $this->extModuleOwner[$extId] );
+		// remove cached extConfig; this will also regenerate
+		// magic word synonyms from the still-registered modules.
+		$this->extConfig = null;
 	}
 
 	/**
@@ -180,7 +208,9 @@ abstract class SiteConfig {
 		if ( $this->extModules === null ) {
 			$this->extModules = [];
 			foreach ( self::$coreExtModules as $m ) {
-				$this->extModules[$this->extModuleNextId++] = new $m();
+				$extId = $this->extModuleNextId++;
+				$this->extModules[$extId] = new $m();
+				$this->extModuleOwner[$extId] = null; // native module
 			}
 		}
 		return array_values( $this->extModules );
@@ -966,14 +996,42 @@ abstract class SiteConfig {
 	}
 
 	/**
-	 * Get a list of precomputed function synonyms
+	 * Get a list of precomputed synonyms for parser functions registered
+	 * with the legacy parser.  Be aware that this is distinct from the
+	 * set of parser functions with Parsoid-native implementations!
+	 * @return array{0:array<string,string>,1:array<string,string>}
 	 */
 	protected function getFunctionSynonyms(): array {
-		return [];
+		return [ [], [], ];
 	}
 
+	/**
+	 * If ::haveComputedFunctionSynoyms() returns false, this function is
+	 * called once on every magic word alias.  This function is responsible
+	 * for determining if the magic word key ($magicword) corresponds to a
+	 * registered legacy parser function (list obtained via
+	 * `action=query&meta=siteinfo&siprop=functionhooks`) and setting
+	 * `$this->functionSynonyms[$case][$alias] = $magicword` if so.
+	 *
+	 * @param string $func A localized aliases for this magic word
+	 * @param string $magicword The lookup key for this magic word
+	 * @param bool $caseSensitive If true, $func is to be treated as
+	 *   case-sensitive.
+	 */
 	protected function updateFunctionSynonym( string $func, string $magicword, bool $caseSensitive ): void {
 		throw new \RuntimeException( "Unexpected code path!" );
+	}
+
+	/**
+	 * Reset our cached magic word lookup tables.
+	 *
+	 * This function is intended to be used by parser tests to
+	 * re-compute magic words, behavior switches, lists of magic
+	 * variables, etc after processing test-specific settings.
+	 * @internal
+	 */
+	public function resetMagicWords() {
+		$this->mwAliases = null;
 	}
 
 	private function populateMagicWords() {
@@ -992,6 +1050,7 @@ abstract class SiteConfig {
 			foreach ( $aliases as $alias ) {
 				$this->mwAliases[$magicword][] = $alias;
 				if ( !$caseSensitive ) {
+					// T389029: strtolower is not the same as case-folding
 					$alias = mb_strtolower( $alias );
 					$this->mwAliases[$magicword][] = $alias;
 				}
@@ -1021,15 +1080,38 @@ abstract class SiteConfig {
 	}
 
 	/**
-	 * Return canonical magic word for a function hook
-	 * @param string $str
-	 * @return string|null
+	 * Return canonical magic word for a parser function
+	 * @param string $str A localized potential parser function name, including
+	 *   any leading `#` (but not a trailing colon or bar)
+	 * @return array{key:?string,isNative:bool}
+	 *   The magic word "key" for this parser function and a boolean
+	 *   indicating whether this is a parsoid-native PFragment handler
+	 *   (true) or a parser function handled by the legacy parser
+	 *   fallback (false).  The key is `null` if no parser function
+	 *   matching $str is known.
 	 */
-	public function getMagicWordForFunctionHook( string $str ): ?string {
-		$this->populateMagicWords();
-		return $this->functionSynonyms[1][$str] ??
-			# Case insensitive functions
-			$this->functionSynonyms[0][mb_strtolower( $str )] ?? null;
+	public function getMagicWordForParserFunction( string $str ): array {
+		# Case insensitive functions:
+		# Core uses $parser->contLang->lc($str) which is optimized but
+		# equivalent to mb_strtolower; case-insensitivity for parser
+		# function names should be deprecated, though, and converting
+		# to lower case doesn't actually yield a case-insensitive match
+		# (T389029)
+		$lower = mb_strtolower( $str );
+
+		# Native implementations take precedence
+		$isNative = true;
+		$this->getExtConfig();
+		$key = $this->pFragmentHandlerFuncSynonyms[1][$str] ??
+			$this->pFragmentHandlerFuncSynonyms[0][$lower] ?? null;
+		if ( $key === null ) {
+			# Legacy parser functions
+			$isNative = false;
+			$this->populateMagicWords();
+			$key = $this->functionSynonyms[1][$str] ??
+				$this->functionSynonyms[0][$lower] ?? null;
+		}
+		return [ 'key' => $key, 'isNative' => $isNative ];
 	}
 
 	/**
@@ -1243,7 +1325,7 @@ abstract class SiteConfig {
 	 * Return the desired linter configuration.  These are heuristic values
 	 * which have hardcoded defaults but could be overridden on a per-wiki
 	 * basis.
-	 * @return array{enabled?:string[],disabled?:string[],maxTableColumnHeuristic?:int,maxTableRowsToCheck?:int}
+	 * @return array{enabled?:?string[],disabled?:?string[],maxTableColumnHeuristic?:int,maxTableRowsToCheck?:int}
 	 */
 	public function getLinterSiteConfig(): array {
 		return [
@@ -1410,6 +1492,16 @@ abstract class SiteConfig {
 	}
 
 	/**
+	 * Whether to validate extension module's configuration arrays
+	 * against the schema.  Returns true by default.  Subclasses
+	 * should return true when running tests, but may elect to return
+	 * false in production.
+	 */
+	protected function shouldValidateExtConfig(): bool {
+		return true;
+	}
+
+	/**
 	 * FIXME: might benefit from T250230 (caching) but see T270307 --
 	 * currently SiteConfig::unregisterExtensionModule() is called
 	 * during testing, which requires invalidating $this->extConfig.
@@ -1427,6 +1519,7 @@ abstract class SiteConfig {
 			'domProcessors'  => [],
 			'annotationStrippers' => [],
 			'contentModels'  => [],
+			'pFragmentHandlers'  => [],
 		];
 
 		// There may be some tags defined by the parent wiki which have no
@@ -1434,8 +1527,13 @@ abstract class SiteConfig {
 		// the legacy parser.
 		$this->extConfig['allTags'] = $this->getNonNativeExtensionTags();
 
-		foreach ( $this->getExtensionModules() as $module ) {
-			$this->processExtensionModule( $module );
+		// Reset the list of PFragment handler synonyms; they will be recreated
+		// as we process the extension modules.
+		$this->pFragmentHandlerFuncSynonyms = [ [], [], ];
+
+		$this->getExtensionModules();
+		foreach ( $this->extModules as $extId => $module ) {
+			$this->processExtensionModule( $module, $this->extModuleOwner[$extId] );
 		}
 	}
 
@@ -1448,17 +1546,46 @@ abstract class SiteConfig {
 	}
 
 	/**
+	 * Return the JSON Schema for Extension Modules.
+	 */
+	private static function getExtensionModuleSchema(): object {
+		static $schema = null;
+		if ( $schema === null ) {
+			$schemaPath = __DIR__ . '/../Ext/moduleconfig.schema.json';
+			$schema = json_decode( file_get_contents( $schemaPath ) );
+		}
+		return $schema;
+	}
+
+	/**
 	 * Register a Parsoid-compatible extension
 	 * @param ExtensionModule $ext
+	 * @param string|null $extensionOwner the MediaWiki extension which registered
+	 *   this extension module.
 	 */
-	protected function processExtensionModule( ExtensionModule $ext ): void {
+	protected function processExtensionModule( ExtensionModule $ext, ?string $extensionOwner = null ): void {
 		Assert::invariant( $this->extConfig !== null, "not yet inited!" );
 		$extConfig = $ext->getConfig();
+		$name = $extConfig['name'] ?? null;
 		Assert::invariant(
-			isset( $extConfig['name'] ),
+			$name !== null,
 			"Every extension module must have a name."
 		);
-		$name = $extConfig['name'];
+
+		if ( $this->shouldValidateExtConfig() ) {
+			$validator = new Validator;
+			$validator->validate(
+				$extConfig,
+				self::getExtensionModuleSchema(),
+				Constraint::CHECK_MODE_TYPE_CAST // allow associative arrays
+			);
+			Assert::invariant(
+				$validator->isValid(),
+				"Found errors when validating " .
+					$extConfig['name'] . " ExtensionModule config: " .
+					json_encode( $validator->getErrors(), JSON_PRETTY_PRINT )
+			);
+		}
 
 		// These are extension tag handlers.  They have
 		// wt2html (sourceToDom), html2wt (domToWikitext), and
@@ -1477,8 +1604,8 @@ abstract class SiteConfig {
 
 		if ( isset( $extConfig['annotations'] ) ) {
 			$annotationConfig = $extConfig['annotations'];
-			$annotationTags = $annotationConfig['tagNames'] ?? $annotationConfig;
-			foreach ( $annotationTags ?? [] as $aTag ) {
+			$annotationTags = $annotationConfig['tagNames'] ?? [];
+			foreach ( $annotationTags as $aTag ) {
 				$lowerTagName = mb_strtolower( $aTag );
 				$this->extConfig['allTags'][$lowerTagName] = true;
 				$this->extConfig['annotationTags'][$lowerTagName] = true;
@@ -1489,6 +1616,42 @@ abstract class SiteConfig {
 					'assertClass' => AnnotationStripper::class,
 				] );
 				$this->extConfig['annotationStrippers'][$name] = $obj;
+			}
+		}
+
+		$this->populateMagicWords();
+		$magicWordMap = $this->getMagicWords();
+		// PFragment handlers are named using magic words
+		foreach ( $extConfig['pFragmentHandlers'] ?? $extConfig['fragmentHandlers'] ?? [] as $pFragmentHandler ) {
+			$key = $pFragmentHandler['key'] ?? null; # A magic word
+			if ( !$key ) {
+				continue;
+			}
+			# transfer information about the extension and parsoid module
+			# in which this fragment handler is defined
+			$pFragmentHandler['module-name'] = $name;
+			$pFragmentHandler['extension-name'] = $extensionOwner;
+			$this->extConfig['pFragmentHandlers'][$key] = $pFragmentHandler;
+			if ( !array_key_exists( $key, $magicWordMap ) ) {
+				continue;
+			}
+			// Case-insensitive is deprecated! T389029
+			$caseSensitive = $magicWordMap[$key][0] ?? 0;
+			foreach ( $this->mwAliases[$key] as $alias ) {
+				if ( isset( $pFragmentHandler['options']['parserFunction'] ) ) {
+					# 'hash' is the default; for legacy compatibility a few
+					# parser functions are defined without a hash or have
+					# the hash already prepended to the magic word alias
+					$pfAlias = $alias;
+					if ( !isset( $pFragmentHandler['options']['nohash'] ) ) {
+						$pfAlias = '#' . $pfAlias;
+					}
+					$this->pFragmentHandlerFuncSynonyms[$caseSensitive][$pfAlias] = $key;
+				}
+				// TODO (T390342): ['options']['extensionTag'] can also be set,
+				// and we would register this PFragment handler as a
+				// localizable (!) extension tag.
+				// $this->pFragmentHandlerTagSynonyms[$case][$alias]=$key;
 			}
 		}
 
@@ -1510,6 +1673,11 @@ abstract class SiteConfig {
 				'assertClass' => ContentModelHandler::class,
 			] );
 			$this->extConfig['contentModels'][$cm] = $handler;
+		}
+
+		// Extension modules can register new PFragment types
+		foreach ( $extConfig['PFragmentTypes'] ?? [] as $pfClass ) {
+			PFragment::registerFragmentClass( $pfClass );
 		}
 	}
 
@@ -1574,7 +1742,7 @@ abstract class SiteConfig {
 	 * Get an array of defined extension tags, with the lower case name
 	 * in the key, and the value being arbitrary.
 	 *
-	 * @return array
+	 * @return array<string,true>
 	 */
 	public function getExtensionTagNameMap(): array {
 		$extConfig = $this->getExtConfig();
@@ -1590,7 +1758,10 @@ abstract class SiteConfig {
 		return $extConfig['parsoidExtTags'][mb_strtolower( $tagName )] ?? null;
 	}
 
-	private $tagHandlerCache = [];
+	/** @var array<string,?ExtensionTagHandler> */
+	private array $tagHandlerCache = [];
+	/** @var array<string,?PFragmentHandler> */
+	private array $pFragmentHandlerCache = [];
 
 	/**
 	 * @param string $tagName Extension tag name
@@ -1598,6 +1769,7 @@ abstract class SiteConfig {
 	 *   Returns the implementation of the named extension, if there is one.
 	 */
 	public function getExtTagImpl( string $tagName ): ?ExtensionTagHandler {
+		$tagName = mb_strtolower( $tagName );
 		if ( !array_key_exists( $tagName, $this->tagHandlerCache ) ) {
 			$tagConfig = $this->getExtTagConfig( $tagName );
 			$this->tagHandlerCache[$tagName] = isset( $tagConfig['handler'] ) ?
@@ -1611,13 +1783,59 @@ abstract class SiteConfig {
 	}
 
 	/**
+	 * @return list<string> Magic word IDs naming PFragment handlers
+	 *  registered with Parsoid.
+	 */
+	public function getPFragmentHandlerKeys() {
+		$extConfig = $this->getExtConfig();
+		return array_keys( $extConfig['pFragmentHandlers'] ?? [] );
+	}
+
+	/**
+	 * @param string $key Magic word ID naming this PFragment handler
+	 * @return array{handler?:string|array}|null Configuration for the
+	 *   fragment handler, including a 'handler' property which contains
+	 *   an object factory specification for a PFragmentHandler.
+	 */
+	public function getPFragmentHandlerConfig( string $key ) {
+		$extConfig = $this->getExtConfig();
+		return $extConfig['pFragmentHandlers'][$key] ?? null;
+	}
+
+	/**
+	 * @param string $key Magic word ID naming this PFragment handler
+	 *
+	 * @return ?PFragmentHandler
+	 */
+	public function getPFragmentHandlerImpl( string $key ): ?PFragmentHandler {
+		if ( !array_key_exists( $key, $this->pFragmentHandlerCache ) ) {
+			$handlerConfig = $this->getPFragmentHandlerConfig( $key );
+			$this->pFragmentHandlerCache[$key] = isset( $handlerConfig['handler'] ) ?
+				$this->getObjectFactory()->createObject( $handlerConfig['handler'], [
+					'allowClassName' => true,
+					'assertClass' => PFragmentHandler::class,
+				] ) : null;
+		}
+
+		return $this->pFragmentHandlerCache[$key];
+	}
+
+	/**
 	 * Return an array mapping extension name to an array of object factory
 	 * specs for Ext\DOMProcessor objects
-	 * @return array
+	 * @return array<name,list<string|array>>
 	 */
 	public function getExtDOMProcessors(): array {
 		$extConfig = $this->getExtConfig();
 		return $extConfig['domProcessors'];
+	}
+
+	/**
+	 * Return the localization key we should use for asynchronous
+	 * fallback content.
+	 */
+	public function getAsyncFallbackMessageKey(): string {
+		return 'parsoid-async-not-ready-fallback';
 	}
 
 	/** @var array<string,int> */

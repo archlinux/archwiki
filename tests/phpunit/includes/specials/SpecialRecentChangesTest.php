@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\MessageParser;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialRecentChanges;
@@ -26,7 +27,7 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 	protected function getPage(): SpecialRecentChanges {
 		return new SpecialRecentChanges(
 			$this->getServiceContainer()->getWatchedItemStore(),
-			$this->getServiceContainer()->getMessageCache(),
+			$this->getServiceContainer()->getMessageParser(),
 			$this->getServiceContainer()->getUserOptionsLookup(),
 			$this->getServiceContainer()->getChangeTagsStore(),
 			$this->getServiceContainer()->getUserIdentityUtils(),
@@ -181,6 +182,44 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 		$this->assertStringNotContainsString( 'anon summary', $html );
 	}
 
+	public function testRegistrationFiltersDoShow() {
+		$this->disableAutoCreateTempUser();
+
+		$context = new RequestContext;
+		$context->setTitle( Title::newFromText( __METHOD__ ) );
+		$context->setUser( $this->getTestUser()->getUser() );
+		$context->setRequest( new FauxRequest );
+
+		[ $html ] = ( new SpecialPageExecutor() )->executeSpecialPage(
+			$this->getPage(),
+			'',
+			new FauxRequest()
+		);
+		$this->assertStringContainsString( 'rcshowhideliu', $html );
+		$this->assertStringContainsString( 'rcshowhideanons', $html );
+	}
+
+	public function testRegistrationFiltersDoNotShowWhenRegistrationIsRequiredToEdit() {
+		$this->overrideConfigValue(
+			MainConfigNames::GroupPermissions,
+			[ '*' => [ 'edit' => false ] ]
+		);
+		$this->disableAutoCreateTempUser();
+
+		$context = new RequestContext;
+		$context->setTitle( Title::newFromText( __METHOD__ ) );
+		$context->setUser( $this->getTestUser()->getUser() );
+		$context->setRequest( new FauxRequest );
+
+		[ $html ] = ( new SpecialPageExecutor() )->executeSpecialPage(
+			$this->getPage(),
+			'',
+			new FauxRequest()
+		);
+		$this->assertStringNotContainsString( 'rcshowhideliu', $html );
+		$this->assertStringNotContainsString( 'rcshowhideanons', $html );
+	}
+
 	/**
 	 * This integration test just tries to run the isDenseFilter() queries, to
 	 * check for syntax errors etc. It doesn't verify the logic.
@@ -220,7 +259,7 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 		$page = new class (
 			$dense,
 			$this->getServiceContainer()->getWatchedItemStore(),
-			$this->getServiceContainer()->getMessageCache(),
+			$this->getServiceContainer()->getMessageParser(),
 			$this->getServiceContainer()->getUserOptionsLookup()
 		)  extends SpecialRecentChanges {
 			private $dense;
@@ -228,10 +267,10 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 			public function __construct(
 				$dense,
 				?WatchedItemStoreInterface $watchedItemStore = null,
-				?MessageCache $messageCache = null,
+				?MessageParser $messageParser = null,
 				?\MediaWiki\User\Options\UserOptionsLookup $userOptionsLookup = null
 			) {
-				parent::__construct( $watchedItemStore, $messageCache, $userOptionsLookup );
+				parent::__construct( $watchedItemStore, $messageParser, $userOptionsLookup );
 				$this->dense = $dense;
 			}
 

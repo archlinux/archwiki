@@ -45,12 +45,13 @@ class SpecialEditRecovery extends SpecialPage {
 
 		$this->getOutput()->addModuleStyles( 'mediawiki.special.editrecovery.styles' );
 		$this->getOutput()->addModules( 'mediawiki.special.editrecovery' );
-		$noJs = Html::element(
-			'span',
-			[ 'class' => 'error mw-EditRecovery-special-nojs-notice' ],
-			$this->msg( 'edit-recovery-nojs-placeholder' )
+		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+		$noJs = Html::errorBox(
+			$this->msg( 'edit-recovery-nojs-placeholder' )->parse(),
+			'',
+			'mw-special-EditRecovery-nojs-notice'
 		);
-		$placeholder = Html::rawElement( 'div', [ 'class' => 'mw-EditRecovery-special' ], $noJs );
+		$placeholder = Html::rawElement( 'div', [ 'class' => 'mw-special-EditRecovery-app' ], $noJs );
 		$this->getOutput()->addHTML( $placeholder );
 	}
 }

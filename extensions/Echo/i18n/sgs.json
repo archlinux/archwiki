@@ -7,6 +7,7 @@
 	"prefs-echo": "Žėnotės",
 	"prefs-echosubscriptions": "Monē pasakīkėt, kap būs padėrbtė tėi dāktā:",
 	"tooltip-pt-notifications-alert": "Pertarėmā Tamstā",
+	"tooltip-pt-notifications": "mona pranešėmā",
 	"echo-specialpage": "Žėnotės",
 	"echo-notification-placeholder": "Žėnotiu nie.",
 	"notification-header-edit-user-talk-with-section": "$1 {{GENDER:$2|parašė}} žėnotė <strong>{{GENDER:$3|Tamstas}} aptarėmu poslapie, </strong> prī skėrsnelė „<strong>$4</strong>“.",

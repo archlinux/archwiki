@@ -22,7 +22,6 @@ namespace Wikimedia\ObjectCache;
 use InvalidArgumentException;
 use JsonSerializable;
 use stdClass;
-use Wikimedia\ObjectCache\Serialized\SerializedValueContainer;
 use Wikimedia\WaitConditionLoop;
 
 /**
@@ -138,12 +137,12 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 			// easy filtering with array_filter() later.
 			$this->duplicateKeyLookups[$key] = 0;
 		} else {
-			$this->duplicateKeyLookups[$key] += 1;
+			$this->duplicateKeyLookups[$key]++;
 
 			if ( $this->dupeTrackScheduled === false ) {
 				$this->dupeTrackScheduled = true;
 				// Schedule a callback that logs keys processed more than once by get().
-				call_user_func( $this->asyncHandler, function () {
+				( $this->asyncHandler )( function () {
 					$dups = array_filter( $this->duplicateKeyLookups );
 					foreach ( $dups as $key => $count ) {
 						$this->logger->warning(

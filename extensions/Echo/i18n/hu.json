@@ -79,6 +79,7 @@
 	"notifications": "Értesítések",
 	"tooltip-pt-notifications-alert": "Értesítéseid",
 	"tooltip-pt-notifications-notice": "Értesítéseid",
+	"tooltip-pt-notifications": "Értesítéseid",
 	"echo-displaynotificationsconfiguration": "Értesítések konfigurációjának megjelenítése",
 	"echo-displaynotificationsconfiguration-summary": "Ez egy áttekintés az Értesítések konfigurációjáról ezen a wikin.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Értesítések kategóriánként",

@@ -21,6 +21,7 @@
 namespace MediaWiki\SyntaxHighlight;
 
 use MediaWiki\MediaWikiServices;
+use Psr\Http\Client\ClientExceptionInterface;
 use Shellbox\Command\BoxedCommand;
 use Shellbox\ShellboxError;
 
@@ -322,6 +323,8 @@ class Pygmentize {
 			// PygmentsException. This permits the Parser tag to fallback to
 			// plainCodeWrap(), thus avoiding a fatal on pageviews (T292663).
 			throw new PygmentsException( 'ShellboxError', 0, $exception );
+		} catch ( ClientExceptionInterface $exception ) {
+			throw new PygmentsException( 'Http client error', 0, $exception );
 		}
 
 		$output = $result->getStdout();

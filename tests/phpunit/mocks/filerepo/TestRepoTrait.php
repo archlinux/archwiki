@@ -3,13 +3,14 @@
 namespace MediaWiki\Tests\FileRepo;
 
 use InvalidArgumentException;
-use LocalRepo;
 use LogicException;
 use MediaWiki\FileBackend\FileBackendGroup;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use PHPUnit\Framework\Assert;
-use RepoGroup;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFileBackend;
 
@@ -93,7 +94,7 @@ trait TestRepoTrait {
 		$this->installTestBackendGroup( $repoGroup->getLocalRepo()->getBackend() );
 	}
 
-	private function createTestRepoGroup( $options = [], ?MediaWikiServices $services = null ) {
+	private function createTestRepoGroup( array $options = [], ?MediaWikiServices $services = null ): RepoGroup {
 		$services ??= $this->getServiceContainer();
 		$localFileRepo = $this->getLocalFileRepoConfig( $options );
 
@@ -112,6 +113,7 @@ trait TestRepoTrait {
 		$this->setService( 'FileBackendGroup', $this->createTestBackendGroup( $backend ) );
 	}
 
+	/** @return FileBackend */
 	private function createTestBackendGroup( FileBackend $backend ) {
 		$expected = "mwstore://{$backend->getName()}/";
 
@@ -129,7 +131,7 @@ trait TestRepoTrait {
 		return $backendGroup;
 	}
 
-	private function getLocalFileRepoConfig( $options = [] ): array {
+	private function getLocalFileRepoConfig( array $options = [] ): array {
 		if ( self::$mockRepoTraitDir === null ) {
 			throw new LogicException( 'Mock repo not initialized. ' .
 				'Call initTestRepo() from addDBDataOnce() and a call ' .
@@ -168,6 +170,7 @@ trait TestRepoTrait {
 		return $info;
 	}
 
+	/** @return FileBackend */
 	private function createFileBackend( array $info = [] ) {
 		$dir = $info['directory'] ?? self::$mockRepoTraitDir;
 		$name = $info['name'] ?? 'test';
@@ -223,7 +226,7 @@ trait TestRepoTrait {
 		}
 	}
 
-	private function importFileToTestRepo( string $path, ?string $destName = null ) {
+	private function importFileToTestRepo( string $path, ?string $destName = null ): File {
 		$repo = self::getTestRepo();
 
 		$destName ??= pathinfo( $path, PATHINFO_BASENAME );

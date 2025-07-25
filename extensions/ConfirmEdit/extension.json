@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -55,15 +55,8 @@
 	"ExtensionMessagesFiles": {
 		"ConfirmEditAlias": "ConfirmEdit.alias.php"
 	},
-	"AutoloadClasses": {
-		"CaptchaCacheStore": "includes/Store/CaptchaCacheStore.php",
-		"ConfirmEditHooks": "includes/Hooks.php",
-		"MediaWiki\\Extension\\ConfirmEdit\\Hooks": "includes/Hooks.php",
-		"MediaWiki\\Extension\\ConfirmEdit\\Store\\CaptchaCacheStore": "includes/Store/CaptchaCacheStore.php"
-	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\ConfirmEdit\\": "includes/",
-		"MediaWiki\\Extension\\ConfirmEdit\\SimpleCaptcha\\": "SimpleCaptcha/"
+		"MediaWiki\\Extension\\ConfirmEdit\\": "includes/"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {
@@ -74,7 +67,7 @@
 			"dependencies": "ext.confirmEdit.CaptchaInputWidget"
 		},
 		"ext.confirmEdit.simpleCaptcha": {
-			"styles": "../SimpleCaptcha/resources/ext.confirmEdit.simpleCaptcha.css"
+			"styles": "ext.confirmEdit.simpleCaptcha.css"
 		}
 	},
 	"attributes": {
@@ -125,12 +118,17 @@
 		}
 	},
 	"config": {
+		"CaptchaClass": {
+			"description": "Set to one of SimpleCaptcha, FancyCaptcha, QuestyCaptcha, ReCaptchaNoCaptcha, hCaptcha, Turnstile, or to a custom PHP subclass of SimpleCaptcha. Defaults to the SimpleCaptcha demo captcha. For example, to use FancyCaptcha: `$wgCaptchaClass = 'FancyCaptcha';`",
+			"value": "SimpleCaptcha"
+		},
 		"CaptchaWhitelistIP": {
+			"description": "DEPRECATED! Use CaptchaBypassIPs",
 			"value": false
 		},
-		"Captcha": {
-			"description": "Captcha class to be used; when enabling sub extensions (ie FancyCaptcha) this will be set for you",
-			"value": null
+		"CaptchaBypassIPs": {
+			"description": "A list of IP addresses that can skip the captcha",
+			"value": false
 		},
 		"CaptchaTriggers": {
 			"description": "Actions which can trigger a captcha",
@@ -179,6 +177,10 @@
 			"value": 20
 		},
 		"CaptchaWhitelist": {
+			"description": "DEPRECATED: Use CaptchaIgnoredUrls.",
+			"value": false
+		},
+		"CaptchaIgnoredUrls": {
 			"description": "Urls that won't trigger a captcha.",
 			"value": false
 		},

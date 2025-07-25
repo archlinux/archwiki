@@ -4,6 +4,8 @@
 			"Cabal"
 		]
 	},
+	"linter-category-empty-heading": "ਖਾਲੀ ਸਿਰਲੇਖ",
 	"linter-form-template-option-with": "ਫਰਮੇ ਦੇ ਨਾਲ",
-	"linter-form-template-option-without": "ਫਰਮੇ ਤੋਂ ਬਿਨਾਂ"
+	"linter-form-template-option-without": "ਫਰਮੇ ਤੋਂ ਬਿਨਾਂ",
+	"linter-pager-empty-heading-details": "ਖਾਲੀ ਸਿਰਲੇਖ"
 }

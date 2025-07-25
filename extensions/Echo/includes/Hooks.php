@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\Notifications;
 
 use EmailNotification;
-use LogEntry;
 use LogicException;
 use MailAddress;
 use MediaWiki\Api\ApiModuleManager;
@@ -24,8 +23,8 @@ use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
+use MediaWiki\Extension\Notifications\Notifications\UserRightsNotification;
 use MediaWiki\Extension\Notifications\Push\Api\ApiEchoPushSubscriptions;
-use MediaWiki\Hook\AbortTalkPageEmailNotificationHook;
 use MediaWiki\Hook\EmailUserCompleteHook;
 use MediaWiki\Hook\GetNewMessagesAlertHook;
 use MediaWiki\Hook\LinksUpdateCompleteHook;
@@ -40,18 +39,22 @@ use MediaWiki\HTMLForm\Field\HTMLCheckMatrix;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\LogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\ArticleDeleteCompleteHook;
 use MediaWiki\Page\Hook\ArticleUndeleteHook;
 use MediaWiki\Page\Hook\RollbackCompleteHook;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Preferences\MultiTitleFilter;
 use MediaWiki\Preferences\MultiUsernameFilter;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
@@ -59,6 +62,8 @@ use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Skin\Skin;
+use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
@@ -78,14 +83,13 @@ use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\WikiMap\WikiMap;
-use RecentChange;
-use Skin;
-use SkinTemplate;
+use MobileContext;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\Stats\StatsFactory;
-use WikiPage;
+
+// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
 
 class Hooks implements
-	AbortTalkPageEmailNotificationHook,
 	ApiMain__moduleManagerHook,
 	ArticleDeleteCompleteHook,
 	ArticleUndeleteHook,
@@ -279,14 +283,11 @@ class Hooks implements
 		}
 
 		// Default $wgEchoSeenTimeCacheType to $wgMainStash
-		if ( $wgEchoSeenTimeCacheType === null ) {
-			$wgEchoSeenTimeCacheType = $wgMainStash;
-		}
+		$wgEchoSeenTimeCacheType ??= $wgMainStash;
 	}
 
 	/**
 	 * Handler for ResourceLoaderRegisterModules hook
-	 * @param ResourceLoader $resourceLoader
 	 */
 	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
 		$resourceLoader->register( 'ext.echo.emailicons', [
@@ -596,7 +597,7 @@ class Hooks implements
 		// test for them reaching a congratulatory threshold
 		$thresholds = [ 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000 ];
 		if ( $userIdentity->isRegistered() ) {
-			$thresholdCount = $this->getEditCount( $userIdentity );
+			$thresholdCount = $this->getPredictedEditCount( $userIdentity );
 			if ( in_array( $thresholdCount, $thresholds ) ) {
 				DeferredUpdates::addCallableUpdate( static function () use (
 					$revisionRecord, $userIdentity, $title, $thresholdCount
@@ -639,10 +640,7 @@ class Hooks implements
 		if ( $editResult->getRevertMethod() === EditResult::REVERT_UNDO ) {
 			$undidRevId = $editResult->getUndidRevId();
 			$undidRevision = $this->revisionStore->getRevisionById( $undidRevId );
-			if (
-				$undidRevision &&
-				Title::newFromLinkTarget( $undidRevision->getPageAsLinkTarget() )->equals( $title )
-			) {
+			if ( $undidRevision && $undidRevision->getPage()->isSamePageAs( $title ) ) {
 				$revertedUser = $undidRevision->getUser();
 				// No notifications for anonymous users
 				if ( $revertedUser && $revertedUser->getId() ) {
@@ -664,17 +662,16 @@ class Hooks implements
 	}
 
 	/**
+	 * Get the predicted edit count after a page save hook
+	 *
 	 * @param UserIdentity $user
 	 * @return int
 	 */
-	private function getEditCount( UserIdentity $user ) {
+	private function getPredictedEditCount( UserIdentity $user ) {
 		$editCount = $this->userEditTracker->getUserEditCount( $user ) ?: 0;
-		// When this code runs from a maintenance script or unit tests
-		// the deferred update incrementing edit count runs right away
-		// so the edit count is right. Otherwise it lags by one.
-		if ( wfIsCLI() ) {
-			return $editCount;
-		}
+		// When this code runs, the deferred update that increments the edit count
+		// will still be pending.
+
 		return $editCount + 1;
 	}
 
@@ -743,31 +740,22 @@ class Hooks implements
 		if ( $expiryChanged ) {
 			// use a separate notification for these, so the notification text doesn't
 			// get too long
-			Event::create(
-				[
-					'type' => 'user-rights',
-					'extra' => [
-						'user' => $user->getId(),
-						'expiry-changed' => $expiryChanged,
-						'reason' => $reason,
-					],
-					'agent' => $performer,
-				]
+			//
+			$notification = UserRightsNotification::newForExpiryChanged(
+				$user, $performer, $reason, $expiryChanged
+			);
+
+			MediaWikiServices::getInstance()->getNotificationService()->notify(
+				$notification, new RecipientSet( [ $user ] )
 			);
 		}
 
 		if ( $reallyAdded || $remove ) {
-			Event::create(
-				[
-					'type' => 'user-rights',
-					'extra' => [
-						'user' => $user->getId(),
-						'add' => $reallyAdded,
-						'remove' => $remove,
-						'reason' => $reason,
-					],
-					'agent' => $performer,
-				]
+			$notification = UserRightsNotification::newForRightsChange(
+				$user, $performer, $reason, $reallyAdded, $remove
+			);
+			MediaWikiServices::getInstance()->getNotificationService()->notify(
+				$notification, new RecipientSet( [ $user ] )
 			);
 		}
 	}
@@ -785,6 +773,11 @@ class Hooks implements
 			if ( isset( self::$revertedRevIds[$revId] ) ) {
 				return;
 			}
+		}
+
+		// Import should not trigger link notification (T381125)
+		if ( $linksUpdate->getCauseAction() === 'page-import' ) {
+			return;
 		}
 
 		// Handle only
@@ -868,7 +861,7 @@ class Hooks implements
 		] );
 	}
 
-	private function processMarkAsRead( User $user, WebRequest $request, Title $title ) {
+	private function processMarkAsRead( User $user, WebRequest $request, Title $title ): array {
 		$subtractions = [
 			AttributeManager::ALERT => 0,
 			AttributeManager::MESSAGE => 0
@@ -941,6 +934,8 @@ class Hooks implements
 			} );
 		}
 
+		$subtractions[AttributeManager::ALL] = array_sum( $subtractions );
+
 		return $subtractions;
 	}
 
@@ -980,83 +975,72 @@ class Hooks implements
 
 		$subtractions = $this->processMarkAsRead( $user, $out->getRequest(), $title );
 
-		// Add a "My notifications" item to personal URLs
+		$skinName = strtolower( $skinTemplate->getSkinName() );
+		// HACK: inverted icons only work in the "MediaWiki" OOUI theme
+		// Avoid flashes in skins that don't use it (T111821)
+		$out::setupOOUI( $skinName, $out->getLanguage()->getDir() );
+
+		// Add notifications items to personal URLs
+		// (On mobile, they're combined into one for reasons lost to mists of time)
+		// TODO: Make this a skin option, and remove other Minerva special-cases below. Currently it's
+		// not fully supported by the JS flyout code, so it can't be enabled on other skins.
+		$isMobile = ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
+			// @phan-suppress-next-line PhanUndeclaredClassMethod
+			MobileContext::singleton()->shouldDisplayMobileView();
+		$sections = $skinName === 'minerva' && $isMobile
+			? [ AttributeManager::ALL ]
+			: [ AttributeManager::ALERT, AttributeManager::MESSAGE ];
+
 		$notifUser = NotifUser::newFromUser( $user );
-		$msgCount = $notifUser->getMessageCount() - $subtractions[AttributeManager::MESSAGE];
-		$alertCount = $notifUser->getAlertCount() - $subtractions[AttributeManager::ALERT];
-		// But make sure we never show a negative number (T130853)
-		$msgCount = max( 0, $msgCount );
-		$alertCount = max( 0, $alertCount );
-
-		$msgNotificationTimestamp = $notifUser->getLastUnreadMessageTime();
-		$alertNotificationTimestamp = $notifUser->getLastUnreadAlertTime();
-
 		$seenTime = SeenTime::newFromUser( $user );
 		if ( $title->isSpecial( 'Notifications' ) ) {
 			// If this is the Special:Notifications page, seenTime to now
 			$seenTime->setTime( wfTimestamp( TS_MW ), AttributeManager::ALL );
 		}
-		$seenAlertTime = $seenTime->getTime( 'alert', TS_ISO_8601 );
-		$seenMsgTime = $seenTime->getTime( 'message', TS_ISO_8601 );
 
-		$out->addJsConfigVars( 'wgEchoSeenTime', [
-			'alert' => $seenAlertTime,
-			'notice' => $seenMsgTime,
-		] );
-
-		$msgFormattedCount = NotificationController::formatNotificationCount( $msgCount );
-		$alertFormattedCount = NotificationController::formatNotificationCount( $alertCount );
-
-		$url = SpecialPage::getTitleFor( 'Notifications' )->getLocalURL();
-
-		$skinName = strtolower( $skinTemplate->getSkinName() );
-		$isMinervaSkin = $skinName === 'minerva';
-		// HACK: inverted icons only work in the "MediaWiki" OOUI theme
-		// Avoid flashes in skins that don't use it (T111821)
-		$out::setupOOUI( $skinName, $out->getLanguage()->getDir() );
-		$bellIconClass = $isMinervaSkin ? 'oo-ui-icon-bellOutline' : 'oo-ui-icon-bell';
-
-		$msgLinkClasses = [ "mw-echo-notifications-badge", "mw-echo-notification-badge-nojs", "oo-ui-icon-tray" ];
-		$alertLinkClasses = [ "mw-echo-notifications-badge", "mw-echo-notification-badge-nojs", $bellIconClass ];
-
+		$iconsClasses = [
+			AttributeManager::ALERT => 'oo-ui-icon-bell',
+			AttributeManager::MESSAGE => 'oo-ui-icon-tray',
+			AttributeManager::ALL => 'oo-ui-icon-bellOutline',
+		];
 		$hasUnseen = false;
-		if (
-			// no unread notifications
-			$msgCount !== 0 &&
-			// should already always be false if count === 0
-			$msgNotificationTimestamp !== false &&
-			// there are no unseen notifications
-			( $seenMsgTime === null ||
-				$seenMsgTime < $msgNotificationTimestamp->getTimestamp( TS_ISO_8601 ) )
-		) {
-			$msgLinkClasses[] = 'mw-echo-unseen-notifications';
-			$hasUnseen = true;
-		} elseif ( $msgCount === 0 ) {
-			$msgLinkClasses[] = 'mw-echo-notifications-badge-all-read';
+		$counts = $notifTimes = $seenTimes = $formattedCounts = $linksClasses = [];
+		foreach ( $sections as $section ) {
+			$counts[$section] = $notifUser->getNotificationCount( $section ) - $subtractions[$section];
+			// But make sure we never show a negative number (T130853)
+			$counts[$section] = max( 0, $counts[$section] );
+
+			$notifTimes[$section] = $notifUser->getLastUnreadNotificationTime( $section );
+			$seenTimes[$section] = $seenTime->getTime( $section, TS_ISO_8601 );
+
+			$formattedCounts[$section] = NotificationController::formatNotificationCount( $counts[$section] );
+
+			$linksClasses[$section] = [ "mw-echo-notifications-badge", "mw-echo-notification-badge-nojs" ];
+			if ( $skinName !== 'minerva' ) {
+				$linksClasses[$section][] = $iconsClasses[$section];
+			}
+
+			if (
+				// no unread notifications
+				$counts[$section] !== 0 &&
+				// should already always be false if count === 0
+				$notifTimes[$section] !== false &&
+				// all notifications have already been seen
+				( $seenTimes[$section] === null ||
+					$seenTimes[$section] < $notifTimes[$section]->getTimestamp( TS_ISO_8601 ) )
+			) {
+				$linksClasses[$section][] = 'mw-echo-unseen-notifications';
+				$hasUnseen = true;
+			} elseif ( $counts[$section] === 0 ) {
+				$linksClasses[$section][] = 'mw-echo-notifications-badge-all-read';
+			}
+
+			if ( $counts[$section] > NotifUser::MAX_BADGE_COUNT ) {
+				$linksClasses[$section][] = 'mw-echo-notifications-badge-long-label';
+			}
 		}
 
-		if ( $msgCount > NotifUser::MAX_BADGE_COUNT ) {
-			$msgLinkClasses[] = 'mw-echo-notifications-badge-long-label';
-		}
-
-		if (
-			// no unread notifications
-			$alertCount !== 0 &&
-			// should already always be false if count === 0
-			$alertNotificationTimestamp !== false &&
-			// all notifications have already been seen
-			( $seenAlertTime === null ||
-				$seenAlertTime < $alertNotificationTimestamp->getTimestamp( TS_ISO_8601 ) )
-		) {
-			$alertLinkClasses[] = 'mw-echo-unseen-notifications';
-			$hasUnseen = true;
-		} elseif ( $alertCount === 0 ) {
-			$alertLinkClasses[] = 'mw-echo-notifications-badge-all-read';
-		}
-
-		if ( $alertCount > NotifUser::MAX_BADGE_COUNT ) {
-			$alertLinkClasses[] = 'mw-echo-notifications-badge-long-label';
-		}
+		$out->addJsConfigVars( 'wgEchoSeenTime', $seenTimes );
 
 		$mytalk = $links['user-menu']['mytalk'] ?? false;
 		if (
@@ -1093,63 +1077,72 @@ class Hooks implements
 			}
 		}
 
-		$links['notifications']['notifications-alert'] = [
-			'href' => $url,
-			'text' => $skinTemplate->msg( 'echo-notification-alert', $alertCount )->text(),
-			'active' => ( $url == $title->getLocalURL() ),
-			'link-class' => $alertLinkClasses,
-			'icon' => 'bell',
-			'data' => [
-				'event-name' => 'ui.notifications',
-				'counter-num' => $alertCount,
-				'counter-text' => $alertFormattedCount,
-			],
-			// This item used to be part of personal tools, and much CSS relies on it using this id.
-			'id' => 'pt-notifications-alert',
+		$keys = [
+			AttributeManager::ALERT => 'notifications-alert',
+			AttributeManager::MESSAGE => 'notifications-notice',
+			AttributeManager::ALL => 'notifications',
 		];
-
-		$links['notifications']['notifications-notice'] = [
-			'href' => $url,
-			'text' => $skinTemplate->msg( 'echo-notification-notice', $msgCount )->text(),
-			'active' => ( $url == $title->getLocalURL() ),
-			'link-class' => $msgLinkClasses,
-			'icon' => 'tray',
-			'data' => [
-				'counter-num' => $msgCount,
-				'counter-text' => $msgFormattedCount,
-			],
-			// This item used to be part of personal tools, and much CSS relies on it using this id.
-			'id' => 'pt-notifications-notice',
+		$messages = [
+			AttributeManager::ALERT => MessageValue::new( 'echo-notification-alert' ),
+			AttributeManager::MESSAGE => MessageValue::new( 'echo-notification-notice' ),
+			AttributeManager::ALL => MessageValue::new( 'echo-notification-all' ),
 		];
+		$icons = [
+			AttributeManager::ALERT => 'bell',
+			AttributeManager::MESSAGE => 'tray',
+			AttributeManager::ALL => $skinName === 'minerva' && $hasUnseen ? 'circle' : 'bellOutline',
+		];
+		// This item used to be part of personal tools, and much CSS relies on it using this id.
+		$ids = [
+			AttributeManager::ALERT => 'pt-notifications-alert',
+			AttributeManager::MESSAGE => 'pt-notifications-notice',
+			AttributeManager::ALL => 'pt-notifications',
+		];
+		$url = SpecialPage::getTitleFor( 'Notifications' )->getLocalURL();
+		foreach ( $sections as $section ) {
+			$links['notifications'][$keys[$section]] = [
+				'href' => $url,
+				'text' => $skinTemplate->msg( $messages[$section] )->params( $counts[$section] )->text(),
+				'active' => ( $url == $title->getLocalURL() ),
+				'link-class' => $linksClasses[$section],
+				'icon' => $icons[$section],
+				'data' => [
+					// FIXME: What is this for and why is it like this?
+					'event-name' => $section === AttributeManager::MESSAGE ? null : 'ui.notifications',
+					'counter-num' => $counts[$section],
+					'counter-text' => $formattedCounts[$section],
+				],
+				'id' => $ids[$section],
+			];
+		}
 
 		if ( $hasUnseen ) {
 			// Record that the user is going to see an indicator that they have unseen notifications
 			// This is part of tracking how likely users are to click a badge with unseen notifications.
 			// The other part is the 'echo.unseen.click' counter, see ext.echo.init.js.
+			// TODO: remove the dedicated Graphite metric counter.MediaWiki.echo.unseen.click once
+			// dashboard consuming Prometheus is setup, T381607
 			$this->statsFactory->getCounter( 'unseen_total' )
 				->copyToStatsdAt( 'echo.unseen' )
+				->increment();
+
+			$wiki = WikiMap::getCurrentWikiId();
+			$this->statsFactory->getCounter( 'unseen_impression_total' )
+				->setLabel( 'wiki', $wiki )
+				->setLabel( 'user_type', $this->getUserTypeForStats( $user ) )
 				->increment();
 		}
 	}
 
-	/**
-	 * Handler for AbortTalkPageEmailNotification hook.
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/AbortTalkPageEmailNotification
-	 * @param User $targetUser
-	 * @param Title $title
-	 * @return bool
-	 */
-	public function onAbortTalkPageEmailNotification( $targetUser, $title ) {
-		// Send legacy talk page email notification if
-		// 1. echo is disabled for them or
-		// 2. echo talk page notification is disabled
-		if ( !isset( $this->config->get( ConfigNames::Notifications )['edit-user-talk'] ) ) {
-			// Legacy talk page email notification
-			return true;
+	private function getUserTypeForStats( User $user ): string {
+		if ( $user->isAnon() ) {
+			return 'ip';
+		} elseif ( $user->isTemp() ) {
+			return 'temp';
+		} elseif ( $user->isNamed() ) {
+			return 'registered';
 		}
-
-		// Echo talk page email notification
-		return false;
+		return 'unknown';
 	}
 
 	/**
@@ -1417,7 +1410,7 @@ class Hooks implements
 		Event::create( [
 			'type' => 'emailuser',
 			'extra' => [
-				'to-user-id' => $userTo->getId(),
+				Event::RECIPIENTS_IDX => [ $userTo->getId() ],
 				'preview' => $preview,
 			],
 			'agent' => $userFrom,
@@ -1426,14 +1419,12 @@ class Hooks implements
 
 	/**
 	 * Sets custom login message for redirect from notification page
-	 *
-	 * @param array &$messages
 	 */
 	public function onLoginFormValidErrorMessages( array &$messages ) {
 		$messages[] = 'echo-notification-loginrequired';
 	}
 
-	public static function getConfigVars( RL\Context $context, Config $config ) {
+	public static function getConfigVars( RL\Context $context, Config $config ): array {
 		return [
 			'EchoMaxNotificationCount' => NotifUser::MAX_BADGE_COUNT,
 			'EchoPollForUpdates' => $config->get( ConfigNames::PollForUpdates )

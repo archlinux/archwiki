@@ -91,6 +91,8 @@ class ExtensionProcessor implements Processor {
 		'TempUserSerialMappings',
 		'DatabaseVirtualDomains',
 		'UserOptionsStoreProviders',
+		'NotificationHandlers',
+		'NotificationMiddleware',
 	];
 
 	/**
@@ -100,6 +102,7 @@ class ExtensionProcessor implements Processor {
 	 * @see getExtractedInfo
 	 */
 	protected const MERGE_STRATEGIES = [
+		'wgAddGroups' => 'array_merge_recursive',
 		'wgAuthManagerAutoConfig' => 'array_plus_2d',
 		'wgCapitalLinkOverrides' => 'array_plus',
 		'wgExtraGenderNamespaces' => 'array_plus',
@@ -111,6 +114,7 @@ class ExtensionProcessor implements Processor {
 		'wgNamespacesWithSubpages' => 'array_plus',
 		'wgPasswordPolicy' => 'array_merge_recursive',
 		'wgRateLimits' => 'array_plus_2d',
+		'wgRemoveGroups' => 'array_merge_recursive',
 		'wgRevokePermissions' => 'array_plus_2d',
 	];
 
@@ -147,6 +151,7 @@ class ExtensionProcessor implements Processor {
 		'TranslationAliasesDirs',
 		'ForeignResourcesDir',
 		'Hooks',
+		'DomainEventIngresses',
 		'MessagePosterModule',
 		'MessagesDirs',
 		'OOUIThemePaths',
@@ -259,6 +264,7 @@ class ExtensionProcessor implements Processor {
 	public function extractInfo( $path, array $info, $version ) {
 		$dir = dirname( $path );
 		$this->extractHooks( $info, $path );
+		$this->extractDomainEventIngresses( $info, $path );
 		$this->extractExtensionMessagesFiles( $dir, $info );
 		$this->extractRestModuleFiles( $dir, $info );
 		$this->extractMessagesDirs( $dir, $info );
@@ -268,6 +274,7 @@ class ExtensionProcessor implements Processor {
 		$this->extractNamespaces( $info );
 		$this->extractImplicitRights( $info );
 		$this->extractResourceLoaderModules( $dir, $info );
+		$this->extractInstallerTasks( $dir, $info );
 		if ( isset( $info['ServiceWiringFiles'] ) ) {
 			$this->extractPathBasedGlobal(
 				'wgServiceWiringFiles',
@@ -300,7 +307,7 @@ class ExtensionProcessor implements Processor {
 						'class' => $className,
 					];
 				}
-				$module['name'] = $name;
+				$module['name'] ??= $name;
 			}
 		}
 
@@ -569,9 +576,21 @@ class ExtensionProcessor implements Processor {
 	}
 
 	/**
-	 * Register namespaces with the appropriate global settings
+	 * Extract domain event subscribers.
 	 *
-	 * @param array $info
+	 * @param array $info attributes and associated values from extension.json
+	 * @param string $path path to extension.json
+	 */
+	protected function extractDomainEventIngresses( array $info, string $path ) {
+		$this->attributes['DomainEventIngresses'] ??= [];
+		foreach ( $info['DomainEventIngresses'] ?? [] as $subscriber ) {
+			$subscriber['extensionPath'] = $path;
+			$this->attributes['DomainEventIngresses'][] = $subscriber;
+		}
+	}
+
+	/**
+	 * Register namespaces with the appropriate global settings
 	 */
 	protected function extractNamespaces( array $info ) {
 		if ( isset( $info['namespaces'] ) ) {
@@ -744,8 +763,6 @@ class ExtensionProcessor implements Processor {
 
 	/**
 	 * Extract any user rights that should be granted implicitly.
-	 *
-	 * @param array $info
 	 */
 	protected function extractImplicitRights( array $info ) {
 		// Rate limits are only configurable for rights that are either in wgImplicitRights
@@ -819,6 +836,18 @@ class ExtensionProcessor implements Processor {
 				throw new InvalidArgumentException( "Incorrect ForeignResourcesDir type, must be a string (in $name)" );
 			}
 			$this->attributes['ForeignResourcesDir'][$name] = "{$dir}/{$info['ForeignResourcesDir']}";
+		}
+	}
+
+	protected function extractInstallerTasks( string $path, array $info ): void {
+		if ( isset( $info['InstallerTasks'] ) ) {
+			// Use a fixed path for the schema base path for now. This could be
+			// made configurable if there were a use case for that.
+			$schemaBasePath = $path . '/sql';
+			foreach ( $info['InstallerTasks'] as $taskSpec ) {
+				$this->attributes['InstallerTasks'][]
+					= $taskSpec + [ 'schemaBasePath' => $schemaBasePath ];
+			}
 		}
 	}
 
@@ -1007,10 +1036,6 @@ class ExtensionProcessor implements Processor {
 		return $autoload;
 	}
 
-	/**
-	 * @param array $info
-	 * @param string $dir
-	 */
 	private function extractAutoload( array $info, string $dir ) {
 		if ( isset( $info['load_composer_autoloader'] ) && $info['load_composer_autoloader'] === true ) {
 			$file = "$dir/vendor/autoload.php";

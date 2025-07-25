@@ -21,10 +21,8 @@
 
 namespace MediaWiki\Pager;
 
-use ChangesList;
-use ChangeTags;
-use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
@@ -37,14 +35,16 @@ use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\RecentChanges\ChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityValue;
-use RecentChange;
 use stdClass;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Rdbms\IExpression;
 
 /**
@@ -54,15 +54,11 @@ use Wikimedia\Rdbms\IExpression;
  */
 class NewPagesPager extends ReverseChronologicalPager {
 
-	/**
-	 * @var FormOptions
-	 */
-	protected $opts;
-
+	protected FormOptions $opts;
 	protected MapCacheLRU $tagsCache;
 
 	/** @var string[] */
-	private $formattedComments = [];
+	private array $formattedComments = [];
 	/** @var bool Whether to group items by date by default this is disabled, but eventually the intention
 	 * should be to default to true once all pages have been transitioned to support date grouping.
 	 */
@@ -77,19 +73,6 @@ class NewPagesPager extends ReverseChronologicalPager {
 	private IContentHandlerFactory $contentHandlerFactory;
 	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param HookContainer $hookContainer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param ChangeTagsStore $changeTagsStore
-	 * @param RowCommentFormatter $rowCommentFormatter
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param TempUserConfig $tempUserConfig
-	 * @param FormOptions $opts
-	 */
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
@@ -374,8 +357,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 	protected function doBatchLookups() {
 		$linkBatch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $this->mResult as $row ) {
-			$linkBatch->add( NS_USER, $row->rc_user_text );
-			$linkBatch->add( NS_USER_TALK, $row->rc_user_text );
+			$linkBatch->addUser( new UserIdentityValue( (int)$row->rc_user, $row->rc_user_text ) );
 			$linkBatch->add( $row->page_namespace, $row->page_title );
 		}
 		$linkBatch->execute();

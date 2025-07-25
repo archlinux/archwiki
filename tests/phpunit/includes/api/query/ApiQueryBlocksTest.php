@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Api\Query;
 
 use MediaWiki\Block\BlockActionInfo;
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
@@ -16,7 +15,7 @@ use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
  * @group Database
  * @group medium
  *
- * @covers MediaWiki\Api\ApiQueryBlocks
+ * @covers \MediaWiki\Api\ApiQueryBlocks
  */
 class ApiQueryBlocksTest extends ApiTestCase {
 	use MockAuthorityTrait;
@@ -33,13 +32,16 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 
-		$block = new DatabaseBlock( [
-			'address' => $badActor,
-			'by' => $sysop,
-			'expiry' => 'infinity',
-		] );
-
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$time = time();
+		$ts = wfTimestamp( TS_MW, $time );
+		$expiry = wfTimestamp( TS_MW, $time + 24 * 60 * 60 );
+		$block = $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'targetUser' => $badActor,
+				'by' => $sysop,
+				'timestamp' => $ts,
+				'expiry' => $expiry,
+			] );
 
 		[ $data ] = $this->doApiRequest( [
 			'action' => 'query',
@@ -51,7 +53,8 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$subset = [
 			'id' => $block->getId(),
 			'user' => $badActor->getName(),
-			'expiry' => $block->getExpiry(),
+			'expiry' => wfTimestamp( TS_ISO_8601, $expiry ),
+			'duration-l10n' => '1 day',
 		];
 		$this->assertArraySubmapSame( $subset, $data['query']['blocks'][0] );
 	}
@@ -60,12 +63,11 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 
-		$block = new DatabaseBlock( [
-			'address' => $badActor,
-			'by' => $sysop,
-		] );
-
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$block = $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'targetUser' => $badActor,
+				'by' => $sysop,
+			] );
 
 		[ $data ] = $this->doApiRequest( [
 			'action' => 'query',
@@ -118,19 +120,19 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 
-		$block = new DatabaseBlock( [
-			'address' => $badActor,
-			'by' => $sysop,
-			'expiry' => 'infinity',
-			'sitewide' => 0,
-		] );
-
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$block = $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'targetUser' => $badActor,
+				'by' => $sysop,
+				'expiry' => 'infinity',
+				'sitewide' => 0,
+			] );
 
 		$subset = [
 			'id' => $block->getId(),
 			'user' => $badActor->getName(),
 			'expiry' => $block->getExpiry(),
+			'duration-l10n' => $this->apiContext->msg( 'infiniteblock' )->plain(),
 		];
 
 		$title = 'Lady Macbeth';
@@ -210,7 +212,7 @@ class ApiQueryBlocksTest extends ApiTestCase {
 				]
 			],
 		] );
-		$this->assertArraySubmapSame( $restrictionsSubset, $data['query']['blocks'][0] );
+		$this->assertEqualsCanonicalizing( $restrictionsSubset, $data['query']['blocks'][0] );
 		$this->assertArrayNotHasKey( 'partial', $data['query']['blocks'][0] );
 	}
 }

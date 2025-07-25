@@ -17,8 +17,8 @@
 @font-size-browser: 16; // Assumed browser default of `16px`.
 @font-size-root: 100%;
 // T282315: Use rem instead of em to avoid font-size compounding, resulting in smaller than intended text
-@font-size-minerva-small: unit( 14 / @font-size-browser, rem ); // Equals `14px` at `16px` browser default.
-@font-size-minerva-smallest: unit( 13 / @font-size-browser, rem ); // Equals `13px` at `16px` browser default.
+@font-size-minerva-small: unit( ( 14 / @font-size-browser ), rem ); // Equals `14px` at `16px` browser default.
+@font-size-minerva-smallest: unit( ( 13 / @font-size-browser ), rem ); // Equals `13px` at `16px` browser default.
 
 //
 // Icons
@@ -42,11 +42,11 @@
 @margin-content: 16px;
 
 // Header
-@height-site-header: unit( 54 / @font-size-browser, em );
-@height-overlay-header: unit( 48 / @font-size-browser, em );
+@height-site-header: unit( ( 54 / @font-size-browser ), em );
+@height-overlay-header: unit( ( 48 / @font-size-browser ), em );
 @padding-vertical-header: 0.15em;
-@width-search-box: 375/16em;
-@device-width-tablet-ems: unit( @min-width-breakpoint-tablet / @font-size-browser, em );
+@width-search-box: ( 375 / 16em );
+@device-width-tablet-ems: unit( ( @min-width-breakpoint-tablet / @font-size-browser ), em );
 // This is the minimum width at which the logo can be rendered safely for logged in users,
 // using advanced mobile mode,
 // without overflowing the viewport at @min-width-breakpoint-tablet.
@@ -54,7 +54,7 @@
 // This is calculated by taking @min-width-breakpoint-tablet and counting the space available
 // after accounting for 3 icons - main menu, notification bell and user menu icon,
 // and the search bar.
-@min-size-interactive-touch-ems: unit( @min-size-interactive-touch / @font-size-browser, em );
+@min-size-interactive-touch-ems: unit( ( @min-size-interactive-touch / @font-size-browser ), em );
 @min-width-branding-box-ems: @device-width-tablet-ems - ( 3 * @min-size-interactive-touch-ems ) - @width-search-box;
 // FIXME: This is the min-width before T349793 was merged. Remove when T366859 is resolved.
 @T366859-min-width-branding-box-ems: 10.0625em;

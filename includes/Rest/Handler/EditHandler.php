@@ -115,27 +115,27 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 		$code = $msg->getApiCode();
 
 		if ( $code === 'protectedpage' ) {
-			throw new LocalizedHttpException( $this->makeMessageValue( $msg ), 403 );
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $msg ), 403 );
 		}
 
 		if ( $code === 'badtoken' ) {
-			throw new LocalizedHttpException( $this->makeMessageValue( $msg ), 403 );
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $msg ), 403 );
 		}
 
 		if ( $code === 'missingtitle' ) {
-			throw new LocalizedHttpException( $this->makeMessageValue( $msg ), 404 );
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $msg ), 404 );
 		}
 
 		if ( $code === 'articleexists' ) {
-			throw new LocalizedHttpException( $this->makeMessageValue( $msg ), 409 );
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $msg ), 409 );
 		}
 
 		if ( $code === 'editconflict' ) {
-			throw new LocalizedHttpException( $this->makeMessageValue( $msg ), 409 );
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $msg ), 409 );
 		}
 
 		if ( $code === 'ratelimited' ) {
-			throw new LocalizedHttpException( $this->makeMessageValue( $msg ), 429 );
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $msg ), 429 );
 		}
 
 		// Fall through to generic handling of the error (status 400).
@@ -156,6 +156,18 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 		if ( $actionModuleResult['edit']['new'] ?? false ) {
 			$response->setStatus( 201 );
 		}
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		$spec['201'][parent::OPENAPI_DESCRIPTION_KEY] = 'OK';
+		$spec['201']['content']['application/json']['schema'] =
+			$spec['200']['content']['application/json']['schema'];
+		$spec['403'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+		$spec['409'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+
+		return $spec;
 	}
 
 }

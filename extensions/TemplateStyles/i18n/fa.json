@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beginneruser",
+			"Jeeputer",
+			"Ladsgroup"
+		]
+	},
+	"templatestyles": "TemplateStyles",
+	"templatestyles-desc": "شیوه‌نامه جداگانه برای هر الگو را ممکن می‌کند",
+	"templatestyles-missing-src": "شیوه‌نامه <code>src</code> نباید خالی باشد",
+	"templatestyles-invalid-src": "عنوان برای شیوه‌نامه در <code>src</code> وجود دارد",
+	"templatestyles-bad-src-missing": "صفحه [[:$1|$2]] محتوایی ندارد.",
+	"templatestyles-errorcomment": "خطا در هنگام پردازش شیوه‌نامه [[:$1]] (نسخه $2):\n$3",
+	"templatestyles-size-exceeded": "شیوه‌نامه از حد مجاز $2 بزرگتر است.",
+	"content-model-sanitized-css": "شیوه‌نامه آبشاری تمیز",
+	"templatestyles-stylesheet-error-category": "شیوه‌نامه‌های الگوسبک دارای خطا",
+	"templatestyles-stylesheet-error-category-desc": "شیوه‌نامهٔ الگوسبک دارای خطا است.",
+	"templatestyles-page-error-category": "صفحه‌های دارای خطای شیوه‌نامه الگو"
+}

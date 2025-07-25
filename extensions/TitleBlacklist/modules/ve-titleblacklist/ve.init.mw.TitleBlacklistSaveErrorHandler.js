@@ -1,5 +1,5 @@
-mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
-	mw.libs.ve.targetLoader.addPlugin( function () {
+mw.loader.using( 'ext.visualEditor.targetLoader' ).then( () => {
+	mw.libs.ve.targetLoader.addPlugin( () => {
 
 		ve.init.mw.TitleBlacklistSaveErrorHandler = function () {};
 
@@ -8,9 +8,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.TitleBlacklistSaveErrorHandler.static.name = 'titleBlacklist';
 
 		ve.init.mw.TitleBlacklistSaveErrorHandler.static.matchFunction = function ( data ) {
-			return data.errors && data.errors.some( function ( err ) {
-				return err.code === 'titleblacklist-forbidden';
-			} );
+			return data.errors && data.errors.some( ( err ) => err.code === 'titleblacklist-forbidden' );
 		};
 
 		ve.init.mw.TitleBlacklistSaveErrorHandler.static.process = function ( data, target ) {

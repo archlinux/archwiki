@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku",
-			"Hakimi97"
+			"Hakimi97",
+			"Tofeiku"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Ulasan dengan ID '$1' tidak dijumpai.",

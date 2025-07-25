@@ -20,6 +20,7 @@
 
 namespace MediaWiki\EditPage;
 
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\Sanitizer;
@@ -54,6 +55,7 @@ class TextboxBuilder {
 	 * @param string[] $classes
 	 * @param mixed[] $attribs
 	 * @return mixed[]
+	 * @deprecated since 1.44, use Html::addClass() instead
 	 */
 	public function mergeClassesIntoAttributes( array $classes, array $attribs ) {
 		if ( $classes === [] ) {
@@ -119,16 +121,7 @@ class TextboxBuilder {
 		// * mw-editfont-serif
 		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
 		$class = 'mw-editfont-' . $userOptionsLookup->getOption( $user, 'editfont' );
-
-		if ( isset( $attribs['class'] ) ) {
-			if ( is_string( $attribs['class'] ) ) {
-				$attribs['class'] .= ' ' . $class;
-			} elseif ( is_array( $attribs['class'] ) ) {
-				$attribs['class'][] = $class;
-			}
-		} else {
-			$attribs['class'] = $class;
-		}
+		Html::addClass( $attribs['class'], $class );
 
 		$title = Title::newFromPageIdentity( $page );
 		$pageLang = $title->getPageLanguage();

@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bencemac",
+			"Dj",
+			"Wolf Rex"
+		]
+	},
+	"apihelp-query+checkuser-summary": "A megadott felhasználónév által használt IP-címek vagy egy megadott IP-cím által használt felhasználónevek ellenőrzése.",
+	"apihelp-query+checkuser-param-request": "IP-ellenőri kérelemtípusok:\n;userips:Konkrét felhasználó IP-címeinek lekérdezése.\n;edits:Konkrét IP vagy tartomány közreműködéseinek lekérdezése.\n;ipusers:Konkrét IP-t vagy tartományt használó felhasználók lekérdezése.",
+	"apihelp-query+checkuser-param-target": "Ellenőrizendő felhasználói név, IP-cím vagy CIDR tartomány.",
+	"apihelp-query+checkuser-param-reason": "Az ellenőrzés oka.",
+	"apihelp-query+checkuser-param-timecond": "Felhasználói adatok időlimitje (pl. „-2 weeks” vagy „2 weeks ago”).",
+	"apihelp-query+checkuser-param-xff": "XFF-adat használata IP-cím helyett.",
+	"apihelp-query+checkuser-example-1": "[[User:Example]] IP-címeinek ellenőrzése",
+	"apihelp-query+checkuser-example-2": "192.0.2.0/24 tevékenységeinek ellenőrzése",
+	"apihelp-query+checkuserlog-summary": "Bejegyzések lekérése az IP-ellenőri naplóból",
+	"apihelp-query+checkuserlog-param-user": "Az IP-ellenőr neve.",
+	"apihelp-query+checkuserlog-param-target": "Ellenőrzött felhasználó, IP-cím vagy CIDR tartomány.",
+	"apihelp-query+checkuserlog-param-from": "Listázás ettől az időbélyegtől.",
+	"apihelp-query+checkuserlog-param-to": "Listázás eddig az időbélyegig.",
+	"apihelp-query+checkuserlog-example-1": "[[User:Example]] ellenőrzéseinek mutatása",
+	"apihelp-query+checkuserlog-example-2": "192.0.2.0/24 ellenőrzéseinek mutatása 2011-10-15T23:00:00Z után",
+	"apierror-checkuser-missingsummary": "Meg kell adnod az ellenőrzés okát.",
+	"apierror-checkuser-timelimit": "Helyes időlimitet kell használnod (pl. „-2 weeks” vagy „2 weeks ago”).",
+	"apierror-checkuser-invalidmode": "Érvénytelen kérésmód."
+}

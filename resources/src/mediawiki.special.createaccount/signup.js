@@ -40,15 +40,12 @@ mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 		$realNameInput = $root.find( '#wpRealName' ),
 		api = new mw.Api();
 
-	function checkUsername( username ) {
-		// We could just use .then() if we didn't have to pass on .abort()…
-
+	function checkUsername( username, signal ) {
 		// Leading/trailing/multiple whitespace characters are always stripped in usernames,
 		// this should not require a warning. We do warn about underscores.
 		username = username.replace( / +/g, ' ' ).trim();
 
-		const d = $.Deferred();
-		const apiPromise = api.get( {
+		return api.get( {
 			action: 'query',
 			list: 'users',
 			ususers: username,
@@ -57,42 +54,35 @@ mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 			errorformat: 'html',
 			errorsuselocal: true,
 			uselang: mw.config.get( 'wgUserLanguage' )
-		} )
-			.done( ( resp ) => {
+		}, { signal } )
+			.then( ( resp ) => {
 				const userinfo = resp.query.users[ 0 ];
 
 				if ( resp.query.users.length !== 1 || userinfo.invalid ) {
-					d.resolve( { valid: false, messages: [ mw.message( 'noname' ).parseDom() ] } );
+					return { valid: false, messages: [ mw.message( 'noname' ).parseDom() ] };
 				} else if ( userinfo.userid !== undefined ) {
-					d.resolve( { valid: false, messages: [ mw.message( 'userexists' ).parseDom() ] } );
+					return { valid: false, messages: [ mw.message( 'userexists' ).parseDom() ] };
 				} else if ( !userinfo.cancreate ) {
-					d.resolve( {
+					return {
 						valid: false,
 						messages: userinfo.cancreateerror ? userinfo.cancreateerror.map( ( m ) => m.html ) : []
-					} );
+					};
 				} else if ( userinfo.name !== username ) {
-					d.resolve( { valid: true, messages: [
+					return { valid: true, messages: [
 						mw.message( 'createacct-normalization', username, userinfo.name ).parseDom()
-					] } );
+					] };
 				} else {
-					d.resolve( { valid: true, messages: [] } );
+					return { valid: true, messages: [] };
 				}
-			} )
-			.fail( d.reject );
-
-		return d.promise( { abort: apiPromise.abort } );
+			} );
 	}
 
-	function checkPassword() {
-		// We could just use .then() if we didn't have to pass on .abort()…
-		const d = $.Deferred();
-
+	function checkPassword( _password, signal ) {
 		if ( $usernameInput.val().trim() === '' ) {
-			d.resolve( { valid: true, messages: [] } );
-			return d.promise();
+			return $.Deferred().resolve( { valid: true, messages: [] } );
 		}
 
-		const apiPromise = api.post( {
+		return api.post( {
 			action: 'validatepassword',
 			user: $usernameInput.val(),
 			password: $passwordInput.val(),
@@ -102,18 +92,15 @@ mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 			errorformat: 'html',
 			errorsuselocal: true,
 			uselang: mw.config.get( 'wgUserLanguage' )
-		} )
-			.done( ( resp ) => {
+		}, { signal } )
+			.then( ( resp ) => {
 				const pwinfo = resp.validatepassword || {};
 
-				d.resolve( {
+				return {
 					valid: pwinfo.validity === 'Good',
 					messages: pwinfo.validitymessages ? pwinfo.validitymessages.map( ( m ) => m.html ) : []
-				} );
-			} )
-			.fail( d.reject );
-
-		return d.promise( { abort: apiPromise.abort } );
+				};
+			} );
 	}
 
 	const usernameChecker = new HtmlformChecker( $usernameInput, checkUsername );

@@ -6,11 +6,9 @@ use FindDeprecated;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * Tests that a XML file exported by {@link ExportSites} can be imported by {@link ImportSites}.
- *
- * @covers FindDeprecated
- * @covers DeprecatedInterfaceFinder
- * @covers FileAwareNodeVisitor
+ * @covers \FindDeprecated
+ * @covers \DeprecatedInterfaceFinder
+ * @covers \FileAwareNodeVisitor
  * @group Database
  * @author Dreamy Jazz
  */

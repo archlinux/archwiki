@@ -100,6 +100,7 @@ $specialPageAliases = [
 	'FileDuplicateSearch'       => [ 'दुहेरी_संचिका_शोध' ],
 	'Filepath'                  => [ 'संचिकेचा_पत्ता_(पाथ)' ],
 	'Import'                    => [ 'आयात' ],
+	'Interwiki'                 => [ 'आंतरविकि' ],
 	'Invalidateemail'           => [ 'अग्राह्य_विपत्र' ],
 	'LinkSearch'                => [ 'दुवाशोध' ],
 	'Listadmins'                => [ 'प्रबंधकांची_यादी' ],
@@ -323,6 +324,8 @@ $digitTransformTable = [
 	'8' => '८', # U+096E
 	'9' => '९', # U+096F
 ];
+
+$numberingSystem = 'deva';
 
 $linkTrail = "/^([\u{0900}-\u{0963}\u{0971}-\u{097F}\u{FEFF}\u{200D}]+)(.*)$/sDu";
 

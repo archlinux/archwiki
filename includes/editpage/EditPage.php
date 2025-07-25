@@ -20,12 +20,8 @@
 
 namespace MediaWiki\EditPage;
 
-use Article;
 use BadMethodCallException;
-use CategoryPage;
-use ErrorPageError;
-use LogPage;
-use ManualLogEntry;
+use MediaWiki\Actions\WatchAction;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Cache\LinkBatchFactory;
@@ -41,9 +37,12 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\EditPage\Constraint\AccidentalRecreationConstraint;
+use MediaWiki\EditPage\Constraint\AuthorizationConstraint;
+use MediaWiki\EditPage\Constraint\BrokenRedirectConstraint;
 use MediaWiki\EditPage\Constraint\ChangeTagsConstraint;
 use MediaWiki\EditPage\Constraint\ContentModelChangeConstraint;
 use MediaWiki\EditPage\Constraint\DefaultTextConstraint;
+use MediaWiki\EditPage\Constraint\DoubleRedirectConstraint;
 use MediaWiki\EditPage\Constraint\EditConstraintFactory;
 use MediaWiki\EditPage\Constraint\EditConstraintRunner;
 use MediaWiki\EditPage\Constraint\EditFilterMergedContentHookConstraint;
@@ -56,7 +55,14 @@ use MediaWiki\EditPage\Constraint\PageSizeConstraint;
 use MediaWiki\EditPage\Constraint\SelfRedirectConstraint;
 use MediaWiki\EditPage\Constraint\SpamRegexConstraint;
 use MediaWiki\EditPage\Constraint\UnicodeConstraint;
-use MediaWiki\EditPage\Constraint\UserBlockConstraint;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\MWContentSerializationException;
+use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\MWUnknownContentModelException;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Exception\ThrottledError;
+use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
@@ -64,26 +70,35 @@ use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\CategoryPage;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\RedirectLookup;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -96,30 +111,20 @@ use MediaWiki\User\UserNameUtils;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use MessageLocalizer;
-use MWContentSerializationException;
-use MWException;
-use MWUnknownContentModelException;
 use OOUI;
 use OOUI\ButtonWidget;
 use OOUI\CheckboxInputWidget;
 use OOUI\DropdownInputWidget;
 use OOUI\FieldLayout;
-use PermissionsError;
-use ReadOnlyError;
-use RecentChange;
 use RuntimeException;
-use Skin;
 use stdClass;
-use ThrottledError;
-use UserBlockedError;
-use WatchAction;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\SelectQueryBuilder;
-use WikiPage;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * The HTML user interface for page editing.
@@ -202,7 +207,7 @@ class EditPage implements IEditObject {
 	 * @deprecated since 1.38 for public usage; no replacement
 	 * @var string
 	 */
-	public $action = 'submit';
+	private $action = 'submit';
 
 	/** @var bool Whether an edit conflict needs to be resolved. Detected based on whether
 	 * $editRevId is different than the latest revision. When a conflict has successfully
@@ -238,9 +243,6 @@ class EditPage implements IEditObject {
 	private $incompleteForm = false;
 
 	/** @var bool */
-	private $tooBig = false;
-
-	/** @var bool */
 	private $missingComment = false;
 
 	/** @var bool */
@@ -261,13 +263,28 @@ class EditPage implements IEditObject {
 	/** @var bool */
 	private $allowSelfRedirect = false;
 
+	/** @var bool */
+	private $brokenRedirect = false;
+
+	/** @var bool */
+	private $allowBrokenRedirects = false;
+
+	/** @var bool */
+	private $doubleRedirect = false;
+
+	/** @var bool */
+	private $doubleRedirectLoop = false;
+
+	/** @var bool */
+	private $allowDoubleRedirects = false;
+
 	/** @var string */
 	private $autoSumm = '';
 
 	/** @var string */
 	private $hookError = '';
 
-	/** @var ParserOutput */
+	/** @var ParserOutput|null */
 	private $mParserOutput;
 
 	/**
@@ -313,8 +330,11 @@ class EditPage implements IEditObject {
 	 */
 	public $textbox1 = '';
 
-	/** @var string */
-	public $textbox2 = '';
+	/**
+	 * @deprecated since 1.44
+	 * @var string
+	 */
+	private $textbox2 = '';
 
 	/** @var string */
 	public $summary = '';
@@ -458,7 +478,7 @@ class EditPage implements IEditObject {
 	private UserOptionsLookup $userOptionsLookup;
 	private TempUserCreator $tempUserCreator;
 	private UserFactory $userFactory;
-	private IConnectionProvider $connectionProvider;
+	private IConnectionProvider $dbProvider;
 	private BlockErrorFormatter $blockErrorFormatter;
 	private AuthManager $authManager;
 
@@ -529,13 +549,13 @@ class EditPage implements IEditObject {
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
 		$this->restrictionStore = $services->getRestrictionStore();
 		$this->commentStore = $services->getCommentStore();
-		$this->connectionProvider = $services->getConnectionProvider();
+		$this->dbProvider = $services->getConnectionProvider();
 		$this->blockErrorFormatter = $services->getFormatterFactory()
 			->getBlockErrorFormatter( $this->context );
 		$this->authManager = $services->getAuthManager();
 
-		// XXX: Restore this deprecation as soon as TwoColConflict is fixed (T305028)
-		// $this->deprecatePublicProperty( 'textbox2', '1.38', __CLASS__ );
+		$this->deprecatePublicProperty( 'textbox2', '1.44', __CLASS__ );
+		$this->deprecatePublicProperty( 'action', '1.38', __CLASS__ );
 	}
 
 	/**
@@ -682,7 +702,7 @@ class EditPage implements IEditObject {
 		// Disallow editing revisions with content models different from the current one
 		// Undo edits being an exception in order to allow reverting content model changes.
 		$revContentModel = $revRecord ?
-			$revRecord->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel() :
+			$revRecord->getMainContentModel() :
 			false;
 		if ( $revContentModel && $revContentModel !== $this->contentModel ) {
 			$prevRevRecord = null;
@@ -695,9 +715,7 @@ class EditPage implements IEditObject {
 					null;
 
 				$prevContentModel = $prevRevRecord ?
-					$prevRevRecord
-						->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )
-						->getModel() :
+					$prevRevRecord->getMainContentModel() :
 					'';
 			}
 
@@ -798,6 +816,27 @@ class EditPage implements IEditObject {
 			return Status::newGood();
 		}
 		$user = $this->context->getUser();
+
+		// Log out any user using an expired temporary account, so that we can give them a new temporary account.
+		// As described in T389485, we need to do this because the maintenance script to expire temporary accounts
+		// may fail to run or not be configured to run.
+		if ( $user->isTemp() ) {
+			$expiryAfterDays = $this->tempUserCreator->getExpireAfterDays();
+			if ( $expiryAfterDays ) {
+				$expirationCutoff = (int)ConvertibleTimestamp::now( TS_UNIX ) - ( 86_400 * $expiryAfterDays );
+
+				// If the user was created before the expiration cutoff, then log them out. If no registration is
+				// set then do nothing, as if registration date system is broken it would cause a new temporary account
+				// for each edit.
+				if (
+					$user->getRegistration() &&
+					ConvertibleTimestamp::convert( TS_UNIX, $user->getRegistration() ) < $expirationCutoff
+				) {
+					$user->logout();
+				}
+			}
+		}
+
 		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
 			if ( $doAcquire ) {
 				$name = $this->tempUserCreator->acquireAndStashName(
@@ -820,11 +859,9 @@ class EditPage implements IEditObject {
 	/**
 	 * If automatic user creation is enabled, create the user.
 	 *
-	 * This is a helper for internalAttemptSavePrivate().
+	 * This is a helper for internalAttemptSave().
 	 *
 	 * If the edit is a null edit, the user will not be created.
-	 *
-	 * @return Status
 	 */
 	private function createTempUser(): Status {
 		if ( !$this->tempUserCreateActive ) {
@@ -852,8 +889,6 @@ class EditPage implements IEditObject {
 	 * are unsuitable for anything that uses or exposes the name, like
 	 * throttling. The only thing a placeholder user is good for is fooling the
 	 * permissions system into allowing edits by anons.
-	 *
-	 * @return Authority
 	 */
 	private function getAuthority(): Authority {
 		return $this->getUserForPermissions();
@@ -955,11 +990,9 @@ class EditPage implements IEditObject {
 
 		$content = $this->getContentObject();
 
-		// Use the normal message if there's nothing to display
-		// We used to only do this if $this->firsttime was truthy, and there was no content
-		// or the content was empty, but sometimes there was no content even if it not the
-		// first time, we can't use displayViewSourcePage if there is no content (T281400)
-		if ( !$content || ( $this->firsttime && $content->isEmpty() ) ) {
+		// Use the normal message if there's nothing to display:
+		// page or section does not exist (T249978), and the user isn't in the middle of an edit
+		if ( !$content || ( $this->firsttime && !$this->mTitle->exists() && $content->isEmpty() ) ) {
 			$action = $this->mTitle->exists() ? 'edit' :
 				( $this->mTitle->isTalkPage() ? 'createtalk' : 'createpage' );
 			throw new PermissionsError( $action, $status );
@@ -1040,10 +1073,11 @@ class EditPage implements IEditObject {
 			// security reasons
 			return false;
 		}
-		if ( $request->getVal( 'preview' ) === 'yes' ) {
+		$preview = $request->getRawVal( 'preview' );
+		if ( $preview === 'yes' ) {
 			// Explicit override from request
 			return true;
-		} elseif ( $request->getVal( 'preview' ) === 'no' ) {
+		} elseif ( $preview === 'no' ) {
 			// Explicit override from request
 			return false;
 		} elseif ( $this->section === 'new' ) {
@@ -1076,7 +1110,7 @@ class EditPage implements IEditObject {
 
 		// $currentRev is null for non-existing pages, use the page default content model.
 		$revContentModel = $currentRev
-			? $currentRev->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel()
+			? $currentRev->getMainContentModel()
 			: $this->page->getContentModel();
 
 		return (
@@ -1128,7 +1162,7 @@ class EditPage implements IEditObject {
 			if ( $this->section === 'new' && $request->getCheck( 'preloadtitle' ) ) {
 				$this->sectiontitle = $request->getVal( 'preloadtitle' );
 				$this->setNewSectionSummary();
-			} elseif ( $this->section !== 'new' && $request->getVal( 'summary' ) !== '' ) {
+			} elseif ( $this->section !== 'new' && $request->getRawVal( 'summary' ) !== '' ) {
 				$this->summary = $request->getText( 'summary' );
 				if ( $this->summary !== '' ) {
 					// If a summary has been preset using &summary= we don't want to prompt for
@@ -1179,9 +1213,6 @@ class EditPage implements IEditObject {
 		$this->getHookRunner()->onEditPage__importFormData( $this, $request );
 	}
 
-	/**
-	 * @param WebRequest $request
-	 */
 	private function importFormDataPosted( WebRequest $request ): void {
 		# These fields need to be checked for encoding.
 		# Also remove trailing whitespace, but don't remove _initial_
@@ -1328,8 +1359,11 @@ class EditPage implements IEditObject {
 
 		$this->allowBlankArticle = $request->getBool( 'wpIgnoreBlankArticle' );
 		$this->allowSelfRedirect = $request->getBool( 'wpIgnoreSelfRedirect' );
+		$this->allowBrokenRedirects = $request->getBool( 'wpIgnoreBrokenRedirects' );
+		$this->allowDoubleRedirects = $request->getBool( 'wpIgnoreDoubleRedirects' );
 
 		$changeTags = $request->getVal( 'wpChangeTags' );
+		$changeTagsAfterPreview = $request->getVal( 'wpChangeTagsAfterPreview' );
 		if ( $changeTags === null || $changeTags === '' ) {
 			$this->changeTags = [];
 		} else {
@@ -1339,6 +1373,14 @@ class EditPage implements IEditObject {
 					explode( ',', $changeTags )
 				)
 			);
+		}
+		if ( $changeTagsAfterPreview !== null && $changeTagsAfterPreview !== '' ) {
+			$this->changeTags = array_merge( $this->changeTags, array_filter(
+				array_map(
+					'trim',
+					explode( ',', $changeTagsAfterPreview )
+				)
+			) );
 		}
 	}
 
@@ -1471,7 +1513,7 @@ class EditPage implements IEditObject {
 				) {
 					if ( WikiPage::hasDifferencesOutsideMainSlot( $undorev, $oldrev )
 						|| !$this->isSupportedContentModel(
-							$oldrev->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel()
+							$oldrev->getMainContentModel()
 						)
 					) {
 						// Hack for undo while EditPage can't handle multi-slot editing
@@ -1538,13 +1580,15 @@ class EditPage implements IEditObject {
 				$out = $this->context->getOutput();
 				// Messages: undo-success, undo-failure, undo-main-slot-only, undo-norev,
 				// undo-nochange.
-				$class = ( $undoMsg === 'success' ? '' : 'error ' ) . "mw-undo-{$undoMsg}";
+				$class = "mw-undo-{$undoMsg}";
+				$html = $this->context->msg( 'undo-' . $undoMsg )->parse();
+				if ( $undoMsg !== 'success' ) {
+					$html = Html::errorBox( $html );
+				}
 				$this->editFormPageTop .= Html::rawElement(
 					'div',
 					[ 'class' => $class ],
-					$out->parseAsInterface(
-						$this->context->msg( 'undo-' . $undoMsg )->plain()
-					)
+					$html
 				);
 			}
 
@@ -1782,7 +1826,7 @@ class EditPage implements IEditObject {
 
 	/**
 	 * Attempt submission
-	 * @param array|false &$resultDetails See docs for $result in internalAttemptSavePrivate @phan-output-reference
+	 * @param array|false &$resultDetails See docs for $result in internalAttemptSave @phan-output-reference
 	 * @throws UserBlockedError|ReadOnlyError|ThrottledError|PermissionsError
 	 * @return Status
 	 */
@@ -1795,7 +1839,7 @@ class EditPage implements IEditObject {
 		$markAsMinor = $this->minoredit && !$this->isNew
 			&& $this->getAuthority()->isAllowed( 'minoredit' );
 
-		$status = $this->internalAttemptSavePrivate( $resultDetails, $markAsBot, $markAsMinor );
+		$status = $this->internalAttemptSave( $resultDetails, $markAsBot, $markAsMinor );
 
 		$this->getHookRunner()->onEditPage__attemptSave_after( $this, $status, $resultDetails );
 
@@ -1826,7 +1870,7 @@ class EditPage implements IEditObject {
 		$statusValue = is_int( $status->value ) ? $status->value : 0;
 
 		/**
-		 * @todo FIXME: once the interface for internalAttemptSavePrivate() is made
+		 * @todo FIXME: once the interface for internalAttemptSave() is made
 		 *   nicer, this should use the message in $status
 		 */
 		if ( $statusValue === self::AS_SUCCESS_UPDATE
@@ -1848,28 +1892,36 @@ class EditPage implements IEditObject {
 		$extraQueryRedirect = $request->getVal( 'wpExtraQueryRedirect' );
 
 		switch ( $statusValue ) {
+			// Status codes for which the error/warning message is generated somewhere else in this class.
+			// They should be refactored to provide their own messages and handled below (T384399).
 			case self::AS_HOOK_ERROR_EXPECTED:
-			case self::AS_CONTENT_TOO_BIG:
 			case self::AS_ARTICLE_WAS_DELETED:
 			case self::AS_CONFLICT_DETECTED:
 			case self::AS_SUMMARY_NEEDED:
 			case self::AS_TEXTBOX_EMPTY:
-			case self::AS_MAX_ARTICLE_SIZE_EXCEEDED:
 			case self::AS_END:
 			case self::AS_BLANK_ARTICLE:
 			case self::AS_SELF_REDIRECT:
+			case self::AS_DOUBLE_REDIRECT:
 			case self::AS_REVISION_WAS_DELETED:
 				return true;
 
 			case self::AS_HOOK_ERROR:
 				return false;
 
+			// Status codes that provide their own error/warning messages. Most error scenarios that don't
+			// need custom user interface (e.g. edit conflicts) should be handled here, one day (T384399).
+			case self::AS_BROKEN_REDIRECT:
+			case self::AS_CONTENT_TOO_BIG:
+			case self::AS_MAX_ARTICLE_SIZE_EXCEEDED:
 			case self::AS_PARSE_ERROR:
-			case self::AS_UNICODE_NOT_SUPPORTED:
 			case self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT:
-				$out->wrapWikiTextAsInterface( 'error',
-					$status->getWikiText( false, false, $this->context->getLanguage() )
-				);
+			case self::AS_UNICODE_NOT_SUPPORTED:
+				foreach ( $status->getMessages() as $msg ) {
+					$out->addHTML( Html::errorBox(
+						$this->context->msg( $msg )->parse()
+					) );
+				}
 				return true;
 
 			case self::AS_SUCCESS_NEW_ARTICLE:
@@ -1929,9 +1981,9 @@ class EditPage implements IEditObject {
 				throw new ReadOnlyError;
 
 			case self::AS_RATE_LIMITED:
-				$out->wrapWikiTextAsInterface( 'error',
-					wfMessage( 'actionthrottledtext' )->plain()
-				);
+				$out->addHTML( Html::errorBox(
+					$this->context->msg( 'actionthrottledtext' )->parse()
+				) );
 				return true;
 
 			case self::AS_NO_CREATE_PERMISSION:
@@ -1997,7 +2049,7 @@ class EditPage implements IEditObject {
 		$services = MediaWikiServices::getInstance();
 		$parser = $services->getParser();
 		$textFormatter = $services->getMessageFormatterFactory()->getTextFormatter(
-			$services->getContentLanguage()->getCode()
+			$services->getContentLanguageCode()->toString()
 		);
 
 		if ( $this->sectiontitle !== '' ) {
@@ -2013,21 +2065,6 @@ class EditPage implements IEditObject {
 		} else {
 			$this->newSectionAnchor = '';
 		}
-	}
-
-	/**
-	 * Deprecated public access to attempting save, see documentation on
-	 * internalAttemptSavePrivate()
-	 *
-	 * @deprecated since 1.43
-	 * @param array &$result
-	 * @param bool $markAsBot
-	 * @param bool $markAsMinor
-	 * @return Status
-	 */
-	public function internalAttemptSave( &$result, $markAsBot = false, $markAsMinor = false ) {
-		wfDeprecated( __METHOD__, '1.43' );
-		return $this->internalAttemptSavePrivate( $result, $markAsBot, $markAsMinor );
 	}
 
 	/**
@@ -2056,7 +2093,7 @@ class EditPage implements IEditObject {
 	 *   AS_BLOCKED_PAGE_FOR_USER. All that stuff needs to be cleaned up some
 	 * time.
 	 */
-	private function internalAttemptSavePrivate( &$result, $markAsBot = false, $markAsMinor = false ) {
+	private function internalAttemptSave( &$result, $markAsBot = false, $markAsMinor = false ) {
 		// If an attempt to acquire a temporary name failed, don't attempt to do anything else.
 		if ( $this->unableToAcquireTempName ) {
 			$status = Status::newFatal( 'temp-user-unable-to-acquire' );
@@ -2165,7 +2202,20 @@ class EditPage implements IEditObject {
 			)
 		);
 		$constraintRunner->addConstraint(
-			$constraintFactory->newUserBlockConstraint( $this->mTitle, $requestUser )
+			$constraintFactory->newReadOnlyConstraint()
+		);
+
+		// Load the page data from the primary DB. If anything changes in the meantime,
+		// we detect it by using page_latest like a token in a 1 try compare-and-swap.
+		$this->page->loadPageData( IDBAccessObject::READ_LATEST );
+		$new = !$this->page->exists();
+
+		$constraintRunner->addConstraint(
+			new AuthorizationConstraint(
+				$authority,
+				$this->mTitle,
+				$new
+			)
 		);
 		$constraintRunner->addConstraint(
 			new ContentModelChangeConstraint(
@@ -2174,15 +2224,9 @@ class EditPage implements IEditObject {
 				$this->contentModel
 			)
 		);
-
 		$constraintRunner->addConstraint(
-			$constraintFactory->newReadOnlyConstraint()
-		);
-		$constraintRunner->addConstraint(
-			$constraintFactory->newUserRateLimitConstraint(
-				$requestUser->toRateLimitSubject(),
-				$this->mTitle->getContentModel(),
-				$this->contentModel
+			$constraintFactory->newLinkPurgeRateLimitConstraint(
+				$requestUser->toRateLimitSubject()
 			)
 		);
 		$constraintRunner->addConstraint(
@@ -2204,16 +2248,6 @@ class EditPage implements IEditObject {
 				$this->wasDeletedSinceLastEdit(),
 				$this->recreate
 			)
-		);
-
-		// Load the page data from the primary DB. If anything changes in the meantime,
-		// we detect it by using page_latest like a token in a 1 try compare-and-swap.
-		$this->page->loadPageData( IDBAccessObject::READ_LATEST );
-		$new = !$this->page->exists();
-
-		// We do this last, as some of the other constraints are more specific
-		$constraintRunner->addConstraint(
-			$constraintFactory->newEditRightConstraint( $this->getUserForPermissions(), $this->mTitle, $new )
 		);
 
 		// Check the constraints
@@ -2324,7 +2358,7 @@ class EditPage implements IEditObject {
 				} elseif ( $this->section === ''
 					&& $this->edittime
 					&& $this->revisionStore->userWasLastToEdit(
-						$this->connectionProvider->getPrimaryDatabase(),
+						$this->dbProvider->getPrimaryDatabase(),
 						$this->mTitle->getArticleID(),
 						$requestUser->getId(),
 						$this->edittime
@@ -2474,6 +2508,9 @@ class EditPage implements IEditObject {
 		// Check for length errors again now that the section is merged in
 		$this->contentLength = strlen( $this->toEditText( $content ) );
 
+		// Message key of the label of the submit button - used by some constraint error messages
+		$submitButtonLabel = $this->getSubmitButtonLabel();
+
 		// BEGINNING OF MIGRATION TO EDITCONSTRAINT SYSTEM (see T157658)
 		// Create a new runner to avoid rechecking the prior constraints, use the same factory
 		$constraintRunner = new EditConstraintRunner();
@@ -2483,6 +2520,24 @@ class EditPage implements IEditObject {
 				$content,
 				$this->getCurrentContent(),
 				$this->getTitle()
+			)
+		);
+		$constraintRunner->addConstraint(
+			new BrokenRedirectConstraint(
+				$this->allowBrokenRedirects,
+				$content,
+				$this->getCurrentContent(),
+				$this->getTitle(),
+				$submitButtonLabel
+			)
+		);
+		$constraintRunner->addConstraint(
+			new DoubleRedirectConstraint(
+				$this->allowDoubleRedirects,
+				$content,
+				$this->getCurrentContent(),
+				$this->getTitle(),
+				$this->redirectLookup
 			)
 		);
 		$constraintRunner->addConstraint(
@@ -2507,6 +2562,7 @@ class EditPage implements IEditObject {
 			// edits as undos.
 			$pageUpdater
 				->setOriginalRevisionId( $this->undoAfter ?: false )
+				->setCause( PageUpdateCauses::CAUSE_UNDO )
 				->markAsRevert(
 					EditResult::REVERT_UNDO,
 					$this->undidRev,
@@ -2574,19 +2630,17 @@ class EditPage implements IEditObject {
 
 	/**
 	 * Apply the specific updates needed for the EditPage fields based on which constraint
-	 * failed, rather than interspersing this logic throughout internalAttemptSavePrivate at
+	 * failed, rather than interspersing this logic throughout internalAttemptSave at
 	 * each of the points the constraints are checked. Eventually, this will act on the
 	 * result from the backend.
-	 *
-	 * @param IEditConstraint $failed
 	 */
 	private function handleFailedConstraint( IEditConstraint $failed ): void {
-		if ( $failed instanceof PageSizeConstraint ) {
-			// Error will be displayed by showEditForm()
-			$this->tooBig = true;
-		} elseif ( $failed instanceof UserBlockConstraint ) {
+		if ( $failed instanceof AuthorizationConstraint ) {
 			// Auto-block user's IP if the account was "hard" blocked
-			if ( !MediaWikiServices::getInstance()->getReadOnlyMode()->isReadOnly() ) {
+			if (
+				!MediaWikiServices::getInstance()->getReadOnlyMode()->isReadOnly()
+				&& $failed->getLegacyStatus()->value === self::AS_BLOCKED_PAGE_FOR_USER
+			) {
 				$this->context->getUser()->spreadAnyEditBlock();
 			}
 		} elseif ( $failed instanceof DefaultTextConstraint ) {
@@ -2607,6 +2661,11 @@ class EditPage implements IEditObject {
 			$this->missingComment = true;
 		} elseif ( $failed instanceof SelfRedirectConstraint ) {
 			$this->selfRedirect = true;
+		} elseif ( $failed instanceof BrokenRedirectConstraint ) {
+			$this->brokenRedirect = true;
+		} elseif ( $failed instanceof DoubleRedirectConstraint ) {
+			$this->doubleRedirect = true;
+			$this->doubleRedirectLoop = $failed->willCreateSelfRedirect;
 		}
 	}
 
@@ -2787,9 +2846,12 @@ class EditPage implements IEditObject {
 		$out = $this->context->getOutput();
 
 		$out->addModules( 'mediawiki.action.edit' );
-		$out->addModuleStyles( 'mediawiki.action.edit.styles' );
-		$out->addModuleStyles( 'mediawiki.editfont.styles' );
-		$out->addModuleStyles( 'mediawiki.interface.helpers.styles' );
+		$out->addModuleStyles( [
+			'mediawiki.action.edit.styles',
+			'mediawiki.codex.messagebox.styles',
+			'mediawiki.editfont.styles',
+			'mediawiki.interface.helpers.styles',
+		] );
 
 		$user = $this->context->getUser();
 
@@ -2830,7 +2892,7 @@ class EditPage implements IEditObject {
 		# NOTE: getDisplayTitle() returns HTML while getPrefixedText() returns plain text.
 		#       Escape ::getPrefixedText() so that we have HTML in all cases,
 		#       and pass as a "raw" parameter to ::setPageTitleMsg().
-		$displayTitle = isset( $this->mParserOutput ) ? $this->mParserOutput->getDisplayTitle() : false;
+		$displayTitle = $this->mParserOutput ? $this->mParserOutput->getDisplayTitle() : false;
 		if ( $displayTitle === false ) {
 			$displayTitle = htmlspecialchars(
 				$contextTitle->getPrefixedText(), ENT_QUOTES, 'UTF-8', false
@@ -2896,7 +2958,7 @@ class EditPage implements IEditObject {
 			$this->context->getRequest()->getVal( 'editintro' ),
 			wfArrayToCgi(
 				array_diff_key(
-					$this->context->getRequest()->getValues(),
+					$this->context->getRequest()->getQueryValues(),
 					[ 'title' => true, 'returnto' => true, 'returntoquery' => true ]
 				)
 			),
@@ -3135,6 +3197,14 @@ class EditPage implements IEditObject {
 			$out->addHTML( Html::hidden( 'wpIgnoreSelfRedirect', true ) );
 		}
 
+		if ( $this->brokenRedirect ) {
+			$out->addHTML( Html::hidden( 'wpIgnoreBrokenRedirects', true ) );
+		}
+
+		if ( $this->doubleRedirect ) {
+			$out->addHTML( Html::hidden( 'wpIgnoreDoubleRedirects', true ) );
+		}
+
 		$autosumm = $this->autoSumm !== '' ? $this->autoSumm : md5( $this->summary );
 		$out->addHTML( Html::hidden( 'wpAutoSummary', $autosumm ) );
 
@@ -3143,6 +3213,9 @@ class EditPage implements IEditObject {
 
 		$out->addHTML( Html::hidden( 'format', $this->contentFormat ) );
 		$out->addHTML( Html::hidden( 'model', $this->contentModel ) );
+		if ( $this->changeTags ) {
+			$out->addHTML( Html::hidden( 'wpChangeTagsAfterPreview', implode( ',', $this->changeTags ) ) );
+		}
 
 		$out->enableOOUI();
 
@@ -3222,13 +3295,14 @@ class EditPage implements IEditObject {
 				$this->showConflict();
 			} catch ( MWContentSerializationException $ex ) {
 				// this can't really happen, but be nice if it does.
-				$msg = $this->context->msg(
-					'content-failed-to-parse',
-					$this->contentModel,
-					$this->contentFormat,
-					$ex->getMessage()
-				);
-				$out->wrapWikiTextAsInterface( 'error', $msg->plain() );
+				$out->addHTML( Html::errorBox(
+					$this->context->msg(
+						'content-failed-to-parse',
+						$this->contentModel,
+						$this->contentFormat,
+						$ex->getMessage()
+					)->parse()
+				) );
 			}
 		}
 
@@ -3345,6 +3419,33 @@ class EditPage implements IEditObject {
 					"<div id='mw-selfredirect'>\n$1\n</div>",
 					[ 'selfredirect', $buttonLabel ]
 				);
+			}
+
+			if ( $this->doubleRedirect ) {
+				if ( $this->doubleRedirectLoop ) {
+					$out->wrapWikiMsg(
+						"<div id='mw-doubleredirectloop'>\n$1\n</div>",
+						[ 'edit-constraint-doubleredirect-loop', $buttonLabel ]
+					);
+				} else {
+					$editContent = $this->toEditContent( $this->textbox1 );
+					$redirectTarget = $editContent->getRedirectTarget();
+
+					$doubleRedirectTarget = $this->redirectLookup->getRedirectTarget( $redirectTarget );
+					$doubleRedirectTargetTitle = Title::castFromLinkTarget( $doubleRedirectTarget );
+
+					$suggestedRedirectContent =
+						$editContent->getContentHandler()->makeRedirectContent( $doubleRedirectTargetTitle );
+					$suggestedRedirectCode =
+						Html::element( 'pre', [], $this->toEditText( $suggestedRedirectContent ) );
+
+					$out->wrapWikiMsg( "<div id='mw-doubleredirect'>\n$1\n</div>", [
+						'edit-constraint-doubleredirect',
+						$buttonLabel,
+						wfEscapeWikiText( $doubleRedirectTargetTitle->getPrefixedText() ),
+						$suggestedRedirectCode,
+					] );
+				}
 			}
 
 			if ( $this->hookError !== '' ) {
@@ -3549,10 +3650,9 @@ class EditPage implements IEditObject {
 
 			$attribs = [
 				'aria-label' => $this->context->msg( 'edit-textarea-aria-label' )->text(),
-				'tabindex' => 1
+				'tabindex' => 1,
+				'class' => $classes,
 			];
-
-			$attribs = $builder->mergeClassesIntoAttributes( $classes, $attribs );
 		}
 
 		$this->showTextbox(
@@ -3598,13 +3698,14 @@ class EditPage implements IEditObject {
 			try {
 				$this->showDiff();
 			} catch ( MWContentSerializationException $ex ) {
-				$msg = $this->context->msg(
-					'content-failed-to-parse',
-					$this->contentModel,
-					$this->contentFormat,
-					$ex->getMessage()
-				);
-				$out->wrapWikiTextAsInterface( 'error', $msg->plain() );
+				$out->addHTML( Html::errorBox(
+					$this->context->msg(
+						'content-failed-to-parse',
+						$this->contentModel,
+						$this->contentFormat,
+						$ex->getMessage()
+					)->parse()
+				) );
 			}
 		}
 	}
@@ -3787,9 +3888,22 @@ class EditPage implements IEditObject {
 
 		$hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
 		foreach ( $output->getLimitReportData() as $key => $value ) {
+			if ( in_array( $key, [
+				'cachereport-origin',
+				'cachereport-timestamp',
+				'cachereport-ttl',
+				'cachereport-transientcontent',
+				'limitreport-timingprofile',
+			] ) ) {
+				// These entries have non-numeric parameters, and can't be displayed by this code.
+				// They are used by the plaintext limit report (see RenderDebugInfo::debugInfo()).
+				// TODO: Display this information in the table somehow.
+				continue;
+			}
+
 			if ( $hookRunner->onParserLimitReportFormat( $key, $value, $limitReport, true, true ) ) {
 				$keyMsg = wfMessage( $key );
-				$valueMsg = wfMessage( [ "$key-value-html", "$key-value" ] );
+				$valueMsg = wfMessage( "$key-value" );
 				if ( !$valueMsg->exists() ) {
 					// This is formatted raw, not as localized number.
 					// If you want the parameter formatted as a number,
@@ -3880,9 +3994,6 @@ class EditPage implements IEditObject {
 		$this->getEditConflictHelper()->incrementConflictStats( $this->context->getUser() );
 	}
 
-	/**
-	 * @return string
-	 */
 	private function getHelpLink(): string {
 		$message = $this->context->msg( 'edithelppage' )->inContentLanguage()->text();
 		$editHelpUrl = Skin::makeInternalOrExternalUrl( $message );
@@ -3933,7 +4044,6 @@ class EditPage implements IEditObject {
 	 * Note that we rely on the logging table, which hasn't been always there,
 	 * but that doesn't matter, because this only applies to brand new
 	 * deletes.
-	 * @return bool
 	 */
 	private function wasDeletedSinceLastEdit(): bool {
 		if ( $this->deletedSinceEdit !== null ) {
@@ -3961,7 +4071,7 @@ class EditPage implements IEditObject {
 	 * @return stdClass|null
 	 */
 	private function getLastDelete(): ?stdClass {
-		$dbr = $this->connectionProvider->getReplicaDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$commentQuery = $this->commentStore->getJoin( 'log_comment' );
 		$data = $dbr->newSelectQueryBuilder()
 			->select( [
@@ -4226,13 +4336,14 @@ class EditPage implements IEditObject {
 	public function getTemplates() {
 		if ( $this->preview || $this->section !== '' ) {
 			$templates = [];
-			if ( !isset( $this->mParserOutput ) ) {
+			if ( !$this->mParserOutput ) {
 				return $templates;
 			}
-			foreach ( $this->mParserOutput->getTemplates() as $ns => $template ) {
-				foreach ( $template as $dbk => $_ ) {
-					$templates[] = Title::makeTitle( $ns, $dbk );
-				}
+			foreach (
+				$this->mParserOutput->getLinkList( ParserOutputLinkTypes::TEMPLATE )
+				as [ 'link' => $link ]
+			) {
+				$templates[] = Title::newFromLinkTarget( $link );
 			}
 			return $templates;
 		} else {
@@ -4413,8 +4524,6 @@ class EditPage implements IEditObject {
 
 	/**
 	 * Get the message key of the label for the button to save the page
-	 *
-	 * @return string
 	 */
 	private function getSubmitButtonLabel(): string {
 		$labelAsPublish =
@@ -4572,25 +4681,13 @@ class EditPage implements IEditObject {
 		}
 
 		$out = $this->context->getOutput();
-		$maxArticleSize = $this->context->getConfig()->get( MainConfigNames::MaxArticleSize );
-		if ( $this->tooBig || $this->contentLength > $maxArticleSize * 1024 ) {
-			$lang = $this->context->getLanguage();
-			$out->wrapWikiMsg( "<div class='error' id='mw-edit-longpageerror'>\n$1\n</div>",
-				[
-					'longpageerror',
-					$lang->formatNum( round( $this->contentLength / 1024, 3 ) ),
-					$lang->formatNum( $maxArticleSize )
-				]
-			);
-		} else {
-			$longPageHint = $this->context->msg( 'longpage-hint' );
-			if ( !$longPageHint->isDisabled() ) {
-				$msgText = trim( $longPageHint->sizeParams( $this->contentLength )
-					->params( $this->contentLength ) // Keep this unformatted for math inside message
-					->text() );
-				if ( $msgText !== '' && $msgText !== '-' ) {
-					$out->addWikiTextAsInterface( "<div id='mw-edit-longpage-hint'>\n$msgText\n</div>" );
-				}
+		$longPageHint = $this->context->msg( 'longpage-hint' );
+		if ( !$longPageHint->isDisabled() ) {
+			$msgText = trim( $longPageHint->sizeParams( $this->contentLength )
+				->params( $this->contentLength ) // Keep this unformatted for math inside message
+				->parse() );
+			if ( $msgText !== '' && $msgText !== '-' ) {
+				$out->addHTML( "<div id='mw-edit-longpage-hint'>\n$msgText\n</div>" );
 			}
 		}
 	}
@@ -4654,6 +4751,3 @@ class EditPage implements IEditObject {
 		return $this->editConflictHelper;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( EditPage::class, 'EditPage' );

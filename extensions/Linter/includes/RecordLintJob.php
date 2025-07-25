@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Linter;
 
-use Job;
+use MediaWiki\JobQueue\Job;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageReference;
 
@@ -50,6 +50,7 @@ class RecordLintJob extends Job {
 		$this->categoryManager = $categoryManager;
 	}
 
+	/** @inheritDoc */
 	public function run() {
 		if ( $this->title->getLatestRevID() != $this->params['revision'] ) {
 			// Outdated now, let a later job handle it

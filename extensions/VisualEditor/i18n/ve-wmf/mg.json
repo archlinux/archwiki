@@ -4,13 +4,13 @@
 			"Jagwar"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Hanova araka ny hitan'ny maso]]",
+	"tag-visualeditor": "Hanova araka ny hitan'ny maso",
 	"tag-visualeditor-description": "Fanovana natao tamin'ny alalan'i [[{{MediaWiki:visualeditor-descriptionpagelink}}|mpanova ara-maso]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|mpanova ara-maso: tokony homarinina]]",
+	"tag-visualeditor-needcheck": "mpanova ara-maso: tokony homarinina",
 	"tag-visualeditor-needcheck-description": "Fanovàna natao tamin'ny alalan'i [[{{MediaWiki:visualeditor-descriptionpagelink}}|mpanova ara-maso]] izay nahitan'ny rafitra hadisoam-panovàna",
 	"tag-visualeditor-wikitext": "mpanova fango 2017",
 	"tag-visualeditor-wikitext-description": "Fiovana natao tamin'ny alalan'ny mpanova wikisoratra 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor:Nivadika]]",
+	"tag-visualeditor-switched": "VisualEditor:Nivadika",
 	"tag-visualeditor-switched-description": "Nanomboka nampiasa mpanova ara-maso ity mpikambana ity ary nivadika tamin'ny mpanova wikisoratra izy.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Famoahan-kevitra",
 	"visualeditor-feedback-tool": "Hametraka famoahan-kevitra momba ity rindrankajy ity",

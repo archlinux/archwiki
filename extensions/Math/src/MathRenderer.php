@@ -282,7 +282,7 @@ abstract class MathRenderer {
 		$this->rbi->setPurge( $this->isPurge() );
 	}
 
-	public function hasWarnings() {
+	public function hasWarnings(): bool {
 		if ( is_array( $this->warnings ) && count( $this->warnings ) ) {
 			return true;
 		}

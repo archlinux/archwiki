@@ -14,6 +14,7 @@
 	"echo-category-title-login-success": "Kirjautuminen tuntemattomalta laitteelta",
 	"echo-pref-tooltip-login-success": "Ilmoita, kun tunnukselleni kirjaudutaan tuntemattomalta laitteelta ja IP-osoitteesta.",
 	"loginnotify-primary-link": "Ohje",
+	"loginnotify-unknown-ip": "Yritit kirjautua sisään tuntemattomasta IP-osoitteesta, ja {{SITENAME}} on tällä hetkellä määritetty estämään kirjautumiset tuntemattomista IP-osoitteista.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Epäonnistunut yritys|Epäonnistuneita yrityksiä}} kirjautua sisään {{GRAMMAR:illative|{{SITENAME}}}} tunnuksella $1",
 	"notification-loginnotify-login-success-email-subject": "Kirjautuminen {{GRAMMAR:illative|{{SITENAME}}}} käyttäjänä $1 laitteesta, jota et ole viime aikoina käyttänyt",
 	"notification-header-login-success": "Joku (luultavasti {{GENDER:$1|sinä}}) kirjautui hiljattain sisään tunnuksellasi uudelta laitteelta. Jos tämä olit sinä, voit jättää tämän viestin huomioimatta. Jos se et ollut sinä, on suositeltavaa, että vaihdat salasanasi ja tarkistat tunnuksesi toiminnan.",

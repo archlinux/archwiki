@@ -118,7 +118,6 @@ class Frame {
 		$opts = [
 			'pipelineType' => 'peg-tokens-to-expanded-tokens',
 			'pipelineOpts' => [
-				'isInclude' => $this->depth > 0,
 				'expandTemplates' => $options['expandTemplates'],
 				'inTemplate' => $options['inTemplate'],
 				'attrExpansion' => $options['attrExpansion'] ?? false
@@ -129,7 +128,7 @@ class Frame {
 		];
 
 		$tokens = PipelineUtils::processContentInPipeline( $this->env, $this, $content, $opts );
-		TokenUtils::stripEOFTkfromTokens( $tokens );
+		TokenUtils::stripEOFTkFromTokens( $tokens );
 		return $tokens;
 	}
 

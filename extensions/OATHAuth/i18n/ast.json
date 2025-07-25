@@ -52,7 +52,6 @@
 	"oath-log-header": "Estos eventos rexistren los cambeos nel estáu de la identificación en dos pasos de les cuentes de los usuarios.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|desactivó}} la identificación de dos factores de $3",
 	"oathauth-ui-no-module": "Nengunu activáu",
-	"oathauth-module-invalid": "El módulu OATHAuth que rexistró l'usuariu ye inválidu.",
 	"oathauth-module-totp-label": "TOTP (pase d’un solu usu)",
 	"oathauth-ui-manage": "Alministrar",
 	"oathmanage": "Alministrar la identificación de dos factores",

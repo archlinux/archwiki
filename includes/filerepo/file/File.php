@@ -6,9 +6,20 @@
  * Represents files in a repository.
  */
 
+namespace MediaWiki\FileRepo\File;
+
+use LogicException;
+use MediaHandler;
+use MediaHandlerState;
+use MediaTransformError;
+use MediaTransformOutput;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\FileRepo\ForeignAPIRepo;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LoggerFactory;
@@ -20,7 +31,10 @@ use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use RuntimeException;
 use Shellbox\Command\BoxedCommand;
+use StatusValue;
+use ThumbnailImage;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
@@ -140,42 +154,42 @@ abstract class File implements MediaHandlerState {
 	/** @var Title */
 	protected $redirectedTitle;
 
-	/** @var FSFile|false False if undefined */
+	/** @var FSFile|false|null False if undefined */
 	protected $fsFile;
 
-	/** @var MediaHandler */
+	/** @var MediaHandler|null */
 	protected $handler;
 
-	/** @var string The URL corresponding to one of the four basic zones */
+	/** @var string|null The URL corresponding to one of the four basic zones */
 	protected $url;
 
-	/** @var string File extension */
+	/** @var string|null File extension */
 	protected $extension;
 
 	/** @var string|null The name of a file from its title object */
 	protected $name;
 
-	/** @var string The storage path corresponding to one of the zones */
+	/** @var string|null The storage path corresponding to one of the zones */
 	protected $path;
 
 	/** @var string|null Relative path including trailing slash */
 	protected $hashPath;
 
-	/** @var int|false Number of pages of a multipage document, or false for
+	/** @var int|false|null Number of pages of a multipage document, or false for
 	 *    documents which aren't multipage documents
 	 */
 	protected $pageCount;
 
-	/** @var string|false URL of transformscript (for example thumb.php) */
+	/** @var string|false|null URL of transformscript (for example thumb.php) */
 	protected $transformScript;
 
 	/** @var Title */
 	protected $redirectTitle;
 
-	/** @var bool Whether the output of transform() for this file is likely to be valid. */
+	/** @var bool|null Whether the output of transform() for this file is likely to be valid. */
 	protected $canRender;
 
-	/** @var bool Whether this media file is in a format that is unlikely to
+	/** @var bool|null Whether this media file is in a format that is unlikely to
 	 *    contain viruses or malicious content
 	 */
 	protected $isSafeFile;
@@ -360,7 +374,7 @@ abstract class File implements MediaHandlerState {
 	 * @return string
 	 */
 	public function getExtension() {
-		if ( !isset( $this->extension ) ) {
+		if ( $this->extension === null ) {
 			$n = strrpos( $this->getName(), '.' );
 			$this->extension = self::normalizeExtension(
 				$n ? substr( $this->getName(), $n + 1 ) : '' );
@@ -398,7 +412,7 @@ abstract class File implements MediaHandlerState {
 	 * @return string
 	 */
 	public function getUrl() {
-		if ( !isset( $this->url ) ) {
+		if ( $this->url === null ) {
 			$this->assertRepoDefined();
 			$ext = $this->getExtension();
 			$this->url = $this->repo->getZoneUrl( 'public', $ext ) . '/' . $this->getUrlRel();
@@ -473,7 +487,7 @@ abstract class File implements MediaHandlerState {
 	 * @return string|false ForeignAPIFile::getPath can return false
 	 */
 	public function getPath() {
-		if ( !isset( $this->path ) ) {
+		if ( $this->path === null ) {
 			$this->assertRepoDefined();
 			$this->path = $this->repo->getZonePath( 'public' ) . '/' . $this->getRel();
 		}
@@ -490,11 +504,11 @@ abstract class File implements MediaHandlerState {
 	 */
 	public function getLocalRefPath() {
 		$this->assertRepoDefined();
-		if ( !isset( $this->fsFile ) ) {
+		if ( !$this->fsFile ) {
 			$timer = MediaWikiServices::getInstance()->getStatsFactory()
 				->getTiming( 'media_thumbnail_generate_fetchoriginal_seconds' )
-				->copyToStatsdAt( 'media.thumbnail.generate.fetchoriginal' );
-			$timer->start();
+				->copyToStatsdAt( 'media.thumbnail.generate.fetchoriginal' )
+				->start();
 
 			$this->fsFile = $this->repo->getLocalReference( $this->getPath() );
 
@@ -887,7 +901,7 @@ abstract class File implements MediaHandlerState {
 	 * @return bool
 	 */
 	public function canRender() {
-		if ( !isset( $this->canRender ) ) {
+		if ( $this->canRender === null ) {
 			$this->canRender = $this->getHandler() && $this->handler->canRender( $this ) && $this->exists();
 		}
 
@@ -940,7 +954,7 @@ abstract class File implements MediaHandlerState {
 	 * @return bool
 	 */
 	public function isSafeFile() {
-		if ( !isset( $this->isSafeFile ) ) {
+		if ( $this->isSafeFile === null ) {
 			$this->isSafeFile = $this->getIsSafeFileUncached();
 		}
 
@@ -1051,7 +1065,7 @@ abstract class File implements MediaHandlerState {
 	 * @return string|false
 	 */
 	private function getTransformScript() {
-		if ( !isset( $this->transformScript ) ) {
+		if ( $this->transformScript === null ) {
 			$this->transformScript = false;
 			if ( $this->repo ) {
 				$script = $this->repo->getThumbScriptUrl();
@@ -1118,7 +1132,7 @@ abstract class File implements MediaHandlerState {
 		$extension = $this->getExtension();
 		[ $thumbExt, ] = $this->getHandler()->getThumbType(
 			$extension, $this->getMimeType(), $params );
-		$thumbName = $this->getHandler()->makeParamString( $params );
+		$thumbName = $this->getHandler()->makeParamString( $this->adjustThumbWidthForSteps( $params ) );
 
 		if ( $this->repo->supportsSha1URLs() ) {
 			$thumbName .= '-' . $this->getSha1() . '.' . $thumbExt;
@@ -1131,6 +1145,59 @@ abstract class File implements MediaHandlerState {
 		}
 
 		return $thumbName;
+	}
+
+	private function adjustThumbWidthForSteps( array $params ): array {
+		$thumbnailSteps = MediaWikiServices::getInstance()
+			->getMainConfig()->get( MainConfigNames::ThumbnailSteps );
+		$thumbnailStepsRatio = MediaWikiServices::getInstance()
+			->getMainConfig()->get( MainConfigNames::ThumbnailStepsRatio );
+
+		if ( !$thumbnailSteps || !$thumbnailStepsRatio ) {
+			return $params;
+		}
+		if ( !isset( $params['physicalWidth'] ) || !$params['physicalWidth'] ) {
+			return $params;
+		}
+
+		if ( $thumbnailStepsRatio < 1 ) {
+			// If thumbnail ratio is below 100%, build a random number
+			// out of the file name and decide whether to apply adjustments
+			// based on that. This way, we get a good uniformity while not going
+			// back and forth between old and new in different requests.
+			// Also this way, ramping up (e.g. from 0.1 to 0.2) would also
+			// cover the previous values too which would reduce the scale of changes.
+			$hash = hexdec( substr( md5( $this->name ), 0, 8 ) ) & 0x7fffffff;
+			if ( ( $hash % 1000 ) > ( $thumbnailStepsRatio * 1000 ) ) {
+				return $params;
+			}
+		}
+
+		$newThumbSize = null;
+		foreach ( $thumbnailSteps as $widthStep ) {
+			if ( $widthStep > $this->getWidth() ) {
+				return $params;
+			}
+			if ( $widthStep == $params['physicalWidth'] ) {
+				return $params;
+			}
+			if ( $widthStep > $params['physicalWidth'] ) {
+				$newThumbSize = $widthStep;
+				break;
+			}
+		}
+		if ( !$newThumbSize ) {
+			return $params;
+		}
+
+		if ( isset( $params['physicalHeight'] ) ) {
+			$params['physicalHeight'] = intval(
+				$params['physicalHeight'] *
+				( $newThumbSize / $params['physicalWidth'] )
+			);
+		}
+		$params['physicalWidth'] = $newThumbSize;
+		return $params;
 	}
 
 	/**
@@ -1254,7 +1321,7 @@ abstract class File implements MediaHandlerState {
 						break;
 					}
 				} elseif ( $flags & self::RENDER_FORCE ) {
-					wfDebug( __METHOD__ . " forcing rendering per flag File::RENDER_FORCE" );
+					wfDebug( __METHOD__ . ": forcing rendering per flag File::RENDER_FORCE" );
 				}
 
 				// If the backend is ready-only, don't keep generating thumbnails
@@ -1289,7 +1356,7 @@ abstract class File implements MediaHandlerState {
 			}
 		} while ( false );
 
-		return is_object( $thumb ) ? $thumb : false;
+		return $thumb ?: false;
 	}
 
 	/**
@@ -1366,9 +1433,10 @@ abstract class File implements MediaHandlerState {
 			// Copy the thumbnail from the file system into storage...
 
 			$timer = $statsFactory->getTiming( 'media_thumbnail_generate_store_seconds' )
-				->copyToStatsdAt( 'media.thumbnail.generate.store' );
-			$timer->start();
+				->copyToStatsdAt( 'media.thumbnail.generate.store' )
+				->start();
 
+			wfDebug( __METHOD__ . ": copying $tmpThumbPath to $thumbPath" );
 			$disposition = $this->getThumbDisposition( $thumbName );
 			$status = $this->repo->quickImport( $tmpThumbPath, $thumbPath, $disposition );
 			if ( $status->isOK() ) {
@@ -1566,7 +1634,7 @@ abstract class File implements MediaHandlerState {
 	 *   or false if none found
 	 */
 	public function getHandler() {
-		if ( !isset( $this->handler ) ) {
+		if ( !$this->handler ) {
 			$this->handler = MediaHandler::getHandler( $this->getMimeType() );
 		}
 
@@ -2192,7 +2260,7 @@ abstract class File implements MediaHandlerState {
 	 * @return int|false
 	 */
 	public function pageCount() {
-		if ( !isset( $this->pageCount ) ) {
+		if ( $this->pageCount === null ) {
 			if ( $this->getHandler() && $this->handler->isMultiPage( $this ) ) {
 				$this->pageCount = $this->handler->pageCount( $this );
 			} else {
@@ -2397,7 +2465,7 @@ abstract class File implements MediaHandlerState {
 	}
 
 	/**
-	 * @return string
+	 * @return string HTML
 	 */
 	public function getLongDesc() {
 		$handler = $this->getHandler();
@@ -2409,7 +2477,7 @@ abstract class File implements MediaHandlerState {
 	}
 
 	/**
-	 * @return string
+	 * @return string HTML
 	 */
 	public function getShortDesc() {
 		$handler = $this->getHandler();
@@ -2421,7 +2489,7 @@ abstract class File implements MediaHandlerState {
 	}
 
 	/**
-	 * @return string
+	 * @return string plain text
 	 */
 	public function getDimensionsString() {
 		$handler = $this->getHandler();
@@ -2517,3 +2585,6 @@ abstract class File implements MediaHandlerState {
 		return true;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( File::class, 'File' );

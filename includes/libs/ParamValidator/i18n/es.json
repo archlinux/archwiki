@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fitoschido",
-			"Dgstranz"
+			"Dgstranz",
+			"Fitoschido"
 		]
 	},
 	"paramvalidator-badvalue-enummulti": "Valor no válido «$2» para el parámetro «$1». {{PLURAL:$4|Solo se permite «$3».|Los valores permitidos son $3.}}",

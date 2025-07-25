@@ -32,8 +32,6 @@ class LanguageSelectorEntry implements IMenuEntry {
 	private string $icon;
 	/** @var string A translatable label used as text and title */
 	private string $label;
-	/** @var string additional classes */
-	private string $classes;
 
 	/**
 	 * LanguageSelectorEntry constructor.
@@ -42,7 +40,6 @@ class LanguageSelectorEntry implements IMenuEntry {
 	 * languages or variants
 	 * @param MessageLocalizer $messageLocalizer Used for translation texts
 	 * @param bool $isButton
-	 * @param string $classes page classes
 	 * @param string $label Menu entry label and title
 	 */
 	public function __construct(
@@ -50,7 +47,6 @@ class LanguageSelectorEntry implements IMenuEntry {
 		$doesPageHaveLanguages,
 		MessageLocalizer $messageLocalizer,
 		$isButton = false,
-		$classes = '',
 		$label = 'mobile-frontend-language-article-heading'
 	) {
 		$this->title = $title;
@@ -58,7 +54,6 @@ class LanguageSelectorEntry implements IMenuEntry {
 		$this->messageLocalizer = $messageLocalizer;
 		$this->icon = 'language';
 		$this->label = $label;
-		$this->classes = $classes;
 	}
 
 	/**
@@ -80,7 +75,7 @@ class LanguageSelectorEntry implements IMenuEntry {
 	 */
 	public function getComponents(): array {
 		$switcherLink = false;
-		$switcherClasses = ' language-selector';
+		$switcherClasses = 'language-selector';
 
 		if ( $this->doesPageHaveLanguages ) {
 			$switcherLink = '#p-lang';
@@ -92,7 +87,8 @@ class LanguageSelectorEntry implements IMenuEntry {
 		return [
 			[
 				'tag-name' => 'a',
-				'classes' => $this->classes . ' ' . $switcherClasses,
+				'isButton' => true,
+				'classes' => $switcherClasses,
 				'label' => $msg,
 				'data-icon' => [
 					'icon' => $this->icon,

@@ -6,6 +6,7 @@
 		]
 	},
 	"tooltip-pt-notifications-alert": "{{GENDER:|Yer}} alerts",
+	"tooltip-pt-notifications": "Yer notifications",
 	"echo-specialpage-pagefilters-subtitle": "Pages wi unread notifications",
 	"notification-header-thank-you-1-edit": "{{GENDER:$2|Ye'v}} juist duin {{GENDER:$2|yer}} first edit; cheers, an walcome!"
 }

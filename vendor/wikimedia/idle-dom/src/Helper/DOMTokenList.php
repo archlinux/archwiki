@@ -183,6 +183,7 @@ trait DOMTokenList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\DOMTokenList $this';
 		// @var \Wikimedia\IDLeDOM\DOMTokenList $this
@@ -274,7 +275,7 @@ trait DOMTokenList {
 	/**
 	 * @return \Iterator<string> Value iterator returning string items
 	 */
-	public function getIterator() {
+	public function getIterator(): \Iterator {
 		'@phan-var \Wikimedia\IDLeDOM\DOMTokenList $this';
 		// @var \Wikimedia\IDLeDOM\DOMTokenList $this
 		for ( $i = 0; $i < $this->getLength(); $i++ ) {

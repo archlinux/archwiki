@@ -2,8 +2,8 @@
 
 namespace LoginNotify;
 
-use Job;
 use LogicException;
+use MediaWiki\JobQueue\Job;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 

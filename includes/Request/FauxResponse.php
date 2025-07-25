@@ -101,9 +101,6 @@ class FauxResponse extends WebResponse {
 		return $this->code;
 	}
 
-	/**
-	 * @return Config
-	 */
 	private function getCookieConfig(): Config {
 		if ( !$this->cookieConfig ) {
 			$this->cookieConfig = MediaWikiServices::getInstance()->getMainConfig();
@@ -111,9 +108,6 @@ class FauxResponse extends WebResponse {
 		return $this->cookieConfig;
 	}
 
-	/**
-	 * @param Config $cookieConfig
-	 */
 	public function setCookieConfig( Config $cookieConfig ): void {
 		$this->cookieConfig = $cookieConfig;
 	}
@@ -198,6 +192,3 @@ class FauxResponse extends WebResponse {
 	}
 
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( FauxResponse::class, 'FauxResponse' );

@@ -476,11 +476,12 @@ class LightboxInterface extends UiElement {
 	}
 
 	/**
-	 * Updates the next and prev buttons
+	 * Updates the next and prev buttons as well as the current image number indicator
 	 *
-	 * @param {boolean} showPrevNext Show prev/next button
+	 * @param {number} currentIndex Current image index
+	 * @param {number} imageCount Image count
 	 */
-	updateControls( showPrevNext ) {
+	updateControls( currentIndex, imageCount ) {
 		const prevNextTop = `${ ( this.$imageWrapper.height() - 60 ) / 2 }px`;
 
 		if ( this.isFullscreen ) {
@@ -489,8 +490,16 @@ class LightboxInterface extends UiElement {
 			this.$postDiv.css( 'top', this.$imageWrapper.height() );
 		}
 
+		this.buttons.$prev.toggleClass( 'mw-mmv-prev-image-loop', currentIndex === 0 );
+		this.buttons.$next.toggleClass( 'mw-mmv-next-image-loop', currentIndex === imageCount - 1 );
 		this.buttons.setOffset( prevNextTop );
-		this.buttons.$nav.toggle( showPrevNext );
+		this.buttons.$nav.toggle( imageCount > 1 );
+		this.buttons.$currentImageNumber.show().text(
+			mw.msg( 'multimediaviewer-current-image-number',
+				mw.language.convertNumber( currentIndex + 1 ),
+				mw.language.convertNumber( imageCount )
+			)
+		);
 	}
 
 	/**

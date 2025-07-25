@@ -5,6 +5,7 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Gadgets\Hooks as GadgetHooks;
 use MediaWiki\Extension\Gadgets\StaticGadgetRepo;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 
 /**
@@ -42,7 +43,7 @@ class GadgetLoadConditionsTest extends MediaWikiIntegrationTestCase {
 		$repo = new StaticGadgetRepo( $gadgets );
 
 		$out = new OutputPage( $context );
-		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup(), null );
+		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup() );
 		$hooks->onBeforePageDisplay( $out, $context->getSkin() );
 
 		return $out;

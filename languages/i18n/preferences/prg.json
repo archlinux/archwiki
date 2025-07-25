@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kxeo",
 			"Nertiks",
-			"Tīgelika",
-			"Kxeo"
+			"Tīgelika"
 		]
 	},
 	"preferences": "Pirminiskwas",
@@ -122,5 +122,6 @@
 	"tog-watchcreations": "Preidāis pāusans kawīdans as teīke prei majjan listin stēisan nadirītan",
 	"prefs-searchoptions": "Laukīsnas mazīngiskwas",
 	"prefs-advancedsearchoptions": "Ēmpirsin treppušas opciōnis",
+	"prefs-misc": "Šlaitawīdai ensadīnsenei",
 	"restoreprefs": "Etwārtai wartinnais wissans auprestaminans pirminiskwans"
 }

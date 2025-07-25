@@ -136,7 +136,7 @@ module.exports = {
 		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
-		surface.getToolbarDialogs().once( 'opening', ( win, opening ) => {
+		surface.getToolbarDialogs( 'above' ).once( 'opening', ( win, opening ) => {
 			opening.then( () => {
 				setTimeout( () => {
 					done(
@@ -153,7 +153,7 @@ module.exports = {
 	specialCharactersTeardown: function () {
 		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
-		surface.getToolbarDialogs().currentWindow.close().closed.then( done );
+		surface.getToolbarDialogs( 'above' ).currentWindow.close().closed.then( done );
 	},
 	formula: function () {
 		const done = arguments[ arguments.length - 1 ],

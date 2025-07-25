@@ -68,6 +68,7 @@
 	"notifications": "Meldingen",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Jo}} seintsjes",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Jo}} meidielings",
+	"tooltip-pt-notifications": "Jo meldingen",
 	"echo-displaynotificationsconfiguration": "Ynstellings fan skermmeldingen",
 	"echo-displaynotificationsconfiguration-summary": "Dit is in oersjoch fan hoe't de Meldingen ynsteld steane op dizze wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Meldingen op kategory",

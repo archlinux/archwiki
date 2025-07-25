@@ -23,13 +23,10 @@
 	"nuke": "Borrado en masa",
 	"action-nuke": "Destruir páginas",
 	"nuke-desc": "Da a los administradores la posibilidad de [[Special:Nuke|borrar páginas de forma masiva]]",
-	"nuke-nopages": "No hay páginas nuevas creadas por [[Special:Contributions/$1|$1]] en cambios recientes.",
-	"nuke-list": "Las siguientes páginas fueron creadas recientemente por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]. Seleccione qué páginas eliminar, proporcione un resumen de edición y haga clic en \"Eliminar seleccionadas\" para iniciar la eliminación de la página.\n\nLos redireccionamientos se muestran en cursiva.",
-	"nuke-list-multiple": "Las siguientes páginas se crearon recientemente. Seleccione qué páginas eliminar, proporcione un resumen de edición y clic en \"Eliminar seleccionadas\" para iniciar la eliminación de la página.\n\nLos redireccionamientos se muestran en cursiva.",
 	"nuke-defaultreason": "Eliminación en masa de páginas añadidas por [[Special:Contributions/$1|$1]]",
 	"nuke-multiplepeople": "Eliminación masiva de páginas nuevas de múltiples usuarios",
 	"nuke-tools": "Esta herramienta permite borrados masivos de páginas creadas recientemente por un usuario o una dirección IP.\nEscribe el nombre de usuario o la dirección IP para obtener la lista de páginas que borrar, o déjalo vacío para todos los usuarios.",
-	"nuke-submit-user": "Mostrar páginas",
+	"nuke-submit-list": "Mostrar páginas",
 	"nuke-submit-delete": "Borrar lo seleccionado",
 	"right-nuke": "Borrar páginas masivamente",
 	"nuke-userorip": "Nombre de usuario, dirección IP o en blanco:",
@@ -44,6 +41,5 @@
 	"nuke-viewchanges": "historial",
 	"nuke-namespace": "Límite al espacio de nombres:",
 	"nuke-linkoncontribs": "borrado masivo",
-	"nuke-linkoncontribs-text": "Eliminar masivamente las páginas donde {{GENDER:$1|este usuario sea el único autor|esta usuaria sea la única autora}}",
-	"nuke-confirm": "Estás a punto de eliminar {{PLURAL:$1|una página|$1 páginas}}. ¿Estás seguro de que quieres eliminarlo?"
+	"nuke-linkoncontribs-text": "Eliminar masivamente las páginas donde {{GENDER:$1|este usuario sea el único autor|esta usuaria sea la única autora}}"
 }

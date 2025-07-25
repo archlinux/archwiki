@@ -5,13 +5,13 @@
 			"Salvemm el lombard"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor Visual]]",
+	"tag-visualeditor": "Editor Visual",
 	"tag-visualeditor-description": "Modifica fada cont el doprà l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Modiffica vixoâ: controlà]]",
+	"tag-visualeditor-needcheck": "Modiffica vixoâ: controlà",
 	"tag-visualeditor-needcheck-description": "Modifica eseguida cont el doprà l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]] indove el sistema l'ha rilevad di possibil modifiche minga vorude in del wikitesto.",
 	"tag-visualeditor-wikitext": "Editor wikitest 2017",
 	"tag-visualeditor-wikitext-description": "Modifica efetuada cont el drovà l'editor wikitest 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Modifica visual: cambiad]]",
+	"tag-visualeditor-switched": "Modifica visual: cambiad",
 	"tag-visualeditor-switched-description": "L'utent l'hà tacà a modifegà cont el drovà l'editor visual, poeu l'è passà de noeuv a l'editor wikitest.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Comencc",
 	"visualeditor-feedback-tool": "Dinn quell che te penset de quell programa informatich chì",

@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\User;
@@ -15,6 +16,11 @@ class EchoHtmlDigestEmailFormatter extends EchoEventDigestFormatter {
 	 */
 	protected $digestMode;
 
+	/**
+	 * @param User $user
+	 * @param Language $language
+	 * @param string $digestMode
+	 */
 	public function __construct( User $user, Language $language, $digestMode ) {
 		parent::__construct( $user, $language );
 		$this->digestMode = $digestMode;
@@ -60,7 +66,9 @@ class EchoHtmlDigestEmailFormatter extends EchoEventDigestFormatter {
 		];
 	}
 
-	private function renderBody( Language $language, $intro, $digestList, $action, $footer ) {
+	private function renderBody(
+		Language $language, string $intro, string $digestList, string $action, string $footer
+	): string {
 		$alignStart = $language->alignStart();
 		$langCode = $language->getHtmlCode();
 		$langDir = $language->getDir();
@@ -184,10 +192,10 @@ EOF;
 	 * @return string
 	 */
 	protected function applyStyleToEvent( EchoEventPresentationModel $model ) {
-		$iconUrl = wfExpandUrl(
+		$iconUrl = MediaWikiServices::getInstance()->getUrlUtils()->expand(
 			EchoIcon::getRasterizedUrl( $model->getIconType(), $this->language->getCode() ),
 			PROTO_CANONICAL
-		);
+		) ?? '';
 
 		$imgSrc = Sanitizer::encodeAttribute( $iconUrl );
 
@@ -206,7 +214,7 @@ EOF;
 EOF;
 	}
 
-	private function renderDigestList( $eventsByCategory ) {
+	private function renderDigestList( array $eventsByCategory ): string {
 		$result = [];
 		// build the html section for each category
 		foreach ( $eventsByCategory as $category => $models ) {
@@ -222,7 +230,7 @@ EOF;
 		return trim( implode( "\n", $result ) );
 	}
 
-	private function renderAction() {
+	private function renderAction(): string {
 		return Html::element(
 			'a',
 			[

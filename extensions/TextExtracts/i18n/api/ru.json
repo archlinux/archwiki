@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Facenapalm",
-			"Okras"
+			"Okras",
+			"Engineer56"
 		]
 	},
 	"apihelp-query+extracts-summary": "Возвращает фрагменты указанных страниц в виде обычного текста или ограниченного HTML.",
@@ -17,5 +18,8 @@
 	"apihelp-query+extracts-paramvalue-sectionformat-raw": "Внутреннее представление данного модуля (перед названием секций будет &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;уровень секции&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt;).",
 	"apihelp-query+extracts-example-1": "Получить 175-символьный фрагмент",
 	"apiwarn-textextracts-limit": "<var>exlimit</var> был слишком велик для запроса фрагмента всей статьи, поэтому он был снижен до $1.",
-	"apiwarn-textextracts-unsupportedmodel": "Модель содержимого $2, установленная для странице $1, не поддерживается; возвращён пустой фрагмент."
+	"apiwarn-textextracts-unsupportedmodel": "Модель содержимого $2, установленная для странице $1, не поддерживается; возвращён пустой фрагмент.",
+	"apiwarn-textextracts-title-in-file-namespace": "Был запрошен заголовок в пространстве имен файлов, но ничего не возвращено.",
+	"apiwarn-textextracts-sentences-and-html": "Параметр <var>$1 sentences</var> может иметь неожиданные результаты при использовании в режиме HTML.",
+	"apiwarn-textextracts-malformed-html": "HTML может быть неправильно сформирован и/или несбалансирован и может пропускать встроенные изображения. Используйте на свой страх и риск. Известные проблемы перечислены на https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats."
 }

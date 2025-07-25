@@ -50,8 +50,8 @@ class SpecialHistoryPage extends Page {
 		return $( '.more' );
 	}
 
-	open() {
-		super.open( 'Special:History' );
+	async open() {
+		return super.open( 'Special:History' );
 	}
 }
 

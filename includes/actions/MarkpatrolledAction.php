@@ -20,11 +20,18 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\SpecialPage\SpecialPage;
+use StatusValue;
 
 /**
  * Mark a revision as patrolled on a page
@@ -159,3 +166,6 @@ class MarkpatrolledAction extends FormAction {
 		return true;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( MarkpatrolledAction::class, 'MarkpatrolledAction' );

@@ -1,14 +1,5 @@
 <?php
 /**
- * Periodic off-peak updating of the search index.
- *
- * Usage: php updateSearchIndex.php [-s START] [-e END] [-p POSFILE] [-l LOCKTIME] [-q]
- * Where START is the starting timestamp
- * END is the ending timestamp
- * POSFILE is a file to load timestamps from and save them to, searchUpdate.WIKI_ID.pos by default
- * LOCKTIME is how long the searchindex and revision tables will be locked for
- * -q means quiet
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,11 +16,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
  */
 
-use MediaWiki\Deferred\SearchUpdate;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Search\SearchUpdate;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -39,8 +30,16 @@ require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
 /**
- * Maintenance script for periodic off-peak updating of the search index.
+ * Periodic off-peak updating of the search index.
  *
+ * Usage: php updateSearchIndex.php [-s START] [-e END] [-p POSFILE] [-l LOCKTIME] [-q]
+ * Where START is the starting timestamp
+ * END is the ending timestamp
+ * POSFILE is a file to load timestamps from and save them to, searchUpdate.WIKI_ID.pos by default
+ * LOCKTIME is how long the searchindex and revision tables will be locked for
+ * -q means quiet
+ *
+ * @ingroup Search
  * @ingroup Maintenance
  */
 class UpdateSearchIndex extends Maintenance {
@@ -64,6 +63,7 @@ class UpdateSearchIndex extends Maintenance {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}
@@ -90,7 +90,7 @@ class UpdateSearchIndex extends Maintenance {
 		}
 	}
 
-	private function doUpdateSearchIndex( $start, $end ) {
+	private function doUpdateSearchIndex( string $start, string $end ) {
 		global $wgDisableSearchUpdate;
 
 		$wgDisableSearchUpdate = false;
@@ -132,7 +132,7 @@ class UpdateSearchIndex extends Maintenance {
 			->getRevisionByPageId( $pageId, 0, IDBAccessObject::READ_LATEST );
 		$title = null;
 		if ( $rev ) {
-			$titleObj = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
+			$titleObj = Title::newFromPageIdentity( $rev->getPage() );
 			$title = $titleObj->getPrefixedDBkey();
 			$this->output( "$title..." );
 			# Update searchindex

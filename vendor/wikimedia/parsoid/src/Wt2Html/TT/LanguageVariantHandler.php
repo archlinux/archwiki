@@ -15,26 +15,26 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * Handler for language conversion markup, which looks like `-{ ... }-`.
  */
 class LanguageVariantHandler extends TokenHandler {
 	/** @inheritDoc */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 	}
 
 	/**
 	 * convert one variant text to dom.
-	 * @param TokenTransformManager $manager
+	 * @param TokenHandlerPipeline $manager
 	 * @param array $options
 	 * @param string $t
 	 * @param array $attribs
 	 * @return array
 	 */
-	private function convertOne( TokenTransformManager $manager, array $options, string $t,
+	private function convertOne( TokenHandlerPipeline $manager, array $options, string $t,
 		array $attribs ): array {
 		// we're going to fetch the actual token list from attribs
 		// (this ensures that it has gone through the earlier stages
@@ -56,7 +56,7 @@ class LanguageVariantHandler extends TokenHandler {
 		);
 		return [
 			'xmlstr' => ContentUtils::ppToXML(
-				$domFragment, [ 'innerXML' => true ]
+				$domFragment, [ 'innerXML' => true, 'fragment' => true, ]
 			),
 			'isBlock' => DOMUtils::hasBlockElementDescendant( $domFragment ),
 		];
@@ -92,11 +92,11 @@ class LanguageVariantHandler extends TokenHandler {
 
 	/**
 	 * Main handler.
-	 * See {@link TokenTransformManager#addTransform}'s transformation parameter
+	 * See {@link TokenHandlerPipeline#addTransform}'s transformation parameter
 	 * @param Token $token
-	 * @return TokenHandlerResult|null
+	 * @return ?array<string|Token>
 	 */
-	private function onLanguageVariant( Token $token ): ?TokenHandlerResult {
+	private function onLanguageVariant( Token $token ): ?array {
 		$manager = $this->manager;
 		$options = $this->options;
 		$attribs = $token->attribs;
@@ -279,13 +279,13 @@ class LanguageVariantHandler extends TokenHandler {
 			$tokens[] = new EndTagTk( $isBlock ? 'div' : 'span', [], $metaDP );
 		}
 
-		return new TokenHandlerResult( $tokens );
+		return $tokens;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		return $token->getName() === 'language-variant' ? $this->onLanguageVariant( $token ) : null;
 	}
 }

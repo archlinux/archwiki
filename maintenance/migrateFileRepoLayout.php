@@ -21,6 +21,11 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\FileBackendDBRepoWrapper;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\FileBackend\FileBackend;
 
 // @codeCoverageIgnoreStart
@@ -92,9 +97,9 @@ class MigrateFileRepoLayout extends Maintenance {
 				/** @var LocalFile $file */
 				$file = $repo->newFile( $row->img_name );
 				// Check in case SHA1 rows are not populated for some files
-				$sha1 = strlen( $row->img_sha1 ) ? $row->img_sha1 : $file->getSha1();
+				$sha1 = $row->img_sha1 !== '' ? $row->img_sha1 : $file->getSha1();
 
-				if ( !strlen( $sha1 ) ) {
+				if ( $sha1 === '' ) {
 					$this->error( "Image SHA-1 not known for {$row->img_name}." );
 				} else {
 					if ( $oldLayout === 'sha1' ) {
@@ -121,7 +126,7 @@ class MigrateFileRepoLayout extends Maintenance {
 
 				foreach ( $file->getHistory() as $ofile ) {
 					$sha1 = $ofile->getSha1();
-					if ( !strlen( $sha1 ) ) {
+					if ( $sha1 === '' ) {
 						$this->error( "Image SHA-1 not set for {$ofile->getArchiveName()}." );
 						continue;
 					}
@@ -183,7 +188,7 @@ class MigrateFileRepoLayout extends Maintenance {
 			foreach ( $res as $row ) {
 				$lastId = $row->fa_id;
 				$sha1Key = $row->fa_storage_key;
-				if ( !strlen( $sha1Key ) ) {
+				if ( $sha1Key === '' ) {
 					$this->error( "Image SHA-1 not set for file #{$row->fa_id} (deleted)." );
 					continue;
 				}
@@ -226,7 +231,7 @@ class MigrateFileRepoLayout extends Maintenance {
 		$this->output( "Done (started $startTime)\n" );
 	}
 
-	protected function getRepo() {
+	protected function getRepo(): LocalRepo {
 		return $this->getServiceContainer()->getRepoGroup()->getLocalRepo();
 	}
 

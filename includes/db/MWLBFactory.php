@@ -21,11 +21,10 @@
  * @ingroup Database
  */
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Debug\MWDebug;
-use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\MWExceptionHandler;
+use MediaWiki\Exception\MWExceptionRenderer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -33,10 +32,10 @@ use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\DatabaseDomain;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\TracerInterface;
 
 /**
  * MediaWiki-specific class for generating database load balancers
@@ -49,7 +48,11 @@ class MWLBFactory {
 	/** Cache of already-logged deprecation messages */
 	private static array $loggedDeprecations = [];
 
-	public const CORE_VIRTUAL_DOMAINS = [ 'virtual-botpasswords' ];
+	public const CORE_VIRTUAL_DOMAINS = [
+		'virtual-botpasswords',
+		'virtual-interwiki',
+		'virtual-interwiki-interlanguage',
+	];
 
 	/**
 	 * @internal For use by ServiceWiring
@@ -82,7 +85,8 @@ class MWLBFactory {
 	private BagOStuff $srvCache;
 	private WANObjectCache $wanCache;
 	private CriticalSectionProvider $csProvider;
-	private StatsdDataFactoryInterface $statsdDataFactory;
+	private StatsFactory $statsFactory;
+	private TracerInterface $tracer;
 	/** @var string[] */
 	private array $virtualDomains;
 
@@ -93,8 +97,9 @@ class MWLBFactory {
 	 * @param BagOStuff $srvCache
 	 * @param WANObjectCache $wanCache
 	 * @param CriticalSectionProvider $csProvider
-	 * @param StatsdDataFactoryInterface $statsdDataFactory
+	 * @param StatsFactory $statsFactory
 	 * @param string[] $virtualDomains
+	 * @param TracerInterface $tracer
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -103,8 +108,9 @@ class MWLBFactory {
 		BagOStuff $srvCache,
 		WANObjectCache $wanCache,
 		CriticalSectionProvider $csProvider,
-		StatsdDataFactoryInterface $statsdDataFactory,
-		array $virtualDomains
+		StatsFactory $statsFactory,
+		array $virtualDomains,
+		TracerInterface $tracer
 	) {
 		$this->options = $options;
 		$this->readOnlyMode = $readOnlyMode;
@@ -112,8 +118,9 @@ class MWLBFactory {
 		$this->srvCache = $srvCache;
 		$this->wanCache = $wanCache;
 		$this->csProvider = $csProvider;
-		$this->statsdDataFactory = $statsdDataFactory;
+		$this->statsFactory = $statsFactory;
 		$this->virtualDomains = $virtualDomains;
+		$this->tracer = $tracer;
 	}
 
 	/**
@@ -144,11 +151,11 @@ class MWLBFactory {
 			'logger' => LoggerFactory::getInstance( 'rdbms' ),
 			'errorLogger' => [ MWExceptionHandler::class, 'logException' ],
 			'deprecationLogger' => [ static::class, 'logDeprecation' ],
-			'statsdDataFactory' => $this->statsdDataFactory,
+			'statsFactory' => $this->statsFactory,
 			'cliMode' => MW_ENTRY_POINT === 'cli',
 			'readOnlyReason' => $this->readOnlyMode->getReason(),
 			'defaultGroup' => $this->options->get( MainConfigNames::DBDefaultGroup ),
-			'criticalSectionProvider' => $this->csProvider
+			'criticalSectionProvider' => $this->csProvider,
 		];
 
 		$serversCheck = [];
@@ -210,15 +217,13 @@ class MWLBFactory {
 		$lbConf['chronologyProtector'] = $this->chronologyProtector;
 		$lbConf['srvCache'] = $this->srvCache;
 		$lbConf['wanCache'] = $this->wanCache;
+		$lbConf['tracer'] = $this->tracer;
 		$lbConf['virtualDomains'] = array_merge( $this->virtualDomains, self::CORE_VIRTUAL_DOMAINS );
 		$lbConf['virtualDomainsMapping'] = $this->options->get( MainConfigNames::VirtualDomainsMapping );
 
 		return $lbConf;
 	}
 
-	/**
-	 * @return array
-	 */
 	private function getDbTypesWithSchemas(): array {
 		return [ 'postgres' ];
 	}
@@ -374,9 +379,6 @@ class MWLBFactory {
 		return $compat[$class] ?? $class;
 	}
 
-	/**
-	 * @param ILBFactory $lbFactory
-	 */
 	public function setDomainAliases( ILBFactory $lbFactory ): void {
 		$domain = DatabaseDomain::newFromId( $lbFactory->getLocalDomainID() );
 		// For compatibility with hyphenated $wgDBname values on older wikis, handle callers
@@ -386,60 +388,6 @@ class MWLBFactory {
 			: (string)$domain->getDatabase();
 
 		$lbFactory->setDomainAliases( [ $rawLocalDomain => $domain ] );
-	}
-
-	/**
-	 * Apply global state from the current web request or other PHP process.
-	 *
-	 * This technically violates the principle constraint on ServiceWiring to be
-	 * deterministic for a given site configuration. The exemption made here
-	 * is solely to aid in debugging and influence non-nominal behaviour such
-	 * as ChronologyProtector. That is, the state applied here must never change
-	 * the logical destination or meaning of any database-related methods, it
-	 * merely applies preferences and debugging information.
-	 *
-	 * The code here must be non-essential, with LBFactory behaving the same toward
-	 * its consumers regardless of whether this is applied or not.
-	 *
-	 * For example, something may instantiate LBFactory for the current wiki without
-	 * calling this, and its consumers must not be able to tell the difference.
-	 * Likewise, in the future MediaWiki may instantiate service wiring and LBFactory
-	 * for a foreign wiki in the same farm and apply the current global state to that,
-	 * and that should be fine as well.
-	 *
-	 * @param ILBFactory $lbFactory
-	 * @param Config $config
-	 * @param IBufferingStatsdDataFactory $stats
-	 */
-	public function applyGlobalState(
-		ILBFactory $lbFactory,
-		Config $config,
-		IBufferingStatsdDataFactory $stats
-	): void {
-		if ( MW_ENTRY_POINT === 'cli' ) {
-			$lbFactory->getMainLB()->setTransactionListener(
-				__METHOD__,
-				static function ( $trigger ) use ( $stats, $config ) {
-					// During maintenance scripts and PHPUnit integration tests, we let
-					// DeferredUpdates run immediately from addUpdate(), unless a transaction
-					// is active. Notify DeferredUpdates after any commit to try now.
-					// See DeferredUpdates::tryOpportunisticExecute for why.
-					if ( $trigger === IDatabase::TRIGGER_COMMIT ) {
-						DeferredUpdates::tryOpportunisticExecute();
-					}
-					// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
-					MediaWiki::emitBufferedStatsdData( $stats, $config );
-				}
-			);
-			$lbFactory->setWaitForReplicationListener(
-				__METHOD__,
-				static function () use ( $stats, $config ) {
-					// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
-					MediaWiki::emitBufferedStatsdData( $stats, $config );
-				}
-			);
-
-		}
 	}
 
 	/**

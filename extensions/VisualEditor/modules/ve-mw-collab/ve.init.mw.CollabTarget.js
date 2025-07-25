@@ -62,8 +62,6 @@ ve.init.mw.CollabTarget.static.toolbarGroups.splice( 4, 0, {
 	name: 'commentAnnotation',
 	include: [ 'commentAnnotation' ]
 } );
-// HACK: Disable references until supported (T194838)
-ve.init.mw.CollabTarget.static.toolbarGroups = ve.init.mw.CollabTarget.static.toolbarGroups.filter( ( group ) => group.name !== 'reference' );
 ve.init.mw.CollabTarget.static.toolbarGroups.push(
 	{
 		name: 'help',

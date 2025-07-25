@@ -11,27 +11,13 @@
 // phpcs:disable Generic.Files.LineLength.TooLong
 namespace MediaWiki;
 
-use AssembleUploadChunksJob;
-use BlockLogFormatter;
-use CategoryMembershipChangeJob;
-use CdnPurgeJob;
-use ContentModelLogFormatter;
 use DateTime;
 use DateTimeZone;
-use DeleteLinksJob;
-use DeleteLogFormatter;
-use DeletePageJob;
-use DoubleRedirectJob;
 use EmaillingJob;
 use EnotifNotifyJob;
 use Generator;
-use HTMLCacheUpdateJob;
-use ImportLogFormatter;
 use InvalidArgumentException;
-use JobQueueDB;
 use LocalisationCache;
-use LocalRepo;
-use LogFormatter;
 use MediaWiki\Auth\CheckBlocksSecondaryAuthenticationProvider;
 use MediaWiki\Auth\EmailNotificationSecondaryAuthenticationProvider;
 use MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider;
@@ -40,6 +26,7 @@ use MediaWiki\Auth\ResetPasswordSecondaryAuthenticationProvider;
 use MediaWiki\Auth\TemporaryPasswordAuthenticationRequest;
 use MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider;
 use MediaWiki\Auth\ThrottlePreAuthenticationProvider;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Content\CssContentHandler;
 use MediaWiki\Content\FallbackContentHandler;
 use MediaWiki\Content\JavaScriptContentHandler;
@@ -47,6 +34,36 @@ use MediaWiki\Content\JsonContentHandler;
 use MediaWiki\Content\TextContentHandler;
 use MediaWiki\Content\WikitextContentHandler;
 use MediaWiki\Deferred\SiteStatsUpdate;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\JobQueue\JobQueueDB;
+use MediaWiki\JobQueue\Jobs\AssembleUploadChunksJob;
+use MediaWiki\JobQueue\Jobs\CategoryMembershipChangeJob;
+use MediaWiki\JobQueue\Jobs\CdnPurgeJob;
+use MediaWiki\JobQueue\Jobs\DeleteLinksJob;
+use MediaWiki\JobQueue\Jobs\DeletePageJob;
+use MediaWiki\JobQueue\Jobs\DoubleRedirectJob;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
+use MediaWiki\JobQueue\Jobs\NullJob;
+use MediaWiki\JobQueue\Jobs\ParsoidCachePrewarmJob;
+use MediaWiki\JobQueue\Jobs\PublishStashedFileJob;
+use MediaWiki\JobQueue\Jobs\RefreshLinksJob;
+use MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob;
+use MediaWiki\JobQueue\Jobs\ThumbnailRenderJob;
+use MediaWiki\JobQueue\Jobs\UploadFromUrlJob;
+use MediaWiki\Logging\BlockLogFormatter;
+use MediaWiki\Logging\ContentModelLogFormatter;
+use MediaWiki\Logging\DeleteLogFormatter;
+use MediaWiki\Logging\ImportLogFormatter;
+use MediaWiki\Logging\InterwikiLogFormatter;
+use MediaWiki\Logging\LogFormatter;
+use MediaWiki\Logging\MergeLogFormatter;
+use MediaWiki\Logging\MoveLogFormatter;
+use MediaWiki\Logging\PatrolLogFormatter;
+use MediaWiki\Logging\ProtectLogFormatter;
+use MediaWiki\Logging\RenameuserLogFormatter;
+use MediaWiki\Logging\RightsLogFormatter;
+use MediaWiki\Logging\TagLogFormatter;
+use MediaWiki\Logging\UploadLogFormatter;
 use MediaWiki\Password\Argon2Password;
 use MediaWiki\Password\BcryptPassword;
 use MediaWiki\Password\LayeredParameterizedPassword;
@@ -57,7 +74,9 @@ use MediaWiki\Password\Pbkdf2PasswordUsingOpenSSL;
 use MediaWiki\Permissions\GrantsInfo;
 use MediaWiki\RCFeed\RedisPubSubFeedEngine;
 use MediaWiki\RCFeed\UDPRCFeedEngine;
-use MediaWiki\RenameUser\RenameUserJob;
+use MediaWiki\RecentChanges\RecentChangesUpdateJob;
+use MediaWiki\RenameUser\Job\RenameUserDerivedJob;
+use MediaWiki\RenameUser\Job\RenameUserTableJob;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Settings\Source\JsonSchemaTrait;
 use MediaWiki\Site\MediaWikiSite;
@@ -69,24 +88,8 @@ use MediaWiki\Watchlist\ActivityUpdateJob;
 use MediaWiki\Watchlist\ClearUserWatchlistJob;
 use MediaWiki\Watchlist\ClearWatchlistNotificationsJob;
 use MediaWiki\Watchlist\WatchlistExpiryJob;
-use MergeLogFormatter;
-use MoveLogFormatter;
-use NullJob;
-use ParsoidCachePrewarmJob;
-use PatrolLogFormatter;
-use ProtectLogFormatter;
-use PublishStashedFileJob;
-use RecentChangesUpdateJob;
 use ReflectionClass;
-use RefreshLinksJob;
-use RenameuserLogFormatter;
-use RevertedTagUpdateJob;
-use RightsLogFormatter;
 use SqlBagOStuff;
-use TagLogFormatter;
-use ThumbnailRenderJob;
-use UploadFromUrlJob;
-use UploadLogFormatter;
 use UserEditCountInitJob;
 use UserGroupExpiryJob;
 use UserOptionsUpdateJob;
@@ -357,9 +360,6 @@ class MainConfigSchema {
 		'dynamicDefault' => true,
 	];
 
-	/**
-	 * @return bool
-	 */
 	public static function getDefaultUsePathInfo(): bool {
 		// These often break when PHP is set up in CGI mode.
 		// PATH_INFO *may* be correct if cgi.fix_pathinfo is set, but then again it may not;
@@ -491,8 +491,9 @@ class MainConfigSchema {
 	/**
 	 * Extensions directory in the file system.
 	 *
-	 * @note Set to "{$IP}/extensions" by Setup.php before loading local settings.
-	 * @note this configuration variable is used to locate extensions while loading settings.
+	 * Defaults to "{$IP}/extensions" in Setup.php
+	 *
+	 * @note This configuration variable is used to locate extensions while loading settings.
 	 * @since 1.25
 	 */
 	public const ExtensionDirectory = [
@@ -503,26 +504,14 @@ class MainConfigSchema {
 	/**
 	 * Skins directory in the file system.
 	 *
-	 * @note Set to "{$IP}/skins" by Setup.php before loading local settings.
-	 * @note this configuration variable is used to locate skins while loading settings.
+	 * Defaults to "{$IP}/skins" in Setup.php.
+	 *
+	 * @note This configuration variable is used to locate skins while loading settings.
 	 * @since 1.3
 	 */
 	public const StyleDirectory = [
 		'default' => null,
 		'type' => '?string',
-	];
-
-	/**
-	 * Absolute filesystem path of the root directory of the MediaWiki installation.
-	 * The MW_INSTALL_PATH environment variable can be used to set this.
-	 *
-	 * @note Automatically set in Setup.php before loading local settings.
-	 * @note Do not modify in settings files! Must remain equal to the MW_INSTALL_PATH constant
-	 *       defined in Setup.php.
-	 * @since 1.38
-	 */
-	public const BaseDirectory = [
-		'default' => null,
 	];
 
 	/**
@@ -594,20 +583,14 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * The filesystem path of the images directory. Defaults to "{$IP}/images".
+	 * The filesystem path of the images directory.
+	 *
+	 * Defaults to "{$IP}/images" in Setup.php.
 	 */
 	public const UploadDirectory = [
 		'default' => false,
-		'dynamicDefault' => [ 'use' => [ 'BaseDirectory' ] ]
+		'type' => '?string|false',
 	];
-
-	/**
-	 * @param mixed $baseDirectory Value of BaseDirectory
-	 * @return string
-	 */
-	public static function getDefaultUploadDirectory( $baseDirectory ): string {
-		return "$baseDirectory/images";
-	}
 
 	/**
 	 * Directory where the cached page will be saved.
@@ -1393,9 +1376,6 @@ class MainConfigSchema {
 		'dynamicDefault' => [ 'callback' => [ self::class, 'getDefaultShowEXIF' ] ],
 	];
 
-	/**
-	 * @return bool
-	 */
 	public static function getDefaultShowEXIF(): bool {
 		return function_exists( 'exif_read_data' );
 	}
@@ -2297,6 +2277,35 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * When defined, is an array of image widths used as steps for thumbnail sizes.
+	 *
+	 * The thumbnail with smallest step that has larger value than requested will be shown
+	 * but it will be downsized via HTML values.
+	 *
+	 * It increases the bandwidth to the users by serving slightly large thumbnail sizes they
+	 * have requested but it will save resources by de-duplicating thumbnail generation and storage.
+	 *
+	 * Note that these steps are "best effort" and MediaWiki might decide to use the requested size
+	 * for any reason.
+	 */
+	public const ThumbnailSteps = [
+		'default' => null,
+		'type' => '?list',
+	];
+
+	/**
+	 * Ratio of images that will use the thumbnail steps
+	 *
+	 * This is to allow for gradual roll out of thumbnail steps. It should be a number between 0 and 1.
+	 *
+	 * The precision of this value is up to 0.001, anything below that will be ignored.
+	 */
+	public const ThumbnailStepsRatio = [
+		'default' => null,
+		'type' => '?float',
+	];
+
+	/**
 	 * When defined, is an array of image widths used as buckets for thumbnail generation.
 	 *
 	 * The goal is to save resources by generating thumbnails based on reference buckets instead of
@@ -2769,6 +2778,8 @@ class MainConfigSchema {
 	 *
 	 * For pages with many users watching, this can significantly reduce mail load.
 	 * Has no effect when using sendmail rather than SMTP.
+	 *
+	 * @deprecated since 1.44
 	 */
 	public const EnotifImpersonal = [
 		'default' => false,
@@ -2777,6 +2788,8 @@ class MainConfigSchema {
 	/**
 	 * Maximum number of users to mail at once when using impersonal mail. Should
 	 * match the limit on your mail server.
+	 *
+	 * @deprecated since 1.44
 	 */
 	public const EnotifMaxRecips = [
 		'default' => 500,
@@ -2977,7 +2990,7 @@ class MainConfigSchema {
 	 * SQL Mode - default is turning off all modes, including strict, if set.
 	 *
 	 * null can be used to skip the setting for performance reasons and assume
-	 * DBA has done his best job.
+	 * the DBA has done their best job.
 	 * String override can be used for some additional fun :-)
 	 */
 	public const SQLMode = [
@@ -3204,17 +3217,39 @@ class MainConfigSchema {
 	}
 
 	/**
-	 * Other wikis on this site, can be administered from a single developer account.
+	 * List of all wiki IDs that reside on the current wiki farm.
 	 *
-	 * List of wiki DB domain IDs; the format of each ID consist of 1-3 hyphen
-	 *   delimited alphanumeric components (each with no hyphens nor spaces) of any of the forms:
-	 *   - "<DB NAME>-<DB SCHEMA>-<TABLE PREFIX>"
-	 *   - "<DB NAME>-<TABLE PREFIX>"
-	 *   - "<DB NAME>"
+	 * The wikis listed here must meet the following requirements in order to
+	 * be be considered part of the same wiki farm:
+	 *
+	 * - reachable for cross-wiki database queries, via \Wikimedia\Rdbms\IConnectionProvider,
+	 *   as configured by $wgLBFactoryConf
+	 * - share the same $wgMainCacheType backend (e.g. the same Memcached cluster),
+	 *   so that cache updates and purges via BagOStuff::makeGlobalKey and
+	 *   WANObjectCache work correctly.
+	 *
+	 * Examples of cross-wiki features enabled through this setting:
+	 *
+	 * - SpecialUserRights, to assign a local user group from a central wiki.
+	 * - JobQueueGroup::push, to queue a job for another wiki
+	 *   (e.g. GlobalUsage, MassMessage, and Wikibase extensions).
+	 * - RenameUser (when using $wgSharedDB), to globally apply the rename to revisions
+	 *   logging tables on all wikis.
+	 *
+	 * Each wiki ID must consist of 1-3 hyphen-delimited alphanumeric components (each with no
+	 * hyphens nor spaces) of any of the forms:
+	 *
+	 * - "<DB NAME>"
+	 * - "<DB NAME>-<TABLE PREFIX>"
+	 * - "<DB NAME>-<DB SCHEMA>-<TABLE PREFIX>"
+	 *
 	 * If hyphens appear in any of the components, then the domain ID parsing may not work
-	 * in all cases and site functionality might be affected. If the schema ($wgDBmwschema)
-	 * is left to the default "mediawiki" for all wikis, then the schema should be omitted
-	 * from these IDs.
+	 * and site functionality might be affected. If the schema ($wgDBmwschema) is set to the
+	 * default of "mediawiki" on all wikis, then the schema should be omitted from wiki IDs.
+	 *
+	 * @see WikiMap::getWikiIdFromDbDomain
+	 * @see SiteConfiguration::getLocalDatabases
+	 * @see self::LocalVirtualHosts
 	 */
 	public const LocalDatabases = [
 		'default' => [],
@@ -3284,6 +3319,38 @@ class MainConfigSchema {
 	 */
 	public const PageLinksSchemaMigrationStage = [
 		'default' => SCHEMA_COMPAT_NEW,
+		'type' => 'integer',
+	];
+
+	/**
+	 * Migration stage for file tables
+	 *
+	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
+	 *
+	 *   - SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD (SCHEMA_COMPAT_OLD)
+	 *   - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+	 *
+	 * History:
+	 *   - 1.44: Added
+	 */
+	public const FileSchemaMigrationStage = [
+		'default' => SCHEMA_COMPAT_OLD,
+		'type' => 'integer',
+	];
+
+	/**
+	 * Migration stage for categorylinks tables
+	 *
+	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
+	 *
+	 *   - SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD (SCHEMA_COMPAT_OLD)
+	 *   - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+	 *
+	 * History:
+	 *   - 1.44: Added
+	 */
+	public const CategoryLinksSchemaMigrationStage = [
+		'default' => SCHEMA_COMPAT_OLD,
 		'type' => 'integer',
 	];
 
@@ -3959,6 +4026,14 @@ class MainConfigSchema {
 	 *      key hashing. This helps mitigate MySQL bugs 61735 and 61736.
 	 *   - writeBatchSize: Default maximum number of rows to change in each query for write
 	 *      operations that can be chunked into a set of smaller writes.
+	 *   - dataRedundancy: When set to a number higher than one, instead of sharding values,
+	 *     it writes to that many servers (out of all servers) and reads from all of them too.
+	 *     In case of inconsistency between servers, it picks the value with the highest exptime.
+	 *     Mostly useful for stronger consistency such as mainstash.
+	 *     This option has many limitations (for example when TTL is set to indef or changes)
+	 *     and it shouldn't be used to handle race conditions nor canonical data.
+	 *     The main point of data redundancy is to allow depool of a cluster for maintenance
+	 *     without displacing too many keys.
 	 *
 	 * For MemcachedPhpBagOStuff parameters see {@link MemcachedPhpBagOStuff::__construct}
 	 *
@@ -4185,6 +4260,30 @@ class MainConfigSchema {
 	 */
 	public const ParserCacheExpireTime = [
 		'default' => 60 * 60 * 24,
+	];
+
+	/**
+	 * The expiry time for "not ready" asynchronous content in the parser
+	 * cache, in seconds.  This should be rather short, to allow the
+	 * "not ready" content to be replaced by "ready" content.
+	 *
+	 * The default is 60 (one minute).
+	 *
+	 * @since 1.44
+	 */
+	public const ParserCacheAsyncExpireTime = [
+		'default' => 60,
+	];
+
+	/**
+	 * Whether to re-run the refresh links jobs when asynchronous content
+	 * becomes ready.  This is needed if the asynchronous content can affect
+	 * categories or other page metadata.
+	 *
+	 * @since 1.44
+	 */
+	public const ParserCacheAsyncRefreshJobs = [
+		'default' => true,
 	];
 
 	/**
@@ -5027,7 +5126,6 @@ class MainConfigSchema {
 		'default' => [
 			'copyright',
 			'history_copyright',
-			'googlesearch',
 		],
 		'type' => 'list',
 		'items' => [ 'type' => 'string', ],
@@ -5038,10 +5136,12 @@ class MainConfigSchema {
 	 * HTML, will be used.
 	 *
 	 * @since 1.43
+	 * @deprecated since 1.44
 	 */
 	public const AllowRawHtmlCopyrightMessages = [
-		'default' => true,
+		'default' => false,
 		'type' => 'boolean',
+		'deprecated' => 'since 1.44',
 	];
 
 	/**
@@ -5104,7 +5204,19 @@ class MainConfigSchema {
 		//       in them, erroneously generated by the installer.
 		$localtimezone = $localtimezone ?: self::getDefaultLocaltimezone();
 
-		$offset = ( new DateTimeZone( $localtimezone ) )->getOffset( new DateTime() );
+		try {
+			$timezone = new DateTimeZone( $localtimezone );
+		} catch ( \Exception $e ) {
+			throw new ConfigException(
+				sprintf( "Invalid timezone '%s'. Please set a valid timezone in '$%s' in LocalSettings.php. Refer to the list of valid timezones at https://www.php.net/timezones. Error: %s",
+					$localtimezone,
+					"wgLocaltimezone",
+					$e->getMessage() ),
+			);
+		}
+
+		$offset = $timezone->getOffset( new DateTime() );
+
 		return (int)( $offset / 60 );
 	}
 
@@ -5348,6 +5460,7 @@ class MainConfigSchema {
 					"src" => null,
 					"url" => "https://www.mediawiki.org/",
 					"alt" => "Powered by MediaWiki",
+					"lang" => "en",
 				]
 			],
 		],
@@ -5536,6 +5649,8 @@ class MainConfigSchema {
 	 *   directory.
 	 *
 	 *   This option is mutually exclusive with `remoteBasePath`.
+	 *
+	 * - remoteSkinPath `{string}`: Like `remoteExtPath`, but relative to $wgStylePath.
 	 *
 	 * - styles `{string[]|string|array<string,array>}`:
 	 *   Styles to always include in the module.
@@ -5780,7 +5895,7 @@ class MainConfigSchema {
 	 * ];
 	 *
 	 * $wgResourceModuleSkinStyles['foo'] = [
-	 *   'bar' => 'skins/Foo/bar.css',
+	 *   'bar' => 'skins/Foo/styles/bar.css',
 	 * ];
 	 * ```
 	 *
@@ -5793,7 +5908,7 @@ class MainConfigSchema {
 	 *   'scripts' => 'resources/bar/bar.js',
 	 *   'styles' => 'resources/bar/main.css',
 	 *   'skinStyles' => [
-	 *     'foo' => skins/Foo/bar.css',
+	 *     'foo' => skins/Foo/styles/bar.css',
 	 *   ],
 	 * ];
 	 * ```
@@ -5816,7 +5931,7 @@ class MainConfigSchema {
 	 * ];
 	 * // Note the '+' character:
 	 * $wgResourceModuleSkinStyles['foo'] = [
-	 *   '+bar' => 'skins/Foo/bar.css',
+	 *   '+bar' => 'skins/Foo/styles/bar.css',
 	 * ];
 	 * ```
 	 *
@@ -5832,7 +5947,7 @@ class MainConfigSchema {
 	 *     'default' => 'resources/bar/additional.css',
 	 *     'foo' => [
 	 *       'resources/bar/additional.css',
-	 *       'skins/Foo/bar.css',
+	 *       'skins/Foo/styles/bar.css',
 	 *     ],
 	 *   ],
 	 * ];
@@ -5851,8 +5966,8 @@ class MainConfigSchema {
 	 * $wgResourceModuleSkinStyles['foo'] = [
 	 *   'bar' => 'bar.css',
 	 *   'quux' => 'quux.css',
-	 *   'remoteSkinPath' => 'Foo',
-	 *   'localBasePath' => __DIR__,
+	 *   'remoteSkinPath' => 'Foo/styles',
+	 *   'localBasePath' => __DIR__ . '/styles',
 	 * ];
 	 * ```
 	 */
@@ -5910,16 +6025,6 @@ class MainConfigSchema {
 	public const ResourceLoaderMaxage = [
 		'default' => [],
 		'type' => 'map',
-	];
-
-	/**
-	 * Use the main stash instead of the module_deps table for indirect dependency tracking
-	 *
-	 * @deprecated since 1.43; This will be removed in 1.44
-	 * @since 1.35
-	 */
-	public const ResourceLoaderUseObjectCacheForDeps = [
-		'default' => true,
 	];
 
 	/**
@@ -6568,6 +6673,24 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * If set, Parsoid's HTML output for parser functions will be different
+	 * from Parsoid HTML spec 2.x.x and lets us experiment with a better
+	 * output that might be rolled out in a future 3.x Parsoid HTML version.
+	 * Parsoid will start generating this output for wikifunctions parser function
+	 * whenever that code is rolled out to production and will let us experiment
+	 * with this new format and tweak it now. This also lets Parsoid developers
+	 * experiment with it locally.
+	 *
+	 * This is an experimental flag and might be removed without notice.
+	 *
+	 * @unstable EXPERIMENTAL
+	 */
+	public const ParsoidExperimentalParserFunctionOutput = [
+		'default' => false,
+		'type' => 'boolean',
+	];
+
+	/**
 	 * Enable legacy media HTML structure in the output from the Parser.  The
 	 * alternative modern HTML structure that replaces it is described at
 	 * https://www.mediawiki.org/wiki/Parsing/Media_structure
@@ -6588,10 +6711,12 @@ class MainConfigSchema {
 	 * Note that each skin also has to indicate support for the new structure.
 	 * More information: https://www.mediawiki.org/wiki/Heading_HTML_changes
 	 *
+	 * @deprecated since 1.44
 	 * @since 1.43
 	 */
 	public const ParserEnableLegacyHeadingDOM = [
-		'default' => true,
+		'default' => false,
+		'deprecated' => 'since 1.44',
 	];
 
 	/**
@@ -6794,7 +6919,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * How many days user must be idle before he is considered inactive. Will affect
+	 * How many days user must be idle before they are considered inactive. Will affect
 	 * the number shown on Special:Statistics, Special:ActiveUsers, and the
 	 * {{NUMBEROFACTIVEUSERS}} magic word in wikitext.
 	 *
@@ -6931,7 +7056,8 @@ class MainConfigSchema {
 			LocalUserRegistrationProvider::TYPE => [
 				'class' => LocalUserRegistrationProvider::class,
 				'services' => [
-					'UserFactory'
+					'UserFactory',
+					'ConnectionProvider',
 				]
 			]
 		],
@@ -7439,7 +7565,7 @@ class MainConfigSchema {
 			'msg:proxyblocker', // For $wgProxyList and Special:Blockme (removed in 1.22)
 			'msg:sorbs', // For $wgEnableDnsBlacklist etc.
 			'msg:spambot_username', // Used by cleanupSpam.php
-			'msg:autochange-username', // Used by anon category RC entries (parser functions, Lua & purges)
+			'msg:autochange-username', // Used by anon category RC entries (removed in 1.44)
 		],
 		'type' => 'list',
 	];
@@ -7704,6 +7830,7 @@ class MainConfigSchema {
 	 *   - serialMapping: (array) Configuration for mapping integer indexes to strings
 	 *     to substitute into genPattern.
 	 *       - type: (string) May be
+	 *         - "readable-numeric" to use ASCII decimal numbers broken up with hyphens
 	 *         - "plain-numeric" to use ASCII decimal numbers
 	 *         - "localized-numeric" to use numbers localized using a specific language
 	 *         - "filtered-radix" to use numbers in an arbitrary base between 2 and 36,
@@ -7718,10 +7845,11 @@ class MainConfigSchema {
 	 *         be zero-based array indexes.
 	 *       - uppercase: (bool) With "filtered-radix", whether to use uppercase
 	 *         letters, default false.
-	 *       - offset: (int) With "plain-numeric", a constant to add to the stored index.
+	 *       - offset: (int) With "plain-numeric" and "readable-numeric", a constant to add to the
+	 *         stored index.
 	 *    - expireAfterDays: (int|null, default 90) If not null, how many days should the temporary
-	 *      accounts expire? Requires expireTemporaryAccounts.php to be periodically executed in
-	 *      order to work.
+	 *      accounts expire? You should run expireTemporaryAccounts.php periodically to expire
+	 *      temporary accounts. Otherwise they are expired when they try to edit.
 	 *    - notifyBeforeExpirationDays: (int|null, default 10) If not null, how many days before the
 	 *      expiration of a temporary account should it be notified that their account is to be expired.
 	 *
@@ -7737,7 +7865,7 @@ class MainConfigSchema {
 			'matchPattern' => [ 'type' => 'string|array|null', 'default' => null ],
 			'reservedPattern' => [ 'type' => 'string|null', 'default' => '~$1' ],
 			'serialProvider' => [ 'type' => 'object', 'default' => [ 'type' => 'local', 'useYear' => true ] ],
-			'serialMapping' => [ 'type' => 'object', 'default' => [ 'type' => 'plain-numeric' ] ],
+			'serialMapping' => [ 'type' => 'object', 'default' => [ 'type' => 'readable-numeric' ] ],
 			'expireAfterDays' => [ 'type' => 'int|null', 'default' => 90 ],
 			'notifyBeforeExpirationDays' => [ 'type' => 'int|null', 'default' => 10 ],
 		],
@@ -7749,6 +7877,12 @@ class MainConfigSchema {
 	/***************************************************************************/
 	// region   User rights, access control and monitoring
 	/** @name   User rights, access control and monitoring */
+
+	/** List of IP addresses or CIDR ranges that are exempt from autoblocks. */
+	public const AutoblockExemptions = [
+		'default' => [],
+		'type' => 'array',
+	];
 
 	/**
 	 * Number of seconds before autoblock entries expire. Default 86400 = 1 day.
@@ -8322,10 +8456,10 @@ class MainConfigSchema {
 	 *  - [ APCOND_EDITCOUNT, number of edits (if null or missing $wgAutoConfirmCount will be used)]:
 	 *      true if user has the at least the number of edits as the passed parameter
 	 *  - [ APCOND_AGE, seconds since registration (if null or missing $wgAutoConfirmAge will be used)]:
-	 *      true if the length of time since the user created his/her account
+	 *      true if the length of time since the user created their account
 	 *      is at least the same length of time as the passed parameter
 	 *  - [ APCOND_AGE_FROM_EDIT, seconds since first edit ]:
-	 *      true if the length of time since the user made his/her first edit
+	 *      true if the length of time since the user made their first edit
 	 *      is at least the same length of time as the passed parameter
 	 *  - [ APCOND_INGROUPS, group1, group2, ... ]:
 	 *      true if the user is a member of each of the passed groups
@@ -8389,6 +8523,18 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Defines a denylist of group names. One-shot autopromotions into these groups will not cause a
+	 * RecentChanges entry to be inserted even if AutopromoteOnceLogInRC is set, as long as they are the
+	 * only new groups the user was autopromoted to.
+	 *
+	 * @since 1.44
+	 */
+	public const AutopromoteOnceRCExcludedGroups = [
+		'default' => [],
+		'type' => 'array',
+	];
+
+	/**
 	 * $wgAddGroups and $wgRemoveGroups can be used to give finer control over who
 	 * can assign which groups at Special:Userrights.
 	 *
@@ -8420,6 +8566,7 @@ class MainConfigSchema {
 	public const AddGroups = [
 		'default' => [],
 		'type' => 'map',
+		'mergeStrategy' => 'array_merge_recursive',
 	];
 
 	/**
@@ -8428,6 +8575,7 @@ class MainConfigSchema {
 	public const RemoveGroups = [
 		'default' => [],
 		'type' => 'map',
+		'mergeStrategy' => 'array_merge_recursive',
 	];
 
 	/**
@@ -9903,7 +10051,7 @@ class MainConfigSchema {
 	 *
 	 * If not set, statsd metrics will not be collected.
 	 *
-	 * @see MediaWiki::emitBufferedStatsdData()
+	 * @see MediaWiki::emitBufferedStats()
 	 * @since 1.25
 	 */
 	public const StatsdServer = [
@@ -10385,6 +10533,33 @@ class MainConfigSchema {
 		'type' => 'map',
 	];
 
+	/**
+	 * Initial content to create when installing a wiki. An array of page info
+	 * arrays. Each must contain at least one of:
+	 *   - title: The title to create (string)
+	 *   - titlemsg: The name of a message to read the title from
+	 *
+	 * And one of:
+	 *   - text: The text to write to the page (string)
+	 *   - textmsg: The name of a message to read the page contents from
+	 *
+	 * The text may contain
+	 *   - {{InstallerOption:<name>}}: This will be replaced with the named option value
+	 *   - {{InstallerConfig:<name>}}: This will be replaced with the named config value
+	 *
+	 * @see \InstallPreConfigured
+	 * @since 1.44
+	 */
+	public const InstallerInitialPages = [
+		'default' => [
+			[
+				'titlemsg' => 'mainpage',
+				'text' => "{{subst:int:mainpagetext}}\n\n{{subst:int:mainpagedocfooter}}",
+			]
+		],
+		'type' => 'list'
+	];
+
 	// endregion -- End of maintenance
 
 	/***************************************************************************/
@@ -10730,17 +10905,18 @@ class MainConfigSchema {
 	 *
 	 * @since 1.31
 	 * @since 1.36 Added 'mw-manual-revert' and 'mw-reverted'
-	 * @see \ChangeTags::TAG_CONTENT_MODEL_CHANGE
-	 * @see \ChangeTags::TAG_NEW_REDIRECT
-	 * @see \ChangeTags::TAG_REMOVED_REDIRECT
-	 * @see \ChangeTags::TAG_CHANGED_REDIRECT_TARGET
-	 * @see \ChangeTags::TAG_BLANK
-	 * @see \ChangeTags::TAG_REPLACE
-	 * @see \ChangeTags::TAG_ROLLBACK
-	 * @see \ChangeTags::TAG_UNDO
-	 * @see \ChangeTags::TAG_MANUAL_REVERT
-	 * @see \ChangeTags::TAG_REVERTED
-	 * @see \ChangeTags::TAG_SERVER_SIDE_UPLOAD
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_CONTENT_MODEL_CHANGE
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_NEW_REDIRECT
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_REMOVED_REDIRECT
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_CHANGED_REDIRECT_TARGET
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_BLANK
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_REPLACE
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_RECREATE
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_ROLLBACK
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_UNDO
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_MANUAL_REVERT
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_REVERTED
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_SERVER_SIDE_UPLOAD
 	 */
 	public const SoftwareTags = [
 		'default' => [
@@ -10750,6 +10926,7 @@ class MainConfigSchema {
 			'mw-changed-redirect-target' => true,
 			'mw-blank' => true,
 			'mw-replace' => true,
+			'mw-recreated' => true,
 			'mw-rollback' => true,
 			'mw-undo' => true,
 			'mw-manual-revert' => true,
@@ -11467,8 +11644,24 @@ class MainConfigSchema {
 				// tell the JobFactory not to include the $page parameter in the constructor call
 				'needsPage' => false
 			],
+			'renameUserTable' => [
+				'class' => RenameUserTableJob::class,
+				'services' => [
+					'MainConfig',
+					'DBLoadBalancerFactory'
+				]
+			],
+			'renameUserDerived' => [
+				'class' => RenameUserDerivedJob::class,
+				'services' => [
+					'RenameUserFactory',
+					'UserFactory'
+				]
+			],
+			// 'renameUser' is a alias for backward compatibility
+			// it should be removed in the future releases
 			'renameUser' => [
-				'class' => RenameUserJob::class,
+				'class' => RenameUserTableJob::class,
 				'services' => [
 					'MainConfig',
 					'DBLoadBalancerFactory'
@@ -11702,6 +11895,7 @@ class MainConfigSchema {
 			'upload',
 			'move',
 			'import',
+			'interwiki',
 			'patrol',
 			'merge',
 			'suppress',
@@ -11822,14 +12016,32 @@ class MainConfigSchema {
 	 * and will receive the LogEntry object as its first constructor argument.
 	 * The type can be specified as '*' (e.g. 'block/*') to handle all types.
 	 *
-	 * @see \LogPage::actionText
-	 * @see \LogFormatter
+	 * @see \MediaWiki\Logging\LogPage::actionText
+	 * @see \MediaWiki\Logging\LogFormatter
 	 */
 	public const LogActionsHandlers = [
 		'default' => [
-			'block/block' => BlockLogFormatter::class,
-			'block/reblock' => BlockLogFormatter::class,
-			'block/unblock' => BlockLogFormatter::class,
+			'block/block' => [
+				'class' => BlockLogFormatter::class,
+				'services' => [
+					'TitleParser',
+					'NamespaceInfo',
+				]
+			],
+			'block/reblock' => [
+				'class' => BlockLogFormatter::class,
+				'services' => [
+					'TitleParser',
+					'NamespaceInfo',
+				]
+			],
+			'block/unblock' => [
+				'class' => BlockLogFormatter::class,
+				'services' => [
+					'TitleParser',
+					'NamespaceInfo',
+				]
+			],
 			'contentmodel/change' => ContentModelLogFormatter::class,
 			'contentmodel/new' => ContentModelLogFormatter::class,
 			'delete/delete' => DeleteLogFormatter::class,
@@ -11840,26 +12052,81 @@ class MainConfigSchema {
 			'delete/revision' => DeleteLogFormatter::class,
 			'import/interwiki' => ImportLogFormatter::class,
 			'import/upload' => ImportLogFormatter::class,
+			'interwiki/iw_add' => InterwikiLogFormatter::class,
+			'interwiki/iw_delete' => InterwikiLogFormatter::class,
+			'interwiki/iw_edit' => InterwikiLogFormatter::class,
 			'managetags/activate' => LogFormatter::class,
 			'managetags/create' => LogFormatter::class,
 			'managetags/deactivate' => LogFormatter::class,
 			'managetags/delete' => LogFormatter::class,
-			'merge/merge' => MergeLogFormatter::class,
-			'move/move' => MoveLogFormatter::class,
-			'move/move_redir' => MoveLogFormatter::class,
+			'merge/merge' => [
+				'class' => MergeLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
+			'move/move' => [
+				'class' => MoveLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
+			'move/move_redir' => [
+				'class' => MoveLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
 			'patrol/patrol' => PatrolLogFormatter::class,
 			'patrol/autopatrol' => PatrolLogFormatter::class,
-			'protect/modify' => ProtectLogFormatter::class,
-			'protect/move_prot' => ProtectLogFormatter::class,
-			'protect/protect' => ProtectLogFormatter::class,
-			'protect/unprotect' => ProtectLogFormatter::class,
-			'renameuser/renameuser' => RenameuserLogFormatter::class,
+			'protect/modify' => [
+				'class' => ProtectLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
+			'protect/move_prot' => [
+				'class' => ProtectLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
+			'protect/protect' => [
+				'class' => ProtectLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
+			'protect/unprotect' => [
+				'class' => ProtectLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
+			'renameuser/renameuser' => [
+				'class' => RenameuserLogFormatter::class,
+				'services' => [
+					'TitleParser',
+				]
+			],
 			'rights/autopromote' => RightsLogFormatter::class,
 			'rights/rights' => RightsLogFormatter::class,
-			'suppress/block' => BlockLogFormatter::class,
+			'suppress/block' => [
+				'class' => BlockLogFormatter::class,
+				'services' => [
+					'TitleParser',
+					'NamespaceInfo',
+				]
+			],
 			'suppress/delete' => DeleteLogFormatter::class,
 			'suppress/event' => DeleteLogFormatter::class,
-			'suppress/reblock' => BlockLogFormatter::class,
+			'suppress/reblock' => [
+				'class' => BlockLogFormatter::class,
+				'services' => [
+					'TitleParser',
+					'NamespaceInfo',
+				]
+			],
 			'suppress/revision' => DeleteLogFormatter::class,
 			'tag/update' => TagLogFormatter::class,
 			'upload/overwrite' => UploadLogFormatter::class,
@@ -12582,17 +12849,8 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Local virtual hosts.
-	 *
-	 * This lists domains that are configured as virtual hosts on the same machine.
-	 * It is expected that each domain can be identified by its hostname alone,
-	 * without any ports.
-	 *
-	 * This affects the following:
-	 * - MWHttpRequest: If a request is to be made to a domain listed here, or any
-	 *   subdomain thereof, then $wgLocalHTTPProxy will be used.
-	 *   Command-line scripts are not affected by this setting and will always use
-	 *   the proxy if it is configured.
+	 * A list of URL domains that will be routed to the proxy specified by
+	 * $wgLocalHTTPProxy.
 	 *
 	 * @since 1.25
 	 */
@@ -12602,11 +12860,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Reverse proxy to use for requests to domains in $wgLocalVirtualHosts
-	 *
-	 * When used, any port in the request URL will be dropped. The behavior of
-	 * redirects and cookies is dependent upon the reverse proxy actually in use,
-	 * as MediaWiki doesn't implement any special handling for them.
+	 * Proxy to use for requests to domains in $wgLocalVirtualHosts
 	 *
 	 * If set to false, no reverse proxy will be used for local requests.
 	 *
@@ -12925,6 +13179,38 @@ class MainConfigSchema {
 	public const OutputPipelineStages = [
 		'default' => [],
 		'type' => 'map',
+	];
+
+	/**
+	 * Allow temporarily disabling use of certain features. Useful for
+	 * large site operators to push people to newer APIs while still
+	 * keeping the breakage short and contained.
+	 *
+	 * This should be an array, where a key is a feature name and the value
+	 * is an array of shutdown arrays, each containing the following keys:
+	 * 	'start' => Shutdown start, parsed with strtotime(). (required)
+	 * 	'end' => Shutdown end, parsed with strtotime(). (required)
+	 * 	'percentage' => Number between 0 and 100. If set, only a certain
+	 * 	  percentage of requests will be blocked.
+	 *
+	 * For example:
+	 * @code
+	 * $wgFeatureShutdown = [
+	 *   'pre-1.24-tokens' => [
+	 *     [
+	 *       'start' => '2021-07-01T00:00 +00:00',
+	 *       'end' => '2021-08-01T00:00 +00:00',
+	 *       'percentage' => 50,
+	 *     ],
+	 *   ],
+	 * ];
+	 * @encdode
+	 *
+	 * @since 1.44
+	 */
+	public const FeatureShutdown = [
+		'default' => [],
+		'type' => 'list',
 	];
 	// endregion -- End Miscellaneous
 

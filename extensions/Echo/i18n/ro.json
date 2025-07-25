@@ -82,6 +82,7 @@
 	"notifications": "Notificări",
 	"tooltip-pt-notifications-alert": "Alertele {{GENDER:|dumneavoastră}}",
 	"tooltip-pt-notifications-notice": "Înștiințările {{GENDER:|dumneavoastră}}",
+	"tooltip-pt-notifications": "Notificările dumneavoastră",
 	"echo-displaynotificationsconfiguration": "Configurare Afișare notificări",
 	"echo-displaynotificationsconfiguration-summary": "Acesta este un rezumat al modului în care Notificări a fost configurată pe acest wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Notificări după categorie",

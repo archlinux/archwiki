@@ -24,17 +24,17 @@
 
 namespace MediaWiki\Title;
 
-use HTMLCacheUpdateJob;
 use InvalidArgumentException;
-use MapCacheLRU;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\Deferred\AutoCommitUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\MWException;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
@@ -47,25 +47,25 @@ use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageStoreRecord;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\PathRouter;
 use MediaWiki\ResourceLoader\WikiModule;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\MWTimestamp;
 use MessageLocalizer;
-use MWException;
 use RuntimeException;
 use stdClass;
 use Stringable;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\PreconditionException;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Parsoid\Core\LinkTargetTrait;
 use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IDBAccessObject;
-use WikiPage;
 
 /**
  * Represents a title within MediaWiki.
@@ -216,7 +216,6 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 
 	/**
 	 * Shorthand for getting a Language Converter for page's language
-	 * @return ILanguageConverter
 	 */
 	private function getPageLanguageConverter(): ILanguageConverter {
 		return $this->getLanguageConverter( $this->getPageLanguage() );
@@ -224,7 +223,6 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 
 	/**
 	 * Shorthand for getting a database connection provider
-	 * @return IConnectionProvider
 	 */
 	private function getDbProvider(): IConnectionProvider {
 		return MediaWikiServices::getInstance()->getConnectionProvider();
@@ -704,7 +702,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 		// Fallback scenarios:
 		// * Recursion guard
 		//   If the message contains a bare local interwiki (T297571), then
-		//   Title::newFromText via MediaWikiTitleCodec::splitTitleString can get back here.
+		//   Title::newFromText via TitleParser::splitTitleString can get back here.
 		// * Invalid title
 		//   If the 'mainpage' message contains something that is invalid,  Title::newFromText
 		//   will return null.
@@ -898,10 +896,9 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 			// Optimization: Avoid Title::getFullText because that involves GenderCache
 			// and (unbatched) database queries. For validation, canonical namespace suffices.
 			$text = self::makeName( $this->mNamespace, $this->mDbkeyform, $this->mFragment, $this->mInterwiki, true );
-			$titleCodec = MediaWikiServices::getInstance()->getTitleParser();
+			$titleParser = MediaWikiServices::getInstance()->getTitleParser();
 
-			'@phan-var MediaWikiTitleCodec $titleCodec';
-			$parts = $titleCodec->splitTitleString( $text, $this->mNamespace );
+			$parts = $titleParser->splitTitleString( $text, $this->mNamespace );
 
 			// Check that nothing changed!
 			// This ensures that $text was already properly normalized.
@@ -2386,8 +2383,10 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	 * Remove any title protection due to page existing
 	 *
 	 * @deprecated since 1.37, do not use (this is only for WikiPage::onArticleCreate)
+	 *   hard-deprecated since 1.44
 	 */
 	public function deleteTitleProtection() {
+		wfDeprecated( __METHOD__, '1.37' );
 		MediaWikiServices::getInstance()->getRestrictionStore()->deleteCreateProtection( $this );
 	}
 
@@ -2694,8 +2693,10 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	}
 
 	public static function clearCaches() {
-		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
-		$linkCache->clear();
+		if ( MediaWikiServices::hasInstance() ) {
+			$linkCache = MediaWikiServices::getInstance()->getLinkCache();
+			$linkCache->clear();
+		}
 
 		// Reset cached main page instance (T395214).
 		self::$cachedMainPage = null;
@@ -2739,16 +2740,12 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	private function secureAndSplit( $text, $defaultNamespace = null ) {
 		$defaultNamespace ??= self::DEFAULT_NAMESPACE;
 
-		// @note: splitTitleString() is a temporary hack to allow MediaWikiTitleCodec to share
+		// @note: splitTitleString() is a temporary hack to allow TitleParser to share
 		//        the parsing code with Title, while avoiding massive refactoring.
 		// @todo: get rid of secureAndSplit, refactor parsing code.
-		// @note: getTitleParser() returns a TitleParser implementation which does not have a
-		//        splitTitleString method, but the only implementation (MediaWikiTitleCodec) does
-		/** @var MediaWikiTitleCodec $titleCodec */
-		$titleCodec = MediaWikiServices::getInstance()->getTitleParser();
-		'@phan-var MediaWikiTitleCodec $titleCodec';
+		$titleParser = MediaWikiServices::getInstance()->getTitleParser();
 		// MalformedTitleException can be thrown here
-		$parts = $titleCodec->splitTitleString( $text, $defaultNamespace );
+		$parts = $titleParser->splitTitleString( $text, $defaultNamespace );
 
 		# Fill fields
 		$this->setFragment( '#' . $parts['fragment'] );
@@ -2960,13 +2957,23 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 			return $data;
 		}
 
-		$dbr = $this->getDbProvider()->getReplicaDatabase();
+		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::CategoryLinksSchemaMigrationStage
+		);
 
-		$res = $dbr->newSelectQueryBuilder()
-			->select( 'cl_to' )
+		$dbr = $this->getDbProvider()->getReplicaDatabase();
+		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->from( 'categorylinks' )
-			->where( [ 'cl_from' => $titleKey ] )
-			->caller( __METHOD__ )->fetchResultSet();
+			->where( [ 'cl_from' => $titleKey ] );
+
+		if ( $migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			$queryBuilder->select( 'cl_to' );
+		} else {
+			$queryBuilder->field( 'lt_title', 'cl_to' )
+				->join( 'linktarget', null, 'cl_target_id = lt_id' )
+				->where( [ 'lt_namespace' => NS_CATEGORY ] );
+		}
+		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 		if ( $res->numRows() > 0 ) {
 			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
@@ -3091,13 +3098,13 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	 * A Title object is considered equal to another Title if it has the same text,
 	 * the same interwiki prefix, and the same namespace.
 	 *
-	 * @note This is different from isSameLinkAs(), which also compares the fragment part,
-	 *       and from isSamePageAs(), which takes into account the page ID.
+	 * @note This is different from {@see LinkTarget::isSameLinkAs} which also compares the fragment
+	 * part.
 	 *
 	 * @phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
 	 * @param Title|object $other
 	 *
-	 * @return bool true if $other is a Title and refers to the same page.
+	 * @return bool
 	 */
 	public function equals( object $other ) {
 		// NOTE: In contrast to isSameLinkAs(), this ignores the fragment part!
@@ -3892,6 +3899,3 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	}
 
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( Title::class, 'Title' );

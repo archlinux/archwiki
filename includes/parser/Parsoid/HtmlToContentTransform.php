@@ -3,7 +3,6 @@
 namespace MediaWiki\Parser\Parsoid;
 
 use Composer\Semver\Semver;
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
@@ -20,6 +19,7 @@ use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\SelserData;
@@ -87,17 +87,8 @@ class HtmlToContentTransform {
 
 	/**
 	 * Set metrics sink.
-	 *
-	 * @note Passing a StatsdDataFactoryInterface here has been deprecated
-	 * since 1.43.
-	 *
-	 * @param StatsFactory|StatsdDataFactoryInterface $metrics
 	 */
-	public function setMetrics( $metrics ): void {
-		if ( $metrics instanceof StatsdDataFactoryInterface ) {
-			wfDeprecated( __METHOD__ . ' with StatsdDataFactoryInterface', '1.43' );
-			return;
-		}
+	public function setMetrics( StatsFactory $metrics ): void {
 		$this->metrics = $metrics;
 	}
 
@@ -115,9 +106,6 @@ class HtmlToContentTransform {
 		$this->options = $options;
 	}
 
-	/**
-	 * @param RevisionRecord $rev
-	 */
 	public function setOriginalRevision( RevisionRecord $rev ): void {
 		if ( $this->pageConfig ) {
 			throw new LogicException( 'Cannot set revision after using the PageConfig' );
@@ -130,9 +118,6 @@ class HtmlToContentTransform {
 		$this->oldid = $rev->getId();
 	}
 
-	/**
-	 * @param int $oldid
-	 */
 	public function setOriginalRevisionId( int $oldid ): void {
 		if ( $this->pageConfig ) {
 			throw new LogicException( 'Cannot set revision ID after using the PageConfig' );
@@ -144,9 +129,6 @@ class HtmlToContentTransform {
 		$this->oldid = $oldid;
 	}
 
-	/**
-	 * @param Bcp47Code $lang
-	 */
 	public function setContentLanguage( Bcp47Code $lang ): void {
 		if ( $this->pageConfig ) {
 			throw new LogicException( 'Cannot set content language after using the PageConfig' );
@@ -157,8 +139,6 @@ class HtmlToContentTransform {
 
 	/**
 	 * Sets the original source text (usually wikitext).
-	 *
-	 * @param string $text
 	 */
 	public function setOriginalText( string $text ): void {
 		$content = $this->getContentHandler()->unserializeContent( $text );
@@ -167,8 +147,6 @@ class HtmlToContentTransform {
 
 	/**
 	 * Sets the original content (such as wikitext).
-	 *
-	 * @param Content $content
 	 */
 	public function setOriginalContent( Content $content ): void {
 		if ( $this->pageConfig ) {
@@ -208,16 +186,10 @@ class HtmlToContentTransform {
 		$this->modifiedPageBundle->mw = $modifiedDataMW;
 	}
 
-	/**
-	 * @param string $originalSchemaVeraion
-	 */
 	public function setOriginalSchemaVersion( string $originalSchemaVeraion ): void {
 		$this->originalPageBundle->version = $originalSchemaVeraion;
 	}
 
-	/**
-	 * @param string $originalHtml
-	 */
 	public function setOriginalHtml( string $originalHtml ): void {
 		if ( $this->doc ) {
 			throw new LogicException( __FUNCTION__ . ' cannot be called after' .
@@ -227,9 +199,6 @@ class HtmlToContentTransform {
 		$this->originalPageBundle->html = $originalHtml;
 	}
 
-	/**
-	 * @param array $originalDataMW
-	 */
 	public function setOriginalDataMW( array $originalDataMW ): void {
 		if ( $this->doc ) {
 			throw new LogicException( __FUNCTION__ . ' cannot be called after getModifiedDocument()' );
@@ -244,9 +213,6 @@ class HtmlToContentTransform {
 		}
 	}
 
-	/**
-	 * @param array $originalDataParsoid
-	 */
 	public function setOriginalDataParsoid( array $originalDataParsoid ): void {
 		if ( $this->doc ) {
 			throw new LogicException( __FUNCTION__ . ' cannot be called after getModifiedDocument()' );
@@ -257,9 +223,6 @@ class HtmlToContentTransform {
 		$this->modifiedPageBundle->parsoid = $originalDataParsoid;
 	}
 
-	/**
-	 * @return PageConfig
-	 */
 	private function getPageConfig(): PageConfig {
 		if ( !$this->pageConfig ) {
 
@@ -303,8 +266,6 @@ class HtmlToContentTransform {
 
 	/**
 	 * The size of the modified HTML in characters.
-	 *
-	 * @return int
 	 */
 	public function getModifiedHtmlSize(): int {
 		return mb_strlen( $this->modifiedPageBundle->html );
@@ -334,18 +295,14 @@ class HtmlToContentTransform {
 	/**
 	 * NOTE: The return value of this method depends on
 	 *    setOriginalData() having been called first.
-	 *
-	 * @return bool
 	 */
 	public function hasOriginalHtml(): bool {
-		return $this->originalPageBundle->html !== null && $this->originalPageBundle->html !== '';
+		return $this->originalPageBundle->html !== '';
 	}
 
 	/**
 	 * NOTE: The return value of this method depends on
 	 *    setOriginalData() having been called first.
-	 *
-	 * @return bool
 	 */
 	public function hasOriginalDataParsoid(): bool {
 		return $this->originalPageBundle->parsoid !== null;
@@ -443,8 +400,6 @@ class HtmlToContentTransform {
 	/**
 	 * NOTE: The return value of this method depends on
 	 *    setOriginalData() having been called first.
-	 *
-	 * @return string
 	 */
 	public function getSchemaVersion(): string {
 		// Get the content version of the edited doc, if available.
@@ -568,7 +523,11 @@ class HtmlToContentTransform {
 		}
 
 		$this->validatePageBundle( $pb );
-		PageBundle::apply( $doc, $pb );
+		$dpb = new DomPageBundle(
+			$doc, $pb->parsoid, $pb->mw, $pb->version,
+			$pb->headers, $pb->contentmodel
+		);
+		$dpb->toDom( false );
 	}
 
 	/**
@@ -610,8 +569,6 @@ class HtmlToContentTransform {
 
 	/**
 	 * Returns a Content object derived from the supplied HTML.
-	 *
-	 * @return Content
 	 */
 	public function htmlToContent(): Content {
 		$text = $this->htmlToText();

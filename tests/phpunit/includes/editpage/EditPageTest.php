@@ -5,8 +5,12 @@ use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\MWException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
@@ -377,6 +381,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			$pageTitle2, null, $user, $edit, $expectedCode, $expectedText, $desc );
 
 		$this->getDb()->commit( __METHOD__ );
+		$this->runDeferredUpdates();
 
 		$this->assertSame( 0, DeferredUpdates::pendingUpdatesCount(), 'No deferred updates' );
 
@@ -544,6 +549,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			"expected successful update with given text" );
 
 		$this->getDb()->commit( __METHOD__ );
+		$this->runDeferredUpdates();
 
 		$this->assertGreaterThan( 0, $checkIds[0], "First event rev ID set" );
 		$this->assertGreaterThan( 0, $checkIds[1], "Second edit hook rev ID set" );
@@ -959,7 +965,7 @@ hello
 	 * The watchlist expiry field should select the entered value on preview, rather than the
 	 * calculated number of days till the expiry (as it shows on edit).
 	 * @covers \MediaWiki\EditPage\EditPage::getCheckboxesDefinition()
-	 * @dataProvider provideWatchlistExpiry()
+	 * @dataProvider provideWatchlistExpiry
 	 */
 	public function testWatchlistExpiry( $existingExpiry, $postVal, $selected, $options ) {
 		// Set up config and fake current time.

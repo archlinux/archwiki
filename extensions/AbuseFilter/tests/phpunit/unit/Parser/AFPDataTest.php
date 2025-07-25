@@ -39,7 +39,7 @@ class AFPDataTest extends ParserTestCase {
 	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator
 	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\AFPTreeParser
 	 *
-	 * @dataProvider divideByZero
+	 * @dataProvider provideDivideByZero
 	 */
 	public function testDivideByZeroException( $expr, $caller ) {
 		$this->exceptionTest( 'dividebyzero', $expr, $caller );
@@ -53,7 +53,7 @@ class AFPDataTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function divideByZero() {
+	public static function provideDivideByZero() {
 		return [
 			[ '1/0', 'mulRel' ],
 			[ '1/0.0', 'mulRel' ],

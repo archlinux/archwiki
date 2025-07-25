@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Anakmalaysia",
+			"Hakimi97",
 			"Jeluang Terluang",
 			"Tofeiku",
-			"Zulfadli51",
-			"Hakimi97"
+			"Zulfadli51"
 		]
 	},
 	"templatedata-desc": "Melaksanakan storan data untuk parameter templat (menggunakan JSON)",
@@ -42,7 +42,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Pengguna",
 	"templatedata-doc-params": "Parameter templat",
 	"templatedata-editbutton": "Sunting data templat",
-	"templatedata-errormsg-jsonbadformat": "Format JSON salah. Anda boleh membatalkan tindakan ini supaya anda dapat memperbaikinya, menghapuskan tag <templatedata> sekarang dan cuba lagi, atau teruskan dengan menukar DataTemplat sekarang dengan yang baru.",
+	"templatedata-errormsg-jsonbadformat": "Format JSON teruk. Anda boleh membatalkan tindakan ini supaya anda dapat memperbaik atau menghapusnya, atau teruskan dengan menukar data templat yang ada sekarang dengan yang baharu.",
 	"templatedata-errormsg-insertblank": "Adakah anda pasti mahu memasukkan data templat tanpa maklumat?",
 	"templatedata-exists-on-related-page": "Perhatian: sudah terdapat blok data templat pada laman berkaitan\"[[$1]]\".",
 	"templatedata-helplink": "Maklumat mengenai data templat",
@@ -71,6 +71,7 @@
 	"templatedata-modal-button-removemap": "Hapus pemetaan",
 	"templatedata-modal-button-saveparam": "Simpan",
 	"templatedata-modal-confirmcancel": "Adakah anda pasti mahu membuang perubahan anda?",
+	"templatedata-modal-button-discard": "Buang",
 	"templatedata-modal-current-language": "Bahasa sekarang: $1",
 	"templatedata-modal-errormsg": "Ralat-ralat dijumpai. Sila pastikan tidak terdapat nama-nama parameter yang kosong atau pendua, dan nama parameter tidak mengandungi \"$1\", \"$2\" atau \"$3\".",
 	"templatedata-modal-errormsg-duplicate-name": "Ralat ditemui. Nama yang dipilih sudah digunakan oleh parameter lain.",
@@ -113,5 +114,19 @@
 	"templatedata-modal-title-templateformat": "pemformatan wikiteks yang dicadangkan",
 	"templatedata-modal-title-templateformatstring": "Rentetan format tersuai",
 	"templatedata-modal-title-templateparam-details": "Butiran parameter: $1",
-	"templatedata-modal-title-templateparams": "Parameter templat"
+	"templatedata-modal-title-templateparams": "Parameter templat",
+	"templatedata-search-title": "Carian templat",
+	"templatedata-search-description": "Cari templat yang anda ingin masukkan dengan mencari kata kunci pengenal pasti. Templat yang mempunyai penerangan lebih berkemungkinan berfungsi dengan baik.",
+	"templatedata-search-placeholder": "Cari templat",
+	"templatedata-search-list-header": "Kegemaran",
+	"templatedata-search-list-empty": "Templat yang anda tandakan sebagai kegemaran akan dipaparkan di sini",
+	"templatedata-template-discovery-disabled": "Penemuan templat dilumpuhkan di wiki ini.",
+	"templatediscovery": "Penemuan templat",
+	"templatedata-favorite-disabled": "Anda mesti log masuk ke templat kegemaran",
+	"templatedata-favorite-add": "Tambahkan templat pada kegemaran",
+	"templatedata-favorite-added": "Templat ditambahkan pada kegemaran",
+	"templatedata-favorite-remove": "Alih keluar templat daripada kegemaran",
+	"templatedata-favorite-removed": "Templat dialih keluar daripada kegemaran",
+	"templatedata-favorite-error": "Tidak dapat menyimpan kegemaran",
+	"templatedata-favorite-maximum-reached": "Anda telah mencapai bilangan maksimum ($1) templat kegemaran. Sila alih keluar beberapa daripada senarai anda sebelum menambah lagi."
 }

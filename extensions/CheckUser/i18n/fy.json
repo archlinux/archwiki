@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"PiefPafPier",
+			"Robin van der Vliet",
+			"Robin0van0der0vliet",
+			"Snakesteuben"
+		]
+	},
+	"group-checkuser": "Meidoggerneisjoggers",
+	"group-checkuser-member": "meidogger{{GENDER:$1|neisjogger|neisjochster}}",
+	"right-checkuser": "YP-adressen en oare ynformaasje fan meidoggers kontrolearje",
+	"grouppage-checkuser": "{{ns:project}}:Meidoggerneisjoggers",
+	"checkuser-reason": "Reden:",
+	"checkuser-search": "Sykje",
+	"checkuser-search-submit": "Sykje"
+}

@@ -70,7 +70,10 @@
 		}
 
 		&.mw-echo-notifications-badge-all-read {
-			opacity: 0.51;
+			// Icon is always solid black in Vector 2022 (T329300)
+			body:not( .skin-vector-2022 ) & {
+				opacity: 0.51;
+			}
 
 			&::after {
 				visibility: hidden;

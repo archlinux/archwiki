@@ -25,6 +25,7 @@
 require_once __DIR__ . '/../Maintenance.php';
 // @codeCoverageIgnoreEnd
 
+use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\StaticArrayWriter;
 
 /**
@@ -40,6 +41,7 @@ class GenerateNormalizerDataMl extends Maintenance {
 		$this->addDescription( 'Generate the normalizer data file for Malayalam' );
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return Maintenance::DB_NONE;
 	}

@@ -14,7 +14,7 @@ require_once __DIR__ . '/Maintenance.php';
 class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	use \Wikimedia\Parsoid\Tools\ExtendedOptsProcessor;
 
-	private $titlesPath = '/tmp/titles';
+	private string $titlesPath = '/tmp/titles';
 
 	public function __construct() {
 		parent::__construct( false /* Doesn't actually require parsoid */ );
@@ -175,7 +175,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	 */
 	public function runTest( $commit ): void {
 		$cdDir = self::cmd( 'cd /srv/parsoid-testing' );
-		$restartPHP = self::cmd( 'sudo systemctl restart php7.4-fpm.service' );
+		$restartPHP = self::cmd( 'sudo systemctl restart php8.1-fpm.service' );
 		$resultPath = "/tmp/results.$commit.json";
 		$testScript = self::cmd(
 			$cdDir, '&&',

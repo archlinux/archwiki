@@ -19,6 +19,8 @@
  * @ingroup Benchmark
  */
 
+use MediaWiki\Maintenance\Benchmarker;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';
 // @codeCoverageIgnoreEnd
@@ -39,7 +41,7 @@ class BenchmarkTidy extends Benchmarker {
 		$this->benchmark( $html );
 	}
 
-	private function benchmark( $html ) {
+	private function benchmark( string $html ) {
 		$services = $this->getServiceContainer();
 		$contLang = $services->getContentLanguage();
 		$tidy = $services->getTidy();

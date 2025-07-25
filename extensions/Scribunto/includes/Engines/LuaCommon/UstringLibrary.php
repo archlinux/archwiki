@@ -22,13 +22,6 @@ class UstringLibrary extends LibraryBase {
 	private $stringLengthLimit;
 
 	/**
-	 * PHP until 5.6.9 are buggy when the regex in preg_replace an
-	 * preg_match_all matches the empty string.
-	 * @var bool
-	 */
-	private $phpBug53823;
-
-	/**
 	 * A cache of patterns and the regexes they generate.
 	 * @var MapCacheLRU
 	 */
@@ -38,12 +31,12 @@ class UstringLibrary extends LibraryBase {
 	public function __construct( $engine ) {
 		$maxArticleSize = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::MaxArticleSize );
 		$this->stringLengthLimit = $maxArticleSize * 1024;
-		$this->phpBug53823 = preg_replace( '//us', 'x', "\xc3\xa1" ) === "x\xc3x\xa1x";
 		$this->patternRegexCache = new MapCacheLRU( 100 );
 
 		parent::__construct( $engine );
 	}
 
+	/** @inheritDoc */
 	public function register() {
 		$perf = $this->getEngine()->getPerformanceCharacteristics();
 
@@ -254,10 +247,10 @@ class UstringLibrary extends LibraryBase {
 	/**
 	 * Handler for char
 	 * @internal
+	 * @param int ...$args
 	 * @return string[]
 	 */
-	public function ustringChar() {
-		$args = func_get_args();
+	public function ustringChar( ...$args ) {
 		if ( count( $args ) > $this->stringLengthLimit ) {
 			throw new LuaError( "too many arguments to 'char'" );
 		}
@@ -779,15 +772,6 @@ class UstringLibrary extends LibraryBase {
 		[ $re, $capt, $anypos ] = $this->patternToRegex( $pattern, '^', 'gsub' );
 		$captures = [];
 
-		if ( $this->phpBug53823 ) {
-			// PHP bug 53823 means that a zero-length match before a UTF-8
-			// character will match again before every byte of that character.
-			// The workaround is to capture the first "character" of/after the
-			// match and verify that its first byte is legal to start a UTF-8
-			// character.
-			$re = '/(?=(?<phpBug53823>.|$))' . substr( $re, 1 );
-		}
-
 		if ( $anypos ) {
 			// preg_replace_callback doesn't take a "flags" argument, so we
 			// can't pass PREG_OFFSET_CAPTURE to it, which is needed to handle
@@ -796,12 +780,6 @@ class UstringLibrary extends LibraryBase {
 			$ct = preg_match_all( $re, $s, $mm, PREG_OFFSET_CAPTURE | PREG_SET_ORDER );
 			for ( $i = 0; $i < $ct; $i++ ) {
 				$m = $mm[$i];
-				if ( $this->phpBug53823 ) {
-					$c = ord( $m['phpBug53823'][0] );
-					if ( $c >= 0x80 && $c <= 0xbf ) {
-						continue;
-					}
-				}
 				$c = [ $m[0][0] ];
 				foreach ( $this->addCapturesFromMatch( [], $s, $m, $capt, false ) as $k => $v ) {
 					$k++;
@@ -889,23 +867,6 @@ class UstringLibrary extends LibraryBase {
 		}
 
 		$skippedMatches = 0;
-		if ( $this->phpBug53823 ) {
-			// Since we're having bogus matches, we need to keep track of the
-			// necessary adjustment and stop manually once we hit the limit.
-			$maxMatches = $n < 0 ? INF : $n;
-			$n = -1;
-			$realCallback = $cb;
-			$cb = static function ( $m ) use ( $realCallback, &$skippedMatches, &$maxMatches ) {
-				$c = ord( $m['phpBug53823'] );
-				if ( ( $c >= 0x80 && $c <= 0xbf ) || $maxMatches <= 0 ) {
-					$skippedMatches++;
-					return $m[0];
-				} else {
-					$maxMatches--;
-					return $realCallback( $m );
-				}
-			};
-		}
 
 		$count = 0;
 		$s2 = preg_replace_callback( $re, $cb, $s, $n, $count );

@@ -1,13 +1,22 @@
 const VueTestUtils = require( '@vue/test-utils' );
 const App = require( '../../resources/skins.vector.search/App.vue' );
+const urlGeneratorFn = require( '../../resources/skins.vector.search/urlGenerator.js' );
+const scriptPath = '/w/index.php';
+const urlGenerator = urlGeneratorFn( scriptPath );
 
 const defaultProps = {
+	prefixClass: 'vector-',
 	id: 'searchform',
 	searchAccessKey: 'f',
 	searchTitle: 'search',
 	showThumbnail: true,
 	showDescription: true,
 	highlightQuery: true,
+	urlGenerator,
+	restClient: {
+		loadMore: () => Promise.resolve(),
+		fetchByTitle: () => Promise.resolve()
+	},
 	searchPlaceholder: 'Search MediaWiki',
 	searchQuery: ''
 };

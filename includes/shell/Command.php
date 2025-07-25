@@ -21,7 +21,7 @@
 namespace MediaWiki\Shell;
 
 use Exception;
-use MediaWiki\ShellDisabledError;
+use MediaWiki\Exception\ShellDisabledError;
 use Profiler;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -74,10 +74,7 @@ class Command extends UnboxedCommand implements Stringable {
 		}
 	}
 
-	/**
-	 * @param LoggerInterface $logger
-	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 		if ( $this->executor ) {
 			$this->executor->setLogger( $logger );

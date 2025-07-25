@@ -3,14 +3,14 @@
 		"authors": [
 			"Balint36",
 			"Bencemac",
+			"Dj",
 			"Ed g2s",
 			"Hanna Tardos",
 			"Misibacsi",
 			"Samat",
 			"Tacsipacsi",
 			"Tgr",
-			"Woytecr",
-			"Dj"
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Vitalapi eszközök",
@@ -191,9 +191,9 @@
 	"tag-discussiontools-description": "A DiscussionToolszal végzett szerkesztés",
 	"tag-discussiontools-edit": "Hozzászólás szerkesztve",
 	"tag-discussiontools-edit-description": "A felhasználó egy meglévő hozzászólást szerkesztett a DiscussionToolszal",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Új téma]",
+	"tag-discussiontools-newtopic": "Új téma",
 	"tag-discussiontools-newtopic-description": "A felhasználó új témát indított a DiscussionToolszal",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} válasz]",
+	"tag-discussiontools-reply": "Válasz",
 	"tag-discussiontools-reply-description": "A felhasználó egy hozzászólásra válaszolt a DiscussionToolszal",
 	"tag-discussiontools-source-description": "A DiscussionTools forrásmódban volt",
 	"tag-discussiontools-source-enhanced-description": "A DiscussionTools fejlett forrásmódban volt, eszköztárral",

@@ -67,10 +67,10 @@
  *
  * @class
  * @constructor
- * @param {number} [start] Length of the history stack at change start
+ * @param {number} [start=0] Length of the history stack at change start
  * @param {ve.dm.Transaction[]} [transactions] Transactions to apply
  * @param {ve.dm.HashValueStore[]} [stores] For each transaction, a collection of new store items
- * @param {Object} [selections] For each author ID (key), latest ve.dm.Selection
+ * @param {Object} [selections={}] For each author ID (key), latest ve.dm.Selection
  */
 ve.dm.Change = function VeDmChange( start, transactions, stores, selections ) {
 	this.start = start || 0;
@@ -97,7 +97,7 @@ ve.dm.Change.static = {};
  * Change object will be rebased and reserialized without ever being applied to a document.
  *
  * @param {Object} data Change serialized as a JSONable object
- * @param {boolean} [preserveStoreValues] Keep store values verbatim instead of deserializing
+ * @param {boolean} [preserveStoreValues=false] Keep store values verbatim instead of deserializing
  * @param {boolean} [unsafe] Use unsafe deserialization (skipping DOMPurify), used via #unsafeDeserialize
  * @return {ve.dm.Change} Deserialized change
  */
@@ -362,8 +362,8 @@ ve.dm.Change.static.rebaseUncommittedChange = function ( history, uncommitted ) 
 	const transactionsB = uncommitted.transactions.slice();
 	let storesA = history.getStores();
 	const storesB = uncommitted.getStores();
-	const selectionsA = ve.cloneObject( history.selections );
-	let selectionsB = ve.cloneObject( uncommitted.selections );
+	const selectionsA = OO.cloneObject( history.selections );
+	let selectionsB = OO.cloneObject( uncommitted.selections );
 	let rejected = null;
 
 	// For each element b_i of transactionsB, rebase the whole list transactionsA over b_i.
@@ -739,7 +739,7 @@ ve.dm.Change.prototype.push = function ( other ) {
 		this.store.merge( store );
 		this.pushTransaction( transaction, this.store.getLength() );
 	}
-	this.selections = ve.cloneObject( other.selections );
+	this.selections = OO.cloneObject( other.selections );
 };
 
 /**
@@ -767,7 +767,7 @@ ve.dm.Change.prototype.mostRecent = function ( start ) {
 		start,
 		this.transactions.slice( start - this.start ),
 		this.getStores().slice( start - this.start ),
-		ve.cloneObject( this.selections )
+		OO.cloneObject( this.selections )
 	);
 };
 
@@ -795,7 +795,7 @@ ve.dm.Change.prototype.truncate = function ( length ) {
  * Apply change to surface
  *
  * @param {ve.dm.Surface} surface Surface in change start state
- * @param {boolean} [applySelection] Apply a selection based on the modified range
+ * @param {boolean} [applySelection=false] Apply a selection based on the modified range
  */
 ve.dm.Change.prototype.applyTo = function ( surface, applySelection ) {
 	const doc = surface.getDocument();
@@ -819,7 +819,7 @@ ve.dm.Change.prototype.applyTo = function ( surface, applySelection ) {
 			if ( range ) {
 				const offset = doc.getNearestCursorOffset( range.end, -1 );
 				if ( offset !== -1 ) {
-					surface.setSelection( new ve.dm.LinearSelection( new ve.Range( offset ) ) );
+					surface.setLinearSelection( new ve.Range( offset ) );
 				}
 			}
 		}
@@ -878,7 +878,7 @@ ve.dm.Change.prototype.removeFromHistory = function ( doc ) {
  * Store values can be serialized, or kept verbatim (which only makes sense if they are serialized
  * already, i.e. the Change object was created by #deserialize without deserializing store values).
  *
- * @param {boolean} [preserveStoreValues] If true, keep store values verbatim instead of serializing
+ * @param {boolean} [preserveStoreValues=false] If true, keep store values verbatim instead of serializing
  * @return {Object} JSONable object
  */
 ve.dm.Change.prototype.serialize = function ( preserveStoreValues ) {
@@ -966,6 +966,6 @@ ve.dm.Change.prototype.squash = function () {
 		[ ve.dm.TransactionSquasher.static.squash( this.transactions ) ],
 		[ this.store.slice() ],
 		// Shallow clone (the individual selections are immutable so need no cloning)
-		ve.cloneObject( this.selections )
+		OO.cloneObject( this.selections )
 	);
 };

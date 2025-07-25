@@ -13,7 +13,6 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
@@ -30,7 +29,7 @@ use Wikimedia\Parsoid\Wikitext\Consts;
 class XMLSerializer {
 
 	// https://html.spec.whatwg.org/#serialising-html-fragments
-	private static $alsoSerializeAsVoid = [
+	private const ALSO_SERIALIZE_AS_VOID = [
 		'basefont' => true,
 		'bgsound' => true,
 		'frame' => true,
@@ -65,48 +64,6 @@ class XMLSerializer {
 	}
 
 	/**
-	 * Modify the attribute array, replacing data-object-id with JSON
-	 * encoded data.  This is just a debugging hack, not to be confused with
-	 * DOMDataUtils::storeDataAttribs()
-	 *
-	 * @param Element $node
-	 * @param array &$attrs
-	 * @param bool $keepTmp
-	 * @param bool $storeDiffMark
-	 */
-	private static function dumpDataAttribs(
-		Element $node, array &$attrs, bool $keepTmp, bool $storeDiffMark
-	) {
-		if ( !isset( $attrs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] ) ) {
-			return;
-		}
-		$codec = DOMDataUtils::getCodec( $node->ownerDocument );
-		$nd = DOMDataUtils::getNodeData( $node );
-		$pd = $nd->parsoid_diff ?? null;
-		if ( $pd && $storeDiffMark ) {
-			$attrs['data-parsoid-diff'] = PHPUtils::jsonEncode( $pd );
-		}
-		$dp = $nd->parsoid;
-		if ( $dp ) {
-			if ( !$keepTmp ) {
-				$dp = clone $dp;
-				// @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
-				unset( $dp->tmp );
-			}
-			$attrs['data-parsoid'] = $codec->toJsonString(
-				$dp, DOMDataUtils::getCodecHints()['data-parsoid']
-			);
-		}
-		$dmw = $nd->mw;
-		if ( $dmw ) {
-			$attrs['data-mw'] = $codec->toJsonString(
-				$dmw, DOMDataUtils::getCodecHints()['data-mw']
-			);
-		}
-		unset( $attrs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] );
-	}
-
-	/**
 	 * Serialize an HTML DOM3 node to XHTML. The XHTML and associated information will be fed
 	 * step-by-step to the callback given in $accum.
 	 * @param Node $node
@@ -121,14 +78,16 @@ class XMLSerializer {
 		$saveData = $options['saveData'];
 		switch ( $node->nodeType ) {
 			case XML_ELEMENT_NODE:
-				DOMUtils::assertElt( $node );
-				$child = $node->firstChild;
+				'@phan-var Element $node'; // @var Element $node
 				$nodeName = DOMCompat::nodeName( $node );
+				$child = $nodeName === 'template' ?
+					DOMCompat::getTemplateElementContent( $node )->firstChild :
+					$node->firstChild;
 				$localName = $node->localName;
 				$accum( '<' . $localName, $node );
 				$attrs = DOMUtils::attributes( $node );
 				if ( $saveData ) {
-					self::dumpDataAttribs( $node, $attrs, $options['keepTmp'], $options['storeDiffMark'] );
+					DOMDataUtils::dumpRichAttribs( $node, $attrs, $options['keepTmp'], $options['storeDiffMark'] );
 				}
 				foreach ( $attrs as $an => $av ) {
 					if ( $smartQuote
@@ -148,7 +107,7 @@ class XMLSerializer {
 				}
 				if ( $child || (
 					!isset( Consts::$HTML['VoidTags'][$nodeName] ) &&
-					!isset( self::$alsoSerializeAsVoid[$nodeName] )
+					!isset( self::ALSO_SERIALIZE_AS_VOID[$nodeName] )
 				) ) {
 					$accum( '>', $node, 'start' );
 					// if is cdata child node

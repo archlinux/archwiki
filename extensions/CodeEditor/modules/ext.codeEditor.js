@@ -19,9 +19,9 @@
  * JavaScript for WikiEditor Table of Contents
  */
 
-$( function () {
+$( () => {
 	// eslint-disable-next-line no-jquery/no-global-selector
-	var $wpTextbox1 = $( '#wpTextbox1' );
+	const $wpTextbox1 = $( '#wpTextbox1' );
 
 	// Code is supposed to be always LTR. See bug 39364.
 	$wpTextbox1.parent().prop( 'dir', 'ltr' );
@@ -29,7 +29,7 @@ $( function () {
 	// Add code editor module
 	$wpTextbox1.wikiEditor( 'addModule', 'codeEditor' );
 
-	$wpTextbox1.on( 'wikiEditor-toolbar-doneInitialSections', function () {
+	$wpTextbox1.on( 'wikiEditor-toolbar-doneInitialSections', () => {
 		$wpTextbox1.data( 'wikiEditor-context' ).fn.codeEditorMonitorFragment();
 	} );
 } );

@@ -5,6 +5,7 @@
 			"Delhovlyn",
 			"Djiboun",
 			"Dr Brains",
+			"Escargot bleu",
 			"Gomoko",
 			"Grondin",
 			"Hecatonchire",
@@ -13,6 +14,7 @@
 			"Lucky",
 			"MacOS Weed",
 			"Macofe",
+			"Mahabarata",
 			"Meno25",
 			"Orlodrim",
 			"Peter17",
@@ -26,8 +28,6 @@
 			"Wladek92",
 			"Zcqsc06",
 			"Zetud",
-			"Escargot bleu",
-			"Mahabarata",
 			"NicoScribe",
 			"Od1n"
 		]
@@ -88,5 +88,8 @@
 	"gadgets-validate-unknownpages": "Contient une ou plusieurs pages sans suffixe .js, .css ou .json. Elles ne seront pas utilisées.",
 	"gadgets-validate-duplicate": "Une deuxième définition du gadget $1 a été détectée et doit être ignorée",
 	"gadgets-validate-nopage": "La page « $1 » n’existe pas.",
-	"gadgets-supports-urlload": "Ce gadget prend en charge le chargement via URL avec le paramètre de requête <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "Il manque {{PLURAL:$2|la dépendance suivante|les dépendances suivantes}} : $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|La dépendance suivante est obsolète|Les dépendances suivantes sont obsolètes}} : $1.",
+	"gadgets-supports-urlload": "Ce gadget prend en charge le chargement via URL avec le paramètre de requête <code>?withgadget</code>.",
+	"gadgets-hidden": "Ce gadget est [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden caché] ce qui signifie qu'il n'apparaîtra pas sur la page des préférences."
 }

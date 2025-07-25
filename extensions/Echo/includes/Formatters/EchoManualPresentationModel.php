@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
+use MediaWiki\Language\RawMessage;
+
 class EchoManualPresentationModel extends EchoEventPresentationModel {
 
 	/** @inheritDoc */
@@ -36,7 +38,7 @@ class EchoManualPresentationModel extends EchoEventPresentationModel {
 		$content = $this->event->getExtraParam( 'content' );
 
 		// Content here passed through plaintextParams for sanitization
-		return $content ? $this->msg( 'notification-body-api-triggered' )->plaintextParams( $content ) : false;
+		return $content ? ( new RawMessage( '$1' ) )->plaintextParams( $content ) : false;
 	}
 
 	/** @inheritDoc */

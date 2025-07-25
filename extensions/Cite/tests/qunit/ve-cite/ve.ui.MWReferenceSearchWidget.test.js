@@ -27,7 +27,9 @@
 			getAllGroupNames: () => ( Object.keys( groups ) ),
 			getIndexLabel: () => ( '1' ),
 			getItemNode: () => ( node ),
-			getGroupRefs: ( groupName ) => ( ve.dm.MWGroupReferences.static.makeGroupRefs( groups[ groupName ] ) ),
+			getGroupRefs: ( groupName ) => ( ve.dm.MWGroupReferences.static.makeGroupRefs(
+				groups[ groupName ]
+			) ),
 			hasRefs: () => ( !!hasNode )
 		};
 

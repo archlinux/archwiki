@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Reedy"
+		]
+	},
+	"content-model-sanitized-css": "Sanitised CSS",
+	"templatestyles-error-unrecognized-property": "Unrecognised or unsupported property at line $1 character $2.",
+	"templatestyles-error-unrecognized-rule": "Unrecognised or unsupported rule at line $1 character $2."
+}

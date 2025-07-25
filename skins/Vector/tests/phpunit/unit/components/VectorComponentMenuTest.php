@@ -35,7 +35,7 @@ class VectorComponentMenuTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideMenuData(): array {
+	public static function provideMenuData(): array {
 		return [
 			[
 				[
@@ -55,7 +55,7 @@ class VectorComponentMenuTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideCountData(): array {
+	public static function provideCountData(): array {
 		return [
 			[
 				[

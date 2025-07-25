@@ -1299,16 +1299,13 @@ class Less_Parser {
 	 *	 black border-collapse
 	 *
 	 * @return Less_Tree_Keyword|Less_Tree_Color|null
+	 * @see less-3.13.1.js#parsers.entities.keyword
 	 */
 	private function parseEntitiesKeyword() {
-		// $k = $this->matchReg('/\\G\\[?(?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+\\]?/');
-		$k = $this->matchReg( '/\\G%|\\G\\[?(?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+\\]?/' );
+		$k = $this->matchChar( '%' )
+			?? $this->matchReg( '/\\G\\[?(?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+\\]?/' );
 		if ( $k ) {
-			$color = Less_Tree_Color::fromKeyword( $k );
-			if ( $color ) {
-				return $color;
-			}
-			return new Less_Tree_Keyword( $k );
+			return Less_Tree_Color::fromKeyword( $k ) ?? new Less_Tree_Keyword( $k );
 		}
 	}
 
@@ -1543,7 +1540,7 @@ class Less_Parser {
 		if ( $this->peekChar( '#' ) ) {
 			$rgb = $this->matchReg( '/\\G#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/' );
 			if ( $rgb ) {
-				return new Less_Tree_Color( $rgb[1], 1, null, $rgb[0] );
+				return new Less_Tree_Color( $rgb[1], 1, $rgb[0] );
 			}
 		}
 	}

@@ -21,6 +21,10 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\JobQueue\Job;
+use MediaWiki\JobQueue\JobQueue;
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd

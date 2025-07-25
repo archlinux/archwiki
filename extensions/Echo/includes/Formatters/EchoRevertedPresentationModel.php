@@ -3,18 +3,22 @@
 namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Extension\Notifications\DiscussionParser;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Revision\RevisionRecord;
 
 class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'revert';
 	}
 
+	/** @inheritDoc */
 	public function canRender() {
 		return (bool)$this->event->getTitle();
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		// Messages: notification-header-reverted
 		$msg = parent::getHeaderMessage();
@@ -23,13 +27,14 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		$summary = $this->event->getExtraParam( 'summary' );
 		if (
 			!$this->isAutomaticSummary( $summary ) &&
 			$this->userCan( RevisionRecord::DELETED_COMMENT )
 		) {
-			$msg = $this->msg( 'notification-body-reverted' );
+			$msg = new RawMessage( '$1' );
 			$msg->plaintextParams( $this->formatSummary( $summary ) );
 			return $msg;
 		} else {
@@ -48,6 +53,7 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 		return DiscussionParser::getTextSnippetFromSummary( $wikitext, $this->language );
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		$url = $this->event->getTitle()->getLocalURL( [
 			'oldid' => 'prev',
@@ -59,6 +65,7 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		$links = [ $this->getAgentLink() ];
 
@@ -102,10 +109,12 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 		return $summary === $autoSummary;
 	}
 
+	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
 		return 'notification-reverted-email-subject2';
 	}
 
+	/** @inheritDoc */
 	public function getSubjectMessage() {
 		return parent::getSubjectMessage()->params( $this->getNumberOfEdits() );
 	}

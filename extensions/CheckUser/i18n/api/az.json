@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} vandalizm və sui-istifadənin tənzimlənməsinə kömək etmək üçün istifadəçi-agent client hint məlumatlarını toplayır. Ətraflı məlumat üçün: https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints"
+}

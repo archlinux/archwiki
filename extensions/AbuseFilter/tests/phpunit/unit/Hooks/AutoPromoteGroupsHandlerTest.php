@@ -34,8 +34,7 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testOnGetAutoPromoteGroups_nothingToDo( bool $enabled, array $groups ) {
 		$cache = new HashBagOStuff();
-		$store = $this->createMock( BlockAutopromoteStore::class );
-		$store->expects( $this->never() )->method( $this->anything() );
+		$store = $this->createNoOpMock( BlockAutopromoteStore::class );
 		$registry = $this->getConsequencesRegistry( $enabled );
 		$handler = new AutoPromoteGroupsHandler( $registry, $store, $cache );
 
@@ -62,8 +61,7 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 		$user = new UserIdentityValue( 1, 'User' );
 		$cache = new HashBagOStuff();
 		$cache->set( 'local:abusefilter:blockautopromote:quick:1', $status );
-		$store = $this->createMock( BlockAutopromoteStore::class );
-		$store->expects( $this->never() )->method( $this->anything() );
+		$store = $this->createNoOpMock( BlockAutopromoteStore::class );
 		$registry = $this->getConsequencesRegistry();
 
 		$handler = new AutoPromoteGroupsHandler( $registry, $store, $cache );

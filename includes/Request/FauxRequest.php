@@ -27,10 +27,10 @@ namespace MediaWiki\Request;
 
 use InvalidArgumentException;
 use MediaWiki;
+use MediaWiki\Exception\MWException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
-use MWException;
 
 /**
  * WebRequest clone which takes values from a provided array.
@@ -326,6 +326,3 @@ class FauxRequest extends WebRequest {
 		return '127.0.0.1';
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( FauxRequest::class, 'FauxRequest' );

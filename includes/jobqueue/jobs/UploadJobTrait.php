@@ -19,11 +19,16 @@
  * @defgroup JobQueue JobQueue
  */
 
+namespace MediaWiki\JobQueue\Jobs;
+
+use Exception;
 use MediaWiki\Api\ApiUpload;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
+use UploadBase;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -58,8 +63,6 @@ trait UploadJobTrait {
 
 	/**
 	 * Do not allow retries on jobs by default.
-	 *
-	 * @return bool
 	 */
 	public function allowRetries(): bool {
 		return false;
@@ -67,8 +70,6 @@ trait UploadJobTrait {
 
 	/**
 	 * Run the job
-	 *
-	 * @return bool
 	 */
 	public function run(): bool {
 		$this->user = $this->getUserFromSession();
@@ -182,8 +183,6 @@ trait UploadJobTrait {
 
 	/**
 	 * Ensure we have the file available. A noop here.
-	 *
-	 * @return bool
 	 */
 	protected function fetchFile(): bool {
 		$this->setStatus( 'fetching' );
@@ -202,8 +201,6 @@ trait UploadJobTrait {
 
 	/**
 	 * Verify the upload is ok
-	 *
-	 * @return bool
 	 */
 	private function verifyUpload(): bool {
 		// Check if the local file checks out (this is generally a no-op)
@@ -216,9 +213,9 @@ trait UploadJobTrait {
 			return false;
 		}
 		// Verify title permissions for this user
-		$titleVerification = $this->getUpload()->verifyTitlePermissions( $this->user );
-		if ( $titleVerification !== true ) {
-			$this->setStatus( 'publish', 'Failure', null, $titleVerification );
+		$status = $this->getUpload()->authorizeUpload( $this->user );
+		if ( !$status->isGood() ) {
+			$this->setStatus( 'publish', 'Failure', Status::wrap( $status ) );
 			$this->setLastError( "Could not verify title permissions." );
 			return false;
 		}
@@ -249,8 +246,6 @@ trait UploadJobTrait {
 
 	/**
 	 * Upload the stashed file to a permanent location
-	 *
-	 * @return bool
 	 */
 	private function performUpload(): bool {
 		if ( $this->user === null ) {
@@ -321,3 +316,6 @@ trait UploadJobTrait {
 	abstract protected function addTeardownCallback( $callback );
 
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( UploadJobTrait::class, 'UploadJobTrait' );

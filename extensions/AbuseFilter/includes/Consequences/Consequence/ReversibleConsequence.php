@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Consequences\Consequence;
 
-use MediaWiki\User\UserIdentity;
+use MediaWiki\Permissions\Authority;
 
 /**
  * Interface for consequences which can be reverted
@@ -10,10 +10,10 @@ use MediaWiki\User\UserIdentity;
 interface ReversibleConsequence {
 
 	/**
-	 * @param UserIdentity $performer
+	 * @param Authority $performer
 	 * @param string $reason
 	 * @return bool Whether the revert was successful
 	 */
-	public function revert( UserIdentity $performer, string $reason ): bool;
+	public function revert( Authority $performer, string $reason ): bool;
 
 }

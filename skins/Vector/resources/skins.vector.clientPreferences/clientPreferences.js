@@ -47,7 +47,7 @@ function isFeatureExcluded( featureName ) {
 function getVisibleClientPreferences( config ) {
 	const active = getClientPreferences();
 	// Order should be based on key in config.json
-	return Object.keys( config ).filter( ( key ) => active.indexOf( key ) > -1 );
+	return Object.keys( config ).filter( ( key ) => active.includes( key ) );
 }
 
 /**
@@ -70,6 +70,9 @@ function toggleDocClassAndSave( featureName, value, config, userPreferences ) {
 		document.documentElement.classList.add( `${ featureName }-clientpref-${ value }` );
 		// Client preferences often change the layout of the page significantly, so emit
 		// a window resize event for other apps that need to update (T374092).
+		// This is used by VisualEditor. If you plan to use this event for any other
+		// purpose please let web team know so we can understand the use case better
+		// (T375559 for more details).
 		window.dispatchEvent( new Event( 'resize' ) );
 		// Ideally this should be taken care of via a single core helper function.
 		mw.util.debounce( () => {
@@ -122,9 +125,15 @@ function makeInputElement( type, featureName, value ) {
  */
 function makeLabelElement( featureName, value ) {
 	const label = document.createElement( 'label' );
-	// eslint-disable-next-line mediawiki/msg-doc
-	label.textContent = mw.msg( `${ featureName }-${ value }-label` );
+	label.classList.add( 'cdx-label' );
 	label.setAttribute( 'for', getInputId( featureName, value ) );
+
+	const labelText = document.createElement( 'span' );
+	labelText.classList.add( 'cdx-label__label__text' );
+	// eslint-disable-next-line mediawiki/msg-doc
+	labelText.textContent = mw.msg( `${ featureName }-${ value }-label` );
+
+	label.appendChild( labelText );
 	return label;
 }
 

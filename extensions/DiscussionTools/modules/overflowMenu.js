@@ -41,11 +41,6 @@ function init( $container, pageThreads ) {
 				mw.hook( 'discussionToolsOverflowMenuOnChoose' ).fire( menuItem.getData().id, menuItem, threadItem );
 			} );
 		} );
-
-		$container.find( '.ext-discussiontools-init-section-bar' ).on( 'click', ( e ) => {
-			// Don't toggle section when clicking on bar
-			e.stopPropagation();
-		} );
 	} );
 }
 

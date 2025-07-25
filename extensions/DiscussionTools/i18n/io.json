@@ -70,9 +70,9 @@
 	"tag-discussiontools-description": "Redakto facita, uzanta DiscussionTools",
 	"tag-discussiontools-edit": "Redaktez komento",
 	"tag-discussiontools-edit-description": "Uzero modifikis existanta komento, uzanta DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nova temo]",
+	"tag-discussiontools-newtopic": "Nova temo",
 	"tag-discussiontools-newtopic-description": "Uzero adjuntis nova temo a la pagino, per DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respondez]",
+	"tag-discussiontools-reply": "Respondez",
 	"tag-discussiontools-reply-description": "Uzero respondis komento, per DiscussionTools",
 	"tag-discussiontools-source-description": "DiscussionTools esis en kodexo-formo",
 	"tag-discussiontools-visual-description": "DiscussionTools esis en videbla modo"

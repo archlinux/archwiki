@@ -1,0 +1,429 @@
+[
+	{
+		"data": {},
+		"showCounts": true,
+		"expectedWikitext": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas)\n|-\n|}",
+		"expectedWikitextWhenClientHintsEnabled": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas) !! (checkuser-helper-client-hints)\n|-\n|}",
+		"msg": "Empty data set"
+	},
+	{
+		"data": {
+			"*Unregistered 276": {
+				"ip": {
+					"127.0.0.157": {
+						"fd12:3456:78fe:fd2a:c99f:cee8:a6f1:d196, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b": {
+							"false": 8
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36": 8
+				},
+				"uach": {},
+				"sorted": {
+					"ip": [
+						"127.0.0.157"
+					],
+					"ua": [
+						"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36"
+					],
+					"uach": []
+				},
+				"linkUserPage": true
+			}
+		},
+		"showCounts": true,
+		"expectedWikitext": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas)\n|-\n|*Unregistered 276||\n* 127.0.0.157 (checkuser-helper-xff-untrusted) fd12:3456:78fe:fd2a:c99f:cee8:a6f1:d196, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b [8]\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36 '''[8]'''\n|-\n|}",
+		"expectedWikitextWhenClientHintsEnabled": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas) !! (checkuser-helper-client-hints)\n|-\n|*Unregistered 276||\n* 127.0.0.157 (checkuser-helper-xff-untrusted) fd12:3456:78fe:fd2a:c99f:cee8:a6f1:d196, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b [8]\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36 '''[8]'''\n|\n|-\n|}",
+		"msg": "One temporary account with some example data"
+	},
+	{
+		"data": {
+			"*Unregistered 289": {
+				"ip": {
+					"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6": {
+						"fd12:3456:780d:9dc:62d:6a63:292d:175c": {
+							"false": 15
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 15
+				},
+				"uach": {},
+				"sorted": {
+					"ip": [
+						"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6"
+					],
+					"ua": [
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": []
+				},
+				"linkUserPage": true
+			},
+			"CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36": {
+				"ip": {
+					"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6": {
+						"fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62": {
+							"false": 25
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36": 11,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 7,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 7
+				},
+				"uach": {
+					"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No": 11,
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 7
+				},
+				"sorted": {
+					"ip": [
+						"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No",
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			},
+			"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+				"ip": {
+					"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+						"": {
+							"false": 7
+						},
+						"127.0.0.195": {
+							"false": 1
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 3,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 1,
+					"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36": 2,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 1,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0": 1
+				},
+				"uach": {
+					"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No": 3,
+					"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes": 2,
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 1
+				},
+				"sorted": {
+					"ip": [
+						"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E"
+					],
+					"ua": [
+						"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No",
+						"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes",
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			},
+			"FD12:3456:7888:90DE:A51F:D679:57AA:D671": {
+				"ip": {
+					"FD12:3456:7888:90DE:A51F:D679:57AA:D671": {
+						"": {
+							"false": 3
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 1,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 1,
+					"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36": 1
+				},
+				"uach": {
+					"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No": 1,
+					"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes": 1
+				},
+				"sorted": {
+					"ip": [
+						"FD12:3456:7888:90DE:A51F:D679:57AA:D671"
+					],
+					"ua": [
+						"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No",
+						"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes"
+					]
+				},
+				"linkUserPage": true
+			},
+			"*Unregistered 293": {
+				"ip": {
+					"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+						"": {
+							"false": 5
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 5
+				},
+				"uach": {},
+				"sorted": {
+					"ip": [
+						"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E"
+					],
+					"ua": [
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": []
+				},
+				"linkUserPage": true
+			}
+		},
+		"showCounts": false,
+		"expectedWikitext": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas)\n|-\n|*Unregistered 289||\n* FD12:3456:788B:2397:9396:9C89:FF9C:DEF6 (checkuser-helper-xff-untrusted) fd12:3456:780d:9dc:62d:6a63:292d:175c\n|\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|-\n|CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36||\n* FD12:3456:788B:2397:9396:9C89:FF9C:DEF6 (checkuser-helper-xff-untrusted) fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|-\n|FD12:3456:7893:81A7:F9D1:78F8:6396:D27E||\n* FD12:3456:7893:81A7:F9D1:78F8:6396:D27E\n* FD12:3456:7893:81A7:F9D1:78F8:6396:D27E (checkuser-helper-xff-untrusted) 127.0.0.195\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|-\n|FD12:3456:7888:90DE:A51F:D679:57AA:D671||\n* FD12:3456:7888:90DE:A51F:D679:57AA:D671\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|-\n|*Unregistered 293||\n* FD12:3456:7893:81A7:F9D1:78F8:6396:D27E\n|\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|-\n|}",
+		"expectedWikitextWhenClientHintsEnabled": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas) !! (checkuser-helper-client-hints)\n|-\n|*Unregistered 289||\n* FD12:3456:788B:2397:9396:9C89:FF9C:DEF6 (checkuser-helper-xff-untrusted) fd12:3456:780d:9dc:62d:6a63:292d:175c\n|\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|\n|-\n|CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36||\n* FD12:3456:788B:2397:9396:9C89:FF9C:DEF6 (checkuser-helper-xff-untrusted) fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|\n*Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No\n*Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No\n|-\n|FD12:3456:7893:81A7:F9D1:78F8:6396:D27E||\n* FD12:3456:7893:81A7:F9D1:78F8:6396:D27E\n* FD12:3456:7893:81A7:F9D1:78F8:6396:D27E (checkuser-helper-xff-untrusted) 127.0.0.195\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|\n*Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No\n*Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes\n*Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No\n|-\n|FD12:3456:7888:90DE:A51F:D679:57AA:D671||\n* FD12:3456:7888:90DE:A51F:D679:57AA:D671\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|\n*Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No\n*Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes\n|-\n|*Unregistered 293||\n* FD12:3456:7893:81A7:F9D1:78F8:6396:D27E\n|\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1\n|\n|-\n|}",
+		"msg": "Subset of example data generated by the populateCheckUserTablesWithSimulatedData.php maintenance script got by running an IPv6 range check with show counts as false"
+	},
+	{
+		"data": {
+			"CheckUserSimulated-4802b84bd86328a786ae3afbf0a914e5": {
+				"ip": {
+					"127.0.0.62": {
+						"fd12:3456:780d:9dc:62d:6a63:292d:175c, 127.0.0.210": {
+							"false": 21
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 21
+				},
+				"uach": {
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 21
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.62"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			},
+			"127.0.0.62": {
+				"ip": {
+					"127.0.0.62": {
+						"": {
+							"false": 90
+						},
+						"127.0.0.157": {
+							"false": 1
+						},
+						"127.0.0.195, fd12:3456:7888:90de:a51f:d679:57aa:d671": {
+							"true": 6
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36": 51,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0": 21,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36": 24,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 1
+				},
+				"uach": {
+					"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes": 51,
+					"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform version: 15.0.0, Mobile: No": 13,
+					"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No": 11
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.62"
+					],
+					"ua": [
+						"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0"
+					],
+					"uach": [
+						"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes",
+						"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform version: 15.0.0, Mobile: No",
+						"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			},
+			"*Unregistered 291": {
+				"ip": {
+					"127.0.0.16": {
+						"": {
+							"false": 38
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 38
+				},
+				"uach": {
+					"Platform: Fake platform name, Brand: Chromium-test 114, Brand: Not/A.Brand 99": 13,
+					"Platform: Fake platform name, Brand: Chromium-test 114, Brand: Not/A)Brand 99": 3
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.16"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Platform: Fake platform name, Brand: Chromium-test 114, Brand: Not/A.Brand 99",
+						"Platform: Fake platform name, Brand: Chromium-test 114, Brand: Not/A)Brand 99"
+					]
+				},
+				"linkUserPage": true
+			},
+			"CheckUserSimulated-49791cd9e0e3b34dc1afa23b05610f81": {
+				"ip": {
+					"127.0.0.16": {
+						"": {
+							"false": 4
+						}
+					},
+					"127.0.0.62": {
+						"127.0.0.157": {
+							"false": 14
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 4,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0": 7,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 7
+				},
+				"uach": {
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 5
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.16",
+						"127.0.0.62"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			},
+			"127.0.0.16": {
+				"ip": {
+					"127.0.0.16": {
+						"": {
+							"false": 9
+						},
+						"127.0.0.193, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b": {
+							"false": 1
+						},
+						"fd12:3456:7871:cd54:952d:717b:9aef:58f4, 127.0.0.162": {
+							"true": 2
+						},
+						"fd12:3456:780d:9dc:62d:6a63:292d:175c, fd12:3456:78b1:f406:7dc3:6270:49c9:7924": {
+							"false": 1
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 2,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0": 1,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36": 3,
+					"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36": 4,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 1,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 2
+				},
+				"uach": {
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 2,
+					"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No": 3,
+					"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes": 4,
+					"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No": 1
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.16"
+					],
+					"ua": [
+						"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No",
+						"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No",
+						"Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes",
+						"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			},
+			"*Unregistered 286": {
+				"ip": {
+					"127.0.0.62": {
+						"fd12:3456:785c:8ddb:75dd:ac62:e6e9:918c, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b": {
+							"false": 28
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 23,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 5
+				},
+				"uach": {
+					"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No": 23,
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 5
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.62"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No",
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"linkUserPage": true
+			}
+		},
+		"showCounts": true,
+		"expectedWikitext": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas)\n|-\n|CheckUserSimulated-4802b84bd86328a786ae3afbf0a914e5||\n* 127.0.0.62 (checkuser-helper-xff-untrusted) fd12:3456:780d:9dc:62d:6a63:292d:175c, 127.0.0.210 [21]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[21]'''\n|-\n|127.0.0.62||\n* 127.0.0.62 [90]\n* 127.0.0.62 (checkuser-helper-xff-untrusted) 127.0.0.157 [1]\n* 127.0.0.62 (checkuser-helper-xff-trusted) 127.0.0.195, fd12:3456:7888:90de:a51f:d679:57aa:d671 [6]\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36 '''[51]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 '''[1]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 '''[24]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0 '''[21]'''\n|-\n|*Unregistered 291||\n* 127.0.0.16 [38]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[38]'''\n|-\n|CheckUserSimulated-49791cd9e0e3b34dc1afa23b05610f81||\n* 127.0.0.16 [4]\n* 127.0.0.62 (checkuser-helper-xff-untrusted) 127.0.0.157 [14]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[4]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0 '''[7]'''\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1 '''[7]'''\n|-\n|127.0.0.16||\n* 127.0.0.16 [9]\n* 127.0.0.16 (checkuser-helper-xff-untrusted) 127.0.0.193, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b [1]\n* 127.0.0.16 (checkuser-helper-xff-trusted) fd12:3456:7871:cd54:952d:717b:9aef:58f4, 127.0.0.162 [2]\n* 127.0.0.16 (checkuser-helper-xff-untrusted) fd12:3456:780d:9dc:62d:6a63:292d:175c, fd12:3456:78b1:f406:7dc3:6270:49c9:7924 [1]\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36 '''[4]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 '''[1]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[2]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 '''[3]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0 '''[1]'''\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1 '''[2]'''\n|-\n|*Unregistered 286||\n* 127.0.0.62 (checkuser-helper-xff-untrusted) fd12:3456:785c:8ddb:75dd:ac62:e6e9:918c, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b [28]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 '''[23]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[5]'''\n|-\n|}",
+		"expectedWikitextWhenClientHintsEnabled": "{| class=\"wikitable sortable\"\n! (checkuser-helper-user) !! (checkuser-helper-ips) !! (checkuser-helper-uas) !! (checkuser-helper-client-hints)\n|-\n|CheckUserSimulated-4802b84bd86328a786ae3afbf0a914e5||\n* 127.0.0.62 (checkuser-helper-xff-untrusted) fd12:3456:780d:9dc:62d:6a63:292d:175c, 127.0.0.210 [21]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[21]'''\n|\n*Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No '''[21]'''\n|-\n|127.0.0.62||\n* 127.0.0.62 [90]\n* 127.0.0.62 (checkuser-helper-xff-untrusted) 127.0.0.157 [1]\n* 127.0.0.62 (checkuser-helper-xff-trusted) 127.0.0.195, fd12:3456:7888:90de:a51f:d679:57aa:d671 [6]\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36 '''[51]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 '''[1]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 '''[24]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0 '''[21]'''\n|\n*Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes '''[51]'''\n*Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform version: 15.0.0, Mobile: No '''[13]'''\n*Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No '''[11]'''\n|-\n|*Unregistered 291||\n* 127.0.0.16 [38]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[38]'''\n|\n*Platform: Fake platform name, Brand: Chromium-test 114, Brand: Not/A.Brand 99 '''[13]'''\n*Platform: Fake platform name, Brand: Chromium-test 114, Brand: Not/A)Brand 99 '''[3]'''\n|-\n|CheckUserSimulated-49791cd9e0e3b34dc1afa23b05610f81||\n* 127.0.0.16 [4]\n* 127.0.0.62 (checkuser-helper-xff-untrusted) 127.0.0.157 [14]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[4]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0 '''[7]'''\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1 '''[7]'''\n|\n*Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No '''[5]'''\n|-\n|127.0.0.16||\n* 127.0.0.16 [9]\n* 127.0.0.16 (checkuser-helper-xff-untrusted) 127.0.0.193, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b [1]\n* 127.0.0.16 (checkuser-helper-xff-trusted) fd12:3456:7871:cd54:952d:717b:9aef:58f4, 127.0.0.162 [2]\n* 127.0.0.16 (checkuser-helper-xff-untrusted) fd12:3456:780d:9dc:62d:6a63:292d:175c, fd12:3456:78b1:f406:7dc3:6270:49c9:7924 [1]\n|\n*Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36 '''[4]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 '''[1]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[2]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 '''[3]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0 '''[1]'''\n*Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1 '''[2]'''\n|\n*Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No '''[2]'''\n*Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No '''[3]'''\n*Model: SM-G965U, Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Android 10.0.0, Mobile: Yes '''[4]'''\n*Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No '''[1]'''\n|-\n|*Unregistered 286||\n* 127.0.0.62 (checkuser-helper-xff-untrusted) fd12:3456:785c:8ddb:75dd:ac62:e6e9:918c, fd12:3456:78e4:82dd:6175:fcad:41e2:aa5b [28]\n|\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0 '''[23]'''\n*Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 '''[5]'''\n|\n*Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No '''[23]'''\n*Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No '''[5]'''\n|-\n|}",
+		"msg": "Subset of example data generated by the populateCheckUserTablesWithSimulatedData.php maintenance script got by running an IPv4 range check"
+	}
+]

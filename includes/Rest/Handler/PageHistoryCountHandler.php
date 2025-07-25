@@ -2,10 +2,11 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -107,7 +108,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 		);
 	}
 
-	private function normalizeType( $type ) {
+	private function normalizeType( string $type ): string {
 		return self::DEPRECATED_COUNT_TYPES[$type] ?? $type;
 	}
 
@@ -313,9 +314,6 @@ class PageHistoryCountHandler extends SimpleHandler {
 		return $this->revision;
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	private function getPage(): ?ExistingPageRecord {
 		if ( $this->page === false ) {
 			$this->page = $this->pageLookup->getExistingPageByText(
@@ -695,12 +693,24 @@ class PageHistoryCountHandler extends SimpleHandler {
 		return false;
 	}
 
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/PageHistoryCount.json';
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+		return $spec;
+	}
+
 	public function getParamSettings() {
 		return [
 			'title' => [
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-count-title' ),
 			],
 			'type' => [
 				self::PARAM_SOURCE => 'path',
@@ -709,16 +719,19 @@ class PageHistoryCountHandler extends SimpleHandler {
 					array_keys( self::DEPRECATED_COUNT_TYPES )
 				),
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-count-type' ),
 			],
 			'from' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'integer',
-				ParamValidator::PARAM_REQUIRED => false
+				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-count-from' ),
 			],
 			'to' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'integer',
-				ParamValidator::PARAM_REQUIRED => false
+				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-count-to' ),
 			]
 		];
 	}

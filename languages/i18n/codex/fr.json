@@ -2,8 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Goombiis",
-			"SleaY",
-			"Mahabarata"
+			"JLTRY",
+			"Mahabarata",
+			"SleaY"
 		]
 	},
 	"cdx-chip-input-chip-added": "Le jeton $1 a été ajouté.",
@@ -12,6 +13,7 @@
 	"cdx-dialog-close-button-label": "Fermer",
 	"cdx-label-optional-flag": "(optionnel)",
 	"cdx-message-dismiss-button-label": "Fermer",
+	"cdx-popover-close-button-label": "Fermer",
 	"cdx-search-input-search-button-label": "Rechercher",
 	"cdx-table-select-all-label": "Sélectionner toutes les lignes",
 	"cdx-table-select-row-label": "Sélectionner la ligne $1 sur $2",
@@ -28,5 +30,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Affichage des résultats $1 à $2 parmi plusieurs",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 de beaucoup",
 	"cdx-table-pagination-status-message-indeterminate-final": "Affichage {{PLURAL:$1|du dernier résultat|des $1 derniers résultats}}",
-	"cdx-table-pagination-status-message-pending": "Chargement des résultats..."
+	"cdx-table-pagination-status-message-pending": "Chargement des résultats...",
+	"cdx-table-no-data-message": "Aucune donnée n'est disponible."
 }

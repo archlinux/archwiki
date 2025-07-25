@@ -1,10 +1,6 @@
 <?php
-/**
- * Initialize a user preference based on the value
- * of another preference.
- *
- * @ingroup Maintenance
- */
+
+use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -13,6 +9,10 @@ require_once __DIR__ . '/Maintenance.php';
 /**
  * Maintenance script that initializes a user preference
  * based on the value of another preference.
+ *
+ * This is done by copying any non-empty (i.e. excluding 0 or null) value for a given
+ * source preference to be the value of the target preference. Only users with the value set
+ * will have the target preference set.
  *
  * @ingroup Maintenance
  */
@@ -46,17 +46,18 @@ class InitUserPreference extends Maintenance {
 
 		$iterator = new BatchRowIterator(
 			$dbr,
-			'user_properties',
+			$dbr->newSelectQueryBuilder()
+				->from( 'user_properties' )
+				->select( [ 'up_user', 'up_value' ] )
+				->where( [
+					'up_property' => $source,
+					$dbr->expr( 'up_value', '!=', null ),
+					$dbr->expr( 'up_value', '!=', '0' ),
+				] )
+				->caller( __METHOD__ ),
 			[ 'up_user', 'up_property' ],
 			$this->getBatchSize()
 		);
-		$iterator->setFetchColumns( [ 'up_user', 'up_value' ] );
-		$iterator->addConditions( [
-			'up_property' => $source,
-			$dbr->expr( 'up_value', '!=', null ),
-			$dbr->expr( 'up_value', '!=', 0 ),
-		] );
-		$iterator->setCaller( __METHOD__ );
 
 		$processed = 0;
 		foreach ( $iterator as $batch ) {

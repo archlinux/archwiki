@@ -11,6 +11,7 @@ use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\NodeData\DataMw;
+use Wikimedia\Parsoid\NodeData\DataMwBody;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
@@ -26,6 +27,8 @@ class Utils {
 	public const COMMENT_REGEXP_FRAGMENT = '<!--(?>[\s\S]*?-->)';
 	/** Regular fragment for matching a wikitext comment */
 	public const COMMENT_REGEXP = '/' . self::COMMENT_REGEXP_FRAGMENT . '/';
+
+	public const COMMENT_OR_WS_REGEXP = '/^(\s|' . self::COMMENT_REGEXP_FRAGMENT . ')*$/D';
 
 	/**
 	 * Strip Parsoid id prefix from aboutID
@@ -68,14 +71,19 @@ class Utils {
 		return isset( Consts::$HTML['VoidTags'][$name] );
 	}
 
-	/**
-	 * recursive deep clones helper function
-	 *
-	 * @param object $el object
-	 * @return object
-	 */
-	private static function recursiveClone( $el ) {
-		return self::clone( $el, true );
+	public static function cloneArray( array $arr ): array {
+		return array_map(
+			static function ( $val ) {
+				if ( is_array( $val ) ) {
+					return self::cloneArray( $val );
+				} elseif ( is_object( $val ) ) {
+					return clone $val;
+				} else {
+					return $val;
+				}
+			},
+			$arr
+		);
 	}
 
 	/**
@@ -91,6 +99,7 @@ class Utils {
 	 * @param bool $deepClone
 	 * @param bool $debug
 	 * @return object|array
+	 * @deprecated Use native PHP cloning and Utils::cloneArray when needed
 	 */
 	public static function clone( $obj, $deepClone = true, $debug = false ) {
 		if ( $debug ) {
@@ -101,6 +110,7 @@ class Utils {
 				if ( $deepClone ) {
 					return array_map(
 						static function ( $o ) {
+							// @phan-suppress-next-line PhanDeprecatedFunction
 							return Utils::clone( $o, true, true );
 						},
 						$obj
@@ -314,6 +324,92 @@ class Utils {
 	}
 
 	/**
+	 * Ensure that the given literal string is safe to parse as wikitext.
+	 * See wfEscapeWikiText() in core.
+	 */
+	public static function escapeWt( string $input ): string {
+		static $repl = null, $repl2 = null, $repl3 = null, $repl4 = null;
+		if ( $repl === null ) {
+			$repl = [
+				'"' => '&#34;', '&' => '&#38;', "'" => '&#39;', '<' => '&#60;',
+				'=' => '&#61;', '>' => '&#62;', '[' => '&#91;', ']' => '&#93;',
+				'{' => '&#123;', '|' => '&#124;', '}' => '&#125;',
+				';' => '&#59;', // a token inside language converter brackets
+				'!!' => '&#33;!', // a token inside table context
+				"\n!" => "\n&#33;", "\r!" => "\r&#33;", // a token inside table context
+				"\n#" => "\n&#35;", "\r#" => "\r&#35;",
+				"\n*" => "\n&#42;", "\r*" => "\r&#42;",
+				"\n:" => "\n&#58;", "\r:" => "\r&#58;",
+				"\n " => "\n&#32;", "\r " => "\r&#32;",
+				"\n\n" => "\n&#10;", "\r\n" => "&#13;\n",
+				"\n\r" => "\n&#13;", "\r\r" => "\r&#13;",
+				"\n\t" => "\n&#9;", "\r\t" => "\r&#9;", // "\n\t\n" is treated like "\n\n"
+				"\n----" => "\n&#45;---", "\r----" => "\r&#45;---",
+				'__' => '_&#95;', '://' => '&#58;//',
+				'~~~' => '~~&#126;', // protect from PST, just to be safe(r)
+			];
+
+			$magicLinks = [ 'ISBN', 'PMID', 'RFC' ];
+			// We have to catch everything "\s" matches in PCRE
+			foreach ( $magicLinks as $magic ) {
+				$repl["$magic "] = "$magic&#32;";
+				$repl["$magic\t"] = "$magic&#9;";
+				$repl["$magic\r"] = "$magic&#13;";
+				$repl["$magic\n"] = "$magic&#10;";
+				$repl["$magic\f"] = "$magic&#12;";
+			}
+			// Additionally escape the following characters at the beginning of the
+			// string, in case they merge to form tokens when spliced into a
+			// string.  Tokens like -{ {{ [[ {| etc are already escaped because
+			// the second character is escaped above, but the following tokens
+			// are handled here: |+ |- __FOO__ ~~~
+			$repl3 = [
+				'+' => '&#43;', '-' => '&#45;', '_' => '&#95;', '~' => '&#126;',
+			];
+			// Similarly, protect the following characters at the end of the
+			// string, which could turn form the start of `__FOO__` or `~~~~`
+			// A trailing newline could also form the unintended start of a
+			// paragraph break if it is glued to a newline in the following
+			// context.
+			$repl4 = [
+				'_' => '&#95;', '~' => '&#126;',
+				"\n" => "&#10;", "\r" => "&#13;",
+				"\t" => "&#9;", // "\n\t\n" is treated like "\n\n"
+			];
+
+			// And handle protocols that don't use "://"
+			$urlProtocols = [
+				'bitcoin:', 'geo:', 'magnet:', 'mailto:', 'matrix:', 'news:',
+				'sip:', 'sips:', 'sms:', 'tel:', 'urn:', 'xmpp:',
+			];
+			$repl2 = [];
+			foreach ( $urlProtocols as $prot ) {
+				$repl2[] = preg_quote( substr( $prot, 0, -1 ), '/' );
+			}
+			$repl2 = '/\b(' . implode( '|', $repl2 ) . '):/i';
+		}
+		// Tell phan that $repl2, $repl3 and $repl4 will also be non-null here
+		'@phan-var string $repl2';
+		'@phan-var string $repl3';
+		'@phan-var string $repl4';
+		// This will also stringify input in case it's not a string
+		$text = substr( strtr( "\n$input", $repl ), 1 );
+		if ( $text === '' ) {
+			return $text;
+		}
+		$first = strtr( $text[0], $repl3 ); // protect first character
+		if ( strlen( $text ) > 1 ) {
+			$text = $first . substr( $text, 1, -1 ) .
+				  strtr( substr( $text, -1 ), $repl4 ); // protect last character
+		} else {
+			// special case for single-character strings
+			$text = strtr( $first, $repl4 ); // protect last character
+		}
+		$text = preg_replace( $repl2, '$1&#58;', $text );
+		return $text;
+	}
+
+	/**
 	 * Convert special characters to HTML entities
 	 *
 	 * @param string $s
@@ -378,15 +474,22 @@ class Utils {
 		$options = $extToken->getAttributeV( 'options' );
 		$defaultDataMw = new DataMw( [
 			'name' => $name,
-			// T367616: 'attrs' should be renamed to 'extAttrs'
-			'attrs' => (object)TokenUtils::kvToHash( $options ),
+			// Back-compat w/ existing DOM spec output: ensure 'attrs'
+			// exists even if there are no attributes.
+			'attrs' => (object)[],
 		] );
+		foreach ( TokenUtils::kvToHash( $options ) as $name => $value ) {
+			// Explicit cast to string is needed here, since a numeric
+			// attribute name will get converted to 'int' when it is used
+			// as an array key.
+			$defaultDataMw->setExtAttrib( (string)$name, $value );
+		}
 		$extTagOffsets = $extToken->dataParsoid->extTagOffsets;
 		if ( $extTagOffsets->closeWidth !== 0 ) {
 			// If not self-closing...
-			$defaultDataMw->body = (object)[
-				'extsrc' => self::extractExtBody( $extToken ),
-			];
+			$defaultDataMw->body = new DataMwBody(
+				self::extractExtBody( $extToken ),
+			);
 		}
 		return $defaultDataMw;
 	}
@@ -444,55 +547,6 @@ class Utils {
 	 */
 	public static function validateMediaParam( ?int $num ): bool {
 		return $num !== null && $num > 0;
-	}
-
-	/**
-	 * FIXME: Is this needed??
-	 *
-	 * Extract content in a backwards compatible way
-	 *
-	 * @param object $revision
-	 * @return object
-	 */
-	public static function getStar( $revision ) {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		/*
-		$content = $revision;
-		if ( $revision && isset( $revision->slots ) ) {
-			$content = $revision->slots->main;
-		}
-		return $content;
-		*/
-		throw new \BadMethodCallException( "This method shouldn't be needed. " .
-			"But, port this if you really need it." );
-	}
-
-	/**
-	 * This regex was generated by running through *all unicode characters* and
-	 * testing them against *all regexes* for linktrails in a default MW install.
-	 * We had to treat it a little bit, here's what we changed:
-	 *
-	 * 1. A-Z, though allowed in Walloon, is disallowed.
-	 * 2. '"', though allowed in Chuvash, is disallowed.
-	 * 3. '-', though allowed in Icelandic (possibly due to a bug), is disallowed.
-	 * 4. '1', though allowed in Lak (possibly due to a bug), is disallowed.
-	 */
-	// phpcs:disable Generic.Files.LineLength.TooLong
-	public static $linkTrailRegex =
-		'/^[^\0-`{÷ĀĈ-ČĎĐĒĔĖĚĜĝĠ-ĪĬ-įĲĴ-ĹĻ-ĽĿŀŅņŉŊŌŎŏŒŔŖ-ŘŜŝŠŤŦŨŪ-ŬŮŲ-ŴŶŸ' .
-		'ſ-ǤǦǨǪ-Ǯǰ-ȗȜ-ȞȠ-ɘɚ-ʑʓ-ʸʽ-̂̄-΅·΋΍΢Ϗ-ЯѐѝѠѢѤѦѨѪѬѮѰѲѴѶѸѺ-ѾҀ-҃҅-ҐҒҔҕҘҚҜ-ҠҤ-ҪҬҭҰҲ' .
-		'Ҵ-ҶҸҹҼ-ҿӁ-ӗӚ-ӜӞӠ-ӢӤӦӪ-ӲӴӶ-ՠֈ-׏׫-ؠً-ٳٵ-ٽٿ-څڇ-ڗڙ-ڨڪ-ڬڮڰ-ڽڿ-ۅۈ-ۊۍ-۔ۖ-਀਄਋-਎਑਒' .
-		'਩਱਴਷਺਻਽੃-੆੉੊੎-੘੝੟-੯ੴ-჏ჱ-ẼẾ-\x{200b}\x{200d}-‒—-‗‚‛”--\x{fffd}]+$/D';
-	// phpcs:enable Generic.Files.LineLength.TooLong
-
-	/**
-	 * Check whether some text is a valid link trail.
-	 *
-	 * @param string $text
-	 * @return bool
-	 */
-	public static function isLinkTrail( string $text ): bool {
-		return $text !== '' && preg_match( self::$linkTrailRegex, $text );
 	}
 
 	/**

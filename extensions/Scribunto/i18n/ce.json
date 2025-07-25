@@ -30,7 +30,7 @@
 	"scribunto-common-timeout": "Скрипташ кхочушйан лерина хан чекхйаьлла.",
 	"scribunto-common-oom": "Скрипт кхочушйан лерина болу чухоам совбаьлла.",
 	"scribunto-common-backtrace": "Кхайкхамийн трассинг",
-	"scribunto-common-no-details": "Мадарра дац.",
+	"scribunto-common-no-details": "Код мичахь йу лаьцна информаци бац.",
 	"scribunto-lua-in-function": "«$1» функци чохь",
 	"scribunto-lua-in-main": "кодан коьртачу декъехь",
 	"scribunto-lua-in-function-at": "$1:$2 функци чохь",

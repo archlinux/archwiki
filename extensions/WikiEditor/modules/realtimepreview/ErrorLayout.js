@@ -10,8 +10,8 @@ function ErrorLayout( config ) {
 	config = config || {};
 	ErrorLayout.super.call( this, config );
 
-	var $image = $( '<div>' ).addClass( 'ext-WikiEditor-image-realtimepreview-error' );
-	var $title = $( '<h3>' ).text( mw.msg( 'wikieditor-realtimepreview-error' ) );
+	const $image = $( '<div>' ).addClass( 'ext-WikiEditor-image-realtimepreview-error' );
+	const $title = $( '<h3>' ).text( mw.msg( 'wikieditor-realtimepreview-error' ) );
 	this.$message = $( '<div>' ).addClass( 'ext-WikiEditor-realtimepreview-error-msg' );
 	this.reloadButton = new OO.ui.ButtonWidget( {
 		icon: 'reload',

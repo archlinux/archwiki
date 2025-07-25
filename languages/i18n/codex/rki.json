@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "ပိတ်ပါ",
 	"cdx-label-optional-flag": "(ချန်လှပ်ထားနိုင်ရေ)",
 	"cdx-message-dismiss-button-label": "ပိတ်ပါ",
+	"cdx-popover-close-button-label": "ပိတ်ပါ",
 	"cdx-search-input-search-button-label": "ယှာဖွီပါ",
 	"cdx-table-select-all-label": "အတန်းအားနုန်းကို ရွီးပါ",
 	"cdx-table-select-row-label": "$2 ဧ့ အတန်း $1 ကို ရွီးပါ",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "ရလဒ်တိအများကြီထဲက $1–$2 ကိုပြနီရေ",
 	"cdx-table-pagination-status-message-indeterminate-short": "အများကြီးထဲက $1–$2",
 	"cdx-table-pagination-status-message-indeterminate-final": "နောက်ဆုံး {{PLURAL:$1|$1 ရလဒ်|$1 ရလဒ်တိ}} ကို ပြရေ",
-	"cdx-table-pagination-status-message-pending": "ရလဒ်တိကို ဖွင့်နီရေ..."
+	"cdx-table-pagination-status-message-pending": "ရလဒ်တိကို ဖွင့်နီရေ...",
+	"cdx-table-no-data-message": "ဒေတာမရနိုင်ပါ"
 }

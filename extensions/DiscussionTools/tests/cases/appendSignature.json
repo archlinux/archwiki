@@ -23,5 +23,10 @@
 		"msg": "Empty trailing paragraph",
 		"html": "<p>Foo bar</p><p></p>",
 		"expected": "<p>Foo bar</p><p><span typeof=\"mw:Transclusion\" data-mw=\"{&quot;parts&quot;:[&quot;~~~~&quot;]}\"></span></p>"
+	},
+	{
+		"msg": "Empty template-generated paragraph not removed",
+		"html": "<p typeof=\"mw:Transclusion\" data-mw=\"{}\"></p>",
+		"expected": "<p typeof=\"mw:Transclusion\" data-mw=\"{}\"></p><p><span typeof=\"mw:Transclusion\" data-mw=\"{&quot;parts&quot;:[&quot;~~~~&quot;]}\"></span></p>"
 	}
 ]

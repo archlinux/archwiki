@@ -234,9 +234,9 @@
 		this.textInput.toggle( false );
 		this.calendar.toggle( false );
 
-		// Hide unused <input> from PHP after infusion is done
 		// See InputWidget#reusePreInfuseDOM about config.$input
 		if ( config.$input ) {
+			// Hide unused <input> from PHP after infusion is done
 			config.$input.addClass( 'oo-ui-element-hidden' );
 		}
 	};
@@ -255,6 +255,20 @@
 	 * @event mw.widgets.DateInputWidget.deactivate
 	 * @param {boolean} userSelected Whether the deactivation happened because the user selected a value
 	 */
+
+	/* Static Methods */
+
+	/**
+	 * @inheritdoc
+	 */
+	mw.widgets.DateInputWidget.static.reusePreInfuseDOM = function ( node, config ) {
+		config = mw.widgets.DateInputWidget.super.static.reusePreInfuseDOM( node, config );
+		if ( config.$input ) {
+			// Ignore the extra field from PendingTextInputWidget (T382344)
+			config.$input = config.$input.first();
+		}
+		return config;
+	};
 
 	/* Methods */
 
@@ -288,7 +302,6 @@
 	 */
 	mw.widgets.DateInputWidget.prototype.onTextInputChange = function () {
 		const
-			widget = this,
 			value = this.textInput.getValue(),
 			mom = moment( value, this.getInputFormat() ),
 			valid = this.isValidDate( value );
@@ -296,22 +309,22 @@
 
 		if ( value === '' ) {
 			// No date selected
-			widget.setValue( '' );
+			this.setValue( '' );
 		} else if ( valid ) {
 			// Well-formed date value, parse and set it
 			// Use English locale to avoid number formatting
-			widget.setValue( mom.locale( 'en' ).format( widget.getInternalFormat() ) );
+			this.setValue( mom.locale( 'en' ).format( this.getInternalFormat() ) );
 		} else {
 			// Not well-formed, but possibly partial? Try updating the calendar, but do not set the
 			// internal value. Generally this only makes sense when 'inputFormat' is little-endian (e.g.
 			// 'YYYY-MM-DD'), but that's hard to check for, and might be difficult to handle the parsing
 			// right for weird formats. So limit this trick to only when we're using the default
 			// 'inputFormat', which is the same as the internal format, 'YYYY-MM-DD'.
-			if ( widget.getInputFormat() === widget.getInternalFormat() ) {
-				widget.calendar.setMoment( mom );
+			if ( this.getInputFormat() === this.getInternalFormat() ) {
+				this.calendar.setMoment( mom );
 			}
 		}
-		widget.inTextInput--;
+		this.inTextInput--;
 
 	};
 
@@ -673,15 +686,14 @@
 	 * @param {boolean} [isValid] Optionally override validation result
 	 */
 	mw.widgets.DateInputWidget.prototype.setValidityFlag = function ( isValid ) {
-		const widget = this,
-			setFlag = function ( valid ) {
-				if ( !valid ) {
-					widget.$input.attr( 'aria-invalid', 'true' );
-				} else {
-					widget.$input.removeAttr( 'aria-invalid' );
-				}
-				widget.setFlags( { invalid: !valid } );
-			};
+		const setFlag = ( valid ) => {
+			if ( !valid ) {
+				this.$input.attr( 'aria-invalid', 'true' );
+			} else {
+				this.$input.removeAttr( 'aria-invalid' );
+			}
+			this.setFlags( { invalid: !valid } );
+		};
 
 		if ( isValid !== undefined ) {
 			setFlag( isValid );

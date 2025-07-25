@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\User\TempUser\TempUserConfig;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IExpression;
@@ -96,8 +97,6 @@ class PopulateUserIsTemp extends LoggedUpdateMaintenance {
 	 *
 	 * This code is not in ::doDBUpdates() so that this can be skipped in unit tests
 	 * and the IReadableDatabase object can be strongly typed.
-	 *
-	 * @return void
 	 */
 	protected function initServices(): void {
 		$this->tempUserConfig = $this->getServiceContainer()->getTempUserConfig();

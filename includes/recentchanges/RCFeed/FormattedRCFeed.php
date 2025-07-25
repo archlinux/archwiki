@@ -20,7 +20,7 @@
 
 namespace MediaWiki\RCFeed;
 
-use RecentChange;
+use MediaWiki\RecentChanges\RecentChange;
 
 /**
  * Base class for RCFeed implementations that use RCFeedFormatter.
@@ -35,9 +35,6 @@ use RecentChange;
 abstract class FormattedRCFeed extends RCFeed {
 	private array $params;
 
-	/**
-	 * @param array $params
-	 */
 	public function __construct( array $params ) {
 		$this->params = $params;
 	}

@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Registration\ExtensionProcessor;
 use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\Composer\ComposerJson;
@@ -65,7 +66,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		$this->addOption( 'config-prefix', 'Custom prefix for configuration settings', false, true );
 	}
 
-	protected function getAllGlobals() {
+	protected function getAllGlobals(): array {
 		$processor = new ReflectionClass( ExtensionProcessor::class );
 		$settings = $processor->getProperty( 'globalSettings' );
 		$settings->setAccessible( true );
@@ -113,8 +114,8 @@ class ConvertExtensionToRegistration extends Maintenance {
 			}
 
 			if ( isset( self::CUSTOM_GLOBALS[$realName] ) ) {
-				call_user_func_array( [ $this, self::CUSTOM_GLOBALS[$realName] ],
-					[ $realName, $value, $vars ] );
+				$method = self::CUSTOM_GLOBALS[$realName];
+				$this->$method( $realName, $value, $vars );
 			} elseif ( in_array( $realName, $globalSettings ) ) {
 				$this->json[$realName] = $value;
 			} elseif ( array_key_exists( $realName, self::NO_LONGER_SUPPORTED_GLOBALS ) ) {
@@ -185,7 +186,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		}
 	}
 
-	protected function handleExtensionFunctions( $realName, $value ) {
+	protected function handleExtensionFunctions( string $realName, array $value ) {
 		foreach ( $value as $func ) {
 			if ( $func instanceof Closure ) {
 				$this->fatalError( "Error: Closures cannot be converted to JSON. " .
@@ -202,7 +203,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		$this->json[$realName] = $value;
 	}
 
-	protected function handleMessagesDirs( $realName, $value ) {
+	protected function handleMessagesDirs( string $realName, array $value, array $_ ) {
 		foreach ( $value as $key => $dirs ) {
 			foreach ( (array)$dirs as $dir ) {
 				$this->json[$realName][$key][] = $this->stripPath( $dir, $this->dir );
@@ -210,7 +211,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		}
 	}
 
-	protected function handleExtensionMessagesFiles( $realName, $value, $vars ) {
+	protected function handleExtensionMessagesFiles( string $realName, array $value, array $vars ) {
 		foreach ( $value as $key => $file ) {
 			$strippedFile = $this->stripPath( $file, $this->dir );
 			if ( isset( $vars['wgMessagesDirs'][$key] ) ) {
@@ -225,7 +226,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		}
 	}
 
-	private function stripPath( $val, $dir ) {
+	private function stripPath( string $val, string $dir ): string {
 		if ( $val === $dir ) {
 			$val = '';
 		} elseif ( strpos( $val, $dir ) === 0 ) {
@@ -236,7 +237,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		return $val;
 	}
 
-	protected function removeAbsolutePath( $realName, $value ) {
+	protected function removeAbsolutePath( string $realName, array $value ) {
 		$out = [];
 		foreach ( $value as $key => $val ) {
 			$out[$key] = $this->stripPath( $val, $this->dir );
@@ -244,7 +245,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		$this->json[$realName] = $out;
 	}
 
-	protected function removeAutodiscoveredParserTestFiles( $realName, $value ) {
+	protected function removeAutodiscoveredParserTestFiles( string $realName, array $value ) {
 		$out = [];
 		foreach ( $value as $key => $val ) {
 			$path = $this->stripPath( $val, $this->dir );
@@ -265,7 +266,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		// with a ParserTestFiles key that will no longer validate.
 	}
 
-	protected function handleCredits( $realName, $value ) {
+	protected function handleCredits( string $realName, array $value ) {
 		$keys = array_keys( $value );
 		$this->json['type'] = $keys[0];
 		$values = array_values( $value );
@@ -276,7 +277,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		}
 	}
 
-	public function handleHooks( $realName, $value ) {
+	public function handleHooks( string $realName, array $value ) {
 		foreach ( $value as $hookName => &$handlers ) {
 			if ( $hookName === 'UnitTestsList' ) {
 				$this->output( "Note: the UnitTestsList hook is no longer necessary as " .
@@ -340,7 +341,7 @@ class ConvertExtensionToRegistration extends Maintenance {
 		}
 	}
 
-	protected function needsComposerAutoloader( $path ) {
+	protected function needsComposerAutoloader( string $path ): bool {
 		$path .= '/composer.json';
 		if ( file_exists( $path ) ) {
 			// assume that the composer.json file is in the root of the extension path

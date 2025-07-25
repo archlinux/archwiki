@@ -6,7 +6,7 @@
  * @param {OO.ui.ButtonWidget} reloadHoverButton
  */
 function ManualWidget( realtimePreview, reloadHoverButton ) {
-	var config = {
+	const config = {
 		classes: [ 'ext-WikiEditor-ManualWidget' ],
 		$element: $( '<a>' )
 	};
@@ -25,9 +25,9 @@ function ManualWidget( realtimePreview, reloadHoverButton ) {
 	this.reloadHoverButton = reloadHoverButton;
 
 	// UI elements.
-	var $reloadLabel = $( '<span>' )
+	const $reloadLabel = $( '<span>' )
 		.text( mw.msg( 'wikieditor-realtimepreview-manual' ) );
-	var $reloadButton = $( '<span>' )
+	const $reloadButton = $( '<span>' )
 		.addClass( 'ext-WikiEditor-realtimepreview-manual-reload' )
 		.text( mw.msg( 'wikieditor-realtimepreview-reload' ) );
 	this.connect( realtimePreview, {

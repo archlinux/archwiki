@@ -36,6 +36,7 @@ class GadgetDefinitionContent extends JsonContent {
 		parent::__construct( $text, 'GadgetDefinition' );
 	}
 
+	/** @inheritDoc */
 	public function isValid() {
 		// parent::isValid() is called in validate()
 		return $this->validate()->isOK();

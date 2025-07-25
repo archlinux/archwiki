@@ -1,79 +1,167 @@
 <template>
 	<cdx-field
+		:key="refreshKey"
 		:is-fieldset="true"
 		:status="status"
 		:messages="messages"
 	>
+		<!-- eslint-disable vue/no-unused-refs -->
 		<cdx-lookup
+			id="mw-bi-target"
 			v-model:selected="selection"
 			v-model:input-value="currentSearchTerm"
+			class="mw-block-target"
 			name="wpTarget"
 			required
+			:clearable="true"
 			:menu-items="menuItems"
-			:placeholder="$i18n( 'block-user-placeholder' ).text()"
+			:placeholder="$i18n( 'block-target-placeholder' ).text()"
 			:start-icon="cdxIconSearch"
 			@input="onInput"
 			@change="onChange"
-			@update:selected="currentSearchTerm = selection"
+			@clear="onClear"
+			@update:selected="onSelect"
+			@keydown.enter.prevent="true/* See T391085 */"
 		>
 		</cdx-lookup>
+		<!-- eslint-enable vue/no-unused-refs -->
 		<template #label>
-			{{ $i18n( 'block-user-label' ).text() }}
+			{{ $i18n( 'block-target' ).text() }}
 		</template>
-		<template #description>
-			{{ $i18n( 'block-user-description' ).text() }}
-		</template>
+		<component
+			:is="customComponent"
+			v-for="customComponent in customComponents"
+			:key="customComponent.name"
+			:target-user="targetExists ? targetUser : null"
+		></component>
 	</cdx-field>
 </template>
 
 <script>
-const { defineComponent, ref, watch } = require( 'vue' );
+const {
+	defineComponent,
+	onMounted,
+	ref,
+	shallowRef,
+	watch,
+	DefineSetupFnComponent,
+	Ref
+} = require( 'vue' );
 const { CdxLookup, CdxField } = require( '@wikimedia/codex' );
 const { storeToRefs } = require( 'pinia' );
 const { cdxIconSearch } = require( '../icons.json' );
 const useBlockStore = require( '../stores/block.js' );
+const util = require( '../util.js' );
 const api = new mw.Api();
 
+/**
+ * User lookup component for Special:Block.
+ *
+ * @todo Abstract for general use in MediaWiki (T375220)
+ */
 module.exports = exports = defineComponent( {
 	name: 'UserLookup',
 	components: { CdxLookup, CdxField },
 	props: {
-		modelValue: { type: [ String, null ], required: true },
-		/**
-		 * Whether the form has been submitted yet. This is used to show
-		 * validation messages only after the form has been submitted.
-		 */
-		formSubmitted: {
-			type: Boolean,
-			default: false
-		}
+		modelValue: { type: [ String, null ], required: true }
 	},
 	emits: [
 		'update:modelValue'
 	],
 	setup( props ) {
-		const { targetUser } = storeToRefs( useBlockStore() );
+		const store = useBlockStore();
+		const { targetExists, targetUser } = storeToRefs( store );
+		/**
+		 * Custom components to be added to the bottom of the field.
+		 *
+		 * @type {Ref<DefineSetupFnComponent>}
+		 */
+		const customComponents = shallowRef( [] );
+		/**
+		 * A key to force the component to re-render.
+		 *
+		 * @type {Ref<number>}
+		 */
+		const refreshKey = ref( 0 );
+		/**
+		 * Codex Lookup component requires a v-modeled `selected` prop.
+		 * Until a selection is made, the value may be set to null.
+		 * We instead want to only update the targetUser for non-null values
+		 * (made either via selection, or the 'change' event).
+		 *
+		 * @type {Ref<string>}
+		 */
+		const selection = ref( props.modelValue || '' );
+		/**
+		 * This is the source of truth for what should be the target user,
+		 * but it should only change on 'change' or 'select' events,
+		 * otherwise we'd fire off API queries for the block log unnecessarily.
+		 *
+		 * @type {Ref<string>}
+		 */
+		const currentSearchTerm = ref( props.modelValue || '' );
+		/**
+		 * Menu items for the Lookup component.
+		 *
+		 * @type {Ref<Object[]>}
+		 */
+		const menuItems = ref( [] );
+		/**
+		 * Error status of the field.
+		 *
+		 * @type {Ref<string>}
+		 */
+		const status = ref( 'default' );
+		/**
+		 * Error messages for the field.
+		 *
+		 * @type {Ref<Object>}
+		 */
+		const messages = ref( {} );
+
+		let htmlInput;
 
 		// Set a flag to keep track of pending API requests, so we can abort if
 		// the target string changes
 		let pending = false;
 
-		// Codex Lookup component requires a v-modeled `selected` prop.
-		// Until a selection is made, the value may be set to null.
-		// We instead want to only update the targetUser for non-null values
-		// (made either via selection, or the 'change' event).
-		const selection = ref( props.modelValue || '' );
-		// This handles changes via selection, while onChange() handles changes via input.
-		watch( selection, ( newValue ) => {
-			if ( newValue !== null ) {
-				targetUser.value = newValue;
+		onMounted( () => {
+			// Get the input element.
+			htmlInput = document.getElementById( 'mw-bi-target' );
+
+			// Focus the input on mount if there's no initial value.
+			if ( !targetUser.value ) {
+				htmlInput.focus();
 			}
+
+			// Ensure error messages are displayed for missing users.
+			if ( !!targetUser.value && !store.targetExists ) {
+				validate();
+			}
+
+			// If loaded from bfcache, re-render the component to ensure the correct state.
+			window.addEventListener( 'pageshow', ( event ) => {
+				if ( event.persisted ) {
+					refreshKey.value += 1;
+				}
+			} );
+
+			/**
+			 * Hook for custom components to be added to the UserLookup component.
+			 *
+			 * @event codex.userlookup
+			 * @param {Ref<DefineSetupFnComponent[]>} customComponents
+			 * @private
+			 * @internal
+			 */
+			mw.hook( 'codex.userlookup' ).fire( customComponents );
 		} );
 
-		const currentSearchTerm = ref( props.modelValue || '' );
-		const menuItems = ref( [] );
-		const status = ref( 'default' );
-		const messages = ref( {} );
+		watch( targetUser, ( newValue ) => {
+			if ( newValue ) {
+				currentSearchTerm.value = newValue;
+			}
+		} );
 
 		/**
 		 * Get search results.
@@ -99,6 +187,7 @@ module.exports = exports = defineComponent( {
 		 * Handle lookup input.
 		 *
 		 * @param {string} value
+		 * @return {Promise}
 		 */
 		function onInput( value ) {
 			// Abort any existing request if one is still pending
@@ -113,10 +202,10 @@ module.exports = exports = defineComponent( {
 			// Do nothing if we have no input.
 			if ( !value ) {
 				menuItems.value = [];
-				return;
+				return Promise.resolve();
 			}
 
-			fetchResults( value )
+			return fetchResults( value )
 				.then( ( data ) => {
 					pending = false;
 
@@ -144,46 +233,113 @@ module.exports = exports = defineComponent( {
 		}
 
 		/**
-		 * Validate the input element.
+		 * Validate the target user and set the status and messages.
 		 *
-		 * @param {HTMLInputElement} el
+		 * @return {boolean} Whether the target user is valid.
 		 */
-		function validate( el ) {
-			if ( el.checkValidity() ) {
+		function validate() {
+			const inResults = menuItems.value.some( ( item ) => item.value === currentSearchTerm.value );
+			let error = null;
+
+			if ( !htmlInput.checkValidity() ) {
+				// Validation constraints on the HTMLInputElement failed.
+				error = htmlInput.validationMessage;
+			} else if ( !inResults && !mw.util.isIPAddress( currentSearchTerm.value, true ) ) {
+				// Not a valid username or IP.
+				error = mw.message( 'nosuchusershort', currentSearchTerm.value ).text();
+				targetExists.value = false;
+
+				// If there is a previously set targetUser then we need to clear all store data
+				// since we now have an invalid target in the UserLookup text field.
+				if ( targetUser.value ) {
+					store.resetForm( true );
+				}
+			} else {
+				targetExists.value = true;
+			}
+
+			if ( error ) {
+				status.value = 'error';
+				messages.value = { error };
+			} else {
 				status.value = 'default';
 				messages.value = {};
-			} else {
-				status.value = 'error';
-				messages.value = { error: el.validationMessage };
 			}
+
+			return !error;
 		}
 
 		/**
 		 * Handle lookup change.
-		 *
-		 * @param {Event} event
 		 */
-		function onChange( event ) {
-			validate( event.target );
-			targetUser.value = event.target.value;
+		function onChange() {
+			// Use the currentSearchTerm value instead of the event target value,
+			// since the event can be fired before the watcher updates the value.
+			setTarget( currentSearchTerm.value );
 		}
 
-		// Validate the input when the form is submitted.
-		// TODO: Remove once Codex supports native validations (T373872).
-		watch( () => props.formSubmitted, () => {
-			validate( document.querySelector( '[name="wpTarget"]' ) );
-		} );
+		/**
+		 * When the clear button is clicked.
+		 */
+		function onClear() {
+			store.resetForm( true );
+			htmlInput.focus();
+			status.value = 'default';
+			messages.value = {};
+		}
+
+		/**
+		 * Handle lookup selection.
+		 */
+		function onSelect() {
+			if ( selection.value !== null ) {
+				currentSearchTerm.value = selection.value;
+				setTarget( selection.value );
+			}
+		}
+
+		/**
+		 * Set the target user and trigger validation.
+		 *
+		 * @param {string} value
+		 */
+		function setTarget( value ) {
+			validate();
+
+			if ( mw.util.isIPAddress( value, true ) ) {
+				// Sanitize IP & IP ranges
+				targetUser.value = util.sanitizeRange( value );
+			} else {
+				targetUser.value = value;
+			}
+
+			onInput( value );
+		}
 
 		return {
+			targetExists,
+			targetUser,
 			menuItems,
 			onChange,
 			onInput,
+			onClear,
+			onSelect,
 			cdxIconSearch,
 			currentSearchTerm,
 			selection,
 			status,
-			messages
+			messages,
+			customComponents,
+			refreshKey
 		};
 	}
 } );
 </script>
+
+<style lang="less">
+.mw-block-conveniencelinks {
+	a {
+		font-size: 90%;
+	}
+}
+</style>

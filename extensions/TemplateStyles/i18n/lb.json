@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Robby",
+			"Volvox"
+		]
+	},
+	"templatestyles-missing-src": "D'Attribut <code>src</code> vun TemplateStyles däerf net eidel sinn.",
+	"templatestyles-invalid-src": "Ongültegen Titel fir d'Attribut <code>src</code> vun TemplateStyles.",
+	"templatestyles-invalid-wrapper": "Ongültege Wäert fir d'Attribut <code>wrapper</code> vun TemplateStyles.",
+	"templatestyles-bad-src-missing": "Säit [[:$1|$2]] huet keen Inhalt.",
+	"templatestyles-bad-src": "D'Säit [[:$1|$2]] muss fir TemplateStyles den Inhaltsmodell „{{int:content-model-sanitized-css}}“ hunn (den aktuelle Modell ass „$3“).",
+	"templatestyles-errorcomment": "Feeler beim Verschaffe vum Stylesheet [[:$1]] (Versioun $2):\n$3",
+	"templatestyles-size-exceeded": "De Stylesheet ass méi grouss wéi d'Maximalgréisst vu(n) $2.",
+	"content-model-sanitized-css": "Gebotzten CSS",
+	"templatestyles-stylesheet-error-category-desc": "Den TemplateStyles-Stylesheet huet e Feeler.",
+	"templatestyles-page-error-category": "Säite mat TemplateStyles-Feeler",
+	"templatestyles-page-error-category-desc": "Et gouf e Feeler beim Verschaffe vun engem <code><nowiki><templatestyles/></nowiki></code>-Tag op der Säit."
+}

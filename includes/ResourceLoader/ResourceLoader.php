@@ -23,14 +23,14 @@
 namespace MediaWiki\ResourceLoader;
 
 use Exception;
-use HttpStatus;
 use InvalidArgumentException;
 use Less_Environment;
 use Less_Parser;
 use LogicException;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\Config;
-use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\MWExceptionHandler;
+use MediaWiki\Exception\MWExceptionRenderer;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlJsCode;
@@ -44,9 +44,6 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\WikiMap\WikiMap;
-use MWExceptionHandler;
-use MWExceptionRenderer;
-use Net_URL2;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -55,7 +52,7 @@ use stdClass;
 use Throwable;
 use UnexpectedValueException;
 use Wikimedia\DependencyStore\DependencyStore;
-use Wikimedia\DependencyStore\KeyValueDependencyStore;
+use Wikimedia\Http\HttpStatus;
 use Wikimedia\Minify\CSSMin;
 use Wikimedia\Minify\IdentityMinifierState;
 use Wikimedia\Minify\IndexMap;
@@ -95,13 +92,9 @@ use Wikimedia\WrappedString;
 class ResourceLoader implements LoggerAwareInterface {
 	/** @var int */
 	public const CACHE_VERSION = 9;
-	/** @var string JavaScript / CSS pragma to disable minification. * */
+	/** @var string Pragma to disable minification in JavaScript or CSS. */
 	public const FILTER_NOMIN = '/*@nomin*/';
 
-	/** @var string */
-	private const RL_DEP_STORE_PREFIX = 'ResourceLoaderModule';
-	/** @var int How long to preserve indirect dependency metadata in our backend store. */
-	private const RL_MODULE_DEP_TTL = BagOStuff::TTL_YEAR;
 	/** @var int */
 	private const MAXAGE_RECOVER = 60;
 
@@ -142,8 +135,6 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * Exposed for testing.
 	 */
 	protected $extraHeaders = [];
-	/** @var array Map of (module-variant => buffered DependencyStore updates) */
-	private $depStoreUpdateBuffer = [];
 	/**
 	 * @var array Styles that are skin-specific and supplement or replace the
 	 * default skinStyles of a FileModule. See $wgResourceModuleSkinStyles.
@@ -198,7 +189,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			new MessageBlobStore( $this, $this->logger, $services->getMainWANObjectCache() )
 		);
 
-		$tracker = $tracker ?: new KeyValueDependencyStore( new HashBagOStuff() );
+		$tracker = $tracker ?: new DependencyStore( new HashBagOStuff() );
 		$this->setDependencyStore( $tracker );
 	}
 
@@ -213,7 +204,7 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @since 1.26
 	 * @param LoggerInterface $logger
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -247,6 +238,15 @@ class ResourceLoader implements LoggerAwareInterface {
 	 */
 	public function setDependencyStore( DependencyStore $tracker ) {
 		$this->depStore = $tracker;
+	}
+
+	/**
+	 * @internal For use by Module.php
+	 * @since 1.44
+	 * @return DependencyStore
+	 */
+	public function getDependencyStore(): DependencyStore {
+		return $this->depStore;
 	}
 
 	/**
@@ -409,7 +409,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			$info = $this->moduleInfos[$name];
 			if ( isset( $info['factory'] ) ) {
 				/** @var Module $object */
-				$object = call_user_func( $info['factory'], $info );
+				$object = $info['factory']( $info );
 			} else {
 				$class = $info['class'] ?? FileModule::class;
 				/** @var Module $object */
@@ -419,10 +419,6 @@ class ResourceLoader implements LoggerAwareInterface {
 			$object->setLogger( $this->logger );
 			$object->setHookContainer( $this->hookContainer );
 			$object->setName( $name );
-			$object->setDependencyAccessCallbacks(
-				[ $this, 'loadModuleDependenciesInternal' ],
-				[ $this, 'saveModuleDependenciesInternal' ]
-			);
 			$object->setSkinStylesOverride( $this->moduleSkinStyles );
 			$this->modules[$name] = $object;
 		}
@@ -444,7 +440,6 @@ class ResourceLoader implements LoggerAwareInterface {
 			$entitiesByModule[$moduleName] = "$moduleName|$vary";
 		}
 		$depsByEntity = $this->depStore->retrieveMulti(
-			self::RL_DEP_STORE_PREFIX,
 			$entitiesByModule
 		);
 		// Inject the indirect file dependencies for all the modules
@@ -453,7 +448,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			if ( $module ) {
 				$entity = $entitiesByModule[$moduleName];
 				$deps = $depsByEntity[$entity];
-				$paths = Module::expandRelativePaths( $deps['paths'] );
+				$paths = $deps['paths'];
 				$module->setFileDependencies( $context, $paths );
 			}
 		}
@@ -474,77 +469,6 @@ class ResourceLoader implements LoggerAwareInterface {
 		$blobs = $store->getBlobs( $modulesWithMessages, $lang );
 		foreach ( $blobs as $moduleName => $blob ) {
 			$modulesWithMessages[$moduleName]->setMessageBlob( $blob, $lang );
-		}
-	}
-
-	/**
-	 * @internal Exposed for letting getModule() pass the callable to DependencyStore
-	 * @param string $moduleName
-	 * @param string $variant Language/skin variant
-	 * @return string[] List of absolute file paths
-	 */
-	public function loadModuleDependenciesInternal( $moduleName, $variant ) {
-		$deps = $this->depStore->retrieve( self::RL_DEP_STORE_PREFIX, "$moduleName|$variant" );
-
-		return Module::expandRelativePaths( $deps['paths'] );
-	}
-
-	/**
-	 * @internal Exposed for letting getModule() pass the callable to DependencyStore
-	 * @param string $moduleName
-	 * @param string $variant Language/skin variant
-	 * @param string[] $paths List of relative paths referenced during computation
-	 * @param string[] $priorPaths List of relative paths tracked in the dependency store
-	 */
-	public function saveModuleDependenciesInternal( $moduleName, $variant, $paths, $priorPaths ) {
-		$hasPendingUpdate = (bool)$this->depStoreUpdateBuffer;
-		$entity = "$moduleName|$variant";
-
-		if ( array_diff( $paths, $priorPaths ) || array_diff( $priorPaths, $paths ) ) {
-			// Dependency store needs to be updated with the new path list
-			if ( $paths ) {
-				$deps = $this->depStore->newEntityDependencies( $paths, time() );
-				$this->depStoreUpdateBuffer[$entity] = $deps;
-			} else {
-				$this->depStoreUpdateBuffer[$entity] = null;
-			}
-		}
-
-		// If paths were unchanged, leave the dependency store unchanged also.
-		// The entry will eventually expire, after which we will briefly issue an incomplete
-		// version hash for a 5-min startup window, the module then recomputes and rediscovers
-		// the paths and arrive at the same module version hash once again. It will churn
-		// part of the browser cache once, for clients connecting during that window.
-
-		if ( !$hasPendingUpdate ) {
-			DeferredUpdates::addCallableUpdate( function () {
-				$updatesByEntity = $this->depStoreUpdateBuffer;
-				$this->depStoreUpdateBuffer = [];
-				$cache = MediaWikiServices::getInstance()
-					->getObjectCacheFactory()->getLocalClusterInstance();
-
-				$scopeLocks = [];
-				$depsByEntity = [];
-				$entitiesUnreg = [];
-				foreach ( $updatesByEntity as $entity => $update ) {
-					$lockKey = $cache->makeKey( 'rl-deps', $entity );
-					$scopeLocks[$entity] = $cache->getScopedLock( $lockKey, 0 );
-					if ( !$scopeLocks[$entity] ) {
-						// avoid duplicate write request slams (T124649)
-						// the lock must be specific to the current wiki (T247028)
-						continue;
-					}
-					if ( $update === null ) {
-						$entitiesUnreg[] = $entity;
-					} else {
-						$depsByEntity[$entity] = $update;
-					}
-				}
-
-				$ttl = self::RL_MODULE_DEP_TTL;
-				$this->depStore->storeMulti( self::RL_DEP_STORE_PREFIX, $depsByEntity, $ttl );
-				$this->depStore->remove( self::RL_DEP_STORE_PREFIX, $entitiesUnreg );
-			} );
 		}
 	}
 
@@ -828,7 +752,7 @@ class ResourceLoader implements LoggerAwareInterface {
 		// error list if we're in debug mode.
 		if ( $context->getDebug() ) {
 			$warnings = ob_get_contents();
-			if ( strlen( $warnings ) ) {
+			if ( $warnings !== false && $warnings !== '' ) {
 				$this->errors[] = $warnings;
 			}
 		}
@@ -865,9 +789,9 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @return ScopedCallback
 	 */
 	protected function measureResponseTime() {
-		$statStart = $_SERVER['REQUEST_TIME_FLOAT'];
-		return new ScopedCallback( function () use ( $statStart ) {
-			$statTiming = microtime( true ) - $statStart;
+		$requestStart = $_SERVER['REQUEST_TIME_FLOAT'];
+		return new ScopedCallback( function () use ( $requestStart ) {
+			$statTiming = microtime( true ) - $requestStart;
 
 			$this->statsFactory->getTiming( 'resourceloader_response_time_seconds' )
 				->copyToStatsdAt( 'resourceloader.responseTime' )
@@ -1188,15 +1112,18 @@ MESSAGE;
 			];
 		}
 
+		$replayMinifier = new ReplayMinifierState;
+		$this->addOneModuleResponse( $context, $replayMinifier, $name, $module, $this->extraHeaders );
+
 		$minifier = new IdentityMinifierState;
-		$this->addOneModuleResponse( $context, $minifier, $name, $module, $this->extraHeaders );
+		$replayMinifier->replayOn( $minifier );
 		$plainContent = $minifier->getMinifiedOutput();
 		if ( $context->getDebug() ) {
 			return [ $plainContent, null ];
 		}
 
 		$isHit = true;
-		$callback = function () use ( $context, $name, $module, &$isHit ) {
+		$callback = function () use ( $context, $replayMinifier, &$isHit ) {
 			$isHit = false;
 			if ( $context->isSourceMap() ) {
 				$minifier = ( new JavaScriptMapperState )
@@ -1207,9 +1134,7 @@ MESSAGE;
 			} else {
 				$minifier = new JavaScriptMinifierState;
 			}
-			// We only need to add one set of headers, and we did that for the identity response
-			$discardedHeaders = null;
-			$this->addOneModuleResponse( $context, $minifier, $name, $module, $discardedHeaders );
+			$replayMinifier->replayOn( $minifier );
 			if ( $context->isSourceMap() ) {
 				$sourceMap = $minifier->getRawSourceMap();
 				$generated = $minifier->getMinifiedOutput();
@@ -1219,6 +1144,17 @@ MESSAGE;
 				return [ $minifier->getMinifiedOutput(), null ];
 			}
 		};
+
+		// The below is based on ResourceLoader::filter. Keep together to ease review/maintenance:
+		// * Handle FILTER_NOMIN, skip minify entirely if set.
+		// * Handle $shouldCache, skip cache and minify directly if set.
+		// * Use minify cache, minify on-demand and populate cache as needed.
+		// * Emit resourceloader_cache_total stats.
+
+		if ( strpos( $plainContent, self::FILTER_NOMIN ) !== false ) {
+			// FILTER_NOMIN should work for JavaScript, too. T373990
+			return [ $plainContent, null ];
+		}
 
 		if ( $shouldCache ) {
 			[ $response, $offsetArray ] = $this->srvCache->getWithSetCallback(
@@ -1637,7 +1573,7 @@ MESSAGE;
 			. ');';
 	}
 
-	private static function isEmptyObject( stdClass $obj ) {
+	private static function isEmptyObject( stdClass $obj ): bool {
 		foreach ( $obj as $value ) {
 			return false;
 		}
@@ -1654,8 +1590,6 @@ MESSAGE;
 	 * - new HtmlJsCode( '{}' )
 	 * - new stdClass()
 	 * - (object)[]
-	 *
-	 * @param array &$array
 	 */
 	private static function trimArray( array &$array ): void {
 		$i = count( $array );
@@ -1769,7 +1703,7 @@ MESSAGE;
 	public static function makeInlineCodeWithModule( $modules, $script ) {
 		// Adds an array to lazy-created RLQ
 		return '(RLQ=window.RLQ||[]).push(['
-			. self::encodeJsonForScript( $modules ) . ','
+			. json_encode( $modules ) . ','
 			. 'function(){' . trim( $script ) . '}'
 			. ']);';
 	}
@@ -1800,6 +1734,10 @@ MESSAGE;
 	 * @param array $configuration List of configuration values keyed by variable name
 	 * @return string JavaScript code
 	 * @throws LogicException
+	 *
+	 * @deprecated since 1.44, Consider using package files instead or
+	 * you can return mw.config.set() combined with RL\Context::encodeJson, if available.
+	 * If not, use FormatJson::encode.
 	 */
 	public static function makeConfigSetScript( array $configuration ) {
 		$json = self::encodeJsonForScript( $configuration );
@@ -2031,7 +1969,9 @@ MESSAGE;
 	 */
 	public static function isValidModuleName( $moduleName ) {
 		$len = strlen( $moduleName );
-		return $len <= 255 && strcspn( $moduleName, '!,|', 0, $len ) === $len;
+		return ( $len <= 255
+			&& strcspn( $moduleName, '!,|', 0, $len ) === $len )
+			&& ( !str_starts_with( $moduleName, "./" ) && !str_starts_with( $moduleName, "../" ) );
 	}
 
 	/**
@@ -2057,7 +1997,7 @@ MESSAGE;
 		$parser = new Less_Parser;
 		$parser->ModifyVars( $vars );
 		$parser->SetOption( 'relativeUrls', false );
-		$parser->SetOption( 'math', 'always' );
+		$parser->SetOption( 'math', 'parens-division' );
 
 		// SetImportDirs expects an array like [ 'path1' => '', 'path2' => '' ]
 		$formattedImportDirs = array_fill_keys( $importDirs, '' );
@@ -2087,7 +2027,8 @@ MESSAGE;
 				if ( str_starts_with( $path, $importPath ) ) {
 					$restOfPath = substr( $path, strlen( $importPath ) );
 					if ( is_callable( $substPath ) ) {
-						$resolvedPath = call_user_func( $substPath, $restOfPath );
+						// @phan-suppress-next-line PhanUseReturnValueOfNever
+						$resolvedPath = $substPath( $restOfPath );
 					} else {
 						$filePath = $substPath . $restOfPath;
 
@@ -2117,34 +2058,6 @@ MESSAGE;
 	}
 
 	/**
-	 * Resolve a possibly relative URL against a base URL.
-	 *
-	 * The base URL must have a server and should have a protocol.
-	 * A protocol-relative base expands to HTTPS.
-	 *
-	 * This is a standalone version of MediaWiki's UrlUtils::expand (T32956).
-	 *
-	 * @internal For use by core ResourceLoader classes only
-	 * @param string $base
-	 * @param string $url
-	 * @return string URL
-	 */
-	public function expandUrl( string $base, string $url ): string {
-		// Net_URL2::resolve() doesn't allow protocol-relative URLs, but we do.
-		$isProtoRelative = strpos( $base, '//' ) === 0;
-		if ( $isProtoRelative ) {
-			$base = "https:$base";
-		}
-		// Net_URL2::resolve() takes care of throwing if $base doesn't have a server.
-		$baseUrl = new Net_URL2( $base );
-		$ret = $baseUrl->resolve( $url );
-		if ( $isProtoRelative ) {
-			$ret->setScheme( false );
-		}
-		return $ret->getURL();
-	}
-
-	/**
 	 * Run JavaScript or CSS data through a filter, caching the filtered result for future calls.
 	 *
 	 * Available filters are:
@@ -2171,8 +2084,8 @@ MESSAGE;
 		}
 
 		$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
-		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()
-			->getLocalServerInstance( CACHE_ANYTHING );
+		// Same as ResourceLoader->srvCache
+		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 
 		$key = $cache->makeGlobalKey(
 			'resourceloader-filter',

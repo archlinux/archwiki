@@ -29,6 +29,10 @@ trait GadgetTestTrait {
 		return $repo->newFromDefinition( $line, 'misc' );
 	}
 
+	/**
+	 * @param Gadget $g
+	 * @return GadgetResourceLoaderModule
+	 */
 	public function makeGadgetModule( Gadget $g ) {
 		$module = TestingAccessWrapper::newFromObject(
 			new GadgetResourceLoaderModule( [ 'id' => null ] )

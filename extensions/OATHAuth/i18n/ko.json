@@ -72,7 +72,6 @@
 	"logentry-oath-disable-other": "$1님이 $3님의 2요소 인증을 {{GENDER:$2|비활성화했습니다}}",
 	"logentry-oath-verify": "$1님이 $3님의 2요소 인증이 활성화되어 있는지 {{GENDER:$2|확인했습니다}}",
 	"oathauth-ui-no-module": "활성화된 항목 없음",
-	"oathauth-module-invalid": "사용자가 등록한 OATHAuth 모듈이 유효하지 않습니다.",
 	"oathauth-module-totp-label": "TOTP (1회용 토큰)",
 	"oathauth-ui-manage": "관리",
 	"oathmanage": "2요소 인증 관리",

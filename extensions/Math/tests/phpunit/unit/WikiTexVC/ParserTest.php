@@ -18,7 +18,7 @@ class ParserTest extends MediaWikiUnitTestCase {
 		$this->parser = new Parser();
 	}
 
-	public function provideTestCases() {
+	public static function provideTestCases() {
 		yield [ '' ];
 		yield [ 'a' ];
 		yield [ 'a^2' ];

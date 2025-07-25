@@ -268,16 +268,6 @@ Target.prototype.onDialogApply = function ( templateData ) {
 			}
 		} );
 	}
-
-	// TODO: Remove when not needed any more, see T267926
-	// eslint-disable-next-line no-jquery/no-global-selector
-	if ( !$( 'input[name="TemplateDataGeneratorUsed"]' ).length ) {
-		$( '<input>' ).attr( {
-			type: 'hidden',
-			value: 1,
-			name: 'TemplateDataGeneratorUsed'
-		} ).insertAfter( '#wpTextbox1' );
-	}
 };
 
 module.exports = Target;

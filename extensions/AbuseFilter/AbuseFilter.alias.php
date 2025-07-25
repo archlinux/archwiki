@@ -45,6 +45,13 @@ $specialPageAliases['av'] = [
 	'AbuseFilter' => [ 'Ихтияразда_мугъ_чІван_бегьуоарел_пишаби_гьабиял_рацІцІин' ],
 ];
 
+/** Azerbaijani (Azərbaycanca) */
+$specialPageAliases['az'] = [
+	'AbuseLog' => [ 'DəyişiklikSüzgəciJurnalı' ],
+	'AbuseFilter' => [ 'DəyişiklikSüzgəci' ],
+	'BlockedExternalDomains' => [ 'BloklanmışXariciDomenlər' ],
+];
+
 /** Bashkir (башҡортса) */
 $specialPageAliases['ba'] = [
 	'AbuseLog' => [ 'Насарға_ҡулланыуҙар_журналы' ],
@@ -278,6 +285,7 @@ $specialPageAliases['ja'] = [
 $specialPageAliases['ko'] = [
 	'AbuseLog' => [ '편집필터기록', '부정행위기록' ],
 	'AbuseFilter' => [ '편집필터', '부정행위필터' ],
+	'BlockedExternalDomains' => [ '차단된외부도메인' ],
 ];
 
 /** Colognian (Ripoarisch) */

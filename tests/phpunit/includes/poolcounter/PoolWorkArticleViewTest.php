@@ -3,6 +3,7 @@
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\PoolCounter\PoolWorkArticleView;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -51,8 +52,12 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 
 		$revisionRenderer = $this->getServiceContainer()->getRevisionRenderer();
 
+		$pool = $this->getServiceContainer()->getPoolCounterFactory()->create(
+			'ArticleView',
+			'test:' . $rev->getId()
+		);
 		return new PoolWorkArticleView(
-			'test:' . $rev->getId(),
+			$pool,
 			$rev,
 			$options,
 			$revisionRenderer,
@@ -78,12 +83,12 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 		$work = $this->newPoolWorkArticleView( $page, $rev1, $options );
 		/** @var Status $status */
 		$status = $work->execute();
-		$this->assertStringContainsString( 'First', $status->getValue()->getText() );
+		$this->assertStringContainsString( 'First', $status->getValue()->getRawText() );
 
 		$work = $this->newPoolWorkArticleView( $page, $rev2, $options );
 		/** @var Status $status */
 		$status = $work->execute();
-		$this->assertStringContainsString( 'Second', $status->getValue()->getText() );
+		$this->assertStringContainsString( 'Second', $status->getValue()->getRawText() );
 	}
 
 	public function testDoWorkParserCache() {
@@ -116,7 +121,7 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 		/** @var Status $status */
 		$status = $work->execute();
 
-		$text = $status->getValue()->getText();
+		$text = $status->getValue()->getRawText();
 		$this->assertStringContainsString( 'YES!', $text );
 		$this->assertStringNotContainsString( 'NOPE', $text );
 	}
@@ -174,7 +179,7 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 		$expected = strval( $callback( $rev ) );
 		$output = $status->getValue();
 
-		$this->assertStringContainsString( $expected, $output->getText() );
+		$this->assertStringContainsString( $expected, $output->getRawText() );
 	}
 
 	public function testDoWorkDeletedContent() {

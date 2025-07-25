@@ -2,21 +2,21 @@
 
 namespace MediaWiki\Watchlist;
 
-use LogPage;
 use MediaWiki\Api\ApiUsageException;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use RecentChange;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
@@ -210,7 +210,7 @@ class WatchedItemQueryService {
 			'must not be provided, use $startFrom instead'
 		);
 		Assert::parameter(
-			!isset( $startFrom ) || ( is_array( $startFrom ) && count( $startFrom ) === 2 ),
+			$startFrom === null || ( is_array( $startFrom ) && count( $startFrom ) === 2 ),
 			'$startFrom',
 			'must be a two-element array'
 		);
@@ -369,7 +369,7 @@ class WatchedItemQueryService {
 		return $watchedItems;
 	}
 
-	private function getRecentChangeFieldsFromRow( \stdClass $row ) {
+	private function getRecentChangeFieldsFromRow( \stdClass $row ): array {
 		return array_filter(
 			get_object_vars( $row ),
 			static function ( $key ) {
@@ -379,7 +379,7 @@ class WatchedItemQueryService {
 		);
 	}
 
-	private function getWatchedItemsWithRCInfoQueryTables( array $options ) {
+	private function getWatchedItemsWithRCInfoQueryTables( array $options ): array {
 		$tables = [ 'recentchanges', 'watchlist' ];
 
 		if ( $this->expiryEnabled ) {
@@ -403,7 +403,7 @@ class WatchedItemQueryService {
 		return $tables;
 	}
 
-	private function getWatchedItemsWithRCInfoQueryFields( array $options ) {
+	private function getWatchedItemsWithRCInfoQueryFields( array $options ): array {
 		$fields = [
 			'rc_id',
 			'rc_namespace',
@@ -466,7 +466,7 @@ class WatchedItemQueryService {
 		IReadableDatabase $db,
 		User $user,
 		array $options
-	) {
+	): array {
 		$watchlistOwnerId = $this->getWatchlistOwnerId( $user, $options );
 		$conds = [ 'wl_user' => $watchlistOwnerId ];
 
@@ -511,7 +511,7 @@ class WatchedItemQueryService {
 		return $conds;
 	}
 
-	private function getWatchlistOwnerId( UserIdentity $user, array $options ) {
+	private function getWatchlistOwnerId( UserIdentity $user, array $options ): int {
 		if ( array_key_exists( 'watchlistOwner', $options ) ) {
 			/** @var UserIdentity $watchlistOwner */
 			$watchlistOwner = $options['watchlistOwner'];
@@ -530,7 +530,7 @@ class WatchedItemQueryService {
 		IReadableDatabase $dbr,
 		User $user,
 		array $options
-	) {
+	): array {
 		$conds = [];
 
 		if ( in_array( self::FILTER_MINOR, $options['filters'] ) ) {
@@ -588,7 +588,7 @@ class WatchedItemQueryService {
 		return $conds;
 	}
 
-	private function getStartEndConds( IReadableDatabase $db, array $options ) {
+	private function getStartEndConds( IReadableDatabase $db, array $options ): array {
 		if ( !isset( $options['start'] ) && !isset( $options['end'] ) ) {
 			return [];
 		}
@@ -606,7 +606,7 @@ class WatchedItemQueryService {
 		return $conds;
 	}
 
-	private function getUserRelatedConds( IReadableDatabase $db, Authority $user, array $options ) {
+	private function getUserRelatedConds( IReadableDatabase $db, Authority $user, array $options ): array {
 		if ( !array_key_exists( 'onlyByUser', $options ) && !array_key_exists( 'notByUser', $options ) ) {
 			return [];
 		}
@@ -633,7 +633,7 @@ class WatchedItemQueryService {
 		return $conds;
 	}
 
-	private function getExtraDeletedPageLogEntryRelatedCond( IReadableDatabase $db, Authority $user ) {
+	private function getExtraDeletedPageLogEntryRelatedCond( IReadableDatabase $db, Authority $user ): string {
 		// LogPage::DELETED_ACTION hides the affected page, too. So hide those
 		// entirely from the watchlist, or someone could guess the title.
 		$bitmask = 0;
@@ -651,7 +651,7 @@ class WatchedItemQueryService {
 		return '';
 	}
 
-	private function getStartFromConds( IReadableDatabase $db, array $options, array $startFrom ) {
+	private function getStartFromConds( IReadableDatabase $db, array $options, array $startFrom ): string {
 		$op = $options['dir'] === self::DIR_OLDER ? '<=' : '>=';
 		[ $rcTimestamp, $rcId ] = $startFrom;
 		$rcTimestamp = $db->timestamp( $rcTimestamp );
@@ -708,7 +708,7 @@ class WatchedItemQueryService {
 		] );
 	}
 
-	private function getWatchedItemsWithRCInfoQueryDbOptions( array $options ) {
+	private function getWatchedItemsWithRCInfoQueryDbOptions( array $options ): array {
 		$dbOptions = [];
 
 		if ( array_key_exists( 'dir', $options ) ) {
@@ -740,7 +740,7 @@ class WatchedItemQueryService {
 		}
 	}
 
-	private function getWatchedItemsWithRCInfoQueryJoinConds( array $options ) {
+	private function getWatchedItemsWithRCInfoQueryJoinConds( array $options ): array {
 		$joinConds = [
 			'watchlist' => [ 'JOIN',
 				[

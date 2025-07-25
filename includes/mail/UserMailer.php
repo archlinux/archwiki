@@ -441,15 +441,21 @@ class UserMailer {
 	 * @param string $string Error message
 	 */
 	private static function errorHandler( $code, $string ) {
-		self::$mErrorString = preg_replace( '/^mail\(\)(\s*\[.*?\])?: /', '', $string );
+		if ( self::$mErrorString !== '' ) {
+			self::$mErrorString .= "\n";
+		}
+		self::$mErrorString .= preg_replace( '/^mail\(\)(\s*\[.*?\])?: /', '', $string );
 	}
 
 	/**
 	 * Strips bad characters from a header value to prevent PHP mail header injection attacks
 	 * @param string $val String to be sanitized
 	 * @return string
+	 * @deprecated in 1.44. No replacement is provided as this
+	 * 	function is unused per codesearch.
 	 */
 	public static function sanitizeHeaderValue( $val ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		return strtr( $val, [ "\r" => '', "\n" => '' ] );
 	}
 

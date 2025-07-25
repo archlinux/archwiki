@@ -8,6 +8,7 @@
 	"cdx-dialog-close-button-label": "Schließen",
 	"cdx-label-optional-flag": "(optional)",
 	"cdx-message-dismiss-button-label": "Schließen",
+	"cdx-popover-close-button-label": "Schließen",
 	"cdx-search-input-search-button-label": "Suchen",
 	"cdx-table-select-all-label": "Alle Zeilen auswählen",
 	"cdx-table-select-row-label": "Zeile $1 von $2 auswählen",
@@ -24,5 +25,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Ergebnisse $1–$2 von vielen werden angezeigt",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 von vielen",
 	"cdx-table-pagination-status-message-indeterminate-final": "Es {{PLURAL:$1|wird das letzte Ergebniss|werden die letzten $1 Ergebnisse}} angezeigt.",
-	"cdx-table-pagination-status-message-pending": "Ergebnisse werden geladen …"
+	"cdx-table-pagination-status-message-pending": "Ergebnisse werden geladen …",
+	"cdx-table-no-data-message": "Es sind keine Daten verfügbar."
 }

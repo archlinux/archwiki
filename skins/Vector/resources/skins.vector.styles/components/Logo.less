@@ -5,16 +5,6 @@
 	height: 100%;
 	// Center vertically.
 	align-items: center;
-	// Hamburger menu icon with padding (22px + 12px = 46px) + right margin (12px) + logo (222px @ 16) + space between
-	// logo and searchbox (28px) = 296px which equals the sum of widths of sidebar elements (i.e. TOC) when toggled.
-	// 226px @ 16 provides correct spacing between the right edge of logo container + left edge of searchbox input.
-	min-width: 13.875em; // 222px @ 16
-
-	.vector-feature-main-menu-pinned-disabled & {
-		// The logo is 40px from the page container.
-		// Main menu button width (20px) + 20px = 40px
-		margin-left: 20px;
-	}
 }
 
 .mw-logo-icon {
@@ -22,9 +12,15 @@
 	// This will be ignored in flexbox browsers.
 	float: left;
 	margin-right: 10px;
-	@size-mw-logo-icon: unit( 50 / @font-size-browser, em );
+	// Hide mobile icon at lower resolutions and defer to wordmark
+	display: none;
+	@size-mw-logo-icon: unit( ( 50 / @font-size-browser ), em );
 	width: @size-mw-logo-icon;
 	height: @size-mw-logo-icon;
+
+	@media ( min-width: @min-width-breakpoint-tablet ) {
+		display: block;
+	}
 }
 
 .mw-logo-container {

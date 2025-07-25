@@ -19,7 +19,13 @@
  * @file
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
@@ -27,10 +33,17 @@ use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\CategoryPage;
+use MediaWiki\Page\ImagePage;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MessageLocalizer;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 
 /**
@@ -219,7 +232,9 @@ abstract class Action implements MessageLocalizer {
 	 * Parameters are the same as wfMessage()
 	 *
 	 * @param string|string[]|MessageSpecifier $key
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 */
 	final public function msg( $key, ...$params ) {
@@ -349,7 +364,7 @@ abstract class Action implements MessageLocalizer {
 		}
 
 		// This should be checked at the end so that the user won't think the
-		// error is only temporary when he also don't have the rights to execute
+		// error is only temporary when they also don't have the rights to execute
 		// this action
 		$readOnlyMode = MediaWikiServices::getInstance()->getReadOnlyMode();
 		if ( $this->requiresWrite() && $readOnlyMode->isReadOnly() ) {
@@ -505,3 +520,6 @@ abstract class Action implements MessageLocalizer {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( Action::class, 'Action' );

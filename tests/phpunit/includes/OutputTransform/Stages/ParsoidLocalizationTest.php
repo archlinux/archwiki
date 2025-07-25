@@ -5,12 +5,18 @@ namespace MediaWiki\OutputTransform\Stages;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
+use MediaWiki\Parser\Parsoid\ParsoidParser;
+use MediaWiki\Title\TitleFactory;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
+use Wikimedia\Message\MessageValue;
+use Wikimedia\Message\ParamType;
+use Wikimedia\Message\ScalarParam;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\ParserTests\TestUtils;
 use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\WTUtils;
 
 /**
@@ -29,7 +35,8 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 	public function createStage(): ParsoidLocalization {
 		return new ParsoidLocalization(
 			new ServiceOptions( [] ),
-			new NullLogger()
+			new NullLogger(),
+			new TitleFactory()
 		);
 	}
 
@@ -44,6 +51,7 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 		$loc = $this->createStage();
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle( new PageBundle( $input ) );
 		$po->setLanguage( new Bcp47CodeValue( $pagelang ) );
+		$po->setExtensionData( ParsoidParser::PARSOID_TITLE_KEY, 'Test_page' );
 		$opts = [ 'isParsoidContent' => true ];
 		$transf = $loc->transform( $po, null, $opts );
 		$res = $transf->getContentHolderText();
@@ -57,13 +65,13 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 		// one of the messages we use resolves a link
 		$this->overrideConfigValue( MainConfigNames::ArticlePath, '/wiki/$1' );
 		$loc = $this->createStage();
-		$doc = ContentUtils::createDocument();
-		$p = $doc->createElement( 'p' );
-		$doc->body->appendChild( $p );
+		$doc = ContentUtils::createAndLoadDocument( '<p>' );
+		$p = DOMCompat::querySelector( $doc, 'p' );
 		$p->appendChild( WTUtils::createInterfaceI18nFragment( $doc, $key, $params ) );
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
 			new PageBundle( ContentUtils::ppToXML( $doc ) ) );
 		$po->setLanguage( new Bcp47CodeValue( 'en' ) );
+		$po->setExtensionData( ParsoidParser::PARSOID_TITLE_KEY, 'Test_page' );
 		$opts = [ 'isParsoidContent' => true ];
 		$transf = $loc->transform( $po, null, $opts );
 		$res = $transf->getContentHolderText();
@@ -75,14 +83,14 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testTransformGeneratedAttrs( string $key, array $params, string $expected, string $message ) {
 		$loc = $this->createStage();
-		$doc = ContentUtils::createDocument();
-		$a = $doc->createElement( 'a' );
-		$doc->body->appendChild( $a );
+		$doc = ContentUtils::createAndLoadDocument( '<a>' );
+		$a = DOMCompat::querySelector( $doc, 'a' );
 		WTUtils::addInterfaceI18nAttribute( $a, 'title', $key, $params );
 
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
 			new PageBundle( ContentUtils::ppToXML( $doc ) ) );
 		$po->setLanguage( new Bcp47CodeValue( 'fr' ) );
+		$po->setExtensionData( ParsoidParser::PARSOID_TITLE_KEY, 'Test_page' );
 		$opts = [ 'isParsoidContent' => true ];
 		$transf = $loc->transform( $po, null, $opts );
 		$res = $transf->getContentHolderText();
@@ -136,11 +144,29 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 				'Span with <b> (doesn\'t get escaped)'
 			],
 			[
+				'testparam',
+				[ new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, 'hello' ) ] ) ) ] ) ],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testparam","params":{"0":{"key":"testparam","params":{"0":{"text":{"key":"testparam","params":{"0":{"text":"hello","_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"array"}}}\'>english english english hello</span></p>',
+				'Span with nested message'
+			],
+			[
 				'testblock',
 				[],
 				// Observe that we're not generating HTML conforming to content types in this specific case
 				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testblock","params":[]}}\'><p>english </p><div>stuff</div></span></p>',
 				'Message with block content in a span'
+			],
+			[
+				'testparam',
+				[ new MessageValue( 'testlink', [] ) ],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testparam","params":{"0":{"key":"testlink","params":[],"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"array"}}}\'>english english <a href="/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a></span></p>',
+				'span with link in the parameter'
+			],
+			[
+				'testpagename',
+				[],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testpagename","params":[]}}\'>Test page</span></p>',
+				'{{PAGENAME}} should resolve'
 			]
 		];
 	}
@@ -170,6 +196,12 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 				[],
 				'<a typeof="mw:LocalizedAttrs" title="english stuff" data-mw-i18n=\'{"title":{"lang":"x-user","key":"testblock","params":[]}}\'></a>',
 				'Attr with block content'
+			],
+			[
+				'testparam',
+				[ new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, 'hello' ) ] ) ) ] ) ],
+				'<a typeof="mw:LocalizedAttrs" title="english english english hello" data-mw-i18n=\'{"title":{"lang":"x-user","key":"testparam","params":{"0":{"key":"testparam","params":{"0":{"text":{"key":"testparam","params":{"0":{"text":"hello","_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"array"}}}\'></a>',
+				'Attr with nested message'
 			]
 		];
 	}

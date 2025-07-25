@@ -426,6 +426,7 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 		if ( !$status->isOK() ) {
 			$this->error( "Move {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()} failed:" );
 			$this->error( $status );
+			return false;
 		}
 		$this->output( "Renamed {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()}\n" );
 
@@ -615,6 +616,8 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 						->limit( $batchSize )
 						->caller( __METHOD__ )->fetchResultSet();
 					$cont = [];
+
+					$this->beginTransactionRound( __METHOD__ );
 					foreach ( $res as $row ) {
 						$cont = [];
 						foreach ( $contFields as $field ) {
@@ -633,12 +636,12 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 							$errors++;
 						}
 					}
+					$this->commitTransactionRound( __METHOD__ );
 
 					if ( $this->run ) {
 						// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
 						$r = $cont ? json_encode( $row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) : '<end>';
 						$this->output( "... $table: $count renames, $errors errors at $r\n" );
-						$this->waitForReplication();
 					}
 				} while ( $cont );
 			}

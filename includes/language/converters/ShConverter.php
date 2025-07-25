@@ -18,6 +18,9 @@
  * @file
  */
 
+use MediaWiki\Language\LanguageConverter;
+use MediaWiki\Language\ReplacementArray;
+
 /**
  * Converts Serbo-Croatian from Latin script to Cyrillic script
  *
@@ -26,6 +29,13 @@
 class ShConverter extends LanguageConverter {
 
 	private const TO_CYRILLIC = [
+		'konjug' => 'конјуг', // T385768
+		'konjun' => 'конјун', // T385768
+		'Konjug' => 'Конјуг', // T385768
+		'Konjun' => 'Конјун', // T385768
+		'wiki' => 'вики', // T385826
+		'Wiki' => 'Вики', // T385826
+
 		'dž' => 'џ',
 		'lj' => 'љ',
 		'nj' => 'њ',

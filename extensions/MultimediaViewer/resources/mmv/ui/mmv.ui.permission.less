@@ -1,6 +1,5 @@
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
-@import '../mmv.mixins.less';
 
 .mw-mmv-permission-box {
 	position: relative;
@@ -40,11 +39,11 @@
 		color: @color-subtle;
 
 		.mw-mmv-permission-text-fader {
+			background-image: linear-gradient( to bottom, @background-color-transparent 0%, @background-color-base 100% );
 			position: absolute;
 			top: ( @lines-shown - 1 ) * @text-line-height * @text-font-size;
 			width: 100%;
 			height: @text-line-height * @text-font-size;
-			.fade-out-vertical();
 			text-align: right;
 
 			a {

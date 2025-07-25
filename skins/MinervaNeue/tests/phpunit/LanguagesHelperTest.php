@@ -18,10 +18,8 @@ class LanguagesHelperTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Build test Output object
-	 * @param array $langLinks
-	 * @return OutputPage
 	 */
-	private function getOutput( array $langLinks ) {
+	private function getOutput( array $langLinks ): OutputPage {
 		$out = $this->createMock( OutputPage::class );
 		$out->expects( $this->once() )
 			->method( 'getLanguageLinks' )
@@ -32,10 +30,8 @@ class LanguagesHelperTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Build test LanguageConverterFactory object
-	 * @param bool $hasVariants
-	 * @return LanguageConverterFactory
 	 */
-	private function getLanguageConverterFactory( $hasVariants ) {
+	private function getLanguageConverterFactory( bool $hasVariants ): LanguageConverterFactory {
 		$langConv = $this->createMock( ILanguageConverter::class );
 		$langConv->method( 'hasVariants' )->willReturn( $hasVariants );
 		$langConvFactory = $this->createMock( LanguageConverterFactory::class );
@@ -46,9 +42,8 @@ class LanguagesHelperTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Build test Title object
-	 * @return Title
 	 */
-	private function getTitle() {
+	private function getTitle(): Title {
 		$languageMock = $this->createMock( Language::class );
 		$title = $this->createMock( Title::class );
 		$title->method( 'getPageLanguage' )
@@ -59,9 +54,6 @@ class LanguagesHelperTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideDoesTitleHasLanguagesOrVariants
-	 * @param bool $hasVariants
-	 * @param array $langLinks
-	 * @param bool $expected
 	 * @covers ::__construct
 	 * @covers ::doesTitleHasLanguagesOrVariants
 	 */

@@ -61,7 +61,6 @@
 	"notification-header-edit-user-talk-with-section": "$1-ը հաղորդագրութիւն մը {{GENDER:$2|ձգած}} է <strong>{{GENDER:$3|Ձեր}} քննարկման էջին $4  բաժինին մէջ</strong>։",
 	"notification-compact-header-edit-user-talk": "$1-ը {{GENDER:$3|Ձեզի}} հաղորդագրութիւն մը {{GENDER:$2|ձգած}} է։",
 	"notification-compact-header-edit-user-talk-with-section": "$1-ը {{GENDER:$3|Ձեզի}} հաղորդագրութիւն մը {{GENDER:$2|ձգած}} է <strong>$4</strong> բաժինին մէջ։",
-	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "<strong>$4</strong> էջէն յղում մը կատարուած է  <strong>$3</strong> էջին։",
 	"notification-compact-header-page-linked": "Յղում մը կատարուած է <strong>$1</strong> էջին։",
 	"notification-bundle-header-page-linked": "Յղումներ կատարուած են {{PLURAL:$5||$5 էջերէն|100=99+ էջերէն}} <strong>$1</strong> էջին։",

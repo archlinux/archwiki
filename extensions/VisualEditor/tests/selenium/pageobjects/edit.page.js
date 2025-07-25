@@ -115,8 +115,8 @@ class EditPage extends Page {
 		return $( '.oo-ui-tool-name-editModeVisual' );
 	}
 
-	openForEditing( title ) {
-		super.openTitle( title, { veaction: 'edit', cxhidebetapopup: 1, hidewelcomedialog: 1, vehidebetadialog: 1 } );
+	async openForEditing( title ) {
+		return super.openTitle( title, { veaction: 'edit', cxhidebetapopup: 1, hidewelcomedialog: 1, vehidebetadialog: 1 } );
 	}
 
 	activationComplete() {

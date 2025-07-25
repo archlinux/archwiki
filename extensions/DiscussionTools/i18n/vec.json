@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Candalua",
 			"Fierodelveneto",
-			"Woytecr",
-			"Candalua"
+			"Woytecr"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Resposta",
@@ -70,9 +70,9 @@
 	"tag-discussiontools-description": "Cànbio fazesto doparando  ła Toła de Discusion",
 	"tag-discussiontools-edit": "Cànbia el comento",
 	"tag-discussiontools-edit-description": "L'utensa ła canbià un comento ezistente co ła Toła de Discusion",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nova argomentasion]",
+	"tag-discussiontools-newtopic": "Nova argomentasion",
 	"tag-discussiontools-newtopic-description": "L'utensa ła ga zontà na nova argomentasion inte ła pàzena co ła Toła de Discusion",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respondi]",
+	"tag-discussiontools-reply": "Respondi",
 	"tag-discussiontools-reply-description": "L'utensa ła ga respondesto a un comento co ła Toła de Discusion",
 	"tag-discussiontools-source-description": "Ła toła de discusion ła zera inte ła magnera sorzente",
 	"tag-discussiontools-visual-description": "Ła toła de discusion ła zera inte ła magnera vizuałe"

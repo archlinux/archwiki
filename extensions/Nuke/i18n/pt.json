@@ -6,20 +6,17 @@
 			"Imperadeiro98",
 			"Luckas",
 			"Malafaya",
-			"Vitorvicentevalente",
-			"Mbs262"
+			"Mbs262",
+			"Vitorvicentevalente"
 		]
 	},
 	"nuke": "Eliminação em massa",
 	"action-nuke": "eliminar páginas em massa",
 	"nuke-desc": "[[Special:Nuke|Página especial]] que permite que os administradores apaguem páginas de forma maciça",
-	"nuke-nopages": "Não há novas páginas de [[Special:Contributions/$1|{{GENDER:$1|$1}}]] nas mudanças recentes.",
-	"nuke-list": "As páginas a seguir foram criadas recentemente por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]; \nintroduza um comentário e pressione o botão para eliminá-las.",
-	"nuke-list-multiple": "As seguintes páginas foram criadas recentemente;\nintroduza um comentário e clique o botão para eliminá-las.",
 	"nuke-defaultreason": "Eliminação em massa de páginas criadas por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Eliminação em massa de páginas recentemente adicionadas",
 	"nuke-tools": "Esta ferramenta permite a eliminação em massa de páginas criadas recentemente por um utilizador ou IP específico. Forneça o nome de utilizador ou o IP para obter a lista de páginas a eliminar, ou deixe em branco para todos os utilizadores.",
-	"nuke-submit-user": "Listar páginas",
+	"nuke-submit-list": "Listar páginas",
 	"nuke-submit-delete": "Eliminar as selecionadas",
 	"right-nuke": "Eliminar páginas em massa",
 	"nuke-userorip": "Utilizador, endereço IP, ou vazio:",
@@ -34,6 +31,5 @@
 	"nuke-viewchanges": "histórico",
 	"nuke-namespace": "Limitar ao espaço nominal:",
 	"nuke-linkoncontribs": "eliminação em massa",
-	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que {{GENDER:$1|este utilizador é o único autor|esta utilizadora é a única autora}}",
-	"nuke-confirm": "Está prestes a eliminar {{PLURAL:$1|uma página|$1 páginas}}. Tem a certeza de que pretende {{PLURAL:$1|eliminá-la|eliminá-las}}?"
+	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que {{GENDER:$1|este utilizador é o único autor|esta utilizadora é a única autora}}"
 }

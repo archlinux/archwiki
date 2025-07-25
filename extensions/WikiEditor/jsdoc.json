@@ -7,11 +7,7 @@
 		"template": "node_modules/jsdoc-wmf-theme"
 	},
 	"plugins": [
-		"node_modules/jsdoc-wmf-theme/plugins/allow-dots-in-modules",
-		"plugins/markdown",
-		"node_modules/jsdoc-wmf-theme/plugins/externals",
-		"node_modules/jsdoc-wmf-theme/plugins/summarize",
-		"node_modules/jsdoc-wmf-theme/plugins/betterlinks"
+		"node_modules/jsdoc-wmf-theme/plugins/default"
 	],
 	"source": {
 		"include": [ "modules" ]
@@ -24,13 +20,9 @@
 		"wmf": {
 			"repository": "https://gerrit.wikimedia.org/g/mediawiki/extensions/WikiEditor/",
 			"prefixMap": {
-				"OO.ui.": "https://doc.wikimedia.org/oojs-ui/master/js/{type}.html",
-				"OO.": "https://doc.wikimedia.org/oojs/master/{type}.html",
 				"mw.": "https://doc.wikimedia.org/mediawiki-core/master/js/{type}.html"
 			},
-			"linkMap": {
-				"jQuery": "https://api.jquery.com/Types/#jQuery"
-			}
+			"linkMap": {}
 		}
 	}
 }

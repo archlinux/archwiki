@@ -64,16 +64,10 @@ class RateLimitSubject {
 		$this->flags = $flags;
 	}
 
-	/**
-	 * @return UserIdentity
-	 */
 	public function getUser(): UserIdentity {
 		return $this->user;
 	}
 
-	/**
-	 * @return string|null
-	 */
 	public function getIP(): ?string {
 		return $this->ip;
 	}

@@ -10,8 +10,12 @@ span[ data-mw-comment-start ] {
 	margin-top: -1em;
 }
 
-// stylelint-disable-next-line @stylistic/selector-list-comma-newline-after
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	span[ data-mw-comment-end ] {
 		// Support: Safari
 		// Markers at the end of a line and before an inline-block (e.g. edit icon)
@@ -47,7 +51,6 @@ h1, h2, h3, h4, h5, h6 {
 
 	// Archived talk section (T295553)
 	.ext-discussiontools-replytool-enabled .mw-archivedtalk & {
-		// stylelint-disable-next-line declaration-no-important
 		display: none !important;
 	}
 
@@ -92,7 +95,6 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	@media print {
-		// stylelint-disable-next-line declaration-no-important
 		display: none !important;
 	}
 }
@@ -244,7 +246,6 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	@media print {
-		// stylelint-disable-next-line declaration-no-important
 		display: none !important;
 	}
 }
@@ -268,7 +269,6 @@ h1, h2, h3, h4, h5, h6 {
 		/* @noflip */
 		float: right;
 		/* @noflip */
-		// stylelint-disable-next-line declaration-no-important
 		margin: -2px 0 0 1em !important;
 	}
 
@@ -277,12 +277,10 @@ h1, h2, h3, h4, h5, h6 {
 		/* @noflip */
 		float: left;
 		/* @noflip */
-		// stylelint-disable-next-line declaration-no-important
 		margin: -2px 1em 0 0 !important;
 	}
 
 	@media print {
-		// stylelint-disable-next-line declaration-no-important
 		display: none !important;
 	}
 }
@@ -394,9 +392,7 @@ h1, h2, h3, h4, h5, h6 {
 		margin: 36px 0 12px 0;
 		padding: 10px 0 0 0;
 		font-weight: bold;
-		// stylelint-disable-next-line declaration-no-important
 		font-family: sans-serif !important;
-		// stylelint-disable-next-line declaration-no-important
 		font-size: inherit !important;
 		border: 0;
 		border-top: @border-width-base @border-style-base @border-color-base;
@@ -405,7 +401,6 @@ h1, h2, h3, h4, h5, h6 {
 			margin: 0;
 			padding: 0;
 			font-weight: bold;
-			// stylelint-disable-next-line declaration-no-important
 			font-family: sans-serif !important;
 			font-size: 1.5em;
 			border: 0;
@@ -483,11 +478,10 @@ h1, h2, h3, h4, h5, h6 {
 	// Mobile
 	&.mw-mf .ext-discussiontools-init-section {
 		flex-wrap: wrap;
-		// stylelint-disable-next-line declaration-no-important
+		/* Legacy parser */
 		align-items: flex-start !important;
-		// stylelint-disable-next-line declaration-no-important
 		border-bottom: 0 !important;
-		margin: 5px 0 0 0;
+		margin: 5px 0 0 0 !important;
 		padding-bottom: 0;
 		// The tap-highlight is an odd shape and shows even for cancelled events on -actions,
 		// just hide it.
@@ -502,6 +496,8 @@ h1, h2, h3, h4, h5, h6 {
 			flex-basis: 0;
 			/* T311612 */
 			font-size: 1.125em;
+			/* Parsoid */
+			align-items: flex-start !important;
 		}
 
 		&-bar,
@@ -515,13 +511,12 @@ h1, h2, h3, h4, h5, h6 {
 			margin-bottom: -6px;
 		}
 
+		/* Legacy parser */
 		// stylelint-disable-next-line selector-class-pattern
-		> .indicator {
+		> .indicator,
+		/* Parsoid */
+		.mf-collapsible-icon {
 			margin-top: 4px;
-		}
-
-		&:first-child {
-			border-top: 0;
 		}
 
 		&-bar {
@@ -552,14 +547,12 @@ h1, h2, h3, h4, h5, h6 {
 				height: 32px;
 
 				@media print {
-					// stylelint-disable-next-line declaration-no-important
 					display: none !important;
 				}
 			}
 
 			.mw-editsection {
 				// Replaced by the overflow menu
-				// stylelint-disable-next-line declaration-no-important
 				display: none !important;
 			}
 		}
@@ -569,6 +562,7 @@ h1, h2, h3, h4, h5, h6 {
 			display: none;
 		}
 
+		/* Legacy parser */
 		// stylelint-disable-next-line selector-class-pattern
 		&.section-heading .ext-discussiontools-init-section-actions {
 			// Hidden until expanded
@@ -583,6 +577,11 @@ h1, h2, h3, h4, h5, h6 {
 				display: block;
 			}
 		}
+
+		/* Parsoid */
+		&.mf-collapsible-heading:has( .mf-collapsible-icon.mf-icon-expand ) .ext-discussiontools-init-section-actions {
+			display: none;
+		}
 	}
 
 	&.mw-mf .ext-discussiontools-init-section-overflowMenu {
@@ -593,7 +592,10 @@ h1, h2, h3, h4, h5, h6 {
 		font-size: 0.875em;
 	}
 
-	&.mw-mf .mf-section-0 + .ext-discussiontools-init-section {
+	/* Legacy parser */
+	&.mw-mf .mf-section-0 + .ext-discussiontools-init-section,
+	/* Parsoid */
+	&.mw-mf [ data-mw-section-id='1' ] .ext-discussiontools-init-section {
 		border-top: 0;
 		margin-top: 0;
 	}
@@ -602,13 +604,20 @@ h1, h2, h3, h4, h5, h6 {
 .ext-discussiontools-emptystate {
 	display: flex;
 	justify-content: space-between;
+	gap: 1em;
 	// Add space between this and any existing page content above,
 	// or page-actions-menu in Minerva for non-existing pages
 	margin-top: 1em;
 	clear: both;
 
-	> img {
+	&-logo {
+		flex-shrink: 0;
 		width: 250px;
+		min-height: 166px;
+		background: url( emptystate.svg ) no-repeat;
+		background-size: contain;
+		// Align with top of h2 text in -text (0.25em margin + 0.5em padding * 1.2em font scaling)
+		margin-top: 0.9em;
 	}
 
 	&:not( :first-child ) {
@@ -633,7 +642,7 @@ h1, h2, h3, h4, h5, h6 {
 			}
 		}
 
-		> img {
+		&-logo {
 			display: none;
 		}
 	}
@@ -781,8 +790,11 @@ h1, h2, h3, h4, h5, h6 {
 		// .mw-body-content selector prevents this applying to content in the preview (T318758)
 		// On non-existent pages MobileFrontend wrapping isn't there
 		.mw-body-content > .mw-talkpageheader,
+		/* Legacy parser */
 		.mw-body-content > .mf-section-0,
-		.mw-body-content > .mw-parser-output > .mf-section-0 {
+		.mw-body-content > .mw-parser-output > .mf-section-0,
+		/* Parsoid */
+		.mw-body-content > .mw-parser-output > section[ data-mw-section-id='0' ] {
 			> *:not( .ext-discussiontools-emptystate ) {
 				display: none;
 			}
@@ -813,9 +825,7 @@ h1, h2, h3, h4, h5, h6 {
 
 	// Match Minerva styles
 	max-width: 993.3px;
-	// stylelint-disable-next-line declaration-no-important
 	margin-left: -16px !important;
-	// stylelint-disable-next-line declaration-no-important
 	margin-right: -16px !important;
 
 	// Avoid smooshing with content / empty state (T320755)
@@ -825,7 +835,6 @@ h1, h2, h3, h4, h5, h6 {
 	margin-bottom: -32px;
 
 	@media print {
-		// stylelint-disable-next-line declaration-no-important
 		display: none !important;
 	}
 }
@@ -878,7 +887,6 @@ h1, h2, h3, h4, h5, h6 {
 	margin: 0.5em 0;
 
 	@media print {
-		// stylelint-disable-next-line declaration-no-important
 		display: none !important;
 	}
 }

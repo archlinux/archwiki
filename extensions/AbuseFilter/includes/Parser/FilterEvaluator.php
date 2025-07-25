@@ -1175,7 +1175,7 @@ class FilterEvaluator {
 				continue;
 			}
 
-			$is_found = strpos( $string, $needle ) !== false;
+			$is_found = str_contains( $string, $needle );
 			if ( $is_found === $is_any ) {
 				// If I'm here and it's ANY (OR) => something is found.
 				// If I'm here and it's ALL (AND) => nothing is found.
@@ -1424,7 +1424,7 @@ class FilterEvaluator {
 			return new AFPData( AFPData::DBOOL, false );
 		}
 
-		return new AFPData( AFPData::DBOOL, strpos( $a, $b ) !== false );
+		return new AFPData( AFPData::DBOOL, str_contains( $a, $b ) );
 	}
 
 	/**

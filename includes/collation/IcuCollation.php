@@ -21,6 +21,7 @@
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\ArrayUtils\ArrayUtils;
 
 /**
  * @since 1.16.3
@@ -162,7 +163,7 @@ class IcuCollation extends Collation {
 		'is' => [ "Á", "Ð", "É", "Í", "Ó", "Ú", "Ý", "Þ", "Æ", "Ö", "Å" ],
 		'it' => [],
 		'ka' => [],
-		'kk' => [ "Ү", "І" ],
+		'kk' => [ "Ё", "Ү", "І" ],
 		'kl' => [ "Æ", "Ø", "Å" ],
 		'km' => [
 			"រ", "ឫ", "ឬ", "ល", "ឭ", "ឮ", "\u{17BB}\u{17C6}",
@@ -211,7 +212,7 @@ class IcuCollation extends Collation {
 		'si' => [ "\u{0D82}", "\u{0D83}", "\u{0DA4}" ],
 		'sk' => [ "Ä", "Č", "Ch", "Ô", "Š", "Ž" ],
 		'sl' => [ "Č", "Š", "Ž" ],
-		'smn' => [ "Á", "Č", "Đ", "Ŋ", "Š", "Ŧ", "Ž", "Æ", "Ø", "Å", "Ä", "Ö" ],
+		'smn' => [ "Â", "Á", "Č", "Đ", "Ŋ", "Š", "Ŧ", "Ž", "Æ", "Ø", "Å", "Ä", "Ö" ],
 		'sq' => [ "Ç", "Dh", "Ë", "Gj", "Ll", "Nj", "Rr", "Sh", "Th", "Xh", "Zh" ],
 		'sr' => [],
 		'sr-Latn' => [ "Č", "Ć", "Dž", "Đ", "Lj", "Nj", "Š", "Ž" ],
@@ -326,7 +327,7 @@ class IcuCollation extends Collation {
 		return $sortLetter;
 	}
 
-	private function getPrimarySortKey( $string ) {
+	private function getPrimarySortKey( string $string ): string {
 		return $this->primaryCollator->getSortKey( $string );
 	}
 

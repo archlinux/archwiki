@@ -14,9 +14,9 @@ class DOMUtils {
 	public static function coerceName( $name ) {
 		$coercedName =
 			mb_encode_numericentity( mb_substr( $name, 0, 1, 'UTF-8' ),
-				HTMLData::$nameStartCharConvTable, 'UTF-8', true ) .
+				HTMLData::NAME_START_CHAR_CONV_TABLE, 'UTF-8', true ) .
 			mb_encode_numericentity( mb_substr( $name, 1, null, 'UTF-8' ),
-				HTMLData::$nameCharConvTable, 'UTF-8', true );
+				HTMLData::NAME_CHAR_CONV_TABLE, 'UTF-8', true );
 		$coercedName = preg_replace_callback( '/&#x([0-9A-F]*);/',
 			static function ( $m ) {
 				return 'U' . str_pad( $m[1], 6, '0', STR_PAD_LEFT );

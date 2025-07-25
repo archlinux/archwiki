@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Macofe",
+			"McDutchie",
+			"Xuacu"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Comprobar qué direiciones IP usa un usuariu determináu o que nomes d'usuariu usa una IP determinada.",
+	"apihelp-query+checkuser-param-request": "Tipu de solicitú CheckUser:\n;userips: Devolver la direición IP del usuariu destín.\n;edits: Devolver los cambios de la direición o rangu IP de destín.\n;ipusers: Devolver los usuarios de la direición o rangu IP de destín.",
+	"apihelp-query+checkuser-param-target": "Nome d'usuariu, direición IP, o rangu CIDR a comprobar.",
+	"apihelp-query+checkuser-param-reason": "Motivu de la comprobación.",
+	"apihelp-query+checkuser-param-limit": "Llende de fileres.",
+	"apihelp-query+checkuser-param-timecond": "Llende de tiempu de datos del usuariu (p. ex. \"-2 weeks\" o \"2 weeks ago\").",
+	"apihelp-query+checkuser-param-xff": "Usar datos XFF en llugar de direiciones IP.",
+	"apihelp-query+checkuser-example-1": "Comprobar les direiciones IP pa [[User:Example]]",
+	"apihelp-query+checkuser-example-2": "Comprobar les ediciones dende 192.0.2.0/24",
+	"apihelp-query+checkuserlog-summary": "Recibir entraes del rexistru de CheckUser.",
+	"apihelp-query+checkuserlog-param-user": "Nome d'usuariu de CheckUser.",
+	"apihelp-query+checkuserlog-param-target": "Usuariu, direición IP o rangu CIDR comprobáu.",
+	"apihelp-query+checkuserlog-param-limit": "Llende de fileres.",
+	"apihelp-query+checkuserlog-param-from": "La marca horaria dende la que principiar la enumeración.",
+	"apihelp-query+checkuserlog-param-to": "La marca horaria na que finar la enumeración.",
+	"apihelp-query+checkuserlog-example-1": "Amosar les comprobaciones de [[User:Example]]",
+	"apihelp-query+checkuserlog-example-2": "Amosar les comprobaciones de 192.0.2.0/24 después de 2011-10-15T23:00:00Z",
+	"apierror-checkuser-missingsummary": "Tienes de dar un motivu pa la comprobación.",
+	"apierror-checkuser-timelimit": "Tienes d'usar una llende de tiempu correuta (como «-2 weeks» o «2 weeks ago»).",
+	"apierror-checkuser-invalidmode": "Mou de solicitú inválidu"
+}

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"CptViraj"
+		]
+	},
+	"apihelp-query+checkuser-param-reason": "તપાસ માટેનું કારણ.",
+	"apihelp-query+checkuserlog-param-user": "સભ્યતપાસકનું સભ્યનામ.",
+	"apierror-checkuser-missingsummary": "તમારે તપાસ માટેનું કારણ આપવું જરૂરી છે."
+}

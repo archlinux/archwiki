@@ -13,6 +13,17 @@
 	Should be inherited from the VE target container.
 	*/
 
+	flex: 1;
+	/*
+	 * Override the flex box default which expands min-width to the content size:
+	 * https://developer.mozilla.org/en-US/docs/Web/CSS/min-width#auto
+	 *
+	 * Without this the surface won't let itself be narrower than its
+	 * widest content, causing issues with long lines of text,
+	 * tables, floated elements, etc.
+	 */
+	min-width: 0;
+
 	&-selections {
 		position: absolute;
 		pointer-events: none;
@@ -108,9 +119,9 @@
 		opacity: 0.5;
 	}
 
-	&-paste {
+	&-clipboardHandler {
 		position: fixed;
-		/* FIXME T126024: Stop the viewport scrolling when the paste target is typed into */
+		/* FIXME T126024: Stop the viewport scrolling when the clipboard handler is typed into */
 		top: 3em;
 		left: 0;
 		/* Try to avoid wrapping by not setting a width because of https://code.google.com/p/chromium/issues/detail?id=318925 */

@@ -29,9 +29,10 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
+use MediaWiki\Exception\MWException;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use MWException;
 
 $IP = getenv( 'MW_INSTALL_PATH' ) ?: __DIR__ . '/../../..';
 if ( !is_readable( "$IP/maintenance/Maintenance.php" ) ) {
@@ -47,28 +48,21 @@ require_once "$IP/maintenance/Maintenance.php";
  * @SuppressWarnings(LongVariable)
  */
 class ReplaceAll extends Maintenance {
-	/** @var User */
-	private $user;
+	private User $user;
 	/** @var string[] */
-	private $target;
+	private array $target;
 	/** @var string[] */
-	private $replacement;
+	private array $replacement;
 	/** @var int[] */
-	private $namespaces;
-	/** @var string */
-	private $category;
-	/** @var string */
-	private $prefix;
-	/** @var int */
-	private $pageLimit;
+	private array $namespaces;
+	private ?string $category;
+	private ?string $prefix;
+	private int $pageLimit;
 	/** @var bool[] */
-	private $useRegex;
-	/** @var bool */
-	private $defaultContinue;
-	/** @var bool */
-	private $botEdit;
-	/** @var bool */
-	private $rename;
+	private array $useRegex;
+	private ?bool $defaultContinue = null;
+	private bool $botEdit;
+	private bool $rename;
 
 	public function __construct() {
 		parent::__construct();
@@ -98,7 +92,7 @@ class ReplaceAll extends Maintenance {
 		$this->addOption( 'prefix', 'Search only pages whose names start with this string.',
 			false, true, 'p' );
 		$this->addOption( 'pageLimit', 'Maximum number of pages to return from the search.',
-			false, true, 'p' );
+			false, true, 'l' );
 		$this->addOption( 'replacements', 'File containing the list of ' .
 			'replacements to be made.  Fields in the file are tab-separated. ' .
 			'See --show-file-format for more information.', false, true, 'f' );
@@ -115,7 +109,7 @@ class ReplaceAll extends Maintenance {
 		$this->requireExtension( 'Replace Text' );
 	}
 
-	private function getUser() {
+	private function getUser(): User {
 		$userReplacing = $this->getOption( 'user', 1 );
 
 		$userFactory = $this->getServiceContainer()->getUserFactory();
@@ -132,7 +126,10 @@ class ReplaceAll extends Maintenance {
 		return $user;
 	}
 
-	private function getTarget() {
+	/**
+	 * @return string[]
+	 */
+	private function getTarget(): array {
 		$ret = $this->getArg( 0 );
 		if ( $ret === null ) {
 			$this->fatalError( 'You have to specify a target.' );
@@ -140,7 +137,10 @@ class ReplaceAll extends Maintenance {
 		return [ $ret ];
 	}
 
-	private function getReplacement() {
+	/**
+	 * @return string[]
+	 */
+	private function getReplacement(): array {
 		$ret = $this->getArg( 1 );
 		if ( $ret === null ) {
 			$this->fatalError( 'You have to specify replacement text.' );
@@ -148,7 +148,7 @@ class ReplaceAll extends Maintenance {
 		return [ $ret ];
 	}
 
-	private function getReplacements() {
+	private function getReplacements(): bool {
 		$file = $this->getOption( 'replacements' );
 		if ( !$file ) {
 			return false;
@@ -179,28 +179,24 @@ class ReplaceAll extends Maintenance {
 		return true;
 	}
 
-	private function shouldContinueByDefault() {
-		if ( !is_bool( $this->defaultContinue ) ) {
-			$this->defaultContinue =
-				$this->getOption( 'yes' ) ?
-				true :
-				false;
-		}
+	private function shouldContinueByDefault(): bool {
+		$this->defaultContinue ??= (bool)$this->getOption( 'yes' );
 		return $this->defaultContinue;
 	}
 
-	private function getSummary( $target, $replacement ) {
-		$msg = wfMessage( 'replacetext_editsummary', $target, $replacement )->
-			plain();
+	private function getSummary( string $target, string $replacement ): string {
 		if ( $this->getOption( 'summary' ) !== null ) {
 			$msg = str_replace( [ '%f', '%r' ],
 				[ $target, $replacement ],
 				$this->getOption( 'summary' ) );
+		} else {
+			$msg = wfMessage( 'replacetext_editsummary', $target, $replacement )
+				->plain();
 		}
 		return $msg;
 	}
 
-	private function listNamespaces() {
+	private function listNamespaces(): void {
 		$this->output( "Index\tNamespace\n" );
 		$nsList = $this->getServiceContainer()->getNamespaceInfo()->getCanonicalNamespaces();
 		ksort( $nsList );
@@ -212,7 +208,7 @@ class ReplaceAll extends Maintenance {
 		}
 	}
 
-	private function showFileFormat() {
+	private function showFileFormat(): void {
 		$text = <<<EOF
 
 The format of the replacements file is tab separated with three fields.
@@ -236,7 +232,10 @@ EOF;
 		$this->output( $text );
 	}
 
-	private function getNamespaces() {
+	/**
+	 * @return int[]
+	 */
+	private function getNamespaces(): array {
 		$nsall = $this->getOption( 'nsall' );
 		$ns = $this->getOption( 'ns' );
 		if ( !$nsall && !$ns ) {
@@ -269,27 +268,48 @@ EOF;
 		return $namespaces;
 	}
 
-	private function getCategory() {
+	private function getCategory(): ?string {
 		return $this->getOption( 'category' );
 	}
 
-	private function getPrefix() {
+	private function getPrefix(): ?string {
 		return $this->getOption( 'prefix' );
 	}
 
-	private function getPageLimit() {
-		return $this->getOption( 'pageLimit' );
+	private function getPageLimit(): int {
+		$pageLimit = (int)$this->getOption( 'pageLimit' );
+		if ( $pageLimit < 1 ) {
+			$pageLimit = $this->getServiceContainer()
+				->getMainConfig()->get( 'ReplaceTextResultsLimit' );
+		}
+		return $pageLimit;
 	}
 
-	private function useRegex() {
-		return [ $this->getOption( 'regex' ) ];
+	/**
+	 * @return bool[]
+	 */
+	private function useRegex(): array {
+		return [ (bool)$this->getOption( 'regex' ) ];
 	}
 
-	private function getRename() {
+	private function getRename(): bool {
 		return $this->hasOption( 'rename' );
 	}
 
-	private function listTitles( $titles, $target, $replacement, $regex, $rename ) {
+	/**
+	 * @param Title[] $titles
+	 * @param string $target
+	 * @param string $replacement
+	 * @param bool $regex
+	 * @param bool $rename
+	 */
+	private function listTitles(
+		array $titles,
+		string $target,
+		string $replacement,
+		bool $regex,
+		bool $rename
+	): void {
 		$skippedTitles = [];
 		foreach ( $titles as $prefixedText => $title ) {
 			if ( $title === null ) {
@@ -314,7 +334,20 @@ EOF;
 		}
 	}
 
-	private function replaceTitles( $titles, $target, $replacement, $useRegex, $rename ) {
+	/**
+	 * @param Title[] $titles
+	 * @param string $target
+	 * @param string $replacement
+	 * @param bool $useRegex
+	 * @param bool $rename
+	 */
+	private function replaceTitles(
+		array $titles,
+		string $target,
+		string $replacement,
+		bool $useRegex,
+		bool $rename
+	): void {
 		foreach ( $titles as $title ) {
 			$params = [
 				'target_str'      => $target,
@@ -340,14 +373,14 @@ EOF;
 				$services->getWatchlistManager(),
 				$services->getWikiPageFactory()
 			);
-			if ( $job->run() !== true ) {
+			if ( !$job->run() ) {
 				$this->error( "Trouble on the page '$title'." );
 			}
 			$this->output( "done.\n" );
 		}
 	}
 
-	private function getReply( $question ) {
+	private function getReply( string $question ): bool {
 		$reply = '';
 		if ( $this->shouldContinueByDefault() ) {
 			return true;
@@ -359,7 +392,7 @@ EOF;
 		return $reply === 'y';
 	}
 
-	private function localSetup() {
+	private function localSetup(): bool {
 		if ( $this->getOption( 'listns' ) ) {
 			$this->listNamespaces();
 			return false;

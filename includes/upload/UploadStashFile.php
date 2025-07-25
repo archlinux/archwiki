@@ -18,6 +18,8 @@
  * @file
  */
 
+use MediaWiki\FileRepo\File\UnregisteredLocalFile;
+use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\SpecialPage\SpecialPage;
 
 /**
@@ -43,10 +45,11 @@ class UploadStashFile extends UnregisteredLocalFile {
 	 * @param string $path Path to file
 	 * @param string $key Key to store the path and any stashed data under
 	 * @param string|null $sha1 SHA1 of file. Will calculate if not set
+	 * @param string|false $mime Mime type of file. Will calculate if not set
 	 * @throws UploadStashBadPathException
 	 * @throws UploadStashFileNotFoundException
 	 */
-	public function __construct( $repo, $path, $key, $sha1 = null ) {
+	public function __construct( $repo, $path, $key, $sha1 = null, $mime = false ) {
 		$this->fileKey = $key;
 		$this->sha1 = $sha1;
 
@@ -77,7 +80,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 			}
 		}
 
-		parent::__construct( false, $repo, $path, false );
+		parent::__construct( false, $repo, $path, $mime );
 
 		$this->name = basename( $this->path );
 	}
@@ -186,7 +189,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 	 * @return string Url
 	 */
 	public function getUrl() {
-		if ( !isset( $this->url ) ) {
+		if ( $this->url === null ) {
 			$this->url = $this->getSpecialUrl( 'file/' . $this->getUrlName() );
 		}
 

@@ -1,8 +1,8 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
-use Skin;
 
 /**
  * VectorComponentMainMenuActionOptOut component

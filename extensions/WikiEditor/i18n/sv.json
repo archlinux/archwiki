@@ -27,7 +27,6 @@
 	},
 	"wikieditor": "Avancerat gränssnitt för redigering av wikitext",
 	"wikieditor-desc": "Tillhandahåller ett avancerat, expanderbart gränssnitt för redigering av wikitext",
-	"wikieditor-wikitext-tab": "Wikitext",
 	"wikieditor-toolbar": "Redigeringsverktygsrad",
 	"wikieditor-toolbar-desc": "Redigeringsverktygsrad med utökad användbarhet",
 	"wikieditor-toolbar-preference": "Aktivera redigeringsverktygsraden",

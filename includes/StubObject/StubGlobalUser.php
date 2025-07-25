@@ -41,9 +41,6 @@ class StubGlobalUser extends StubObject {
 	/** @var User */
 	public $realUser;
 
-	/**
-	 * @param User $realUser
-	 */
 	public function __construct( User $realUser ) {
 		parent::__construct( 'wgUser' );
 		$this->realUser = $realUser;
@@ -154,6 +151,3 @@ class StubGlobalUser extends StubObject {
 		}
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( StubGlobalUser::class, 'StubGlobalUser' );

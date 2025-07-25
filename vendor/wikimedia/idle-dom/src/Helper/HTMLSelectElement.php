@@ -817,6 +817,7 @@ trait HTMLSelectElement {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\HTMLSelectElement $this';
 		// @var \Wikimedia\IDLeDOM\HTMLSelectElement $this

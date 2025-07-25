@@ -17,22 +17,20 @@
 
 const { CanvasButtons } = require( 'mmv' );
 
-( function () {
-	QUnit.module( 'mmv.ui.CanvasButtons', QUnit.newMwEnvironment() );
+QUnit.module( 'mmv.ui.CanvasButtons', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Prev/Next', ( assert ) => {
-		const $qf = $( '#qunit-fixture' );
-		const buttons = new CanvasButtons( $qf, $( '<div>' ), $( '<div>' ) );
+QUnit.test( 'Prev/Next', ( assert ) => {
+	const $qf = $( '#qunit-fixture' );
+	const buttons = new CanvasButtons( $qf, $( '<div>' ), $( '<div>' ) );
 
-		buttons.on( 'next', () => {
-			assert.true( true, 'Switched to next image' );
-		} );
-
-		buttons.on( 'prev', () => {
-			assert.true( true, 'Switched to prev image' );
-		} );
-
-		buttons.$next.trigger( 'click' );
-		buttons.$prev.trigger( 'click' );
+	buttons.on( 'next', () => {
+		assert.true( true, 'Switched to next image' );
 	} );
-}() );
+
+	buttons.on( 'prev', () => {
+		assert.true( true, 'Switched to prev image' );
+	} );
+
+	buttons.$next.trigger( 'click' );
+	buttons.$prev.trigger( 'click' );
+} );

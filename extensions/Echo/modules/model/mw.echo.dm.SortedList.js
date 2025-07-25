@@ -1,30 +1,28 @@
-( function () {
-	/**
-	 * Sorted list abstract data structure.
-	 *
-	 * @class
-	 * @abstract
-	 * @mixes OO.EventEmitter
-	 * @mixes OO.SortedEmitterList
-	 *
-	 * @constructor
-	 */
-	mw.echo.dm.SortedList = function MwEchoDmSortedList() {
-		// Mixin constructors
-		OO.EventEmitter.call( this );
-		OO.SortedEmitterList.call( this );
-	};
+/**
+ * Sorted list abstract data structure.
+ *
+ * @class
+ * @abstract
+ * @mixes OO.EventEmitter
+ * @mixes OO.SortedEmitterList
+ *
+ * @constructor
+ */
+mw.echo.dm.SortedList = function MwEchoDmSortedList() {
+	// Mixin constructors
+	OO.EventEmitter.call( this );
+	OO.SortedEmitterList.call( this );
+};
 
-	/* Initialization */
+/* Initialization */
 
-	OO.mixinClass( mw.echo.dm.SortedList, OO.EventEmitter );
-	OO.mixinClass( mw.echo.dm.SortedList, OO.SortedEmitterList );
+OO.mixinClass( mw.echo.dm.SortedList, OO.EventEmitter );
+OO.mixinClass( mw.echo.dm.SortedList, OO.SortedEmitterList );
 
-	/**
-	 * Defines whether or not this list contains items
-	 * or lists of items.
-	 *
-	 * @return {boolean} This list is a group
-	 */
-	mw.echo.dm.SortedList.prototype.isGroup = null;
-}() );
+/**
+ * Defines whether or not this list contains items
+ * or lists of items.
+ *
+ * @return {boolean} This list is a group
+ */
+mw.echo.dm.SortedList.prototype.isGroup = null;

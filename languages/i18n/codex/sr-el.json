@@ -8,6 +8,7 @@
 	"cdx-dialog-close-button-label": "Zatvori",
 	"cdx-label-optional-flag": "(neobavezno)",
 	"cdx-message-dismiss-button-label": "Zatvori",
+	"cdx-popover-close-button-label": "Zatvori",
 	"cdx-search-input-search-button-label": "Pretraga",
 	"cdx-table-select-all-label": "Izaberi sve redove",
 	"cdx-table-select-row-label": "Izaberite red $1 od $2",
@@ -23,5 +24,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Prikazani rezultati $1–$2 od mnogih",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1—$2 od mnogih",
 	"cdx-table-pagination-status-message-indeterminate-final": "Prikaz poslednjih {{PLURAL:$1|$1 rezultat|$1 rezultata}}",
-	"cdx-table-pagination-status-message-pending": "Učitavanje rezultata..."
+	"cdx-table-pagination-status-message-pending": "Učitavanje rezultata...",
+	"cdx-table-no-data-message": "Nema dostupnih podataka."
 }

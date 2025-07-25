@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Cigaryno",
 			"Gerges",
 			"Meno25",
 			"Mohammed Qays"
@@ -12,6 +13,7 @@
 	"cdx-dialog-close-button-label": "أغلق",
 	"cdx-label-optional-flag": "(اختياري)",
 	"cdx-message-dismiss-button-label": "أغلق",
+	"cdx-popover-close-button-label": "أغلق",
 	"cdx-search-input-search-button-label": "بحث",
 	"cdx-table-select-all-label": "اختر جميع الصفوف",
 	"cdx-table-select-row-label": "اختر الصف $1 من $2",
@@ -28,5 +30,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "عرض النتائج $1 – $2 من العديد",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1 – $2 من العديد",
 	"cdx-table-pagination-status-message-indeterminate-final": "عرض آخر {{PLURAL:$1|$1 نتيجة|$1 نتائج}}",
-	"cdx-table-pagination-status-message-pending": "جاري تحميل النتائج..."
+	"cdx-table-pagination-status-message-pending": "جاري تحميل النتائج...",
+	"cdx-table-no-data-message": "لا توجد بيانات متاحة."
 }

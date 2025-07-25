@@ -48,6 +48,6 @@
 	"discussiontools-topicsubscription-pager-page": "ገጽ",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "ምዝገባ ኣቋርጽ",
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "ምዝገባታት ኣርትዕ",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} ሓድሽ ኣርእስቲ]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} መልስ]"
+	"tag-discussiontools-newtopic": "ሓድሽ ኣርእስቲ",
+	"tag-discussiontools-reply": "መልስ"
 }

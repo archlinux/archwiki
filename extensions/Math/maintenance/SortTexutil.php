@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+use MediaWiki\Maintenance\Maintenance;
 
 class SortTexutil extends Maintenance {
 

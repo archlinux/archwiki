@@ -139,7 +139,7 @@ ThreadItem.prototype.calculateThreadSummary = function () {
 			};
 			if (
 				comment.displayName &&
-				authors[ comment.author ].displayNames.indexOf( comment.displayName ) === -1
+				!authors[ comment.author ].displayNames.includes( comment.displayName )
 			) {
 				authors[ comment.author ].displayNames.push( comment.displayName );
 			}

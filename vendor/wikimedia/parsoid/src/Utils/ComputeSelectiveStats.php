@@ -5,11 +5,12 @@ namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
+use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\PageBundle;
-use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Html2Wt\DiffUtils;
 use Wikimedia\Parsoid\Html2Wt\DOMDiff;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
 
 /**
@@ -61,20 +62,23 @@ class ComputeSelectiveStats {
 		}
 
 		// Parse to DOM and diff
-		$oldDoc = self::pb2doc( $env, $oldPb );
-		$newDoc = self::pb2doc( $env, $newPb );
+		$oldDoc = DomPageBundle::fromPageBundle( $oldPb )->toDom();
+		$newDoc = DomPageBundle::fromPageBundle( $newPb )->toDom();
 		$dd = new DOMDiff( $env );
 		// Don't skip over template content!
 		$dd->skipEncapsulatedContent = false;
 		// Ignore differences in data-parsoid 'dsr' and 'tmp'
-		$cleanDP = static function ( $dp ) {
-			$dp = $dp->clone();
+		$cleanDP = static function ( DataParsoid $dp ): DataParsoid {
+			$dp = clone $dp;
 			foreach ( [ 'tmp', 'tsr', 'dsr', 'extTagOffsets', 'extLinkContentOffsets' ] as $prop ) {
 				unset( $dp->$prop );
 			}
 			return $dp;
 		};
 		$dd->specializedAttribHandlers['data-parsoid'] = static function ( $nA, $vA, $nB, $vB ) use ( $cleanDP ) {
+			// This is deliberately a not-strict equality comparisong between
+			// two DataParsoid objects.
+			// @phan-suppress-next-line PhanPluginComparisonObjectEqualityNotStrict
 			return $cleanDP( $vA ) == $cleanDP( $vB );
 		};
 		// Ignore differences in 'id' attributes, since these are a side-effect
@@ -173,19 +177,50 @@ class ComputeSelectiveStats {
 
 	// ----------- Helper functions ---------------
 
-	/** Convert a page bundle to a DOM Document. */
-	private static function pb2doc( Env $env, PageBundle $pb ): Document {
-		$doc = $pb->toDom();
-		DOMDataUtils::prepareDoc( $doc );
-		$body = DOMCompat::getBody( $doc );
-		'@phan-var Element $body'; // assert non-null
-		DOMDataUtils::visitAndLoadDataAttribs( $body, [ 'markNew' => true ] );
-		return $doc;
-	}
-
 	/** Convert a PageConfig to a wikitext string. */
 	private static function pc2wt( PageConfig $pc ): string {
 		return $pc->getRevisionContent()->getContent( 'main' );
+	}
+
+	// See https://www.mediawiki.org/wiki/Manual:Stats#Cardinality
+
+	/** Restrict the cardinality of user agent labels */
+	public static function filterUserAgent( ?string $userAgent ): string {
+		static $acceptableAgents = [
+			'ChangePropagation_JobQueue_WMF' => true,
+			'ChangePropagation_WMF' => true,
+			'Mobileapps_WMF' => true,
+			'RESTBase_WMF' => true,
+			'C_WikiAPI' => true,
+			'Java_7_0_for_MediaWikiAPI' => true,
+		];
+		static $agentPrefixes = [
+			'MediaWiki_API',
+			'MediaWiki_Bot',
+			'Mozilla_4_0',
+			'Mozilla_5_0',
+			'Mozilla',
+			'REST_API_Crawler_Google',
+			'IABot',
+			'Rust_mediawiki_API',
+			'ChangePropagation', // fallback
+		];
+		if ( $userAgent === null ) {
+			return 'unknown';
+		}
+		// Replace non-alphanumeric characters, the same way that core does
+		// See mediawiki-core:includes/libs/Stats/StatsUtils::normalizeString()
+		$userAgent = preg_replace( '/\W+/', '_', $userAgent );
+		$userAgent = trim( $userAgent, "_" );
+		if ( $acceptableAgents[$userAgent] ?? false ) {
+			return $userAgent;
+		}
+		foreach ( $agentPrefixes as $prefix ) {
+			if ( str_starts_with( $userAgent, $prefix ) ) {
+				return $prefix;
+			}
+		}
+		return 'other';
 	}
 
 	/** Convert a boolean to a string for labelling purposes. */
@@ -195,7 +230,10 @@ class ComputeSelectiveStats {
 		);
 	}
 
-	/** Convert an integer to a string for labelling purposes. */
+	/**
+	 * Convert an integer to a string for labelling purposes,
+	 * restricting its cardinality.
+	 */
 	private static function int2str( ?int $val, ?int $limit = null ): string {
 		if ( $val === null ) {
 			return 'unknown';

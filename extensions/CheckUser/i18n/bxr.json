@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz"
+		]
+	},
+	"checkuser-investigateblock-warning-confirmaction": "Хэрбээ та үнэхөөрөө иигэжэ хэхэеэ бодобол, доро байһан «{{int:checkuser-investigateblock-confirm-blocks-label}}» тэмдэг табиит даа."
+}

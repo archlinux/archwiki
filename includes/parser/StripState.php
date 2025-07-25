@@ -25,6 +25,7 @@ namespace MediaWiki\Parser;
 
 use Closure;
 use InvalidArgumentException;
+use Wikimedia\Parsoid\Fragments\PFragment;
 
 /**
  * @todo document, briefly.
@@ -34,6 +35,8 @@ use InvalidArgumentException;
 class StripState {
 	/** @var array[] */
 	protected $data;
+	/** @var array[] */
+	protected $extra;
 	/** @var string */
 	protected $regex;
 
@@ -64,6 +67,7 @@ class StripState {
 			'nowiki' => [],
 			'general' => []
 		];
+		$this->extra = [];
 		$this->regex = '/' . Parser::MARKER_PREFIX . "([^\x7f<>&'\"]+)" . Parser::MARKER_SUFFIX . '/';
 		$this->circularRefGuard = [];
 		$this->parser = $parser;
@@ -80,9 +84,11 @@ class StripState {
 	 * Add a nowiki strip item
 	 * @param string $marker
 	 * @param string|Closure $value
+	 * @param ?string $extra Used to distinguish items added by <nowiki>
+	 *  from items added by other mechanisms.
 	 */
-	public function addNoWiki( $marker, $value ) {
-		$this->addItem( 'nowiki', $marker, $value );
+	public function addNoWiki( $marker, $value, ?string $extra = null ) {
+		$this->addItem( 'nowiki', $marker, $value, $extra );
 	}
 
 	/**
@@ -94,19 +100,43 @@ class StripState {
 	}
 
 	/**
+	 * @param string $marker
+	 * @param string|Closure $value
+	 * @since 1.44
+	 * @internal Parsoid use only.
+	 */
+	public function addExtTag( $marker, $value ) {
+		$this->addItem( 'exttag', $marker, $value );
+	}
+
+	/**
+	 * @param string $marker
+	 * @param PFragment $extra
+	 * @since 1.44
+	 * @internal Parsoid use only.
+	 */
+	public function addParsoidOpaque( $marker, PFragment $extra ) {
+		$this->addItem( 'parsoid', $marker, '<parsoid opaque>', $extra );
+	}
+
+	/**
 	 * @param string $type
 	 * @param-taint $type none
 	 * @param string $marker
 	 * @param-taint $marker none
 	 * @param string|Closure $value
+	 * @param string|PFragment|null $extra
 	 * @param-taint $value exec_html
 	 */
-	protected function addItem( $type, $marker, $value ) {
+	protected function addItem( $type, $marker, $value, $extra = null ) {
 		if ( !preg_match( $this->regex, $marker, $m ) ) {
 			throw new InvalidArgumentException( "Invalid marker: $marker" );
 		}
 
 		$this->data[$type][$m[1]] = $value;
+		if ( $extra !== null ) {
+			$this->extra[$type][$m[1]] = $extra;
+		}
 	}
 
 	/**
@@ -129,6 +159,7 @@ class StripState {
 	 * @param string $text
 	 * @param callable $callback
 	 * @return string
+	 * @unstable Temporarily used by Scribunto
 	 */
 	public function replaceNoWikis( string $text, callable $callback ): string {
 		// Shortcut
@@ -149,13 +180,101 @@ class StripState {
 					return $this->getLimitationWarning( 'unstrip-size', $this->sizeLimit );
 				}
 
-				return call_user_func( $callback, $value );
+				return $callback( $value );
 			} else {
 				return $m[0];
 			}
 		};
 
 		return preg_replace_callback( $this->regex, $callback, $text );
+	}
+
+	/**
+	 * Split the given text by strip markers, returning an array
+	 * of [ 'type' => ..., 'content' => ... ] elements. The type
+	 * property is:
+	 * - 'string' for plain strings and 'exttag' strip markers
+	 * - otherwise, name of the strip marker that generated the 'content' value
+	 * @return array<string|array{type:string,content:string}>
+	 */
+	public function split( string $text ): array {
+		$result = [];
+		$pieces = preg_split( $this->regex, $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+		for ( $i = 0; $i < count( $pieces ); $i++ ) {
+			if ( $i % 2 === 0 ) {
+				$result[] = [
+					'type' => 'string',
+					'content' => $pieces[$i],
+				];
+				continue;
+			}
+			$marker = $pieces[$i];
+			foreach ( $this->data as $type => $items ) {
+				if ( isset( $items[$marker] ) ) {
+					$value = $items[$marker];
+					$extra = $this->extra[$type][$marker] ?? null;
+					if ( $value instanceof Closure ) {
+						$value = $value();
+					}
+
+					if ( $type === 'exttag' ) {
+						// Catch circular refs / enforce depth limits
+						// similar to code in unstripType().
+						if ( isset( $this->circularRefGuard[$marker] ) ) {
+							$result[] = [
+								'type' => 'string',
+								'content' => $this->getWarning( 'parser-unstrip-loop-warning' )
+							];
+							continue;
+						}
+
+						if ( $this->depth > $this->highestDepth ) {
+							$this->highestDepth = $this->depth;
+						}
+						if ( $this->depth >= $this->depthLimit ) {
+							$result[] = [
+								'type' => 'string',
+								'content' => $this->getLimitationWarning( 'unstrip-depth', $this->depthLimit )
+							];
+							continue;
+						}
+
+						// For exttag types, the output size should include the output of
+						// the extension, but don't think unstripType is doing that, and so
+						// we aren't doing that either here. But this is kinda broken.
+						// See T380758#10355050.
+						$this->expandSize += strlen( $value );
+						if ( $this->expandSize > $this->sizeLimit ) {
+							$result[] = [
+								'type' => 'string',
+								'content' => $this->getLimitationWarning( 'unstrip-size', $this->sizeLimit )
+							];
+							continue;
+						}
+
+						$this->circularRefGuard[$marker] = true;
+						$this->depth++;
+						$result = array_merge( $result, $this->split( $value ) );
+						$this->depth--;
+						unset( $this->circularRefGuard[$marker] );
+					} else {
+						$result[] = [
+							'type' => $type,
+							'content' => $value,
+							'extra' => $extra,
+							'marker' => Parser::MARKER_PREFIX . $marker . Parser::MARKER_SUFFIX,
+						];
+					}
+					continue 2;
+				}
+			}
+			$result[] = [
+				'type' => 'unknown',
+				'content' => null,
+				'marker' => Parser::MARKER_PREFIX . $marker . Parser::MARKER_SUFFIX,
+			];
+		}
+		return $result;
 	}
 
 	/**

@@ -61,5 +61,8 @@
 	"gadgets-validate-unknownpages": "Содржи една или повеќе страници без наставка .js, .css или .json. Тие нема да се користат.",
 	"gadgets-validate-duplicate": "Пронајдена е втора дефиниција на алатката $1 и истата ќе биде занемарена",
 	"gadgets-validate-nopage": "Страницата „$1“ не постои.",
-	"gadgets-supports-urlload": "Оваа алатка поддржува вчитување преку со барачкиот параметар <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Недостасува следнава зависност|Недостасуваат следниве зависности}}: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Следнава зависност е застарена|Следниве зависности се застарени}}: $1.",
+	"gadgets-supports-urlload": "Оваа алатка поддржува вчитување преку со барачкиот параметар <code>?withgadget</code>.",
+	"gadgets-hidden": "Оваа алатка е [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden скриена], што значи дека не се појавува во вашите нагодувања."
 }

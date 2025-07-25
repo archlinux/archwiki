@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Michawiki",
-			"Vlad5250",
-			"Sławobóg"
+			"Sławobóg",
+			"Vlad5250"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 rěc|$1 rěcy|$1 rěcy|$1 rěcow}}",

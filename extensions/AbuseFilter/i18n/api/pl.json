@@ -58,5 +58,6 @@
 	"apierror-abusefilter-cantcheck": "Nie masz uprawnień do sprawdzania składni filtru nadużyć.",
 	"apierror-abusefilter-canteval": "Nie masz uprawnień do ewaluowania wyrażeń filtra nadużyć.",
 	"apierror-abusefilter-nosuchlogid": "Nie istnieje wpis rejestru nadużyć o identyfikatorze $1.",
+	"apierror-abusefilter-incompatible": "Żądana zmiana nie jest obsługiwana przez Filtr nadużyć.",
 	"apierror-abusefilter-badsyntax": "Filtr ma nieprawidłową składnię."
 }

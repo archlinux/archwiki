@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements the User class for the %MediaWiki software.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -31,9 +29,11 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Block\AbstractBlock;
 use MediaWiki\Block\Block;
+use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\SystemBlock;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntityTrait;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Mail\UserEmailContact;
@@ -55,7 +55,6 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MWCryptHash;
 use MWCryptRand;
-use MWExceptionHandler;
 use RuntimeException;
 use stdClass;
 use Stringable;
@@ -76,19 +75,47 @@ use Wikimedia\ScopedCallback;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * The User object encapsulates all of the user-specific settings (user_id,
- * name, rights, email address, options, last login time). Client
- * classes use the getXXX() functions to access these fields. These functions
- * do all the work of determining whether the user is logged in,
- * whether the requested option can be satisfied from cookies or
- * whether a database query is needed. Most of the settings needed
- * for rendering normal pages are set in the cookie to minimize use
- * of the database.
+ * @defgroup User User management
+ */
+
+/**
+ * User class for the %MediaWiki software.
+ *
+ * User objects manage reading and writing of user-specific storage, including:
+ * - `user` table (user_id, user_name, email, password, last login, etc.)
+ * - `user_properties` table (user options)
+ * - `user_groups` table (user rights and permissions)
+ * - `user_newtalk` table (last-seen for your own user talk page)
+ * - `watchlist` table (watched page titles by user, and their last-seen marker)
+ * - `block` table, formerly known as `ipblocks` (user blocks)
+ *
+ * Callers use getter methods (getXXX) to read these fields. These getter functions
+ * manage all higher-level responsibilities such as expanding default user options,
+ * interpreting user groups into specific rights. Most user data needed when
+ * rendering page views are cached (or stored in the session) to minimize repeat
+ * database queries.
+ *
+ * New code is encouraged to use the following narrower classes instead.
+ * If no replacement exist, and the User class method is not deprecated, feel
+ * free to use it in new code (instead of duplicating business logic).
+ *
+ * - UserIdentityValue, to represent a user name/id.
+ * - UserOptionsManager service, to read-write user options.
+ * - Authority via RequestContext::getAuthority, to represent the current user
+ *   with a easy shortcuts to interpret user permissions (can user X do Y on page Z)
+ *   without needing te call low-level PermissionManager and RateLimiter services.
+ *   Authority replaces methods like User::isAllowed, User::definitelyCan,
+ *   and User::pingLimiter.
+ * - PermissionManager service, to interpret rights and permissions of any user.
+ * - TalkPageNotificationManager service, replacing User::getNewtalk.
+ * - WatchlistManager service, replacing methods like User::isWatched,
+ *   User::addWatch, and User::clearNotification.
+ * - BlockManager service, replacing User::getBlock.
  *
  * @note User implements Authority to ease transition. Always prefer
  * using existing Authority or obtaining a proper Authority implementation.
  *
- * @note {@}newable in 1.35 only, the constructor is {@}internal since 1.36
+ * @ingroup User
  */
 #[AllowDynamicProperties]
 class User implements Stringable, Authority, UserIdentity, UserEmailContact {
@@ -233,9 +260,6 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	private $isTemp;
 
 	/**
-	 * Lightweight constructor for an anonymous user.
-	 *
-	 * @stable to call since 1.35
 	 * @internal since 1.36, use the UserFactory service instead
 	 *
 	 * @see MediaWiki\User\UserFactory
@@ -248,6 +272,8 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	 * @see newFromRow()
 	 */
 	public function __construct() {
+		// By default, this is a lightweight constructor representing
+		// an anonymous user from the current web request and IP.
 		$this->clearInstanceCache( 'defaults' );
 	}
 
@@ -890,11 +916,12 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 
 	/**
 	 * Get the username corresponding to a given user ID
-	 * @deprecated since 1.43, Use UserIdentityLookup to get name from id
+	 * @deprecated since 1.43, emits deprecation warnings since 1.44, Use UserIdentityLookup to get name from id
 	 * @param int $id User ID
 	 * @return string|false The corresponding username
 	 */
 	public static function whoIs( $id ) {
+		wfDeprecated( __METHOD__, '1.43' );
 		return MediaWikiServices::getInstance()->getUserCache()
 			->getProp( $id, 'name' );
 	}
@@ -902,11 +929,13 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Get the real name of a user given their user ID
 	 *
-	 * @deprecated since 1.43, Use UserFactory to get user instance and use User::getRealName
+	 * @deprecated since 1.43, emits deprecation warnings since 1.44,
+	 *   Use UserFactory to get user instance and use User::getRealName
 	 * @param int $id User ID
 	 * @return string|false The corresponding user's real name
 	 */
 	public static function whoIsReal( $id ) {
+		wfDeprecated( __METHOD__, '1.43' );
 		return MediaWikiServices::getInstance()->getUserCache()
 			->getProp( $id, 'real_name' );
 	}
@@ -919,7 +948,7 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	 * @param int $limit Max number of users to return. The actual limit will never exceed 5000
 	 *   records; larger values are ignored.
 	 * @param int|null $after ID the user to start after
-	 * @return UserArrayFromResult|ArrayIterator
+	 * @return UserArray|ArrayIterator
 	 */
 	public static function findUsersByGroup( $groups, $limit = 5000, $after = null ) {
 		if ( $groups === [] ) {
@@ -975,8 +1004,13 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	 * @since 1.23
 	 */
 	public function checkPasswordValidity( $password ) {
-		$passwordPolicy = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::PasswordPolicy );
+		$services = MediaWikiServices::getInstance();
+		$userNameUtils = $services->getUserNameUtils();
+		if ( $userNameUtils->isTemp( $this->getName() ) ) {
+			return Status::newFatal( 'error-temporary-accounts-cannot-have-passwords' );
+		}
+
+		$passwordPolicy = $services->getMainConfig()->get( MainConfigNames::PasswordPolicy );
 
 		$upp = new UserPasswordPolicy(
 			$passwordPolicy['policies'],
@@ -1146,7 +1180,7 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	 *                strings is ignored.
 	 */
 	protected function loadFromRow( $row, $data = null ) {
-		if ( !is_object( $row ) ) {
+		if ( !( $row instanceof stdClass ) ) {
 			throw new InvalidArgumentException( '$row must be an object' );
 		}
 
@@ -1485,6 +1519,7 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	 * @deprecated since 1.40. Use getBlock instead
 	 */
 	public function getGlobalBlock( $ip = '' ) {
+		wfDeprecated( __METHOD__, '1.40' );
 		if ( $this->mGlobalBlock !== null ) {
 			return $this->mGlobalBlock ?: null;
 		}
@@ -1501,7 +1536,8 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 		if ( $blocked && $block === null ) {
 			// back-compat: UserIsBlockedGlobally didn't have $block param first
 			$block = new SystemBlock( [
-				'address' => $ip,
+				'target' => MediaWikiServices::getInstance()->getBlockTargetFactory()
+					->newAnonIpBlockTarget( $ip ),
 				'systemBlock' => 'global-block'
 			] );
 		}
@@ -2224,8 +2260,6 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 
 	/**
 	 * Get the WebRequest object to use with this object
-	 *
-	 * @return WebRequest
 	 */
 	public function getRequest(): WebRequest {
 		return $this->mRequest ?? RequestContext::getMain()->getRequest();
@@ -2329,6 +2363,7 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	 */
 	public function doLogout() {
 		$session = $this->getRequest()->getSession();
+		$accountType = MediaWikiServices::getInstance()->getUserIdentityUtils()->getShortUserTypeInternal( $this );
 		if ( !$session->canSetUser() ) {
 			LoggerFactory::getInstance( 'session' )
 				->warning( __METHOD__ . ": Cannot log out of an immutable session" );
@@ -2356,6 +2391,7 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 			'event' => 'logout',
 			'successful' => $error === false,
 			'status' => $error ?: 'success',
+			'accountType' => $accountType,
 		] );
 	}
 
@@ -2656,8 +2692,9 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 		$blockWasSpread = false;
 		$this->getHookRunner()->onSpreadAnyEditBlock( $this, $blockWasSpread );
 
-		if ( $this->getBlock() ) {
-			$blockWasSpread = $blockWasSpread || $this->spreadBlock();
+		$block = $this->getBlock();
+		if ( $block ) {
+			$blockWasSpread = $blockWasSpread || $this->spreadBlock( $block );
 		}
 
 		return $blockWasSpread;
@@ -2666,9 +2703,10 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	/**
 	 * If this (non-anonymous) user is blocked,
 	 * block the IP address they've successfully logged in from.
+	 * @param Block $block The active block on the user
 	 * @return bool A block was spread
 	 */
-	protected function spreadBlock() {
+	protected function spreadBlock( Block $block ): bool {
 		wfDebug( __METHOD__ . "()" );
 		$this->load();
 		if ( $this->mId == 0 ) {
@@ -2676,13 +2714,12 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 		}
 
 		$blockStore = MediaWikiServices::getInstance()->getDatabaseBlockStore();
-
-		$userblock = $blockStore->newFromTarget( $this->getName() );
-		if ( !$userblock ) {
-			return false;
+		foreach ( $block->toArray() as $singleBlock ) {
+			if ( $singleBlock instanceof DatabaseBlock && $singleBlock->isAutoblocking() ) {
+				return (bool)$blockStore->doAutoblock( $singleBlock, $this->getRequest()->getIP() );
+			}
 		}
-
-		return (bool)$blockStore->doAutoblock( $userblock, $this->getRequest()->getIP() );
+		return false;
 	}
 
 	/**
@@ -3335,7 +3372,6 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Returns the Authority of this User if it's the main request context user.
 	 * This is intended to exist only for the period of transition to Authority.
-	 * @return UserAuthority
 	 */
 	private function getThisAsAuthority(): UserAuthority {
 		if ( !$this->mThisAsAuthority ) {
@@ -3364,7 +3400,6 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 
 	/**
 	 * Check whether this is the global session user.
-	 * @return bool
 	 */
 	private function isGlobalSessionUser(): bool {
 		// The session user is set up towards the end of Setup.php. Until then,

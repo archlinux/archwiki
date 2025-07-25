@@ -22,9 +22,6 @@ namespace MediaWiki\Specials;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
@@ -57,6 +54,7 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 		$this->outputPageList( $groups );
 	}
 
+	/** @return array[][]|false */
 	private function getPageGroups() {
 		$pages = $this->getSpecialPageFactory()->getUsablePages( $this->getUser() );
 
@@ -100,7 +98,7 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 		return $groups;
 	}
 
-	private function outputPageList( $groups ) {
+	private function outputPageList( array $groups ) {
 		$out = $this->getOutput();
 
 		// Legend
@@ -135,7 +133,7 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 
 			$legend = Html::rawElement(
 				'div',
-				[ 'class' => 'mw-changeslist-legend mw-specialpages-notes' ],
+				[ 'class' => [ 'mw-changeslist-legend', 'mw-specialpages-notes' ] ],
 				$legendHeading . implode( "\n", $notes )
 			);
 
@@ -163,11 +161,7 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 			}
 		}
 
-		$pout = new ParserOutput;
-		$pout->setTOCData( $tocData );
-		$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-		$pout->setRawText( Parser::TOC_PLACEHOLDER );
-		$out->addParserOutput( $pout );
+		$out->addTOCPlaceholder( $tocData );
 
 		// Format contents
 		foreach ( $groups as $group => $sortedPages ) {

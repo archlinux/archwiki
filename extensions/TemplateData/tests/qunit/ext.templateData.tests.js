@@ -591,6 +591,7 @@ QUnit.test( 'TemplateData model', ( assert ) => {
 
 // Test model with maps in wikitext
 QUnit.test( 'TemplateData sourceHandler with maps', ( assert ) => {
+	mw.config.set( 'wgContentLanguage', 'en' );
 	const sourceHandler = new SourceHandler(),
 		wikitextWithMaps = 'Some text here that is not templatedata information.' +
 		'<templatedata>' +

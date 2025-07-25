@@ -8,8 +8,9 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
-use MediaWiki\Extension\AbuseFilter\Filter\Flags;
+use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
+use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
@@ -20,6 +21,7 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentityValue;
 use MediaWiki\WikiMap\WikiMap;
 use stdClass;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -30,15 +32,6 @@ class AbuseLogPager extends ReverseChronologicalPager {
 	 */
 	private $conds;
 
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var AbuseFilterPermissionManager */
-	private $afPermissionManager;
-
 	/** @var string */
 	private $basePageName;
 
@@ -47,16 +40,11 @@ class AbuseLogPager extends ReverseChronologicalPager {
 	 */
 	private $hideEntries;
 
-	/**
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param array $conds
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param PermissionManager $permManager
-	 * @param AbuseFilterPermissionManager $afPermissionManager
-	 * @param string $basePageName
-	 * @param string[] $hideEntries
-	 */
+	private LinkBatchFactory $linkBatchFactory;
+	private PermissionManager $permissionManager;
+	private AbuseFilterPermissionManager $afPermissionManager;
+	private VariablesBlobStore $varBlobStore;
+
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
@@ -64,6 +52,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 		LinkBatchFactory $linkBatchFactory,
 		PermissionManager $permManager,
 		AbuseFilterPermissionManager $afPermissionManager,
+		VariablesBlobStore $varBlobStore,
 		string $basePageName,
 		array $hideEntries = []
 	) {
@@ -72,6 +61,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->permissionManager = $permManager;
 		$this->afPermissionManager = $afPermissionManager;
+		$this->varBlobStore = $varBlobStore;
 		$this->basePageName = $basePageName;
 		$this->hideEntries = $hideEntries;
 	}
@@ -173,49 +163,61 @@ class AbuseLogPager extends ReverseChronologicalPager {
 		$filterID = $row->afl_filter_id;
 		$global = $row->afl_global;
 
-		if ( $global ) {
-			// Pull global filter description
-			$lookup = AbuseFilterServices::getFilterLookup();
-			try {
-				$filterObj = $lookup->getFilter( $filterID, true );
-				$globalDesc = $filterObj->getName();
-				$escaped_comments = Sanitizer::escapeHtmlAllowEntities( $globalDesc );
-				$privacyLevel = $filterObj->getPrivacyLevel();
-			} catch ( CentralDBNotAvailableException $_ ) {
-				$escaped_comments = $this->msg( 'abusefilter-log-description-not-available' )->escaped();
-				// either hide all filters, including not hidden/protected, or show all, including hidden/protected
-				// we choose the former
-				$privacyLevel = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
-			}
-		} else {
-			$escaped_comments = Sanitizer::escapeHtmlAllowEntities(
-				$row->af_public_comments ?? '' );
-			$privacyLevel = $row->af_hidden;
+		// Pull global filter description
+		$lookup = AbuseFilterServices::getFilterLookup();
+		try {
+			$filterObj = $lookup->getFilter( $filterID, $global );
+			$escaped_comments = Sanitizer::escapeHtmlAllowEntities( $filterObj->getName() );
+		} catch ( CentralDBNotAvailableException $_ ) {
+			$escaped_comments = $this->msg( 'abusefilter-log-description-not-available' )->escaped();
+			// either hide all filters, including not hidden/protected, or show all, including hidden/protected
+			// we choose the former
+			$filterObj = MutableFilter::newDefault();
+			$filterObj->setProtected( true );
+			$filterObj->setHidden( true );
 		}
 
-		if ( $this->afPermissionManager->canSeeLogDetailsForFilter( $performer, $privacyLevel ) ) {
+		// Determine if the user has access to the associated filter and also the details of the current log
+		// These are used to determine what links to display for the log line.
+		$canSeeLogDetails = $this->afPermissionManager->canSeeLogDetailsForFilter( $performer, $filterObj );
+		$canSeeFilter = $canSeeLogDetails;
+		if ( $filterObj->isProtected() ) {
+			$canSeeFilter = $canSeeFilter &&
+				$this->afPermissionManager->canViewProtectedVariablesInFilter( $performer, $filterObj )->isGood();
+
+			if ( $canSeeLogDetails ) {
+				$vars = $this->varBlobStore->loadVarDump( $row );
+				$canSeeLogDetails = $this->afPermissionManager->canViewProtectedVariables(
+					$performer, array_keys( $vars->getVars() )
+				)->isGood();
+			}
+		}
+
+		if ( $canSeeFilter ) {
 			$actionLinks = [];
 
-			if ( $isListItem ) {
-				$detailsLink = $linkRenderer->makeKnownLink(
-					SpecialPage::getTitleFor( $this->basePageName, $row->afl_id ),
-					$this->msg( 'abusefilter-log-detailslink' )->text()
-				);
-				$actionLinks[] = $detailsLink;
-			}
+			if ( $canSeeLogDetails ) {
+				if ( $isListItem ) {
+					$detailsLink = $linkRenderer->makeKnownLink(
+						SpecialPage::getTitleFor( $this->basePageName, $row->afl_id ),
+						$this->msg( 'abusefilter-log-detailslink' )->text()
+					);
+					$actionLinks[] = $detailsLink;
+				}
 
-			$examineTitle = SpecialPage::getTitleFor( 'AbuseFilter', 'examine/log/' . $row->afl_id );
-			$examineLink = $linkRenderer->makeKnownLink(
-				$examineTitle,
-				new HtmlArmor( $this->msg( 'abusefilter-changeslist-examine' )->parse() )
-			);
-			$actionLinks[] = $examineLink;
+				$examineTitle = SpecialPage::getTitleFor( 'AbuseFilter', 'examine/log/' . $row->afl_id );
+				$examineLink = $linkRenderer->makeKnownLink(
+					$examineTitle,
+					new HtmlArmor( $this->msg( 'abusefilter-changeslist-examine' )->parse() )
+				);
+				$actionLinks[] = $examineLink;
+			}
 
 			if ( $diffLink ) {
 				$actionLinks[] = $diffLink;
 			}
 
-			if ( !$isListItem && $this->afPermissionManager->canHideAbuseLog( $performer ) ) {
+			if ( !$isListItem && $canSeeLogDetails && $this->afPermissionManager->canHideAbuseLog( $performer ) ) {
 				// Link for hiding a single entry from the details view
 				$hideLink = $linkRenderer->makeKnownLink(
 					SpecialPage::getTitleFor( $this->basePageName, 'hide' ),
@@ -246,7 +248,13 @@ class AbuseLogPager extends ReverseChronologicalPager {
 					->numParams( $filterID )->text();
 				$filterLink = $linkRenderer->makeKnownLink( $title, $linkText );
 			}
-			$description = $this->msg( 'abusefilter-log-detailedentry-meta' )->rawParams(
+
+			if ( count( $actionLinks ) ) {
+				$msg = 'abusefilter-log-detailedentry-meta';
+			} else {
+				$msg = 'abusefilter-log-detailedentry-meta-without-action-links';
+			}
+			$description = $this->msg( $msg )->rawParams(
 				$timestamp,
 				$userLink,
 				$filterLink,
@@ -254,6 +262,8 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$pageLink,
 				$actions_taken,
 				$escaped_comments,
+				// Passing $8 to 'abusefilter-log-detailedentry-meta-without-action-links' will do nothing,
+				// as it's not used.
 				$lang->pipeList( $actionLinks )
 			)->params( $row->afl_user_text )->parse();
 		} else {
@@ -342,7 +352,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 	 */
 	public function getQueryInfo() {
 		$info = [
-			'tables' => [ 'abuse_filter_log', 'abuse_filter', 'revision' ],
+			'tables' => [ 'abuse_filter_log', 'revision' ],
 			'fields' => [
 				'afl_id',
 				'afl_global',
@@ -359,16 +369,10 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				'afl_wiki',
 				'afl_deleted',
 				'afl_rev_id',
-				'af_public_comments',
-				'af_hidden',
 				'rev_id',
 			],
 			'conds' => $this->conds,
 			'join_conds' => [
-				'abuse_filter' => [
-					'LEFT JOIN',
-					[ 'af_id=afl_filter_id', 'afl_global' => 0 ],
-				],
 				'revision' => [
 					'LEFT JOIN',
 					[
@@ -415,8 +419,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			// Only for local wiki results
 			if ( !$row->afl_wiki ) {
 				$lb->add( $row->afl_namespace, $row->afl_title );
-				$lb->add( NS_USER, $row->afl_user_text );
-				$lb->add( NS_USER_TALK, $row->afl_user_text );
+				$lb->addUser( new UserIdentityValue( $row->afl_user ?? 0, $row->afl_user_text ) );
 			}
 		}
 		$lb->execute();

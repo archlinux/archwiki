@@ -20,7 +20,7 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * Generic attribute expansion handler.
@@ -35,14 +35,14 @@ class AttributeExpander extends TokenHandler {
 	private $tokenizer;
 
 	/**
-	 * @param TokenTransformManager $manager
+	 * @param TokenHandlerPipeline $manager
 	 * @param array $options
 	 *  - bool inTemplate Is this being invoked while processing a template?
 	 *  - bool expandTemplates Should we expand templates encountered here?
 	 *  - bool standalone Is this AttributeExpander used as part of a pipeline
 	 *                    or is it being used standalone as an utility class?
 	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 		$this->tokenizer = new PegTokenizer( $manager->getEnv() );
 	}
@@ -251,7 +251,7 @@ class AttributeExpander extends TokenHandler {
 	 * Callback for attribute expansion in AttributeTransformManager
 	 * @param Token $token
 	 * @param KV[] $expandedAttrs
-	 * @return TokenHandlerResult
+	 * @return array<string|Token>
 	 */
 	private function buildExpandedAttrs( Token $token, array $expandedAttrs ) {
 		// If we're not in a template, we'll be doing template wrapping in dom
@@ -517,8 +517,10 @@ class AttributeExpander extends TokenHandler {
 					//         is clearer and less confusing than
 					//    [{ "txt":..., "html":... }, { "html":... }]
 					$tmpDataMW[$key] = [
+						// @phan-suppress-next-line PhanCoalescingNeverNullInLoop $expandedA is nullable
 						'k' => [ 'txt' => $key, 'srcOffsets' => $expandedA->srcOffsets->key ?? null ],
 						// FIXME: Why is 'txt' missing? Why are we not checking for [] ?
+						// @phan-suppress-next-line PhanCoalescingNeverNullInLoop $expandedA is nullable
 						'v' => [ 'html' => $valHTML, 'srcOffsets' => $expandedA->srcOffsets->value ?? null ]
 					];
 
@@ -575,7 +577,7 @@ class AttributeExpander extends TokenHandler {
 			//
 			// The general principle here being, don't share tokens between
 			// pipelines.
-			$vals = Utils::clone( $vals );
+			$vals = Utils::cloneArray( $vals );
 
 			// Expand all token arrays to DOM.
 			$eVals = PipelineUtils::expandAttrValuesToDOM(
@@ -590,18 +592,11 @@ class AttributeExpander extends TokenHandler {
 				$expAttrs[] = new DataMwAttrib( $eVals[$j], $eVals[$j + 1] );
 			}
 
-			if ( $token->getName() === 'template' ) {
-				// Don't add Parsoid about, typeof, data-mw attributes here since
-				// we won't be able to distinguish between Parsoid-added attributes
-				// and actual template attributes in cases like:
-				//   {{some-tpl|about=#mwt1|typeof=mw:Transclusion}}
-				// In both cases, we will encounter a template token that looks like:
-				//   { ... "attribs":[{"k":"about","v":"#mwt1"},{"k":"typeof","v":"mw:Transclusion"}] .. }
-				// So, record these in the tmp attribute for the template hander
-				// to retrieve and process.
-				$token->dataParsoid->getTemp()->templatedAttribs = $expAttrs;
-			} else {
-				// Mark token as having expanded attrs.
+			// Mark token as having expanded attrs.
+			//
+			// Template tokens are omitted because the attribute expander is
+			// just being used to resolve the template target.
+			if ( $token->getName() !== 'template' ) {
 				$token->addAttribute( 'about', $this->env->newAboutId() );
 				$token->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
 				foreach ( $annotationTypes as $annotationType ) {
@@ -611,9 +606,7 @@ class AttributeExpander extends TokenHandler {
 			}
 		}
 
-		return new TokenHandlerResult(
-			array_merge( $metaTokens, [ $token ], $postNLToks )
-		);
+		return array_merge( $metaTokens, [ $token ], $postNLToks );
 	}
 
 	/**
@@ -621,14 +614,20 @@ class AttributeExpander extends TokenHandler {
 	 * (Ex: Templated styles)
 	 *
 	 * @param Token $token Token whose attrs being expanded.
-	 * @return TokenHandlerResult
+	 * @return ?array<string|Token>
 	 */
-	private function processComplexAttributes( Token $token ): TokenHandlerResult {
-		$atm = new AttributeTransformManager( $this->manager->getFrame(), [
-			'expandTemplates' => $this->options['expandTemplates'],
-			'inTemplate' => $this->options['inTemplate']
-		] );
-		return $this->buildExpandedAttrs( $token, $atm->process( $token->attribs ) );
+	private function processComplexAttributes( Token $token ): ?array {
+		$expandedAttrs = AttributeTransformManager::process(
+			$this->manager->getFrame(),
+			[
+				'expandTemplates' => $this->options['expandTemplates'],
+				'inTemplate' => $this->options['inTemplate']
+			],
+			$token->attribs
+		);
+
+		// null signifies unmodified token
+		return $expandedAttrs ? $this->buildExpandedAttrs( $token, $expandedAttrs ) : null;
 	}
 
 	/**
@@ -636,18 +635,26 @@ class AttributeExpander extends TokenHandler {
 	 * tempate tokens where the template target itself is a complex attribute.
 	 *
 	 * @param Token $token Token whose first attribute is being expanded.
-	 * @return TokenHandlerResult
+	 * @return ?array<string|Token>
 	 */
-	public function expandFirstAttribute( Token $token ): TokenHandlerResult {
-		$atm = new AttributeTransformManager( $this->manager->getFrame(), [
-			'expandTemplates' => $this->options['expandTemplates'],
-			'inTemplate' => $this->options['inTemplate']
-		] );
-		$expandedAttrs = $atm->process( [ $token->attribs[0] ] );
-		return $this->buildExpandedAttrs(
-			$token,
-			array_replace( $token->attribs, [ 0 => $expandedAttrs[0] ] )
+	public function expandFirstAttribute( Token $token ): ?array {
+		$expandedAttrs = AttributeTransformManager::process(
+			$this->manager->getFrame(),
+			[
+				'expandTemplates' => $this->options['expandTemplates'],
+				'inTemplate' => $this->options['inTemplate']
+			],
+			[ $token->attribs[0] ]
 		);
+		if ( $expandedAttrs ) {
+			return $this->buildExpandedAttrs(
+				$token,
+				array_replace( $token->attribs, [ 0 => $expandedAttrs[0] ] )
+			);
+		} else {
+			// null signifies unmodified token
+			return null;
+		}
 	}
 
 	/**
@@ -657,10 +664,9 @@ class AttributeExpander extends TokenHandler {
 	 * processes / expands them.
 	 * (Ex: Templated styles)
 	 *
-	 * @param Token|string $token Token whose attrs being expanded.
-	 * @return TokenHandlerResult|null
+	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
+	public function onAny( $token ): ?array {
 		if (
 			!( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) ||
 			!count( $token->attribs )
@@ -669,30 +675,14 @@ class AttributeExpander extends TokenHandler {
 		}
 
 		$name = $token->getName();
-		$property = $token->getAttributeV( 'property' ) ?? '';
 		$typeOf = $token->getAttributeV( 'typeof' ) ?? '';
 
 		if (
 			// Do not process dom-fragment tokens: a separate handler deals with them.
 			$name === 'mw:dom-fragment-token' ||
-			(
-				$name === 'meta' &&
-				(
-					// Parsoid generated metas don't need expansion
-					preg_match( '/mw:(Placeholder|Transclusion|Param|Includes)/', $typeOf ) ||
-					// The TemplateHandler runs before the AttributeExpander and
-					// magic words masquerading as templates may themselves be
-					// templated (as in templated template names).
-					// See TemplateHandler::processSpecialMagicWord()
-					// So, we may see page properties that have already been
-					// expanded and annotated with mw:ExpandedAttrs.  We return
-					// early to avoid the assertion below, at the expense of
-					// perhaps not catching other cases where tokens are passed
-					// through here doubly by mistake.
-					( preg_match( '/mw:(PageProp)/', $property ) &&
-						str_contains( $typeOf, 'mw:ExpandedAttrs' ) )
-				)
-			)
+			// Parsoid generated metas don't need expansion
+			( $name === 'meta' &&
+				preg_match( '/mw:(Placeholder|Transclusion|Param|Includes)/', $typeOf ) )
 		) {
 			return null;
 		}

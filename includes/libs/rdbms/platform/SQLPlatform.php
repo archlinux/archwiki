@@ -49,14 +49,11 @@ class SQLPlatform implements ISQLPlatform {
 	protected $tableAliases = [];
 	/** @var string[] Current map of (index alias => index) */
 	protected $indexAliases = [];
-	/** @var DatabaseDomain|null */
-	protected $currentDomain;
+	protected DatabaseDomain $currentDomain;
 	/** @var array|null Current variables use for schema element placeholders */
 	protected $schemaVars;
-	/** @var DbQuoter */
-	protected $quoter;
-	/** @var LoggerInterface */
-	protected $logger;
+	protected DbQuoter $quoter;
+	protected LoggerInterface $logger;
 	/** @var callable Error logging callback */
 	protected $errorLogger;
 
@@ -65,11 +62,10 @@ class SQLPlatform implements ISQLPlatform {
 		?LoggerInterface $logger = null,
 		?DatabaseDomain $currentDomain = null,
 		$errorLogger = null
-
 	) {
 		$this->quoter = $quoter;
 		$this->logger = $logger ?? new NullLogger();
-		$this->currentDomain = $currentDomain ?: DatabaseDomain::newUnspecified();
+		$this->currentDomain = $currentDomain ?? DatabaseDomain::newUnspecified();
 		$this->errorLogger = $errorLogger ?? static function ( Throwable $e ) {
 			trigger_error( get_class( $e ) . ': ' . $e->getMessage(), E_USER_WARNING );
 		};
@@ -427,7 +423,6 @@ class SQLPlatform implements ISQLPlatform {
 
 	/**
 	 * @inheritDoc
-	 * @stable to override
 	 */
 	public function buildConcat( $stringList ) {
 		return 'CONCAT(' . implode( ',', $stringList ) . ')';
@@ -447,7 +442,6 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	/**
-	 * @stable to override
 	 * @param string $s
 	 * @param string $escapeChar
 	 * @return string
@@ -463,11 +457,9 @@ class SQLPlatform implements ISQLPlatform {
 	public function buildLike( $param, ...$params ) {
 		if ( is_array( $param ) ) {
 			$params = $param;
-		} else {
-			$params = func_get_args();
+			$param = array_shift( $params );
 		}
-		// @phan-suppress-next-line PhanParamTooFewUnpack
-		$likeValue = new LikeValue( ...$params );
+		$likeValue = new LikeValue( $param, ...$params );
 
 		return ' LIKE ' . $likeValue->toSql( $this->quoter );
 	}
@@ -482,7 +474,6 @@ class SQLPlatform implements ISQLPlatform {
 
 	/**
 	 * @inheritDoc
-	 * @stable to override
 	 */
 	public function unionSupportsOrderAndLimit() {
 		return true; // True for almost every DB supported
@@ -554,7 +545,6 @@ class SQLPlatform implements ISQLPlatform {
 
 	/**
 	 * @inheritDoc
-	 * @stable to override
 	 */
 	public function buildSubstring( $input, $startPosition, $length = null ) {
 		$this->assertBuildSubstringParams( $startPosition, $length );
@@ -864,7 +854,6 @@ class SQLPlatform implements ISQLPlatform {
 	 * Get an aliased field name
 	 * e.g. fieldName AS newFieldName
 	 *
-	 * @stable to override
 	 * @param string $name Field name
 	 * @param string|false $alias Alias (optional)
 	 * @return string SQL name for aliased field. Will not alias a field to its own name
@@ -1206,26 +1195,10 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	/**
-	 * @stable to override
 	 * @return string|null Schema to use to qualify relations in queries
 	 */
 	protected function relationSchemaQualifier() {
 		return $this->currentDomain->getSchema();
-	}
-
-	/**
-	 * @deprecated since 1.39.
-	 */
-	public function tableNames( ...$tables ) {
-		wfDeprecated( __METHOD__, '1.39' );
-
-		$retVal = [];
-
-		foreach ( $tables as $name ) {
-			$retVal[$name] = $this->tableName( $name );
-		}
-
-		return $retVal;
 	}
 
 	public function tableNamesN( ...$tables ) {
@@ -1261,7 +1234,6 @@ class SQLPlatform implements ISQLPlatform {
 	 * as such in practice this is biased toward specifically improving performance
 	 * of large wiki farms that use MySQL or MariaDB (like Wikipedia).
 	 *
-	 * @stable to override
 	 * @param string $index
 	 * @return string
 	 */
@@ -1287,7 +1259,6 @@ class SQLPlatform implements ISQLPlatform {
 	 *
 	 * @see Database::select()
 	 *
-	 * @stable to override
 	 * @param array $options Associative array of options to be turned into
 	 *   an SQL query, valid keys are listed in the function.
 	 * @return string[] (START OPTIONS, PRE-LIMIT TAIL, POST-LIMIT TAIL)
@@ -1475,7 +1446,6 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	/**
-	 * @stable to override
 	 * @return string[] ("INSERT"-style SQL verb, "ON CONFLICT"-style clause or "")
 	 * @since 1.35
 	 */
@@ -1617,7 +1587,11 @@ class SQLPlatform implements ISQLPlatform {
 		);
 	}
 
-	private function scrubArray( $array, $listType = self::LIST_AND ) {
+	/**
+	 * @param mixed $array
+	 * @param int $listType
+	 */
+	private function scrubArray( $array, int $listType = self::LIST_AND ): string {
 		if ( is_array( $array ) ) {
 			$scrubbedArray = [];
 			foreach ( $array as $key => $value ) {
@@ -1674,7 +1648,6 @@ class SQLPlatform implements ISQLPlatform {
 	/**
 	 * Make UPDATE options array for Database::makeUpdateOptions
 	 *
-	 * @stable to override
 	 * @param array $options
 	 * @return array
 	 */
@@ -1997,10 +1970,9 @@ class SQLPlatform implements ISQLPlatform {
 	/**
 	 * Get schema variables to use if none have been set via setSchemaVars().
 	 *
-	 * Override this in derived classes to provide variables for tables.sql
-	 * and SQL patch files.
+	 * Override this in derived classes to provide variables for SQL schema
+	 * and patch files.
 	 *
-	 * @stable to override
 	 * @return array
 	 */
 	protected function getDefaultSchemaVars() {

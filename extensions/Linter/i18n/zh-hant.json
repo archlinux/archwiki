@@ -9,10 +9,10 @@
 			"LNDDYL",
 			"Liuxinyu970226",
 			"Xiplus",
+			"優枰",
 			"捍粵者",
 			"沈澄心",
-			"蘭斯特",
-			"優枰"
+			"蘭斯特"
 		]
 	},
 	"linterrors": "Lint錯誤",
@@ -24,6 +24,8 @@
 	"linter-category-deletable-table-tag-desc": "這些頁面含有應被刪除的表格標籤。",
 	"linter-category-duplicate-ids": "重複ID",
 	"linter-category-duplicate-ids-desc": "這些頁面含有重複 id 屬性的元素。",
+	"linter-category-empty-heading": "空標題",
+	"linter-category-empty-heading-desc": "這些頁面含有空標題。",
 	"linter-category-fostered": "表格內容嵌套錯誤",
 	"linter-category-fostered-desc": "這些頁面含有內容嵌套錯誤的表格。",
 	"linter-category-fostered-transparent": "渲染後透明的表格內容嵌套錯誤",
@@ -91,6 +93,7 @@
 	"linter-pager-deletable-table-tag-details": "應被刪除的表格標籤",
 	"linter-pager-details-header": "額外資訊",
 	"linter-pager-duplicate-ids-details": "重複ID",
+	"linter-pager-empty-heading-details": "空標題",
 	"linter-pager-fostered-details": "表格不合法內容",
 	"linter-pager-fostered-transparent-details": "不合法透明內容渲染",
 	"linter-pager-html5-misnesting-details": "錯誤（現已中斷）",

@@ -1,0 +1,17 @@
+{
+	"x-i18n-description": "rest-schema-desc-page-history-count",
+	"required": [
+		"count",
+		"limit"
+	],
+	"properties": {
+		"count": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-history-edit-count"
+		},
+		"limit": {
+			"type": "boolean",
+			"x-i18n-description": "rest-property-desc-page-history-edit-limit"
+		}
+	}
+}

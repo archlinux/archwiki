@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.0.2
+
+* Fix getRelativePath() with multiple ".." parent fragments (Hannah Okwelum)[T388323](https://phabricator.wikimedia.org/T388323)
+
 # 4.0.1
 
 * Fix "Implicitly nullable parameter" PHP 8.4 warning (libraryupgrader)

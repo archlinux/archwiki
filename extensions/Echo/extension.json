@@ -15,7 +15,7 @@
 	"license-name": "MIT",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"APIMetaModules": {
 		"notifications": {
@@ -117,6 +117,14 @@
 		},
 		"NotificationsMarkRead": "MediaWiki\\Extension\\Notifications\\Special\\SpecialNotificationsMarkRead"
 	},
+	"NotificationHandlers": [
+		{
+			"types": [
+				"*"
+			],
+			"class": "MediaWiki\\Extension\\Notifications\\EchoNotificationHandler"
+		}
+	],
 	"AvailableRights": [
 		"manage-all-push-subscriptions",
 		"echo-create"
@@ -273,6 +281,7 @@
 				"echo-notification-more-options-tooltip",
 				"echo-notification-alert-text-only",
 				"echo-notification-notice-text-only",
+				"echo-notification-all-text-only",
 				"echo-email-batch-bullet",
 				"echo-notification-placeholder",
 				"tooltip-pt-notifications-alert",
@@ -434,7 +443,6 @@
 			},
 			"dependencies": [
 				"ext.echo.ui",
-				"mediawiki.Uri",
 				"mediawiki.user",
 				"ext.echo.styles.special"
 			],
@@ -487,7 +495,6 @@
 		"LocalUserCreated": "main",
 		"RollbackComplete": "main",
 		"UserSaveSettings": "main",
-		"AbortTalkPageEmailNotification": "main",
 		"SendWatchlistEmailNotification": "main",
 		"GetNewMessagesAlert": "main",
 		"LinksUpdateComplete": "main",
@@ -525,6 +532,14 @@
 			"class": "MediaWiki\\Extension\\Notifications\\UserMergeHooks"
 		}
 	},
+	"NotificationMiddleware": [
+		{
+			"class": "MediaWiki\\Extension\\Notifications\\Notifications\\RecentChangeNotificationMiddleware",
+			"services": [
+				"MainConfig"
+			]
+		}
+	],
 	"config": {
 		"EchoEnableEmailBatch": {
 			"value": true
@@ -980,14 +995,6 @@
 					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoMentionStatusPresentationModel"
 				},
 				"user-rights": {
-					"user-locators": [
-						[
-							"MediaWiki\\Extension\\Notifications\\UserLocator::locateFromEventExtra",
-							[
-								"user"
-							]
-						]
-					],
 					"category": "user-rights",
 					"group": "neutral",
 					"section": "alert",
@@ -995,14 +1002,6 @@
 				},
 				"emailuser": {
 					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoEmailUserPresentationModel",
-					"user-locators": [
-						[
-							"MediaWiki\\Extension\\Notifications\\UserLocator::locateFromEventExtra",
-							[
-								"to-user-id"
-							]
-						]
-					],
 					"category": "emailuser",
 					"group": "neutral",
 					"section": "alert"
@@ -1037,14 +1036,6 @@
 					"section": "message"
 				},
 				"api-alert": {
-					"user-locators": [
-						[
-							"MediaWiki\\Extension\\Notifications\\UserLocator::locateFromEventExtra",
-							[
-								"recipients"
-							]
-						]
-					],
 					"canNotifyAgent": true,
 					"category": "api-triggered",
 					"group": "neutral",
@@ -1052,14 +1043,6 @@
 					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoManualPresentationModel"
 				},
 				"api-notice": {
-					"user-locators": [
-						[
-							"MediaWiki\\Extension\\Notifications\\UserLocator::locateFromEventExtra",
-							[
-								"recipients"
-							]
-						]
-					],
 					"canNotifyAgent": true,
 					"category": "api-triggered",
 					"group": "neutral",
@@ -1153,8 +1136,7 @@
 		"MediaWiki\\Extension\\Notifications\\": "includes/"
 	},
 	"TestAutoloadClasses": {
-		"MediaWiki\\Extension\\Notifications\\Test\\EchoAbstractMapperStub": "tests/phpunit/Mapper/EchoAbstractMapperStub.php",
-		"MediaWiki\\Extension\\Notifications\\Test\\Integration\\Mapper\\EchoExecuteFirstArgumentStub": "tests/phpunit/Mapper/EchoExecuteFirstArgumentStub.php"
+		"MediaWiki\\Extension\\Notifications\\Test\\EchoAbstractMapperStub": "tests/phpunit/Mapper/EchoAbstractMapperStub.php"
 	},
 	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\Notifications\\Test\\": "tests/phpunit/",
@@ -1165,5 +1147,10 @@
 	],
 	"ConfigRegistry": {
 		"Echo": "GlobalVarConfig::newInstance"
-	}
+	},
+	"InstallerTasks": [
+		{
+			"class": "MediaWiki\\Extension\\Notifications\\InstallSchemaTask"
+		}
+	]
 }

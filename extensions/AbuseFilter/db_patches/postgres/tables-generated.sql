@@ -50,7 +50,6 @@ CREATE TABLE abuse_filter_log (
   afl_title TEXT NOT NULL,
   afl_wiki TEXT DEFAULT NULL,
   afl_deleted SMALLINT DEFAULT 0 NOT NULL,
-  afl_patrolled_by INT DEFAULT 0 NOT NULL,
   afl_rev_id INT DEFAULT NULL,
   PRIMARY KEY(afl_id)
 );

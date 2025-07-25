@@ -2,6 +2,7 @@
 namespace MediaWiki\Extension\Thanks;
 
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -13,10 +14,16 @@ use Wikimedia\Rdbms\IDBAccessObject;
 class ThanksQueryHelper {
 	private TitleFactory $titleFactory;
 	private IConnectionProvider $dbProvider;
+	private ActorNormalization $actorNormalization;
 
-	public function __construct( TitleFactory $titleFactory, IConnectionProvider $dbProvider ) {
+	public function __construct(
+		TitleFactory $titleFactory,
+		IConnectionProvider $dbProvider,
+		ActorNormalization $actorNormalization
+	) {
 		$this->titleFactory = $titleFactory;
 		$this->dbProvider = $dbProvider;
+		$this->actorNormalization = $actorNormalization;
 	}
 
 	/**
@@ -48,6 +55,41 @@ class ThanksQueryHelper {
 				'log_action' => 'thank',
 				'log_namespace' => NS_USER,
 				'log_title' => $logTitle,
+			] )
+			->limit( $limit )
+			->caller( __METHOD__ )
+			->fetchRowCount();
+	}
+
+	/**
+	 * Return the number of thanks a user has given. The query is not cached.
+	 *
+	 * @param UserIdentity $userIdentity
+	 * @param int $limit cap the value of counts queried for performance
+	 * @param int $flags database options. If calling in a POST context where a user is giving thanks, the
+	 *  return value will be incorrect if returned from replica. This allows you to query primary if the
+	 *  exact number is important.
+	 * @return int Number of thanks given for the user ID
+	 */
+	public function getThanksGivenCount(
+		UserIdentity $userIdentity,
+		int $limit = 1000,
+		int $flags = IDBAccessObject::READ_NORMAL
+	): int {
+		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
+		$actorId = $this->actorNormalization->findActorId( $userIdentity, $db );
+		if ( !$actorId ) {
+			return 0;
+		}
+		return $db->newSelectQueryBuilder()
+			->table( 'logging' )
+			->field( '1' )
+			->conds( [
+				'log_type' => 'thanks',
+				// Omit the log_action and log_namespace, as there's only one action
+				// ('thank') and namespace (NS_USER) involved; this speeds up the query
+				// because we can use the `log_actor_type_time` index
+				'log_actor' => $actorId
 			] )
 			->limit( $limit )
 			->caller( __METHOD__ )

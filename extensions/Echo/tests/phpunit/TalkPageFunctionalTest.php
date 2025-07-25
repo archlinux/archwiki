@@ -11,12 +11,20 @@ use MediaWiki\Tests\Api\ApiTestCase;
  * @group medium
  */
 class TalkPageFunctionalTest extends ApiTestCase {
+
+	protected function tearDown(): void {
+		Event::$alwaysInsert = false;
+		parent::tearDown();
+	}
+
 	/**
 	 * Creates and updates a user talk page a few times to ensure proper events are
 	 * created.
 	 * @covers \MediaWiki\Extension\Notifications\DiscussionParser
 	 */
 	public function testAddCommentsToTalkPage() {
+		Event::$alwaysInsert = true;
+
 		$editor = $this->getTestSysop()->getUser();
 		$talkTitle = $this->getTestSysop()->getUser()->getTalkPage();
 		$talkPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $talkTitle );

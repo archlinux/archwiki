@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Thanks;
 
-use LogEntry;
-use LogFormatter;
+use MediaWiki\Logging\LogEntry;
+use MediaWiki\Logging\LogFormatter;
 use MediaWiki\Message\Message;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\User;
@@ -35,6 +35,7 @@ class ThanksLogFormatter extends LogFormatter {
 		return $params;
 	}
 
+	/** @inheritDoc */
 	public function getPreloadTitles() {
 		// Add the recipient's user talk page to LinkBatch
 		return [ $this->namespaceInfo->getTalkPage( $this->entry->getTarget() ) ];

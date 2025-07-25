@@ -11,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Затвори",
 	"cdx-label-optional-flag": "(необавезно)",
 	"cdx-message-dismiss-button-label": "Затвори",
+	"cdx-popover-close-button-label": "Затвори",
 	"cdx-search-input-search-button-label": "Претрага",
 	"cdx-table-select-all-label": "Изабери све редове",
 	"cdx-table-select-row-label": "Изаберите ред $1 од $2",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Приказани резултати $1–$2 од многих",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1—$2 од многих",
 	"cdx-table-pagination-status-message-indeterminate-final": "Приказ последњих {{PLURAL:$1|$1 резултат|$1 резултата}}",
-	"cdx-table-pagination-status-message-pending": "Учитавање резултата..."
+	"cdx-table-pagination-status-message-pending": "Учитавање резултата...",
+	"cdx-table-no-data-message": "Нема доступних података."
 }

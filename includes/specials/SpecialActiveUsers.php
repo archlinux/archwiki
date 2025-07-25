@@ -28,6 +28,7 @@ use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\ActiveUsersPager;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityLookup;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -44,20 +45,15 @@ class SpecialActiveUsers extends SpecialPage {
 	private UserGroupManager $userGroupManager;
 	private UserIdentityLookup $userIdentityLookup;
 	private HideUserUtils $hideUserUtils;
+	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param UserGroupManager $userGroupManager
-	 * @param UserIdentityLookup $userIdentityLookup
-	 * @param HideUserUtils $hideUserUtils
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
 		UserGroupManager $userGroupManager,
 		UserIdentityLookup $userIdentityLookup,
-		HideUserUtils $hideUserUtils
+		HideUserUtils $hideUserUtils,
+		TempUserConfig $tempUserConfig
 	) {
 		parent::__construct( 'Activeusers' );
 		$this->linkBatchFactory = $linkBatchFactory;
@@ -65,6 +61,7 @@ class SpecialActiveUsers extends SpecialPage {
 		$this->userGroupManager = $userGroupManager;
 		$this->userIdentityLookup = $userIdentityLookup;
 		$this->hideUserUtils = $hideUserUtils;
+		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -99,6 +96,7 @@ class SpecialActiveUsers extends SpecialPage {
 			$this->userGroupManager,
 			$this->userIdentityLookup,
 			$this->hideUserUtils,
+			$this->tempUserConfig,
 			$opts
 		);
 		$usersBody = $pager->getBody();

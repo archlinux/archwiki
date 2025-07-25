@@ -9,7 +9,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.43",
+		"MediaWiki": ">= 1.44",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -70,6 +70,18 @@
 	"DatabaseVirtualDomains": [
 		"virtual-LoginNotify"
 	],
+	"AuthManagerAutoConfig": {
+		"preauth": {
+			"login-notify-known-ip": {
+				"class": "LoginNotify\\KnownIPPreAuthenticationProvider",
+				"services": [
+					"LoginNotify.LoginNotify",
+					"UserFactory"
+				],
+				"sort": 0
+			}
+		}
+	},
 	"config": {
 		"LoginNotifyAttemptsKnownIP": {
 			"description": "The number of failed login attempts to permit from a known IP before a notification is triggered.",
@@ -134,6 +146,10 @@
 		"LoginNotifySeenBucketSize": {
 			"description": "The size of a time bucket used when storing data in the loginnotify_seen_net table, in seconds. If this is changed, the data in the loginnotify_seen_net will become invalid and the table should be truncated. Setting this to a small number will require additional storage space. Setting this to a large number will cause the data expiry time to be less accurate. Default: 15 days.",
 			"value": 1296000
+		},
+		"LoginNotifyDenyUnknownIPs": {
+			"description": "Whether to deny login from unknown IPs.",
+			"value": false
 		}
 	},
 	"manifest_version": 2

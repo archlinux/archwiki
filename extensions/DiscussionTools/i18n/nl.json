@@ -7,6 +7,7 @@
 			"Elroy",
 			"Encycloon",
 			"HanV",
+			"Jeroen N",
 			"Mainframe98",
 			"Mar(c)",
 			"Matma Rex",
@@ -16,8 +17,7 @@
 			"Robin van der Vliet",
 			"Romaine",
 			"Siebrand",
-			"Sjoerddebruin",
-			"Jeroen N"
+			"Sjoerddebruin"
 		]
 	},
 	"discussiontools": "Overleghulpmiddelen",
@@ -82,7 +82,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "U bent nu geabonneerd!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "U ontvangt geen melding meer wanneer er een nieuw overleg op deze pagina wordt begonnen.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Uw abonnement is opgezegd.",
-	"discussiontools-notification-added-topic-header": "Nieuw onderwerp \"<strong>$4</strong>\" aangemaakt door $2 op <strong>$3</strong>.",
+	"discussiontools-notification-added-topic-header": "Nieuw onderwerp “<strong>$4</strong>” {{GENDER:$2|aangemaakt}} door $1 op <strong>$3</strong>.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Eén nieuw onderwerp|$1 nieuwe onderwerpen|100=99+ nieuwe onderwerpen}} op \"<strong>$2</strong>\".",
 	"discussiontools-notification-added-topic-view": "Onderwerp bekijken",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|heeft}} {{GENDER:$4|je}} bedankt voor je reactie op \"<strong>$3</strong>\".",
@@ -207,9 +207,9 @@
 	"tag-discussiontools-description": "Bewerking gemaakt met DiscussionTools",
 	"tag-discussiontools-edit": "Reactie bewerkt",
 	"tag-discussiontools-edit-description": "De gebruiker heeft een bestaande bericht bewerkt met DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nieuw onderwerp]",
+	"tag-discussiontools-newtopic": "Nieuw onderwerp",
 	"tag-discussiontools-newtopic-description": "De gebruiker heeft een nieuw onderwerp aan de pagina toegevoegd met DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Reageerfunctie]",
+	"tag-discussiontools-reply": "Reageerfunctie",
 	"tag-discussiontools-reply-description": "De gebruiker heeft geantwoord op een reactie met DiscussionTools",
 	"tag-discussiontools-source-description": "DiscussionTools is gebruikt in brontekstmodus",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools is gebruikt in verbeterde bronmodus met de werkbalk",

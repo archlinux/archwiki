@@ -10,12 +10,9 @@
 	"cite_error_ref_numeric_key": "Tenger <code>&lt;ref&gt;</code> kaga' aci; nama kaga' bisa angka kabèhan ringkes doang.\nPaké judul nyang ngejabarin.",
 	"cite_error_ref_no_key": "Tenger pembuka <code>&lt;ref&gt;</code> salah bentuk atawa namanya salah.",
 	"cite_error_ref_too_many_keys": "Patokan kaga' aci di tenger <code>&lt;ref&gt;</code>",
-	"cite_error_ref_nested_extends": "Merlèng tenger <code>&lt;ref&gt;</code> lebi deri atu trap kaga' diboléin",
 	"cite_error_ref_no_input": "Tenger <code>&lt;ref&gt;</code> kaga' aci; ruju'an sonder nama kudu ada isinya",
 	"cite_error_references_duplicate_key": "Tenger <code>&lt;ref&gt;</code> kaga' aci; nama \"$1\" diterangin bekali-kali paké isi nyang béda",
 	"cite_error_references_invalid_parameters": "Patokan dalem tenger <code>&lt;references&gt;</code> kaga' aci",
-	"cite_error_references_no_backlink_label": "Keabisan ènclèkan sènggètan balik cènglian. Terangin lagi di pesen sistim [[MediaWiki:Cite references link many format backlink labels]].",
-	"cite_error_no_link_label_group": "Keabisan ènclèkan sènggètan cènglian bakal kelompok \"$1\". Terangin lagi di pesen [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Tenger <code>&lt;ref&gt;</code> kaga' aci; kaga' ada tèks bakal ruju'an nyang namanya <code>$1</code>",
 	"cite_error_included_ref": "Tenger <code>&lt;/ref&gt;</code> kudu ditutup paké <code>&lt;ref&gt;</code>",
 	"cite_error_included_references": "Tenger penutup kaga' ada <code>&lt;references&gt;</code>",
@@ -33,6 +30,7 @@
 	"cite-reference-previews-note": "Catetan",
 	"cite-reference-previews-web": "Ruju'an jala",
 	"cite-reference-previews-collapsible-placeholder": "Ni ruju'an nyerèntain gambar bèbèr nyang kaga' muat di terawangan.",
+	"cite-reference-previews-preference-label": "Nyalain terawangan halaman (dapetin terawangan lekas deri ruju'an pas ngebaca halaman)",
 	"cite_references_link_accessibility_label": "Taèk",
 	"cite_references_link_many_accessibility_label": "Taèk ke:",
 	"cite_references_link_accessibility_back_label": "Balik ke atas",
@@ -47,6 +45,5 @@
 	"cite-wikieditor-help-content-showreferences-description": "Pampangin ruju'an",
 	"cite-wikieditor-help-content-reference-example-text1": "Halaman tèks.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Tèks sènggètan], tèks tambahan.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèks sènggètan]",
-	"popups-refpreview-user-preference-label": "Nyalain terawangan halaman (dapetin terawangan lekas deri ruju'an pas ngebaca halaman)"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèks sènggètan]"
 }

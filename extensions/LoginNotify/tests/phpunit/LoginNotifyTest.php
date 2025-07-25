@@ -56,7 +56,7 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 				new ServiceOptions( LoginNotify::CONSTRUCTOR_OPTIONS, $config ),
 				new HashBagOStuff,
 				LoggerFactory::getInstance( 'LoginNotify' ),
-				$services->getStatsdDataFactory(),
+				$services->getStatsFactory(),
 				$services->getDBLoadBalancerFactory(),
 				$services->getJobQueueGroup(),
 				new LocalIdLookup(

@@ -41,7 +41,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->registerSimpleRequirement( 'requirementA', true );
 		$featureManager->registerSimpleRequirement( 'requirementA', true );
@@ -75,7 +75,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->registerSimpleRequirement( 'requirement', true );
 		$featureManager->registerFeature( 'feature', $config );
@@ -87,7 +87,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 	public function testIsRequirementMet() {
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->registerSimpleRequirement( 'enabled', true );
 		$featureManager->registerSimpleRequirement( 'disabled', false );
@@ -104,7 +104,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->isRequirementMet( 'foo' );
 	}
@@ -117,7 +117,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->registerFeature( 'featureA', [] );
 		$featureManager->registerFeature( 'featureA', [] );
@@ -129,7 +129,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 	public function testIsFeatureEnabled() {
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->registerSimpleRequirement( 'foo', false );
 		$featureManager->registerFeature( 'requiresFoo', 'foo' );
@@ -163,7 +163,7 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 
 		$featureManager = new FeatureManager(
 			$this->createMock( UserOptionsLookup::class ),
-			RequestContext::getMain()
+			new RequestContext()
 		);
 		$featureManager->isFeatureEnabled( 'foo' );
 	}

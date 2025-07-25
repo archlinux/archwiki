@@ -13,6 +13,8 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\NodeList;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Fragments\PFragment;
+use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
@@ -30,6 +32,29 @@ use Wikimedia\Parsoid\Wt2Html\Frame;
  * This file contains parsing pipeline related utilities.
  */
 class PipelineUtils {
+	// keep in sync with internal_strip_marker in Grammar.pegphp
+	public const PARSOID_FRAGMENT_PREFIX = '{{#parsoid\0fragment:';
+
+	/**
+	 * Returns a wikitext string with embedded parsoid fragment markers,
+	 * as well as a mapping from the marker IDs to PFragment objects.
+	 * @return array{0:string,1:array<string,PFragment>} A array consisting of
+	 *   the wikitext string, followed by the id-to-PFragment map.
+	 */
+	public static function pFragmentToParsoidFragmentMarkers( PFragment $fragment ): array {
+		static $counter = 0;
+		$pieces = WikitextPFragment::castFromPFragment( $fragment )->split();
+		$result = [ $pieces[0] ];
+		$map = [];
+		for ( $i = 1; $i < count( $pieces ); $i += 2 ) {
+			$marker = self::PARSOID_FRAGMENT_PREFIX . ( $counter++ ) . '}}';
+			$map[$marker] = $pieces[$i];
+			$result[] = $marker;
+			$result[] = $pieces[$i + 1];
+		}
+		return [ implode( '', $result ), $map ];
+	}
+
 	/**
 	 * Creates a dom-fragment-token for processing 'content' (an array of tokens)
 	 * in its own subpipeline all the way to DOM. These tokens will be processed
@@ -69,7 +94,7 @@ class PipelineUtils {
 	 * @param Frame $frame
 	 *    The parent frame within which the expansion is taking place.
 	 *    Used for template expansion and source text tracking.
-	 * @param string|Token|array<Token|string>|Element $content
+	 * @param string|Token|array<Token|string>|DocumentFragment|PFragment $content
 	 *    How this content is processed depends on what kind of pipeline
 	 *    is constructed specified by opts.
 	 * @param array $opts
@@ -106,6 +131,216 @@ class PipelineUtils {
 
 		// Off the starting block ... ready, set, go!
 		return $pipeline->parse( $content, [ 'sol' => $opts['sol'] ] );
+	}
+
+	/**
+	 * Dump template source if '--dump tplsrc' flag was set
+	 */
+	public static function dumpTplSrc(
+		Env $env, Token $token, string $templateName, string $src,
+		bool $fragmentMode = false
+	): void {
+		$codec = DOMDataUtils::getCodec( $env->getTopLevelDoc() );
+		$dump = str_repeat( '=', 28 ) . " template source " . ( $fragmentMode ? '(FRAGMENT)' : '' ) .
+			str_repeat( '=', 28 ) . "\n";
+		$dp = $codec->toJsonArray( $token->dataParsoid, DataParsoid::class );
+		$dump .= 'TEMPLATE:' . $templateName . 'TRANSCLUSION:' .
+			PHPUtils::jsonEncode( $dp['src'] ) . "\n";
+		$dump .= str_repeat( '-', 80 ) . "\n";
+		$dump .= $src . "\n";
+		$pfragMapStr = $env->pFragmentMapToString();
+		if ( $pfragMapStr ) {
+			$dump .= "----- P-FRAGMENT MAP -----\n";
+			$dump .= $pfragMapStr;
+		}
+		$dump .= str_repeat( '-', 80 ) . "\n";
+		$env->writeDump( $dump );
+	}
+
+	/**
+	 * Prepare a PFragment for our parsing pipeline: split the fragment,
+	 * convert it to embedded fragment markers, and add those markers to
+	 * the pfragment map in the env.
+	 * @param Env $env
+	 * @param Frame $frame
+	 * @param PFragment $pFragment
+	 * @param array $opts
+	 * @return array{frame:Frame,wikitext:string,srcOffsets:?SourceRange}
+	 */
+	public static function preparePFragment(
+		Env $env,
+		Frame $frame,
+		PFragment $pFragment,
+		array $opts
+	): array {
+		[ $wikitext, $pFragmentMap ] =
+			self::pFragmentToParsoidFragmentMarkers( $pFragment );
+		// FUTURE WORK: Fragment should probably contain a Frame pointer as
+		// well, since srcOffsets are only meaningful in relation to a specific
+		// Frame::$srcText.  When that happens, we should assign an appropriate
+		// $frame here.
+		$srcOffsets = $pFragment->getSrcOffsets() ?? $opts['srcOffsets'] ?? null;
+		if ( !empty( $opts['processInNewFrame'] ) ) {
+			$frame = $frame->newChild( $frame->getTitle(), [], $wikitext );
+			$srcOffsets = new SourceRange( 0, strlen( $wikitext ) );
+		}
+		$env->addToPFragmentMap( $pFragmentMap );
+		return [
+			'frame' => $frame,
+			'wikitext' => $wikitext,
+			'srcOffsets' => $srcOffsets,
+		];
+	}
+
+	public static function processTemplateSource(
+		Env $env, Frame $frame, Token $token, ?array $tplArgs,
+		string $src, array $opts = []
+	): array {
+		if ( $src === '' ) {
+			return [];
+		}
+
+		// Get a nested transformation pipeline for the wikitext that takes
+		// us through stages 1-2, with the appropriate pipeline options set.
+		//
+		// Simply returning the tokenized source here (which may be correct
+		// when using the legacy preprocessor because we don't expect to
+		// tokenize any templates or include directives so skipping those
+		// handlers should be ok) won't work since the options for the pipeline
+		// we're in probably aren't what we want.
+		$toks = self::processContentInPipeline(
+			$env,
+			$frame,
+			$src,
+			[
+				'pipelineType' => 'wikitext-to-expanded-tokens',
+				'pipelineOpts' => [
+					'inTemplate' => true,
+					// FIXME: In reality, this is broken for parser tests where
+					// we expand templates natively. We do want all nested templates
+					// to be expanded. But, setting this to !usePHPPreProcessor seems
+					// to break a number of tests. Not pursuing this line of enquiry
+					// for now since this parserTests vs production distinction will
+					// disappear with parser integration. We'll just bear the stench
+					// till that time.
+					//
+					// NOTE: No expansion required for nested templates.
+					'expandTemplates' => $opts['expandTemplates'] ?? false,
+					'extTag' => $opts['extTag'] ?? null,
+				],
+				'srcText' => $src,
+				'srcOffsets' => new SourceRange( 0, strlen( $src ) ),
+				'tplArgs' => $tplArgs,
+				// HEADS UP: You might be wondering why we are forcing "sol" => true without
+				// using information about whether the transclusion is used in a SOL context.
+				//
+				// Ex: "foo {{1x|*bar}}"  Here, "*bar" is not in SOL context relative to the
+				// top-level page and so, should it be actually be parsed as a list item?
+				//
+				// So, there is a use-case where one could argue that the sol value here
+				// should be conditioned on the page-level context where "{{1x|*bar}}" showed
+				// up. So, in this example "foo {{1x|*bar}}, sol would be false and in this
+				// example "foo\n{{1x|*bar}}", sol would be true. That is effectively how
+				// the legacy parser behaves. (Ignore T2529 for the moment.)
+				//
+				// But, Parsoid is a different beast. Since the Parsoid/JS days, templates
+				// have been processed asynchronously. So, {{1x|*bar}} would be expanded and
+				// tokenized before even its preceding context might have been processed.
+				// From the start, Parsoid has aimed to decouple the processing of fragment
+				// generators (be it templates, extensions, or something else) from the
+				// processing of the page they are embedded in. This has been the
+				// starting point of many a wikitext 2.0 proposal on mediawiki.org;
+				// see also [[mw:Parsing/Notes/Wikitext_2.0#Implications_of_this_model]].
+				//
+				// The main performance implication is that you can process a transclusion
+				// concurrently *and* cache the output of {{1x|*bar}} since its output is
+				// the same no matter where on the page it appears. Without this decoupled
+				// model, if you got "{{mystery-template-that-takes-30-secs}}{{1x|*bar}}"
+				// you have to wait 30 secs before you get to expand {{1x|*bar}}
+				// because you have to wait and see whether the mystery template will
+				// leave you in SOL state or non-SOL state.
+				//
+				// In a stroke of good luck, wikitext editors seem to have agreed
+				// that it is better for all templates to be expanded in a
+				// consistent SOL state and not be dependent on their context;
+				// turn now to phab task T2529 which (via a fragile hack) tried
+				// to ensure that every template which started with
+				// start-of-line-sensitive markup was evaluated in a
+				// start-of-line context (by hackily inserting a newline).  Not
+				// everyone was satisfied with this hack (see T14974), but it's
+				// been the way things work for over a decade now (as evidenced
+				// by T14974 never having been "fixed").
+				//
+				// So, while we've established we would prefer *not* to use page
+				// context to set the initial SOL value for tokenizing the
+				// template, what *should* the initial SOL value be?
+				//
+				// * Treat every transclusion as a fresh document starting in SOL
+				//   state, ie set "sol" => true always.  This is supported by
+				//   most current wiki use, and is the intent behind the original
+				//   T2529 hack (although that hack left a number of edge cases,
+				//   described below).
+				//
+				// * Use `"sol" => false` for templates -- this was the solution
+				//   rejected by the original T2529 as being contrary to editor
+				//   expectations.
+				//
+				// * In the future, one might allow the template itself to
+				//   specify that its initial SOL state should be, using a
+				//   mechanism similar to what might be necessary for typed
+				//   templates.  This could also address T14974.  This is not
+				//   excluded by Parsoid at this point; but it would probably be
+				//   signaled by a template "return type" which is *not* DOM
+				//   therefore the template wouldn't get parsed "as wikitext"
+				//   (ie, T14974 wants an "attribute-value" return type which is
+				//   a plain string, and some of the wikitext 2.0 proposals
+				//   anticipate a "attribute name/value" dictionary as a possible
+				//   return type).
+				//
+				// In support of using sol=>true as the default initial state,
+				// let's examine the sol-sensitive wikitext constructs, and
+				// implicitly the corner cases left open by the T2529 hack.  (For
+				// non-sol-sensitive constructs, the initial SOL state is
+				// irrelevant.)
+				//
+				//   - SOL-sensitive contructs include lists, headings, indent-pre,
+				//     and table syntax.
+				//   - Of these, only lists, headings, and table syntax are actually handled in
+				//     the PEG tokenizer and are impacted by SOL state.
+				//   - Indent-Pre has its own handler that operates in a full page token context
+				//     and isn't impacted.
+				//   - T2529 effectively means for *#:; (lists) and {| (table start), newlines
+				//     are added which means no matter what value we set here, they will get
+				//     processed in sol state.
+				//   - This leaves us with headings (=), table heading (!), table row (|), and
+				//     table close (|}) syntax that would be impacted by what we set here.
+				//   - Given that table row/heading/close templates are very very common on wikis
+				//     and used for constructing complex tables, sol => true will let us handle
+				//     those without hacks. We aren't fully off the hook there -- see the code
+				//     in TokenStreamPatcher, AttributeExpander, TableFixups that all exist to
+				//     to work around the fact that decoupled processing isn't the wikitext
+				//     default. But, without sol => true, we'll likely be in deeper trouble.
+				//   - But, this can cause some occasional bad parses where "=|!" aren't meant
+				//     to be processed as a sol-wikitext construct.
+				//   - Note also that the workaround for T14974 (ie, the T2529 hack applying
+				//     where sol=false is actually desired) has traditionally been to add an
+				//     initial <nowiki/> which ensures that the "T2529 characters" are not
+				//     initial.  There are a number of alternative mechanisms to accomplish
+				//     this (ie, HTML-encode the first character).
+				//
+				// To honor the spirit of T2529 it seems plausible to try to lint
+				// away the remaining corner cases where T2529 does *not* result
+				// in start-of-line state for template expansion, and to use the
+				// various workarounds for compatibility in the meantime.
+				//
+				// We should also pick *one* of the workarounds for T14974
+				// (probably `<nowiki/>` at the first position in the template),
+				// support that (until a better mechanism exists), and (if
+				// possible) lint away any others.
+				'sol' => true
+			]
+		);
+		return $toks;
 	}
 
 	/**
@@ -152,7 +387,7 @@ class PipelineUtils {
 			// were not applied in cleanup.  However, tmp
 			// was stripped.
 			$v['html'] = ContentUtils::ppToXML(
-				$domFragment, [ 'innerXML' => true ]
+				$domFragment, [ 'innerXML' => true, 'fragment' => true ]
 			);
 		}
 		// Remove srcOffsets after value is expanded, so they don't show
@@ -204,11 +439,11 @@ class PipelineUtils {
 				$out[] = new KV( $name, $value );
 			}
 		}
+		$dmw = DOMDataUtils::getDataMw( $node );
 		return [
 			'attrs' => $out,
 			'dataParsoid' => DOMDataUtils::getDataParsoid( $node ),
-			'dataMw' =>
-				DOMDataUtils::validDataMw( $node ) ? DOMDataUtils::getDataMw( $node ) : null,
+			'dataMw' => $dmw->isEmpty() ? null : $dmw,
 		];
 	}
 
@@ -357,7 +592,7 @@ class PipelineUtils {
 				!$node->hasAttribute( 'data-parsoid' ),
 				"Expected node to have its data attributes loaded" );
 
-			$nodeData = DOMDataUtils::getNodeData( $node )->cloneNodeData();
+			$nodeData = clone DOMDataUtils::getNodeData( $node );
 
 			if ( $wrapperName !== DOMCompat::nodeName( $node ) ) {
 				// Create a copy of the node without children
@@ -396,11 +631,21 @@ class PipelineUtils {
 				// template wrapping of a foster box if the dom fragment is found in
 				// a fosterable position.
 				if (
-					isset( $nodeData->parsoid ) &&
+					$nodeData->parsoid !== null &&
 					$nodeData->parsoid->getTempFlag( TempData::IN_TRANSCLUSION )
 				) {
 					$nodeData->parsoid->tmp->setFlag( TempData::IN_TRANSCLUSION, false );
 				}
+				// Similarly for "fostered", it applies to the nested pipeline and,
+				// if transferred, can interfere when unpacking
+				if ( isset( $nodeData->parsoid->fostered ) ) {
+					unset( $nodeData->parsoid->fostered );
+				}
+
+				// Note that the TempData::WRAPPER flag may be transfered to the
+				// fragment wrapper.  Depending on the contents of the fragment,
+				// it's questionable if that's truly representative.  Our modeling
+				// based on the first node of the fragment has limitations.
 			}
 
 			DOMDataUtils::setNodeData( $workNode, $nodeData );
@@ -568,7 +813,7 @@ class PipelineUtils {
 	 * Convert a HTML5 DOM into a mw:DOMFragment and generate appropriate
 	 * tokens to insert into the token stream for further processing.
 	 *
-	 * The DOMPostProcessor will unpack the fragment and insert the HTML
+	 * The DOMProcessorPipeline will unpack the fragment and insert the HTML
 	 * back into the DOM.
 	 *
 	 * @param Env $env
@@ -682,12 +927,12 @@ class PipelineUtils {
 	/**
 	 * Fetches output of encapsulations that return HTML from the legacy parser
 	 */
-	public static function fetchHTML( Env $env, string $source ): ?DocumentFragment {
+	public static function parseToHTML( Env $env, string $source ): ?DocumentFragment {
 		$ret = $env->getDataAccess()->parseWikitext(
 			$env->getPageConfig(), $env->getMetadata(), $source
 		);
 		return $ret === '' ? null : DOMUtils::parseHTMLToFragment(
-				$env->topLevelDoc, DOMUtils::stripPWrapper( $ret )
+				$env->getTopLevelDoc(), DOMUtils::stripPWrapper( $ret )
 			);
 	}
 }

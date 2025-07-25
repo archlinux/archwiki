@@ -28,6 +28,7 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		$this->section = new EchoPresentationModelSection( $event, $user, $language );
 	}
 
+	/** @inheritDoc */
 	public function getIconType() {
 		if ( $this->isMixedBundle() ) {
 			return 'mention-status-bundle';
@@ -38,10 +39,12 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		return 'mention-failure';
 	}
 
+	/** @inheritDoc */
 	public function canRender() {
 		return (bool)$this->event->getTitle();
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		if ( $this->isTooManyMentionsFailure() ) {
 			$msg = $this->getMessageWithAgent( 'notification-header-mention-failure-too-many' );
@@ -84,6 +87,7 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getCompactHeaderMessage() {
 		if ( $this->isMentionSuccess() ) {
 			$msg = $this->getMessageWithAgent( 'notification-compact-header-mention-success' );
@@ -97,6 +101,7 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		return [
 			// Need FullURL so the section is included
@@ -107,6 +112,7 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		if ( $this->isBundled() ) {
 			return [];
@@ -121,38 +127,38 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		return [ $talkPageLink ];
 	}
 
-	public function isMentionSuccessEvent( Event $event ) {
+	public function isMentionSuccessEvent( Event $event ): bool {
 		return $event->getType() === 'mention-success';
 	}
 
-	private function isMentionSuccess() {
+	private function isMentionSuccess(): bool {
 		return $this->isMentionSuccessEvent( $this->event );
 	}
 
-	private function getSubjectName() {
+	private function getSubjectName(): string {
 		return $this->event->getExtraParam( 'subject-name', '' );
 	}
 
-	private function getFailureType() {
+	private function getFailureType(): string {
 		return $this->event->getExtraParam( 'failure-type', 'user-unknown' );
 	}
 
-	private function isTooManyMentionsFailure() {
+	private function isTooManyMentionsFailure(): bool {
 		return $this->getFailureType() === 'too-many' ||
 			$this->getType() === 'mention-failure-too-many';
 	}
 
-	private function getMaxMentions() {
+	private function getMaxMentions(): int {
 		global $wgEchoMaxMentionsCount;
 		return $this->event->getExtraParam( 'max-mentions', $wgEchoMaxMentionsCount );
 	}
 
-	private function getBundleSuccessCount() {
+	private function getBundleSuccessCount(): int {
 		$events = array_merge( $this->getBundledEvents(), [ $this->event ] );
 		return count( array_filter( $events, [ $this, 'isMentionSuccessEvent' ] ) );
 	}
 
-	private function isMixedBundle() {
+	private function isMixedBundle(): bool {
 		$successCount = $this->getBundleSuccessCount();
 		$failCount = $this->getBundleCount() - $successCount;
 		return $successCount > 0 && $failCount > 0;

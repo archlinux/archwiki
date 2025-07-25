@@ -90,9 +90,6 @@ class WikitextSerializer {
 		'/^(\n)?(\{\{ *_+)(\n? *\|\n? *_+ *= *)(_+)(\n? *\}\})(\n)?$/D';
 
 	/** @var string Regexp for testing whether nowiki added around heading-like wikitext is needed */
-	private const COMMENT_OR_WS_REGEXP = '/^(\s|' . Utils::COMMENT_REGEXP_FRAGMENT . ')*$/D';
-
-	/** @var string Regexp for testing whether nowiki added around heading-like wikitext is needed */
 	private const HEADING_NOWIKI_REGEXP = '/^(?:' . Utils::COMMENT_REGEXP_FRAGMENT . ')*'
 		. '<nowiki>(=+[^=]+=+)<\/nowiki>(.+)$/D';
 
@@ -112,8 +109,8 @@ class WikitextSerializer {
 	/** @var SerializerState */
 	private $state;
 
-	/** @var string Log type for trace() */
-	private $logType;
+	/** @var string Trace type for Env::trace() */
+	public $logType;
 
 	/**
 	 * @param Env $env
@@ -123,7 +120,7 @@ class WikitextSerializer {
 	 */
 	public function __construct( Env $env, $options ) {
 		$this->env = $env;
-		$this->logType = $options['logType'] ?? 'trace/wts';
+		$this->logType = $options['logType'] ?? 'wts';
 		$this->state = new SerializerState( $this, $options );
 		$this->wteHandlers = new WikitextEscapeHandlers( $env, $options['extName'] ?? null );
 	}
@@ -170,7 +167,7 @@ class WikitextSerializer {
 
 	public function htmlToWikitext( array $opts, string $html ): string {
 		$domFragment = ContentUtils::createAndLoadDocumentFragment(
-			$this->env->topLevelDoc, $html, [ 'markNew' => true ]
+			$this->env->getTopLevelDoc(), $html, [ 'markNew' => true ]
 		);
 		return $this->domToWikitext( $opts, $domFragment );
 	}
@@ -477,11 +474,15 @@ class WikitextSerializer {
 				// Attrib not present -- sanitized away!
 				if ( !KV::lookupKV( $attribs, (string)$k ) ) {
 					$v = $dataParsoid->sa[$k] ?? null;
-					// PORT-FIXME check type
+					// FIXME: The tokenizer and attribute shadowing currently
+					// don't make much effort towards distinguishing the use
+					// of HTML empty attribute syntax.  We can derive whether
+					// empty attribute syntax was used from the attributes
+					// srcOffsets in the Sanitizer, from the key end position
+					// and value start position being different.
 					if ( $v !== null && $v !== '' ) {
 						$out[] = $k . '="' . str_replace( '"', '&quot;', $v ) . '"';
 					} else {
-						// at least preserve the key
 						$out[] = $k;
 					}
 				}
@@ -489,31 +490,6 @@ class WikitextSerializer {
 		}
 		// XXX: round-trip optional whitespace / line breaks etc
 		return implode( ' ', $out );
-	}
-
-	/**
-	 * FIXME: Get rid of this function after content version 2.2.0 has expired from caches.
-	 *
-	 * @param Element $node
-	 */
-	public function handleLIHackIfApplicable( Element $node ): void {
-		$liHackSrc = DOMDataUtils::getDataParsoid( $node )->liHackSrc ?? null;
-		$prev = DiffDOMUtils::previousNonSepSibling( $node );
-
-		// If we are dealing with an LI hack, then we must ensure that
-		// we are dealing with either
-		//
-		//   1. A node with no previous sibling inside of a list.
-		//
-		//   2. A node whose previous sibling is a list element.
-		if ( $liHackSrc !== null
-			// Case 1
-			&& ( ( $prev === null && DOMUtils::isList( $node->parentNode ) )
-				// Case 2
-				|| ( $prev !== null && DOMUtils::isListItem( $prev ) ) )
-		) {
-			$this->state->emitChunk( $liHackSrc, $node );
-		}
 	}
 
 	private function formatStringSubst( string $format, string $value, bool $forceTrim ): string {
@@ -690,7 +666,7 @@ class WikitextSerializer {
 		$buf .= $this->formatStringSubst( $formatStart, $part->targetWt, $forceTrim );
 
 		// Short-circuit transclusions without params
-		$paramKeys = array_map( fn ( ParamInfo $pi ) => $pi->k, $part->paramInfos );
+		$paramKeys = array_map( static fn ( ParamInfo $pi ) => $pi->k, $part->paramInfos );
 		if ( !$paramKeys ) {
 			if ( substr( $formatEnd, 0, 1 ) === "\n" ) {
 				$formatEnd = substr( $formatEnd, 1 );
@@ -710,7 +686,7 @@ class WikitextSerializer {
 		// Per-parameter info from data-parsoid for pre-existing parameters
 		$dp = DOMDataUtils::getDataParsoid( $node );
 		// Account for clients not setting the `i`, see T238721
-		$dpArgInfo = isset( $part->i ) ? ( $dp->pi[$part->i] ?? [] ) : [];
+		$dpArgInfo = $part->i !== null ? ( $dp->pi[$part->i] ?? [] ) : [];
 
 		// Build a key -> arg info map
 		$dpArgInfoMap = [];
@@ -919,7 +895,7 @@ class WikitextSerializer {
 			$prevPart = $srcParts[$i - 1] ?? null;
 			$nextPart = $srcParts[$i + 1] ?? null;
 
-			if ( !isset( $part->targetWt ) ) {
+			if ( $part->targetWt === null ) {
 				// Maybe we should just raise a ClientError
 				$this->env->log( 'error', 'data-mw.parts array is malformed: ',
 					DOMCompat::getOuterHTML( $node ), PHPUtils::jsonEncode( $srcParts ) );
@@ -948,7 +924,7 @@ class WikitextSerializer {
 			// Fetch template data for the template
 			$tplData = null;
 			$apiResp = null;
-			if ( isset( $part->href ) && $useTplData ) {
+			if ( $part->href !== null && $useTplData ) {
 				// Not a parser function
 				try {
 					$title = Title::newFromText(
@@ -978,9 +954,11 @@ class WikitextSerializer {
 		// Serialize extension attributes in normalized form as:
 		// key='value'
 		// FIXME: with no dataParsoid, shadow info will mark it as new
-		$attrs = (array)( $dataMw->attrs ?? [] );
+		$attrs = $dataMw->getExtAttribs() ?? [];
 		$extTok = new TagTk( $extTagName, array_map( static function ( $key ) use ( $attrs ) {
-			return new KV( $key, $attrs[$key] );
+			// explicit conversion to string because PHP will convert to int
+			// if $key is numeric
+			return new KV( (string)$key, $attrs[$key] );
 		}, array_keys( $attrs ) ) );
 
 		$about = DOMCompat::getAttribute( $node, 'about' );
@@ -997,7 +975,7 @@ class WikitextSerializer {
 		if ( $attrStr ) {
 			$src .= ' ' . $attrStr;
 		}
-		return $src . ( !empty( $dataMw->body ) ? '>' : ' />' );
+		return $src . ( isset( $dataMw->body ) ? '>' : ' />' );
 	}
 
 	public function defaultExtensionHandler( Element $node, SerializerState $state ): string {
@@ -1169,10 +1147,10 @@ class WikitextSerializer {
 
 				$out = $state->getOrigSrc( $dp->dsr ) ?? '';
 
-				$this->trace( 'ORIG-src with DSR', static function () use ( $dp, $out ) {
-					return '[' . $dp->dsr->start . ',' . $dp->dsr->end . '] = '
-						. PHPUtils::jsonEncode( $out );
-				} );
+				$this->env->trace(
+					$this->logType,
+					'ORIG-src with DSR', $dp->dsr, ' = ', $out
+				);
 
 				// When reusing source, we should only suppress serializing
 				// to a single line for the cases we've allowed in normal serialization.
@@ -1255,18 +1233,18 @@ class WikitextSerializer {
 		$state->currNode = $node;
 
 		if ( $state->selserMode ) {
-			$this->trace(
-				static function () use ( $node ) {
-					return WTSUtils::traceNodeName( $node );
-				},
+			$this->env->trace(
+				$this->logType,
+				static fn () => WTSUtils::traceNodeName( $node ),
 				'; prev-unmodified: ', $state->prevNodeUnmodified,
-				'; SOL: ', $state->onSOL );
+				'; SOL: ', $state->onSOL
+			);
 		} else {
-			$this->trace(
-				static function () use ( $node ) {
-					return WTSUtils::traceNodeName( $node );
-				},
-				'; SOL: ', $state->onSOL );
+			$this->env->trace(
+				$this->logType,
+				static fn () => WTSUtils::traceNodeName( $node ),
+				'; SOL: ', $state->onSOL
+			);
 		}
 
 		switch ( $node->nodeType ) {
@@ -1328,7 +1306,7 @@ class WikitextSerializer {
 		);
 
 		$this->env->log( 'debug/wts', 'Calling serialization handler for ' . $nodeName );
-		$nextNode = call_user_func( $method, $node, $domHandler );
+		$nextNode = $method( $node, $domHandler );
 
 		$next = DiffDOMUtils::nextNonSepSibling( $node ) ?: $node->parentNode;
 		$this->env->log( 'debug/wts', 'After constraints for ' . $nodeName );
@@ -1355,7 +1333,7 @@ class WikitextSerializer {
 		};
 
 		preg_match( self::HEADING_NOWIKI_REGEXP, $line, $match );
-		if ( $match && !preg_match( self::COMMENT_OR_WS_REGEXP, $match[2] ) ) {
+		if ( $match && !preg_match( Utils::COMMENT_OR_WS_REGEXP, $match[2] ) ) {
 			// The nowikiing was spurious since the trailing = is not in EOL position
 			return $escaper( $match[1] ) . $match[2];
 		} else {
@@ -1572,14 +1550,14 @@ class WikitextSerializer {
 		Node $node, bool $selserMode = false
 	): string {
 		Assert::parameterType(
-			Document::class . '|' . DocumentFragment::class,
+			[ Document::class, DocumentFragment::class ],
 			$node, '$node' );
 
 		if ( $node instanceof Document ) {
 			$node = DOMCompat::getBody( $node );
 		}
 
-		$this->logType = $selserMode ? 'trace/selser' : 'trace/wts';
+		$this->logType = $selserMode ? 'selser' : 'wts';
 
 		$state = $this->state;
 		$state->initMode( $selserMode );
@@ -1623,13 +1601,4 @@ class WikitextSerializer {
 
 		return $state->out;
 	}
-
-	/**
-	 * @note Porting note: this replaces the pattern $serializer->env->log( $serializer->logType, ... )
-	 * @param mixed ...$args
-	 */
-	public function trace( ...$args ) {
-		$this->env->log( $this->logType, ...$args );
-	}
-
 }

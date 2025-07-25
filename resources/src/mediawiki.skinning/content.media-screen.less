@@ -11,15 +11,21 @@ figure[ typeof~='mw:File/Frame' ] {
 	border: @border-subtle;
 	border-bottom: 0;  // No border to figcaption
 	background-color: @background-color-interactive-subtle;
+	color: @color-base;
 
 	> :not( figcaption ) .mw-file-element {
+		background-color: @background-color-base;
 		border: @border-subtle;
+
+		&:not( .mw-broken-media ) {
+			background-color: @background-color-base-fixed;
+			color: @color-base-fixed;
+		}
 	}
 
 	> figcaption {
 		border: @border-subtle;
 		border-top: 0;
-		background-color: @background-color-interactive-subtle;
 
 		/* In mw-core the font-size is duplicated, 94% in thumbinner
 		 * and again 94% in thumbcaption. 88.4% for font size of the
@@ -80,6 +86,18 @@ figure[ typeof~='mw:File/Thumb' ] {
 			// Allow to flip
 			right: 6px;
 			background-image: @background-image-magnify-ltr;
+
+			// Invert icon for night mode
+			.skin-theme-clientpref-night & {
+				filter: invert( 1 );
+			}
+
+			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+			@media ( prefers-color-scheme: dark ) {
+				.skin-theme-clientpref-os & {
+					filter: invert( 1 );
+				}
+			}
 
 			// Defaults for page content language
 

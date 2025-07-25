@@ -8,17 +8,19 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in row" insertion mode
  */
 class InRow extends InsertionMode {
-	private static $tableRowContext = [
+	private const TABLE_ROW_CONTEXT = [
 		'tr' => true,
 		'template' => true,
 		'html' => true,
 	];
 
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->dispatcher->inTable->characters( $text, $start, $length,
 			$sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -27,7 +29,7 @@ class InRow extends InsertionMode {
 		switch ( $name ) {
 			case 'th':
 			case 'td':
-				$builder->clearStackBack( self::$tableRowContext, $sourceStart );
+				$builder->clearStackBack( self::TABLE_ROW_CONTEXT, $sourceStart );
 				$builder->insertElement( $name, $attrs, false, $sourceStart, $sourceLength );
 				$dispatcher->switchMode( Dispatcher::IN_CELL );
 				$builder->afe->insertMarker();
@@ -46,7 +48,7 @@ class InRow extends InsertionMode {
 					// Ignore
 					return;
 				}
-				$builder->clearStackBack( self::$tableRowContext, $sourceStart );
+				$builder->clearStackBack( self::TABLE_ROW_CONTEXT, $sourceStart );
 				$builder->pop( $sourceStart, 0 );
 				$dispatcher->switchMode( Dispatcher::IN_TABLE_BODY )
 					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
@@ -58,6 +60,7 @@ class InRow extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -70,7 +73,7 @@ class InRow extends InsertionMode {
 					// Ignore
 					return;
 				}
-				$builder->clearStackBack( self::$tableRowContext, $sourceStart );
+				$builder->clearStackBack( self::TABLE_ROW_CONTEXT, $sourceStart );
 				$builder->pop( $sourceStart, $sourceLength );
 				$dispatcher->switchMode( Dispatcher::IN_TABLE_BODY );
 				break;
@@ -82,7 +85,7 @@ class InRow extends InsertionMode {
 					// Ignore
 					return;
 				}
-				$builder->clearStackBack( self::$tableRowContext, $sourceStart );
+				$builder->clearStackBack( self::TABLE_ROW_CONTEXT, $sourceStart );
 				$builder->pop( $sourceStart, 0 );
 				$dispatcher->switchMode( Dispatcher::IN_TABLE_BODY )
 					->endTag( $name, $sourceStart, $sourceLength );
@@ -99,7 +102,7 @@ class InRow extends InsertionMode {
 				if ( !$stack->isInTableScope( 'tr' ) ) {
 					return;
 				}
-				$builder->clearStackBack( self::$tableRowContext, $sourceStart );
+				$builder->clearStackBack( self::TABLE_ROW_CONTEXT, $sourceStart );
 				$builder->pop( $sourceStart, 0 );
 				$dispatcher->switchMode( Dispatcher::IN_TABLE_BODY )
 					->endTag( $name, $sourceStart, $sourceLength );
@@ -120,6 +123,7 @@ class InRow extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->dispatcher->inTable->endDocument( $pos );
 	}

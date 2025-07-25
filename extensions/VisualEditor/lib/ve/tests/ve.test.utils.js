@@ -11,6 +11,7 @@
 	 * @ignore
 	 */
 	ve.test = { utils: {} };
+	let nextUniqueId = 1;
 
 	// Create a dummy platform and target so ve.init.platform/target are available
 	function DummyPlatform() {
@@ -54,6 +55,9 @@
 	};
 	DummyPlatform.prototype.getUnanchoredExternalLinkUrlProtocolsRegExp = function () {
 		return /https?:\/\//i;
+	};
+	DummyPlatform.prototype.generateUniqueId = function () {
+		return 'test' + ( nextUniqueId++ );
 	};
 	DummyPlatform.prototype.getUserConfig = function () {
 		return undefined;
@@ -152,9 +156,7 @@
 		};
 		if ( !Object.prototype.hasOwnProperty.call( store, 'length' ) ) {
 			Object.defineProperty( store, 'length', {
-				get: function () {
-					return Object.keys( store ).length;
-				}
+				get: () => Object.keys( store ).length
 			} );
 		}
 
@@ -187,6 +189,38 @@
 	new ve.test.utils.DummyPlatform();
 	new ve.test.utils.DummyTarget(); // Target gets appended to qunit-fixture in ve.qunit.local.js
 	/* eslint-enable no-new */
+
+	function ImageTransferHandler() {
+		// Parent constructor
+		ImageTransferHandler.super.apply( this, arguments );
+	}
+	OO.inheritClass( ImageTransferHandler, ve.ui.DataTransferHandler );
+	ImageTransferHandler.static.name = 'imageTest';
+	ImageTransferHandler.static.kinds = [ 'file' ];
+	ImageTransferHandler.static.types = [ 'image/jpeg', 'image/gif' ];
+	ImageTransferHandler.prototype.process = function () {
+		const file = this.item.getAsFile();
+		const text = file.name || ( file.type + ':' + file.size );
+		this.insertableDataDeferred.resolve( text.split( '' ) );
+	};
+
+	ve.test.utils.ImageTransferHandler = ImageTransferHandler;
+
+	/**
+	 * Creates a simulated jQuery Event
+	 *
+	 * @param {string|Object} src Event type, or original event object
+	 * @param {Object} props jQuery event properties
+	 * @return {jQuery.Event}
+	 */
+	ve.test.utils.createTestEvent = function TestEvent( src, props ) {
+		if ( props && !( 'which' in props ) ) {
+			props.which = props.keyCode;
+		}
+		const event = $.Event( src, props );
+		event.isSimulated = true;
+		return event;
+	};
 
 	// Disable scroll animatinos
 	ve.scrollIntoView = function () {
@@ -361,6 +395,15 @@
 		}
 
 		surface.getModel().setSelection( selection );
+
+		if ( caseItem.insertionAnnotations ) {
+			caseItem.insertionAnnotations.forEach( ( annotation ) => {
+				surface.getModel().addInsertionAnnotations(
+					ve.dm.annotationFactory.create( annotation.type, annotation.data )
+				);
+			} );
+		}
+
 		action[ caseItem.method ].apply( action, caseItem.args || [] );
 
 		const afterApply = () => {
@@ -369,6 +412,15 @@
 			assert.equalLinearData( actualData, data, caseItem.msg + ': data models match' );
 			if ( expectedSelection ) {
 				assert.equalHash( surface.getModel().getSelection(), expectedSelection, caseItem.msg + ': selections match' );
+			}
+
+			if ( caseItem.expectedInsertionAnnotations ) {
+				const actualAnnotations = surface.getModel().getInsertionAnnotations().get();
+				assert.deepEqual(
+					actualAnnotations.map( ( annotation ) => annotation.getComparableObject() ),
+					caseItem.expectedInsertionAnnotations,
+					'Insertion annotations match expected state'
+				);
 			}
 
 			if ( caseItem.undo ) {
@@ -602,6 +654,9 @@
 			getView: function () {
 				return view;
 			},
+			getTarget: function () {
+				return ve.init.target;
+			},
 			getCommands: function () {
 				return ve.ui.commandRegistry.getNames();
 			},
@@ -613,6 +668,9 @@
 			},
 			isDisabled: function () {
 				return false;
+			},
+			doesAllowTabFocusChange: function () {
+				return !!config.allowTabFocusChange;
 			},
 			emit: function () {},
 			connect: function () {},
@@ -643,8 +701,9 @@
 
 		view.surface = mockSurface;
 		mockSurface.$element.append( view.$element );
+		const $focusHolder = $( '<div>' ).prop( 'tabIndex', 0 ).addClass( 've-ui-testFocusHolder' );
 		// eslint-disable-next-line no-jquery/no-global-selector
-		$( '#qunit-fixture' ).append( mockSurface.$element );
+		$( '#qunit-fixture' ).append( mockSurface.$element, $focusHolder );
 
 		view.initialize();
 		model.initialize();

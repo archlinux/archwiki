@@ -67,6 +67,7 @@
 	"notifications": "জাননী",
 	"tooltip-pt-notifications-alert": "{{GENDER:|আপোনাৰ}} জাননী",
 	"tooltip-pt-notifications-notice": "{{GENDER:|আপোনাৰ}} জাননী",
+	"tooltip-pt-notifications": "আপোনাৰ জাননীসমূহ",
 	"echo-displaynotificationsconfiguration": "জাননী কনফিগাৰেচন প্ৰদৰ্শন কৰক",
 	"echo-displaynotificationsconfiguration-summary": "এই ৱিকিত জাননীসমূহ কেনেদৰে কনফিগাৰ কৰা হৈছে তাৰ এক অৱলোকন।",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "শ্ৰেণী অনুসৰি জাননীসমূহ",

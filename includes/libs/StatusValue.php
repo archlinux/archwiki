@@ -84,7 +84,9 @@ class StatusValue implements Stringable {
 	 * Factory function for fatal errors
 	 *
 	 * @param string|MessageSpecifier $message Message key or object
-	 * @param mixed ...$parameters
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$parameters
+	 *   See Message::params()
 	 * @return static
 	 */
 	public static function newFatal( $message, ...$parameters ) {
@@ -216,12 +218,8 @@ class StatusValue implements Stringable {
 	private function addError( array $newError ) {
 		[ 'type' => $newType, 'message' => $newKey, 'params' => $newParams ] = $newError;
 		if ( $newKey instanceof MessageSpecifier ) {
-			if ( $newParams ) {
-				// Deprecate code like `Status::newFatal( wfMessage( 'foo' ), 'param' )`
-				// - the parameters have always been ignored, so this is usually a mistake.
-				wfDeprecatedMsg( 'Combining MessageSpecifier and parameters array' .
-					' was deprecated in MediaWiki 1.43', '1.43' );
-			}
+			Assert::parameter( $newParams === [],
+				'$parameters', "must be empty when using a MessageSpecifier" );
 			$newParams = $newKey->getParams();
 			$newKey = $newKey->getKey();
 		}
@@ -251,7 +249,9 @@ class StatusValue implements Stringable {
 	 * Add a new warning
 	 *
 	 * @param string|MessageSpecifier $message Message key or object
-	 * @param mixed ...$parameters
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$parameters
+	 *   See Message::params()
 	 * @return $this
 	 */
 	public function warning( $message, ...$parameters ) {
@@ -267,7 +267,9 @@ class StatusValue implements Stringable {
 	 * This can be used for non-fatal errors
 	 *
 	 * @param string|MessageSpecifier $message Message key or object
-	 * @param mixed ...$parameters
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$parameters
+	 *   See Message::params()
 	 * @return $this
 	 */
 	public function error( $message, ...$parameters ) {
@@ -283,7 +285,9 @@ class StatusValue implements Stringable {
 	 * as a whole was fatal
 	 *
 	 * @param string|MessageSpecifier $message Message key or object
-	 * @param mixed ...$parameters
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$parameters
+	 *   See Message::params()
 	 * @return $this
 	 */
 	public function fatal( $message, ...$parameters ) {
@@ -375,16 +379,9 @@ class StatusValue implements Stringable {
 	 * Any message using the same key will be found (ignoring the message parameters).
 	 *
 	 * @param string $message Message key to search for
-	 *   (this parameter used to allow MessageSpecifier too, deprecated since 1.43)
 	 * @return bool
 	 */
-	public function hasMessage( $message ) {
-		if ( $message instanceof MessageSpecifier ) {
-			wfDeprecatedMsg( 'Passing MessageSpecifier to hasMessage()' .
-				' was deprecated in MediaWiki 1.43', '1.43' );
-			$message = $message->getKey();
-		}
-
+	public function hasMessage( string $message ) {
 		foreach ( $this->errors as [ 'message' => $key ] ) {
 			if ( ( $key instanceof MessageSpecifier && $key->getKey() === $message ) ||
 				$key === $message
@@ -401,25 +398,14 @@ class StatusValue implements Stringable {
 	 * Any messages using the same keys will be found (ignoring the message parameters).
 	 *
 	 * @param string ...$messages Message keys to search for
-	 *   (this parameter used to allow MessageSpecifier too, deprecated since 1.43)
 	 * @return bool
 	 */
-	public function hasMessagesExcept( ...$messages ) {
-		$exceptedKeys = [];
-		foreach ( $messages as $message ) {
-			if ( $message instanceof MessageSpecifier ) {
-				wfDeprecatedMsg( 'Passing MessageSpecifier to hasMessagesExcept()' .
-					' was deprecated in MediaWiki 1.43', '1.43' );
-				$message = $message->getKey();
-			}
-			$exceptedKeys[] = $message;
-		}
-
+	public function hasMessagesExcept( string ...$messages ) {
 		foreach ( $this->errors as [ 'message' => $key ] ) {
 			if ( $key instanceof MessageSpecifier ) {
 				$key = $key->getKey();
 			}
-			if ( !in_array( $key, $exceptedKeys, true ) ) {
+			if ( !in_array( $key, $messages, true ) ) {
 				return true;
 			}
 		}
@@ -431,27 +417,14 @@ class StatusValue implements Stringable {
 	 * If the specified source message exists, replace it with the specified
 	 * destination message, but keep the same parameters as in the original error.
 	 *
-	 * When using a string as the `$source` parameter, any message using the same key will be replaced
-	 * (regardless of whether it was stored as string or as MessageSpecifier, and ignoring the
-	 * message parameters).
-	 *
-	 * When using a MessageSpecifier as the `$source` parameter, the message will only be replaced
-	 * when the same MessageSpecifier object was stored in the StatusValue (compared with `===`).
-	 * Since the only reliable way to obtain one is to use getErrors(), which is deprecated,
-	 * passing a MessageSpecifier is deprecated (since 1.43).
+	 * Any message using the same key will be replaced (ignoring the message parameters).
 	 *
 	 * @param string $source Message key to search for
-	 *   (this parameter used to allow MessageSpecifier too, deprecated since 1.43)
 	 * @param MessageSpecifier|string $dest Replacement message key or object
 	 * @return bool Return true if the replacement was done, false otherwise.
 	 */
-	public function replaceMessage( $source, $dest ) {
+	public function replaceMessage( string $source, $dest ) {
 		$replaced = false;
-
-		if ( $source instanceof MessageSpecifier ) {
-			wfDeprecatedMsg( 'Passing MessageSpecifier as $source to replaceMessage()' .
-				' was deprecated in MediaWiki 1.43', '1.43' );
-		}
 
 		foreach ( $this->errors as [ 'message' => &$message, 'params' => &$params ] ) {
 			if ( $message === $source ||
@@ -482,7 +455,7 @@ class StatusValue implements Stringable {
 		} else {
 			$errorcount = "no errors detected";
 		}
-		if ( isset( $this->value ) ) {
+		if ( $this->value !== null ) {
 			$valstr = get_debug_type( $this->value ) . " value set";
 		} else {
 			$valstr = "no value set";

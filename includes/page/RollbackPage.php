@@ -20,28 +20,28 @@
 
 namespace MediaWiki\Page;
 
-use ManualLogEntry;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Message\Converter;
 use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\ActorMigration;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use RecentChange;
 use StatusValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -163,11 +163,6 @@ class RollbackPage {
 		return $this;
 	}
 
-	/**
-	 * Authorize the rollback.
-	 *
-	 * @return PermissionStatus
-	 */
 	public function authorizeRollback(): PermissionStatus {
 		$permissionStatus = PermissionStatus::newEmpty();
 		$this->performer->authorizeWrite( 'edit', $this->page, $permissionStatus );
@@ -296,6 +291,7 @@ class RollbackPage {
 			}
 		}
 
+		$updater->setCause( PageUpdateCauses::CAUSE_ROLLBACK );
 		$updater->markAsRevert(
 			EditResult::REVERT_ROLLBACK,
 			$currentRevision->getId(),
@@ -421,7 +417,7 @@ class RollbackPage {
 			if ( $unpatrolled ) {
 				$dbw->newUpdateQueryBuilder()
 					->update( 'recentchanges' )
-					->set( [ 'rc_bot' => 1, 'rc_patrolled' => RecentChange::PRC_AUTOPATROLLED ] )
+					->set( [ 'rc_bot' => 1, 'rc_patrolled' => RecentChange::PRC_PATROLLED ] )
 					->where( [ 'rc_id' => $unpatrolled ] )
 					->caller( __METHOD__ )->execute();
 			}
@@ -437,7 +433,7 @@ class RollbackPage {
 			if ( $unpatrolled ) {
 				$dbw->newUpdateQueryBuilder()
 					->update( 'recentchanges' )
-					->set( [ 'rc_patrolled' => RecentChange::PRC_AUTOPATROLLED ] )
+					->set( [ 'rc_patrolled' => RecentChange::PRC_PATROLLED ] )
 					->where( [ 'rc_id' => $unpatrolled ] )
 					->caller( __METHOD__ )->execute();
 			}
@@ -494,8 +490,7 @@ class RollbackPage {
 			$revisionsBetween,
 		];
 		if ( $summary instanceof MessageValue ) {
-			$summary = ( new Converter() )->convertMessageValue( $summary );
-			$summary = $summary->params( $args )->inContentLanguage()->text();
+			$summary = Message::newFromSpecifier( $summary )->params( $args )->inContentLanguage()->text();
 		} else {
 			$summary = ( new RawMessage( $summary, $args ) )->inContentLanguage()->plain();
 		}

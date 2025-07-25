@@ -96,11 +96,11 @@ function getPageData( pageName, oldId, apiParams ) {
 			linterrors: linterrors,
 			transcludedfrom: transcludedfrom,
 			metadata: metadata
-		} ), () => {
+		} ), ( ...args ) => {
 			// Clear on failure
 			pageDataCache[ pageName ][ oldId ] = null;
 			// Let caller handle the error
-			return $.Deferred().rejectWith( this, arguments );
+			return $.Deferred().reject( ...args );
 		} );
 
 	if ( $.isEmptyObject( apiParams ) ) {
@@ -349,7 +349,8 @@ function init( $container, state ) {
 	 * @param {jQuery} $link Add section link for new topic controller
 	 * @param {Object} [options] Options, see CommentController
 	 * @param {string} [options.mode] Optionally force a mode, 'visual' or 'source'
-	 * @param {boolean} [options.hideErrors] Suppress errors, e.g. when restoring auto-save
+	 * @param {boolean} [options.fromAutoSave] The comment has been restored from auto-save. Open the
+	 *   reply widget even if there are loading errors, to allow user to backup or discard it (T345986).
 	 * @param {boolean} [options.suppressNotifications] Don't notify the user if recovering auto-save
 	 * @param {MemoryStorage} [storage] Storage object for autosave
 	 */
@@ -489,7 +490,7 @@ function init( $container, state ) {
 					setTimeout( () => {
 						setupController( comment, $link, {
 							mode: mode,
-							hideErrors: true,
+							fromAutoSave: true,
 							suppressNotifications: !state.firstLoad
 						}, replyStorage );
 					} );
@@ -503,7 +504,7 @@ function init( $container, state ) {
 			const mode = newTopicStorage.get( 'mode' );
 			setupController( newTopicComment(), $( [] ), {
 				mode: mode,
-				hideErrors: true,
+				fromAutoSave: true,
 				suppressNotifications: !state.firstLoad
 			}, newTopicStorage );
 		} else if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
@@ -579,7 +580,7 @@ function init( $container, state ) {
 			// Only do the replacement if the original hash doesn't correspond to a target
 			// element, but the fixed hash does, to avoid affects on other apps which
 			// may use fragments with spaces.
-			if ( location.hash && !mw.util.getTargetFromFragment() && location.hash.indexOf( '%20' ) !== -1 ) {
+			if ( location.hash && !mw.util.getTargetFromFragment() && location.hash.includes( '%20' ) ) {
 				const fixedHash = location.hash.slice( 1 ).replace( /%20/g, '_' );
 				if ( mw.util.getTargetFromFragment( fixedHash ) ) {
 					location.hash = fixedHash;
@@ -701,7 +702,8 @@ function init( $container, state ) {
  * @param {Object} data Data from action=parse API
  */
 function updatePageContents( $container, data ) {
-	$container.find( '.mw-parser-output' ).first().replaceWith( data.parse.text );
+	// T386078: Use a more specified selector to prevent selecting the wrong element
+	$container.find( '> .mw-parser-output' ).first().replaceWith( data.parse.text );
 
 	mw.util.clearSubtitle();
 	mw.util.addSubtitle( data.parse.subtitle );

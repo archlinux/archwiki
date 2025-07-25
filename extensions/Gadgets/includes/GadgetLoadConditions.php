@@ -21,8 +21,8 @@
 namespace MediaWiki\Extension\Gadgets;
 
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Skin;
 use MediaWiki\User\User;
-use Skin;
 
 /**
  * @author Siddharth VP
@@ -36,22 +36,19 @@ class GadgetLoadConditions {
 	private $action;
 	/** @var int */
 	private $namespace;
-	/** @var string[] */
+	/** @var array<string,int> */
 	private $categories;
 	/** @var string */
 	private $contentModel;
 	/** @var string|null */
 	private $withGadgetParam;
 
-	/**
-	 * @param OutputPage $out
-	 */
 	public function __construct( OutputPage $out ) {
 		$this->user = $out->getUser();
 		$this->skin = $out->getSkin();
 		$this->action = $out->getContext()->getActionName();
 		$this->namespace = $out->getTitle()->getNamespace();
-		$this->categories = $out->getCategories();
+		$this->categories = array_fill_keys( $out->getCategories(), 1 );
 		$this->contentModel = $out->getTitle()->getContentModel();
 		$this->withGadgetParam = $out->getRequest()->getRawVal( 'withgadget' );
 	}

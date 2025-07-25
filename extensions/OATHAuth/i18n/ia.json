@@ -67,7 +67,6 @@
 	"log-action-filter-oath-verify": "Verificar si le authentication bifactorial es active",
 	"log-action-filter-oath-disable-other": "Disactivar le authentication bifactorial pro un altere usator",
 	"oathauth-ui-no-module": "Nihil activate",
-	"oathauth-module-invalid": "Le modulo OATHAuth que le usator ha registrate non es valide.",
 	"oathauth-module-totp-label": "TOTP (token a uso unic)",
 	"oathauth-ui-manage": "Gerer",
 	"oathmanage": "Gerer le authentication bifactorial",
@@ -86,9 +85,6 @@
 	"oathauth-disable-method-warning-button-label": "Confirmar e continuar",
 	"oathauth-disable-method-warning": "Si tu disactiva le methodo de authentication bifactorial $1, tu non plus potera usar iste methodo pro aperir session, e tote le datos associate a iste methodo de authentication essera delite.",
 	"oathauth-disable-method-next-step": "In le proxime passo, tu debera authenticar te con tu methodo actual de authentication bifactorial ($1) pro poter disactivar lo.",
-	"oathauth-switch-method-warning-header": "Confirmar le cambio a un altere methodo de authentication",
-	"oathauth-switch-method-warning": "Si tu cambia al methodo de authentication bifactorial $2, le methodo actual ($1) essera disactivate e tote le datos associate con le methodo de authentication actual essera delite.",
-	"oathauth-switch-method-next-step": "In le proxime passo, tu debera authenticar te con tu methodo actual de authentication bifactorial ($1) pro poter passar a $2.",
 	"oathauth-totp-disable-warning": "Tu non plus potera usar le apparato de authentication registrate pro iste conto. Tote le codices de recuperation associate a iste conto essera invalidate.",
 	"oathauth-invalidrequest": "Requesta invalide",
 	"notification-header-oathauth-disable": "Le authentication bifactorial ha essite disactivate sur {{GENDER:$2|tu conto}}.",
@@ -111,5 +107,6 @@
 	"oathauth-prefs-disabledgroups": "Gruppo{{PLURAL:$1||s}} disactivate:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Tu membrato}} de iste gruppo{{PLURAL:$1||s}} es disactivate usque tu activa le [[Special:Manage Two-factor authentication|authentication bifactorial]].",
 	"oathauth-qrcode-alt": "Codice QR scannabile que representa le clave secrete.",
-	"oathauth-hint": "Non ha accesso a tu apparato o application? Tu pote inserer in iste campo le codices de recuperation (presentate quando tu ha activate le authentication bifactorial)."
+	"oathauth-hint": "Non ha accesso a tu apparato o application? Tu pote inserer in iste campo le codices de recuperation (presentate quando tu ha activate le authentication bifactorial).",
+	"oathauth-must-be-central": "{{GENDER:$1|Tu conto}} debe esser ligate al systema de authentication central pro usar le authentication bifactorial."
 }

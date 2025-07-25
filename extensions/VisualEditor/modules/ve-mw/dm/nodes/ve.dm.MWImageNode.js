@@ -154,7 +154,7 @@ ve.dm.MWImageNode.static.describeChanges = function ( attributeChanges, attribut
 		);
 	}
 	for ( const key in attributeChanges ) {
-		if ( customKeys.indexOf( key ) === -1 ) {
+		if ( !customKeys.includes( key ) ) {
 			if ( key === 'borderImage' && !attributeChanges.borderImage.from && !attributeChanges.borderImage.to ) {
 				// Skip noise from the data model
 				continue;

@@ -6,9 +6,12 @@ use Exception;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Rest\Handler\PageHTMLHandler;
+use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
+use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
@@ -21,7 +24,6 @@ use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use WikiPage;
 
 /**
  * @covers \MediaWiki\Rest\Handler\PageHTMLHandler
@@ -50,10 +52,13 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @param Parsoid|MockObject|null $parsoid
+	 * @param RevisionRenderer|MockObject|null $renderer
 	 *
 	 * @return PageHTMLHandler
 	 */
-	private function newHandler( ?Parsoid $parsoid = null ): PageHTMLHandler {
+	private function newHandler(
+		?Parsoid $parsoid = null, ?RevisionRenderer $renderer = null
+	): PageHTMLHandler {
 		if ( $parsoid ) {
 			$this->resetServicesWithMockedParsoid( $parsoid );
 		} else {
@@ -61,6 +66,10 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 			// Resetting ensures that ParsoidCachePrewarmJob gets a fresh copy
 			// of ParserOutputAccess without these problems!
 			$this->resetServices();
+		}
+
+		if ( $renderer ) {
+			$this->setService( 'RevisionRenderer', $renderer );
 		}
 
 		return $this->newPageHtmlHandler();
@@ -160,6 +169,57 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( '<!DOCTYPE html>', $htmlResponse );
 		$this->assertStringContainsString( '<html', $htmlResponse );
 		$this->assertStringContainsString( self::HTML, $htmlResponse );
+	}
+
+	public static function provideWikiRedirect() {
+		yield 'follow wiki redirects per default' => [ [], 307, null, false ];
+		yield 'bad redirect param' => [ [ 'redirect' => 'wrong' ], 400, null, false ];
+		yield 'redirect=no' => [ [ 'redirect' => 'no' ], 200, 'Footer' ];
+		yield 'redirect=false' => [ [ 'redirect' => 'false' ], 200, 'Footer' ];
+		yield 'redirect=true' => [ [ 'redirect' => 'true' ], 307, null, false ];
+	}
+
+	/**
+	 * @dataProvider provideWikiRedirect
+	 */
+	public function testWikiRedirect(
+		$params, $expectedStatus, $expectedText = null, $allowRenders = true
+	) {
+		$redirect = $this->getExistingTestPage( 'HtmlEndpointTestPage/redirect' );
+		$page = $this->getExistingTestPage( 'HtmlEndpointTestPage/target' );
+
+		$this->editPage(
+			$redirect,
+			"#REDIRECT [[{$page->getTitle()->getPrefixedDBkey()}]]\n" .
+			"Redirect Footer"
+		);
+
+		$request = new RequestData(
+			[
+				'pathParams' => [ 'title' => $redirect->getTitle()->getPrefixedText() ],
+				'queryParams' => $params
+			]
+		);
+
+		try {
+			// If renders should not occur, use a renderer that will throw if called
+			$renderer = $allowRenders ? null : $this->createNoOpMock( RevisionRenderer::class );
+			$handler = $this->newHandler( null, $renderer );
+			$response = $this->executeHandler( $handler, $request, [
+				'format' => 'html'
+			] );
+
+			$this->assertSame( $expectedStatus, $response->getStatusCode() );
+
+			if ( $expectedText !== null ) {
+				$this->assertStringContainsString(
+					$expectedText,
+					(string)$response->getBody()
+				);
+			}
+		} catch ( HttpException $ex ) {
+			$this->assertSame( $expectedStatus, $ex->getCode() );
+		}
 	}
 
 	public function testExecuteHtmlOnlyForSystemMessagePage() {
@@ -310,6 +370,11 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		// First, test it works if nothing was cached yet.
 		// Make some time pass since page was created:
 		$time += 10;
+
+		// Force the touch time, since it's used for Last-Modified
+		// when fetching the current version of a page.
+		$page->getTitle()->invalidateCache( $time );
+
 		MWTimestamp::setFakeTime( $time );
 		$handler = $this->newHandler();
 		$response = $this->executeHandler( $handler, $request, [
@@ -432,10 +497,6 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->executeHandler( $handler, $request, [ 'format' => 'html' ] );
 	}
 
-	/**
-	 * @param WikiPage $page
-	 * @param array $data
-	 */
 	private function assertResponseData( WikiPage $page, array $data ): void {
 		$this->assertSame( $page->getId(), $data['id'] );
 		$this->assertSame( $page->getTitle()->getPrefixedDBkey(), $data['key'] );

@@ -125,11 +125,11 @@ codex:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 1.14.0
-  purl: pkg:npm/@wikimedia/codex@1.14.0
+  version: 1.23.0
+  purl: pkg:npm/@wikimedia/codex@1.23.0
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.14.0.tgz
-  integrity: sha384-o8NvdWUn15pb7fzwPohTiifUab8UGVslAI8VGcAjPizeJeYwZ/Gmiajvck3D+Rz4
+  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.23.0.tgz
+  integrity: sha384-cmoeYhSAHpbpsMfGutyu7XwurDOr99/PUCC/HgEkff41bMxqZwCNBIIEkXYlZrY5
   dest:
     package/dist/codex.cjs:
     package/dist/codex.js:
@@ -146,11 +146,11 @@ codex-design-tokens:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 1.14.0
-  purl: pkg:npm/@wikimedia/codex-design-tokens@1.14.0
+  version: 1.23.0
+  purl: pkg:npm/@wikimedia/codex-design-tokens@1.23.0
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.14.0.tgz
-  integrity: sha384-9+A0bemVWjCetPN9hBgrg+A9+oFH743oIV6I4ODYp3GHZ5P2ede17y4TR2tZlJON
+  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.23.0.tgz
+  integrity: sha384-H5h3k6xfUFPCynK4LYTPcqR/bvZJlstIQgeZ3jptdDlOIusl5c1aEwIv1d3c6ooa
   dest:
     package/dist/theme-*.less:
     package/dist/theme-wikimedia-ui-root.css:
@@ -162,11 +162,11 @@ codex-icons:
   license: MIT
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 1.14.0
-  purl: pkg:npm/@wikimedia/codex-icons@1.14.0
+  version: 1.23.0
+  purl: pkg:npm/@wikimedia/codex-icons@1.23.0
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.14.0.tgz
-  integrity: sha384-heGnyT3UdMvqIJ/BzDxVVyuLWcBajYUATVAqIG/48249BJJvfmGgDXdYHK0aYbJ1
+  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.23.0.tgz
+  integrity: sha384-Hh/6MP3SarXmPe7HqKyXFUGW4JB9RDqBtkHlH0uPTXfcLqAAylTs/JxlUGnyOAQL
   dest:
     package/dist/codex-icons.json:
     package/dist/codex-icon-paths.less:
@@ -301,17 +301,17 @@ moment:
   license: MIT
   homepage: https://momentjs.com
   authors: JS Foundation and other contributors
-  version: 2.25.2
-  purl: pkg:github/moment/moment@2.25.2
+  version: 2.30.1
+  purl: pkg:github/moment/moment@2.30.1
   type: tar
-  src: https://codeload.github.com/moment/moment/tar.gz/2.25.2
-  integrity: sha384-Kdi8+psMUggMYwnp+uBCuy03sBfDbKFyjzdLWJks/4O8x4DwOFWzYbtm7RbJ4ISU
+  src: https://codeload.github.com/moment/moment/tar.gz/2.30.1
+  integrity: sha384-PqvOPbeNfcZqJunZo/JI3zgtel3Y36u3wR6Da8vs6HKuNlPDUiacaXoe3+a8efyH
   dest:
-    moment-2.25.2/moment.js:
-    moment-2.25.2/CHANGELOG.md:
-    moment-2.25.2/README.md:
-    moment-2.25.2/LICENSE:
-    moment-2.25.2/locale/*.js: locale
+    moment-2.30.1/moment.js:
+    moment-2.30.1/CHANGELOG.md:
+    moment-2.30.1/README.md:
+    moment-2.30.1/LICENSE:
+    moment-2.30.1/locale/*.js: locale
 
 mustache:
   license: MIT
@@ -345,11 +345,11 @@ ooui:
   license: MIT
   homepage: https://www.mediawiki.org/wiki/OOUI
   authors: OOUI Team and other contributors
-  version: 0.51.2
-  purl: pkg:npm/oojs-ui@0.51.2
+  version: 0.51.7
+  purl: pkg:npm/oojs-ui@0.51.7
   type: tar
-  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.51.2.tgz
-  integrity: sha384-g6cWXC5OOcrrOpbgmi5fMTYH+v2/LeHB03EnFgZjwxt4Mzu5a1jJ6EOFB6JSqPIg
+  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.51.7.tgz
+  integrity: sha384-4qCOHXoxweCN6ilkHmm2alWe91hQssdF3tieSwzFVTsPgGn57nNrMm0Zhp70TRvu
 
   dest:
     # Main stuff
@@ -417,25 +417,27 @@ qunitjs:
   license: MIT
   homepage: https://qunitjs.com
   authors: OpenJS Foundation and other contributors
-  version: 2.20.0
+  version: 2.24.1
   type: multi-file
   # Integrity from link modals at https://code.jquery.com/qunit/
   files:
     qunit.js:
-      src: https://code.jquery.com/qunit/qunit-2.20.0.js
-      integrity: sha256-qDPbT8viaD6gCaTrUd7FOE5lU5S9H5U5bbuQMADnrRY=
+      src: https://code.jquery.com/qunit/qunit-2.24.1.js
+      integrity: sha256-YEdd4wYuxAQiI/6o35EYhVnRPryAlednh23dKtVxrZI=
     qunit.css:
-      src: https://code.jquery.com/qunit/qunit-2.20.0.css
-      integrity: sha256-NN2oro7r8aYcRYA4fnBbijdLRS7Rc4Pz9ikcmlwWvl4=
+      src: https://code.jquery.com/qunit/qunit-2.24.1.css
+      integrity: sha256-EfwMSDkbaZPDKJNr29GUv+yTN8LvtHkmXIadx60UKrI=
 
 sinonjs:
   license: BSD-3-Clause
   homepage: https://sinonjs.org/
   authors: Christian Johansen and other contributors
-  version: 1.17.7
+  version: 18.0.1
   type: file
-  src: https://sinonjs.org/releases/sinon-1.17.7.js
-  integrity: sha384-wR63Jwy75KqwBfzCmXd6gYws6uj3qV/XMAybzXrkEYGYG3AQ58ZWwr1fVpkHa5e8
+  # Avoid the version at https://sinonjs.org/releases/,
+  # as it contains a huge inline source map
+  src: https://unpkg.com/sinon@18.0.1/pkg/sinon-no-sourcemaps.cjs
+  integrity: sha384-jx7JQ8andegP9KcpOdNfOJlARMaUaUGtHLHURZEpUWJSCkdlnp1bzr7De/O3XM60
   dest: sinon.js
 
 vue-demi:
@@ -456,11 +458,11 @@ vue:
   license: MIT
   homepage: https://vuejs.org/
   authors: Yuxi (Evan) You
-  version: 3.4.27
-  purl: pkg:npm/vue@3.4.27
+  version: 3.5.13
+  purl: pkg:npm/vue@3.5.13
   type: tar
-  src: https://registry.npmjs.org/vue/-/vue-3.4.27.tgz
-  integrity: sha384-NI/upbRDNmqZCbvCtpncGt32Iw2gOsS6j/l3D4wSfz9IVnSXqLhO5mHLbVblRHet
+  src: https://registry.npmjs.org/vue/-/vue-3.5.13.tgz
+  integrity: sha384-+0bU8/XSlZlbtiI2pM86YfxHl9QAVK5XQUByFz0bNM87zV7gdekl7B+rx9axKREU
   dest:
     package/README.md:
     package/LICENSE:

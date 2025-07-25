@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Balyozxane",
+			"Bangin",
+			"Bikarhêner",
+			"George Animal"
+		]
+	},
+	"checkuser-reason": "Sedem:",
+	"checkuser-week-1": "hefteya dawî",
+	"checkuser-week-2": "du hefteyên dawî",
+	"checkuser-month": "30 rojên dawî",
+	"checkuser-all": "hemû",
+	"checkuser-search": "Li qeydên têkitinên bikarhênerên kontrolê bigere",
+	"checkuser-search-submit": "Lêbigere",
+	"checkuser-ipeditcount": "~$1 ji hemû bikarhêneran",
+	"checkuser-investigateblock-notice-text-label": "Wîkînivîs",
+	"checkuser-investigate-duration-label": "Mawe",
+	"checkuser-investigate-duration-option-all": "Hemû",
+	"checkuser-investigate-duration-option-1w": "Hefteya dawî",
+	"checkuser-investigate-duration-option-2w": "2 heftiyên dawîn",
+	"checkuser-investigate-duration-option-30d": "30 rojên dawî",
+	"checkuser-global-contributions-link-sidebar": "Beşdariyên global"
+}

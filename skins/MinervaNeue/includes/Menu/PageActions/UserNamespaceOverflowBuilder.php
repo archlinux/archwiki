@@ -65,8 +65,6 @@ class UserNamespaceOverflowBuilder extends DefaultOverflowBuilder {
 				),
 				$this->getMessageLocalizer(),
 				false,
-				// no additional classes
-				'',
 				'minerva-page-actions-language-switcher'
 			) );
 		}

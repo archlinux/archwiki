@@ -52,10 +52,10 @@
 		 */
 		function onBeforeunload( e ) {
 			if ( test() ) {
-				// Standard supported in Firefox, IE9+, Safari 11.1+
+				// Standard supported in Firefox 6+, Edge 119+, Safari 11.1+
 				e.preventDefault();
 
-				// Support: Chrome, Edge, Safari 9-11
+				// Support: Chrome 1-118, Edge 12-118, Safari 9-11
 				//
 				// Leave the "extra text" string empty since Chrome/Firefox/Safari/Edge
 				// won't display it anyway, and because otherwise IE11 would actually
@@ -81,7 +81,7 @@
 
 		return {
 			/**
-			 * Remove the event listener and don't show an alert anymore, if the user wants to leave
+			 * Remove the event listener and don't show an alert anymore if the user wants to leave
 			 * the page.
 			 *
 			 * @ignore
@@ -92,8 +92,8 @@
 			/**
 			 * Trigger the module's function manually.
 			 *
-			 * Check, if options.test() returns true and show an alert to the user if he/she want
-			 * to leave this page. Returns false, if options.test() returns false or the user
+			 * Check if options.test() returns true and show an alert to the user if they want
+			 * to leave this page. Returns false if options.test() returns false or the user
 			 * cancelled the alert window (~don't leave the page), true otherwise.
 			 *
 			 * @ignore

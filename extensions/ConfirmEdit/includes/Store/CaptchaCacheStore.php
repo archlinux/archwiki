@@ -14,9 +14,7 @@ class CaptchaCacheStore extends CaptchaStore {
 		$this->store = MediaWikiServices::getInstance()->getMicroStash();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function store( $index, $info ) {
 		global $wgCaptchaSessionExpiration;
 
@@ -24,29 +22,24 @@ class CaptchaCacheStore extends CaptchaStore {
 			$this->store->makeKey( 'captcha', $index ),
 			$info,
 			$wgCaptchaSessionExpiration,
-			// Assume the write will reach the master DC before the user sends the
+			// Assume the write action will reach the primary DC before the user sends the
 			// HTTP POST request attempted to solve the captcha and perform an action
 			$this->store::WRITE_BACKGROUND
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function retrieve( $index ) {
 		return $this->store->get( $this->store->makeKey( 'captcha', $index ) );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function clear( $index ) {
 		$this->store->delete( $this->store->makeKey( 'captcha', $index ) );
 	}
 
+	/** @inheritDoc */
 	public function cookiesNeeded() {
 		return false;
 	}
 }
-
-class_alias( CaptchaCacheStore::class, 'CaptchaCacheStore' );

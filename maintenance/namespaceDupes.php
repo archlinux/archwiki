@@ -32,6 +32,7 @@ use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -672,15 +673,14 @@ class NamespaceDupes extends Maintenance {
 			}
 			$updateBatches = array_chunk( $updateConds, $updateRowsPerQuery );
 			foreach ( $updateBatches as $updateBatch ) {
+				$this->beginTransactionRound( __METHOD__ );
 				$dbw->newUpdateQueryBuilder()
 					->update( $table )
 					->set( [ $fromNamespaceField => $newLinkTarget->getNamespace() ] )
 					->where( $dbw->factorConds( $updateBatch ) )
 					->caller( __METHOD__ )
 					->execute();
-				if ( count( $updateBatches ) > 1 ) {
-					$this->waitForReplication();
-				}
+				$this->commitTransactionRound( __METHOD__ );
 			}
 		}
 
@@ -721,7 +721,6 @@ class NamespaceDupes extends Maintenance {
 	 * @return bool
 	 */
 	private function mergePage( $row, Title $newTitle ) {
-		$dbw = $this->getPrimaryDB();
 		$updateRowsPerQuery = $this->getConfig()->get( MainConfigNames::UpdateRowsPerQuery );
 
 		$id = $row->page_id;
@@ -733,9 +732,10 @@ class NamespaceDupes extends Maintenance {
 		$sourceTitle->resetArticleID( $id );
 		$wikiPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $sourceTitle );
 		$wikiPage->loadPageData( IDBAccessObject::READ_LATEST );
-
 		$destId = $newTitle->getArticleID();
-		$this->beginTransaction( $dbw, __METHOD__ );
+
+		$dbw = $this->getPrimaryDB();
+		$this->beginTransactionRound( __METHOD__ );
 		$revIds = $dbw->newSelectQueryBuilder()
 			->select( 'rev_id' )
 			->from( 'revision' )
@@ -751,17 +751,16 @@ class NamespaceDupes extends Maintenance {
 				->caller( __METHOD__ )
 				->execute();
 			if ( count( $updateBatches ) > 1 ) {
-				$this->waitForReplication();
+				$this->commitTransactionRound( __METHOD__ );
+				$this->beginTransactionRound( __METHOD__ );
 			}
 		}
-
 		$dbw->newDeleteQueryBuilder()
 			->deleteFrom( 'page' )
 			->where( [ 'page_id' => $id ] )
 			->caller( __METHOD__ )
 			->execute();
-
-		$this->commitTransaction( $dbw, __METHOD__ );
+		$this->commitTransactionRound( __METHOD__ );
 
 		/* Call LinksDeletionUpdate to delete outgoing links from the old title,
 		 * and update category counts.

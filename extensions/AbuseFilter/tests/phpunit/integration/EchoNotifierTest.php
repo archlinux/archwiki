@@ -79,10 +79,8 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNotifyForFilter_EchoNotLoaded() {
-		$lookup = $this->createMock( FilterLookup::class );
-		$lookup->expects( $this->never() )->method( $this->anything() );
 		$notifier = new EchoNotifier(
-			$lookup,
+			$this->createNoOpMock( FilterLookup::class ),
 			$this->createMock( ConsequencesRegistry::class ),
 			false
 		);

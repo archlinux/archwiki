@@ -42,6 +42,7 @@ class ApiEchoMarkSeen extends ApiBase {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'type' => [
@@ -66,6 +67,7 @@ class ApiEchoMarkSeen extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Echo_(Notifications)/API';
 	}

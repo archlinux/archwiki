@@ -388,15 +388,21 @@ RLPAGEMODULES = {$pageModulesJson};
 		return WrappedString::join( "\n", $chunks );
 	}
 
-	private function getContext( $group, $type ): Context {
+	private function getContext( ?string $group, string $type ): Context {
 		return self::makeContext( $this->context, $group, $type );
 	}
 
-	private function getLoad( $modules, $only, array $extraQuery = [] ) {
+	/**
+	 * @param string|string[] $modules
+	 * @param string $only
+	 * @param array $extraQuery
+	 * @return string|WrappedStringList HTML
+	 */
+	private function getLoad( $modules, string $only, array $extraQuery = [] ) {
 		return self::makeLoad( $this->context, (array)$modules, $only, $extraQuery );
 	}
 
-	private static function makeContext( Context $mainContext, $group, $type,
+	private static function makeContext( Context $mainContext, ?string $group, string $type,
 		array $extraQuery = []
 	): DerivativeContext {
 		// Allow caller to setVersion() and setModules()

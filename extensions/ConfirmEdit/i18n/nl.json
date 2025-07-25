@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Jeroen N",
 			"Mainframe98",
 			"McDutchie",
 			"SPQRobin",
 			"Siebrand",
-			"Sjoerddebruin",
-			"Jeroen N"
+			"Sjoerddebruin"
 		]
 	},
 	"captcha-edit": "U wilt deze pagina bewerken.\nVoer het antwoord op de onderstaande eenvoudige som in het invoervenster in ([[Special:Captcha/help|meer informatie]]):",

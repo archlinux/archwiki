@@ -89,26 +89,6 @@ wgParserEnableLegacyMediaDOM=false
 !! end
 
 !! test
-Serialize simple image with figure-inline wrapper
-!! options
-parsoid=html2wt
-!! html/parsoid
-<p><figure-inline class="mw-default-size" typeof="mw:Image"><a href="./File:Foobar.jpg"><img resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a></figure-inline></p>
-!! wikitext
-[[File:Foobar.jpg]]
-!! end
-
-!! test
-Serialize simple image with mw:Image typeof
-!! options
-parsoid=html2wt
-!! html/parsoid
-<p><span class="mw-default-size" typeof="mw:Image"><a href="./File:Foobar.jpg" class="mw-file-description"><img resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a></span></p>
-!! wikitext
-[[File:Foobar.jpg]]
-!! end
-
-!! test
 Simple image (using File: namespace, now canonical)
 !! config
 wgParserEnableLegacyMediaDOM=false
@@ -1838,7 +1818,7 @@ wgParserEnableLegacyMediaDOM=false
 <p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description" title="text with a MeatBall:Link in it"><img alt="text with a MeatBall:Link in it" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" /></a></span>
 </p>
 !! html/parsoid
-<p><span class="mw-default-size" typeof="mw:File" data-parsoid='{"optList":[{"ck":"caption","ak":"text with a [[MeatBall:Link]] in it"}]}' data-mw='{"caption":"text with a &lt;a rel=\"mw:WikiLink/Interwiki\" href=\"http://www.usemod.com/cgi-bin/mb.pl?Link\" title=\"meatball:Link\" class=\"extiw\" data-parsoid=&#39;{\"stx\":\"simple\",\"a\":{\"href\":\"http://www.usemod.com/cgi-bin/mb.pl?Link\"},\"sa\":{\"href\":\"MeatBall:Link\"},\"isIW\":true,\"dsr\":[30,47,2,2]}&#39;>MeatBall:Link&lt;/a> in it"}'><a href="./File:Foobar.jpg" class="mw-file-description" title="text with a MeatBall:Link in it"><img alt="text with a MeatBall:Link in it" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"}}' class="mw-file-element"/></a></span></p>
+<p><span class="mw-default-size" typeof="mw:File" data-parsoid='{"optList":[{"ck":"caption","ak":"text with a [[MeatBall:Link]] in it"}]}' data-mw='{"caption":"text with a &lt;a rel=\"mw:WikiLink/Interwiki\" href=\"http://www.usemod.com/cgi-bin/mb.pl?Link\" title=\"meatball:Link\" class=\"extiw\" data-parsoid=&#39;{\"stx\":\"simple\",\"a\":{\"href\":\"http://www.usemod.com/cgi-bin/mb.pl?Link\"},\"sa\":{\"href\":\"MeatBall:Link\"},\"dsr\":[30,47,2,2]}&#39;>MeatBall:Link&lt;/a> in it"}'><a href="./File:Foobar.jpg" class="mw-file-description" title="text with a MeatBall:Link in it"><img alt="text with a MeatBall:Link in it" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"}}' class="mw-file-element"/></a></span></p>
 !! end
 
 !! test
@@ -1851,7 +1831,7 @@ wgParserEnableLegacyMediaDOM=false
 <p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description" title="text with a link in it"><img alt="text with a link in it" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" /></a></span>
 </p>
 !! html/parsoid
-<p><span class="mw-default-size" typeof="mw:File" data-parsoid='{"optList":[{"ck":"caption","ak":"text with a [[MeatBall:Link|link]] in it"}]}' data-mw='{"caption":"text with a &lt;a rel=\"mw:WikiLink/Interwiki\" href=\"http://www.usemod.com/cgi-bin/mb.pl?Link\" title=\"meatball:Link\" class=\"extiw\" data-parsoid=&#39;{\"stx\":\"piped\",\"a\":{\"href\":\"http://www.usemod.com/cgi-bin/mb.pl?Link\"},\"sa\":{\"href\":\"MeatBall:Link\"},\"isIW\":true,\"dsr\":[30,52,16,2]}&#39;>link&lt;/a> in it"}'><a href="./File:Foobar.jpg" class="mw-file-description" title="text with a link in it"><img alt="text with a link in it" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"}}' class="mw-file-element"/></a></span></p>
+<p><span class="mw-default-size" typeof="mw:File" data-parsoid='{"optList":[{"ck":"caption","ak":"text with a [[MeatBall:Link|link]] in it"}]}' data-mw='{"caption":"text with a &lt;a rel=\"mw:WikiLink/Interwiki\" href=\"http://www.usemod.com/cgi-bin/mb.pl?Link\" title=\"meatball:Link\" class=\"extiw\" data-parsoid=&#39;{\"stx\":\"piped\",\"a\":{\"href\":\"http://www.usemod.com/cgi-bin/mb.pl?Link\"},\"sa\":{\"href\":\"MeatBall:Link\"},\"dsr\":[30,52,16,2]}&#39;>link&lt;/a> in it"}'><a href="./File:Foobar.jpg" class="mw-file-description" title="text with a link in it"><img alt="text with a link in it" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"}}' class="mw-file-element"/></a></span></p>
 !! end
 
 !! test
@@ -3948,7 +3928,7 @@ wgParserEnableLegacyMediaDOM=false
 
 <p><span class="mw-default-size" typeof="mw:File mw:ExpandedAttrs" about="#mwt3" data-mw='{"attribs":[["alt",{"html":"alt=&lt;a rel=\"mw:MediaLink\" href=\"http://example.com/images/e/ea/Thumb.png\" resource=\"./Media:Thumb.png\" title=\"Thumb.png\" data-parsoid=&apos;{\"a\":{\"resource\":\"./Media:Thumb.png\"},\"sa\":{\"resource\":\"Media:Thumb.png\"},\"dsr\":[113,216,null,null]}&apos;>Media:Thumb.png&lt;/a>","txt":"Media:Thumb.png"}]],"caption":"caption"}'><a href="./Media:Thumb.png" title="caption" data-parsoid='{"a":{"href":"./Media:Thumb.png"},"sa":{"href":"link=[[Media:Thumb.png]]"}}'><img alt="Media:Thumb.png" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a></span></p>
 
-<p><span class="mw-default-size" typeof="mw:File mw:ExpandedAttrs" about="#mwt2" data-mw='{"attribs":[["alt",{"html":"alt=&lt;a rel=\"mw:WikiLink/Interwiki\" href=\"http://en.wikipedia.org/wiki/Foo\" title=\"wikipedia:Foo\" class=\"extiw\" data-parsoid=&apos;{\"stx\":\"simple\",\"a\":{\"href\":\"http://en.wikipedia.org/wiki/Foo\"},\"sa\":{\"href\":\"wikipedia:Foo\"},\"isIW\":true,\"dsr\":[189,216,2,2]}&apos;>wikipedia:Foo&lt;/a>","txt":"wikipedia:Foo"}]],"caption":"caption"}'><a href="http://en.wikipedia.org/wiki/Foo" title="caption" data-parsoid='{"a":{"href":"http://en.wikipedia.org/wiki/Foo"},"sa":{"href":"link=[[wikipedia:Foo]]"}}'><img alt="wikipedia:Foo" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a></span></p>
+<p><span class="mw-default-size" typeof="mw:File mw:ExpandedAttrs" about="#mwt2" data-mw='{"attribs":[["alt",{"html":"alt=&lt;a rel=\"mw:WikiLink/Interwiki\" href=\"http://en.wikipedia.org/wiki/Foo\" title=\"wikipedia:Foo\" class=\"extiw\" data-parsoid=&apos;{\"stx\":\"simple\",\"a\":{\"href\":\"http://en.wikipedia.org/wiki/Foo\"},\"sa\":{\"href\":\"wikipedia:Foo\"},\"dsr\":[189,216,2,2]}&apos;>wikipedia:Foo&lt;/a>","txt":"wikipedia:Foo"}]],"caption":"caption"}'><a href="http://en.wikipedia.org/wiki/Foo" title="caption" data-parsoid='{"a":{"href":"http://en.wikipedia.org/wiki/Foo"},"sa":{"href":"link=[[wikipedia:Foo]]"}}'><img alt="wikipedia:Foo" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a></span></p>
 !! end
 
 !! test
@@ -4010,7 +3990,7 @@ wgParserEnableLegacyMediaDOM=false
 !! html/parsoid
 <p><a rel="mw:ExtLink" href="http://www.google.com" class="external text"><span class="mw-default-size" typeof="mw:File" data-parsoid='{"optList":[{"ck":"caption","ak":"123"}]}' data-mw='{"caption":"123"}'></span></a><a href="./File:Foobar.jpg" class="mw-file-description" title="123" data-parsoid='{"misnested":true}'><img alt="123" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"},"misnested":true}' class="mw-file-element"/></a></p>
 
-<a rel="mw:ExtLink" href="http://www.google.com" class="external autonumber"></a><figure class="mw-default-size" typeof="mw:File/Thumb" data-parsoid='{"optList":[{"ck":"thumbnail","ak":"thumb"},{"ck":"caption","ak":"123"}]}'><a rel="mw:ExtLink" href="http://www.google.com" class="external autonumber"></a><a href="./File:Foobar.jpg" class="mw-file-description" data-parsoid='{"misnested":true}'><img resource="./File:Foobar.jpg" src="http://example.com/images/thumb/3/3a/Foobar.jpg/180px-Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="20" width="180" srcset="http://example.com/images/thumb/3/3a/Foobar.jpg/270px-Foobar.jpg 1.5x, http://example.com/images/thumb/3/3a/Foobar.jpg/360px-Foobar.jpg 2x" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"20","width":"180"},"sa":{"resource":"File:Foobar.jpg"},"misnested":true}' class="mw-file-element"/></a><figcaption data-parsoid='{"misnested":true}'>123</figcaption></figure>
+<a rel="mw:ExtLink" href="http://www.google.com" class="external text"></a><figure class="mw-default-size" typeof="mw:File/Thumb" data-parsoid='{"optList":[{"ck":"thumbnail","ak":"thumb"},{"ck":"caption","ak":"123"}]}'><a rel="mw:ExtLink" href="http://www.google.com" class="external text"></a><a href="./File:Foobar.jpg" class="mw-file-description" data-parsoid='{"misnested":true}'><img resource="./File:Foobar.jpg" src="http://example.com/images/thumb/3/3a/Foobar.jpg/180px-Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="20" width="180" srcset="http://example.com/images/thumb/3/3a/Foobar.jpg/270px-Foobar.jpg 1.5x, http://example.com/images/thumb/3/3a/Foobar.jpg/360px-Foobar.jpg 2x" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"20","width":"180"},"sa":{"resource":"File:Foobar.jpg"},"misnested":true}' class="mw-file-element"/></a><figcaption data-parsoid='{"misnested":true}'>123</figcaption></figure>
 !! end
 
 !! test

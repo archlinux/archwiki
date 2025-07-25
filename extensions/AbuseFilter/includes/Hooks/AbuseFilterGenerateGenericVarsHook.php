@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
-use RecentChange;
+use MediaWiki\RecentChanges\RecentChange;
 
 interface AbuseFilterGenerateGenericVarsHook {
 	/**

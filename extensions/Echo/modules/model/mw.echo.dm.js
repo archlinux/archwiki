@@ -1,6 +1,4 @@
-( function () {
-	/**
-	 * @namespace
-	 */
-	mw.echo.dm = {};
-}() );
+/**
+ * @namespace
+ */
+mw.echo.dm = {};

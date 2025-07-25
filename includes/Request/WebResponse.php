@@ -22,11 +22,11 @@
 
 namespace MediaWiki\Request;
 
-use HttpStatus;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use RuntimeException;
+use Wikimedia\Http\HttpStatus;
 
 /**
  * Allow programs to request this object from WebRequest::response()
@@ -275,6 +275,3 @@ class WebResponse {
 		return (bool)self::$setCookies;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( WebResponse::class, 'WebResponse' );

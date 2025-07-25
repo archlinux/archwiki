@@ -88,5 +88,8 @@
 	"gadgets-validate-unknownpages": "包含一个或多个不带.js、.css或.json后缀的页面。它们不会被使用。",
 	"gadgets-validate-duplicate": "检测到小工具$1的另一个定义，将忽略",
 	"gadgets-validate-nopage": "页面“$1”不存在。",
-	"gadgets-supports-urlload": "此小工具支持通过包含<code>?withgadget</code>查询的URL来加载。"
+	"gadgets-validate-invaliddependencies": "缺少以下{{PLURAL:$2|依赖}}：$1。",
+	"gadgets-validate-deprecateddependencies": "以下{{PLURAL:$2|依赖}}已弃用：$1。",
+	"gadgets-supports-urlload": "此小工具支持通过包含<code>?withgadget</code>查询的URL来加载。",
+	"gadgets-hidden": "这个小工具已[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 隐藏]，将不会在参数设置页面上显示。"
 }

@@ -47,6 +47,16 @@ ve.ui.MWWikitextLinkAnnotationInspector.static.internalLinkParser = ( function (
 	);
 }() );
 
+ve.ui.MWWikitextLinkAnnotationInspector.static.externalLinkParser = ( function () {
+	const protocols = ve.init.platform.getUnanchoredExternalLinkUrlProtocolsRegExp().source;
+	return new RegExp( '\\[(' + protocols + '\\S+) ?([^\\]]*)(\\])', 'ig' );
+}() );
+
+ve.ui.MWWikitextLinkAnnotationInspector.static.magicLinkParser = ( function () {
+	const protocols = ve.init.platform.getUnanchoredExternalLinkUrlProtocolsRegExp().source;
+	return new RegExp( '\\b(' + protocols + '\\S+\\w)', 'ig' );
+}() );
+
 /* Methods */
 
 /**
@@ -58,7 +68,9 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 	return ve.ui.AnnotationInspector.super.prototype.getSetupProcess.call( this, data )
 		.next( () => {
 			const wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
-				internalLinkParser = this.constructor.static.internalLinkParser;
+				internalLinkParser = this.constructor.static.internalLinkParser,
+				externalLinkParser = this.constructor.static.externalLinkParser,
+				magicLinkParser = this.constructor.static.magicLinkParser;
 
 			// Only supports linear selections
 			if ( !( this.initialFragment && this.initialFragment.getSelection() instanceof ve.dm.LinearSelection ) ) {
@@ -66,7 +78,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 			}
 
 			let fragment = this.getFragment();
-			let linkMatches;
+			let linkMatches, isExternal;
 			// Initialize range
 			if ( !data.noExpand ) {
 				if ( !fragment.getSelection().isCollapsed() ) {
@@ -107,6 +119,43 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 						break;
 					}
 				}
+				if ( !linkMatches ) {
+					externalLinkParser.lastIndex = 0;
+					while ( ( matches = externalLinkParser.exec( text ) ) !== null ) {
+						const matchURL = matches[ 1 ];
+						if ( !matchURL ) {
+							continue;
+						}
+						const linkRange = new ve.Range(
+							contextRange.start + matches.index,
+							contextRange.start + matches.index + matches[ 0 ].length
+						);
+						if ( linkRange.containsRange( range ) ) {
+							linkMatches = matches;
+							fragment = fragment.getSurface().getLinearFragment( linkRange );
+							isExternal = true;
+							break;
+						}
+					}
+				}
+				if ( !linkMatches ) {
+					magicLinkParser.lastIndex = 0;
+					while ( ( matches = magicLinkParser.exec( text ) ) !== null ) {
+						if ( !matches[ 0 ] ) {
+							continue;
+						}
+						const linkRange = new ve.Range(
+							contextRange.start + matches.index,
+							contextRange.start + matches.index + matches[ 0 ].length
+						);
+						if ( linkRange.containsRange( range ) ) {
+							linkMatches = matches;
+							fragment = fragment.getSurface().getLinearFragment( linkRange );
+							isExternal = true;
+							break;
+						}
+					}
+				}
 			}
 			if ( !linkMatches ) {
 				if ( !data.noExpand && fragment.getSelection().isCollapsed() ) {
@@ -123,23 +172,63 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 
 			this.initialSelection = fragment.getSelection();
 			this.fragment = fragment;
-			this.initialLabelText = this.fragment.getText();
+			this.initialLabel = this.fragment.getText();
 
-			let title;
-			if ( linkMatches ) {
-				// Group 1 is the link target, group 2 is the label after | if present
-				title = mw.Title.newFromText( linkMatches[ 1 ] );
-				this.initialLabelText = linkMatches[ 2 ] || linkMatches[ 1 ];
-				// HACK: Remove escaping probably added by this tool.
-				// We should really do a full parse from wikitext to HTML if
-				// we see any syntax
-				this.initialLabelText = this.initialLabelText.replace( /<nowiki>(\]{2,})<\/nowiki>/g, '$1' );
+			if ( isExternal ) {
+				// can't get here without linkMatches
+				// linkMatches: [ whole match, url, protocol, label, closing bracket ]
+				if ( linkMatches[ 4 ] ) {
+					// Link came in []
+					this.initialLabel = linkMatches[ 3 ];
+					this.initialLabel = this.initialLabel.replace( /<nowiki>(\]{2,})<\/nowiki>/g, '$1' );
+					if ( !linkMatches[ 3 ] ) {
+						// Didn't have a label
+						this.initialAnnotation = this.newExternalLinkAnnotation( {
+							type: 'link/mwNumberedExternal',
+							attributes: {
+								href: linkMatches[ 1 ]
+							}
+						} );
+					} else {
+						// Has a label
+						this.initialAnnotation = this.newExternalLinkAnnotation( {
+							type: 'link/mwExternal',
+							attributes: {
+								href: linkMatches[ 1 ]
+							}
+						} );
+					}
+				} else {
+					// Just an autolinked URL
+					this.initialLabel = '';
+					this.initialAnnotation = this.newExternalLinkAnnotation( {
+						type: 'link/mwMagic',
+						attributes: {
+							href: linkMatches[ 1 ]
+						}
+					} );
+				}
 			} else {
-				title = mw.Title.newFromText( this.initialLabelText );
+				let title;
+				if ( linkMatches ) {
+					// Group 1 is the link target, group 2 is the label after | if present
+					title = mw.Title.newFromText( linkMatches[ 1 ] );
+					this.initialLabel = linkMatches[ 2 ] || linkMatches[ 1 ];
+					// HACK: Remove escaping probably added by this tool.
+					// We should really do a full parse from wikitext to HTML if
+					// we see any syntax
+					this.initialLabel = this.initialLabel.replace( /<nowiki>(\]{2,})<\/nowiki>/g, '$1' );
+				} else {
+					title = mw.Title.newFromText( this.initialLabel );
+				}
+				if ( title ) {
+					this.initialAnnotation = this.newInternalLinkAnnotationFromTitle( title );
+				}
 			}
-			if ( title ) {
-				this.initialAnnotation = this.newInternalLinkAnnotationFromTitle( title );
-			}
+
+			// We've skipped ve.ui.AnnotationInspector#getSetupProcess. Set isNew here so
+			// that getInsertionData works correctly.
+			this.isNew = !linkMatches;
 
 			const inspectorTitle = ve.msg(
 				this.isReadOnly() ?
@@ -151,6 +240,8 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 			);
 
 			this.title.setLabel( inspectorTitle ).setTitle( inspectorTitle );
+			this.labelInput.setValue( this.initialLabel );
+
 			this.annotationInput.setReadOnly( this.isReadOnly() );
 
 			this.actions.setMode( this.getMode() );
@@ -173,22 +264,22 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 		.first( () => {
 			const wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
 				annotation = this.getAnnotation(),
-				fragment = this.getFragment(),
-				insertion = this.getInsertionText();
+				fragment = this.getFragment();
+
+			const insertionText = this.getInsertionText();
+			const replace = !this.isNew;
+			const insertText = this.initialSelection.isCollapsed() && insertionText.length;
 
 			if ( data && data.action === 'done' && annotation ) {
-				const insert = this.initialSelection.isCollapsed() && insertion.length;
-				let labelText;
-				if ( insert ) {
-					fragment.insertContent( insertion );
-					labelText = insertion;
-				} else {
-					labelText = this.initialLabelText;
-				}
-
 				// Build internal links locally
 				if ( annotation instanceof ve.dm.MWInternalLinkAnnotation ) {
-					if ( labelText.indexOf( ']]' ) !== -1 ) {
+					let labelText;
+					if ( replace || insertText ) {
+						labelText = insertionText;
+					} else {
+						labelText = this.initialLabel;
+					}
+					if ( labelText.includes( ']]' ) ) {
 						labelText = labelText.replace( /(\]{2,})/g, '<nowiki>$1</nowiki>' );
 					}
 					const labelTitle = mw.Title.newFromText( labelText );
@@ -213,7 +304,25 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 					}
 
 					fragment.insertContent( '[[' + prefix + targetText + labelText + ']]' );
+				} else if ( annotation instanceof ve.dm.MWExternalLinkAnnotation ) {
+					if ( this.initialAnnotation.element.type === 'link/mwMagic' ) {
+						fragment.insertContent( annotation.element.attributes.href );
+					} else {
+						let labelText = '';
+						if ( replace || insertText ) {
+							labelText = insertionText;
+						} else if ( annotation.name === 'link/mwExternal' ) {
+							labelText = this.initialLabel;
+						}
+						if ( labelText ) {
+							labelText = ' ' + labelText;
+						}
+						fragment.insertContent( '[' + annotation.element.attributes.href + labelText + ']' );
+					}
 				} else {
+					if ( replace || this.shouldInsertText() ) {
+						fragment.insertContent( this.getInsertionData() );
+					}
 					// Annotating the surface will send the content to Parsoid before
 					// it is inserted into the wikitext document. It is slower but it
 					// will handle all cases.
@@ -223,7 +332,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 
 				// Fix selection after annotating is complete
 				fragment.getPending().then( () => {
-					if ( insert ) {
+					if ( insertText ) {
 						fragment.collapseToEnd().select();
 					} else {
 						fragment.select();

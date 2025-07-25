@@ -45,7 +45,7 @@ ve.dm.MWExternalLinkAnnotation.static.toDataElement = function ( domElements, co
 		types = type.trim().split( /\s+/ );
 
 	// If the link doesn't have a known RDFa type...
-	if ( types.indexOf( 'mw:ExtLink' ) === -1 && types.indexOf( 'mw:WikiLink/Interwiki' ) === -1 ) {
+	if ( !types.includes( 'mw:ExtLink' ) && !types.includes( 'mw:WikiLink/Interwiki' ) ) {
 		// ...when pasting: auto-convert it to the correct type (internal/external/span)
 		if ( converter.isFromClipboard() ) {
 			if ( domElement.hasAttribute( 'href' ) ) {

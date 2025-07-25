@@ -37,8 +37,7 @@ ve.ui.Trigger = function VeUiTrigger( e, allowInvalidPrimary ) {
 	} else if ( typeof e === 'string' ) {
 		// Normalization: remove whitespace and force lowercase
 		const parts = e.replace( /\s+/g, '' ).toLowerCase().split( '+' );
-		for ( let i = 0, len = parts.length; i < len; i++ ) {
-			let key = parts[ i ];
+		parts.forEach( ( key ) => {
 			// Resolve key aliases
 			if ( Object.prototype.hasOwnProperty.call( keyAliases, key ) ) {
 				key = keyAliases[ key ];
@@ -47,11 +46,11 @@ ve.ui.Trigger = function VeUiTrigger( e, allowInvalidPrimary ) {
 			if ( Object.prototype.hasOwnProperty.call( this.modifiers, key ) ) {
 				// Modifier key
 				this.modifiers[ key ] = true;
-			} else if ( primaryKeys.indexOf( key ) !== -1 || allowInvalidPrimary ) {
+			} else if ( primaryKeys.includes( key ) || allowInvalidPrimary ) {
 				// WARNING: Only the last primary key will be used
 				this.primary = key;
 			}
-		}
+		} );
 	}
 };
 
@@ -398,14 +397,8 @@ ve.ui.Trigger.prototype.isComplete = function () {
  * @return {string} Canonical trigger string
  */
 ve.ui.Trigger.prototype.toString = function () {
-	const modifierKeys = ve.ui.Trigger.static.modifierKeys,
-		keys = [];
 	// Add modifier keywords in the correct order
-	for ( let i = 0, len = modifierKeys.length; i < len; i++ ) {
-		if ( this.modifiers[ modifierKeys[ i ] ] ) {
-			keys.push( modifierKeys[ i ] );
-		}
-	}
+	const keys = ve.ui.Trigger.static.modifierKeys.filter( ( modifierKey ) => this.modifiers[ modifierKey ] );
 	// Check that there were modifiers and the primary key is whitelisted
 	if ( this.primary ) {
 		// Add a symbolic name for the primary key
@@ -422,7 +415,7 @@ ve.ui.Trigger.prototype.toString = function () {
  * This is similar to #toString but the resulting string will be formatted in a way that makes it
  * appear more native for the platform, and special keys will be translated.
  *
- * @param {boolean} explode Whether to return the message split up into some
+ * @param {boolean} [explode=false] Whether to return the message split up into some
  *        reasonable sequence of inputs required
  * @return {string[]|string} Seprate key messages, or a joined string
  */
@@ -458,7 +451,7 @@ ve.ui.Trigger.prototype.getMessage = function ( explode ) {
 	// * visualeditor-key-space
 	// * visualeditor-key-tab
 	// * visualeditor-key-up
-	keys = keys.map( ( key ) => translatableKeys.indexOf( key ) !== -1 ? ve.msg( 'visualeditor-key-' + key ) : key.toUpperCase() );
+	keys = keys.map( ( key ) => translatableKeys.includes( key ) ? ve.msg( 'visualeditor-key-' + key ) : key.toUpperCase() );
 
 	// Concatenation
 	if ( explode ) {

@@ -70,7 +70,6 @@ class ApiEchoPushSubscriptionsCreate extends ApiBase {
 
 	/**
 	 * Get the parent module.
-	 * @return ApiBase
 	 */
 	public function getParent(): ApiBase {
 		return $this->parent;

@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
+use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\FilterUtils;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
@@ -14,25 +15,21 @@ use MediaWiki\Linker\LinkRenderer;
  */
 class GlobalAbuseFilterPager extends AbuseFilterPager {
 
-	/**
-	 * @param AbuseFilterViewList $page
-	 * @param LinkRenderer $linkRenderer
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param SpecsFormatter $specsFormatter
-	 * @param CentralDBManager $centralDBManager
-	 * @param array $conds
-	 */
 	public function __construct(
 		AbuseFilterViewList $page,
 		LinkRenderer $linkRenderer,
 		AbuseFilterPermissionManager $afPermManager,
 		SpecsFormatter $specsFormatter,
 		CentralDBManager $centralDBManager,
+		FilterLookup $filterLookup,
 		array $conds
 	) {
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $centralDBManager->getConnection( DB_REPLICA );
-		parent::__construct( $page, $linkRenderer, null, $afPermManager, $specsFormatter, $conds, null, null );
+		parent::__construct(
+			$page, $linkRenderer, null, $afPermManager, $specsFormatter,
+			$filterLookup, $conds, null, null
+		);
 	}
 
 	/**

@@ -160,7 +160,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		);
 
 		$this->getOutput()->addModuleStyles( 'ext.citeThisPage' );
-		$this->getOutput()->addParserOutputContent( $ret, [
+		$this->getOutput()->addParserOutputContent( $ret, $parserOptions, [
 			'enableSectionEditLinks' => false,
 		] );
 	}
@@ -224,12 +224,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 			/* $linestart = */ false
 		);
 
-		return Parser::stripOuterParagraph( $ret->getText( [
-			'enableSectionEditLinks' => false,
-			// This will be inserted into the output of another parser, so there will actually be a wrapper
-			'unwrap' => true,
-			'wrapperDivClass' => '',
-		] ) );
+		return Parser::stripOuterParagraph( $ret->getRawText() );
 	}
 
 	/** @inheritDoc */

@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Crazymadlover",
+			"Omnipaedista",
+			"SPQRobin"
+		]
+	},
+	"grouppage-checkuser": "{{ns:project}}:Ἔλεγχος χρωμένου",
+	"checkuser-reason": "Αἰτία:",
+	"checkuser-period": "Διάρκεια:",
+	"checkuser-all": "ἅπασαι",
+	"checkuser-check": "Ἐλέγχειν",
+	"checkuser-wasblocked": "Προηγουμένως πεφραγμένος",
+	"checkuser-search": "Ζητεῖν",
+	"checkuser-search-submit": "Ζητεῖν"
+}

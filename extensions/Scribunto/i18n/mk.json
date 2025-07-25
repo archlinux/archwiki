@@ -31,7 +31,7 @@
 	"scribunto-common-timeout": "Зададеното време за работа на скриптите истече.",
 	"scribunto-common-oom": "Надминат е дозволениот складишен простор за работа на скрипти.",
 	"scribunto-common-backtrace": "Проследување на текот:",
-	"scribunto-common-no-details": "Нема повеќе поединости.",
+	"scribunto-common-no-details": "Нема поединости за кодното наоѓалиште.",
 	"scribunto-lua-in-function": "во функцијата „$1“",
 	"scribunto-lua-in-main": "во главниот дел",
 	"scribunto-lua-in-function-at": "во функцијата, кај $1:$2",

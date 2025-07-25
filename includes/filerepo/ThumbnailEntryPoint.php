@@ -31,11 +31,12 @@
 namespace MediaWiki\FileRepo;
 
 use Exception;
-use File;
 use InvalidArgumentException;
 use MediaTransformError;
 use MediaTransformInvalidParametersException;
 use MediaTransformOutput;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\UnregisteredLocalFile;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiEntryPoint;
@@ -47,8 +48,6 @@ use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Request\HeaderCallback;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use RepoGroup;
-use UnregisteredLocalFile;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Message\MessageSpecifier;
 
@@ -231,7 +230,7 @@ class ThumbnailEntryPoint extends MediaWikiEntryPoint {
 		// Get the normalized thumbnail name from the parameters...
 		try {
 			$thumbName = $img->thumbName( $params );
-			if ( !strlen( $thumbName ?? '' ) ) { // invalid params?
+			if ( ( $thumbName ?? '' ) === '' ) { // invalid params?
 				throw new MediaTransformInvalidParametersException(
 					'Empty return from File::thumbName'
 				);
@@ -286,7 +285,7 @@ class ThumbnailEntryPoint extends MediaWikiEntryPoint {
 
 		$thumbProxyUrl = $img->getRepo()->getThumbProxyUrl();
 
-		if ( strlen( $thumbProxyUrl ?? '' ) ) {
+		if ( ( $thumbProxyUrl ?? '' ) !== '' ) {
 			$this->proxyThumbnailRequest( $img, $thumbName );
 			// No local fallback when in proxy mode
 			return;
@@ -329,7 +328,7 @@ class ThumbnailEntryPoint extends MediaWikiEntryPoint {
 		$secret = $img->getRepo()->getThumbProxySecret();
 
 		// Pass a secret key shared with the proxied service if any
-		if ( strlen( $secret ?? '' ) ) {
+		if ( ( $secret ?? '' ) !== '' ) {
 			$req->setHeader( 'X-Swift-Secret', $secret );
 		}
 
@@ -684,7 +683,7 @@ EOT;
 		return false;
 	}
 
-	private function vary( $header ) {
+	private function vary( string $header ) {
 		$this->varyHeader[] = $header;
 	}
 
@@ -834,7 +833,7 @@ EOT;
 		return false;
 	}
 
-	private function maybeEnforceRateLimits( File $img, array $params ) {
+	private function maybeEnforceRateLimits( File $img, array $params ): bool {
 		$authority = $this->getContext()->getAuthority();
 		$status = PermissionStatus::newEmpty();
 

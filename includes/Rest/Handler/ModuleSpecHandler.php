@@ -5,6 +5,7 @@ namespace MediaWiki\Rest\Handler;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Module\Module;
 use MediaWiki\Rest\RequestData;
@@ -77,9 +78,10 @@ class ModuleSpecHandler extends SimpleHandler {
 		$prefix = $module->getPathPrefix();
 
 		if ( $prefix === '' ) {
-			$title = "Default Module";
+			$title = $this->getJsonLocalizer()->getFormattedMessage( 'rest-default-module' );
 		} else {
-			$title = "$prefix Module";
+			$moduleStr = $this->getJsonLocalizer()->getFormattedMessage( 'rest-module' );
+			$title = "$prefix " . $moduleStr;
 		}
 
 		return $module->getOpenApiInfo() + [
@@ -142,7 +144,7 @@ class ModuleSpecHandler extends SimpleHandler {
 		return $operationSpec;
 	}
 
-	private function getComponentsSpec( Module $module ) {
+	private function getComponentsSpec( Module $module ): array {
 		$components = [];
 
 		// XXX: also collect reusable components from handler specs (but how to avoid name collisions?).
@@ -161,17 +163,23 @@ class ModuleSpecHandler extends SimpleHandler {
 		return $components;
 	}
 
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/ModuleSpec.json';
+	}
+
 	public function getParamSettings() {
 		return [
 			'module' => [
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-module-spec-module' ),
 			],
 			'version' => [
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => '',
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-module-spec-version' ),
 			],
 		];
 	}

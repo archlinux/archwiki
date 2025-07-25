@@ -64,7 +64,7 @@ ve.dm.MWTableNode.static.toDataElement = function ( domElements ) {
 		classAttr = domElement.getAttribute( 'class' );
 
 	const attributes = {
-		hasExpandedAttrs: ( domElement.getAttribute( 'typeof' ) || '' ).indexOf( 'mw:ExpandedAttrs' ) !== -1
+		hasExpandedAttrs: ( domElement.getAttribute( 'typeof' ) || '' ).includes( 'mw:ExpandedAttrs' )
 	};
 
 	this.setClassAttributes( attributes, classAttr );

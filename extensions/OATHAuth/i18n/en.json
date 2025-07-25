@@ -68,7 +68,6 @@
 	"log-action-filter-oath-verify": "Checking if two-factor authentication is enabled",
 	"log-action-filter-oath-disable-other": "Disabling two-factor authentication for another user",
 	"oathauth-ui-no-module": "None enabled",
-	"oathauth-module-invalid": "The OATHAuth module that the user has registered is invalid.",
 	"oathauth-module-totp-label": "TOTP (one-time token)",
 	"oathauth-ui-manage": "Manage",
 	"oathmanage": "Manage Two-factor authentication",
@@ -87,9 +86,6 @@
 	"oathauth-disable-method-warning-button-label": "Confirm and continue",
 	"oathauth-disable-method-warning": "If you disable $1 two-factor authentication method, you will no longer be able to use this method when logging in, and all the data associated with this authentication method will be deleted.",
 	"oathauth-disable-method-next-step": "On the next step, you will be required to authenticate yourself with your current two-factor authentication method ($1) to be able to disable it.",
-	"oathauth-switch-method-warning-header": "Confirm switching to a different authentication method",
-	"oathauth-switch-method-warning": "By switching to $2 two-factor authentication method, current method ($1) will be disabled, and all the data associated with the current authentication method will be deleted",
-	"oathauth-switch-method-next-step": "On the next step, you will be required to authenticate yourself with your current two-factor authentication method ($1) to be able to switch to $2.",
 	"oathauth-totp-disable-warning": "You will no longer be able to use the authentication device registered with this account. All recovery codes associated with this account will be invalidated.",
 	"oathauth-invalidrequest": "Invalid request",
 	"notification-header-oathauth-disable": "Two-factor authentication has been disabled on {{GENDER:$2|your account}}.",
@@ -115,5 +111,6 @@
 	"oathauth-prefs-disabledgroups": "Disabled {{PLURAL:$1|group|groups}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Your membership}} in {{PLURAL:$1|this group|these groups}} is disabled until you enable [[Special:Manage Two-factor authentication|two-factor authentication]].",
 	"oathauth-qrcode-alt": "Scannable QR code representing the secret key.",
-	"oathauth-hint": "Don't have access to your device or application? You can enter recovery codes (presented when you enabled 2FA) in this field."
+	"oathauth-hint": "Don't have access to your device or application? You can enter recovery codes (presented when you enabled 2FA) in this field.",
+	"oathauth-must-be-central": "{{GENDER:$1|Your account}} must linked to the central authentication system to use two-factor authentication."
 }

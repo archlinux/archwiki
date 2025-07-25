@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\ExternalLinks\LinkFilter;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -123,12 +124,14 @@ class CleanupSpam extends Maintenance {
 				$count += $res->numRows();
 				$this->output( "Found $count articles containing $spec so far...\n" );
 				foreach ( $res as $row ) {
+					$this->beginTransactionRound( __METHOD__ );
 					$this->cleanupArticle(
 						$row->el_from,
 						$spec,
 						$prot,
 						$user
 					);
+					$this->commitTransactionRound( __METHOD__ );
 				}
 			}
 			if ( $count ) {
@@ -174,8 +177,6 @@ class CleanupSpam extends Maintenance {
 			// This happens e.g. when a link comes from a template rather than the page itself
 			$this->output( "False match\n" );
 		} else {
-			$dbw = $this->getPrimaryDB();
-			$this->beginTransaction( $dbw, __METHOD__ );
 			$page = $services->getWikiPageFactory()->newFromTitle( $title );
 			if ( $rev ) {
 				// Revert to this revision
@@ -209,7 +210,6 @@ class CleanupSpam extends Maintenance {
 					EDIT_UPDATE | EDIT_FORCE_BOT
 				);
 			}
-			$this->commitTransaction( $dbw, __METHOD__ );
 		}
 	}
 }

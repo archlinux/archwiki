@@ -1,0 +1,29 @@
+[
+	{
+		"name": "cuci_wiki_map",
+		"comment": "A central table used to map an integer ID to wiki DB name. Used to make storage of the wiki IDs more efficient.",
+		"columns": [
+			{
+				"name": "ciwm_id",
+				"comment": "Unique ID to identify each wiki ID. This is the primary key, but can be a smallint as it will never exceed the number of wikis in an install (so ~65,000 is enough).",
+				"type": "smallint",
+				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "ciwm_wiki",
+				"comment": "The wiki DB name associated with this row.",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "ciwm_wiki",
+				"columns": [ "ciwm_wiki" ],
+				"unique": true,
+				"comment": "Used to find the integer ID for a given wiki DB name."
+			}
+		],
+		"pk": [ "ciwm_id" ]
+	}
+]

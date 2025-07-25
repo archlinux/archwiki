@@ -14,7 +14,7 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\DiscussionTools\CommentParser;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
-use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
+use MediaWiki\Extension\DiscussionTools\ContentThreadItemSetStatus;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
@@ -22,12 +22,12 @@ use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
-use RuntimeException;
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
+use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -72,6 +72,17 @@ class HookUtils {
 
 	public const FEATURES_CONFLICT_WITH_GADGET = [
 		self::REPLYTOOL,
+		self::TOPICSUBSCRIPTION,
+	];
+
+	public const FEATURES_DEPENDENCIES = [
+		self::SOURCEMODETOOLBAR => [
+			self::REPLYTOOL,
+			self::NEWTOPICTOOL,
+		],
+		self::AUTOTOPICSUB => [
+			self::TOPICSUBSCRIPTION,
+		]
 	];
 
 	private const CACHED_PAGE_PROPS = [
@@ -118,13 +129,12 @@ class HookUtils {
 	 *        Otherwise, it should be set to the name of the calling method (__METHOD__),
 	 *        so we can track what is causing parser cache writes.
 	 *
-	 * @return ContentThreadItemSet
-	 * @throws ResourceLimitExceededException
+	 * @return ContentThreadItemSetStatus
 	 */
 	public static function parseRevisionParsoidHtml(
 		RevisionRecord $revRecord,
 		$updateParserCacheFor
-	): ContentThreadItemSet {
+	): ContentThreadItemSetStatus {
 		$services = MediaWikiServices::getInstance();
 		$mainConfig = $services->getMainConfig();
 		$parserOutputAccess = $services->getParserOutputAccess();
@@ -133,7 +143,15 @@ class HookUtils {
 		// ParserOutputAccess would look it up by namespace+title in replica.
 		$pageRecord = $services->getPageStore()->getPageById( $revRecord->getPageId() ) ?:
 			$services->getPageStore()->getPageById( $revRecord->getPageId(), IDBAccessObject::READ_LATEST );
-		Assert::postcondition( $pageRecord !== null, 'Revision had no page' );
+		if ( !$pageRecord ) {
+			throw new NormalizedException(
+				"PageRecord for page {page} revision {revision} not found",
+				[
+					'page' => $revRecord->getPageId(),
+					'revision' => $revRecord->getId(),
+				]
+			);
+		}
 
 		$parserOptions = ParserOptions::newFromAnon();
 		$parserOptions->setUseParsoid();
@@ -152,14 +170,12 @@ class HookUtils {
 		);
 
 		if ( !$status->isOK() ) {
-			[ 'message' => $key, 'params' => $params ] = $status->getErrors()[0];
-			// XXX: HtmlOutputRendererHelper checks for a resource limit exceeded message as well,
-			// maybe we shouldn't be catching that so low down.  Re-throw for callers.
+			// This is currently the only expected failure, make the caller handle it
 			if ( $status->hasMessage( 'parsoid-resource-limit-exceeded' ) ) {
-				throw new ResourceLimitExceededException( $params[0] ?? '' );
+				return ContentThreadItemSetStatus::wrap( $status );
 			}
-			$message = wfMessage( $key, ...$params );
-			throw new RuntimeException( $message->inLanguage( 'en' )->useDatabase( false )->text() );
+			// Any other failures indicate a software bug, so throw an exception
+			throw new NormalizedException( ...Status::wrap( $status )->getPsr3MessageAndContext() );
 		}
 
 		$parserOutput = $status->getValue();
@@ -176,7 +192,7 @@ class HookUtils {
 		/** @var CommentParser $parser */
 		$parser = $services->getService( 'DiscussionTools.CommentParser' );
 		$title = TitleValue::newFromPage( $revRecord->getPage() );
-		return $parser->parse( $container, $title );
+		return ContentThreadItemSetStatus::newGood( $parser->parse( $container, $title ) );
 	}
 
 	/**
@@ -518,7 +534,7 @@ class HookUtils {
 			// Only in talk namespaces, not including other namespaces that isAvailableForTitle() allows
 			$title->isTalkPage() &&
 			// Only if the subject page or the user exists (T288319, T312560)
-			static::pageSubjectExists( $title ) &&
+			( $title->exists() || static::pageSubjectExists( $title ) ) &&
 			// The default display will probably be more useful for links to old revisions of deleted
 			// pages (existing pages are already excluded in shouldShowNewSectionTab())
 			$req->getIntOrNull( 'oldid' ) === null &&

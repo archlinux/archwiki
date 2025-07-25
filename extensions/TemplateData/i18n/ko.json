@@ -13,12 +13,12 @@
 			"Revi",
 			"SeoJeongHo",
 			"Songhee",
+			"Suleiman the Magnificent Television",
+			"YeBoy371",
 			"Ykhwong",
 			"렌즈",
 			"아라",
-			"이강철",
-			"Suleiman the Magnificent Television",
-			"YeBoy371"
+			"이강철"
 		]
 	},
 	"templatedata-desc": "(JSON을 사용하여) 틀 변수에 대한 데이터 저장소를 구현합니다",
@@ -55,7 +55,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "사용자",
 	"templatedata-doc-params": "틀 변수",
 	"templatedata-editbutton": "틀데이터 편집",
-	"templatedata-errormsg-jsonbadformat": "잘못된 JSON 형식입니다. 이것을 수정하거나, 현재의 <templatedata> 태그를 삭제하고 나서 다시 시도하거나 계속하고 템플릿 데이터를 새로 만들기 위해서 이것을 취소할수 있습니다.",
+	"templatedata-errormsg-jsonbadformat": "잘못된 JSON 형식. 이 작업을 취소하여 수정 또는 제거하거나, 현재 틀 데이터를 새로운 데이터로 계속 교체할 수 있다.",
 	"templatedata-errormsg-insertblank": "어떠한 정보 없이 틀데이터를 추가하시겠습니까?",
 	"templatedata-exists-on-related-page": "참고: 관련된 문서 \"[[$1]]\"에 틀데이터 블록이 이미 있습니다.",
 	"templatedata-helplink": "틀데이터에 대한 정보",
@@ -84,6 +84,7 @@
 	"templatedata-modal-button-removemap": "지도 삭제",
 	"templatedata-modal-button-saveparam": "저장",
 	"templatedata-modal-confirmcancel": "정말 변경사항을 버리시겠습니까?",
+	"templatedata-modal-button-discard": "버리기",
 	"templatedata-modal-current-language": "현재 언어: $1",
 	"templatedata-modal-errormsg": "오류를 찾았습니다. 빠진 곳이 없는지 확인하거나 매개변수 이름을 복사하고 매개변수 이름에  \"$1\", \"$2\", \"$3\" 기호가 포함되지 않도록 하세요.",
 	"templatedata-modal-errormsg-duplicate-name": "오류가 발견되었습니다. 선택한 이름은 이미 다른 변수에 의해 사용되고 있습니다.",
@@ -126,5 +127,12 @@
 	"templatedata-modal-title-templateformat": "제안되는 위키텍스트 형식",
 	"templatedata-modal-title-templateformatstring": "사용자 지정 포맷 문자열",
 	"templatedata-modal-title-templateparam-details": "변수 상세 정보: $1",
-	"templatedata-modal-title-templateparams": "틀 변수"
+	"templatedata-modal-title-templateparams": "틀 변수",
+	"templatedata-search-title": "틀 검색",
+	"templatedata-search-placeholder": "틀 찾기",
+	"templatedata-search-list-header": "즐겨찾기",
+	"templatedata-favorite-disabled": "틀을 즐겨찾기하려면 로그인해야 합니다",
+	"templatedata-favorite-added": "즐겨찾기에 틀이 추가되었습니다",
+	"templatedata-favorite-removed": "즐겨찾기에서 틀을 제거했습니다",
+	"templatedata-favorite-error": "즐겨찾기를 저장할 수 없습니다"
 }

@@ -1,0 +1,16 @@
+<li>
+	{{{ipLink}}}
+	{{#ip64Link}}
+		<span class="mw-changeslist-links">{{{ip64Link}}}</span>
+	{{/ip64Link}}
+	<span class="mw-changeslist-links">{{{blockLink}}}</span>
+	<span class="mw-changeslist-links">{{timeRange}}</span>
+	<strong class="mw-checkuser-actions-count mw-checkuser-edits-count">{{editCount}}</strong>
+	{{#showIpCounts}}
+		<i class="mw-changeslist-links">{{#ipEditCount}}<span
+			class="mw-checkuser-actions-from-all-users mw-checkuser-edits-from-all-users">{{ipEditCount}}</span>{{/ipEditCount}}{{#ip64EditCount}}<span
+			class="mw-checkuser-actions-from-all-users-64 mw-checkuser-edits-from-all-users-64">{{ip64EditCount}}</span>{{/ip64EditCount}}</i>
+	{{/showIpCounts}}
+	{{{blockInfo}}}
+	<div class="mw-checkuser-indented"><small>{{{toolLinks}}}</small></div>
+</li>

@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
+			"Woytecr",
 			"Исмаил Садуев",
 			"Саид Мисарбиев",
-			"Умар",
-			"Woytecr"
+			"Умар"
 		]
 	},
 	"discussiontools": "Дийцарийн гӀирсаш",
@@ -70,7 +70,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "{{GENDER:|Йаздалар}} кхочушдина!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "{{GENDER:|Хьоьга}} хаам богӀура бац, кху агӀонгахь керла тема йолийча.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Йаздалар}} дӀадаьккхина.",
-	"discussiontools-notification-added-topic-header": "$2 кхоьллина керла тема «<strong>$4</strong>» <strong>$3</strong> агӀонгахь.",
+	"discussiontools-notification-added-topic-header": "$1 {{GENDER:$2|кхоьллина}} керла тема «<strong>$4</strong>» <strong>$3</strong> агӀонгахь.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|$1 керла тема}}<strong>$2</strong> тӀехь",
 	"discussiontools-notification-added-topic-view": "Хьажа темега",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|баркалла аьлла}} {{GENDER:$4|хьуна}} «<strong>$3</strong>» темехь коммент йитарна.",
@@ -198,9 +198,9 @@
 	"tag-discussiontools-description": "Нисдар дина DiscussionTools гӀоьнца",
 	"tag-discussiontools-edit": "хааман редакци йе",
 	"tag-discussiontools-edit-description": "Декъашхочо йолуш йолу коммент хийцина DiscussionTools гӀоьнца",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Керла тема]",
+	"tag-discussiontools-newtopic": "Керла тема",
 	"tag-discussiontools-newtopic-description": "Декъашхочо DiscussionTools гӀоьнца керла тема тӀетоьхна",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Жоп]",
+	"tag-discussiontools-reply": "Жоп",
 	"tag-discussiontools-reply-description": "Декъашхочо DiscussionTools гӀоьнца комментана жоп дела",
 	"tag-discussiontools-source-description": "DiscussionTools ражехь",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools йара дӀайолалун кодан шорйина ражехь гӀирсийн панельца.",

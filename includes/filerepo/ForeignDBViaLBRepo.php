@@ -18,6 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo;
+
+use Closure;
+use LogicException;
+use MediaWiki\FileRepo\File\ForeignDBFile;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -64,9 +69,6 @@ class ForeignDBViaLBRepo extends LocalRepo implements IForeignRepoWithDB {
 		};
 	}
 
-	/**
-	 * @return IConnectionProvider
-	 */
 	protected function getDbProvider(): IConnectionProvider {
 		return MediaWikiServices::getInstance()->getConnectionProvider();
 	}
@@ -82,3 +84,6 @@ class ForeignDBViaLBRepo extends LocalRepo implements IForeignRepoWithDB {
 		return FileRepo::getInfo();
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ForeignDBViaLBRepo::class, 'ForeignDBViaLBRepo' );

@@ -1,4 +1,4 @@
-@import 'mediawiki.mixins';
+@import 'mediawiki.mixins.less';
 @import 'mediawiki.skin.variables.less';
 
 /*
@@ -42,69 +42,4 @@
 		background: @background-color-neutral-subtle;
 		overflow: hidden;
 	}
-}
-
-.wikiEditor-wikitext {
-	float: left;
-	width: 100%;
-}
-
-.wikiEditor-ui-controls {
-	float: left;
-	width: 100%;
-	background-color: @background-color-base;
-}
-
-.wikiEditor-ui-tabs {
-	float: left;
-	height: 2.5em;
-	margin-right: -1px;
-	background-color: @background-color-base;
-	border-left: @border-subtle;
-	border-top: @border-subtle;
-
-	div {
-		float: left;
-		height: 2.5em;
-		background-color: @background-color-interactive-subtle;
-		border-right: @border-subtle;
-		border-bottom: @border-subtle;
-
-		a {
-			display: inline-block;
-			padding: 0 0.75em;
-			line-height: 2.5em;
-			color: @color-progressive;
-		}
-
-		&.current {
-			border-bottom: 1px solid #fff;
-			background-color: @background-color-base;
-
-			a {
-				color: @color-base;
-
-				&:hover {
-					text-decoration: none;
-				}
-			}
-		}
-	}
-}
-
-.wikiEditor-ui-buttons {
-	float: right;
-	height: 2.5em;
-	margin-right: -1px;
-	background-color: @background-color-base;
-	padding-left: 1em;
-	border-top: 1px solid #fff;
-
-	button {
-		margin-left: 0.5em;
-	}
-}
-
-.wikiEditor-view-wikitext {
-	line-height: 1em;
 }

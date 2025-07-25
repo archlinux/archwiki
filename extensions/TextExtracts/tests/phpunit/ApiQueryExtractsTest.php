@@ -13,6 +13,7 @@ use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Title\Title;
 use MediaWikiCoversValidator;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
@@ -74,6 +75,7 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 			$configFactory,
 			$cache,
 			$langConvFactory,
+			$this->getServiceContainer()->getParserOutputAccess(),
 			$this->getServiceContainer()->getWikiPageFactory(),
 			$this->getServiceContainer()->getTitleFormatter()
 		);
@@ -84,7 +86,7 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 		$title->method( 'getPageLanguage' )
 			->willReturn( $this->createMock( Language::class ) );
 
-		$page = $this->createMock( \WikiPage::class );
+		$page = $this->createMock( WikiPage::class );
 		$page->method( 'getTitle' )
 			->willReturn( $title );
 		$page->method( 'getId' )
@@ -159,16 +161,6 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 				'Example <h11>...',
 				false,
 				'Example <h11>...',
-			],
-			'__TOC__ before intro (HTML)' => [
-				'<h2 id="mw-toc-heading">Contents</h2>Intro<h2>Actual heading</h2>...',
-				false,
-				'<h2 id="mw-toc-heading">Contents</h2>Intro',
-			],
-			'__TOC__ before intro (plaintext)' => [
-				"\1\2_\2\1<h2 id=\"mw-toc-heading\">Contents</h2>Intro\1\2_\2\1<h2>Actual heading</h2>...",
-				true,
-				"\1\2_\2\1<h2 id=\"mw-toc-heading\">Contents</h2>Intro",
 			],
 		];
 	}

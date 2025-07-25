@@ -21,6 +21,7 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Unit\Components;
 
+use MediaWiki\Skin\Skin;
 use MediaWiki\Skins\Vector\Components\VectorComponent;
 use MediaWiki\Skins\Vector\Components\VectorComponentMainMenu;
 use MediaWiki\Skins\Vector\Constants;
@@ -28,7 +29,6 @@ use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
 use MessageLocalizer;
-use Skin;
 
 /**
  * @group Vector
@@ -69,7 +69,7 @@ class VectorComponentMainMenuTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideMainMenuScenarios(): array {
+	public static function provideMainMenuScenarios(): array {
 		return [
 			'Main Menu Pinned' => [
 				'sidebarData' => [

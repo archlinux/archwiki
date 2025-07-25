@@ -3,7 +3,7 @@
 namespace Wikimedia\Message;
 
 use InvalidArgumentException;
-use MediaWiki\Json\JsonDeserializer;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
 
 /**
  * Value object representing a message parameter that consists of a list of values.
@@ -13,8 +13,9 @@ use MediaWiki\Json\JsonDeserializer;
  * @newable
  */
 class ListParam extends MessageParam {
-	/** @var string */
-	private $listType;
+	use JsonCodecableTrait;
+
+	private string $listType;
 
 	/**
 	 * @stable to call.
@@ -23,7 +24,7 @@ class ListParam extends MessageParam {
 	 * @param (MessageParam|MessageSpecifier|string|int|float)[] $elements Values in the list.
 	 *  Values that are not instances of MessageParam are wrapped using ParamType::TEXT.
 	 */
-	public function __construct( $listType, array $elements ) {
+	public function __construct( string $listType, array $elements ) {
 		if ( !in_array( $listType, ListType::cases() ) ) {
 			throw new InvalidArgumentException( '$listType must be one of the ListType constants' );
 		}
@@ -44,19 +45,19 @@ class ListParam extends MessageParam {
 	 *
 	 * @return string One of the ListType constants
 	 */
-	public function getListType() {
+	public function getListType(): string {
 		return $this->listType;
 	}
 
-	public function dump() {
+	public function dump(): string {
 		$contents = '';
 		foreach ( $this->value as $element ) {
 			$contents .= $element->dump();
 		}
-		return "<{$this->type} listType=\"{$this->listType}\">$contents</{$this->type}>";
+		return "<$this->type listType=\"$this->listType\">$contents</$this->type>";
 	}
 
-	protected function toJsonArray(): array {
+	public function toJsonArray(): array {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		return [
@@ -65,7 +66,7 @@ class ListParam extends MessageParam {
 		];
 	}
 
-	public static function newFromJsonArray( JsonDeserializer $deserializer, array $json ) {
+	public static function newFromJsonArray( array $json ): ListParam {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		if ( count( $json ) !== 2 || !isset( $json[ParamType::LIST] ) || !isset( $json['type'] ) ) {

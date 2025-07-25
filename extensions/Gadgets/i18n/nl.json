@@ -72,5 +72,8 @@
 	"gadgets-validate-unknownpages": "Bevat een of meer pagina’s zonder het achtervoegsel .js, .css of .json. Ze zouden niet worden gebruikt.",
 	"gadgets-validate-duplicate": "Er is een tweede definitie van gadget $1 gedetecteerd, die zal worden genegeerd",
 	"gadgets-validate-nopage": "Pagina “$1” bestaat niet.",
-	"gadgets-supports-urlload": "Deze gadget ondersteunt het laden via een URL met de queryparameter <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "De volgende {{PLURAL:$2|afhankelijkheid ontbreekt|afhankelijkheden ontbreken}}: $1.",
+	"gadgets-validate-deprecateddependencies": "De volgende {{PLURAL:$2|afhankelijkheid is|afhankelijkheden zijn}} verouderd: $1.",
+	"gadgets-supports-urlload": "Deze gadget ondersteunt het laden via een URL met de queryparameter <code>?withgadget</code>.",
+	"gadgets-hidden": "Deze gadget is [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden verborgen], wat betekent dat deze niet op de voorkeurenpagina wordt weergegeven."
 }

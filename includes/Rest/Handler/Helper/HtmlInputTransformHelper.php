@@ -20,11 +20,11 @@
 namespace MediaWiki\Rest\Handler\Helper;
 
 use InvalidArgumentException;
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Content\Content;
 use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SelserContext;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
@@ -44,7 +44,6 @@ use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
-use MWUnknownContentModelException;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -134,9 +133,6 @@ class HtmlInputTransformHelper {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getParamSettings(): array {
 		// JSON body schema:
 		/*
@@ -188,6 +184,7 @@ class HtmlInputTransformHelper {
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => '',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-input-title' )
 			],
 			// XXX: Needed for compatibility with the parsoid transform endpoint.
 			//      But revid should just be part of the info about the original data
@@ -197,6 +194,7 @@ class HtmlInputTransformHelper {
 				ParamValidator::PARAM_TYPE => 'int',
 				ParamValidator::PARAM_DEFAULT => 0,
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-input-oldid' )
 			],
 			// XXX: Supported for compatibility with the parsoid transform endpoint.
 			//      If given, it should be 'html' or 'pagebundle'.
@@ -205,6 +203,7 @@ class HtmlInputTransformHelper {
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => '',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-input-from' )
 			],
 			// XXX: Supported for compatibility with the parsoid transform endpoint.
 			//      Ignored.
@@ -213,18 +212,21 @@ class HtmlInputTransformHelper {
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => '',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-input-format' )
 			],
 			'contentmodel' => [ // XXX: get this from the Accept header?
 				Handler::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => '',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-input-contentmodel' )
 			],
 			'language' => [ // TODO: get this from Accept-Language header?!
 				Handler::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => '',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-input-language' )
 			]
 		];
 	}
@@ -436,7 +438,6 @@ class HtmlInputTransformHelper {
 
 	/**
 	 * Return HTMLTransform object, so additional context can be provided by calling setters on it.
-	 * @return HtmlToContentTransform
 	 */
 	public function getTransform(): HtmlToContentTransform {
 		return $this->transform;
@@ -444,19 +445,8 @@ class HtmlInputTransformHelper {
 
 	/**
 	 * Set metrics sink.
-	 *
-	 * @note Passing a StatsdDataFactoryInterface here has been deprecated
-	 * since 1.43.
-	 *
-	 * @param StatsFactory|StatsdDataFactoryInterface $statsFactory
 	 */
-	public function setMetrics( $statsFactory ) {
-		if ( $statsFactory instanceof StatsdDataFactoryInterface ) {
-			// Uncomment this once all WMF code has been transitioned, but
-			// leave it in for the 1.43 release.
-			wfDeprecated( __METHOD__ . ' with StatsdDataFactoryInterface', '1.43' );
-			return;
-		}
+	public function setMetrics( StatsFactory $statsFactory ) {
 		$this->statsFactory = $statsFactory;
 
 		if ( $this->transform ) {
@@ -588,8 +578,8 @@ class HtmlInputTransformHelper {
 
 		// NOTE: We might have an incomplete PageBundle here, with no HTML.
 		//       PageBundle::$html is declared to not be nullable, so it would be set to the empty
-		//       string if not given. Note however that it might also be null, since it's a public field.
-		if ( $originalRendering->html !== null && $originalRendering->html !== '' ) {
+		//       string if not given.
+		if ( $originalRendering->html !== '' ) {
 			$this->transform->setOriginalHtml( $originalRendering->html );
 		}
 
@@ -632,8 +622,6 @@ class HtmlInputTransformHelper {
 	/**
 	 * Creates a response containing the content derived from the input HTML.
 	 * This will set the appropriate Content-Type header.
-	 *
-	 * @param ResponseInterface $response
 	 */
 	public function putContent( ResponseInterface $response ) {
 		$content = $this->getContent();

@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
-use HTMLCacheUpdateJob;
-use JobQueueGroup;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\ParserOutput;
 
@@ -104,7 +104,10 @@ class PagePropsTable extends LinksTable {
 			&& $this->encodeValue( $this->newProps[$name] ) === $this->encodeValue( $value );
 	}
 
-	private function encodeValue( $value ) {
+	/**
+	 * @param mixed $value
+	 */
+	private function encodeValue( $value ): string {
 		if ( is_bool( $value ) ) {
 			return (string)(int)$value;
 		} elseif ( $value === null ) {

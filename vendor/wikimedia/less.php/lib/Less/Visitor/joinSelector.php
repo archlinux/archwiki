@@ -13,7 +13,7 @@ class Less_Visitor_joinSelector extends Less_Visitor {
 		return $this->visitObj( $root );
 	}
 
-	public function visitDeclration( $declNode, &$visitDeeper ) {
+	public function visitDeclaration( $declNode, &$visitDeeper ) {
 		$visitDeeper = false;
 	}
 

@@ -14,13 +14,7 @@
 			"i18n/api"
 		]
 	},
-	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\ConfirmEdit\\Turnstile\\": "includes/"
-	},
 	"config": {
-		"CaptchaClass": {
-			"value": "MediaWiki\\Extension\\ConfirmEdit\\Turnstile\\Turnstile"
-		},
 		"TurnstileSiteKey": {
 			"value": ""
 		},
@@ -32,8 +26,8 @@
 		}
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "resources",
-		"remoteExtPath": "ConfirmEdit/Turnstile/resources"
+		"localBasePath": "../resources",
+		"remoteExtPath": "ConfirmEdit/resources"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.turnstile.visualEditor": {

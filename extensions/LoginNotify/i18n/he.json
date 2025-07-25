@@ -12,6 +12,7 @@
 	"echo-category-title-login-success": "כניסה ממכשיר לא מוכר",
 	"echo-pref-tooltip-login-success": "להודיע לי בכל פעם שמישהו נכנס לחשבון שלי ממכשיר או מכתובת IP שאינם מוכרים.",
 	"loginnotify-primary-link": "עזרה",
+	"loginnotify-unknown-ip": "ניסית להיכנס מכתובת IP לא מוכרת, ואתר {{SITENAME}} מוגדר כעת למנוע התחברות מכתובות IP לא מוכרות.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|ניסיון כושל|כמה ניסיונות כושלים}} להיכנס לאתר {{SITENAME}} בתור $1",
 	"notification-loginnotify-login-success-email-subject": "כניסה לאתר {{SITENAME}} בתור $1 ממכשיר שלא {{GENDER:$1|השתמשת}} בו לאחרונה",
 	"notification-header-login-success": "מישהו (אולי {{GENDER:$1|אתה|את}}) הצליח לאחרונה להיכנס לחשבון שלך ממכשיר חדש. אם {{GENDER:$1|זה אתה, אתה יכול|זאת את, את יכולה}} להתעלם מההודעה הזאת. אם {{GENDER:$1|זה לא אתה|זאת לא את}}, מומלץ לשנות את הסיסמה שלך, ולבדוק את הפעילות בחשבון שלך.",

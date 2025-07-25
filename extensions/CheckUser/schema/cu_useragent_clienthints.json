@@ -1,0 +1,33 @@
+[
+	{
+		"name": "cu_useragent_clienthints",
+		"columns": [
+			{
+				"name": "uach_id",
+				"comment": "Primary key",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "uach_name",
+				"comment": "Name of the user-agent client hint. See https://wicg.github.io/ua-client-hints/#http-ua-hints for a list.",
+				"type": "string",
+				"options": { "notnull": true, "length": 32 }
+			},
+			{
+				"name": "uach_value",
+				"comment": "Value of the user-agent client hint, see https://wicg.github.io/ua-client-hints/#http-ua-hints for a list of client hint names.",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "uach_name_value",
+				"columns": [ "uach_name", "uach_value" ],
+				"unique": true
+			}
+		],
+		"pk": [ "uach_id" ]
+	}
+]

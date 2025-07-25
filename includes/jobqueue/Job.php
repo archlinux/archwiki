@@ -18,6 +18,9 @@
  * @file
  */
 
+namespace MediaWiki\JobQueue;
+
+use InvalidArgumentException;
 use MediaWiki\Http\Telemetry;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MediaWikiServices;
@@ -81,7 +84,8 @@ abstract class Job implements RunnableJob {
 	 * @stable to call
 	 *
 	 * @param string $command
-	 * @param array|PageReference|null $params
+	 * @param array|PageReference|null $params The parameters for the job. Note that if providing,
+	 *   a 'requestId' key it should be a value from {@link Telemetry::getRequestId}.
 	 */
 	public function __construct( $command, $params = null ) {
 		if ( $params instanceof PageReference ) {
@@ -360,7 +364,7 @@ abstract class Job implements RunnableJob {
 	 */
 	public function teardown( $status ) {
 		foreach ( $this->teardownCallbacks as $callback ) {
-			call_user_func( $callback, $status );
+			$callback( $status );
 		}
 	}
 
@@ -440,3 +444,6 @@ abstract class Job implements RunnableJob {
 		return $this->error;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( Job::class, 'Job' );

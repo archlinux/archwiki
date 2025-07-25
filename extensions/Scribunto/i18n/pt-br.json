@@ -38,7 +38,7 @@
 	"scribunto-common-timeout": "O tempo alocado para a execução de scripts expirou.",
 	"scribunto-common-oom": "A quantidade de memória permitida para a execução de scripts foi excedida.",
 	"scribunto-common-backtrace": "Backtrace:",
-	"scribunto-common-no-details": "Não há mais detalhes disponíveis.",
+	"scribunto-common-no-details": "Não há detalhes disponíveis sobre a posição do código.",
 	"scribunto-lua-in-function": "na função \"$1\"",
 	"scribunto-lua-in-main": "na parte principal",
 	"scribunto-lua-in-function-at": "na função em $1:$2",

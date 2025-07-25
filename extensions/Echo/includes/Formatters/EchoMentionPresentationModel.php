@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\User\User;
 
@@ -23,14 +24,17 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		$this->section = new EchoPresentationModelSection( $event, $user, $language );
 	}
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'mention';
 	}
 
+	/** @inheritDoc */
 	public function canRender() {
 		return (bool)$this->event->getTitle();
 	}
 
+	/** @inheritDoc */
 	protected function getHeaderMessageKey() {
 		$hasSection = $this->section->exists();
 		if ( $this->onArticleTalkpage() ) {
@@ -52,6 +56,7 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		$msg = $this->getMessageWithAgent( $this->getHeaderMessageKey() );
 		$msg->params( $this->getViewingUserForGender() );
@@ -77,10 +82,11 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		$content = $this->event->getExtraParam( 'content' );
 		if ( $content && $this->userCan( RevisionRecord::DELETED_TEXT ) ) {
-			$msg = $this->msg( 'notification-body-mention' );
+			$msg = new RawMessage( '$1' );
 			$msg->plaintextParams(
 				DiscussionParser::getTextSnippet(
 					$content,
@@ -95,6 +101,7 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		return [
 			// Need FullURL so the section is included
@@ -103,6 +110,7 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		$url = $this->event->getTitle()->getLocalURL( [
 			'oldid' => 'prev',
@@ -119,19 +127,20 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		return [ $this->getAgentLink(), $viewChangesLink ];
 	}
 
-	private function onArticleTalkpage() {
+	private function onArticleTalkpage(): bool {
 		return $this->event->getTitle()->getNamespace() === NS_TALK;
 	}
 
-	private function onAgentTalkpage() {
+	private function onAgentTalkpage(): bool {
 		return $this->event->getTitle()->equals( $this->event->getAgent()->getTalkPage() );
 	}
 
-	private function onUserTalkpage() {
+	private function onUserTalkpage(): bool {
 		$title = $this->event->getTitle();
 		return $title->getNamespace() === NS_USER_TALK && !$title->isSubpage();
 	}
 
+	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
 		return 'notification-mention-email-subject';
 	}

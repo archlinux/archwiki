@@ -15,6 +15,7 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 class MMLRenderTest extends MediaWikiUnitTestCase {
+	use MathServiceContainerTrait;
 
 	public function testMathFRakUnicode() {
 		$input = "\\mathfrak{O},  \\mathfrak{K}, \\mathfrak{t}, \\mathfrak{C}";
@@ -139,6 +140,13 @@ class MMLRenderTest extends MediaWikiUnitTestCase {
 		$input = "\cos(x)";
 		$mathMLtexVC = $this->generateMML( $input );
 		$this->assertStringContainsString( "<mo>&#x2061;</mo>", $mathMLtexVC );
+	}
+
+	public function testApplyFunction6() {
+		$input = "\sin \cos^2";
+		$mathMLtexVC = preg_replace( '/\s/', '', $this->generateMML( $input ) );
+		$this->assertStringContainsString( "<msup><mi>cos</mi><mrow", $mathMLtexVC );
+		$this->assertStringContainsString( "sin", $mathMLtexVC );
 	}
 
 	public function testSpacesNoMstyle() {
@@ -551,5 +559,10 @@ class MMLRenderTest extends MediaWikiUnitTestCase {
 		$this->assertStringContainsString( "&#x2016;", $mml );
 		$this->assertStringNotContainsString( "OPEN", $mml );
 		$this->assertStringNotContainsString( "CLOSE", $mml );
+	}
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->setUpMathServiceContainer();
 	}
 }

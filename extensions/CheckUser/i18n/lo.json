@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aefgh39622",
+			"Kimmie023"
+		]
+	},
+	"checkuser": "ກວດຜູ້ໃຊ້",
+	"checkuserlog": "ບັນທຶກການກວດຜູ້ໃຊ້",
+	"right-checkuser-temporary-account": "ເບິ່ງທີ່ຢູ່ IP ທີ່ໃຊ້ໂດຍບັນຊີຊົ່ວຄາວ",
+	"action-checkuser-temporary-account": "ເບິ່ງທີ່ຢູ່ IP ທີ່ໃຊ້ໂດຍບັນຊີຊົ່ວຄາວ",
+	"checkuser-reason": "ເຫດຜົນ:",
+	"checkuser-showlog": "ສະແດງບັນທຶກ",
+	"checkuser-target": "ທີ່ຢູ່ IP ຫຼື ຊື່ຜູ້ໃຊ້:",
+	"checkuser-ips": "ເອົາ ທີ່ຢູ່ IP",
+	"checkuser-empty": "ບໍ່ມີເນື້ອໃນຖືກບັນທຶກ",
+	"checkuser-nomatch": "ບໍ່ພົບສິ່ງທີ່ຊອກຫາ",
+	"checkuser-check": "ກວດ",
+	"checkuser-search": "ຊອກຫາ",
+	"checkuser-helper-label": "ເບິ່ງຜົນໄດ້ຮັບໃນຕາຕະລາງ",
+	"checkuser-helper-copy-success": "ສຳເນົາແລ້ວ",
+	"checkuser-helper-copy-failed": "ບໍ່ສາມາດສຳເນົາໄດ້",
+	"checkuser-helper-user": "ຜູ້ໃຊ້",
+	"checkuser-helper-ips": "ໄອພີ(s)",
+	"checkuser-helper-uas": "ຕົວແທນຜູ້ໃຊ້",
+	"checkuser-rest-access-denied": "ທ່ານບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ປະຕິບັດການດໍາເນີນການນີ້",
+	"checkuser-rest-access-denied-blocked-user": "ທ່ານບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ດໍາເນີນການດັ່ງກ່າວເນື່ອງຈາກວ່າບັນຊີຂອງທ່ານຖືກບລັອກ"
+}

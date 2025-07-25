@@ -1,6 +1,7 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Message\Message;
 use MediaWiki\Skin\SkinComponentLink;
@@ -89,7 +90,9 @@ class VectorComponentUserLinks implements VectorComponent {
 			$class .= $linkclass;
 		}
 
-		$tooltip = '';
+		$tooltip = Html::expandAttributes( [
+			'title' => $this->msg( 'vector-personal-tools-tooltip' ),
+		] );
 		$icon = $this->userIcon;
 		if ( $icon === '' && $userLinksCount ) {
 			$icon = 'ellipsis';
@@ -288,7 +291,13 @@ class VectorComponentUserLinks implements VectorComponent {
 							// * login
 							// * create account
 							$name = $item['name'];
-							return in_array( $name, [ 'watchlist', 'createaccount', 'login', 'login-private' ] );
+							return in_array( $name, [
+								'watchlist',
+								'createaccount',
+								'login',
+								'login-private',
+								'sitesupport'
+							] );
 						}
 					)
 				)

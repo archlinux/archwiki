@@ -11,6 +11,7 @@
 	"echo-category-title-login-success": "Најава од непознат уред",
 	"echo-pref-tooltip-login-success": "Извести ме кога некој ќе се најави со мојата сметка од непознат уред и IP-адреса",
 	"loginnotify-primary-link": "Помош",
+	"loginnotify-unknown-ip": "Се обидовте да се најавите од непозната IP-адреса. Тековната поставеност на {{SITENAME}} не дозволува најавување од непознати IP-адреси.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Неуспешен обид|Неуспешни обиди}} за најава на {{SITENAME}} како $1",
 	"notification-loginnotify-login-success-email-subject": "Најава на {{SITENAME}} како $1 од уред што досега не го {{GENDER:$1|имате}} користено",
 	"notification-header-login-success": "Некој (најверојатно {{GENDER:$1|Вие}})  неодамна се најави со вашата сметка од нов уред. Ако ова бевте Вие, тогаш занемарете ја поракава. Доколку не сте Вие, препорачуваме да си ја смените лозинката и да видите што е правено со сметката во меѓувреме.",

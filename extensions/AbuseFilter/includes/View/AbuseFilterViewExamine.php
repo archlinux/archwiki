@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use ChangesList;
 use LogicException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
@@ -10,9 +9,8 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilderFactory;
-use MediaWiki\Extension\AbuseFilter\Filter\Flags;
+use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
-use MediaWiki\Extension\AbuseFilter\FilterUtils;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseFilterExaminePager;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
@@ -23,10 +21,11 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\RecentChanges\ChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use OOUI;
-use RecentChange;
 use Wikimedia\Rdbms\LBFactory;
 
 class AbuseFilterViewExamine extends AbuseFilterView {
@@ -235,9 +234,13 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		}
 
 		$varGenerator = $this->varGeneratorFactory->newRCGenerator( $rc, $this->getUser() );
-		$vars = $varGenerator->getVars() ?: new VariableHolder();
+		$vars = $varGenerator->getVars();
+		if ( !$vars ) {
+			$out->addWikiMsg( 'abusefilter-examine-incompatible' );
+			return;
+		}
+
 		$out->addJsConfigVars( [
-			'wgAbuseFilterVariables' => $this->varManager->dumpAllVars( $vars, true ),
 			'abuseFilterExamine' => [ 'type' => 'rc', 'id' => $rcid ]
 		] );
 
@@ -273,12 +276,14 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		}
 
 		try {
-			$privacyLevel = $this->filterLookup->getFilter( $row->afl_filter_id, $row->afl_global )->getPrivacyLevel();
+			$filter = $this->filterLookup->getFilter( $row->afl_filter_id, $row->afl_global );
 		} catch ( CentralDBNotAvailableException $_ ) {
 			// Conservatively assume that it's hidden and protected, like in AbuseLogPager::doFormatRow
-			$privacyLevel = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
+			$filter = MutableFilter::newDefault();
+			$filter->setProtected( true );
+			$filter->setHidden( true );
 		}
-		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $performer, $privacyLevel ) ) {
+		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $performer, $filter ) ) {
 			$out->addWikiMsg( 'abusefilter-log-cannot-see-details' );
 			return;
 		}
@@ -296,77 +301,70 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 			return;
 		}
 
-		$shouldLogProtectedVarAccess = false;
-
-		// Logs that reveal the values of protected variables are gated behind:
-		// 1. the `abusefilter-access-protected-vars` right
-		// 2. agreement to the `abusefilter-protected-vars-view-agreement` preference
-		$userAuthority = $this->getAuthority();
-		$canViewProtectedVars = $this->afPermManager->canViewProtectedVariableValues( $userAuthority );
-		if ( FilterUtils::isProtected( $privacyLevel ) ) {
-			if ( !$canViewProtectedVars ) {
-				$out->addWikiMsg( 'abusefilter-examine-protected-vars-permission' );
-				return;
-			} else {
-				$shouldLogProtectedVarAccess = true;
-			}
-		}
-
-		// If a non-protected filter and a protected filter have overlapping conditions,
-		// it's possible for a hit to contain a protected variable and for that variable
-		// to be dumped and displayed on a detail page that wouldn't be considered
-		// protected (because it caught on the public filter).
-		// We shouldn't block access to the details of an otherwise public filter hit so
-		// instead only check for access to the protected variables and redact them if the
-		// user shouldn't see them.
 		$vars = $this->varBlobStore->loadVarDump( $row );
 		$varsArray = $this->varManager->dumpAllVars( $vars, true );
 
+		// Check that the user can see the protected variables that are being examined if the filter is protected.
+		$userAuthority = $this->getAuthority();
+		if (
+			$filter->isProtected() &&
+			!$this->afPermManager->canViewProtectedVariables( $userAuthority, array_keys( $varsArray ) )->isGood()
+		) {
+			$out->addWikiMsg( 'abusefilter-examine-protected-vars-permission' );
+			return;
+		}
+
+		// AbuseFilter logs created before T390086 may have protected variables present in the variable dump
+		// when the filter itself isn't protected. This is because a different filter matched against the
+		// a protected variable which caused the value to be added to the var dump for the public filter
+		// match.
+		// We shouldn't block access to the details of an otherwise public filter hit so
+		// instead only check for access to the protected variables and redact them if the user
+		// shouldn't see them.
+		$protectedVariableValuesShown = [];
 		foreach ( $this->afPermManager->getProtectedVariables() as $protectedVariable ) {
 			if ( isset( $varsArray[$protectedVariable] ) ) {
-				if ( !$canViewProtectedVars ) {
+				// Try each variable at a time, as the user may be able to see some but not all of the
+				// protected variables. We only want to redact what is necessary to redact.
+				$canViewProtectedVariable = $this->afPermManager
+					->canViewProtectedVariables( $userAuthority, [ $protectedVariable ] )->isGood();
+				if ( !$canViewProtectedVariable ) {
 					$varsArray[$protectedVariable] = '';
 				} else {
-					// Protected variable in protected filters logs access in the general permission check
-					// Log access to non-protected filters that happen to expose protected variables here
-					if ( !FilterUtils::isProtected( $privacyLevel ) ) {
-						$shouldLogProtectedVarAccess = true;
-					}
+					$protectedVariableValuesShown[] = $protectedVariable;
 				}
 			}
 		}
 		$vars = VariableHolder::newFromArray( $varsArray );
 
-		if ( $shouldLogProtectedVarAccess ) {
+		if ( $filter->isProtected() ) {
 			$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
 			$logger->logViewProtectedVariableValue(
 				$userAuthority->getUser(),
-				$varsArray['user_name'] ?? $varsArray['accountname']
+				$varsArray['user_name'] ?? $varsArray['accountname'],
+				$protectedVariableValuesShown
 			);
 		}
 
 		$out->addJsConfigVars( [
-			'wgAbuseFilterVariables' => $varsArray,
 			'abuseFilterExamine' => [ 'type' => 'log', 'id' => $logid ]
 		] );
 		$this->showExaminer( $vars );
 	}
 
 	/**
-	 * @param VariableHolder|null $vars
+	 * @param VariableHolder $vars
 	 */
-	public function showExaminer( ?VariableHolder $vars ) {
+	public function showExaminer( VariableHolder $vars ) {
 		$output = $this->getOutput();
 		$output->enableOOUI();
-
-		if ( !$vars ) {
-			$output->addWikiMsg( 'abusefilter-examine-incompatible' );
-			return;
-		}
 
 		$html = '';
 
 		$output->addModules( 'ext.abuseFilter.examine' );
+		$output->addJsConfigVars( [
+			'wgAbuseFilterVariables' => $this->varManager->dumpAllVars( $vars, true ),
+		] );
 
 		// Add test bit
 		if ( $this->afPermManager->canUseTestTools( $this->getAuthority() ) ) {

@@ -13,13 +13,7 @@
 			"i18n/api"
 		]
 	},
-	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\": "includes/"
-	},
 	"config": {
-		"CaptchaClass": {
-			"value": "MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\ReCaptchaNoCaptcha"
-		},
 		"ReCaptchaSiteKey": {
 			"value": ""
 		},
@@ -31,8 +25,8 @@
 		}
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "resources",
-		"remoteExtPath": "ConfirmEdit/ReCaptchaNoCaptcha/resources"
+		"localBasePath": "../resources",
+		"remoteExtPath": "ConfirmEdit/resources"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.reCaptchaNoCaptcha.visualEditor": {

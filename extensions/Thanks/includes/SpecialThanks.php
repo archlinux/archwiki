@@ -75,7 +75,8 @@ class SpecialThanks extends FormSpecialPage {
 		}
 
 		$this->type = 'rev';
-		if ( !( ctype_digit( $par ) ) ) { // Revision ID is not an integer.
+		if ( !( ctype_digit( $par ) ) ) {
+			// Revision ID is not an integer.
 			$this->id = '0';
 			return;
 		}
@@ -170,12 +171,12 @@ class SpecialThanks extends FormSpecialPage {
 		$request = new DerivativeRequest(
 			$this->getRequest(),
 			$requestData,
-			true // posted
+			true
 		);
 
 		$api = new ApiMain(
 			$request,
-			true // enable write mode
+			true
 		);
 
 		try {

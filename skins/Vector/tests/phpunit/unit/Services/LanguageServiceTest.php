@@ -27,11 +27,11 @@ use MediaWikiUnitTestCase;
 /**
  * @group Vector
  * @group Services
- * @covers  \MediaWiki\Skins\Vector\Services\LanguageService
+ * @covers \MediaWiki\Skins\Vector\Services\LanguageService
  */
 class LanguageServiceTest extends MediaWikiUnitTestCase {
 
-	public function provideSplittableLanguages(): array {
+	public static function provideSplittableLanguages(): array {
 		return [
 			[ 'en', true ],
 			[ 'de', true ],

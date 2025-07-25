@@ -1,6 +1,23 @@
 # Release History
 
-# 4.1.1 (2024-10-29)
+## 4.2.0 (2025-03-24)
+* build: Updating mediawiki/mediawiki-phan-config to 0.15.1
+* Replace call_user_func_array with dynamic function call
+* tests: Use coversNothing annotation
+* build: Updating mediawiki/mediawiki-codesniffer to 46.0.0
+* tests: Use explicit exit code to pass phan on php8.4
+* Document bubbled ClientExceptionInterface (T374117)
+
+## 4.1.2 (2025-01-07)
+* Check that error level should be handled before throwing. Allows expected
+  warnings and errors to be suppressed, rather than triggering a ShellboxError
+* build: Updating mediawiki/mediawiki-phan-config to 0.15.0
+* Add wmf-certificates to video variants
+* Pass pcov options to child process
+* build: Updating phpunit/phpunit to 9.6.21
+* build: Updating mediawiki/mediawiki-codesniffer to 45.0.0
+
+## 4.1.1 (2024-10-29)
 * composer.json: Add changelog command (Reedy)
 * composer.json: Bump guzzle/guzzlehttp to 7.9.2 (Reedy)
 * Use explicit nullable type on parameter arguments (Reedy)

@@ -29,6 +29,11 @@ class TagTk extends Token {
 		$this->attribs = $attribs;
 	}
 
+	public function __clone() {
+		parent::__clone();
+		// No new non-primitive properties to clone.
+	}
+
 	public function getName(): string {
 		return $this->name;
 	}
@@ -37,12 +42,25 @@ class TagTk extends Token {
 	 * @inheritDoc
 	 */
 	public function jsonSerialize(): array {
-		return [
+		$ret = [
 			'type' => $this->getType(),
 			'name' => $this->name,
 			'attribs' => $this->attribs,
 			'dataParsoid' => $this->dataParsoid,
-			'dataMw' => $this->dataMw,
 		];
+		if ( $this->dataMw !== null ) {
+			$ret['dataMw'] = $this->dataMw;
+		}
+		return $ret;
+	}
+
+	/** @inheritDoc */
+	public static function newFromJsonArray( array $json ) {
+		return new self(
+			$json['name'],
+			$json['attribs'] ?? [],
+			$json['dataParsoid'] ?? null,
+			$json['dataMw'] ?? null
+		);
 	}
 }

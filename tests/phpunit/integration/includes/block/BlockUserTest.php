@@ -3,6 +3,7 @@
 use MediaWiki\Block\BlockUserFactory;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\PageRestriction;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\User;
 
@@ -206,10 +207,12 @@ class BlockUserTest extends MediaWikiIntegrationTestCase {
 			[ 'isAutoblocking' => true ]
 		)->placeBlockUnsafe();
 		$this->assertStatusGood( $blockStatus );
+		/** @var DatabaseBlock $block */
 		$block = $blockStatus->getValue();
 
 		$target = '1.2.3.4';
-		$autoBlockId = $block->doAutoblock( $target );
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$autoBlockId = $blockStore->doAutoblock( $block, $target );
 		$this->assertNotFalse( $autoBlockId );
 
 		$hookPriorBlock = false;
@@ -237,11 +240,60 @@ class BlockUserTest extends MediaWikiIntegrationTestCase {
 			static function ( DatabaseBlock $block ) {
 				return $block->getId();
 			},
-			$this->getServiceContainer()->getDatabaseBlockStore()
-				->newListFromTarget( $target, null, /*fromPrimary=*/true )
+			$blockStore->newListFromTarget( $target, null, /*fromPrimary=*/true )
 		);
 		$this->assertContains( $autoBlockId, $blockIds );
 		$this->assertContains( $IPBlock->getId(), $blockIds );
+	}
+
+	/**
+	 * @covers \MediaWiki\Block\BlockUser::placeBlockUnsafe
+	 */
+	public function testTooManyContribs() {
+		// Set the contrib limit to zero so that it fails with one edit
+		$this->overrideConfigValue( MainConfigNames::HideUserContribLimit, 0 );
+		// Reset the stored instance
+		$this->blockUserFactory = $this->getServiceContainer()->getBlockUserFactory();
+		// Make the edit
+		$this->editPage( 'BlockUserTest', 'test', '', NS_MAIN, $this->user );
+		// Try to block the user with the hideuser option
+		$blockStatus = $this->blockUserFactory->newBlockUser(
+			$this->user,
+			$this->getTestUser( [ 'sysop', 'suppress' ] )->getUser(),
+			'infinity',
+			'test block',
+			[ 'isHideUser' => true ]
+		)->placeBlockUnsafe();
+		$this->assertStatusError( 'ipb_hide_invalid', $blockStatus );
+	}
+
+	/**
+	 * @covers \MediaWiki\Block\BlockUser::placeBlockUnsafe
+	 */
+	public function testUpdateWithTooManyContribs() {
+		$this->overrideConfigValue( MainConfigNames::HideUserContribLimit, 0 );
+		$this->blockUserFactory = $this->getServiceContainer()->getBlockUserFactory();
+		$this->editPage( 'BlockUserTest', 'test', '', NS_MAIN, $this->user );
+		$performer = $this->getTestUser( [ 'sysop', 'suppress' ] )->getUser();
+		// Make a regular block, without the hideuser option
+		$blockStatus = $this->blockUserFactory->newBlockUser(
+			$this->user,
+			$performer,
+			'infinity',
+			'test block'
+		)->placeBlockUnsafe();
+		$this->assertStatusGood( $blockStatus );
+
+		// Try to change the block to include the hideuser option, which should
+		// fail due to the edit
+		$blockStatus = $this->blockUserFactory->newUpdateBlock(
+			$blockStatus->value,
+			$performer,
+			'infinity',
+			'test block',
+			[ 'isHideUser' => true ]
+		)->placeBlockUnsafe();
+		$this->assertStatusError( 'ipb_hide_invalid', $blockStatus );
 	}
 
 }

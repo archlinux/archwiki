@@ -3,10 +3,12 @@
 namespace MediaWiki\Rest\Module;
 
 use LogicException;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Rest\BasicAccess\BasicAuthorizerInterface;
 use MediaWiki\Rest\CorsUtils;
 use MediaWiki\Rest\Handler;
+use MediaWiki\Rest\Hook\HookRunner;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\PathTemplateMatcher\ModuleConfigurationException;
@@ -21,6 +23,7 @@ use Throwable;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * A REST module represents a collection of endpoints.
@@ -37,16 +40,18 @@ abstract class Module {
 	 */
 	public const CACHE_CONFIG_HASH_KEY = 'CONFIG-HASH';
 
+	private Router $router;
 	protected string $pathPrefix;
 	protected ResponseFactory $responseFactory;
 	private BasicAuthorizerInterface $basicAuth;
 	private ObjectFactory $objectFactory;
 	private Validator $restValidator;
 	private ErrorReporter $errorReporter;
-	private Router $router;
+	private HookContainer $hookContainer;
 
 	private StatsFactory $stats;
 	private ?CorsUtils $cors = null;
+	private ?HookRunner $hookRunner = null;
 
 	/**
 	 * @param Router $router
@@ -64,7 +69,8 @@ abstract class Module {
 		BasicAuthorizerInterface $basicAuth,
 		ObjectFactory $objectFactory,
 		Validator $restValidator,
-		ErrorReporter $errorReporter
+		ErrorReporter $errorReporter,
+		HookContainer $hookContainer
 	) {
 		$this->router = $router;
 		$this->pathPrefix = $pathPrefix;
@@ -73,6 +79,7 @@ abstract class Module {
 		$this->objectFactory = $objectFactory;
 		$this->restValidator = $restValidator;
 		$this->errorReporter = $errorReporter;
+		$this->hookContainer = $hookContainer;
 
 		$this->stats = StatsFactory::newNull();
 	}
@@ -256,16 +263,39 @@ abstract class Module {
 		}
 	}
 
+	private function runRestCheckCanExecuteHook(
+		Handler $handler,
+		string $path,
+		RequestInterface $request
+	): void {
+		$this->hookRunner ??= new HookRunner( $this->hookContainer );
+		$error = null;
+		$canExecute = $this->hookRunner->onRestCheckCanExecute( $this, $handler, $path, $request, $error );
+		if ( $canExecute !== ( $error === null ) ) {
+			throw new LogicException(
+				'Hook RestCheckCanExecute returned ' . ( $canExecute ? 'true' : 'false' )
+					. ' but ' . ( $error ? 'did' : 'did not' ) . ' set an error'
+			);
+		} elseif ( $error instanceof HttpException ) {
+			throw $error;
+		} elseif ( $error ) {
+			throw new LogicException(
+				'RestCheckCanExecute must set a HttpException when returning false, '
+					. 'but got ' . get_class( $error )
+			);
+		}
+	}
+
 	/**
 	 * Find the handler for a request and execute it
 	 */
 	public function execute( string $path, RequestInterface $request ): ResponseInterface {
 		$handler = null;
-		$startTime = microtime( true );
+		$startTime = ConvertibleTimestamp::hrtime();
 
 		try {
 			$handler = $this->getHandlerForPath( $path, $request, true );
-
+			$this->runRestCheckCanExecuteHook( $handler, $path, $request );
 			$response = $this->executeHandler( $handler );
 		} catch ( HttpException $e ) {
 			$extraData = [];
@@ -292,7 +322,7 @@ abstract class Module {
 		ResponseInterface $response,
 		float $startTime
 	) {
-		$latency = ( microtime( true ) - $startTime ) * 1000;
+		$latency = ConvertibleTimestamp::hrtime() - $startTime;
 
 		// NOTE: The "/" prefix is for consistency with old logs. It's rather ugly.
 		$pathForMetrics = $this->getPathPrefix();
@@ -323,7 +353,7 @@ abstract class Module {
 				->setLabel( 'method', $requestMethod )
 				->setLabel( 'status', "$statusCode" )
 				->copyToStatsdAt( "rest_api_latency.$pathForMetrics.$requestMethod.$statusCode" )
-				->observe( $latency );
+				->observeNanoseconds( $latency );
 		}
 	}
 
@@ -396,10 +426,6 @@ abstract class Module {
 		return $response;
 	}
 
-	/**
-	 * @param CorsUtils $cors
-	 * @return self
-	 */
 	public function setCors( CorsUtils $cors ): self {
 		$this->cors = $cors;
 

@@ -78,9 +78,6 @@ class RevisionRenderer {
 		$this->saveParseLogger = new NullLogger();
 	}
 
-	/**
-	 * @param LoggerInterface $saveParseLogger
-	 */
 	public function setLogger( LoggerInterface $saveParseLogger ) {
 		$this->saveParseLogger = $saveParseLogger;
 	}
@@ -184,7 +181,7 @@ class RevisionRenderer {
 		return $renderedRevision;
 	}
 
-	private function getSpeculativeRevId( $dbIndex ) {
+	private function getSpeculativeRevId( int $dbIndex ): int {
 		// Use a separate primary DB connection in order to see the latest data, by avoiding
 		// stale data from REPEATABLE-READ snapshots.
 		$flags = ILoadBalancer::CONN_TRX_AUTOCOMMIT;
@@ -197,7 +194,7 @@ class RevisionRenderer {
 			->caller( __METHOD__ )->fetchField();
 	}
 
-	private function getSpeculativePageId( $dbIndex ) {
+	private function getSpeculativePageId( int $dbIndex ): int {
 		// Use a separate primary DB connection in order to see the latest data, by avoiding
 		// stale data from REPEATABLE-READ snapshots.
 		$flags = ILoadBalancer::CONN_TRX_AUTOCOMMIT;

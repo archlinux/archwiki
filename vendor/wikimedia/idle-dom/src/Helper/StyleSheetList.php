@@ -112,6 +112,7 @@ trait StyleSheetList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\StyleSheetList $this';
 		// @var \Wikimedia\IDLeDOM\StyleSheetList $this

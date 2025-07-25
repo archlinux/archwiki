@@ -5,13 +5,13 @@ namespace MediaWiki\Tests\Rest\Handler;
 use Exception;
 use MediaWiki\Content\TextContent;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Rest\Handler\PageSourceHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Message\MessageValue;
-use WikiPage;
 
 /**
  * @covers \MediaWiki\Rest\Handler\PageSourceHandler
@@ -138,10 +138,6 @@ class PageSourceHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->executeHandler( $handler, $request, $config );
 	}
 
-	/**
-	 * @param WikiPage $page
-	 * @param array $data
-	 */
 	private function assertResponseData( WikiPage $page, array $data ): void {
 		$this->assertSame( $page->getId(), $data['id'] );
 		$this->assertSame( $page->getTitle()->getPrefixedDBkey(), $data['key'] );
@@ -156,10 +152,6 @@ class PageSourceHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'some rights', $data['license']['title'] );
 	}
 
-	/**
-	 * @param WikiPage $page
-	 * @param array $data
-	 */
 	private function assertRestbaseCompatibleResponseData( WikiPage $page, array $data ): void {
 		$this->assertArrayHasKey( 'items', $data );
 		$this->assertSame( $page->getTitle()->getPrefixedDBkey(), $data['items'][0]['title'] );

@@ -31,6 +31,9 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Page\PageRecord;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubObject;
@@ -183,7 +186,7 @@ class ParserOptions {
 	private function lazyLoadOption( $name ) {
 		$lazyOptions = self::getLazyOptions();
 		if ( isset( $lazyOptions[$name] ) && $this->options[$name] === null ) {
-			$this->options[$name] = call_user_func( $lazyOptions[$name], $this, $name );
+			$this->options[$name] = $lazyOptions[$name]( $this, $name );
 		}
 	}
 
@@ -892,7 +895,7 @@ class ParserOptions {
 	}
 
 	/**
-	 * Callback for current revision fetching; first argument to call_user_func().
+	 * Callback to fetch the current revision
 	 * @internal
 	 * @since 1.35
 	 * @return callable
@@ -902,7 +905,7 @@ class ParserOptions {
 	}
 
 	/**
-	 * Callback for current revision fetching; first argument to call_user_func().
+	 * Callback to fetch the current revision
 	 * @internal
 	 * @since 1.35
 	 * @param callable|null $x New value
@@ -913,7 +916,8 @@ class ParserOptions {
 	}
 
 	/**
-	 * Callback for template fetching; first argument to call_user_func().
+	 * Callback to fetch a template
+	 * @see Parser::statelessFetchTemplate
 	 * @return callable
 	 */
 	public function getTemplateCallback() {
@@ -921,7 +925,7 @@ class ParserOptions {
 	}
 
 	/**
-	 * Callback for template fetching; first argument to call_user_func().
+	 * Set the callback to fetch a template
 	 * @param callable|null $x New value (null is no change)
 	 * @return callable Old value
 	 */
@@ -1012,7 +1016,7 @@ class ParserOptions {
 	 * @return string TS_MW timestamp
 	 */
 	public function getTimestamp() {
-		if ( !isset( $this->mTimestamp ) ) {
+		if ( $this->mTimestamp === null ) {
 			$this->mTimestamp = wfTimestampNow();
 		}
 		return $this->mTimestamp;
@@ -1095,6 +1099,7 @@ class ParserOptions {
 	 * Get a ParserOptions object from a given user.
 	 * Language will be taken from $wgLang.
 	 *
+	 * @since 1.13
 	 * @param UserIdentity $user
 	 * @return ParserOptions
 	 */
@@ -1105,6 +1110,7 @@ class ParserOptions {
 	/**
 	 * Get a ParserOptions object from a given user and language
 	 *
+	 * @since 1.19
 	 * @param UserIdentity $user
 	 * @param Language $lang
 	 * @return ParserOptions
@@ -1116,6 +1122,7 @@ class ParserOptions {
 	/**
 	 * Get a ParserOptions object from a IContextSource object
 	 *
+	 * @since 1.19
 	 * @param IContextSource $context
 	 * @return ParserOptions
 	 */
@@ -1394,7 +1401,7 @@ class ParserOptions {
 	 */
 	private function optionUsed( $optionName ) {
 		if ( $this->onAccessCallback ) {
-			call_user_func( $this->onAccessCallback, $optionName );
+			( $this->onAccessCallback )( $optionName );
 		}
 	}
 
@@ -1525,27 +1532,57 @@ class ParserOptions {
 	 * Sets a hook to force that a page exists, and sets a current revision callback to return
 	 * a revision with custom content when the current revision of the page is requested.
 	 *
-	 * @since 1.25
-	 * @param Title $title
+	 * @param PageIdentity $page
 	 * @param Content $content
 	 * @param UserIdentity $user The user that the fake revision is attributed to
+	 * @param int $currentRevId
+	 *
 	 * @return ScopedCallback to unset the hook
+	 * @internal since 1.44, this method is no longer considered safe to call
+	 * by extensions. It may be removed or changed in a backwards incompatible
+	 * way in 1.45 or later.
+	 *
+	 * @since 1.25
 	 */
-	public function setupFakeRevision( $title, $content, $user ) {
+	public function setupFakeRevision( $page, $content, $user, $currentRevId = 0 ) {
 		$oldCallback = $this->setCurrentRevisionRecordCallback(
-			static function (
-				$titleToCheck, $parser = null ) use ( $title, $content, $user, &$oldCallback
-			) {
-				if ( $titleToCheck->equals( $title ) ) {
-					$revRecord = new MutableRevisionRecord( $title );
+			function ( $titleToCheck, $parser = null )
+			use ( $page, $content, $user, $currentRevId, &$oldCallback )
+			{
+				if ( $titleToCheck->isSamePageAs( $page ) ) {
+					if ( $page->exists() ) {
+						$pageId = $page->getId();
+
+						if ( $currentRevId ) {
+							$parentRevision = $currentRevId;
+						} elseif ( $page instanceof Title ) {
+							$parentRevision = $page->getLatestRevID();
+						} elseif ( $page instanceof PageRecord ) {
+							$parentRevision = $page->getLatest();
+						} else {
+							$parentRevision = 0;
+						}
+					} else {
+						$pageId = $this->getSpeculativePageId() ?: 0;
+						$parentRevision = 0;
+						$page = new PageIdentityValue(
+							$pageId,
+							$page->getNamespace(),
+							$page->getDBkey(),
+							$page->getWikiId()
+						);
+					}
+
+					$revRecord = new MutableRevisionRecord( $page );
 					$revRecord->setContent( SlotRecord::MAIN, $content )
 						->setUser( $user )
 						->setTimestamp( MWTimestamp::now( TS_MW ) )
-						->setPageId( $title->getArticleID() )
-						->setParentId( $title->getLatestRevID() );
+						->setId( 0 )
+						->setPageId( $pageId )
+						->setParentId( $parentRevision );
 					return $revRecord;
 				} else {
-					return call_user_func( $oldCallback, $titleToCheck, $parser );
+					return $oldCallback( $titleToCheck, $parser );
 				}
 			}
 		);
@@ -1553,19 +1590,19 @@ class ParserOptions {
 		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
 		$hookScope = $hookContainer->scopedRegister(
 			'TitleExists',
-			static function ( $titleToCheck, &$exists ) use ( $title ) {
-				if ( $titleToCheck->equals( $title ) ) {
+			static function ( Title $titleToCheck, &$exists ) use ( $page ) {
+				if ( $titleToCheck->isSamePageAs( $page ) ) {
 					$exists = true;
 				}
 			}
 		);
 
 		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
-		$linkCache->clearBadLink( $title->getPrefixedDBkey() );
+		$linkCache->clearBadLink( $page );
 
-		return new ScopedCallback( function () use ( $title, $hookScope, $linkCache, $oldCallback ) {
+		return new ScopedCallback( function () use ( $page, $hookScope, $linkCache, $oldCallback ) {
 			ScopedCallback::consume( $hookScope );
-			$linkCache->clearLink( $title );
+			$linkCache->clearLink( $page );
 			$this->setCurrentRevisionRecordCallback( $oldCallback );
 		} );
 	}
@@ -1573,7 +1610,6 @@ class ParserOptions {
 	/**
 	 * Returns reason for rendering the content. This human-readable, intended for logging and debugging only.
 	 * Expected values include "edit", "view", "purge", "LinksUpdate", etc.
-	 * @return string
 	 */
 	public function getRenderReason(): string {
 		return $this->renderReason;
@@ -1582,7 +1618,6 @@ class ParserOptions {
 	/**
 	 * Sets reason for rendering the content. This human-readable, intended for logging and debugging only.
 	 * Expected values include "edit", "view", "purge", "LinksUpdate", etc.
-	 * @param string $renderReason
 	 */
 	public function setRenderReason( string $renderReason ): void {
 		$this->renderReason = $renderReason;

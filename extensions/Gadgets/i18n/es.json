@@ -3,6 +3,7 @@
 		"authors": [
 			"Crazymadlover",
 			"DannyS712",
+			"Dgstranz",
 			"Eulalio",
 			"Fitoschido",
 			"Jakeukalane",
@@ -16,8 +17,7 @@
 			"Ryo567",
 			"Sanbec",
 			"Themasterriot",
-			"Vivaelcelta",
-			"Dgstranz"
+			"Vivaelcelta"
 		]
 	},
 	"gadgets-desc": "Permite a los usuarios seleccionar [[Special:Gadgets|accesorios de CSS y JavaScript]] personalizados en sus [[Special:Preferences#mw-prefsection-gadgets|preferencias]].",
@@ -67,5 +67,8 @@
 	"gadgets-validate-unknownpages": "Contiene una o más páginas sin el sufijo .js, .css o .json. No se utilizarán.",
 	"gadgets-validate-duplicate": "Se detectó una segunda definición de gadget $1 y se ignorará",
 	"gadgets-validate-nopage": "La página «$1» no existe.",
-	"gadgets-supports-urlload": "Este accesorio admite su carga a través de una URL con el parámetro <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Falta la siguiente dependencia|Faltan las siguientes dependencias}}: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|La siguiente dependencia está|Las siguientes dependencias están}} en desuso: $1.",
+	"gadgets-supports-urlload": "Este accesorio admite su carga a través de una URL con el parámetro <code>?withgadget</code>.",
+	"gadgets-hidden": "Este accesorio está [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden oculto], lo que significa que no se mostrará en la página de preferencias."
 }

@@ -31,8 +31,7 @@ use MediaWiki\Page\PageIdentity;
 class HookRunner implements
 	ConfirmEditTriggersCaptchaHook
 {
-	/** @var HookContainer */
-	private $hookContainer;
+	private HookContainer $hookContainer;
 
 	/**
 	 * @param HookContainer $hookContainer
@@ -41,9 +40,7 @@ class HookRunner implements
 		$this->hookContainer = $hookContainer;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function onConfirmEditTriggersCaptcha(
 		string $action,
 		?PageIdentity $page,

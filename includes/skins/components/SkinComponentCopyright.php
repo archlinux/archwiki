@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Skin;
 
-use HtmlArmor;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\MainConfigNames;
@@ -12,6 +11,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MessageLocalizer;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 class SkinComponentCopyright implements SkinComponent {
 	use ProtectedHookAccessorTrait;
@@ -25,9 +25,6 @@ class SkinComponentCopyright implements SkinComponent {
 	/** @var User */
 	private $user;
 
-	/**
-	 * @param SkinComponentRegistryContext $skinContext
-	 */
 	public function __construct( SkinComponentRegistryContext $skinContext ) {
 		$this->skinContext = $skinContext;
 		$this->config = $skinContext->getConfig();
@@ -44,11 +41,6 @@ class SkinComponentCopyright implements SkinComponent {
 		];
 	}
 
-	/**
-	 * Get the copyright.
-	 *
-	 * @return string
-	 */
 	public function getCopyrightHTML(): string {
 		$out = $this->skinContext->getOutput();
 		$title = $out->getTitle();

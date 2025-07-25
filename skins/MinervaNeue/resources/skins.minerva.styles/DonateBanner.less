@@ -1,0 +1,69 @@
+// Position .donate-banner far outside the viewport initially.
+// This ensures the native lazy loading works correctly, as the `loading="lazy"` attribute
+// only takes effect when the image is outside the viewport. Using `display: none` or
+// `visibility: hidden` would prevent lazy loading from working as intended.
+// When the menu opens, the banner's position will be reset by the checkbox pattern.
+.donate-banner {
+	position: absolute;
+	top: 10000px;
+	padding: 0.75em 0.875em;
+	display: flex;
+	align-items: center;
+	background-color: @background-color-base;
+	border-top: @border-color-muted;
+	color: @color-subtle;
+	font-size: @font-size-minerva-small;
+	font-weight: bold;
+	.text-overflow( @visible: false );
+
+	&:hover {
+		text-decoration: none;
+	}
+	// stylelint-disable-next-line selector-max-id
+	#main-menu-input:checked ~ #mw-mf-page-left & {
+		position: relative;
+		top: auto;
+	}
+}
+
+.donate-banner__link {
+	display: flex;
+	text-decoration: none;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+
+	&:where( :not( [ role='button' ] ) ):hover {
+		color: @color-progressive--hover;
+		text-decoration: none;
+	}
+}
+
+.donate-banner__text-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	max-width: 200px;
+}
+
+.donate-banner__text {
+	display: block;
+	margin-bottom: 15px;
+}
+
+.donate-banner__subtitle {
+	display: block;
+	color: @color-subtle;
+	font-weight: normal;
+	white-space: normal;
+	word-wrap: break-word;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+.donate-banner__gif {
+	width: 75px;
+	flex-shrink: 0;
+}

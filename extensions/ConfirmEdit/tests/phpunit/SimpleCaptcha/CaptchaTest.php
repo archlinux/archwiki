@@ -74,7 +74,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $passed, $captcha->passCaptchaLimitedFromRequest( $request, $user ) );
 	}
 
-	public function providePassCaptchaLimitedFromRequest(): iterable {
+	public static function providePassCaptchaLimitedFromRequest(): iterable {
 		yield 'new captcha session' => [ null, null, false ];
 		yield 'missing captcha ID' => [ null, '8', false ];
 		yield 'mismatched captcha ID' => [ '129', '8', false ];
@@ -198,25 +198,23 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideCanSkipCaptchaIPWhitelisted
+	 * @dataProvider provideCanSkipCaptchaBypassIPList
 	 */
-	public function testCanSkipCaptchaIPWhitelisted( $requestIP, $IPWhitelist, $expected ) {
+	public function testCanSkipCaptchaBypassIP( $requestIP, $list, $expected ) {
 		$testObject = new SimpleCaptcha();
 		$config = new HashConfig( [ 'AllowConfirmedEmail' => false ] );
 		$request = $this->createMock( WebRequest::class );
 		$request->method( 'getIP' )->willReturn( $requestIP );
 
-		$this->setMwGlobals( [
-			'wgRequest' => $request,
-		] );
-		$this->overrideConfigValue( 'CaptchaWhitelistIP', $IPWhitelist );
+		$this->setRequest( $request );
+		$this->overrideConfigValue( 'CaptchaBypassIPs', $list );
 
 		$actual = $testObject->canSkipCaptcha( RequestContext::getMain()->getUser(), $config );
 
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public static function provideCanSkipCaptchaIPWhitelisted() {
+	public static function provideCanSkipCaptchaBypassIPList() {
 		return ( [
 			[ '127.0.0.1', [ '127.0.0.1', '127.0.0.2' ], true ],
 			[ '127.0.0.1', [], false ]

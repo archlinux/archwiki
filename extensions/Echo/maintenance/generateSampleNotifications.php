@@ -186,7 +186,7 @@ class GenerateSampleNotifications extends Maintenance {
 		$this->addToUserTalk( $user, $agent, $section );
 	}
 
-	private function getOptionUser( $optionName ) {
+	private function getOptionUser( string $optionName ): User {
 		$username = $this->getOption( $optionName );
 		$user = User::newFromName( $username );
 		if ( !$user->isRegistered() ) {
@@ -195,7 +195,7 @@ class GenerateSampleNotifications extends Maintenance {
 		return $user;
 	}
 
-	private function generateRandomString( $length = 10 ) {
+	private function generateRandomString( int $length = 10 ): string {
 		return substr( str_shuffle( "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ), 0, $length );
 	}
 
@@ -214,11 +214,11 @@ class GenerateSampleNotifications extends Maintenance {
 		}
 	}
 
-	private function addToUserTalk( User $user, User $agent, $contentText ) {
+	private function addToUserTalk( User $user, User $agent, string $contentText ) {
 		$this->addToPageContent( $user->getTalkPage(), $agent, $contentText );
 	}
 
-	private function addToPageContent( Title $title, User $agent, $contentText ) {
+	private function addToPageContent( Title $title, User $agent, string $contentText ): RevisionRecord {
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$previousContent = "";
 		$page->loadPageData( IDBAccessObject::READ_LATEST );
@@ -267,7 +267,7 @@ class GenerateSampleNotifications extends Maintenance {
 		$this->generateMultiplePageLinks( $user, $agent );
 	}
 
-	private function generateNewPageTitle() {
+	private function generateNewPageTitle(): Title {
 		return Title::newFromText( $this->generateRandomString() );
 	}
 
@@ -345,7 +345,7 @@ class GenerateSampleNotifications extends Maintenance {
 		Event::create( [
 			'type' => 'emailuser',
 			'extra' => [
-				'to-user-id' => $user->getId(),
+				Event::RECIPIENTS_IDX => [ $user->getId() ],
 				'subject' => 'Long time no see',
 			],
 			'agent' => $agent,
@@ -361,7 +361,8 @@ class GenerateSampleNotifications extends Maintenance {
 		$this->createUserRightsNotification( $user, $agent, [ 'Add-1', 'Add-2' ], [ 'Remove-1', 'Remove-2' ] );
 	}
 
-	private function createUserRightsNotification( User $user, User $agent, $add, $remove ) {
+	private function createUserRightsNotification( User $user, User $agent, ?array $add, ?array $remove ) {
+		// as this is testing Echo notifications, lets keep triggering the Echo event for now
 		Event::create(
 			[
 				'type' => 'user-rights',
@@ -370,6 +371,7 @@ class GenerateSampleNotifications extends Maintenance {
 					'add' => $add,
 					'remove' => $remove,
 					'reason' => 'This is the [[reason]] for changing your user rights.',
+					Event::RECIPIENTS_IDX => [ $user->getId() ],
 				],
 				'agent' => $agent,
 				'timestamp' => $this->getTimestamp(),
@@ -460,7 +462,7 @@ class GenerateSampleNotifications extends Maintenance {
 		] );
 	}
 
-	private function shouldGenerate( $type, array $types ) {
+	private function shouldGenerate( string $type, array $types ): bool {
 		return in_array( $type, $types );
 	}
 

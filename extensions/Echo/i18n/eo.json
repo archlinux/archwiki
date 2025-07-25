@@ -78,6 +78,7 @@
 	"notifications": "Sciigoj",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Viaj}} atentigoj",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Viaj}} sciigoj",
+	"tooltip-pt-notifications": "Viaj sciigoj",
 	"echo-displaynotificationsconfiguration": "Montri agordejon pri Sciigoj",
 	"echo-displaynotificationsconfiguration-summary": "Ĉi tio estas superrigardo pri tio, kiel agordoj de sciigoj estas konfiguritaj en ĉi tiu vikio.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Sciigoj laŭ kategorio",

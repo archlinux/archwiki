@@ -52,5 +52,6 @@
 	"replacetext_no_compress": "Deine Wiki wird nicht mit ReplaceText funktionieren: Textersetzungen können nicht ausgeführt werden, wenn $wgCompressRevisions auf true gesetzt ist.",
 	"replacetext_no_external_stores": "Dein Wiki wird nicht mit ReplaceText funktionieren: Textersetzungen können nicht ausgeführt werden, wenn $wgExternalStores gesetzt ist.",
 	"right-replacetext": "Textersetzung für das gesamte Wiki durchführen",
-	"action-replacetext": "im gesamten Wiki Zeichenfolgeersetzungen durchzuführen"
+	"action-replacetext": "im gesamten Wiki Zeichenfolgeersetzungen durchzuführen",
+	"replacetext-summary-label": "Zusammenfassung für Ersetzungen (leer lassen, um Standardzusammenfassung zu verwenden)"
 }

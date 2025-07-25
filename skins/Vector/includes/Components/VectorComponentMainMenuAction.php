@@ -1,7 +1,7 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
-use Skin;
+use MediaWiki\Skin\Skin;
 
 /**
  * VectorComponentMainMenuAction component

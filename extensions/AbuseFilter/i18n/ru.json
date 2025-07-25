@@ -69,12 +69,12 @@
 			"VasilievVV",
 			"Vlad5250",
 			"Wikisaurus",
+			"Yurina Tatiana",
 			"Александр Сигачёв",
 			"ЛингвоЧел",
 			"Сrower",
 			"Туллук",
-			"Умар",
-			"Yurina Tatiana"
+			"Умар"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять автоматические эвристические фильтры к правкам",
@@ -286,6 +286,7 @@
 	"abusefilter-edit-deleted": "Отметить как удалённый",
 	"abusefilter-edit-hidden": "Скрыть подробности этого фильтра от обычных участников",
 	"abusefilter-edit-protected-variable-already-protected": "Подробности этого фильтра скрыты от участников, которые не могут видеть защищённые переменные",
+	"abusefilter-edit-protected-help-message": "Подробности этого фильтра будут скрыты от участников, которые не могут видеть защищённые переменные. Это действие является постоянным и не может быть отменено.",
 	"abusefilter-edit-global": "Глобальный фильтр",
 	"abusefilter-edit-rules": "Условия:",
 	"abusefilter-edit-field-conditions": "условия",
@@ -693,7 +694,6 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "Создать или изменить, ссылки на какие внешние домены блокируются, необходимо через [[Special:BlockedExternalDomains|специальную страницу]].",
 	"right-abusefilter-access-protected-vars": "Просмотр и создание фильтров с использованием защищённых переменных",
 	"action-abusefilter-access-protected-vars": "просмотр и создание фильтров, использующих защищённые переменные",
-	"prefs-abusefilter": "Фильтр злоупотреблений",
 	"abusefilter-protected-vars-log-name": "Журнал защищённых переменных фильтра злоупотреблений",
 	"log-action-filter-abusefilter-protected-vars": "Тип действия:",
 	"log-action-filter-abusefilter-protected-vars-change-access": "Изменить доступ",

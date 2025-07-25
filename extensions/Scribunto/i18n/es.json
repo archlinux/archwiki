@@ -44,7 +44,7 @@
 	"scribunto-common-timeout": "Ha caducado el tiempo asignado para ejecutar secuencias de comandos (scripts).",
 	"scribunto-common-oom": "Se superó la cantidad de memoria permitida para ejecutar secuencias de órdenes.",
 	"scribunto-common-backtrace": "Traza inversa:",
-	"scribunto-common-no-details": "No hay más detalles disponibles.",
+	"scribunto-common-no-details": "No hay detalles disponibles sobre la posición del código.",
 	"scribunto-lua-in-function": "en la función \"$1\"",
 	"scribunto-lua-in-main": "en el campo principal",
 	"scribunto-lua-in-function-at": "en la función en $1: $2",

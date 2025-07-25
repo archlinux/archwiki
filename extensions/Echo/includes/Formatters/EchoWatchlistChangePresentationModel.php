@@ -8,10 +8,12 @@ use MediaWiki\Title\Title;
 
 class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'watchlist-progressive';
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		if ( $this->isMultiTypeBundle() ) {
 			$status = "changed";
@@ -39,6 +41,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		if ( $this->isBundled() ) {
 			return [
@@ -53,6 +56,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		if ( $this->isBundled() ) {
 			if ( $this->isMultiUserBundle() ) {
@@ -73,6 +77,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		if ( $this->event->getExtraParam( 'emailonce' ) && $this->getDistributionType() == 'email' ) {
 			return $this->msg( 'notification-body-watchlist-once', $this->getViewingUserForGender() );
@@ -80,7 +85,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		return false;
 	}
 
-	private function isMultiUserBundle() {
+	private function isMultiUserBundle(): bool {
 		foreach ( $this->getBundledEvents() as $bundled ) {
 			if ( !$bundled->getAgent()->equals( $this->event->getAgent() ) ) {
 				return true;
@@ -89,7 +94,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		return false;
 	}
 
-	private function isMultiTypeBundle() {
+	private function isMultiTypeBundle(): bool {
 		foreach ( $this->getBundledEvents() as $bundled ) {
 			if ( $bundled->getExtraParam( 'status' ) !== $this->event->getExtraParam( 'status' ) ) {
 				return true;
@@ -98,7 +103,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		return false;
 	}
 
-	private function getViewChangesUrl() {
+	private function getViewChangesUrl(): string {
 		$revid = $this->event->getExtraParam( 'revid' );
 		if ( $revid === 0 ) {
 			$url = SpecialPage::getTitleFor( 'Log' )->getLocalUrl( [

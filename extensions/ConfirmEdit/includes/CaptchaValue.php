@@ -8,15 +8,13 @@ namespace MediaWiki\Extension\ConfirmEdit;
 class CaptchaValue {
 	/**
 	 * ID that is used to store the captcha in cache.
-	 * @var string
 	 */
-	protected $id;
+	protected string $id;
 
 	/**
 	 * Answer to the captcha.
-	 * @var string
 	 */
-	protected $solution;
+	protected string $solution;
 
 	/**
 	 * @var mixed

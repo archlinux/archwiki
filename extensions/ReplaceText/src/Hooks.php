@@ -32,17 +32,9 @@ class Hooks implements
 	SpecialMovepageAfterMoveHook,
 	UserGetReservedNamesHook
 {
+	private Config $config;
+	private SpecialPageFactory $specialPageFactory;
 
-	/** @var Config */
-	private $config;
-
-	/** @var SpecialPageFactory */
-	private $specialPageFactory;
-
-	/**
-	 * @param Config $config
-	 * @param SpecialPageFactory $specialPageFactory
-	 */
 	public function __construct(
 		Config $config,
 		SpecialPageFactory $specialPageFactory

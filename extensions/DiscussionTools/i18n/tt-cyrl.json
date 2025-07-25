@@ -4,10 +4,10 @@
 			"Don Alessandro",
 			"Mansur",
 			"Run Li",
+			"Woytecr",
 			"Ерней",
 			"З. ӘЙЛЕ",
-			"Ильгиз",
-			"Woytecr"
+			"Ильгиз"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Бу фикер алышуда кемдер яңа хәбәр бастырса, {{GENDER:|сез}} хәбәрнамә алырсыз. Сез көйләүләрдә хәбәрнамәләрнең параметрларын көйли аласыз.",
@@ -187,9 +187,9 @@
 	"tag-discussiontools-description": "Төзәтмә DiscussionTools ярдәмендә эшләнде",
 	"tag-discussiontools-edit": "Хәбәрне үзгәртү",
 	"tag-discussiontools-edit-description": "Кулланучы DiscussionTools ярдәмендә булган хәбәрне төзәтте",
-	"tag-discussiontools-newtopic": "[{{int\n:discussiontools-replywidget-newtopic-link}} Яңа тема]",
+	"tag-discussiontools-newtopic": "Яңа тема",
 	"tag-discussiontools-newtopic-description": "Кулланучы биткә DiscussionTools ярдәмендә яңа тема өстәде",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Җавап]",
+	"tag-discussiontools-reply": "Җавап",
 	"tag-discussiontools-reply-description": "Кулланучы DiscussionTools ярдәмендә хәбәргә җавап бирде",
 	"tag-discussiontools-source-description": "DiscussionTools кодны төзәтү режимында иде",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools кораллар панеле белән чыганак кодының киңәйтелгән режимында иде",

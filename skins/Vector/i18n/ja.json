@@ -24,13 +24,13 @@
 			"Tar Lócesilion",
 			"Tmv",
 			"Whym",
+			"Yaakiyu.jp",
 			"Yusuke1109",
 			"しぃ",
 			"ひまり",
 			"春春眠眠",
 			"翻訳者a",
-			"青子守歌",
-			"Yaakiyu.jp"
+			"青子守歌"
 		]
 	},
 	"skinname-vector": "レガシー ベクター (2010年版)",
@@ -66,6 +66,7 @@
 	"vector-more-actions": "その他",
 	"vector-appearance-label": "表示",
 	"vector-appearance-tooltip": "ページのフォントサイズ、幅、色の外観を変更する",
+	"vector-personal-tools-tooltip": "個人設定",
 	"vector-feature-limited-width-name": "幅",
 	"vector-feature-limited-width-0-label": "広め",
 	"vector-feature-limited-width-1-label": "標準",

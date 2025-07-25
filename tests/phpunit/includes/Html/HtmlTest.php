@@ -68,6 +68,68 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		$this->setUserLang( $userLangObj );
 	}
 
+	public function testAddClassSpecialCases() {
+		// You probably shouldn't do this, but it works
+		Html::addClass( $attrs['class'], 'foo' );
+		$this->assertEquals( [ 'class' => [ 'foo' ] ], $attrs, 'Variable is defined if missing' );
+
+		// This is intended though and supported
+		$attrs = [];
+		Html::addClass( $attrs['class'], 'foo' );
+		$this->assertEquals( [ 'class' => [ 'foo' ] ], $attrs, 'Attribute is added if missing' );
+
+		// Warning is emitted if attributes are passed instead of classes
+		$attrs = [ 'title' => 'hello' ];
+		$this->expectPHPError(
+			E_USER_NOTICE,
+			static function () use ( &$attrs ) {
+				Html::addClass( $attrs, 'foo' );
+			},
+			"Argument doesn't look like a class array"
+		);
+		$this->assertEquals( [ 'title' => 'hello', 'foo' ], $attrs );
+	}
+
+	/**
+	 * @dataProvider provideAddClass
+	 */
+	public function testAddClass( $input, $class, $expected ) {
+		Html::addClass( $input, $class );
+		$this->assertEquals( $expected, $input );
+	}
+
+	public static function provideAddClass() {
+		yield "Null" =>
+			[ null, 'foo', [ 'foo' ] ];
+
+		yield "Empty array" =>
+			[ [], 'foo', [ 'foo' ] ];
+
+		yield "Array" =>
+			[ [ 'foo' ], 'bar', [ 'foo', 'bar' ] ];
+
+		yield "Empty string" =>
+			[ '', 'bar', [ '', 'bar' ] ];
+
+		yield "String" =>
+			[ 'foo', 'bar', [ 'foo', 'bar' ] ];
+
+		yield "Assoc" =>
+			[ [ 'foo' => false ], 'bar', [ 'foo' => false, 'bar' ] ];
+
+		yield "Duplicate" =>
+			[ [ 'foo' ], 'foo', [ 'foo', 'foo' ] ];
+
+		yield "Duplicate string" =>
+			[ 'foo', 'foo', [ 'foo', 'foo' ] ];
+
+		yield "Duplicate assoc" =>
+			[ [ 'foo' => false ], 'foo', [ 'foo' => false, 'foo' ] ];
+
+		yield "No cleanup" =>
+			[ ' a  b ', ' c  d ', [ ' a  b ', ' c  d ' ] ];
+	}
+
 	public function testOpenElement() {
 		$this->expectPHPError(
 			E_USER_NOTICE,
@@ -110,7 +172,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function dataXmlMimeType() {
+	public static function provideXmlMimeType() {
 		return [
 			// ( $mimetype, $isXmlMimeType )
 			# HTML is not an XML MimeType
@@ -129,7 +191,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider dataXmlMimeType
+	 * @dataProvider provideXmlMimeType
 	 */
 	public function testXmlMimeType( $mimetype, $isXmlMimeType ) {
 		$this->assertEquals( $isXmlMimeType, Html::isXmlMimeType( $mimetype ) );
@@ -185,6 +247,10 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 			' zero="0"',
 			[ 'zero' => 0 ]
 		];
+		yield 'Integration test for space-separated attribs' => [
+			' class="a b"',
+			[ 'class' => [ 'a', 'b' ] ]
+		];
 	}
 
 	/**
@@ -211,35 +277,35 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		// $expect, $classes
 		// string values
 		yield 'Normalization should strip redundant spaces' => [
-			' class="redundant spaces here"',
+			'redundant spaces here',
 			' redundant  spaces  here  '
 		];
 		yield 'Normalization should remove duplicates in string-lists' => [
-			' class="foo bar"',
+			'foo bar',
 			'foo bar foo bar bar'
 		];
 		// array values
 		yield 'Value with an empty array' => [
-			' class=""',
+			'',
 			[]
 		];
 		yield 'Array with null, empty string and spaces' => [
-			' class=""',
+			'',
 			[ null, '', ' ', '  ' ]
 		];
 		yield 'Normalization should remove duplicates in the array' => [
-			' class="foo bar"',
+			'foo bar',
 			[ 'foo', 'bar', 'foo', 'bar', 'bar' ]
 		];
 		yield 'Normalization should remove duplicates in string-lists in the array' => [
-			' class="foo bar"',
-			[ 'foo bar', 'bar foo', 'foo', 'bar bar' ]
+			'foo bar baz',
+			[ 'foo bar', 'bar foo', 'foo', 'bar bar', 'baz' ]
 		];
 
 		// Feature added in r96188 - pass attributes values as a PHP array
 		// only applies to class, rel, and accesskey
 		yield 'Associative array' => [
-			' class="booltrue one"',
+			'booltrue one',
 			[
 				'booltrue' => true,
 				'one' => 1,
@@ -257,7 +323,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		// We could pass a "class" the values: 'GREEN' and [ 'GREEN' => false ]
 		// The latter will take precedence
 		yield 'Duplicate keys' => [
-			' class=""',
+			'',
 			[
 				'GREEN',
 				'GREEN' => false,
@@ -267,16 +333,12 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Html::expandAttributes has special features for HTML
-	 * attributes that use space separated lists and also
-	 * allows arrays to be used as values.
-	 *
 	 * @dataProvider provideExpandAttributesClass
 	 */
 	public function testExpandAttributesClass( string $expect, $classes ) {
 		$this->assertEquals(
 			$expect,
-			Html::expandAttributes( [ 'class' => $classes ] )
+			Html::expandClassList( $classes )
 		);
 	}
 
@@ -480,7 +542,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 
 	public function testWarningBox() {
 		$this->assertEquals(
-			'<div class="cdx-message cdx-message--block cdx-message--warning">'
+			'<div class="cdx-message--warning cdx-message cdx-message--block">'
 				. '<span class="cdx-message__icon"></span>'
 				. '<div class="cdx-message__content">warn</div></div>',
 			Html::warningBox( 'warn' )
@@ -489,13 +551,13 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 
 	public function testErrorBox() {
 		$this->assertEquals(
-			'<div class="cdx-message cdx-message--block cdx-message--error">'
+			'<div class="cdx-message--error cdx-message cdx-message--block">'
 				. '<span class="cdx-message__icon"></span>'
 				. '<div class="cdx-message__content">err</div></div>',
 			Html::errorBox( 'err' )
 		);
 		$this->assertEquals(
-			'<div class="cdx-message cdx-message--block cdx-message--error errorbox-custom-class">'
+			'<div class="cdx-message--error errorbox-custom-class cdx-message cdx-message--block">'
 				. '<span class="cdx-message__icon"></span>'
 				. '<div class="cdx-message__content">'
 				. '<h2>heading</h2>err'
@@ -503,7 +565,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 			Html::errorBox( 'err', 'heading', 'errorbox-custom-class' )
 		);
 		$this->assertEquals(
-			'<div class="cdx-message cdx-message--block cdx-message--error">'
+			'<div class="cdx-message--error cdx-message cdx-message--block">'
 				. '<span class="cdx-message__icon"></span>'
 				. '<div class="cdx-message__content">'
 				. '<h2>0</h2>err'
@@ -514,13 +576,13 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 
 	public function testSuccessBox() {
 		$this->assertEquals(
-			'<div class="cdx-message cdx-message--block cdx-message--success">'
+			'<div class="cdx-message--success cdx-message cdx-message--block">'
 				. '<span class="cdx-message__icon"></span>'
 				. '<div class="cdx-message__content">great</div></div>',
 			Html::successBox( 'great' )
 		);
 		$this->assertEquals(
-			'<div class="cdx-message cdx-message--block cdx-message--success">'
+			'<div class="cdx-message--success cdx-message cdx-message--block">'
 				. '<span class="cdx-message__icon"></span>'
 				. '<div class="cdx-message__content">'
 				. '<script>beware no escaping!</script>'
@@ -957,11 +1019,19 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals(
 			[
 				[ 'label' => 'other reasons', 'value' => 'other' ],
-				[ 'label' => 'Foo', 'value' => '', 'disabled' => true ],
-				[ 'label' => 'Foo 1', 'value' => 'Foo 1' ],
-				[ 'label' => 'Example', 'value' => 'Example' ],
-				[ 'label' => 'Bar', 'value' => '', 'disabled' => true ],
-				[ 'label' => 'Bar 1', 'value' => 'Bar 1' ],
+				[
+					'label' => 'Foo',
+					'items' => [
+						[ 'label' => 'Foo 1', 'value' => 'Foo 1' ],
+						[ 'label' => 'Example', 'value' => 'Example' ],
+					],
+				],
+				[
+					'label' => 'Bar',
+					'items' => [
+						[ 'label' => 'Bar 1', 'value' => 'Bar 1' ],
+					],
+				]
 			],
 			Html::listDropdownOptionsCodex( [
 				'other reasons' => 'other',

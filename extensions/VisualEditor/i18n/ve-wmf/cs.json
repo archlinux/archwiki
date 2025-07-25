@@ -22,13 +22,13 @@
 			"아라"
 		]
 	},
-	"tag-visualeditor": "editace z [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálního editoru]]",
+	"tag-visualeditor": "editace z Vizuálního editoru",
 	"tag-visualeditor-description": "Editace provedená za použití [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálního editoru]]",
-	"tag-visualeditor-needcheck": "možná chyba ve [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálním editoru]]",
+	"tag-visualeditor-needcheck": "možná chyba ve Vizuálním editoru",
 	"tag-visualeditor-needcheck-description": "Editace provedená za použití [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálního editoru]], u které systém detekoval možné nezamýšlené změny wikitextu.",
 	"tag-visualeditor-wikitext": "editor wikitextu 2017",
 	"tag-visualeditor-wikitext-description": "Editace provedená pomocí editoru wikitextu 2017",
-	"tag-visualeditor-switched": "přepnuto z [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálního editoru]]",
+	"tag-visualeditor-switched": "přepnuto z Vizuálního editoru",
 	"tag-visualeditor-switched-description": "Uživatel začal editovat pomocí Vizuálního editoru, načež se přepnul do editoru wikitextu.",
 	"visualeditor-feedback-link": "Project:Vizuální editor/Názory",
 	"visualeditor-feedback-tool": "Poslat názor na tento software",

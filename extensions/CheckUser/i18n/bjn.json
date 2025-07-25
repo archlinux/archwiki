@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ezagren"
+		]
+	},
+	"checkuser-investigate-legend": "Gagai ngaran pamakai, alamat IP, atawa rantang IP",
+	"checkuser-investigate-notice-no-results": "Kadada hasil.",
+	"checkuser-investigate-filters-legend": "Panyaring",
+	"checkuser-investigate-compare-table-cell-unregistered": "Kada tadaptar"
+}

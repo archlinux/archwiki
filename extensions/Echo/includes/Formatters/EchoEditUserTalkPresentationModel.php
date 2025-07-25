@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 
@@ -22,14 +23,17 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		$this->section = new EchoPresentationModelSection( $event, $user, $language );
 	}
 
+	/** @inheritDoc */
 	public function canRender() {
 		return (bool)$this->event->getTitle();
 	}
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'edit-user-talk';
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		return [
 			// Need FullURL so the section is included
@@ -38,6 +42,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		$diffLink = [
 			'url' => $this->getDiffLinkUrl(),
@@ -54,6 +59,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		if ( $this->isBundled() ) {
 			$msg = $this->msg( 'notification-bundle-header-edit-user-talk-v2' );
@@ -76,6 +82,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getCompactHeaderMessage() {
 		$hasSection = $this->section->exists();
 		$key = $hasSection
@@ -89,10 +96,11 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		$sectionText = $this->event->getExtraParam( 'section-text' );
 		if ( !$this->isBundled() && $this->section->exists() && is_string( $sectionText ) ) {
-			$msg = $this->msg( 'notification-body-edit-user-talk-with-section' );
+			$msg = new RawMessage( '$1' );
 			// section-text is safe to use here, because section->exists() returns false if the revision is deleted
 			$msg->plaintextParams( $sectionText );
 			return $msg;
@@ -101,7 +109,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
-	private function getDiffLinkUrl() {
+	private function getDiffLinkUrl(): string {
 		$revId = $this->event->getExtraParam( 'revid' );
 		$oldId = $this->isBundled() ? $this->getRevBeforeFirstNotification() : 'prev';
 		$query = [
@@ -111,7 +119,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		return $this->event->getTitle()->getFullURL( $query );
 	}
 
-	private function getRevBeforeFirstNotification() {
+	private function getRevBeforeFirstNotification(): int {
 		$events = $this->getBundledEvents();
 		$firstNotificationRevId = end( $events )->getExtraParam( 'revid' );
 		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
@@ -120,6 +128,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		return $previousRevision ? $previousRevision->getId() : 0;
 	}
 
+	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
 		return 'notification-edit-talk-page-email-subject2';
 	}

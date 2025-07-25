@@ -286,7 +286,7 @@ ve.dm.Surface.prototype.resetHistoryTrackingInterval = function () {
  * @return {ve.dm.Surface.UndoStackItem[]} List of applied transaction stacks
  */
 ve.dm.Surface.prototype.getHistory = function () {
-	const appliedUndoStack = this.undoStack.slice( 0, this.undoStack.length - this.undoIndex );
+	const appliedUndoStack = this.undoIndex ? this.undoStack.slice( 0, -this.undoIndex ) : this.undoStack.slice();
 	if ( this.newTransactions.length > 0 ) {
 		appliedUndoStack.push( { transactions: this.newTransactions.slice( 0 ) } );
 	}
@@ -640,7 +640,7 @@ ve.dm.Surface.prototype.getLinearFragment = function ( range, noAutoSelect, excl
  */
 ve.dm.Surface.prototype.truncateUndoStack = function () {
 	if ( this.undoIndex ) {
-		this.undoStack = this.undoStack.slice( 0, this.undoStack.length - this.undoIndex );
+		this.undoStack = this.undoStack.slice( 0, -this.undoIndex );
 		this.undoIndex = 0;
 		this.emit( 'undoStackChange' );
 	}
@@ -1170,6 +1170,9 @@ ve.dm.Surface.prototype.getSelectedNode = function () {
 /**
  * Get the selected node covering a specific selection, or null
  *
+ * Will return a node if it is wrapped (e.g. not a TextNode or DocumentNode)
+ * and fully selected.
+ *
  * @param {ve.dm.Selection} [selection] Selection, defaults to the current selection
  * @return {ve.dm.Node|null} Selected node
  */
@@ -1184,7 +1187,7 @@ ve.dm.Surface.prototype.getSelectedNodeFromSelection = function ( selection ) {
 	const range = selection.getRange();
 	if ( !range.isCollapsed() ) {
 		const startNode = this.getDocument().documentNode.getNodeFromOffset( range.start + 1 );
-		if ( startNode && startNode.getOuterRange().equalsSelection( range ) ) {
+		if ( startNode && startNode.isWrapped() && startNode.getOuterRange().equalsSelection( range ) ) {
 			selectedNode = startNode;
 		}
 	}
@@ -1552,7 +1555,7 @@ ve.dm.Surface.prototype.updateExpiry = function ( skipKeys ) {
 	}
 	skipKeys = skipKeys || [];
 	[ 've-docstate', 've-dochtml', 've-selection', 've-changes' ].forEach( ( key ) => {
-		if ( skipKeys.indexOf( key ) === -1 ) {
+		if ( !skipKeys.includes( key ) ) {
 			this.storage.setExpires( this.autosavePrefix + key, this.storageExpiry );
 		}
 	} );

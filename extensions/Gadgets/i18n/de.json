@@ -7,13 +7,13 @@
 			"Geitost",
 			"Kghbln",
 			"Lucas Werkmeister",
+			"McDutchie",
 			"Metalhead64",
 			"Raimond Spekking",
 			"The Evil IP address",
 			"Tiin",
 			"Umherirrender",
-			"✓",
-			"McDutchie"
+			"✓"
 		]
 	},
 	"gadgets-desc": "Ermöglicht es Benutzern, in ihren [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] vordefinierte [[Special:Gadgets|CSS- und JavaScript-Helferlein]] zu aktivieren",
@@ -72,5 +72,8 @@
 	"gadgets-validate-unknownpages": "Enthält eine oder mehrere Seiten ohne .js-, .css- oder .json-Suffix. Sie würden nicht verwendet werden.",
 	"gadgets-validate-duplicate": "Eine zweite Definition von Helferlein $1 wurde erkannt und wird ignoriert werden",
 	"gadgets-validate-nopage": "Seite „$1“ ist nicht vorhanden.",
-	"gadgets-supports-urlload": "Dieses Helferlein unterstützt das Laden über eine URL mit dem Query-Parameter <code>?withgadget</code>"
+	"gadgets-validate-invaliddependencies": "Die {{PLURAL:$2|folgende Abhängigkeit fehlt|folgenden Abhängigkeiten fehlen}}: $1.",
+	"gadgets-validate-deprecateddependencies": "Die {{PLURAL:$2|folgende Abhängigkeit ist|folgenden Abhängigkeiten sind}} veraltet: $1.",
+	"gadgets-supports-urlload": "Dieses Helferlein unterstützt das Laden über eine URL mit dem Query-Parameter <code>?withgadget</code>",
+	"gadgets-hidden": "Dieses Helferlein ist [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden versteckt], was bedeutet, dass es in den Einstellungen nicht angezeigt wird."
 }

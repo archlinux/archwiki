@@ -8,9 +8,9 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  * description: "Operator, Fence, Separator or Accent"
  * category: "Token Elements"
  */
-class MMLmo extends MMLbase {
+class MMLmo extends MMLleaf {
 
-	public function __construct( string $texclass = "", array $attributes = [] ) {
-		parent::__construct( "mo", $texclass, $attributes );
+	public function __construct( string $texclass = "", array $attributes = [], string $text = "" ) {
+		parent::__construct( "mo", $texclass, $attributes, $text );
 	}
 }

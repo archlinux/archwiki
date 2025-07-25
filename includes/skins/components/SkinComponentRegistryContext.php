@@ -22,11 +22,10 @@ use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Language\Language;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MessageLocalizer;
-use Skin;
-use WikiPage;
 
 /**
  * @internal for use inside Skin and SkinTemplate classes only
@@ -40,16 +39,10 @@ class SkinComponentRegistryContext implements ComponentRegistryContext {
 	/** @var MessageLocalizer|null */
 	private $localizer = null;
 
-	/**
-	 * @param Skin $skin
-	 */
 	public function __construct( Skin $skin ) {
 		$this->skin = $skin;
 	}
 
-	/**
-	 * @return IContextSource
-	 */
 	public function getContextSource(): IContextSource {
 		return $this->skin->getContext();
 	}
@@ -75,9 +68,6 @@ class SkinComponentRegistryContext implements ComponentRegistryContext {
 		return $this->skin->getRelevantTitle() ?? $this->getTitle();
 	}
 
-	/**
-	 * @return OutputPage
-	 */
 	public function getOutput(): OutputPage {
 		return $this->skin->getOutput();
 	}
@@ -96,9 +86,6 @@ class SkinComponentRegistryContext implements ComponentRegistryContext {
 		return $this->skin->getLanguage();
 	}
 
-	/**
-	 * @return MessageLocalizer
-	 */
 	public function getMessageLocalizer(): MessageLocalizer {
 		if ( $this->localizer === null ) {
 			// Cannot call getContext in constructor,
@@ -115,37 +102,5 @@ class SkinComponentRegistryContext implements ComponentRegistryContext {
 	 */
 	public function getWikiPage() {
 		return $this->skin->getWikiPage();
-	}
-
-	/**
-	 * Temporarily allows access to Skin method.
-	 * It exists to support skins overriding the method in MediaWiki 1.40
-	 * (overriding the method is now deprecated)
-	 * It can be removed in 1.41
-	 *
-	 * @unstable
-	 * @internal
-	 * @return array
-	 */
-	public function getFooterIcons() {
-		return $this->skin->getFooterIcons();
-	}
-
-	/**
-	 * Renders a $wgFooterIcons icon according to the method's arguments
-	 * It exists to support skins overriding the method in MediaWiki 1.40
-	 * (overriding the method is now deprecated)
-	 * It can be removed in 1.41
-	 *
-	 * @unstable
-	 * @param array $icon The icon to build the html for, see $wgFooterIcons
-	 *   for the format of this array.
-	 * @param bool|string $withImage Whether to use the icon's image or output
-	 *   a text-only footericon.
-	 * @internal
-	 * @return string HTML
-	 */
-	public function makeFooterIcon( $icon, $withImage = 'withImage' ) {
-		return $this->skin->makeFooterIcon( $icon, $withImage );
 	}
 }

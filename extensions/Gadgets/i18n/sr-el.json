@@ -48,5 +48,6 @@
 	"gadgets-validate-invalidrights": "{{PLURAL:$2|Sledeće pravo ne postoji|Sledeća prava ne postoje}}: $1",
 	"gadgets-validate-invalidtitle": "Naziv stranice „$1” nije valjan",
 	"gadgets-validate-duplicate": "Druga definicija spravice $1 je detektovana i biće ignorisana",
-	"gadgets-validate-nopage": "Stranica „$1” ne postoji."
+	"gadgets-validate-nopage": "Stranica „$1” ne postoji.",
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Sledeća zavisnost nedostaje|Sledeće zavisnosti nedostaju}}: $1."
 }

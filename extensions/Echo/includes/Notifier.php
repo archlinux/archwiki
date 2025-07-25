@@ -29,7 +29,8 @@ class Notifier {
 			return;
 		}
 
-		Notification::create( [ 'user' => $user, 'event' => $event ] );
+		$notif = new Notification( $user, $event );
+		$notif->insert();
 	}
 
 	/**
@@ -81,7 +82,7 @@ class Notifier {
 				}
 			}
 		} elseif ( $event->getExtraParam( 'noemail' ) ) {
-			// Could be set for API triggered notifications were email is not
+			// Could be set for API triggered notifications where email is not
 			// requested in API request params
 			return false;
 		}
@@ -114,14 +115,15 @@ class Notifier {
 				$bundleHash = md5( $bundleString );
 			}
 
-			// email digest notification ( weekly or daily )
+			// email digest notification (weekly or daily)
 			if ( $wgEchoEnableEmailBatch && $userOptionsLookup->getOption( $user, 'echo-email-frequency' ) > 0 ) {
 				// always create a unique event hash for those events don't support bundling
 				// this is mainly for group by
+				$eventId = $event->acquireId();
 				if ( !$bundleHash ) {
-					$bundleHash = md5( $event->getType() . '-' . $event->getId() );
+					$bundleHash = md5( $event->getType() . '-' . $eventId );
 				}
-				EmailBatch::addToQueue( $user->getId(), $event->getId(), $priority, $bundleHash );
+				EmailBatch::addToQueue( $user->getId(), $eventId, $priority, $bundleHash );
 
 				return true;
 			}

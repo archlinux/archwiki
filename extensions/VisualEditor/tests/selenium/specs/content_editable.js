@@ -1,5 +1,4 @@
 'use strict';
-const assert = require( 'assert' );
 const EditPage = require( '../pageobjects/edit.page' );
 const LoginPage = require( 'wdio-mediawiki/LoginPage' );
 const Util = require( 'wdio-mediawiki/Util' );
@@ -25,13 +24,13 @@ describe( 'Content Editable', () => {
 	} );
 
 	it( 'should load when an url is opened @daily', async () => {
-		assert( await EditPage.toolbar.isDisplayed() );
+		await expect( await EditPage.toolbar ).toBeDisplayed();
 	} );
 
 	it( 'should be editable', async () => {
 		await EditPage.veRootNode.setValue( content );
 
-		assert.equal( await EditPage.veRootNode.getText(), content );
+		await expect( await EditPage.veRootNode ).toHaveText( content );
 	} );
 
 	it( 'should save an edit', async () => {
@@ -41,13 +40,13 @@ describe( 'Content Editable', () => {
 		await EditPage.savePage.click();
 
 		await EditPage.saveComplete();
-		assert.strictEqual( await EditPage.notification.getText(), 'The page has been created.' );
+		await expect( await EditPage.notification ).toHaveText( 'The page has been created.' );
 	} );
 
 	it( 'should insert a table', async () => {
 		await EditPage.insertTable();
 
-		assert( await EditPage.insertedTable.isDisplayed() );
+		await expect( await EditPage.insertedTable ).toBeDisplayed();
 	} );
 
 } );

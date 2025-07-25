@@ -88,7 +88,6 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 		return [
 			'event_id' => 1,
 			'event_type' => 'test_event',
-			'event_variant' => '',
 			'event_extra' => '',
 			'event_page_id' => '',
 			'event_agent_id' => '',

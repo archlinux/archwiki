@@ -18,12 +18,19 @@
  * @file
  */
 
-use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+namespace MediaWiki\FileRepo\File;
+
+use BadMethodCallException;
+use MediaHandler;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use RuntimeException;
+use stdClass;
+use UnexpectedValueException;
 use Wikimedia\Rdbms\Blob;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -68,13 +75,13 @@ class ArchivedFile {
 	/** @var int File size in bytes */
 	private $size;
 
-	/** @var int Size in bytes */
+	/** @var int Bitdepth */
 	private $bits;
 
-	/** @var int Width */
+	/** @var int */
 	private $width;
 
-	/** @var int Height */
+	/** @var int */
 	private $height;
 
 	/** @var array Unserialized metadata */
@@ -605,7 +612,6 @@ class ArchivedFile {
 	}
 
 	/**
-	 * Return the bits of the image file, in bytes
 	 * @return int
 	 */
 	public function getBits() {
@@ -629,7 +635,7 @@ class ArchivedFile {
 	 * @return MediaHandler
 	 */
 	private function getHandler() {
-		if ( !isset( $this->handler ) ) {
+		if ( !$this->handler ) {
 			$this->handler = MediaHandler::getHandler( $this->getMimeType() );
 		}
 
@@ -643,7 +649,7 @@ class ArchivedFile {
 	 * @return int|false
 	 */
 	public function pageCount() {
-		if ( !isset( $this->pageCount ) ) {
+		if ( $this->pageCount === null ) {
 			// @FIXME: callers expect File objects
 			// @phan-suppress-next-line PhanTypeMismatchArgument
 			if ( $this->getHandler() && $this->handler->isMultiPage( $this ) ) {
@@ -777,3 +783,6 @@ class ArchivedFile {
 		);
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ArchivedFile::class, 'ArchivedFile' );

@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Tests\Integration\Permissions;
 
-use HtmlArmor;
 use MediaWiki\Html\Html;
 use MediaWiki\Message\Message;
 use MediaWiki\Permissions\GrantsLocalization;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * @author Zabe
@@ -24,7 +24,7 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider grantDescriptions
+	 * @dataProvider provideGrantDescriptions
 	 */
 	public function testGetGrantDescription( string $grant ) {
 		$message = new Message( 'grant-' . $grant );
@@ -38,7 +38,7 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function grantDescriptions() {
+	public static function provideGrantDescriptions() {
 		yield [ 'blockusers' ];
 		yield [ 'createeditmovepage' ];
 		yield [ 'delete' ];
@@ -88,7 +88,7 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 
 	public function testGetGrantsWikiText() {
 		$this->assertSame(
-			"*<span class=\"mw-grantgroup\">Perform high volume activity</span>\n:High-volume (bot) access <span class=\"mw-grant mw-grantriskgroup-low\"></span>\n\n",
+			"*<span class=\"mw-grantgroup\">Perform high volume activity</span>\n:High-volume (bot) access\n\n",
 			$this->grantsLocalization->getGrantsWikiText( [ 'highvolume' ] )
 		);
 	}

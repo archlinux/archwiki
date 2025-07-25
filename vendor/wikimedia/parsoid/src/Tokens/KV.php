@@ -4,10 +4,17 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Tokens;
 
+use Wikimedia\JsonCodec\Hint;
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
+use Wikimedia\Parsoid\Utils\Utils;
+
 /**
  * Represents a Key-value pair.
  */
-class KV implements \JsonSerializable {
+class KV implements JsonCodecable, \JsonSerializable {
+	use JsonCodecableTrait;
+
 	/**
 	 * Commonly a string, but where the key might be templated,
 	 * this can be an array of tokens even.
@@ -19,14 +26,14 @@ class KV implements \JsonSerializable {
 	/** @var string|Token|array<Token|string>|KV[] */
 	public $v;
 
-	/** @var KVSourceRange|null wikitext source offsets */
-	public $srcOffsets;
+	/** Wikitext source offsets */
+	public ?KVSourceRange $srcOffsets;
 
-	/** @var string|null wikitext source */
-	public $ksrc;
+	/** Wikitext source */
+	public ?string $ksrc;
 
-	/** @var string|null wikitext source */
-	public $vsrc;
+	/** Wikitext source */
+	public ?string $vsrc;
 
 	/**
 	 * @param string|Token|array<Token|string> $k
@@ -45,11 +52,21 @@ class KV implements \JsonSerializable {
 		$this->k = $k;
 		$this->v = $v;
 		$this->srcOffsets = $srcOffsets;
-		if ( isset( $ksrc ) ) {
-			$this->ksrc = $ksrc;
+		$this->ksrc = $ksrc;
+		$this->vsrc = $vsrc;
+	}
+
+	public function __clone() {
+		// Deep clone non-primitive properties
+		foreach ( [ 'k', 'v' ] as $f ) {
+			if ( is_array( $this->$f ) ) {
+				$this->$f = Utils::cloneArray( $this->$f );
+			} elseif ( is_object( $this->$f ) ) {
+				$this->$f = clone $this->$f;
+			}
 		}
-		if ( isset( $vsrc ) ) {
-			$this->vsrc = $vsrc;
+		if ( $this->srcOffsets !== null ) {
+			$this->srcOffsets = clone $this->srcOffsets;
 		}
 	}
 
@@ -101,6 +118,7 @@ class KV implements \JsonSerializable {
 	 * @return SourceRange|null
 	 */
 	public function keyOffset(): ?SourceRange {
+		// @phan-suppress-next-line PhanCoalescingNeverNull $this->srcOffsets is nullable
 		return $this->srcOffsets->key ?? null;
 	}
 
@@ -110,6 +128,7 @@ class KV implements \JsonSerializable {
 	 * @return SourceRange|null
 	 */
 	public function valueOffset(): ?SourceRange {
+		// @phan-suppress-next-line PhanCoalescingNeverNull $this->srcOffsets is nullable
 		return $this->srcOffsets->value ?? null;
 	}
 
@@ -128,5 +147,35 @@ class KV implements \JsonSerializable {
 			$ret["vsrc"] = $this->vsrc;
 		}
 		return $ret;
+	}
+
+	/** @inheritDoc */
+	public function toJsonArray(): array {
+		return $this->jsonSerialize();
+	}
+
+	/** @inheritDoc */
+	public static function newFromJsonArray( array $json ) {
+		return new self(
+			$json['k'], $json['v'],
+			$json['srcOffsets'] ?? null,
+			$json['ksrc'] ?? null,
+			$json['vsrc'] ?? null
+		);
+	}
+
+	/** @inheritDoc */
+	public static function jsonClassHintFor( string $keyName ) {
+		switch ( $keyName ) {
+			case 'k':
+			case 'v':
+				// Hint these as "array of Token" which is the most common
+				// thing after "string".
+				return Hint::build( Token::class, Hint::INHERITED, Hint::LIST );
+			case 'srcOffsets':
+				return Hint::build( KVSourceRange::class, Hint::USE_SQUARE );
+			default:
+				return null;
+		}
 	}
 }

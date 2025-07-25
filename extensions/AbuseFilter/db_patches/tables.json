@@ -189,11 +189,6 @@
 				"options": { "notnull": true, "length": 1, "default": 0 }
 			},
 			{
-				"name": "afl_patrolled_by",
-				"type": "integer",
-				"options": { "notnull": true, "unsigned": true, "default": 0 }
-			},
-			{
 				"name": "afl_rev_id",
 				"type": "integer",
 				"options": { "notnull": false, "unsigned": true }

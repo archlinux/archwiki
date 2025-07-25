@@ -20,15 +20,18 @@
 
 namespace MediaWiki\Specials;
 
-use DoubleRedirectJob;
-use ErrorPageError;
-use LogEventsList;
-use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ThrottledError;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
+use MediaWiki\JobQueue\Jobs\DoubleRedirectJob;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Page\MovePageFactory;
@@ -44,7 +47,6 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWiki\Widget\ComplexTitleInputWidget;
-use MediaWiki\Xml\Xml;
 use OOUI\ButtonInputWidget;
 use OOUI\CheckboxInputWidget;
 use OOUI\DropdownInputWidget;
@@ -54,16 +56,13 @@ use OOUI\FormLayout;
 use OOUI\HtmlSnippet;
 use OOUI\PanelLayout;
 use OOUI\TextInputWidget;
-use PermissionsError;
-use RepoGroup;
 use SearchEngineFactory;
 use StatusValue;
-use StringUtils;
-use ThrottledError;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Implement Special:Movepage for changing page titles
@@ -116,22 +115,6 @@ class SpecialMovePage extends UnlistedSpecialPage {
 	private TitleFactory $titleFactory;
 	private DeletePageFactory $deletePageFactory;
 
-	/**
-	 * @param MovePageFactory $movePageFactory
-	 * @param PermissionManager $permManager
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param IConnectionProvider $dbProvider
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param NamespaceInfo $nsInfo
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param RepoGroup $repoGroup
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param WatchlistManager $watchlistManager
-	 * @param RestrictionStore $restrictionStore
-	 * @param TitleFactory $titleFactory
-	 * @param DeletePageFactory $deletePageFactory
-	 */
 	public function __construct(
 		MovePageFactory $movePageFactory,
 		PermissionManager $permManager,
@@ -187,6 +170,8 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			throw new ErrorPageError( 'notargettitle', 'notargettext' );
 		}
 		$this->getOutput()->addBacklinkSubtitle( $this->oldTitle );
+		// Various uses of Html::errorBox and Html::warningBox.
+		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 
 		if ( !$this->oldTitle->exists() ) {
 			throw new ErrorPageError( 'nopagetitle', 'nopagetext' );
@@ -803,8 +788,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			return;
 		}
 
-		if ( $this->getConfig()->get( MainConfigNames::FixDoubleRedirects ) &&
-		$this->fixRedirects ) {
+		if ( $this->getConfig()->get( MainConfigNames::FixDoubleRedirects ) && $this->fixRedirects ) {
 			DoubleRedirectJob::fixRedirects( 'move', $ot );
 		}
 
@@ -979,10 +963,10 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		$this->watchlistManager->setWatch( $this->watch, $this->getAuthority(), $nt );
 	}
 
-	private function showLogFragment( $title ) {
+	private function showLogFragment( Title $title ) {
 		$moveLogPage = new LogPage( 'move' );
 		$out = $this->getOutput();
-		$out->addHTML( Xml::element( 'h2', null, $moveLogPage->getName()->text() ) );
+		$out->addHTML( Html::element( 'h2', [], $moveLogPage->getName()->text() ) );
 		LogEventsList::showLogExtract( $out, 'move', $title );
 	}
 
@@ -1025,7 +1009,9 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		}
 	}
 
-	private function showSubpagesList( $subpages, $pagecount, $msg, $truncatedMsg, $noSubpageMsg = false ) {
+	private function showSubpagesList(
+		TitleArrayFromResult $subpages, int $pagecount, string $msg, string $truncatedMsg, bool $noSubpageMsg = false
+	) {
 		$out = $this->getOutput();
 
 		# No subpages.
@@ -1044,9 +1030,9 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		}
 		$out->addHTML( "<ul>\n" );
 
-		$linkBatch = $this->linkBatchFactory->newLinkBatch( $subpages );
-		$linkBatch->setCaller( __METHOD__ );
-		$linkBatch->execute();
+		$this->linkBatchFactory->newLinkBatch( $subpages )
+			->setCaller( __METHOD__ )
+			->execute();
 		$linkRenderer = $this->getLinkRenderer();
 
 		foreach ( $subpages as $subpage ) {

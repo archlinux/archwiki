@@ -1,18 +1,28 @@
 <?php
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\JavaScriptContent;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Event\PageMovedEvent;
+use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
 use MediaWiki\Page\MovePage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Tests\ExpectCallbackTrait;
+use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
+use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Rest\Handler\MediaTestTrait;
+use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\Watchlist\WatchedItemStore;
+use PHPUnit\Framework\Assert;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -24,6 +34,11 @@ use Wikimedia\Rdbms\IDBAccessObject;
 class MovePageTest extends MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;
 	use MediaTestTrait;
+	use ChangeTrackingUpdateSpyTrait;
+	use SearchUpdateSpyTrait;
+	use LocalizationUpdateSpyTrait;
+	use ResourceLoaderUpdateSpyTrait;
+	use ExpectCallbackTrait;
 
 	/**
 	 * @param Title $old
@@ -59,6 +74,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getRevisionStore(),
 			$this->getServiceContainer()->getSpamChecker(),
 			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getDomainEventDispatcher(),
 			$this->getServiceContainer()->getWikiPageFactory(),
 			$this->getServiceContainer()->getUserFactory(),
 			$this->getServiceContainer()->getUserEditTracker(),
@@ -338,6 +354,11 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 				$status
 			);
 		} else {
+			$oldFromText = Title::newFromText( $old->getPrefixedText() );
+			$newFromText = Title::newFromText( $new->getPrefixedText() );
+			$oldFromText->getId();
+			$newFromText->getId();
+
 			$oldPageId = $old->getArticleID();
 			$status = $this->getServiceContainer()
 				->getMovePageFactory()
@@ -471,9 +492,11 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $createRedirect
 	 */
 	protected function assertMoved( $from, $to, $id, bool $createRedirect = true ) {
-		Title::clearCaches();
-		$fromTitle = $from instanceof Title ? $from : Title::newFromText( $from );
-		$toTitle = $to instanceof Title ? $to : Title::newFromText( $to );
+		// NOTE: Title objects returned by Title::newFromText may come from an
+		//       instance cache. Using newFromText() here allows us to check
+		//       that we are not getting stale instances.
+		$fromTitle = Title::newFromText( "$from" );
+		$toTitle = Title::newFromText( "$to" );
 
 		$this->assertTrue( $toTitle->exists(),
 			"Destination {$toTitle->getPrefixedText()} does not exist" );
@@ -584,6 +607,183 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			->assertResultSet( [
 				[ 'Existent.jpg', NS_PROJECT ]
 			] );
+	}
+
+	/**
+	 * Regression test for T381225
+	 */
+	public function testEventEmission() {
+		$old = Title::makeTitle( NS_MEDIAWIKI, 'Foo' );
+		$oldPage = $this->getExistingTestPage( $old );
+		$oldRev = $oldPage->getRevisionRecord();
+		$oldPageId = $old->getId();
+
+		$new = Title::makeTitle( NS_MEDIAWIKI, 'Bar' );
+		$this->getNonexistingTestPage( $new );
+
+		$mover = $this->getTestSysop()->getUser();
+
+		// clear the queue
+		$this->runJobs();
+
+		$this->expectDomainEvent(
+			PageRevisionUpdatedEvent::TYPE, 2,
+			static function ( PageRevisionUpdatedEvent $event ) use ( $old, $oldPageId, $new, $oldRev, $mover ) {
+				// for the existing page under the new title
+				if ( $event->getPage()->isSamePageAs( $new ) ) {
+					Assert::assertFalse( $event->isCreation(), 'isCreation' );
+					Assert::assertFalse(
+						$event->isReconciliationRequest(),
+						'isReconciliationRequest'
+					);
+					Assert::assertTrue(
+						$event->changedLatestRevisionId(),
+						'changedLatestRevisionId'
+					);
+					Assert::assertFalse(
+						$event->isEffectiveContentChange(),
+						'isEffectiveContentChange'
+					);
+					Assert::assertFalse(
+						$event->isNominalContentChange(),
+						'isNominalContentChange'
+					);
+					Assert::assertSame( $oldPageId, $event->getPage()->getId() );
+					Assert::assertSame( $oldRev->getId(), $event->getLatestRevisionBefore()->getId() );
+					Assert::assertSame( $mover, $event->getPerformer() );
+
+					Assert::assertTrue(
+						$event->getLatestRevisionAfter()->isMinor(),
+						'isMinor'
+					);
+
+					Assert::assertTrue(
+						$event->hasCause( PageRevisionUpdatedEvent::CAUSE_MOVE ),
+						PageRevisionUpdatedEvent::CAUSE_MOVE
+					);
+
+					Assert::assertTrue( $event->isSilent(), 'isSilent' );
+				}
+
+				// for the redirect page
+				if ( $event->getPage()->isSamePageAs( $old ) ) {
+					Assert::assertTrue( $event->isCreation(), 'isCreation' );
+					Assert::assertFalse(
+						$event->isReconciliationRequest(),
+						'isReconciliationRequest'
+					);
+					Assert::assertTrue(
+						$event->changedLatestRevisionId(),
+						'changedLatestRevisionId'
+					);
+					Assert::assertTrue(
+						$event->isEffectiveContentChange(),
+						'isEffectiveContentChange'
+					);
+					Assert::assertTrue(
+						$event->isNominalContentChange(),
+						'isNominalContentChange'
+					);
+					Assert::assertSame( $mover, $event->getPerformer() );
+					Assert::assertSame( $mover, $event->getAuthor() );
+
+					Assert::assertTrue( $event->isSilent(), 'isSilent' );
+					Assert::assertTrue( $event->isImplicit(), 'isImplicit' );
+				}
+
+				// TODO: assert more properties
+			}
+		);
+
+		$this->expectDomainEvent(
+			PageMovedEvent::TYPE, 1,
+			static function ( PageMovedEvent $event )
+				use ( $old, $oldPageId, $new, $mover )
+			{
+				Assert::assertTrue( $event->getPageRecordAfter()->isSamePageAs( $new ) );
+				Assert::assertTrue( $event->getPageRecordBefore()->isSamePageAs( $old ) );
+
+				Assert::assertSame( $oldPageId, $event->getPageId() );
+			}
+		);
+
+		// Now move the page
+		$obj = $this->newMovePageWithMocks( $old, $new, [ 'db' => $this->getDb() ] );
+		$obj->move( $mover );
+	}
+
+	public static function provideUpdatePropagation() {
+		static $counter = 1;
+		$name = __METHOD__ . $counter++;
+
+		$script = new JavaScriptContent( 'console.log("testing")' );
+
+		yield 'move article' => [ "$name-OLD", "$name-NEW" ];
+		yield 'move user talk' => [ "User_talk:$name-OLD", "User_talk:$name-NEW" ];
+		yield 'move message' => [ "MediaWiki:$name-OLD", "MediaWiki:$name-NEW" ];
+		yield 'move script' => [ "User:$name/OLD.js", "User:$name/NEW.js", $script ];
+
+		yield 'move from user talk' => [ "User_talk:$name-OLD", "$name-NEW" ];
+		yield 'move from message' => [ "MediaWiki:$name-OLD", "$name-NEW" ];
+		yield 'move from script' => [ "User:$name/OLD.js", "$name/NEW", $script ];
+
+		yield 'move to user talk' => [ "$name-OLD", "User_talk:$name-NEW" ];
+		yield 'move to message' => [ "$name-OLD", "MediaWiki:$name-NEW" ];
+		yield 'move to script' => [ "$name/OLD", "User:$name/NEW.js" ];
+	}
+
+	/**
+	 * Test update propagation.
+	 * Includes regression test for T381225
+	 *
+	 * @dataProvider provideUpdatePropagation
+	 */
+	public function testUpdatePropagation( $old, $new, ?Content $content = null ) {
+		// Clear some extension hook handlers that may interfere with mock object expectations.
+		$this->clearHooks( [
+			'RevisionRecordInserted',
+			'PageSaveComplete',
+			'PageMoveComplete',
+			'LinksUpdateComplete',
+		] );
+
+		$old = Title::newFromText( $old );
+		$new = Title::newFromText( $new );
+
+		$content ??= new WikitextContent( 'hi' );
+		$this->editPage( $old, $content );
+		$this->getNonexistingTestPage( $new );
+
+		// clear the queue
+		$this->runJobs();
+
+		// Should be counted as user contributions (T163966)
+		// Should generate an RC entry for the move log, but not for
+		// the dummy revision or redirect page.
+		$this->expectChangeTrackingUpdates( 0, 1, 1, 0, 1 );
+
+		// The moved page and the redirect should both get re-indexed.
+		$this->expectSearchUpdates( 2 );
+
+		// The localization cache should be reset of any page in the MediaWiki
+		// namespace.
+		$this->expectLocalizationUpdate(
+			( $old->getNamespace() === NS_MEDIAWIKI ? 1 : 0 )
+			+ ( $new->getNamespace() === NS_MEDIAWIKI ? 1 : 0 )
+		);
+
+		// If the content model is JS, the module cache should be reset for the
+		// old and the new title.
+		$this->expectResourceLoaderUpdates(
+			$content->getModel() === CONTENT_MODEL_JAVASCRIPT ? 2 : 0
+		);
+
+		// Now move the page
+		$obj = $this->newMovePageWithMocks( $old, $new, [ 'db' => $this->getDb() ] );
+		$obj->move( $this->getTestUser()->getUser() );
+
+		// NOTE: assertions are applied by the spies installed earlier.
+		$this->runDeferredUpdates();
 	}
 
 }

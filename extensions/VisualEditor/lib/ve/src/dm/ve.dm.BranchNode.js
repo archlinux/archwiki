@@ -200,3 +200,20 @@ ve.dm.BranchNode.prototype.hasSlugAtOffset = function ( offset ) {
 	}
 	return false;
 };
+
+/**
+ * Get all annotations and the ranges they cover
+ *
+ * @return {ve.dm.ElementLinearData.AnnotationRange[]} Contiguous annotation ranges, ordered by start then end
+ */
+ve.dm.BranchNode.prototype.getAnnotationRanges = function () {
+	const annotationRanges = [];
+	this.traverse( ( node ) => {
+		if ( node.canContainContent() ) {
+			annotationRanges.push(
+				...this.getDocument().data.getAnnotationRanges( node.getRange() )
+			);
+		}
+	} );
+	return annotationRanges;
+};

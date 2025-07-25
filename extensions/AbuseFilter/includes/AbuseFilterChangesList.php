@@ -3,15 +3,15 @@
 namespace MediaWiki\Extension\AbuseFilter;
 
 use HtmlArmor;
-use LogFormatter;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Logging\LogFormatter;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\RecentChanges\OldChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
-use OldChangesList;
-use RecentChange;
 
 class AbuseFilterChangesList extends OldChangesList {
 

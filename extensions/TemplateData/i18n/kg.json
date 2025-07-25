@@ -3,5 +3,8 @@
 		"authors": [
 			"BOKOBA VEROLY"
 		]
-	}
+	},
+	"templatedata-favorite-added": "Bo me yika yo na bima ya bo ke zolaka mingi",
+	"templatedata-favorite-removed": "Bo katulaka yo na mikanda ya bo ke zolaka mingi",
+	"templatedata-favorite-maximum-reached": "Nge me kuma na ntalu ya kuluta nene ($1) ya ba templates ya nge ke zolaka mingi. Beto ke lomba nge na kukatula bankaka na lisiti na nge na ntwala ya kuyika mingi."
 }

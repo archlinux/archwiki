@@ -21,17 +21,17 @@ class WikibaseHook {
 		if ( !$wgMathEnableWikibaseDataType ) {
 			return;
 		}
-
 		$dataTypeDefinitions['PT:math'] = [
 			'value-type'                 => 'string',
 			'validator-factory-callback' => static function () {
+				global $wgMathTexMaxLength;
 				// load validator builders
 				$factory = WikibaseRepo::getDefaultValidatorBuilders();
 
 				// initialize an array with string validators
 				// returns an array of validators
 				// that add basic string validation such as preventing empty strings
-				$validators = $factory->buildStringValidators();
+				$validators = $factory->buildStringValidators( $wgMathTexMaxLength );
 				$validators[] = new MathValidator();
 				return $validators;
 			},

@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  */
 class LoggedInRequirementTest extends TestCase {
 
-	public function userProvider(): array {
+	public static function userProvider(): array {
 		return [
 			'Logged-in user' => [
 				// User is logged in

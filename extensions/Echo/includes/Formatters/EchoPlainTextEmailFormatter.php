@@ -2,10 +2,12 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 
 class EchoPlainTextEmailFormatter extends EchoEventFormatter {
+	/** @inheritDoc */
 	protected function formatModel( EchoEventPresentationModel $model ) {
 		$subject = Sanitizer::stripAllTags( $model->getSubjectMessage()->parse() );
 
@@ -21,13 +23,15 @@ class EchoPlainTextEmailFormatter extends EchoEventFormatter {
 		$primaryLink = $model->getPrimaryLinkWithMarkAsRead();
 		$colon = $this->msg( 'colon-separator' )->text();
 
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
+
 		if ( $primaryLink ) {
-			$primaryUrl = wfExpandUrl( $primaryLink['url'], PROTO_CANONICAL );
+			$primaryUrl = $urlUtils->expand( $primaryLink['url'], PROTO_CANONICAL );
 			$text .= "\n\n{$primaryLink['label']}$colon <$primaryUrl>";
 		}
 
 		foreach ( array_filter( $model->getSecondaryLinks() ) as $secondaryLink ) {
-			$url = wfExpandUrl( $secondaryLink['url'], PROTO_CANONICAL );
+			$url = $urlUtils->expand( $secondaryLink['url'], PROTO_CANONICAL );
 			$text .= "\n\n{$secondaryLink['label']}$colon <$url>";
 		}
 

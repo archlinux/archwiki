@@ -1,19 +1,68 @@
-const pako = require( '../../lib/pako/pako_deflate.js' );
+/**
+ * Convert a byte stream to base64 text.
+ *
+ * @deprecated Use mw.deflateAsync
+ * @example
+ * return mw.loader.using( 'mediawiki.deflate' ).then( () => mw.deflate( html ) );
+ * @param {string} data
+ * @return {string} Compressed data
+ */
+mw.deflate = function ( data ) {
+	const pako = require( '../../lib/pako/pako_deflate.js' );
+	return 'rawdeflate,' + bytesToBase64( pako.deflateRaw( data, { level: 5 } ) );
+};
 
 /**
  * Convert a byte stream to base64 text.
- * Before using load the mediawiki.deflate ResourceLoader module.
+ *
+ * Uses browser native CompressionStream if available.
  *
  * @example
- * return mw.loader.using( 'mediawiki.deflate' ).then( function () {
- *    return mw.deflate( html );
- * } );
+ * return mw.loader.using( 'mediawiki.deflate' ).then( () => mw.deflateAsync( html ) );
  * @param {string} data
- * @return {string}
+ * @return {Promise<string>} Compressed data
  */
-mw.deflate = function ( data ) {
-	return 'rawdeflate,' + bytesToBase64( pako.deflateRaw( data, { level: 5 } ) );
+mw.deflateAsync = function ( data ) {
+	// Support: Chrome < 80, Firefox < 113, Safari < 16.4
+	if ( window.CompressionStream ) {
+		return compress( data ).then( ( buffer ) => 'rawdeflate,' + bytesToBase64( new Uint8Array( buffer ) ) );
+	} else {
+		return Promise.resolve( mw.deflate( data ) );
+	}
 };
+
+function stripHeaderAndChecksum( buffer ) {
+	// Header is 2 bytes, checksum is the last 4 bytes
+	return buffer.slice( 2, buffer.byteLength - 4 );
+}
+
+function compress( string ) {
+	const byteArray = new TextEncoder().encode( string );
+	let cs, isRaw;
+	// Support: Chrome < 103
+	// Not all browsers with CompressionStream support 'deflate-raw'
+	// so fall back to the universally-supported 'deflate' and
+	// remove the header/checksum manually
+	try {
+		// eslint-disable-next-line compat/compat
+		cs = new CompressionStream( 'deflate-raw' );
+		isRaw = true;
+	} catch ( e ) {
+		// eslint-disable-next-line compat/compat
+		cs = new CompressionStream( 'deflate' );
+		isRaw = false;
+	}
+	const writer = cs.writable.getWriter();
+	writer.write( byteArray );
+	writer.close();
+
+	const arrayBuffer = new Response( cs.readable ).arrayBuffer();
+	if ( isRaw ) {
+		return arrayBuffer;
+	} else {
+		return arrayBuffer.then( ( buffer ) => stripHeaderAndChecksum( new Uint8Array( buffer ) ) );
+	}
+}
 
 /*
  * Convert a byte stream to base64 text.

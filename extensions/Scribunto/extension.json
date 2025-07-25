@@ -10,12 +10,13 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"APIModules": {
 		"scribunto-console": {
 			"class": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole",
 			"services": [
+				"ObjectCacheFactory",
 				"ParserFactory"
 			]
 		}
@@ -110,7 +111,10 @@
 		"main": {
 			"class": "MediaWiki\\Extension\\Scribunto\\Hooks",
 			"services": [
-				"MainConfig"
+				"MainConfig",
+				"ContentHandlerFactory",
+				"ObjectCacheFactory",
+				"StatsFactory"
 			]
 		},
 		"codeeditor": {

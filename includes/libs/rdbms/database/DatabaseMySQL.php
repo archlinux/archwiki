@@ -437,9 +437,6 @@ class DatabaseMySQL extends Database {
 		return $version;
 	}
 
-	/**
-	 * @param array $options
-	 */
 	public function setSessionOptions( array $options ) {
 		$sqlAssignments = [];
 
@@ -811,7 +808,10 @@ class DatabaseMySQL extends Database {
 		}
 	}
 
-	private function mysqlRealEscapeString( $s ) {
+	/**
+	 * @param mixed $s
+	 */
+	private function mysqlRealEscapeString( $s ): string {
 		$conn = $this->getBindingHandle();
 
 		return $conn->real_escape_string( (string)$s );

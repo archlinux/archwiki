@@ -49,15 +49,10 @@ class DOMDiffTest extends TestCase {
 			if ( isset( $spec['diff'] ) ) {
 				$this->assertTrue( DiffUtils::isDiffMarker( $node, $spec['diff'] ) );
 			} elseif ( isset( $spec['markers'] ) ) {
-				$markers = DiffUtils::getDiffMark( $node )->diff ?? [];
+				$dpd = DiffUtils::getDiffMark( $node );
+				$markers = $dpd ? $dpd->toJsonArray()['diff'] : [];
 
-				$this->assertSameSize( $spec['markers'], $markers,
-					'number of markers does not match' );
-
-				foreach ( $markers as $k => $m ) {
-					$this->assertEquals( $spec['markers'][$k], $m,
-						'markers do not match' );
-				}
+				$this->assertEqualsCanonicalizing( $spec['markers'], $markers );
 			}
 		}
 	}
@@ -68,7 +63,7 @@ class DOMDiffTest extends TestCase {
 	 * update code accordingly. If possible, simplify / reduce the different
 	 * markers being used.
 	 */
-	public function provideDiff(): array {
+	public static function provideDiff(): array {
 		return [
 			[
 				[

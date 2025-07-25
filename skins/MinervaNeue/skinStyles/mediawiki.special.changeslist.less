@@ -203,7 +203,8 @@ ul.mw-contributions-list li .mw-rollback-link {
 			}
 		}
 
-		.mw-changeslist-links > span {
+		/** hide if the span does not have any links inside it */
+		.mw-changeslist-links > span:not( :has( a ) ) {
 			display: none;
 		}
 

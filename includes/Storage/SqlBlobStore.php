@@ -32,7 +32,7 @@ use HistoryBlobUtils;
 use InvalidArgumentException;
 use StatusValue;
 use Wikimedia\Assert\Assert;
-use Wikimedia\AtEase\AtEase;
+use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IDatabase;
@@ -461,7 +461,7 @@ class SqlBlobStore implements BlobStore {
 		return [ $result, $errors ];
 	}
 
-	private static function getDBOptions( $bitfield ) {
+	private static function getDBOptions( int $bitfield ): array {
 		if ( DBAccessObjectUtils::hasFlags( $bitfield, IDBAccessObject::READ_LATEST_IMMUTABLE ) ) {
 			$index = DB_REPLICA; // override READ_LATEST if set
 			$fallbackIndex = DB_PRIMARY;
@@ -565,21 +565,21 @@ class SqlBlobStore implements BlobStore {
 				return $this->cache->getWithSetCallback(
 					$this->getCacheKey( $blobAddress ),
 					$this->getCacheTTL(),
-					function () use ( $url, $flags ) {
+					function () use ( $url, $flags, $blobAddress ) {
 						// Ignore $setOpts; blobs are immutable and negatives are not cached
 						$blob = $this->extStoreAccess
 							->fetchFromURL( $url, [ 'domain' => $this->dbDomain ] );
 
-						return $blob === false ? false : $this->decompressData( $blob, $flags );
+						return $blob === false ? false : $this->decompressData( $blob, $flags, $blobAddress );
 					},
 					$this->getCacheOptions()
 				);
 			} else {
 				$blob = $this->extStoreAccess->fetchFromURL( $url, [ 'domain' => $this->dbDomain ] );
-				return $blob === false ? false : $this->decompressData( $blob, $flags );
+				return $blob === false ? false : $this->decompressData( $blob, $flags, $blobAddress );
 			}
 		} else {
-			return $this->decompressData( $raw, $flags );
+			return $this->decompressData( $raw, $flags, $blobAddress );
 		}
 	}
 
@@ -636,23 +636,26 @@ class SqlBlobStore implements BlobStore {
 	 * @param array $blobFlags Compression flags, such as 'gzip'.
 	 *   Note that not including 'utf-8' in $blobFlags will cause the data to be decoded
 	 *   according to the legacy encoding specified via setLegacyEncoding.
+	 * @param string|null $blobAddress Used for log message
 	 *
-	 * @return string|bool Decompressed text, or false on failure
+	 * @return string|false Decompressed text, or false on failure
 	 */
-	public function decompressData( string $blob, array $blobFlags ) {
+	public function decompressData( string $blob, array $blobFlags, ?string $blobAddress = null ) {
 		if ( in_array( 'error', $blobFlags ) ) {
 			// Error row, return false
 			return false;
 		}
 
+		// Deal with optional compression of archived pages.
+		// This can be done periodically via maintenance/compressOld.php, and
+		// as pages are saved if $wgCompressRevisions is set.
 		if ( in_array( 'gzip', $blobFlags ) ) {
-			# Deal with optional compression of archived pages.
-			# This can be done periodically via maintenance/compressOld.php, and
-			# as pages are saved if $wgCompressRevisions is set.
-			$blob = gzinflate( $blob );
-
+			// Silence native warning in favour of more detailed warning (T380347)
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$blob = @gzinflate( $blob );
 			if ( $blob === false ) {
-				wfWarn( __METHOD__ . ': gzinflate() failed' );
+				wfWarn( __METHOD__ . ': gzinflate() failed' .
+					( $blobAddress ? ' (at blob address ' . $blobAddress . ')' : '' ) );
 				return false;
 			}
 		}
@@ -671,17 +674,17 @@ class SqlBlobStore implements BlobStore {
 		if ( $blob !== false && $this->legacyEncoding
 			&& !in_array( 'utf-8', $blobFlags ) && !in_array( 'utf8', $blobFlags )
 		) {
-			# Old revisions kept around in a legacy encoding?
-			# Upconvert on demand.
-			# ("utf8" checked for compatibility with some broken
-			#  conversion scripts 2008-12-30)
-			# Even with //IGNORE iconv can whine about illegal characters in
-			# *input* string. We just ignore those too.
-			# REF: https://bugs.php.net/bug.php?id=37166
-			# REF: https://phabricator.wikimedia.org/T18885
-			AtEase::suppressWarnings();
-			$blob = iconv( $this->legacyEncoding, 'UTF-8//IGNORE', $blob );
-			AtEase::restoreWarnings();
+			// - Old revisions kept around in a legacy encoding?
+			//   Upconvert on demand.
+			// - "utf8" checked for compatibility with some broken
+			//   conversion scripts 2008-12-30.
+			// - Even with "//IGNORE" iconv can whine about illegal characters in
+			//   *input* string. We just ignore those too.
+			//   Ref https://bugs.php.net/bug.php?id=37166
+			//   Ref https://phabricator.wikimedia.org/T18885
+			//
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$blob = @iconv( $this->legacyEncoding, 'UTF-8//IGNORE', $blob );
 		}
 
 		return $blob;
@@ -697,7 +700,7 @@ class SqlBlobStore implements BlobStore {
 	private function getCacheTTL() {
 		$cache = $this->cache;
 
-		if ( $cache->getQoS( $cache::ATTR_DURABILITY ) >= $cache::QOS_DURABILITY_RDBMS ) {
+		if ( $cache->getQoS( BagOStuff::ATTR_DURABILITY ) >= BagOStuff::QOS_DURABILITY_RDBMS ) {
 			// Do not cache RDBMs blobs in...the RDBMs store
 			$ttl = $cache::TTL_UNCACHEABLE;
 		} else {

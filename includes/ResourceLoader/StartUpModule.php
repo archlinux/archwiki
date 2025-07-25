@@ -29,10 +29,10 @@ use Wikimedia\RequestTimeout\TimeoutException;
 /**
  * Module for ResourceLoader initialization.
  *
- * See also <https://www.mediawiki.org/wiki/ResourceLoader/Features#Startup_Module>
+ * See also <https://www.mediawiki.org/wiki/ResourceLoader/Architecture#Startup_Module>
  *
  * The startup module, as being called only from ClientHtml, has
- * the ability to vary based extra query parameters, in addition to those
+ * the ability to vary based on extra query parameters, in addition to those
  * from Context:
  *
  * - safemode: Only register modules that have ORIGIN_CORE as their origin.
@@ -51,7 +51,7 @@ class StartUpModule extends Module {
 	private const STORAGE_VERSION = '2';
 
 	/** @var int[] */
-	private $groupIds = [
+	private array $groupIds = [
 		// These reserved numbers MUST start at 0 and not skip any. These are preset
 		// for forward compatibility so that they can be safely referenced by mediawiki.js,
 		// even when the code is cached and the order of registrations (and implicit
@@ -65,14 +65,14 @@ class StartUpModule extends Module {
 	 *
 	 * @param array $registryData
 	 * @param string $moduleName
-	 * @param string[] $handled Internal parameter for recursion. (Optional)
+	 * @param array<string,true> &$handled Internal parameter for recursion.
 	 * @return array
 	 * @throws CircularDependencyError
 	 */
 	protected static function getImplicitDependencies(
 		array $registryData,
 		string $moduleName,
-		array $handled = []
+		array &$handled
 	): array {
 		static $dependencyCache = [];
 
@@ -91,9 +91,9 @@ class StartUpModule extends Module {
 			$flat = $data['dependencies'];
 
 			// Prevent recursion
-			$handled[] = $moduleName;
+			$handled[$moduleName] = true;
 			foreach ( $data['dependencies'] as $dependency ) {
-				if ( in_array( $dependency, $handled, true ) ) {
+				if ( isset( $handled[$dependency] ) ) {
 					// If we encounter a circular dependency, then stop the optimiser and leave the
 					// original dependencies array unmodified. Circular dependencies are not
 					// supported in ResourceLoader. Awareness of them exists here so that we can
@@ -138,7 +138,8 @@ class StartUpModule extends Module {
 			$dependencies = $data['dependencies'];
 			try {
 				foreach ( $data['dependencies'] as $dependency ) {
-					$implicitDependencies = self::getImplicitDependencies( $registryData, $dependency );
+					$depCheck = [];
+					$implicitDependencies = self::getImplicitDependencies( $registryData, $dependency, $depCheck );
 					$dependencies = array_diff( $dependencies, $implicitDependencies );
 				}
 			} catch ( CircularDependencyError $err ) {
@@ -285,7 +286,7 @@ class StartUpModule extends Module {
 		return $out;
 	}
 
-	private function getGroupId( $groupName ): ?int {
+	private function getGroupId( ?string $groupName ): ?int {
 		if ( $groupName === null ) {
 			return null;
 		}
@@ -299,8 +300,6 @@ class StartUpModule extends Module {
 
 	/**
 	 * Base modules implicitly available to all modules.
-	 *
-	 * @return array
 	 */
 	private function getBaseModules(): array {
 		return [ 'jquery', 'mediawiki.base' ];
@@ -376,13 +375,11 @@ class StartUpModule extends Module {
 			'$VARS.reqBase' => $context->encodeJson( (object)$context->getReqBase() ),
 			'$VARS.baseModules' => $context->encodeJson( $this->getBaseModules() ),
 			'$VARS.maxQueryLength' => $context->encodeJson(
-				// In debug mode (except legacy debug mode), let the client fetch each module in
+				// In debug mode, let the client fetch each module in
 				// its own dedicated request (T85805).
 				// This is effectively the equivalent of ClientHtml::makeLoad,
 				// which does this for stylesheets.
-				( !$context->getDebug() || $context->getDebug() === $context::DEBUG_LEGACY ) ?
-					$this->getMaxQueryLength() :
-					0
+				!$context->getDebug() ? $this->getMaxQueryLength() : 0
 			),
 			'$VARS.storeEnabled' => $context->encodeJson(
 				$conf->get( MainConfigNames::ResourceLoaderStorageEnabled )
@@ -447,16 +444,10 @@ class StartUpModule extends Module {
 		];
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function supportsURLLoading(): bool {
 		return false;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function enableModuleContentVersion(): bool {
 		// Enabling this means that ResourceLoader::getVersionHash will simply call getScript()
 		// and hash it to determine the version (as used by E-Tag HTTP response header).

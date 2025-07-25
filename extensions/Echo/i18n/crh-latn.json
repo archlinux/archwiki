@@ -27,6 +27,8 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Sade metin",
 	"echo-pref-cross-wiki-notifications": "Başqa vikilerden bildirmelerni köster",
+	"echo-pref-notifications-blacklist": "Bu qullanıcılardan kelgen bildirmelerni kösterme ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute daa çoq malümat])",
+	"echo-pref-notifications-page-linked-title-muted-list": "Bu saifeler içün \"Saife bağlantısı\" bildirmelerini kösterme ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute daa çoq malümat])",
 	"echo-new-messages": "Yañı bir beyanatıñız bar",
 	"echo-category-title-edit-user-talk": "Muzakere saifemniñ {{PLURAL:$1|deñiştirilmesi|deñiştirilmeleri}}",
 	"echo-category-title-edit-user-page": "Qullanıcı saifemniñ {{PLURAL:$1|deñiştirilmesi|deñiştirilmeleri}}",

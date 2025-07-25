@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Servien"
+		]
+	},
+	"checkuser-summary": "Dit hulpmiddel bekik de leste wiezigingen um IP-adressen weerumme te haolen die gebruukt bin deur n gebruker of gif de bewarkings-/gebrukersgegevens weer veur n IP-adres. Gebrukers en bewarkingen kunnen weerummehaold wörden mit n XFF-IP deur \"/xff\" an t IP-adres toe te voegen. IPv4 (CIDR $1-32) en IPv6 (CIDR $2-128) wörden ondersteund. Wie laoten niet meer as 5.000 bewarkingen zien vanwegen prestasieredens. Gebruuk dit in overeenstemming mit t beleid.",
+	"checkuser-desc": "Laot gebrukers mit de beneudigen rechten IP-adressen en aandere informasie van gebrukers achterhaolen.",
+	"checkuser": "Gebruker naokieken",
+	"checkuserlog": "Logboek gebrukersscheumers",
+	"group-checkuser": "gebrukers nåkyken",
+	"group-checkuser-member": "{{GENDER:$1|gebrukerskontrolöör}}",
+	"grouppage-checkuser": "{{ns:project}}:Gebrukerskontrolöör",
+	"checkuser-reason": "Reden:",
+	"checkuser-showlog": "Logboek bekieken",
+	"checkuser-query": "Zeukopdrachte leste wiezigingen",
+	"checkuser-target": "IP-adres of gebrukersnaam:",
+	"checkuser-users": "Gebrukers naokieken",
+	"checkuser-ips": "IP-adressen naokieken",
+	"checkuser-empty": "Der steet gien informasie in t logboek.",
+	"checkuser-nomatch": "Gien overeenkomsten evunnen.",
+	"checkuser-check": "Naokieken",
+	"checkuser-blocked": "Eblokkeerd",
+	"checkuser-search": "Zeuken",
+	"checkuser-search-submit": "Zeuken"
+}

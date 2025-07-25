@@ -1,6 +1,5 @@
 'use strict';
 
-const assert = require( 'assert' );
 const { ArticlePageWithEditorOverlay, ArticlePage } = require( '../support/world.js' );
 
 const iClickTheEditButton = async () => {
@@ -11,36 +10,36 @@ const iSeeTheWikitextEditorOverlay = async () => {
 	await ArticlePageWithEditorOverlay.editor_overlay_element.waitForDisplayed();
 	await ArticlePageWithEditorOverlay.editor_textarea_element.waitForExist();
 };
-const iClearTheEditor = () => {
-	ArticlePageWithEditorOverlay.editor_textarea_element.setValue( '' );
+const iClearTheEditor = async () => {
+	await ArticlePageWithEditorOverlay.editor_textarea_element.setValue( '' );
 };
-const iDoNotSeeTheWikitextEditorOverlay = () => {
-	browser.waitUntil(
+const iDoNotSeeTheWikitextEditorOverlay = async () => {
+	await browser.waitUntil(
 		() => ArticlePageWithEditorOverlay.editor_overlay_element.isDisplayed() === false, 10000
 	);
 };
-const iTypeIntoTheEditor = ( text ) => {
-	ArticlePageWithEditorOverlay.editor_overlay_element.waitForExist();
-	ArticlePageWithEditorOverlay.editor_textarea_element.waitForExist();
-	ArticlePageWithEditorOverlay.editor_textarea_element.waitForDisplayed();
+const iTypeIntoTheEditor = async ( text ) => {
+	await ArticlePageWithEditorOverlay.editor_overlay_element.waitForExist();
+	await ArticlePageWithEditorOverlay.editor_textarea_element.waitForExist();
+	await ArticlePageWithEditorOverlay.editor_textarea_element.waitForDisplayed();
 	// Make sure the slow connection load basic button is gone (T348539)
-	browser.waitUntil(
-		() => ArticlePageWithEditorOverlay.editor_load_basic_element.isDisplayed() === false
+	await browser.waitUntil(
+		async () => await ArticlePageWithEditorOverlay.editor_load_basic_element.isDisplayed() === false
 	);
-	ArticlePageWithEditorOverlay.editor_textarea_element.addValue( text );
-	browser.waitUntil( () => !ArticlePageWithEditorOverlay
+	await ArticlePageWithEditorOverlay.editor_textarea_element.addValue( text );
+	await browser.waitUntil( () => !ArticlePageWithEditorOverlay
 		.continue_element.getAttribute( 'disabled' ) );
 };
-const iClickContinue = () => {
-	ArticlePageWithEditorOverlay.continue_element.waitForExist();
-	ArticlePageWithEditorOverlay.continue_element.click();
+const iClickContinue = async () => {
+	await ArticlePageWithEditorOverlay.continue_element.waitForExist();
+	await ArticlePageWithEditorOverlay.continue_element.click();
 };
-const iClickSubmit = () => {
-	ArticlePageWithEditorOverlay.submit_element.waitForExist();
-	ArticlePageWithEditorOverlay.submit_element.click();
+const iClickSubmit = async () => {
+	await ArticlePageWithEditorOverlay.submit_element.waitForExist();
+	await ArticlePageWithEditorOverlay.submit_element.click();
 };
-const iSayOkayInTheConfirmDialog = () => {
-	browser.waitUntil( () => {
+const iSayOkayInTheConfirmDialog = async () => {
+	await browser.waitUntil( () => {
 		try {
 			const text = browser.getAlertText();
 			return text && true;
@@ -50,27 +49,9 @@ const iSayOkayInTheConfirmDialog = () => {
 	}, 2000 );
 	browser.acceptAlert();
 };
-const theTextOfTheFirstHeadingShouldBe = async ( title ) => {
-	await ArticlePage.first_heading_element.waitForDisplayed();
-	title = mw.util.escapeRegExp( title );
-	assert.match(
-		await ArticlePage.first_heading_element.getText(),
-		// eslint-disable-next-line security/detect-non-literal-regexp
-		new RegExp( `.*${ title }$` )
-	);
-};
-const thereShouldBeARedLinkWithText = ( text ) => {
-	ArticlePage.red_link_element.waitForExist();
-	assert.strictEqual(
-		ArticlePage.red_link_element.getText(),
-		text
-	);
-};
 
 module.exports = {
 	iClickTheEditButton, iSeeTheWikitextEditorOverlay, iClearTheEditor,
-	thereShouldBeARedLinkWithText,
 	iDoNotSeeTheWikitextEditorOverlay,
-	iTypeIntoTheEditor, iClickContinue, iClickSubmit, iSayOkayInTheConfirmDialog,
-	theTextOfTheFirstHeadingShouldBe
+	iTypeIntoTheEditor, iClickContinue, iClickSubmit, iSayOkayInTheConfirmDialog
 };

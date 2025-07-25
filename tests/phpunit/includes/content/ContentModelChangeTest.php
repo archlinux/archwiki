@@ -4,6 +4,7 @@ use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\ContentModelChange;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
@@ -290,12 +291,13 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			$status = $change->$method();
 			$this->assertArrayEquals(
 				[
-					[ 'no edit new content model' ],
-					[ 'no edit old content model' ],
-					[ 'no edit at all old content model' ],
-					[ 'no edit at all new content model' ],
+					'permissionserrors', // addded by MockAuthorityTrait
+					'no edit new content model',
+					'no edit old content model',
+					'no edit at all old content model',
+					'no edit at all new content model',
 				],
-				$status->toLegacyErrorArray()
+				array_map( static fn ( $msg ) => $msg->getKey(), $status->getMessages() )
 			);
 		}
 	}

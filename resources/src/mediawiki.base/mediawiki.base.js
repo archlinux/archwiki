@@ -261,7 +261,7 @@ mw.inspect = function ( ...reports ) {
  * @return {string} Transformed format string
  */
 mw.internalDoTransformFormatForQqx = function ( formatString, parameters ) {
-	if ( formatString.indexOf( '$*' ) !== -1 ) {
+	if ( formatString.includes( '$*' ) ) {
 		let replacement = '';
 		if ( parameters.length ) {
 			replacement = ': ' + parameters.map( ( _, i ) => '$' + ( i + 1 ) ).join( ', ' );
@@ -379,10 +379,10 @@ let trackHandlers = [];
  *
  * @memberof mw
  * @param {string} topic Topic name
- * @param {Object|number|string} [data] Data describing the event.
+ * @param {...Object|number|string} [data] Data describing the event.
  */
-mw.track = function ( topic, data ) {
-	mw.trackQueue.push( { topic: topic, data: data } );
+mw.track = function ( topic, ...data ) {
+	mw.trackQueue.push( { topic, args: data } );
 	trackCallbacks.fire( mw.trackQueue );
 };
 
@@ -391,8 +391,7 @@ mw.track = function ( topic, data ) {
  *
  * Handlers will be called once for each tracked event, including for any buffered events that
  * fired before the handler was subscribed. The callback is passed a `topic` string, and optional
- * `data` event object. The `this` value for the callback is a plain object with `topic` and
- * `data` properties set to those same values.
+ * `data` argument(s).
  *
  * @example
  * // To monitor all topics for debugging
@@ -406,7 +405,7 @@ mw.track = function ( topic, data ) {
  * @param {string} topic Handle events whose name starts with this string prefix
  * @param {Function} callback Handler to call for each matching tracked event
  * @param {string} callback.topic
- * @param {Object} [callback.data]
+ * @param {...Object|number|string} [callback.data]
  */
 mw.trackSubscribe = function ( topic, callback ) {
 	let seen = 0;
@@ -414,7 +413,7 @@ mw.trackSubscribe = function ( topic, callback ) {
 		for ( ; seen < trackQueue.length; seen++ ) {
 			const event = trackQueue[ seen ];
 			if ( event.topic.indexOf( topic ) === 0 ) {
-				callback.call( event, event.topic, event.data );
+				callback( event.topic, ...event.args );
 			}
 		}
 	}
@@ -503,6 +502,7 @@ const hooks = Object.create( null );
 mw.hook = function ( name ) {
 	return hooks[ name ] || ( hooks[ name ] = ( function () {
 		let memory;
+		let deprecated;
 		const fns = [];
 		function rethrow( e ) {
 			setTimeout( () => {
@@ -524,6 +524,9 @@ mw.hook = function ( name ) {
 			 * @return {Hook}
 			 */
 			add: function () {
+				if ( deprecated ) {
+					deprecated();
+				}
 				for ( let i = 0; i < arguments.length; i++ ) {
 					fns.push( arguments[ i ] );
 					if ( memory ) {
@@ -553,6 +556,32 @@ mw.hook = function ( name ) {
 				return this;
 			},
 			/**
+			 * Enable a deprecation warning, logged after registering a hook handler.
+			 *
+			 * @example
+			 * mw.hook( 'myhook' ).deprecate().fire( data );
+			 *
+			 * @example
+			 * mw.hook( 'myhook' )
+			 *   .deprecate( 'Use the "someother" hook instead.' )
+			 *   .fire( data );
+			 *
+			 * NOTE: This must be called before calling fire(), as otherwise some
+			 * hook handlers may be registered and fired without being reported.
+			 *
+			 * @memberof Hook
+			 * @param {string} msg Optional extra text to add to the deprecation warning
+			 * @return {Hook}
+			 * @chainable
+			 */
+			deprecate: function ( msg ) {
+				deprecated = mw.log.makeDeprecated(
+					`hook_${ name }`,
+					`mw.hook "${ name }" is deprecated.` + ( msg ? ' ' + msg : '' )
+				);
+				return this;
+			},
+			/**
 			 * Call hook handlers with data.
 			 *
 			 * @memberof Hook
@@ -561,6 +590,10 @@ mw.hook = function ( name ) {
 			 * @chainable
 			 */
 			fire: function () {
+				if ( deprecated && fns.length ) {
+					deprecated();
+				}
+
 				for ( let i = 0; i < fns.length; i++ ) {
 					try {
 						fns[ i ].apply( null, arguments );
@@ -569,6 +602,7 @@ mw.hook = function ( name ) {
 					}
 				}
 				memory = slice.call( arguments );
+
 				return this;
 			}
 		};

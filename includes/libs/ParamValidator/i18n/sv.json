@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Lejonel",
 			"Sabelöga",
-			"WikiPhoenix",
-			"Lejonel"
+			"WikiPhoenix"
 		]
 	},
 	"paramvalidator-badbool": "\"$2\" är ett ogiltigt värde för booleska parametern \"$1\". Ange $3 för true eller $5 för false.",

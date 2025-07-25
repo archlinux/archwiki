@@ -30,9 +30,9 @@ use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use SkinFactory;
 
 /**
  * Special:Gadgets renders the data of MediaWiki:Gadgets-definition.
@@ -70,7 +70,7 @@ class SpecialGadgets extends SpecialPage {
 	public function execute( $par ) {
 		$parts = $par !== null ? explode( '/', $par ) : [];
 
-		if ( count( $parts ) === 2 && $parts[0] === 'export' ) {
+		if ( count( $parts ) >= 2 && $parts[0] === 'export' ) {
 			$this->showExportForm( $parts[1] );
 		} else {
 			$this->showMainForm();
@@ -241,6 +241,7 @@ class SpecialGadgets extends SpecialPage {
 					if ( $needLineBreakAfter ) {
 						$output->addHTML( '<br />' );
 					}
+					$output->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 					$output->addHTML( Html::errorBox(
 						$this->msg( 'gadgets-legacy' )->parse(),
 						'',
@@ -376,7 +377,16 @@ class SpecialGadgets extends SpecialPage {
 					);
 					$needLineBreakAfter = true;
 				}
+				// Show if hidden
+				if ( $gadget->isHidden() ) {
+					if ( $needLineBreakAfter ) {
+						$output->addHTML( '<br />' );
+					}
+					$output->addHTML( $this->msg( 'gadgets-hidden' )->parse() );
+					$needLineBreakAfter = true;
+				}
 
+				// Show if supports URL load
 				if ( $gadget->supportsUrlLoad() ) {
 					if ( $needLineBreakAfter ) {
 						$output->addHTML( '<br />' );
@@ -397,7 +407,8 @@ class SpecialGadgets extends SpecialPage {
 				// Show warnings
 				$warnings = $this->gadgetRepo->validationWarnings( $gadget );
 
-				if ( count( $warnings ) > 0 ) {
+				if ( $warnings ) {
+					$output->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 					$output->addHTML( Html::warningBox( implode( '<br/>', array_map( static function ( $msg ) {
 						return $msg->parse();
 					}, $warnings ) ) ) );

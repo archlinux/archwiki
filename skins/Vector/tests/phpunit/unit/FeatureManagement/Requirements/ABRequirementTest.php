@@ -43,7 +43,7 @@ class ABRequirementTest extends TestCase {
 	/**
 	 * Provides different scenarios for AB test enrollment.
 	 */
-	public function enrollmentProvider(): array {
+	public static function enrollmentProvider(): array {
 		return [
 			'Experiment Disabled' => [
 				[ 'enabled' => false, 'name' => 'mockExperiment' ],

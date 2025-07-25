@@ -22,14 +22,14 @@
 			"Tranve",
 			"VulpesVulpes825",
 			"WQL",
+			"WaitSpring",
 			"WhitePhosphorus",
 			"Xiaomingyan",
 			"Yfdyh000",
 			"ZhuofanWu",
 			"佛壁灯",
 			"科劳",
-			"铁桶",
-			"WaitSpring"
+			"铁桶"
 		]
 	},
 	"oathauth-desc": "提供“基于HMAC的一次性密码”的身份验证支持",
@@ -95,7 +95,6 @@
 	"log-action-filter-oath-verify": "检查是否启用双重验证",
 	"log-action-filter-oath-disable-other": "禁用另一名用户的双重身份验证",
 	"oathauth-ui-no-module": "没有启用",
-	"oathauth-module-invalid": "用户已注册的OATHAuth模块无效。",
 	"oathauth-module-totp-label": "TOTP（基于时间的一次性密码）",
 	"oathauth-ui-manage": "管理",
 	"oathmanage": "管理双重身份验证",
@@ -114,9 +113,6 @@
 	"oathauth-disable-method-warning-button-label": "确认并继续",
 	"oathauth-disable-method-warning": "如果您禁用了$1的两步验证方法，您将无法再次在登录时使用该方法进行两步验证，且所有与之相关的数据均会被清除。",
 	"oathauth-disable-method-next-step": "在下一步中，您将需要使用当前的双因素身份验证方法（$1）完成身份验证，才能禁用它。",
-	"oathauth-switch-method-warning-header": "确认切换到另一种身份验证方法",
-	"oathauth-switch-method-warning": "切换到$2双重身份验证方法后，目前的方法（$1）将被停用，且与当前身份验证方法关联的所有数据将被删除",
-	"oathauth-switch-method-next-step": "在下一步中，您将需要使用当前的双因素身份验证方法（$1）完成身份验证，才能切换到$2。",
 	"oathauth-totp-disable-warning": "您将无法再次使用和此账号关联的设备进行认证。所有与该账号关联的恢复代码均会失效。",
 	"oathauth-invalidrequest": "无效请求",
 	"notification-header-oathauth-disable": "{{GENDER:$2|您的账户}}已禁用双重身份验证。",
@@ -139,5 +135,6 @@
 	"oathauth-prefs-disabledgroups": "已禁用{{PLURAL:$1|用户组}}：",
 	"oathauth-prefs-disabledgroups-help": "在您启用[[Special:Manage Two-factor authentication|双重身份验证]]之前，{{GENDER:$2|您}}于{{PLURAL:$1|此用户组|这些用户组}}的成员资格会处于禁用状态。",
 	"oathauth-qrcode-alt": "代表密钥的可扫描二维码。",
-	"oathauth-hint": "无法访问您的设备或应用？您可以在此字段中输入恢复代码（启用2FA时显示）。"
+	"oathauth-hint": "无法访问您的设备或应用？您可以在此字段中输入恢复代码（启用2FA时显示）。",
+	"oathauth-must-be-central": "{{GENDER:$1|您的账号}}必须链接到中央身份验证系统，才能使用双重身份验证。"
 }

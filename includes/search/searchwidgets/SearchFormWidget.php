@@ -11,7 +11,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Specials\SpecialSearch;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Widget\SearchInputWidget;
-use MediaWiki\Xml\Xml;
 use OOUI\ActionFieldLayout;
 use OOUI\ButtonInputWidget;
 use OOUI\CheckboxInputWidget;
@@ -23,31 +22,16 @@ class SearchFormWidget {
 	public const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::CapitalLinks,
 	];
-	private ServiceOptions $options;
-	/** @var SpecialSearch */
-	protected $specialSearch;
-	/** @var SearchEngineConfig */
-	protected $searchConfig;
-	/** @var array */
-	protected $profiles;
-	/** @var HookContainer */
-	private $hookContainer;
-	/** @var HookRunner */
-	private $hookRunner;
-	/** @var ILanguageConverter */
-	private $languageConverter;
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param SpecialSearch $specialSearch
-	 * @param SearchEngineConfig $searchConfig
-	 * @param HookContainer $hookContainer
-	 * @param ILanguageConverter $languageConverter
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param array $profiles
-	 */
+	private ServiceOptions $options;
+	protected SpecialSearch $specialSearch;
+	protected SearchEngineConfig $searchConfig;
+	private HookContainer $hookContainer;
+	private HookRunner $hookRunner;
+	private ILanguageConverter $languageConverter;
+	private NamespaceInfo $namespaceInfo;
+	protected array $profiles;
+
 	public function __construct(
 		ServiceOptions $options,
 		SpecialSearch $specialSearch,
@@ -73,6 +57,7 @@ class SearchFormWidget {
 	 * @param string $term The current search term
 	 * @param int $numResults The number of results shown
 	 * @param int $totalResults The total estimated results found
+	 * @param bool $approximateTotalResults Whether $totalResults is approximate or not
 	 * @param int $offset Current offset in search results
 	 * @param bool $isPowerSearch Is the 'advanced' section open?
 	 * @param array $options Widget options
@@ -83,13 +68,14 @@ class SearchFormWidget {
 		$term,
 		$numResults,
 		$totalResults,
+		$approximateTotalResults,
 		$offset,
 		$isPowerSearch,
 		array $options = []
 	) {
 		$user = $this->specialSearch->getUser();
 
-		$form = Xml::openElement(
+		$form = Html::openElement(
 				'form',
 				[
 					'id' => $isPowerSearch ? 'powersearch' : 'search',
@@ -101,7 +87,8 @@ class SearchFormWidget {
 				Html::rawElement(
 					'div',
 					[ 'id' => 'mw-search-top-table' ],
-					$this->shortDialogHtml( $profile, $term, $numResults, $totalResults, $offset, $options )
+					$this->shortDialogHtml( $profile, $term, $numResults, $totalResults,
+						$approximateTotalResults, $offset, $options )
 				) .
 				Html::rawElement( 'div', [ 'class' => 'mw-search-visualclear' ] ) .
 				Html::rawElement(
@@ -111,7 +98,7 @@ class SearchFormWidget {
 						Html::rawElement( 'div', [ 'style' => 'clear:both' ] )
 				) .
 				$this->optionsHtml( $term, $isPowerSearch, $profile ) .
-			Xml::closeElement( 'form' );
+			Html::closeElement( 'form' );
 
 		return Html::rawElement( 'div', [ 'class' => 'mw-search-form-wrapper' ], $form );
 	}
@@ -121,6 +108,7 @@ class SearchFormWidget {
 	 * @param string $term The current search term
 	 * @param int $numResults The number of results shown
 	 * @param int $totalResults The total estimated results found
+	 * @param bool $approximateTotalResults Whether $totalResults is approximate or not
 	 * @param int $offset Current offset in search results
 	 * @param array $options Widget options
 	 * @return string HTML
@@ -130,6 +118,7 @@ class SearchFormWidget {
 		$term,
 		$numResults,
 		$totalResults,
+		$approximateTotalResults,
 		$offset,
 		array $options = []
 	) {
@@ -159,14 +148,16 @@ class SearchFormWidget {
 		}
 
 		if ( $totalResults > 0 && $offset < $totalResults ) {
-			$html .= Xml::tags(
+			$html .= Html::rawElement(
 				'div',
 				[
 					'class' => 'results-info',
 					'data-mw-num-results-offset' => $offset,
-					'data-mw-num-results-total' => $totalResults
+					'data-mw-num-results-total' => $totalResults,
+					'data-mw-num-results-approximate-total' => $approximateTotalResults ? "true" : "false"
 				],
-				$this->specialSearch->msg( 'search-showingresults' )
+				$this->specialSearch
+					->msg( $approximateTotalResults ? 'search-showingresults-approximate' : 'search-showingresults' )
 					->numParams( $offset + 1, $offset + $numResults, $totalResults )
 					->numParams( $numResults )
 					->parse()
@@ -199,7 +190,7 @@ class SearchFormWidget {
 			$tooltipParam = isset( $profileConfig['namespace-messages'] )
 				? $lang->commaList( $profileConfig['namespace-messages'] )
 				: null;
-			$items[] = Xml::tags(
+			$items[] = Html::rawElement(
 				'li',
 				[ 'class' => $profile === $id ? 'current' : 'normal' ],
 				$this->makeSearchLink(
@@ -245,7 +236,7 @@ class SearchFormWidget {
 			'fulltext' => 1,
 		];
 
-		return Xml::element(
+		return Html::element(
 			'a',
 			[
 				'href' => $this->specialSearch->getPageTitle()->getLocalURL( $params ),
@@ -407,13 +398,8 @@ class SearchFormWidget {
 			$rows[$subject] .= $this->createNamespaceCheckbox( $namespace, $activeNamespaces );
 		}
 
-		$namespaceTables = [];
-		foreach ( array_chunk( $rows, 4 ) as $chunk ) {
-			$namespaceTables[] = implode( '', $chunk );
-		}
-
-		return '<div class="checkbox-container">' .
-			implode( '</div><div class="checkbox-container">', $namespaceTables ) . '</div>';
+		return '<div class="checkbox-wrapper"><div>' .
+			implode( '</div><div>', $rows ) . '</div></div>';
 	}
 
 	private function createHiddenOptsHtml( array $opts ): string {

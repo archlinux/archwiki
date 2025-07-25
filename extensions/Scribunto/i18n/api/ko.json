@@ -3,8 +3,8 @@
 		"authors": [
 			"Kwj2772",
 			"Markingdots",
-			"Ykhwong",
-			"Suleiman the Magnificent Television"
+			"Suleiman the Magnificent Television",
+			"Ykhwong"
 		]
 	},
 	"apihelp-scribunto-console-summary": "Scribunto 콘솔에서 XHR 요청을 서비스하기 위한 내부 모듈입니다.",

@@ -37,19 +37,12 @@ class CategoryPager extends AlphabeticPager {
 
 	private LinkBatchFactory $linkBatchFactory;
 
-	/**
-	 * @param IContextSource $context
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param LinkRenderer $linkRenderer
-	 * @param IConnectionProvider $dbProvider
-	 * @param string $from
-	 */
 	public function __construct(
 		IContextSource $context,
 		LinkBatchFactory $linkBatchFactory,
 		LinkRenderer $linkRenderer,
 		IConnectionProvider $dbProvider,
-		$from
+		string $from
 	) {
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();

@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Lisyeng",
 			"Makuba",
 			"OIS",
 			"RWMuc",
 			"Renan",
 			"Stavanger7",
-			"Valodnieks",
-			"Lisyeng"
+			"Valodnieks"
 		]
 	},
 	"preferences": "Preferenties",
@@ -43,7 +43,7 @@
 	"youremail": "Adresse postal electronic:",
 	"prefs-help-email": "Adresse de e-mail es optional, ma es necessitá por recomensar parol-clave, deve vu obliviar tui parol-clave.",
 	"prefs-help-email-others": "Vu posse anc optar por permisser altri contacter vu per e-mail complet che un catenun in tui págine de usator o págine de discussion.\nTui adresse de e-mail ne es revelat quande altri usatores contacter vu.",
-	"tog-requireemail": "Inviar missages electronic de redefinition de parol-passe solmen quande li adresse postal electronic e li nómine de usator es providet.",
+	"tog-requireemail": "Inviar missages electronic de redefinition de parol-passe solmen quande li adresse postal electronic e li nómine de usator es providet",
 	"emailconfirmlink": "Confirma tui adresse postal electronic",
 	"tog-ccmeonemails": "Inviar me copies de e-mailes que yo invia por altri usatores",
 	"tog-enotifwatchlistpages": "Inviar me un e-mail quande un págine o dossiere de mi liste de págines vigilantie es changeat",

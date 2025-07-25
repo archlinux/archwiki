@@ -5,13 +5,13 @@
 			"Teitei Para"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit]]",
+	"tag-visualeditor": "Visual edit",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|mona taopathina]] he hmâna chôta taopathina tao teh",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Mona taopathina: Pazâh]]",
+	"tag-visualeditor-needcheck": "Mona taopathina: Pazâh",
 	"tag-visualeditor-needcheck-description": "Achhuah leipa wikichâ pathlainazy a y theipazy dâh ta a patupa [[{{MediaWiki:visualeditor-descriptionpagelink}}|mona taopathi0]] he hmâna chôta taopathina tao teh.",
 	"tag-visualeditor-wikitext": "2017 hnawh taopathina",
 	"tag-visualeditor-wikitext-description": "2017 wikichâ hmâna chôta taopathina tao teh",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Mona taopathina: Pathlai haw]]",
+	"tag-visualeditor-switched": "Mona taopathina: Pathlai haw",
 	"tag-visualeditor-switched-description": "Hmâhtuhpa cha mona taopathina hmâna chôta taopathi'pa ta a pathao, khaitawh wikichâ taopathina lâ a pathlai.",
 	"visualeditor-feedback-link": "Prawche; MonaTaopathina/Khokheina",
 	"visualeditor-feedback-tool": "He software nah azaopa na pachâna so teh",

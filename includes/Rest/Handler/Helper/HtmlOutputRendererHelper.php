@@ -19,13 +19,14 @@
  */
 namespace MediaWiki\Rest\Handler\Helper;
 
-use HttpError;
 use InvalidArgumentException;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SelserContext;
+use MediaWiki\Exception\HttpError;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Logger\LoggerFactory;
@@ -52,7 +53,6 @@ use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MWUnknownContentModelException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
@@ -63,7 +63,6 @@ use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Parsoid;
-use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
@@ -139,6 +138,8 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 */
 	private $parsoidOptions = [];
 
+	private ?ParserOptions $parserOptions = null;
+
 	/**
 	 * Whether the result can be cached in the parser cache and the web cache.
 	 * Set to false when bespoke options are set.
@@ -177,6 +178,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 *    $page and the page that $revision belongs to? Usually happens
 	 *    because of page moves. This should be set to true only for
 	 *    internal API calls.
+	 * @param ParserOptions|null $parserOptions
 	 * @note Since 1.43, setting $page and $authority arguments to null
 	 *    has been deprecated.
 	 */
@@ -195,7 +197,8 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		array $parameters = [],
 		?Authority $authority = null,
 		$revision = null,
-		bool $lenientRevHandling = false
+		bool $lenientRevHandling = false,
+		?ParserOptions $parserOptions = null
 	) {
 		$this->parsoidOutputStash = $parsoidOutputStash;
 		$this->statsFactory = $statsFactory;
@@ -208,6 +211,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->languageFactory = $languageFactory;
 		$this->lenientRevHandling = $lenientRevHandling;
+		$this->parserOptions = $parserOptions;
 		if ( $page === null || $authority === null ) {
 			// Constructing without $page and $authority parameters
 			// is deprecated since 1.43.
@@ -412,6 +416,12 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		$this->initInternal( $page, $parameters, $authority, $revision );
 	}
 
+	/**
+	 * @param PageIdentity $page
+	 * @param array $parameters
+	 * @param Authority $authority
+	 * @param int|RevisionRecord|null $revision
+	 */
 	private function initInternal(
 		PageIdentity $page,
 		array $parameters,
@@ -431,6 +441,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		} else {
 			$this->setFlavor( $parameters['flavor'] ?? 'view' );
 		}
+		$this->parserOptions ??= ParserOptions::newFromAnon();
 	}
 
 	/**
@@ -521,10 +532,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			$pb = $this->getPageBundle();
 
 			// Inject data-parsoid and data-mw attributes.
-			// XXX: Would be nice if we had a DOM handy.
-			$doc = DOMUtils::parseHTML( $parserOutput->getRawText() );
-			PageBundle::apply( $doc, $pb );
-			$parserOutput->setRawText( ContentUtils::toXML( $doc ) );
+			$parserOutput->setRawText( $pb->toInlineAttributeHtml() );
 		}
 
 		// Check if variant conversion has to be performed
@@ -563,10 +571,44 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		return "\"{$eTag}\"";
 	}
 
+	private function isLatest(): bool {
+		$revId = $this->getRevisionId();
+
+		if ( $revId === null ) {
+			return false; // un-saved revision
+		}
+
+		if ( $revId === 0 ) {
+			return true; // latest revision
+		}
+
+		$page = $this->getPageRecord();
+
+		if ( !$page ) {
+			return false; // page doesn't exist. shouldn't happen.
+		}
+
+		return $revId === $page->getLatest();
+	}
+
 	/**
 	 * @inheritDoc
 	 */
 	public function getLastModified(): ?string {
+		if ( $this->isLatest() ) {
+			$page = $this->getPageRecord();
+
+			// $page should never be null here.
+			// If it's null, getParserOutput() will fail nicely below.
+			if ( $page ) {
+				// Using the touch timestamp for this purpose is in line with
+				// the behavior of ViewAction::show(). However,
+				// OutputPage::checkLastModified() applies a lot of additional
+				// limitations.
+				return $page->getTouched();
+			}
+		}
+
 		return $this->getParserOutput()->getCacheTime();
 	}
 
@@ -580,53 +622,51 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 				ParamValidator::PARAM_TYPE => 'boolean',
 				ParamValidator::PARAM_DEFAULT => false,
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-output-stash' )
 			],
 			'flavor' => [
 				Handler::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => self::OUTPUT_FLAVORS,
 				ParamValidator::PARAM_DEFAULT => 'view',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-html-output-flavor' )
 			],
 		];
 	}
 
-	private function getDefaultPageLanguage( ParserOptions $options ): Bcp47Code {
+	private function getDefaultPageLanguage(): Bcp47Code {
 		// NOTE: keep in sync with Parser::getTargetLanguage!
 
 		// XXX: Inject a TitleFactory just for this?! We need a better way to determine the page language...
 		$title = Title::castFromPageIdentity( $this->page );
 
-		if ( $options->getInterfaceMessage() ) {
-			return $options->getUserLangObj();
+		if ( $this->parserOptions->getInterfaceMessage() ) {
+			return $this->parserOptions->getUserLangObj();
 		}
 
 		return $title->getPageLanguage();
 	}
 
-	/**
-	 * @return ParserOutput
-	 */
 	private function getParserOutput(): ParserOutput {
 		if ( !$this->parserOutput ) {
-			$parserOptions = ParserOptions::newFromAnon();
-			$parserOptions->setRenderReason( __METHOD__ );
+			$this->parserOptions->setRenderReason( __METHOD__ );
 
-			$defaultLanguage = $this->getDefaultPageLanguage( $parserOptions );
+			$defaultLanguage = $this->getDefaultPageLanguage();
 
 			if ( $this->pageLanguage
 				&& $this->pageLanguage->toBcp47Code() !== $defaultLanguage->toBcp47Code()
 			) {
 				$languageObj = $this->languageFactory->getLanguage( $this->pageLanguage );
-				$parserOptions->setTargetLanguage( $languageObj );
+				$this->parserOptions->setTargetLanguage( $languageObj );
 				// Ensure target language splits the parser cache, when
 				// non-default; targetLangauge is not in
 				// ParserOptions::$cacheVaryingOptionsHash for the legacy
 				// parser.
-				$parserOptions->addExtraKey( 'target=' . $languageObj->getCode() );
+				$this->parserOptions->addExtraKey( 'target=' . $languageObj->getCode() );
 			}
 
 			try {
-				$status = $this->getParserOutputInternal( $parserOptions );
+				$status = $this->getParserOutputInternal();
 			} catch ( RevisionAccessException $e ) {
 				throw new LocalizedHttpException(
 					MessageValue::new( 'rest-nonexistent-title' ),
@@ -717,8 +757,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 
 	/**
 	 * Returns the rendered HTML as a PageBundle object.
-	 *
-	 * @return PageBundle
 	 */
 	public function getPageBundle(): PageBundle {
 		// XXX: converting between PageBundle and ParserOutput is inefficient!
@@ -747,8 +785,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 *
 	 * This wil return null if RevisionRecord has been set but that RevisionRecord
 	 * does not have a revision ID, e.g. when rendering a preview.
-	 *
-	 * @return ?int
 	 */
 	public function getRevisionId(): ?int {
 		if ( !$this->revisionOrId ) {
@@ -756,7 +792,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			return 0;
 		}
 
-		if ( is_object( $this->revisionOrId ) ) {
+		if ( $this->revisionOrId instanceof RevisionRecord ) {
 			// NOTE: return null even if getId() gave us 0
 			return $this->revisionOrId->getId() ?: null;
 		}
@@ -771,8 +807,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 * TODO: Should we move this to Parsoid's ContentUtils class?
 	 * There already is a stripUnnecessaryWrappersAndSyntheticNodes but
 	 * it targets html2wt and does a lot more than just section unwrapping.
-	 *
-	 * @param Element $elt
 	 */
 	private function stripParsoidSectionTags( Element $elt ): void {
 		$n = $elt->firstChild;
@@ -795,11 +829,28 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	}
 
 	/**
-	 * @param ParserOptions $parserOptions
+	 * Returns the page record, or null if no page is known or the page does not exist.
 	 *
-	 * @return Status
+	 * @return PageRecord|null
 	 */
-	private function getParserOutputInternal( ParserOptions $parserOptions ): Status {
+	private function getPageRecord(): ?PageRecord {
+		if ( $this->page === null ) {
+			return null;
+		}
+
+		if ( !$this->page instanceof PageRecord ) {
+			$page = $this->pageLookup->getPageByReference( $this->page );
+			if ( !$page ) {
+				return null;
+			}
+
+			$this->page = $page;
+		}
+
+		return $this->page;
+	}
+
+	private function getParserOutputInternal(): Status {
 		// NOTE: ParserOutputAccess::getParserOutput() should be used for revisions
 		//       that come from the database. Either this revision is null to indicate
 		//       the current revision or the revision must have an ID.
@@ -817,29 +868,28 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		// either directly or through ParserOutputAccess.
 
 		$flags = $this->parserOutputAccessOptions;
-		// Resolve revision
-		$page = $this->page;
+
+		// Find page
+		$pageRecord = $this->getPageRecord();
 		$revision = $this->revisionOrId;
-		if ( $page === null ) {
-			throw new RevisionAccessException( "No page" );
-		}
+
 		// NOTE: If we have a RevisionRecord already and this is
 		//       not cacheable, just use it, there is no need to
 		//       resolve $page to a PageRecord (and it may not be
 		//       possible if the page doesn't exist).
-		if ( $this->isCacheable || !$revision instanceof RevisionRecord ) {
-			if ( !$page instanceof PageRecord ) {
-				$name = "$page";
-				$page = $this->pageLookup->getPageByReference( $page );
-				if ( !$page ) {
+		if ( $this->isCacheable ) {
+			if ( !$pageRecord ) {
+				if ( $this->page ) {
 					throw new RevisionAccessException(
 						'Page {name} not found',
-						[ 'name' => $name ]
+						[ 'name' => "{$this->page}" ]
 					);
+				} else {
+					throw new RevisionAccessException( "No page" );
 				}
 			}
 
-			$revision ??= $page->getLatest();
+			$revision ??= $pageRecord->getLatest();
 
 			if ( is_int( $revision ) ) {
 				$revId = $revision;
@@ -853,10 +903,10 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 				}
 			}
 
-			if ( $page->getId() !== $revision->getPageId() ) {
+			if ( $pageRecord->getId() !== $revision->getPageId() ) {
 				if ( $this->lenientRevHandling ) {
-					$page = $this->pageLookup->getPageById( $revision->getPageId() );
-					if ( !$page ) {
+					$pageRecord = $this->pageLookup->getPageById( $revision->getPageId() );
+					if ( !$pageRecord ) {
 						// This should ideally never trigger!
 						throw new \RuntimeException(
 							"Unexpected NULL page for pageid " . $revision->getPageId() .
@@ -868,24 +918,23 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 				} else {
 					throw new RevisionAccessException(
 						'Revision {revId} does not belong to page {name}',
-						[ 'name' => $page->getDBkey(), 'revId' => $revision->getId() ]
+						[ 'name' => $pageRecord->getDBkey(), 'revId' => $revision->getId() ]
 					);
 				}
 			}
 		}
 
-		$mainSlot = $revision->getSlot( SlotRecord::MAIN );
-		$contentModel = $mainSlot->getModel();
+		$contentModel = $revision->getMainContentModel();
 		if ( $this->parsoidSiteConfig->supportsContentModel( $contentModel ) ) {
-			$parserOptions->setUseParsoid();
+			$this->parserOptions->setUseParsoid();
 		}
 		if ( $this->isCacheable ) {
 			// phan can't tell that we must have used the block above to
-			// resolve $page to a PageRecord if we've made it to this block.
-			'@phan-var PageRecord $page';
+			// resolve $pageRecord to a PageRecord if we've made it to this block.
+			'@phan-var PageRecord $pageRecord';
 			try {
 				$status = $this->parserOutputAccess->getParserOutput(
-					$page, $parserOptions, $revision, $flags
+					$pageRecord, $this->parserOptions, $revision, $flags
 				);
 			} catch ( ClientError $e ) {
 				$status = Status::newFatal( 'parsoid-client-error', $e->getMessage() );
@@ -894,9 +943,9 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			}
 			Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		} else {
+			'@phan-var RevisionRecord $revision';
 			$status = $this->parseUncacheable(
-				$page,
-				$parserOptions,
+				$this->page,
 				$revision,
 				$this->lenientRevHandling
 			);
@@ -923,7 +972,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	// bypasses any caching.
 	private function parseUncacheable(
 		PageIdentity $page,
-		ParserOptions $parserOptions,
 		RevisionRecord $revision,
 		bool $lenientRevHandling = false
 	): Status {
@@ -936,7 +984,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		try {
 			$renderedRev = $this->revisionRenderer->getRenderedRevision(
 				$revision,
-				$parserOptions,
+				$this->parserOptions,
 				// ParserOutputAccess uses 'null' for the authority and
 				// 'audience' => RevisionRecord::RAW, presumably because
 				// the access checks are already handled by the
@@ -957,4 +1005,11 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			return Status::newFatal( 'parsoid-resource-limit-exceeded', $e->getMessage() );
 		}
 	}
+
+	public function isParsoidContent(): bool {
+		return PageBundleParserOutputConverter::hasPageBundle(
+			$this->getParserOutput()
+		);
+	}
+
 }

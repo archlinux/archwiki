@@ -20,22 +20,23 @@
 
 namespace MediaWiki\Specials;
 
-use LogEventsList;
 use MediaWiki\Block\Block;
-use MediaWiki\Block\BlockUtils;
+use MediaWiki\Block\BlockTarget;
+use MediaWiki\Block\BlockTargetFactory;
+use MediaWiki\Block\BlockTargetWithUserPage;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\UnblockUserFactory;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
-use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Watchlist\WatchlistManager;
-use Wikimedia\IPUtils;
 
 /**
  * A special page for unblocking users
@@ -44,33 +45,24 @@ use Wikimedia\IPUtils;
  */
 class SpecialUnblock extends SpecialPage {
 
-	/** @var UserIdentity|string|null */
+	/** @var BlockTarget|null */
 	protected $target;
-
-	/** @var int|null Block::TYPE_ constant */
-	protected $type;
 
 	/** @var DatabaseBlock|null */
 	protected $block;
 
 	private UnblockUserFactory $unblockUserFactory;
-	private BlockUtils $blockUtils;
+	private BlockTargetFactory $blockTargetFactory;
 	private DatabaseBlockStore $blockStore;
 	private UserNameUtils $userNameUtils;
 	private UserNamePrefixSearch $userNamePrefixSearch;
 	private WatchlistManager $watchlistManager;
 
-	/**
-	 * @param UnblockUserFactory $unblockUserFactory
-	 * @param BlockUtils $blockUtils
-	 * @param DatabaseBlockStore $blockStore
-	 * @param UserNameUtils $userNameUtils
-	 * @param UserNamePrefixSearch $userNamePrefixSearch
-	 * @param WatchlistManager $watchlistManager
-	 */
+	protected bool $useCodex = false;
+
 	public function __construct(
 		UnblockUserFactory $unblockUserFactory,
-		BlockUtils $blockUtils,
+		BlockTargetFactory $blockTargetFactory,
 		DatabaseBlockStore $blockStore,
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
@@ -78,11 +70,13 @@ class SpecialUnblock extends SpecialPage {
 	) {
 		parent::__construct( 'Unblock', 'block' );
 		$this->unblockUserFactory = $unblockUserFactory;
-		$this->blockUtils = $blockUtils;
+		$this->blockTargetFactory = $blockTargetFactory;
 		$this->blockStore = $blockStore;
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
 		$this->watchlistManager = $watchlistManager;
+		$this->useCodex = $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ||
+			$this->getRequest()->getBool( 'usecodex' );
 	}
 
 	public function doesWrites() {
@@ -93,12 +87,26 @@ class SpecialUnblock extends SpecialPage {
 		$this->checkPermissions();
 		$this->checkReadOnly();
 
-		[ $this->target, $this->type ] = $this->getTargetAndType( $par, $this->getRequest() );
+		$this->target = $this->getTargetFromRequest( $par, $this->getRequest() );
+
+		// T382539
+		if ( $this->useCodex ) {
+			// If target is null, redirect to Special:Block
+			if ( $this->target === null ) {
+				// Use 301 (Moved Permanently) as this is a deprecation
+				$this->getOutput()->redirect(
+					SpecialPage::getTitleFor( 'Block' )->getFullURL( 'redirected=1' ),
+					'301'
+				);
+				return;
+			}
+		}
+
 		$this->block = $this->blockStore->newFromTarget( $this->target );
-		if ( $this->target instanceof UserIdentity ) {
+		if ( $this->target instanceof BlockTargetWithUserPage ) {
 			// Set the 'relevant user' in the skin, so it displays links like Contributions,
 			// User logs, UserRights, etc.
-			$this->getSkin()->setRelevantUser( $this->target );
+			$this->getSkin()->setRelevantUser( $this->target->getUserIdentity() );
 		}
 
 		$this->setHeaders();
@@ -106,33 +114,37 @@ class SpecialUnblock extends SpecialPage {
 		$this->addHelpLink( 'Help:Blocking users' );
 
 		$out = $this->getOutput();
-		$out->setPageTitleMsg( $this->msg( 'unblockip' ) );
+		$out->setPageTitleMsg( $this->msg( 'unblock-target' ) );
 		$out->addModules( [ 'mediawiki.userSuggest', 'mediawiki.special.block' ] );
 
 		$form = HTMLForm::factory( 'ooui', $this->getFields(), $this->getContext() )
-			->setWrapperLegendMsg( 'unblockip' )
+			->setWrapperLegendMsg( 'unblock-target' )
 			->setSubmitCallback( function ( array $data, HTMLForm $form ) {
-				if ( $this->type != Block::TYPE_RANGE
-					&& $this->type != Block::TYPE_AUTO
-					&& $data['Watch']
-				) {
+				if ( $this->target instanceof BlockTargetWithUserPage && $data['Watch'] ) {
 					$this->watchlistManager->addWatchIgnoringRights(
 						$form->getUser(),
-						Title::makeTitle( NS_USER, $this->target )
+						Title::newFromPageReference( $this->target->getUserPage() )
 					);
 				}
-				return $this->unblockUserFactory->newUnblockUser(
-					$data['Target'],
+				$status = $this->unblockUserFactory->newUnblockUser(
+					$this->target,
 					$form->getContext()->getAuthority(),
 					$data['Reason'],
 					$data['Tags'] ?? []
 				)->unblock();
+
+				if ( $status->hasMessage( 'ipb_cant_unblock_multiple_blocks' ) ) {
+					// Add additional message sending users to [[Special:Block/Username]]
+					$status->error( 'unblock-error-multiblocks', $this->target );
+				}
+				return $status;
 			} )
 			->setSubmitTextMsg( 'ipusubmit' )
 			->addPreHtml( $this->msg( 'unblockiptext' )->parseAsBlock() );
 
-		$userPage = $this->getTargetUserTitle( $this->target );
-		if ( $userPage ) {
+		if ( $this->target ) {
+			$userPage = $this->target->getLogPage();
+			$targetName = (string)$this->target;
 			// Get relevant extracts from the block and suppression logs, if possible
 			$logExtract = '';
 			LogEventsList::showLogExtract(
@@ -144,7 +156,7 @@ class SpecialUnblock extends SpecialPage {
 					'lim' => 10,
 					'msgKey' => [
 						'unblocklog-showlog',
-						$userPage->getText(),
+						$targetName,
 					],
 					'showIfEmpty' => false
 				]
@@ -166,7 +178,7 @@ class SpecialUnblock extends SpecialPage {
 						'conds' => [ 'log_action' => [ 'block', 'reblock', 'unblock' ] ],
 						'msgKey' => [
 							'unblocklog-showsuppresslog',
-							$userPage->getText(),
+							$targetName,
 						],
 						'showIfEmpty' => false
 					]
@@ -178,21 +190,16 @@ class SpecialUnblock extends SpecialPage {
 		}
 
 		if ( $form->show() ) {
-			switch ( $this->type ) {
-				case Block::TYPE_IP:
-					$out->addWikiMsg( 'unblocked-ip', wfEscapeWikiText( $this->target ) );
-					break;
-				case Block::TYPE_USER:
-					$out->addWikiMsg( 'unblocked', wfEscapeWikiText( $this->target ) );
-					break;
-				case Block::TYPE_RANGE:
-					$out->addWikiMsg( 'unblocked-range', wfEscapeWikiText( $this->target ) );
-					break;
-				case Block::TYPE_ID:
-				case Block::TYPE_AUTO:
-					$out->addWikiMsg( 'unblocked-id', wfEscapeWikiText( $this->target ) );
-					break;
-			}
+			$msgsByType = [
+				Block::TYPE_IP => 'unblocked-ip',
+				Block::TYPE_USER => 'unblocked',
+				Block::TYPE_RANGE => 'unblocked-range',
+				Block::TYPE_AUTO => 'unblocked-id'
+			];
+			$out->addWikiMsg(
+				$msgsByType[$this->target->getType()],
+				wfEscapeWikiText( (string)$this->target )
+			);
 		}
 	}
 
@@ -203,10 +210,9 @@ class SpecialUnblock extends SpecialPage {
 	 *
 	 * @param string|null $par Subpage parameter
 	 * @param WebRequest $request
-	 * @return array [ UserIdentity|string|null, DatabaseBlock::TYPE_ constant|null ]
-	 * @phan-return array{0:UserIdentity|string|null,1:int|null}
+	 * @return BlockTarget|null
 	 */
-	private function getTargetAndType( ?string $par, WebRequest $request ) {
+	private function getTargetFromRequest( ?string $par, WebRequest $request ) {
 		$possibleTargets = [
 			$request->getVal( 'wpTarget', null ),
 			$par,
@@ -215,38 +221,20 @@ class SpecialUnblock extends SpecialPage {
 			$request->getVal( 'wpBlockAddress', null ),
 		];
 		foreach ( $possibleTargets as $possibleTarget ) {
-			$targetAndType = $this->blockUtils->parseBlockTarget( $possibleTarget );
+			$target = $this->blockTargetFactory->newFromString( $possibleTarget );
 			// If type is not null then target is valid
-			if ( $targetAndType[ 1 ] !== null ) {
+			if ( $target ) {
 				break;
 			}
 		}
-		return $targetAndType;
-	}
-
-	/**
-	 * Get a user page target for things like logs.
-	 * This handles account and IP range targets.
-	 * @param UserIdentity|string|null $target
-	 * @return Title|null
-	 */
-	private function getTargetUserTitle( $target ): ?Title {
-		if ( $target instanceof UserIdentity ) {
-			return Title::makeTitle( NS_USER, $target->getName() );
-		}
-
-		if ( is_string( $target ) && IPUtils::isIPAddress( $target ) ) {
-			return Title::makeTitle( NS_USER, $target );
-		}
-
-		return null;
+		return $target;
 	}
 
 	protected function getFields() {
 		$fields = [
 			'Target' => [
 				'type' => 'text',
-				'label-message' => 'ipaddressorusername',
+				'label-message' => 'unblock-target-label',
 				'autofocus' => true,
 				'size' => '45',
 				'required' => true,
@@ -254,7 +242,7 @@ class SpecialUnblock extends SpecialPage {
 			],
 			'Name' => [
 				'type' => 'info',
-				'label-message' => 'ipaddressorusername',
+				'label-message' => 'unblock-target-label',
 			],
 			'Reason' => [
 				'type' => 'text',
@@ -270,8 +258,8 @@ class SpecialUnblock extends SpecialPage {
 			// User:Foo, and we've just got any block, auto or not, that applies to a target
 			// the user has specified.  Someone could be fishing to connect IPs to autoblocks,
 			// so don't show any distinction between unblocked IPs and autoblocked IPs
-			if ( $type == Block::TYPE_AUTO && $this->type == Block::TYPE_IP ) {
-				$fields['Target']['default'] = $this->target;
+			if ( $type == Block::TYPE_AUTO && $this->target->getType() == Block::TYPE_IP ) {
+				$fields['Target']['default'] = (string)$this->target;
 				unset( $fields['Name'] );
 			} else {
 				$fields['Target']['default'] = $targetName;
@@ -297,10 +285,10 @@ class SpecialUnblock extends SpecialPage {
 						break;
 
 					case Block::TYPE_AUTO:
+						// Don't expose the real target of the autoblock
 						$fields['Name']['default'] = $this->block->getRedactedName();
 						$fields['Name']['raw'] = true;
-						// Don't expose the real target of the autoblock
-						$fields['Target']['default'] = "#{$this->target}";
+						$fields['Target']['default'] = $this->block->getRedactedTarget()->toString();
 						break;
 				}
 				// Target is hidden, so the reason is the first element

@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eitvys200",
+			"Nokeoo"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Patikrinti kokie IP adresai yra naudojami pateikto naudotojo vardo arba kokie naudotojų vardai yra naudojami pateikto IP adreso.",
+	"apihelp-query+checkuser-param-target": "Naudotojo vardas, IP adresas ar CIDR diapazonas tikrinimui.",
+	"apihelp-query+checkuser-param-reason": "Tikrinimo priežastis.",
+	"apihelp-query+checkuser-param-limit": "Eilučių limitas.",
+	"apihelp-query+checkuser-param-xff": "Vietoj IP adreso naudoti XFF duomenis.",
+	"apihelp-query+checkuser-example-1": "Patikrinti [[User:Example]] IP adresus",
+	"apihelp-query+checkuser-example-2": "Patikrinti 192.0.2.0/24 keitimus",
+	"apihelp-query+checkuserlog-param-user": "CheckUser vartotojo vardas.",
+	"apihelp-query+checkuserlog-param-target": "Patikrintas naudotojas, IP adresas ar CIDR diapazonas.",
+	"apihelp-query+checkuserlog-param-reason": "Nurodyta patikros priežastis.",
+	"apihelp-query+checkuserlog-param-limit": "Eilučių limitas.",
+	"apihelp-query+checkuserlog-example-1": "Rodyti [[User:Example]] patikrinimus",
+	"apihelp-query+checkuserlog-example-2": "Rodyti 192.0.2.0/24 patikrinimus, po 2011-10-15T23:00:00Z",
+	"apierror-checkuser-missingsummary": "Privalote nurodyti tikrinimo priežastį.",
+	"apierror-checkuser-invalidmode": "Negalimas prašymo režimas"
+}

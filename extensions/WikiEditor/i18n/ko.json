@@ -15,15 +15,14 @@
 			"Mintz0223",
 			"Priviet",
 			"Suleiman the Magnificent Television",
+			"Tensama0415",
 			"Ykhwong",
 			"관인생략",
-			"아라",
-			"Tensama0415"
+			"아라"
 		]
 	},
 	"wikieditor": "확장된 위키텍스트 편집 인터페이스",
 	"wikieditor-desc": "확장 가능한 고급 위키텍스트 편집 인터페이스를 제공합니다",
-	"wikieditor-wikitext-tab": "위키텍스트",
 	"wikieditor-toolbar": "편집 도구 모음",
 	"wikieditor-toolbar-desc": "사용성이 향상된 문서 편집 도구 모음",
 	"wikieditor-toolbar-preference": "편집 도구 모음 활성화하기",
@@ -81,6 +80,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "항목",
 	"wikieditor-toolbar-tool-olist": "번호가 매겨진 목록",
 	"wikieditor-toolbar-tool-olist-example": "항목",
+	"wikieditor-toolbar-tool-code": "컴퓨터 코드",
+	"wikieditor-toolbar-tool-code-example": "컴퓨터 코드",
 	"wikieditor-toolbar-tool-nowiki": "위키 문법 사용하지 않기",
 	"wikieditor-toolbar-tool-nowiki-example": "여기에 위키 문법을 사용하지 않을 글을 적어 주세요",
 	"wikieditor-toolbar-tool-redirect": "넘겨주기",

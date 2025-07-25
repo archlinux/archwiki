@@ -64,11 +64,11 @@
 					true
 				).then(
 					( response ) => parseDocumentModulePromise.then( () => mw.libs.ve.diffLoader.getModelFromResponse( response, section ) ),
-					() => {
-					// Clear promise. Do not cache errors.
+					( ...args ) => {
+						// Clear promise. Do not cache errors.
 						delete revCache[ cacheKey ];
 						// Let caller handle the error code
-						return $.Deferred().rejectWith( this, arguments );
+						return $.Deferred().reject( ...args );
 					}
 				);
 

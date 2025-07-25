@@ -61,6 +61,7 @@
 	"notifications": "Obavještenja",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Vaša}} obavještenja",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Vaša}} sitna obavještenja",
+	"tooltip-pt-notifications": "Vaša obavještenja",
 	"echo-displaynotificationsconfiguration": "Konfiguracija prikaza obavještenja",
 	"echo-displaynotificationsconfiguration-summary": "Ovo je pregled toga kako su obavještenja postavljena na ovoj wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Obavještenja po kategoriji",

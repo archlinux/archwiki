@@ -20,21 +20,25 @@
 
 namespace MediaWiki\Maintenance;
 
+use Closure;
 use ExecutableFinder;
+use Generator;
 use MediaWiki;
 use MediaWiki\Config\Config;
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiEntryPoint;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
 use MediaWiki\User\User;
 use StatusValue;
-use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 
@@ -187,7 +191,11 @@ abstract class Maintenance {
 	 * @var array
 	 */
 	public $orderedOptions = [];
-	private ?IConnectionProvider $dbProvider = null;
+
+	/**
+	 * @var ILBFactory|null Injected DB connection manager (e.g. LBFactorySingle); null if none
+	 */
+	private ?ILBFactory $lbFactory = null;
 
 	/**
 	 * Default constructor. Children should call this *first* if implementing
@@ -480,16 +488,15 @@ abstract class Maintenance {
 	 * as we handle all --quiet stuff here
 	 * @stable to override
 	 * @param string $out The text to show to the user
-	 * @param mixed|null $channel Unique identifier for the channel. See function outputChanneled.
+	 * @param string|null $channel Unique identifier for the channel. See function outputChanneled.
 	 */
 	protected function output( $out, $channel = null ) {
 		// This is sometimes called very early, before Setup.php is included.
 		if ( defined( 'MW_SERVICE_BOOTSTRAP_COMPLETE' ) ) {
 			// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
 			$stats = $this->getServiceContainer()->getStatsdDataFactory();
-			if ( $stats->getDataCount() > 1000 ) {
-				MediaWiki::emitBufferedStatsdData( $stats, $this->getConfig() );
-			}
+			$statsFactory = $this->getServiceContainer()->getStatsFactory();
+			MediaWiki::emitBufferedStats( $statsFactory, $stats, $this->getConfig() );
 		}
 
 		if ( $this->mQuiet ) {
@@ -781,8 +788,8 @@ abstract class Maintenance {
 		if ( $this->mDb !== null ) {
 			$child->setDB( $this->mDb );
 		}
-		if ( $this->dbProvider !== null ) {
-			$child->setDBProvider( $this->dbProvider );
+		if ( $this->lbFactory !== null ) {
+			$child->setLBFactory( $this->lbFactory );
 		}
 
 		return $child;
@@ -1145,10 +1152,7 @@ abstract class Maintenance {
 	 * @since 1.42
 	 */
 	protected function getReplicaDB(): IReadableDatabase {
-		if ( $this->dbProvider === null ) {
-			$this->dbProvider = $this->getServiceContainer()->getConnectionProvider();
-		}
-		return $this->dbProvider->getReplicaDatabase();
+		return $this->getLBFactory()->getReplicaDatabase();
 	}
 
 	/**
@@ -1156,61 +1160,104 @@ abstract class Maintenance {
 	 * @since 1.42
 	 */
 	protected function getPrimaryDB(): IDatabase {
-		if ( $this->dbProvider === null ) {
-			$this->dbProvider = $this->getServiceContainer()->getConnectionProvider();
-		}
-		return $this->dbProvider->getPrimaryDatabase();
+		return $this->getLBFactory()->getPrimaryDatabase();
 	}
 
 	/**
 	 * @internal
-	 * @param IConnectionProvider $dbProvider
+	 * @param ILBFactory $lbFactory LBFactory to inject in place of the service instance
 	 * @return void
 	 */
-	public function setDBProvider( IConnectionProvider $dbProvider ) {
-		$this->dbProvider = $dbProvider;
+	public function setLBFactory( ILBFactory $lbFactory ) {
+		$this->lbFactory = $lbFactory;
 	}
 
 	/**
-	 * Begin a transaction on a DB
+	 * @return ILBFactory Injected LBFactory, if any, the service instance, otherwise
+	 */
+	private function getLBFactory() {
+		$this->lbFactory ??= $this->getServiceContainer()->getDBLoadBalancerFactory();
+
+		return $this->lbFactory;
+	}
+
+	/**
+	 * Begin a transaction on a DB handle
+	 *
+	 * Maintenance scripts should call this method instead of {@link IDatabase::begin()}.
+	 * Use of this method makes it clear that the caller is a maintenance script, which has
+	 * the outermost transaction scope needed to explicitly begin transactions.
 	 *
 	 * This method makes it clear that begin() is called from a maintenance script,
 	 * which has outermost scope. This is safe, unlike $dbw->begin() called in other places.
 	 *
+	 * Use this method for scripts with direct, straightforward, control of all writes.
+	 *
 	 * @param IDatabase $dbw
 	 * @param string $fname Caller name
 	 * @since 1.27
+	 * @deprecated Since 1.44 Use {@link beginTransactionRound()} instead
 	 */
 	protected function beginTransaction( IDatabase $dbw, $fname ) {
 		$dbw->begin( $fname );
 	}
 
 	/**
-	 * Commit the transaction on a DB handle and wait for replica DBs to catch up
+	 * Commit the transaction on a DB handle and wait for replica DB servers to catch up
 	 *
-	 * This method makes it clear that commit() is called from a maintenance script,
-	 * which has outermost scope. This is safe, unlike $dbw->commit() called in other places.
+	 * This method also triggers {@link DeferredUpdates::tryOpportunisticExecute()}.
+	 *
+	 * Maintenance scripts should call this method instead of {@link IDatabase::commit()}.
+	 * Use of this method makes it clear that the caller is a maintenance script, which has
+	 * the outermost transaction scope needed to explicitly commit transactions.
+	 *
+	 * Use this method for scripts with direct, straightforward, control of all writes.
 	 *
 	 * @param IDatabase $dbw
 	 * @param string $fname Caller name
-	 * @return bool Whether the replica DB wait succeeded
+	 * @return bool Whether the replication wait succeeded
 	 * @since 1.27
+	 * @deprecated Since 1.44 Use {@link commitTransactionRound()} instead
 	 */
 	protected function commitTransaction( IDatabase $dbw, $fname ) {
 		$dbw->commit( $fname );
+
 		return $this->waitForReplication();
 	}
 
 	/**
-	 * Wait for replica DBs to catch up.
+	 * Rollback the transaction on a DB handle
+	 *
+	 * Maintenance scripts should call this method instead of {@link IDatabase::rollback()}.
+	 * Use of this method makes it clear that the caller is a maintenance script, which has
+	 * the outermost transaction scope needed to explicitly roll back transactions.
+	 *
+	 * Use this method for scripts with direct, straightforward, control of all writes.
+	 *
+	 * @param IDatabase $dbw
+	 * @param string $fname Caller name
+	 * @since 1.27
+	 * @deprecated Since 1.44 Use {@link rollbackTransactionRound()} instead
+	 */
+	protected function rollbackTransaction( IDatabase $dbw, $fname ) {
+		$dbw->rollback( $fname );
+	}
+
+	/**
+	 * Wait for replica DB servers to catch up
+	 *
+	 * Use this method after performing a batch of autocommit writes inscripts with direct,
+	 * straightforward, control of all writes.
 	 *
 	 * @note Since 1.39, this also calls LBFactory::autoReconfigure().
 	 *
-	 * @return bool Whether the replica DB wait succeeded
+	 * @return bool Whether the replication wait succeeded
 	 * @since 1.36
+	 * @deprecated Since 1.44 Batch writes and use {@link commitTransactionRound()} instead
 	 */
 	protected function waitForReplication() {
-		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
+		$lbFactory = $this->getLBFactory();
+
 		$waitSucceeded = $lbFactory->waitForReplication(
 			[ 'timeout' => 30, 'ifWritesSince' => $this->lastReplicationWait ]
 		);
@@ -1223,21 +1270,128 @@ abstract class Maintenance {
 		// If no config callback was configured, this has no effect.
 		$lbFactory->autoReconfigure();
 
+		// Periodically run any deferred updates that accumulate
+		DeferredUpdates::tryOpportunisticExecute();
+		// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
+		MediaWikiEntryPoint::emitBufferedStats(
+			$this->getServiceContainer()->getStatsFactory(),
+			$this->getServiceContainer()->getStatsdDataFactory(),
+			$this->getConfig()
+		);
+
 		return $waitSucceeded;
 	}
 
 	/**
-	 * Rollback the transaction on a DB handle
+	 * Start a transactional batch of DB operations
 	 *
-	 * This method makes it clear that rollback() is called from a maintenance script,
-	 * which has outermost scope. This is safe, unlike $dbw->rollback() called in other places.
+	 * Use this method for scripts that split up their work into logical transactions.
 	 *
-	 * @param IDatabase $dbw
+	 * This method is suitable even for scripts lacking direct, straightforward, control of
+	 * all writes. Such scripts might invoke complex methods of service objects, which might
+	 * easily touch multiple DB servers. This method proves the usual best-effort distributed
+	 * transactions that DBO_DEFAULT provides during web requests.
+	 *
+	 * @see ILBfactory::beginPrimaryChanges()
+	 *
 	 * @param string $fname Caller name
-	 * @since 1.27
+	 * @return void
+	 * @since 1.44
 	 */
-	protected function rollbackTransaction( IDatabase $dbw, $fname ) {
-		$dbw->rollback( $fname );
+	protected function beginTransactionRound( $fname ) {
+		$lbFactory = $this->getLBFactory();
+
+		$lbFactory->beginPrimaryChanges( $fname );
+	}
+
+	/**
+	 * Commit a transactional batch of DB operations and wait for replica DB servers to catch up
+	 *
+	 * Use this method for scripts that split up their work into logical transactions.
+	 *
+	 * This method also triggers {@link DeferredUpdates::tryOpportunisticExecute()}.
+	 *
+	 * @see ILBfactory::commitPrimaryChanges()
+	 *
+	 * @param string $fname Caller name
+	 * @return bool Whether the replication wait succeeded
+	 * @since 1.44
+	 */
+	protected function commitTransactionRound( $fname ) {
+		$lbFactory = $this->getLBFactory();
+
+		$lbFactory->commitPrimaryChanges( $fname );
+
+		$waitSucceeded = $lbFactory->waitForReplication(
+			[ 'timeout' => 30, 'ifWritesSince' => $this->lastReplicationWait ]
+		);
+		$this->lastReplicationWait = microtime( true );
+
+		// Periodically run any deferred updates that accumulate
+		DeferredUpdates::tryOpportunisticExecute();
+		// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
+		MediaWikiEntryPoint::emitBufferedStats(
+			$this->getServiceContainer()->getStatsFactory(),
+			$this->getServiceContainer()->getStatsdDataFactory(),
+			$this->getConfig()
+		);
+
+		// If possible, apply changes to the database configuration.
+		// The primary use case for this is taking replicas out of rotation.
+		// Long-running scripts may otherwise keep connections to
+		// de-pooled database hosts, and may even re-connect to them.
+		// If no config callback was configured, this has no effect.
+		$lbFactory->autoReconfigure();
+
+		return $waitSucceeded;
+	}
+
+	/**
+	 * Rollback a transactional batch of DB operations
+	 *
+	 * Use this method for scripts that split up their work into logical transactions.
+	 * Note that this does not call {@link ILBfactory::flushPrimarySessions()}.
+	 *
+	 * @see ILBfactory::rollbackPrimaryChanges()
+	 *
+	 * @param string $fname Caller name
+	 * @return void
+	 * @since 1.44
+	 */
+	protected function rollbackTransactionRound( $fname ) {
+		$lbFactory = $this->getLBFactory();
+
+		$lbFactory->rollbackPrimaryChanges( $fname );
+	}
+
+	/**
+	 * Wrap an entry iterator into a generator that returns batches of said entries
+	 *
+	 * The batch size is determined by {@link getBatchSize()}.
+	 *
+	 * @param iterable|Generator|Closure $source An iterable or a callback to get one
+	 * @return iterable<array> New iterable yielding entry batches from the given iterable
+	 * @since 1.44
+	 */
+	final protected function newBatchIterator( $source ): iterable {
+		$batchSize = max( $this->getBatchSize(), 1 );
+		if ( $source instanceof Closure ) {
+			$iterable = $source();
+		} else {
+			$iterable = $source;
+		}
+
+		$entryBatch = [];
+		foreach ( $iterable as $key => $entry ) {
+			$entryBatch[$key] = $entry;
+			if ( count( $entryBatch ) >= $batchSize ) {
+				yield $entryBatch;
+				$entryBatch = [];
+			}
+		}
+		if ( $entryBatch ) {
+			yield $entryBatch;
+		}
 	}
 
 	/**
@@ -1495,6 +1649,27 @@ abstract class Maintenance {
 		}
 
 		return $line;
+	}
+
+	/**
+	 * @param string $prompt The prompt to display to the user
+	 * @param bool|null $default The default value to return if the user just presses enter
+	 *
+	 * @return ?bool
+	 *
+	 * @since 1.44
+	 */
+	protected function promptYesNo( $prompt, $default = null ) {
+		$defaultText = $default === null ? '' : ( $default ? 'Y' : 'n' );
+		$line = self::readconsole( $prompt . " (Y/n) [$defaultText]" );
+		if ( $line === false ) {
+			return $default;
+		}
+		if ( $line === '' ) {
+			return $default;
+		}
+
+		return strtolower( $line ) === 'y';
 	}
 }
 

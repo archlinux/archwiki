@@ -109,8 +109,6 @@
 	"abusefilter-diff-info": "ಪುಟೊದ ಮಾಹಿತಿ",
 	"abusefilter-diff-prev": "ಪರ ಬದಲಾವಣೆ",
 	"abusefilter-diff-next": "ಪೊಸ ಬದಲಾವಣೆ",
-	"prefs-abusefilter": "ದುರುಪಯೋಗ ಫಿಲ್ಟರ್",
-	"abusefilter-preference-protected-vars-view-agreement": "ದುರುಪಯೋಗ ಫಿಲ್ಟರ್ ಡ್ ತಾತ್ಕಾಲಿಕ ಖಾತೆಲೆಗ್ ಐಪಿ ವಿಳಾಸೊಲೆನ್ ತೆರಿಪಾವುನ ಸಕ್ರಿಯ ಮಲ್ಪುಲೆ",
 	"abusefilter-protected-vars-log-name": "ದುರುಪಯೋಗ ಫಿಲ್ಟರ್ ರಕ್ಷಣೆ ಮಲ್ತಿನ ವೇರಿಯೇಬಲ್ ಲಾಗ್",
 	"abusefilter-protected-vars-log-header": "ಉಂದು ಒಂಜಿ ಲಾಗ್:\n# ಲಾಗ್ ವಿವರೊಲೆಡ್ ರಕ್ಷಣೆ ಮಲ್ತಿನ ವೇರಿಯೇಬಲ್ ಲೆನ್ ತೂಪುನವು\n# ರಕ್ಷಣೆ ಮಲ್ತಿನ ವೇರಿಯೇಬಲ್ ಲೆನ್ ತೂಯೆರೆ ಬಳಕೆದಾರ ಪ್ರವೇಶ ಮಟ್ಟೊಲೆನ್ ಬದಲಾವಣೆ ಮಲ್ಪುನವು",
 	"logentry-abusefilter-protected-vars-change-access-enable": "$1 ಸಕ್ರಿಯ ಆತ್ಂಡ್ {{GENDER:$2| ರಕ್ಷಣೆ ಮಲ್ತಿನ ಅಸ್ಥಿರೊಲೆನ್ ತೂಯೆರೆ ಅರೆನ|ಅಲೆನ|ಅಕ್ಲೆನ}} ಸ್ವಂತ ಪ್ರವೇಶ",

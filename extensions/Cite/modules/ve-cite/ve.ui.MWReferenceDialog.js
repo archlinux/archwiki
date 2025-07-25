@@ -86,7 +86,9 @@ ve.ui.MWReferenceDialog.prototype.onReuseSearchResultsReuse = function ( ref ) {
 		this.selectedNode = null;
 	}
 
-	this.insertReference( ref );
+	// Collapse returns a new fragment, so update this.fragment
+	this.fragment = this.getFragment().collapseToEnd();
+	ref.insertIntoFragment( this.getFragment() );
 
 	ve.track( 'activity.' + this.constructor.static.name, { action: 'reuse-choose' } );
 
@@ -190,23 +192,6 @@ ve.ui.MWReferenceDialog.prototype.openReusePanel = function () {
 };
 
 /**
- * Insert a reference at the end of the selection, could also be a reuse of an exising reference
- *
- * @private
- * @param {ve.dm.MWReferenceModel} ref
- */
-ve.ui.MWReferenceDialog.prototype.insertReference = function ( ref ) {
-	const surfaceModel = this.getFragment().getSurface();
-
-	if ( !ref.findInternalItem( surfaceModel ) ) {
-		ref.insertInternalItem( surfaceModel );
-	}
-	// Collapse returns a new fragment, so update this.fragment
-	this.fragment = this.getFragment().collapseToEnd();
-	ref.insertReferenceNode( this.getFragment() );
-};
-
-/**
  * @override
  */
 ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
@@ -215,7 +200,9 @@ ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
 			const ref = this.editPanel.getReferenceFromEditing();
 
 			if ( !( this.selectedNode instanceof ve.dm.MWReferenceNode ) ) {
-				this.insertReference( ref );
+				// Collapse returns a new fragment, so update this.fragment
+				this.fragment = this.getFragment().collapseToEnd();
+				ref.insertIntoFragment( this.getFragment() );
 			}
 
 			ref.updateInternalItem( this.getFragment().getSurface() );

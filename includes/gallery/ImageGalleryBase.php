@@ -23,6 +23,7 @@
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
@@ -43,7 +44,7 @@ abstract class ImageGalleryBase extends ContextSource {
 
 	/**
 	 * @var array[] Gallery images
-	 * @phan-var array<int,array{0:Title,1:string,2:string,3:string,4:array,5:int}>
+	 * @phan-var array<int,array{0:Title,1:string,2:?string,3:string,4:array,5:int,6:?array}>
 	 */
 	protected $mImages;
 
@@ -323,7 +324,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * @param Title $title Title object of the image that is added to the gallery
 	 * @param string $html Additional HTML text to be shown. The name and size
 	 *   of the image are always shown.
-	 * @param string $alt Alt text for the image
+	 * @param string|null $alt Alt text for the image, or null to omit
 	 * @param string $link Override image link (optional)
 	 * @param array $handlerOpts Array of options for image handler (aka page number)
 	 * @param int $loading Sets loading attribute of the underlying <img> (optional)
@@ -342,13 +343,13 @@ abstract class ImageGalleryBase extends ContextSource {
 			// Old calling convention
 			$title = $title->getTitle();
 		}
-		array_unshift( $this->mImages, [ &$title, $html, $alt, $link, $handlerOpts, $loading, $imageOptions ] );
+		array_unshift( $this->mImages, [ $title, $html, $alt, $link, $handlerOpts, $loading, $imageOptions ] );
 	}
 
 	/**
 	 * Returns the list of images this gallery contains
 	 * @return array[]
-	 * @phan-return array<int,array{0:Title,1:string,2:string,3:string,4:array}>
+	 * @phan-return array<int,array{0:Title,1:string,2:?string,3:string,4:array,5:int,6:?array}>
 	 */
 	public function getImages() {
 		return $this->mImages;

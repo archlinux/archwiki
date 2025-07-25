@@ -4,14 +4,14 @@
 			"Alpineer",
 			"Ebrahim",
 			"Ebraminio",
+			"Jeeputer",
 			"Ladsgroup",
-			"Reza1615",
-			"Jeeputer"
+			"Reza1615"
 		]
 	},
 	"apihelp-query+gadgetcategories-summary": "بازگرداندن فهرست رده‌های ابزارها",
-	"apihelp-query+gadgetcategories-param-names": "نام‌های رده‌ها برای دریافت.",
-	"apihelp-query+gadgetcategories-example-1": "دریافت فهرستی از دسته‌بندی‌های ابزارهای موجود",
+	"apihelp-query+gadgetcategories-param-names": "نام‌های بخش‌ها برای دریافت.",
+	"apihelp-query+gadgetcategories-example-1": "دریافت فهرستی از بخش‌های ابزارهای موجود",
 	"apihelp-query+gadgets-summary": "بازگرداندن فهرست ابزارهای استفاده شده در این ویکی",
 	"apihelp-query+gadgets-param-categories": "رده‌هایی که از آن فهرست ابزارها را می‌خواهید",
 	"apihelp-query+gadgets-param-ids": "شماره گجت‌ها برای دریافت",

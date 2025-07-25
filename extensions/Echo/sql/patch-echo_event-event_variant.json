@@ -1,0 +1,134 @@
+{
+	"before": {
+		"name": "echo_event",
+		"comment": "An event is a thing that happened that caused one or more users to be notified. For every notified user, there is a corresponding row in the echo_notification table.",
+		"columns": [
+			{
+				"name": "event_id",
+				"comment": "Unique auto-increment ID",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "event_type",
+				"comment": "Event type; one of the keys in $wgEchoNotifications",
+				"type": "binary",
+				"options": { "notnull": true, "length": 64 }
+			},
+			{
+				"name": "event_variant",
+				"comment": "Unused, always null",
+				"type": "binary",
+				"options": { "notnull": false, "length": 64 }
+			},
+			{
+				"name": "event_agent_id",
+				"comment": "The agent (user who triggered the event), if any. If the agent is a logged-in user, event_agent_id contains their user ID and event_agent_ip is null. If the agent is an anonymous user, event_agent_ip contains their IP address and event_agent_id is null. If the event doesn't have an agent, both fields are null.",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			},
+			{
+				"name": "event_agent_ip",
+				"comment": "The agent (user who triggered the event), if any. If the agent is a logged-in user, event_agent_id contains their user ID and event_agent_ip is null. If the agent is an anonymous user, event_agent_ip contains their IP address and event_agent_id is null. If the event doesn't have an agent, both fields are null.",
+				"type": "binary",
+				"options": { "notnull": false, "length": 39 }
+			},
+			{
+				"name": "event_extra",
+				"comment": "JSON blob with additional information about the event",
+				"type": "blob",
+				"options": { "notnull": false, "length": 65530 }
+			},
+			{
+				"name": "event_page_id",
+				"comment": "Page ID of the page the event happened on, if any (key to page_id)",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			},
+			{
+				"name": "event_deleted",
+				"comment": "Whether the event pertains to a deleted page and should be hidden. Events are marked as deleted when the related page is deleted, and unmarked as deleted when the related page is undeleted",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "echo_event_type",
+				"comment": "Index to get only 'alert' types or only 'message' types",
+				"columns": [ "event_type" ],
+				"unique": false
+			},
+			{
+				"name": "echo_event_page_id",
+				"comment": "Index to find events for a specific page",
+				"columns": [ "event_page_id" ],
+				"unique": false
+			}
+		],
+		"pk": [ "event_id" ]
+	},
+	"after": {
+		"name": "echo_event",
+		"comment": "An event is a thing that happened that caused one or more users to be notified. For every notified user, there is a corresponding row in the echo_notification table.",
+		"columns": [
+			{
+				"name": "event_id",
+				"comment": "Unique auto-increment ID",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "event_type",
+				"comment": "Event type; one of the keys in $wgEchoNotifications",
+				"type": "binary",
+				"options": { "notnull": true, "length": 64 }
+			},
+			{
+				"name": "event_agent_id",
+				"comment": "The agent (user who triggered the event), if any. If the agent is a logged-in user, event_agent_id contains their user ID and event_agent_ip is null. If the agent is an anonymous user, event_agent_ip contains their IP address and event_agent_id is null. If the event doesn't have an agent, both fields are null.",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			},
+			{
+				"name": "event_agent_ip",
+				"comment": "The agent (user who triggered the event), if any. If the agent is a logged-in user, event_agent_id contains their user ID and event_agent_ip is null. If the agent is an anonymous user, event_agent_ip contains their IP address and event_agent_id is null. If the event doesn't have an agent, both fields are null.",
+				"type": "binary",
+				"options": { "notnull": false, "length": 39 }
+			},
+			{
+				"name": "event_extra",
+				"comment": "JSON blob with additional information about the event",
+				"type": "blob",
+				"options": { "notnull": false, "length": 65530 }
+			},
+			{
+				"name": "event_page_id",
+				"comment": "Page ID of the page the event happened on, if any (key to page_id)",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			},
+			{
+				"name": "event_deleted",
+				"comment": "Whether the event pertains to a deleted page and should be hidden. Events are marked as deleted when the related page is deleted, and unmarked as deleted when the related page is undeleted",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "echo_event_type",
+				"comment": "Index to get only 'alert' types or only 'message' types",
+				"columns": [ "event_type" ],
+				"unique": false
+			},
+			{
+				"name": "echo_event_page_id",
+				"comment": "Index to find events for a specific page",
+				"columns": [ "event_page_id" ],
+				"unique": false
+			}
+		],
+		"pk": [ "event_id" ]
+	}
+}

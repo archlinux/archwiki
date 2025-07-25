@@ -28,6 +28,7 @@ require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
 use MediaWiki\Deferred\SiteStatsUpdate;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 
 /**
@@ -53,7 +54,7 @@ class NukePage extends Maintenance {
 		# Get page ID
 		$this->output( "Searching for \"$name\"..." );
 		$title = Title::newFromText( $name );
-		if ( $title ) {
+		if ( $title && $title->exists() ) {
 			$id = $title->getArticleID();
 			$real = $title->getPrefixedText();
 			$isGoodArticle = $title->isContentPage();
@@ -115,7 +116,7 @@ class NukePage extends Maintenance {
 		}
 	}
 
-	public function deleteRevisions( $ids ) {
+	public function deleteRevisions( array $ids ) {
 		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 

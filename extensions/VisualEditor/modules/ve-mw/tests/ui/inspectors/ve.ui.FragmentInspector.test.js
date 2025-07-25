@@ -94,6 +94,20 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				}
 			},
 			{
+				msg: 'Link insertion with label (mobile)',
+				name: 'wikitextLink',
+				range: new ve.Range( 26 ),
+				isMobile: true,
+				input: function () {
+					this.annotationInput.getTextInputWidget().setValue( 'quux' );
+					this.labelInput.setValue( 'whee' );
+				},
+				expectedRange: new ve.Range( 39 ),
+				expectedData: ( data ) => {
+					data.splice( 26, 0, ...[ ...'[[Quux|whee]]' ] );
+				}
+			},
+			{
 				msg: 'Link insertion to file page',
 				name: 'wikitextLink',
 				range: new ve.Range( 26 ),
@@ -113,7 +127,7 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				expectedData: () => {}
 			},
 			{
-				msg: 'Link modified',
+				msg: 'Link target modified',
 				name: 'wikitextLink',
 				range: new ve.Range( 5, 12 ),
 				input: function () {
@@ -121,11 +135,52 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				},
 				expectedRange: new ve.Range( 5, 17 ),
 				expectedData: ( data ) => {
-					data.splice( 7, 3, ...[ ...'Quux|bar' ] );
+					data.splice( 5, 7, ...[ ...'[[Quux|bar]]' ] );
 				}
 			},
 			{
-				msg: 'Link modified with initial selection including whitespace',
+				msg: 'Link target and label modified (mobile)',
+				name: 'wikitextLink',
+				range: new ve.Range( 5, 12 ),
+				isMobile: true,
+				input: function () {
+					this.annotationInput.getTextInputWidget().setValue( 'quux' );
+					this.labelInput.setValue( 'whee' );
+				},
+				expectedRange: new ve.Range( 5, 18 ),
+				expectedData: ( data ) => {
+					data.splice( 5, 7, ...[ ...'[[Quux|whee]]' ] );
+				}
+			},
+			{
+				msg: 'Link target modified and label cleared (mobile)',
+				name: 'wikitextLink',
+				range: new ve.Range( 5, 12 ),
+				isMobile: true,
+				input: function () {
+					this.annotationInput.getTextInputWidget().setValue( 'quux' );
+					this.labelInput.setValue( '' );
+				},
+				expectedRange: new ve.Range( 5, 13 ),
+				expectedData: ( data ) => {
+					data.splice( 5, 7, ...[ ...'[[quux]]' ] );
+				}
+			},
+			{
+				msg: 'Link label modified (mobile)',
+				name: 'wikitextLink',
+				range: new ve.Range( 16 ),
+				isMobile: true,
+				input: function () {
+					this.labelInput.setValue( 'whee' );
+				},
+				expectedRange: new ve.Range( 13, 26 ),
+				expectedData: ( data ) => {
+					data.splice( 13, 12, ...[ ...'[[Quux|whee]]' ] );
+				}
+			},
+			{
+				msg: 'Link target modified with initial selection including whitespace',
 				name: 'wikitextLink',
 				range: new ve.Range( 4, 13 ),
 				input: function () {
@@ -133,11 +188,11 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				},
 				expectedRange: new ve.Range( 5, 17 ),
 				expectedData: ( data ) => {
-					data.splice( 7, 3, ...[ ...'Quux|bar' ] );
+					data.splice( 5, 7, ...[ ...'[[Quux|bar]]' ] );
 				}
 			},
 			{
-				msg: 'Piped link modified',
+				msg: 'Target of labeled link modified',
 				name: 'wikitextLink',
 				range: new ve.Range( 16 ),
 				input: function () {
@@ -149,7 +204,7 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				}
 			},
 			{
-				msg: 'Link modified',
+				msg: 'Wikitext in link label is escaped',
 				name: 'wikitextLink',
 				range: new ve.Range( 30, 36 ),
 				input: function () {

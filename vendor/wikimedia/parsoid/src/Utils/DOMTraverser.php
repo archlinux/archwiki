@@ -80,11 +80,10 @@ class DOMTraverser {
 		// attributes first, we ensure attribute are always processed.
 		if ( $node instanceof Element && $this->applyToAttributeEmbeddedHTML ) {
 			$self = $this;
-			ContentUtils::processAttributeEmbeddedHTML(
+			ContentUtils::processAttributeEmbeddedDom(
 				$extAPI,
 				$node,
-				static function ( string $html ) use ( $self, $extAPI, $state ) {
-					$dom = $extAPI->htmlToDom( $html );
+				static function ( DocumentFragment $dom ) use ( $self, $extAPI, $state ) {
 					// We are processing a nested document (which by definition
 					// is not a top-level document).
 					// FIXME:
@@ -101,14 +100,14 @@ class DOMTraverser {
 					//    than reusing partial state.
 					$newState = $state ? new DTState( $state->env, $state->options, false ) : null;
 					$self->traverse( $extAPI, $dom, $newState );
-					return $extAPI->domToHtml( $dom, true, true );
+					return true; // $dom might have been changed
 				}
 			);
 		}
 
 		foreach ( $this->handlers as $handler ) {
 			if ( $handler['nodeName'] === null || $handler['nodeName'] === $name ) {
-				$result = call_user_func( $handler['action'], $node, $state );
+				$result = $handler['action']( $node, $state );
 				if ( $result !== true ) {
 					// Abort processing for this node
 					return $result;
@@ -164,9 +163,9 @@ class DOMTraverser {
 					!( $state->tplInfo ?? null ) && WTUtils::isFirstEncapsulationWrapperNode( $workNode )
 					// Ensure this isn't just a meta marker, since we might
 					// not be traversing after encapsulation.  Note that the
-					// valid data-mw assertion is the same test as used in
+					// nonempty data-mw assertion is the same test as used in
 					// cleanup.
-					&& ( !WTUtils::isTplMarkerMeta( $workNode ) || DOMDataUtils::validDataMw( $workNode ) )
+					&& ( !WTUtils::isTplMarkerMeta( $workNode ) || !DOMDataUtils::getDataMw( $workNode )->isEmpty() )
 					// Encapsulation info on sections should not be used to
 					// traverse with since it's designed to be dropped and
 					// may have expanded ranges.

@@ -8,7 +8,8 @@
 			"Shirayuki",
 			"Suzukaze-c",
 			"Takot",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Foomin10"
 		]
 	},
 	"loginnotify-desc": "身に覚えのない端末および IP アドレスからのログインがあったときに利用者に通知する",
@@ -17,6 +18,7 @@
 	"echo-category-title-login-success": "身に覚えのない端末からのログイン",
 	"echo-pref-tooltip-login-success": "身に覚えのない端末およびIPアドレスからのログインがあったときに通知する。",
 	"loginnotify-primary-link": "ヘルプ",
+	"loginnotify-unknown-ip": "あなたは見知らぬIPアドレスからログインしようとしました。{{SITENAME}}は現在、見知らぬIPアドレスからのログインを防ぐように設定されています。",
 	"notification-loginnotify-login-fail-email-subject": "{{SITENAME}}におけるアカウント$1の{{PLURAL:$2|ログイン失敗|複数回のログイン失敗}}",
 	"notification-loginnotify-login-success-email-subject": "{{GENDER:$1|あなたが}}最近、使っていないデバイスから{{SITENAME}}に$1のアカウントでログインがありました",
 	"notification-header-login-success": "誰か（おそらく{{GENDER:$1|あなた}}）が最近新しいデバイスからあなたのアカウントにログインしました。もしそれがご自身であれば、このメッセージは無視して構いません。しかしもし、それがご自身のものでなければ、パスワードを変更し、あなたのアカウントのアクティビティを確認することをお勧めします。",

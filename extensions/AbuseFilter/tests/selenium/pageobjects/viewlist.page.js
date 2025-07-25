@@ -29,8 +29,8 @@ class ViewListPage extends Page {
 		return regexp.exec( succesMsg )[ 1 ];
 	}
 
-	open() {
-		super.openTitle( 'Special:AbuseFilter' );
+	async open() {
+		return super.openTitle( 'Special:AbuseFilter' );
 	}
 }
 module.exports = new ViewListPage();

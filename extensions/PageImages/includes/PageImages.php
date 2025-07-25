@@ -2,7 +2,6 @@
 
 namespace PageImages;
 
-use File;
 use MapCacheLRU;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
@@ -10,16 +9,17 @@ use MediaWiki\Api\Hook\ApiOpenSearchSuggestHook;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Hook\InfoActionHook;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
-use RepoGroup;
-use Skin;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -81,13 +81,7 @@ class PageImages implements
 	 * @return PageImages
 	 */
 	private static function factory(): self {
-		$services = MediaWikiServices::getInstance();
-		return new self(
-			$services->getMainConfig(),
-			$services->getDBLoadBalancerFactory(),
-			$services->getRepoGroup(),
-			$services->getUserOptionsLookup()
-		);
+		return MediaWikiServices::getInstance()->getService( 'PageImages.PageImages' );
 	}
 
 	/**
@@ -146,7 +140,7 @@ class PageImages implements
 	 */
 	public static function getPageImage( Title $title ) {
 		// Cast any cacheable null to false
-		return self::factory()->getPageImageInternal( $title ) ?? false;
+		return self::factory()->getImage( $title ) ?? false;
 	}
 
 	/**
@@ -155,7 +149,7 @@ class PageImages implements
 	 * @param Title $title Title to get page image for
 	 * @return File|null
 	 */
-	public function getPageImageInternal( Title $title ): ?File {
+	public function getImage( Title $title ): ?File {
 		self::$cache ??= new MapCacheLRU( 100 );
 
 		$file = self::$cache->getWithSetCallback(
@@ -216,7 +210,7 @@ class PageImages implements
 	 * @param array[] &$pageInfo Auxillary information about the page.
 	 */
 	public function onInfoAction( $context, &$pageInfo ) {
-		$imageFile = $this->getPageImageInternal( $context->getTitle() );
+		$imageFile = $this->getImage( $context->getTitle() );
 		if ( !$imageFile ) {
 			// The page has no image
 			return;
@@ -305,7 +299,7 @@ class PageImages implements
 		if ( !$out->getConfig()->get( 'PageImagesOpenGraph' ) ) {
 			return;
 		}
-		$imageFile = $this->getPageImageInternal( $out->getContext()->getTitle() );
+		$imageFile = $this->getImage( $out->getContext()->getTitle() );
 		if ( !$imageFile ) {
 			$fallback = $out->getConfig()->get( 'PageImagesOpenGraphFallbackImage' );
 			if ( $fallback ) {

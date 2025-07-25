@@ -194,6 +194,12 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 			"$dir/$dbType/patch-drop-afh_user.sql", true
 		] );
 
+		// 1.44
+		$updater->addExtensionUpdate( [
+			'dropField', 'abuse_filter_log', 'afl_patrolled_by',
+			"$dir/$dbType/patch-drop-afl_patrolled_by.sql", true
+		] );
+
 		$updater->addExtensionUpdate( [ [ $this, 'createAbuseFilterUser' ] ] );
 		// 1.35
 		$updater->addPostDatabaseUpdateMaintenance( UpdateVarDumps::class );

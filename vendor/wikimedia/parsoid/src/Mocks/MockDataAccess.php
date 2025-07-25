@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\Config\PageContent;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\LinkTarget;
+use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Parsoid\ParserTests\MockApiHelper;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -22,8 +23,9 @@ use Wikimedia\Parsoid\Utils\TitleValue;
  */
 class MockDataAccess extends DataAccess {
 	private SiteConfig $siteConfig;
+	private array $opts;
 
-	private static $PAGE_DATA = [
+	private const PAGE_DATA = [
 		"Main_Page" => [
 			"title" => "Main Page",
 			"pageid" => 1,
@@ -384,9 +386,7 @@ class MockDataAccess extends DataAccess {
 	 */
 	public function __construct( SiteConfig $siteConfig, array $opts ) {
 		$this->siteConfig = $siteConfig;
-		// Update data of the large page
-		$mainSlot = &self::$PAGE_DATA['Large_Page']['slots']['main'];
-		$mainSlot['*'] = str_repeat( 'a', $opts['maxWikitextSize'] ?? 1000000 );
+		$this->opts = $opts;
 	}
 
 	/** @inheritDoc */
@@ -394,12 +394,16 @@ class MockDataAccess extends DataAccess {
 		$ret = [];
 		foreach ( $titles as $title ) {
 			$normTitle = $this->normTitle( $title );
-			$pageData = self::$PAGE_DATA[$normTitle] ?? null;
+			$pageData = self::PAGE_DATA[$normTitle] ?? null;
+			if ( $normTitle === 'Large_Page' ) {
+				// Update data of the large page
+				$pageData['slots']['main']['*'] = str_repeat( 'a', $this->opts['maxWikitextSize'] ?? 1000000 );
+			}
 			$ret[$title] = [
 				'pageId' => $pageData['pageid'] ?? null,
 				'revId' => $pageData['revid'] ?? null,
 				'missing' => $pageData === null,
-				'known' => $pageData !== null || ( $pageData['known'] ?? false ),
+				'known' => $pageData !== null,
 				'redirect' => $pageData['redirect'] ?? false,
 				'linkclasses' => $pageData['linkclasses'] ?? [],
 			];
@@ -530,12 +534,6 @@ class MockDataAccess extends DataAccess {
 	}
 
 	/** @inheritDoc */
-	public function doPst( PageConfig $pageConfig, string $wikitext ): string {
-		// FIXME: This is all mockAPI does
-		return preg_replace( '/\{\{subst:1x\|([^}]+)\}\}/', '$1', $wikitext, 1 );
-	}
-
-	/** @inheritDoc */
 	public function parseWikitext(
 		PageConfig $pageConfig,
 		ContentMetadataCollector $metadata,
@@ -570,10 +568,14 @@ class MockDataAccess extends DataAccess {
 	public function preprocessWikitext(
 		PageConfig $pageConfig,
 		ContentMetadataCollector $metadata,
-		string $wikitext
-	): string {
+		$wikitext
+	) {
 		$revid = $pageConfig->getRevisionId();
 
+		if ( !is_string( $wikitext ) ) {
+			// Flatten fragments into wikitext
+			$wikitext = $wikitext->killMarkers();
+		}
 		$expanded = str_replace( '{{!}}', '|', $wikitext );
 		preg_match( '/{{1x\|(.*?)}}/s', $expanded, $match1 );
 		preg_match( '/{{#tag:ref\|(.*?)\|(.*?)}}/s', $expanded, $match2 );
@@ -596,7 +598,7 @@ class MockDataAccess extends DataAccess {
 			$ret = '';
 		}
 
-		return $ret;
+		return WikitextPFragment::newFromWt( $ret, null );
 	}
 
 	/** @inheritDoc */
@@ -604,7 +606,7 @@ class MockDataAccess extends DataAccess {
 		PageConfig $pageConfig, LinkTarget $title
 	): ?PageContent {
 		$normTitle = $this->normTitle( $title );
-		$pageData = self::$PAGE_DATA[$normTitle] ?? null;
+		$pageData = self::PAGE_DATA[$normTitle] ?? null;
 		if ( $pageData ) {
 			$content = [];
 			foreach ( $pageData['slots'] as $role => $data ) {
@@ -635,6 +637,7 @@ class MockDataAccess extends DataAccess {
 		'magiclink-tracking-rfc' => 'Pages using RFC magic links',
 		'magiclink-tracking-isbn' => 'Pages using ISBN magic links',
 		'magiclink-tracking-pmid' => 'Pages using PMID magic links',
+		'hidden-category-category' => 'Hidden categories',
 	];
 
 	/** @inheritDoc */

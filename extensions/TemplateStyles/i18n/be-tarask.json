@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Red Winged Duck",
+			"Renessaince"
+		]
+	},
+	"templatestyles": "Стылі шаблёнаў",
+	"templatestyles-desc": "Рэалізуе старонкі стыляў для кожнага шаблёну",
+	"templatestyles-missing-src": "Атрыбут <code>src</code> цэтліку TemplateStyles ня мусіць быць пустым.",
+	"templatestyles-invalid-src": "Няслушная назва атрыбуту <code>src</code> цэтліку TemplateStyles.",
+	"templatestyles-invalid-wrapper": "Няслушнае значэньне атрыбуту <code>wrapper</code> цэтліку TemplateStyles.",
+	"templatestyles-bad-src-missing": "Старонка [[:$1|$2]] ня мае зьместу.",
+	"templatestyles-bad-src": "Для TemplateStyles старонка [[:$1|$2]] мусіць мець мадэль зьместу „{{int:content-model-sanitized-css}}“ (цяперашняя мадэль — „$3“).",
+	"templatestyles-errorcomment": "Памылкі апрацоўкі табліцы стыляў [[:$1]] (вэр. $2):\n$3",
+	"templatestyles-size-exceeded": "Табліца стыляў большая за максымальны памер, роўны $2.",
+	"content-model-sanitized-css": "Ачышчаны CSS",
+	"templatestyles-stylesheet-error-category": "Табліцы стыляў TemplateStyles з памылкамі",
+	"templatestyles-stylesheet-error-category-desc": "Табліца стыляў TemplateStyles мае памылку.",
+	"templatestyles-page-error-category": "Старонкі з памылкамі стыляў шаблёнаў",
+	"templatestyles-page-error-category-desc": "Падчас апрацоўкі цэтліку <code><nowiki><templatestyles/></nowiki></code> на старонцы здарылася памылка."
+}

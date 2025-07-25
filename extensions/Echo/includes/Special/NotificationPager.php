@@ -23,12 +23,14 @@ class NotificationPager extends ReverseChronologicalPager {
 		parent::__construct( $context );
 	}
 
+	/** @inheritDoc */
 	public function formatRow( $row ) {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod LSP violation
 		throw new LogicException( "This pager does not support row formatting. " .
 			"Use 'getNotifications()' to get a list of Notification objects." );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$attributeManager = Services::getInstance()->getAttributeManager();
 		$eventTypes = $attributeManager->getUserEnabledEvents( $this->getUser(), 'web' );
@@ -52,6 +54,9 @@ class NotificationPager extends ReverseChronologicalPager {
 		];
 	}
 
+	/**
+	 * @return Notification[]
+	 */
 	public function getNotifications() {
 		if ( !$this->mQueryDone ) {
 			$this->doQuery();
@@ -74,6 +79,7 @@ class NotificationPager extends ReverseChronologicalPager {
 		return $notifications;
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return 'notification_event';
 	}

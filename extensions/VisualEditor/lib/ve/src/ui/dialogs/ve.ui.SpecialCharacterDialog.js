@@ -51,11 +51,11 @@ ve.ui.SpecialCharacterDialog.prototype.initialize = function () {
 	// Parent method
 	ve.ui.SpecialCharacterDialog.super.prototype.initialize.call( this );
 
-	this.characterListLayout = new ve.ui.SymbolListBookletLayout();
+	// Use 'visualeditor-symbolList-recentlyUsed-specialCharacters' in Hooks.php
+	this.characterListLayout = new ve.ui.SymbolListBookletLayout( { preferenceNameSuffix: 'specialCharacters' } );
 	this.characterListLayout.connect( this, {
 		choose: 'onCharacterListChoose'
 	} );
-	// Character list is lazy-loaded the first time getSetupProcess runs
 
 	this.$body.append( this.characterListLayout.$element );
 };
@@ -93,29 +93,6 @@ ve.ui.SpecialCharacterDialog.prototype.getTeardownProcess = function ( data ) {
 		.first( () => {
 			this.surface.getModel().disconnect( this );
 			this.surface = null;
-		} );
-};
-
-/**
- * @inheritdoc
- */
-ve.ui.SpecialCharacterDialog.prototype.getReadyProcess = function ( data ) {
-	return ve.ui.SpecialCharacterDialog.super.prototype.getReadyProcess.call( this, data )
-		.next( () => {
-			const surface = this.surface;
-			// The dialog automatically receives focus after opening, move it back to the surface.
-			// (Make sure an existing selection is preserved. Why does focus() reset the selection? 🤦)
-			const previousSelection = surface.getModel().getSelection();
-			// On deactivated surfaces (e.g. those using nullSelectionOnBlur), the native selection is
-			// removed after a setTimeout to fix a bug in iOS (T293661, in ve.ce.Surface#deactivate).
-			// Ensure that we restore the selection **after** this happens, otherwise the surface will
-			// get re-blurred. (T318720)
-			setTimeout( () => {
-				surface.getView().focus();
-				if ( !previousSelection.isNull() ) {
-					surface.getModel().setSelection( previousSelection );
-				}
-			} );
 		} );
 };
 

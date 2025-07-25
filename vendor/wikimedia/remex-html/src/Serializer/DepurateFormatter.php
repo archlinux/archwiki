@@ -14,11 +14,13 @@ use Wikimedia\RemexHtml\HTMLData;
  * https://www.mediawiki.org/wiki/Html5Depurate
  */
 class DepurateFormatter extends HtmlFormatter {
+	/** @inheritDoc */
 	public function __construct( $options = [] ) {
 		parent::__construct( $options );
 		$this->textEscapes["\xc2\xa0"] = '&#160;';
 	}
 
+	/** @inheritDoc */
 	public function element( SerializerNode $parent, SerializerNode $node, $contents ) {
 		$name = $node->name;
 		$s = "<$name";

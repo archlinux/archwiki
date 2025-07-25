@@ -302,7 +302,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		$this->assertNotContains( 'test2', $extracted['globals']['wgImplicitRights'] );
 	}
 
-	public function provideMixedStyleHooks() {
+	public static function provideMixedStyleHooks() {
 		// Format:
 		// Content in extension.json
 		// Expected wgHooks
@@ -339,7 +339,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'services' => [],
 								'name' => 'FooBar-HandlerObjectCallback'
 							],
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						],
 						[
 							'handler' => [
@@ -348,7 +348,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'name' => 'FooBar-HandlerObjectCallback'
 							],
 							'deprecated' => true,
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						],
 						[
 							'handler' => [
@@ -356,7 +356,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'services' => [],
 								'name' => 'FooBar-HandlerObjectCallback'
 							],
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						]
 					]
 				]
@@ -364,7 +364,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	public function provideNonLegacyHooks() {
+	public static function provideNonLegacyHooks() {
 		// Format:
 		// Current Hooks attribute
 		// Content in extension.json
@@ -393,7 +393,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'name' => 'FooBar-HandlerObjectCallback'
 							],
 							'deprecated' => true,
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						]
 					]
 				],
@@ -417,7 +417,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'services' => [],
 								'name' => 'FooBar-HandlerObjectCallback'
 							],
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						],
 					]
 				],
@@ -446,7 +446,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'services' => []
 							],
 							'deprecated' => true,
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						],
 						[
 							'handler' => [
@@ -454,7 +454,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'class' => 'FooClass',
 								'services' => [],
 							],
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						]
 					]
 				],
@@ -482,7 +482,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 								'class' => 'FooClass',
 								'services' => []
 							],
-							'extensionPath' => $this->getExtensionPath()
+							'extensionPath' => self::getExtensionPath()
 						],
 					]
 				],
@@ -594,6 +594,50 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		);
 		$processor->extractInfo( $this->extensionPath, $info, 1 );
 		$processor->getExtractedInfo();
+	}
+
+	public static function provideDomainEventDomainEventIngresses() {
+		// Format:
+		// Current attributes
+		// Content in extension.json
+		// Expected DomainEventIngresses attribute
+		return [
+			'DomainEventIngresses' => [
+				[
+					'DomainEventIngresses' => [
+						[ 'events' => [ 'FooDone' ], 'factory' => 'PriorCallback' ]
+					]
+				],
+				[
+					'DomainEventIngresses' => [
+						[
+							'events' => [ 'FooDone', 'BarDone', ],
+							'class' => 'FooClass',
+							'services' => [],
+						],
+					]
+				] + self::$default,
+				[
+					[ 'events' => [ 'FooDone' ], 'factory' => 'PriorCallback' ],
+					[
+						'events' => [ 'FooDone', 'BarDone', ],
+						'class' => 'FooClass',
+						'services' => [],
+						'extensionPath' => self::getExtensionPath()
+					]
+				]
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideDomainEventDomainEventIngresses
+	 */
+	public function testDomainEventDomainEventIngresses( $pre, $info, $expected ) {
+		$processor = new MockExtensionProcessor( [ 'attributes' => $pre ] );
+		$processor->extractInfo( $this->extensionPath, $info, 1 );
+		$extracted = $processor->getExtractedInfo();
+		$this->assertEquals( $expected, $extracted['attributes']['DomainEventIngresses'] );
 	}
 
 	public function testExtractConfig1() {
@@ -788,15 +832,11 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 	 */
 	public function testExtractResourceLoaderModules(
 		$input,
-		array $expectedGlobals,
 		array $expectedAttribs = []
 	) {
 		$processor = new ExtensionProcessor();
 		$processor->extractInfo( $this->extensionPath, $input + self::$default, 1 );
 		$out = $processor->getExtractedInfo();
-		foreach ( $expectedGlobals as $key => $value ) {
-			$this->assertEquals( $value, $out['globals'][$key] );
-		}
 		foreach ( $expectedAttribs as $key => $value ) {
 			$this->assertEquals( $value, $out['attributes'][$key] );
 		}
@@ -805,8 +845,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 	public static function provideExtractResourceLoaderModules() {
 		$dir = dirname( self::getExtensionPath() );
 		return [
-			// Generic module with localBasePath/remoteExtPath specified
-			[
+			'Generic module with localBasePath/remoteExtPath specified' => [
 				// Input
 				[
 					'ResourceModules' => [
@@ -818,7 +857,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 				// Expected
-				[],
 				[
 					'ResourceModules' => [
 						'test.foo' => [
@@ -829,8 +867,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 			],
-			// ResourceFileModulePaths specified:
-			[
+			'ResourceFileModulePaths specified' => [
 				// Input
 				[
 					'ResourceFileModulePaths' => [
@@ -862,7 +899,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 				// Expected
-				[],
 				[
 					'ResourceModules' => [
 						'test.foo' => [
@@ -890,8 +926,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 			],
-			// ResourceModuleSkinStyles with file module paths
-			[
+			'ResourceModuleSkinStyles with file module paths' => [
 				// Input
 				[
 					'ResourceFileModulePaths' => [
@@ -905,7 +940,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 				// Expected
-				[],
 				[
 					'ResourceModuleSkinStyles' => [
 						'foobar' => [
@@ -916,8 +950,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 			],
-			// ResourceModuleSkinStyles with file module paths and an override
-			[
+			'ResourceModuleSkinStyles with file module paths and an override' => [
 				// Input
 				[
 					'ResourceFileModulePaths' => [
@@ -932,7 +965,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 				// Expected
-				[],
 				[
 					'ResourceModuleSkinStyles' => [
 						'foobar' => [
@@ -953,7 +985,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 				// Expected
-				[],
 				[
 					'QUnitTestModules' => [
 						'test.FooBar' => [
@@ -964,58 +995,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 					],
 				],
 			],
-		];
-	}
-
-	public static function provideSetToGlobal() {
-		return [
-			[
-				[ 'wgAPIModules', 'wgAvailableRights' ],
-				[],
-				[
-					'APIModules' => [ 'foobar' => 'ApiFooBar' ],
-					'AvailableRights' => [ 'foobar', 'unfoobar' ],
-				],
-				[
-					'wgAPIModules' => [ 'foobar' => 'ApiFooBar' ],
-					'wgAvailableRights' => [ 'foobar', 'unfoobar' ],
-				],
-			],
-			[
-				[ 'wgAPIModules', 'wgAvailableRights' ],
-				[
-					'wgAPIModules' => [ 'barbaz' => 'ApiBarBaz' ],
-					'wgAvailableRights' => [ 'barbaz' ]
-				],
-				[
-					'APIModules' => [ 'foobar' => 'ApiFooBar' ],
-					'AvailableRights' => [ 'foobar', 'unfoobar' ],
-				],
-				[
-					'wgAPIModules' => [ 'barbaz' => 'ApiBarBaz', 'foobar' => 'ApiFooBar' ],
-					'wgAvailableRights' => [ 'barbaz', 'foobar', 'unfoobar' ],
-				],
-			],
-			[
-				[ 'wgGroupPermissions' ],
-				[
-					'wgGroupPermissions' => [
-						'sysop' => [ 'delete' ]
-					],
-				],
-				[
-					'GroupPermissions' => [
-						'sysop' => [ 'undelete' ],
-						'user' => [ 'edit' ]
-					],
-				],
-				[
-					'wgGroupPermissions' => [
-						'sysop' => [ 'delete', 'undelete' ],
-						'user' => [ 'edit' ]
-					],
-				]
-			]
 		];
 	}
 
@@ -1288,8 +1267,9 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 
 		$schemaFileHash = md5_file( "$IP/docs/extension.schema.v1.json", false );
 
-		$this->assertTrue(
-			$schemaFileHash === '197fc9db288765d17a76a826e879ac6b',
+		$this->assertSame(
+			'51b7eb8503c163fb1381110bc995cdd5',
+			$schemaFileHash,
 			"Manifest_version 1 is frozen and should not be changed or given new features" );
 	}
 

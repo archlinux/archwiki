@@ -8,11 +8,13 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in cell" insertion mode
  */
 class InCell extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->dispatcher->inBody->characters( $text, $start, $length,
 			$sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		switch ( $name ) {
 			case 'caption':
@@ -41,6 +43,7 @@ class InCell extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -91,11 +94,12 @@ class InCell extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->dispatcher->inBody->endDocument( $pos );
 	}
 
-	private function closeTheCell( $sourceStart ) {
+	private function closeTheCell( int $sourceStart ): InsertionMode {
 		$tdth = [ 'td' => true, 'th' => true ];
 		$builder = $this->builder;
 		$stack = $builder->stack;

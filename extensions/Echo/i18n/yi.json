@@ -48,6 +48,7 @@
 	"notifications": "אנזאגן",
 	"tooltip-pt-notifications-alert": "{{GENDER:|אייערע}} אויפדערוואכן",
 	"tooltip-pt-notifications-notice": "{{GENDER:|אייערע}} מעלדונגען",
+	"tooltip-pt-notifications": "אײַערע אנזאגן",
 	"echo-displaynotificationsconfiguration": "װײזן מודעות־קאנפֿיגוראַציע",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "מודעות לויט קאטעגאריע",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "סארטירן פון טיפן",

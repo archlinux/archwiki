@@ -6,6 +6,7 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Exception\MWException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
@@ -325,13 +326,13 @@ class NamespaceInfoTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $obj->wantSignatures( $index ) );
 	}
 
-	public function provideWantSignatures_ExtraSignatureNamespaces() {
+	public static function provideWantSignatures_ExtraSignatureNamespaces() {
 		$ret = array_map(
 			static function ( $arr ) {
 				// We've added all these as extra signature namespaces, so expect true
 				return [ $arr[0], true ];
 			},
-			$this->provideWantSignatures()
+			self::provideWantSignatures()
 		);
 
 		// Add one more that's false

@@ -74,6 +74,7 @@
 	"prefs-help-email": "Jenganan surél mak wajib, kidang tiperluko kik haga nyetil luwot sandini kik Niku lupa.",
 	"prefs-help-email-required": "Jenganan surél wajib tiisi.",
 	"prefs-help-email-others": "Niku dapok munih milih kik haga ngijinko hulun barih ngehubungi Niku liyu halaman pemakai atawa pubalahan.\nJenganan surél mak tijajakko pas pemakai barih ngehubungi Niku.",
+	"tog-requireemail": "Kirim surél pengatoran ulang sandi angkah pas keruwa jenganan surél rik gelar pemakai tikeni",
 	"prefs-help-requireemail": "Hinji bakal ningkatko pripasi rik nulung nyegah surél sai mak tiharapko.",
 	"noemailprefs": "Niku musti ngurukko jenganan surél kak préperénsimu guwai dapok makai pitur-pitur hinji.",
 	"emailnotauthenticated": "Jenganan surélmu mangkung tikonpirmasi.\nSemangkung tikonpirmasi Niku mak bakal nerima surél jak pitur sa.",
@@ -201,6 +202,7 @@
 	"search-thumbnail-extra-namespaces-label": "Jajakko miniyatur di Special:Search on Desktop",
 	"search-thumbnail-extra-namespaces-message": "Ngejajakko miniyatur guwai $1 $1 {{PLURAL:$2|ruwang gelar}} kak halaman {{#special:search}}",
 	"prefs-advancedsearchoptions": "Opsi lanjutan",
+	"prefs-misc": "Subanéka",
 	"prefs-reset-intro": "Niku dapok makai halaman hinji guwai ngulohko préperénsimu mit atoran usungan situs.\nPengulohan préperénsi mak dapok tiurungko.",
 	"prefs-reset-confirm": "Yu, nyak haga ngator luwot préperénsiku.",
 	"restoreprefs": "Ulohko unyin mit dandanan usungan"

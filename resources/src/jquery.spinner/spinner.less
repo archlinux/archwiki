@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+
 .mw-spinner {
 	position: relative;
 
@@ -13,7 +15,7 @@
 		height: @mw-spinner-small-size;
 
 		> .mw-spinner-container {
-			transform: scale( unit( @mw-spinner-small-size / 64 ) );
+			transform: scale( unit( ( @mw-spinner-small-size / 64 ) ) );
 		}
 	}
 
@@ -22,7 +24,7 @@
 		height: @mw-spinner-large-size;
 
 		> .mw-spinner-container {
-			transform: scale( unit( @mw-spinner-large-size / 64 ) );
+			transform: scale( unit( ( @mw-spinner-large-size / 64 ) ) );
 		}
 	}
 
@@ -70,7 +72,7 @@
 			width: 5px;
 			height: 14px;
 			border-radius: 20%;
-			background: #000;
+			background: @color-base;
 		}
 
 		&:nth-child( 1 ) {

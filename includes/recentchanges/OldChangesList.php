@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\RecentChanges;
+
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -158,10 +160,13 @@ class OldChangesList extends ChangesList {
 			'data-target-page' => $rc->getTitle(), // Used for reliable determination of the affiliated page
 		], $html );
 		if ( is_callable( $this->changeLinePrefixer ) ) {
-			$prefix = call_user_func( $this->changeLinePrefixer, $rc, $this, false );
+			$prefix = ( $this->changeLinePrefixer )( $rc, $this, false );
 			$html = Html::rawElement( 'span', [ 'class' => 'mw-changeslist-line-prefix' ], $prefix ) . $html;
 		}
 
 		return $html;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( OldChangesList::class, 'OldChangesList' );

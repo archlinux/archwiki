@@ -12,16 +12,10 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEchoMute extends ApiBase {
 
-	/** @var CentralIdLookup */
-	private $centralIdLookup;
+	private CentralIdLookup $centralIdLookup;
+	private LinkBatchFactory $linkBatchFactory;
+	private UserOptionsManager $userOptionsManager;
 
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var UserOptionsManager */
-	private $userOptionsManager;
-
-	/** @var string[][] */
 	private const MUTE_LISTS = [
 		'user' => [
 			'pref' => 'echo-notifications-blacklist',
@@ -33,16 +27,9 @@ class ApiEchoMute extends ApiBase {
 		],
 	];
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param CentralIdLookup $centralIdLookup
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param UserOptionsManager $userOptionsManager
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		CentralIdLookup $centralIdLookup,
 		LinkBatchFactory $linkBatchFactory,
 		UserOptionsManager $userOptionsManager
@@ -68,7 +55,7 @@ class ApiEchoMute extends ApiBase {
 		$params = $this->extractRequestParams();
 		$mutelistInfo = self::MUTE_LISTS[ $params['type'] ];
 		$prefValue = $this->userOptionsManager->getOption( $user, $mutelistInfo['pref'] );
-		$ids = $this->parsePref( $prefValue );
+		$ids = $prefValue !== null ? $this->parsePref( $prefValue ) : [];
 		$targetsToMute = $params['mute'] ?? [];
 		$targetsToUnmute = $params['unmute'] ?? [];
 
@@ -101,6 +88,11 @@ class ApiEchoMute extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), 'success' );
 	}
 
+	/**
+	 * @param string[] $names
+	 * @param string $type
+	 * @return int[]
+	 */
 	private function lookupIds( $names, $type ) {
 		if ( $type === 'title' ) {
 			$linkBatch = $this->linkBatchFactory->newLinkBatch();
@@ -122,14 +114,15 @@ class ApiEchoMute extends ApiBase {
 		}
 	}
 
-	private function parsePref( $prefValue ) {
+	private function parsePref( string $prefValue ): array {
 		return preg_split( '/\n/', $prefValue, -1, PREG_SPLIT_NO_EMPTY );
 	}
 
-	private function serializePref( $ids ) {
+	private function serializePref( array $ids ): string {
 		return implode( "\n", $ids );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams( $flags = 0 ) {
 		return [
 			'type' => [
@@ -145,14 +138,17 @@ class ApiEchoMute extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}

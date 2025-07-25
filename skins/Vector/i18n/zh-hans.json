@@ -33,6 +33,7 @@
 			"Wzl19371",
 			"Xiaomingyan",
 			"Xiplus",
+			"XtexChooser",
 			"Xyb",
 			"Xzonn",
 			"Yfdyh000",
@@ -40,7 +41,6 @@
 			"沈澄心",
 			"落花有意12138",
 			"魔琴",
-			"XtexChooser",
 			"Key0121"
 		]
 	},
@@ -58,7 +58,7 @@
 	"vector-language-button-aria-label": "前往另一种语言写成的文章。{{PLURAL:$1|$1种语言}}可用",
 	"vector-language-button-label": "{{PLURAL:$1|$1种语言}}",
 	"vector-no-language-button-label": "添加语言",
-	"vector-no-language-button-aria-label": "这篇条目只存在于此语言中。添加其他语言的条目",
+	"vector-no-language-button-aria-label": "这篇条目只在此语言可用。请添加该条目的其他语言版本",
 	"vector-language-variant-switcher-label": "更改语言变体",
 	"vector-action-addsection": "添加话题",
 	"vector-action-delete": "删除",
@@ -77,6 +77,7 @@
 	"vector-more-actions": "更多",
 	"vector-appearance-label": "外观",
 	"vector-appearance-tooltip": "更改页面字体大小、宽度和颜色的外观",
+	"vector-personal-tools-tooltip": "个人设置",
 	"vector-feature-limited-width-name": "宽度",
 	"vector-feature-limited-width-0-label": "宽",
 	"vector-feature-limited-width-1-label": "标准",

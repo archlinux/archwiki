@@ -21,10 +21,10 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Unit\Components;
 
+use MediaWiki\Skin\Skin;
 use MediaWiki\Skins\Vector\Components\VectorComponent;
 use MediaWiki\Skins\Vector\Components\VectorComponentMainMenuAction;
 use MediaWikiUnitTestCase;
-use Skin;
 
 /**
  * @group Vector

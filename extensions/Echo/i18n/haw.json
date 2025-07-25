@@ -18,6 +18,7 @@
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|memo|mau memo}} ‘ao‘ao kūkākūkā",
 	"echo-category-title-article-linked": "{{PLURAL:$1|loulou|mau loulou}} ‘ao‘ao",
 	"notifications": "Notikala",
+	"tooltip-pt-notifications": "Kāu notikala",
 	"echo-specialpage": "Notikala",
 	"echo-none": "‘A‘ohe notikala.",
 	"notification-link-text-view-message": "Nānā memo"

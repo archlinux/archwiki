@@ -1,5 +1,5 @@
 /**
- * Compares the default Uri host, usually `window.location.host`, and `mw.Uri.host`. Equivalence
+ * Compares `window.location.host`, and `URL.host`. Equivalence
  * tests internal linkage, a mismatch may indicate an external link. Interwiki links are
  * considered external.
  *
@@ -21,17 +21,21 @@
  *     https://en.wikipedia.org/wiki/Bar
  *
  * @ignore
- * @param {mw.Uri} uri
+ * @param {URL} url
+ * @param {URL|Location} reference
  * @return {boolean}
  */
-function isInternal( uri ) {
+function isInternal( url ) {
 	try {
-		// mw.Uri can throw exceptions (T264914, T66884)
-		return uri.host === mw.Uri().host;
+		// URL can throw exceptions (T264914, T66884)
+		return url.host === isInternal.base.host;
 	} catch ( e ) {
 		return false;
 	}
 }
+
+// Allow overriding for qunit tests
+isInternal.base = location;
 
 module.exports = {
 	isInternal

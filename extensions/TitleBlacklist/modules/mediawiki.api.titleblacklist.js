@@ -17,7 +17,7 @@
 		 *  and 'message' properties if title was blacklisted.
 		 */
 		isBlacklisted: function ( title, ok, err ) {
-			var d = $.Deferred();
+			const d = $.Deferred();
 			// Backwards compatibility (< MW 1.20)
 			d.done( ok );
 			d.fail( err );
@@ -31,8 +31,8 @@
 				errorsuselocal: '',
 				formatversion: 2
 			} )
-				.done( function ( data ) {
-					var result;
+				.done( ( data ) => {
+					let result;
 
 					// this fails open (if nothing valid is returned by the api, allows the title)
 					// also fails open when the API is not present, which will be most of the time

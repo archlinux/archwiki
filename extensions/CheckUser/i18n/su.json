@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Irwangatot",
+			"Kandar",
+			"Uchup19"
+		]
+	},
+	"checkuser-desc": "Leler kawenangan pikeun mariksa alamat IP jeung émbaran lianna ti hiji pamaké",
+	"checkuser": "Pamaké pamariksa",
+	"checkuserlog": "Log PamakéPamariksa",
+	"group-checkuser": "Pamaké pamariksa",
+	"group-checkuser-member": "{{GENDER:$1|pamariksa}}",
+	"grouppage-checkuser": "{{ns:project}}:Pamaké pamariksa",
+	"checkuser-reason": "Alesan:",
+	"checkuser-showlog": "Témbongkeun log",
+	"checkuser-target": "Sandiasma atawa alamat IP:",
+	"checkuser-users": "Paluruh pamaké",
+	"checkuser-ips": "Paluruh IP",
+	"checkuser-empty": "Logna kosong.",
+	"checkuser-nomatch": "Euweuh nu cocog.",
+	"checkuser-check": "Pariksa",
+	"checkuser-blocked": "Dipeungpeuk",
+	"checkuser-search": "Paluruh éntri log pamaké",
+	"checkuser-search-submit": "Paluruh",
+	"checkuser-ipeditcount": "~$1 ti sakumna pamaké",
+	"checkuser-showmain": "Balik ka formulir utama PamakéPamariksa"
+}

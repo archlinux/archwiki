@@ -7,12 +7,12 @@
 			"Klutzy",
 			"Kurousagi",
 			"Kwj2772",
+			"Namoroka",
 			"Priviet",
 			"SeoJeongHo",
 			"Yearning",
 			"Ykhwong",
-			"아라",
-			"Namoroka"
+			"아라"
 		]
 	},
 	"gadgets-desc": "각 사용자가 [[Special:Gadgets|CSS와 자바스크립트 소도구]]를 [[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]을 통해 사용할 수 있습니다",
@@ -55,6 +55,7 @@
 	"gadgets-validate-invalidjs": "유효하지 않은 \"$2\" 콘텐츠 모델로 인해 $1 스크립트는 사용되지 않습니다.",
 	"gadgets-validate-invalidcss": "유효하지 않은 \"$2\" 콘텐츠 모델로 인해 $1 스타일시트는 사용되지 않습니다.",
 	"gadgets-validate-invalidjson": "유효하지 않은 \"$2\" 콘텐츠 모델로 인해 $1 데이터 문서는 사용되지 않습니다.",
+	"gadgets-validate-nopeer": "\"$1\" 피어 소도구는 존재하지 않으므로 무시되었습니다.",
 	"gadgets-validate-invalidactions": "다음의 {{PLURAL:$2|동작이}} 인식되지 않습니다: $1",
 	"gadgets-validate-invalidcontentmodels": "다음의 콘텐츠 {{PLURAL:$2|모델이}} 존재하지 않습니다: $1",
 	"gadgets-validate-invalidnamespaces": "다음의 이름공간 {{PLURAL:$2|번호가}} 존재하지 않습니다: $1",
@@ -64,5 +65,8 @@
 	"gadgets-validate-unknownpages": ".js, .css 또는 .json 접미사가 없는 문서가 하나 이상 포함되어 있습니다. 해당 문서들은 사용되지 않습니다.",
 	"gadgets-validate-duplicate": "소도구 $1의 두 번째 정의가 확인되었으며 무시됩니다",
 	"gadgets-validate-nopage": "\"$1\" 문서는 존재하지 않습니다.",
-	"gadgets-supports-urlload": "이 소도구는 <code>?withgadget</code> 쿼리 변수 URL을 통해 불러오기를 지원합니다."
+	"gadgets-validate-invaliddependencies": "다음의 {{PLURAL:$2|의존성이}} 없습니다: $1.",
+	"gadgets-validate-deprecateddependencies": "다음의 {{PLURAL:$2|의존성은}} 구식입니다: $1.",
+	"gadgets-supports-urlload": "이 소도구는 <code>?withgadget</code> 쿼리 변수 URL을 통해 불러오기를 지원합니다.",
+	"gadgets-hidden": "이 소도구는 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 숨겨져] 있으므로, 환경 설정 문서에 표시되지 않습니다."
 }

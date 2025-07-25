@@ -7,7 +7,10 @@
 	<div class="post-content footer-content">
 	{{{html-after-content}}}
 	{{>LanguageSection}}
-	{{#data-logos}}<div class="minerva-footer-logo">{{>Logo}}</div>{{/data-logos}}
+	<div class="minerva-footer-logo">
+		{{#data-logos}}{{>Logo}}{{/data-logos}}
+		{{#data-icons}}{{>footerIconList}}{{/data-icons}}
+	</div>
 	{{#data-info}}{{>footerItemList}}{{/data-info}}
 	{{#data-places}}{{>footerItemList}}{{/data-places}}
 	</div>

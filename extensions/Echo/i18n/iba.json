@@ -29,6 +29,7 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Teks biasa",
 	"echo-pref-cross-wiki-notifications": "Mandangka pemadah ari wiki ke bukai",
+	"echo-pref-notifications-blacklist": "Anang ayanka pemadah ari pengena-pengena tu ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute penerang ke silik agi])",
 	"echo-notification-markasread": "Tanda udah dibacha",
 	"echo-notification-markasunread": "Tanda bedau dibacha",
 	"echo-notification-markasread-tooltip": "Tanda udah dibacha",

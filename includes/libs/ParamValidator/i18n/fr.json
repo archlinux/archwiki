@@ -3,13 +3,13 @@
 		"authors": [
 			"Assorted-Interests",
 			"Gomoko",
+			"Mahabarata",
 			"Méthodes Bulebe Hangi",
 			"Orlodrim",
 			"Pamputt",
 			"Thibaut120094",
 			"Verdy p",
-			"Wladek92",
-			"Mahabarata"
+			"Wladek92"
 		]
 	},
 	"paramvalidator-badbool": "Valeur « $2 » non valide pour le paramètre booléen « $1 ». Passer $3 pour vrai, ou $5 pour faux.",

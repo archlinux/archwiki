@@ -30,6 +30,7 @@ use MWHttpRequest;
 use Profiler;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Http\MultiHttpClient;
+use Wikimedia\Http\TelemetryHeadersInterface;
 
 /**
  * Factory creating MWHttpRequest objects.
@@ -39,7 +40,7 @@ class HttpRequestFactory {
 	private $options;
 	/** @var LoggerInterface */
 	private $logger;
-	/** @var Telemetry|null */
+	/** @var TelemetryHeadersInterface|null */
 	private $telemetry;
 
 	/**
@@ -57,7 +58,7 @@ class HttpRequestFactory {
 	public function __construct(
 		ServiceOptions $options,
 		LoggerInterface $logger,
-		?Telemetry $telemetry = null
+		?TelemetryHeadersInterface $telemetry = null
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
@@ -183,7 +184,7 @@ class HttpRequestFactory {
 		if ( $status->isOK() ) {
 			return $req->getContent();
 		} else {
-			$errors = array_map( fn ( $msg ) => $msg->getKey(), $status->getMessages( 'error' ) );
+			$errors = array_map( static fn ( $msg ) => $msg->getKey(), $status->getMessages( 'error' ) );
 			$logger->warning( Status::wrap( $status )->getWikiText( false, false, 'en' ),
 				[ 'error' => $errors, 'caller' => $caller, 'content' => $req->getContent() ] );
 			return null;

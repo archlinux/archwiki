@@ -25,10 +25,10 @@ use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Title\Title;
-use WikiPage;
 
 /**
  * Content handler for JavaScript pages.
@@ -150,7 +150,7 @@ class JavaScriptContentHandler extends CodeContentHandler {
 			// Return JavaScript wrapped in a <pre> tag.
 			$html = Html::element(
 				'pre',
-				[ 'class' => 'mw-code mw-js', 'dir' => 'ltr' ],
+				[ 'class' => [ 'mw-code', 'mw-js' ], 'dir' => 'ltr' ],
 				"\n" . $content->getText() . "\n"
 			) . "\n";
 		} else {

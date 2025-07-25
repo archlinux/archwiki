@@ -74,5 +74,8 @@
 	"gadgets-validate-unknownpages": "Contiene una o più pagine senza suffisso .js, .css o .json. Non verrebbero utilizzati.",
 	"gadgets-validate-duplicate": "È stata rilevata una seconda definizione dell'accessorio $1 che verrà ignorata",
 	"gadgets-validate-nopage": "La pagina \"$1\" non esiste.",
-	"gadgets-supports-urlload": "Questo accessorio supporta il caricamento tramite URL con il parametro query <code>?withgadget</code> ."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Manca la seguente dipendenza|Mancano le seguenti dipendenze}}: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|La seguente dipendenza è deprecata|Le seguenti dipendenze sono deprecate}}: $1.",
+	"gadgets-supports-urlload": "Questo accessorio supporta il caricamento tramite URL con il parametro query <code>?withgadget</code> .",
+	"gadgets-hidden": "Questo gadget è [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden nascosto], il che significa che non apparirà nella pagina delle preferenze."
 }

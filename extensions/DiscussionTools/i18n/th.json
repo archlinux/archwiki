@@ -179,8 +179,8 @@
 	"tag-discussiontools-added-comment-description": "มีการเพิ่มความเห็นในหน้าพูดคุยในการแก้ไขนี้",
 	"tag-discussiontools-description": "การแก้ไขโดยใช้เครื่องมือการอภิปราย",
 	"tag-discussiontools-edit": "แก้ไขความเห็น",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} หัวข้อใหม่]",
+	"tag-discussiontools-newtopic": "หัวข้อใหม่",
 	"tag-discussiontools-newtopic-description": "ผู้ใช้เพิ่มหัวข้อใหม่ในหน้าด้วยเครื่องมือช่วยในการอภิปราย",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} ตอบกลับ]",
+	"tag-discussiontools-reply": "ตอบกลับ",
 	"tag-discussiontools-reply-description": "ผู้ใช้ตอบกลับด้วยเครื่องมือการอภิปราย"
 }

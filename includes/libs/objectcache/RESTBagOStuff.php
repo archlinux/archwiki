@@ -176,7 +176,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		$this->attrMap[self::ATTR_DURABILITY] = self::QOS_DURABILITY_DISK;
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		parent::setLogger( $logger );
 		$this->client->setLogger( $logger );
 	}
@@ -226,7 +226,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 				[ 'cacheKey' => $key ] );
 		}
 
-		$this->updateOpStats( self::METRIC_OP_SET, [ $key => [ strlen( $rbody ), 0 ] ] );
+		$this->updateOpStats( self::METRIC_OP_SET, [ $key => [ strlen( $req['body'] ), 0 ] ] );
 
 		return $res;
 	}

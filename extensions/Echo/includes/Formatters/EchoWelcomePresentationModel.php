@@ -6,10 +6,12 @@ use MediaWiki\Title\Title;
 
 class EchoWelcomePresentationModel extends EchoEventPresentationModel {
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'site';
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		$msg = $this->msg( 'notification-welcome-link' );
 		if ( $msg->isDisabled() ) {

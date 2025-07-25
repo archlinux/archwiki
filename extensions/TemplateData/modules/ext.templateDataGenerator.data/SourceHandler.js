@@ -177,10 +177,10 @@ SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateC
 	while ( ( matches = paramExtractor.exec( templateCode ) ) !== null ) {
 		// This normalization process is repeated in PHP in TemplateDataBlob.php
 		const normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).trim().toLowerCase();
-		if ( !normalizedParamName || normalizedParamNames.indexOf( normalizedParamName ) !== -1 ) {
+		if ( !normalizedParamName || normalizedParamNames.includes( normalizedParamName ) ) {
 			continue;
 		}
-		if ( paramNames.indexOf( matches[ 1 ] ) === -1 ) {
+		if ( !paramNames.includes( matches[ 1 ] ) ) {
 			normalizedParamNames.push( normalizedParamName );
 			paramNames.push( matches[ 1 ].trim() );
 		}

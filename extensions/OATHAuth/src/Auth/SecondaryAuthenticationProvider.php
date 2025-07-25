@@ -7,6 +7,7 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
+use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 
@@ -40,8 +41,7 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 	 * @return AuthenticationResponse
 	 */
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
-		$authUser = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' )
-			->findByUser( $user );
+		$authUser = OATHAuthServices::getInstance()->getUserRepository()->findByUser( $user );
 
 		$module = $authUser->getModule();
 		if ( $module === null ) {
@@ -57,8 +57,7 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 	 * @inheritDoc
 	 */
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
-		$authUser = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' )
-			->findByUser( $user );
+		$authUser = OATHAuthServices::getInstance()->getUserRepository()->findByUser( $user );
 
 		$module = $authUser->getModule();
 		$provider = $this->getProviderForModule( $module );

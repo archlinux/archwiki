@@ -15,7 +15,7 @@
 	 * @param {jQuery.Event} e The event fired when the function is called
 	 */
 	function doExprSubmit( e ) {
-		var expr = $( '#wpFilterRules' ).val();
+		const expr = $( '#wpFilterRules' ).val();
 
 		$( this ).injectSpinner( { id: 'abusefilter-expr', size: 'large' } );
 
@@ -24,9 +24,9 @@
 			expression: expr,
 			prettyprint: 1
 		} )
-			.fail( function showError( error, details ) {
+			.fail( ( error, details ) => {
 				// TODO This might use api.getErrorMessage()
-				var msg;
+				let msg;
 				if ( error === 'http' ) {
 					msg = 'abusefilter-http-error';
 				} else if ( error === 'abusefilter-tools-syntax-error' ) {
@@ -42,7 +42,7 @@
 					.addClass( 'mw-abusefilter-tools-error' )
 					.show();
 			} )
-			.done( function showResult( data ) {
+			.done( ( data ) => {
 				$.removeSpinner( 'abusefilter-expr' );
 
 				$( '#mw-abusefilter-expr-result' )
@@ -76,7 +76,7 @@
 	 * @param {Object} data The response of the API request
 	 */
 	function processReautoconfirmFailure( errorCode, data ) {
-		var msg;
+		let msg;
 
 		switch ( errorCode ) {
 			case 'permissiondenied':
@@ -105,7 +105,7 @@
 	 * @return {boolean} False to prevent form submission
 	 */
 	function doReautoSubmit() {
-		var nameField = OO.ui.infuse( $( '#reautoconfirm-user' ) ),
+		const nameField = OO.ui.infuse( $( '#reautoconfirm-user' ) ),
 			name = nameField.getValue();
 
 		if ( name === '' ) {
@@ -124,7 +124,7 @@
 		return false;
 	}
 
-	$( function initialize() {
+	$( () => {
 		$( '#mw-abusefilter-submitexpr' ).on( 'click', doExprSubmit );
 		$( '#mw-abusefilter-reautoconfirmsubmit' ).on( 'click', doReautoSubmit );
 	} );

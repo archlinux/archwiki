@@ -37,5 +37,8 @@
 	"gadgets-not-found": "Tööriista \"$1\" ei leidu.",
 	"gadgets-export-text": "Klõpsa nuppu \"{{int:gadgets-export-download}}\", et eksportida tööriist $1; salvesta allalaaditav fail;\nmine sihtvikis leheküljele Special:Import ja laadi see üles. Seejärel lisa järgnev leheküljele MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nSul peavad olema sihtvikis vajalikud õigused (kaasa arvatud õigus redigeerida süsteemi sõnumeid) ja üleslaaditavate failide kaudu importimine peab olema lubatud.",
 	"gadgets-export-download": "Laadi alla",
-	"gadgets-supports-urlload": "See tööriist toetab laadimist URL-i päringuparameetriga <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Järgmine sõltuv moodul puudub|Järgmised sõltuvad moodulid puuduvad}}: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Järgmine sõltuv moodul|Järgmised sõltuvad moodulid}} on aegunud: $1.",
+	"gadgets-supports-urlload": "See tööriist toetab laadimist URL-i päringuparameetriga <code>?withgadget</code>.",
+	"gadgets-hidden": "See tööriist on [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden peidetud], mis tähendab, et seda ei näidata eelistuste leheküljel."
 }

@@ -36,7 +36,7 @@
 	"scribunto-common-timeout": "Die zum Ausführen von Skripten vorgesehene Zeit ist abgelaufen.",
 	"scribunto-common-oom": "Der zum Ausführen von Skripten vorgesehene Arbeitsspeicher wurde erschöpft.",
 	"scribunto-common-backtrace": "Ablaufrückverfolgung:",
-	"scribunto-common-no-details": "Es sind keine weiteren Einzelheiten verfügbar.",
+	"scribunto-common-no-details": "Keine Details zum Codestandort verfügbar.",
 	"scribunto-lua-in-function": "in der Funktion „$1“",
 	"scribunto-lua-in-main": "im Hauptsegment",
 	"scribunto-lua-in-function-at": "in der Funktion bei $1:$2",

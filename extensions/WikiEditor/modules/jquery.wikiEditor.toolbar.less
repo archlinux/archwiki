@@ -1,4 +1,4 @@
-@import 'mediawiki.mixins';
+@import 'mediawiki.mixins.less';
 @import 'mediawiki.skin.variables.less';
 
 /**
@@ -57,6 +57,7 @@
 
 				&::before {
 					content: '';
+					/* @embed */
 					background: url( images/toolbar/arrow-down.svg ) center no-repeat;
 					display: block;
 					position: absolute;
@@ -167,6 +168,7 @@
 
 				&::after {
 					content: '';
+					/* @embed */
 					background: url( images/toolbar/arrow-down.svg ) center no-repeat;
 					display: block;
 					position: absolute;
@@ -242,8 +244,10 @@
 			float: left;
 			width: 20%;
 			height: 125px;
-			overflow: auto;
+			overflow: hidden auto;
 			resize: horizontal;
+			min-width: 6em;
+			max-width: 50%;
 
 			> div {
 				padding: 4px 4px 4px 6px;

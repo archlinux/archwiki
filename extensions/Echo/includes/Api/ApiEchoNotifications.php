@@ -324,10 +324,13 @@ class ApiEchoNotifications extends ApiQueryBase {
 			$output = DataOutputFormatter::formatOutput( $notif, $format, $user, $this->getLanguage() );
 			if ( $output !== false ) {
 				$result['list'][] = $output;
-			} elseif ( $bundler && $notif->getBundledNotifications() ) {
-				// when the bundle_base gets filtered out, bundled notifications
-				// have to be re-bundled and formatted
-				$notifs = array_merge( $bundler->bundle( $notif->getBundledNotifications() ), $notifs );
+			} elseif ( $bundler ) {
+				$bundledNotifications = $notif->getBundledNotifications();
+				if ( $bundledNotifications ) {
+					// when the bundle_base gets filtered out, bundled notifications
+					// have to be re-bundled and formatted
+					$notifs = array_merge( $bundler->bundle( $bundledNotifications ), $notifs );
+				}
 			}
 		}
 
@@ -420,14 +423,13 @@ class ApiEchoNotifications extends ApiQueryBase {
 
 		// Sort wikis by timestamp, in descending order (newest first)
 		usort( $wikis, static function ( $a, $b ) use ( $section, $timestampsByWiki ) {
-			return (int)$timestampsByWiki[$b]->getTimestamp( TS_UNIX )
-				- (int)$timestampsByWiki[$a]->getTimestamp( TS_UNIX );
+			return ( $timestampsByWiki[$b] ? $timestampsByWiki[$b]->getTimestamp( TS_UNIX ) : -1 )
+				<=> ( $timestampsByWiki[$a] ? $timestampsByWiki[$a]->getTimestamp( TS_UNIX ) : -1 );
 		} );
 
 		$row = (object)[
 			'event_id' => -1,
 			'event_type' => 'foreign',
-			'event_variant' => null,
 			'event_agent_id' => $user->getId(),
 			'event_agent_ip' => null,
 			'event_page_id' => null,
@@ -454,12 +456,12 @@ class ApiEchoNotifications extends ApiQueryBase {
 		$output['sources'] = ForeignNotifications::getApiEndpoints( $wikis );
 		// Add timestamp information
 		foreach ( $output['sources'] as $wiki => &$data ) {
-			$data['ts'] = $timestampsByWiki[$wiki]->getTimestamp( TS_ISO_8601 );
+			$data['ts'] = $timestampsByWiki[$wiki] ? $timestampsByWiki[$wiki]->getTimestamp( TS_ISO_8601 ) : null;
 		}
 		return $output;
 	}
 
-	protected function getForeignQueryParams() {
+	protected function getForeignQueryParams(): array {
 		$params = $this->getRequest()->getValues();
 
 		// don't request cross-wiki notification summaries
@@ -502,7 +504,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	protected function mergeList( array $primary, array $results, $groupBySection ) {
 		// sort all notifications by timestamp: most recent first
 		$sort = static function ( $a, $b ) {
-			return $a['timestamp']['utcunix'] - $b['timestamp']['utcunix'];
+			return $a['timestamp']['utcunix'] <=> $b['timestamp']['utcunix'];
 		};
 
 		if ( $groupBySection ) {
@@ -560,6 +562,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		return $primary;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$sections = AttributeManager::$sections;
 
@@ -662,6 +665,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Echo_(Notifications)/API';
 	}

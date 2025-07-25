@@ -23,6 +23,7 @@
 	"discussiontools-error-noswitchtove-template": "sintaks mal",
 	"discussiontools-error-noswitchtove-title": "Mode cingakan kamatiang",
 	"discussiontools-limitreport-timeusage-value": "{{PLURAL:$1|adetik|$1 detik}}",
+	"discussiontools-newtopic-missing-title": "Durus icénin murda ring topik pabligbagan {{GENDER:|ragané}}.",
 	"discussiontools-newtopic-placeholder-title": "Parihindik",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|kacawis}} ring \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|acawisan anyar|$1 cawisan anyar|100=99+ cawisan anyar}} ring \"<strong>$3</strong>\".",

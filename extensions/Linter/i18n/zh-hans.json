@@ -17,9 +17,9 @@
 			"VulpesVulpes825",
 			"WhitePhosphorus",
 			"Xiplus",
+			"優枰",
 			"沈澄心",
-			"铁桶",
-			"優枰"
+			"铁桶"
 		]
 	},
 	"linterrors": "Lint错误",
@@ -31,6 +31,8 @@
 	"linter-category-deletable-table-tag-desc": "这些页面拥有应被删除的表格标签。",
 	"linter-category-duplicate-ids": "重复ID",
 	"linter-category-duplicate-ids-desc": "这些页面含有重复id属性的元素。",
+	"linter-category-empty-heading": "空标题",
+	"linter-category-empty-heading-desc": "这些页面含有空标题。",
 	"linter-category-fostered": "表格内容嵌套错误",
 	"linter-category-fostered-desc": "这些页面含有内容嵌套错误的表格。",
 	"linter-category-fostered-transparent": "渲染后透明的表格内容嵌套错误",
@@ -98,6 +100,7 @@
 	"linter-pager-deletable-table-tag-details": "应被删除的表格标签",
 	"linter-pager-details-header": "额外信息",
 	"linter-pager-duplicate-ids-details": "重复ID",
+	"linter-pager-empty-heading-details": "空标题",
 	"linter-pager-fostered-details": "表格中不合法内容",
 	"linter-pager-fostered-transparent-details": "不合法透明内容渲染",
 	"linter-pager-html5-misnesting-details": "嵌套错误（现已损坏）",

@@ -77,13 +77,8 @@ class PageHTMLHandler extends SimpleHandler {
 	public function run(): Response {
 		$this->contentHelper->checkAccessPermission();
 		$page = $this->contentHelper->getPageIdentity();
-		$params = $this->getRequest()->getQueryParams();
 
-		if ( array_key_exists( 'redirect', $params ) ) {
-			$followWikiRedirects = $params['redirect'] !== 'no';
-		} else {
-			$followWikiRedirects = true;
-		}
+		$followWikiRedirects = $this->contentHelper->getRedirectsAllowed();
 
 		// The call to $this->contentHelper->getPage() should not return null if
 		// $this->contentHelper->checkAccess() did not throw.
@@ -153,9 +148,6 @@ class PageHTMLHandler extends SimpleHandler {
 		return $this->htmlHelper->getETag( $this->getOutputMode() );
 	}
 
-	/**
-	 * @return string|null
-	 */
 	protected function getLastModified(): ?string {
 		if ( !$this->contentHelper->isAccessible() || !$this->contentHelper->hasContent() ) {
 			return null;
@@ -180,5 +172,24 @@ class PageHTMLHandler extends SimpleHandler {
 			// for that are a subset of those for HtmlOutputRendererHelper
 			HtmlOutputRendererHelper::getParamSettings()
 		);
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		// TODO: Consider if we prefer something like:
+		//    text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.8.0"
+		//  That would be more specific, but fragile when the profile version changes. It could
+		//  also be inaccurate if the page content was not in fact produced by Parsoid.
+		if ( $this->getOutputMode() == 'html' ) {
+			unset( $spec['200']['content']['application/json'] );
+			$spec['200']['content']['text/html']['schema']['type'] = 'string';
+		}
+
+		return $spec;
+	}
+
+	public function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/ExistingPageHtml.json';
 	}
 }

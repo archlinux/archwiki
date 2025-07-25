@@ -3,9 +3,11 @@
 namespace MediaWiki\Extension\TitleBlacklist;
 
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LibraryBase;
+use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 use MediaWiki\MediaWikiServices;
 
 class LuaTitleBlacklistLibrary extends LibraryBase {
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'test' => [ $this, 'test' ],
@@ -16,6 +18,12 @@ class LuaTitleBlacklistLibrary extends LibraryBase {
 		);
 	}
 
+	/**
+	 * @param string|null $action
+	 * @param string|null $title
+	 * @return null[]|array[]
+	 * @throws LuaError If the expensive function count has been exceeded
+	 */
 	public function test( $action = null, $title = null ) {
 		$this->checkType( 'mw.ext.TitleBlacklist.test', 1, $action, 'string' );
 		$this->checkTypeOptional( 'mw.ext.TitleBlacklist.test', 2, $title, 'string', '' );

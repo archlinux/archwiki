@@ -72,7 +72,7 @@ class CodexHTMLForm extends HTMLForm {
 	}
 
 	protected function wrapFieldSetSection( $legend, $section, $attributes, $isRoot ) {
-		$attributes['class'] = 'cdx-field';
+		$attributes['class'] = 'cdx-field cdx-field--is-fieldset';
 		$legendElement = Html::rawElement( 'legend', [ 'class' => [ 'cdx-label' ] ], $legend );
 		return Html::rawElement( 'fieldset', $attributes, "$legendElement\n$section" ) . "\n";
 	}
@@ -168,7 +168,7 @@ class CodexHTMLForm extends HTMLForm {
 			$submitName = $this->mSubmitName;
 			$submitTooltip = [];
 
-			if ( isset( $this->mSubmitTooltip ) ) {
+			if ( $this->mSubmitTooltip !== null ) {
 				$submitTooltip += Linker::tooltipAndAccesskeyAttribs( $this->mSubmitTooltip );
 			}
 
@@ -236,13 +236,7 @@ class CodexHTMLForm extends HTMLForm {
 				$attrs['id'] = $button['id'];
 			}
 
-			if ( isset( $attrs['class'] ) ) {
-				// Ensure $attrs['class'] is always treated as an array whether it's initially set
-				// as an array or a string.
-				$attrs['class'] = (array)( $attrs['class'] ?? [] );
-			}
-
-			$attrs['class'][] = 'cdx-button';
+			Html::addClass( $attrs['class'], 'cdx-button' );
 
 			$buttons[] = Html::rawElement( 'button', $attrs, $label ) . "\n";
 		}

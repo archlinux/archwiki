@@ -2,18 +2,24 @@
 
 namespace Wikimedia\RequestTimeout;
 
-use Wikimedia\NormalizedException\NormalizedException;
+use Exception;
+use Wikimedia\NormalizedException\INormalizedException;
+use Wikimedia\NormalizedException\NormalizedExceptionTrait;
 
 /**
  * The base class for timeout exceptions thrown by this library
  */
-class TimeoutException extends NormalizedException {
+class TimeoutException extends Exception implements INormalizedException {
+	use NormalizedExceptionTrait;
+
 	/** @var float */
 	private $limit;
 
 	public function __construct( $message, $limit ) {
-		parent::__construct( $message, [ 'limit' => $limit ] );
 		$this->limit = $limit;
+		$this->normalizedMessage = $message;
+		$this->messageContext = [ 'limit' => $limit ];
+		parent::__construct( self::getMessageFromNormalizedMessage( $message, $this->messageContext ) );
 	}
 
 	/**

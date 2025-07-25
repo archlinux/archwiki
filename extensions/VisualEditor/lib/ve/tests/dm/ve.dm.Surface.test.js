@@ -484,7 +484,7 @@ QUnit.test( 'getOffsetFromSourceOffset / getSourceOffsetFromOffset / getRangeFro
 	assert.equalRange( surface.getRangeFromSourceOffsets( 8 ), new ve.Range( 11 ), 'Collapsed range (1 arg)' );
 } );
 
-QUnit.test( 'autosave', function ( assert ) {
+QUnit.test( 'autosave', ( assert ) => {
 	const storage = ve.init.platform.sessionStorage,
 		done = assert.async(),
 		state = {
@@ -582,7 +582,7 @@ QUnit.test( 'autosave', function ( assert ) {
 		s.undo();
 		assert.equalHash( s.getSelection(), { type: 'linear', range: { type: 'range', from: 7, to: 7 } }, 'Document selection guessed after undo' );
 		done();
-	} ).bind( this, surface ) );
+	} ).bind( null, surface ) );
 
 	ve.init.platform.storageDisabled = true;
 	assert.strictEqual( surface.restoreChanges(), false, 'restoreChanges returns false if session storage disabled' );
@@ -632,6 +632,52 @@ QUnit.test( 'autosave', function ( assert ) {
 	surface.storeDocState( state );
 	assert.strictEqual( surface.lastStoredChange, 5, 'storeDocState without custom HTML advances the lastStoredChange pointer' );
 
+} );
+
+QUnit.skip( 'getSelectedNodeFromSelection', ( assert ) => {
+	const currentRange = new ve.Range( 4, 6 );
+	const surface = new ve.dm.SurfaceStub( ve.copy( ve.dm.example.alienData ), currentRange );
+	const cases = [
+		{
+			msg: 'Collapsed selection in focusable node returns null',
+			range: new ve.Range( 5 ),
+			expected: null
+		},
+		{
+			msg: 'Inline alien',
+			range: new ve.Range( 4, 6 ),
+			expected: new ve.Range( 4, 6 )
+		},
+		{
+			msg: 'Block alien',
+			range: new ve.Range( 0, 2 ),
+			expected: new ve.Range( 0, 2 )
+		},
+		{
+			msg: 'Document returns null',
+			range: new ve.Range( 0, 10 ),
+			expected: null
+		},
+		{
+			msg: 'Null argument checks currentRange',
+			range: null,
+			expected: currentRange
+		},
+		{
+			msg: 'Text node returns null',
+			range: new ve.Range( 3, 4 ),
+			expected: null
+		},
+		{
+			msg: 'Paragraph node',
+			range: new ve.Range( 2, 8 ),
+			expected: new ve.Range( 2, 8 )
+		}
+	];
+	cases.forEach( ( caseItem ) => {
+		const node = surface.getSelectedNodeFromSelection( caseItem.range && new ve.dm.LinearSelection( caseItem.range ) );
+		assert.equalRange( node && node.getOuterRange(), caseItem.expected, caseItem.msg );
+	} );
 } );
 
 // TODO: ve.dm.Surface#getHistory

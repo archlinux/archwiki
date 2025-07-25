@@ -22,11 +22,11 @@ namespace MediaWiki\Status;
 
 use MediaWiki\Api\ApiMessage;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\MessageParser;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
-use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\StubObject\StubUserLang;
-use MessageCache;
 use MessageLocalizer;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -45,16 +45,16 @@ use Wikimedia\Message\MessageSpecifier;
 class StatusFormatter {
 
 	private MessageLocalizer $messageLocalizer;
-	private MessageCache $messageCache;
+	private MessageParser $messageParser;
 	private LoggerInterface $logger;
 
 	public function __construct(
 		MessageLocalizer $messageLocalizer,
-		MessageCache $messageCache,
+		MessageParser $messageParser,
 		LoggerInterface $logger
 	) {
 		$this->messageLocalizer = $messageLocalizer;
-		$this->messageCache = $messageCache;
+		$this->messageParser = $messageParser;
 		$this->logger = $logger;
 	}
 
@@ -72,7 +72,7 @@ class StatusFormatter {
 		}
 		$cleanParams = [];
 		foreach ( $params as $i => $param ) {
-			$cleanParams[$i] = call_user_func( $cleanCallback, $param );
+			$cleanParams[$i] = $cleanCallback( $param );
 		}
 		return $cleanParams;
 	}
@@ -228,11 +228,12 @@ class StatusFormatter {
 	 * Try to convert the status to a PSR-3 friendly format. The output will be similar to
 	 * getWikiText( false, false, 'en' ), but message parameters will be extracted into the
 	 * context array with parameter names 'parameter1' etc. when possible.
+	 * A predefined context array may be passed for convenience.
 	 *
 	 * @return array A pair of (message, context) suitable for passing to a PSR-3 logger.
 	 * @phan-return array{0:string,1:(int|float|string)[]}
 	 */
-	public function getPsr3MessageAndContext( StatusValue $status ): array {
+	public function getPsr3MessageAndContext( StatusValue $status, array $context = [] ): array {
 		$options = [ 'lang' => 'en' ];
 		$errors = $status->getErrors();
 
@@ -240,34 +241,33 @@ class StatusFormatter {
 			// identical to getMessage( false, false, 'en' ) when there's just one error
 			$message = $this->getErrorMessage( $errors[0], [ 'lang' => 'en' ] );
 
-			if ( in_array( get_class( $message ), [ Message::class, ApiMessage::class ], true ) ) {
-				// Fall back to getWikiText for rawmessage, which is just a placeholder for non-translated text.
-				// Turning the entire message into a context parameter wouldn't be useful.
-				if ( $message->getKey() === 'rawmessage' ) {
-					return [ $this->getWikiText( $status, $options ), [] ];
-				}
+			if ( $message instanceof RawMessage ) {
+				$text = $message->getTextOfRawMessage();
+				$params = $message->getParamsOfRawMessage();
+			} elseif ( $message instanceof ApiMessage ||
+				// rawmessage is just a placeholder for non-translated text. Turning the entire
+				// message into a context parameter wouldn't be useful.
+				( get_class( $message ) === Message::class && $message->getKey() !== 'rawmessage' )
+			) {
 				// $1,$2... will be left as-is when no parameters are provided.
 				$text = $this->msgInLang( $message->getKey(), 'en' )->plain();
 				$params = $message->getParams();
-			} elseif ( $message instanceof RawMessage ) {
-				$text = $message->getTextOfRawMessage();
-				$params = $message->getParamsOfRawMessage();
 			} else {
 				// Unknown Message subclass, we can't be sure how it marks parameters. Fall back to getWikiText.
-				return [ $this->getWikiText( $status, $options ), [] ];
+				return [ $this->getWikiText( $status, $options ), $context ];
 			}
 
-			$context = [];
+			$contextParams = [];
 			$i = 1;
 			foreach ( $params as $param ) {
 				if ( $param instanceof MessageParam ) {
 					$param = $param->getValue();
 				}
 				if ( is_int( $param ) || is_float( $param ) || is_string( $param ) ) {
-					$context["parameter$i"] = $param;
+					$contextParams["parameter$i"] = $param;
 				} else {
 					// Parameter is not of a safe type, fall back to getWikiText.
-					return [ $this->getWikiText( $status, $options ), [] ];
+					return [ $this->getWikiText( $status, $options ), $context ];
 				}
 
 				$text = str_replace( "\$$i", "{parameter$i}", $text );
@@ -275,10 +275,10 @@ class StatusFormatter {
 				$i++;
 			}
 
-			return [ $text, $context ];
+			return [ $text, $context + $contextParams ];
 		}
 		// Parameters cannot be easily extracted, fall back to getWikiText,
-		return [ $this->getWikiText( $status, $options ), [] ];
+		return [ $this->getWikiText( $status, $options ), $context ];
 	}
 
 	/**
@@ -350,11 +350,15 @@ class StatusFormatter {
 		$lang = $options['lang'] ?? null;
 
 		$text = $this->getWikiText( $status, $options );
-		$out = $this->messageCache->parse( $text, null, true, true, $lang );
+		$out = $this->messageParser->parse(
+			$text,
+			PageReferenceValue::localReference( NS_SPECIAL, 'Badtitle/StatusFormatter' ),
+			/*linestart*/ true,
+			/*interface*/ true,
+			$lang
+		);
 
-		return $out instanceof ParserOutput
-			? $out->getText( [ 'enableSectionEditLinks' => false ] )
-			: $out;
+		return $out->getContentHolderText();
 	}
 
 	/**
@@ -383,7 +387,9 @@ class StatusFormatter {
 	/**
 	 * @param string|MessageSpecifier $key
 	 * @param string|Language|StubUserLang|null $lang
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 */
 	private function msgInLang( $key, $lang, ...$params ): Message {

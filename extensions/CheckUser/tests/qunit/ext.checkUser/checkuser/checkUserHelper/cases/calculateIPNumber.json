@@ -1,0 +1,32 @@
+[
+	{
+		"IP": "127.0.0.1",
+		"expectedIPNumber": 127000000001,
+		"msg": "Example IPv4 address"
+	},
+	{
+		"IP": "124.5.6.7",
+		"expectedIPNumber": 124005006007,
+		"msg": "Second example IPv4 address"
+	},
+	{
+		"IP": "0.0.0.0",
+		"expectedIPNumber": 0,
+		"msg": "IPv4 address with all zeros"
+	},
+	{
+		"IP": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+		"expectedIPNumber": 4.254076645264115e+37,
+		"msg": "Example IPv6 address"
+	},
+	{
+		"IP": "::a",
+		"expectedIPNumber": 10,
+		"msg": "Second example IPv6 address"
+	},
+	{
+		"IP": "::",
+		"expectedIPNumber": 0,
+		"msg": "IPv6 address with all zeros"
+	}
+]

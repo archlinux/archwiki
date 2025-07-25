@@ -1,11 +1,13 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangesUpdateJob;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group Database
- * @covers RecentChangesUpdateJob
+ * @covers \MediaWiki\RecentChanges\RecentChangesUpdateJob
  * @author Dreamy Jazz
  */
 class RecentChangesUpdateJobTest extends MediaWikiIntegrationTestCase {

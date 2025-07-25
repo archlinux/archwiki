@@ -3,8 +3,8 @@
 		"authors": [
 			"Patriot Kor",
 			"Patriot Kur",
-			"Гусейн",
-			"Woytecr"
+			"Woytecr",
+			"Гусейн"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Šymə}} xəbədo bəsejon kejnə kijsə no-pegətədə nujə ǧədəǧə ebədašte. Šymə bəzynejon yštə xəbədon səbəro cəmisə noj.",
@@ -182,9 +182,9 @@
 	"tag-discussiontools-description": "Sərost kardə byə de DiscussionTools dastəki",
 	"tag-discussiontools-edit": "Kommenti sərost karde",
 	"tag-discussiontools-edit-description": "Okoədə sərost kadyše kommenti de DiscussionTools dastəki",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nujə myžor]",
+	"tag-discussiontools-newtopic": "Nujə myžor",
 	"tag-discussiontools-newtopic-description": "Okoədə əlovə kardyše nujə myžor bə səhifə de DiscussionTools dastəki",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Čəvob]",
+	"tag-discussiontools-reply": "Čəvob",
 	"tag-discussiontools-reply-description": "Okoədə čəvob doše bə kommenti de DiscussionTools dastəki",
 	"tag-discussiontools-source-description": "DiscussionTools kodi sərost karde režimədə be",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools de diləgon paneli bə bešemonə kodi hovužə režimədə be.",

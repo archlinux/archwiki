@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\Config;
 
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\LinkTarget;
+use Wikimedia\Parsoid\Fragments\PFragment;
 
 /**
  * MediaWiki data access abstract class for Parsoid
@@ -72,18 +73,6 @@ abstract class DataAccess {
 	abstract public function getFileInfo( PageConfig $pageConfig, array $files ): array;
 
 	/**
-	 * Perform a pre-save transform on wikitext
-	 *
-	 * This replaces PHPParseRequest with onlypst = true
-	 *
-	 * @todo Parsoid should be able to do this itself.
-	 * @param PageConfig $pageConfig
-	 * @param string $wikitext
-	 * @return string Processed wikitext
-	 */
-	abstract public function doPst( PageConfig $pageConfig, string $wikitext ): string;
-
-	/**
 	 * Perform a parse on wikitext
 	 *
 	 * This replaces PHPParseRequest with onlypst = false, and Batcher.parse()
@@ -110,14 +99,14 @@ abstract class DataAccess {
 	 * @param PageConfig $pageConfig
 	 * @param ContentMetadataCollector $metadata Will collect metadata about
 	 *   the preprocessed content.
-	 * @param string $wikitext
-	 * @return string Expanded wikitext
+	 * @param string|PFragment $wikitext
+	 * @return string|PFragment Expanded wikitext
 	 */
 	abstract public function preprocessWikitext(
 		PageConfig $pageConfig,
 		ContentMetadataCollector $metadata,
-		string $wikitext
-	): string;
+		$wikitext
+	);
 
 	/**
 	 * Fetch latest revision of article/template content for transclusion.

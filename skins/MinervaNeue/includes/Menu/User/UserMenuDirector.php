@@ -56,6 +56,7 @@ final class UserMenuDirector {
 				'class' => 'minerva-user-menu',
 				'checkboxID' => $checkboxID,
 				'toggleID' => $toggleID,
+				'event' => 'ui.usermenu',
 				'data-btn' => [
 					'tag-name' => 'label',
 					'data-icon' => [
@@ -74,10 +75,6 @@ final class UserMenuDirector {
 						[
 							'key' => 'aria-hidden',
 							'value' => 'true'
-						],
-						[
-							'key' => 'data-event-name',
-							'value' => 'ui.usermenu',
 						],
 					],
 					'label' => $this->localizer->msg( 'minerva-user-menu-button' )->escaped(),

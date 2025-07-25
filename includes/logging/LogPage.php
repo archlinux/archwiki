@@ -23,11 +23,15 @@
  * @file
  */
 
+namespace MediaWiki\Logging;
+
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
@@ -384,30 +388,6 @@ class LogPage {
 	}
 
 	/**
-	 * Add relations to log_search table
-	 *
-	 * @param string $field
-	 * @param array $values
-	 * @param int $logid
-	 * @return bool
-	 */
-	public function addRelations( $field, $values, $logid ) {
-		if ( !strlen( $field ) || !$values ) {
-			return false;
-		}
-		$insert = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
-			->newInsertQueryBuilder()
-			->insertInto( 'log_search' )
-			->ignore();
-		foreach ( $values as $value ) {
-			$insert->row( [ 'ls_field' => $field, 'ls_value' => $value, 'ls_log_id' => $logid ] );
-		}
-		$insert->caller( __METHOD__ )->execute();
-
-		return true;
-	}
-
-	/**
 	 * Create a blob from a parameter array
 	 *
 	 * @param array $params
@@ -481,3 +461,6 @@ class LogPage {
 		return $restriction !== '' && $restriction !== '*';
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LogPage::class, 'LogPage' );

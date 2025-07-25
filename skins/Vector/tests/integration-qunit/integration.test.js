@@ -10,6 +10,10 @@ const clientPreferences = require( 'skins.vector.clientPreferences' );
 QUnit.module( 'Vector (integration)', () => {
 	QUnit.test( 'Client preferences: Behaves same for all users', function ( assert ) {
 		const sandbox = this.sandbox;
+
+		// Avoid mw.util.debounce() delay (T253993)
+		const clock = sandbox.useFakeTimers();
+
 		const helper = ( feature, isNamedReturnValue ) => {
 			document.documentElement.setAttribute( 'class', `${ feature }-clientpref-0` );
 			const stub = sandbox.stub( mw.user, 'isNamed', () => isNamedReturnValue );
@@ -28,5 +32,6 @@ QUnit.module( 'Vector (integration)', () => {
 			helper( 'vector-feature-limited-width', true ),
 			'The same classes are modified regardless of the user status.'
 		);
+		clock.runAll();
 	} );
 } );

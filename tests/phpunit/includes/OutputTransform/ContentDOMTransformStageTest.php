@@ -7,11 +7,13 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Tests\OutputTransform\DummyDOMTransformStage;
+use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\Parsoid\Core\PageBundle;
 
 class ContentDOMTransformStageTest extends TestCase {
+	use MediaWikiCoversValidator;
 
 	public function createStage(): ContentDOMTransformStage {
 		return new DummyDOMTransformStage(
@@ -51,13 +53,11 @@ class ContentDOMTransformStageTest extends TestCase {
 		$text = $po->getContentHolderText();
 		$this->assertEquals( $html, $text );
 
-		// Parsoid, input is sullied with rich attributes
+		// Parsoid, also roundtrips the input since document creation marks it as new
 		$options = [ 'isParsoidContent' => true ];
 		$po = $transform->transform( $po, null, $options );
 		$text = $po->getContentHolderText();
-		$this->assertNotEquals( $html, $text );
-		// Without PageBundle data, attributes are inlined
-		self::assertStringContainsString( "data-parsoid", $text );
+		$this->assertEquals( $html, $text );
 	}
 
 }

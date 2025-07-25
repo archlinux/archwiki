@@ -43,7 +43,7 @@ $( () => {
 				title = mw.Title.newFromText( pageName, 10 );
 			}
 			if ( title ) {
-				link.href = mw.util.getUrl( title.toText() );
+				link.href = title.getUrl();
 				link.title = title.toText();
 			}
 			if ( link.href ) {
@@ -61,12 +61,15 @@ $( () => {
 	}
 
 	const commentClasses = [ 'c', 'c1', 'cm' ];
-	Array.from( document.getElementsByClassName( 'mw-highlight' ) ).forEach( ( codeBlock ) => {
-		commentClasses.forEach( ( commentClass ) => {
-			Array.from( codeBlock.getElementsByClassName( commentClass ) ).forEach( ( node ) => {
-				processComment( node.firstChild, node );
+
+	mw.hook( 'wikipage.content' ).add( ( $content ) => {
+		$content.find( '.mw-highlight' ).get().forEach( ( codeBlock ) => {
+			commentClasses.forEach( ( commentClass ) => {
+				Array.from( codeBlock.getElementsByClassName( commentClass ) ).forEach( ( node ) => {
+					processComment( node.firstChild, node );
+				} );
 			} );
 		} );
-	} );
 
+	} );
 } );

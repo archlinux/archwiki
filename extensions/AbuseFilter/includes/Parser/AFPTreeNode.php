@@ -96,7 +96,7 @@ class AFPTreeNode {
 	 * Parameters of the value. Typically it is an array of children nodes,
 	 * which might be either strings (for parametrization of the node) or another
 	 * node. In case of ATOM it's a parser token.
-	 * @var AFPTreeNode[]|string[]|AFPToken
+	 * @var self[]|string[]|AFPToken
 	 */
 	public $children;
 
@@ -105,7 +105,7 @@ class AFPTreeNode {
 
 	/**
 	 * @param string $type
-	 * @param (AFPTreeNode|null)[]|string[]|AFPToken $children
+	 * @param (self|null)[]|string[]|AFPToken $children
 	 * @param int $position
 	 */
 	public function __construct( $type, $children, $position ) {
@@ -138,7 +138,7 @@ class AFPTreeNode {
 		$lines = [ $this->type ];
 		// @phan-suppress-next-line PhanTypeSuspiciousNonTraversableForeach children is array here
 		foreach ( $this->children as $subnode ) {
-			if ( $subnode instanceof AFPTreeNode ) {
+			if ( $subnode instanceof self ) {
 				$sublines = array_map( $align, $subnode->toDebugStringInner() );
 			} elseif ( is_string( $subnode ) ) {
 				$sublines = [ "  {$subnode}" ];

@@ -18,6 +18,9 @@
  * @file
  */
 
+namespace MediaWiki\ChangeTags;
+
+use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Status\Status;
@@ -85,3 +88,6 @@ class ChangeTagsLogList extends ChangeTagsList {
 		return $status;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ChangeTagsLogList::class, 'ChangeTagsLogList' );

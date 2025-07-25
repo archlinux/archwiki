@@ -4,6 +4,7 @@ namespace Shellbox;
 
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -154,6 +155,9 @@ class Client implements RPCClient {
 	 *   be populated with data received from the server.
 	 * @return array An associative array of output data
 	 * @throws ShellboxError
+	 * @throws ClientExceptionInterface or any other exception thrown by the inner client
+	 * (see the constructor documentation for details).
+	 * @suppress PhanTypeInvalidThrowsIsInterface
 	 */
 	public function sendRequest( $path, $parts, $outputFiles = [], $outputGlobs = [] ) {
 		$boundary = Shellbox::getUniqueString();

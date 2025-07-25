@@ -37,9 +37,6 @@ OO.inheritClass( ve.ce.KeyDownHandlerFactory, OO.Factory );
  * See https://doc.wikimedia.org/oojs/master/OO.Factory.html
  *
  * @param {Function} constructor Constructor to use when creating object
- * @param {string} [name] Symbolic name to use for #create().
- *  This parameter may be omitted in favour of letting the constructor decide
- *  its own name, through `constructor.static.name`.
  * @throws {Error} If a parameter is invalid
  */
 ve.ce.KeyDownHandlerFactory.prototype.register = function ( constructor ) {
@@ -52,7 +49,7 @@ ve.ce.KeyDownHandlerFactory.prototype.register = function ( constructor ) {
 	// TODO: Clean up handlerNamesByKeys in unregister
 	for ( let i = 0, ilen = keys.length; i < ilen; i++ ) {
 		this.handlerNamesByKeys[ keys[ i ] ] = this.handlerNamesByKeys[ keys[ i ] ] || [];
-		if ( this.handlerNamesByKeys[ keys[ i ] ].indexOf( name ) === -1 ) {
+		if ( !this.handlerNamesByKeys[ keys[ i ] ].includes( name ) ) {
 			this.handlerNamesByKeys[ keys[ i ] ].push( name );
 		}
 	}
@@ -73,7 +70,7 @@ ve.ce.KeyDownHandlerFactory.prototype.lookupHandlersForKey = function ( key, sel
 	for ( let i = 0; i < names.length; i++ ) {
 		const constructor = this.registry[ names[ i ] ];
 		const supportedSelections = constructor.static.supportedSelections;
-		if ( !supportedSelections || supportedSelections.indexOf( selectionName ) !== -1 ) {
+		if ( !supportedSelections || supportedSelections.includes( selectionName ) ) {
 			constructors.push( constructor );
 		}
 	}

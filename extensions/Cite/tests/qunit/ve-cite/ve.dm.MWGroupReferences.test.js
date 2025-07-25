@@ -81,7 +81,8 @@
 		// The total usage count should be the sum of main refs and subrefs
 		assert.strictEqual(
 			plainGroupRefs.getTotalUsageCount( mockListKey ),
-			plainGroupRefs.getRefUsages( mockListKey ).length + plainGroupRefs.getSubrefs( mockListKey ).length
+			plainGroupRefs.getRefUsages( mockListKey ).length +
+				plainGroupRefs.getSubrefs( mockListKey ).length
 		);
 	} );
 

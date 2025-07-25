@@ -4,7 +4,6 @@
 			"1233thehongkonger",
 			"A2093064",
 			"Alexsh",
-			"Amire80",
 			"Anakmalaysia",
 			"Anterdc99",
 			"Arielyurusova",
@@ -53,7 +52,8 @@
 			"Zanhsieh",
 			"Zhxy 519",
 			"捍粵者",
-			"逆襲的天邪鬼"
+			"逆襲的天邪鬼",
+			"Key0121"
 		]
 	},
 	"abusefilter-desc": "自動條件判定編輯行為",
@@ -267,9 +267,9 @@
 	"abusefilter-edit-enabled": "開啟此過濾器",
 	"abusefilter-edit-deleted": "標記為已刪除",
 	"abusefilter-edit-hidden": "隱藏此過濾器的詳細資料",
-	"abusefilter-edit-protected": "我了解對不可查看[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables 受保護變數]的使用者來說，此過濾器的詳細資料是隱藏不可見的",
+	"abusefilter-edit-protected": "<strong>在此過濾器中啟用[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables 受保護變數]</strong>",
 	"abusefilter-edit-protected-variable-already-protected": "對無法看到受保護變數的使用者來說，此過濾器的詳細資訊是隱藏不可見的。",
-	"abusefilter-edit-protected-help-message": "此操作是永久性且無法撤銷",
+	"abusefilter-edit-protected-help-message": "此過濾器的詳細信息將對無法看到受保護變數的使用者隱藏。此操作是永久性且無法撤銷。",
 	"abusefilter-edit-global": "全域過濾器",
 	"abusefilter-edit-rules": "條件：",
 	"abusefilter-edit-field-conditions": "條件",
@@ -683,8 +683,6 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "要建立或修改被禁止連結的外部網域必須透過[[Special:BlockedExternalDomains|特殊頁面]]完成。",
 	"right-abusefilter-access-protected-vars": "檢視和建立受保護的過濾器",
 	"action-abusefilter-access-protected-vars": "檢視和建立受保護的過濾器",
-	"prefs-abusefilter": "防濫用過濾器",
-	"abusefilter-preference-protected-vars-view-agreement": "在防濫用過濾器啟用揭露臨時帳號的 IP 位址",
 	"abusefilter-protected-vars-log-name": "防濫用過濾器受保護變數日誌",
 	"abusefilter-protected-vars-log-header": "此日誌是關於：\n# 在日誌詳細資料中檢視受保護的變數\n# 更改檢視受保護變數的使用者存取級別",
 	"logentry-abusefilter-protected-vars-change-access-enable": "$1已啟用{{GENDER:$2|他|她|他/她們}}擁有檢視受保護變數的權限",

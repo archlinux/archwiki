@@ -9,9 +9,8 @@ function getFragmentMock( hasRefs ) {
 
 	return {
 		getDocument: () => ( {
-			getOriginalDocument: () => undefined,
-			getStorage: () => docRefsMock,
-			setStorage: () => undefined
+			extCiteDocumentReferences: docRefsMock,
+			getOriginalDocument: () => undefined
 		} ),
 		getSelection: () => ( {
 			getName: () => 'linear'

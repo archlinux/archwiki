@@ -55,14 +55,13 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	/** @var null|string[] Encryption algorithm to use */
 	private static $encryptionAlgorithm = null;
 
-	/** @var SessionBackend Session backend */
+	/** @var SessionBackend Session backend (can't be type-hinted, see DummySessionBackend in tests) */
 	private $backend;
 
 	/** @var int Session index */
 	private $index;
 
-	/** @var LoggerInterface */
-	private $logger;
+	private LoggerInterface $logger;
 
 	/**
 	 * @param SessionBackend $backend
@@ -173,7 +172,6 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Returns the authenticated user for this session
-	 * @return User
 	 */
 	public function getUser(): User {
 		return $this->backend->getUser();
@@ -426,10 +424,8 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 */
 	private function getSecretKeys() {
 		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
-		$sessionSecret = $mainConfig->get( MainConfigNames::SessionSecret );
-		$secretKey = $mainConfig->get( MainConfigNames::SecretKey );
-		$sessionPbkdf2Iterations = $mainConfig->get( MainConfigNames::SessionPbkdf2Iterations );
-		$wikiSecret = $sessionSecret ?: $secretKey;
+		$wikiSecret = $mainConfig->get( MainConfigNames::SessionSecret )
+			?: $mainConfig->get( MainConfigNames::SecretKey );
 		$userSecret = $this->get( 'wsSessionSecret', null );
 		if ( $userSecret === null ) {
 			$userSecret = \MWCryptRand::generateHex( 32 );
@@ -437,7 +433,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 		}
 		$iterations = $this->get( 'wsSessionPbkdf2Iterations', null );
 		if ( $iterations === null ) {
-			$iterations = $sessionPbkdf2Iterations;
+			$iterations = $mainConfig->get( MainConfigNames::SessionPbkdf2Iterations );
 			$this->set( 'wsSessionPbkdf2Iterations', $iterations );
 		}
 

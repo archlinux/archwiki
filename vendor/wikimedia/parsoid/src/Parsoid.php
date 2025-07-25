@@ -8,6 +8,7 @@ use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use InvalidArgumentException;
 use LogicException;
+use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Config\DataAccess;
 use Wikimedia\Parsoid\Config\Env;
@@ -15,6 +16,7 @@ use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
@@ -29,7 +31,6 @@ use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
-use Wikimedia\Parsoid\Wikitext\Wikitext;
 use Wikimedia\Parsoid\Wt2Html\DOM\Processors\AddRedLinks;
 use Wikimedia\Parsoid\Wt2Html\DOM\Processors\ConvertOffsets;
 
@@ -154,6 +155,7 @@ class Parsoid {
 	 * @param array $options See wikitext2html.
 	 * @param ?SelectiveUpdateData $selparData See wikitext2html.
 	 * @return array{0:Env,1:Document,2:?string}
+	 *  The returned document is in "prepared and loaded" form.
 	 */
 	private function parseWikitext(
 		PageConfig $pageConfig,
@@ -165,7 +167,6 @@ class Parsoid {
 		if ( isset( $options['outputContentVersion'] ) ) {
 			$envOptions['outputContentVersion'] = $options['outputContentVersion'];
 		}
-		$envOptions['discardDataParsoid'] = !empty( $options['discardDataParsoid'] );
 		if ( isset( $options['wrapSections'] ) ) {
 			$envOptions['wrapSections'] = (bool)$options['wrapSections'];
 		}
@@ -194,8 +195,15 @@ class Parsoid {
 		$contentmodel = $options['contentmodel'] ?? null;
 		$handler = $env->getContentHandler( $contentmodel );
 		$extApi = new ParsoidExtensionAPI( $env );
-		// FIXME: Hardcoded to assume 'mode' is 'template'
-		return [ $env, $handler->toDOM( $extApi, $selparData ), $contentmodel ];
+		$doc = $handler->toDOM( $extApi, $selparData );
+		if ( !DOMDataUtils::isPreparedAndLoaded( $doc ) ) {
+			// DEPRECATED. Extensions for other content types might still
+			// be returning plain/stored docs here.  Prepare and load them
+			// for consistency.
+			$dpb = new DomPageBundle( $doc );
+			$doc = $dpb->toDom();
+		}
+		return [ $env, $doc, $contentmodel ];
 	}
 
 	/**
@@ -210,7 +218,6 @@ class Parsoid {
 	 *   'outputContentVersion' => (string|null) Version of HTML to output.
 	 *                                           `null` returns the default version.
 	 *   'contentmodel'         => (string|null) The content model of the input.
-	 *   'discardDataParsoid'   => (bool) Drop all data-parsoid annotations.
 	 *   'offsetType'           => (string) ucs2, char, byte are valid values
 	 *                                      what kind of source offsets should be emitted?
 	 *   'skipLanguageConversionPass'  => (bool) Skip the language variant conversion pass (defaults to false)
@@ -224,6 +231,7 @@ class Parsoid {
 	 *   'debugFlags'           => (array) associative array with debug options
 	 *   'logLevels'            => (string[]) Levels to log
 	 *   // Experimental options, not considered stable
+	 *   'useFragmentBank'      => (bool) Alternative encoding of embedded HTML
 	 *   'sampleStats'          => (bool) If true, okay to perform "expensive"
 	 *                             analysis to generate metrics.
 	 *   'renderReason'         => (?string) Passed through from MediaWiki core
@@ -254,6 +262,13 @@ class Parsoid {
 
 		$parseTiming = Timing::start();
 		[ $env, $doc, $contentmodel ] = $this->parseWikitext( $pageConfig, $metadata, $options, $selparData );
+		DOMDataUtils::visitAndStoreDataAttribs( DOMCompat::getBody( $doc ), [
+			'storeInPageBundle' => $env->pageBundle,
+			'outputContentVersion' => $env->getOutputContentVersion(),
+			'useFragmentBank' => $options['useFragmentBank'] ?? false,
+			'idIndex' => $env->pageBundle ?
+				DOMDataUtils::usedIdIndex( $env, $doc ) : null,
+		] );
 		$parseTimeMs = $parseTiming->end();
 
 		// FIXME: Does this belong in parseWikitext so that the other endpoint
@@ -269,9 +284,16 @@ class Parsoid {
 		$node = $body_only ? DOMCompat::getBody( $doc ) : $doc;
 
 		if ( $env->pageBundle ) {
-			$out = ContentUtils::extractDpAndSerialize( $node, [
-				'innerXML' => $body_only,
-			] );
+			$out = [
+				'pb' => PageBundle::fromDomPageBundle( $env->pageBundle, [
+					'body_only' => $body_only,
+					'contentversion' => $env->getOutputContentVersion(),
+					'headers' => $headers,
+					'contentmodel' => $contentmodel,
+					'offsetType' => $env->getCurrentOffsetType(),
+				] ),
+			];
+			$out['html'] = $out['pb']->html; // for use in metrics
 		} else {
 			$out = [
 				'html' => ContentUtils::toXML( $node, [
@@ -285,13 +307,7 @@ class Parsoid {
 		);
 
 		if ( $env->pageBundle ) {
-			return new PageBundle(
-				$out['html'],
-				$out['pb']->parsoid, $out['pb']->mw ?? null,
-				$env->getOutputContentVersion(),
-				$headers,
-				$contentmodel
-			);
+			return $out['pb'];
 		} else {
 			return $out['html'];
 		}
@@ -337,7 +353,7 @@ class Parsoid {
 		] );
 
 		// @phan-suppress-next-line PhanDeprecatedFunction
-		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $pageConfig->getPageMainContent() ) );
+		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $pageConfig->getPageMainContent() ), false );
 		$timing->end(
 			"entry.wt2html.{$mstr}.size.input",
 			"wt2html_size_input_bytes",
@@ -345,7 +361,7 @@ class Parsoid {
 		);
 
 		$outSize = strlen( $out['html'] );
-		$timing = Timing::fakeTiming( $this->siteConfig, $outSize );
+		$timing = Timing::fakeTiming( $this->siteConfig, $outSize, false );
 		$timing->end( "entry.wt2html.{$mstr}.size.output", "wt2html_size_output_bytes", [ "type" => $mstr ] );
 
 		if ( $parseTimeMs > 10 && $outSize > 100 ) {
@@ -380,7 +396,7 @@ class Parsoid {
 			// don't inadvertently corrupt the main document result.
 			$newPb = new PageBundle(
 				$out['html'],
-				$out['pb']->parsoid, $out['pb']->mw ?? null,
+				$out['pb']->parsoid ?? null, $out['pb']->mw ?? null,
 				$env->getOutputContentVersion(),
 				$headers,
 				$contentmodel
@@ -394,6 +410,7 @@ class Parsoid {
 			);
 			$labels['wiki'] = $this->siteConfig->iwp();
 			$labels['reason'] = $options['renderReason'] ?? 'unknown';
+			$labels['useragent'] = ComputeSelectiveStats::filterUserAgent( $options['userAgent'] ?: null );
 
 			$this->siteConfig->incrementCounter( 'selective_update_total', $labels );
 			$this->siteConfig->incrementCounter( 'selective_update_seconds', $labels, $parseTimeMs / 1000. );
@@ -429,8 +446,11 @@ class Parsoid {
 	 * Serialize DOM to wikitext.
 	 *
 	 * @param PageConfig $pageConfig
-	 * @param Document $doc Data attributes are expected to have been applied
-	 *   already.  Loading them will happen once the environment is created.
+	 * @param Document|PageBundle|DomPageBundle $doc This is either a page
+	 *   bundle or a "naive" DOM without special handling of
+	 *   data-parsoid/data-mw etc.  A naive DOM can either be in "single
+	 *   document" form (data attributes in an element in the <head>) or in
+	 *   "inline attributes" form.
 	 * @param array $options [
 	 *   'inputContentVersion' => (string) The content version of the input.
 	 *     Necessary if it differs from the current default in order to
@@ -450,14 +470,18 @@ class Parsoid {
 	 * @return string
 	 */
 	public function dom2wikitext(
-		PageConfig $pageConfig, Document $doc, array $options = [],
+		PageConfig $pageConfig, $doc, array $options = [],
 		?SelectiveUpdateData $selserData = null
 	): string {
+		Assert::invariant(
+			!DOMDataUtils::isPrepared( $doc ),
+			"document should not be already prepared"
+		);
 		$envOptions = $this->setupCommonOptions( $options );
 		if ( isset( $options['inputContentVersion'] ) ) {
 			$envOptions['inputContentVersion'] = $options['inputContentVersion'];
 		}
-		$envOptions['topLevelDoc'] = $doc;
+		$envOptions['topLevelDoc'] = self::prepareAndLoadDocOrBundle( $doc );
 		$metadata = new StubMetadataCollector( $this->siteConfig );
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
@@ -486,7 +510,7 @@ class Parsoid {
 		$metrics = $siteConfig->metrics();
 
 		$htmlSize = $options['htmlSize'] ?? 0;
-		$timing = Timing::fakeTiming( $this->siteConfig, $htmlSize );
+		$timing = Timing::fakeTiming( $this->siteConfig, $htmlSize, false );
 		$timing->end( 'entry.html2wt.size.input', 'html2wt_size_input_bytes' );
 
 		if ( isset( $options['inputContentVersion'] ) ) {
@@ -504,7 +528,7 @@ class Parsoid {
 		$timing = Timing::fakeTiming( $this->siteConfig, $serialTime );
 		$timing->end( 'entry.html2wt.total', 'html2wt_total_seconds', [] );
 
-		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $wikitext ) );
+		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $wikitext ), false );
 		$timing->end( 'entry.html2wt.size.output', 'html2wt_size_output_bytes', [] );
 
 		if ( $htmlSize ) {  // Avoid division by zero
@@ -549,35 +573,36 @@ class Parsoid {
 	 *
 	 * @param PageConfig $pageConfig
 	 * @param string $update 'redlinks'|'variant'
-	 * @param PageBundle $pb
+	 * @param PageBundle|DomPageBundle $pb
 	 * @param array $options
 	 * @return PageBundle
 	 */
 	public function pb2pb(
-		PageConfig $pageConfig, string $update, PageBundle $pb,
+		PageConfig $pageConfig, string $update, $pb,
 		array $options = []
 	): PageBundle {
 		$envOptions = [
 			'pageBundle' => true,
-			'topLevelDoc' => DOMUtils::parseHTML( $pb->toHtml(), true ),
+			'topLevelDoc' => self::prepareAndLoadDocOrBundle( $pb ),
 		];
 		$metadata = new StubMetadataCollector( $this->siteConfig );
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
-		$doc = $env->topLevelDoc;
-		DOMDataUtils::visitAndLoadDataAttribs(
-			DOMCompat::getBody( $doc ), [ 'markNew' => true ]
-		);
+		$doc = $env->getTopLevelDoc();
 
-		$dataBagPB = DOMDataUtils::getPageBundle( $doc );
 		switch ( $update ) {
 			case 'convertoffsets':
+				// This method also calls Env::setCurrentOffsetType, which
+				// is used by PageBundle::fromDomPageBundle() below to set
+				// 'offsetType' in the 'parsoid' property of the page bundle
 				ContentUtils::convertOffsets(
 					$env, $doc, $options['inputOffsetType'], $options['outputOffsetType']
 				);
-				$dataBagPB->parsoid['offsetType'] = $options['outputOffsetType'];
-				$dataBagPB->parsoid['counter'] = $pb->parsoid['counter'];
+				if ( isset( $pb->parsoid['counter'] ) ) {
+					$internalPB = $env->pageBundle;
+					$internalPB->parsoid['counter'] = $pb->parsoid['counter'];
+				}
 				break;
 
 			case 'redlinks':
@@ -634,41 +659,21 @@ class Parsoid {
 
 		DOMDataUtils::visitAndStoreDataAttribs(
 			DOMCompat::getBody( $doc ), [
-				'discardDataParsoid' => $env->discardDataParsoid,
 				'storeInPageBundle' => $env->pageBundle,
-				'env' => $env,
+				'outputContentVersion' => $env->getOutputContentVersion(),
+				'idIndex' => $env->pageBundle ?
+					DOMDataUtils::usedIdIndex( $env, $doc ) : null,
 			]
 		);
-		$body_only = !empty( $options['body_only'] );
-		$node = $body_only ? DOMCompat::getBody( $doc ) : $doc;
-		DOMDataUtils::injectPageBundle( $doc, $dataBagPB );
-		$out = ContentUtils::extractDpAndSerialize( $node, [
-			'innerXML' => $body_only,
-		] );
-		return new PageBundle(
-			$out['html'],
-			$out['pb']->parsoid, $out['pb']->mw ?? null,
+		return PageBundle::fromDomPageBundle( $env->pageBundle, [
+			'body_only' => !empty( $options['body_only'] ),
 			// Prefer the passed in version, since this was just a transformation
-			$pb->version ?? $env->getOutputContentVersion(),
-			DOMUtils::findHttpEquivHeaders( $doc ),
+			'contentversion' => $pb->version ?? $env->getOutputContentVersion(),
+			'headers' => DOMUtils::findHttpEquivHeaders( $doc ),
 			// Prefer the passed in content model
-			$pb->contentmodel ?? $pageConfig->getContentModel()
-		);
-	}
-
-	/**
-	 * Perform pre-save transformations with top-level templates subst'd.
-	 *
-	 * @param PageConfig $pageConfig
-	 * @param string $wikitext
-	 * @return string
-	 */
-	public function substTopLevelTemplates(
-		PageConfig $pageConfig, string $wikitext
-	): string {
-		$metadata = new StubMetadataCollector( $this->siteConfig );
-		$env = new Env( $this->siteConfig, $pageConfig, $this->dataAccess, $metadata );
-		return Wikitext::pst( $env, $wikitext, true /* $substTLTemplates */ );
+			'contentmodel' => $pb->contentmodel ?? $pageConfig->getContentModel(),
+			'offsetType' => $env->getCurrentOffsetType(),
+		] );
 	}
 
 	/**
@@ -705,7 +710,7 @@ class Parsoid {
 	): void {
 		foreach ( self::DOWNGRADES as [ 'from' => $dgFrom, 'to' => $dgTo, 'func' => $dgFunc ] ) {
 			if ( $dg['from'] === $dgFrom && $dg['to'] === $dgTo ) {
-				call_user_func( [ self::class, $dgFunc ], $pageBundle );
+				self::$dgFunc( $pageBundle );
 
 				// FIXME: Maybe this resolve should just be part of the $dg
 				$pageBundle->version = self::resolveContentVersion( $dg['to'] );
@@ -760,14 +765,58 @@ class Parsoid {
 		// See the comment in around `DOMDataUtils::applyPageBundle`
 		$newPageBundle = new PageBundle(
 			$pageBundle->html,
-			[ 'ids' => [] ],
+			null,
 			$pageBundle->mw
 		);
-		$pageBundle->html = $newPageBundle->toHtml();
+		$pageBundle->html = $newPageBundle->toInlineAttributeHtml();
+
 		// Now, modify the pagebundle to the expected form.  This is important
 		// since, at least in the serialization path, the original pb will be
 		// applied to the modified content and its presence could cause lost
 		// deletions.
 		$pageBundle->mw = [ 'ids' => [] ];
 	}
+
+	/**
+	 * Convert an input document in a variety of formats (page bundle, etc)
+	 * to a "prepared and loaded" document suitable to be given to
+	 * Env::setupTopLevelDoc()
+	 * @param Document|PageBundle|DomPageBundle $topLevelDoc
+	 * @return Document
+	 */
+	private static function prepareAndLoadDocOrBundle( $topLevelDoc ): Document {
+		$options = [ 'markNew' => true, 'validateXMLNames' => true, ];
+		// Recognize a "single document" page bundle.
+		if (
+			$topLevelDoc instanceof Document &&
+			DomPageBundle::isSingleDocument( $topLevelDoc )
+		) {
+			$topLevelDoc = DomPageBundle::fromSingleDocument( $topLevelDoc );
+		}
+		// Convert a PageBundle (string html) to a DomPageBundle (DOM)
+		if ( $topLevelDoc instanceof PageBundle ) {
+			$topLevelDoc = DomPageBundle::fromPageBundle( $topLevelDoc );
+		}
+		// Use DomPageBundle::toDom() to efficiently apply and load
+		// (without necessarily having to add attributes to the DOM)
+		if ( $topLevelDoc instanceof DomPageBundle ) {
+			// Skip preparation and loading, it's already done.
+			return $topLevelDoc->toDom( true, $options );
+		}
+
+		// This is an unprepared/unloaded Document.
+		Assert::invariant(
+			!DOMDataUtils::isPreparedAndLoaded( $topLevelDoc ),
+			"toplevelDoc should not be prepared and loaded already"
+		);
+		DOMDataUtils::prepareDoc( $topLevelDoc );
+		DOMDataUtils::visitAndLoadDataAttribs(
+			DOMCompat::getBody( $topLevelDoc ), $options
+		);
+		// Mark the document as loaded so we can try to catch errors which
+		// might try to reload this again later.
+		DOMDataUtils::getBag( $topLevelDoc )->loaded = true;
+		return $topLevelDoc;
+	}
+
 }

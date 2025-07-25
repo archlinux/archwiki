@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Purodha"
+		]
+	},
+	"apihelp-query+checkuser-param-request": "De Zood Övverpröhvong:\n;userips:Holl enem Metmaacher sing <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräß.\n;edits:Holl de Änderonge över en <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräß udder ene Berätt.\n;ipusers:Holl de Metmaacher för en <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräß udder ene Berätt.",
+	"apihelp-query+checkuser-param-target": "Däm Metmaacher singe Nahme, de <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräß, udder dä <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Classless Inter-Domain Routing\">CIDR</i>-Berätt zom Övverpröhve.",
+	"apihelp-query+checkuser-param-reason": "der Jrond för et Övverpröhfe.",
+	"apihelp-query+checkuser-param-limit": "En Bejränzung för de Aanzahl Reihje.",
+	"apihelp-query+checkuser-param-timecond": "En Bejränzung noh de Zigg för der Ömfang vun Aanjahbe övver Metmaacher, allso esu jät wi: „<code lang=\"en\" xml:lang=\"en\" dir=\"ltr\">2 weeks</code>“",
+	"apihelp-query+checkuser-param-xff": "Nemm de Aanjahbe uß dä <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"X-Forwarded-For\">XFF</i>-Koppreih un nit de tiräkte <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräß.",
+	"apihelp-query+checkuser-example-1": "Övverpröhv de <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräße vum [[Metmaacher:Beijschpell]]\n<!--\nhttps://translatewiki.net/wiki/Thread:Support/About_MediaWiki:Apihelp-query%2Bcheckuser-example-1/en_(3)\n-->",
+	"apihelp-query+checkuser-example-2": "Donn Änderonge vun <code>192.0.2.0/24</code> övverpröhfe.",
+	"apihelp-query+checkuserlog-param-user": "Dä Nahme vun däm Metmaacher vum {{int:Checkuser}}.",
+	"apihelp-query+checkuserlog-param-target": "Dä jepröhvte Metmaacher, de jepröhvte <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Internet Protocol\">IP</i>-Adräß, udder dä jepröhvte <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Classless Inter-Domain Routing\">CIDR</i>-Berätt.",
+	"apihelp-query+checkuserlog-param-limit": "De Jränß aan Reihje.",
+	"apihelp-query+checkuserlog-param-from": "Dattum un Uhrzigg, vun woh aan opzälle.",
+	"apihelp-query+checkuserlog-param-to": "Dattum un Uhrzigg, bes wann opzälle.",
+	"apihelp-query+checkuserlog-example-1": "Donn de Övverpröhfonge vum „<code lang=\"en\" xml:lang=\"en\" dir=\"ltr\">[[User:Example]]</code>“ aanzeije.",
+	"apihelp-query+checkuserlog-example-2": "Zeisch de Övverpröhvonge vun 192.0.2.0/24 aff 2011-10-15T23:00:00Z"
+}

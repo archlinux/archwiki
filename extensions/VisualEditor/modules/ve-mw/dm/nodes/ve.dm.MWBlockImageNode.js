@@ -43,7 +43,7 @@ ve.dm.MWBlockImageNode.static.name = 'mwBlockImage';
 
 ve.dm.MWBlockImageNode.static.preserveHtmlAttributes = function ( attribute ) {
 	const attributes = [ 'typeof', 'class', 'src', 'resource', 'width', 'height', 'href', 'rel', 'data-mw', 'alt' ];
-	return attributes.indexOf( attribute ) === -1;
+	return !attributes.includes( attribute );
 };
 
 ve.dm.MWBlockImageNode.static.handlesOwnChildren = true;

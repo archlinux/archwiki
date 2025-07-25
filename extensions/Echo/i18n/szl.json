@@ -6,5 +6,6 @@
 		]
 	},
 	"notifications": "Powiadomiynia",
-	"tooltip-pt-notifications-alert": "{{GENDER:|Moje}} powiadōmiynia"
+	"tooltip-pt-notifications-alert": "{{GENDER:|Moje}} powiadōmiynia",
+	"tooltip-pt-notifications": "Twoje nowiny"
 }

@@ -5,13 +5,12 @@
 			"Boulaur",
 			"Cedric31",
 			"Jfblanc",
-			"McDutchie",
-			"Lhanars"
+			"Lhanars",
+			"McDutchie"
 		]
 	},
 	"wikieditor": "Interfàcia avançada de modificacion de wikitèxte",
 	"wikieditor-desc": "Provesís una interfàcia de modificacion de wikitèxte extensible e mantuna foncionalitats.",
-	"wikieditor-wikitext-tab": "Wikitèxte",
 	"wikieditor-toolbar": "Barra d’aisinas de modificacion",
 	"wikieditor-toolbar-desc": "Modificacion de la barra d'aisinas amb l'utilizabilitat melhorada",
 	"wikieditor-toolbar-preference": "Activar la barra d'aisinas melhorada",

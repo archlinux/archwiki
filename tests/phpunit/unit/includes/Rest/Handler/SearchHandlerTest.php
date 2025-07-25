@@ -122,7 +122,6 @@ class SearchHandlerTest extends MediaWikiUnitTestCase {
 			$mockTitleFormatter = $this->getDummyTitleFormatter();
 		}
 
-		/** @var SearchEngine|MockObject $searchEngine */
 		$this->searchEngine = $this->createMock( SearchEngine::class );
 		$this->searchEngine->method( 'searchTitle' )
 			->with( $query )
@@ -564,6 +563,46 @@ class SearchHandlerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( 'Foo Redirect Source', $data['pages'][0]['matched_title'] );
 		$this->assertSame( 'Foo Redirect Target', $data['pages'][0]['title'] );
 		$this->assertSame( null, $data['pages'][1]['matched_title'] );
+	}
+
+	/**
+	 * Tests the case where a search term matches a page with a redirect and a anchor.
+	 */
+	public function testExecute_ResolvesRedirectAnchor() {
+		$textResults = new MockSearchResultSet( [
+			$this->makeMockSearchResult( 'Foo Redirect Source' ),
+			$this->makeMockSearchResult( 'FooBarBaz' ),
+		] );
+
+		$pageTarget = new PageIdentityValue( 1, NS_MAIN, 'Foo_Redirect_Target', PageIdentityValue::LOCAL );
+
+		$mockRedirectLinkTarget = $this->createMock( LinkTarget::class );
+		$mockRedirectLinkTarget->method( 'getFragment' )->willReturn( 'Lorem Ipsum' );
+		$mockPageStore = $this->createMock( PageStore::class );
+		$mockPageStore->method( 'getPageForLink' )->willReturn( $pageTarget );
+		$mockRedirectLookup = $this->createMock( RedirectLookup::class );
+
+		// first call has a redirect, second call does not
+		$mockRedirectLookup
+			->method( 'getRedirectTarget' )
+			->willReturnOnConsecutiveCalls( $mockRedirectLinkTarget, null );
+
+		$query = 'foo';
+		$request = new RequestData( [ 'queryParams' => [ 'q' => $query ] ] );
+		$config = [];
+		$handler = $this->newHandler(
+			$query, null, $textResults, null, null,
+			$mockRedirectLookup, $mockPageStore
+		);
+
+		$data = $this->executeHandlerAndGetBodyData( $handler, $request, $config, [] );
+
+		$this->assertCount( 2, $data['pages'] );
+		$this->assertArrayHasKey( 'anchor', $data['pages'][0] );
+		$this->assertArrayHasKey( 'anchor', $data['pages'][1] );
+
+		$this->assertSame( 'Lorem Ipsum', $data['pages'][0]['anchor'] );
+		$this->assertSame( null, $data['pages'][1]['anchor'] );
 	}
 
 	/**

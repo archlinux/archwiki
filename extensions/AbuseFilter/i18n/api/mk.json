@@ -53,5 +53,6 @@
 	"apierror-abusefilter-cantcheck": "Немате дозвола да проверувате синтакса на филтри на злоупотреба.",
 	"apierror-abusefilter-canteval": "Немате дозвола да вреднување изрази од Филтерот за злоупотреби.",
 	"apierror-abusefilter-nosuchlogid": "Нема запис во дневникот на злоупотреби со назнака $1.",
+	"apierror-abusefilter-incompatible": "Бараната промена не е поддржана од Филтерот за злоупотреби.",
 	"apierror-abusefilter-badsyntax": "Филтерот има неважечка синтакса."
 }

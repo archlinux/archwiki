@@ -67,5 +67,8 @@
 	"gadgets-validate-unknownpages": ".js, .css və ya .json şəkilçisi olmayan bir və ya bir neçə səhifədən ibarətdir. Onlardan istifadə olunmayacaqlar.",
 	"gadgets-validate-duplicate": "$1 qadcetinin ikinci tərifi aşkar edildi və nəzərə alınmayacaq",
 	"gadgets-validate-nopage": "\"$1\" səhifəsi mövcud deyil.",
-	"gadgets-supports-urlload": "Bu qadcet <code>?withgadget</code> sorğu parametri ilə URL vasitəsilə yükləməni dəstəkləyir."
+	"gadgets-validate-invaliddependencies": "Aşağıdakı {{PLURAL:$2|paket|paketlər}} mövcud deyil: $1",
+	"gadgets-validate-deprecateddependencies": "Aşağıdakı {{PLURAL:$2|paket|paketlər}} köhnəlib: $1",
+	"gadgets-supports-urlload": "Bu qadcet <code>?withgadget</code> sorğu parametri ilə URL vasitəsilə yükləməni dəstəkləyir.",
+	"gadgets-hidden": "Bu qadcet [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden gizlidir], yəni nizamlamalar səhifəsində görünməyəcək."
 }

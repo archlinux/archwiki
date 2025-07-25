@@ -7,10 +7,10 @@
 			"Khalid Mahmood"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویول ایڈیٹر]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویژوئل ایڈیٹر: چیک]]",
+	"tag-visualeditor": "ویول ایڈیٹر",
+	"tag-visualeditor-needcheck": "ویژوئل ایڈیٹر: چیک",
 	"tag-visualeditor-wikitext": "۲۰۱۷ء سروت توں سودھ",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویژوئل ایڈیٹر:چالو]]",
+	"tag-visualeditor-switched": "ویژوئل ایڈیٹر:چالو",
 	"visualeditor-help-label": "ورتوں دی گائیڈ پڑھیو",
 	"visualeditor-welcomedialog-action": "سودھاں شروع کرو",
 	"visualeditor-welcomedialog-switch": "سروت توں سودھو",

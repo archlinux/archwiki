@@ -23,7 +23,6 @@
 namespace MediaWiki\Extension\Gadgets;
 
 use InvalidArgumentException;
-use ManualLogEntry;
 use MediaWiki\Api\ApiMessage;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Gadgets\Special\SpecialGadgetUsage;
@@ -34,35 +33,28 @@ use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
-use MediaWiki\Page\Hook\PageDeleteCompleteHook;
-use MediaWiki\Page\ProperPageIdentity;
-use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
-use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleValue;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
+use OOUI\FieldLayout;
 use OOUI\HtmlSnippet;
-use Skin;
+use OOUI\MessageWidget;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\WrappedString;
-use WikiPage;
 
 class Hooks implements
-	PageDeleteCompleteHook,
-	PageSaveCompleteHook,
 	UserGetDefaultOptionsHook,
 	GetPreferencesHook,
 	PreferencesGetIconHook,
@@ -86,52 +78,6 @@ class Hooks implements
 	}
 
 	/**
-	 * Handle MediaWiki\Page\Hook\PageSaveCompleteHook
-	 *
-	 * @param WikiPage $wikiPage
-	 * @param mixed $userIdentity unused
-	 * @param string $summary
-	 * @param int $flags
-	 * @param mixed $revisionRecord unused
-	 * @param mixed $editResult unused
-	 */
-	public function onPageSaveComplete(
-		$wikiPage,
-		$userIdentity,
-		$summary,
-		$flags,
-		$revisionRecord,
-		$editResult
-	): void {
-		$title = $wikiPage->getTitle();
-		$this->gadgetRepo->handlePageUpdate( $title );
-	}
-
-	/**
-	 * Handle MediaWiki\Page\Hook\PageDeleteCompleteHook
-	 *
-	 * @param ProperPageIdentity $page
-	 * @param Authority $deleter
-	 * @param string $reason
-	 * @param int $pageID
-	 * @param RevisionRecord $deletedRev Last revision
-	 * @param ManualLogEntry $logEntry
-	 * @param int $archivedRevisionCount Number of revisions deleted
-	 */
-	public function onPageDeleteComplete(
-		ProperPageIdentity $page,
-		Authority $deleter,
-		string $reason,
-		int $pageID,
-		RevisionRecord $deletedRev,
-		ManualLogEntry $logEntry,
-		int $archivedRevisionCount
-	): void {
-		$title = TitleValue::newFromPage( $page );
-		$this->gadgetRepo->handlePageUpdate( $title );
-	}
-
-	/**
 	 * UserGetDefaultOptions hook handler
 	 * @param array &$defaultOptions Array of default preference keys and values
 	 */
@@ -141,9 +87,6 @@ class Hooks implements
 			return;
 		}
 
-		/**
-		 * @var $gadget Gadget
-		 */
 		foreach ( $gadgets as $thisSection ) {
 			foreach ( $thisSection as $gadgetId => $gadget ) {
 				// Hidden gadgets don't need to be added here, T299071
@@ -176,14 +119,32 @@ class Hooks implements
 		if ( $safeMode ) {
 			$preferences['gadgets-safemode'] = [
 				'type' => 'info',
-				'default' => Html::warningBox( wfMessage( 'gadgets-prefstext-safemode' )->parse() ),
 				'section' => 'gadgets',
 				'raw' => true,
+				'rawrow' => true,
+				'default' => new FieldLayout(
+					new MessageWidget( [
+						'label' => new HtmlSnippet( wfMessage( 'gadgets-prefstext-safemode' )->parse() ),
+						'type' => 'warning',
+					] )
+				),
 			];
 		}
 
 		$skin = RequestContext::getMain()->getSkin();
 		foreach ( $gadgets as $section => $thisSection ) {
+			if ( $section !== '' ) {
+				$sectionInfoMsg = wfMessage( "gadgets-section-info-$section" );
+				if ( !$sectionInfoMsg->isDisabled() ) {
+					$preferences['gadgets-section-info-' . $section] = [
+						'type' => 'info',
+						'default' => $sectionInfoMsg->parse(),
+						'section' => "gadgets/gadget-section-$section",
+						'raw' => true,
+					];
+				}
+			}
+
 			foreach ( $thisSection as $gadget ) {
 				// Only show option to enable gadget if it can be enabled
 				$type = 'api';
@@ -239,7 +200,6 @@ class Hooks implements
 
 	/**
 	 * ResourceLoaderRegisterModules hook handler.
-	 * @param ResourceLoader $resourceLoader
 	 */
 	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
 		foreach ( $this->gadgetRepo->getGadgetIds() as $id ) {
@@ -265,9 +225,6 @@ class Hooks implements
 		$enabledLegacyGadgets = [];
 		$conditions = new GadgetLoadConditions( $out );
 
-		/**
-		 * @var $gadget Gadget
-		 */
 		foreach ( $ids as $id ) {
 			try {
 				$gadget = $repo->getGadget( $id );

@@ -163,9 +163,6 @@ class VariablesManager {
 			'links-from-wikitext-or-database',
 			'load-recent-authors',
 			'page-age',
-			'revision-age-by-id',
-			'revision-age-by-title',
-			'previous-revision-age',
 			'get-page-restrictions',
 			'user-editcount',
 			'user-emailconfirm',
@@ -173,8 +170,9 @@ class VariablesManager {
 			'user-rights',
 			'user-age',
 			'user-block',
-			'revision-text-by-id',
-			'content-model-by-id',
+			'revision-age',
+			'revision-text',
+			'content-model',
 		];
 
 		/** @var LazyLoadedVariable[] $missingVars */

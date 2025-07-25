@@ -17,8 +17,8 @@ class ViewImportPage extends Page {
 		await this.submit.click();
 	}
 
-	open() {
-		super.openTitle( 'Special:AbuseFilter/import' );
+	async open() {
+		return super.openTitle( 'Special:AbuseFilter/import' );
 	}
 }
 module.exports = new ViewImportPage();

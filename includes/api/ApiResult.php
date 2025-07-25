@@ -27,6 +27,8 @@ use MediaWiki\Message\Message;
 use RuntimeException;
 use stdClass;
 use UnexpectedValueException;
+use Wikimedia\Message\ListParam;
+use Wikimedia\Message\ScalarParam;
 
 /**
  * This class represents the result of the API operations.
@@ -355,10 +357,10 @@ class ApiResult implements ApiSerializable {
 						$ex
 					);
 				}
-			} elseif ( $value instanceof \Wikimedia\Message\MessageParam ) {
+			} elseif ( $value instanceof ScalarParam || $value instanceof ListParam ) {
 				// HACK Support code that puts $msg->getParams() directly into API responses
 				// (e.g. ApiErrorFormatter::formatRawMessage()).
-				$value = $value->getType() === 'text' ? $value->getValue() : $value->jsonSerialize();
+				$value = $value->getType() === 'text' ? $value->getValue() : $value->toJsonArray();
 			} elseif ( is_callable( [ $value, '__toString' ] ) ) {
 				$value = (string)$value;
 			} else {
@@ -822,7 +824,7 @@ class ApiResult implements ApiSerializable {
 			if ( !is_callable( $transforms['Custom'] ) ) {
 				throw new InvalidArgumentException( __METHOD__ . ': Value for "Custom" must be callable' );
 			}
-			call_user_func_array( $transforms['Custom'], [ &$data, &$metadata ] );
+			$transforms['Custom']( $data, $metadata );
 		}
 
 		if ( ( isset( $transforms['BC'] ) || $transformTypes !== null ) &&
@@ -1224,7 +1226,7 @@ class ApiResult implements ApiSerializable {
 	/**
 	 * Format an expiry timestamp for API output
 	 * @since 1.29
-	 * @param string $expiry Expiry timestamp, likely from the database
+	 * @param string|null|false $expiry Expiry timestamp, likely from the database
 	 * @param string $infinity Use this string for infinite expiry
 	 *  (only use this to maintain backward compatibility with existing output)
 	 * @return string Formatted expiry

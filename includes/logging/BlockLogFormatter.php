@@ -22,13 +22,18 @@
  * @since 1.25
  */
 
+namespace MediaWiki\Logging;
+
 use MediaWiki\Api\ApiResult;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleParser;
 use MediaWiki\User\User;
 
 /**
@@ -37,6 +42,19 @@ use MediaWiki\User\User;
  * @since 1.25
  */
 class BlockLogFormatter extends LogFormatter {
+	private TitleParser $titleParser;
+	private NamespaceInfo $namespaceInfo;
+
+	public function __construct(
+		LogEntry $entry,
+		TitleParser $titleParser,
+		NamespaceInfo $namespaceInfo
+	) {
+		parent::__construct( $entry );
+		$this->titleParser = $titleParser;
+		$this->namespaceInfo = $namespaceInfo;
+	}
+
 	protected function getMessageParameters() {
 		$params = parent::getMessageParameters();
 
@@ -165,13 +183,16 @@ class BlockLogFormatter extends LogFormatter {
 		$preload = [];
 		// Preload user page for non-autoblocks
 		if ( substr( $title->getText(), 0, 1 ) !== '#' && $title->canExist() ) {
-			$preload[] = $title->getTalkPage();
+			$preload[] = $this->namespaceInfo->getTalkPage( $title );
 		}
 		// Preload page restriction
 		$params = $this->extractParameters();
 		if ( isset( $params[6]['pages'] ) ) {
 			foreach ( $params[6]['pages'] as $page ) {
-				$preload[] = Title::newFromText( $page );
+				try {
+					$preload[] = $this->titleParser->parseTitle( $page );
+				} catch ( MalformedTitleException $_ ) {
+				}
 			}
 		}
 		return $preload;
@@ -180,25 +201,58 @@ class BlockLogFormatter extends LogFormatter {
 	public function getActionLinks() {
 		$subtype = $this->entry->getSubtype();
 		$linkRenderer = $this->getLinkRenderer();
-		if ( $this->entry->isDeleted( LogPage::DELETED_ACTION ) // Action is hidden
+
+		// Don't show anything if the action is hidden
+		if ( $this->entry->isDeleted( LogPage::DELETED_ACTION )
 			|| !( $subtype === 'block' || $subtype === 'reblock' )
 			|| !$this->context->getAuthority()->isAllowed( 'block' )
 		) {
 			return '';
 		}
 
-		// Show unblock/change block link
 		$title = $this->entry->getTarget();
-		$links = [
-			$linkRenderer->makeKnownLink(
-				SpecialPage::getTitleFor( 'Unblock', $title->getDBkey() ),
-				$this->msg( 'unblocklink' )->text()
-			),
-			$linkRenderer->makeKnownLink(
-				SpecialPage::getTitleFor( 'Block', $title->getDBkey() ),
-				$this->msg( 'change-blocklink' )->text()
-			)
-		];
+		if ( $this->context->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ) {
+			$params = $this->entry->getParameters();
+			if ( isset( $params['blockId'] ) ) {
+				// If we have a block ID, show remove/change links
+				$query = isset( $params['blockId'] ) ? [ 'id' => $params['blockId'] ] : [];
+				$links = [
+					$linkRenderer->makeKnownLink(
+						SpecialPage::getTitleFor( 'Block', $title->getDBkey() ),
+						$this->msg( 'remove-blocklink' )->text(),
+						[],
+						$query + [ 'remove' => '1' ]
+					),
+					$linkRenderer->makeKnownLink(
+						SpecialPage::getTitleFor( 'Block', $title->getDBkey() ),
+						$this->msg( 'change-blocklink' )->text(),
+						[],
+						$query
+					)
+				];
+			} else {
+				// For legacy log entries, just show "manage blocks" since the
+				// Codex block page doesn't have an "unblock by target" mode
+				$links = [
+					$linkRenderer->makeKnownLink(
+						SpecialPage::getTitleFor( 'Block', $title->getDBkey() ),
+						$this->msg( 'manage-blocklink' )->text(),
+					),
+				];
+			}
+		} else {
+			// Show unblock/change links
+			$links = [
+				$linkRenderer->makeKnownLink(
+					SpecialPage::getTitleFor( 'Unblock', $title->getDBkey() ),
+					$this->msg( 'unblocklink' )->text()
+				),
+				$linkRenderer->makeKnownLink(
+					SpecialPage::getTitleFor( 'Block', $title->getDBkey() ),
+					$this->msg( 'change-blocklink' )->text()
+				)
+			];
+		}
 
 		return $this->msg( 'parentheses' )->rawParams(
 			$this->context->getLanguage()->pipeList( $links ) )->escaped();
@@ -298,12 +352,15 @@ class BlockLogFormatter extends LogFormatter {
 			if ( wfIsInfinity( $params['5::duration'] ) ) {
 				// Normalize all possible values to one for pre-T241709 rows
 				$params['5::duration'] = 'infinity';
+				$params[':plain:duration-l10n'] = $this->msg( 'infiniteblock' )->plain();
 			} else {
 				$ts = (int)wfTimestamp( TS_UNIX, $entry->getTimestamp() );
 				$expiry = strtotime( $params['5::duration'], $ts );
 				if ( $expiry !== false && $expiry > 0 ) {
 					$params[':timestamp:expiry'] = $expiry;
 				}
+				$params[':plain:duration-l10n'] = $this->context->getLanguage()
+					->formatDurationBetweenTimestamps( $ts, $expiry );
 			}
 		}
 
@@ -338,7 +395,9 @@ class BlockLogFormatter extends LogFormatter {
 	protected function getMessageKey() {
 		$type = $this->entry->getType();
 		$subtype = $this->entry->getSubtype();
-		$sitewide = $this->entry->getParameters()['sitewide'] ?? true;
+		$params = $this->entry->getParameters();
+		$sitewide = $params['sitewide'] ?? true;
+		$count = $params['finalTargetCount'] ?? 0;
 
 		$key = "logentry-$type-$subtype";
 		if ( ( $subtype === 'block' || $subtype === 'reblock' ) && !$sitewide ) {
@@ -354,7 +413,15 @@ class BlockLogFormatter extends LogFormatter {
 				$key = "logentry-non-editing-$type-$subtype";
 			}
 		}
+		if ( $subtype === 'block' && $count > 1 ) {
+			// logentry-block-block-multi, logentry-partialblock-block-multi,
+			// logentry-non-editing-block-block-multi
+			$key .= '-multi';
+		}
 
 		return $key;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( BlockLogFormatter::class, 'BlockLogFormatter' );

@@ -1,0 +1,109 @@
+{
+	"x-i18n-description": "rest-schema-desc-existing-page-source",
+	"required": [
+		"id",
+		"key",
+		"title",
+		"latest",
+		"content_model",
+		"license",
+		"source"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-id"
+		},
+		"key": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-key"
+		},
+		"title": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-title"
+		},
+		"latest": {
+			"type": "object",
+			"x-i18n-description": "rest-property-desc-page-latest",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"x-i18n-description": "rest-property-desc-page-latest-id"
+				},
+				"timestamp": {
+					"type": "string",
+					"format": "date-time",
+					"x-i18n-description": "rest-property-desc-page-timestamp",
+					"nullable": true
+				}
+			}
+		},
+		"content_model": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-contentmodel"
+		},
+		"license": {
+			"type": "object",
+			"x-i18n-description": "rest-property-desc-page-license",
+			"properties": {
+				"url": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-url"
+				},
+				"title": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-title"
+				}
+			}
+		},
+		"source": {
+			"type": "string",
+			"x-i18n-description": "rest-param-desc-latest-source"
+		},
+		"page_id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"rev": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+
+		},
+		"tid": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"namespace": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"user_id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"user_text": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"tags": {
+			"type": "array",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"restrictions": {
+			"type": "array",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"page_language": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"redirect": {
+			"type": "boolean",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"comment": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		}
+	}
+}

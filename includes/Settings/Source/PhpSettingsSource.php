@@ -18,9 +18,6 @@ class PhpSettingsSource implements Stringable, SettingsSource, SettingsIncludeLo
 	 */
 	private $path;
 
-	/**
-	 * @param string $path
-	 */
 	public function __construct( string $path ) {
 		$this->path = $path;
 	}
@@ -76,8 +73,6 @@ class PhpSettingsSource implements Stringable, SettingsSource, SettingsIncludeLo
 
 	/**
 	 * Returns this file source as a string.
-	 *
-	 * @return string
 	 */
 	public function __toString(): string {
 		return $this->path;

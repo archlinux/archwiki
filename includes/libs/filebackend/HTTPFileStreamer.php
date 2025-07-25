@@ -22,8 +22,8 @@
 
 namespace Wikimedia\FileBackend;
 
-use HttpStatus;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Http\HttpStatus;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -130,10 +130,10 @@ class HTTPFileStreamer {
 		$headerFunc( 'Last-Modified: ' . $mtimeCT->getTimestamp( TS_RFC2822 ) );
 
 		if ( ( $flags & self::STREAM_ALLOW_OB ) == 0 ) {
-			call_user_func( $this->obResetFunc );
+			( $this->obResetFunc )();
 		}
 
-		$type = call_user_func( $this->streamMimeFunc, $this->path );
+		$type = ( $this->streamMimeFunc )( $this->path );
 		if ( $type && $type != 'unknown/unknown' ) {
 			$headerFunc( "Content-type: $type" );
 		} else {
@@ -299,6 +299,9 @@ class HTTPFileStreamer {
 		return 'unknown/unknown';
 	}
 
+	/**
+	 * @param string|int $header
+	 */
 	private function header( $header ) {
 		if ( is_int( $header ) ) {
 			$header = HttpStatus::getHeader( $header );

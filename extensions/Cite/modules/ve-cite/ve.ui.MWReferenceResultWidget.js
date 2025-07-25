@@ -48,7 +48,7 @@ ve.ui.MWReferenceResultWidget = function VeUiMWReferenceResultWidget( config ) {
 	this.setLabel( $footnoteLabel.add( $name ).add( item.$refContent ) );
 	this.setData( item.reference );
 
-	if ( mw.config.get( 'wgCiteBookReferencing' ) && config.reuseMenu ) {
+	if ( mw.config.get( 'wgCiteSubReferencing' ) && config.reuseMenu ) {
 		this.$element.append( config.reuseMenu.$element );
 	}
 };

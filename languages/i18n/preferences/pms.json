@@ -79,7 +79,7 @@
 	"prefs-help-email": "L'adrëssa ëd pòsta eletrònica a l'é opsional, ma a-i n'a j'é dabzògn për torna amposté la ciav, s'a dovèissa dësmentié soa ciav.",
 	"prefs-help-email-required": "A-i va l'adrëssa ëd pòsta eletrònica.",
 	"prefs-help-email-others": "A peul ëdcò serne ëd lassé che j'àutri a lo contato a travers soa pàgina utent o ëd ciaciarada sensa ch'a-i sia da manca d'arvelé soa identità.",
-	"tog-requireemail": "Mandé dij mëssagi për reimposté la ciav mach quand sia l'adrëssa ëd pòsta eletrònica sia lë stranòm a son ëstàit fornì.",
+	"tog-requireemail": "Mandé dij mëssagi për reimposté la ciav mach quand sia l'adrëssa ëd pòsta eletrònica sia lë stranòm a son ëstàit fornì",
 	"prefs-help-requireemail": "Sòn a aumenta l'arzervatëssa e a giuta a preven-e ij mëssagi nen vorsù.",
 	"noemailprefs": "Che a specìfica n'adrëssa ëd pòsta eletrònica se a veul dovré coste funsion-sì.",
 	"emailnotauthenticated": "Soa adrëssa ëd pòsta eletrònica a l'é pa ancó stàita confirmà.\nPër qualsëssìa ëd coste funsion a sarà mandà gnun mëssagi.",
@@ -225,6 +225,7 @@
 	"search-thumbnail-extra-namespaces-label": "Mostré le miniadure an Special:Arserca an sla Tàula",
 	"search-thumbnail-extra-namespaces-message": "Mostré le miniadure për $1 arzultà {{PLURAL:$2|dlë spassi nominal|djë spassi nominaj}} dzor la pàgina {{#special:search}}",
 	"prefs-advancedsearchoptions": "Opsion avansà",
+	"prefs-misc": "Sòn e lòn",
 	"prefs-reset-intro": "A peul dovré costa pàgina për amposté torna ij sò gust a coj dë stàndard.\nSòn a peul pa esse anulà.",
 	"prefs-reset-confirm": "É! i veuj ripristiné ij mè gust.",
 	"restoreprefs": "Buté torna j'ampostassion dë stàndard"

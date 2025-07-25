@@ -8,6 +8,7 @@
 			"Chicocvenancio",
 			"Cristofer Alves",
 			"Dianakc",
+			"EGobi",
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
@@ -30,7 +31,6 @@
 			"TheGabrielZaum",
 			"Vonil55",
 			"YuriNikolai",
-			"EGobi",
 			"Stanglavine"
 		]
 	},
@@ -98,6 +98,7 @@
 	"notifications": "Notificações",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Seus}} alertas",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Suas}} notificações",
+	"tooltip-pt-notifications": "Suas notificações",
 	"echo-displaynotificationsconfiguration": "Configuração de notificações de exibição",
 	"echo-displaynotificationsconfiguration-summary": "Esta é uma visão geral de como as Notificações são configuradas nesta wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Notificações por categoria",
@@ -160,7 +161,6 @@
 	"notification-compact-header-edit-user-page": "$1 {{GENDER:$2|editou}} {{GENDER:$3|a sua}} página de usuário.",
 	"notification-compact-header-edit-user-talk": "$1 {{GENDER:$2|deixou}}{{GENDER:$3|-lhe}} uma mensagem.",
 	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$2|deixou}}{{GENDER:$3|-lhe}} uma mensagem em \"<strong>$4</strong>\".",
-	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "Uma ligação foi criada de <strong>$4</strong> para <strong>$3</strong>.",
 	"notification-compact-header-page-linked": "Vinculado de <strong>$1</strong>.",
 	"notification-bundle-header-page-linked": "Ligações foram criadas de {{PLURAL:$5||$5 páginas|100=99+ páginas}} para <strong>$3</strong>.",

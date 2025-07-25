@@ -39,6 +39,7 @@ use Wikimedia\TestingAccessWrapper;
 class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers ::findByUser
+	 * @covers ::loadKeysFromDatabase
 	 * @covers ::createKey
 	 * @covers ::updateKey
 	 * @covers ::remove
@@ -47,8 +48,8 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser()->getUser();
 
 		$dbProvider = $this->createMock( IConnectionProvider::class );
-		$dbProvider->method( 'getPrimaryDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->db );
-		$dbProvider->method( 'getReplicaDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->db );
+		$dbProvider->method( 'getPrimaryDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->getDb() );
+		$dbProvider->method( 'getReplicaDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->getDb() );
 
 		$moduleRegistry = OATHAuthServices::getInstance( $this->getServiceContainer() )->getModuleRegistry();
 		$module = $moduleRegistry->getModuleByKey( 'totp' );
@@ -115,5 +116,32 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( [], $oathUser->getKeys() );
 		$this->assertNull( $oathUser->getModule() );
 		$this->assertEquals( [], $repository->findByUser( $user )->getKeys() );
+	}
+
+	/**
+	 * @covers ::findByUser
+	 * @covers ::loadKeysFromDatabase
+	 */
+	public function testUserWithNoCentralId() {
+		$user = $this->getTestUser()->getUser();
+
+		$lookup = $this->createMock( CentralIdLookup::class );
+		$lookup->method( 'centralIdFromLocalUser' )
+			->with( $user )
+			->willReturn( 0 );
+		$lookupFactory = $this->createMock( CentralIdLookupFactory::class );
+		$lookupFactory->method( 'getLookup' )->willReturn( $lookup );
+
+		$repository = new OATHUserRepository(
+			$this->createNoOpMock( IConnectionProvider::class ),
+			new EmptyBagOStuff(),
+			OATHAuthServices::getInstance( $this->getServiceContainer() )->getModuleRegistry(),
+			$lookupFactory,
+			$this->createMock( LoggerInterface::class ),
+		);
+
+		$oathUser = $repository->findByUser( $user );
+		$this->assertSame( 0, $oathUser->getCentralId() );
+		$this->assertEquals( [], $oathUser->getKeys() );
 	}
 }

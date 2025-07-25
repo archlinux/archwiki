@@ -22,10 +22,11 @@
  * @ingroup Media
  */
 
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
-use MediaWiki\Xml\Xml;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\HTTPFileStreamer;
 
@@ -197,16 +198,18 @@ abstract class MediaTransformOutput {
 		}
 
 		if ( $this->path === null ) {
-			return $this->file->getLocalRefPath(); // assume thumb was not scaled
+			// assume thumb was not scaled
+			return $this->file->getLocalRefPath();
 		}
 		if ( FileBackend::isStoragePath( $this->path ) ) {
 			$be = $this->file->getRepo()->getBackend();
-			// The temp file will be process cached by FileBackend
+			// The temp file is process-cached by FileBackend
 			$fsFile = $be->getLocalReference( [ 'src' => $this->path ] );
 
 			return $fsFile ? $fsFile->getPath() : false;
 		}
-		return $this->path; // may return false
+		// may return false
+		return $this->path;
 	}
 
 	/**
@@ -229,16 +232,17 @@ abstract class MediaTransformOutput {
 					[ 'src' => $this->path, 'headers' => $headers, ]
 				)
 			);
-		} else {
-			$streamer = new HTTPFileStreamer(
-				$this->getLocalCopyPath(),
-				$repo ? $repo->getBackend()->getStreamerOptions() : []
-			);
-
-			$success = $streamer->stream( $headers );
-			return $success ? Status::newGood()
-				: Status::newFatal( 'backend-fail-stream', $this->path );
 		}
+
+		$streamer = new HTTPFileStreamer(
+			$this->getLocalCopyPath(),
+			$repo ? $repo->getBackend()->getStreamerOptions() : []
+		);
+
+		$success = $streamer->stream( $headers );
+
+		return $success ? Status::newGood()
+			: Status::newFatal( 'backend-fail-stream', $this->path );
 	}
 
 	/**
@@ -262,14 +266,14 @@ abstract class MediaTransformOutput {
 	 */
 	protected function linkWrap( $linkAttribs, $contents ) {
 		if ( isset( $linkAttribs['href'] ) ) {
-			return Xml::tags( 'a', $linkAttribs, $contents );
+			return Html::rawElement( 'a', $linkAttribs, $contents );
 		}
 		$parserEnableLegacyMediaDOM = MediaWikiServices::getInstance()
 			->getMainConfig()->get( MainConfigNames::ParserEnableLegacyMediaDOM );
 		if ( $parserEnableLegacyMediaDOM ) {
 			return $contents;
 		}
-		return Xml::tags( 'span', $linkAttribs ?: null, $contents );
+		return Html::rawElement( 'span', $linkAttribs ?: null, $contents );
 	}
 
 	/**

@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bishnu Saikia",
+			"Chaipau",
+			"Simbu123"
+		]
+	},
+	"checkuser-desc": "উপযুক্ত অনুমতিৰ সৈতে সদস্যসকলক অন্য সদস্যৰ আইপি ঠিকনা আৰু অন্যান্য তথ্য পৰীক্ষা কৰাৰ ক্ষমতা প্ৰদান কৰে",
+	"checkuser": "সদস্য পৰীক্ষণ",
+	"checkuserlog": "সদস্য পৰীক্ষণ অভিলেখ",
+	"checkuser-contribs": "সদস্যৰ আইপি ঠিকনাসমূহ পৰীক্ষা কৰক",
+	"checkuser-contribs-log": "শেহতীয়া সদস্য পৰীক্ষণ",
+	"group-checkuser": "সদস্য পৰীক্ষক",
+	"group-checkuser-member": "{{GENDER:$1|সদস্য পৰীক্ষক}}",
+	"action-checkuser": "সদস্যৰ আইপি ঠিকনা আৰু অন্যান্য তথ্য পৰীক্ষা কৰক",
+	"grouppage-checkuser": "{{ns:project}}:সদস্য পৰীক্ষক",
+	"checkuser-reason": "কাৰণ:",
+	"checkuser-period": "সময়কাল:",
+	"checkuser-week-1": "যোৱা সপ্তাহ",
+	"checkuser-week-2": "যোৱা দুই সপ্তাহ",
+	"checkuser-month": "যোৱা ৩০ দিন",
+	"checkuser-all": "সকলো",
+	"checkuser-search": "সদস্য পৰীক্ষণৰ অভিলেখ সন্ধান কৰক",
+	"checkuser-search-submit": "সন্ধান কৰক"
+}

@@ -23,6 +23,7 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\UserIdentity;
 
 // @codeCoverageIgnoreStart
@@ -109,14 +110,6 @@ class RemoveUnusedAccounts extends Maintenance {
 					->deleteFrom( 'actor' )
 					->where( [ 'actor_id' => $del ] )
 					->caller( __METHOD__ )->execute();
-			}
-			if ( $keep ) {
-				$dbw->newUpdateQueryBuilder()
-					->update( 'actor' )
-					->set( [ 'actor_user' => null ] )
-					->where( [ 'actor_id' => $keep ] )
-					->caller( __METHOD__ )
-					->execute();
 			}
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom( 'user_groups' )

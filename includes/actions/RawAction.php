@@ -26,10 +26,14 @@
  * @file
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\HttpError;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\Article;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
@@ -358,3 +362,6 @@ class RawAction extends FormlessAction {
 		return $ctype;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RawAction::class, 'RawAction' );

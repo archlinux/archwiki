@@ -2,13 +2,14 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use Article;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Sanitizer;
@@ -50,6 +51,7 @@ abstract class DiscussionParser {
 		global $wgEchoMentionOnChanges;
 		$services = MediaWikiServices::getInstance();
 		$store = $services->getRevisionStore();
+		$userFactory = $services->getUserFactory();
 
 		// use the replica database if there is a previous revision
 		if ( $store->getPreviousRevision( $revision ) ) {
@@ -67,10 +69,7 @@ abstract class DiscussionParser {
 		$events = [];
 
 		$interpretation = self::getChangeInterpretationForRevision( $revision );
-
-		$userID = $revision->getUser()->getId();
-		$userName = $revision->getUser()->getName();
-		$user = $userID !== 0 ? User::newFromId( $userID ) : User::newFromName( $userName, false );
+		$user = $userFactory->newFromUserIdentity( $revision->getUser() );
 
 		foreach ( $interpretation as $action ) {
 			if ( $action['type'] === 'add-comment' ) {
@@ -117,7 +116,7 @@ abstract class DiscussionParser {
 			$notifyUser = User::newFromName( $title->getText() );
 			// If the recipient is a valid non-anonymous user generate a talk page post notification.
 			if ( $notifyUser && $notifyUser->getId() ) {
-				$permManager = MediaWikiServices::getInstance()->getPermissionManager();
+				$permManager = $services->getPermissionManager();
 				// If this is a minor edit, only notify if the agent doesn't have talk page minor
 				// edit notification blocked
 				if ( !$revision->isMinor() || !$permManager->userHasRight( $user, 'nominornewtalk' ) ) {
@@ -166,7 +165,7 @@ abstract class DiscussionParser {
 			$usersInSummary = $summaryParser->parse( $revision->getComment()->text );
 
 			// Don't allow pinging yourself
-			unset( $usersInSummary[$userName] );
+			unset( $usersInSummary[$user->getName()] );
 
 			$count = 0;
 			$mentionedUsers = [];
@@ -293,10 +292,7 @@ abstract class DiscussionParser {
 	) {
 		global $wgEchoMaxMentionsCount, $wgEchoMentionStatusNotifications;
 
-		$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
-		if ( !$title ) {
-			return [];
-		}
+		$title = Title::newFromPageIdentity( $revision->getPage() );
 		$content = self::stripHeader( $content );
 		$content = self::stripSignature( $content, $title );
 
@@ -313,7 +309,6 @@ abstract class DiscussionParser {
 		}
 
 		$events = [];
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 
 		if ( $overallMentionsCount > $wgEchoMaxMentionsCount ) {
 			if ( $wgEchoMentionStatusNotifications ) {
@@ -326,7 +321,6 @@ abstract class DiscussionParser {
 					],
 					'agent' => $agent,
 				];
-				$stats->increment( 'echo.event.mention.notification.failure-too-many' );
 			}
 			return $events;
 		}
@@ -358,7 +352,6 @@ abstract class DiscussionParser {
 					],
 					'agent' => $agent,
 				];
-				$stats->increment( 'echo.event.mention.notification.success' );
 			}
 
 			// TODO batch?
@@ -374,7 +367,6 @@ abstract class DiscussionParser {
 					],
 					'agent' => $agent,
 				];
-				$stats->increment( 'echo.event.mention.notification.failure-user-anonymous' );
 			}
 
 			// TODO batch?
@@ -390,14 +382,13 @@ abstract class DiscussionParser {
 					],
 					'agent' => $agent,
 				];
-				$stats->increment( 'echo.event.mention.notification.failure-user-unknown' );
 			}
 		}
 
 		return $events;
 	}
 
-	private static function getOverallUserMentionsCount( array $userMentions ) {
+	private static function getOverallUserMentionsCount( array $userMentions ): int {
 		return count( $userMentions, COUNT_RECURSIVE ) - count( $userMentions );
 	}
 
@@ -421,14 +412,12 @@ abstract class DiscussionParser {
 		];
 
 		$count = 0;
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 		$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
 
 		foreach ( $userLinks as $dbk => $page_id ) {
 			// If more users are being pinged this is likely a spam/attack vector
 			// Don't send any mention notifications.
 			if ( $count > $wgEchoMaxMentionsCount ) {
-				$stats->increment( 'echo.event.mention.error.tooMany' );
 				break;
 			}
 
@@ -442,7 +431,6 @@ abstract class DiscussionParser {
 			if ( $userNameUtils->isIP( $dbk ) ) {
 				$userMentions['anonymousUsers'][] = $dbk;
 				$count++;
-				$stats->increment( 'echo.event.mention.error.anonUser' );
 				continue;
 			}
 
@@ -451,19 +439,16 @@ abstract class DiscussionParser {
 			if ( !$user ) {
 				$userMentions['unknownUsers'][] = str_replace( '_', ' ', $dbk );
 				$count++;
-				$stats->increment( 'echo.event.mention.error.invalidUser' );
 				continue;
 			}
 
 			// 4. the user mentions themselves
 			if ( $user->getId() === $revisionUserId ) {
-				$stats->increment( 'echo.event.mention.error.sameUser' );
 				continue;
 			}
 
 			// 5. the user is the owner of the talk page
 			if ( $title->getNamespace() === NS_USER_TALK && $title->getDBkey() === $dbk ) {
-				$stats->increment( 'echo.event.mention.error.ownPage' );
 				continue;
 			}
 
@@ -471,7 +456,6 @@ abstract class DiscussionParser {
 			if ( $user->getId() === 0 ) {
 				$userMentions['unknownUsers'][] = str_replace( '_', ' ', $dbk );
 				$count++;
-				$stats->increment( 'echo.event.mention.error.unknownUser' );
 				continue;
 			}
 
@@ -499,7 +483,7 @@ abstract class DiscussionParser {
 		return $links[NS_USER];
 	}
 
-	private static function hasSubpage( $dbk ) {
+	private static function hasSubpage( string $dbk ): bool {
 		return strpos( $dbk, '/' ) !== false;
 	}
 
@@ -570,7 +554,7 @@ abstract class DiscussionParser {
 		$output = self::interpretDiff(
 			$changes,
 			$userIdentity ? $userIdentity->getName() : '',
-			Title::newFromLinkTarget( $revision->getPageAsLinkTarget() )
+			Title::newFromPageIdentity( $revision->getPage() )
 		);
 
 		if ( $cacheKey ) {
@@ -586,7 +570,7 @@ abstract class DiscussionParser {
 	 *
 	 * @todo Expand recognisable actions.
 	 *
-	 * @param array[] $changes Output of Event::getMachineReadableDiff
+	 * @param array[] $changes Output of DiscussionParser::getMachineReadableDiff
 	 * @param string $username
 	 * @param Title|null $title
 	 * @return array[] Array of associative arrays.
@@ -733,6 +717,13 @@ abstract class DiscussionParser {
 		return $actions;
 	}
 
+	/**
+	 * @param string $oldContent
+	 * @param string $newContent
+	 * @param string $username
+	 * @param Title|null $title
+	 * @return bool
+	 */
 	private static function hasNewSignature( $oldContent, $newContent, $username, $title ) {
 		$oldSignedUsers = self::extractSignatures( $oldContent, $title );
 		$newSignedUsers = self::extractSignatures( $newContent, $title );
@@ -748,7 +739,7 @@ abstract class DiscussionParser {
 	 * @return array[] Converted actions
 	 */
 	private static function convertToUnknownSignedChanges( array $signedSections, array $actions ) {
-		return array_map( function ( $action ) use( $signedSections ) {
+		return array_map( function ( $action ) use ( $signedSections ) {
 			if (
 				$action['type'] === 'unknown-change' &&
 				self::isInSignedSection( $action['right-pos'], $signedSections )
@@ -1032,11 +1023,7 @@ abstract class DiscussionParser {
 
 		$output = [];
 
-		$lineNumber = 0;
-
 		foreach ( $lines as $line ) {
-			++$lineNumber;
-
 			// Look for the last user link on the line.
 			$userData = self::getUserFromLine( $line, $title );
 			if ( $userData === false ) {
@@ -1096,9 +1083,6 @@ abstract class DiscussionParser {
 			} elseif ( $title && $title->isSpecial( 'Contributions' ) ) {
 				$parts = explode( '/', $title->getText(), 2 );
 				$usernames[] = end( $parts );
-			} else {
-				// move on to next matched title-like excerpt
-				continue;
 			}
 		}
 
@@ -1117,6 +1101,8 @@ abstract class DiscussionParser {
 	 */
 	public static function getUserFromLine( $line, ?Title $title = null ) {
 		$parser = MediaWikiServices::getInstance()->getParser();
+		$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
+		$userFactory = MediaWikiServices::getInstance()->getUserFactory();
 
 		/*
 		 * First we call extractUsersFromLine to get all the potential usernames
@@ -1129,8 +1115,15 @@ abstract class DiscussionParser {
 		foreach ( $usernames as $username ) {
 			// generate (dateless) signature from the user we think we've
 			// discovered the signature from
-			// don't validate the username - anon (IP) is fine!
-			$user = User::newFromName( $username, false );
+			if ( $userNameUtils->isIP( $username ) ) {
+				$user = $userFactory->newAnonymous( $username );
+			} else {
+				$user = $userFactory->newFromName( $username );
+				if ( !$user ) {
+					// Invalid username, so this link can't be any user's signature
+					continue;
+				}
+			}
 			$sig = $parser->preSaveTransform(
 				'~~~',
 				$title ?: Title::newMainPage(),
@@ -1280,10 +1273,10 @@ abstract class DiscussionParser {
 	public static function getTextSnippet(
 		$text, Language $lang, $length = self::DEFAULT_SNIPPET_LENGTH, $title = null, $linestart = true
 	) {
+		$title ??= PageReferenceValue::localReference( NS_SPECIAL, 'Badtitle/title not set in ' . __METHOD__ );
 		// Parse wikitext
-		$html = MediaWikiServices::getInstance()->getMessageCache()->parse( $text, $title, $linestart )->getText( [
-			'enableSectionEditLinks' => false
-		] );
+		$html = MediaWikiServices::getInstance()->getMessageCache()
+			->parseWithPostprocessing( $text, $title, $linestart, false, $lang )->getContentHolderText();
 		$plaintext = trim( Sanitizer::stripAllTags( $html ) );
 		return $lang->truncateForVisual( $plaintext, $length );
 	}

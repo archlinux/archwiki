@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\AbuseFilter\Maintenance\PurgeOldLogIPData;
+use MediaWiki\MainConfigSchema;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -42,7 +43,6 @@ class PurgeOldLogIPDataTest extends MaintenanceBaseTestCase {
 			'afl_title' => 'Title',
 			'afl_wiki' => null,
 			'afl_deleted' => 0,
-			'afl_patrolled_by' => 0,
 			'afl_rev_id' => 42,
 		];
 		$oldTS = ConvertibleTimestamp::convert(
@@ -65,7 +65,10 @@ class PurgeOldLogIPDataTest extends MaintenanceBaseTestCase {
 
 	public function testExecute() {
 		ConvertibleTimestamp::setFakeTime( self::FAKE_TIME );
-		$this->maintenance->setConfig( new HashConfig( [ 'AbuseFilterLogIPMaxAge' => self::MAX_AGE ] ) );
+		$this->maintenance->setConfig( new HashConfig( [
+			'AbuseFilterLogIPMaxAge' => self::MAX_AGE,
+			'StatsdServer' => MainConfigSchema::getDefaultValue( 'StatsdServer' )
+		] ) );
 		$this->expectOutputRegex( '/1 rows/' );
 		$this->maintenance->execute();
 	}

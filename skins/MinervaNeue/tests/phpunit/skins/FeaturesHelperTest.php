@@ -14,7 +14,7 @@ use MediaWikiIntegrationTestCase;
  */
 class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 
-	public function provideShouldDisableNightModeExcluded() {
+	public static function provideShouldDisableNightModeExcluded() {
 		$options = [
 			'exclude' => [
 				'mainpage' => true,

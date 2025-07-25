@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Notifications\Jobs;
 
-use Job;
-use JobQueueGroup;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\JobQueue\Job;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 

@@ -16,9 +16,7 @@ QUnit.test( 'rebaseTransactions', ( assert ) => {
 		insert1X = ve.dm.TransactionBuilder.static.newFromInsertion( doc, 1, [ 'x' ] ),
 		insert1Y = ve.dm.TransactionBuilder.static.newFromInsertion( doc, 1, [ 'y' ] ),
 		annotate12 = ve.dm.TransactionBuilder.static.newFromAnnotation( doc, new ve.Range( 1, 2 ), 'set', bold ),
-		rebasedOnto = function ( tx1, tx2 ) {
-			return ve.dm.Change.static.rebaseTransactions( tx1, tx2 )[ 0 ];
-		};
+		rebasedOnto = ( tx1, tx2 ) => ve.dm.Change.static.rebaseTransactions( tx1, tx2 )[ 0 ];
 	assert.deepEqual( rebasedOnto( replace23, replace12 ).operations, [
 		{
 			type: 'retain',
@@ -117,11 +115,9 @@ QUnit.test( 'rebaseTransactions', ( assert ) => {
 
 QUnit.test( 'Change operations', ( assert ) => {
 	const origData = [ { type: 'paragraph' }, ...'three', { type: '/paragraph' } ],
-		newSurface = function () {
-			return new ve.dm.Surface(
-				ve.dm.example.createExampleDocumentFromData( origData )
-			);
-		};
+		newSurface = () => new ve.dm.Surface(
+			ve.dm.example.createExampleDocumentFromData( origData )
+		);
 	let surface = newSurface();
 	const emptyStore = new ve.dm.HashValueStore(),
 		doc = surface.documentModel,
@@ -158,7 +154,7 @@ QUnit.test( 'Change operations', ( assert ) => {
 	insert2.applyTo( surface );
 	assert.deepEqual(
 		doc.data.data.slice( 1, -1 ),
-		[ [ 't', iHash ], [ 'w', iHash ], [ 'o', iHash ], ...' three' ],
+		[ ...ve.dm.example.annotateText( 'two', iHash ), ...' three' ],
 		'Apply insert2'
 	);
 
@@ -181,13 +177,9 @@ QUnit.test( 'Change operations', ( assert ) => {
 	assert.deepEqual(
 		surface.documentModel.data.data.slice( 1, -1 ),
 		[
-			[ 'o', bHash ],
-			[ 'n', bHash ],
-			[ 'e', bHash ],
+			...ve.dm.example.annotateText( 'one', bHash ),
 			' ',
-			[ 't', iHash ],
-			[ 'w', iHash ],
-			[ 'o', iHash ],
+			...ve.dm.example.annotateText( 'two', iHash ),
 			...' three'
 		],
 		'Apply insert1 then insert2'
@@ -205,15 +197,9 @@ QUnit.test( 'Change operations', ( assert ) => {
 	assert.deepEqual(
 		surface.documentModel.data.data.slice( 1, -1 ),
 		[
-			[ 'o', bHash ],
-			[ 'n', bHash ],
-			[ 'e', bHash ],
+			...ve.dm.example.annotateText( 'one', bHash ),
 			...' TWO ',
-			[ 't', uHash ],
-			[ 'h', uHash ],
-			[ 'r', uHash ],
-			[ 'e', uHash ],
-			[ 'e', uHash ]
+			...ve.dm.example.annotateText( 'three', uHash )
 		],
 		'Apply insert1 then insert2*replace2 then underline3'
 	);
@@ -257,11 +243,9 @@ QUnit.test( 'Change operations', ( assert ) => {
 
 QUnit.test( 'Rebase with conflicting annotations', ( assert ) => {
 	const origData = [ { type: 'paragraph' }, 'A', { type: '/paragraph' } ],
-		newSurface = function () {
-			return new ve.dm.Surface(
-				ve.dm.example.createExampleDocumentFromData( origData )
-			);
-		},
+		newSurface = () => new ve.dm.Surface(
+			ve.dm.example.createExampleDocumentFromData( origData )
+		),
 		surface = newSurface(),
 		doc = surface.documentModel,
 		TxRemove = ve.dm.TransactionBuilder.static.newFromRemoval,
@@ -294,11 +278,9 @@ QUnit.test( 'Rebase with conflicting annotations', ( assert ) => {
 
 QUnit.test( 'toJSON/deserialize/unsafeDeserialize', ( assert ) => {
 	const origData = [ { type: 'paragraph' }, ...'Bar', { type: '/paragraph' } ],
-		newSurface = function () {
-			return new ve.dm.Surface(
-				ve.dm.example.createExampleDocumentFromData( origData )
-			);
-		},
+		newSurface = () => new ve.dm.Surface(
+			ve.dm.example.createExampleDocumentFromData( origData )
+		),
 		surface = newSurface(),
 		emptyStore = new ve.dm.HashValueStore(),
 		doc = surface.documentModel,
@@ -320,7 +302,7 @@ QUnit.test( 'toJSON/deserialize/unsafeDeserialize', ( assert ) => {
 			stores: [
 				{
 					hashStore: {
-						h49981eab0f8056ff: {
+						[ ve.dm.example.boldHash ]: {
 							type: 'plain',
 							value: {
 								type: 'textStyle/bold',
@@ -432,14 +414,14 @@ QUnit.test( 'Minified serialization', ( assert ) => {
 					type: 'annotate',
 					method: 'set',
 					bias: 'start',
-					index: 'he4e7c54e2204d10b'
+					index: ve.dm.example.italicHash
 				},
 				9,
 				{
 					type: 'annotate',
 					method: 'set',
 					bias: 'stop',
-					index: 'he4e7c54e2204d10b'
+					index: ve.dm.example.italicHash
 				},
 				28
 			],
@@ -448,18 +430,10 @@ QUnit.test( 'Minified serialization', ( assert ) => {
 				5,
 				[
 					[
-						[ 'r', [ 'he4e7c54e2204d10b' ] ],
-						[ 'e', [ 'he4e7c54e2204d10b' ] ],
-						[ 'd', [ 'he4e7c54e2204d10b' ] ],
-						[ ' ', [ 'he4e7c54e2204d10b' ] ],
-						[ 'p', [ 'he4e7c54e2204d10b' ] ],
-						[ 'a', [ 'he4e7c54e2204d10b' ] ],
-						[ 'n', [ 'he4e7c54e2204d10b' ] ],
-						[ 'd', [ 'he4e7c54e2204d10b' ] ],
-						[ 'a', [ 'he4e7c54e2204d10b' ] ]
+						...ve.dm.example.annotateText( 'red panda', ve.dm.example.italicHash )
 					],
 					[
-						[ 'q', [ 'he4e7c54e2204d10b' ] ]
+						[ 'q', [ ve.dm.example.italicHash ] ]
 					]
 				],
 				28
@@ -472,14 +446,14 @@ QUnit.test( 'Minified serialization', ( assert ) => {
 					type: 'annotate',
 					method: 'set',
 					bias: 'start',
-					index: 'hfbe3cfe099b83e1e'
+					index: ve.dm.example.boldHash
 				},
 				9,
 				{
 					type: 'annotate',
 					method: 'set',
 					bias: 'stop',
-					index: 'hfbe3cfe099b83e1e'
+					index: ve.dm.example.boldHash
 				},
 				3
 			],
@@ -488,18 +462,10 @@ QUnit.test( 'Minified serialization', ( assert ) => {
 				36,
 				[
 					[
-						[ 'a', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 'u', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 't', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 'o', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 'm', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 'a', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 't', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 'o', [ 'hfbe3cfe099b83e1e' ] ],
-						[ 'n', [ 'hfbe3cfe099b83e1e' ] ]
+						...ve.dm.example.annotateText( 'automaton', ve.dm.example.boldHash )
 					],
 					[
-						[ 'l', [ 'hfbe3cfe099b83e1e' ] ]
+						[ 'l', [ ve.dm.example.boldHash ] ]
 					]
 				],
 				3
@@ -509,21 +475,21 @@ QUnit.test( 'Minified serialization', ( assert ) => {
 		stores: [
 			null, null, null, null, null, null, null, null, null,
 			{
-				hashes: [ 'he4e7c54e2204d10b' ],
+				hashes: [ ve.dm.example.italicHash ],
 				hashStore: {
-					he4e7c54e2204d10b: {
+					[ ve.dm.example.italicHash ]: {
 						type: 'annotation',
-						value: { type: 'textStyle/italic' }
+						value: ve.dm.example.italic
 					}
 				}
 			},
 			null, null, null, null, null, null, null, null, null,
 			{
-				hashes: [ 'hfbe3cfe099b83e1e' ],
+				hashes: [ ve.dm.example.boldHash ],
 				hashStore: {
-					hfbe3cfe099b83e1e: {
+					[ ve.dm.example.boldHash ]: {
 						type: 'annotation',
-						value: { type: 'textStyle/bold' }
+						value: ve.dm.example.bold
 					}
 				}
 			},
@@ -548,7 +514,7 @@ QUnit.test( 'Same-offset typing', ( assert ) => {
 		emptyStore = new ve.dm.HashValueStore(),
 		doc = surface.documentModel,
 		saved = doc.completeHistory.toJSON(),
-		clear = function () {
+		clear = () => {
 			doc.getChangeSince( 0 ).reversed().applyTo( surface );
 			doc.completeHistory = ve.dm.Change.static.deserialize( saved );
 			doc.store = doc.completeHistory.store;
@@ -615,7 +581,7 @@ QUnit.test( 'Same-offset typing', ( assert ) => {
 	const expected = [ { type: 'paragraph' }, ...'abcd', { type: '/paragraph' }, { type: 'internalList' }, { type: '/internalList' } ];
 
 	clear();
-	surface.setSelection( new ve.dm.LinearSelection( new ve.Range( 1 ) ) );
+	surface.setLinearSelection( new ve.Range( 1 ) );
 	a.applyTo( surface );
 	b.applyTo( surface );
 	c.rebasedOnto( a.concat( b ) ).applyTo( surface );

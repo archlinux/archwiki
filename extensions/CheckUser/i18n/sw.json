@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Killy95",
+			"Kwisha",
+			"Lloffiwr",
+			"Stephenwanjau",
+			"Wangombe"
+		]
+	},
+	"checkuser-desc": "Inawezesha watumiaji wenye ruksa wakague anwani za IP za watumiaji na data zingine",
+	"checkuser": "Mkaguzi wa watumiaji",
+	"checkuserlog": "Kumbukumbu za kukagua Watumiaji",
+	"checkuser-contribs": "kagua anwani za IP (Itifaki Wavuti) za watumiaji",
+	"group-checkuser": "Wakaguzi wa watumiaji",
+	"group-checkuser-member": "{{GENDER:$1|kagua mtumiaji}}",
+	"right-checkuser": "Kukagua anwani za IP na data zingine za watumiaji",
+	"right-checkuser-log": "Kutazama kumbukumbu za kukagua watumiaji",
+	"grouppage-checkuser": "{{ns:project}}:Mkaguzi wa watumiaji",
+	"checkuser-reason": "Sababu:",
+	"checkuser-reason-api": "API: $1",
+	"checkuser-showlog": "Onyesha kumbukumbu",
+	"checkuser-target": "Anwani ya IP au jina la mtumiaji:",
+	"checkuser-users": "Leta watumiaji",
+	"checkuser-actions": "Pata hatua",
+	"checkuser-ips": "Leta anwani za IP",
+	"checkuser-period": "Muda:",
+	"checkuser-week-1": "wiki iliyopita",
+	"checkuser-week-2": "wiki mbili zilizopita",
+	"checkuser-month": "siku 30 zilizopita",
+	"checkuser-all": "wote",
+	"checkuser-empty": "Kumbukumbu haina kitu.",
+	"checkuser-check": "Chagua",
+	"checkuser-blocked": "Imezuia",
+	"checkuser-locked": "Imefungwa",
+	"checkuser-search": "Tafuta",
+	"checkuser-search-submit": "Tafuta",
+	"checkuser-ipeditcount": "~$1 kutoka kwa watumiaji wote",
+	"logentry-checkuser-private-event-create-account": "iliumbwa",
+	"checkuser-tempaccount-reveal-ip-missing": "haipatikani"
+}

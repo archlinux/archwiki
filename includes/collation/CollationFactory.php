@@ -98,6 +98,18 @@ class CollationFactory {
 				'LanguageFactory',
 			]
 		],
+		'uppercase-smn' => [
+			'class' => \InariSaamiUppercaseCollation::class,
+			'services' => [
+				'LanguageFactory',
+			]
+		],
+		'uppercase-ckb' => [
+			'class' => \CentralKurdishUppercaseCollation::class,
+			'services' => [
+				'LanguageFactory',
+			]
+		],
 	];
 
 	/** @var ServiceOptions */
@@ -125,9 +137,6 @@ class CollationFactory {
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
-	/**
-	 * @return Collation
-	 */
 	public function getCategoryCollation(): Collation {
 		return $this->makeCollation( $this->getDefaultCollationName() );
 	}
@@ -136,10 +145,6 @@ class CollationFactory {
 		return $this->options->get( MainConfigNames::CategoryCollation );
 	}
 
-	/**
-	 * @param string $collationName
-	 * @return Collation
-	 */
 	public function makeCollation( string $collationName ): Collation {
 		if ( isset( self::CORE_COLLATIONS[$collationName] ) ) {
 			return $this->instantiateCollation( self::CORE_COLLATIONS[$collationName] );

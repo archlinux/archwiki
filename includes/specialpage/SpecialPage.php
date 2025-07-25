@@ -23,16 +23,20 @@
 
 namespace MediaWiki\SpecialPage;
 
-use ErrorPageError;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
@@ -41,16 +45,14 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MessageLocalizer;
 use MWCryptRand;
-use PermissionsError;
-use ReadOnlyError;
 use SearchEngineFactory;
-use Skin;
-use UserNotLoggedIn;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 
 /**
@@ -294,7 +296,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @return string
 	 */
 	public function getLocalName() {
-		if ( !isset( $this->mLocalName ) ) {
+		if ( $this->mLocalName === null ) {
 			$this->mLocalName = $this->getSpecialPageFactory()->getLocalNameFor( $this->mName );
 		}
 
@@ -718,6 +720,10 @@ class SpecialPage implements MessageLocalizer {
 	 * @param string|null $subPage
 	 */
 	final public function run( $subPage ) {
+		$scope = LoggerFactory::getContext()->addScoped( [
+			'context.special_page_name' => $this->getName(),
+			'context.special_page_subpage' => $subPage ?? '',
+		] );
 		if ( !$this->getHookRunner()->onSpecialPageBeforeExecute( $this, $subPage ) ) {
 			return;
 		}
@@ -993,7 +999,9 @@ class SpecialPage implements MessageLocalizer {
 	 *
 	 * @since 1.16
 	 * @param string|string[]|MessageSpecifier $key
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 * @see wfMessage
 	 */

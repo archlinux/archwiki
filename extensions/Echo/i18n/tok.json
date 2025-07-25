@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robin van der Vliet",
-			"Juwan"
+			"Juwan",
+			"Robin van der Vliet"
 		]
 	},
 	"prefs-echo": "mu",
@@ -28,6 +28,8 @@
 	"echo-pref-email-format-html": "toki lon nasin HTML",
 	"echo-pref-email-format-plain-text": "toki taso",
 	"echo-pref-cross-wiki-notifications": "o pana e mu tan lipu ante",
+	"echo-pref-notifications-blacklist": "o pana ala e mu tan jan ni. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute o sona])",
+	"echo-pref-notifications-page-linked-title-muted-list": "o pana ala e mu tan lipu ni. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute o sona])",
 	"echo-pref-dont-email-read-notifications": "mi lukin e mu la, o pana ala e ona tawa kulupu pi toki Email",
 	"echo-learn-more": "o sona",
 	"echo-log": "pini pali",

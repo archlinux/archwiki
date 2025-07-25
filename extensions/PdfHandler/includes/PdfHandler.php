@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\PdfHandler;
 
-use File;
 use ImageHandler;
 use MediaTransformError;
 use MediaTransformOutput;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use ThumbnailImage;
@@ -296,7 +296,7 @@ class PdfHandler extends ImageHandler {
 		global $wgPdfOutputExtension;
 		static $mime;
 
-		if ( !isset( $mime ) ) {
+		if ( $mime === null ) {
 			$magic = MediaWikiServices::getInstance()->getMimeAnalyzer();
 			$mime = $magic->guessTypesForExtension( $wgPdfOutputExtension );
 		}
@@ -444,6 +444,7 @@ class PdfHandler extends ImageHandler {
 		];
 	}
 
+	/** @inheritDoc */
 	public function useSplitMetadata() {
 		return true;
 	}

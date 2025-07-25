@@ -52,13 +52,13 @@ use Wikimedia\TestingAccessWrapper;
 class ParserTest extends ParserTestCase {
 	/**
 	 * @param string $rule The rule to parse
-	 * @dataProvider readTests
+	 * @dataProvider provideTests
 	 */
 	public function testParser( $rule ) {
 		$this->assertTrue( $this->getParser()->parse( $rule ) );
 	}
 
-	public static function readTests() {
+	public static function provideTests() {
 		$testPath = __DIR__ . "/../../../parserTests";
 		$testFiles = glob( $testPath . "/*.t" );
 
@@ -147,13 +147,13 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $rule The rule to parse
 	 * @param int $expected The expected amount of used conditions
-	 * @dataProvider condCountCases
+	 * @dataProvider provideCondCountCases
 	 */
 	public function testCondCount( $rule, $expected ) {
 		$this->assertEquals( $expected, $this->getParser()->checkConditions( $rule )->getCondsUsed(), "Rule: $rule" );
 	}
 
-	public static function condCountCases() {
+	public static function provideCondCountCases() {
 		return [
 			[ '((("a" == "b")))', 1 ],
 			[ 'contains_any("a", "b", "c")', 1 ],
@@ -184,7 +184,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider expectedNotFound
+	 * @dataProvider provideExpectedNotFound
 	 */
 	public function testExpectedNotFoundException( $expr, $caller ) {
 		$this->exceptionTest( 'expectednotfound', $expr, $caller );
@@ -198,7 +198,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function expectedNotFound() {
+	public static function provideExpectedNotFound() {
 		return [
 			[ 'a:= [1,2,3]; a[1 = 4', 'doLevelSet' ],
 			[ "if 1 = 1 'foo'", 'doLevelConditions' ],
@@ -220,7 +220,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unexpectedAtEnd
+	 * @dataProvider provideUnexpectedAtEnd
 	 */
 	public function testUnexpectedAtEndException( $expr, $caller ) {
 		$this->exceptionTest( 'unexpectedatend', $expr, $caller );
@@ -234,7 +234,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function unexpectedAtEnd() {
+	public static function provideUnexpectedAtEnd() {
 		return [
 			[ "'a' = 1 )", 'doLevelEntry' ],
 		];
@@ -245,7 +245,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unrecognisedVar
+	 * @dataProvider provideUnrecognisedVar
 	 */
 	public function testUnrecognisedVarException( $expr, $caller ) {
 		$this->exceptionTest( 'unrecognisedvar', $expr, $caller );
@@ -259,7 +259,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function unrecognisedVar() {
+	public static function provideUnrecognisedVar() {
 		return [
 			[ 'a[1] := 5', 'getVarValue' ],
 			[ 'a[] := 5', 'getVarValue' ],
@@ -275,7 +275,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider notArray
+	 * @dataProvider provideNotArray
 	 */
 	public function testNotArrayException( $expr, $caller ) {
 		$this->exceptionTest( 'notarray', $expr, $caller );
@@ -289,7 +289,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function notArray() {
+	public static function provideNotArray() {
 		return [
 			[ 'a := 5; a[1] = 5', 'doLevelSet' ],
 			[ 'a := 1; 3 = a[5]', 'doLevelArrayElements' ],
@@ -303,7 +303,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider outOfBounds
+	 * @dataProvider provideOutOfBounds
 	 */
 	public function testOutOfBoundsException( $expr, $caller ) {
 		$this->exceptionTest( 'outofbounds', $expr, $caller );
@@ -317,7 +317,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function outOfBounds() {
+	public static function provideOutOfBounds() {
 		return [
 			[ 'a := [2]; a[5] = 9', 'doLevelSet' ],
 			[ 'a := [1,2,3]; 3 = a[5]', 'doLevelArrayElements' ],
@@ -330,7 +330,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider negativeIndex
+	 * @dataProvider provideNegativeIndex
 	 */
 	public function testNegativeIndexException( $expr, $caller ) {
 		$this->exceptionTest( 'negativeindex', $expr, $caller );
@@ -344,7 +344,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function negativeIndex() {
+	public static function provideNegativeIndex() {
 		return [
 			[ '[0][-1]', '' ],
 			[ "x := ['foo']; x[-1]", '' ],
@@ -358,7 +358,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unrecognisedKeyword
+	 * @dataProvider provideUnrecognisedKeyword
 	 */
 	public function testUnrecognisedKeywordException( $expr, $caller ) {
 		$this->exceptionTest( 'unrecognisedkeyword', $expr, $caller );
@@ -372,7 +372,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function unrecognisedKeyword() {
+	public static function provideUnrecognisedKeyword() {
 		return [
 			[ '5 = rlike', 'doLevelAtom' ],
 			[ 'then := 45', 'doLevelAtom' ],
@@ -384,7 +384,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unexpectedToken
+	 * @dataProvider provideUnexpectedToken
 	 */
 	public function testUnexpectedTokenException( $expr, $caller ) {
 		$this->exceptionTest( 'unexpectedtoken', $expr, $caller );
@@ -398,7 +398,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function unexpectedToken() {
+	public static function provideUnexpectedToken() {
 		return [
 			[ '1 =? 1', 'doLevelAtom' ],
 		];
@@ -409,7 +409,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider disabledVar
+	 * @dataProvider provideDisabledVar
 	 */
 	public function testDisabledVarException( $expr, $caller ) {
 		$this->exceptionTest( 'disabledvar', $expr, $caller );
@@ -423,7 +423,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function disabledVar() {
+	public static function provideDisabledVar() {
 		return [
 			[ 'old_text = 1', 'getVarValue' ],
 		];
@@ -432,7 +432,7 @@ class ParserTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider variableVariable
+	 * @dataProvider provideVariableVariable
 	 */
 	public function testVariableVariableException( $expr, $caller ) {
 		$this->exceptionTest( 'variablevariable', $expr, $caller );
@@ -446,7 +446,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function variableVariable() {
+	public static function provideVariableVariable() {
 		return [
 			[ "set( 'x' + 'y', 1 )", 'doLevelFunction' ],
 			[ "set( 'x' + page_title, 1 )", 'doLevelFunction' ],
@@ -458,7 +458,7 @@ class ParserTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider overrideBuiltin
+	 * @dataProvider provideOverrideBuiltin
 	 */
 	public function testOverrideBuiltinException( $expr, $caller ) {
 		$this->exceptionTest( 'overridebuiltin', $expr, $caller );
@@ -472,7 +472,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function overrideBuiltin() {
+	public static function provideOverrideBuiltin() {
 		return [
 			[ 'added_lines := 1', 'setUserVariable' ],
 			[ 'added_lines[] := 1', 'doLevelSet' ],
@@ -491,7 +491,7 @@ class ParserTest extends ParserTestCase {
 	 * Test the 'usebuiltin' exception
 	 *
 	 * @param string $expr The expression to test
-	 * @dataProvider useBuiltin
+	 * @dataProvider provideUseBuiltin
 	 */
 	public function testUseBuiltinException( $expr ) {
 		$this->exceptionTest( 'usebuiltin', $expr );
@@ -502,7 +502,7 @@ class ParserTest extends ParserTestCase {
 	 * Data provider for testUseBuiltinException
 	 * @return array
 	 */
-	public static function useBuiltin() {
+	public static function provideUseBuiltin() {
 		return [
 			[ 'contains_any[1] := "foo"' ],
 			[ '1 + lcase + 2' ]
@@ -522,7 +522,7 @@ class ParserTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider regexFailure
+	 * @dataProvider provideRegexFailure
 	 */
 	public function testRegexFailureException( $expr, $caller ) {
 		$this->exceptionTest( 'regexfailure', $expr, $caller );
@@ -536,7 +536,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function regexFailure() {
+	public static function provideRegexFailure() {
 		return [
 			[ "rcount('(','a')", 'funcRCount' ],
 			[ "get_matches('this (should fail', 'any haystack')", 'funcGetMatches' ],
@@ -548,7 +548,7 @@ class ParserTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider invalidIPRange
+	 * @dataProvider provideInvalidIPRange
 	 */
 	public function testInvalidIPRangeException( $expr, $caller ) {
 		$this->exceptionTest( 'invalidiprange', $expr, $caller );
@@ -562,7 +562,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function invalidIPRange() {
+	public static function provideInvalidIPRange() {
 		return [
 			[ "ip_in_range('0.0.0.0', 'lol')", 'funcIPInRange' ],
 			[ "ip_in_ranges('0.0.0.0', ':', '0.0.0.256')", 'funcIPInRanges' ],
@@ -575,7 +575,7 @@ class ParserTest extends ParserTestCase {
 	 *   without 0 params. They should throw a 'noparams' exception.
 	 *
 	 * @param string $func The function to test
-	 * @dataProvider oneParamFuncs
+	 * @dataProvider provideOneParamFuncs
 	 */
 	public function testNoParamsException( $func ) {
 		$this->exceptionTest( 'noparams', "$func()", 'checkArgCount' );
@@ -588,7 +588,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function oneParamFuncs() {
+	public static function provideOneParamFuncs() {
 		return [
 			[ 'lcase' ],
 			[ 'ucase' ],
@@ -616,7 +616,7 @@ class ParserTest extends ParserTestCase {
 	 *   They should throw a 'notenoughargs' exception.
 	 *
 	 * @param string $func The function to test
-	 * @dataProvider twoParamsFuncs
+	 * @dataProvider provideTwoParamsFuncs
 	 */
 	public function testNotEnoughArgsExceptionTwo( $func ) {
 		// Nevermind if the argument can't be string since we check the amount
@@ -632,7 +632,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function twoParamsFuncs() {
+	public static function provideTwoParamsFuncs() {
 		return [
 			[ 'get_matches' ],
 			[ 'ip_in_range' ],
@@ -653,7 +653,7 @@ class ParserTest extends ParserTestCase {
 	 *   They should throw a 'notenoughargs' exception.
 	 *
 	 * @param string $func The function to test
-	 * @dataProvider threeParamsFuncs
+	 * @dataProvider provideThreeParamsFuncs
 	 */
 	public function testNotEnoughArgsExceptionThree( $func ) {
 		// Nevermind if the argument can't be string since we check the amount
@@ -669,7 +669,7 @@ class ParserTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public static function threeParamsFuncs() {
+	public static function provideThreeParamsFuncs() {
 		return [
 			[ 'str_replace' ],
 			[ 'str_replace_regexp' ],
@@ -678,7 +678,7 @@ class ParserTest extends ParserTestCase {
 
 	/**
 	 * @param string $code
-	 * @dataProvider tooManyArgsFuncs
+	 * @dataProvider provideTooManyArgsFuncs
 	 */
 	public function testTooManyArgumentsException( $code ) {
 		$this->exceptionTest( 'toomanyargs', $code, 'checkArgCount' );
@@ -688,7 +688,7 @@ class ParserTest extends ParserTestCase {
 	/**
 	 * @return array
 	 */
-	public static function tooManyArgsFuncs() {
+	public static function provideTooManyArgsFuncs() {
 		return [
 			[ "lcase( 'a', 'b' )" ],
 			[ "norm( 'a', 'b', 'c' )" ],
@@ -702,7 +702,7 @@ class ParserTest extends ParserTestCase {
 
 	/**
 	 * @param string $func
-	 * @dataProvider variadicFuncs
+	 * @dataProvider provideVariadicFuncs
 	 */
 	public function testVariadicFuncsArbitraryArgsAllowed( $func ) {
 		$argsList = str_repeat( ', "arg"', 50 );
@@ -715,7 +715,7 @@ class ParserTest extends ParserTestCase {
 	/**
 	 * @return array
 	 */
-	public static function variadicFuncs() {
+	public static function provideVariadicFuncs() {
 		return [
 			[ 'contains_any' ],
 			[ 'contains_all' ],

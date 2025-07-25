@@ -89,6 +89,8 @@ ve.init.mw.MobileCollabTarget.static.toolbarGroups = [
 	}
 ];
 
+ve.init.mw.MobileCollabTarget.static.enforceResizesContent = true;
+
 /* Methods */
 
 /**

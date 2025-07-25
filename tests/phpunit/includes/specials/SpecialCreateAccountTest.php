@@ -6,6 +6,7 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -24,7 +25,8 @@ class SpecialCreateAccountTest extends SpecialPageTestBase {
 		$context ??= RequestContext::getMain();
 		$page = new SpecialCreateAccount(
 			$services->getAuthManager(),
-			$services->getFormatterFactory()
+			$services->getFormatterFactory(),
+			$services->getUserIdentityUtils()
 		);
 		$page->setContext( $context );
 		$context->setTitle( $page->getPageTitle() );

@@ -22,6 +22,22 @@ if ( !process.env.MW_SERVER || !process.env.MW_SCRIPT_PATH ) {
 	throw new Error( 'MW_SERVER or MW_SCRIPT_PATH not defined.\nSee https://www.mediawiki.org/wiki/Selenium/How-to/Set_environment_variables\n' );
 }
 
+process.on( 'uncaughtException', ( error ) => {
+	console.error( 'Caught uncaughtException: ', error );
+	// eslint-disable-next-line n/no-process-exit
+	process.exit( 1 );
+} );
+
+process.on( 'unhandledRejection', ( reason, promise ) => {
+	console.log( 'Unhandled Rejection at:', promise, 'reason:', reason );
+} );
+
+[ 'SIGINT', 'SIGTERM' ].forEach( ( signal ) => process.on( signal, () => {
+	// eslint-disable-next-line no-underscore-dangle
+	console.log( `Received ${ signal }. Active handles:`, process._getActiveHandles() );
+} )
+);
+
 /**
  * For more details documentation and available options:
  * - https://webdriver.io/docs/configurationfile
@@ -65,8 +81,8 @@ exports.config = {
 				// Dismissed Chrome's `Save password?` popup
 				'--enable-automation',
 				...( process.env.DISPLAY ? [] : [ '--headless' ] ),
-				// Chrome sandbox does not work in Docker
-				...( fs.existsSync( '/.dockerenv' ) ? [ '--no-sandbox' ] : [] ),
+				// Chrome sandbox does not work in Docker. Disable GPU to prevent crashes (T389536#10677201)
+				...( fs.existsSync( '/.dockerenv' ) ? [ '--no-sandbox', '--disable-gpu' ] : [] ),
 				// Workaround inputs not working consistently post-navigation on Chrome 90
 				// https://issuetracker.google.com/issues/42322798
 				'--allow-pre-commit-input'
@@ -149,7 +165,10 @@ exports.config = {
 	 * @param {Object} test Mocha Test object
 	 */
 	afterTest: async function ( test ) {
-		await saveScreenshot( `${ test.parent }-${ test.title }` );
-		stopVideo( ffmpeg );
+		try {
+			await saveScreenshot( `${ test.parent }-${ test.title }` );
+		} finally {
+			stopVideo( ffmpeg );
+		}
 	}
 };

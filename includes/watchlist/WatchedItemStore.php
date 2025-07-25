@@ -3,12 +3,11 @@
 namespace MediaWiki\Watchlist;
 
 use DateInterval;
-use JobQueueGroup;
 use LogicException;
-use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
@@ -19,6 +18,7 @@ use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use stdClass;
 use Wikimedia\Assert\Assert;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -212,9 +212,6 @@ class WatchedItemStore implements WatchedItemStoreInterface {
 		);
 	}
 
-	/**
-	 * @param WatchedItem $item
-	 */
 	private function cache( WatchedItem $item ) {
 		$user = $item->getUserIdentity();
 		$target = $item->getTarget();
@@ -259,9 +256,6 @@ class WatchedItemStore implements WatchedItemStoreInterface {
 		}
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 */
 	private function uncacheUser( UserIdentity $user ) {
 		$this->statsFactory->getCounter( 'WatchedItemStore_uncacheUser_total' )
 			->copyToStatsdAt( 'WatchedItemStore.uncacheUser' )
@@ -361,17 +355,10 @@ class WatchedItemStore implements WatchedItemStoreInterface {
 		return true;
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @return bool
-	 */
 	public function mustClearWatchedItemsUsingJobQueue( UserIdentity $user ): bool {
 		return $this->countWatchedItems( $user ) > $this->updateRowsPerQuery;
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 */
 	private function uncacheAllItemsForUser( UserIdentity $user ) {
 		$userId = $user->getId();
 		foreach ( $this->cacheIndex as $ns => $dbKeyIndex ) {
@@ -1317,8 +1304,7 @@ class WatchedItemStore implements WatchedItemStoreInterface {
 
 		// Try to run this post-send
 		// Calls DeferredUpdates::addCallableUpdate in normal operation
-		call_user_func(
-			$this->deferredUpdatesAddCallableUpdateCallback,
+		( $this->deferredUpdatesAddCallableUpdateCallback )(
 			static function () use ( $job ) {
 				$job->run();
 			}
@@ -1366,8 +1352,7 @@ class WatchedItemStore implements WatchedItemStoreInterface {
 			$fname = __METHOD__;
 			// Try to run this post-send
 			// Calls DeferredUpdates::addCallableUpdate in normal operation
-			call_user_func(
-				$this->deferredUpdatesAddCallableUpdateCallback,
+			( $this->deferredUpdatesAddCallableUpdateCallback )(
 				function () use ( $timestamp, $wlIds, $target, $fname ) {
 					$dbw = $this->lbFactory->getPrimaryDatabase();
 					$ticket = $this->lbFactory->getEmptyTransactionTicket( $fname );
@@ -1513,10 +1498,6 @@ class WatchedItemStore implements WatchedItemStoreInterface {
 		return $cache;
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @return string
-	 */
 	private function getPageSeenTimestampsKey( UserIdentity $user ): string {
 		return $this->stash->makeGlobalKey(
 			'watchlist-recent-updates',

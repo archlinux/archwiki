@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
+			"GianAntonucci",
 			"Gmelfi",
 			"Pippinu",
-			"Sarvaturi",
-			"GianAntonucci"
+			"Sarvaturi"
 		]
 	},
 	"echo-desc": "Sistema pi nutificari a l'utenti eventi e missaggi",
@@ -43,6 +43,7 @@
 	"notifications": "Nutìfichi",
 	"tooltip-pt-notifications-alert": "Li {{GENDER:|tò}} avvisi",
 	"tooltip-pt-notifications-notice": "Li {{GENDER:|tò}} avvisi",
+	"tooltip-pt-notifications": "Tutti li nutìfichi",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Nutìfichi pi catigurìa",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Utenti novi",
 	"echo-specialpage": "Nutìfichi",

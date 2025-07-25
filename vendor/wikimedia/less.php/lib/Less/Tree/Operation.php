@@ -39,7 +39,9 @@ class Less_Tree_Operation extends Less_Tree {
 				$b = $b->toColor();
 			}
 
-			if ( !( $a instanceof Less_Tree_Dimension || $a instanceof Less_Tree_Color ) ) {
+			if ( !( $a instanceof Less_Tree_Dimension || $a instanceof Less_Tree_Color )
+				|| !( $b instanceof Less_Tree_Dimension || $b instanceof Less_Tree_Color )
+			) {
 				if ( $a instanceof Less_Tree_Operation && $a->op === '/' && $env->math === Less_Environment::MATH_PARENS_DIVISION
 				) {
 					return new self( $this->op, [ $a, $b ], $this->isSpaced );

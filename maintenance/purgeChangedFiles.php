@@ -21,6 +21,9 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 
 // @codeCoverageIgnoreStart
@@ -240,7 +243,7 @@ class PurgeChangedFiles extends Maintenance {
 		}
 	}
 
-	protected function getDeletedPath( LocalRepo $repo, LocalFile $file ) {
+	protected function getDeletedPath( LocalRepo $repo, LocalFile $file ): string {
 		$hash = $repo->getFileSha1( $file->getPath() );
 		$key = "{$hash}.{$file->getExtension()}";
 

@@ -61,7 +61,6 @@
 	"log-action-filter-oath-verify": "जाँचा गया कि दो-कारक प्रमाणीकरण सक्षम है या नहीं",
 	"log-action-filter-oath-disable-other": "किसी दूसरे सदस्य के लिए दो-कारक प्रमाणीकरण सक्षम किया गया",
 	"oathauth-ui-no-module": "कोई सक्षम नहीं",
-	"oathauth-module-invalid": "सदस्य द्वारा पंजीकृत OATH मॉड्यूल अमान्य है।",
 	"oathauth-module-totp-label": "TOTP (एकल-उपयोग टोकन)",
 	"oathauth-ui-manage": "प्रबंधित करें",
 	"oathmanage": "दो-कारक प्रमाणीकरण प्रबंधित करें",

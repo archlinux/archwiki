@@ -31,6 +31,7 @@
 	"scribunto-common-timeout": "Ang panahong inilaan para sa pagpapatakbo ng mga panitik ay lipas na.",
 	"scribunto-common-oom": "Ang dami ng pinahintulutang alaala para sa pagpapatakbo ng mga panitik ay nalampasan na.",
 	"scribunto-common-backtrace": "Paurong na pagbabakas:",
+	"scribunto-common-no-details": "Walang magagamit na mga detalye sa posisyon ng kodigo.",
 	"scribunto-lua-in-function": "sa loob ng tungkuling \"$1\"",
 	"scribunto-lua-in-main": "sa loob ng pangunahing tipak",
 	"scribunto-lua-in-function-at": "sa loob ng tungkuling nasa $1:$2",

@@ -1,13 +1,11 @@
-( function () {
-	mw.echo = mw.echo || {};
+mw.echo = mw.echo || {};
+/**
+ * @namespace
+ */
+mw.echo.ui = {
 	/**
-	 * @namespace
+	 * @property {jQuery}
 	 */
-	mw.echo.ui = {
-		/**
-		 * @property {jQuery}
-		 */
-		$overlay: $( '<div>' )
-			.addClass( 'mw-echo-ui-overlay' )
-	};
-}() );
+	$overlay: $( '<div>' )
+		.addClass( 'mw-echo-ui-overlay' )
+};

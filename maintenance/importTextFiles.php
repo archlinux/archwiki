@@ -22,6 +22,8 @@
  */
 
 use MediaWiki\Content\ContentHandler;
+use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;

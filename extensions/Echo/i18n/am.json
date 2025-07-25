@@ -25,6 +25,7 @@
 	"echo-pref-tooltip-reverted": "ማንኛው ሰው የእኔን ለውጦች ሲገለብጥ አስታውቀኝ።",
 	"echo-pref-tooltip-mention": "ማንኛውም ሰው ወደ እኔ ውይይት ገጽ በሌላ ውይይት ገጽ ላይ መያያዣ ሲያቀርብ አስታውቀኝ።",
 	"notifications": "ማስታወቂያዎች",
+	"tooltip-pt-notifications": "የእርስዎ ማስታወቂያዎች",
 	"echo-specialpage": "ማስታወቂያዎች",
 	"echo-none": "ምንም ማስታወቂያዎች የሎትም።",
 	"notification-link-text-view-message": "መልዕክት ለማየት",

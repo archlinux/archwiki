@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Title\Title;
@@ -14,7 +15,6 @@ use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\UpdateQueryBuilder;
-use WikiPage;
 
 /**
  * @group Test

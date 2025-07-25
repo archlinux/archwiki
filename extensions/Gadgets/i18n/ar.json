@@ -70,5 +70,8 @@
 	"gadgets-validate-unknownpages": "تحتوي على صفحة واحدة أو أكثر بدون لاحقة .js أو .css أو .json. لن يتم استخدامها.",
 	"gadgets-validate-duplicate": "تم اكتشاف تعريف ثانٍ للأداة $1 ويجب تجاهله",
 	"gadgets-validate-nopage": "الصفحة \"$1\" غير موجودة.",
-	"gadgets-supports-urlload": "تدعم هذه الأداة التحميل عبر عنوان URL باستخدام معلمة طلب البحث <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|التبعية|التبعيات}} التالية مفقودة: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|التبعية|التبعيات}} التالية مستغنى عنها: $1.",
+	"gadgets-supports-urlload": "تدعم هذه الأداة التحميل عبر عنوان URL باستخدام معلمة طلب البحث <code>?withgadget</code>.",
+	"gadgets-hidden": "هذه الإضافة [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden مخفية]، مما يعني أنها لن تظهر في صفحة التفضيلات."
 }

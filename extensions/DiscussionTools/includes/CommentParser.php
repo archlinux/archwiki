@@ -25,6 +25,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Timestamp\TimestampException;
 
 // TODO consider making timestamp parsing not a returned function
@@ -563,7 +564,7 @@ class CommentParser {
 	 */
 	private function getUsernameFromLink( Element $link ): ?array {
 		// Selflink: use title of current page
-		if ( DOMCompat::getClassList( $link )->contains( 'mw-selflink' ) ) {
+		if ( DOMUtils::hasClass( $link, 'mw-selflink' ) ) {
 			$title = $this->title;
 		} else {
 			$titleString = CommentUtils::getTitleFromUrl( $link->getAttribute( 'href' ) ?? '', $this->config ) ?? '';
@@ -675,9 +676,7 @@ class CommentParser {
 						$user = $this->getUsernameFromLink( $node );
 						if ( $user ) {
 							// Accept the first link to the user namespace, then only accept links to that user
-							if ( $sigUsername === null ) {
-								$sigUsername = $user['username'];
-							}
+							$sigUsername ??= $user['username'];
 							if ( $user['username'] === $sigUsername ) {
 								$lastLinkNode = $node;
 								if ( $user['displayName'] ) {
@@ -739,9 +738,8 @@ class CommentParser {
 			) {
 				return NodeFilter::FILTER_REJECT;
 			}
-			$classList = DOMCompat::getClassList( $node );
 			// Don't attempt to parse blocks marked 'mw-notalk'
-			if ( $classList->contains( 'mw-notalk' ) ) {
+			if ( DOMUtils::hasClass( $node, 'mw-notalk' ) ) {
 				return NodeFilter::FILTER_REJECT;
 			}
 			// Don't detect comments within references. We can't add replies to them without bungling up
@@ -749,7 +747,7 @@ class CommentParser {
 			if (
 				// <ol class="references"> is the only reliably consistent thing between the two parsers
 				$tagName === 'ol' &&
-				DOMCompat::getClassList( $node )->contains( 'references' )
+				DOMUtils::hasClass( $node, 'references' )
 			) {
 				return NodeFilter::FILTER_REJECT;
 			}

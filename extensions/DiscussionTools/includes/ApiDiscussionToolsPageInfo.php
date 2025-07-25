@@ -12,9 +12,9 @@ use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -112,11 +112,15 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 			return new ContentThreadItemSet;
 		}
 
-		try {
-			return HookUtils::parseRevisionParsoidHtml( $revision, __METHOD__ );
-		} catch ( ResourceLimitExceededException $e ) {
-			$this->dieWithException( $e );
+		if ( !$revision->audienceCan( RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_PUBLIC ) ) {
+			$this->dieWithError( [ 'apierror-missingcontent-revid', $revision->getId() ], 'missingcontent' );
 		}
+
+		$status = HookUtils::parseRevisionParsoidHtml( $revision, __METHOD__ );
+		if ( !$status->isOK() ) {
+			$this->dieStatus( $status );
+		}
+		return $status->getValueOrThrow();
 	}
 
 	/**

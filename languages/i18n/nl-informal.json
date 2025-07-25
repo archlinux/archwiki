@@ -86,7 +86,6 @@
 	"login-throttled": "Je hebt in korte tijd te veel aanmeldpogingen gedaan.\nWacht $1 voordat je het opnieuw probeert.",
 	"login-abort-generic": "Je aanmelding is mislukt - Afgebroken",
 	"login-migrated-generic": "Je account is overgezet, en je gebruikersnaam bestaat nu niet meer op deze wiki.",
-	"suspicious-userlogout": "Je verzoek om af te melden is genegeerd, omdat het lijkt alsof het verzoek is verzonden door een browser of cacheproxy die stuk is.",
 	"createacct-another-realname-tip": "Je mag een echte naam opgeven.\nAls je dat doet, wordt de gebruiker onder deze naam vermeld als erkenning voor diens werk.",
 	"changepassword-success": "Je wachtwoord is gewijzigd!",
 	"changepassword-throttled": "Je hebt in korte tijd te veel aanmeldpogingen gedaan.\nWacht $1 voordat je het weer probeert.",
@@ -191,7 +190,6 @@
 	"mergehistory-header": "Via deze pagina kan je versies van de geschiedenis van een bronpagina naar een nieuwere pagina samenvoegen.\nZorg dat deze wijziging de geschiedenis van de pagina behoudt.",
 	"searchmenu-new": "Maak de pagina \"[[:$1]]\" op deze wiki! {{PLURAL:$2|0=|Zie ook de pagina met je zoekresultaat.|Zie ook de lijst met gevonden zoekresultaten}}",
 	"search-suggest": "Bedoelde je: $1",
-	"searchdisabled": "Zoeken in {{SITENAME}} is niet mogelijk.\nJe kunt gebruik maken van Google.\nDe gegevens over {{SITENAME}} zijn mogelijk niet bijgewerkt.",
 	"prefs-help-watchlist-token2": "Dit is de geheime sleutel voor de webfeed van je volglijst.\nIedereen die het token kent, kan jouw volglijst bekijken, dus deel dit token niet.\nAls dat nodig is kun je de [[Special:ResetTokens|tokens opnieuw instellen]].",
 	"userrights-groups-help": "Je kunt de groepen wijzigen waar {{GENDER:$1|deze gebruiker}} lid van is:\n* Een aangekruist vakje betekent dat de gebruiker lid is van de groep.\n* Een niet aangekruist vakje betekent dat de gebruiker geen lid is van de groep.\n* Een \"*\" betekent dat je een gebruiker niet uit een groep kunt verwijderen nadat je die hebt toegevoegd of andersom.\n* Een \"#\" betekent dat je dit groepslidmaatschap alleen kan verlengen en het niet kan verkorten.",
 	"userrights-no-interwiki": "Je hebt geen rechten om gebruikersrechten op andere wiki's te wijzigen.",
@@ -353,5 +351,8 @@
 	"blockedtext-contact-blocker-admin": "Je kunt contact opnemen met $1 of een andere [[{{MediaWiki:Grouppage-sysop}}|beheerder]] om de blokkade te bespreken.",
 	"blockedtext-block-ip": "Je huidige IP-adres is $1.",
 	"blockedtext-include-details-queries": "Vermeld alle bovenstaande gegevens als je ergens op deze blokkade reageert.",
-	"renameuser-error-same-user": "Je kunt geen gebruiker hernoemen naar dezelfde naam."
+	"renameuser-error-same-user": "Je kunt geen gebruiker hernoemen naar dezelfde naam.",
+	"interwiki_deleting": "Je bent voorvoegsel \"$1\" aan het verwijderen.",
+	"interwiki_addintro": "Je bent een nieuw interwikivoorvoegsel aan het toevoegen.\nLet op dat dit geen spaties ( ), dubbele punt (:), ampersands (&), of gelijktekens (=) mag bevatten.",
+	"interwiki_editintro": "Je bent een interwikivoorvoegsel aan het bewerken. Let op dat dit bestaande koppelingen kan breken."
 }

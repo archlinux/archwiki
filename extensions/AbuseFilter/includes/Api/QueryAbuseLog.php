@@ -26,9 +26,10 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterNotFoundException;
-use MediaWiki\Extension\AbuseFilter\Filter\Flags;
+use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
+use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
@@ -50,42 +51,24 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class QueryAbuseLog extends ApiQueryBase {
 
-	/** @var FilterLookup */
-	private $afFilterLookup;
-
-	/** @var AbuseFilterPermissionManager */
-	private $afPermManager;
-
-	/** @var VariablesBlobStore */
-	private $afVariablesBlobStore;
-
-	/** @var VariablesManager */
-	private $afVariablesManager;
-
-	/** @var UserFactory */
-	private $userFactory;
-
+	private FilterLookup $afFilterLookup;
+	private AbuseFilterPermissionManager $afPermManager;
+	private VariablesBlobStore $afVariablesBlobStore;
+	private VariablesManager $afVariablesManager;
+	private UserFactory $userFactory;
 	private AbuseLoggerFactory $abuseLoggerFactory;
+	private RuleCheckerFactory $ruleCheckerFactory;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param FilterLookup $afFilterLookup
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param VariablesBlobStore $afVariablesBlobStore
-	 * @param VariablesManager $afVariablesManager
-	 * @param UserFactory $userFactory
-	 * @param AbuseLoggerFactory $abuseLoggerFactory
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		FilterLookup $afFilterLookup,
 		AbuseFilterPermissionManager $afPermManager,
 		VariablesBlobStore $afVariablesBlobStore,
 		VariablesManager $afVariablesManager,
 		UserFactory $userFactory,
-		AbuseLoggerFactory $abuseLoggerFactory
+		AbuseLoggerFactory $abuseLoggerFactory,
+		RuleCheckerFactory $ruleCheckerFactory
 	) {
 		parent::__construct( $query, $moduleName, 'afl' );
 		$this->afFilterLookup = $afFilterLookup;
@@ -94,6 +77,7 @@ class QueryAbuseLog extends ApiQueryBase {
 		$this->afVariablesManager = $afVariablesManager;
 		$this->userFactory = $userFactory;
 		$this->abuseLoggerFactory = $abuseLoggerFactory;
+		$this->ruleCheckerFactory = $ruleCheckerFactory;
 	}
 
 	/**
@@ -127,8 +111,6 @@ class QueryAbuseLog extends ApiQueryBase {
 		}
 
 		$canViewPrivate = $this->afPermManager->canViewPrivateFiltersLogs( $performer );
-		$canViewProtected = $this->afPermManager->canViewProtectedVariables( $performer );
-		$canViewProtectedValues = $this->afPermManager->canViewProtectedVariableValues( $performer );
 
 		// Map of [ [ id, global ], ... ]
 		$searchFilters = [];
@@ -149,32 +131,40 @@ class QueryAbuseLog extends ApiQueryBase {
 				}
 			}
 
-			if ( !$canViewPrivate || !$canViewProtected || !$canViewProtectedValues ) {
-				foreach ( $searchFilters as [ $filterID, $global ] ) {
-					try {
-						$privacyLevel = $lookup->getFilter( $filterID, $global )->getPrivacyLevel();
-					} catch ( CentralDBNotAvailableException $_ ) {
-						// Conservatively assume it's hidden and protected, like in AbuseLogPager::doFormatRow
-						$privacyLevel = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
-					} catch ( FilterNotFoundException $_ ) {
-						$privacyLevel = Flags::FILTER_PUBLIC;
-						$foundInvalid = true;
-					}
-					if ( !$canViewPrivate && ( Flags::FILTER_HIDDEN & $privacyLevel ) ) {
-						$this->dieWithError(
-							[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-private' ) ]
-						);
-					}
-					if ( !$canViewProtected && ( Flags::FILTER_USES_PROTECTED_VARS & $privacyLevel ) ) {
-						$this->dieWithError(
-							[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-protected' ) ]
-						);
-					}
-					if ( !$canViewProtectedValues && ( Flags::FILTER_USES_PROTECTED_VARS & $privacyLevel ) ) {
-						$this->dieWithError(
-							[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-protected-access' ) ]
-						);
-					}
+			foreach ( $searchFilters as [ $filterID, $global ] ) {
+				try {
+					$filter = $lookup->getFilter( $filterID, $global );
+					$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
+					$usedVariables = $ruleChecker->getUsedVars( $filter->getRules() );
+				} catch ( CentralDBNotAvailableException $_ ) {
+					// Conservatively assume that it's hidden and protected, like in AbuseLogPager::doFormatRow.
+					// Also assume that the filter contains all protected variables for the same reasons.
+					$filter = MutableFilter::newDefault();
+					$filter->setHidden( true );
+					$filter->setProtected( true );
+					$usedVariables = $this->afPermManager->getProtectedVariables();
+				} catch ( FilterNotFoundException $_ ) {
+					// If no filter is found, assume it has no restrictions (is public and uses no protected
+					// variables) because it should be an non-existing filter ID.
+					$filter = MutableFilter::newDefault();
+					$usedVariables = [];
+					$foundInvalid = true;
+				}
+
+				if ( !$canViewPrivate && $filter->isHidden() ) {
+					$this->dieWithError(
+						[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-private' ) ]
+					);
+				}
+
+				if (
+					$filter->isProtected() &&
+					!$this->afPermManager->canViewProtectedVariables( $performer, $usedVariables )->isGood()
+				) {
+					$this->dieWithError(
+						[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-protected' ) ],
+						'permissiondenied'
+					);
 				}
 			}
 
@@ -200,21 +190,6 @@ class QueryAbuseLog extends ApiQueryBase {
 		$this->addFieldsIf( 'afl_var_dump', $fld_details );
 		$this->addFieldsIf( 'afl_actions', $fld_result );
 		$this->addFieldsIf( 'afl_wiki', $fld_wiki );
-
-		if ( $fld_filter ) {
-			$this->addTables( 'abuse_filter' );
-			$this->addFields( 'af_public_comments' );
-
-			$this->addJoinConds( [
-				'abuse_filter' => [
-					'LEFT JOIN',
-					[
-						'af_id=afl_filter_id',
-						'afl_global' => 0
-					]
-				]
-			] );
-		}
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
@@ -307,8 +282,8 @@ class QueryAbuseLog extends ApiQueryBase {
 			$filterID = $row->afl_filter_id;
 			$global = $row->afl_global;
 			$fullName = GlobalNameUtils::buildGlobalName( $filterID, $global );
-			$privacyLevel = $lookup->getFilter( $filterID, $global )->getPrivacyLevel();
-			$canSeeDetails = $this->afPermManager->canSeeLogDetailsForFilter( $performer, $privacyLevel );
+			$filterObj = $lookup->getFilter( $filterID, $global );
+			$canSeeDetails = $this->afPermManager->canSeeLogDetailsForFilter( $performer, $filterObj );
 
 			$entry = [];
 			if ( $fld_ids ) {
@@ -316,11 +291,7 @@ class QueryAbuseLog extends ApiQueryBase {
 				$entry['filter_id'] = $canSeeDetails ? $fullName : '';
 			}
 			if ( $fld_filter ) {
-				if ( $global ) {
-					$entry['filter'] = $lookup->getFilter( $filterID, true )->getName();
-				} else {
-					$entry['filter'] = $row->af_public_comments;
-				}
+				$entry['filter'] = $filterObj->getName();
 			}
 			if ( $fld_user ) {
 				$entry['user'] = $row->afl_user_text;
@@ -355,21 +326,23 @@ class QueryAbuseLog extends ApiQueryBase {
 					$usedProtectedVars = $this->afPermManager
 						->getUsedProtectedVariables( array_keys( $entry['details'] ) );
 					if ( $usedProtectedVars ) {
-						// Unset the variable if the user can't see protected variables
+						// Unset the variable if the user can't see protected variables.
 						// Additionally, a protected variable is considered used if the key exists
 						// but since it can have a null value, check isset before logging access
-						$shouldLog = false;
+						$protectedVariableValuesShown = [];
 						foreach ( $usedProtectedVars as $protectedVariable ) {
 							if ( isset( $entry['details'][$protectedVariable] ) ) {
-								if ( $canViewProtectedValues ) {
-									$shouldLog = true;
+								if ( $this->afPermManager->canViewProtectedVariables(
+									$performer, [ $protectedVariable ]
+								)->isGood() ) {
+									$protectedVariableValuesShown[] = $protectedVariable;
 								} else {
 									$entry['details'][$protectedVariable] = '';
 								}
 							}
 						}
 
-						if ( $shouldLog ) {
+						if ( $filterObj->isProtected() ) {
 							// user_name or accountname should always exist -- just in case
 							// if it doesn't, unset the protected variables since they shouldn't be accessed if
 							// the access isn't logged
@@ -379,7 +352,8 @@ class QueryAbuseLog extends ApiQueryBase {
 								$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
 								$logger->logViewProtectedVariableValue(
 									$performer->getUser(),
-									$entry['details']['user_name'] ?? $entry['details']['accountname']
+									$entry['details']['user_name'] ?? $entry['details']['accountname'],
+									$protectedVariableValuesShown
 								);
 							} else {
 								foreach ( $usedProtectedVars as $protectedVariable ) {

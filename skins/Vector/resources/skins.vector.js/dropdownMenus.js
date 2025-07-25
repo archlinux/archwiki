@@ -45,7 +45,7 @@ function createIconElement( menuElement, parentElement, id ) {
 		[
 			'p-personal',
 			'p-personal-sticky-header'
-		].indexOf( menuElement.getAttribute( 'id' ) || 'p-unknown' ) > -1;
+		].includes( menuElement.getAttribute( 'id' ) || 'p-unknown' );
 
 	if ( !isIconCapable || !parentElement ) {
 		return;

@@ -5,7 +5,6 @@
 CREATE TABLE /*_*/echo_event (
   event_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
   event_type VARBINARY(64) NOT NULL,
-  event_variant VARBINARY(64) DEFAULT NULL,
   event_agent_id INT UNSIGNED DEFAULT NULL,
   event_agent_ip VARBINARY(39) DEFAULT NULL,
   event_extra BLOB DEFAULT NULL,

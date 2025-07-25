@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\FileRepo\File\ArchivedFile;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -54,7 +56,7 @@ class EraseArchivedFile extends Maintenance {
 
 		if ( $filekey === '*' ) {
 			// all versions by name
-			if ( !strlen( $filename ) ) {
+			if ( $filename === null || $filename === '' ) {
 				$this->fatalError( "Missing --filename parameter." );
 			}
 			$afile = false;
@@ -90,7 +92,7 @@ class EraseArchivedFile extends Maintenance {
 		}
 	}
 
-	protected function scrubAllVersions( $name ) {
+	protected function scrubAllVersions( string $name ) {
 		$dbw = $this->getPrimaryDB();
 		$queryBuilder = FileSelectQueryBuilder::newForArchivedFile( $dbw );
 		$queryBuilder->where( [ 'fa_name' => $name, 'fa_storage_group' => 'deleted' ] );

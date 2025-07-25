@@ -90,21 +90,21 @@ class SparqlClient {
 
 	/**
 	 * Get current user agent.
-	 * @return string
 	 */
 	public function getUserAgent(): string {
 		return $this->userAgent;
 	}
 
 	/**
-	 * Mote it is not recommended to completely override user agent for
+	 * Note it is not recommended to completely override user agent for
 	 * most applications.
 	 * @see appendUserAgent() for recommended way of specifying user agent.
 	 *
-	 * @param string $agent
+	 * @return $this
 	 */
-	public function setUserAgent( string $agent ) {
+	public function setUserAgent( string $agent ): SparqlClient {
 		$this->userAgent = $agent;
+		return $this;
 	}
 
 	/**
@@ -114,10 +114,11 @@ class SparqlClient {
 	 * for specific applications of the SparqlClient inside MediaWiki
 	 * and extension code.
 	 *
-	 * @param string $agent
+	 * @return $this
 	 */
-	public function appendUserAgent( string $agent ) {
+	public function appendUserAgent( string $agent ): SparqlClient {
 		$this->userAgent .= ' ' . $agent;
+		return $this;
 	}
 
 	/**

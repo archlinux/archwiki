@@ -3,7 +3,7 @@
  *
  * @memberof module:ext.wikiEditor
  */
-var dialogsModule = {
+const dialogsModule = {
 
 	/**
 	 * API accessible functions
@@ -14,8 +14,8 @@ var dialogsModule = {
 		},
 		openDialog: function ( context, module ) {
 			if ( module in dialogsModule.modules ) {
-				var mod = dialogsModule.modules[ module ];
-				var $dialog = $( '#' + mod.id );
+				const mod = dialogsModule.modules[ module ];
+				let $dialog = $( '#' + mod.id );
 				if ( $dialog.length === 0 ) {
 					dialogsModule.fn.reallyCreate( context, mod, module );
 					$dialog = $( '#' + mod.id );
@@ -48,12 +48,12 @@ var dialogsModule = {
 		 */
 		create: function ( context, config ) {
 			// Defer building of modules, unless they require immediate creation
-			for ( var mod in config ) {
-				var module = config[ mod ];
+			for ( const mod in config ) {
+				const module = config[ mod ];
 				// Only create the dialog if it isn't filtered and doesn't exist yet
-				var filtered = false;
+				let filtered = false;
 				if ( typeof module.filters !== 'undefined' ) {
-					for ( var i = 0; i < module.filters.length; i++ ) {
+					for ( let i = 0; i < module.filters.length; i++ ) {
 						if ( $( module.filters[ i ] ).length === 0 ) {
 							filtered = true;
 							break;
@@ -61,7 +61,7 @@ var dialogsModule = {
 					}
 				}
 				// If the dialog already exists, but for another textarea, simply remove it
-				var $existingDialog = $( '#' + module.id );
+				let $existingDialog = $( '#' + module.id );
 				if ( $existingDialog.length > 0 && $existingDialog.data( 'context' ).$textarea !== context.$textarea ) {
 					$existingDialog.remove();
 				}
@@ -86,7 +86,7 @@ var dialogsModule = {
 		 * @param {string} name Dialog name (key in dialogsModule.modules)
 		 */
 		reallyCreate: function ( context, module, name ) {
-			var configuration = module.dialog;
+			const configuration = module.dialog;
 			// Add some stuff to configuration
 			configuration.bgiframe = true;
 			configuration.autoOpen = false;
@@ -94,17 +94,23 @@ var dialogsModule = {
 			if ( typeof configuration.modal === 'undefined' ) {
 				configuration.modal = true;
 			}
-			configuration.title = $.wikiEditor.autoSafeMsg( module, 'title' );
+			// The jQuery UI Dialog Widget option title (https://api.jqueryui.com/dialog/#option-title)
+			// is specified as string but also accepts DOM elements like other jQuery functions.
+			// Therefor use .parseDom() instead of .parse().
+			configuration.title = module.title instanceof mw.Message ?
+				module.title.parseDom() :
+				// Deprecated backward compatibility
+				module.title;
 			// Transform messages in keys
 			// Stupid JS won't let us do stuff like
 			// foo = { mw.msg( 'bar' ): baz }
 			configuration.newButtons = {};
-			for ( var msg in configuration.buttons ) {
+			for ( const msg in configuration.buttons ) {
 				// eslint-disable-next-line mediawiki/msg-doc
 				configuration.newButtons[ mw.msg( msg ) ] = configuration.buttons[ msg ];
 			}
 			configuration.buttons = configuration.newButtons;
-			var $content;
+			let $content;
 			if ( module.htmlTemplate ) {
 				$content = mw.template.get( 'ext.wikiEditor', module.htmlTemplate ).render();
 			} else if ( module.html instanceof $ ) {
@@ -113,7 +119,7 @@ var dialogsModule = {
 				$content = $( $.parseHTML( module.html ) );
 			}
 			// Create the dialog <div>
-			var $dialogDiv = $( '<div>' )
+			const $dialogDiv = $( '<div>' )
 				.attr( 'id', module.id )
 				.append( $content )
 				.data( 'context', context )
@@ -121,7 +127,7 @@ var dialogsModule = {
 				.each( module.init )
 				.dialog( configuration );
 
-			$dialogDiv.on( 'dialogclose', function () {
+			$dialogDiv.on( 'dialogclose', () => {
 				context.fn.restoreSelection();
 			} );
 

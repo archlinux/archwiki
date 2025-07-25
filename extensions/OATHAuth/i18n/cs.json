@@ -56,7 +56,6 @@
 	"oath-log-header": "Tyto události zaznamenávají změny stavu dvoufaktorové autentizace uživatelů.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$1|vypnul|vypnula}} dvoufaktorovou autentizaci {{GENDER:$2|uživatele|uživatelky}} $3.",
 	"oathauth-ui-no-module": "Není zapnuto",
-	"oathauth-module-invalid": "Modul dvoufaktorového ověřování zaregistrovaný uživatelem je neplatný.",
 	"oathauth-module-totp-label": "TOTP (jednorázový token)",
 	"oathauth-ui-manage": "Spravovat",
 	"oathmanage": "Spravovat dvoufázové ověření",
@@ -74,8 +73,6 @@
 	"oathauth-disable-method-warning-header": "Potvrďte vypnutí ověřovací metody",
 	"oathauth-disable-method-warning-button-label": "Potvrdit a pokračovat",
 	"oathauth-disable-method-warning": "Pokud vypnete metodu dvoufaktorového ověřování „$1“, již ji nebudete moci použít pro přihlašování a všechna data spojená s touto metodou ověřování budou smazána.",
-	"oathauth-switch-method-warning-header": "Potvrďte přepnutí na jinou ověřovací metodu",
-	"oathauth-switch-method-warning": "Přepnutím na metodu dvoufaktorového ověřování „$2“ vypnete současně zapnutou metodu ($1), a všechna data spojená se současnou metodou dvoufaktorového ověřování budou smazána.",
 	"oathauth-totp-disable-warning": "Již nebudete moci použít ověřovací zařízení registrované na tento účet. Všechny provizorní kódy přiřazené k tomuto účtu budou neplatné.",
 	"oathauth-invalidrequest": "Neplatný požadavek"
 }

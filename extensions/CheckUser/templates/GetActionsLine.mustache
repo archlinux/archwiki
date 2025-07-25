@@ -1,0 +1,25 @@
+<li>
+	{{#showLinks}}
+		{{{links}}}
+		<span class="mw-changeslist-separator"></span>
+	{{/showLinks}}
+	{{timestamp}}
+	<span class="mw-changeslist-separator"></span>
+	<span data-username="{{userName}}" class="mw-checkuser-user-link{{#userLinkClass}} {{userLinkClass}}{{/userLinkClass}}">
+		{{{userLink}}}
+	</span>
+	{{{userToolLinks}}}
+	{{#flags}}
+		{{{ . }}}
+	{{/flags}}
+	{{{actionText}}}
+	{{{comment}}}
+	<div class="mw-checkuser-indented"><small>
+		<strong>IP</strong>: <span class="mw-checkuser-ip">{{{ipLink}}}</span>{{#xff}}&#160;&#160;
+		<strong>XFF</strong>: <span class="mw-checkuser-xff{{#xffTrusted}} mw-checkuser-xff-trusted{{/xffTrusted}}">{{{ . }}}</span>{{/xff}}
+		&#160;&#160;<span class="mw-checkuser-agent">{{userAgent}}</span>
+		{{#clientHints}}
+			<br><span class="mw-checkuser-client-hints">{{ . }}</span>
+		{{/clientHints}}
+	</small></div>
+</li>

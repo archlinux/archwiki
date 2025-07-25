@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Pikakapi",
-			"Ykhwong",
-			"Suleiman the Magnificent Television"
+			"Suleiman the Magnificent Television",
+			"Ykhwong"
 		]
 	},
 	"apihelp-templatedata-summary": "TemplateData 확장 기능에 의해 저장된 데이터를 가져옵니다.",

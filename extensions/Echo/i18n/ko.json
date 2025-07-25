@@ -21,7 +21,8 @@
 			"관인생략",
 			"렌즈",
 			"밝은소년",
-			"아라"
+			"아라",
+			"YeBoy371"
 		]
 	},
 	"echo-desc": "이벤트와 메시지를 사용자에게 알리는 시스템",
@@ -87,6 +88,7 @@
 	"notifications": "알림",
 	"tooltip-pt-notifications-alert": "{{GENDER:|당신}}의 중요 알림",
 	"tooltip-pt-notifications-notice": "{{GENDER:|당신의}} 알림",
+	"tooltip-pt-notifications": "{{GENDER:|내}} 알림",
 	"echo-displaynotificationsconfiguration": "알림 표시 설정",
 	"echo-displaynotificationsconfiguration-summary": "이 위키에서 알림이 어떻게 설정되었는지에 관한 개요입니다.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "분류별 알림",
@@ -181,6 +183,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|사용자}}의 편집",
 	"notification-link-text-view-edit": "편집 보기",
 	"notification-link-article-reminder": "문서 보기",
+	"notification-link-api-triggered": "문서 보기",
 	"notification-header-reverted": "{{PLURAL:$4|<strong>$3</strong> 문서의 내 편집}}이 {{GENDER:$2|되돌려졌습니다}}.",
 	"notification-header-emailuser": "$1님이 당신에게 이메일을 {{GENDER:$2|보냈습니다}}.",
 	"notification-edit-user-page-email-subject": "$1님이 {{SITENAME}}의 {{GENDER:$3|당신의}} 사용자 문서를 {{GENDER:$2|편집했습니다}}",
@@ -206,8 +209,10 @@
 	"echo-email-html-footer-with-link": "{{GENDER:$2|}}발송되는 메일을 관리하려면, $1.",
 	"echo-notification-alert": "{{PLURAL:$1|중요 알림 ($1)|중요 알림 ($1)|100=중요 알림 (99+)}}",
 	"echo-notification-notice": "{{PLURAL:$1|알림 ($1)|알림 ($1)|100=알림 (99+)}}",
+	"echo-notification-all": "{{PLURAL:$1|알림 ($1)|100=알림 (99+)}}",
 	"echo-notification-alert-text-only": "중요 알림",
 	"echo-notification-notice-text-only": "알림",
+	"echo-notification-all-text-only": "알림",
 	"echo-overlay-link": "모든 알림",
 	"echo-overlay-title": "<b>알림</b>",
 	"echo-mark-all-as-read": "{{PLURAL:$1|모두}} 읽은 것으로 표시",

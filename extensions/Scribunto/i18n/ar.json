@@ -38,7 +38,7 @@
 	"scribunto-common-timeout": "الوقت المتاح لتشغيل البرامج النصية قد انتهى.",
 	"scribunto-common-oom": "تم تجاوز مقدار الذاكرة المسموح به لتشغيل البرامج النصية.",
 	"scribunto-common-backtrace": "المصحح:",
-	"scribunto-common-no-details": "لا توجد تفاصيل أخرى متوفرة.",
+	"scribunto-common-no-details": "لا تتوفر تفاصيل حول موقع الكود.",
 	"scribunto-lua-in-function": "في الوظيفة \"$1\"",
 	"scribunto-lua-in-main": "في الجزء الرئيسي",
 	"scribunto-lua-in-function-at": "في الوظيفة عند $1:$2",

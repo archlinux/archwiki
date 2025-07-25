@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\Category\Category;
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -75,10 +76,12 @@ TEXT
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getUpdateKey() {
 		return 'cleanup empty categories';
 	}
 
+	/** @inheritDoc */
 	protected function doDBUpdates() {
 		$mode = $this->getOption( 'mode', 'both' );
 		$begin = $this->getOption( 'begin', '' );

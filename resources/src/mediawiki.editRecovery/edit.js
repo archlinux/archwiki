@@ -1,12 +1,13 @@
 /**
  * In-progress edit recovery for action=edit
+ *
+ * @ignore
  */
-'use strict';
-
 const storage = require( './storage.js' );
 const LoadNotification = require( './LoadNotification.js' );
 
 const pageName = mw.config.get( 'wgPageName' );
+const wiki = mw.config.get( 'wgDBname' );
 const section = $( 'input[name="wpSection"]' ).val() || null;
 const inputFields = {};
 const fieldNamePrefix = 'field_';
@@ -23,7 +24,7 @@ const isOldRevision = $( 'input[name="oldid"]' ).val() > 0;
 const isConflict = mw.config.get( 'wgEditMessage' ) === 'editconflict';
 const useEditRecovery = !isUndo && !isOldRevision && !isConflict;
 if ( useEditRecovery ) {
-	mw.hook( 'wikipage.editform' ).add( onLoadHandler );
+	mw.hook( 'wikipage.editform' ).add( init );
 } else {
 	// Always remove the data-saved flag when editing without Edit Recovery.
 	// It may have been set by a previous editing session (within 5 minutes) that did use ER.
@@ -33,8 +34,14 @@ if ( useEditRecovery ) {
 const windowManager = OO.ui.getWindowManager();
 windowManager.addWindows( [ new mw.widgets.AbandonEditDialog() ] );
 
-function onLoadHandler( $editForm ) {
-	mw.hook( 'wikipage.editform' ).remove( onLoadHandler );
+/**
+ * Initialise when the wikipage.editform hook first fires
+ *
+ * @ignore
+ * @param {jQuery} $editForm
+ */
+function init( $editForm ) {
+	mw.hook( 'wikipage.editform' ).remove( init );
 
 	// Monitor all text-entry inputs for changes/typing.
 	const inputsToMonitorSelector = 'textarea, select, input:not([type="hidden"], [type="submit"])';
@@ -60,7 +67,7 @@ function onLoadHandler( $editForm ) {
 	// Store the original data for later comparing to the data-to-save. Use the defaultValue/defaultChecked in order to
 	// avoid using any data remembered by the browser. Note that we have to be careful to store with the same types as
 	// it will be done later, in order to correctly compare it (e.g. checkboxes as booleans).
-	Object.keys( inputFields ).forEach( ( fieldName ) => {
+	for ( const fieldName in inputFields ) {
 		const field = inputFields[ fieldName ];
 		if ( field.nodeName === 'INPUT' || field.nodeName === 'TEXTAREA' ) {
 			if ( field.type === 'checkbox' ) {
@@ -80,7 +87,7 @@ function onLoadHandler( $editForm ) {
 				originalData[ fieldNamePrefix + fieldName ] = field.$input[ 0 ].defaultValue;
 			}
 		}
-	} );
+	}
 
 	// Set a short-lived (5m / see postEdit.js) localStorage item to indicate which section is being edited.
 	if ( section ) {
@@ -90,7 +97,7 @@ function onLoadHandler( $editForm ) {
 	storage.openDatabase().then( () => {
 		// Check for and delete any expired data for any page, before loading any saved data for the current page.
 		storage.deleteExpiredData().then( () => {
-			storage.loadData( pageName, section ).then( onLoadData );
+			storage.loadData( pageName, section ).then( loadDataSuccess );
 		} );
 	} );
 
@@ -99,7 +106,7 @@ function onLoadHandler( $editForm ) {
 	cancelButton.on( 'click', () => {
 		windowManager.openWindow( 'abandonedit' ).closed.then( ( data ) => {
 			if ( data && data.action === 'discard' ) {
-				// Note that originalData is used below in onLoadData() but that's always called before this method.
+				// Note that originalData is used below in loadDataSuccess() but that's always called before this method.
 				// Here we set originalData to null in order to signal to saveFormData() to deleted the stored data.
 				originalData = null;
 				storage.deleteData( pageName, section ).finally( () => {
@@ -114,12 +121,13 @@ function onLoadHandler( $editForm ) {
 	} );
 }
 
-function track( metric, value ) {
-	const dbName = mw.config.get( 'wgDBname' );
-	mw.track( `counter.MediaWiki.edit_recovery.${ metric }.by_wiki.${ dbName }`, value );
-}
-
-function onLoadData( pageData ) {
+/**
+ * loadData promise resolved successfully
+ *
+ * @ignore
+ * @param {Object|undefined} pageData Page data, undefined if none found
+ */
+function loadDataSuccess( pageData ) {
 	if ( wasPosted ) {
 		// If this is a POST request, save the current data (e.g. from a preview).
 		saveFormData();
@@ -131,29 +139,31 @@ function onLoadData( pageData ) {
 		} );
 
 		// statsv: Track the number of times the edit recovery notification is shown.
-		track( 'show', 1 );
+		mw.track( `counter.MediaWiki.edit_recovery.show.by_wiki.${ wiki }` );
+		mw.track( 'stats.mediawiki_editrecovery_prompt_total', 1, { action: 'show', wiki } );
 
 		const notification = loadNotification.getNotification();
 		// On 'restore changes'.
 		loadNotification.getRecoverButton().on( 'click', () => {
-			loadData( pageData );
+			recover( pageData );
 			notification.close();
 			// statsv: Track the number of times the edit recovery data is recovered.
-			track( 'recover', 1 );
+			mw.track( `counter.MediaWiki.edit_recovery.recover.by_wiki.${ wiki }` );
+			mw.track( 'stats.mediawiki_editrecovery_prompt_total', 1, { action: 'recover', wiki } );
 		} );
 		// On 'discard changes'.
 		loadNotification.getDiscardButton().on( 'click', () => {
-			loadData( originalData );
 			storage.deleteData( pageName, section ).then( () => {
 				notification.close();
 			} );
 			// statsv: Track the number of times the edit recovery data is discarded.
-			track( 'discard', 1 );
+			mw.track( `counter.MediaWiki.edit_recovery.discard.by_wiki.${ wiki }` );
+			mw.track( 'stats.mediawiki_editrecovery_prompt_total', 1, { action: 'discard', wiki } );
 		} );
 	}
 
 	// Add change handlers.
-	Object.keys( inputFields ).forEach( ( fieldName ) => {
+	for ( const fieldName in inputFields ) {
 		const field = inputFields[ fieldName ];
 		if ( field.nodeName !== undefined && field.nodeName === 'TEXTAREA' ) {
 			field.addEventListener( 'input', fieldChangeHandler );
@@ -162,7 +172,7 @@ function onLoadData( pageData ) {
 		} else {
 			field.addEventListener( 'change', fieldChangeHandler );
 		}
-	} );
+	}
 	// Also add handlers for when the window is closed or hidden. Saving the data at these points is not guaranteed to
 	// work, but it often does and the save operation is atomic so there's no harm in trying.
 	window.addEventListener( 'beforeunload', saveFormData );
@@ -179,10 +189,16 @@ function onLoadData( pageData ) {
 	mw.hook( 'editRecovery.loadEnd' ).fire( { fieldChangeHandler: fieldChangeHandler } );
 }
 
-function loadData( pageData ) {
-	Object.keys( inputFields ).forEach( ( fieldName ) => {
+/**
+ * Recover specified page data
+ *
+ * @ignore
+ * @param {Object} pageData Page data
+ */
+function recover( pageData ) {
+	for ( const fieldName in inputFields ) {
 		if ( pageData[ fieldNamePrefix + fieldName ] === undefined ) {
-			return;
+			continue;
 		}
 		const field = inputFields[ fieldName ];
 		const $field = $( field );
@@ -201,9 +217,14 @@ function loadData( pageData ) {
 			// Anything else.
 			field.value = pageData[ fieldNamePrefix + fieldName ];
 		}
-	} );
+	}
 }
 
+/**
+ * Handle an edit form field changing
+ *
+ * @ignore
+ */
 function fieldChangeHandler() {
 	clearTimeout( changeDebounceTimer );
 	changeDebounceTimer = setTimeout( saveFormData, debounceTime );
@@ -238,6 +259,11 @@ function isSameAsOriginal( pageData, ignoreRevIds = false ) {
 	return true;
 }
 
+/**
+ * Save the current edit form state in the storage backend
+ *
+ * @ignore
+ */
 function saveFormData() {
 	const pageData = getFormData();
 	if ( ( originalData === null || isSameAsOriginal( pageData ) ) && !wasPosted ) {
@@ -261,7 +287,7 @@ function saveFormData() {
  */
 function getFormData() {
 	const formData = {};
-	Object.keys( inputFields ).forEach( ( fieldName ) => {
+	for ( const fieldName in inputFields ) {
 		const field = inputFields[ fieldName ];
 		let newValue = null;
 		if ( !( field instanceof OO.ui.Widget ) && field.nodeName !== undefined && field.nodeName === 'TEXTAREA' ) {
@@ -278,6 +304,6 @@ function getFormData() {
 			newValue = field.value;
 		}
 		formData[ fieldNamePrefix + fieldName ] = newValue;
-	} );
+	}
 	return formData;
 }

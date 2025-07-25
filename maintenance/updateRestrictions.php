@@ -24,6 +24,8 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -41,6 +43,7 @@ class UpdateRestrictions extends Maintenance {
 		$this->setBatchSize( 1000 );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$dbw = $this->getDB( DB_PRIMARY );
 		$batchSize = $this->getBatchSize();

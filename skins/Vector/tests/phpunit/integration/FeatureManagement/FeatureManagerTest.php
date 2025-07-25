@@ -49,12 +49,10 @@ class FeatureManagerTest extends \MediaWikiIntegrationTestCase {
 		$featureManager = $this->newFeatureManager();
 		$featureManager->registerSimpleRequirement( 'requirement', true );
 		$featureManager->registerSimpleRequirement( 'disabled', false );
-		$featureManager->registerFeature( Constants::FEATURE_STICKY_HEADER, [ 'requirement' ] );
 		$featureManager->registerFeature( Constants::FEATURE_NIGHT_MODE, [ 'requirement' ] );
 		$featureManager->registerFeature( Constants::FEATURE_LIMITED_WIDTH_CONTENT, [ 'disabled' ] );
 		$this->assertEquals(
 			[
-				'vector-feature-sticky-header-enabled',
 				'vector-feature-night-mode-enabled',
 				'vector-feature-limited-width-content-disabled'
 			],

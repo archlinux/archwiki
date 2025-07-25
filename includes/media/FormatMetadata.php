@@ -28,6 +28,8 @@
 use MediaWiki\Api\ApiResult;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\ForeignAPIFile;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
@@ -1703,31 +1705,40 @@ class FormatMetadata extends ContextSource {
 			(int)$this->singleLang,
 			$file->getSha1()
 		);
+		$maxCacheTime = ( $file instanceof ForeignAPIFile ) ? 60 * 60 * 12 : 60 * 60 * 24 * 30;
 
-		$cachedValue = $cache->get( $cacheKey );
-		if (
-			$cachedValue
-			&& $this->getHookRunner()->onValidateExtendedMetadataCache( $cachedValue['timestamp'], $file )
-		) {
-			$extendedMetadata = $cachedValue['data'];
-		} else {
-			$maxCacheTime = ( $file instanceof ForeignAPIFile ) ? 60 * 60 * 12 : 60 * 60 * 24 * 30;
-			$fileMetadata = $this->getExtendedMetadataFromFile( $file );
-			$extendedMetadata = $this->getExtendedMetadataFromHook( $file, $fileMetadata, $maxCacheTime );
-			if ( $this->singleLang ) {
-				$this->resolveMultilangMetadata( $extendedMetadata );
-			}
-			$this->discardMultipleValues( $extendedMetadata );
-			// Make sure the metadata won't break the API when an XML format is used.
-			// This is an API-specific function so it would be cleaner to call it from
-			// outside fetchExtendedMetadata, but this way we don't need to redo the
-			// computation on a cache hit.
-			$this->sanitizeArrayForAPI( $extendedMetadata );
-			$valueToCache = [ 'data' => $extendedMetadata, 'timestamp' => wfTimestampNow() ];
-			$cache->set( $cacheKey, $valueToCache, $maxCacheTime );
-		}
+		$cachedValue = $cache->getWithSetCallback(
+			$cacheKey,
+			$maxCacheTime,
+			function () use ( $file ) {
+				$fileMetadata = $this->getExtendedMetadataFromFile( $file );
+				$extendedMetadata = $this->getExtendedMetadataFromHook( $file, $fileMetadata, $maxCacheTime );
+				if ( $this->singleLang ) {
+					$this->resolveMultilangMetadata( $extendedMetadata );
+				}
+				$this->discardMultipleValues( $extendedMetadata );
+				// Make sure the metadata won't break the API when an XML format is used.
+				// This is an API-specific function so it would be cleaner to call it from
+				// outside fetchExtendedMetadata, but this way we don't need to redo the
+				// computation on a cache hit.
+				$this->sanitizeArrayForAPI( $extendedMetadata );
 
-		return $extendedMetadata;
+				return [ 'data' => $extendedMetadata, 'timestamp' => wfTimestampNow() ];
+			},
+			[
+				'touchedCallback' => function ( $value ) use ( $file ) {
+					if (
+						!$this->getHookRunner()->onValidateExtendedMetadataCache( $value['timestamp'], $file )
+					) {
+						// Reject cache and regenerate
+						return time();
+					}
+					return null;
+				}
+			]
+		);
+
+		return $cachedValue['data'];
 	}
 
 	/**

@@ -25,16 +25,16 @@
 
 namespace MediaWiki\Page;
 
-use Article;
-use ErrorPageError;
-use LogEventsList;
-use LogPage;
+use InvalidArgumentException;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\Language;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
@@ -45,8 +45,8 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Watchlist\WatchlistManager;
-use MediaWiki\Xml\Xml;
 use MediaWiki\Xml\XmlSelect;
+use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 
 /**
  * Handles the page protection UI and backend
@@ -185,7 +185,7 @@ class ProtectionForm {
 			}
 
 			$val = $this->mRequest->getVal( "mwProtect-level-$action" );
-			if ( isset( $val ) && in_array( $val, $levels ) ) {
+			if ( $val !== null && in_array( $val, $levels ) ) {
 				$this->mRestrictions[$action] = $val;
 			}
 		}
@@ -195,8 +195,9 @@ class ProtectionForm {
 	 * Get the expiry time for a given action, by combining the relevant inputs.
 	 *
 	 * @param string $action
-	 *
 	 * @return string|false 14-char timestamp or "infinity", or false if the input was invalid
+	 * @todo Non-qualified absolute times are not in users specified timezone
+	 *   and there isn't notice about it in the UI
 	 */
 	private function getExpiry( $action ) {
 		if ( $this->mExpirySelection[$action] == 'existing' ) {
@@ -206,20 +207,11 @@ class ProtectionForm {
 		} else {
 			$value = $this->mExpirySelection[$action];
 		}
-		if ( wfIsInfinity( $value ) ) {
-			$time = 'infinity';
-		} else {
-			$unix = strtotime( $value );
-
-			if ( !$unix || $unix === -1 ) {
-				return false;
-			}
-
-			// @todo FIXME: Non-qualified absolute times are not in users specified timezone
-			// and there isn't notice about it in the ui
-			$time = wfTimestamp( TS_MW, $unix );
+		try {
+			return ExpiryDef::normalizeExpiry( $value, TS_MW );
+		} catch ( InvalidArgumentException $e ) {
+			return false;
 		}
-		return $time;
 	}
 
 	/**
@@ -626,13 +618,10 @@ class ProtectionForm {
 	private function showLogExtract() {
 		# Show relevant lines from the protection log:
 		$protectLogPage = new LogPage( 'protect' );
-		$this->mOut->addHTML( Xml::element( 'h2', null, $protectLogPage->getName()->text() ) );
+		$this->mOut->addHTML( Html::element( 'h2', [], $protectLogPage->getName()->text() ) );
 		/** @phan-suppress-next-line PhanTypeMismatchPropertyByRef */
 		LogEventsList::showLogExtract( $this->mOut, 'protect', $this->mTitle );
 		# Let extensions add other relevant log extracts
 		$this->hookRunner->onProtectionForm__showLogExtract( $this->mArticle, $this->mOut );
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( ProtectionForm::class, 'ProtectionForm' );

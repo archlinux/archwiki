@@ -27,6 +27,7 @@ class LuaModule extends ScribuntoModuleBase {
 		parent::__construct( $engine, $code, $chunkName );
 	}
 
+	/** @inheritDoc */
 	public function validate() {
 		try {
 			$this->getInitChunk();
@@ -61,7 +62,7 @@ class LuaModule extends ScribuntoModuleBase {
 	public function invoke( $name, $frame ) {
 		$ret = $this->engine->executeModule( $this->getInitChunk(), $name, $frame );
 
-		if ( !isset( $ret ) ) {
+		if ( $ret === null ) {
 			throw $this->engine->newException(
 				'scribunto-common-nosuchfunction', [ 'args' => [ $name ] ]
 			);

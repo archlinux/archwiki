@@ -13,6 +13,7 @@
 			"Michel Bakni",
 			"Mido",
 			"Mohammed Qays",
+			"Mohanad",
 			"OsamaK",
 			"Samer",
 			"Shbib Al-Subaie",
@@ -21,13 +22,11 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"Mohanad"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"wikieditor": "الواجهة المتقدمة لتعديل نص ويكي",
 	"wikieditor-desc": "يوفر واجهة تعديل نص ويكي قابلة للتمديد",
-	"wikieditor-wikitext-tab": "نص الويكي",
 	"wikieditor-toolbar": "شريط أدوات التحرير",
 	"wikieditor-toolbar-desc": "شريط تحرير الصفحات مع تحسين الاستخدامية",
 	"wikieditor-toolbar-preference": "تفعيل شريط أدوات التحرير",
@@ -85,6 +84,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "عنصر قائمة منقطة",
 	"wikieditor-toolbar-tool-olist": "قائمة مرقمة",
 	"wikieditor-toolbar-tool-olist-example": "عنصر قائمة مرقمة",
+	"wikieditor-toolbar-tool-code": "كود برمجي",
+	"wikieditor-toolbar-tool-code-example": "كود برمجي",
 	"wikieditor-toolbar-tool-nowiki": "بلا تنسيق ويكي",
 	"wikieditor-toolbar-tool-nowiki-example": "نص غير منسق",
 	"wikieditor-toolbar-tool-redirect": "تحويلة",

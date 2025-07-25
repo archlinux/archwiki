@@ -71,6 +71,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 		$this->userOptionsManager = $userOptionsManager;
 	}
 
+	/** @inheritDoc */
 	public function execute( $subPage ) {
 		$this->setHeaders();
 		$this->checkPermissions();

@@ -2,6 +2,7 @@
 
 namespace Test\Parsoid\Utils;
 
+use PHPUnit\Framework\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -10,6 +11,7 @@ use Wikimedia\Parsoid\Mocks\MockEnv;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMTraverser;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\DTState;
 
 class DOMTraverserTest extends \PHPUnit\Framework\TestCase {
@@ -45,8 +47,7 @@ HTML;
 		if ( $withTplInfo || $processAttrEmbeddedHTML ) {
 			$doc = ContentUtils::createAndLoadDocument( $html );
 		} else {
-			$doc = DOMCompat::newDocument( true );
-			$doc->loadHTML( $html );
+			$doc = DOMUtils::parseHTML( $html );
 		}
 
 		$state = new DTState( $env, [], true );
@@ -64,29 +65,13 @@ HTML;
 		$this->assertSame( $expectedTrace, $trace );
 	}
 
-	public function provideTraverse() {
+	public static function provideTraverse() {
 		$basicEnv = new MockEnv( [] );
-
-		$expectError = $this->getMockBuilder( MockEnv::class )
-			->setConstructorArgs( [ [] ] )
-			->onlyMethods( [ 'log' ] )
-			->getMock();
-		$expectError->expects( $this->atLeastOnce() )
-			->method( 'log' )
-			->willReturnCallback( function ( $prefix ) {
-				$this->assertSame( 'error', $prefix );
-			} );
-		$dontExpectError = $this->getMockBuilder( MockEnv::class )
-			->setConstructorArgs( [ [] ] )
-			->onlyMethods( [ 'log' ] )
-			->getMock();
-		$dontExpectError->expects( $this->never() )
-			->method( 'log' );
 
 		return [
 			'basic' => [
-				'callback' => function ( Node $node, ?DTState $state ) use ( $basicEnv ) {
-					$this->assertTrue( $state->atTopLevel );
+				'callback' => static function ( Node $node, ?DTState $state ) use ( $basicEnv ) {
+					Assert::assertTrue( $state->atTopLevel );
 					return true;
 				},
 				'nodeName' => null,
@@ -159,9 +144,9 @@ HTML;
 				'expectedTrace' => [ 'x1', 'x1_1', 'x1_2', 'x1_2_1', 'x1_2_2', 'x1_3', 'x2', 'x2_1' ],
 			],
 			'not traversing with tplinfo' => [
-				'callback' => function ( Node $node, DTState $state ) {
+				'callback' => static function ( Node $node, DTState $state ) {
 					if ( $node instanceof Element && DOMCompat::getAttribute( $node, 'id' ) === 'x1_1' ) {
-						$this->assertTrue( $state->tplInfo === null );
+						Assert::assertTrue( $state->tplInfo === null );
 					}
 					return true;
 				},
@@ -170,18 +155,18 @@ HTML;
 				'expectedTrace' => [ 'x1', 'x1_1', 'x1_2', 'x1_2_1', 'x1_2_2', 'x1_3', 'x2', 'x2_1' ],
 			],
 			'traversing with tplinfo' => [
-				'callback' => function ( Node $node, DTState $state ) {
+				'callback' => static function ( Node $node, DTState $state ) {
 					if ( $node instanceof Element && DOMCompat::getAttribute( $node, 'id' ) === 'x1_1' ) {
-						$this->assertTrue( $state->tplInfo->first === $node );
+						Assert::assertTrue( $state->tplInfo->first === $node );
 					}
 					if ( $node instanceof Element && DOMCompat::getAttribute( $node, 'id' ) === 'x1_2' ) {
-						$this->assertTrue( $state->tplInfo->last === $node );
+						Assert::assertTrue( $state->tplInfo->last === $node );
 					}
 					if ( $node instanceof Element && DOMCompat::getAttribute( $node, 'id' ) === 'x1_2_1' ) {
-						$this->assertTrue( $state->tplInfo !== null );
+						Assert::assertTrue( $state->tplInfo !== null );
 					}
 					if ( $node instanceof Element && DOMCompat::getAttribute( $node, 'id' ) === 'x1_3' ) {
-						$this->assertTrue( $state->tplInfo === null );
+						Assert::assertTrue( $state->tplInfo === null );
 					}
 					return true;
 				},
@@ -191,9 +176,9 @@ HTML;
 				'withTplInfo' => true,
 			],
 			'not traversing with tplinfo, with embedded html' => [
-				'callback' => function ( Node $node, DTState $state ) {
+				'callback' => static function ( Node $node, DTState $state ) {
 					if ( $node instanceof Element && DOMCompat::getAttribute( $node, 'id' ) === 'x1_1' ) {
-						$this->assertTrue( $state->tplInfo === null );
+						Assert::assertTrue( $state->tplInfo === null );
 					}
 					return true;
 				},

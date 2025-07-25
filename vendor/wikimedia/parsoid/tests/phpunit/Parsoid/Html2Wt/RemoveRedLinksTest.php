@@ -27,7 +27,7 @@ class RemoveRedLinksTest extends TestCase {
 		$this->assertEquals( $expected, $actual, $message );
 	}
 
-	public function provideRedLinks(): array {
+	public static function provideRedLinks(): array {
 		return [
 			[
 				'<a href="./Hello" rel="mw:WikiLink">Hello</a>',
@@ -80,13 +80,6 @@ class RemoveRedLinksTest extends TestCase {
 				'<a href="./Hello#fragment?" rel="mw:WikiLink" class="new">Hello</a>',
 				'<a href="./Hello#fragment?" rel="mw:WikiLink" class="new">Hello</a>',
 				'Not a redlink, with fragment with a question mark'
-			],
-			// The code that allows for the creation of such an URL should be fixed; in the
-			// meantime we still want to avoid breaking links that may still cached.
-			[
-				'<a href="./Hello#fragment?action=edit&redlink=1" rel="mw:WikiLink" class="new">Hello</a>',
-				'<a href="./Hello#fragment" rel="mw:WikiLink" class="new">Hello</a>',
-				'Redlink with buggy fragment'
 			],
 			[
 				'<a href="./Hello?action=edit&redlink=1#fragment?action=edit&redlink=1" ' .

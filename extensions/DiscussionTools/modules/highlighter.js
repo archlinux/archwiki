@@ -67,7 +67,15 @@ function Highlight( items ) {
 		// comments across multiple threads.
 		// HACK: Ideally MF would expose Toggler as a public API, but for now just find the correct DOM
 		// node and trigger a fake click.
+		// Legacy parser markup:
 		this.$element.parents( '.collapsible-block' ).prev( '.collapsible-heading:not( .open-block )' ).trigger( 'click' );
+		// Parsoid markup:
+		// Support: Firefox, Safari
+		// The parsoid markup now uses hidden=until-found for the toggling.
+		// Safari and Firefox doesn't support this yet, and so we need to
+		// fake a click. We filter down to [hidden] first so that other
+		// browsers won't be immediately toggled back to hidden.
+		this.$element.parents( '.mf-collapsible-content[hidden]' ).prev( '.mf-collapsible-heading' ).trigger( 'click' );
 	}
 
 	this.update();

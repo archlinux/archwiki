@@ -49,7 +49,7 @@ class ListFetcher {
 	 */
 	private function output( $text ) {
 		if ( $this->output ) {
-			call_user_func( $this->output, $text );
+			( $this->output )( $text );
 		}
 	}
 

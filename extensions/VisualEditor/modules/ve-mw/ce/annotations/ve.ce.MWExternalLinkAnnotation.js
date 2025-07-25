@@ -22,7 +22,7 @@ ve.ce.MWExternalLinkAnnotation = function VeCeMWExternalLinkAnnotation( model ) 
 	// DOM changes
 	const rel = model.getAttribute( 'rel' ) || '';
 	const relValues = rel.split( /\s+/ );
-	if ( relValues.indexOf( 'mw:WikiLink/Interwiki' ) >= 0 ) {
+	if ( relValues.includes( 'mw:WikiLink/Interwiki' ) ) {
 		this.$anchor.addClass( 'extiw' );
 	} else {
 		this.$anchor.addClass( 'external' );

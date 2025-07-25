@@ -2,23 +2,26 @@
 
 namespace MediaWiki\SpecialPage;
 
-use ErrorPageError;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\HTMLForm\Field\HTMLInfoField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\Token;
 use MediaWiki\Status\Status;
 use MWCryptRand;
+use Profiler;
 use StatusValue;
 use UnexpectedValueException;
 
@@ -109,12 +112,7 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 		);
 	}
 
-	/**
-	 * @stable to override
-	 * @param string|null $subPage
-	 *
-	 * @return bool|void
-	 */
+	/** @inheritDoc */
 	protected function beforeExecute( $subPage ) {
 		$this->getOutput()->disallowUserJs();
 
@@ -149,18 +147,24 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 			// FIXME save POST values only from request
 			$authData = array_diff_key( $this->getRequest()->getValues(),
 				$preservedParams, [ 'title' => 1 ] );
+			$uniqueId = MWCryptRand::generateHex( 6 );
+			$preservedParams['authUniqueId'] = $uniqueId;
+			$key .= ':' . $uniqueId;
 			$authManager->setAuthenticationSessionData( $key, $authData );
 
 			$url = $this->getPageTitle()->getFullURL( $preservedParams, false, PROTO_HTTPS );
 			$this->getOutput()->redirect( $url );
 			return false;
-		}
-
-		$authData = $authManager->getAuthenticationSessionData( $key );
-		if ( $authData ) {
-			$authManager->removeAuthenticationSessionData( $key );
-			$this->isReturn = true;
-			$this->setRequest( $authData, true );
+		} elseif ( $this->getRequest()->getCheck( 'authUniqueId' ) ) {
+			$uniqueId = $this->getRequest()->getVal( 'authUniqueId' );
+			$key .= ':' . $uniqueId;
+			$authData = $authManager->getAuthenticationSessionData( $key );
+			if ( $authData ) {
+				$authManager->removeAuthenticationSessionData( $key );
+				$this->isReturn = true;
+				$this->setRequest( $authData, true );
+				$this->setPostTransactionProfilerExpectations( __METHOD__ );
+			}
 		}
 
 		return true;
@@ -198,12 +202,16 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 					$authManager->setAuthenticationSessionData( $key, $authData );
 				}
 
+				// Copied from RedirectSpecialPage::getRedirectQuery()
+				// Would using $this->getPreservedParams() be appropriate here?
+				$keepParams = [ 'uselang', 'useskin', 'useformat', 'variant', 'debug', 'safemode' ];
+
 				$title = SpecialPage::getTitleFor( 'Userlogin' );
 				$url = $title->getFullURL( [
 					'returnto' => $this->getFullTitle()->getPrefixedDBkey(),
 					'returntoquery' => wfArrayToCgi( $queryParams ),
 					'force' => $securityLevel,
-				], false, PROTO_HTTPS );
+				] + array_intersect_key( $queryParams, array_fill_keys( $keepParams, true ) ), false, PROTO_HTTPS );
 
 				$this->getOutput()->redirect( $url );
 				return false;
@@ -221,10 +229,20 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 			if ( $authData ) {
 				$authManager->removeAuthenticationSessionData( $key );
 				$this->setRequest( $authData, true );
+				$this->setPostTransactionProfilerExpectations( __METHOD__ );
 			}
 		}
 
 		return true;
+	}
+
+	private function setPostTransactionProfilerExpectations( string $fname ) {
+		$trxLimits = $this->getConfig()->get( MainConfigNames::TrxProfilerLimits );
+		$trxProfiler = Profiler::instance()->getTransactionProfiler();
+		$trxProfiler->redefineExpectations( $trxLimits['POST'], $fname );
+		DeferredUpdates::addCallableUpdate( static function () use ( $trxProfiler, $trxLimits, $fname ) {
+			$trxProfiler->redefineExpectations( $trxLimits['PostSend-POST'], $fname );
+		} );
 	}
 
 	/**
@@ -580,10 +598,10 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 		// Allow authentication extensions like CentralAuth to preserve their own
 		// query params during and after the authentication process.
 		$this->getHookRunner()->onAuthPreserveQueryParams(
-			$params, [ 'reset' => $options['reset'] ]
+			$params, [ 'request' => $request, 'reset' => $options['reset'] ]
 		);
 
-		return array_filter( $params, fn ( $val ) => $val !== null );
+		return array_filter( $params, static fn ( $val ) => $val !== null );
 	}
 
 	/**
@@ -798,7 +816,6 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 	 * Sort the fields of a form descriptor by their 'weight' property. (Fields with higher weight
 	 * are shown closer to the bottom; weight defaults to 0. Negative weight is allowed.)
 	 * Keep order if weights are equal.
-	 * @param array &$formDescriptor
 	 */
 	protected static function sortFormDescriptorFields( array &$formDescriptor ) {
 		$i = 0;

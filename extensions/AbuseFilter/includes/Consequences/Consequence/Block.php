@@ -2,14 +2,13 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Consequences\Consequence;
 
-use ManualLogEntry;
 use MediaWiki\Block\BlockUserFactory;
 use MediaWiki\Block\DatabaseBlockStore;
+use MediaWiki\Block\UnblockUserFactory;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
-use MediaWiki\Title\TitleValue;
-use MediaWiki\User\UserIdentity;
+use MediaWiki\Permissions\Authority;
 use MessageLocalizer;
 use Psr\Log\LoggerInterface;
 
@@ -20,12 +19,14 @@ class Block extends BlockingConsequence implements ReversibleConsequence {
 
 	private bool $preventsTalkEdit;
 	private DatabaseBlockStore $databaseBlockStore;
+	private UnblockUserFactory $unblockUserFactory;
 
 	/**
 	 * @param Parameters $params
 	 * @param string $expiry
 	 * @param bool $preventTalkEdit
 	 * @param BlockUserFactory $blockUserFactory
+	 * @param UnblockUserFactory $unblockUserFactory
 	 * @param DatabaseBlockStore $databaseBlockStore
 	 * @param FilterUser $filterUser
 	 * @param MessageLocalizer $messageLocalizer
@@ -36,12 +37,14 @@ class Block extends BlockingConsequence implements ReversibleConsequence {
 		string $expiry,
 		bool $preventTalkEdit,
 		BlockUserFactory $blockUserFactory,
+		UnblockUserFactory $unblockUserFactory,
 		DatabaseBlockStore $databaseBlockStore,
 		FilterUser $filterUser,
 		MessageLocalizer $messageLocalizer,
 		LoggerInterface $logger
 	) {
 		parent::__construct( $params, $expiry, $blockUserFactory, $filterUser, $messageLocalizer, $logger );
+		$this->unblockUserFactory = $unblockUserFactory;
 		$this->databaseBlockStore = $databaseBlockStore;
 		$this->preventsTalkEdit = $preventTalkEdit;
 	}
@@ -65,29 +68,20 @@ class Block extends BlockingConsequence implements ReversibleConsequence {
 
 	/**
 	 * @inheritDoc
-	 * @todo This could use UnblockUser, but we need to check if the block was performed by the AF user
 	 */
-	public function revert( UserIdentity $performer, string $reason ): bool {
-		$block = $this->databaseBlockStore->newFromTarget( $this->parameters->getUser()->getName() );
-		if ( !( $block && $block->getBy() === $this->filterUser->getUserIdentity()->getId() ) ) {
-			// Not blocked by abuse filter
-			return false;
+	public function revert( Authority $performer, string $reason ): bool {
+		$blocks = $this->databaseBlockStore->newListFromTarget(
+			$this->parameters->getUser()->getName(), null, false, DatabaseBlockStore::AUTO_NONE );
+		foreach ( $blocks as $block ) {
+			if ( $block->getBy() === $this->filterUser->getUserIdentity()->getId() ) {
+				return $this->unblockUserFactory->newRemoveBlock(
+					$block,
+					$performer,
+					$reason,
+				)->unblockUnsafe()->isOK();
+			}
 		}
-		if ( !$this->databaseBlockStore->deleteBlock( $block ) ) {
-			return false;
-		}
-		$logEntry = new ManualLogEntry( 'block', 'unblock' );
-		$logEntry->setTarget( new TitleValue( NS_USER, $this->parameters->getUser()->getName() ) );
-		$logEntry->setComment( $reason );
-		$logEntry->setPerformer( $performer );
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			// This has a bazillion of static dependencies all around the place, and a nightmare to deal with in tests
-			// TODO: Remove this check once T253717 is resolved
-			// @codeCoverageIgnoreStart
-			$logEntry->publish( $logEntry->insert() );
-			// @codeCoverageIgnoreEnd
-		}
-		return true;
+		return false;
 	}
 
 	/**

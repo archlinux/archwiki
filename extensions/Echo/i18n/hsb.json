@@ -34,6 +34,7 @@
 	"echo-pref-tooltip-mention": "Informuj mje, hdyž něchtó z někajkeje diskusijneje strony k mojej wužiwarskej stronje wotkazuje.",
 	"notifications": "Zdźělenki",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Twoje}} powěsće",
+	"tooltip-pt-notifications": "Twoje zdźělenki",
 	"echo-specialpage": "Zdźělenki",
 	"echo-none": "Nimaš zdźělenki.",
 	"notification-link-text-view-message": "Powěsć pokazać",

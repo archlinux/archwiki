@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "Pechar",
 	"cdx-label-optional-flag": "(opcional)",
 	"cdx-message-dismiss-button-label": "Pechar",
+	"cdx-popover-close-button-label": "Pechar",
 	"cdx-search-input-search-button-label": "Procurar",
 	"cdx-table-select-all-label": "Seleccionar todas as ringleiras",
 	"cdx-table-select-row-label": "Seleccionar a ringleira $1 de $2",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Amosando os resultados do $1 ao $2 de moitos",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 de moitos",
 	"cdx-table-pagination-status-message-indeterminate-final": "Amosando {{PLURAL:$1|o último resultado|os últimos $1 resultados}}",
-	"cdx-table-pagination-status-message-pending": "Cargando os resultados..."
+	"cdx-table-pagination-status-message-pending": "Cargando os resultados...",
+	"cdx-table-no-data-message": "Non hai datos dispoñibles."
 }

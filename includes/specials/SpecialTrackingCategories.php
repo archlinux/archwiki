@@ -40,10 +40,6 @@ class SpecialTrackingCategories extends SpecialPage {
 	private LinkBatchFactory $linkBatchFactory;
 	private TrackingCategories $trackingCategories;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param TrackingCategories $trackingCategories
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		TrackingCategories $trackingCategories
@@ -64,7 +60,7 @@ class SpecialTrackingCategories extends SpecialPage {
 		] );
 		$this->getOutput()->addModules( 'jquery.tablesorter' );
 		$this->getOutput()->addHTML(
-			Html::openElement( 'table', [ 'class' => 'mw-datatable sortable',
+			Html::openElement( 'table', [ 'class' => [ 'mw-datatable', 'sortable' ],
 				'id' => 'mw-trackingcategories-table' ] ) . "\n" .
 			'<thead><tr>' .
 			Html::element( 'th', [], $this->msg( 'trackingcategories-msg' )->text() ) .
@@ -75,7 +71,7 @@ class SpecialTrackingCategories extends SpecialPage {
 
 		$categoryList = $this->trackingCategories->getTrackingCategories();
 
-		$batch = $this->linkBatchFactory->newLinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 		foreach ( $categoryList as $data ) {
 			$batch->addObj( $data['msg'] );
 			foreach ( $data['cats'] as $catTitle ) {

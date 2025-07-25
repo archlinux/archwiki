@@ -2,19 +2,22 @@
 
 namespace MediaWiki\EditPage;
 
-use LogEventsList;
-use MediaWiki\Block\Block;
+use LogicException;
 use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Config\Config;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Skin\Skin;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\NamespaceInfo;
@@ -25,9 +28,6 @@ use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRigorOptions;
 use MediaWiki\Utils\UrlUtils;
 use MessageLocalizer;
-use RepoGroup;
-use Skin;
-use SkinFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
@@ -322,7 +322,6 @@ class IntroMessageBuilder {
 			$validation = UserRigorOptions::RIGOR_NONE;
 			$user = $this->userFactory->newFromName( $username, $validation );
 			$ip = $this->userNameUtils->isIP( $username );
-			$block = $this->blockStore->newFromTarget( $user, $user );
 
 			$userExists = ( $user && $user->isRegistered() );
 			if ( $userExists && $user->isHidden() && !$performer->isAllowed( 'hideuser' ) ) {
@@ -340,37 +339,19 @@ class IntroMessageBuilder {
 						'mw-userpage-userdoesnotexist'
 					)
 				);
-			} elseif (
-				$block !== null &&
-				$block->getType() !== Block::TYPE_AUTO &&
-				(
-					$block->isSitewide() ||
-					$this->permManager->isBlockedFrom(
-						// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-						$user,
-						$title,
-						true
-					)
-				)
-			) {
-				// Show log extract if the user is sitewide blocked or is partially
-				// blocked and not allowed to edit their user page or user talk page
-				$messages->addWithKey(
-					'blocked-notice-logextract',
-					$this->getLogExtract(
-						'block',
-						$this->namespaceInfo->getCanonicalName( NS_USER ) . ':' . $block->getTargetName(),
-						'',
-						[
-							'lim' => 1,
-							'showIfEmpty' => false,
-							'msgKey' => [
-								'blocked-notice-logextract',
-								$user->getName() # Support GENDER in notice
-							],
-						]
-					)
-				);
+				return;
+			}
+
+			$blockLogBox = LogEventsList::getBlockLogWarningBox(
+				$this->blockStore,
+				$this->namespaceInfo,
+				$localizer,
+				$this->linkRenderer,
+				$user,
+				$title
+			);
+			if ( $blockLogBox !== null ) {
+				$messages->addWithKey( 'blocked-notice-logextract', $blockLogBox );
 			}
 		}
 	}
@@ -419,6 +400,9 @@ class IntroMessageBuilder {
 				),
 				PROTO_CURRENT
 			);
+			if ( $helpLink === null ) {
+				throw new LogicException( 'Help link was invalid, this should be impossible' );
+			}
 			if ( $performer->getUser()->isRegistered() ) {
 				$messages->add(
 					$localizer->msg( 'newarticletext', $helpLink ),

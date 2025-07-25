@@ -66,7 +66,6 @@
 	"log-action-filter-oath-verify": "Prověrka, jest li vključena dvufaktorna avtentifikacija",
 	"log-action-filter-oath-disable-other": "Izključenje dvufaktornoj avtentifikacije za drugogo koristnika",
 	"oathauth-ui-no-module": "Ne vključena",
-	"oathauth-module-invalid": "Registrovany koristnikom OATHAuth-modul jest nepravilny.",
 	"oathauth-module-totp-label": "TOTP (jednokratny token)",
 	"oathauth-ui-manage": "Upraviti",
 	"oathmanage": "Upravjenje dvufaktornoju avtentifikacijeju",
@@ -85,9 +84,6 @@
 	"oathauth-disable-method-warning-button-label": "Potvrditi i prodolžiti",
 	"oathauth-disable-method-warning": "Ako izključite metodu dvufaktornoj avtentifikacije $1, uže ne budete mogti ju koristati pri prijavjenju se, a vse dane povezane s tutoju metodoju avtentifikacije budut odstranjene.",
 	"oathauth-disable-method-next-step": "V slědujučem kroku trěba, že avtentifikujete se svojej nyněšnjeju metodoju za dvufaktornu avtentifikaciju ($1), da byste mogli ju izključiti.",
-	"oathauth-switch-method-warning-header": "Potvrdženje prěključenja na drugu metodu avtentifikacije",
-	"oathauth-switch-method-warning": "Ako prěključite metodu dvufaktornoj avtentifikacije na $2, nyněšnja metoda ($1) bude izključena, a vse dane povezane s nyněšnoju metodoju avtentifikacije budut odstranjene",
-	"oathauth-switch-method-next-step": "V slědujučem kroku trěba, že avtentifikujete se svojej nyněšnjeju metodoju za dvufaktornu avtentifikaciju ($1), da byste mogli prěključiti se na $2.",
 	"oathauth-totp-disable-warning": "Vy veče ne smožete upotrěbiti aparat za avtentifikaciju, registrovany tutomu kontu. Vse kody odnovjenja, povezane s tutym kontom, propadnut.",
 	"oathauth-invalidrequest": "Nepravilny zapyt",
 	"notification-header-oathauth-disable": "Aparat za dvufaktornu avtentifikaciju jest izključeny za {{GENDER:$2|vaše konto}}.",
@@ -110,5 +106,6 @@
 	"oathauth-prefs-disabledgroups": "Izključen{{PLURAL:$1|a grupa|e grupy}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Vaše členstvo}} v {{PLURAL:$1|tutoj grupě|tutyh grupah}} jest unemožnjeno do momenta, že vključite [[Special:Manage Two-factor authentication|dvufaktornu avtentifikaciju]].",
 	"oathauth-qrcode-alt": "QR-kod s tajnym ključem za skanovanje.",
-	"oathauth-hint": "Ne imajete li dostup k svojemu aparatu ili aplikacije? Možete vvesti kody za odnovjenje (podane, ako imajete vključenu dvufaktornu avtentifikaciju) v tuto polje."
+	"oathauth-hint": "Ne imajete li dostup k svojemu aparatu ili aplikacije? Možete vvesti kody za odnovjenje (podane, ako imajete vključenu dvufaktornu avtentifikaciju) v tuto polje.",
+	"oathauth-must-be-central": "Da byste mogli korstistati dvufaktornu avtentifikaciju, trěba, že {{GENDER:$1|Vaše konto}} jest slučeno s centralnoji sistemoju za avtentifikaciju."
 }

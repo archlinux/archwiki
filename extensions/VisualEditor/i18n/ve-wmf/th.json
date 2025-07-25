@@ -11,13 +11,13 @@
 			"Taweetham"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|แก้ไขแบบเห็นภาพ]]",
+	"tag-visualeditor": "แก้ไขแบบเห็นภาพ",
 	"tag-visualeditor-description": "การแก้ไขโดยใช้[[{{MediaWiki:visualeditor-descriptionpagelink}}|ตัวแก้ไขแบบเห็นภาพ]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|การแก้ไขแบบเห็นภาพ: ตรวจสอบ]]",
+	"tag-visualeditor-needcheck": "การแก้ไขแบบเห็นภาพ: ตรวจสอบ",
 	"tag-visualeditor-needcheck-description": "การแก้ไขที่ใช้[[{{MediaWiki:visualeditor-descriptionpagelink}}|ตัวแก้ไขแบบเห็นภาพ]]ซึ่งระบบตรวจพบข้อความวิกิที่อาจถูกเปลี่ยนแปลงโดยไม่ได้ตั้งใจ",
 	"tag-visualeditor-wikitext": "แก้ไขแบบต้นฉบับปี 2560",
 	"tag-visualeditor-wikitext-description": "การแก้ไขที่ทำโดยใช้ตัวแก้ไขข้อความวิกิปี 2560",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|การแก้ไขแบบเห็นภาพ: สลับแล้ว]]",
+	"tag-visualeditor-switched": "การแก้ไขแบบเห็นภาพ: สลับแล้ว",
 	"tag-visualeditor-switched-description": "ผู้ใช้เริ่มแก้ไขโดยใช้ตัวแก้ไขแบบเห็นภาพ จากนั้นจึงสลับเป็นตัวแก้ไขข้อความวิกิ",
 	"visualeditor-feedback-link": "Project:VisualEditor/ข้อเสนอแนะ",
 	"visualeditor-feedback-tool": "ฝากข้อเสนอแนะเกี่ยวกับซอฟต์แวร์นี้",

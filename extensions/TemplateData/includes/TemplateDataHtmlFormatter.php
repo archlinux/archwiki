@@ -71,8 +71,7 @@ class TemplateDataHtmlFormatter {
 				Html::rawElement( 'p',
 					[ 'class' => 'mw-templatedata-caption' ],
 					$this->localizer->msg( 'templatedata-doc-params' )->escaped() .
-					// Edit interface is only loaded in the template namespace (see Hooks::onEditPage)
-					( $showEditLink && $frameTitle->inNamespace( NS_TEMPLATE ) ?
+					( $showEditLink ?
 						Html::element( 'mw:edittemplatedata', [
 							'page' => $frameTitle->getPrefixedText()
 						] ) :
@@ -131,8 +130,6 @@ class TemplateDataHtmlFormatter {
 
 	/**
 	 * Replace <mw:edittemplatedata> markers with links
-	 *
-	 * @param string &$text
 	 */
 	public function replaceEditLink( string &$text ): void {
 		$localizer = $this->localizer;

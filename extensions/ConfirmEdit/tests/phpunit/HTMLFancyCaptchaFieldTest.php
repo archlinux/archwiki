@@ -14,18 +14,6 @@ use MediaWiki\Title\Title;
  */
 class HTMLFancyCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 
-	public function setUp(): void {
-		parent::setUp();
-
-		$this->mergeMwGlobalArrayValue(
-			'wgAutoloadClasses',
-			[
-				'MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\HTMLFancyCaptchaField'
-					=> __DIR__ . '/../../FancyCaptcha/includes/HTMLFancyCaptchaField.php'
-			]
-		);
-	}
-
 	public function testGetHTML() {
 		$html = $this->getForm( [ 'imageUrl' => 'https://example.com/' ] )->getHTML( false );
 		$this->assertMatchesRegularExpression( '/"fancycaptcha-image"/', $html );

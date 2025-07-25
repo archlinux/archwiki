@@ -13,6 +13,8 @@
 	"linter-category-deletable-table-tag-desc": "Neil lehekülgedel on tabelisilte, mis tuleks kustutada.",
 	"linter-category-duplicate-ids": "Dubleeritud identifikaatorid",
 	"linter-category-duplicate-ids-desc": "Neil lehekülgedel on elemente, mille atribuudi \"id\" väärtus on dubleeritud.",
+	"linter-category-empty-heading": "Tühjad pealkirjad",
+	"linter-category-empty-heading-desc": "Neil lehekülgedel on tühje pealkirju.",
 	"linter-category-fostered": "Valesti paigutatud tabelisisu",
 	"linter-category-fostered-desc": "Neil lehekülgedel on tabeli sisu valesti paigutatud.",
 	"linter-category-fostered-transparent": "Valesti paigutatud ja nähtamatu sisu",

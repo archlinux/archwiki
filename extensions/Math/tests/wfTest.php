@@ -8,6 +8,7 @@ use MediaWiki\Content\TextContent;
 use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\MathMathMLCli;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Page\Article;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;

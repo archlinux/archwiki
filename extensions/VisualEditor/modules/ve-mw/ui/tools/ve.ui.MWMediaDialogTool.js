@@ -25,7 +25,6 @@ ve.ui.MWMediaDialogTool.static.title =
 	OO.ui.deferMsg( 'visualeditor-dialogbutton-media-tooltip' );
 ve.ui.MWMediaDialogTool.static.modelClasses = [ ve.dm.MWBlockImageNode, ve.dm.MWInlineImageNode ];
 ve.ui.MWMediaDialogTool.static.commandName = 'media';
-ve.ui.MWMediaDialogTool.static.autoAddToCatchall = false;
 ve.ui.MWMediaDialogTool.static.autoAddToGroup = false;
 ve.ui.toolFactory.register( ve.ui.MWMediaDialogTool );
 

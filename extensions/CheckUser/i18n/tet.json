@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ankry",
+			"Chaduvari",
+			"MF-Warburg"
+		]
+	},
+	"checkuser": "Verifika uza-na'in",
+	"checkuserlog": "Lista checkuser",
+	"checkuser-contribs": "verifika diresaun IP uza-na'in nian",
+	"group-checkuser": "CheckUser",
+	"group-checkuser-member": "{{GENDER:$1|Ema ne'ebé bele halo CheckUser}}",
+	"right-checkuser": "verifika diresaun IP uza-na'in nian no informasaun seluk",
+	"grouppage-checkuser": "{{ns:project}}:CheckUser",
+	"checkuser-reason": "Motivu:",
+	"checkuser-target": "Diresaun IP ka naran uza-na'in:",
+	"checkuser-users": "Uza-na'in sira",
+	"checkuser-ips": "IP sira",
+	"checkuser-all": "hotu",
+	"checkuser-search": "Buka",
+	"checkuser-search-submit": "Buka"
+}

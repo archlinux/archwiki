@@ -21,12 +21,12 @@
 namespace MediaWiki\Tests\User;
 
 use InvalidArgumentException;
-use LogEntryBase;
 use LogicException;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Request\WebRequest;
@@ -504,7 +504,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$calledCount = 0;
 		$callback = function ( UserIdentity $callbackUser ) use ( $user, &$calledCount ) {
 			$this->assertTrue( $callbackUser->equals( $user ) );
-			$calledCount += 1;
+			$calledCount++;
 		};
 		$manager = $this->getManager( [], null, $callback );
 		$this->assertTrue( $manager->removeUserFromGroup( $user, 'test' ) );
@@ -583,49 +583,18 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'test', $memberships['test']->getGroup() );
 	}
 
-	public function provideGetUserAutopromoteEmailConfirmed() {
-		$successUserMock = $this->createNoOpMock(
-			User::class, [ 'getEmail', 'getEmailAuthenticationTimestamp', 'isTemp', 'assertWiki' ]
-		);
-		$successUserMock->method( 'assertWiki' )->willReturn( true );
-		$successUserMock->expects( $this->once() )
-			->method( 'getEmail' )
-			->willReturn( 'test@test.com' );
-		$successUserMock->expects( $this->once() )
-			->method( 'getEmailAuthenticationTimestamp' )
-			->willReturn( wfTimestampNow() );
+	public static function provideGetUserAutopromoteEmailConfirmed() {
 		yield 'Successful autopromote' => [
-			true, $successUserMock, [ 'test_autoconfirmed' ]
+			true, [ 'email' => 'test@test.com', 'timestamp' => wfTimestampNow() ], [ 'test_autoconfirmed' ]
 		];
-		$emailAuthMock = $this->createNoOpMock( User::class, [ 'getEmail', 'isTemp', 'assertWiki' ] );
-		$emailAuthMock->method( 'assertWiki' )->willReturn( true );
-		$emailAuthMock->expects( $this->once() )
-			->method( 'getEmail' )
-			->willReturn( 'test@test.com' );
 		yield 'wgEmailAuthentication is false' => [
-			false, $emailAuthMock, [ 'test_autoconfirmed' ]
+			false, [ 'email' => 'test@test.com' ], [ 'test_autoconfirmed' ]
 		];
-		$invalidEmailMock = $this->createNoOpMock( User::class, [ 'getEmail', 'isTemp', 'assertWiki' ] );
-		$invalidEmailMock->method( 'assertWiki' )->willReturn( true );
-		$invalidEmailMock
-			->expects( $this->once() )
-			->method( 'getEmail' )
-			->willReturn( 'INVALID!' );
 		yield 'Invalid email' => [
-			true, $invalidEmailMock, []
+			true, [ 'email' => 'INVALID!' ], []
 		];
-		$nullTimestampMock = $this->createNoOpMock(
-			User::class, [ 'getEmail', 'getEmailAuthenticationTimestamp', 'isTemp', 'assertWiki' ]
-		);
-		$nullTimestampMock->method( 'assertWiki' )->willReturn( true );
-		$nullTimestampMock->expects( $this->once() )
-			->method( 'getEmail' )
-			->willReturn( 'test@test.com' );
-		$nullTimestampMock->expects( $this->once() )
-			->method( 'getEmailAuthenticationTimestamp' )
-			->willReturn( null );
 		yield 'Invalid email auth timestamp' => [
-			true, $nullTimestampMock, []
+			true, [ 'email' => 'test@test.com', 'timestamp' => null ], []
 		];
 	}
 
@@ -633,15 +602,25 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideGetUserAutopromoteEmailConfirmed
 	 * @covers \MediaWiki\User\UserGroupManager::getUserAutopromoteGroups
 	 * @covers \MediaWiki\User\UserGroupManager::checkCondition
-	 * @param bool $emailAuthentication
-	 * @param User $user
-	 * @param array $expected
 	 */
 	public function testGetUserAutopromoteEmailConfirmed(
 		bool $emailAuthentication,
-		User $user,
+		array $userSpec,
 		array $expected
 	) {
+		$user = $this->createNoOpMock(
+			User::class, array_merge( [ 'getEmail', 'isTemp', 'assertWiki' ],
+				( array_key_exists( 'timestamp', $userSpec ) ? [ 'getEmailAuthenticationTimestamp' ] : [] ) )
+		);
+		$user->method( 'assertWiki' )->willReturn( true );
+		$user->expects( $this->once() )
+			->method( 'getEmail' )
+			->willReturn( $userSpec['email'] );
+		if ( array_key_exists( 'timestamp', $userSpec ) ) {
+			$user->expects( $this->once() )
+				->method( 'getEmailAuthenticationTimestamp' )
+				->willReturn( $userSpec['timestamp'] );
+		}
 		$manager = $this->getManager( [
 			MainConfigNames::Autopromote => [ 'test_autoconfirmed' => [ APCOND_EMAILCONFIRMED ] ],
 			MainConfigNames::EmailAuthentication => $emailAuthentication
@@ -926,7 +905,8 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( [], $manager->getUserAutopromoteGroups( $nonBlockedUser ) );
 		$blockedUser = $this->getTestUser( [ 'blocked' ] )->getUser();
 		$block = new DatabaseBlock();
-		$block->setTarget( $blockedUser );
+		$block->setTarget( $this->getServiceContainer()->getBlockTargetFactory()
+			->newUserBlockTarget( $blockedUser ) );
 		$block->setBlocker( $this->getTestSysop()->getUser() );
 		$block->isSitewide( true );
 		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
@@ -1205,6 +1185,83 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 					'5::newgroups' => [ 'autopromoteonce' ],
 				] )
 			] ] );
+	}
+
+	/**
+	 * @covers \MediaWiki\User\UserGroupManager::addUserToAutopromoteOnceGroups
+	 * @dataProvider provideAutopromoteOnceGroupsRecentChanges
+	 */
+	public function testAddUserToAutopromoteOnceGroupsRecentChanges( array $autoPromoteOnceGroups ) {
+		$user = $this->getTestUser()->getUser();
+
+		// Setup one-shot autopromote conditions for the groups we would like to trigger autopromotion into
+		$autoPromoteOnce = [];
+		foreach ( $autoPromoteOnceGroups as $groupName ) {
+			$autoPromoteOnce[$groupName] = [ APCOND_EDITCOUNT, 0 ];
+		}
+
+		$rcExcludedGroups = [ 'autopromoteonce-excluded' ];
+
+		$manager = $this->getManager( [
+			MainConfigNames::AutopromoteOnce => [
+				'EVENT' => $autoPromoteOnce
+			],
+			MainConfigNames::AutopromoteOnceLogInRC => true,
+			MainConfigNames::AutopromoteOnceRCExcludedGroups => $rcExcludedGroups
+		] );
+
+		// Add the test user to an unrelated group to verify autopromote RC exclusion ignores these.
+		$manager->addUserToGroup( $user, 'sysop' );
+		$preAutopromoteGroups = $manager->getUserGroups( $user );
+
+		foreach ( $autoPromoteOnceGroups as $groupName ) {
+			$this->assertNotContains( $groupName, $manager->getUserGroups( $user ) );
+		}
+
+		$manager->addUserToAutopromoteOnceGroups( $user, 'EVENT' );
+
+		foreach ( $autoPromoteOnceGroups as $groupName ) {
+			$this->assertContains( $groupName, $manager->getUserGroups( $user ) );
+		}
+
+		$logQueryBuilder = $this->newSelectQueryBuilder()
+			->select( [ 'log_type', 'log_action', 'log_params' ] )
+			->from( 'logging' )
+			->where( [ 'log_type' => 'rights' ] );
+
+		$logQueryBuilder->assertRowValue( [ 'rights',
+			'autopromote',
+			LogEntryBase::makeParamBlob( [
+				'4::oldgroups' => $preAutopromoteGroups,
+				'5::newgroups' => $manager->getUserGroups( $user ),
+			] )
+		] );
+
+		$logId = $logQueryBuilder
+			->clearFields()
+			->field( 'log_id' )
+			->fetchField();
+
+		if ( !array_diff( $autoPromoteOnceGroups, $rcExcludedGroups ) ) {
+			$this->newSelectQueryBuilder()
+				->select( [ 'rc_logid' ] )
+				->from( 'recentchanges' )
+				->where( [ 'rc_type' => RC_LOG ] )
+				->assertEmptyResult();
+			return;
+		}
+
+		$this->newSelectQueryBuilder()
+			->select( [ 'rc_logid' ] )
+			->from( 'recentchanges' )
+			->where( [ 'rc_type' => RC_LOG ] )
+			->assertFieldValue( $logId );
+	}
+
+	public static function provideAutopromoteOnceGroupsRecentChanges(): iterable {
+		yield 'autopromotion into excluded group' => [ [ 'autopromoteonce-excluded' ] ];
+		yield 'autopromotion into excluded and non-excluded group' => [ [ 'autopromoteonce', 'autopromoteonce-excluded' ] ];
+		yield 'autopromotion into non-excluded group' => [ [ 'autopromoteonce' ] ];
 	}
 
 	private const CHANGEABLE_GROUPS_TEST_CONFIG = [

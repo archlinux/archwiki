@@ -1,11 +1,9 @@
-@import 'mediawiki.mixins';
-
 /**
  * CSS for WikiEditor Toolbar jQuery plugin
  */
 
 .wikiEditor-ui-toolbar {
-	.vertical-gradient( #fff, #f1f7fb, 0, 32px );
+	background-image: linear-gradient( to bottom, #fff 0, #f1f7fb 32px );
 
 	.sections .section {
 		background-color: #f8f9fa;
@@ -55,7 +53,7 @@
 
 	&.tool-active {
 		border-color: rgba( 0, 0, 0, 0.2 );
-		.vertical-gradient( #f1f7fb, #fff );
+		background-image: linear-gradient( to bottom, #f1f7fb 0, #fff 100% );
 		box-shadow: inset 0 0.0875em 0.0875em 0 rgba( 0, 0, 0, 0.07 );
 	}
 }

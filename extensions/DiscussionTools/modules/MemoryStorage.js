@@ -5,19 +5,20 @@
  * (e.g. quota exceeded):
  *
  * - Duplicating their contents in memory, so that the storage can be relied on before the page has
- *   been reloaded.
+ *   been reloaded. This is used by the "Show N new messages" feature which reloads the reply widget
+ *   after refreshing the page contents.
  * - Storing all keys in a single underlying key, to make the stores are atomic: either all values
  *   are stored or none.
  *
  * This has two additional consequences which are convenient for our use case:
  *
  * - All keys share the same expiry time, removing the need to specify it repeatedly.
- * - When multiple processes try to write the same keys, all keys are overwritten, so that we don't
- *   have to worry about inconsistent data.
+ * - When multiple processes try to write the same keys (e.g. having the same comment open in
+ *   multiple tabs), all keys are overwritten, so that we don't have to worry about inconsistent data.
  *
  * @example
- * var sessionStorage = new MemoryStorage( mw.storage.session, 'myprefix' );
  * var localStorage = new MemoryStorage( mw.storage, 'myprefix' );
+ * var sessionStorage = new MemoryStorage( mw.storage.session, 'myprefix' );
  */
 class MemoryStorage {
 	/**

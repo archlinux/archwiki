@@ -5,10 +5,14 @@
 			"Ykhwong"
 		]
 	},
-	"apihelp-query+gadgetcategories-summary": "소도구 분류의 목록을 반환합니다.",
-	"apihelp-query+gadgetcategories-param-names": "검색할 분류 이름입니다.",
-	"apihelp-query+gadgetcategories-example-1": "기존의 소도구 분류 목록을 가져옵니다",
-	"apihelp-query+gadgetcategories-example-2": "\"foo\"와 \"bar\"라는 이름의 분류에 관한 모든 정보를 가져옵니다",
+	"apihelp-query+gadgetcategories-summary": "소도구 문단의 목록을 반환합니다.",
+	"apihelp-query+gadgetcategories-param-prop": "가져올 소도구 문단 정보:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "내부 문단 이름입니다.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "문단 제목입니다.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "문단 내 소도구 수입니다.",
+	"apihelp-query+gadgetcategories-param-names": "검색할 문단 이름입니다.",
+	"apihelp-query+gadgetcategories-example-1": "기존의 소도구 문단 목록을 가져옵니다",
+	"apihelp-query+gadgetcategories-example-2": "\"foo\"와 \"bar\"라는 이름의 문단에 관한 모든 정보를 가져옵니다",
 	"apihelp-query+gadgets-summary": "이 위키에 사용되는 소도구의 목록을 반환합니다.",
 	"apihelp-query+gadgets-param-prop": "가져올 소도구 정보:",
 	"apihelp-query+gadgets-paramvalue-prop-id": "내부 소도구 ID입니다.",

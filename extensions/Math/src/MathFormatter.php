@@ -54,7 +54,7 @@ class MathFormatter implements ValueFormatter {
 
 			// Intentionally fall back to MathML output in all other, possibly unknown cases.
 			default:
-				$renderer = new MathMathML( $tex );
+				$renderer = new MathNativeMML( $tex );
 
 				if ( $renderer->checkTeX() && $renderer->render() ) {
 					$html = $renderer->getHtmlOutput();

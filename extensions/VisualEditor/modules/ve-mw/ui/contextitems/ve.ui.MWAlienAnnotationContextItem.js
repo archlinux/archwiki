@@ -36,7 +36,7 @@ ve.ui.MWAlienAnnotationContextItem.static.modelClasses = [
 
 ve.ui.MWAlienAnnotationContextItem.prototype.getLabelMessage = function () {
 	const type = this.model.getAttribute( 'type' );
-	if ( type.indexOf( '/End', type.length - 4 ) !== -1 ) {
+	if ( type.includes( '/End', type.length - 4 ) ) {
 		return mw.message( 'visualeditor-annotations-default-end' ).text();
 	} else {
 		return mw.message( 'visualeditor-annotations-default-start' ).text();
@@ -45,7 +45,7 @@ ve.ui.MWAlienAnnotationContextItem.prototype.getLabelMessage = function () {
 
 ve.ui.MWAlienAnnotationContextItem.prototype.getDescriptionMessage = function () {
 	const type = this.model.getAttribute( 'type' );
-	if ( type.indexOf( '/End', type.length - 4 ) !== -1 ) {
+	if ( type.includes( '/End', type.length - 4 ) ) {
 		return '';
 	}
 	return mw.message( 'visualeditor-annotations-default-description' ).parseDom();

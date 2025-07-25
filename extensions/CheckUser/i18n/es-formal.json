@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"MarcoAurelio"
+		]
+	},
+	"checkuser-summary": "Esta herramienta explora los cambios recientes para obtener las direcciones IP utilizadas por un usuario, o para mostrar la información de ediciones y usuarios de una cierta dirección IP.\nSe pueden obtener los usuarios y las ediciones de una dirección IP cliente vía XFF añadiendo \"/xff\" al final de la dirección IP. Funciona con IPv4 (CIDR $1-32) e IPv6 (CIDR $2-128).\nNo se muestran más de 5000 ediciones por motivos de rendimiento.\nUtilícela de acuerdo con las políticas correspondientes.",
+	"checkuser-noreason": "Debe dar una razón para esta consulta.",
+	"checkuser-token-fail": "Fallo en la sesión. Por favor, inténtelo de nuevo."
+}

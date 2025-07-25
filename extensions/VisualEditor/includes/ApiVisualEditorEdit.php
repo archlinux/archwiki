@@ -26,15 +26,15 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Storage\PageEditStash;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use SkinFactory;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IDBAccessObject;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 
 class ApiVisualEditorEdit extends ApiBase {
 	use ApiParsoidTrait;
@@ -53,7 +53,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		ApiMain $main,
 		string $name,
 		HookContainer $hookContainer,
-		IBufferingStatsdDataFactory $statsdDataFactory,
+		StatsFactory $statsFactory,
 		PageEditStash $pageEditStash,
 		SkinFactory $skinFactory,
 		WikiPageFactory $wikiPageFactory,
@@ -62,7 +62,7 @@ class ApiVisualEditorEdit extends ApiBase {
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
-		$this->setStats( $statsdDataFactory );
+		$this->setStatsFactory( $statsFactory );
 		$this->hookRunner = new VisualEditorHookRunner( $hookContainer );
 		$this->pageEditStash = $pageEditStash;
 		$this->skinFactory = $skinFactory;
@@ -277,7 +277,9 @@ class ApiVisualEditorEdit extends ApiBase {
 		}
 
 		$status = $ok ? 'ok' : 'failed';
-		$this->getStats()->increment( "editstash.ve_serialization_cache.set_" . $status );
+		$this->getStatsFactory()->getCounter( 'VE_editstash_serialization_cache_set_total' )
+			->setLabel( 'status', $status )
+			->increment();
 
 		// Also parse and prepare the edit in case it might be saved later
 		$pageUpdater = $this->wikiPageFactory->newFromTitle( $title )->newPageUpdater( $this->getUser() );
@@ -288,7 +290,9 @@ class ApiVisualEditorEdit extends ApiBase {
 			$logger = LoggerFactory::getInstance( 'StashEdit' );
 			$logger->debug( "Cached parser output for VE content key '$key'." );
 		}
-		$this->getStats()->increment( "editstash.ve_cache_stores.$status" );
+		$this->getStatsFactory()->getCounter( 'VE_editstash_cache_store_total' )
+			->setLabel( 'status', $status )
+			->increment();
 
 		return $hash;
 	}
@@ -318,7 +322,9 @@ class ApiVisualEditorEdit extends ApiBase {
 		$value = $cache->get( $key );
 
 		$status = ( $value !== false ) ? 'hit' : 'miss';
-		$this->getStats()->increment( "editstash.ve_serialization_cache.get_$status" );
+		$this->getStatsFactory()->getCounter( 'VE_editstash_serialization_cache_get_total' )
+			->setLabel( 'status', $status )
+			->increment();
 
 		return $value;
 	}

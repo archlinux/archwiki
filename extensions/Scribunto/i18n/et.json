@@ -25,7 +25,7 @@
 	"scribunto-common-nosuchfunction": "Skriptitõrge: Funktsioon \"$2\" puudub.",
 	"scribunto-common-notafunction": "Skriptitõrge: \"$2\" pole funktsioon.",
 	"scribunto-common-backtrace": "Pinujälg:",
-	"scribunto-common-no-details": "Rohkem üksikasju pole saadaval.",
+	"scribunto-common-no-details": "Üksikasjad koodi asukoha kohta pole saadaval.",
 	"scribunto-lua-in-function": "funktsioonis \"$1\"",
 	"scribunto-lua-error-location": "Lua tõrge $1: $2.",
 	"scribunto-lua-error": "Lua tõrge: $2.",

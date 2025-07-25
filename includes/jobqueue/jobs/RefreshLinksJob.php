@@ -18,15 +18,22 @@
  * @file
  */
 
+namespace MediaWiki\JobQueue\Jobs;
+
+use MediaWiki\Actions\InfoAction;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
 use MediaWiki\Deferred\RefreshSecondaryDataUpdate;
+use MediaWiki\JobQueue\Job;
+use MediaWiki\JobQueue\Utils\BacklinkJobUtils;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageAssertionException;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\SlotRecord;
@@ -475,6 +482,10 @@ class RefreshLinksJob extends Job {
 		$statsCounter
 			->setLabel( 'status', 'cache_miss' )
 			->setLabel( 'html_changed', $htmlChanged )
+			->setLabel( 'has_async_content',
+				$output->getOutputFlag( ParserOutputFlags::HAS_ASYNC_CONTENT ) ? 'true' : 'false' )
+			->setLabel( 'async_not_ready',
+				$output->getOutputFlag( ParserOutputFlags::ASYNC_NOT_READY ) ? 'true' : 'false' )
 			->copyToStatsdAt( 'refreshlinks.parser_uncached' )
 			->increment();
 
@@ -569,7 +580,7 @@ class RefreshLinksJob extends Job {
 	private function canUseParserOutputFromCache(
 		ParserOutput $cachedOutput,
 		RevisionRecord $currentRevision
-	) {
+	): bool {
 		// As long as the cache rev ID matches the current rev ID and it reflects
 		// the job's triggering change, then it is usable.
 		return $cachedOutput->getCacheRevisionId() == $currentRevision->getId()
@@ -639,3 +650,6 @@ class RefreshLinksJob extends Job {
 		return 1; // one title
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RefreshLinksJob::class, 'RefreshLinksJob' );

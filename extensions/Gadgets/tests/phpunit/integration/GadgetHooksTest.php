@@ -5,6 +5,7 @@ use MediaWiki\Extension\Gadgets\Gadget;
 use MediaWiki\Extension\Gadgets\Hooks as GadgetHooks;
 use MediaWiki\Extension\Gadgets\StaticGadgetRepo;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 
 /**
@@ -20,7 +21,7 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 		$repo = new StaticGadgetRepo( [
 			'g1' => new Gadget( [ 'name' => 'g1', 'onByDefault' => true, 'pages' => [ 'test.css' ] ] ),
 		] );
-		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup(), null );
+		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup() );
 		$out = new OutputPage( RequestContext::getMain() );
 		$out->setTitle( Title::newMainPage() );
 		$skin = $this->createMock( Skin::class );
@@ -33,7 +34,7 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 		$repo = new StaticGadgetRepo( [
 			'g1' => new Gadget( [ 'name' => 'g1', 'pages' => [ 'test.js' ], 'resourceLoaded' => true ] ),
 		] );
-		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup(), null );
+		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup() );
 		$context = RequestContext::getMain();
 		$out = new OutputPage( $context );
 		$out->setTitle( Title::newMainPage() );
@@ -69,13 +70,13 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 		$repo = new StaticGadgetRepo( [
 			'foo' => new Gadget( [ 'name' => 'foo', 'pages' => [ 'foo.css' ] ] ),
 			'bar' => new Gadget( [ 'name' => 'bar', 'pages' => [ 'bar.css' ],
-				'category' => 'keep-section1' ] ),
+				'section' => 'keep-section1' ] ),
 			'baz' => new Gadget( [ 'name' => 'baz', 'pages' => [ 'baz.css' ], 'requiredRights' => [ 'delete' ],
-				'category' => 'remove-section' ] ),
+				'section' => 'remove-section' ] ),
 			'quux' => new Gadget( [ 'name' => 'quux', 'pages' => [ 'quux.css' ], 'requiredRights' => [ 'read' ],
-				'category' => 'keep-section2' ] ),
+				'section' => 'keep-section2' ] ),
 		] );
-		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup(), null );
+		$hooks = new GadgetHooks( $repo, $services->getUserOptionsLookup() );
 
 		$user = $this->getTestUser()->getUser();
 		$hooks->onGetPreferences( $user, $prefs );

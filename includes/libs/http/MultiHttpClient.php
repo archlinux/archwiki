@@ -27,6 +27,7 @@ use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use RuntimeException;
 
 /**
  * Class to handle multiple HTTP requests
@@ -77,7 +78,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	protected $usePipelining = false;
 	/** @var int */
 	protected $maxConnsPerHost = 50;
-	/** @var string|null proxy */
+	/** @var string|null */
 	protected $proxy;
 	/** @var string|false */
 	protected $localProxy = false;
@@ -87,7 +88,6 @@ class MultiHttpClient implements LoggerAwareInterface {
 	protected $userAgent = 'wikimedia/multi-http-client v1.1';
 	/** @var LoggerInterface */
 	protected $logger;
-	/** @var array */
 	protected array $headers = [];
 
 	// In PHP 7 due to https://bugs.php.net/bug.php?id=76480 the request/connect
@@ -160,10 +160,11 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - maxConnsPerHost : maximum number of concurrent connections (per host)
 	 *   - httpVersion     : One of 'v1.0', 'v1.1', 'v2' or 'v2.0'. Leave empty to use
 	 *                       PHP/curl's default
+	 * @param string $caller The method making this request, for attribution in logs
 	 * @return array Response array for request
 	 */
-	public function run( array $req, array $opts = [] ) {
-		return $this->runMulti( [ $req ], $opts )[0]['response'];
+	public function run( array $req, array $opts = [], string $caller = __METHOD__ ) {
+		return $this->runMulti( [ $req ], $opts, $caller )[0]['response'];
 	}
 
 	/**
@@ -194,10 +195,11 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - maxConnsPerHost : maximum number of concurrent connections (per host)
 	 *   - httpVersion     : One of 'v1.0', 'v1.1', 'v2' or 'v2.0'. Leave empty to use
 	 *                       PHP/curl's default
+	 * @param string $caller The method making these requests, for attribution in logs
 	 * @return array[] $reqs With response array populated for each
 	 * @throws \Exception
 	 */
-	public function runMulti( array $reqs, array $opts = [] ) {
+	public function runMulti( array $reqs, array $opts = [], string $caller = __METHOD__ ) {
 		$this->normalizeRequests( $reqs );
 		$opts += [ 'connTimeout' => $this->connTimeout, 'reqTimeout' => $this->reqTimeout ];
 
@@ -223,7 +225,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 				default:
 					$opts['httpVersion'] = CURL_HTTP_VERSION_NONE;
 			}
-			return $this->runMultiCurl( $reqs, $opts );
+			return $this->runMultiCurl( $reqs, $opts, $caller );
 		} else {
 			# TODO: Add handling for httpVersion option
 			return $this->runMultiHttp( $reqs, $opts );
@@ -254,11 +256,12 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - maxConnsPerHost : maximum number of concurrent connections (per host)
 	 *   - httpVersion:    : HTTP version to use
 	 * @phan-param array{connTimeout?:int,reqTimeout?:int,usePipelining?:bool,maxConnsPerHost?:int} $opts
+	 * @param string $caller The method making these requests, for attribution in logs
 	 * @return array $reqs With response array populated for each
 	 * @throws \Exception
 	 * @suppress PhanTypeInvalidDimOffset
 	 */
-	private function runMultiCurl( array $reqs, array $opts ) {
+	private function runMultiCurl( array $reqs, array $opts, string $caller = __METHOD__ ) {
 		$chm = $this->getCurlMulti( $opts );
 
 		$selectTimeout = $this->getSelectTimeout( $opts );
@@ -276,22 +279,40 @@ class MultiHttpClient implements LoggerAwareInterface {
 		$active = null; // handles still being processed
 		do {
 			// Do any available work...
-			do {
-				$mrc = curl_multi_exec( $chm, $active );
-				$info = curl_multi_info_read( $chm );
-				if ( $info !== false ) {
-					// Note: cast to integer even works on PHP 8.0+ despite the
-					// handle being an object not a resource, because CurlHandle
-					// has a backwards-compatible cast_object handler.
-					$infos[(int)$info['handle']] = $info;
-				}
-			} while ( $mrc == CURLM_CALL_MULTI_PERFORM );
-			// Wait (if possible) for available work...
-			if ( $active > 0 && $mrc == CURLM_OK && curl_multi_select( $chm, $selectTimeout ) == -1 ) {
-				// PHP bug 63411; https://curl.haxx.se/libcurl/c/curl_multi_fdset.html
-				usleep( 5000 ); // 5ms
+			$mrc = curl_multi_exec( $chm, $active );
+
+			if ( $mrc !== CURLM_OK ) {
+				$error = curl_multi_strerror( $mrc );
+				$this->logger->error( 'curl_multi_exec() failed: {error}', [
+					'error' => $error,
+					'exception' => new RuntimeException(),
+					'method' => $caller,
+				] );
+				break;
 			}
-		} while ( $active > 0 && $mrc == CURLM_OK );
+
+			// Wait (if possible) for available work...
+			if ( $active > 0 && curl_multi_select( $chm, $selectTimeout ) === -1 ) {
+				$errno = curl_multi_errno( $chm );
+				$error = curl_multi_strerror( $errno );
+				$this->logger->error( 'curl_multi_select() failed: {error}', [
+					'error' => $error,
+					'exception' => new RuntimeException(),
+					'method' => $caller,
+				] );
+			}
+		} while ( $active > 0 );
+
+		$queuedMessages = null;
+		do {
+			$info = curl_multi_info_read( $chm, $queuedMessages );
+			if ( $info !== false && $info['msg'] === CURLMSG_DONE ) {
+				// Note: cast to integer even works on PHP 8.0+ despite the
+				// handle being an object not a resource, because CurlHandle
+				// has a backwards-compatible cast_object handler.
+				$infos[(int)$info['handle']] = $info;
+			}
+		} while ( $queuedMessages > 0 );
 
 		// Remove all of the added cURL handles and check for errors...
 		foreach ( $reqs as $index => &$req ) {
@@ -306,8 +327,12 @@ class MultiHttpClient implements LoggerAwareInterface {
 					if ( function_exists( 'curl_strerror' ) ) {
 						$req['response']['error'] .= " " . curl_strerror( $errno );
 					}
-					$this->logger->warning( "Error fetching URL \"{$req['url']}\": " .
-						$req['response']['error'] );
+					$this->logger->error( 'Error fetching URL "{url}": {error}', [
+						'url' => $req['url'],
+						'error' => $req['response']['error'],
+						'exception' => new RuntimeException(),
+						'method' => $caller,
+					] );
 				} else {
 					$this->logger->debug(
 						"HTTP complete: {method} {url} code={response_code} size={size} " .
@@ -709,7 +734,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 		}
 	}
 
-	private function useReverseProxy( array &$req, $proxy ) {
+	private function useReverseProxy( array &$req, string $proxy ) {
 		$parsedProxy = parse_url( $proxy );
 		if ( $parsedProxy === false ) {
 			throw new InvalidArgumentException( "Invalid reverseProxy configured: $proxy" );
@@ -846,10 +871,8 @@ class MultiHttpClient implements LoggerAwareInterface {
 
 	/**
 	 * Register a logger
-	 *
-	 * @param LoggerInterface $logger
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 

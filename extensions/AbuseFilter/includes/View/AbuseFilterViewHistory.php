@@ -12,6 +12,7 @@ use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\User\UserNameUtils;
 use OOUI;
 
@@ -71,19 +72,23 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 		$out->enableOOUI();
 		$filter = $this->getRequest()->getIntOrNull( 'filter' ) ?: $this->filter;
 		$canViewPrivate = $this->afPermManager->canViewPrivateFilters( $this->getAuthority() );
-		$canViewProtectedVars = $this->afPermManager->canViewProtectedVariables( $this->getAuthority() );
 
 		if ( $filter ) {
+			$filterObj = null;
 			try {
 				$filterObj = $this->filterLookup->getFilter( $filter, false );
 			} catch ( FilterNotFoundException $_ ) {
 				$filter = null;
 			}
-			if ( isset( $filterObj ) && $filterObj->isHidden() && !$canViewPrivate ) {
+			if ( $filterObj && $filterObj->isHidden() && !$canViewPrivate ) {
 				$out->addWikiMsg( 'abusefilter-history-error-hidden' );
 				return;
 			}
-			if ( isset( $filterObj ) && $filterObj->isProtected() && !$canViewProtectedVars ) {
+			if (
+				$filterObj &&
+				$filterObj->isProtected() &&
+				!$this->afPermManager->canViewProtectedVariablesInFilter( $this->getAuthority(), $filterObj )->isGood()
+			) {
 				$out->addWikiMsg( 'abusefilter-history-error-protected' );
 				return;
 			}
@@ -165,12 +170,15 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 			$this->linkBatchFactory,
 			$this->filterLookup,
 			$this->specsFormatter,
+			$this->afPermManager,
 			$filter,
 			$user,
-			$canViewPrivate,
-			$canViewProtectedVars
+			$canViewPrivate
 		);
 
-		$out->addParserOutputContent( $pager->getFullOutput() );
+		$out->addParserOutputContent(
+			$pager->getFullOutput(),
+			ParserOptions::newFromContext( $this->getContext() )
+		);
 	}
 }

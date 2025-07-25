@@ -285,6 +285,42 @@ QUnit.test( 'expandLinearSelection (word)', ( assert ) => {
 			range: new ve.Range( 7 ),
 			expected: 'quick',
 			msg: 'zero-length range'
+		},
+		{
+			phrase: 'the quick brown fox',
+			range: new ve.Range( 4, 9 ),
+			expected: 'quick',
+			msg: 'simple word selection'
+		},
+		{
+			phrase: 'the quick brown fox',
+			range: new ve.Range( 3, 9 ),
+			expected: 'the quick',
+			msg: 'word and leading space'
+		},
+		{
+			phrase: 'the quick brown fox',
+			range: new ve.Range( 4, 10 ),
+			expected: 'quick brown',
+			msg: 'word and trailing space'
+		},
+		{
+			phrase: '香港曾經以人煙稀少嘅漁農村為主',
+			range: new ve.Range( 2, 4 ),
+			expected: '曾經',
+			msg: 'Chinese characters are not expanded'
+		},
+		{
+			phrase: '香港曾經以人煙稀少嘅漁農村為主',
+			range: new ve.Range( 8, 3 ),
+			expected: '經以人煙稀',
+			msg: 'backwards Chinese range'
+		},
+		{
+			phrase: '香港曾經以人煙稀少嘅漁農村為主',
+			range: new ve.Range( 1 ),
+			expected: '',
+			msg: 'Zero-length range in Chinese characters not expanded'
 		}
 	];
 
@@ -374,7 +410,7 @@ QUnit.test( 'delete', ( assert ) => {
 		{
 			range: new ve.Range( 1, 4 ),
 			directionAfterRemove: -1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 1, 3 );
 			},
 			expectedRange: new ve.Range( 1 ),
@@ -383,7 +419,7 @@ QUnit.test( 'delete', ( assert ) => {
 		{
 			range: new ve.Range( 1, 4 ),
 			directionAfterRemove: 1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 1, 3 );
 			},
 			expectedRange: new ve.Range( 1 ),
@@ -392,7 +428,7 @@ QUnit.test( 'delete', ( assert ) => {
 		{
 			range: new ve.Range( 39, 41 ),
 			directionAfterRemove: 1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 39, 2 );
 			},
 			expectedRange: new ve.Range( 39 ),
@@ -400,7 +436,7 @@ QUnit.test( 'delete', ( assert ) => {
 		},
 		{
 			range: new ve.Range( 39, 41 ),
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 39, 2 );
 			},
 			expectedRange: new ve.Range( 39 ),
@@ -409,7 +445,7 @@ QUnit.test( 'delete', ( assert ) => {
 		{
 			range: new ve.Range( 0, 63 ),
 			directionAfterRemove: -1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice(
 					0,
 					61,
@@ -424,7 +460,7 @@ QUnit.test( 'delete', ( assert ) => {
 			html: '<div rel="ve:Alien">Foo</div><p>Bar</p>',
 			range: new ve.Range( 0, 6 ),
 			directionAfterRemove: -1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice(
 					0,
 					7,
@@ -439,7 +475,7 @@ QUnit.test( 'delete', ( assert ) => {
 			html: '<div rel="ve:Alien">Foo</div><p>Bar</p><div rel="ve:Alien">Baz</div>',
 			range: new ve.Range( 0, 9 ),
 			directionAfterRemove: -1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice(
 					0,
 					9,
@@ -454,7 +490,7 @@ QUnit.test( 'delete', ( assert ) => {
 			html: '<p>foo</p><meta><p>bar</p>',
 			range: new ve.Range( 3, 9 ),
 			directionAfterRemove: -1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				const meta = data.slice( 5, 7 );
 				data.splice( 3, 6 );
 				data.splice( 0, 0, ...meta );
@@ -466,7 +502,7 @@ QUnit.test( 'delete', ( assert ) => {
 			html: '<h2>foo</h2><meta><p>bar</p>',
 			range: new ve.Range( 3, 9 ),
 			directionAfterRemove: -1,
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				const meta = data.slice( 5, 7 );
 				const ar = data.slice( 9, 11 );
 				data.splice( 5, 7 );

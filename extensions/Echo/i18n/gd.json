@@ -35,6 +35,7 @@
 	"echo-pref-tooltip-user-rights": "Cuir brath-naidheachd thugam nuair a dh'atharraicheas cuideigin ceadan a' chleachdaiche agam.",
 	"notifications": "Brathan-naidheachd",
 	"tooltip-pt-notifications-alert": "Na caismeachdan {{GENDER:|agad}}",
+	"tooltip-pt-notifications": "Na brathan-naidheachd agad",
 	"echo-specialpage": "Brathan-naidheachd",
 	"echo-none": "Chan eil brath-naidheachd agad.",
 	"notification-link-text-view-message": "Seall an teachdaireachd",

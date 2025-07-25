@@ -10,7 +10,6 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
-use Article;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiBlockInfoTrait;
 use MediaWiki\Api\ApiMain;
@@ -28,6 +27,7 @@ use MediaWiki\EditPage\TextboxBuilder;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
@@ -45,7 +45,7 @@ use MediaWiki\Watchlist\WatchlistManager;
 use MessageLocalizer;
 use Wikimedia\Assert\Assert;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 
 class ApiVisualEditor extends ApiBase {
 	use ApiBlockInfoTrait;
@@ -72,7 +72,7 @@ class ApiVisualEditor extends ApiBase {
 		UserOptionsLookup $userOptionsLookup,
 		WatchlistManager $watchlistManager,
 		ContentTransformer $contentTransformer,
-		IBufferingStatsdDataFactory $statsdDataFactory,
+		StatsFactory $statsFactory,
 		WikiPageFactory $wikiPageFactory,
 		IntroMessageBuilder $introMessageBuilder,
 		PreloadedContentBuilder $preloadedContentBuilder,
@@ -81,7 +81,7 @@ class ApiVisualEditor extends ApiBase {
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
-		$this->setStats( $statsdDataFactory );
+		$this->setStatsFactory( $statsFactory );
 		$this->revisionLookup = $revisionLookup;
 		$this->tempUserCreator = $tempUserCreator;
 		$this->userFactory = $userFactory;
@@ -435,20 +435,29 @@ class ApiVisualEditor extends ApiBase {
 						&& $this->tempUserCreator->isAutoCreateAction( 'edit' )
 						&& $permissionManager->userHasRight( $user, 'createaccount' );
 
+				// phpcs:disable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment
+				/** @phpcs-require-sorted-array */
 				$result = [
-					'result' => 'success',
-					'notices' => $notices,
-					'copyrightWarning' => $copyrightWarning,
+					// --------------------------------------------------------------------------------
+					// This should match ArticleTarget#getWikitextDataPromiseForDoc and ArticleTarget#storeDocState
+					// --------------------------------------------------------------------------------
+					'basetimestamp' => $baseTimestamp,
+					'blockinfo' => $blockinfo, // only used by MobileFrontend EditorGateway
+					'canEdit' => $canEdit,
 					'checkboxesDef' => $checkboxesDef,
 					'checkboxesMessages' => $checkboxesMessages,
-					'protectedClasses' => implode( ' ', $protectedClasses ),
-					'basetimestamp' => $baseTimestamp,
-					'starttimestamp' => wfTimestampNow(),
+					// 'content' => ..., // optional, see below
+					'copyrightWarning' => $copyrightWarning,
+					// 'etag' => ..., // optional, see below
+					'notices' => $notices,
 					'oldid' => $oldid,
-					'blockinfo' => $blockinfo,
+					// 'preloaded' => ..., // optional, see below
+					'protectedClasses' => implode( ' ', $protectedClasses ),
+					'result' => 'success', // probably unused?
+					'starttimestamp' => wfTimestampNow(),
 					'wouldautocreate' => $wouldautocreate,
-					'canEdit' => $canEdit,
 				];
+				// phpcs:enable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment
 				if ( isset( $restbaseHeaders['etag'] ) ) {
 					$result['etag'] = $restbaseHeaders['etag'];
 				}
@@ -498,7 +507,38 @@ class ApiVisualEditor extends ApiBase {
 				break;
 		}
 
+		if (
+			is_array( $result ) &&
+			isset( $result['content'] ) &&
+			is_string( $result['content'] )
+		) {
+			// Protect content from being corrupted by conversion to Unicode NFC.
+			// Without this, MediaWiki::Api::ApiResult::addValue can break html tags.
+			// See T382756
+			$result['content'] = $this->makeSafeHtmlForNfc( $result['content'] );
+		}
+
 		$this->getResult()->addValue( null, $this->getModuleName(), $result );
+	}
+
+	/**
+	 * Protect html-like content from being corrupted by conversion to Unicode NFC.
+	 *
+	 * Encodes U+0338 COMBINING LONG SOLIDUS OVERLAY as an html numeric character reference.
+	 * Otherwise, conversion to Unicode NFC can break html tags by converting
+	 * '>' + U+0338 to U+226F (NOT GREATER THAN), and
+	 * '<' + U+0338 to U+226E (NOT LESS THAN)
+	 *
+	 * Note we cannot just search for those two combinations, because sequences of combining
+	 * characters can get reordered, e.g. '>' + U+0339 + U+0338 will become U+226F + U+0339.
+	 * See https://unicode.org/reports/tr15/
+	 *
+	 * @param string $html
+	 * @return string
+	 */
+	public static function makeSafeHtmlForNfc( string $html ) {
+		$html = str_replace( "\u{0338}", '&#x338;', $html );
+		return $html;
 	}
 
 	/**

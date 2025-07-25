@@ -17,7 +17,16 @@
  *
  * @file
  */
+
+namespace MediaWiki\JobQueue;
+
+use MappedIterator;
+use MediaWiki\JobQueue\Exceptions\JobQueueConnectionError;
+use MediaWiki\JobQueue\Exceptions\JobQueueError;
 use MediaWiki\MediaWikiServices;
+use Profiler;
+use stdClass;
+use UnexpectedValueException;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\IDatabase;
@@ -26,6 +35,7 @@ use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Rdbms\ServerInfo;
+use Wikimedia\ScopedCallback;
 
 /**
  * Database-backed job queue storage.
@@ -61,7 +71,6 @@ class JobQueueDB extends JobQueue {
 	 *               If not specified, the primary DB cluster for the wiki will be used.
 	 *               This can be overridden with a custom cluster so that DB handles will
 	 *               be retrieved via LBFactory::getExternalLB() and getConnection().
-	 * @param array $params
 	 */
 	protected function __construct( array $params ) {
 		parent::__construct( $params );
@@ -206,11 +215,15 @@ class JobQueueDB extends JobQueue {
 	 * @see JobQueue::doBatchPush()
 	 * @param IJobSpecification[] $jobs
 	 * @param int $flags
-	 * @throws DBError|Exception
+	 * @throws DBError|\Exception
 	 * @return void
 	 */
 	protected function doBatchPush( array $jobs, $flags ) {
+		// Silence expectations related to getting a primary DB, as we have to get a primary DB to insert the job.
+		$transactionProfiler = Profiler::instance()->getTransactionProfiler();
+		$scope = $transactionProfiler->silenceForScope();
 		$dbw = $this->getPrimaryDB();
+		ScopedCallback::consume( $scope );
 		// In general, there will be two cases here:
 		// a) sqlite; DB connection is probably a regular round-aware handle.
 		// If the connection is busy with a transaction, then defer the job writes
@@ -222,9 +235,7 @@ class JobQueueDB extends JobQueue {
 		// errors that bubble up will rollback the main commit round.
 		$fname = __METHOD__;
 		$dbw->onTransactionPreCommitOrIdle(
-			function ( IDatabase $dbw ) use ( $jobs, $flags, $fname ) {
-				$this->doBatchPushInternal( $dbw, $jobs, $flags, $fname );
-			},
+			fn () => $this->doBatchPushInternal( $dbw, $jobs, $flags, $fname ),
 			$fname
 		);
 	}
@@ -280,6 +291,10 @@ class JobQueueDB extends JobQueue {
 			}
 			// Build the full list of job rows to insert
 			$rows = array_merge( $rowList, array_values( $rowSet ) );
+			// Silence expectations related to inserting to the job table, because we have to perform the inserts to
+			// track the job.
+			$transactionProfiler = Profiler::instance()->getTransactionProfiler();
+			$scope = $transactionProfiler->silenceForScope();
 			// Insert the job rows in chunks to avoid replica DB lag...
 			foreach ( array_chunk( $rows, 50 ) as $rowBatch ) {
 				$dbw->newInsertQueryBuilder()
@@ -287,6 +302,7 @@ class JobQueueDB extends JobQueue {
 					->rows( $rowBatch )
 					->caller( $method )->execute();
 			}
+			ScopedCallback::consume( $scope );
 			$this->incrStats( 'inserts', $this->type, count( $rows ) );
 			$this->incrStats( 'dupe_inserts', $this->type,
 				count( $rowSet ) + count( $rowList ) - count( $rows )
@@ -588,7 +604,7 @@ class JobQueueDB extends JobQueue {
 
 	/**
 	 * @see JobQueue::getAllQueuedJobs()
-	 * @return Iterator<RunnableJob>
+	 * @return \Iterator<RunnableJob>
 	 */
 	public function getAllQueuedJobs() {
 		return $this->getJobIterator( [ 'job_cmd' => $this->getType(), 'job_token' => '' ] );
@@ -596,7 +612,7 @@ class JobQueueDB extends JobQueue {
 
 	/**
 	 * @see JobQueue::getAllAcquiredJobs()
-	 * @return Iterator<RunnableJob>
+	 * @return \Iterator<RunnableJob>
 	 */
 	public function getAllAcquiredJobs() {
 		$dbr = $this->getReplicaDB();
@@ -605,7 +621,7 @@ class JobQueueDB extends JobQueue {
 
 	/**
 	 * @see JobQueue::getAllAbandonedJobs()
-	 * @return Iterator<RunnableJob>
+	 * @return \Iterator<RunnableJob>
 	 */
 	public function getAllAbandonedJobs() {
 		$dbr = $this->getReplicaDB();
@@ -618,7 +634,7 @@ class JobQueueDB extends JobQueue {
 
 	/**
 	 * @param array $conds Query conditions
-	 * @return Iterator<RunnableJob>
+	 * @return \Iterator<RunnableJob>
 	 */
 	protected function getJobIterator( array $conds ) {
 		$dbr = $this->getReplicaDB();
@@ -802,7 +818,7 @@ class JobQueueDB extends JobQueue {
 			'job_params' => self::makeBlob( $job->getParams() ),
 			// Additional job metadata
 			'job_timestamp' => $db->timestamp(),
-			'job_sha1' => Wikimedia\base_convert(
+			'job_sha1' => \Wikimedia\base_convert(
 				sha1( serialize( $job->getDeduplicationInfo() ) ),
 				16, 36, 31
 			),
@@ -953,3 +969,6 @@ class JobQueueDB extends JobQueue {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( JobQueueDB::class, 'JobQueueDB' );

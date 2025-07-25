@@ -62,6 +62,25 @@ ve.dm.MWReferenceNode.static.disallowedAnnotationTypes = [ 'link' ];
  */
 ve.dm.MWReferenceNode.static.listKeyRegex = /^(auto|literal)\/([\s\S]*)$/;
 
+/**
+ * @private
+ * @param {ve.dm.InternalList} internalList
+ * @param {string|null} [name]
+ * @return {string}
+ */
+ve.dm.MWReferenceNode.static.makeListKey = function ( internalList, name ) {
+	return name ?
+		'literal/' + name :
+		'auto/' + internalList.getNextUniqueNumber();
+};
+
+/**
+ * Transform parsoid HTML DOM to constructor parameters for VE reference nodes.
+ *
+ * @param {Node[]} domElements DOM elements to convert
+ * @param {ve.dm.Converter} converter
+ * @return {Object|Array|null} Data element or array of linear model data, or null to alienate
+ */
 ve.dm.MWReferenceNode.static.toDataElement = function ( domElements, converter ) {
 	function getReflistItemHtml( id ) {
 		const elem = converter.getHtmlDocument().getElementById( id );
@@ -77,25 +96,33 @@ ve.dm.MWReferenceNode.static.toDataElement = function ( domElements, converter )
 		'';
 	const refGroup = mwAttrs.group || '';
 	const listGroup = this.name + '/' + refGroup;
-	const listKey = !mwAttrs.name ?
-		'auto/' + converter.internalList.getNextUniqueNumber() :
-		'literal/' + mwAttrs.name;
-	const queueResult = converter.internalList.queueItemHtml( listGroup, listKey, body );
+	const listKey = this.makeListKey( converter.internalList, mwAttrs.name );
+	const { index, isNew } = converter.internalList.queueItemHtml( listGroup, listKey, body );
+
+	if ( converter.isFromClipboard() && !( mwAttrs.name || body ) ) {
+		// Pasted reference has neither a name nor body HTML, must have
+		// come from Parsoid read mode directly. (T389518)
+		return [];
+	}
 
 	const dataElement = {
 		type: this.name,
 		attributes: {
 			mw: mwData,
 			originalMw: mwDataJSON,
-			listIndex: queueResult.index,
+			listIndex: index,
 			listGroup: listGroup,
 			listKey: listKey,
 			refGroup: refGroup,
-			contentsUsed: body !== '' && queueResult.isNew
+			contentsUsed: body !== '' && isNew
 		}
 	};
-	if ( mwAttrs.extends && mw.config.get( 'wgCiteBookReferencing' ) ) {
-		dataElement.attributes.extendsRef = mwAttrs.extends ? 'literal/' + mwAttrs.extends : null;
+
+	if ( mwData.mainRef && mw.config.get( 'wgCiteSubReferencing' ) ) {
+		dataElement.attributes.extendsRef = this.makeListKey(
+			converter.internalList,
+			mwData.mainRef
+		);
 	}
 	if ( reflistItemId ) {
 		dataElement.attributes.refListItemId = reflistItemId;
@@ -113,83 +140,56 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 	mwData.name = 'ref';
 
 	if ( isForClipboard || converter.isForParser() ) {
-		let setContents = dataElement.attributes.contentsUsed;
-
 		// This call rebuilds the document tree if it isn't built already (e.g. on a
 		// document slice), so only use when necessary (i.e. not in preview mode)
 		const itemNode = converter.internalList.getItemNode( dataElement.attributes.listIndex );
 		const itemNodeRange = itemNode.getRange();
 
-		const keyedNodes = converter.internalList
+		const nodesWithSameKey = converter.internalList
 			.getNodeGroup( dataElement.attributes.listGroup )
-			.keyedNodes[ dataElement.attributes.listKey ];
+			.keyedNodes[ dataElement.attributes.listKey ] || [];
 
-		const extendsNodes = converter.internalList.getNodeGroup( dataElement.attributes.listGroup ).firstNodes.filter(
-			( node ) => node.element.attributes.extendsRef === dataElement.attributes.listKey
-		);
+		const name = this.generateName( dataElement, converter, nodesWithSameKey );
+		if ( name !== undefined ) {
+			ve.setProp( mwData, 'attrs', 'name', name );
+		}
 
-		let contentsAlreadySet = false;
-		if ( setContents ) {
-			// Check if a previous node has already set the content. If so, we don't overwrite this
-			// node's contents.
-			if ( keyedNodes ) {
-				for ( let i = 0; i < keyedNodes.length; i++ ) {
-					if (
-						ve.compare(
-							this.getInstanceHashObject( keyedNodes[ i ].element ),
-							this.getInstanceHashObject( dataElement )
-						)
-					) {
-						break;
-					}
-					if ( keyedNodes[ i ].element.attributes.contentsUsed ) {
-						contentsAlreadySet = true;
-						break;
-					}
-				}
-			}
-		} else {
-			// Check if any other nodes with this key provided content. If not
-			// then we attach the contents to the first reference with this key
+		if ( dataElement.attributes.extendsRef ) {
+			// this is always either the literal name that was already there or the
+			// auto generated literal from above
+			ve.setProp( mwData, 'mainRef', name );
 
-			// Check that this is the first reference with its key
-			if (
-				keyedNodes &&
-				ve.compare(
-					this.getInstanceHashObject( dataElement ),
-					this.getInstanceHashObject( keyedNodes[ 0 ].element )
-				)
-			) {
-				setContents = true;
-				// Check no other reference originally defined the contents
-				// As this is keyedNodes[0] we can start at 1
-				for ( let i = 1; i < keyedNodes.length; i++ ) {
-					if ( keyedNodes[ i ].element.attributes.contentsUsed ) {
-						setContents = false;
-						break;
-					}
-				}
+			if ( !ve.getProp( mwData, 'attrs', 'details' ) ) {
+				// make sure Parsoid recognizes the ref as a subref, the details content will be
+				// set by Parsoid from the bodyContent in body.html
+				ve.setProp( mwData, 'attrs', 'details', 'true' );
 			}
 		}
 
-		// Add reference contents to data-mw.
-		if ( setContents && !contentsAlreadySet ) {
-			const itemNodeWrapper = doc.createElement( 'div' );
-			const originalHtmlWrapper = doc.createElement( 'div' );
+		// TODO: Apply isBodyContentSet logic to isMainRefBodyWithDetails
+		const isBodyContentSet = this.isBodyContentSet( dataElement, nodesWithSameKey );
+		const shouldGetBodyContent = this.shouldGetBodyContent( dataElement, nodesWithSameKey );
+
+		// Add reference content to data-mw.
+		if ( shouldGetBodyContent && !isBodyContentSet ) {
+			// get the current content html of the node
+			const currentHtmlWrapper = doc.createElement( 'div' );
 			converter.getDomSubtreeFromData(
 				itemNode.getDocument().getFullData( itemNodeRange, 'roundTrip' ),
-				itemNodeWrapper
+				currentHtmlWrapper
 			);
-			// Returns '' if itemNodeWrapper is empty
-			const itemNodeHtml = itemNodeWrapper.innerHTML;
+
+			// get the original content html of the node
+			const originalHtmlWrapper = doc.createElement( 'div' );
 			const originalHtml = ve.getProp( mwData, 'body', 'html' ) ||
 				( ve.getProp( mwData, 'body', 'id' ) !== undefined && itemNode.getAttribute( 'originalHtml' ) ) ||
 				'';
 			originalHtmlWrapper.innerHTML = originalHtml;
-			// Only set body.html if itemNodeHtml and originalHtml are actually different,
+
+			// Only set body.html if current and original are actually different,
 			// or we are writing the clipboard for use in another VE instance
-			if ( isForClipboard || !originalHtmlWrapper.isEqualNode( itemNodeWrapper ) ) {
-				ve.setProp( mwData, 'body', 'html', itemNodeHtml );
+			if ( isForClipboard || !originalHtmlWrapper.isEqualNode( currentHtmlWrapper ) ) {
+				ve.setProp( mwData, 'body', 'html', currentHtmlWrapper.innerHTML );
 			}
 		}
 
@@ -197,47 +197,6 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 		// another VE document. T110479
 		if ( isForClipboard && itemNodeRange.isCollapsed() ) {
 			el.setAttribute( 'data-ve-ignore', 'true' );
-		}
-
-		// Set extends
-		if ( dataElement.attributes.extendsRef ) {
-			let extendsAttr;
-			const extendsKeyParts = dataElement.attributes.extendsRef.match( this.listKeyRegex );
-			if ( extendsKeyParts[ 1 ] === 'auto' ) {
-				// Allocate a unique list key, then strip the 'literal/'' prefix
-				extendsAttr = converter.internalList.getUniqueListKey(
-					dataElement.attributes.listGroup,
-					dataElement.attributes.extendsRef,
-					// Generate a name starting with ':' to distinguish it from normal names
-					'literal/:'
-				).slice( 'literal/'.length );
-			} else {
-				extendsAttr = extendsKeyParts[ 2 ];
-			}
-			ve.setProp( mwData, 'attrs', 'extends', extendsAttr );
-		}
-
-		// Generate name
-		let name;
-		const listKeyParts = dataElement.attributes.listKey.match( this.listKeyRegex );
-		if ( listKeyParts[ 1 ] === 'auto' ) {
-			// Only render a name if this key was reused
-			if ( keyedNodes.length > 1 || extendsNodes.length ) {
-				// Allocate a unique list key, then strip the 'literal/'' prefix
-				name = converter.internalList.getUniqueListKey(
-					dataElement.attributes.listGroup,
-					dataElement.attributes.listKey,
-					// Generate a name starting with ':' to distinguish it from normal names
-					'literal/:'
-				).slice( 'literal/'.length );
-			}
-		} else {
-			// Use literal name
-			name = listKeyParts[ 2 ];
-		}
-		// Set name
-		if ( name !== undefined ) {
-			ve.setProp( mwData, 'attrs', 'name', name );
 		}
 
 		// Set or clear group
@@ -261,19 +220,148 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 				converter.getStore().value( dataElement.originalDomElementsHash ), doc );
 		}
 	} else {
-		el.setAttribute( 'data-mw', JSON.stringify( mwData ) );
+		let stringifiedMwData = JSON.stringify( mwData );
+		if ( isForClipboard ) {
+			// T382858: Ensure data-mw attribute wouldn't be removed by DOMPurify on paste.
+			// DOMPurify forbids '</style' in the body of attributes to avoid mXSS
+			// attacks. Since we know it's JSON, we can encode it with JS unicode escape
+			// codes to let the sanitization code do its job without breaking nodes.
+			// JSON.parse( '"\\u003C/style"' ) returns '</style', so we don't need
+			// to modify the paste handler.
+			stringifiedMwData = stringifiedMwData.replace( /<\/style/g, '\\u003C/style' );
+		}
+		el.setAttribute( 'data-mw', stringifiedMwData );
 
 		// HTML for the external clipboard, it will be ignored by the converter
 		const $link = $( '<a>', doc )
 			.attr( 'data-mw-group', this.getGroup( dataElement ) || null );
 		$( el ).addClass( 'mw-ref reference' ).html(
-			$link.append(
-				$( '<span>', doc ).addClass( 'mw-reflink-text' ).html( this.getIndexLabel( dataElement, converter.internalList ) )
+			$link.append( $( '<span>', doc )
+				.addClass( 'mw-reflink-text' )
+				.html( this.getIndexLabel( dataElement, converter.internalList ) )
 			)
 		);
 	}
 
 	return [ el ];
+};
+
+/***
+ * Check if a previous node with the same key has already set the content.
+ * If so, we don't overwrite the content of this node.
+ *
+ * @static
+ * @param {Object} dataElement
+ * @param {ve.dm.Node[]} nodesWithSameKey
+ * @return {boolean}
+ * */
+ve.dm.MWReferenceNode.static.isBodyContentSet = function ( dataElement, nodesWithSameKey ) {
+	if ( !dataElement.attributes.contentsUsed ) {
+		return false;
+	}
+	for ( let i = 0; i < nodesWithSameKey.length; i++ ) {
+		// Check if the node is the same as the one we are checking
+		if (
+			ve.compare(
+				this.getInstanceHashObject( nodesWithSameKey[ i ].element ),
+				this.getInstanceHashObject( dataElement )
+			)
+		) {
+			break;
+		}
+
+		if ( nodesWithSameKey[ i ].element.attributes.contentsUsed ) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+/***
+ * Check if the reference should get the body content. Especially if there's no other reference
+ * that defined the body content with the key.
+ *
+ * @static
+ * @param {Object} dataElement
+ * @param {ve.dm.Node[]} nodesWithSameKey
+ * @return {boolean}
+ * */
+ve.dm.MWReferenceNode.static.shouldGetBodyContent = function ( dataElement, nodesWithSameKey ) {
+	// if the reference defined the body content, it should be stored there again
+	// a sub-ref should always get the body content, it's needed for the details attribute
+	if ( dataElement.attributes.extendsRef || dataElement.attributes.contentsUsed ) {
+		return true;
+	}
+
+	// only the first reference should get the body content
+	if ( !nodesWithSameKey ||
+		!ve.compare(
+			this.getInstanceHashObject( dataElement ),
+			this.getInstanceHashObject( nodesWithSameKey[ 0 ].element )
+		) ) {
+		return false;
+	}
+
+	// check if there's another reference that defined the body content
+	// As this is keyedNodes[0] we can start at 1
+	for ( let i = 1; i < nodesWithSameKey.length; i++ ) {
+		if ( nodesWithSameKey[ i ].element.attributes.contentsUsed ) {
+			return false;
+		}
+	}
+
+	return true;
+};
+
+/**
+ * Generate the name for a given reference
+ *
+ * @static
+ * @param {Object} dataElement
+ * @param {ve.dm.Converter} converter
+ * @param {ve.dm.Node[]} nodesWithSameKey
+ * @return {string|undefined} literal or auto generated name
+ */
+ve.dm.MWReferenceNode.static.generateName = function ( dataElement, converter, nodesWithSameKey ) {
+	const mainRefKey = dataElement.attributes.extendsRef || dataElement.attributes.listKey;
+	const keyParts = mainRefKey.match( this.listKeyRegex );
+
+	// use literal name
+	if ( keyParts[ 1 ] === 'literal' ) {
+		return keyParts[ 2 ];
+	}
+
+	// use auto generated name
+	if ( dataElement.attributes.extendsRef ||
+		nodesWithSameKey.length > 1 ||
+		this.hasSubRefs( dataElement, converter )
+	) {
+		return converter.internalList.getUniqueListKey(
+			dataElement.attributes.listGroup,
+			mainRefKey,
+			'literal/:'
+		).slice( 'literal/'.length );
+	}
+};
+
+/**
+ * @static
+ * @param {Object} dataElement
+ * @param {ve.dm.Converter} converter
+ * @return {boolean}
+ */
+ve.dm.MWReferenceNode.static.hasSubRefs = function ( dataElement, converter ) {
+	if ( dataElement.attributes.extendsRef ) {
+		return false;
+	}
+
+	const subRefs = converter.internalList.getNodeGroup( dataElement.attributes.listGroup )
+		.firstNodes.filter(
+			( node ) => node.element.attributes.extendsRef === dataElement.attributes.listKey
+		);
+
+	return subRefs.length > 0;
 };
 
 ve.dm.MWReferenceNode.static.remapInternalListIndexes = function (
@@ -285,14 +373,14 @@ ve.dm.MWReferenceNode.static.remapInternalListIndexes = function (
 	// Remap listKey if it was automatically generated
 	const listKeyParts = dataElement.attributes.listKey.match( this.listKeyRegex );
 	if ( listKeyParts[ 1 ] === 'auto' ) {
-		dataElement.attributes.listKey = 'auto/' + internalList.getNextUniqueNumber();
+		dataElement.attributes.listKey = this.makeListKey( internalList );
 	}
 };
 
 ve.dm.MWReferenceNode.static.remapInternalListKeys = function ( dataElement, internalList ) {
 	let suffix = '';
 	// Try name, name2, name3, ... until unique
-	while ( internalList.keys.indexOf( dataElement.attributes.listKey + suffix ) !== -1 ) {
+	while ( internalList.keys.includes( dataElement.attributes.listKey + suffix ) ) {
 		suffix = suffix ? suffix + 1 : 2;
 	}
 	if ( suffix ) {
@@ -406,7 +494,11 @@ ve.dm.MWReferenceNode.static.describeChange = function ( key, change ) {
 		} else if ( !change.to ) {
 			return ve.htmlMsg( 'cite-ve-changedesc-ref-group-from', this.wrapText( 'del', change.from ) );
 		} else {
-			return ve.htmlMsg( 'cite-ve-changedesc-ref-group-both', this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
+			return ve.htmlMsg(
+				'cite-ve-changedesc-ref-group-both',
+				this.wrapText( 'del', change.from ),
+				this.wrapText( 'ins', change.to )
+			);
 		}
 	}
 };
@@ -414,7 +506,7 @@ ve.dm.MWReferenceNode.static.describeChange = function ( key, change ) {
 /* Methods */
 
 /**
- * Don't allow reference nodes to be edited if we can't find their contents.
+ * Don't allow reference nodes to be edited if we can't find their content.
  *
  * @override
  * @see ve.dm.Model
@@ -467,7 +559,10 @@ ve.dm.MWReferenceNode.prototype.getIndexLabel = function () {
  * @return {string} Footnote number ready for rendering
  */
 ve.dm.MWReferenceNode.prototype.getIndexNumber = function () {
-	return this.constructor.static.findIndexNumber( this.element, this.getDocument().getInternalList() );
+	return this.constructor.static.findIndexNumber(
+		this.element,
+		this.getDocument().getInternalList()
+	);
 };
 
 /**
@@ -522,7 +617,7 @@ ve.dm.MWReferenceNode.prototype.removeFromInternalList = function () {
 	);
 };
 
-ve.dm.MWReferenceNode.prototype.onAttributeChange = function ( key, from, to ) {
+ve.dm.MWReferenceNode.prototype.onAttributeChange = function ( key, _from, to ) {
 	if ( key === 'placeholder' ) {
 		this.getDocument().getInternalList().markGroupAsChanged( this.registeredListGroup );
 	}

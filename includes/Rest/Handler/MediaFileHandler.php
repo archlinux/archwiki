@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use File;
-use MediaFileTrait;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
-use RepoGroup;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -17,7 +17,7 @@ use Wikimedia\ParamValidator\ParamValidator;
  * Handler class for media meta-data
  */
 class MediaFileHandler extends SimpleHandler {
-	use MediaFileTrait;
+	use \MediaWiki\FileRepo\File\MediaFileTrait;
 
 	private RepoGroup $repoGroup;
 	private PageLookup $pageLookup;
@@ -40,9 +40,6 @@ class MediaFileHandler extends SimpleHandler {
 		$this->pageLookup = $pageLookup;
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	private function getPage(): ?ExistingPageRecord {
 		if ( $this->page === false ) {
 			$this->page = $this->pageLookup->getExistingPageByText(
@@ -52,9 +49,6 @@ class MediaFileHandler extends SimpleHandler {
 		return $this->page;
 	}
 
-	/**
-	 * @return File|null
-	 */
 	private function getFile(): ?File {
 		if ( $this->file === false ) {
 			$page = $this->getPage();
@@ -134,6 +128,7 @@ class MediaFileHandler extends SimpleHandler {
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-media-file-title' ),
 			],
 		];
 	}
@@ -170,5 +165,9 @@ class MediaFileHandler extends SimpleHandler {
 	protected function hasRepresentation() {
 		$file = $this->getFile();
 		return $file && $file->exists();
+	}
+
+	public function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/MediaFile.json';
 	}
 }

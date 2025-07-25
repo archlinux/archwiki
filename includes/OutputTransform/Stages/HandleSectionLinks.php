@@ -13,9 +13,9 @@ use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\TitleFactory;
 use Psr\Log\LoggerInterface;
-use Skin;
 
 /**
  * Add anchors and other heading formatting, and replace the section link placeholders.
@@ -56,6 +56,18 @@ class HandleSectionLinks extends ContentTextTransformStage {
 		} else {
 			return preg_replace( self::EDITSECTION_REGEX, '', $text );
 		}
+	}
+
+	/**
+	 * Check if the heading has attributes that can only be added using HTML syntax.
+	 */
+	private function isHtmlHeading( array $attrs ): bool {
+		foreach ( $attrs as $name => $value ) {
+			if ( !Sanitizer::isReservedDataAttribute( $name ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private function replaceHeadings( string $text, array $options ): string {
@@ -116,12 +128,14 @@ class HandleSectionLinks extends ContentTextTransformStage {
 					}
 				}
 
-				// Do not add the wrapper if the heading has attributes generated from wikitext (T353489).
-				// In this case it's also guaranteed that there's no edit link, so we don't need wrappers.
-				foreach ( $attrs as $name => $value ) {
-					if ( !Sanitizer::isReservedDataAttribute( $name ) ) {
-						$wrapperType = 'none';
-					}
+				if ( $this->isHtmlHeading( $attrs ) ) {
+					// This is a <h#> tag with attributes added using HTML syntax.
+					// Mark it with a class to make them easier to distinguish (T68637).
+					Html::addClass( $attrs['class'], 'mw-html-heading' );
+
+					// Do not add the wrapper if the heading has attributes added using HTML syntax (T353489).
+					// In this case it's also guaranteed that there's no edit link, so we don't need wrappers.
+					$wrapperType = 'none';
 				}
 
 			} else {
@@ -155,6 +169,10 @@ class HandleSectionLinks extends ContentTextTransformStage {
 		$link, $fallbackAnchor, string $wrapperType
 	) {
 		$anchorEscaped = htmlspecialchars( $anchor, ENT_COMPAT );
+		$idAttr = " id=\"$anchorEscaped\"";
+		if ( isset( $attrs['id'] ) ) {
+			$idAttr = '';
+		}
 		$fallback = '';
 		if ( $fallbackAnchor !== false && $fallbackAnchor !== $anchor ) {
 			$fallbackAnchor = htmlspecialchars( $fallbackAnchor, ENT_COMPAT );
@@ -164,16 +182,16 @@ class HandleSectionLinks extends ContentTextTransformStage {
 		switch ( $wrapperType ) {
 			case 'legacy':
 				return "<h$level" . Html::expandAttributes( $attrs ) . ">"
-					. "$fallback<span class=\"mw-headline\" id=\"$anchorEscaped\">$html</span>"
+					. "$fallback<span class=\"mw-headline\"$idAttr>$html</span>"
 					. $link
 					. "</h$level>";
 			case 'mwheading':
 				return "<div class=\"mw-heading mw-heading$level\">"
-					. "<h$level id=\"$anchorEscaped\"" . Html::expandAttributes( $attrs ) . ">$fallback$html</h$level>"
+					. "<h$level$idAttr" . Html::expandAttributes( $attrs ) . ">$fallback$html</h$level>"
 					. $link
 					. "</div>";
 			case 'none':
-				return "<h$level id=\"$anchorEscaped\"" . Html::expandAttributes( $attrs ) . ">$fallback$html</h$level>"
+				return "<h$level$idAttr" . Html::expandAttributes( $attrs ) . ">$fallback$html</h$level>"
 					. $link;
 			default:
 				throw new LogicException( "Bad wrapper type: $wrapperType" );

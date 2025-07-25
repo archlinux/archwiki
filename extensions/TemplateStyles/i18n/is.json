@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Stefán Örvar Sigmundsson"
+		]
+	},
+	"templatestyles-stylesheet-error-category": "TemplateStyles-stílsíður með villur",
+	"templatestyles-stylesheet-error-category-desc": "TemplateStyles-stílsíðan hefur villu.",
+	"templatestyles-page-error-category": "Síður með TemplateStyles-villur",
+	"templatestyles-page-error-category-desc": "Það kom upp villa við meðhöndlun <code><nowiki><templatestyles/></nowiki></code>-merkis á síðunni."
+}

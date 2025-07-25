@@ -25,12 +25,8 @@ class DiscoveryHandler extends Handler {
 		MainConfigNames::Server,
 	];
 
-	/** @var ServiceOptions */
 	private ServiceOptions $options;
 
-	/**
-	 * @param Config $config
-	 */
 	public function __construct( Config $config ) {
 		$options = new ServiceOptions( self::CONSTRUCTOR_OPTIONS, $config );
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
@@ -73,7 +69,7 @@ class DiscoveryHandler extends Handler {
 		];
 	}
 
-	private function getInfoSpec() {
+	private function getInfoSpec(): array {
 		return [
 			'title' => $this->options->get( MainConfigNames::Sitename ),
 			'mediawiki' => MW_VERSION,
@@ -106,4 +102,7 @@ class DiscoveryHandler extends Handler {
 		return $module->getModuleDescription();
 	}
 
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'docs/rest/discovery-1.0.json';
+	}
 }

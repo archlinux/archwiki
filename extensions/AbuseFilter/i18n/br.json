@@ -466,6 +466,5 @@
 	"notification-link-text-show-filter": "Diskouez ar sil",
 	"right-abusefilter-modify-blocked-external-domains": "Krouiñ pe kemmañ pe domanioù diavaez a zo miret ouzh bezañ liammet war o zu",
 	"right-abusefilter-bypass-blocked-external-domains": "Korntroiañ domanioù diavaez stanket",
-	"abusefilter-blocked-domains-cannot-edit-directly": "Krouiñ pe kemmañ pe domanioù diavaez a zo miret ouzh bezañ liammet war o zu a rank bezañ graet dre [[Special:BlockedExternalDomains|ar bajenn a-ratozh]].",
-	"abusefilter-preference-protected-vars-view-agreement": "Gweredekaat diskuliañ chomlec’hioù IP ar c’hontoù berrbad er sil a-enep ar gwallimplij"
+	"abusefilter-blocked-domains-cannot-edit-directly": "Krouiñ pe kemmañ pe domanioù diavaez a zo miret ouzh bezañ liammet war o zu a rank bezañ graet dre [[Special:BlockedExternalDomains|ar bajenn a-ratozh]]."
 }

@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+
 .mw-templatedata-doc-params {
 	caption {
 		text-align: left;
@@ -14,12 +16,12 @@
 }
 
 .mw-templatedata-doc-param-alias {
-	color: #555; /* required to pass WCAG AAA */
+	color: @color-notice; /* required to pass WCAG AAA */
 }
 
 .mw-templatedata-doc-muted {
 	font-style: italic;
-	color: #555; /* required to pass WCAG AAA */
+	color: @color-notice; /* required to pass WCAG AAA */
 }
 
 .mw-templatedata-doc-param-status-required {
@@ -37,7 +39,7 @@
 }
 
 .mw-templateData-template-map-list-menu-panel {
-	border-right: 1px solid #c8ccd1;
+	border-right: @border-subtle;
 }
 
 .mw-templateData-template-remove-map-button {

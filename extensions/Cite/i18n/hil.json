@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Pare Mo",
-			"Exec8"
+			"Exec8",
+			"Pare Mo"
 		]
 	},
 	"cite-desc": "Nagadugang <code><ref></code> kag <code><references></code> nga mga tag para sa mga sitasyon",
@@ -12,6 +12,7 @@
 	"cite_error_ref_numeric_key": "Indi balido nga <code><ref></code> tag; ang ngalan indi mahimo nga isa ka simple nga integer. Maggamit sang nagalaragway nga titulo",
 	"cite_error_ref_no_key": "Ang nagabukas nga <code><ref></code> nga tag may diperensya ukon may malain nga ngalan",
 	"cite_error_ref_too_many_keys": "Indi balido nga parameter sa <code><ref></code> tag",
+	"cite_error_ref_follow_conflicts": "Ang <code><ref follow=\"…\"></code> nga tag nga amo ang pagpadayon sang isa ka nauna nga isa indi mahimo nga hingalanan sing indibiduwal",
 	"cite_error_ref_no_input": "Indi balido nga <code><ref></code> tag; ang mga ref nga wala sing ngalan dapat may kaundan",
 	"cite_error_references_duplicate_key": "Indi balido nga <code><ref></code> tag; ang ngalan \" $1 \" ginhatagan kahulugan sing madamo nga beses nga may lainlain nga kaundan",
 	"cite_error_references_invalid_parameters": "Indi balido nga parameter sa <code><references></code> tag",
@@ -25,6 +26,8 @@
 	"cite_error_empty_references_define": "<code><ref></code> tag nga may ngalan nga \" $1 \" nga ginhatagan kahulugan sa <code><references></code> nga grupo \" $2 \" wala sing kaundan.",
 	"cite-tracking-category-cite-error": "Mga pahina nga may mga sayop sa reperensya",
 	"cite-tracking-category-cite-error-desc": "Ang mga pahina sa sini nga kategorya may mga sayop sa paggamit sang mga tag sang reperensya.",
+	"cite-tracking-category-cite-diffing-error": "Mga pahina nga may mga sayop sa reperensya nga nagapukaw sang mga kalainan sa biswal",
+	"cite-tracking-category-cite-diffing-error-desc": "Ang mga pahina sa sini nga kategorya may mga sayop sa paggamit sang mga tag sang mga reperensya, kag ining mga sayop wala gina-render sa pareho nga paagi sa legacy parser kag sa Parsoid.",
 	"cite-reference-previews-reference": "Reperensya",
 	"cite-reference-previews-book": "Reperensya sa libro",
 	"cite-reference-previews-journal": "Reperensya sa journal",
@@ -32,6 +35,10 @@
 	"cite-reference-previews-note": "Nasambit",
 	"cite-reference-previews-web": "Reperensya sa web",
 	"cite-reference-previews-collapsible-placeholder": "Ini nga reperensya nagalakip sang isa ka numero nga indi nagakaigo sa preview.",
+	"cite-reference-previews-gadget-conflict-info-navpopups": "Gin-enable mo ang [[ $1 |Navigation popups]] nga gadget, gani indi mo makita ang mga preview nga ginhatag sang sini nga feature. Depende sa imo wiki, ang gadget mahimo nga may gamay nga lain nga ngalan. Kon padayon ka nga nagaeksperyensya sang mga isyu, palihog repasuha ang imo mga gadyet kag mga script sang user, lakip ang mga pangkalibutanon.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "Gin-enable mo ang [[$1|Reference Tooltips]] nga gadget, gani indi mo makita ang mga preview sang reperensya apang makita mo gihapon ang mga preview sang pahina. Depende sa imo wiki, ang gadget mahimo nga may gamay nga lain nga ngalan. Kon padayon ka nga nagaeksperyensya sang mga isyu, palihog repasuha ang imo mga gadyet kag mga script sang user, lakip ang mga pangkalibutanon.",
+	"cite-reference-previews-gadget-conflict-info-navpopups-reftooltips": "May yara ka sang [[ $1 |Navigation popups]] kag [[ $1 |Reference Tooltips]] nga mga gadget nga gin-enable, gani indi mo makita ang mga preview nga ginhatag sang sini nga feature. Depende sa imo wiki, ang mga gadyet mahimo nga may gamay nga lainlain nga mga ngalan. Kon padayon ka nga nagaeksperyensya sang mga isyu, palihog repasuha ang imo mga gadyet kag mga script sang user, lakip ang mga pangkalibutanon.",
+	"cite-reference-previews-preference-label": "I-enable ang mga preview sang reperensya (magkuha sang madasig nga mga preview sang isa ka reperensya samtang nagabasa sang isa ka pahina)",
 	"cite_references_link_accessibility_label": "Lumpat pataas",
 	"cite_references_link_many_accessibility_label": "Maglukso sa:",
 	"cite_references_link_accessibility_back_label": "Maglukso pabalik sa ibabaw",
@@ -47,5 +54,16 @@
 	"cite-wikieditor-help-content-reference-example-text1": "Teksto sang pahina. $1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Link text], dugang nga teksto.",
 	"cite-wikieditor-help-content-reference-example-text3": "[$1 Link text]",
-	"cite-wikieditor-help-content-reference-example-extra-details": "Dugang nga mga detalye"
+	"cite-wikieditor-help-content-reference-example-extra-details": "Dugang nga mga detalye",
+	"communityconfiguration-cite-title": "Cite",
+	"communityconfiguration-cite-description": "Ipasadya ang pormat kag hitsura sang mga reperensya.",
+	"cite-configuration-title": "Cite configuration",
+	"cite-configuration-info": "Ini nga mga setting nagaapektar sa tanan nga mga pahina nga nagagamit sang Cite. Ang mga administrador lang ang makabag-o sini nga mga setting.",
+	"cite-configuration-backlink-title": "Mga setting sang backlink",
+	"cite-configuration-backlink-description": "Ang mga backlink makita sa listahan sang reperensya kag nagatudlo pabalik sa mga footnote sa pahina. Kon ang isa ka reperensya ginagamit sing kapin sa isa ka beses, ang mga backlink sini ginanumerohan. Ang pag-configure nagapahanugot sang isa ka kinabatasan nga alpabeto nga gamiton para sa sini nga katuyuan.",
+	"cite-configuration-backlink-alpha-suggestion": "Ang Cite nakatukib sang alpabeto para sa lenguahe sang imo wiki. Kon luyag mo ini gamiton, palihog kopya kag i-paste ang teksto sa idalom bilang basehan para sa imo mga backlink markers. Hilway ka sa pag-edit ukon pag-areglo liwat sang pagkasunod-sunod.",
+	"cite-configuration-backlink-marker-label": "Backlink symbol set",
+	"cite-configuration-backlink-marker-description": "Ang mga karakter sa idalom pagagamiton para sa mga backlink sa imo wiki.",
+	"cite-configuration-backlink-marker-help": "Isulod ang imo pinasahi nga set sang karakter, nga may espasyo sa tunga sang tagsa ka karakter. Siguraduhon nga ang suludlan nagaunod sang XX nga mga karakter.",
+	"cite-configuration-submit": "I-save ang mga pagbag-o"
 }

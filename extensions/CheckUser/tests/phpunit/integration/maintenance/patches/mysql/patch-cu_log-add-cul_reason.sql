@@ -1,0 +1,2 @@
+ALTER TABLE  /*_*/cu_log
+ADD  cul_reason VARBINARY(255) DEFAULT '' NOT NULL;

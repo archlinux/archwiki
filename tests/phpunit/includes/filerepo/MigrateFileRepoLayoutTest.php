@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\WikiMap\WikiMap;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
@@ -52,7 +54,7 @@ class MigrateFileRepoLayoutTest extends MediaWikiIntegrationTestCase {
 				new FakeResultWrapper( [] ), // image
 				new FakeResultWrapper( [] ) // filearchive
 			);
-		$dbMock->method( 'newSelectQueryBuilder' )->willReturnCallback( fn () => new SelectQueryBuilder( $dbMock ) );
+		$dbMock->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $dbMock ) );
 
 		$repoMock = $this->getMockBuilder( LocalRepo::class )
 			->onlyMethods( [ 'getPrimaryDB', 'getReplicaDB' ] )

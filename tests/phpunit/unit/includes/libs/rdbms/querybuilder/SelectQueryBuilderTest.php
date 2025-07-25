@@ -16,11 +16,8 @@ use Wikimedia\TestingAccessWrapper;
  */
 class SelectQueryBuilderTest extends MediaWikiUnitTestCase {
 
-	/** @var DatabaseTestHelper */
-	private $db;
-
-	/** @var SelectQueryBuilder */
-	private $sqb;
+	private DatabaseTestHelper $db;
+	private SelectQueryBuilder $sqb;
 
 	protected function setUp(): void {
 		$this->db = new DatabaseTestHelper( __CLASS__ . '::' . $this->getName() );
@@ -125,6 +122,30 @@ class SelectQueryBuilderTest extends MediaWikiUnitTestCase {
 			->useIndex( [ 'a' => 'ia' ] )
 			->fields( [ 'a', 'b' ] );
 		$this->assertSQL( 'SELECT a,b FROM b a FORCE INDEX (ia),c FORCE INDEX (ic)' );
+	}
+
+	public function testFieldsRepeating() {
+		$this->sqb
+			->table( 't' )
+			->field( 'f' )
+			->field( 'f' );
+		$this->assertSQL( 'SELECT f FROM t' );
+	}
+
+	public function testFieldsRepeatingAlias() {
+		$this->sqb
+			->table( 't' )
+			->field( 'f', 'f' )
+			->field( 'f', 'f' );
+		$this->assertSQL( 'SELECT f FROM t' );
+	}
+
+	public function testFieldsConflictingAlias() {
+		$this->expectException( LogicException::class );
+		$this->sqb
+			->table( 't' )
+			->field( 'x', 'f' )
+			->field( 'y', 'f' );
 	}
 
 	public function testRawTables() {

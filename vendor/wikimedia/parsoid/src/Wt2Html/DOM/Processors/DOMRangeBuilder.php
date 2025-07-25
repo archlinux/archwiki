@@ -78,6 +78,9 @@ class DOMRangeBuilder {
 	/** @var array<string|CompoundTemplateInfo>[] */
 	private $compoundTpls = [];
 
+	/** Are we generating spec 3.x HTML for parser functions */
+	private bool $v3PFOutput;
+
 	/** @var string */
 	protected $traceType;
 
@@ -89,6 +92,10 @@ class DOMRangeBuilder {
 		$this->env = $frame->getEnv();
 		$this->nodeRanges = new SplObjectStorage;
 		$this->traceType = "tplwrap";
+		// @phan-suppress-next-line PhanDeprecatedFunction
+		$this->v3PFOutput = (bool)$this->env->getSiteConfig()->getMWConfigValue(
+			'ParsoidExperimentalParserFunctionOutput'
+		);
 	}
 
 	protected function updateDSRForFirstRangeNode( Element $target, Element $source ): void {
@@ -99,7 +106,8 @@ class DOMRangeBuilder {
 		// template handler, all computed dsr values for template content
 		// is always inferred from top-level content values and is safe.
 		// So, do not overwrite a bigger end-dsr value.
-		if ( isset( $srcDP->dsr->end ) && isset( $tgtDP->dsr->end ) &&
+		if ( isset( $srcDP->dsr ) && $srcDP->dsr->end !== null &&
+			isset( $tgtDP->dsr ) && $tgtDP->dsr->end !== null &&
 			$tgtDP->dsr->end > $srcDP->dsr->end
 		) {
 			$tgtDP->dsr->start = $srcDP->dsr->start ?? null;
@@ -279,8 +287,8 @@ class DOMRangeBuilder {
 			$range->flipped = true;
 		}
 
-		$this->env->log(
-			"trace/{$this->traceType}/findranges",
+		$this->env->trace(
+			"{$this->traceType}/findranges",
 			static function () use ( &$range ) {
 				$msg = '';
 				$dp1 = DOMDataUtils::getDataParsoid( $range->start );
@@ -577,7 +585,7 @@ class DOMRangeBuilder {
 
 			$this->verifyTplInfoExpectation( $templateInfo, $tmp );
 
-			$this->env->log( "trace/{$this->traceType}/merge", static function () use ( &$DOMDataUtils, &$r ) {
+			$this->env->trace( "{$this->traceType}/merge", static function () use ( &$DOMDataUtils, &$r ) {
 				$msg = '';
 				$dp1 = DOMDataUtils::getDataParsoid( $r->start );
 				$dp2 = DOMDataUtils::getDataParsoid( $r->end );
@@ -605,7 +613,7 @@ class DOMRangeBuilder {
 				$subsumedRanges[$r->id] ?? null
 			);
 			if ( $enclosingRangeId ) {
-				$this->env->log( "trace/{$this->traceType}/merge", '--nested in ', $enclosingRangeId, '--' );
+				$this->env->trace( "{$this->traceType}/merge", '--nested in ', $enclosingRangeId, '--' );
 
 				// Nested -- ignore r
 				$startTagToStrip = $r->startElem;
@@ -619,7 +627,7 @@ class DOMRangeBuilder {
 				// In the common case, in overlapping scenarios, r.start is
 				// identical to prev.end. However, in fostered content scenarios,
 				// there can true overlap of the ranges.
-				$this->env->log( "trace/{$this->traceType}/merge", '--overlapped--' );
+				$this->env->trace( "{$this->traceType}/merge", '--overlapped--' );
 
 				// See comment above, where `subsumedRanges` is defined.
 				$subsumedRanges[$r->id] = $prev->id;
@@ -654,7 +662,7 @@ class DOMRangeBuilder {
 					$this->recordTemplateInfo( $prev->id, $r, $templateInfo );
 				}
 			} else {
-				$this->env->log( "trace/{$this->traceType}/merge", '--normal--' );
+				$this->env->trace( "{$this->traceType}/merge", '--normal--' );
 
 				// Default -- no overlap
 				// Emit the merged range
@@ -958,17 +966,28 @@ class DOMRangeBuilder {
 						// to other transclusions. Should match the index of
 						// the corresponding private metadata in $templateInfos.
 						$a->info->i = $infoIndex++;
-						$a->info->type = 'template';
 						if ( $a->isParam ) {
 							$a->info->type = 'templatearg';
 						} elseif ( $a->info->func ) {
-							$a->info->type = 'parserfunction';
+							// type might be initialized to v3parserfunction
+							// already
+							if ( !$a->info->type ) {
+								$a->info->type = $this->v3PFOutput ?
+									'v3parserfunction' : 'parserfunction';
+							}
+						} else {
+							$a->info->type = 'template';
 						}
 						$parts[] = $a->info;
 						// FIXME: we throw away the array keys and rebuild them
 						// again in WikitextSerializer
 						$pi[] = array_values( $a->info->paramInfos );
 					}
+				}
+
+				if ( !is_string( $parts[0] ) && $parts[0]->type === 'v3parserfunction' ) {
+					$key = $parts[0]->func;
+					DOMUtils::addTypeOf( $encapTgt, 'mw:ParserFunction/' . $key, false );
 				}
 
 				// Set up dsr->start, dsr->end, and data-mw on the target node
@@ -1203,8 +1222,8 @@ class DOMRangeBuilder {
 							if ( $tbl && DOMCompat::nodeName( $tbl ) === 'table' && !empty( $dp->fostered ) ) {
 								'@phan-var Element $tbl';  /** @var Element $tbl */
 								$tblDP = DOMDataUtils::getDataParsoid( $tbl );
-								if ( isset( $dp->tsr->start ) && $dp->tsr->start !== null &&
-									isset( $tblDP->dsr->start ) && $tblDP->dsr->start === null
+								if ( isset( $dp->tsr ) && $dp->tsr->start !== null && $dp->tsr->start !== null &&
+									isset( $tblDP->dsr ) && $tblDP->dsr->start !== null && $tblDP->dsr->start === null
 								) {
 									$tblDP->dsr->start = $dp->tsr->start;
 								}

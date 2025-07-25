@@ -75,8 +75,35 @@ ve.ce.TableCellNode.prototype.initialize = function () {
 		this.$element.attr( 'colspan', colspan );
 	}
 
+	ve.ce.TableCellNode.static.updateStyles( this.$element, this.model );
+
 	// Add tooltip
 	this.$element.attr( 'title', ve.msg( 'visualeditor-tablecell-tooltip' ) );
+};
+
+/**
+ * Update the DOM element styles from the data model.
+ *
+ * @param {HTMLElement} $element DOM element
+ * @param {ve.dm.TableCellNode|ve.dm.TableRowNode} model Data model
+ */
+ve.ce.TableCellNode.static.updateStyles = function ( $element, model ) {
+	const align = model.getAttribute( 'align' );
+	const valign = model.getAttribute( 'valign' );
+	const textAlign = model.getAttribute( 'textAlign' );
+	const verticalAlign = model.getAttribute( 'verticalAlign' );
+	if ( align ) {
+		$element.attr( 'align', align );
+	}
+	if ( valign ) {
+		$element.attr( 'valign', valign );
+	}
+	if ( textAlign ) {
+		$element.css( 'textAlign', textAlign );
+	}
+	if ( verticalAlign ) {
+		$element.css( 'verticalAlign', verticalAlign );
+	}
 };
 
 /**

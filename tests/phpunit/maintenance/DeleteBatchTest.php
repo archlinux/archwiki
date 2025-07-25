@@ -3,8 +3,8 @@
 namespace MediaWiki\Tests\Maintenance;
 
 use DeleteBatch;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
-use WikiPage;
 
 /**
  * @covers \DeleteBatch
@@ -50,8 +50,9 @@ class DeleteBatchTest extends MaintenanceBaseTestCase {
 		$fileContents = '';
 		$expectedOutputRegex = '/';
 		foreach ( $existingPages as $page ) {
-			$fileContents .= $page->getTitle()->getPrefixedText() . PHP_EOL;
-			$expectedOutputRegex .= ".*Deleted!\n";
+			$text = $page->getTitle()->getPrefixedText();
+			$fileContents .= $text . PHP_EOL;
+			$expectedOutputRegex .= ".*Deleted $text!\n";
 		}
 		$this->expectOutputRegex( $expectedOutputRegex . '/' );
 		$this->commonTestExecute( [], $fileContents, $existingPages );
@@ -66,8 +67,9 @@ class DeleteBatchTest extends MaintenanceBaseTestCase {
 		$fileContents = '';
 		$expectedOutputRegex = '/';
 		foreach ( $existingPages as $page ) {
-			$fileContents .= $page->getId() . PHP_EOL;
-			$expectedOutputRegex .= ".*Deleted!\n";
+			$pageId = $page->getId();
+			$fileContents .= $pageId . PHP_EOL;
+			$expectedOutputRegex .= ".*Deleted $pageId!\n";
 		}
 		$this->expectOutputRegex( $expectedOutputRegex . '/' );
 		$this->commonTestExecute( [ 'by-id' => 1 ], $fileContents, $existingPages );

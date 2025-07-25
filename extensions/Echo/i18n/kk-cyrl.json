@@ -44,6 +44,7 @@
 	"echo-pref-tooltip-emailuser": "Маған электронды хат жібергенде маған ескерт.",
 	"notifications": "Хабарландырулар",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Сіздегі}} дабылдар",
+	"tooltip-pt-notifications": "Сіздегі хабарландырулар",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Жаңа қатысушылар",
 	"echo-specialpage": "Хабарландырулар",
 	"echo-specialpage-pagination-numnotifications": "{{PLURAL:$1|$1 ескертпе|$1 ескертпе}}",

@@ -5,16 +5,13 @@ namespace Wikimedia\Parsoid\NodeData;
 
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Tokens\SourceRange;
+use Wikimedia\Parsoid\Utils\Utils;
 
 /**
  * A class for temporary node-related data, stored in DataParsoid->tmp
  *
  * We use undeclared properties to reduce memory usage, since there are
  * typically very many instances of this class.
- *
- * An associative array with keys "key" and "params", set on span typeof=mw:I18n
- * elements to carry wfMessage() parameters.
- * @property array|null $i18n
  *
  * The original DSR for a quote (b/i) element prior to its adjustment by ComputeDSR.
  * @property DomSourceRange|null $origDSR
@@ -25,21 +22,21 @@ use Wikimedia\Parsoid\Tokens\SourceRange;
  * This is set on h1-h6 tokens to track section numbers.
  * @property int|null $headingIndex
  *
- * This is an array of key-value pairs [[k,v], [k,v]] set by AttributeExpander
- * on template tokens. It filters through to data-mw attribs.
- * @property array|null $templatedAttribs
- *
  * Information about a template invocation
  * @property TemplateInfo|null $tplarginfo
  *
  * The TSR of the end tag
  * @property SourceRange|null $endTSR
  *
- * Used to shuttle tokens to the end of a stage in the TTM
+ * Used to shuttle tokens to the end of a stage in the TokenHandlerPipeline
  * @property array|null $shuttleTokens
  *
  * Section data associated with a heading
- * @property array|null $section
+ * @property ?array{line:string,linkAnchor:string} $section
+ *
+ * For td/th tokens, wikitext source for attributes
+ * This is needed to reparse this as content when tokenization is incorrect
+ * @property string|null $attrSrc
  */
 #[\AllowDynamicProperties]
 class TempData {
@@ -72,62 +69,72 @@ class TempData {
 	public const FAILED_REPARSE = 1 << 3;
 
 	/**
+	 * This cell is a merge of two cells in TableFixups.
+	 * For now, this prevents additional merges.
+	 */
+	public const MERGED_TABLE_CELL = 1 << 4;
+
+	/**
+	 * Indicates a cell is from the start of template source.
+	 * Used in TableFixups.
+	 */
+	public const AT_SRC_START = 1 << 5;
+
+	/**
 	 * This is set on span tags that are created by PipelineUtils::addSpanWrappers().
 	 */
-	public const WRAPPER = 1 << 4;
+	public const WRAPPER = 1 << 6;
 
 	/**
 	 * This is set on wrapper tokens created by PipelineUtils::encapsulateExpansionHTML()
 	 * to propagate the setDSR option to that function.
 	 */
-	public const SET_DSR = 1 << 5;
-
-	/**
-	 * This is set on wrapper tokens created by PipelineUtils::encapsulateExpansionHTML()
-	 * to propagate the fromCache option to that function.
-	 */
-	public const FROM_CACHE = 1 << 6;
+	public const SET_DSR = 1 << 7;
 
 	/**
 	 * A flag private to Linter, used to suppress duplicate messages.
 	 */
-	public const LINTED = 1 << 7;
+	public const LINTED = 1 << 8;
 
 	/**
 	 * A flag private to Linter to help it traverse a DOM
 	 */
-	public const PROCESSED_TIDY_WS_BUG = 1 << 8;
+	public const PROCESSED_TIDY_WS_BUG = 1 << 9;
 
 	/**
 	 * This is set on all elements that originate in a template. It controls
 	 * the insertion of mw:Transclusion markers in MarkFosteredContent.
 	 */
-	public const IN_TRANSCLUSION = 1 << 9;
+	public const IN_TRANSCLUSION = 1 << 10;
 
 	/**
 	 * MarkFosteredContent sets this on meta mw:Transclusion tags. It is only used
 	 * in an assertion.
 	 */
-	public const FROM_FOSTER = 1 << 10;
+	public const FROM_FOSTER = 1 << 11;
 
 	/**
 	 * Used to indicate that media dimensions have redundant units.
 	 */
-	public const BOGUS_PX = 1 << 11;
+	public const BOGUS_PX = 1 << 12;
+
+	/**
+	 * This is set on wrapper tokens created by PipelineUtils::encapsulateExpansionHTML()
+	 * to propagate the fromCache option to that function.
+	 */
+	public const FROM_CACHE = 1 << 13;
 
 	/**
 	 * All elements inserted by TreeBuilderStage receive an integer ID. It is used
 	 * in findAutoInsertedTags() in conjunction with data-stag to identify
 	 * auto-inserted tags, and for debugging.
-	 * @var int|null
 	 */
-	public $tagId;
+	public ?int $tagId;
 
 	/**
 	 * A combination of flags combined from consts on this class.
-	 * @var int
 	 */
-	public $bits = 0;
+	public int $bits = 0;
 
 	/**
 	 * Node temporary attribute key-value pair to be processed in post-process steps.
@@ -136,16 +143,28 @@ class TempData {
 	 *
 	 * Make this property private and leave for ParsoidExtensionAPI to manipulate its
 	 * content.
-	 *
-	 * @var array|null
 	 */
 	private ?array $tagData;
 
 	/**
+	 * Deeply clone this object
+	 */
+	public function __clone() {
+		// Properties that need deep cloning
+		foreach ( [ 'origDSR', 'extLinkContentOffsets', 'tplarginfo', 'endTSR' ] as $f ) {
+			if ( isset( $this->$f ) ) {
+				$this->$f = clone $this->$f;
+			}
+		}
+		foreach ( [ 'shuttleTokens', 'tagData', 'section' ] as $f ) {
+			if ( isset( $this->$f ) ) {
+				$this->$f = Utils::cloneArray( $this->$f );
+			}
+		}
+	}
+
+	/**
 	 * Check whether a bit is set in $this->bits
-	 *
-	 * @param int $flag
-	 * @return bool
 	 */
 	public function getFlag( int $flag ): bool {
 		return (bool)( $this->bits & $flag );
@@ -153,9 +172,6 @@ class TempData {
 
 	/**
 	 * Set a bit in $this->bits
-	 *
-	 * @param int $flag
-	 * @param bool $value
 	 */
 	public function setFlag( int $flag, bool $value = true ): void {
 		if ( $value ) {
@@ -169,9 +185,9 @@ class TempData {
 	 * Set a tag attribute for a specific extension with a given key
 	 *
 	 * @param string $key identifier to support a map for multiple extensions
-	 * @param mixed $data
+	 * @param mixed $data Should be cloneable
 	 */
-	public function setTagData( string $key, $data ) {
+	public function setTagData( string $key, $data ): void {
 		$this->tagData ??= [];
 		$this->tagData[$key] = $data;
 	}

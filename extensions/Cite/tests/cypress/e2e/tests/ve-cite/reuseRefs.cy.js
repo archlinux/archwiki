@@ -53,7 +53,7 @@ describe( 'Re-using refs in Visual Editor', () => {
 		cy.contains( '.mw-reflink-text', '[2]' ).type( '{rightarrow}' );
 
 		if ( usesCitoid ) {
-			veHelper.openVECiteoidReuseDialog();
+			veHelper.openVECitoidReuseDialog();
 		} else {
 			veHelper.openVECiteReuseDialog();
 		}
@@ -93,7 +93,7 @@ describe( 'Re-using refs in Visual Editor', () => {
 		cy.contains( '.mw-reflink-text', '[1]' ).first().type( '{rightarrow}' );
 
 		if ( usesCitoid ) {
-			veHelper.openVECiteoidReuseDialog();
+			veHelper.openVECitoidReuseDialog();
 		} else {
 			veHelper.openVECiteReuseDialog();
 		}

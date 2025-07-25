@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "Chiudi",
 	"cdx-label-optional-flag": "(facoltativo)",
 	"cdx-message-dismiss-button-label": "Chiudi",
+	"cdx-popover-close-button-label": "Chiudi",
 	"cdx-search-input-search-button-label": "Ricerca",
 	"cdx-table-select-all-label": "Seleziona tutte le righe",
 	"cdx-table-select-row-label": "Seleziona la riga $1 di $2",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Visualizzazione dei risultati $1–$2 su molti",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 di molti",
 	"cdx-table-pagination-status-message-indeterminate-final": "Visualizzazione {{PLURAL:$1|dell'ultimo risultato|degli ultimi $1 risultati}}",
-	"cdx-table-pagination-status-message-pending": "Caricamento dei risultati..."
+	"cdx-table-pagination-status-message-pending": "Caricamento dei risultati...",
+	"cdx-table-no-data-message": "Non ci sono dati disponibili."
 }

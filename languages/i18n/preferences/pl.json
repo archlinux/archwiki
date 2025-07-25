@@ -97,7 +97,7 @@
 	"prefs-help-email": "Podanie adresu e‐mail nie jest obowiązkowe, lecz jest konieczne do zresetowania zapomnianego hasła.",
 	"prefs-help-email-required": "Wymagany jest adres e‐mail.",
 	"prefs-help-email-others": "Możesz również umożliwić innym użytkownikom wysłanie do Ciebie e‐maila poprzez Twoją stronę użytkownika lub stronę dyskusji (bez ujawniania Twojego adresu).",
-	"tog-requireemail": "Wyślij wiadomość e-mail resetującą hasło tylko wtedy, gdy podany jest zarówno adres e-mail jak i nazwa użytkownika.",
+	"tog-requireemail": "Wyślij wiadomość e-mail resetującą hasło tylko wtedy, gdy podany jest zarówno adres e-mail jak i nazwa użytkownika",
 	"prefs-help-requireemail": "Poprawia to prywatność i pomaga uniknąć niechcianych wiadomości e-mail.",
 	"noemailprefs": "Podaj adres e‐mail w preferencjach, by skorzystać z tych funkcji.",
 	"emailnotauthenticated": "Twój adres '''e‐mail nie został potwierdzony'''.\nPoniższe funkcje poczty nie działają.",
@@ -244,6 +244,7 @@
 	"search-thumbnail-extra-namespaces-label": "Wyświetlaj miniatury w {{#special:Search}} na komputerach",
 	"search-thumbnail-extra-namespaces-message": "Wyświetlaj miniatury dla wyników w {{PLURAL:$2|przestrzeni nazw|przestrzeniach nazw}} $1 na stronie {{#special:Search}}",
 	"prefs-advancedsearchoptions": "Zaawansowane",
+	"prefs-misc": "Ustawienia różne",
 	"prefs-reset-intro": "Na tej stronie można przywrócić domyślne ustawienia preferencji dla tej witryny.\nTej operacji nie można później cofnąć.",
 	"prefs-reset-confirm": "Tak, chcę zresetować moje preferencje.",
 	"restoreprefs": "Przywróć wszystkie domyślne preferencje"

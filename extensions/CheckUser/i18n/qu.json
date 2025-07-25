@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"AlimanRuna"
+		]
+	},
+	"checkuser-summary": "Kay llamk'anaqa ñaqha hukchasqakunapim maskaykun huk ruraqpa llamk'achisqan IP huchhakunata chaskinapaq icha huk IP huchhap llamk'apusqamanta/ruraqmanta willankunata rikuchinapaq.\nRuraqkunata icha mink'akuq IP huchhap rurasqankunatapas XFF uma siq'iwanmi chaskiyta atinki IP huchhata \"/xff\" nisqawan yapaspa. IPv4 (CIDR $1-32), IPv6 (CIDR $2-128) nisqakunam llamk'akun.\nPichqa waranqamanta aswan llamk'apusqakunaqa manam kutimunqachu, allin rikuchinarayku. Kay llamk'anataqa kawpayllakama rurachiy.",
+	"checkuser": "Ruraqta llanchiy",
+	"checkuserlog": "Ruraq llanchiy hallch'a",
+	"group-checkuser": "Ruraqkunata llanchiy",
+	"group-checkuser-member": "{{GENDER:$1|}}Ruraqta llanchiy",
+	"grouppage-checkuser": "{{ns:project}}:Ruraqta llanchiy",
+	"checkuser-reason": "Kayrayku:",
+	"checkuser-showlog": "Hallch'ata rikuchiy",
+	"checkuser-query": "Ñaqha hukchasqakunapi maskay",
+	"checkuser-target": "IP huchha icha ruraqpa sutin:",
+	"checkuser-users": "Ruraqkunata chaskiy",
+	"checkuser-ips": "IP huchhakunata chaskiy",
+	"checkuser-period": "Kay mit'alla:",
+	"checkuser-week-1": "qayna simana",
+	"checkuser-week-2": "qayna iskay simana",
+	"checkuser-month": "qayna kimsa chunka p'unchaw",
+	"checkuser-all": "tukuy",
+	"checkuser-empty": "Manam kanchu ima hallch'asqapas.",
+	"checkuser-nomatch": "Manam imapas taripasqachu.",
+	"checkuser-check": "Llanchiy",
+	"checkuser-blocked": "Hark'asqa",
+	"checkuser-gblocked": "Sapsintinpi hark'asqa",
+	"checkuser-locked": "Wichq'asqa",
+	"checkuser-wasblocked": "Ñawpaqta hark'asqa",
+	"checkuser-localonly": "Manam hukllasqachu",
+	"checkuser-massblock": "Akllasqa ruraqkunata hark'ay",
+	"checkuser-search": "Maskay",
+	"checkuser-search-submit": "Maskay"
+}

@@ -26,6 +26,7 @@ use ISearchResultSet;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
@@ -46,8 +47,6 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
-use MediaWiki\Xml\Xml;
-use RepoGroup;
 use SearchEngine;
 use SearchEngineConfig;
 use SearchEngineFactory;
@@ -133,19 +132,6 @@ class SpecialSearch extends SpecialPage {
 
 	private const NAMESPACES_CURRENT = 'sense';
 
-	/**
-	 * @param SearchEngineConfig $searchConfig
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param NamespaceInfo $nsInfo
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param InterwikiLookup $interwikiLookup
-	 * @param ReadOnlyMode $readOnlyMode
-	 * @param UserOptionsManager $userOptionsManager
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param RepoGroup $repoGroup
-	 * @param SearchResultThumbnailProvider $thumbnailProvider
-	 * @param TitleMatcher $titleMatcher
-	 */
 	public function __construct(
 		SearchEngineConfig $searchConfig,
 		SearchEngineFactory $searchEngineFactory,
@@ -190,7 +176,7 @@ class SpecialSearch extends SpecialPage {
 		// in releasing page view data. As such issue a 301 redirect to the correct
 		// URL.
 		if ( $par !== null && $par !== '' && $term === '' ) {
-			$query = $request->getValues();
+			$query = $request->getQueryValues();
 			unset( $query['title'] );
 			// Strip underscores from title parameter; most of the time we'll want
 			// text form here. But don't strip underscores from actual text params!
@@ -208,7 +194,7 @@ class SpecialSearch extends SpecialPage {
 			// Remove the token from the URL to prevent the user from inadvertently
 			// exposing it (e.g. by pasting it into a public wiki page) or undoing
 			// later settings changes (e.g. by reloading the page).
-			$query = $request->getValues();
+			$query = $request->getQueryValues();
 			unset( $query['title'], $query['nsRemember'] );
 			$out->redirect( $this->getPageTitle()->getFullURL( $query ) );
 			return;
@@ -237,38 +223,17 @@ class SpecialSearch extends SpecialPage {
 				$url = str_replace( '$1', urlencode( $term ), $searchForwardUrl );
 				$out->redirect( $url );
 			} else {
-				$out->addHTML( $this->showGoogleSearch( $term ) );
+				$out->addHTML( Html::errorBox( Html::rawElement(
+					'p',
+					[ 'class' => 'mw-searchdisabled' ],
+					$this->msg( 'searchdisabled', [ 'mw:Special:MyLanguage/Manual:$wgSearchForwardUrl' ] )->parse()
+				) ) );
 			}
 
 			return;
 		}
 
 		$this->showResults( $term );
-	}
-
-	/**
-	 * Output a google search form if search is disabled
-	 *
-	 * @param string $term Search term
-	 * @todo FIXME Maybe we should get rid of this raw html message at some future time
-	 * @return string HTML
-	 * @return-taint escaped
-	 */
-	private function showGoogleSearch( $term ) {
-		return "<fieldset>" .
-				"<legend>" .
-					$this->msg( 'search-external' )->escaped() .
-				"</legend>" .
-				"<p class='mw-searchdisabled'>" .
-					$this->msg( 'searchdisabled' )->escaped() .
-				"</p>" .
-				// googlesearch is part of $wgRawHtmlMessages and safe to use as is here
-				$this->msg( 'googlesearch' )->rawParams(
-					htmlspecialchars( $term ),
-					'UTF-8',
-					$this->msg( 'searchbutton' )->escaped()
-				)->text() .
-			"</fieldset>";
 	}
 
 	/**
@@ -381,16 +346,16 @@ class SpecialSearch extends SpecialPage {
 		return $url ?? $title->getFullUrlForRedirect();
 	}
 
-	private function redirectOnExactMatch() {
+	private function redirectOnExactMatch(): bool {
 		if ( !$this->getConfig()->get( MainConfigNames::SearchMatchRedirectPreference ) ) {
 			// If the preference for whether to redirect is disabled, use the default setting
-			return $this->userOptionsManager->getDefaultOption(
+			return (bool)$this->userOptionsManager->getDefaultOption(
 				'search-match-redirect',
 				$this->getUser()
 			);
 		} else {
 			// Otherwise use the user's preference
-			return $this->userOptionsManager->getOption( $this->getUser(), 'search-match-redirect' );
+			return $this->userOptionsManager->getBoolOption( $this->getUser(), 'search-match-redirect' );
 		}
 	}
 
@@ -428,7 +393,7 @@ class SpecialSearch extends SpecialPage {
 			// only do the form render here for the empty $term case. Rendering
 			// the form when a search is provided is repeated below.
 			$out->addHTML( $formWidget->render(
-				$this->profile, $term, 0, 0, $this->offset, $this->isPowerSearch(), $widgetOptions
+				$this->profile, $term, 0, 0, false, $this->offset, $this->isPowerSearch(), $widgetOptions
 			) );
 			return;
 		}
@@ -477,13 +442,16 @@ class SpecialSearch extends SpecialPage {
 
 		// Get number of results
 		$titleMatchesNum = $textMatchesNum = $numTitleMatches = $numTextMatches = 0;
+		$approxTotalRes = false;
 		if ( $titleMatches ) {
 			$titleMatchesNum = $titleMatches->numRows();
 			$numTitleMatches = $titleMatches->getTotalHits();
+			$approxTotalRes = $titleMatches->isApproximateTotalHits();
 		}
 		if ( $textMatches ) {
 			$textMatchesNum = $textMatches->numRows();
 			$numTextMatches = $textMatches->getTotalHits();
+			$approxTotalRes = $approxTotalRes || $textMatches->isApproximateTotalHits();
 			if ( $textMatchesNum > 0 ) {
 				$engine->augmentSearchResults( $textMatches );
 			}
@@ -494,7 +462,8 @@ class SpecialSearch extends SpecialPage {
 		// start rendering the page
 		$out->enableOOUI();
 		$out->addHTML( $formWidget->render(
-			$this->profile, $term, $num, $totalRes, $this->offset, $this->isPowerSearch(), $widgetOptions
+			$this->profile, $term, $num, $totalRes, $approxTotalRes, $this->offset, $this->isPowerSearch(),
+			$widgetOptions
 		) );
 
 		// did you mean... suggestions
@@ -516,7 +485,7 @@ class SpecialSearch extends SpecialPage {
 		if ( $this->offset > 0 ) {
 			$classNames[] = 'mw-searchresults-has-offset';
 		}
-		$out->addHTML( '<div class="' . implode( ' ', $classNames ) . '">' );
+		$out->addHTML( Html::openElement( 'div', [ 'class' => $classNames ] ) );
 
 		$out->addHTML( '<div class="mw-search-results-info">' );
 
@@ -630,6 +599,8 @@ class SpecialSearch extends SpecialPage {
 			) {
 				$messageName = 'searchmenu-new';
 			}
+		} else {
+			$messageName = 'searchmenu-new-external';
 		}
 
 		$params = [
@@ -640,7 +611,7 @@ class SpecialSearch extends SpecialPage {
 		$this->getHookRunner()->onSpecialSearchCreateLink( $title, $params );
 
 		// Extensions using the hook might still return an empty $messageName
-		// @phan-suppress-next-line PhanRedundantCondition Set by hook
+		// @phan-suppress-next-line PhanRedundantCondition Might be unset by hook
 		if ( $messageName ) {
 			$this->getOutput()->wrapWikiMsg( "<p class=\"$linkClass\">\n$1</p>", $params );
 		} else {
@@ -683,7 +654,7 @@ class SpecialSearch extends SpecialPage {
 			];
 
 			$subtitle .= ' (';
-			$subtitle .= Xml::element(
+			$subtitle .= Html::element(
 				'a',
 				[
 					'href' => $this->getPageTitle()->getLocalURL( $params ),
@@ -700,6 +671,8 @@ class SpecialSearch extends SpecialPage {
 		$out->addModuleStyles( [
 			'mediawiki.special', 'mediawiki.special.search.styles',
 			'mediawiki.widgets.SearchInputWidget.styles',
+			// Special page makes use of Html::warningBox and Html::errorBox in multiple places.
+			'mediawiki.codex.messagebox.styles',
 		] );
 	}
 

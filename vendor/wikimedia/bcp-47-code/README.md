@@ -10,7 +10,7 @@ code) and exposes only the ability to convert this opaque object to
 an interoperable [BCP 47] code, which is the standard used in [HTML]
 and [HTTP].
 
-The [BCP 47] standard was originally [RFC 4647],and is now
+The [BCP 47] standard was originally [RFC 4647], and is now
 [maintained by the IETF based on the IANA language registry](https://en.wikipedia.org/wiki/IETF_language_tag).
 
 Additional documentation about this library can be found on

@@ -56,6 +56,7 @@ class ApiSpamBlacklist extends ApiBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'url' => [
@@ -76,6 +77,7 @@ class ApiSpamBlacklist extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return [ 'https://www.mediawiki.org/wiki/Extension:SpamBlacklist/API' ];
 	}

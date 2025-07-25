@@ -18,24 +18,42 @@
  * @file
  */
 
-use MediaWiki\CommentStore\CommentStoreComment;
+namespace MediaWiki\FileRepo\File;
+
+use InvalidArgumentException;
+use LockManager;
+use MediaHandler;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\AutoCommitUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
 use MediaWiki\Deferred\SiteStatsUpdate;
-use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use MediaWiki\FileRepo\FileBackendDBRepoWrapper;
+use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
+use MediaWiki\JobQueue\Jobs\ThumbnailRenderJob;
 use MediaWiki\Language\Language;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\LogEntryBase;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\WikiFilePage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
+use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
+use MWFileProps;
+use RuntimeException;
+use stdClass;
+use UnexpectedValueException;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FileBackendError;
 use Wikimedia\FileBackend\FSFile\FSFile;
@@ -95,6 +113,12 @@ class LocalFile extends File {
 	/** @var bool Does the file exist on disk? (loadFromXxx) */
 	protected $fileExists;
 
+	/** @var int Id of the file */
+	private $fileId;
+
+	/** @var int Id of the file type */
+	private $fileTypeId;
+
 	/** @var int Image width */
 	protected $width;
 
@@ -147,6 +171,12 @@ class LocalFile extends File {
 	/** @var int Bitfield akin to rev_deleted */
 	protected $deleted;
 
+	/** @var int id in file table, null on read old */
+	protected $file_id;
+
+	/** @var int id in filerevision table, null on read old */
+	protected $filerevision_id;
+
 	/** @var string */
 	protected $repoClass = LocalRepo::class;
 
@@ -191,6 +221,9 @@ class LocalFile extends File {
 
 	/** @var MetadataStorageHelper */
 	private $metadataStorageHelper;
+
+	/** @var int */
+	private $migrationStage = SCHEMA_COMPAT_OLD;
 
 	// @note: higher than IDBAccessObject constants
 	private const LOAD_ALL = 16; // integer; load all the lazy fields too (like metadata)
@@ -284,6 +317,7 @@ class LocalFile extends File {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo( array $options = [] ) {
+		wfDeprecated( __METHOD__, '1.41' );
 		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$queryInfo = FileSelectQueryBuilder::newForFile( $dbr, $options )->getQueryInfo();
 		// needs remapping...
@@ -304,6 +338,9 @@ class LocalFile extends File {
 	public function __construct( $title, $repo ) {
 		parent::__construct( $title, $repo );
 		$this->metadataStorageHelper = new MetadataStorageHelper( $repo );
+		$this->migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
 
 		$this->assertRepoDefined();
 		$this->assertTitleDefined();
@@ -656,7 +693,7 @@ class LocalFile extends File {
 				'name', 'media_type', 'description_text', 'description_data',
 				'description_cid', 'user', 'user_text', 'actor', 'timestamp',
 				'metadata', 'major_mime', 'minor_mime', 'sha1', 'size', 'width',
-				'height', 'bits'
+				'height', 'bits', 'file_id', 'filerevision_id'
 			]
 		);
 		if ( $extraFields ) {
@@ -756,6 +793,115 @@ class LocalFile extends File {
 	}
 
 	/**
+	 * This is mostly for the migration period.
+	 *
+	 * Since 1.44
+	 * @return int|false
+	 */
+	public function getFileIdFromName() {
+		if ( !$this->fileId ) {
+			$dbw = $this->repo->getPrimaryDB();
+			$id = $dbw->newSelectQueryBuilder()
+				->select( 'file_id' )
+				->from( 'file' )
+				->where( [
+					'file_name' => $this->getName(),
+					'file_deleted' => 0
+				] )
+				->caller( __METHOD__ )
+				->fetchField();
+			$this->fileId = $id;
+		}
+
+		return $this->fileId;
+	}
+
+	/**
+	 * This is mostly for the migration period.
+	 *
+	 * @internal
+	 * @return int
+	 */
+	public function acquireFileIdFromName() {
+		$dbw = $this->repo->getPrimaryDB();
+		$id = $this->getFileIdFromName();
+		if ( $id ) {
+			return $id;
+		}
+		$id = $dbw->newSelectQueryBuilder()
+			->select( 'file_id' )
+			->from( 'file' )
+			->where( [
+				'file_name' => $this->getName(),
+			] )
+			->caller( __METHOD__ )
+			->fetchField();
+		if ( !$id ) {
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'file' )
+				->row( [
+					'file_name' => $this->getName(),
+					// The value will be updated later
+					'file_latest' => 0,
+					'file_deleted' => 0,
+					'file_type' => $this->getFileTypeId(),
+				] )
+				->caller( __METHOD__ )->execute();
+			$insertId = $dbw->insertId();
+			if ( !$insertId ) {
+				throw new RuntimeException( 'File entry could not be inserted' );
+			}
+			return $insertId;
+		} else {
+			// Undelete
+			$dbw->newUpdateQueryBuilder()
+				->update( 'file' )
+				->set( [ 'file_deleted' => 0 ] )
+				->where( [ 'file_id' => $id ] )
+				->caller( __METHOD__ )->execute();
+			return $id;
+		}
+	}
+
+	protected function getFileTypeId() {
+		if ( $this->fileTypeId ) {
+			return $this->fileTypeId;
+		}
+		[ $major, $minor ] = self::splitMime( $this->mime );
+		$dbw = $this->repo->getPrimaryDB();
+		$id = $dbw->newSelectQueryBuilder()
+			->select( 'ft_id' )
+			->from( 'filetypes' )
+			->where( [
+				'ft_media_type' => $this->getMediaType(),
+				'ft_major_mime' => $major,
+				'ft_minor_mime' => $minor,
+			] )
+			->caller( __METHOD__ )
+			->fetchField();
+		if ( $id ) {
+			$this->fileTypeId = $id;
+			return $id;
+		}
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'filetypes' )
+			->row( [
+				'ft_media_type' => $this->getMediaType(),
+				'ft_major_mime' => $major,
+				'ft_minor_mime' => $minor,
+			] )
+			->caller( __METHOD__ )->execute();
+
+		$id = $dbw->insertId();
+		if ( !$id ) {
+			throw new RuntimeException( 'File entry could not be inserted' );
+		}
+
+		$this->fileTypeId = $id;
+		return $id;
+	}
+
+	/**
 	 * Fix assorted version-related problems with the image row by reloading it from the file
 	 * @stable to override
 	 */
@@ -779,6 +925,7 @@ class LocalFile extends File {
 
 		wfDebug( __METHOD__ . ': upgrading ' . $this->getName() . " to the current schema" );
 
+		$metadata = $this->getMetadataForDb( $dbw );
 		$dbw->newUpdateQueryBuilder()
 			->update( 'image' )
 			->set( [
@@ -789,12 +936,28 @@ class LocalFile extends File {
 				'img_media_type' => $this->media_type,
 				'img_major_mime' => $major,
 				'img_minor_mime' => $minor,
-				'img_metadata' => $this->getMetadataForDb( $dbw ),
+				'img_metadata' => $metadata,
 				'img_sha1' => $this->sha1,
 			] )
 			->where( [ 'img_name' => $this->getName() ] )
 			->andWhere( $freshnessCondition )
 			->caller( __METHOD__ )->execute();
+
+		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'filerevision' )
+				->set( [
+					'fr_size' => $this->size,
+					'fr_width' => $this->width,
+					'fr_height' => $this->height,
+					'fr_bits' => $this->bits,
+					'fr_metadata' => $metadata,
+					'fr_sha1' => $this->sha1,
+				] )
+				->where( [ 'fr_file' => $this->acquireFileIdFromName() ] )
+				->andWhere( [ 'fr_timestamp' => $dbw->timestamp( $this->getTimestamp() ) ] )
+				->caller( __METHOD__ )->execute();
+		}
 
 		$this->invalidateCache();
 
@@ -810,14 +973,23 @@ class LocalFile extends File {
 			return;
 		}
 		$dbw = $this->repo->getPrimaryDB();
+		$metadata = $this->getMetadataForDb( $dbw );
 		$dbw->newUpdateQueryBuilder()
 			->update( 'image' )
-			->set( [ 'img_metadata' => $this->getMetadataForDb( $dbw ) ] )
+			->set( [ 'img_metadata' => $metadata ] )
 			->where( [
 				'img_name' => $this->name,
 				'img_timestamp' => $dbw->timestamp( $this->timestamp ),
 			] )
 			->caller( __METHOD__ )->execute();
+		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'filerevision' )
+				->set( [ 'fr_metadata' => $metadata ] )
+				->where( [ 'fr_file' => $this->acquireFileIdFromName() ] )
+				->andWhere( [ 'fr_timestamp' => $dbw->timestamp( $this->getTimestamp() ) ] )
+				->caller( __METHOD__ )->execute();
+		}
 		$this->upgraded = true;
 	}
 
@@ -830,9 +1002,10 @@ class LocalFile extends File {
 	 * If major_mime/minor_mime are given, $this->mime will also be set.
 	 *
 	 * @stable to override
+	 * @unstable to call
 	 * @param array $info
 	 */
-	protected function setProps( $info ) {
+	public function setProps( $info ) {
 		$this->dataLoaded = true;
 		$fields = $this->getCacheFields( '' );
 		$fields[] = 'fileExists';
@@ -1480,11 +1653,11 @@ class LocalFile extends File {
 		}
 
 		$dbr = $this->repo->getReplicaDB();
-		$oldFileQuery = OldLocalFile::getQueryInfo();
+		$oldFileQuery = FileSelectQueryBuilder::newForOldFile( $dbr )->getQueryInfo();
 
 		$tables = $oldFileQuery['tables'];
 		$fields = $oldFileQuery['fields'];
-		$join_conds = $oldFileQuery['joins'];
+		$join_conds = $oldFileQuery['join_conds'];
 		$conds = $opts = [];
 		$eq = $inc ? '=' : '';
 		$conds[] = $dbr->expr( 'oi_name', '=', $this->title->getDBkey() );
@@ -1758,6 +1931,12 @@ class LocalFile extends File {
 
 		$actorNormalizaton = MediaWikiServices::getInstance()->getActorNormalization();
 
+		// T391473: File uploads can involve moving a lot of bytes around. Sometimes in
+		// that time the DB connection can timeout. Normally this is automatically
+		// reconnected, but reconnection does not work inside atomic sections.
+		// Ping the DB to ensure it is still there prior to entering the atomic
+		// section. TODO: Refactor upload jobs to be smarter about implicit transactions.
+		$dbw->ping();
 		$dbw->startAtomic( __METHOD__ );
 
 		$actorId = $actorNormalizaton->acquireActorId( $performer->getUser(), $dbw );
@@ -1787,6 +1966,40 @@ class LocalFile extends File {
 			] + $commentFields + $actorFields )
 			->caller( __METHOD__ )->execute();
 		$reupload = ( $dbw->affectedRows() == 0 );
+
+		$latestFileRevId = null;
+		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			if ( $reupload ) {
+				$latestFileRevId = $dbw->newSelectQueryBuilder()
+					->select( 'fr_id' )
+					->from( 'filerevision' )
+					->where( [ 'fr_file' => $this->acquireFileIdFromName() ] )
+					->orderBy( 'fr_timestamp', 'DESC' )
+					->caller( __METHOD__ )
+					->fetchField();
+			}
+			$commentFieldsNew = $commentStore->insert( $dbw, 'fr_description', $comment );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'filerevision' )
+				->row( [
+						'fr_file' => $this->acquireFileIdFromName(),
+						'fr_size' => $this->size,
+						'fr_width' => intval( $this->width ),
+						'fr_height' => intval( $this->height ),
+						'fr_bits' => $this->bits,
+						'fr_actor' => $actorId,
+						'fr_deleted' => 0,
+						'fr_timestamp' => $dbw->timestamp( $timestamp ),
+						'fr_metadata' => $this->getMetadataForDb( $dbw ),
+						'fr_sha1' => $this->sha1
+					] + $commentFieldsNew )
+				->caller( __METHOD__ )->execute();
+			$dbw->newUpdateQueryBuilder()
+				->update( 'file' )
+				->set( [ 'file_latest' => $dbw->insertId() ] )
+				->where( [ 'file_id' => $this->getFileIdFromName() ] )
+				->caller( __METHOD__ )->execute();
+		}
 
 		if ( $reupload ) {
 			$row = $dbw->newSelectQueryBuilder()
@@ -1831,8 +2044,16 @@ class LocalFile extends File {
 				'oi_sha1' => 'img_sha1',
 				'oi_actor' => 'img_actor',
 			];
-			$joins = [];
 
+			if ( ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) && $latestFileRevId && $oldver ) {
+				$dbw->newUpdateQueryBuilder()
+					->update( 'filerevision' )
+					->set( [ 'fr_archive_name' => $oldver ] )
+					->where( [ 'fr_id' => $latestFileRevId ] )
+					->caller( __METHOD__ )->execute();
+			}
+
+			$joins = [];
 			# (T36993) Note: $oldver can be empty here, if the previous
 			# version of the file was broken. Allow registration of the new
 			# version to continue anyway, because that's better than having
@@ -1903,35 +2124,17 @@ class LocalFile extends File {
 		if ( $descTitle->exists() ) {
 			if ( $createNullRevision ) {
 				$services = MediaWikiServices::getInstance();
-				$revStore = $services->getRevisionStore();
 				// Use own context to get the action text in content language
 				$formatter = $services->getLogFormatterFactory()->newFromEntry( $logEntry );
 				$formatter->setContext( RequestContext::newExtraneousContext( $descTitle ) );
 				$editSummary = $formatter->getPlainActionText();
-				$summary = CommentStoreComment::newUnsavedComment( $editSummary );
-				$nullRevRecord = $revStore->newNullRevision(
-					$dbw,
-					$descTitle,
-					$summary,
-					false,
-					$performer->getUser()
-				);
 
-				if ( $nullRevRecord ) {
-					$inserted = $revStore->insertRevisionOn( $nullRevRecord, $dbw );
+				$nullRevRecord = $wikiPage->newPageUpdater( $performer->getUser() )
+					->setCause( PageUpdater::CAUSE_UPLOAD )
+					->saveDummyRevision( $editSummary, EDIT_SILENT );
 
-					$this->getHookRunner()->onRevisionFromEditComplete(
-						$wikiPage,
-						$inserted,
-						$inserted->getParentId(),
-						$performer->getUser(),
-						$tags
-					);
-
-					$wikiPage->updateRevisionOn( $dbw, $inserted );
-					// Associate null revision id
-					$logEntry->setAssociatedRevId( $inserted->getId() );
-				}
+				// Associate null revision id
+				$logEntry->setAssociatedRevId( $nullRevRecord->getId() );
 			}
 
 			$newPageContent = null;
@@ -1964,14 +2167,11 @@ class LocalFile extends File {
 					# New file page; create the description page.
 					# There's already a log entry, so don't make a second RC entry
 					# CDN and file cache for the description page are purged by doUserEditContent.
-					$status = $wikiPage->doUserEditContent(
-						$newPageContent,
-						$performer,
-						$comment,
-						EDIT_NEW | EDIT_SUPPRESS_RC
-					);
+					$revRecord = $wikiPage->newPageUpdater( $performer )
+						->setCause( PageUpdater::CAUSE_UPLOAD )
+						->setContent( SlotRecord::MAIN, $newPageContent )
+						->saveRevision( $comment, EDIT_NEW | EDIT_SUPPRESS_RC );
 
-					$revRecord = $status->getNewRevision();
 					if ( $revRecord ) {
 						// Associate new page revision id
 						$logEntry->setAssociatedRevId( $revRecord->getId() );
@@ -2415,7 +2615,8 @@ class LocalFile extends File {
 			// Rendering failed.
 			return false;
 		}
-		return $parseStatus->getValue()->getText();
+		// TODO T371004 move runOutputPipeline out of $parserOutput
+		return $parseStatus->getValue()->runOutputPipeline( $parserOptions, [] )->getContentHolderText();
 	}
 
 	/**
@@ -2617,3 +2818,6 @@ class LocalFile extends File {
 		$this->unlock();
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LocalFile::class, 'LocalFile' );

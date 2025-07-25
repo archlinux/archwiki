@@ -41,7 +41,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Kasutaja",
 	"templatedata-doc-params": "Malli parameetrid",
 	"templatedata-editbutton": "Muuda malliandmeid",
-	"templatedata-errormsg-jsonbadformat": "Vigane JSONi vorming. Saad sellest toimingust loobuda, et praegused <templatedata>-sildid kustutada ning uuesti proovida ja vorming parandada. Saad ka jätkata ja asendada praegused malliandmed uutega.",
+	"templatedata-errormsg-jsonbadformat": "Vigane JSONi vorming. Saad sellest toimingust loobuda, et vormingut parandada või see eemaldada. Saad ka jätkata ja asendada praegused malliandmed uutega.",
 	"templatedata-errormsg-insertblank": "Kas oled kindel, et tahad lisada malliandmed ilma infota?",
 	"templatedata-exists-on-related-page": "Pane tähele, et seotud leheküljel \"[[$1]]\" juba on malliandmete plokk.",
 	"templatedata-helplink": "Teave malliandmete süsteemi kohta",
@@ -69,6 +69,7 @@
 	"templatedata-modal-button-removemap": "Eemalda vastendus",
 	"templatedata-modal-button-saveparam": "Salvesta",
 	"templatedata-modal-confirmcancel": "Kas oled kindel, et tahad muudatustest loobuda?",
+	"templatedata-modal-button-discard": "Hülga",
 	"templatedata-modal-current-language": "Praegune keel: $1",
 	"templatedata-modal-errormsg": "Leidub tõrkeid. Palun veendu, et ükski parameetri nimi pole tühi ega topelt ning et parameetrite nimed ei sisalda märke \"$1\", \"$2\" ega \"$3\".",
 	"templatedata-modal-errormsg-duplicate-name": "Leiti viga. Valitud nime kasutab juba teine parameeter.",
@@ -111,5 +112,13 @@
 	"templatedata-modal-title-templateformat": "Soovitatav vikiteksti vorming",
 	"templatedata-modal-title-templateformatstring": "Kohandatud vormingusõne",
 	"templatedata-modal-title-templateparam-details": "Parameetri üksikasjad: $1",
-	"templatedata-modal-title-templateparams": "Malli parameetrid"
+	"templatedata-modal-title-templateparams": "Malli parameetrid",
+	"templatedata-search-list-header": "Lemmikud",
+	"templatedata-search-list-empty": "Siia ilmuvad mallid, mille märgid lemmikuks.",
+	"templatedata-favorite-disabled": "Pead olema sisse loginud, et mall lemmikuks märkida",
+	"templatedata-favorite-add": "Lisa mall lemmikuks",
+	"templatedata-favorite-added": "Mall lisatud lemmikutesse.",
+	"templatedata-favorite-remove": "Eemalda mall lemmikutest",
+	"templatedata-favorite-removed": "Mall lemmikutest eemaldatud.",
+	"templatedata-favorite-maximum-reached": "Oled lisanud suurima lubatud arvu ($1) lemmikmalle. Palun eemalda enda loendist mõned, enne kui lisad malle juurde."
 }

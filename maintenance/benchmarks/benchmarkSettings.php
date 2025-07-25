@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Maintenance\Benchmarker;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\NullIniSink;
@@ -45,7 +46,7 @@ class BenchmarkSettings extends Benchmarker {
 		$this->addDescription( 'Benchmark loading settings files.' );
 	}
 
-	private function newSettingsBuilder() {
+	private function newSettingsBuilder(): SettingsBuilder {
 		$extReg = new ExtensionRegistry();
 		$configBuilder = new ArrayConfigBuilder();
 		$phpIniSink = new NullIniSink();

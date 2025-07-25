@@ -141,6 +141,7 @@ class SingleMenuEntry implements IMenuEntry {
 
 		$btn = [
 			'tag-name' => 'a',
+			'isButton' => true,
 			'label' => $this->attributes['text'],
 			'array-attributes' => $attrs,
 			'classes' => $this->attributes['class'],

@@ -5,10 +5,10 @@
 			"CAPTAIN MEDUSA",
 			"Ed g2s",
 			"Matma Rex",
+			"Woytecr",
 			"पर्वत सुबेदी",
 			"बडा काजी",
-			"हिमाल सुबेदी",
-			"Woytecr"
+			"हिमाल सुबेदी"
 		]
 	},
 	"discussiontools": "छलफल उपकरण",
@@ -170,9 +170,9 @@
 	"tag-discussiontools-description": "छलफल उपकरण प्रयाेग गरि गरिएका सम्पादन",
 	"tag-discussiontools-edit": "सम्पादित टिप्पणी",
 	"tag-discussiontools-edit-description": "प्रयोगकर्ताले छलफल उपकरणहरू प्रयोग गरी अवस्थित टिप्पणी सम्पादन गर्नुभयो",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} विषय थपियाे]",
+	"tag-discussiontools-newtopic": "विषय थपियाे",
 	"tag-discussiontools-newtopic-description": "प्रयोगकर्ताले छलफल उपकरणको साथ पृष्ठमा नयाँ विषय थप्यो",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} उत्तर दिइयो]",
+	"tag-discussiontools-reply": "उत्तर दिइयो",
 	"tag-discussiontools-reply-description": "प्रयोगकर्ताले छलफल उपकरण प्रयोग गरेर टिप्पणीको जवाफ दिनुभयो",
 	"tag-discussiontools-source-description": "छलफल उपकरण स्रोत मोडमा थियो",
 	"tag-discussiontools-source-enhanced-description": "छलफल उपकरण उपकरणपट्टीको साथ परिष्कृत स्रोत मोडमा थियो",

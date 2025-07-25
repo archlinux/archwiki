@@ -2,8 +2,9 @@
 
 namespace PageImages\Tests\Hooks;
 
-use LocalFile;
 use LogicException;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageProps;
@@ -11,7 +12,6 @@ use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\SearchResultProvideThumbnailHookHandler;
 use PageImages\PageImages;
-use RepoGroup;
 use ThumbnailImage;
 
 /**

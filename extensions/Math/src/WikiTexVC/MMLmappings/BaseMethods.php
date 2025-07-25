@@ -61,7 +61,7 @@ class BaseMethods {
 										   $state, $prepareInput = true ) {
 			$resOperator = TexUtil::getInstance()->operator_rendering( trim( $input ) );
 		if ( $resOperator == null ) {
-			$resOperator = OperatorDictionary::getOperatorByKey( $input );
+			$resOperator = TexUtil::getInstance()->operator_infix( trim( $input ) );
 			if ( $resOperator ) {
 				if ( isset( $resOperator[1] ) ) {
 					// custom parsing here
@@ -95,8 +95,7 @@ class BaseMethods {
 			case ";":
 			case ",":
 				// this maybe just a default case, this is not rendered when it is the last in row
-				$mmlMo = new MMLmo();
-				return $mmlMo->encapsulate( $input );
+				return (string)( new MMLmo( "", [], $input ) );
 			case "<":
 				$mmlMo = new MMLmo();
 				return $mmlMo->encapsulateRaw( "&lt;" );
@@ -219,11 +218,9 @@ class BaseMethods {
 			return null;
 		}
 		if ( $input === 'color' ) {
-			$mstyle = new MMLmstyle( "", [ "mathcolor" => $resColor ] );
-			return $mstyle->encapsulate();
+			return (string)( new MMLmstyle( "", [ "mathcolor" => $resColor ] ) );
 		} else {
 			// Input is 'pagecolor'
-			$mtext = new MMLmtext( "", [ "mathcolor" => $resColor ] );
 			$mrow = new MMLmrow();
 			$mi = new MMLmi();
 			// Mj3 does this, probably not necessary
@@ -232,16 +229,17 @@ class BaseMethods {
 				$innerRow .= $mi->encapsulateRaw( $char );
 			}
 			if ( $innerRow !== "" ) {
-				return $mtext->encapsulate( "\\pagecolor" ) . $mrow->encapsulateRaw( $innerRow );
+				return ( new MMLmtext( "", [ "mathcolor" => $resColor ], "\\pagecolor" ) ) .
+					$mrow->encapsulateRaw( $innerRow );
 			} else {
-				return $mtext->encapsulate( "\\pagecolor" );
+				return (string)( new MMLmtext( "", [ "mathcolor" => $resColor ], "\\pagecolor" ) );
 			}
 		}
 	}
 
 	public static function generateMMLError( string $msg ): string {
 		return ( new MMLmerror() )->encapsulateRaw(
-			( new MMLmtext() )->encapsulate( $msg )
+			(string)( new MMLmtext( "", [], $msg ) )
 		);
 	}
 }

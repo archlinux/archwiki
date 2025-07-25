@@ -62,6 +62,7 @@
 	"notifications": "გინაფეფი",
 	"tooltip-pt-notifications-alert": "{{GENDER:|თქვანი}} მოშინუეფი",
 	"tooltip-pt-notifications-notice": "{{GENDER:|თქვანი}} გინაფეფი",
+	"tooltip-pt-notifications": "თქვან ოგინაფუეფი",
 	"echo-displaynotificationsconfiguration": "გინაფაშ პარამეტრეფიშ ძირაფა",
 	"echo-displaynotificationsconfiguration-summary": "თენა რე გინაფაშ პარამეტრეფიშ გიწოთოლორაფა ათე ვიკი-საიტის.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "გინაფეფი კატეგორიეფიშ მეჯინათ",

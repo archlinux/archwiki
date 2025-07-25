@@ -97,7 +97,9 @@ QUnit.test( 'newFromDocumentInsertion with references', ( assert ) => {
 		);
 
 		const expectedStoreItems = caseItem.expectedStoreItems || [];
-		const actualStoreItems = expectedStoreItems.map( ( item ) => doc.store.value( OO.getHash( item ) ) );
+		const actualStoreItems = expectedStoreItems.map(
+			( item ) => doc.store.value( OO.getHash( item ) )
+		);
 		assert.deepEqual( actualStoreItems, expectedStoreItems, caseItem.msg + ': store items' );
 	} );
 } );

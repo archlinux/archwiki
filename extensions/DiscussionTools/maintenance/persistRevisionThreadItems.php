@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Maintenance;
 
+use MediaWiki\Exception\MWExceptionRenderer;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\ThreadItemStore;
 use MediaWiki\Language\Language;
@@ -9,7 +10,6 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Shell\Shell;
 use MediaWiki\Title\Title;
-use MWExceptionRenderer;
 use stdClass;
 use Throwable;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -199,7 +199,7 @@ class PersistRevisionThreadItems extends Maintenance {
 				$rev->getPageAsLinkTarget()
 			);
 			if ( HookUtils::isAvailableForTitle( $title ) ) {
-				$threadItemSet = HookUtils::parseRevisionParsoidHtml( $rev, false );
+				$threadItemSet = HookUtils::parseRevisionParsoidHtml( $rev, false )->getValueOrThrow();
 
 				// Store permalink data (even when store is disabled - T334258)
 				$changed = $this->itemStore->insertThreadItems( $rev, $threadItemSet );

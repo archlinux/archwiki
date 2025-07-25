@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 
 use MediaWiki\Block\BlockUserFactory;
 use MediaWiki\Block\DatabaseBlockStore;
+use MediaWiki\Block\UnblockUserFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagger;
@@ -46,6 +47,9 @@ class ConsequencesFactory {
 	/** @var BlockUserFactory */
 	private $blockUserFactory;
 
+	/** @var UnblockUserFactory */
+	private $unblockUserFactory;
+
 	/** @var DatabaseBlockStore */
 	private $databaseBlockStore;
 
@@ -85,6 +89,7 @@ class ConsequencesFactory {
 	 * @param ServiceOptions $options
 	 * @param LoggerInterface $logger
 	 * @param BlockUserFactory $blockUserFactory
+	 * @param UnblockUserFactory $unblockUserFactory
 	 * @param DatabaseBlockStore $databaseBlockStore
 	 * @param UserGroupManager $userGroupManager
 	 * @param BagOStuff $mainStash
@@ -100,6 +105,7 @@ class ConsequencesFactory {
 		ServiceOptions $options,
 		LoggerInterface $logger,
 		BlockUserFactory $blockUserFactory,
+		UnblockUserFactory $unblockUserFactory,
 		DatabaseBlockStore $databaseBlockStore,
 		UserGroupManager $userGroupManager,
 		BagOStuff $mainStash,
@@ -115,6 +121,7 @@ class ConsequencesFactory {
 		$this->options = $options;
 		$this->logger = $logger;
 		$this->blockUserFactory = $blockUserFactory;
+		$this->unblockUserFactory = $unblockUserFactory;
 		$this->databaseBlockStore = $databaseBlockStore;
 		$this->userGroupManager = $userGroupManager;
 		$this->mainStash = $mainStash;
@@ -141,6 +148,7 @@ class ConsequencesFactory {
 			$expiry,
 			$preventsTalk,
 			$this->blockUserFactory,
+			$this->unblockUserFactory,
 			$this->databaseBlockStore,
 			$this->filterUser,
 			$this->messageLocalizer,

@@ -227,7 +227,7 @@ ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data ) {
 				selectWidget.findItemFromData( page ).setDisabled( isSource );
 			} );
 
-			if ( isSource && visualOnlyPages.indexOf( data.page || 'categories' ) !== -1 ) {
+			if ( isSource && visualOnlyPages.includes( data.page || 'categories' ) ) {
 				data.page = 'templatesUsed';
 			}
 

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cgtdk",
+			"Saederup92"
+		]
+	},
+	"apihelp-query+checkuser-param-target": "Brugernavn, ip-adresse eller CIDR-interval at tjekke.",
+	"apihelp-query+checkuser-param-reason": "Begrundelse for tjek.",
+	"apihelp-query+checkuser-example-2": "Tjek redigeringer fra 192.0.2.0/24",
+	"apihelp-query+checkuserlog-param-user": "Brugernavnet på tjekbrugeren.",
+	"apierror-checkuser-missingsummary": "Du skal angive en begrundelse for tjekket."
+}

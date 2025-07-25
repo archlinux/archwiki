@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"NikosLikomitros",
+			"Nikosgranturismogt",
+			"Αντιγόνη"
+		]
+	},
+	"templatestyles-bad-src-missing": "Η σελίδα [[:$1|$2]] δεν έχει περιεχόμενο.",
+	"templatestyles-page-error-category": "Σελίδες με σφάλματα TemplateStyles"
+}

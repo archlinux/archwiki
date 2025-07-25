@@ -12,6 +12,7 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
+use PHPUnit\Framework\TestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -22,17 +23,23 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 	public static function evaluateUserLocatorsProvider() {
 		return [
 			[
-				'With no options no users are notified',
+				'With no options only default recipient locator is returned',
 				// expected result
-				[],
+				[ [ 987, 123 ] ],
 				// event user locator config
 				[],
+				static function ( TestCase $test, $event ) {
+					$event->expects( $test->once() )
+						->method( 'getExtraParam' )
+						->with( Event::RECIPIENTS_IDX )
+						->willReturn( [ 987, 123 ] );
+				}
 			],
 
 			[
-				'Does not error when given non-existant user-locator',
+				'Does not error when given non-existant user-locator and recipients is not set ',
 				// expected result
-				[],
+				[ [] ],
 				// event user locator config
 				[ 'not-callable' ],
 			],
@@ -40,7 +47,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			[
 				'Calls selected locator and returns result',
 				// expected result
-				[ [ 123 ] ],
+				[ [ 123 ], [] ],
 				// event user locator config
 				static function () {
 					return [ 123 => 123 ];
@@ -48,34 +55,19 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			],
 
 			[
-				'evaluates multiple locators',
-				// expected result
-				[ [ 123 ], [ 456 ] ],
-				// event user locator config
-				[
-					static function () {
-						return [ 123 => 123 ];
-					},
-					static function () {
-						return [ 456 => 456 ];
-					},
-				],
-			],
-
-			[
 				'Passes parameters to locateFromEventExtra in expected manner',
 				// expected result
-				[ [ 123 ] ],
+				[ [ 123 ], [ 256 ] ],
 				// event user locator config
 				[
 					[ [ UserLocator::class, 'locateFromEventExtra' ], [ 'other-user' ] ],
 				],
 				// additional setup
-				static function ( $test, $event ) {
-					$event->expects( $test->any() )
+				static function ( TestCase $test, $event ) {
+					$event->expects( $test->exactly( 2 ) )
 						->method( 'getExtraParam' )
-						->with( 'other-user' )
-						->willReturn( 123 );
+						->withConsecutive( [ 'other-user' ], [ Event::RECIPIENTS_IDX ] )
+						->willReturnOnConsecutiveCalls( 123, [ 256 ] );
 				}
 			],
 		];
@@ -114,7 +106,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 
 		$this->testEvaluateUserLocators(
 			__FUNCTION__,
-			[ [] ],
+			[ [], [] ],
 			[ [ $callback, 'first', 'second' ] ]
 		);
 	}
@@ -270,8 +262,13 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			->method( 'getTitle' )
 			->willReturn( Title::newFromText( 'test-title' ) );
 		$event->expects( $this->once() )
-			->method( 'getId' )
-			->willReturn( 42 );
+			->method( 'toDbArray' )
+			->willReturn( [
+				'event_type' => 'test',
+				'event_extra' => [
+					'extra-key' => 'extra'
+				],
+			] );
 		NotificationController::enqueueEvent( $event );
 		$jobQueueGroup = $this->getServiceContainer()->getJobQueueGroup();
 		$queues = $jobQueueGroup->getQueuesWithJobs();
@@ -279,7 +276,15 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( 'EchoNotificationJob', $queues[0] );
 		$job = $jobQueueGroup->pop( 'EchoNotificationJob' );
 		$this->assertEquals( 'Test-title', $job->params[ 'title' ] );
-		$this->assertEquals( 42, $job->params[ 'eventId' ] );
+		$this->assertEquals(
+			[
+				'event_type' => 'test',
+				'event_extra' => [
+					'extra-key' => 'extra'
+				],
+			],
+			$job->params[ 'eventData' ]
+		);
 	}
 
 	public function testNotSupportedDelay() {
@@ -315,12 +320,26 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 				[ 'rootJobTimestamp', null, $rootJobTimestamp ]
 			] );
 		$event->expects( $this->once() )
-			->method( 'getId' )
-			->willReturn( 42 );
+			->method( 'toDbArray' )
+			->willReturn( [
+				'event_type' => 'test',
+				'event_extra' => [
+					'delay' => 10,
+					'rootJobSignature' => 'test-signature',
+					'rootJobTimestamp' => $rootJobTimestamp,
+				],
+			] );
 
 		$params = NotificationController::getEventParams( $event );
 		$expectedParams = [
-			'eventId' => 42,
+			'eventData' => [
+				'event_type' => 'test',
+				'event_extra' => [
+					'delay' => 10,
+					'rootJobSignature' => 'test-signature',
+					'rootJobTimestamp' => $rootJobTimestamp,
+				],
+			],
 			'rootJobSignature' => 'test-signature',
 			'rootJobTimestamp' => $rootJobTimestamp,
 			'jobReleaseTimestamp' => 10
@@ -329,7 +348,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider PageLinkedTitleMutedByUserDataProvider
+	 * @dataProvider pageLinkedTitleMutedByUserDataProvider
 	 * @param int $mockArticleID
 	 * @param int[] $mockMutedTitlePreferences
 	 * @param bool $expected
@@ -348,7 +367,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public static function PageLinkedTitleMutedByUserDataProvider(): array {
+	public static function pageLinkedTitleMutedByUserDataProvider(): array {
 		return [
 			[
 				123,

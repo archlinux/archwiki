@@ -13,12 +13,15 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use MediaWiki\Settings\SettingsBuilderException;
 use MediaWiki\Settings\Source\EtcdSource;
+use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \MediaWiki\Settings\Source\EtcdSource
  */
 class EtcdSourceTest extends TestCase {
+	use MediaWikiCoversValidator;
+
 	public function testGetExpiryTtl() {
 		$source = new EtcdSource();
 		$this->assertSame( 10, $source->getExpiryTtl() );
@@ -98,7 +101,7 @@ class EtcdSourceTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider serverFailures
+	 * @dataProvider provideServerFailures
 	 */
 	public function testLoadAllServersFailed( GuzzleException $exception ) {
 		$client = $this->mockClientWithResponses( [
@@ -122,7 +125,7 @@ class EtcdSourceTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider serverFailures
+	 * @dataProvider provideServerFailures
 	 */
 	public function testLoadSomeServersFailed( GuzzleException $exception ) {
 		$client = $this->mockClientWithResponses( [
@@ -196,10 +199,8 @@ class EtcdSourceTest extends TestCase {
 
 	/**
 	 * All possible server-side exceptions.
-	 *
-	 * @return array
 	 */
-	public function serverFailures(): array {
+	public static function provideServerFailures(): array {
 		return [
 			[
 				new ConnectException(
@@ -217,11 +218,6 @@ class EtcdSourceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @param array $responses
-	 *
-	 * @return Client
-	 */
 	private function mockClientWithResponses( array $responses ): Client {
 		return new Client( [
 			'handler' => HandlerStack::create(

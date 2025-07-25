@@ -55,7 +55,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Dir hutt Iech abonéiert!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Dir kritt keng Notifikatioune méi, wann nei Sujeten op dëser Säit ugefaange ginn.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Dir hutt Iech desabonéiert.",
-	"discussiontools-notification-added-topic-header": "Neie Sujet „<strong>$4</strong>“ op <strong>$3</strong> ugeluecht vum $2.",
+	"discussiontools-notification-added-topic-header": "Neie Sujet „<strong>$4</strong>“ op <strong>$3</strong> {{GENDER:$2|ugeluecht}} vum $1.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Een neie Sujet|$1 nei Sujeten|100=Méi wéi 99 nei Sujeten}} op „<strong>$2</strong>“.",
 	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Sujet weisen",
@@ -147,7 +147,7 @@
 	"discussiontools-topicsubscription-button-subscribe-tooltip": "Abonéiere fir Notifikatiounen iwwer nei Kommentaren ze kréien.",
 	"discussiontools-topicsubscription-button-unsubscribe": "ofbestellen",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Ofbestellen",
-	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "Ofbestelle fir keng Notifikatiounen iwwer nei Kommentare méi ze kréien.",
+	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "Ofbestelle fir keng Notifikatioune méi iwwer nei Kommentare ze kréien.",
 	"discussiontools-topicsubscription-error-not-found-body": "Den Abonnement, deen an der URL ugi gouf, gouf net fonnt.",
 	"discussiontools-topicsubscription-error-not-found-title": "Abonnement net fonnt",
 	"discussiontools-topicsubscription-notify-subscribed-body": "Dir kritt Notifikatiounen iwwer nei Kommentaren zu dësem Sujet.",
@@ -169,8 +169,8 @@
 	"echo-pref-tooltip-dt-subscription": "Mech informéieren, wann een e Kommentar zu engem Sujet schreift, op deen ech abonéiert sinn.",
 	"tag-discussiontools-added-comment-description": "E Kommentar op der Diskussiounssäit gouf mat dëser Ännerung derbäigesat",
 	"tag-discussiontools-edit": "Geännerte Kommentar",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Neie Sujet]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Äntwerten]",
+	"tag-discussiontools-newtopic": "Neie Sujet",
+	"tag-discussiontools-reply": "Äntwerten",
 	"tag-discussiontools-reply-description": "De Benotzer huet mam Diskussiouns-Geschier op e Kommentar geäntwert",
 	"tag-discussiontools-visual-description": "Diskussiouns-Funktioun war am visuelle Modus"
 }

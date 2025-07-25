@@ -115,9 +115,9 @@
 	"tag-discussiontools-description": "Bi DiscussionToolsê re hat guhartin",
 	"tag-discussiontools-edit": "Şiroveya guhartî",
 	"tag-discussiontools-edit-description": "Bikarhêner şîroveke heyî bi DiscussionToolsê re guhart",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Mijareke nû]",
+	"tag-discussiontools-newtopic": "Mijareke nû",
 	"tag-discussiontools-newtopic-description": "Bikarhêner mijarekê lê zêde kir bi DiscussionToolsê re",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Bersiv bide]",
+	"tag-discussiontools-reply": "Bersiv bide",
 	"tag-discussiontools-reply-description": "Bikarhêner cewab da şîrovekê bi DiscussionToolsê re",
 	"tag-discussiontools-source-description": "DiscussionTools di şiklê çavkaniyê de bû",
 	"tag-discussiontools-visual-description": "DiscussionTools di şiklê dîtinê de bû"

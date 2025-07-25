@@ -44,6 +44,7 @@
 	"notifications": "સૂચનાઓ",
 	"tooltip-pt-notifications-alert": "{{GENDER:|તમારી}} ચેતવણીઓ",
 	"tooltip-pt-notifications-notice": "{{GENDER:|તમારી}} સૂચનાઓ",
+	"tooltip-pt-notifications": "તમારી સૂચનાઓ",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "નવા સભ્યો",
 	"echo-specialpage": "સૂચનાઓ",
 	"echo-none": "તમારા માટે કોઈ સૂચનાઓ નથી.",

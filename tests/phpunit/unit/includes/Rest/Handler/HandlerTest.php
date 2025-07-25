@@ -176,8 +176,16 @@ class HandlerTest extends MediaWikiUnitTestCase {
 	public function testCheckPreconditions( $status ) {
 		$request = new RequestData();
 
-		$util = $this->createNoOpMock( ConditionalHeaderUtil::class, [ 'checkPreconditions' ] );
+		$util = $this->createNoOpMock(
+			ConditionalHeaderUtil::class,
+			[ 'checkPreconditions', 'applyResponseHeaders', ]
+		);
 		$util->method( 'checkPreconditions' )->with( $request )->willReturn( $status );
+		$util->method( 'applyResponseHeaders' )->willReturnCallback(
+			static function ( ResponseInterface $response ) {
+				$response->setHeader( 'etag', '"the-etag"' );
+			}
+		);
 
 		$handler = $this->newHandler( [ 'getConditionalHeaderUtil' ] );
 		$handler->method( 'getConditionalHeaderUtil' )->willReturn( $util );
@@ -185,8 +193,17 @@ class HandlerTest extends MediaWikiUnitTestCase {
 		$this->initHandler( $handler, $request );
 		$resp = $handler->checkPreconditions();
 
-		$responseStatus = $resp ? $resp->getStatusCode() : null;
-		$this->assertSame( $status, $responseStatus );
+		if ( $status ) {
+			$this->assertNotNull( $resp );
+			$responseStatus = $resp->getStatusCode();
+			$this->assertSame( $status, $responseStatus );
+
+			// T357603: Response must include the Etag as specified in
+			// https://datatracker.ietf.org/doc/html/rfc9110#name-304-not-modified
+			$this->assertSame( '"the-etag"', $resp->getHeaderLine( 'etag' ) );
+		} else {
+			$this->assertNull( $resp );
+		}
 	}
 
 	public function testApplyConditionalResponseHeaders() {
@@ -499,7 +516,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expectedParams, $params );
 	}
 
-	public function provideValidateBodyParams_invalid() {
+	public static function provideValidateBodyParams_invalid() {
 		$paramDefintions = [
 			'foo' => [
 				ParamValidator::PARAM_TYPE => 'timestamp',
@@ -1299,6 +1316,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 			'$paramSettings' => [],
 			'$bodySettings' => [],
 			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test' ],
 			'$method' => 'GET',
 			'$assertions' =>
@@ -1323,16 +1341,24 @@ class HandlerTest extends MediaWikiUnitTestCase {
 					Handler::PARAM_SOURCE => 'path',
 					ParamValidator::PARAM_TYPE => [ 'x', 'y', 'z' ],
 					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_DESCRIPTION => "param b"
 				],
 				'c' => [
 					Handler::PARAM_SOURCE => 'path',
 					ParamValidator::PARAM_TYPE => 'string',
 					ParamValidator::PARAM_REQUIRED => false,
 				],
+				'd' => [
+					Handler::PARAM_SOURCE => 'path',
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-mock-desc' )
+				],
 			],
 			'$bodySettings' => [],
 			'$requestTypes' => [ 'application/json' ],
-			'$routeConfig' => [ 'path' => '/test/{a}/{b}' ],
+			'$responseBodySchema' => null,
+			'$routeConfig' => [ 'path' => '/test/{a}/{b}/{d}' ],
 			'$method' => 'GET',
 			'$assertions' =>
 				static function ( array $spec ) {
@@ -1352,6 +1378,12 @@ class HandlerTest extends MediaWikiUnitTestCase {
 					Assert::assertTrue( $params['a']['required'] );
 					Assert::assertTrue( $params['b']['required'] );
 
+					Assert::assertSame( 'a parameter', $params['a']['description'] );
+					Assert::assertSame( 'param b', $params['b']['description'] );
+					Assert::assertSame( '<message key="rest-param-desc-mock-desc"></message>',
+						$params['d']['description']
+					);
+
 					Assert::assertSame( 'integer', $params['a']['schema']['type'] );
 					Assert::assertSame( 'string', $params['b']['schema']['type'] );
 					Assert::assertSame( [ 'x', 'y', 'z' ], $params['b']['schema']['enum'] );
@@ -1369,10 +1401,18 @@ class HandlerTest extends MediaWikiUnitTestCase {
 					Handler::PARAM_SOURCE => 'query',
 					ParamValidator::PARAM_TYPE => [ 'x', 'y', 'z' ],
 					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_DESCRIPTION => "param b"
+				],
+				'c' => [
+					Handler::PARAM_SOURCE => 'query',
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-mock-desc' )
 				],
 			],
 			'$bodySettings' => [],
 			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test' ],
 			'$method' => 'GET',
 			'$assertions' =>
@@ -1388,6 +1428,12 @@ class HandlerTest extends MediaWikiUnitTestCase {
 
 					Assert::assertTrue( $params['a']['required'] );
 					Assert::assertFalse( $params['b']['required'] );
+
+					Assert::assertSame( 'a parameter', $params['a']['description'] );
+					Assert::assertSame( 'param b', $params['b']['description'] );
+					Assert::assertSame( '<message key="rest-param-desc-mock-desc"></message>',
+						$params['c']['description']
+					);
 
 					Assert::assertSame( 'integer', $params['a']['schema']['type'] );
 					Assert::assertSame( 'string', $params['b']['schema']['type'] );
@@ -1410,12 +1456,19 @@ class HandlerTest extends MediaWikiUnitTestCase {
 				'b' => [
 					Handler::PARAM_SOURCE => 'body',
 					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_DESCRIPTION => "param b"
+				],
+				'c' => [
+					Handler::PARAM_SOURCE => 'body',
+					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-mock-desc' )
 				],
 				'p' => [
 					Handler::PARAM_SOURCE => 'post',
 				],
 			],
 			'$requestTypes' => [ 'application/foo+json', 'application/bar+json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test' ],
 			'$method' => 'PUT',
 			'$assertions' =>
@@ -1447,6 +1500,12 @@ class HandlerTest extends MediaWikiUnitTestCase {
 					Assert::assertContains( 'a', $schema['required'] );
 					Assert::assertNotContains( 'b', $schema['required'] );
 
+					Assert::assertSame( 'a parameter', $schema['properties']['a']['description'] );
+					Assert::assertSame( 'param b', $schema['properties']['b']['description'] );
+					Assert::assertSame( '<message key="rest-param-desc-mock-desc"></message>',
+						$schema['properties']['c']['description']
+					);
+
 					// Nested schema, from ArrayDef
 					$aSchema = $schema['properties']['a'];
 					Assert::assertSame( 'object', $aSchema['type'] );
@@ -1465,6 +1524,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 				],
 			],
 			'$requestTypes' => [ 'application/x-www-form-urlencoded' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test' ],
 			'$method' => 'POST',
 			'$assertions' =>
@@ -1498,6 +1558,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 				],
 			],
 			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test' ],
 			'$method' => 'GET',
 			'$assertions' =>
@@ -1519,6 +1580,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 				],
 			],
 			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test' ],
 			'$method' => 'DELETE',
 			'$assertions' =>
@@ -1544,6 +1606,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 			],
 			'$bodySettings' => [],
 			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [ 'path' => '/test/{p}' ],
 			'$method' => 'GET',
 			'$assertions' =>
@@ -1570,6 +1633,67 @@ class HandlerTest extends MediaWikiUnitTestCase {
 				},
 		];
 
+		yield 'response body schema' => [
+			'$paramSettings' => [],
+			'$bodySettings' => [],
+			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => [
+				'x-i18n-description' => 'rest-schema-desc-mock-desc',
+				'properties' => [
+					'a' => [
+						'type' => 'string'
+					],
+					'b' => [
+						'type' => 'string',
+						'description' => 'plaintext description'
+					],
+					'c' => [
+						'type' => 'string',
+						'x-i18n-description' => 'rest-property-desc-mock-desc',
+					],
+					'd' => [
+						'type' => 'object',
+						'description' => "mock description",
+						'properties' => [
+							'example' => [
+								'type' => 'string',
+								'x-i18n-description' => 'rest-property-desc-mock-desc',
+							]
+						]
+					],
+				]
+			],
+			'$routeConfig' => [ 'path' => 'test' ],
+			'$method' => 'GET',
+			'$assertions' =>
+				static function ( array $spec ) {
+					self::assertWellFormedOAS( $spec, [ 'responses' ] );
+
+					$schema = $spec['responses'][200]['content']['application/json']['schema'];
+					// Body
+					Assert::assertArrayHasKey( 'description', $schema );
+					Assert::assertSame(
+						'<message key="rest-schema-desc-mock-desc"></message>',
+						$schema['description']
+					);
+					// First level properties
+					$props = $schema['properties'];
+					Assert::assertArrayNotHasKey( 'description', $props['a'] );
+					Assert::assertArrayHasKey( 'description', $props['b'] );
+					Assert::assertSame( 'plaintext description', $props['b']['description'] );
+					Assert::assertArrayHasKey( 'description', $props['c'] );
+					Assert::assertSame(
+						'<message key="rest-property-desc-mock-desc"></message>',
+						$schema['properties']['c']['description']
+					);
+					// Nested properties
+					Assert::assertArrayHasKey( 'description', $props['d']['properties']['example'] );
+					Assert::assertSame(
+						'<message key="rest-property-desc-mock-desc"></message>',
+						$props['d']['properties']['example']['description'] );
+				},
+		];
+
 		yield 'OAS info' => [
 			'$paramSettings' => [
 				'p' => [
@@ -1578,6 +1702,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 			],
 			'$bodySettings' => [],
 			'$requestTypes' => [ 'application/json' ],
+			'$responseBodySchema' => null,
 			'$routeConfig' => [
 				'path' => 'test/{p}',
 				'OAS' => [
@@ -1605,6 +1730,7 @@ class HandlerTest extends MediaWikiUnitTestCase {
 		$paramSettings,
 		$bodySettings,
 		$requestTypes,
+		$responseBodySchema,
 		$routeConfig,
 		$method,
 		$assertions
@@ -1613,10 +1739,12 @@ class HandlerTest extends MediaWikiUnitTestCase {
 				'getParamSettings',
 				'getBodyParamSettings',
 				'getSupportedRequestTypes',
+				'getResponseBodySchema'
 		] );
 		$handler->method( 'getParamSettings' )->willReturn( $paramSettings );
 		$handler->method( 'getBodyParamSettings' )->willReturn( $bodySettings );
 		$handler->method( 'getSupportedRequestTypes' )->willReturn( $requestTypes );
+		$handler->method( 'getResponseBodySchema' )->willReturn( $responseBodySchema );
 
 		// The "body" parameter should be processed as "body", not as "parameter".
 		$module = $this->createNoOpMock( Module::class );
@@ -1625,6 +1753,17 @@ class HandlerTest extends MediaWikiUnitTestCase {
 			$routeConfig['path'],
 			$routeConfig
 		);
+
+		// Because the dummy text formatter uses MessageValue::dump(), translated message keys
+		// will contain html. This html is a testing artifact and not representative of the spec
+		// presented to users at runtime.
+		$formatter = $this->getDummyTextFormatter( true );
+
+		$responseFactory = new ResponseFactory( [ 'qqx' => $formatter ] );
+		$authority = $this->mockAnonUltimateAuthority();
+		$hookContainer = $this->createHookContainer();
+		$handler->initServices( $authority, $responseFactory, $hookContainer );
+
 		$spec = $handler->getOpenApiSpec( $method );
 
 		$assertions( $spec );

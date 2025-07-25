@@ -1,5 +1,87 @@
 # OOUI Release History
 
+## v0.51.7 / 2025-03-10
+
+### Styles
+* styles, FieldsetLayout: fix regression in legend layout (Volker E.)
+
+### Code
+* Tool: Use getTitle (Ed Sanders)
+* build: Upgrade eslint-config-wikimedia from 0.28.2 to 0.29.1 (James D. Forrester)
+* build: Upgrade qunit from 2.20.0 to 2.24.1 (James D. Forrester)
+
+## v0.51.6 / 2025-02-20
+
+### Styles
+* TabSelectWidget: Fix position of overflow fade in the mobile version (Bartosz Dziewoński)
+* styles, FieldsetLayout: Remove IE `<legend>` workaround CSS code (Volker E.)
+* styles: Remove obsolete var (Volker E.)
+* styles: remove horizontal gradient mixin (Volker E.)
+* styles: remove vertical gradient mixin (Volker E.)
+
+### Icons
+* icons: Add more language-specific text icons for Norwegian and Swedish (Volker E.)
+
+### Code
+* Change how we place PopupToolGroups on narrow displays (Zoë)
+* Fix error when calling IndexLayout::addTabPanels with no items (Thiemo Kreuz)
+* build: Fix exclude pattern for PrefixedGlobalFunctions (Umherirrender)
+* build: Updating mediawiki/mediawiki-codesniffer to 46.0.0 ([BOT] libraryupgrader)
+
+## v0.51.5 / 2025-01-24
+
+### Styles
+* Update checkbox and radio hover states to match Codex (Ed Sanders)
+* WikimediaUI theme: Fix tool group borders on dark mode (Taavi Väänänen)
+* styles: Remove obsolete IE & Edge 12-18 proprietary CSS (Volker E.)
+
+### Icons
+* icons: Add localised 'bold' and 'italic' for Azerbaijani (James D. Forrester)
+* icons: Minor SVG optimization in the Wikiquote logo (Thiemo Kreuz)
+* icons: add 'arrowDown' and 'arrowUp' icons (lwatson)
+* icons: update SVG image of 'linkExternal' icon (lwatson)
+
+### Code
+* PopupWidget: When autoflipped and there's no space, open in original direction (Bartosz Dziewoński)
+* SelectFileInputWidget: Simplify filterFiles logic (Ed Sanders)
+* TagMultiselectWidget: Improve `allowReordering: false` (Bartosz Dziewoński)
+* TextInputWidget.validationPatterns: Use cheaper regex pattern for non-empty check (Thiemo Kreuz)
+* Toggle off the menu when the tag limit is reached (Func)
+* Toggle the modal-active-fullscreen class when changing the size (Func)
+* php: Replace isset() with null check in InputWidget::setDisabled (Umherirrender)
+* .nvmrc: Update now that CI is using Node 20 (James D. Forrester)
+* build, .nvmrc: Bump Node version to 20.18.1 (Jon Robson)
+* build: Updating mediawiki/mediawiki-phan-config to 0.15.0 ([BOT] libraryupgrader)
+* build: Updating mediawiki/mediawiki-phan-config to 0.15.1 ([BOT] libraryupgrader)
+* build: Upgrade stylelint-config-wikimedia from 0.17.2 to 0.18.0 (James D. Forrester)
+* demos: Remove the extra frame from the CopyTextLayout demo (Func)
+* license: Bump year to 2025 (Volker E.)
+
+## v0.51.4 / 2024-12-05
+
+### Code
+* build: Partly revert SVGO config changes by not enabling pretty output (Volker E.)
+
+## v0.51.3 / 2024-12-04
+
+### Deprecating changes
+* [DEPRECATING CHANGE] Mark Exception class as deprecated (Daimona Eaytoy)
+
+### Styles
+* WikimediaUI theme: fix TextInput invalid focus style (Volker E.)
+
+### Icons
+* icons: Add 'power' to 'interactions' pack (Volker E.)
+
+### Code
+* build: Replace grunt-jsdoc with direct call to jsdoc (James D. Forrester)
+* build: Update SVGO config to follow Codex's (James D. Forrester)
+* build: Update qunit from 2.20.0 to 2.22.0 (James D. Forrester)
+* build: Updating cross-spawn to 7.0.6 ([BOT] libraryupgrader)
+* build: Updating jsdoc to 4.0.4 ([BOT] libraryupgrader)
+* build: Upgrade PHPUnit from 9.6.16 to 9.6.21 (James D. Forrester)
+* build: Upgrade svgo from 3.2.0 to 3.3.2 (James D. Forrester)
+
 ## v0.51.2 / 2024-11-13
 
 ### Deprecating changes

@@ -2,12 +2,12 @@
 
 namespace PageImages\Hooks;
 
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageProps;
 use MediaWiki\Search\Hook\SearchResultProvideThumbnailHook;
 use MediaWiki\Search\SearchResultThumbnailProvider;
 use PageImages\PageImages;
-use RepoGroup;
 
 class SearchResultProvideThumbnailHookHandler implements SearchResultProvideThumbnailHook {
 

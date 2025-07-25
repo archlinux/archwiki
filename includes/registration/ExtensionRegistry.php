@@ -6,9 +6,11 @@ use AutoLoader;
 use Composer\Semver\Semver;
 use InvalidArgumentException;
 use LogicException;
+use MediaWiki\DomainEvent\DomainEventSource;
+use MediaWiki\DomainEvent\DomainEventSubscriber;
+use MediaWiki\Exception\ShellDisabledError;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
-use MediaWiki\ShellDisabledError;
 use MediaWiki\WikiMap\WikiMap;
 use ObjectCacheFactory;
 use RuntimeException;
@@ -30,7 +32,7 @@ use Wikimedia\ScopedCallback;
  * @ingroup ExtensionRegistry
  * @since 1.25
  */
-class ExtensionRegistry {
+class ExtensionRegistry implements DomainEventSubscriber {
 
 	/**
 	 * "requires" key that applies to MediaWiki core
@@ -157,9 +159,6 @@ class ExtensionRegistry {
 	 */
 	private $cache = null;
 
-	/**
-	 * @var ?SettingsBuilder
-	 */
 	private ?SettingsBuilder $settingsBuilder = null;
 
 	private static bool $accessDisabledForUnitTests = false;
@@ -271,7 +270,7 @@ class ExtensionRegistry {
 		return $this->cache;
 	}
 
-	private function makeCacheKey( BagOStuff $cache, $component, ...$extra ) {
+	private function makeCacheKey( BagOStuff $cache, string $component, string ...$extra ): string {
 		// Allow reusing cached ExtensionRegistry metadata between wikis (T274648)
 		return $cache->makeGlobalKey(
 			"registration-$component",
@@ -625,6 +624,19 @@ class ExtensionRegistry {
 		}
 
 		return $this->attributes[$name] ?? [];
+	}
+
+	/**
+	 * Register any domain event subscribers defined by extensions.
+	 *
+	 * @internal
+	 */
+	public function registerListeners( DomainEventSource $eventSource ): void {
+		$subscribers = $this->getAttribute( 'DomainEventIngresses' );
+
+		foreach ( $subscribers as $subscriber ) {
+			$eventSource->registerSubscriber( $subscriber );
+		}
 	}
 
 	/**

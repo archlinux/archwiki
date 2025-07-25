@@ -474,6 +474,8 @@ class CommentModifier {
 		if (
 			!( $wrapperNode instanceof Element ) ||
 			strtolower( $wrapperNode->tagName ) !== 'p' ||
+			// A signature placed inside a template rendering would get deleted (T390316)
+			$wrapperNode->getAttribute( 'typeof' ) === 'mw:Transclusion' ||
 			(
 				// This would be easier to check in prepareWikitextReply(), but that would result
 				// in an empty list item being added at the end if we don't need to add a signature.
@@ -635,6 +637,8 @@ class CommentModifier {
 			) || (
 				$node instanceof Element &&
 				strtolower( $node->tagName ) === 'p' &&
+				// A template-generated paragraph is not "empty" (T390316)
+				$node->getAttribute( 'typeof' ) !== 'mw:Transclusion' &&
 				CommentUtils::htmlTrim( DOMCompat::getInnerHTML( $node ) ) === ''
 			) ) {
 				$container->removeChild( $node );

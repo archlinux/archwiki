@@ -36,7 +36,6 @@
 	},
 	"wikieditor": "Interfaz avanzada de edición de wikitexto",
 	"wikieditor-desc": "Provee una interfaz avanzada y extensible de edición de wikitexto",
-	"wikieditor-wikitext-tab": "Wikitexto",
 	"wikieditor-toolbar": "Barra de herramientas de edición",
 	"wikieditor-toolbar-desc": "Barra de herramientas de la página de edición con usabilidad mejorada",
 	"wikieditor-toolbar-preference": "Activar la barra de herramientas de edición mejorada",

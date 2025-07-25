@@ -1,0 +1,629 @@
+[
+	{
+		"items": [],
+		"expectedData": {},
+		"expectedDataWhenClientHintsEnabled": {},
+		"msg": "No results in the result list"
+	},
+	{
+		"items": [
+			{
+				"userLink": "test ",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+				"clientHints": "Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No",
+				"IP": "127.0.0.1",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			}
+		],
+		"expectedData": {
+			"test": {
+				"classes": "mw-userlink",
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [ "127.0.0.1" ],
+					"ua": [ "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" ],
+					"uach": []
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 1
+				},
+				"uach": {},
+				"linkUserPage": true
+			}
+		},
+		"expectedDataWhenClientHintsEnabled": {
+			"test": {
+				"classes": "mw-userlink",
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.1"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 1
+				},
+				"uach": {
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 1
+				},
+				"linkUserPage": true
+			}
+		},
+		"msg": "One result in the results list"
+	},
+	{
+		"items": [
+			{
+				"userLink": "(username removed)",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+				"clientHints": "Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No",
+				"IP": "127.0.0.1",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": false,
+				"isTemp": false,
+				"isExpired": false
+			}
+		],
+		"expectedData": {
+			"(username removed)": {
+				"classes": null,
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [ "127.0.0.1" ],
+					"ua": [ "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" ],
+					"uach": []
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 1
+				},
+				"uach": {},
+				"linkUserPage": false
+			}
+		},
+		"expectedDataWhenClientHintsEnabled": {
+			"(username removed)": {
+				"classes": null,
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.1"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 1
+				},
+				"uach": {
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 1
+				},
+				"linkUserPage": false
+			}
+		},
+		"msg": "One result in the results list for a hidden user"
+	},
+	{
+		"items": [
+			{
+				"userLink": " *Unregistered 289 ",
+				"userAgent": "Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1",
+				"clientHints": "",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "fd12:3456:780d:9dc:62d:6a63:292d:175c",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": " *Unregistered 289 ",
+				"userAgent": "Another user agent",
+				"clientHints": "Another client hints",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "fd12:3456:780d:9dc:62d:6a63:292d:175c",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+				"clientHints": "Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No",
+				"IP": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+				"clientHints": "",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36",
+				"userAgent": "Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1",
+				"clientHints": "",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+				"clientHints": "Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62",
+				"XFFTrusted": true,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"userAgent": "Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1",
+				"clientHints": "",
+				"IP": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+				"clientHints": "Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "*Unregistered 289 ",
+				"userAgent": "Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1",
+				"clientHints": "",
+				"IP": "1.2.3.4",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+				"clientHints": "Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No",
+				"IP": "FD12:3456:788B:2397:9396:9C89:FF9C:DEF6",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+				"clientHints": "",
+				"IP": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"XFF": "127.0.0.195",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			},
+			{
+				"userLink": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+				"clientHints": "",
+				"IP": "FD12:3456:7893:81A7:F9D1:78F8:6396:D27E",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": false,
+				"isExpired": false
+			}
+		],
+		"expectedData": {
+			"*Unregistered 289": {
+				"classes": "mw-userlink",
+				"ip": {
+					"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6": {
+						"fd12:3456:780d:9dc:62d:6a63:292d:175c": {
+							"false": 2
+						}
+					},
+					"1.2.3.4": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 2,
+					"Another user agent": 1
+				},
+				"uach": {},
+				"sorted": {
+					"ip": [
+						"1.2.3.4",
+						"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6"
+					],
+					"ua": [
+						"Another user agent",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": []
+				},
+				"linkUserPage": true
+			},
+			"CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36": {
+				"classes": "mw-userlink",
+				"ip": {
+					"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6": {
+						"fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62": {
+							"false": 2,
+							"true": 1
+						},
+						"": {
+							"false": 2
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36": 2,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 1,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 2
+				},
+				"uach": {},
+				"sorted": {
+					"ip": [
+						"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": []
+				},
+				"linkUserPage": true
+			},
+			"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+				"classes": "mw-userlink",
+				"ip": {
+					"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+						"": {
+							"false": 3
+						},
+						"127.0.0.195": {
+							"false": 1
+						}
+					}
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 1,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 1,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0": 2
+				},
+				"uach": {},
+				"sorted": {
+					"ip": [
+						"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": []
+				},
+				"linkUserPage": true
+			}
+		},
+		"expectedDataWhenClientHintsEnabled": {
+			"*Unregistered 289": {
+				"classes": "mw-userlink",
+				"ip": {
+					"1.2.3.4": {
+						"": {
+							"false": 1
+						}
+					},
+					"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6": {
+						"fd12:3456:780d:9dc:62d:6a63:292d:175c": {
+							"false": 2
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"1.2.3.4",
+						"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6"
+					],
+					"ua": [
+						"Another user agent",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Another client hints"
+					]
+				},
+				"ua": {
+					"Another user agent": 1,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 2
+				},
+				"uach": {
+					"Another client hints": 1
+				},
+				"linkUserPage": true
+			},
+			"CheckUserSimulated-f917787ef9bc5d73d7bf8a08b81a7c36": {
+				"classes": "mw-userlink",
+				"ip": {
+					"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6": {
+						"": {
+							"false": 2
+						},
+						"fd12:3456:7893:81a7:f9d1:78f8:6396:d27e, 127.0.0.62": {
+							"false": 2,
+							"true": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"FD12:3456:788B:2397:9396:9C89:FF9C:DEF6"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No",
+						"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No"
+					]
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36": 2,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36": 2,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 1
+				},
+				"uach": {
+					"Brand: Chromium 115.0.5790.171, Brand: Google Chrome 115.0.5790.171, Brand: Not/A)Brand 99.0.0.0, Platform: Windows 15.0.0, Mobile: No": 2,
+					"Platform: Windows, Brand: Chromium 114, Brand: Google Chrome 114, Brand: Not/A)Brand 99, Mobile: No": 1
+				},
+				"linkUserPage": true
+			},
+			"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+				"classes": "mw-userlink",
+				"ip": {
+					"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E": {
+						"": {
+							"false": 3
+						},
+						"127.0.0.195": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"FD12:3456:7893:81A7:F9D1:78F8:6396:D27E"
+					],
+					"ua": [
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0",
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+						"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1"
+					],
+					"uach": [
+						"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No"
+					]
+				},
+				"ua": {
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 OPR/98.0.0.0": 1,
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0": 2,
+					"Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1": 1
+				},
+				"uach": {
+					"Brand: Chromium 112.0.5615.165, Brand: Not_A Brand 24.0.0.0, Brand: Opera GX 98.0.4759.82, Platform: Windows 15.0.0, Mobile: No": 1
+				},
+				"linkUserPage": true
+			}
+		},
+		"msg": "Multiple results from different users"
+	},
+	{
+		"items": [
+			{
+				"userLink": "~2025-1 ",
+				"userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+				"clientHints": "Platform: Linux, Brand: Chromium 131, Brand: Not_A Brand 24, Mobile: No",
+				"IP": "127.0.0.1",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": true,
+				"isExpired": false
+			}
+		],
+		"expectedData": {
+			"~2025-1": {
+				"classes": "mw-userlink mw-tempuserlink",
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.1"
+					],
+					"ua": [
+						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					],
+					"uach": []
+				},
+				"ua": {
+					"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36": 1
+				},
+				"uach": {},
+				"linkUserPage": true
+			}
+		},
+		"expectedDataWhenClientHintsEnabled": {
+			"~2025-1": {
+				"classes": "mw-userlink mw-tempuserlink",
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [ "127.0.0.1" ],
+					"ua": [
+						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Platform: Linux, Brand: Chromium 131, Brand: Not_A Brand 24, Mobile: No"
+					]
+				},
+				"ua": {
+					"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36": 1
+				},
+				"uach": {
+					"Platform: Linux, Brand: Chromium 131, Brand: Not_A Brand 24, Mobile: No": 1
+				},
+				"linkUserPage": true
+			}
+		},
+		"msg": "One result in the results list for a non-expired temporary account"
+	},
+	{
+		"items": [
+			{
+				"userLink": "~2025-1 ",
+				"userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+				"clientHints": "Platform: Linux, Brand: Chromium 131, Brand: Not_A Brand 24, Mobile: No",
+				"IP": "127.0.0.1",
+				"XFF": "",
+				"XFFTrusted": false,
+				"linkUserPage": true,
+				"isTemp": true,
+				"isExpired": true
+			}
+		],
+		"expectedData": {
+			"~2025-1": {
+				"classes": "mw-userlink mw-tempuserlink mw-tempuserlink-expired",
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [
+						"127.0.0.1"
+					],
+					"ua": [
+						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					],
+					"uach": []
+				},
+				"ua": {
+					"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36": 1
+				},
+				"uach": {},
+				"linkUserPage": true
+			}
+		},
+		"expectedDataWhenClientHintsEnabled": {
+			"~2025-1": {
+				"classes": "mw-userlink mw-tempuserlink mw-tempuserlink-expired",
+				"ip": {
+					"127.0.0.1": {
+						"": {
+							"false": 1
+						}
+					}
+				},
+				"sorted": {
+					"ip": [ "127.0.0.1" ],
+					"ua": [
+						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					],
+					"uach": [
+						"Platform: Linux, Brand: Chromium 131, Brand: Not_A Brand 24, Mobile: No"
+					]
+				},
+				"ua": {
+					"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36": 1
+				},
+				"uach": {
+					"Platform: Linux, Brand: Chromium 131, Brand: Not_A Brand 24, Mobile: No": 1
+				},
+				"linkUserPage": true
+			}
+		},
+		"msg": "One result in the results list for an expired temporary account"
+	}
+]

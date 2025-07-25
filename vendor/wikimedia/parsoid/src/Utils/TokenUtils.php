@@ -1,12 +1,6 @@
 <?php
 declare( strict_types = 1 );
 
-/**
- * This file contains general utilities for:
- * (a) querying token properties and token types
- * (b) manipulating tokens, individually and as collections.
- */
-
 namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Assert\Assert;
@@ -25,6 +19,11 @@ use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
+/**
+ * This class contains general utilities for:
+ * (a) querying token properties and token types
+ * (b) manipulating tokens, individually and as collections.
+ */
 class TokenUtils {
 	public const SOL_TRANSPARENT_LINK_REGEX =
 		'/(?:^|\s)mw:PageProp\/(?:Category|redirect|Language)(?=$|\s)/D';
@@ -76,7 +75,26 @@ class TokenUtils {
 	 * @return bool
 	 */
 	public static function isTemplateToken( $token ): bool {
-		return $token instanceof SelfclosingTagTk && $token->getName() === 'template';
+		return $token instanceof SelfclosingTagTk &&
+			in_array( $token->getName(), [ 'template', 'templatearg' ], true );
+	}
+
+	/**
+	 * Is this a template arg token?
+	 * @param Token|string|null $token
+	 * @return bool
+	 */
+	public static function isTemplateArgToken( $token ): bool {
+		return $token instanceof SelfclosingTagTk && $token->getName() === 'templatearg';
+	}
+
+	/**
+	 * Is this an extension token?
+	 * @param Token|string|null $token
+	 * @return bool
+	 */
+	public static function isExtensionToken( $token ): bool {
+		return $token instanceof SelfclosingTagTk && $token->getName() === 'extension';
 	}
 
 	/**
@@ -173,6 +191,34 @@ class TokenUtils {
 		} else {  // only metas left
 			return !( isset( $token->dataParsoid->stx ) && $token->dataParsoid->stx === 'html' );
 		}
+	}
+
+	/**
+	 * @param Token $t
+	 * @return bool
+	 */
+	public static function isAnnotationMetaToken( Token $t ): bool {
+		return self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP ) !== null;
+	}
+
+	/**
+	 * Checks whether the provided meta tag token is an annotation start token
+	 * @param Token $t
+	 * @return bool
+	 */
+	public static function isAnnotationStartToken( Token $t ): bool {
+		$type = self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP );
+		return $type !== null && !str_ends_with( $type, '/End' );
+	}
+
+	/**
+	 * Checks whether the provided meta tag token is an annotation end token
+	 * @param Token $t
+	 * @return bool
+	 */
+	public static function isAnnotationEndToken( Token $t ): bool {
+		$type = self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP );
+		return $type !== null && str_ends_with( $type, '/End' );
 	}
 
 	/**
@@ -304,7 +350,7 @@ class TokenUtils {
 					}
 
 					// Process attributes
-					if ( isset( $t->attribs ) ) {
+					if ( $t->attribs !== null ) {
 						for ( $j = 0, $m = count( $t->attribs );  $j < $m;  $j++ ) {
 							$a = $t->attribs[$j];
 							if ( is_array( $a->k ) ) {
@@ -362,8 +408,8 @@ class TokenUtils {
 	 *  populate it with references as `$offsets[] = &$var;`.
 	 *
 	 * @param string $s Unicode string the offsets are offsets into, UTF-8 encoded.
-	 * @param string $from Offset type to convert from.
-	 * @param string $to Offset type to convert to.
+	 * @param ('byte'|'ucs2'|'char') $from Offset type to convert from.
+	 * @param ('byte'|'ucs2'|'char') $to Offset type to convert to.
 	 * @param int[] $offsets References to the offsets to convert.
 	 */
 	public static function convertOffsets(
@@ -464,8 +510,8 @@ class TokenUtils {
 	 * @see TokenUtils::convertOffsets()
 	 *
 	 * @param string $s The offset reference string
-	 * @param string $from Offset type to convert from
-	 * @param string $to Offset type to convert to
+	 * @param ('byte'|'ucs2'|'char') $from Offset type to convert from
+	 * @param ('byte'|'ucs2'|'char') $to Offset type to convert to
 	 * @param array<Token|string|array> $tokens
 	 */
 	public static function convertTokenOffsets(
@@ -665,8 +711,10 @@ class TokenUtils {
 	/**
 	 * Convert an array of key-value pairs into a hash of keys to values.
 	 * For duplicate keys, the last entry wins.
+	 * @note that numeric key values will be converted by PHP from string to
+	 *  int when they are used as array keys.
 	 * @param array<KV> $kvs
-	 * @return array<string,array<Token|string>>|array<string,string>
+	 * @return array<string|int,array<Token|string>>|array<string|int,string>
 	 */
 	public static function kvToHash( array $kvs ): array {
 		$res = [];
@@ -728,23 +776,4 @@ class TokenUtils {
 		return $tokens;
 	}
 
-	/**
-	 * Checks whether the provided meta tag token is an annotation start token
-	 * @param Token $t
-	 * @return bool
-	 */
-	public static function isAnnotationStartToken( Token $t ): bool {
-		$type = self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP );
-		return $type !== null && !str_ends_with( $type, '/End' );
-	}
-
-	/**
-	 * Checks whether the provided meta tag token is an annotation end token
-	 * @param Token $t
-	 * @return bool
-	 */
-	public static function isAnnotationEndToken( Token $t ): bool {
-		$type = self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP );
-		return $type !== null && str_ends_with( $type, '/End' );
-	}
 }

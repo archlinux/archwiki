@@ -41,6 +41,12 @@ $separatorTransformTable = null;
 $minimumGroupingDigits = 1;
 
 /**
+ * The CLDR numbering system name.
+ * Refer to https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml
+ */
+$numberingSystem = 'latn';
+
+/**
  * URLs do not specify their encoding. UTF-8 is used by default, but if the
  * URL is not a valid UTF-8 sequence, we have to try to guess what the real
  * encoding is. The encoding used in this case is defined below, and must be
@@ -189,6 +195,12 @@ $dateFormats = [
 ];
 
 /**
+ * Overrides for the JS date format option arrays generated from $dateFormats by
+ * Language::convertDateFormatToJs()
+ */
+$jsDateFormats = [];
+
+/**
  * Default list of book sources
  */
 $bookstoreList = [
@@ -293,6 +305,8 @@ $magicWords = [
 	'img_width'               => [ 1, '$1px' ],
 	'index'                   => [ 1, '__INDEX__' ],
 	'int'                     => [ 0, 'INT:' ],
+	'interlanguagelink'       => [ 1, '#interlanguagelink' ],
+	'interwikilink'           => [ 1, '#interwikilink' ],
 	'language'                => [ 0, '#LANGUAGE' ],
 	'language_option_bcp47'   => [ 1, 'bcp47' ],
 	'lc'                      => [ 0, 'LC:' ],
@@ -448,6 +462,7 @@ $specialPageAliases = [
 	'Filepath'                   => [ 'FilePath' ],
 	'GoToInterwiki'              => [ 'GoToInterwiki' ],
 	'Import'                     => [ 'Import' ],
+	'Interwiki'                  => [ 'Interwiki' ],
 	'Invalidateemail'            => [ 'InvalidateEmail' ],
 	'JavaScriptTest'             => [ 'JavaScriptTest' ],
 	'LinkAccounts'               => [ 'LinkAccounts' ],
@@ -536,7 +551,7 @@ $specialPageAliases = [
 	'Userlogin'                  => [ 'UserLogin', 'Login' ],
 	'Userlogout'                 => [ 'UserLogout', 'Logout' ],
 	'Userrights'                 => [ 'UserRights', 'MakeSysop', 'MakeBot' ],
-	'Version'                    => [ 'Version' ],
+	'Version'                    => [ 'Version', 'Versions' ],
 	'Wantedcategories'           => [ 'WantedCategories' ],
 	'Wantedfiles'                => [ 'WantedFiles' ],
 	'Wantedpages'                => [ 'WantedPages', 'BrokenLinks' ],

@@ -22,7 +22,8 @@
  * @ingroup Maintenance
  */
 
-use Wikimedia\Rdbms\DoctrineSchemaBuilderFactory;
+use MediaWiki\Maintenance\SchemaGenerator;
+use MediaWiki\Maintenance\SchemaMaintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/includes/SchemaMaintenance.php';
@@ -37,20 +38,10 @@ class GenerateSchemaSql extends SchemaMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Build SQL files from abstract JSON files' );
-		$this->scriptName = 'generateSchemaSql.php';
 	}
 
-	protected function generateSchema( string $platform, array $schema ): string {
-		$schemaBuilder = ( new DoctrineSchemaBuilderFactory() )->getSchemaBuilder( $platform );
-
-		foreach ( $schema as $table ) {
-			$schemaBuilder->addTable( $table );
-		}
-		$tableSqls = $schemaBuilder->getSql();
-
-		$sql = $this->cleanupSqlArray( $platform, $tableSqls );
-
-		return $sql;
+	protected function generateSchema( string $platform, string $jsonPath ): string {
+		return ( new SchemaGenerator() )->generateSchema( $platform, $jsonPath );
 	}
 
 }

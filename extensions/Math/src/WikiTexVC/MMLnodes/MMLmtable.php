@@ -21,7 +21,8 @@ class MMLmtable extends MMLbase {
 			'columnspacing' => '0em 2em 0em 2em 0em 2em 0em 2em 0em 2em 0em',
 			'displaystyle' => 'true',
 			'rowspacing' => '3pt'
-		] ) {
-		parent::__construct( "mtable", $texclass, $attributes );
+		],
+		MMLmtr ...$rows ) {
+		parent::__construct( "mtable", $texclass, $attributes, ...$rows );
 	}
 }

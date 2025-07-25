@@ -54,7 +54,6 @@ this ''is'' a '''test'''
 <div class="poem" typeof="mw:Extension/poem" about="#mwt3" data-mw='{"name":"poem","attrs":{},"body":{"extsrc":"\nthis &apos;&apos;is&apos;&apos; a &apos;&apos;&apos;test&apos;&apos;&apos;\n"}}'><p>this <i>is</i> a <b>test</b></p></div>
 !!end
 
-## FIXME: Is Parsoid output the right output wrt how it actually renders?
 !!test
 <poem> with leading whitespace
 !!wikitext
@@ -71,7 +70,7 @@ this ''is'' a '''test'''
 </div>
 !! html/parsoid
 <div class="poem" typeof="mw:Extension/poem" about="#mwt3" data-mw='{"name":"poem","attrs":{},"body":{"extsrc":"\n\n   test\n\n"}}'><p><br/>
-<span typeof="mw:Entity"> </span>  test<br/></p>
+<span typeof="mw:Entity"> </span><span typeof="mw:Entity"> </span><span typeof="mw:Entity"> </span>test<br/></p>
 </div>
 !!end
 

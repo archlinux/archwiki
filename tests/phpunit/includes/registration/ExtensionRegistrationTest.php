@@ -4,6 +4,7 @@ namespace MediaWiki\Tests\Registration;
 
 use AutoLoader;
 use Generator;
+use MediaWiki\DomainEvent\DomainEventSource;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\PhpIniSink;
@@ -40,6 +41,8 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			'wgAvailableRights',
 			'wgAuthManagerAutoConfig',
 			'wgGroupPermissions',
+			'wgAddGroups',
+			'wgRemoveGroups',
 		] );
 
 		// For the purpose of this test, make $wgHooks behave like a real global config array.
@@ -128,6 +131,41 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $hookContainer->isRegistered( 'BooEvent' ), 'BooEvent' );
 	}
 
+	public function testRegisterDomainEventListeners() {
+		$subscriber = [
+			'events' => [ 'AnEvent', 'BooEvent' ],
+			'factory' => [ self::class, 'newSubscriber' ]
+		];
+
+		$manifest = [
+			'DomainEventIngresses' => [ $subscriber ]
+		];
+
+		$file = $this->makeManifestFile( $manifest );
+
+		$registry = new ExtensionRegistry();
+		$this->setExtensionRegistry( $registry );
+
+		$registry->queue( $file );
+		$registry->loadFromQueue();
+
+		$actualSubscribers = [];
+		$mockSource = $this->createMock( DomainEventSource::class );
+		$mockSource->method( 'registerSubscriber' )->willReturnCallback(
+			static function ( $subscriber ) use ( &$actualSubscribers ) {
+				$actualSubscribers[] = $subscriber;
+			}
+		);
+		$registry->registerListeners( $mockSource );
+
+		$expectedSubscribers = [ $subscriber + [ 'extensionPath' => $file ] ];
+
+		$this->assertArrayEquals(
+			$expectedSubscribers,
+			$actualSubscribers
+		);
+	}
+
 	public function testExportAutoload() {
 		global $wgAutoloadClasses;
 		$oldAutoloadClasses = $wgAutoloadClasses;
@@ -174,7 +212,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideExportConfigToGlobals
 	 * @dataProvider provideExportAttributesToGlobals
 	 */
-	public function testExportGlobals( $desc, $before, $manifest, $expected ) {
+	public function testExportGlobals( $before, $manifest, $expected ) {
 		$this->setMwGlobals( $before );
 
 		$file = $this->makeManifestFile( $manifest );
@@ -184,8 +222,8 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 		$registry->loadFromQueue();
 
 		foreach ( $expected as $name => $expectedValue ) {
-			$this->assertArrayHasKey( $name, $GLOBALS, $desc );
-			$this->assertEquals( $expectedValue, $GLOBALS[$name], $desc );
+			$this->assertArrayHasKey( $name, $GLOBALS );
+			$this->assertEquals( $expectedValue, $GLOBALS[$name] );
 		}
 	}
 
@@ -233,8 +271,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 	 * @return Generator
 	 */
 	public static function provideExportConfigToGlobals() {
-		yield [
-			'Simple non-array values',
+		yield 'Simple non-array values' => [
 			[
 				'mwtestFooBarConfig' => true,
 				'mwtestFooBarConfig2' => 'string',
@@ -253,8 +290,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'No global already set, simple assoc array',
+		yield 'No global already set, simple assoc array' => [
 			[],
 			[
 				'config_prefix' => 'mwtest',
@@ -273,8 +309,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'No global already set, simple assoc array, manifest version 1',
+		yield 'No global already set, simple assoc array, manifest version 1' => [
 			[],
 			[
 				'manifest_version' => 1,
@@ -292,8 +327,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'Global already set, simple assoc array, manifest version 1',
+		yield 'Global already set, simple assoc array, manifest version 1' => [
 			[
 				'mwtestSomeMap' => [
 					'foobar' => true,
@@ -319,8 +353,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		yield [
-			'Global already set, simple list array',
+		yield 'Global already set, simple list array' => [
 			[
 				'mwtestList' => [ 'x', 'y', 'z' ],
 			],
@@ -336,8 +369,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		yield [
-			'New variable, explicit merge strategy',
+		yield 'New variable, explicit merge strategy' => [
 			[
 				'wgNamespacesFoo' => [
 					100 => true,
@@ -364,8 +396,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		yield [
-			'New variable, explicit merge strategy, manifest version 1',
+		yield 'New variable, explicit merge strategy, manifest version 1' => [
 			[
 				'wgNamespacesFoo' => [
 					100 => true,
@@ -391,8 +422,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		yield [
-			'False local setting should not be overridden by default (T100767)',
+		yield 'False local setting should not be overridden by default (T100767)' => [
 			[
 				'wgT100767' => false,
 			],
@@ -406,8 +436,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'test array_replace_recursive',
+		yield 'test array_replace_recursive' => [
 			[
 				'mwtestJsonConfigs' => [
 					'JsonZeroConfig' => [
@@ -447,8 +476,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'Default doesn\'t override null',
+		yield 'Default doesn\'t override null' => [
 			[
 				'wgNullGlobal' => null,
 			],
@@ -462,8 +490,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'provide_default passive case',
+		yield 'provide_default passive case' => [
 			[
 				'wgFlatArray' => [],
 			],
@@ -480,8 +507,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 
-		yield [
-			'provide_default active case',
+		yield 'provide_default active case' => [
 			[],
 			[
 				'config' => [
@@ -504,8 +530,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 	 * @return Generator
 	 */
 	public static function provideExportAttributesToGlobals() {
-		yield [
-			'AvailableRights appends to default value, per config schema',
+		yield 'AvailableRights appends to default value, per config schema' => [
 			[
 				'wgAvailableRights' => [
 					'aaa',
@@ -524,8 +549,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		yield [
-			'AuthManagerAutoConfig appends to default value, per top level key',
+		yield 'AuthManagerAutoConfig appends to default value, per top level key' => [
 			[
 				'wgAuthManagerAutoConfig' => [
 					'preauth' => [ 'default' => 'DefaultPreAuth' ],
@@ -547,8 +571,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		yield [
-			'Global already set, $wgGroupPermissions',
+		yield 'Global already set, $wgGroupPermissions' => [
 			[
 				'wgGroupPermissions' => [
 					'sysop' => [
@@ -591,13 +614,72 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 				],
 			],
 		];
+		yield '$wgAddGroups and $wgRemoveGroups are merged correctly' => [
+			[
+				'wgAddGroups' => [
+					'key1' => [
+						'value1',
+					],
+					'key2' => [
+						'value2',
+					],
+				],
+				'wgRemoveGroups' => [
+					'key1' => [
+						'value1',
+					],
+					'key2' => [
+						'value2',
+					],
+				],
+			],
+			[
+				'AddGroups' => [
+					'key1' => [
+						'value1b',
+					],
+					'key3' => [
+						'value3',
+					],
+				],
+				'RemoveGroups' => [
+					'key1' => [
+						'value1b',
+					],
+					'key3' => [
+						'value3',
+					],
+				],
+			],
+			[
+				'wgAddGroups' => [
+					'key1' => [
+						'value1',
+						'value1b',
+					],
+					'key2' => [
+						'value2',
+					],
+					'key3' => [
+						'value3',
+					],
+				],
+				'wgRemoveGroups' => [
+					'key1' => [
+						'value1',
+						'value1b',
+					],
+					'key2' => [
+						'value2',
+					],
+					'key3' => [
+						'value3',
+					],
+				],
+			],
+		];
 	}
 
-	/**
-	 * @param array $manifest
-	 *
-	 * @return string
-	 */
 	private function makeManifestFile( array $manifest ): string {
 		$manifest += [
 			'name' => 'Test',

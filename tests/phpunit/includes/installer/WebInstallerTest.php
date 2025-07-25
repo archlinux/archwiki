@@ -18,11 +18,13 @@ class WebInstallerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideGetAcceptLanguage() {
+	public static function provideGetAcceptLanguage() {
 		return [
 			[ 'de-ch', 'de-LI,de-CH;q=0.8,de;q=0.5,en;q=0.3' ],
 			// T189193: This should be 'de-de' or 'de'.
-			[ 'de-at', 'de-DE,de-AT;q=0.8,de;q=0.5,en;q=0.3' ]
+			[ 'de-at', 'de-DE,de-AT;q=0.8,de;q=0.5,en;q=0.3' ],
+			// T187866: 'no' gets accepted.
+			[ 'no', 'no,nl;q=0.5' ],
 		];
 	}
 }

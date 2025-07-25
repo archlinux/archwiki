@@ -4,6 +4,7 @@
 			"555",
 			"Cainamarques",
 			"Dr03ramos",
+			"EGobi",
 			"Eduardo Addad de Oliveira",
 			"Eduardo.mps",
 			"Eduardoaddad",
@@ -13,8 +14,7 @@
 			"Glaucia Japui Gonçalves",
 			"Mariagarbin",
 			"Marinaazev",
-			"TheEduGobi",
-			"EGobi"
+			"TheEduGobi"
 		]
 	},
 	"cite-desc": "Adiciona elementos <code>&lt;ref&gt;</code> e <code>&lt;references&gt;</code> para uso em citações",
@@ -23,12 +23,9 @@
 	"cite_error_ref_numeric_key": "Marca <code>&lt;ref&gt;</code> inválida; \no nome não pode ser um número inteiro. Utilize um título descritivo",
 	"cite_error_ref_no_key": "A tag de abertura <code>&lt;ref&gt;</code> está mal formada ou tem um nome ruim",
 	"cite_error_ref_too_many_keys": "Marca <code>&lt;ref&gt;</code> inválida; \nnomes inválidos, por exemplo, muito extenso",
-	"cite_error_ref_nested_extends": "Não é permitido estender as etiquetas <code>&lt;ref&gt;</code> a mais do que um nível de profundidade",
 	"cite_error_ref_no_input": "Marca <code>&lt;ref&gt;</code> inválida; \nrefs sem nome devem possuir conteúdo",
 	"cite_error_references_duplicate_key": "Etiqueta inválida <code>&lt;ref&gt;</code>; Nome \"$1\" definido várias vezes com conteúdo diferente",
 	"cite_error_references_invalid_parameters": "Parâmetro inválido na marca <code>&lt;references&gt;</code>",
-	"cite_error_references_no_backlink_label": "Etiquetas de backlink esgotadas. \nDefina mais na mensagem [[MediaWiki:Cite references link many format backlink labels]].",
-	"cite_error_no_link_label_group": "Etiquetas personalizadas para links, no grupo \"$1\", esgotadas. Defina mais na mensagem [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Marca <code>&lt;ref&gt;</code> inválida; \nnão foi fornecido texto para as refs chamadas <code>$1</code>",
 	"cite_error_included_ref": "<code>&lt;/ref&gt;</code> de fechamento ausente para a marca <code>&lt;ref&gt;</code>",
 	"cite_error_included_references": "Falta a etiqueta de fechamento para <code>&lt;references&gt;</code>",
@@ -46,6 +43,10 @@
 	"cite-reference-previews-note": "Nota",
 	"cite-reference-previews-web": "Referência de site",
 	"cite-reference-previews-collapsible-placeholder": "Esta referência inclui uma figura que não cabe na pré-visualização.",
+	"cite-reference-previews-gadget-conflict-info-navpopups": "Voe tem o ''gadget'' da [[$1|navegação flutuante]] (''navigation popups'') ativado, por isso não verá as pré-visualizações fornecidas por esta funcionalidade. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do usuário, incluindo os globais.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "Você tem o ''gadget'' das [[$1|dicas de referências]] (''reference tooltips'') ativado, por isso não verá as pré-visualizações de referências,  mas continuará a ver as pré-visualizações de páginas. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do utilizador, incluindo os globais.",
+	"cite-reference-previews-gadget-conflict-info-navpopups-reftooltips": "Você tem os ''gadgets'' da [[$1|navegação flutuante]] (''navigation popups'') e das [[$1|dicas de referências]] (''reference tooltips'') ativados, por isso não verá as pré-visualizações fornecidas por esta funcionalidade. Dependendo da sua wiki, estes ''gadgets'' pode ter nomes ligeiramente diferentes. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do usuário, incluindo os globais.",
+	"cite-reference-previews-preference-label": "Ativar a pré-visualizações de referência (obtenha pré-visualizações rápidas de uma referência ao ler uma página)",
 	"cite_references_link_accessibility_label": "Ir para cima",
 	"cite_references_link_many_accessibility_label": "Ir para:",
 	"cite_references_link_accessibility_back_label": "Voltar acima",
@@ -60,9 +61,5 @@
 	"cite-wikieditor-help-content-showreferences-description": "Mostrar referências",
 	"cite-wikieditor-help-content-reference-example-text1": "Página\n  texto.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Texto do link], texto adicional.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto do link]",
-	"popups-prefs-navpopups-gadget-conflict-info": "Voe tem o ''gadget'' da [[$1|navegação flutuante]] (''navigation popups'') ativado, por isso não verá as pré-visualizações fornecidas por esta funcionalidade. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do usuário, incluindo os globais.",
-	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Você tem os ''gadgets'' da [[$1|navegação flutuante]] (''navigation popups'') e das [[$1|dicas de referências]] (''reference tooltips'') ativados, por isso não verá as pré-visualizações fornecidas por esta funcionalidade. Dependendo da sua wiki, estes ''gadgets'' pode ter nomes ligeiramente diferentes. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do usuário, incluindo os globais.",
-	"popups-prefs-reftooltips-gadget-conflict-info": "Você tem o ''gadget'' das [[$1|dicas de referências]] (''reference tooltips'') ativado, por isso não verá as pré-visualizações de referências,  mas continuará a ver as pré-visualizações de páginas. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do utilizador, incluindo os globais.",
-	"popups-refpreview-user-preference-label": "Ativar a pré-visualizações de referência (obtenha pré-visualizações rápidas de uma referência ao ler uma página)"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto do link]"
 }

@@ -23,7 +23,6 @@
 namespace MediaWiki\Specials;
 
 use Closure;
-use HtmlArmor;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -32,10 +31,7 @@ use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
-use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserFactory;
-use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -45,6 +41,7 @@ use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\Utils\UrlUtils;
 use Symfony\Component\Yaml\Yaml;
 use Wikimedia\Composer\ComposerInstalled;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -82,11 +79,6 @@ class SpecialVersion extends SpecialPage {
 	private UrlUtils $urlUtils;
 	private IConnectionProvider $dbProvider;
 
-	/**
-	 * @param ParserFactory $parserFactory
-	 * @param UrlUtils $urlUtils
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct(
 		ParserFactory $parserFactory,
 		UrlUtils $urlUtils,
@@ -233,16 +225,13 @@ class SpecialVersion extends SpecialPage {
 					$this->getLibraries( $credits ),
 					$this->getParserTags(),
 					$this->getParserFunctionHooks(),
+					$this->getParsoidModules(),
 					$this->getHooks(),
 					$this->IPInfo(),
 				];
 
 				// Insert TOC first
-				$pout = new ParserOutput;
-				$pout->setTOCData( $this->tocData );
-				$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-				$pout->setRawText( Parser::TOC_PLACEHOLDER );
-				$out->addParserOutput( $pout );
+				$out->addTOCPlaceholder( $this->tocData );
 
 				// Insert contents
 				foreach ( $sections as $content ) {
@@ -356,7 +345,9 @@ class SpecialVersion extends SpecialPage {
 			'Bartosz Dziewoński', 'Ed Sanders', 'Moriel Schottlender',
 			'Kunal Mehta', 'James D. Forrester', 'Brian Wolff', 'Adam Shorland',
 			'DannyS712', 'Ori Livneh', 'Max Semenik', 'Amir Sarabadani',
-			'Derk-Jan Hartman', 'Petr Pchelko',
+			'Derk-Jan Hartman', 'Petr Pchelko', 'Umherirrender', 'C. Scott Ananian',
+			'fomafix', 'Thiemo Kreuz', 'Gergő Tisza', 'Volker E.',
+			'Jack Phoenix', 'Isarra Yos',
 			$othersLink, $translatorsLink
 		];
 
@@ -660,12 +651,12 @@ class SpecialVersion extends SpecialPage {
 	}
 
 	/**
-	 * Generate an HTML table for external server-side libraries that are installed
-	 *
+	 * @internal
+	 * @since 1.44
 	 * @param array $credits
-	 * @return string
+	 * @return array
 	 */
-	protected function getExternalLibraries( array $credits ) {
+	public static function parseComposerInstalled( array $credits ) {
 		$paths = [
 			MW_INSTALL_PATH . '/vendor/composer/installed.json'
 		];
@@ -695,11 +686,21 @@ class SpecialVersion extends SpecialPage {
 			$dependencies += $installed->getInstalledDependencies();
 		}
 
+		ksort( $dependencies );
+		return $dependencies;
+	}
+
+	/**
+	 * Generate an HTML table for external libraries that are installed
+	 *
+	 * @param array $credits
+	 * @return string
+	 */
+	protected function getExternalLibraries( array $credits ) {
+		$dependencies = self::parseComposerInstalled( $credits );
 		if ( $dependencies === [] ) {
 			return '';
 		}
-
-		ksort( $dependencies );
 
 		$this->addTocSubSection( $this->msg( 'version-libraries-server' )->text(), 'mw-version-libraries-server' );
 
@@ -933,22 +934,98 @@ class SpecialVersion extends SpecialPage {
 		array_walk( $funcHooks, static function ( &$value ) use ( $preferredSynonyms ) {
 			$value = $preferredSynonyms[$value];
 		} );
+		$legacyHooks = array_flip( $funcHooks );
 
 		// Sort case-insensitively, ignoring the leading '#' if present
-		usort( $funcHooks, static function ( $a, $b ) {
+		$cmpHooks = static function ( $a, $b ) {
 			return strcasecmp( ltrim( $a, '#' ), ltrim( $b, '#' ) );
-		} );
+		};
+		usort( $funcHooks, $cmpHooks );
 
-		array_walk( $funcHooks, static function ( &$value ) {
+		$formatHooks = static function ( &$value ) {
 			// Bidirectional isolation ensures it displays as {{#ns}} and not {{ns#}} in RTL wikis
 			$value = Html::rawElement(
 				'bdi',
 				[],
 				Html::element( 'code', [], '{{' . $value . '}}' )
 			);
-		} );
+		};
+		array_walk( $funcHooks, $formatHooks );
 
 		$out .= $this->getLanguage()->listToText( $funcHooks );
+
+		# Get a list of parser functions from Parsoid as well.
+		$parsoidHooks = [];
+		$services = MediaWikiServices::getInstance();
+		$siteConfig = $services->getParsoidSiteConfig();
+		$magicWordFactory = $services->getMagicWordFactory();
+		foreach ( $siteConfig->getPFragmentHandlerKeys() as $key ) {
+			$config = $siteConfig->getPFragmentHandlerConfig( $key );
+			if ( !( $config['options']['parserFunction'] ?? false ) ) {
+				continue;
+			}
+			$mw = $magicWordFactory->get( $key );
+			foreach ( $mw->getSynonyms() as $local ) {
+				if ( !( $config['options']['nohash'] ?? false ) ) {
+					$local = '#' . $local;
+				}
+				// Skip hooks already present in legacy hooks (they will
+				// also work in parsoid)
+				if ( isset( $legacyHooks[$local] ) ) {
+					continue;
+				}
+				$parsoidHooks[] = $local;
+			}
+		}
+		if ( $parsoidHooks ) {
+			$out .= Html::element(
+				'h3',
+				[ 'id' => 'mw-version-parser-function-hooks-parsoid' ],
+				$this->msg( 'version-parser-function-hooks-parsoid' )->text()
+			);
+			usort( $parsoidHooks, $cmpHooks );
+			array_walk( $parsoidHooks, $formatHooks );
+			$out .= $this->getLanguage()->listToText( $parsoidHooks );
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Obtains a list of installed Parsoid Modules and the associated H2 header
+	 *
+	 * @return string HTML output
+	 */
+	protected function getParsoidModules() {
+		$siteConfig = MediaWikiServices::getInstance()->getParsoidSiteConfig();
+		$modules = $siteConfig->getExtensionModules();
+
+		if ( !$modules ) {
+			return '';
+		}
+
+		$this->addTocSection( 'version-parsoid-modules', 'mw-version-parsoid-modules' );
+
+		$out = Html::rawElement(
+			'h2',
+			[ 'id' => 'mw-version-parsoid-modules' ],
+			Html::rawElement(
+				'span',
+				[ 'class' => 'plainlinks' ],
+				$this->getLinkRenderer()->makeExternalLink(
+					'https://www.mediawiki.org/wiki/Special:MyLanguage/Parsoid',
+					$this->msg( 'version-parsoid-modules' ),
+					$this->getFullTitle()
+				)
+			)
+		);
+
+		$moduleNames = array_map(
+			static fn ( $m )=>Html::element( 'code', [], $m->getConfig()['name'] ),
+			$modules
+		);
+
+		$out .= $this->getLanguage()->listToText( $moduleNames );
 
 		return $out;
 	}
@@ -1227,7 +1304,7 @@ class SpecialVersion extends SpecialPage {
 		return implode( "\n", $ret );
 	}
 
-	private function openExtType( ?string $text = null, ?string $name = null ) {
+	private function openExtType( ?string $text = null, ?string $name = null ): string {
 		$out = '';
 
 		$opt = [ 'class' => 'wikitable plainlinks mw-installed-software' ];

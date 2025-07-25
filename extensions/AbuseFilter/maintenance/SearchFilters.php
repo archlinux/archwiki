@@ -2,10 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Maintenance;
 
+use MediaWiki\Extension\AbuseFilter\AbuseFilter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
-use Wikimedia\Rdbms\IExpression;
-use Wikimedia\Rdbms\LikeValue;
 
 // @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
@@ -19,10 +18,17 @@ class SearchFilters extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription(
-			'Find all filters matching a regular expression pattern and/or that have given consequence'
+			'Find all filters matching a regular expression pattern and/or that have a given ' .
+			'consequence and/or privacy level'
 		);
 		$this->addOption( 'pattern', 'Regular expression pattern', false, true );
 		$this->addOption( 'consequence', 'The consequence that the filter should have', false, true );
+		$this->addOption(
+			'privacy',
+			'The privacy level that the filter should include (a constant from Flags)',
+			false,
+			true
+		);
 
 		$this->requireExtension( 'Abuse Filter' );
 	}
@@ -37,8 +43,12 @@ class SearchFilters extends Maintenance {
 			$this->fatalError( 'This maintenance script only works with MySQL databases' );
 		}
 
-		if ( !$this->getOption( 'pattern' ) && !$this->getOption( 'consequence' ) ) {
-			$this->fatalError( 'One of --consequence or --pattern should be specified.' );
+		if (
+			!$this->getOption( 'pattern' ) &&
+			!$this->getOption( 'consequence' ) &&
+			$this->getOption( 'privacy' ) === null
+		) {
+			$this->fatalError( 'One of --consequence, --pattern or --privacy should be specified.' );
 		}
 
 		$this->output( "wiki\tfilter\n" );
@@ -59,6 +69,7 @@ class SearchFilters extends Maintenance {
 		$dbr = $this->getDB( DB_REPLICA, [], $dbname );
 		$pattern = $dbr->addQuotes( $this->getOption( 'pattern' ) );
 		$consequence = $this->getOption( 'consequence' );
+		$privacy = $this->getOption( 'privacy' );
 
 		if ( $dbr->tableExists( 'abuse_filter', __METHOD__ ) ) {
 			$queryBuilder = $dbr->newSelectQueryBuilder()
@@ -68,11 +79,22 @@ class SearchFilters extends Maintenance {
 				$queryBuilder->where( "af_pattern RLIKE $pattern" );
 			}
 			if ( $consequence ) {
-				$queryBuilder->where( $dbr->expr(
-					'af_actions',
-					IExpression::LIKE,
-					new LikeValue( $dbr->anyString(), $consequence, $dbr->anyString() )
-				) );
+				$queryBuilder->where( AbuseFilter::findInSet( $dbr, 'af_actions', $consequence ) );
+			}
+			if ( $privacy !== '' ) {
+				if ( $privacy === '0' ) {
+					$queryBuilder->where( $dbr->expr(
+						'af_hidden',
+						'=',
+						0
+					) );
+				} else {
+					$privacy = (int)$privacy;
+					$queryBuilder->where( $dbr->bitAnd(
+						'af_hidden',
+						$privacy
+					) . " = $privacy" );
+				}
 			}
 			$rows = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 

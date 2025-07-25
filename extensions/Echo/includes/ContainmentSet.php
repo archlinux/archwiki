@@ -40,8 +40,6 @@ class ContainmentSet {
 
 	/**
 	 * Add an ContainmentList to the set of lists checked by self::contains()
-	 *
-	 * @param ContainmentList $list
 	 */
 	public function add( ContainmentList $list ) {
 		$this->lists[] = $list;
@@ -49,8 +47,6 @@ class ContainmentSet {
 
 	/**
 	 * Add a php array to the set of lists checked by self::contains()
-	 *
-	 * @param array $list
 	 */
 	public function addArray( array $list ) {
 		$this->add( new ArrayList( $list ) );
@@ -58,8 +54,6 @@ class ContainmentSet {
 
 	/**
 	 * Add a list from a user preference to the set of lists checked by self::contains().
-	 *
-	 * @param string $preferenceName
 	 */
 	public function addFromUserOption( string $preferenceName ) {
 		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
@@ -76,8 +70,6 @@ class ContainmentSet {
 	/**
 	 * Add a list of title IDs from a user preference to the set of lists
 	 * checked by self::contains().
-	 *
-	 * @param string $preferenceName
 	 */
 	public function addTitleIDsFromUserOption( string $preferenceName ): void {
 		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();

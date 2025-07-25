@@ -10,6 +10,7 @@
 	"echo-category-title-login-success": "Session proveniente de un apparato non familiar",
 	"echo-pref-tooltip-login-success": "Notificar me quando alcuno aperi session in mi conto a partir de un apparato e adresse IP non familiar.",
 	"loginnotify-primary-link": "Adjuta",
+	"loginnotify-unknown-ip": "Tu ha tentate aperir session desde un adresse IP non familiar, e {{SITENAME}} es actualmente configurate pro impedir le apertura de session desde adresses IP non familiar.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Tentativa|Plure tentativas}} fallite de aperir session in {{SITENAME}} como $1",
 	"notification-loginnotify-login-success-email-subject": "Session {{SITENAME}} como $1 ab un dispositivo que {{GENDER:$1|tu}} non ha usate recentemente",
 	"notification-header-login-success": "Alcuno (probabilemente {{GENDER:$1|tu}}) ha recentemente aperire session in tu conto a partir de un nove apparato. Si es tu, alora tu pote ignorar iste message. Si non es tu, alora es recommendate cambiar tu contrasigno e verificar le activitate de tu conto.",

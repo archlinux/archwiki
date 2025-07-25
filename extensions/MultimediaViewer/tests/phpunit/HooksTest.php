@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\MultimediaViewer\Tests;
 
 use MediaWiki\Extension\MultimediaViewer\Hooks;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use SkinTemplate;
 
 /**
  * @covers \MediaWiki\Extension\MultimediaViewer\Hooks

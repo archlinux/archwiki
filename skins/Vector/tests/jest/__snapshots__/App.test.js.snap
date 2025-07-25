@@ -17,6 +17,7 @@ exports[`App renders a typeahead search component 1`] = `
   search-results-label="searchresults"
   show-thumbnail="true"
   title="search"
+  visible-item-limit="7"
 >
   <input
     name="title"

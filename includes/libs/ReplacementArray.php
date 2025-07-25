@@ -44,7 +44,6 @@ class ReplacementArray {
 
 	/**
 	 * Set the whole replacement array at once
-	 * @param array $data
 	 */
 	public function setArray( array $data ) {
 		$this->data = $data;
@@ -73,9 +72,6 @@ class ReplacementArray {
 		$this->data = $data + $this->data;
 	}
 
-	/**
-	 * @param ReplacementArray $other
-	 */
 	public function merge( ReplacementArray $other ) {
 		$this->data = $other->data + $this->data;
 	}

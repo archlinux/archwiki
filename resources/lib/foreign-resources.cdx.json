@@ -2,7 +2,7 @@
     "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
     "bomFormat": "CycloneDX",
     "specVersion": "1.6",
-    "serialNumber": "urn:uuid:8f7b71d2-192a-4a77-beb2-28d13a983050",
+    "serialNumber": "urn:uuid:7b61f6ab-2484-410e-b843-1468dfb75c49",
     "version": 1,
     "components": [
         {
@@ -32,7 +32,7 @@
         {
             "type": "library",
             "name": "codex",
-            "version": "1.14.0",
+            "version": "1.23.0",
             "licenses": [
                 {
                     "license": {
@@ -40,7 +40,7 @@
                     }
                 }
             ],
-            "purl": "pkg:npm/@wikimedia/codex@1.14.0",
+            "purl": "pkg:npm/@wikimedia/codex@1.23.0",
             "authors": [
                 {
                     "name": "Design System team"
@@ -59,7 +59,7 @@
         {
             "type": "library",
             "name": "codex-design-tokens",
-            "version": "1.14.0",
+            "version": "1.23.0",
             "licenses": [
                 {
                     "license": {
@@ -67,7 +67,7 @@
                     }
                 }
             ],
-            "purl": "pkg:npm/@wikimedia/codex-design-tokens@1.14.0",
+            "purl": "pkg:npm/@wikimedia/codex-design-tokens@1.23.0",
             "authors": [
                 {
                     "name": "Design System team"
@@ -86,7 +86,7 @@
         {
             "type": "library",
             "name": "codex-icons",
-            "version": "1.14.0",
+            "version": "1.23.0",
             "licenses": [
                 {
                     "license": {
@@ -94,7 +94,7 @@
                     }
                 }
             ],
-            "purl": "pkg:npm/@wikimedia/codex-icons@1.14.0",
+            "purl": "pkg:npm/@wikimedia/codex-icons@1.23.0",
             "authors": [
                 {
                     "name": "Design System team"
@@ -330,7 +330,7 @@
         {
             "type": "library",
             "name": "moment",
-            "version": "2.25.2",
+            "version": "2.30.1",
             "licenses": [
                 {
                     "license": {
@@ -338,7 +338,7 @@
                     }
                 }
             ],
-            "purl": "pkg:github/moment/moment@2.25.2",
+            "purl": "pkg:github/moment/moment@2.30.1",
             "authors": [
                 {
                     "name": "JS Foundation and other contributors"
@@ -411,7 +411,7 @@
         {
             "type": "library",
             "name": "ooui",
-            "version": "0.51.2",
+            "version": "0.51.7",
             "licenses": [
                 {
                     "license": {
@@ -419,7 +419,7 @@
                     }
                 }
             ],
-            "purl": "pkg:npm/oojs-ui@0.51.2",
+            "purl": "pkg:npm/oojs-ui@0.51.7",
             "authors": [
                 {
                     "name": "OOUI Team and other contributors"
@@ -496,7 +496,7 @@
         {
             "type": "library",
             "name": "qunitjs",
-            "version": "2.20.0",
+            "version": "2.24.1",
             "licenses": [
                 {
                     "license": {
@@ -519,7 +519,7 @@
         {
             "type": "library",
             "name": "sinonjs",
-            "version": "1.17.7",
+            "version": "18.0.1",
             "licenses": [
                 {
                     "license": {
@@ -566,7 +566,7 @@
         {
             "type": "library",
             "name": "vue",
-            "version": "3.4.27",
+            "version": "3.5.13",
             "licenses": [
                 {
                     "license": {
@@ -574,7 +574,7 @@
                     }
                 }
             ],
-            "purl": "pkg:npm/vue@3.4.27",
+            "purl": "pkg:npm/vue@3.5.13",
             "authors": [
                 {
                     "name": "Yuxi (Evan) You"

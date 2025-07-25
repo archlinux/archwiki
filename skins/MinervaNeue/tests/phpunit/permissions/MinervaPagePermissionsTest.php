@@ -36,7 +36,7 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 		?ContentHandler $contentHandler = null,
 		?Authority $user = null,
 		$hasOtherLanguagesOrVariants = false
-	) {
+	): MinervaPagePermissions {
 		$languageHelper = $this->createMock( LanguagesHelper::class );
 		$languageHelper->method( 'doesTitleHasLanguagesOrVariants' )
 			->willReturn( $hasOtherLanguagesOrVariants );

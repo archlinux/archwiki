@@ -4,13 +4,14 @@ namespace MediaWiki\Extension\AbuseFilter\VariableGenerator;
 
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Page\WikiPage;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Storage\PreparedUpdate;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
-use RecentChange;
-use WikiPage;
 
 /**
  * Class used to generate variables, for instance related to a given user or title.
@@ -228,38 +229,61 @@ class VariableGenerator {
 	}
 
 	/**
+	 * Add variables for an edit action when a PreparedUpdate instance is available.
+	 * This is equivalent to ::addEditVars, and the preferred method.
+	 *
+	 * @param PreparedUpdate $update
+	 * @param User $contextUser
+	 * @return $this For chaining
+	 */
+	public function addEditVarsFromUpdate( PreparedUpdate $update, User $contextUser ): self {
+		$this->addDerivedEditVars();
+
+		$this->vars->setLazyLoadVar( 'all_links', 'links-from-update',
+			[ 'update' => $update ] );
+		$this->vars->setLazyLoadVar( 'old_links', 'links-from-database',
+			[ 'article' => $update->getPage() ] );
+		$this->vars->setLazyLoadVar( 'new_pst', 'pst-from-update',
+			[ 'update' => $update, 'contextUser' => $contextUser ] );
+		$this->vars->setLazyLoadVar( 'new_html', 'html-from-update',
+			[ 'update' => $update ] );
+
+		return $this;
+	}
+
+	/**
+	 * Add variables for an edit action. The method assumes that old_wikitext and new_wikitext
+	 * will have been set prior to filter execution.
+	 *
+	 * @note This is a legacy method. Code using it likely relies on legacy hooks.
+	 *
 	 * @param WikiPage $page
 	 * @param UserIdentity $userIdentity The current user
-	 * @param bool $forFilter Whether the variables should be computed for an ongoing action
-	 *   being filtered
-	 * @param PreparedUpdate|null $update
+	 * @param bool $linksFromDatabase Whether links variables should be loaded
+	 *   from the database. If set to false, they will be parsed from the text variables.
 	 * @return $this For chaining
 	 */
 	public function addEditVars(
 		WikiPage $page,
 		UserIdentity $userIdentity,
-		bool $forFilter = true,
-		?PreparedUpdate $update = null
+		bool $linksFromDatabase = true
 	): self {
 		$this->addDerivedEditVars();
 
-		if ( $forFilter && $update ) {
-			$this->vars->setLazyLoadVar( 'all_links', 'links-from-update',
-				[ 'update' => $update ] );
-		} else {
-			$this->vars->setLazyLoadVar( 'all_links', 'links-from-wikitext',
-				[
-					'text-var' => 'new_wikitext',
-					'article' => $page,
-					'forFilter' => $forFilter,
-					'contextUserIdentity' => $userIdentity
-				] );
-		}
+		$this->vars->setLazyLoadVar( 'all_links', 'links-from-wikitext',
+			[
+				'text-var' => 'new_wikitext',
+				'article' => $page,
+				// XXX: this has never made sense
+				'forFilter' => $linksFromDatabase,
+				'contextUserIdentity' => $userIdentity
+			] );
 
-		if ( $forFilter ) {
+		if ( $linksFromDatabase ) {
 			$this->vars->setLazyLoadVar( 'old_links', 'links-from-database',
 				[ 'article' => $page ] );
 		} else {
+			// Note: this claims "or database" but it will never reach it
 			$this->vars->setLazyLoadVar( 'old_links', 'links-from-wikitext-or-database',
 				[
 					'article' => $page,
@@ -268,7 +292,6 @@ class VariableGenerator {
 				] );
 		}
 
-		// TODO: the following should use PreparedUpdate, too
 		$this->vars->setLazyLoadVar( 'new_pst', 'parse-wikitext',
 			[
 				'wikitext-var' => 'new_wikitext',
@@ -277,17 +300,12 @@ class VariableGenerator {
 				'contextUserIdentity' => $userIdentity
 			] );
 
-		if ( $forFilter && $update ) {
-			$this->vars->setLazyLoadVar( 'new_html', 'html-from-update',
-				[ 'update' => $update ] );
-		} else {
-			$this->vars->setLazyLoadVar( 'new_html', 'parse-wikitext',
-				[
-					'wikitext-var' => 'new_wikitext',
-					'article' => $page,
-					'contextUserIdentity' => $userIdentity
-				] );
-		}
+		$this->vars->setLazyLoadVar( 'new_html', 'parse-wikitext',
+			[
+				'wikitext-var' => 'new_wikitext',
+				'article' => $page,
+				'contextUserIdentity' => $userIdentity
+			] );
 
 		return $this;
 	}

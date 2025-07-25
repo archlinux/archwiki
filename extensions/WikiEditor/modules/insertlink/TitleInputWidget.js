@@ -1,4 +1,4 @@
-var InsertLinkTitleOptionWidget = require( './TitleOptionWidget.js' );
+const InsertLinkTitleOptionWidget = require( './TitleOptionWidget.js' );
 
 /**
  * A custom TitleInputWidget that adds support for external links
@@ -50,19 +50,18 @@ TitleInputWidget.prototype.onLookupInputBlur = function () {
  * @public
  */
 TitleInputWidget.prototype.selectFirstMatch = function () {
-	var that = this;
-	this.getLookupMenuItems().done( function ( items ) {
+	this.getLookupMenuItems().then( ( items ) => {
 		// The matching item is not always the first,
 		// because disambiguation pages are moved to the end.
-		for ( var i = 0; i < items.length; i++ ) {
-			var item = items[ i ];
-			var queryVal = that.getQueryValue();
+		for ( let i = 0; i < items.length; i++ ) {
+			const item = items[ i ];
+			const queryVal = this.getQueryValue();
 			// Check for exact match, or a match with uppercase first character.
 			if ( item.getData() === queryVal ||
 				item.getData() === queryVal.charAt( 0 ).toUpperCase() + queryVal.slice( 1 )
 			) {
 				// If a matching title is is found, fire an event and stop looking.
-				that.emit( 'select', item );
+				this.emit( 'select', item );
 				break;
 			}
 		}
@@ -78,7 +77,7 @@ TitleInputWidget.prototype.selectFirstMatch = function () {
  * @return {Object} Data for option widget
  */
 TitleInputWidget.prototype.getOptionWidgetData = function ( title, data ) {
-	var widgetData = TitleInputWidget.super.prototype.getOptionWidgetData.call( this, title, data );
+	const widgetData = TitleInputWidget.super.prototype.getOptionWidgetData.call( this, title, data );
 	widgetData.external = data.originalData.external;
 	return widgetData;
 };
@@ -101,14 +100,14 @@ TitleInputWidget.prototype.createOptionWidget = function ( data ) {
  * @return {Object}
  */
 TitleInputWidget.prototype.getLookupCacheDataFromResponse = function ( response ) {
-	var res = TitleInputWidget.super.prototype.getLookupCacheDataFromResponse( response );
+	const res = TitleInputWidget.super.prototype.getLookupCacheDataFromResponse( response );
 	// Guard against zero responses.
 	if ( res.pages === undefined ) {
 		return res;
 	}
-	for ( var pageId in res.pages ) {
+	for ( const pageId in res.pages ) {
 		if ( Object.prototype.hasOwnProperty.call( res.pages, pageId ) ) {
-			var page = res.pages[ pageId ];
+			const page = res.pages[ pageId ];
 			page.external = page.missing !== undefined && this.looksLikeExternalLink( page.title );
 		}
 	}

@@ -11,6 +11,7 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * first token is a newline, and then switches to the correct mode regardless.
  */
 class InPre extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		if ( $length > 0 && $text[$start] === "\n" ) {
 			$start++;
@@ -24,26 +25,31 @@ class InPre extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->dispatcher->restoreMode()
 			->endDocument( $pos );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$this->dispatcher->restoreMode()
 			->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$this->dispatcher->restoreMode()
 			->endTag( $name, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->dispatcher->restoreMode()
 			->doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function comment( $text, $sourceStart, $sourceLength ) {
 		$this->dispatcher->restoreMode()
 			->comment( $text, $sourceStart, $sourceLength );

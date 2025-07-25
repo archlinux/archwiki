@@ -1,0 +1,14 @@
+[
+	{
+		"resourceModule": "ext.visualEditor.desktopArticleTarget.noscript",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.desktopArticleTarget.init",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.targetLoader",
+		"maxSize": null
+	}
+]

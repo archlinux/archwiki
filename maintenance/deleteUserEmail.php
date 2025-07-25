@@ -25,12 +25,13 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
 /**
- *
  * @since 1.38
  * @author Samuel Guebo
  */

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -27,6 +29,7 @@ class PruneUnusedLinkTargetRows extends Maintenance {
 		$this->setBatchSize( 50 );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$dbw = $this->getPrimaryDB();
 		$dbr = $this->getReplicaDB();

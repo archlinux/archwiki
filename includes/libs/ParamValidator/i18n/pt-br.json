@@ -3,11 +3,11 @@
 		"authors": [
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
+			"Felipe L. Ewald",
 			"Flaviane da Silva",
 			"Iohanen",
-			"Re demz",
 			"McDutchie",
-			"Felipe L. Ewald"
+			"Re demz"
 		]
 	},
 	"paramvalidator-badbool": "Valor inválido \"$2\" para o parâmetro booleano \"$1\". Passe $3 para true ou $5 para false.",

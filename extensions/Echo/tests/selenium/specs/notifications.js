@@ -1,8 +1,7 @@
 'use strict';
 
-const assert = require( 'assert' ),
-	NotificationsPage = require( '../pageobjects/notifications.page' ),
-	UserLoginPage = require( 'wdio-mediawiki/LoginPage' );
+const NotificationsPage = require( '../pageobjects/notifications.page' );
+const UserLoginPage = require( 'wdio-mediawiki/LoginPage' );
 
 describe( 'Notifications', () => {
 
@@ -11,7 +10,7 @@ describe( 'Notifications', () => {
 		await UserLoginPage.login( browser.config.mwUser, browser.config.mwPwd );
 		await NotificationsPage.open();
 
-		assert.strictEqual( await NotificationsPage.notificationHeading.getText(), 'Notifications' );
+		await expect( await NotificationsPage.notificationHeading ).toHaveText( 'Notifications' );
 
 	} );
 

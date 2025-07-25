@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Exception\ReadOnlyError;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -55,7 +56,7 @@ class ExternalStoreAccess implements LoggerAwareInterface {
 		$this->logger = $logger ?: new NullLogger();
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -140,7 +141,7 @@ class ExternalStoreAccess implements LoggerAwareInterface {
 					$msg = 'read only';
 				} else {
 					$url = $store->store( $location, $data );
-					if ( strlen( $url ) ) {
+					if ( $url !== false && $url !== '' ) {
 						// A store accepted the write; done!
 						return $url;
 					}

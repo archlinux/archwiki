@@ -12,6 +12,7 @@ class TitleBlacklistAuthenticationRequest extends AuthenticationRequest {
 	/** @var bool */
 	public $ignoreTitleBlacklist;
 
+	/** @inheritDoc */
 	public function getFieldInfo() {
 		return [
 			'ignoreTitleBlacklist' => [

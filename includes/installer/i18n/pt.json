@@ -14,6 +14,7 @@
 			"Luckas",
 			"Macofe",
 			"Mansil alfalb",
+			"Mbs262",
 			"MokaAkashiyaPT",
 			"Mormegil",
 			"Platonides",
@@ -23,8 +24,7 @@
 			"Vitorvicentevalente",
 			"Waldir",
 			"Waldyrious",
-			"아라",
-			"Mbs262"
+			"아라"
 		]
 	},
 	"config-desc": "O instalador do MediaWiki",
@@ -287,14 +287,13 @@
 	"config-install-user-missing-create": "O utilizador especificado, \"$1\", não existe.\nMarque a caixa de seleção \"criar conta\" abaixo se pretende criá-la, por favor.",
 	"config-install-logo-blank": "Introduzir um URL de logótipo válido.",
 	"config-install-restore-services": "A restaurar serviços MediaWiki",
-	"config-install-tables": "A criar tabelas, primeiro passo",
+	"config-install-tables": "A criar tabelas",
 	"config-install-tables-exist": "<strong>Aviso:</strong> As tabelas do MediaWiki parecem já existir.\nA criação das tabelas será saltada.",
 	"config-install-tables-failed": "<strong>Erro:</strong> A criação das tabelas falhou com o seguinte erro: $1",
 	"config-install-interwiki": "A preencher a tabela padrão de hiperligações interwikis",
 	"config-install-interwiki-list": "Não foi possível ler o ficheiro <code>interwiki.list</code>.",
 	"config-install-interwiki-exists": "<strong>Aviso:</strong> A tabela de interwikis parece já conter entradas.\nO preenchimento padrão desta tabela será saltado.",
 	"config-install-stats": "A inicializar as estatísticas",
-	"config-install-keys": "A gerar as chaves secretas",
 	"config-install-updates": "Evitar executar atualizações desnecessárias",
 	"config-install-updates-failed": "<strong>Erro:</strong> A inserção de chaves de atualização nas tabelas falhou com o seguinte erro: $1",
 	"config-install-sysop": "A criar a conta de administrador",

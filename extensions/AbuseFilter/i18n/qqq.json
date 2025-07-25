@@ -33,6 +33,7 @@
 			"MuratTheTurkish",
 			"MusikAnimal",
 			"Nemo bis",
+			"Nemoralis",
 			"Patriot Kur",
 			"Phjtieudoc",
 			"Pikne",
@@ -48,8 +49,7 @@
 			"Translationista",
 			"Umherirrender",
 			"Verdy p",
-			"Yekrats",
-			"Nemoralis"
+			"Yekrats"
 		]
 	},
 	"abusefilter-desc": "{{desc|name=Abuse Filter|url=https://www.mediawiki.org/wiki/Extension:AbuseFilter}}",
@@ -124,6 +124,7 @@
 	"abusefilter-log-entry": "This message is for a log entry. Parameters:\n* $1 - timestamp\n* $2 - user\n* $3 - action by user\n* $4 - link to page the action that triggered the filter was made on\n* $5 - actions taken by the filter\n* $6 - comments in filter description\n* $8 - raw username, for GENDER support\n{{Related|Abusefilter-log}}",
 	"abusefilter-log-entry-withdiff": "This message is for a log entry. Parameters:\n* $1 - timestamp\n* $2 - user\n* $3 - action by user\n* $4 - link to page the action that triggered the filter was made on\n* $5 - actions taken by the filter\n* $6 - comments in filter description\n* $7 - link to diff\n* $8 - raw username, for GENDER support\n{{Related|Abusefilter-log}}",
 	"abusefilter-log-detailedentry-meta": "This message is for a log entry. Parameters:\n* $1 - timestamp\n* $2 - user\n* $3 - link to filter\n* $4 - action by user\n* $5 - link to page the action that triggered the filter was made on\n* $6 - actions taken by the filter\n* $7 - comments in filter description\n* $8 - link to action details, examine, and optional diff\n* $9 - raw username, for GENDER support\n{{Related|Abusefilter-log}}",
+	"abusefilter-log-detailedentry-meta-without-action-links": "This message is for a log entry. Parameters:\n* $1 - timestamp\n* $2 - user\n* $3 - link to filter (it is either {{msg-mw|abusefilter-log-detailedentry-global}} or {{msg-mw|abusefilter-log-detailedentry-local}})\n* $4 - action by user\n* $5 - link to page the action that triggered the filter was made on\n* $6 - actions taken by the filter\n* $7 - comments in filter description\n* $9 - raw username, for GENDER support\n{{Related|Abusefilter-log}}",
 	"abusefilter-log-detailedentry-global": "Addition in the abuse filter log detail when a filter rule is a global rule. Parameters:\n* $1 is a global filter ID.",
 	"abusefilter-log-detailedentry-local": "Addition in the abuse filter log detail when a filter rule is a local rule. Parameters:\n* $1 is a local filter ID.\n{{Identical|Filter}}",
 	"abusefilter-log-detailslink": "Link text for a link to abuse filter log details.\n{{Identical|Detail}}",
@@ -679,8 +680,6 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "Error message shown when someone tries to edit the list of blocked domains directly and bypass the Special page.",
 	"right-abusefilter-access-protected-vars": "{{doc-right|abusefilter-access-protected-vars}}",
 	"action-abusefilter-access-protected-vars": "{{doc-action|abusefilter-access-protected-vars}}",
-	"prefs-abusefilter": "Header of the AbuseFilter options on [[Special:Preferences]]",
-	"abusefilter-preference-protected-vars-view-agreement": "Agreement shown on [[Special:Preferences]] that the user can acknowledge via checkbox.",
 	"abusefilter-protected-vars-log-name": "{{doc-logpage}}\n\nThe page name of [[Special:Log/abusefilter-protected-vars]]. Appears in the drop down menu of the [[Special:Log]] page and subpages.",
 	"abusefilter-protected-vars-log-header": "Appears on top of [[Special:Log/abusefilter-protected-vars]].",
 	"logentry-abusefilter-protected-vars-change-access-enable": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if a user's state of access was enabled.\n\nNote: This log entry is no longer generated, but this message is kept to support historical log entries.\n\n{{Doc-singularthey}}",

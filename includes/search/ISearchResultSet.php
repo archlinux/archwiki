@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Title\Title;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * A set of SearchEngine results.
@@ -40,6 +41,16 @@ interface ISearchResultSet extends \Countable, \IteratorAggregate {
 	 * @return int|null
 	 */
 	public function getTotalHits();
+
+	/**
+	 * If {@link #getTotalHits()} is supported determine whether this number is approximate or not.
+	 * Some engine might perform optimizations that might lead to inaccurate total hits.
+	 * If this happens such engine should return true.
+	 *
+	 * @return bool
+	 * @since 1.44
+	 */
+	public function isApproximateTotalHits(): bool;
 
 	/**
 	 * Some search modes will run an alternative query that it thinks gives
@@ -147,7 +158,6 @@ interface ISearchResultSet extends \Countable, \IteratorAggregate {
 
 	/**
 	 * Returns extra data for specific result and store it in SearchResult object.
-	 * @param SearchResult $result
 	 */
 	public function augmentResult( SearchResult $result );
 

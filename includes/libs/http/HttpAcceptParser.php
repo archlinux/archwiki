@@ -15,7 +15,7 @@ class HttpAcceptParser {
 	/**
 	 * Parse media types from an Accept header and sort them by q-factor.
 	 *
-	 * Note that his was mostly ported from,
+	 * Note that this was mostly ported from
 	 * https://github.com/arlolra/negotiator/blob/full-parse-access/lib/mediaType.js
 	 *
 	 * @param string $accept
@@ -27,7 +27,8 @@ class HttpAcceptParser {
 	 *  - params: (array)
 	 */
 	public function parseAccept( $accept ): array {
-		$accepts = explode( ',', $accept );  // FIXME: Allow commas in quotes
+		// FIXME: Allow commas in quotes
+		$accepts = explode( ',', $accept );
 		$ret = [];
 
 		foreach ( $accepts as $i => $a ) {
@@ -38,7 +39,8 @@ class HttpAcceptParser {
 			$q = 1;
 			$params = [];
 			if ( isset( $matches[3] ) ) {
-				$kvps = explode( ';', $matches[3] );  // FIXME: Allow semi-colon in quotes
+				// FIXME: Allow semi-colon in quotes
+				$kvps = explode( ';', $matches[3] );
 				foreach ( $kvps as $kv ) {
 					$kvArray = explode( '=', trim( $kv ), 2 );
 					if ( count( $kvArray ) != 2 ) {
@@ -48,7 +50,8 @@ class HttpAcceptParser {
 					$key = strtolower( trim( $key ) );
 					$val = trim( $val );
 					if ( $key === 'q' ) {
-						$q = (float)$val;  // FIXME: Spec is stricter about this
+						// FIXME: Spec is stricter about this
+						$q = (float)$val;
 					} else {
 						if ( $val && $val[0] === '"' && $val[ strlen( $val ) - 1 ] === '"' ) {
 							$val = substr( $val, 1, strlen( $val ) - 2 );

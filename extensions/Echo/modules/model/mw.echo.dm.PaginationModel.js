@@ -1,223 +1,221 @@
-( function () {
-	/**
-	 * Pagination model for echo notifications pages.
-	 *
-	 * @class
-	 * @mixes OO.EventEmitter
-	 *
-	 * @constructor
-	 * @param {Object} config Configuration object
-	 * @param {string} [config.pageNext] The continue value of the next page
-	 * @param {number} [config.itemsPerPage] The number of items per page
-	 * @param {number} [config.currentPageItemCount] The number of items that are in the
-	 *  current page. If not given, the initial count defaults to the total number
-	 *  of items per page.
-	 */
-	mw.echo.dm.PaginationModel = function MwEchoDmPaginationModel( config ) {
-		config = config || {};
+/**
+ * Pagination model for echo notifications pages.
+ *
+ * @class
+ * @mixes OO.EventEmitter
+ *
+ * @constructor
+ * @param {Object} [config={}]
+ * @param {string} [config.pageNext] The continue value of the next page
+ * @param {number} [config.itemsPerPage] The number of items per page
+ * @param {number} [config.currentPageItemCount] The number of items that are in the
+ *  current page. If not given, the initial count defaults to the total number
+ *  of items per page.
+ */
+mw.echo.dm.PaginationModel = function MwEchoDmPaginationModel( config ) {
+	config = config || {};
 
-		// Mixin constructor
-		OO.EventEmitter.call( this );
+	// Mixin constructor
+	OO.EventEmitter.call( this );
 
-		this.pagesContinue = [];
-		this.itemsPerPage = config.itemsPerPage || 25;
-		this.currentPageItemCount = config.currentPageItemCount || this.itemsPerPage;
+	this.pagesContinue = [];
+	this.itemsPerPage = config.itemsPerPage || 25;
+	this.currentPageItemCount = config.currentPageItemCount || this.itemsPerPage;
 
-		// Set initial page
-		this.currPageIndex = 0;
-		this.pagesContinue[ 0 ] = '';
+	// Set initial page
+	this.currPageIndex = 0;
+	this.pagesContinue[ 0 ] = '';
 
-		// If a next page is given, fill it
-		if ( config.pageNext ) {
-			this.setPageContinue( 1, config.pageNext );
-		}
-	};
+	// If a next page is given, fill it
+	if ( config.pageNext ) {
+		this.setPageContinue( 1, config.pageNext );
+	}
+};
 
-	/* Initialization */
+/* Initialization */
 
-	OO.initClass( mw.echo.dm.PaginationModel );
-	OO.mixinClass( mw.echo.dm.PaginationModel, OO.EventEmitter );
+OO.initClass( mw.echo.dm.PaginationModel );
+OO.mixinClass( mw.echo.dm.PaginationModel, OO.EventEmitter );
 
-	/* Events */
+/* Events */
 
-	/**
-	 * Pagination information was updated
-	 *
-	 * @event mw.echo.dm.PaginationModel#update
-	 */
+/**
+ * Pagination information was updated
+ *
+ * @event mw.echo.dm.PaginationModel#update
+ */
 
-	/* Methods */
+/* Methods */
 
-	/**
-	 * Reset pagination data
-	 *
-	 * @fires mw.echo.dm.PaginationModel#update
-	 */
-	mw.echo.dm.PaginationModel.prototype.reset = function () {
-		this.pagesContinue = [];
-		this.currPageIndex = 0;
-		this.currentPageItemCount = this.itemsPerPage;
+/**
+ * Reset pagination data
+ *
+ * @fires mw.echo.dm.PaginationModel#update
+ */
+mw.echo.dm.PaginationModel.prototype.reset = function () {
+	this.pagesContinue = [];
+	this.currPageIndex = 0;
+	this.currentPageItemCount = this.itemsPerPage;
 
+	this.emit( 'update' );
+};
+/**
+ * Set a page index with its 'continue' value, used for API fetching
+ *
+ * @param {number} page Page index
+ * @param {string} continueVal Continue string value
+ * @fires mw.echo.dm.PaginationModel#update
+ */
+mw.echo.dm.PaginationModel.prototype.setPageContinue = function ( page, continueVal ) {
+	if ( this.pagesContinue[ page ] !== continueVal ) {
+		this.pagesContinue[ page ] = continueVal;
 		this.emit( 'update' );
-	};
-	/**
-	 * Set a page index with its 'continue' value, used for API fetching
-	 *
-	 * @param {number} page Page index
-	 * @param {string} continueVal Continue string value
-	 * @fires mw.echo.dm.PaginationModel#update
-	 */
-	mw.echo.dm.PaginationModel.prototype.setPageContinue = function ( page, continueVal ) {
-		if ( this.pagesContinue[ page ] !== continueVal ) {
-			this.pagesContinue[ page ] = continueVal;
-			this.emit( 'update' );
-		}
-	};
+	}
+};
 
-	/**
-	 * Get the 'continue' value of a certain page
-	 *
-	 * @param {number} page Page index
-	 * @return {string} Continue string value
-	 */
-	mw.echo.dm.PaginationModel.prototype.getPageContinue = function ( page ) {
-		return this.pagesContinue[ page ];
-	};
+/**
+ * Get the 'continue' value of a certain page
+ *
+ * @param {number} page Page index
+ * @return {string} Continue string value
+ */
+mw.echo.dm.PaginationModel.prototype.getPageContinue = function ( page ) {
+	return this.pagesContinue[ page ];
+};
 
-	/**
-	 * Get the current page index
-	 *
-	 * @return {number} Current page index
-	 */
-	mw.echo.dm.PaginationModel.prototype.getCurrPageIndex = function () {
-		return this.currPageIndex;
-	};
+/**
+ * Get the current page index
+ *
+ * @return {number} Current page index
+ */
+mw.echo.dm.PaginationModel.prototype.getCurrPageIndex = function () {
+	return this.currPageIndex;
+};
 
-	/**
-	 * Set the current page index
-	 *
-	 * @internal
-	 * @param {number} index Current page index
-	 */
-	mw.echo.dm.PaginationModel.prototype.setCurrPageIndex = function ( index ) {
-		this.currPageIndex = index;
-	};
+/**
+ * Set the current page index
+ *
+ * @internal
+ * @param {number} index Current page index
+ */
+mw.echo.dm.PaginationModel.prototype.setCurrPageIndex = function ( index ) {
+	this.currPageIndex = index;
+};
 
-	/**
-	 * Move forward to the next page
-	 *
-	 * @fires mw.echo.dm.PaginationModel#update
-	 */
-	mw.echo.dm.PaginationModel.prototype.forwards = function () {
-		if ( this.hasNextPage() ) {
-			this.setCurrPageIndex( this.currPageIndex + 1 );
-			this.emit( 'update' );
-		}
-	};
+/**
+ * Move forward to the next page
+ *
+ * @fires mw.echo.dm.PaginationModel#update
+ */
+mw.echo.dm.PaginationModel.prototype.forwards = function () {
+	if ( this.hasNextPage() ) {
+		this.setCurrPageIndex( this.currPageIndex + 1 );
+		this.emit( 'update' );
+	}
+};
 
-	/**
-	 * Move backwards to the previous page
-	 *
-	 * @fires mw.echo.dm.PaginationModel#update
-	 */
-	mw.echo.dm.PaginationModel.prototype.backwards = function () {
-		if ( this.hasPrevPage() ) {
-			this.setCurrPageIndex( this.currPageIndex - 1 );
-			this.emit( 'update' );
-		}
-	};
+/**
+ * Move backwards to the previous page
+ *
+ * @fires mw.echo.dm.PaginationModel#update
+ */
+mw.echo.dm.PaginationModel.prototype.backwards = function () {
+	if ( this.hasPrevPage() ) {
+		this.setCurrPageIndex( this.currPageIndex - 1 );
+		this.emit( 'update' );
+	}
+};
 
-	/**
-	 * Get the previous page continue value
-	 *
-	 * @return {string} Previous page continue value
-	 */
-	mw.echo.dm.PaginationModel.prototype.getPrevPageContinue = function () {
-		return this.pagesContinue[ this.currPageIndex - 1 ] || '';
-	};
+/**
+ * Get the previous page continue value
+ *
+ * @return {string} Previous page continue value
+ */
+mw.echo.dm.PaginationModel.prototype.getPrevPageContinue = function () {
+	return this.pagesContinue[ this.currPageIndex - 1 ] || '';
+};
 
-	/**
-	 * Get the current page continue value
-	 *
-	 * @return {string} Current page continue value
-	 */
-	mw.echo.dm.PaginationModel.prototype.getCurrPageContinue = function () {
-		return this.pagesContinue[ this.currPageIndex ] || '';
-	};
+/**
+ * Get the current page continue value
+ *
+ * @return {string} Current page continue value
+ */
+mw.echo.dm.PaginationModel.prototype.getCurrPageContinue = function () {
+	return this.pagesContinue[ this.currPageIndex ] || '';
+};
 
-	/**
-	 * Get the next page continue value
-	 *
-	 * @return {string} Next page continue value
-	 */
-	mw.echo.dm.PaginationModel.prototype.getNextPageContinue = function () {
-		return this.pagesContinue[ this.currPageIndex + 1 ] || '';
-	};
+/**
+ * Get the next page continue value
+ *
+ * @return {string} Next page continue value
+ */
+mw.echo.dm.PaginationModel.prototype.getNextPageContinue = function () {
+	return this.pagesContinue[ this.currPageIndex + 1 ] || '';
+};
 
-	/**
-	 * Set the next page continue value
-	 *
-	 * @param {string} cont Next page continue value
-	 */
-	mw.echo.dm.PaginationModel.prototype.setNextPageContinue = function ( cont ) {
-		this.setPageContinue( this.currPageIndex + 1, cont );
-	};
+/**
+ * Set the next page continue value
+ *
+ * @param {string} cont Next page continue value
+ */
+mw.echo.dm.PaginationModel.prototype.setNextPageContinue = function ( cont ) {
+	this.setPageContinue( this.currPageIndex + 1, cont );
+};
 
-	/**
-	 * Check whether a previous page exists
-	 *
-	 * @return {boolean} Previous page exists
-	 */
-	mw.echo.dm.PaginationModel.prototype.hasPrevPage = function () {
-		return this.currPageIndex > 0;
-	};
+/**
+ * Check whether a previous page exists
+ *
+ * @return {boolean} Previous page exists
+ */
+mw.echo.dm.PaginationModel.prototype.hasPrevPage = function () {
+	return this.currPageIndex > 0;
+};
 
-	/**
-	 * Check whether a next page exists
-	 *
-	 * @return {boolean} Next page exists
-	 */
-	mw.echo.dm.PaginationModel.prototype.hasNextPage = function () {
-		return !!this.pagesContinue[ this.currPageIndex + 1 ];
-	};
+/**
+ * Check whether a next page exists
+ *
+ * @return {boolean} Next page exists
+ */
+mw.echo.dm.PaginationModel.prototype.hasNextPage = function () {
+	return !!this.pagesContinue[ this.currPageIndex + 1 ];
+};
 
-	/**
-	 * Set the number of items in the current page
-	 *
-	 * @param {number} count Number of items
-	 * @fires mw.echo.dm.PaginationModel#update
-	 */
-	mw.echo.dm.PaginationModel.prototype.setCurrentPageItemCount = function ( count ) {
-		if ( this.currentPageItemCount !== count ) {
-			this.currentPageItemCount = count;
-			this.emit( 'update' );
-		}
-	};
+/**
+ * Set the number of items in the current page
+ *
+ * @param {number} count Number of items
+ * @fires mw.echo.dm.PaginationModel#update
+ */
+mw.echo.dm.PaginationModel.prototype.setCurrentPageItemCount = function ( count ) {
+	if ( this.currentPageItemCount !== count ) {
+		this.currentPageItemCount = count;
+		this.emit( 'update' );
+	}
+};
 
-	/**
-	 * Get the number of items in the current page
-	 *
-	 * @return {number} Number of items
-	 */
-	mw.echo.dm.PaginationModel.prototype.getCurrentPageItemCount = function () {
-		return this.currentPageItemCount;
-	};
+/**
+ * Get the number of items in the current page
+ *
+ * @return {number} Number of items
+ */
+mw.echo.dm.PaginationModel.prototype.getCurrentPageItemCount = function () {
+	return this.currentPageItemCount;
+};
 
-	/**
-	 * Set the number of items per page
-	 *
-	 * @param {number} count Number of items per page
-	 */
-	mw.echo.dm.PaginationModel.prototype.setItemsPerPage = function ( count ) {
-		this.itemsPerPage = count;
-	};
+/**
+ * Set the number of items per page
+ *
+ * @param {number} count Number of items per page
+ */
+mw.echo.dm.PaginationModel.prototype.setItemsPerPage = function ( count ) {
+	this.itemsPerPage = count;
+};
 
-	/**
-	 * Get the number of items per page
-	 *
-	 * @return {number} Number of items per page
-	 */
-	mw.echo.dm.PaginationModel.prototype.getItemsPerPage = function () {
-		return this.itemsPerPage;
-	};
-}() );
+/**
+ * Get the number of items per page
+ *
+ * @return {number} Number of items per page
+ */
+mw.echo.dm.PaginationModel.prototype.getItemsPerPage = function () {
+	return this.itemsPerPage;
+};

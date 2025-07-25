@@ -11,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Tutup",
 	"cdx-label-optional-flag": "(pilihan)",
 	"cdx-message-dismiss-button-label": "Tutup",
+	"cdx-popover-close-button-label": "Tutup",
 	"cdx-search-input-search-button-label": "Cari",
 	"cdx-table-select-all-label": "Pilih semua baris",
 	"cdx-table-select-row-label": "Pilih baris $1 daripada $2",
@@ -27,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Menunjukkan $1–$2 daripada lebih banyak hasil",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 daripada lebih banyak",
 	"cdx-table-pagination-status-message-indeterminate-final": "Menunjukkan {{PLURAL:$1|$1 hasil}} yang terakhir",
-	"cdx-table-pagination-status-message-pending": "Memuatkan hasil..."
+	"cdx-table-pagination-status-message-pending": "Memuatkan hasil...",
+	"cdx-table-no-data-message": "Tiada data tersedia."
 }

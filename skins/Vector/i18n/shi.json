@@ -12,6 +12,7 @@
 	"vector-language-button-aria-label": "Ddu s umnni ɣ tutlayt yaḍn. Illa s {{PLURAL:$1|$1 tutlayt|$1 tutlayin}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 tutlayt|$1 tutlayin}}",
 	"vector-no-language-button-label": "Rnu tutlayin",
+	"vector-no-language-button-aria-label": "Amnni ad illa ɣar s tutlayt ad. Rnu amnni i tutlayin yaḍnin",
 	"vector-language-variant-switcher-label": "Snfl tamzarayt n tutlayt",
 	"vector-action-addsection": "Rnu asntl",
 	"vector-action-delete": "Kks",

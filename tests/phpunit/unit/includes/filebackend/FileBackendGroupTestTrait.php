@@ -1,12 +1,13 @@
 <?php
 
 use MediaWiki\FileBackend\FileBackendGroup;
-use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\StreamFile;
 use MediaWiki\Status\Status;
+use Wikimedia\FileBackend\FSFile\TempFSFileFactory;
 use Wikimedia\FileBackend\FSFileBackend;
 use Wikimedia\Mime\MimeAnalyzer;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -59,7 +60,7 @@ trait FileBackendGroupTestTrait {
 	/** @var TempFSFileFactory */
 	private $tmpFileFactory;
 
-	private static function getDefaultLocalFileRepo() {
+	private static function getDefaultLocalFileRepo(): array {
 		return [
 			'class' => LocalRepo::class,
 			'name' => 'local',
@@ -78,7 +79,7 @@ trait FileBackendGroupTestTrait {
 		];
 	}
 
-	private static function getDefaultOptions() {
+	private static function getDefaultOptions(): array {
 		return [
 			MainConfigNames::DirectoryMode => 0775,
 			MainConfigNames::FileBackends => [],
@@ -259,6 +260,10 @@ trait FileBackendGroupTestTrait {
 			'class' => FSFileBackend::class,
 			'lockManager' =>
 				$this->lmgFactory->getLockManagerGroup( self::getWikiID() )->get( 'fsLockManager' ),
+			'asyncHandler' => [
+				MediaWiki\Deferred\DeferredUpdates::class,
+				'addCallableUpdate'
+			]
 		], $config );
 
 		// For config values that are objects, check object identity.

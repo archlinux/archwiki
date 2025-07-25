@@ -48,9 +48,6 @@ class SiteImporter {
 	 */
 	private $exceptionCallback;
 
-	/**
-	 * @param SiteStore $store
-	 */
 	public function __construct( SiteStore $store ) {
 		$this->store = $store;
 	}
@@ -256,12 +253,9 @@ class SiteImporter {
 		return $this->getChildText( $element, $name, null ) !== null;
 	}
 
-	/**
-	 * @param Exception $ex
-	 */
 	private function handleException( Exception $ex ) {
 		if ( $this->exceptionCallback ) {
-			call_user_func( $this->exceptionCallback, $ex );
+			( $this->exceptionCallback )( $ex );
 		} else {
 			wfLogWarning( $ex->getMessage() );
 		}

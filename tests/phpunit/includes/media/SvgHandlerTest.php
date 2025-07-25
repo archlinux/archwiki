@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\MainConfigNames;
 use Wikimedia\TestingAccessWrapper;
 
@@ -150,6 +151,11 @@ class SvgHandlerTest extends MediaWikiMediaTestCase {
 				[ 'width' => 123, ],
 				'123px',
 				'Width in thumb'
+			],
+			[
+				[ 'width' => 113, 'physicalWidth' => 120 ],
+				'120px',
+				'physicalWidth should override width in thumb'
 			],
 			[
 				[ 'width' => 123, 'lang' => 'en' ],

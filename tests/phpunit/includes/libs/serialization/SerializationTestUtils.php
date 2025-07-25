@@ -76,9 +76,6 @@ class SerializationTestUtils {
 		$this->logger = new NullLogger();
 	}
 
-	/**
-	 * @param LoggerInterface $logger
-	 */
 	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
@@ -148,7 +145,7 @@ class SerializationTestUtils {
 	 */
 	private function getDeserializedInstances( string $class ): array {
 		return array_map( function ( $fileInfo ) {
-			$fileInfo->object = call_user_func( $this->deserializer, $fileInfo->data );
+			$fileInfo->object = ( $this->deserializer )( $fileInfo->data );
 			return $fileInfo;
 		}, $this->getMatchingFiles( $class, $this->ext ) );
 	}
@@ -186,12 +183,11 @@ class SerializationTestUtils {
 	/**
 	 * Get test objects of $class, serialized using $serializer,
 	 * keyed by test case name.
-	 * @return array
 	 */
 	public function getSerializedInstances(): array {
 		$instances = $this->getTestInstances();
 		return array_map( function ( $object )  {
-			return call_user_func( $this->serializer, $object );
+			return ( $this->serializer )( $object );
 		}, $instances );
 	}
 
@@ -219,7 +215,7 @@ class SerializationTestUtils {
 				// swap _ and - to ensure that 1.43-foo sorts after 1.43_wmf...-foo
 				usort(
 					$savedFiles,
-					fn ( $a, $b ) => strtr( $a, '-_', '_-' ) <=> strtr( $b, '-_', '_-' )
+					static fn ( $a, $b ) => strtr( $a, '-_', '_-' ) <=> strtr( $b, '-_', '_-' )
 				);
 				$path = end( $savedFiles );
 			} else {
@@ -242,7 +238,6 @@ class SerializationTestUtils {
 
 	/**
 	 * Returns the current version of MediaWiki in `1.xx` format.
-	 * @return string
 	 */
 	private function getCurrentVersion(): string {
 		return preg_replace( '/^(\d\.\d+).*$/', '$1', MW_VERSION );
@@ -263,7 +258,7 @@ class SerializationTestUtils {
 		return end( $arr );
 	}
 
-	private function log( $msg ) {
+	private function log( string $msg ) {
 		$this->logger->info( $msg );
 	}
 }

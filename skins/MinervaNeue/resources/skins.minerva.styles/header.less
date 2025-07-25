@@ -1,0 +1,101 @@
+.header-container {
+	border-bottom: @border-subtle;
+	padding: 0 @padding-content;
+
+	&.header-chrome {
+		background-color: @background-color-interactive;
+		border: 0;
+		box-shadow: inset 0 -1px 3px rgba( 0, 0, 0, 0.08 );
+	}
+}
+
+.minerva-header {
+	.navigation-drawer .toggle-list__checkbox,
+	.navigation-drawer .toggle-list__toggle {
+		.cdx-mixin-button-layout-flush( 'start', true, 'large' );
+	}
+
+	.branding-box {
+		opacity: @opacity-icon-subtle; // T251135
+
+		a {
+			float: left;
+			margin-left: 5px;
+			font-size: 1em;
+			text-decoration: none;
+			color: @color-base;
+
+			span {
+				line-height: 0;
+				font-size: inherit;
+			}
+
+			> * {
+				float: left;
+			}
+
+			sup {
+				color: @color-subtle;
+				display: none;
+
+				.beta & {
+					display: initial;
+				}
+			}
+		}
+	}
+
+	.search-box {
+		// Search box should grow to fill rest of header
+		flex: 1 0 auto;
+		display: none;
+	}
+
+	// Fix cursor for Safari
+	#searchInput { // stylelint-disable-line selector-max-id
+		cursor: text;
+	}
+}
+
+@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+	.minerva-header {
+		.branding-box {
+			// Handle logos that are larger than the set branding box width
+			// This will also cause the searchbox overlay to be misaligned with the .minerva-heading searchbox
+			min-width: @min-width-branding-box-ems;
+			width: auto;
+		}
+
+		.search-box {
+			display: block;
+			width: @width-search-box;
+			max-width: @width-search-box;
+		}
+	}
+}
+
+/* FIXME: Remove when T366859 has been addressed */
+@media screen and ( min-width: 720px ) {
+	.minerva-header {
+		.branding-box {
+			min-width: @T366859-min-width-branding-box-ems;
+		}
+	}
+}
+
+// Night mode
+@media screen {
+	html.skin-theme-clientpref-night {
+		.branding-box img {
+			.night-mode-invert-image();
+		}
+	}
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		.branding-box img {
+			.night-mode-invert-image();
+		}
+	}
+}

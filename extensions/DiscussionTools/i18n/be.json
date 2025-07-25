@@ -9,8 +9,8 @@
 			"Plaga med",
 			"Tomato Cream",
 			"Tīgelika",
-			"ZlyiLev",
-			"Woytecr"
+			"Woytecr",
+			"ZlyiLev"
 		]
 	},
 	"discussiontools": "Інструменты абмеркаванняў",
@@ -71,7 +71,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Вы падпісаліся!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Вы больш не будзеце атрымоўваць апавяшчэнні пра новыя тэмы на гэтай старонцы.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Вы адпісаліся",
-	"discussiontools-notification-added-topic-header": "$2 стварыў(ла) новую тэму «<strong>$4</strong>» на старонцы <strong>$3</strong>.",
+	"discussiontools-notification-added-topic-header": "$1 {{GENDER:$2|стварыў|стварыла}} новую тэму «<strong>$4</strong>» на старонцы <strong>$3</strong>.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|$1 новая тэма|$1 новых тэм|100=99+ новых тэм}} на <strong>$2</strong>.",
 	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Глядзець тэму",
@@ -184,9 +184,9 @@
 	"tag-discussiontools-description": "Праўка, здзейсненая з дапамогай DiscussionTools",
 	"tag-discussiontools-edit": "Адрэдагаваны каментарый",
 	"tag-discussiontools-edit-description": "Удзельнік адрэдагаваў існуючы каментарый з дапамогай DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Новая тэма]",
+	"tag-discussiontools-newtopic": "Новая тэма",
 	"tag-discussiontools-newtopic-description": "Удзельнік дадаў новую тэму на старонцы з дапамогай DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Адказ]",
+	"tag-discussiontools-reply": "Адказ",
 	"tag-discussiontools-reply-description": "Удзельнік адказаў на каментарый з дапамогай DiscussionTools",
 	"tag-discussiontools-source-description": "DiscussionTools быў выкарыстаны ў рэжыме праўкі зыходніка",
 	"tag-discussiontools-source-enhanced-description": "Пашырэнне DiscussionTools было ў пашыраным зыходным рэжыме з панэллю інструментаў",

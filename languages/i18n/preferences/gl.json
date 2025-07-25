@@ -81,7 +81,7 @@
 	"prefs-help-email": "O enderezo de correo electrónico é opcional, pero permite que se che envíe un contrasinal novo se o esqueces.",
 	"prefs-help-email-required": "Cómpre o enderezo de correo electrónico.",
 	"prefs-help-email-others": "Tamén podes optar por deixar que outras persoas se poñan en contacto contigo a través dunha ligazón na túa páxina de usuario e de conversa.\nO teu enderezo non se revela cando contactan contigo.",
-	"tog-requireemail": "Enviar correos electrónicos de restablecemento de contrasinal só cando se proporcione o enderezo de correo electrónico e o nome de usuario.",
+	"tog-requireemail": "Enviar correos electrónicos de restablecemento de contrasinal só cando se proporcione o enderezo de correo electrónico e o nome de usuario",
 	"prefs-help-requireemail": "Isto mellora a privacidade e axuda a evitar os correos electrónicos non solicitados.",
 	"noemailprefs": "Sinala un enderezo de correo electrónico se queres que che funcione esta opción.",
 	"emailnotauthenticated": "O teu enderezo de correo electrónico aínda non foi confirmado.\nAta entón non se che enviarán mensaxes ningunhas en todos estes casos.",
@@ -228,6 +228,7 @@
 	"search-thumbnail-extra-namespaces-label": "Amosar as miniaturas en Especial:Procurar na versión de escritorio",
 	"search-thumbnail-extra-namespaces-message": "Amosa as miniaturas para os resultados {{PLURAL:$2|do espazo de nomes|dos espazos de nomes}} $1 na páxina {{#special:search}}",
 	"prefs-advancedsearchoptions": "Opcións avanzadas",
+	"prefs-misc": "Preferencias varias",
 	"prefs-reset-intro": "Podes usar esta páxina para restablecer os valores predeterminados das preferencias.\nEsta acción non se pode desfacer.",
 	"prefs-reset-confirm": "Si, quero restablecer as miñas preferencias.",
 	"restoreprefs": "Restaurar todas as preferencias por defecto"

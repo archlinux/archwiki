@@ -108,11 +108,6 @@ class TransactionManager {
 	 * @phan-var array<array{0:callable,1:string,2:AtomicSectionIdentifier|null}>
 	 */
 	private $trxEndCallbacks = [];
-	/**
-	 * @var array[] Pending cancel callbacks; list of (callable, method name, atomic section id)
-	 * @phan-var array<array{0:callable,1:string,2:AtomicSectionIdentifier|null}>
-	 */
-	private $trxSectionCancelCallbacks = [];
 	/** @var callable[] Listener callbacks; map of (name => callable) */
 	private $trxRecurringCallbacks = [];
 	/** @var bool Whether to suppress triggering of transaction end callbacks */
@@ -186,7 +181,7 @@ class TransactionManager {
 			);
 		} elseif ( $this->trxStatus === self::STATUS_TRX_OK && $this->trxStatusIgnoredCause ) {
 			[ $iLastError, $iLastErrno, $iFname ] = $this->trxStatusIgnoredCause;
-			call_user_func( $deprecationLogger,
+			$deprecationLogger(
 				"Caller from $fname ignored an error originally raised from $iFname: " .
 				"[$iLastErrno] $iLastError"
 			);
@@ -207,8 +202,6 @@ class TransactionManager {
 
 	/**
 	 * Mark the transaction as requiring rollback (STATUS_TRX_ERROR) due to an error
-	 *
-	 * @param Throwable $trxError
 	 */
 	public function setTransactionError( Throwable $trxError ) {
 		if ( $this->trxStatus !== self::STATUS_TRX_ERROR ) {
@@ -217,9 +210,6 @@ class TransactionManager {
 		}
 	}
 
-	/**
-	 * @param array|null $trxStatusIgnoredCause
-	 */
 	public function setTrxStatusIgnoredCause( ?array $trxStatusIgnoredCause ): void {
 		$this->trxStatusIgnoredCause = $trxStatusIgnoredCause;
 	}
@@ -236,8 +226,6 @@ class TransactionManager {
 
 	/**
 	 * Flag the session as needing a reset due to an error, if not already flagged
-	 *
-	 * @param Throwable $sessionError
 	 */
 	public function setSessionError( Throwable $sessionError ) {
 		$this->sessionError ??= $sessionError;
@@ -294,11 +282,11 @@ class TransactionManager {
 		}
 
 		$this->trxWriteDuration += $runtime;
-		$this->trxWriteQueryCount += 1;
+		$this->trxWriteQueryCount++;
 		$this->trxWriteAffectedRows += $affected;
 		if ( $indicativeOfReplicaRuntime ) {
 			$this->trxWriteAdjDuration += $runtime;
-			$this->trxWriteAdjQueryCount += 1;
+			$this->trxWriteAdjQueryCount++;
 		}
 
 		$this->trxWriteCallers[] = $fname;
@@ -360,13 +348,6 @@ class TransactionManager {
 		}
 
 		return $error;
-	}
-
-	public function onAtomicSectionCancel( IDatabase $db, $callback, $fname ): void {
-		if ( !$this->trxLevel() || !$this->trxAtomicLevels ) {
-			throw new DBUnexpectedError( $db, "No atomic section is open (got $fname)" );
-		}
-		$this->trxSectionCancelCallbacks[] = [ $callback, $fname, $this->currentAtomicSectionId() ];
 	}
 
 	public function onCancelAtomicBeforeCriticalSection( IDatabase $db, $fname ): void {
@@ -663,11 +644,6 @@ class TransactionManager {
 				$this->trxEndCallbacks[$key][2] = $new;
 			}
 		}
-		foreach ( $this->trxSectionCancelCallbacks as $key => $info ) {
-			if ( $info[2] === $old ) {
-				$this->trxSectionCancelCallbacks[$key][2] = $new;
-			}
-		}
 	}
 
 	/**
@@ -710,76 +686,33 @@ class TransactionManager {
 		foreach ( $this->trxEndCallbacks as $key => $entry ) {
 			if ( in_array( $entry[2], $excisedSectionsId, true ) ) {
 				$callback = $entry[0];
-				$this->trxEndCallbacks[$key][0] = static function ( $t, $db ) use ( $callback ) {
-					return $callback( IDatabase::TRIGGER_ROLLBACK, $db );
+				$this->trxEndCallbacks[$key][0] = static function () use ( $callback ) {
+					return $callback( IDatabase::TRIGGER_ROLLBACK );
 				};
 				// This "on resolution" callback no longer belongs to a section.
 				$this->trxEndCallbacks[$key][2] = null;
 			}
 		}
-		// Hoist callback ownership for section cancel callbacks to the new top section
-		foreach ( $this->trxSectionCancelCallbacks as $key => $entry ) {
-			if ( in_array( $entry[2], $excisedSectionsId, true ) ) {
-				$this->trxSectionCancelCallbacks[$key][2] = $newSectionId;
-			}
-		}
 	}
 
-	public function consumeEndCallbacks( $trigger ): array {
+	public function consumeEndCallbacks(): array {
 		$callbackEntries = array_merge(
 			$this->trxPostCommitOrIdleCallbacks,
-			$this->trxEndCallbacks,
-			( $trigger === IDatabase::TRIGGER_ROLLBACK )
-				? $this->trxSectionCancelCallbacks
-				: [] // just consume them
+			$this->trxEndCallbacks
 		);
 		$this->trxPostCommitOrIdleCallbacks = []; // consumed (and recursion guard)
 		$this->trxEndCallbacks = []; // consumed (recursion guard)
-		$this->trxSectionCancelCallbacks = []; // consumed (recursion guard)
 
 		return $callbackEntries;
 	}
 
 	/**
-	 * Consume and run any relevant "on atomic section cancel" callbacks for the active transaction
-	 *
-	 * @param IDatabase $db
-	 * @param int $trigger IDatabase::TRIGGER_* constant
-	 * @param AtomicSectionIdentifier[] $sectionIds IDs of the sections that where just cancelled
-	 * @throws Throwable Any exception thrown by a callback
-	 */
-	public function runOnAtomicSectionCancelCallbacks( IDatabase $db, int $trigger, array $sectionIds ) {
-		// Drain the queue of matching "atomic section cancel" callbacks until there are none
-		$unrelatedCallbackEntries = [];
-		do {
-			$callbackEntries = $this->trxSectionCancelCallbacks;
-			$this->trxSectionCancelCallbacks = []; // consumed (recursion guard)
-			foreach ( $callbackEntries as $entry ) {
-				if ( in_array( $entry[2], $sectionIds, true ) ) {
-					try {
-						$entry[0]( $trigger, $db );
-					} catch ( Throwable $trxError ) {
-						$this->setTransactionError( $trxError );
-						throw $trxError;
-					}
-				} else {
-					$unrelatedCallbackEntries[] = $entry;
-				}
-			}
-			// @phan-suppress-next-line PhanImpossibleConditionInLoop
-		} while ( $this->trxSectionCancelCallbacks );
-
-		$this->trxSectionCancelCallbacks = $unrelatedCallbackEntries;
-	}
-
-	/**
 	 * Consume and run any "on transaction pre-commit" callbacks
 	 *
-	 * @param IDatabase $db
 	 * @return int Number of callbacks attempted
 	 * @throws Throwable Any exception thrown by a callback
 	 */
-	public function runOnTransactionPreCommitCallbacks( IDatabase $db ): int {
+	public function runOnTransactionPreCommitCallbacks(): int {
 		$count = 0;
 
 		// Drain the queues of transaction "precommit" callbacks until it is empty
@@ -789,7 +722,7 @@ class TransactionManager {
 			$count += count( $callbackEntries );
 			foreach ( $callbackEntries as $entry ) {
 				try {
-					$entry[0]( $db );
+					$entry[0]();
 				} catch ( Throwable $trxError ) {
 					$this->setTransactionError( $trxError );
 					throw $trxError;
@@ -808,7 +741,6 @@ class TransactionManager {
 
 	public function clearEndCallbacks() {
 		$this->trxEndCallbacks = []; // don't copy
-		$this->trxSectionCancelCallbacks = []; // don't copy
 	}
 
 	public function writesOrCallbacksPending(): bool {
@@ -816,8 +748,7 @@ class TransactionManager {
 				$this->trxWriteCallers ||
 				$this->trxPostCommitOrIdleCallbacks ||
 				$this->trxPreCommitOrIdleCallbacks ||
-				$this->trxEndCallbacks ||
-				$this->trxSectionCancelCallbacks
+				$this->trxEndCallbacks
 			);
 	}
 
@@ -831,8 +762,7 @@ class TransactionManager {
 		foreach ( [
 			$this->trxPostCommitOrIdleCallbacks,
 			$this->trxPreCommitOrIdleCallbacks,
-			$this->trxEndCallbacks,
-			$this->trxSectionCancelCallbacks
+			$this->trxEndCallbacks
 		] as $callbacks ) {
 			foreach ( $callbacks as $callback ) {
 				$fnames[] = $callback[1];
@@ -930,7 +860,7 @@ class TransactionManager {
 		}
 	}
 
-	public function onFlushSnapshot( IDatabase $db, $fname, $flush, $trxRoundId ) {
+	public function onFlushSnapshot( IDatabase $db, $fname, $flush, $trxRoundFname ) {
 		if ( $this->explicitTrxActive() ) {
 			// Committing this transaction would break callers that assume it is still open
 			throw new DBUnexpectedError(
@@ -948,13 +878,13 @@ class TransactionManager {
 			);
 		} elseif (
 			$this->trxLevel() &&
-			$trxRoundId &&
+			$trxRoundFname !== null &&
 			$flush !== IDatabase::FLUSHING_INTERNAL &&
 			$flush !== IDatabase::FLUSHING_ALL_PEERS
 		) {
 			$this->logger->warning(
 				"$fname: Expected mass snapshot flush of all peer transactions " .
-				"in the explicit transactions round '{$trxRoundId}'",
+				"in the explicit transactions round '{$trxRoundFname}'",
 				[
 					'exception' => new RuntimeException(),
 					'db_log_category' => 'trx'

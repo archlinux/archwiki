@@ -4,9 +4,6 @@ namespace Wikimedia\Rdbms;
 
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
-// Very long type annotations :(
-// phpcs:disable Generic.Files.LineLength
-
 /**
  * Build SELECT queries with a fluent interface.
  *
@@ -40,6 +37,11 @@ class SelectQueryBuilder extends JoinGroupBase {
 	private $fields = [];
 
 	/**
+	 * @var array Like $fields, but always an assoc array, for checking which field/alias names are already used
+	 */
+	private $aliasesUsed = [];
+
+	/**
 	 * @var array The conditions to be passed to IReadableDatabase::select()
 	 */
 	private $conds = [];
@@ -64,14 +66,11 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 */
 	private $isCallerOverridden = false;
 
-	/** @var IReadableDatabase */
 	protected IReadableDatabase $db;
 
 	/**
 	 * Only for use in subclasses. To create a SelectQueryBuilder instance,
 	 * use `$db->newSelectQueryBuilder()` instead.
-	 *
-	 * @param IReadableDatabase $db
 	 */
 	public function __construct( IReadableDatabase $db ) {
 		$this->db = $db;
@@ -195,7 +194,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add a single table to the SELECT query. Alias for table().
 	 *
-	 * @param string|JoinGroup|SelectQueryBuilder $table Table reference; see {@link table}
+	 * @param string|JoinGroup|Subquery|SelectQueryBuilder $table Table reference; see {@link table}
 	 *  for details
 	 * @param-taint $table exec_sql
 	 * @param string|null $alias The table alias, or null for no alias
@@ -237,11 +236,14 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * @return $this
 	 */
 	public function fields( $fields ) {
-		if ( is_array( $fields ) ) {
-			$this->fields = array_merge( $this->fields, $fields );
-		} else {
-			$this->fields[] = $fields;
+		if ( !is_array( $fields ) ) {
+			return $this->field( $fields );
 		}
+
+		foreach ( $fields as $alias => $field ) {
+			$this->field( $field, is_numeric( $alias ) ? null : $alias );
+		}
+
 		return $this;
 	}
 
@@ -267,6 +269,17 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * @return $this
 	 */
 	public function field( $field, $alias = null ) {
+		$usedAlias = $alias ?? $field;
+		if ( isset( $this->aliasesUsed[$usedAlias] ) ) {
+			if ( $this->aliasesUsed[$usedAlias] !== $field ) {
+				throw new \LogicException( __METHOD__ .
+					": field alias \"$usedAlias\" is already used for a different field" );
+			}
+			// Identical field/alias combination was already added, don't add it again
+			return $this;
+		}
+		$this->aliasesUsed[$usedAlias] = $field;
+
 		if ( $alias === null ) {
 			$this->fields[] = $field;
 		} else {
@@ -282,6 +295,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 */
 	public function clearFields() {
 		$this->fields = [];
+		$this->aliasesUsed = [];
 		return $this;
 	}
 
@@ -289,6 +303,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add conditions to the query. The supplied conditions will be appended
 	 * to the existing conditions, separated by AND.
 	 *
+	 * @phpcs:ignore Generic.Files.LineLength
 	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 *
@@ -345,6 +360,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
+	 * @phpcs:ignore Generic.Files.LineLength
 	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
@@ -356,6 +372,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
+	 * @phpcs:ignore Generic.Files.LineLength
 	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
@@ -802,8 +819,6 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * COUNT() expression, for example:
 	 *
 	 *   $queryBuilder->select( 'COUNT(*)' )->from( 'page' )->fetchField()
-	 *
-	 * @return int
 	 */
 	public function fetchRowCount(): int {
 		return $this->db->selectRowCount( $this->tables, $this->getRowCountVar(), $this->conds,
@@ -817,8 +832,6 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * by a SELECT query, using EXPLAIN SELECT. The estimate is provided using
 	 * index cardinality statistics, and is notoriously inaccurate, especially
 	 * when large numbers of rows have recently been added or deleted.
-	 *
-	 * @return int
 	 */
 	public function estimateRowCount(): int {
 		return $this->db->estimateRowCount( $this->tables, $this->getRowCountVar(), $this->conds,

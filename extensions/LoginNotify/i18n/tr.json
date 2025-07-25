@@ -16,6 +16,7 @@
 	"echo-category-title-login-success": "Tanıdık olmayan bir cihazdan giriş",
 	"echo-pref-tooltip-login-success": "Birisi hesabıma daha önce kullanmadığım bir cihaz ve/veya IP adresinden giriş yaptığı zaman bana bildir.",
 	"loginnotify-primary-link": "Yardım",
+	"loginnotify-unknown-ip": "Bilinmeyen bir IP adresinden giriş yapmaya çalıştınız ve {{SITENAME}} şu anda bilinmeyen IP adreslerinden giriş yapılmasını engelleyecek şekilde yapılandırılmış.",
 	"notification-loginnotify-login-fail-email-subject": "{{SITENAME}} sitesine $1 kullanıcısı olarak {{PLURAL:$2|başarısız giriş|birden çok başarısız giriş}} denemesi",
 	"notification-loginnotify-login-success-email-subject": "{{SITENAME}} sitesine daha önce kullanmadığınız bir cihazdan $1 olarak giriş yapıldı",
 	"notification-header-login-success": "Birisi (muhtemelen {{GENDER:$1|siz}}) yakın zamanda hesabınıza yeni bir cihazdan oturum açtı. Eğer bu işlemi siz yaptıysanız bu mesajı gözardı edebilirsiniz. Ancak bu işlemi yapan siz değilseniz, parolanızı değiştirmeniz ve hesap etkinliğini kontrol etmeniz önerilir.",

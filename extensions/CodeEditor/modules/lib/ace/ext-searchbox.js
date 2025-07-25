@@ -15,35 +15,35 @@ dom.importCssString(searchboxCss, "ace_searchbox", false);
 var SearchBox = /** @class */ (function () {
     function SearchBox(editor, range, showReplaceForm) {
         this.activeInput;
-        var div = dom.createElement("div");
-        dom.buildDom(["div", { class: "ace_search right" },
+        this.element = dom.buildDom(["div", { class: "ace_search right" },
             ["span", { action: "hide", class: "ace_searchbtn_close" }],
             ["div", { class: "ace_search_form" },
-                ["input", { class: "ace_search_field", placeholder: nls("Search for"), spellcheck: "false" }],
+                ["input", { class: "ace_search_field", placeholder: nls("search-box.find.placeholder", "Search for"), spellcheck: "false" }],
                 ["span", { action: "findPrev", class: "ace_searchbtn prev" }, "\u200b"],
                 ["span", { action: "findNext", class: "ace_searchbtn next" }, "\u200b"],
-                ["span", { action: "findAll", class: "ace_searchbtn", title: "Alt-Enter" }, nls("All")]
+                ["span", { action: "findAll", class: "ace_searchbtn", title: "Alt-Enter" }, nls("search-box.find-all.text", "All")]
             ],
             ["div", { class: "ace_replace_form" },
-                ["input", { class: "ace_search_field", placeholder: nls("Replace with"), spellcheck: "false" }],
-                ["span", { action: "replaceAndFindNext", class: "ace_searchbtn" }, nls("Replace")],
-                ["span", { action: "replaceAll", class: "ace_searchbtn" }, nls("All")]
+                ["input", { class: "ace_search_field", placeholder: nls("search-box.replace.placeholder", "Replace with"), spellcheck: "false" }],
+                ["span", { action: "replaceAndFindNext", class: "ace_searchbtn" }, nls("search-box.replace-next.text", "Replace")],
+                ["span", { action: "replaceAll", class: "ace_searchbtn" }, nls("search-box.replace-all.text", "All")]
             ],
             ["div", { class: "ace_search_options" },
-                ["span", { action: "toggleReplace", class: "ace_button", title: nls("Toggle Replace mode"),
+                ["span", { action: "toggleReplace", class: "ace_button", title: nls("search-box.toggle-replace.title", "Toggle Replace mode"),
                         style: "float:left;margin-top:-2px;padding:0 5px;" }, "+"],
                 ["span", { class: "ace_search_counter" }],
-                ["span", { action: "toggleRegexpMode", class: "ace_button", title: nls("RegExp Search") }, ".*"],
-                ["span", { action: "toggleCaseSensitive", class: "ace_button", title: nls("CaseSensitive Search") }, "Aa"],
-                ["span", { action: "toggleWholeWords", class: "ace_button", title: nls("Whole Word Search") }, "\\b"],
-                ["span", { action: "searchInSelection", class: "ace_button", title: nls("Search In Selection") }, "S"]
+                ["span", { action: "toggleRegexpMode", class: "ace_button", title: nls("search-box.toggle-regexp.title", "RegExp Search") }, ".*"],
+                ["span", { action: "toggleCaseSensitive", class: "ace_button", title: nls("search-box.toggle-case.title", "CaseSensitive Search") }, "Aa"],
+                ["span", { action: "toggleWholeWords", class: "ace_button", title: nls("search-box.toggle-whole-word.title", "Whole Word Search") }, "\\b"],
+                ["span", { action: "searchInSelection", class: "ace_button", title: nls("search-box.toggle-in-selection.title", "Search In Selection") }, "S"]
             ]
-        ], div);
-        this.element = div.firstChild;
+        ]);
         this.setSession = this.setSession.bind(this);
+        this.$onEditorInput = this.onEditorInput.bind(this);
         this.$init();
         this.setEditor(editor);
         dom.importCssString(searchboxCss, "ace_searchbox", editor.container);
+        event.addListener(this.element, "touchstart", function (e) { e.stopPropagation(); }, editor);
     }
     SearchBox.prototype.setEditor = function (editor) {
         editor.searchBox = this;
@@ -53,6 +53,9 @@ var SearchBox = /** @class */ (function () {
     SearchBox.prototype.setSession = function (e) {
         this.searchRange = null;
         this.$syncOptions(true);
+    };
+    SearchBox.prototype.onEditorInput = function () {
+        this.find(false, false, true);
     };
     SearchBox.prototype.$initElements = function (sb) {
         this.searchBox = sb.querySelector(".ace_search_form");
@@ -161,6 +164,10 @@ var SearchBox = /** @class */ (function () {
             var value = this.searchRange
                 ? editor.session.getTextRange(this.searchRange)
                 : editor.getValue();
+            if (editor.$search.$isMultilineSearch(editor.getLastSearchOptions())) {
+                value = value.replace(/\r\n|\r|\n/g, "\n");
+                editor.session.doc.$autoNewLine = "\n";
+            }
             var offset = editor.session.doc.positionToIndex(editor.selection.anchor);
             if (this.searchRange)
                 offset -= editor.session.doc.positionToIndex(this.searchRange.start);
@@ -180,7 +187,7 @@ var SearchBox = /** @class */ (function () {
                 }
             }
         }
-        this.searchCounter.textContent = nls("$0 of $1", [before, (all > MAX_COUNT ? MAX_COUNT + "+" : all)]);
+        this.searchCounter.textContent = nls("search-box.search-counter", "$0 of $1", [before, (all > MAX_COUNT ? MAX_COUNT + "+" : all)]);
     };
     SearchBox.prototype.findNext = function () {
         this.find(true, false);
@@ -218,6 +225,7 @@ var SearchBox = /** @class */ (function () {
         this.active = false;
         this.setSearchRange(null);
         this.editor.off("changeSession", this.setSession);
+        this.editor.off("input", this.$onEditorInput);
         this.element.style.display = "none";
         this.editor.keyBinding.removeKeyboardHandler(this.$closeSearchBarKb);
         this.editor.focus();
@@ -225,8 +233,11 @@ var SearchBox = /** @class */ (function () {
     SearchBox.prototype.show = function (value, isReplace) {
         this.active = true;
         this.editor.on("changeSession", this.setSession);
+        this.editor.on("input", this.$onEditorInput);
         this.element.style.display = "";
         this.replaceOption.checked = isReplace;
+        if (this.editor.$search.$options.regExp)
+            value = lang.escapeRegExp(value);
         if (value)
             this.searchInput.value = value;
         this.searchInput.focus();

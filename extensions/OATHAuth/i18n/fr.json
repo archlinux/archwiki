@@ -5,8 +5,10 @@
 			"Crochet.david",
 			"Derugon",
 			"Gomoko",
+			"JLTRY",
 			"Lofhi",
 			"MacOS Weed",
+			"Mahabarata",
 			"Manaviko",
 			"McDutchie",
 			"Od1n",
@@ -19,9 +21,7 @@
 			"Urhixidur",
 			"Verdy p",
 			"Wladek92",
-			"Yasten",
-			"Mahabarata",
-			"JLTRY"
+			"Yasten"
 		]
 	},
 	"oathauth-desc": "Prend en charge l’authentification utilisant des mots de passe HMAC à utilisation unique.",
@@ -87,7 +87,6 @@
 	"log-action-filter-oath-verify": "Vérifie si l’authentification à deux facteurs est activée",
 	"log-action-filter-oath-disable-other": "Désactivation de l’authentification à deux facteurs pour un autre utilisateur",
 	"oathauth-ui-no-module": "Aucune activée",
-	"oathauth-module-invalid": "Le module ''OATHAuth'' avec lequel l’utilisateur s’est inscrit n’est pas valide.",
 	"oathauth-module-totp-label": "TOTP (jeton à usage unique)",
 	"oathauth-ui-manage": "Gérer",
 	"oathmanage": "Gérer l’authentification à deux facteurs",
@@ -106,9 +105,6 @@
 	"oathauth-disable-method-warning-button-label": "Confirmer et continuer",
 	"oathauth-disable-method-warning": "Si vous désactivez la méthode $1 d’authentification à deux facteurs, vous ne pourrez plus utiliser cette méthode pour vous connecter et les données associées à cette méthode d’authentification seront effacée.",
 	"oathauth-disable-method-next-step": "À l’étape suivante, vous devrez vous authentifier avec votre méthode d’authentification à deux facteurs actuelle ($1) pour pouvoir la désactiver.",
-	"oathauth-switch-method-warning-header": "Confirmer le basculement vers une méthode d’authentification différente",
-	"oathauth-switch-method-warning": "En basculant vers la méthode $2 d’authentification à deux facteurs, la méthode actuelle ($1) sera désactivée et les données associées avec la méthode d’authentification actuelle seront supprimées.",
-	"oathauth-switch-method-next-step": "À l’étape suivante, vous devrez vous authentifier avec votre méthode d’authentification à deux facteurs actuelle ($1) pour pouvoir passer à la méthode $2.",
 	"oathauth-totp-disable-warning": "Vous ne pourrez plus utiliser l’appareil d’authentification enregistré avec ce compte. Tous les codes de récupération associés à ce compte seront invalidés.",
 	"oathauth-invalidrequest": "Requête non valide",
 	"notification-header-oathauth-disable": "L’authentification à deux facteurs a été désactivée sur {{GENDER:$2|}}votre compte.",
@@ -131,5 +127,6 @@
 	"oathauth-prefs-disabledgroups": "Groupe{{PLURAL:$1||s}} désactivé{{PLURAL:$1||s}} :",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|}}Votre statut de membre de ce{{PLURAL:$1||s}} groupe{{PLURAL:$1||s}} restera désactivé tant que vous n’aurez pas activé l’[[Special:Manage Two-factor authentication|authentification à deux facteurs]].",
 	"oathauth-qrcode-alt": "Code QR à scanner représentant la clé secrète.",
-	"oathauth-hint": "Vous n'avez pas accès à votre appareil ou à votre application ? Vous pouvez saisir un code de récupération (qui vous ont été fournis lorsque vous avez activé l'authentification à deux facteurs) dans ce champ."
+	"oathauth-hint": "Vous n'avez pas accès à votre appareil ou à votre application ? Vous pouvez saisir un code de récupération (qui vous ont été fournis lorsque vous avez activé l'authentification à deux facteurs) dans ce champ.",
+	"oathauth-must-be-central": "{{GENDER:$1|}}Votre compte doit être lié au système d’authentification central pour pouvoir utiliser l’authentification à deux facteurs."
 }

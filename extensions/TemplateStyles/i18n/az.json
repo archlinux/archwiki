@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"templatestyles-desc": "Hər bir şablon üçün üslub cədvəlləri yaradın",
+	"templatestyles-missing-src": "TemplateStyles-in <code>src</code> parametri boş olmamalıdır.",
+	"templatestyles-invalid-src": "TemplateStyles-in <code>src</code> parametrində yanlış başlıq.",
+	"templatestyles-bad-src-missing": "[[:$1|$2]] səhifəsinin məzmunu yoxdur.",
+	"templatestyles-bad-src": "TemplateStyles üçün [[:$1|$2]] səhifəsinin məzmun modeli \"{{int:content-model-sanitized-css}}\" olmalıdır (cari model: \"$3\").",
+	"content-model-sanitized-css": "Təmizlənmiş CSS",
+	"templatestyles-stylesheet-error-category": "Xətalı TemplateStyles üslub cədvəlləri",
+	"templatestyles-stylesheet-error-category-desc": "TemplateStyles üslub cədvəlində xəta var.",
+	"templatestyles-page-error-category": "TemplateStyles xətaları olan səhifələr"
+}

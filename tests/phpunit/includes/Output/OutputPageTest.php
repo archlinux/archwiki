@@ -3,6 +3,7 @@
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
@@ -15,8 +16,10 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\PageStoreRecord;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\ContentSecurityPolicy;
@@ -24,6 +27,8 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Session\SessionManager;
+use MediaWiki\Skin\QuickTemplate;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderTestCase;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderTestModule;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
@@ -32,8 +37,7 @@ use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use PHPUnit\Framework\MockObject\MockObject;
-use Wikimedia\DependencyStore\KeyValueDependencyStore;
-use Wikimedia\LightweightObjectStore\ExpirationAwareness;
+use Wikimedia\DependencyStore\DependencyStore;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\TestingAccessWrapper;
 
@@ -532,7 +536,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			[ 'c' => '<d>&amp;', 'e' => 'f', 'a' => 'q' ] );
 		$op->addParserOutputMetadata( $stubPO2 );
 		$stubPO3 = $this->createParserOutputStub( 'getHeadItems', [ 'e' => 'g' ] );
-		$op->addParserOutput( $stubPO3 );
+		$op->addParserOutput( $stubPO3, ParserOptions::newFromAnon() );
 		$stubPO4 = $this->createParserOutputStub( 'getHeadItems', [ 'x' ] );
 		$op->addParserOutputMetadata( $stubPO4 );
 
@@ -628,7 +632,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, @$op->checkLastModified( $timestamp ) );
 	}
 
-	public function provideCheckLastModified() {
+	public static function provideCheckLastModified() {
 		$lastModified = time() - 3600;
 		return [
 			'Timestamp 0' =>
@@ -656,8 +660,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 					[ MainConfigNames::CacheEpoch => wfTimestamp( TS_MW, $lastModified + 1 ) ] ],
 			'Recently-touched user' =>
 				[ $lastModified, $lastModified, false, [],
-				function ( OutputPage $op ) {
-					$op->getContext()->setUser( $this->getTestUser()->getUser() );
+				static function ( OutputPage $op, $testCase ) {
+					$op->getContext()->setUser( $testCase->getTestUser()->getUser() );
 				} ],
 			'After CDN expiry' =>
 				[ $lastModified, $lastModified, false,
@@ -944,6 +948,9 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$title = $titles[0];
+		if ( is_array( $title ) ) {
+			$title = $this->makeMockTitle( ...$title );
+		}
 		$query = $queries[0];
 
 		$str = OutputPage::buildBacklinkSubtitle( $title, $query )->text();
@@ -962,8 +969,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testAddBacklinkSubtitle( $titles, $queries, $contains, $notContains ) {
 		$op = $this->newInstance();
-		foreach ( $titles as $i => $unused ) {
-			$op->addBacklinkSubtitle( $titles[$i], $queries[$i] );
+		foreach ( $titles as $i => $title ) {
+			if ( is_array( $title ) ) {
+				$title = $this->makeMockTitle( ...$title );
+			}
+			$op->addBacklinkSubtitle( $title, $queries[$i] );
 		}
 
 		$str = $op->getSubtitle();
@@ -977,8 +987,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideBacklinkSubtitle() {
-		$page1title = $this->makeMockTitle( 'Page 1', [ 'redirect' => true ] );
+	public static function provideBacklinkSubtitle() {
+		$page1title = [ 'Page 1', [ 'redirect' => true ] ];
 		$page1ref = new PageReferenceValue( NS_MAIN, 'Page 1', PageReference::LOCAL );
 
 		$row = [
@@ -1053,6 +1063,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testShowNewSectionLink() {
+		$this->filterDeprecated( '/OutputPage::showNewSectionLink was deprecated/' );
 		$op = $this->newInstance();
 
 		$this->assertFalse( $op->showNewSectionLink() );
@@ -1066,13 +1077,14 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NEW_SECTION ) );
 
 		$pOut2 = $this->createParserOutputStub( 'getNewSection', false );
-		$op->addParserOutput( $pOut2 );
+		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
 		$this->assertFalse( $op->showNewSectionLink() );
 		// Note that flags are OR'ed together, and not reset.
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NEW_SECTION ) );
 	}
 
 	public function testForceHideNewSectionLink() {
+		$this->filterDeprecated( '/OutputPage::forceHideNewSectionLink was deprecated/' );
 		$op = $this->newInstance();
 
 		$this->assertFalse( $op->forceHideNewSectionLink() );
@@ -1086,7 +1098,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::HIDE_NEW_SECTION ) );
 
 		$pOut2 = $this->createParserOutputStub( 'getHideNewSection', false );
-		$op->addParserOutput( $pOut2 );
+		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
 		$this->assertFalse( $op->forceHideNewSectionLink() );
 		// Note that flags are OR'ed together, and not reset.
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::HIDE_NEW_SECTION ) );
@@ -1183,13 +1195,34 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->setLanguageLinks( [ TitleValue::tryNew( NS_MAIN, 'E', '', 'pt' ) ] );
 		$this->assertSame( [ 'pt:E' ], $op->getLanguageLinks() );
 
-		$pOut1 = $this->createParserOutputStub( 'getLanguageLinks', [ 'he:F', 'ar:G#y' ] );
+		$pOut1 = $this->createParserOutputStub( [
+			'getLanguageLinks' => [ 'he:F', 'ar:G#y' ],
+			'getLinkList' => static function ( $type ) {
+				if ( $type !== ParserOutputLinkTypes::LANGUAGE ) {
+					return [];
+				}
+				return [
+					[ 'link' => TitleValue::tryNew( NS_MAIN, 'F', '', 'he' ) ],
+					[ 'link' => TitleValue::tryNew( NS_MAIN, 'G', 'y', 'ar' ) ],
+				];
+			},
+		] );
 		$op->addParserOutputMetadata( $pOut1 );
 		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G#y' ], $op->getLanguageLinks() );
 
 		# Duplicates are removed in OutputPage (T26502)
-		$pOut2 = $this->createParserOutputStub( 'getLanguageLinks', [ 'pt:H' ] );
-		$op->addParserOutput( $pOut2 );
+		$pOut2 = $this->createParserOutputStub( [
+			'getLanguageLinks' => [ 'pt:H' ],
+			'getLinkList' => static function ( $type ) {
+				if ( $type !== ParserOutputLinkTypes::LANGUAGE ) {
+					return [];
+				}
+				return [
+					[ 'link' => TitleValue::tryNew( NS_MAIN, 'H', '', 'pt' ) ],
+				];
+			},
+		] );
+		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
 		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G#y' ], $op->getLanguageLinks() );
 	}
 
@@ -1285,14 +1318,29 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$stubPO = $this->createParserOutputStub( [
 			'getCategoryMap' => $args,
+			'getLinkList' => static function ( $type ) use ( $args ) {
+				if ( $type !== ParserOutputLinkTypes::CATEGORY ) {
+					return [];
+				}
+				$result = [];
+				foreach ( $args as $cat => $sort ) {
+					$result[] = [
+						'link' => TitleValue::tryNew( NS_CATEGORY, $cat ),
+						'sort' => $sort,
+					];
+				}
+				return $result;
+			},
 		] );
 
 		// addParserOutput and addParserOutputMetadata should behave identically for us, so
 		// alternate to get coverage for both without adding extra tests
 		static $idx = 0;
-		$idx++;
-		$method = [ 'addParserOutputMetadata', 'addParserOutput' ][$idx % 2];
-		$op->$method( $stubPO );
+		if ( ( ( ++$idx ) % 2 ) === 0 ) {
+			$op->addParserOutputMetadata( $stubPO );
+		} else {
+			$op->addParserOutput( $stubPO, ParserOptions::newFromAnon() );
+		}
 
 		$this->doCategoryAsserts( $op, $expectedNormal, $expectedHidden );
 		$this->doCategoryLinkAsserts( $op, $expectedNormal, $expectedHidden );
@@ -1504,7 +1552,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'getIndicators' => [ 'a' => '!!!' ],
 			'getWrapperDivClass' => 'wrapper2',
 		] );
-		$op->addParserOutput( $pOut2 );
+		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
 		$this->assertSame( [
 			'a' => '<div class="wrapper2">!!!</div>',
 			'b' => 'x',
@@ -1574,6 +1622,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testRevisionTimestamp() {
+		$this->filterDeprecated( '/OutputPage::setRevisionTimestamp was deprecated/' );
 		$op = $this->newInstance();
 		$this->assertNull( $op->getRevisionTimestamp() );
 
@@ -1645,7 +1694,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$mockedRunOutputPipeline = false;
 		foreach ( $retVals as $method => $retVal ) {
-			$pOut->method( $method )->willReturn( $retVal );
+			if ( is_callable( $retVal ) ) {
+				$pOut->method( $method )->willReturnCallback( $retVal );
+			} else {
+				$pOut->method( $method )->willReturn( $retVal );
+			}
 			if ( $method === 'runOutputPipeline' ) {
 				$mockedRunOutputPipeline = true;
 			}
@@ -1715,7 +1768,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			NS_PROJECT => [ 'F' => 5678 ],
 		];
 
-		$op->addParserOutput( $stubPO2 );
+		$op->addParserOutput( $stubPO2, ParserOptions::newFromAnon() );
 		$this->assertSame( $finalIds, $op->getTemplateIds() );
 
 		// Test merging with an empty set of id's
@@ -1744,7 +1797,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$stubPO1 = $this->createParserOutputStub( 'getFileSearchOptions', $files1 );
 
-		$op->addParserOutput( $stubPO1 );
+		$op->addParserOutput( $stubPO1, ParserOptions::newFromAnon() );
 		$this->assertSame( $files1, $op->getFileSearchOptions() );
 
 		// Test merging with a second set of files
@@ -1759,7 +1812,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( array_merge( $files1, $files2 ), $op->getFileSearchOptions() );
 
 		// Test merging with an empty set of files
-		$op->addParserOutput( $stubPOEmpty );
+		$op->addParserOutput( $stubPOEmpty, ParserOptions::newFromAnon() );
 		$this->assertSame( array_merge( $files1, $files2 ), $op->getFileSearchOptions() );
 	}
 
@@ -1902,6 +1955,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNoGallery() {
+		$this->filterDeprecated( '/OutputPage::getNoGallery was deprecated/' );
 		$op = $this->newInstance();
 		$this->assertFalse( $op->getNoGallery() );
 		$this->assertFalse( $op->getOutputFlag( ParserOutputFlags::NO_GALLERY ) );
@@ -1914,7 +1968,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NO_GALLERY ) );
 
 		$stubPO2 = $this->createParserOutputStub( 'getNoGallery', false );
-		$op->addParserOutput( $stubPO2 );
+		$op->addParserOutput( $stubPO2, ParserOptions::newFromAnon() );
 		$this->assertFalse( $op->getNoGallery() );
 		// Note that flags are OR'ed together, and not reset.
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NO_GALLERY ) );
@@ -1946,6 +2000,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	public function testAddParserOutput() {
 		$op = $this->newInstance();
 		$this->assertSame( '', $op->getHTML() );
+		$this->filterDeprecated( '/OutputPage::showNewSectionLink was deprecated/' );
 		$this->assertFalse( $op->showNewSectionLink() );
 		$this->assertFalse( $op->getOutputFlag( ParserOutputFlags::NEW_SECTION ) );
 
@@ -1956,7 +2011,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			ParserOutputFlags::NEW_SECTION,
 		] );
 
-		$op->addParserOutput( $pOut );
+		$op->addParserOutput( $pOut, ParserOptions::newFromAnon() );
 		$this->assertSame( '<some text>', $op->getHTML() );
 		$this->assertTrue( $op->showNewSectionLink() );
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NEW_SECTION ) );
@@ -2136,24 +2191,25 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		global $wgCdnMaxAge;
 		$now = time();
 		self::$fakeTime = $now;
+		$oneMinute = 60;
 		return [
 			'Five minutes ago' => [ [ $now - 300 ], 270 ],
-			'Now' => [ [ +0 ], ExpirationAwareness::TTL_MINUTE ],
-			'Five minutes from now' => [ [ $now + 300 ], ExpirationAwareness::TTL_MINUTE ],
+			'Now' => [ [ +0 ], $oneMinute ],
+			'Five minutes from now' => [ [ $now + 300 ], $oneMinute ],
 			'Five minutes ago, initial maxage four minutes' =>
 				[ [ $now - 300 ], 270, [ 'initialMaxage' => 240 ] ],
 			'A very long time ago' => [ [ $now - 1000000000 ], $wgCdnMaxAge ],
 			'Initial maxage zero' => [ [ $now - 300 ], 270, [ 'initialMaxage' => 0 ] ],
 
-			'false' => [ [ false ], ExpirationAwareness::TTL_MINUTE ],
-			'null' => [ [ null ], ExpirationAwareness::TTL_MINUTE ],
-			"'0'" => [ [ '0' ], ExpirationAwareness::TTL_MINUTE ],
-			'Empty string' => [ [ '' ], ExpirationAwareness::TTL_MINUTE ],
+			'false' => [ [ false ], $oneMinute ],
+			'null' => [ [ null ], $oneMinute ],
+			"'0'" => [ [ '0' ], $oneMinute ],
+			'Empty string' => [ [ '' ], $oneMinute ],
 			// @todo These give incorrect results due to timezones, how to test?
-			//"'now'" => [ [ 'now' ], ExpirationAwareness::TTL_MINUTE ],
-			//"'parse error'" => [ [ 'parse error' ], ExpirationAwareness::TTL_MINUTE ],
+			//"'now'" => [ [ 'now' ], $oneMinute ],
+			//"'parse error'" => [ [ 'parse error' ], $oneMinute ],
 
-			'Now, minTTL 0' => [ [ $now, 0 ], ExpirationAwareness::TTL_MINUTE ],
+			'Now, minTTL 0' => [ [ $now, 0 ], $oneMinute ],
 			'Now, minTTL 0.000001' => [ [ $now, 0.000001 ], 0 ],
 			'A very long time ago, maxTTL even longer' =>
 				[ [ $now - 1000000000, 0, 1000000001 ], 900000000 ],
@@ -2190,27 +2246,31 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		// Test that an uncacheable ParserOutput does set to false
 		$pOutUncacheable = $this->createParserOutputStub( 'isCacheable', false );
-		$op->addParserOutput( $pOutUncacheable );
+		$op->addParserOutput( $pOutUncacheable, ParserOptions::newFromAnon() );
 		$this->assertSame( false, $op->couldBePublicCached() );
 	}
 
 	public function testGetCacheVaryCookies() {
-		global $wgCookiePrefix, $wgDBname;
 		$op = $this->newInstance();
-		$prefix = $wgCookiePrefix !== false ? $wgCookiePrefix : $wgDBname;
-		$expectedCookies = [
-			"{$prefix}Token",
-			"{$prefix}LoggedOut",
-			"{$prefix}_session",
-			'forceHTTPS',
-			'cookie1',
-			'cookie2',
-		];
+
+		$expectedCookies = array_merge(
+			SessionManager::singleton()->getVaryCookies(),
+			[
+				'forceHTTPS',
+				'cookie1',
+				'cookie2',
+			]
+		);
+
+		$expectedCookies = array_values( array_unique( $expectedCookies ) );
 
 		// We have to reset the cookies because getCacheVaryCookies may have already been called
 		TestingAccessWrapper::newFromClass( OutputPage::class )->cacheVaryCookies = null;
 
 		$this->overrideConfigValue( MainConfigNames::CacheVaryCookies, [ 'cookie1' ] );
+
+		// Clear out any extension hooks that may interfere with cookies.
+		$this->clearHook( 'GetCacheVaryCookies' );
 		$this->setTemporaryHook( 'GetCacheVaryCookies',
 			function ( $innerOP, &$cookies ) use ( $op, $expectedCookies ) {
 				$this->assertSame( $op, $innerOP );
@@ -2493,10 +2553,10 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->setPreventClickjacking( false );
 		$this->assertFalse( $op->getPreventClickjacking() );
 
-		$op->addParserOutput( $pOut1 );
+		$op->addParserOutput( $pOut1, ParserOptions::newFromAnon() );
 		$this->assertTrue( $op->getPreventClickjacking() );
 
-		$op->addParserOutput( $pOut2 );
+		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
 		$this->assertTrue( $op->getPreventClickjacking() );
 	}
 
@@ -2548,7 +2608,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$reflectCSP = new ReflectionClass( ContentSecurityPolicy::class );
 		$rl = $out->getResourceLoader();
 		$rl->setMessageBlobStore( $this->createMock( RL\MessageBlobStore::class ) );
-		$rl->setDependencyStore( $this->createMock( KeyValueDependencyStore::class ) );
+		$rl->setDependencyStore( $this->createMock( DependencyStore::class ) );
 		$rl->register( [
 			'test.foo' => [
 				'class' => ResourceLoaderTestModule::class,
@@ -2729,21 +2789,20 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideTransformFilePath
 	 */
-	public function testTransformResourcePath( $baseDir, $basePath, $uploadDir = null,
+	public function testTransformResourcePath( $basePath, $uploadDir = null,
 		$uploadPath = null, $path = null, $expected = null
 	) {
 		if ( $path === null ) {
 			// Skip optional $uploadDir and $uploadPath
 			$path = $uploadDir;
 			$expected = $uploadPath;
-			$uploadDir = "$baseDir/images";
+			$uploadDir = MW_INSTALL_PATH . '/images';
 			$uploadPath = "$basePath/images";
 		}
 		$conf = new HashConfig( [
 			MainConfigNames::ResourceBasePath => $basePath,
 			MainConfigNames::UploadDirectory => $uploadDir,
 			MainConfigNames::UploadPath => $uploadPath,
-			MainConfigNames::BaseDirectory => $baseDir
 		] );
 
 		// Some of these paths don't exist and will cause warnings
@@ -2757,58 +2816,58 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		return [
 			// File that matches basePath, and exists. Hash found and appended.
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
-				'/w/test.jpg',
-				'/w/test.jpg?edcf2'
+				'/w',
+				'/w/tests/phpunit/data/media/test.jpg',
+				'/w/tests/phpunit/data/media/test.jpg?edcf2'
 			],
 			// File that matches basePath, but not found on disk. Empty query.
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'/w/unknown.png',
 				'/w/unknown.png'
 			],
 			// File not matching basePath. Ignored.
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'/files/test.jpg'
 			],
 			// Empty string. Ignored.
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'',
 				''
 			],
 			// Similar path, but with domain component. Ignored.
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'//example.org/w/test.jpg'
 			],
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'https://www.example.org/w/test.jpg'
 			],
 			// Unrelated path with domain component. Ignored.
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'https://www.example.org/files/test.jpg'
 			],
 			[
-				'baseDir' => $baseDir, 'basePath' => '/w',
+				'/w',
 				'//example.org/files/test.jpg'
 			],
 			// Unrelated path with domain, and empty base path (root mw install). Ignored.
 			[
-				'baseDir' => $baseDir, 'basePath' => '',
+				'',
 				'https://www.example.org/files/test.jpg'
 			],
+			// T155310
 			[
-				'baseDir' => $baseDir, 'basePath' => '',
-				// T155310
+				'',
 				'//example.org/files/test.jpg'
 			],
 			// Check UploadPath before ResourceBasePath (T155146)
 			[
-				'baseDir' => dirname( $baseDir ), 'basePath' => '',
+				'',
 				'uploadDir' => $baseDir, 'uploadPath' => '/images',
 				'/images/test.jpg',
 				'/images/test.jpg?edcf2'
@@ -2917,7 +2976,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$pOut2 = $this->createParserOutputStubWithFlags(
 			[], [ ParserOutputFlags::SHOW_TOC ]
 		);
-		$op->addParserOutput( $pOut2 );
+		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
 		$this->assertTrue( $op->isTOCEnabled() );
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::SHOW_TOC ) );
 
@@ -2939,7 +2998,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$stubPO2 = $this->createParserOutputStub();
 		$this->assertFalse( $stubPO2->getOutputFlag( ParserOutputFlags::NO_TOC ) );
-		$op->addParserOutput( $stubPO2 );
+		$op->addParserOutput( $stubPO2, ParserOptions::newFromAnon() );
 		// Note that flags are OR'ed together, and not reset.
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NO_TOC ) );
 	}
@@ -3009,12 +3068,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				[
 					MainConfigNames::ResourceBasePath => '/w',
 					MainConfigNames::Logos => [
-						'1x' => '/w/test.jpg',
+						'1x' => '/w/tests/phpunit/data/media/test.jpg',
 					],
 					MainConfigNames::UploadPath => '/w/images',
-					MainConfigNames::BaseDirectory => dirname( __DIR__ ) . '/../data/media'
 				],
-				'Link: </w/test.jpg?edcf2>;rel=preload;as=image',
+				'Link: </w/tests/phpunit/data/media/test.jpg?edcf2>;rel=preload;as=image',
 			],
 		];
 	}
@@ -3153,28 +3211,28 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function provideGetJsVarsEditable() {
+	public static function provideGetJsVarsEditable() {
 		yield 'can edit and create' => [
-			'performer' => $this->mockAnonAuthorityWithPermissions( [ 'edit', 'create' ] ),
+			'performerSpec' => 'with',
 			'expectedEditableConfig' => [
 				'wgIsProbablyEditable' => true,
 				'wgRelevantPageIsProbablyEditable' => true,
 			]
 		];
 		yield 'cannot edit or create' => [
-			'performer' => $this->mockAnonAuthorityWithoutPermissions( [ 'edit', 'create' ] ),
+			'performerSpec' => 'without',
 			'expectedEditableConfig' => [
 				'wgIsProbablyEditable' => false,
 				'wgRelevantPageIsProbablyEditable' => false,
 			]
 		];
 		yield 'only can edit relevant title' => [
-			'performer' => $this->mockAnonAuthority( static function (
+			'performerSpec' => static function (
 				string $permission,
 				PageIdentity $page
 			) {
 				return ( $permission === 'edit' || $permission === 'create' ) && $page->getDBkey() === 'RelevantTitle';
-			} ),
+			},
 			'expectedEditableConfig' => [
 				'wgIsProbablyEditable' => false,
 				'wgRelevantPageIsProbablyEditable' => true,
@@ -3185,13 +3243,20 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideGetJsVarsEditable
 	 */
-	public function testGetJsVarsEditable( Authority $performer, array $expectedEditableConfig ) {
+	public function testGetJsVarsEditable( $performerSpec, array $expectedEditableConfig ) {
+		if ( is_string( $performerSpec ) ) {
+			$performer = $performerSpec === 'with'
+				? $this->mockAnonAuthorityWithPermissions( [ 'edit', 'create' ] )
+				: $this->mockAnonAuthorityWithoutPermissions( [ 'edit', 'create' ] );
+		} else {
+			$performer = $this->mockAnonAuthority( $performerSpec );
+		}
 		$op = $this->newInstance( [], null, null, $performer );
 		$op->getContext()->getSkin()->setRelevantTitle( Title::makeTitle( NS_MAIN, 'RelevantTitle' ) );
 		$this->assertArraySubmapSame( $expectedEditableConfig, $op->getJSVars() );
 	}
 
-	public function provideJsVarsAboutPageLang() {
+	public static function provideJsVarsAboutPageLang() {
 		// Format:
 		// - expected
 		// - title
@@ -3266,52 +3331,34 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		return $user;
 	}
 
-	public function provideUserCanPreview() {
+	public static function provideUserCanPreview() {
 		yield 'all good' => [
-			'performer' => $this->mockUserAuthorityWithPermissions(
-				$this->mockUser( true, true ),
-				[ 'edit' ]
-			),
+			'performerSpec' => [ 'with', true, true ],
 			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
 			true
 		];
 		yield 'get request' => [
-			'performer' => $this->mockUserAuthorityWithPermissions(
-				$this->mockUser( true, true ),
-				[ 'edit' ]
-			),
+			'performerSpec' => [ 'with', true, true ],
 			'request' => new FauxRequest( [ 'action' => 'submit' ], false ),
 			false
 		];
 		yield 'not a submit action' => [
-			'performer' => $this->mockUserAuthorityWithPermissions(
-				$this->mockUser( true, true ),
-				[ 'edit' ]
-			),
+			'performerSpec' => [ 'with', true, true ],
 			'request' => new FauxRequest( [ 'action' => 'something' ], true ),
 			false
 		];
 		yield 'anon can not' => [
-			'performer' => $this->mockUserAuthorityWithPermissions(
-				$this->mockUser( false, true ),
-				[ 'edit' ]
-			),
+			'performerSpec' => [ 'with', false, true ],
 			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
 			false
 		];
 		yield 'token not match' => [
-			'performer' => $this->mockUserAuthorityWithPermissions(
-				$this->mockUser( true, false ),
-				[ 'edit' ]
-			),
+			'performerSpec' => [ 'with', true, false ],
 			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
 			false
 		];
 		yield 'no permission' => [
-			'performer' => $this->mockUserAuthorityWithoutPermissions(
-				$this->mockUser( true, true ),
-				[ 'edit' ]
-			),
+			'performerSpec' => [ 'without', true, true ],
 			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
 			false
 		];
@@ -3320,12 +3367,16 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideUserCanPreview
 	 */
-	public function testUserCanPreview( Authority $performer, WebRequest $request, bool $expected ) {
+	public function testUserCanPreview( $performerSpec, WebRequest $request, bool $expected ) {
+		$mockedUser = $this->mockUser( $performerSpec[1], $performerSpec[2] );
+		$performer = $performerSpec[0] === 'with'
+			? $this->mockUserAuthorityWithPermissions( $mockedUser, [ 'edit' ] )
+			: $this->mockUserAuthorityWithoutPermissions( $mockedUser, [ 'edit' ] );
 		$op = $this->newInstance( [], $request, null, $performer );
 		$this->assertSame( $expected, $op->userCanPreview() );
 	}
 
-	public function providePermissionStatus() {
+	public static function providePermissionStatus() {
 		yield 'no errors' => [
 			PermissionStatus::newEmpty(),
 			'',
@@ -3346,21 +3397,12 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function provideFormatPermissionStatus() {
+	public static function provideFormatPermissionStatus() {
 		yield 'RawMessage' => [
 			PermissionStatus::newEmpty()->fatal( new RawMessage( 'Foo Bar' ) ),
 			'(permissionserrorstext: 1)
 
 <div class="permissions-errors"><div class="mw-permissionerror-rawmessage">Foo Bar</div></div>',
-		];
-	}
-
-	public function provideFormatPermissionsErrorMessage() {
-		yield 'RawMessage' => [
-			PermissionStatus::newEmpty()->fatal( new RawMessage( 'Foo Bar' ) ),
-			'(permissionserrorstext: 1)
-
-<div class="permissions-errors"><div class="mw-permissionerror-rawmessage">(rawmessage: Foo Bar)</div></div>',
 		];
 	}
 
@@ -3372,20 +3414,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
 
 		$actual = self::newInstance()->formatPermissionStatus( $status );
-		$this->assertEquals( $expected, $actual );
-	}
-
-	/**
-	 * @dataProvider providePermissionStatus
-	 * @dataProvider provideFormatPermissionsErrorMessage
-	 */
-	public function testFormatPermissionsErrorMessage( PermissionStatus $status, string $expected ) {
-		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
-		$this->filterDeprecated( '/OutputPage::formatPermissionsErrorMessage was deprecated/' );
-
-		// Unlike formatPermissionStatus, this method doesn't accept good statuses
-		$actual = $status->isGood() ? '' :
-			self::newInstance()->formatPermissionsErrorMessage( $status->toLegacyErrorArray() );
 		$this->assertEquals( $expected, $actual );
 	}
 

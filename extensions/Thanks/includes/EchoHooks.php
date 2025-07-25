@@ -2,11 +2,9 @@
 
 namespace MediaWiki\Extension\Thanks;
 
-use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks\BeforeCreateEchoEventHook;
 use MediaWiki\Extension\Notifications\Hooks\EchoGetBundleRulesHook;
 use MediaWiki\Extension\Notifications\Model\Event;
-use MediaWiki\Extension\Notifications\UserLocator;
 use MediaWiki\Registration\ExtensionRegistry;
 
 /**
@@ -43,12 +41,6 @@ class EchoHooks implements BeforeCreateEchoEventHook, EchoGetBundleRulesHook {
 				'web' => true,
 				'expandable' => true,
 			],
-			AttributeManager::ATTR_LOCATORS => [
-				[
-					[ UserLocator::class, 'locateFromEventExtra' ],
-					[ 'thanked-user-id' ]
-				],
-			],
 		];
 
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
@@ -60,12 +52,6 @@ class EchoHooks implements BeforeCreateEchoEventHook, EchoGetBundleRulesHook {
 				'bundle' => [
 					'web' => true,
 					'expandable' => true,
-				],
-				AttributeManager::ATTR_LOCATORS => [
-					[
-						[ UserLocator::class, 'locateFromEventExtra' ],
-						[ 'thanked-user-id' ]
-					],
 				],
 			];
 		}

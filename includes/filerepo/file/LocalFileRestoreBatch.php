@@ -18,10 +18,14 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo\File;
+
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\SiteStatsUpdate;
-use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\Language\Language;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -149,6 +153,7 @@ class LocalFileRestoreBatch {
 		$storeBatch = [];
 		$insertBatch = [];
 		$insertCurrent = false;
+		$insertFileRevisions = [];
 		$deleteIds = [];
 		$first = true;
 		$archiveNames = [];
@@ -209,8 +214,25 @@ class LocalFileRestoreBatch {
 					'metadata' => $row->fa_metadata
 				];
 			}
-
+			$this->file->setProps( [
+				'media_type' => $mediaInfo['media_type'],
+				'major_mime' => $mediaInfo['major_mime'],
+				'minor_mime' => $mediaInfo['minor_mime'],
+			] );
 			$comment = $commentStore->getComment( 'fa_description', $row );
+
+			$commentFieldsNew = $commentStore->insert( $dbw, 'fr_description', $comment );
+			$fileRevisionRow = [
+				'fr_size' => $row->fa_size,
+				'fr_width' => $row->fa_width,
+				'fr_height' => $row->fa_height,
+				'fr_metadata' => $mediaInfo['metadata'],
+				'fr_bits' => $row->fa_bits,
+				'fr_actor' => $row->fa_actor,
+				'fr_timestamp' => $row->fa_timestamp,
+				'fr_sha1' => $sha1
+			] + $commentFieldsNew;
+
 			if ( $first && !$exists ) {
 				// This revision will be published as the new current version
 				$destRel = $this->file->getRel();
@@ -235,6 +257,8 @@ class LocalFileRestoreBatch {
 					$status->fatal( 'undeleterevdel' );
 					return $status;
 				}
+				$fileRevisionRow['fr_archive_name'] = '';
+				$fileRevisionRow['fr_deleted'] = 0;
 			} else {
 				$archiveName = $row->fa_archive_name;
 
@@ -268,7 +292,11 @@ class LocalFileRestoreBatch {
 					'oi_deleted' => $this->unsuppress ? 0 : $row->fa_deleted,
 					'oi_sha1' => $sha1
 				] + $commentStore->insert( $dbw, 'oi_description', $comment );
+
+				$fileRevisionRow['fr_archive_name'] = $archiveName;
+				$fileRevisionRow['fr_deleted'] = $this->unsuppress ? 0 : $row->fa_deleted;
 			}
+			$insertFileRevisions[] = $fileRevisionRow;
 
 			$deleteIds[] = $row->fa_id;
 
@@ -321,11 +349,21 @@ class LocalFileRestoreBatch {
 		// no data loss, but leaving unregistered files scattered throughout the
 		// public zone.
 		// This is not ideal, which is why it's important to lock the image row.
+		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
 		if ( $insertCurrent ) {
 			$dbw->newInsertQueryBuilder()
 				->insertInto( 'image' )
 				->row( $insertCurrent )
 				->caller( __METHOD__ )->execute();
+			if ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+				$dbw->newUpdateQueryBuilder()
+					->update( 'file' )
+					->set( [ 'file_deleted' => 0 ] )
+					->where( [ 'file_id' => $this->file->acquireFileIdFromName() ] )
+					->caller( __METHOD__ )->execute();
+			}
 		}
 
 		if ( $insertBatch ) {
@@ -340,6 +378,31 @@ class LocalFileRestoreBatch {
 				->deleteFrom( 'filearchive' )
 				->where( [ 'fa_id' => $deleteIds ] )
 				->caller( __METHOD__ )->execute();
+		}
+
+		if ( $insertFileRevisions && ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) ) {
+			// reverse the order to make the newest have the highest id
+			$insertFileRevisions = array_reverse( $insertFileRevisions );
+
+			foreach ( $insertFileRevisions as &$row ) {
+				$row['fr_file'] = $this->file->getFileIdFromName();
+			}
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'filerevision' )
+				->rows( $insertFileRevisions )
+				->caller( __METHOD__ )->execute();
+			$latestId = $dbw->newSelectQueryBuilder()
+				->select( 'fr_id' )
+				->from( 'filerevision' )
+				->where( [ 'fr_file' => $this->file->getFileIdFromName() ] )
+				->orderBy( 'fr_timestamp', 'DESC' )
+				->caller( __METHOD__ )->fetchField();
+			$dbw->newUpdateQueryBuilder()
+				->update( 'file' )
+				->set( [ 'file_latest' => $latestId ] )
+				->where( [ 'file_id' => $this->file->getFileIdFromName() ] )
+				->caller( __METHOD__ )->execute();
+
 		}
 
 		// If store batch is empty (all files are missing), deletion is to be considered successful
@@ -450,3 +513,6 @@ class LocalFileRestoreBatch {
 		$this->file->repo->cleanupBatch( $cleanupBatch );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LocalFileRestoreBatch::class, 'LocalFileRestoreBatch' );

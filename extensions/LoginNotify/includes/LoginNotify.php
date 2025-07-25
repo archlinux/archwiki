@@ -8,13 +8,13 @@
 
 namespace LoginNotify;
 
-use JobQueueGroup;
-use JobSpecification;
 use LogicException;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\JobSpecification;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
@@ -34,7 +34,7 @@ use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Handle sending notifications on login from unknown source.
@@ -81,7 +81,7 @@ class LoginNotify implements LoggerAwareInterface {
 	private $salt;
 	/** @var string */
 	private $secret;
-	private IBufferingStatsdDataFactory $stats;
+	private StatsFactory $stats;
 	private LBFactory $lbFactory;
 	private JobQueueGroup $jobQueueGroup;
 	private CentralIdLookup $centralIdLookup;
@@ -97,7 +97,7 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @param ServiceOptions $options
 	 * @param BagOStuff $cache
 	 * @param LoggerInterface $log
-	 * @param IBufferingStatsdDataFactory $stats
+	 * @param StatsFactory $stats
 	 * @param LBFactory $lbFactory
 	 * @param JobQueueGroup $jobQueueGroup
 	 * @param CentralIdLookup $centralIdLookup
@@ -107,7 +107,7 @@ class LoginNotify implements LoggerAwareInterface {
 		ServiceOptions $options,
 		BagOStuff $cache,
 		LoggerInterface $log,
-		IBufferingStatsdDataFactory $stats,
+		StatsFactory $stats,
 		LBFactory $lbFactory,
 		JobQueueGroup $jobQueueGroup,
 		CentralIdLookup $centralIdLookup,
@@ -189,7 +189,7 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @param WebRequest $request
 	 * @return string One of USER_* constants
 	 */
-	private function isKnownSystemFast( User $user, WebRequest $request ) {
+	public function isKnownSystemFast( User $user, WebRequest $request ) {
 		$logContext = [ 'user' => $user->getName() ];
 		$result = $this->userIsInCookie( $user, $request );
 		if ( $result === self::USER_KNOWN ) {
@@ -1037,7 +1037,10 @@ class LoginNotify implements LoggerAwareInterface {
 		);
 		$message = '{count} failed login attempts for {user} from an unknown system';
 		if ( $count ) {
-			$this->incrStats( 'fail.unknown.notifications' );
+			$this->incrStats( 'failures_total',
+				[ 'status' => 'fail', 'kind' => 'unknown', 'notified' => 'yes' ],
+				'fail.unknown.notifications'
+			);
 			$this->sendNotice( $user, 'login-fail-new', $count );
 			$message .= ', sending notification';
 		}
@@ -1066,7 +1069,10 @@ class LoginNotify implements LoggerAwareInterface {
 			$this->config->get( 'LoginNotifyExpiryKnownIP' )
 		);
 		if ( $count ) {
-			$this->incrStats( 'fail.known.notifications' );
+			$this->incrStats( 'failures_total',
+				[ 'status' => 'fail', 'kind' => 'known', 'notified' => 'yes' ],
+				'fail.known.notifications'
+			);
 			$this->sendNotice( $user, 'login-fail-known', $count );
 		}
 	}
@@ -1142,13 +1148,15 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @param User $user User in question
 	 */
 	public function recordFailure( User $user ) {
-		$this->incrStats( 'fail.total' );
-
 		if ( $user->isAnon() ) {
 			// Login failed because user doesn't exist
 			// skip this user.
 			$this->log->debug( "Skipping recording failure for {user} - no account",
 				[ 'user' => $user->getName() ]
+			);
+			$this->incrStats( 'failures_total',
+				[ 'status' => 'fail', 'kind' => 'noaccount', 'notified' => 'no' ],
+				'fail.muted.total'
 			);
 			return;
 		}
@@ -1157,6 +1165,10 @@ class LoginNotify implements LoggerAwareInterface {
 		if ( !$this->authManager->userCanAuthenticate( $user->getName() ) ) {
 			$this->log->debug( "Skipping recording failure for user {user} - can't authenticate",
 				[ 'user' => $user->getName() ]
+			);
+			$this->incrStats( 'failures_total',
+				[ 'status' => 'fail', 'kind' => 'cantauth', 'notified' => 'no' ],
+				'fail.muted.total'
 			);
 			return;
 		}
@@ -1198,16 +1210,22 @@ class LoginNotify implements LoggerAwareInterface {
 		if ( !$this->config->get( 'LoginNotifyEnableOnSuccess' ) ) {
 			return;
 		}
-		$this->incrStats( 'success.total' );
 		$result = $this->isKnownSystemFast( $user, $user->getRequest() );
 		if ( $result === self::USER_KNOWN ) {
 			// No need to notify
+			$this->incrStats( 'successes_total',
+				[ 'status' => 'success', 'kind' => 'known', 'notified' => 'no' ],
+				'success.muted.total'
+			);
 		} elseif ( $this->config->get( 'LoginNotifyUseCheckUser' ) ) {
 			$this->createJob( DeferredChecksJob::TYPE_LOGIN_SUCCESS,
 				$user, $user->getRequest(), $result
 			);
 		} elseif ( $result === self::USER_NOT_KNOWN ) {
-			$this->incrStats( 'success.notifications' );
+			$this->incrStats( 'successes_total',
+				[ 'status' => 'success', 'kind' => 'unknown', 'notified' => 'yes' ],
+				'success.notifications'
+			);
 			$this->sendNotice( $user, 'login-success' );
 		}
 	}
@@ -1230,7 +1248,10 @@ class LoginNotify implements LoggerAwareInterface {
 				]
 			);
 		} else {
-			$this->incrStats( 'success.notifications' );
+			$this->incrStats( 'successes_total',
+				[ 'status' => 'success', 'kind' => 'LoginNotifyUseCheckUser', 'notified' => 'yes' ],
+				'success.notifications'
+			);
 			$this->sendNotice( $user, 'login-success' );
 		}
 	}
@@ -1266,11 +1287,30 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Increments the given statistic
+	 * Increments the given statistic.
 	 *
-	 * @param string $metric
+	 * Both on Prometheus and Graphite.
+	 *
+	 * @param string $metric Name of the Prometheus metric
+	 * @param array $labels Prometheus metric labels in the format: name => value
+	 * @param string $statsdMetric Metric name of the legacy statsd metric
 	 */
-	private function incrStats( $metric ) {
-		$this->stats->increment( "loginnotify.$metric" );
+	private function incrStats(
+		$metric,
+		$labels,
+		$statsdMetric
+	) {
+		$component = "loginnotify";
+
+		$stat = $this->stats->withComponent( $component );
+		$counter = $stat->getCounter( $metric );
+
+		foreach ( $labels as $label => $value ) {
+			$counter->setLabel( $label, $value );
+		}
+
+		$counter->copyToStatsdAt( $component . "." . $statsdMetric );
+
+		$counter->increment();
 	}
 }

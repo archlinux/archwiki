@@ -14,25 +14,13 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class EvalExpression extends ApiBase {
 
-	/** @var RuleCheckerFactory */
-	private $ruleCheckerFactory;
+	private RuleCheckerFactory $ruleCheckerFactory;
+	private AbuseFilterPermissionManager $afPermManager;
+	private VariableGeneratorFactory $afVariableGeneratorFactory;
 
-	/** @var AbuseFilterPermissionManager */
-	private $afPermManager;
-
-	/** @var VariableGeneratorFactory */
-	private $afVariableGeneratorFactory;
-
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param RuleCheckerFactory $ruleCheckerFactory
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param VariableGeneratorFactory $afVariableGeneratorFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		RuleCheckerFactory $ruleCheckerFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		VariableGeneratorFactory $afVariableGeneratorFactory

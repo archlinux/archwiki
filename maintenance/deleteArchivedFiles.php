@@ -23,6 +23,10 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -62,7 +66,7 @@ class DeleteArchivedFiles extends Maintenance {
 		$count = 0;
 		foreach ( $res as $row ) {
 			$key = $row->fa_storage_key;
-			if ( !strlen( $key ) ) {
+			if ( $key === '' ) {
 				$this->output( "Entry with ID {$row->fa_id} has empty key, skipping\n" );
 				continue;
 			}

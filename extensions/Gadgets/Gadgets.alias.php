@@ -39,6 +39,12 @@ $specialPageAliases['av'] = [
 	'Gadgets' => [ 'Гаджетал', 'Гаджеты' ],
 ];
 
+/** Azerbaijani (Azərbaycanca) */
+$specialPageAliases['az'] = [
+	'Gadgets' => [ 'Qadcetlər' ],
+	'GadgetUsage' => [ 'Qadcetİstifadəsi' ],
+];
+
 /** Bulgarian (български) */
 $specialPageAliases['bg'] = [
 	'Gadgets' => [ 'Джаджи' ],

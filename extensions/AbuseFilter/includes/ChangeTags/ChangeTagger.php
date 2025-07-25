@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
-use RecentChange;
 
 /**
  * Class that collects change tags to be later applied
@@ -128,7 +128,7 @@ class ChangeTagger {
 	private function getActionID( ActionSpecifier $specifier ): string {
 		$username = $specifier->getUser()->getName();
 		$title = $specifier->getTitle();
-		if ( strpos( $specifier->getAction(), 'createaccount' ) !== false ) {
+		if ( str_contains( $specifier->getAction(), 'createaccount' ) ) {
 			// TODO Move this to ActionSpecifier?
 			$username = $specifier->getAccountName();
 			'@phan-var string $username';

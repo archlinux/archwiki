@@ -20,7 +20,6 @@
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Deferred\DeferredUpdates;
-use MediaWiki\Http\Telemetry;
 use MediaWiki\Logger\Spi;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -30,8 +29,8 @@ use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ObjectCache\MemcachedBagOStuff;
 use Wikimedia\ObjectCache\MultiWriteBagOStuff;
-use Wikimedia\ObjectCache\RESTBagOStuff;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\TracerInterface;
 
 /**
  * Factory for cache objects as configured in the ObjectCaches setting.
@@ -91,6 +90,7 @@ class ObjectCacheFactory {
 	private ServiceOptions $options;
 	private StatsFactory $stats;
 	private Spi $logger;
+	private TracerInterface $telemetry;
 	/** @var BagOStuff[] */
 	private $instances = [];
 	private string $domainId;
@@ -107,7 +107,8 @@ class ObjectCacheFactory {
 		StatsFactory $stats,
 		Spi $loggerSpi,
 		callable $dbLoadBalancerFactory,
-		string $domainId
+		string $domainId,
+		TracerInterface $telemetry
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
@@ -115,6 +116,7 @@ class ObjectCacheFactory {
 		$this->logger = $loggerSpi;
 		$this->dbLoadBalancerFactory = $dbLoadBalancerFactory;
 		$this->domainId = $domainId;
+		$this->telemetry = $telemetry;
 	}
 
 	/**
@@ -123,8 +125,6 @@ class ObjectCacheFactory {
 	 * This is either the value of the MainConfigNames::CachePrefix setting
 	 * or (if the former is unset) the MainConfigNames::DBname setting, with
 	 * MainConfigNames::DBprefix (if defined).
-	 *
-	 * @return string
 	 */
 	private function getDefaultKeyspace(): string {
 		$cachePrefix = $this->options->get( MainConfigNames::CachePrefix );
@@ -204,12 +204,13 @@ class ObjectCacheFactory {
 			'asyncHandler' => [ DeferredUpdates::class, 'addCallableUpdate' ],
 			'reportDupes' => true,
 			'stats' => $this->stats,
+			'telemetry' => $this->telemetry,
 		];
 
 		if ( isset( $params['factory'] ) ) {
 			$args = $params['args'] ?? [ $params ];
 
-			return call_user_func( $params['factory'], ...$args );
+			return $params['factory']( ...$args );
 		}
 
 		if ( !isset( $params['class'] ) ) {
@@ -233,9 +234,6 @@ class ObjectCacheFactory {
 		// Normalization and DI for MultiWriteBagOStuff
 		if ( is_a( $class, MultiWriteBagOStuff::class, true ) ) {
 			$this->prepareMultiWriteBagOStuffFromParams( $params );
-		}
-		if ( is_a( $class, RESTBagOStuff::class, true ) ) {
-			$this->prepareRESTBagOStuffFromParams( $params );
 		}
 
 		return new $class( $params );
@@ -291,10 +289,6 @@ class ObjectCacheFactory {
 			// one of these was configured without MultiWriteBagOStuff (T318272)
 			$params['caches'][$i] = $this->newFromParams( $cacheInfo );
 		}
-	}
-
-	private function prepareRESTBagOStuffFromParams( array &$params ): void {
-		$params['telemetry'] = Telemetry::getInstance();
 	}
 
 	/**

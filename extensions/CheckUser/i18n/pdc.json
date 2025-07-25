@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xqt"
+		]
+	},
+	"checkuser-reason": "Grund:",
+	"checkuser-target": "IP-Adress odder Yuusernaame:",
+	"checkuser-week-1": "letscht Woch",
+	"checkuser-week-2": "letschte zwo Woche",
+	"checkuser-month": "letschte 30 Daag",
+	"checkuser-all": "all",
+	"checkuser-blocked": "g'baerrt",
+	"checkuser-gblocked": "Iwwerall g'baerrt",
+	"checkuser-search": "Uffgucke",
+	"checkuser-search-submit": "Guck uff"
+}

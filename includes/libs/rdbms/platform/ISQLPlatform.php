@@ -25,9 +25,6 @@ use Wikimedia\Rdbms\LikeMatch;
 use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\Subquery;
 
-// Very long type annotations :(
-// phpcs:disable Generic.Files.LineLength
-
 /**
  * Interface for query language.
  * Note: This is for simple SQL operations, use query builder classes for building full queries.
@@ -316,7 +313,7 @@ interface ISQLPlatform {
 	 *   $query .= $dbr->buildLike( $pattern );
 	 *
 	 * @since 1.16 in IDatabase, moved to ISQLPlatform in 1.39
-	 * @param array[]|string|LikeMatch $param
+	 * @param string|LikeMatch|non-empty-array<string|LikeMatch> $param
 	 * @param-taint $param escapes_sql
 	 * @param string|LikeMatch ...$params
 	 * @param-taint ...$params escapes_sql
@@ -526,6 +523,7 @@ interface ISQLPlatform {
 	 * @param-taint $tables exec_sql
 	 * @param string|array $vars Field names
 	 * @param-taint $vars exec_sql
+	 * @phpcs:ignore Generic.Files.LineLength
 	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 *   Conditions
 	 * @param-taint $conds exec_sql_numkey
@@ -576,34 +574,10 @@ interface ISQLPlatform {
 	public function tableName( string $name, $format = 'quoted' );
 
 	/**
-	 * Fetch a number of table names into an associative array
-	 *
-	 * Much like {@link tableName()}, this is only needed when calling
-	 * {@link query()} directly. Prefer calling other methods,
-	 * or using {@link SelectQueryBuilder}.
-	 *
-	 * Theoretical example (which really does not require raw SQL):
-	 * ```
-	 * [ 'user' => $user, 'watchlist' => $watchlist ] =
-	 *     $dbr->tableNames( 'user', 'watchlist' );
-	 * $sql = "SELECT wl_namespace, wl_title FROM $watchlist, $user
-	 *         WHERE wl_user=user_id AND wl_user=$nameWithQuotes";
-	 * ```
-	 *
-	 * @param string ...$tables
-	 * @return array
-	 * @deprecated since 1.39; if you must format table names,
-	 * write several calls to {@link tableName} or use {@link tableNamesN}
-	 * instead of calling this function.
-	 */
-	public function tableNames( ...$tables );
-
-	/**
 	 * Fetch a number of table names into a zero-indexed numerical array
 	 *
 	 * Much like {@link tableName()}, this is only needed when calling
-	 * {@link query()} directly. It is slightly more convenient than
-	 * {@link tableNames()}, but you should still prefer calling other
+	 * {@link query()} directly. You should prefer calling other
 	 * methods, or using {@link SelectQueryBuilder}.
 	 *
 	 * Theoretical example (which really does not require raw SQL):
@@ -632,6 +606,7 @@ interface ISQLPlatform {
 	 * @param string|array $tables Table reference(s), using the unqualified name of tables
 	 *   or of the form "information_schema.<identifier>". {@see select} for details.
 	 * @param string $field Field name
+	 * @phpcs:ignore Generic.Files.LineLength
 	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 *   Conditions
 	 * @param string|array $join_conds Join conditions

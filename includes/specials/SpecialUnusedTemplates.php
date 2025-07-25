@@ -23,10 +23,10 @@
 namespace MediaWiki\Specials;
 
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -41,10 +41,6 @@ class SpecialUnusedTemplates extends QueryPage {
 
 	private LinksMigration $linksMigration;
 
-	/**
-	 * @param IConnectionProvider $dbProvider
-	 * @param LinksMigration $linksMigration
-	 */
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		LinksMigration $linksMigration

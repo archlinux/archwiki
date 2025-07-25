@@ -52,7 +52,6 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 					'selectRow' => (object)[
 						'event_id' => 1,
 						'event_type' => 'test',
-						'event_variant' => '',
 						'event_extra' => '',
 						'event_page_id' => '',
 						'event_agent_id' => '',

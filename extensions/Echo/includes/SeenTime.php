@@ -56,7 +56,7 @@ class SeenTime {
 					'Either $wgEchoSeenTimeCacheType or $wgMainStash must be set'
 				);
 			}
-			return new CachedBagOStuff( $services->getObjectCacheFactory()->getInstance( $cacheConfig ) );
+			$wrappedCache = new CachedBagOStuff( $services->getObjectCacheFactory()->getInstance( $cacheConfig ) );
 		}
 
 		return $wrappedCache;

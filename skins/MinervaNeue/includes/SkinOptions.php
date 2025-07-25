@@ -24,9 +24,9 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Minerva\Hooks\HookRunner;
 use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
+use MediaWiki\Skin\Skin;
 use MobileContext;
 use OutOfBoundsException;
-use Skin;
 
 /**
  * A wrapper for all available Skin options.
@@ -39,6 +39,7 @@ final class SkinOptions {
 	public const BETA_MODE = 'beta';
 	public const TALK_AT_TOP = 'talkAtTop';
 	public const SHOW_DONATE = 'donate';
+	public const SHOW_DONATE_BANNER = 'donateBanner';
 	public const HISTORY_IN_PAGE_ACTIONS = 'historyInPageActions';
 	public const TOOLBAR_SUBMENU = 'overflowSubmenu';
 	public const TABS_ON_SPECIALS = 'tabsOnSpecials';
@@ -54,6 +55,7 @@ final class SkinOptions {
 	 */
 	private array $skinOptions = [
 		self::BETA_MODE => false,
+		self::SHOW_DONATE_BANNER => false,
 		self::SHOW_DONATE => true,
 		/**
 		 * Whether the main menu should include a link to
@@ -181,6 +183,7 @@ final class SkinOptions {
 
 			$isBeta = $mobileContext->isBetaGroupMember();
 			$this->setMultiple( [
+				self::SHOW_DONATE_BANNER => $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaDonateBanner' ),
 				self::SHOW_DONATE => $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaDonateLink' ),
 				self::TALK_AT_TOP => $isUserPageOrUserTalkPage ?
 					true : $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaTalkAtTop' ),

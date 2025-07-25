@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Artsiom91",
+			"Chadyka",
+			"Tomato Cream"
+		]
+	},
+	"templatestyles-desc": "Рэалізуе старонкі стыляў для кожнага шаблону",
+	"templatestyles-missing-src": "Атрыбут TemplateStyles <code>src</code> павінен быць не пустым.",
+	"templatestyles-invalid-src": "Няслушная назва для атрыбута <code>src</code> TemplateStyles.",
+	"templatestyles-invalid-wrapper": "Няслушнае значэнне для атрыбута <code>wrapper</code> TemplateStyles.",
+	"templatestyles-bad-src-missing": "Старонка [[:$1|$2]] не мае зместу.",
+	"templatestyles-bad-src": "Старонка [[:$1|$2]] павінна мець мадэль зместу «{{int:content-model-sanitized-css}}» для TemplateStyles (цяперашняя мадэль — «$3»).",
+	"templatestyles-errorcomment": "Памылка апрацоўкі табліцы стыляў [[:$1]] (версія $2):\n$3",
+	"templatestyles-size-exceeded": "Табліца стыляў большая за максімальны памер у $2.",
+	"content-model-sanitized-css": "Ачышчаны CSS",
+	"templatestyles-stylesheet-error-category": "Стылі шаблонаў з памылкамі CSS",
+	"templatestyles-stylesheet-error-category-desc": "Табліца стыляў TemplateStyles мае памылку.",
+	"templatestyles-page-error-category": "Старонкі з памылкамі стыляў шаблонаў",
+	"templatestyles-page-error-category-desc": "Адбылася памылка пры апрацоўцы тэга <code><nowiki><templatestyles/></nowiki></code> на старонцы.",
+	"templatestyles-error-at-rule-block-not-allowed": "Недапушчальны блок для <code>@$3</code> у радку $1, сімвал $2.",
+	"templatestyles-error-at-rule-block-required": "Патрабуецца блок для <code>@$3</code> у радку $1, сімвал $2.",
+	"templatestyles-error-bad-character-in-url": "Няслушны сімвал у URL-адрасе ў радку $1, сімвал $2.",
+	"templatestyles-error-bad-escape": "Няслушны сімвал у мадыфікацыйным выразе ў радку $1, сімвал $2.",
+	"templatestyles-error-bad-value-for-property": "Няслушнае ці непадтрымоўванае значэнне для ўласцівасці <code>$3</code> у радку $1, сімвал $2.",
+	"templatestyles-error-expected-at-rule": "Чакаецца <code>$3</code> у радку $1, сімвал $2.",
+	"templatestyles-error-expected-colon": "Чакаецца двукроп’е ў радку $1, сімвал $2.",
+	"templatestyles-error-expected-declaration": "Чакаецца абвяшчэнне ў радку $1, сімвал $2.",
+	"templatestyles-error-expected-declaration-list": "Чакаецца спіс абвяшчэнняў у радку $1, сімвал $2.",
+	"templatestyles-error-expected-eof": "Чакаецца канец табліцы стыляў у радку $1, сімвал $2.",
+	"templatestyles-error-expected-ident": "Чакаецца ідэнтыфікатар у радку $1, сімвал $2."
+}

@@ -66,6 +66,7 @@
 	"templatedata-modal-button-removemap": "Map ewechhuelen",
 	"templatedata-modal-button-saveparam": "Späicheren",
 	"templatedata-modal-confirmcancel": "Sidd Dir sécher, datt Dir Är Ännerunge verwerfe wëllt?",
+	"templatedata-modal-button-discard": "Verwerfen",
 	"templatedata-modal-current-language": "Aktuell Sprooch: $1",
 	"templatedata-modal-errormsg": "Feeler fonnt. Kuckt wgl., datt et keng eidel oder duebel Parameternimm gëtt an datt „$1“, „$2“ an „$3“ net am Parameternumm virkommen.",
 	"templatedata-modal-errormsg-duplicate-name": "Feeler fonnt. De gewielten Numm gëtt scho vun engem anere Parameter benotzt.",
@@ -108,5 +109,17 @@
 	"templatedata-modal-title-templateformat": "Virgeschloe Wikitext-Formatéierung",
 	"templatedata-modal-title-templateformatstring": "Benotzerdefinéiert Format-Zeecheketten",
 	"templatedata-modal-title-templateparam-details": "Parameterdetailer: $1",
-	"templatedata-modal-title-templateparams": "Parametere vun der Schabloun"
+	"templatedata-modal-title-templateparams": "Parametere vun der Schabloun",
+	"templatedata-search-title": "Sich no Schablounen",
+	"templatedata-search-placeholder": "Schabloun sichen",
+	"templatedata-search-list-header": "Favoritten",
+	"templatedata-search-list-empty": "Hei gesitt Dir d'Schablounen, déi Dir als Favoritte markéiert",
+	"templatedata-template-discovery-disabled": "D'Entdecke vu Schablounen ass op dëser Wiki desaktivéiert.",
+	"templatedata-favorite-disabled": "Dir musst ageloggt si fir eng Schabloun als Favorit ze markéieren",
+	"templatedata-favorite-add": "Schabloun bei d'Favoritten derbäisetzen",
+	"templatedata-favorite-added": "Schabloun bei d'Favoritten derbäigesat",
+	"templatedata-favorite-remove": "Schabloun aus de Favoritten eraushuelen",
+	"templatedata-favorite-removed": "Schabloun aus de Favoritten erausgeholl",
+	"templatedata-favorite-error": "Favoritte konnten net gespäichert ginn",
+	"templatedata-favorite-maximum-reached": "Dir hutt déi maximal Zuel vu Favoritte-Schablounen erreecht ($1). Huelt der wgl. e puer aus Ärer Lëscht eraus, ier Dir neier derbäisetzt."
 }

@@ -1,5 +1,5 @@
-mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
-	mw.libs.ve.targetLoader.addPlugin( function () {
+mw.loader.using( 'ext.visualEditor.targetLoader' ).then( () => {
+	mw.libs.ve.targetLoader.addPlugin( () => {
 
 		ve.init.mw.AbuseFilterSaveErrorHandler = function () {};
 
@@ -8,15 +8,11 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.AbuseFilterSaveErrorHandler.static.name = 'abuseFilter';
 
 		ve.init.mw.AbuseFilterSaveErrorHandler.static.matchFunction = function ( data ) {
-			return data.errors && data.errors.some( function ( err ) {
-				return err.code === 'abusefilter-disallowed' || err.code === 'abusefilter-warning';
-			} );
+			return data.errors && data.errors.some( ( err ) => err.code === 'abusefilter-disallowed' || err.code === 'abusefilter-warning' );
 		};
 
 		ve.init.mw.AbuseFilterSaveErrorHandler.static.process = function ( data, target ) {
-			var isWarning = data.errors.every( function ( err ) {
-				return err.code === 'abusefilter-warning';
-			} );
+			const isWarning = data.errors.every( ( err ) => err.code === 'abusefilter-warning' );
 			// Handle warnings/errors from Extension:AbuseFilter
 			target.showSaveError( target.extractErrorMessages( data ), isWarning );
 			// Emit event for tracking. TODO: This is a bad design

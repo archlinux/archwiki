@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"334a",
+			"Basharh"
+		]
+	},
+	"checkuser-reason": "ܥܠܬܐ:",
+	"checkuser-showlog": "ܚܘܝ ܣܓܠܐ",
+	"checkuser-week-1": "ܫܒܘܥܐ ܐܚܪܝܐ",
+	"checkuser-week-2": "ܬܪܝܢ ܫܒܘܥ̈ܐ ܐܚܪ̈ܝܐ",
+	"checkuser-month": "ܬܠܬܝܢ ܝܘܡܬ̈ܐ ܐܚܪ̈ܝܐ",
+	"checkuser-all": "ܟܠ",
+	"checkuser-blocked": "ܚܪܝܡܐ",
+	"checkuser-locked": "ܩܦܝܠܐ",
+	"checkuser-search": "ܒܨܝܐ",
+	"checkuser-search-submit": "ܒܨܝܐ"
+}

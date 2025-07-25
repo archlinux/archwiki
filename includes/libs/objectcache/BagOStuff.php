@@ -35,7 +35,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
-use Wikimedia\LightweightObjectStore\StorageAwareness;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
 
@@ -83,7 +82,6 @@ use Wikimedia\Stats\StatsFactory;
  */
 abstract class BagOStuff implements
 	ExpirationAwareness,
-	StorageAwareness,
 	IStoreKeyEncoder,
 	LoggerAwareInterface
 {
@@ -109,6 +107,57 @@ abstract class BagOStuff implements
 
 	/** @var float|null */
 	private $wallClockOverride;
+
+	/** Storage operation succeeded, or no operation was performed. Exposed via getLastError(). */
+	public const ERR_NONE = 0;
+	/** Storage operation failed to yield a complete response. */
+	public const ERR_NO_RESPONSE = 1;
+	/** Storage operation could not establish a connection. */
+	public const ERR_UNREACHABLE = 2;
+	/** Storage operation failed due to usage limitations or an I/O error. */
+	public const ERR_UNEXPECTED = 3;
+
+	/**
+	 * Key in getQoS() for durability of storage writes.
+	 *
+	 * This helps middleware distinguish between different kinds of BagOStuff
+	 * implementations, without hardcoding class names, and in a way that works
+	 * even through a wrapper like CachedBagOStuff, MultiWriteBagOStuff, or
+	 * WANObjectCache.
+	 *
+	 * Value must be a QOS_DURABILITY_ constant, where higher means stronger.
+	 *
+	 * Example use cases:
+	 *
+	 * - SqlBlobStore::getCacheTTL, skip main cache if the cache is also sql-based.
+	 * - MediumSpecificBagOStuff::unlock, use stricter logic if the lock is known
+	 *   to be stored in the current process.
+	 *
+	 * @see BagOStuff::getQoS
+	 */
+	public const ATTR_DURABILITY = 2;
+	/** Storage is disabled or never saves data, not even temporarily (EmptyBagOStuff). */
+	public const QOS_DURABILITY_NONE = 1;
+	/** Storage survives in memory until the end of the current request or CLI process (HashBagOStuff). */
+	public const QOS_DURABILITY_SCRIPT = 2;
+	/** Storage survives in memory until a shared service is restarted (e.g. MemcachedBagOStuff). */
+	public const QOS_DURABILITY_SERVICE = 3;
+	/**
+	 * Storage survives on disk on a best-effort basis (e.g. RedisBagOStuff).
+	 *
+	 * Very recent writes may be lost when the service is restarted, because the storage
+	 * service is not expected to synchronously flush to disk (fsync), and writes are not
+	 * expected to be replicated in case of server maintenance or replacement.
+	 */
+	public const QOS_DURABILITY_DISK = 4;
+	/**
+	 * Storage survives on disk with high availability (SqlBagOStuff).
+	 *
+	 * Writes typically wait for flush to disk and/or have replication.
+	 */
+	public const QOS_DURABILITY_RDBMS = 5;
+	/** Generic "unknown" value; useful for comparisons (always "good enough") */
+	public const QOS_UNKNOWN = INF;
 
 	/** Bitfield constants for get()/getMulti(); these are only advisory */
 	/** If supported, avoid reading stale data due to replication */
@@ -184,7 +233,7 @@ abstract class BagOStuff implements
 	 *
 	 * @return void
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -508,17 +557,6 @@ abstract class BagOStuff implements
 	}
 
 	/**
-	 * Clear the "last error" registry
-	 *
-	 * @since 1.23
-	 * @deprecated Since 1.38, hard deprecated in 1.43
-	 */
-	public function clearLastError() {
-		wfDeprecated( __METHOD__, '1.38' );
-		$this->lastError = self::ERR_NONE;
-	}
-
-	/**
 	 * Set the "last error" registry due to a problem encountered during an attempted operation
 	 *
 	 * @param int $error BagOStuff:ERR_* constant
@@ -661,9 +699,9 @@ abstract class BagOStuff implements
 	/**
 	 * Make a cache key for the given keyspace and components
 	 *
-	 * Subclasses may override this method in order to apply different escaping,
-	 * or to deal with size constraints (such as MemcachedBagOStuff). For example
-	 * by converting long components into hashes.
+	 * Subclasses may override this method to apply different escaping,
+	 * or to deal with size constraints (such as MemcachedBagOStuff).
+	 * For example, by converting long components into hashes.
 	 *
 	 * If you override this method, you MUST override ::requireConvertGenericKey()
 	 * to return true. This ensures that wrapping classes (e.g. MultiWriteBagOStuff)
@@ -673,7 +711,7 @@ abstract class BagOStuff implements
 	 * @since 1.27
 	 *
 	 * @param string $keyspace
-	 * @param string[]|int[] $components Key group and other components
+	 * @param string[]|int[]|null[] $components Key group and other components
 	 *
 	 * @return string
 	 */
@@ -685,7 +723,7 @@ abstract class BagOStuff implements
 		$key = $keyspace;
 		foreach ( $components as $component ) {
 			// Escape delimiter (":") and escape ("%") characters
-			$key .= ':' . strtr( $component, [ '%' => '%25', ':' => '%3A' ] );
+			$key .= ':' . strtr( $component ?? '', [ '%' => '%25', ':' => '%3A' ] );
 		}
 
 		return $key;

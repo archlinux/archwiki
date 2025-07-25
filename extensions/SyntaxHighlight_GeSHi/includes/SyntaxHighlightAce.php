@@ -121,7 +121,8 @@ class SyntaxHighlightAce {
 		'R'            => [],
 		'Razor'        => [],
 		'RDoc'         => [],
-		'RHTML'        => [], // HTML with Rcode, not ruby
+		// HTML with Rcode, not ruby
+		'RHTML'        => [],
 		'RST'          => [ 'rst', 'rest', 'restructuredtext' ],
 		'Ruby'         => [ 'ruby', 'rb', 'duby' ],
 		'Rust'         => [ 'rust' ],

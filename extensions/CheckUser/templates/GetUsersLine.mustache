@@ -1,0 +1,46 @@
+<li>
+	{{#canPerformBlocksOrLocks}}
+		<input type="checkbox" name="users[]" value="{{userText}}"/>
+	{{/canPerformBlocksOrLocks}}
+	<span data-username="{{userText}}" class="mw-checkuser-user-link{{#userLinkClass}} {{userLinkClass}}{{/userLinkClass}}">
+		{{{userLink}}}
+	</span>
+	{{{userToolLinks}}}
+	{{{userLinks}}}
+	{{{centralAuthLink}}}
+	{{{globalBlockLink}}}
+	<span class="mw-changeslist-links">{{timeRange}}</span>
+	<strong class="mw-checkuser-actions-count mw-checkuser-edits-count">{{editCount}}</strong><br/>
+	{{#flags}}
+		{{{ . }}}
+	{{/flags}}
+	{{^displayClientHints}}<ol>
+		{{#infoSets}}
+			<li>
+				<span class="mw-checkuser-ip">{{{ipLink}}}</span>{{#xff}}&#160;&#160;<strong>XFF</strong>: <span class="mw-checkuser-xff{{#xffTrusted}} mw-checkuser-xff-trusted{{/xffTrusted}}">{{{ . }}}</span>{{/xff}}
+			</li>
+		{{/infoSets}}
+	</ol><br><ol>
+		{{#agentsList}}
+			<li>
+				<i dir="ltr" class="mw-checkuser-agent">{{ . }}</i>
+			</li>
+		{{/agentsList}}
+	</ol>{{/displayClientHints}}{{#displayClientHints}}<ul>
+		{{#infoSets}}
+			<li>
+				<span class="mw-checkuser-ip">{{{ipLink}}}</span>{{#xff}}&#160;&#160;<strong>XFF</strong>: <span class="mw-checkuser-xff{{#xffTrusted}} mw-checkuser-xff-trusted{{/xffTrusted}}">{{{ . }}}</span>{{/xff}}
+			</li>
+		{{/infoSets}}
+	</ul><ul>
+		{{#agentsList}}
+			<li>
+				<span class="mw-checkuser-agent">{{ . }}</span>
+			</li>
+		{{/agentsList}}
+	</ul><ul>{{#clientHintsList}}
+		<li>
+			<span class="mw-checkuser-client-hints">{{ . }}</span>
+		</li>
+	{{/clientHintsList}}</ul><br/>{{/displayClientHints}}
+</li>

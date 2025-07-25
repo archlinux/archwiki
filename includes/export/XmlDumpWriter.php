@@ -27,8 +27,12 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\Exception\MWException;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\OldLocalFile;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionAccessException;
@@ -423,7 +427,7 @@ class XmlDumpWriter {
 			/** @var Content $content */
 			$content = $this->invokeLenient(
 				static function () use ( $rev ) {
-					return $rev->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
+					return $rev->getMainContentRaw();
 				},
 				'Failed to load main slot content of revision ' . $rev->getId()
 			);

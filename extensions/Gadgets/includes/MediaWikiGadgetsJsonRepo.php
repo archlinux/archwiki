@@ -121,10 +121,6 @@ class MediaWikiGadgetsJsonRepo extends GadgetRepo {
 		return substr( $title, strlen( self::DEF_PREFIX ), -strlen( self::DEF_SUFFIX ) );
 	}
 
-	/**
-	 * @param LinkTarget $target
-	 * @return bool
-	 */
 	public static function isGadgetDefinitionTitle( LinkTarget $target ): bool {
 		if ( !$target->inNamespace( NS_MEDIAWIKI ) ) {
 			return false;

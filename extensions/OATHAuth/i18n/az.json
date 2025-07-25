@@ -6,8 +6,8 @@
 			"Toghrul Rahimli",
 			"Wertuose",
 			"Zpizza",
-			"Əkrəm Cəfər",
-			"Əkrəm"
+			"Əkrəm",
+			"Əkrəm Cəfər"
 		]
 	},
 	"oathauth-desc": "HMAC əsaslı birdəfəlik şifrələrdən istifadə edərək autentifikasiya dəstəyi təmin edir",
@@ -73,7 +73,6 @@
 	"log-action-filter-oath-verify": "İki faktorlu autentifikasiyanın aktiv olub olmadığının yoxlanması",
 	"log-action-filter-oath-disable-other": "Digər istifadəçinin iki faktorlu autentifikasiyasının deaktiv edilməsi",
 	"oathauth-ui-no-module": "Qoşulmayıb",
-	"oathauth-module-invalid": "İstifadəçinin qeydiyyatdan keçirdiyi OATHAuth modulu etibarsızdır.",
 	"oathauth-module-totp-label": "TOTP (birdəfəlik token)",
 	"oathauth-ui-manage": "İdarə et",
 	"oathmanage": "İki faktorlu autentifikasiyanı idarə et",
@@ -92,9 +91,6 @@
 	"oathauth-disable-method-warning-button-label": "Təsdiqlə və davam et",
 	"oathauth-disable-method-warning": "$1 iki faktorlu autentifikasiya üsulunu deaktiv etsəniz, daxil olarkən daha bu üsuldan istifadə edə bilməyəcəksiniz və bu autentifikasiya üsulu ilə əlaqəli bütün məlumatlar silinəcək.",
 	"oathauth-disable-method-next-step": "Növbəti addımda sizdən onu söndürmək üçün cari iki faktorlu autentifikasiya metodunuzla ($1) autentifikasiya etməlisiniz.",
-	"oathauth-switch-method-warning-header": "Fərqli autentifikasiya üsuluna keçidi təsdiqləyin",
-	"oathauth-switch-method-warning": "$2 iki faktorlu autentifikasiya metoduna keçməklə, cari metod ($1) deaktiv ediləcək və cari autentifikasiya metodu ilə əlaqəli bütün məlumatlar silinəcək",
-	"oathauth-switch-method-next-step": "Növbəti addımda sizdən $2 metoduna keçə bilmək üçün cari iki faktorlu autentifikasiya metodunuzla ($1) autentifikasiya etməlisiniz.",
 	"oathauth-totp-disable-warning": "Siz artıq bu hesabda qeydiyyatdan keçmiş identifikasiya cihazından istifadə edə bilməyəcəksiniz. Bu hesabla əlaqəli bütün bərpa kodları etibarsız olacaq.",
 	"oathauth-invalidrequest": "Etibarsız sorğu",
 	"notification-header-oathauth-disable": "{{GENDER:$2|Hesabınızdakı}} iki faktorlu autentifikasiya deaktiv edildi.",
@@ -117,5 +113,6 @@
 	"oathauth-prefs-disabledgroups": "Deaktiv edilən {{PLURAL:$1|qrup|qruplar}}:",
 	"oathauth-prefs-disabledgroups-help": "Bu {{PLURAL:$1|qrupdakı|qruplardakı}} {{GENDER:$2|üzvlüyünüz}} \n[[Special:Manage Two-factor authentication|iki faktorlu autentifikasiyanı]] aktivləşdirənə qədər dondurulub.",
 	"oathauth-qrcode-alt": "Gizli açarı təmsil edən skan edilə bilən QR kodu.",
-	"oathauth-hint": "Cihazınıza və ya tətbiqinizə girişiniz yoxdur? Bu hissəyə bərpa kodlarınızı (2FA-nı aktivləşdirdiyiniz zaman təqdim olunur) daxil edə bilərsiniz."
+	"oathauth-hint": "Cihazınıza və ya tətbiqinizə girişiniz yoxdur? Bu hissəyə bərpa kodlarınızı (2FA-nı aktivləşdirdiyiniz zaman təqdim olunur) daxil edə bilərsiniz.",
+	"oathauth-must-be-central": "İki faktorlu autentifikasiyadan istifadə etmək üçün {{GENDER:$1|hesabınız}} mərkəzi autentifikasiya sisteminə qoşulmalıdır."
 }

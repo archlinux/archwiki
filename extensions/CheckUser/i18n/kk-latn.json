@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"checkuser-summary": "Bul qural paýdalanwşı qoldanğan IP jaýlar üşin, nemese IP jaý tüzetw/paýdalanwşı derekterin körsetw üşin jwıqtağı özgeristerdi qarap şığadı.\n\tPaýdalanwşılardı men tüzetwlerdi XFF IP arqılı IP jaýğa «/xff» degendi qosıp keltirwge boladı. IPv4 (CIDR $1-32) jäne IPv6 (CIDR $2-128) arqawlanadı.\n\tOrındawşılıq sebepterimen 5000 tüzetwden artıq qaýtarılmaýdı. Bunı erejelerge säýkes paýdalanıñız.",
+	"checkuser": "Qatıswşını sınaw",
+	"checkuserlog": "Qatıswşı sınaw jwrnalı",
+	"group-checkuser": "Qatıswşı sınawşılar",
+	"group-checkuser-member": "qatıswşı sınawşı",
+	"grouppage-checkuser": "{{ns:project}}:Qatıswşını sınaw",
+	"checkuser-reason": "Sebebi:",
+	"checkuser-showlog": "Jwrnaldı körset",
+	"checkuser-query": "Jwıqtağı özgeristerdi suranımdaw",
+	"checkuser-target": "Qatıswşı atı / IP jaý",
+	"checkuser-users": "Qatıswşılardı keltirw",
+	"checkuser-ips": "IP jaýlardı keltirw",
+	"checkuser-empty": "Jwrnalda eş jazba joq.",
+	"checkuser-nomatch": "Säýkes tabılmadı.",
+	"checkuser-check": "Sınaw",
+	"checkuser-blocked": "Buğattalğan",
+	"checkuser-search": "İzdew",
+	"checkuser-search-submit": "İzdew",
+	"checkuser-showmain": "CheckUser basqı pişinine  oralw"
+}

@@ -13,11 +13,14 @@ use MediaWiki\OutputTransform\ContentDOMTransformStage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\TitleFactory;
 use Psr\Log\LoggerInterface;
-use Skin;
 use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMDataUtils;
 
 /**
  * Add anchors and other heading formatting, and replace the section link placeholders.
@@ -37,6 +40,30 @@ class HandleParsoidSectionLinks extends ContentDOMTransformStage {
 	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
 		// Only run this stage if it is parsoid content
 		return ( $options['isParsoidContent'] ?? false );
+	}
+
+	/**
+	 * Check if the heading has attributes that can only be added using HTML syntax.
+	 *
+	 * In the Parsoid default future, we might prefer checking for stx=html.
+	 */
+	private function isHtmlHeading( Element $h ): bool {
+		foreach ( $h->attributes as $attr ) {
+			// Condition matches DiscussionTool's CommentFormatter::handleHeading
+			if (
+				!in_array( $attr->name, [ 'id', 'data-object-id', 'about', 'typeof' ], true ) &&
+				!Sanitizer::isReservedDataAttribute( $attr->name )
+			) {
+				return true;
+			}
+		}
+		// FIXME(T100856): stx info probably shouldn't be in data-parsoid
+		// Id is ignored above since it's a special case, make use of metadata
+		// to determine if it came from wikitext
+		if ( DOMDataUtils::getDataParsoid( $h )->reusedId ?? false ) {
+			return true;
+		}
+		return false;
 	}
 
 	public function transformDOM(
@@ -65,9 +92,11 @@ class HandleParsoidSectionLinks extends ContentDOMTransformStage {
 		$sections = ( $toc !== null ) ? $toc->getSections() : [];
 		// use the TOC data to extract the headings:
 		foreach ( $sections as $section ) {
-			$fromTitle = $section->fromTitle;
-			if ( $fromTitle === null ) {
-				// T353489: don't wrap bare <h> tags
+			if ( $section->anchor === '' ) {
+				// T375002 / T368722: The empty string isn't a valid id so
+				// Parsoid will have reassigned it and we'll never be able
+				// to select by it below.  There's no sense in logging an
+				// error since it's a common enough occurrence at present.
 				continue;
 			}
 			$h = $dom->getElementById( $section->anchor );
@@ -78,9 +107,23 @@ class HandleParsoidSectionLinks extends ContentDOMTransformStage {
 				);
 				continue;
 			}
+
+			if ( $this->isHtmlHeading( $h ) ) {
+				// This is a <h#> tag with attributes added using HTML syntax.
+				// Mark it with a class to make them easier to distinguish (T68637).
+				DOMCompat::getClassList( $h )->add( 'mw-html-heading' );
+
+				// Do not add the wrapper if the heading has attributes added using HTML syntax (T353489).
+				continue;
+			}
+
+			$fromTitle = $section->fromTitle;
 			$div = $dom->createElement( 'div' );
-			if ( ( $options['enableSectionEditLinks'] ?? true ) &&
-				 !$po->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS ) ) {
+			if (
+				$fromTitle !== null &&
+				( $options['enableSectionEditLinks'] ?? true ) &&
+				!$po->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS )
+			) {
 				$editPage = $this->titleFactory->newFromTextThrow( $fromTitle );
 				$html = $skin->doEditSectionLink(
 					$editPage, $section->index, $h->textContent,

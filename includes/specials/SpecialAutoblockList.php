@@ -22,7 +22,7 @@ namespace MediaWiki\Specials;
 
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
-use MediaWiki\Block\BlockUtils;
+use MediaWiki\Block\BlockTargetFactory;
 use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
@@ -30,6 +30,7 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Pager\BlockListPager;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -45,27 +46,17 @@ class SpecialAutoblockList extends SpecialPage {
 	private BlockRestrictionStore $blockRestrictionStore;
 	private IConnectionProvider $dbProvider;
 	private CommentStore $commentStore;
-	private BlockUtils $blockUtils;
+	private BlockTargetFactory $blockTargetFactory;
 	private HideUserUtils $hideUserUtils;
 	private BlockActionInfo $blockActionInfo;
 	private RowCommentFormatter $rowCommentFormatter;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param BlockRestrictionStore $blockRestrictionStore
-	 * @param IConnectionProvider $dbProvider
-	 * @param CommentStore $commentStore
-	 * @param BlockUtils $blockUtils
-	 * @param HideUserUtils $hideUserUtils
-	 * @param BlockActionInfo $blockActionInfo
-	 * @param RowCommentFormatter $rowCommentFormatter
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		BlockRestrictionStore $blockRestrictionStore,
 		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
-		BlockUtils $blockUtils,
+		BlockTargetFactory $blockTargetFactory,
 		HideUserUtils $hideUserUtils,
 		BlockActionInfo $blockActionInfo,
 		RowCommentFormatter $rowCommentFormatter
@@ -76,7 +67,7 @@ class SpecialAutoblockList extends SpecialPage {
 		$this->blockRestrictionStore = $blockRestrictionStore;
 		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
-		$this->blockUtils = $blockUtils;
+		$this->blockTargetFactory = $blockTargetFactory;
 		$this->hideUserUtils = $hideUserUtils;
 		$this->blockActionInfo = $blockActionInfo;
 		$this->rowCommentFormatter = $rowCommentFormatter;
@@ -136,7 +127,7 @@ class SpecialAutoblockList extends SpecialPage {
 			$this->getContext(),
 			$this->blockActionInfo,
 			$this->blockRestrictionStore,
-			$this->blockUtils,
+			$this->blockTargetFactory,
 			$this->hideUserUtils,
 			$this->commentStore,
 			$this->linkBatchFactory,
@@ -170,7 +161,10 @@ class SpecialAutoblockList extends SpecialPage {
 		}
 
 		if ( $pager->getNumRows() ) {
-			$out->addParserOutputContent( $pager->getFullOutput() );
+			$out->addParserOutputContent(
+				$pager->getFullOutput(),
+				ParserOptions::newFromContext( $this->getContext() )
+			);
 		} else {
 			$out->addWikiMsg( 'autoblocklist-empty' );
 		}

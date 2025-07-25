@@ -23,11 +23,21 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\File\OldLocalFile;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\WikiFilePage;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
@@ -222,9 +232,12 @@ class RevertAction extends FormAction {
 	 * @return File
 	 */
 	private function getFile(): File {
-		/** @var \WikiFilePage $wikiPage */
+		/** @var WikiFilePage $wikiPage */
 		$wikiPage = $this->getWikiPage();
 		// @phan-suppress-next-line PhanUndeclaredMethod
 		return $wikiPage->getFile();
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RevertAction::class, 'RevertAction' );

@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"BaRaN6161 TURK",
+			"JinJian"
+		]
+	},
+	"group-checkuser": "Mga manginginsayod hin gumaramit",
+	"group-checkuser-member": "{{GENDER:$1|manginginsayod hin gumaramit}}",
+	"checkuser-all": "ngatanan",
+	"checkuser-check": "Panginsayori",
+	"checkuser-massblock": "Pugngi an mga ginpili nga gumaramit",
+	"checkuser-search-submit": "Bilnga"
+}

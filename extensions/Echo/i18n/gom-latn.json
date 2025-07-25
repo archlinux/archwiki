@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer",
-			"QW90"
+			"QW90",
+			"The Discoverer"
 		]
 	},
 	"prefs-echo": "Kollovnnio",
@@ -11,6 +11,7 @@
 	"notifications": "Kollovnnio",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Tujeo}} chotraio",
 	"tooltip-pt-notifications-notice": "Tujeo kollovnnio",
+	"tooltip-pt-notifications": "Tujeo kollovnio",
 	"echo-specialpage": "Kollovnnio",
 	"echo-specialpage-pagefilters-title": "Halinchem kario",
 	"echo-specialpage-pagefilters-subtitle": "Vachunk naslelo kollovnio aslelim panam",

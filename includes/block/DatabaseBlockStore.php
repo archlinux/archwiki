@@ -35,7 +35,6 @@ use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserIdentityValue;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use stdClass;
@@ -58,12 +57,12 @@ use function array_key_exists;
  * @author DannyS712
  */
 class DatabaseBlockStore {
-	/** The old schema */
-	public const SCHEMA_IPBLOCKS = 'ipblocks';
-	/** The new schema */
-	public const SCHEMA_BLOCK = 'block';
-	/** The schema currently selected by the read stage */
-	public const SCHEMA_CURRENT = 'current';
+	/** Load all autoblocks */
+	public const AUTO_ALL = 'all';
+	/** Load only autoblocks specified by ID */
+	public const AUTO_SPECIFIED = 'specified';
+	/** Do not load autoblocks */
+	public const AUTO_NONE = 'none';
 
 	/**
 	 * @internal For use by ServiceWiring
@@ -89,7 +88,7 @@ class DatabaseBlockStore {
 	private ReadOnlyMode $readOnlyMode;
 	private UserFactory $userFactory;
 	private TempUserConfig $tempUserConfig;
-	private BlockUtils $blockUtils;
+	private BlockTargetFactory $blockTargetFactory;
 	private AutoblockExemptionList $autoblockExemptionList;
 
 	public function __construct(
@@ -103,7 +102,7 @@ class DatabaseBlockStore {
 		ReadOnlyMode $readOnlyMode,
 		UserFactory $userFactory,
 		TempUserConfig $tempUserConfig,
-		BlockUtils $blockUtils,
+		BlockTargetFactory $blockTargetFactory,
 		AutoblockExemptionList $autoblockExemptionList,
 		/* string|false */ $wikiId = DatabaseBlock::LOCAL
 	) {
@@ -121,32 +120,8 @@ class DatabaseBlockStore {
 		$this->readOnlyMode = $readOnlyMode;
 		$this->userFactory = $userFactory;
 		$this->tempUserConfig = $tempUserConfig;
-		$this->blockUtils = $blockUtils;
+		$this->blockTargetFactory = $blockTargetFactory;
 		$this->autoblockExemptionList = $autoblockExemptionList;
-	}
-
-	/**
-	 * Get the read stage of the block_target migration
-	 *
-	 * @since 1.42
-	 * @deprecated since 1.43
-	 * @return int
-	 */
-	public function getReadStage() {
-		wfDeprecated( __METHOD__, '1.43' );
-		return SCHEMA_COMPAT_NEW;
-	}
-
-	/**
-	 * Get the write stage of the block_target migration
-	 *
-	 * @since 1.42
-	 * @deprecated since 1.43
-	 * @return int
-	 */
-	public function getWriteStage() {
-		wfDeprecated( __METHOD__, '1.43' );
-		return SCHEMA_COMPAT_NEW;
 	}
 
 	/***************************************************************************/
@@ -158,39 +133,22 @@ class DatabaseBlockStore {
 	 *
 	 * @since 1.42
 	 * @param int $id ID to search for
+	 * @param bool $fromPrimary Whether to use the DB_PRIMARY database (since 1.44)
+	 * @param bool $includeExpired Whether to include expired blocks (since 1.44)
 	 * @return DatabaseBlock|null
 	 */
-	public function newFromID( $id ) {
-		$dbr = $this->getReplicaDB();
-		$blockQuery = $this->getQueryInfo();
-		$res = $dbr->newSelectQueryBuilder()
-			->queryInfo( $blockQuery )
-			->where( [ 'bl_id' => $id ] )
-			->caller( __METHOD__ )
-			->fetchRow();
-		if ( $res ) {
-			return $this->newFromRow( $dbr, $res );
-		} else {
-			return null;
-		}
+	public function newFromID( $id, $fromPrimary = false, $includeExpired = false ) {
+		$blocks = $this->newListFromConds( [ 'bl_id' => $id ], $fromPrimary, $includeExpired );
+		return $blocks ? $blocks[0] : null;
 	}
 
 	/**
 	 * Return the tables, fields, and join conditions to be selected to create
 	 * a new block object.
 	 *
-	 * Since 1.34, ipb_by and ipb_by_text have not been present in the
-	 * database, but they continue to be available in query results as
-	 * aliases.
-	 *
 	 * @since 1.42
-	 * @internal Avoid this method and DatabaseBlock::getQueryInfo() in new
-	 *   external code, since they are not schema-independent. Use
-	 *   newListFromConds() and deleteBlocksMatchingConds().
+	 * @internal Prefer newListFromConds() and deleteBlocksMatchingConds().
 	 *
-	 * @param string $schema What schema to use for field aliases. May be either
-	 *   self::SCHEMA_IPBLOCKS or self::SCHEMA_BLOCK. This parameter will soon be
-	 *   removed.
 	 * @return array[] With three keys:
 	 *   - tables: (string[]) to include in the `$table` to `IDatabase->select()`
 	 *     or `SelectQueryBuilder::tables`
@@ -200,92 +158,58 @@ class DatabaseBlockStore {
 	 *     or `SelectQueryBuilder::joinConds`
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
-	public function getQueryInfo( $schema = self::SCHEMA_BLOCK ) {
+	public function getQueryInfo() {
 		$commentQuery = $this->commentStore->getJoin( 'bl_reason' );
-		if ( $schema === self::SCHEMA_IPBLOCKS ) {
-			return [
-				'tables' => [
-					'block',
-					'block_by_actor' => 'actor',
-				] + $commentQuery['tables'],
-				'fields' => [
-					'ipb_id' => 'bl_id',
-					'ipb_address' => 'COALESCE(bt_address, bt_user_text)',
-					'ipb_timestamp' => 'bl_timestamp',
-					'ipb_auto' => 'bt_auto',
-					'ipb_anon_only' => 'bl_anon_only',
-					'ipb_create_account' => 'bl_create_account',
-					'ipb_enable_autoblock' => 'bl_enable_autoblock',
-					'ipb_expiry' => 'bl_expiry',
-					'ipb_deleted' => 'bl_deleted',
-					'ipb_block_email' => 'bl_block_email',
-					'ipb_allow_usertalk' => 'bl_allow_usertalk',
-					'ipb_parent_block_id' => 'bl_parent_block_id',
-					'ipb_sitewide' => 'bl_sitewide',
-					'ipb_by_actor' => 'bl_by_actor',
-					'ipb_by' => 'block_by_actor.actor_user',
-					'ipb_by_text' => 'block_by_actor.actor_name',
-					'ipb_reason_text' => $commentQuery['fields']['bl_reason_text'],
-					'ipb_reason_data' => $commentQuery['fields']['bl_reason_data'],
-					'ipb_reason_cid' => $commentQuery['fields']['bl_reason_cid'],
-				],
-				'joins' => [
-					'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
-				] + $commentQuery['joins'],
-			];
-		} elseif ( $schema === self::SCHEMA_BLOCK ) {
-			return [
-				'tables' => [
-					'block',
-					'block_target',
-					'block_by_actor' => 'actor',
-				] + $commentQuery['tables'],
-				'fields' => [
-					'bl_id',
-					'bt_address',
-					'bt_user',
-					'bt_user_text',
-					'bl_timestamp',
-					'bt_auto',
-					'bl_anon_only',
-					'bl_create_account',
-					'bl_enable_autoblock',
-					'bl_expiry',
-					'bl_deleted',
-					'bl_block_email',
-					'bl_allow_usertalk',
-					'bl_parent_block_id',
-					'bl_sitewide',
-					'bl_by_actor',
-					'bl_by' => 'block_by_actor.actor_user',
-					'bl_by_text' => 'block_by_actor.actor_name',
-				] + $commentQuery['fields'],
-				'joins' => [
-					'block_target' => [ 'JOIN', 'bt_id=bl_target' ],
-					'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
-				] + $commentQuery['joins'],
-			];
-		}
-		throw new InvalidArgumentException(
-			'$schema must be SCHEMA_IPBLOCKS or SCHEMA_BLOCK' );
+		return [
+			'tables' => [
+				'block',
+				'block_target',
+				'block_by_actor' => 'actor',
+			] + $commentQuery['tables'],
+			'fields' => [
+				'bl_id',
+				'bt_address',
+				'bt_user',
+				'bt_user_text',
+				'bl_timestamp',
+				'bt_auto',
+				'bl_anon_only',
+				'bl_create_account',
+				'bl_enable_autoblock',
+				'bl_expiry',
+				'bl_deleted',
+				'bl_block_email',
+				'bl_allow_usertalk',
+				'bl_parent_block_id',
+				'bl_sitewide',
+				'bl_by_actor',
+				'bl_by' => 'block_by_actor.actor_user',
+				'bl_by_text' => 'block_by_actor.actor_name',
+			] + $commentQuery['fields'],
+			'joins' => [
+				'block_target' => [ 'JOIN', 'bt_id=bl_target' ],
+				'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
+			] + $commentQuery['joins'],
+		];
 	}
 
 	/**
 	 * Load blocks from the database which target the specific target exactly, or which cover the
 	 * vague target.
 	 *
-	 * @param UserIdentity|string|null $specificTarget
-	 * @param int|null $specificType
+	 * @param BlockTarget|null $specificTarget
 	 * @param bool $fromPrimary
-	 * @param UserIdentity|string|null $vagueTarget Also search for blocks affecting this target.
-	 *     Doesn't make any sense to use TYPE_AUTO / TYPE_ID here. Leave blank to skip IP lookups.
+	 * @param BlockTarget|null $vagueTarget Also search for blocks affecting
+	 *     this target. Doesn't make any sense to use TYPE_AUTO here. Leave blank to
+	 *     skip IP lookups.
+	 * @param string $auto One of the self::AUTO_* constants
 	 * @return DatabaseBlock[] Any relevant blocks
 	 */
 	private function newLoad(
 		$specificTarget,
-		$specificType,
 		$fromPrimary,
-		$vagueTarget = null
+		$vagueTarget = null,
+		$auto = self::AUTO_ALL
 	) {
 		if ( $fromPrimary ) {
 			$db = $this->getPrimaryDB();
@@ -297,49 +221,37 @@ class DatabaseBlockStore {
 		$userNames = [];
 		$addresses = [];
 		$ranges = [];
-		if ( $specificType === Block::TYPE_USER ) {
-			if ( $specificTarget instanceof UserIdentity ) {
-				$userId = $specificTarget->getId( $this->wikiId );
-				if ( $userId ) {
-					$userIds[] = $specificTarget->getId( $this->wikiId );
-				} else {
-					// A nonexistent user can have no blocks.
-					// This case is hit in testing, possibly production too.
-					// Ignoring the user is optimal for production performance.
-				}
+		if ( $specificTarget instanceof UserBlockTarget ) {
+			$userId = $specificTarget->getUserIdentity()->getId( $this->wikiId );
+			if ( $userId ) {
+				$userIds[] = $userId;
 			} else {
-				$userNames[] = (string)$specificTarget;
+				// A nonexistent user can have no blocks.
+				// This case is hit in testing, possibly production too.
+				// Ignoring the user is optimal for production performance.
 			}
-		} elseif ( in_array( $specificType, [ Block::TYPE_IP, Block::TYPE_RANGE ], true ) ) {
+		} elseif ( $specificTarget instanceof AnonIpBlockTarget
+			|| $specificTarget instanceof RangeBlockTarget
+		) {
 			$addresses[] = (string)$specificTarget;
 		}
 
 		// Be aware that the != '' check is explicit, since empty values will be
 		// passed by some callers (T31116)
-		if ( $vagueTarget != '' ) {
-			[ $target, $type ] = $this->blockUtils->parseBlockTarget( $vagueTarget );
-			switch ( $type ) {
-				case Block::TYPE_USER:
-					// Slightly weird, but who are we to argue?
-					/** @var UserIdentity $vagueUser */
-					$vagueUser = $target;
-					if ( $vagueUser->getId( $this->wikiId ) ) {
-						$userIds[] = $vagueUser->getId( $this->wikiId );
-					} else {
-						$userNames[] = $vagueUser->getName();
-					}
-					break;
-
-				case Block::TYPE_IP:
-					$ranges[] = [ IPUtils::toHex( $target ), null ];
-					break;
-
-				case Block::TYPE_RANGE:
-					$ranges[] = IPUtils::parseRange( $target );
-					break;
-
-				default:
-					$this->logger->debug( "Ignoring invalid vague target" );
+		if ( $vagueTarget !== null ) {
+			if ( $vagueTarget instanceof UserBlockTarget ) {
+				// Slightly weird, but who are we to argue?
+				$vagueUser = $vagueTarget->getUserIdentity();
+				$userId = $vagueUser->getId( $this->wikiId );
+				if ( $userId ) {
+					$userIds[] = $userId;
+				} else {
+					$userNames[] = $vagueUser->getName();
+				}
+			} elseif ( $vagueTarget instanceof BlockTargetWithIp ) {
+				$ranges[] = $vagueTarget->toHexRange();
+			} else {
+				$this->logger->debug( "Ignoring invalid vague target" );
 			}
 		}
 
@@ -358,17 +270,21 @@ class DatabaseBlockStore {
 			// @phan-suppress-next-line PhanTypeMismatchArgument
 			$orConds[] = $db->expr( 'bt_address', '=', array_unique( $addresses ) );
 		}
-		foreach ( $ranges as $range ) {
-			$orConds[] = new RawSQLExpression( $this->getRangeCond( $range[0], $range[1] ) );
+		foreach ( $this->getConditionForRanges( $ranges ) as $cond ) {
+			$orConds[] = new RawSQLExpression( $cond );
 		}
 		if ( !$orConds ) {
 			return [];
 		}
 
+		// Exclude autoblocks unless AUTO_ALL was requested.
+		$autoConds = $auto === self::AUTO_ALL ? [] : [ 'bt_auto' => 0 ];
+
 		$blockQuery = $this->getQueryInfo();
 		$res = $db->newSelectQueryBuilder()
 			->queryInfo( $blockQuery )
 			->where( $db->orExpr( $orConds ) )
+			->andWhere( $autoConds )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
@@ -385,9 +301,9 @@ class DatabaseBlockStore {
 
 			// Don't use anon only blocks on users
 			if (
-				$specificType == Block::TYPE_USER && $specificTarget &&
+				$specificTarget instanceof UserBlockTarget &&
 				!$block->isHardblock() &&
-				!$this->tempUserConfig->isTempName( $specificTarget )
+				!$this->tempUserConfig->isTempName( $specificTarget->toString() )
 			) {
 				continue;
 			}
@@ -431,21 +347,7 @@ class DatabaseBlockStore {
 		// Lower will be better
 		$bestBlockScore = 100;
 		foreach ( $blocks as $block ) {
-			if ( $block->getType() == Block::TYPE_RANGE ) {
-				// This is the number of bits that are allowed to vary in the block, give
-				// or take some floating point errors
-				$target = $block->getTargetName();
-				$max = IPUtils::isIPv6( $target ) ? 128 : 32;
-				[ , $bits ] = IPUtils::parseCIDR( $target );
-				$size = $max - $bits;
-
-				// Rank a range block covering a single IP equally with a single-IP block
-				$score = Block::TYPE_RANGE - 1 + ( $size / $max );
-
-			} else {
-				$score = $block->getType();
-			}
-
+			$score = $block->getTarget()->getSpecificity();
 			if ( $score < $bestBlockScore ) {
 				$bestBlockScore = $score;
 				$bestBlock = $block;
@@ -456,6 +358,51 @@ class DatabaseBlockStore {
 	}
 
 	/**
+	 * Get a set of SQL conditions which select range blocks encompassing the
+	 * given ranges. For each range that is really a single IP (start=end), it will
+	 * also select single IP blocks with that IP.
+	 *
+	 * @since 1.44
+	 * @param string[][] $ranges List of elements with `[ start, end ]`, where `start` and `end` are hexadecimal
+	 * IP representation, and `end` can be null to use `end = start`.
+	 * @phan-param list<array{0:string,1:?string}> $ranges
+	 * @return string[] List of conditions to be ORed.
+	 */
+	public function getConditionForRanges( array $ranges ): array {
+		$dbr = $this->getReplicaDB();
+
+		$conds = [];
+		$individualIPs = [];
+		foreach ( $ranges as [ $start, $end ] ) {
+			// Per T16634, we want to include relevant active range blocks; for
+			// range blocks, we want to include larger ranges which enclose the given
+			// range. We know that all blocks must be smaller than $wgBlockCIDRLimit,
+			// so we can improve performance by filtering on a LIKE clause
+			$chunk = $this->getIpFragment( $start );
+			$end ??= $start;
+
+			$expr = $dbr->expr(
+				'bt_range_start',
+				IExpression::LIKE,
+				new LikeValue( $chunk, $dbr->anyString() )
+			)
+				->and( 'bt_range_start', '<=', $start )
+				->and( 'bt_range_end', '>=', $end );
+			if ( $start === $end ) {
+				$individualIPs[] = $start;
+			}
+			$conds[] = $expr->toSql( $dbr );
+		}
+		if ( $individualIPs ) {
+			// Also select single IP blocks for these targets
+			$conds[] = $dbr->expr( 'bt_ip_hex', '=', $individualIPs )
+				->and( 'bt_range_start', '=', null )
+				->toSql( $dbr );
+		}
+		return $conds;
+	}
+
+	/**
 	 * Get a set of SQL conditions which select range blocks encompassing a
 	 * given range. If the given range is a single IP with start=end, it will
 	 * also select single IP blocks with that IP.
@@ -463,58 +410,12 @@ class DatabaseBlockStore {
 	 * @since 1.42
 	 * @param string $start Hexadecimal IP representation
 	 * @param string|null $end Hexadecimal IP representation, or null to use $start = $end
-	 * @param string $schema What schema to use for field aliases. Can be one of:
-	 *    - self::SCHEMA_IPBLOCKS for the old schema
-	 *    - self::SCHEMA_BLOCK for the new schema
-	 *    - self::SCHEMA_CURRENT formerly used the configured schema, but now
-	 *      acts the same as SCHEMA_BLOCK
-	 *   In future this parameter will be removed.
 	 * @return string
 	 */
-	public function getRangeCond( $start, $end, $schema = self::SCHEMA_BLOCK ) {
-		// Per T16634, we want to include relevant active range blocks; for
-		// range blocks, we want to include larger ranges which enclose the given
-		// range. We know that all blocks must be smaller than $wgBlockCIDRLimit,
-		// so we can improve performance by filtering on a LIKE clause
-		$chunk = $this->getIpFragment( $start );
+	public function getRangeCond( $start, $end ) {
 		$dbr = $this->getReplicaDB();
-		$end ??= $start;
-
-		if ( $schema === self::SCHEMA_CURRENT ) {
-			$schema = self::SCHEMA_BLOCK;
-		}
-
-		if ( $schema === self::SCHEMA_IPBLOCKS ) {
-			return $dbr->makeList(
-				[
-					$dbr->expr( 'ipb_range_start', IExpression::LIKE,
-						new LikeValue( $chunk, $dbr->anyString() ) ),
-					$dbr->expr( 'ipb_range_start', '<=', $start ),
-					$dbr->expr( 'ipb_range_end', '>=', $end ),
-				],
-				LIST_AND
-			);
-		} elseif ( $schema === self::SCHEMA_BLOCK ) {
-			$expr = $dbr->expr(
-					'bt_range_start',
-					IExpression::LIKE,
-					new LikeValue( $chunk, $dbr->anyString() )
-				)
-				->and( 'bt_range_start', '<=', $start )
-				->and( 'bt_range_end', '>=', $end );
-			if ( $start === $end ) {
-				// Also select single IP blocks for this target
-				$expr = $dbr->orExpr( [
-					$dbr->expr( 'bt_ip_hex', '=', $start )
-						->and( 'bt_range_start', '=', null ),
-					$expr
-				] );
-			}
-			return $expr->toSql( $dbr );
-		} else {
-			throw new InvalidArgumentException(
-				'$schema must be SCHEMA_IPBLOCKS or SCHEMA_BLOCK' );
-		}
+		$conds = $this->getConditionForRanges( [ [ $start, $end ] ] );
+		return $dbr->makeList( $conds, IDatabase::LIST_OR );
 	}
 
 	/**
@@ -538,70 +439,40 @@ class DatabaseBlockStore {
 	 *
 	 * @since 1.42
 	 * @param IReadableDatabase $db The database you got the row from
-	 * @param stdClass $row Row from the ipblocks table
+	 * @param stdClass $row Row from the block table
 	 * @return DatabaseBlock
 	 */
 	public function newFromRow( IReadableDatabase $db, $row ) {
-		if ( isset( $row->ipb_id ) ) {
-			return new DatabaseBlock( [
-				'address' => $row->ipb_address,
-				'wiki' => $this->wikiId,
-				'timestamp' => $row->ipb_timestamp,
-				'auto' => (bool)$row->ipb_auto,
-				'hideName' => (bool)$row->ipb_deleted,
-				'id' => (int)$row->ipb_id,
-				// Blocks with no parent ID should have ipb_parent_block_id as null,
-				// don't save that as 0 though, see T282890
-				'parentBlockId' => $row->ipb_parent_block_id
-					? (int)$row->ipb_parent_block_id : null,
-				'by' => $this->actorStoreFactory
-					->getActorStore( $this->wikiId )
-					->newActorFromRowFields( $row->ipb_by, $row->ipb_by_text, $row->ipb_by_actor ),
-				'decodedExpiry' => $db->decodeExpiry( $row->ipb_expiry ),
-				'reason' => $this->commentStore
-					// Legacy because $row may have come from self::selectFields()
-					->getCommentLegacy( $db, 'ipb_reason', $row ),
-				'anonOnly' => $row->ipb_anon_only,
-				'enableAutoblock' => (bool)$row->ipb_enable_autoblock,
-				'sitewide' => (bool)$row->ipb_sitewide,
-				'createAccount' => (bool)$row->ipb_create_account,
-				'blockEmail' => (bool)$row->ipb_block_email,
-				'allowUsertalk' => (bool)$row->ipb_allow_usertalk
-			] );
-		} else {
-			$address = $row->bt_address
-				?? new UserIdentityValue( $row->bt_user, $row->bt_user_text, $this->wikiId );
-			return new DatabaseBlock( [
-				'address' => $address,
-				'wiki' => $this->wikiId,
-				'timestamp' => $row->bl_timestamp,
-				'auto' => (bool)$row->bt_auto,
-				'hideName' => (bool)$row->bl_deleted,
-				'id' => (int)$row->bl_id,
-				// Blocks with no parent ID should have ipb_parent_block_id as null,
-				// don't save that as 0 though, see T282890
-				'parentBlockId' => $row->bl_parent_block_id
-					? (int)$row->bl_parent_block_id : null,
-				'by' => $this->actorStoreFactory
-					->getActorStore( $this->wikiId )
-					->newActorFromRowFields( $row->bl_by, $row->bl_by_text, $row->bl_by_actor ),
-				'decodedExpiry' => $db->decodeExpiry( $row->bl_expiry ),
-				'reason' => $this->commentStore->getComment( 'bl_reason', $row ),
-				'anonOnly' => $row->bl_anon_only,
-				'enableAutoblock' => (bool)$row->bl_enable_autoblock,
-				'sitewide' => (bool)$row->bl_sitewide,
-				'createAccount' => (bool)$row->bl_create_account,
-				'blockEmail' => (bool)$row->bl_block_email,
-				'allowUsertalk' => (bool)$row->bl_allow_usertalk
-			] );
-		}
+		return new DatabaseBlock( [
+			'target' => $this->blockTargetFactory->newFromRowRaw( $row ),
+			'wiki' => $this->wikiId,
+			'timestamp' => $row->bl_timestamp,
+			'auto' => (bool)$row->bt_auto,
+			'hideName' => (bool)$row->bl_deleted,
+			'id' => (int)$row->bl_id,
+			// Blocks with no parent ID should have bl_parent_block_id as null,
+			// don't save that as 0 though, see T282890
+			'parentBlockId' => $row->bl_parent_block_id
+				? (int)$row->bl_parent_block_id : null,
+			'by' => $this->actorStoreFactory
+				->getActorStore( $this->wikiId )
+				->newActorFromRowFields( $row->bl_by, $row->bl_by_text, $row->bl_by_actor ),
+			'decodedExpiry' => $db->decodeExpiry( $row->bl_expiry ),
+			'reason' => $this->commentStore->getComment( 'bl_reason', $row ),
+			'anonOnly' => $row->bl_anon_only,
+			'enableAutoblock' => (bool)$row->bl_enable_autoblock,
+			'sitewide' => (bool)$row->bl_sitewide,
+			'createAccount' => (bool)$row->bl_create_account,
+			'blockEmail' => (bool)$row->bl_block_email,
+			'allowUsertalk' => (bool)$row->bl_allow_usertalk
+		] );
 	}
 
 	/**
 	 * Given a target and the target's type, get an existing block object if possible.
 	 *
 	 * @since 1.42
-	 * @param string|UserIdentity|int|null $specificTarget A block target, which may be one of
+	 * @param BlockTarget|string|UserIdentity|int|null $specificTarget A block target, which may be one of
 	 *   several types:
 	 *     * A user to block, in which case $target will be a User
 	 *     * An IP to block, in which case $target will be a User generated by using
@@ -612,10 +483,14 @@ class DatabaseBlockStore {
 	 *     Calling this with a user, IP address or range will not select autoblocks, and will
 	 *     only select a block where the targets match exactly (so looking for blocks on
 	 *     1.2.3.4 will not select 1.2.0.0/16 or even 1.2.3.4/32)
-	 * @param string|UserIdentity|int|null $vagueTarget As above, but we will search for *any*
+	 * @param BlockTarget|string|UserIdentity|int|null $vagueTarget As above, but we will search for *any*
 	 *     block which affects that target (so for an IP address, get ranges containing that IP;
 	 *     and also get any relevant autoblocks). Leave empty or blank to skip IP-based lookups.
 	 * @param bool $fromPrimary Whether to use the DB_PRIMARY database
+	 * @param string $auto Since 1.44. One of the self::AUTO_* constants:
+	 *    - AUTO_ALL: always load autoblocks
+	 *    - AUTO_SPECIFIED: load only autoblocks specified in the input by ID
+	 *    - AUTO_NONE: do not load autoblocks
 	 * @return DatabaseBlock|null (null if no relevant block could be found). The target and type
 	 *     of the returned block will refer to the actual block which was found, which might
 	 *     not be the same as the target you gave if you used $vagueTarget!
@@ -623,9 +498,10 @@ class DatabaseBlockStore {
 	public function newFromTarget(
 		$specificTarget,
 		$vagueTarget = null,
-		$fromPrimary = false
+		$fromPrimary = false,
+		$auto = self::AUTO_ALL
 	) {
-		$blocks = $this->newListFromTarget( $specificTarget, $vagueTarget, $fromPrimary );
+		$blocks = $this->newListFromTarget( $specificTarget, $vagueTarget, $fromPrimary, $auto );
 		return $this->chooseMostSpecificBlock( $blocks );
 	}
 
@@ -633,32 +509,39 @@ class DatabaseBlockStore {
 	 * This is similar to DatabaseBlockStore::newFromTarget, but it returns all the relevant blocks.
 	 *
 	 * @since 1.42
-	 * @param string|UserIdentity|int|null $specificTarget
-	 * @param string|UserIdentity|int|null $vagueTarget
+	 * @param BlockTarget|string|UserIdentity|int|null $specificTarget
+	 * @param BlockTarget|string|UserIdentity|int|null $vagueTarget
 	 * @param bool $fromPrimary
+	 * @param string $auto Since 1.44. One of the self::AUTO_* constants:
+	 *   - AUTO_ALL: always load autoblocks
+	 *   - AUTO_SPECIFIED: load only autoblocks specified in the input by ID
+	 *   - AUTO_NONE: do not load autoblocks
 	 * @return DatabaseBlock[] Any relevant blocks
 	 */
 	public function newListFromTarget(
 		$specificTarget,
 		$vagueTarget = null,
-		$fromPrimary = false
+		$fromPrimary = false,
+		$auto = self::AUTO_ALL
 	) {
-		[ $target, $type ] = $this->blockUtils->parseBlockTarget( $specificTarget );
-		if ( $type == Block::TYPE_ID || $type == Block::TYPE_AUTO ) {
-			$block = $this->newFromID( $target );
-			return $block ? [ $block ] : [];
-		} elseif ( $target === null && $vagueTarget == '' ) {
-			// We're not going to find anything useful here
-			// Be aware that the == '' check is explicit, since empty values will be
-			// passed by some callers (T31116)
-			return [];
-		} elseif ( in_array(
-			$type,
-			[ Block::TYPE_USER, Block::TYPE_IP, Block::TYPE_RANGE, null ] )
-		) {
-			return $this->newLoad( $target, $type, $fromPrimary, $vagueTarget );
+		if ( !( $specificTarget instanceof BlockTarget ) ) {
+			$specificTarget = $this->blockTargetFactory->newFromLegacyUnion( $specificTarget );
 		}
-		return [];
+		if ( $vagueTarget !== null && !( $vagueTarget instanceof BlockTarget ) ) {
+			$vagueTarget = $this->blockTargetFactory->newFromLegacyUnion( $vagueTarget );
+		}
+		if ( $specificTarget instanceof AutoBlockTarget ) {
+			if ( $auto === self::AUTO_NONE ) {
+				return [];
+			}
+			$block = $this->newFromID( $specificTarget->getId() );
+			return $block ? [ $block ] : [];
+		} elseif ( $specificTarget === null && $vagueTarget === null ) {
+			// We're not going to find anything useful here
+			return [];
+		} else {
+			return $this->newLoad( $specificTarget, $fromPrimary, $vagueTarget, $auto );
+		}
 	}
 
 	/**
@@ -672,25 +555,23 @@ class DatabaseBlockStore {
 	 * @return DatabaseBlock[]
 	 */
 	public function newListFromIPs( array $addresses, $applySoftBlocks, $fromPrimary = false ) {
+		$addresses = array_unique( $addresses );
 		if ( $addresses === [] ) {
 			return [];
 		}
 
-		$conds = [];
-		foreach ( array_unique( $addresses ) as $ipaddr ) {
-			$conds[] = $this->getRangeCond( IPUtils::toHex( $ipaddr ), null );
+		$ranges = [];
+		foreach ( $addresses as $ipaddr ) {
+			$ranges[] = [ IPUtils::toHex( $ipaddr ), null ];
 		}
-
-		if ( $conds === [] ) {
-			return [];
-		}
+		$rangeConds = $this->getConditionForRanges( $ranges );
 
 		if ( $fromPrimary ) {
 			$db = $this->getPrimaryDB();
 		} else {
 			$db = $this->getReplicaDB();
 		}
-		$conds = $db->makeList( $conds, LIST_OR );
+		$conds = $db->makeList( $rangeConds, LIST_OR );
 		if ( !$applySoftBlocks ) {
 			$conds = [ $conds, 'bl_anon_only' => 0 ];
 		}
@@ -717,9 +598,8 @@ class DatabaseBlockStore {
 	 * Construct an array of blocks from database conditions.
 	 *
 	 * @since 1.42
-	 * @param array $conds For schema-independence this should be an associative
-	 *   array mapping field names to values. Field names from the new schema
-	 *   should be used.
+	 * @param array $conds Query conditions, given as an associative array
+	 *   mapping field names to values.
 	 * @param bool $fromPrimary
 	 * @param bool $includeExpired
 	 * @return DatabaseBlock[]
@@ -749,7 +629,38 @@ class DatabaseBlockStore {
 	/** @name   Database write methods */
 
 	/**
-	 * Delete expired blocks from the ipblocks table
+	 * Create a DatabaseBlock representing an unsaved block. Pass the returned
+	 * object to insertBlock().
+	 *
+	 * @since 1.44
+	 *
+	 * @param array $options Options as documented in DatabaseBlock and
+	 *   AbstractBlock, and additionally:
+	 *   - address: (string) A string specifying the block target. This is not
+	 *     the same as the legacy address parameter which allows UserIdentity.
+	 *   - targetUser: (UserIdentity) The UserIdentity to block
+	 * @return DatabaseBlock
+	 */
+	public function newUnsaved( array $options ): DatabaseBlock {
+		if ( isset( $options['targetUser'] ) ) {
+			$options['target'] = $this->blockTargetFactory
+				->newFromUser( $options['targetUser'] );
+			unset( $options['targetUser'] );
+		}
+		if ( isset( $options['address'] ) ) {
+			$target = $this->blockTargetFactory
+				->newFromString( $options['address'] );
+			if ( !$target ) {
+				throw new InvalidArgumentException( 'Invalid target address' );
+			}
+			$options['target'] = $target;
+			unset( $options['address'] );
+		}
+		return new DatabaseBlock( $options );
+	}
+
+	/**
+	 * Delete expired blocks from the block table
 	 *
 	 * @internal only public for use in DatabaseBlock
 	 */
@@ -782,8 +693,7 @@ class DatabaseBlockStore {
 	 *
 	 * @since 1.42
 	 * @param array $conds An associative array mapping the field name to the
-	 *   matched value. Some limited schema abstractions are implemented, to
-	 *   allow new field names to be used with the old schema.
+	 *   matched value.
 	 * @param int|null $limit The maximum number of blocks to delete
 	 * @return int The number of blocks deleted
 	 */
@@ -877,7 +787,9 @@ class DatabaseBlockStore {
 		$maxTargetCount = max( $deltasByTarget );
 		for ( $delta = 1; $delta <= $maxTargetCount; $delta++ ) {
 			$targetsWithThisDelta = array_keys( $deltasByTarget, $delta, true );
-			$this->releaseTargets( $dbw, $targetsWithThisDelta, $delta );
+			if ( $targetsWithThisDelta ) {
+				$this->releaseTargets( $dbw, $targetsWithThisDelta, $delta );
+			}
 		}
 
 		$dbw->newDeleteQueryBuilder()
@@ -899,6 +811,9 @@ class DatabaseBlockStore {
 	 * @param int $delta The amount to decrement by
 	 */
 	private function releaseTargets( IDatabase $dbw, $targetIds, int $delta = 1 ) {
+		if ( !$targetIds ) {
+			return;
+		}
 		$dbw->newUpdateQueryBuilder()
 			->update( 'block_target' )
 			->set( [ 'bt_count' => new RawSQLValue( "bt_count-$delta" ) ] )
@@ -932,7 +847,9 @@ class DatabaseBlockStore {
 	 *   on the specified target. If this is zero but there is an existing
 	 *   block, the insertion will fail.
 	 * @return bool|array False on failure, assoc array on success:
-	 *      ('id' => block ID, 'autoIds' => array of autoblock IDs)
+	 *   - id: block ID
+	 *   - autoIds: array of autoblock IDs
+	 *   - finalTargetCount: The updated number of blocks for the specified target.
 	 */
 	public function insertBlock(
 		DatabaseBlock $block,
@@ -960,18 +877,30 @@ class DatabaseBlockStore {
 
 		$dbw = $this->getPrimaryDB();
 		$dbw->startAtomic( __METHOD__ );
-		$success = $this->attemptInsert( $block, $dbw, $expectedTargetCount );
+		$finalTargetCount = $this->attemptInsert( $block, $dbw, $expectedTargetCount );
+		$purgeDone = false;
 
 		// Don't collide with expired blocks.
 		// Do this after trying to insert to avoid locking.
-		if ( !$success ) {
+		if ( !$finalTargetCount ) {
 			if ( $this->purgeExpiredConflicts( $block, $dbw ) ) {
-				$success = $this->attemptInsert( $block, $dbw, $expectedTargetCount );
+				$finalTargetCount = $this->attemptInsert( $block, $dbw, $expectedTargetCount );
+				$purgeDone = true;
 			}
 		}
 		$dbw->endAtomic( __METHOD__ );
 
-		if ( $success ) {
+		if ( $finalTargetCount > 1 && !$purgeDone ) {
+			// Subtract expired blocks from the target count
+			$expiredBlockCount = $this->getExpiredConflictingBlockRows( $block, $dbw )->count();
+			if ( $expiredBlockCount >= $finalTargetCount ) {
+				$finalTargetCount = 1;
+			} else {
+				$finalTargetCount -= $expiredBlockCount;
+			}
+		}
+
+		if ( $finalTargetCount ) {
 			$autoBlockIds = $this->doRetroactiveAutoblock( $block );
 
 			if ( $this->options->get( MainConfigNames::BlockDisablesLogin ) ) {
@@ -982,27 +911,51 @@ class DatabaseBlockStore {
 				}
 			}
 
-			return [ 'id' => $block->getId( $this->wikiId ), 'autoIds' => $autoBlockIds ];
+			return [
+				'id' => $block->getId( $this->wikiId ),
+				'autoIds' => $autoBlockIds,
+				'finalTargetCount' => $finalTargetCount
+			];
 		}
 
 		return false;
 	}
 
 	/**
-	 * Attempt to insert rows into ipblocks/block, block_target and
-	 * ipblocks_restrictions. If there is a conflict, return false.
+	 * Create a block with an array of parameters and immediately insert it.
+	 * Throw an exception on failure. This is a convenience method for testing.
+	 *
+	 * Duplicate blocks for a given target are allowed by default.
+	 *
+	 * @since 1.44
+	 * @param array $params Parameters for newUnsaved(), and also:
+	 *   - expectedTargetCount: Use this to override conflict checking
+	 * @return DatabaseBlock The inserted Block
+	 */
+	public function insertBlockWithParams( array $params ): DatabaseBlock {
+		$block = $this->newUnsaved( $params );
+		$status = $this->insertBlock( $block, $params['expectedTargetCount'] ?? null );
+		if ( !$status ) {
+			throw new RuntimeException( 'Failed to insert block' );
+		}
+		return $block;
+	}
+
+	/**
+	 * Attempt to insert rows into block, block_target and ipblocks_restrictions.
+	 * If there is a conflict, return false.
 	 *
 	 * @param DatabaseBlock $block
 	 * @param IDatabase $dbw
 	 * @param int|null $expectedTargetCount
-	 * @return bool True if block successfully inserted
+	 * @return int|false The updated number of blocks for the target, or false on failure
 	 */
 	private function attemptInsert(
 		DatabaseBlock $block,
 		IDatabase $dbw,
 		$expectedTargetCount
 	) {
-		$targetId = $this->acquireTarget( $block, $dbw, $expectedTargetCount );
+		[ $targetId, $finalCount ] = $this->acquireTarget( $block, $dbw, $expectedTargetCount );
 		if ( !$targetId ) {
 			return false;
 		}
@@ -1026,7 +979,7 @@ class DatabaseBlockStore {
 			$this->blockRestrictionStore->insert( $restrictions );
 		}
 
-		return true;
+		return $finalCount;
 	}
 
 	/**
@@ -1040,36 +993,55 @@ class DatabaseBlockStore {
 		DatabaseBlock $block,
 		IDatabase $dbw
 	) {
-		$targetConds = $this->getTargetConds( $block );
-		$res = $dbw->newSelectQueryBuilder()
+		return (bool)$this->deleteBlockRows(
+			$this->getExpiredConflictingBlockRows( $block, $dbw )
+		);
+	}
+
+	/**
+	 * Get rows with bl_id/bl_target for expired blocks that have the same
+	 * target as the specified block.
+	 *
+	 * @param DatabaseBlock $block
+	 * @param IDatabase $dbw
+	 * @return IResultWrapper
+	 */
+	private function getExpiredConflictingBlockRows(
+		DatabaseBlock $block,
+		IDatabase $dbw
+	) {
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
+		$targetConds = $this->getTargetConds( $block->getTarget() );
+		return $dbw->newSelectQueryBuilder()
 			->select( [ 'bl_id', 'bl_target' ] )
 			->from( 'block' )
 			->join( 'block_target', null, [ 'bt_id=bl_target' ] )
 			->where( $targetConds )
 			->andWhere( $dbw->expr( 'bl_expiry', '<', $dbw->timestamp() ) )
 			->caller( __METHOD__ )->fetchResultSet();
-		return (bool)$this->deleteBlockRows( $res );
 	}
 
 	/**
-	 * Get conditions matching the block's block_target row
+	 * Get conditions matching an existing block's block_target row
 	 *
-	 * @param DatabaseBlock $block
+	 * @param BlockTarget $target
 	 * @return array
 	 */
-	private function getTargetConds( DatabaseBlock $block ) {
-		if ( $block->getType() === Block::TYPE_USER ) {
+	private function getTargetConds( BlockTarget $target ) {
+		if ( $target instanceof UserBlockTarget ) {
 			return [
-				'bt_user' => $block->getTargetUserIdentity()->getId( $this->wikiId )
+				'bt_user' => $target->getUserIdentity()->getId( $this->wikiId )
 			];
+		} elseif ( $target instanceof AnonIpBlockTarget || $target instanceof RangeBlockTarget ) {
+			return [ 'bt_address' => $target->toString() ];
 		} else {
-			return [ 'bt_address' => $block->getTargetName() ];
+			throw new \InvalidArgumentException( 'Invalid target type' );
 		}
 	}
 
 	/**
 	 * Insert a new block_target row, or update bt_count in the existing target
-	 * row for a given block, and return the target ID.
+	 * row for a given block, and return the target ID and new bt_count.
 	 *
 	 * An atomic section should be active while calling this function.
 	 *
@@ -1079,27 +1051,26 @@ class DatabaseBlockStore {
 	 *   exists, abort the insert and return null. If this is greater than zero
 	 *   and the pre-increment bt_count value does not match, abort the update
 	 *   and return null. If this is null, do not perform any conflict checks.
-	 * @return int|null
+	 * @return array{?int,int}
 	 */
 	private function acquireTarget(
 		DatabaseBlock $block,
 		IDatabase $dbw,
 		$expectedTargetCount
 	) {
-		$isUser = $block->getType() === Block::TYPE_USER;
-		$isRange = $block->getType() === Block::TYPE_RANGE;
+		$target = $block->getTarget();
+		// Note: for new autoblocks, the target is an IpBlockTarget
 		$isAuto = $block->getType() === Block::TYPE_AUTO;
-		$isSingle = !$isUser && !$isRange;
-		$targetAddress = $isUser ? null : $block->getTargetName();
-		$targetUserName = $isUser ? $block->getTargetName() : null;
-		$targetUserId = $isUser
-			? $block->getTargetUserIdentity()->getId( $this->wikiId ) : null;
-
-		// Update bt_count field in existing target, if there is one
-		if ( $isUser ) {
+		if ( $target instanceof UserBlockTarget ) {
+			$targetAddress = null;
+			$targetUserName = (string)$target;
+			$targetUserId = $target->getUserIdentity()->getId( $this->wikiId );
 			$targetConds = [ 'bt_user' => $targetUserId ];
 			$targetLockKey = $dbw->getDomainID() . ':block:u:' . $targetUserId;
 		} else {
+			$targetAddress = (string)$target;
+			$targetUserName = null;
+			$targetUserId = null;
 			$targetConds = [
 				'bt_address' => $targetAddress,
 				'bt_auto' => $isAuto,
@@ -1107,6 +1078,7 @@ class DatabaseBlockStore {
 			$targetLockKey = $dbw->getDomainID() . ':block:' .
 				( $isAuto ? 'a' : 'i' ) . ':' . $targetAddress;
 		}
+
 		$condsWithCount = $targetConds;
 		if ( $expectedTargetCount !== null ) {
 			$condsWithCount['bt_count'] = $expectedTargetCount;
@@ -1134,27 +1106,38 @@ class DatabaseBlockStore {
 		$numUpdatedRows = $dbw->affectedRows();
 
 		// Now that the row is locked, find the target ID
-		$ids = $dbw->newSelectQueryBuilder()
-			->select( 'bt_id' )
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [ 'bt_id', 'bt_count' ] )
 			->from( 'block_target' )
 			->where( $targetConds )
 			->forUpdate()
 			->caller( __METHOD__ )
-			->fetchFieldValues();
-		if ( count( $ids ) > 1 ) {
+			->fetchResultSet();
+		if ( $res->numRows() > 1 ) {
+			$ids = [];
+			foreach ( $res as $row ) {
+				$ids[] = $row->bt_id;
+			}
 			throw new RuntimeException( "Duplicate block_target rows detected: " .
 				implode( ',', $ids ) );
 		}
-		$id = $ids[0] ?? false;
+		$row = $res->fetchObject();
 
-		if ( $id === false ) {
+		if ( $row ) {
+			$count = (int)$row->bt_count;
+			if ( !$numUpdatedRows ) {
+				// ID found but count update failed -- must be a conflict due to bt_count mismatch
+				return [ null, $count ];
+			}
+			$id = (int)$row->bt_id;
+		} else {
 			if ( $numUpdatedRows ) {
 				throw new RuntimeException(
 					'block_target row unexpectedly missing after we locked it' );
 			}
 			if ( $expectedTargetCount !== 0 && $expectedTargetCount !== null ) {
 				// Conflict (expectation failure)
-				return null;
+				return [ null, 0 ];
 			}
 
 			// Insert new row
@@ -1163,9 +1146,9 @@ class DatabaseBlockStore {
 				'bt_user' => $targetUserId,
 				'bt_user_text' => $targetUserName,
 				'bt_auto' => $isAuto,
-				'bt_range_start' => $isRange ? $block->getRangeStart() : null,
-				'bt_range_end' => $isRange ? $block->getRangeEnd() : null,
-				'bt_ip_hex' => $isSingle || $isRange ? $block->getRangeStart() : null,
+				'bt_range_start' => $block->getRangeStart(),
+				'bt_range_end' => $block->getRangeEnd(),
+				'bt_ip_hex' => $block->getIpHex(),
 				'bt_count' => 1
 			];
 			$dbw->newInsertQueryBuilder()
@@ -1177,17 +1160,18 @@ class DatabaseBlockStore {
 				throw new RuntimeException(
 					'block_target insert ID is falsey despite unconditional insert' );
 			}
-		} elseif ( !$numUpdatedRows ) {
-			// ID found but count update failed -- must be a conflict due to bt_count mismatch
-			return null;
+			$count = 1;
 		}
 
-		return (int)$id;
+		return [ $id, $count ];
 	}
 
 	/**
 	 * Update a block in the DB with new parameters.
 	 * The ID field needs to be loaded first. The target must stay the same.
+	 *
+	 * TODO: remove the possibility of false return. The cases where this
+	 *   happens are exotic enough that they should just be exceptions.
 	 *
 	 * @param DatabaseBlock $block
 	 * @return bool|array False on failure, array on success:
@@ -1204,6 +1188,9 @@ class DatabaseBlockStore {
 				__METHOD__ . ' requires that a block id be set'
 			);
 		}
+
+		// Update bl_timestamp to current when making any updates to a block (T389275)
+		$block->setTimestamp( wfTimestamp() );
 
 		$dbw = $this->getPrimaryDB();
 
@@ -1267,7 +1254,7 @@ class DatabaseBlockStore {
 	 *
 	 * @since 1.42
 	 * @param DatabaseBlock $block
-	 * @param UserIdentity|string $newTarget
+	 * @param BlockTarget|UserIdentity|string $newTarget
 	 * @return bool True if the update was successful, false if there was no
 	 *   match for the block ID.
 	 */
@@ -1279,12 +1266,16 @@ class DatabaseBlockStore {
 				__METHOD__ . " requires that a block id be set\n"
 			);
 		}
+		if ( !( $newTarget instanceof BlockTarget ) ) {
+			$newTarget = $this->blockTargetFactory->newFromLegacyUnion( $newTarget );
+		}
 
-		$oldTargetConds = $this->getTargetConds( $block );
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
+		$oldTargetConds = $this->getTargetConds( $block->getTarget() );
 		$block->setTarget( $newTarget );
 
 		$dbw->startAtomic( __METHOD__ );
-		$targetId = $this->acquireTarget( $block, $dbw, null );
+		[ $targetId, $count ] = $this->acquireTarget( $block, $dbw, null );
 		if ( !$targetId ) {
 			// This is an exotic and unlikely error -- perhaps an exception should be thrown
 			$dbw->endAtomic( __METHOD__ );
@@ -1483,18 +1474,17 @@ class DatabaseBlockStore {
 			return [];
 		}
 
-		$type = $block->getType();
-		if ( $type !== AbstractBlock::TYPE_USER ) {
+		$target = $block->getTarget();
+		if ( !( $target instanceof UserBlockTarget ) ) {
 			// Autoblocks only apply to users
 			return [];
 		}
 
 		$dbr = $this->getReplicaDB();
 
-		$targetUser = $block->getTargetUserIdentity();
-		$actor = $targetUser ? $this->actorStoreFactory
+		$actor = $this->actorStoreFactory
 			->getActorNormalization( $this->wikiId )
-			->findActorId( $targetUser, $dbr ) : null;
+			->findActorId( $target->getUserIdentity(), $dbr );
 
 		if ( !$actor ) {
 			$this->logger->debug( 'No actor found to retroactively autoblock' );
@@ -1535,20 +1525,19 @@ class DatabaseBlockStore {
 		}
 		$parentBlock->assertWiki( $this->wikiId );
 
-		[ $target, $type ] = $this->blockUtils->parseBlockTarget( $autoblockIP );
-		if ( $type != Block::TYPE_IP ) {
-			$this->logger->debug( "Autoblock not supported for ip ranges." );
+		$target = $this->blockTargetFactory->newFromIp( $autoblockIP );
+		if ( !$target ) {
+			$this->logger->debug( "Invalid autoblock IP" );
 			return false;
 		}
-		$target = (string)$target;
 
 		// Check if autoblock exempt.
-		if ( $this->autoblockExemptionList->isExempt( $target ) ) {
+		if ( $this->autoblockExemptionList->isExempt( $autoblockIP ) ) {
 			return false;
 		}
 
 		// Allow hooks to cancel the autoblock.
-		if ( !$this->hookRunner->onAbortAutoblock( $target, $parentBlock ) ) {
+		if ( !$this->hookRunner->onAbortAutoblock( $autoblockIP, $parentBlock ) ) {
 			$this->logger->debug( "Autoblock aborted by hook." );
 			return false;
 		}
@@ -1556,7 +1545,7 @@ class DatabaseBlockStore {
 		// It's okay to autoblock. Go ahead and insert/update the block...
 
 		// Do not add a *new* block if the IP is already blocked.
-		$blocks = $this->newLoad( $target, Block::TYPE_IP, false );
+		$blocks = $this->newLoad( $target, false );
 		if ( $blocks ) {
 			foreach ( $blocks as $ipblock ) {
 				// Check if the block is an autoblock and would exceed the user block
@@ -1580,7 +1569,7 @@ class DatabaseBlockStore {
 		$expiry = $this->getAutoblockExpiry( $timestamp, $parentBlock->getExpiry() );
 		$autoblock = new DatabaseBlock( [
 			'wiki' => $this->wikiId,
-			'address' => UserIdentityValue::newAnonymous( $target, $this->wikiId ),
+			'target' => $target,
 			'by' => $blocker,
 			'reason' => $this->getAutoblockReason( $parentBlock ),
 			'decodedTimestamp' => $timestamp,
@@ -1603,7 +1592,7 @@ class DatabaseBlockStore {
 			: false;
 	}
 
-	private function getAutoblockReason( DatabaseBlock $parentBlock ) {
+	private function getAutoblockReason( DatabaseBlock $parentBlock ): string {
 		return wfMessage(
 			'autoblocker',
 			$parentBlock->getTargetName(),

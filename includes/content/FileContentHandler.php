@@ -3,17 +3,20 @@
 namespace MediaWiki\Content;
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
 use SearchEngine;
 use SearchIndexField;
-use WikiPage;
 
 /**
- * Content handler for File: files
+ * Content handler for "File" page content
+ *
  * TODO: this handler is not used directly now,
  * but instead manually called by WikitextHandler.
  * This should be fixed in the future.
+ *
+ * @ingroup Content
  */
 class FileContentHandler extends WikitextContentHandler {
 

@@ -50,6 +50,7 @@
 	"notifications": "Tilkynningar",
 	"tooltip-pt-notifications-alert": "Tilkynningar til {{GENDER:|þín}}",
 	"tooltip-pt-notifications-notice": "Athugasemdir {{GENDER:|þínar}}",
+	"tooltip-pt-notifications": "Tilkynningar til þín",
 	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Fyrirliggjandi notendur",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Nýjir notendur",
 	"echo-specialpage": "Tilkynningar",

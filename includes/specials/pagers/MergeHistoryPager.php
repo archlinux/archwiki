@@ -21,18 +21,18 @@
 
 namespace MediaWiki\Pager;
 
-use ChangeTags;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTags;
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
-use MediaWiki\Xml\Xml;
+use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -43,40 +43,20 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 	/** @inheritDoc */
 	public $mGroupByDate = true;
 
-	/** @var array */
-	public $mConds;
-
-	/** @var int */
-	private $articleID;
-
-	/** @var string */
-	private $maxTimestamp;
-
-	/** @var string */
-	private $maxRevId;
-
-	/** @var string */
-	private $mergePointTimestamp;
+	public array $mConds;
+	private int $articleID;
+	private string $maxTimestamp;
+	private int $maxRevId;
+	private string $mergePointTimestamp;
 
 	/** @var int[] */
-	public $prevId;
+	public array $prevId;
 
 	private LinkBatchFactory $linkBatchFactory;
 	private RevisionStore $revisionStore;
 	private CommentFormatter $commentFormatter;
+	private ChangeTagsStore $changeTagsStore;
 
-	/**
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param RevisionStore $revisionStore
-	 * @param CommentFormatter $commentFormatter
-	 * @param array $conds
-	 * @param PageIdentity $source
-	 * @param PageIdentity $dest
-	 * @param string $mergePointTimestamp
-	 */
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
@@ -84,10 +64,11 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
 		CommentFormatter $commentFormatter,
+		ChangeTagsStore $changeTagsStore,
 		$conds,
 		PageIdentity $source,
 		PageIdentity $dest,
-		$mergePointTimestamp
+		string $mergePointTimestamp
 	) {
 		$this->mConds = $conds;
 		$this->articleID = $source->getId();
@@ -105,7 +86,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 			->where( [ 'rev_timestamp' => $maxtimestamp ] )
 			->caller( __METHOD__ )->fetchField();
 		$this->maxTimestamp = $maxtimestamp;
-		$this->maxRevId = $maxRevId;
+		$this->maxRevId = (int)$maxRevId;
 		$this->mergePointTimestamp = $mergePointTimestamp;
 
 		// Set database before parent constructor to avoid setting it there
@@ -114,20 +95,20 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->revisionStore = $revisionStore;
 		$this->commentFormatter = $commentFormatter;
+		$this->changeTagsStore = $changeTagsStore;
 	}
 
 	protected function doBatchLookups() {
 		# Do a link batch query
 		$this->mResult->seek( 0 );
-		$batch = $this->linkBatchFactory->newLinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 		# Give some pointers to make (last) links
 		$this->prevId = [];
 		$rev_id = null;
 		foreach ( $this->mResult as $row ) {
-			$batch->add( NS_USER, $row->rev_user_text );
-			$batch->add( NS_USER_TALK, $row->rev_user_text );
+			$batch->addUser( new UserIdentityValue( (int)$row->rev_user, $row->rev_user_text ) );
 
-			if ( isset( $rev_id ) ) {
+			if ( $rev_id !== null ) {
 				if ( $rev_id > $row->rev_id ) {
 					$this->prevId[$rev_id] = $row->rev_id;
 				} elseif ( $rev_id < $row->rev_id ) {
@@ -166,9 +147,10 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 		$ts = wfTimestamp( TS_MW, $row->rev_timestamp );
 		$tsWithId = $ts . "|" . $row->rev_id;
-		$checkBox = Xml::radio(
-			'mergepoint', $tsWithId,
-			$this->mergePointTimestamp === $ts || $this->mergePointTimestamp === $tsWithId
+		$checkBox = Html::radio(
+			'mergepoint',
+			$this->mergePointTimestamp === $ts || $this->mergePointTimestamp === $tsWithId,
+			[ 'value' => $tsWithId ]
 		);
 
 		$user = $this->getUser();
@@ -235,7 +217,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 					]
 				)
 			] );
-		MediaWikiServices::getInstance()->getChangeTagsStore()->modifyDisplayQueryBuilder( $queryBuilder, 'revision' );
+		$this->changeTagsStore->modifyDisplayQueryBuilder( $queryBuilder, 'revision' );
 
 		return $queryBuilder->getQueryInfo( 'join_conds' );
 	}

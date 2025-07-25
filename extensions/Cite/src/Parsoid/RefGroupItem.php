@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Cite\Parsoid;
 
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 
 /**
  * Individual item in a {@see RefGroup}.
@@ -20,25 +21,56 @@ class RefGroupItem {
 	 * multiple conflicting definitions.
 	 */
 	public ?string $contentId = null;
-
-	/** Just used for comparison when we have multiples */
-	public ?string $cachedHtml = null;
+	/**
+	 * Used when the content comes from an attribute eg. subreference details.
+	 */
+	public ?Node $externalFragment = null;
 
 	public string $dir = '';
+	/**
+	 * Name of the group (or empty for the default group) which this <ref> belongs to.
+	 */
 	public string $group = '';
-	public int $groupIndex = 1;
-	public int $index = 0;
-	public string $key;
-	public string $id;
-	/** @var array<int,string> */
-	public array $linkbacks = [];
-	public string $name = '';
-	public string $target;
+	/**
+	 * The original name="…" attribute of a <ref>, or null for anonymous, unnamed references.
+	 * Guaranteed to never be empty or "0". These are not valid names.
+	 */
+	public ?string $name = null;
 
-	/** @var Element[] */
+	/**
+	 * Sequence number per {@see $group}, starting from 1. To be used in the footnote marker,
+	 * e.g. "[1]".
+	 */
+	public int $numberInGroup = 1;
+
+	/**
+	 * Sequence number per subref set, starting from 1.  Used in
+	 * hierarchical footnote numbering, eg. "[1.1]".
+	 */
+	public ?int $subrefIndex = null;
+
+	/**
+	 * Global, unique sequence number for each <ref>, no matter which group, starting from 1.
+	 * 0 is invalid. Currently unused.
+	 */
+	public int $globalId;
+
+	/**
+	 * True if this was a main ref artificially split from a main+details in the article.
+	 */
+	public bool $isMainWithDetails = false;
+
+	/**
+	 * @var Element[] Collection of footnote markers that have been generated so far for the same
+	 * reference. Mainly used to track errors and render them in the reference list, instead of next
+	 * to (or instead of) the footnote marker. Can be empty in case of not-yet used or unused
+	 * list-defined references, or sub-reference parents.
+	 */
 	public array $nodes = [];
 
 	/** @var string[] */
 	public array $embeddedNodes = [];
+
+	public int $visibleNodes = 0;
 
 }

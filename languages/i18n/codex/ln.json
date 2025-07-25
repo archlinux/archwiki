@@ -11,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Kokanga",
 	"cdx-label-optional-flag": "(soki olingi)",
 	"cdx-message-dismiss-button-label": "Kokanga",
+	"cdx-popover-close-button-label": "Kokanga",
 	"cdx-search-input-search-button-label": "Koluka",
 	"cdx-table-select-all-label": "Pona milɔngɔ nyonso",
 	"cdx-table-select-row-label": "Pona molongo $1 ya $2",
@@ -27,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Kolakisa ba résultats $1 – $2 ya mingi",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1 – $2 ya mingi",
 	"cdx-table-pagination-status-message-indeterminate-final": "Kolakisa {{PLURAL:$1| suka $1 résultat| $1 ba résultats}}",
-	"cdx-table-pagination-status-message-pending": "Chargement ya ba résultats..."
+	"cdx-table-pagination-status-message-pending": "Chargement ya ba résultats...",
+	"cdx-table-no-data-message": "Ba données ezali te."
 }

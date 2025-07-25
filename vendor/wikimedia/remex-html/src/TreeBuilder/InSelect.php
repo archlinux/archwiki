@@ -8,6 +8,7 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in select" insertion mode
  */
 class InSelect extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->stripNulls(
 			function ( $text, $start, $length, $sourceStart, $sourceLength ) {
@@ -17,6 +18,7 @@ class InSelect extends InsertionMode {
 			$text, $start, $length, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -80,6 +82,7 @@ class InSelect extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -128,6 +131,7 @@ class InSelect extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->dispatcher->inBody->endDocument( $pos );
 	}

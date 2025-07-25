@@ -91,7 +91,7 @@ class SpecsFormatter {
 			// abusefilter-throttle-site, abusefilter-throttle-creationdate, abusefilter-throttle-editcount
 			// abusefilter-throttle-range, abusefilter-throttle-page, abusefilter-throttle-none
 			foreach ( $parameters as &$val ) {
-				if ( strpos( $val, ',' ) !== false ) {
+				if ( str_contains( $val, ',' ) ) {
 					$subGroups = explode( ',', $val );
 					foreach ( $subGroups as &$group ) {
 						$msg = $this->messageLocalizer->msg( "abusefilter-throttle-$group" );

@@ -11,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Luk",
 	"cdx-label-optional-flag": "(valgfri)",
 	"cdx-message-dismiss-button-label": "Luk",
+	"cdx-popover-close-button-label": "Luk",
 	"cdx-search-input-search-button-label": "Søg",
 	"cdx-table-select-all-label": "Vælg alle rækker",
 	"cdx-table-select-row-label": "Vælg række $1 af $2",
@@ -27,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Viser resultat $1–$2 af mange",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1-$2 af mange",
 	"cdx-table-pagination-status-message-indeterminate-final": "Viser {{PLURAL:$1|det sidste $1 resultat|de sidste $1 resultater}}",
-	"cdx-table-pagination-status-message-pending": "Indlæser resultater..."
+	"cdx-table-pagination-status-message-pending": "Indlæser resultater...",
+	"cdx-table-no-data-message": "Der er ingen tilgængelige data."
 }

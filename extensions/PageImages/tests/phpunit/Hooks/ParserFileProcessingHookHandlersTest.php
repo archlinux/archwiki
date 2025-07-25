@@ -2,9 +2,10 @@
 
 namespace PageImages\Tests\Hooks;
 
-use File;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Parser\Parser;
@@ -15,7 +16,6 @@ use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\ParserFileProcessingHookHandlers;
 use PageImages\PageImageCandidate;
 use PageImages\PageImages;
-use RepoGroup;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
@@ -272,6 +272,21 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 				[ 'filename' => 'A.jpg', 'frame' => [ 'class' => 'notpageimage' ] ],
 				0,
 				0,
+				// class="notpageimage"
+				-1000
+			],
+			[
+				[ 'filename' => 'A.jpg', 'fullwidth' => 100, 'frame' => [ 'class' => 'pageimage' ] ],
+				50,
+				1,
+				// width score + ratio score + position score + class="pageimage"
+				106 + 1000
+			],
+			[
+				[ 'filename' => 'A.jpg', 'frame' => [ 'class' => 'pageimage notpageimage' ] ],
+				0,
+				0,
+				// class="pageimage notpageimage" - should be the same as class="notpageimage"
 				-1000
 			],
 		];

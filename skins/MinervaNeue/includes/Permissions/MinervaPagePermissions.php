@@ -124,10 +124,18 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 			if ( $action === self::SWITCH_LANGUAGE ) {
 				return !$this->config->get( MainConfigNames::HideInterlanguageLinks );
 			}
-			// Only the talk page is allowed on the main page provided user is registered.
-			// talk page permission is disabled on mobile for anons
-			// https://phabricator.wikimedia.org/T54165
-			return $action === self::TALK && $this->performer->isRegistered();
+
+			if ( $action === self::TALK ) {
+				// Talk page is allowed on the main page provided user is registered.
+				// Talk page permission is disabled on mobile for anons, T54165
+				return $this->performer->isRegistered();
+			} elseif ( $action === self::HISTORY ) {
+				// History link will be shown on main page diff-view only, T363916
+				return ( $this->title->exists() &&
+					$this->skinOptions->get( SkinOptions::HISTORY_IN_PAGE_ACTIONS ) );
+			}
+
+			return false;
 		}
 
 		if ( $action === self::TALK ) {
