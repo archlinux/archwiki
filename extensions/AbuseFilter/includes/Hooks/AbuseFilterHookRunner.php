@@ -3,12 +3,15 @@
 namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Content\Content;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use RecentChange;
+use MediaWiki\User\UserIdentity;
 
 /**
  * Handle running AbuseFilter's hooks
@@ -17,9 +20,11 @@ use RecentChange;
 class AbuseFilterHookRunner implements
 	AbuseFilterAlterVariablesHook,
 	AbuseFilterBuilderHook,
+	AbuseFilterCanViewProtectedVariablesHook,
 	AbuseFilterComputeVariableHook,
 	AbuseFilterContentToStringHook,
 	AbuseFilterCustomActionsHook,
+	AbuseFilterCustomProtectedVariablesHook,
 	AbuseFilterDeprecatedVariablesHook,
 	AbuseFilterFilterActionHook,
 	AbuseFilterGenerateGenericVarsHook,
@@ -27,17 +32,14 @@ class AbuseFilterHookRunner implements
 	AbuseFilterGenerateUserVarsHook,
 	AbuseFilterGenerateVarsForRecentChangeHook,
 	AbuseFilterInterceptVariableHook,
+	AbuseFilterProtectedVarsAccessLoggerHook,
 	AbuseFilterShouldFilterActionHook,
 	AbuseFilterGetDangerousActionsHook
 {
 	public const SERVICE_NAME = 'AbuseFilterHookRunner';
 
-	/** @var HookContainer */
-	private $hookContainer;
+	private HookContainer $hookContainer;
 
-	/**
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct( HookContainer $hookContainer ) {
 		$this->hookContainer = $hookContainer;
 	}
@@ -222,6 +224,46 @@ class AbuseFilterHookRunner implements
 		$this->hookContainer->run(
 			'AbuseFilterCustomActions',
 			[ &$actions ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onAbuseFilterCustomProtectedVariables( array &$variables ): void {
+		$this->hookContainer->run(
+			'AbuseFilterCustomProtectedVariables',
+			[ &$variables ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onAbuseFilterLogProtectedVariableValueAccess(
+		UserIdentity $performer,
+		string $target,
+		string $action,
+		bool $shouldDebounce,
+		int $timestamp,
+		array $params
+	) {
+		return $this->hookContainer->run(
+			'AbuseFilterLogProtectedVariableValueAccess',
+			[ $performer, $target, $action, $shouldDebounce, $timestamp, $params ],
+			[ 'abortable' => true ]
+		);
+	}
+
+	/** @inheritDoc */
+	public function onAbuseFilterCanViewProtectedVariables(
+		Authority $performer, array $variables, AbuseFilterPermissionStatus $status
+	): void {
+		$this->hookContainer->run(
+			'AbuseFilterCanViewProtectedVariables',
+			[ $performer, $variables, $status ],
 			[ 'abortable' => false ]
 		);
 	}

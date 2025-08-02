@@ -14,12 +14,9 @@
 	"cite_error_ref_numeric_key": "చెల్లని <code>&lt;ref&gt;</code> టాగు; పేరు కేవలం ఒక సంఖ్య అయితే కుదరదు. వివరమైన శీర్షిక వాడండి",
 	"cite_error_ref_no_key": "తెరిచే <code>&lt;ref&gt;</code> ట్యాగు సరిగ్గా లేదు, లేదా దాని పేరు సరైనది కాదు",
 	"cite_error_ref_too_many_keys": "చెల్లని <code>&lt;ref&gt;</code> ట్యాగు; తప్పు పేర్లు, ఉదాహరణకు మరీ ఎక్కువ",
-	"cite_error_ref_nested_extends": "<code>&lt;ref&gt;</code> ట్యాగులను ఒక స్థాయి కంటే లోతుగా విస్తరించే వీలు లేదు",
 	"cite_error_ref_no_input": "చెల్లని <code>&lt;ref&gt;</code> ట్యాగు; పేరు లేని ref లలో తప్పనిసరిగా కంటెంటు ఉండాలి",
 	"cite_error_references_duplicate_key": "చెల్లని <code>&lt;ref&gt;</code> ట్యాగు; \"$1\" అనే పేరును విభిన్న కంటెంటుతో అనేక సార్లు నిర్వచించారు",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> ట్యాగులో చెల్లని పరామితి ఉంది",
-	"cite_error_references_no_backlink_label": "మీ స్వంత బ్యాక్‌లింకు లేబుళ్ళు అయిపోయాయి. [[MediaWiki:Cite references link many format backlink labels]] సందేశంలో మరిన్ని లేబుళ్ళను నిర్వచించుకోండి.",
-	"cite_error_no_link_label_group": "\"$1\"గుంపుకు కస్టమ్ లింకు లేబుళ్ళు అయిపోయాయి. [[MediaWiki:$2]] సందేశంలో ఇంకొన్నిటిని నిర్వచించండి.",
 	"cite_error_references_no_text": "చెల్లని <code>&lt;ref&gt;</code> ట్యాగు; <code>$1</code> అనే పేరుగల ref లలో పాఠ్యమేమీ ఇవ్వలేదు",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> ట్యాగుకు, మూసే <code>&lt;/ref&gt;</code> లేదు.",
 	"cite_error_included_references": "<code>&lt;references&gt;</code> కు మూసివేత ట్యాగు లేదు",
@@ -36,6 +33,9 @@
 	"cite-reference-previews-news": "వార్త మూలం",
 	"cite-reference-previews-web": "అంతర్జాల మూలం",
 	"cite-reference-previews-collapsible-placeholder": "ఈ మూలంలో వున్న చిత్రం మునుజూపు పరిధి దాటుతుంది.",
+	"cite-reference-previews-gadget-conflict-info-navpopups": "మీరు [[$1|నేవిగేషన్ పాపప్స్]] గ్యాడ్జెట్‌ను చేతనం చేసుకున్నారు. అంచేత, ఈ విశేషం చూపించే మునుజూపులు మీకు కనిపించవు. మీకు రిఫరెన్సు మునుజూపులు కనబడవు. మీరు పనిచేస్తున్న వికీని బట్టి, ఈ గాడ్జెట్ పేరు కొద్దిగా భిన్నంగా ఉండవచ్చు. ఈ సమస్య ఇంకా ఉంటే, మీ గాడ్జెట్లు, యూజర్ స్క్రిప్టులను - సార్వత్రికమైన వాటితో సహా - సమీక్షించండి.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "మీరు [[$1|రిఫరెన్స్ టూల్‌టిప్స్]] గ్యాడ్జెట్‌ను చేతనం చేసుకున్నారు, అంచేత మీకు రిఫరెన్సు మునుజూపులు కనబడవు, పేజీ మునుజూపులు మాత్రం కనిపిస్తాయి. మీరు పనిచేస్తున్న వికీని బట్టి, ఈ గాడ్జెట్ పేరు కొద్దిగా భిన్నంగా ఉండవచ్చు. ఈ సమస్య ఇంకా ఉంటే, మీ గాడ్జెట్లు, యూజర్ స్క్రిప్టులను - సార్వత్రికమైన వాటితో సహా - సమీక్షించండి.",
+	"cite-reference-previews-preference-label": "మూలాల మునుజూపులు(పాదసూచికల త్వరిత మునుజూపులు పొందు)",
 	"cite_reference_backlink_symbol": "↑",
 	"cite_references_link_many_and": "&#32;",
 	"cite_references_link_accessibility_label": "పైకి దూకు",
@@ -46,6 +46,5 @@
 	"cite_warning_sectionpreview_no_text": "<code>$1</code> పేరుతో ఉన్న <code>&lt;ref&gt;</code> ట్యాగును మునుజూపులో చూపలేం. ఎందుకంటే అది ప్రస్తుత విభాగానికి బయటైనా ఉండి ఉండాలి, లేదా అసలు దాన్ని నిర్వచించకపోయి అయినా ఉండాలి.",
 	"cite-wikieditor-tool-reference": "మూలాలు",
 	"cite-wikieditor-help-page-references": "మూలాలు",
-	"cite-wikieditor-help-content-reference-description": "సాక్ష్యాలు",
-	"popups-refpreview-user-preference-label": "మూలాల మునుజూపులు(పాదసూచికల త్వరిత మునుజూపులు పొందు)"
+	"cite-wikieditor-help-content-reference-description": "సాక్ష్యాలు"
 }

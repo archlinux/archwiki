@@ -30,6 +30,13 @@ $specialPageAliases['av'] = [
 	'Notifications' => [ 'Уведомления' ],
 ];
 
+/** Azerbaijani (Azərbaycanca) */
+$specialPageAliases['az'] = [
+	'Notifications' => [ 'Bildirişlər' ],
+	'DisplayNotificationsConfiguration' => [ 'BildirişKonfiqurasiyasınıGöstər' ],
+	'NotificationsMarkRead' => [ 'OxunmuşOlaraqİşarələ' ],
+];
+
 /** Western Balochi (بلوچی رخشانی) */
 $specialPageAliases['bgn'] = [
 	'Notifications' => [ 'آگاه_کورتینۆک_ئان' ],

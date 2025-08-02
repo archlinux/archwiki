@@ -176,6 +176,17 @@ ve.ui.MWMediaDialog.static.getImportRules = function () {
 /**
  * @inheritdoc
  */
+ve.ui.MWMediaDialog.prototype.getEscapeAction = function () {
+	const backOrClose = this.actions.get( { flags: [ 'back', 'close' ], visible: true } );
+	if ( backOrClose.length ) {
+		return backOrClose[ 0 ].getAction();
+	}
+	return null;
+};
+
+/**
+ * @inheritdoc
+ */
 ve.ui.MWMediaDialog.prototype.getBodyHeight = function () {
 	// FIXME: This should vary on panel.
 	return 600;
@@ -666,7 +677,7 @@ ve.ui.MWMediaDialog.prototype.buildMediaInfoPanel = function ( imageinfo ) {
 	$thumbContainer
 		.append( $image.prop( 'src', imageinfo.thumburl ) );
 
-	this.$infoPanelWrapper.append(
+	this.$infoPanelWrapper.empty().append(
 		$thumbContainer,
 		$info
 	);
@@ -866,7 +877,6 @@ ve.ui.MWMediaDialog.prototype.onSearchQueryClear = function () {
  * @param {Object} info Image info
  */
 ve.ui.MWMediaDialog.prototype.chooseImageInfo = function ( info ) {
-	this.$infoPanelWrapper.empty();
 	// Switch panels
 	this.selectedImageInfo = info;
 	this.switchPanels( 'imageInfo' );

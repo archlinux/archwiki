@@ -27,18 +27,18 @@ use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Skin\SkinFactory;
+use MediaWiki\Skin\SkinFallback;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\TitleValue;
 use MockPoolCounterFailing;
-use SkinFactory;
-use SkinFallback;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers MediaWiki\Api\ApiParse
+ * @covers \MediaWiki\Api\ApiParse
  */
 class ApiParseTest extends ApiTestCase {
 	use DummyServicesTrait;

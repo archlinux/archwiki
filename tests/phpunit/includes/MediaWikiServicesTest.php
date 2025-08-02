@@ -321,9 +321,13 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotSame( $oldInstance, $newInstance );
 	}
 
-	public function provideGetters() {
+	public static function provideGetters() {
 		$getServiceCases = self::provideGetService();
-		$getterCases = [];
+		$getterCases = [
+			// These are "mis-named" getters that don't follow the standard pattern, so are listed explicitly
+			'getWikiRevisionOldRevisionImporter' => [ 'getWikiRevisionOldRevisionImporter', OldRevisionImporter::class ],
+			'newSearchEngine' => [ 'newSearchEngine', SearchEngine::class ]
+		];
 
 		// All getters should be named just like the service, with "get" added.
 		foreach ( $getServiceCases as $name => $case ) {
@@ -393,8 +397,11 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 
 		foreach ( $names as $name ) {
 			$this->assertTrue( $services->hasService( $name ) );
-			$service = $services->getService( $name );
-			$this->assertIsObject( $service );
+
+			// Check that the service can be instantiated without errors.
+			// Make no assumption about the value returned by the instantiator
+			// as extensions may be putting all manners of values in the container.
+			$services->getService( $name );
 		}
 	}
 

@@ -7,7 +7,6 @@ use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagger;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesExecutorFactory;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
-use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher;
@@ -38,8 +37,6 @@ class FilterRunnerFactory {
 	private $abuseLoggerFactory;
 	/** @var VariablesManager */
 	private $varManager;
-	/** @var VariableGeneratorFactory */
-	private $varGeneratorFactory;
 	/** @var EmergencyCache */
 	private $emergencyCache;
 	/** @var UpdateHitCountWatcher */
@@ -66,7 +63,6 @@ class FilterRunnerFactory {
 	 * @param ConsequencesExecutorFactory $consExecutorFactory
 	 * @param AbuseLoggerFactory $abuseLoggerFactory
 	 * @param VariablesManager $varManager
-	 * @param VariableGeneratorFactory $varGeneratorFactory
 	 * @param EmergencyCache $emergencyCache
 	 * @param UpdateHitCountWatcher $updateHitCountWatcher
 	 * @param EmergencyWatcher $emergencyWatcher
@@ -85,7 +81,6 @@ class FilterRunnerFactory {
 		ConsequencesExecutorFactory $consExecutorFactory,
 		AbuseLoggerFactory $abuseLoggerFactory,
 		VariablesManager $varManager,
-		VariableGeneratorFactory $varGeneratorFactory,
 		EmergencyCache $emergencyCache,
 		UpdateHitCountWatcher $updateHitCountWatcher,
 		EmergencyWatcher $emergencyWatcher,
@@ -103,7 +98,6 @@ class FilterRunnerFactory {
 		$this->consExecutorFactory = $consExecutorFactory;
 		$this->abuseLoggerFactory = $abuseLoggerFactory;
 		$this->varManager = $varManager;
-		$this->varGeneratorFactory = $varGeneratorFactory;
 		$this->emergencyCache = $emergencyCache;
 		$this->updateHitCountWatcher = $updateHitCountWatcher;
 		$this->emergencyWatcher = $emergencyWatcher;
@@ -138,7 +132,6 @@ class FilterRunnerFactory {
 			$this->consExecutorFactory,
 			$this->abuseLoggerFactory,
 			$this->varManager,
-			$this->varGeneratorFactory,
 			$this->emergencyCache,
 			$watchers,
 			new EditStashCache(

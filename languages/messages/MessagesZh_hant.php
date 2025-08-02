@@ -182,6 +182,7 @@ $specialPageAliases = [
 	'Filepath'                   => [ '檔案路徑' ],
 	'GoToInterwiki'              => [ '前往跨wiki頁面' ],
 	'Import'                     => [ '匯入', '匯入頁面' ],
+	'Interwiki'                  => [ '跨wiki', '跨維基' ],
 	'Invalidateemail'            => [ '無效的信箱' ],
 	'JavaScriptTest'             => [ 'JavaScript測試' ],
 	'LinkAccounts'               => [ '連結帳號' ],

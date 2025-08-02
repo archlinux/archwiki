@@ -20,25 +20,29 @@
 
 namespace MediaWiki\User;
 
-use InvalidArgumentException;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Service for looking up UserIdentity
  *
- * @package MediaWiki\User
+ * Default implementation is MediaWiki\User\ActorStore.
+ *
  * @since 1.36
+ * @ingroup User
  */
 interface UserIdentityLookup {
 
 	/**
 	 * Find an identity of a user by $name
 	 *
+	 * This method can't be used to check whether a name is valid, as it returns null both for invalid
+	 * user names, and for valid user names (or IP addresses) that haven't been used on this wiki yet.
+	 * Use UserNameUtils for that purpose.
+	 *
 	 * @param string $name
 	 * @param int $queryFlags one of IDBAccessObject constants
 	 * @return UserIdentity|null
-	 * @throws InvalidArgumentException if non-normalizable actor name is passed.
 	 */
 	public function getUserIdentityByName(
 		string $name,

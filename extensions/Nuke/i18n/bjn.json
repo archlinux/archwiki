@@ -5,7 +5,6 @@
 		]
 	},
 	"nuke": "Pahapusan sabukuan",
-	"nuke-list": "Laman nangini hanyar haja diulah ulih [[Special:Contributions/$1|{{GENDER:$1|$1}}]]; bariakan kumintar wan tikin picikan gasan mahapus laman-laman nangitu.",
 	"nuke-defaultreason": "Pahapusan sabukuan laman-laman nang diulah ulih [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Pahapusan sabukuan laman nang hanyar haja ditambahakan",
 	"nuke-submit-delete": "Hapus nang tapilih",

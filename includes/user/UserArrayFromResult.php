@@ -1,7 +1,5 @@
 <?php
 /**
- * Class to walk into a list of User objects.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,44 +20,31 @@
 
 namespace MediaWiki\User;
 
-use Countable;
 use stdClass;
 use Wikimedia\Rdbms\IResultWrapper;
 
-class UserArrayFromResult extends UserArray implements Countable {
-	/** @var IResultWrapper */
-	public $res;
+/**
+ * @internal Call and type against UserArray instead.
+ */
+class UserArrayFromResult extends UserArray {
 
-	/** @var int */
-	public $key;
+	private IResultWrapper $res;
+	private int $key = 0;
+	private ?User $current = null;
 
-	/** @var User|false */
-	public $current;
-
-	/**
-	 * @param IResultWrapper $res
-	 */
-	public function __construct( $res ) {
+	public function __construct( IResultWrapper $res ) {
 		$this->res = $res;
-		$this->key = 0;
-		$this->setCurrent( $this->res->current() );
+		$this->rewind();
 	}
 
 	/**
-	 * @param stdClass|false $row
+	 * @param stdClass|null|false $row
 	 * @return void
 	 */
 	protected function setCurrent( $row ) {
-		if ( $row === false ) {
-			$this->current = false;
-		} else {
-			$this->current = User::newFromRow( $row );
-		}
+		$this->current = $row instanceof stdClass ? User::newFromRow( $row ) : null;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function count(): int {
 		return $this->res->numRows();
 	}
@@ -73,8 +58,7 @@ class UserArrayFromResult extends UserArray implements Countable {
 	}
 
 	public function next(): void {
-		$row = $this->res->fetchObject();
-		$this->setCurrent( $row );
+		$this->setCurrent( $this->res->fetchObject() );
 		$this->key++;
 	}
 
@@ -84,11 +68,8 @@ class UserArrayFromResult extends UserArray implements Countable {
 		$this->setCurrent( $this->res->current() );
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function valid(): bool {
-		return $this->current !== false;
+		return (bool)$this->current;
 	}
 }
 

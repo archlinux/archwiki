@@ -7,6 +7,7 @@ use DateTimeZone;
 use Exception;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
@@ -18,7 +19,6 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\MWTimestamp;
-use RepoGroup;
 use StringUtils;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -28,50 +28,23 @@ use Wikimedia\RequestTimeout\TimeoutException;
  * @link https://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
  */
 class ParserFunctions {
-	/** @var ExprParser|null */
-	private static $mExprParser = null;
+	private static ?ExprParser $mExprParser = null;
 	/** @var array[][][][] */
-	private static $mTimeCache = [];
-	/** @var int */
-	private static $mTimeChars = 0;
+	private static array $mTimeCache = [];
+	private static int $mTimeChars = 0;
 
 	/** ~10 seconds */
 	private const MAX_TIME_CHARS = 6000;
 
-	/** @var Config */
-	private $config;
+	private Config $config;
+	private HookContainer $hookContainer;
+	private LanguageConverterFactory $languageConverterFactory;
+	private LanguageFactory $languageFactory;
+	private LanguageNameUtils $languageNameUtils;
+	private LinkCache $linkCache;
+	private RepoGroup $repoGroup;
+	private SpecialPageFactory $specialPageFactory;
 
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var LanguageConverterFactory */
-	private $languageConverterFactory;
-
-	/** @var LanguageFactory */
-	private $languageFactory;
-
-	/** @var LanguageNameUtils */
-	private $languageNameUtils;
-
-	/** @var LinkCache */
-	private $linkCache;
-
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var SpecialPageFactory */
-	private $specialPageFactory;
-
-	/**
-	 * @param Config $config
-	 * @param HookContainer $hookContainer
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param LinkCache $linkCache
-	 * @param RepoGroup $repoGroup
-	 * @param SpecialPageFactory $specialPageFactory
-	 */
 	public function __construct(
 		Config $config,
 		HookContainer $hookContainer,
@@ -92,10 +65,7 @@ class ParserFunctions {
 		$this->specialPageFactory = $specialPageFactory;
 	}
 
-	/**
-	 * @return ExprParser
-	 */
-	private static function &getExprParser() {
+	private static function &getExprParser(): ExprParser {
 		if ( self::$mExprParser === null ) {
 			self::$mExprParser = new ExprParser;
 		}
@@ -275,7 +245,8 @@ class ParserFunctions {
 				if ( $defaultFound || $mwDefault->matchStartToEnd( $test ) ) {
 					$default = $valueNode;
 					$defaultFound = false;
-				} # else wrong case, continue
+				}
+				# else wrong case, continue
 			} else {
 				# Multiple input, single output
 				# If the value matches, set a flag and continue
@@ -354,11 +325,12 @@ class ParserFunctions {
 		$newExploded = [];
 
 		foreach ( $exploded as $current ) {
-			if ( $current === '..' ) { // removing one level
+			// removing one level
+			if ( $current === '..' ) {
 				if ( !count( $newExploded ) ) {
 					// attempted to access a node above root node
-					$msg = wfMessage( 'pfunc_rel2abs_invalid_depth', $fullPath )
-						->inContentLanguage()->escaped();
+					$msg = $parser->msg( 'pfunc_rel2abs_invalid_depth', $fullPath )
+						->escaped();
 					return '<strong class="error">' . $msg . '</strong>';
 				}
 				// remove last level from the stack
@@ -373,13 +345,7 @@ class ParserFunctions {
 		return implode( '/', $newExploded );
 	}
 
-	/**
-	 * @param Parser $parser
-	 * @param string $titletext
-	 *
-	 * @return bool
-	 */
-	private function ifexistInternal( Parser $parser, $titletext ): bool {
+	private function ifexistInternal( Parser $parser, string $titletext ): bool {
 		$title = Title::newFromText( $titletext );
 		$this->languageConverterFactory->getLanguageConverter( $parser->getContentLanguage() )
 			->findVariantLink( $titletext, $title, true );
@@ -462,18 +428,10 @@ class ParserFunctions {
 
 	/**
 	 * Used by time() and localTime()
-	 *
-	 * @param Parser $parser
-	 * @param PPFrame $frame
-	 * @param string $format
-	 * @param string $date
-	 * @param string $language
-	 * @param string|bool $local
-	 * @return string
 	 */
 	private function timeCommon(
-		Parser $parser, PPFrame $frame, $format, $date, $language, $local
-	) {
+		Parser $parser, PPFrame $frame, string $format, string $date, string $language, bool $local
+	): string {
 		$this->hookContainer->register(
 			'ParserClearState',
 			static function () {
@@ -490,8 +448,8 @@ class ParserFunctions {
 			$cacheKey = $date;
 			$useTTL = false;
 		}
-		if ( isset( self::$mTimeCache[$format][$cacheKey][$language][$local] ) ) {
-			$cachedVal = self::$mTimeCache[$format][$cacheKey][$language][$local];
+		if ( isset( self::$mTimeCache[$format][$cacheKey][$language][(int)$local] ) ) {
+			$cachedVal = self::$mTimeCache[$format][$cacheKey][$language][(int)$local];
 			if ( $useTTL && $cachedVal[1] !== null ) {
 				$frame->setTTL( $cachedVal[1] );
 			}
@@ -545,24 +503,26 @@ class ParserFunctions {
 		# format the timestamp and return the result
 		if ( $invalidTime ) {
 			$result = '<strong class="error">' .
-				wfMessage( 'pfunc_time_error' )->inContentLanguage()->escaped() .
+				$parser->msg( 'pfunc_time_error' )->escaped() .
 				'</strong>';
 		} else {
 			self::$mTimeChars += strlen( $format );
 			if ( self::$mTimeChars > self::MAX_TIME_CHARS ) {
 				return '<strong class="error">' .
-					wfMessage( 'pfunc_time_too_long' )->inContentLanguage()->escaped() .
+					$parser->msg( 'pfunc_time_too_long' )->escaped() .
 					'</strong>';
 			}
 
-			if ( $ts < 0 ) { // Language can't deal with BC years
+			// Language can't deal with BC years
+			if ( $ts < 0 ) {
 				return '<strong class="error">' .
-					wfMessage( 'pfunc_time_too_small' )->inContentLanguage()->escaped() .
+					$parser->msg( 'pfunc_time_too_small' )->escaped() .
 					'</strong>';
 			}
-			if ( $ts >= 100000000000000 ) { // Language can't deal with years after 9999
+			// Language can't deal with years after 9999
+			if ( $ts >= 100000000000000 ) {
 				return '<strong class="error">' .
-					wfMessage( 'pfunc_time_too_big' )->inContentLanguage()->escaped() .
+					$parser->msg( 'pfunc_time_too_big' )->escaped() .
 					'</strong>';
 			}
 
@@ -570,7 +530,7 @@ class ParserFunctions {
 				$this->normalizeLangCode( $parser, $language ) );
 			$result = $langObject->sprintfDate( $format, $ts, $tz, $ttl );
 		}
-		self::$mTimeCache[$format][$cacheKey][$language][$local] = [ $result, $ttl ];
+		self::$mTimeCache[$format][$cacheKey][$language][(int)$local] = [ $result, $ttl ];
 		if ( $useTTL && $ttl !== null ) {
 			$frame->setTTL( $ttl );
 		}
@@ -579,12 +539,8 @@ class ParserFunctions {
 
 	/**
 	 * Convert an input string to a known language code for time formatting
-	 *
-	 * @param Parser $parser
-	 * @param string $langCode
-	 * @return string
 	 */
-	private function normalizeLangCode( Parser $parser, string $langCode ) {
+	private function normalizeLangCode( Parser $parser, string $langCode ): string {
 		if ( $langCode !== '' && $this->languageNameUtils->isKnownLanguageTag( $langCode ) ) {
 			return $langCode;
 		} else {
@@ -659,14 +615,8 @@ class ParserFunctions {
 
 	/**
 	 * Helper for timef and timefl
-	 *
-	 * @param Parser $parser
-	 * @param PPFrame $frame
-	 * @param array $args
-	 * @param bool $local
-	 * @return string
 	 */
-	private function timefCommon( Parser $parser, PPFrame $frame, array $args, $local ) {
+	private function timefCommon( Parser $parser, PPFrame $frame, array $args, bool $local ): string {
 		$date = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
 		$inputType = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
 
@@ -724,22 +674,18 @@ class ParserFunctions {
 
 	/**
 	 * Verifies parameter is less than max string length.
-	 *
-	 * @param string $text
-	 * @return bool
 	 */
-	private function checkLength( $text ) {
-		return ( mb_strlen( $text ) < $this->config->get( 'PFStringLengthLimit' ) );
+	private function checkLength( string $text ): bool {
+		return mb_strlen( $text ) < $this->config->get( 'PFStringLengthLimit' );
 	}
 
 	/**
 	 * Generates error message. Called when string is too long.
-	 * @return string
 	 */
-	private function tooLongError() {
-		$msg = wfMessage( 'pfunc_string_too_long' )
+	private function tooLongError( Parser $parser ): string {
+		$msg = $parser->msg( 'pfunc_string_too_long' )
 			->numParams( $this->config->get( 'PFStringLengthLimit' ) );
-		return '<strong class="error">' . $msg->inContentLanguage()->escaped() . '</strong>';
+		return '<strong class="error">' . $msg->escaped() . '</strong>';
 	}
 
 	/**
@@ -775,7 +721,7 @@ class ParserFunctions {
 
 		if ( !$this->checkLength( $inStr ) ||
 			!$this->checkLength( $inNeedle ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		if ( $inNeedle === '' ) {
@@ -808,7 +754,7 @@ class ParserFunctions {
 
 		if ( !$this->checkLength( $inStr ) ||
 			!$this->checkLength( $inNeedle ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		if ( $inNeedle === '' ) {
@@ -845,7 +791,7 @@ class ParserFunctions {
 		$inStr = $parser->killMarkers( (string)$inStr );
 
 		if ( !$this->checkLength( $inStr ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		if ( (int)$inLength === 0 ) {
@@ -875,7 +821,7 @@ class ParserFunctions {
 
 		if ( !$this->checkLength( $inStr ) ||
 			!$this->checkLength( $inSubStr ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		if ( $inSubStr === '' ) {
@@ -912,7 +858,7 @@ class ParserFunctions {
 		if ( !$this->checkLength( $inStr ) ||
 			!$this->checkLength( $inReplaceFrom ) ||
 			!$this->checkLength( $inReplaceTo ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		if ( $inReplaceFrom === '' ) {
@@ -942,7 +888,7 @@ class ParserFunctions {
 						$inReplaceTo, $inStr, $limit );
 
 		if ( !$this->checkLength( $result ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		return $result;
@@ -977,7 +923,7 @@ class ParserFunctions {
 
 		if ( !$this->checkLength( $inStr ) ||
 			!$this->checkLength( $inDiv ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		$inDiv = preg_quote( $inDiv, '/' );
@@ -1007,7 +953,7 @@ class ParserFunctions {
 	public function runUrlDecode( Parser $parser, $inStr = '' ) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		if ( !$this->checkLength( $inStr ) ) {
-			return $this->tooLongError();
+			return $this->tooLongError( $parser );
 		}
 
 		return urldecode( $inStr );
@@ -1025,7 +971,7 @@ class ParserFunctions {
 	 *   but with char refs intact
 	 * @return string The trimmed, expanded and entity reference decoded version of the PPNode
 	 */
-	private static function decodeTrimExpand( $obj, PPFrame $frame, &$trimExpanded = '' ) {
+	private static function decodeTrimExpand( $obj, PPFrame $frame, string &$trimExpanded = '' ): string {
 		$expanded = $frame->expand( $obj );
 		$trimExpanded = trim( $expanded );
 		return trim( Sanitizer::decodeCharReferences( $expanded ) );

@@ -67,7 +67,7 @@ class HTMLUserTextField extends HTMLTextField {
 				// Treat hidden users as unregistered if current user can't view them (T309894)
 				!( $user->isHidden() && !( $this->mParent && $this->mParent->getUser()->isAllowed( 'hideuser' ) ) )
 			) ) {
-				return $this->msg( 'htmlform-user-not-exists',  wfEscapeWikiText( $user->getName() ) );
+				return $this->msg( 'htmlform-user-not-exists', wfEscapeWikiText( $user->getName() ) );
 			}
 
 			// check if the user account type matches the account type filter

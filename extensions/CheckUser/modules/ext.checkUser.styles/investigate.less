@@ -1,0 +1,230 @@
+@import 'mediawiki.skin.variables.less';
+
+.mw-datatable {
+	&.ext-checkuser-investigate-table td {
+		vertical-align: top;
+	}
+
+	&.ext-checkuser-investigate-table tr:hover td {
+		background-color: @background-color-base;
+	}
+
+	&.ext-checkuser-investigate-table th {
+		// TODO: Replace by Codex design token.
+		background-color: #eaecf0;
+		border-bottom-width: @border-width-thick;
+	}
+
+	.ext-checkuser-compare-table-cell-target {
+		width: 200px;
+
+		a,
+		.ext-checkuser-compare-table-cell-ip {
+			font-weight: bold;
+		}
+
+		td.ext-checkuser-compare-table-cell-target {
+			// TODO: Replace by Codex design token.
+			background-color: #eaecf0;
+		}
+	}
+
+	.ext-checkuser-investigate-table-cell-interactive {
+		// Leave horizontal space for buttons before they are appended
+		padding-right: 4.5em;
+
+		.ext-checkuser-investigate-table-select {
+			visibility: hidden;
+		}
+
+		&:hover,
+		&:focus,
+		&:focus-within {
+			.ext-checkuser-investigate-table-select {
+				visibility: visible;
+			}
+		}
+	}
+
+	.ext-checkuser-compare-table-cell-user-agent {
+		border-right-width: 0;
+		font-size: @font-size-x-small;
+	}
+
+	.ext-checkuser-compare-table-cell-activity {
+		border-left-width: 0;
+		text-align: right;
+	}
+}
+
+// Leave vertical space for buttons before they are appended
+.ext-checkuser-investigate-table-cell-interactive::before {
+	content: '';
+	float: right;
+	width: 0;
+
+	.ext-checkuser-investigate-table-preliminary-check & {
+		min-height: 2.5em;
+	}
+
+	.ext-checkuser-investigate-table-compare & {
+		min-height: 5em;
+	}
+}
+
+.ext-checkuser-investigate-table-options-container {
+	float: right;
+	width: 3em;
+	margin-right: -4em;
+	text-align: center;
+
+	.oo-ui-menuSelectWidget {
+		text-align: left;
+	}
+}
+
+.ext-checkuser-investigate-table-select.oo-ui-buttonElement.oo-ui-iconElement:first-child {
+	margin-left: 5px;
+}
+
+.ext-checkuser-investigate-table-button-pin.oo-ui-buttonElement,
+.ext-checkuser-investigate-table-select.oo-ui-buttonElement {
+	visibility: hidden;
+}
+
+.ext-checkuser-investigate-table.mw-datatable.ext-checkuser-investigate-table-pinned {
+	.ext-checkuser-investigate-table-row-pinned td,
+	.ext-checkuser-investigate-table-row-pinned-data-match td {
+		background-color: @background-color-warning-subtle;
+		transition: background-color @transition-duration-base;
+
+		&.ext-checkuser-investigate-table-cell-pinned,
+		&.ext-checkuser-investigate-table-cell-pinned-data-match {
+			// Use darker `color` instead of `background-color` to emphasize the cell.
+			background-color: @background-color-content-removed;
+			transition: background-color @transition-duration-base;
+		}
+
+		&:hover,
+		&:focus,
+		&:focus-within {
+			.ext-checkuser-investigate-table-select {
+				visibility: visible;
+			}
+
+			&.ext-checkuser-investigate-table-cell-pinned {
+				.ext-checkuser-investigate-table-button-pin {
+					visibility: visible;
+				}
+			}
+		}
+	}
+}
+
+/* stylelint-disable no-descending-specificity */
+.ext-checkuser-investigate-table.mw-datatable:not( .ext-checkuser-investigate-table-pinned ) {
+	tr {
+		td.ext-checkuser-investigate-active,
+		td:hover,
+		td:focus,
+		td:focus-within {
+			.ext-checkuser-investigate-table-select,
+			.ext-checkuser-investigate-table-button-pin {
+				visibility: visible;
+			}
+		}
+
+		td.ext-checkuser-investigate-table-cell-hover-data-match,
+		td:hover.ext-checkuser-investigate-table-cell-pinnable {
+			// Use darker `color` instead of `background-color` to emphasize the cell.
+			background-color: @background-color-content-removed;
+		}
+	}
+
+	.ext-checkuser-investigate-table-row-hover-data-match,
+	tr:hover {
+		td {
+			background-color: @background-color-warning-subtle;
+		}
+	}
+}
+/* stylelint-enable no-descending-specificity */
+
+.ext-checkuser-investigate-copy-message {
+	max-width: none;
+
+	&.oo-ui-messageWidget.oo-ui-messageWidget-block.oo-ui-flaggedElement-notice {
+		// TODO: Progressive colors should only be used for interactive elements.
+		background-color: @background-color-progressive-subtle;
+		border-color: @border-color-progressive;
+	}
+
+	.mw-widget-copyTextLayout.oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top,
+	.mw-widget-copyTextLayout > .oo-ui-fieldLayout-body > .oo-ui-fieldLayout-field,
+	.oo-ui-textInputWidget {
+		max-width: none;
+	}
+
+	&.oo-ui-messageWidget .oo-ui-labelElement-label {
+		display: inline-block;
+	}
+
+	.oo-ui-buttonWidget {
+		float: right;
+		margin-right: 0;
+		margin-top: -5px;
+	}
+}
+
+.mw-special-Investigate {
+	.ext-checkuser-investigate-indicators.oo-ui-buttonGroupWidget {
+		top: -2px;
+		margin-right: 4px;
+	}
+
+	.ext-checkuser-investigate-subtitle-fieldset {
+		// TODO: Progressive colors should only be used for interactive elements.
+		background-color: @background-color-progressive-subtle;
+		padding: 10px;
+
+		.oo-ui-fieldLayout.oo-ui-labelElement.oo-ui-fieldLayout-align-top > .oo-ui-fieldLayout-body > .oo-ui-fieldLayout-header,
+		.oo-ui-tagMultiselectWidget {
+			max-width: none;
+		}
+	}
+
+	.ext-checkuser-investigate-subtitle-block-button,
+	.ext-checkuser-investigate-subtitle-continue-button,
+	.ext-checkuser-investigate-subtitle-cancel-button {
+		float: right;
+		margin-left: 10px;
+	}
+
+	// Apply the text colors to the links.
+	.oo-ui-tabOptionWidget a {
+		color: inherit;
+
+		&:hover,
+		&:focus {
+			text-decoration: none;
+		}
+	}
+
+	// Seperate the tabs from the table
+	.oo-ui-menuLayout-menu {
+		margin-bottom: 1em;
+	}
+
+	.oo-ui-messageWidget {
+		margin-top: 1em;
+		margin-bottom: 1em;
+	}
+
+	.guider_overlay { /* stylelint-disable-line selector-class-pattern */
+		opacity: 0.2;
+	}
+}
+
+.ext-checkuser-investigate-timeline-row-title {
+	unicode-bidi: embed;
+}

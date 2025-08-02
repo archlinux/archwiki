@@ -70,6 +70,7 @@
 	"notifications": "Agahdarî",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Agahdariyên}} te",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Agahdariyên}} te",
+	"tooltip-pt-notifications": "Agahdarîyên te",
 	"echo-displaynotificationsconfiguration": "Mîhengên Agahdariyan nîşan bide",
 	"echo-displaynotificationsconfiguration-summary": "Ev giştnêrîneke ku nîşan dide ka Agahdarî li ser vê wîkiyê çawa hatine mîhengkirin.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Agahdarî li gor kategoriyan",

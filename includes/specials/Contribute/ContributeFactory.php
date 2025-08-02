@@ -21,30 +21,23 @@
 namespace MediaWiki\Specials\Contribute;
 
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Specials\Contribute\Card\ContributeCard;
 use MediaWiki\Specials\Contribute\Card\ContributeCardActionLink;
 use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
-use Skin;
 
 class ContributeFactory {
 
 	private MessageLocalizer $localizer;
 	private HookRunner $hookRunner;
 
-	/**
-	 * @param MessageLocalizer $localizer
-	 * @param HookRunner $hookRunner
-	 */
 	public function __construct( MessageLocalizer $localizer, HookRunner $hookRunner ) {
 		$this->localizer = $localizer;
 		$this->hookRunner = $hookRunner;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getCards(): array {
 		$cards = [];
 

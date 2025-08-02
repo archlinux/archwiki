@@ -19,7 +19,7 @@
 namespace MediaWiki\Extension\OATHAuth;
 
 use InvalidArgumentException;
-use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 use ReflectionClass;
 
 /**
@@ -28,7 +28,7 @@ use ReflectionClass;
  * @ingroup Extensions
  */
 class OATHUser {
-	private User $user;
+	private UserIdentity $user;
 	private int $centralId;
 
 	/** @var IAuthKey[] */
@@ -37,18 +37,15 @@ class OATHUser {
 
 	/**
 	 * Constructor. Can't be called directly. Use OATHUserRepository::findByUser instead.
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param int $centralId
 	 */
-	public function __construct( User $user, int $centralId ) {
+	public function __construct( UserIdentity $user, int $centralId ) {
 		$this->user = $user;
 		$this->centralId = $centralId;
 	}
 
-	/**
-	 * @return User
-	 */
-	public function getUser(): User {
+	public function getUser(): UserIdentity {
 		return $this->user;
 	}
 
@@ -113,6 +110,7 @@ class OATHUser {
 	 * Gets the module instance associated with this user
 	 *
 	 * @return IModule|null
+	 * @deprecated Use {@link IAuthKey::getModule()} instead
 	 */
 	public function getModule() {
 		return $this->module;
@@ -122,6 +120,7 @@ class OATHUser {
 	 * Sets the module instance associated with this user
 	 *
 	 * @param IModule|null $module
+	 * @internal
 	 */
 	public function setModule( ?IModule $module = null ) {
 		$this->module = $module;

@@ -6,8 +6,8 @@ mw.hook( 'wikiEditor.toolbarReady' ).add( function ( $textarea ) {
 		return;
 	}
 
-	var RealtimePreview = require( './RealtimePreview.js' );
-	var realtimePreview = new RealtimePreview();
+	const RealtimePreview = require( './RealtimePreview.js' );
+	const realtimePreview = new RealtimePreview();
 	$textarea.wikiEditor( 'addToToolbar', {
 		section: 'secondary',
 		group: 'default',

@@ -30,8 +30,8 @@ namespace MediaWiki\User;
  * in the cache, not keys, and evict them alongside with all their indexes.
  *
  * @since 1.37
- * @internal for use by ActorStore
- * @package MediaWiki\User
+ * @internal For use by ActorStore
+ * @ingroup User
  */
 class ActorCache {
 
@@ -99,10 +99,6 @@ class ActorCache {
 		$this->cache[self::KEY_USER_NAME][$actor->getName()] = $value;
 	}
 
-	/**
-	 * Remove $actor from cache.
-	 * @param UserIdentity $actor
-	 */
 	public function remove( UserIdentity $actor ) {
 		$oldByName = $this->cache[self::KEY_USER_NAME][$actor->getName()] ?? null;
 		$oldByUserId = $this->cache[self::KEY_USER_ID][$actor->getId( $actor->getWikiId() )] ?? null;

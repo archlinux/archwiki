@@ -79,6 +79,7 @@ $specialPageAliases = [
 	'Filepath'                  => [ 'مسار_ملف' ],
 	'GoToInterwiki'             => [ 'روح_للانترويكى' ],
 	'Import'                    => [ 'استوراد' ],
+	'Interwiki'                 => [ 'إنترويكى' ],
 	'Invalidateemail'           => [ 'تعطيل_الايميل' ],
 	'JavaScriptTest'            => [ 'تجربه_جافا_سكريبت' ],
 	'LinkAccounts'              => [ 'توصيل_الحسابات' ],
@@ -252,6 +253,8 @@ $magicWords = [
 	'img_width'                 => [ '1', '$1بك', '$1عن', '$1px' ],
 	'index'                     => [ '1', '__فهرسة__', '__INDEX__' ],
 	'int'                       => [ '0', 'محتوى:', 'INT:' ],
+	'interlanguagelink'         => [ '1', '#وصله_بين_اللغات', '#رابط_بين_اللغات', '#interlanguagelink' ],
+	'interwikilink'             => [ '1', '#وصلة_انترويكى', '#رابط_انترويكى', '#interwikilink' ],
 	'language'                  => [ '0', '#لغة', '#LANGUAGE' ],
 	'language_option_bcp47'     => [ '1', 'بى_سى_بى_47', 'bcp47' ],
 	'lc'                        => [ '0', 'صغير:', 'LC:' ],
@@ -375,3 +378,5 @@ $separatorTransformTable = [
 	'.' => '.',
 	',' => ',',
 ];
+
+$numberingSystem = 'latn';

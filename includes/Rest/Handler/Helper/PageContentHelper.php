@@ -59,8 +59,8 @@ class PageContentHelper {
 	protected TitleFormatter $titleFormatter;
 	protected PageLookup $pageLookup;
 	private TitleFactory $titleFactory;
-	private IConnectionProvider $connectionProvider;
-	private ChangeTagsStore $changeTagStore;
+	private IConnectionProvider $dbProvider;
+	private ChangeTagsStore $changeTagsStore;
 
 	/** @var Authority|null */
 	protected $authority = null;
@@ -83,16 +83,16 @@ class PageContentHelper {
 		TitleFormatter $titleFormatter,
 		PageLookup $pageLookup,
 		TitleFactory $titleFactory,
-		IConnectionProvider $connectionProvider,
-		ChangeTagsStore $changeTagStore
+		IConnectionProvider $dbProvider,
+		ChangeTagsStore $changeTagsStore
 	) {
 		$this->options = $options;
 		$this->revisionLookup = $revisionLookup;
 		$this->titleFormatter = $titleFormatter;
 		$this->pageLookup = $pageLookup;
 		$this->titleFactory = $titleFactory;
-		$this->connectionProvider = $connectionProvider;
-		$this->changeTagStore = $changeTagStore;
+		$this->dbProvider = $dbProvider;
+		$this->changeTagsStore = $changeTagsStore;
 	}
 
 	/**
@@ -111,9 +111,6 @@ class PageContentHelper {
 		return $this->parameters['title'] ?? null;
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	public function getPage(): ?ExistingPageRecord {
 		if ( $this->pageRecord === false ) {
 			$titleText = $this->getTitleText();
@@ -202,9 +199,6 @@ class PageContentHelper {
 		return $content;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isAccessible(): bool {
 		$page = $this->getPageIdentity();
 		return $page && $this->authority->probablyCan( 'read', $page );
@@ -227,9 +221,6 @@ class PageContentHelper {
 		return '"' . sha1( $revisionTag ) . '"';
 	}
 
-	/**
-	 * @return string|null
-	 */
 	public function getLastModified(): ?string {
 		if ( !$this->isAccessible() ) {
 			return null;
@@ -244,16 +235,11 @@ class PageContentHelper {
 
 	/**
 	 * Checks whether content exists. Permission checks are not considered.
-	 *
-	 * @return bool
 	 */
 	public function hasContent(): bool {
 		return $this->useDefaultSystemMessage() || (bool)$this->getPage();
 	}
 
-	/**
-	 * @return array
-	 */
 	public function constructMetadata(): array {
 		$revision = $this->getRevisionRecordForMetadata();
 
@@ -266,8 +252,7 @@ class PageContentHelper {
 				'id' => $revision->getId(),
 				'timestamp' => wfTimestampOrNull( TS_ISO_8601, $revision->getTimestamp() )
 			],
-			'content_model' => $revision->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )
-				->getModel(),
+			'content_model' => $revision->getMainContentModel(),
 			'license' => [
 				'url' => $this->options->get( MainConfigNames::RightsUrl ),
 				'title' => $this->options->get( MainConfigNames::RightsText )
@@ -275,17 +260,14 @@ class PageContentHelper {
 		];
 	}
 
-	/**
-	 * @return array
-	 */
 	public function constructRestbaseCompatibleMetadata(): array {
 		$revision = $this->getRevisionRecordForMetadata();
 
 		$page = $revision->getPage();
 		$title = $this->titleFactory->newFromPageIdentity( $page );
 
-		$tags = $this->changeTagStore->getTags(
-			$this->connectionProvider->getReplicaDatabase(),
+		$tags = $this->changeTagsStore->getTags(
+			$this->dbProvider->getReplicaDatabase(),
 			null, $revision->getId(), null
 		);
 
@@ -334,13 +316,27 @@ class PageContentHelper {
 				Handler::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-page-content-title' ),
 			],
 			'redirect' => [
 				Handler::PARAM_SOURCE => 'query',
-				ParamValidator::PARAM_TYPE => [ 'no' ],
+				ParamValidator::PARAM_TYPE => 'boolean',
 				ParamValidator::PARAM_REQUIRED => false,
+				ParamValidator::PARAM_DEFAULT => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-page-content-redirect' ),
 			]
 		];
+	}
+
+	/**
+	 * Whether the handler is allowed to follow redirects, according to the
+	 * request parameters.
+	 *
+	 * Handlers that can follow wiki redirects can use this to give clients
+	 * control over the redirect handling behavior.
+	 */
+	public function getRedirectsAllowed(): bool {
+		return $this->parameters['redirect'] ?? true;
 	}
 
 	/**
@@ -363,16 +359,11 @@ class PageContentHelper {
 	/**
 	 * If the page is a system message page. When the content gets
 	 * overridden to create an actual page, this method returns false.
-	 *
-	 * @return bool
 	 */
 	public function useDefaultSystemMessage(): bool {
 		return $this->getDefaultSystemMessage() !== null && $this->getPage() === null;
 	}
 
-	/**
-	 * @return Message|null
-	 */
 	public function getDefaultSystemMessage(): ?Message {
 		$title = Title::newFromText( $this->getTitleText() );
 

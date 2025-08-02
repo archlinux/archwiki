@@ -45,13 +45,18 @@ class Search {
 	 * @param array $namespaces
 	 * @param string|null $category
 	 * @param string|null $prefix
-	 * @param int|null $pageLimit
+	 * @param int $pageLimit
 	 * @param bool $use_regex
 	 * @return IResultWrapper Resulting rows
 	 */
 	public function doSearchQuery(
-		$search, $namespaces, $category, $prefix, $pageLimit, $use_regex = false
-	) {
+		string $search,
+		array $namespaces,
+		?string $category,
+		?string $prefix,
+		int $pageLimit,
+		bool $use_regex = false
+	): IResultWrapper {
 		$dbr = $this->loadBalancer->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_id', 'page_namespace', 'page_title', 'old_text', 'slot_role_id' ] )
@@ -67,9 +72,6 @@ class Search {
 			$queryBuilder->where( $dbr->expr( 'old_text', IExpression::LIKE, new LikeValue( $any, $search, $any ) ) );
 		}
 		$queryBuilder->andWhere( [ 'page_namespace' => $namespaces ] );
-		if ( $pageLimit === null || $pageLimit === '' ) {
-			$pageLimit = $this->config->get( 'ReplaceTextResultsLimit' );
-		}
 		self::categoryCondition( $category, $queryBuilder );
 		$this->prefixCondition( $prefix, $dbr, $queryBuilder );
 		return $queryBuilder->orderBy( [ 'page_namespace', 'page_title' ] )
@@ -78,25 +80,20 @@ class Search {
 			->fetchResultSet();
 	}
 
-	/**
-	 * @param string|null $category
-	 * @param SelectQueryBuilder $queryBuilder
-	 */
-	public static function categoryCondition( $category, SelectQueryBuilder $queryBuilder ) {
-		if ( strval( $category ) !== '' ) {
+	private static function categoryCondition( ?string $category, SelectQueryBuilder $queryBuilder ) {
+		if ( $category !== null && $category !== '' ) {
 			$category = Title::newFromText( $category )->getDbKey();
 			$queryBuilder->join( 'categorylinks', null, 'page_id = cl_from' )
 				->where( [ 'cl_to' => $category ] );
 		}
 	}
 
-	/**
-	 * @param string|null $prefix
-	 * @param IReadableDatabase $dbr
-	 * @param SelectQueryBuilder $queryBuilder
-	 */
-	private function prefixCondition( $prefix, IReadableDatabase $dbr, SelectQueryBuilder $queryBuilder ) {
-		if ( strval( $prefix ) === '' ) {
+	private function prefixCondition(
+		?string $prefix,
+		IReadableDatabase $dbr,
+		SelectQueryBuilder $queryBuilder
+	): void {
+		if ( $prefix === null || $prefix === '' ) {
 			return;
 		}
 
@@ -105,7 +102,6 @@ class Search {
 			$prefix = $title->getDbKey();
 		}
 		$any = $dbr->anyString();
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable $prefix is checked for null
 		$queryBuilder->where( $dbr->expr( 'page_title', IExpression::LIKE, new LikeValue( $prefix, $any ) ) );
 	}
 
@@ -115,7 +111,7 @@ class Search {
 	 * @param string $regex
 	 * @return string query condition for regex
 	 */
-	public static function regexCond( $dbr, $column, $regex ) {
+	private static function regexCond( IReadableDatabase $dbr, string $column, string $regex ): string {
 		if ( $dbr->getType() == 'postgres' ) {
 			$cond = "$column ~ ";
 		} else {
@@ -130,18 +126,18 @@ class Search {
 	 * @param array $namespaces
 	 * @param string|null $category
 	 * @param string|null $prefix
-	 * @param int|null $pageLimit
+	 * @param int $pageLimit
 	 * @param bool $use_regex
 	 * @return IResultWrapper Resulting rows
 	 */
 	public function getMatchingTitles(
-		$str,
-		$namespaces,
-		$category,
-		$prefix,
-		$pageLimit,
-		$use_regex = false
-	) {
+		string $str,
+		array $namespaces,
+		?string $category,
+		?string $prefix,
+		int $pageLimit,
+		bool $use_regex = false
+	): IResultWrapper {
 		$dbr = $this->loadBalancer->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_title', 'page_namespace' ] )
@@ -154,9 +150,6 @@ class Search {
 			$queryBuilder->where( $dbr->expr( 'page_title', IExpression::LIKE, new LikeValue( $any, $str, $any ) ) );
 		}
 		$queryBuilder->andWhere( [ 'page_namespace' => $namespaces ] );
-		if ( $pageLimit === null || $pageLimit === '' ) {
-			$pageLimit = $this->config->get( 'ReplaceTextResultsLimit' );
-		}
 		self::categoryCondition( $category, $queryBuilder );
 		$this->prefixCondition( $prefix, $dbr, $queryBuilder );
 		return $queryBuilder->orderBy( [ 'page_namespace', 'page_title' ] )
@@ -167,13 +160,13 @@ class Search {
 
 	/**
 	 * Do a replacement on a string.
-	 * @param string $text
-	 * @param string $search
-	 * @param string $replacement
-	 * @param bool $regex
-	 * @return string
 	 */
-	public static function getReplacedText( $text, $search, $replacement, $regex ) {
+	public static function getReplacedText(
+		string $text,
+		string $search,
+		string $replacement,
+		bool $regex
+	): string {
 		if ( $regex ) {
 			$escapedSearch = addcslashes( $search, '/' );
 			return preg_replace( "/$escapedSearch/Uu", $replacement, $text );
@@ -184,13 +177,13 @@ class Search {
 
 	/**
 	 * Do a replacement on a title.
-	 * @param Title $title
-	 * @param string $search
-	 * @param string $replacement
-	 * @param bool $regex
-	 * @return Title|null
 	 */
-	public static function getReplacedTitle( Title $title, $search, $replacement, $regex ) {
+	public static function getReplacedTitle(
+		Title $title,
+		string $search,
+		string $replacement,
+		bool $regex
+	): ?Title {
 		$oldTitleText = $title->getText();
 		$newTitleText = self::getReplacedText( $oldTitleText, $search, $replacement, $regex );
 		return Title::makeTitleSafe( $title->getNamespace(), $newTitleText );

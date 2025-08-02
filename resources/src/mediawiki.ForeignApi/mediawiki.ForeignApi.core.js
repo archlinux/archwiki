@@ -5,8 +5,9 @@ module.exports = ( function () {
 	 * an object like {@link mw.Api}, but automatically handle everything required to communicate
 	 * with another MediaWiki wiki via cross-origin requests (CORS).
 	 *
-	 * The foreign wiki must be configured to accept requests from the current wiki. See
-	 * <https://www.mediawiki.org/wiki/Manual:$wgCrossSiteAJAXdomains> for details.
+	 * The foreign wiki must be configured to accept requests from the current wiki.
+	 * For details, see [$wgCrossSiteAJAXdomains](https://www.mediawiki.org/wiki/Manual:$wgCrossSiteAJAXdomains)
+	 * and [$wgRestAllowCrossOriginCookieAuth](https://www.mediawiki.org/wiki/Manual:$wgRestAllowCrossOriginCookieAuth).
 	 * ```
 	 * const api = new mw.ForeignApi( 'https://commons.wikimedia.org/w/api.php' );
 	 * api.get( {
@@ -112,7 +113,7 @@ module.exports = ( function () {
 			let url = ( ajaxOptions && ajaxOptions.url ) || this.defaults.ajax.url;
 			const origin = ( parameters && parameters.origin ) || this.defaults.parameters.origin;
 			if ( origin !== undefined ) {
-				url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' ) +
+				url += ( url.includes( '?' ) ? '&' : '?' ) +
 					'origin=' + encodeURIComponent( origin );
 			}
 			newAjaxOptions = Object.assign( {}, ajaxOptions, { url: url } );

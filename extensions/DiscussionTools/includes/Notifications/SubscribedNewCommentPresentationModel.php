@@ -142,7 +142,7 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 			$viewChangesLink,
 		];
 
-		/** @var SubscriptionStore $parser */
+		/** @var SubscriptionStore $subscriptionStore */
 		$subscriptionStore = MediaWikiServices::getInstance()->getService( 'DiscussionTools.SubscriptionStore' );
 		$items = $subscriptionStore->getSubscriptionItemsForUser(
 			$this->getUser(),

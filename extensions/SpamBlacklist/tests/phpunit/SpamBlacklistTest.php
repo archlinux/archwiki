@@ -5,6 +5,7 @@ use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
 use MediaWiki\Extension\SpamBlacklist\SpamBlacklist;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Article;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;

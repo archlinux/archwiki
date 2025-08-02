@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Kizule",
+			"Milicevic01",
 			"Prevodim",
-			"Zoranzoki21",
-			"Milicevic01"
+			"Zoranzoki21"
 		]
 	},
 	"apihelp-query+extracts-summary": "Враћа сажетке датих страница у облику чистог текста или ограниченог HTML-а.",

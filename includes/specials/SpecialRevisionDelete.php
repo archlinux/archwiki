@@ -20,25 +20,24 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
-use File;
-use LogEventsList;
-use LogPage;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
-use PermissionsError;
-use RepoGroup;
 use RevDelList;
 use RevisionDeleter;
-use UserBlockedError;
 
 /**
  * Special page allowing users with the appropriate permissions to view
@@ -127,12 +126,6 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		],
 	];
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param PermissionManager $permissionManager
-	 * @param RepoGroup $repoGroup
-	 */
 	public function __construct( PermissionManager $permissionManager, RepoGroup $repoGroup ) {
 		parent::__construct( 'Revisiondelete' );
 
@@ -382,7 +375,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 							'token' => $user->getEditToken( $archiveName ),
 						] )
 					],
-					Xml::submitButton( $this->msg( 'revdelete-show-file-submit' )->text() )
+					Html::submitButton( $this->msg( 'revdelete-show-file-submit' )->text() )
 				)
 			);
 
@@ -555,7 +548,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 					[],
 					[ 'action' => 'edit' ]
 				);
-				$htmlForm->setPostHtml( Xml::tags( 'p', [ 'class' => 'mw-revdel-editreasons' ], $link ) );
+				$htmlForm->setPostHtml( Html::rawElement( 'p', [ 'class' => 'mw-revdel-editreasons' ], $link ) );
 			}
 			$out->addHTML( $htmlForm->getHTML( false ) );
 		}
@@ -704,6 +697,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		// Messages: revdelete-failure, logdelete-failure
 		$out = $this->getOutput();
 		$out->setPageTitleMsg( $this->msg( 'actionfailed' ) );
+		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		$out->addHTML(
 			Html::errorBox(
 				$out->parseAsContent(

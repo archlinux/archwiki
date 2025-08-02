@@ -5,7 +5,6 @@ namespace MediaWiki\Maintenance;
 use Exception;
 use LCStoreNull;
 use LogicException;
-use Maintenance;
 use MediaWiki;
 use MediaWiki\Config\Config;
 use MediaWiki\Deferred\DeferredUpdates;
@@ -51,11 +50,7 @@ class MaintenanceRunner {
 
 	/** @var bool */
 	private $runFromWrapper = false;
-
-	/** @var bool */
 	private bool $withoutLocalSettings = false;
-
-	/** @var ?Config */
 	private ?Config $config = null;
 
 	/**
@@ -69,7 +64,7 @@ class MaintenanceRunner {
 		$this->addDefaultParams();
 	}
 
-	private function getConfig() {
+	private function getConfig(): Config {
 		if ( $this->config === null ) {
 			$this->config = $this->getServiceContainer()->getMainConfig();
 		}
@@ -227,7 +222,7 @@ class MaintenanceRunner {
 		}
 	}
 
-	private static function isAbsolutePath( $path ) {
+	private static function isAbsolutePath( string $path ): bool {
 		if ( str_starts_with( $path, '/' ) ) {
 			return true;
 		}
@@ -439,8 +434,6 @@ class MaintenanceRunner {
 
 	/**
 	 * MW_FINAL_SETUP_CALLBACK handler, for setting up the Maintenance object.
-	 *
-	 * @param SettingsBuilder $settings
 	 */
 	public function setup( SettingsBuilder $settings ) {
 		// NOTE: this has to happen after the autoloader has been initialized.
@@ -494,8 +487,6 @@ class MaintenanceRunner {
 
 	/**
 	 * Returns the maintenance script name to show in the help message.
-	 *
-	 * @return string
 	 */
 	public function getName(): string {
 		// Once one of the init methods was called, getArg( 0 ) should always
@@ -739,9 +730,6 @@ class MaintenanceRunner {
 		exit( $exitCode );
 	}
 
-	/**
-	 * @param string $msg
-	 */
 	protected function error( string $msg ) {
 		// Print to stderr if possible, don't mix it in with stdout output.
 		if ( defined( 'STDERR' ) ) {
@@ -820,7 +808,8 @@ class MaintenanceRunner {
 		$profiler->logData();
 		$profiler->logDataPageOutputOnly();
 
-		MediaWiki::emitBufferedStatsdData(
+		MediaWiki::emitBufferedStats(
+			$this->getServiceContainer()->getStatsFactory(),
 			$this->getServiceContainer()->getStatsdDataFactory(),
 			$this->getConfig()
 		);

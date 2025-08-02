@@ -51,7 +51,7 @@ class StandaloneInterpreterTest extends LuaInterpreterTestBase {
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( ScribuntoException $ex ) {
 			$this->assertSame( 'scribunto-luastandalone-exited', $ex->getMessageName() );
-			$this->assertSame( [ '[UNKNOWN]', 42 ], $ex->messageArgs );
+			$this->assertSame( [ '(unknown code location)', 42 ], $ex->messageArgs );
 		}
 	}
 
@@ -64,7 +64,7 @@ class StandaloneInterpreterTest extends LuaInterpreterTestBase {
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( ScribuntoException $ex ) {
 			$this->assertSame( 'scribunto-luastandalone-signal', $ex->getMessageName() );
-			$this->assertSame( [ '[UNKNOWN]', 15 ], $ex->messageArgs );
+			$this->assertSame( [ '(unknown code location)', 15 ], $ex->messageArgs );
 		}
 	}
 

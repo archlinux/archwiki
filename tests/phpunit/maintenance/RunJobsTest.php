@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Tests\Maintenance;
 
+use MediaWiki\JobQueue\Jobs\NullJob;
 use MediaWiki\Json\FormatJson;
-use NullJob;
 use RunJobs;
 
 /**
- * @covers RunJobs
+ * @covers \RunJobs
  * @group Database
  * @author Dreamy Jazz
  */

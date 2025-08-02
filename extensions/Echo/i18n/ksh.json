@@ -42,6 +42,7 @@
 	"notifications": "Benohreeschtejonge",
 	"tooltip-pt-notifications-alert": "Ding Benohreeschtejonge",
 	"tooltip-pt-notifications-notice": "Ding Benohreeschtejonge{{GENDER:|}}",
+	"tooltip-pt-notifications": "Nohreeschte aan Desch",
 	"echo-displaynotificationsconfiguration": "Zeijsch de Enschtällonge för de Meddeijlonge",
 	"echo-displaynotificationsconfiguration-summary": "Heh küdd en Övversesch, wi de Meddeijlonge en heh däm Wikki enjeschtallt sin.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Meddeijlonge noh Zoote",

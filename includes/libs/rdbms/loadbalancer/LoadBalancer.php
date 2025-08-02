@@ -19,20 +19,19 @@
  */
 namespace Wikimedia\Rdbms;
 
-use ArrayUtils;
 use InvalidArgumentException;
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
 use Throwable;
 use UnexpectedValueException;
+use Wikimedia\ArrayUtils\ArrayUtils;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\ScopedCallback;
-use Wikimedia\Stats\NullStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @see ILoadBalancer
@@ -50,14 +49,16 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 	/** @var TransactionProfiler */
 	private $trxProfiler;
-	/** @var StatsdDataFactoryInterface */
-	private $statsd;
+	/** @var StatsFactory */
+	private $statsFactory;
 	/** @var LoggerInterface */
 	private $logger;
 	/** @var callable Exception logger */
 	private $errorLogger;
 	/** @var DatabaseDomain Local DB domain ID and default for new connections */
 	private $localDomain;
+	/** @var bool Whether this PHP instance is for a CLI script */
+	private $cliMode;
 
 	/** @var array<string,array<int,Database[]>> Map of (connection pool => server index => Database[]) */
 	private $conns;
@@ -82,8 +83,8 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	/** @var bool[] Map of (domain => whether to use "temp tables only" mode) */
 	private $tempTablesOnlyMode = [];
 
-	/** @var string|false Explicit DBO_TRX transaction round active or false if none */
-	private $trxRoundId = false;
+	/** @var string|null Active explicit transaction round owner or false if none */
+	private $trxRoundFname = null;
 	/** @var string Stage of the current transaction round in the transaction round life-cycle */
 	private $trxRoundStage = self::ROUND_CURSORY;
 	/** @var int[] The group replica server indexes keyed by group */
@@ -195,7 +196,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		$this->logger = $params['logger'] ?? new NullLogger();
 
 		$this->trxProfiler = $params['trxProfiler'] ?? new TransactionProfiler();
-		$this->statsd = $params['statsdDataFactory'] ?? new NullStatsdDataFactory();
+		$this->statsFactory = $params['statsFactory'] ?? StatsFactory::newNull();
 
 		// Set up LoadMonitor
 		$loadMonitorConfig = $params['loadMonitor'] ?? [ 'class' => LoadMonitorNull::class ];
@@ -209,9 +210,13 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			$class = $compat[$class];
 		}
 		$this->loadMonitor = new $class(
-			$this, $this->srvCache, $this->wanCache, $loadMonitorConfig );
-		$this->loadMonitor->setLogger( $this->logger );
-		$this->loadMonitor->setStatsdDataFactory( $this->statsd );
+			$this,
+			$this->srvCache,
+			$this->wanCache,
+			$this->logger,
+			$this->statsFactory,
+			$loadMonitorConfig
+		);
 
 		if ( isset( $params['chronologyProtector'] ) ) {
 			$this->chronologyProtector = $params['chronologyProtector'];
@@ -225,11 +230,13 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			}
 		}
 
+		$this->cliMode = $params['cliMode'] ?? ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' );
+
 		$group = $params['defaultGroup'] ?? self::GROUP_GENERIC;
 		$this->defaultGroup = isset( $this->groupLoads[ $group ] ) ? $group : self::GROUP_GENERIC;
 	}
 
-	private static function newTrackedConnectionsArray() {
+	private static function newTrackedConnectionsArray(): array {
 		// Note that CATEGORY_GAUGE connections are untracked
 		return [
 			self::CATEGORY_ROUND => [],
@@ -1041,10 +1048,8 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		$conn->setTableAliases( $this->tableAliases );
 		$conn->setIndexAliases( $this->indexAliases );
 		// Account for any active transaction round and listeners
+		$this->syncConnectionRoundState( $conn );
 		if ( $i === ServerInfo::WRITER_INDEX ) {
-			if ( $this->trxRoundId !== false ) {
-				$this->applyTransactionRoundFlags( $conn );
-			}
 			foreach ( $this->trxRecurringCallbacks as $name => $callback ) {
 				$conn->setTransactionListener( $name, $callback );
 			}
@@ -1195,6 +1200,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			return $conn->getPrimaryPos();
 		}
 
+		/** @var IDatabaseForOwner|null $conn */
 		$conn = $this->getConnectionInternal( ServerInfo::WRITER_INDEX, self::CONN_SILENCE_ERRORS );
 		// @phan-suppress-next-line PhanRedundantCondition
 		if ( !$conn ) {
@@ -1299,8 +1305,6 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	 *
 	 * Using this function makes sure the LoadBalancer knows the connection is closed.
 	 * If you use $conn->close() directly, the load balancer won't update its state.
-	 *
-	 * @param IDatabaseForOwner $conn
 	 */
 	private function closeConnection( IDatabaseForOwner $conn ) {
 		if ( $conn instanceof DBConnRef ) {
@@ -1421,10 +1425,10 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	public function beginPrimaryChanges( $fname = __METHOD__ ) {
-		if ( $this->trxRoundId !== false ) {
+		if ( $this->trxRoundFname !== null ) {
 			throw new DBTransactionError(
 				null,
-				"Transaction round '{$this->trxRoundId}' already started"
+				"Transaction round '{$this->trxRoundFname}' already started"
 			);
 		}
 		$this->assertTransactionRoundStage( self::ROUND_CURSORY );
@@ -1434,14 +1438,14 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		// Clear any empty transactions (no writes/callbacks) from the implicit round
 		$this->flushPrimarySnapshots( $fname );
 
-		$this->trxRoundId = $fname;
+		$this->trxRoundFname = $fname;
 		$this->trxRoundStage = self::ROUND_ERROR; // "failed" until proven otherwise
 		// Mark applicable handles as participating in this explicit transaction round.
 		// For each of these handles, any writes and callbacks will be tied to a single
 		// transaction. The (peer) handles will reject begin()/commit() calls unless they
 		// are part of an en masse commit or an en masse rollback.
-		foreach ( $this->getOpenPrimaryConnections() as $conn ) {
-			$this->applyTransactionRoundFlags( $conn );
+		foreach ( $this->getOpenConnections() as $conn ) {
+			$this->syncConnectionRoundState( $conn );
 		}
 		$this->trxRoundStage = self::ROUND_CURSORY;
 	}
@@ -1453,8 +1457,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 		$failures = [];
 
-		$restore = ( $this->trxRoundId !== false );
-		$this->trxRoundId = false;
+		$this->trxRoundFname = null;
 		$this->trxRoundStage = self::ROUND_ERROR; // "failed" until proven otherwise
 		// Commit any writes and clear any snapshots as well (callbacks require AUTOCOMMIT).
 		// Note that callbacks should already be suppressed due to finalizePrimaryChanges().
@@ -1472,11 +1475,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 				"Commit failed on server(s) " . implode( "\n", array_unique( $failures ) )
 			);
 		}
-		if ( $restore ) {
-			// Unmark handles as participating in this explicit transaction round
-			foreach ( $this->getOpenPrimaryConnections() as $conn ) {
-				$this->undoTransactionRoundFlags( $conn );
-			}
+		// Unmark handles as participating in this explicit transaction round
+		foreach ( $this->getOpenConnections() as $conn ) {
+			$this->syncConnectionRoundState( $conn );
 		}
 		$this->trxRoundStage = self::ROUND_COMMIT_CALLBACKS;
 	}
@@ -1527,6 +1528,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 							[ 'exception' => new RuntimeException() ]
 						)
 					);
+					$this->statsFactory->getCounter( 'rdbms_callback_writes_found_total' )
+						->setLabel( 'db_server', $conn->getServerName() )
+						->increment();
 				} elseif ( $conn->trxLevel() ) {
 					// A callback from another handle read from this one and DBO_TRX is set,
 					// which can easily happen if there is only one DB (no replicas)
@@ -1573,17 +1577,14 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = ScopedCallback::newScopedIgnoreUserAbort();
 
-		$restore = ( $this->trxRoundId !== false );
-		$this->trxRoundId = false;
+		$this->trxRoundFname = null;
 		$this->trxRoundStage = self::ROUND_ERROR; // "failed" until proven otherwise
 		foreach ( $this->getOpenPrimaryConnections() as $conn ) {
 			$conn->rollback( $fname, $conn::FLUSHING_ALL_PEERS );
 		}
-		if ( $restore ) {
-			// Unmark handles as participating in this explicit transaction round
-			foreach ( $this->getOpenPrimaryConnections() as $conn ) {
-				$this->undoTransactionRoundFlags( $conn );
-			}
+		// Unmark handles as participating in this explicit transaction round
+		foreach ( $this->getOpenConnections() as $conn ) {
+			$this->syncConnectionRoundState( $conn );
 		}
 		$this->trxRoundStage = self::ROUND_ROLLBACK_CALLBACKS;
 	}
@@ -1622,7 +1623,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	/**
-	 * Make all DB servers with DBO_DEFAULT/DBO_TRX set join the transaction round
+	 * Make connections with DBO_DEFAULT/DBO_TRX set join any active transaction round
 	 *
 	 * Some servers may have neither flag enabled, meaning that they opt out of such
 	 * transaction rounds and remain in auto-commit mode. Such behavior might be desired
@@ -1630,36 +1631,44 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	 *
 	 * @param Database $conn
 	 */
-	private function applyTransactionRoundFlags( Database $conn ) {
+	private function syncConnectionRoundState( Database $conn ) {
 		if ( $conn->getLBInfo( self::INFO_CONN_CATEGORY ) !== self::CATEGORY_ROUND ) {
 			return; // transaction rounds do not apply to these connections
 		}
 
+		if ( $this->trxRoundFname !== null ) {
+			// Explicit transaction round
+			$trxRoundLevel = 1;
+		} else {
+			// Implicit auto-commit round (cli mode) or implicit transaction round (web mode)
+			$trxRoundLevel = ( $this->cliMode ? 0 : 1 );
+		}
+
+		// CATEGORY_ROUND DB handles with DBO_DEFAULT are considered "round aware" and the
+		// load balancer will take over the logic of when DBO_TRX is set for such DB handles.
+		// DBO_TRX will be set only when a transaction round is active (explicit or implicit).
 		if ( $conn->getFlag( $conn::DBO_DEFAULT ) ) {
-			// DBO_TRX is controlled entirely by CLI mode presence with DBO_DEFAULT.
-			// Force DBO_TRX even in CLI mode since a commit round is expected soon.
-			$conn->setFlag( $conn::DBO_TRX, $conn::REMEMBER_PRIOR );
+			if ( $trxRoundLevel ) {
+				// Wrap queries in a transaction joined to the active transaction round
+				$conn->setFlag( $conn::DBO_TRX );
+			} else {
+				// Do not wrap queries in a transaction (no active transaction round)
+				$conn->clearFlag( $conn::DBO_TRX );
+			}
 		}
 
+		// Note that DBO_TRX is normally only set above or by DatabaseFactory applying
+		// DBO_DEFAULT. However, integration tests might directly force DBO_TRX in the
+		// server configuration arrays. Such handles will still be flushed during calls
+		// to {@link LoadBalancer::commitPrimaryChanges()}.
 		if ( $conn->getFlag( $conn::DBO_TRX ) ) {
-			$conn->setLBInfo( $conn::LB_TRX_ROUND_ID, $this->trxRoundId );
-		}
-	}
-
-	/**
-	 * @param Database $conn
-	 */
-	private function undoTransactionRoundFlags( Database $conn ) {
-		if ( $conn->getLBInfo( self::INFO_CONN_CATEGORY ) !== self::CATEGORY_ROUND ) {
-			return; // transaction rounds do not apply to these connections
-		}
-
-		if ( $conn->getFlag( $conn::DBO_TRX ) ) {
-			$conn->setLBInfo( $conn::LB_TRX_ROUND_ID, null ); // remove the round ID
-		}
-
-		if ( $conn->getFlag( $conn::DBO_DEFAULT ) ) {
-			$conn->restoreFlags( $conn::RESTORE_PRIOR );
+			// DB handle is participating in the active transction round
+			$conn->setLBInfo( $conn::LB_TRX_ROUND_LEVEL, $trxRoundLevel );
+			$conn->setLBInfo( $conn::LB_TRX_ROUND_FNAME, $this->trxRoundFname );
+		} else {
+			// DB handle is not participating in any transction rounds
+			$conn->setLBInfo( $conn::LB_TRX_ROUND_LEVEL, 0 );
+			$conn->setLBInfo( $conn::LB_TRX_ROUND_FNAME, null );
 		}
 	}
 
@@ -1697,7 +1706,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	public function lastPrimaryChangeTimestamp() {
-		$lastTime = false;
+		$lastTime = null;
 		foreach ( $this->getOpenPrimaryConnections() as $conn ) {
 			$lastTime = max( $lastTime, $conn->lastDoneWrites() );
 		}

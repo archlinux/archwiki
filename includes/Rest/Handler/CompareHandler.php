@@ -111,11 +111,11 @@ class CompareHandler extends Handler {
 		return $rev->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() );
 	}
 
-	private function getRole() {
+	private function getRole(): string {
 		return SlotRecord::MAIN;
 	}
 
-	private function getRevisionText( $paramName ) {
+	private function getRevisionText( string $paramName ): string {
 		if ( !isset( $this->textCache[$paramName] ) ) {
 			$revision = $this->getRevision( $paramName );
 			try {
@@ -188,17 +188,30 @@ class CompareHandler extends Handler {
 		return false;
 	}
 
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/RevisionCompare.json';
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+
+		return $spec;
+	}
+
 	public function getParamSettings() {
 		return [
 			'from' => [
 				ParamValidator::PARAM_TYPE => 'integer',
 				ParamValidator::PARAM_REQUIRED => true,
 				Handler::PARAM_SOURCE => 'path',
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-compare-from' ),
 			],
 			'to' => [
 				ParamValidator::PARAM_TYPE => 'integer',
 				ParamValidator::PARAM_REQUIRED => true,
 				Handler::PARAM_SOURCE => 'path',
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-compare-to' ),
 			],
 		];
 	}

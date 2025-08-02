@@ -6,7 +6,7 @@
  * @module module:ext.wikiEditor
  */
 
-var editingSessionId;
+let editingSessionId;
 
 // This sets $.wikiEditor and $.fn.wikiEditor
 require( './jquery.wikiEditor.js' );
@@ -48,7 +48,7 @@ function logAbort( switchingToVE, unmodified ) {
 		logEditFeature( 'editor-switch', 'visual-desktop' );
 	}
 
-	var abortType;
+	let abortType;
 	if ( switchingToVE && unmodified ) {
 		abortType = 'switchnochange';
 	} else if ( switchingToVE ) {
@@ -65,8 +65,8 @@ function logAbort( switchingToVE, unmodified ) {
 	} );
 }
 
-$( function () {
-	var $textarea = $( '#wpTextbox1' ),
+$( () => {
+	const $textarea = $( '#wpTextbox1' ),
 		$editingSessionIdInput = $( '#editingStatsId' ),
 		origText = $textarea.val();
 
@@ -82,45 +82,45 @@ $( function () {
 			// fall back to the timestamp when the page loaded for those
 			// that don't, we just ignore them, so as to not skew the
 			// results towards better-performance in those cases.
-			var readyTime = Date.now();
+			const readyTime = Date.now();
 			logEditEvent( {
 				action: 'ready',
 				timing: readyTime - window.performance.timing.navigationStart
 			} );
-			$textarea.on( 'wikiEditor-toolbar-doneInitialSections', function () {
+			$textarea.on( 'wikiEditor-toolbar-doneInitialSections', () => {
 				logEditEvent( {
 					action: 'loaded',
 					timing: Date.now() - window.performance.timing.navigationStart
 				} );
-			} ).one( 'input', function () {
+			} ).one( 'input', () => {
 				logEditEvent( {
 					action: 'firstChange',
 					timing: Date.now() - readyTime
 				} );
 			} );
 		}
-		var $form = $textarea.closest( 'form' );
+		const $form = $textarea.closest( 'form' );
 		if ( mw.user.options.get( 'uselivepreview' ) ) {
-			$form.find( '#wpPreview' ).on( 'click', function () {
+			$form.find( '#wpPreview' ).on( 'click', () => {
 				logEditFeature( 'preview', 'preview-live' );
 			} );
 		}
 
-		var submitting;
-		$form.on( 'submit', function () {
+		let submitting;
+		$form.on( 'submit', () => {
 			submitting = true;
 		} );
-		var onUnloadFallback = window.onunload;
+		const onUnloadFallback = window.onunload;
 
 		window.onunload = function () {
-			var unmodified = mw.config.get( 'wgAction' ) !== 'submit' && origText === $textarea.val(),
+			const unmodified = mw.config.get( 'wgAction' ) !== 'submit' && origText === $textarea.val(),
 				caVeEdit = $( '#ca-ve-edit' )[ 0 ],
 				switchingToVE = caVeEdit && (
 					document.activeElement === caVeEdit ||
 					$.contains( caVeEdit, document.activeElement )
 				);
 
-			var fallbackResult;
+			let fallbackResult;
 			if ( onUnloadFallback ) {
 				fallbackResult = onUnloadFallback();
 			}
@@ -140,8 +140,8 @@ $( function () {
 
 			return fallbackResult;
 		};
-		$textarea.on( 'wikiEditor-switching-visualeditor', function () {
-			var unmodified = mw.config.get( 'wgAction' ) !== 'submit' && origText === $textarea.val();
+		$textarea.on( 'wikiEditor-switching-visualeditor', () => {
+			const unmodified = mw.config.get( 'wgAction' ) !== 'submit' && origText === $textarea.val();
 			// A non-navigation switch to VE has occurred. As such, avoid eventually
 			// double-logging an abort when VE is done.
 			window.onunload = onUnloadFallback;
@@ -150,28 +150,28 @@ $( function () {
 		} );
 
 		// Add logging for Realtime Preview.
-		mw.hook( 'ext.WikiEditor.realtimepreview.enable' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.enable' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-on' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.inuse' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.inuse' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-inuse' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.disable' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.disable' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-off' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.loaded' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.loaded' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-loaded' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.stop' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.stop' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-error-stopped' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.reloadError' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.reloadError' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-reload-error' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.reloadHover' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.reloadHover' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-reload-hover' );
 		} );
-		mw.hook( 'ext.WikiEditor.realtimepreview.reloadManual' ).add( function () {
+		mw.hook( 'ext.WikiEditor.realtimepreview.reloadManual' ).add( () => {
 			logEditFeature( 'preview', 'preview-realtime-reload-manual' );
 		} );
 	}
@@ -192,7 +192,7 @@ mw.addWikiEditor = function ( $textarea ) {
 		'addModule', require( './jquery.wikiEditor.toolbar.config.js' )
 	);
 
-	var dialogsConfig = require( './jquery.wikiEditor.dialogs.config.js' );
+	const dialogsConfig = require( './jquery.wikiEditor.dialogs.config.js' );
 	// Replace icons
 	dialogsConfig.replaceIcons( $textarea );
 	// Add dialogs module

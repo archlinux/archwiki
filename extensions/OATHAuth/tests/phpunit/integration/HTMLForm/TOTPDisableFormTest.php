@@ -26,6 +26,7 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
+use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
@@ -35,6 +36,11 @@ use Wikimedia\TestingAccessWrapper;
  * @coversDefaultClass \MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm
  */
 class TOTPDisableFormTest extends MediaWikiIntegrationTestCase {
+	protected function setUp(): void {
+		parent::setUp();
+		$this->overrideConfigValue( MainConfigNames::CentralIdLookupProvider, 'local' );
+	}
+
 	/**
 	 * @return array
 	 * @phan-return array{0:TOTPDisableForm,1:TOTPKey,2:MediaWiki\Extension\OATHAuth\OATHUser}

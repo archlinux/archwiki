@@ -1,16 +1,21 @@
-a {
+/*
+ * This not does apply to links with role button per discussion on T373989
+ * The `where` it used here as specificity is important so support overriding
+ * in skins and extensions.
+ * When changing this file - DO NOT disable stylelint rule selector-max-specificity
+*/
+a:where( :not( [ role='button' ] ) ) {
 	.cdx-mixin-link-base();
-	/* T373989 */
-	border-radius: 0;
 }
 
-// Red links
-a.new {
+// Red links - DO NOT disable stylelint rule selector-max-specificity for this rule.
+a:where( .new:not( [ role='button' ] ) ) {
 	.cdx-mixin-link-red();
 }
 
 // External links
 // Use of `a` element selector for limiting generic class scope due to `.external` widespread usage.
+/* stylelint-disable selector-max-specificity */
 .mw-parser-output {
 	a {
 		// Deal with long links (T327334, inspired by Minerva solution T62387)
@@ -34,12 +39,14 @@ a.new {
 		}
 	}
 }
+/* stylelint-enable selector-max-specificity */
 
 /**
  * The following styles are copied from content.links.less
  */
 
 /* self links */
+/* stylelint-disable selector-max-specificity */
 a.mw-selflink {
 	color: inherit;
 	font-weight: bold;
@@ -65,3 +72,4 @@ a.mw-selflink {
 	background: none !important; /* stylelint-disable-line declaration-no-important */
 	padding: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
+/* stylelint-enable selector-max-specificity */

@@ -1,5 +1,5 @@
-var LinkTypeField = require( './LinkTypeField.js' );
-var TitleInputWidget = require( './TitleInputWidget.js' );
+const LinkTypeField = require( './LinkTypeField.js' );
+const TitleInputWidget = require( './TitleInputWidget.js' );
 /* global InsertLinkTitleOptionWidget */
 
 /**
@@ -14,7 +14,7 @@ function TitleInputField() {
 	// Mixin constructor
 	OO.EventEmitter.call( this );
 
-	var input = new TitleInputWidget();
+	const input = new TitleInputWidget();
 	input.connect( this, {
 		change: this.onChange,
 		select: this.onSelect
@@ -25,7 +25,7 @@ function TitleInputField() {
 	// The 'manual' URL mode flag is set when the user changes the mode, and doesn't change again.
 	this.urlModeManual = false;
 
-	var config = {
+	const config = {
 		align: 'top',
 		label: mw.msg( 'wikieditor-toolbar-tool-link-int-target' ),
 		classes: [ 'mw-wikiEditor-InsertLink-TitleInputField' ]
@@ -131,7 +131,7 @@ TitleInputField.prototype.validate = function ( value ) {
  * @param {InsertLinkTitleOptionWidget} item
  */
 TitleInputField.prototype.onSelect = function ( item ) {
-	var icon, msg;
+	let icon, msg;
 	if ( this.urlMode === LinkTypeField.static.LINK_MODE_EXTERNAL ||
 		( !this.urlModeManual && this.urlMode === LinkTypeField.static.LINK_MODE_INTERNAL && item.isExternal() )
 	) {

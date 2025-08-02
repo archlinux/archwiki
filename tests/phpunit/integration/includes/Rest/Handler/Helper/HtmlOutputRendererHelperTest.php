@@ -289,6 +289,8 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideRevisionReferences() {
+		// Expected values to match the code in getExistingPageWithRevisions()
+
 		return [
 			'current' => [ null, [ 'html' => self::HTML, 'timestamp' => self::TIMESTAMP ] ],
 			'old' => [ 'first', [ 'html' => self::HTML_OLD, 'timestamp' => self::TIMESTAMP_OLD ] ],
@@ -296,7 +298,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideRevisionReferences()
+	 * @dataProvider provideRevisionReferences
 	 */
 	public function testGetHtml( $revRef ) {
 		[ $page, $revisions ] = $this->getExistingPageWithRevisions( __METHOD__ );
@@ -536,7 +538,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideRevisionReferences()
+	 * @dataProvider provideRevisionReferences
 	 */
 	public function testETagLastModified( $revRef ) {
 		[ $page, $revisions ] = $this->getExistingPageWithRevisions( __METHOD__ );
@@ -551,13 +553,17 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$pout = $helper->getHtml();
 
 		$renderId = ParsoidRenderID::newFromParserOutput( $pout );
-		$lastModified = $pout->getCacheTime();
 
 		if ( $rev ) {
 			$this->assertSame( $rev->getId(), $helper->getRevisionId() );
+
+			// old revision use ParserOutput timestamp
+			$lastModified = $pout->getCacheTime();
 		} else {
-			// current revision
 			$this->assertSame( 0, $helper->getRevisionId() );
+
+			// current revision uses the page's touch time
+			$lastModified = $page->getTouched();
 		}
 
 		// make sure the etag didn't change after getHtml();
@@ -582,6 +588,35 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringNotContainsString( $renderId->getKey(), $helper->getETag() );
 		$this->assertSame(
 			MWTimestamp::convert( TS_MW, $now ),
+			MWTimestamp::convert( TS_MW, $helper->getLastModified() )
+		);
+	}
+
+	/**
+	 * Check that getLastModified doesn't load ParserOutput for the latest revision.
+	 */
+	public function testFastLastModified_no_rev() {
+		$page = $this->getExistingTestPage();
+		$touchDate = $page->getTouched();
+
+		// First, test it works if nothing was cached yet.
+		$helper = $this->newHelper( [
+			'ParserOutputAccess' => $this->createNoOpMock( ParserOutputAccess::class ),
+		], $page, self::PARAM_DEFAULTS, $this->newAuthority() );
+
+		// Try without providing a revision
+		$this->assertSame(
+			MWTimestamp::convert( TS_MW, $touchDate ),
+			MWTimestamp::convert( TS_MW, $helper->getLastModified() )
+		);
+
+		// Provide the latest revision
+		$helper = $this->newHelper( [
+			'ParserOutputAccess' => $this->createNoOpMock( ParserOutputAccess::class ),
+		], $page, self::PARAM_DEFAULTS, $this->newAuthority(), $page->getLatest() );
+
+		$this->assertSame(
+			MWTimestamp::convert( TS_MW, $touchDate ),
 			MWTimestamp::convert( TS_MW, $helper->getLastModified() )
 		);
 	}
@@ -658,7 +693,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideETagSuffix()
+	 * @dataProvider provideETagSuffix
 	 */
 	public function testETagSuffix( array $params, string $mode, string $suffix ) {
 		$page = $this->getExistingTestPage( __METHOD__ );
@@ -799,8 +834,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 				$mockParsoid,
 				$services->getParsoidPageConfigFactory(),
 				$services->getLanguageConverterFactory(),
-				$services->getParserFactory(),
-				$services->getGlobalIdGenerator()
+				$services->getParsoidDataAccess()
 			);
 		}
 
@@ -861,7 +895,9 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 			$services->getChronologyProtector(),
 			$this->getLoggerSpi(),
 			$services->getWikiPageFactory(),
-			$services->getTitleFormatter()
+			$services->getTitleFormatter(),
+			$services->getTracer(),
+			$services->getPoolCounterFactory()
 		);
 		return [
 			'ParserOutputAccess' => $parserOutputAccess,
@@ -1044,41 +1080,29 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$helper->getHtml();
 	}
 
-	public function provideInit() {
-		$page = PageIdentityValue::localIdentity( 7, NS_MAIN, 'Köfte' );
-		$authority = $this->createNoOpMock( Authority::class );
-
+	public static function provideInit() {
 		yield 'Minimal' => [
-			$page,
 			[],
-			$authority,
 			null,
 			[
-				'page' => $page,
-				'authority' => $authority,
+				'page' => 'mock',
+				'authority' => 'mock',
 				'revisionOrId' => null,
 				'stash' => false,
 				'flavor' => 'view',
 			]
 		];
 
-		$rev = $this->createNoOpMock( RevisionRecord::class, [ 'getId' ] );
-		$rev->method( 'getId' )->willReturn( 7 );
-
 		yield 'Revision and Language' => [
-			$page,
 			[],
-			$authority,
-			$rev,
+			'mock',
 			[
-				'revisionOrId' => $rev,
+				'revisionOrId' => 'mock',
 			]
 		];
 
 		yield 'revid and stash' => [
-			$page,
 			[ 'stash' => true ],
-			$authority,
 			8,
 			[
 				'stash' => true,
@@ -1088,9 +1112,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		yield 'flavor' => [
-			$page,
 			[ 'flavor' => 'fragment' ],
-			$authority,
 			8,
 			[
 				'flavor' => 'fragment',
@@ -1098,9 +1120,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		yield 'stash winds over flavor' => [
-			$page,
 			[ 'flavor' => 'fragment', 'stash' => true ],
-			$authority,
 			8,
 			[
 				'flavor' => 'stash',
@@ -1112,25 +1132,33 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	 * Whitebox test for ensuring that init() sets the correct members.
 	 * Testing init() against behavior would mean duplicating all tests that use setters.
 	 *
-	 * @param PageIdentity $page
-	 * @param array $parameters
-	 * @param Authority $authority
-	 * @param RevisionRecord|int|null $revision
-	 * @param array $expected
-	 *
 	 * @dataProvider provideInit
 	 */
 	public function testInit(
-		PageIdentity $page,
 		array $parameters,
-		Authority $authority,
 		$revision,
 		array $expected
 	) {
+		$page = PageIdentityValue::localIdentity( 7, NS_MAIN, 'Köfte' );
+		$authority = $this->createNoOpMock( Authority::class );
+		if ( $revision === 'mock' ) {
+			$revision = $this->createNoOpMock( RevisionRecord::class, [ 'getId' ] );
+			$revision->method( 'getId' )->willReturn( 7 );
+		}
+
 		$helper = $this->newHelper( [], $page, $parameters, $authority, $revision );
 
 		$wrapper = TestingAccessWrapper::newFromObject( $helper );
 		foreach ( $expected as $name => $value ) {
+			if ( $value === 'mock' ) {
+				if ( $name === 'page' ) {
+					$value = $page;
+				} elseif ( $name === 'authority' ) {
+					$value = $authority;
+				} else {
+					$value = $revision;
+				}
+			}
 			$this->assertSame( $value, $wrapper->$name );
 		}
 	}

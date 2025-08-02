@@ -18,12 +18,17 @@
  * @file
  */
 
+namespace MediaWiki\JobQueue;
+
+use InvalidArgumentException;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\JobQueueEnqueueUpdate;
+use MediaWiki\JobQueue\Exceptions\JobQueueError;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ReadOnlyMode;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
@@ -50,8 +55,8 @@ class JobQueueGroup {
 	private $jobTypeConfiguration;
 	/** @var array */
 	private $jobTypesExcludedFromDefaultQueue;
-	/** @var IBufferingStatsdDataFactory */
-	private $statsdDataFactory;
+	/** @var StatsFactory */
+	private $statsFactory;
 	/** @var WANObjectCache */
 	private $wanCache;
 	/** @var GlobalIdGenerator */
@@ -75,7 +80,7 @@ class JobQueueGroup {
 	 * @param array|null $localJobClasses
 	 * @param array $jobTypeConfiguration
 	 * @param array $jobTypesExcludedFromDefaultQueue
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
+	 * @param StatsFactory $statsFactory
 	 * @param WANObjectCache $wanCache
 	 * @param GlobalIdGenerator $globalIdGenerator
 	 *
@@ -86,7 +91,7 @@ class JobQueueGroup {
 		?array $localJobClasses,
 		array $jobTypeConfiguration,
 		array $jobTypesExcludedFromDefaultQueue,
-		IBufferingStatsdDataFactory $statsdDataFactory,
+		StatsFactory $statsFactory,
 		WANObjectCache $wanCache,
 		GlobalIdGenerator $globalIdGenerator
 	) {
@@ -96,7 +101,7 @@ class JobQueueGroup {
 		$this->localJobClasses = $localJobClasses;
 		$this->jobTypeConfiguration = $jobTypeConfiguration;
 		$this->jobTypesExcludedFromDefaultQueue = $jobTypesExcludedFromDefaultQueue;
-		$this->statsdDataFactory = $statsdDataFactory;
+		$this->statsFactory = $statsFactory;
 		$this->wanCache = $wanCache;
 		$this->globalIdGenerator = $globalIdGenerator;
 	}
@@ -114,7 +119,7 @@ class JobQueueGroup {
 			$conf['readOnlyReason'] = $this->readOnlyMode->getConfiguredReason();
 		}
 
-		$conf['stats'] = $this->statsdDataFactory;
+		$conf['stats'] = $this->statsFactory;
 		$conf['wanCache'] = $this->wanCache;
 		$conf['idGenerator'] = $this->globalIdGenerator;
 
@@ -415,7 +420,7 @@ class JobQueueGroup {
 			foreach ( $this->jobTypeConfiguration as $type => $conf ) {
 				$conf['domain'] = $this->domain;
 				$conf['type'] = 'null';
-				$conf['stats'] = $this->statsdDataFactory;
+				$conf['stats'] = $this->statsFactory;
 				$conf['wanCache'] = $this->wanCache;
 				$conf['idGenerator'] = $this->globalIdGenerator;
 
@@ -439,9 +444,6 @@ class JobQueueGroup {
 		return $this->coalescedQueues;
 	}
 
-	/**
-	 * @param array $jobs
-	 */
 	private function assertValidJobs( array $jobs ) {
 		foreach ( $jobs as $job ) {
 			if ( !( $job instanceof IJobSpecification ) ) {
@@ -451,3 +453,6 @@ class JobQueueGroup {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( JobQueueGroup::class, 'JobQueueGroup' );

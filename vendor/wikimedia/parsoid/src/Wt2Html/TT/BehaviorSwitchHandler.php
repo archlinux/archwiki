@@ -6,41 +6,67 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * Handler for behavior switches, like '__TOC__' and similar.
  */
 class BehaviorSwitchHandler extends TokenHandler {
 
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 	}
 
+	private const OUTPUT_FLAG_FROM_BEHAVIOR_SWITCH = [
+		// ParserOutputFlags::NO_GALLERY
+		'nogallery' => 'mw-NoGallery',
+
+		// ParserOutputFlags::NEW_SECTION
+		'newsectionlink' => 'mw-NewSection',
+
+		// ParserOutputFlags::HIDE_NEW_SECTION
+		'nonewsectionlink' => 'mw-HideNewSection',
+
+		// ParserOutputFlags::NO_SECTION_EDIT_LINKS
+		'noeditsection' => 'no-section-edit-links',
+	];
+
 	/**
 	 * Main handler.
-	 * See {@link TokenTransformManager#addTransform}'s transformation parameter.
-	 *
-	 * @param Token $token
-	 * @return TokenHandlerResult
+	 * See {@link TokenHandlerPipeline#addTransform}'s transformation parameter.
+	 * @return array<Token>
 	 */
-	public function onBehaviorSwitch( Token $token ): TokenHandlerResult {
+	public function onBehaviorSwitch( Token $token ): array {
 		$env = $this->env;
 		$magicWord = $env->getSiteConfig()->getMagicWordForBehaviorSwitch( $token->attribs[0]->v );
 		$env->setBehaviorSwitch( $magicWord, true );
+		if ( isset( self::OUTPUT_FLAG_FROM_BEHAVIOR_SWITCH[$magicWord] ) ) {
+			$env->getMetadata()->setOutputFlag(
+				self::OUTPUT_FLAG_FROM_BEHAVIOR_SWITCH[$magicWord], true
+			);
+		}
+		if (
+			$magicWord === 'hiddencat' &&
+			$env->getPageConfig()->getLinkTarget()->getNamespace() === 14 // NS_CATEGORY
+		) {
+			$env->getDataAccess()->addTrackingCategory(
+				$env->getPageConfig(),
+				$env->getMetadata(),
+				'hidden-category-category'
+			);
+		}
 		$metaToken = new SelfclosingTagTk(
 			'meta',
 			[ new KV( 'property', 'mw:PageProp/' . $magicWord ) ],
-			$token->dataParsoid->clone()
+			clone $token->dataParsoid
 		);
-
-		return new TokenHandlerResult( [ $metaToken ] );
+		return [ $metaToken ];
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		return $token->getName() === 'behavior-switch' ? $this->onBehaviorSwitch( $token ) : null;
 	}
 }

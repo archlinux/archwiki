@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.51.2
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-11-13T16:37:10Z
+ * Date: 2025-03-11T00:03:30Z
  */
 ( function ( OO ) {
 
@@ -956,7 +956,7 @@ OO.ui.Tool.prototype.setTitle = function ( title ) {
  */
 OO.ui.Tool.prototype.setDisplayBothIconAndLabel = function ( displayBothIconAndLabel ) {
 	this.displayBothIconAndLabel = displayBothIconAndLabel;
-	this.$element.toggleClass( 'oo-ui-tool-with-label', !!this.title && this.displayBothIconAndLabel );
+	this.$element.toggleClass( 'oo-ui-tool-with-label', !!this.getTitle() && this.displayBothIconAndLabel );
 	return this;
 };
 
@@ -1018,13 +1018,14 @@ OO.ui.Tool.prototype.updateTitle = function () {
 	const titleTooltips = this.toolGroup.constructor.static.titleTooltips,
 		accelTooltips = this.toolGroup.constructor.static.accelTooltips,
 		accel = this.toolbar.getToolAccelerator( this.constructor.static.name ),
-		tooltipParts = [];
+		tooltipParts = [],
+		title = this.getTitle();
 
-	this.$title.text( this.title );
+	this.$title.text( title );
 	this.$accel.text( accel );
 
-	if ( titleTooltips && typeof this.title === 'string' && this.title.length ) {
-		tooltipParts.push( this.title );
+	if ( titleTooltips && typeof title === 'string' && title.length ) {
+		tooltipParts.push( title );
 	}
 	if ( accelTooltips && typeof accel === 'string' && accel.length ) {
 		tooltipParts.push( accel );
@@ -2350,7 +2351,7 @@ OO.ui.PopupToolGroup.prototype.setActive = function ( value ) {
 				true
 			);
 
-			this.$clippable.css( 'left', '' );
+			this.$clippable.css( { left: '', width: '', 'margin-left': '', 'min-width': '' } );
 			this.$element.addClass( 'oo-ui-popupToolGroup-active' );
 			this.$group.addClass( 'oo-ui-popupToolGroup-active-tools' );
 			this.$handle.attr( 'aria-expanded', true );
@@ -2371,11 +2372,17 @@ OO.ui.PopupToolGroup.prototype.setActive = function ( value ) {
 				this.setHorizontalPosition( otherSide );
 			}
 			if ( this.isClippedHorizontally() || this.isFloatableOutOfView() ) {
+				this.setHorizontalPosition( 'center' );
+			}
+			if ( this.isClippedHorizontally() || this.isFloatableOutOfView() ) {
 				// Anchoring to the right also caused the popup to clip, so just make it fill the
 				// container.
-				containerWidth = this.$clippableScrollableContainer.width();
-				containerLeft = this.$clippableScrollableContainer[ 0 ] ===
-					document.documentElement ?
+				const isDocument = this.$clippableScrollableContainer[ 0 ] ===
+					document.documentElement;
+				containerWidth = isDocument ?
+					document.documentElement.clientWidth :
+					this.$clippableScrollableContainer.width();
+				containerLeft = isDocument ?
 					0 :
 					this.$clippableScrollableContainer.offset().left;
 
@@ -2384,7 +2391,8 @@ OO.ui.PopupToolGroup.prototype.setActive = function ( value ) {
 
 				this.$clippable.css( {
 					'margin-left': -( this.$element.offset().left - containerLeft ),
-					width: containerWidth
+					width: containerWidth,
+					'min-width': containerWidth
 				} );
 			}
 		} else {

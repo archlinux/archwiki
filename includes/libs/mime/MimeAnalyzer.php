@@ -25,7 +25,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use UnexpectedValueException;
 use Wikimedia\AtEase\AtEase;
-use ZipDirectoryReader;
 
 /**
  * @defgroup Mime Mime
@@ -108,7 +107,7 @@ class MimeAnalyzer implements LoggerAwareInterface {
 	protected function loadFiles(): void {
 		# Allow media handling extensions adding MIME-types and MIME-info
 		if ( $this->initCallback ) {
-			call_user_func( $this->initCallback, $this );
+			( $this->initCallback )( $this );
 		}
 
 		$rawTypes = $this->extraTypes;
@@ -242,7 +241,7 @@ class MimeAnalyzer implements LoggerAwareInterface {
 		}
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -251,8 +250,6 @@ class MimeAnalyzer implements LoggerAwareInterface {
 	 *
 	 * As an extension author, you are encouraged to submit patches to
 	 * MediaWiki's core to add new MIME types to MimeMap.php.
-	 *
-	 * @param string $types
 	 */
 	public function addExtraTypes( string $types ): void {
 		$this->extraTypes .= "\n" . $types;
@@ -263,8 +260,6 @@ class MimeAnalyzer implements LoggerAwareInterface {
 	 *
 	 * As an extension author, you are encouraged to submit patches to
 	 * MediaWiki's core to add new MIME info to MimeMap.php.
-	 *
-	 * @param string $info
 	 */
 	public function addExtraInfo( string $info ): void {
 		$this->extraInfo .= "\n" . $info;
@@ -1089,7 +1084,7 @@ class MimeAnalyzer implements LoggerAwareInterface {
 	 * @return bool
 	 */
 	public function isValidMajorMimeType( string $type ): bool {
-		// From maintenance/tables-generated.sql => img_major_mime
+		// See the definition of the `img_major_mime` enum in tables-generated.sql
 		$types = [
 			'unknown',
 			'application',

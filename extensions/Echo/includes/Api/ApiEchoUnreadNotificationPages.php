@@ -26,23 +26,15 @@ class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 	 */
 	protected $crossWikiSummary = false;
 
-	/**
-	 * @var PageStore
-	 */
-	private $pageStore;
+	private PageStore $pageStore;
+	private TitleFactory $titleFactory;
 
-	/**
-	 * @var TitleFactory
-	 */
-	private $titleFactory;
-
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param PageStore $pageStore
-	 * @param TitleFactory $titleFactory
-	 */
-	public function __construct( $query, $moduleName, PageStore $pageStore, TitleFactory $titleFactory ) {
+	public function __construct(
+		ApiQuery $query,
+		string $moduleName,
+		PageStore $pageStore,
+		TitleFactory $titleFactory
+	) {
 		parent::__construct( $query, $moduleName, 'unp' );
 		$this->pageStore = $pageStore;
 		$this->titleFactory = $titleFactory;
@@ -258,6 +250,7 @@ class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Echo_(Notifications)/API';
 	}

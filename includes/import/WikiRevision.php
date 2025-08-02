@@ -26,6 +26,7 @@
 
 use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionSlots;
 use MediaWiki\Revision\SlotRecord;
@@ -196,9 +197,6 @@ class WikiRevision implements ImportableUploadRevision, ImportableOldRevision {
 		$this->slots = new MutableRevisionSlots();
 	}
 
-	/**
-	 * @param Title $title
-	 */
 	public function setTitle( Title $title ) {
 		$this->title = $title;
 	}

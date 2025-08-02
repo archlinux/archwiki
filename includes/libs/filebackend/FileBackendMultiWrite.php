@@ -26,11 +26,9 @@ namespace Wikimedia\FileBackend;
 use InvalidArgumentException;
 use LockManager;
 use LogicException;
-use MediaWiki\Deferred\DeferredUpdates;
-use MediaWiki\Json\FormatJson;
 use Shellbox\Command\BoxedCommand;
 use StatusValue;
-use StringUtils;
+use Wikimedia\StringUtils\StringUtils;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -101,8 +99,6 @@ class FileBackendMultiWrite extends FileBackend {
 	 *   - replication    : Set to 'async' to defer file operations on the non-master backends.
 	 *                      This will apply such updates post-send for web requests. Note that
 	 *                      any checks from "syncChecks" are still synchronous.
-	 *
-	 * @param array $config
 	 */
 	public function __construct( array $config ) {
 		parent::__construct( $config );
@@ -175,7 +171,7 @@ class FileBackendMultiWrite extends FileBackend {
 		$syncStatus = $this->consistencyCheck( $relevantPaths );
 		if ( !$syncStatus->isOK() ) {
 			$this->logger->error(
-				"$fname: failed sync check: " . FormatJson::encode( $relevantPaths )
+				"$fname: failed sync check: " . implode( ', ', $relevantPaths )
 			);
 			// Try to resync the clone backends to the master on the spot
 			if (
@@ -203,13 +199,13 @@ class FileBackendMultiWrite extends FileBackend {
 				$realOps = $this->substOpBatchPaths( $ops, $backend );
 				if ( $this->asyncWrites && !$this->hasVolatileSources( $ops ) ) {
 					// Bind $scopeLock to the callback to preserve locks
-					DeferredUpdates::addCallableUpdate(
+					$this->callNowOrLater(
 						function () use (
 							$backend, $realOps, $opts, $scopeLock, $relevantPaths, $fname
 						) {
 							$this->logger->debug(
 								"$fname: '{$backend->getName()}' async replication; paths: " .
-								FormatJson::encode( $relevantPaths )
+								implode( ', ', $relevantPaths )
 							);
 							$backend->doOperations( $realOps, $opts );
 						}
@@ -217,7 +213,7 @@ class FileBackendMultiWrite extends FileBackend {
 				} else {
 					$this->logger->debug(
 						"$fname: '{$backend->getName()}' sync replication; paths: " .
-						FormatJson::encode( $relevantPaths )
+						implode( ', ', $relevantPaths )
 					);
 					$status->merge( $backend->doOperations( $realOps, $opts ) );
 				}
@@ -239,7 +235,7 @@ class FileBackendMultiWrite extends FileBackend {
 	 * This method should only be called if the files are locked or the backend
 	 * is in read-only mode
 	 *
-	 * @param array $paths List of storage paths
+	 * @param string[] $paths List of storage paths
 	 * @return StatusValue
 	 */
 	public function consistencyCheck( array $paths ) {
@@ -327,7 +323,7 @@ class FileBackendMultiWrite extends FileBackend {
 	/**
 	 * Check that a set of file paths are usable across all internal backends
 	 *
-	 * @param array $paths List of storage paths
+	 * @param string[] $paths List of storage paths
 	 * @return StatusValue
 	 */
 	public function accessibilityCheck( array $paths ) {
@@ -354,7 +350,7 @@ class FileBackendMultiWrite extends FileBackend {
 	 *
 	 * This method should only be called if the files are locked
 	 *
-	 * @param array $paths List of storage paths
+	 * @param string[] $paths List of storage paths
 	 * @param string|bool $resyncMode False, True, or "conservative"; see __construct()
 	 * @return StatusValue
 	 */
@@ -439,7 +435,7 @@ class FileBackendMultiWrite extends FileBackend {
 		}
 
 		if ( !$status->isOK() ) {
-			$this->logger->error( "$fname: failed to resync: " . FormatJson::encode( $paths ) );
+			$this->logger->error( "$fname: failed to resync: " . implode( ', ', $paths ) );
 		}
 
 		return $status;
@@ -513,7 +509,7 @@ class FileBackendMultiWrite extends FileBackend {
 	/**
 	 * Substitute the backend of storage paths with an internal backend's name
 	 *
-	 * @param array|string $paths List of paths or single string path
+	 * @param string[]|string $paths List of paths or single string path
 	 * @param FileBackendStore $backend
 	 * @return string[]|string
 	 */
@@ -528,7 +524,7 @@ class FileBackendMultiWrite extends FileBackend {
 	/**
 	 * Substitute the backend of internal storage paths with the proxy backend's name
 	 *
-	 * @param array|string $paths List of paths or single string path
+	 * @param string[]|string $paths List of paths or single string path
 	 * @param FileBackendStore $backend internal storage backend
 	 * @return string[]|string
 	 */
@@ -568,7 +564,7 @@ class FileBackendMultiWrite extends FileBackend {
 
 			$realOps = $this->substOpBatchPaths( $ops, $backend );
 			if ( $this->asyncWrites && !$this->hasVolatileSources( $ops ) ) {
-				DeferredUpdates::addCallableUpdate(
+				$this->callNowOrLater(
 					static function () use ( $backend, $realOps ) {
 						$backend->doQuickOperations( $realOps );
 					}
@@ -622,7 +618,7 @@ class FileBackendMultiWrite extends FileBackend {
 
 			$realParams = $this->substOpPaths( $params, $backend );
 			if ( $this->asyncWrites ) {
-				DeferredUpdates::addCallableUpdate(
+				$this->callNowOrLater(
 					static function () use ( $backend, $method, $realParams ) {
 						$backend->$method( $realParams );
 					}
@@ -780,7 +776,7 @@ class FileBackendMultiWrite extends FileBackend {
 		return $this->backends[$this->masterIndex]->getFileList( $realParams );
 	}
 
-	private function getFileListForWrite( $params ) {
+	private function getFileListForWrite( array $params ): array {
 		$files = [];
 		// Get the list of thumbnails from all backends to allow
 		// deleting all of them. Otherwise, old thumbnails existing on

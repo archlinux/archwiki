@@ -27,7 +27,7 @@ class TestUtils {
 	 */
 	public static function refGroupsFromArray( array $refs ) {
 		return array_map(
-			fn ( $groupRefs ) => array_map( [ self::class, 'refFromArray' ], $groupRefs ),
+			static fn ( $groupRefs ) => array_map( [ self::class, 'refFromArray' ], $groupRefs ),
 			$refs
 		);
 	}

@@ -310,14 +310,14 @@ class Server {
 
 	/**
 	 * Handle an error
-	 * @param int $level
-	 * @param string $message
-	 * @param string $file
-	 * @param int $line
-	 * @return never
+	 * @throws ShellboxError
 	 */
-	public function handleError( $level, $message, $file, $line ) {
-		throw new ShellboxError( "PHP error in $file line $line: $message" );
+	public function handleError( int $level, string $message, string $file, int $line ): void {
+		if ( ( error_reporting() & $level ) === 0 ) {
+			// ignore suppressed errors, and any levels not covered by error_reporting()
+		} else {
+			throw new ShellboxError( "PHP error in $file line $line: $message" );
+		}
 	}
 
 	/**

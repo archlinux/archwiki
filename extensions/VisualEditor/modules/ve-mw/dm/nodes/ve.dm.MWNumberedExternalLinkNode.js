@@ -51,7 +51,7 @@ ve.dm.MWNumberedExternalLinkNode.static.matchFunction = function ( domElement ) 
 	// contexts.)
 	// Note that ve:NumberedLink is only used internally by VE for cross-document
 	// pastes and is never sent to Parsoid.
-	return domElement.childNodes.length === 0 || domElement.getAttribute( 'rel' ).indexOf( 've:NumberedLink' ) !== -1;
+	return domElement.childNodes.length === 0 || domElement.getAttribute( 'rel' ).includes( 've:NumberedLink' );
 };
 
 ve.dm.MWNumberedExternalLinkNode.static.toDataElement = function ( domElements ) {

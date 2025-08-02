@@ -7,6 +7,7 @@ use MediaWiki\Content\Content;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -18,7 +19,6 @@ use MWFileProps;
 use UploadBase;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Mime\MimeAnalyzer;
-use WikiPage;
 
 /**
  * This class contains the logic used to create variable holders before filtering
@@ -179,8 +179,14 @@ class RunVariableGenerator extends VariableGenerator {
 			// a hook parameter
 			$update = null;
 		}
-		$this->addEditVars( $page, $this->user, true, $update );
 
+		if ( $update ) {
+			$this->addEditVarsFromUpdate( $update, $this->user );
+		} else {
+			$this->addEditVars( $page, $this->user );
+		}
+
+		$this->addGenericVars();
 		return $this->vars;
 	}
 
@@ -231,7 +237,7 @@ class RunVariableGenerator extends VariableGenerator {
 		} elseif ( $from instanceof Title ) {
 			$this->vars->setLazyLoadVar(
 				$varName,
-				'revision-age-by-title',
+				'revision-age',
 				[ 'title' => $from, 'asof' => wfTimestampNow() ]
 			);
 		} else {
@@ -259,6 +265,7 @@ class RunVariableGenerator extends VariableGenerator {
 		$this->setLastEditAge( $this->title, 'moved_from' );
 		$this->setLastEditAge( $newTitle, 'moved_to' );
 		// TODO: add old_wikitext etc. (T320347)
+		$this->addGenericVars();
 		return $this->vars;
 	}
 
@@ -280,6 +287,7 @@ class RunVariableGenerator extends VariableGenerator {
 		// the hook and call WikiPage::getRevisionRecord, but then ProofreadPage tests fail
 		$this->setLastEditAge( $this->title, 'page' );
 		// TODO: add old_wikitext etc. (T173663)
+		$this->addGenericVars();
 		return $this->vars;
 	}
 
@@ -354,6 +362,7 @@ class RunVariableGenerator extends VariableGenerator {
 			// TODO: set old_content_model and new_content_model vars, use them
 			$this->addEditVars( $page, $this->user, true );
 		}
+		$this->addGenericVars();
 		return $this->vars;
 	}
 
@@ -383,6 +392,7 @@ class RunVariableGenerator extends VariableGenerator {
 
 		$this->vars->setVar( 'action', $autocreate ? 'autocreateaccount' : 'createaccount' );
 		$this->vars->setVar( 'accountname', $createdUser->getName() );
+		$this->addGenericVars();
 		return $this->vars;
 	}
 }

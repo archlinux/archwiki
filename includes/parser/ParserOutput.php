@@ -28,7 +28,6 @@ use MediaWiki\Json\JsonDeserializableTrait;
 use MediaWiki\Json\JsonDeserializer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Converter;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Title\TitleValue;
@@ -143,12 +142,12 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	/**
 	 * @var array<string,string> Map of category names to sort keys
 	 */
-	private $mCategories;
+	private $mCategories = [];
 
 	/**
 	 * @var array<string,string> Page status indicators, usually displayed in top-right corner.
 	 */
-	private $mIndicators = [];
+	private array $mIndicators = [];
 
 	/**
 	 * @var string Title text of the chosen language variant, as HTML.
@@ -468,6 +467,7 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 *  available.
 	 */
 	public function getText( $options = [] ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		$oldText = $this->mRawText; // T353257
 		$options += [ 'allowClone' => false ];
 		$po = $this->runPipelineInternal( null, $options );
@@ -581,8 +581,6 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 * Returns the class (or classes) to be used with the wrapper div for this output.
 	 * If there is no wrapper class given, no wrapper div should be added.
 	 * The wrapper div is added automatically by getText().
-	 *
-	 * @return string
 	 */
 	public function getWrapperDivClass(): string {
 		return implode( ' ', array_keys( $this->mWrapperDivClasses ) );
@@ -732,7 +730,7 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	}
 
 	/**
-	 * @return string[]
+	 * @return array<string,string> Maps identifiers to HTML contents
 	 * @since 1.25
 	 */
 	public function getIndicators(): array {
@@ -855,7 +853,8 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 						$result[] = [
 							'link' => new TitleValue( $ns, (string)$dbkey ),
 							'pageid' => $pageid,
-							'revid' => $this->mTemplateIds[$ns][$dbkey],
+							// default to invalid/broken revision if this is not present
+							'revid' => $this->mTemplateIds[$ns][$dbkey] ?? 0,
 						];
 					}
 				}
@@ -870,6 +869,21 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	/** @deprecated since 1.43, use ::getLinkList(ParserOutputLinkTypes::LOCAL) */
 	public function &getLinks() {
 		return $this->mLinks;
+	}
+
+	/**
+	 * Return true if the given parser output has local links registered
+	 * in the metadata.
+	 * @return bool
+	 * @since 1.44
+	 */
+	public function hasLinks(): bool {
+		foreach ( $this->mLinks as $ns => $arr ) {
+			foreach ( $arr as $dbkey => $id ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -894,6 +908,15 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	/** @deprecated since 1.43, use ::getLinkList(ParserOutputLinkTypes::MEDIA) */
 	public function &getImages() {
 		return $this->mImages;
+	}
+
+	/**
+	 * Return true if there are image dependencies registered for this
+	 * ParserOutput.
+	 * @since 1.44
+	 */
+	public function hasImages(): bool {
+		return $this->mImages !== [];
 	}
 
 	/** @deprecated since 1.43, use ::getLinkList(ParserOutputLinkTypes::MEDIA) */
@@ -1200,15 +1223,12 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 
 	/**
 	 * Add a warning to the output for this page.
-	 * @param MessageValue $mv Note that the parameters must be serializable/deserializable
-	 *   with JsonCodec; see the @note on ParserOutput::setExtensionData(). MessageValue guarantees
-	 *   that unless the deprecated ParamType::OBJECT or the ->objectParams() method is used.
+	 * @param MessageValue $mv
 	 * @since 1.43
 	 */
 	public function addWarningMsgVal( MessageValue $mv ) {
-		$m = ( new Converter() )->convertMessageValue( $mv );
-		// These can eventually be stored as MessageValue instead of converting to Message.
-		$this->addWarningMsg( $m->getKey(), ...$m->getParams() );
+		// These can eventually be stored as MessageValue directly.
+		$this->addWarningMsg( $mv->getKey(), ...$mv->getParams() );
 	}
 
 	/**
@@ -1870,6 +1890,7 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 * @since 1.38
 	 */
 	public function getPageProperties(): array {
+		// @phan-suppress-next-line MediaWikiNoIssetIfDefined
 		if ( !isset( $this->mProperties ) ) {
 			$this->mProperties = [];
 		}
@@ -2175,7 +2196,7 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 		return $value;
 	}
 
-	private static function getTimes( $clock = null ): array {
+	private static function getTimes( ?string $clock = null ): array {
 		$ret = [];
 		if ( !$clock || $clock === 'wall' ) {
 			$ret['wall'] = microtime( true );
@@ -2344,10 +2365,26 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 * @return bool
 	 */
 	public function hasReducedExpiry(): bool {
+		if ( $this->getOutputFlag( ParserOutputFlags::HAS_ASYNC_CONTENT ) ) {
+			// If this page has async content, then we should re-run
+			// RefreshLinksJob whenever we regenerate the page.
+			return true;
+		}
 		$parserCacheExpireTime = MediaWikiServices::getInstance()->getMainConfig()->get(
 			MainConfigNames::ParserCacheExpireTime );
 
 		return $this->getCacheExpiry() < $parserCacheExpireTime;
+	}
+
+	public function getCacheExpiry(): int {
+		$expiry = parent::getCacheExpiry();
+		if ( $this->getOutputFlag( ParserOutputFlags::ASYNC_NOT_READY ) ) {
+			$asyncExpireTime = MediaWikiServices::getInstance()->getMainConfig()->get(
+				MainConfigNames::ParserCacheAsyncExpireTime
+			);
+			$expiry = min( $expiry, $asyncExpireTime );
+		}
+		return $expiry;
 	}
 
 	/**
@@ -2451,7 +2488,6 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	/**
 	 * Transfer parser options which affect post-processing from ParserOptions
 	 * to this ParserOutput.
-	 * @param ParserOptions $parserOptions
 	 */
 	public function setFromParserOptions( ParserOptions $parserOptions ) {
 		// Copied from Parser.php::parse and should probably be abstracted
@@ -2498,8 +2534,6 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 * Merges internal metadata such as flags, accessed options, and profiling info
 	 * from $source into this ParserOutput. This should be used whenever the state of $source
 	 * has any impact on the state of this ParserOutput.
-	 *
-	 * @param ParserOutput $source
 	 */
 	public function mergeInternalMetaDataFrom( ParserOutput $source ): void {
 		$this->mWarnings = self::mergeMap( $this->mWarnings, $source->mWarnings ); // don't use getter
@@ -2572,8 +2606,6 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 * Merges HTML metadata such as head items, JS config vars, and HTTP cache control info
 	 * from $source into this ParserOutput. This should be used whenever the HTML in $source
 	 * has been somehow merged into the HTML of this ParserOutput.
-	 *
-	 * @param ParserOutput $source
 	 */
 	public function mergeHtmlMetaDataFrom( ParserOutput $source ): void {
 		// HTML and HTTP
@@ -2650,27 +2682,46 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 	 * Merges dependency tracking metadata such as backlinks, images used, and extension data
 	 * from $source into this ParserOutput. This allows dependency tracking to be done for the
 	 * combined output of multiple content slots.
-	 *
-	 * @param ParserOutput $source
 	 */
 	public function mergeTrackingMetaDataFrom( ParserOutput $source ): void {
-		foreach ( $source->getLanguageLinks() as $ll ) {
-			$this->addLanguageLink( $ll );
+		foreach (
+			$source->getLinkList( ParserOutputLinkTypes::LANGUAGE )
+			as [ 'link' => $link ]
+		) {
+			$this->addLanguageLink( $link );
 		}
 		$this->mCategories = self::mergeMap( $this->mCategories, $source->getCategoryMap() );
-		$this->mLinks = self::merge2D( $this->mLinks, $source->getLinks() );
-		$this->mTemplates = self::merge2D( $this->mTemplates, $source->getTemplates() );
-		$this->mTemplateIds = self::merge2D( $this->mTemplateIds, $source->getTemplateIds() );
-		$this->mImages = self::mergeMap( $this->mImages, $source->getImages() );
-		$this->mFileSearchOptions = self::mergeMap(
-			$this->mFileSearchOptions,
-			$source->getFileSearchOptions()
-		);
+		foreach (
+			$source->getLinkList( ParserOutputLinkTypes::LOCAL )
+			as [ 'link' => $link, 'pageid' => $pageid ]
+		) {
+			$this->addLink( $link, $pageid );
+		}
+		foreach (
+			$source->getLinkList( ParserOutputLinkTypes::TEMPLATE )
+				as [ 'link' => $link, 'pageid' => $pageid, 'revid' => $revid ]
+		) {
+			$this->addTemplate( $link, $pageid, $revid );
+		}
+		foreach (
+			$source->getLinkList( ParserOutputLinkTypes::MEDIA ) as $item
+		) {
+			$this->addImage( $item['link'], $item['time'] ?? null, $item['sha1'] ?? null );
+		}
 		$this->mExternalLinks = self::mergeMap( $this->mExternalLinks, $source->getExternalLinks() );
-		$this->mInterwikiLinks = self::merge2D(
-			$this->mInterwikiLinks,
-			$source->getInterwikiLinks()
-		);
+		foreach (
+			$source->getLinkList( ParserOutputLinkTypes::INTERWIKI )
+			as [ 'link' => $link ]
+		) {
+			$this->addInterwikiLink( $link );
+		}
+
+		foreach (
+			$source->getLinkList( ParserOutputLinkTypes::SPECIAL )
+			as [ 'link' => $link ]
+		) {
+			$this->addLink( $link );
+		}
 
 		// TODO: add a $mergeStrategy parameter to setPageProperty to allow different
 		// kinds of properties to be merged in different ways.
@@ -2843,6 +2894,9 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 			foreach ( $this->getUsedOptions() as $opt ) {
 				$metadata->recordOption( $opt );
 			}
+			if ( !is_infinite( $this->mMaxAdaptiveExpiry ) ) {
+				$metadata->updateRuntimeAdaptiveExpiry( $this->mMaxAdaptiveExpiry );
+			}
 			if ( $this->mCacheExpiry !== null ) {
 				$metadata->updateCacheExpiry( $this->mCacheExpiry );
 			}
@@ -2860,7 +2914,8 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 			}
 			foreach ( $this->mTemplates as $ns => $arr ) {
 				foreach ( $arr as $dbk => $page_id ) {
-					$rev_id = $this->mTemplateIds[$ns][$dbk];
+					// default to invalid/broken revision if this is not present
+					$rev_id = $this->mTemplateIds[$ns][$dbk] ?? 0;
 					$metadata->addTemplate( TitleValue::tryNew( $ns, (string)$dbk ), $page_id, $rev_id );
 				}
 			}
@@ -2920,25 +2975,6 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 		return $a;
 	}
 
-	private static function merge2D( array $a, array $b ): array {
-		$values = [];
-		$keys = array_merge( array_keys( $a ), array_keys( $b ) );
-
-		foreach ( $keys as $k ) {
-			if ( empty( $a[$k] ) ) {
-				$values[$k] = $b[$k];
-			} elseif ( empty( $b[$k] ) ) {
-				$values[$k] = $a[$k];
-			} elseif ( is_array( $a[$k] ) && is_array( $b[$k] ) ) {
-				$values[$k] = array_replace( $a[$k], $b[$k] );
-			} else {
-				$values[$k] = $b[$k];
-			}
-		}
-
-		return $values;
-	}
-
 	private static function useEachMinValue( array $a, array $b ): array {
 		$values = [];
 		$keys = array_merge( array_keys( $a ), array_keys( $b ) );
@@ -2961,6 +2997,11 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 		return $values;
 	}
 
+	/**
+	 * @param string|int|null $a
+	 * @param string|int|null $b
+	 * @return string|int|null
+	 */
 	private static function useMaxValue( $a, $b ) {
 		if ( $a === null ) {
 			return $b;

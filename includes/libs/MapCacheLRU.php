@@ -16,8 +16,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Cache
  */
+
+namespace Wikimedia\MapCacheLRU;
+
+use InvalidArgumentException;
+use UnexpectedValueException;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 
 /**
@@ -99,7 +103,7 @@ class MapCacheLRU implements ExpirationAwareness {
 	 * of 3/8 means values start at the top of the bottom 3/8s of the list and are
 	 * moved to the top of the list when accessed a second time.
 	 *
-	 * @param string $key
+	 * @param string|int $key
 	 * @param mixed $value
 	 * @param float $rank Bottom fraction of the list where keys start off [default: 1.0]
 	 * @return void
@@ -155,7 +159,7 @@ class MapCacheLRU implements ExpirationAwareness {
 	 * This returns null if the key is not set.
 	 * If the item is already set, it will be pushed to the top of the cache.
 	 *
-	 * @param string $key
+	 * @param string|int $key
 	 * @param float $maxAge Ignore items older than this many seconds [default: INF]
 	 * @param mixed|null $default Value to return if no key is found [default: null]
 	 * @return mixed Returns $default if the key was not found or is older than $maxAge
@@ -255,7 +259,7 @@ class MapCacheLRU implements ExpirationAwareness {
 	 * If the callback returns false, then nothing is stored.
 	 *
 	 * @since 1.28
-	 * @param string $key
+	 * @param string|int $key
 	 * @param callable $callback Callback that will produce the value
 	 * @param float $rank Bottom fraction of the list where keys start off [default: 1.0]
 	 * @param float $maxAge Ignore items older than this many seconds [default: INF]
@@ -351,7 +355,7 @@ class MapCacheLRU implements ExpirationAwareness {
 	/**
 	 * Push an entry to the top of the cache
 	 *
-	 * @param string $key
+	 * @param string|int $key
 	 */
 	private function ping( $key ) {
 		$item = $this->cache[$key];
@@ -412,3 +416,6 @@ class MapCacheLRU implements ExpirationAwareness {
 		$this->wallClockOverride =& $time;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( MapCacheLRU::class, 'MapCacheLRU' );

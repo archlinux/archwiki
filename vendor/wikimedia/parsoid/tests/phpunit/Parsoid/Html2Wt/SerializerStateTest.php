@@ -10,7 +10,7 @@ use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Html2Wt\WikitextSerializer;
 use Wikimedia\Parsoid\Mocks\MockEnv;
 use Wikimedia\Parsoid\Tokens\SourceRange;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Zest\Zest;
 
 class SerializerStateTest extends TestCase {
@@ -23,13 +23,11 @@ class SerializerStateTest extends TestCase {
 	private function getBaseSerializerMock( array $extraMethodsToMock = [] ): WikitextSerializer {
 		$serializer = $this->getMockBuilder( WikitextSerializer::class )
 			->disableOriginalConstructor()
-			->onlyMethods( array_merge( [ 'trace' ], $extraMethodsToMock ) )
+			->onlyMethods( $extraMethodsToMock )
 			->getMock();
-		$serializer->expects( $this->any() )
-			->method( 'trace' )
-			->willReturn( null );
 		/** @var WikitextSerializer $serializer */
 		$serializer->env = new MockEnv( [] );
+		$serializer->logType = 'wts';
 		return $serializer;
 	}
 
@@ -52,8 +50,9 @@ class SerializerStateTest extends TestCase {
 	 * @return Element
 	 */
 	private function getNode( $html = '<div id="main"></div>', $selector = '#main' ): Element {
-		$document = DOMCompat::newDocument( true );
-		$document->loadHTML( "<html><body>$html</body></html>" );
+		$document = ContentUtils::createAndLoadDocument(
+			"<html><body>$html</body></html>"
+		);
 		return Zest::find( $selector, $document )[0];
 	}
 
@@ -197,7 +196,7 @@ class SerializerStateTest extends TestCase {
 		$state->$method( $node, $callback );
 	}
 
-	public function provideSerializeChildrenToString() {
+	public static function provideSerializeChildrenToString() {
 		return [
 			[ 'kickOffSerialize' ],
 			[ 'serializeLinkChildrenToString' ],

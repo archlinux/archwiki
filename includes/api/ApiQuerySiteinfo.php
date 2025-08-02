@@ -22,6 +22,7 @@
 
 namespace MediaWiki\Api;
 
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageCode;
@@ -30,12 +31,14 @@ use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\SkinModule;
 use MediaWiki\SiteStats\SiteStats;
+use MediaWiki\Skin\Skin;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Specials\SpecialVersion;
@@ -48,10 +51,7 @@ use MediaWiki\Utils\ExtensionInfo;
 use MediaWiki\Utils\GitInfo;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
-use Skin;
-use SkinFactory;
 use UploadBase;
-use Wikimedia\Composer\ComposerInstalled;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\ReadOnlyMode;
@@ -65,6 +65,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 	private UserOptionsLookup $userOptionsLookup;
 	private UserGroupManager $userGroupManager;
+	private HookContainer $hookContainer;
 	private LanguageConverterFactory $languageConverterFactory;
 	private LanguageFactory $languageFactory;
 	private LanguageNameUtils $languageNameUtils;
@@ -79,12 +80,14 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	private ReadOnlyMode $readOnlyMode;
 	private UrlUtils $urlUtils;
 	private TempUserConfig $tempUserConfig;
+	private GroupPermissionsLookup $groupPermissionsLookup;
 
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,
 		UserOptionsLookup $userOptionsLookup,
 		UserGroupManager $userGroupManager,
+		HookContainer $hookContainer,
 		LanguageConverterFactory $languageConverterFactory,
 		LanguageFactory $languageFactory,
 		LanguageNameUtils $languageNameUtils,
@@ -98,11 +101,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		ILoadBalancer $loadBalancer,
 		ReadOnlyMode $readOnlyMode,
 		UrlUtils $urlUtils,
-		TempUserConfig $tempUserConfig
+		TempUserConfig $tempUserConfig,
+		GroupPermissionsLookup $groupPermissionsLookup
 	) {
 		parent::__construct( $query, $moduleName, 'si' );
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->userGroupManager = $userGroupManager;
+		$this->hookContainer = $hookContainer;
 		$this->languageConverterFactory = $languageConverterFactory;
 		$this->languageFactory = $languageFactory;
 		$this->languageNameUtils = $languageNameUtils;
@@ -117,6 +122,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$this->readOnlyMode = $readOnlyMode;
 		$this->urlUtils = $urlUtils;
 		$this->tempUserConfig = $tempUserConfig;
+		$this->groupPermissionsLookup = $groupPermissionsLookup;
 	}
 
 	public function execute() {
@@ -593,11 +599,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 		$data = [];
 		$result = $this->getResult();
-		$allGroups = array_values( $this->userGroupManager->listAllGroups() );
-		foreach ( $config->get( MainConfigNames::GroupPermissions ) as $group => $permissions ) {
+		$allGroups = $this->userGroupManager->listAllGroups();
+		$allImplicitGroups = $this->userGroupManager->listAllImplicitGroups();
+		foreach ( array_merge( $allImplicitGroups, $allGroups ) as $group ) {
 			$arr = [
 				'name' => $group,
-				'rights' => array_keys( $permissions, true ),
+				'rights' => $this->groupPermissionsLookup->getGrantedPermissions( $group ),
+				// TODO: Also expose the list of revoked permissions somehow.
 			];
 
 			if ( $numberInGroup ) {
@@ -611,25 +619,14 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				}
 			}
 
-			$groupArr = [
-				'add' => $config->get( MainConfigNames::AddGroups ),
-				'remove' => $config->get( MainConfigNames::RemoveGroups ),
-				'add-self' => $config->get( MainConfigNames::GroupsAddToSelf ),
-				'remove-self' => $config->get( MainConfigNames::GroupsRemoveFromSelf )
-			];
+			$groupArr = $this->userGroupManager->getGroupsChangeableByGroup( $group );
 
-			foreach ( $groupArr as $type => $rights ) {
-				if ( isset( $rights[$group] ) ) {
-					if ( $rights[$group] === true ) {
-						$groups = $allGroups;
-					} else {
-						$groups = array_intersect( $rights[$group], $allGroups );
-					}
-					if ( $groups ) {
-						$arr[$type] = $groups;
-						ApiResult::setArrayType( $arr[$type], 'BCarray' );
-						ApiResult::setIndexedTagName( $arr[$type], 'group' );
-					}
+			foreach ( $groupArr as $type => $groups ) {
+				$groups = array_values( array_intersect( $groups, $allGroups ) );
+				if ( $groups ) {
+					$arr[$type] = $groups;
+					ApiResult::setArrayType( $arr[$type], 'BCarray' );
+					ApiResult::setIndexedTagName( $arr[$type], 'group' );
 				}
 			}
 
@@ -677,14 +674,12 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	protected function appendInstalledLibraries( $property ) {
-		$path = MW_INSTALL_PATH . '/vendor/composer/installed.json';
-		if ( !file_exists( $path ) ) {
-			return true;
-		}
-
+		$credits = SpecialVersion::getCredits(
+			ExtensionRegistry::getInstance(),
+			$this->getConfig()
+		);
 		$data = [];
-		$installed = new ComposerInstalled( $path );
-		foreach ( $installed->getInstalledDependencies() as $name => $info ) {
+		foreach ( SpecialVersion::parseComposerInstalled( $credits ) as $name => $info ) {
 			if ( str_starts_with( $info['type'], 'mediawiki-' ) ) {
 				// Skip any extensions or skins since they'll be listed
 				// in their proper section
@@ -955,7 +950,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		return $this->getResult()->addValue( 'query', $property, $config );
 	}
 
-	private function getAutoPromoteConds() {
+	private function getAutoPromoteConds(): array {
 		$allowedConditions = [];
 		foreach ( get_defined_constants() as $constantName => $constantValue ) {
 			if ( strpos( $constantName, 'APCOND_' ) !== false ) {
@@ -965,7 +960,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		return $allowedConditions;
 	}
 
-	private function processAutoPromote( $input, $allowedConditions ) {
+	private function processAutoPromote( array $input, array $allowedConditions ): array {
 		$data = [];
 		foreach ( $input as $groupName => $conditions ) {
 			$row = $this->recAutopromote( $conditions, $allowedConditions );
@@ -977,7 +972,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		return $data;
 	}
 
-	private function appendAutoPromote( $property ) {
+	private function appendAutoPromote( string $property ): bool {
 		return $this->getResult()->addValue(
 			'query',
 			$property,
@@ -988,7 +983,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		);
 	}
 
-	private function appendAutoPromoteOnce( $property ) {
+	private function appendAutoPromoteOnce( string $property ): bool {
 		$allowedConditions = $this->getAutoPromoteConds();
 		$data = [];
 		foreach ( $this->getConfig()->get( MainConfigNames::AutopromoteOnce ) as $key => $value ) {
@@ -1049,15 +1044,14 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	public function appendSubscribedHooks( $property ) {
-		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
-		$hookNames = $hookContainer->getHookNames();
+		$hookNames = $this->hookContainer->getHookNames();
 		sort( $hookNames );
 
 		$data = [];
 		foreach ( $hookNames as $name ) {
 			$arr = [
 				'name' => $name,
-				'subscribers' => $hookContainer->getHandlerDescriptions( $name ),
+				'subscribers' => $this->hookContainer->getHandlerDescriptions( $name ),
 			];
 
 			ApiResult::setArrayType( $arr['subscribers'], 'array' );

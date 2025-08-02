@@ -67,6 +67,7 @@
 	"notifications": "ئاگادارییەکان",
 	"tooltip-pt-notifications-alert": "{{GENDER:|ھۆشدارەکانت}}",
 	"tooltip-pt-notifications-notice": "{{GENDER:|پەیامەکانت}}",
+	"tooltip-pt-notifications": "ئاگادارییەکانت",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "ئاگادارییەکان بە پۆل",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "بە بنچینەیی کارا کراوە",
 	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "بەکارھێنەرەکانی ئێستا",

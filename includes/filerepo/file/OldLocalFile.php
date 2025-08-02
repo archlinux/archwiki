@@ -18,13 +18,21 @@
  * @file
  */
 
-use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+namespace MediaWiki\FileRepo\File;
+
+use InvalidArgumentException;
+use LogicException;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use MWFileProps;
+use RuntimeException;
+use stdClass;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -39,7 +47,7 @@ class OldLocalFile extends LocalFile {
 	/** @var string|int Timestamp */
 	protected $requestedTime;
 
-	/** @var string Archive name */
+	/** @var string|null Archive name */
 	protected $archive_name;
 
 	public const CACHE_VERSION = 1;
@@ -137,6 +145,7 @@ class OldLocalFile extends LocalFile {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo( array $options = [] ) {
+		wfDeprecated( __METHOD__, '1.41' );
 		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$queryInfo = FileSelectQueryBuilder::newForOldFile( $dbr, $options )->getQueryInfo();
 		return [
@@ -185,7 +194,7 @@ class OldLocalFile extends LocalFile {
 	 * @return string
 	 */
 	public function getArchiveName() {
-		if ( !isset( $this->archive_name ) ) {
+		if ( $this->archive_name === null ) {
 			$this->load();
 		}
 
@@ -252,7 +261,9 @@ class OldLocalFile extends LocalFile {
 		}
 	}
 
-	private function buildQueryBuilderForLoad( IReadableDatabase $dbr, $options = [ 'omit-nonlazy' ] ) {
+	private function buildQueryBuilderForLoad(
+		IReadableDatabase $dbr, array $options = [ 'omit-nonlazy' ]
+	): FileSelectQueryBuilder {
 		$queryBuilder = FileSelectQueryBuilder::newForOldFile( $dbr, $options );
 		$queryBuilder->where( [ 'oi_name' => $this->getName() ] )
 			->orderBy( 'oi_timestamp', SelectQueryBuilder::SORT_DESC );
@@ -307,6 +318,7 @@ class OldLocalFile extends LocalFile {
 
 		$dbw = $this->repo->getPrimaryDB();
 		[ $major, $minor ] = self::splitMime( $this->mime );
+		$metadata = $this->getMetadataForDb( $dbw );
 
 		wfDebug( __METHOD__ . ': upgrading ' . $this->archive_name . " to the current schema" );
 		$dbw->newUpdateQueryBuilder()
@@ -319,7 +331,7 @@ class OldLocalFile extends LocalFile {
 				'oi_media_type' => $this->media_type,
 				'oi_major_mime' => $major,
 				'oi_minor_mime' => $minor,
-				'oi_metadata' => $this->getMetadataForDb( $dbw ),
+				'oi_metadata' => $metadata,
 				'oi_sha1' => $this->sha1,
 			] )
 			->where( [
@@ -327,6 +339,27 @@ class OldLocalFile extends LocalFile {
 				'oi_archive_name' => $this->archive_name,
 			] )
 			->caller( __METHOD__ )->execute();
+
+		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
+		if ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'filerevision' )
+				->set( [
+					'fr_size' => $this->size,
+					'fr_width' => $this->width,
+					'fr_height' => $this->height,
+					'fr_bits' => $this->bits,
+					'fr_metadata' => $metadata,
+					'fr_sha1' => $this->sha1,
+				] )
+				->where( [
+					'fr_file' => $this->acquireFileIdFromName(),
+					'fr_archive_name' => $this->archive_name,
+				] )
+				->caller( __METHOD__ )->execute();
+		}
 	}
 
 	protected function reserializeMetadata() {
@@ -420,6 +453,7 @@ class OldLocalFile extends LocalFile {
 		$this->setProps( $props );
 
 		$dbw->startAtomic( __METHOD__ );
+
 		$commentFields = $services->getCommentStore()
 			->insert( $dbw, 'oi_description', $comment );
 		$actorId = $services->getActorNormalization()
@@ -442,6 +476,31 @@ class OldLocalFile extends LocalFile {
 				'oi_sha1' => $props['sha1'],
 			] + $commentFields )
 			->caller( __METHOD__ )->execute();
+
+		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
+		if ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$commentFields = $services->getCommentStore()
+				->insert( $dbw, 'fr_description', $comment );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'filerevision' )
+				->ignore()
+				->row( [
+						'fr_file' => $this->acquireFileIdFromName(),
+						'fr_size' => $this->size,
+						'fr_width' => intval( $this->width ),
+						'fr_height' => intval( $this->height ),
+						'fr_bits' => $this->bits,
+						'fr_actor' => $actorId,
+						'fr_deleted' => 0,
+						'fr_timestamp' => $dbw->timestamp( $timestamp ),
+						'fr_metadata' => $this->getMetadataForDb( $dbw ),
+						'fr_sha1' => $this->sha1
+					] + $commentFields )
+				->caller( __METHOD__ )->execute();
+		}
+
 		$dbw->endAtomic( __METHOD__ );
 
 		return true;
@@ -462,3 +521,6 @@ class OldLocalFile extends LocalFile {
 		return parent::exists();
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( OldLocalFile::class, 'OldLocalFile' );

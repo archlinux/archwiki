@@ -58,6 +58,11 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "View categories of pages",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Unfortunately, grouping results by page is not available on mobile. If you would like to use the group by page feature please visit the desktop site.",
 	"skin-minerva-night-mode-unavailable": "Page only available in \"Light\" color theme.",
+	"skin-minerva-donate-banner-message": "",
+	"skin-minerva-donate-banner-subtitle": "",
+	"skin-minerva-donate-banner-gif": "",
+	"skin-minerva-donate-banner-reduced-motion": "",
+	"skin-minerva-donate-banner-url": "",
 	"minerva.css": "/* All CSS here will be loaded for users of the MinervaNeue skin */",
 	"minerva.js": "/* All JavaScript here will be loaded for users of the MinervaNeue skin */"
 }

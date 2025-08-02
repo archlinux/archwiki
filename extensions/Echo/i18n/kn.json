@@ -36,6 +36,7 @@
 	"echo-pref-tooltip-reverted": "ನಾನು ಮಾಡಿದ ಸಂಪಾದನೆಯನ್ನು ಯಾರಾದರು ಹಿಂದಿನಂತೆ ಮಾಡಿದರೆ ನನಗೆ ತಿಳಿಸಿ",
 	"echo-pref-tooltip-mention": "ನನ್ನ ಸದಸ್ಯ ಪುಟಕ್ಕೆ ಯಾರಾದರು ಯಾವುದಾದರು ಚರ್ಚಾಪುಟದಿಂದ ಕೊಂಡಿ ನೀಡಿದರೆ ನನಗೆ ತಿಳಿಸಿ",
 	"notifications": "ಸೂಚನೆಗಳು",
+	"tooltip-pt-notifications": "ನಿಮ್ಮ ಸೂಚನೆಗಳು",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "ಹೊಸ ಬಳಕೆದಾರರು",
 	"echo-specialpage": "ಸೂಚನೆಗಳು",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|ಅಧಿಸೂಚನೆ|ಅಧಿಸೂಚನೆಗಳು}}",

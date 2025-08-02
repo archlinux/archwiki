@@ -1,8 +1,29 @@
+@import '../../lib/codex-design-tokens/theme-wikimedia-ui.less';
+
+@media ( max-width: 1492px ) {
+	/* Hides the Vector sidebar while an editcheck-enabled editing session is occurring. See T379443. */
+	/* stylelint-disable selector-class-pattern */
+	.ve-editcheck-available {
+		.mw-body .vector-column-end,
+		.vector-pinnable-header-pin-button {
+			display: none !important;  /* stylelint-disable-line declaration-no-important */
+		}
+	}
+	/* stylelint-enable selector-class-pattern */
+}
+
 /* Toolbar */
 
 .ve-ui-editCheck-toolbar {
+	font-size: 0.875rem; // ignore content scaling
+
+	.mw-mf & {
+		font-size: inherit;
+	}
+
 	.oo-ui-toolbar-bar {
 		display: flex;
+		flex-wrap: wrap;
 	}
 
 	.oo-ui-toolbar-tools {
@@ -12,6 +33,12 @@
 
 	.oo-ui-toolbar-tools.oo-ui-toolbar-after {
 		flex: 0;
+	}
+
+	.oo-ui-toolbar-actions + div {
+		// There's a clear div that we need to enhance slightly
+		flex-basis: 100%;
+		height: 0;
 	}
 
 	&.ve-init-mw-mobileArticleTarget-toolbar .oo-ui-toolbar-tools.oo-ui-toolbar-after {
@@ -26,22 +53,261 @@
 	text-align: center;
 }
 
-/* Context item */
+/* Actions */
 
-.ve-ui-editCheckContextItem {
-	> .ve-ui-linearContextItem-head {
-		background: #fce7fe;
+.ve-ui-editCheckDialog {
+	font-size: 0.875rem; // ignore content scaling
+
+	&-title {
+		display: block;
+		font-weight: bold;
+		padding: @spacing-50 0;
+		margin-bottom: @spacing-50;
+		border-bottom: 1px solid @border-color-base;
 	}
 
-	&-actions {
-		margin-top: 16px;
+	&-footer {
+		display: flex;
+		justify-content: flex-end;
+
+		> .oo-ui-labelWidget {
+			align-content: center;
+		}
+	}
+
+	.ve-ui-editCheckActionWidget {
+		box-sizing: border-box;
+		white-space: normal; // Minerva needs this
+		margin: @spacing-50 0;
+		padding: @spacing-50 @spacing-75;
+		cursor: pointer;
+		overflow: hidden;
+
+		> .oo-ui-iconElement-icon {
+			// Fixes icon placement in WMUI theme
+			top: -@spacing-50;
+		}
+
+		> .oo-ui-labelElement-label {
+			font-weight: @font-weight-semi-bold;
+		}
+
+		&-body {
+			cursor: auto;
+			background-color: @background-color-base;
+			margin: @spacing-50 -@spacing-75 -@spacing-50 -@spacing-75;
+			padding: @spacing-50 @spacing-75 @spacing-100;
+		}
+
+		&-actions {
+			margin-top: @spacing-100;
+		}
+
+		&.ve-ui-editCheckActionWidget-collapsed {
+			filter: grayscale( 1 );
+
+			> .ve-ui-editCheckActionWidget-body {
+				display: none;
+			}
+		}
+
+		&.oo-ui-flaggedElement-warning {
+			border-color: @border-color-warning;
+
+			> .ve-ui-editCheckActionWidget-head {
+				background-color: @background-color-warning-subtle;
+			}
+		}
+
+		&.oo-ui-flaggedElement-error {
+			border-color: @border-color-error;
+
+			> .ve-ui-editCheckActionWidget-head {
+				background-color: @background-color-error-subtle;
+			}
+		}
+
+		&.oo-ui-flaggedElement-success {
+			border-color: @border-color-success;
+
+			> .ve-ui-editCheckActionWidget-head {
+				background-color: @background-color-success-subtle;
+			}
+		}
+
+		&.oo-ui-flaggedElement-notice {
+			border-color: @border-color-notice;
+
+			> .ve-ui-editCheckActionWidget-head {
+				background-color: @background-color-notice-subtle;
+			}
+		}
+
+		.ve-ui-editCheckActionWidget-feedback {
+			.oo-ui-fieldLayout-header {
+				padding-bottom: @spacing-100;
+			}
+
+			.oo-ui-labelElement-label {
+				font-size: inherit;
+			}
+		}
+	}
+
+	&.ve-ui-editCheckDialog-singleAction .ve-ui-editCheckActionWidget-collapsed {
+		display: none;
+	}
+
+	.mw-mf & {
+		top: auto;
+		// See: .ve-ui-mobileContext, which this is closely mimicking
+		background-color: @background-color-interactive-subtle;
+		/* Match toolbar border & shadow */
+		border-top: @border-subtle;
+		box-shadow: 0 -1px 1px 0 rgba( 0, 0, 0, 0.1 );
+		/* Transition out faster, as keyboard may be coming up */
+		transition: transform 100ms;
+		transform: translateY( 0% );
+		max-width: 995px;
+		margin: 0 auto;
+
+		&-title {
+			padding: @spacing-75 @spacing-100;
+			margin-bottom: 0;
+		}
+
+		&-close {
+			position: absolute;
+			right: 0;
+			top: 2px;
+		}
+
+		&-footer {
+			margin: 0 @spacing-100 @spacing-50;
+		}
+
+		&.ve-ui-editCheckDialog-collapsed {
+			display: block;
+			transition: transform 250ms;
+			transform: translateY( calc( 100% - 2.5em ) );
+		}
+
+		.oo-ui-window-body {
+			padding: 0;
+		}
+
+		.ve-ui-editCheckActionWidget {
+			margin: 0;
+			border-width: 0;
+			background-color: transparent !important;  /* stylelint-disable-line declaration-no-important */
+
+			&-body {
+				background-color: transparent;
+				padding-left: 2em;
+				margin-left: 0;
+			}
+		}
 	}
 }
 
-/* Fix the callout border color in browsers which support :has */
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-.ve-ui-desktopContext > .oo-ui-popupWidget:has( .ve-ui-editCheckContextItem:first-child ) .oo-ui-popupWidget-anchor::after {
-	border-bottom-color: #fce7fe;
+.mw-mf .ve-ce-surface-reviewMode.ve-ce-surface-deactivated {
+	// Otherwise the content will be covered by the mobile context at the end
+	// of the document. (Upstream this?)
+	margin-bottom: 100%;
+}
+
+/* Mobile sidebar */
+
+.ve-ui-editCheck-gutter-active {
+	div.ve-ui-editCheckGutterSidebarDialog {
+		background-color: @background-color-interactive-subtle;
+
+		.ve-ui-editCheck-gutter-action {
+			position: absolute;
+			width: 42px;
+			text-align: center;
+			margin-top: -3px;
+			min-height: 24px;
+
+			> .oo-ui-iconElement-icon {
+				width: 20px;
+				height: 20px;
+				margin-top: -4px;
+			}
+
+			label {
+				position: absolute;
+				top: 16px;
+				right: 5px;
+				display: block;
+				border-radius: 3px;
+				background-color: @accent-color-base;
+				color: @color-inverted;
+				font-size: @font-size-x-small;
+				line-height: 0.9;
+				padding: 3px;
+			}
+
+			&-error {
+				border-left: 2px solid @color-error;
+			}
+
+			&-warning {
+				border-left: 2px solid @color-warning;
+			}
+
+			&-notice {
+				border-left: 2px solid @color-notice;
+			}
+
+			&-success {
+				border-left: 2px solid @color-success;
+			}
+
+			&-inactive {
+				border-left: 2px solid @border-color-base;
+			}
+		}
+	}
+}
+
+.ve-editcheck-available .mw-mf .ve-ce-surface {
+	margin-right: 16px;
+}
+
+@media all and ( max-width: 993.4px ) {
+	.ve-editcheck-available .mw-mf {
+		.ve-init-mw-target-surface {
+			margin: 0 0 1em;
+		}
+
+		.ve-ce-surface {
+			// Stop reflow during the transition
+			max-width: calc( 100% - (44px + 16px + 16px) );
+			margin: 0 16px 0 32px;
+		}
+
+		.ve-ui-editCheck-sidebar-active .ve-ce-surface {
+			margin-left: 16px;
+		}
+
+		.ve-ui-editCheck-sidebar-active .ve-init-mw-target-surface {
+			margin: 0;
+		}
+	}
+}
+
+@media all and ( min-width: 993.4px ) and ( max-width: @min-width-breakpoint-desktop ) {
+	.mw-mf .ve-ui-editCheck-sidebar-active .ve-ui-sidebarDialogWindowManager {
+		margin-right: -44px;
+	}
+}
+
+@media all and ( min-width: @min-width-breakpoint-desktop ) {
+	/* stylelint-disable-next-line selector-class-pattern */
+	.mw-mf .ve-ui-editCheck-sidebar-active .overlay-content {
+		width: auto;
+	}
 }
 
 /* Selections */
@@ -54,7 +320,7 @@
 .ve-ce-surface-selections-editCheck .ve-ce-surface-selection > div {
 	mix-blend-mode: darken;
 	// Adjust target colours to account for 50% opacity
-	background: ( #fce7fe - 0.8 * ( #fff ) ) / 0.2;
+	background: ( ( #fce7fe - 0.8 * ( #fff ) ) / 0.2 );
 	// border: 1px solid ( ( #d02aac - 0.8 * ( #fff ) ) / 0.2 );
 	border-radius: 2px;
 	padding: 2px;
@@ -67,10 +333,42 @@
 	> div {
 		mix-blend-mode: darken;
 		// Adjust target colours to account for 50% opacity
-		background: ( #fef6e7 - 0.8 * ( #fff ) ) / 0.2;
-		border: 1px solid ( ( #a66200 - 0.8 * ( #fff ) ) / 0.2 );
+		background: ( ( #fef6e7 - 0.8 * ( #fff ) ) / 0.2 );
+		// border: 1px solid ( ( #a66200 - 0.8 * ( #fff ) ) / 0.2 );
 		border-radius: 2px;
 		padding: 2px;
 		margin: -2px 0 0 -2px;
+	}
+}
+
+.ve-ui-editCheck-gutter-highlight {
+	position: absolute;
+	left: 0;
+	width: 2px;
+	overflow: hidden;
+	background-color: @color-base;
+
+	&-error {
+		background-color: @color-error;
+	}
+
+	&-warning {
+		background-color: @color-warning;
+	}
+
+	&-notice {
+		background-color: @color-notice;
+	}
+
+	&-success {
+		background-color: @color-success;
+	}
+
+	&-inactive {
+		background-color: @border-color-base;
+	}
+
+	.mw-mf & {
+		left: -10px;
 	}
 }

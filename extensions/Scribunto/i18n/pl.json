@@ -41,7 +41,7 @@
 	"scribunto-common-timeout": "Upłynął czas przewidziany do wykonywania skryptów.",
 	"scribunto-common-oom": "Przekroczona wielkość pamięci przewidziana do wykonywania skryptów.",
 	"scribunto-common-backtrace": "Backtrace:",
-	"scribunto-common-no-details": "Żadne dalsze szczegóły nie są dostępne.",
+	"scribunto-common-no-details": "Brak szczegółów na temat lokalizacji w kodzie.",
 	"scribunto-lua-in-function": "w funkcji „$1”",
 	"scribunto-lua-in-main": "w głównym bloku",
 	"scribunto-lua-in-function-at": "w funkcji na $1: $2",

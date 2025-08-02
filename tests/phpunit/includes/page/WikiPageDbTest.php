@@ -4,6 +4,7 @@ use MediaWiki\Category\Category;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\JavaScriptContent;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Content\WikitextContent;
@@ -11,6 +12,10 @@ use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
@@ -18,6 +23,11 @@ use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\RevisionSlotsUpdate;
+use MediaWiki\Tests\ExpectCallbackTrait;
+use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
+use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
+use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -29,13 +39,18 @@ use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \WikiPage
+ * @covers \MediaWiki\Page\WikiPage
  * @group Database
  */
 class WikiPageDbTest extends MediaWikiLangTestCase {
 	use DummyServicesTrait;
 	use MockAuthorityTrait;
 	use TempUserTestTrait;
+	use ChangeTrackingUpdateSpyTrait;
+	use SearchUpdateSpyTrait;
+	use LocalizationUpdateSpyTrait;
+	use ResourceLoaderUpdateSpyTrait;
+	use ExpectCallbackTrait;
 
 	protected function tearDown(): void {
 		ParserOptions::clearStaticCache();
@@ -65,7 +80,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 	 * @return WikiPage
 	 */
 	protected function createPage( $page, $content, $model = null, ?Authority $performer = null ) {
-		if ( is_string( $page ) || $page instanceof Title ) {
+		if ( !$page instanceof WikiPage ) {
 			$page = $this->newPage( $page, $model );
 		}
 
@@ -187,6 +202,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 	}
 
 	public function testDoEditUpdates() {
+		$this->hideDeprecated( WikiPage::class . '::doEditUpdates' );
 		$user = $this->getTestUser()->getUserIdentity();
 
 		// NOTE: if site stats get out of whack and drop below 0,
@@ -660,7 +676,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetRedirectTarget
-	 * @covers \WikiPage
+	 * @covers \MediaWiki\Page\WikiPage
 	 * @covers \MediaWiki\Page\RedirectStore
 	 */
 	public function testGetRedirectTarget( $title, $model, $text, $target ) {
@@ -926,12 +942,12 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 			[
 				CONTENT_MODEL_JAVASCRIPT,
 				"var test='<h2>not really a heading</h2>';",
-				"<pre class=\"mw-code mw-js\" dir=\"ltr\">\nvar test='&lt;h2>not really a heading&lt;/h2>';\n</pre>",
+				"<pre class=\"mw-code mw-js\" dir=\"ltr\">var test='&lt;h2&gt;not really a heading&lt;/h2&gt;';\n</pre>",
 			],
 			[
 				CONTENT_MODEL_CSS,
 				"/* Not ''wikitext'' */",
-				"<pre class=\"mw-code mw-css\" dir=\"ltr\">\n/* Not ''wikitext'' */\n</pre>",
+				"<pre class=\"mw-code mw-css\" dir=\"ltr\">/* Not ''wikitext'' */\n</pre>",
 			],
 			// @todo more...?
 		];
@@ -988,7 +1004,7 @@ just a test
 more stuff
 ";
 
-	public function dataReplaceSection() {
+	public static function provideReplaceSection() {
 		// NOTE: assume the Help namespace to contain wikitext
 		return [
 			[ 'Help:WikiPageTest_testReplaceSection',
@@ -1037,7 +1053,7 @@ more stuff
 	}
 
 	/**
-	 * @dataProvider dataReplaceSection
+	 * @dataProvider provideReplaceSection
 	 */
 	public function testReplaceSectionContent( $title, $model, $text, $section,
 		$with, $sectionTitle, $expected
@@ -1052,7 +1068,7 @@ more stuff
 	}
 
 	/**
-	 * @dataProvider dataReplaceSection
+	 * @dataProvider provideReplaceSection
 	 */
 	public function testReplaceSectionAtRev( $title, $model, $text, $section,
 		$with, $sectionTitle, $expected
@@ -1159,11 +1175,11 @@ more stuff
 
 			$page->doUserEditContent( $content, $user, "test edit $c", $c < 2 ? EDIT_NEW : 0 );
 
-			$c += 1;
+			$c++;
 		}
 
-		$this->hideDeprecated( 'WikiPage::getAutoDeleteReason:' );
-		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getAutoDeleteReason:' );
+		$this->hideDeprecated( WikiPage::class . '::getAutoDeleteReason:' );
+		$this->hideDeprecated( ContentHandler::class . '::getAutoDeleteReason:' );
 		$reason = $page->getAutoDeleteReason( $hasHistory );
 
 		if ( is_bool( $expectedResult ) || $expectedResult === null ) {
@@ -1535,7 +1551,29 @@ more stuff
 
 		$cascade = false;
 
+		// Expect that the onArticleProtect and onArticleProtectComplete hooks are called for successful calls.
+		$articleProtectHookCalled = false;
+		$this->setTemporaryHook(
+			'ArticleProtect',
+			static function () use ( &$articleProtectHookCalled ) {
+				$articleProtectHookCalled = true;
+			},
+			false
+		);
+
+		$articleProtectCompleteHookCalled = false;
+		$this->setTemporaryHook(
+			'ArticleProtectComplete',
+			static function () use ( &$articleProtectCompleteHookCalled ) {
+				$articleProtectCompleteHookCalled = true;
+			},
+			false
+		);
+
 		$status = $page->doUpdateRestrictions( $limit, $expiry, $cascade, 'aReason', $userIdentity, [] );
+
+		$this->assertTrue( $articleProtectCompleteHookCalled );
+		$this->assertTrue( $articleProtectHookCalled );
 
 		$logId = $status->getValue();
 		$restrictionStore = $this->getServiceContainer()->getRestrictionStore();
@@ -1718,6 +1756,116 @@ more stuff
 			$preparedEditBefore->output,
 			$preparedUpdateAfter->getCanonicalParserOutput()
 		);
+	}
+
+	public static function provideDoUpdateRestrictions_updatePropagation() {
+		static $counter = 1;
+		$name = strtr( __METHOD__, '\\:', '--' ) . $counter++;
+
+		yield 'article' => [ PageIdentityValue::localIdentity( 0, NS_MAIN, $name ) ];
+		yield 'message' => [ PageIdentityValue::localIdentity( 0, NS_MEDIAWIKI, $name ) ];
+		yield 'script' => [
+			PageIdentityValue::localIdentity( 0, NS_USER, "$name/common.js" ),
+			new JavaScriptContent( 'console.log("hi")' ),
+		];
+	}
+
+	/**
+	 * @dataProvider provideDoUpdateRestrictions_updatePropagation
+	 */
+	public function testDoUpdateRestrictions_updatePropagation(
+		PageIdentity $title,
+		?Content $content = null
+	) {
+		// Clear some extension hook handlers that may interfere with mock object expectations.
+		$this->clearHooks( [
+			'PageSaveComplete',
+			'RevisionRecordInserted',
+			'ArticleProtectComplete',
+		] );
+
+		$content ??= new TextContent( 'Lorem Ipsum' );
+		$page = $this->createPage( $title, $content );
+
+		// clear the queue
+		$this->runJobs();
+
+		// Expect only non-edit recent changes entry
+		$this->expectChangeTrackingUpdates( 0, 1, 0, 0, 0 );
+
+		// Expect no resource module purges on protection
+		$this->expectResourceLoaderUpdates( 0 );
+
+		// Expect no additional updates, since content didn't change
+		$this->expectSearchUpdates( 0 );
+		$this->expectLocalizationUpdate( 0 );
+
+		// now apply restrictions
+		$user = $this->getTestSysop()->getUser();
+		$cascade = false;
+		$limit = [ 'edit' => 'sysop' ];
+
+		$status = $page->doUpdateRestrictions(
+			$limit,
+			[],
+			$cascade,
+			'aReason',
+			$user,
+			[]
+		);
+
+		$this->assertStatusGood( $status );
+		$this->runDeferredUpdates();
+	}
+
+	public function testDoUpdateRestrictions_eventEmission() {
+		$page = $this->getExistingTestPage();
+
+		// flush the queue
+		$this->runDeferredUpdates();
+
+		$this->expectDomainEvent(
+			PageRevisionUpdatedEvent::TYPE, 1,
+			static function ( PageRevisionUpdatedEvent $event ) use ( &$calls, $page ) {
+				Assert::assertFalse( $event->isCreation(), 'isCreation' );
+				Assert::assertTrue( $event->changedLatestRevisionId(), 'changedLatestRevisionId' );
+				Assert::assertFalse( $event->isEffectiveContentChange(), 'isEffectiveContentChange' );
+				Assert::assertSame( $page->getId(), $event->getPage()->getId() );
+
+				Assert::assertTrue(
+					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_PROTECTION_CHANGE ),
+					PageRevisionUpdatedEvent::CAUSE_PROTECTION_CHANGE
+				);
+
+				Assert::assertTrue( $event->isSilent(), 'isSilent' );
+				Assert::assertTrue( $event->isImplicit(), 'isAutomated' );
+
+				Assert::assertTrue(
+					$event->getLatestRevisionAfter()->isMinor(),
+					'isMinor'
+				);
+			}
+		);
+
+		// Hooks fired by PageUpdater
+		$this->expectHook( 'RevisionFromEditComplete', 1 );
+		$this->expectHook( 'PageSaveComplete', 1 );
+
+		// now apply restrictions
+		$user = $this->getTestSysop()->getUser();
+		$cascade = false;
+		$limit = [ 'edit' => 'sysop' ];
+
+		$status = $page->doUpdateRestrictions(
+			$limit,
+			[],
+			$cascade,
+			'aReason',
+			$user,
+			[]
+		);
+
+		$this->assertStatusGood( $status );
 	}
 
 	public function testGetDerivedDataUpdater() {

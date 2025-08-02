@@ -122,9 +122,9 @@
 	"tag-discussiontools-description": "Golygiad wedi'i wneud yn DiscussionTools",
 	"tag-discussiontools-edit": "Wedi golygu sylw",
 	"tag-discussiontools-edit-description": "Cafodd sylw a oedd yn bodoli eisoes ei olygu yn DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Ychwanegu pwnc]",
+	"tag-discussiontools-newtopic": "Ychwanegu pwnc",
 	"tag-discussiontools-newtopic-description": "Cafodd pwnc newydd ei ychwanegu i'r dudalen yn DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Ateb]",
+	"tag-discussiontools-reply": "Ateb",
 	"tag-discussiontools-reply-description": "Cafodd ymateb ei ysgrifennu yn DiscussionTools",
 	"tag-discussiontools-source-description": "Roedd DiscussionTools yn y modd ffynhonnell",
 	"tag-discussiontools-visual-description": "Roedd DiscussionTools yn y modd gweledol"

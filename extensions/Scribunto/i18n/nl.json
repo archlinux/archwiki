@@ -41,7 +41,7 @@
 	"scribunto-common-timeout": "De maximale uitvoertijd voor scripts is verlopen.",
 	"scribunto-common-oom": "De hoeveelheid geheugen die uitgevoerde scripts mogen gebruiken is overschreden.",
 	"scribunto-common-backtrace": "Backtrace:",
-	"scribunto-common-no-details": "Geen verdere gegevens beschikbaar.",
+	"scribunto-common-no-details": "Er zijn geen details over de locatie van de code beschikbaar.",
 	"scribunto-lua-in-function": "in functie \"$1\"",
 	"scribunto-lua-in-main": "in het hoofdgedeelte",
 	"scribunto-lua-in-function-at": "in de functie op $1:$2",

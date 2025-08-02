@@ -39,6 +39,26 @@ ve.dm.TableCellableNode.static.areNodesCellable = function ( domNodes ) {
 	);
 };
 
+/**
+ * @typedef {Object} ve.dm.TableCellableNode.TableAttributes
+ * @property {string} style 'header' or 'data'
+ * @property {number} [rowspan]
+ * @property {string} [originalRowspan]
+ * @property {number} [colspan]
+ * @property {string} [originalColspan]
+ * @property {string} [align] DOM attribute align (deprecated)
+ * @property {string} [valign] DOM attribute valign (deprecated)
+ * @property {string} [textAlign] CSS property text-align
+ * @property {string} [verticalAlign] CSS property vertical-align
+ * @property {string} [originalTextAlign] CSS property text-align (original value)
+ * @property {string} [originalVerticalAlign] CSS property vertical-align (original value)
+ */
+
+/**
+ * @param {ve.dm.TableCellableNode.TableAttributes} attributes
+ * @param {HTMLElement[]} domElements
+ * @param {boolean} isAlien
+ */
 ve.dm.TableCellableNode.static.setAttributes = function ( attributes, domElements, isAlien ) {
 	if ( isAlien ) {
 		// For alienTableCells, we only need the colspan and rowspan, which
@@ -80,6 +100,10 @@ ve.dm.TableCellableNode.static.setAttributes = function ( attributes, domElement
 	}
 };
 
+/**
+ * @param {ve.dm.TableCellableNode.TableAttributes} attributes
+ * @param {HTMLElement} domElement
+ */
 ve.dm.TableCellableNode.static.applyAttributes = function ( attributes, domElement ) {
 	const spans = {
 		colspan: attributes.colspan,

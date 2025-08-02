@@ -20,10 +20,10 @@
 
 namespace MediaWiki\Page;
 
-use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -42,10 +42,6 @@ class PageProps {
 	private IConnectionProvider $dbProvider;
 	private MapCacheLRU $cache;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider
@@ -287,6 +283,3 @@ class PageProps {
 		$this->cache->setField( 0, $pageID, $pageProperties );
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( PageProps::class, 'PageProps' );

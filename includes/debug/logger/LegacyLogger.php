@@ -24,8 +24,8 @@ use DateTimeZone;
 use Error;
 use LogicException;
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\WikiMap\WikiMap;
-use MWExceptionHandler;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 use Throwable;
@@ -163,6 +163,8 @@ class LegacyLogger extends AbstractLogger {
 		if ( $level < $this->minimumLevel ) {
 			return;
 		}
+
+		$context += LoggerFactory::getContext()->get();
 
 		if ( $this->isDB
 			&& $level === self::LEVEL_DEBUG

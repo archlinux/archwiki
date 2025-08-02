@@ -84,16 +84,19 @@ class SpecialDiscussionToolsDebug extends FormSpecialPage {
 	public function onSubmit( array $data ) {
 		$title = Title::newFromText( $data['pagetitle'] );
 
+		$parserOptions = ParserOptions::newFromAnon();
 		$status = $this->parserOutputAccess->getParserOutput(
 			$title->toPageRecord(),
-			ParserOptions::newFromAnon()
+			$parserOptions
 		);
 		if ( !$status->isOK() ) {
 			return $status;
 		}
 
 		$parserOutput = $status->getValue();
-		$html = $parserOutput->getText();
+		$html = $parserOutput->runOutputPipeline( $parserOptions, [
+			'enableSectionEditLinks' => false,
+		] )->getContentHolderText();
 
 		$doc = DOMUtils::parseHTML( $html );
 		$container = DOMCompat::getBody( $doc );

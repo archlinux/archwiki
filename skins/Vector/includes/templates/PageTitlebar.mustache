@@ -2,7 +2,7 @@
 	Page titlebar - Main h1 title for all pages, with either the indicators or language selector.
 	When language button is visible, indicators are placed in the BeforeContent.mustache template instead.
 }}
-<header class="mw-body-header vector-page-titlebar{{#is-title-blank}} vector-page-titlebar-blank{{/is-title-blank}}">
+<header class="mw-body-header vector-page-titlebar{{#is-title-blank}} vector-page-titlebar-blank{{/is-title-blank}} vector-feature-custom-font-size-clientpref--excluded">
 	{{#data-toc}}
 	{{! TOC is moved into this dropdown from the sidebar in stickyHeader.js. }}
 	<nav aria-label="{{ msg-vector-toc-label }}" class="vector-toc-landmark">

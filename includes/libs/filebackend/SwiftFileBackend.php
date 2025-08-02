@@ -26,9 +26,6 @@ namespace Wikimedia\FileBackend;
 
 use Exception;
 use LockManager;
-use MapCacheLRU;
-use MediaWiki\Json\FormatJson;
-use MediaWiki\Utils\MWTimestamp;
 use Psr\Log\LoggerInterface;
 use Shellbox\Command\BoxedCommand;
 use StatusValue;
@@ -38,10 +35,12 @@ use Wikimedia\FileBackend\FileIteration\SwiftFileBackendDirList;
 use Wikimedia\FileBackend\FileIteration\SwiftFileBackendFileList;
 use Wikimedia\FileBackend\FileOpHandle\SwiftFileOpHandle;
 use Wikimedia\Http\MultiHttpClient;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\RequestTimeout\TimeoutException;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @brief Class for an OpenStack Swift (or Ceph RGW) based file backend.
@@ -193,7 +192,7 @@ class SwiftFileBackend extends FileBackendStore {
 		$this->maxFileSize = 5 * 1024 * 1024 * 1024;
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		parent::setLogger( $logger );
 		$this->http->setLogger( $logger );
 	}
@@ -248,7 +247,7 @@ class SwiftFileBackend extends FileBackendStore {
 			} elseif ( preg_match( '/^(x-)?content-(?!length$)/', $name ) ) {
 				// Only allow content-* and x-content-* headers (but not content-length)
 				$contentHeaders[$name] = $value;
-			} elseif ( $name === 'content-type' && strlen( $value ) ) {
+			} elseif ( $name === 'content-type' && $value !== '' ) {
 				// This header can be set to a value but not unset
 				$contentHeaders[$name] = $value;
 			}
@@ -798,7 +797,7 @@ class SwiftFileBackend extends FileBackendStore {
 	 */
 	protected function convertSwiftDate( $ts, $format = TS_MW ) {
 		try {
-			$timestamp = new MWTimestamp( $ts );
+			$timestamp = new ConvertibleTimestamp( $ts );
 
 			return $timestamp->getTimestamp( $format );
 		} catch ( TimeoutException $e ) {
@@ -1661,7 +1660,7 @@ class SwiftFileBackend extends FileBackendStore {
 		$params = [ 'cont' => $fullCont, 'prefix' => $prefix, 'delim' => $delim ];
 		if ( $rcode === 200 ) { // good
 			if ( $type === 'info' ) {
-				$status->value = FormatJson::decode( trim( $rbody ) );
+				$status->value = json_decode( trim( $rbody ) );
 			} else {
 				$status->value = explode( "\n", trim( $rbody ) );
 			}
@@ -1868,10 +1867,10 @@ class SwiftFileBackend extends FileBackendStore {
 	 */
 	protected function storageUrl( array $creds, $container = null, $object = null ) {
 		$parts = [ $creds['storage_url'] ];
-		if ( strlen( $container ?? '' ) ) {
+		if ( ( $container ?? '' ) !== '' ) {
 			$parts[] = rawurlencode( $container );
 		}
-		if ( strlen( $object ?? '' ) ) {
+		if ( ( $object ?? '' ) !== '' ) {
 			$parts[] = str_replace( "%2F", "/", rawurlencode( $object ) );
 		}
 
@@ -2020,12 +2019,12 @@ class SwiftFileBackend extends FileBackendStore {
 		if ( $status instanceof StatusValue ) {
 			$status->fatal( 'backend-fail-internal', $this->name );
 		}
-		$msg = "HTTP {code} ({desc}) in '{func}' (given '{req_params}')";
+		$msg = "HTTP {code} ({desc}) in '{func}'";
 		$msgParams = [
 			'code'   => $code,
 			'desc'   => $desc,
 			'func'   => $func,
-			'req_params' => FormatJson::encode( $params ),
+			'req_params' => $params,
 		];
 		if ( $err ) {
 			$msg .= ': {err}';

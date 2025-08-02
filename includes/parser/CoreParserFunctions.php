@@ -29,6 +29,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
@@ -37,6 +38,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SiteStats\SiteStats;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\RemexHtml\Tokenizer\Attributes;
@@ -124,6 +126,8 @@ class CoreParserFunctions {
 			# is the same as passing an empty first argument
 			'bcp47',
 			'dir',
+			'interwikilink',
+			'interlanguagelink',
 		];
 		foreach ( $noHashFunctions as $func ) {
 			$parser->setFunctionHook( $func, [ __CLASS__, $func ], Parser::SFH_NO_HASH );
@@ -154,7 +158,7 @@ class CoreParserFunctions {
 	/**
 	 * @param Parser $parser
 	 * @param string $part1 Message key
-	 * @param mixed ...$params To pass to wfMessage()
+	 * @param string ...$params To pass to wfMessage()
 	 * @return array
 	 */
 	public static function intFunction( $parser, $part1 = '', ...$params ) {
@@ -384,10 +388,10 @@ class CoreParserFunctions {
 				// Don't split on NAN/INF in the legacy case since they are
 				// likely to be found embedded inside non-numeric text.
 				return preg_replace_callback( "/{$validNumberRe}/", static function ( $m ) use ( $callback ) {
-					return call_user_func( $callback, $m[0] );
+					return $callback( $m[0] );
 				}, $number );
 			}
-			return call_user_func( $callback, $number );
+			return $callback( $number );
 		};
 	}
 
@@ -1167,7 +1171,7 @@ class CoreParserFunctions {
 		$arg = $magicWords->matchStartToEnd( $uarg );
 
 		$text = trim( $text );
-		if ( strlen( $text ) == 0 ) {
+		if ( $text === '' ) {
 			return '';
 		}
 		$old = $parser->getOutput()->getPageProperty( 'defaultsort' );
@@ -1246,11 +1250,24 @@ class CoreParserFunctions {
 		if ( !count( $args ) ) {
 			return '';
 		}
-		$tagName = strtolower( trim( $frame->expand( array_shift( $args ) ) ) );
+		$tagName = strtolower( trim( $parser->killMarkers(
+			$frame->expand( array_shift( $args ) )
+		) ) );
 		$processNowiki = $parser->tagNeedsNowikiStrippedInTagPF( $tagName ) ? PPFrame::PROCESS_NOWIKI : 0;
 
 		if ( count( $args ) ) {
+			// With Parsoid Fragment support, $processNoWiki flag
+			// isn't actually required as a ::expand() flag, but it
+			// doesn't do any harm.
 			$inner = $frame->expand( array_shift( $args ), $processNowiki );
+			if ( $processNowiki ) {
+				// This is the T299103 workaround for <syntaxhighlight>,
+				// and reproduces the code in SyntaxHighlight::parserHook.
+				// The Parsoid extension API (SyntaxHighlight::sourceToDom)
+				// doesn't (yet) know about strip state, and so can't do
+				// this itself.
+				$inner = $parser->getStripState()->unstripNoWiki( $inner );
+			}
 		} else {
 			$inner = null;
 		}
@@ -1274,7 +1291,7 @@ class CoreParserFunctions {
 			$attrText = '';
 			foreach ( $attributes as $name => $value ) {
 				$attrText .= ' ' . htmlspecialchars( $name ) .
-					'="' . htmlspecialchars( $value, ENT_COMPAT ) . '"';
+					'="' . htmlspecialchars( $parser->killMarkers( $value ), ENT_COMPAT ) . '"';
 			}
 			if ( $inner === null ) {
 				return "<$tagName$attrText/>";
@@ -1680,6 +1697,58 @@ class CoreParserFunctions {
 			return implode( '|', $names );
 		}
 		return '';
+	}
+
+	public static function interwikilink( $parser, $prefix = '', $title = '', $linkText = null ) {
+		$services = MediaWikiServices::getInstance();
+		if (
+			$prefix !== '' &&
+			$services->getInterwikiLookup()->isValidInterwiki( $prefix )
+		) {
+			if ( $linkText !== null ) {
+				$linkText = Parser::stripOuterParagraph(
+					# FIXME T382287: when using Parsoid this may leave
+					# strip markers behind for embedded extension tags.
+					$parser->recursiveTagParseFully( $linkText )
+				);
+			}
+			[ $title, $frag ] = array_pad( explode( '#', $title, 2 ), 2, '' );
+			$target = new TitleValue( NS_MAIN, $title, $frag, $prefix );
+			$parser->getOutput()->addInterwikiLink( $target );
+			return [
+				'text' => Linker::link( $target, $linkText ),
+				'isHTML' => true,
+			];
+		}
+		// Invalid interwiki link, render as plain text
+		return [ 'found' => false ];
+	}
+
+	public static function interlanguagelink( $parser, $prefix = '', $title = '', $linkText = null ) {
+		$services = MediaWikiServices::getInstance();
+		$extraInterlanguageLinkPrefixes = $services->getMainConfig()->get(
+			MainConfigNames::ExtraInterlanguageLinkPrefixes
+		);
+		if (
+			$prefix !== '' &&
+			$services->getInterwikiLookup()->isValidInterwiki( $prefix ) &&
+			(
+				$services->getLanguageNameUtils()->getLanguageName(
+					$prefix, LanguageNameUtils::AUTONYMS, LanguageNameUtils::DEFINED
+				) || in_array( $prefix, $extraInterlanguageLinkPrefixes, true )
+			)
+		) {
+			// $linkText is ignored for language links, but fragment is kept
+			[ $title, $frag ] = array_pad( explode( '#', $title, 2 ), 2, '' );
+			$parser->getOutput()->addLanguageLink(
+				new TitleValue(
+					NS_MAIN, $title, $frag, $prefix
+				)
+			);
+			return '';
+		}
+		// Invalid language link, render as plain text
+		return [ 'found' => false ];
 	}
 }
 

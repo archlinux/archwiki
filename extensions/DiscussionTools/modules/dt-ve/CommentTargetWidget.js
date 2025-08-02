@@ -13,9 +13,6 @@ require( './CommentTarget.js' );
 function CommentTargetWidget( replyWidget, config ) {
 	const excludeCommands = [
 		'blockquoteWrap', // T258194
-		// Disable to allow Tab/Shift+Tab to move focus out of the widget (T172694)
-		'indent',
-		'outdent',
 		// Save commands get loaded from articletarget module, which we load
 		// to get the edit switching tool for mobile
 		'showSave',

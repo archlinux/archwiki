@@ -61,7 +61,7 @@ function isAvailable( windowObj, page, userAgent, supportedNamespaces ) {
 	// Download button is restricted to certain namespaces T181152.
 	// Not shown on missing pages
 	// Defaults to 0, in case cached JS has been served.
-	if ( supportedNamespaces.indexOf( page.getNamespaceId() ) === -1 ||
+	if ( !supportedNamespaces.includes( page.getNamespaceId() ) ||
 		page.isMainPage() || page.isMissing ) {
 		// namespace is not supported or it's a main page
 		return false;

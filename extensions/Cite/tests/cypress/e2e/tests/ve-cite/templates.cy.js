@@ -78,12 +78,9 @@ describe( 'Re-using refs in Visual Editor using templates', () => {
 		cy.get( '.ve-ui-mwParameterPage-field' ).type( 'test' );
 		// Click on insert button
 		cy.get( '.ve-ui-mwTemplateDialog .oo-ui-processDialog-actions-primary .oo-ui-buttonElement-button' ).click();
-		cy.get( '.ve-ui-toolbar-saveButton' ).click();
-		// Click save changes button
-		cy.get( '.ve-ui-mwSaveDialog .oo-ui-processDialog-navigation .oo-ui-flaggedElement-primary .oo-ui-buttonElement-button' ).click();
 
-		// Success notification should be visible
-		cy.get( '.mw-notification-visible .oo-ui-icon-success' ).should( 'be.visible' );
+		// Save changes
+		veHelper.saveEdits();
 
 		// Ref has been added to references section and has correct content
 		helper.getRefFromReferencesSection( 2 ).find( '.reference-text' ).should( 'have.text', 'Template:Internetquelle' );

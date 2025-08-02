@@ -2,12 +2,14 @@
 
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\RecentChanges\EnhancedChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 
 /**
- * @covers \EnhancedChangesList
+ * @covers \MediaWiki\RecentChanges\EnhancedChangesList
  *
  * @group Database
  *

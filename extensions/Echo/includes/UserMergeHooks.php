@@ -17,8 +17,6 @@ class UserMergeHooks implements
 
 	/**
 	 * For integration with the UserMerge extension.
-	 *
-	 * @param array &$updateFields
 	 */
 	public function onUserMergeAccountFields( array &$updateFields ) {
 		// [ tableName, idField, textField ]

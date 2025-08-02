@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\ExtensionError;
@@ -19,15 +18,15 @@ use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 class ExtensionHandler extends TokenHandler {
 
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 	}
 
-	private static function normalizeExtOptions( array $options ): array {
+	private static function normalizeExtOptions( array $options, string $normalizeFlag ): array {
 		// Mimics Sanitizer::decodeTagAttributes from the PHP parser
 		//
 		// Extension options should always be interpreted as plain text. The
@@ -40,17 +39,27 @@ class ExtensionHandler extends TokenHandler {
 			// string, as it can be a token stream if the parser has recognized it
 			// as a directive.
 			$v = $o->vsrc ?? TokenUtils::tokensToString( $o->v, false, [ 'includeEntities' => true ] );
-			// Normalize whitespace in extension attribute values
-			// FIXME: If the option is parsed as wikitext, this normalization
-			// can mess with src offsets.
-			$o->v = trim( preg_replace( '/[\t\r\n ]+/', ' ', $v ) );
+
+			// Let extensions decide which format they want their options in; by default they are interpreted as
+			// with normalized spaces and trimmed.
+			if ( $normalizeFlag === 'keepspaces' ) {
+				$o->v = $v;
+			} elseif ( $normalizeFlag === 'trim' ) {
+				$o->v = trim( $v );
+			} else {
+				$o->v = trim( preg_replace( '/[\r\n\t ]+/', ' ', $v ) );
+			}
+
 			// Decode character references
 			$o->v = Utils::decodeWtEntities( $o->v );
 		}
 		return $options;
 	}
 
-	private function onExtension( Token $token ): TokenHandlerResult {
+	/**
+	 * @return array<string|Token>
+	 */
+	private function onExtension( Token $token ): array {
 		$env = $this->env;
 		$siteConfig = $env->getSiteConfig();
 		$pageConfig = $env->getPageConfig();
@@ -81,10 +90,9 @@ class ExtensionHandler extends TokenHandler {
 		}
 
 		$nativeExt = $siteConfig->getExtTagImpl( $extensionName );
-		$cachedExpansion = $env->extensionCache[$token->dataParsoid->src] ?? null;
-
 		$options = $token->getAttributeV( 'options' );
-		$token->setAttribute( 'options', self::normalizeExtOptions( $options ) );
+		$normalizeFlag = $extConfig['options']['wt2html']['attributeWSNormalizationPref'] ?? 'normalize';
+		$token->setAttribute( 'options', self::normalizeExtOptions( $options, $normalizeFlag ) );
 
 		// Call after normalizing extension options, since that can affect the result
 		$dataMw = Utils::getExtArgInfo( $token );
@@ -104,7 +112,7 @@ class ExtensionHandler extends TokenHandler {
 					$extSrc = $this->stripAnnotations( $extSrc, $env->getSiteConfig() );
 				}
 				$domFragment = $nativeExt->sourceToDom(
-					$extApi, $extSrc ?? '', $extArgs
+					$extApi, $extSrc, $extArgs
 				);
 				$errors = $extApi->getErrors();
 				if ( $extConfig['options']['wt2html']['customizesDataMw'] ?? false ) {
@@ -114,7 +122,7 @@ class ExtensionHandler extends TokenHandler {
 				}
 			} catch ( ExtensionError $e ) {
 				$domFragment = WTUtils::createInterfaceI18nFragment(
-					$env->topLevelDoc, $e->err->key, $e->err->params ?: null
+					$env->getTopLevelDoc(), $e->err->key, $e->err->params ?: null
 				);
 				$errors = [ $e->err ];
 				// FIXME: Should we include any errors collected
@@ -127,13 +135,13 @@ class ExtensionHandler extends TokenHandler {
 					$toks = $this->onDocumentFragment(
 						$token, $domFragment, $dataMw, $errors
 					);
-					return new TokenHandlerResult( $toks );
+					return $toks;
 				} else {
 					// The extension dropped this instance completely (!!)
 					// Should be a rarity and presumably the extension
 					// knows what it is doing. Ex: nested refs are dropped
 					// in some scenarios.
-					return new TokenHandlerResult( [] );
+					return [];
 				}
 			}
 			// Fall through: this extension is electing not to use
@@ -141,30 +149,17 @@ class ExtensionHandler extends TokenHandler {
 			// sourceToDom).
 		}
 
-		if ( $cachedExpansion ) {
-			// WARNING: THIS HAS BEEN UNUSED SINCE 2015, SEE T98995.
-			// THIS CODE WAS WRITTEN BUT APPARENTLY NEVER TESTED.
-			// NO WARRANTY.  MAY HALT AND CATCH ON FIRE.
-			throw new UnreachableException( 'Should not be here!' );
-			/*
-			$toks = PipelineUtils::encapsulateExpansionHTML(
-				$env, $token, $cachedExpansion, [ 'fromCache' => true ]
-			);
-			*/
-		} else {
-			$start = microtime( true );
-			$domFragment = PipelineUtils::fetchHTML( $env, $token->getAttributeV( 'source' ) );
-			if ( $env->profiling() ) {
-				$profile = $env->getCurrentProfile();
-				$profile->bumpMWTime( "Extension", 1000 * ( microtime( true ) - $start ), "api" );
-				$profile->bumpCount( "Extension" );
-			}
-			if ( !$domFragment ) {
-				$domFragment = DOMUtils::parseHTMLToFragment( $env->topLevelDoc, '' );
-			}
-			$toks = $this->onDocumentFragment( $token, $domFragment, $dataMw, [] );
+		$start = hrtime( true );
+		$domFragment = PipelineUtils::parseToHTML( $env, $token->getAttributeV( 'source' ) );
+		if ( $env->profiling() ) {
+			$profile = $env->getCurrentProfile();
+			$profile->bumpMWTime( "Extension", hrtime( true ) - $start, "api" );
+			$profile->bumpCount( "Extension" );
 		}
-		return new TokenHandlerResult( $toks );
+		if ( !$domFragment ) {
+			$domFragment = DOMUtils::parseHTMLToFragment( $env->getTopLevelDoc(), '' );
+		}
+		return $this->onDocumentFragment( $token, $domFragment, $dataMw, [] );
 	}
 
 	/**
@@ -174,7 +169,7 @@ class ExtensionHandler extends TokenHandler {
 	 * @param DocumentFragment $domFragment
 	 * @param DataMw $dataMw
 	 * @param list<DataMwError> $errors
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function onDocumentFragment(
 		Token $extToken, DocumentFragment $domFragment, DataMw $dataMw,
@@ -275,7 +270,7 @@ class ExtensionHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		return $token->getName() === 'extension' ? $this->onExtension( $token ) : null;
 	}
 

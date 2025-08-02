@@ -8,11 +8,13 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in caption" insertion mode
  */
 class InCaption extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->dispatcher->inBody->characters( $text, $start, $length,
 			$sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -43,6 +45,7 @@ class InCaption extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$dispatcher = $this->dispatcher;
 		$builder = $this->builder;
@@ -99,6 +102,7 @@ class InCaption extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->dispatcher->inBody->endDocument( $pos );
 	}

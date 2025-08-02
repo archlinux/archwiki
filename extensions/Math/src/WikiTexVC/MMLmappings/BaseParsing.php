@@ -396,23 +396,23 @@ class BaseParsing {
 		switch ( trim( $name ) ) {
 			case "\\mod":
 				$mmlRow = new MMLmrow();
-				$mo = new MMLmo( "", [ "lspace" => "2.5pt", "rspace" => "2.5pt" ] );
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				$inner = $node->getArg() instanceof TexNode ? $node->getArg()->renderMML() : "";
-				return $mmlRow->encapsulateRaw( $mo->encapsulate( "mod" ) . $inner );
+				return $mmlRow->encapsulateRaw(
+					( new MMLmo( "", [ "lspace" => "2.5pt", "rspace" => "2.5pt" ], "mod" ) ) . $inner );
 			case "\\pmod":
 				// tbd indicate in mapping that this is composed within php
 				$mmlRow = new MMLmrow();
-				$mspace = new MMLmspace( "", [ "width" => "0.444em" ] );
-				$mspace2 = new MMLmspace( "", [ "width" => "0.333em" ] );
-				$mo = new MMLmo( "", [ "stretchy" => "false" ] );
-				$mi = new MMLmi();
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				$inner = $node->getArg() instanceof TexNode ? $node->getArg()->renderMML() : "";
 
-				return $mmlRow->encapsulateRaw( $mspace->encapsulate() .
-					$mo->encapsulate( "(" ) . $mi->encapsulate( "mod" ) .
-					$mspace2->encapsulate() . $inner . $mo->encapsulate( ")" ) );
+				return $mmlRow->encapsulateRaw( ( new MMLmspace( "", [ "width" => "0.444em" ] ) ) .
+					( new MMLmo( "", [ "stretchy" => "false" ], "(" ) ) .
+					( new MMLmi( "", [], "mod" ) ) .
+					( new MMLmspace( "", [ "width" => "0.333em" ] ) ) .
+					$inner .
+					( new MMLmo( "", [ "stretchy" => "false" ], ")" ) )
+				);
 			case "\\varlimsup":
 			case "\\varliminf":
 				// hardcoded macro in php (there is also a dynamic mapping which is not completely resolved atm)
@@ -440,10 +440,9 @@ class BaseParsing {
 			case "\\varprojlim":
 				$mmlRow = new MMLmrow( TexClass::OP );
 				$mmlMunder = new MMLmunder();
-				$mi = new MMLmi();
 				$mo = new MMLmo();
 				return $mmlRow->encapsulateRaw( $mmlMunder->encapsulateRaw(
-					$mi->encapsulate( "lim" ) .
+					( new MMLmi( "", [], "lim" ) ) .
 					$mo->encapsulateRaw( "&#x2190;" )
 				) );
 			case "\\stackrel":
@@ -467,14 +466,17 @@ class BaseParsing {
 				}
 				return $mmlRow->encapsulateRaw( $mmlRowInner->encapsulateRaw( $inner ) );
 			case "\\bmod":
-				$mo = new MMLmo( "", [ "lspace" => Sizes::THICKMATHSPACE, "rspace" => Sizes::THICKMATHSPACE ] );
 				$mmlRow = new MMLmrow( TexClass::ORD );
 				$mspace = new MMLmspace( "", [ "width" => "0.167em" ] );
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				$inner = $node->getArg() instanceof TexNode ?
 					// @phan-suppress-next-line PhanUndeclaredMethod
 					$mmlRow->encapsulateRaw( $node->getArg()->renderMML() ) : "";
-				return $mmlRow->encapsulateRaw( $mo->encapsulate( "mod" ) .
+				return $mmlRow->encapsulateRaw( (
+					new MMLmo(
+						"",
+						[ "lspace" => Sizes::THICKMATHSPACE, "rspace" => Sizes::THICKMATHSPACE ],
+						"mod" ) ) .
 					$inner . $mmlRow->encapsulateRaw( $mspace->getEmpty() ) );
 			case "\\implies":
 				$mstyle = new MMLmstyle( "", [ "scriptlevel" => "0" ] );
@@ -524,8 +526,8 @@ class BaseParsing {
 		}
 
 		// Removed all token based parsing, since macro resolution for the supported macros can be hardcoded in php
-		$mmlMrow = new MMLmrow();
-		return $mmlMrow->encapsulate( "macro not resolved: " . $macro );
+		return (string)( new MMLmerror( "", [], (
+			new MMLmtext( "", [], "macro not resolved: " . $macro ) ) ) );
 	}
 
 	public static function matrix( Matrix $node, $passedArgs, $operatorContent,
@@ -629,9 +631,12 @@ class BaseParsing {
 			$mrowAll = new MMLmrow( TexClass::ORD );
 			$mrowOpen = new MMLmrow( TexClass::OPEN );
 			$mrowClose = new MMLmrow( TexClass::CLOSE );
-			$mo = new MMLmo( "", [ "maxsize" => "1.2em", "minsize" => "1.2em" ] );
-			$start = $mrowAll->getStart() . $mrowOpen->encapsulateRaw( $mo->encapsulate( "(" ) );
-			$tail = $mrowClose->encapsulateRaw( $mo->encapsulate( ")" ) ) . $mrowAll->getEnd();
+			$start = $mrowAll->getStart() .
+				$mrowOpen->encapsulateRaw( (string)(
+					new MMLmo( "", [ "maxsize" => "1.2em", "minsize" => "1.2em" ], "(" ) ) );
+			$tail = $mrowClose->encapsulateRaw( (string)(
+				new MMLmo( "", [ "maxsize" => "1.2em", "minsize" => "1.2em" ], ")" ) ) ) .
+				$mrowAll->getEnd();
 			$attributes = [ "linethickness" => "0" ];
 
 		}
@@ -678,7 +683,8 @@ class BaseParsing {
 					$mmlText->encapsulateRaw( MMLutil::uc2xNotation( $uc ) )
 					. $mSpace->getEmpty() ) );
 			default:
-				return ( new MMLmerror() )->encapsulate( "not found in OintMethod" );
+				return (string)( new MMLmerror( "", [], (
+					new MMLmtext( "", [], "not found in OintMethod" ) ) ) );
 
 		}
 	}
@@ -1024,9 +1030,8 @@ class BaseParsing {
 	}
 
 	public static function spacer( $node, $passedArgs, $operatorContent, $name, $withIn = null, $smth2 = null ) {
-		$width  = MMLutil::round2em( $withIn );
-		$mspace = new MMLmspace( "", [ "width" => $width ] );
-		return $mspace->encapsulate();
+		$width = MMLutil::round2em( $withIn );
+		return (string)( new MMLmspace( "", [ "width" => $width ] ) );
 	}
 
 	public static function smash( $node, $passedArgs, $operatorContent, $name ) {
@@ -1282,7 +1287,7 @@ class BaseParsing {
 					$mmlMrow->encapsulateRaw(
 						$node->getArg1()->renderMML()
 					) .
-					$mspace->encapsulate()
+					$mspace
 				) .
 				$mpadded->encapsulateRaw(
 					$node->getArg2()->renderMML()
@@ -1294,7 +1299,7 @@ class BaseParsing {
 			$mstyle->encapsulateRaw( $moArrow->encapsulateRaw( $char ) ) .
 			$mpadded->encapsulateRaw(
 				$node->getArg()->renderMML() .
-				$mspace->encapsulate()
+				$mspace
 			)
 		);
 	}

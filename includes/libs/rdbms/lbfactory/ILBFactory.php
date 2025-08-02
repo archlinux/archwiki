@@ -49,7 +49,7 @@ interface ILBFactory extends IConnectionProvider {
 	/** Do not save "session consistency" DB replication positions */
 	public const SHUTDOWN_NO_CHRONPROT = 1;
 
-	/** @var string Default main cluster name (do not change this) */
+	/** Default main cluster name (do not change this) */
 	public const CLUSTER_MAIN_DEFAULT = 'DEFAULT';
 
 	/**
@@ -83,6 +83,7 @@ interface ILBFactory extends IConnectionProvider {
 	 *  - deprecationLogger: Callback to log a deprecation warning [optional]
 	 *  - secret: Secret string to use for HMAC hashing [optional]
 	 *  - criticalSectionProvider: CriticalSectionProvider instance [optional]
+	 *  - statsFactory: StatsFactory instance [optional]
 	 */
 	public function __construct( array $conf );
 
@@ -398,6 +399,7 @@ interface ILBFactory extends IConnectionProvider {
 	 *
 	 * @param string $name Callback name
 	 * @param callable|null $callback Use null to unset a callback
+	 * @deprecated Since 1.44
 	 */
 	public function setWaitForReplicationListener( $name, ?callable $callback = null );
 
@@ -491,4 +493,20 @@ interface ILBFactory extends IConnectionProvider {
 	 * @since 1.35
 	 */
 	public function getTransactionProfiler(): TransactionProfiler;
+
+	/**
+	 * Like {@link IConnectionProvider::getPrimaryDatabase()} but with AUTOCOMMIT mode.
+	 *
+	 * This is useful for whether the caller needs to use AUTOCOMMIT (no transaction wrapping)
+	 * or it needs a new connection outside of the current transaction to bypass REPEATABLE READ
+	 * isolation.
+	 *
+	 * This method accepts virtual domains
+	 * ({@see \MediaWiki\MainConfigSchema::VirtualDomainsMapping}).
+	 *
+	 * @since 1.44
+	 * @param string|false $domain Domain ID, or false for the current domain
+	 * @return IDatabase
+	 */
+	public function getAutoCommitPrimaryConnection( $domain = false ): IDatabase;
 }

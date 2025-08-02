@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
 use LogicException;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\AuthManagerSpecialPage;
@@ -26,9 +26,6 @@ class SpecialLinkAccounts extends AuthManagerSpecialPage {
 		AuthManager::ACTION_LINK, AuthManager::ACTION_LINK_CONTINUE,
 	];
 
-	/**
-	 * @param AuthManager $authManager
-	 */
 	public function __construct( AuthManager $authManager ) {
 		parent::__construct( 'LinkAccounts' );
 		$this->setAuthManager( $authManager );

@@ -105,7 +105,7 @@ class Less_Functions {
 	 * @param float $a
 	 */
 	public function hsva( $h, $s, $v, $a ) {
-		$h = ( ( self::_number( $h ) % 360 ) / 360 ) * 360;
+		$h = ( ( (int)self::_number( $h ) % 360 ) / 360 ) * 360;
 		$s = self::_number( $s );
 		$v = self::_number( $v );
 		$a = self::_number( $a );

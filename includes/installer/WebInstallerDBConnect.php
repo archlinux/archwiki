@@ -24,7 +24,6 @@ namespace MediaWiki\Installer;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Status\Status;
-use MediaWiki\Xml\Xml;
 
 class WebInstallerDBConnect extends WebInstallerPage {
 
@@ -73,22 +72,22 @@ class WebInstallerDBConnect extends WebInstallerPage {
 		$settings = '';
 		foreach ( $compiledDBs as $type ) {
 			$installer = $this->parent->getDBInstaller( $type );
-			$types .= "<span class=\"cdx-radio\">";
+			$types .= "<div class=\"cdx-radio\"><div class=\"cdx-radio__wrapper\">";
 			$id = "DBType_$type";
 			$types .=
-				Xml::radio(
+				Html::radio(
 					'DBType',
-					$type,
 					$type == $defaultType,
 					[
 						'id' => $id,
-						'class' => 'cdx-radio__input dbRadio',
+						'class' => [ 'cdx-radio__input', 'dbRadio' ],
 						'rel' => "DB_wrapper_$type",
+						'value' => $type,
 					]
 				) .
 				"\u{00A0}<span class=\"cdx-radio__icon\"></span>" .
-				Xml::label( $installer->getReadableName(), $id, [ 'class' => 'cdx-radio__label' ] );
-			$types .= "</span>";
+				Html::label( $installer->getReadableName(), $id, [ 'class' => 'cdx-radio__label' ] );
+			$types .= "</div></div>";
 			// Messages: config-header-mysql, config-header-postgres, config-header-sqlite
 			$settings .= Html::openElement(
 					'div',
@@ -102,8 +101,6 @@ class WebInstallerDBConnect extends WebInstallerPage {
 				"</div>\n";
 
 		}
-
-		$types .= "<br style=\"clear: left\"/>\n";
 
 		$this->addHTML( $this->parent->label( 'config-db-type', false, $types ) . $settings );
 		$this->endForm();

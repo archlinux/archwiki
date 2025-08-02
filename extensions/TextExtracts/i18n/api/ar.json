@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"ديفيد",
-			"Meno25"
+			"Meno25",
+			"ديفيد"
 		]
 	},
 	"apihelp-query+extracts-summary": "يعرض نصا عاديا أو مقتطفات HTML محدودة من الصفحات المعينة.",

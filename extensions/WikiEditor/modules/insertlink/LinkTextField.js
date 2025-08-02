@@ -4,7 +4,7 @@
  * @constructor
  */
 function LinkTextField() {
-	var input = new OO.ui.TextInputWidget( {
+	const input = new OO.ui.TextInputWidget( {
 		placeholder: mw.msg( 'wikieditor-toolbar-tool-link-int-text-tooltip' )
 	} );
 
@@ -12,7 +12,7 @@ function LinkTextField() {
 		change: 'onInputChange'
 	} );
 
-	var config = {
+	const config = {
 		align: 'top',
 		label: mw.msg( 'wikieditor-toolbar-tool-link-int-text' ),
 		classes: [ 'mw-wikiEditor-InsertLink-LinkTextField' ]

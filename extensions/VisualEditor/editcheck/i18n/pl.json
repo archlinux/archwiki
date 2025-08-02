@@ -19,6 +19,8 @@
 	"editcheck-dialog-addref-success-notify": "Dziękujemy za dodanie przypisu!",
 	"editcheck-dialog-addref-title": "Dodaj przypis",
 	"editcheck-dialog-title": "Przed publikacją",
+	"editcheck-copyvio-title": "Wklejona zawartość",
+	"editcheck-copyvio-description": "Co do zasady, nie kopiuj treści z innych źródeł. Takie działania stanowią zarówno naruszenie praw autorskich, jak i plagiat.",
 	"tag-editcheck-reference-decline-common-knowledge": "Automatyczny pomocnik (przypisy): odrzucono (wiedza powszechna)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Automatyczny pomocnik: użytkownik odrzucił sugestię dodania przypisu, ponieważ uznał informację za wiedzę powszechną",
 	"tag-editcheck-reference-decline-irrelevant": "Automatyczny pomocnik (przypisy): odrzucono (nieistotne)",

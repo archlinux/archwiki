@@ -10,27 +10,22 @@ class CaptchaSessionStore extends CaptchaStore {
 		SessionManager::getGlobalSession()->persist();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function store( $index, $info ) {
 		SessionManager::getGlobalSession()->set( 'captcha' . $index, $info );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function retrieve( $index ) {
 		return SessionManager::getGlobalSession()->get( 'captcha' . $index, false );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function clear( $index ) {
 		SessionManager::getGlobalSession()->remove( 'captcha' . $index );
 	}
 
+	/** @inheritDoc */
 	public function cookiesNeeded() {
 		return true;
 	}

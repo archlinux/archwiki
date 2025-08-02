@@ -2,8 +2,10 @@
 
 namespace MediaWiki\Rest\Module;
 
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Rest\BasicAccess\BasicAuthorizerInterface;
 use MediaWiki\Rest\Handler\RedirectHandler;
+use MediaWiki\Rest\JsonLocalizer;
 use MediaWiki\Rest\PathTemplateMatcher\ModuleConfigurationException;
 use MediaWiki\Rest\Reporter\ErrorReporter;
 use MediaWiki\Rest\ResponseFactory;
@@ -57,7 +59,8 @@ class SpecBasedModule extends MatcherBasedModule {
 		BasicAuthorizerInterface $basicAuth,
 		ObjectFactory $objectFactory,
 		Validator $restValidator,
-		ErrorReporter $errorReporter
+		ErrorReporter $errorReporter,
+		HookContainer $hookContainer
 	) {
 		parent::__construct(
 			$router,
@@ -66,15 +69,14 @@ class SpecBasedModule extends MatcherBasedModule {
 			$basicAuth,
 			$objectFactory,
 			$restValidator,
-			$errorReporter
+			$errorReporter,
+			$hookContainer
 		);
 		$this->definitionFile = $definitionFile;
 	}
 
 	/**
 	 * Get a config version hash for cache invalidation
-	 *
-	 * @return string
 	 */
 	protected function getConfigHash(): string {
 		if ( $this->configHash === null ) {
@@ -89,8 +91,6 @@ class SpecBasedModule extends MatcherBasedModule {
 
 	/**
 	 * Load the module definition file.
-	 *
-	 * @return array
 	 */
 	private function getModuleDefinition(): array {
 		if ( $this->moduleDef !== null ) {
@@ -121,6 +121,9 @@ class SpecBasedModule extends MatcherBasedModule {
 					. $this->definitionFile
 			);
 		}
+
+		$localizer = new JsonLocalizer( $this->responseFactory );
+		$moduleDef = $localizer->localizeJson( $moduleDef );
 
 		$this->moduleDef = $moduleDef;
 		return $this->moduleDef;

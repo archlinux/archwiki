@@ -77,6 +77,6 @@ interface DOMTokenList extends \ArrayAccess, \IteratorAggregate, \Countable {
 	/**
 	 * @return \Iterator<string> Value iterator returning string items
 	 */
-	public function getIterator();
+	public function getIterator(): \Iterator;
 
 }

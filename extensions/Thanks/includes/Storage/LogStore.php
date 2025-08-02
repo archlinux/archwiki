@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\Thanks\Storage;
 
-use DatabaseLogEntry;
-use ManualLogEntry;
 use MediaWiki\CheckUser\Hooks;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\InvalidLogType;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\LogDeleted;
+use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\User;

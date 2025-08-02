@@ -22,8 +22,8 @@ namespace MediaWiki\Parser;
 
 use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
-use StringUtils;
 use UnexpectedValueException;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * This class encapsulates "magic words" such as "#redirect", __NOTOC__, etc.
@@ -286,6 +286,3 @@ class MagicWord {
 		return $this->mId;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( MagicWord::class, 'MagicWord' );

@@ -35,6 +35,14 @@ ve.init.mw.Target = function VeInitMwTarget( config ) {
 
 OO.inheritClass( ve.init.mw.Target, ve.init.Target );
 
+/* Events */
+
+/**
+ * Fired when the target has been torn down
+ *
+ * @event ve.init.mw.Target#teardown
+ */
+
 /* Static Properties */
 
 /**
@@ -74,10 +82,6 @@ ve.init.mw.Target.static.toolbarGroups = [
 	{
 		name: 'link',
 		include: [ 'link' ]
-	},
-	// Placeholder for reference tools (e.g. Cite and/or Citoid)
-	{
-		name: 'reference'
 	},
 	{
 		name: 'structure',
@@ -512,7 +516,9 @@ ve.init.mw.Target.prototype.teardown = function () {
 	this.clearDocState();
 
 	// Parent method
-	return ve.init.mw.Target.super.prototype.teardown.call( this );
+	return ve.init.mw.Target.super.prototype.teardown.call( this ).then( () => {
+		this.emit( 'teardown' );
+	} );
 };
 
 /**
@@ -601,19 +607,13 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
  * @param {string} wikitext
  * @param {boolean} pst Perform pre-save transform
  * @param {ve.dm.Document} [doc] Parse for a specific document, defaults to current surface's
+ * @param {Object} [ajaxOptions]
  * @return {jQuery.Promise} Abortable promise
  */
-ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, doc ) {
-	let abortable, aborted;
-	const abortedPromise = ve.createDeferred().reject( 'http',
-		{ textStatus: 'abort', exception: 'abort' } ).promise();
-
-	function abort() {
-		aborted = true;
-		if ( abortable && abortable.abort ) {
-			abortable.abort();
-		}
-	}
+ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, doc, ajaxOptions ) {
+	const api = this.getContentApi( doc );
+	ajaxOptions = ajaxOptions || {};
+	const abortable = api.makeAbortablePromise( ajaxOptions );
 
 	// Acquire a temporary user username before previewing or diffing, so that signatures and
 	// user-related magic words display the temp user instead of IP user in the preview. (T331397)
@@ -625,19 +625,14 @@ ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, do
 	}
 
 	return tempUserNamePromise
-		.then( () => {
-			if ( aborted ) {
-				return abortedPromise;
-			}
-			return ( abortable = this.getContentApi( doc ).post( {
-				action: 'visualeditor',
-				paction: 'parsefragment',
-				page: this.getPageName( doc ),
-				wikitext: wikitext,
-				pst: pst
-			} ) );
-		} )
-		.promise( { abort: abort } );
+		.then( () => api.post( {
+			action: 'visualeditor',
+			paction: 'parsefragment',
+			page: this.getPageName( doc ),
+			wikitext: wikitext,
+			pst: pst
+		}, ajaxOptions ) )
+		.promise( abortable );
 };
 
 /**

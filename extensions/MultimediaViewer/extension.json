@@ -27,7 +27,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
@@ -102,6 +102,7 @@
 			],
 			"messages": [
 				"license-header",
+				"multimediaviewer-current-image-number",
 				"multimediaviewer-file-page",
 				"multimediaviewer-enable-alert",
 				"multimediaviewer-disable-confirmation-header",
@@ -302,14 +303,6 @@
 				"multimediaviewer-disable-info-title",
 				"multimediaviewer-disable-info"
 			]
-		},
-		"mmv.bootstrap.autostart": {
-			"deprecated": "Deprecated in 1.43, alias for mmw.bootstrap",
-			"dependencies": "mmv.bootstrap"
-		},
-		"mmv.head": {
-			"deprecated": "Deprecated in 1.43, alias for mmw.bootstrap",
-			"dependencies": "mmv.bootstrap"
 		}
 	},
 	"ResourceFileModulePaths": {

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"BukhariSaeed",
+			"Muhammad Shuaib",
+			"පසිඳු කාවින්ද"
+		]
+	},
+	"checkuser": "صارف کو چیک کریں",
+	"checkuserlog": "صارف لاگ ان کریں چیک کریں",
+	"checkuser-contribs-log": "حال ہی میں صارف کي",
+	"group-checkuser": "پڑتال کنندگان",
+	"group-checkuser-member": "{{GENDER:$1|پڑتال کنندہ}}",
+	"right-checkuser": "صارف کے آئی پی پتوں اور دیگر متعلقہ معلومات کی جانچ",
+	"right-checkuser-log": "نوشتہ صارف پڑتال کا مشاہدہ",
+	"action-checkuser-log": "نوشتۂ صارف پڑتال دیکھیں",
+	"grouppage-checkuser": "{{ns:project}}:پڑتال کنندہ",
+	"checkuser-reason": "وجہ:",
+	"checkuser-showlog": "شو کے لاگ ان کریں",
+	"checkuser-week-1": "گزشتہ ہفتے",
+	"checkuser-week-2": "گزشتہ دو ہفتوں",
+	"checkuser-month": "گزشتہ 30 دن میں",
+	"checkuser-all": "سب",
+	"checkuser-nomatch": "کوئی میچ پایا.",
+	"checkuser-check": "چیک کریں",
+	"checkuser-search": "تلاش",
+	"checkuser-search-submit": "تلاش",
+	"checkuser-global-contributions-link": "عالمی شراکتیں"
+}

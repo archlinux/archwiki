@@ -1,8 +1,7 @@
 'use strict';
 
-const assert = require( 'assert' ),
-	Api = require( 'wdio-mediawiki/Api' ),
-	MathPage = require( '../pageobjects/math.page' );
+const Api = require( 'wdio-mediawiki/Api' );
+const MathPage = require( '../pageobjects/math.page' );
 
 describe( 'Math', () => {
 	let bot;
@@ -22,7 +21,7 @@ describe( 'Math', () => {
 		await MathPage.openTitle( pageName );
 
 		// check if the page displays the image
-		assert( await MathPage.mathml.isExisting() );
+		await expect( await MathPage.mathml ).toExist();
 
 	} );
 

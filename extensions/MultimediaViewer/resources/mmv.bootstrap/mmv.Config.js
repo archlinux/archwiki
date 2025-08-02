@@ -50,15 +50,6 @@ class Config {
 	}
 
 	/**
-	 * Regular expression representing the legacy media route
-	 *
-	 * @return {RegExp}
-	 */
-	static get LEGACY_ROUTE_REGEXP() {
-		return /^mediaviewer\/(.+)$/;
-	}
-
-	/**
 	 * Returns true if MediaViewer should handle thumbnail clicks.
 	 *
 	 * @return {boolean}

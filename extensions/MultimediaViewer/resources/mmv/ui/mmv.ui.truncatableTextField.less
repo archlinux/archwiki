@@ -1,7 +1,6 @@
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 @import '../mmv.variables.less';
-@import '../mmv.mixins.less';
 
 .mw-mmv-ttf-container {
 	position: relative;
@@ -58,14 +57,15 @@
 			opacity: 1;
 		}
 
+		// Fade-out effect via gradient for the ellipsis.
 		&::before {
+			background-image: linear-gradient( to right, @background-color-transparent 0%, @background-color-base 100% );
 			@fade-length: 2em;
 			display: block;
 			content: '';
 			height: 1.6em; // 1em would not cover high glyphs
 			width: @fade-length;
 			margin-left: -@fade-length;
-			.fade-out-horizontal();
 		}
 	}
 }

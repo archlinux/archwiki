@@ -22,6 +22,8 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -44,7 +46,7 @@ class DeleteOldRevisions extends Maintenance {
 		$this->doDelete( $this->hasOption( 'delete' ), $this->getArgs( 'page_id' ) );
 	}
 
-	private function doDelete( $delete = false, $pageIds = [] ) {
+	private function doDelete( bool $delete = false, array $pageIds = [] ) {
 		# Data should come off the master, wrapped in a transaction
 		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );

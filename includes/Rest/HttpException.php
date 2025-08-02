@@ -11,7 +11,6 @@ namespace MediaWiki\Rest;
  */
 class HttpException extends \Exception {
 
-	/** @var array */
 	private array $errorData;
 
 	/**
@@ -26,9 +25,6 @@ class HttpException extends \Exception {
 		$this->errorData = $errorData;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getErrorData(): array {
 		return $this->errorData;
 	}

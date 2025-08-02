@@ -1,0 +1,135 @@
+@import ( reference ) 'mediawiki.skin.variables.less';
+
+.ext-checkuser-temp-account-onboarding-dialog {
+	// Allow the images shown in the dialog to have no padding, but make all other content have padding.
+	/* stylelint-disable-next-line selector-class-pattern */
+	.cdx-dialog__body {
+		padding: 0;
+	}
+
+	.ext-checkuser-temp-account-onboarding-dialog-main-body {
+		padding: @spacing-100 @spacing-150;
+	}
+
+	// Make the images appropriately tall so that they fully display.
+	.ext-checkuser-temp-account-onboarding-dialog-image {
+		background-color: #f4f9ff;
+		height: 250px;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	// Format the heading of the dialog to match the design specs.
+	// Code here a modified copy of code in GrowthExperiments OnboardingDialog component.
+	&__header {
+		&__top {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+
+			&__title {
+				padding-top: @spacing-35;
+				font-size: @font-size-medium;
+				line-height: @line-height-xx-small;
+				font-weight: @font-weight-bold;
+				padding-bottom: @spacing-35;
+			}
+
+			&__button {
+				min-width: 90px;
+			}
+		}
+	}
+
+	// Format the navigation buttons of the dialog to match the design specs.
+	// Code here a modified copy of code in GrowthExperiments OnboardingDialog component.
+	&__footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+
+		&__navigation {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			font-size: @font-size-small;
+			flex-grow: 1;
+
+			/* stylelint-disable selector-class-pattern */
+			&--prev.cdx-button,
+			&--next.cdx-button {
+				margin-left: @spacing-50;
+			}
+			/* stylelint-enable selector-class-pattern */
+		}
+	}
+}
+
+// Modified copy of the styles in the OnboardingStepper.vue component in the
+// mediawiki/extensions/GrowthExperiments repository.
+.ext-checkuser-temp-account-onboarding-dialog-stepper {
+	display: flex;
+	font-size: @font-size-small;
+	color: @color-subtle;
+	align-items: center;
+
+	&__label {
+		margin-inline-end: @spacing-50;
+	}
+
+	&__dots {
+		display: flex;
+		align-items: center;
+		height: @size-125;
+
+		&__dot {
+			background-color: @background-color-disabled;
+			border-radius: @border-radius-circle;
+			width: @size-50;
+			height: @size-50;
+			margin-inline-end: @spacing-50;
+
+			&--active {
+				background-color: @color-base;
+			}
+		}
+	}
+}
+
+// Modified copy of the styles from the MultiPane.vue component in
+// the mediawiki/extensions/GrowthExperiments repository.
+.ext-checkuser-temp-account-onboarding-dialog-content {
+	position: relative;
+	overflow: hidden hidden;
+
+	.ext-checkuser-temp-account-onboarding-right-enter-active,
+	.ext-checkuser-temp-account-onboarding-right-leave-active,
+	.ext-checkuser-temp-account-onboarding-left-enter-active,
+	.ext-checkuser-temp-account-onboarding-left-leave-active {
+		transition: all 500ms @animation-timing-function-base;
+	}
+
+	.ext-checkuser-temp-account-onboarding-right-enter-from {
+		transform: translateX( @size-full );
+	}
+
+	.ext-checkuser-temp-account-onboarding-right-leave-to {
+		// Use `calc()` for negative calculation to not rely on Less, but standard CSS.
+		transform: translateX( calc( -1 * @size-full ) );
+	}
+
+	.ext-checkuser-temp-account-onboarding-left-leave-to {
+		transform: translateX( @size-full );
+	}
+
+	.ext-checkuser-temp-account-onboarding-left-enter-from {
+		// Use `calc()` for negative calculation to not rely on Less, but standard CSS.
+		transform: translateX( calc( -1 * @size-full ) );
+	}
+
+	.ext-checkuser-temp-account-onboarding-right-leave-active,
+	.ext-checkuser-temp-account-onboarding-left-leave-active {
+		position: absolute;
+	}
+}

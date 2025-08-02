@@ -263,6 +263,7 @@ class SpecialNotifications extends SpecialPage {
 		return $lang->pipeList( $subtitleLinks );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'login';
 	}

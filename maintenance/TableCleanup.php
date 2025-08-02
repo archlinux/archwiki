@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\WikiMap\WikiMap;
 
 // @codeCoverageIgnoreStart
@@ -73,7 +74,7 @@ class TableCleanup extends Maintenance {
 		$this->runTable( $this->defaultParams );
 	}
 
-	protected function init( $count, $table ) {
+	protected function init( int $count, string $table ) {
 		$this->processed = 0;
 		$this->updated = 0;
 		$this->count = $count;
@@ -154,7 +155,7 @@ class TableCleanup extends Maintenance {
 			}
 
 			foreach ( $res as $row ) {
-				call_user_func( $callback, $row );
+				$callback( $row );
 			}
 
 			if ( $res->numRows() < $this->getBatchSize() ) {

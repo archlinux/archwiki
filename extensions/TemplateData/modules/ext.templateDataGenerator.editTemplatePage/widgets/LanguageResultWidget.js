@@ -31,6 +31,13 @@ function LanguageResultWidget( config ) {
 OO.inheritClass( LanguageResultWidget, OO.ui.OptionWidget );
 OO.mixinClass( LanguageResultWidget, OO.ui.mixin.TabIndexedElement );
 
+/* Events */
+
+/**
+ * @event choose
+ * @param {LanguageResultWidget} languageResultWidget
+ */
+
 /* Methods */
 
 /**

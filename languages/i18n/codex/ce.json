@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "ДӀачӀагӀа",
 	"cdx-label-optional-flag": "(тӀехь дац)",
 	"cdx-message-dismiss-button-label": "ДӀачӀагӀа",
+	"cdx-popover-close-button-label": "ДӀачӀагӀа",
 	"cdx-search-input-search-button-label": "Лаха",
 	"cdx-table-select-all-label": "Харжа массо могӀанаш",
 	"cdx-table-select-row-label": "$2 могӀанах $1 харжа",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "ЖамӀаш гайтар $1—$2 дуккхачарех",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1—$2 дуккхачарех",
 	"cdx-table-pagination-status-message-indeterminate-final": "Гойтуш ду {{PLURAL:$1|тӀаьххьара $1 жамӀ|тӀаьххьара $1 жамӀаш}}",
-	"cdx-table-pagination-status-message-pending": "ЖамӀаш чудохуш..."
+	"cdx-table-pagination-status-message-pending": "ЖамӀаш чудохуш...",
+	"cdx-table-no-data-message": "Хаамаш бац."
 }

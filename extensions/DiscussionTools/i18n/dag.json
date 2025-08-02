@@ -11,10 +11,10 @@
 			"Jahinfo",
 			"Kalakpagh",
 			"Karimbaasani",
+			"Matma Rex",
 			"Musahfm",
 			"Naporo",
 			"Ruky Wunpini",
-			"Matma Rex",
 			"Woytecr"
 		]
 	},
@@ -140,7 +140,7 @@
 	"tag-discussiontools-added-comment-description": "Tɔɣino ŋan be yɛltɔɣa paaji ŋɔ zuɣu pahila maliniŋ puuni",
 	"tag-discussiontools-description": "Maliniŋ shɛli din niŋ ka di nyɛla saawara tuma niɛma ka bɛ zaŋ niŋ ʋa",
 	"tag-discussiontools-edit": "Maliniŋ tɔɣino",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} New topic]",
+	"tag-discussiontools-newtopic": "New topic",
 	"tag-discussiontools-newtopic-description": "Ŋun.tumdi pahila yɛlikpani palli nti pahi sawara tuma niɛma",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Reply]"
+	"tag-discussiontools-reply": "Reply"
 }

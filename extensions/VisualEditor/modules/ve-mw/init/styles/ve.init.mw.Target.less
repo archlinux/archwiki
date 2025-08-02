@@ -96,3 +96,31 @@ a[ rel~='mw:PageProp/Category' ] {
 	white-space: nowrap;
 	font-weight: bold;
 }
+
+/* Night mode */
+
+// FIXME: Can be removed when T369092 is resolved
+&.skin-theme-clientpref-night {
+	.ve-ce-branchNode-blockSlug,
+	body p.ve-ce-branchNode-newSlug {
+		background-color: rgba( 241, 247, 251, 0.1 );
+	}
+
+	.ve-ce-surface-selections-deactivated-showAsDeactivated .ve-ce-surface-selection > div {
+		background: #fff;
+	}
+}
+
+/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+@media ( prefers-color-scheme: dark ) {
+	&.skin-theme-clientpref-os {
+		.ve-ce-branchNode-blockSlug,
+		body p.ve-ce-branchNode-newSlug {
+			background-color: rgba( 241, 247, 251, 0.1 );
+		}
+
+		.ve-ce-surface-selections-deactivated-showAsDeactivated .ve-ce-surface-selection > div {
+			background: #fff;
+		}
+	}
+}

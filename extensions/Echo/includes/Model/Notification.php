@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Notifications\Model;
 
-use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Bundleable;
 use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
@@ -54,55 +53,20 @@ class Notification extends AbstractEntity implements Bundleable {
 	protected $bundledNotifications;
 
 	/**
-	 * Do not use this constructor.
-	 */
-	protected function __construct() {
-	}
-
-	/**
 	 * Creates an Notification object based on event and user
-	 * @param array $info The following keys are required:
-	 * - 'event' The Event being notified about.
-	 * - 'user' The User being notified.
-	 * @return Notification
 	 */
-	public static function create( array $info ) {
-		$obj = new Notification();
-		static $validFields = [ 'event', 'user' ];
-
-		foreach ( $validFields as $field ) {
-			if ( isset( $info[$field] ) ) {
-				$obj->$field = $info[$field];
-			} else {
-				throw new InvalidArgumentException( "Field $field is required" );
-			}
-		}
-
-		if ( !$obj->user instanceof User ) {
-			throw new InvalidArgumentException( 'Invalid user parameter, expected: User object' );
-		}
-
-		if ( !$obj->event instanceof Event ) {
-			throw new InvalidArgumentException( 'Invalid event parameter, expected: Event object' );
-		}
-
+	public function __construct( User $user, Event $event ) {
+		$this->user = $user;
+		$this->event = $event;
 		// Notification timestamp should be the same as event timestamp
-		$obj->timestamp = $obj->event->getTimestamp();
-		// Safe fallback
-		if ( !$obj->timestamp ) {
-			$obj->timestamp = wfTimestampNow();
-		}
-
-		// @Todo - Database insert logic should not be inside the model
-		$obj->insert();
-
-		return $obj;
+		// Otherwise use safe fallback
+		$this->timestamp = $this->event->getTimestamp() ?: wfTimestampNow();
 	}
 
 	/**
 	 * Adds this new notification object to the backend storage.
 	 */
-	protected function insert() {
+	public function insert() {
 		global $wgEchoNotifications;
 
 		$notifMapper = new NotificationMapper();
@@ -129,6 +93,7 @@ class Notification extends AbstractEntity implements Bundleable {
 			}
 		);
 
+		$this->event->acquireId();
 		$notifMapper->insert( $this );
 
 		if ( $this->event->getCategory() === 'edit-user-talk' ) {
@@ -145,20 +110,20 @@ class Notification extends AbstractEntity implements Bundleable {
 	 * @return Notification|false False if failed to load/unserialize
 	 */
 	public static function newFromRow( $row, ?array $targetPages = null ) {
-		$notification = new Notification();
-
 		if ( property_exists( $row, 'event_type' ) ) {
-			$notification->event = Event::newFromRow( $row );
+			$event = Event::newFromRow( $row );
 		} else {
-			$notification->event = Event::newFromID( $row->notification_event );
+			$event = Event::newFromID( $row->notification_event );
 		}
-
-		if ( $notification->event === false ) {
+		if ( $event === false ) {
 			return false;
 		}
 
+		$user = User::newFromId( $row->notification_user );
+
+		$notification = new Notification( $user, $event );
+
 		$notification->targetPages = $targetPages;
-		$notification->user = User::newFromId( $row->notification_user );
 		// Notification timestamp should never be empty
 		$notification->timestamp = wfTimestamp( TS_MW, $row->notification_timestamp );
 		$notification->readTimestamp = wfTimestampOrNull( TS_MW, $row->notification_read_timestamp );
@@ -182,7 +147,6 @@ class Notification extends AbstractEntity implements Bundleable {
 	}
 
 	/**
-	 * Getter method
 	 * @return Event The event for this notification
 	 */
 	public function getEvent() {
@@ -198,7 +162,6 @@ class Notification extends AbstractEntity implements Bundleable {
 	}
 
 	/**
-	 * Getter method
 	 * @return string Notification creation timestamp
 	 */
 	public function getTimestamp() {
@@ -206,19 +169,17 @@ class Notification extends AbstractEntity implements Bundleable {
 	}
 
 	/**
-	 * Getter method
 	 * @return string|null Notification read timestamp
 	 */
 	public function getReadTimestamp() {
 		return $this->readTimestamp;
 	}
 
-	public function isRead() {
+	public function isRead(): bool {
 		return $this->getReadTimestamp() !== null;
 	}
 
 	/**
-	 * Getter method
 	 * @return string|null Notification bundle hash
 	 */
 	public function getBundleHash() {
@@ -239,7 +200,7 @@ class Notification extends AbstractEntity implements Bundleable {
 		$this->bundledNotifications = $notifications;
 	}
 
-	public function getBundledNotifications() {
+	public function getBundledNotifications(): ?array {
 		return $this->bundledNotifications;
 	}
 

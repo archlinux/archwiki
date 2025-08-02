@@ -4,6 +4,7 @@
 			"Bdijkstra",
 			"Calak",
 			"DiGro",
+			"Jeroen N",
 			"Mainframe98",
 			"McDutchie",
 			"Nickthijssen1994",
@@ -12,8 +13,7 @@
 			"Siebrand",
 			"Sjoerddebruin",
 			"Strepulah",
-			"Troefkaart",
-			"Jeroen N"
+			"Troefkaart"
 		]
 	},
 	"skinname-vector": "Vector, oude versie (2010)",
@@ -29,7 +29,7 @@
 	"vector-language-button-aria-label": "Ga naar een artikel in een andere taal. Beschikbaar in {{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-no-language-button-label": "Talen toevoegen",
-	"vector-no-language-button-aria-label": "Dit artikel bestaat alleen in deze taal. Het artikel in andere talen toevoegen.",
+	"vector-no-language-button-aria-label": "Dit artikel is alleen beschikbaar in deze taal. Het artikel in andere talen toevoegen",
 	"vector-language-variant-switcher-label": "Taalvariant wijzigen",
 	"vector-action-addsection": "Onderwerp toevoegen",
 	"vector-action-delete": "Verwijderen",
@@ -48,6 +48,7 @@
 	"vector-more-actions": "Meer",
 	"vector-appearance-label": "Uiterlijk",
 	"vector-appearance-tooltip": "De lettergrootte, breedte en kleur van de pagina wijzigen",
+	"vector-personal-tools-tooltip": "Persoonlijke instellingen",
 	"vector-feature-limited-width-name": "Paginabreedte",
 	"vector-feature-limited-width-0-label": "Volle breedte",
 	"vector-feature-limited-width-1-label": "Standaard",

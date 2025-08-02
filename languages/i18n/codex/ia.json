@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "Clauder",
 	"cdx-label-optional-flag": "(optional)",
 	"cdx-message-dismiss-button-label": "Clauder",
+	"cdx-popover-close-button-label": "Clauder",
 	"cdx-search-input-search-button-label": "Cercar",
 	"cdx-table-select-all-label": "Seliger tote le lineas",
 	"cdx-table-select-row-label": "Seliger le linea $1 de $2",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Resultatos $1–$2 de multes",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 de multes",
 	"cdx-table-pagination-status-message-indeterminate-final": "Le ultime {{PLURAL:$1|resultato|$1 resultatos}}",
-	"cdx-table-pagination-status-message-pending": "Carga resultatos…"
+	"cdx-table-pagination-status-message-pending": "Carga resultatos…",
+	"cdx-table-no-data-message": "Il non ha datos disponibile."
 }

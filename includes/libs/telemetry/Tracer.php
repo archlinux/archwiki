@@ -21,6 +21,7 @@ class Tracer implements TracerInterface {
 	private Clock $clock;
 	private SamplerInterface $sampler;
 	private ExporterInterface $exporter;
+	private ContextPropagatorInterface $contextPropagator;
 	private TracerState $tracerState;
 
 	/**
@@ -33,12 +34,14 @@ class Tracer implements TracerInterface {
 		Clock $clock,
 		SamplerInterface $sampler,
 		ExporterInterface $exporter,
-		TracerState $tracerState
+		TracerState $tracerState,
+		ContextPropagatorInterface $contextPropagator
 	) {
 		$this->clock = $clock;
 		$this->sampler = $sampler;
 		$this->exporter = $exporter;
 		$this->tracerState = $tracerState;
+		$this->contextPropagator = $contextPropagator;
 	}
 
 	/** @inheritDoc */
@@ -67,6 +70,18 @@ class Tracer implements TracerInterface {
 		return $this->newSpan( $spanName, $parentSpanContext );
 	}
 
+	/** @inheritDoc */
+	public function createRootSpanFromCarrier( string $spanName, array $carrier ): SpanInterface {
+		$spanContext = $this->contextPropagator->extract( $carrier );
+		return $this->newSpan( $spanName, $spanContext );
+	}
+
+	/** @inheritDoc */
+	public function getRequestHeaders(): array {
+		$activeSpanContext = $this->tracerState->getActiveSpanContext();
+		return $this->contextPropagator->inject( $activeSpanContext, [] );
+	}
+
 	private function newSpan( string $spanName, ?SpanContext $parentSpanContext ): SpanInterface {
 		$traceId = $parentSpanContext !== null ?
 			$parentSpanContext->getTraceId() : $this->generateId( self::TRACE_ID_BYTES_LENGTH );
@@ -82,7 +97,7 @@ class Tracer implements TracerInterface {
 		);
 
 		if ( $this->wasShutdown || !$sampled ) {
-			return new NoopSpan( $spanContext );
+			return new NoopSpan( $this->tracerState, $spanContext );
 		}
 
 		return new Span(

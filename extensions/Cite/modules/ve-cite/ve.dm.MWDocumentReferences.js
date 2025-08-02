@@ -47,15 +47,15 @@ OO.mixinClass( ve.dm.MWDocumentReferences, OO.EventEmitter );
  */
 ve.dm.MWDocumentReferences.static.refsForDoc = function ( doc ) {
 	let docRefs;
+	// Only use cache if we're working with the full document.
 	if ( !doc.getOriginalDocument() ) {
-		// Only use cache if we're working with the full document.
-		docRefs = doc.getStorage( 'document-references-store' );
+		docRefs = doc.extCiteDocumentReferences;
 	}
 	if ( docRefs === undefined ) {
 		docRefs = new ve.dm.MWDocumentReferences( doc );
 	}
 	if ( !doc.getOriginalDocument() ) {
-		doc.setStorage( 'document-references-store', docRefs );
+		doc.extCiteDocumentReferences = docRefs;
 	}
 	return docRefs;
 };

@@ -23,5 +23,6 @@
 	"templatedata-modal-table-param-label": "Պիտակ",
 	"templatedata-modal-table-param-name": "Անունը",
 	"templatedata-modal-title-addparam": "Ավելացնել նոր պարամետր",
-	"templatedata-modal-title-language": "Լեզու"
+	"templatedata-modal-title-language": "Լեզու",
+	"templatedata-search-placeholder": "Գտնել կաղապար"
 }

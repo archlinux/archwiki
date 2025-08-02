@@ -1,6 +1,5 @@
 <?php
 
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
@@ -8,6 +7,8 @@ use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\CentralId\LocalIdLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
+use Wikimedia\ArrayUtils\ArrayUtils;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @covers \MediaWiki\User\CentralId\LocalIdLookup
@@ -27,32 +28,30 @@ class LocalIdLookupTest extends MediaWikiIntegrationTestCase {
 		$sysop = static::getTestSysop()->getUserIdentity();
 		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 
-		$block = new DatabaseBlock( [
-			'address' => $this->localUsers[2]->getName(),
+		$blockStore->insertBlockWithParams( [
+			'targetUser' => $this->localUsers[2],
 			'by' => $sysop,
 			'reason' => __METHOD__,
 			'expiry' => '1 day',
 			'hideName' => false,
 		] );
-		$blockStore->insertBlock( $block );
 
-		$block = new DatabaseBlock( [
-			'address' => $this->localUsers[3]->getName(),
+		$blockStore->insertBlockWithParams( [
+			'targetUser' => $this->localUsers[3],
 			'by' => $sysop,
 			'reason' => __METHOD__,
 			'expiry' => '1 day',
 			'hideName' => true,
 		] );
-		$blockStore->insertBlock( $block );
 	}
 
 	private function newLookup( array $configOverride = [] ) {
 		$lookup = new LocalIdLookup(
-			new HashConfig( [
+			new HashConfig( $configOverride + [
 				MainConfigNames::SharedDB => null,
 				MainConfigNames::SharedTables => [],
 				MainConfigNames::LocalDatabases => [],
-			] + $configOverride ),
+			] ),
 			$this->getServiceContainer()->getConnectionProvider(),
 			$this->getServiceContainer()->getHideUserUtils()
 		);
@@ -114,6 +113,35 @@ class LocalIdLookupTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expect2, $lookup->lookupUserNames( $arg, $nonPermitted ) );
 	}
 
+	/** @dataProvider provideLookupAttachedUserNames */
+	public function testLookupAttachedUserNames( $isShared ) {
+		$lookup = $this->newLookup( [
+			MainConfigNames::SharedDB => $isShared ? "dummy" : null,
+			MainConfigNames::SharedTables => $isShared ? [ 'user' ] : [],
+			MainConfigNames::LocalDatabases => $isShared ? [ 'shared' ] : [],
+		] );
+		$nameToId = [];
+		foreach ( $this->localUsers as $user ) {
+			$nameToId[$user->getName()] = 0;
+			if ( $isShared ) {
+				$expected[$user->getName()] = $user->getId();
+			} else {
+				$expected[$user->getName()] = 0;
+			}
+		}
+		$result = $lookup->lookupAttachedUserNames(
+			$nameToId,
+			CentralIdLookup::AUDIENCE_RAW,
+			IDBAccessObject::READ_NORMAL,
+			'shared'
+		);
+		$this->assertSame( $expected, $result );
+	}
+
+	public static function provideLookupAttachedUserNames() {
+		return [ [ false, true ] ];
+	}
+
 	public function testIsAttached() {
 		$lookup = $this->newLookup();
 		$user1 = UserIdentityValue::newRegistered( 42, 'Test' );
@@ -150,15 +178,8 @@ class LocalIdLookupTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideIsAttachedShared() {
-		$ret = [];
-		for ( $i = 0; $i < 7; $i++ ) {
-			$ret[] = [
-				(bool)( $i & 1 ),
-				(bool)( $i & 2 ),
-				(bool)( $i & 4 ),
-			];
-		}
-		return $ret;
+		$bool = [ false, true ];
+		return ArrayUtils::cartesianProduct( $bool, $bool, $bool );
 	}
 
 }

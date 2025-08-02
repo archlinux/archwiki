@@ -1,7 +1,6 @@
 @import 'mediawiki.skin.variables.less';
 @import '../mmv.variables.less';
 @import 'mediawiki.mixins.less';
-@import '../mmv.mixins.less';
 
 // Common to all buttons
 // We override the codex background and borders to be their forced darkmode variant
@@ -58,6 +57,30 @@
 	left: auto;
 	min-width: @buttons-size;
 	min-height: @buttons-size;
+}
+
+.mw-mmv-current-image-number {
+	align-items: center;
+	background-color: @buttons-background-color-faded;
+	color: @color-inverted-fixed;
+	display: inline-flex;
+	gap: 4px;
+	justify-content: center;
+	left: auto;
+	min-height: @buttons-size;
+	min-width: @buttons-size;
+	opacity: 0.8;
+	padding: 0 4px;
+	position: fixed;
+	right: ( @buttons-offset-edge + ( @buttons-offset-each ) );
+	top: @buttons-offset-edge;
+	transition-property: background-color, opacity;
+
+	&:hover {
+		background-color: @buttons-background-color;
+		opacity: 1;
+		transition: opacity 0.1s ease-in;
+	}
 }
 
 // Per button positioning and providing icons

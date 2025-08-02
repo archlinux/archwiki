@@ -49,14 +49,17 @@ class TraceFormatter {
 		return $names[$prep] ?? '???';
 	}
 
+	/** @inheritDoc */
 	public static function startDocument( $fns, $fn ) {
 		return "startDocument";
 	}
 
+	/** @inheritDoc */
 	public static function endDocument( $pos ) {
 		return "endDocument pos=$pos";
 	}
 
+	/** @inheritDoc */
 	public static function characters( $preposition, $refNode, $text, $start, $length,
 								$sourceStart, $sourceLength
 	) {
@@ -67,6 +70,7 @@ class TraceFormatter {
 		return "characters \"$excerpt\", $prepName $refTag, pos=$sourceStart, len=$sourceLength";
 	}
 
+	/** @inheritDoc */
 	public static function insertElement( $preposition, $refNode, Element $element, $void,
 		$sourceStart, $sourceLength
 	) {
@@ -77,11 +81,13 @@ class TraceFormatter {
 		return "insert $elementTag $voidMsg, $prepName $refTag, pos=$sourceStart, len=$sourceLength";
 	}
 
+	/** @inheritDoc */
 	public static function endTag( Element $element, $sourceStart, $sourceLength ) {
 		$elementTag = self::getDebugTag( $element );
 		return "end $elementTag, pos=$sourceStart, len=$sourceLength";
 	}
 
+	/** @inheritDoc */
 	public static function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength
 	) {
 		$quirksTypes = [
@@ -94,6 +100,7 @@ class TraceFormatter {
 			"$quirksMsg, pos=$sourceStart, len=$sourceLength";
 	}
 
+	/** @inheritDoc */
 	public static function comment( $preposition, $refNode, $text, $sourceStart, $sourceLength ) {
 		$prepName = self::getPrepositionName( $preposition );
 		$refTag = self::getDebugTag( $refNode );
@@ -102,20 +109,24 @@ class TraceFormatter {
 		return "comment \"$excerpt\", $prepName $refTag, pos=$sourceStart, len=$sourceLength";
 	}
 
+	/** @inheritDoc */
 	public static function error( $text, $pos ) {
 		return "error \"$text\", pos=$pos";
 	}
 
+	/** @inheritDoc */
 	public static function mergeAttributes( Element $element, Attributes $attrs, $sourceStart ) {
 		$elementTag = self::getDebugTag( $element );
 		return "merge $elementTag, pos=$sourceStart";
 	}
 
+	/** @inheritDoc */
 	public static function removeNode( Element $element, $sourceStart ) {
 		$elementTag = self::getDebugTag( $element );
 		return "remove $elementTag, pos=$sourceStart";
 	}
 
+	/** @inheritDoc */
 	public static function reparentChildren( Element $element, Element $newParent, $sourceStart ) {
 		$elementTag = self::getDebugTag( $element );
 		$newParentTag = self::getDebugTag( $newParent );

@@ -6,6 +6,7 @@
 /**
  * Helper classes to provide styles for classes provided by functions of Linker class or Changes class.
  * Also used for CommentFormatter class, which was previous in Linker.
+ * LogEventsList also seems to be here.
  */
 
 /** Class is added by ChangesList::flag */
@@ -21,7 +22,7 @@
 	font-weight: bold;
 }
 
-/** Class is added by Linker::userLink */
+/** Class is added by UserLinkRenderer::userLink */
 .mw-userlink {
 	// Word-break overlong user names, see T237230.
 	// FIXME: This property is introduced now, but will be separated in a follow-up
@@ -30,11 +31,34 @@
 	unicode-bidi: embed;
 }
 
-/** Class is added by Linker::userLink */
+/** Class is added by UserLinkRenderer::userLink */
 .mw-tempuserlink {
 	background-color: @background-color-interactive;
 	padding: 2px 8px;
 	border-radius: @border-radius-base;
+}
+
+/** Class is added by UserLinkRenderer::userLink */
+.mw-tempuserlink-expired {
+	text-decoration: line-through 0.075em;
+	position: relative;
+
+	/** Class is added by UserLinkRenderer::userLink */
+	&--tooltip {
+		display: none;
+		pointer-events: none;
+		top: 100%;
+		left: 0;
+	}
+
+	&:hover &--tooltip,
+	&:focus &--tooltip {
+		display: block;
+	}
+}
+
+a.mw-tempuserlink-expired:hover {
+	text-decoration: line-through underline 0.075em;
 }
 
 /* Comment portions of RC entries, also used by MediaWiki\CommentFormatter\CommentFormatter::formatBlock */
@@ -83,5 +107,30 @@ strong.mw-revdelundel-link {
 
 	&:visited {
 		color: @color-link-new--visited;
+	}
+}
+
+.mw-logevent-actionlink,
+.mw-logevent-tool,
+.mw-diff-tool,
+.mw-pager-tools {
+	a {
+		.cdx-mixin-link-base();
+	}
+}
+
+ul.mw-logevent-footer {
+	margin: 0;
+	padding-top: 0.5em;
+
+	li {
+		display: inline list-item;
+		padding: 0 0.3em;
+		list-style: disc;
+	}
+
+	li:first-child {
+		padding-left: 0;
+		list-style: none;
 	}
 }

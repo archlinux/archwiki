@@ -26,6 +26,7 @@ use MediaWiki\Config\Config;
 use MediaWiki\Config\MutableConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageCode;
@@ -45,7 +46,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
-use MWUnknownContentModelException;
 use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
 use Wikimedia\Bcp47Code\Bcp47Code;
@@ -97,6 +97,7 @@ class SiteConfig extends ISiteConfig {
 		MainConfigNames::NoFollowDomainExceptions,
 		MainConfigNames::ExternalLinkTarget,
 		MainConfigNames::EnableMagicLinks,
+		MainConfigNames::ParsoidExperimentalParserFunctionOutput,
 	];
 
 	private ServiceOptions $config;
@@ -254,7 +255,6 @@ class SiteConfig extends ISiteConfig {
 
 	/**
 	 * Create a prefixed StatsFactory for parsoid stats
-	 * @return StatsFactory
 	 */
 	public function prefixedStatsFactory(): StatsFactory {
 		$component = $this->getStatsPrefix( true );
@@ -558,10 +558,6 @@ class SiteConfig extends ISiteConfig {
 		return $this->contLang->isRTL();
 	}
 
-	/**
-	 * @param Bcp47Code $lang
-	 * @return bool
-	 */
 	public function langConverterEnabledBcp47( Bcp47Code $lang ): bool {
 		if ( $this->languageConverterFactory->isConversionDisabled() ) {
 			return false;
@@ -753,13 +749,19 @@ class SiteConfig extends ISiteConfig {
 	}
 
 	/** @inheritDoc */
+	protected function shouldValidateExtConfig(): bool {
+		// Only perform json schema validation for extension module
+		// configurations when running tests.
+		return defined( 'MW_PHPUNIT_TEST' ) || defined( 'MW_PARSER_TEST' );
+	}
+
+	/** @inheritDoc */
 	public function getMaxTemplateDepth(): int {
 		return (int)$this->config->get( MainConfigNames::MaxTemplateDepth );
 	}
 
 	/**
 	 * Overrides the max template depth in the MediaWiki configuration.
-	 * @param int $depth
 	 */
 	public function setMaxTemplateDepth( int $depth ): void {
 		// Parsoid's command-line tools let you set the max template depth
@@ -807,7 +809,6 @@ class SiteConfig extends ISiteConfig {
 		return $this->config->get( MainConfigNames::UrlProtocols );
 	}
 
-	/** @return array */
 	public function getNoFollowConfig(): array {
 		return [
 			'nofollow' => $this->config->get( MainConfigNames::NoFollowLinks ),
@@ -819,6 +820,14 @@ class SiteConfig extends ISiteConfig {
 	/** @return string|false */
 	public function getExternalLinkTarget() {
 		return $this->config->get( MainConfigNames::ExternalLinkTarget );
+	}
+
+	/**
+	 * Return the localization key we should use for asynchronous
+	 * fallback content.
+	 */
+	public function getAsyncFallbackMessageKey(): string {
+		return 'parsoid-async-not-ready-fallback';
 	}
 
 	// MW-specific helper

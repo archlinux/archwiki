@@ -84,7 +84,7 @@ OO.mixinClass( ve.ui.MWGalleryItemWidget, OO.ui.mixin.TabIndexedElement );
  * @fires ve.ui.MWGalleryItemWidget#edit
  */
 ve.ui.MWGalleryItemWidget.prototype.onItemClick = function () {
-	this.emit( 'edit', this );
+	this.emit( 'edit' );
 };
 
 /**

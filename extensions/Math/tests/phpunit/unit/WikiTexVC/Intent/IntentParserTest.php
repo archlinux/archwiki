@@ -1,6 +1,7 @@
 <?php
 namespace MediaWiki\Extension\Math\WikiTexVC\Intent;
 
+use MediaWiki\Extension\Math\Tests\WikiTexVC\MathServiceContainerTrait;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLTestUtil;
 use MediaWiki\Extension\Math\WikiTexVC\TexVC;
 use MediaWikiUnitTestCase;
@@ -16,6 +17,8 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 final class IntentParserTest extends MediaWikiUnitTestCase {
+	use MathServiceContainerTrait;
+
 	/** @var string */
 	private static $FILENAMEINTENTTESTS = __DIR__ . "/intent_mathml_testing_extracted.json";
 	/** @var string */
@@ -119,5 +122,10 @@ final class IntentParserTest extends MediaWikiUnitTestCase {
 			$f = array_slice( $f, self::$FILTERSTART, self::$FILTERLENGTH );
 		}
 		return $f;
+	}
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->setUpMathServiceContainer();
 	}
 }

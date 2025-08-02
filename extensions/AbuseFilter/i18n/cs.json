@@ -98,6 +98,7 @@
 	"abusefilter-log-entry": "$1: $2 {{GENDER:$8|spustil|spustila|spustil(a)}} filtr zneužití při činnosti „$3“ na $4.\nProvedená opatření: $5; popis filtru: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 {{GENDER:$8|spustil|spustila|spustil(a)}} filtr zneužití při činnosti „$3“ na $4.\nProvedená opatření: $5;\npopis filtru: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 {{GENDER:$9|spustil|spustila|spustil(a)}} $3 při činnosti „$4“ na $5.\nProvedená opatření: $6; popis filtru: $7 ($8)",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1: $2 {{GENDER:$9|spustil|spustila|spustil(a)}} $3 při činnosti „$4“ na $5.\nProvedená opatření: $6; popis filtru: $7",
 	"abusefilter-log-detailedentry-global": "globální filtr $1",
 	"abusefilter-log-detailedentry-local": "filtr $1",
 	"abusefilter-log-detailslink": "podrobnosti",

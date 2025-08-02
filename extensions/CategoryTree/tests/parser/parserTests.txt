@@ -1,0 +1,137 @@
+!! options
+version=2
+parsoid-compatible=wt2html
+!! end
+
+!! test
+Self-closing tag: <categorytree />
+!! wikitext
+<categorytree />
+!! html/php
+!! html/parsoid
+<p><link typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{}}'/></p>
+!! end
+
+!! test
+Empty tag: <categorytree></categorytree>
+!! wikitext
+<categorytree></categorytree>
+!! html/php
+!! html/parsoid
+<p><link typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""}}'/></p>
+!! end
+
+!! test
+Empty function: {{#categorytree:}}
+!! wikitext
+{{#categorytree:}}
+!! html/php
+!! html/parsoid
+<p><link typeof="mw:Extension/categorytree mw:Transclusion" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""},"parts":[{"template":{"target":{"wt":"#categorytree:","function":"categorytree"},"params":{},"i":0}}]}'/></p>
+!! end
+
+!! test
+Tag with Unknown category: <categorytree>Unknown category</categorytree>
+!! wikitext
+<categorytree>Unknown category</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":"Unknown category"}}'><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+!! end
+
+!! test
+Function with Unknown category: {{#categorytree:Unknown category}}
+!! wikitext
+{{#categorytree:Unknown category}}
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree mw:Transclusion" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":"Unknown category"},"parts":[{"template":{"target":{"wt":"#categorytree:Unknown category","function":"categorytree"},"params":{},"i":0}}]}'><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+!! end
+
+!! test
+Tag with Unknown category and parameters: <categorytree mode=all depth=2 showcount=1>Unknown category</categorytree>
+!! wikitext
+<categorytree mode=all depth=2 showcount=1>Unknown category</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:20,&quot;hideprefix&quot;:20,&quot;showcount&quot;:true,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":20,"hideprefix":20,"showcount":true,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{"mode":"all","depth":"2","showcount":"1"},"body":{"extsrc":"Unknown category"}}'><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+!! end
+
+!! article
+Category:CategoryTree test category
+!! text
+!! endarticle
+
+!! test
+Tag with Category:CategoryTree test category
+!! wikitext
+<categorytree>CategoryTree test category</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_test_category" title="Category:CategoryTree test category">CategoryTree test category</a></bdi></div><div class="CategoryTreeChildren"><i class="CategoryTreeNotice">no subcategories</i></div></div></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":"CategoryTree test category"}}'>
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_test_category" title="Category:CategoryTree test category">CategoryTree test category</a></bdi></div>
+<div class="CategoryTreeChildren"><i class="CategoryTreeNotice">no subcategories</i></div>
+</div>
+</div>
+!! end
+
+!! article
+Category:CategoryTree test category 2
+!! text
+!! endarticle
+
+!! test
+Tag with Category:CategoryTree test category 2 and hideroot=1
+!! wikitext
+<categorytree hideroot=1>CategoryTree test category 2</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{"hideroot":"1"},"body":{"extsrc":"CategoryTree test category 2"}}'></div>
+!! end
+
+!! article
+Category:CategoryTree root
+!! text
+!! endarticle
+
+!! article
+Category:CategoryTree 1
+!! text
+[[Category:CategoryTree root]]
+!! endarticle
+
+!! article
+Category:CategoryTree 2
+!! text
+[[Category:CategoryTree root]]
+!! endarticle
+
+!! test
+Tag with CategoryTree root and two subcategories
+!! wikitext
+<categorytree>CategoryTree root</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeBullet"><a class="CategoryTreeToggle" data-ct-title="CategoryTree_root" data-ct-loaded="1" aria-expanded="true"></a> </span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_root" title="Category:CategoryTree root">CategoryTree root</a></bdi></div><div class="CategoryTreeChildren"><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_1" title="Category:CategoryTree 1">CategoryTree 1</a></bdi></div><div class="CategoryTreeChildren" style="display:none"></div></div><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_2" title="Category:CategoryTree 2">CategoryTree 2</a></bdi></div><div class="CategoryTreeChildren" style="display:none"></div></div></div></div></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":"CategoryTree root"}}'>
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeBullet"><a class="CategoryTreeToggle" data-ct-title="CategoryTree_root" data-ct-loaded="1" aria-expanded="true"></a> </span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_root" title="Category:CategoryTree root">CategoryTree root</a></bdi></div>
+<div class="CategoryTreeChildren">
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_1" title="Category:CategoryTree 1">CategoryTree 1</a></bdi></div>
+<div class="CategoryTreeChildren" style="display:none"></div>
+</div>
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_2" title="Category:CategoryTree 2">CategoryTree 2</a></bdi></div>
+<div class="CategoryTreeChildren" style="display:none"></div>
+</div>
+</div>
+</div>
+</div>
+!! end

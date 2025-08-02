@@ -23,6 +23,11 @@
  * @file
  */
 
+namespace MediaWiki\Logging;
+
+use InvalidArgumentException;
+use MediaWiki\Block\DatabaseBlockStore;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
@@ -45,7 +50,12 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
-use MediaWiki\Xml\Xml;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentity;
+use MessageLocalizer;
+use stdClass;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 
 class LogEventsList extends ContextSource {
 	public const NO_ACTION_LINK = 1;
@@ -230,7 +240,7 @@ class LogEventsList extends ContextSource {
 			$page = new LogPage( $type );
 			$pageText = $page->getName()->text();
 			if ( in_array( $pageText, $typesByName ) ) {
-				LoggerFactory::getInstance( 'error' )->error(
+				LoggerFactory::getInstance( 'translation-problem' )->error(
 					'The log type {log_type_one} has the same translation as {log_type_two} for {lang}. ' .
 					'{log_type_one} will not be displayed in the drop down menu on Special:Log.',
 					[
@@ -379,11 +389,16 @@ class LogEventsList extends ContextSource {
 		$ret = "$del $timeLink $action $comment $revert $tagDisplay";
 
 		// Let extensions add data
+		$ret .= Html::openElement( 'span', [ 'class' => 'mw-logevent-tool' ] );
+		// FIXME: this hook assumes that callers will only append to $ret value.
+		// In future this hook should be replaced with a new hook: LogTools that has a
+		// hook interface consistent with DiffTools and HistoryTools.
 		$this->hookRunner->onLogEventsListLineEnding( $this, $ret, $entry, $classes, $attribs );
 		$attribs = array_filter( $attribs,
 			[ Sanitizer::class, 'isReservedDataAttribute' ],
 			ARRAY_FILTER_USE_KEY
 		);
+		$ret .= Html::closeElement( 'span' );
 		$attribs['class'] = $classes;
 
 		return Html::rawElement( 'li', $attribs, $ret ) . "\n";
@@ -401,11 +416,7 @@ class LogEventsList extends ContextSource {
 
 		// If change tag editing is available to this user, return the checkbox
 		if ( $this->flags & self::USE_CHECKBOXES && $this->showTagEditUI ) {
-			return Xml::check(
-				'showhiderevisions',
-				false,
-				[ 'name' => 'ids[' . $row->log_id . ']' ]
-			);
+			return Html::check( 'ids[' . $row->log_id . ']', false );
 		}
 
 		// no one can hide items from the suppress log.
@@ -427,13 +438,9 @@ class LogEventsList extends ContextSource {
 				if ( $canHide && $this->flags & self::USE_CHECKBOXES && !$canViewThisSuppressedEntry ) {
 					// If event was hidden from sysops
 					if ( !self::userCan( $row, LogPage::DELETED_RESTRICTED, $authority ) ) {
-						$del = Xml::check( 'deleterevisions', false, [ 'disabled' => 'disabled' ] );
+						$del = Html::check( 'deleterevisions', false, [ 'disabled' => 'disabled' ] );
 					} else {
-						$del = Xml::check(
-							'showhiderevisions',
-							false,
-							[ 'name' => 'ids[' . $row->log_id . ']' ]
-						);
+						$del = Html::check( 'ids[' . $row->log_id . ']', false );
 					}
 				} else {
 					// If event was hidden from sysops
@@ -557,6 +564,8 @@ class LogEventsList extends ContextSource {
 	 * - useRequestParams boolean Set true to use Pager-related parameters in the WebRequest
 	 * - useMaster boolean Use primary DB
 	 * - extraUrlParams array|bool Additional url parameters for "full log" link (if it is shown)
+	 * - footerHtmlItems: string[] Extra HTML to add as horizontal list items after the
+	 *   end of the log
 	 * @return int Number of total log items (not limited by $lim)
 	 */
 	public static function showLogExtract(
@@ -572,6 +581,7 @@ class LogEventsList extends ContextSource {
 			'useRequestParams' => false,
 			'useMaster' => false,
 			'extraUrlParams' => false,
+			'footerHtmlItems' => []
 		];
 		# The + operator appends elements of remaining keys from the right
 		# handed array to the left handed, whereas duplicated keys are NOT overwritten.
@@ -622,7 +632,6 @@ class LogEventsList extends ContextSource {
 			$services->getActorNormalization(),
 			$services->getLogFormatterFactory()
 		);
-		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( !$useRequestParams ) {
 			# Reset vars that may have been taken from the request
 			$pager->mLimit = 50;
@@ -631,7 +640,6 @@ class LogEventsList extends ContextSource {
 			$pager->mIsBackwards = false;
 		}
 
-		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( $param['useMaster'] ) {
 			$pager->mDb = $services->getConnectionProvider()->getPrimaryDatabase();
 		}
@@ -649,6 +657,7 @@ class LogEventsList extends ContextSource {
 		$numRows = $pager->getNumRows();
 
 		$s = '';
+		$footerHtmlItems = [];
 
 		if ( $logBody ) {
 			if ( $msgKey[0] ) {
@@ -664,7 +673,6 @@ class LogEventsList extends ContextSource {
 				$loglist->endLogEventsList();
 			// add styles for change tags
 			$context->getOutput()->addModuleStyles( 'mediawiki.interface.helpers.styles' );
-		// @phan-suppress-next-line PhanRedundantCondition
 		} elseif ( $showIfEmpty ) {
 			$s = Html::rawElement( 'div', [ 'class' => 'mw-warning-logempty' ],
 				$context->msg( 'logempty' )->parse() );
@@ -703,12 +711,22 @@ class LogEventsList extends ContextSource {
 				$urlParam = array_merge( $urlParam, $extraUrlParams );
 			}
 
-			$s .= $linkRenderer->makeKnownLink(
+			$footerHtmlItems[] = $linkRenderer->makeKnownLink(
 				SpecialPage::getTitleFor( 'Log' ),
 				$context->msg( 'log-fulllog' )->text(),
 				[],
 				$urlParam
 			);
+		}
+		if ( $param['footerHtmlItems'] ) {
+			$footerHtmlItems = array_merge( $footerHtmlItems, $param['footerHtmlItems'] );
+		}
+		if ( $logBody && $footerHtmlItems ) {
+			$s .= '<ul class="mw-logevent-footer">';
+			foreach ( $footerHtmlItems as $item ) {
+				$s .= Html::rawElement( 'li', [], $item );
+			}
+			$s .= '</ul>';
 		}
 
 		if ( $logBody && $msgKey[0] ) {
@@ -729,9 +747,11 @@ class LogEventsList extends ContextSource {
 				$s,
 				'mw-warning-with-logexcerpt'
 			);
+			// Add styles for warning box
+			$context->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		}
 
-		// @phan-suppress-next-line PhanSuspiciousValueComparison, PhanRedundantCondition
+		// @phan-suppress-next-line PhanSuspiciousValueComparison
 		if ( $wrap != '' ) { // Wrap message in html
 			$s = str_replace( '$1', $s, $wrap );
 		}
@@ -785,4 +805,78 @@ class LogEventsList extends ContextSource {
 
 		return false;
 	}
+
+	/**
+	 * @internal -- shared code for IntroMessageBuilder and Article::showMissingArticle
+	 *
+	 * If the user associated with the current page is blocked, get a warning
+	 * box with a block log extract in it. Otherwise, return null.
+	 *
+	 * @param DatabaseBlockStore $blockStore
+	 * @param NamespaceInfo $namespaceInfo
+	 * @param MessageLocalizer $localizer
+	 * @param LinkRenderer $linkRenderer
+	 * @param UserIdentity|false|null $user The user which may be blocked
+	 * @param Title $title The title being viewed
+	 * @return string|null
+	 */
+	public static function getBlockLogWarningBox(
+		DatabaseBlockStore $blockStore,
+		NamespaceInfo $namespaceInfo,
+		MessageLocalizer $localizer,
+		LinkRenderer $linkRenderer,
+		$user,
+		Title $title
+	) {
+		if ( !$user ) {
+			return null;
+		}
+		$appliesToTitle = false;
+		$logTargetPage = '';
+		$blockTargetName = '';
+		$blocks = $blockStore->newListFromTarget( $user, $user, false,
+			DatabaseBlockStore::AUTO_NONE );
+		foreach ( $blocks as $block ) {
+			if ( $block->appliesToTitle( $title ) ) {
+				$appliesToTitle = true;
+			}
+			$blockTargetName = $block->getTargetName();
+			$logTargetPage = $namespaceInfo->getCanonicalName( NS_USER ) .
+				':' . $blockTargetName;
+		}
+
+		// Show log extract if the user is sitewide blocked or is partially
+		// blocked and not allowed to edit their user page or user talk page
+		if ( !count( $blocks ) || !$appliesToTitle ) {
+			return null;
+		}
+		$msgKey = count( $blocks ) === 1
+			? 'blocked-notice-logextract' : 'blocked-notice-logextract-multi';
+		$params = [
+			'lim' => 1,
+			'showIfEmpty' => false,
+			'msgKey' => [
+				$msgKey,
+				$user->getName(), # Support GENDER in notice
+				count( $blocks )
+			],
+		];
+		if ( count( $blocks ) > 1 ) {
+			$params['footerHtmlItems'] = [
+				$linkRenderer->makeKnownLink(
+					SpecialPage::getTitleFor( 'BlockList' ),
+					$localizer->msg( 'blocked-notice-list-link' )->text(),
+					[],
+					[ 'wpTarget' => $blockTargetName ]
+				),
+			];
+		}
+
+		$outString = '';
+		self::showLogExtract( $outString, 'block', $logTargetPage, '', $params );
+		return $outString ?: null;
+	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LogEventsList::class, 'LogEventsList' );

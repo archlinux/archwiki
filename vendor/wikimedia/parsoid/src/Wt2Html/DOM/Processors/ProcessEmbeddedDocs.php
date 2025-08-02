@@ -4,12 +4,11 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
@@ -20,24 +19,21 @@ class ProcessEmbeddedDocs implements Wt2HtmlDOMProcessor {
 	private ParsoidExtensionAPI $extApi;
 
 	private function processNode( Element $elt ): void {
-		ContentUtils::processAttributeEmbeddedHTML(
+		ContentUtils::processAttributeEmbeddedDom(
 			$this->extApi,
 			$elt,
-			function ( string $html ) {
-				$dom = ContentUtils::createDocument( $html );
-				$body = DOMCompat::getBody( $dom );
-				DOMDataUtils::visitAndLoadDataAttribs( $body );
+			function ( DocumentFragment $df ) {
 				PipelineUtils::processContentInPipeline(
 					$this->env,
 					$this->env->topFrame,
-					$body,
+					$df,
 					[
 						'pipelineType' => 'fullparse-embedded-docs-dom-to-dom',
 						'pipelineOpts' => [],
 						'sol' => true
 					],
 				);
-				return ContentUtils::ppToXML( $body, [ 'innerXML' => true ] );
+				return true; // might have been changed.
 			}
 		);
 
@@ -62,7 +58,12 @@ class ProcessEmbeddedDocs implements Wt2HtmlDOMProcessor {
 	): void {
 		$this->env = $env;
 		$this->extApi = new ParsoidExtensionAPI( $env );
-		'@phan-var Element $root';
-		$this->processNode( $root );
+
+		$children = ( $root instanceof Element ) ? [ $root ] : $root->childNodes;
+		foreach ( $children as $child ) {
+			if ( $child instanceof Element ) {
+				$this->processNode( $child );
+			}
+		}
 	}
 }

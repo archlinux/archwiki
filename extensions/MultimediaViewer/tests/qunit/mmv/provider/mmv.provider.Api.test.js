@@ -17,182 +17,180 @@
 
 const { Api } = require( 'mmv' );
 
-( function () {
-	QUnit.module( 'mmv.provider.Api', QUnit.newMwEnvironment() );
+QUnit.module( 'mmv.provider.Api', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Api constructor sense check', ( assert ) => {
-		const api = { get: function () {} };
-		const options = {};
-		const apiProvider = new Api( api, options );
-		const ApiProviderWithNoOptions = new Api( api );
+QUnit.test( 'Api constructor sense check', ( assert ) => {
+	const api = { get: function () {} };
+	const options = {};
+	const apiProvider = new Api( api, options );
+	const ApiProviderWithNoOptions = new Api( api );
 
-		assert.true( apiProvider instanceof Api );
-		assert.true( ApiProviderWithNoOptions instanceof Api );
-	} );
+	assert.true( apiProvider instanceof Api );
+	assert.true( ApiProviderWithNoOptions instanceof Api );
+} );
 
-	QUnit.test( 'apiGetWithMaxAge()', function ( assert ) {
-		const api = {};
-		let options = {};
-		let apiProvider = new Api( api, options );
+QUnit.test( 'apiGetWithMaxAge()', function ( assert ) {
+	const api = {};
+	let options = {};
+	let apiProvider = new Api( api, options );
 
-		api.get = this.sandbox.stub();
-		apiProvider.apiGetWithMaxAge( {} );
-		assert.false( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage is not set by default' );
-		assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage is not set by default' );
+	api.get = this.sandbox.stub();
+	apiProvider.apiGetWithMaxAge( {} );
+	assert.false( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage is not set by default' );
+	assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage is not set by default' );
 
-		options = { maxage: 123 };
-		apiProvider = new Api( api, options );
+	options = { maxage: 123 };
+	apiProvider = new Api( api, options );
 
-		api.get = this.sandbox.stub();
-		apiProvider.apiGetWithMaxAge( {} );
-		assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].maxage, 123, 'maxage falls back to provider default' );
-		assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].smaxage, 123, 'smaxage falls back to provider default' );
+	api.get = this.sandbox.stub();
+	apiProvider.apiGetWithMaxAge( {} );
+	assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].maxage, 123, 'maxage falls back to provider default' );
+	assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].smaxage, 123, 'smaxage falls back to provider default' );
 
-		api.get = this.sandbox.stub();
-		apiProvider.apiGetWithMaxAge( {}, null, 456 );
-		assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].maxage, 456, 'maxage can be overridden' );
-		assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].smaxage, 456, 'smaxage can be overridden' );
+	api.get = this.sandbox.stub();
+	apiProvider.apiGetWithMaxAge( {}, null, 456 );
+	assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].maxage, 456, 'maxage can be overridden' );
+	assert.strictEqual( api.get.getCall( 0 ).args[ 0 ].smaxage, 456, 'smaxage can be overridden' );
 
-		api.get = this.sandbox.stub();
-		apiProvider.apiGetWithMaxAge( {}, null, null );
-		assert.false( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage can be overridden to unset' );
-		assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage can be overridden to unset' );
-	} );
+	api.get = this.sandbox.stub();
+	apiProvider.apiGetWithMaxAge( {}, null, null );
+	assert.false( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage can be overridden to unset' );
+	assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage can be overridden to unset' );
+} );
 
-	QUnit.test( 'getCachedPromise success', ( assert ) => {
-		const api = { get: function () {} };
-		const apiProvider = new Api( api );
-		const oldMwLog = mw.log;
-		let promiseShouldBeCached = false;
+QUnit.test( 'getCachedPromise success', ( assert ) => {
+	const api = { get: function () {} };
+	const apiProvider = new Api( api );
+	const oldMwLog = mw.log;
+	let promiseShouldBeCached = false;
 
-		mw.log = function () {
-			assert.true( false, 'mw.log should not have been called' );
+	mw.log = function () {
+		assert.true( false, 'mw.log should not have been called' );
+	};
+
+	const promiseSource = function ( result ) {
+		return function () {
+			assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
+			return $.Deferred().resolve( result );
 		};
+	};
 
-		const promiseSource = function ( result ) {
-			return function () {
-				assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
-				return $.Deferred().resolve( result );
-			};
-		};
-
-		apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ).done( ( result ) => {
-			assert.strictEqual( result, 1, 'result comes from the promise source' );
-		} );
-
-		apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ).done( ( result ) => {
-			assert.strictEqual( result, 2, 'result comes from the promise source' );
-		} );
-
-		promiseShouldBeCached = true;
-		apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ).done( ( result ) => {
-			assert.strictEqual( result, 1, 'result comes from cache' );
-		} );
-
-		mw.log = oldMwLog;
+	apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ).done( ( result ) => {
+		assert.strictEqual( result, 1, 'result comes from the promise source' );
 	} );
 
-	QUnit.test( 'getCachedPromise failure', ( assert ) => {
-		const api = { get: function () {} };
-		const apiProvider = new Api( api );
-		const oldMwLog = mw.log;
-		let promiseShouldBeCached = false;
-
-		mw.log = function () {
-			assert.true( true, 'mw.log was called' );
-		};
-
-		const promiseSource = function ( result ) {
-			return function () {
-				assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
-				return $.Deferred().reject( result );
-			};
-		};
-
-		apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ).fail( ( result ) => {
-			assert.strictEqual( result, 1, 'result comes from the promise source' );
-		} );
-
-		apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ).fail( ( result ) => {
-			assert.strictEqual( result, 2, 'result comes from the promise source' );
-		} );
-
-		promiseShouldBeCached = true;
-		apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ).fail( ( result ) => {
-			assert.strictEqual( result, 1, 'result comes from cache' );
-		} );
-
-		mw.log = oldMwLog;
+	apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ).done( ( result ) => {
+		assert.strictEqual( result, 2, 'result comes from the promise source' );
 	} );
 
-	QUnit.test( 'getErrorMessage', ( assert ) => {
-		const api = { get: function () {} };
-		const apiProvider = new Api( api );
-
-		const errorMessage = apiProvider.getErrorMessage( {
-			servedby: 'mw1194',
-			error: {
-				code: 'unknown_action',
-				info: 'Unrecognized value for parameter \'action\': FOO'
-			}
-		} );
-		assert.strictEqual( errorMessage,
-			'unknown_action: Unrecognized value for parameter \'action\': FOO',
-			'error message is parsed correctly' );
-
-		assert.strictEqual( apiProvider.getErrorMessage( {} ), 'unknown error', 'missing error message is handled' );
+	promiseShouldBeCached = true;
+	apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ).done( ( result ) => {
+		assert.strictEqual( result, 1, 'result comes from cache' );
 	} );
 
-	QUnit.test( 'getQueryPage', ( assert ) => {
-		const api = { get: function () {} };
-		const apiProvider = new Api( api );
-		const done = assert.async( 5 );
+	mw.log = oldMwLog;
+} );
 
-		const data = {
-			query: {
-				pages: [
-					{
-						title: 'File:Stuff.jpg'
-					}
-				]
-			}
+QUnit.test( 'getCachedPromise failure', ( assert ) => {
+	const api = { get: function () {} };
+	const apiProvider = new Api( api );
+	const oldMwLog = mw.log;
+	let promiseShouldBeCached = false;
+
+	mw.log = function () {
+		assert.true( true, 'mw.log was called' );
+	};
+
+	const promiseSource = function ( result ) {
+		return function () {
+			assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
+			return $.Deferred().reject( result );
 		};
+	};
 
-		apiProvider.getQueryPage( data ).then( ( field ) => {
-			assert.strictEqual( field, data.query.pages[ 0 ], 'specified page is found' );
-			done();
-		} );
-
-		apiProvider.getQueryPage( {} ).fail( () => {
-			assert.true( true, 'promise rejected when data is missing' );
-			done();
-		} );
-
-		apiProvider.getQueryPage( { data: { query: {} } } ).fail( () => {
-			assert.true( true, 'promise rejected when pages are missing' );
-			done();
-		} );
-
-		apiProvider.getQueryPage( { data: { query: { pages: [] } } } ).fail( () => {
-			assert.true( true, 'promise rejected when pages are empty' );
-			done();
-		} );
-
-		apiProvider.getQueryPage( {
-			query: {
-				pages: [
-					{
-						title: 'File:Stuff.jpg'
-					},
-					{
-						title: 'File:OtherStuff.jpg'
-					}
-				]
-			}
-		} ).fail( () => {
-			assert.true( true, 'promise rejected when data contains two entries' );
-			done();
-		} );
-
+	apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ).fail( ( result ) => {
+		assert.strictEqual( result, 1, 'result comes from the promise source' );
 	} );
-}() );
+
+	apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ).fail( ( result ) => {
+		assert.strictEqual( result, 2, 'result comes from the promise source' );
+	} );
+
+	promiseShouldBeCached = true;
+	apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ).fail( ( result ) => {
+		assert.strictEqual( result, 1, 'result comes from cache' );
+	} );
+
+	mw.log = oldMwLog;
+} );
+
+QUnit.test( 'getErrorMessage', ( assert ) => {
+	const api = { get: function () {} };
+	const apiProvider = new Api( api );
+
+	const errorMessage = apiProvider.getErrorMessage( {
+		servedby: 'mw1194',
+		error: {
+			code: 'unknown_action',
+			info: 'Unrecognized value for parameter \'action\': FOO'
+		}
+	} );
+	assert.strictEqual( errorMessage,
+		'unknown_action: Unrecognized value for parameter \'action\': FOO',
+		'error message is parsed correctly' );
+
+	assert.strictEqual( apiProvider.getErrorMessage( {} ), 'unknown error', 'missing error message is handled' );
+} );
+
+QUnit.test( 'getQueryPage', ( assert ) => {
+	const api = { get: function () {} };
+	const apiProvider = new Api( api );
+	const done = assert.async( 5 );
+
+	const data = {
+		query: {
+			pages: [
+				{
+					title: 'File:Stuff.jpg'
+				}
+			]
+		}
+	};
+
+	apiProvider.getQueryPage( data ).then( ( field ) => {
+		assert.strictEqual( field, data.query.pages[ 0 ], 'specified page is found' );
+		done();
+	} );
+
+	apiProvider.getQueryPage( {} ).fail( () => {
+		assert.true( true, 'promise rejected when data is missing' );
+		done();
+	} );
+
+	apiProvider.getQueryPage( { data: { query: {} } } ).fail( () => {
+		assert.true( true, 'promise rejected when pages are missing' );
+		done();
+	} );
+
+	apiProvider.getQueryPage( { data: { query: { pages: [] } } } ).fail( () => {
+		assert.true( true, 'promise rejected when pages are empty' );
+		done();
+	} );
+
+	apiProvider.getQueryPage( {
+		query: {
+			pages: [
+				{
+					title: 'File:Stuff.jpg'
+				},
+				{
+					title: 'File:OtherStuff.jpg'
+				}
+			]
+		}
+	} ).fail( () => {
+		assert.true( true, 'promise rejected when data contains two entries' );
+		done();
+	} );
+
+} );

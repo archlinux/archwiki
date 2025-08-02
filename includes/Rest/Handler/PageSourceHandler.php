@@ -46,14 +46,10 @@ class PageSourceHandler extends SimpleHandler {
 		$this->contentHelper->init( $this->getAuthority(), $this->getValidatedParams() );
 	}
 
-	/**
-	 * @param PageReference $page
-	 * @return string
-	 */
 	private function constructHtmlUrl( PageReference $page ): string {
 		// TODO: once legacy "v1" routes are removed, just use the path prefix from the module.
 		$pathPrefix = $this->getModule()->getPathPrefix();
-		if ( strlen( $pathPrefix ) == 0 ) {
+		if ( $pathPrefix === '' ) {
 			$pathPrefix = 'v1';
 		}
 
@@ -138,9 +134,6 @@ class PageSourceHandler extends SimpleHandler {
 		return $this->contentHelper->getETag();
 	}
 
-	/**
-	 * @return string|null
-	 */
 	protected function getLastModified(): ?string {
 		return $this->contentHelper->getLastModified();
 	}
@@ -165,5 +158,21 @@ class PageSourceHandler extends SimpleHandler {
 	 */
 	protected function hasRepresentation() {
 		return $this->contentHelper->hasContent();
+	}
+
+	public function getResponseBodySchemaFileName( string $method ): ?string {
+		switch ( $this->getConfig()['format'] ) {
+			case 'bare':
+				$schema = 'includes/Rest/Handler/Schema/ExistingPageBare.json';
+				break;
+			case 'source':
+				$schema = 'includes/Rest/Handler/Schema/ExistingPageSource.json';
+				break;
+			default:
+				$schema = null;
+				break;
+		}
+
+		return $schema;
 	}
 }

@@ -3,7 +3,7 @@
 use MediaWiki\Title\TitleValue;
 
 /**
- * @covers \BlockLogFormatter
+ * @covers \MediaWiki\Logging\BlockLogFormatter
  */
 class BlockLogFormatterTest extends LogFormatterTestCase {
 
@@ -35,6 +35,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 					'preload' => [ new TitleValue( NS_USER_TALK, 'Logtestuser' ) ],
 				],
@@ -61,6 +62,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 					'preload' => [ new TitleValue( NS_USER_TALK, 'Logtestuser' ) ],
 				],
@@ -84,6 +86,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [],
+						'duration-l10n' => 'infinite',
 					],
 					'preload' => [],
 				],
@@ -111,6 +114,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -135,6 +139,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -157,6 +162,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -198,6 +204,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -224,6 +231,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -248,6 +256,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -323,6 +332,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -349,6 +359,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -382,6 +393,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -407,6 +419,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -448,6 +461,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -474,6 +488,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -523,6 +538,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -548,6 +564,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 					'api' => [
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -597,6 +614,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 							],
 						],
 						'sitewide' => false,
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -628,6 +646,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 							'namespaces' => [ NS_USER ],
 						],
 						'sitewide' => false,
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -667,6 +686,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 							'namespaces' => [ NS_USER, NS_MAIN ],
 						],
 						'sitewide' => false,
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -692,6 +712,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 						'duration' => 'infinity',
 						'flags' => [ 'anononly' ],
 						'sitewide' => false,
+						'duration-l10n' => 'infinite',
 					],
 				],
 			],
@@ -702,6 +723,48 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 	 * @dataProvider providePartialBlockLogDatabaseRows
 	 */
 	public function testPartialBlockLogDatabaseRows( $row, $extra ) {
+		$this->doTestLogFormatter( $row, $extra );
+	}
+
+	public static function provideMultiblocksDatabaseRows() {
+		return [
+			// Sitewide multiblock with expiry
+			[
+				[
+					'type' => 'block',
+					'action' => 'block',
+					'comment' => 'multiblock',
+					'user' => 0,
+					'user_text' => 'Sysop',
+					'namespace' => NS_USER,
+					'title' => 'Target',
+					'timestamp' => '20240101000000',
+					'params' => [
+						'5::duration' => '24 hours',
+						'6::flags' => '',
+						'sitewide' => true,
+						'finalTargetCount' => 2,
+					]
+				],
+				[
+					'text' => 'Sysop added a block for Target with an expiration time of 1 day',
+					'api' => [
+						'duration' => '24 hours',
+						'flags' => [],
+						'finalTargetCount' => 2,
+						'sitewide' => true,
+						'expiry' => '2024-01-02T00:00:00Z',
+						'duration-l10n' => '1 day',
+					]
+				]
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideMultiblocksDatabaseRows
+	 */
+	public function testMultiblocksDatabaseRows( $row, $extra ) {
 		$this->doTestLogFormatter( $row, $extra );
 	}
 }

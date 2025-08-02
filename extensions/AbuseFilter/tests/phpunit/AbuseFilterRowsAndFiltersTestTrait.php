@@ -13,7 +13,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 	/**
 	 * @return array[]
 	 */
-	public function getRowsAndFilters(): array {
+	public static function provideRowsAndFilters(): array {
 		static $ret = null;
 		if ( $ret !== null ) {
 			return $ret;
@@ -85,7 +85,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 			);
 			$ret[$name] = [
 				'row' => $row,
-				'actions' => $this->getRowsForActions( $row->af_id, $actionKeys ),
+				'actions' => self::getRowsForActions( $row->af_id, $actionKeys ),
 				'filter' => $filter
 			];
 		}
@@ -111,7 +111,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					'af_global' => 0,
 					'af_group' => 'default'
 				],
-				'actions' => $this->getRowsForActions( 333, [ 'warn' ] ),
+				'actions' => self::getRowsForActions( 333, [ 'warn' ] ),
 				'filter' => new ExistingFilter(
 					new Specs(
 						'false',
@@ -218,7 +218,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 	 * @param string[] $actions
 	 * @return stdClass[]
 	 */
-	private function getRowsForActions( int $id, array $actions ): array {
+	private static function getRowsForActions( int $id, array $actions ): array {
 		$ret = [];
 		foreach ( $actions as $action ) {
 			$ret[] = (object)[

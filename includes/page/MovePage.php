@@ -20,12 +20,8 @@
 
 namespace MediaWiki\Page;
 
-use ChangeTags;
-use File;
-use LogFormatterFactory;
-use ManualLogEntry;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Collation\CollationFactory;
-use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
@@ -33,10 +29,17 @@ use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\AtomicSectionUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\DomainEvent\DomainEventDispatcher;
 use MediaWiki\EditPage\SpamChecker;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logging\LogFormatterFactory;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\Event\PageMovedEvent;
+use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
@@ -50,13 +53,10 @@ use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
-use RepoGroup;
-use StringUtils;
-use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IDBAccessObject;
-use WikiPage;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Handles the backend logic of moving a page from one title
@@ -77,6 +77,7 @@ class MovePage {
 	private RevisionStore $revisionStore;
 	private SpamChecker $spamChecker;
 	private HookRunner $hookRunner;
+	private DomainEventDispatcher $eventDispatcher;
 	private WikiPageFactory $wikiPageFactory;
 	private UserFactory $userFactory;
 	private UserEditTracker $userEditTracker;
@@ -113,6 +114,7 @@ class MovePage {
 		RevisionStore $revisionStore,
 		SpamChecker $spamChecker,
 		HookContainer $hookContainer,
+		DomainEventDispatcher $eventDispatcher,
 		WikiPageFactory $wikiPageFactory,
 		UserFactory $userFactory,
 		UserEditTracker $userEditTracker,
@@ -135,6 +137,7 @@ class MovePage {
 		$this->revisionStore = $revisionStore;
 		$this->spamChecker = $spamChecker;
 		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->eventDispatcher = $eventDispatcher;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->userFactory = $userFactory;
 		$this->userEditTracker = $userEditTracker;
@@ -412,7 +415,7 @@ class MovePage {
 			0,
 			IDBAccessObject::READ_LATEST
 		);
-		if ( !is_object( $rev ) ) {
+		if ( !$rev ) {
 			return false;
 		}
 		$content = $rev->getContent( SlotRecord::MAIN );
@@ -637,7 +640,8 @@ class MovePage {
 
 		$this->hookRunner->onTitleMoveStarting( $this->oldTitle, $this->newTitle, $userObj );
 
-		$pageid = $this->oldTitle->getArticleID( IDBAccessObject::READ_LATEST );
+		$pageStateBeforeMove = $this->oldTitle->toPageRecord( IDBAccessObject::READ_LATEST );
+		$pageid = $pageStateBeforeMove->getId();
 		$protected = $this->restrictionStore->isProtected( $this->oldTitle );
 
 		// Attempt the actual move
@@ -674,11 +678,13 @@ class MovePage {
 					'pr_expiry' => $row->pr_expiry
 				];
 			}
-			$dbw->newInsertQueryBuilder()
-				->insertInto( 'page_restrictions' )
-				->ignore()
-				->rows( $rowsInsert )
-				->caller( __METHOD__ )->execute();
+			if ( $rowsInsert ) {
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'page_restrictions' )
+					->ignore()
+					->rows( $rowsInsert )
+					->caller( __METHOD__ )->execute();
+			}
 
 			// Build comment for log
 			$comment = wfMessage(
@@ -734,6 +740,13 @@ class MovePage {
 			$this->oldTitle, $this->newTitle,
 			$user, $pageid, $redirid, $reason, $nullRevision
 		);
+
+		// Emit an event describing the move
+		$this->eventDispatcher->dispatch( new PageMovedEvent(
+			$pageStateBeforeMove,
+			$this->newTitle->toPageRecord( IDBAccessObject::READ_LATEST ),
+			$user
+		), $this->dbProvider );
 
 		$dbw->endAtomic( __METHOD__ );
 
@@ -904,40 +917,11 @@ class MovePage {
 		// But not $this->oldTitle yet, see below (T47348).
 		$nt->resetArticleID( $oldid );
 
-		$commentObj = CommentStoreComment::newUnsavedComment( $comment );
-		# Save a null revision in the page's history notifying of the move
-		$nullRevision = $this->revisionStore->newNullRevision(
-			$dbw,
-			$nt,
-			$commentObj,
-			true,
-			$user
-		);
-		if ( $nullRevision === null ) {
-			$id = $nt->getArticleID( IDBAccessObject::READ_EXCLUSIVE );
-			// XXX This should be handled more gracefully
-			throw new NormalizedException( 'Failed to create null revision while ' .
-				'moving page ID {oldId} to {prefixedDBkey} (page ID {id})',
-				[
-					'oldId' => $oldid,
-					'prefixedDBkey' => $nt->getPrefixedDBkey(),
-					'id' => $id,
-				]
-			);
-		}
-
-		$nullRevision = $this->revisionStore->insertRevisionOn( $nullRevision, $dbw );
-		$logEntry->setAssociatedRevId( $nullRevision->getId() );
-
-		/**
-		 * T163966
-		 * Increment user_editcount during page moves
-		 * Moved from SpecialMovePage.php per T195550
-		 */
+		// NOTE: Page moves should contribute to user edit count (T163966).
+		//       The dummy revision created below will otherwise not be counted.
 		$this->userEditTracker->incrementUserEditCount( $user );
 
 		// Get the old redirect state before clean up
-		$isRedirect = $this->oldTitle->isRedirect();
 		if ( !$redirectContent ) {
 			// Clean up the old title *before* reset article id - T47348
 			WikiPage::onArticleDelete( $this->oldTitle );
@@ -946,28 +930,23 @@ class MovePage {
 		$this->oldTitle->resetArticleID( 0 ); // 0 == non existing
 		$newpage->loadPageData( IDBAccessObject::READ_LOCKING ); // T48397
 
-		$newpage->updateRevisionOn( $dbw, $nullRevision, null, $isRedirect );
+		// Generate updates for the new dummy revision under the new title.
+		// NOTE: The dummy revision will not be counted as a user contribution.
+		// NOTE: Use FLAG_SILENT to avoid redundant RecentChanges entry.
+		//       The move log already generates one.
+		$nullRevision = $newpage->newPageUpdater( $user )
+			->setCause( PageRevisionUpdatedEvent::CAUSE_MOVE )
+			->setHints( [
+				'oldtitle' => $this->oldTitle,
+				'oldcountable' => $oldcountable,
+			] )
+			->saveDummyRevision( $comment, EDIT_SILENT | EDIT_MINOR );
 
-		$fakeTags = [];
-		$this->hookRunner->onRevisionFromEditComplete(
-			$newpage, $nullRevision, $nullRevision->getParentId(), $user, $fakeTags );
-
-		$options = [
-			'changed' => false,
-			'moved' => true,
-			'oldtitle' => $this->oldTitle,
-			'oldcountable' => $oldcountable,
-			'causeAction' => 'MovePage',
-			'causeAgent' => $user->getName(),
-		];
-
-		$updater = $this->pageUpdaterFactory->newDerivedPageDataUpdater( $newpage );
-		$updater->prepareUpdate( $nullRevision, $options );
-		$updater->doUpdates();
+		$logEntry->setAssociatedRevId( $nullRevision->getId() );
 
 		WikiPage::onArticleCreate( $nt );
 
-		# Recreate the redirect, this time in the other direction.
+		// Recreate the redirect, this time in the other direction.
 		$redirectRevision = null;
 		if ( $redirectContent ) {
 			$redirectArticle = $this->wikiPageFactory->newFromTitle( $this->oldTitle );
@@ -977,11 +956,11 @@ class MovePage {
 				->addTags( $changeTags )
 				->addSoftwareTag( 'mw-new-redirect' )
 				->setUsePageCreationLog( false )
-				->setFlags( EDIT_SUPPRESS_RC )
-				->saveRevision( $commentObj );
+				->setFlags( EDIT_SILENT | EDIT_INTERNAL | EDIT_IMPLICIT )
+				->saveRevision( $comment );
 		}
 
-		# Log the move
+		// Log the move
 		$logid = $logEntry->insert();
 
 		$logEntry->addTags( $changeTags );
@@ -993,6 +972,3 @@ class MovePage {
 		] );
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( MovePage::class, 'MovePage' );

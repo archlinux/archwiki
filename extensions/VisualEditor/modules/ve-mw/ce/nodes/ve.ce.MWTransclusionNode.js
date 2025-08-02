@@ -156,17 +156,11 @@ ve.ce.MWTransclusionNode.static.filterRendering = function ( contentNodes ) {
 /** @inheritDoc */
 ve.ce.MWTransclusionNode.prototype.executeCommand = function () {
 	const contextItems = this.focusableSurface.getSurface().getContext().items;
-	const contextClicked = contextItems.some( ( contextItem ) => {
-		if ( contextItem instanceof ve.ui.MWTransclusionContextItem ) {
-			// Utilize the context item when it's there instead of triggering the command manually.
-			// Required to make the context item show the "Loading…" message (see T297773).
-			contextItem.onEditButtonClick();
-			return true;
-		}
-		return false;
-	} );
-
-	if ( contextClicked ) {
+	const transclusionContextItem = contextItems.find( ( contextItem ) => contextItem instanceof ve.ui.MWTransclusionContextItem );
+	if ( transclusionContextItem ) {
+		// Utilize the context item when it's there instead of triggering the command manually.
+		// Required to make the context item show the "Loading…" message (see T297773).
+		transclusionContextItem.onEditButtonClick();
 		return;
 	}
 

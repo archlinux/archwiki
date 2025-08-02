@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Gomoko",
+			"JLTRY",
 			"Seb35",
 			"Thibaut120094",
 			"Urhixidur",
@@ -15,6 +16,7 @@
 	"echo-category-title-login-success": "Connexion depuis un appareil inhabituel",
 	"echo-pref-tooltip-login-success": "Me notifier quand quelqu’un se connecte sur mon compte depuis un appareil ou une adresse IP inhabituel.",
 	"loginnotify-primary-link": "Aide",
+	"loginnotify-unknown-ip": "Vous avez tenté de vous connecter à partir d'une adresse IP inconnue et {{SITENAME}} est actuellement configuré pour empêcher les connexions à partir d'adresses IP inconnues.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Tentative échouée|Plusieurs tentatives échouées}} de connexion à {{SITENAME}} en tant que $1",
 	"notification-loginnotify-login-success-email-subject": "Connexion à {{SITENAME}} en tant que $1 depuis un appareil que {{GENDER:$1|}}vous n’avez pas utilisé récemment",
 	"notification-header-login-success": "Quelqu’un (probablement {{GENDER:$1|}}vous) s’est connecté récemment avec votre compte depuis un nouvel appareil. Si c’était vous, alors vous pouvez ignorer ce message. Sinon, il est alors recommandé de modifier votre mot de passe, et de vérifier l’activité de votre compte.",

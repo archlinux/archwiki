@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"A2093064",
+			"Liuxinyu970226",
+			"LuciferianThomas",
+			"Xiplus",
+			"捍粵者",
+			"星海",
+			"Dabao qian"
+		]
+	},
+	"checkuser": "查核用戶",
+	"checkuserlog": "用戶查核日誌",
+	"group-checkuser": "用戶查核員",
+	"group-checkuser-member": "{{GENDER:$1|用戶查核員}}",
+	"right-checkuser": "檢查用戶IP位址與其它資訊",
+	"right-checkuser-log": "檢視用戶查核日誌",
+	"grouppage-checkuser": "{{ns:project}}:用戶查核員",
+	"checkuser-target": "IP位址或用戶名：",
+	"checkuser-users": "查詢用戶",
+	"checkuser-ipeditcount": "~於全部用戶中 $1"
+}

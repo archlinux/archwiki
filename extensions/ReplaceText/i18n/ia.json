@@ -44,5 +44,6 @@
 	"replacetext_no_compress": "Tu wiki non functiona con Replacetext: le reimplaciamentos de texto non pote esser executate si $wgCompressRevisions es mittite a ver.",
 	"replacetext_no_external_stores": "Tu wiki non functiona con Replacetext: le reimplaciamentos de texto non pote esser executate si $wgExternalStores es vacue.",
 	"right-replacetext": "Reimplaciar catenas de texto in tote le wiki",
-	"action-replacetext": "reimplaciar catenas de texto in tote le wiki"
+	"action-replacetext": "reimplaciar catenas de texto in tote le wiki",
+	"replacetext-summary-label": "Summario pro modificationes de reimplaciamento (lassa vacue pro usar le summario predefinite)"
 }

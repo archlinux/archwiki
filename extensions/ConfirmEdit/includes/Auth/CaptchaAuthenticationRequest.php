@@ -7,7 +7,9 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 
 /**
- * Generic captcha authentication request class. A captcha consist some data stored in the session
+ * Generic captcha authentication request class.
+ *
+ *  A captcha consists of some data stored in the session
  * (e.g. a question and its answer), an ID that references the data, and a solution.
  */
 class CaptchaAuthenticationRequest extends AuthenticationRequest {
@@ -36,13 +38,11 @@ class CaptchaAuthenticationRequest extends AuthenticationRequest {
 		return 'CaptchaAuthenticationRequest';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function loadFromSubmission( array $data ) {
 		$success = parent::loadFromSubmission( $data );
 		if ( $success ) {
-			// captchaId and captchaWord was set from the submission but captchaData was not.
+			// The captchaId and captchaWord was set from the submission, but captchaData was not.
 			$captcha = Hooks::getInstance();
 			$this->captchaData = $captcha->retrieveCaptcha( $this->captchaId );
 			if ( !$this->captchaData ) {
@@ -52,13 +52,11 @@ class CaptchaAuthenticationRequest extends AuthenticationRequest {
 		return $success;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getFieldInfo() {
 		$captcha = Hooks::getInstance();
 
-		// doesn't actually exist but *Captcha::getMessage will handle that
+		// generic action doesn't exist, but *Captcha::getMessage will handle that
 		$action = 'generic';
 		switch ( $this->action ) {
 			case AuthManager::ACTION_LOGIN:
@@ -69,7 +67,7 @@ class CaptchaAuthenticationRequest extends AuthenticationRequest {
 				break;
 		}
 
-		$fields = [
+		return [
 			'captchaId' => [
 				'type' => 'hidden',
 				'value' => $this->captchaId,
@@ -88,13 +86,9 @@ class CaptchaAuthenticationRequest extends AuthenticationRequest {
 				'help' => wfMessage( 'captcha-help' ),
 			],
 		];
-
-		return $fields;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getMetadata() {
 		return ( Hooks::getInstance() )->describeCaptchaType();
 	}

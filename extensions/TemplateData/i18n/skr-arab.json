@@ -37,6 +37,7 @@
 	"templatedata-modal-button-delparam": "پیرامیٹر دی معلومات ہٹاؤ",
 	"templatedata-modal-button-done": "مکمل",
 	"templatedata-modal-button-saveparam": "بچاؤ",
+	"templatedata-modal-button-discard": "مُکاؤ",
 	"templatedata-modal-current-language": "حالیہ زبان: $1",
 	"templatedata-modal-format-block": "پابندی لاؤ",
 	"templatedata-modal-format-inline": "ان لائن",

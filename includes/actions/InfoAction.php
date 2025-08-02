@@ -22,11 +22,14 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Category\Category;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\EditPage\TemplatesOnThisPageFormatter;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageNameUtils;
@@ -36,6 +39,7 @@ use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageProps;
 use MediaWiki\Page\RedirectLookup;
@@ -522,7 +526,7 @@ class InfoAction extends FormlessAction {
 			$fileObj = $this->repoGroup->findFile( $title );
 			if ( $fileObj !== false ) {
 				// Convert the base-36 sha1 value obtained from database to base-16
-				$output = Wikimedia\base_convert( $fileObj->getSha1(), 36, 16, 40 );
+				$output = \Wikimedia\base_convert( $fileObj->getSha1(), 36, 16, 40 );
 				$pageInfo['header-basic'][] = [
 					$this->msg( 'pageinfo-file-hash' ),
 					$output
@@ -619,20 +623,19 @@ class InfoAction extends FormlessAction {
 
 		$firstRev = $this->revisionLookup->getFirstRevision( $this->getTitle() );
 		$lastRev = $this->getWikiPage()->getRevisionRecord();
-		$batch = $this->linkBatchFactory->newLinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch()
+			->setCaller( __METHOD__ );
 		if ( $firstRev ) {
 			$firstRevUser = $firstRev->getUser( RevisionRecord::FOR_THIS_USER, $user );
 			if ( $firstRevUser ) {
-				$batch->add( NS_USER, $firstRevUser->getName() );
-				$batch->add( NS_USER_TALK, $firstRevUser->getName() );
+				$batch->addUser( $firstRevUser );
 			}
 		}
 
 		if ( $lastRev ) {
 			$lastRevUser = $lastRev->getUser( RevisionRecord::FOR_THIS_USER, $user );
 			if ( $lastRevUser ) {
-				$batch->add( NS_USER, $lastRevUser->getName() );
-				$batch->add( NS_USER_TALK, $lastRevUser->getName() );
+				$batch->addUser( $lastRevUser );
 			}
 		}
 
@@ -1019,3 +1022,6 @@ class InfoAction extends FormlessAction {
 		return $cache->makeKey( 'infoaction', md5( (string)$page ), $revId, self::VERSION );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( InfoAction::class, 'InfoAction' );

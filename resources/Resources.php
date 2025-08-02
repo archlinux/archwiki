@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\Actions\WatchAction;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
@@ -30,6 +31,7 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\CodexModule;
 use MediaWiki\ResourceLoader\Context;
+use MediaWiki\ResourceLoader\DateFormatterConfig;
 use MediaWiki\ResourceLoader\FilePath;
 use MediaWiki\ResourceLoader\ForeignApiModule;
 use MediaWiki\ResourceLoader\LessVarFileModule;
@@ -46,6 +48,7 @@ use MediaWiki\ResourceLoader\UserModule;
 use MediaWiki\ResourceLoader\UserOptionsModule;
 use MediaWiki\ResourceLoader\UserStylesModule;
 use MediaWiki\ResourceLoader\WikiModule;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -109,6 +112,25 @@ return [
 				'resources/src/mediawiki.page.gallery.styles/content.media.less',
 			],
 		],
+	],
+	'mediawiki.skinning.typeaheadSearch' => [
+		'dependencies' => [
+			'mediawiki.codex.typeaheadSearch'
+		],
+		'packageFiles' => [
+			'resources/src/mediawiki.skinning.typeaheadSearch/index.js',
+			'resources/src/mediawiki.skinning.typeaheadSearch/App.vue',
+			'resources/src/mediawiki.skinning.typeaheadSearch/instrumentation.js',
+			'resources/src/mediawiki.skinning.typeaheadSearch/fetch.js',
+			'resources/src/mediawiki.skinning.typeaheadSearch/restSearchClient.js',
+			'resources/src/mediawiki.skinning.typeaheadSearch/urlGenerator.js',
+		],
+		'messages' => [
+			'searchbutton',
+			'searchresults',
+			'search-loader',
+			'searchsuggest-containing-html'
+		]
 	],
 
 	/* Polyfills */
@@ -388,6 +410,8 @@ return [
 	/* Moment.js */
 
 	'moment' => [
+		'deprecated' => '[1.44] Use mediawiki.DateFormatter or native Intl function instead.'
+			. ' See https://phabricator.wikimedia.org/T146798',
 		'scripts' => [
 			'resources/lib/moment/moment.js',
 			'resources/src/moment/moment-module.js',
@@ -397,12 +421,14 @@ return [
 			'af' => 'resources/lib/moment/locale/af.js',
 			'ar' => 'resources/lib/moment/locale/ar.js',
 			'ar-ma' => 'resources/lib/moment/locale/ar-ma.js',
+			'ar-ps' => 'resources/lib/moment/locale/ar-ps.js',
 			'ar-sa' => 'resources/lib/moment/locale/ar-sa.js',
 			'az' => 'resources/lib/moment/locale/az.js',
 			'be' => 'resources/lib/moment/locale/be.js',
 			'bg' => 'resources/lib/moment/locale/bg.js',
 			'bm' => 'resources/lib/moment/locale/bm.js',
 			'bn' => 'resources/lib/moment/locale/bn.js',
+			'bn-bd' => 'resources/lib/moment/locale/bn-bd.js',
 			'bo' => 'resources/lib/moment/locale/bo.js',
 			'br' => 'resources/lib/moment/locale/br.js',
 			'bs' => 'resources/lib/moment/locale/bs.js',
@@ -422,6 +448,7 @@ return [
 			'en-gb' => 'resources/lib/moment/locale/en-gb.js',
 			'eo' => 'resources/lib/moment/locale/eo.js',
 			'es' => 'resources/lib/moment/locale/es.js',
+			'es-mx' => 'resources/lib/moment/locale/es-mx.js',
 			'et' => 'resources/lib/moment/locale/et.js',
 			'eu' => 'resources/lib/moment/locale/eu.js',
 			'fa' => 'resources/lib/moment/locale/fa.js',
@@ -450,6 +477,7 @@ return [
 			'kk-cyrl' => 'resources/lib/moment/locale/kk.js',
 			'kn' => 'resources/lib/moment/locale/kn.js',
 			'ko' => 'resources/lib/moment/locale/ko.js',
+			'ku' => 'resources/lib/moment/locale/ku-kmr.js',
 			'ky' => 'resources/lib/moment/locale/ky.js',
 			'lo' => 'resources/lib/moment/locale/lo.js',
 			'lt' => 'resources/lib/moment/locale/lt.js',
@@ -486,6 +514,7 @@ return [
 			'te' => 'resources/lib/moment/locale/te.js',
 			'tet' => 'resources/lib/moment/locale/tet.js',
 			'th' => 'resources/lib/moment/locale/th.js',
+			'tk' => 'resources/lib/moment/locale/tk.js',
 			'tl' => 'resources/lib/moment/locale/tl-ph.js',
 			'tr' => 'resources/lib/moment/locale/tr.js',
 			'tzm' => 'resources/lib/moment/locale/tzm.js',
@@ -647,23 +676,11 @@ return [
 		'codexStyleOnly' => true
 	],
 
-	'@wikimedia/codex-search' => [
-		'deprecated' => '[1.43] Use a CodexModule with codexComponents to set your specific components used: '
-			. 'https://www.mediawiki.org/wiki/Codex#Using_a_limited_subset_of_components',
-		'class' => CodexModule::class,
-		'codexComponents' => [ 'CdxTypeaheadSearch' ],
-		'codexScriptOnly' => true,
-		'dependencies' => [
-			'codex-search-styles',
-		],
-	],
-
-	'codex-search-styles' => [
-		'deprecated' => '[1.43] Use a CodexModule with codexComponents to set your specific components used: '
-		. 'https://www.mediawiki.org/wiki/Codex#Using_a_limited_subset_of_components',
-		'class' => CodexModule::class,
-		'codexComponents' => [ 'CdxTypeaheadSearch' ],
-		'codexStyleOnly' => true,
+	'mediawiki.codex.typeaheadSearch' => [
+		'class' => 'MediaWiki\\ResourceLoader\\CodexModule',
+		'codexComponents' => [
+			'CdxTypeaheadSearch'
+		]
 	],
 
 	/* MediaWiki */
@@ -686,6 +703,8 @@ return [
 	'mediawiki.api' => [
 		'scripts' => [
 			'resources/src/mediawiki.api/index.js',
+			'resources/src/mediawiki.api/AbortablePromise.js',
+			'resources/src/mediawiki.api/AbortController.js',
 			'resources/src/mediawiki.api/rest.js',
 			'resources/src/mediawiki.api/category.js',
 			'resources/src/mediawiki.api/edit.js',
@@ -722,6 +741,20 @@ return [
 		'messages' => [
 			'confirmleave-warning',
 		],
+	],
+	'mediawiki.DateFormatter' => [
+		'localBasePath' => MW_INSTALL_PATH . '/resources/src/mediawiki.DateFormatter',
+		'remoteBasePath' => "$wgResourceBasePath/resources/src/mediawiki.DateFormatter",
+		'packageFiles' => [
+			'DateFormatter.js',
+			[
+				'name' => 'config.json',
+				'callback' => [ DateFormatterConfig::class, 'getData' ]
+			]
+		],
+		'dependencies' => [
+			'user.options',
+		]
 	],
 	'mediawiki.debug' => [
 		'scripts' => [
@@ -861,7 +894,6 @@ return [
 			'autoinfuse.js',
 			'cloner.js',
 			'cond-state.js',
-			'multiselect.js',
 			'selectandother.js',
 			'selectorother.js',
 			'timezone.js',
@@ -960,6 +992,17 @@ return [
 				'resources/src/mediawiki.pager.styles/IndexPager.less',
 			]
 		],
+	],
+	'mediawiki.pager.codex' => [
+		'scripts' => 'resources/src/mediawiki.pager.codex/codexTablePager.js',
+	],
+	'mediawiki.pager.codex.styles' => [
+		'class' => CodexModule::class,
+		'codexComponents' => [ 'CdxTable' ],
+		'codexStyleOnly' => true,
+		'styles' => [
+			'resources/src/mediawiki.pager.codex/CodexTablePager.less',
+		]
 	],
 	'mediawiki.pulsatingdot' => [
 		'styles' => [
@@ -1216,7 +1259,7 @@ return [
 		'scripts' => 'resources/src/mediawiki.checkboxtoggle.js',
 	],
 	'mediawiki.checkboxtoggle.styles' => [
-		'styles' => 'resources/src/mediawiki.checkboxtoggle.styles.css',
+		'styles' => 'resources/src/mediawiki.checkboxtoggle.styles.less',
 	],
 	'mediawiki.cookie' => [
 		'localBasePath' => MW_INSTALL_PATH . '/resources/src/mediawiki.cookie',
@@ -1591,6 +1634,7 @@ return [
 		],
 		'dependencies' => 'mediawiki.language',
 		'messages' => [
+			'special-characters-recently-used',
 			'special-characters-group-latin',
 			'special-characters-group-latinextended',
 			'special-characters-group-ipa',
@@ -1685,6 +1729,7 @@ return [
 			} ],
 		],
 		'dependencies' => [
+			'mediawiki.user',
 			'mediawiki.util',
 			'mediawiki.api'
 		],
@@ -1999,6 +2044,13 @@ return [
 			'user.options',
 		],
 	],
+	'mediawiki.interface.helpers.linker.styles' => [
+		'class' => CodexModule::class,
+		'codexStyleOnly' => true,
+		'codexComponents' => [
+			'CdxTooltip',
+		],
+	],
 	'mediawiki.interface.helpers.styles' => [
 		'localBasePath' => MW_INSTALL_PATH . '/resources/src/mediawiki.interface.helpers.styles',
 		'remoteBasePath' => "$wgResourceBasePath/resources/src/mediawiki.interface.helpers.styles",
@@ -2045,7 +2097,9 @@ return [
 		'remoteBasePath' => "$wgResourceBasePath/resources/src/mediawiki.special.apisandbox",
 		'styles' => 'apisandbox.less',
 		'packageFiles' => [
-			'apisandbox.js',
+			'init.js',
+			'ApiSandbox.js',
+			'ApiSandboxLayout.js',
 			'OptionalParamWidget.js',
 			'ParamLabelWidget.js',
 			'BooleanToggleSwitchParamWidget.js',
@@ -2054,6 +2108,7 @@ return [
 			'PasswordParamWidget.js',
 			'UploadSelectFileParamWidget.js',
 			'TextParamMixin.js',
+			'Util.js',
 			'UtilMixin.js',
 		],
 		'dependencies' => [
@@ -2234,26 +2289,34 @@ return [
 		],
 	],
 	'mediawiki.special.block.codex' => [
+		'localBasePath' => MW_INSTALL_PATH . '/resources/src/mediawiki.special.block',
+		'remoteBasePath' => "$wgResourceBasePath/resources/src/mediawiki.special.block",
 		'packageFiles' => [
-			'resources/src/mediawiki.special.block/init.js',
-			'resources/src/mediawiki.special.block/util.js',
-			'resources/src/mediawiki.special.block/stores/block.js',
-			'resources/src/mediawiki.special.block/components/BlockDetailsOptions.vue',
-			'resources/src/mediawiki.special.block/components/BlockTypeField.vue',
-			'resources/src/mediawiki.special.block/components/ExpiryField.vue',
-			'resources/src/mediawiki.special.block/components/NamespacesField.vue',
-			'resources/src/mediawiki.special.block/components/PagesField.vue',
-			'resources/src/mediawiki.special.block/components/ReasonField.vue',
-			'resources/src/mediawiki.special.block/components/TargetActiveBlocks.vue',
-			'resources/src/mediawiki.special.block/components/TargetBlockLog.vue',
-			'resources/src/mediawiki.special.block/components/UserLookup.vue',
-			'resources/src/mediawiki.special.block/components/ValidatingTextInput.js',
-			'resources/src/mediawiki.special.block/SpecialBlock.vue',
+			'init.js',
+			'util.js',
+			'stores/block.js',
+			'components/AdditionalDetailsField.vue',
+			'components/BlockDetailsField.vue',
+			'components/BlockTypeField.vue',
+			'components/ConfirmationDialog.vue',
+			'components/ExpiryField.vue',
+			'components/NamespacesField.vue',
+			'components/PagesField.vue',
+			'components/ReasonField.vue',
+			'components/BlockLog.vue',
+			'components/UserLookup.vue',
+			'components/ValidatingTextInput.js',
+			'SpecialBlock.vue',
 			[
-				'name' => 'resources/src/mediawiki.special.block/icons.json',
+				'name' => 'icons.json',
 				'callback' => 'MediaWiki\\ResourceLoader\\CodexModule::getIcons',
 				'callbackParam' => [
-					'cdxIconSearch'
+					'cdxIconCancel',
+					'cdxIconEdit',
+					'cdxIconTrash',
+					'cdxIconSearch',
+					'cdxIconAlert',
+					'cdxIconInfoFilled',
 				],
 			],
 		],
@@ -2262,94 +2325,127 @@ return [
 			'@wikimedia/codex',
 			'pinia',
 			'mediawiki.api',
+			'mediawiki.util',
 			'mediawiki.jqueryMsg',
+			'mediawiki.confirmCloseWindow',
+			'mediawiki.Title',
+			'mediawiki.DateFormatter',
 		],
 		'messages' => [
+			'api-error-unknownerror',
+			'blanknamespace',
 			'block-actions',
+			'block-added-message',
+			'block-change-visibility',
+			'block-confirm-no',
+			'block-confirm-yes',
+			'block-cancel',
+			'block-create',
 			'block-details',
 			'block-details-description',
 			'block-expiry',
-			'block-expiry-preset',
-			'block-expiry-preset-placeholder',
 			'block-expiry-custom',
-			'block-expiry-custom-minutes',
-			'block-expiry-custom-hours',
 			'block-expiry-custom-days',
-			'block-expiry-custom-weeks',
+			'block-expiry-custom-hours',
+			'block-expiry-custom-minutes',
 			'block-expiry-custom-months',
+			'block-expiry-custom-weeks',
 			'block-expiry-custom-years',
 			'block-expiry-datetime',
+			'block-expiry-preset',
+			'block-expiry-preset-placeholder',
+			'block-item-edit',
+			'block-unblock-redirected',
+			'block-invalid-id',
+			'block-item-remove',
+			'block-log-flags-angry-autoblock',
+			'block-log-flags-anononly',
+			'block-log-flags-hiddenname',
+			'block-log-flags-noautoblock',
+			'block-log-flags-nocreate',
+			'block-log-flags-noemail',
+			'block-log-flags-nousertalk',
+			'block-namespaces-placeholder',
 			'block-options',
-			'block-options-description',
+			'block-pages-placeholder',
 			'block-reason',
+			'block-reason-help',
 			'block-reason-other',
-			'blocklist-timestamp',
-			'blocklist-target',
-			'blocklist-expiry',
+			'block-removal-confirm-no',
+			'block-removal-confirm-yes',
+			'block-removal-title',
+			'block-removal-reason-placeholder',
+			'block-removed',
+			'block-submit',
+			'block-success',
+			'block-target',
+			'block-target-placeholder',
+			'block-update',
+			'block-updated-message',
+			'block-user-active-blocks',
+			'block-user-active-range-blocks',
+			'block-user-label-count-exceeds-limit',
+			'block-user-no-active-blocks',
+			'block-user-no-active-range-blocks',
+			'block-user-no-previous-blocks',
+			'block-user-no-suppressed-blocks',
+			'block-user-previous-blocks',
+			'block-user-suppressed-blocks',
+			'block-view-target',
+			'blockipsuccesssub',
+			'blocklist-actions-header',
 			'blocklist-by',
+			'blocklist-editing',
+			'blocklist-editing-sitewide',
+			'blocklist-editing-page',
+			'blocklist-editing-ns',
+			'blocklist-editing-action',
+			'blocklist-expiry',
 			'blocklist-params',
 			'blocklist-reason',
+			'blocklist-target',
+			'blocklist-timestamp',
 			'blocklist-type-header',
-			'block-user-description',
-			'block-user-label',
-			'block-user-active-blocks',
-			'block-user-previous-blocks',
-			'block-user-no-previous-blocks',
-			'parentheses-start',
-			'pipe-separator',
-			'parentheses-end',
-			'talkpagelinktext',
-			'contribslink',
-			'userlink-with-contribs',
-			'block-user-placeholder',
 			'blocklist-type-opt-partial',
 			'blocklist-type-opt-sitewide',
 			'colon-separator',
-			'block-user-label',
-			'block-user-description',
-			'block-user-placeholder',
-			'ipbsubmit',
+			'contribslink',
 			'htmlform-optional-flag',
 			'htmlform-selectorother-other',
+			'infiniteblock',
 			'ipb-action-create',
 			'ipb-action-move',
 			'ipb-action-upload',
+			'ipb-blockingself',
+			'ipb-blocklist-contribs',
 			'ipb-change-block',
+			'ipb-confirm',
+			'ipb-confirmaction',
+			'ipb-confirmhideuser',
 			'ipb-disableusertalk',
+			'ipb-edit-dropdown',
 			'ipb-hardblock',
+			'block-multiblocks-new-feature',
+			'ipb-namespaces-label',
 			'ipb-needreblock',
+			'ipb-pages-label',
 			'ipb-partial-help',
 			'ipb-sitewide-help',
+			'ipb_expiry_invalid',
 			'ipbcreateaccount',
 			'ipbemailban',
 			'ipbenableautoblock',
 			'ipbhidename',
 			'ipbwatchuser',
-			'block-log-flags-anononly',
-			'block-log-flags-nocreate',
-			'block-log-flags-noautoblock',
-			'block-log-flags-noemail',
-			'block-log-flags-nousertalk',
-			'block-log-flags-angry-autoblock',
-			'block-log-flags-hiddenname',
-			'block-user-no-reason-given',
-			'block-user-no-reason-given-aria-details',
-			'blockipsuccesssub',
-			'block-success',
-			'ipb_expiry_invalid',
-			'infiniteblock',
 			'log-action-filter-block-block',
 			'log-action-filter-block-reblock',
 			'log-action-filter-block-unblock',
 			'log-fulllog',
-			'ipb-confirm',
-			'ipb-blockingself',
-			'ipb-confirmaction',
-			'ipb-pages-label',
-			'ipb-namespaces-label',
-			'block-pages-placeholder',
-			'block-namespaces-placeholder',
-			'blanknamespace',
+			'nosuchusershort',
+			'parentheses-end',
+			'parentheses-start',
+			'pipe-separator',
+			'talkpagelinktext',
 		],
 	],
 	'mediawiki.protectionIndicators.styles' => [
@@ -2399,6 +2495,9 @@ return [
 	],
 	'mediawiki.special.import.styles.ooui' => [
 		'styles' => 'resources/src/mediawiki.special.import.styles.ooui.less',
+	],
+	'mediawiki.special.interwiki' => [
+		'styles' => 'resources/src/mediawiki.special.interwiki.less',
 	],
 	'mediawiki.special.changecredentials' => [
 		'scripts' => [ 'resources/src/mediawiki.special.changecredentails.js' ],
@@ -2791,9 +2890,12 @@ return [
 			[ 'name' => 'data.json', 'callback' => static function ( Context $context ) {
 				// $context only has a language code, we need to look up the language object
 				$langCode = $context->getLanguage();
-				$userLang = MediaWikiServices::getInstance()->getLanguageFactory()
-					->getLanguage( $langCode );
+				$services = MediaWikiServices::getInstance();
+				$userLang = $services->getLanguageFactory()->getLanguage( $langCode );
+				$converter = $services->getLanguageConverterFactory()
+					->getLanguageConverter( $services->getContentLanguage() );
 				return [
+					'isContLangVariant' => $converter->hasVariant( $langCode ),
 					'formattedNamespaces' => $userLang->getFormattedNamespaces(),
 				];
 			} ],
@@ -2888,6 +2990,13 @@ return [
 			],
 		],
 	],
+	'mediawiki.widgets.DateTimeInputWidget.styles' => [
+		'skinStyles' => [
+			'default' => [
+				'resources/src/mediawiki.widgets/mw.widgets.DateTimeInputWidget.styles.less',
+			],
+		],
+	],
 	'mediawiki.widgets.visibleLengthLimit' => [
 		'localBasePath' => MW_INSTALL_PATH . '/resources/src/mediawiki.widgets.visibleLengthLimit',
 		'remoteBasePath' => "$wgResourceBasePath/resources/src/mediawiki.widgets.visibleLengthLimit",
@@ -2970,6 +3079,7 @@ return [
 		],
 		'dependencies' => [
 			'mediawiki.util',
+			'mediawiki.widgets.DateTimeInputWidget.styles',
 			'oojs-ui-core',
 			'oojs-ui.styles.icons-moderation',
 			'oojs-ui.styles.icons-movement',
@@ -3091,6 +3201,22 @@ return [
 	'mediawiki.widgets.TagMultiselectWidget' => [
 		'scripts' => [
 			'resources/src/mediawiki.widgets/mw.widgets.TagMultiselectWidget.js',
+		],
+		'dependencies' => [
+			'oojs-ui-widgets',
+		],
+	],
+	'mediawiki.widgets.OrderedMultiselectWidget' => [
+		'scripts' => [
+			'resources/src/mediawiki.widgets/mw.widgets.OrderedMultiselectWidget.js'
+		],
+		'dependencies' => [
+			'oojs-ui-widgets',
+		],
+	],
+	'mediawiki.widgets.MenuTagMultiselectWidget' => [
+		'scripts' => [
+			'resources/src/mediawiki.widgets/mw.widgets.MenuTagMultiselectWidget.js',
 		],
 		'dependencies' => [
 			'oojs-ui-widgets',

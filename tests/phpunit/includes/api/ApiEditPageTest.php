@@ -3,12 +3,12 @@
 namespace MediaWiki\Tests\Api;
 
 use MediaWiki\Api\ApiUsageException;
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\JavaScriptContent;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -18,7 +18,6 @@ use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use RevisionDeleter;
 use Wikimedia\Rdbms\IDBAccessObject;
-use WikiPage;
 
 /**
  * Tests for MediaWiki api.php?action=edit.
@@ -1619,7 +1618,7 @@ class ApiEditPageTest extends ApiTestCase {
 		$this->assertNull( $blockStore->newFromTarget( '127.0.0.1' ) );
 
 		$user = $this->getTestSysop()->getUser();
-		$block = new DatabaseBlock( [
+		$blockStore->insertBlockWithParams( [
 			'address' => $user->getName(),
 			'by' => $user,
 			'reason' => 'Capriciousness',
@@ -1627,7 +1626,6 @@ class ApiEditPageTest extends ApiTestCase {
 			'expiry' => 'infinity',
 			'enableAutoblock' => true,
 		] );
-		$blockStore->insertBlock( $block );
 
 		try {
 			$this->doApiRequestWithToken( [

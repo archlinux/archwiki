@@ -34,6 +34,9 @@ use Wikimedia\Rdbms\Replication\ReplicationReporter;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\RequestTimeout\CriticalSectionScope;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Telemetry\NoopTracer;
+use Wikimedia\Telemetry\SpanInterface;
+use Wikimedia\Telemetry\TracerInterface;
 
 /**
  * A single concrete connection to a relational database.
@@ -56,6 +59,8 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	protected $deprecationLogger;
 	/** @var callable|null */
 	protected $profiler;
+	/** @var TracerInterface */
+	private $tracer;
 	/** @var TransactionManager */
 	private $transactionManager;
 
@@ -117,8 +122,8 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 
 	/** @var float UNIX timestamp of the last server response */
 	private $lastPing = 0.0;
-	/** @var float|false UNIX timestamp of last write query */
-	private $lastWriteTime = false;
+	/** @var float|null UNIX timestamp of the last committed write */
+	private $lastWriteTime;
 	/** @var string|false The last PHP error from a query or connection attempt */
 	private $lastPhpError = false;
 
@@ -244,6 +249,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 			$this->currentDomain,
 			$this->errorLogger
 		);
+		$this->tracer = $params['tracer'] ?? new NoopTracer();
 		// Children classes must set $this->replicationReporter.
 	}
 
@@ -294,10 +300,8 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 
 	/**
 	 * Set the PSR-3 logger interface to use.
-	 *
-	 * @param LoggerInterface $logger
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -370,7 +374,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	}
 
 	public function lastDoneWrites() {
-		return $this->lastWriteTime ?: false;
+		return $this->lastWriteTime;
 	}
 
 	/**
@@ -383,15 +387,13 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	}
 
 	/**
-	 * @return string|null ID of the active explicit transaction round being participating in
+	 * @return ?string Owner name of explicit transaction round being participating in; null if none
 	 */
-	final protected function getTransactionRoundId() {
+	final protected function getTransactionRoundFname() {
 		if ( $this->flagsHolder->hasImplicitTrxFlag() ) {
 			// LoadBalancer transaction round participation is enabled for this DB handle;
-			// get the ID of the active explicit transaction round (if any)
-			$id = $this->getLBInfo( self::LB_TRX_ROUND_ID );
-
-			return is_string( $id ) ? $id : null;
+			// get the owner of the active explicit transaction round (if any)
+			return $this->getLBInfo( self::LB_TRX_ROUND_FNAME );
 		}
 
 		return null;
@@ -600,8 +602,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 
 	/**
 	 * Register creation and dropping of temporary tables
-	 *
-	 * @param Query $query
 	 */
 	protected function registerTempTables( Query $query ) {
 		$table = $query->getWriteTable();
@@ -762,20 +762,16 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 			$this->sessionTempTables
 		);
 		// Get the transaction-aware SQL string used for profiling
-		$prefix = (
-			$this->replicationReporter->getTopologyRole() === self::ROLE_STREAMING_MASTER
-		) ? 'role-primary: ' : '';
-
-		// Start profile section
-		if ( $sql->getCleanedSql() ) {
-			$generalizedSql = $sql;
-			$ps = $this->profiler ? ( $this->profiler )( $sql->getCleanedSql() ) : null;
-		} else {
-			$generalizedSql = new GeneralizedSql( $sql->getSQL(), $prefix );
-			$ps = $this->profiler ? ( $this->profiler )( $generalizedSql->stringify() ) : null;
-		}
+		$generalizedSql = GeneralizedSql::newFromQuery(
+			$sql,
+			( $this->replicationReporter->getTopologyRole() === self::ROLE_STREAMING_MASTER )
+				? 'role-primary: '
+				: ''
+		);
 		// Add agent and calling method comments to the SQL
 		$cStatement = $this->makeCommentedSql( $sql->getSQL(), $fname );
+		// Start profile section
+		$ps = $this->profiler ? ( $this->profiler )( $generalizedSql->stringify() ) : null;
 		$startTime = microtime( true );
 
 		// Clear any overrides from a prior "query method". Note that this does not affect
@@ -784,24 +780,58 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 		$this->lastEmulatedAffectedRows = null;
 		$this->lastEmulatedInsertId = null;
 
+		// Record an OTEL span for this query.
+		$writeTableName = $sql->getWriteTable();
+		$spanName = $writeTableName ?
+			"Database {$sql->getVerb()} {$this->getDBname()}.{$writeTableName}" :
+			"Database {$sql->getVerb()} {$this->getDBname()}";
+		$span = $this->tracer->createSpan( $spanName )
+			->setSpanKind( SpanInterface::SPAN_KIND_CLIENT )
+			->start();
+		if ( $span->getContext()->isSampled() ) {
+			$span->setAttributes( [
+				'code.function' => $fname,
+				'db.namespace' => $this->getDBname(),
+				'db.operation.name' => $sql->getVerb(),
+				'db.query.text' => $generalizedSql->stringify(),
+				'db.system' => $this->getType(),
+				'server.address' => $this->getServerName(),
+				'db.collection.name' => $writeTableName, # nulls filtered out
+			] );
+		}
+
 		$status = $this->doSingleStatementQuery( $cStatement );
 
 		// End profile section
 		$endTime = microtime( true );
 		$queryRuntime = max( $endTime - $startTime, 0.0 );
 		unset( $ps );
+		$span->end();
 
 		if ( $status->res !== false ) {
 			$this->lastPing = $endTime;
+			$span->setSpanStatus( SpanInterface::SPAN_STATUS_OK );
+		} else {
+			$span->setSpanStatus( SpanInterface::SPAN_STATUS_ERROR )
+				->setAttributes( [
+				'db.response.status_code' => $status->code,
+				'exception.message' => $status->message,
+			] );
 		}
 
 		$affectedRowCount = $status->rowsAffected;
 		$returnedRowCount = $status->rowsReturned;
 		$this->lastQueryAffectedRows = $affectedRowCount;
 
+		if ( $span->getContext()->isSampled() ) {
+			$span->setAttributes( [
+				'db.response.affected_rows' => $affectedRowCount,
+				'db.response.returned_rows' => $returnedRowCount,
+			] );
+		}
+
 		if ( $status->res !== false ) {
 			if ( $isPermWrite ) {
-				$this->lastWriteTime = $startTime;
 				if ( $this->trxLevel() ) {
 					$this->transactionManager->transactionWritingIn(
 						$this->getServerName(),
@@ -814,6 +844,8 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 						$affectedRowCount,
 						$fname
 					);
+				} else {
+					$this->lastWriteTime = $endTime;
 				}
 			}
 		}
@@ -845,7 +877,9 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 		return $status;
 	}
 
-	private function handleErroredQuery( QueryStatus $status, $sql, $fname, $queryRuntime, $priorSessInfo ) {
+	private function handleErroredQuery(
+		QueryStatus $status, Query $sql, string $fname, float $queryRuntime, CriticalSessionInfo $priorSessInfo
+	): int {
 		$errflags = self::ERR_NONE;
 		$error = $status->message;
 		$errno = $status->code;
@@ -1224,8 +1258,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	/**
 	 * Get a SelectQueryBuilder bound to this connection. This is overridden by
 	 * DBConnRef.
-	 *
-	 * @return SelectQueryBuilder
 	 */
 	public function newSelectQueryBuilder(): SelectQueryBuilder {
 		return new SelectQueryBuilder( $this );
@@ -1234,8 +1266,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	/**
 	 * Get a UnionQueryBuilder bound to this connection. This is overridden by
 	 * DBConnRef.
-	 *
-	 * @return UnionQueryBuilder
 	 */
 	public function newUnionQueryBuilder(): UnionQueryBuilder {
 		return new UnionQueryBuilder( $this );
@@ -1244,8 +1274,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	/**
 	 * Get an UpdateQueryBuilder bound to this connection. This is overridden by
 	 * DBConnRef.
-	 *
-	 * @return UpdateQueryBuilder
 	 */
 	public function newUpdateQueryBuilder(): UpdateQueryBuilder {
 		return new UpdateQueryBuilder( $this );
@@ -1254,8 +1282,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	/**
 	 * Get a DeleteQueryBuilder bound to this connection. This is overridden by
 	 * DBConnRef.
-	 *
-	 * @return DeleteQueryBuilder
 	 */
 	public function newDeleteQueryBuilder(): DeleteQueryBuilder {
 		return new DeleteQueryBuilder( $this );
@@ -1264,8 +1290,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	/**
 	 * Get a InsertQueryBuilder bound to this connection. This is overridden by
 	 * DBConnRef.
-	 *
-	 * @return InsertQueryBuilder
 	 */
 	public function newInsertQueryBuilder(): InsertQueryBuilder {
 		return new InsertQueryBuilder( $this );
@@ -1274,8 +1298,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	/**
 	 * Get a ReplaceQueryBuilder bound to this connection. This is overridden by
 	 * DBConnRef.
-	 *
-	 * @return ReplaceQueryBuilder
 	 */
 	public function newReplaceQueryBuilder(): ReplaceQueryBuilder {
 		return new ReplaceQueryBuilder( $this );
@@ -1920,7 +1942,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	}
 
 	final public function onTransactionCommitOrIdle( callable $callback, $fname = __METHOD__ ) {
-		if ( !$this->trxLevel() && $this->getTransactionRoundId() ) {
+		if ( !$this->trxLevel() && $this->getTransactionRoundFname() !== null ) {
 			// This DB handle is set to participate in LoadBalancer transaction rounds and
 			// an explicit transaction round is active. Start an implicit transaction on this
 			// DB handle (setting trxAutomatic) similar to how query() does in such situations.
@@ -1938,7 +1960,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	}
 
 	final public function onTransactionPreCommitOrIdle( callable $callback, $fname = __METHOD__ ) {
-		if ( !$this->trxLevel() && $this->getTransactionRoundId() ) {
+		if ( !$this->trxLevel() && $this->getTransactionRoundFname() !== null ) {
 			// This DB handle is set to participate in LoadBalancer transaction rounds and
 			// an explicit transaction round is active. Start an implicit transaction on this
 			// DB handle (setting trxAutomatic) similar to how query() does in such situations.
@@ -1964,10 +1986,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 			}
 			$this->endAtomic( __METHOD__ );
 		}
-	}
-
-	final public function onAtomicSectionCancel( callable $callback, $fname = __METHOD__ ) {
-		$this->transactionManager->onAtomicSectionCancel( $this, $callback, $fname );
 	}
 
 	final public function setTransactionListener( $name, ?callable $callback = null ) {
@@ -2014,14 +2032,14 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 		$autoTrx = $this->flagsHolder->hasImplicitTrxFlag(); // automatic begin() enabled?
 		// Drain the queues of transaction "idle" and "end" callbacks until they are empty
 		do {
-			$callbackEntries = $this->transactionManager->consumeEndCallbacks( $trigger );
+			$callbackEntries = $this->transactionManager->consumeEndCallbacks();
 			$count += count( $callbackEntries );
 			foreach ( $callbackEntries as $entry ) {
 				$this->flagsHolder->clearFlag( self::DBO_TRX ); // make each query its own transaction
 				try {
-					$entry[0]( $trigger, $this );
+					$entry[0]( $trigger );
 				} catch ( DBError $ex ) {
-					call_user_func( $this->errorLogger, $ex );
+					( $this->errorLogger )( $ex );
 					$errors[] = $ex;
 					// Some callbacks may use startAtomic/endAtomic, so make sure
 					// their transactions are ended so other callbacks don't fail
@@ -2238,11 +2256,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 					$query = new Query( $sql, self::QUERY_CHANGE_TRX, 'ROLLBACK TO SAVEPOINT' );
 					$this->query( $query, $fname );
 					$this->transactionManager->setTrxStatusToOk(); // no exception; recovered
-					$this->transactionManager->runOnAtomicSectionCancelCallbacks(
-						$this,
-						self::TRIGGER_CANCEL,
-						$excisedSectionIds
-					);
 				}
 			} else {
 				// Put the transaction into an error state if it's not already in one
@@ -2507,7 +2520,12 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	}
 
 	public function flushSnapshot( $fname = __METHOD__, $flush = self::FLUSHING_ONE ) {
-		$this->transactionManager->onFlushSnapshot( $this, $fname, $flush, $this->getTransactionRoundId() );
+		$this->transactionManager->onFlushSnapshot(
+			$this,
+			$fname,
+			$flush,
+			$this->getTransactionRoundFname()
+		);
 		if (
 			$this->transactionManager->sessionStatus() === TransactionManager::STATUS_SESS_ERROR ||
 			$this->transactionManager->trxStatus() === TransactionManager::STATUS_TRX_ERROR
@@ -2672,7 +2690,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	public static function getCacheSetOptions( ?IReadableDatabase ...$dbs ) {
 		$res = [ 'lag' => 0, 'since' => INF, 'pending' => false ];
 
-		foreach ( func_get_args() as $db ) {
+		foreach ( $dbs as $db ) {
 			if ( $db instanceof IReadableDatabase ) {
 				$status = $db->getSessionLagStatus();
 
@@ -2755,7 +2773,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 
 		while ( !feof( $fp ) ) {
 			if ( $lineCallback ) {
-				call_user_func( $lineCallback );
+				$lineCallback();
 			}
 
 			$line = trim( fgets( $fp ) );
@@ -3284,7 +3302,7 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 	}
 
 	public function runOnTransactionPreCommitCallbacks() {
-		return $this->transactionManager->runOnTransactionPreCommitCallbacks( $this );
+		return $this->transactionManager->runOnTransactionPreCommitCallbacks();
 	}
 
 	public function explicitTrxActive() {
@@ -3359,10 +3377,6 @@ abstract class Database implements Stringable, IDatabaseForOwner, IMaintainableD
 
 	public function tableName( string $name, $format = 'quoted' ) {
 		return $this->platform->tableName( $name, $format );
-	}
-
-	public function tableNames( ...$tables ) {
-		return $this->platform->tableNames( ...$tables );
 	}
 
 	public function tableNamesN( ...$tables ) {

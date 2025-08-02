@@ -4,5 +4,14 @@
 			"Sam Wilson",
 			"Sammy Fox"
 		]
-	}
+	},
+	"templatedata-search-list-header": "Favourites",
+	"templatedata-search-list-empty": "Templates you mark as favourites will appear here",
+	"templatedata-favorite-disabled": "You must be logged in to favourite a template",
+	"templatedata-favorite-add": "Add to favourites",
+	"templatedata-favorite-added": "Template added to favourites",
+	"templatedata-favorite-remove": "Remove from favourites",
+	"templatedata-favorite-removed": "Template removed from favourites",
+	"templatedata-favorite-error": "Unable to save favourites",
+	"templatedata-favorite-maximum-reached": "You have reached the maximum number ($1) of favourite templates. Please remove some from your list before adding more."
 }

@@ -1,0 +1,78 @@
+{
+	"x-i18n-description": "rest-schema-desc-page-history",
+	"required": [
+		"revisions",
+		"latest"
+	],
+	"properties": {
+		"revisions": {
+			"type": "array",
+			"x-i18n-description": "rest-property-desc-revision-array",
+			"items": {
+				"type": "object",
+				"required": [
+					"id",
+					"timestamp",
+					"minor",
+					"size",
+					"comment",
+					"user",
+					"delta"
+				],
+				"properties": {
+					"id": {
+						"type": "integer",
+						"x-i18n-description": "rest-property-desc-revision-id"
+					},
+					"timestamp": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"minor": {
+						"type": "boolean",
+						"x-i18n-description": "rest-property-desc-revision-minor"
+					},
+					"size": {
+						"type": "integer",
+						"x-i18n-description": "rest-property-desc-revision-size"
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true,
+						"x-i18n-description": "rest-property-desc-revision-comment"
+					},
+					"user": {
+						"type": "object",
+						"nullable": true,
+						"x-i18n-description": "rest-property-desc-revision-user",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-property-desc-user-id"
+							},
+							"name": {
+								"type": "string",
+								"x-i18n-description": "rest-property-desc-user-name"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					},
+					"delta": {
+						"type": "integer",
+						"nullable": true,
+						"x-i18n-description": "rest-property-desc-revision-delta"
+					}
+				}
+			}
+		},
+		"latest": {
+			"type": "string",
+			"format": "uri",
+			"x-i18n-description": "rest-property-desc-revision-url"
+		}
+	}
+}

@@ -7,13 +7,13 @@
 			"Srđan"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualno uređivanje]]",
+	"tag-visualeditor": "vizualno uređivanje",
 	"tag-visualeditor-description": "Izmjena načinjena korištenjem [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualnog uređivača]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualno uređivanje: potrebna provjera]]",
+	"tag-visualeditor-needcheck": "vizualno uređivanje: potrebna provjera",
 	"tag-visualeditor-needcheck-description": "Izmjena načinjena korištenjem [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualnog uređivača]] gdje je sistem detektirao wikitekst s mogućim neželjenim izmjenama.",
 	"tag-visualeditor-wikitext": "uređivanje izvornog kôda (2017)",
 	"tag-visualeditor-wikitext-description": "Izmjena napravljena uređivačem wikiteksta iz 2017.",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualno uređivanje: prebačeno]]",
+	"tag-visualeditor-switched": "vizualno uređivanje: prebačeno",
 	"tag-visualeditor-switched-description": "Korisnik je počeo uređivati koristeći vizualni uređivač, pa se prebacio na izvorno uređivanje wikiteksta.",
 	"visualeditor-feedback-link": "Project:Vizualni uređivač/Povratne informacije",
 	"visualeditor-feedback-tool": "Ostavite povratnu informaciju",

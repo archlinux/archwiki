@@ -79,6 +79,7 @@ $specialPageAliases = [
 	'Filepath'                  => [ 'مسیر_پرونده' ],
 	'GoToInterwiki'             => [ 'برو_به_میان‌ویکی', 'میان‌ویکی' ],
 	'Import'                    => [ 'درون‌ریزی_صفحه' ],
+	'Interwiki'                 => [ 'میان‌ویکی' ],
 	'Invalidateemail'           => [ 'باطل‌کردن_ایمیل', 'باطل‌کردن_رایانامه' ],
 	'JavaScriptTest'            => [ 'تست_جاوااسکریپت' ],
 	'LinkAccounts'              => [ 'اتصال_حساب‌ها' ],
@@ -362,6 +363,8 @@ $separatorTransformTable = [
 	',' => '٬', # U+066C
 ];
 
+$numberingSystem = 'arabext';
+
 /**
  * A list of date format preference keys which can be selected in user
  * preferences. New preference keys can be added, provided they are supported
@@ -377,6 +380,7 @@ $datePreferences = [
 	'dmy',
 	'ymd',
 	'persian',
+	'hijri',
 	'hebrew',
 	'ISO 8601',
 ];
@@ -409,30 +413,46 @@ $datePreferenceMigrationMap = [
  * overridden.
  */
 $dateFormats = [
-	# Please be cautious not to delete the invisible RLM from the beginning of the strings.
-	'mdy time' => '‏H:i',
-	'mdy date' => '‏n/j/Y میلادی',
-	'mdy both' => '‏n/j/Y میلادی، ساعت H:i',
+	'mdy time' => 'H:i',
+	'mdy date' => 'n/j/Y میلادی',
+	'mdy both' => 'n/j/Y میلادی، ساعت H:i',
 
-	'dmy time' => '‏H:i',
-	'dmy date' => '‏j xg Y',
-	'dmy both' => '‏j xg Y، ساعت H:i',
+	'dmy time' => 'H:i',
+	'dmy date' => 'j xg Y',
+	'dmy both' => 'j xg Y، ساعت H:i',
 
-	'ymd time' => '‏H:i',
-	'ymd date' => '‏Y/n/j میلادی',
-	'ymd both' => '‏Y/n/j میلادی، ساعت H:i',
+	'ymd time' => 'H:i',
+	'ymd date' => 'Y/n/j میلادی',
+	'ymd both' => 'Y/n/j میلادی، ساعت H:i',
 
-	'persian time' => '‏H:i',
-	'persian date' => '‏xij xiF xiY',
-	'persian both' => '‏xij xiF xiY، ساعت H:i',
+	'persian time' => 'H:i',
+	'persian date' => 'xij xiF xiY',
+	'persian both' => 'xij xiF xiY، ساعت H:i',
 
-	'hebrew time' => '‏H:i',
-	'hebrew date' => '‏xij xjF xjY',
-	'hebrew both' => '‏H:i, xij xjF xjY',
+	'hijri time' => 'H:i',
+	'hijri date' => 'xmj xmF xmY',
+	'hijri both' => 'xmj xmF xmY، ساعت H:i',
+
+	'hebrew time' => 'H:i',
+	'hebrew date' => 'xij xjF xjY',
+	'hebrew both' => 'xij xjF xjY، ساعت H:i',
 
 	'ISO 8601 time' => 'xnH:xni:xns',
 	'ISO 8601 date' => 'xnY-xnm-xnd',
 	'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
+];
+
+// Use Gregorian calendar, where appropriate, override fa browser locale
+$jsDateFormats = [
+	'mdy date' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'mdy both' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'mdy pretty' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'dmy date' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'dmy both' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'dmy pretty' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'ymd date' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'ymd both' => [ 'options' => [ 'calendar' => 'gregory' ] ],
+	'ymd pretty' => [ 'options' => [ 'calendar' => 'gregory' ] ],
 ];
 
 # Harakat are intentionally not included in the linkTrail. Their addition should

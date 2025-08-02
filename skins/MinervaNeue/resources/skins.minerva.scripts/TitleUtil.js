@@ -31,54 +31,54 @@ const UriUtil = require( './UriUtil.js' );
  *     https://foo.wikimedia.org/ → null (mismatching host)
  *     https://en.wikipedia.org/wiki/Bar → null (mismatching host)
  *
- * This function invokes `Uri.isInternal()` to validate that this link is assuredly a local
+ * This function invokes `UriUtil.isInternal()` to validate that this link is assuredly a local
  * wiki link and that the internal usage of both the title query parameter and value of
  * wgArticlePath are relevant.
  *
  * This function doesn't throw. `null` is returned for any unparseable input.
  *
  * @ignore
- * @param {mw.Uri|Object|string} [uri] Passed to Uri.
- * @param {Object|boolean} [options] Passed to Uri.
- * @param {Object|boolean} [options.validateReadOnlyLink] If true, only links that would show a
+ * @param {URL|Object|string} [url] Passed to URL constructor.
+* @param {Object|boolean} [options]
+* @param {Object|boolean} [options.validateReadOnlyLink] If true, only links that would show a
  *     page for reading are considered. E.g., `/wiki/Foo` and `/w/index.php?title=Foo` would
  *     validate but `/w/index.php?title=Foo&action=bar` would not.
  * @return {mw.Title|null} A Title or `null`.
  */
-function newFromUri( uri, options ) {
-	let mwUri;
+function newFromUri( url, options ) {
+	let newURL;
 	let title;
 
 	try {
-		// uri may or may not be a Uri but the Uri constructor accepts a Uri parameter.
-		mwUri = new mw.Uri( uri, options );
+		// url may or may not be a URL but the URL constructor accepts a URL parameter.
+		newURL = new URL( url, UriUtil.isInternal.base );
 	} catch ( e ) {
 		return null;
 	}
 
-	if ( !UriUtil.isInternal( mwUri ) ) {
+	if ( !UriUtil.isInternal( newURL ) ) {
 		return null;
 	}
 
-	if ( ( options || {} ).validateReadOnlyLink && !isReadOnlyUri( mwUri ) ) {
+	if ( ( options || {} ).validateReadOnlyLink && !isReadOnlyUri( newURL ) ) {
 		// An unknown query parameter is used. This may not be a read-only link.
 		return null;
 	}
 
-	if ( mwUri.query.title ) {
+	if ( newURL.searchParams.get( 'title' ) ) {
 		// True if input starts with wgScriptPath.
 
 		const regExp = new RegExp( '^' + mw.util.escapeRegExp( mw.config.get( 'wgScriptPath' ) ) + '/' );
 
 		// URL has a nonempty `title` query parameter like `/w/index.php?title=Foo`. The script
 		// path should match.
-		const matches = regExp.test( mwUri.path );
+		const matches = regExp.test( newURL.pathname );
 		if ( !matches ) {
 			return null;
 		}
 
-		// The parameter was already decoded at Uri construction.
-		title = mwUri.query.title;
+		// The parameter was already decoded at URL construction.
+		title = newURL.searchParams.get( 'title' );
 	} else {
 		// True if input starts with wgArticlePath and ends with a nonempty page title. The
 		// first matching group (index 1) is the page title.
@@ -86,15 +86,15 @@ function newFromUri( uri, options ) {
 		const regExp = new RegExp( '^' + mw.util.escapeRegExp( mw.config.get( 'wgArticlePath' ) ).replace( '\\$1', '(.+)' ) );
 
 		// No title query parameter is present so the URL may be "pretty" like `/wiki/Foo`.
-		// `Uri.path` should not contain query parameters or a fragment, as is assumed in
+		// `URL.pathname` should not contain query parameters or a fragment, as is assumed in
 		// `Uri.getRelativePath()`. Try to isolate the title.
-		const matches = regExp.exec( mwUri.path );
+		const matches = regExp.exec( newURL.pathname );
 		if ( !matches || !matches[ 1 ] ) {
 			return null;
 		}
 
 		try {
-			// `Uri.path` was not previously decoded, as is assumed in `Uri.getRelativePath()`,
+			// `URL.pathname` was not previously decoded, as is assumed in `Uri.getRelativePath()`,
 			// and decoding may now fail. Do not use `Uri.decode()` which is designed to be
 			// paired with `Uri.encode()` and replaces `+` characters with spaces.
 			title = decodeURIComponent( matches[ 1 ] );
@@ -104,7 +104,7 @@ function newFromUri( uri, options ) {
 	}
 
 	// Append the fragment, if present.
-	title += mwUri.fragment ? '#' + mwUri.fragment : '';
+	title += newURL.hash ? '#' + decodeURIComponent( newURL.hash.slice( 1 ) ) : '';
 
 	return mw.Title.newFromText( title );
 }
@@ -123,12 +123,12 @@ function newFromUri( uri, options ) {
  * @private
  * @static
  * @method isReadOnlyUri
- * @param {mw.Uri} uri A Uri to an internal wiki page.
+ * @param {URL} url A Uri to an internal wiki page.
  * @return {boolean} True if uri has no query parameters or only known parameters for reading.
  */
-function isReadOnlyUri( uri ) {
-	const length = Object.keys( uri.query ).length;
-	return length === ( ( 'oldid' in uri.query ? 1 : 0 ) + ( 'title' in uri.query ? 1 : 0 ) );
+function isReadOnlyUri( url ) {
+	const searchParams = url.searchParams;
+	return searchParams.size === ( ( searchParams.has( 'oldid' ) ? 1 : 0 ) + ( searchParams.has( 'title' ) ? 1 : 0 ) );
 }
 
 module.exports = {

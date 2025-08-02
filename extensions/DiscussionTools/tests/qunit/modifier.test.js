@@ -10,7 +10,7 @@ require( '../cases/modified.json' ).forEach( ( caseItem ) => {
 	// This should be one test with many cases, rather than multiple tests, but the cases are large
 	// enough that processing all of them at once causes timeouts in Karma test runner.
 	const skipTests = require( '../skip.json' )[ 'cases/modified.json' ];
-	if ( skipTests.indexOf( caseItem.name ) !== -1 ) {
+	if ( skipTests.includes( caseItem.name ) ) {
 		QUnit.skip( testName );
 		return;
 	}

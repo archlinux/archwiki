@@ -1,7 +1,10 @@
 <?php
 
+use MediaWiki\RecentChanges\ChangesListBooleanFilter;
+use MediaWiki\RecentChanges\ChangesListBooleanFilterGroup;
+
 /**
- * @covers \ChangesListBooleanFilter
+ * @covers \MediaWiki\RecentChanges\ChangesListBooleanFilter
  */
 class ChangesListBooleanFilterTest extends MediaWikiUnitTestCase {
 	public function testGetJsData() {

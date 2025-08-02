@@ -19,7 +19,7 @@ class ApiEchoCreateEvent extends ApiBase {
 
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		UserNameUtils $userNameUtils
 	) {
 		parent::__construct( $mainModule, $moduleName );
@@ -61,7 +61,7 @@ class ApiEchoCreateEvent extends ApiBase {
 			'agent' => $user,
 			'title' => $params['page'] ? Title::newFromLinkTarget( $params['page'] ) : null,
 			'extra' => [
-				'recipients' => [ $userToNotify->getId() ],
+				Event::RECIPIENTS_IDX => [ $userToNotify->getId() ],
 				'header' => $params['header'],
 				'content' => $params['content'],
 				// Send email only if specified
@@ -87,10 +87,12 @@ class ApiEchoCreateEvent extends ApiBase {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}

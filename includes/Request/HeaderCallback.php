@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Request;
 
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Http\Telemetry;
+use MediaWiki\Logger\LoggerFactory;
 use RuntimeException;
 
 /**
@@ -60,7 +62,7 @@ class HeaderCallback {
 			) {
 				header( 'Expires: Thu, 01 Jan 1970 00:00:00 GMT' );
 				header( 'Cache-Control: private, max-age=0, s-maxage=0' );
-				\MediaWiki\Logger\LoggerFactory::getInstance( 'cache-cookies' )->warning(
+				LoggerFactory::getInstance( 'cache-cookies' )->warning(
 					'Cookies set on {url} with Cache-Control "{cache-control}"', [
 						'url' => WebRequest::getGlobalRequestURL(),
 						'set-cookie' => self::sanitizeSetCookie( $headers['set-cookie'] ),
@@ -92,9 +94,9 @@ class HeaderCallback {
 	public static function warnIfHeadersSent() {
 		if ( !self::$messageSent && headers_sent( $filename, $line ) ) {
 			self::$messageSent = true;
-			\MediaWiki\Debug\MWDebug::warning( 'Headers already sent, should send headers earlier than ' .
+			MWDebug::warning( 'Headers already sent, should send headers earlier than ' .
 				wfGetCaller( 3 ) );
-			$logger = \MediaWiki\Logger\LoggerFactory::getInstance( 'headers-sent' );
+			$logger = LoggerFactory::getInstance( 'headers-sent' );
 			$logger->error( 'Warning: headers were already sent (output started at ' . $filename . ':' . $line . ')', [
 				'exception' => self::$headersSentException,
 				'detection-trace' => new RuntimeException( 'Detected here' ),
@@ -122,6 +124,3 @@ class HeaderCallback {
 		return implode( "\n", $sanitizedValues );
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( HeaderCallback::class, 'MediaWiki\\HeaderCallback' );

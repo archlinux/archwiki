@@ -29,7 +29,7 @@ class SerializerNode {
 	 */
 	public $void;
 
-	/** @var SerializerNode[] */
+	/** @var (self|string)[] */
 	public $children = [];
 
 	/**

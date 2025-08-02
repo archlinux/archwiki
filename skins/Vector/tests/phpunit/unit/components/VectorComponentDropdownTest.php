@@ -34,7 +34,7 @@ class VectorComponentDropdownTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideDropdownData(): array {
+	public static function provideDropdownData(): array {
 		return [
 			'Dropdown' => [
 				'id' => 'mock-dropdown',

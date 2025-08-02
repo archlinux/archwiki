@@ -87,5 +87,6 @@
 	"apierror-abusefilter-cantcheck": "{{doc-apierror}}",
 	"apierror-abusefilter-canteval": "{{doc-apierror}}",
 	"apierror-abusefilter-nosuchlogid": "{{doc-apierror}}\n\nParameters:\n* $1 - AbuseFilter log ID number.",
+	"apierror-abusefilter-incompatible": "{{doc-apierror}}",
 	"apierror-abusefilter-badsyntax": "{{doc-apierror}}"
 }

@@ -1,0 +1,150 @@
+{
+	"x-i18n-description": "rest-schema-desc-revision-metadata",
+	"required": [
+		"timestamp"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"x-i18n-description": "rest-param-desc-revision-id"
+		},
+		"size": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-revision-size"
+		},
+		"delta": {
+			"type": "integer",
+			"nullable": true,
+			"x-i18n-description": "rest-property-desc-revision-delta"
+		},
+		"comment": {
+			"type": "string",
+			"nullable": true,
+			"x-i18n-description": "rest-property-desc-revision-comment"
+		},
+		"minor": {
+			"type": "boolean",
+			"x-i18n-description": "rest-property-desc-revision-minor"
+		},
+		"timestamp": {
+			"type": "string",
+			"format": "date-time",
+			"x-i18n-description": "rest-property-desc-revision-timestamp"
+		},
+		"content_model": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-revision-content-model"
+		},
+		"page": {
+			"x-i18n-description": "rest-property-desc-revision-page",
+			"required": [
+				"id",
+				"key",
+				"title"
+			],
+			"properties": {
+				"id": {
+					"type": "integer",
+					"x-i18n-description": "rest-property-desc-page-id"
+				},
+				"key": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-key"
+				},
+				"title": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-title"
+				}
+			}
+		},
+		"license": {
+			"type": "object",
+			"x-i18n-description": "rest-property-desc-page-license",
+			"required": [
+				"url",
+				"title"
+			],
+			"properties": {
+				"url": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-url-html"
+				},
+				"title": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-title-html"
+				}
+			}
+		},
+		"user": {
+			"type": "object",
+			"description": "",
+			"nullable": true,
+			"required": [
+				"id",
+				"name"
+			],
+			"properties": {
+				"id": {
+					"type": "integer",
+					"x-i18n-description": "rest-property-desc-user-id"
+				},
+				"name": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-user-name"
+				}
+			}
+		},
+		"html_url": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-revision-html-url"
+		},
+		"html": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"title": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-revision-title"
+		},
+		"page_id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"rev": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"tid": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"namespace": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"user_id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"user_text": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"tags": {
+			"type": "array",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"restrictions": {
+			"type": "array",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"page_language": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		},
+		"redirect": {
+			"type": "boolean",
+			"x-i18n-description": "rest-property-desc-page-restbase-compatibility"
+		}
+	}
+}

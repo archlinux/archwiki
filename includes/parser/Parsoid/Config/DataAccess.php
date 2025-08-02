@@ -19,30 +19,35 @@
 
 namespace MediaWiki\Parser\Parsoid\Config;
 
-use File;
 use MediaTransformError;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Category\TrackingCategories;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\Html;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Title\Title;
-use RepoGroup;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\DataAccess as IDataAccess;
 use Wikimedia\Parsoid\Config\PageConfig as IPageConfig;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
+use Wikimedia\Parsoid\Fragments\HtmlPFragment;
+use Wikimedia\Parsoid\Fragments\PFragment;
+use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
@@ -70,6 +75,7 @@ class DataAccess extends IDataAccess {
 	private ServiceOptions $config;
 	private ReadOnlyMode $readOnlyMode;
 	private LinkBatchFactory $linkBatchFactory;
+	private int $markerIndex = 0;
 
 	/**
 	 * @param ServiceOptions $config MediaWiki main configuration object
@@ -192,9 +198,9 @@ class DataAccess extends IDataAccess {
 				$titleObjs[$name] = $t;
 			}
 		}
-		$linkBatch = $this->linkBatchFactory->newLinkBatch( $titleObjs );
-		$linkBatch->setCaller( __METHOD__ );
-		$linkBatch->execute();
+		$this->linkBatchFactory->newLinkBatch( $titleObjs )
+			->setCaller( __METHOD__ )
+			->execute();
 
 		foreach ( $titleObjs as $obj ) {
 			$pdbk = $obj->getPrefixedDBkey();
@@ -329,6 +335,7 @@ class DataAccess extends IDataAccess {
 		// Use the same legacy parser object for all calls to extension tag
 		// processing, for greater compatibility.
 		$this->parser ??= $this->parserFactory->create();
+		$this->parser->setStripExtTags( false );
 		$this->parser->startExternalParse(
 			Title::newFromLinkTarget( $pageConfig->getLinkTarget() ),
 			$pageConfig->getParserOptions(),
@@ -343,20 +350,15 @@ class DataAccess extends IDataAccess {
 		return $this->parser;
 	}
 
-	/** @inheritDoc */
-	public function doPst( IPageConfig $pageConfig, string $wikitext ): string {
-		'@phan-var PageConfig $pageConfig'; // @var PageConfig $pageConfig
-		// This could use prepareParser(), but it's only called once per page,
-		// so it's not essential.
-		$titleObj = Title::newFromLinkTarget( $pageConfig->getLinkTarget() );
-		$user = $pageConfig->getParserOptions()->getUserIdentity();
-		$content = ContentHandler::makeContent( $wikitext, $titleObj, CONTENT_MODEL_WIKITEXT );
-		return $this->contentTransformer->preSaveTransform(
-			$content,
-			$titleObj,
-			$user,
-			$pageConfig->getParserOptions()
-		)->serialize();
+	/** @internal */
+	public function makeLimitReport(
+		IPageConfig $pageConfig,
+		ParserOptions $parserOptions,
+		ParserOutput $parserOutput
+	) {
+		$parser = $this->parser ??
+			$this->prepareParser( $pageConfig, Parser::OT_HTML );
+		$parser->makeLimitReport( $parserOptions, $parserOutput );
 	}
 
 	/** @inheritDoc */
@@ -381,21 +383,89 @@ class DataAccess extends IDataAccess {
 	public function preprocessWikitext(
 		IPageConfig $pageConfig,
 		ContentMetadataCollector $metadata,
-		string $wikitext
-	): string {
+		$wikitext
+	) {
 		$parser = $this->prepareParser( $pageConfig, Parser::OT_PREPROCESS );
+		if ( $wikitext instanceof PFragment ) {
+			$result = [];
+			$index = 1;
+			$split = $wikitext instanceof WikitextPFragment ?
+				$wikitext->split() : [ $wikitext ];
+			foreach ( $split as $fragment ) {
+				if ( is_string( $fragment ) ) {
+					$result[] = $fragment;
+				} else {
+					$marker = Parser::MARKER_PREFIX . '-parsoid-' .
+						sprintf( '%08X', $this->markerIndex++ ) .
+						Parser::MARKER_SUFFIX;
+					$parser->getStripState()->addParsoidOpaque(
+						$marker, $fragment
+					);
+					$result[] = $marker;
+				}
+			}
+			$wikitext = implode( $result );
+		}
 		$this->hookRunner->onParserBeforePreprocess(
 			# $wikitext is passed by reference and mutated
 			$parser, $wikitext, $parser->getStripState()
 		);
-		$wikitext = $parser->replaceVariables( $wikitext, $this->ppFrame );
-		// FIXME (T289545): StripState markers protect content that need to be protected from further
-		// "wikitext processing". So, where the result has strip state markers, we actually
-		// need to tunnel this content through rather than unwrap and let it go through the
-		// rest of the parsoid pipeline. For example, some parser functions might return HTML
-		// not wikitext, and where the content might contain wikitext characters, we are now
-		// going to potentially mangle that output.
-		$wikitext = $parser->getStripState()->unstripBoth( $wikitext );
+		// New PFragment-based support (T374616)
+		$wikitext = $parser->replaceVariables(
+			$wikitext, $this->ppFrame, false, [
+				'parsoidTopLevelCall' => true,
+				// This is implied by stripExtTags=false and
+				// probably doesn't need to be explicitly passed
+				// any more.
+				'processNowiki' => true,
+			]
+		);
+		// Where the result has strip state markers, tunnel this content
+		// through Parsoid as a PFragment type.
+		$pieces = $parser->getStripState()->split( $wikitext );
+		if ( count( $pieces ) > 1 || ( $pieces[0]['type'] ?? null ) !== 'string' ) {
+			for ( $i = 0; $i < count( $pieces ); $i++ ) {
+				[ 'type' => $type, 'content' => $content ] = $pieces[$i];
+				if ( $type === 'string' ) {
+					// wikitext (could include extension tag snippets like <tag..>...</tag>)
+					$pieces[$i] = $content;
+				} elseif ( $type === 'parsoid' ) {
+					$pieces[$i] = $pieces[$i]['extra']; // replace w/ fragment
+				} elseif ( $type === 'nowiki' ) {
+					$extra = $pieces[$i]['extra'] ?? null;
+					// T388819: If this is from an actual <nowiki>, we
+					// wrap <span typeof="mw:Nowiki"> around $contents.
+					if ( $extra === 'nowiki' ) {
+						$content = Html::rawElement( 'span', [
+							'typeof' => 'mw:Nowiki',
+						], $content );
+					}
+					$pieces[$i] = $content ? HtmlPFragment::newFromHtmlString( $content, null ) : '';
+				} else {
+					// T381709: technically this fragment should
+					// be subject to language conversion and some
+					// additional processing
+					$pieces[$i] = $content ? HtmlPFragment::newFromHtmlString( $content, null ) : '';
+				}
+			}
+			// Concatenate wikitext strings generated by extension tags,
+			// so that PFragment doesn't try to add <nowiki>s between
+			// the pieces to prevent token-gluing.
+			$result = [];
+			$wt = '';
+			foreach ( $pieces as $p ) {
+				if ( is_string( $p ) ) {
+					$wt .= $p;
+				} else {
+					$result[] = $wt;
+					$result[] = $p;
+					$wt = '';
+				}
+			}
+			$result[] = $wt;
+			// result will be a PFragment, no longer a string.
+			$wikitext = PFragment::fromSplitWt( $result );
+		}
 
 		// XXX: Ideally we will eventually have the legacy parser use our
 		// ContentMetadataCollector instead of having a new ParserOutput

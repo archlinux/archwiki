@@ -34,7 +34,7 @@ ve.ui.CollabProcessDialog.prototype.initialize = function () {
 	} );
 
 	this.userNameInput = new OO.ui.TextInputWidget( {
-		value: mw.user.getName()
+		value: ve.init.platform.getUserName()
 	} );
 	const userNameField = new OO.ui.FieldLayout( this.userNameInput, {
 		label: ve.msg( 'visualeditor-rebase-client-author-name' ),
@@ -83,7 +83,11 @@ ve.ui.CollabProcessDialog.prototype.getReadyProcess = function ( data ) {
 		.next( function () {
 			switch ( this.stack.getCurrentItem() ) {
 				case this.initPanel:
-					this.initButton.focus();
+					if ( !this.userNameInput.getValue() ) {
+						this.userNameInput.focus();
+					} else {
+						this.initButton.focus();
+					}
 					break;
 				case this.copyPanel:
 					this.copyTextLayout.button.focus();
@@ -141,6 +145,9 @@ ve.ui.HostCollabProcessDialog.prototype.onButtonClick = function () {
 
 	ve.collab.initPeerServer( this.userNameInput.getValue() );
 	const collabUrl = new URL( location.href );
+	collabUrl.searchParams.delete( 'action' );
+	collabUrl.searchParams.set( 'veaction',
+		ve.init.target.getSurface().getMode() === 'source' ? 'editsource' : 'edit' );
 	ve.collab.peerServer.peer.on( 'open', ( newId ) => {
 		collabUrl.searchParams.set( 'collabSession', newId );
 		this.copyTextLayout.textInput.setValue( collabUrl );

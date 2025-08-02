@@ -2,11 +2,11 @@
 
 namespace MediaWiki\CommentFormatter;
 
-use File;
-use HtmlArmor;
 use MediaWiki\Cache\LinkBatch;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Cache\LinkCache;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -23,8 +23,8 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleParser;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\WikiMap\WikiMap;
-use RepoGroup;
-use StringUtils;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * The text processing backend for CommentFormatter.

@@ -1240,7 +1240,7 @@ class LinterTest extends TestCase {
 	 * Provide test cases for large tables
 	 * @return array[]
 	 */
-	public function provideLargeTablesTests(): array {
+	public static function provideLargeTablesTests(): array {
 		$noLongRowsTable = [
 			"{|",
 			"|-",
@@ -1639,7 +1639,7 @@ class LinterTest extends TestCase {
 	 * - there is nothing unusual DSR-wise about this lint that
 	 *   needs special verification.
 	 */
-	public function provideLogInlineBackgroundWithoutColor(): array {
+	public static function provideLogInlineBackgroundWithoutColor(): array {
 		return [
 			[
 				'should not lint when style attribute is missing',
@@ -1683,107 +1683,6 @@ class LinterTest extends TestCase {
 	}
 
 	/**
-	 * Provide test cases for image alt text
-	 * @return array[]
-	 */
-	public function provideMissingImageAltTextTests() {
-		return [
-			[
-				'wikiText' => '[[File:Foobar.jpg]]',
-				'count' => 1,
-				'desc' => 'Inline image, no alt or caption',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|alt=Painting depicting a gazebo]]',
-				'count' => 0,
-				'desc' => 'Inline image, explicit alt',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|Painting depicting a gazebo]]',
-				'count' => 0,
-				'desc' => 'Inline image, implicit alt as caption',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|thumb|On display]]',
-				'count' => 1,
-				'desc' => 'Thumbnail image, no alt, has caption',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|thumb|alt=Painting depicting a gazebo]]',
-				'count' => 0,
-				'desc' => 'Thumbnail image, explicit alt, no caption',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|thumb|alt=Painting depicting a gazebo|On display]]',
-				'count' => 0,
-				'desc' => 'Thumbnail image, explicit alt, has caption',
-			],
-
-			// Currently an explicitly empty alt does not trigger the lint.
-			[
-				'wikiText' => '[[File:Foobar.jpg|alt=]]',
-				'count' => 0,
-				'desc' => 'Inline image, explicit empty alt',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|thumb|alt=]]',
-				'count' => 0,
-				'desc' => 'Thumbnail image, explicit empty alt, no caption',
-			],
-			[
-				'wikiText' => '[[File:Foobar.jpg|thumb|alt=|On display]]',
-				'count' => 0,
-				'desc' => 'Thumbnail image, explicit empty alt, has caption',
-			],
-
-			// Use of aria-hidden=true or role=presentation/role=none suppresses
-			// the lint on the whole subtree.
-			[
-				'wikiText' =>
-					"<div aria-hidden=true>\n" .
-					"<div>\n" .
-					"[[File:Foobar.jpg]]\n" .
-					"</div>\n" .
-					"</div>",
-				'count' => 0,
-				'desc' => 'Image in an aria-hidden=true div',
-			],
-			// It's common to use aria-hidden=true and role=presentation together
-			// for backwards compatibility reasons; treat them equivalently here.
-			[
-				'wikiText' =>
-					"<div aria-hidden=true role=presentation>\n" .
-					"<div>\n" .
-					"[[File:Foobar.jpg]]\n" .
-					"</div>\n" .
-					"</div>",
-				'count' => 0,
-				'desc' => 'Image in an aria-hidden=true role=presentation div',
-			],
-			[
-				'wikiText' =>
-					"<div role=presentation>\n" .
-					"<div>\n" .
-					"[[File:Foobar.jpg]]\n" .
-					"</div>\n" .
-					"</div>",
-				'count' => 0,
-				'desc' => 'Image inside a bare role=presentation div',
-			],
-			[
-				'wikiText' =>
-					"<div role=none>\n" .
-					"<div>\n" .
-					"[[File:Foobar.jpg]]\n" .
-					"</div>\n" .
-					"</div>",
-				'count' => 0,
-				'desc' => 'Image inside a bare role=none div',
-			],
-		];
-	}
-
-	/**
 	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter::lintNightModeUnawareBackgroundColor
 	 * @see https://phabricator.wikimedia.org/T358238
 	 * @dataProvider provideLogInlineBackgroundWithoutColor
@@ -1805,26 +1704,15 @@ class LinterTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter::lintMissingAltText
-	 *
-	 * @param string[] $wikiText input text
-	 * @param int $count of expected lint results
-	 * @param string $desc description of test case
-	 *
-	 * @dataProvider provideMissingImageAltTextTests
-	 */
-	public function testMissingImageAltText( $wikiText, $count, $desc ): void {
-		$result = $this->wtToLint( $wikiText );
-		$result = $this->filterLints( $result, 'missing-image-alt-text' );
-		$this->assertCount( $count, $result, $desc );
-	}
-
-	/**
 	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Handlers\Headings::dedupeHeadingIds
 	 */
 	public function testDuplicateIds(): void {
 		$desc = 'should not lint unique ids';
 		$result = $this->wtToLint( "<div id='one'>Hi</div><div id='two'>Ho</div>" );
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = 'should not lint empty ids';
+		$result = $this->wtToLint( "<div id=''>Hi</div><div id=''>Ho</div>" );
 		$this->assertCount( 0, $result, $desc );
 
 		$desc = 'should lint duplicate ids';
@@ -1851,6 +1739,46 @@ class LinterTest extends TestCase {
 		$desc = 'should maybe lint ids that would conflict with headings';
 		$result = $this->wtToLint( "==hi==\n<div id='hi'>ho</div>" );
 		$this->assertCount( 0, $result, $desc );
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Handlers\Headings::genAnchors
+	 */
+	public function testEmptyHeadings(): void {
+		$desc = 'should not lint headings with content';
+		$result = $this->wtToLint( "== hi ==" );
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = 'should lint headings without content';
+		$result = $this->wtToLint( "== ==" );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'empty-heading', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 5, 2, 2 ], $result[0]['dsr'], $desc );
+
+		$desc = 'should lint templated headings without content';
+		$result = $this->wtToLint( "{{1x|== ==}}" );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'empty-heading', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 12, null, null ], $result[0]['dsr'], $desc );
+		$this->assertEquals( 'Template:1x', $result[0]['templateInfo']['name'], $desc );
+
+		$desc = 'should lint headings with only transparent content';
+		$result = $this->wtToLint( "== <!-- test -->[[Category:123]] ==" );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'empty-heading', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 35, 2, 2 ], $result[0]['dsr'], $desc );
+
+		$desc = 'should lint headings with only underscores because they are normalized away';
+		$result = $this->wtToLint( "== ____ ==" );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'empty-heading', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 10, 2, 2 ], $result[0]['dsr'], $desc );
+
+		$desc = 'should lint multiple empty headings before deduplication';
+		$result = $this->wtToLint( "== ==\n\n== ==" );
+		$this->assertCount( 2, $result, $desc );
+		$this->assertEquals( 'empty-heading', $result[0]['type'], $desc );
+		$this->assertEquals( 'empty-heading', $result[1]['type'], $desc );
 	}
 
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ciencia Al Poder"
+			"Ciencia Al Poder",
+			"MatyGamingHD"
 		]
 	},
 	"cdx-chip-input-chip-added": "Se añadió la pieza $1.",
@@ -10,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Cerrar",
 	"cdx-label-optional-flag": "(opcional)",
 	"cdx-message-dismiss-button-label": "Cerrar",
+	"cdx-popover-close-button-label": "Cerrar",
 	"cdx-search-input-search-button-label": "Buscar",
 	"cdx-table-select-all-label": "Seleccionar todas las filas",
 	"cdx-table-select-row-label": "Seleccionar la fila $1 de $2",
@@ -26,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Mostrando resultados $1–$2 de muchos",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 de muchos",
 	"cdx-table-pagination-status-message-indeterminate-final": "Mostrando {{PLURAL:$1|el último resultado|los últimos $1 resultados}}",
-	"cdx-table-pagination-status-message-pending": "Cargando resultados..."
+	"cdx-table-pagination-status-message-pending": "Cargando resultados...",
+	"cdx-table-no-data-message": "No hay datos disponibles."
 }

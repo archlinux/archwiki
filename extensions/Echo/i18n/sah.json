@@ -39,6 +39,7 @@
 	"echo-pref-tooltip-emailuser": "Электроннай почтабар ким эмит сурук ыытар буоллаҕына миэхэ биллэр.",
 	"notifications": "Биллэриилэр",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Эйиэхэ}} биллэриилэр",
+	"tooltip-pt-notifications": "Эйиэхэ биллэриилэр",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Биллэрии көрүҥүнэн наардаммыта",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "Көрүҥүнэн наардааһын",
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "Биллэрии көҥүллэммит ньымалара",

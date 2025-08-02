@@ -4,12 +4,12 @@
 			"Alfredie",
 			"Arlin",
 			"McDutchie",
+			"Nail123Real",
 			"Sahran",
 			"Tel'et",
 			"Uzdil",
 			"بىلگە",
-			"چۈشكۈن",
-			"Nail123Real"
+			"چۈشكۈن"
 		]
 	},
 	"preferences": "مايىللىق",
@@ -172,6 +172,7 @@
 	"prefs-watchlist-token": "كۆزەت تىزىملىك نىشانى:",
 	"prefs-searchoptions": "ئىزدەش",
 	"prefs-advancedsearchoptions": "ئالىي تاللانما",
+	"prefs-misc": "ئارىلاشما تۈر",
 	"prefs-reset-intro": "سىز بۇ بەتنى ئىشلىتىپ تەڭشەكلىرىڭىزنى تور بېكەتنىڭ كۆڭۈلدىكى قىممىتىگە تەڭشىيەلەيسىز.\nبۇ مەشغۇلاتتىن يانغىلى بولمايدۇ.",
 	"restoreprefs": "بارلىق كۆڭۈلدىكى تەڭشەكنى ئەسلىگە كەلتۈر (بارلىق بۆلەكلەردە)"
 }

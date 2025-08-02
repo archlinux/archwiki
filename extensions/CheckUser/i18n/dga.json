@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Domo John",
+			"Kuukye",
+			"Robert"
+		]
+	},
+	"checkuser-contribs-log": "Detona kaa nyaabo",
+	"checkuser-contribs-log-initiator": "Detona ŋa kaa nyaabo baarɛɛŋ",
+	"checkuser-showlog": "Kaa nyaabo sɛgepoɔbo",
+	"checkuser-recent-checks": "Kaa nyaabo kyaare boɔbo zie ŋa",
+	"checkuser-showmain": "Leɛre eŋ {{#special:CheckUser}}",
+	"checkuser-show-investigate": "Leɛre eŋ",
+	"checkuser-link-investigate-label": "E nyɛ"
+}

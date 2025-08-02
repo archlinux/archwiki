@@ -14,8 +14,18 @@ interface IUserRegistrationProvider {
 	 * Get user registration timestamp
 	 *
 	 * @param UserIdentity $user
-	 * @return string|false|null Registration timestamp, null if not available or false if it
+	 * @return string|false|null Registration timestamp (TS_MW), null if not available or false if it
 	 * cannot be fetched (anonymous users, for example).
 	 */
 	public function fetchRegistration( UserIdentity $user );
+
+	/**
+	 * Get user registration timestamps for a batch of users.
+	 *
+	 * @since 1.44
+	 * @param iterable<UserIdentity> $users
+	 * @return string[]|null[] Map of registration timestamps in MediaWiki format
+	 * (or `null` if not available) keyed by user ID.
+	 */
+	public function fetchRegistrationBatch( iterable $users ): array;
 }

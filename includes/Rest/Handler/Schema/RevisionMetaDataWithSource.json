@@ -1,0 +1,111 @@
+{
+	"x-i18n-description": "rest-schema-desc-revision-metadata",
+	"required": [
+		"id",
+		"size",
+		"minor",
+		"timestamp",
+		"content_model",
+		"page",
+		"license",
+		"user",
+		"comment",
+		"delta",
+		"source"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-revision-id"
+		},
+		"size": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-revision-size"
+		},
+		"delta": {
+			"type": "integer",
+			"nullable": true,
+			"x-i18n-description": "rest-property-desc-revision-delta"
+		},
+		"comment": {
+			"type": "string",
+			"nullable": true,
+			"x-i18n-description": "rest-property-desc-revision-comment"
+		},
+		"minor": {
+			"type": "boolean",
+			"x-i18n-description": "rest-property-desc-revision-minor"
+		},
+		"timestamp": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-revision-timestamp"
+		},
+		"content_model": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-revision-content-model"
+		},
+		"page": {
+			"x-i18n-description": "rest-property-desc-revision-page",
+			"required": [
+				"id",
+				"key",
+				"title"
+			],
+			"properties": {
+				"id": {
+					"type": "integer",
+					"x-i18n-description": "rest-property-desc-page-id"
+				},
+				"key": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-key"
+				},
+				"title": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-title"
+				}
+			}
+		},
+		"license": {
+			"type": "object",
+			"x-i18n-description": "Information about the wiki's license",
+			"required": [
+				"url",
+				"title"
+			],
+			"properties": {
+				"url": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-url-html"
+				},
+				"title": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-title-html"
+				}
+			}
+		},
+		"user": {
+			"type": "object",
+			"x-i18n-description": "",
+			"nullable": true,
+			"required": [
+				"id",
+				"name"
+			],
+			"properties": {
+				"id": {
+					"type": "integer",
+					"x-i18n-description": "rest-property-desc-user-id"
+				},
+				"name": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-user-name"
+				}
+			}
+		},
+		"source": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-revision-source"
+		}
+	}
+}

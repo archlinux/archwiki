@@ -8,8 +8,8 @@
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Əkrəm Cəfər",
-			"Əkrəm"
+			"Əkrəm",
+			"Əkrəm Cəfər"
 		]
 	},
 	"templatedata-desc": "Şablon parametrləri üçün məlumat saxlanmasını həyata keçirir (JSON istifadə edərək)",
@@ -46,7 +46,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "İstifadəçi",
 	"templatedata-doc-params": "Şablon parametrləri",
 	"templatedata-editbutton": "Şablon məlumatlarını redaktə edin",
-	"templatedata-errormsg-jsonbadformat": "Pis JSON formatı. Əgər bu əməliyyat düzgün aparılıbsa, siz bildirişi ləğv edərək <templatedata> teqlərini silib və yenidən yükləyə bilərsiniz və yaxud davam edərək cari datanı yenisi ilə əvəzləyə bilərsiniz.",
+	"templatedata-errormsg-jsonbadformat": "Pis JSON formatı. Əgər bu əməliyyat düzgün aparılıbsa, siz bildirişi silə bilərsiniz və yaxud davam edərək cari datanı yenisi ilə əvəzləyə bilərsiniz.",
 	"templatedata-errormsg-insertblank": "Heç bir məlumat olmayan şablon datası daxil etmək istədiyinizə əminsiniz?",
 	"templatedata-exists-on-related-page": "Xahiş edirik, nəzərə alın: şablon data bloku artıq \"[[$1]]\" səhifəsinə əlavə edilib.",
 	"templatedata-helplink": "Şablon məlumatları haqqında məlumat",
@@ -75,6 +75,7 @@
 	"templatedata-modal-button-removemap": "Xəritəni sil",
 	"templatedata-modal-button-saveparam": "Yadda saxla",
 	"templatedata-modal-confirmcancel": "Dəyişikliklərinizi ləğv etmək istədiyinizə əminsiniz?",
+	"templatedata-modal-button-discard": "Ləğv et",
 	"templatedata-modal-current-language": "Cari dil: $1",
 	"templatedata-modal-errormsg": "Xəta tapıldı. Zəhmət olmasa, boş və ya dublikat parametr adlarının olmadığına və parametr adlarında \"$1\", \"$2\" və ya \"$3\" olmadığına əmin olun.",
 	"templatedata-modal-errormsg-duplicate-name": "Xəta tapıldı. Seçilmiş ad artıq başqa parametr tərəfindən istifadə olunur.",
@@ -117,5 +118,19 @@
 	"templatedata-modal-title-templateformat": "Tövsiyə edilən viki mətn formatı",
 	"templatedata-modal-title-templateformatstring": "Fərdi format sətri",
 	"templatedata-modal-title-templateparam-details": "Parametrin detalları: $1",
-	"templatedata-modal-title-templateparams": "Şablon parametrləri"
+	"templatedata-modal-title-templateparams": "Şablon parametrləri",
+	"templatedata-search-title": "Şablon axtarışı",
+	"templatedata-search-description": "Tanıdıcı açar söz axtararaq daxil etmək istədiyiniz şablonu tapın. İzahları olan şablonların bu redaktorla yaxşı işləmə ehtimalı daha yüksəkdir.",
+	"templatedata-search-placeholder": "Şablon tap",
+	"templatedata-search-list-header": "Sevimlilər",
+	"templatedata-search-list-empty": "Sevimli kimi qeyd etdiyiniz şablonlar burada görünəcək",
+	"templatedata-template-discovery-disabled": "Şablonların aşkarlanması bu vikidə söndürülüb.",
+	"templatediscovery": "Şablonların aşkarlanması",
+	"templatedata-favorite-disabled": "Şablonu sevimlilərə əlavə edə bilmək üçün daxil olmalısınız",
+	"templatedata-favorite-add": "Şablonu sevimlilərə əlavə et",
+	"templatedata-favorite-added": "Şablon sevimlilərə əlavə edildi",
+	"templatedata-favorite-remove": "Şablonu sevimlilərdən sil",
+	"templatedata-favorite-removed": "Şablon sevimlilərdən silindi",
+	"templatedata-favorite-error": "Sevimliləri yadda saxlamaq mümkün olmadı",
+	"templatedata-favorite-maximum-reached": "Sevimli şablonların maksimum sayına ($1) çatdınız. Zəhmət olmasa, yenisini əlavə etməzdən əvvəl bəzi şablonu sevimlilərdən silin."
 }

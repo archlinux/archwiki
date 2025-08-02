@@ -19,13 +19,13 @@
  */
 namespace MediaWiki\Extension\AbuseFilter\Special;
 
-use ErrorPageError;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainStorage;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
-use PermissionsError;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IDBAccessObject;
 

@@ -13,12 +13,16 @@ use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
 use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\ActorStore;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use RuntimeException;
 use stdClass;
+use Wikimedia\IPUtils;
+use Wikimedia\NonSerializable\NonSerializableTrait;
+use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
@@ -27,12 +31,19 @@ use Wikimedia\Rdbms\IDBAccessObject;
  */
 class Event extends AbstractEntity implements Bundleable {
 
+	// We only use PHP serialization for event_extra arrays, but not for whole Event objects.
+	// Disallow using it to prevent mistakes.
+	use NonSerializableTrait;
+
+	/**
+	 * Index in the `extra` array that defines a list of recipients stored as an array of user_ids
+	 */
+	public const RECIPIENTS_IDX = 'recipients';
+
 	/** @var string|null */
 	protected $type = null;
 	/** @var int|null|false */
 	protected $id = null;
-	/** @var string|null */
-	protected $variant = null;
 	/**
 	 * @var User|null
 	 */
@@ -73,7 +84,7 @@ class Event extends AbstractEntity implements Bundleable {
 	/**
 	 * Other events bundled with this one
 	 *
-	 * @var Event[]
+	 * @var Event[]|null
 	 */
 	protected $bundledEvents;
 
@@ -83,6 +94,9 @@ class Event extends AbstractEntity implements Bundleable {
 	 * @var int
 	 */
 	protected $deleted = 0;
+
+	/** For use in tests */
+	public static bool $alwaysInsert = false;
 
 	/**
 	 * You should not call the constructor.
@@ -94,19 +108,6 @@ class Event extends AbstractEntity implements Bundleable {
 	protected function __construct() {
 	}
 
-	## Save the id and timestamp
-	public function __sleep() {
-		if ( !$this->id ) {
-			throw new RuntimeException( "Unable to serialize an uninitialized Event" );
-		}
-
-		return [ 'id', 'timestamp' ];
-	}
-
-	public function __wakeup() {
-		$this->loadFromID( $this->id );
-	}
-
 	public function __toString() {
 		return "Event(id={$this->id}; type={$this->type})";
 	}
@@ -115,9 +116,8 @@ class Event extends AbstractEntity implements Bundleable {
 	 * Creates an Event object
 	 * @param array $info Named arguments:
 	 * type (required): The event type;
-	 * variant: A variant of the type;
-	 * agent: The user who caused the event;
-	 * title: The page on which the event was triggered;
+	 * agent: The user who caused the event (UserIdentity);
+	 * title: The page on which the event was triggered (PageIdentity);
 	 * extra: Event-specific extra information (e.g. post content, delay time, root job params).
 	 *
 	 * Delayed jobs extra params:
@@ -145,9 +145,6 @@ class Event extends AbstractEntity implements Bundleable {
 			return false;
 		}
 
-		$obj = new Event;
-		static $validFields = [ 'type', 'variant', 'agent', 'title', 'extra' ];
-
 		if ( empty( $info['type'] ) ) {
 			throw new InvalidArgumentException( "'type' parameter is mandatory" );
 		}
@@ -156,13 +153,27 @@ class Event extends AbstractEntity implements Bundleable {
 			return false;
 		}
 
+		$obj = new self();
 		$obj->id = false;
-		$obj->timestamp = $info['timestamp'] ?? wfTimestampNow();
-		foreach ( $validFields as $field ) {
-			if ( isset( $info[$field] ) ) {
-				$obj->$field = $info[$field];
+		$obj->type = $info['type'];
+		$obj->extra = $info['extra'] ?? [];
+		if ( isset( $info['agent'] ) ) {
+			try {
+				$obj->setAgent( $info['agent'] );
+			} catch ( NormalizedException $e ) {
+				// TODO: when no errors are logged in production, remove this and let the exception happen
+				LoggerFactory::getInstance( 'Echo' )->error(
+					$e->getNormalizedMessage(),
+					[ 'exception' => $e ] + $e->getMessageContext()
+				);
+				return false;
 			}
 		}
+		if ( isset( $info['title'] ) ) {
+			// This may modify $obj->extra as well
+			$obj->setTitle( $info['title'] );
+		}
+		$obj->timestamp = $info['timestamp'] ?? wfTimestampNow();
 
 		// If the extra size is more than 50000 bytes, that means there is
 		// probably a problem with the design of this notification type.
@@ -174,23 +185,8 @@ class Event extends AbstractEntity implements Bundleable {
 			return false;
 		}
 
-		if ( $obj->title ) {
-			if ( !$obj->title instanceof Title ) {
-				throw new InvalidArgumentException( 'Invalid title parameter' );
-			}
-			$obj->setTitle( $obj->title );
-		}
-
-		if ( $obj->agent ) {
-			if ( !$obj->agent instanceof UserIdentity ) {
-				throw new InvalidArgumentException( "Invalid user parameter" );
-			}
-
-			// RevisionStore returns UserIdentityValue now, convert to User for passing to hooks.
-			if ( !$obj->agent instanceof User ) {
-				$obj->agent = $services->getUserFactory()->newFromUserIdentity( $obj->agent );
-			}
-		}
+		// Temporary measure - Verify if object could be serialized with JsonCodec @see T325703
+		$obj->logWhenExtraIsNotJsonSerializable();
 
 		$hookRunner = new HookRunner( $services->getHookContainer() );
 		if ( !$hookRunner->onBeforeEchoEventInsert( $obj ) ) {
@@ -198,18 +194,13 @@ class Event extends AbstractEntity implements Bundleable {
 		}
 
 		// @Todo - Database insert logic should not be inside the model
-		$obj->insert();
-
-		$hookRunner->onEventInsertComplete( $obj );
+		if ( self::$alwaysInsert ) {
+			$obj->insert();
+		}
 
 		global $wgEchoUseJobQueue;
 
 		NotificationController::notify( $obj, $wgEchoUseJobQueue );
-
-		$stats = $services->getStatsdDataFactory();
-		$type = $info['type'];
-		$stats->increment( 'echo.event.all' );
-		$stats->increment( "echo.event.$type" );
 
 		return $obj;
 	}
@@ -221,7 +212,6 @@ class Event extends AbstractEntity implements Bundleable {
 	public function toDbArray() {
 		$data = [
 			'event_type' => $this->type,
-			'event_variant' => $this->variant,
 			'event_deleted' => $this->deleted,
 			'event_extra' => $this->serializeExtra()
 		];
@@ -251,12 +241,51 @@ class Event extends AbstractEntity implements Bundleable {
 	}
 
 	/**
+	 * Creates an Event from an array. The array should be output from ::toDbArray().
+	 *
+	 * @param array $data
+	 * @return self
+	 */
+	public static function newFromArray( $data ) {
+		$obj = new self();
+		if ( isset( $data['event_id'] ) ) {
+			$obj->id = $data['event_id'];
+		}
+		$obj->type = $data['event_type'];
+		$obj->extra = $data['event_extra'] ? self::deserializeExtra( $data['event_extra'] ) : [];
+		if ( isset( $data['event_page_id'] ) ) {
+			$obj->pageId = $data['event_page_id'];
+		}
+		$obj->deleted = $data['event_deleted'];
+
+		if ( $data['event_agent_id'] ?? 0 ) {
+			$obj->agent = User::newFromId( $data['event_agent_id'] );
+		} elseif ( isset( $data['event_agent_ip'] ) ) {
+			$obj->agent = User::newFromName( $data['event_agent_ip'], false );
+		}
+
+		return $obj;
+	}
+
+	/**
 	 * Check whether the echo event is an enabled event
-	 * @return bool
 	 */
 	public function isEnabledEvent(): bool {
 		global $wgEchoNotifications;
 		return isset( $wgEchoNotifications[$this->getType()] );
+	}
+
+	/**
+	 * Insert this event into the database if it hasn't been yet, and return its id.
+	 * Subsequent calls on this instance will not cause repeated insertion
+	 * and will always return the same id.
+	 * @return int
+	 */
+	public function acquireId() {
+		if ( !$this->id ) {
+			$this->insert();
+		}
+		return $this->id;
 	}
 
 	/**
@@ -276,6 +305,18 @@ class Event extends AbstractEntity implements Bundleable {
 				}
 			}
 		}
+
+		$services = MediaWikiServices::getInstance();
+		$hookRunner = new HookRunner( $services->getHookContainer() );
+		$hookRunner->onEventInsertComplete( $this );
+
+		$stats = $services->getStatsFactory()->withComponent( 'Echo' );
+		$type = $this->getType();
+		// TODO remove copyToStatsdAt once new dashboards are created, T359347
+		$stats->getCounter( 'event_all' )
+			->setLabel( 'event_type', $type )
+			->copyToStatsdAt( [ 'echo.event.all', "echo.event.$type" ] )
+			->increment();
 	}
 
 	/**
@@ -315,7 +356,6 @@ class Event extends AbstractEntity implements Bundleable {
 		$this->id = (int)$row->event_id;
 		$this->type = $row->event_type;
 
-		// If the object is loaded from __sleep(), timestamp should be already set
 		if ( !$this->timestamp ) {
 			if ( isset( $row->notification_timestamp ) ) {
 				$this->timestamp = wfTimestamp( TS_MW, $row->notification_timestamp );
@@ -323,10 +363,8 @@ class Event extends AbstractEntity implements Bundleable {
 				$this->timestamp = wfTimestampNow();
 			}
 		}
-
-		$this->variant = $row->event_variant;
 		try {
-			$this->extra = $row->event_extra ? unserialize( $row->event_extra ) : [];
+			$this->extra = $row->event_extra ? self::deserializeExtra( $row->event_extra ) : [];
 		} catch ( Exception $e ) {
 			// T73489: unserializing can fail for old notifications
 			LoggerFactory::getInstance( 'Echo' )->warning(
@@ -337,13 +375,44 @@ class Event extends AbstractEntity implements Bundleable {
 			);
 			return false;
 		}
+		array_walk_recursive(
+			$this->extra,
+			static function ( $value, $key ) use ( $row ) {
+				if ( $value instanceof \__PHP_Incomplete_Class ) {
+					// T388725: figure out what is causing those __PHP_Incomplete_Class instances
+					LoggerFactory::getInstance( 'Echo' )->warning(
+						'Unserializing of extra data partially failed for event {id} of type {type}',
+						[
+							'id' => $row->event_id,
+							'type' => $row->event_type,
+							'unserializable_data' => $row->event_extra,
+							'key' => $key,
+							'created_class' => var_export( $value, true ),
+						]
+					);
+				}
+			}
+		);
+
 		$this->pageId = $row->event_page_id;
 		$this->deleted = $row->event_deleted;
 
 		if ( $row->event_agent_id ) {
 			$this->agent = User::newFromId( (int)$row->event_agent_id );
 		} elseif ( $row->event_agent_ip ) {
-			$this->agent = User::newFromName( (string)$row->event_agent_ip, false );
+			// Due to an oversight, non-existing users could be inserted as IPs.
+			// This wouldn't cause problems if there wasn't the limit of 39 bytes for
+			// the database field, leading to silent truncation of long user names.
+			// Ignoring such entries and setting the agent to null could cause
+			// exceptions in presentation models, hence we accept the name if it's
+			// definitely not been truncated, otherwise return a fallback user.
+			if ( IPUtils::isValid( $row->event_agent_ip )
+				|| strlen( $row->event_agent_ip ) < 39
+			) {
+				$this->agent = User::newFromName( $row->event_agent_ip, false );
+			} else {
+				$this->agent = User::newFromName( ActorStore::UNKNOWN_USER_NAME, false );
+			}
 		}
 
 		// Lazy load the title from getTitle() so that we can do a batch-load
@@ -384,7 +453,6 @@ class Event extends AbstractEntity implements Bundleable {
 		// Copy over the attribute
 		$this->id = $event->id;
 		$this->type = $event->type;
-		$this->variant = $event->variant;
 		$this->extra = $event->extra;
 		$this->pageId = $event->pageId;
 		$this->agent = $event->agent;
@@ -425,10 +493,51 @@ class Event extends AbstractEntity implements Bundleable {
 	}
 
 	/**
+	 * The `extra` array is serialized with php serialization mechanism which can lead into severe
+	 * problems when deserializing and also can cause code injection vulnerability. Before we
+	 * switch to JsonCodec, we need to verify if the extra can be serialized with JsonCodec.
+	 *
+	 * This is temporary measure and should be removed when we switch to JsonCodec
+	 * @see T325703
+	 *
+	 * @return void
+	 */
+	private function logWhenExtraIsNotJsonSerializable(): void {
+		if ( $this->extra === null ) {
+			return;
+		}
+		$jsonCodec = MediaWikiServices::getInstance()->getJsonCodec();
+		$path = $jsonCodec->detectNonSerializableData( $this->extra, true );
+		if ( $path !== null ) {
+			LoggerFactory::getInstance( 'Echo' )->warning(
+				'Event Type {type} has non JsonCodec serializable value in extra: {path}', [
+					'path' => $path,
+					'type' => $this->getType()
+				]
+			);
+		}
+	}
+
+	/**
+	 * Since 1.45 Echo stores `extra` as JSON, to be backwards compatible we still support
+	 * deserialization in both formats - JSON, and the legacy php unserialize
+	 *
+	 * @param string $serialized
+	 * @return array
+	 */
+	private static function deserializeExtra( string $serialized ) {
+		if ( str_starts_with( $serialized, '{' ) || str_starts_with( $serialized, '[' ) ) {
+			$codec = MediaWikiServices::getInstance()->getJsonCodec();
+			return $codec->deserialize( $serialized );
+		}
+		return $serialized ? unserialize( $serialized ) : [];
+	}
+
+	/**
 	 * Serialize the extra data for event
 	 * @return string|null
 	 */
-	public function serializeExtra() {
+	private function serializeExtra() {
 		if ( is_array( $this->extra ) || is_object( $this->extra ) ) {
 			$extra = serialize( $this->extra );
 		} elseif ( $this->extra === null ) {
@@ -503,13 +612,6 @@ class Event extends AbstractEntity implements Bundleable {
 	 */
 	public function getType() {
 		return $this->type;
-	}
-
-	/**
-	 * @return string|null
-	 */
-	public function getVariant() {
-		return $this->variant;
 	}
 
 	/**
@@ -640,29 +742,48 @@ class Event extends AbstractEntity implements Bundleable {
 		return true;
 	}
 
+	/**
+	 * @param string|null $type
+	 */
 	public function setType( $type ) {
 		$this->type = $type;
 	}
 
-	public function setVariant( $variant ) {
-		$this->variant = $variant;
+	public function setAgent( UserIdentity $agentIdent ) {
+		if ( !$agentIdent->isRegistered() && !IPUtils::isValid( $agentIdent->getName() ) ) {
+			throw new NormalizedException(
+				'Invalid IP agent: {username} for event type {event_type}',
+				[
+					'username' => $agentIdent->getName(),
+					'event_type' => $this->type,
+				]
+			);
+		}
+
+		$services = MediaWikiServices::getInstance();
+		$this->agent = $services->getUserFactory()->newFromUserIdentity( $agentIdent );
 	}
 
-	public function setAgent( User $agent ) {
-		$this->agent = $agent;
-	}
+	public function setTitle( PageIdentity $page ) {
+		$services = MediaWikiServices::getInstance();
+		$this->title = $services->getTitleFactory()->newFromPageIdentity( $page );
 
-	public function setTitle( Title $title ) {
-		$this->title = $title;
-		$pageId = $title->getArticleID();
+		// Use Title::getArticleId() instead of PageIdentity::getId() in order to allow special pages
+		// as the target titles. This is used by e.g. AbuseFilter and GrowthExperiments.
+		// TODO: Should that be disallowed?
+		$pageId = $this->title->getArticleId();
 		if ( $pageId ) {
 			$this->pageId = $pageId;
 		} else {
-			$this->extra['page_title'] = $title->getDBkey();
-			$this->extra['page_namespace'] = $title->getNamespace();
+			$this->extra['page_title'] = $this->title->getDBkey();
+			$this->extra['page_namespace'] = $this->title->getNamespace();
 		}
 	}
 
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 */
 	public function setExtra( $name, $value ) {
 		$this->extra[$name] = $value;
 	}
@@ -716,7 +837,7 @@ class Event extends AbstractEntity implements Bundleable {
 		$this->bundledEvents = $events;
 	}
 
-	public function getBundledEvents() {
+	public function getBundledEvents(): ?array {
 		return $this->bundledEvents;
 	}
 
@@ -757,7 +878,6 @@ class Event extends AbstractEntity implements Bundleable {
 		return [
 			'event_id',
 			'event_type',
-			'event_variant',
 			'event_agent_id',
 			'event_agent_ip',
 			'event_extra',

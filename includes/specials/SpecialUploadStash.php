@@ -21,20 +21,21 @@
 namespace MediaWiki\Specials;
 
 use Exception;
-use File;
-use HttpError;
-use LocalRepo;
+use MediaWiki\Exception\HttpError;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\UnregisteredLocalFile;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\UploadStashPager;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Utils\UrlUtils;
-use RepoGroup;
 use SpecialUploadStashTooLargeException;
-use UnregisteredLocalFile;
 use UploadStash;
 use UploadStashBadPathException;
 use UploadStashFileNotFoundException;
@@ -74,12 +75,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 */
 	private const MAX_SERVE_BYTES = 1_048_576; // 1 MiB
 
-	/**
-	 * @param RepoGroup $repoGroup
-	 * @param HttpRequestFactory $httpRequestFactory
-	 * @param UrlUtils $urlUtils
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct(
 		RepoGroup $repoGroup,
 		HttpRequestFactory $httpRequestFactory,
@@ -273,7 +268,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		// If a thumb proxy is set up for the repo, we favor that, as that will
 		// keep the request internal
 		$thumbProxyUrl = $file->getRepo()->getThumbProxyUrl();
-		if ( strlen( $thumbProxyUrl ) ) {
+		if ( $thumbProxyUrl !== null ) {
 			$scalerThumbUrl = $thumbProxyUrl . 'temp/' . $file->getUrlRel() .
 				'/' . rawurlencode( $scalerThumbName );
 			$secret = $file->getRepo()->getThumbProxySecret();
@@ -292,7 +287,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 
 			$scalerThumbUrl = $scalerBaseUrl . '/' . $file->getUrlRel() .
 				'/' . rawurlencode( $scalerThumbName );
-			$secret = false;
+			$secret = null;
 		}
 
 		// make an http request based on wgUploadStashScalerBaseUrl to lazy-create
@@ -304,7 +299,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		$req = $this->httpRequestFactory->create( $scalerThumbUrl, $httpOptions, __METHOD__ );
 
 		// Pass a secret key shared with the proxied service if any
-		if ( strlen( $secret ) ) {
+		if ( $secret !== null ) {
 			$req->setHeader( 'X-Swift-Secret', $secret );
 		}
 
@@ -439,7 +434,10 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		);
 		if ( $pager->getNumRows() ) {
 			$pager->getForm();
-			$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
+			$this->getOutput()->addParserOutputContent(
+				$pager->getFullOutput(),
+				ParserOptions::newFromContext( $this->getContext() )
+			);
 			$form->displayForm( $formResult );
 			$this->getOutput()->addHTML( Html::rawElement( 'p', [], $refreshHtml ) );
 		} else {

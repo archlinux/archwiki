@@ -748,19 +748,21 @@ ve.ui.MWGalleryDialog.prototype.onSearchResultsChoose = function ( item ) {
  * Handle click event for the remove button
  */
 ve.ui.MWGalleryDialog.prototype.onRemoveItem = function () {
+	const removedItemIndex = this.galleryGroup.items.indexOf( this.highlightedItem );
 	// Remove the highlighted item
 	this.galleryGroup.removeItems( [ this.highlightedItem ] );
 
 	// Highlight another item, or show the search panel if the gallery is now empty
-	this.onHighlightItem();
+	this.onHighlightItem( undefined, removedItemIndex !== -1 ? removedItemIndex : undefined );
 };
 
 /**
  * Handle clicking on an image in the menu
  *
  * @param {ve.ui.MWGalleryItemWidget} [item] The item that was clicked on
+ * @param {number} [removedItemIndex] Index of just-removed item
  */
-ve.ui.MWGalleryDialog.prototype.onHighlightItem = function ( item ) {
+ve.ui.MWGalleryDialog.prototype.onHighlightItem = function ( item, removedItemIndex ) {
 	// Unhighlight previous item
 	if ( this.highlightedItem ) {
 		this.highlightedItem.toggleHighlighted( false );
@@ -771,8 +773,15 @@ ve.ui.MWGalleryDialog.prototype.onHighlightItem = function ( item ) {
 	this.toggleSearchPanel( false );
 
 	// Highlight new item.
-	// If no item was given, highlight the first item in the gallery.
-	item = item || this.galleryGroup.items[ 0 ];
+	if ( removedItemIndex !== undefined ) {
+		// The removed item might have been the last item in the list, in which
+		// case highlight the new last item.
+		const index = Math.min( removedItemIndex, this.galleryGroup.items.length - 1 );
+		item = this.galleryGroup.items[ index ];
+	} else if ( !item ) {
+		// If no item was given, highlight the first item in the gallery.
+		item = this.galleryGroup.items[ 0 ];
+	}
 
 	if ( !item ) {
 		// Show the search panel if the gallery is empty

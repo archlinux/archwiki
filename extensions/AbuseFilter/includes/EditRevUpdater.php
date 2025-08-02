@@ -4,10 +4,10 @@ namespace MediaWiki\Extension\AbuseFilter;
 
 use InvalidArgumentException;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\Rdbms\LBFactory;
-use WikiPage;
 
 /**
  * This service allows "linking" the edit filter hook and the page save hook

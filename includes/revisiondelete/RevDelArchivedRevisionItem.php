@@ -28,29 +28,22 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class RevDelArchivedRevisionItem extends RevDelArchiveItem {
 
-	/** @var IConnectionProvider */
-	protected IConnectionProvider $connectionProvider;
+	protected IConnectionProvider $dbProvider;
 
 	/**
 	 * @param RevisionListBase $list
 	 * @param stdClass $row
-	 * @param IConnectionProvider $connectionProvider
+	 * @param IConnectionProvider $dbProvider
 	 */
-	public function __construct( RevisionListBase $list, stdClass $row, IConnectionProvider $connectionProvider ) {
-		$this->connectionProvider = $connectionProvider;
+	public function __construct( RevisionListBase $list, stdClass $row, IConnectionProvider $dbProvider ) {
+		$this->dbProvider = $dbProvider;
 		parent::__construct( $list, $row );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getIdField(): string {
 		return 'ar_rev_id';
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getId(): int {
 		return $this->getRevisionRecord()->getId();
 	}
@@ -60,7 +53,7 @@ class RevDelArchivedRevisionItem extends RevDelArchiveItem {
 	 * @return bool
 	 */
 	public function setBits( $bits ): bool {
-		$dbw = $this->connectionProvider->getPrimaryDatabase();
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$dbw->newUpdateQueryBuilder()
 			->update( 'archive' )
 			->set( [ 'ar_deleted' => $bits ] )

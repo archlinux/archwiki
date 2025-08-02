@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
@@ -44,14 +45,18 @@ class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
 
 		$parserCache = $this->parserCache ?: $this->installParserCache();
 
+		$pool = $this->getServiceContainer()->getPoolCounterFactory()->create(
+			'ArticleView',
+			'test:' . $rev->getId()
+		);
 		return new PoolWorkArticleViewCurrent(
-			'test:' . $rev->getId(),
+			$pool,
 			$page,
 			$rev,
 			$options,
 			$this->getServiceContainer()->getRevisionRenderer(),
 			$parserCache,
-			$this->getServiceContainer()->getConnectionProvider(),
+			$this->getServiceContainer()->getDBLoadBalancerFactory(),
 			$this->getServiceContainer()->getChronologyProtector(),
 			$this->getLoggerSpi(),
 			$this->getServiceContainer()->getWikiPageFactory()
@@ -116,7 +121,7 @@ class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
 		// The parser output cached but $work2 should now be also visible to $work1
 		$status1 = $work1->getCachedWork();
 		$this->assertInstanceOf( ParserOutput::class, $status1->getValue() );
-		$this->assertSame( $status2->getValue()->getText(), $status1->getValue()->getText() );
+		$this->assertSame( $status2->getValue()->getRawText(), $status1->getValue()->getRawText() );
 	}
 
 	public function testFallbackFromOutdatedParserCache() {

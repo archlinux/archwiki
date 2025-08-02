@@ -1,5 +1,21 @@
 # Changelog
 
+## v5.2.1
+
+Fixed:
+* Fix un-parenthesized nested operation via a variable (Hannah Okwelum) [T386074](https://phabricator.wikimedia.org/T386074)
+* Faster Less_Visitor_joinSelector by skipping Declaration blocks (ubermanu)
+
+## v5.2.0
+
+Added:
+* Add support for BrianHenryIE/strauss codemod in Less_Visitor (Stefan Warnat)
+
+Fixed:
+* Fix "PHP Warning: Undefined array key currentUri" when using `@import (inline)` (tck) [T380641](https://phabricator.wikimedia.org/T380641)
+* Fix "Implicit conversion from float to int" PHP 8.1 warning when using `hsv()` (Peter Knut)
+* Less_Visitor: Faster class mapping in `visitObj`  by using inline cache (Thiemo Kreuz)
+
 ## v5.1.2
 
 Fixed:

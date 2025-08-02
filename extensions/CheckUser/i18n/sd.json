@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Indus Asia",
+			"Mehtab ahmed",
+			"Tweety"
+		]
+	},
+	"group-checkuser": "واپرائيندڙ چڪاسڪار",
+	"group-temporary-account-viewer": "عارضي کاتن جي آئپي ڏسندڙ",
+	"right-checkuser-temporary-account": "عارضي کاتن پاران استعمال ٿيندڙ آئپي پتا ڏسو",
+	"action-checkuser-temporary-account": "عارضي کاتن پاران استعمال ٿيندڙ آئپي پتا ڏسو",
+	"checkuser-target": "آئپي پتو يا واپرائيندڙنانءُ:",
+	"checkuser-month": "گذريل 30 ڏينھن",
+	"checkuser-all": "سڀ",
+	"checkuser-check-this-user": "هن واپرائيندڙ کي چڪاسيو",
+	"checkuser-investigate-indicator-logs": "لاگس",
+	"checkuser-investigate-duration-option-all": "سڀ",
+	"checkuser-investigate-duration-option-2w": "گذريل 2 ھفتا",
+	"checkuser-investigate-preliminary-table-header-editcount": "سنوارون",
+	"checkuser-investigate-preliminary-table-header-groups": "گروھَ",
+	"checkuser-investigate-filters-legend": "ڇاڻيون",
+	"prefs-checkuser-tempaccount": "عارضي کاتن جون آئپي ظاھر ڪريو",
+	"checkuser-tempaccount-enable-preference": "عارضي کاتن جي آئپي پتن کي ظاھر ڪرڻ کي فعال ڪريو"
+}

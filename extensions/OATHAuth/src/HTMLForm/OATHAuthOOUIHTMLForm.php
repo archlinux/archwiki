@@ -138,5 +138,8 @@ abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm 
 	 */
 	abstract public function onSubmit( array $formData );
 
+	/**
+	 * @return void
+	 */
 	abstract public function onSuccess();
 }

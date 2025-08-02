@@ -16,6 +16,7 @@
 	"echo-category-title-login-success": "Aanmelding vanaf onbekend apparaat",
 	"echo-pref-tooltip-login-success": "Meld mij wanneer iemand zich met mijn account aanmeldt vanaf een onbekend apparaat en IP-adres.",
 	"loginnotify-primary-link": "Hulp",
+	"loginnotify-unknown-ip": "U hebt geprobeerd u aan te melden vanaf een onbekend IP-adres, en {{SITENAME}} is momenteel zo ingesteld dat het aanmelden vanaf onbekende IP-adressen wordt geblokkeerd.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Mislukte aanmeldingspoging|Meerdere mislukte aanmeldingspogingen}} op {{SITENAME}} als $1",
 	"notification-loginnotify-login-success-email-subject": "Er is aangemeld op {{SITENAME}} als $1 vanaf een apparaat dat {{GENDER:$1|u}} niet recentelijk hebt gebruikt",
 	"notification-header-login-success": "Iemand (waarschijnlijk {{GENDER:$1|u}}) heeft zich recentelijk vanaf een nieuw apparaat bij uw account aangemeld. Als u dit zelf was, kunt u dit bericht negeren. Als u dit niet was, dan raden wij u aan uw wachtwoord te veranderen en de activiteit van uw account te controleren.",

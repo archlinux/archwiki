@@ -42,33 +42,9 @@ class MetaHandler extends DOMHandler {
 		if ( $property ) {
 			preg_match( '#^mw\:PageProp/(.*)$#D', $property, $switchType );
 			if ( $switchType ) {
-				$out = $switchType[1];
-				$cat = preg_match( '/^(?:category)?(.*)/', $out, $catMatch );
-				if ( $cat && (
-					// Need this b/c support while RESTBase has Parsoid HTML
-					// in storage with meta tags for these.
-					// Can be removed as part of T335843
-					$catMatch[1] === 'defaultsort' || $catMatch[1] === 'displaytitle'
-				) ) {
-					$contentInfo = $state->serializer->serializedAttrVal( $node, 'content' );
-					if ( WTUtils::hasExpandedAttrsType( $node ) ) {
-						$out = '{{' . $contentInfo['value'] . '}}';
-					} elseif ( isset( $dp->src ) ) {
-						$colon = strpos( $dp->src, ':', 2 );
-						$out = preg_replace( '/^([^:}]+).*$/D', "$1", $dp->src, 1 );
-						if ( ( $colon === false ) && ( $contentInfo['value'] === '' ) ) {
-							$out .= '}}';
-						} else {
-							$out .= ':' . $contentInfo['value'] . '}}';
-						}
-					} else {
-						$magicWord = mb_strtoupper( $catMatch[1] );
-						$out = '{{' . $magicWord . ':' . $contentInfo['value'] . '}}';
-					}
-				} else {
-					$out = $state->getEnv()->getSiteConfig()->getMagicWordWT(
-						$switchType[1], $dp->magicSrc ?? '' );
-				}
+				$out = $state->getEnv()->getSiteConfig()->getMagicWordWT(
+					$switchType[1], $dp->magicSrc ?? ''
+				);
 				$state->emitChunk( $out, $node );
 			} else {
 				( new FallbackHTMLHandler )->handle( $node, $state );
@@ -78,13 +54,14 @@ class MetaHandler extends DOMHandler {
 			if ( $this->needToWriteStartMeta( $state, $node ) ) {
 				$datamw = DOMDataUtils::getDataMw( $node );
 				$attrs = "";
-				if ( isset( $datamw->attrs ) ) {
-					foreach ( get_object_vars( $datamw->attrs ) as $k => $v ) {
-						if ( $v === "" ) {
-							$attrs .= ' ' . $k;
-						} else {
-							$attrs .= ' ' . $k . '="' . $v . '"';
-						}
+				foreach ( ( $datamw->getExtAttribs() ?? [] ) as $k => $v ) {
+					// numeric $k will get converted to int by PHP when
+					// they are used as array keys
+					$k = (string)$k;
+					if ( $v === "" ) {
+						$attrs .= ' ' . $k;
+					} else {
+						$attrs .= ' ' . $k . '="' . $v . '"';
 					}
 				}
 				// Follow-up on attributes sanitation to happen in T295168
@@ -160,8 +137,10 @@ class MetaHandler extends DOMHandler {
 				// deleted or modified, we emit _now_ so that we don't risk losing it. The range
 				// stays extended in the round-tripped version of the wikitext.
 				$nextdiffdata = DOMDataUtils::getDataParsoidDiff( $nextContentSibling );
-				if ( DiffUtils::isDiffMarker( $nextContentSibling ) ||
-					( $nextdiffdata->diff ?? null ) ) {
+				if (
+					DiffUtils::isDiffMarker( $nextContentSibling ) ||
+					( $nextdiffdata && !$nextdiffdata->isEmpty() )
+				) {
 					return true;
 				}
 
@@ -193,7 +172,7 @@ class MetaHandler extends DOMHandler {
 
 				if (
 					DiffUtils::isDiffMarker( $prevElementSibling ) ||
-					( $prevdiffdata !== null && $prevdiffdata->diff !== null )
+					( $prevdiffdata && !$prevdiffdata->isEmpty() )
 				) {
 					return true;
 				}

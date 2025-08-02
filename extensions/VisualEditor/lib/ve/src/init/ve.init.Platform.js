@@ -159,6 +159,15 @@ ve.init.Platform.prototype.getUserConfig = null;
 ve.init.Platform.prototype.setUserConfig = null;
 
 /**
+ * Determine whether we can store preferences
+ *
+ * @return {boolean}
+ */
+ve.init.Platform.prototype.canUseUserConfig = function () {
+	return true;
+};
+
+/**
  * Create a safe storage object
  *
  * @abstract
@@ -279,14 +288,6 @@ ve.init.Platform.prototype.getParsedMessage = null;
 ve.init.Platform.prototype.getUserLanguages = null;
 
 /**
- * Get a list of URL entry points where media can be found.
- *
- * @abstract
- * @return {string[]} API URLs
- */
-ve.init.Platform.prototype.getMediaSources = null;
-
-/**
  * Get a list of all language codes.
  *
  * @abstract
@@ -301,7 +302,7 @@ ve.init.Platform.prototype.getLanguageCodes = null;
  * @return {boolean} Language code is known
  */
 ve.init.Platform.prototype.hasLanguageCode = function ( code ) {
-	return this.getLanguageCodes().indexOf( code ) !== -1;
+	return this.getLanguageCodes().includes( code );
 };
 
 /**
@@ -330,6 +331,15 @@ ve.init.Platform.prototype.getLanguageAutonym = null;
  * @return {string} Language direction
  */
 ve.init.Platform.prototype.getLanguageDirection = null;
+
+/**
+ * Generate a unique ID
+ *
+ * @return {string}
+ */
+ve.init.Platform.prototype.generateUniqueId = function () {
+	return Math.random().toString( 36 ).slice( 2 );
+};
 
 /**
  * Initialize the platform. The default implementation is to do nothing and return a resolved

@@ -17,7 +17,7 @@ class InputWidget extends Widget {
 	/**
 	 * Input element.
 	 *
-	 * @var Tag
+	 * @var Tag|null
 	 */
 	protected $input;
 
@@ -134,7 +134,7 @@ class InputWidget extends Widget {
 	/** @inheritDoc */
 	public function setDisabled( $disabled ) {
 		parent::setDisabled( $disabled );
-		if ( isset( $this->input ) ) {
+		if ( $this->input !== null ) {
 			if ( $this->isDisabled() ) {
 				$this->input->setAttributes( [ 'disabled' => 'disabled' ] );
 			} else {

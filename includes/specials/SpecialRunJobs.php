@@ -20,13 +20,13 @@
 
 namespace MediaWiki\Specials;
 
-use HttpStatus;
-use JobRunner;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\TransactionRoundDefiningUpdate;
+use MediaWiki\JobQueue\JobRunner;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
+use Wikimedia\Http\HttpStatus;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
@@ -41,10 +41,6 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 	private JobRunner $jobRunner;
 	private ReadOnlyMode $readOnlyMode;
 
-	/**
-	 * @param JobRunner $jobRunner
-	 * @param ReadOnlyMode $readOnlyMode
-	 */
 	public function __construct(
 		JobRunner $jobRunner,
 		ReadOnlyMode $readOnlyMode

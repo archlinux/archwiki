@@ -39,7 +39,7 @@ ve.ui.MWCategoryWidget = function VeUiMWCategoryWidget( config ) {
 	this.normalizedTitles = {};
 	this.popup = new ve.ui.MWCategoryPopupWidget();
 	this.input = new ve.ui.MWCategoryInputWidget( this, { $overlay: config.$overlay } );
-	this.forceCapitalization = mw.config.get( 'wgCaseSensitiveNamespaces' ).indexOf( categoryNamespace ) === -1;
+	this.forceCapitalization = !mw.config.get( 'wgCaseSensitiveNamespaces' ).includes( categoryNamespace );
 	this.categoryPrefix = mw.config.get( 'wgFormattedNamespaces' )[ categoryNamespace ] + ':';
 	this.expandedItem = null;
 

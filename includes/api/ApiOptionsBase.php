@@ -53,9 +53,6 @@ abstract class ApiOptionsBase extends ApiBase {
 	/** @var string[]|null */
 	private $prefsKinds;
 
-	/** @var array */
-	private $params;
-
 	public function __construct(
 		ApiMain $main,
 		string $action,
@@ -260,8 +257,6 @@ abstract class ApiOptionsBase extends ApiBase {
 	/**
 	 * Load the user from the primary to reduce CAS errors on double post (T95839)
 	 * Will throw if the user is anonymous.
-	 *
-	 * @return User
 	 */
 	protected function getUserForUpdates(): User {
 		// @phan-suppress-next-line PhanTypeMismatchReturnNullable
@@ -306,7 +301,7 @@ abstract class ApiOptionsBase extends ApiBase {
 	/**
 	 * Reset preferences of the specified kinds
 	 *
-	 * @param string[] $kinds One or more types returned by UserOptionsManager::listOptionKinds() or 'all'
+	 * @param string[] $kinds One or more types returned by PreferencesFactory::listResetKinds() or 'all'
 	 */
 	abstract protected function resetPreferences( array $kinds );
 

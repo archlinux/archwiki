@@ -16,19 +16,19 @@ class RegistrationCallback {
 			$wgAbuseFilterActionRestrictions, $wgAbuseFilterLocallyDisabledGlobalActions;
 
 		// @todo Remove this in a future release (added in 1.33)
-		if ( isset( $wgAbuseFilterProfile ) || isset( $wgAbuseFilterProfiling ) ) {
+		if ( $wgAbuseFilterProfile !== null || $wgAbuseFilterProfiling !== null ) {
 			wfWarn( '$wgAbuseFilterProfile and $wgAbuseFilterProfiling have been removed and ' .
 				'profiling is now enabled by default.' );
 		}
 
-		if ( isset( $wgAbuseFilterPrivateLog ) ) {
+		if ( $wgAbuseFilterPrivateLog !== null ) {
 			global $wgAbuseFilterLogPrivateDetailsAccess;
 			$wgAbuseFilterLogPrivateDetailsAccess = $wgAbuseFilterPrivateLog;
 			wfWarn( '$wgAbuseFilterPrivateLog has been renamed to $wgAbuseFilterLogPrivateDetailsAccess. ' .
 				'Please make the change in your settings; the format is identical.'
 			);
 		}
-		if ( isset( $wgAbuseFilterForceSummary ) ) {
+		if ( $wgAbuseFilterForceSummary !== null ) {
 			global $wgAbuseFilterPrivateDetailsForceReason;
 			$wgAbuseFilterPrivateDetailsForceReason = $wgAbuseFilterForceSummary;
 			wfWarn( '$wgAbuseFilterForceSummary has been renamed to ' .
@@ -60,7 +60,7 @@ class RegistrationCallback {
 		}
 
 		// @todo Remove this in a future release (added in 1.36)
-		if ( isset( $wgAbuseFilterDisallowGlobalLocalBlocks ) ) {
+		if ( $wgAbuseFilterDisallowGlobalLocalBlocks !== null ) {
 			wfWarn( '$wgAbuseFilterDisallowGlobalLocalBlocks has been removed and replaced by ' .
 				'$wgAbuseFilterLocallyDisabledGlobalActions. You can now specify which actions to disable. ' .
 				'If you had set the former to true, you should set to true all of the actions in ' .
@@ -83,7 +83,7 @@ class RegistrationCallback {
 		}
 
 		// @todo Remove this in a future release (added in 1.36)
-		if ( isset( $wgAbuseFilterRestrictions ) ) {
+		if ( $wgAbuseFilterRestrictions !== null ) {
 			wfWarn( '$wgAbuseFilterRestrictions has been renamed to $wgAbuseFilterActionRestrictions.' );
 			$wgAbuseFilterActionRestrictions = $wgAbuseFilterRestrictions;
 		}

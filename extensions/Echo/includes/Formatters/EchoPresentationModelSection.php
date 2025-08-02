@@ -127,7 +127,7 @@ class EchoPresentationModelSection {
 	/**
 	 * Get truncated section title, according to user's language.
 	 * You should only call this if EchoPresentationModelSection::exists returns true.
-	 * @return string
+	 * @return string|false
 	 */
 	public function getTruncatedSectionTitle() {
 		return $this->language->embedBidi( $this->language->truncateForVisual(

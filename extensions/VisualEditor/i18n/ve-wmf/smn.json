@@ -6,13 +6,13 @@
 			"Trondtr"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaallâš hammim]]",
+	"tag-visualeditor": "Visuaallâš hammim",
 	"tag-visualeditor-description": "Nubástus rahtui [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuaallâš editoráin]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaallâš hammim: Täärhist]]",
+	"tag-visualeditor-needcheck": "Visuaallâš hammim: Täärhist",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaallâš editoráin]] rahtum hammim, mast systeem huámmášij máhđulávt tátuhánnáá šoddâm nubástusâid wikiteevstâst.",
 	"tag-visualeditor-wikitext": "2017 wikiteevstâ hammim",
 	"tag-visualeditor-wikitext-description": "Hämmejum ive 2017 wikiteevstâ editoráin",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaallâš hammim: molsom]]",
+	"tag-visualeditor-switched": "Visuaallâš hammim: molsom",
 	"tag-visualeditor-switched-description": "Kevttee hammiiškuođij visuaallâš editoráin, talle molsoi wikitekstâ editorân.",
 	"visualeditor-feedback-link": "Project:Visuaallâš editor/Macâttâs",
 	"visualeditor-feedback-tool": "Addel taan ohjelmist macâttâs",

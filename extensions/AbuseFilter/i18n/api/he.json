@@ -55,5 +55,6 @@
 	"apierror-abusefilter-cantcheck": "אין לך הרשאה לבדוק את התחביר של מסנני השחתות.",
 	"apierror-abusefilter-canteval": "אין לך הרשאה להעריך ביטויי מסנן השחתות.",
 	"apierror-abusefilter-nosuchlogid": "אין רשומה ביומן ההשחתות עם המזהה $1.",
+	"apierror-abusefilter-incompatible": "מסנן ההשחתות אינו תומך בשינוי המבוקש.",
 	"apierror-abusefilter-badsyntax": "המסנן מכיל תחביר בלתי־תקין."
 }

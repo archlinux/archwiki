@@ -138,6 +138,7 @@ class MathMathMLCli extends MathMathML {
 		return $res;
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		if ( $this->getLastError() ) {
 			return false;

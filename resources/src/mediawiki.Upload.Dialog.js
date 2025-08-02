@@ -189,9 +189,7 @@
 	 */
 	mw.Upload.Dialog.prototype.getSetupProcess = function ( data ) {
 		return mw.Upload.Dialog.super.prototype.getSetupProcess.call( this, data )
-			.next( function () {
-				return this.uploadBooklet.initialize();
-			}, this );
+			.next( () => this.uploadBooklet.initialize() );
 	};
 
 	/**
@@ -199,8 +197,6 @@
 	 * @inheritdoc
 	 */
 	mw.Upload.Dialog.prototype.getActionProcess = function ( action ) {
-		const dialog = this;
-
 		if ( action === 'upload' ) {
 			return new OO.ui.Process( this.uploadBooklet.uploadFile() );
 		}
@@ -209,7 +205,7 @@
 		}
 		if ( action === 'insert' ) {
 			return new OO.ui.Process( () => {
-				dialog.close( dialog.upload );
+				this.close( this.upload );
 			} );
 		}
 		if ( action === 'cancel' ) {
@@ -228,8 +224,8 @@
 	 */
 	mw.Upload.Dialog.prototype.getTeardownProcess = function ( data ) {
 		return mw.Upload.Dialog.super.prototype.getTeardownProcess.call( this, data )
-			.next( function () {
+			.next( () => {
 				this.uploadBooklet.clear();
-			}, this );
+			} );
 	};
 }() );

@@ -177,6 +177,11 @@ ve.init.mw.Platform.prototype.setUserConfig = function ( keyOrValueMap, value ) 
 	}
 };
 
+/**
+ * @inheritdoc
+ */
+ve.init.mw.Platform.prototype.canUseUserConfig = mw.user.isNamed;
+
 ve.init.mw.Platform.prototype.createLocalStorage = function () {
 	return this.createConflictableStorage( mw.storage );
 };
@@ -314,7 +319,7 @@ ve.init.mw.Platform.prototype.fetchSpecialCharList = function () {
 			characters[ groupName ] = {
 				label: mw.msg( 'special-characters-group-' + groupName ),
 				symbols: this.processSpecialCharSymbols( groupObject ),
-				attributes: { dir: rtlGroups.indexOf( groupName ) !== -1 ? 'rtl' : 'ltr' }
+				attributes: { dir: rtlGroups.includes( groupName ) ? 'rtl' : 'ltr' }
 			};
 		} );
 

@@ -26,8 +26,11 @@
 		}
 	}
 
+	// FIXME: Remove these styles when Codex removes the checkbox hack in favor of details/summary T333394
 	.vector-dropdown-checkbox:active + .vector-dropdown-label {
 		&.cdx-button--action-progressive.cdx-button--weight-quiet {
+			color: @color-inverted-fixed;
+
 			.vector-icon {
 				filter: brightness( 0 ) invert( 1 );
 			}

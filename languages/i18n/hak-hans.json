@@ -175,6 +175,7 @@
 	"emailuser": "電郵聯繫邇隻用戶",
 	"emailmessage": "消息",
 	"emailsend": "發送",
+	"emailccme": "發送吾消息嘅一份副本到吾電郵信箱",
 	"emailccsubject": "汝發送分$1嘅消息副本：$2",
 	"emailsent": "電子郵件已發送",
 	"emailsenttext": "汝嘅電子郵件已經發出。",

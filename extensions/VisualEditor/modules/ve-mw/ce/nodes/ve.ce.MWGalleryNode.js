@@ -67,6 +67,10 @@ ve.ce.MWGalleryNode.static.primaryCommandName = 'gallery';
  * Handle model update events.
  */
 ve.ce.MWGalleryNode.prototype.onUpdate = function () {
+	if ( !this.model ) {
+		// onUpdate is debounced, so check the node still exists
+		return;
+	}
 	const mwAttrs = this.model.getAttribute( 'mw' ).attrs;
 	const defaults = mw.config.get( 'wgVisualEditorConfig' ).galleryOptions;
 	const mode = mwAttrs.mode || defaults.mode;

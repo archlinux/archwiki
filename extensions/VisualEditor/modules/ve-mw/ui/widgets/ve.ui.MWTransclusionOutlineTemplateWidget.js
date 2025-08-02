@@ -431,7 +431,7 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.filterParameters = function 
 
 		const foundSomeMatch = placesToSearch.some(
 			// Aliases missed validation for a long time and aren't guaranteed to be strings
-			( term ) => term && typeof term === 'string' && term.toLowerCase().indexOf( query ) !== -1
+			( term ) => term && typeof term === 'string' && term.toLowerCase().includes( query )
 		);
 
 		item.toggle( foundSomeMatch );

@@ -14,7 +14,7 @@ function LinkTypeField() {
 	this.radioExt = new OO.ui.RadioOptionWidget( {
 		label: mw.msg( 'wikieditor-toolbar-tool-link-ext' )
 	} );
-	var radioSelect = new OO.ui.RadioSelectWidget( {
+	const radioSelect = new OO.ui.RadioSelectWidget( {
 		items: [
 			this.radioInt,
 			this.radioExt
@@ -24,7 +24,7 @@ function LinkTypeField() {
 		choose: this.onRadioChoose
 	} );
 
-	var config = {
+	const config = {
 		align: 'top',
 		classes: [ 'mw-wikiEditor-InsertLink-LinkTypeField' ]
 	};

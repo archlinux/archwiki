@@ -19,8 +19,13 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
+use ErrorPageError;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
+use MediaWiki\Extension\OATHAuth\IAuthKey;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUser;
@@ -29,14 +34,11 @@ use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
-use MWException;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\HtmlSnippet;
 use OOUI\LabelWidget;
 use OOUI\PanelLayout;
-use PermissionsError;
-use UserNotLoggedIn;
 
 class OATHManage extends SpecialPage {
 	public const ACTION_ENABLE = 'enable';
@@ -53,10 +55,7 @@ class OATHManage extends SpecialPage {
 	 */
 	protected $action;
 
-	/**
-	 * @var IModule|null
-	 */
-	protected $requestedModule;
+	protected ?IModule $requestedModule;
 
 	/**
 	 * Initializes a page to manage available 2FA modules
@@ -74,7 +73,6 @@ class OATHManage extends SpecialPage {
 
 		$this->userRepo = $userRepo;
 		$this->moduleRegistry = $moduleRegistry;
-		$this->authUser = $this->userRepo->findByUser( $this->getUser() );
 	}
 
 	/**
@@ -88,6 +86,8 @@ class OATHManage extends SpecialPage {
 	 * @param null|string $subPage
 	 */
 	public function execute( $subPage ) {
+		$this->authUser = $this->userRepo->findByUser( $this->getUser() );
+
 		$this->getOutput()->enableOOUI();
 		$this->getOutput()->disallowUserJs();
 		$this->setAction();
@@ -99,7 +99,7 @@ class OATHManage extends SpecialPage {
 			// Performing an action on a requested module
 			$this->clearPage();
 			if ( $this->shouldShowDisableWarning() ) {
-				$this->showDisableWarning();
+				$this->showDisableWarning( $this->requestedModule );
 				return;
 			}
 			$this->addModuleHTML( $this->requestedModule );
@@ -124,6 +124,14 @@ class OATHManage extends SpecialPage {
 	public function checkPermissions() {
 		$this->requireNamedUser();
 
+		if ( !$this->authUser->getCentralId() ) {
+			throw new ErrorPageError(
+				'oathauth-enable',
+				'oathauth-must-be-central',
+				[ $this->getUser()->getName() ]
+			);
+		}
+
 		$canEnable = $this->getUser()->isAllowed( 'oathauth-enable' );
 
 		if ( $this->action === static::ACTION_ENABLE && !$canEnable ) {
@@ -147,12 +155,24 @@ class OATHManage extends SpecialPage {
 
 	private function setModule(): void {
 		$moduleKey = $this->getRequest()->getVal( 'module', '' );
-		$this->requestedModule = $this->moduleRegistry->getModuleByKey( $moduleKey );
+		$this->requestedModule = ( $moduleKey && $this->moduleRegistry->moduleExists( $moduleKey ) )
+			? $this->moduleRegistry->getModuleByKey( $moduleKey )
+			: null;
 	}
 
 	private function addEnabledHTML(): void {
 		$this->addHeading( $this->msg( 'oathauth-ui-enabled-module' ) );
-		$this->addModuleHTML( $this->authUser->getModule() );
+
+		$modules = array_unique(
+			array_map(
+				static fn ( IAuthKey $key ) => $key->getModule(),
+				$this->authUser->getKeys(),
+			)
+		);
+
+		foreach ( $modules as $module ) {
+			$this->addModuleHTML( $this->moduleRegistry->getModuleByKey( $module ) );
+		}
 	}
 
 	private function addAlternativesHTML(): void {
@@ -180,14 +200,14 @@ class OATHManage extends SpecialPage {
 		)->parseAsBlock() );
 	}
 
-	private function addModuleHTML( ?IModule $module ): void {
-		if ( $module instanceof IModule && $this->isModuleRequested( $module ) ) {
+	private function addModuleHTML( IModule $module ): void {
+		if ( $this->isModuleRequested( $module ) ) {
 			$this->addCustomContent( $module );
 			return;
 		}
 
 		$panel = $this->getGenericContent( $module );
-		if ( $module instanceof IModule && $this->isModuleEnabled( $module ) ) {
+		if ( $this->isModuleEnabled( $module ) ) {
 			$this->addCustomContent( $module, $panel );
 		}
 
@@ -197,7 +217,7 @@ class OATHManage extends SpecialPage {
 	/**
 	 * Get the panel with generic content for a module
 	 */
-	private function getGenericContent( ?IModule $module ): PanelLayout {
+	private function getGenericContent( IModule $module ): PanelLayout {
 		$modulePanel = new PanelLayout( [
 			'framed' => true,
 			'expanded' => false,
@@ -209,16 +229,19 @@ class OATHManage extends SpecialPage {
 			'label' => $module->getDisplayName()->text()
 		] );
 		if ( $this->shouldShowGenericButtons() ) {
-			$enabled = $module && $this->isModuleEnabled( $module );
+			$enabled = $this->isModuleEnabled( $module );
+			$urlParams = [
+				'action' => $enabled ? static::ACTION_DISABLE : static::ACTION_ENABLE,
+				'module' => $module->getName(),
+			];
+			if ( $enabled ) {
+				$urlParams['warn'] = 1;
+			}
 			$button = new ButtonWidget( [
 				'label' => $this
 					->msg( $enabled ? 'oathauth-disable-generic' : 'oathauth-enable-generic' )
 					->text(),
-				'href' => $this->getOutput()->getTitle()->getLocalURL( [
-					'action' => $enabled ? static::ACTION_DISABLE : static::ACTION_ENABLE,
-					'module' => $module->getName(),
-					'warn' => 1
-				] )
+				'href' => $this->getOutput()->getTitle()->getLocalURL( $urlParams )
 			] );
 			$headerLayout->addItems( [ $button ] );
 		}
@@ -266,11 +289,12 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function isModuleEnabled( IModule $module ): bool {
-		$enabled = $this->authUser->getModule();
-		if ( !$enabled ) {
-			return false;
+		foreach ( $this->authUser->getKeys() as $key ) {
+			if ( $key->getModule() === $module->getName() ) {
+				return true;
+			}
 		}
-		return $enabled->getName() === $module->getName();
+		return false;
 	}
 
 	/**
@@ -356,45 +380,32 @@ class OATHManage extends SpecialPage {
 	private function shouldShowDisableWarning(): bool {
 		return $this->getRequest()->getBool( 'warn' ) &&
 			$this->requestedModule instanceof IModule &&
+			$this->action === static::ACTION_DISABLE &&
 			$this->authUser->isTwoFactorAuthEnabled();
 	}
 
-	private function showDisableWarning(): void {
+	private function showDisableWarning( IModule $module ): void {
 		$panel = new PanelLayout( [
 			'padded' => true,
 			'framed' => true,
 			'expanded' => false
 		] );
 
-		$isSwitch = $this->isSwitch();
-		$currentDisplayName = $this->authUser->getModule()->getDisplayName();
-		$newDisplayName = $this->requestedModule->getDisplayName();
-
-		$genericMessage = $isSwitch ?
-			$this->msg(
-				'oathauth-switch-method-warning',
-				$currentDisplayName,
-				$newDisplayName
-			) :
-			$this->msg( 'oathauth-disable-method-warning', $currentDisplayName );
+		$currentDisplayName = $module->getDisplayName();
 
 		$panel->appendContent( new HtmlSnippet(
-			$genericMessage->parseAsBlock()
+			$this->msg( 'oathauth-disable-method-warning', $currentDisplayName )->parseAsBlock()
 		) );
 
-		$customMessage = $this->authUser->getModule()->getDisableWarningMessage();
+		$customMessage = $module->getDisableWarningMessage();
 		if ( $customMessage instanceof Message ) {
 			$panel->appendContent( new HtmlSnippet(
 				$customMessage->parseAsBlock()
 			) );
 		}
 
-		$nextStepMessage = $isSwitch ?
-			$this->msg( 'oathauth-switch-method-next-step', $currentDisplayName, $newDisplayName ) :
-			$this->msg( 'oathauth-disable-method-next-step', $currentDisplayName );
-
 		$panel->appendContent( new HtmlSnippet(
-			$nextStepMessage->parseAsBlock()
+			$this->msg( 'oathauth-disable-method-next-step', $currentDisplayName )->parseAsBlock()
 		) );
 
 		$button = new ButtonWidget( [
@@ -407,18 +418,8 @@ class OATHManage extends SpecialPage {
 		] );
 		$panel->appendContent( $button );
 
-		$headerMessage = $isSwitch ?
-			$this->msg( 'oathauth-switch-method-warning-header' ) :
-			$this->msg( 'oathauth-disable-method-warning-header' );
-
-		$this->getOutput()->setPageTitleMsg( $headerMessage );
+		$this->getOutput()->setPageTitleMsg( $this->msg( 'oathauth-disable-method-warning-header' ) );
 		$this->getOutput()->addHTML( $panel->toString() );
-	}
-
-	private function isSwitch(): bool {
-		return $this->requestedModule instanceof IModule &&
-			$this->action === static::ACTION_ENABLE &&
-			$this->authUser->isTwoFactorAuthEnabled();
 	}
 
 }

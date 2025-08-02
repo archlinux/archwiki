@@ -32,6 +32,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\Xml\Xml;
 use Wikimedia\Http\HttpAcceptParser;
+use Wikimedia\Message\MessageValue;
 
 /**
  * Handler for generating an OpenSearch description document.
@@ -184,10 +185,19 @@ class OpenSearchDescriptionHandler extends Handler {
 		return 'application/opensearchdescription+xml';
 	}
 
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		$spec['200']['content']['application/opensearchdescription+xml']['schema']['type'] = 'string';
+
+		return $spec;
+	}
+
 	public function getParamSettings() {
 		return [
 			'ctype' => [
 				self::PARAM_SOURCE => 'query',
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-opensearch-ctype' ),
 			]
 		];
 	}

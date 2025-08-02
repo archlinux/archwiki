@@ -12,8 +12,6 @@
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> aazihen-paya angangan a kese mungangaw saca kalungangan caay kalucek.",
 	"cite_error_ref_too_many_keys": "la’cusay <code>&lt;ref&gt;</code> aazihen-paya, la’cusay name susin sulyang, hakay kalungangan tadatanayu’.",
 	"cite_error_ref_no_input": "la’cusay <code>&lt;ref&gt;</code> aazihen-paya, inayi’ ku name susin sa kanca izaway aazihen-paya lacul",
-	"cite_error_references_no_backlink_label": "pakuniza misanga’ mabelih masasiket aazihen-paya tatebanan nu nisulitan mahmintu. i [[MediaWiki:Cite references link many format backlink labels]] satetek yadahay a aazihen-paya tatebanan nu nisulitan.",
-	"cite_error_no_link_label_group": "luyaluy \"$1\" a pakuniza misanga’ masasiket  aazihen-paya tatebanan nu nisulitan mahemintu. pisatetek i [[MediaWiki:$2]] yadahay a aazihen-paya tatebanan nu nisulitan.",
 	"cite_error_references_no_text": "la’cusay <code>&lt;ref&gt;</code> aazihen-paya,\ncaay satetek kalungangan ku <code>$1</code> a miazih tu tatenga’ay nasulitan lacul sulit.",
 	"cite_error_included_ref": "caay kataneng <code>&lt;ref&gt;</code>aazihen-paya a pahezek aazihen-paya  <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "pisaungay luyaluy kalungangan \"$1\" a <code>&lt;ref&gt;</code> aazihen-paya mamueneng tu, caykatepa patatapalen a <code>&lt;references group=\"$1\"/&gt;</code> aazihen-paya，saca caay kataneng <code>&lt;/ref&gt;</code> pahezek aazihen-paya.",

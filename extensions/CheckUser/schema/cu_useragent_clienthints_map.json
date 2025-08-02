@@ -1,0 +1,29 @@
+[
+	{
+		"name": "cu_useragent_clienthints_map",
+		"columns": [
+			{
+				"name": "uachm_uach_id",
+				"comment": "Foreign key to cu_useragent_clienthints uach_id.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "uachm_reference_id",
+				"comment": "Foreign key to one of cu_changes, cu_log_event, or cu_private_event. Consult uachm_reference_type to determine which table this row relates to.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "uachm_reference_type",
+				"comment": "Integer mapping identifier specifying which table the data in this row relates to. See UserAgentClientHintsManager for the mapping.",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			}
+		],
+		"indexes": [
+			{ "name": "uachm_reference_id", "columns": [ "uachm_reference_id" ], "unique": false }
+		],
+		"pk": [ "uachm_uach_id", "uachm_reference_type", "uachm_reference_id" ]
+	}
+]

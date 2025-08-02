@@ -21,9 +21,6 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	 */
 	private $gadget;
 
-	/**
-	 * @param array $options
-	 */
 	public function __construct( array $options ) {
 		$this->id = $options['id'];
 	}
@@ -47,7 +44,6 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	}
 
 	/**
-	 * Overrides the function from RL\WikiModule class
 	 * @param RL\Context $context
 	 * @return array
 	 */
@@ -74,7 +70,6 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	}
 
 	/**
-	 * Overrides RL\WikiModule::getRequireKey()
 	 * @param string $titleText
 	 * @return string
 	 */
@@ -100,16 +95,13 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	}
 
 	/**
-	 * Overrides RL\WikiModule::isPackaged()
 	 * Returns whether this gadget is packaged.
-	 * @return bool
 	 */
 	public function isPackaged(): bool {
 		return $this->getGadget()->isPackaged();
 	}
 
 	/**
-	 * Overrides RL\Module::getDependencies()
 	 * @param RL\Context|null $context
 	 * @return string[] Names of resources this module depends on
 	 */
@@ -118,7 +110,6 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	}
 
 	/**
-	 * Overrides RL\WikiModule::getType()
 	 * @return string RL\Module::LOAD_STYLES or RL\Module::LOAD_GENERAL
 	 */
 	public function getType() {
@@ -127,18 +118,22 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 			: RL\Module::LOAD_GENERAL;
 	}
 
+	/** @inheritDoc */
 	public function getMessages() {
 		return $this->getGadget()->getMessages();
 	}
 
+	/** @inheritDoc */
 	public function getSkins(): ?array {
 		return $this->getGadget()->getRequiredSkins() ?: null;
 	}
 
+	/** @inheritDoc */
 	public function requiresES6(): bool {
 		return $this->getGadget()->requiresES6();
 	}
 
+	/** @inheritDoc */
 	public function getGroup() {
 		return $this->requiresES6() ? 'es6-gadget' : self::GROUP_SITE;
 	}

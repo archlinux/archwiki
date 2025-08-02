@@ -444,8 +444,14 @@
 				sectionKey += 'source';
 			}
 
-			$( '#ca-edit a' ).text( getTabMessage( key ) );
-			$( '.mw-editsection a' ).text( getTabMessage( sectionKey ) );
+			const fallbackSelector = function ( selector, fallback ) {
+				const $result = $( selector );
+				return $result.length > 0 ? $result : $( fallback );
+			};
+
+			// Depending on skin these might contain text nested in a span
+			fallbackSelector( '#ca-edit a span', '#ca-edit a' ).text( getTabMessage( key ) );
+			fallbackSelector( '.mw-editsection a span', '.mw-editsection a' ).text( getTabMessage( sectionKey ) );
 		}
 
 		mw.cookie.set( 'VEE', editor, { path: '/', expires: 30 * 86400, prefix: '' } );
@@ -755,6 +761,14 @@
 		// On dual-edit-tab wikis, the edit page must mean the user wants wikitext,
 		// unless following a redlink
 		if ( !mw.config.get( 'wgVisualEditorConfig' ).singleEditTab && !isRedLink ) {
+			return 'wikitext';
+		}
+		// Adding a new section is not supported in visual mode
+		if ( url.searchParams.get( 'section' ) === 'new' ) {
+			return 'wikitext';
+		}
+		// Force switched from VE
+		if ( url.searchParams.has( 'veswitched' ) ) {
 			return 'wikitext';
 		}
 
@@ -1300,6 +1314,16 @@
 		}
 	};
 
+	/**
+	 * Check if a URL doesn't contain any params which would prevent VE from loading, e.g. 'undo'
+	 *
+	 * @param {URL} editUrl
+	 * @return {boolean} URL contains no unsupported params
+	 */
+	function isSupportedEditPage( editUrl ) {
+		return configData.unsupportedEditParams.every( ( param ) => !editUrl.searchParams.has( param ) );
+	}
+
 	init.isSingleEditTab = conf.singleEditTab && tabPreference !== 'multi-tab';
 
 	// On a view page, extend the current URL so extra parameters are carried over
@@ -1338,11 +1362,14 @@
 		// If forced by the URL parameter, skip the namespace check (T221892) and preference check
 		( url.searchParams.get( 'veaction' ) === 'edit' || (
 			// Only in enabled namespaces
-			conf.namespaces.indexOf( new mw.Title( mw.config.get( 'wgRelevantPageName' ) ).getNamespaceId() ) !== -1 &&
+			conf.namespaces.includes( new mw.Title( mw.config.get( 'wgRelevantPageName' ) ).getNamespaceId() ) &&
 
 			// Enabled per user preferences
 			enabledForUser
 		) ) &&
+
+		// Only if the current page isn't using unsupported URL parameters
+		isSupportedEditPage( url ) &&
 
 		// Only for pages with a supported content model
 		Object.prototype.hasOwnProperty.call( conf.contentModels, mw.config.get( 'wgPageContentModel' ) )
@@ -1399,16 +1426,6 @@
 	}
 
 	/**
-	 * Check if a URL doesn't contain any params which would prevent VE from loading, e.g. 'undo'
-	 *
-	 * @param {URL} editUrl
-	 * @return {boolean} URL contains no unsupported params
-	 */
-	function isSupportedEditPage( editUrl ) {
-		return configData.unsupportedEditParams.every( ( param ) => !editUrl.searchParams.has( param ) );
-	}
-
-	/**
 	 * Get the edit mode for the given URL
 	 *
 	 * @param {URL} editUrl Edit URL
@@ -1424,7 +1441,7 @@
 			const mode = veactionToMode[ editUrl.searchParams.get( 'veaction' ) ] ||
 				// Always load VE visual mode if collabSession is set
 				( editUrl.searchParams.has( 'collabSession' ) ? 'visual' : null );
-			if ( mode && availableModes.indexOf( mode ) !== -1 ) {
+			if ( mode && availableModes.includes( mode ) ) {
 				return mode;
 			}
 		}

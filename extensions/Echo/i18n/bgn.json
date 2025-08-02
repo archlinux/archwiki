@@ -17,6 +17,7 @@
 	"echo-category-title-system": "{{PLURAL:$1|سیستیم}}",
 	"notifications": "نئ مئلوماتان",
 	"tooltip-pt-notifications-alert": "{{GENDER:|شمئ}} اخطاران",
+	"tooltip-pt-notifications": "شمی مئلوماتان",
 	"echo-specialpage": "اعلان‌هان",
 	"notification-link-text-view-message": "پیامئ دیستین",
 	"notification-link-text-view-page": "تاکدیمی دیستین",

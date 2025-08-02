@@ -37,7 +37,7 @@ ve.ui.MWReferenceSearchWidget = function VeUiMWReferenceSearchWidget( config ) {
 	this.getResults().connect( this, { choose: 'onChoose' } );
 
 	// FIXME: T375053 Should just be temporary to test some UI changes
-	if ( mw.config.get( 'wgCiteBookReferencing' ) ) {
+	if ( mw.config.get( 'wgCiteSubReferencing' ) ) {
 		this.$element.addClass( 've-ui-mwReferenceSearchReuseHacks' );
 	}
 };
@@ -168,13 +168,13 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchIndex = function () {
 
 			let $refContent;
 			// Make visible text, footnoteLabel and reference name searchable
-			let refText = ( footnoteLabel + ' ' + name ).toLowerCase();
+			let refText = footnoteLabel + ' ' + name;
 			const itemNode = groupRefs.getInternalModelNode( listKey );
 			if ( itemNode.length ) {
 				$refContent = new ve.ui.MWPreviewElement( itemNode, { useView: true } ).$element;
-				refText = $refContent.text().toLowerCase() + ' ' + refText;
+				refText = $refContent.text() + ' ' + refText;
 				// Make URLs searchable
-				$refContent.find( 'a[href]' ).each( ( k, element ) => {
+				$refContent.find( 'a[href]' ).each( ( _, element ) => {
 					refText += ' ' + element.getAttribute( 'href' );
 				} );
 			} else {
@@ -185,7 +185,7 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchIndex = function () {
 
 			return {
 				$refContent: $refContent,
-				searchableText: refText,
+				searchableText: refText.toLowerCase(),
 				// TODO: return a simple node
 				reference: ve.dm.MWReferenceModel.static.newFromReferenceNode( node ),
 				footnoteLabel: footnoteLabel,
@@ -267,7 +267,7 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchResults = function ( query ) 
 
 	for ( let i = 0; i < this.index.length; i++ ) {
 		const item = this.index[ i ];
-		if ( item.searchableText.indexOf( query ) >= 0 ) {
+		if ( item.searchableText.includes( query ) ) {
 			results.push(
 				new ve.ui.MWReferenceResultWidget( {
 					item: item,

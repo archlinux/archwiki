@@ -11,8 +11,6 @@
 	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> indak sah;\nparameter indak sah; mis. talampau panjang",
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> indak sah;\nrujuakan indak banamo harus ado isi",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> indak sah;\nindak buliah ado parameter.\nGunoan <code>&lt;references /&gt;</code>",
-	"cite_error_references_no_backlink_label": "Label pautan baliak habih. Cubo tambahkan di [[MediaWiki:Cite references link many format backlink labels]]",
-	"cite_error_no_link_label_group": "Label pautan untuak grup \"$1\" habih. Tantukan labiah lanjuik dalam [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Tag <code>&lt;ref&gt;</code> indak sah; \nindak ado teks untuak ref banamo <code>$1</code>",
 	"cite_error_included_ref": "Tag <code>&lt;ref&gt;</code> harus ditutuik jo <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Tag <code>&lt;ref&gt;</code> ado untuak grup banamo \"$1\", tapi indak ado <code>&lt;references group=\"$1\"/&gt;</code>",

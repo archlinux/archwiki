@@ -33,7 +33,6 @@ namespace Wikimedia\FileBackend;
 
 use InvalidArgumentException;
 use LockManager;
-use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use NullLockManager;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -43,6 +42,9 @@ use Shellbox\Command\BoxedCommand;
 use StatusValue;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\FileBackend\FSFile\TempFSFileFactory;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -137,6 +139,8 @@ abstract class FileBackend implements LoggerAwareInterface {
 	private $obResetFunc;
 	/** @var callable */
 	private $headerFunc;
+	/** @var callable */
+	private $asyncHandler;
 	/** @var array Option map for use with HTTPFileStreamer */
 	protected $streamerOptions;
 	/** @var callable|null */
@@ -198,6 +202,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 	 *   - obResetFunc : alternative callback to clear the output buffer
 	 *   - streamMimeFunc : alternative method to determine the content type from the path
 	 *   - headerFunc : alternative callback for sending response headers
+	 *   - asyncHandler : callback for scheduling deferred updated
 	 *   - logger : Optional PSR logger object.
 	 *   - profiler : Optional callback that takes a section name argument and returns
 	 *      a ScopedCallback instance that ends the profile section in its destructor.
@@ -231,6 +236,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 		$this->obResetFunc = $config['obResetFunc']
 			?? [ self::class, 'resetOutputBufferTheDefaultWay' ];
 		$this->headerFunc = $config['headerFunc'] ?? 'header';
+		$this->asyncHandler = $config['asyncHandler'] ?? null;
 		$this->streamerOptions = [
 			'obResetFunc' => $this->obResetFunc,
 			'headerFunc' => $this->headerFunc,
@@ -255,12 +261,25 @@ abstract class FileBackend implements LoggerAwareInterface {
 		( $this->headerFunc )( $header );
 	}
 
+	/**
+	 * @param callable $update
+	 *
+	 * @return void
+	 */
+	protected function callNowOrLater( callable $update ) {
+		if ( $this->asyncHandler ) {
+			( $this->asyncHandler )( $update );
+		} else {
+			$update();
+		}
+	}
+
 	protected function resetOutputBuffer() {
 		// By default, this ends up calling $this->defaultOutputBufferReset
 		( $this->obResetFunc )();
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -1630,7 +1649,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 	final public static function extensionFromPath( $path, $case = 'lowercase' ) {
 		// This will treat a string starting with . as not having an extension, but store paths have
 		// to start with 'mwstore://', so "garbage in, garbage out".
-		$i = strrpos( $path ?? '', '.' );
+		$i = strrpos( $path, '.' );
 		$ext = $i ? substr( $path, $i + 1 ) : '';
 
 		if ( $case === 'lowercase' ) {
@@ -1670,7 +1689,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 		}
 		$parts[] = $type;
 
-		if ( strlen( $filename ) ) {
+		if ( $filename !== '' ) {
 			$parts[] = "filename*=UTF-8''" . rawurlencode( basename( $filename ) );
 		}
 
@@ -1713,15 +1732,18 @@ abstract class FileBackend implements LoggerAwareInterface {
 
 	/**
 	 * Yields the result of the status wrapper callback on either:
-	 *   - StatusValue::newGood() if this method is called without parameters
-	 *   - StatusValue::newFatal() with all parameters to this method if passed in
+	 *   - StatusValue::newGood(), if this method is called without a message
+	 *   - StatusValue::newFatal( ... ) with all parameters to this method, if a message was given
 	 *
-	 * @param mixed ...$args
+	 * @param null|string $message Message key
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return StatusValue
 	 */
-	final protected function newStatus( ...$args ) {
-		if ( count( $args ) ) {
-			$sv = StatusValue::newFatal( ...$args );
+	final protected function newStatus( $message = null, ...$params ) {
+		if ( $message !== null ) {
+			$sv = StatusValue::newFatal( $message, ...$params );
 		} else {
 			$sv = StatusValue::newGood();
 		}
@@ -1734,7 +1756,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 	 * @return StatusValue Modified status or StatusValue subclass
 	 */
 	final protected function wrapStatus( StatusValue $sv ) {
-		return $this->statusWrapper ? call_user_func( $this->statusWrapper, $sv ) : $sv;
+		return $this->statusWrapper ? ( $this->statusWrapper )( $sv ) : $sv;
 	}
 
 	/**

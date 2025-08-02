@@ -1,9 +1,13 @@
 <?php
 
+use MediaWiki\Skin\Skin;
+use MediaWiki\Skin\SkinException;
+use MediaWiki\Skin\SkinFactory;
+use MediaWiki\Skin\SkinFallback;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 
 /**
- * @covers \SkinFactory
+ * @covers \MediaWiki\Skin\SkinFactory
  */
 class SkinFactoryTest extends \MediaWikiUnitTestCase {
 	use DummyServicesTrait;
@@ -115,6 +119,18 @@ class SkinFactoryTest extends \MediaWikiUnitTestCase {
 		$this->assertEquals( [ 'foo'  => 'Skin 2' ], $factory->getInstalledSkins() );
 		$this->assertSame( $s2, $factory->makeSkin( 'foo' ) );
 		$this->assertSame( [ 'foo'  => 'Skin 2' ], $factory->getAllowedSkins(), 'not skipped' );
+	}
+
+	public function testGetSkinNames() {
+		$this->expectDeprecationAndContinue( '/SkinFactory::getSkinNames was deprecated in MediaWiki 1\.37/' );
+
+		$factory = $this->createSkinFactory();
+		$factory->register( 'skin1', 'Skin1', [] );
+		$factory->register( 'skin2', 'Skin2', [] );
+
+		$names = $factory->getSkinNames();
+		$this->assertEquals( 'Skin1', $names['skin1'] );
+		$this->assertEquals( 'Skin2', $names['skin2'] );
 	}
 
 	public function testGetAllowedSkins() {

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jeroen N",
+			"McDutchie",
+			"Siebrand"
+		]
+	},
+	"checkuser-noreason": "Je moet een reden opgeven voor deze zoekopdracht.",
+	"checkuser-temporary-accounts-onboarding-dialog-stepper-label": "$1 van $2",
+	"checkuser-rest-access-denied": "Je hebt geen rechten om de handeling uit te voeren",
+	"checkuser-rest-access-denied-blocked-user": "Je mag de handeling niet uitvoeren omdat je account is geblokkeerd"
+}

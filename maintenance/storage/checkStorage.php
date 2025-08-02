@@ -21,6 +21,7 @@
  * @ingroup Maintenance ExternalStorage
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Shell\Shell;
 use MediaWiki\User\User;
@@ -399,7 +400,12 @@ class CheckStorage extends Maintenance {
 		}
 	}
 
-	private function addError( $type, $msg, $ids ) {
+	/**
+	 * @param string $type
+	 * @param string $msg
+	 * @param int|int[] $ids
+	 */
+	private function addError( string $type, string $msg, $ids ) {
 		if ( is_array( $ids ) && count( $ids ) == 1 ) {
 			$ids = reset( $ids );
 		}
@@ -422,7 +428,7 @@ class CheckStorage extends Maintenance {
 		$this->errors[$type] += array_fill_keys( $revIds, true );
 	}
 
-	private function checkExternalConcatBlobs( $externalConcatBlobs ) {
+	private function checkExternalConcatBlobs( array $externalConcatBlobs ) {
 		if ( !count( $externalConcatBlobs ) ) {
 			return;
 		}
@@ -464,7 +470,7 @@ class CheckStorage extends Maintenance {
 		}
 	}
 
-	private function restoreText( $revIds, $xml ) {
+	private function restoreText( array $revIds, string $xml ) {
 		global $wgDBname;
 		$tmpDir = wfTempDir();
 

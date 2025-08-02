@@ -8,8 +8,8 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  * description: "text"
  * category: "Token Elements"
  */
-class MMLmtext extends MMLbase {
-	public function __construct( string $texclass = "", array $attributes = [] ) {
-		parent::__construct( "mtext", $texclass, $attributes );
+class MMLmtext extends MMLleaf {
+	public function __construct( string $texclass = "", array $attributes = [], string $text = "" ) {
+		parent::__construct( "mtext", $texclass, $attributes, $text );
 	}
 }

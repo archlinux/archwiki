@@ -20,7 +20,7 @@
 
 namespace MediaWiki\LinkedData;
 
-use HttpError;
+use MediaWiki\Exception\HttpError;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\WebRequest;
@@ -98,7 +98,7 @@ class PageDataRequestHandler {
 
 		if ( $title === null || $title === '' ) {
 			// TODO: different error message?
-			throw new HttpError( 400, wfMessage( 'pagedata-bad-title', $title ) );
+			throw new HttpError( 400, wfMessage( 'pagedata-bad-title', (string)$title ) );
 		}
 
 		try {

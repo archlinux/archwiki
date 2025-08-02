@@ -43,7 +43,6 @@
 
 namespace Wikimedia\FileBackend;
 
-use MapCacheLRU;
 use Shellbox\Command\BoxedCommand;
 use Shellbox\Shellbox;
 use StatusValue;
@@ -53,6 +52,7 @@ use Wikimedia\FileBackend\FileIteration\FSFileBackendFileList;
 use Wikimedia\FileBackend\FileOpHandle\FSFileOpHandle;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -145,7 +145,7 @@ class FSFileBackend extends FileBackendStore {
 
 	protected function resolveContainerPath( $container, $relStoragePath ) {
 		// Check that container has a root directory
-		if ( isset( $this->containerPaths[$container] ) || isset( $this->basePath ) ) {
+		if ( isset( $this->containerPaths[$container] ) || $this->basePath !== null ) {
 			// Check for sensible relative paths (assume the base paths are OK)
 			if ( $this->isLegalRelPath( $relStoragePath ) ) {
 				return $relStoragePath;
@@ -184,7 +184,7 @@ class FSFileBackend extends FileBackendStore {
 	protected function containerFSRoot( $shortCont, $fullCont ) {
 		if ( isset( $this->containerPaths[$shortCont] ) ) {
 			return $this->containerPaths[$shortCont];
-		} elseif ( isset( $this->basePath ) ) {
+		} elseif ( $this->basePath !== null ) {
 			return "{$this->basePath}/{$fullCont}";
 		}
 

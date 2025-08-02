@@ -10,13 +10,13 @@
 			"ViDam"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuális szerkesztés]]",
+	"tag-visualeditor": "Vizuális szerkesztés",
 	"tag-visualeditor-description": "A szerkesztés a [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizuális szerkesztővel]] készült.",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuális szerkesztés: Ellenőrizendő]]",
+	"tag-visualeditor-needcheck": "Vizuális szerkesztés: Ellenőrizendő",
 	"tag-visualeditor-needcheck-description": "A szerkesztés a [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizuális szerkesztővel]] készült, és a rendszer észlelte, hogy a wikiszövegben nem kívánt módosítások történhettek.",
 	"tag-visualeditor-wikitext": "2017-es forrásszöveg-szerkesztő",
 	"tag-visualeditor-wikitext-description": "A 2017-es forrásszöveg-szerkesztővel végzett szerkesztések",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuális szerkesztés: Átváltott]]",
+	"tag-visualeditor-switched": "Vizuális szerkesztés: Átváltott",
 	"tag-visualeditor-switched-description": "A felhasználó a vizuális szerkesztővel kezdett el szerkeszteni, majd átváltott a wikiszöveg-szerkesztőre.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Visszajelzés",
 	"visualeditor-feedback-tool": "Visszajelzés erről a szoftverről",

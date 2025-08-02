@@ -23,10 +23,12 @@
 namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -40,11 +42,8 @@ use Wikimedia\Rdbms\IResultWrapper;
  * @author Brian Wolff
  */
 class SpecialListDuplicatedFiles extends QueryPage {
+	private int $migrationStage;
 
-	/**
-	 * @param IConnectionProvider $dbProvider
-	 * @param LinkBatchFactory $linkBatchFactory
-	 */
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory
@@ -52,6 +51,9 @@ class SpecialListDuplicatedFiles extends QueryPage {
 		parent::__construct( 'ListDuplicatedFiles' );
 		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
+		$this->migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
 	}
 
 	public function isExpensive() {
@@ -67,22 +69,37 @@ class SpecialListDuplicatedFiles extends QueryPage {
 	 *
 	 * A cheaper (but less useful) version of this
 	 * query would be to not care how many duplicates a
-	 * particular file has, and do a self-join on image table.
+	 * particular file has, and do a self-join on image or file table.
 	 * However this version should be no more expensive then
 	 * Special:MostLinked, which seems to get handled fine
 	 * with however we are doing cached special pages.
 	 * @return array
 	 */
 	public function getQueryInfo() {
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			$tables = [ 'image' ];
+			$nameField = 'img_name';
+			$hashField = 'img_sha1';
+			$conds = [];
+			$joins = [];
+		} else {
+			$tables = [ 'file', 'filerevision' ];
+			$nameField = 'file_name';
+			$hashField = 'fr_sha1';
+			$conds = [ 'file_deleted' => 0 ];
+			$joins = [ 'filerevision' => [ 'JOIN', 'file_latest = fr_id' ] ];
+		}
 		return [
-			'tables' => [ 'image' ],
+			'tables' => $tables,
 			'fields' => [
 				'namespace' => NS_FILE,
-				'title' => 'MIN(img_name)',
+				'title' => "MIN($nameField)",
 				'value' => 'count(*)'
 			],
+			'conds' => $conds,
+			'join_conds' => $joins,
 			'options' => [
-				'GROUP BY' => 'img_sha1',
+				'GROUP BY' => $hashField,
 				'HAVING' => 'count(*) > 1',
 			],
 		];

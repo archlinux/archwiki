@@ -21,6 +21,8 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -129,7 +131,7 @@ TEXT
 		}
 	}
 
-	protected function doWork( $mode ) {
+	protected function doWork( string $mode ) {
 		$this->output( "Finding up to {$this->getBatchSize()} drifted rows " .
 			"greater than cat_id {$this->minimumId}...\n" );
 

@@ -2,12 +2,17 @@
 	"name": "DiscussionTools",
 	"license-name": "MIT",
 	"version": "0.0.0",
+	"author": [
+		"Bartosz Dziewoński",
+		"Ed Sanders",
+		"David Lynch"
+	],
 	"url": "https://www.mediawiki.org/wiki/Extension:DiscussionTools",
 	"namemsg": "discussiontools",
 	"descriptionmsg": "discussiontools-desc",
 	"manifest_version": 2,
 	"requires": {
-		"MediaWiki": ">= 1.43.0",
+		"MediaWiki": ">= 1.44",
 		"extensions": {
 			"VisualEditor": "*",
 			"Linter": "*"
@@ -533,7 +538,10 @@
 		"echo-subscriptions-email-dt-subscription": [
 			[
 				true,
-				[ "registered-after", "20240617000000" ]
+				[
+					"registered-after",
+					"20240617000000"
+				]
 			]
 		]
 	},

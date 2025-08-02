@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Don Alessandro"
+		]
+	},
+	"checkuser-global-contributions-link": "global isseler",
+	"checkuser-global-contributions-link-sidebar": "Global isseler",
+	"checkuser-global-contributions": "Global isselerni qıdıruv",
+	"checkuser-global-contributions-subtitle": "İsselerni körmek aqqıñız olğan bütün vikiler içün soñki {{PLURAL:$1|künden}} neticeler kösterile. Viki başına $2 netice ile sıñırlıdır.",
+	"checkuser-global-contributions-target-label": "Qullanıcı adı, IP adresi ve ya aralığı:",
+	"checkuser-global-contributions-target-placeholder": "Qullanıcı adı, IP adresi ve ya aralığı",
+	"checkuser-global-contributions-search-form-wrapper": "Global isselerni qıdıruv",
+	"checkuser-global-contributions-results-title": "$1 içün global isseler"
+}

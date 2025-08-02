@@ -31,7 +31,8 @@
 			"おはぐろ蜻蛉",
 			"ネイ",
 			"春春眠眠",
-			"Ryoya3"
+			"Ryoya3",
+			"YeBoy371"
 		]
 	},
 	"echo-desc": "イベントおよびメッセージについて、利用者に通知するシステム",
@@ -97,6 +98,7 @@
 	"notifications": "通知",
 	"tooltip-pt-notifications-alert": "{{GENDER:|あなた}}へのアラート",
 	"tooltip-pt-notifications-notice": "{{GENDER:|あなた}}への通知",
+	"tooltip-pt-notifications": "あなたへの通知",
 	"echo-displaynotificationsconfiguration": "通知の構成状況の表示",
 	"echo-displaynotificationsconfiguration-summary": "こちらは通知機能がこのウィキでどのように構成されているかの概観です。",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "分類別の通知",
@@ -201,6 +203,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|自身}}の編集",
 	"notification-link-text-view-edit": "編集内容を閲覧",
 	"notification-link-article-reminder": "ページを閲覧",
+	"notification-link-api-triggered": "ページを閲覧",
 	"notification-header-reverted": "{{PLURAL:$4|<strong>$3</strong> でのあなたの編集}}が{{GENDER:$2|差し戻されました}}",
 	"notification-header-emailuser": "$1 があなたにメールを{{GENDER:$2|送信しました}}。",
 	"notification-edit-talk-page-email-subject2": "{{SITENAME}}で $1 があなたのトークページにメッセージを{{GENDER:$2|投稿しました}}",

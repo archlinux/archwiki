@@ -8,29 +8,61 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
 abstract class InsertionMode {
 	use PropGuard;
 
-	/** @var TreeBuilder */
-	protected $builder;
-
-	/** @var Dispatcher */
-	protected $dispatcher;
+	protected TreeBuilder $builder;
+	protected Dispatcher $dispatcher;
 
 	public function __construct( TreeBuilder $builder, Dispatcher $dispatcher ) {
 		$this->builder = $builder;
 		$this->dispatcher = $dispatcher;
 	}
 
+	/**
+	 * A valid DOCTYPE token was found.
+	 *
+	 * @param string $name The doctype name, usually "html"
+	 * @param string $public The PUBLIC identifier
+	 * @param string $system The SYSTEM identifier
+	 * @param bool $quirks What the spec calls the "force-quirks flag"
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The length of the input which is consumed
+	 */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->builder->error( "unexpected doctype", $sourceStart );
 	}
 
+	/**
+	 * @param string $text The text of the comment
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The length of the input which is consumed
+	 */
 	public function comment( $text, $sourceStart, $sourceLength ) {
 		$this->builder->comment( null, $text, $sourceStart, $sourceLength );
 	}
 
+	/**
+	 * A parse error
+	 *
+	 * @param string $text An error message explaining in English what the
+	 *   author did wrong, and what the parser intends to do about the
+	 *   situation.
+	 * @param int $pos The input position at which the error occurred
+	 */
 	public function error( $text, $pos ) {
 		$this->builder->error( $text, $pos );
 	}
 
+	/**
+	 * @param bool $isStartOfToken
+	 * @param string $mask Match mask
+	 * @param string $text The text to insert is a substring of this string,
+	 *   with the start and length of the substring given by $start and
+	 *   $length. We do it this way to avoid unnecessary copying.
+	 * @param int $start The start of the substring
+	 * @param int $length The length of the substring
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The length of the input which is consumed
+	 * @return array
+	 */
 	protected function splitInitialMatch( $isStartOfToken, $mask, $text, $start, $length,
 		$sourceStart, $sourceLength
 	) {
@@ -61,6 +93,16 @@ abstract class InsertionMode {
 		];
 	}
 
+	/**
+	 * @param bool $inBody
+	 * @param string $text The text to insert is a substring of this string,
+	 *   with the start and length of the substring given by $start and
+	 *   $length. We do it this way to avoid unnecessary copying.
+	 * @param int $start The start of the substring
+	 * @param int $length The length of the substring
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The length of the input which is consumed
+	 */
 	protected function handleFramesetWhitespace( $inBody, $text, $start, $length,
 		$sourceStart, $sourceLength
 	) {
@@ -93,6 +135,16 @@ abstract class InsertionMode {
 		} while ( $length > 0 );
 	}
 
+	/**
+	 * @param callable $callback
+	 * @param string $text The text to insert is a substring of this string,
+	 *   with the start and length of the substring given by $start and
+	 *   $length. We do it this way to avoid unnecessary copying.
+	 * @param int $start The start of the substring
+	 * @param int $length The length of the substring
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The length of the input which is consumed
+	 */
 	protected function stripNulls( $callback, $text, $start, $length, $sourceStart, $sourceLength ) {
 		$errorOffset = $sourceStart - $start;
 		while ( $length > 0 ) {
@@ -111,12 +163,40 @@ abstract class InsertionMode {
 		}
 	}
 
+	/**
+	 * Insert characters.
+	 *
+	 * @param string $text The text to insert is a substring of this string,
+	 *   with the start and length of the substring given by $start and
+	 *   $length. We do it this way to avoid unnecessary copying.
+	 * @param int $start The start of the substring
+	 * @param int $length The length of the substring
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The length of the input which is consumed
+	 */
 	abstract public function characters( $text, $start, $length, $sourceStart, $sourceLength );
 
+	/**
+	 * @param string $name The tag name being ended
+	 * @param Attributes $attrs
+	 * @param bool $selfClose True if this is a self closing tag
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input position
+	 */
 	abstract public function startTag( $name, Attributes $attrs, $selfClose,
 		$sourceStart, $sourceLength );
 
+	/**
+	 * @param string $name The tag name being ended
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input position
+	 */
 	abstract public function endTag( $name, $sourceStart, $sourceLength );
 
+	/**
+	 * Called when parsing stops.
+	 *
+	 * @param int $pos The input string length, i.e. the past-the-end position.
+	 */
 	abstract public function endDocument( $pos );
 }

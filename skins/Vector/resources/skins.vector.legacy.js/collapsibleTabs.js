@@ -11,7 +11,6 @@
 function init() {
 	/** @type {boolean|undefined} */ let boundEvent;
 	const isRTL = document.documentElement.dir === 'rtl';
-	const rAF = window.requestAnimationFrame || setTimeout;
 
 	// Mark the tabs which can be collapsed under the more menu
 	// eslint-disable-next-line no-jquery/no-global-selector
@@ -43,12 +42,12 @@ function init() {
 		if ( !boundEvent ) {
 			boundEvent = true;
 			$( window ).on( 'resize', mw.util.debounce( () => {
-				rAF( $.collapsibleTabs.handleResize );
+				requestAnimationFrame( $.collapsibleTabs.handleResize );
 			}, 10 ) );
 		}
 
 		// call our resize handler to setup the page
-		rAF( $.collapsibleTabs.handleResize );
+		requestAnimationFrame( $.collapsibleTabs.handleResize );
 		// When adding new links, a resize should be triggered (T139830).
 		mw.hook( 'util.addPortletLink' ).add( $.collapsibleTabs.handleResize );
 		return this;
@@ -161,7 +160,7 @@ function init() {
 					$( this ).detach().prependTo( target ).data( 'collapsibleTabsSettings', outerData );
 					$( this ).attr( 'style', 'display: list-item;' );
 					collapsedContainerSettings.shifting = false;
-					rAF( $.collapsibleTabs.handleResize );
+					requestAnimationFrame( $.collapsibleTabs.handleResize );
 				} );
 		},
 		moveToExpanded: function ( $moving ) {
@@ -188,7 +187,7 @@ function init() {
 					.data( 'collapsibleTabsSettings', data )
 					.animate( { width: expandedWidth + 'px' }, 'normal', function () {
 						$( this ).attr( 'style', 'display: block;' );
-						rAF( () => {
+						requestAnimationFrame( () => {
 							// Update the 'expandedWidth' in case someone was brazen enough to
 							// change the tab's contents after the page load *gasp* (T71729). This
 							// doesn't prevent a tab from collapsing back and forth once, but at

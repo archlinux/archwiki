@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Push;
 
-use Job;
 use MediaWiki\Extension\Notifications\Services;
+use MediaWiki\JobQueue\Job;
 
 class NotificationRequestJob extends Job {
 

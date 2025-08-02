@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Liangent"
+		]
+	},
+	"checkuser-desc": "Ba korbaron ixtijoroti lozimiro baroi barrasiji nişonahoi internetī IP korbaron va ittilooti digar, içozat medihad",
+	"checkuser": "Bozrasiji korbar",
+	"checkuserlog": "BozrasiKorbar guzoriş",
+	"group-checkuser": "Bozrasiji korbaron",
+	"right-checkuser": "Barrasi kardani nişonai IP va digar ittilooti korbar",
+	"grouppage-checkuser": "{{ns:project}}:Bozrasiji korbar",
+	"checkuser-reason": "Sabab:",
+	"checkuser-query": "Çustuçūi taƣjiroti oxir",
+	"checkuser-users": "Fehrist kardani korbaron",
+	"checkuser-ips": "Fehrist kardani nişonahoi IP",
+	"checkuser-period": "Tūl:",
+	"checkuser-week-1": "hafta guzaşta",
+	"checkuser-week-2": "du haftai guzaşta",
+	"checkuser-month": "30 rūzi guzaşta",
+	"checkuser-all": "hama",
+	"checkuser-empty": "Guzoriş xolī ast.",
+	"checkuser-nomatch": "Mavride ki mutobiqat doşta boşad pajdo naşud",
+	"checkuser-nomatch-edits": "Heç mutobiqate joft naşud.\nOxirin viroiş dar $1 soati $2 bud.",
+	"checkuser-check": "Barrasi",
+	"checkuser-blocked": "Dastrasī qat' şud",
+	"checkuser-gblocked": "Bastaşuda sartosarī",
+	"checkuser-wasblocked": "Qablan basta şuda",
+	"checkuser-localonly": "Jakka naşuda",
+	"checkuser-massblock": "Korbaroni intixobşuda basta şavand",
+	"checkuser-search-submit": "Çustuçū",
+	"logentry-checkuser-private-event-autocreate-account": "ba tavri xudkor eçod şuda bud"
+}

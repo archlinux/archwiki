@@ -33,7 +33,6 @@ class PushNotifier {
 		$params = [ 'centralId' => $centralId ];
 		// below params are only needed for debug logging (T255068)
 		if ( $event !== null ) {
-			$params['eventId'] = $event->getId();
 			$params['eventType'] = $event->getType();
 			if ( $event->getAgent() !== null ) {
 				$params['agent'] = $event->getAgent()->getId();

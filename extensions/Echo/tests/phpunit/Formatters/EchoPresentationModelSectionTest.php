@@ -79,7 +79,6 @@ class EchoPresentationModelSectionTest extends MediaWikiIntegrationTestCase {
 		return Event::newFromRow( (object)array_merge( [
 			'event_id' => 12,
 			'event_type' => 'welcome',
-			'event_variant' => '1',
 			'event_page_id' => 1,
 			'event_deleted' => 0,
 			'event_agent_id' => $agent->getId(),

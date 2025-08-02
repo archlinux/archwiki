@@ -19,7 +19,7 @@ class Scribunto {
 	 */
 	public static function newEngine( $options ) {
 		if ( isset( $options['factory'] ) ) {
-			return call_user_func( $options['factory'], $options );
+			return $options['factory']( $options );
 		} else {
 			$class = $options['class'];
 			return new $class( $options );
@@ -60,7 +60,7 @@ class Scribunto {
 	 * @return ScribuntoEngineBase
 	 */
 	public static function getParserEngine( Parser $parser ) {
-		if ( !isset( $parser->scribunto_engine ) ) {
+		if ( $parser->scribunto_engine === null ) {
 			$parser->scribunto_engine = self::newDefaultEngine( [ 'parser' => $parser ] );
 			$parser->scribunto_engine->setTitle( $parser->getTitle() );
 		}
@@ -74,7 +74,7 @@ class Scribunto {
 	 * @return bool
 	 */
 	public static function isParserEnginePresent( Parser $parser ) {
-		return isset( $parser->scribunto_engine );
+		return $parser->scribunto_engine !== null;
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Scribunto {
 	 * @param Parser $parser
 	 */
 	public static function resetParserEngine( Parser $parser ) {
-		if ( isset( $parser->scribunto_engine ) ) {
+		if ( $parser->scribunto_engine !== null ) {
 			$parser->scribunto_engine->destroy();
 			$parser->scribunto_engine = null;
 		}

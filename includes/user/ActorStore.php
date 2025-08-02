@@ -20,10 +20,10 @@
 
 namespace MediaWiki\User;
 
-use CannotCreateActorException;
 use InvalidArgumentException;
 use MediaWiki\Block\HideUserUtils;
 use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\Exception\CannotCreateActorException;
 use MediaWiki\User\TempUser\TempUserConfig;
 use Psr\Log\LoggerInterface;
 use stdClass;
@@ -36,10 +36,10 @@ use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
- * Service for interacting with the actor table.
+ * Service to read or write data in the actor table.
  *
- * @package MediaWiki\User
  * @since 1.36
+ * @ingroup User
  */
 class ActorStore implements UserIdentityLookup, ActorNormalization {
 
@@ -225,11 +225,7 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 	}
 
 	/**
-	 * Find an actor by $name
-	 *
-	 * @param string $name
-	 * @param int $queryFlags one of IDBAccessObject constants
-	 * @return UserIdentity|null
+	 * @inheritDoc
 	 */
 	public function getUserIdentityByName(
 		string $name,
@@ -248,11 +244,7 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 	}
 
 	/**
-	 * Find an actor by $userId
-	 *
-	 * @param int $userId
-	 * @param int $queryFlags one of IDBAccessObject constants
-	 * @return UserIdentity|null
+	 * @inheritDoc
 	 */
 	public function getUserIdentityByUserId(
 		int $userId,
@@ -435,8 +427,9 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 			$actorId = $this->findActorIdInternal( $userName, $dbw, true );
 			if ( !$actorId ) {
 				throw new CannotCreateActorException(
-					"Failed to create actor ID for " .
-					"user_id={$userId} user_name=\"{$userName}\""
+					'Failed to create actor ID for ' .
+						'user_id={userId} user_name="{userName}"',
+					[ 'userId' => $userId, 'userName' => $userName ]
 				);
 			}
 		}
@@ -521,7 +514,8 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 			if ( $this->userNameUtils->isUsable( $userName ) || $existingActor->isRegistered() ) {
 				throw new CannotCreateActorException(
 					'Cannot replace user for existing actor: ' .
-					"actor_id=$existingActorId, new user_id=$userId"
+						'actor_id={existingActorId}, new user_id={userId}',
+					[ 'existingActorId' => $existingActorId, 'userId' => $userId ]
 				);
 			}
 		}
@@ -535,7 +529,8 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 		if ( !$dbw->affectedRows() ) {
 			throw new CannotCreateActorException(
 				'Failed to replace user for actor: ' .
-				"actor_id=$existingActorId, new user_id=$userId"
+					'actor_id={existingActorId}, new user_id={userId}',
+				[ 'existingActorId' => $existingActorId, 'userId' => $userId ]
 			);
 		}
 		$actorId = $dbw->insertId() ?: $existingActorId;
@@ -622,7 +617,8 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 			$userIdForErrorMessage = $user->getId( $this->wikiId );
 			throw new CannotCreateActorException(
 				'Cannot create an actor for a user with no name: ' .
-				"user_id={$userIdForErrorMessage} user_name=\"{$user->getName()}\""
+					'user_id={userId} user_name="{userName}"',
+				[ 'userId' => $userIdForErrorMessage, 'userName' => $user->getName() ]
 			);
 		}
 
@@ -630,7 +626,8 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 		if ( $userId === null && $this->userNameUtils->isUsable( $user->getName() ) ) {
 			throw new CannotCreateActorException(
 				'Cannot create an actor for a usable name that is not an existing user: ' .
-				"user_name=\"{$user->getName()}\""
+					'user_name="{userName}"',
+				[ 'userName' => $user->getName() ]
 			);
 		}
 
@@ -672,8 +669,6 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 	/**
 	 * Throws an exception if the given database connection does not belong to the wiki this
 	 * ActorStore is bound to.
-	 *
-	 * @param IReadableDatabase $db
 	 */
 	private function checkDatabaseDomain( IReadableDatabase $db ) {
 		$dbDomain = $db->getDomainID();
@@ -688,8 +683,6 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 	/**
 	 * In case all reasonable attempts of initializing a proper actor from the
 	 * database have failed, entities can be attributed to special 'Unknown user' actor.
-	 *
-	 * @return UserIdentity
 	 */
 	public function getUnknownActor(): UserIdentity {
 		$actor = $this->getUserIdentityByName( self::UNKNOWN_USER_NAME );
@@ -704,11 +697,7 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 	}
 
 	/**
-	 * Returns a specialized SelectQueryBuilder for querying the UserIdentity objects.
-	 *
-	 * @param IReadableDatabase|int $dbOrQueryFlags The database connection to perform the query on,
-	 *   or one of IDBAccessObject::READ_* constants.
-	 * @return UserSelectQueryBuilder
+	 * @inheritDoc
 	 */
 	public function newSelectQueryBuilder( $dbOrQueryFlags = IDBAccessObject::READ_NORMAL ): UserSelectQueryBuilder {
 		if ( $dbOrQueryFlags instanceof IReadableDatabase ) {
@@ -743,8 +732,6 @@ class ActorStore implements UserIdentityLookup, ActorNormalization {
 	/**
 	 * Emits a deprecation warning if $user does not belong to the
 	 * same wiki this store belongs to.
-	 *
-	 * @param UserIdentity $user
 	 */
 	private function deprecateInvalidCrossWikiParam( UserIdentity $user ) {
 		if ( $user->getWikiId() !== $this->wikiId ) {

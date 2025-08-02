@@ -59,9 +59,8 @@ class MathMLRdfBuilderTest extends MediaWikiIntegrationTestCase {
 			self::ACME_PREFIX_URL . self::ACME_REF . '> "<math',
 			$triples
 		);
-		$this->assertStringContainsString( '<mi>sin</mi>\n', $triples );
-		$this->assertStringContainsString( '<mn>2</mn>\n', $triples );
-		$this->assertStringContainsString( 'x^{2}', $triples );
+		$this->assertStringContainsString( '<mi>sin</mi>', $triples );
+		$this->assertStringContainsString( '<mn>2</mn>', $triples );
 		$this->assertStringContainsString( '^^<http://www.w3.org/1998/Math/MathML> .', $triples );
 	}
 

@@ -23,6 +23,7 @@ export function openVEForSourceEditingReferences( title, usesCitoid ) {
 	if ( usesCitoid ) {
 		waitForVECitoidToLoad();
 	}
+	cy.get( '.ve-ce-surface' ).click();
 }
 
 export function waitForVECiteToLoad() {
@@ -33,6 +34,9 @@ export function waitForVECiteToLoad() {
 
 export function waitForVECitoidToLoad() {
 	helpers.waitForModuleReady( 'ext.citoid.visualEditor' );
+	// FIXME: Fix application logic to only render once fully initialized.
+	// eslint-disable-next-line cypress/no-unnecessary-waiting
+	cy.wait( 1000 );
 }
 
 export function getVEFootnoteMarker( refName, sequenceNumber, index ) {
@@ -59,7 +63,7 @@ export function openVECiteReuseDialog() {
 	cy.get( '.ve-ui-toolbar .oo-ui-tool-name-reference-existing' ).click();
 }
 
-export function openVECiteoidReuseDialog() {
+export function openVECitoidReuseDialog() {
 	cy.get( '.ve-ui-toolbar-group-citoid' ).click();
 	// TODO: Sometimes enabling the tab does not work right away.
 	// eslint-disable-next-line cypress/no-unnecessary-waiting

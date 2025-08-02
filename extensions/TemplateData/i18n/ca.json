@@ -6,10 +6,10 @@
 			"Luckas",
 			"Macofe",
 			"Mguix",
+			"Paucabot",
 			"Qllach",
 			"Toniher",
-			"Vriullop",
-			"Paucabot"
+			"Vriullop"
 		]
 	},
 	"templatedata-desc": "Implementa emmagatzematge de dades pels paràmetres de plantilles (utilitzant JSON)",

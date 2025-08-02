@@ -80,8 +80,6 @@
 	"oathauth-disable-method-warning-button-label": "Kinnita ja jätka",
 	"oathauth-disable-method-warning": "Kui keelad kaheastmelise autentimise meetodi $1, siis ei saa sa seda enam sisselogimiseks kasutada ning kõik selle autentimismeetodiga seotud andmed kustutatakse.",
 	"oathauth-disable-method-next-step": "Järgmises sammus nõutakse, et autendid ennast praeguse kaheastmelise autentimise meetodi $1 abil, et see keelata.",
-	"oathauth-switch-method-warning-header": "Teisele autentimismeetodile üleminemise kinnitamine",
-	"oathauth-switch-method-warning": "Kui lähed üle kaheastmelise autentimise meetodile $2, siis praegune meetod ($1) keelatakse ning kõik praeguse autentimismeetodiga seotud andmed kustutatakse.",
 	"oathauth-totp-disable-warning": "Sa ei saa enam kasutada selle kontoga seotud autentimisseadet. Kõik selle kontoga seotud taastekoodid tunnistatakse kehtetuks.",
 	"notification-header-oathauth-disable": "{{GENDER:$2|Sinu konto}} kaheastmeline autentimine on keelatud.",
 	"notification-body-oathauth-disable": "Kui {{GENDER:$2|sa}} ei teinud seda ise, siis võib {{GENDER:$2|sinu konto}} turvalisus ohus olla.",

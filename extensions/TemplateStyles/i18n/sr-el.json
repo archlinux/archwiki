@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"templatestyles": "TemplateStyles",
+	"templatestyles-desc": "Primenjuje listove stilova po šablonu",
+	"templatestyles-invalid-src": "Nevažeći naslov za atribut <code>src</code> TemplateStyles-a.",
+	"templatestyles-invalid-wrapper": "Nevažeća vrednost za atribut <code>wrapper</code> Stilova šablona",
+	"templatestyles-bad-src-missing": "Stranica [[:$1|$2]] nema sadržaj.",
+	"templatestyles-bad-src": "Stranica [[:$1|$2]] mora da ima model sadržaja „{{int:content-model-sanitized-css}}” za TemplateStyles (trenutni model je „$3”).",
+	"content-model-sanitized-css": "pročišćeni CSS"
+}

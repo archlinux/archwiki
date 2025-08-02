@@ -28,7 +28,6 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
-use MediaWiki\Xml\Xml;
 
 /**
  * Special page lists various statistics, including the contents of
@@ -46,9 +45,6 @@ class SpecialStatistics extends SpecialPage {
 
 	private UserGroupManager $userGroupManager;
 
-	/**
-	 * @param UserGroupManager $userGroupManager
-	 */
 	public function __construct( UserGroupManager $userGroupManager ) {
 		parent::__construct( 'Statistics' );
 		$this->userGroupManager = $userGroupManager;
@@ -66,7 +62,7 @@ class SpecialStatistics extends SpecialPage {
 		$this->users = SiteStats::users();
 		$this->activeUsers = SiteStats::activeUsers();
 
-		$text = Xml::openElement( 'table', [ 'class' => 'wikitable mw-statistics-table' ] );
+		$text = Html::openElement( 'table', [ 'class' => [ 'wikitable', 'mw-statistics-table' ] ] );
 
 		# Statistic - pages
 		$text .= $this->getPageStats();
@@ -88,7 +84,7 @@ class SpecialStatistics extends SpecialPage {
 			$text .= $this->getOtherStats( $extraStats );
 		}
 
-		$text .= Xml::closeElement( 'table' );
+		$text .= Html::closeElement( 'table' );
 
 		# Customizable footer
 		$footer = $this->msg( 'statistics-footer' );
@@ -140,7 +136,7 @@ class SpecialStatistics extends SpecialPage {
 
 		$specialAllPagesTitle = SpecialPage::getTitleFor( 'Allpages' );
 		$pageStatsHtml = Html::rawElement( 'tr', [],
-			Xml::tags( 'th', [ 'colspan' => '2' ],
+			Html::rawElement( 'th', [ 'colspan' => '2' ],
 				$this->msg( 'statistics-header-pages' )->parse()
 			) ) .
 				$this->formatRow(
@@ -171,9 +167,9 @@ class SpecialStatistics extends SpecialPage {
 		return $pageStatsHtml;
 	}
 
-	private function getEditStats() {
+	private function getEditStats(): string {
 		return Html::rawElement( 'tr', [],
-			Xml::tags( 'th', [ 'colspan' => '2' ],
+			Html::rawElement( 'th', [ 'colspan' => '2' ],
 				$this->msg( 'statistics-header-edits' )->parse()
 			) ) .
 			$this->formatRow( $this->msg( 'statistics-edits' )->parse(),
@@ -187,9 +183,9 @@ class SpecialStatistics extends SpecialPage {
 			);
 	}
 
-	private function getUserStats() {
+	private function getUserStats(): string {
 		return Html::rawElement( 'tr', [],
-			Xml::tags( 'th', [ 'colspan' => '2' ],
+			Html::rawElement( 'th', [ 'colspan' => '2' ],
 				$this->msg( 'statistics-header-users' )->parse()
 			) ) .
 			$this->formatRow( $this->msg( 'statistics-users' )->parse() . ' ' .
@@ -213,7 +209,7 @@ class SpecialStatistics extends SpecialPage {
 			);
 	}
 
-	private function getGroupStats() {
+	private function getGroupStats(): string {
 		$linkRenderer = $this->getLinkRenderer();
 		$lang = $this->getLanguage();
 		$text = '';
@@ -309,7 +305,7 @@ class SpecialStatistics extends SpecialPage {
 	 */
 	private function formatRowHeader( $header ) {
 		return Html::rawElement( 'tr', [],
-			Xml::tags( 'th', [ 'colspan' => '2' ], $this->msg( $header )->parse() )
+			Html::rawElement( 'th', [ 'colspan' => '2' ], $this->msg( $header )->parse() )
 		);
 	}
 

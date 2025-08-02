@@ -1,9 +1,9 @@
 /* eslint-disable no-jquery/no-global-selector */
 module.exports = function () {
-	mw.loader.using( [ 'ext.uls.interface' ] ).then( function () {
-		var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
-			$ULSTrigger = $( '#pt-uls' ),
-			ULSMoved = false;
+	mw.loader.using( [ 'ext.uls.interface' ] ).then( () => {
+		const mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
+			$ULSTrigger = $( '#pt-uls' );
+		let ULSMoved = false;
 
 		function moveULS() {
 			if ( $ULSTrigger.length ) {

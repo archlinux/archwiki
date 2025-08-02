@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Search;
 
-use File;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
-use RepoGroup;
 
 /**
  * Find thumbnails for search results
@@ -19,16 +19,9 @@ class SearchResultThumbnailProvider {
 
 	public const THUMBNAIL_SIZE = 60;
 
-	/** @var RepoGroup */
-	private $repoGroup;
+	private RepoGroup $repoGroup;
+	private HookRunner $hookRunner;
 
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/**
-	 * @param RepoGroup $repoGroup
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct( RepoGroup $repoGroup, HookContainer $hookContainer ) {
 		$this->repoGroup = $repoGroup;
 		$this->hookRunner = new HookRunner( $hookContainer );

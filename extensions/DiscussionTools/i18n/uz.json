@@ -3,8 +3,8 @@
 		"authors": [
 			"Malikxan",
 			"Nataev",
-			"Zafar Shamsiddinov",
-			"Woytecr"
+			"Woytecr",
+			"Zafar Shamsiddinov"
 		]
 	},
 	"discussiontools": "Munozara asboblari",
@@ -92,8 +92,8 @@
 	"discussiontools-topicsubscription-pager-topic": "Mavzu",
 	"tag-discussiontools-description": "DiscussionTools yordamida qilingan tahrir",
 	"tag-discussiontools-edit": "Tahrirlangan fikr",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Yangi mavzu]",
+	"tag-discussiontools-newtopic": "Yangi mavzu",
 	"tag-discussiontools-newtopic-description": "Foydalanuvchi DiscussionTools yordamida sahifaga yangi mavzu qoʻshdi",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Javob]",
+	"tag-discussiontools-reply": "Javob",
 	"tag-discussiontools-reply-description": "Foydalanuvchi DiscussionTools yordamida xabarga javob berdi"
 }

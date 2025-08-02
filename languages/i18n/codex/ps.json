@@ -11,6 +11,7 @@
 	"cdx-dialog-close-button-label": "تړل",
 	"cdx-label-optional-flag": "(اختياري)",
 	"cdx-message-dismiss-button-label": "تړل",
+	"cdx-popover-close-button-label": "تړل",
 	"cdx-search-input-search-button-label": "پلټل",
 	"cdx-table-select-all-label": "ټول کتارونه ټاکل",
 	"cdx-table-select-row-label": "له $2 څخه $1 کتار وټاکئ",
@@ -27,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "د ډېرو څخه $1 – $2 پایلې گورئ",
 	"cdx-table-pagination-status-message-indeterminate-short": "د ډېرو څخه $1 - $2",
 	"cdx-table-pagination-status-message-indeterminate-final": "وروستۍ {{PLURAL:$1| $1 پایله| $1 پایلې}} ښیې",
-	"cdx-table-pagination-status-message-pending": "پایلې بارېږي..."
+	"cdx-table-pagination-status-message-pending": "پایلې بارېږي...",
+	"cdx-table-no-data-message": "هیڅ مالومات نشته."
 }

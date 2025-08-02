@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use MediaFileTrait;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
-use RepoGroup;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -17,7 +17,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * Handler class for Core REST API endpoints that perform operations on revisions
  */
 class MediaLinksHandler extends SimpleHandler {
-	use MediaFileTrait;
+	use \MediaWiki\FileRepo\File\MediaFileTrait;
 
 	/** int The maximum number of media links to return */
 	private const MAX_NUM_LINKS = 100;
@@ -41,9 +41,6 @@ class MediaLinksHandler extends SimpleHandler {
 		$this->pageLookup = $pageLookup;
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	private function getPage(): ?ExistingPageRecord {
 		if ( $this->page === false ) {
 			$this->page = $this->pageLookup->getExistingPageByText(
@@ -150,6 +147,7 @@ class MediaLinksHandler extends SimpleHandler {
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-media-links-title' ),
 			],
 		];
 	}
@@ -191,5 +189,15 @@ class MediaLinksHandler extends SimpleHandler {
 	 */
 	protected function getMaxNumLinks(): int {
 		return self::MAX_NUM_LINKS;
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+		return $spec;
+	}
+
+	public function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/MediaLinks.json';
 	}
 }

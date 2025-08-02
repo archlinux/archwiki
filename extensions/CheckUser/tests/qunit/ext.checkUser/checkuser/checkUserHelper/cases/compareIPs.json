@@ -1,0 +1,50 @@
+[
+	{
+		"IP1": "127.0.0.1",
+		"IP2": "127.0.0.1",
+		"expectedReturnValue": 0,
+		"msg": "Example IPv4 addresses that are the same"
+	},
+	{
+		"IP1": "127.0.0.1",
+		"IP2": "127.0.0.2",
+		"expectedReturnValue": -1,
+		"msg": "Example IPv4 addresses that are one number apart"
+	},
+	{
+		"IP1": "127.0.0.2",
+		"IP2": "127.0.0.1",
+		"expectedReturnValue": 1,
+		"msg": "Example IPv4 addresses that are one number apart"
+	},
+	{
+		"IP1": "124.5.6.7",
+		"IP2": "126.5.6.7",
+		"expectedReturnValue": -2000000000,
+		"msg": "Two example IPv4 addresses"
+	},
+	{
+		"IP1": "0.0.1.0",
+		"IP2": "0.0.0.0",
+		"expectedReturnValue": 1000,
+		"msg": "IPv4 address with all zeros and another IPv4 address"
+	},
+	{
+		"IP1": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+		"IP2": "2002:0db8:86a3:0020:1000:8a2e:0670:7434",
+		"expectedReturnValue": -5.192297168019837e+33,
+		"msg": "Two example IPv6 addresses"
+	},
+	{
+		"IP1": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+		"IP2": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+		"expectedReturnValue": 0,
+		"msg": "The same IPv6 address twice"
+	},
+	{
+		"IP1": "::",
+		"IP2": "::",
+		"expectedReturnValue": 0,
+		"msg": "Two all zero IPv6 addresses"
+	}
+]

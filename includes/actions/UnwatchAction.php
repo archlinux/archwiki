@@ -20,8 +20,11 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Page\Article;
 use MediaWiki\Watchlist\WatchedItemStore;
 use MediaWiki\Watchlist\WatchlistManager;
 
@@ -88,3 +91,6 @@ class UnwatchAction extends WatchAction {
 		return true;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( UnwatchAction::class, 'UnwatchAction' );

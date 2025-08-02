@@ -6,9 +6,9 @@ use MediaWiki\CheckUser\Hook\CheckUserInsertChangesRowHook;
 use MediaWiki\CheckUser\Hook\CheckUserInsertLogEventRowHook;
 use MediaWiki\CheckUser\Hook\CheckUserInsertPrivateEventRowHook;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityUtils;
-use RecentChange;
 
 class CheckUserHandler implements
 	CheckUserInsertChangesRowHook,

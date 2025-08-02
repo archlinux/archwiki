@@ -1,0 +1,29 @@
+[
+	{
+		"name": "cu_useragent",
+		"comment": "The user agent string header provided by the browser for requests is stored here for de-duplication. There MAY be rows with the same user agent string.",
+		"columns": [
+			{
+				"name": "cuua_id",
+				"comment": "Unique ID to identify each user agent",
+				"type": "bigint",
+				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "cuua_text",
+				"comment": "The user agent string",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cuua_text",
+				"columns": [ "cuua_text" ],
+				"unique": false,
+				"comment": "Used to find rows with a given user agent string when attempting to insert a new row to one of cu_changes, cu_log_event, cu_private_event, or cu_private_event_no_actor."
+			}
+		],
+		"pk": [ "cuua_id" ]
+	}
+]

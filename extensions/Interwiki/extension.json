@@ -1,6 +1,6 @@
 {
 	"name": "Interwiki",
-	"version": "3.2",
+	"version": "4.0",
 	"author": [
 		"Stephanie Amanda Stevens",
 		"Alexandre Emsenhuber",
@@ -14,59 +14,11 @@
 		"..."
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Interwiki",
-	"descriptionmsg": "interwiki-desc",
+	"description": "Interwiki extension stub",
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.43"
-	},
-	"ExtensionMessagesFiles": {
-		"InterwikiAlias": "Interwiki.alias.php"
-	},
-	"config": {
-		"InterwikiCentralDB": {
-			"value": null
-		},
-		"InterwikiCentralInterlanguageDB": {
-			"value": null
-		},
-		"InterwikiViewOnly": {
-			"value": false
-		}
-	},
-	"MessagesDirs": {
-		"Interwiki": [
-			"i18n"
-		]
-	},
-	"Hooks": {
-		"UserGetAllRights": "main"
-	},
-	"HookHandlers": {
-		"main": {
-			"class": "MediaWiki\\Extension\\Interwiki\\Hooks"
-		}
-	},
-	"ResourceModules": {
-		"ext.interwiki.specialpage": {
-			"styles": "interwiki.less"
-		}
-	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "modules",
-		"remoteExtPath": "Interwiki/modules"
-	},
-	"SpecialPages": {
-		"Interwiki": "MediaWiki\\Extension\\Interwiki\\SpecialInterwiki"
-	},
-	"ExtensionFunctions": [
-		"MediaWiki\\Extension\\Interwiki\\Hooks::onExtensionFunctions"
-	],
-	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\Interwiki\\": "includes/"
-	},
-	"LogActionsHandlers": {
-		"interwiki/*": "MediaWiki\\Extension\\Interwiki\\InterwikiLogFormatter"
+		"MediaWiki": ">= 1.44"
 	},
 	"manifest_version": 2
 }

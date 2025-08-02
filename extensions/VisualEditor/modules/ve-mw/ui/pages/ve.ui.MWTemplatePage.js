@@ -67,7 +67,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 		} catch ( e ) {
 		}
 		// When {{User:Foo}} can be parsed as "Foo", we know the ":" is not syntax.
-		key = title && title.getMain().indexOf( ':' ) === -1 ?
+		key = title && !title.getMain().includes( ':' ) ?
 			'visualeditor-dialog-transclusion-template-title-nonexistent' :
 			'visualeditor-dialog-transclusion-template-title-modifier';
 	} else {

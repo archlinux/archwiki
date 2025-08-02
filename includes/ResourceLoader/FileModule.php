@@ -304,6 +304,10 @@ class FileModule extends Module {
 			$remoteBasePath = (string)$options['remoteBasePath'];
 		}
 
+		if ( $localBasePath === null ) {
+			$localBasePath = MW_INSTALL_PATH;
+		}
+
 		if ( $remoteBasePath === '' ) {
 			// If MediaWiki is installed at the document root (not recommended),
 			// then wgScriptPath is set to the empty string by the installer to
@@ -316,7 +320,7 @@ class FileModule extends Module {
 			$remoteBasePath = '/';
 		}
 
-		return [ $localBasePath ?? MW_INSTALL_PATH, $remoteBasePath ];
+		return [ $localBasePath, $remoteBasePath ];
 	}
 
 	public function getScript( Context $context ) {
@@ -336,27 +340,6 @@ class FileModule extends Module {
 			$this->readFileInfo( $context, $file );
 		}
 		return [ 'plainScripts' => $files ];
-	}
-
-	/**
-	 * @param Context $context
-	 * @return string[] URLs
-	 */
-	public function getScriptURLsForDebug( Context $context ) {
-		$rl = $context->getResourceLoader();
-		$config = $this->getConfig();
-		$server = $config->get( MainConfigNames::Server );
-
-		$urls = [];
-		foreach ( $this->getScriptFiles( $context ) as $file ) {
-			if ( isset( $file['filePath'] ) ) {
-				$url = OutputPage::transformResourcePath( $config, $this->getRemotePath( $file['filePath'] ) );
-				// Expand debug URL in case we are another wiki's module source (T255367)
-				$url = $rl->expandUrl( $server, $url );
-				$urls[] = $url;
-			}
-		}
-		return $urls;
 	}
 
 	/**
@@ -573,8 +556,8 @@ class FileModule extends Module {
 		}
 
 		// Add any lazily discovered file dependencies from previous module builds.
-		// These are already absolute paths.
-		foreach ( $this->getFileDependencies( $context ) as $file ) {
+		// These are saved as relatative paths.
+		foreach ( Module::expandRelativePaths( $this->getFileDependencies( $context ) ) as $file ) {
 			$files[] = $file;
 		}
 
@@ -1088,7 +1071,7 @@ class FileModule extends Module {
 		// @TODO: dependency injection
 		if ( !$cache ) {
 			$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()
-				->getLocalServerInstance( CACHE_ANYTHING );
+				->getLocalServerInstance( CACHE_HASH );
 		}
 
 		$skinName = $context->getSkin();

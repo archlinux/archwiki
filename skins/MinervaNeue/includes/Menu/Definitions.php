@@ -320,7 +320,7 @@ final class Definitions {
 		// https://www.mediawiki.org/wiki/Wikimedia_Product/Analytics_Infrastructure/Schema_fragments#Campaign_Attribution
 		$url = wfAppendQuery(
 			$urlMsg->text(),
-			[ 'utm_key' => 'minerva' ]
+			[ 'wmf_key' => 'minerva' ]
 		);
 		$entry = $this->buildMenuEntry(
 			'donate',

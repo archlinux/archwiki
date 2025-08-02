@@ -18,8 +18,6 @@
 	"cite_error_ref_no_input": "Невалиден <code>&lt;ref&gt;</code> таг; бележките без име трябва да имат съдържание",
 	"cite_error_references_duplicate_key": "Невалидна употреба на таг <code>&lt;ref&gt;</code>; името „$1“ е дефинирано няколко пъти с различно съдържание",
 	"cite_error_references_invalid_parameters": "Невалиден параметър на таг <code>&lt;references&gt;</code>.",
-	"cite_error_references_no_backlink_label": "Изчерпани са специалните етикети за обратна референция. Още етикети могат да се дефинират в системното съобщение [[MediaWiki:Cite references link many format backlink labels]].",
-	"cite_error_no_link_label_group": "Изчерпани са наличните етикети за потребителски препратки от група „$1“. Дефинирайте повече в съобщението [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Невалиден <code>&lt;ref&gt;</code> таг; не е подаден текст за бележките на име <code>$1</code>",
 	"cite_error_included_ref": "Липсва затварящ етикет <code>&lt;/ref&gt;</code> след отварящия етикет <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Тагове <code>&lt;ref&gt;</code> съществуват за група „$1“, но липсва таг <code>&lt;references group=\"$1\"/&gt;</code>",
@@ -29,13 +27,12 @@
 	"cite_error_empty_references_define": "Таг <code><ref></code> с име „$1“, дефиниран в <code><references></code> в група „$2“, няма съдържание.",
 	"cite-tracking-category-cite-error": "Страници с грешка в източник",
 	"cite-tracking-category-cite-error-desc": "Страниците в тази категория имат грешки при използването на таговете за източници.",
-	"cite-tracking-category-ref-extends": "Страници, които използват разширени източници",
-	"cite-tracking-category-ref-extends-desc": "Страниците в тази категория използват атрибут „extends“ на таг &lt;ref&gt;.",
 	"cite-reference-previews-reference": "Източник",
 	"cite-reference-previews-book": "Източник от книга",
 	"cite-reference-previews-journal": "Източник от периодичен печат",
 	"cite-reference-previews-news": "Източник от новина",
 	"cite-reference-previews-web": "Източник от уеб сайт",
+	"cite-reference-previews-preference-label": "Включване на преглед на източници (бърз преглед на бележките, докато четете страница)",
 	"cite_references_link_accessibility_label": "Нагоре",
 	"cite_references_link_many_accessibility_label": "Нагоре към:",
 	"cite_references_link_accessibility_back_label": "Обратно нагоре",
@@ -47,6 +44,5 @@
 	"cite-wikieditor-help-content-reference-description": "Източник",
 	"cite-wikieditor-help-content-named-reference-description": "Наименован източник/бележка",
 	"cite-wikieditor-help-content-rereference-description": "Множествена употреба на един и същ източник",
-	"cite-wikieditor-help-content-showreferences-description": "Извеждане на източниците",
-	"popups-refpreview-user-preference-label": "Включване на преглед на източници (бърз преглед на бележките, докато четете страница)"
+	"cite-wikieditor-help-content-showreferences-description": "Извеждане на източниците"
 }

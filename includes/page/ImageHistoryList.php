@@ -18,7 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Page;
+
 use MediaWiki\Context\ContextSource;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
@@ -338,3 +341,6 @@ class ImageHistoryList extends ContextSource {
 		return $this->preventClickjacking;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ImageHistoryList::class, 'ImageHistoryList' );

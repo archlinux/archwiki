@@ -49,9 +49,9 @@ class LuaSandboxEngine extends LuaEngine {
 		$versions = LuaSandbox::getVersionInfo();
 		$software['[https://www.mediawiki.org/wiki/LuaSandbox LuaSandbox]'] =
 			$versions['LuaSandbox'];
-		$software['[http://www.lua.org/ Lua]'] = str_replace( 'Lua ', '', $versions['Lua'] );
+		$software['[https://www.lua.org/ Lua]'] = str_replace( 'Lua ', '', $versions['Lua'] );
 		if ( isset( $versions['LuaJIT'] ) ) {
-			$software['[http://luajit.org/ LuaJIT]'] = str_replace( 'LuaJIT ', '', $versions['LuaJIT'] );
+			$software['[https://luajit.org/ LuaJIT]'] = str_replace( 'LuaJIT ', '', $versions['LuaJIT'] );
 		}
 	}
 
@@ -87,7 +87,7 @@ class LuaSandboxEngine extends LuaEngine {
 
 		$logs = $this->getLogBuffer();
 		if ( $logs !== '' ) {
-			$ret['scribunto-limitreport-logs'] = $logs;
+			$ret['scribunto-limitreport-logs'] = $this->fixTruncation( $logs );
 		}
 
 		if ( $t < 1.0 ) {
@@ -253,6 +253,7 @@ class LuaSandboxEngine extends LuaEngine {
 		return $this->lineCache['mw.lua'][$lineNum - 1];
 	}
 
+	/** @inheritDoc */
 	protected function newInterpreter() {
 		return new LuaSandboxInterpreter( $this, $this->options );
 	}

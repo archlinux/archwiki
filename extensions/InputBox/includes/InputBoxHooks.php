@@ -8,12 +8,12 @@
 
 namespace MediaWiki\Extension\InputBox;
 
-use Article;
 use MediaWiki\Actions\ActionEntryPoint;
 use MediaWiki\Config\Config;
 use MediaWiki\Hook\MediaWikiPerformActionHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;

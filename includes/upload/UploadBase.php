@@ -21,9 +21,14 @@
  * @ingroup Upload
  */
 
+use MediaWiki\Api\ApiMessage;
 use MediaWiki\Api\ApiResult;
 use MediaWiki\Api\ApiUpload;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\ArchivedFile;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
@@ -43,7 +48,9 @@ use Wikimedia\AtEase\AtEase;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\Message\ListType;
 use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Mime\XmlTypeCheck;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -102,7 +109,7 @@ abstract class UploadBase {
 	/** @var string|false */
 	protected $mSVGNSError;
 
-	private const SAFE_XML_ENCONDINGS = [
+	private const SAFE_XML_ENCODINGS = [
 		'UTF-8',
 		'US-ASCII',
 		'ISO-8859-1',
@@ -125,11 +132,9 @@ abstract class UploadBase {
 	public const EMPTY_FILE = 3;
 	public const MIN_LENGTH_PARTNAME = 4;
 	public const ILLEGAL_FILENAME = 5;
-	public const OVERWRITE_EXISTING_FILE = 7; # Not used anymore; handled by verifyTitlePermissions()
 	public const FILETYPE_MISSING = 8;
 	public const FILETYPE_BADTYPE = 9;
 	public const VERIFICATION_ERROR = 10;
-	public const HOOK_ABORTED = 11;
 	public const FILE_TOO_LARGE = 12;
 	public const WINDOWS_NONASCII_FILENAME = 13;
 	public const FILENAME_TOO_LONG = 14;
@@ -141,9 +146,7 @@ abstract class UploadBase {
 		self::FILETYPE_BADTYPE => 'filetype-banned',
 		self::MIN_LENGTH_PARTNAME => 'filename-tooshort',
 		self::ILLEGAL_FILENAME => 'illegal-filename',
-		self::OVERWRITE_EXISTING_FILE => 'overwrite',
 		self::VERIFICATION_ERROR => 'verification-error',
-		self::HOOK_ABORTED => 'hookaborted',
 		self::WINDOWS_NONASCII_FILENAME => 'windows-nonascii-filename',
 		self::FILENAME_TOO_LONG => 'filename-toolong',
 	];
@@ -189,7 +192,7 @@ abstract class UploadBase {
 	/**
 	 * Returns true if the user has surpassed the upload rate limit, false otherwise.
 	 *
-	 * @deprecated since 1.41, use verifyTitlePermissions() instead.
+	 * @deprecated since 1.41, use authorizeUpload() instead.
 	 * Rate limit checks are now implicit in permission checks.
 	 *
 	 * @param User $user
@@ -311,7 +314,7 @@ abstract class UploadBase {
 		$this->mTempPath = $tempPath ?? '';
 		$this->mFileSize = $fileSize ?: null;
 		$this->mFileProps = null;
-		if ( strlen( $this->mTempPath ) && file_exists( $this->mTempPath ) ) {
+		if ( $this->mTempPath !== '' && file_exists( $this->mTempPath ) ) {
 			$this->tempFileObj = new TempFSFile( $this->mTempPath );
 			if ( !$fileSize ) {
 				$this->mFileSize = filesize( $this->mTempPath );
@@ -645,48 +648,63 @@ abstract class UploadBase {
 	 * 'verifyPermissions', but that suggests it's checking the user, when it's
 	 * really checking the title + user combination.
 	 *
+	 * @deprecated since 1.44 Use authorizeUpload() instead
 	 * @param Authority $performer to verify the permissions against
 	 * @return array|bool An array as returned by getPermissionErrors or true
 	 *   in case the user has proper permissions.
 	 */
 	public function verifyPermissions( Authority $performer ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		return $this->verifyTitlePermissions( $performer );
 	}
 
 	/**
-	 * Check whether the user can edit, upload and create the image. This
-	 * checks only against the current title; if it returns errors, it may
-	 * very well be that another title will not give errors. Therefore
-	 * isAllowed() should be called as well for generic is-user-blocked or
-	 * can-user-upload checking.
+	 * Check whether the user can upload the image. This method checks against the current title.
+	 * Use verifyUpload() or validateName() first to check that the title is valid.
 	 *
+	 * @deprecated since 1.44 Use authorizeUpload() instead
 	 * @param Authority $performer to verify the permissions against
 	 * @return array|bool An array as returned by getPermissionErrors or true
 	 *   in case the user has proper permissions.
 	 */
 	public function verifyTitlePermissions( Authority $performer ) {
-		/**
-		 * If the image is protected, non-sysop users won't be able
-		 * to modify it by uploading a new revision.
-		 */
-		$nt = $this->getTitle();
-		if ( $nt === null ) {
+		wfDeprecated( __METHOD__, '1.44' );
+
+		if ( $this->getTitle() === null ) {
 			return true;
 		}
+		$status = $this->authorizeUpload( $performer );
+		if ( !$status->isGood() ) {
+			return $status->toLegacyErrorArray();
+		}
+		return true;
+	}
 
+	/**
+	 * Check whether the user can upload the image. This method checks against the current title.
+	 * Use verifyUpload() or validateName() first to check that the title is valid.
+	 */
+	public function authorizeUpload( Authority $performer ): PermissionStatus {
 		$status = PermissionStatus::newEmpty();
+
+		$nt = $this->getTitle();
+		if ( $nt === null ) {
+			throw new LogicException( __METHOD__ . ' must only be called with valid title' );
+		}
+
 		$performer->authorizeWrite( 'edit', $nt, $status );
 		$performer->authorizeWrite( 'upload', $nt, $status );
 		if ( !$status->isGood() ) {
-			return $status->toLegacyErrorArray();
+			// If the user can't upload at all, don't display additional errors about re-uploading
+			return $status;
 		}
 
 		$overwriteError = $this->checkOverwrite( $performer );
 		if ( $overwriteError !== true ) {
-			return [ $overwriteError ];
+			$status->fatal( ...$overwriteError );
 		}
 
-		return true;
+		return $status;
 	}
 
 	/**
@@ -905,7 +923,7 @@ abstract class UploadBase {
 		return $warnings;
 	}
 
-	private function checkLocalFileWasDeleted( LocalFile $localFile ) {
+	private function checkLocalFileWasDeleted( LocalFile $localFile ): bool {
 		return $localFile->wasDeleted() && !$localFile->exists();
 	}
 
@@ -1491,7 +1509,7 @@ abstract class UploadBase {
 
 		if ( preg_match( "!<\?xml\b(.*?)\?>!si", $contents, $matches ) ) {
 			if ( preg_match( $encodingRegex, $matches[1], $encMatch )
-				&& !in_array( strtoupper( $encMatch[1] ), self::SAFE_XML_ENCONDINGS )
+				&& !in_array( strtoupper( $encMatch[1] ), self::SAFE_XML_ENCODINGS )
 			) {
 				wfDebug( __METHOD__ . ": Found unsafe XML encoding '{$encMatch[1]}'" );
 
@@ -1511,7 +1529,7 @@ abstract class UploadBase {
 		}
 
 		// It's possible the file is encoded with multibyte encoding, so re-encode attempt to
-		// detect the encoding in case it specifies an encoding not allowed in self::SAFE_XML_ENCONDINGS
+		// detect the encoding in case it specifies an encoding not allowed in self::SAFE_XML_ENCODINGS
 		$attemptEncodings = [ 'UTF-16', 'UTF-16BE', 'UTF-32', 'UTF-32BE' ];
 		foreach ( $attemptEncodings as $encoding ) {
 			AtEase::suppressWarnings();
@@ -1519,7 +1537,7 @@ abstract class UploadBase {
 			AtEase::restoreWarnings();
 			if ( $str != '' && preg_match( "!<\?xml\b(.*?)\?>!si", $str, $matches ) ) {
 				if ( preg_match( $encodingRegex, $matches[1], $encMatch )
-					&& !in_array( strtoupper( $encMatch[1] ), self::SAFE_XML_ENCONDINGS )
+					&& !in_array( strtoupper( $encMatch[1] ), self::SAFE_XML_ENCODINGS )
 				) {
 					wfDebug( __METHOD__ . ": Found unsafe XML encoding '{$encMatch[1]}'" );
 
@@ -2032,6 +2050,7 @@ abstract class UploadBase {
 	 * @param Authority $performer
 	 *
 	 * @return bool|array
+	 * @phan-return true|non-empty-array
 	 */
 	private function checkOverwrite( Authority $performer ) {
 		// First check whether the local file can be overwritten
@@ -2233,15 +2252,89 @@ abstract class UploadBase {
 		return $apiUpload->getUploadImageInfo( $this );
 	}
 
-	/**
-	 * @param array $error
-	 * @return Status
-	 */
-	public function convertVerifyErrorToStatus( $error ) {
-		$code = $error['status'];
-		unset( $code['status'] );
+	public function convertVerifyErrorToStatus( array $error ): UploadVerificationStatus {
+		switch ( $error['status'] ) {
+			/** Statuses that only require name changing */
+			case self::MIN_LENGTH_PARTNAME:
+				return UploadVerificationStatus::newFatal( 'filename-tooshort' )
+					->setRecoverableError( true )
+					->setInvalidParameter( 'filename' );
 
-		return Status::newFatal( $this->getVerificationErrorCode( $code ), $error );
+			case self::ILLEGAL_FILENAME:
+				return UploadVerificationStatus::newFatal( 'illegal-filename' )
+					->setRecoverableError( true )
+					->setInvalidParameter( 'filename' )
+					->setApiData( [ 'filename' => $error['filtered'] ] );
+
+			case self::FILENAME_TOO_LONG:
+				return UploadVerificationStatus::newFatal( 'filename-toolong' )
+					->setRecoverableError( true )
+					->setInvalidParameter( 'filename' );
+
+			case self::FILETYPE_MISSING:
+				return UploadVerificationStatus::newFatal( 'filetype-missing' )
+					->setRecoverableError( true )
+					->setInvalidParameter( 'filename' );
+
+			case self::WINDOWS_NONASCII_FILENAME:
+				return UploadVerificationStatus::newFatal( 'windows-nonascii-filename' )
+					->setRecoverableError( true )
+					->setInvalidParameter( 'filename' );
+
+			/** Statuses that require reuploading */
+			case self::EMPTY_FILE:
+				return UploadVerificationStatus::newFatal( 'empty-file' );
+
+			case self::FILE_TOO_LARGE:
+				return UploadVerificationStatus::newFatal( 'file-too-large' );
+
+			case self::FILETYPE_BADTYPE:
+				$extensions = array_unique( MediaWikiServices::getInstance()
+					->getMainConfig()->get( MainConfigNames::FileExtensions ) );
+				$extradata = [
+					'filetype' => $error['finalExt'],
+					'allowed' => array_values( $extensions ),
+				];
+				ApiResult::setIndexedTagName( $extradata['allowed'], 'ext' );
+				if ( isset( $error['blacklistedExt'] ) ) {
+					$bannedTypes = $error['blacklistedExt'];
+					$extradata['blacklisted'] = array_values( $bannedTypes );
+					ApiResult::setIndexedTagName( $extradata['blacklisted'], 'ext' );
+				} else {
+					$bannedTypes = [ $error['finalExt'] ];
+				}
+				'@phan-var string[] $bannedTypes';
+				return UploadVerificationStatus::newFatal(
+						'filetype-banned-type',
+						Message::listParam( $bannedTypes, ListType::COMMA ),
+						Message::listParam( $extensions, ListType::COMMA ),
+						count( $extensions ),
+						// Add PLURAL support for the first parameter. This results
+						// in a bit unlogical parameter sequence, but does not break
+						// old translations
+						count( $bannedTypes )
+					)
+					->setApiCode( 'filetype-banned' )
+					->setApiData( $extradata );
+
+			case self::VERIFICATION_ERROR:
+				$msg = ApiMessage::create( $error['details'], 'verification-error' );
+				if ( $error['details'][0] instanceof MessageSpecifier ) {
+					$apiDetails = [ $msg->getKey(), ...$msg->getParams() ];
+				} else {
+					$apiDetails = $error['details'];
+				}
+				ApiResult::setIndexedTagName( $apiDetails, 'detail' );
+				$msg->setApiData( $msg->getApiData() + [ 'details' => $apiDetails ] );
+				return UploadVerificationStatus::newFatal( $msg );
+
+			default:
+				// @codeCoverageIgnoreStart
+				return UploadVerificationStatus::newFatal( 'upload-unknownerror-nocode' )
+					->setApiCode( 'unknown-error' )
+					->setApiData( [ 'details' => [ 'code' => $error['status'] ] ] );
+				// @codeCoverageIgnoreEnd
+		}
 	}
 
 	/**

@@ -6,6 +6,7 @@ use MediaWiki\Config\Config;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Database gateway which handles direct database interaction with the
@@ -49,6 +50,10 @@ class UserNotificationGateway {
 		$this->config = $config;
 	}
 
+	/**
+	 * @param int $dbSource
+	 * @return IDatabase
+	 */
 	public function getDB( $dbSource ) {
 		return $this->dbFactory->getEchoDb( $dbSource );
 	}

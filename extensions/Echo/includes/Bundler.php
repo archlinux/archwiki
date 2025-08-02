@@ -4,9 +4,12 @@ namespace MediaWiki\Extension\Notifications;
 
 class Bundler {
 
+	/**
+	 * @param Bundleable[] &$array
+	 */
 	private function sort( &$array ) {
 		usort( $array, static function ( Bundleable $a, Bundleable $b ) {
-			return strcmp( $b->getSortingKey(), $a->getSortingKey() );
+			return $b->getSortingKey() <=> $a->getSortingKey();
 		} );
 	}
 

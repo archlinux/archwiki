@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Hook;
 
-use LocalFile;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\Page\WikiFilePage;
 use MediaWiki\User\User;
-use WikiFilePage;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.

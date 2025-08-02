@@ -23,7 +23,7 @@ namespace MediaWiki\Site;
 use Wikimedia\ObjectCache\BagOStuff;
 
 /**
- * Hold a configured list of sites (SiteList), with a caching layer.
+ * Wrap SiteList with an in-process cache and (optionally) a local-server cache.
  *
  * @internal For use by core ServiceWiring only. The public interface is SiteStore
  * @ingroup Site
@@ -35,16 +35,11 @@ class CachingSiteStore implements SiteStore {
 	private $siteStore;
 	/** @var BagOStuff */
 	private $cache;
-
 	/** @var string|null */
 	private $cacheKey = null;
 	/** @var SiteList|null */
 	private $sites = null;
 
-	/**
-	 * @param SiteStore $siteStore
-	 * @param BagOStuff $cache
-	 */
 	public function __construct(
 		SiteStore $siteStore,
 		BagOStuff $cache

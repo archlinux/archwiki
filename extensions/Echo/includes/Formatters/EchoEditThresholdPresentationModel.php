@@ -4,10 +4,12 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 class EchoEditThresholdPresentationModel extends EchoEventPresentationModel {
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'edit';
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessageKey() {
 		// The following messages are used here:
 		// * notification-header-thank-you-1-edit
@@ -21,6 +23,7 @@ class EchoEditThresholdPresentationModel extends EchoEventPresentationModel {
 		return 'notification-header-thank-you-' . $this->event->getExtraParam( 'editCount' ) . '-edit';
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		if ( !$this->event->getTitle() ) {
 			return false;

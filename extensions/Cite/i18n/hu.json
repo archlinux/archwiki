@@ -17,8 +17,6 @@
 	"cite_error_ref_no_input": "Érvénytelen <code>&lt;ref&gt;</code> címke; a név (name) nélküli lábjegyzeteknek adni kell valamilyen tartalmat",
 	"cite_error_references_duplicate_key": "Érvénytelen <code>&lt;ref&gt;</code> címke, „$1” nevű forráshivatkozás többször van definiálva eltérő tartalommal",
 	"cite_error_references_invalid_parameters": "Érvénytelen paraméter a <code>&lt;references&gt;</code> címkében",
-	"cite_error_references_no_backlink_label": "Elfogytak a visszahivatkozásra használt címkék, adj meg többet a [[MediaWiki:Cite references link many format backlink labels]] üzenetben",
-	"cite_error_no_link_label_group": "Nincs több egyedi címke a következő csoport számára: „$1”. Adj meg többet a [[MediaWiki:$2]] lapon.",
 	"cite_error_references_no_text": "Érvénytelen <code>&lt;ref&gt;</code> címke; nincs megadva szöveg a(z) <code>$1</code> nevű lábjegyzeteknek",
 	"cite_error_included_ref": "Egy <code>&lt;ref&gt;</code> címke lezáró <code>&lt;/ref&gt;</code> része hiányzik",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> címkék léteznek a(z) „$1” csoporthoz, de nincs hozzá <code>&lt;references group=\"$1\"/&gt;</code>",
@@ -34,6 +32,10 @@
 	"cite-reference-previews-news": "Hírhivatkozás",
 	"cite-reference-previews-note": "Megjegyzés",
 	"cite-reference-previews-web": "Webes forráshivatkozás",
+	"cite-reference-previews-gadget-conflict-info-navpopups": "Be van neked kapcsolva a [[$1|Látszer segédeszköz]], így nem fogod látni ennek a funkciónak az előnézeteit. (A wikitől függően lehet, hogy más néven – például az eredeti angol ''Navigation popups''ként – találod meg a segédeszközt.) Ha továbbra is problémákat tapasztalsz, nézd át a segédeszközeidet és felhasználói parancsfájljaidat, beleértve a globálisakat is.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "Be van neked kapcsolva a [[$1|Hivatkozások előnézete segédeszköz]], így nem fogod látni ennek a funkciónak az előnézeteit. (A wikitől függően lehet, hogy más néven találod meg a segédeszközt.) Ha továbbra is problémákat tapasztalsz, nézd át a segédeszközeidet és felhasználói parancsfájljaidat, beleértve a globálisakat is.",
+	"cite-reference-previews-gadget-conflict-info-navpopups-reftooltips": "Be vannak neked kapcsolva a [[$1|Látszer és Hivatkozások előnézete segédeszközök]], így nem fogod látni ennek a funkciónak az előnézeteit. (A wikitől függően lehet, hogy más néven – például a Látszert az eredeti angol ''Navigation popups''ként – találod meg a segédeszközöket.) Ha továbbra is problémákat tapasztalsz, nézd át a segédeszközeidet és felhasználói parancsfájljaidat, beleértve a globálisakat is.",
+	"cite-reference-previews-preference-label": "Forráshivatkozás-előnézetek bekapcsolása (forráshivatkozások gyors előnézetének megjelenítése az oldal olvasása közben)",
 	"cite_references_link_accessibility_label": "Ugrás fel",
 	"cite_references_link_many_accessibility_label": "Ugrás ehhez:",
 	"cite_references_link_accessibility_back_label": "Visszaugrás fel",
@@ -44,9 +46,5 @@
 	"cite-wikieditor-help-page-references": "Forráshivatkozások",
 	"cite-wikieditor-help-content-reference-description": "Forráshivatkozás",
 	"cite-wikieditor-help-content-rereference-description": "Ugyanazon forráshivatkozás későbbi használata",
-	"cite-wikieditor-help-content-showreferences-description": "Forráshivatkozások listázása",
-	"popups-prefs-navpopups-gadget-conflict-info": "Be van neked kapcsolva a [[$1|Látszer segédeszköz]], így nem fogod látni ennek a funkciónak az előnézeteit. (A wikitől függően lehet, hogy más néven – például az eredeti angol ''Navigation popups''ként – találod meg a segédeszközt.) Ha továbbra is problémákat tapasztalsz, nézd át a segédeszközeidet és felhasználói parancsfájljaidat, beleértve a globálisakat is.",
-	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Be vannak neked kapcsolva a [[$1|Látszer és Hivatkozások előnézete segédeszközök]], így nem fogod látni ennek a funkciónak az előnézeteit. (A wikitől függően lehet, hogy más néven – például a Látszert az eredeti angol ''Navigation popups''ként – találod meg a segédeszközöket.) Ha továbbra is problémákat tapasztalsz, nézd át a segédeszközeidet és felhasználói parancsfájljaidat, beleértve a globálisakat is.",
-	"popups-prefs-reftooltips-gadget-conflict-info": "Be van neked kapcsolva a [[$1|Hivatkozások előnézete segédeszköz]], így nem fogod látni ennek a funkciónak az előnézeteit. (A wikitől függően lehet, hogy más néven találod meg a segédeszközt.) Ha továbbra is problémákat tapasztalsz, nézd át a segédeszközeidet és felhasználói parancsfájljaidat, beleértve a globálisakat is.",
-	"popups-refpreview-user-preference-label": "Forráshivatkozás-előnézetek bekapcsolása (forráshivatkozások gyors előnézetének megjelenítése az oldal olvasása közben)"
+	"cite-wikieditor-help-content-showreferences-description": "Forráshivatkozások listázása"
 }

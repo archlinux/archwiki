@@ -20,30 +20,35 @@
 
 namespace MediaWiki\Specials;
 
-use ArchivedFile;
-use ChangesList;
-use ChangeTags;
-use ErrorPageError;
-use File;
-use LocalRepo;
-use LogEventsList;
-use LogPage;
 use MediaWiki\Cache\LinkBatch;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\FileRepo\File\ArchivedFile;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\PageArchive;
 use MediaWiki\Page\UndeletePage;
 use MediaWiki\Page\UndeletePageFactory;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\RecentChanges\ChangesList;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionArchiveRecord;
@@ -52,14 +57,13 @@ use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Status\Status;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Watchlist\WatchlistManager;
-use MediaWiki\Xml\Xml;
 use OOUI\ActionFieldLayout;
 use OOUI\ButtonInputWidget;
 use OOUI\CheckboxInputWidget;
@@ -73,11 +77,7 @@ use OOUI\Layout;
 use OOUI\PanelLayout;
 use OOUI\TextInputWidget;
 use OOUI\Widget;
-use PageArchive;
-use PermissionsError;
-use RepoGroup;
 use SearchEngineFactory;
-use UserBlockedError;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -158,23 +158,6 @@ class SpecialUndelete extends SpecialPage {
 	private CommentFormatter $commentFormatter;
 	private WatchlistManager $watchlistManager;
 
-	/**
-	 * @param PermissionManager $permissionManager
-	 * @param RevisionStore $revisionStore
-	 * @param RevisionRenderer $revisionRenderer
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param NameTableStore $changeTagDefStore
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param RepoGroup $repoGroup
-	 * @param IConnectionProvider $dbProvider
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param UndeletePageFactory $undeletePageFactory
-	 * @param ArchivedRevisionLookup $archivedRevisionLookup
-	 * @param CommentFormatter $commentFormatter
-	 * @param WatchlistManager $watchlistManager
-	 */
 	public function __construct(
 		PermissionManager $permissionManager,
 		RevisionStore $revisionStore,
@@ -214,7 +197,7 @@ class SpecialUndelete extends SpecialPage {
 		return true;
 	}
 
-	private function loadRequest( $par ) {
+	private function loadRequest( ?string $par ) {
 		$request = $this->getRequest();
 		$user = $this->getUser();
 
@@ -356,6 +339,8 @@ class SpecialUndelete extends SpecialPage {
 		$this->checkPermissions(); // Needs to be after mTargetObj is set
 
 		$out = $this->getOutput();
+		// This page uses Html::warningBox and Html::errorBox
+		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 
 		if ( $this->mTargetObj === null ) {
 			$out->addWikiMsg( 'undelete-header' );
@@ -565,7 +550,7 @@ class SpecialUndelete extends SpecialPage {
 		return true;
 	}
 
-	private function showRevision( $timestamp ) {
+	private function showRevision( string $timestamp ) {
 		if ( !preg_match( '/[0-9]{14}/', $timestamp ) ) {
 			return;
 		}
@@ -712,7 +697,7 @@ class SpecialUndelete extends SpecialPage {
 		if ( $this->mPreview || !$isText ) {
 			// NOTE: non-text content has no source view, so always use rendered preview
 
-			$popts = $out->parserOptions();
+			$popts = ParserOptions::newFromContext( $this->getContext() );
 
 			try {
 				$rendered = $this->revisionRenderer->getRenderedRevision(
@@ -726,7 +711,7 @@ class SpecialUndelete extends SpecialPage {
 				// at the beginning of this method.
 				$pout = $rendered->getRevisionParserOutput();
 
-				$out->addParserOutput( $pout, [
+				$out->addParserOutput( $pout, $popts, [
 					'enableSectionEditLinks' => false,
 				] );
 			} catch ( RevisionAccessException $e ) {
@@ -740,7 +725,7 @@ class SpecialUndelete extends SpecialPage {
 			'@phan-var TextContent $content';
 			// TODO: MCR: make this work for multiple slots
 			// source view for textual content
-			$sourceView = Xml::element( 'textarea', [
+			$sourceView = Html::element( 'textarea', [
 				'readonly' => 'readonly',
 				'cols' => 80,
 				'rows' => 25
@@ -763,20 +748,20 @@ class SpecialUndelete extends SpecialPage {
 
 		$out->addHTML(
 			$sourceView .
-				Xml::openElement( 'div', [
+				Html::openElement( 'div', [
 					'style' => 'clear: both' ] ) .
-				Xml::openElement( 'form', [
+				Html::openElement( 'form', [
 					'method' => 'post',
 					'action' => $this->getPageTitle()->getLocalURL( [ 'action' => 'submit' ] ) ] ) .
-				Xml::element( 'input', [
+				Html::element( 'input', [
 					'type' => 'hidden',
 					'name' => 'target',
 					'value' => $this->mTargetObj->getPrefixedDBkey() ] ) .
-				Xml::element( 'input', [
+				Html::element( 'input', [
 					'type' => 'hidden',
 					'name' => 'timestamp',
 					'value' => $timestamp ] ) .
-				Xml::element( 'input', [
+				Html::element( 'input', [
 					'type' => 'hidden',
 					'name' => 'wpEditToken',
 					'value' => $user->getEditToken() ] ) .
@@ -787,8 +772,8 @@ class SpecialUndelete extends SpecialPage {
 						] )
 					] )
 				) .
-				Xml::closeElement( 'form' ) .
-				Xml::closeElement( 'div' )
+				Html::closeElement( 'form' ) .
+				Html::closeElement( 'div' )
 		);
 	}
 
@@ -803,7 +788,7 @@ class SpecialUndelete extends SpecialPage {
 		RevisionRecord $previousRevRecord,
 		RevisionRecord $currentRevRecord
 	) {
-		$currentTitle = Title::newFromLinkTarget( $currentRevRecord->getPageAsLinkTarget() );
+		$currentTitle = Title::newFromPageIdentity( $currentRevRecord->getPage() );
 
 		$diffContext = new DerivativeContext( $this->getContext() );
 		$diffContext->setTitle( $currentTitle );
@@ -824,7 +809,19 @@ class SpecialUndelete extends SpecialPage {
 			$this->diffHeader( $currentRevRecord, 'n' )
 		);
 
-		$this->getOutput()->addHTML( "<div>$formattedDiff</div>\n" );
+		if ( $formattedDiff === false ) {
+			if ( $diffEngine->hasSuppressedRevision() ) {
+				$error = 'rev-suppressed-no-diff';
+			} elseif ( $diffEngine->hasDeletedRevision() ) {
+				$error = 'rev-deleted-no-diff';
+			} else {
+				// Something else went wrong when loading the diff - at least explain that something was wrong ...
+				$error = 'undelete-error-loading-diff';
+			}
+			$this->getOutput()->addHTML( $this->msg( $error )->parse() );
+		} else {
+			$this->getOutput()->addHTML( "<div>$formattedDiff</div>\n" );
+		}
 	}
 
 	/**
@@ -930,7 +927,7 @@ class SpecialUndelete extends SpecialPage {
 						'token' => $user->getEditToken( $key ),
 					] ),
 				],
-				Xml::submitButton( $this->msg( 'undelete-show-file-submit' )->text() )
+				Html::submitButton( $this->msg( 'undelete-show-file-submit' )->text() )
 			)
 		);
 	}
@@ -954,21 +951,12 @@ class SpecialUndelete extends SpecialPage {
 		$this->localRepo->streamFileWithStatus( $path );
 	}
 
-	/**
-	 * @param LinkBatch $batch
-	 * @param IResultWrapper $revisions
-	 */
 	private function addRevisionsToBatch( LinkBatch $batch, IResultWrapper $revisions ) {
 		foreach ( $revisions as $row ) {
-			$batch->add( NS_USER, $row->ar_user_text );
-			$batch->add( NS_USER_TALK, $row->ar_user_text );
+			$batch->addUser( new UserIdentityValue( (int)$row->ar_user, $row->ar_user_text ) );
 		}
 	}
 
-	/**
-	 * @param LinkBatch $batch
-	 * @param IResultWrapper $files
-	 */
 	private function addFilesToBatch( LinkBatch $batch, IResultWrapper $files ) {
 		foreach ( $files as $row ) {
 			$batch->add( NS_USER, $row->fa_user_text );
@@ -993,7 +981,7 @@ class SpecialUndelete extends SpecialPage {
 			$extraConds,
 			self::REVISION_HISTORY_LIMIT + 1
 		);
-		$batch = $this->linkBatchFactory->newLinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 		$this->addRevisionsToBatch( $batch, $revisions );
 		$batch->execute();
 		$out->addHTML( $this->formatRevisionHistory( $revisions ) );
@@ -1071,7 +1059,7 @@ class SpecialUndelete extends SpecialPage {
 
 		# Batch existence check on user and talk pages
 		if ( $haveRevisions || $haveFiles ) {
-			$batch = $this->linkBatchFactory->newLinkBatch();
+			$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 			$this->addRevisionsToBatch( $batch, $revisions );
 			if ( $haveFiles ) {
 				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable -- $files is non-null
@@ -1094,12 +1082,12 @@ class SpecialUndelete extends SpecialPage {
 
 		# Show relevant lines from the deletion log:
 		$deleteLogPage = new LogPage( 'delete' );
-		$out->addHTML( Xml::element( 'h2', null, $deleteLogPage->getName()->text() ) . "\n" );
+		$out->addHTML( Html::element( 'h2', [], $deleteLogPage->getName()->text() ) . "\n" );
 		LogEventsList::showLogExtract( $out, 'delete', $this->mTargetObj );
 		# Show relevant lines from the suppression log:
 		$suppressLogPage = new LogPage( 'suppress' );
 		if ( $this->permissionManager->userHasRight( $this->getUser(), 'suppressionlog' ) ) {
-			$out->addHTML( Xml::element( 'h2', null, $suppressLogPage->getName()->text() ) . "\n" );
+			$out->addHTML( Html::element( 'h2', [], $suppressLogPage->getName()->text() ) . "\n" );
 			LogEventsList::showLogExtract( $out, 'suppress', $this->mTargetObj );
 		}
 
@@ -1117,11 +1105,11 @@ class SpecialUndelete extends SpecialPage {
 				$dropdownComment .= "\n" . $this->msg( 'undelete-comment-dropdown-unsuppress' )
 					->page( $this->mTargetObj )->inContentLanguage()->text();
 			}
-			$options = Xml::listDropdownOptions(
+			$options = Html::listDropdownOptions(
 				$dropdownComment,
 				[ 'other' => $this->msg( 'undeletecommentotherlist' )->text() ]
 			);
-			$options = Xml::listDropdownOptionsOoui( $options );
+			$options = Html::listDropdownOptionsOoui( $options );
 
 			$fields[] = new FieldLayout(
 				new DropdownInputWidget( [
@@ -1271,18 +1259,18 @@ class SpecialUndelete extends SpecialPage {
 		}
 
 		$history = '';
-		$history .= Xml::element( 'h2', null, $this->msg( 'history' )->text() ) . "\n";
+		$history .= Html::element( 'h2', [], $this->msg( 'history' )->text() ) . "\n";
 
 		if ( $haveRevisions ) {
 			# Show the page's stored (deleted) history
 
-			if ( $this->permissionManager->userHasRight( $this->getUser(), 'deleterevision' ) ) {
+			if ( $this->mAllowed && $this->permissionManager->userHasRight( $this->getUser(), 'deleterevision' ) ) {
 				$history .= Html::element(
 					'button',
 					[
 						'name' => 'revdel',
 						'type' => 'submit',
-						'class' => 'deleterevision-log-submit mw-log-deleterevision-button'
+						'class' => [ 'deleterevision-log-submit', 'mw-log-deleterevision-button' ]
 					],
 					$this->msg( 'showhideselectedversions' )->text()
 				) . "\n";
@@ -1306,7 +1294,7 @@ class SpecialUndelete extends SpecialPage {
 		}
 
 		if ( $haveFiles ) {
-			$history .= Xml::element( 'h2', null, $this->msg( 'filehist' )->text() ) . "\n";
+			$history .= Html::element( 'h2', [], $this->msg( 'filehist' )->text() ) . "\n";
 			$history .= Html::openElement( 'ul', [ 'class' => 'mw-undelete-revlist' ] );
 			foreach ( $files as $row ) {
 				$history .= $this->formatFileRow( $row );
@@ -1345,12 +1333,12 @@ class SpecialUndelete extends SpecialPage {
 		if ( $this->mAllowed ) {
 			if ( $this->mInvert ) {
 				if ( in_array( $ts, $this->mTargetTimestamp ) ) {
-					$checkBox = Xml::check( "ts$ts" );
+					$checkBox = Html::check( "ts$ts" );
 				} else {
-					$checkBox = Xml::check( "ts$ts", true );
+					$checkBox = Html::check( "ts$ts", true );
 				}
 			} else {
-				$checkBox = Xml::check( "ts$ts" );
+				$checkBox = Html::check( "ts$ts" );
 			}
 		} else {
 			$checkBox = '';
@@ -1407,9 +1395,7 @@ class SpecialUndelete extends SpecialPage {
 			'deletedhistory',
 			$this->getContext()
 		);
-		if ( $classes ) {
-			$attribs['class'] = implode( ' ', $classes );
-		}
+		$attribs['class'] = $classes;
 
 		$revisionRow = $this->msg( 'undelete-revision-row2' )
 			->rawParams(
@@ -1424,10 +1410,10 @@ class SpecialUndelete extends SpecialPage {
 			)
 			->escaped();
 
-		return Xml::tags( 'li', $attribs, $revisionRow ) . "\n";
+		return Html::rawElement( 'li', $attribs, $revisionRow ) . "\n";
 	}
 
-	private function formatFileRow( $row ) {
+	private function formatFileRow( \stdClass $row ): string {
 		$file = ArchivedFile::newFromRow( $row );
 		$ts = wfTimestamp( TS_MW, $row->fa_timestamp );
 		$user = $this->getUser();
@@ -1435,7 +1421,7 @@ class SpecialUndelete extends SpecialPage {
 		$checkBox = '';
 		if ( $this->mCanView && $row->fa_storage_key ) {
 			if ( $this->mAllowed ) {
-				$checkBox = Xml::check( 'fileid' . $row->fa_id );
+				$checkBox = Html::check( 'fileid' . $row->fa_id );
 			}
 			$key = urlencode( $row->fa_storage_key );
 			$pageLink = $this->getFileLink( $file, $this->getPageTitle(), $ts, $key );
@@ -1644,14 +1630,11 @@ class SpecialUndelete extends SpecialPage {
 
 		if ( !$status->isGood() ) {
 			$out->setPageTitleMsg( $this->msg( 'undelete-error' ) );
-			$out->wrapWikiTextAsInterface(
-				'error',
-				Status::wrap( $status )->getWikiText(
-					'cannotundelete',
-					'cannotundelete',
-					$this->getLanguage()
-				)
-			);
+			foreach ( $status->getMessages() as $msg ) {
+				$out->addHTML( Html::errorBox(
+					$this->msg( $msg )->parse()
+				) );
+			}
 			return;
 		}
 

@@ -124,7 +124,6 @@
 	"notification-header-edit-user-talk-with-section": "$1 <strong>{{GENDER:$3|توھان جي}} بحث صفحي</strong> تي ھڪ نياپو \"<strong>$4</strong>\" ۾ {{GENDER:$2|ڇڏيو}}.",
 	"notification-compact-header-edit-user-talk": "$1 {{GENDER:$3|توھان}} لاءِ ھڪ نياپو {{GENDER:$2|ڇڏيو}}.",
 	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$3|توھان}} لاءِ \"<strong>$4</strong>\" ۾ ھڪ نياپو {{GENDER:$2|ڇڏيو}} آھي.",
-	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "<strong>$4</strong> کان ھڪ ڳنڍڻو <strong>$3</strong> ڏانھن ٺاھيو ويو.",
 	"notification-compact-header-page-linked": "<strong>$1</strong> تان ڳنڍيل.",
 	"notification-bundle-header-page-linked": "{{PLURAL:$5|$5 صفحن|100=99+ صفحن}} کان <strong>$3</strong> ڏانھن ڳنڍڻا ٺاھيا ويا.",

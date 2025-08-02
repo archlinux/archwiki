@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Block;
 
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 
@@ -40,26 +39,22 @@ class BlockPermissionCheckerTest extends MediaWikiIntegrationTestCase {
 			'u4' => $this->getMutableTestUser( 'sysop' )->getUser(),
 			'nonsysop' => $this->getTestUser()->getUser()
 		];
-		foreach ( [ 'blockedUser', 'blockPerformer', 'adjustPerformer', 'adjustTarget' ] as $var ) {
-			$$var = $users[$$var];
-		}
 
-		$block = new DatabaseBlock( [
-			'address' => $blockedUser,
-			'by' => $blockPerformer,
-			'expiry' => 'infinity',
-			'sitewide' => $sitewide,
-			'enableAutoblock' => true,
-		] );
-
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'targetUser' => $users[$blockedUser],
+				'by' => $users[$blockPerformer],
+				'expiry' => 'infinity',
+				'sitewide' => $sitewide,
+				'enableAutoblock' => true,
+			] );
 
 		$this->assertSame(
 			$expectedResult,
 			$this->getServiceContainer()
 				->getBlockPermissionCheckerFactory()
-				->newBlockPermissionChecker( $adjustTarget, $adjustPerformer )
-				->checkBlockPermissions(),
+				->newChecker( $users[$adjustPerformer] )
+				->checkBlockPermissions( $users[$adjustTarget] ),
 			$reason
 		);
 	}

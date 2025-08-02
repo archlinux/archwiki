@@ -142,10 +142,9 @@ FeedbackDialog.prototype.getBodyHeight = function () {
  */
 FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 	return FeedbackDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			// Get the URL of the target page, we want to use that in links in the intro
 			// and in the success dialog
-			const dialog = this;
 			if ( data.foreignApi ) {
 				return data.foreignApi.get( {
 					action: 'query',
@@ -154,13 +153,13 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 					formatversion: 2,
 					titles: data.settings.title.getPrefixedText()
 				} ).then( ( response ) => {
-					dialog.feedbackPageUrl = OO.getProp( response, 'query', 'pages', 0, 'canonicalurl' );
+					this.feedbackPageUrl = OO.getProp( response, 'query', 'pages', 0, 'canonicalurl' );
 				} );
 			} else {
 				this.feedbackPageUrl = data.settings.title.getUrl();
 			}
-		}, this )
-		.next( function () {
+		} )
+		.next( () => {
 			const settings = data.settings;
 			data.contents = data.contents || {};
 
@@ -191,7 +190,7 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 			);
 
 			this.validateFeedbackForm();
-		}, this );
+		} );
 };
 
 /**
@@ -200,9 +199,9 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
  */
 FeedbackDialog.prototype.getReadyProcess = function ( data ) {
 	return FeedbackDialog.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.feedbackSubjectInput.focus();
-		}, this );
+		} );
 };
 
 /**
@@ -211,20 +210,19 @@ FeedbackDialog.prototype.getReadyProcess = function ( data ) {
  */
 FeedbackDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'cancel' ) {
-		return new OO.ui.Process( function () {
+		return new OO.ui.Process( () => {
 			this.close( { action: action } );
-		}, this );
+		} );
 	} else if ( action === 'external' ) {
-		return new OO.ui.Process( function () {
+		return new OO.ui.Process( () => {
 			// Open in a new window
 			window.open( this.getBugReportLink(), '_blank' );
 			// Close the dialog
 			this.close();
-		}, this );
+		} );
 	} else if ( action === 'submit' ) {
-		return new OO.ui.Process( function () {
-			const fb = this,
-				userAgentMessage = ':' +
+		return new OO.ui.Process( () => {
+			const userAgentMessage = ':' +
 					'<small>' +
 					mw.msg( 'feedback-useragent' ) +
 					' ' +
@@ -239,13 +237,13 @@ FeedbackDialog.prototype.getActionProcess = function ( action ) {
 			}
 
 			// Post the message
-			return this.messagePosterPromise.then( ( poster ) => fb.postMessage( poster, subject, message ), () => {
-				fb.status = 'error4';
+			return this.messagePosterPromise.then( ( poster ) => this.postMessage( poster, subject, message ), () => {
+				this.status = 'error4';
 				mw.log.warn( 'Feedback report failed because MessagePoster could not be fetched' );
 			} ).then( () => {
-				fb.close();
-			}, () => fb.getErrorMessage() );
-		}, this );
+				this.close();
+			}, () => this.getErrorMessage() );
+		} );
 	}
 	// Fallback to parent handler
 	return FeedbackDialog.super.prototype.getActionProcess.call( this, action );
@@ -279,26 +277,24 @@ FeedbackDialog.prototype.getErrorMessage = function () {
  * @return {jQuery.Promise} Promise representing success of message posting action
  */
 FeedbackDialog.prototype.postMessage = function ( poster, subject, message ) {
-	const fb = this;
-
 	return poster.post(
 		subject,
 		message
 	).then( () => {
-		fb.status = 'submitted';
+		this.status = 'submitted';
 	}, ( mainCode, secondaryCode, details ) => {
 		if ( mainCode === 'api-fail' ) {
 			if ( secondaryCode === 'http' ) {
-				fb.status = 'error3';
+				this.status = 'error3';
 				// ajax request failed
 				mw.log.warn( 'Feedback report failed with HTTP error: ' + details.textStatus );
 			} else {
-				fb.status = 'error2';
+				this.status = 'error2';
 				mw.log.warn( 'Feedback report failed with API error: ' + secondaryCode );
 			}
-			fb.$statusFromApi = ( new mw.Api() ).getErrorMessage( details );
+			this.$statusFromApi = ( new mw.Api() ).getErrorMessage( details );
 		} else {
-			fb.status = 'error1';
+			this.status = 'error1';
 		}
 	} );
 };
@@ -309,7 +305,7 @@ FeedbackDialog.prototype.postMessage = function ( poster, subject, message ) {
  */
 FeedbackDialog.prototype.getTeardownProcess = function ( data ) {
 	return FeedbackDialog.super.prototype.getTeardownProcess.call( this, data )
-		.first( function () {
+		.first( () => {
 			this.emit( 'submit', this.status, this.feedbackPageName, this.feedbackPageUrl );
 			// Cleanup
 			this.status = '';
@@ -317,7 +313,7 @@ FeedbackDialog.prototype.getTeardownProcess = function ( data ) {
 			this.feedbackSubjectInput.setValue( '' );
 			this.feedbackMessageInput.setValue( '' );
 			this.useragentCheckbox.setSelected( false );
-		}, this );
+		} );
 };
 
 /**

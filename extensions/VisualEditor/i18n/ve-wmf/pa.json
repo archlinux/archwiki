@@ -10,9 +10,9 @@
 			"Satdeep gill"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ਵਿਜ਼ੁਅਲ ਐਡਿਟ]]",
+	"tag-visualeditor": "ਵਿਜ਼ੁਅਲ ਐਡਿਟ",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]] ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਸੋਧ ਕੀਤੀ ਗਈ",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit: Check]]",
+	"tag-visualeditor-needcheck": "Visual edit: Check",
 	"tag-visualeditor-needcheck-description": "Edit made using the [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]] where the system detected the wikitext possibly having unintended changes.",
 	"visualeditor-feedback-link": "ਪਰੋਜੈਕਟ:ਵਿਜ਼ੂਅਲਐਡੀਟਰ/ਇਸ ਬਾਰੇ ਤੁਹਾਡੇ ਵਿਚਾਰ",
 	"visualeditor-feedback-tool": "ਇਸ ਸਾਫ਼ਟਵੇਅਰ ਬਾਰੇ ਆਪਣੇ ਵਿਚਾਰ ਸਾਂਝੇ ਕਰੋ",

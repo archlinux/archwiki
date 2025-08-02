@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Af420",
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"Amjad Khan",
+			"Baloch Khan",
+			"Dreamy Jazz",
+			"شاه زمان پټان"
+		]
+	},
+	"checkuser": "کره کتونکی کارن",
+	"group-checkuser": "کره کتونکي کارنان",
+	"group-checkuser-member": "{{GENDER:$1|کره کتونکی کارن}}",
+	"grant-checkuser": "د کارن ډاټا کتنې لاسرسی",
+	"grouppage-checkuser": "{{ns:project}}:کره کتونکي کارنان",
+	"checkuser-reason": "سبب:",
+	"checkuser-showlog": "يادښت کتل",
+	"checkuser-target": "کارن يا IP پته:",
+	"checkuser-users": "کارنان راغوښتل",
+	"checkuser-ips": "آی پي پتې ترلاسه کول",
+	"checkuser-period": "موده:",
+	"checkuser-week-1": "تېره اوونۍ",
+	"checkuser-week-2": "تېرې دوه اوونۍ",
+	"checkuser-month": "تېرې ۳۰ ورځې",
+	"checkuser-all": "ټول",
+	"checkuser-check": "کره کتل",
+	"checkuser-blocked": "بنديز لگېدلی",
+	"checkuser-gblocked": "نړېواله بنديز لگېدلی",
+	"checkuser-locked": "تړل شوی",
+	"checkuser-massblock": "په ټاکلو کارنانو بنديز لگول",
+	"checkuser-search": "د کارن يادښت ننوتنې پلټل",
+	"checkuser-search-submit": "پلټل",
+	"checkuser-log-search-target": "موخه:",
+	"checkuser-ipeditcount": "~$1 د ټولو کارنانو نه",
+	"logentry-checkuser-private-event-autocreate-account": "په خپلکاره توگه جوړ شو",
+	"logentry-checkuser-private-event-create-account": "جوړ شو",
+	"checkuser-temporary-accounts-onboarding-dialog-close-label": "تړل",
+	"checkuser-global-contributions-link": "ټوليزې ونډې",
+	"checkuser-global-contributions-link-sidebar": "ټوليزې ونډې",
+	"checkuser-ip-auto-reveal-off-dialog-extend-action": "+۱۰دقيقې"
+}

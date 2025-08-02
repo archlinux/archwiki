@@ -32,6 +32,8 @@ use MediaWiki\Page\PageReference;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\TempUser\TempUserDetailsLookup;
+use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Wikimedia\Assert\Assert;
@@ -50,6 +52,11 @@ class LinkBatch {
 	 * @var array<int,array<string,mixed>> 2-d array, first index namespace, second index dbkey, value arbitrary
 	 */
 	public $data = [];
+
+	/**
+	 * @var UserIdentity[] Users to preload temporary account expiration status for
+	 */
+	private array $users = [];
 
 	/**
 	 * @var ProperPageIdentity[]|null page identity objects corresponding to the links in the batch
@@ -89,6 +96,8 @@ class LinkBatch {
 	/** @var LinksMigration */
 	private $linksMigration;
 
+	private TempUserDetailsLookup $tempUserDetailsLookup;
+
 	/** @var LoggerInterface */
 	private $logger;
 
@@ -103,6 +112,7 @@ class LinkBatch {
 	 * @param GenderCache $genderCache
 	 * @param IConnectionProvider $dbProvider
 	 * @param LinksMigration $linksMigration
+	 * @param TempUserDetailsLookup $tempUserDetailsLookup
 	 * @param LoggerInterface $logger
 	 */
 	public function __construct(
@@ -113,6 +123,7 @@ class LinkBatch {
 		GenderCache $genderCache,
 		IConnectionProvider $dbProvider,
 		LinksMigration $linksMigration,
+		TempUserDetailsLookup $tempUserDetailsLookup,
 		LoggerInterface $logger
 	) {
 		$this->linkCache = $linkCache;
@@ -121,6 +132,7 @@ class LinkBatch {
 		$this->genderCache = $genderCache;
 		$this->dbProvider = $dbProvider;
 		$this->linksMigration = $linksMigration;
+		$this->tempUserDetailsLookup = $tempUserDetailsLookup;
 		$this->logger = $logger;
 
 		foreach ( $arr as $item ) {
@@ -129,17 +141,31 @@ class LinkBatch {
 	}
 
 	/**
-	 * Use ->setCaller( __METHOD__ ) to indicate which code is using this
-	 * class. Only used in debugging output.
-	 * @since 1.17
+	 * Set the function name to attribute database queries to, in debug logs.
 	 *
+	 * @see Wikimedia\Rdbms\SelectQueryBuilder::caller
+	 * @since 1.17
 	 * @param string $caller
 	 * @return self (since 1.32)
 	 */
-	public function setCaller( $caller ) {
+	public function setCaller( $caller ): self {
 		$this->caller = $caller;
 
 		return $this;
+	}
+
+	/**
+	 * Convenience function to add user and user talk pages for a given user to this batch.
+	 * Calling {@link execute} will also prefetch the expiration status of temporary accounts
+	 * added this way, which is needed for the efficient rendering of user links via UserLinkRenderer.
+	 *
+	 * @since 1.44
+	 */
+	public function addUser( UserIdentity $user ): void {
+		$this->users[$user->getName()] = $user;
+
+		$this->add( NS_USER, $user->getName() );
+		$this->add( NS_USER_TALK, $user->getName() );
 	}
 
 	/**
@@ -241,6 +267,13 @@ class LinkBatch {
 	protected function executeInto( $cache ) {
 		$res = $this->doQuery();
 		$this->doGenderQuery();
+
+		// Prefetch expiration status for temporary accounts added to this batch via addUser()
+		// for efficient user link rendering (T358469).
+		if ( count( $this->users ) > 0 ) {
+			$this->tempUserDetailsLookup->preloadExpirationStatus( $this->users );
+		}
+
 		return $this->addResultToCache( $cache, $res );
 	}
 
@@ -326,19 +359,19 @@ class LinkBatch {
 			return false;
 		}
 
-		// This is similar to LinkHolderArray::replaceInternal
-		$dbr = $this->dbProvider->getReplicaDatabase();
-		$queryBuilder = $dbr->newSelectQueryBuilder()
-			->select( LinkCache::getSelectFields() )
-			->from( 'page' )
-			->where( $this->constructSet( 'page', $dbr ) );
-
 		$caller = __METHOD__;
 		if ( strval( $this->caller ) !== '' ) {
 			$caller .= " (for {$this->caller})";
 		}
 
-		return $queryBuilder->caller( $caller )->fetchResultSet();
+		// This is similar to LinkHolderArray::replaceInternal
+		$dbr = $this->dbProvider->getReplicaDatabase();
+		return $dbr->newSelectQueryBuilder()
+			->select( LinkCache::getSelectFields() )
+			->from( 'page' )
+			->where( $this->constructSet( 'page', $dbr ) )
+			->caller( $caller )
+			->fetchResultSet();
 	}
 
 	/**

@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Notifications\Test\Unit;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway;
+use MediaWiki\MainConfigNames;
 use MediaWiki\User\User;
 use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\FakeResultWrapper;
@@ -137,7 +138,7 @@ class UserNotificationGatewayTest extends MediaWikiUnitTestCase {
 
 	protected function mockConfig() {
 		return new HashConfig( [
-			'UpdateRowsPerQuery' => 500,
+			MainConfigNames::UpdateRowsPerQuery => 500,
 		] );
 	}
 

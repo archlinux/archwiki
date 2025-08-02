@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"1917 Ekim Devrimi",
-			"Amire80",
 			"Asmen",
+			"GolyatGeri",
 			"Kumkumuk",
 			"Mirzali",
 			"Orbot707"
@@ -57,5 +57,6 @@
 	"apierror-abusefilter-cantcheck": "rêz kerdena qeydanê nengan rê izinê şıma çıni yo.",
 	"apierror-abusefilter-canteval": "Ercnayışê ifadeyanê AbuseFilteri re mısadey to çıniyo",
 	"apierror-abusefilter-nosuchlogid": "Tiya ra qeydê nengan nêdebêno kamiya $1",
+	"apierror-abusefilter-incompatible": "Parzunê tacizi wastisê vurnayışê rê phesti nêdano",
 	"apierror-abusefilter-badsyntax": "Ena filter de yew rêza xelat esta."
 }

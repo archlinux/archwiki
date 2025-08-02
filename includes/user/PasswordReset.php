@@ -1,7 +1,5 @@
 <?php
 /**
- * User password reset helper for MediaWiki.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,7 +22,6 @@ namespace MediaWiki\User;
 
 use Iterator;
 use LogicException;
-use MapCacheLRU;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\TemporaryPasswordAuthenticationRequest;
 use MediaWiki\Config\ServiceOptions;
@@ -40,9 +37,10 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use StatusValue;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 
 /**
- * Helper class for the password reset functionality shared by the web UI and the API.
+ * Password reset helper for functionality shared by the web UI and the API.
  *
  * Requires the TemporaryPasswordPrimaryAuthenticationProvider and the
  * EmailNotificationSecondaryAuthenticationProvider (or something providing equivalent
@@ -150,10 +148,6 @@ class PasswordReset implements LoggerAwareInterface {
 		return StatusValue::newGood();
 	}
 
-	/**
-	 * @param User $user
-	 * @return StatusValue
-	 */
 	private function computeIsAllowed( User $user ): StatusValue {
 		$enabledStatus = $this->isEnabled();
 		if ( !$enabledStatus->isGood() ) {

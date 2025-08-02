@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"BOKOBA VEROLY"
+		]
+	},
+	"group-temporary-account-viewer": "Bato oyo batalaka makambo ya IP mpo na mwa ntango",
+	"group-temporary-account-viewer-member": "{{GENDER:$1| motali IP ya compte temporaire}}",
+	"right-checkuser-temporary-account-auto-reveal": "Bimisa automatiquement ba adresses IP oyo ba comptes temporaires esalela",
+	"action-checkuser-temporary-account-auto-reveal": "emonisaka mbala moko adrɛsi IP oyo basalelaka na ba compte ya ntango mokuse",
+	"grouppage-temporary-account-viewer": "{{ns:project}}:Motali IP ya compte ya ntango moke",
+	"checkuser-global-contributions-link-sidebar": "Makabo ya mokili mobimba",
+	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>Ba résultats oyo ekokani na query te.</strong> Okoki kozwa makabo soki obongoli ba paramètres ya boluki na yo.",
+	"checkuser-ip-auto-reveal-link-sidebar": "IP Komimonisa ye moko"
+}

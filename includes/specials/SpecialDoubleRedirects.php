@@ -23,9 +23,9 @@ namespace MediaWiki\Specials;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Html\Html;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -44,11 +44,6 @@ class SpecialDoubleRedirects extends QueryPage {
 	private IContentHandlerFactory $contentHandlerFactory;
 	private LinkBatchFactory $linkBatchFactory;
 
-	/**
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
 		LinkBatchFactory $linkBatchFactory,
@@ -76,7 +71,7 @@ class SpecialDoubleRedirects extends QueryPage {
 		return $this->msg( 'doubleredirectstext' )->parseAsBlock();
 	}
 
-	private function reallyGetQueryInfo( $namespace = null, $title = null ) {
+	private function reallyGetQueryInfo( ?int $namespace = null, ?string $title = null ): array {
 		$limitToTitle = !( $namespace === null && $title === null );
 		$retval = [
 			'tables' => [
@@ -236,7 +231,7 @@ class SpecialDoubleRedirects extends QueryPage {
 			return;
 		}
 
-		$batch = $this->linkBatchFactory->newLinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
 			if ( isset( $row->b_namespace ) ) {

@@ -66,6 +66,31 @@
 					"additionalProperties": false
 				}
 			]
+		},
+		"ObjectFactorySpec": {
+			"type": "object",
+			"properties": {
+				"factory": {
+					"type": [ "string", "array" ],
+					"description": "A factory function to be called to create the object"
+				},
+				"class": {
+					"type": "string",
+					"description": "The fully-qualified class name of the object. This should be omitted if a factory is specified."
+				},
+				"args": {
+					"type": "array",
+					"description": "The arguments passed to the object constructor or factory"
+				},
+				"services": {
+					"type": "array",
+					"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
+				},
+				"optional_services": {
+					"type": "array",
+					"description": "If supplied and non-empty, the named services are requested from the service container and appended after 'services' if the services are available; null is passed if the services are not available."
+				}
+			}
 		}
 	},
 	"type": "object",
@@ -299,11 +324,11 @@
 							"properties": {
 								"localBasePath": {
 									"type": "string",
-									"description": "Base path to prepend to all local paths in $options. Defaults to $IP"
+									"description": "Base path to prepend to all local paths. Defaults to $IP"
 								},
 								"remoteBasePath": {
 									"type": "string",
-									"description": "Base path to prepend to all remote paths in $options. Defaults to $wgScriptPath"
+									"description": "Base path to prepend to all remote paths. Defaults to $wgScriptPath"
 								},
 								"remoteExtPath": {
 									"type": "string",
@@ -578,11 +603,11 @@
 					"properties": {
 						"localBasePath": {
 							"type": "string",
-							"description": "Base path to prepend to all local paths in $options. Defaults to $IP"
+							"description": "Base path to prepend to all local paths. Defaults to $IP"
 						},
 						"remoteBasePath": {
 							"type": "string",
-							"description": "Base path to prepend to all remote paths in $options. Defaults to $wgScriptPath"
+							"description": "Base path to prepend to all remote paths. Defaults to $wgScriptPath"
 						},
 						"remoteExtPath": {
 							"type": "string",
@@ -752,7 +777,7 @@
 			"properties": {
 				"localBasePath": {
 					"type": "string",
-					"description": "Prefix for local paths to files in $options, relative to extension directory"
+					"description": "Prefix for local paths to files, relative to extension directory"
 				},
 				"scripts": {
 					"type": "array",
@@ -1143,31 +1168,7 @@
 		"HookHandlers": {
 			"type": "object",
 			"description": "ObjectFactory specifications for new-style hook handlers",
-			"additionalProperties": {
-				"type": "object",
-				"properties": {
-					"factory": {
-						"type": [ "string", "array" ],
-						"description": "A factory function to be called to create the handler for this hook"
-					},
-					"class": {
-						"type": "string",
-						"description": "The fully-qualified class name of the handler. This should be omitted if a factory is specified."
-					},
-					"args": {
-						"type": "array",
-						"description": "The arguments passed to the handler constructor or factory"
-					},
-					"services": {
-						"type": "array",
-						"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
-					},
-					"optional_services": {
-						"type": "array",
-						"description": "If supplied and non-empty, the named services are requested from the service container and appended after 'services' if the services are available; null is passed if the services are not available."
-					}
-				}
-			}
+			"additionalProperties": { "$ref": "#/definitions/ObjectFactorySpec" }
 		},
 		"DeprecatedHooks": {
 			"type": "object",
@@ -1190,6 +1191,40 @@
 				},
 				"required": [
 					"deprecatedVersion"
+				]
+			}
+		},
+		"DomainEventSubscribers": {
+			"type": "array",
+			"description": "Deprecated alias for DomainEventIngresses (T389033)",
+			"items": {
+				"$ref": "#/properties/DomainEventIngresses/items"
+			}
+		},
+		"DomainEventIngresses": {
+			"type": "array",
+			"description": "ObjectFactory specifications for domain event ingress objects. Since MW 1.44. Event ingress objects must extend DomainEventIngress.",
+			"items": {
+				"allOf": [
+					{
+						"type": "object",
+						"required": [ "events" ],
+						"properties": {
+							"events": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								},
+								"description": "A list of events to subscribe to"
+							},
+							"factory": { "description": "See the ObjectFactorySpec definition" },
+							"class": { "description": "See the ObjectFactorySpec definition" },
+							"args": { "description": "See the ObjectFactorySpec definition" },
+							"services": { "description": "See the ObjectFactorySpec definition" },
+							"optional_services": { "description": "See the ObjectFactorySpec definition" }
+						}
+					},
+					{ "$ref": "#/definitions/ObjectFactorySpec" }
 				]
 			}
 		},
@@ -1346,6 +1381,55 @@
 				}
 			}
 		},
+		"InstallerTasks": {
+			"type": "array",
+			"description": "Array of specification objects describing tasks to run during installation",
+			"items": {
+				"type": "object",
+				"properties": {
+					"class": {
+						"type": "string",
+						"description": "The class name to create"
+					},
+					"factory": {
+						"type": [ "array", "string" ],
+						"description": "A function to call to create the object"
+					},
+					"args": {
+						"type": "array",
+						"description": "Arguments to pass to the constructor"
+					},
+					"callback": {
+						"type": [ "array", "string" ],
+						"description": "Function to call during installation"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name of the task (with callback only)"
+					},
+					"description": {
+						"type": "string",
+						"description": "A description of the task (with callback only)"
+					},
+					"after": {
+						"type": [ "array", "string" ],
+						"description": "The name of the dependency or provided data, or a list of such names (with callback only)"
+					},
+					"postInstall": {
+						"type": "boolean",
+						"description": "Whether the task should run after all tasks that actually perform installation (with callback only)"
+					},
+					"profile": {
+						"type": "string",
+						"description": "Which installer to run the task under. If unspecified, it runs in both installers.",
+						"enum": [
+							"installer",
+							"installPreConfigured"
+						]
+					}
+				}
+			}
+		},
 		"callback": {
 			"type": [
 				"array",
@@ -1414,44 +1498,38 @@
 			"type": "array",
 			"description": "List of route specifications to be added to the REST API",
 			"items": {
-				"type": "object",
-				"properties": {
-					"method": {
-						"oneOf": [
-							{
-								"type": "string",
-								"description": "The HTTP method name"
+				"allOf": [
+					{
+						"type": "object",
+						"properties": {
+							"method": {
+								"oneOf": [
+									{
+										"type": "string",
+										"description": "The HTTP method name"
+									},
+									{
+										"type": "array",
+										"items": {
+											"type": "string",
+											"description": "An acceptable HTTP method name"
+										}
+									}
+								]
 							},
-							{
-								"type": "array",
-								"items": {
-									"type": "string",
-									"description": "An acceptable HTTP method name"
-								}
-							}
-						]
+							"path": {
+								"type": "string",
+								"description": "The path template. This should start with an initial slash, designating the root of the REST API. Path parameters are enclosed in braces, for example /endpoint/{param}."
+							},
+							"factory": { "description": "See the ObjectFactorySpec definition" },
+							"class": { "description": "See the ObjectFactorySpec definition" },
+							"args": { "description": "See the ObjectFactorySpec definition" },
+							"services": { "description": "See the ObjectFactorySpec definition" },
+							"optional_services": { "description": "See the ObjectFactorySpec definition" }
+						}
 					},
-					"path": {
-						"type": "string",
-						"description": "The path template. This should start with an initial slash, designating the root of the REST API. Path parameters are enclosed in braces, for example /endpoint/{param}."
-					},
-					"factory": {
-						"type": [ "string", "array" ],
-						"description": "A factory function to be called to create the handler for this route"
-					},
-					"class": {
-						"type": "string",
-						"description": "The fully-qualified class name of the handler. This should be omitted if a factory is specified."
-					},
-					"args": {
-						"type": "array",
-						"description": "The arguments passed to the handler constructor or factory"
-					},
-					"services": {
-						"type": "array",
-						"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
-					}
-				}
+					{ "$ref": "#/definitions/ObjectFactorySpec" }
+				]
 			}
 		},
 		"ParsoidModules": {
@@ -1487,7 +1565,7 @@
 					},
 					{
 						"type": "object",
-						"description": "A Parsoid extension module configuration array",
+						"description": "A Parsoid extension module configuration array. Only mandatory and prohibited fields are specified here; the Parsoid repository contains a complete schema, documented at [[mw:Parsoid/Internals/Module_Configuration_Schema]].",
 						"properties": {
 							"class": {
 								"type": "null",
@@ -1497,46 +1575,9 @@
 								"type": "null",
 								"description": "This property must not be present in a configuration array"
 							},
-							"domProcessors": {
-								"type": "array",
-								"items": {
-									"description": "Object factory specification of a class implementing Wikimedia\\Parsoid\\Ext\\DOMProcessor"
-								}
-							},
-							"styles": {
-								"type": "array",
-								"items": {
-									"type": "string",
-									"description": "Additional ResourceLoader styles to include"
-								}
-							},
-							"annotations": {
-								"type": "array",
-								"items": {
-									"type": "string",
-									"description": "The name of an annotation tag"
-								}
-							},
-							"tags": {
-								"type": "array",
-								"items": {
-									"type": "object",
-									"description": "An extension tag",
-									"properties": {
-										"name": {
-											"type": "string",
-											"description": "The name of the extension tag"
-										},
-										"handler": {
-											"description": "An object factory specification of a class extending Wikimedia\\Parsoid\\Ext\\ExtensionTagHandler"
-										},
-										"options": {
-											"type": "object",
-											"description": "Additional Parsoid processing configuration for this extension tag"
-										}
-									},
-									"required": [ "name" ]
-								}
+							"name": {
+								"type": "string",
+								"description": "The Parsoid extension module's canonical name; should be unique."
 							}
 						}
 					}
@@ -1547,104 +1588,73 @@
 			"type": "object",
 			"description": "Map of temporary user serial provider type name to ObjectFactory spec",
 			"patternProperties": {
-				".*": {
-					"type": "object",
-					"properties": {
-						"factory": {
-							"type": [ "string", "array" ],
-							"description": "A factory function"
-						},
-						"class": {
-							"type": "string",
-							"description": "The fully-qualified class name of the handler. This should be omitted if a factory is specified."
-						},
-						"args": {
-							"type": "array",
-							"description": "The arguments passed to the constructor or factory"
-						},
-						"services": {
-							"type": "array",
-							"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
-						}
-					}
-				}
+				".*": { "$ref": "#/definitions/ObjectFactorySpec" }
 			}
 		},
 		"TempUserSerialMappings": {
 			"type": "object",
 			"description": "Map of temporary user serial map type name to ObjectFactory spec",
 			"patternProperties": {
-				".*": {
-					"type": "object",
-					"properties": {
-						"factory": {
-							"type": [ "string", "array" ],
-							"description": "A factory function"
-						},
-						"class": {
-							"type": "string",
-							"description": "The fully-qualified class name of the handler. This should be omitted if a factory is specified."
-						},
-						"args": {
-							"type": "array",
-							"description": "The arguments passed to the constructor or factory"
-						},
-						"services": {
-							"type": "array",
-							"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
-						}
-					}
-				}
+				".*": { "$ref": "#/definitions/ObjectFactorySpec" }
 			}
 		},
 		"UserRegistrationProviders": {
 			"type": "object",
 			"description": "Map of user registration timestamp providers (specs for ObjectFactory, indexed by provider name)",
 			"patternProperties": {
-				".*": {
-					"type": "object",
-					"properties": {
-						"class": {
-							"type": "string",
-							"description": "The fully-qualified class name of the handler. This should be omitted if a factory is specified."
-						},
-						"args": {
-							"type": "array",
-							"description": "The arguments passed to the constructor or factory"
-						},
-						"services": {
-							"type": "array",
-							"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
-						}
-					}
-				}
+				".*": { "$ref": "#/definitions/ObjectFactorySpec" }
 			}
 		},
 		"UserOptionsStoreProviders": {
 			"type": "object",
 			"description": "Map of user options store providers (specs for ObjectFactory, indexed by provider name). The class should implement the UserOptionsStore interface.",
 			"patternProperties": {
-				".*": {
-					"type": "object",
-					"properties": {
-						"factory": {
-							"type": [ "string", "array" ],
-							"description": "A factory function"
-						},
-						"class": {
-							"type": "string",
-							"description": "The fully-qualified class name of the store. This should be omitted if a factory is specified."
-						},
-						"args": {
-							"type": "array",
-							"description": "The arguments passed to the constructor or factory"
-						},
-						"services": {
-							"type": "array",
-							"description": "If supplied and non-empty, the named services are requested from the service container and prepended before 'args'."
+				".*": { "$ref": "#/definitions/ObjectFactorySpec" }
+			}
+		},
+		"NotificationMiddleware": {
+			"type": "array",
+			"description": "List of notification middleware (specs for ObjectFactory). The class should implement the NotificationMiddlewareInterface interface.",
+			"items": {
+				"allOf": [
+					{
+						"type": "object",
+						"properties": {
+							"factory": { "description": "See the ObjectFactorySpec definition" },
+							"class": { "description": "See the ObjectFactorySpec definition" },
+							"args": { "description": "See the ObjectFactorySpec definition" },
+							"services": { "description": "See the ObjectFactorySpec definition" },
+							"optional_services": { "description": "See the ObjectFactorySpec definition" }
 						}
-					}
-				}
+					},
+					{ "$ref": "#/definitions/ObjectFactorySpec" }
+				]
+			}
+		},
+		"NotificationHandlers": {
+			"type": "array",
+			"description": "List of notification handlers (specs for ObjectFactory). The class should implement the NotificationHandler interface.",
+			"items": {
+				"allOf": [
+					{
+						"type": "object",
+						"properties": {
+							"types": {
+								"type": "array",
+								"description": "Notification types (or wildcards) supported by this handler. Currently, the only supported wildcard is setting the whole type to '*' (no partial matches allowed).",
+								"items": {
+									"type": "string"
+								}
+							},
+							"factory": { "description": "See the ObjectFactorySpec definition" },
+							"class": { "description": "See the ObjectFactorySpec definition" },
+							"args": { "description": "See the ObjectFactorySpec definition" },
+							"services": { "description": "See the ObjectFactorySpec definition" },
+							"optional_services": { "description": "See the ObjectFactorySpec definition" }
+						}
+					},
+					{ "$ref": "#/definitions/ObjectFactorySpec" }
+				]
 			}
 		},
 		"ForeignResourcesDir": {

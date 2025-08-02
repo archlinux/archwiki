@@ -72,7 +72,7 @@ class RenderDebugInfo extends ContentTextTransformStage {
 					'cachereport-transientcontent',
 					'limitreport-timingprofile',
 				] ) ) {
-					// These keys are processed separately.
+					// These entries have non-numeric parameters, and therefore are processed separately.
 					continue;
 				}
 
@@ -81,7 +81,7 @@ class RenderDebugInfo extends ContentTextTransformStage {
 					$key, $value, $limitReport, false, false )
 				) {
 					$keyMsg = Message::newFromSpecifier( $key )->inLanguage( 'en' )->useDatabase( false );
-					$valueMsg = Message::newFallbackSequence( [ "$key-value-text", "$key-value" ] )
+					$valueMsg = Message::newFromSpecifier( "$key-value" )
 						->inLanguage( 'en' )->useDatabase( false );
 					if ( !$valueMsg->exists() ) {
 						$valueMsg = new RawMessage( '$1' );

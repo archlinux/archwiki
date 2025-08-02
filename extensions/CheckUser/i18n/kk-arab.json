@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"checkuser-summary": "بۇل قۇرال پايدالانۋشى قولدانعان IP جايلار ٴۇشىن, نەمەسە IP جاي تۇزەتۋ/پايدالانۋشى دەرەكتەرىن كورسەتۋ ٴۇشىن جۋىقتاعى وزگەرىستەردى قاراپ شىعادى.\n\tپايدالانۋشىلاردى مەن تۇزەتۋلەردى XFF IP ارقىلى IP جايعا «/xff» دەگەندى قوسىپ كەلتىرۋگە بولادى. IPv4 (CIDR $1-32) جانە IPv6 (CIDR $2-128) ارقاۋلانادى.\n\tورىنداۋشىلىق سەبەپتەرىمەن 5000 تۇزەتۋدەن ارتىق قايتارىلمايدى. بۇنى ەرەجەلەرگە سايكەس پايدالانىڭىز.",
+	"checkuser": "قاتىسۋشىنى سىناۋ",
+	"checkuserlog": "قاتىسۋشى سىناۋ جۋرنالى",
+	"group-checkuser": "قاتىسۋشى سىناۋشىلار",
+	"group-checkuser-member": "قاتىسۋشى سىناۋشى",
+	"grouppage-checkuser": "{{ns:project}}:قاتىسۋشىنى سىناۋ",
+	"checkuser-reason": "سەبەبى:",
+	"checkuser-showlog": "جۋرنالدى كورسەت",
+	"checkuser-query": "جۋىقتاعى وزگەرىستەردى سۇرانىمداۋ",
+	"checkuser-target": "قاتىسۋشى اتى / IP جاي",
+	"checkuser-users": "قاتىسۋشىلاردى كەلتىرۋ",
+	"checkuser-ips": "IP جايلاردى كەلتىرۋ",
+	"checkuser-empty": "جۋرنالدا ەش جازبا جوق.",
+	"checkuser-nomatch": "سايكەس تابىلمادى.",
+	"checkuser-check": "سىناۋ",
+	"checkuser-blocked": "بۇعاتتالعان",
+	"checkuser-search": "ىزدەۋ",
+	"checkuser-search-submit": "ىزدەۋ",
+	"checkuser-showmain": "CheckUser باسقى پىشىنىنە  ورالۋ"
+}

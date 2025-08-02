@@ -267,6 +267,7 @@
 	"search-thumbnail-extra-namespaces-label": "Mostrar miniaturas en Especial:Buscar en el Escritorio",
 	"search-thumbnail-extra-namespaces-message": "Muestra miniaturas para {{PLURAL:$2|el siguiente espacio|los siguientes espacios}} de nombres: $1 en la página {{#special:search}}",
 	"prefs-advancedsearchoptions": "Opciones avanzadas",
+	"prefs-misc": "Varias",
 	"prefs-reset-intro": "Puedes usar esta página para restablecer tus preferencias a los valores predeterminados del sitio.\nNo podrás deshacer esta acción.",
 	"prefs-reset-confirm": "Sí, quiero restablecer mis preferencias.",
 	"restoreprefs": "Restablecer todas las preferencias"

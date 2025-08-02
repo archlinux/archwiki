@@ -10,7 +10,7 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"type": "other",
 	"ContentHandlers": {
@@ -83,8 +83,6 @@
 		}
 	},
 	"Hooks": {
-		"PageDeleteComplete": "GadgetHooks",
-		"PageSaveComplete": "GadgetHooks",
 		"BeforePageDisplay": "GadgetHooks",
 		"CodeEditorGetPageLanguage": "GadgetCodeEditorHooks",
 		"ContentHandlerDefaultModelFor": "GadgetHooks",
@@ -97,6 +95,18 @@
 		"PreferencesGetIcon": "GadgetHooks",
 		"getUserPermissionsErrors": "GadgetHooks"
 	},
+	"DomainEventIngresses": [
+		{
+			"events": [
+				"PageRevisionUpdated",
+				"PageDeleted"
+			],
+			"class": "MediaWiki\\Extension\\Gadgets\\EventIngress",
+			"services": [
+				"GadgetsRepo"
+			]
+		}
+	],
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],

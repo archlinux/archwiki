@@ -1,7 +1,5 @@
 <?php
 /**
- * Content object for wiki text pages.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,12 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @since 1.21
- *
  * @file
- * @ingroup Content
- *
- * @author Daniel Kinzler
  */
 
 namespace MediaWiki\Content;
@@ -39,7 +32,9 @@ use MediaWiki\Title\Title;
  * Content object for wiki text pages.
  *
  * @newable
+ * @since 1.21
  * @ingroup Content
+ * @author Daniel Kinzler
  */
 class WikitextContent extends TextContent {
 
@@ -111,7 +106,7 @@ class WikitextContent extends TextContent {
 					->plaintextParams( $sectionTitle )->inContentLanguage()->text() . "\n\n" : '';
 			$hookRunner = ( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) );
 			if ( $hookRunner->onPlaceNewSection( $this, $oldtext, $subject, $text ) ) {
-				$text = strlen( trim( $oldtext ) ) > 0
+				$text = trim( $oldtext ) !== ''
 					? "{$oldtext}\n\n{$subject}{$text}"
 					: "{$subject}{$text}";
 			}
@@ -232,8 +227,7 @@ class WikitextContent extends TextContent {
 				$contentRenderer = MediaWikiServices::getInstance()->getContentRenderer();
 				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable getTitle does not return null here
 				$po = $contentRenderer->getParserOutput( $this, $title, null, null, false );
-				$links = $po->getLinks();
-				$hasLinks = $links !== [];
+				$hasLinks = $po->hasLinks();
 			}
 
 			return $hasLinks;

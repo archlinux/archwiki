@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gothicspeaker"
+		]
+	},
+	"apihelp-query+checkuser-param-target": "𐌰𐍄𐌲𐌰𐌲𐌲𐌰𐌽𐌰𐌼𐍉, IP 𐍂𐌰𐌸𐌾𐍉, 𐌰𐌹𐌸𐌸𐌰𐌿 CIDR",
+	"apihelp-query+checkuser-param-xff": "𐌱𐍂𐌿𐌺𐌴𐌹 𐍇𐍆𐍆 𐌲𐌹𐌱𐍉𐍃 𐌽𐌹𐌷 IP 𐍂𐌰𐌸𐌾𐍉."
+}

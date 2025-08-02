@@ -1,5 +1,6 @@
 <?php
 declare( strict_types = 1 );
+// @phan-file-suppress PhanEmptyPublicMethod
 
 namespace Wikimedia\Parsoid\Ext;
 
@@ -21,7 +22,7 @@ use Wikimedia\Parsoid\DOM\Element;
 abstract class ExtensionTagHandler {
 
 	/**
-	 * Convert an extension tag's content to DOM
+	 * Convert an extension tag's content to "prepared and loaded" DOM.
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param string $src Extension tag content
 	 * @param array $extArgs Extension tag arguments
@@ -47,6 +48,10 @@ abstract class ExtensionTagHandler {
 	 * Parsoid will only call this method if the tag's config sets the
 	 * options['wt2html']['embedsHTMLInAttributes'] property to true.
 	 *
+	 * Override this method if your element embeds content as an HTML string;
+	 * however it is recommended to embed content directly as a
+	 * DocumentFragment and override ::processAttributeEmbeddedDom() instead.
+	 *
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param Element $elt The node whose data attributes need to be examined
 	 * @param Closure $proc The processor that will process the embedded HTML
@@ -56,6 +61,33 @@ abstract class ExtensionTagHandler {
 	 */
 	public function processAttributeEmbeddedHTML(
 		ParsoidExtensionAPI $extApi, Element $elt, Closure $proc
+	): void {
+		// Nothing to do by default
+	}
+
+	/**
+	 * Extensions might embed HTML in attributes in their own custom
+	 * representation (whether in data-mw or elsewhere).
+	 *
+	 * Core Parsoid will need a way to traverse such content. This method
+	 * is a way for extension tag handlers to provide this functionality.
+	 * Parsoid will only call this method if the tag's config sets the
+	 * options['wt2html']['embedsDomInAttributes'] property to true.
+	 *
+	 * Override this method if your element embeds
+	 * content directly as a DocumentFragment, which is recommended.
+	 * If your element embeds content as a serialized HTML string,
+	 * then ::processAttributeEmbeddedHTML() may be more convenient.
+	 *
+	 * @param ParsoidExtensionAPI $extApi
+	 * @param Element $elt The node whose data attributes need to be examined
+	 * @param callable(DocumentFragment):bool $proc
+	 *        The processor that will process the embedded HTML.
+	 *        This processor will be provided a DocumentFragment
+	 *        and is expected to return true if that fragment was modified.
+	 */
+	public function processAttributeEmbeddedDom(
+		ParsoidExtensionAPI $extApi, Element $elt, callable $proc
 	): void {
 		// Nothing to do by default
 	}
@@ -89,7 +121,7 @@ abstract class ExtensionTagHandler {
 	/**
 	 * Serialize a DOM node created by this extension to wikitext.
 	 * @param ParsoidExtensionAPI $extApi
-	 * @param Element $node
+	 * @param Element $node A node in a "prepared and loaded" document.
 	 * @param bool $wrapperUnmodified
 	 * @return string|false Return false to use the default serialization.
 	 */
@@ -103,7 +135,7 @@ abstract class ExtensionTagHandler {
 	/**
 	 * XXX: Experimental
 	 *
-	 * Call $domDiff on corresponding substrees of $origNode and $editedNode
+	 * Call $domDiff on corresponding subtrees of $origNode and $editedNode
 	 *
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param callable $domDiff

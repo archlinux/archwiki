@@ -31,7 +31,7 @@ class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider dataGet
+	 * @dataProvider provideDataGet
 	 */
 	public function testGet( $serializationType, $hmacKey, $data ) {
 		$classReflect = new ReflectionClass( RESTBagOStuff::class );
@@ -54,7 +54,7 @@ class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 		$this->assertEquals( 'somedata', $result );
 	}
 
-	public static function dataGet() {
+	public static function provideDataGet() {
 		// Make sure the defaults are last, so the $bag is left as expected for the next test
 		return [
 			[ 'JSON', '12345', 'JSON.Us1wli82zEJ6DNQnCG//w+MShOFrdx9wCdfTUhPPA2w=."somedata"' ],
@@ -100,7 +100,7 @@ class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider dataGet
+	 * @dataProvider provideDataGet
 	 */
 	public function testPut( $serializationType, $hmacKey, $data ) {
 		$classReflect = new ReflectionClass( RESTBagOStuff::class );
@@ -133,5 +133,17 @@ class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 		] )->willReturn( [ 200, 'OK', [], 'Done', 0 ] );
 		$result = $this->bag->delete( '42xyz42' );
 		$this->assertTrue( $result );
+	}
+
+	public function testSetStats() {
+		$statsHelper = Wikimedia\Stats\StatsFactory::newUnitTestingHelper();
+		$cache = new RESTBagOStuff( [ 'client' => $this->client,
+			'url' => 'http://test/rest/', 'stats' => $statsHelper->getStatsFactory() ] );
+		$cache->set( 'test_set12345', 'F4l65kZqWhoAnKW8ZTzekDYfrDxT' );
+
+		$bagostuff_bytes_sent_total = $statsHelper->getStatsFactory()
+			->getCounter( 'bagostuff_bytes_sent_total' )->getSamples();
+
+		$this->assertEquals( 41, $bagostuff_bytes_sent_total[0]->getValue() );
 	}
 }

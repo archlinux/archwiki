@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Language\Language;
+use MediaWiki\Language\ReplacementArray;
 use MediaWiki\Languages\Data\CrhExceptions;
 use MediaWiki\StubObject\StubUserLang;
 
@@ -254,7 +255,7 @@ class CrhConverter extends LanguageConverterSpecific {
 		}
 	}
 
-	private function regsConverter( $text, $toVariant ) {
+	private function regsConverter( string $text, string $toVariant ): string {
 		if ( $text == '' ) {
 			return $text;
 		}

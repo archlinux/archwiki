@@ -5,6 +5,13 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
+// Temporarily disable TOC in edit mode until TOC
+// works with both visual and source editors (T294950)
+/* stylelint-disable-next-line selector-class-pattern */
+.ve-activated .vector-toc {
+	display: none;
+}
+
 .ve-init-mw-desktopArticleTarget-toolbar,
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder,
 .ve-ui-overlay-local,
@@ -43,4 +50,15 @@
 
 .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ce-surface .ve-ce-attachedRootNode {
 	min-height: 15em;
+}
+
+// Vector 2022 has no side borders, so there's no need for side padding in toolbar dialogs
+.ve-init-mw-desktopArticleTarget-toolbar .ve-ui-toolbarDialog-position-above.ve-ui-toolbarDialog-padded .oo-ui-window-body,
+.ve-init-mw-desktopArticleTarget-toolbar .ve-ui-toolbarDialog-position-below.ve-ui-toolbarDialog-padded .oo-ui-window-body {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.ve-init-mw-desktopArticleTarget-toolbar .ve-ui-toolbarDialog-position-side.ve-ui-toolbarDialog-padded .oo-ui-window-body {
+	padding-right: 0;
 }

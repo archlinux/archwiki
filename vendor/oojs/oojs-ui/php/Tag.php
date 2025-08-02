@@ -2,6 +2,8 @@
 
 namespace OOUI;
 
+use UnexpectedValueException;
+
 class Tag {
 
 	/* Properties */
@@ -450,7 +452,9 @@ class Tag {
 		$attributes = '';
 		foreach ( $this->getGeneratedAttributes() as $key => $value ) {
 			if ( !preg_match( '/^[0-9a-zA-Z-]+$/', $key ) ) {
-				throw new Exception( 'Attribute name must consist of only ASCII letters, numbers and dash' );
+				throw new UnexpectedValueException(
+					'Attribute name must consist of only ASCII letters, numbers and dash'
+				);
 			}
 
 			// Note that this is not a complete list of HTML attributes that need this validation.
@@ -485,7 +489,7 @@ class Tag {
 		}
 
 		if ( !preg_match( '/^[0-9a-zA-Z]+$/', $this->tag ) ) {
-			throw new Exception( 'Tag name must consist of only ASCII letters and numbers' );
+			throw new UnexpectedValueException( 'Tag name must consist of only ASCII letters and numbers' );
 		}
 
 		// Tag
@@ -499,17 +503,13 @@ class Tag {
 	/**
 	 * Magic method implementation.
 	 *
-	 * It was not possible to throw an exception from within a __toString() method prior to PHP 7.4.0.
-	 * Doing so will result in a fatal error.
-	 * This is a wrapper around the real toString() to convert them to errors instead.
+	 * It was not possible to throw an exception from within a __toString() method prior to PHP 7.4.0:
+	 * doing so resulted in a fatal error. This method existed as a wrapper around the real toString()
+	 * to convert them to errors instead. It now exists for B/C only.
 	 *
 	 * @return string
 	 */
 	public function __toString() {
-		try {
-			return $this->toString();
-		} catch ( Exception $ex ) {
-			trigger_error( (string)$ex, E_USER_ERROR );
-		}
+		return $this->toString();
 	}
 }

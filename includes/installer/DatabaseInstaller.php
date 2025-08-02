@@ -24,13 +24,12 @@
 
 namespace MediaWiki\Installer;
 
+use MediaWiki\Installer\Task\ITaskContext;
 use MediaWiki\Status\Status;
 use RuntimeException;
-use Wikimedia\AtEase\AtEase;
-use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseDomain;
-use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
  * Base class for DBMS-specific installation helper classes.
@@ -38,32 +37,7 @@ use Wikimedia\Rdbms\IDatabase;
  * @ingroup Installer
  * @since 1.17
  */
-abstract class DatabaseInstaller {
-	/**
-	 * A connection for creating DBs, suitable for pre-installation.
-	 */
-	public const CONN_CREATE_DATABASE = 'create-database';
-
-	/**
-	 * A connection to the new DB, for creating schemas and other similar
-	 * objects in the new DB.
-	 */
-	public const CONN_CREATE_SCHEMA = 'create-schema';
-
-	/**
-	 * A connection with a role suitable for creating tables.
-	 */
-	public const CONN_CREATE_TABLES = 'create-tables';
-
-	/**
-	 * Legacy default connection type. Before MW 1.43, getConnection() with no
-	 * parameters would return the cached connection. The state (especially the
-	 * selected domain) would depend on the previously executed install steps.
-	 * Using this constant tries to reproduce this behaviour.
-	 *
-	 * @deprecated since 1.43
-	 */
-	public const CONN_DONT_KNOW = 'dont-know';
+abstract class DatabaseInstaller implements ITaskContext {
 
 	/**
 	 * The Installer object.
@@ -84,11 +58,11 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * @deprecated since 1.43 -- use definitelyGetConnection()
-	 * @var Database
+	 * @var IMaintainableDatabase
 	 */
 	public $db = null;
 
-	/** @var Database|null */
+	/** @var IMaintainableDatabase|null */
 	private $cachedConn;
 	/** @var string|null */
 	private $cachedConnType;
@@ -106,6 +80,9 @@ abstract class DatabaseInstaller {
 	 * @var array
 	 */
 	protected $globalNames = [];
+
+	/** @var array */
+	private $provisions = [];
 
 	/**
 	 * Whether the provided version meets the necessary requirements for this type
@@ -158,14 +135,6 @@ abstract class DatabaseInstaller {
 	abstract protected function openConnection( string $type );
 
 	/**
-	 * Create the database and return a Status object indicating success or
-	 * failure.
-	 *
-	 * @return Status
-	 */
-	abstract public function setupDatabase();
-
-	/**
 	 * Connect to the database using the administrative user/password currently
 	 * defined in the session. Returns a status object. On success, the status
 	 * object will contain a Database object in its value member.
@@ -176,7 +145,7 @@ abstract class DatabaseInstaller {
 	 *   is deprecated and will cause an exception to be thrown in a future release.
 	 * @return ConnectionStatus
 	 */
-	public function getConnection( $type = self::CONN_DONT_KNOW ) {
+	public function getConnection( $type = self::CONN_DONT_KNOW ): ConnectionStatus {
 		if ( $type === self::CONN_DONT_KNOW ) {
 			if ( $this->cachedConnType ) {
 				$type = $this->cachedConnType;
@@ -211,9 +180,9 @@ abstract class DatabaseInstaller {
 	 * exception on failure.
 	 *
 	 * @param string $type
-	 * @return Database
+	 * @return IMaintainableDatabase
 	 */
-	public function definitelyGetConnection( string $type ): Database {
+	public function definitelyGetConnection( string $type ): IMaintainableDatabase {
 		$status = $this->getConnection( $type );
 		if ( !$status->isOK() ) {
 			throw new RuntimeException( __METHOD__ . ': unexpected DB connection error' );
@@ -235,7 +204,7 @@ abstract class DatabaseInstaller {
 	 * CONN_CREATE_TABLES means a fully-configured connection, suitable for
 	 * most tasks, so converting from it is a no-op.
 	 *
-	 * @param Database $conn
+	 * @param IMaintainableDatabase $conn
 	 * @param string &$storedType One of the self::CONN_* constants. An in/out
 	 *   parameter, set to the new type on success. It is set to the "real" new
 	 *   type, reflecting the highest configuration level reached, to avoid
@@ -244,7 +213,7 @@ abstract class DatabaseInstaller {
 	 * @param string $newType One of the self::CONN_* constants
 	 * @return ConnectionStatus
 	 */
-	protected function changeConnType( Database $conn, &$storedType, $newType ) {
+	protected function changeConnType( IMaintainableDatabase $conn, &$storedType, $newType ) {
 		// Change type from database to schema, if requested
 		if ( $storedType === self::CONN_CREATE_DATABASE ) {
 			if ( $newType === self::CONN_CREATE_SCHEMA || $newType === self::CONN_CREATE_TABLES ) {
@@ -273,106 +242,35 @@ abstract class DatabaseInstaller {
 	 * Change the type of a connection from CONN_CREATE_SCHEMA to CONN_CREATE_TABLES.
 	 * Postgres overrides this.
 	 *
-	 * @param Database $conn
+	 * @param IMaintainableDatabase $conn
 	 * @return ConnectionStatus
 	 */
-	protected function changeConnTypeFromSchemaToTables( Database $conn ) {
+	protected function changeConnTypeFromSchemaToTables( IMaintainableDatabase $conn ) {
 		return new ConnectionStatus( $conn );
 	}
 
-	/**
-	 * Apply a SQL source file to the database as part of running an installation step.
-	 *
-	 * @param Database $conn
-	 * @param string $sqlFile
-	 * @return Status
-	 */
-	private function applySourceFile( $conn, $sqlFile ) {
-		$status = Status::newGood();
-		try {
-			$conn->doAtomicSection( __METHOD__,
-				static function ( $conn ) use ( $sqlFile ) {
-					$conn->sourceFile( $sqlFile );
-				},
-				IDatabase::ATOMIC_CANCELABLE
-			);
-		} catch ( DBQueryError $e ) {
-			$status->fatal( "config-install-tables-failed", $e->getMessage() );
-		}
-		return $status;
+	public function getDbType(): string {
+		return $this->getName();
 	}
 
-	/**
-	 * Create database tables from scratch from the automatically generated file
-	 *
-	 * @return Status
-	 */
-	public function createTables() {
-		$status = $this->getConnection( self::CONN_CREATE_TABLES );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
-		$conn = $status->getDB();
-		if ( $conn->tableExists( 'archive', __METHOD__ ) ) {
-			$status->warning( "config-install-tables-exist" );
-			return $status;
-		}
-		$status = $this->applySourceFile( $conn,
-			$this->getSqlFilePath( 'tables-generated.sql' ) );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
-		$status->merge( $this->applySourceFile( $conn,
-			$this->getSqlFilePath( 'tables.sql' ) ) );
-		return $status;
+	public function getConfigVar( string $name ) {
+		return $this->getVar( "wg$name" );
 	}
 
-	/**
-	 * Insert update keys into table to prevent running unneeded updates.
-	 *
-	 * @return Status
-	 */
-	public function insertUpdateKeys() {
-		$updater = DatabaseUpdater::newForDB(
-			$this->definitelyGetConnection( self::CONN_CREATE_TABLES ) );
-		$updater->insertInitialUpdateKeys();
-		return Status::newGood();
+	public function getOption( string $name ) {
+		return $this->getVar( "_$name" );
 	}
 
-	/**
-	 * Return a path to the DBMS-specific SQL file if it exists,
-	 * otherwise default SQL file
-	 *
-	 * @param string $filename
-	 * @return string
-	 */
-	private function getSqlFilePath( string $filename ) {
-		global $IP;
+	public function provide( string $name, $value ) {
+		$this->provisions[$name] = $value;
+	}
 
-		$dbmsSpecificFilePath = "$IP/maintenance/" . $this->getName() . "/$filename";
-		if ( file_exists( $dbmsSpecificFilePath ) ) {
-			return $dbmsSpecificFilePath;
+	public function getProvision( string $name ) {
+		if ( isset( $this->provisions[$name] ) ) {
+			return $this->provisions[$name];
 		} else {
-			return "$IP/maintenance/$filename";
+			throw new \RuntimeException( "Can't find provided data \"$name\"" );
 		}
-	}
-
-	/**
-	 * Create the tables for each extension the user enabled
-	 * @return Status
-	 */
-	public function createExtensionTables() {
-		$status = $this->getConnection( self::CONN_CREATE_TABLES );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
-
-		// Now run updates to create tables for old extensions
-		$updater = DatabaseUpdater::newForDB( $status->getDB() );
-		$updater->setAutoExtensionHookContainer( $this->parent->getAutoExtensionHookContainer() );
-		$updater->doUpdates( [ 'extensions' ] );
-
-		return $status;
 	}
 
 	/**
@@ -384,25 +282,11 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Override this to provide DBMS-specific schema variables, to be
-	 * substituted into tables.sql and other schema files.
+	 * substituted into the schema files.
 	 * @return array
 	 */
 	public function getSchemaVars() {
 		return [];
-	}
-
-	/**
-	 * @deprecated since 1.43
-	 */
-	public function enableLB() {
-	}
-
-	/**
-	 * Allow DB installers a chance to make last-minute changes before installation
-	 * occurs. This happens before setupDatabase() or createTables() is called, but
-	 * long after the constructor. Helpful for things like modifying setup steps :)
-	 */
-	public function preInstall() {
 	}
 
 	/**
@@ -522,72 +406,4 @@ abstract class DatabaseInstaller {
 			$db->tableExists( 'revision', __METHOD__ );
 	}
 
-	/**
-	 * Common function for databases that don't understand the MySQLish syntax of interwiki.list.
-	 *
-	 * @return Status
-	 */
-	public function populateInterwikiTable() {
-		$status = $this->getConnection( self::CONN_CREATE_TABLES );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
-		$conn = $status->getDB();
-
-		$row = $conn->newSelectQueryBuilder()
-			->select( '1' )
-			->from( 'interwiki' )
-			->caller( __METHOD__ )->fetchRow();
-		if ( $row ) {
-			$status->warning( 'config-install-interwiki-exists' );
-
-			return $status;
-		}
-		global $IP;
-		AtEase::suppressWarnings();
-		$rows = file( "$IP/maintenance/interwiki.list",
-			FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		AtEase::restoreWarnings();
-		if ( !$rows ) {
-			return Status::newFatal( 'config-install-interwiki-list' );
-		}
-		$insert = $conn->newInsertQueryBuilder()
-			->insertInto( 'interwiki' );
-		foreach ( $rows as $row ) {
-			$row = preg_replace( '/^\s*([^#]*?)\s*(#.*)?$/', '\\1', $row ); // strip comments - whee
-			if ( $row == "" ) {
-				continue;
-			}
-			$row .= "|";
-			$insert->row(
-				array_combine(
-					[ 'iw_prefix', 'iw_url', 'iw_local', 'iw_api', 'iw_wikiid' ],
-					explode( '|', $row )
-				)
-			);
-		}
-		$insert->caller( __METHOD__ )->execute();
-
-		return Status::newGood();
-	}
-
-	/**
-	 * @param Database $conn
-	 * @param string $database
-	 * @return bool
-	 * @since 1.39
-	 */
-	protected function selectDatabase( Database $conn, string $database ) {
-		$schema = $conn->dbSchema();
-		$prefix = $conn->tablePrefix();
-
-		$conn->selectDomain( new DatabaseDomain(
-			$database,
-			// DatabaseDomain uses null for unspecified schemas
-			( $schema !== '' ) ? $schema : null,
-			$prefix
-		) );
-
-		return true;
-	}
 }

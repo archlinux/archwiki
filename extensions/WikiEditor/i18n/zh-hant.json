@@ -38,7 +38,6 @@
 	},
 	"wikieditor": "進階wikitext編輯介面",
 	"wikieditor-desc": "提供進階、可擴充的wikitext編輯介面",
-	"wikieditor-wikitext-tab": "wikitext",
 	"wikieditor-toolbar": "編輯工具列",
 	"wikieditor-toolbar-desc": "使編輯頁面更簡單的頁面工具列",
 	"wikieditor-toolbar-preference": "啟用編輯工具列",

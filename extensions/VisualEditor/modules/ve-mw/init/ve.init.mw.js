@@ -11,9 +11,7 @@
  *
  * @namespace
  */
-ve.init.mw = {
-	targetFactory: new OO.Factory()
-};
+ve.init.mw = {};
 
 /**
  * @namespace mw.libs.ve

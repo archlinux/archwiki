@@ -21,6 +21,7 @@
  * @ingroup Media
  */
 
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
@@ -302,13 +303,13 @@ class DjVuHandler extends ImageHandler {
 	public function getThumbType( $ext, $mime, $params = null ) {
 		$djvuOutputExtension = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::DjvuOutputExtension );
-		static $mime;
-		if ( !isset( $mime ) ) {
+		static $djvuMime = null;
+		if ( $djvuMime === null ) {
 			$magic = MediaWikiServices::getInstance()->getMimeAnalyzer();
-			$mime = $magic->getMimeTypeFromExtensionOrNull( $djvuOutputExtension );
+			$djvuMime = $magic->getMimeTypeFromExtensionOrNull( $djvuOutputExtension );
 		}
 
-		return [ $djvuOutputExtension, $mime ];
+		return [ $djvuOutputExtension, $djvuMime ];
 	}
 
 	public function getSizeAndMetadata( $state, $path ) {

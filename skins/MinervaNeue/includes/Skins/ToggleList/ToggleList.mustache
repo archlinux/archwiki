@@ -13,6 +13,7 @@
 		id="{{checkboxID}}"
 		class="toggle-list__checkbox"
 		role="button"
+		{{#event}}data-event-name="{{.}}"{{/event}}
 		aria-labelledby="{{toggleID}}"
 		aria-expanded="false"
 		aria-haspopup="true">

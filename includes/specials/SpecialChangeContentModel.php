@@ -2,16 +2,17 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
-use LogEventsList;
-use LogPage;
 use MediaWiki\Collation\CollationFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Page\ContentModelChangeFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionLookup;
@@ -20,7 +21,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 use SearchEngineFactory;
 
 /**
@@ -36,15 +36,6 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	private SearchEngineFactory $searchEngineFactory;
 	private CollationFactory $collationFactory;
 
-	/**
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param ContentModelChangeFactory $contentModelChangeFactory
-	 * @param SpamChecker $spamChecker
-	 * @param RevisionLookup $revisionLookup
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param CollationFactory $collationFactory
-	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
 		ContentModelChangeFactory $contentModelChangeFactory,
@@ -96,7 +87,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		$text = '';
 		if ( $this->title ) {
 			$contentModelLogPage = new LogPage( 'contentmodel' );
-			$text = Xml::element( 'h2', null, $contentModelLogPage->getName()->text() );
+			$text = Html::element( 'h2', [], $contentModelLogPage->getName()->text() );
 			$out = '';
 			LogEventsList::showLogExtract( $out, 'contentmodel', $this->title );
 			$text .= $out;

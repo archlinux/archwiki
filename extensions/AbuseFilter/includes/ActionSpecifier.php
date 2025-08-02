@@ -34,7 +34,7 @@ class ActionSpecifier {
 	public function __construct(
 		string $action, LinkTarget $title, UserIdentity $user, string $requestIP, ?string $accountName
 	) {
-		if ( $accountName === null && strpos( $action, 'createaccount' ) !== false ) {
+		if ( $accountName === null && str_contains( $action, 'createaccount' ) ) {
 			throw new InvalidArgumentException( '$accountName required for account creations' );
 		}
 		$this->action = $action;

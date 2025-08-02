@@ -1,18 +1,17 @@
 ( function () {
 	const TitleUtil = require( 'skins.minerva.scripts/TitleUtil.js' );
-	const mwUriOrg = mw.Uri;
+	const UriUtil = require( 'skins.minerva.scripts/UriUtil.js' );
 
 	QUnit.module( 'Minerva TitleUtil', QUnit.newMwEnvironment( {
 		beforeEach: function () {
-			this.mwUriOrg = mw.Uri;
-			mw.Uri = mw.UriRelative( 'https://meta.wikimedia.org/w/index.php' );
+			UriUtil.isInternal.base = new URL( 'https://meta.wikimedia.org/w/index.php' );
 			mw.config.set( {
 				wgArticlePath: '/wiki/$1',
 				wgScriptPath: '/w'
 			} );
 		},
 		afterEach: function () {
-			mw.Uri = mwUriOrg;
+			UriUtil.isInternal.base = location;
 		},
 		// mw.Title relies on these three config vars
 		// Restore them after each test run
@@ -156,7 +155,7 @@
 	} );
 
 	QUnit.test.each( '.newFromUri() bad input', [
-		'%', null, undefined, '', ' ', '/', {}, '\\', '/wiki/%', '/w/index.php?title=%'
+		null, undefined, '', ' ', '/', {}, '\\', '/wiki/%'
 	], ( assert, input ) => {
 		assert.strictEqual(
 			TitleUtil.newFromUri( input ),
@@ -166,18 +165,9 @@
 	} );
 
 	QUnit.test( '.newFromUri() misc', ( assert ) => {
-		// Parameters are passed to Uri's constructor.
+		// A URL itself can be passed.
 		assert.strictEqual(
-			TitleUtil.newFromUri( { protocol: 'https',
-				host: 'meta.wikimedia.org',
-				path: '/wiki/Title' } ).getPrefixedDb(),
-			'Title',
-			'title is in Uri parameters'
-		);
-
-		// A Uri itself can be passed.
-		assert.strictEqual(
-			TitleUtil.newFromUri( new mw.Uri( 'https://meta.wikimedia.org/wiki/Title' ) ).getPrefixedDb(),
+			TitleUtil.newFromUri( new URL( 'https://meta.wikimedia.org/wiki/Title' ) ).getPrefixedDb(),
 			'Title',
 			'title is in Uri'
 		);

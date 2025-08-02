@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications;
 
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
@@ -101,11 +102,21 @@ class AttributeManager {
 	 * @return array
 	 */
 	public function getUserCallable( $type, $locator = self::ATTR_LOCATORS ) {
+		$locators = [];
+
 		if ( isset( $this->notifications[$type][$locator] ) ) {
-			return (array)$this->notifications[$type][$locator];
+			// if extension defines its own locators, use those as default locators set
+			$locators = (array)$this->notifications[$type][$locator];
 		}
 
-		return [];
+		if ( $locator === self::ATTR_LOCATORS && array_key_exists( $type, $this->notifications ) ) {
+			// additionally, inject our own default locator that uses extra['recipients'] key
+			$locators[] = [
+				[ UserLocator::class, 'locateFromEventExtra' ],
+				[ Event::RECIPIENTS_IDX ]
+			];
+		}
+		return $locators;
 	}
 
 	/**

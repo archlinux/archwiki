@@ -1,35 +1,27 @@
 'use strict';
 
 const ArticlePage = require( '../support/pages/article_page' );
-const { iClickTheOverlayCloseButton, iSeeAnOverlay, iDoNotSeeAnOverlay } = require( './common_steps' );
+const Util = require( 'wdio-mediawiki/Util' );
+const { iClickTheOverlayCloseButton } = require( './common_steps' );
 
-const iHaveNoNotifications = () => {
-	ArticlePage.notifications_button_element.waitForDisplayed();
+const iHaveNoNotifications = async () => {
+	await ArticlePage.notifications_button_element.waitForDisplayed();
 	// This is somewhat hacky, but we don't want this test making use of
 	// Echo's APIs which may change
-	browser.execute( '$( () => { $( ".notification-count span" ).hide(); } );' );
+	await browser.execute( '$( () => { $( ".notification-count span" ).hide(); } );' );
 };
 
-const iClickOnTheNotificationIcon = () => {
-	ArticlePage.waitUntilResourceLoaderModuleReady( 'skins.minerva.scripts' );
-	ArticlePage.notifications_button_element.waitForDisplayed();
-	ArticlePage.notifications_button_element.click();
+const iClickOnTheNotificationIcon = async () => {
+	await Util.waitForModuleState( 'skins.minerva.scripts' );
+	await ArticlePage.notifications_button_element.waitForDisplayed();
+	await ArticlePage.notifications_button_element.click();
 };
 
-const iShouldSeeTheNotificationsOverlay = () => {
-	iSeeAnOverlay();
-};
-
-const iClickTheNotificationsOverlayCloseButton = () => {
-	iClickTheOverlayCloseButton();
-};
-
-const iShouldNotSeeTheNotificationsOverlay = () => {
-	iDoNotSeeAnOverlay();
+const iClickTheNotificationsOverlayCloseButton = async () => {
+	await iClickTheOverlayCloseButton();
 };
 
 module.exports = {
 	iHaveNoNotifications, iClickOnTheNotificationIcon,
-	iShouldSeeTheNotificationsOverlay, iClickTheNotificationsOverlayCloseButton,
-	iShouldNotSeeTheNotificationsOverlay
+	iClickTheNotificationsOverlayCloseButton
 };

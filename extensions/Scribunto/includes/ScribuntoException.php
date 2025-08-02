@@ -48,7 +48,7 @@ class ScribuntoException extends Exception {
 				)->inContentLanguage()->text();
 			}
 		} else {
-			$codeLocation = '[UNKNOWN]';
+			$codeLocation = '(unknown code location)';
 		}
 		array_unshift( $this->messageArgs, $codeLocation );
 		$msg = wfMessage( $messageName )
@@ -70,7 +70,7 @@ class ScribuntoException extends Exception {
 		return $this->messageName;
 	}
 
-	public function toStatus() {
+	public function toStatus(): Status {
 		$status = Status::newFatal( $this->messageName, ...$this->messageArgs );
 		$status->value = $this;
 		return $status;

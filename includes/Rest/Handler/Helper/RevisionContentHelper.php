@@ -8,7 +8,6 @@ use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\ResponseInterface;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Revision\SlotRecord;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -33,9 +32,6 @@ class RevisionContentHelper extends PageContentHelper {
 			: null;
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	public function getPage(): ?ExistingPageRecord {
 		$revision = $this->getTargetRevision();
 		return $revision ? $this->pageLookup->getPageByReference( $revision->getPage() ) : null;
@@ -56,9 +52,6 @@ class RevisionContentHelper extends PageContentHelper {
 		return $this->targetRevision;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isAccessible(): bool {
 		if ( !parent::isAccessible() ) {
 			return false;
@@ -77,9 +70,6 @@ class RevisionContentHelper extends PageContentHelper {
 		return true;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function hasContent(): bool {
 		return (bool)$this->getTargetRevision();
 	}
@@ -95,21 +85,16 @@ class RevisionContentHelper extends PageContentHelper {
 		parent::setCacheControl( $response, $expiry );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function constructMetadata(): array {
 		$page = $this->getPage();
 		$revision = $this->getTargetRevision();
-
-		$mainSlot = $revision->getSlot( SlotRecord::MAIN, RevisionRecord::RAW );
 
 		$metadata = [
 			'id' => $revision->getId(),
 			'size' => $revision->getSize(),
 			'minor' => $revision->isMinor(),
 			'timestamp' => wfTimestampOrNull( TS_ISO_8601, $revision->getTimestamp() ),
-			'content_model' => $mainSlot->getModel(),
+			'content_model' => $revision->getMainContentModel(),
 			'page' => [
 				'id' => $page->getId(),
 				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable

@@ -33,6 +33,8 @@ use MediaWiki\Content\Content;
 use MediaWiki\Content\FallbackContent;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
@@ -43,6 +45,7 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Storage\BadBlobException;
 use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\BlobStore;
@@ -55,12 +58,9 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
-use MWException;
-use MWUnknownContentModelException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use RecentChange;
 use RuntimeException;
 use StatusValue;
 use stdClass;
@@ -224,7 +224,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -360,11 +360,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		);
 	}
 
-	/**
-	 * @param PageIdentity $page
-	 *
-	 * @return PageIdentity
-	 */
 	private function wrapPage( PageIdentity $page ): PageIdentity {
 		if ( $this->wikiId === WikiAwareEntity::LOCAL ) {
 			// NOTE: since there is still a lot of code that needs a full Title,
@@ -472,6 +467,8 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		$pageId = $this->failOnEmpty( $rev->getPageId( $this->wikiId ), 'rev_page field' ); // check this early
 
 		$parentId = $rev->getParentId() ?? $this->getPreviousRevisionId( $dbw, $rev );
+
+		Assert::precondition( $pageId > 0, 'revision must have an ID' );
 
 		/** @var RevisionRecord $rev */
 		$rev = $dbw->doAtomicSection(
@@ -627,9 +624,9 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		UserIdentity $user,
 		CommentStoreComment $comment,
 		PageIdentity $page,
-		$pageId,
-		$parentId
-	) {
+		int $pageId,
+		int $parentId
+	): RevisionRecord {
 		$slotRoles = $rev->getSlotRoles();
 
 		$revisionRow = $this->insertRevisionRowOn(
@@ -821,9 +818,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 					}
 					$fname = __METHOD__;
 					$dbw->onTransactionResolution(
-						static function ( $trigger, IDatabase $dbw ) use ( $fname ) {
-							$dbw->unlock( 'fix-for-T202032', $fname );
-						},
+						static fn () => $dbw->unlock( 'fix-for-T202032', $fname ),
 						__METHOD__
 					);
 
@@ -1027,8 +1022,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *
 	 * MCR migration note: this replaced Revision::newNullRevision
 	 *
-	 * @todo Introduce newFromParentRevision(). newNullRevision can then be based on that
-	 * (or go away).
+	 * @deprecated since 1.44, use PageUpdater::saveDummyRevision() instead.
 	 *
 	 * @param IDatabase $dbw used for obtaining the lock on the page table row
 	 * @param PageIdentity $page the page to read from
@@ -1213,8 +1207,8 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			} catch ( BlobAccessException $e ) {
 				throw new RevisionAccessException(
 					'Failed to load data blob from {address} for revision {revision}. '
-						. 'If this problem persist, use the findBadBlobs maintenance script '
-						. 'to investigate the issue and mark bad blobs.',
+						. 'If this problem persists, use the findBadBlobs maintenance script '
+						. 'to investigate the issue and mark the bad blobs.',
 					[ 'address' => $e->getMessage(), 'revision' => $slot->getRevision() ],
 					0,
 					$e
@@ -1443,7 +1437,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		return $this->constructSlotRecords( $revId, $res, $queryFlags, $page );
 	}
 
-	private function loadSlotRecordsFromDb( $revId, $queryFlags, PageIdentity $page ): array {
+	private function loadSlotRecordsFromDb( int $revId, int $queryFlags, PageIdentity $page ): array {
 		$revQuery = $this->getSlotsQueryInfo( [ 'content' ] );
 
 		$db = $this->getDBConnectionRefForQueryFlags( $queryFlags );
@@ -1661,9 +1655,11 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			$page = $overrides['title'];
 		}
 
-		if ( !isset( $page ) ) {
+		if ( $page === null ) {
 			if ( isset( $row->ar_namespace ) && isset( $row->ar_title ) ) {
-				$page = Title::makeTitle( $row->ar_namespace, $row->ar_title );
+				// Represent a non-existing page.
+				// NOTE: The page title may be invalid by current rules (T384628).
+				$page = PageIdentityValue::localIdentity( 0, $row->ar_namespace, $row->ar_title );
 			} else {
 				throw new InvalidArgumentException(
 					'A Title or ar_namespace and ar_title must be given'
@@ -2154,12 +2150,11 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		$result = new StatusValue();
 
 		$revIds = [];
-		foreach ( $rowsOrIds as $row ) {
-			if ( is_object( $row ) ) {
-				$revIds[] = isset( $row->ar_rev_id ) ? (int)$row->ar_rev_id : (int)$row->rev_id;
-			} else {
-				$revIds[] = (int)$row;
+		foreach ( $rowsOrIds as $id ) {
+			if ( $id instanceof stdClass ) {
+				$id = $id->ar_rev_id ?? $id->rev_id;
 			}
+			$revIds[] = (int)$id;
 		}
 
 		// Nothing to do.
@@ -2371,8 +2366,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	/**
 	 * Throws an exception if the given database connection does not belong to the wiki this
 	 * RevisionStore is bound to.
-	 *
-	 * @param IReadableDatabase $db
 	 */
 	private function checkDatabaseDomain( IReadableDatabase $db ) {
 		$dbDomain = $db->getDomainID();
@@ -2441,29 +2434,27 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 */
 	public function getQueryInfo( $options = [] ) {
 		$ret = [
-			'tables' => [],
-			'fields' => [],
-			'joins'  => [],
+			'tables' => [
+				'revision',
+				'actor_rev_user' => 'actor',
+			],
+			'fields' => [
+				'rev_id',
+				'rev_page',
+				'rev_actor' => 'rev_actor',
+				'rev_user' => 'actor_rev_user.actor_user',
+				'rev_user_text' => 'actor_rev_user.actor_name',
+				'rev_timestamp',
+				'rev_minor_edit',
+				'rev_deleted',
+				'rev_len',
+				'rev_parent_id',
+				'rev_sha1',
+			],
+			'joins' => [
+				'actor_rev_user' => [ 'JOIN', "actor_rev_user.actor_id = rev_actor" ],
+			]
 		];
-
-		$ret['tables'] = array_merge( $ret['tables'], [
-			'revision',
-			'actor_rev_user' => 'actor',
-		] );
-		$ret['fields'] = array_merge( $ret['fields'], [
-			'rev_id',
-			'rev_page',
-			'rev_actor' => 'rev_actor',
-			'rev_user' => 'actor_rev_user.actor_user',
-			'rev_user_text' => 'actor_rev_user.actor_name',
-			'rev_timestamp',
-			'rev_minor_edit',
-			'rev_deleted',
-			'rev_len',
-			'rev_parent_id',
-			'rev_sha1',
-		] );
-		$ret['joins']['actor_rev_user'] = [ 'JOIN', "actor_rev_user.actor_id = rev_actor" ];
 
 		$commentQuery = $this->commentStore->getJoin( 'rev_comment' );
 		$ret['tables'] = array_merge( $ret['tables'], $commentQuery['tables'] );
@@ -3036,6 +3027,18 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			// Only resolve LinkTarget to a Title when operating in the context of the local wiki (T248756)
 			$page = $this->wikiId === WikiAwareEntity::LOCAL ? Title::castFromLinkTarget( $page ) : null;
 		}
+
+		if ( $page && !$page->exists() ) {
+			// Protect against T380677#10461083:
+			// During a page move, we are creating a new page with the name of a
+			// page that we just renamed. If we look up revisions by name on a
+			// stale replica/snapshot, we may find the revisions of the old page,
+			// while the new page doesn't exist yet.
+			// This is a work-around. Ideally, we'd just do the lookup based on page ID,
+			// or make sure we are not running into replication lag or stale snapshots.
+			return null;
+		}
+
 		return $this->newRevisionFromConds(
 			[
 				'page_namespace' => $page->getNamespace(),

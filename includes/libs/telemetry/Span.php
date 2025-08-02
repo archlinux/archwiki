@@ -53,6 +53,12 @@ class Span implements SpanInterface {
 	}
 
 	/** @inheritDoc */
+	public function setSpanStatus( int $status ): SpanInterface {
+		$this->context->setSpanStatus( $status );
+		return $this;
+	}
+
+	/** @inheritDoc */
 	public function start( ?int $epochNanos = null ): SpanInterface {
 		Assert::precondition(
 			!$this->context->wasStarted(),
@@ -80,13 +86,15 @@ class Span implements SpanInterface {
 	}
 
 	/** @inheritDoc */
-	public function activate(): void {
+	public function activate(): SpanInterface {
 		$this->tracerState->activateSpan( $this->getContext() );
+		return $this;
 	}
 
 	/** @inheritDoc */
-	public function deactivate(): void {
+	public function deactivate(): SpanInterface {
 		$this->tracerState->deactivateSpan( $this->getContext() );
+		return $this;
 	}
 
 }

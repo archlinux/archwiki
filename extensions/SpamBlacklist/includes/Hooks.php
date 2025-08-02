@@ -15,6 +15,7 @@ use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\UploadVerifyUploadHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\PermissionManager;
@@ -30,7 +31,6 @@ use MediaWiki\User\UserIdentity;
 use UploadBase;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Message\MessageSpecifier;
-use WikiPage;
 
 /**
  * Hooks for the spam blacklist extension

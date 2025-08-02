@@ -3,10 +3,16 @@
 		"authors": [
 			"Ivan Pozdeev",
 			"Okras",
-			"Putnik"
+			"Putnik",
+			"Engineer56"
 		]
 	},
 	"apihelp-templatedata-summary": "Получить данные, сохранённые расширением TemplateData.",
 	"apihelp-templatedata-example-1": "Вернуть TemplateData для [[Template:Foobar]] с результатами, если шаблон не существует или существует, но не имеет TemplateData",
-	"apihelp-templatedata-param-lang": "Вернуть локализованные значения на этом языке. По умолчанию возвращаются все доступные переводы."
+	"apihelp-templatedata-example-2": "Вернуть TemplateData для [[Template:Phabricator]] без результатов, если шаблон не существует или существует, но не имеет TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "Возвращать данные о заголовках, даже если они отсутствуют или не имеют TemplateData. По умолчанию заголовки возвращаются только если они существуют и имеют TemplateData.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Возвращать данные о заголовках, даже если они отсутствуют или не имеют TemplateData. По умолчанию (для обратной совместимости) заголовки возвращаются только если они существуют и имеют TemplateData.",
+	"apihelp-templatedata-param-lang": "Вернуть локализованные значения на этом языке. По умолчанию возвращаются все доступные переводы.",
+	"apierror-templatedata-corrupt": "Страница #$1 templatedata содержит неверные данные: $2",
+	"apiwarn-templatedata-deprecation-format": "Формат вывода по умолчанию в будущем изменится на <kbd>jsonfm</kbd> . Пожалуйста, укажите <kbd>format=json</kbd> явно."
 }

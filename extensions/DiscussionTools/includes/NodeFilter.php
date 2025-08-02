@@ -53,7 +53,7 @@ class NodeFilter {
 		}
 
 		$this->active = true;
-		$result = call_user_func( $this->filter, $node );
+		$result = ( $this->filter )( $node );
 		$this->active = false;
 
 		return $result;

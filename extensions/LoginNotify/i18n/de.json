@@ -10,6 +10,7 @@
 	"echo-category-title-login-success": "Anmeldung von einem unbekannten Gerät",
 	"echo-pref-tooltip-login-success": "Benachrichtige mich, wenn sich jemand bei meinem Benutzerkonto von einem unbekannten Gerät und einer unbekannten IP-Adresse anmeldet.",
 	"loginnotify-primary-link": "Hilfe",
+	"loginnotify-unknown-ip": "Du hast versucht, dich von einer ungewohnten IP-Adresse aus anzumelden, und {{SITENAME}} ist derzeit so konfiguriert, dass Anmeldungen von ungewohnten IP-Adressen verhindert werden.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Fehlgeschlagener Anmeldeversuch|Mehrere fehlgeschlagene Anmeldeversuche}} bei {{SITENAME}} als $1",
 	"notification-loginnotify-login-success-email-subject": "Anmeldung bei {{SITENAME}} als $1 von einem Gerät, das {{GENDER:$1|du}} nicht kürzlich verwendet hast.",
 	"notification-header-login-success": "Jemand (vermutlich {{GENDER:$1|du}} selbst) hat sich mit einem neuen Gerät bei deinem Benutzerkonto angemeldet. Falls dies du warst, kannst du diese Nachricht ignorieren. Falls nicht, empfehlen wir dir, dein Passwort zu ändern und die Aktivität deines Benutzerkontos zu prüfen.",

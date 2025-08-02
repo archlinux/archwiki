@@ -12,11 +12,11 @@
 			"SunAfterRain",
 			"Tranve",
 			"Winston Sung",
-			"Xiplus",
-			"捍粵者",
-			"沈澄心",
 			"Woytecr",
-			"列维劳德"
+			"Xiplus",
+			"列维劳德",
+			"捍粵者",
+			"沈澄心"
 		]
 	},
 	"discussiontools": "討論工具（Discussion tools）",
@@ -207,9 +207,9 @@
 	"tag-discussiontools-description": "使用討論工具編輯",
 	"tag-discussiontools-edit": "已編輯留言",
 	"tag-discussiontools-edit-description": "使用者以討論工具編輯現有的留言",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} 新話題]",
+	"tag-discussiontools-newtopic": "新話題",
 	"tag-discussiontools-newtopic-description": "使用者以討論工具於頁面新增話題",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} 回覆]",
+	"tag-discussiontools-reply": "回覆",
 	"tag-discussiontools-reply-description": "使用者以討論工具回覆留言",
 	"tag-discussiontools-source-description": "討論工具處於原始碼模式",
 	"tag-discussiontools-source-enhanced-description": "討論工具處於帶有工具列的增強原始碼模式",

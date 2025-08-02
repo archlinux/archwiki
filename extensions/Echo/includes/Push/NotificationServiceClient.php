@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Notifications\Push;
 
 use MediaWiki\Http\HttpRequestFactory;
-use MediaWiki\Status\Status;
+use MediaWiki\Status\StatusFormatter;
 use MWHttpRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -15,15 +15,24 @@ class NotificationServiceClient implements LoggerAwareInterface {
 	/** @var HttpRequestFactory */
 	private $httpRequestFactory;
 
+	/** @var StatusFormatter */
+	private $statusFormatter;
+
 	/** @var string */
 	private $endpointBase;
 
 	/**
 	 * @param HttpRequestFactory $httpRequestFactory
+	 * @param StatusFormatter $statusFormatter
 	 * @param string $endpointBase push service notification request endpoint base URL
 	 */
-	public function __construct( HttpRequestFactory $httpRequestFactory, string $endpointBase ) {
+	public function __construct(
+		HttpRequestFactory $httpRequestFactory,
+		StatusFormatter $statusFormatter,
+		string $endpointBase
+	) {
 		$this->httpRequestFactory = $httpRequestFactory;
+		$this->statusFormatter = $statusFormatter;
 		$this->endpointBase = $endpointBase;
 	}
 
@@ -66,15 +75,10 @@ class NotificationServiceClient implements LoggerAwareInterface {
 		$request = $this->constructRequest( $provider, $payload );
 		$status = $request->execute();
 		if ( !$status->isOK() ) {
-			$errors = $status->getErrorsByType( 'error' );
-			$this->logger->warning(
-				serialize( Status::wrap( $status )->getMessage( false, false, 'en' ) ),
-				[
-					'error' => $errors,
-					'caller' => __METHOD__,
-					'content' => $request->getContent()
-				]
-			);
+			$this->logger->warning( ...$this->statusFormatter->getPsr3MessageAndContext( $status, [
+				'caller' => __METHOD__,
+				'content' => $request->getContent(),
+			] ) );
 		}
 	}
 

@@ -253,7 +253,7 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 				( suggestedValue ) => typeof suggestedValue === 'string'
 			).map( ( suggestedValue ) => ( { data: suggestedValue, label: suggestedValue || '\xA0' } ) );
 		return new OO.ui.ComboBoxInputWidget( valueInputConfig );
-	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
+	} else if ( type !== 'line' || value.includes( '\n' ) ) {
 		// If the type is line, but there are already newlines in the provided
 		// value, don't break the existing content by only providing a single-
 		// line field. (This implies that the TemplateData for the field isn't
@@ -277,7 +277,7 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
  * @return {boolean} True if suggested values should be shown
  */
 ve.ui.MWParameterPage.prototype.isSuggestedValueType = function ( type ) {
-	return [ 'unknown', 'content', 'line', 'string', 'number', 'unbalanced-wikitext' ].indexOf( type ) > -1;
+	return [ 'unknown', 'content', 'line', 'string', 'number', 'unbalanced-wikitext' ].includes( type );
 };
 
 /**

@@ -20,8 +20,8 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\Field\HTMLRestrictionsField;
 use MediaWiki\HTMLForm\HTMLForm;
@@ -64,13 +64,6 @@ class SpecialBotPasswords extends FormSpecialPage {
 	private GrantsInfo $grantsInfo;
 	private GrantsLocalization $grantsLocalization;
 
-	/**
-	 * @param PasswordFactory $passwordFactory
-	 * @param AuthManager $authManager
-	 * @param CentralIdLookup $centralIdLookup
-	 * @param GrantsInfo $grantsInfo
-	 * @param GrantsLocalization $grantsLocalization
-	 */
 	public function __construct(
 		PasswordFactory $passwordFactory,
 		AuthManager $authManager,
@@ -354,7 +347,7 @@ class SpecialBotPasswords extends FormSpecialPage {
 		return false;
 	}
 
-	private function save( array $data ) {
+	private function save( array $data ): Status {
 		$bp = BotPassword::newUnsaved( [
 			'centralId' => $this->userId,
 			'appId' => $this->par,

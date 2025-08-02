@@ -1,5 +1,5 @@
-mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
-	mw.libs.ve.targetLoader.addPlugin( function () {
+mw.loader.using( 'ext.visualEditor.targetLoader' ).then( () => {
+	mw.libs.ve.targetLoader.addPlugin( () => {
 
 		ve.init.mw.SpamBlacklistSaveErrorHandler = function () {};
 
@@ -8,9 +8,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.SpamBlacklistSaveErrorHandler.static.name = 'spamBlacklist';
 
 		ve.init.mw.SpamBlacklistSaveErrorHandler.static.matchFunction = function ( data ) {
-			return data.errors && data.errors.some( function ( err ) {
-				return err.code === 'spamblacklist';
-			} );
+			return data.errors && data.errors.some( ( err ) => err.code === 'spamblacklist' );
 		};
 
 		ve.init.mw.SpamBlacklistSaveErrorHandler.static.process = function ( data, target ) {

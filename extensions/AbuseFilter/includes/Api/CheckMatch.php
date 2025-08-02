@@ -2,59 +2,47 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Api;
 
-use LogEventsList;
 use LogicException;
-use LogPage;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\ApiResult;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
-use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
-use RecentChange;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class CheckMatch extends ApiBase {
 
-	/** @var RuleCheckerFactory */
-	private $ruleCheckerFactory;
+	private RuleCheckerFactory $ruleCheckerFactory;
+	private AbuseFilterPermissionManager $afPermManager;
+	private VariablesBlobStore $afVariablesBlobStore;
+	private VariableGeneratorFactory $afVariableGeneratorFactory;
+	private FilterLookup $filterLookup;
 
-	/** @var AbuseFilterPermissionManager */
-	private $afPermManager;
-
-	/** @var VariablesBlobStore */
-	private $afVariablesBlobStore;
-
-	/** @var VariableGeneratorFactory */
-	private $afVariableGeneratorFactory;
-
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param RuleCheckerFactory $ruleCheckerFactory
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param VariablesBlobStore $afVariablesBlobStore
-	 * @param VariableGeneratorFactory $afVariableGeneratorFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		RuleCheckerFactory $ruleCheckerFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		VariablesBlobStore $afVariablesBlobStore,
-		VariableGeneratorFactory $afVariableGeneratorFactory
+		VariableGeneratorFactory $afVariableGeneratorFactory,
+		FilterLookup $filterLookup
 	) {
 		parent::__construct( $main, $action );
 		$this->ruleCheckerFactory = $ruleCheckerFactory;
 		$this->afPermManager = $afPermManager;
 		$this->afVariablesBlobStore = $afVariablesBlobStore;
 		$this->afVariableGeneratorFactory = $afVariableGeneratorFactory;
+		$this->filterLookup = $filterLookup;
 	}
 
 	/**
@@ -102,6 +90,9 @@ class CheckMatch extends ApiBase {
 
 			$varGenerator = $this->afVariableGeneratorFactory->newRCGenerator( $rc, $this->getUser() );
 			$vars = $varGenerator->getVars();
+			if ( $vars === null ) {
+				$this->dieWithError( 'apierror-abusefilter-incompatible' );
+			}
 		} elseif ( $params['logid'] ) {
 			$row = $this->getDB()->newSelectQueryBuilder()
 				->select( '*' )
@@ -114,11 +105,9 @@ class CheckMatch extends ApiBase {
 				$this->dieWithError( [ 'apierror-abusefilter-nosuchlogid', $params['logid'] ], 'nosuchlogid' );
 			}
 
-			// TODO: Replace with dependency injection once security patch is uploaded publicly.
-			$afFilterLookup = AbuseFilterServices::getFilterLookup();
-			$privacyLevel = $afFilterLookup->getFilter( $row->afl_filter_id, $row->afl_global )
-				->getPrivacyLevel();
-			$canSeeDetails = $this->afPermManager->canSeeLogDetailsForFilter( $performer, $privacyLevel );
+			$canSeeDetails = $this->afPermManager->canSeeLogDetailsForFilter(
+				$performer, $this->filterLookup->getFilter( $row->afl_filter_id, $row->afl_global )
+			);
 			if ( !$canSeeDetails ) {
 				$this->dieWithError( 'apierror-permissiondenied-generic', 'cannotseedetails' );
 			}
@@ -134,7 +123,7 @@ class CheckMatch extends ApiBase {
 		}
 		if ( $vars === null ) {
 			// @codeCoverageIgnoreStart
-			throw new LogicException( 'Impossible.' );
+			throw new LogicException( 'Variables were not loaded, this should not happen.' );
 			// @codeCoverageIgnoreEnd
 		}
 

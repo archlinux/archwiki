@@ -29,10 +29,7 @@ use Wikimedia\Stats\Sample;
  * @since 1.41
  */
 interface MetricInterface {
-	/**
-	 * @param BaseMetricInterface $baseMetric
-	 * @param LoggerInterface $logger
-	 */
+
 	public function __construct( BaseMetricInterface $baseMetric, LoggerInterface $logger );
 
 	/** @return string */
@@ -120,4 +117,11 @@ interface MetricInterface {
 	 * @return self|NullMetric
 	 */
 	public function fresh();
+
+	/**
+	 * Indicates the metric instance is used in a Histogram
+	 *
+	 * @return bool
+	 */
+	public function isHistogram(): bool;
 }

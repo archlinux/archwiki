@@ -18,11 +18,14 @@
  * @file
  */
 
-use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+namespace MediaWiki\FileRepo\File;
+
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentity;
+use StatusValue;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -257,9 +260,9 @@ class LocalFileDeleteBatch {
 				->where( [ 'oi_name' => $this->file->getName() ] )
 				->andWhere( [ 'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) ) ] );
 			$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
-			$rowsInsert = [];
 			if ( $res->numRows() ) {
 				$reason = $commentStore->createComment( $dbw, $this->reason );
+				$rowsInsert = [];
 				foreach ( $res as $row ) {
 					$comment = $commentStore->getComment( 'oi_description', $row );
 					$rowsInsert[] = [
@@ -288,18 +291,21 @@ class LocalFileDeleteBatch {
 					] + $commentStore->insert( $dbw, 'fa_deleted_reason', $reason )
 					+ $commentStore->insert( $dbw, 'fa_description', $comment );
 				}
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'filearchive' )
+					->ignore()
+					->rows( $rowsInsert )
+					->caller( __METHOD__ )->execute();
 			}
-
-			$dbw->newInsertQueryBuilder()
-				->insertInto( 'filearchive' )
-				->ignore()
-				->rows( $rowsInsert )
-				->caller( __METHOD__ )->execute();
 		}
 	}
 
 	private function doDBDeletes() {
 		$dbw = $this->file->repo->getPrimaryDB();
+		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
+
 		[ $oldRels, $deleteCurrent ] = $this->getOldRels();
 
 		if ( count( $oldRels ) ) {
@@ -310,6 +316,17 @@ class LocalFileDeleteBatch {
 					'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) )
 				] )
 				->caller( __METHOD__ )->execute();
+			if ( ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) && $this->file->getFileIdFromName() ) {
+				$delete = $dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'filerevision' )
+					->where( [ 'fr_file' => $this->file->getFileIdFromName() ] );
+				if ( !$deleteCurrent ) {
+					// It's not full page deletion.
+					$delete->andWhere( [ 'fr_archive_name' => array_map( 'strval', array_keys( $oldRels ) ) ] );
+				}
+				$delete->caller( __METHOD__ )->execute();
+
+			}
 		}
 
 		if ( $deleteCurrent ) {
@@ -317,6 +334,25 @@ class LocalFileDeleteBatch {
 				->deleteFrom( 'image' )
 				->where( [ 'img_name' => $this->file->getName() ] )
 				->caller( __METHOD__ )->execute();
+			if ( ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) && $this->file->getFileIdFromName() ) {
+				$dbw->newUpdateQueryBuilder()
+					->update( 'file' )
+					->set( [
+						'file_deleted' => $this->suppress ? 3 : 1,
+						'file_latest' => 0
+					] )
+					->where( [ 'file_id' => $this->file->getFileIdFromName() ] )
+					->caller( __METHOD__ )->execute();
+				if ( !count( $oldRels ) ) {
+					// Only the current version is uploaded and then deleted
+					// TODO: After migration is done and old code is removed,
+					// this should be refactored to become much simpler
+					$dbw->newDeleteQueryBuilder()
+						->deleteFrom( 'filerevision' )
+						->where( [ 'fr_file' => $this->file->getFileIdFromName() ] )
+						->caller( __METHOD__ )->execute();
+				}
+			}
 		}
 	}
 
@@ -420,3 +456,6 @@ class LocalFileDeleteBatch {
 		return Status::newGood( $newBatch );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LocalFileDeleteBatch::class, 'LocalFileDeleteBatch' );

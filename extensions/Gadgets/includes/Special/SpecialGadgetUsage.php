@@ -23,9 +23,9 @@ namespace MediaWiki\Extension\Gadgets\Special;
 use MediaWiki\Extension\Gadgets\GadgetRepo;
 use MediaWiki\Html\Html;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\TitleValue;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
@@ -46,7 +46,8 @@ class SpecialGadgetUsage extends QueryPage {
 		parent::__construct( 'GadgetUsage' );
 		$this->gadgetRepo = $gadgetRepo;
 		$this->dbProvider = $dbProvider;
-		$this->limit = 1000; // Show all gadgets
+		// Show all gadgets
+		$this->limit = 1000;
 		$this->shownavigation = false;
 	}
 
@@ -67,6 +68,7 @@ class SpecialGadgetUsage extends QueryPage {
 		return $this->getConfig()->get( 'SpecialGadgetUsageActiveUsers' );
 	}
 
+	/** @inheritDoc */
 	public function isExpensive() {
 		return true;
 	}
@@ -143,6 +145,7 @@ class SpecialGadgetUsage extends QueryPage {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getOrderFields() {
 		return [ 'value' ];
 	}

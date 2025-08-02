@@ -33,6 +33,7 @@
  * @param {string} [config.nullSelectionOnBlur=true] Surface selection is set to null on blur
  * @param {string} [config.inDialog=''] The name of the dialog this surface is in
  * @param {boolean} [config.inTargetWidget=false] The surface is in a target widget
+ * @param {boolean} [config.allowTabFocusChange=false] Allow changing focus from target surfaces with tab/shift+tab
  */
 ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	config = config || {};
@@ -46,6 +47,7 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	this.$scrollListener = config.$scrollListener || $( this.getElementWindow() );
 	this.inDialog = config.inDialog || '';
 	this.inTargetWidget = !!config.inTargetWidget;
+	this.allowTabFocusChange = !!config.allowTabFocusChange;
 	this.mode = config.mode;
 
 	// The following classes are used here:
@@ -53,6 +55,8 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	// * ve-ui-overlay-global-desktop
 	this.globalOverlay = new ve.ui.Overlay( { classes: [ 've-ui-overlay-global', 've-ui-overlay-global-' + ( OO.ui.isMobile() ? 'mobile' : 'desktop' ) ] } );
 	this.localOverlay = new ve.ui.Overlay( { classes: [ 've-ui-overlay-local' ] } );
+	// Selection highlights should appear under text, so need their own overlay for CSS
+	this.localOverlaySelections = new ve.ui.Overlay( { classes: [ 've-ui-overlay-local ve-ui-overlay-local-selections' ] } );
 	this.$selections = $( '<div>' ).addClass( 've-ui-surface-selections' );
 	this.$blockers = $( '<div>' );
 	this.$controls = $( '<div>' );
@@ -83,6 +87,7 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	}
 	this.view = this.createView( this.model );
 	this.dialogs = this.createDialogWindowManager();
+	this.sidebarDialogs = this.createSidebarWindowManager();
 	this.importRules = config.importRules || {};
 	this.multiline = config.multiline !== false;
 	this.context = this.createContext( {
@@ -123,6 +128,9 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 		activation: 'onViewActivation'
 	} );
 	this.getContext().connect( this, { resize: ve.debounce( this.onContextResize.bind( this ) ) } );
+	this.getView().getSelectionManager().on( 'update', ( hasSelections ) => {
+		this.localOverlaySelections.$element.toggleClass( 've-ui-overlay-local-selections-hasSelections', hasSelections );
+	} );
 
 	// Initialization
 	if ( OO.ui.isMobile() ) {
@@ -137,14 +145,15 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 		// * ve-ui-surface-visual
 		// * ve-ui-surface-source
 		.addClass( 've-ui-surface ve-ui-surface-' + this.mode )
-		.append( this.view.$element );
+		.append( this.view.$element, this.sidebarDialogs.$element );
 	if ( this.mode === 'source' ) {
 		// Separate class to make it easier to override
 		this.getView().$element.add( this.$placeholder )
 			.addClass( 've-ui-surface-source-font' );
 	}
-	this.view.$element.after( this.localOverlay.$element );
-	this.localOverlay.$element.append( this.$selections, this.$blockers, this.$controls, this.$menus );
+	this.view.$element.after( this.localOverlay.$element, this.localOverlaySelections.$element );
+	this.localOverlay.$element.append( this.$blockers, this.$controls, this.$menus );
+	this.localOverlaySelections.$element.append( this.$selections );
 	this.globalOverlay.$element.append( this.dialogs.$element );
 };
 
@@ -316,6 +325,15 @@ ve.ui.Surface.prototype.createDialogWindowManager = function () {
 };
 
 /**
+ * Create a sidebar window manager.
+ *
+ * @return {ve.ui.WindowManager} Sidebar window manager
+ */
+ve.ui.Surface.prototype.createSidebarWindowManager = function () {
+	return new ve.ui.SidebarDialogWindowManager( this, { factory: ve.ui.windowFactory } );
+};
+
+/**
  * Create a surface model
  *
  * @param {ve.dm.Document} doc Document model
@@ -424,11 +442,17 @@ ve.ui.Surface.prototype.getDialogs = function () {
 ve.ui.Surface.prototype.getToolbarDialogs = function ( position ) {
 	position = position || 'side';
 	this.toolbarDialogs[ position ] = this.toolbarDialogs[ position ] ||
-		new ve.ui.ToolbarDialogWindowManager( this, {
-			factory: ve.ui.windowFactory,
-			modal: false
-		} );
+		new ve.ui.ToolbarDialogWindowManager( this, { factory: ve.ui.windowFactory } );
 	return this.toolbarDialogs[ position ];
+};
+
+/**
+ * Get sidebar dialogs window set.
+ *
+ * @return {ve.ui.WindowManager} Sdiebar dialogs window set
+ */
+ve.ui.Surface.prototype.getSidebarDialogs = function () {
+	return this.sidebarDialogs;
 };
 
 /**
@@ -668,7 +692,7 @@ ve.ui.Surface.prototype.updatePlaceholder = function () {
 /**
  * Handle position events from the view
  *
- * @param {boolean} [wasSynchronizing]
+ * @param {boolean} [wasSynchronizing=false]
  */
 ve.ui.Surface.prototype.onViewPosition = function ( wasSynchronizing ) {
 	const padding = {};
@@ -918,4 +942,13 @@ ve.ui.Surface.prototype.getDir = function () {
  */
 ve.ui.Surface.prototype.getInDialog = function () {
 	return this.inDialog;
+};
+
+/**
+ * Does the surface allow changing focus from target surfaces with tab/shift+tab
+ *
+ * @return {boolean}
+ */
+ve.ui.Surface.prototype.doesAllowTabFocusChange = function () {
+	return this.allowTabFocusChange;
 };

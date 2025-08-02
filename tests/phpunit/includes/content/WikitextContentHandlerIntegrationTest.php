@@ -40,6 +40,11 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 				] + $defaults,
 			] )
 		);
+		// Limit reporting affects the options used
+		$this->overrideConfigValue(
+			MainConfigNames::EnableParserLimitReporting,
+			true
+		);
 	}
 
 	public static function provideGetParserOutput() {
@@ -52,16 +57,15 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 			'suppressSectionEditLinks',
 			'useParsoid',
 			'wrapclass',
+			'expensiveParserFunctionLimit',
+			'maxPPExpandDepth',
+			'maxPPNodeCount',
 		];
 		$commonParsoidOptions = array_merge( $commonOptions, [
 			// Currently no options specific to parsoid parses
 		] );
 		$commonLegacyOptions = array_merge( $commonOptions, [
 			'disableTitleConversion',
-			'expensiveParserFunctionLimit',
-			'maxPPExpandDepth',
-			'maxPPNodeCount',
-			'suppressTOC',
 			'targetLanguage',
 		] );
 		$parsoidVersion =
@@ -99,7 +103,7 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 			'title' => 'WikitextContentTest_testGetParserOutput',
 			'model' => CONTENT_MODEL_WIKITEXT,
 			'text' => "#REDIRECT [[Main Page]]",
-			'expectedHtml' => "<div class=\"mw-content-ltr mw-parser-output\" lang=\"en\" dir=\"ltr\" $parsoidVersion><div class=\"redirectMsg\"><p>Redirect to:</p><ul class=\"redirectText\"><li><a href=\"/w/index.php?title=Main_Page&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Main Page (page does not exist)\">Main Page</a></li></ul></div><section data-mw-section-id=\"0\" id=\"mwAQ\"><link rel=\"mw:PageProp/redirect\" href=\"./Main_Page\" id=\"mwAg\"/></section></div>",
+			'expectedHtml' => "<div class=\"mw-content-ltr mw-parser-output\" lang=\"en\" dir=\"ltr\" $parsoidVersion><div class=\"redirectMsg\"><p>Redirect to:</p><ul class=\"redirectText\"><li><a href=\"/w/index.php?title=Main_Page&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Main Page (page does not exist)\">Main Page</a></li></ul></div><section data-mw-section-id=\"0\" id=\"mwAQ\"><link rel=\"mw:PageProp/redirect\" href=\"./Main_Page\" id=\"mwAg\"></section></div>",
 			'expectedFields' => [
 				'Links' => [
 					[ 'Main_Page' => 0 ],
@@ -271,7 +275,8 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 			new ContentParseParams( Title::newMainPage() )
 		);
 		$redirectHeader = $parserOutput->getRedirectHeader();
-		$this->assertStringContainsString( '<div class="redirectMsg">', $redirectHeader );
+		$this->assertStringContainsString( '<div class="redirectMsg"', $redirectHeader );
+		$this->assertStringContainsString( '<link rel="mw:PageProp/redirect"', $redirectHeader );
 		$this->assertMatchesRegularExpression( '!<a[^<>]+>' . $expectedTarget . '</a>!', $redirectHeader );
 	}
 

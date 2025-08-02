@@ -51,5 +51,6 @@
 	"replacetext_no_compress": "Uw wiki werkt niet met ReplaceText: tekstvervangingen kunnen niet worden uitgevoerd als $wgCompressRevisions is ingesteld op true.",
 	"replacetext_no_external_stores": "Uw wiki werkt niet met ReplaceText: tekstvervangingen kunnen niet worden uitgevoerd als $wgExternalStores niet leeg is.",
 	"right-replacetext": "Tekst vervangen in de hele wiki",
-	"action-replacetext": "tekst te vervangen in de hele wiki"
+	"action-replacetext": "tekst te vervangen in de hele wiki",
+	"replacetext-summary-label": "Samenvatting voor vervangende bewerkingen (laat leeg om de standaardsamenvatting te gebruiken)"
 }

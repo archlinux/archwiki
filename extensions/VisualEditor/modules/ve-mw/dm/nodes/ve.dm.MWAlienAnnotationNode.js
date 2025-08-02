@@ -45,7 +45,7 @@ ve.dm.MWAlienAnnotationNode.static.toDataElement = function ( domElements ) {
 
 ve.dm.MWAlienAnnotationNode.prototype.getWikitextTag = function () {
 	const type = this.getAttribute( 'type' );
-	if ( type.indexOf( '/End', type.length - 4 ) !== -1 ) {
+	if ( type.includes( '/End', type.length - 4 ) ) {
 		return '</UNKNOWN>';
 	}
 	return '<UNKNOWN>';

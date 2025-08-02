@@ -32,7 +32,7 @@ class LocalRpcClient implements RpcClient {
 		// be autoloaded.
 
 		try {
-			$result = call_user_func_array( $functionName, $params );
+			$result = $functionName( ...$params );
 		} catch ( Throwable $e ) {
 			throw new ShellboxError( $e->getMessage(), $e->getCode(), $e );
 		}

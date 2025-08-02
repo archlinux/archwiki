@@ -5,13 +5,13 @@
 			"Gitartha.bordoloi"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ভিজুৱেলএডিট]]",
+	"tag-visualeditor": "ভিজুৱেলএডিট",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ভিজুৱেল এডিটৰ]]ৰে কৰা সম্পাদনা",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ভিজুৱেল এডিটৰ: পৰীক্ষা কৰক]]",
+	"tag-visualeditor-needcheck": "ভিজুৱেল এডিটৰ: পৰীক্ষা কৰক",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ভিজুৱেল এডিটৰ]]ৰে সম্পাদনা কৰা হৈছে য'ত প্ৰণালীয়ে অনিচ্ছাকৃতভাৱে সালসলনি হোৱা সম্ভাব্য ৱিকিপাঠ্য চিনাক্ত কৰিছে।",
 	"tag-visualeditor-wikitext": "২০১৭ উৎস সম্পাদনা",
 	"tag-visualeditor-wikitext-description": "২০১৭ ৱিকিপাঠ্য সম্পাদক ব্যৱহাৰ কৰি সম্পাদনা কৰা হৈছে",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ভিজুৱেলএডিটৰ: পৰিবৰ্তন]]",
+	"tag-visualeditor-switched": "ভিজুৱেলএডিটৰ: পৰিবৰ্তন",
 	"tag-visualeditor-switched-description": "সদস্যই ভিজুৱেল এডিটৰ ব্যৱহাৰ কৰি সম্পাদনা আৰম্ভ কৰি, পাছত ৱিকিপাঠ সম্পাদকলৈ সলনি কৰিছিল।",
 	"visualeditor-feedback-link": "Project:ভিজুৱেলেডিটৰ/প্ৰতিক্ৰিয়া",
 	"visualeditor-feedback-tool": "এই চফ্টৱেৰ সম্পৰ্কত আপোনাৰ মন্তব্য দিয়ক",

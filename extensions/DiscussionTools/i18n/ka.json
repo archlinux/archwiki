@@ -5,9 +5,9 @@
 			"Matma Rex",
 			"Mehman97",
 			"Otogi",
+			"Woytecr",
 			"Გიო ოქრო",
-			"Იო ოქრო",
-			"Woytecr"
+			"Იო ოქრო"
 		]
 	},
 	"discussiontools": "განხილვის ხელსაწყოები",
@@ -131,9 +131,9 @@
 	"tag-discussiontools-description": "რედაქტირება განხორციელდა განხილვის ხელსაწყოს დახმარებით",
 	"tag-discussiontools-edit": "კომენტარის რედაქტირება",
 	"tag-discussiontools-edit-description": "მომხმარებელმა განხილვის ხელსაწყოების საშუალებით დაარედაქტირა მანამდე არსებული კომენტარი",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} ახალი თემა]",
+	"tag-discussiontools-newtopic": "ახალი თემა",
 	"tag-discussiontools-newtopic-description": "მომხმარებელმა განხილვის ხელსაწყოს დახმარებით გვერდზე ახალი თემა დაამატა",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} პასუხი]",
+	"tag-discussiontools-reply": "პასუხი",
 	"tag-discussiontools-reply-description": "მომხმარებელმა განხილვის ხელსაწყოს დახმარებით უპასუხა კომენტარს",
 	"tag-discussiontools-source-description": "განხილვის ხელსაწყო წყაროს რედაქტირების რეჟიმში იყო",
 	"tag-discussiontools-visual-description": "განხილვის ხელსაწყო ვიზუალური რედაქტირების რეჟიმში იყო"

@@ -94,6 +94,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'nullary_macro_aliase',
 			'nullary_macro_in_mbox',
 			'operator',
+			'operator_infix',
 			'operator_rendering',
 			'other_delimiters1',
 			'other_delimiters2',
@@ -170,6 +171,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		$types = [
 			'mathchar' => 'string',
 			'color' => 'string',
+			'operator_infix' => 'array'
 		];
 		$tu = TexUtil::getInstance();
 		$baseElements = $tu->getBaseElements();

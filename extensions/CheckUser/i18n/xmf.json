@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Narazeni"
+		]
+	},
+	"grant-checkuser": "მახვარებუეფიშ გინოჯინეფიშ მუნაჩემეფშა მიშულა",
+	"checkuser-investigate-preliminary-table-cell-blocked": "ბლოკირი რე",
+	"checkuser-investigate-preliminary-table-cell-edits": "$1 {{PLURAL:$1|რედაქტირაფა|რედაქტირაფა}}",
+	"checkuser-investigate-preliminary-table-cell-unblocked": "ვა რე ბლოკირი",
+	"checkuser-investigate-preliminary-table-header-editcount": "რედაქტირაფეფი",
+	"checkuser-investigate-preliminary-table-header-groups": "ბუნეფი",
+	"checkuser-investigate-preliminary-table-header-name": "მახვარებუშ ჯოხო",
+	"checkuser-investigate-preliminary-table-header-registration": "თარიღი ეკოჸუნს",
+	"checkuser-investigate-preliminary-table-header-wiki": "ვიკი:",
+	"checkuser-investigate-compare-table-button-add-user-targets-label": "თე მახვარებუშ არძა IP-მიოწურაფუშ ძირაფა"
+}

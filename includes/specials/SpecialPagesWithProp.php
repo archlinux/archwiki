@@ -22,9 +22,9 @@ namespace MediaWiki\Specials;
 
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -61,9 +61,6 @@ class SpecialPagesWithProp extends QueryPage {
 	 */
 	private $sortByValue = false;
 
-	/**
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'PagesWithProp' );
 		$this->setDatabaseProvider( $dbProvider );

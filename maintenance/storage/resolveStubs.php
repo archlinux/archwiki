@@ -22,6 +22,7 @@
  * @ingroup Maintenance ExternalStorage
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Maintenance\UndoLog;
 use MediaWiki\Storage\SqlBlobStore;
 
@@ -85,9 +86,6 @@ class ResolveStubs extends Maintenance {
 		$this->output( "$numResolved of $numTotal stubs resolved\n" );
 	}
 
-	/**
-	 * @param UndoLog $undoLog
-	 */
 	public function setUndoLog( UndoLog $undoLog ) {
 		$this->undoLog = $undoLog;
 	}

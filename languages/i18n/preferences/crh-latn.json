@@ -74,7 +74,7 @@
 	"prefs-help-email": "E-mail (mecburiy degildir). E-mail adresi bildirilgen olsa, paroliñizni unutsañız, sizge yañı bir parol yollamaq içün qullanılır.",
 	"prefs-help-email-required": "E-mail adresi lâzim.",
 	"prefs-help-email-others": "Ayrıca, qullanıcı ve ya muzakere saifeñizdeki bir bağlantı vastasınen başqalarına siznen e-mail ile bağlanmağa imkân bermege de saylay bilirsiñiz.\nBaşqa qullanıcılar siznen bağlanğanda e-mail adresiñiz açıqlanmaz.",
-	"tog-requireemail": "Parol sıfırlama mektübini tek e-mail adresi ve qullanıcı adı bildirilgen taqdirde yolla.",
+	"tog-requireemail": "Parol sıfırlav mektübini tek e-mail adresi ve qullanıcı adı bildirilgen taqdirde yolla.",
 	"prefs-help-requireemail": "Bu gizlilikni arttıra ve istenilmegen e-mail mektüplerniñ yollanmamasına yardım ete.",
 	"noemailprefs": "Bu funktsiyalarnıñ çalışması içün sazlamalarıñızda bir e-mail adresi bildiriñiz.",
 	"emailnotauthenticated": "E-mail adresiñiz alâ daa tasdıqlanmadı.\nAşağıdaki funktsiyalarınıñ iç biri içün e-mail yollanmaycaq.",
@@ -221,6 +221,7 @@
 	"search-thumbnail-extra-namespaces-label": "İş masası rejiminde kiçik resimlerni Special:Search saifesinde köster",
 	"search-thumbnail-extra-namespaces-message": "{{#special:search}} saifesindeki $1 {{PLURAL:$2|isim fezası}} neticesiniñ kiçik resimlerini köstere",
 	"prefs-advancedsearchoptions": "Tafsilâtlı sazlamalar",
+	"prefs-misc": "Diger sazlamalar",
 	"prefs-reset-intro": "Bu saifeni sazlamalarıñıznı saytnıñ ögünden tayinlengen sazlamalarına qaytarmaq içün qullana bilesiñiz. Bu lâğu etilip olamaz.",
 	"prefs-reset-confirm": "Ebet, sazlamalarımnı sıfırlamağa isteyim.",
 	"restoreprefs": "Bütün ögünden tayinlengen sazlamalarnı qaytar"

@@ -54,9 +54,6 @@ class SkinComponentListItem implements SkinComponent {
 		$this->defaultLinkOptions = $defaultLinkOptions;
 	}
 
-	/**
-	 * @return MessageLocalizer
-	 */
 	private function getMessageLocalizer(): MessageLocalizer {
 		return $this->localizer;
 	}
@@ -122,7 +119,9 @@ class SkinComponentListItem implements SkinComponent {
 		// In case this is still set from SkinTemplate, we don't want it to appear in
 		// the HTML output (normally removed in SkinTemplate::buildContentActionUrls())
 		unset( $item['redundant'] );
-
+		$iconData = [
+			'icon' => $item['icon'] ?? null,
+		];
 		$linksArray = [];
 		if ( isset( $this->item['links'] ) ) {
 			$links = [];
@@ -131,7 +130,7 @@ class SkinComponentListItem implements SkinComponent {
 				// Note: links will have identical label unless 'msg' is set on $link
 				$linkComponent = new SkinComponentLink(
 					$key,
-					$link,
+					$link + $iconData,
 					$this->getMessageLocalizer(),
 					$options + $linkOptions
 				);
@@ -183,19 +182,19 @@ class SkinComponentListItem implements SkinComponent {
 				$attrs[$attr] = $item[$attr];
 			}
 		}
-		$attrs['class'] = SkinComponentUtils::addClassToClassList( $attrs['class'] ?? [], 'mw-list-item' );
-
+		if ( !isset( $attrs['class'] ) || $attrs['class'] === false ) {
+			// Compatibility
+			$attrs['class'] = null;
+		}
+		Html::addClass( $attrs['class'], 'mw-list-item' );
 		if ( isset( $item['active'] ) && $item['active'] ) {
-			// In the future, this should accept an array of classes, not a string
-			$attrs['class'] = SkinComponentUtils::addClassToClassList( $attrs['class'], 'active' );
+			Html::addClass( $attrs['class'], 'active' );
 		}
 		if ( isset( $item['itemtitle'] ) ) {
 			$attrs['title'] = $item['itemtitle'];
 		}
 		// Making sure we always have strings as class values
-		$classes = is_array( $attrs['class'] ) ?
-			implode( ' ', $attrs['class'] ) :
-			$attrs['class'] ?? null;
+		$classes = Html::expandClassList( $attrs['class'] );
 		return [
 			'tag' => $options['tag'] ?? 'li',
 			'attrs' => $attrs,

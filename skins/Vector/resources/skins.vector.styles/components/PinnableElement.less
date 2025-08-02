@@ -36,7 +36,7 @@
 	// Border-box changes the height calculation.
 	box-sizing: border-box;
 	// Height is viewport height - row gap above and below the container.
-	max-height: ~'calc( 100vh - (@{grid-row-gap} * 2) )';
+	max-height: ~'calc( 100vh - ( @{grid-row-gap} * 2 ) )';
 }
 
 @media ( max-width: @max-width-breakpoint-tablet ) {

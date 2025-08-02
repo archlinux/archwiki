@@ -19,8 +19,8 @@
  */
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
-use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\TitleFormatter;
 
@@ -89,7 +89,7 @@ class TrivialLanguageConverter implements ILanguageConverter {
 		try {
 			$nsWithUnderscores = $this->titleFormatter->getNamespaceName( $index, $mainText );
 		} catch ( InvalidArgumentException $e ) {
-			// T165149: see MediaWikiTitleCodec::formatTitle()
+			// T165149: see TitleFormatter::formatTitle()
 			$nsWithUnderscores = $this->language->getNsText( NS_SPECIAL );
 			$mainText = "Badtitle/NS$index:$mainText";
 		}
@@ -161,7 +161,7 @@ class TrivialLanguageConverter implements ILanguageConverter {
 		return $text;
 	}
 
-	public function updateConversionTable( LinkTarget $linkTarget ) {
+	public function updateConversionTable( PageIdentity $page ) {
 	}
 
 	/**

@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscussionTools;
 
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookRunner;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
@@ -19,7 +20,6 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
-use MWExceptionHandler;
 use Throwable;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
@@ -112,7 +112,7 @@ class CommentFormatter {
 		$wrapperNode = $headingElement->parentNode;
 		if ( !(
 			$wrapperNode instanceof Element &&
-			DOMCompat::getClassList( $wrapperNode )->contains( 'mw-heading' )
+			DOMUtils::hasClass( $wrapperNode, 'mw-heading' )
 		) ) {
 			// Do not add the wrapper if the heading has attributes generated from wikitext (T353489).
 			// Only allow reserved attributes (e.g. 'data-mw', which can't be used in wikitext, but which
@@ -136,7 +136,19 @@ class CommentFormatter {
 			return $wrapperNode;
 		}
 
-		$uneditable = DOMCompat::querySelector( $wrapperNode, 'mw\\:editsection' ) === null;
+		$uneditable = false;
+		$wrapperParent = $wrapperNode->parentNode;
+		if (
+			$wrapperParent instanceof Element &&
+			strtolower( $wrapperParent->tagName ) === 'section'
+		) {
+			// Parsoid
+			$uneditable = $wrapperParent->getAttribute( 'data-mw-section-id' ) < 0;
+		} else {
+			// Legacy parser
+			$uneditable = DOMCompat::querySelector( $wrapperNode, 'mw\\:editsection' ) === null;
+		}
+
 		$headingItem->setUneditableSection( $uneditable );
 		self::addOverflowMenuButton( $headingItem, $doc, $wrapperNode );
 
@@ -379,7 +391,7 @@ class CommentFormatter {
 		$headings = DOMCompat::querySelectorAll( $container, 'h2' );
 		foreach ( $headings as $headingElement ) {
 			$wrapper = $headingElement->parentNode;
-			if ( $wrapper instanceof Element && DOMCompat::getClassList( $wrapper )->contains( 'toctitle' ) ) {
+			if ( $wrapper instanceof Element && DOMUtils::hasClass( $wrapper, 'toctitle' ) ) {
 				continue;
 			}
 			$headingElement = static::handleHeading( $headingElement );
@@ -514,7 +526,7 @@ class CommentFormatter {
 				$href = $title->getLinkURL( [
 					'action' => $isSubscribed ? 'dtunsubscribe' : 'dtsubscribe',
 					'commentname' => $itemName,
-					'section' => $itemData['linkableTitle'],
+					'section' => $isSubscribed ? null : $itemData['linkableTitle'],
 				] );
 
 				if ( $buttonIsMobile !== $isMobile ) {

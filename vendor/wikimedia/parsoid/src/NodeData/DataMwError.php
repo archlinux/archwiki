@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\NodeData;
 
+use Wikimedia\JsonCodec\JsonCodec;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
 
@@ -34,7 +35,23 @@ class DataMwError implements JsonCodecable {
 		$this->message = $message;
 	}
 
-		/** @inheritDoc */
+	public function __clone() {
+		if ( $this->params ) {
+			$codec = new JsonCodec;
+			$this->params = $codec->newFromJsonArray(
+				$codec->toJsonArray( $this->params )
+			);
+		}
+	}
+
+	public function equals( DataMwError $other ): bool {
+		// Use non-strict equality test, which will compare the properties
+		// and compare the values in the params array.
+		// @phan-suppress-next-line PhanPluginComparisonObjectEqualityNotStrict
+		return $this == $other;
+	}
+
+	/** @inheritDoc */
 	public function toJsonArray(): array {
 		$result = [ 'key' => $this->key ];
 		if ( $this->message !== null ) {

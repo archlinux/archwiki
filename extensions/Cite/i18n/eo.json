@@ -19,8 +19,6 @@
 	"cite_error_ref_no_input": "Nevalida <code>&lt;ref&gt;</code>-etikedo; sennomaj referencoj devas havi enhavon",
 	"cite_error_references_duplicate_key": "Ne valida etikedo <code>&lt;ref&gt;</code>; la nomo \"$1\" estas difinita plurfoje kun malsamaj enhavoj",
 	"cite_error_references_invalid_parameters": "Nevalida parametro en etikedo <code>&lt;references&gt;</code>",
-	"cite_error_references_no_backlink_label": "Neniom plu memfaritaj retroligaj etikedoj. Difinu pliajn en la mesaĝo [[MediaWiki:Cite references link many format backlink labels]].",
-	"cite_error_no_link_label_group": "Mankas proprajn ligilajn etikedojn por grupo \"$1\". Difinu pliajn en la [[MediaWiki:$2]] mesaĝo.",
 	"cite_error_references_no_text": "Malvalida etikedo <code>&lt;ref&gt;</code>; neniu teksto estis provizita por ref-oj nomataj <code>$1</code>",
 	"cite_error_included_ref": "Ferma <code>&lt;/ref&gt;</code> mankas por <code>&lt;ref&gt;</code>-etikedo",
 	"cite_error_group_refs_without_references": "Etikedoj <code>&lt;ref&gt;</code> ekzistas por la grupo nomita \"$1\", sed la responda etikedo <code>&lt;references group=\"$1\"/&gt;</code> ne estis trovita",

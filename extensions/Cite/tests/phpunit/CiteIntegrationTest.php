@@ -85,7 +85,8 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	private function newCite(): Cite {
-		$language = $this->createNoOpMock( Language::class );
+		$language = $this->createMock( Language::class );
+		$language->method( 'getCode' )->willReturn( 'en' );
 
 		$mockOptions = $this->createMock( ParserOptions::class );
 		$mockOptions->method( 'getIsPreview' )->willReturn( false );

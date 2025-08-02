@@ -110,5 +110,6 @@
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desactivado|Grupos desactivados}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|A túa pertenza}} a {{PLURAL:$1|este grupo|estes grupos}} está desactivada ata que actives a [[Special:Manage Two-factor authentication|autenticación de dous factores]].",
 	"oathauth-qrcode-alt": "Código QR escaneable que representa a clave secreta.",
-	"oathauth-hint": "Non tes acceso ao teu dispositivo ou á túa aplicación? Podes introducir neste campo un código de recuperación (presentados cando activaches a autenticación de dous factores)."
+	"oathauth-hint": "Non tes acceso ao teu dispositivo ou á túa aplicación? Podes introducir neste campo un código de recuperación (presentados cando activaches a autenticación de dous factores).",
+	"oathauth-must-be-central": "{{GENDER:$1|A túa conta}} debe estar ligada ao sistema de autenticación central para usar a autenticación en dous pasos."
 }

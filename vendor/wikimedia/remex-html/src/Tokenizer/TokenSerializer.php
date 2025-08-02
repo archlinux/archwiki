@@ -11,32 +11,45 @@ namespace Wikimedia\RemexHtml\Tokenizer;
  * on its parent element, including its namespace.
  */
 class TokenSerializer implements TokenHandler {
+	/** @var string */
 	private $output;
+	/** @var array[] */
 	private $errors = [];
 
+	/**
+	 * @return string
+	 */
 	public function getOutput() {
 		return $this->output;
 	}
 
+	/**
+	 * @return array[]
+	 */
 	public function getErrors() {
 		return $this->errors;
 	}
 
+	/** @inheritDoc */
 	public function startDocument( Tokenizer $tokenizer, $fns, $fn ) {
 		$this->output = '';
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 	}
 
+	/** @inheritDoc */
 	public function error( $text, $pos ) {
 		$this->errors[] = [ $text, $pos ];
 	}
 
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->output .= htmlspecialchars( substr( $text, $start, $length ) );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$attrs = $attrs->getValues();
 		$this->output .= "<$name";
@@ -49,10 +62,12 @@ class TokenSerializer implements TokenHandler {
 		$this->output .= '>';
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$this->output .= "</$name>";
 	}
 
+	/** @inheritDoc */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->output .= "<!DOCTYPE $name";
 		if ( strlen( $public ) ) {
@@ -69,6 +84,7 @@ class TokenSerializer implements TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
 	public function comment( $text, $sourceStart, $sourceLength ) {
 		$this->output .= '<!--' . $text . '-->';
 	}

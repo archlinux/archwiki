@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joao Xavier",
+			"Malafaya",
+			"Robin van der Vliet"
+		]
+	},
+	"checkuser": "Kontrolero di adresi IP",
+	"group-checkuser": "Kontroleri dil uzeri",
+	"group-checkuser-member": "{{GENDER:$1|kontrolero di IP-adresi}}",
+	"grant-checkuser": "Acesar informi por verifikar uzeri",
+	"grouppage-checkuser": "{{ns:project}}:Kontrolero di IP-adresi",
+	"checkuser-reason": "Motivo:",
+	"checkuser-showlog": "Montrez la registro 'CheckUser'",
+	"checkuser-target": "IP-adreso od uzeronomo:",
+	"checkuser-period": "Durado:",
+	"checkuser-week-1": "lasta semano",
+	"checkuser-week-2": "lasta du semani",
+	"checkuser-month": "lasta 30 dii",
+	"checkuser-all": "omna",
+	"checkuser-cidr-res": "Komuna CIDR:",
+	"checkuser-blocked": "Blokusita",
+	"checkuser-gblocked": "Blokusita en omna Wiki",
+	"checkuser-wasblocked": "Antee blokusita",
+	"checkuser-search-submit": "Serchar",
+	"checkuser-log-search-target": "Emo:",
+	"checkuser-ipeditcount": "~$1 di omna uzanti",
+	"checkuser-investigate-subtitle-cancel-button-label": "Nuligez",
+	"checkuser-investigate-subtitle-continue-button-label": "Durar",
+	"checkuser-investigate-tab-preliminary-check": "Informo pri la konto",
+	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Montrez omna IP-adresi de ca uzero",
+	"checkuser-investigate-compare-table-button-add-user-targets-label": "Montrez omna uzeri en ca IP",
+	"checkuser-global-contributions-no-results-no-central-user": "<strong>Nula rezulto korespondis al inquesto</strong>. Uzero \"$1\" ne esis enrejistrita.",
+	"checkuser-global-contributions": "Serchar globala kontributadi",
+	"checkuser-global-contributions-no-results-no-permissions": "<strong>Nula rezulto korespondas al inquesto.</strong> Posible vu ne havas permiso pri vidar IP-adresi uzita da tempala konti.",
+	"checkuser-global-contributions-no-results-no-global-preference": "<strong>Nula rezulto korespondas al inquesto.</strong> Ca rezulti esas nekompleta posible pro ke vu mustas aceptar la konvenciono en [$1 vua globala preferaji].",
+	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>Nula rezulto korespondis al inquesto.</strong> Uzero \"$1\" havas nula videbla kontributado.",
+	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>Nula rezulto korespondas al inquesto.</strong> Vu povos trovar kontributadi se vu modifikos vua sercho-parametri.",
+	"prefs-checkuser-tempaccount": "Montrar IP-adresi de tempala konti",
+	"checkuser-tempaccount-enable-preference": "Kapabligar la montro di adresi IP por tempala konti"
+}

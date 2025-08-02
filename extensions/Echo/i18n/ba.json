@@ -61,6 +61,7 @@
 	"notifications": "Белдереүҙәр",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Һеҙгә}} хәбәр итәләр",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Һеҙҙең}} белдереүҙәр",
+	"tooltip-pt-notifications": "Һеҙҙең белдереүҙәр",
 	"echo-displaynotificationsconfiguration": "Белдереү көйләүҙәрен күрһәтергә",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Категориялар буйынса белдереүҙәр",
 	"echo-specialpage": "Белдереүҙәр",

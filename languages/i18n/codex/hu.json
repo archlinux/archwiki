@@ -8,6 +8,7 @@
 	"cdx-dialog-close-button-label": "Bezárás",
 	"cdx-label-optional-flag": "(nem kötelező)",
 	"cdx-message-dismiss-button-label": "Bezárás",
+	"cdx-popover-close-button-label": "Bezárás",
 	"cdx-search-input-search-button-label": "Keresés",
 	"cdx-table-select-all-label": "Az összes sor kijelölése",
 	"cdx-table-select-row-label": "A(z) $1. sor kijelölése $2 sorból",
@@ -24,5 +25,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "$1–$2. találat megjelenítve a sok találatból",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2/sok",
 	"cdx-table-pagination-status-message-indeterminate-final": "Az utolsó $1 {{PLURAL:$1|találat}} megjelenítve",
-	"cdx-table-pagination-status-message-pending": "Találatok betöltése…"
+	"cdx-table-pagination-status-message-pending": "Találatok betöltése…",
+	"cdx-table-no-data-message": "Nem állnak rendelkezésre adatok."
 }

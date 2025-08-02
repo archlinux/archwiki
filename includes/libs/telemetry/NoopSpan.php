@@ -9,8 +9,13 @@ namespace Wikimedia\Telemetry;
  */
 class NoopSpan implements SpanInterface {
 	private SpanContext $context;
+	private TracerState $tracerState;
 
-	public function __construct( SpanContext $context ) {
+	public function __construct(
+		TracerState $tracerState,
+		SpanContext $context
+	) {
+		$this->tracerState = $tracerState;
 		$this->context = $context;
 	}
 
@@ -30,6 +35,11 @@ class NoopSpan implements SpanInterface {
 	}
 
 	/** @inheritDoc */
+	public function setSpanStatus( int $status ): SpanInterface {
+		return $this;
+	}
+
+	/** @inheritDoc */
 	public function start( ?int $epochNanos = null ): SpanInterface {
 		return $this;
 	}
@@ -40,12 +50,14 @@ class NoopSpan implements SpanInterface {
 	}
 
 	/** @inheritDoc */
-	public function activate(): void {
-		// no-op
+	public function activate(): SpanInterface {
+		$this->tracerState->activateSpan( $this->context );
+		return $this;
 	}
 
 	/** @inheritDoc */
-	public function deactivate(): void {
-		// no-op
+	public function deactivate(): SpanInterface {
+		$this->tracerState->deactivateSpan( $this->context );
+		return $this;
 	}
 }

@@ -12,13 +12,10 @@
 	"nuke": "pêropiya hewnakeno..",
 	"action-nuke": "perê nuke",
 	"nuke-desc": "Hizmetlilere, sayfaları [[Special:Nuke|kitlesel silme]] yeteneği verir",
-	"nuke-nopages": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] ra vurnayışanê peyênan ra pelê neweyi çıniyê.",
-	"nuke-list": "Pelê ke cêr de yê hetê ıney ra [[Special:Contributions/$1|{{GENDER:$1|$1}}]]  yew tarixo nızdi de  vıraziyayi; mışore bıkerê u qey hewnakerdışi yew tuş bıtıknê.",
-	"nuke-list-multiple": "Pelê cêrêni nezdıra vıraziyayê ;\nVatış kerdış u esterıtışi re butoni bıploğne",
 	"nuke-defaultreason": "Pelê ke terefê [[Special:Contributions/$1|{{GENDER:$1|$1}}]] ra vıraziyayê iman wedardış",
 	"nuke-multiplepeople": "Vıraziyaye pelanê peyênan pêroyın piya esterıtış",
 	"nuke-tools": "No hacet mısade dano be esteriyayışê pelanê ke nêzdi de terefê yew karberi ya zi yew adresa IPyi ra ilawe biyê.\nSeba gırewtışê lista pelan ra êyê ke esteriyenê nameyê karberi ya zi adresa IPyi cı kewe, ya zi seba pêro karberan ra veng caverde.",
-	"nuke-submit-user": "Pelan liste ke",
+	"nuke-submit-list": "Pelan liste ke",
 	"nuke-submit-delete": "Weçinayi esterne",
 	"right-nuke": "pelan yew hew de hewnaker",
 	"nuke-userorip": "Nameyê karberi, adresa IP ya zi veng:",
@@ -32,6 +29,5 @@
 	"nuke-viewchanges": "vurriyayışan bıvêne",
 	"nuke-namespace": "Limitê caynamey",
 	"nuke-linkoncontribs": "Piya besterne",
-	"nuke-linkoncontribs-text": "Pelê ke {{GENDER:$1|no karber}} teyna nuştekaro inan pêroyın piya bıesternê",
-	"nuke-confirm": "Şımayê ke {{PLURAL:$1|yew pele |$1 pelan}} bıesternê. Qayılê bıesternê?"
+	"nuke-linkoncontribs-text": "Pelê ke {{GENDER:$1|no karber}} teyna nuştekaro inan pêroyın piya bıesternê"
 }

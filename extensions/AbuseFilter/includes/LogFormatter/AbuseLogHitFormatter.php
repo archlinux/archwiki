@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\LogFormatter;
 
-use LogEntry;
-use LogFormatter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Logging\LogEntry;
+use MediaWiki\Logging\LogFormatter;
 use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
 

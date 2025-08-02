@@ -1,0 +1,118 @@
+@import '../../minerva.less/minerva.variables.less';
+@import '../../minerva.less/minerva.mixins.less';
+
+// style that applies only to minerva footer
+.minerva-footer {
+	border-top: @border-subtle;
+	overflow: auto;
+	padding-bottom: 6px;
+}
+
+// styles that apply to nested footer components
+.mw-footer {
+	.indicator {
+		.client-nojs & {
+			// Certain browsers e.g. Opera Mini do not support css transforms
+			// We assume that we do not run JS on these browsers so hide the chevron
+			display: none;
+		}
+	}
+
+	li {
+		list-style: none;
+	}
+
+	// links should be separated by same color
+	.hlist {
+		li {
+			line-height: 2;
+
+			&::after {
+				color: @color-progressive;
+			}
+		}
+	}
+
+	> .post-content {
+		overflow: auto;
+		margin-top: 42px;
+
+		> * {
+			margin-bottom: 9px;
+		}
+
+		.minerva-footer-logo {
+			border-bottom: @border-subtle;
+			padding-bottom: 10px;
+			margin-top: 42px;
+			font-size: 1em;
+			font-weight: bold;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		// No margin top on logo needed if it follows the #p-lang element and nothing has been loaded
+		// above languages e.g. RelatedArticles.
+		/* stylelint-disable selector-max-id */
+		#p-lang:not( :target ):first-child + .minerva-footer-logo {
+			margin-top: 0;
+		}
+
+		.hlist,
+		.license {
+			font-size: 0.875em;
+		}
+	}
+
+	//Duplicate: Hiding b/c these already shows up in the left nav drawer
+	#footer-places-disclaimers,
+	#footer-places-about,
+	#footer-info-lastmod {
+		display: none;
+	}
+}
+
+.footer-icons {
+	display: flex;
+	gap: 16px;
+
+	/* Hack: The footer icons have special logic that collapse them into icon only buttons,
+	however since they do not have the class cdx-button--icon-only they use the incorrect padding. That is corrected here. */
+	@media ( max-width: 500px ) {
+		.cdx-button {
+			padding-left: @spacing-horizontal-button;
+			padding-right: @spacing-horizontal-button;
+		}
+	}
+
+	.cdx-button.cdx-button--fake-button--enabled,
+	.cdx-button.cdx-button--fake-button--enabled:hover,
+	.cdx-button.cdx-button--fake-button--enabled:active {
+		background: @background-color-base-fixed;
+	}
+
+	// correct vertical alignment of icons.
+	picture {
+		display: flex;
+	}
+}
+
+// Night mode
+@media screen {
+	html.skin-theme-clientpref-night {
+		.minerva-footer-logo > img {
+			.night-mode-invert-image();
+		}
+	}
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		.minerva-footer-logo > img {
+			.night-mode-invert-image();
+		}
+	}
+}
+
+@import 'LastModifiedBar.less';

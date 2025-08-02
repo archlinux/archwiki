@@ -38,6 +38,6 @@
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Mintix se tirċievi aktar notifiki dwar kummenti fuq dan is-suġġett.",
 	"discussiontools-topicsubscription-pager-actions": "Azzjonijiet",
 	"tag-discussiontools-added-comment-description": "Ġie miżjud kumment f'paġna ta' diskussjoni f'din il-modifika",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Suġġett ġdid]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Wieġeb]"
+	"tag-discussiontools-newtopic": "Suġġett ġdid",
+	"tag-discussiontools-reply": "Wieġeb"
 }

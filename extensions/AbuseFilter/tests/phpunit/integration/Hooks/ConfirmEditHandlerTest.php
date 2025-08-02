@@ -19,13 +19,17 @@ use MediaWikiIntegrationTestCase;
  */
 class ConfirmEditHandlerTest extends MediaWikiIntegrationTestCase {
 
+	protected function setUp(): void {
+		parent::setUp();
+		$this->markTestSkippedIfExtensionNotLoaded( 'ConfirmEdit' );
+	}
+
 	protected function tearDown(): void {
-		parent::tearDown();
 		Hooks::getInstance()->setForceShowCaptcha( false );
+		parent::tearDown();
 	}
 
 	public function testOnEditFilterMergedContent() {
-		$this->markTestSkippedIfExtensionNotLoaded( 'ConfirmEdit' );
 		$confirmEditHandler = new ConfirmEditHandler();
 		$status = Status::newGood();
 		$title = $this->createMock( Title::class );
@@ -55,10 +59,7 @@ class ConfirmEditHandlerTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( User::class ),
 			false
 		);
-		$message = $status->getMessages( 'error' );
 
-		// FIXME: Change to `$this->assertStatusError( 'captcha-edit' );` after
-		// Ie13181b78b8e2903c6cc0f0f778689bcc8b8ce2e is merged.
-		$this->assertContains( $message[0]->getKey(), [ 'captcha-edit', 'captcha-edit-fail' ] );
+		$this->assertStatusError( 'captcha-edit', $status );
 	}
 }

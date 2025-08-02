@@ -183,7 +183,7 @@ class SerializerState {
 	/**
 	 * Stack of wikitext escaping handlers -- these handlers are responsible
 	 * for smart escaping when the surrounding wikitext context is known.
-	 * @var callable[] See {@link serializeChildren()}
+	 * @var (callable|null)[] See {@link serializeChildren()}
 	 */
 	public $wteHandlerStack = [];
 
@@ -220,16 +220,6 @@ class SerializerState {
 
 	/** @var string The serialized output */
 	public $out = '';
-
-	/**
-	 * Whether to use heuristics to determine if a list item, heading, table cell, etc.
-	 * should have whitespace inserted after the "*#=|!" wikitext chars? This is normally
-	 * true by default, but not so if HTML content version is older than 1.7.0.
-	 * In practice, we are now at version 2.1, but Flow stores HTML, so till Flow migrates
-	 * all its content over to a later version, we need a boolean flag.
-	 * @var bool
-	 */
-	public $useWhitespaceHeuristics;
 
 	/**
 	 * Are we in selective serialization mode?
@@ -289,7 +279,7 @@ class SerializerState {
 	 */
 	private $logPrefix = 'OUT:';
 
-	public $haveTrimmedWsDSR = false;
+	public bool $haveTrimmedWsDSR = false;
 
 	/**
 	 * @param WikitextSerializer $serializer
@@ -333,8 +323,6 @@ class SerializerState {
 	 * @param bool $selserMode Are we running selective serialization?
 	 */
 	public function initMode( bool $selserMode ): void {
-		$this->useWhitespaceHeuristics =
-			Semver::satisfies( $this->env->getInputContentVersion(), '>=1.7.0' );
 		$this->selserMode = $selserMode;
 	}
 
@@ -531,9 +519,10 @@ class SerializerState {
 
 		$this->currLine->chunks[] = $chunk;
 
-		$this->serializer->trace( '--->', $logPrefix, static function () use ( $chunk ) {
-			return PHPUtils::jsonEncode( $chunk->text );
-		} );
+		$this->env->trace(
+			$this->serializer->logType,
+			'--->', $logPrefix, static fn () =>PHPUtils::jsonEncode( $chunk->text )
+		);
 	}
 
 	/**
@@ -661,9 +650,10 @@ class SerializerState {
 	 */
 	public function recoverTrimmedWhitespace( Node $node, bool $leading ): ?string {
 		$sep = $this->separators->recoverTrimmedWhitespace( $node, $leading );
-		$this->serializer->trace( '--->', "TRIMMED-SEP:", static function () use ( $sep ) {
-			return PHPUtils::jsonEncode( $sep );
-		} );
+		$this->env->trace(
+			$this->serializer->logType,
+			'--->', "TRIMMED-SEP:", static fn () => PHPUtils::jsonEncode( $sep )
+		);
 		return $sep;
 	}
 

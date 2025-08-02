@@ -1,7 +1,5 @@
 <?php
 /**
- * Content handler for CSS pages.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Content
  */
 
 namespace MediaWiki\Content;
@@ -28,11 +25,11 @@ use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Title\Title;
 use Wikimedia\Minify\CSSMin;
-use WikiPage;
 
 /**
  * Content handler for CSS pages.
@@ -134,7 +131,7 @@ class CssContentHandler extends CodeContentHandler {
 			// Return CSS wrapped in a <pre> tag.
 			$html = Html::element(
 				'pre',
-				[ 'class' => 'mw-code mw-css', 'dir' => 'ltr' ],
+				[ 'class' => [ 'mw-code', 'mw-css' ], 'dir' => 'ltr' ],
 				"\n" . $content->getText() . "\n"
 			) . "\n";
 		} else {

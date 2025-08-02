@@ -1,0 +1,41 @@
+[
+	{
+		"name": "cuci_temp_edit",
+		"comment": "A central index table that allows looking up which wikis have temporary account edits in their CheckUser result tables for a given IP or IP range.",
+		"columns": [
+			{
+				"name": "cite_ip_hex",
+				"comment": "The IP address associated with this row in hexadecimal form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "cite_ciwm_id",
+				"comment": "ID for a row in the cuci_temp_edit table. That row holds the wiki ID associated with this row.",
+				"type": "smallint",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "cite_timestamp",
+				"comment": "The most recent timestamp associated with temporary account edits made on the given wiki and IP address.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cite_timestamp",
+				"columns": [ "cite_timestamp" ],
+				"unique": false,
+				"comment": "Used to find rows that should be deleted as the rows they reference will have been purged."
+			},
+			{
+				"name": "cite_ip_hex_timestamp",
+				"columns": [ "cite_ip_hex", "cite_timestamp" ],
+				"unique": false,
+				"comment": "Used to find which wikis were mostly recently edited by temporary accounts for a given IP or IP range."
+			}
+		],
+		"pk": [ "cite_ip_hex", "cite_ciwm_id" ]
+	}
+]

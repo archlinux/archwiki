@@ -118,13 +118,29 @@ ve.ui.Toolbar.prototype.setup = function ( groups, surface ) {
 		opening: 'onInspectorOrDialogOpeningOrClosing',
 		closing: 'onInspectorOrDialogOpeningOrClosing'
 	} );
-	this.getSurface().getToolbarDialogs().connect( this, {
-		opening: 'onInspectorOrDialogOpeningOrClosing',
-		closing: 'onInspectorOrDialogOpeningOrClosing'
+	ve.ui.ToolbarDialogWindowManager.static.positions.forEach( ( position ) => {
+		this.getSurface().getToolbarDialogs( position ).connect( this, {
+			opening: 'onInspectorOrDialogOpeningOrClosing',
+			closing: 'onInspectorOrDialogOpeningOrClosing'
+		} );
 	} );
 	this.getSurface().getContext().getInspectors().connect( this, {
 		opening: 'onInspectorOrDialogOpeningOrClosing',
 		closing: 'onInspectorOrDialogOpeningOrClosing'
+	} );
+
+	// instrumentation
+	this.items.forEach( ( item ) => {
+		if ( item instanceof OO.ui.ToolGroup ) {
+			const name = ( ve.entries( this.groupsByName ).find( ( entry ) => entry[ 1 ] === item ) || [] )[ 0 ];
+			if ( name ) {
+				item.on( 'active', ( isActive ) => {
+					if ( isActive ) {
+						ve.track( 'activity.' + name, { action: 'toolbar-group-active' } );
+					}
+				} );
+			}
+		}
 	} );
 };
 
@@ -142,7 +158,7 @@ ve.ui.Toolbar.prototype.isToolAvailable = function ( name ) {
 	}
 	// FIXME should use .static.getCommandName(), but we have tools that aren't ve.ui.Tool subclasses :(
 	const commandName = tool.static.commandName;
-	return !commandName || this.getCommands().indexOf( commandName ) !== -1;
+	return !commandName || this.getCommands().includes( commandName );
 };
 
 /**
@@ -213,7 +229,9 @@ ve.ui.Toolbar.prototype.updateToolState = function () {
 	const activeDialogs = [
 		this.surface.getDialogs(),
 		this.surface.getContext().getInspectors(),
-		this.surface.getToolbarDialogs()
+		...ve.ui.ToolbarDialogWindowManager.static.positions.map(
+			( positon ) => this.surface.getToolbarDialogs( positon )
+		)
 	].map( ( windowManager ) => {
 		if ( windowManager.getCurrentWindow() ) {
 			return windowManager.getCurrentWindow().constructor.static.name;
@@ -250,6 +268,19 @@ ve.ui.Toolbar.prototype.getToolAccelerator = function ( name ) {
 	const messages = ve.ui.triggerRegistry.getMessages( name );
 
 	return messages ? messages.join( ', ' ) : undefined;
+};
+
+/**
+ * @inheritdoc
+ */
+ve.ui.Toolbar.prototype.setNarrow = function ( narrow ) {
+	if ( OO.ui.isMobile() ) {
+		// Always use narrow mode on mobile.
+		// TODO: Be responsive like desktop, but that would require supporting
+		// things like label + indicator tools.
+		narrow = true;
+	}
+	return ve.ui.Toolbar.super.prototype.setNarrow.call( this, narrow );
 };
 
 /**

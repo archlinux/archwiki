@@ -13,13 +13,10 @@
 	"nuke": "Masinis trynimas",
 	"action-nuke": "masiškai trinti puslapius",
 	"nuke-desc": "Suteikia administratoriams galimybę [[Special:Nuke|masiškai trinti]] puslapius",
-	"nuke-nopages": "Nėra naujų puslapių, sukurtų [[Special:Contributions/$1|{{GENDER:$1|$1}}]], naujausiuose keitimuose.",
-	"nuke-list": "Šiuos puslapius neseniai sukūrė [[Special:Contributions/$1|{{GENDER:$1|$1}}]];\nįrašykite komentarą ir paspauskite mygtuką, kad jie būtų ištrinti.",
-	"nuke-list-multiple": "Šie puslapiai buvo neseniai sukurti;\nįrašykite komentarą ir paspauskite mygtuką, kad juos ištrintumėte.",
 	"nuke-defaultreason": "Masinis pašalinimas puslapių, kuriuos sukūrė [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Masinis neseniai sukurtų puslapių trynimas",
 	"nuke-tools": "Šis įrankis leidžia masiškai ištrinti puslapius, neseniai sukurtus nurodyto naudotojo ar IP adreso.\nĮrašykite naudotojo vardą ar IP adresą, kad gautumėte trintinų puslapių sąrašą arba palikite tuščią visiems naudotojams.",
-	"nuke-submit-user": "Puslapių sąrašas",
+	"nuke-submit-list": "Puslapių sąrašas",
 	"nuke-submit-delete": "Ištrinti pasirinktus(ą)",
 	"right-nuke": "Masinis puslapių trynėjas",
 	"nuke-userorip": "Vartotojo vardas, IP adresas arba tuščia:",
@@ -34,6 +31,5 @@
 	"nuke-viewchanges": "žiūrėti pakeitimus",
 	"nuke-namespace": "Apriboti vardų sritį:",
 	"nuke-linkoncontribs": "masinis trynimas",
-	"nuke-linkoncontribs-text": "Masiškai trinti puslapius, kur {{GENDER:$1|šis naudotojas yra vienintelis autorius|ši naudotoja yra vienintelė autorė}}",
-	"nuke-confirm": "Ketinate ištrinti {{PLURAL:$1|vieną puslapį|$1 puslapius}}. Ar tikrai norite ištrinti?"
+	"nuke-linkoncontribs-text": "Masiškai trinti puslapius, kur {{GENDER:$1|šis naudotojas yra vienintelis autorius|ši naudotoja yra vienintelė autorė}}"
 }

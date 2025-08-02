@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -9,6 +12,7 @@ class GenerateAutoload extends Maintenance {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return self::DB_NONE;
 	}

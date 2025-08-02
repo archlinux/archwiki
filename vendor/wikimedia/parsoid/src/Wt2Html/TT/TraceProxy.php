@@ -7,15 +7,14 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 class TraceProxy extends TokenHandler {
-	private $traceType;
-	private $handler;
-	private $name;
+	private string $traceType;
+	private TokenHandler $handler;
+	private string $name;
 
-	public function __construct( TokenTransformManager $manager, array $options,
+	public function __construct( TokenHandlerPipeline $manager, array $options,
 		string $traceType, TokenHandler $handler
 	) {
 		parent::__construct( $manager, $options );
@@ -29,24 +28,20 @@ class TraceProxy extends TokenHandler {
 	/**
 	 * @param string $func
 	 * @param string|Token $token
-	 * @return TokenHandlerResult|null
+	 * @return ?array<string|Token>
 	 */
 	private function traceEvent( string $func, $token ) {
-		$this->env->log(
+		$this->env->trace(
 			$this->traceType, $this->pipelineId,
-			function () {
-				return str_pad( $this->name, 23, ' ', STR_PAD_LEFT ) . "|";
-			},
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
+			fn () => str_pad( $this->name, 23, ' ', STR_PAD_LEFT ) . "| ",
+			$token
 		);
 
 		$profile = $this->manager->profile;
 		if ( $profile ) {
-			$s = microtime( true );
+			$s = hrtime( true );
 			$res = $this->handler->$func( $token );
-			$t = (int)( ( microtime( true ) - $s ) * 1000 );
+			$t = hrtime( true ) - $s;
 			$traceName = "{$this->name}::$func";
 			$profile->bumpTimeUse( $traceName, $t, "TT" );
 			$profile->bumpCount( $traceName );
@@ -59,23 +54,20 @@ class TraceProxy extends TokenHandler {
 		return $res;
 	}
 
-	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
+	public function onEnd( EOFTk $token ): ?array {
 		return $this->traceEvent( 'onEnd', $token );
 	}
 
-	public function onNewline( NlTk $token ): ?TokenHandlerResult {
+	public function onNewline( NlTk $token ): ?array {
 		return $this->traceEvent( 'onNewline', $token );
 	}
 
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		return $this->traceEvent( 'onTag', $token );
 	}
 
-	/**
-	 * @param string|Token $token
-	 * @return TokenHandlerResult|null
-	 */
-	public function onAny( $token ): ?TokenHandlerResult {
+	/** @inheritDoc */
+	public function onAny( $token ): ?array {
 		return $this->traceEvent( 'onAny', $token );
 	}
 

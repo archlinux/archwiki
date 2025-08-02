@@ -39,6 +39,8 @@ abstract class Handler {
 	 */
 	public const PARAM_DESCRIPTION = Validator::PARAM_DESCRIPTION;
 
+	public const OPENAPI_DESCRIPTION_KEY = 'description';
+
 	/** @var Module */
 	private $module;
 
@@ -65,6 +67,9 @@ abstract class Handler {
 
 	/** @var ConditionalHeaderUtil */
 	private $conditionalHeaderUtil;
+
+	/** @var JsonLocalizer */
+	private $jsonLocalizer;
 
 	/** @var HookContainer */
 	private $hookContainer;
@@ -239,8 +244,6 @@ abstract class Handler {
 	/**
 	 * Returns the path this handler is bound to relative to the module prefix.
 	 * Includes path variables.
-	 *
-	 * @return string
 	 */
 	public function getPath(): string {
 		return $this->path;
@@ -263,11 +266,6 @@ abstract class Handler {
 		return $matches[1] ?? [];
 	}
 
-	/**
-	 * Get the Router.
-	 *
-	 * @return Router
-	 */
 	protected function getRouter(): Router {
 		return $this->module->getRouter();
 	}
@@ -275,8 +273,6 @@ abstract class Handler {
 	/**
 	 * Get the Module this handler belongs to.
 	 * Will fail hard if called before initContext().
-	 *
-	 * @return Module
 	 */
 	protected function getModule(): Module {
 		return $this->module;
@@ -326,8 +322,6 @@ abstract class Handler {
 	/**
 	 * Get the current request. The return type declaration causes it to raise
 	 * a fatal error if initForExecute() has not yet been called.
-	 *
-	 * @return RequestInterface
 	 */
 	public function getRequest(): RequestInterface {
 		return $this->request;
@@ -348,8 +342,6 @@ abstract class Handler {
 	 * Get the configuration array for the current route. The return type
 	 * declaration causes it to raise a fatal error if initContext() has not
 	 * been called.
-	 *
-	 * @return array
 	 */
 	public function getConfig(): array {
 		return $this->config;
@@ -359,8 +351,6 @@ abstract class Handler {
 	 * Get the ResponseFactory which can be used to generate Response objects.
 	 * This will raise a fatal error if initServices() has not been
 	 * called.
-	 *
-	 * @return ResponseFactory
 	 */
 	public function getResponseFactory(): ResponseFactory {
 		return $this->responseFactory;
@@ -370,8 +360,6 @@ abstract class Handler {
 	 * Get the Session.
 	 * This will raise a fatal error if initSession() has not been
 	 * called.
-	 *
-	 * @return Session
 	 */
 	public function getSession(): Session {
 		return $this->session;
@@ -464,6 +452,24 @@ abstract class Handler {
 	}
 
 	/**
+	 * Get a JsonLocalizer object.
+	 *
+	 * @return JsonLocalizer
+	 */
+	protected function getJsonLocalizer(): JsonLocalizer {
+		Assert::precondition(
+			$this->responseFactory !== null,
+			'getJsonLocalizer() must not be called before initServices()'
+		);
+
+		if ( $this->jsonLocalizer === null ) {
+			$this->jsonLocalizer = new JsonLocalizer( $this->responseFactory );
+		}
+
+		return $this->jsonLocalizer;
+	}
+
+	/**
 	 * Get a ConditionalHeaderUtil object.
 	 *
 	 * On the first call to this method, the object will be initialized with
@@ -475,10 +481,17 @@ abstract class Handler {
 	protected function getConditionalHeaderUtil() {
 		if ( $this->conditionalHeaderUtil === null ) {
 			$this->conditionalHeaderUtil = new ConditionalHeaderUtil;
+
+			// NOTE: It would be nicer to have Handler implement a
+			// ConditionalHeaderValues interface that defines methods that
+			// ConditionalHeaderUtil can call. But the relevant methods already
+			// exist in Handler as protected and stable to override.
+			// We can't make them public without breaking all subclasses that
+			// override them. So we pass closures for now.
 			$this->conditionalHeaderUtil->setValidators(
-				$this->getETag(),
-				$this->getLastModified(),
-				$this->hasRepresentation()
+				fn () => $this->getETag(),
+				fn () => $this->getLastModified(),
+				fn () => $this->hasRepresentation()
 			);
 		}
 		return $this->conditionalHeaderUtil;
@@ -497,6 +510,7 @@ abstract class Handler {
 		if ( $status ) {
 			$response = $this->getResponseFactory()->create();
 			$response->setStatus( $status );
+			$this->applyConditionalResponseHeaders( $response );
 			return $response;
 		}
 
@@ -531,8 +545,6 @@ abstract class Handler {
 
 	/**
 	 * Apply cache control to enforce privacy.
-	 *
-	 * @param ResponseInterface $response
 	 */
 	public function applyCacheControl( ResponseInterface $response ) {
 		// NOTE: keep this consistent with the logic in OutputPage::sendCacheControl
@@ -621,8 +633,8 @@ abstract class Handler {
 
 		$supportedPathParams = array_flip( $this->getSupportedPathParams() );
 
-		foreach ( $this->getParamSettings() as $name => $paramSetting ) {
-			$source = $paramSetting[ Validator::PARAM_SOURCE ] ?? '';
+		foreach ( $this->getParamSettings() as $name => $setting ) {
+			$source = $setting[ Validator::PARAM_SOURCE ] ?? '';
 
 			if ( $source !== 'query' && $source !== 'path' ) {
 				continue;
@@ -633,20 +645,11 @@ abstract class Handler {
 				continue;
 			}
 
-			if ( array_key_exists( Validator::PARAM_DESCRIPTION, $paramSetting ) &&
-				$paramSetting[ Validator::PARAM_DESCRIPTION ] instanceof MessageValue
-			) {
-				// TODO: consider if we want to request a specific preferred language
-				$translation = $this->responseFactory->getFormattedMessage(
-					$paramSetting[ Validator::PARAM_DESCRIPTION ]
-				);
-				$paramSetting[ Validator::PARAM_DESCRIPTION ] = $translation;
-			}
-
-			$param = Validator::getParameterSpec(
-				$name,
-				$paramSetting
+			$setting[ Validator::PARAM_DESCRIPTION ] = $this->getJsonLocalizer()->localizeValue(
+				$setting, Validator::PARAM_DESCRIPTION,
 			);
+
+			$param = Validator::getParameterSpec( $name, $setting );
 
 			$parameters[] = $param;
 		}
@@ -748,6 +751,9 @@ abstract class Handler {
 			}
 
 			$properties[$name] = Validator::getParameterSchema( $settings );
+			$properties[$name][self::OPENAPI_DESCRIPTION_KEY] =
+				$this->getJsonLocalizer()->localizeValue( $settings, Validator::PARAM_DESCRIPTION )
+				?? "$name parameter";
 
 			if ( $isRequired ) {
 				$required[] = $name;
@@ -822,11 +828,12 @@ abstract class Handler {
 	 * @return array
 	 */
 	protected function generateResponseSpec( string $method ): array {
-		$ok = [ 'description' => 'OK' ];
+		$ok = [ self::OPENAPI_DESCRIPTION_KEY => 'OK' ];
 
 		$bodySchema = $this->getResponseBodySchema( $method );
 
 		if ( $bodySchema ) {
+			$bodySchema = $this->getJsonLocalizer()->localizeJson( $bodySchema );
 			$ok['content']['application/json']['schema'] = $bodySchema;
 		}
 
@@ -1091,6 +1098,9 @@ abstract class Handler {
 	 * This must be a complete ETag, including double quotes.
 	 * See RFC 7231 §7.2 and RFC 7232 §2.3 for semantics.
 	 *
+	 * This method should return null if the resource doesn't exist. It may also
+	 * return null if ETag semantics is not supported by the Handler.
+	 *
 	 * @stable to override
 	 *
 	 * @return string|null
@@ -1103,6 +1113,9 @@ abstract class Handler {
 	 * The subclass should override this to indicate whether the resource
 	 * exists. This is used for wildcard validators, for example "If-Match: *"
 	 * fails if the resource does not exist.
+	 *
+	 * If this method returns null, the value returned by getETag() will be used
+	 * to determine whether the resource exists.
 	 *
 	 * In a state-changing request, the return value of this method should
 	 * reflect the state before the requested change is applied.

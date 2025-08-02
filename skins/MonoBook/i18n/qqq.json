@@ -10,8 +10,8 @@
 			"Raymond",
 			"Robby",
 			"Shirayuki",
-			"Umherirrender",
-			"Stjn"
+			"Stjn",
+			"Umherirrender"
 		]
 	},
 	"monobook-prefs-talkpage": "{{optional}}\nLink to the skin's talk page on MediaWiki.org; it is shown before the preview link in skin preferences on Special:Preferences. Inspired by [https://phabricator.wikimedia.org/T307113 T307113].",

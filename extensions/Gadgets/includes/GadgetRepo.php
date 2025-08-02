@@ -61,9 +61,9 @@ abstract class GadgetRepo {
 	}
 
 	/**
-	 * Get a lists of Gadget objects by category
+	 * Get a lists of Gadget objects by section
 	 *
-	 * @return array<string,Gadget[]> `[ 'category' => [ 'name' => $gadget ] ]`
+	 * @return array<string,Gadget[]> `[ 'section' => [ 'name' => $gadget ] ]`
 	 */
 	public function getStructuredList() {
 		$list = [];
@@ -73,7 +73,7 @@ abstract class GadgetRepo {
 			} catch ( InvalidArgumentException $e ) {
 				continue;
 			}
-			$list[$gadget->getCategory()][$gadget->getName()] = $gadget;
+			$list[$gadget->getSection()][$gadget->getName()] = $gadget;
 		}
 
 		return $list;
@@ -106,11 +106,12 @@ abstract class GadgetRepo {
 			return wfMessage( $warningMsgKey );
 		}, $warningMsgKeys );
 
-		// Check for invalid values in skins, rights, namespaces, and contentModels
-		$this->checkInvalidLoadConditions( $gadget, 'skins', $warnings );
-		$this->checkInvalidLoadConditions( $gadget, 'rights', $warnings );
-		$this->checkInvalidLoadConditions( $gadget, 'namespaces', $warnings );
-		$this->checkInvalidLoadConditions( $gadget, 'contentModels', $warnings );
+		// Check for invalid values in skins, rights, namespaces, contentModels, and dependencies
+		$this->checkProperty( $gadget, 'skins', $warnings );
+		$this->checkProperty( $gadget, 'rights', $warnings );
+		$this->checkProperty( $gadget, 'namespaces', $warnings );
+		$this->checkProperty( $gadget, 'contentModels', $warnings );
+		$this->checkProperty( $gadget, 'dependencies', $warnings );
 
 		// Peer gadgets not being styles-only gadgets, or not being defined at all
 		foreach ( $gadget->getPeers() as $peer ) {
@@ -168,11 +169,24 @@ abstract class GadgetRepo {
 
 	/**
 	 * @param Gadget $gadget
-	 * @param string $condition
+	 * @param string $property
 	 * @param Message[] &$warnings
 	 */
-	private function checkInvalidLoadConditions( Gadget $gadget, string $condition, array &$warnings ) {
-		switch ( $condition ) {
+	private function checkProperty( Gadget $gadget, string $property, array &$warnings ) {
+		switch ( $property ) {
+			case 'dependencies':
+				$rl = MediaWikiServices::getInstance()->getResourceLoader();
+				$this->maybeAddWarnings( $gadget->getDependencies(),
+					static function ( $dep ) use ( $rl ) {
+						return $rl->getModule( $dep ) === null;
+					}, $warnings, "gadgets-validate-invaliddependencies" );
+				$this->maybeAddWarnings( $gadget->getDependencies(),
+					static function ( $dep ) use ( $rl ) {
+						$depModule = $rl->getModule( $dep );
+						return $depModule !== null && $depModule->getDeprecationWarning() !== null;
+					}, $warnings, "gadgets-validate-deprecateddependencies" );
+				break;
+
 			case 'skins':
 				$allSkins = array_keys( MediaWikiServices::getInstance()->getSkinFactory()->getInstalledSkins() );
 				$this->maybeAddWarnings( $gadget->getRequiredSkins(),
@@ -226,7 +240,7 @@ abstract class GadgetRepo {
 				$invalidEntries[] = $entry;
 			}
 		}
-		if ( count( $invalidEntries ) ) {
+		if ( $invalidEntries ) {
 			$warnings[] = wfMessage( $message,
 				Message::listParam( $invalidEntries, 'comma' ),
 				count( $invalidEntries ) );

@@ -223,7 +223,7 @@ return testframework.getTestProvider( {
 		args = { 'lcfirst', 'IX' },
 		expect = {
 			{ 'iX' },
-			{ 'ıX' },
+			{ 'iX' },
 			{ 'iX' },
 			"language code '[[bogus]]' is invalid",
 		}
@@ -243,7 +243,7 @@ return testframework.getTestProvider( {
 		args = { 'ucfirst', 'ix' },
 		expect = {
 			{ 'Ix' },
-			{ 'İx' },
+			{ 'Ix' },
 			{ 'Ix' },
 			"language code '[[bogus]]' is invalid",
 		}

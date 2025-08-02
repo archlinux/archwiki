@@ -7,6 +7,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 
 class MessageLibrary extends LibraryBase {
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'plain' => [ $this, 'messagePlain' ],
@@ -89,6 +90,6 @@ class MessageLibrary extends LibraryBase {
 		}
 
 		$msg = $this->makeMessage( $data, false );
-		return [ call_user_func( [ $msg, $what ] ) ];
+		return [ $msg->$what() ];
 	}
 }

@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.51.1
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-09-19T17:13:43Z
+ * Date: 2025-03-11T00:03:30Z
  */
 ( function ( OO ) {
 
@@ -1481,14 +1481,14 @@ OO.ui.StackLayout.prototype.addItems = function ( items, index ) {
  * @fires OO.ui.StackLayout#set
  */
 OO.ui.StackLayout.prototype.removeItems = function ( itemsToRemove ) {
-	const isCurrentItemRemoved = itemsToRemove.indexOf( this.currentItem ) !== -1;
+	const isCurrentItemRemoved = itemsToRemove.includes( this.currentItem );
 
 	let nextItem;
 	if ( isCurrentItemRemoved ) {
 		let i = this.items.indexOf( this.currentItem );
 		do {
 			nextItem = this.items[ ++i ];
-		} while ( nextItem && itemsToRemove.indexOf( nextItem ) !== -1 );
+		} while ( nextItem && itemsToRemove.includes( nextItem ) );
 	}
 
 	// Mixin method
@@ -1536,7 +1536,7 @@ OO.ui.StackLayout.prototype.setItem = function ( item ) {
 	if ( item !== this.currentItem ) {
 		this.updateHiddenState( this.items, item );
 
-		if ( this.items.indexOf( item ) !== -1 ) {
+		if ( this.items.includes( item ) ) {
 			this.currentItem = item;
 			this.emit( 'set', item );
 		} else {
@@ -1785,7 +1785,7 @@ OO.ui.MenuLayout.prototype.isMenuVisible = function () {
  * @return {OO.ui.MenuLayout} The layout, for chaining
  */
 OO.ui.MenuLayout.prototype.setMenuPosition = function ( position ) {
-	if ( [ 'top', 'bottom', 'before', 'after' ].indexOf( position ) === -1 ) {
+	if ( ![ 'top', 'bottom', 'before', 'after' ].includes( position ) ) {
 		position = 'before';
 	}
 
@@ -4301,13 +4301,8 @@ OO.ui.TagMultiselectWidget = function OoUiTagMultiselectWidget( config ) {
 	OO.ui.mixin.DraggableGroupElement.call( this, config );
 	OO.ui.mixin.TitledElement.call( this, config );
 
-	this.toggleDraggable(
-		config.allowReordering === undefined ?
-			true : !!config.allowReordering
-	);
-
 	this.inputPosition =
-		this.constructor.static.allowedInputPositions.indexOf( config.inputPosition ) > -1 ?
+		this.constructor.static.allowedInputPositions.includes( config.inputPosition ) ?
 			config.inputPosition : 'inline';
 	this.allowEditTags = config.allowEditTags === undefined ? true : !!config.allowEditTags;
 	this.allowArbitrary = !!config.allowArbitrary;
@@ -4316,8 +4311,11 @@ OO.ui.TagMultiselectWidget = function OoUiTagMultiselectWidget( config ) {
 	this.allowDisplayInvalidTags = config.allowDisplayInvalidTags;
 	this.hasInput = this.inputPosition !== 'none';
 	this.tagLimit = config.tagLimit;
+	this.allowReordering = config.allowReordering === undefined ? true : !!config.allowReordering;
 	this.height = null;
 	this.valid = true;
+
+	this.toggleDraggable( this.allowReordering );
 
 	this.$content = $( '<div>' ).addClass( 'oo-ui-tagMultiselectWidget-content' );
 	this.$handle = $( '<div>' )
@@ -4690,6 +4688,7 @@ OO.ui.TagMultiselectWidget.prototype.onTagFixed = function ( item ) {
 	}
 	this.addItems( [ item ], i );
 };
+
 /**
  * Respond to change event, where items were added, removed, or cleared.
  */
@@ -4839,7 +4838,7 @@ OO.ui.TagMultiselectWidget.prototype.isAllowedData = function ( data ) {
 
 	// Check with allowed values
 	if (
-		this.getAllowedValues().some( ( value ) => data === value )
+		this.getAllowedValues().includes( data )
 	) {
 		return true;
 	}
@@ -4862,7 +4861,7 @@ OO.ui.TagMultiselectWidget.prototype.getAllowedValues = function () {
  * @param {any} value Allowed data value
  */
 OO.ui.TagMultiselectWidget.prototype.addAllowedValue = function ( value ) {
-	if ( this.allowedValues.indexOf( value ) === -1 ) {
+	if ( !this.allowedValues.includes( value ) ) {
 		this.allowedValues.push( value );
 	}
 };
@@ -4924,7 +4923,27 @@ OO.ui.TagMultiselectWidget.prototype.addTag = function ( data, label ) {
 	if ( this.isUnderLimit() && ( isValid || this.allowDisplayInvalidTags ) ) {
 		const newItemWidget = this.createTagItemWidget( data, label );
 		newItemWidget.toggleValid( isValid );
-		this.addItems( [ newItemWidget ] );
+		newItemWidget.toggleDraggable( this.allowReordering );
+
+		let insertIndex = this.getItems().length;
+		if ( !this.allowReordering ) {
+			// Keep predefined allowed values in the order in which they were given
+			// (before any arbitrary values, if allowArbitrary is true)
+			const allowedIndex = this.getAllowedValues().indexOf( data );
+			if ( allowedIndex !== -1 ) {
+				insertIndex = 0;
+				for ( const [ itemIndex, item ] of this.getItems().entries() ) {
+					const itemAllowedIndex = this.getAllowedValues().indexOf( item.getData() );
+					if ( itemAllowedIndex !== -1 && itemAllowedIndex <= allowedIndex ) {
+						insertIndex = itemIndex + 1;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+
+		this.addItems( [ newItemWidget ], insertIndex );
 		return true;
 	}
 
@@ -5443,9 +5462,11 @@ OO.ui.MenuTagMultiselectWidget.prototype.onInputFocus = function () {
 	// Parent method
 	OO.ui.MenuTagMultiselectWidget.super.prototype.onInputFocus.call( this );
 
-	this.menu.toggle( true );
-	if ( !valid ) {
-		this.menu.highlightItem();
+	if ( this.isUnderLimit() ) {
+		this.menu.toggle( true );
+		if ( !valid ) {
+			this.menu.highlightItem();
+		}
 	}
 };
 
@@ -5579,6 +5600,18 @@ OO.ui.MenuTagMultiselectWidget.prototype.setValue = function ( valueObject ) {
 /**
  * @inheritdoc
  */
+OO.ui.MenuTagMultiselectWidget.prototype.onChangeTags = function () {
+	// Parent method
+	OO.ui.MenuTagMultiselectWidget.super.prototype.onChangeTags.call( this );
+
+	if ( this.menu && !this.isUnderLimit() ) {
+		this.menu.toggle( false );
+	}
+};
+
+/**
+ * @inheritdoc
+ */
 OO.ui.MenuTagMultiselectWidget.prototype.setDisabled = function ( isDisabled ) {
 	// Parent method
 	OO.ui.MenuTagMultiselectWidget.super.prototype.setDisabled.call( this, isDisabled );
@@ -5645,7 +5678,7 @@ OO.ui.MenuTagMultiselectWidget.prototype.addOptions = function ( menuOptions ) {
 		items = [];
 
 	menuOptions.forEach( ( obj ) => {
-		if ( optionsData.indexOf( obj.data ) === -1 ) {
+		if ( !optionsData.includes( obj.data ) ) {
 			optionsData.push( obj.data );
 			items.push(
 				this.createMenuOptionWidget( obj.data, obj.label, obj.icon )

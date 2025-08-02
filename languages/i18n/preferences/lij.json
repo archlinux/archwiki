@@ -78,7 +78,7 @@
 	"prefs-help-email": "L'e-mail a no l'é òbligatöia, ma a te permétte de reçéive a pòula segrétta se ti l'ascòrdi.",
 	"prefs-help-email-required": "L'indirìsso e-mail o ghe veu.",
 	"prefs-help-email-others": "Ti ti peu çérne de lasciâ che i âtri te contàttan pe e-mail ascì co-in ingàncio da-a tò pàgina utente ò de discusción sénsa rivelâ a tò e-mail quànde i âtri uténti te contàttan.",
-	"tog-requireemail": "Màndime l'email pe-a reinpostaçión da password solo quànde l'é stæto fornîo ségge l'indirìsso che o nómme uténte.",
+	"tog-requireemail": "Màndime l'email pe çèrne tórna a password sôlo quànde l'é stæto fornîo ségge l'indirìsso che o nómme uténte",
 	"prefs-help-requireemail": "Quésto o l'avantàggia a riservatéssa e o l'agiùtta a prevegnî de e-mail indexidiæ.",
 	"noemailprefs": "Pe ativâ ste fonçioìn chi ti gh'æ da métte 'n indirìsso e-mail inte preferénse.",
 	"emailnotauthenticated": "L'indirìsso de pòsta eletrònica o no l'é stæto ancón confermòu.\nNo saiàn inviæ mesàggi e-mail pe-e fonçioìn elenchæ chi de sótta.",
@@ -225,6 +225,7 @@
 	"search-thumbnail-extra-namespaces-label": "Fa védde e miniatûe inte Speciâle:Riçèrca in sciô Desktop",
 	"search-thumbnail-extra-namespaces-message": "Fa védde e miniatûe inta pàgina {{#special:search}} pe-i rizultâti {{PLURAL:$2|do|di}} namespace $1",
 	"prefs-advancedsearchoptions": "Inpostaçioìn avansæ",
+	"prefs-misc": "Vàrie",
 	"prefs-reset-intro": "L'é poscìbile dêuviâ sta pàgina chi pe reinpostâ e pròpie preferénse a quélle predefinîe do scîto.\nL'òperaçión a no peu êse anulâ.",
 	"prefs-reset-confirm": "Scì, véuggio ripristinâ e mæ preferénse.",
 	"restoreprefs": "Ripristinâ tùtte e inpostaçioìn predefinîe"

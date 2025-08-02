@@ -52,5 +52,6 @@
 	"gadgets-validate-invalidrights": "{{PLURAL:$2|Следеће право не постоји|Следећа права не постоје}}: $1",
 	"gadgets-validate-invalidtitle": "Назив странице „$1” није ваљан",
 	"gadgets-validate-duplicate": "Друга дефиниција справице $1 је детектована и биће игнорисана",
-	"gadgets-validate-nopage": "Страница „$1” не постоји."
+	"gadgets-validate-nopage": "Страница „$1” не постоји.",
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Следећа зависност недостаје|Следеће зависности недостају}}: $1."
 }

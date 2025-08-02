@@ -64,6 +64,7 @@
 	"notifications": "Hysbysiadau",
 	"tooltip-pt-notifications-alert": "Eich hysbysiadau",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Eich}} hysbysiadau",
+	"tooltip-pt-notifications": "Eich hysbysiadau",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Hysbysiadau fesul categori",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "Trefnu mathau",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Defnyddwyr newydd",

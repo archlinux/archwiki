@@ -114,26 +114,6 @@ class FeatureManagerFactory {
 			]
 		);
 
-		// Feature: Sticky header
-		// ================================
-		$featureManager->registerRequirement(
-			new OverridableConfigRequirement(
-				$config,
-				$user,
-				$request,
-				Constants::CONFIG_STICKY_HEADER,
-				Constants::REQUIREMENT_STICKY_HEADER
-			)
-		);
-
-		$featureManager->registerFeature(
-			Constants::FEATURE_STICKY_HEADER,
-			[
-				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_STICKY_HEADER
-			]
-		);
-
 		// Feature: Page tools pinned
 		// ================================
 		$featureManager->registerRequirement(

@@ -65,8 +65,8 @@
 						"type": "string"
 					}
 				},
-				"category": {
-					"description": "Key of the category this gadget belongs to",
+				"section": {
+					"description": "Key of the section (group) this gadget belongs to",
 					"type": "string",
 					"default": ""
 				},

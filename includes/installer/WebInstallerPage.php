@@ -23,7 +23,6 @@
 namespace MediaWiki\Installer;
 
 use MediaWiki\Html\Html;
-use MediaWiki\Xml\Xml;
 
 /**
  * Abstract class to define pages for the web installer.
@@ -45,9 +44,6 @@ abstract class WebInstallerPage {
 	 */
 	abstract public function execute();
 
-	/**
-	 * @param WebInstaller $parent
-	 */
 	public function __construct( WebInstaller $parent ) {
 		$this->parent = $parent;
 	}
@@ -98,7 +94,7 @@ abstract class WebInstallerPage {
 		if ( $continue ) {
 			// Fake submit button for enter keypress (T28267)
 			// Messages: config-continue, config-restart, config-regenerate
-			$s .= Xml::submitButton(
+			$s .= Html::submitButton(
 				wfMessage( "config-$continue" )->text(),
 				[
 					'name' => "enter-$continue",
@@ -109,24 +105,24 @@ abstract class WebInstallerPage {
 
 		if ( $back ) {
 			// Message: config-back
-			$s .= Xml::submitButton(
+			$s .= Html::submitButton(
 				wfMessage( "config-$back" )->text(),
 				[
 					'name' => "submit-$back",
 					'tabindex' => $this->parent->nextTabIndex(),
-					'class' => 'cdx-button cdx-button--action-destructive'
+					'class' => [ 'cdx-button', 'cdx-button--action-default' ]
 				]
 			) . "\n";
 		}
 
 		if ( $continue ) {
 			// Messages: config-continue, config-restart, config-regenerate
-			$s .= Xml::submitButton(
+			$s .= Html::submitButton(
 				wfMessage( "config-$continue" )->text(),
 				[
 					'name' => "submit-$continue",
 					'tabindex' => $this->parent->nextTabIndex(),
-					'class' => 'cdx-button cdx-button--action-progressive'
+					'class' => [ 'cdx-button', 'cdx-button--action-progressive' ]
 				]
 			) . "\n";
 		}
@@ -175,8 +171,8 @@ abstract class WebInstallerPage {
 	 * @return string
 	 */
 	protected function getFieldsetStart( $legend ) {
-		return "\n<span class=\"cdx-card\"><span class=\"cdx-card__text\"><span class=\"cdx-card__text__title\">" .
-			wfMessage( $legend )->escaped() . "</span><span class=\"cdx-card__text__description\">\n";
+		return "\n<div class=\"cdx-card\"><div class=\"cdx-card__text\"><div class=\"cdx-card__text__title\">" .
+			wfMessage( $legend )->escaped() . "</div><div class=\"cdx-card__text__description\">\n";
 	}
 
 	/**
@@ -185,7 +181,7 @@ abstract class WebInstallerPage {
 	 * @return string
 	 */
 	protected function getFieldsetEnd() {
-		return "</span></span></span>\n";
+		return "</div></div></div>\n";
 	}
 
 	/**

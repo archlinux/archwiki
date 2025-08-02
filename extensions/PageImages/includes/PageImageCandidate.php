@@ -2,8 +2,8 @@
 
 namespace PageImages;
 
-use File;
 use JsonSerializable;
+use MediaWiki\FileRepo\File\File;
 
 /**
  * Value object to hold information about page image candidates.

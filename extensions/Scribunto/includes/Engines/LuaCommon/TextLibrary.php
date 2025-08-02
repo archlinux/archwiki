@@ -13,6 +13,7 @@ class TextLibrary extends LibraryBase {
 	private const JSON_TRY_FIXING = 2;
 	private const JSON_PRETTY = 4;
 
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'unstrip' => [ $this, 'textUnstrip' ],

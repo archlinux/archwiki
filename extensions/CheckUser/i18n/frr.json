@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Murma174"
+		]
+	},
+	"group-checkuser": "Checkusern",
+	"group-checkuser-member": "{{GENDER:$1|Checkuser}}",
+	"grant-checkuser": "Üüb Checkuser-dooten tugrip",
+	"checkuser-global-contributions-link": "globaal bidracher"
+}

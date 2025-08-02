@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Revision\SlotRecord;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\IExpression;
@@ -110,7 +111,7 @@ class TrackBlobs extends Maintenance {
 		$dbw->sourceFile( __DIR__ . '/blob_tracking.sql' );
 	}
 
-	private function getTextClause() {
+	private function getTextClause(): IExpression {
 		if ( !$this->textClause ) {
 			$dbr = $this->getReplicaDB();
 			$conds = [];
@@ -127,7 +128,8 @@ class TrackBlobs extends Maintenance {
 		return $this->textClause;
 	}
 
-	private function interpretPointer( $text ) {
+	/** @return array|false */
+	private function interpretPointer( string $text ) {
 		if ( !preg_match( '!^DB://(\w+)/(\d+)(?:/([0-9a-fA-F]+)|)$!', $text, $m ) ) {
 			return false;
 		}

@@ -64,6 +64,7 @@
 	"notifications": "Avixi",
 	"tooltip-pt-notifications-alert": "{{GENDER:|I to}} avixi",
 	"tooltip-pt-notifications-notice": "{{GENDER:|I to}} avixi",
+	"tooltip-pt-notifications": "Le to notifiche",
 	"echo-displaynotificationsconfiguration": "Varda configurasion notìfeghe",
 	"echo-displaynotificationsconfiguration-summary": "Sta cuà ła xé na panoràmega de cofà łe notìfeghe łe xé configurae so sta Wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Avixi par categoria",

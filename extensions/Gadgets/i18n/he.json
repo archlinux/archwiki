@@ -64,5 +64,8 @@
 	"gadgets-validate-unknownpages": "מכיל דף אחד או יותר שהסיומת ‎.js‏, ‎.css או ‎.json לא מופיעה בהם. לא ייעשה שימוש בהם.",
 	"gadgets-validate-duplicate": "זוהתה הגדרה שנייה של הגאדג'ט $1 והמערכת תתעלם ממנה",
 	"gadgets-validate-nopage": "הדף $1 אינו קיים.",
-	"gadgets-supports-urlload": "הגאדג'ט הזה תומך בטעינה דרך URL רק עם פרמטר השאילתה <code dir=\"ltr\">?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|התלות הבאה חסרה|התלויות הבאות חסרות}}: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|התלות הבאה הוכרזה כמיושנת|התלויות הבאות הוכרזו כמיושנות}}: $1.",
+	"gadgets-supports-urlload": "הגאדג'ט הזה תומך בטעינה דרך URL רק עם פרמטר השאילתה <code dir=\"ltr\">?withgadget</code>.",
+	"gadgets-hidden": "הגאדג׳ט הזה [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden מוסתר], מה שאומר שהוא לא יופיע בדף ההעדפות."
 }

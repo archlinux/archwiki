@@ -32,7 +32,7 @@ class TextPassDumperDatabaseTest extends DumpTestCase {
 		$this->addTestPages( $this->getTestSysop()->getUser() );
 	}
 
-	public function schemaVersionProvider() {
+	public static function schemaVersionProvider() {
 		foreach ( XmlDumpWriter::$supportedSchemas as $schemaVersion ) {
 			yield [ $schemaVersion ];
 		}
@@ -438,6 +438,10 @@ class TextPassDumperDatabaseTest extends DumpTestCase {
 
 		$asserter = $this->getDumpAsserter( $schemaVersion );
 		$this->setAllRevisionsVarMappings( $asserter );
+
+		// Make revision point to a non-existent address, to test refreshing
+		// content address
+		$asserter->setVarMapping( 'rev4_1_main_location', 'tt:11111111' );
 
 		$writer = new XmlDumpWriter( XmlDumpWriter::WRITE_STUB, $schemaVersion );
 		$content = $writer->openStream();

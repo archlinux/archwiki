@@ -45,10 +45,8 @@ use Wikimedia\Parsoid\Wt2Html\TT\BehaviorSwitchHandler;
 use Wikimedia\Parsoid\Wt2Html\TT\DOMFragmentBuilder;
 use Wikimedia\Parsoid\Wt2Html\TT\ExtensionHandler;
 use Wikimedia\Parsoid\Wt2Html\TT\ExternalLinkHandler;
-use Wikimedia\Parsoid\Wt2Html\TT\IncludeOnly;
 use Wikimedia\Parsoid\Wt2Html\TT\LanguageVariantHandler;
 use Wikimedia\Parsoid\Wt2Html\TT\ListHandler;
-use Wikimedia\Parsoid\Wt2Html\TT\NoInclude;
 use Wikimedia\Parsoid\Wt2Html\TT\OnlyInclude;
 use Wikimedia\Parsoid\Wt2Html\TT\ParagraphWrapper;
 use Wikimedia\Parsoid\Wt2Html\TT\PreHandler;
@@ -62,28 +60,7 @@ use Wikimedia\Parsoid\Wt2Html\TT\WikiLinkHandler;
  * This class assembles parser pipelines from parser stages
  */
 class ParserPipelineFactory {
-	private static $initialized = false;
-	private static $globalPipelineId = 0;
-
-	public static function init(): void {
-		if ( self::$initialized ) {
-			return;
-		}
-
-		self::$stages["FullParseDOMTransform"]["processors"] =
-			array_merge(
-				self::NESTED_PIPELINE_DOM_TRANSFORMS,
-				self::FULL_PARSE_GLOBAL_DOM_TRANSFORMS
-			);
-
-		self::$stages["SelectiveUpdateFragmentDOMTransform"]["processors"] =
-			array_merge(
-				self::NESTED_PIPELINE_DOM_TRANSFORMS,
-				self::SELECTIVE_UPDATE_FRAGMENT_GLOBAL_DOM_TRANSFORMS
-			);
-
-		self::$initialized = true;
-	}
+	private static int $globalPipelineId = 0;
 
 	private const DOM_PROCESSOR_CONFIG = [
 		'addmetadata' => AddMetaData::class,
@@ -133,18 +110,11 @@ class ParserPipelineFactory {
 				[ 'nodeName' => 'th', 'action' => [ TableFixups::class, 'handleTableCellTemplates' ] ],
 			]
 		],
-		'fixups+dedupe-styles' => [
-			'name' => 'MigrateTrailingCategories,TableFixups,DedupeStyles',
+		'dedupe-styles' => [
+			'name' => 'DedupeStyles',
 			'tplInfo' => true,
 			'handlers' => [
-				// 1. Move trailing categories in <li>s out of the list
-				[ 'nodeName' => 'li', 'action' => [ LiFixups::class, 'migrateTrailingSolTransparentLinks' ] ],
-				[ 'nodeName' => 'dt', 'action' => [ LiFixups::class, 'migrateTrailingSolTransparentLinks' ] ],
-				[ 'nodeName' => 'dd', 'action' => [ LiFixups::class, 'migrateTrailingSolTransparentLinks' ] ],
-				// 2. Fix up issues from templated table cells and table cell attributes
-				[ 'nodeName' => 'td', 'action' => [ TableFixups::class, 'handleTableCellTemplates' ] ],
-				[ 'nodeName' => 'th', 'action' => [ TableFixups::class, 'handleTableCellTemplates' ] ],
-				// 3. Deduplicate template styles
+				// Deduplicate template styles
 				// (should run after dom-fragment expansion + after extension post-processors)
 				[ 'nodeName' => 'style', 'action' => [ DedupeStyles::class, 'dedupe' ] ]
 			]
@@ -157,11 +127,16 @@ class ParserPipelineFactory {
 				[ 'nodeName' => 'meta', 'action' => [ CleanUp::class, 'stripMarkerMetas' ] ]
 			]
 		],
-		'displayspace+linkclasses' => [
-			'name' => 'DisplaySpace+AddLinkAttributes',
+		'displayspace' => [
+			'name' => 'DisplaySpace',
 			'handlers' => [
 				[ 'nodeName' => null, 'action' => [ DisplaySpace::class, 'leftHandler' ] ],
 				[ 'nodeName' => null, 'action' => [ DisplaySpace::class, 'rightHandler' ] ],
+			]
+		],
+		'linkclasses' => [
+			'name' => 'AddLinkAttributes',
+			'handlers' => [
 				[ 'nodeName' => 'a', 'action' => [ AddLinkAttributes::class, 'handler' ] ]
 			]
 		],
@@ -177,13 +152,6 @@ class ParserPipelineFactory {
 				[ 'nodeName' => null, 'action' => [ Headings::class, 'dedupeHeadingIds' ] ]
 			]
 		],
-		'heading-ids' => [
-			'name' => 'Headings-genAnchors',
-			'handlers' => [
-				[ 'nodeName' => null, 'action' => [ Headings::class, 'genAnchors' ] ],
-				[ 'nodeName' => null, 'action' => [ Headings::class, 'dedupeHeadingIds' ] ]
-			]
-		],
 		'cleanup' => [
 			'name' => 'CleanUp-handleEmptyElts,CleanUp-cleanup',
 			'tplInfo' => true,
@@ -194,14 +162,15 @@ class ParserPipelineFactory {
 				[ 'nodeName' => null, 'action' => [ CleanUp::class, 'finalCleanup' ] ]
 			]
 		],
-		'saveDP' => [
-			'name' => 'CleanUp-saveDataParsoid',
+		'markDiscardableDP' => [
+			'name' => 'CleanUp-markDiscardableDataParsoid',
 			'tplInfo' => true,
 			'handlers' => [
-				// Save data.parsoid into data-parsoid html attribute.
+				// Mark which data.parsoid's should be serialized into
+				// data-parsoid html attributes.
 				// Make this its own thing so that any changes to the DOM
 				// don't affect other handlers that run alongside it.
-				[ 'nodeName' => null, 'action' => [ CleanUp::class, 'saveDataParsoid' ] ]
+				[ 'nodeName' => null, 'action' => [ CleanUp::class, 'markDiscardableDataParsoid' ] ]
 			]
 		]
 	];
@@ -227,78 +196,97 @@ class ParserPipelineFactory {
 	//    embedded in attributes and they may need to be processed independently.
 	//
 	// Nested (non-top-level) pipelines can never include the following:
-	// - lang-converter, convertoffsets, dedupe-styles, cleanup, saveDP
+	// - lang-converter, convertoffsets, dedupe-styles, cleanup, markDiscardableDP
 	//
 	// FIXME: Perhaps introduce a config flag in the processor config that
 	// verifies this property against a pipeline's 'toplevel' state.
 	public const NESTED_PIPELINE_DOM_TRANSFORMS = [
 		'fostered', 'process-fixups', 'normalize', 'pwrap',
 		'media', 'migrate-metas', 'migrate-nls', 'dsr', 'tplwrap',
-		'ann-ids', 'annwrap', 'linkneighbours+dom-unpack'
+		'ann-ids', 'annwrap',
+		'fixups', 'linkclasses',
+		'linkneighbours+dom-unpack'
 	];
 
 	// NOTES about ordering:
 	// lang-converter, redlinks:
 	//    Language conversion and redlink marking are done here
-	//    *before* we cleanup and save data-parsoid because they
+	//    *before* we cleanup and mark discardable data-parsoid because they
 	//    are also used in pb2pb/html2html passes, and we want to
 	//    keep their input/output formats consistent.
 	public const FULL_PARSE_GLOBAL_DOM_TRANSFORMS = [
 		// FIXME: It should be documented in the spec that an extension's
 		// wtDOMProcess handler is run once on the top level document.
 		'extpp',
-		'fixups+dedupe-styles', 'linter', 'strip-metas',
-		'lang-converter', 'redlinks', 'displayspace+linkclasses',
-		// Benefits from running after determining which media are redlinks
-		'heading-ids',
+		// Even though displayspace *could* be run in the nested pipeline,
+		// if we want to spare non-wikitext extensions from having to deal
+		// with french spacing, we should run it once on the full DOM including
+		// content of all extensions (wikitext-produced or not).
+		'displayspace',
+		'dedupe-styles',
+		'lang-converter', 'redlinks',
+		'gen-anchors', # depends on lang-converter
+		'linter', 'strip-metas',
+		'dedupe-heading-ids',
 		'sections', 'convertoffsets', 'cleanup',
 		'embedded-docs',
-		'saveDP', 'addmetadata'
+		'markDiscardableDP', 'addmetadata'
 	];
 
 	// Skipping sections, addmetadata from the above pipeline
 	//
-	// FIXME: Skip extpp, linter, lang-converter, redlinks, heading-ids, convertoffsets, saveDP for now.
+	// FIXME: Skip extpp, linter, lang-converter, redlinks, gen-anchors, dedupe-heading-ids, convertoffsets for now.
 	// This replicates behavior prior to this refactor.
 	public const FULL_PARSE_EMBEDDED_DOC_DOM_TRANSFORMS = [
-		'fixups+dedupe-styles', 'strip-metas',
-		'displayspace+linkclasses',
+		// Even though displayspace *could* be run in the nested pipeline,
+		// if we want to spare non-wikitext extensions from having to deal
+		// with french spacing, we should run it once on the full DOM including
+		// content of all extensions (wikitext-produced or not).
+		'displayspace',
+		'dedupe-styles', 'strip-metas',
 		'cleanup',
-		// Need to run this recursively
-		'embedded-docs',
-		// FIXME This means the data-* from embedded HTML fragments won't end up
-		// in the pagebundle. But, if we try to call this on those fragments,
-		// we get multiple calls to store embedded docs. So, we may need to
-		// write a custom traverser if we want these embedded data* objects
-		// in the pagebundle (this is not a regression since they weren't part
-		// of the pagebundle all this while anyway.)
-		/* 'saveDP' */
+		'embedded-docs', // Need to run this recursively
+		'markDiscardableDP'
 	];
 
 	public const SELECTIVE_UPDATE_FRAGMENT_GLOBAL_DOM_TRANSFORMS = [
 		'extpp', // FIXME: this should be a different processor
-		'fixups', 'strip-metas', 'redlinks', 'displayspace+linkclasses',
-		'gen-anchors', 'convertoffsets', 'cleanup',
+		// Even though displayspace *could* be run in the nested pipeline,
+		// if we want to spare non-wikitext extensions from having to deal
+		// with french spacing, we should run it once on the full DOM including
+		// content of all extensions (wikitext-produced or not).
+		'displayspace',
+		'redlinks',
+		'gen-anchors',
+		'strip-metas',
+		'convertoffsets', 'cleanup',
+	];
+
+	/**
+	 * These passes below should be global passes that rely on
+	 * full-DOM global state. So, 'displayspace' doesn't belong here.
+	 * It is sufficient to run it on the updated fragments above.
+	 */
+	public const SELECTIVE_UPDATE_GLOBAL_DOM_TRANSFORMS = [
+		'update-template',
+		'lang-converter', /* FIXME: Are lang converters idempotent? */
+		'linter',
+		'dedupe-heading-ids',
+		'sections',
+		'markDiscardableDP',
 		// FIXME: This will probably need some special-case code to first
 		// strip old metadata before adding fresh metadata.
 		'addmetadata'
 	];
 
-	public const SELECTIVE_UPDATE_GLOBAL_DOM_TRANSFORMS = [
-		'update-template', 'linter', 'lang-converter', /* FIXME: Are lang converters idempotent? */
-		'heading-ids', 'sections', 'saveDP'
-	];
-
-	private static $stages = [
+	private const STAGES = [
 		"Tokenizer" => [
 			"class" => PegTokenizer::class,
 		],
 		"TokenTransform2" => [
-			"class" => TokenTransformManager::class,
-			"transformers" => [
+			"class" => TokenHandlerPipeline::class,
+			"token-handlers" => [
 				OnlyInclude::class,
-				IncludeOnly::class,
-				NoInclude::class,
 
 				TemplateHandler::class,
 				ExtensionHandler::class,
@@ -321,8 +309,8 @@ class ParserPipelineFactory {
 			],
 		],
 		"TokenTransform3" => [
-			"class" => TokenTransformManager::class,
-			"transformers" => [
+			"class" => TokenHandlerPipeline::class,
+			"token-handlers" => [
 				TokenStreamPatcher::class,
 				// add <pre>s
 				PreHandler::class,
@@ -348,35 +336,41 @@ class ParserPipelineFactory {
 		// This performs a lot of post-processing of the DOM
 		// (Template wrapping, broken wikitext/html detection, etc.)
 		"FullParseDOMTransform" => [
-			"class" => DOMPostProcessor::class,
-			"processors" => null // Will be initialized in an init function()
+			"class" => DOMProcessorPipeline::class,
+			"processors" => [
+				self::NESTED_PIPELINE_DOM_TRANSFORMS,
+				self::FULL_PARSE_GLOBAL_DOM_TRANSFORMS
+			],
 		],
 		// DOM transformer for fragments of a top-level document
 		"NestedFragmentDOMTransform" => [
-			"class" => DOMPostProcessor::class,
+			"class" => DOMProcessorPipeline::class,
 			"processors" => self::NESTED_PIPELINE_DOM_TRANSFORMS
 		],
 		// DOM transformations to run on attribute-embedded docs of the top level doc
 		"FullParseEmbeddedDocsDOMTransform" => [
-			"class" => DOMPostProcessor::class,
+			"class" => DOMProcessorPipeline::class,
 			"processors" => self::FULL_PARSE_EMBEDDED_DOC_DOM_TRANSFORMS
 		],
 		// DOM transformer for fragments during selective updates.
 		// This may eventually become identical to NestedFrgmentDOMTransform,
 		// but at this time, it is unclear if that will materialize.
 		"SelectiveUpdateFragmentDOMTransform" => [
-			"class" => DOMPostProcessor::class,
-			"processors" => null // Will be initialized in an init function()
+			"class" => DOMProcessorPipeline::class,
+			"processors" => [
+				self::NESTED_PIPELINE_DOM_TRANSFORMS,
+				self::SELECTIVE_UPDATE_FRAGMENT_GLOBAL_DOM_TRANSFORMS
+			],
 		],
 		// DOM transformer for the top-level page during selective updates.
 		"SelectiveUpdateDOMTransform" => [
 			// For use in the top-level of the selective-update pipeline
-			"class" => DOMPostProcessor::class,
+			"class" => DOMProcessorPipeline::class,
 			"processors" => self::SELECTIVE_UPDATE_GLOBAL_DOM_TRANSFORMS
 		]
 	];
 
-	private static $pipelineRecipes = [
+	private const PIPELINE_RECIPES = [
 		// This pipeline takes wikitext as input and emits a fully
 		// processed DOM as output. This is the pipeline used for
 		// all top-level documents.
@@ -452,17 +446,13 @@ class ParserPipelineFactory {
 		]
 	];
 
-	private static $supportedOptions = [
+	private const SUPPORTED_OPTIONS = [
 		// If true, templates found in content will have its contents expanded
 		'expandTemplates',
 
 		// If true, indicates pipeline is processing the expanded content of a
 		// template or its arguments
 		'inTemplate',
-
-		// If true, indicates that we are in a <includeonly> context
-		// (in current usage, isInclude === inTemplate)
-		'isInclude',
 
 		// The extension tag that is being processed (Ex: ref, references)
 		// (in current usage, only used for native tag implementation)
@@ -497,16 +487,13 @@ class ParserPipelineFactory {
 		// default: not in a template
 		$options['inTemplate'] ??= false;
 
-		// default: not an include context
-		$options['isInclude'] ??= false;
-
 		// default: wrap templates
 		$options['expandTemplates'] ??= true;
 
 		// Catch pipeline option typos
 		foreach ( $options as $k => $v ) {
 			Assert::invariant(
-				in_array( $k, self::$supportedOptions, true ),
+				in_array( $k, self::SUPPORTED_OPTIONS, true ),
 				'Invalid cacheKey option: ' . $k
 			);
 		}
@@ -541,28 +528,33 @@ class ParserPipelineFactory {
 	private function makePipeline(
 		string $type, string $cacheKey, array $options
 	): ParserPipeline {
-		self::init();
-
-		if ( !isset( self::$pipelineRecipes[$type] ) ) {
+		if ( !isset( self::PIPELINE_RECIPES[$type] ) ) {
 			throw new InternalException( 'Unsupported Pipeline: ' . $type );
 		}
-		$recipe = self::$pipelineRecipes[$type];
+		$recipe = self::PIPELINE_RECIPES[$type];
 		$pipeStages = [];
 		$prevStage = null;
 		$recipeStages = $recipe["stages"];
 
 		foreach ( $recipeStages as $stageId ) {
-			$stageData = self::$stages[$stageId];
-			// @phan-suppress-next-line PhanNonClassMethodCall,PhanTypeExpectedObjectOrClassName
+			$stageData = self::STAGES[$stageId];
 			$stage = new $stageData["class"]( $this->env, $options, $stageId, $prevStage );
-			if ( isset( $stageData["transformers"] ) ) {
-				foreach ( $stageData["transformers"] as $tName ) {
+			if ( isset( $stageData["token-handlers"] ) ) {
+				foreach ( $stageData["token-handlers"] as $tName ) {
 					$stage->addTransformer( new $tName( $stage, $options ) );
 				}
 			} elseif ( isset( $stageData["processors"] ) ) {
-				$stage->registerProcessors( self::procNamesToProcs( $stageData["processors"] ) );
+				$processors = [];
+				array_walk_recursive(
+					$stageData["processors"],
+					static function ( $p ) use ( &$processors ) {
+						$processors[] = $p;
+					}
+				);
+				$stage->registerProcessors(
+					self::procNamesToProcs( $processors )
+				);
 			}
-
 			$prevStage = $stage;
 			$pipeStages[] = $stage;
 		}
@@ -578,9 +570,6 @@ class ParserPipelineFactory {
 	}
 
 	private function getCacheKey( string $cacheKey, array $options ): string {
-		if ( empty( $options['isInclude'] ) ) {
-			$cacheKey .= '::noInclude';
-		}
 		if ( empty( $options['expandTemplates'] ) ) {
 			$cacheKey .= '::noExpand';
 		}

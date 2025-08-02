@@ -1,8 +1,6 @@
 {
 	"@metadata": {
-		"authors": [
-			"Amire80"
-		]
+		"authors": []
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Preslovljavanje je onemogućeno",
 	"visualeditor-mwlanguagevariant-filter": "Varijante su filtrirane na $1",

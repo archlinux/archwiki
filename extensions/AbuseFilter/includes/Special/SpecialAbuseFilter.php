@@ -49,7 +49,6 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 		],
 		AbuseFilterViewEdit::class => [
 			'DBLoadBalancerFactory',
-			'PermissionManager',
 			AbuseFilterPermissionManager::SERVICE_NAME,
 			FilterProfiler::SERVICE_NAME,
 			FilterLookup::SERVICE_NAME,
@@ -87,6 +86,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			FilterProfiler::SERVICE_NAME,
 			SpecsFormatter::SERVICE_NAME,
 			CentralDBManager::SERVICE_NAME,
+			FilterLookup::SERVICE_NAME,
 		],
 		AbuseFilterViewRevert::class => [
 			'DBLoadBalancerFactory',
@@ -156,6 +156,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			$out->setSubtitle( $this->msg( 'abusefilter-edit-done-subtitle' ) );
 			$changedFilter = intval( $request->getVal( 'changedfilter' ) );
 			$changeId = intval( $request->getVal( 'changeid' ) );
+			$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 			$out->addHTML( Html::successBox(
 				$this->msg(
 					'abusefilter-edit-done',

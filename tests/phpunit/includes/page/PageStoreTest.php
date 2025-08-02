@@ -53,7 +53,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$serviceOptions = new ServiceOptions(
 			PageStore::CONSTRUCTOR_OPTIONS,
 			$options + [
-				MainConfigNames::LanguageCode => $services->getContentLanguage()->getCode(),
+				MainConfigNames::LanguageCode => $services->getContentLanguageCode()->toString(),
 				MainConfigNames::PageLanguageUseDB => true,
 			]
 		);
@@ -71,10 +71,6 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @param PageIdentity $expected
-	 * @param PageIdentity $actual
-	 */
 	private function assertSamePage( PageIdentity $expected, PageIdentity $actual ) {
 		// NOTE: Leave it to the caller to compare the wiki IDs. $expected may be local
 		//       even if $actual belongs to a (pretend) sister site.
@@ -624,17 +620,17 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSamePage( $existingPage, $page );
 	}
 
-	public function provideGetPageByIdentity_invalid() {
+	public static function provideGetPageByIdentity_invalid() {
 		yield 'section' => [
-			$this->makeMockTitle( '', [ 'fragment' => 'See also' ] ),
+			[ '', [ 'fragment' => 'See also' ] ],
 			InvalidArgumentException::class
 		];
 		yield 'special' => [
-			$this->makeMockTitle( 'Blankpage', [ 'namespace' => NS_SPECIAL ] ),
+			[ 'Blankpage', [ 'namespace' => NS_SPECIAL ] ],
 			InvalidArgumentException::class
 		];
 		yield 'interwiki' => [
-			$this->makeMockTitle( 'Foo', [ 'interwiki' => 'acme' ] ),
+			[ 'Foo', [ 'interwiki' => 'acme' ] ],
 			InvalidArgumentException::class
 		];
 
@@ -649,6 +645,9 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Page\PageStore::getPageByReference
 	 */
 	public function testGetPageByIdentity_invalid( $identity, $exception ) {
+		if ( is_array( $identity ) ) {
+			$identity = $this->makeMockTitle( ...$identity );
+		}
 		$pageStore = $this->getPageStore();
 
 		$this->expectException( $exception );

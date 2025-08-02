@@ -4,7 +4,7 @@
 		"Max Semenik"
 	],
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"url": "https://www.mediawiki.org/wiki/Extension:TextExtracts",
 	"descriptionmsg": "textextracts-desc",
@@ -20,6 +20,7 @@
 				"ConfigFactory",
 				"MainWANObjectCache",
 				"LanguageConverterFactory",
+				"ParserOutputAccess",
 				"WikiPageFactory",
 				"TitleFormatter"
 			]
@@ -56,7 +57,9 @@
 				"input",
 				"style",
 				"ul.gallery",
-				".mw-editsection",
+				"mw\\:editsection",
+				"editsection",
+				"meta",
 				"sup.reference",
 				"ol.references",
 				".error",

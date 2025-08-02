@@ -142,11 +142,11 @@ class AbuseFilterTokenizer {
 
 		// Read past comments
 		while ( preg_match( self::COMMENT_START_RE, $code, $matches, 0, $offset ) ) {
-			if ( strpos( $code, '*/', $offset ) === false ) {
-				throw new UserVisibleException(
-					'unclosedcomment', $offset, [] );
+			$pos = strpos( $code, '*/', $offset );
+			if ( $pos === false ) {
+				throw new UserVisibleException( 'unclosedcomment', $offset, [] );
 			}
-			$offset = strpos( $code, '*/', $offset ) + 2;
+			$offset = $pos + 2;
 		}
 
 		// Spaces
@@ -187,7 +187,7 @@ class AbuseFilterTokenizer {
 			if ( preg_match( self::BASE_CHARS_RES[$base], $input ) ) {
 				$num = $base !== 10 ? base_convert( $input, $base, 10 ) : $input;
 				$offset += strlen( $token );
-				return ( strpos( $input, '.' ) !== false )
+				return str_contains( $input, '.' )
 					? new AFPToken( AFPToken::TFLOAT, floatval( $num ), $start )
 					: new AFPToken( AFPToken::TINT, intval( $num ), $start );
 			}

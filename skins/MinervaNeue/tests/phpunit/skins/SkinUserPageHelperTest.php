@@ -103,8 +103,8 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 		$origUserFactory = $this->getServiceContainer()->getUserFactory();
 		$userFactory = $this->createMock( UserFactory::class );
 		$userFactory->method( 'newFromName' )
-			->willReturnCallback( static function () use ( $origUserFactory ) {
-				$user = $origUserFactory->newFromName( ...func_get_args() );
+			->willReturnCallback( static function ( $name, $validate ) use ( $origUserFactory ) {
+				$user = $origUserFactory->newFromName( $name, $validate );
 				$user->setId( 0 );
 				$user->setItemLoaded( 'id' );
 				return $user;
@@ -142,8 +142,8 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 		$origUserFactory = $this->getServiceContainer()->getUserFactory();
 		$userFactory = $this->createMock( UserFactory::class );
 		$userFactory->method( 'newFromName' )
-			->willReturnCallback( static function () use ( $origUserFactory ) {
-				$user = $origUserFactory->newFromName( ...func_get_args() );
+			->willReturnCallback( static function ( $name, $validate ) use ( $origUserFactory ) {
+				$user = $origUserFactory->newFromName( $name, $validate );
 				$user->setId( 0 );
 				$user->setItemLoaded( 'id' );
 				return $user;

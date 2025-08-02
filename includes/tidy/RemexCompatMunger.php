@@ -21,14 +21,17 @@ class RemexCompatMunger implements TreeHandler {
 		"abbr" => true,
 		"acronym" => true,
 		"applet" => true,
+		"audio" => true,
 		"b" => true,
 		"basefont" => true,
+		"bdi" => true,
 		"bdo" => true,
 		"big" => true,
 		"br" => true,
 		"button" => true,
 		"cite" => true,
 		"code" => true,
+		"data" => true,
 		"del" => true,
 		"dfn" => true,
 		"em" => true,
@@ -42,6 +45,7 @@ class RemexCompatMunger implements TreeHandler {
 		"label" => true,
 		"legend" => true,
 		"map" => true,
+		"mark" => true,
 		"object" => true,
 		"param" => true,
 		"q" => true,
@@ -55,22 +59,20 @@ class RemexCompatMunger implements TreeHandler {
 		"samp" => true,
 		"select" => true,
 		"small" => true,
+		"source" => true,
 		"span" => true,
 		"strike" => true,
 		"strong" => true,
 		"sub" => true,
 		"sup" => true,
 		"textarea" => true,
+		"time" => true,
+		"track" => true,
 		"tt" => true,
 		"u" => true,
 		"var" => true,
-		// Those defined in tidy.conf
 		"video" => true,
-		"audio" => true,
-		"bdi" => true,
-		"data" => true,
-		"time" => true,
-		"mark" => true,
+		"wbr" => true,
 	];
 
 	/**
@@ -132,7 +134,7 @@ class RemexCompatMunger implements TreeHandler {
 		$this->serializer->endDocument( $pos );
 	}
 
-	private function getParentForInsert( $preposition, $refElement ) {
+	private function getParentForInsert( int $preposition, ?Element $refElement ): array {
 		if ( $preposition === TreeBuilder::ROOT ) {
 			return [ $this->serializer->getRootNode(), null ];
 		} elseif ( $preposition === TreeBuilder::BEFORE ) {
@@ -208,7 +210,7 @@ class RemexCompatMunger implements TreeHandler {
 			$length, $sourceStart, $sourceLength );
 	}
 
-	private function trace( $msg ) {
+	private function trace( string $msg ) {
 		if ( $this->trace ) {
 			wfDebug( "[RCM] $msg" );
 		}
@@ -431,7 +433,6 @@ class RemexCompatMunger implements TreeHandler {
 			$fakeElement->userData = $rNode;
 			$this->serializer->removeNode( $fakeElement, $pos );
 		}
-		// @phan-suppress-next-line PhanTypeMismatchReturnNullable False positive
 		return $node;
 	}
 

@@ -31,6 +31,6 @@
 	"discussiontools-topicsubscription-action-subscribe-prompt": "Кырьйхуввэ тэнн те̄ма э̄л?",
 	"discussiontools-topicsubscription-button-subscribe": "кырьйхуввэ",
 	"discussiontools-topicsubscription-button-subscribe-label": "Кырьйхуввэ",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} О̄дт те̄ма]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Вуэсстлэгк]"
+	"tag-discussiontools-newtopic": "О̄дт те̄ма",
+	"tag-discussiontools-reply": "Вуэсстлэгк"
 }

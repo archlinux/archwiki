@@ -5,6 +5,7 @@ use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Http\MultiHttpClient;
 use Wikimedia\Http\TelemetryHeadersInterface;
+use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -506,5 +507,89 @@ class MultiHttpClientTest extends MediaWikiIntegrationTestCase {
 				$this->isInstanceOf( 'CurlMultiHandle' )
 			)
 		);
+	}
+
+	/**
+	 * @requires extension curl
+	 */
+	public function testShouldHandleConnectionLevelCurlErrors(): void {
+		// Find a random local port on which nothing is listening.
+		$randomPort = self::randomPort();
+
+		$client = new MultiHttpClient( [] );
+		$res = $client->run( [
+			'method' => 'GET',
+			'url' => "http://127.0.0.1:$randomPort",
+		] );
+
+		$this->assertStringStartsWith( '(curl error: 7)', $res['error'] );
+	}
+
+	/**
+	 * @requires extension curl
+	 */
+	public function testShouldReturnResponses(): void {
+		// Find a random local port on which nothing is listening.
+		$randomPort = self::randomPort();
+
+		// Start a mock server locally for testing.
+		// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.proc_open
+		$phpServerProc = proc_open(
+			[ PHP_BINARY, '-S', "127.0.0.1:$randomPort" ],
+			// Silence unwanted output.
+			[ 1 => [ 'file', '/dev/null', 'w' ], 2 => [ 'file', '/dev/null', 'w' ] ],
+			$pipes,
+			__DIR__
+		);
+		$scope = new ScopedCallback( static function () use ( $phpServerProc ) {
+			proc_terminate( $phpServerProc );
+			proc_close( $phpServerProc );
+		} );
+
+		// Wait a short while for the mock server to start.
+		$socket = socket_create( AF_INET, SOCK_STREAM, SOL_TCP );
+		$tries = 0;
+		while ( !@socket_connect( $socket, "127.0.0.1", $randomPort ) ) {
+			if ( ++$tries > 10 ) {
+				socket_close( $socket );
+				$this->fail( 'Could not connect to PHP server' );
+			}
+			usleep( 100_000 );
+		}
+		socket_close( $socket );
+
+		$client = new MultiHttpClient( [] );
+
+		$reqs = [];
+
+		for ( $i = 1; $i <= 4; $i++ ) {
+			$reqs[] = [
+				'method' => 'GET',
+				'url' => "http://127.0.0.1:$randomPort/test-index.php?request=$i",
+			];
+		}
+
+		$reqs = $client->runMulti( $reqs );
+
+		$this->assertCount( 4, $reqs );
+		$i = 1;
+		foreach ( $reqs as $req ) {
+			$this->assertSame( '', $req['response']['error'] );
+			$this->assertSame( 200, $req['response']['code'] );
+			$this->assertSame( "Response for request $i\n", $req['response']['body'] );
+			$i++;
+		}
+	}
+
+	/**
+	 * Convenience function to obtain a random free port.
+	 * @return int
+	 */
+	private static function randomPort(): int {
+		$socket = socket_create_listen( 0 );
+		socket_getsockname( $socket, $address, $randomPort );
+		socket_close( $socket );
+
+		return $randomPort;
 	}
 }

@@ -1,23 +1,11 @@
 /* global fetchMock */
 const restSearchClient = require( '../../resources/skins.vector.search/restSearchClient.js' );
 const jestFetchMock = require( 'jest-fetch-mock' );
-
+const urlGeneratorFn = require( '../../resources/skins.vector.search/urlGenerator.js' );
+const scriptPath = '/w/index.php';
+const urlGenerator = urlGeneratorFn( scriptPath );
+const searchApiUrl = 'https://en.wikipedia.org/w/rest.php';
 const mockedRequests = !process.env.TEST_LIVE_REQUESTS;
-const configMock = {
-	get: jest.fn().mockImplementation( ( key, fallback = null ) => {
-		if ( key === 'wgScriptPath' ) {
-			return '/w';
-		}
-		if ( key === 'wgScript' ) {
-			return '/w/index.php';
-		}
-		if ( key === 'wgVectorSearchApiUrl' ) {
-			return 'https://en.wikipedia.org/w/rest.php';
-		}
-		return fallback;
-	} ),
-	set: jest.fn()
-};
 
 describe( 'restApiSearchClient', () => {
 	beforeAll( () => {
@@ -67,7 +55,7 @@ describe( 'restApiSearchClient', () => {
 		};
 		fetchMock.mockOnce( JSON.stringify( restResponse ) );
 
-		const searchResult = await restSearchClient( configMock ).fetchByTitle(
+		const searchResult = await restSearchClient( searchApiUrl, urlGenerator ).fetchByTitle(
 			'media',
 			2
 		).fetch;
@@ -98,7 +86,7 @@ describe( 'restApiSearchClient', () => {
 		const restResponse = { pages: [] };
 		fetchMock.mockOnce( JSON.stringify( restResponse ) );
 
-		const searchResult = await restSearchClient( configMock ).fetchByTitle(
+		const searchResult = await restSearchClient( searchApiUrl, urlGenerator ).fetchByTitle(
 			'thereIsNothingLikeThis'
 		).fetch;
 
@@ -120,7 +108,7 @@ describe( 'restApiSearchClient', () => {
 		test( 'network error', async () => {
 			fetchMock.mockRejectOnce( new Error( 'failed' ) );
 
-			await expect( restSearchClient( configMock ).fetchByTitle(
+			await expect( restSearchClient( searchApiUrl, urlGenerator ).fetchByTitle(
 				'anything'
 			).fetch ).rejects.toThrow( 'failed' );
 		} );

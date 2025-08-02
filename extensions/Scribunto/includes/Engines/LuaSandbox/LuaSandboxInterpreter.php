@@ -80,6 +80,7 @@ class LuaSandboxInterpreter extends LuaInterpreter {
 	 */
 	protected function convertSandboxError( LuaSandboxError $e ) {
 		$opts = [];
+		// @phan-suppress-next-line MediaWikiNoIssetIfDefined Upstream class, not clear if always declared
 		if ( isset( $e->luaTrace ) ) {
 			$trace = $e->luaTrace;
 			foreach ( $trace as &$val ) {

@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Page\File;
 
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\TitleParser;
-use RepoGroup;
 use Wikimedia\ObjectCache\BagOStuff;
 
 class BadFileLookup {
@@ -132,6 +132,3 @@ class BadFileLookup {
 		return $ret;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( BadFileLookup::class, 'MediaWiki\\BadFileLookup' );

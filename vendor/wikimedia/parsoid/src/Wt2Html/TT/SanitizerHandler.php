@@ -19,11 +19,10 @@ use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\Frame;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 class SanitizerHandler extends TokenHandler {
 	/** @var bool */
@@ -117,10 +116,10 @@ class SanitizerHandler extends TokenHandler {
 	}
 
 	/**
-	 * @param TokenTransformManager $manager manager enviroment
+	 * @param TokenHandlerPipeline $manager manager enviroment
 	 * @param array $options various configuration options
 	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 		$this->inTemplate = $options['inTemplate'];
 	}
@@ -128,28 +127,24 @@ class SanitizerHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
+	public function onAny( $token ): ?array {
 		if ( is_string( $token ) ) {
 			return null;
 		}
 		$env = $this->env;
-		$env->log( 'trace/sanitizer', $this->pipelineId, static function () use ( $token ) {
-			return PHPUtils::jsonEncode( $token );
-		} );
+		$env->trace( 'sanitizer', $this->pipelineId, $token );
 
 		// Pass through a transparent line meta-token
 		if ( TokenUtils::isEmptyLineMetaToken( $token ) ) {
-			$env->log( 'trace/sanitizer', $this->pipelineId, '--unchanged--' );
+			$env->trace( 'sanitizer', $this->pipelineId, '--unchanged--' );
 			return null;
 		}
 
-		$token = $this->sanitizeToken(
+		$newToken = $this->sanitizeToken(
 			$env->getSiteConfig(), $this->manager->getFrame(), $token, $this->inTemplate
 		);
 
-		$env->log( 'trace/sanitizer', $this->pipelineId, static function () use ( $token ) {
-			return ' ---> ' . PHPUtils::jsonEncode( $token );
-		} );
-		return $token === null ? null : new TokenHandlerResult( [ $token ] );
+		$env->trace( 'sanitizer', $this->pipelineId, $newToken );
+		return ( $newToken === null || $newToken === $token ) ? null : [ $newToken ];
 	}
 }

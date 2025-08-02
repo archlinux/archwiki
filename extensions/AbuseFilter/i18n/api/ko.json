@@ -7,9 +7,9 @@
 			"Kwj2772",
 			"MemphisA5",
 			"Revi",
+			"Tensama0415",
 			"Ykhwong",
-			"아라",
-			"Tensama0415"
+			"아라"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "편집 필터가 변수 집합, 편집, 또는 기록된 편집 필터 이벤트와 일치하는지 확인합니다.",
@@ -60,5 +60,6 @@
 	"apierror-abusefilter-cantcheck": "편집 필터의 문법을 검사할 권한이 없습니다.",
 	"apierror-abusefilter-canteval": "편집 필터 식을 평가할 권한이 없습니다.",
 	"apierror-abusefilter-nosuchlogid": "편집필터 기록 $1 은(는) 존재하지 않습니다.",
+	"apierror-abusefilter-incompatible": "요청된 변경사항은 편집 필터에서 지원되지 않습니다.",
 	"apierror-abusefilter-badsyntax": "필터에 유효하지 않은 문법이 있습니다."
 }

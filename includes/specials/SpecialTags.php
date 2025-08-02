@@ -20,14 +20,14 @@
 
 namespace MediaWiki\Specials;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Xml\Xml;
-use PermissionsError;
 
 /**
  * A special page that lists tags for edits
@@ -61,6 +61,7 @@ class SpecialTags extends SpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 		$this->addHelpLink( 'Manual:Tags' );
+		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 
 		$request = $this->getRequest();
 		switch ( $par ) {
@@ -148,14 +149,14 @@ class SpecialTags extends SpecialPage {
 		}
 
 		// Write the headers
-		$thead = Xml::tags( 'tr', null, Xml::tags( 'th', null, $this->msg( 'tags-tag' )->parse() ) .
-			Xml::tags( 'th', null, $this->msg( 'tags-display-header' )->parse() ) .
-			Xml::tags( 'th', null, $this->msg( 'tags-description-header' )->parse() ) .
-			Xml::tags( 'th', null, $this->msg( 'tags-source-header' )->parse() ) .
-			Xml::tags( 'th', null, $this->msg( 'tags-active-header' )->parse() ) .
-			Xml::tags( 'th', null, $this->msg( 'tags-hitcount-header' )->parse() ) .
+		$thead = Html::rawElement( 'tr', [], Html::rawElement( 'th', [], $this->msg( 'tags-tag' )->parse() ) .
+			Html::rawElement( 'th', [], $this->msg( 'tags-display-header' )->parse() ) .
+			Html::rawElement( 'th', [], $this->msg( 'tags-description-header' )->parse() ) .
+			Html::rawElement( 'th', [], $this->msg( 'tags-source-header' )->parse() ) .
+			Html::rawElement( 'th', [], $this->msg( 'tags-active-header' )->parse() ) .
+			Html::rawElement( 'th', [], $this->msg( 'tags-hitcount-header' )->parse() ) .
 			( ( $userCanManage || $userCanDelete ) ?
-				Xml::tags( 'th', [ 'class' => 'unsortable' ],
+				Html::rawElement( 'th', [ 'class' => 'unsortable' ],
 					$this->msg( 'tags-actions-header' )->parse() ) :
 				'' )
 		);
@@ -182,24 +183,24 @@ class SpecialTags extends SpecialPage {
 			'mediawiki.pager.styles'
 		] );
 		$out->addModules( 'jquery.tablesorter' );
-		$out->addHTML( Xml::tags(
+		$out->addHTML( Html::rawElement(
 			'table',
 			[ 'class' => 'mw-datatable sortable mw-tags-table' ],
-			Xml::tags( 'thead', null, $thead ) .
-			Xml::tags( 'tbody', null, $tbody )
+			Html::rawElement( 'thead', [], $thead ) .
+				Html::rawElement( 'tbody', [], $tbody )
 		) );
 	}
 
 	private function doTagRow(
-		$tag, $hitcount, $showManageActions, $showDeleteActions, $showEditLinks
-	) {
+		string $tag, int $hitcount, bool $showManageActions, bool $showDeleteActions, bool $showEditLinks
+	): string {
 		$newRow = '';
-		$newRow .= Xml::tags( 'td', null, Xml::element( 'code', null, $tag ) );
+		$newRow .= Html::rawElement( 'td', [], Html::element( 'code', [], $tag ) );
 
 		$linkRenderer = $this->getLinkRenderer();
 		$disp = ChangeTags::tagDescription( $tag, $this->getContext() );
 		if ( $disp === false ) {
-			$disp = Xml::element( 'em', null, $this->msg( 'tags-hidden' )->text() );
+			$disp = Html::element( 'em', [], $this->msg( 'tags-hidden' )->text() );
 		}
 		if ( $showEditLinks ) {
 			$disp .= ' ';
@@ -219,7 +220,7 @@ class SpecialTags extends SpecialPage {
 				$this->getLanguage()->pipeList( [ $editLink, $helpEditLink ] )
 			)->escaped();
 		}
-		$newRow .= Xml::tags( 'td', null, $disp );
+		$newRow .= Html::rawElement( 'td', [], $disp );
 
 		$msg = $this->msg( "tag-$tag-description" );
 		$desc = !$msg->exists() ? '' : $msg->parse();
@@ -233,7 +234,7 @@ class SpecialTags extends SpecialPage {
 			);
 			$desc .= $this->msg( 'parentheses' )->rawParams( $editDescLink )->escaped();
 		}
-		$newRow .= Xml::tags( 'td', null, $desc );
+		$newRow .= Html::rawElement( 'td', [], $desc );
 
 		$sourceMsgs = [];
 		$isSoftware = isset( $this->softwareDefinedTags[$tag] );
@@ -248,11 +249,11 @@ class SpecialTags extends SpecialPage {
 		if ( !$sourceMsgs ) {
 			$sourceMsgs[] = $this->msg( 'tags-source-none' )->escaped();
 		}
-		$newRow .= Xml::tags( 'td', null, implode( Xml::element( 'br' ), $sourceMsgs ) );
+		$newRow .= Html::rawElement( 'td', [], implode( Html::element( 'br' ), $sourceMsgs ) );
 
 		$isActive = $isExplicit || isset( $this->softwareActivatedTags[$tag] );
 		$activeMsg = ( $isActive ? 'tags-active-yes' : 'tags-active-no' );
-		$newRow .= Xml::tags( 'td', null, $this->msg( $activeMsg )->escaped() );
+		$newRow .= Html::rawElement( 'td', [], $this->msg( $activeMsg )->escaped() );
 
 		$hitcountLabelMsg = $this->msg( 'tags-hitcount' )->numParams( $hitcount );
 		if ( $this->getConfig()->get( MainConfigNames::UseTagFilter ) ) {
@@ -267,7 +268,7 @@ class SpecialTags extends SpecialPage {
 		}
 
 		// add raw $hitcount for sorting, because tags-hitcount contains numbers and letters
-		$newRow .= Xml::tags( 'td', [ 'data-sort-value' => $hitcount ], $hitcountLabel );
+		$newRow .= Html::rawElement( 'td', [ 'data-sort-value' => $hitcount ], $hitcountLabel );
 
 		$actionLinks = [];
 
@@ -298,10 +299,10 @@ class SpecialTags extends SpecialPage {
 		}
 
 		if ( $showDeleteActions || $showManageActions ) {
-			$newRow .= Xml::tags( 'td', null, $this->getLanguage()->pipeList( $actionLinks ) );
+			$newRow .= Html::rawElement( 'td', [], $this->getLanguage()->pipeList( $actionLinks ) );
 		}
 
-		return Xml::tags( 'tr', null, $newRow ) . "\n";
+		return Html::rawElement( 'tr', [], $newRow ) . "\n";
 	}
 
 	public function processCreateTagForm( array $data, HTMLForm $form ) {
@@ -337,7 +338,11 @@ class SpecialTags extends SpecialPage {
 			$out->addBacklinkSubtitle( $this->getPageTitle() );
 			return false;
 		} else {
-			$out->wrapWikiTextAsInterface( 'error', $status->getWikiText() );
+			foreach ( $status->getMessages() as $msg ) {
+				$out->addHTML( Html::errorBox(
+					$this->msg( $msg )->parse()
+				) );
+			}
 			return false;
 		}
 	}
@@ -355,7 +360,11 @@ class SpecialTags extends SpecialPage {
 		// is the tag actually able to be deleted?
 		$canDeleteResult = ChangeTags::canDeleteTag( $tag, $authority );
 		if ( !$canDeleteResult->isGood() ) {
-			$out->wrapWikiTextAsInterface( 'error', $canDeleteResult->getWikiText() );
+			foreach ( $canDeleteResult->getMessages() as $msg ) {
+				$out->addHTML( Html::errorBox(
+					$this->msg( $msg )->parse()
+				) );
+			}
 			if ( !$canDeleteResult->isOK() ) {
 				return;
 			}
@@ -420,7 +429,11 @@ class SpecialTags extends SpecialPage {
 			$result = ChangeTags::canDeactivateTag( $tag, $authority );
 		}
 		if ( !$result->isGood() ) {
-			$out->wrapWikiTextAsInterface( 'error', $result->getWikiText() );
+			foreach ( $result->getMessages() as $msg ) {
+				$out->addHTML( Html::errorBox(
+					$this->msg( $msg )->parse()
+				) );
+			}
 			if ( !$result->isOK() ) {
 				return;
 			}
@@ -466,7 +479,8 @@ class SpecialTags extends SpecialPage {
 
 		$tag = $data['HiddenTag'];
 		// activateTagWithChecks, deactivateTagWithChecks, deleteTagWithChecks
-		$status = call_user_func( [ ChangeTags::class, "{$action}TagWithChecks" ],
+		$method = "{$action}TagWithChecks";
+		$status = ChangeTags::$method(
 			$tag, $data['Reason'], $context->getUser(), true );
 
 		if ( $status->isGood() ) {
@@ -480,7 +494,11 @@ class SpecialTags extends SpecialPage {
 			$out->addReturnTo( $this->getPageTitle() );
 			return true;
 		} else {
-			$out->wrapWikiTextAsInterface( 'error', $status->getWikitext() );
+			foreach ( $status->getMessages() as $msg ) {
+				$out->addHTML( Html::errorBox(
+					$this->msg( $msg )->parse()
+				) );
+			}
 			return false;
 		}
 	}

@@ -20,12 +20,12 @@
 
 namespace MediaWiki\Permissions;
 
-use ErrorPageError;
 use MediaWiki\Block\Block;
-use PermissionsError;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ThrottledError;
+use MediaWiki\Exception\UserBlockedError;
 use StatusValue;
-use ThrottledError;
-use UserBlockedError;
 
 /**
  * A StatusValue for permission errors.
@@ -99,6 +99,7 @@ class PermissionStatus extends StatusValue {
 	 * @return array[]
 	 */
 	public function toLegacyErrorArray(): array {
+		wfDeprecated( __METHOD__, '1.43' );
 		return $this->getStatusArray();
 	}
 
@@ -106,7 +107,7 @@ class PermissionStatus extends StatusValue {
 	 * Call this to indicate that the user is over the rate limit for some action.
 	 * @since 1.41
 	 * @internal
-	 * Will cause isRateLimited() to return true.
+	 * Will cause isRateLimitExceeded() to return true.
 	 */
 	public function setRateLimitExceeded() {
 		$this->rateLimitExceeded = true;
@@ -127,7 +128,6 @@ class PermissionStatus extends StatusValue {
 	 *
 	 * @since 1.41
 	 * @internal
-	 * Will cause isRateLimited() to return true.
 	 */
 	public function setPermission( string $permission ) {
 		$this->permission = $permission;

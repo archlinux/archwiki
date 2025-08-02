@@ -618,7 +618,7 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 	} else {
 		const titleString = utils.getTitleFromUrl( link.href ) || '';
 		// Performance optimization, skip strings that obviously don't contain a namespace
-		if ( !titleString || titleString.indexOf( ':' ) === -1 ) {
+		if ( !titleString || !titleString.includes( ':' ) ) {
 			return null;
 		}
 		title = mw.Title.newFromText( titleString );
@@ -638,7 +638,7 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 		namespaceId === namespaceIds.user_talk
 	) {
 		username = mainText;
-		if ( username.indexOf( '/' ) !== -1 ) {
+		if ( username.includes( '/' ) ) {
 			return null;
 		}
 		if ( namespaceId === namespaceIds.user ) {

@@ -40,14 +40,14 @@ ol.references {
 		counter-reset: mw-ref-extends-child;
 	}
 
-	.mw-extended-references {
+	.mw-subreference-list {
 		list-style: none;
 		margin-left: 2em;
 		padding: 0;
 	}
 }
 
-.mw-extended-references > li::before {
+.mw-subreference-list > li::before {
 	counter-increment: mw-ref-extends-child;
 	content: counter( mw-ref-extends-parent, decimal ) '.' counter( mw-ref-extends-child, decimal ) '. ';
 }

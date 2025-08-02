@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Rest;
 
-use HttpStatus;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
@@ -17,6 +16,7 @@ use MediaWiki\Rest\Reporter\ErrorReporter;
 use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Session\Session;
 use Throwable;
+use Wikimedia\Http\HttpStatus;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectFactory\ObjectFactory;
@@ -196,8 +196,6 @@ class Router {
 
 	/**
 	 * Get the cache data, or false if it is missing or invalid
-	 *
-	 * @return ?array
 	 */
 	private function fetchCachedModuleMap(): ?array {
 		$moduleMapCacheKey = $this->getModuleMapCacheKey();
@@ -340,7 +338,7 @@ class Router {
 		return $this->moduleMap;
 	}
 
-	private function getModuleInfo( $module ): ?array {
+	private function getModuleInfo( string $module ): ?array {
 		$map = $this->getModuleMap();
 		return $map[$module] ?? null;
 	}
@@ -505,10 +503,6 @@ class Router {
 		$handler->initSession( $this->session );
 	}
 
-	/**
-	 * @param CorsUtils $cors
-	 * @return self
-	 */
 	public function setCors( CorsUtils $cors ): self {
 		$this->cors = $cors;
 
@@ -528,10 +522,6 @@ class Router {
 		return $this;
 	}
 
-	/**
-	 * @param array $info
-	 * @param string $name
-	 */
 	private function instantiateModule( array $info, string $name ): Module {
 		if ( $info['class'] === SpecBasedModule::class ) {
 			$module = new SpecBasedModule(
@@ -542,7 +532,8 @@ class Router {
 				$this->basicAuth,
 				$this->objectFactory,
 				$this->restValidator,
-				$this->errorReporter
+				$this->errorReporter,
+				$this->hookContainer
 			);
 		} else {
 			$module = new ExtraRoutesModule(
@@ -553,7 +544,8 @@ class Router {
 				$this->basicAuth,
 				$this->objectFactory,
 				$this->restValidator,
-				$this->errorReporter
+				$this->errorReporter,
+				$this->hookContainer
 			);
 		}
 

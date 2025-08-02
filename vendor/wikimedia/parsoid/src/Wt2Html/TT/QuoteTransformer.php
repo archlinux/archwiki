@@ -13,16 +13,13 @@ use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Wt2html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2html\TokenHandlerPipeline;
 
 /**
  * PORT-FIXME: Maybe we need to look at all uses of flatten
  * and move it to a real helper in PHPUtils.js
  *
  * Flattens arrays with nested arrays
- *
- * @param array $array array
- * @return array
  */
 function array_flatten( array $array ): array {
 	$ret = [];
@@ -61,10 +58,10 @@ class QuoteTransformer extends TokenHandler {
 	private $last;
 
 	/**
-	 * @param TokenTransformManager $manager manager environment
+	 * @param TokenHandlerPipeline $manager manager environment
 	 * @param array $options options
 	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 		$this->reset();
 	}
@@ -100,7 +97,7 @@ class QuoteTransformer extends TokenHandler {
 	 * Handles mw-quote tokens and td/th tokens
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		$tkName = $token->getName();
 		if ( $tkName === 'mw-quote' ) {
 			return $this->onQuote( $token );
@@ -115,7 +112,7 @@ class QuoteTransformer extends TokenHandler {
 	 * On encountering a NlTk, processes quotes on the current line
 	 * @inheritDoc
 	 */
-	public function onNewline( NlTk $token ): ?TokenHandlerResult {
+	public function onNewline( NlTk $token ): ?array {
 		return $this->processQuotes( $token );
 	}
 
@@ -123,29 +120,17 @@ class QuoteTransformer extends TokenHandler {
 	 * On encountering an EOFTk, processes quotes on the current line
 	 * @inheritDoc
 	 */
-	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
+	public function onEnd( EOFTk $token ): ?array {
 		return $this->processQuotes( $token );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
-		$this->env->log(
-			"trace/quote",
-			$this->pipelineId,
-			"ANY |",
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
-		);
-
-		if ( $this->onAnyEnabled ) {
-			$this->currentChunk[] = $token;
-			return new TokenHandlerResult( [] );
-		} else {
-			return null;
-		}
+	public function onAny( $token ): ?array {
+		$this->env->trace( "quote", $this->pipelineId, "ANY | ", $token );
+		$this->currentChunk[] = $token;
+		return [];
 	}
 
 	/**
@@ -153,21 +138,11 @@ class QuoteTransformer extends TokenHandler {
 	 * the length of quote string. Actual analysis and conversion to the
 	 * appropriate tag tokens is deferred until the next NEWLINE token triggers
 	 * processQuotes.
-	 *
-	 * @param Token $token token
-	 * @return TokenHandlerResult
 	 */
-	private function onQuote( Token $token ): TokenHandlerResult {
+	private function onQuote( Token $token ): array {
 		$v = $token->getAttributeV( 'value' );
 		$qlen = strlen( $v );
-		$this->env->log(
-			"trace/quote",
-			$this->pipelineId,
-			"QUOTE |",
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
-		);
+		$this->env->trace( "quote", $this->pipelineId, "QUOTE | ", $token );
 
 		$this->onAnyEnabled = true;
 
@@ -177,24 +152,22 @@ class QuoteTransformer extends TokenHandler {
 			$this->startNewChunk();
 		}
 
-		return new TokenHandlerResult( [] );
+		return [];
 	}
 
 	/**
 	 * Handle NEWLINE tokens, which trigger the actual quote analysis on the
 	 * collected quote tokens so far.
-	 *
-	 * @param Token $token token
-	 * @return TokenHandlerResult|null
+	 * @return ?array<string|Token>
 	 */
-	private function processQuotes( Token $token ): ?TokenHandlerResult {
+	private function processQuotes( Token $token ): ?array {
 		if ( !$this->onAnyEnabled ) {
 			// Nothing to do, quick abort.
 			return null;
 		}
 
-		$this->env->log(
-			"trace/quote",
+		$this->env->trace(
+			"quote",
 			$this->pipelineId,
 			"NL    |",
 			static function () use( $token ) {
@@ -275,16 +248,9 @@ class QuoteTransformer extends TokenHandler {
 		$this->currentChunk[] = $token;
 		$this->startNewChunk();
 		// PORT-FIXME: Is there a more efficient way of doing this?
-		$res = new TokenHandlerResult( array_flatten( $this->chunks ) );
+		$res = array_flatten( $this->chunks );
 
-		$this->env->log(
-			"trace/quote",
-			$this->pipelineId,
-			"----->",
-			static function () use ( $res ) {
-				return PHPUtils::jsonEncode( $res->tokens );
-			}
-		);
+		$this->env->trace( "quote", $this->pipelineId, "-----> ", $token );
 
 		// prepare for next line
 		$this->reset();

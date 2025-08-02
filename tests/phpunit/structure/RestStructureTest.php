@@ -21,6 +21,7 @@ use MediaWiki\Session\Session;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Stats\StatsFactory;
@@ -60,8 +61,6 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Constructs a fake MediaWikiServices instance for use in data providers.
-	 *
-	 * @return MediaWikiServices
 	 */
 	private function getFakeServiceContainer(): MediaWikiServices {
 		$realConfig = MediaWikiServices::getInstance()->getMainConfig();
@@ -113,7 +112,9 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 			$context->method( 'getAuthority' )->willReturn( $authority );
 			$context->method( 'getRequest' )->willReturn( $request );
 
-			$responseFactory = $this->createNoOpMock( ResponseFactory::class );
+			$responseFactory = $this->createNoOpMock( ResponseFactory::class, [ 'getFormattedMessage' ] );
+			$responseFactory->method( 'getFormattedMessage' )->willReturn( '' );
+
 			$cors = $this->createNoOpMock( CorsUtils::class );
 
 			$services = $this->getFakeServiceContainer();
@@ -157,7 +158,9 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 			$context->method( 'getAuthority' )->willReturn( $authority );
 			$context->method( 'getRequest' )->willReturn( $request );
 
-			$responseFactory = $this->createNoOpMock( ResponseFactory::class );
+			$responseFactory = $this->createNoOpMock( ResponseFactory::class, [ 'getFormattedMessage' ] );
+			$responseFactory->method( 'getFormattedMessage' )->willReturn( '' );
+
 			$cors = $this->createNoOpMock( CorsUtils::class );
 
 			$this->router = EntryPoint::createRouter(
@@ -359,6 +362,16 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 					"$msg: $dataName: Parameter message $key exists" );
 			}
 		}
+
+		$description = $settings[Handler::PARAM_DESCRIPTION] ?? null;
+		if ( $description && !is_string( $description ) ) {
+			$this->assertInstanceOf( MessageValue::class, $description );
+			$this->assertTrue(
+				wfMessage( $description->getKey() )->exists(),
+				'Message key of parameter description should exit: '
+				. $description->getKey()
+			);
+		}
 	}
 
 	public function testRoutePathAndMethodForDuplicates() {
@@ -382,7 +395,7 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideModuleDefinitionFiles() {
+	public static function provideModuleDefinitionFiles() {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$entryPoint = TestingAccessWrapper::newFromClass( EntryPoint::class );
 		$routeFiles = $entryPoint->getRouteFiles( $conf );

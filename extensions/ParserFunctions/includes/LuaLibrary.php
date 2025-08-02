@@ -6,6 +6,7 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LibraryBase;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 
 class LuaLibrary extends LibraryBase {
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'expr' => [ $this, 'expr' ],
@@ -16,6 +17,13 @@ class LuaLibrary extends LibraryBase {
 		);
 	}
 
+	/**
+	 * Forward the expression to the php expr parser
+	 *
+	 * @param string|null $expression
+	 * @return string[]
+	 * @throws LuaError
+	 */
 	public function expr( $expression = null ) {
 		$this->checkType( 'mw.ext.ParserFunctions.expr', 1, $expression, 'string' );
 		try {

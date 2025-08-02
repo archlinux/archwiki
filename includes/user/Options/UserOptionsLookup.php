@@ -21,6 +21,7 @@
 namespace MediaWiki\User\Options;
 
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserNameUtils;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
@@ -40,6 +41,12 @@ abstract class UserOptionsLookup {
 	 * @since 1.43
 	 */
 	public const LOCAL_EXCEPTION_SUFFIX = '-local-exception';
+
+	private UserNameUtils $userNameUtils;
+
+	public function __construct( UserNameUtils $userNameUtils ) {
+		$this->userNameUtils = $userNameUtils;
+	}
 
 	/**
 	 * Combine the language default options with any site-specific and user-specific defaults
@@ -150,6 +157,26 @@ abstract class UserOptionsLookup {
 	}
 
 	/**
+	 * Get a cache key for a user
+	 * @param UserIdentity $user
+	 * @return string
+	 */
+	protected function getCacheKey( UserIdentity $user ): string {
+		$name = $user->getName();
+		if ( $this->userNameUtils->isIP( $name ) || $this->userNameUtils->isTemp( $name ) ) {
+			// IP and temporary users may not have custom preferences, so they can share a key
+			return 'anon';
+		} elseif ( $user->isRegistered() ) {
+			return "u:{$user->getId()}";
+		} else {
+			// Allow users with no local account to have preferences provided by alternative
+			// UserOptionsStore implementations (e.g. in GlobalPreferences)
+			$canonical = $this->userNameUtils->getCanonical( $name ) ?: $name;
+			return "a:$canonical";
+		}
+	}
+
+	/**
 	 * Determine if a user option came from a source other than the local store
 	 * or the defaults. If this is true, setting the option will be ignored
 	 * unless GLOBAL_OVERRIDE or GLOBAL_UPDATE is passed to setOption().
@@ -161,6 +188,23 @@ abstract class UserOptionsLookup {
 	public function isOptionGlobal( UserIdentity $user, string $key ) {
 		return false;
 	}
+
+	/**
+	 * Get a single option for a batch of users, given their names.
+	 *
+	 * Results are uncached. Use getOption() to get options with a per-user
+	 * cache.
+	 *
+	 * User names are used because that's what GenderCache has. If you're
+	 * calling this and you're not GenderCache, consider adding a method
+	 * taking an array of UserIdentity objects instead.
+	 *
+	 * @since 1.44
+	 * @param string[] $users A normalized list of usernames
+	 * @param string $key The option to get
+	 * @return array The option values, indexed by the provided usernames
+	 */
+	abstract public function getOptionBatchForUserNames( array $users, string $key );
 }
 /** @deprecated class alias since 1.42 */
 class_alias( UserOptionsLookup::class, 'MediaWiki\\User\\UserOptionsLookup' );

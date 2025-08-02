@@ -38,6 +38,7 @@
 	"notifications": "Bööd",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Din}} wäärnangen",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Din}} bööden",
+	"tooltip-pt-notifications": "Din bööd",
 	"echo-specialpage": "Bööd",
 	"echo-none": "Dü heest nian bööd.",
 	"echo-notification-more-options-tooltip": "Muar ütjwool",

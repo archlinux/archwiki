@@ -5,6 +5,7 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathConfig;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\VisitorFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWikiUnitTestCase;
@@ -35,5 +36,21 @@ class MathTest extends MediaWikiUnitTestCase {
 		);
 		$mathConfig = Math::getMathConfig( $services );
 		$this->assertStringContainsString( 'new', $mathConfig->texCheckDisabled() );
+	}
+
+	public function testGetVisitorFactory() {
+		$config = new HashConfig( [] );
+		$services = new MediaWikiServices( $config );
+		$mockVisitorFactory = $this->createMock( VisitorFactory::class );
+		$services->defineService( 'Math.MathMLTreeVisitor',
+			static function ( MediaWikiServices $services ) use ( $mockVisitorFactory ) {
+				return $mockVisitorFactory;
+			}
+		);
+		$this->setService( 'Math.MathMLTreeVisitor', $mockVisitorFactory );
+		$result = Math::getVisitorFactory( $services );
+		$this->assertSame( $mockVisitorFactory, $result );
+		$treeVisitor = $this->getService( 'Math.MathMLTreeVisitor' );
+		$this->assertSame( $mockVisitorFactory, $treeVisitor );
 	}
 }

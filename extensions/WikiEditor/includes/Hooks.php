@@ -8,7 +8,6 @@
 
 namespace MediaWiki\Extension\WikiEditor;
 
-use Article;
 use MediaWiki\Api\ApiMessage;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
@@ -28,7 +27,9 @@ use MediaWiki\Hook\RecentChange_saveHook;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
@@ -40,7 +41,6 @@ use MediaWiki\WikiMap\WikiMap;
 use MessageLocalizer;
 use MobileContext;
 use MWCryptRand;
-use RecentChange;
 use WikimediaEvents\WikimediaEventsHooks;
 
 /**

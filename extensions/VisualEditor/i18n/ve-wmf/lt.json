@@ -9,13 +9,13 @@
 			"Zygimantus"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizualus redagavimas]]",
+	"tag-visualeditor": "Vizualus redagavimas",
 	"tag-visualeditor-description": "Redaguota su [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualiu redaktoriumi]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizualus redagavimas: Tikrinti]]",
+	"tag-visualeditor-needcheck": "Vizualus redagavimas: Tikrinti",
 	"tag-visualeditor-needcheck-description": "Redaguota su [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualiu redaktoriumi]], kai sistema aptiko galimai nenorėtų vikiteksto pakeitimų.",
 	"tag-visualeditor-wikitext": "2017 kodo redagavimas",
 	"tag-visualeditor-wikitext-description": "Keitimas atliktas su 2017 vikiteksto redaktoriumi",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizualus redaktorius: Perjungta]]",
+	"tag-visualeditor-switched": "Vizualus redaktorius: Perjungta",
 	"tag-visualeditor-switched-description": "Naudotojas pradėjo redaguoti su vizualiu redaktoriumi, po to persijungė į vikiteksto redaktorių.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Atsiliepimai",
 	"visualeditor-feedback-tool": "Pateikti atsiliepimą apie šią programinę įrangą",

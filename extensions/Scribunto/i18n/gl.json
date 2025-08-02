@@ -33,7 +33,7 @@
 	"scribunto-common-timeout": "Rematou o tempo reservado para executar os scripts.",
 	"scribunto-common-oom": "Superouse a cantidade de memoria permitida para executar os scripts.",
 	"scribunto-common-backtrace": "Rastro inverso (backtrace):",
-	"scribunto-common-no-details": "No hai máis detalles dispoñibles.",
+	"scribunto-common-no-details": "No hai detalles dispoñibles sobre a localización do código.",
 	"scribunto-lua-in-function": "na función «$1»",
 	"scribunto-lua-in-main": "no bloque principal",
 	"scribunto-lua-in-function-at": "na función en $1:$2",

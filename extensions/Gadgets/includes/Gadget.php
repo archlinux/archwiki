@@ -24,8 +24,8 @@ use InvalidArgumentException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Skin\Skin;
 use MediaWiki\User\UserIdentity;
-use Skin;
 
 /**
  * Represents one gadget definition.
@@ -36,7 +36,7 @@ class Gadget {
 	/**
 	 * Increment this when changing class structure
 	 */
-	public const GADGET_CLASS_VERSION = 18;
+	public const GADGET_CLASS_VERSION = 19;
 
 	public const CACHE_TTL = 86400;
 
@@ -52,9 +52,7 @@ class Gadget {
 	private $name;
 	/** @var string|null */
 	private $definition = null;
-	/** @var bool */
 	private bool $resourceLoaded = false;
-	/** @var bool */
 	private bool $requiresES6 = false;
 	/** @var string[] */
 	private array $requiredRights = [];
@@ -76,15 +74,14 @@ class Gadget {
 	private $package = false;
 	/** @var string */
 	private $type = '';
-	/** @var string */
-	private string $category = '';
+	private string $section = '';
 	/** @var bool */
 	private $supportsUrlLoad = false;
 
 	public function __construct( array $options ) {
 		foreach ( $options as $member => $option ) {
 			switch ( $member ) {
-				case 'category':
+				case 'section':
 				case 'definition':
 				case 'dependencies':
 				case 'hidden':
@@ -125,7 +122,7 @@ class Gadget {
 			return GadgetRepo::RESOURCE_TITLE_PREFIX . $page;
 		};
 		return [
-			'category' => $data['settings']['category'],
+			'section' => $data['settings']['section'],
 			'dependencies' => $data['module']['dependencies'],
 			'hidden' => $data['settings']['hidden'],
 			'messages' => $data['module']['messages'],
@@ -149,11 +146,10 @@ class Gadget {
 
 	/**
 	 * Serialize to an array
-	 * @return array
 	 */
 	public function toArray(): array {
 		return [
-			'category' => $this->category,
+			'section' => $this->section,
 			'dependencies' => $this->dependencies,
 			'hidden' => $this->hidden,
 			'messages' => $this->messages,
@@ -181,7 +177,7 @@ class Gadget {
 	 * Get a placeholder object to use if a gadget doesn't exist
 	 *
 	 * @param string $id name
-	 * @return Gadget
+	 * @return self
 	 */
 	public static function newEmptyGadget( $id ) {
 		return new self( [ 'name' => $id ] );
@@ -226,10 +222,10 @@ class Gadget {
 	}
 
 	/**
-	 * @return string Name of category (aka section) our gadget belongs to. Empty string if none.
+	 * @return string Name of section our gadget belongs to. Empty string if none.
 	 */
-	public function getCategory(): string {
-		return $this->category;
+	public function getSection(): string {
+		return $this->section;
 	}
 
 	/**
@@ -276,12 +272,9 @@ class Gadget {
 		return $this->hidden;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isPackaged(): bool {
 		// A packaged gadget needs to have a main script, so there must be at least one script
-		return $this->package && $this->supportsResourceLoader() && $this->getScripts() !== [];
+		return $this->package && $this->supportsResourceLoader() && $this->getScripts();
 	}
 
 	/**
@@ -291,7 +284,7 @@ class Gadget {
 	 * @return bool
 	 */
 	public function isActionSupported( string $action ): bool {
-		if ( count( $this->requiredActions ) === 0 ) {
+		if ( !$this->requiredActions ) {
 			return true;
 		}
 		// Don't require specifying 'submit' action in addition to 'edit'
@@ -316,15 +309,16 @@ class Gadget {
 	/**
 	 * Whether to load the gadget on pages in any of the given categories
 	 *
-	 * @param array $categories Category names (category title text, no namespace prefix, no dbkey-underscores)
+	 * @param array $categories Associative array with keys as category names (category title text,
+	 * no namespace prefix, no dbkey-underscores) and with value as 1 for all keys.
 	 * @return bool
 	 */
 	public function isCategorySupported( array $categories ) {
 		if ( !$this->requiredCategories ) {
 			return true;
 		}
-		foreach ( $categories as $category ) {
-			if ( in_array( $category, $this->requiredCategories, true ) ) {
+		foreach ( $this->requiredCategories as $category ) {
+			if ( isset( $categories[$category] ) ) {
 				return true;
 			}
 		}
@@ -541,27 +535,27 @@ class Gadget {
 		}
 
 		// Gadget containing files with uncrecognised suffixes
-		if ( count( array_diff( $this->pages, $this->getScriptsAndStyles() ) ) !== 0 ) {
+		if ( array_diff( $this->pages, $this->getScriptsAndStyles() ) ) {
 			$warnings[] = "gadgets-validate-unknownpages";
 		}
 
 		// Non-package gadget containing JSON files
-		if ( !$this->package && count( $this->getJSONs() ) > 0 ) {
+		if ( !$this->package && $this->getJSONs() ) {
 			$warnings[] = "gadgets-validate-json";
 		}
 
 		// Package gadget without a script file in it (to serve as entry point)
-		if ( $this->package && count( $this->getScripts() ) === 0 ) {
+		if ( $this->package && !$this->getScripts() ) {
 			$warnings[] = "gadgets-validate-noentrypoint";
 		}
 
 		// Gadget with type=styles having non-CSS files
-		if ( $this->type === 'styles' && count( $this->getScripts() ) > 0 ) {
+		if ( $this->type === 'styles' && $this->getScripts() ) {
 			$warnings[] = "gadgets-validate-scriptsnotallowed";
 		}
 
 		// Style-only gadgets having peers
-		if ( $this->getType() === 'styles' && count( $this->peers ) > 0 ) {
+		if ( $this->getType() === 'styles' && $this->peers ) {
 			$warnings[] = "gadgets-validate-stylepeers";
 		}
 

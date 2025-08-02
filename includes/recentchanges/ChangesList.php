@@ -18,6 +18,9 @@
  * @file
  */
 
+namespace MediaWiki\RecentChanges;
+
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
@@ -28,6 +31,11 @@ use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Linker\UserLinkRenderer;
+use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogFormatterFactory;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\PagerTools;
@@ -40,6 +48,10 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Watchlist\WatchedItem;
 use OOUI\IconWidget;
+use RuntimeException;
+use stdClass;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -108,6 +120,8 @@ class ChangesList extends ContextSource {
 
 	private LogFormatterFactory $logFormatterFactory;
 
+	protected UserLinkRenderer $userLinkRenderer;
+
 	/**
 	 * @param IContextSource $context
 	 * @param ChangesListFilterGroup[] $filterGroups Array of ChangesListFilterGroup objects (currently optional)
@@ -122,6 +136,7 @@ class ChangesList extends ContextSource {
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->commentFormatter = $services->getRowCommentFormatter();
 		$this->logFormatterFactory = $services->getLogFormatterFactory();
+		$this->userLinkRenderer = $services->getUserLinkRenderer();
 		$this->tagsCache = new MapCacheLRU( 50 );
 		$this->userLinkCache = new MapCacheLRU( 50 );
 	}
@@ -215,6 +230,7 @@ class ChangesList extends ContextSource {
 	 * they are called often, we call them once and save them in $this->message
 	 */
 	private function preCacheMessages() {
+		// @phan-suppress-next-line MediaWikiNoIssetIfDefined False positives when documented as nullable
 		if ( !isset( $this->message ) ) {
 			$this->message = [];
 			foreach ( [
@@ -564,8 +580,7 @@ class ChangesList extends ContextSource {
 		# Diff link
 		if (
 			$rc->mAttribs['rc_type'] == RC_NEW ||
-			$rc->mAttribs['rc_type'] == RC_LOG ||
-			$rc->mAttribs['rc_type'] == RC_CATEGORIZE
+			$rc->mAttribs['rc_type'] == RC_LOG
 		) {
 			$diffLink = $this->message['diff'];
 		} elseif ( !self::userCan( $rc, RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
@@ -584,19 +599,15 @@ class ChangesList extends ContextSource {
 				$query
 			);
 		}
-		if ( $rc->mAttribs['rc_type'] == RC_CATEGORIZE ) {
-			$histLink = $this->message['hist'];
-		} else {
-			$histLink = $this->linkRenderer->makeKnownLink(
-				$rc->getTitle(),
-				new HtmlArmor( $this->message['hist'] ),
-				[ 'class' => 'mw-changeslist-history' ],
-				[
-					'curid' => $rc->mAttribs['rc_cur_id'],
-					'action' => 'history'
-				]
-			);
-		}
+		$histLink = $this->linkRenderer->makeKnownLink(
+			$rc->getTitle(),
+			new HtmlArmor( $this->message['hist'] ),
+			[ 'class' => 'mw-changeslist-history' ],
+			[
+				'curid' => $rc->mAttribs['rc_cur_id'],
+				'action' => 'history'
+			]
+		);
 
 		$s .= Html::rawElement( 'span', [ 'class' => 'mw-changeslist-links' ],
 				Html::rawElement( 'span', [], $diffLink ) .
@@ -647,6 +658,7 @@ class ChangesList extends ContextSource {
 
 		// Watchlist expiry icon.
 		$watchlistExpiry = '';
+		// @phan-suppress-next-line MediaWikiNoIssetIfDefined
 		if ( isset( $rc->watchlistExpiry ) && $rc->watchlistExpiry ) {
 			$watchlistExpiry = $this->getWatchlistExpiry( $rc );
 		}
@@ -706,7 +718,7 @@ class ChangesList extends ContextSource {
 		// contain the full date (month, year) and adds consistency with Special:Contributions
 		// and other pages.
 		$separatorClass = $rc->watchlistExpiry ? 'mw-changeslist-separator' : 'mw-changeslist-separator--semicolon';
-		return Html::element( 'span', [ 'class' => $separatorClass ] ) . ' ' .
+		return Html::element( 'span', [ 'class' => $separatorClass ] ) . $this->message['word-separator'] .
 			'<span class="mw-changeslist-date mw-changeslist-time">' .
 			htmlspecialchars( $this->getLanguage()->userTime(
 				$rc->mAttribs['rc_timestamp'],
@@ -739,6 +751,10 @@ class ChangesList extends ContextSource {
 			$s .= ' <span class="' . $deletedClass . '">' .
 				$this->msg( 'rev-deleted-user' )->escaped() . '</span>';
 		} else {
+			$s .= $this->userLinkRenderer->userLink(
+				$rc->getPerformerIdentity(),
+				$this
+			);
 			# Don't wrap result of this with another tag, see T376814
 			$s .= $this->userLinkCache->getWithSetCallback(
 				$this->userLinkCache->makeKey(
@@ -746,18 +762,13 @@ class ChangesList extends ContextSource {
 					$this->getUser()->getName(),
 					$this->getLanguage()->getCode()
 				),
-				static function () use ( $rc ) {
-					return Linker::userLink(
-						$rc->mAttribs['rc_user'],
-						$rc->mAttribs['rc_user_text']
-					) . Linker::userToolLinks(
-						$rc->mAttribs['rc_user'], $rc->mAttribs['rc_user_text'],
-						false, 0, null,
-						// The text content of tools is not wrapped with parentheses or "piped".
-						// This will be handled in CSS (T205581).
-						false
-					);
-				}
+				// The text content of tools is not wrapped with parentheses or "piped".
+				// This will be handled in CSS (T205581).
+				static fn () => Linker::userToolLinks(
+					$rc->mAttribs['rc_user'], $rc->mAttribs['rc_user_text'],
+					false, 0, null,
+					false
+				)
 			);
 		}
 	}
@@ -766,10 +777,11 @@ class ChangesList extends ContextSource {
 	 * Insert a formatted action
 	 *
 	 * @param RecentChange $rc
-	 * @return string
+	 * @return string HTML
 	 */
 	public function insertLogEntry( $rc ) {
-		$formatter = $this->logFormatterFactory->newFromRow( $rc->mAttribs );
+		$entry = DatabaseLogEntry::newFromRow( $rc->mAttribs );
+		$formatter = $this->logFormatterFactory->newFromEntry( $entry );
 		$formatter->setContext( $this->getContext() );
 		$formatter->setShowUserToolLinks( true );
 
@@ -779,13 +791,20 @@ class ChangesList extends ContextSource {
 			$comment = Html::rawElement( 'bdi', [ 'dir' => $dir ], $comment );
 		}
 
-		return Html::openElement( 'span', [ 'class' => 'mw-changeslist-log-entry' ] )
-			. $formatter->getActionText()
-			. ' '
-			. $comment
-			. $this->message['word-separator']
-			. $formatter->getActionLinks()
-			. Html::closeElement( 'span' );
+		$html = $formatter->getActionText() . $this->message['word-separator'] . $comment .
+			$this->message['word-separator'] . $formatter->getActionLinks();
+		$classes = [ 'mw-changeslist-log-entry' ];
+		$attribs = [];
+
+		// Let extensions add data to the outputted log entry in a similar way to the LogEventsListLineEnding hook
+		$this->getHookRunner()->onChangesListInsertLogEntry( $entry, $this->getContext(), $html, $classes, $attribs );
+		$attribs = array_filter( $attribs,
+			[ Sanitizer::class, 'isReservedDataAttribute' ],
+			ARRAY_FILTER_USE_KEY
+		);
+		$attribs['class'] = $classes;
+
+		return Html::openElement( 'span', $attribs ) . $html . Html::closeElement( 'span' );
 	}
 
 	/**
@@ -979,7 +998,7 @@ class ChangesList extends ContextSource {
 			)
 		);
 		$classes = array_merge( $classes, $newClasses );
-		$s .= ' ' . $tagSummary;
+		$s .= $this->message['word-separator'] . $tagSummary;
 	}
 
 	/**
@@ -1079,3 +1098,6 @@ class ChangesList extends ContextSource {
 		$this->changeLinePrefixer = $prefixer;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ChangesList::class, 'ChangesList' );

@@ -72,7 +72,8 @@ NewTopicController.prototype.setup = function () {
 
 	// Insert directly after the page content on already existing pages
 	// (.mw-parser-output is missing on non-existent pages)
-	const $parserOutput = this.$pageContainer.find( '.mw-parser-output' ).first();
+	// T386078: Use a more specified selector to prevent selecting the wrong element
+	const $parserOutput = this.$pageContainer.find( '> .mw-parser-output' ).first();
 	const $mobileAddTopicWrapper = this.$pageContainer.find( '.ext-discussiontools-init-new-topic' );
 	if ( $parserOutput.length ) {
 		$parserOutput.after( this.container.$element );
@@ -110,11 +111,11 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 	NewTopicController.super.prototype.setupReplyWidget.apply( this, arguments );
 
 	this.$notices.empty();
-	for ( const noticeName in this.replyWidget.commentDetails.notices ) {
-		if ( this.constructor.static.suppressedEditNotices.indexOf( noticeName ) !== -1 ) {
+	for ( const noticeName in replyWidget.commentDetails.notices ) {
+		if ( this.constructor.static.suppressedEditNotices.includes( noticeName ) ) {
 			continue;
 		}
-		const noticeItem = this.replyWidget.commentDetails.notices[ noticeName ];
+		const noticeItem = replyWidget.commentDetails.notices[ noticeName ];
 		const $noticeElement = $( '<div>' )
 			.addClass( 'ext-discussiontools-ui-replyWidget-notice' )
 			.html( typeof noticeItem === 'string' ? noticeItem : noticeItem.message );
@@ -122,7 +123,7 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 	}
 	mw.hook( 'wikipage.content' ).fire( this.$notices );
 
-	const title = this.replyWidget.storage.get( 'title' );
+	const title = replyWidget.storage.get( 'title' );
 	if ( title && !this.sectionTitle.getValue() ) {
 		// Don't overwrite if the user has already typed something in while the widget was loading.
 		// TODO This should happen immediately rather than waiting for the reply widget to load,
@@ -130,22 +131,22 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 		this.sectionTitle.setValue( title );
 		this.prevTitleText = title;
 
-		if ( this.replyWidget.storage.get( 'summary' ) === null ) {
+		if ( replyWidget.storage.get( 'summary' ) === null ) {
 			const generatedSummary = this.generateSummary( title );
-			this.replyWidget.editSummaryInput.setValue( generatedSummary );
+			replyWidget.editSummaryInput.setValue( generatedSummary );
 		}
 	}
-	this.replyWidget.storage.set( 'title', this.sectionTitle.getValue() );
+	replyWidget.storage.set( 'title', this.sectionTitle.getValue() );
 
-	if ( this.replyWidget.modeTabSelect ) {
+	if ( replyWidget.modeTabSelect ) {
 		// Start with the mode-select widget not-tabbable so focus will go from the title to the body
-		this.replyWidget.modeTabSelect.$element.attr( {
+		replyWidget.modeTabSelect.$element.attr( {
 			tabindex: '-1'
 		} );
 	}
 
 	this.sectionTitle.connect( this, { change: 'onSectionTitleChange' } );
-	this.replyWidget.connect( this, { bodyFocus: 'onBodyFocus' } );
+	replyWidget.connect( this, { bodyFocus: 'onBodyFocus' } );
 
 	replyWidget.connect( this, {
 		clear: 'onReplyWidgetClear',
@@ -174,23 +175,24 @@ NewTopicController.prototype.onReplyWidgetClear = function () {
  */
 NewTopicController.prototype.onReplyWidgetClearStorage = function () {
 	// This is going to get called as part of the teardown chain from replywidget
-	if ( this.replyWidget ) {
-		this.replyWidget.storage.remove( 'title' );
-	}
+	this.replyWidgetPromise.then( ( replyWidget ) => {
+		replyWidget.storage.remove( 'title' );
+	} );
 };
 
 NewTopicController.prototype.storeEditSummary = function () {
-	if ( this.replyWidget ) {
-		const currentSummary = this.replyWidget.editSummaryInput.getValue();
+	this.replyWidgetPromise.then( ( replyWidget ) => {
+		const currentSummary = replyWidget.editSummaryInput.getValue();
 		const generatedSummary = this.generateSummary( this.sectionTitle.getValue() );
 		if ( currentSummary === generatedSummary ) {
 			// Do not store generated summaries (T315730)
-			this.replyWidget.storage.remove( 'summary' );
+			replyWidget.storage.remove( 'summary' );
 			return;
 		}
-	}
 
-	NewTopicController.super.prototype.storeEditSummary.call( this );
+		// Parent method
+		NewTopicController.super.prototype.storeEditSummary.call( this );
+	} );
 };
 
 /**
@@ -244,8 +246,9 @@ NewTopicController.prototype.getUnsupportedNodeSelectors = function () {
 /**
  * @inheritdoc
  */
-NewTopicController.prototype.getApiQuery = function ( pageName, checkboxes, extraParams ) {
-	let data = NewTopicController.super.prototype.getApiQuery.call( this, pageName, checkboxes, extraParams );
+NewTopicController.prototype.getApiQuery = function () {
+	// Parent method
+	let data = NewTopicController.super.prototype.getApiQuery.apply( this, arguments );
 
 	// Rebuild the tags array and remove the reply tag
 	const tags = ( data.dttags || '' ).split( ',' );
@@ -275,11 +278,11 @@ NewTopicController.prototype.getApiQuery = function ( pageName, checkboxes, extr
 /**
  * @inheritdoc
  */
-NewTopicController.prototype.saveFail = function ( code ) {
+NewTopicController.prototype.saveFail = function ( replyWidget, code ) {
 	if ( code === 'discussiontools-newtopic-missing-title' ) {
 		OO.ui.confirm( mw.msg( 'discussiontools-newtopic-missing-title-prompt' ) ).then( ( confirmed ) => {
 			if ( confirmed ) {
-				this.onReplySubmit( { allownosectiontitle: true } );
+				this.onReplySubmit( replyWidget, { allownosectiontitle: true } );
 			} else {
 				this.sectionTitle.focus();
 			}
@@ -306,26 +309,28 @@ NewTopicController.prototype.generateSummary = function ( titleText ) {
  * @private
  */
 NewTopicController.prototype.onSectionTitleChange = function () {
-	const titleText = this.sectionTitle.getValue();
-	const prevTitleText = this.prevTitleText;
+	this.replyWidgetPromise.then( ( replyWidget ) => {
+		const titleText = this.sectionTitle.getValue();
+		const prevTitleText = this.prevTitleText;
 
-	if ( prevTitleText !== titleText ) {
-		this.replyWidget.storage.set( 'title', titleText );
+		if ( prevTitleText !== titleText ) {
+			replyWidget.storage.set( 'title', titleText );
 
-		const generatedSummary = this.generateSummary( titleText );
-		const generatedPrevSummary = this.generateSummary( prevTitleText );
+			const generatedSummary = this.generateSummary( titleText );
+			const generatedPrevSummary = this.generateSummary( prevTitleText );
 
-		const currentSummary = this.replyWidget.editSummaryInput.getValue();
+			const currentSummary = replyWidget.editSummaryInput.getValue();
 
-		// Fill in edit summary if it was not modified by the user yet
-		if ( currentSummary === generatedPrevSummary ) {
-			this.replyWidget.editSummaryInput.setValue( generatedSummary );
+			// Fill in edit summary if it was not modified by the user yet
+			if ( currentSummary === generatedPrevSummary ) {
+				replyWidget.editSummaryInput.setValue( generatedSummary );
+			}
 		}
-	}
 
-	this.prevTitleText = titleText;
+		this.prevTitleText = titleText;
 
-	this.checkSectionTitleValidity();
+		this.checkSectionTitleValidity();
+	} );
 };
 
 /**
@@ -334,26 +339,28 @@ NewTopicController.prototype.onSectionTitleChange = function () {
  * @private
  */
 NewTopicController.prototype.onBodyFocus = function () {
-	const offsetBefore = this.replyWidget.$element.offset().top;
-	const rootScrollable = OO.ui.Element.static.getRootScrollableElement( document.body );
-	const scrollBefore = rootScrollable.scrollTop;
+	this.replyWidgetPromise.then( ( replyWidget ) => {
+		const offsetBefore = replyWidget.$element.offset().top;
+		const rootScrollable = OO.ui.Element.static.getRootScrollableElement( document.body );
+		const scrollBefore = rootScrollable.scrollTop;
 
-	this.checkSectionTitleValidity();
+		this.checkSectionTitleValidity();
 
-	const offsetChange = this.replyWidget.$element.offset().top - offsetBefore;
-	// Ensure the rest of the widget doesn't move when the validation
-	// message is triggered by a focus. (T275923)
-	// Browsers sometimes also scroll in response to focus events,
-	// so use the old scrollTop value for consistent results.
-	rootScrollable.scrollTop = scrollBefore + offsetChange;
+		const offsetChange = replyWidget.$element.offset().top - offsetBefore;
+		// Ensure the rest of the widget doesn't move when the validation
+		// message is triggered by a focus. (T275923)
+		// Browsers sometimes also scroll in response to focus events,
+		// so use the old scrollTop value for consistent results.
+		rootScrollable.scrollTop = scrollBefore + offsetChange;
 
-	if ( this.replyWidget.modeTabSelect ) {
-		// Return normal tabbable status to the mode select widget so shift-tab will move focus to it
-		// (Similar to how the other toolbar elements only become tabbable once the body has focus)
-		this.replyWidget.modeTabSelect.$element.attr( {
-			tabindex: '0'
-		} );
-	}
+		if ( replyWidget.modeTabSelect ) {
+			// Return normal tabbable status to the mode select widget so shift-tab will move focus to it
+			// (Similar to how the other toolbar elements only become tabbable once the body has focus)
+			replyWidget.modeTabSelect.$element.attr( {
+				tabindex: '0'
+			} );
+		}
+	} );
 };
 
 /**

@@ -11,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Serriñ",
 	"cdx-label-optional-flag": "(diret)",
 	"cdx-message-dismiss-button-label": "Serriñ",
+	"cdx-popover-close-button-label": "Serriñ",
 	"cdx-search-input-search-button-label": "Klask",
 	"cdx-table-select-all-label": "Diuzañ an holl vannoù",
 	"cdx-table-select-row-label": "Diuzañ bann $1 diwar $2",
@@ -27,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "O tiskouez disoc’hoù $1–$2 diwar kalz",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 diwar kalz",
 	"cdx-table-pagination-status-message-indeterminate-final": "O tiskouez ar {{PLURAL:$1|$1 disoc’h}} diwezhañ",
-	"cdx-table-pagination-status-message-pending": "O kargañ an disoc’hoù…"
+	"cdx-table-pagination-status-message-pending": "O kargañ an disoc’hoù…",
+	"cdx-table-no-data-message": "N'eus roadenn ebet da gaout."
 }

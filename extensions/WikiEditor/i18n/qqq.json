@@ -30,17 +30,16 @@
 			"Robby",
 			"Shirayuki",
 			"Siebrand",
+			"Stjn",
 			"Totosunarto",
 			"Umherirrender",
 			"Verdy p",
 			"Wowes",
-			"Yekrats",
-			"Stjn"
+			"Yekrats"
 		]
 	},
 	"wikieditor": "An extension to provide an advanced, extensible wikitext editing interface.\nhttps://www.mediawiki.org/wiki/Extension:WikiEditor",
 	"wikieditor-desc": "Sorry, the documentation apears out of date:\n\n\n{{desc|name=WikiEditor|url=https://www.mediawiki.org/wiki/Extension:WikiEditor}}",
-	"wikieditor-wikitext-tab": "Caption of the tab containing the edit box\n{{Identical|Wikitext}}",
 	"wikieditor-toolbar": "A customizable toolbar for the WikiEditor.\nFor more information, see https://www.mediawiki.org/wiki/Extension:WikiEditor/Toolbar_customization",
 	"wikieditor-toolbar-desc": "Unused at this time.",
 	"wikieditor-toolbar-preference": "Label for the checkbox user preference to enable the editor. By default this is checked.",
@@ -98,6 +97,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Used as example text when inserting an unordered list into the editbox from the toolbar",
 	"wikieditor-toolbar-tool-olist": "{{Identical|Numbered list}}",
 	"wikieditor-toolbar-tool-olist-example": "Used as example text when inserting an ordered list into the editbox from the toolbar",
+	"wikieditor-toolbar-tool-code": "{{Identical|Computer code}}",
+	"wikieditor-toolbar-tool-code-example": "Used as example text.\n\n{{Identical|Computer code}}",
 	"wikieditor-toolbar-tool-nowiki": "This is the text that appears when you hover the mouse over the third button from the right on the edit toolbar.",
 	"wikieditor-toolbar-tool-nowiki-example": "Used as example text when inserting a nowiki tag into the editbox from the toolbar",
 	"wikieditor-toolbar-tool-redirect": "Tooltip for icon to place wiki text for a redirect in the edit box. The label before these icons says 'Insert'. 'Redirect' is a noun here.\n{{Identical|Redirect}}",

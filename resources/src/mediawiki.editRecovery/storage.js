@@ -9,11 +9,9 @@ const objectStoreName = 'unsaved-page-data';
 
 let db = null;
 
-// TODO: Document Promise objects as native promises, not jQuery ones.
-
 /**
  * @ignore
- * @return {jQuery.Promise} Promise which resolves on success
+ * @return {Promise} Promise which resolves on success
  */
 function openDatabaseLocal() {
 	return new Promise( ( resolve, reject ) => {
@@ -25,14 +23,14 @@ function openDatabaseLocal() {
 			resolve();
 		} );
 		openRequest.addEventListener( 'error', ( event ) => {
-			reject( 'EditRecovery error: ' + event.target.error );
+			reject( 'EditRecovery error:', event.target.error );
 		} );
 	} );
 }
 
 /**
  * @private
- * @param {Object} versionChangeEvent
+ * @param {IDBVersionChangeEvent} versionChangeEvent
  */
 function upgradeDatabase( versionChangeEvent ) {
 	const keyPathParts = [ 'pageName', 'section' ];
@@ -70,12 +68,13 @@ function upgradeDatabase( versionChangeEvent ) {
  * @ignore
  * @param {string} pageName The current page name (with underscores)
  * @param {string|null} section The section ID, or null if the whole page is being edited
- * @return {jQuery.Promise} Promise which resolves with the page data on success, or rejects with an error message.
+ * @return {Promise<object|undefined>} Promise which resolves with the page data on success, or rejects with an error message.
  */
 function loadData( pageName, section ) {
 	return new Promise( ( resolve, reject ) => {
 		if ( !db ) {
 			reject( 'DB not opened' );
+			return;
 		}
 		const transaction = db.transaction( objectStoreName, 'readonly' );
 		const key = [ pageName, section || '' ];
@@ -88,10 +87,17 @@ function loadData( pageName, section ) {
 	} );
 }
 
+/**
+ * Load data realting to all saved sessions
+ *
+ * @ignore
+ * @return {Promise<Object[]>}
+ */
 function loadAllData() {
 	return new Promise( ( resolve, reject ) => {
 		if ( !db ) {
 			reject( 'DB not opened' );
+			return;
 		}
 		const transaction = db.transaction( objectStoreName, 'readonly' );
 		const requestAll = transaction
@@ -110,12 +116,13 @@ function loadAllData() {
  * @param {string} pageName The current page name (with underscores)
  * @param {string|null} section The section ID, or null if the whole page is being edited
  * @param {Object} pageData The page data to save
- * @return {jQuery.Promise} Promise which resolves on success, or rejects with an error message.
+ * @return {Promise} Promise which resolves on success, or rejects with an error message.
  */
 function saveData( pageName, section, pageData ) {
 	return new Promise( ( resolve, reject ) => {
 		if ( !db ) {
 			reject( 'DB not opened' );
+			return;
 		}
 
 		// Add indexed fields.
@@ -127,11 +134,11 @@ function saveData( pageName, section, pageData ) {
 		const objectStore = transaction.objectStore( objectStoreName );
 
 		const request = objectStore.put( pageData );
-		request.addEventListener( 'success', ( event ) => {
-			resolve( event );
+		request.addEventListener( 'success', () => {
+			resolve();
 		} );
 		request.addEventListener( 'error', ( event ) => {
-			reject( 'Error saving data: ' + event.target.errorCode );
+			reject( 'Error saving data:', event.target.error );
 		} );
 	} );
 }
@@ -142,21 +149,24 @@ function saveData( pageName, section, pageData ) {
  * @ignore
  * @param {string} pageName The current page name (with underscores)
  * @param {string|null} section The section ID, or null if the whole page is being edited
- * @return {jQuery.Promise} Promise which resolves on success, or rejects with an error message.
+ * @return {Promise} Promise which resolves on success, or rejects with an error message.
  */
 function deleteData( pageName, section ) {
 	return new Promise( ( resolve, reject ) => {
 		if ( !db ) {
 			reject( 'DB not opened' );
+			return;
 		}
 
 		const transaction = db.transaction( objectStoreName, 'readwrite' );
 		const objectStore = transaction.objectStore( objectStoreName );
 
 		const request = objectStore.delete( [ pageName, section || '' ] );
-		request.addEventListener( 'success', resolve );
-		request.addEventListener( 'error', () => {
-			reject( 'Error opening cursor' );
+		request.addEventListener( 'success', () => {
+			resolve();
+		} );
+		request.addEventListener( 'error', ( event ) => {
+			reject( 'Error opening cursor:', event.target.error );
 		} );
 	} );
 }
@@ -176,12 +186,13 @@ function getExpiryDate( diff ) {
  * Delete expired data
  *
  * @ignore
- * @return {jQuery.Promise} Promise which resolves on success, or rejects with an error message.
+ * @return {Promise} Promise which resolves on success, or rejects with an error message.
  */
 function deleteExpiredData() {
 	return new Promise( ( resolve, reject ) => {
 		if ( !db ) {
 			reject( 'DB not opened' );
+			return;
 		}
 
 		const transaction = db.transaction( objectStoreName, 'readwrite' );
@@ -204,8 +215,8 @@ function deleteExpiredData() {
 			}
 		} );
 
-		expired.addEventListener( 'error', () => {
-			reject( 'Error getting filtered data' );
+		expired.addEventListener( 'error', ( event ) => {
+			reject( 'Error getting filtered data:', event.target.error );
 		} );
 	} );
 }

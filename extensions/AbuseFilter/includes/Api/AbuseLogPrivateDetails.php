@@ -32,17 +32,11 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class AbuseLogPrivateDetails extends ApiBase {
 
-	/** @var AbuseFilterPermissionManager */
-	private $afPermManager;
+	private AbuseFilterPermissionManager $afPermManager;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		AbuseFilterPermissionManager $afPermManager
 	) {
 		parent::__construct( $main, $action );
@@ -117,16 +111,20 @@ class AbuseLogPrivateDetails extends ApiBase {
 	 * @inheritDoc
 	 */
 	public function getAllowedParams() {
-		return [
+		$params = [
 			'logid' => [
 				ParamValidator::PARAM_TYPE => 'integer'
 			],
 			'reason' => [
 				ParamValidator::PARAM_TYPE => 'string',
-				ParamValidator::PARAM_REQUIRED => $this->getConfig()->get( 'AbuseFilterPrivateDetailsForceReason' ),
-				ParamValidator::PARAM_DEFAULT => '',
 			]
 		];
+		if ( $this->getConfig()->get( 'AbuseFilterPrivateDetailsForceReason' ) ) {
+			$params['reason'][ParamValidator::PARAM_REQUIRED] = true;
+		} else {
+			$params['reason'][ParamValidator::PARAM_DEFAULT] = '';
+		}
+		return $params;
 	}
 
 	/**

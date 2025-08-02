@@ -1,0 +1,1077 @@
+{
+	"name": "CheckUser",
+	"version": "2.5",
+	"author": [
+		"Tim Starling",
+		"Aaron Schulz",
+		"Dreamy Jazz"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:CheckUser",
+	"descriptionmsg": "checkuser-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.44.0",
+		"platform": {
+			"ext-openssl": "*"
+		}
+	},
+	"ExtensionMessagesFiles": {
+		"CheckUserAliases": "CheckUser.alias.php"
+	},
+	"config": {
+		"CheckUserCIDRLimit": {
+			"value": {
+				"IPv4": 16,
+				"IPv6": 19
+			},
+			"description": "Shortest CIDR limits that can be checked in any individual range check"
+		},
+		"CheckUserMaxBlocks": {
+			"value": 200,
+			"description": "Maximum number of users that can be mass blocked simultaneously"
+		},
+		"CUPublicKey": {
+			"value": "",
+			"description": "Public key to encrypt private data that may need to be read later. Generate a public key with something like: `openssl genrsa -out cu.key 2048; openssl rsa -in cu.key -pubout > cu.pub` and paste the contents of cu.pub here."
+		},
+		"CUDMaxAge": {
+			"value": 7776000,
+			"description": "How long to keep CheckUser data (in seconds)"
+		},
+		"CheckUserForceSummary": {
+			"value": false,
+			"description": "Whether to force checkusers into giving a reason for each check they do through Special:CheckUser."
+		},
+		"CheckUserGlobalContributionsCentralWikiId": {
+			"value": false,
+			"description": "The wiki ID to use when redirecting users to [[Special:GlobalContributions]] on a central wiki. This wiki should know about temporary accounts. If set to false, no redirect occurs."
+		},
+		"CheckUserCAMultiLock": {
+			"value": false,
+			"description": "Whether to add a link to Special:MultiLock by CentralAuth to the Special:CheckUser's mass block form. This requires CentralAuth extension to be installed on the wiki. To enable this, set this to an array with a central wiki's database name and an array with the name(s) of the global group(s) to add the link for. Example: [ 'centralDB' => 'metawiki', 'groups' => [ 'steward' ] ]"
+		},
+		"CheckUserCAtoollink": {
+			"value": false,
+			"description": "Whether to add links to CentralAuth in Special:CheckUser results"
+		},
+		"CheckUserGBtoollink": {
+			"value": false,
+			"description": "Configuration for adding links for globally blocking accounts shown in Special:CheckUser results. Array with keys 'centralDB' for the ID of the wiki where global blocks are made, and 'groups' for the groups that can make global blocks there. False if links should not be added."
+		},
+		"CheckUserCollapseCheckUserHelperByDefault": {
+			"value": 2500,
+			"description": "Whether to have the CheckUserHelper shown on Special:CheckUser collapsed by default. Specify true to collapse by default, false to do the opposite and a number to collapse only when the number of rows returned exceeds this value."
+		},
+		"CheckUserLogLogins": {
+			"value": true,
+			"description": "Whether login attempts should be logged in CheckUser logs"
+		},
+		"CheckUserLogSuccessfulBotLogins": {
+			"value": true,
+			"description": "Whether successful login attempts of accounts in the 'bot' user group should be logged in CheckUser logs (assuming wgCheckUserLogLogins is also true)"
+		},
+		"CheckUserMaximumRowCount": {
+			"value": 5000,
+			"description": "Maximum number of rows to be displayed in Special:CheckUser per page of results"
+		},
+		"CheckUserInvestigateMaximumRowCount": {
+			"value": 25000,
+			"description": "Maximum number of rows from the CheckUser result tables to be grouped in the Compare table query"
+		},
+		"CheckUserTemporaryAccountMaxAge": {
+			"value": 86400,
+			"description": "Number of seconds for which the temporary account API response is fresh"
+		},
+		"CheckUserClientHintsEnabled": {
+			"value": true,
+			"description": "General on/off switch for User-Agent Client Hints functionality. When set to true, CheckUser will request Client Hints headers specified in the CheckUserClientHintsHeaders config variable."
+		},
+		"CheckUserClientHintsRestApiMaxTimeLag": {
+			"value": 1800,
+			"description": "The amount of time in seconds that a user has to submit a request to /checkuser/v0/useragent-clienthints/{type}/{id} to store client hints data."
+		},
+		"CheckUserClientHintsSpecialPages": {
+			"value": {
+				"CreateAccount": "header",
+				"Emailuser": "js",
+				"PasswordReset": "js",
+				"Userlogin": [ "js", "header" ],
+				"Userlogout": "header"
+			},
+			"description": "List of SpecialPages where CheckUser will collect Client Hints data. Keys are the special pages and values are the method that the data is collected ('js' is using the API and 'header' is using the HTTP headers). Note that the special pages are case sensitive, and do not always match their appearance in the URL, e.g. 'UserLogin' is known in the Special page system as 'Userlogin'."
+		},
+		"CheckUserClientHintsHeaders": {
+			"value": {
+				"Sec-CH-UA": "brands",
+				"Sec-CH-UA-Arch": "architecture",
+				"Sec-CH-UA-Bitness": "bitness",
+				"Sec-CH-UA-Form-Factor": "",
+				"Sec-CH-UA-Full-Version-List": "fullVersionList",
+				"Sec-CH-UA-Mobile": "mobile",
+				"Sec-CH-UA-Model": "model",
+				"Sec-CH-UA-Platform": "platform",
+				"Sec-CH-UA-Platform-Version": "platformVersion",
+				"Sec-CH-UA-WoW64": ""
+			},
+			"description": "Map of User-Agent Client Hints headers that CheckUser may ask for, either via setting an Accept-CH header on the server-side, or via client-side usage of the NavigatorUAData.getHighEntropyValues() API. The keys in the map are the server-side headers, and the values are the JS API equivalents. Empty strings indicate lack of equivalent between JS API and server-side headers. See the list of valid values https://wicg.github.io/ua-client-hints."
+		},
+		"CheckUserClientHintsUnsetHeaderWhenPossible": {
+			"value": true,
+			"description": "If set to 'true', then CheckUser will transmit an empty `Accept-CH: ` header in BeforePageDisplay and SpecialPageBeforeExecute if SpecialPage isn't in the CheckUserClientHintsSpecialPages config list. If set to false, CheckUser will not send an empty `Accept-CH: ` header, which in practice means that all logged-in user requests will transmit User-Agent client hint data."
+		},
+		"CheckUserClientHintsForDisplay": {
+			"value": [
+				"model",
+				"fullVersionList",
+				"platformVersion",
+				"platform",
+				"brands",
+				"formFactor",
+				"architecture",
+				"mobile",
+				"bitness",
+				"woW64"
+			],
+			"description": "An array of the Client Hints data that should be displayed in CheckUser interfaces in the order that they should be displayed. If 'platform' and 'platformVersion' are both included, then these will be combined as one when displaying as a string. If 'brands' and 'fullVersionList' are both selected, then only the fullVersionList value will be displayed if for a given brand name an entry exists in 'brand' and 'fullVersionList'. The 'userAgent' client hint name is currently not included in this list as it may be combined with the 'brands' item, but would be removed if HTTP headers are not going to be used to collect data."
+		},
+		"CheckUserClientHintsValuesToHide": {
+			"value": {
+				"architecture": [
+					"x86"
+				],
+				"bitness": [
+					"64"
+				],
+				"woW64": [
+					false
+				]
+			},
+			"description": "An array of the Client Hints data names as keys and an array of values that should be hidden from the interface as the value. This is used to hide commonly seen Client Hint data values in the cases where it isn't helpful."
+		},
+		"CheckUserDisplayClientHints": {
+			"value": true,
+			"description": "A configuration value used to control whether Client Hints data is shown in the interfaces that support it. The default is for it to be enabled."
+		},
+		"CheckUserDeveloperMode": {
+			"value": false,
+			"description": "If set to 'true', then CheckUser will be know it is in development mode. Do not enable this on any wikis other than local development wikis. This will allow use of code that is only intended for local development wikis, such as the populateCheckUserTablesWithSimulatedData.php maintenance script which inserts automated testing edits and actions to the wiki."
+		},
+		"CheckUserMaximumIPsToAutoblock": {
+			"value": 1,
+			"description": "The maximum number of IPs to retroactively autoblock when a block is created that is set to autoblock. The actual number of IPs blocked will be smaller if the CheckUser data for this user has less than this number of IPs. If this number is greater, then the IPs blocked are those which were used last."
+		},
+		"CheckUserCentralIndexGroupsToExclude": {
+			"value": [],
+			"description": "Users in any of these user groups will not have their actions stored in the central index tables. Used to reduce the rate at which rows are updated for users which are expected to make frequent updates (such as bots) and often do not need review from the CheckUser tools."
+		},
+		"CheckUserCentralIndexRangesToExclude": {
+			"value": [],
+			"description": "Exclude actions from being recorded in the central user index if they are within the ranges or are using an IP specified in this config. This is ignored for writes to the cuci_temp_edit table. Used to reduce the rate at which rows are updated for users which are expected to make frequent updates."
+		},
+		"CheckUserWriteToCentralIndex": {
+			"value": true,
+			"description": "Whether to add entries to the central index for this local wiki. Useful in case a wiki is not part of a SUL system or is written to too often, so cannot be represented in a central table."
+		},
+		"CheckUserCuciUserRandomChanceDebounceCutoff": {
+			"value": 3600,
+			"description": "Used to control when the random chance to update the cuci_user table is applied. Set to false to disable the random chance of not writing. By default the random chance is applied when the last timestamp for this user and wiki was recorded less than an hour ago."
+		},
+		"CheckUserSpecialPagesWithoutIPRevealButtons": {
+			"value": [
+				"Investigate",
+				"InvestigateBlock",
+				"CheckUser",
+				"CheckUserLog",
+				"Activeusers",
+				"Listusers",
+				"BlockList"
+			],
+			"description": "Used to hide the 'Show IP' buttons for temporary accounts on special pages where they are not useful. For example, Special:BlockList where a temporary account will only be the target of a block and therefore no IP will be present for that block. Note that the special pages are case sensitive, and do not always match their appearance in the URL, e.g. 'ListUsers' is known in the Special page system as 'Listusers'. Some special pages are hard-coded to be included as they load custom scripts to add the buttons."
+		},
+		"CheckUserEnableTempAccountsOnboardingDialog": {
+			"value": true,
+			"description": "Used to control whether the Temporary Accounts onboarding dialog is shown. Used as a temporary configuration value to hide the dialog while it is still being developed."
+		}
+	},
+	"DefaultUserOptions": {
+		"checkuser-temporary-account-enable": false
+	},
+	"APIListModules": {
+		"checkuser": {
+			"class": "MediaWiki\\CheckUser\\Api\\ApiQueryCheckUser",
+			"services": [
+				"ApiQueryCheckUserResponseFactory"
+			]
+		},
+		"checkuserlog": {
+			"class": "MediaWiki\\CheckUser\\Api\\ApiQueryCheckUserLog",
+			"services": [
+				"CommentStore",
+				"CheckUserLogService",
+				"UserFactory"
+			]
+		}
+	},
+	"APIMetaModules": {
+		"checkuserformattedblockinfo": {
+			"class": "MediaWiki\\CheckUser\\Api\\ApiQueryFormattedBlockInfo",
+			"services": [
+				"FormatterFactory"
+			]
+		}
+	},
+	"RateLimits": {
+		"checkuser-userinfo": {
+			"&can-bypass": true,
+			"user": [
+				100,
+				86400
+			]
+		}
+	},
+	"RestRoutes": [
+		{
+			"path": "/checkuser/v0/userinfo/{id}",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\UserInfoHandler",
+			"services": [
+				"CheckUserUserInfoCardService",
+				"UserFactory"
+			]
+		},
+		{
+			"path": "/checkuser/v0/temporaryaccount/{name}",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\TemporaryAccountHandler",
+			"services": [
+				"MainConfig",
+				"JobQueueGroup",
+				"PermissionManager",
+				"PreferencesFactory",
+				"UserNameUtils",
+				"DBLoadBalancerFactory",
+				"ActorStore",
+				"BlockManager",
+				"CheckUserPermissionManager",
+				"ReadOnlyMode"
+			]
+		},
+		{
+			"path": "/checkuser/v0/temporaryaccount/ip/{ip}",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\TemporaryAccountIPHandler",
+			"services": [
+				"MainConfig",
+				"JobQueueGroup",
+				"PermissionManager",
+				"UserNameUtils",
+				"DBLoadBalancerFactory",
+				"ActorStore",
+				"BlockManager",
+				"TempUserConfig",
+				"CheckUserTemporaryAccountsByIPLookup",
+				"CheckUserPermissionManager",
+				"ReadOnlyMode"
+			]
+		},
+		{
+			"path": "/checkuser/v0/temporaryaccount/{name}/revisions/{ids}",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\TemporaryAccountRevisionHandler",
+			"services": [
+				"MainConfig",
+				"JobQueueGroup",
+				"PermissionManager",
+				"PreferencesFactory",
+				"UserNameUtils",
+				"DBLoadBalancerFactory",
+				"ActorStore",
+				"BlockManager",
+				"RevisionStore",
+				"CheckUserPermissionManager",
+				"ReadOnlyMode"
+			]
+		},
+		{
+			"path": "/checkuser/v0/temporaryaccount/{name}/logs/{ids}",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\TemporaryAccountLogHandler",
+			"services": [
+				"MainConfig",
+				"JobQueueGroup",
+				"PermissionManager",
+				"PreferencesFactory",
+				"UserNameUtils",
+				"DBLoadBalancerFactory",
+				"ActorStore",
+				"BlockManager",
+				"CheckUserPermissionManager",
+				"ReadOnlyMode"
+			]
+		},
+		{
+			"path": "/checkuser/v0/batch-temporaryaccount",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\BatchTemporaryAccountHandler",
+			"services": [
+				"MainConfig",
+				"JobQueueGroup",
+				"PermissionManager",
+				"PreferencesFactory",
+				"UserNameUtils",
+				"DBLoadBalancerFactory",
+				"ActorStore",
+				"BlockManager",
+				"RevisionStore",
+				"CheckUserPermissionManager",
+				"ReadOnlyMode"
+			]
+		},
+		{
+			"path": "/checkuser/v0/useragent-clienthints/{type}/{id}",
+			"method": "POST",
+			"class": "MediaWiki\\CheckUser\\Api\\Rest\\Handler\\UserAgentClientHintsHandler",
+			"services": [
+				"MainConfig",
+				"RevisionStore",
+				"UserAgentClientHintsManager",
+				"ConnectionProvider",
+				"ActorStore"
+			]
+		}
+	],
+	"HookHandlers": {
+		"clienthints": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\ClientHints",
+			"services": [
+				"MainConfig",
+				"SpecialPageFactory"
+			]
+		},
+		"preferences": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\Preferences",
+			"services": [
+				"PermissionManager",
+				"CheckUserTemporaryAccountLoggerFactory",
+				"MainConfig"
+			]
+		},
+		"GlobalPreferencesHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\GlobalPreferencesHandler",
+			"services": [
+				"CheckUserTemporaryAccountLoggerFactory"
+			]
+		},
+		"pageDisplay": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\PageDisplay",
+			"services": [
+				"MainConfig",
+				"CheckUserPermissionManager",
+				"TempUserConfig",
+				"UserOptionsLookup",
+				"ExtensionRegistry",
+				"UserIdentityUtils"
+			]
+		},
+		"CheckUserPrivateEvents": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\CheckUserPrivateEventsHandler",
+			"services": [
+				"CheckUserInsert",
+				"MainConfig",
+				"UserIdentityLookup",
+				"UserFactory",
+				"ReadOnlyMode",
+				"UserAgentClientHintsManager",
+				"JobQueueGroup",
+				"ConnectionProvider"
+			]
+		},
+		"RetroactiveAutoBlock": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\PerformRetroactiveAutoblockHandler",
+			"services": [
+				"DBLoadBalancerFactory",
+				"DatabaseBlockStoreFactory",
+				"MainConfig"
+			]
+		},
+		"SchemaChanges": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\SchemaChangesHandler"
+		},
+		"ToolLinks": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\ToolLinksHandler",
+			"services": [
+				"CheckUserPermissionManager",
+				"PermissionManager",
+				"SpecialPageFactory",
+				"LinkRenderer",
+				"UserIdentityLookup",
+				"UserIdentityUtils",
+				"UserOptionsLookup",
+				"TempUserConfig"
+			]
+		},
+		"RenameUserSQLHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\RenameUserSQLHandler"
+		},
+		"GlobalBlockingHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\GlobalBlockingHandler",
+			"services": [
+				"ConnectionProvider",
+				"CentralIdLookup",
+				"ActorStoreFactory"
+			]
+		},
+		"SpecialPageBeforeExecute": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\SpecialPageBeforeExecuteHandler"
+		},
+		"ConditionalRegistration": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\ConditionalRegistrationHandler",
+			"services": [
+				"MainConfig",
+				"TempUserConfig",
+				"ExtensionRegistry"
+			]
+		},
+		"RecentChangeSaveHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\RecentChangeSaveHandler",
+			"services": [
+				"CheckUserInsert",
+				"JobQueueGroup",
+				"DBLoadBalancerFactory"
+			]
+		},
+		"RLRegisterModules": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\RLRegisterModulesHandler",
+			"services": [
+				"ExtensionRegistry"
+			]
+		},
+		"UserMerge": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\UserMergeHandler"
+		},
+		"SidebarLinksHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\SidebarLinksHandler",
+			"services": [
+				"MainConfig",
+				"CheckUserPermissionManager",
+				"ExtensionRegistry"
+			]
+		},
+		"LogDisplayHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\LogDisplayHandler",
+			"services": [
+				"UserNameUtils",
+				"MainConfig",
+				"CheckUserPermissionManager"
+			]
+		},
+		"AbuseFilterHandler": {
+			"class": "MediaWiki\\CheckUser\\HookHandler\\AbuseFilterHandler",
+			"services": [
+				"CheckUserTemporaryAccountLoggerFactory",
+				"CheckUserPermissionManager",
+				"TempUserConfig"
+			]
+		}
+	},
+	"Hooks": {
+		"AbuseFilterCustomProtectedVariables": "AbuseFilterHandler",
+		"AbuseFilterLogProtectedVariableValueAccess": "AbuseFilterHandler",
+		"AbuseFilterCanViewProtectedVariables": "AbuseFilterHandler",
+		"AuthManagerLoginAuthenticateAudit": "CheckUserPrivateEvents",
+		"BeforePageDisplay": [
+			"clienthints",
+			"pageDisplay"
+		],
+		"ApiQuery::moduleManager": "ConditionalRegistration",
+		"APIGetAllowedParams": "clienthints",
+		"ChangesListInsertLogEntry": "LogDisplayHandler",
+		"ContributionsToolLinks": "ToolLinks",
+		"EmailUser": "CheckUserPrivateEvents",
+		"GetPreferences": "preferences",
+		"GlobalBlockingGetRetroactiveAutoblockIPs": "GlobalBlockingHandler",
+		"GlobalPreferencesSetGlobalPreferences": "GlobalPreferencesHandler",
+		"LoadExtensionSchemaUpdates": "SchemaChanges",
+		"LocalUserCreated": "CheckUserPrivateEvents",
+		"LogEventsListLineEnding": "LogDisplayHandler",
+		"PerformRetroactiveAutoblock": "RetroactiveAutoBlock",
+		"RecentChange_save": "RecentChangeSaveHandler",
+		"RenameUserSQL": "RenameUserSQLHandler",
+		"ResourceLoaderRegisterModules": "RLRegisterModules",
+		"SaveUserOptions": "preferences",
+		"SidebarBeforeOutput": "SidebarLinksHandler",
+		"SpecialContributionsBeforeMainOutput": "ToolLinks",
+		"SpecialPageBeforeExecute": [
+			"clienthints",
+			"SpecialPageBeforeExecute"
+		],
+		"SpecialPage_initList": "ConditionalRegistration",
+		"UserGetDefaultOptions": "preferences",
+		"User::mailPasswordInternal": "CheckUserPrivateEvents",
+		"UserLogoutComplete": "CheckUserPrivateEvents",
+		"UserMergeAccountFields": "UserMerge",
+		"UserToolLinksEdit": "ToolLinks"
+	},
+	"MessagesDirs": {
+		"CheckUser": [
+			"i18n",
+			"i18n/api"
+		]
+	},
+	"ResourceModules": {
+		"ext.checkUser.clientHints": {
+			"localBasePath": "modules/ext.checkUser.clientHints",
+			"remoteExtPath": "CheckUser/modules/ext.checkUser.clientHints",
+			"packageFiles": [
+				"index.js"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.base"
+			]
+		},
+		"ext.checkUser.tempAccountOnboarding": {
+			"localBasePath": "modules/ext.checkUser.tempAccountsOnboarding",
+			"remoteExtPath": "CheckUser/modules/ext.checkUser.tempAccountsOnboarding",
+			"packageFiles": [
+				"init.js",
+				"components/App.vue",
+				"components/TempAccountsOnboardingDialog.vue",
+				"components/TempAccountsOnboardingStep.vue",
+				"components/TempAccountsOnboardingStepper.vue",
+				"components/TempAccountsOnboardingIntroStep.vue",
+				"components/TempAccountsOnboardingIPInfoStep.vue",
+				"components/TempAccountsOnboardingIPRevealStep.vue",
+				{
+					"name": "components/icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconNext",
+						"cdxIconPrevious"
+					]
+				}
+			],
+			"messages": [
+				"checkuser-temporary-accounts-onboarding-dialog-title",
+				"checkuser-temporary-accounts-onboarding-dialog-skip-all",
+				"checkuser-temporary-accounts-onboarding-dialog-stepper-label",
+				"checkuser-temporary-accounts-onboarding-dialog-previous-label",
+				"checkuser-temporary-accounts-onboarding-dialog-next-label",
+				"checkuser-temporary-accounts-onboarding-dialog-close-label",
+				"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title",
+				"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-content",
+				"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-image-aria-label",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-image-aria-label",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-error",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-success",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-warning",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-info-save-preference",
+				"ipinfo-preference-use-agreement",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content",
+				"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-image-aria-label"
+			],
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex",
+				"mediawiki.api",
+				"mediawiki.user",
+				"mediawiki.jqueryMsg"
+			]
+		},
+		"ext.checkUser.tempAccounts": {
+			"localBasePath": "modules/ext.checkUser.tempAccounts",
+			"remoteExtPath": "CheckUser/modules/ext.checkUser.tempAccounts",
+			"packageFiles": [
+				"dispatcher.js",
+				"BlockDetailsPopupButtonWidget.js",
+				"components/IPAutoRevealOnDialog.vue",
+				"components/IPAutoRevealOffDialog.vue",
+				"ipRevealUtils.js",
+				"ipReveal.js",
+				"autoReveal.js",
+				"initOnLoad.js",
+				"initOnHook.js",
+				"api.js",
+				"rest.js",
+				"ShowIPButton.vue",
+				"SpecialBlock.js",
+				"SpecialContributions.js",
+				{
+					"name": "durations.json",
+					"callback": "MediaWiki\\CheckUser\\HookHandler\\DurationMessages::getTranslatedDurations",
+					"callbackParam": [ 1800, 3600 ]
+				},
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconInfo"
+					]
+				}
+			],
+			"messages": [
+				"checkuser-ip-contributions",
+				"checkuser-ip-contributions-target-label",
+				"checkuser-ip-contributions-target-error-no-ip",
+				"checkuser-tempaccount-no-ip-results",
+				"checkuser-tempaccount-reveal-ip-button-label",
+				"checkuser-tempaccount-reveal-ip-missing",
+				"checkuser-tempaccount-reveal-ip-error",
+				"checkuser-tempaccount-specialblock-ips",
+				"checkuser-tempaccount-reveal-blocked-header",
+				"checkuser-tempaccount-reveal-blocked-description",
+				"checkuser-tempaccount-reveal-blocked-title",
+				"checkuser-tempaccount-reveal-blocked-loading",
+				"checkuser-tempaccount-reveal-blocked-error",
+				"checkuser-tempaccount-reveal-blocked-missingblock",
+				"checkuser-ip-auto-reveal-notification-on",
+				"checkuser-ip-auto-reveal-notification-off",
+				"checkuser-ip-auto-reveal-on-dialog-title",
+				"checkuser-ip-auto-reveal-on-dialog-text",
+				"checkuser-ip-auto-reveal-on-dialog-default-action",
+				"checkuser-ip-auto-reveal-on-dialog-primary-action",
+				"checkuser-ip-auto-reveal-on-dialog-select-label",
+				"checkuser-ip-auto-reveal-on-dialog-select-default",
+				"checkuser-ip-auto-reveal-off-dialog-title",
+				"checkuser-ip-auto-reveal-off-dialog-text-expiry",
+				"checkuser-ip-auto-reveal-off-dialog-text-info",
+				"checkuser-ip-auto-reveal-off-dialog-error-extend-limit",
+				"checkuser-ip-auto-reveal-off-dialog-extend-action",
+				"checkuser-ip-auto-reveal-off-dialog-off-action"
+			],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-widgets",
+				"mediawiki.api",
+				"mediawiki.storage",
+				"mediawiki.Title",
+				"mediawiki.util",
+				"mediawiki.widgets",
+				"mediawiki.widgets.UserInputWidget",
+				"web2017-polyfills"
+			]
+		},
+		"ext.checkUser.images": {
+			"localBasePath": "images",
+			"remoteExtPath": "CheckUser/modules/ext.checkUser.images",
+			"class": "MediaWiki\\ResourceLoader\\ImageModule",
+			"selector": ".ext-checkuser-image-{name}",
+			"images": {
+				"temp-accounts-onboarding-temp-accounts": {
+					"file": {
+						"ltr": "temp-accounts-onboarding-temp-accounts-ltr.svg",
+						"rtl": "temp-accounts-onboarding-temp-accounts-rtl.svg"
+					}
+				},
+				"temp-accounts-onboarding-ip-info": {
+					"file": {
+						"ltr": "temp-accounts-onboarding-ip-info-ltr.svg",
+						"rtl": "temp-accounts-onboarding-ip-info-rtl.svg"
+					}
+				},
+				"temp-accounts-onboarding-ip-reveal": {
+					"file": {
+						"ltr": "temp-accounts-onboarding-ip-reveal-ltr.svg",
+						"rtl": "temp-accounts-onboarding-ip-reveal-rtl.svg"
+					}
+				}
+			}
+		},
+		"ext.checkUser": {
+			"localBasePath": "modules/ext.checkUser",
+			"remoteExtPath": "CheckUser/modules/ext.checkUser",
+			"packageFiles": [
+				"dispatcher.js",
+				"cidr/cidr.js",
+				"checkuser/getUsersBlockForm.js",
+				"checkuser/checkUserHelper/init.js",
+				"checkuser/checkUserHelper/addCopyElement.js",
+				"checkuser/checkUserHelper/buildUserElement.js",
+				"checkuser/checkUserHelper/createTable.js",
+				"checkuser/checkUserHelper/createTableText.js",
+				"checkuser/checkUserHelper/generateData.js",
+				"checkuser/checkUserHelper/utils.js",
+				"checkuserlog/highlightScroll.js",
+				"investigateblock/investigateblock.js",
+				"investigate/init.js",
+				"investigate/InvestigateMenuSelectWidget.js",
+				"investigate/resetGuidedTour.js",
+				"investigate/tables.js",
+				"investigate/copy.js",
+				"investigate/blockform.js",
+				{
+					"name": "investigate/message.json",
+					"callback": "MediaWiki\\CheckUser\\ToolLinksMessages::getParsedMessage",
+					"callbackParam": "checkuser-investigate-compare-toollinks"
+				}
+			],
+			"dependencies": [
+				"jquery.tablesorter",
+				"oojs-ui-core",
+				"oojs-ui-widgets",
+				"oojs-ui.styles.icons-editing-core",
+				"oojs-ui.styles.icons-editing-advanced",
+				"oojs-ui.styles.icons-interactions",
+				"oojs-ui.styles.icons-location",
+				"oojs-ui.styles.icons-moderation",
+				"oojs-ui.styles.icons-user",
+				"mediawiki.api",
+				"mediawiki.pager.styles",
+				"mediawiki.storage",
+				"mediawiki.Title",
+				"mediawiki.user",
+				"mediawiki.util",
+				"mediawiki.widgets",
+				"web2017-polyfills"
+			],
+			"messages": [
+				"checkuser-centralauth-multilock",
+				"checkuser-centralauth-multilock-list",
+				"checkuser-centralauth-multilock-list-item",
+				"checkuser-cidr-too-small",
+				"checkuser-cidr-affected-ips",
+				"checkuser-helper-copy-success",
+				"checkuser-helper-copy-failed",
+				"checkuser-helper-user",
+				"checkuser-helper-ips",
+				"checkuser-helper-uas",
+				"checkuser-helper-client-hints",
+				"checkuser-helper-xff-trusted",
+				"checkuser-helper-xff-untrusted",
+				"checkuser-cidr-tool-links",
+				"checkuser-cidr-tool-links-checkuser",
+				"checkuser-cidr-tool-links-checkuserlog",
+				"checkuser-cidr-tool-links-prefix",
+				"checkuser-investigate-compare-copy-button-label",
+				"checkuser-investigate-compare-copy-button-label-hide",
+				"checkuser-investigate-compare-copy-message-label",
+				"checkuser-investigate-compare-table-button-add-ip-targets-label",
+				"checkuser-investigate-compare-table-button-add-user-targets-label",
+				"checkuser-investigate-compare-table-button-add-user-targets-log-label",
+				"checkuser-investigate-compare-table-button-checks-label",
+				"checkuser-investigate-compare-table-button-contribs-label",
+				"checkuser-investigate-compare-table-button-filter-label",
+				"checkuser-investigate-subtitle-cancel-button-label",
+				"checkuser-investigate-subtitle-continue-button-label",
+				"tempuser-expired-link-tooltip"
+			]
+		},
+		"ext.checkUser.styles": {
+			"class": "MediaWiki\\ResourceLoader\\LessVarFileModule",
+			"localBasePath": "modules/ext.checkUser.styles",
+			"remoteExtPath": "CheckUser/modules/ext.checkUser.styles",
+			"styles": [
+				"checkuser.less",
+				"investigate.less",
+				"investigateblock.less",
+				"temporaryaccount.less",
+				"cidr.less",
+				"temporaryaccountonboarding.less"
+			],
+			"skinStyles": {
+				"minerva": "temporaryaccount.minerva.less"
+			},
+			"lessMessages": [
+				"brackets-start",
+				"brackets-end",
+				"parentheses-start",
+				"parentheses-end",
+				"pipe-separator"
+			]
+		}
+	},
+	"QUnitTestModule": {
+		"localBasePath": "",
+		"remoteExtPath": "CheckUser",
+		"packageFiles": [
+			"tests/qunit/index.js",
+			"tests/qunit/ext.checkUser/checkuser/getUsersBlockForm.test.js",
+			"modules/ext.checkUser/checkuser/getUsersBlockForm.js",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/utils.test.js",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/buildUserElement.test.js",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/createTable.test.js",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/createTableText.test.js",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/generateData.test.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/init.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/addCopyElement.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/buildUserElement.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/createTable.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/createTableText.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/generateData.js",
+			"modules/ext.checkUser/checkuser/checkUserHelper/utils.js",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/cases/buildUserElement.json",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/cases/calculateIPNumber.json",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/cases/compareIPs.json",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/cases/createTable.json",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/cases/createTableText.json",
+			"tests/qunit/ext.checkUser/checkuser/checkUserHelper/cases/generateData.json",
+			"tests/qunit/ext.checkUser.clientHints/index.test.js",
+			"modules/ext.checkUser.clientHints/index.js",
+			"tests/qunit/ext.checkUser/investigate/blockform.test.js",
+			"modules/ext.checkUser/investigate/blockform.js",
+			"tests/qunit/ext.checkUser/investigate/cases/blockFormWidgetVisibility.json",
+			"tests/qunit/ext.checkUser.tempAccounts/SpecialContributions.test.js",
+			"modules/ext.checkUser.tempAccounts/SpecialContributions.js",
+			"tests/qunit/ext.checkUser.tempAccounts/ipRevealUtils.test.js",
+			"modules/ext.checkUser.tempAccounts/ipRevealUtils.js",
+			"tests/qunit/ext.checkUser.tempAccounts/ipReveal.test.js",
+			"tests/qunit/ext.checkUser.tempAccounts/utils.js",
+			"modules/ext.checkUser.tempAccounts/ipReveal.js",
+			"modules/ext.checkUser.tempAccounts/rest.js",
+			"tests/qunit/ext.checkUser.tempAccounts/initOnLoad.test.js",
+			"modules/ext.checkUser.tempAccounts/initOnLoad.js",
+			"tests/qunit/ext.checkUser.tempAccounts/initOnHook.test.js",
+			"modules/ext.checkUser.tempAccounts/initOnHook.js",
+			"tests/qunit/ext.checkUser.tempAccounts/rest.test.js",
+			"tests/qunit/ext.checkUser.tempAccounts/SpecialBlock.test.js",
+			"modules/ext.checkUser.tempAccounts/SpecialBlock.js",
+			"modules/ext.checkUser.tempAccounts/ShowIPButton.vue",
+			"modules/ext.checkUser.tempAccounts/api.js",
+			"modules/ext.checkUser.tempAccounts/BlockDetailsPopupButtonWidget.js",
+			"tests/qunit/ext.checkUser.tempAccounts/BlockDetailsPopupButtonWidget.test.js",
+			"tests/qunit/ext.checkUser.ipInfo.hooks/ext.ipinfo.infobox.widget.test.js",
+			"modules/ext.checkUser.ipInfo.hooks/infobox.js",
+			{
+				"name": "modules/ext.checkUser.tempAccounts/icons.json",
+				"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+				"callbackParam": [
+					"cdxIconNext",
+					"cdxIconPrevious"
+				]
+			}
+		],
+		"dependencies": [
+			"mediawiki.qunit-testrunner",
+			"mediawiki.base",
+			"mediawiki.router",
+			"mediawiki.storage",
+			"mediawiki.util",
+			"mediawiki.widgets",
+			"mediawiki.widgets.UserInputWidget",
+			"ext.checkUser",
+			"ext.checkUser.clientHints",
+			"sinonjs",
+			"vue",
+			"@wikimedia/codex"
+		]
+	},
+	"GroupPermissions": {
+		"checkuser": {
+			"checkuser": true,
+			"checkuser-log": true,
+			"checkuser-temporary-account-no-preference": true,
+			"checkuser-temporary-account-log": true
+		},
+		"temporary-account-viewer": {
+			"checkuser-temporary-account": true
+		}
+	},
+	"GrantPermissions": {
+		"checkuser": {
+			"checkuser": true,
+			"checkuser-log": true
+		},
+		"checkuser-temporary-account": {
+			"checkuser-temporary-account": true,
+			"checkuser-temporary-account-no-preference": true,
+			"checkuser-temporary-account-log": true
+		}
+	},
+	"GrantPermissionGroups": {
+		"checkuser": "administration",
+		"checkuser-temporary-account": "administration"
+	},
+	"GrantRiskGroups": {
+		"checkuser": "security",
+		"checkuser-temporary-account": "low"
+	},
+	"PrivilegedGroups": [
+		"checkuser"
+	],
+	"AvailableRights": [
+		"checkuser",
+		"checkuser-log",
+		"checkuser-temporary-account",
+		"checkuser-temporary-account-no-preference",
+		"checkuser-temporary-account-log",
+		"checkuser-temporary-account-auto-reveal"
+	],
+	"SpecialPages": {
+		"CheckUser": {
+			"class": "MediaWiki\\CheckUser\\CheckUser\\SpecialCheckUser",
+			"services": [
+				"LinkBatchFactory",
+				"UserGroupManager",
+				"CentralIdLookupFactory",
+				"PermissionManager",
+				"UserIdentityLookup",
+				"CheckUserTokenQueryManager",
+				"DBLoadBalancerFactory",
+				"UserFactory",
+				"CheckUserLogService",
+				"CommentFormatter",
+				"UserEditTracker",
+				"UserNamePrefixSearch",
+				"UserNameUtils",
+				"CheckUserHookRunner",
+				"CheckUserUtilityService",
+				"CommentStore",
+				"UserAgentClientHintsLookup",
+				"UserAgentClientHintsFormatter",
+				"CheckUserLookupUtils",
+				"LogFormatterFactory",
+				"UserOptionsLookup",
+				"DatabaseBlockStore"
+			]
+		},
+		"CheckUserLog": {
+			"class": "MediaWiki\\CheckUser\\CheckUser\\SpecialCheckUserLog",
+			"services": [
+				"LinkBatchFactory",
+				"PermissionManager",
+				"CommentStore",
+				"CommentFormatter",
+				"CheckUserLogService",
+				"UserFactory",
+				"ActorStore",
+				"DBLoadBalancerFactory"
+			]
+		},
+		"Investigate": {
+			"class": "MediaWiki\\CheckUser\\Investigate\\SpecialInvestigate",
+			"services": [
+				"LinkRenderer",
+				"ContentLanguage",
+				"UserOptionsManager",
+				"CheckUserPreliminaryCheckPagerFactory",
+				"CheckUserComparePagerFactory",
+				"CheckUserTimelinePagerFactory",
+				"CheckUserTokenQueryManager",
+				"CheckUserDurationManager",
+				"CheckUserEventLogger",
+				"CheckUserGuidedTourLauncher",
+				"CheckUserHookRunner",
+				"PermissionManager",
+				"CheckUserLogService",
+				"UserIdentityLookup",
+				"UserFactory",
+				"UrlUtils"
+			]
+		},
+		"InvestigateBlock": {
+			"class": "MediaWiki\\CheckUser\\Investigate\\SpecialInvestigateBlock",
+			"services": [
+				"BlockUserFactory",
+				"BlockPermissionCheckerFactory",
+				"PermissionManager",
+				"TitleFormatter",
+				"UserFactory",
+				"CheckUserEventLogger"
+			]
+		}
+	},
+	"LogTypes": [
+		"checkuser-temporary-account"
+	],
+	"LogNames": {
+		"checkuser-temporary-account": "checkuser-temporary-account-log-name"
+	},
+	"LogHeaders": {
+		"checkuser-temporary-account": "checkuser-temporary-account-log-header"
+	},
+	"LogActionsHandlers": {
+		"checkuser-temporary-account/*": {
+			"class": "MediaWiki\\CheckUser\\Logging\\TemporaryAccountLogFormatter",
+			"services": [
+				"UserFactory"
+			]
+		},
+		"checkuser-private-event/*": {
+			"class": "MediaWiki\\CheckUser\\Logging\\CheckUserPrivateEventLogFormatter",
+			"services": [
+				"UserFactory"
+			]
+		}
+	},
+	"LogRestrictions": {
+		"checkuser-temporary-account": "checkuser-temporary-account-log",
+		"checkuser-private-event": "checkuser"
+	},
+	"ActionFilteredLogs": {
+		"checkuser-temporary-account": {
+			"change-access": [
+				"change-access",
+				"af-change-access-enable",
+				"af-change-access-disable"
+			],
+			"view-ips": [
+				"view-ips",
+				"view-temporary-accounts-on-ip",
+				"af-view-protected-var-value"
+			]
+		}
+	},
+	"JobClasses": {
+		"checkuserLogTemporaryAccountAccess": "\\MediaWiki\\CheckUser\\Jobs\\LogTemporaryAccountAccessJob",
+		"checkuserPruneCheckUserDataJob": "\\MediaWiki\\CheckUser\\Jobs\\PruneCheckUserDataJob",
+		"checkuserUpdateUserCentralIndexJob": {
+			"class": "MediaWiki\\CheckUser\\Jobs\\UpdateUserCentralIndexJob",
+			"services": [
+				"ConnectionProvider"
+			]
+		},
+		"checkuserStoreClientHintsDataJob": {
+			"class": "MediaWiki\\CheckUser\\Jobs\\StoreClientHintsDataJob",
+			"services": [
+				"UserAgentClientHintsManager"
+			],
+			"needsPage": false
+		}
+	},
+	"AutoloadClasses": {
+		"MediaWiki\\CheckUser\\CheckUserQueryInterface": "src/CheckUserQueryInterface.php",
+		"MediaWiki\\CheckUser\\Hook\\CheckUserInsertChangesRow": "src/Hook/CheckUserInsertChangesRowHook.php",
+		"MediaWiki\\CheckUser\\Hook\\CheckUserInsertChangesRowHook": "src/Hook/CheckUserInsertChangesRowHook.php",
+		"MediaWiki\\CheckUser\\Hook\\CheckUserInsertLogEventRow": "src/Hook/CheckUserInsertLogEventRowHook.php",
+		"MediaWiki\\CheckUser\\Hook\\CheckUserInsertLogEventRowHook": "src/Hook/CheckUserInsertLogEventRowHook.php",
+		"MediaWiki\\CheckUser\\Hook\\CheckUserInsertPrivateEventRow": "src/Hook/CheckUserInsertPrivateEventRowHook.php",
+		"MediaWiki\\CheckUser\\Hook\\CheckUserInsertPrivateEventRowHook": "src/Hook/CheckUserInsertPrivateEventRowHook.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCheckUserTable": "maintenance/populateCheckUserTable.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PurgeOldData": "maintenance/purgeOldData.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCucActor": "maintenance/populateCucActor.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCucComment": "maintenance/populateCucComment.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCulActor": "maintenance/populateCulActor.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCulComment": "maintenance/populateCulComment.php",
+		"MediaWiki\\CheckUser\\Maintenance\\MoveLogEntriesFromCuChanges": "maintenance/moveLogEntriesFromCuChanges.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCheckUserTablesWithSimulatedData": "maintenance/populateCheckUserTablesWithSimulatedData.php",
+		"MediaWiki\\CheckUser\\Maintenance\\GenerateStatsAboutClientHintsData": "maintenance/generateStatsAboutClientHintsData.php",
+		"MediaWiki\\CheckUser\\Maintenance\\FixTrailingSpacesInLogs": "maintenance/fixTrailingSpacesInLogs.php",
+		"MediaWiki\\CheckUser\\Maintenance\\DeleteReadOldRowsInCuChanges": "maintenance/deleteReadOldRowsInCuChanges.php",
+		"MediaWiki\\CheckUser\\Maintenance\\PopulateCentralCheckUserIndexTables": "maintenance/populateCentralCheckUserIndexTables.php",
+		"MediaWiki\\CheckUser\\Maintenance\\MigrateTemporaryAccountIPViewerGroup": "maintenance/migrateTemporaryAccountIPViewerGroup.php"
+	},
+	"ServiceWiringFiles": [
+		"src/ServiceWiring.php"
+	],
+	"AutoloadNamespaces": {
+		"MediaWiki\\CheckUser\\": "src/"
+	},
+	"TestAutoloadClasses": {
+		"MediaWiki\\CheckUser\\Tests\\Integration\\Maintenance\\Mocks\\SemiMockedCheckUserDataPurger": "tests/phpunit/integration/maintenance/mocks/SemiMockedCheckUserDataPurger.php"
+	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\CheckUser\\Tests\\": "tests/phpunit/",
+		"MediaWiki\\CheckUser\\Tests\\Unit\\": "tests/phpunit/unit/",
+		"MediaWiki\\CheckUser\\Tests\\Integration\\": "tests/phpunit/integration/"
+	},
+	"load_composer_autoloader": true,
+	"DatabaseVirtualDomains": [
+		"virtual-checkuser-global"
+	],
+	"manifest_version": 2
+}

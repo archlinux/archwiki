@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
@@ -8,7 +9,6 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 use Wikimedia\Assert\Assert;
 
@@ -60,18 +60,18 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			$badFileLookup = $services->getBadFileLookup();
 		}
 
+		Html::addClass( $this->mAttribs['class'], 'gallery' );
+		Html::addClass( $this->mAttribs['class'], 'mw-gallery-' . $this->mMode );
+
 		if ( $this->mPerRow > 0 ) {
 			$maxwidth = $this->mPerRow * ( $this->mWidths + $this->getAllPadding() );
 			$oldStyle = $this->mAttribs['style'] ?? '';
 			$this->mAttribs['style'] = "max-width: {$maxwidth}px;" . $oldStyle;
 		}
 
-		$attribs = Sanitizer::mergeAttributes(
-			[ 'class' => 'gallery mw-gallery-' . $this->mMode ], $this->mAttribs );
-
 		$parserOutput->addModules( $this->getModules() );
 		$parserOutput->addModuleStyles( [ 'mediawiki.page.gallery.styles' ] );
-		$output = Html::openElement( 'ul', $attribs );
+		$output = Html::openElement( 'ul', $this->mAttribs );
 		if ( $this->mCaption ) {
 			$output .= "\n\t" . Html::rawElement( 'li', [ 'class' => 'gallerycaption' ], $this->mCaption );
 		}
@@ -80,7 +80,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			// Preload LinkCache info for when generating links
 			// of the filename below
 			$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
-			$lb = $linkBatchFactory->newLinkBatch();
+			$lb = $linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 			foreach ( $this->mImages as [ $title, /* see below */ ] ) {
 				$lb->addObj( $title );
 			}

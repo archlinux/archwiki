@@ -10,14 +10,17 @@ use MediaWikiIntegrationTestCase;
  * @covers \MediaWiki\Parser\StripState
  */
 class StripStateTest extends MediaWikiIntegrationTestCase {
+	private int $markerValue = 0;
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->setContentLang( 'qqx' );
+		$this->markerValue = 0;
 	}
 
 	private function getMarker() {
-		static $i;
-		return Parser::MARKER_PREFIX . '-blah-' . sprintf( '%08X', $i++ ) . Parser::MARKER_SUFFIX;
+		$i = $this->markerValue++;
+		return Parser::MARKER_PREFIX . '-blah-' . sprintf( '%08X', $i ) . Parser::MARKER_SUFFIX;
 	}
 
 	private static function getWarning( $message, $max = '' ) {
@@ -178,5 +181,87 @@ class StripStateTest extends MediaWikiIntegrationTestCase {
 			return preg_replace( "#</?nowiki[^>]*>#", '', $s );
 		} );
 		$this->assertSame( $out2, $text );
+	}
+
+	public function testSplitSimple() {
+		// "Raw HTML" nowiki strip marker
+		$ss = new StripState();
+		$rawHtml = "<span>foo</span>";
+		$m1 = $this->getMarker();
+		$ss->addNoWiki( $m1, $rawHtml );
+		$expected = [
+			[ 'type' => 'string', 'content' => 'abc ' ],
+			[ 'type' => 'nowiki', 'content' => $rawHtml, 'extra' => null, 'marker' => $m1 ],
+			[ 'type' => 'string', 'content' => ' def' ],
+		];
+		$this->assertSame( $expected, $ss->split( "abc $m1 def" ) );
+
+		// "nowiki" nowiki strip marker
+		$ss = new StripState();
+		$m2 = $this->getMarker();
+		$nowiki = "''foo''";
+		$ss->addNoWiki( $m2, $nowiki, 'nowiki' );
+
+		$text = "abc $m2 def";
+		$r2 = $ss->split( $text );
+
+		$expected = [
+			[ 'type' => 'string', 'content' => 'abc ' ],
+			[ 'type' => 'nowiki', 'content' => $nowiki, 'extra' => 'nowiki', 'marker' => $m2 ],
+			[ 'type' => 'string', 'content' => ' def' ],
+		];
+		$this->assertSame( $expected, $r2 );
+
+		// "nowiki" empty nowiki strip marker
+		$ss = new StripState();
+		$m2 = $this->getMarker();
+		$nowiki = "";
+		$ss->addNoWiki( $m2, $nowiki, 'nowiki' );
+
+		$text = "abc $m2 def";
+		$r2 = $ss->split( $text );
+
+		$expected = [
+			[ 'type' => 'string', 'content' => 'abc ' ],
+			[ 'type' => 'nowiki', 'content' => '', 'extra' => 'nowiki', 'marker' => $m2 ],
+			[ 'type' => 'string', 'content' => ' def' ],
+		];
+		$this->assertSame( $expected, $r2 );
+
+		// exttag strip marker
+		$ref = "<ref>foo</ref>";
+		$m3 = $this->getMarker();
+		$ss->addExtTag( $m3, $ref );
+
+		$text .= $m3;
+		$r3 = $ss->split( $text );
+		$expected = array_merge( $expected, [
+			[ 'type' => 'string', 'content' => $ref ],
+			[ 'type' => 'string', 'content' => '' ]
+		] );
+		$this->assertSame( $expected, $r3 );
+	}
+
+	public function testSplitRecursive() {
+		$ss = new StripState();
+
+		$ref = "<ref>foo</ref>";
+		$m1 = $this->getMarker();
+		$ss->addExtTag( $m1, $ref );
+
+		$poem = "<poem>foo $m1</poem>";
+		$m2 = $this->getMarker();
+		$ss->addExtTag( $m2, $poem );
+
+		$text = "abc $m2";
+		$expected = [
+			[ 'type' => 'string', 'content' => 'abc ' ],
+			[ 'type' => 'string', 'content' => '<poem>foo ' ],
+			[ 'type' => 'string', 'content' => $ref ],
+			[ 'type' => 'string', 'content' => '</poem>' ],
+			[ 'type' => 'string', 'content' => '' ],
+		];
+		$result = $ss->split( $text );
+		$this->assertSame( $expected, $result );
 	}
 }

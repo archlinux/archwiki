@@ -58,7 +58,6 @@
 	"oath-log-header": "Ovi događaji prate promjene statusa dvofaktorske autentifikacije suradnika/suradnice.",
 	"logentry-oath-disable-other": "{{GENDER:$2|suradnik $1 je onemogućio je|suradnica $1 onemogućila je|suradnik/suradnica $1 onemogućio/onemogućila}} je dvofaktorsku autentifikaciju suradnika/suradnice $3",
 	"oathauth-ui-no-module": "Nije omogućeno",
-	"oathauth-module-invalid": "Nije valjan modul OATHAuth-a koji je registrirao suradnik.",
 	"oathauth-module-totp-label": "TOTP (jednokratni kôd)",
 	"oathauth-ui-manage": "Upravljaj",
 	"oathmanage": "Upravljanje dvofaktorskom autentifikacijom",
@@ -76,6 +75,5 @@
 	"oathauth-disable-method-warning-header": "Potvrđivanje onemogućavanja autentifikacijske metode",
 	"oathauth-disable-method-warning-button-label": "Potvrdi i nastavi",
 	"oathauth-disable-method-warning": "Ako onemogućite dvofaktorsku autentifikacijsku metodu naziva $1, više nećete biti u mogućnosti rabiti tu metodu pri prijavljivanju, a svi će podatci povezani s tom autentifikacijskom metodom biti izbrisani.",
-	"oathauth-switch-method-warning-header": "Potvrđivanje prijelaza na ostale autentifikacijske metode",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nema omogućenu dvofaktorsku autentifikaciju."
 }

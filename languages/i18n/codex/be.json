@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "Закрыць",
 	"cdx-label-optional-flag": "(неабавязкова)",
 	"cdx-message-dismiss-button-label": "Закрыць",
+	"cdx-popover-close-button-label": "Закрыць",
 	"cdx-search-input-search-button-label": "Пошук",
 	"cdx-table-select-all-label": "Выбраць усе радкі",
 	"cdx-table-select-row-label": "Выбраць радок $1 з $2",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Паказаны вынікі $1–$2 з многіх",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 з многіх",
 	"cdx-table-pagination-status-message-indeterminate-final": "Паказаны {{PLURAL:$1|апошні $1 вынік|$1 апошнія вынікі|апошнія $1 вынікаў|1=апошні вынік}}",
-	"cdx-table-pagination-status-message-pending": "Загрузка вынікаў..."
+	"cdx-table-pagination-status-message-pending": "Загрузка вынікаў...",
+	"cdx-table-no-data-message": "Няма даступных дадзеных."
 }

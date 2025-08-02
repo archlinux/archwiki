@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
 
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
+use MediaWiki\Maintenance\Maintenance;
 
 class GenerateDoc extends Maintenance {
 

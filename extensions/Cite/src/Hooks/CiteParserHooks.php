@@ -64,7 +64,7 @@ class CiteParserHooks implements
 	 * @param StripState $stripState
 	 */
 	public function onParserAfterParse( $parser, &$text, $stripState ) {
-		if ( isset( $parser->extCite ) ) {
+		if ( $parser->extCite !== null ) {
 			/** @var Cite $cite */
 			$cite = $parser->extCite;
 			$text .= $cite->checkRefsNoReferences( $parser, $parser->getOptions()->getIsSectionPreview() );

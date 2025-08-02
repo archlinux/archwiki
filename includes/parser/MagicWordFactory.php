@@ -226,8 +226,6 @@ class MagicWordFactory {
 
 	/**
 	 * Get a MagicWordArray of double-underscore entities
-	 *
-	 * @return MagicWordArray
 	 */
 	public function getDoubleUnderscoreArray(): MagicWordArray {
 		if ( $this->mDoubleUnderscoreArray === null ) {
@@ -247,6 +245,3 @@ class MagicWordFactory {
 		return new MagicWordArray( $names, $this );
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( MagicWordFactory::class, 'MagicWordFactory' );

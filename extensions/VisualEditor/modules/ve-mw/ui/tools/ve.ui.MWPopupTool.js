@@ -107,10 +107,13 @@ ve.ui.MWNoticesPopupTool.static.autoAddToCatchall = false;
 ve.ui.MWNoticesPopupTool.prototype.setNotices = function ( notices ) {
 	const count = notices.length;
 
-	this.popup.setLabel( ve.msg(
+	const noticeMsg = ve.msg(
 		'visualeditor-editnotices-tool',
 		mw.language.convertNumber( count )
-	) );
+	);
+
+	this.popup.setLabel( noticeMsg );
+	this.setTitle( noticeMsg );
 
 	if ( this.$items ) {
 		this.$items.remove();
@@ -139,18 +142,6 @@ ve.ui.MWNoticesPopupTool.prototype.setNotices = function ( notices ) {
 	mw.hook( 'wikipage.content' ).fire( this.popup.$body );
 
 	ve.track( 'activity.notices', { action: 'show' } );
-};
-
-/**
- * Get the tool title.
- *
- * @inheritdoc
- */
-ve.ui.MWNoticesPopupTool.prototype.getTitle = function () {
-	const items = this.toolbar.getTarget().getEditNotices();
-
-	// eslint-disable-next-line mediawiki/msg-doc
-	return ve.msg( this.constructor.static.title, items.length );
 };
 
 /* Registration */

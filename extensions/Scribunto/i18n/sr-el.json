@@ -19,7 +19,7 @@
 	"scribunto-common-nosuchmodule": "Greška u skripti: Ne postoji modul „$2”.",
 	"scribunto-common-notafunction": "Greška u skripti: „$2” nije funkcija.",
 	"scribunto-common-timeout": "Vreme izdvojeno za pokretanje skripti je isteklo.",
-	"scribunto-common-no-details": "Nije dostupno više informacija.",
+	"scribunto-common-no-details": "Nema dostupnih detalja o lokaciji koda.",
 	"scribunto-lua-error-location": "Lua greška $1: $2.",
 	"scribunto-lua-error": "Lua greška: $2.",
 	"scribunto-module-with-errors-category-desc": "Moduli sa greškom.",

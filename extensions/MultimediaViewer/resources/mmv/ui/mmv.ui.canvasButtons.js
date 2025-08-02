@@ -56,11 +56,16 @@ class CanvasButtons extends UiElement {
 			.addClass( 'cdx-button cdx-button--icon-only cdx-button--size-large mw-mmv-button mw-mmv-prev-image' )
 			.append( $( '<span>' ).addClass( 'mw-mmv-icon' ) );
 
+		this.$currentImageNumber = $( '<div>' )
+			.addClass( 'mw-mmv-current-image-number' )
+			.hide();
+
 		this.$nav = this.$next
 			.add( this.$prev )
 			.hide();
 
 		this.$buttons = this.$close
+			.add( this.$currentImageNumber )
 			.add( this.$download )
 			.add( this.$reuse )
 			.add( this.$fullscreen )
@@ -70,6 +75,7 @@ class CanvasButtons extends UiElement {
 		this.$buttons.appendTo( this.$container );
 
 		$( document ).on( 'mmv-close', () => {
+			this.$currentImageNumber.hide();
 			this.$nav.hide();
 		} );
 

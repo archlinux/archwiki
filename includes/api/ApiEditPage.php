@@ -22,16 +22,17 @@
 
 namespace MediaWiki\Api;
 
-use Article;
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Exception\MWContentSerializationException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Request\DerivativeRequest;
@@ -45,7 +46,6 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
-use MWContentSerializationException;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -375,6 +375,8 @@ class ApiEditPage extends ApiBase {
 			'wpIgnoreBlankSummary' => true,
 			'wpIgnoreBlankArticle' => true,
 			'wpIgnoreSelfRedirect' => true,
+			'wpIgnoreBrokenRedirects' => true,
+			'wpIgnoreDoubleRedirects' => true,
 			'bot' => $params['bot'],
 			'wpUnicodeCheck' => EditPage::UNICODE_CHECK,
 		];
@@ -638,11 +640,6 @@ class ApiEditPage extends ApiBase {
 							break;
 						case EditPage::AS_IMAGE_REDIRECT_LOGGED:
 							$status->fatal( 'apierror-noimageredirect' );
-							break;
-						case EditPage::AS_CONTENT_TOO_BIG:
-						case EditPage::AS_MAX_ARTICLE_SIZE_EXCEEDED:
-							$status->fatal( 'apierror-contenttoobig',
-								$this->getConfig()->get( MainConfigNames::MaxArticleSize ) );
 							break;
 						case EditPage::AS_READ_ONLY_PAGE_ANON:
 							$status->fatal( 'apierror-noedit-anon' );

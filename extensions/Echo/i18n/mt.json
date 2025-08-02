@@ -36,6 +36,7 @@
 	"echo-pref-tooltip-mention": "Għarrafni meta xi ħadd joħloq ħolqa minn xi paġna tad-diskussjoni għall-paġna tal-utent tiegħi.",
 	"notifications": "Notifiki",
 	"tooltip-pt-notifications-alert": "L-avviżi tiegħek",
+	"tooltip-pt-notifications": "In-notifiki tiegħek",
 	"echo-specialpage": "Notifiki",
 	"echo-none": "M'għandek l-ebda notifika",
 	"notification-link-text-expand-alert-count": "Ara {{PLURAL:$1|$1 avviż|$1 avviżi}}",

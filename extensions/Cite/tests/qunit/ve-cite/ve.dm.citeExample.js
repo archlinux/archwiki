@@ -707,25 +707,25 @@ ve.dm.citeExample.domToDataCases = {
 			{ type: '/internalList' }
 		]
 	},
-	'Extend reference': {
+	'Simple main plus details': {
 		body: ve.dm.example.singleLine`
 			<p>
 				<sup typeof="mw:Extension/ref" class="mw-ref reference"
-				 data-mw='{"name":"ref","body":{"html":"Bar"},"attrs":{"extends":"foo"}}'>
+				 data-mw='{"name":"ref","body":{"html":"main body"},"attrs":{"details":"details body","name":"name"},"isMainRefBodyWithDetails":"1","mainRef":"name","mainBody":"mw-reference-text-cite_note-name-1"}'>
 				</sup>
 			</p>
 		`,
 		fromDataBody: ve.dm.example.singleLine`
 			<p>
 				<sup typeof="mw:Extension/ref"
-				 data-mw='{"name":"ref","body":{"html":"Bar"},"attrs":{"extends":"foo"}}'>
+				 data-mw='{"name":"ref","body":{"html":"main body"},"attrs":{"details":"details body","name":"name"},"isMainRefBodyWithDetails":"1","mainRef":"name","mainBody":"mw-reference-text-cite_note-name-1"}'>
 				</sup>
 			</p>
 		`,
 		clipboardBody: ve.dm.example.singleLine`
 			<p>
 				<sup typeof="mw:Extension/ref"
-				 data-mw='{"name":"ref","body":{"html":"Bar"},"attrs":{"extends":"foo"}}'
+				 data-mw='{"name":"ref","body":{"html":"main body"},"attrs":{"details":"details body","name":"name"},"isMainRefBodyWithDetails":"1","mainRef":"name","mainBody":"mw-reference-text-cite_note-name-1"}'
 				 class="mw-ref reference">
 					<a>
 						<span class="mw-reflink-text"><span class="cite-bracket">[</span>1.1<span class="cite-bracket">]</span></span>
@@ -739,16 +739,19 @@ ve.dm.citeExample.domToDataCases = {
 				type: 'mwReference',
 				attributes: {
 					contentsUsed: true,
-					extendsRef: 'literal/foo',
+					extendsRef: 'literal/name',
 					listGroup: 'mwReference/',
 					listIndex: 0,
-					listKey: 'auto/0',
+					listKey: 'literal/name',
 					mw: {
-						attrs: { extends: 'foo' },
-						body: { html: 'Bar' },
+						attrs: { details: 'details body', name: 'name' },
+						body: { html: 'main body' },
+						isMainRefBodyWithDetails: '1',
+						mainRef: 'name',
+						mainBody: 'mw-reference-text-cite_note-name-1',
 						name: 'ref'
 					},
-					originalMw: '{"name":"ref","body":{"html":"Bar"},"attrs":{"extends":"foo"}}',
+					originalMw: '{"name":"ref","body":{"html":"main body"},"attrs":{"details":"details body","name":"name"},"isMainRefBodyWithDetails":"1","mainRef":"name","mainBody":"mw-reference-text-cite_note-name-1"}',
 					refGroup: ''
 				}
 			},
@@ -756,14 +759,14 @@ ve.dm.citeExample.domToDataCases = {
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{
-				attributes: { originalHtml: 'Bar' },
+				attributes: { originalHtml: 'main body' },
 				type: 'internalItem'
 			},
 			{
 				internal: { generated: 'wrapper' },
 				type: 'paragraph'
 			},
-			'B', 'a', 'r',
+			'm', 'a', 'i', 'n', ' ', 'b', 'o', 'd', 'y',
 			{ type: '/paragraph' },
 			{ type: '/internalItem' },
 			{ type: '/internalList' }
@@ -995,6 +998,7 @@ ve.dm.citeExample.complexInternalData.internalItems = [
 
 ve.dm.citeExample.complexInternalData.internalListNextUniqueNumber = 1;
 
+// TODO: Rewrite for details syntax
 ve.dm.citeExample.extends = [
 	{ type: 'paragraph' },
 	{ type: 'mwReference', attributes: {

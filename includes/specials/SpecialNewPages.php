@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Specials;
 
-use HtmlArmor;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
@@ -39,6 +38,7 @@ use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * List of newly created pages
@@ -68,17 +68,6 @@ class SpecialNewPages extends IncludableSpecialPage {
 	private ChangeTagsStore $changeTagsStore;
 	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param RevisionLookup $revisionLookup
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param RowCommentFormatter $rowCommentFormatter
-	 * @param ChangeTagsStore $changeTagsStore
-	 * @param TempUserConfig $tempUserConfig
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IContentHandlerFactory $contentHandlerFactory,
@@ -391,7 +380,7 @@ class SpecialNewPages extends IncludableSpecialPage {
 		$out->addModuleStyles( 'mediawiki.special' );
 	}
 
-	private function getNewPagesPager() {
+	private function getNewPagesPager(): NewPagesPager {
 		return new NewPagesPager(
 			$this->getContext(),
 			$this->getLinkRenderer(),

@@ -8,6 +8,7 @@
 		]
 	},
 	"tooltip-pt-notifications-alert": "{{GENDER:|तमरा}} अलर्टहरू",
+	"tooltip-pt-notifications": "तमरा जानकारीहरू",
 	"notification-dynamic-actions-unwatch": "\"$1\"मी नौला कृयाकलाप तक्द {{GENDER:$3|बन्द}} अरऽ",
 	"notification-dynamic-actions-unwatch-confirmation": "{{GENDER:$3|तम}} आब \"$1\" पन्ना नाइहेद्दार्‍याऽ",
 	"notification-dynamic-actions-watch": "\"$1\"मी नौलो कृयाकलाप {{GENDER:$3|पछ्याऽ}}",

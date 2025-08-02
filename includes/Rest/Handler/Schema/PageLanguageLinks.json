@@ -1,0 +1,30 @@
+{
+	"x-i18n-description": "rest-schema-desc-page-language-links",
+	"type": "array",
+	"items": {
+		"required": [
+			"code",
+			"name",
+			"key",
+			"title"
+		],
+		"properties": {
+			"code": {
+				"type": "string",
+				"x-i18n-description": "rest-property-desc-page-language-code"
+			},
+			"name": {
+				"type": "string",
+				"x-i18n-description": "rest-property-desc-page-language-name"
+			},
+			"key": {
+				"type": "string",
+				"x-i18n-description": "rest-property-desc-page-language-key"
+			},
+			"title": {
+				"type": "string",
+				"x-i18n-description": "rest-property-desc-page-language-title"
+			}
+		}
+	}
+}

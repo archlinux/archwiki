@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alan Mena",
+			"Arnaugir",
 			"Fitoschido",
 			"Galactic Thrasher",
 			"KRLS",
@@ -14,9 +15,8 @@
 			"Solde",
 			"Toniher",
 			"Vriullop",
-			"Xavier Dengra",
 			"Woytecr",
-			"Arnaugir"
+			"Xavier Dengra"
 		]
 	},
 	"discussiontools": "Eines de discussió",
@@ -190,9 +190,9 @@
 	"tag-discussiontools-description": "Edició realitzada a través de DiscussionTools",
 	"tag-discussiontools-edit": "Intervenció editada",
 	"tag-discussiontools-edit-description": "L'usuari ha editat un comentari ja existent amb DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Tema nou]",
+	"tag-discussiontools-newtopic": "Tema nou",
 	"tag-discussiontools-newtopic-description": "L'usuari ha afegit un nou tema amb DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respost]",
+	"tag-discussiontools-reply": "Respost",
 	"tag-discussiontools-reply-description": "L'usuari ha respost un comentari amb DiscussionTools",
 	"tag-discussiontools-source-description": "Les Eines de Discussió es trobaven en el mode d'edició amb codi wiki",
 	"tag-discussiontools-source-enhanced-description": "Les Eines de Discussió es trobaven a la barra d'eines del mode avançat d'edició de codi wiki",

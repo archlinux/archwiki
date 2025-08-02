@@ -99,6 +99,8 @@ $separatorTransformTable = [
 	',' => '٬', # U+066C
 ];
 
+$numberingSystem = 'arab';
+
 $namespaceNames = [
 	NS_MEDIA            => 'ميديا',
 	NS_SPECIAL          => 'خاص',
@@ -210,6 +212,8 @@ $magicWords = [
 	'img_width'                 => [ '1', '$1بك', '$1عن', '$1px' ],
 	'index'                     => [ '1', '__فهرسة__', '__INDEX__' ],
 	'int'                       => [ '0', 'محتوى:', 'INT:' ],
+	'interlanguagelink'         => [ '1', '#وصلة_بين_اللغات', '#رابط_بين_اللغات', '#interlanguagelink' ],
+	'interwikilink'             => [ '1', '#وصلة_إنترويكي', '#رابط_إنترويكي', '#interwikilink' ],
 	'language'                  => [ '0', '#لغة', '#LANGUAGE' ],
 	'language_option_bcp47'     => [ '1', 'بي_سي_بي_47', 'bcp47' ],
 	'lc'                        => [ '0', 'صغير:', 'LC:' ],
@@ -360,6 +364,7 @@ $specialPageAliases = [
 	'Filepath'                  => [ 'مسار_ملف' ],
 	'GoToInterwiki'             => [ 'الذهاب_إلى_الإنترويكي' ],
 	'Import'                    => [ 'استيراد' ],
+	'Interwiki'                 => [ 'إنترويكي' ],
 	'Invalidateemail'           => [ 'تعطيل_البريد_الإلكتروني' ],
 	'JavaScriptTest'            => [ 'اختبار_جافا_سكريبت' ],
 	'LinkAccounts'              => [ 'وصل_الحسابات' ],

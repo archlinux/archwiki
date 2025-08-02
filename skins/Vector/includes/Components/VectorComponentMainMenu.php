@@ -1,11 +1,11 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Skin\Skin;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
-use Skin;
 
 /**
  * VectorComponentMainMenu component

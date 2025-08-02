@@ -20,6 +20,7 @@ use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
 use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -348,6 +349,9 @@ class TestRunner {
 		$handler = $env->getContentHandler();
 		$extApi = new ParsoidExtensionAPI( $env );
 		$doc = $handler->toDOM( $extApi );
+		DOMDataUtils::visitAndStoreDataAttribs( DOMCompat::getBody( $doc ), [
+			'storeInPageBundle' => false,
+		] );
 		return $doc;
 	}
 
@@ -367,7 +371,21 @@ class TestRunner {
 		} else {
 			$selserData = null;
 		}
-		$env->topLevelDoc = $doc;
+		Assert::invariant(
+				!DOMDataUtils::isPreparedAndLoaded( $doc ),
+				"doc should not be prepared and loaded already"
+		);
+		DOMDataUtils::prepareDoc( $doc );
+		DOMDataUtils::visitAndLoadDataAttribs(
+			DOMCompat::getBody( $doc ), [
+				'markNew' => true, 'validateXMLNames' => true,
+			]
+		);
+		// Mark the document as loaded so we can try to catch errors which
+		// might try to reload this again later.
+		DOMDataUtils::getBag( $doc )->loaded = true;
+
+		$env->setupTopLevelDoc( $doc );
 		$extApi = new ParsoidExtensionAPI( $env );
 		return $env->getContentHandler()->fromDOM( $extApi, $selserData );
 	}
@@ -429,7 +447,7 @@ class TestRunner {
 			!empty( $testOpts['parsoid'] ) &&
 			!isset( $testOpts['parsoid']['normalizePhp'] )
 		);
-		$test->time['start'] = microtime( true );
+		$test->time['start'] = hrtime( true );
 		$doc = null;
 		$wt = null;
 
@@ -446,7 +464,10 @@ class TestRunner {
 				// therefore causes false failures.
 				$html = TestUtils::normalizePhpOutput( $html );
 			}
-			$doc = ContentUtils::createDocument( $html );
+			// FUTURE WORK: it would be better if we used
+			// ContentUtils::createAndLoadDocument() here -- and for all of the
+			// ::parseHTML() calls below this as well.
+			$doc = DOMUtils::parseHTML( $html );
 			$wt = $this->convertHtml2Wt( $env, $test, $mode, $doc );
 		} else { // startsAtWikitext
 			// Always serialize DOM to string and reparse before passing to wt2wt
@@ -464,10 +485,10 @@ class TestRunner {
 				if ( $mode === 'wt2html' ) {
 					// no-op
 				} else {
-					$doc = ContentUtils::createDocument( $test->cachedBODYstr );
+					$doc = DOMUtils::parseHTML( $test->cachedBODYstr );
 				}
 			} else {
-				$doc = ContentUtils::createDocument( $test->cachedBODYstr );
+				$doc = DOMUtils::parseHTML( $test->cachedBODYstr );
 			}
 		}
 
@@ -491,7 +512,7 @@ class TestRunner {
 			// Save the modified DOM so we can re-test it later.
 			// Always serialize to string and reparse before passing to selser/wt2wt.
 			$test->changedHTMLStr = ContentUtils::toXML( DOMCompat::getBody( $doc ) );
-			$doc = ContentUtils::createDocument( $test->changedHTMLStr );
+			$doc = DOMUtils::parseHTML( $test->changedHTMLStr );
 		} elseif ( $mode === 'wt2wt' ) {
 			// Handle a 'changes' option if present.
 			if ( $testManualChanges ) {
@@ -632,7 +653,7 @@ class TestRunner {
 		}
 		if ( isset( $opts['showmedia'] ) ) {
 			$images = array_map(
-				fn ( $item ) => $item['link']->getDBkey(),
+				static fn ( $item ) => $item['link']->getDBkey(),
 				$output->getLinkList( StubMetadataCollector::LINKTYPE_MEDIA )
 			);
 			$after[] = 'images=' . implode( ', ', $images );
@@ -685,14 +706,12 @@ class TestRunner {
 		Env $env, Test $test, array $options, string $mode, Document $doc
 	): void {
 		$modeObj = new TestMode( $mode );
-		$test->time['end'] = microtime( true );
+		$test->time['end'] = hrtime( true );
 		$metadataExpected = self::getStandaloneMetadataSection( $test );
 		$metadataActual = null;
 		if ( isset( $test->options['nohtml'] ) ) {
 			$body = DOMCompat::getBody( $doc );
-			while ( $body->hasChildNodes() ) {
-				$body->removeChild( $body->firstChild );
-			}
+			DOMCompat::replaceChildren( $body );
 		}
 		$this->addParserOutputInfo(
 			$env, $test, $options, $mode, $doc,
@@ -735,13 +754,13 @@ class TestRunner {
 	private function processSerializedWT(
 		Env $env, Test $test, array $options, string $mode, string $wikitext
 	): void {
-		$test->time['end'] = microtime( true );
+		$test->time['end'] = hrtime( true );
 
 		if ( $mode === 'selser' && $options['selser'] !== 'noauto' ) {
 			if ( $test->changetree === [ 5 ] ) {
 				$test->resultWT = $test->wikitext;
 			} else {
-				$doc = ContentUtils::createDocument( $test->changedHTMLStr );
+				$doc = DOMUtils::parseHTML( $test->changedHTMLStr );
 				$test->resultWT = $this->convertHtml2Wt( $env, $test, 'wt2wt', $doc );
 			}
 		}
@@ -788,7 +807,7 @@ class TestRunner {
 	}
 
 	/**
-	 * Removes DSR from data-parsoid for test normalization of a complet document. If
+	 * Removes DSR from data-parsoid for test normalization of a complete document. If
 	 * data-parsoid gets subsequently empty, removes it too.
 	 * @param string $raw
 	 * @return string
@@ -800,8 +819,7 @@ class TestRunner {
 				$this->filterNodeDsr( $child );
 			}
 		}
-		DOMDataUtils::visitAndStoreDataAttribs( $doc );
-		$ret = ContentUtils::toXML( DOMCompat::getBody( $doc ), [ 'innerXML' => true ] );
+		$ret = ContentUtils::ppToXML( DOMCompat::getBody( $doc ), [ 'innerXML' => true ] );
 		$ret = preg_replace( '/\sdata-parsoid="{}"/', '', $ret );
 		return $ret;
 	}
@@ -812,6 +830,8 @@ class TestRunner {
 	private function filterNodeDsr( Element $el ) {
 		$dp = DOMDataUtils::getDataParsoid( $el );
 		unset( $dp->dsr );
+		// XXX: could also set TempData::IS_NEW if !$dp->isModified(),
+		// rather than using the preg_replace above.
 		foreach ( $el->childNodes as $child ) {
 			if ( $child instanceof Element ) {
 				$this->filterNodeDsr( $child );
@@ -1111,6 +1131,8 @@ class TestRunner {
 			);
 		}
 
+		$this->siteConfig->v3pf = $test->config['wgParsoidExperimentalParserFunctionSupport'] ?? false;
+
 		// Process test-specific options
 		if ( $testOpts ) {
 			Assert::invariant( !isset( $testOpts['extensions'] ),
@@ -1138,21 +1160,21 @@ class TestRunner {
 
 			// Emulate PHP parser's tag hook to tunnel content past the sanitizer
 			if ( isset( $testOpts['styletag'] ) ) {
-				$this->siteConfig->registerParserTestExtension( new StyleTag() );
+				$teardown[] = $this->siteConfig->registerParserTestExtension( StyleTag::class );
 			}
 
 			if ( ( $testOpts['wgrawhtml'] ?? null ) === '1' ) {
-				$this->siteConfig->registerParserTestExtension( new RawHTML() );
+				$teardown[] = $this->siteConfig->registerParserTestExtension( RawHTML::class );
 			}
 
 			if ( isset( $testOpts['thumbsize'] ) ) {
 				$this->siteConfig->thumbsize = (int)$testOpts['thumbsize'];
 			}
 			if ( isset( $testOpts['annotations'] ) ) {
-				$this->siteConfig->registerParserTestExtension( new DummyAnnotation() );
+				$teardown[] = $this->siteConfig->registerParserTestExtension( DummyAnnotation::class );
 			}
 			if ( isset( $testOpts['i18next'] ) ) {
-				$this->siteConfig->registerParserTestExtension( new I18nTag() );
+				$teardown[] = $this->siteConfig->registerParserTestExtension( I18nTag::class );
 			}
 			if ( isset( $testOpts['externallinktarget'] ) ) {
 				$this->siteConfig->setExternalLinkTarget( $testOpts['externallinktarget'] );
@@ -1160,12 +1182,12 @@ class TestRunner {
 		}
 
 		// Ensure ParserHook is always registered!
-		$this->siteConfig->registerParserTestExtension( new ParserHook() );
+		$teardown[] = $this->siteConfig->registerParserTestExtension( ParserHook::class );
 
 		$runner = $this;
 		$test->testAllModes( $targetModes, $options, Closure::fromCallable( [ $this, 'runTest' ] ) );
 
-		foreach ( $teardown as $t ) {
+		foreach ( array_reverse( $teardown ) as $t ) {
 			$t();
 		}
 	}
@@ -1230,14 +1252,14 @@ class TestRunner {
 		 * // "suppressError" option on the test if error is expected.)
 		 * $env->setLogger = ( ( function ( $parserTests, $superSetLogger ) {
 		 * return function ( $_logger ) use ( &$parserTests ) {
-		 * call_user_func( 'superSetLogger', $_logger );
+		 * superSetLogger( $_logger );
 		 * $this->log = function ( $level ) use ( &$_logger, &$parserTests ) {
 		 * if ( $_logger !== $parserTests->suppressLogger &&
 		 * preg_match( '/^(fatal|error)\b/', $level )
 		 * ) {
 		 * $parserTests->stats->loggedErrorCount++;
 		 * }
-		 * return call_user_func_array( [ $_logger, 'log' ], $arguments );
+		 * return $_logger->log( ...$arguments );
 		 * };
 		 * };
 		 * } ) );

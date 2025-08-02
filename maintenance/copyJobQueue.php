@@ -21,6 +21,8 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\JobQueue\JobQueue;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\WikiMap\WikiMap;
 
 // @codeCoverageIgnoreStart
@@ -75,7 +77,7 @@ class CopyJobQueue extends Maintenance {
 		}
 	}
 
-	protected function copyJobs( JobQueue $src, JobQueue $dst, $jobs ) {
+	protected function copyJobs( JobQueue $src, JobQueue $dst, iterable $jobs ): array {
 		$total = 0;
 		$totalOK = 0;
 		$batch = [];

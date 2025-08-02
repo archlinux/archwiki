@@ -2,6 +2,7 @@
 
 namespace Shellbox\RPC;
 
+use Psr\Http\Client\ClientExceptionInterface;
 use Shellbox\ShellboxError;
 
 /**
@@ -28,6 +29,8 @@ interface RpcClient {
 	 *      return value will be similarly converted to a string.
 	 * @return mixed
 	 * @throws ShellboxError
+	 * @throws ClientExceptionInterface
+	 * @suppress PhanTypeInvalidThrowsIsInterface
 	 */
 	public function call(
 		string $routeName,

@@ -116,9 +116,9 @@
 	"tag-discussiontools-description": "DiscussionTools အသုံးပြု၍ တည်းဖြတ်ခြင်း",
 	"tag-discussiontools-edit": "ပြင်ဆင်ထားသော သုံးသပ်ချက်",
 	"tag-discussiontools-edit-description": "အသုံးပြုသူသည် ရှိနှင့်ပြီးသော သုံးသပ်ချက်တစ်ခုကို DiscussionTools ဖြင့် တည်းဖြတ်ခဲ့သည်",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} အကြောင်းအရာအသစ်]",
+	"tag-discussiontools-newtopic": "အကြောင်းအရာအသစ်",
 	"tag-discussiontools-newtopic-description": "အသုံးပြုသူသည် DiscussionTools ဖြင့် အကြောင်းအရာသစ်တစ်ခုကို စာမျက်နှာသို့ ပေါင်းထည့်ခဲ့သည်။",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} အကြောင်းပြန်ရန်]",
+	"tag-discussiontools-reply": "အကြောင်းပြန်ရန်",
 	"tag-discussiontools-reply-description": "အသုံးပြုသူသည် DiscussionTools ဖြင့် သုံးသပ်ချက်တစ်ခုကို ပြန်ကြားခဲ့သည်။",
 	"tag-discussiontools-source-description": "DiscussionTools သည် ရင်းမြစ်တည်းဖြတ်ခြင်း ဖြစ်နေသည်",
 	"tag-discussiontools-visual-description": "DiscussionTools သည် မျက်မြင်တည်းဖြတ် ဖြစ်နေသည်"

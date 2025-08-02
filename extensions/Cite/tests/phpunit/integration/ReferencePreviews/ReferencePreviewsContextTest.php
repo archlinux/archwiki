@@ -4,10 +4,10 @@ namespace Cite\Tests\Integration\ReferencePreviews;
 
 use Cite\ReferencePreviews\ReferencePreviewsContext;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Skin\Skin;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use Skin;
 
 /**
  * @group Popups

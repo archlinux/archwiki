@@ -55,5 +55,6 @@
 	"apierror-abusefilter-cantcheck": "U hebt geen toestemming om de syntax van misbruikfilters te controleren.",
 	"apierror-abusefilter-canteval": "U bent niet gemachtigd om AbuseFilter-expressies te evalueren.",
 	"apierror-abusefilter-nosuchlogid": "Er is geen misbruikfilterregel met de id $1.",
+	"apierror-abusefilter-incompatible": "De gevraagde wijziging wordt niet ondersteund door het misbruikfilter.",
 	"apierror-abusefilter-badsyntax": "Het filter heeft een ongeldige syntax."
 }

@@ -2,6 +2,7 @@
 
 namespace Wikimedia\Tests\Stats;
 
+use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\Stats\IBufferingStatsdDataFactory;
@@ -11,6 +12,7 @@ use Wikimedia\Stats\Metrics\NullMetric;
 use Wikimedia\Stats\OutputFormats;
 use Wikimedia\Stats\StatsCache;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Stats\StatsUtils;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -21,6 +23,7 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \Wikimedia\Stats\StatsUtils
  */
 class MetricTest extends TestCase {
+	use MediaWikiCoversValidator;
 
 	public const FORMATS = [ 'statsd', 'dogstatsd' ];
 
@@ -334,11 +337,14 @@ class MetricTest extends TestCase {
 		$formatter = OutputFormats::getNewFormatter( OutputFormats::getFormatFromString( 'dogstatsd' ) );
 		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $cache, $formatter );
 		$statsFactory = new StatsFactory( $cache, $emitter, new NullLogger );
-		$timer = $statsFactory->getTiming( 'test', )->setLabel( 'foo', 'bar' );
 
 		// start() and stop() called so close together here should be fractions of a millisecond
-		$timer->start();
-		$timer->setLabel( 'foo', 'baz' )->stop();
+		$timer = $statsFactory->getTiming( 'test' )
+			->setLabel( 'foo', 'bar' )
+			->start();
+		$timer->setLabel( 'foo', 'baz' );
+		$timer->stop();
+
 		$this->assertMatchesRegularExpression(
 			'/^mediawiki\.test:(0\.[0-9]+)\|ms\|#foo:baz$/',
 			TestingAccessWrapper::newFromObject( $emitter )->render()[0]
@@ -392,15 +398,23 @@ class MetricTest extends TestCase {
 	/**
 	 * PHPUnit 10 compatible replacement for expectWarning().
 	 *
+	 * Default uses assertStringContainsString().
+	 * When $strict = true, uses assertSame().
+	 *
 	 * @param string $msg
 	 * @param callable $callback
+	 * @param bool $strict
 	 * @return void
 	 */
-	private function expectPHPWarning( string $msg, callable $callback ): void {
+	private function expectPHPWarning( string $msg, callable $callback, bool $strict = false ): void {
 		try {
 			$errorEmitted = false;
-			set_error_handler( function ( $_, $actualMsg ) use ( $msg, &$errorEmitted ) {
-				$this->assertStringContainsString( $msg, $actualMsg );
+			set_error_handler( function ( $_, $actualMsg ) use ( $msg, &$errorEmitted, $strict ) {
+				if ( $strict ) {
+					$this->assertSame( $msg, $actualMsg );
+				} else {
+					$this->assertStringContainsString( $msg, $actualMsg );
+				}
 				$errorEmitted = true;
 			}, E_USER_WARNING );
 			$callback();
@@ -424,5 +438,26 @@ class MetricTest extends TestCase {
 				$samples
 			)
 		);
+	}
+
+	public function testNormalizeStringLocaleHardening() {
+		// Confirm that e.g. the Turkish capital I (U+0130) is stripped
+		// It might not be e.g. when using the tr_TR locale on PHP < 8.2
+		$this->assertSame( 'test_value', StatsUtils::normalizeString( "test\u{0130} value" ) );
+	}
+
+	public function testSetLabelReserved() {
+		$metric = @StatsFactory::newNull()->getCounter( 'test' )->setLabel( 'Le', 'foo' );
+		$this->assertInstanceOf( NullMetric::class, $metric );
+	}
+
+	public function testSetLabelsReserved() {
+		$metric = @StatsFactory::newNull()->getCounter( 'test' )->setLabels( [ 'foo' => 'a', 'lE' => '1', 'bar' => 'c' ] );
+		$this->assertInstanceOf( NullMetric::class, $metric );
+	}
+
+	public function testInvalidBucketValue() {
+		$this->expectException( 'InvalidArgumentException' );
+		StatsFactory::newNull()->getCounter( 'test' )->setBucket( 'foo' );
 	}
 }

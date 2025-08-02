@@ -226,7 +226,7 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 				'action' => $row->afl_action
 			] );
 			// Add some action-specific variables
-			if ( strpos( $row->afl_action, 'createaccount' ) !== false ) {
+			if ( str_contains( $row->afl_action, 'createaccount' ) ) {
 				$vars->setVar( 'accountname', $row->afl_user_text );
 			} else {
 				$vars->setVar( 'user_name', $row->afl_user_text );

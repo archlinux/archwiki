@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aleator",
 			"Fitoschido",
 			"Lluis Cat",
 			"SMP",
 			"Toniher",
-			"Vriullop",
-			"Aleator"
+			"Vriullop"
 		]
 	},
 	"linterrors": "Errors de lint",

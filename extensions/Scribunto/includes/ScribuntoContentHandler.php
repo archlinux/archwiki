@@ -216,7 +216,9 @@ class ScribuntoContentHandler extends CodeContentHandler {
 		if (
 			$useGeSHi && $codeLang && ExtensionRegistry::getInstance()->isLoaded( 'SyntaxHighlight' )
 		) {
-			$status = SyntaxHighlight::highlight( $source, $codeLang, [ 'line' => true, 'linelinks' => 'L' ] );
+			/** @var SyntaxHighlight $syntaxHighlight */
+			$syntaxHighlight = MediaWikiServices::getInstance()->getService( 'SyntaxHighlight.SyntaxHighlight' );
+			$status = $syntaxHighlight->syntaxHighlight( $source, $codeLang, [ 'line' => true, 'linelinks' => 'L' ] );
 			if ( $status->isGood() ) {
 				// @todo replace addModuleStyles line with the appropriate call on
 				// SyntaxHighlight once one is created

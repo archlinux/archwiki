@@ -24,8 +24,6 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Returns the main configuration schema as a settings array.
-	 *
-	 * @return array
 	 */
 	private static function getSchemaData(): array {
 		$source = new ReflectionSchemaSource( MainConfigSchema::class, true );
@@ -33,9 +31,6 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 		return $settings;
 	}
 
-	/**
-	 * @return SettingsBuilder
-	 */
 	private function getSettingsBuilderWithSchema(): SettingsBuilder {
 		$configBuilder = new ArrayConfigBuilder();
 		$settingsBuilder = new SettingsBuilder(
@@ -572,8 +567,7 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\MainConfigSchema::listDefaultValues
-	 * @covers \MediaWiki\MainConfigSchema::getDefaultValue
+	 * @covers \MediaWiki\MainConfigSchema
 	 */
 	public function testMainConfigSchemaDefaults() {
 		$defaults = iterator_to_array( MainConfigSchema::listDefaultValues() );

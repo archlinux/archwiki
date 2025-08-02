@@ -18,6 +18,8 @@
  * @file
  */
 
+use MediaWiki\Language\ReplacementArray;
+
 /**
  * A class that extends LanguageConverterSpecific for converts that use
  * ICU rule-based transliterators.
@@ -33,8 +35,6 @@ abstract class LanguageConverterIcu extends LanguageConverterSpecific {
 
 	/**
 	 * Creates empty tables. mTransliterators will be used instead.
-	 *
-	 * @return array
 	 */
 	protected function loadDefaultTables(): array {
 		$tables = [];

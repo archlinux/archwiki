@@ -18,6 +18,9 @@
  * @file
  */
 
+namespace MediaWiki\RecentChanges;
+
+use InvalidArgumentException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\FormOptions;
 
@@ -352,7 +355,7 @@ abstract class ChangesListFilter {
 			return;
 		}
 
-		if ( call_user_func( $this->isRowApplicableCallable, $ctx, $rc ) ) {
+		if ( ( $this->isRowApplicableCallable )( $ctx, $rc ) ) {
 			$classes[] = $this->getCssClass();
 		}
 	}
@@ -446,7 +449,7 @@ abstract class ChangesListFilter {
 		return false;
 	}
 
-	private function hasConflictWithGroup( ChangesListFilterGroup $group ) {
+	private function hasConflictWithGroup( ChangesListFilterGroup $group ): bool {
 		return in_array( $group, $this->getConflictingGroups() );
 	}
 
@@ -473,7 +476,7 @@ abstract class ChangesListFilter {
 		return false;
 	}
 
-	private function hasConflictWithFilter( ChangesListFilter $filter ) {
+	private function hasConflictWithFilter( ChangesListFilter $filter ): bool {
 		return in_array( $filter, $this->getConflictingFilters() );
 	}
 
@@ -498,3 +501,6 @@ abstract class ChangesListFilter {
 		$this->defaultHighlightColor = $defaultHighlightColor;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ChangesListFilter::class, 'ChangesListFilter' );

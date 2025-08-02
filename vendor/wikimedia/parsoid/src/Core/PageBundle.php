@@ -4,33 +4,36 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Core;
 
 use Composer\Semver\Semver;
-use Wikimedia\Parsoid\DOM\Document;
-use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\DOM\Node;
-use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
 use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMDataUtils;
-use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
 
 /**
- * PORT-FIXME: This is just a placeholder for data that was previously passed
- * to entrypoint in JavaScript.  Who will construct these objects and whether
- * this is the correct interface is yet to be determined.
+ * A page bundle stores an HTML string with separated data-parsoid and
+ * (optionally) data-mw content.  The data-parsoid and data-mw content
+ * is indexed by the id attributes on individual nodes.  This content
+ * needs to be loaded before the data-parsoid and/or data-mw
+ * information can be used.
  *
  * Note that the parsoid/mw properties of the page bundle are in "serialized
  * array" form; that is, they are flat arrays appropriate for json-encoding
  * and do not contain DataParsoid or DataMw objects.
+ *
+ * See DomPageBundle for a similar structure used where the HTML string
+ * has been parsed into a DOM.
  */
-class PageBundle {
-	/** @var string */
-	public $html;
+class PageBundle implements JsonCodecable {
+	use JsonCodecableTrait;
+
+	/** The document, as an HTML string. */
+	public string $html;
 
 	/**
 	 * A map from ID to the array serialization of DataParsoid for the Node
 	 * with that ID.
 	 *
-	 * @var null|array{counter?:int,offsetType?:string,ids:array<string,array>}
+	 * @var null|array{counter?:int,offsetType?:'byte'|'ucs2'|'char',ids:array<string,array>}
 	 */
 	public $parsoid;
 
@@ -67,14 +70,25 @@ class PageBundle {
 		$this->contentmodel = $contentmodel;
 	}
 
-	public function toDom(): Document {
-		$doc = DOMUtils::parseHTML( $this->html );
-		self::apply( $doc, $this );
-		return $doc;
-	}
-
-	public function toHtml(): string {
-		return ContentUtils::toXML( $this->toDom() );
+	public static function newEmpty(
+		string $html,
+		?string $version = null,
+		?array $headers = null,
+		?string $contentmodel = null
+	): self {
+		return new PageBundle(
+			$html,
+			[
+				'counter' => -1,
+				'ids' => [],
+			],
+			[
+				'ids' => [],
+			],
+			$version,
+			$headers,
+			$contentmodel
+		);
 	}
 
 	/**
@@ -102,13 +116,14 @@ class PageBundle {
 	 * @return array
 	 */
 	public function responseData() {
+		$version = $this->version ?? '0.0.0';
 		$responseData = [
 			'contentmodel' => $this->contentmodel ?? '',
 			'html' => [
 				'headers' => array_merge( [
 					'content-type' => 'text/html; charset=utf-8; '
 						. 'profile="https://www.mediawiki.org/wiki/Specs/HTML/'
-						. $this->version . '"',
+						. $version . '"',
 				], $this->headers ?? [] ),
 				'body' => $this->html,
 			],
@@ -116,17 +131,17 @@ class PageBundle {
 				'headers' => [
 					'content-type' => 'application/json; charset=utf-8; '
 						. 'profile="https://www.mediawiki.org/wiki/Specs/data-parsoid/'
-						. $this->version . '"',
+						. $version . '"',
 				],
 				'body' => $this->parsoid,
 			],
 		];
-		if ( Semver::satisfies( $this->version, '^999.0.0' ) ) {
+		if ( Semver::satisfies( $version, '^999.0.0' ) ) {
 			$responseData['data-mw'] = [
 				'headers' => [
 					'content-type' => 'application/json; charset=utf-8; ' .
 						'profile="https://www.mediawiki.org/wiki/Specs/data-mw/' .
-						$this->version . '"',
+						$version . '"',
 				],
 				'body' => $this->mw,
 			];
@@ -135,49 +150,83 @@ class PageBundle {
 	}
 
 	/**
-	 * Applies the `data-*` attributes JSON structure to the document.
-	 * Leaves `id` attributes behind -- they are used by citation code to
-	 * extract `<ref>` body from the DOM.
+	 * Convert a DomPageBundle to a PageBundle.
 	 *
-	 * @param Document $doc doc
-	 * @param PageBundle $pb page bundle
+	 * This serializes the DOM from the DomPageBundle, with the given $options.
+	 * The options can also provide defaults for content version, headers,
+	 * content model, and offsetType if they weren't already set in the
+	 * DomPageBundle.
+	 *
+	 * @param DomPageBundle $dpb
+	 * @param array $options XMLSerializer options
+	 * @return PageBundle
 	 */
-	public static function apply( Document $doc, PageBundle $pb ): void {
-		DOMUtils::visitDOM(
-			DOMCompat::getBody( $doc ),
-			static function ( Node $node ) use ( $pb ): void {
-				if ( $node instanceof Element ) {
-					$id = DOMCompat::getAttribute( $node, 'id' );
-					if ( $id === null ) {
-						return;
-					}
-					if ( isset( $pb->parsoid['ids'][$id] ) ) {
-						DOMDataUtils::setJSONAttribute(
-							$node, 'data-parsoid', $pb->parsoid['ids'][$id]
-						);
-					}
-					if ( isset( $pb->mw['ids'][$id] ) ) {
-						// Only apply if it isn't already set.  This means
-						// earlier applications of the pagebundle have higher
-						// precedence, inline data being the highest.
-						if ( !$node->hasAttribute( 'data-mw' ) ) {
-							DOMDataUtils::setJSONAttribute(
-								$node, 'data-mw', $pb->mw['ids'][$id]
-							);
-						}
-					}
-				}
-			}
+	public static function fromDomPageBundle( DomPageBundle $dpb, array $options = [] ): PageBundle {
+		$node = $dpb->doc;
+		if ( $options['body_only'] ?? false ) {
+			$node = DOMCompat::getBody( $dpb->doc );
+			$options += [ 'innerXML' => true ];
+		}
+		$out = XMLSerializer::serialize( $node, $options );
+		$pb = new PageBundle(
+			$out['html'],
+			$dpb->parsoid,
+			$dpb->mw,
+			$dpb->version ?? $options['contentversion'] ?? null,
+			$dpb->headers ?? $options['headers'] ?? null,
+			$dpb->contentmodel ?? $options['contentmodel'] ?? null
 		);
+		if ( isset( $options['offsetType'] ) ) {
+			$pb->parsoid['offsetType'] ??= $options['offsetType'];
+		}
+		return $pb;
 	}
 
 	/**
-	 * Encode some of these properties for emitting in the <head> element of a doc
-	 * @return string
+	 * Convert this PageBundle to "single document" form, where page bundle
+	 * information is embedded in the <head> of the document.
+	 * @param array $options XMLSerializer options
+	 * @return string an HTML string
 	 */
-	public function encodeForHeadElement(): string {
-		// Note that $this->parsoid and $this->mw are already serialized arrays
-		// so a naive jsonEncode is sufficient.  We don't need a codec.
-		return PHPUtils::jsonEncode( [ 'parsoid' => $this->parsoid ?? [], 'mw' => $this->mw ?? [] ] );
+	public function toSingleDocumentHtml( array $options = [] ): string {
+		return DomPageBundle::fromPageBundle( $this )
+			->toSingleDocumentHtml( $options );
+	}
+
+	/**
+	 * Convert this PageBundle to "inline attribute" form, where page bundle
+	 * information is represented as inline JSON-valued attributes.
+	 * @param array $options XMLSerializer options
+	 * @return string an HTML string
+	 */
+	public function toInlineAttributeHtml( array $options = [] ): string {
+		return DomPageBundle::fromPageBundle( $this )
+			->toInlineAttributeHtml( $options );
+	}
+
+	// JsonCodecable -------------
+
+	/** @inheritDoc */
+	public function toJsonArray(): array {
+		return [
+			'html' => $this->html,
+			'parsoid' => $this->parsoid,
+			'mw' => $this->mw,
+			'version' => $this->version,
+			'headers' => $this->headers,
+			'contentmodel' => $this->contentmodel,
+		];
+	}
+
+	/** @inheritDoc */
+	public static function newFromJsonArray( array $json ): PageBundle {
+		return new PageBundle(
+			$json['html'] ?? '',
+			$json['parsoid'] ?? null,
+			$json['mw'] ?? null,
+			$json['version'] ?? null,
+			$json['headers'] ?? null,
+			$json['contentmodel'] ?? null
+		);
 	}
 }

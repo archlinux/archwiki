@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"apihelp-query+checkuser-param-request": "Vrsta Čekjuzer zahteva:",
+	"apihelp-query+checkuserlog-param-reason": "Razlog za ovu proveru.",
+	"checkuser-api-useragent-clienthints-revision-user-mismatch": "Korisnik $1 nije autor izmene $2",
+	"checkuser-api-useragent-clienthints-nonexistent-id": "$1 ID $2 ne postoji"
+}

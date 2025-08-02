@@ -34,6 +34,6 @@ interface HTMLCollection extends \ArrayAccess, \IteratorAggregate, \Countable {
 	/**
 	 * @return \Iterator<Element> Value iterator returning Element items
 	 */
-	public function getIterator();
+	public function getIterator(): \Iterator;
 
 }

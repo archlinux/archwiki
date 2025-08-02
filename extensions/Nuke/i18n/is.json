@@ -11,16 +11,12 @@
 	"nuke": "Fjöldaeyða",
 	"action-nuke": "fjöldaeyða síðum",
 	"nuke-desc": "Gefur möppudýrum kleyft að [[Special:Nuke|fjöldaeyða]] síðum.",
-	"nuke-nopages": "Engar nýjar síður eftir [[Special:Contributions/$1|{{GENDER:$1|$1}}]] í nýlegum breytingum.",
-	"nuke-list": "Eftirfarandi síður voru nýlega búnar til af [[Special:Contributions/$1|{{GENDER:$1|$1}}]]. Veldu hvaða síður eigi að eyða, tilgreindu breytingaráagrip og smelltu á \"Eyða völdum síðum\" til að byrja eyðingu.\n\nTilvísanir eru skáletraðar.",
-	"nuke-list-tempaccount": "Eftirfarandi síður voru nýlega búnar til af tímabundnum aðgöngum sem voru notaðar af vistfanginu $1. Veldu hvaða síður eigi að eyða, tilgreindu breytingaráagrip og smelltu á \"Eyða völdum síðum\" til að byrja eyðingu. '''Af persónuverndarástæðum, ekki skrifa vistfangið í breytingarágripið.'''\n\nTilvísanir eru skáletraðar.",
-	"nuke-list-multiple": "Eftirfarandi síður voru nýlega búnar til. Veldu hvaða síður eigi að eyða, tilgreindu breytingaráagrip og smelltu á \"Eyða völdum síðum\" til að byrja eyðingu.\n\nTilvísanir eru skáletraðar.",
 	"nuke-defaultreason": "Fjöldaeyðing síðna sem búnar voru til af [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-defaultreason-tempaccount": "Fjöldaeyðing síðna sem bætt var við af tímabundnum aðgöngum",
 	"nuke-multiplepeople": "Fjöldaeyðing nýjustu greina",
 	"nuke-tools": "Þetta verkfæri heimilar fjöldaeyðingu síðna sem nýlega voru bættar við af gefnum notanda eða IP-staðfangi.\nSettu inn notandanafn eða IP-staðfang til að fá lista síðna til eyðingar eða skildu eftir autt fyrir alla notendur.",
 	"nuke-tools-tempaccount": "Þetta verkfæri gerir kleift að fjöldaeyða síður sem var nýlega bætt við af gefnum notanda eða tímabundnum aðgangi.\nSettu inn notandanafn eða IP-staðfang til að fá lista síðna til eyðingar eða skildu eftir autt fyrir alla notendur. Ef þú tilgreinir IP-staðfang þá munt þú fá allar síður sem voru búnar til af því IP-staðfangi eða tímabundna aðganga sem voru notaðir frá því IP-staðfangi.",
-	"nuke-submit-user": "Lista síður",
+	"nuke-submit-list": "Lista síður",
 	"nuke-submit-delete": "Eyða völdum síðum",
 	"right-nuke": "Fjöldaeyða síðum",
 	"nuke-userorip": "Notandanafn, IP-staðfang eða tómt:",
@@ -35,6 +31,5 @@
 	"nuke-viewchanges": "breytingaskrá",
 	"nuke-namespace": "Takmarka við nafnrými:",
 	"nuke-linkoncontribs": "fjöldaeyða",
-	"nuke-linkoncontribs-text": "Fjöldaeyða síðum þegar {{GENDER:$1|þessi notandi}} er eini höfundurinn",
-	"nuke-confirm": "Þú ert í þann mund að eyða $1 {{PLURAL:$1|síðu|síðum}}. Ertu viss um að þú viljir gera það?"
+	"nuke-linkoncontribs-text": "Fjöldaeyða síðum þegar {{GENDER:$1|þessi notandi}} er eini höfundurinn"
 }

@@ -35,6 +35,7 @@
 	"echo-pref-tooltip-user-rights": "Pakaammuannak no adda mangbaliw kadagiti karbengak.",
 	"notifications": "Dagiti pakaammo",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Dagiti}} pakaammom",
+	"tooltip-pt-notifications": "Dagiti pakaammom",
 	"echo-specialpage": "Dagiti pakaammo",
 	"echo-none": "Awan dagiti pakaammom.",
 	"notification-link-text-view-message": "Kitaen ti mensahe",

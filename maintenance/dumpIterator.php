@@ -28,6 +28,7 @@
 
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
@@ -137,7 +138,7 @@ abstract class DumpIterator extends Maintenance {
 		}
 	}
 
-	public static function disableInterwikis( $prefix, &$data ) {
+	public static function disableInterwikis( string $prefix, array &$data ): bool {
 		# Title::newFromText will check on each namespaced article if it's an interwiki.
 		# We always answer that it is not.
 
@@ -185,8 +186,6 @@ abstract class DumpIterator extends Maintenance {
 
 	/**
 	 * Core function which does whatever the maintenance script is designed to do
-	 *
-	 * @param WikiRevision $rev
 	 */
 	abstract public function processRevision( WikiRevision $rev );
 }
@@ -204,13 +203,11 @@ class SearchDump extends DumpIterator {
 		$this->addOption( 'regex', 'Searching regex', true, true );
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return Maintenance::DB_NONE;
 	}
 
-	/**
-	 * @param WikiRevision $rev
-	 */
 	public function processRevision( WikiRevision $rev ) {
 		if ( preg_match( $this->getOption( 'regex' ), $rev->getContent()->getTextForSearchIndex() ) ) {
 			$this->output( $rev->getTitle() . " matches at edit from " . $rev->getTimestamp() . "\n" );

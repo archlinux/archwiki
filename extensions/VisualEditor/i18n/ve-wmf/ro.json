@@ -11,13 +11,13 @@
 			"아라"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editare vizuală]]",
+	"tag-visualeditor": "Editare vizuală",
 	"tag-visualeditor-description": "Modificare efectuată cu [[{{MediaWiki:visualeditor-descriptionpagelink}}|editorul vizual]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor vizual: Verificare]]",
+	"tag-visualeditor-needcheck": "Editor vizual: Verificare",
 	"tag-visualeditor-needcheck-description": "Modificare efectuată cu [[{{MediaWiki:visualeditor-descriptionpagelink}}|editorul vizual]], unde sistemul a detectat că textul wiki a suferit eventuale modificări nedorite.",
 	"tag-visualeditor-wikitext": "Modificare sursă 2017",
 	"tag-visualeditor-wikitext-description": "Modificare efectuată utilizând editorul de wikitext 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor vizual: Comutat]]",
+	"tag-visualeditor-switched": "Editor vizual: Comutat",
 	"tag-visualeditor-switched-description": "Utilizatorul a început modificarea cu editorul vizual, după care a comutat la editorul de text wiki.",
 	"visualeditor-feedback-link": "Project:EditorVizual/Feedback",
 	"visualeditor-feedback-tool": "Lăsați feedback despre acest software",

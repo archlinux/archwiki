@@ -10,8 +10,8 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  */
 class MMLmtr extends MMLbase {
 
-	public function __construct( string $texclass = "", array $attributes = [] ) {
-		parent::__construct( "mtr", $texclass, $attributes );
+	public function __construct( string $texclass = "", array $attributes = [], MMLmtd ...$cells ) {
+		parent::__construct( "mtr", $texclass, $attributes, ...$cells );
 	}
 
 }

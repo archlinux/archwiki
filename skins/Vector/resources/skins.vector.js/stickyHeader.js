@@ -530,7 +530,7 @@ function isAllowedNamespace( namespaceNumber ) {
 	const allowedNamespaceNumbers = [ 0, 2, 4, 10, 12, 14, 100, 828 ];
 	// Also allow on all talk namespaces (compare NamespaceInfo::isTalk()).
 	const isAllowedTalk = namespaceNumber > 0 && namespaceNumber % 2 !== 0;
-	return isAllowedTalk || allowedNamespaceNumbers.indexOf( namespaceNumber ) > -1;
+	return isAllowedTalk || allowedNamespaceNumbers.includes( namespaceNumber );
 }
 
 /**
@@ -542,7 +542,7 @@ function isAllowedNamespace( namespaceNumber ) {
 function isAllowedAction( action ) {
 	const disallowedActions = [ 'history', 'edit' ],
 		hasDiffId = mw.config.get( 'wgDiffOldId' );
-	return disallowedActions.indexOf( action ) < 0 && !hasDiffId;
+	return !disallowedActions.includes( action ) && !hasDiffId;
 }
 
 /**

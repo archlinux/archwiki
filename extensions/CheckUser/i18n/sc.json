@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Andria",
+			"Marzedu",
+			"Taxandru"
+		]
+	},
+	"checkuser-reason": "Motivu:",
+	"checkuser-target": "Indiritzu IP o nùmene impitadore:",
+	"checkuser-period": "Durada:",
+	"checkuser-week-1": "ùrtima chida",
+	"checkuser-week-2": "ùrtimas duas chidas",
+	"checkuser-month": "ùrtimas 30 dies",
+	"checkuser-all": "totu",
+	"checkuser-search": "Chirca",
+	"checkuser-search-submit": "Chirca",
+	"checkuser-ipeditcount": "~$1 dae totus is impitadores"
+}

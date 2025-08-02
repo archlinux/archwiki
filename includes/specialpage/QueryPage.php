@@ -27,10 +27,12 @@ use Exception;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Specials\SpecialAncientPages;
 use MediaWiki\Specials\SpecialBrokenRedirects;
 use MediaWiki\Specials\SpecialDeadendPages;
@@ -64,8 +66,6 @@ use MediaWiki\Specials\SpecialWantedFiles;
 use MediaWiki\Specials\SpecialWantedPages;
 use MediaWiki\Specials\SpecialWantedTemplates;
 use MediaWiki\Specials\SpecialWithoutInterwiki;
-use MediaWiki\Xml\Xml;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -126,8 +126,8 @@ abstract class QueryPage extends SpecialPage {
 	 * Get a list of query page classes and their associated special pages,
 	 * for periodic updates.
 	 *
-	 * DO NOT CHANGE THIS LIST without testing that
-	 * maintenance/updateSpecialPages.php still works.
+	 * When changing this list, you should ensure that maintenance/updateSpecialPages.php still works
+	 * including when test data exists.
 	 *
 	 * @return array[] List of [ string $class, string $specialPageName, ?int $limit (optional) ].
 	 *  Limit defaults to $wgQueryCacheLimit if not given.
@@ -780,7 +780,7 @@ abstract class QueryPage extends SpecialPage {
 		$dbr = $this->getRecacheDB();
 		$this->preprocessResults( $dbr, $res );
 
-		$out->addHTML( Xml::openElement( 'div', [ 'class' => 'mw-spcontent' ] ) );
+		$out->addHTML( Html::openElement( 'div', [ 'class' => 'mw-spcontent' ] ) );
 
 		// Top header and navigation
 		if ( $this->shownavigation ) {
@@ -800,7 +800,7 @@ abstract class QueryPage extends SpecialPage {
 				// No results to show, so don't bother with "showing X of Y" etc.
 				// -- just let the user know and give up now
 				$this->showEmptyText();
-				$out->addHTML( Xml::closeElement( 'div' ) );
+				$out->addHTML( Html::closeElement( 'div' ) );
 				return;
 			}
 		}
@@ -821,7 +821,7 @@ abstract class QueryPage extends SpecialPage {
 			$out->addHTML( '<p>' . $paging . '</p>' );
 		}
 
-		$out->addHTML( Xml::closeElement( 'div' ) );
+		$out->addHTML( Html::closeElement( 'div' ) );
 	}
 
 	/**
@@ -909,7 +909,7 @@ abstract class QueryPage extends SpecialPage {
 			return;
 		}
 
-		$batch = $this->getLinkBatchFactory()->newLinkBatch();
+		$batch = $this->getLinkBatchFactory()->newLinkBatch()->setCaller( __METHOD__ );
 		foreach ( $res as $row ) {
 			$batch->add( $ns ?? (int)$row->namespace, $row->title );
 		}

@@ -14,7 +14,27 @@ use MediaWikiIntegrationTestCase;
  */
 class HooksTest extends MediaWikiIntegrationTestCase {
 
-	public function testNormal() {
+	private function newSpecialContribsPage(): SpecialContributions {
+		$services = $this->getServiceContainer();
+
+		return new SpecialContributions(
+			$services->getLinkBatchFactory(),
+			$services->getPermissionManager(),
+			$services->getDBLoadBalancerFactory(),
+			$services->getRevisionStore(),
+			$services->getNamespaceInfo(),
+			$services->getUserNameUtils(),
+			$services->getUserNamePrefixSearch(),
+			$services->getUserOptionsLookup(),
+			$services->getCommentFormatter(),
+			$services->getUserFactory(),
+			$services->getUserIdentityLookup(),
+			$services->getDatabaseBlockStore(),
+			$services->getTempUserConfig()
+		);
+	}
+
+	public function testContributionsNormal() {
 		$sysop = $this->getTestSysop()->getUser();
 		$performer = new UltimateAuthority( $sysop );
 
@@ -34,7 +54,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayHasKey( 'nuke', $tools );
 	}
 
-	public function testNoPermission() {
+	public function testContributionsNoPermission() {
 		$this->overrideConfigValues( [
 			"GroupPermissions" => [
 				"testgroup" => [
@@ -62,7 +82,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayNotHasKey( 'nuke', $tools );
 	}
 
-	public function testIPRange() {
+	public function testContributionsIPRange() {
 		$sysop = $this->getTestSysop()->getUser();
 		$performer = new UltimateAuthority( $sysop );
 
@@ -82,24 +102,25 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayNotHasKey( 'nuke', $tools );
 	}
 
-	private function newSpecialContribsPage(): SpecialContributions {
-		$services = $this->getServiceContainer();
+	public function testTags() {
+		$arr = [];
+		Hooks::onRegisterTags( $arr );
 
-		return new SpecialContributions(
-			$services->getLinkBatchFactory(),
-			$services->getPermissionManager(),
-			$services->getDBLoadBalancerFactory(),
-			$services->getRevisionStore(),
-			$services->getNamespaceInfo(),
-			$services->getUserNameUtils(),
-			$services->getUserNamePrefixSearch(),
-			$services->getUserOptionsLookup(),
-			$services->getCommentFormatter(),
-			$services->getUserFactory(),
-			$services->getUserIdentityLookup(),
-			$services->getDatabaseBlockStore(),
-			$services->getTempUserConfig()
-		);
+		// Only one tag should be added
+		$this->assertCount( 1, $arr );
+		// All tags should be lowercase
+		foreach ( $arr as $tag ) {
+			$this->assertEquals( strtolower( $tag ), $tag );
+		}
+		// There should be a name and description defined for each tag
+		foreach ( $arr as $tag ) {
+			$this->setUserLang( 'en' );
+			$this->assertTrue( wfMessage( 'tag-' . $tag )->exists() );
+			$this->assertTrue( wfMessage( 'tag-' . $tag . '-description' )->exists() );
+			$this->setUserLang( 'qqq' );
+			$this->assertTrue( wfMessage( 'tag-' . $tag )->exists() );
+			$this->assertTrue( wfMessage( 'tag-' . $tag . '-description' )->exists() );
+		}
 	}
 
 }

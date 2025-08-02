@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
-use RecentChange;
 
 interface AbuseFilterGenerateTitleVarsHook {
 	/**

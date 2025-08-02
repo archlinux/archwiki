@@ -7,7 +7,14 @@
  * @details
  */
 
+namespace MediaWiki\FileRepo;
+
+use InvalidArgumentException;
+use LogicException;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\File\UnregisteredLocalFile;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -17,7 +24,11 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
+use MWFileProps;
+use RuntimeException;
 use Shellbox\Command\BoxedCommand;
+use StatusValue;
+use UploadStash;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\FSFile;
@@ -90,17 +101,17 @@ class FileRepo {
 	 */
 	protected $transformVia404;
 
-	/** @var string URL of image description pages, e.g.
+	/** @var string|null URL of image description pages, e.g.
 	 *    https://en.wikipedia.org/wiki/File:
 	 */
 	protected $descBaseUrl;
 
-	/** @var string URL of the MediaWiki installation, equivalent to
+	/** @var string|null URL of the MediaWiki installation, equivalent to
 	 *    $wgScriptPath, e.g. https://en.wikipedia.org/w
 	 */
 	protected $scriptDirUrl;
 
-	/** @var string Equivalent to $wgArticlePath, e.g. https://en.wikipedia.org/wiki/$1 */
+	/** @var string|null Equivalent to $wgArticlePath, e.g. https://en.wikipedia.org/wiki/$1 */
 	protected $articleUrl;
 
 	/** @var bool Equivalent to $wgCapitalLinks (or $wgCapitalLinkOverrides[NS_FILE],
@@ -431,12 +442,12 @@ class FileRepo {
 		}
 		if ( $time ) {
 			if ( $this->oldFileFactory ) {
-				return call_user_func( $this->oldFileFactory, $title, $this, $time );
+				return ( $this->oldFileFactory )( $title, $this, $time );
 			} else {
 				return null;
 			}
 		} else {
-			return call_user_func( $this->fileFactory, $title, $this );
+			return ( $this->fileFactory )( $title, $this );
 		}
 	}
 
@@ -600,13 +611,13 @@ class FileRepo {
 		if ( !$this->fileFactoryKey ) {
 			return false; // find-by-sha1 not supported
 		}
-		$img = call_user_func( $this->fileFactoryKey, $sha1, $this, $time );
+		$img = ( $this->fileFactoryKey )( $sha1, $this, $time );
 		if ( $img && $img->exists() ) {
 			return $img;
 		}
 		# Now try to find a matching old version of a file...
 		if ( $time !== false && $this->oldFileFactoryKey ) { // find-by-sha1 supported?
-			$img = call_user_func( $this->oldFileFactoryKey, $sha1, $this, $time );
+			$img = ( $this->oldFileFactoryKey )( $sha1, $this, $time );
 			if ( $img && $img->exists() ) {
 				if ( !$img->isDeleted( File::DELETED_FILE ) ) {
 					return $img; // always OK
@@ -678,7 +689,7 @@ class FileRepo {
 	/**
 	 * Get the URL thumb.php requests are being proxied to
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getThumbProxyUrl() {
 		return $this->thumbProxyUrl;
@@ -687,7 +698,7 @@ class FileRepo {
 	/**
 	 * Get the secret key for the proxied thumb service
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getThumbProxySecret() {
 		return $this->thumbProxySecret;
@@ -812,7 +823,7 @@ class FileRepo {
 	 * @return string|false False on failure
 	 */
 	public function makeUrl( $query = '', $entry = 'index' ) {
-		if ( isset( $this->scriptDirUrl ) ) {
+		if ( $this->scriptDirUrl !== null ) {
 			return wfAppendQuery( "{$this->scriptDirUrl}/{$entry}.php", $query );
 		}
 
@@ -870,7 +881,7 @@ class FileRepo {
 		if ( $lang !== null ) {
 			$query .= '&uselang=' . urlencode( $lang );
 		}
-		if ( isset( $this->scriptDirUrl ) ) {
+		if ( $this->scriptDirUrl !== null ) {
 			return $this->makeUrl(
 				'title=' .
 				wfUrlencode( 'Image:' . $name ) .
@@ -891,7 +902,7 @@ class FileRepo {
 	 * @return string|false False on failure
 	 */
 	public function getDescriptionStylesheetUrl() {
-		if ( isset( $this->scriptDirUrl ) ) {
+		if ( $this->scriptDirUrl !== null ) {
 			// Must match canonical query parameter order for optimum caching
 			// See HTMLCacheUpdater::getUrls
 			return $this->makeUrl( 'title=MediaWiki:Filepage.css&action=raw&ctype=text/css' );
@@ -1745,7 +1756,7 @@ class FileRepo {
 			}
 			foreach ( $iterator as $name ) {
 				// Each item returned is a public file
-				call_user_func( $callback, "{$path}/{$name}" );
+				$callback( "{$path}/{$name}" );
 			}
 		}
 	}
@@ -2006,11 +2017,11 @@ class FileRepo {
 			'descriptionCacheExpiry',
 		];
 		foreach ( $optionalSettings as $k ) {
-			if ( isset( $this->$k ) ) {
+			if ( $this->$k !== null ) {
 				$ret[$k] = $this->$k;
 			}
 		}
-		if ( isset( $this->favicon ) ) {
+		if ( $this->favicon !== null ) {
 			// Expand any local path to full URL to improve API usability (T77093).
 			$ret['favicon'] = MediaWikiServices::getInstance()->getUrlUtils()
 				->expand( $this->favicon );
@@ -2035,3 +2046,6 @@ class FileRepo {
 		return $this->supportsSha1URLs;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( FileRepo::class, 'FileRepo' );

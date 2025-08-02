@@ -52,6 +52,7 @@ class ToolbarBuilder {
 	/** @var bool Correlates to $wgWatchlistExpiry feature flag. */
 	private bool $watchlistExpiryEnabled;
 	private WatchlistManager $watchlistManager;
+	private Title $loginTitle;
 
 	/**
 	 * ServiceOptions needed.
@@ -84,7 +85,8 @@ class ToolbarBuilder {
 		SkinUserPageHelper $relevantUserPageHelper,
 		LanguagesHelper $languagesHelper,
 		ServiceOptions $options,
-		WatchlistManager $watchlistManager
+		WatchlistManager $watchlistManager,
+		?Title $loginTitle = null
 	) {
 		$this->title = $title;
 		$this->user = $user;
@@ -95,6 +97,7 @@ class ToolbarBuilder {
 		$this->languagesHelper = $languagesHelper;
 		$this->watchlistExpiryEnabled = $options->get( 'WatchlistExpiry' );
 		$this->watchlistManager = $watchlistManager;
+		$this->loginTitle = $loginTitle ?: SpecialPage::getTitleFor( 'Userlogin' );
 	}
 
 	/**
@@ -146,12 +149,35 @@ class ToolbarBuilder {
 			$group->insertEntry( $this->createContributionsPageAction( $user ) );
 		}
 
-		// We want the edit icon/action(s) always to be the last element on the toolbar list
-		if ( $permissions->isAllowed( IMinervaPagePermissions::CONTENT_EDIT ) ) {
-			foreach ( $views as $key => $viewData ) {
-				if ( in_array( $key, [ 've-edit', 'viewsource', 'edit' ] ) ) {
+		// T388909: Iterate through all view actions. Known edit actions (edit, ve-edit, viewsource) are
+		// always included if the user has edit permissions, even if they do not define an icon.
+		// All other actions must define an icon to be included in the mobile toolbar.
+		// This ensures compatibility with hook-defined entries (e.g., 'bookmark') while preserving
+		// fallback icons for core actions.
+		foreach ( $views as $key => $viewData ) {
+			$isEditAction = in_array( $key, [ 've-edit', 'viewsource', 'edit' ] );
+
+			if ( $isEditAction ) {
+				// Only insert edit actions if user has permission
+				if ( $permissions->isAllowed( IMinervaPagePermissions::CONTENT_EDIT ) ) {
 					$group->insertEntry( $this->createEditPageAction( $key, $viewData ) );
 				}
+			} elseif ( isset( $viewData[ 'icon' ] ) ) {
+				// Everything else (e.g., 'bookmark', 'share') is added normally
+				$entry = new SingleMenuEntry(
+					'page-actions-' . $key,
+					$viewData['text'] ?? $key,
+					$viewData['href'] ?? '#',
+					$viewData['class'] ?? ''
+				);
+
+				$entry
+					->setIcon( $viewData['icon'] )
+					->trackClicks( $key )
+					->setTitle( $this->context->msg( 'tooltip-' . $key ) )
+					->setNodeID( 'ca-' . $key );
+
+				$group->insertEntry( $entry );
 			}
 		}
 		return $group;
@@ -268,6 +294,6 @@ class ToolbarBuilder {
 	 * @return string
 	 */
 	private function getLoginUrl( $query ): string {
-		return SpecialPage::getTitleFor( 'Userlogin' )->getLocalURL( $query );
+		return $this->loginTitle->getLocalURL( $query );
 	}
 }

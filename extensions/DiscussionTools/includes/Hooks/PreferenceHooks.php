@@ -122,36 +122,27 @@ class PreferenceHooks implements
 			}
 		}
 
-		if ( isset( $preferences['discussiontools-' . HookUtils::SOURCEMODETOOLBAR] ) && (
-			isset( $preferences['discussiontools-' . HookUtils::REPLYTOOL] ) ||
-			isset( $preferences['discussiontools-' . HookUtils::NEWTOPICTOOL] )
-		) ) {
-			// Disable this option when it would have no effect
-			// (both reply tool and new topic tool are disabled)
-			$preferences['discussiontools-' . HookUtils::SOURCEMODETOOLBAR]['disable-if'] = [ 'AND' ];
-
-			if ( isset( $preferences['discussiontools-' . HookUtils::REPLYTOOL] ) &&
-				// GlobalPreferences extension would delete disabled fields, avoid referring to it.
-				!( $preferences['discussiontools-' . HookUtils::REPLYTOOL]['disabled'] ?? false )
-			) {
-				$preferences['discussiontools-' . HookUtils::SOURCEMODETOOLBAR]['disable-if'][] = [
-					'===', 'discussiontools-' . HookUtils::REPLYTOOL, ''
-				];
+		foreach ( HookUtils::FEATURES_DEPENDENCIES as $feature => $dependencies ) {
+			if ( !isset( $preferences["discussiontools-$feature"] ) ) {
+				continue;
 			}
-			if ( isset( $preferences['discussiontools-' . HookUtils::NEWTOPICTOOL] ) ) {
-				$preferences['discussiontools-' . HookUtils::SOURCEMODETOOLBAR]['disable-if'][] = [
-					'===', 'discussiontools-' . HookUtils::NEWTOPICTOOL, ''
-				];
+			$fields = array_filter( $dependencies,
+				static fn ( $dep ) => isset( $preferences["discussiontools-$dep"] ) &&
+					// GlobalPreferences would remove disabled fields, avoid referencing them
+					!( $preferences["discussiontools-$dep"]['disabled'] ?? false )
+			);
+			// Disable the option when it would have no effect: its dependencies
+			// are all disabled by the user or by the conflicting Gadget
+			if ( count( $fields ) ) {
+				$preferences["discussiontools-$feature"]['disable-if'] = [ 'AND' ];
+				foreach ( $fields as $field ) {
+					$preferences["discussiontools-$feature"]['disable-if'][] = [
+						'===', "discussiontools-$field", ''
+					];
+				}
+			} else {
+				$preferences["discussiontools-$feature"]['disabled'] = true;
 			}
-		}
-
-		if ( isset( $preferences['discussiontools-' . HookUtils::AUTOTOPICSUB] ) &&
-			isset( $preferences['discussiontools-' . HookUtils::TOPICSUBSCRIPTION] )
-		) {
-			// Disable automatic subscriptions when subscriptions are disabled
-			$preferences['discussiontools-' . HookUtils::AUTOTOPICSUB]['disable-if'] = [
-				'===', 'discussiontools-' . HookUtils::TOPICSUBSCRIPTION, ''
-			];
 		}
 
 		$preferences['discussiontools-showadvanced'] = [

@@ -27,6 +27,7 @@ use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\MWException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -35,7 +36,6 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
-use MWException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -79,32 +79,16 @@ use Wikimedia\ObjectCache\CachedBagOStuff;
  * @see https://www.mediawiki.org/wiki/Manual:SessionManager_and_AuthManager
  */
 class SessionManager implements SessionManagerInterface {
-	/** @var SessionManager|null */
-	private static $instance = null;
+	private static ?SessionManager $instance = null;
+	private static ?Session $globalSession = null;
+	private static ?WebRequest $globalSessionRequest = null;
 
-	/** @var Session|null */
-	private static $globalSession = null;
-
-	/** @var WebRequest|null */
-	private static $globalSessionRequest = null;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var Config */
-	private $config;
-
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var CachedBagOStuff|null */
-	private $store;
+	private LoggerInterface $logger;
+	private HookContainer $hookContainer;
+	private HookRunner $hookRunner;
+	private Config $config;
+	private UserNameUtils $userNameUtils;
+	private CachedBagOStuff $store;
 
 	/** @var SessionProvider[] */
 	private $sessionProviders = null;
@@ -138,8 +122,6 @@ class SessionManager implements SessionManagerInterface {
 	/**
 	 * If PHP's session_id() has been set, returns that session. Otherwise
 	 * returns the session for RequestContext::getMain()->getRequest().
-	 *
-	 * @return Session
 	 */
 	public static function getGlobalSession(): Session {
 		if ( !PHPSessionHandler::isEnabled() ) {
@@ -184,54 +166,22 @@ class SessionManager implements SessionManagerInterface {
 	 */
 	public function __construct( $options = [] ) {
 		$services = MediaWikiServices::getInstance();
-		if ( isset( $options['config'] ) ) {
-			$this->config = $options['config'];
-			if ( !$this->config instanceof Config ) {
-				throw new InvalidArgumentException(
-					'$options[\'config\'] must be an instance of Config'
-				);
-			}
-		} else {
-			$this->config = $services->getMainConfig();
-		}
 
-		if ( isset( $options['logger'] ) ) {
-			if ( !$options['logger'] instanceof LoggerInterface ) {
-				throw new InvalidArgumentException(
-					'$options[\'logger\'] must be an instance of LoggerInterface'
-				);
-			}
-			$this->setLogger( $options['logger'] );
-		} else {
-			$this->setLogger( \MediaWiki\Logger\LoggerFactory::getInstance( 'session' ) );
-		}
+		$this->config = $options['config'] ?? $services->getMainConfig();
+		$this->setLogger( $options['logger'] ?? \MediaWiki\Logger\LoggerFactory::getInstance( 'session' ) );
+		$this->setHookContainer( $options['hookContainer'] ?? $services->getHookContainer() );
 
-		if ( isset( $options['hookContainer'] ) ) {
-			$this->setHookContainer( $options['hookContainer'] );
-		} else {
-			$this->setHookContainer( $services->getHookContainer() );
-		}
-
-		if ( isset( $options['store'] ) ) {
-			if ( !$options['store'] instanceof BagOStuff ) {
-				throw new InvalidArgumentException(
-					'$options[\'store\'] must be an instance of BagOStuff'
-				);
-			}
-			$store = $options['store'];
-		} else {
-			$store = $services->getObjectCacheFactory()
-				->getInstance( $this->config->get( MainConfigNames::SessionCacheType ) );
-		}
-
+		$store = $options['store'] ?? $services->getObjectCacheFactory()
+			->getInstance( $this->config->get( MainConfigNames::SessionCacheType ) );
 		$this->logger->debug( 'SessionManager using store ' . get_class( $store ) );
 		$this->store = $store instanceof CachedBagOStuff ? $store : new CachedBagOStuff( $store );
+
 		$this->userNameUtils = $services->getUserNameUtils();
 
 		register_shutdown_function( [ $this, 'shutdown' ] );
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -610,6 +560,10 @@ class SessionManager implements SessionManagerInterface {
 		// "fail" is just return false.
 		if ( $info->forceUse() && $blob !== false ) {
 			$failHandler = function () use ( $key, &$info, $request ) {
+				$this->logSessionWrite( $request, $info, [
+					'type' => 'delete',
+					'reason' => 'loadSessionInfo fail',
+				] );
 				$this->store->delete( $key );
 				return $this->loadSessionInfoFromStore( $info, $request );
 			};
@@ -624,9 +578,10 @@ class SessionManager implements SessionManagerInterface {
 		if ( $blob !== false ) {
 			// Double check: blob must be an array, if it's saved at all
 			if ( !is_array( $blob ) ) {
-				$this->logger->warning( 'Session "{session}": Bad data', [
-					'session' => $info->__toString(),
-				] );
+				$this->logSessionWrite( $request, $info, [
+					'type' => 'delete',
+					'reason' => 'bad data',
+				], LogLevel::WARNING );
 				$this->store->delete( $key );
 				return $failHandler();
 			}
@@ -635,9 +590,10 @@ class SessionManager implements SessionManagerInterface {
 			if ( !isset( $blob['data'] ) || !is_array( $blob['data'] ) ||
 				!isset( $blob['metadata'] ) || !is_array( $blob['metadata'] )
 			) {
-				$this->logger->warning( 'Session "{session}": Bad data structure', [
-					'session' => $info->__toString(),
-				] );
+				$this->logSessionWrite( $request, $info, [
+					'type' => 'delete',
+					'reason' => 'bad data structure',
+				], LogLevel::WARNING );
 				$this->store->delete( $key );
 				return $failHandler();
 			}
@@ -652,9 +608,10 @@ class SessionManager implements SessionManagerInterface {
 				!array_key_exists( 'userToken', $metadata ) ||
 				!array_key_exists( 'provider', $metadata )
 			) {
-				$this->logger->warning( 'Session "{session}": Bad metadata', [
-					'session' => $info->__toString(),
-				] );
+				$this->logSessionWrite( $request, $info, [
+					'type' => 'delete',
+					'reason' => 'bad metadata',
+				], LogLevel::WARNING );
 				$this->store->delete( $key );
 				return $failHandler();
 			}
@@ -664,12 +621,11 @@ class SessionManager implements SessionManagerInterface {
 			if ( $provider === null ) {
 				$newParams['provider'] = $provider = $this->getProvider( $metadata['provider'] );
 				if ( !$provider ) {
-					$this->logger->warning(
-						'Session "{session}": Unknown provider ' . $metadata['provider'],
-						[
-							'session' => $info->__toString(),
-						]
-					);
+					$this->logSessionWrite( $request, $info, [
+						'type' => 'delete',
+						'reason' => 'unknown provider',
+						'provider' => $metadata['provider'],
+					], LogLevel::WARNING );
 					$this->store->delete( $key );
 					return $failHandler();
 				}
@@ -1038,6 +994,7 @@ class SessionManager implements SessionManagerInterface {
 			'id' => $info->getId(),
 			'provider' => get_class( $info->getProvider() ),
 			'user' => '<anon>',
+			'supposedUser' => $info->getUserInfo() ? $info->getUserInfo()->getName() : null,
 			'clientip' => $request->getIP(),
 			'userAgent' => $request->getHeader( 'user-agent' ),
 		];
@@ -1143,6 +1100,36 @@ class SessionManager implements SessionManagerInterface {
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable message is set when used here
 			$logger->log( $logLevel, $message, $logData );
 		}
+	}
+
+	/**
+	 * @param WebRequest $request
+	 * @param SessionInfo $info
+	 * @param array $data Additional log context. Should have at least the following keys:
+	 *   - type: 'write' or 'delete'.
+	 *   - reason: why the write happened
+	 * @param string $level PSR LogLevel constant (defaults to info)
+	 * @throws MWException
+	 * @see SessionBackend::logSessionWrite()
+	 */
+	private function logSessionWrite(
+		WebRequest $request,
+		SessionInfo $info,
+		array $data,
+		string $level = LogLevel::INFO
+	): void {
+		$user = ( !$info->getUserInfo() || $info->getUserInfo()->isAnon() )
+			? '<anon>'
+			: $info->getUserInfo()->getName();
+		$this->logger->log( $level, 'Session store: {action} for {reason}', $data + [
+				'action' => $data['type'],
+				'reason' => $data['reason'],
+				'id' => $info->getId(),
+				'provider' => $info->getProvider() ? get_class( $info->getProvider() ) : 'null',
+				'user' => $user,
+				'clientip' => $request->getIP(),
+				'userAgent' => $request->getHeader( 'user-agent' ),
+			] );
 	}
 
 	// endregion -- end of Internal methods

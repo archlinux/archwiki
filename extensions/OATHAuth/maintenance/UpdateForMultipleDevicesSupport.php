@@ -42,6 +42,7 @@ class UpdateForMultipleDevicesSupport extends LoggedUpdateMaintenance {
 		$this->setBatchSize( 500 );
 	}
 
+	/** @inheritDoc */
 	protected function doDBUpdates() {
 		$dbw = MediaWikiServices::getInstance()
 			->getDBLoadBalancerFactory()

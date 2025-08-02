@@ -1,8 +1,8 @@
-var ResizingDragBar = require( './ResizingDragBar.js' );
-var TwoPaneLayout = require( './TwoPaneLayout.js' );
-var ErrorLayout = require( './ErrorLayout.js' );
-var ManualWidget = require( './ManualWidget.js' );
-var localStorage = require( 'mediawiki.storage' ).local;
+const ResizingDragBar = require( './ResizingDragBar.js' );
+const TwoPaneLayout = require( './TwoPaneLayout.js' );
+const ErrorLayout = require( './ErrorLayout.js' );
+const ManualWidget = require( './ManualWidget.js' );
+const localStorage = require( 'mediawiki.storage' ).local;
 
 /**
  * @class
@@ -18,7 +18,7 @@ function RealtimePreview() {
 	// @todo This shouldn't be required, but the preview element is added in PHP
 	// and can have attributes with values (such as `dir`) that aren't easily accessible from here,
 	// and we need to duplicate here what Live Preview does in core.
-	var $previewContent = $( '#wikiPreview .mw-content-ltr, #wikiPreview .mw-content-rtl' ).first().clone();
+	const $previewContent = $( '#wikiPreview .mw-content-ltr, #wikiPreview .mw-content-rtl' ).first().clone();
 	this.$previewNode = $( '<div>' )
 		.addClass( 'ext-WikiEditor-realtimepreview-preview' )
 		.attr( 'tabindex', '1' ) // T317108
@@ -71,6 +71,8 @@ function RealtimePreview() {
 	this.lastWikitext = null;
 	// Used to average response times and automatically disable realtime preview if it's very slow.
 	this.responseTimes = [];
+	// Used to hide the 'abort' error when submitting the #editform.
+	this.isSubmitting = false;
 }
 
 /**
@@ -80,16 +82,16 @@ function RealtimePreview() {
  */
 RealtimePreview.prototype.getToolbarButton = function ( context ) {
 	this.context = context;
-	var $uiText = context.$ui.find( '.wikiEditor-ui-text' );
+	const $uiText = context.$ui.find( '.wikiEditor-ui-text' );
 
 	// Fix the height of the textarea, before adding a resizing bar below it.
-	var height = context.$textarea.height();
+	const height = context.$textarea.height();
 	$uiText.css( 'height', height + 'px' );
 	context.$textarea.removeAttr( 'rows cols' );
 	context.$textarea.addClass( 'ext-WikiEditor-realtimepreview-textbox' );
 
 	// Add the resizing bar.
-	var bottomDragBar = new ResizingDragBar( { isEW: false } );
+	const bottomDragBar = new ResizingDragBar( { isEW: false, id: 'ext-WikiEditor-bottom-dragbar' } );
 	$uiText.after( bottomDragBar.$element );
 
 	// Create and configure the toolbar button.
@@ -156,13 +158,13 @@ RealtimePreview.prototype.saveUserPref = function () {
  * @private
  */
 RealtimePreview.prototype.toggle = function ( saveUserPref ) {
-	var $uiText = this.context.$ui.find( '.wikiEditor-ui-text' );
-	var $textarea = this.context.$textarea;
-	var $form = $textarea.parents( 'form' );
+	const $uiText = this.context.$ui.find( '.wikiEditor-ui-text' );
+	const $textarea = this.context.$textarea;
+	const $form = $textarea.parents( 'form' );
 
 	// Save the current cursor selection and focused element.
-	var cursorPos = $textarea.textSelection( 'getCaretPosition', { startAndEnd: true } );
-	var focusedElement = document.activeElement;
+	const cursorPos = $textarea.textSelection( 'getCaretPosition', { startAndEnd: true } );
+	const focusedElement = document.activeElement;
 
 	// Remove or add the layout to the DOM.
 	if ( this.enabled ) {
@@ -176,6 +178,10 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 		// Remove the keyup handler.
 		$textarea.off( this.eventNames );
 		$form.off( 'reset.realtimepreview' );
+
+		// Remove the submit handler.
+		$form.off( 'submit.realtimepreview' );
+		this.isSubmitting = false;
 
 		// Let other things happen after disabling.
 		mw.hook( 'ext.WikiEditor.realtimepreview.disable' ).fire( this );
@@ -201,6 +207,10 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 
 		// Hide or show the manual-reload message bar.
 		this.manualWidget.toggle( this.inManualMode );
+
+		$form.on( 'submit.realtimepreview', () => {
+			this.isSubmitting = true;
+		} );
 
 		// Let other things happen after enabling.
 		mw.hook( 'ext.WikiEditor.realtimepreview.enable' ).fire( this );
@@ -228,12 +238,12 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
  */
 RealtimePreview.prototype.getEventHandler = function () {
 	return mw.util.debounce(
-		function () {
+		() => {
 			// Only do preview if we're not in manual mode (as set in this.checkResponseTimes()).
 			if ( !this.inManualMode ) {
 				this.doRealtimePreview();
 			}
-		}.bind( this ),
+		},
 		this.configData.realtimeDebounce
 	);
 };
@@ -254,8 +264,8 @@ RealtimePreview.prototype.isScreenWideEnough = function () {
  * @private
  */
 RealtimePreview.prototype.enableFeatureWhenScreenIsWideEnough = function () {
-	var previewButtonIsVisible = this.button.isVisible();
-	var isScreenWideEnough = this.isScreenWideEnough();
+	const previewButtonIsVisible = this.button.isVisible();
+	const isScreenWideEnough = this.isScreenWideEnough();
 	if ( !isScreenWideEnough && previewButtonIsVisible ) {
 		this.button.toggle( false );
 		this.reloadButton.setDisabled( true );
@@ -277,6 +287,11 @@ RealtimePreview.prototype.enableFeatureWhenScreenIsWideEnough = function () {
  * @param {jQuery} $msg
  */
 RealtimePreview.prototype.showError = function ( $msg ) {
+	if ( this.isSubmitting ) {
+		// Do not show any error if the form has been submitted (the page is being reloaded and
+		// any preview request will have been aborted).
+		return;
+	}
 	this.$previewNode.hide();
 	this.reloadButton.toggle( false );
 	this.manualWidget.toggle( false );
@@ -301,9 +316,7 @@ RealtimePreview.prototype.checkResponseTimes = function ( time ) {
 		return;
 	}
 
-	var totalResponseTime = this.responseTimes.reduce( function ( a, b ) {
-		return a + b;
-	}, 0 );
+	const totalResponseTime = this.responseTimes.reduce( ( a, b ) => a + b, 0 );
 
 	if ( ( totalResponseTime / this.responseTimes.length ) > this.configData.realtimeDisableDuration ) {
 		this.inManualMode = true;
@@ -327,8 +340,8 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 		return;
 	}
 
-	var $textareaNode = $( '#wpTextbox1' );
-	var wikitext = $textareaNode.textSelection( 'getContents' );
+	const $textareaNode = $( '#wpTextbox1' );
+	const wikitext = $textareaNode.textSelection( 'getContents' );
 	if ( !forceUpdate && wikitext === this.lastWikitext ) {
 		// Wikitext unchanged, no update necessary
 		return;
@@ -341,16 +354,14 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 	this.reloadButton.setDisabled( true );
 	this.manualWidget.setDisabled( true );
 	this.errorLayout.toggle( false );
-	var loadingSelectors = this.pagePreview.getLoadingSelectors()
+	const loadingSelectors = this.pagePreview.getLoadingSelectors()
 		// config.$previewNode below is a clone of #wikiPreview with a different selector!
 		// config.$diffNode defaults to #wikiDiff but is disabled below and never updated.
-		.filter( function ( selector ) {
-			return selector.indexOf( '#wiki' ) !== 0;
-		} );
+		.filter( ( selector ) => selector.indexOf( '#wiki' ) !== 0 );
 	loadingSelectors.push( '.ext-WikiEditor-realtimepreview-preview' );
 	loadingSelectors.push( '.ext-WikiEditor-ManualWidget' );
 	loadingSelectors.push( '.ext-WikiEditor-realtimepreview-ErrorLayout' );
-	var time = Date.now();
+	const time = Date.now();
 
 	this.pagePreview.doPreview( {
 		$textareaNode: $textareaNode,
@@ -359,12 +370,15 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 		loadingSelectors: loadingSelectors,
 		// Don't hide the diff view, if visible.
 		$diffNode: null
-	} ).done( function () {
-		this.errorLayout.toggle( false );
-	}.bind( this ) ).fail( function ( code, result ) {
-		this.showError( ( new mw.Api() ).getErrorMessage( result ) );
-		mw.log.error( 'WikiEditor realtime preview error', result );
-	}.bind( this ) ).always( function () {
+	} ).then(
+		() => {
+			this.errorLayout.toggle( false );
+		},
+		( code, result ) => {
+			this.showError( ( new mw.Api() ).getErrorMessage( result ) );
+			mw.log.error( 'WikiEditor realtime preview error', result );
+		}
+	).then( () => {
 		this.$loadingBar.hide();
 		this.reloadButton.setDisabled( false );
 		if ( !this.errorLayout.isVisible() ) {
@@ -382,7 +396,7 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 			this.doRealtimePreview();
 		}
 		mw.hook( 'ext.WikiEditor.realtimepreview.loaded' ).fire( this );
-	}.bind( this ) );
+	} );
 };
 
 module.exports = RealtimePreview;

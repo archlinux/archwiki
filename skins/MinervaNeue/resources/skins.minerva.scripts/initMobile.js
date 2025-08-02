@@ -325,14 +325,14 @@ module.exports = function () {
 			// Filter out non-User namespace pages.
 			( _, element ) => isUserUri( element.href )
 		).each( ( _, element ) => {
-			const uri = new mw.Uri( element.href );
-			if ( uri.query.action !== 'edit' ) {
+			const uri = new URL( element.href );
+			if ( uri.searchParams.get( 'action' ) !== 'edit' ) {
 				// Nothing to strip.
 				return;
 			}
 
 			// Strip the action.
-			delete uri.query.action;
+			uri.searchParams.delete( 'action' );
 
 			// Update the element with the new link.
 			element.href = uri.toString();

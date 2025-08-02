@@ -77,7 +77,6 @@
 	"log-action-filter-oath-verify": "Prüfen, ob die Zwei-Faktor-Authentifizierung aktiviert ist",
 	"log-action-filter-oath-disable-other": "Deaktivieren der Zwei-Faktor-Authentifizierung für einen anderen Benutzer",
 	"oathauth-ui-no-module": "nicht aktiviert",
-	"oathauth-module-invalid": "Das vom Benutzer registrierte OATHAuth-Modul ist ungültig.",
 	"oathauth-module-totp-label": "TOTP (Einmal-Token)",
 	"oathauth-ui-manage": "Verwalten",
 	"oathmanage": "Zwei-Faktor-Authentifizierung verwalten",
@@ -96,9 +95,6 @@
 	"oathauth-disable-method-warning-button-label": "Bestätigen und fortfahren",
 	"oathauth-disable-method-warning": "Wenn du die Zwei-Faktor-Authentifizierungsmethode „$1“ deaktivierst, kannst du diese Methode beim Anmelden nicht mehr verwenden und alle mit dieser Authentifizierungsmethode verknüpften Daten werden gelöscht.",
 	"oathauth-disable-method-next-step": "Im nächsten Schritt musst du dich mit deiner aktuellen Zwei-Faktor-Authentifizierungsmethode ($1) authentifizieren, um diese deaktivieren zu können.",
-	"oathauth-switch-method-warning-header": "Auswahl einer anderen Authentifizierungsmethode bestätigen",
-	"oathauth-switch-method-warning": "Wenn du zur Zwei-Faktor-Authentifizierungsmethode $2 wechselst, wird die aktuelle Methode ($1) deaktiviert und alle Daten, die der aktuellen Authentifizierungsmethode zugeordnet sind, werden gelöscht",
-	"oathauth-switch-method-next-step": "Im nächsten Schritt musst du dich mit deiner aktuellen Zwei-Faktor-Authentifizierungsmethode ($1) authentifizieren, um zu $2 wechseln zu können.",
 	"oathauth-totp-disable-warning": "Du kannst das mit diesem Konto registrierte Authentifizierungsgerät nicht mehr verwenden. Alle mit diesem Konto verknüpften Wiederherstellungscodes werden ungültig.",
 	"oathauth-invalidrequest": "Ungültige Anfrage",
 	"notification-header-oathauth-disable": "Die Zwei-Faktor-Authentifizierung wurde für {{GENDER:$2|dein Konto}} deaktiviert.",
@@ -121,5 +117,6 @@
 	"oathauth-prefs-disabledgroups": "Deaktiverte {{PLURAL:$1|Gruppe|Gruppen}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Deine Mitgliedschaft}} in {{PLURAL:$1|der Gruppe|den Gruppen}} ist deaktiviert, bis du die [[Special:Manage Two-factor authentication|Zwei-Faktor-Authentifizierung]] aktivierst.",
 	"oathauth-qrcode-alt": "Scanbarer QR-Code, der den geheimen Schlüssel darstellt.",
-	"oathauth-hint": "Du hast keinen Zugriff auf dein Gerät oder deine Anwendung? In diesem Feld kannst du Wiederherstellungscodes eingeben (die angezeigt werden, wenn du 2FA aktiviert hast)."
+	"oathauth-hint": "Du hast keinen Zugriff auf dein Gerät oder deine Anwendung? In diesem Feld kannst du Wiederherstellungscodes eingeben (die angezeigt werden, wenn du 2FA aktiviert hast).",
+	"oathauth-must-be-central": "{{GENDER:$1|Dein Konto}} muss mit dem zentralen Authentifizierungssystem verknüpft sein, um die Zwei-Faktor-Authentifizierung verwenden zu können."
 }

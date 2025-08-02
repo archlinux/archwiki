@@ -17,6 +17,8 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Fragments\PFragment;
+use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\WikiLinkText;
 use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
@@ -97,7 +99,7 @@ class ParsoidExtensionAPI {
 		$this->wt2htmlOpts = $options['wt2html'] ?? null;
 		$this->html2wtOpts = $options['html2wt'] ?? null;
 		$this->serializerState = $this->html2wtOpts['state'] ?? null;
-		$this->frame = $this->wt2htmlOpts['frame'] ?? null;
+		$this->frame = $this->wt2htmlOpts['frame'] ?? $env->topFrame;
 		$this->extTag = $this->wt2htmlOpts['extTag'] ?? null;
 	}
 
@@ -223,7 +225,7 @@ class ParsoidExtensionAPI {
 	 * @return Document
 	 */
 	public function getTopLevelDoc(): Document {
-		return $this->env->topLevelDoc;
+		return $this->env->getTopLevelDoc();
 	}
 
 	/**
@@ -349,7 +351,7 @@ class ParsoidExtensionAPI {
 	/**
 	 * Parse wikitext to DOM
 	 *
-	 * @param string $wikitext
+	 * @param string|PFragment $wikitextOrPFragment
 	 * @param array $opts
 	 * - srcOffsets
 	 * - processInNewFrame
@@ -363,20 +365,32 @@ class ParsoidExtensionAPI {
 	 * @return DocumentFragment
 	 */
 	public function wikitextToDOM(
-		string $wikitext, array $opts, bool $sol
+		$wikitextOrPFragment, array $opts, bool $sol
 	): DocumentFragment {
-		if ( $wikitext === '' ) {
+		if ( is_string( $wikitextOrPFragment ) ) {
+			$srcOffsets = $opts['srcOffsets'] ?? null;
+			if ( $srcOffsets !== null && !$srcOffsets instanceof DomSourceRange ) {
+				$srcOffsets = DomSourceRange::fromTsr( $srcOffsets );
+			}
+			$pFragment = WikitextPFragment::newFromWt(
+				$wikitextOrPFragment, $srcOffsets
+			);
+		} else {
+			$pFragment = $wikitextOrPFragment;
+		}
+		if ( $pFragment->isEmpty() ) {
 			$domFragment = $this->getTopLevelDoc()->createDocumentFragment();
 		} else {
 			// Parse content to DOM and pass DOM-fragment token back to the main pipeline.
 			// The DOM will get unwrapped and integrated  when processing the top level document.
+			[
+				'frame' => $frame,
+				'wikitext' => $wikitext,
+				'srcOffsets' => $srcOffsets,
+			] = PipelineUtils::preparePFragment(
+				$this->env, $this->frame, $pFragment, $opts
+			);
 			$parseOpts = $opts['parseOpts'] ?? [];
-			$srcOffsets = $opts['srcOffsets'] ?? null;
-			$frame = $this->frame;
-			if ( !empty( $opts['processInNewFrame'] ) ) {
-				$frame = $frame->newChild( $frame->getTitle(), [], $wikitext );
-				$srcOffsets = new SourceRange( 0, strlen( $wikitext ) );
-			}
 			$domFragment = PipelineUtils::processContentInPipeline(
 				$this->env, $frame, $wikitext,
 				[
@@ -384,7 +398,7 @@ class ParsoidExtensionAPI {
 					'pipelineType' => 'wikitext-to-fragment',
 					'pipelineOpts' => [
 						'expandTemplates' => true,
-						'extTag' => $parseOpts['extTag'],
+						'extTag' => $parseOpts['extTag'] ?? null,
 						'extTagOpts' => $parseOpts['extTagOpts'] ?? null,
 						'inTemplate' => $this->inTemplate(),
 						'inlineContext' => ( $parseOpts['context'] ?? '' ) === 'inline',
@@ -428,7 +442,7 @@ class ParsoidExtensionAPI {
 	 *   - extTag
 	 *   - extTagOpts
 	 *   - context
-	 * @return DocumentFragment
+	 * @return DocumentFragment "prepared and loaded"
 	 */
 	public function extTagToDOM(
 		array $extArgs, string $wikitext, array $opts
@@ -588,6 +602,65 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
+	 * Updates all arguments, similar to findAndUpdateArg, but applies the closure to all arguments
+	 * @param KV[] &$extArgs Array of extension args
+	 * @param ?Closure $updater $updater will get the existing string value
+	 *    for the key and value of the arg and is expected to return an updated value.
+	 */
+	public function updateAllArgs( array &$extArgs, ?Closure $updater = null ): void {
+		if ( !$updater ) {
+			return;
+		}
+		foreach ( $extArgs as $i => $kv ) {
+			$k = TokenUtils::tokensToString( $kv->k );
+			$val = $kv->v;
+			$kv = clone $kv;
+			$kv->v = $updater( $k, TokenUtils::tokensToString( $val ) );
+			$extArgs[$i] = $kv;
+		}
+	}
+
+	/**
+	 * Normalizes spaces from extension tag arguments, except for those keyed by values in $exceptions
+	 * @param KV[] &$extArgs Array of extension args
+	 * @param array[] $action array that is either empty or has one key, 'except' or 'only', which defines the
+	 * attributes that should be respectively excluded or only included from the normalization
+	 */
+	public function normalizeWhiteSpaceInArgs( array &$extArgs, array $action = [] ) {
+		$except = $action['except'] ?? null;
+		$only = $action['only'] ?? null;
+
+		if ( $except && $only ) {
+			$this->log( 'warn', 'normalizeWhiteSpaceInArgs should not have both except and only parameters' );
+			return;
+		}
+
+		if ( $except ) {
+			$closure = static function ( $key, $value ) use ( $except ) {
+				if ( in_array( strtolower( trim( $key ) ), $except, true ) ) {
+					return $value;
+				} else {
+					return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) );
+				}
+			};
+		} elseif ( $only ) {
+			$closure = static function ( $key, $value ) use ( $only ) {
+				if ( in_array( strtolower( trim( $key ) ), $only, true ) ) {
+					return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) );
+				} else {
+					return $value;
+				}
+			};
+		} else {
+			$closure = static function ( $key, $value ) {
+				return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) );
+			};
+		}
+
+		$this->updateAllArgs( $extArgs, $closure );
+	}
+
+	/**
 	 * This method adds a new argument to the extension args array
 	 * @param KV[] &$extArgs
 	 * @param string $key
@@ -611,10 +684,14 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * Extensions might be interested in examining (their) content embedded
-	 * in data-mw attributes that don't otherwise show up in the DOM.
+	 * in attributes that don't otherwise show up in the DOM.
 	 *
 	 * Ex: inline media captions that aren't rendered, language variant markup,
 	 *     attributes that are transcluded. More scenarios might be added later.
+	 * @deprecated
+	 * Don't use this directly: use ::processAttributeEmbeddedDom().
+	 * This method may omit content which is embedded natively as
+	 * DocumentFragments instead of as HTML strings.
 	 *
 	 * @param Element $elt The node whose data attributes need to be examined
 	 * @param Closure $proc The processor that will process the embedded HTML
@@ -623,7 +700,25 @@ class ParsoidExtensionAPI {
 	 *        and is expected to return a possibly modified string.
 	 */
 	public function processAttributeEmbeddedHTML( Element $elt, Closure $proc ): void {
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		ContentUtils::processAttributeEmbeddedHTML( $this, $elt, $proc );
+	}
+
+	/**
+	 * Extensions might be interested in examining (their) content embedded
+	 * in attributes that don't otherwise show up in the DOM.
+	 *
+	 * Ex: inline media captions that aren't rendered, language variant markup,
+	 *     attributes that are transcluded. More scenarios might be added later.
+	 *
+	 * @param Element $elt The node whose data attributes need to be examined
+	 * @param callable(DocumentFragment):bool $proc
+	 *        The processor that will process the embedded HTML.
+	 *        This processor will be provided a DocumentFragment
+	 *        and is expected to return true if that fragment was modified.
+	 */
+	public function processAttributeEmbeddedDom( Element $elt, callable $proc ): void {
+		ContentUtils::processAttributeEmbeddedDom( $this, $elt, $proc );
 	}
 
 	/**
@@ -638,10 +733,10 @@ class ParsoidExtensionAPI {
 	): void {
 		DOMUtils::migrateChildren( $from, $to );
 		DOMDataUtils::setDataParsoid(
-			$to, DOMDataUtils::getDataParsoid( $from )->clone()
+			$to, clone DOMDataUtils::getDataParsoid( $from )
 		);
 		DOMDataUtils::setDataMw(
-			$to, Utils::clone( DOMDataUtils::getDataMw( $from ) )
+			$to, clone DOMDataUtils::getDataMw( $from )
 		);
 	}
 
@@ -653,10 +748,45 @@ class ParsoidExtensionAPI {
 	 * This also doesn't support replacing template args from a frame.
 	 *
 	 * @param string $wikitext
-	 * @return string preprocessed wikitext
+	 * @return array{error:bool,src?:string,fragment?:PFragment}
+	 *  - 'error' did we hit resource limits?
+	 *  - 'src' expanded wikitext OR error message to print
+	 *     FIXME: Maybe error message should be localizable
+	 *  - 'fragment' Optional fragment (wikitext plus strip state)
+	 * @deprecated Use ::preprocessFragment instead
 	 */
-	public function preprocessWikitext( string $wikitext ): string {
-		return Wikitext::preprocess( $this->env, $wikitext )['src'];
+	public function preprocessWikitext( string $wikitext ) {
+		$error = false;
+		$result = $this->preprocessFragment(
+			WikitextPFragment::newFromWt( $wikitext, null ),
+			$error
+		);
+		if ( $error ) {
+			return [
+				'error' => true,
+				'src' => $result->killMarkers(),
+			];
+		}
+		return [ 'error' => false, 'fragment' => $result, ];
+	}
+
+	/**
+	 * Equivalent of 'preprocess' from Parser.php in core.
+	 * - expands templates
+	 * - replaces magic variables
+	 * This does not run any hooks however since that would be unexpected.
+	 * This also doesn't support replacing template args from a frame.
+	 *
+	 * This version takes fragments as input and output.
+	 *
+	 * @param PFragment $fragment The input fragment
+	 * @param bool|null &$error Set to true if we hit resource limits
+	 * @return PFragment expanded wikitext OR error message to print
+	 *
+	 * @unstable EXPERIMENTAL! This interface may change further
+	 */
+	public function preprocessFragment( PFragment $fragment, ?bool &$error = null ): PFragment {
+		return Wikitext::preprocessFragment( $this->env, $fragment, $error );
 	}
 
 	/**
@@ -679,7 +809,7 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * Serialize DOM element to string (inner/outer HTML is controlled by flag).
-	 * If $releaseDom is set to true, the DOM will be left in non-canonical form
+	 * If $releaseDom is set to true, the DOM will not be "prepared and loaded"
 	 * and is not safe to use after this call. This is primarily a performance optimization.
 	 *
 	 * @param Node $node
@@ -695,7 +825,9 @@ class ParsoidExtensionAPI {
 		// FIXME: This is going to drop any diff markers but since
 		// the dom differ doesn't traverse into extension content (right now),
 		// none should exist anyways.
-		$html = ContentUtils::ppToXML( $node, [ 'innerXML' => $innerHTML ] );
+		// FIXME: This roundtrip discards data-parsoid.tmp data from $node.
+		// Maybe it meant to set keepTmp, but that flag is currently broken.
+		$html = ContentUtils::ppToXML( $node, [ 'innerXML' => $innerHTML, 'fragment' => true ] );
 		if ( !$releaseDom ) {
 			DOMDataUtils::visitAndLoadDataAttribs( $node );
 		}
@@ -855,15 +987,8 @@ class ParsoidExtensionAPI {
 	 * @param Document $doc
 	 */
 	public function postProcessDOM( Document $doc ): void {
-		$env = $this->env;
-		// From CleanUp::saveDataParsoid
-		$body = DOMCompat::getBody( $doc );
-		DOMDataUtils::visitAndStoreDataAttribs( $body, [
-			'storeInPageBundle' => $env->pageBundle,
-			'env' => $env
-		] );
 		// Ugh! But, this whole method needs to go away anyway
-		( new AddMetaData( null ) )->run( $env, $body );
+		( new AddMetaData( null ) )->run( $this->env, DOMCompat::getBody( $doc ) );
 	}
 
 	/**

@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"CptViraj",
+			"Dsvyas",
+			"KartikMistry"
+		]
+	},
+	"group-checkuser": "સભ્ય તપાસકો",
+	"checkuser-reason": "કારણ:",
+	"checkuser-all": "બધા",
+	"checkuser-locked": "તાળું મારેલ",
+	"checkuser-search": "શોધો",
+	"checkuser-search-submit": "શોધો",
+	"checkuser-investigate-reason-label": "કારણ",
+	"checkuser-investigate-preliminary-table-header-name": "સભ્યનામ",
+	"checkuser-investigate-compare-table-header-username": "સભ્યનામ",
+	"checkuser-ip-contributions-tab-label-contributions": "યોગદાનો"
+}

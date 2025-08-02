@@ -28,6 +28,6 @@ interface NodeList extends \ArrayAccess, \IteratorAggregate, \Countable {
 	/**
 	 * @return \Iterator<Node> Value iterator returning Node items
 	 */
-	public function getIterator();
+	public function getIterator(): \Iterator;
 
 }

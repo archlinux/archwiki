@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "Fechal",
 	"cdx-label-optional-flag": "(ocional)",
 	"cdx-message-dismiss-button-label": "Fechal",
+	"cdx-popover-close-button-label": "Fechal",
 	"cdx-search-input-search-button-label": "Precural",
 	"cdx-table-select-all-label": "Descogel tolas carrefilas",
 	"cdx-table-select-row-label": "Descogel la carrefila $1 de $2",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Muestrandu resultaus $1–$2 d'abondus",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 de munchus",
 	"cdx-table-pagination-status-message-indeterminate-final": "Muestrandu {{PLURAL:$1|el resultau caberu|los $1 resultaus caberus}}",
-	"cdx-table-pagination-status-message-pending": "Cargandu resultaus..."
+	"cdx-table-pagination-status-message-pending": "Cargandu resultaus...",
+	"cdx-table-no-data-message": "No ain daus oportunus."
 }

@@ -11,8 +11,6 @@ class AdminLinksHooks implements AdminLinksHook {
 
 	/**
 	 * Implements AdminLinks hook from Extension:Admin_Links.
-	 *
-	 * @param ALTree &$adminLinksTree
 	 */
 	public function onAdminLinks( ALTree &$adminLinksTree ) {
 		$generalSection = $adminLinksTree->getSection( wfMessage( 'adminlinks_general' )->text() );

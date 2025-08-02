@@ -107,25 +107,14 @@ ve.ce.MWSignatureNode.prototype.onTeardown = function () {
  */
 ve.ce.MWSignatureNode.prototype.generateContents = function () {
 	const doc = this.getModel().getDocument();
-	let abortable, aborted;
-	const abortedPromise = ve.createDeferred().reject( 'http',
-		{ textStatus: 'abort', exception: 'abort' } ).promise();
-
-	function abort() {
-		aborted = true;
-		if ( abortable && abortable.abort ) {
-			abortable.abort();
-		}
-	}
+	const api = ve.init.target.getContentApi( doc );
+	const ajaxOptions = {};
+	const abortable = api.makeAbortablePromise( ajaxOptions );
 
 	// Acquire a temporary user username before previewing, so that signatures
 	// display the temp user instead of IP user. (T331397)
 	return mw.user.acquireTempUserName()
 		.then( () => {
-			if ( aborted ) {
-				return abortedPromise;
-			}
-
 			// We must have only one top-level node, this is the easiest way.
 			const wikitext = '<span>~~~~</span>';
 
@@ -133,35 +122,29 @@ ve.ce.MWSignatureNode.prototype.generateContents = function () {
 			// meta attributes (that may or may not be required).
 			// We could try hacking up one (or even both) of these, but just calling the two parsers
 			// in order seems slightly saner.
-			return ( abortable = ve.init.target.getContentApi( doc ).post( {
+			return api.post( {
 				action: 'parse',
 				text: wikitext,
 				contentmodel: 'wikitext',
 				prop: 'text',
 				onlypst: true
-			} ) );
+			}, ajaxOptions );
 		} )
 		.then( ( pstResponse ) => {
-			if ( aborted ) {
-				return abortedPromise;
-			}
 			const wikitext = ve.getProp( pstResponse, 'parse', 'text' );
 			if ( !wikitext ) {
 				return ve.createDeferred().reject();
 			}
-			return ( abortable = ve.init.target.parseWikitextFragment( wikitext, true, doc ) );
+			return ve.init.target.parseWikitextFragment( wikitext, true, doc, ajaxOptions );
 		} )
 		.then( ( parseResponse ) => {
-			if ( aborted ) {
-				return abortedPromise;
-			}
 			if ( ve.getProp( parseResponse, 'visualeditor', 'result' ) !== 'success' ) {
 				return ve.createDeferred().reject();
 			}
 			// Simplified case of template rendering, don't need to worry about filtering etc
 			return $( parseResponse.visualeditor.content ).contents().toArray();
 		} )
-		.promise( { abort: abort } );
+		.promise( abortable );
 };
 
 /* Registration */

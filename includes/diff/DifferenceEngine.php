@@ -21,6 +21,7 @@
  * @ingroup DifferenceEngine
  */
 
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
@@ -28,6 +29,7 @@ use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
@@ -40,6 +42,8 @@ use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\RecentChanges\ChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\BadRevisionException;
 use MediaWiki\Revision\RevisionRecord;
@@ -611,10 +615,23 @@ class DifferenceEngine extends ContextSource {
 	/**
 	 * Get the permission errors associated with the revisions for the current diff.
 	 *
+	 * @deprecated since 1.44 Use authorizeView() instead
 	 * @param Authority $performer
 	 * @return array[] Array of arrays of the arguments to wfMessage to explain permissions problems.
 	 */
 	public function getPermissionErrors( Authority $performer ) {
+		wfDeprecated( __METHOD__, '1.44' );
+		return $this->authorizeView( $performer )->toLegacyErrorArray();
+	}
+
+	/**
+	 * Check whether the user can read both of the pages for the current diff.
+	 *
+	 * This does not check access to deleted revisions, use isUserAllowedToSeeRevisions() for that.
+	 *
+	 * @since 1.44
+	 */
+	public function authorizeView( Authority $performer ): PermissionStatus {
 		$this->loadRevisionData();
 		$permStatus = PermissionStatus::newEmpty();
 		if ( $this->mNewPage ) {
@@ -623,7 +640,7 @@ class DifferenceEngine extends ContextSource {
 		if ( $this->mOldPage ) {
 			$performer->authorizeRead( 'read', $this->mOldPage, $permStatus );
 		}
-		return $permStatus->toLegacyErrorArray();
+		return $permStatus;
 	}
 
 	/**
@@ -758,9 +775,9 @@ class DifferenceEngine extends ContextSource {
 		}
 
 		$user = $this->getUser();
-		$permErrors = $this->getPermissionErrors( $this->getAuthority() );
-		if ( $permErrors ) {
-			throw new PermissionsError( 'read', $permErrors );
+		$permStatus = $this->authorizeView( $this->getAuthority() );
+		if ( !$permStatus->isGood() ) {
+			throw new PermissionsError( 'read', $permStatus );
 		}
 
 		$rollback = '';
@@ -996,6 +1013,7 @@ class DifferenceEngine extends ContextSource {
 				'class' => 'mw-diff-revision-history-links'
 			], $breadCrumbs )
 		);
+		$addMessageBoxStyles = false;
 		# If the diff cannot be shown due to a deleted revision, then output
 		# the diff header and links to unhide (if available)...
 		if ( $this->shouldBeHiddenFromUser( $this->getAuthority() ) ) {
@@ -1014,6 +1032,7 @@ class DifferenceEngine extends ContextSource {
 				];
 			}
 			$out->addHTML( Html::warningBox( $this->msg( ...$msg )->parse(), 'plainlinks' ) );
+			$addMessageBoxStyles = true;
 		# Otherwise, output a regular diff...
 		} else {
 			# Add deletion notice if the user is viewing deleted content
@@ -1021,12 +1040,14 @@ class DifferenceEngine extends ContextSource {
 			if ( $deleted ) {
 				$msg = $suppressed ? 'rev-suppressed-diff-view' : 'rev-deleted-diff-view';
 				$notice = Html::warningBox( $this->msg( $msg )->parse(), 'plainlinks' );
+				$addMessageBoxStyles = true;
 			}
 
 			# Add an error if the content can't be loaded
 			$this->getSlotContents();
 			foreach ( $this->getRevisionLoadErrors() as $msg ) {
 				$notice .= Html::warningBox( $msg->parse() );
+				$addMessageBoxStyles = true;
 			}
 
 			// Check if inline switcher will be needed
@@ -1045,6 +1066,9 @@ class DifferenceEngine extends ContextSource {
 				# Add redundant patrol link on bottom...
 				$out->addHTML( $this->markPatrolledLink() );
 			}
+		}
+		if ( $addMessageBoxStyles ) {
+			$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		}
 	}
 
@@ -1218,7 +1242,7 @@ class DifferenceEngine extends ContextSource {
 
 			$out->setRevisionId( $this->mNewid );
 			$out->setRevisionIsCurrent( $this->mNewRevisionRecord->isCurrent() );
-			$out->setRevisionTimestamp( $this->mNewRevisionRecord->getTimestamp() );
+			$out->getMetadata()->setRevisionTimestamp( $this->mNewRevisionRecord->getTimestamp() );
 			$out->setArticleFlag( true );
 
 			if ( !$this->hookRunner->onArticleRevisionViewCustom(
@@ -1257,7 +1281,7 @@ class DifferenceEngine extends ContextSource {
 					if ( $this->hookRunner->onDifferenceEngineRenderRevisionAddParserOutput(
 						$this, $out, $parserOutput, $wikiPage )
 					) {
-						$out->addParserOutput( $parserOutput, [
+						$out->addParserOutput( $parserOutput, $parserOptions, [
 							'enableSectionEditLinks' => $this->mNewRevisionRecord->isCurrent()
 								&& $this->getAuthority()->probablyCan(
 									'edit',
@@ -1267,13 +1291,12 @@ class DifferenceEngine extends ContextSource {
 						] );
 					}
 				} else {
-					$out->addHTML(
-						Html::errorBox(
-							$out->parseAsInterface(
-								$status->getWikiText( false, false, $this->getLanguage() )
-							)
-						)
-					);
+					$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+					foreach ( $status->getMessages() as $msg ) {
+						$out->addHTML( Html::errorBox(
+							$this->msg( $msg )->parse()
+						) );
+					}
 				}
 			}
 		}
@@ -2063,7 +2086,7 @@ class DifferenceEngine extends ContextSource {
 		if ( $oldRevision ) {
 			$this->mOldRevisionRecord = $oldRevision;
 			$this->mOldid = $oldRevision->getId();
-			$this->mOldPage = Title::newFromLinkTarget( $oldRevision->getPageAsLinkTarget() );
+			$this->mOldPage = Title::newFromPageIdentity( $oldRevision->getPage() );
 			// This method is meant for edit diffs and such so there is no reason to provide a
 			// revision that's not readable to the user, but check it just in case.
 			$this->mOldContent = $oldRevision->getContent( SlotRecord::MAIN,
@@ -2077,7 +2100,7 @@ class DifferenceEngine extends ContextSource {
 		}
 		$this->mNewRevisionRecord = $newRevision;
 		$this->mNewid = $newRevision->getId();
-		$this->mNewPage = Title::newFromLinkTarget( $newRevision->getPageAsLinkTarget() );
+		$this->mNewPage = Title::newFromPageIdentity( $newRevision->getPage() );
 		$this->mNewContent = $newRevision->getContent( SlotRecord::MAIN,
 			RevisionRecord::FOR_THIS_USER, $this->getAuthority() );
 		if ( !$this->mNewContent ) {
@@ -2204,7 +2227,7 @@ class DifferenceEngine extends ContextSource {
 		// Update the new revision ID in case it was 0 (makes life easier doing UI stuff)
 		$this->mNewid = $this->mNewRevisionRecord->getId();
 		$this->mNewPage = $this->mNewid ?
-			Title::newFromLinkTarget( $this->mNewRevisionRecord->getPageAsLinkTarget() ) :
+			Title::newFromPageIdentity( $this->mNewRevisionRecord->getPage() ) :
 			null;
 
 		// Load the old RevisionRecord object
@@ -2223,9 +2246,7 @@ class DifferenceEngine extends ContextSource {
 		}
 
 		if ( $this->mOldRevisionRecord && $this->mOldRevisionRecord->getId() ) {
-			$this->mOldPage = Title::newFromLinkTarget(
-				$this->mOldRevisionRecord->getPageAsLinkTarget()
-			);
+			$this->mOldPage = Title::newFromPageIdentity( $this->mOldRevisionRecord->getPage() );
 		} else {
 			$this->mOldPage = null;
 		}

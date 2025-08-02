@@ -20,8 +20,9 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
@@ -30,7 +31,6 @@ use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use PermissionsError;
 
 /**
  * Let users change their email address.
@@ -43,9 +43,6 @@ class SpecialChangeEmail extends FormSpecialPage {
 	 */
 	private $status;
 
-	/**
-	 * @param AuthManager $authManager
-	 */
 	public function __construct( AuthManager $authManager ) {
 		parent::__construct( 'ChangeEmail', 'editmyprivateinfo' );
 
@@ -153,6 +150,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		} elseif ( $this->status->value === 'eauth' ) {
 			# Notify user that a confirmation email has been sent...
 			$out = $this->getOutput();
+			$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 			$out->addHTML(
 				Html::warningBox(
 					$out->msg( 'eauthentsent', $this->getUser()->getName() )->parse()

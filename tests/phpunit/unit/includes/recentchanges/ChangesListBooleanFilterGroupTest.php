@@ -1,9 +1,10 @@
 <?php
 
+use MediaWiki\RecentChanges\ChangesListBooleanFilterGroup;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \ChangesListBooleanFilterGroup
+ * @covers \MediaWiki\RecentChanges\ChangesListBooleanFilterGroup
  */
 class ChangesListBooleanFilterGroupTest extends MediaWikiUnitTestCase {
 	public function testIsFullCoverage() {

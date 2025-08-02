@@ -1,5 +1,5 @@
 const Overlay = require( 'mobile.startup' ).Overlay;
-const IssueList = require( './IssueList.js' );
+const issueList = require( './IssueList.js' );
 const KEYWORD_ALL_SECTIONS = 'all';
 const namespaceIds = mw.config.get( 'wgNamespaceIds' );
 const NS_MAIN = namespaceIds[ '' ];
@@ -23,15 +23,10 @@ function pageIssuesOverlay( issues, section, namespaceID ) {
 		getNamespaceHeadingText( namespaceID ) :
 		mw.msg( 'minerva-meta-data-issues-section-header' );
 
-	const overlay = new Overlay( {
+	return Overlay.make( {
 		className: 'overlay overlay-issues',
-		heading: '<strong>' + headingText + '</strong>'
-	} );
-
-	overlay.$el.find( '.overlay-content' ).append(
-		new IssueList( issues ).$el
-	);
-	return overlay;
+		heading: `<strong>${ headingText }</strong>`
+	}, issueList( issues ) );
 }
 
 /**

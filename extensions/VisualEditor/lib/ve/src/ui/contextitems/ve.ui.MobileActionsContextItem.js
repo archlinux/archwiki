@@ -56,6 +56,8 @@ ve.ui.MobileActionsContextItem.static.name = 'mobileActions';
 
 ve.ui.MobileActionsContextItem.static.editable = false;
 
+ve.ui.MobileActionsContextItem.static.exclusive = false;
+
 // Show this context last
 ve.ui.MobileActionsContextItem.static.sortOrder = 1;
 
@@ -78,7 +80,7 @@ ve.ui.MobileActionsContextItem.prototype.onCopyButtonClick = function () {
 
 	surfaceView.activate();
 	// Force a native selection on mobile
-	surfaceView.preparePasteTargetForCopy( true );
+	surfaceView.prepareClipboardHandlerForCopy( true );
 
 	let copied;
 	try {
@@ -90,7 +92,7 @@ ve.ui.MobileActionsContextItem.prototype.onCopyButtonClick = function () {
 	ve.init.platform.notify( ve.msg( copied ? 'visualeditor-clipboard-copy-success' : 'visualeditor-clipboard-copy-fail' ) );
 
 	// Restore normal selection for device type
-	surfaceView.preparePasteTargetForCopy();
+	surfaceView.prepareClipboardHandlerForCopy();
 	if ( OO.ui.isMobile() ) {
 		// Support: Mobile Safari
 		// Force remove the selection to hide the keyboard

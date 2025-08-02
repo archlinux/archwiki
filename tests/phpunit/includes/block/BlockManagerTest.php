@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Block\AbstractBlock;
+use MediaWiki\Block\Block;
 use MediaWiki\Block\BlockManager;
 use MediaWiki\Block\CompositeBlock;
 use MediaWiki\Block\DatabaseBlock;
@@ -8,6 +10,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentityValue;
 use Psr\Log\NullLogger;
 use Wikimedia\TestingAccessWrapper;
 
@@ -62,6 +65,7 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			new NullLogger(),
 			$services->getHookContainer(),
 			$services->getDatabaseBlockStore(),
+			$services->getBlockTargetFactory(),
 			$services->getProxyLookup()
 		];
 	}
@@ -101,6 +105,17 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
+	private function extractBlockOptions( $options ) {
+		$blockOptions = $options['blockOptions'];
+		if ( $options['target'] ) {
+			$blockOptions['address'] = $options['target'];
+		} else {
+			$blockOptions['targetUser'] = $this->user;
+		}
+		$blockOptions['by'] ??= $this->sysopUser;
+		return $blockOptions;
+	}
+
 	/**
 	 * @dataProvider provideBlocksForShouldApplyCookieBlock
 	 */
@@ -113,12 +128,8 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			] )
 		);
 
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$block = new DatabaseBlock( array_merge( [
-			'address' => $options['target'] ?: $this->user,
-			'by' => $this->sysopUser,
-		], $options['blockOptions'] ) );
-		$blockStore->insertBlock( $block );
+		$block = $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( $this->extractBlockOptions( $options ) );
 
 		$user = $options['registered'] ? $this->user : new User();
 		$user->getRequest()->setCookie( 'BlockID', $blockManager->getCookieValue( $block ) );
@@ -141,12 +152,8 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			] )
 		);
 
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$block = new DatabaseBlock( array_merge( [
-			'address' => $options['target'] ?: $this->user,
-			'by' => $this->sysopUser,
-		], $options['blockOptions'] ) );
-		$blockStore->insertBlock( $block );
+		$block = $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( $this->extractBlockOptions( $options ) );
 
 		$user = $options['registered'] ? $this->user : new User();
 		$user->getRequest()->setCookie( 'BlockID', $blockManager->getCookieValue( $block ) );
@@ -358,9 +365,6 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 	public function testGetUniqueBlocks() {
 		$blockId = 100;
 
-		/** @var BlockManager $blockManager */
-		$blockManager = TestingAccessWrapper::newFromObject( $this->getBlockManager( [] ) );
-
 		$block = $this->getMockBuilder( DatabaseBlock::class )
 			->onlyMethods( [ 'getId' ] )
 			->getMock();
@@ -373,11 +377,22 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 		$autoblock->method( 'getParentBlockId' )
 			->willReturn( $blockId );
 		$autoblock->method( 'getType' )
-			->willReturn( DatabaseBlock::TYPE_AUTO );
+			->willReturn( Block::TYPE_AUTO );
 
-		$blocks = [ $block, $block, $autoblock, new SystemBlock() ];
+		$autoblockWithoutParentIdMethod = $this->getMockBuilder( AbstractBlock::class )
+			->onlyMethods( [ 'getType' ] )
+			->getMockForAbstractClass();
+		$autoblockWithoutParentIdMethod->method( 'getType' )
+			->willReturn( Block::TYPE_AUTO );
 
-		$this->assertCount( 2, $blockManager->getUniqueBlocks( $blocks ) );
+		$systemBlock = new SystemBlock();
+		$blocks = [ $block, $block, $autoblock, $systemBlock, $autoblockWithoutParentIdMethod ];
+
+		$blockManager = TestingAccessWrapper::newFromObject( $this->getBlockManager( [] ) );
+		$this->assertArrayEquals(
+			[ $block, $systemBlock, $autoblockWithoutParentIdMethod ],
+			$blockManager->getUniqueBlocks( $blocks )
+		);
 	}
 
 	/**
@@ -385,6 +400,22 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testTrackBlockWithCookie( $options, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::CookiePrefix, '' );
+
+		if ( is_int( $options['block'] ) ) {
+			$options['block'] = $this->getTrackableBlock( $options['block'] );
+		} elseif ( is_array( $options['block'] ) ) {
+			$blocks = [];
+			foreach ( $options['block'] as $block ) {
+				if ( is_int( $block ) ) {
+					$blocks[] = $this->getTrackableBlock( $block );
+				} elseif ( $block === 'system' ) {
+					$blocks[] = new SystemBlock();
+				}
+			}
+			$options['block'] = new CompositeBlock( [
+				'originalBlocks' => $blocks
+			] );
+		}
 
 		$request = new FauxRequest();
 		if ( $options['cookieSet'] ) {
@@ -413,13 +444,13 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected['value'], $response->getCookie( 'BlockID' ) );
 	}
 
-	public function provideTrackBlockWithCookie() {
+	public static function provideTrackBlockWithCookie() {
 		$blockId = 123;
 		return [
 			'Block cookie is already set; there is a trackable block' => [
 				[
 					'cookieSet' => true,
-					'block' => $this->getTrackableBlock( $blockId ),
+					'block' => $blockId,
 				],
 				[
 					'count' => 1,
@@ -450,7 +481,7 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			'Block cookie is not yet set; there is a trackable block' => [
 				[
 					'cookieSet' => false,
-					'block' => $this->getTrackableBlock( $blockId ),
+					'block' => $blockId,
 				],
 				[
 					'count' => 1,
@@ -460,12 +491,10 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			'Block cookie is not yet set; there is a composite block with a trackable block' => [
 				[
 					'cookieSet' => false,
-					'block' => new CompositeBlock( [
-						'originalBlocks' => [
-							new SystemBlock(),
-							$this->getTrackableBlock( $blockId ),
-						]
-					] ),
+					'block' => [
+						'system',
+						$blockId,
+					],
 				],
 				[
 					'count' => 1,
@@ -475,12 +504,10 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			'Block cookie is not yet set; there is a composite block but no trackable block' => [
 				[
 					'cookieSet' => false,
-					'block' => new CompositeBlock( [
-						'originalBlocks' => [
-							new SystemBlock(),
-							new SystemBlock(),
-						]
-					] ),
+					'block' => [
+						'system',
+						'system',
+					],
 				],
 				[
 					'count' => 0,
@@ -919,17 +946,12 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 
 	public function testGetBlocksForIPList() {
 		$blockManager = $this->getBlockManager( [] );
-		$block = new DatabaseBlock( [
-			'address' => '1.2.3.4',
-			'by' => $this->getTestSysop()->getUser(),
-		] );
-		$inserted = $this->getServiceContainer()
+		$block = $this->getServiceContainer()
 			->getDatabaseBlockStore()
-			->insertBlock( $block );
-		$this->assertTrue(
-			(bool)$inserted['id'],
-			'Check that the block was inserted correctly'
-		);
+			->insertBlockWithParams( [
+				'address' => '1.2.3.4',
+				'by' => $this->getTestSysop()->getUser(),
+			] );
 
 		// Early return of empty array if no ips in the list
 		$list = $blockManager->getBlocksForIPList( [], true, false );
@@ -965,7 +987,7 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			'DatabaseBlock returned'
 		);
 		$this->assertSame(
-			$inserted['id'],
+			$block->getId(),
 			$list[0]->getId(),
 			'Block returned is the correct one'
 		);
@@ -977,4 +999,181 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 	public function testAllServiceOptionsUsed() {
 		$this->assertAllServiceOptionsUsed();
 	}
+
+	/**
+	 * Test ported from DatabaseBlock
+	 */
+	public function testBlockedUserCanNotCreateAccount() {
+		$username = 'BlockedUserToCreateAccountWith';
+		$u = User::createNew( $username );
+		$userId = $u->getId();
+		$this->assertNotEquals( 0, $userId, 'Check user id is not 0' );
+		TestUser::setPasswordForUser( $u, 'NotRandomPass' );
+		unset( $u );
+
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$this->assertNull(
+			$blockStore->newFromTarget( $username ),
+			"$username should not be blocked"
+		);
+
+		// Reload user
+		$userFactory = $this->getServiceContainer()->getUserFactory();
+		$u = $userFactory->newFromName( $username );
+		$this->assertTrue(
+			$u->isDefinitelyAllowed( 'createaccount' ),
+			"Our sandbox user should be able to create account before being blocked"
+		);
+
+		// Foreign perspective (blockee not on current wiki)...
+		$block = $blockStore->insertBlockWithParams( [
+			'address' => $username,
+			'reason' => 'crosswiki block...',
+			'timestamp' => wfTimestampNow(),
+			'expiry' => $this->getDb()->getInfinity(),
+			'createAccount' => true,
+			'enableAutoblock' => true,
+			'hideName' => true,
+			'blockEmail' => true,
+			'by' => UserIdentityValue::newExternal( 'm', 'MetaWikiUser' ),
+		] );
+
+		// Reload block from DB
+		$userBlock = $blockStore->newFromTarget( $username );
+		$this->assertTrue(
+			(bool)$block->appliesToRight( 'createaccount' ),
+			"Block object in DB should block right 'createaccount'"
+		);
+
+		$this->assertInstanceOf(
+			DatabaseBlock::class,
+			$userBlock,
+			"'$username' block block object should be existent"
+		);
+
+		// Reload user
+		$u = $userFactory->newFromName( $username );
+		$this->assertFalse(
+			$u->isDefinitelyAllowed( 'createaccount' ),
+			"Our sandbox user '$username' should NOT be able to create account"
+		);
+	}
+
+	public static function providerXff() {
+		return [
+			[ 'xff' => '1.2.3.4, 70.2.1.1, 60.2.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Range Hardblock'
+			],
+			[ 'xff' => '1.2.3.4, 50.2.1.1, 60.2.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Range Softblock with AC Disabled'
+			],
+			[ 'xff' => '1.2.3.4, 70.2.1.1, 50.1.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Exact Softblock'
+			],
+			[ 'xff' => '1.2.3.4, 70.2.1.1, 50.2.1.1, 50.1.1.1, 2.3.4.5',
+				'count' => 3,
+				'result' => 'Exact Softblock'
+			],
+			[ 'xff' => '1.2.3.4, 70.2.1.1, 50.2.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Range Hardblock'
+			],
+			[ 'xff' => '1.2.3.4, 70.2.1.1, 60.2.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Range Hardblock'
+			],
+			[ 'xff' => '50.2.1.1, 60.2.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Range Softblock with AC Disabled'
+			],
+			[ 'xff' => '1.2.3.4, 50.1.1.1, 60.2.1.1, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Exact Softblock'
+			],
+			[ 'xff' => '1.2.3.4, <$A_BUNCH-OF{INVALID}TEXT\>, 60.2.1.1, 2.3.4.5',
+				'count' => 1,
+				'result' => 'Range Softblock with AC Disabled'
+			],
+			[ 'xff' => '1.2.3.4, 50.2.1.1, 2001:4860:4001:802::1003, 2.3.4.5',
+				'count' => 2,
+				'result' => 'Range6 Hardblock'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider providerXff
+	 */
+	public function testBlocksOnXff( $xff, $exCount, $exResult ) {
+		$this->setupForXff();
+		$this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'targetUser' => $this->getTestUser()->getUserIdentity(),
+				'by' => $this->getTestSysop()->getUserIdentity()
+			] );
+
+		$list = array_map( 'trim', explode( ',', $xff ) );
+		$manager = $this->getBlockManager( [] );
+		$xffblocks = $manager->getBlocksForIPList( $list, true, false );
+		$this->assertCount( $exCount, $xffblocks, 'Number of blocks for ' . $xff );
+	}
+
+	private function setupForXff() {
+		$blockList = [
+			[ 'target' => '70.2.0.0/16',
+				'type' => DatabaseBlock::TYPE_RANGE,
+				'desc' => 'Range Hardblock',
+				'ACDisable' => false,
+				'isHardblock' => true,
+				'isAutoBlocking' => false,
+			],
+			[ 'target' => '2001:4860:4001:0:0:0:0:0/48',
+				'type' => DatabaseBlock::TYPE_RANGE,
+				'desc' => 'Range6 Hardblock',
+				'ACDisable' => false,
+				'isHardblock' => true,
+				'isAutoBlocking' => false,
+			],
+			[ 'target' => '60.2.0.0/16',
+				'type' => DatabaseBlock::TYPE_RANGE,
+				'desc' => 'Range Softblock with AC Disabled',
+				'ACDisable' => true,
+				'isHardblock' => false,
+				'isAutoBlocking' => false,
+			],
+			[ 'target' => '50.2.0.0/16',
+				'type' => DatabaseBlock::TYPE_RANGE,
+				'desc' => 'Range Softblock',
+				'ACDisable' => false,
+				'isHardblock' => false,
+				'isAutoBlocking' => false,
+			],
+			[ 'target' => '50.1.1.1',
+				'type' => DatabaseBlock::TYPE_IP,
+				'desc' => 'Exact Softblock',
+				'ACDisable' => false,
+				'isHardblock' => false,
+				'isAutoBlocking' => false,
+			],
+		];
+
+		$targetFactory = $this->getServiceContainer()->getBlockTargetFactory();
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$blocker = $this->getTestUser()->getUser();
+		foreach ( $blockList as $insBlock ) {
+			$block = new DatabaseBlock();
+			$block->setTarget( $targetFactory->newFromString( $insBlock['target'] ) );
+			$block->setBlocker( $blocker );
+			$block->setReason( $insBlock['desc'] );
+			$block->setExpiry( 'infinity' );
+			$block->isCreateAccountBlocked( $insBlock['ACDisable'] );
+			$block->isHardblock( $insBlock['isHardblock'] );
+			$block->isAutoblocking( $insBlock['isAutoBlocking'] );
+			$blockStore->insertBlock( $block );
+		}
+	}
+
 }

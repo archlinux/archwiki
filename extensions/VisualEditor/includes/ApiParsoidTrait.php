@@ -10,11 +10,9 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -23,13 +21,14 @@ use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Throwable;
-use Wikimedia\Stats\NullStatsdDataFactory;
-use Wikimedia\Stats\PrefixingStatsdDataFactoryProxy;
+use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Stats\StatsFactory;
 
 trait ApiParsoidTrait {
 
 	private ?LoggerInterface $logger = null;
-	private ?StatsdDataFactoryInterface $stats = null;
+	/** @var StatsFactory|null */
+	private $stats = null;
 
 	protected function getLogger(): LoggerInterface {
 		return $this->logger ?: new NullLogger();
@@ -39,12 +38,12 @@ trait ApiParsoidTrait {
 		$this->logger = $logger;
 	}
 
-	protected function getStats(): StatsdDataFactoryInterface {
-		return $this->stats ?: new NullStatsdDataFactory();
+	protected function getStatsFactory(): StatsFactory {
+		return $this->stats ?: StatsFactory::newNull();
 	}
 
-	protected function setStats( StatsdDataFactoryInterface $stats ): void {
-		$this->stats = new PrefixingStatsdDataFactoryProxy( $stats, 'VE' );
+	protected function setStatsFactory( StatsFactory $statsFactory ): void {
+		$this->stats = $statsFactory;
 	}
 
 	/**
@@ -60,7 +59,7 @@ trait ApiParsoidTrait {
 	 */
 	private function statsRecordTiming( string $key, float $startTime ): void {
 		$duration = ( microtime( true ) - $startTime ) * 1000;
-		$this->getStats()->timing( $key, $duration );
+		$this->getStatsFactory()->getTiming( $key )->observe( $duration );
 	}
 
 	/**
@@ -69,9 +68,7 @@ trait ApiParsoidTrait {
 	 */
 	private function dieWithRestHttpException( HttpException $ex ): void {
 		if ( $ex instanceof LocalizedHttpException ) {
-			$converter = new \MediaWiki\Message\Converter();
-			$msg = $converter->convertMessageValue( $ex->getMessageValue() );
-			$this->dieWithError( $msg, null, $ex->getErrorData() );
+			$this->dieWithError( $ex->getMessageValue(), null, $ex->getErrorData() );
 		} else {
 			$this->dieWithException( $ex, [ 'data' => $ex->getErrorData() ] );
 		}
@@ -95,7 +92,7 @@ trait ApiParsoidTrait {
 		} catch ( HttpException $ex ) {
 			$this->dieWithRestHttpException( $ex );
 		}
-		$this->statsRecordTiming( 'ApiVisualEditor.ParsoidClient.getPageHtml', $startTime );
+		$this->statsRecordTiming( 'ApiVisualEditor_ParsoidClient_getPageHtml_seconds', $startTime );
 
 		return $response;
 	}
@@ -122,7 +119,7 @@ trait ApiParsoidTrait {
 		} catch ( HttpException $ex ) {
 			$this->dieWithRestHttpException( $ex );
 		}
-		$this->statsRecordTiming( 'ApiVisualEditor.ParsoidClient.transformHTML', $startTime );
+		$this->statsRecordTiming( 'ApiVisualEditor_ParsoidClient_transformHTML_seconds', $startTime );
 
 		return $response;
 	}
@@ -157,7 +154,7 @@ trait ApiParsoidTrait {
 		} catch ( HttpException $ex ) {
 			$this->dieWithRestHttpException( $ex );
 		}
-		$this->statsRecordTiming( 'ApiVisualEditor.ParsoidClient.transformWikitext', $startTime );
+		$this->statsRecordTiming( 'ApiVisualEditor_ParsoidClient_transformWikitext_seconds', $startTime );
 
 		return $response;
 	}
@@ -186,19 +183,20 @@ trait ApiParsoidTrait {
 
 	/**
 	 * @see ApiBase
-	 * @param string|array|Message $msg See ApiErrorFormatter::addError()
+	 * @param string|array|MessageSpecifier $msg See ApiErrorFormatter::addError()
 	 * @param string|null $code See ApiErrorFormatter::addError()
 	 * @param array|null $data See ApiErrorFormatter::addError()
-	 * @param int|null $httpCode HTTP error code to use
+	 * @param int $httpCode HTTP error code to use
+	 * @throws ApiUsageException always
 	 * @return never
-	 * @throws ApiUsageException
 	 */
-	abstract public function dieWithError( $msg, $code = null, $data = null, $httpCode = null );
+	abstract public function dieWithError( $msg, $code = null, $data = null, $httpCode = 0 );
 
 	/**
 	 * @see ApiBase
 	 * @param Throwable $exception See ApiErrorFormatter::getMessageFromException()
 	 * @param array $options See ApiErrorFormatter::getMessageFromException()
+	 * @throws ApiUsageException always
 	 * @return never
 	 */
 	abstract public function dieWithException( Throwable $exception, array $options = [] );

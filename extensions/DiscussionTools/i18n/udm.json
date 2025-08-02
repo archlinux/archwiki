@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kotwys",
-			"Света Поторочина",
-			"Woytecr"
+			"Woytecr",
+			"Света Поторочина"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Та вераськонын кин ке выль валэктэт гожтӥз ке, {{GENDER:|тӥледлы}} ивортодэт вуоз.\nИвортодэтлэсь параметръёссэ тӥ асьтэ ладъянъёсады тупатыны быгатӥськоды.",
@@ -184,9 +184,9 @@
 	"tag-discussiontools-description": "Тупатъямын DiscussionTools-эз кутыса",
 	"tag-discussiontools-edit": "Тупатъям валэктэт",
 	"tag-discussiontools-edit-description": " Юзчи та валэктэтэз DiscussionTools-эз кутыса тупатъям",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools\n-replywidget-newtopic-link}} Выль тема]",
+	"tag-discussiontools-newtopic": "Выль тема",
 	"tag-discussiontools-newtopic-description": "Юзчи выль темаез баме DiscussionTools-эз кутыса ватсам",
-	"tag-discussiontools-reply": "[{{int:discussiontools\n-replywidget-reply-link}} Вазёно]",
+	"tag-discussiontools-reply": "Вазёно",
 	"tag-discussiontools-reply-description": "Юзчи валэктэтлы DiscussionTools-эз кутыса вазем",
 	"tag-discussiontools-source-description": "DiscussionTools кодэз тупатон режимын вал",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools паськытатэм исходной режимын, тӥрлык панелен валче вылэм.",

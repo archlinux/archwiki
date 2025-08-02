@@ -23,6 +23,7 @@
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 
 /**
@@ -35,6 +36,7 @@ class PageExists extends Maintenance {
 		$this->addArg( 'title', 'Page title to check whether it exists' );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$titleArg = $this->getArg( 0 );
 		$title = Title::newFromText( $titleArg );

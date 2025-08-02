@@ -2,24 +2,39 @@ QUnit.module( 'mediawiki.base/track', () => {
 
 	QUnit.test( 'track', ( assert ) => {
 		const sequence = [];
-		mw.trackSubscribe( 'simple', ( topic, data ) => {
+		mw.trackSubscribe( 'test.single', ( topic, data ) => {
 			sequence.push( [ topic, data ] );
 		} );
-		mw.track( 'simple', { key: 1 } );
-		mw.track( 'simple', { key: 2 } );
+		mw.track( 'test.single', { key: 1 } );
+		mw.track( 'test.single', { key: 2 } );
 
 		assert.deepEqual( sequence, [
-			[ 'simple', { key: 1 } ],
-			[ 'simple', { key: 2 } ]
+			[ 'test.single', { key: 1 } ],
+			[ 'test.single', { key: 2 } ]
 		], 'Events after subscribing' );
+
+		sequence.length = 0;
+		mw.trackSubscribe( 'test.multi', ( topic, num, options = {} ) => {
+			sequence.push( [ num, options ] );
+		} );
+		mw.track( 'test.multi', 42 );
+		mw.track( 'test.multi', 12, { name: 'Foo' } );
+
+		assert.deepEqual( sequence, [
+			[ 42, {} ],
+			[ 12, { name: 'Foo' } ]
+		] );
 	} );
 
 	QUnit.test( 'trackSubscribe', ( assert ) => {
 		const sequence = [];
+		let thisValue;
 		mw.track( 'before', { key: 1 } );
 		mw.track( 'before', { key: 2 } );
-		mw.trackSubscribe( 'before', ( topic, data ) => {
+		mw.trackSubscribe( 'before', function ( topic, data ) {
+			'use strict';
 			sequence.push( [ topic, data ] );
+			thisValue = this;
 		} );
 		mw.track( 'before', { key: 3 } );
 
@@ -29,11 +44,7 @@ QUnit.module( 'mediawiki.base/track', () => {
 			[ 'before', { key: 3 } ]
 		], 'Replay events from before subscribing' );
 
-		mw.track( 'context', { key: 0 } );
-		mw.trackSubscribe( 'context', function ( topic, data ) {
-			assert.strictEqual( this.topic, topic, 'thisValue has topic' );
-			assert.strictEqual( this.data, data, 'thisValue has data' );
-		} );
+		assert.strictEqual( thisValue, undefined, 'thisValue' );
 	} );
 
 	QUnit.test( 'trackUnsubscribe', ( assert ) => {

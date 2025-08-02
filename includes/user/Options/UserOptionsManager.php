@@ -22,14 +22,12 @@ namespace MediaWiki\User\Options;
 
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\Language\LanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
@@ -42,6 +40,7 @@ use Wikimedia\Rdbms\IDBAccessObject;
 /**
  * A service class to control user options
  * @since 1.35
+ * @ingroup User
  */
 class UserOptionsManager extends UserOptionsLookup {
 
@@ -75,6 +74,14 @@ class UserOptionsManager extends UserOptionsLookup {
 	 * @since 1.43
 	 */
 	public const GLOBAL_UPDATE = 'update';
+
+	/**
+	 * Create a new global preference in the first available global store.
+	 * If there are no global stores, update the local value. If there was
+	 * already a global preference, update it.
+	 * @since 1.44
+	 */
+	public const GLOBAL_CREATE = 'create';
 
 	private const LOCAL_STORE_KEY = 'local';
 
@@ -120,6 +127,7 @@ class UserOptionsManager extends UserOptionsLookup {
 		ObjectFactory $objectFactory,
 		array $storeProviders
 	) {
+		parent::__construct( $userNameUtils );
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->serviceOptions = $options;
 		$this->defaultOptionsLookup = $defaultOptionsLookup;
@@ -217,6 +225,42 @@ class UserOptionsManager extends UserOptionsLookup {
 		return $source !== self::LOCAL_STORE_KEY;
 	}
 
+	public function getOptionBatchForUserNames( array $users, string $key ) {
+		if ( !$users ) {
+			return [];
+		}
+
+		$exceptionKey = $key . self::LOCAL_EXCEPTION_SUFFIX;
+		$results = [];
+		$stores = $this->getStores();
+		foreach ( $stores as $storeName => $store ) {
+			// Check the exception key in the local store, if there is more than one store
+			if ( count( $stores ) > 1 && $storeName === self::LOCAL_STORE_KEY ) {
+				$storeResults = $store->fetchBatchForUserNames( [ $key, $exceptionKey ], $users );
+				$values = $storeResults[$key] ?? [];
+				$exceptions = $storeResults[$exceptionKey] ?? [];
+				foreach ( $values as $userName => $value ) {
+					if ( !empty( $exceptions[$userName] ) || !isset( $results[$userName] ) ) {
+						$results[$userName] = $value;
+					}
+				}
+			} else {
+				$storeResults = $store->fetchBatchForUserNames( [ $key ], $users );
+				$results += $storeResults[$key] ?? [];
+			}
+		}
+
+		// If $key has a conditional default, DefaultOptionsLookup will be expensive,
+		// so it makes sense to only ask for the users without an option set.
+		$usersNeedingDefaults = array_diff( $users, array_keys( $results ) );
+		if ( $usersNeedingDefaults ) {
+			$defaults = $this->defaultOptionsLookup->getOptionBatchForUserNames( $usersNeedingDefaults, $key );
+			$results += $defaults;
+		}
+
+		return $results;
+	}
+
 	/**
 	 * Set the given option for a user.
 	 *
@@ -245,12 +289,13 @@ class UserOptionsManager extends UserOptionsLookup {
 	 * @param UserIdentity $user
 	 * @param string $oname The option to set
 	 * @param mixed $val New value to set.
-	 * @param string $global Since 1.43. What to do if the option was set
-	 *   globally using the GlobalPreferences extension. One of the
-	 *   self::GLOBAL_* constants:
-	 *   - GLOBAL_IGNORE: Do nothing. The option remains with its previous value.
-	 *   - GLOBAL_OVERRIDE: Add a local override.
-	 *   - GLOBAL_UPDATE: Update the option globally.
+	 * @param string $global Since 1.43. The global update behaviour, used if
+	 *   GlobalPreferences is installed:
+	 *   - GLOBAL_IGNORE: If there is a global preference, do nothing. The option remains with
+	 *     its previous value.
+	 *   - GLOBAL_OVERRIDE: If there is a global preference, add a local override.
+	 *   - GLOBAL_UPDATE: If there is a global preference, update it.
+	 *   - GLOBAL_CREATE: Create a new global preference, overriding any local value.
 	 *   The UI should typically ask for the user's consent before setting a global
 	 *   option.
 	 */
@@ -263,34 +308,6 @@ class UserOptionsManager extends UserOptionsLookup {
 		$info = $this->cache[$userKey] ??= new UserOptionsCacheEntry;
 		$info->modifiedValues[$oname] = $val;
 		$info->globalUpdateActions[$oname] = $global;
-	}
-
-	/**
-	 * Reset certain (or all) options to the site defaults
-	 *
-	 * The optional parameter determines which kinds of preferences will be reset.
-	 * Supported values are everything that can be reported by getOptionKinds()
-	 * and 'all', which forces a reset of *all* preferences and overrides everything else.
-	 *
-	 * @note You need to call saveOptions() to actually write to the database.
-	 *
-	 * @deprecated since 1.43 use resetOptionsByName() with PreferencesFactory::getOptionNamesForReset()
-	 *
-	 * @param UserIdentity $user
-	 * @param IContextSource $context Context source used when $resetKinds does not contain 'all'.
-	 * @param array|string $resetKinds Which kinds of preferences to reset.
-	 *  Defaults to [ 'registered', 'registered-multiselect', 'registered-checkmatrix', 'unused' ]
-	 */
-	public function resetOptions(
-		UserIdentity $user,
-		IContextSource $context,
-		$resetKinds = [ 'registered', 'registered-multiselect', 'registered-checkmatrix', 'unused' ]
-	) {
-		wfDeprecated( __METHOD__, '1.43' );
-		$preferencesFactory = MediaWikiServices::getInstance()->getPreferencesFactory();
-		$optionsToReset = $preferencesFactory->getOptionNamesForReset(
-			$this->userFactory->newFromUserIdentity( $user ), $context, $resetKinds );
-		$this->resetOptionsByName( $user, $optionsToReset );
 	}
 
 	/**
@@ -321,36 +338,6 @@ class UserOptionsManager extends UserOptionsLookup {
 		foreach ( $this->loadUserOptions( $user ) as $name => $value ) {
 			$this->setOption( $user, $name, null );
 		}
-	}
-
-	/**
-	 * @deprecated since 1.43 use PreferencesFactory::listResetKinds()
-	 *
-	 * @return string[] Option kinds
-	 */
-	public function listOptionKinds(): array {
-		wfDeprecated( __METHOD__, '1.43' );
-		$preferencesFactory = MediaWikiServices::getInstance()->getPreferencesFactory();
-		return $preferencesFactory->listResetKinds();
-	}
-
-	/**
-	 * @deprecated since 1.43 use PreferencesFactory::getResetKinds
-	 *
-	 * @param UserIdentity $userIdentity
-	 * @param IContextSource $context
-	 * @param array|null $options
-	 * @return string[]
-	 */
-	public function getOptionKinds(
-		UserIdentity $userIdentity,
-		IContextSource $context,
-		$options = null
-	): array {
-		wfDeprecated( __METHOD__, '1.43' );
-		$user = $this->userFactory->newFromUserIdentity( $userIdentity );
-		$preferencesFactory = MediaWikiServices::getInstance()->getPreferencesFactory();
-		return $preferencesFactory->getResetKinds( $user, $context, $options );
 	}
 
 	/**
@@ -411,11 +398,16 @@ class UserOptionsManager extends UserOptionsLookup {
 				$valOrNull = (string)$value;
 			}
 			$source = $cache->sources[$key] ?? self::LOCAL_STORE_KEY;
+			$updateAction = $cache->globalUpdateActions[$key] ?? self::GLOBAL_IGNORE;
+
 			if ( $source === self::LOCAL_STORE_KEY ) {
-				$updatesByStore[self::LOCAL_STORE_KEY][$key] = $valOrNull;
+				if ( $updateAction === self::GLOBAL_CREATE ) {
+					$updatesByStore[$this->getStoreNameForGlobalCreate()][$key] = $valOrNull;
+				} else {
+					$updatesByStore[self::LOCAL_STORE_KEY][$key] = $valOrNull;
+				}
 			} else {
-				$updateAction = $cache->globalUpdateActions[$key] ?? self::GLOBAL_IGNORE;
-				if ( $updateAction === self::GLOBAL_UPDATE ) {
+				if ( $updateAction === self::GLOBAL_UPDATE || $updateAction === self::GLOBAL_CREATE ) {
 					$updatesByStore[$source][$key] = $valOrNull;
 				} elseif ( $updateAction === self::GLOBAL_OVERRIDE ) {
 					$updatesByStore[self::LOCAL_STORE_KEY][$key] = $valOrNull;
@@ -545,8 +537,18 @@ class UserOptionsManager extends UserOptionsLookup {
 		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): array {
 		$userKey = $this->getCacheKey( $user );
-		$defaultOptions = $this->defaultOptionsLookup->getDefaultOptions( $user );
 		$cache = $this->cache[$userKey] ??= new UserOptionsCacheEntry;
+
+		// In case options were already loaded from the database before and no options
+		// changes were saved to the database, we can use the cached original options.
+		if ( $cache->canUseCachedValues( $queryFlags )
+			&& $cache->originalValues !== null
+		) {
+			return $cache->originalValues;
+		}
+
+		$defaultOptions = $this->defaultOptionsLookup->getDefaultOptions( $user );
+
 		if ( $this->userNameUtils->isIP( $user->getName() ) || $this->userNameUtils->isTemp( $user->getName() ) ) {
 			// For unlogged-in users, load language/variant options from request.
 			// There's no need to do it for logged-in users: they can set preferences,
@@ -557,14 +559,6 @@ class UserOptionsManager extends UserOptionsLookup {
 			$defaultOptions['language'] = $variant;
 			$cache->originalValues = $defaultOptions;
 			return $defaultOptions;
-		}
-
-		// In case options were already loaded from the database before and no options
-		// changes were saved to the database, we can use the cached original options.
-		if ( $cache->canUseCachedValues( $queryFlags )
-			&& $cache->originalValues !== null
-		) {
-			return $cache->originalValues;
 		}
 
 		$options = $this->loadOptionsFromStore( $user, $queryFlags ) + $defaultOptions;
@@ -596,26 +590,6 @@ class UserOptionsManager extends UserOptionsLookup {
 		$this->hookRunner->onLoadUserOptions( $user, $options );
 		$cache->originalValues = $options;
 		return $options;
-	}
-
-	/**
-	 * Get a cache key for a user
-	 * @param UserIdentity $user
-	 * @return string
-	 */
-	private function getCacheKey( UserIdentity $user ): string {
-		$name = $user->getName();
-		if ( $this->userNameUtils->isIP( $name ) || $this->userNameUtils->isTemp( $name ) ) {
-			// IP and temporary users may not have custom preferences, so they can share a key
-			return 'anon';
-		} elseif ( $user->isRegistered() ) {
-			return "u:{$user->getId()}";
-		} else {
-			// Allow users with no local account to have preferences provided by alternative
-			// UserOptionsStore implementations (e.g. in GlobalPreferences)
-			$canonical = $this->userNameUtils->getCanonical( $name ) ?: $name;
-			return "a:$canonical";
-		}
 	}
 
 	/**
@@ -665,6 +639,21 @@ class UserOptionsManager extends UserOptionsLookup {
 			$this->stores = array_reverse( $stores, true );
 		}
 		return $this->stores;
+	}
+
+	/**
+	 * Get the name of the store to be used when setOption() is called with
+	 * GLOBAL_CREATE and there is no existing global preference value.
+	 *
+	 * @return string
+	 */
+	private function getStoreNameForGlobalCreate() {
+		foreach ( $this->getStores() as $name => $store ) {
+			if ( $name !== self::LOCAL_STORE_KEY ) {
+				return $name;
+			}
+		}
+		return self::LOCAL_STORE_KEY;
 	}
 }
 

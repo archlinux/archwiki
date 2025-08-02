@@ -1,0 +1,182 @@
+{
+	"x-i18n-description": "rest-schema-desc-media-links",
+	"required": [
+		"files"
+	],
+	"properties": {
+		"files": {
+			"type": "array",
+			"x-i18n-description": "rest-param-desc-media-links-array",
+			"items": {
+				"type": "object",
+				"required": [
+					"title",
+					"file_description_url",
+					"latest",
+					"preferred",
+					"original"
+				],
+				"properties": {
+					"title": {
+						"type": "string",
+						"x-i18n-description": "rest-param-desc-media-links-title"
+					},
+					"file_description_url": {
+						"type": "string",
+						"x-i18n-description": "rest-param-desc-media-description-url"
+					},
+					"latest": {
+						"type": "object",
+						"nullable": true,
+						"x-i18n-description": "rest-param-desc-media-latest",
+						"properties": {
+							"timestamp": {
+								"type": "string",
+								"format": "date-time",
+								"x-i18n-description": "rest-param-desc-media-latest-timestamp"
+							},
+							"user": {
+								"type": "object",
+								"x-i18n-description": "rest-param-desc-media-latest-user",
+								"properties": {
+									"id": {
+										"type": "integer",
+										"nullable": true,
+										"x-i18n-description": "rest-property-desc-user-id"
+									},
+									"name": {
+										"type": "string",
+										"nullable": true,
+										"x-i18n-description": "rest-property-desc-user-name"
+									}
+								},
+								"required": [
+									"id",
+									"name"
+								]
+							}
+						},
+						"required": [
+							"timestamp",
+							"user"
+						]
+					},
+					"preferred": {
+						"type": "object",
+						"nullable": true,
+						"x-i18n-description": "rest-param-desc-media-preferred",
+						"properties": {
+							"mediatype": {
+								"type": "string",
+								"enum": [
+									"BITMAP",
+									"DRAWING",
+									"AUDIO",
+									"VIDEO",
+									"MULTIMEDIA",
+									"UNKNOWN",
+									"OFFICE",
+									"TEXT",
+									"EXECUTABLE",
+									"ARCHIVE",
+									"3D"
+								],
+								"x-i18n-description": "rest-param-desc-media-mediatype"
+							},
+							"size": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-size"
+							},
+							"width": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-width"
+							},
+							"height": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-height"
+							},
+							"duration": {
+								"type": "number",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-duration"
+							},
+							"url": {
+								"type": "string",
+								"format": "uri",
+								"x-i18n-description": "rest-param-desc-media-url"
+							}
+						},
+						"required": [
+							"mediatype",
+							"size",
+							"width",
+							"height",
+							"duration",
+							"url"
+						]
+					},
+					"original": {
+						"type": "object",
+						"nullable": true,
+						"x-i18n-description": "rest-param-desc-media-original",
+						"properties": {
+							"mediatype": {
+								"type": "string",
+								"enum": [
+									"BITMAP",
+									"DRAWING",
+									"AUDIO",
+									"VIDEO",
+									"MULTIMEDIA",
+									"UNKNOWN",
+									"OFFICE",
+									"TEXT",
+									"EXECUTABLE",
+									"ARCHIVE",
+									"3D"
+								],
+								"x-i18n-description": "rest-param-desc-media-mediatype"
+							},
+							"size": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-size"
+							},
+							"width": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-width"
+							},
+							"height": {
+								"type": "integer",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-height"
+							},
+							"duration": {
+								"type": "number",
+								"nullable": true,
+								"x-i18n-description": "rest-param-desc-media-duration"
+							},
+							"url": {
+								"type": "string",
+								"format": "uri",
+								"x-i18n-description": "rest-param-desc-media-url"
+							}
+						},
+						"required": [
+							"mediatype",
+							"size",
+							"width",
+							"height",
+							"duration",
+							"url"
+						]
+					}
+				}
+			}
+		}
+	}
+}

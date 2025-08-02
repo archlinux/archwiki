@@ -132,7 +132,11 @@
 				smaxage: 60 * 60 * 24,
 				// Workaround T97096 by setting uselang=content
 				uselang: 'content'
-			} ).then( ( data ) => data.query.interwikimap.map( ( interwiki ) => interwiki.prefix ) );
+			} ).then( ( data ) => data.query.interwikimap.map( ( iw ) => iw.prefix ) );
+			// Do not cache errors
+			cache[ key ].catch( () => {
+				delete cache[ key ];
+			} );
 		}
 		return cache[ key ];
 	};
@@ -163,7 +167,7 @@
 		return this.sectionsCache[ normalizedTitleText ].then( ( response ) => {
 			const sections = OO.getProp( response, 'parse', 'sections' ) || [];
 			const normalizedFragmentQuery = normalizeFragment( fragmentQuery );
-			const results = sections.filter( ( section ) => normalizeFragment( section.line ).indexOf( normalizedFragmentQuery ) !== -1 ).map( ( section ) => {
+			const results = sections.filter( ( section ) => normalizeFragment( section.line ).includes( normalizedFragmentQuery ) ).map( ( section ) => {
 				const fragment = section.linkAnchor.replace( /_/g, ' ' );
 				// TODO: Make promise abortable
 				return {
@@ -194,11 +198,10 @@
 	 * @return {jQuery.Promise} Suggestions promise
 	 */
 	mw.widgets.TitleWidget.prototype.getSuggestionsPromise = function () {
-		const api = this.getApi(),
-			query = this.getQueryValue(),
-			promiseAbortObject = { abort: function () {
-				// Do nothing. This is just so OOUI doesn't break due to abort being undefined.
-			} };
+		const api = this.getApi();
+		const query = this.getQueryValue();
+		const ajaxOptions = {};
+		const abortable = api.makeAbortablePromise( ajaxOptions );
 
 		if ( this.searchFragments ) {
 			const hashIndex = query.indexOf( '#' );
@@ -210,7 +213,7 @@
 		if ( !mw.Title.newFromText( query ) ) {
 			// Don't send invalid titles to the API.
 			// Just pretend it returned nothing so we can show the 'invalid title' section
-			return $.Deferred().resolve( {} ).promise( promiseAbortObject );
+			return $.Deferred().resolve( {} ).promise( abortable );
 		}
 
 		return this.getInterwikiPrefixesPromise().then( ( interwikiPrefixes ) => {
@@ -219,20 +222,19 @@
 				const interwiki = query.slice( 0, Math.max( 0, query.indexOf( ':' ) ) );
 				if (
 					interwiki !== '' &&
-					interwikiPrefixes.indexOf( interwiki ) !== -1
+					interwikiPrefixes.includes( interwiki )
 				) {
 					// Interwiki prefix is valid: return the original query as a valid title
 					// NB: This doesn't check if the title actually exists on the other wiki
-					return $.Deferred().resolve( { query: {
+					return { query: {
 						pages: [ {
 							title: query
 						} ]
-					} } ).promise( promiseAbortObject );
+					} };
 				}
 			}
 			// Not a interwiki: do a prefix-search API lookup of the query.
-			const prefixSearchRequest = api.get( this.getApiParams( query ) );
-			promiseAbortObject.abort = prefixSearchRequest.abort.bind( prefixSearchRequest ); // TODO ew
+			const prefixSearchRequest = api.get( this.getApiParams( query ), ajaxOptions );
 			return prefixSearchRequest.then( ( prefixSearchResponse ) => {
 				if ( !this.showMissing ) {
 					return prefixSearchResponse;
@@ -242,8 +244,7 @@
 				const queryTitleRequest = api.get( {
 					action: 'query',
 					titles: title ? title.getPrefixedDb() : query
-				} );
-				promiseAbortObject.abort = queryTitleRequest.abort.bind( queryTitleRequest );
+				}, ajaxOptions );
 				return queryTitleRequest.then( ( queryTitleResponse ) => {
 					// By default, return the prefix-search result.
 					const result = prefixSearchResponse;
@@ -266,7 +267,7 @@
 					return result;
 				} );
 			} );
-		} ).promise( promiseAbortObject );
+		} ).promise( abortable );
 	};
 
 	/**

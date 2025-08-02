@@ -212,7 +212,6 @@ class UrlUtils {
 	/**
 	 * Get the canonical server, i.e. the canonical protocol and host part of
 	 * the wiki's URL.
-	 * @return string
 	 */
 	public function getCanonicalServer(): string {
 		// @phan-suppress-next-line PhanTypeMismatchReturnNullable -- throw if unconfigured
@@ -295,7 +294,7 @@ class UrlUtils {
 				$inputOffset += 3;
 			} elseif ( $inputOffset + 2 === $inputLength && str_ends_with( $urlPath, '/.' ) ) {
 				# Step B, replace leading "/.$" with "/"
-				$inputOffset += 1;
+				$inputOffset++;
 				$urlPath[$inputOffset] = '/';
 			} elseif ( substr_compare( $urlPath, '/./', $inputOffset, 3 ) === 0 ) {
 				# Step B, replace leading "/./" with "/"
@@ -313,7 +312,7 @@ class UrlUtils {
 				$trimOutput = true;
 			} elseif ( $inputOffset + 1 === $inputLength && str_ends_with( $urlPath, '.' ) ) {
 				# Step D, remove "^.$"
-				$inputOffset += 1;
+				$inputOffset++;
 			} elseif ( $inputOffset + 2 === $inputLength && str_ends_with( $urlPath, '..' ) ) {
 				# Step D, remove "^..$"
 				$inputOffset += 2;

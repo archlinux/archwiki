@@ -16,6 +16,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\Maintenance\Maintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -97,7 +100,7 @@ class DeleteAutoPatrolLogs extends Maintenance {
 		}
 	}
 
-	private function getRows( $fromId ) {
+	private function getRows( ?int $fromId ): array {
 		$dbr = $this->getReplicaDB();
 		$before = $this->getOption( 'before', false );
 
@@ -124,7 +127,7 @@ class DeleteAutoPatrolLogs extends Maintenance {
 			->fetchFieldValues();
 	}
 
-	private function getRowsOld( $fromId ) {
+	private function getRowsOld( ?int $fromId ): ?array {
 		$dbr = $this->getReplicaDB();
 		$batchSize = $this->getBatchSize();
 		$before = $this->getOption( 'before', false );

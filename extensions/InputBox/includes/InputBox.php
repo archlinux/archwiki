@@ -106,7 +106,7 @@ class InputBox {
 		] );
 	}
 
-	public function render() {
+	public function render(): string {
 		// Handle various types
 		switch ( $this->mType ) {
 			case 'create':
@@ -819,7 +819,7 @@ REGEX;
 		return Html::element( 'input', $defaultAttr );
 	}
 
-	private function bgColorStyle() {
+	private function bgColorStyle(): string {
 		if ( $this->mBGColor !== 'transparent' ) {
 			// Define color to avoid flagging linting warnings.
 			// https://phabricator.wikimedia.org/T369619

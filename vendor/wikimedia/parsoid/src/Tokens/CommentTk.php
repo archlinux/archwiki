@@ -25,15 +25,32 @@ class CommentTk extends Token {
 		$this->value = $value;
 	}
 
+	public function __clone() {
+		parent::__clone();
+		// No new non-primitive properties to clone.
+	}
+
 	/**
 	 * @inheritDoc
 	 */
 	public function jsonSerialize(): array {
-		return [
+		$ret = [
 			'type' => $this->getType(),
 			'value' => $this->value,
 			'dataParsoid' => $this->dataParsoid,
-			'dataMw' => $this->dataMw,
 		];
+		if ( $this->dataMw !== null ) {
+			$ret['dataMw'] = $this->dataMw;
+		}
+		return $ret;
+	}
+
+	/** @inheritDoc */
+	public static function newFromJsonArray( array $json ) {
+		return new self(
+			$json['value'],
+			$json['dataParsoid'] ?? null,
+			$json['dataMw'] ?? null
+		);
 	}
 }

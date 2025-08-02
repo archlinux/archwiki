@@ -28,14 +28,15 @@ use MediaWiki\Api\Validator\SubmoduleDef;
 use MediaWiki\Block\Block;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\MWException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
-use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -44,7 +45,6 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
-use MWException;
 use ReflectionClass;
 use StatusValue;
 use stdClass;
@@ -56,7 +56,6 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\ParamValidator\TypeDef\StringDef;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Timestamp\TimestampException;
-use WikiPage;
 
 /**
  * This abstract class implements many basic API functions, and is the base of
@@ -74,8 +73,6 @@ use WikiPage;
  * @ingroup API
  */
 abstract class ApiBase extends ContextSource {
-
-	use ApiBlockInfoTrait;
 
 	/** @var HookContainer */
 	private $hookContainer;
@@ -266,17 +263,6 @@ abstract class ApiBase extends ContextSource {
 
 	/** @var stdClass[][] Cache for self::filterIDs() */
 	private static $filterIDsCache = [];
-
-	/** @var array Map of web UI block messages which magically gain machine-readable block info */
-	private const BLOCK_CODE_MAP = [
-		'blockedtext' => true,
-		'blockedtext-partial' => true,
-		'autoblockedtext' => true,
-		'systemblockedtext' => true,
-		'blockedtext-composite' => true,
-		'blockedtext-tempuser' => true,
-		'autoblockedtext-tempuser' => true,
-	];
 
 	/** @var array Map of web UI block messages to corresponding API messages and codes */
 	private const MESSAGE_CODE_MAP = [
@@ -732,7 +718,7 @@ abstract class ApiBase extends ContextSource {
 	 * @return IReadableDatabase
 	 */
 	protected function getDB() {
-		if ( !isset( $this->mReplicaDB ) ) {
+		if ( !$this->mReplicaDB ) {
 			$this->mReplicaDB = MediaWikiServices::getInstance()
 				->getConnectionProvider()
 				->getReplicaDatabase( false, 'api' );
@@ -1068,6 +1054,40 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
+	 * Die with an "invalid param mix" error if the parameters contain the trigger parameter and
+	 * any of the conflicting parameters.
+	 *
+	 * @since 1.44
+	 *
+	 * @param array $params User provided parameters set, as from $this->extractRequestParams()
+	 * @param string $trigger The name of the trigger parameter
+	 * @param string|string[] $conflicts The conflicting parameter or a list
+	 *   of conflicting parameters
+	 */
+	public function requireNoConflictingParameters( $params, $trigger, $conflicts ) {
+		$triggerValue = $params[$trigger] ?? null;
+		if ( $triggerValue === null || $triggerValue === false ) {
+			return;
+		}
+		$intersection = array_intersect(
+			array_keys( array_filter( $params, [ $this, 'parameterNotEmpty' ] ) ),
+			(array)$conflicts
+		);
+		if ( count( $intersection ) ) {
+			$this->dieWithError( [
+				'apierror-invalidparammix-cannotusewith',
+				Message::listParam( array_map(
+					function ( $p ) {
+						return '<var>' . $this->encodeParamName( $p ) . '</var>';
+					},
+					array_values( $intersection )
+				) ),
+				$trigger,
+			] );
+		}
+	}
+
+	/**
 	 * Die if any of the specified parameters were found in the query part of
 	 * the URL rather than the HTTP post body contents.
 	 *
@@ -1343,81 +1363,6 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
-	 * Turn an array of messages into a Status.
-	 *
-	 * @deprecated since 1.43 Use methods that return StatusValue objects directly,
-	 *   such as PermissionManager::getPermissionStatus().
-	 *
-	 * @see ApiMessage::create
-	 *
-	 * @since 1.29
-	 * @param array $errors A list of message keys, MessageSpecifier objects,
-	 *        or arrays containing the message key and parameters.
-	 * @param Authority|null $performer
-	 * @return Status
-	 */
-	public function errorArrayToStatus( array $errors, ?Authority $performer = null ) {
-		wfDeprecated( __METHOD__, '1.43' );
-
-		$performer ??= $this->getAuthority();
-		$block = $performer->getBlock();
-
-		$status = Status::newGood();
-		foreach ( $errors as $error ) {
-			if ( !is_array( $error ) ) {
-				$error = [ $error ];
-			}
-
-			$head = reset( $error );
-			$key = ( $head instanceof MessageSpecifier ) ? $head->getKey() : (string)$head;
-
-			if ( isset( self::BLOCK_CODE_MAP[$key] ) && $block ) {
-				$status->fatal( ApiMessage::create(
-					$error,
-					$this->getBlockCode( $block ),
-					[ 'blockinfo' => $this->getBlockDetails( $block ) ]
-				) );
-			} elseif ( isset( self::MESSAGE_CODE_MAP[$key] ) ) {
-				[ $msg, $code ] = self::MESSAGE_CODE_MAP[$key];
-				$status->fatal( ApiMessage::create( $msg, $code ) );
-			} else {
-				// @phan-suppress-next-line PhanParamTooFewUnpack
-				$status->fatal( ...$error );
-			}
-		}
-		return $status;
-	}
-
-	/**
-	 * Add block info to block messages in a Status
-	 * @since 1.33
-	 * @internal since 1.37, should become protected in the future.
-	 * @param StatusValue $status
-	 * @param Authority|null $user
-	 */
-	public function addBlockInfoToStatus( StatusValue $status, ?Authority $user = null ) {
-		if ( $status instanceof PermissionStatus ) {
-			$block = $status->getBlock();
-		} else {
-			$user = $user ?: $this->getAuthority();
-			$block = $user->getBlock();
-		}
-
-		if ( !$block ) {
-			return;
-		}
-		foreach ( $status->getMessages() as $msg ) {
-			if ( isset( self::BLOCK_CODE_MAP[$msg->getKey()] ) ) {
-				$status->replaceMessage( $msg->getKey(), ApiMessage::create(
-					Message::newFromSpecifier( $msg ),
-					$this->getBlockCode( $block ),
-					[ 'blockinfo' => $this->getBlockDetails( $block ) ]
-				) );
-			}
-		}
-	}
-
-	/**
 	 * Call wfTransactionalTimeLimit() if this request was POSTed.
 	 *
 	 * @since 1.26
@@ -1613,11 +1558,7 @@ abstract class ApiBase extends ContextSource {
 			$this->getRequest()->getIP()
 		);
 
-		$this->dieWithError(
-			$msg,
-			$this->getBlockCode( $block ),
-			[ 'blockinfo' => $this->getBlockDetails( $block ) ]
-		);
+		$this->dieWithError( $msg );
 	}
 
 	/**
@@ -1661,8 +1602,6 @@ abstract class ApiBase extends ContextSource {
 			}
 			$status = $newStatus;
 		}
-
-		$this->addBlockInfoToStatus( $status );
 
 		throw new ApiUsageException( $this, $status );
 	}
@@ -2065,6 +2004,7 @@ abstract class ApiBase extends ContextSource {
 				array_multisort( $submoduleFlags, $submoduleNames, $submodules );
 				$msgs[$param] = array_merge( $msgs[$param], $submodules );
 			} elseif ( isset( $settings[self::PARAM_HELP_MSG_PER_VALUE] ) ) {
+				// ! keep these checks in sync with \MediaWiki\Api\Validator\ApiParamValidator::checkSettings
 				if ( !is_array( $settings[self::PARAM_HELP_MSG_PER_VALUE] ) ) {
 					self::dieDebug( __METHOD__,
 						'ApiBase::PARAM_HELP_MSG_PER_VALUE is not valid' );

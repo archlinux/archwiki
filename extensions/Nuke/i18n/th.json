@@ -2,33 +2,36 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
+			"Ekminarin",
 			"Horus",
-			"Nullzero",
-			"Ekminarin"
+			"Nullzero"
 		]
 	},
 	"nuke": "การลบเป็นกลุ่ม",
 	"action-nuke": "ลบหน้าเป็นกลุ่ม",
 	"nuke-desc": "ให้ผู้ดูแลระบบสามารถ[[Special:Nuke|ลบหน้าเป็นกลุ่ม]]",
-	"nuke-nopages": "ไม่มีหน้าใหม่สร้างโดย [[Special:Contributions/$1|{{GENDER:$1|$1}}]] ในการเปลี่ยนแปลงล่าสุด",
-	"nuke-list": "หน้าต่อไปนี้เพิ่งสร้างโดย [[Special:Contributions/$1|{{GENDER:$1|$1}}]]; \nกรอกความเห็นและกดปุ่มเพื่อลบ",
-	"nuke-list-multiple": "หน้าต่อไปนี้เพิ่งถูกสร้าง;\nกรอกความเห็นและกดปุ่มเพื่อลบ",
 	"nuke-defaultreason": "การลบหน้าที่เพิ่มโดย [[Special:Contributions/$1|{{GENDER:$1|$1}}]] เป็นกลุ่ม",
 	"nuke-multiplepeople": "การลบหน้าที่เพิ่งเพิ่มเป็นกลุ่ม",
 	"nuke-tools": "เครื่องมือนี้จะลบหน้าที่เพิ่งเพิ่มโดยผู้ใช้หรือเลขที่อยู่ไอพีที่กำหนดเป็นกลุ่ม\nกรอกชื่อผู้ใช้หรือเลขที่อยู่ไอพีเพื่อลบ หรือปล่อยว่างไว้สำหรับผู้ใช้ทุกคน",
-	"nuke-submit-user": "แสดงรายชื่อหน้า",
-	"nuke-submit-delete": "ลบรายการที่เลือก",
+	"nuke-submit-list": "แสดงรายชื่อหน้า",
+	"nuke-submit-continue": "ดำเนินการต่อ",
+	"nuke-submit-delete": "ลบ",
 	"right-nuke": "ลบหน้าเป็นกลุ่ม",
 	"nuke-userorip": "ชื่อผู้ใช้ ที่อยู่ไอพี หรือว่าง:",
 	"nuke-maxpages": "จำนวนหน้าสูงสุด:",
+	"nuke-date-from": "ตั้งแต่วันที่:",
+	"nuke-date-to": "ถึงวันที่:",
+	"nuke-associated-redirect": "เปลี่ยนทาง",
 	"nuke-editby": "สร้างโดย [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "ลบหน้า '''$1''' แล้ว",
 	"nuke-not-deleted": "ลบหน้า [[:$1]] '''ไม่ได้'''",
 	"nuke-delete-more": "[[Special:Nuke|ลบหน้าเพิ่ม]]",
 	"nuke-pattern": "แบบรูปสำหรับชื่อหน้า:",
-	"nuke-nopages-global": "ไม่มีหน้าใหม่ใน[[Special:RecentChanges|การเปลี่ยนแปลงล่าสุด]]",
+	"nuke-nopages-global": "ไม่มีหน้าที่ตรงกับการค้นหา",
 	"nuke-viewchanges": "ประวัติ",
 	"nuke-namespace": "จำกัดที่เนมสเปซ:",
 	"nuke-linkoncontribs": "การลบเป็นกลุ่ม",
-	"nuke-linkoncontribs-text": "ลบหน้าเป็นกลุ่มที่{{GENDER:$1|ผู้ใช้นี้}}เป็นผู้เขียนเพียงคนเดียว"
+	"nuke-linkoncontribs-text": "ลบหน้าเป็นกลุ่มที่{{GENDER:$1|ผู้ใช้นี้}}เป็นผู้เขียนเพียงคนเดียว",
+	"tag-nuke": "ลบหน้าทั้งหมด",
+	"tag-nuke-description": "การลบที่ดำเนินการโดยใช้ส่วนขยายลบหน้าทั้งหมด"
 }

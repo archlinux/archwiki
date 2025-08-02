@@ -27,11 +27,14 @@
 
 namespace MediaWiki\Api;
 
-use AssembleUploadChunksJob;
-use ChangeTags;
 use Exception;
-use JobQueueGroup;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Config\Config;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\AssembleUploadChunksJob;
+use MediaWiki\JobQueue\Jobs\PublishStashedFileJob;
+use MediaWiki\JobQueue\Jobs\UploadFromUrlJob;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -41,14 +44,12 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\Watchlist\WatchlistManager;
 use Psr\Log\LoggerInterface;
-use PublishStashedFileJob;
 use StatusValue;
 use UploadBase;
 use UploadFromChunks;
 use UploadFromFile;
 use UploadFromStash;
 use UploadFromUrl;
-use UploadFromUrlJob;
 use UploadStashBadPathException;
 use UploadStashException;
 use UploadStashFileException;
@@ -68,7 +69,7 @@ class ApiUpload extends ApiBase {
 
 	use ApiWatchlistTrait;
 
-	/** @var UploadBase|UploadFromChunks */
+	/** @var UploadBase|UploadFromChunks|null */
 	protected $mUpload = null;
 
 	/** @var array */
@@ -124,7 +125,7 @@ class ApiUpload extends ApiBase {
 		try {
 			if ( !$this->selectUploadModule() ) {
 				return; // not a true upload, but a status request or similar
-			} elseif ( !isset( $this->mUpload ) ) {
+			} elseif ( !$this->mUpload ) {
 				$this->dieDebug( __METHOD__, 'No upload module set' );
 			}
 		} catch ( UploadStashException $e ) { // XXX: don't spam exception log
@@ -161,9 +162,9 @@ class ApiUpload extends ApiBase {
 		// (This check is irrelevant if stashing is already requested, since the errors
 		//  can always be fixed by changing the title)
 		if ( !$this->mParams['stash'] ) {
-			$permErrors = $this->mUpload->verifyTitlePermissions( $user );
-			if ( $permErrors !== true ) {
-				$this->dieRecoverableError( $permErrors, 'filename' );
+			$status = $this->mUpload->authorizeUpload( $user );
+			if ( !$status->isGood() ) {
+				$this->dieRecoverableError( $status->getMessages(), 'filename' );
 			}
 		}
 
@@ -589,8 +590,7 @@ class ApiUpload extends ApiBase {
 	 * Throw an error that the user can recover from by providing a better
 	 * value for $parameter
 	 *
-	 * @param array $errors Array of Message objects, message keys, key+param
-	 *  arrays, or StatusValue::getErrors()-style arrays
+	 * @param MessageSpecifier[] $errors
 	 * @param string|null $parameter Parameter that needs revising
 	 * @throws ApiUsageException
 	 * @return never
@@ -845,85 +845,13 @@ class ApiUpload extends ApiBase {
 	 * @return never
 	 */
 	protected function checkVerification( array $verification ) {
-		switch ( $verification['status'] ) {
-			// Recoverable errors
-			case UploadBase::MIN_LENGTH_PARTNAME:
-				$this->dieRecoverableError( [ 'filename-tooshort' ], 'filename' );
-				// dieRecoverableError prevents continuation
-			case UploadBase::ILLEGAL_FILENAME:
-				$this->dieRecoverableError(
-					[ ApiMessage::create(
-						'illegal-filename', null, [ 'filename' => $verification['filtered'] ]
-					) ], 'filename'
-				);
-				// dieRecoverableError prevents continuation
-			case UploadBase::FILENAME_TOO_LONG:
-				$this->dieRecoverableError( [ 'filename-toolong' ], 'filename' );
-				// dieRecoverableError prevents continuation
-			case UploadBase::FILETYPE_MISSING:
-				$this->dieRecoverableError( [ 'filetype-missing' ], 'filename' );
-				// dieRecoverableError prevents continuation
-			case UploadBase::WINDOWS_NONASCII_FILENAME:
-				$this->dieRecoverableError( [ 'windows-nonascii-filename' ], 'filename' );
-
-			// Unrecoverable errors
-			case UploadBase::EMPTY_FILE:
-				$this->dieWithError( 'empty-file' );
-				// dieWithError prevents continuation
-			case UploadBase::FILE_TOO_LARGE:
-				$this->dieWithError( 'file-too-large' );
-				// dieWithError prevents continuation
-
-			case UploadBase::FILETYPE_BADTYPE:
-				$extradata = [
-					'filetype' => $verification['finalExt'],
-					'allowed' => array_values( array_unique(
-						$this->getConfig()->get( MainConfigNames::FileExtensions ) ) )
-				];
-				$extensions =
-					array_unique( $this->getConfig()->get( MainConfigNames::FileExtensions ) );
-				$msg = [
-					'filetype-banned-type',
-					null, // filled in below
-					Message::listParam( $extensions, 'comma' ),
-					count( $extensions ),
-					null, // filled in below
-				];
-				ApiResult::setIndexedTagName( $extradata['allowed'], 'ext' );
-
-				if ( isset( $verification['blacklistedExt'] ) ) {
-					$msg[1] = Message::listParam( $verification['blacklistedExt'], 'comma' );
-					$msg[4] = count( $verification['blacklistedExt'] );
-					$extradata['blacklisted'] = array_values( $verification['blacklistedExt'] );
-					ApiResult::setIndexedTagName( $extradata['blacklisted'], 'ext' );
-				} else {
-					$msg[1] = $verification['finalExt'];
-					$msg[4] = 1;
-				}
-
-				$this->dieWithError( $msg, 'filetype-banned', $extradata );
-				// dieWithError prevents continuation
-
-			case UploadBase::VERIFICATION_ERROR:
-				$msg = ApiMessage::create( $verification['details'], 'verification-error' );
-				if ( $verification['details'][0] instanceof MessageSpecifier ) {
-					$details = [ $msg->getKey(), ...$msg->getParams() ];
-				} else {
-					$details = $verification['details'];
-				}
-				ApiResult::setIndexedTagName( $details, 'detail' );
-				$msg->setApiData( $msg->getApiData() + [ 'details' => $details ] );
-				$this->dieWithError( $msg );
-				// dieWithError prevents continuation
-
-			case UploadBase::HOOK_ABORTED:
-				$msg = $verification['error'] === '' ? 'hookaborted' : $verification['error'];
-				$this->dieWithError( $msg, 'hookaborted', [ 'details' => $verification['error'] ] );
-				// dieWithError prevents continuation
-			default:
-				$this->dieWithError( 'apierror-unknownerror-nocode', 'unknown-error',
-					[ 'details' => [ 'code' => $verification['status'] ] ] );
+		$status = $this->mUpload->convertVerifyErrorToStatus( $verification );
+		if ( $status->isRecoverableError() ) {
+			$this->dieRecoverableError( [ $status->asApiMessage() ], $status->getInvalidParameter() );
+			// dieRecoverableError prevents continuation
 		}
+		$this->dieWithError( $status->asApiMessage() );
+		// dieWithError prevents continuation
 	}
 
 	/**

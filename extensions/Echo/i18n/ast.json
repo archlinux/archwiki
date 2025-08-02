@@ -60,6 +60,7 @@
 	"notifications": "Avisos",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Les tos}} alertes",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Los tos}} avisos",
+	"tooltip-pt-notifications": "Los sos avisos",
 	"echo-displaynotificationsconfiguration": "Amosar la configuración de notificaciones",
 	"echo-displaynotificationsconfiguration-summary": "Esti ye un resume de cómo se configuren les Notificaciones nesta wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Notificaciones per categoría",

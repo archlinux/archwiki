@@ -165,7 +165,22 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
 };
 
 /**
- * Insert reference at the end of a surface fragment.
+ * Insert a reference node at the end of a surface fragment. Will also add an internal item
+ * if needed.
+ *
+ * @param {ve.dm.SurfaceFragment} surfaceFragment Surface fragment to insert at
+ */
+ve.dm.MWReferenceModel.prototype.insertIntoFragment = function ( surfaceFragment ) {
+	const surfaceModel = surfaceFragment.getSurface();
+
+	if ( !this.findInternalItem( surfaceModel ) ) {
+		this.insertInternalItem( surfaceModel );
+	}
+	this.insertReferenceNode( surfaceFragment );
+};
+
+/**
+ * Insert a reference node at the end of a surface fragment.
  *
  * @param {ve.dm.SurfaceFragment} surfaceFragment Surface fragment to insert at
  * @param {boolean} [placeholder] Reference is a placeholder for staging purposes

@@ -6,11 +6,11 @@
 			"Stefán Örvar Sigmundsson"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Sýnileg breyting]]",
+	"tag-visualeditor": "Sýnileg breyting",
 	"tag-visualeditor-description": "Breyting gerð með [[{{MediaWiki:visualeditor-descriptionpagelink}}|Sýnilega ritlinum]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Sýnileg breyting: Athuga]]",
+	"tag-visualeditor-needcheck": "Sýnileg breyting: Athuga",
 	"tag-visualeditor-needcheck-description": "Breyting gerð með [[{{MediaWiki:visualeditor-descriptionpagelink}}|sýnilega ritlinum]] þar sem kerfið greindi að wiki-textinn hafi mögulega ófyrirsjáanlegar breytingar.",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Sýnilegi ritilinn: Skipti yfir]]",
+	"tag-visualeditor-switched": "Sýnilegi ritilinn: Skipti yfir",
 	"tag-visualeditor-switched-description": "Notandinn byrjaði að gera breytingar með sýnilega ritlinum en fór svo að breyta wikitextanum.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Ábendingar",
 	"visualeditor-feedback-tool": "Skilja eftir ábendingu um þennan hugbúnað",

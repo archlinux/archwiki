@@ -29,6 +29,8 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 class MMLGenerationTexUtilTest extends MediaWikiUnitTestCase {
+	use MathServiceContainerTrait;
+
 	/** @var float */
 	private static $SIMILARITYTRESH = 0.7;
 	/** @var bool */
@@ -338,5 +340,10 @@ class MMLGenerationTexUtilTest extends MediaWikiUnitTestCase {
 			$groups[$set] = $entries;
 		}
 		return $groups;
+	}
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->setUpMathServiceContainer();
 	}
 }

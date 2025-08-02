@@ -21,7 +21,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"attributes": {
 		"DarkMode": {
@@ -211,7 +211,6 @@
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"codexStyleOnly": true,
 			"codexComponents": [
-				"CdxTypeaheadSearch",
 				"CdxSearchInput",
 				"CdxButton",
 				"CdxRadio",
@@ -223,7 +222,6 @@
 				"skins.vector.search.codex.styles"
 			],
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
-			"codexScriptOnly": true,
 			"codexComponents": [
 				"CdxTypeaheadSearch"
 			]
@@ -279,6 +277,7 @@
 				"content-links": false,
 				"content-links-external": false,
 				"content-media": true,
+				"content-media-dark": true,
 				"content-tables": true,
 				"interface": false,
 				"interface-category": true,
@@ -393,7 +392,6 @@
 			]
 		},
 		"skins.vector.js": {
-			"class": "MediaWiki\\ResourceLoader\\SkinModule",
 			"styles": [
 				"resources/skins.vector.js/index.less"
 			],
@@ -458,7 +456,8 @@
 				"mediawiki.experiments",
 				"skins.vector.icons.js",
 				"mediawiki.util",
-				"mediawiki.jqueryMsg"
+				"mediawiki.jqueryMsg",
+				"web2017-polyfills"
 			],
 			"messages": [
 				"vector-search-loader",
@@ -475,6 +474,9 @@
 			]
 		},
 		"skins.vector.legacy.js": {
+			"styles": [
+				"resources/skins.vector.legacy.js/index.less"
+			],
 			"packageFiles": [
 				"resources/skins.vector.legacy.js/skin-legacy.js",
 				"resources/skins.vector.legacy.js/portlets.js",
@@ -505,7 +507,6 @@
 			"+ext.uls.compactlinks": "skinStyles/ext.uls.compactlinks.less",
 			"+ext.uls.interface": "skinStyles/ext.uls.interface.less",
 			"+ext.uls.pt": "skinStyles/ext.uls.pt.less",
-			"+ext.visualEditor.base": "skinStyles/ext.visualEditor.less",
 			"jquery.ui": [
 				"skinStyles/jquery.ui/jquery.ui.core.css",
 				"skinStyles/jquery.ui/jquery.ui.theme.css",
@@ -577,8 +578,16 @@
 				"exclude": {
 					"mainpage": false,
 					"pagetitles": [],
-					"namespaces": [ -1, 6, 14, 100, 710 ],
-					"querystring": { "action": "info|protect|delete|undelete|action|history" }
+					"namespaces": [
+						-1,
+						6,
+						14,
+						100,
+						710
+					],
+					"querystring": {
+						"action": "info|protect|delete|undelete|action|history"
+					}
 				},
 				"include": []
 			},
@@ -653,13 +662,6 @@
 				"logged_out": false
 			},
 			"description": "@var When `VectorLanguageInHeader` is enabled, determines whether the Main Page's language button should be at the top or bottom of the content. The default position on the main page is at the bottom."
-		},
-		"VectorStickyHeader": {
-			"value": {
-				"logged_in": true,
-				"logged_out": false
-			},
-			"description": "@var array Enables a persistent header that allows quick access to user links, editing tools, search and other links while scrolling down a page"
 		},
 		"VectorWebABTestEnrollment": {
 			"value": {

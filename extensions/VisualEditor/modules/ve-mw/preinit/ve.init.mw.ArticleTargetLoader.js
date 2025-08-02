@@ -36,8 +36,8 @@
 		modules.push( 'ext.visualEditor.mwwikitext' );
 	}
 
-	// A/B test enrollment for edit check (T342930)
-	if ( conf.editCheckABTest ) {
+	// A/B test enrollment for edit check (T384372)
+	if ( conf.editCheck && conf.editCheckABTest ) {
 		let inABTest;
 		if ( mw.user.isAnon() ) {
 			// can't just use mw.user.sessionId() because we need this to last across sessions
@@ -48,9 +48,10 @@
 		} else {
 			inABTest = mw.user.getId() % 2 === 1;
 		}
-		conf.editCheck = inABTest;
+		// Test group gets edit check in multiple-checks mode
+		conf.editCheckSingle = !inABTest;
 		// Communicate the bucket to instrumentation:
-		mw.config.set( 'wgVisualEditorEditCheckABTestBucket', '2024-02-editcheck-reference-' + ( inABTest ? 'test' : 'control' ) );
+		mw.config.set( 'wgVisualEditorEditCheckABTestBucket', '2025-03-editcheck-multicheck-reference-' + ( inABTest ? 'test' : 'control' ) );
 	}
 
 	const editCheck = conf.editCheck || !!url.searchParams.get( 'ecenable' ) || !!window.MWVE_FORCE_EDIT_CHECK_ENABLED;
@@ -224,6 +225,9 @@
 		 */
 		requestPageData: function ( mode, pageName, options ) {
 			options = options || {};
+			if ( mode === 'visual' && options.section === 'new' ) {
+				throw new Error( 'Adding new section is not supported in visual mode' );
+			}
 			const apiRequest = mode === 'source' ?
 				this.requestWikitext.bind( this, pageName, options ) :
 				this.requestParsoidData.bind( this, pageName, options );

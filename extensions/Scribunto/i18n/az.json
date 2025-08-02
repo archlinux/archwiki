@@ -6,8 +6,8 @@
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Əkrəm Cəfər",
-			"Əkrəm"
+			"Əkrəm",
+			"Əkrəm Cəfər"
 		]
 	},
 	"content-model-scribunto": "Scribunto modulu",
@@ -36,7 +36,7 @@
 	"scribunto-common-timeout": "Skriptlərin işləməsi üçün ayrılan vaxt bitdi.",
 	"scribunto-common-oom": "Skriptlərin işləməsi üçün ayrılan yaddaş limiti aşıldı.",
 	"scribunto-common-backtrace": "Backtrace:",
-	"scribunto-common-no-details": "Əlavə məlumat yoxdur.",
+	"scribunto-common-no-details": "Kodun yeri haqqında ətraflı məlumat yoxdur.",
 	"scribunto-lua-in-function": "\"$1\" funksiyasında",
 	"scribunto-lua-in-main": "əsas hissədə",
 	"scribunto-lua-in-function-at": "$1:$2 funksiyasında",

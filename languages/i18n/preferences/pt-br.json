@@ -8,6 +8,7 @@
 			"Dianakc",
 			"Dicionarista",
 			"Duke of Wikipädia",
+			"EGobi",
 			"Eduardo.mps",
 			"Eduardoaddad",
 			"Fabsouza1",
@@ -34,8 +35,7 @@
 			"TheEduGobi",
 			"Walesson",
 			"Webysther",
-			"YuriNikolai",
-			"EGobi"
+			"YuriNikolai"
 		]
 	},
 	"preferences": "Preferências",
@@ -108,7 +108,7 @@
 	"prefs-help-email": "O endereço de e-mail é opcional, mas será necessário para recriar sua senha caso esqueça a antiga.",
 	"prefs-help-email-required": "O endereço de e-mail é requerido.",
 	"prefs-help-email-others": "Você também pode optar por permitir que outros entrem em contato com você através de sua página de usuário ou de discussão sem ter de revelar seus dados pessoais.",
-	"tog-requireemail": "Envie e-mails de redefinição de senha somente quando o endereço de e-mail e o nome de usuário forem fornecidos.",
+	"tog-requireemail": "Envie e-mails de redefinição de senha somente quando o endereço de e-mail e o nome de usuário forem fornecidos",
 	"prefs-help-requireemail": "Isso melhora a privacidade e ajuda a impedir e-mails não solicitados.",
 	"noemailprefs": "Especifique um endereço de e-mail para que os seguintes recursos funcionem.",
 	"emailnotauthenticated": "O seu endereço de e-mail ainda não foi autenticado.\nNão lhe será enviado nenhum e-mail sobre nenhuma das seguintes funcionalidades.",
@@ -255,6 +255,7 @@
 	"search-thumbnail-extra-namespaces-label": "Mostrar miniaturas em Especial:Pesquisar nos computadores de secretária",
 	"search-thumbnail-extra-namespaces-message": "Apresenta miniaturas para os resultados {{PLURAL:$2|do espaço nominal|dos espaços nominais}} $1 na página {{#special:search}}",
 	"prefs-advancedsearchoptions": "Opções avançadas",
+	"prefs-misc": "Diversos",
 	"prefs-reset-intro": "Pode usar esta página para repor as configurações padrão das preferências.\nAs suas preferências serão modificadas para os valores predefinidos do site.\nEsta operação não pode ser desfeita.",
 	"prefs-reset-confirm": "Sim, quero reiniciar as minhas preferências.",
 	"restoreprefs": "Restaurar todas as configurações padrão"

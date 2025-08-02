@@ -80,20 +80,6 @@ if ( mw.config.get( 'wgAction' ) === 'history' ) {
 	topicSubscriptions.initNewTopicsSubscription();
 }
 
-// Clean up old localStorage entries that were erroneously set with no expiration (T339042).
-// We are no longer using these keys since T329299.
-// TODO: Remove this code after a few weeks.
-mw.requestIdleCallback( () => {
-	try {
-		for ( const key in localStorage ) {
-			if ( key.startsWith( 'reply/' ) ) {
-				localStorage.removeItem( key );
-				localStorage.removeItem( '_EXPIRY_' + key );
-			}
-		}
-	} catch ( err ) {}
-} );
-
 module.exports = {
 	controller: controller,
 	Parser: require( './Parser.js' ),

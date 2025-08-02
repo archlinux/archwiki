@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\Maintenance\Benchmarker;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';
@@ -75,7 +76,8 @@ class BenchmarkJsonCodec extends Benchmarker {
 		] );
 	}
 
-	private function loadData( $file ) {
+	/** @return mixed */
+	private function loadData( string $file ) {
 		if ( str_ends_with( $file, '.php' ) ) {
 			$data = include $file;
 			if ( !$data ) {

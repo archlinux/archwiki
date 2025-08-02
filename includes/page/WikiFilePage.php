@@ -18,10 +18,17 @@
  * @file
  */
 
+namespace MediaWiki\Page;
+
 use MediaWiki\Actions\FileDeleteAction;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
+use RuntimeException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 /**
@@ -48,9 +55,6 @@ class WikiFilePage extends WikiPage {
 		$this->mRepo = null;
 	}
 
-	/**
-	 * @param File $file
-	 */
 	public function setFile( File $file ) {
 		$this->mFile = $file;
 		$this->mFileLoaded = true;
@@ -116,9 +120,6 @@ class WikiFilePage extends WikiPage {
 		return $this->mFile->isLocal();
 	}
 
-	/**
-	 * @return File
-	 */
 	public function getFile(): File {
 		$this->loadFile();
 		return $this->mFile;
@@ -257,3 +258,6 @@ class WikiFilePage extends WikiPage {
 		return parent::getActionOverrides();
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( WikiFilePage::class, 'WikiFilePage' );

@@ -7,6 +7,7 @@
 	},
 	"notifications": "नोटिफिकेशन",
 	"tooltip-pt-notifications-alert": "{{GENDER:|राउर}} सूचना",
+	"tooltip-pt-notifications": "हमार अधिसूचना",
 	"echo-specialpage": "नोटिफिकेशन",
 	"echo-notification-alert-text-only": "सूचना"
 }

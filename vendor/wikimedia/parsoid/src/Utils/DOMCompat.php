@@ -11,8 +11,8 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat\TokenList;
+use Wikimedia\Parsoid\Wt2Html\TreeBuilder\DOMBuilder;
 use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
-use Wikimedia\RemexHtml\DOM\DOMBuilder;
 use Wikimedia\RemexHtml\HTMLData;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
 use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
@@ -27,15 +27,21 @@ use Wikimedia\Zest\Zest;
  *
  * Only implements the methods that are actually used by Parsoid.
  *
- * Because this class may be used by code outside Parsoid it tries to
+ * Because this class may be used by code outside Parsoid, it tries to
  * be relatively tolerant of object types: you can call it either with
  * PHP's DOM* types or with a "proper" DOM implementation, and it will
- * attempt to Do The Right Thing regardless.  As a result there are
+ * attempt to Do The Right Thing regardless. As a result, there are
  * generally not parameter type hints for DOM object types, and the
  * return types will be broad enough to accomodate the value a "real"
  * DOM implementation would return, as well as the values our
  * thunk will return. (For instance, we can't create a "real" NodeList
  * in our compatibility thunk.)
+ *
+ * Exception to the above: ::nodeName method is not so much a DOM compatibility
+ * method in the sense above, but a proxy to let us support multiple DOM libraries
+ * against the Parsoid codebase that expects lower-case names. In this specific
+ * instance the default behavior is tailored for performance vs. being
+ * HTML-standards-compliant.
  */
 class DOMCompat {
 
@@ -59,13 +65,15 @@ class DOMCompat {
 	}
 
 	/**
-	 * Return the lower-case version of the node name (HTML says this should
-	 * be capitalized).
-	 * @param Node $node
-	 * @return string
+	 * Return the lower-case version of the node name.
+	 * FIXME: HTML says this should be capitalized, but we are tailoring
+	 * this to the DOM libraries that Parsoid uses that return lower-case names.
 	 */
 	public static function nodeName( Node $node ): string {
-		return strtolower( $node->nodeName );
+		// If we change DOM libraries that defaults to upper-case per HTML spec,
+		// we will probably flip this condition and change rest of Parsoid to
+		// compare against upper-case strings.
+		return $node instanceof \DOMNode ? $node->nodeName : strtolower( $node->nodeName );
 	}
 
 	/**
@@ -80,6 +88,9 @@ class DOMCompat {
 		// document body changes.
 		if ( $document->body !== null ) {
 			return $document->body;
+		}
+		if ( $document->documentElement === null ) {
+			return null;
 		}
 		foreach ( $document->documentElement->childNodes as $element ) {
 			/** @var Element $element */
@@ -107,6 +118,9 @@ class DOMCompat {
 		// document head changes.
 		if ( isset( $document->head ) ) {
 			return $document->head;
+		}
+		if ( $document->documentElement === null ) {
+			return null;
 		}
 		foreach ( $document->documentElement->childNodes as $element ) {
 			/** @var Element $element */
@@ -176,13 +190,12 @@ class DOMCompat {
 	 * @see https://dom.spec.whatwg.org/#dom-nonelementparentnode-getelementbyid
 	 */
 	public static function getElementById( $node, string $id ) {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Document::class, DocumentFragment::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMDocument::class, \DOMDocumentFragment::class
-			),
+			],
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument Zest is declared to take DOMDocument\DOMElement
 		$elements = Zest::getElementsById( $node, $id );
@@ -219,13 +232,12 @@ class DOMCompat {
 	 *   (which cannot be freely constructed in PHP), just a traversable containing Elements.
 	 */
 	public static function getElementsByTagName( $node, string $tagName ): iterable {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Document::class, Element::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMDocument::class, \DOMElement::class
-			),
+			],
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument Zest is declared to take DOMDocument\DOMElement
 		$result = Zest::getElementsByTagName( $node, $tagName );
@@ -234,19 +246,45 @@ class DOMCompat {
 	}
 
 	/**
-	 * Return the last child of the node that is an Element, or null otherwise.
+	 * Return the first child of the node that is an Element, or null
+	 * otherwise.
 	 * @param Document|DocumentFragment|Element $node
 	 * @return Element|null
-	 * @see https://dom.spec.whatwg.org/#dom-parentnode-lastelementchild
+	 * @see https://dom.spec.whatwg.org/#dom-parentnode-firstelementchild
+	 * @note This property was added to PHP in 8.0.0, and won't be needed
+	 *  once our minimum required version >= 8.0.0
 	 */
-	public static function getLastElementChild( $node ) {
-		Assert::parameterType(
-			self::or(
+	public static function getFirstElementChild( $node ) {
+		Assert::parameterType( [
 				Document::class, DocumentFragment::class, Element::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMDocument::class, \DOMDocumentFragment::class, \DOMElement::class
-			),
+			],
+			$node, '$node' );
+		$firstChild = $node->firstChild;
+		while ( $firstChild && $firstChild->nodeType !== XML_ELEMENT_NODE ) {
+			$firstChild = $firstChild->nextSibling;
+		}
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
+		return $firstChild;
+	}
+
+	/**
+	 * Return the last child of the node that is an Element, or null otherwise.
+	 * @param Document|DocumentFragment|Element $node
+	 * @return Element|null
+	 * @see https://dom.spec.whatwg.org/#dom-parentnode-lastelementchild
+	 * @note This property was added to PHP in 8.0.0, and won't be needed
+	 *  once our minimum required version >= 8.0.0
+	 */
+	public static function getLastElementChild( $node ) {
+		Assert::parameterType( [
+				Document::class, DocumentFragment::class, Element::class,
+				// For compatibility with code which might call this from
+				// outside Parsoid.
+				\DOMDocument::class, \DOMDocumentFragment::class, \DOMElement::class
+			],
 			$node, '$node' );
 		$lastChild = $node->lastChild;
 		while ( $lastChild && $lastChild->nodeType !== XML_ELEMENT_NODE ) {
@@ -278,13 +316,12 @@ class DOMCompat {
 	 *   (which cannot be freely constructed in PHP), just a traversable containing Elements.
 	 */
 	public static function querySelectorAll( $node, string $selector ): iterable {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Document::class, DocumentFragment::class, Element::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMDocument::class, \DOMDocumentFragment::class, \DOMElement::class
-			),
+			],
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument DOMNode
 		return Zest::find( $selector, $node );
@@ -297,13 +334,12 @@ class DOMCompat {
 	 * @see https://dom.spec.whatwg.org/#dom-nondocumenttypechildnode-previouselementsibling
 	 */
 	public static function getPreviousElementSibling( $node ) {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Element::class, CharacterData::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMElement::class, \DOMCharacterData::class
-			),
+			],
 			$node, '$node' );
 		$previousSibling = $node->previousSibling;
 		while ( $previousSibling && $previousSibling->nodeType !== XML_ELEMENT_NODE ) {
@@ -320,13 +356,12 @@ class DOMCompat {
 	 * @see https://dom.spec.whatwg.org/#dom-nondocumenttypechildnode-nextelementsibling
 	 */
 	public static function getNextElementSibling( $node ) {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Element::class, CharacterData::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMElement::class, \DOMCharacterData::class
-			),
+			],
 			$node, '$node' );
 		$nextSibling = $node->nextSibling;
 		while ( $nextSibling && $nextSibling->nodeType !== XML_ELEMENT_NODE ) {
@@ -337,18 +372,40 @@ class DOMCompat {
 	}
 
 	/**
+	 * Append the node to the parent node.
+	 * @param Document|DocumentFragment|Element $parentNode
+	 * @param Node|string ...$nodes
+	 * @note This method was added in PHP 8.0.0
+	 */
+	public static function append( $parentNode, ...$nodes ): void {
+		Assert::parameterType( [
+				Document::class, DocumentFragment::class, Element::class,
+				// For compatibility with code which might call this from
+				// outside Parsoid.
+				\DOMDocument::class, \DOMDocumentFragment::class, \DOMElement::class
+			],
+			$parentNode, '$parentNode'
+		);
+		foreach ( $nodes as $node ) {
+			if ( is_string( $node ) ) {
+				$node = $parentNode->ownerDocument->createTextNode( $node );
+			}
+			$parentNode->appendChild( $node );
+		}
+	}
+
+	/**
 	 * Removes the node from the document.
 	 * @param Element|CharacterData $node
 	 * @see https://dom.spec.whatwg.org/#dom-childnode-remove
 	 */
 	public static function remove( $node ): void {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Element::class, CharacterData::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMElement::class, \DOMCharacterData::class
-			),
+			],
 			$node, '$node' );
 		if ( $node->parentNode ) {
 			$node->parentNode->removeChild( $node );
@@ -374,19 +431,7 @@ class DOMCompat {
 	 * @param string $html
 	 */
 	public static function setInnerHTML( $element, string $html ): void {
-		$domBuilder = new class( [
-			'suppressHtmlNamespace' => true,
-		] ) extends DOMBuilder {
-			/** @inheritDoc */
-			protected function createDocument(
-				?string $doctypeName = null,
-				?string $public = null,
-				?string $system = null
-			) {
-				// @phan-suppress-next-line PhanTypeMismatchReturn
-				return DOMCompat::newDocument( $doctypeName === 'html' );
-			}
-		};
+		$domBuilder = new DOMBuilder; // Our version, not Remex's
 		$treeBuilder = new TreeBuilder( $domBuilder );
 		$dispatcher = new Dispatcher( $treeBuilder );
 		$tokenizer = new Tokenizer( $dispatcher, $html, [ 'ignoreErrors' => true ] );
@@ -499,13 +544,12 @@ class DOMCompat {
 	public static function replaceChildren(
 		$parentNode, ...$nodes
 	): void {
-		Assert::parameterType(
-			self::or(
+		Assert::parameterType( [
 				Document::class, DocumentFragment::class, Element::class,
 				// For compatibility with code which might call this from
 				// outside Parsoid.
 				\DOMDocument::class, \DOMDocumentFragment::class, \DOMElement::class
-			),
+			],
 			$parentNode, '$parentNode'
 		);
 		while ( $parentNode->firstChild ) {
@@ -520,11 +564,26 @@ class DOMCompat {
 	}
 
 	/**
-	 * Join class names together in a form suitable for Assert::parameterType.
-	 * @param class-string ...$args
-	 * @return string
+	 * Return HTMLTemplateElement#content
+	 *
+	 * In the PHP DOM, <template> elements do not have a dedicated
+	 * DocumentFragment and children are stored directly under the
+	 * Element.  In the HTML5 spec, the contents are stored in a
+	 * DocumentFragment with a unique owner document.
+	 *
+	 * Bridge this gap by returning the <template> element for
+	 * PHP's DOM, or the DocumentFragment for an HTML5-compliant DOM.
+	 *
+	 * @param Element $node A <template> element
+	 * @return Element|DocumentFragment Either the element (for PHP compat)
+	 *  or the DocumentFragment which is the template's "content"
 	 */
-	private static function or( ...$args ) {
-		return implode( '|', $args );
+	public static function getTemplateElementContent( $node ) {
+		// @phan-suppress-next-line PhanUndeclaredProperty only in IDLeDOM
+		if ( isset( $node->content ) ) {
+			// @phan-suppress-next-line PhanUndeclaredProperty only in IDLeDOM
+			return $node->content;
+		}
+		return $node;
 	}
 }

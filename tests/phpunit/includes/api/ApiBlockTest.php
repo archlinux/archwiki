@@ -2,10 +2,13 @@
 
 namespace MediaWiki\Tests\Api;
 
+use MediaWiki\Block\AbstractBlock;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
+use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\UltimateAuthority;
@@ -13,6 +16,7 @@ use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
 use MediaWiki\Utils\MWTimestamp;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @group API
@@ -28,6 +32,8 @@ class ApiBlockTest extends ApiTestCase {
 	protected $mUser = null;
 	/** @var DatabaseBlockStore */
 	private $blockStore;
+	/** @var DatabaseBlock|null */
+	private $block;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -40,6 +46,7 @@ class ApiBlockTest extends ApiTestCase {
 				'IPv6' => 19,
 			]
 		);
+		$this->overrideConfigValue( MainConfigNames::EnableMultiBlocks, true );
 		$this->blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 	}
 
@@ -51,7 +58,7 @@ class ApiBlockTest extends ApiTestCase {
 	private function doBlock( array $extraParams = [], ?Authority $blocker = null ) {
 		$this->assertNotNull( $this->mUser );
 
-		$params = [
+		$params = $extraParams + [
 			'action' => 'block',
 			'user' => $this->mUser->getName(),
 			'reason' => 'Some reason',
@@ -60,14 +67,14 @@ class ApiBlockTest extends ApiTestCase {
 			// Make sure we don't have both user and userid
 			unset( $params['user'] );
 		}
-		$ret = $this->doApiRequestWithToken( array_merge( $params, $extraParams ), null, $blocker );
+		$ret = $this->doApiRequestWithToken( $params, null, $blocker );
 
-		$block = $this->blockStore->newFromTarget( $this->mUser->getName() );
+		$this->block = $this->blockStore->newFromId( $ret[0]['block']['id'] );
 
-		$this->assertInstanceOf( DatabaseBlock::class, $block, 'Block is valid' );
+		$this->assertInstanceOf( DatabaseBlock::class, $this->block, 'Block is valid' );
 
-		$this->assertSame( $this->mUser->getName(), $block->getTargetName() );
-		$this->assertSame( 'Some reason', $block->getReasonComment()->text );
+		$this->assertSame( $params['user'] ?? $this->mUser->getName(), $this->block->getTargetName() );
+		$this->assertSame( 'Some reason', $this->block->getReasonComment()->text );
 
 		return $ret;
 	}
@@ -93,14 +100,14 @@ class ApiBlockTest extends ApiTestCase {
 		$this->expectApiErrorCode( 'ipbblocked' );
 
 		$blocked = $this->getMutableTestUser( [ 'sysop' ] )->getUser();
-		$block = new DatabaseBlock( [
-			'address' => $blocked->getName(),
-			'by' => $this->getTestSysop()->getUser(),
-			'reason' => 'Capriciousness',
-			'timestamp' => '19370101000000',
-			'expiry' => 'infinity',
-		] );
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'address' => $blocked->getName(),
+				'by' => $this->getTestSysop()->getUser(),
+				'reason' => 'Capriciousness',
+				'timestamp' => '19370101000000',
+				'expiry' => 'infinity',
+			] );
 
 		$this->doBlock( [], $blocked );
 	}
@@ -205,6 +212,20 @@ class ApiBlockTest extends ApiTestCase {
 			->where( [ 'bl_id' => $res[0]['block']['id'] ] )
 			->caller( __METHOD__ )->fetchField();
 		$this->assertSame( (int)wfTimestamp( TS_UNIX, $expiry ), $fakeTime + 86400 );
+
+		// Check log format (T248196)
+		$blob = $this->newSelectQueryBuilder()
+			->select( 'log_params' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'block',
+				'log_type' => 'block'
+			] )
+			->orderBy( 'log_timestamp', SelectQueryBuilder::SORT_DESC )
+			->caller( __METHOD__ )
+			->fetchField();
+		$params = LogEntryBase::extractParams( $blob );
+		$this->assertSame( '1 day', $params['5::duration'] );
 	}
 
 	public function testBlockWithInvalidExpiry() {
@@ -310,7 +331,7 @@ class ApiBlockTest extends ApiTestCase {
 				'user' => $this->mUser->getName(),
 				'reason' => 'Some reason',
 				'partial' => true,
-				'pagerestrictions' => 'One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven',
+				'pagerestrictions' => implode( '|', range( 1, 55 ) ),
 			],
 			null,
 			$this->getTestSysop()->getUser()
@@ -328,6 +349,22 @@ class ApiBlockTest extends ApiTestCase {
 		$this->doBlock();
 	}
 
+	public function testNonNormalizedRangeBlock() {
+		$params = [
+			'action' => 'block',
+			'user' => '128.0.0.1/16',
+			'reason' => 'Some reason',
+		];
+		$res = $this->doApiRequestWithToken( $params );
+		$this->assertSame( '128.0.0.0/16', $res[0]['block']['user'] );
+		$this->newSelectQueryBuilder()
+			->select( 'bt_address' )
+			->from( 'block_target' )
+			->join( 'block', null, 'bl_target=bt_id' )
+			->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+			->assertFieldValue( '128.0.0.0/16' );
+	}
+
 	public function testBlockByIdReturns() {
 		// See T189073 and Ifdced735b694b85116cb0e43dadbfa8e4cdb8cab for context
 		$userId = $this->mUser->getId();
@@ -343,5 +380,106 @@ class ApiBlockTest extends ApiTestCase {
 
 		$this->assertArrayHasKey( 'userID', $blockResult );
 		$this->assertSame( $userId, $blockResult['userID'] );
+	}
+
+	public function testConflict() {
+		$this->doBlock();
+		$this->expectApiErrorCode( 'alreadyblocked' );
+		$this->doBlock( [ 'noemail' => '' ] );
+	}
+
+	public function testReblock() {
+		$this->doBlock();
+		$this->assertFalse( $this->block->isEmailBlocked() );
+		$this->doBlock( [ 'noemail' => '', 'reblock' => true ] );
+		$this->assertTrue( $this->block->isEmailBlocked() );
+	}
+
+	public function testMultiBlocks() {
+		$this->doBlock();
+		$this->doBlock( [ 'noemail' => '', 'newblock' => '' ] );
+		$this->assertTrue( $this->block->isEmailBlocked() );
+		$this->assertCount( 2, $this->blockStore->newListFromTarget( $this->mUser ) );
+	}
+
+	public function testMultiRedundant() {
+		$this->expectApiErrorCode( 'alreadyblocked' );
+		$this->doBlock();
+		$this->doBlock( [ 'newblock' => '' ] );
+	}
+
+	public function testReblockMulti() {
+		$this->doBlock();
+		$this->doBlock( [ 'noemail' => '', 'newblock' => '' ] );
+		$this->expectApiErrorCode( 'ambiguous-block' );
+		$this->doBlock( [ 'reblock' => true ] );
+	}
+
+	public function testId() {
+		$this->doBlock();
+		$this->assertFalse( $this->block->isEmailBlocked() );
+		$this->doBlock( [ 'noemail' => '', 'id' => $this->block->getId(), 'user' => null ] );
+		$this->assertTrue( $this->block->isEmailBlocked() );
+	}
+
+	public function testIdConflictsWithUser() {
+		$this->expectApiErrorCode( 'invalidparammix' );
+		$this->doBlock( [ 'noemail' => '', 'id' => '1' ] );
+	}
+
+	public function testIdConflictsWithNewblock() {
+		$this->expectApiErrorCode( 'invalidparammix' );
+		$this->doBlock( [ 'newblock' => '', 'id' => '1' ] );
+	}
+
+	public function testIdConflictsWithReblock() {
+		$this->expectApiErrorCode( 'invalidparammix' );
+		$this->doBlock( [ 'reblock' => '', 'id' => '1' ] );
+	}
+
+	public function testIdMulti() {
+		$this->doBlock();
+		$block1 = $this->block->getId();
+		$this->doBlock( [ 'allowusertalk' => '', 'newblock' => '' ] );
+		$block2 = $this->block->getId();
+		$this->assertFalse( $this->blockStore->newFromId( $block2 )->isEmailBlocked() );
+
+		$this->doBlock( [ 'id' => $block2, 'user' => null, 'noemail' => '' ] );
+		$this->assertFalse( $this->blockStore->newFromId( $block1 )->isEmailBlocked() );
+		$this->assertTrue( $this->blockStore->newFromId( $block2 )->isEmailBlocked() );
+	}
+
+	public function testNoSuchBlockId() {
+		$this->expectApiErrorCode( 'nosuchblockid' );
+		$this->doBlock( [ 'id' => '1', 'user' => null ] );
+	}
+
+	public function testModifyAutoblock() {
+		$this->doBlock( [ 'autoblock' => '' ] );
+		$autoId = $this->blockStore->doAutoblock( $this->block, '127.0.0.1' );
+		$this->expectApiErrorCode( 'modify-autoblock' );
+		$this->doBlock( [ 'id' => $autoId, 'user' => null, 'noemail' => '' ] );
+	}
+
+	public function testNoOpBlockUpdate() {
+		$this->doBlock();
+		$this->expectApiErrorCode( 'alreadyblocked' );
+		$this->doBlock( [ 'id' => $this->block->getId(), 'user' => null ] );
+	}
+
+	/**
+	 * Regression test for T389452
+	 */
+	public function testReblockAutoblockedIp() {
+		$ip = '127.0.0.1';
+		$this->doBlock( [ 'autoblock' => '' ] );
+		$autoId = $this->blockStore->doAutoblock( $this->block, $ip );
+		$this->doBlock( [ 'user' => $ip, 'expiry' => '1 year', 'reblock' => true ] );
+		$blocks = $this->blockStore->newListFromTarget( $ip );
+		$this->assertCount( 2, $blocks );
+		usort( $blocks, static fn ( $a, $b ) => $a->getId() <=> $b->getId() );
+		$this->assertSame( AbstractBlock::TYPE_AUTO, $blocks[0]->getType() );
+		$this->assertSame( $autoId, $blocks[0]->getId() );
+		$this->assertSame( AbstractBlock::TYPE_IP, $blocks[1]->getType() );
 	}
 }

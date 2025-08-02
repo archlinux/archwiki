@@ -13,12 +13,14 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
+use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\DTState;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\Frame;
@@ -187,7 +189,7 @@ class TableFixups {
 		Env $env, Element $cell, ?Element $templateWrapper
 	): ?array {
 		$buf = [];
-		$nowikis = [];
+		$frags = [];
 		$transclusions = $templateWrapper ? [ $templateWrapper ] : [];
 
 		// Some of this logic could be replaced by DSR-based recovery of
@@ -196,7 +198,7 @@ class TableFixups {
 		// same logic uniformly.
 
 		$traverse = static function ( ?Node $child ) use (
-			&$traverse, &$buf, &$nowikis, &$transclusions
+			&$traverse, &$buf, &$frags, &$transclusions, $env
 		): bool {
 			while ( $child ) {
 				if ( $child instanceof Comment ) {
@@ -215,28 +217,18 @@ class TableFixups {
 						$transclusions[] = $child;
 					}
 
-					if ( WTUtils::isFirstExtensionWrapperNode( $child ) ) {
-						// "|" chars in extension content don't trigger table-cell parsing
-						// since they have higher precedence in tokenization. The extension
-						// content will simply be dropped (but any side effects it had will
-						// continue to apply. Ex: <ref> tags might leave an orphaned ref in
-						// the <references> section).
-						$child = WTUtils::skipOverEncapsulatedContent( $child );
-						continue;
-					} elseif ( DOMUtils::hasTypeOf( $child, 'mw:Entity' ) ) {
+					if ( DOMUtils::hasTypeOf( $child, 'mw:Entity' ) ) {
 						// Get entity's wikitext source, not rendered content.
 						// "&#10;" is "\n" which breaks attribute parsing!
 						$buf[] = DOMDataUtils::getDataParsoid( $child )->src ?? $child->textContent;
-					} elseif ( DOMUtils::hasTypeOf( $child, 'mw:Nowiki' ) ) {
-						// Nowiki span were added to protect otherwise
-						// meaningful wikitext chars used in attributes.
-						// Save the content and add in a marker to splice out later.
-						$nowikis[] = $child->textContent;
-						$buf[] = '<nowiki-marker>';
-					} elseif ( DOMUtils::hasRel( $child, 'mw:WikiLink' ) ||
-						WTUtils::isGeneratedFigure( $child )
-					) {
-						// Wikilinks/images abort attribute parsing
+					} elseif ( DOMUtils::hasTypeOf( $child, 'mw:DOMFragment' ) ) {
+						$fragDOM = $env->getDOMFragment( DOMDataUtils::getDataParsoid( $child )->html );
+						// FIXME: This is correct only for nowikis.
+						// For everything else, we need to figure out what needs to happen
+						// here wrt the extension opening & closing tags.
+						$frags[] = $fragDOM->firstChild->textContent;
+						$buf[] = '<frag-marker>';
+					} elseif ( self::shouldAbortAttr( $child ) ) {
 						return true;
 					} else {
 						if ( $traverse( $child->firstChild ) ) {
@@ -254,7 +246,7 @@ class TableFixups {
 		if ( $traverse( $cell->firstChild ) ) {
 			return [
 				'txt' => implode( '', $buf ),
-				'nowikis' => $nowikis,
+				'frags' => $frags,
 				'transclusions' => $transclusions,
 			];
 		} else {
@@ -321,19 +313,19 @@ class TableFixups {
 		}
 		$attributishPrefix = $matches[1];
 
-		// Splice in nowiki content.  We added in <nowiki> markers to prevent the
-		// above regexps from matching on nowiki-protected chars.
-		if ( str_contains( $attributishPrefix, '<nowiki-marker>' ) ) {
+		// Splice in fragment content. We added in <frag-marker> markers to prevent
+		// the above regexps from matching protected chars.
+		if ( str_contains( $attributishPrefix, '<frag-marker>' ) ) {
 			$attributishPrefix = preg_replace_callback(
-				'/<nowiki-marker>/',
+				'/<frag-marker>/',
 				static function ( $unused ) use ( &$attributishContent ) {
 					// This is a little tricky. We want to use the content from the
-					// nowikis to reparse the string to key/val pairs but the rule,
+					// fragments to reparse the string to key/val pairs but the rule,
 					// single_cell_table_args, will invariably get tripped up on
-					// newlines which, to this point, were shuttled through in the
-					// nowiki. Core sanitizer will do this replacement in attr vals
+					// newlines which, to this point, were shuttled through the fragment.
+					// Core sanitizer will do this replacement in attr vals
 					// so it's a safe normalization to do here.
-					return preg_replace( '/\s+/', ' ', array_shift( $attributishContent['nowikis'] ) );
+					return preg_replace( '/\s+/', ' ', array_shift( $attributishContent['frags'] ) );
 				},
 				$attributishPrefix
 			);
@@ -359,7 +351,7 @@ class TableFixups {
 		$cellDp = DOMDataUtils::getDataParsoid( $cell );
 		// Reparsed cells start off as non-mergeable-table cells
 		// and preserve that property after reparsing
-		$cellDp->setTempFlag( TempData::NON_MERGEABLE_TABLE_CELL );
+		$cellDp->setTempFlag( TempData::MERGED_TABLE_CELL );
 		$cellDp->setTempFlag( TempData::NO_ATTRS, false );
 
 		// If the transclusion node was embedded within the td node,
@@ -378,134 +370,366 @@ class TableFixups {
 	}
 
 	/**
-	 * Possibilities:
-	 * - $cell and $prev are both <td>s (or both <th>s)
-	 *   - Common case
-	 *   - Ex: "|align=left {{tpl returning | foobar}}"
-	 *     So, "|align=left |foobar" is the combined string
-	 *   - Combined cell is a <td> (will be <th> if both were <th>s)
-	 *   - We assign new attributes to $cell and drop $prev
-	 * - $cell is <td> and $prev is <th>
-	 *   - Ex: "!align=left {{tpl returning | foobar}}"
-	 *     So, "!align=left |foobar" is the combined string
-	 *   - The combined cell will be a <th> with attributes "align=left"
-	 *     and content "foobar"
-	 * - $cell is <th> and $prev is <td>
-	 *    - Ex: "|align=left {{tpl returning !scope=row | foobar}}"
-	 *      So "|align=left !scope=row | foobar" is the combined string
-	 *      and we need to drop the th-attributes entirely after combining
-	 *   - The combined cell will be a <td>
-	 *   - $cell's attribute is dropped
-	 *   - $prev's content is dropped
+	 * $cell's last character is known to be a '|' (for <td>) of '!' (for <th>)
+	 */
+	private static function stripTrailingPipe( Element $cell ): ?string {
+		$lc = $cell->lastChild;
+		$txt = '';
+		while ( $lc && !( $lc instanceof Text ) ) {
+			$lc = $lc->lastChild;
+		}
+
+		if ( !$lc ) {
+			// FIXME: Is this code reachable?
+			return null;
+		}
+
+		$txt = $lc->textContent;
+		$lastCharIndex = strlen( $txt ) - 1;
+		$lc->textContent = substr( $txt, 0, $lastCharIndex );
+		return $txt[$lastCharIndex];
+	}
+
+	private const PARSOID_ATTRIBUTES = [
+		'data-object-id', 'typeof', 'about', 'data-parsoid', 'data-mw'
+	];
+
+	/**
+	 * Ths is called in two cases:
+	 * (a) when two cells are merged, source is transferred from source
+	 *     to target cell.
 	 *
-	 * FIXME: There are a number of other merge possibilities that end up
-	 * in this function that aren't accounted for yet! Couple of them are
-	 * in the unsupported scenario 1/2 buckets below.
+	 *     This is called from mergeCells( .. )
+	 *
+	 * (b) when a pipe (| for td, ! for th) is being transferred from one cell
+	 *     to another making the recepient cell a 'row' syntax cell. In this
+	 *     case, the pipe char could come from content (when the cell has content)
+	 *     OR from the attribute-terminator (when the cell has no content).
+	 *     In the attribute-terminator case, the pipe transfer requires that
+	 *     the openWidth dsr property be decremnted by 1 for the source cell.
+	 *
+	 *     This is called from reparseWithPreviousCell( .. )
+	 */
+	private static function transferSourceBetweenCells(
+		string $src, Element $from, Element $to, bool $emptyFromContent
+	): void {
+		if ( DOMUtils::hasTypeOf( $to, 'mw:Transclusion' ) ) {
+			$dataMW = DOMDataUtils::getDataMw( $to );
+			array_unshift( $dataMW->parts, $src );
+		}
+
+		$rowSyntaxChar = DOMCompat::nodeName( $to ) === 'td' ? '|' : '!';
+		$fromDp = DOMDataUtils::getDataParsoid( $from );
+		if ( $rowSyntaxChar === '|' ) {
+			unset( $fromDp->startTagSrc );
+			unset( $fromDp->attrSepSrc );
+		}
+
+		$hasRowSyntax = false;
+		$toDp = DOMDataUtils::getDataParsoid( $to );
+		if ( str_ends_with( $src, $rowSyntaxChar ) ) {
+			$hasRowSyntax = true;
+			$toDp->stx = 'row';
+		}
+
+		$srcLen = strlen( $src );
+		$toDSR = $toDp->dsr ?? null;
+		if ( $toDSR ) {
+			if ( $toDSR->start ) {
+				$toDSR->start -= $srcLen;
+			}
+			if ( $hasRowSyntax && $toDSR->openWidth ) {
+				$toDSR->openWidth += 1;
+			}
+		}
+
+		$fromDSR = $fromDp->dsr ?? null;
+		if ( $fromDSR ) {
+			if ( $fromDSR->end ) {
+				$fromDSR->end -= $srcLen;
+			}
+			if ( $hasRowSyntax && $fromDSR->openWidth && $emptyFromContent ) {
+				$fromDSR->openWidth -= 1;
+			}
+		}
+	}
+
+	private static function mergeCells( string $fromSrc, Element $from, Element $to ): void {
+		// Update data-mw, DSR if $to is an encapsulation wrapper
+		self::transferSourceBetweenCells( $fromSrc, $from, $to, false );
+
+		$identicalCellTypes = DOMCompat::nodeName( $from ) === DOMCompat::nodeName( $to );
+		[ $src, $tgt ] = $identicalCellTypes ? [ $from, $to ] : [ $to, $from ];
+		// For non-identical cell types, $from is the authoritative cell but
+		// $to has transclusion attributes. So, we need to migrate data-mw,
+		// data-parsoid, etc. as well to the $tgt ($from in this case).
+		$ignoreParsoidAttributes = $identicalCellTypes;
+
+		foreach ( $src->attributes as $attr ) {
+			if ( !$ignoreParsoidAttributes || !in_array( $attr->name, self::PARSOID_ATTRIBUTES, true ) ) {
+				$tgt->setAttribute( $attr->name, $attr->value );
+			}
+		}
+
+		DOMUtils::migrateChildren( $src, $tgt, $identicalCellTypes ? $tgt->firstChild : null );
+		$src->parentNode->removeChild( $src );
+
+		// Combined cells don't merge further
+		$tgtDp = DOMDataUtils::getDataParsoid( $tgt );
+		$tgtDp->setTempFlag( TempData::MERGED_TABLE_CELL );
+		$tgtDp->setTempFlag( TempData::NO_ATTRS, false );
+	}
+
+	/**
+	 * Reprocess attribute source as a WT -> HTML transform
+	 * - If $cell's attributes were templated (mw:ExpandedAttrs typeof),
+	 *   we would have already processed these in AttributeExpander and
+	 *   stuffed it in data-mw. Just pull it out of there.
+	 * - If not, extract attribute source from the $cell and process it
+	 *   in a wikitext-to-fragment pipeline.
+	 */
+	private static function convertAttribsToContent(
+		Env $env, Frame $frame, Element $cell, bool $leadingPipe, bool $trailingPipe
+	): void {
+		$doc = $cell->ownerDocument;
+		$cellDp = DOMDataUtils::getDataParsoid( $cell );
+		$cellAttrSrc = $cellDp->getTemp()->attrSrc ?? null;
+
+		if ( DOMUtils::matchTypeOf( $cell, "/\bmw:ExpandedAttrs\b/" ) ) {
+			DOMUtils::removeTypeOf( $cell, 'mw:ExpandedAttrs' );
+			$dataMw = DOMDataUtils::getDataMw( $cell );
+			unset( $dataMw->attribs );
+		}
+
+		// Process attribute wikitext as HTML
+		$leadingPipeChar = DOMCompat::nodeName( $cell ) === 'td' ? '|' : '!';
+		// FIXME: Encapsulated doesn't necessarily mean templated
+		$fromTpl = WTUtils::fromEncapsulatedContent( $cell );
+		if ( !preg_match( "#['[{<]#", $cellAttrSrc ) ) {
+			// Optimization:
+			// - SOL constructs like =-*# won't be found here
+			// - If no non-sol wikitext constructs, this will just a plain string
+			$str = ( $leadingPipe ? $leadingPipeChar : '' ) .
+				$cellAttrSrc .
+				( $cellAttrSrc && $trailingPipe ? '|' : '' );
+			$children = [ $doc->createTextNode( $str ) ];
+		} else {
+			if ( isset( $cellDp->startTagSrc ) ) {
+				$attrSrcOffset = strlen( $cellDp->startTagSrc );
+			} elseif ( ( $cellDp->stx ?? '' ) === 'row' ) {
+				$attrSrcOffset = 2;
+			} else {
+				$attrSrcOffset = 1;
+			}
+			$frag = PipelineUtils::processContentInPipeline(
+				$env, $frame, $cellAttrSrc, [
+					'sol' => false,
+					'toplevel' => !$fromTpl,
+					'srcOffsets' => $fromTpl ? null : new SourceRange(
+						$cellDp->tsr->start + $attrSrcOffset, $cellDp->tsr->end - 1
+					),
+					'pipelineType' => 'wikitext-to-fragment',
+					'pipelineOpts' => [ 'inlineContext' => true ]
+				]
+			);
+
+			if ( $leadingPipe ) {
+				$fc = $frag->firstChild;
+				if ( $fc instanceof Text ) {
+					$fc->textContent = $leadingPipeChar . $fc->textContent;
+				} else {
+					$frag->insertBefore( $doc->createTextNode( $leadingPipeChar ), $fc );
+				}
+			}
+			if ( $trailingPipe ) {
+				$lc = $frag->lastChild;
+				if ( $lc instanceof Text ) {
+					$lc->textContent .= '|';
+				} else {
+					$frag->appendChild( $doc->createTextNode( '|' ) );
+				}
+			}
+			$children = iterator_to_array( $frag->childNodes );
+		}
+
+		// Append new children
+		$sentinel = $cell->firstChild;
+		foreach ( $children as $c ) {
+			$cell->insertBefore( $c, $sentinel );
+		}
+
+		// Remove $cell's attributes
+		foreach ( iterator_to_array( $cell->attributes ) as $attr ) {
+			if ( !in_array( $attr->name, self::PARSOID_ATTRIBUTES, true ) ) {
+				$cell->removeAttribute( $attr->name );
+			}
+		}
+
+		// Remove shadow attributes to suppress them from wt2wt output!
+		unset( $cellDp->a );
+		unset( $cellDp->sa );
+
+		// Update DSR
+		if ( !$fromTpl ) {
+			$excessDP = strlen( $cellAttrSrc ) + (int)$leadingPipe + (int)$trailingPipe;
+			$cellDp->dsr->openWidth -= $excessDP;
+		}
+
+		// This has no attributes now
+		$cellDp->setTempFlag( TempData::NO_ATTRS );
+	}
+
+	/**
+	 * Given: $cell is not a NON_MERGEABLE_TABLE_CELL
+	 * => $cell syntax is of the form: "|..." or "|..|.." (if <td>)
+	 *                             or: "!..." or "!..|.." (if <th>)
+	 *
+	 * Examine combined $prev and $cell syntax to see how it should
+	 * have actually parsed and fix up $prev & $cell appropriately.
 	 *
 	 * @param DTState $dtState
 	 * @param Element $cell
 	 * @return bool
 	 */
-	private static function combineAttrsWithPreviousCell( DTState $dtState, Element $cell ): bool {
-		// UNSUPPORTED SCENARIO 1:
-		// In this cell-combining scenario, $prev can have attributes only if it
-		// also had content. See example below:
-		//     Ex: |class="foo"|bar{{1x|1={{!}}foo}}
-		//         should parse as <td class="foo">bar|foo</td>
-		// In this case, the attributes/content of $cell would end up as the
-		// content of the combined cell.
-		//
-		// UNSUPPORTED SCENARIO 2:
-		// The template produced attributes as well as maybe a new cell.
-		//     Ex: |class="foo"{{1x| foo}} and |class="foo"{{1x|&nbsp;foo}}
-		// We let the more general 'reparseTemplatedAttributes' code handle
-		// this scenario for now.
+	private static function reparseWithPreviousCell( DTState $dtState, Element $cell ): bool {
+		// NOTE: The comments in this method always assume
+		// <td> && '|', but sometimes <th> & '!' are involved.
+
+		$env = $dtState->env;
+		$frame = $dtState->options['frame'];
+
 		$prev = $cell->previousSibling;
 		DOMUtils::assertElt( $prev );
+
+		$prevIsTd = DOMCompat::nodeName( $prev ) === 'td';
 		$prevDp = DOMDataUtils::getDataParsoid( $prev );
+		$prevHasAttrs = !$prevDp->getTempFlag( TempData::NO_ATTRS );
 
-		// If $prevDp has attributes already, we don't want to reparse content
-		// as the attributes.  However, we might be in unsupported scenario 1
-		// above, but that's definitionally still unsupported so bail for now.
-		if ( !$prevDp->getTempFlag( TempData::NO_ATTRS ) ) {
-			return false;
-		}
-
-		// Build the attribute string
-		$frame = $dtState->options['frame'];
-		$prevCellSrc = PHPUtils::safeSubstr(
-			$frame->getSrcText(), $prevDp->dsr->start, $prevDp->dsr->length()
-		);
-		$reparseSrc = substr( $prevCellSrc, $prevDp->dsr->openWidth );
-
-		// The previous cell had NO_ATTRS, from the check above, but the cell
-		// ends in a vertical bar.  This isn't a scenario where we'll combine
-		// the cell content to form attributes, so there's no sense in trying
-		// to tokenize them below; they probably already failed during the
-		// original tokenizing  However, the trailing vertical probably does
-		// want to be hoisted into the next cell, to combine to form row syntax.
-		if ( substr( $reparseSrc, -1 ) === "|" ) {
-			return false;
-		}
-
-		// "|" or "!", but doesn't matter since we discard that anyway
-		$reparseSrc .= "|";
-
-		// Reparse the attributish prefix
-		$env = $dtState->env;
-		if ( !$dtState->tokenizer ) {
-			$dtState->tokenizer = new PegTokenizer( $env );
-		}
-		$attributeTokens = $dtState->tokenizer->tokenizeTableCellAttributes( $reparseSrc, false );
-		if ( !is_array( $attributeTokens ) ) {
-			$env->log( "error/wt2html",
-				"TableFixups: Failed to successfully reparse $reparseSrc as table cell attributes" );
-			return false;
-		}
-
-		// Update data-mw, DSR if $cell is an encapsulation wrapper
+		$cellIsTd = DOMCompat::nodeName( $cell ) === 'td';
 		$cellDp = DOMDataUtils::getDataParsoid( $cell );
-		if ( DOMUtils::hasTypeOf( $cell, 'mw:Transclusion' ) ) {
-			$dataMW = DOMDataUtils::getDataMw( $cell );
-			array_unshift( $dataMW->parts, $prevCellSrc );
-			$cellDSR = $cellDp->dsr ?? null;
-			if ( $cellDSR && $cellDSR->start ) {
-				$cellDSR->start -= strlen( $prevCellSrc );
-			}
-		}
+		$cellHasAttrs = !$cellDp->getTempFlag( TempData::NO_ATTRS );
 
-		$parent = $cell->parentNode;
-		if ( DOMCompat::nodeName( $cell ) === DOMCompat::nodeName( $prev ) ) {
-			// Matching cell types
-			$combinedCell = $cell;
-			$combinedCellDp = $cellDp;
-			$parent->removeChild( $prev );
+		// Even though we have valid dsr for $prev as a condition of entering
+		// here, use tsr start because dsr computation may have expanded the range
+		// to include fostered content
+		$prevDsr = clone $prevDp->dsr;
+		$prevDsr->start = $prevDp->tsr->start;
+
+		$prevCellSrc = $prevDsr->substr( $frame->getSrcText() );
+
+		// $prevCellContent = substr( $prevCellSrc, $prevDp->dsr->openWidth );
+		// The following is equivalent because td/th has zero end-tag width
+		$prevCellContent = $prevDsr->innerSubstr( $frame->getSrcText() );
+
+		// Parsoid currently doesn't support parsing "|<--cmt-->|" as
+		// a "||" which legacy parser does. We won't support this.
+		//
+		// FIXME: $prev content could have a {{..}} that ended in a "|"
+		// and that check is missing here. For now, we won't support this
+		// use case unless necessary.
+		$prevHasTrailingPipe =
+			( $cellIsTd && str_ends_with( $prevCellContent, "|" ) ) ||
+			( !$cellIsTd && !$prevIsTd && str_ends_with( $prevCellContent, "!" ) );
+
+		if ( $prevHasTrailingPipe ) {
+			// $prev is of form "..|"
+			// => no cell merging
+			//    strip "|" from $prev
+			//    migrate "|" to $cell
+			$strippedChar = self::stripTrailingPipe( $prev );
+			if ( !$strippedChar ) {
+				// We saw these in T384737, it's worth keeping around these conservative
+				// checks for the time being
+				$env->log( "error/wt2html", "TableFixups: stripTrailingPipe failed." );
+			} else {
+				self::transferSourceBetweenCells(
+					// $prevHasTrailingPipe => $prevCellContent !== '' => last arg is false
+					$strippedChar, $prev, $cell, false /* emptyFromContent */
+				);
+			}
+		} elseif ( $prevIsTd &&
+			$prevDp->getTempFlag( TempData::NON_MERGEABLE_TABLE_CELL )
+			&& ( $prevDp->stx ?? '' ) !== 'row'
+		) {
+			if ( $prevCellContent !== '' ) {
+				// $prev is of form "||.." in SOL position, no attributes, some content
+				// Combined wikitext is "||..|.."
+				// => <td>..|..</td>
+				self::convertAttribsToContent( $env, $frame, $cell, true, true );
+				self::mergeCells( $prevCellSrc, $prev, $cell );
+			} else {
+				// $prev is of form "||" in SOL position, no attributes, no content
+				// Combined wikitext is "|||.."
+				// => <td></td><td..>..</td>
+				//    migrate "|" to $cell
+				self::transferSourceBetweenCells( '|', $prev, $cell, true /* emptyFromContent */ ); // '!'
+			}
+		} elseif ( !$prevHasAttrs ) {
+			// $prev has no attributes and is of form "|.." in SOL posn OR "||.." in non-SOL posn
+			// => merge $prev into $cell
+			//    if $cell had attributes, those become $cell's leading content with a trailing pipe
+			if ( $cellIsTd && $cellHasAttrs ) {
+				self::convertAttribsToContent( $env, $frame, $cell, false, true );
+			}
+
+			// If $cell is a <th>, we need a pipe for us to reprocess $prev's content
+			// as $cell's attributes. So, <th> without attributes need special handling.
+			if ( !$cellIsTd && !$cellHasAttrs ) {
+				// $cell's "!" char should become content now when $prev
+				// and $cell are merged below. This code is equivalent to
+				// calling convertAttribsToContent( $env, $frame, $cell, true, false )
+				$pipe = $cell->ownerDocument->createTextNode( '!' );
+				$cell->insertBefore( $pipe, $cell->firstChild );
+			} elseif ( $prevCellContent !== '' ) {
+				// If $prev cell had content, those become $cell's attributes
+				$reparseSrc = $prevCellContent . '|';
+
+				// Reparse the attributish prefix
+				if ( !$dtState->tokenizer ) {
+					$dtState->tokenizer = new PegTokenizer( $env );
+				}
+				$attributeTokens = $dtState->tokenizer->tokenizeTableCellAttributes( $reparseSrc, false );
+				if ( is_array( $attributeTokens ) ) {
+					// Note that `row_syntax_table_args` (the rule used for tokenizing above)
+					// returns an array consisting of [table_attributes, spaces, pipe]
+					$attrs = $attributeTokens[0];
+					Sanitizer::applySanitizedArgs( $env->getSiteConfig(), $cell, $attrs );
+
+					// Remove all $prev's children
+					DOMCompat::replaceChildren( $prev );
+				} else {
+					// FIXME: Why would this happen?
+					//        For now, should we just log errors to better understand this?
+					//
+					// Failed to successfully reparse $reparseSrc as table cell attributes
+					// We'll let the cells merge, but we have to convert cell's attributes to content as well
+					if ( $cellIsTd ) {
+						// The leading pipe should become content since we skipped it
+						// in the call to convertAttribsToContent above.
+						$pipe = $cell->ownerDocument->createTextNode( '|' );
+						$cell->insertBefore( $pipe, $cell->firstChild );
+					} elseif ( $cellHasAttrs ) {
+						// We skipped <th> above
+						self::convertAttribsToContent( $env, $frame, $cell, true, true );
+					}
+				}
+			}
+
+			// Merge cells
+			self::mergeCells( $prevCellSrc, $prev, $cell );
+		} elseif ( $prevCellContent === '' ) {
+			// $prev has attributes and is of form "|..|" in SOL or "||..|" in non-SOL
+			// => no cell merging,
+			//    $prev's attributes are actually its contents
+			//    migrate "|" to $cell
+			self::convertAttribsToContent( $env, $frame, $prev, false, false );
+			self::transferSourceBetweenCells( '|', $prev, $cell, true /* emptyFromContent */ );
 		} else {
-			// Different cell types
-			$combinedCell = $prev;
-
-			// Remove all content on $prev which will
-			// become the new combined cell
-			while ( $prev->firstChild ) {
-				$prev->removeChild( $prev->firstChild );
-			}
-			// Note that this implicitly migrates data-mw and data-parsoid
-			foreach ( DOMUtils::attributes( $cell ) as $k => $v ) {
-				$combinedCell->setAttribute( $k, $v );
-			}
-			DOMUtils::migrateChildren( $cell, $combinedCell );
-			$parent->removeChild( $cell );
-
-			$combinedCellDp = DOMDataUtils::getDataParsoid( $combinedCell );
+			// $prev has attributes and is of form "|..|.." in SOL or "||..|.." in non-SOL
+			// => $cell merges into $prev (its attrs & pipes become content)
+			self::convertAttribsToContent( $env, $frame, $cell, true, true );
+			self::mergeCells( $prevCellSrc, $prev, $cell );
 		}
-
-		// Note that `row_syntax_table_args` (the rule used for tokenizing above)
-		// returns an array consisting of [table_attributes, spaces, pipe]
-		$attrs = $attributeTokens[0];
-		Sanitizer::applySanitizedArgs( $env->getSiteConfig(), $combinedCell, $attrs );
-		// Combined cells don't merge further
-		$combinedCellDp->setTempFlag( TempData::NON_MERGEABLE_TABLE_CELL );
-		$combinedCellDp->setTempFlag( TempData::NO_ATTRS, false );
 
 		return true;
 	}
@@ -515,20 +739,81 @@ class TableFixups {
 	private const OTHER_REPARSE = 2;
 
 	/**
+	 * The legacy parser naively aborts attributes on '/\[\[|-\{/'
+	 * Wikilinks and language converter constructs should follow suit
+	 */
+	private static function shouldAbortAttr( Element $child ): bool {
+		return DOMUtils::matchRel( $child,
+			'#^mw:(WikiLink(/Interwiki)?|MediaLink|PageProp/(Category|Language))$#' ) ||
+			WTUtils::isGeneratedFigure( $child );
+	}
+
+	private static function pipeStatusInContent( Node $node, string $testRE, bool $inTplContent ): int {
+		$about = null;
+		$child = $node->firstChild;
+		while ( $child ) {
+			if ( $inTplContent &&
+				$child instanceof Text &&
+				preg_match( $testRE, $child->textContent )
+			) {
+				return 1;
+			}
+
+			if ( $child instanceof Element ) {
+				if ( $about && DOMCompat::getAttribute( $child, 'about' ) !== $about ) {
+					$inTplContent = false;
+					$about = null;
+				}
+
+				if ( !$inTplContent && DOMUtils::hasTypeOf( $child, 'mw:Transclusion' ) ) {
+					$inTplContent = true;
+					$about = DOMCompat::getAttribute( $child, 'about' );
+				}
+
+				// FIXME: Extlinks can hide pipes in dom fragments, but we are not handling that
+				// right now -- it is likely an edge case and it is icky to deal with it.
+				// There can be other sources of dom fragments (parser functions returning HTML,)
+				// that could hide pipes but it is unclear we need to support that form of
+				// string gluing here. For now, we treat that as unsupported behavior unless
+				// we find real uses that need to be dealt with.
+				if ( !DOMUtils::hasTypeOf( $child, 'mw:DOMFragment' ) ) {
+					// "|" chars in extension/language variant content don't trigger
+					// table-cell parsing since they have higher precedence in tokenization
+					if ( self::shouldAbortAttr( $child ) ) {
+						return -1;
+					}
+
+					// A "|" char in the HTML will trigger table cell tokenization.
+					// Ex: "| foobar <div> x | y </div>" will split the <div>
+					// in table-cell tokenization context.
+					$status = self::pipeStatusInContent( $child, $testRE, $inTplContent );
+					if ( $status !== 0 ) { // abort OR found
+						return $status;
+					}
+
+					// $status = 0; not-found; continue with next sibling
+				}
+			}
+
+			$child = $child->nextSibling;
+		}
+
+		return 0;
+	}
+
+	/**
 	 * $cell is known to be <td>/<th>
 	 */
 	private static function getReparseType( Element $cell, DTState $dtState ): int {
-		$inTplContent = $dtState->tplInfo !== null;
 		$dp = DOMDataUtils::getDataParsoid( $cell );
-		if ( !$dp->getTempFlag( TempData::NON_MERGEABLE_TABLE_CELL ) &&
+		if (
+			!$dp->getTempFlag( TempData::NON_MERGEABLE_TABLE_CELL ) &&
+			!$dp->getTempFlag( TempData::MERGED_TABLE_CELL ) &&
 			!$dp->getTempFlag( TempData::FAILED_REPARSE ) &&
-			// This is a good proxy for what we need: "Is $cell a template wrapper?".
-			// That info won't be available for nested templates unless we want
-			// to use a more expensive hacky check.
-			// "inTplContent" is sufficient because we won't have mergeable
-			// cells for wikitext that doesn't get any part of its content from
-			// templates because NON_MERGEABLE_TABLE_CELL prevents such merges.
-			$inTplContent
+			// Template wrapping, which happens prior to this pass, may have combined
+			// various regions.  The important indicator of whether we want to try
+			// to combine is if the $cell was the first node of a template.
+			$dp->getTempFlag( TempData::AT_SRC_START )
 		) {
 			// Look for opportunities where table cells could combine. This requires
 			// $cell to be a templated cell. But, we don't support combining
@@ -549,51 +834,13 @@ class TableFixups {
 			}
 		}
 
-		$cellIsTd = DOMCompat::nodeName( $cell ) === 'td';
-		$testRE = $cellIsTd ? '/[|]/' : '/[!|]/';
-		$child = $cell->firstChild;
-		while ( $child ) {
-			if ( !$inTplContent && DOMUtils::hasTypeOf( $child, 'mw:Transclusion' ) ) {
-				$inTplContent = true;
-			}
-
-			if ( $inTplContent &&
-				$child instanceof Text &&
-				preg_match( $testRE, $child->textContent )
-			) {
-				return self::OTHER_REPARSE;
-			}
-
-			if ( $child instanceof Element ) {
-				if ( WTUtils::isFirstExtensionWrapperNode( $child ) ) {
-					// "|" chars in extension/language variant content don't trigger
-					// table-cell parsing since they have higher precedence in tokenization
-					$child = WTUtils::skipOverEncapsulatedContent( $child );
-				} else {
-					if ( DOMUtils::hasRel( $child, 'mw:WikiLink' ) ||
-						WTUtils::isGeneratedFigure( $child )
-					) {
-						// Wikilinks/images abort attribute parsing
-						return self::NO_REPARSING;
-					}
-					// FIXME: Ugly for now
-					$outerHTML = DOMCompat::getOuterHTML( $child );
-					if ( preg_match( $testRE, $outerHTML ) &&
-						( $inTplContent || preg_match( '/"mw:Transclusion"/', $outerHTML ) )
-					) {
-						// A "|" char in the HTML will trigger table cell tokenization.
-						// Ex: "| foobar <div> x | y </div>" will split the <div>
-						// in table-cell tokenization context.
-						return self::OTHER_REPARSE;
-					}
-					$child = $child->nextSibling;
-				}
-			} else {
-				$child = $child->nextSibling;
-			}
-		}
-
-		return self::NO_REPARSING;
+		// FIXME: We're traversing with the outermost encapsulation, but encapsulations
+		// can be nested (ie. template in extension content) so the check is insufficient
+		$inTplContent = $dtState->tplInfo !== null &&
+			DOMUtils::hasTypeOf( $dtState->tplInfo->first, 'mw:Transclusion' );
+		$testRE = DOMCompat::nodeName( $cell ) === 'td' ? '/[|]/' : '/[!|]/';
+		$status = self::pipeStatusInContent( $cell, $testRE, $inTplContent );
+		return $status === 1 ? self::OTHER_REPARSE : self::NO_REPARSING;
 	}
 
 	/**
@@ -655,7 +902,7 @@ class TableFixups {
 
 		$cellDp = DOMDataUtils::getDataParsoid( $cell );
 		if ( $reparseType === self::COMBINE_WITH_PREV_CELL ) {
-			if ( self::combineAttrsWithPreviousCell( $dtState, $cell ) ) {
+			if ( self::reparseWithPreviousCell( $dtState, $cell ) ) {
 				return true;
 			} else {
 				// Clear property and retry $cell for other reparses
@@ -752,7 +999,7 @@ class TableFixups {
 					$newCellDp->setTempFlag( TempData::NO_ATTRS );
 					// It is important to set this so that when $newCell is processed by this pass,
 					// it won't accidentally recombine again with the previous cell!
-					$newCellDp->setTempFlag( TempData::NON_MERGEABLE_TABLE_CELL );
+					$newCellDp->setTempFlag( TempData::MERGED_TABLE_CELL );
 				}
 			}
 

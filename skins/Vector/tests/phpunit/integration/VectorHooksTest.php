@@ -312,7 +312,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @todo move into MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement
 	 *  test in future.
-	 * @covers MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement::isMet
+	 * @covers \MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement::isMet
 	 * @dataProvider providerShouldDisableMaxWidth
 	 */
 	public function testShouldDisableMaxWidth(

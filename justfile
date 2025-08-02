@@ -55,6 +55,7 @@ stop:
 clean:
 	{{COMPOSE}} down -v
 	git clean -fdqx -e .idea
+	git submodule foreach git clean -fdqx
 
 rebuild: clean
 	{{COMPOSE}} build --pull --parallel

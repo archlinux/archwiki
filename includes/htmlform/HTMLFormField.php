@@ -2,7 +2,6 @@
 
 namespace MediaWiki\HTMLForm;
 
-use HtmlArmor;
 use InvalidArgumentException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
@@ -15,6 +14,8 @@ use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
 use StatusValue;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 
 /**
@@ -27,9 +28,9 @@ abstract class HTMLFormField {
 	/** @var array|array[] */
 	public $mParams;
 
-	/** @var callable(mixed,array,HTMLForm):(StatusValue|string|bool|Message) */
+	/** @var callable(mixed,array,HTMLForm):(StatusValue|string|bool|Message)|null */
 	protected $mValidationCallback;
-	/** @var callable(mixed,array,HTMLForm):(StatusValue|string|bool|Message) */
+	/** @var callable(mixed,array,HTMLForm):(StatusValue|string|bool|Message)|null */
 	protected $mFilterCallback;
 	/** @var string */
 	protected $mName;
@@ -133,7 +134,9 @@ abstract class HTMLFormField {
 	 * Parameters are the same as wfMessage().
 	 *
 	 * @param string|string[]|MessageSpecifier $key
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 */
 	public function msg( $key, ...$params ) {
@@ -446,7 +449,7 @@ abstract class HTMLFormField {
 			return $this->msg( 'htmlform-required' );
 		}
 
-		if ( !isset( $this->mValidationCallback ) ) {
+		if ( $this->mValidationCallback === null ) {
 			return true;
 		}
 
@@ -470,7 +473,7 @@ abstract class HTMLFormField {
 	 * @return mixed
 	 */
 	public function filter( $value, $alldata ) {
-		if ( isset( $this->mFilterCallback ) ) {
+		if ( $this->mFilterCallback !== null ) {
 			$value = ( $this->mFilterCallback )( $value, $alldata, $this->mParent );
 		}
 
@@ -661,6 +664,9 @@ abstract class HTMLFormField {
 		if ( $this->mCondState ) {
 			$rowAttributes['data-cond-state'] = FormatJson::encode( $this->parseCondStateForClient() );
 			$rowClasses .= implode( ' ', $this->mCondStateClass );
+			if ( $this->isHidden( $this->mParent->mFieldData ) ) {
+				$rowClasses .= ' mw-htmlform-hide-if-hidden';
+			}
 		}
 
 		if ( $verticalLabel ) {
@@ -727,6 +733,9 @@ abstract class HTMLFormField {
 		if ( $this->mCondState ) {
 			$wrapperAttributes['data-cond-state'] = FormatJson::encode( $this->parseCondStateForClient() );
 			$wrapperAttributes['class'] = array_merge( $wrapperAttributes['class'], $this->mCondStateClass );
+			if ( $this->isHidden( $this->mParent->mFieldData ) ) {
+				$wrapperAttributes['class'][] = 'mw-htmlform-hide-if-hidden';
+			}
 		}
 		return Html::rawElement( 'div', $wrapperAttributes, $label . $field ) .
 			$helptext;
@@ -791,6 +800,9 @@ abstract class HTMLFormField {
 		}
 		if ( $this->mCondState ) {
 			$config['classes'] = array_merge( $config['classes'], $this->mCondStateClass );
+			if ( $this->isHidden( $this->mParent->mFieldData ) ) {
+				$config['classes'][] = 'mw-htmlform-hide-if-hidden';
+			}
 		}
 
 		// the element could specify, that the label doesn't need to be added
@@ -887,6 +899,9 @@ abstract class HTMLFormField {
 		if ( $this->mCondState ) {
 			$fieldAttributes['data-cond-state'] = FormatJson::encode( $this->parseCondStateForClient() );
 			$fieldClasses = array_merge( $fieldClasses, $this->mCondStateClass );
+			if ( $this->isHidden( $this->mParent->mFieldData ) ) {
+				$fieldClasses[] = 'mw-htmlform-hide-if-hidden';
+			}
 		}
 
 		return Html::rawElement( 'div', [ 'class' => $fieldClasses ] + $fieldAttributes,
@@ -1279,7 +1294,7 @@ abstract class HTMLFormField {
 			$msg = $this->msg( $key );
 			$msgAsText = $needsParse ? $msg->parse() : $msg->plain();
 			if ( array_key_exists( $msgAsText, $ret ) ) {
-				LoggerFactory::getInstance( 'error' )->error(
+				LoggerFactory::getInstance( 'translation-problem' )->error(
 					'The option that uses the message key {msg_key_one} has the same translation as ' .
 					'another option in {lang}. This means that {msg_key_one} will not be used as an option.',
 					[
@@ -1446,6 +1461,38 @@ abstract class HTMLFormField {
 	public function needsJSForHtml5FormValidation() {
 		// This is probably more restrictive than it needs to be, but better safe than sorry
 		return (bool)$this->mCondState;
+	}
+
+	/**
+	 * The keys in the array returned by getOptions() can be either HTML or
+	 * plain text depending on $this->mOptionsLabelsNotFromMessage. Convert such
+	 * a key to HTML.
+	 *
+	 * FIXME: a dangerous and untidy convention.
+	 *
+	 * @param string $label
+	 * @param-taint $label escapes_html
+	 * @return string
+	 */
+	protected function escapeLabel( $label ) {
+		return $this->mOptionsLabelsNotFromMessage
+			? $label : htmlspecialchars( $label, ENT_NOQUOTES );
+	}
+
+	/**
+	 * The keys in the array returned by getOptions() can be either HTML or
+	 * plain text depending on $this->mOptionsLabelsNotFromMessage. Convert
+	 * such a key to either plain text or an HtmlSnippet as appropriate.
+	 *
+	 * FIXME: a dangerous and untidy convention.
+	 *
+	 * @param string $label
+	 * @param-taint $label escapes_html
+	 * @return string|\OOUI\HtmlSnippet
+	 */
+	protected function makeLabelSnippet( $label ) {
+		return $this->mOptionsLabelsNotFromMessage
+			? new \OOUI\HtmlSnippet( $label ) : $label;
 	}
 }
 

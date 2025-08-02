@@ -22,7 +22,7 @@
 
 namespace MediaWiki\Request;
 
-use FatalError;
+use MediaWiki\Exception\FatalError;
 use MediaWiki\Utils\UrlUtils;
 use stdClass;
 
@@ -229,7 +229,7 @@ class PathRouter {
 		foreach ( $path as $piece ) {
 			if ( preg_match( '/^\$(\d+|key)$/u', $piece ) ) {
 				# For a piece that is only a $1 variable add 1 points of weight
-				$weight += 1;
+				$weight++;
 			} elseif ( preg_match( '/\$(\d+|key)/u', $piece ) ) {
 				# For a piece that simply contains a $1 variable add 2 points of weight
 				$weight += 2;
@@ -377,7 +377,7 @@ class PathRouter {
 
 			// If this match includes a callback, execute it
 			if ( isset( $pattern->options['callback'] ) ) {
-				call_user_func_array( $pattern->options['callback'], [ &$matches, $data ] );
+				$pattern->options['callback']( $matches, $data );
 			}
 		} else {
 			// Our regexp didn't match, return null to signify no match.
@@ -445,6 +445,3 @@ class PathRouter {
 		return $actionPaths;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( PathRouter::class, 'PathRouter' );

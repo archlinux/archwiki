@@ -18,16 +18,16 @@
  * @file
  */
 
-use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Status\Status;
+use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Title\ForeignTitle;
-use MediaWiki\Xml\Xml;
 
 /**
  * Reporting callback
@@ -99,7 +99,7 @@ class ImportReporter extends ContextSource {
 	public function reportLogItem( ...$args ) {
 		$this->mLogItemCount++;
 		if ( is_callable( $this->mOriginalLogCallback ) ) {
-			call_user_func_array( $this->mOriginalLogCallback, $args );
+			( $this->mOriginalLogCallback )( ...$args );
 		}
 	}
 
@@ -113,7 +113,7 @@ class ImportReporter extends ContextSource {
 	 */
 	public function reportPage( ?PageIdentity $pageIdentity, $foreignTitle, $revisionCount,
 			$successCount, $pageInfo ) {
-		call_user_func_array( $this->mOriginalPageOutCallback, func_get_args() );
+		( $this->mOriginalPageOutCallback )( $pageIdentity, $foreignTitle, $revisionCount, $successCount, $pageInfo );
 
 		if ( $pageIdentity === null ) {
 			# Invalid or non-importable title; a notice is already displayed
@@ -157,32 +157,10 @@ class ImportReporter extends ContextSource {
 					. $this->reason;
 			}
 
-			$comment = CommentStoreComment::newUnsavedComment( $detail );
-			$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
-			$revStore = $services->getRevisionStore();
-			$nullRevRecord = $revStore->newNullRevision(
-				$dbw,
-				$pageIdentity,
-				$comment,
-				true,
-				$this->getUser()
-			);
-
-			$nullRevId = null;
-			if ( $nullRevRecord !== null ) {
-				$inserted = $revStore->insertRevisionOn( $nullRevRecord, $dbw );
-				$nullRevId = $inserted->getId();
-				$parentRevId = $inserted->getParentId();
-				$page = $services->getWikiPageFactory()->newFromTitle( $pageIdentity );
-
-				// Update page record
-				$page->updateRevisionOn( $dbw, $inserted );
-
-				$fakeTags = [];
-				$this->getHookRunner()->onRevisionFromEditComplete(
-					$page, $inserted, $parentRevId, $this->getUser(), $fakeTags
-				);
-			}
+			$wikiPage = $services->getWikiPageFactory()->newFromTitle( $pageIdentity );
+			$dummyRevRecord = $wikiPage->newPageUpdater( $this->getUser() )
+				->setCause( PageUpdater::CAUSE_IMPORT )
+				->saveDummyRevision( $detail, EDIT_SILENT | EDIT_MINOR );
 
 			// Create the import log entry
 			$logEntry = new ManualLogEntry( 'import', $action );
@@ -191,8 +169,7 @@ class ImportReporter extends ContextSource {
 			$logEntry->setPerformer( $this->getUser() );
 			$logEntry->setParameters( $logParams );
 			// Make sure the null revision will be tagged as well
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T303637
-			$logEntry->setAssociatedRevId( $nullRevId );
+			$logEntry->setAssociatedRevId( $dummyRevRecord->getId() );
 			if ( count( $this->logTags ) ) {
 				$logEntry->addTags( $this->logTags );
 			}
@@ -208,7 +185,7 @@ class ImportReporter extends ContextSource {
 		$out = $this->getOutput();
 		if ( $this->mLogItemCount > 0 ) {
 			$msg = $this->msg( 'imported-log-entries' )->numParams( $this->mLogItemCount )->parse();
-			$out->addHTML( Xml::tags( 'li', null, $msg ) );
+			$out->addHTML( Html::rawElement( 'li', [], $msg ) );
 		} elseif ( $this->mPageCount == 0 && $this->mLogItemCount == 0 ) {
 			$out->addHTML( "</ul>\n" );
 

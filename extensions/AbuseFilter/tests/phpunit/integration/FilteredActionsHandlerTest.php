@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
 use MediaWiki\Content\Content;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainFilter;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainFilter;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainStorage;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
 use MediaWiki\Extension\AbuseFilter\FilterRunner;
 use MediaWiki\Extension\AbuseFilter\FilterRunnerFactory;
@@ -19,19 +19,22 @@ use MediaWiki\Message\Message;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\UserFactory;
+use MediaWikiIntegrationTestCase;
 use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * @covers \MediaWiki\Extension\AbuseFilter\Hooks\Handlers\FilteredActionsHandler
  * @group Database
  */
-class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
+class FilteredActionsHandlerTest extends MediaWikiIntegrationTestCase {
 
 	private array $blockedDomains = [ 'foo.com' => true ];
 
 	/**
 	 * @dataProvider provideOnEditFilterMergedContent
-	 * @covers \MediaWiki\Extension\AbuseFilter\BlockedDomainFilter
+	 * @covers \MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainFilter
 	 */
 	public function testOnEditFilterMergedContent( $urlsAdded, $expected ) {
 		$this->overrideConfigValue( 'AbuseFilterEnableBlockedExternalDomain', true );
@@ -97,13 +100,13 @@ class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$variableGeneratorFactory = $this->createMock( VariableGeneratorFactory::class );
 		$variableGeneratorFactory->method( 'newRunGenerator' )
-			 ->willReturn( $variableGenerator );
+			->willReturn( $variableGenerator );
 
 		$editRevUpdater = $this->createMock( EditRevUpdater::class );
 
 		$variablesManager = $this->createMock( VariablesManager::class );
 		$variablesManager->method( 'getVar' )
-			->willReturnCallback( fn ( $unused, $vars ) => AFPData::newFromPHPVar( $urlsAdded ) );
+			->willReturnCallback( static fn ( $unused, $vars ) => AFPData::newFromPHPVar( $urlsAdded ) );
 
 		$blockedDomainStorage = $this->createMock( BlockedDomainStorage::class );
 		$blockedDomainStorage->method( 'loadComputed' )
@@ -112,7 +115,7 @@ class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$permissionManager = $this->createMock( PermissionManager::class );
 		$permissionManager->method( 'userHasRight' )
-			 ->willReturn( false );
+			->willReturn( false );
 
 		return new FilteredActionsHandler(
 			new NullStatsdDataFactory(),
@@ -120,7 +123,9 @@ class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
 			$variableGeneratorFactory,
 			$editRevUpdater,
 			$blockedDomainFilter,
-			$permissionManager
+			$permissionManager,
+			$this->createMock( TitleFactory::class ),
+			$this->createMock( UserFactory::class )
 		);
 	}
 }

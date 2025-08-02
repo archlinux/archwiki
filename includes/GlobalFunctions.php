@@ -21,23 +21,26 @@
  */
 
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\Exception\ProcOpenError;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
-use MediaWiki\ProcOpenError;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Shell\Shell;
 use MediaWiki\Title\Title;
-use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\Utils\UrlUtils;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\Http\HttpStatus;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\RequestTimeout\RequestTimeout;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Load an extension
@@ -547,12 +550,14 @@ function wfGetServerUrl( $proto ) {
  * This is the basic structure used (brackets contain keys for $urlParts):
  * [scheme][delimiter][user]:[pass]@[host]:[port][path]?[query]#[fragment]
  *
- * @deprecated since 1.39, use UrlUtils::assemble()
+ * @deprecated since 1.39, use UrlUtils::assemble(); hard-deprecated since 1.44
  * @since 1.19
  * @param array $urlParts URL parts, as output from wfParseUrl
  * @return string URL assembled from its component parts
  */
 function wfAssembleUrl( $urlParts ) {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	return UrlUtils::assemble( (array)$urlParts );
 }
 
@@ -561,7 +566,7 @@ function wfAssembleUrl( $urlParts ) {
  *
  * @deprecated since 1.39, use UrlUtils::validProtocols(); hard-deprecated since 1.43
  * @param bool $includeProtocolRelative If false, remove '//' from the returned protocol list.
- *        DO NOT USE this directly, use wfUrlProtocolsWithoutProtRel() instead
+ *        DO NOT USE this directly, use UrlUtils::validAbsoluteProtocols() instead
  * @return string
  */
 function wfUrlProtocols( $includeProtocolRelative = true ) {
@@ -575,10 +580,12 @@ function wfUrlProtocols( $includeProtocolRelative = true ) {
  * Like wfUrlProtocols(), but excludes '//' from the protocol list. Use this if
  * you need a regex that matches all URL protocols but does not match protocol-
  * relative URLs
- * @deprecated since 1.39, use UrlUtils::validAbsoluteProtocols()
+ * @deprecated since 1.39, use UrlUtils::validAbsoluteProtocols(); hard-deprecated since 1.44
  * @return string
  */
 function wfUrlProtocolsWithoutProtRel() {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	return wfGetUrlUtils()->validAbsoluteProtocols();
 }
 
@@ -630,12 +637,14 @@ function wfExpandIRI( $url ) {
 /**
  * Check whether a given URL has a domain that occurs in a given set of domains
  *
- * @deprecated since 1.39, use UrlUtils::expandIRI()
+ * @deprecated since 1.39, use UrlUtils::matchesDomainList(); hard-deprecated since 1.44
  * @param string $url
  * @param array $domains Array of domains (strings)
  * @return bool True if the host part of $url ends in one of the strings in $domains
  */
 function wfMatchesDomainList( $url, $domains ) {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	return wfGetUrlUtils()->matchesDomainList( (string)$url, (array)$domains );
 }
 
@@ -839,7 +848,8 @@ function wfLogWarning( $msg, $callerOffset = 1, $level = E_USER_WARNING ) {
  * instance of a subclass like RawMessage or ApiMessage.
  *
  * @param string|string[]|MessageSpecifier $key Message key, or array of keys, or a MessageSpecifier
- * @param mixed ...$params Normal message parameters
+ * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+ *   See Message::params()
  * @return Message
  *
  * @since 1.17
@@ -1216,7 +1226,7 @@ function wfSetBit( &$dest, $bit, $state = true ) {
 function wfVarDump( $var ) {
 	global $wgOut;
 	$s = str_replace( "\n", "<br />\n", var_export( $var, true ) . "\n" );
-	if ( headers_sent() || !isset( $wgOut ) || !is_object( $wgOut ) ) {
+	if ( headers_sent() || $wgOut === null || !is_object( $wgOut ) ) {
 		print $s;
 	} else {
 		$wgOut->addHTML( $s );
@@ -1244,7 +1254,7 @@ function wfHttpError( $code, $label, $desc ) {
 	print '<!DOCTYPE html>' .
 		'<html><head><title>' .
 		htmlspecialchars( $label ) .
-		'</title></head><body><h1>' .
+		'</title><meta name="color-scheme" content="light dark" /></head><body><h1>' .
 		htmlspecialchars( $label ) .
 		'</h1><p>' .
 		nl2br( htmlspecialchars( $desc ) ) .
@@ -1319,7 +1329,7 @@ function wfResetOutputBuffers( $resetGzipEncoding = true ) {
  * @return string|false The date in the specified format, or false on error.
  */
 function wfTimestamp( $outputtype = TS_UNIX, $ts = 0 ) {
-	$ret = MWTimestamp::convert( $outputtype, $ts );
+	$ret = ConvertibleTimestamp::convert( $outputtype, $ts );
 	if ( $ret === false ) {
 		wfDebug( "wfTimestamp() fed bogus time value: TYPE=$outputtype; VALUE=$ts" );
 	}
@@ -1348,7 +1358,7 @@ function wfTimestampOrNull( $outputtype = TS_UNIX, $ts = null ) {
  * @return string TS_MW timestamp
  */
 function wfTimestampNow() {
-	return MWTimestamp::now( TS_MW );
+	return ConvertibleTimestamp::now( TS_MW );
 }
 
 /**
@@ -1683,7 +1693,7 @@ function wfMerge(
 	$mergeLeftovers = '';
 	do {
 		$data = fread( $handle, 8192 );
-		if ( strlen( $data ) == 0 ) {
+		if ( $data === false || $data === '' ) {
 			break;
 		}
 		$mergeLeftovers .= $data;
@@ -1699,7 +1709,7 @@ function wfMerge(
 	$simplisticMergeAttempt = '';
 	do {
 		$data = fread( $handle, 8192 );
-		if ( strlen( $data ) == 0 ) {
+		if ( $data === false || $data === '' ) {
 			break;
 		}
 		$simplisticMergeAttempt .= $data;
@@ -1786,58 +1796,6 @@ function wfRelativePath( $path, $from ) {
 	$pieces[] = wfBaseName( $path );
 
 	return implode( DIRECTORY_SEPARATOR, $pieces );
-}
-
-/**
- * Get a Database object.
- *
- * @param int $db Index of the connection to get. May be DB_PRIMARY for the
- *            primary (for write queries), DB_REPLICA for potentially lagged read
- *            queries, or an integer >= 0 for a particular server.
- *
- * @param string|string[] $groups Query groups. An array of group names that this query
- *                belongs to. May contain a single string if the query is only
- *                in one group.
- *
- * @param string|false $wiki The wiki ID, or false for the current wiki
- *
- * Note: multiple calls to wfGetDB(DB_REPLICA) during the course of one request
- * will always return the same object, unless the underlying connection or load
- * balancer is manually destroyed.
- *
- * Note 2: use $this->getDB() in maintenance scripts that may be invoked by
- * updater to ensure that a proper database is being updated.
- *
- * Note 3: When replacing calls to this with calls to methods on an injected
- * LoadBalancer, LoadBalancer::getConnection is more commonly needed than
- * LoadBalancer::getMaintenanceConnectionRef, which is needed for more advanced
- * administrative tasks. See the IMaintainableDatabase and IDatabase interfaces
- * for details.
- *
- * @deprecated since 1.39, emitting warnings since 1.42; instead, you can use:
- *   $services = MediaWikiServices::getInstance();
- *   $dbr = $services->getConnectionProvider()->getReplicaDatabase();
- *   $dbw = $services->getConnectionProvider()->getPrimaryDatabase();
- *
- * 	 … or, in rare circumstances, you may need to use:
- *
- *   $services->getDBLoadBalancer()->getConnection() / getMaintenanceConnectionRef()
- *
- * @return \Wikimedia\Rdbms\DBConnRef
- */
-function wfGetDB( $db, $groups = [], $wiki = false ) {
-	wfDeprecated( __FUNCTION__, '1.39' );
-
-	if ( $wiki === false ) {
-		return MediaWikiServices::getInstance()
-			->getDBLoadBalancer()
-			->getMaintenanceConnectionRef( $db, $groups, $wiki );
-	} else {
-		return MediaWikiServices::getInstance()
-			->getDBLoadBalancerFactory()
-			->getMainLB( $wiki )
-			->getMaintenanceConnectionRef( $db, $groups, $wiki );
-	}
 }
 
 /**

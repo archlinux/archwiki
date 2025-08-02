@@ -24,6 +24,7 @@
  */
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -41,6 +42,7 @@ class RenameDbPrefix extends Maintenance {
 		$this->addOption( "new", "New db prefix [0 for none]", true, true );
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}
@@ -49,7 +51,7 @@ class RenameDbPrefix extends Maintenance {
 		$dbName = $this->getConfig()->get( MainConfigNames::DBname );
 
 		// Allow for no old prefix
-		if ( $this->getOption( 'old', 0 ) === '0' ) {
+		if ( $this->getOption( 'old', '0' ) === '0' ) {
 			$old = '';
 		} else {
 			// Use nice safe, sensible, prefixes
@@ -57,7 +59,7 @@ class RenameDbPrefix extends Maintenance {
 			$old = $m[0] ?? false;
 		}
 		// Allow for no new prefix
-		if ( $this->getOption( 'new', 0 ) === '0' ) {
+		if ( $this->getOption( 'new', '0' ) === '0' ) {
 			$new = '';
 		} else {
 			// Use nice safe, sensible, prefixes
@@ -69,7 +71,8 @@ class RenameDbPrefix extends Maintenance {
 			$this->fatalError( "Invalid prefix!" );
 		}
 		if ( $old === $new ) {
-			$this->output( "Same prefix. Nothing to rename!\n", true );
+			$this->output( "Same prefix. Nothing to rename!\n" );
+			return;
 		}
 
 		$this->output( "Renaming DB prefix for tables of $dbName from '$old' to '$new'\n" );

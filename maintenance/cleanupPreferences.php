@@ -29,8 +29,10 @@ require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\Options\UserOptionsLookup;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
 
 /**
@@ -98,23 +100,22 @@ class CleanupPreferences extends Maintenance {
 		}
 	}
 
-	private function deleteByWhere( $dbr, $startMessage, $where ) {
+	private function deleteByWhere( IReadableDatabase $dbr, string $startMessage, array $where ) {
 		$this->output( $startMessage . "...\n" );
 		$dryRun = $this->hasOption( 'dry-run' );
 
 		$iterator = new BatchRowIterator(
 			$dbr,
-			'user_properties',
+			$dbr->newSelectQueryBuilder()
+				->from( 'user_properties' )
+				->select( $dryRun ?
+					[ 'up_user', 'up_property', 'up_value' ] :
+					[ 'up_user', 'up_property' ] )
+				->where( $where )
+				->caller( __METHOD__ ),
 			[ 'up_user', 'up_property' ],
 			$this->getBatchSize()
 		);
-		if ( $dryRun ) {
-			$iterator->setFetchColumns( [ 'up_user', 'up_property', 'up_value' ] );
-		} else {
-			$iterator->setFetchColumns( [ 'up_user', 'up_property' ] );
-		}
-		$iterator->addConditions( $where );
-		$iterator->setCaller( __METHOD__ );
 
 		$dbw = $this->getPrimaryDB();
 		$total = 0;

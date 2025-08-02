@@ -26,7 +26,7 @@ class MathMLRdfBuilder implements ValueSnakRdfBuilder {
 		$snakNamespace,
 		PropertyValueSnak $snak
 	) {
-		$renderer = new MathMathML( $snak->getDataValue()->getValue() );
+		$renderer = new MathNativeMML( $snak->getDataValue()->getValue() );
 		if ( $renderer->checkTeX() && $renderer->render() ) {
 			$mml = $renderer->getMathml();
 		} else {

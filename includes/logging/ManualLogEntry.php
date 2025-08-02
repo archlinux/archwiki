@@ -23,6 +23,9 @@
  * @since 1.19
  */
 
+namespace MediaWiki\Logging;
+
+use InvalidArgumentException;
 use MediaWiki\ChangeTags\Taggable;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
@@ -30,9 +33,12 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use RuntimeException;
+use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -77,7 +83,7 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 	/** @var string[] Change tags add to the log entry */
 	protected $tags = [];
 
-	/** @var int Deletion state of the log entry */
+	/** @var int|null Deletion state of the log entry */
 	protected $deleted;
 
 	/** @var int ID of the log entry */
@@ -149,6 +155,19 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 	 */
 	public function setParameters( $parameters ) {
 		$this->parameters = $parameters;
+	}
+
+	/**
+	 * Add a parameter to the list already set.
+	 *
+	 * @see setParameters
+	 * @since 1.44
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	public function addParameter( $name, $value ) {
+		$this->parameters[$name] = $value;
 	}
 
 	/**
@@ -321,7 +340,7 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 			'log_page' => $this->getTarget()->getArticleID(),
 			'log_params' => LogEntryBase::makeParamBlob( $params ),
 		];
-		if ( isset( $this->deleted ) ) {
+		if ( $this->deleted !== null ) {
 			$row['log_deleted'] = $this->deleted;
 		}
 		$row += $services->getCommentStore()->insert( $dbw, 'log_comment', $comment );
@@ -335,7 +354,7 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 
 		$rows = [];
 		foreach ( $relations as $tag => $values ) {
-			if ( !strlen( $tag ) ) {
+			if ( $tag === '' ) {
 				throw new UnexpectedValueException( "Got empty log search tag." );
 			}
 
@@ -419,14 +438,17 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 			$canAddTags = false;
 		}
 
-		DeferredUpdates::addCallableUpdate(
-			function () use ( $newId, $to, $canAddTags ) {
-				$log = new LogPage( $this->getType() );
-				if ( !$log->isRestricted() ) {
-					( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
-						->onManualLogEntryBeforePublish( $this );
-					$rc = $this->getRecentChange( $newId );
+		$log = new LogPage( $this->getType() );
+		if ( !$log->isRestricted() ) {
+			// We need to generate a RecentChanges object now so that we can have the rc_bot attribute set based
+			// on any temporary user rights assigned to the user as part of the creation of this log entry.
+			// We do not attempt to save it to the DB until POSTSEND to avoid writes blocking a response (T127852).
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+				->onManualLogEntryBeforePublish( $this );
+			$rc = $this->getRecentChange( $newId );
 
+			DeferredUpdates::addCallableUpdate(
+				function () use ( $newId, $to, $canAddTags, $rc ) {
 					if ( $to === 'rc' || $to === 'rcandudp' ) {
 						// save RC, passing tags so they are applied there
 						$rc->addTags( $this->getTags() );
@@ -447,11 +469,11 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 					if ( $to === 'udp' || $to === 'rcandudp' ) {
 						$rc->notifyRCFeeds();
 					}
-				}
-			},
-			DeferredUpdates::POSTSEND,
-			MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
-		);
+				},
+				DeferredUpdates::POSTSEND,
+				MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
+			);
+		}
 	}
 
 	/**
@@ -475,9 +497,6 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 		return $this->parameters;
 	}
 
-	/**
-	 * @return UserIdentity
-	 */
 	public function getPerformerIdentity(): UserIdentity {
 		return $this->performer;
 	}
@@ -546,3 +565,6 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 		return (int)$this->deleted;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ManualLogEntry::class, 'ManualLogEntry' );

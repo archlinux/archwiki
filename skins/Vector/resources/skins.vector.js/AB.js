@@ -168,7 +168,7 @@ module.exports = function webABTest( props, token, forceInit ) {
 	function isInTreatmentBucket( treatmentBucketName = '' ) {
 		const bucketLowerCase = getBucket().toLowerCase();
 		// Array.prototype.includes` is ES7
-		return bucketLowerCase.indexOf( `${ TREATMENT_BUCKET_SUBSTRING }${ treatmentBucketName }` ) > -1;
+		return bucketLowerCase.includes( `${ TREATMENT_BUCKET_SUBSTRING }${ treatmentBucketName }` );
 	}
 
 	/**

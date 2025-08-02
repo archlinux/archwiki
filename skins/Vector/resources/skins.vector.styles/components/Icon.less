@@ -5,6 +5,12 @@
 .vector-icon {
 	// By default use a transparent PNG. This is important for icons loaded via JavaScript, as without this
 	// the icon will appear as a black square until loaded.
+	// IMPORTANT: Do not remove this until the appearance menu icon (mw-ui-icon-wikimedia-appearance)
+	// and table of content expand icons (.mw-ui-icon-wikimedia-expand) are render blocking
+	// as without that this will result in the display of a black square and repeat of T387351.
+	// FIXME: this is inconsistent with the mobile site which shows black squares for
+	// icons that haven't been loaded at the wrong time or that are missing.
+	// This code is incorrect. Minerva exhibits the correct behaviour.
 	-webkit-mask-image: @transparentPNG;
 	mask-image: @transparentPNG;
 	.cdx-mixin-css-icon( 'none' );

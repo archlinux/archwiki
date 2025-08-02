@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aleator",
 			"ArenaL5",
 			"Astroemi",
 			"DannyS712",
@@ -13,8 +14,7 @@
 			"Luzcaru",
 			"Macofe",
 			"MarcoAurelio",
-			"No se",
-			"Aleator"
+			"No se"
 		]
 	},
 	"linterrors": "Errores de sintaxis",
@@ -26,6 +26,8 @@
 	"linter-category-deletable-table-tag-desc": "Estas páginas tienen etiquetas de tabla que se deberían borrar.",
 	"linter-category-duplicate-ids": "Identificadores duplicados",
 	"linter-category-duplicate-ids-desc": "Estas páginas tienen elementos con atributos «id» duplicados.",
+	"linter-category-empty-heading": "Encabezados vacíos",
+	"linter-category-empty-heading-desc": "Estas páginas tienen encabezados vacíos.",
 	"linter-category-fostered": "Contenido fuera de lugar",
 	"linter-category-fostered-desc": "Estas páginas incluyen contenido fuera de lugar.",
 	"linter-category-fostered-transparent": "Contenido invisible en la salida y fuera de lugar en la tabla",
@@ -93,6 +95,7 @@
 	"linter-pager-deletable-table-tag-details": "Etiqueta de tabla que se debería borrar",
 	"linter-pager-details-header": "Información adicional",
 	"linter-pager-duplicate-ids-details": "Identificadores duplicados",
+	"linter-pager-empty-heading-details": "Encabezados vacíos",
 	"linter-pager-fostered-details": "Contenido mal posicionado",
 	"linter-pager-fostered-transparent-details": "Contenido invisible en la salida y fuera de lugar",
 	"linter-pager-html5-misnesting-details": "Anidación errónea (ahora rota)",

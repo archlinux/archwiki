@@ -63,7 +63,7 @@ class CleanupWatchlist extends TableCleanup {
 		parent::execute();
 	}
 
-	protected function processRow( $row ) {
+	protected function processRow( \stdClass $row ) {
 		$current = Title::makeTitle( $row->wl_namespace, $row->wl_title );
 		$display = $current->getPrefixedText();
 		$verified = $this->getServiceContainer()->getContentLanguage()->normalize( $display );
@@ -80,7 +80,7 @@ class CleanupWatchlist extends TableCleanup {
 		$this->progress( 0 );
 	}
 
-	private function removeWatch( $row ) {
+	private function removeWatch( \stdClass $row ): int {
 		if ( !$this->dryrun && $this->hasOption( 'fix' ) ) {
 			$dbw = $this->getPrimaryDB();
 			$dbw->newDeleteQueryBuilder()

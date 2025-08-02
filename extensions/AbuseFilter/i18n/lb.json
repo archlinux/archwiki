@@ -60,6 +60,7 @@
 	"abusefilter-log-search-submit": "Sichen",
 	"abusefilter-log-entry": "$1: $2 huet e Mëssbrauchsfilter {{GENDER:$8|ausgeléist}}, {{GENDER:$8|bei der Aktioun}} \"$3\" op $4.\nAktioune vum Filter: $5;\nBeschreiwung vum Filter: $6",
 	"abusefilter-log-detailedentry-meta": "$1: $2 huet e Mëssbrauchsfilter $3 {{GENDER:$9|ausgeléist}}, {{GENDER:$9|bei der Aktioun}} \"$4\" op $5.\nAktioune vum Filter: $6;\nBeschreiwung vum Filter: $7 ($8)",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1: {{GENDER:$9|De(n) $2|D'$2}} huet duerch d'Aktioun „$4“ op der Säit $5 de $3 ausgeléist.\nAktioune vum Filter: $6;\nBeschreiwung vum Filter: $7",
 	"abusefilter-log-detailedentry-global": "globale Filter $1",
 	"abusefilter-log-detailedentry-local": "Filter $1",
 	"abusefilter-log-detailslink": "Detailer",

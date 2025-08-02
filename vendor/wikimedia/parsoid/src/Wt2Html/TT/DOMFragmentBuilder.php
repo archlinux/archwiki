@@ -11,14 +11,14 @@ use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 class DOMFragmentBuilder extends TokenHandler {
 	/**
-	 * @param TokenTransformManager $manager manager environment
+	 * @param TokenHandlerPipeline $manager manager environment
 	 * @param array $options options
 	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 	}
 
@@ -57,14 +57,17 @@ class DOMFragmentBuilder extends TokenHandler {
 		return true;
 	}
 
-	private function buildDOMFragment( Token $scopeToken ): TokenHandlerResult {
+	/**
+	 * @return array<string|Token>
+	 */
+	private function buildDOMFragment( Token $scopeToken ): array {
 		$contentKV = $scopeToken->getAttributeKV( 'content' );
 		$content = $contentKV->v;
 		if ( is_string( $content ) ||
 			$this->subpipelineUnnecessary( $content, $scopeToken->getAttributeV( 'contextTok' ) )
 		) {
 			// New pipeline not needed. Pass them through
-			return new TokenHandlerResult( is_string( $content ) ? [ $content ] : $content );
+			return is_string( $content ) ? [ $content ] : $content;
 		} else {
 			// Source offsets of content
 			$srcOffsets = $contentKV->srcOffsets;
@@ -101,21 +104,19 @@ class DOMFragmentBuilder extends TokenHandler {
 				]
 			);
 
-			$toks = PipelineUtils::tunnelDOMThroughTokens(
+			return PipelineUtils::tunnelDOMThroughTokens(
 				$this->env,
 				$scopeToken,
 				$domFragment,
 				[ "pipelineOpts" => $pipelineOpts ]
 			);
-
-			return new TokenHandlerResult( $toks );
 		}
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		return $token->getName() === 'mw:dom-fragment-token' ?
 			$this->buildDOMFragment( $token ) : null;
 	}

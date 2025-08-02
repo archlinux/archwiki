@@ -5,7 +5,7 @@ declare( strict_types = 1 );
  * A bidirectional Language Converter, capable of round-tripping variant
  * conversion.
  *
- * Language conversion is as DOMPostProcessor pass, run over the
+ * Language conversion is a DOMProcessorPipeline pass, run over the
  * Parsoid-format HTML output, which may have embedded language converter
  * rules.  We first assign a (guessed) wikitext variant to each DOM node,
  * the variant we expect the original wikitext was written in,
@@ -33,7 +33,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Language;
 
-use DOMDocument;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
@@ -259,15 +258,16 @@ class LanguageConverter {
 		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
 		$guesser = null;
 
-		$metrics = $env->getSiteConfig()->metrics();
-		$loadTiming = Timing::start( $metrics );
+		$loadTiming = Timing::start( $env->getSiteConfig() );
 		$languageClass = self::loadLanguage( $env, $pageLangCode );
 		$lang = new $languageClass();
 		$langconv = $lang->getConverter();
 		$htmlVariantLanguageMw = Utils::bcp47ToMwCode( $htmlVariantLanguage );
 		// XXX we might want to lazily-load conversion tables here.
-		$loadTiming->end( "langconv.{$htmlVariantLanguageMw}.init" );
-		$loadTiming->end( 'langconv.init' );
+		$loadTiming->end( "langconv.{$htmlVariantLanguageMw}.init", "langconv_init_seconds", [
+			"variant" => $htmlVariantLanguageMw,
+		] );
+		$loadTiming->end( 'langconv.init', "langconv_all_variants_init_seconds", [] );
 
 		// Check the html variant is valid (and implemented!)
 		$validTarget = $langconv !== null && $langconv->getMachine() !== null
@@ -286,7 +286,8 @@ class LanguageConverter {
 			throw new ClientError( "Invalid wikitext variant: $wtVariantLanguageMw for target $htmlVariantLanguageMw" );
 		}
 
-		$timing = Timing::start( $metrics );
+		$timing = Timing::start( $env->getSiteConfig() );
+		$metrics = $env->getSiteConfig()->metrics();
 		if ( $metrics ) {
 			$metrics->increment( 'langconv.count' );
 			$metrics->increment( "langconv." . $htmlVariantLanguageMw . ".count" );
@@ -323,9 +324,11 @@ class LanguageConverter {
 			}
 		}
 
-		$timing->end( 'langconv.total' );
-		$timing->end( "langconv.{$htmlVariantLanguageMw}.total" );
-		$loadTiming->end( 'langconv.totalWithInit' );
+		$timing->end( 'langconv.total', 'langconv_all_variants_total_seconds', [] );
+		$timing->end( "langconv.{$htmlVariantLanguageMw}.total", "langconv_total_seconds", [
+			"variant" => $htmlVariantLanguageMw,
+		] );
+		$loadTiming->end( 'langconv.totalWithInit', "langconv_total_with_init_seconds", [] );
 	}
 
 	/**
@@ -351,13 +354,13 @@ class LanguageConverter {
 	 * Convert a string in an unknown variant of the page language to all its possible variants.
 	 *
 	 * @param Env $env
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @param string $text
 	 * @return string[] map of converted variants keyed by variant language
 	 */
 	public static function autoConvertToAllVariants(
 		Env $env,
-		DOMDocument $doc,
+		Document $doc,
 		string $text
 	): array {
 		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
@@ -392,6 +395,7 @@ class LanguageConverter {
 				}
 
 				$fragment = $machine->convert(
+					// @phan-suppress-next-line PhanTypeMismatchArgument DOM library issues
 					$doc,
 					$text,
 					$destCode,

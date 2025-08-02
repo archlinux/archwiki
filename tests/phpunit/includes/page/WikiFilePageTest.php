@@ -1,11 +1,15 @@
 <?php
 
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Page\WikiFilePage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 
 /**
- * @covers \WikiFilePage
+ * @covers \MediaWiki\Page\WikiFilePage
  * @group Database
  */
 class WikiFilePageTest extends MediaWikiLangTestCase {

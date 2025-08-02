@@ -8,6 +8,14 @@
 
 $specialPageAliases = [];
 
+/** Azerbaijani (Azərbaycanca) */
+$specialPageAliases['az'] = [
+	'TopicSubscriptions' => [ 'MövzuAbunəlikləri' ],
+	'FindComment' => [ 'ŞərhiTap' ],
+	'GoToComment' => [ 'ŞərhəGet' ],
+	'DiscussionToolsDebug' => [ 'MüzakirəAlətlərininSazlanması' ],
+];
+
 /** English (English) */
 $specialPageAliases['en'] = [
 	'TopicSubscriptions' => [ 'TopicSubscriptions' ],

@@ -24,7 +24,7 @@
 	"vector-language-button-aria-label": "Перайсці да артыкула на іншай мове. Даступны на $1 {{PLURAL:$1|мове|мовах}}.",
 	"vector-language-button-label": "{{PLURAL:$1|$1 мова|$1 мовы|$1 моў}}",
 	"vector-no-language-button-label": "Дадаць мовы",
-	"vector-no-language-button-aria-label": "Артыкул ёсць толькі на гэтай мове. Дадайце артыкул для іншых моў",
+	"vector-no-language-button-aria-label": "Гэты артыкул даступны толькі гэтай мовай. Дадайце артыкулы іншымі мовамі",
 	"vector-language-variant-switcher-label": "Змяніць моўны варыянт",
 	"vector-action-addsection": "Дадаць тэму",
 	"vector-action-delete": "Выдаліць",

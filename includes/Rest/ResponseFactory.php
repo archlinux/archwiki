@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Rest;
 
-use HttpStatus;
 use InvalidArgumentException;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Language\LanguageCode;
-use MWExceptionHandler;
 use stdClass;
 use Throwable;
+use Wikimedia\Http\HttpStatus;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Message\MessageValue;
 
@@ -401,7 +401,7 @@ class ResponseFactory {
 			'schemas' => [
 				'GenericErrorResponseModel' => [
 					'description' => 'Generic error response body',
-					'required' => [ 'httpCode', 'httpMessage' ],
+					'required' => [ 'httpCode' ],
 					'properties' => [
 						'httpCode' => [
 							'type' => 'integer'

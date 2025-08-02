@@ -20,34 +20,36 @@
 
 namespace MediaWiki\Page;
 
-use ChangeTags;
-use HTMLCacheUpdateJob;
-use JobQueueGroup;
-use LocalFile;
-use ManualLogEntry;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\ValidationParams;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
+use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Status\Status;
+use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Storage\PageUpdaterFactory;
 use MediaWiki\Title\NamespaceInfo;
 use Psr\Log\LoggerInterface;
-use ReadOnlyError;
-use RepoGroup;
 use StatusValue;
+use Wikimedia\Assert\Assert;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ReadOnlyMode;
-use WikiPage;
 
 /**
  * Backend logic for performing a page undelete action.
@@ -176,8 +178,6 @@ class UndeletePage {
 	/**
 	 * Tests whether it's probably possible to undelete the associated talk page. This checks the replica,
 	 * so it may not see the latest master change, and is useful e.g. for building the UI.
-	 *
-	 * @return StatusValue
 	 */
 	public function canProbablyUndeleteAssociatedTalk(): StatusValue {
 		if ( $this->namespaceInfo->isTalk( $this->page->getNamespace() ) ) {
@@ -230,9 +230,6 @@ class UndeletePage {
 		return $this->undeleteUnsafe( $comment );
 	}
 
-	/**
-	 * @return PermissionStatus
-	 */
 	private function authorizeUndeletion(): PermissionStatus {
 		$status = PermissionStatus::newEmpty();
 		$this->performer->authorizeWrite( 'undelete', $this->page, $status );
@@ -294,7 +291,12 @@ class UndeletePage {
 		$restoredRevision = null;
 		$restoredPageIds = [];
 		if ( $restoreText ) {
-			$this->revisionStatus = $this->undeleteRevisions( $this->page, $this->timestamps, $comment );
+			// If we already restored files, then don't bail if there isn't any text to restore
+			$acceptNoRevisions = $filesRestored > 0;
+			$this->revisionStatus = $this->undeleteRevisions(
+				$this->page, $this->timestamps,
+				$comment, $acceptNoRevisions
+			);
 			if ( !$this->revisionStatus->isOK() ) {
 				return $this->revisionStatus;
 			}
@@ -311,7 +313,7 @@ class UndeletePage {
 			$talkStatus = $this->canProbablyUndeleteAssociatedTalk();
 			// if undeletion of the page fails we don't want to undelete the talk page
 			if ( $talkStatus->isGood() && $resStatus->isGood() ) {
-				$talkStatus = $this->undeleteRevisions( $this->associatedTalk, [], $comment );
+				$talkStatus = $this->undeleteRevisions( $this->associatedTalk, [], $comment, false );
 				if ( !$talkStatus->isOK() ) {
 					return $talkStatus;
 				}
@@ -373,10 +375,6 @@ class UndeletePage {
 		return $resStatus;
 	}
 
-	/**
-	 * @param string $comment
-	 * @return StatusValue
-	 */
 	private function runPreUndeleteHook( string $comment ): StatusValue {
 		$checkPages = [ $this->page ];
 		if ( $this->associatedTalk ) {
@@ -440,10 +438,15 @@ class UndeletePage {
 	 * @param ProperPageIdentity $page
 	 * @param string[] $timestamps
 	 * @param string $comment
+	 * @param bool $acceptNoRevisions Whether to return a good status rather than an error
+	 * 	if no revisions are undeleted.
 	 * @throws ReadOnlyError
 	 * @return StatusValue Status object containing the number of revisions restored on success
 	 */
-	private function undeleteRevisions( ProperPageIdentity $page, array $timestamps, string $comment ): StatusValue {
+	private function undeleteRevisions(
+		ProperPageIdentity $page, array $timestamps,
+		string $comment, bool $acceptNoRevisions
+	): StatusValue {
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			throw new ReadOnlyError();
 		}
@@ -475,7 +478,9 @@ class UndeletePage {
 			// Status value is count of revisions, whether the page has been created,
 			// last revision undeleted and all undeleted pages
 			$status = Status::newGood( [ 0, false, null, [] ] );
-			$status->error( "undelete-no-results" );
+			if ( !$acceptNoRevisions ) {
+				$status->error( "undelete-no-results" );
+			}
 			$dbw->endAtomic( __METHOD__ );
 
 			return $status;
@@ -521,6 +526,10 @@ class UndeletePage {
 			}
 		}
 
+		// Grab page state before changing it
+		$updater = $this->pageUpdaterFactory->newDerivedPageDataUpdater( $wikiPage );
+		$updater->grabCurrentRevision();
+
 		$pageId = $wikiPage->insertOn( $dbw, $latestRestorableRow->ar_page_id );
 		if ( $pageId === false ) {
 			// The page ID is reserved; let's pick another
@@ -561,8 +570,18 @@ class UndeletePage {
 			$previousTimestamp = 0;
 		}
 
+		// Re-create the PageIdentity using $pageId
+		$page = PageIdentityValue::localIdentity(
+			$pageId,
+			$page->getNamespace(),
+			$page->getDBkey()
+		);
+
+		Assert::postcondition( $page->exists(), 'The page should exist now' );
+
 		// Check if a deleted revision will become the current revision...
-		if ( $latestRestorableRow->ar_timestamp > $previousTimestamp ) {
+		$latestRestorableRowTimestamp = wfTimestamp( TS_MW, $latestRestorableRow->ar_timestamp );
+		if ( $latestRestorableRowTimestamp > $previousTimestamp ) {
 			// Check the state of the newest to-be version...
 			if ( !$this->unsuppress
 				&& ( $latestRestorableRow->ar_deleted & RevisionRecord::DELETED_TEXT )
@@ -624,16 +643,15 @@ class UndeletePage {
 
 			if ( $created || $wasnew ) {
 				// Update site stats, link tables, etc
-				$user = $revision->getUser( RevisionRecord::RAW );
 				$options = [
+					PageRevisionUpdatedEvent::FLAG_SILENT => true,
+					PageRevisionUpdatedEvent::FLAG_IMPLICIT => true,
 					'created' => $created,
 					'oldcountable' => $oldcountable,
-					'restored' => true,
-					'causeAction' => 'undelete-page',
-					'causeAgent' => $user->getName(),
 				];
 
-				$updater = $this->pageUpdaterFactory->newDerivedPageDataUpdater( $wikiPage );
+				$updater->setCause( PageUpdater::CAUSE_UNDELETE );
+				$updater->setPerformer( $this->performer->getUser() );
 				$updater->prepareUpdate( $revision, $options );
 				$updater->doUpdates();
 			}

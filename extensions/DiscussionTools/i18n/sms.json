@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik",
-			"Woytecr"
+			"Woytecr",
+			"Yupik"
 		]
 	},
 	"discussiontools-autotopicsubpopup-dismiss": "Äʹšš lij seʹlvv.",
@@ -56,6 +56,6 @@
 	"discussiontools-topicsubscription-pager-topic": "Äʹšš",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Čåuddõõđ tiʹllʼjõõzz",
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "Muuʹtt tiʹllʼjõõzzid",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Ođđ teeʹmm]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Vasttõs]"
+	"tag-discussiontools-newtopic": "Ođđ teeʹmm",
+	"tag-discussiontools-reply": "Vasttõs"
 }

@@ -3,6 +3,7 @@
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Language\MessageInfo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -66,7 +67,7 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 */
 	private function makePage( $title, $lang, $content = null ) {
 		$content ??= $lang;
-		if ( $lang !== $this->getServiceContainer()->getContentLanguage()->getCode() ) {
+		if ( $lang !== $this->getServiceContainer()->getContentLanguageCode()->toString() ) {
 			$title = "$title/$lang";
 		}
 
@@ -80,6 +81,10 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 			->saveRevision( $summary );
 
 		$this->assertNotNull( $newRevision, 'Create page ' . $title->getPrefixedDBkey() );
+
+		// Run the updates if no outer transaction is active
+		DeferredUpdates::tryOpportunisticExecute();
+
 		return $newRevision;
 	}
 
@@ -88,23 +93,26 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 *
 	 * @dataProvider provideMessagesForFallback
 	 */
-	public function testMessageFallbacks( $message, $langCode, $expectedContent ) {
-		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( $langCode );
-		$result = $this->getServiceContainer()->getMessageCache()->get( $message, true, $lang );
+	public function testMessageFallbacks( $message, $langCode, $expectedContent, $expectedLang ) {
+		$messageInfo = new MessageInfo;
+		$result = $this->getServiceContainer()->getMessageCache()
+			->get( $message, true, $langCode, $messageInfo );
 		$this->assertEquals( $expectedContent, $result, "Message fallback failed." );
+		$this->assertSame( $expectedLang, $messageInfo->langCode );
+		$this->assertSame( lcfirst( $message ), $messageInfo->usedKey );
 	}
 
 	public static function provideMessagesForFallback() {
 		return [
-			[ 'FallbackLanguageTest-Full', 'ab', 'ab' ],
-			[ 'FallbackLanguageTest-Partial', 'ab', 'ru' ],
-			[ 'FallbackLanguageTest-ContLang', 'ab', 'de' ],
-			[ 'FallbackLanguageTest-None', 'ab', false ],
+			[ 'FallbackLanguageTest-Full', 'ab', 'ab', 'ab' ],
+			[ 'FallbackLanguageTest-Partial', 'ab', 'ru', 'ru' ],
+			[ 'FallbackLanguageTest-ContLang', 'ab', 'de', 'de' ],
+			[ 'FallbackLanguageTest-None', 'ab', false, null ],
 
 			// T48579
-			[ 'FallbackLanguageTest-NoDervContLang', 'de', 'de/none' ],
+			[ 'FallbackLanguageTest-NoDervContLang', 'de', 'de/none', 'de' ],
 			// UI language different from content language should only use de/none as last option
-			[ 'FallbackLanguageTest-NoDervContLang', 'fit', 'de/none' ],
+			[ 'FallbackLanguageTest-NoDervContLang', 'fit', 'de/none', 'de' ],
 		];
 	}
 
@@ -125,6 +133,7 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 			'Updates are reflected in-process immediately' );
 		$this->makePage( 'Go', 'de', 'Race!' );
 		$dbw->endAtomic( __METHOD__ );
+		$this->runDeferredUpdates();
 
 		$this->assertSame( 0,
 			DeferredUpdates::pendingUpdatesCount(),
@@ -176,7 +185,8 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 * @dataProvider provideNormalizeKey
 	 */
 	public function testNormalizeKey( $key, $expected ) {
-		$actual = MessageCache::normalizeKey( $key );
+		$actual = $this->getServiceContainer()->getMessageCache()
+			->normalizeKey( $key );
 		$this->assertEquals( $expected, $actual );
 	}
 
@@ -243,7 +253,7 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 		// Create an out-of-sequence revision by importing a
 		// revision with an old timestamp. Hacky.
 		$importRevision = new WikiRevision();
-		$title = Title::newFromLinkTarget( $r3->getPageAsLinkTarget() );
+		$title = Title::newFromPageIdentity( $r3->getPage() );
 		$importRevision->setTitle( $title );
 		$importRevision->setComment( 'Imported edit' );
 		$importRevision->setTimestamp( '19991122001122' );
@@ -300,20 +310,15 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 */
 	public function testLocalOverride( $messageKey ) {
 		$messageCache = $this->getServiceContainer()->getMessageCache();
-		$languageFactory = $this->getServiceContainer()->getLanguageFactory();
-		$languageZh = $languageFactory->getLanguage( 'zh' );
-		$languageZh_tw = $languageFactory->getLanguage( 'zh-tw' );
-		$languageZh_hk = $languageFactory->getLanguage( 'zh-hk' );
-		$languageZh_mo = $languageFactory->getLanguage( 'zh-mo' );
-		$oldMessageZh = $messageCache->get( $messageKey, true, $languageZh );
-		$oldMessageZh_tw = $messageCache->get( $messageKey, true, $languageZh_tw );
+		$oldMessageZh = $messageCache->get( $messageKey, true, 'zh' );
+		$oldMessageZh_tw = $messageCache->get( $messageKey, true, 'zh-tw' );
 
 		$localOverrideHK = $messageKey . '_zh-hk';
 		$this->makePage( ucfirst( $messageKey ), 'zh-hk', $localOverrideHK );
-		$this->assertEquals( $oldMessageZh, $messageCache->get( $messageKey, true, $languageZh ), 'Local override overlapped (main code)' );
-		$this->assertEquals( $oldMessageZh_tw, $messageCache->get( $messageKey, true, $languageZh_tw ), 'Local override overlapped' );
-		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, $languageZh_hk ), 'Local override failed (self)' );
-		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, $languageZh_mo ), 'Local override failed (fallback)' );
+		$this->assertEquals( $oldMessageZh, $messageCache->get( $messageKey, true, 'zh' ), 'Local override overlapped (main code)' );
+		$this->assertEquals( $oldMessageZh_tw, $messageCache->get( $messageKey, true, 'zh-tw' ), 'Local override overlapped' );
+		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, 'zh-hk' ), 'Local override failed (self)' );
+		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, 'zh-mo' ), 'Local override failed (fallback)' );
 	}
 
 	public static function provideLocalOverride() {
@@ -332,9 +337,8 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 			MainConfigNames::RawHtmlMessages => [],
 		] );
 
-		$xss = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'x-xss' );
 		$message = $this->getServiceContainer()->getMessageCache()
-			->get( 'key', true, $xss );
+			->get( 'key', true, 'x-xss' );
 		if ( $expectXssMessage ) {
 			$this->assertSame(
 				"<script>alert('key')</script>\"><script>alert('key')</script><x y=\"(\$*)",

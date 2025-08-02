@@ -80,9 +80,13 @@
 
 	/**
 	 * Font size settings
+	 *
+	 * TODO: Temporary workaround to prevent Codex messages from scaling with text size T391890.
+	 * Remove the workaround once font size modes are fully integrated in Vector.
 	 */
 	.vector-feature-custom-font-size-clientpref--excluded,
-	.vector-feature-custom-font-size-clientpref-0 {
+	.vector-feature-custom-font-size-clientpref-0,
+	.mw-body-content .cdx-message {
 		--font-size-medium: @font-size-small;
 		--line-height-medium: @line-height-small;
 	}

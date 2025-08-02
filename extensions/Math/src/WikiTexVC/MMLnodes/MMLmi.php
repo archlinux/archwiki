@@ -8,9 +8,9 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  * description: "identifier"
  * category: "Token Elements"
  */
-class MMLmi extends MMLbase {
+class MMLmi extends MMLleaf {
 
-	public function __construct( string $texclass = "", array $attributes = [] ) {
-		parent::__construct( "mi", $texclass, $attributes );
+	public function __construct( string $texclass = "", array $attributes = [], string $text = "" ) {
+		parent::__construct( "mi", $texclass, $attributes, $text );
 	}
 }

@@ -26,5 +26,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Ngejajakko ulih $1-$2 jak lamon",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1-$2 jak lamon",
 	"cdx-table-pagination-status-message-indeterminate-final": "Ngejajakko {{PLURAL:$1|$1 ulih}} teraghir",
-	"cdx-table-pagination-status-message-pending": "Ngemuwak ulih..."
+	"cdx-table-pagination-status-message-pending": "Ngemuwak ulih...",
+	"cdx-table-no-data-message": "Mak ngedok data."
 }

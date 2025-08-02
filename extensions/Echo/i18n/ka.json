@@ -59,6 +59,7 @@
 	"notifications": "შეტყობინებები",
 	"tooltip-pt-notifications-alert": "{{GENDER:|თქვენი}} მოხსენებები",
 	"tooltip-pt-notifications-notice": "თქვენი შეტყობინებები",
+	"tooltip-pt-notifications": "თქვენი შეტყობინებები",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "შეტყობინებები კატეგორიების მიხედვით",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "ტიპების დალაგება",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "ახალი მომხმარებლები",

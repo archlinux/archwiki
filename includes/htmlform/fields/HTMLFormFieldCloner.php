@@ -8,7 +8,6 @@ use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\DerivativeRequest;
-use MediaWiki\Xml\Xml;
 
 /**
  * A container for HTMLFormFields that allows for multiple copies of the set of
@@ -440,7 +439,12 @@ class HTMLFormFieldCloner extends HTMLFormField {
 
 		if ( !empty( $this->mParams['row-legend'] ) ) {
 			$legend = $this->msg( $this->mParams['row-legend'] )->text();
-			$html = Xml::fieldset( $legend, $html );
+			$legend = $legend ? Html::element( 'legend', [], $legend ) : '';
+			$html = Html::rawElement(
+				'fieldset',
+				[],
+				$legend . $html
+			);
 		}
 
 		return $html;
@@ -545,7 +549,12 @@ class HTMLFormFieldCloner extends HTMLFormField {
 
 		if ( !empty( $this->mParams['row-legend'] ) ) {
 			$legend = $this->msg( $this->mParams['row-legend'] )->text();
-			$html = Xml::fieldset( $legend, $html );
+			$legend = $legend ? Html::element( 'legend', [], $legend ) : '';
+			$html = Html::rawElement(
+				'fieldset',
+				[],
+				$legend . $html
+			);
 		}
 
 		return $html;

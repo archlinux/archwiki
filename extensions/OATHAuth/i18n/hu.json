@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Bencoke",
+			"BáthoryPéter",
 			"Dj",
 			"Hanna Tardos",
 			"Tacsipacsi",
-			"Tgr",
-			"BáthoryPéter"
+			"Tgr"
 		]
 	},
 	"oathauth-desc": "Lehetővé teszi az azonosítást HMAC-alapú egyszer használatos jelszavakkal",
@@ -72,7 +72,6 @@
 	"log-action-filter-oath-verify": "Kétlépcsős azonosítás bekapcsoltságának ellenőrzése",
 	"log-action-filter-oath-disable-other": "Más felhasználó kétlépcsős azonosításának kikapcsolása",
 	"oathauth-ui-no-module": "Nincs engedélyezve",
-	"oathauth-module-invalid": "A felhasználó által regisztrált OATHAuth-modul érvénytelen.",
 	"oathauth-module-totp-label": "TOTP (egyszeri token)",
 	"oathauth-ui-manage": "Kezelés",
 	"oathmanage": "Kétlépcsős azonosítás kezelése",
@@ -91,9 +90,6 @@
 	"oathauth-disable-method-warning-button-label": "Megerősítés és folytatás",
 	"oathauth-disable-method-warning": "Amennyiben letiltod a(z) $1 kétlépcsős azonosítási módszert, többé nem használhatod ezt a módszert belépéskor, és minden, a hitelesítési módszerrel kapcsolatos adat törlődik.",
 	"oathauth-disable-method-next-step": "A következő lépésben a jelenlegi kétlépcsős azonosítási módszerrel ($1) kell azonosítanod magad ahhoz, hogy letilthassad.",
-	"oathauth-switch-method-warning-header": "Másik azonosítási módszerre váltás megerősítése",
-	"oathauth-switch-method-warning": "A(z) $2 kétlépcsős azonosítási módszerre váltással a jelenlegi módszer ($1) le lesz tiltva, és minden, a jelenlegi hitelesítési módszerrel kapcsolatos adat törlődik.",
-	"oathauth-switch-method-next-step": "A következő lépésben a jelenlegi kétlépcsős azonosítási módszerrel ($1) kell azonosítanod magad ahhoz, hogy át tudj váltani a(z) $2 módszerre.",
 	"oathauth-totp-disable-warning": "A továbbiakban nem fogod tudni használni az ehhez a fiókhoz regisztrált hitelesítő eszközt. A fiókhoz társított összes helyreállítási kód érvénytelen lesz.",
 	"oathauth-invalidrequest": "Érvénytelen kérés",
 	"notification-header-oathauth-disable": "A kétlépcsős azonosítás le lett tiltva a {{GENDER:$2|fiókodon}}.",

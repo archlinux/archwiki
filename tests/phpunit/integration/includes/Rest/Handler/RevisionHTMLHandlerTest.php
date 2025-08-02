@@ -50,9 +50,6 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->parserCacheBagOStuff = new HashBagOStuff();
 	}
 
-	/**
-	 * @return RevisionHTMLHandler
-	 */
 	private function newHandler(): RevisionHTMLHandler {
 		$services = $this->getServiceContainer();
 		$config = [
@@ -316,12 +313,9 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->executeHandler( $handler, $request );
 	}
 
-	/**
-	 * @param RevisionRecord $rev
-	 * @param array $data
-	 */
 	private function assertResponseData( RevisionRecord $rev, array $data ): void {
-		$title = $rev->getPageAsLinkTarget();
+		$page = $rev->getPage();
+		$link = $rev->getPageAsLinkTarget();
 
 		$this->assertSame( $rev->getId(), $data['id'] );
 		$this->assertSame( $rev->getSize(), $data['size'] );
@@ -330,9 +324,9 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 			wfTimestampOrNull( TS_ISO_8601, $rev->getTimestamp() ),
 			$data['timestamp']
 		);
-		$this->assertSame( $title->getArticleID(), $data['page']['id'] );
-		$this->assertSame( $title->getDBkey(), $data['page']['key'] ); // assume main namespace
-		$this->assertSame( $title->getText(), $data['page']['title'] ); // assume main namespace
+		$this->assertSame( $page->getId(), $data['page']['id'] );
+		$this->assertSame( $link->getDBkey(), $data['page']['key'] ); // assume main namespace
+		$this->assertSame( $link->getText(), $data['page']['title'] ); // assume main namespace
 		$this->assertSame( CONTENT_MODEL_WIKITEXT, $data['content_model'] );
 		$this->assertSame( 'https://example.com/rights', $data['license']['url'] );
 		$this->assertSame( 'some rights', $data['license']['title'] );

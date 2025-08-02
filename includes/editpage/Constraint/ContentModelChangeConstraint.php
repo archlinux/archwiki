@@ -21,6 +21,7 @@
 namespace MediaWiki\EditPage\Constraint;
 
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Title\Title;
 use StatusValue;
 
@@ -28,6 +29,7 @@ use StatusValue;
  * Verify user permissions if changing content model:
  *    Must have editcontentmodel rights
  *    Must be able to edit under the new content model
+ *    Must not have exceeded the rate limit
  *
  * @since 1.36
  * @internal
@@ -35,10 +37,11 @@ use StatusValue;
  */
 class ContentModelChangeConstraint implements IEditConstraint {
 
+	private PermissionStatus $status;
+
 	private Authority $performer;
 	private Title $title;
 	private string $newContentModel;
-	private string $result;
 
 	/**
 	 * @param Authority $performer
@@ -56,45 +59,43 @@ class ContentModelChangeConstraint implements IEditConstraint {
 	}
 
 	public function checkConstraint(): string {
+		$this->status = PermissionStatus::newEmpty();
+
 		if ( $this->newContentModel === $this->title->getContentModel() ) {
 			// No change
-			$this->result = self::CONSTRAINT_PASSED;
 			return self::CONSTRAINT_PASSED;
 		}
 
-		if ( !$this->performer->isAllowed( 'editcontentmodel' ) ) {
-			$this->result = self::CONSTRAINT_FAILED;
+		if ( !$this->performer->authorizeWrite( 'editcontentmodel', $this->title, $this->status ) ) {
 			return self::CONSTRAINT_FAILED;
 		}
 
-		// Make sure the user can edit the page under the new content model too
+		// Make sure the user can edit the page under the new content model too.
+		// We rely on caching in UserAuthority to avoid bumping the rate limit counter twice.
 		$titleWithNewContentModel = clone $this->title;
 		$titleWithNewContentModel->setContentModel( $this->newContentModel );
-
-		$canEditModel = $this->performer->authorizeWrite(
-			'editcontentmodel',
-			$titleWithNewContentModel
-		);
-
 		if (
-			!$canEditModel
-			|| !$this->performer->authorizeWrite( 'edit', $titleWithNewContentModel )
+			!$this->performer->authorizeWrite( 'editcontentmodel', $titleWithNewContentModel, $this->status )
+			|| !$this->performer->authorizeWrite( 'edit', $titleWithNewContentModel, $this->status )
 		) {
-			$this->result = self::CONSTRAINT_FAILED;
 			return self::CONSTRAINT_FAILED;
 		}
 
-		$this->result = self::CONSTRAINT_PASSED;
 		return self::CONSTRAINT_PASSED;
 	}
 
 	public function getLegacyStatus(): StatusValue {
 		$statusValue = StatusValue::newGood();
 
-		if ( $this->result === self::CONSTRAINT_FAILED ) {
-			$statusValue->setResult( false, self::AS_NO_CHANGE_CONTENT_MODEL );
+		if ( !$this->status->isGood() ) {
+			if ( $this->status->isRateLimitExceeded() ) {
+				$statusValue->setResult( false, self::AS_RATE_LIMITED );
+			} else {
+				$statusValue->setResult( false, self::AS_NO_CHANGE_CONTENT_MODEL );
+			}
 		}
 
+		// TODO: Use error messages from the PermissionStatus ($this->status) here - T384399
 		return $statusValue;
 	}
 

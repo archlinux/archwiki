@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Ed g2s",
+			"Lisyeng",
 			"Matma Rex",
 			"OIS",
-			"Woytecr",
-			"Lisyeng"
+			"Woytecr"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Response",
@@ -17,6 +17,6 @@
 	"discussiontools-replywidget-reply": "{{GENDER:|Responder}}",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|person|persones}} in discussion",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comenta|comentas}}",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Tema adjuntet]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respondet]"
+	"tag-discussiontools-newtopic": "Tema adjuntet",
+	"tag-discussiontools-reply": "Respondet"
 }

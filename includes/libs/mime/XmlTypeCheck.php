@@ -167,11 +167,19 @@ class XmlTypeCheck {
 	 * @param bool $isFile
 	 */
 	private function validateFromInput( $xml, $isFile ) {
+		// Allow text and attr nodes over 10 MB, e.g. embedded embedded raster images in SVG (T387969).
+		$xmlParseHuge = LIBXML_PARSEHUGE;
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			// Use low limits while running tests, because XmlTypeCheckTest::testRecursiveEntity()
+			// requires over 1 GB of memory and over a minute of time with huge limits (T392782).
+			// Maybe this should be configurable for low-resource deployments?
+			$xmlParseHuge = 0;
+		}
 		$reader = new XMLReader();
 		if ( $isFile ) {
-			$s = $reader->open( $xml, null, LIBXML_NOERROR | LIBXML_NOWARNING );
+			$s = $reader->open( $xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | $xmlParseHuge );
 		} else {
-			$s = $reader->XML( $xml, null, LIBXML_NOERROR | LIBXML_NOWARNING );
+			$s = $reader->XML( $xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | $xmlParseHuge );
 		}
 		if ( $s !== true ) {
 			// Couldn't open the XML
@@ -197,7 +205,7 @@ class XmlTypeCheck {
 		}
 	}
 
-	private function readNext( XMLReader $reader ) {
+	private function readNext( XMLReader $reader ): bool {
 		set_error_handler( function ( $line, $file ) {
 			$this->wellFormed = false;
 			return true;
@@ -207,7 +215,7 @@ class XmlTypeCheck {
 		return $ret;
 	}
 
-	private function validate( $reader ) {
+	private function validate( XMLReader $reader ) {
 		// First, move through anything that isn't an element, and
 		// handle any processing instructions with the callback
 		do {

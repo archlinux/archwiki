@@ -6,13 +6,13 @@
 			"The Discoverer"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|વિઝ્યુલ સંપાદન]]",
+	"tag-visualeditor": "વિઝ્યુલ સંપાદન",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|વિઝ્યુલ સંપાદક]] વડે કરેલ ફેરફાર",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|વિઝ્યુલ સંપાદક: ચકાસો]]",
+	"tag-visualeditor-needcheck": "વિઝ્યુલ સંપાદક: ચકાસો",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|વિઝ્યુલ સંપાદક]] દ્વારા કરેલ ફેરફાર જ્યાં સિસ્ટમે ન ધારેલા વિકિલખાણ ફેરફારો મેળવ્યા.",
 	"tag-visualeditor-wikitext": "૨૦૧૭ સ્ત્રોત ફેરફાર",
 	"tag-visualeditor-wikitext-description": "૨૦૧૭ના સ્ત્રોત સંપાદક વડે થયેલ ફેરફાર",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|વિઝ્યુલ સંપાદક: બદલેલ]]",
+	"tag-visualeditor-switched": "વિઝ્યુલ સંપાદક: બદલેલ",
 	"tag-visualeditor-switched-description": "સભ્યે વિઝ્યુલ સંપાદક વાપરવાનું શરુ કર્યું પછી વિકિલખાણ સંપાદકમાં ગયા.",
 	"visualeditor-feedback-link": "Project:વિઝ્યુલસંપાદક/પ્રતિભાવ",
 	"visualeditor-feedback-tool": "આ સોફ્ટવેર વિશે પ્રતિભાવ આપો",

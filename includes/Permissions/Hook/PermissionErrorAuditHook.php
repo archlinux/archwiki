@@ -13,7 +13,7 @@ use MediaWiki\User\UserIdentity;
  */
 interface PermissionErrorAuditHook {
 	/**
-	 * This hook is called from PermissionManager::getPermissionErrorsInternal()
+	 * This hook is called from PermissionManager::getPermissionStatus()
 	 * to collect internal permission errors and make them available to consumers.
 	 *
 	 * @param LinkTarget $title Page in question
@@ -24,6 +24,7 @@ interface PermissionErrorAuditHook {
 	 * @return void This hook must not abort, it must return no value
 	 *
 	 * @since 1.39
+	 * @deprecated since 1.44 Use PermissionStatusAudit hook instead
 	 */
 	public function onPermissionErrorAudit(
 		LinkTarget $title,

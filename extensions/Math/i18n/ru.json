@@ -17,6 +17,7 @@
 			"Megakott",
 			"Movses",
 			"Nk88",
+			"Novichev",
 			"Okras",
 			"Ole Yves",
 			"Pacha Tchernof",
@@ -28,8 +29,7 @@
 			"Translatobecomer",
 			"Vlad5250",
 			"Wikisaurus",
-			"Ядерный Трамвай",
-			"Novichev"
+			"Ядерный Трамвай"
 		]
 	},
 	"math-desc": "Отображает математические формулы в тегах <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

@@ -27,7 +27,7 @@
 	"vector-language-button-aria-label": "ਕਿਸੇ ਹੋਰ ਭਾਸ਼ਾ ਵਿੱਚ ਲੇਖ 'ਤੇ ਜਾਓ। {{PLURAL:$1|$1 ਭਾਸ਼ਾ|$1 ਭਾਸ਼ਾਵਾਂ}} ਵਿੱਚ ਉਪਲਬਧ ਹੈ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ਭਾਸ਼ਾ|$1 ਭਾਸ਼ਾਵਾਂ}}",
 	"vector-no-language-button-label": "ਹੋਰ ਬੋਲੀਆਂ ਜੋੜੋ",
-	"vector-no-language-button-aria-label": "ਇਹ ਲੇਖ ਸਿਰਫ਼ ਇਸ ਭਾਸ਼ਾ ਵਿੱਚ ਮੌਜੂਦ ਹੈ। ਹੋਰ ਭਾਸ਼ਾਵਾਂ ਲਈ ਲੇਖ ਨੂੰ ਸ਼ਾਮਲ ਕਰੋ",
+	"vector-no-language-button-aria-label": "ਇਹ ਲੇਖ ਸਿਰਫ਼ ਇਸ ਭਾਸ਼ਾ ਵਿੱਚ ਮੌਜੂਦ ਏ। ਹੋਰ ਬੋਲਿਆਂ ਲਈ ਲੇਖ ਨੂੰ ਜੋੜੋ",
 	"vector-language-variant-switcher-label": "ਭਾਸ਼ਾ ਰੂਪ ਬਦਲੋ",
 	"vector-action-addsection": "ਵਿਸ਼ਾ ਜੋੜੋ",
 	"vector-action-delete": "ਹਟਾਓ",

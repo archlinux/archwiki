@@ -34,22 +34,15 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 class EventDispatcher {
-	/**
-	 * @throws ResourceLimitExceededException
-	 */
 	private static function getParsedRevision( RevisionRecord $revRecord ): ContentThreadItemSet {
-		return HookUtils::parseRevisionParsoidHtml( $revRecord, __METHOD__ );
+		return HookUtils::parseRevisionParsoidHtml( $revRecord, __METHOD__ )->getValueOrThrow();
 	}
 
-	/**
-	 * @throws ResourceLimitExceededException
-	 */
 	public static function generateEventsForRevision( array &$events, RevisionRecord $newRevRecord ): void {
 		$services = MediaWikiServices::getInstance();
 
@@ -354,7 +347,7 @@ class EventDispatcher {
 			$dtConfig->get( 'DiscussionToolsAutoTopicSubEditor' ) === 'any' &&
 			HookUtils::shouldAddAutoSubscription( $user, $title )
 		) {
-			/** @var SubscriptionStore $parser */
+			/** @var SubscriptionStore $subscriptionStore */
 			$subscriptionStore = MediaWikiServices::getInstance()->getService( 'DiscussionTools.SubscriptionStore' );
 			$subscriptionStore->addAutoSubscriptionForUser( $user, $title, $itemName );
 		}
@@ -500,10 +493,10 @@ class EventDispatcher {
 		global $wgDTSchemaEditAttemptStepSamplingRate, $wgWMESchemaEditAttemptStepSamplingRate;
 		// Sample 6.25%
 		$samplingRate = 0.0625;
-		if ( isset( $wgDTSchemaEditAttemptStepSamplingRate ) ) {
+		if ( $wgDTSchemaEditAttemptStepSamplingRate !== null ) {
 			$samplingRate = $wgDTSchemaEditAttemptStepSamplingRate;
 		}
-		if ( isset( $wgWMESchemaEditAttemptStepSamplingRate ) ) {
+		if ( $wgWMESchemaEditAttemptStepSamplingRate !== null ) {
 			$samplingRate = $wgWMESchemaEditAttemptStepSamplingRate;
 		}
 		if ( $samplingRate === 0 ) {

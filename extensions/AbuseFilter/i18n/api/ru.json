@@ -10,7 +10,8 @@
 			"Movses",
 			"Okras",
 			"Vlad5250",
-			"Марио"
+			"Марио",
+			"MidnightLG"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Проверьте, удовлетворяет ли фильтру злоупотреблений набор переменных или событие фильтра злоупотреблений, записанное редактором.",
@@ -61,5 +62,6 @@
 	"apierror-abusefilter-cantcheck": "У вас недостаточно прав для проверки синтаксиса фильтра злоупотреблений.",
 	"apierror-abusefilter-canteval": "У вас нет разрешения на оценку выражений фильтра злоупотреблений.",
 	"apierror-abusefilter-nosuchlogid": "Не существует записи в журнале злоупотреблений с идентификатором $1.",
+	"apierror-abusefilter-incompatible": "Запрошенное изменение не поддерживается в Abuse Filter.",
 	"apierror-abusefilter-badsyntax": "Синтаксическая ошибка в фильтре."
 }

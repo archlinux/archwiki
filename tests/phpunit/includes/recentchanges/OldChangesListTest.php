@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\RecentChanges\OldChangesList;
 use MediaWiki\Title\Title;
 
 /**
@@ -8,7 +9,7 @@ use MediaWiki\Title\Title;
  *       log entry, user tool links, direction marks, tags, rollback,
  *       watching users, and date header.
  *
- * @covers \OldChangesList
+ * @covers \MediaWiki\RecentChanges\OldChangesList
  * @group Database
  * @author Katie Filbert <aude.wiki@gmail.com>
  */

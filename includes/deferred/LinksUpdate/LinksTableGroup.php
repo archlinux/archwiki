@@ -34,7 +34,10 @@ class LinksTableGroup {
 			'services' => [
 				'LanguageConverterFactory',
 				'NamespaceInfo',
-				'WikiPageFactory'
+				'WikiPageFactory',
+				'DBLoadBalancer',
+				'MainWANObjectCache',
+				'MainConfig'
 			],
 			'needCollation' => true,
 		],
@@ -136,8 +139,6 @@ class LinksTableGroup {
 
 	/**
 	 * Set the ParserOutput object to be used in new and existing objects.
-	 *
-	 * @param ParserOutput $parserOutput
 	 */
 	public function setParserOutput( ParserOutput $parserOutput ) {
 		$this->parserOutput = $parserOutput;
@@ -148,8 +149,6 @@ class LinksTableGroup {
 
 	/**
 	 * Set the original title in the case of a page move.
-	 *
-	 * @param PageReference $oldPage
 	 */
 	public function setMoveDetails( PageReference $oldPage ) {
 		$this->movedPage = $oldPage;
@@ -172,8 +171,6 @@ class LinksTableGroup {
 
 	/**
 	 * Set the revision to be used in new and existing objects.
-	 *
-	 * @param RevisionRecord $revision
 	 */
 	public function setRevision( RevisionRecord $revision ) {
 		$this->revision = $revision;

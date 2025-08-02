@@ -43,8 +43,8 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		parent::tearDown();
 		/** @var Hooks $req */
 		$req = TestingAccessWrapper::newFromClass( Hooks::class );
-		// make sure $wgCaptcha resets between tests
-		$req->instanceCreated = false;
+		// clear the singleton between tests
+		$req->instance = null;
 	}
 
 	/**
@@ -63,7 +63,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		$this->setTriggers( $triggers );
 		if ( $preTestCallback ) {
 			$fn = array_shift( $preTestCallback );
-			call_user_func_array( [ $this, $fn ], $preTestCallback );
+			$this->$fn( ...$preTestCallback );
 		}
 
 		/** @var FauxRequest $request */

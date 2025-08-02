@@ -13,9 +13,11 @@
 			"Hégésippe Cormier",
 			"IAlex",
 			"Iketsi",
+			"JLTRY",
 			"Linedwell",
 			"Lofhi",
 			"MacOS Weed",
+			"Mahabarata",
 			"McDutchie",
 			"Meithal",
 			"Momo50WM",
@@ -35,8 +37,6 @@
 			"Wladek92",
 			"Wyz",
 			"לערי ריינהארט",
-			"Mahabarata",
-			"JLTRY",
 			"EmDashUser002"
 		]
 	},
@@ -110,7 +110,7 @@
 	"prefs-help-email": "L’adresse de courriel est facultative, mais elle est nécessaire pour réinitialiser votre mot de passe, en cas d’oubli.",
 	"prefs-help-email-required": "Une adresse de courriel est requise.",
 	"prefs-help-email-others": "Vous pouvez aussi choisir de laisser les autres vous contacter par courriel via un lien sur votre page de discussion ou page utilisateur. \nVotre adresse courriel n’est pas révélée quand les autres utilisateurs vous contactent.",
-	"tog-requireemail": "Envoyer les courriels de réinitialisation de mot de passe seulement quand l’adresse de messagerie et le nom d’utilisateur sont tous deux fournis.",
+	"tog-requireemail": "Envoyer les courriels de réinitialisation de mot de passe uniquement quand l’adresse de messagerie et le nom d’utilisateur sont tous les deux fournis",
 	"prefs-help-requireemail": "Cela améliore la confidentialité et aide à éviter les courriels non sollicités.",
 	"noemailprefs": "Indiquez une adresse de courriel dans vos préférences pour utiliser ces fonctions.",
 	"emailnotauthenticated": "Votre adresse de courriel n’est pas encore confirmée.\nAucun courriel ne sera envoyé pour chacune des fonctions suivantes.",
@@ -257,6 +257,7 @@
 	"search-thumbnail-extra-namespaces-label": "Afficher les vignettes dans Spécial:Recherche sur ordinateur de bureau",
 	"search-thumbnail-extra-namespaces-message": "Afficher les vignettes pour $1 espace{{PLURAL:$2||s}} de noms sur la page {{#special:search}}.",
 	"prefs-advancedsearchoptions": "Options avancées",
+	"prefs-misc": "Préférences diverses",
 	"prefs-reset-intro": "Vous pouvez utiliser cette page pour restaurer vos préférences aux valeurs par défaut du site.\nCeci ne peut pas être annulé.",
 	"prefs-reset-confirm": "Oui, je veux réinitialiser mes préférences.",
 	"restoreprefs": "Restaurer tous les paramètres par défaut"

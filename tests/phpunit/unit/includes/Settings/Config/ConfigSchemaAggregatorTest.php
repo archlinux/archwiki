@@ -7,12 +7,14 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Settings\Config\ConfigSchemaAggregator;
 use MediaWiki\Settings\Config\MergeStrategy;
 use MediaWiki\Settings\SettingsBuilderException;
+use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \MediaWiki\Settings\Config\ConfigSchemaAggregator
  */
 class ConfigSchemaAggregatorTest extends TestCase {
+	use MediaWikiCoversValidator;
 
 	public function testAddSchema() {
 		$aggregator = new ConfigSchemaAggregator();
@@ -266,10 +268,15 @@ class ConfigSchemaAggregatorTest extends TestCase {
 			'config' => [ 'foo' => [], 'baz' => false, ],
 			'valid' => true,
 		];
-		yield 'assoc array where list is expected' => [
+		yield 'assoc array where list is expected (string key)' => [
 			'config-schema' => [ 'foo' => [ 'type' => 'array', ], ],
 			'config' => [ 'foo' => [ 'x' => 1 ] ],
 			'valid' => false,
+		];
+		yield 'assoc array where list is expected (numeric key)' => [
+			'config-schema' => [ 'foo' => [ 'type' => 'array', ], ],
+			'config' => [ 'foo' => [ 2 => 'x' ] ],
+			'valid' => true,
 		];
 		yield 'map with numeric keys' => [
 			'config-schema' => [ 'foo' => [ 'type' => 'object', ], ],

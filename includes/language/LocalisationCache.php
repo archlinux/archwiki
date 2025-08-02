@@ -151,13 +151,13 @@ class LocalisationCache {
 		'fallback', 'namespaceNames', 'bookstoreList',
 		'magicWords', 'messages', 'rtl',
 		'digitTransformTable', 'separatorTransformTable',
-		'minimumGroupingDigits', 'fallback8bitEncoding',
+		'minimumGroupingDigits', 'numberingSystem', 'fallback8bitEncoding',
 		'linkPrefixExtension', 'linkTrail', 'linkPrefixCharset',
-		'namespaceAliases', 'dateFormats', 'datePreferences',
+		'namespaceAliases', 'dateFormats', 'jsDateFormats', 'datePreferences',
 		'datePreferenceMigrationMap', 'defaultDateFormat',
 		'specialPageAliases', 'imageFiles', 'preloadedMessages',
 		'namespaceGenderAliases', 'digitGroupingPattern', 'pluralRules',
-		'pluralRuleTypes', 'compiledPluralRules', 'formalityIndex',
+		'pluralRuleTypes', 'compiledPluralRules', 'formalityIndex'
 	];
 
 	/**
@@ -169,7 +169,8 @@ class LocalisationCache {
 	 */
 	private const CORE_ONLY_KEYS = [
 		'fallback', 'rtl', 'digitTransformTable', 'separatorTransformTable',
-		'minimumGroupingDigits', 'fallback8bitEncoding', 'linkPrefixExtension',
+		'minimumGroupingDigits', 'numberingSystem',
+		'fallback8bitEncoding', 'linkPrefixExtension',
 		'linkTrail', 'linkPrefixCharset', 'datePreferences',
 		'datePreferenceMigrationMap', 'defaultDateFormat', 'digitGroupingPattern',
 		'formalityIndex',
@@ -185,7 +186,7 @@ class LocalisationCache {
 	 */
 	private const ALL_EXCEPT_CORE_ONLY_KEYS = [
 		'namespaceNames', 'bookstoreList', 'magicWords', 'messages',
-		'namespaceAliases', 'dateFormats', 'specialPageAliases',
+		'namespaceAliases', 'dateFormats', 'jsDateFormats', 'specialPageAliases',
 		'imageFiles', 'preloadedMessages', 'namespaceGenderAliases',
 		'pluralRules', 'pluralRuleTypes', 'compiledPluralRules',
 	];
@@ -198,7 +199,7 @@ class LocalisationCache {
 	 * by a fallback sequence.
 	 */
 	private const MERGEABLE_MAP_KEYS = [ 'messages', 'namespaceNames',
-		'namespaceAliases', 'dateFormats', 'imageFiles', 'preloadedMessages'
+		'namespaceAliases', 'dateFormats', 'jsDateFormats', 'imageFiles', 'preloadedMessages'
 	];
 
 	/**
@@ -703,12 +704,14 @@ class LocalisationCache {
 			foreach ( self::ALL_KEYS as $key ) {
 				// Not all keys are set in language files, so
 				// check they exist first
+				// @phan-suppress-next-line MediaWikiNoIssetIfDefined  May be set in the included file
 				if ( isset( $$key ) ) {
 					$data[$key] = $$key;
 				}
 			}
 		} elseif ( $_fileType == 'extension' ) {
 			foreach ( self::ALL_EXCEPT_CORE_ONLY_KEYS as $key ) {
+				// @phan-suppress-next-line MediaWikiNoIssetIfDefined  May be set in the included file
 				if ( isset( $$key ) ) {
 					$data[$key] = $$key;
 				}
@@ -932,10 +935,6 @@ class LocalisationCache {
 		}
 	}
 
-	/**
-	 * @param array &$value
-	 * @param array $fallbackValue
-	 */
 	private function mergeMagicWords( array &$value, array $fallbackValue ): void {
 		foreach ( $fallbackValue as $magicName => $fallbackInfo ) {
 			if ( !isset( $value[$magicName] ) ) {
@@ -966,12 +965,14 @@ class LocalisationCache {
 		return [
 			'core' => "$IP/languages/i18n",
 			'codex' => "$IP/languages/i18n/codex",
+			'datetime' => "$IP/languages/i18n/datetime",
 			'exif' => "$IP/languages/i18n/exif",
 			'preferences' => "$IP/languages/i18n/preferences",
 			'api' => "$IP/includes/api/i18n",
 			'rest' => "$IP/includes/Rest/i18n",
 			'oojs-ui' => "$IP/resources/lib/ooui/i18n",
 			'paramvalidator' => "$IP/includes/libs/ParamValidator/i18n",
+			'installer' => "$IP/includes/installer/i18n",
 		] + $this->options->get( MainConfigNames::MessagesDirs );
 	}
 

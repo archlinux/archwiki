@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"김도훈",
-			"Tensama0415"
+			"Tensama0415",
+			"김도훈"
 		]
 	},
 	"turnstile-desc": "ConfirmEdit에 Cloudflare Turnstile에 대한 지원을 추가합니다.",

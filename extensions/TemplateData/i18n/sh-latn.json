@@ -55,6 +55,7 @@
 	"templatedata-modal-button-removemap": "Ukloni mapiranje",
 	"templatedata-modal-button-saveparam": "Snimi",
 	"templatedata-modal-confirmcancel": "Da li sigurno želite odbaciti promjene?",
+	"templatedata-modal-button-discard": "Odbaci",
 	"templatedata-modal-current-language": "Trenutni jezik: $1",
 	"templatedata-modal-format-block": "Jedan ispod drugog",
 	"templatedata-modal-format-custom": "Prilagođeno",

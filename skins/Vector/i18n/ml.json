@@ -3,8 +3,8 @@
 		"authors": [
 			"Akbarali",
 			"Anoopan",
-			"Praveenp",
-			"Jinoytommanjaly"
+			"Jinoytommanjaly",
+			"Praveenp"
 		]
 	},
 	"skinname-vector": "വെക്റ്റർ പഴമ (2010)",
@@ -41,6 +41,7 @@
 	"vector-more-actions": "കൂടുതൽ",
 	"vector-appearance-label": "ദൃശ്യരൂപം",
 	"vector-appearance-tooltip": "താളിന്റെ ഫോണ്ട് വലിപ്പം, വീതി, നിറം എന്നിവയുടെ ദൃശ്യരീതിയിൽ മാറ്റം വരുത്തുക",
+	"vector-personal-tools-tooltip": "വ്യക്തിഗത സജ്ജീകരണങ്ങൾ",
 	"vector-feature-limited-width-name": "വീതി",
 	"vector-feature-limited-width-0-label": "വിശാലത",
 	"vector-feature-limited-width-1-label": "സാധാരണം",

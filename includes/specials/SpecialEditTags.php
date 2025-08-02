@@ -20,22 +20,21 @@
 
 namespace MediaWiki\Specials;
 
-use ChangeTagsList;
-use ErrorPageError;
-use LogEventsList;
-use LogPage;
+use MediaWiki\ChangeTags\ChangeTagsList;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\Html\Html;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 use MediaWiki\Xml\XmlSelect;
 use RevisionDeleter;
-use UserBlockedError;
 
 /**
  * Add or remove change tags to individual revisions.
@@ -70,11 +69,6 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	private PermissionManager $permissionManager;
 	private ChangeTagsStore $changeTagsStore;
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param PermissionManager $permissionManager
-	 */
 	public function __construct( PermissionManager $permissionManager, ChangeTagsStore $changeTagsStore ) {
 		parent::__construct( 'EditTags', 'changetags' );
 
@@ -282,8 +276,11 @@ class SpecialEditTags extends UnlistedSpecialPage {
 		$form = Html::openElement( 'form', [ 'method' => 'post',
 				'action' => $this->getPageTitle()->getLocalURL( [ 'action' => 'submit' ] ),
 				'id' => 'mw-revdel-form-revisions' ] ) .
-			Xml::fieldset( $this->msg( "tags-edit-{$this->typeName}-legend",
-				count( $this->ids ) )->text() ) .
+			Html::openElement( 'fieldset' ) .
+			Html::element(
+				'legend', [],
+				$this->msg( "tags-edit-{$this->typeName}-legend", count( $this->ids ) )->text()
+			) .
 			$this->buildCheckBoxes() .
 			Html::openElement( 'table' ) .
 			"<tr>\n" .

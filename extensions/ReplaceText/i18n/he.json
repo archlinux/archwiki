@@ -47,5 +47,6 @@
 	"replacetext_no_compress": "הוויקי שלך לא יעבוד עם ReplaceText: החלפות טקסט לא יכולות להיות מורצות אם <span dir=\"ltr\">$wgCompressRevisions</span> מוגדר ל־true.",
 	"replacetext_no_external_stores": "הוויקי שלך לא יעבוד עם ReplaceText: החלפות טקסט לא יכולות להיות מורצות אם <span dir=\"ltr\">$wgExternalStores</span> אינו ריק.",
 	"right-replacetext": "ביצוע החלפת מחרוזות באתר הוויקי כולו",
-	"action-replacetext": "לבצע החלפת מחרוזות באתר הוויקי כולו"
+	"action-replacetext": "לבצע החלפת מחרוזות באתר הוויקי כולו",
+	"replacetext-summary-label": "תקציר לעריכות החלפה (יש להשאיר את זה ריק כדי להשתמש בתקציר ברירת המחדל)"
 }

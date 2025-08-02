@@ -38,6 +38,7 @@
 	"notifications": "Meldingen",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Juw}} meldingen",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Joew}} mededelingen",
+	"tooltip-pt-notifications": "Joew meldingen",
 	"echo-specialpage": "Meldingen",
 	"echo-specialpage-pagefilters-title": "Leste aktiviteit",
 	"echo-specialpage-pagefilters-subtitle": "Ziejen mit meldingen die niet elezen bin",

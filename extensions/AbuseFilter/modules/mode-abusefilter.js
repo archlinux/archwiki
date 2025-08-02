@@ -1,11 +1,11 @@
 /* global ace */
-ace.define( 'ace/mode/abusefilter_highlight_rules', [ 'require', 'exports', 'module', 'ace/lib/oop', 'ace/mode/text_highlight_rules' ], function ( require, exports ) {
+ace.define( 'ace/mode/abusefilter_highlight_rules', [ 'require', 'exports', 'module', 'ace/lib/oop', 'ace/mode/text_highlight_rules' ], ( require, exports ) => {
 	'use strict';
 
-	var oop = require( 'ace/lib/oop' ),
+	const oop = require( 'ace/lib/oop' ),
 		TextHighlightRules = require( './text_highlight_rules' ).TextHighlightRules,
 		AFHighlightRules = function () {
-			var cfg = mw.config.get( 'aceConfig' ),
+			const cfg = mw.config.get( 'aceConfig' ),
 				constants = ( 'true|false|null' ),
 				keywords = this.createKeywordMapper(
 					{
@@ -97,10 +97,10 @@ ace.define( 'ace/mode/abusefilter_highlight_rules', [ 'require', 'exports', 'mod
 	exports.AFHighlightRules = AFHighlightRules;
 } );
 
-ace.define( 'ace/mode/abusefilter', [ 'require', 'exports', 'module', 'ace/lib/oop', 'ace/mode/text', 'ace/mode/abusefilter_highlight_rules', 'ace/worker/worker_client' ], function ( require, exports ) {
+ace.define( 'ace/mode/abusefilter', [ 'require', 'exports', 'module', 'ace/lib/oop', 'ace/mode/text', 'ace/mode/abusefilter_highlight_rules', 'ace/worker/worker_client' ], ( require, exports ) => {
 	'use strict';
 
-	var oop = require( 'ace/lib/oop' ),
+	const oop = require( 'ace/lib/oop' ),
 		TextMode = require( './text' ).Mode,
 		WorkerClient = require( 'ace/worker/worker_client' ).WorkerClient,
 		AFHighlightRules = require( './abusefilter_highlight_rules' ).AFHighlightRules,
@@ -118,7 +118,7 @@ ace.define( 'ace/mode/abusefilter', [ 'require', 'exports', 'module', 'ace/lib/o
 			end: '*/'
 		};
 		this.getNextLineIndent = function ( state, line ) {
-			var indent = this.$getIndent( line );
+			const indent = this.$getIndent( line );
 			return indent;
 		};
 		this.checkOutdent = function ( state, line, input ) {
@@ -129,11 +129,11 @@ ace.define( 'ace/mode/abusefilter', [ 'require', 'exports', 'module', 'ace/lib/o
 		};
 
 		this.createWorker = function ( session ) {
-			var extPath = mw.config.get( 'wgExtensionAssetsPath' );
+			const extPath = mw.config.get( 'wgExtensionAssetsPath' );
 			ace.config.set( 'workerPath', extPath + '/AbuseFilter/modules' );
-			var worker = new WorkerClient( [ 'ace' ], 'ace/mode/abusefilter_worker', 'AbuseFilterWorker' );
+			const worker = new WorkerClient( [ 'ace' ], 'ace/mode/abusefilter_worker', 'AbuseFilterWorker' );
 
-			var apiPath = mw.config.get( 'wgServer' ) + new mw.Api().defaults.ajax.url;
+			let apiPath = mw.config.get( 'wgServer' ) + new mw.Api().defaults.ajax.url;
 			if ( apiPath.slice( 0, 2 ) === '//' ) {
 				apiPath = window.location.protocol + apiPath;
 			}
@@ -141,11 +141,11 @@ ace.define( 'ace/mode/abusefilter', [ 'require', 'exports', 'module', 'ace/lib/o
 
 			worker.attachToDocument( session.getDocument() );
 
-			worker.on( 'annotate', function ( results ) {
+			worker.on( 'annotate', ( results ) => {
 				session.setAnnotations( results.data );
 			} );
 
-			worker.on( 'terminate', function () {
+			worker.on( 'terminate', () => {
 				session.clearAnnotations();
 			} );
 

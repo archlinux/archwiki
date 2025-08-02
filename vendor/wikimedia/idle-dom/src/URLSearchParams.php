@@ -60,7 +60,7 @@ interface URLSearchParams extends \IteratorAggregate {
 	/**
 	 * @return \Iterator<string,string> Pair iterator: string => string
 	 */
-	public function getIterator();
+	public function getIterator(): \Iterator;
 
 	/**
 	 * @return string

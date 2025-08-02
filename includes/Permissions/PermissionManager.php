@@ -29,6 +29,7 @@ use MediaWiki\Block\BlockManager;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
@@ -51,7 +52,6 @@ use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
-use PermissionsError;
 use StatusValue;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ScopedCallback;
@@ -175,6 +175,7 @@ class PermissionManager {
 		'hideuser',
 		'import',
 		'importupload',
+		'interwiki',
 		'ipblock-exempt',
 		'managechangetags',
 		'markbotedits',
@@ -194,6 +195,7 @@ class PermissionManager {
 		'protect',
 		'read',
 		'renameuser',
+		'renameuser-global',
 		'reupload',
 		'reupload-own',
 		'reupload-shared',
@@ -308,6 +310,17 @@ class PermissionManager {
 		return $this->userCan( $action, $user, $page, self::RIGOR_QUICK );
 	}
 
+	/** @var array For use by deprecated getPermissionErrors() only */
+	private const BLOCK_CODES = [
+		'blockedtext' => true,
+		'blockedtext-partial' => true,
+		'autoblockedtext' => true,
+		'systemblockedtext' => true,
+		'blockedtext-composite' => true,
+		'blockedtext-tempuser' => true,
+		'autoblockedtext-tempuser' => true,
+	];
+
 	/**
 	 * Can $user perform $action on a page?
 	 *
@@ -348,6 +361,11 @@ class PermissionManager {
 			$key = $keyOrMsg instanceof MessageSpecifier ? $keyOrMsg->getKey() : $keyOrMsg;
 			// Remove the errors being ignored.
 			if ( !in_array( $key, $ignoreErrors ) ) {
+				// Remove modern block info that is not expected by users of this legacy API
+				if ( isset( self::BLOCK_CODES[ $key ] ) && $keyOrMsg instanceof MessageSpecifier ) {
+					$params = $keyOrMsg->getParams();
+					$keyOrMsg = $key;
+				}
 				$result[] = [ $keyOrMsg, ...$params ];
 			}
 		}
@@ -442,6 +460,11 @@ class PermissionManager {
 			$user = $this->userFactory->newTempPlaceholder();
 		}
 
+		// Use [ $this, 'methodName' ] for dynamic callbacks instead of just
+		// $methodName. Doing so lets code analyzers immediately infer that
+		// the value is used as a callable. Note: This can be changed to use
+		// first-class callable syntax when we require PHP 8.1.
+
 		# Read has special handling
 		if ( $action === 'read' ) {
 			$checks = [
@@ -468,6 +491,9 @@ class PermissionManager {
 			$skipUserConfigActions = [
 				// Allow patrolling per T21818
 				'patrol',
+
+				// Allow (un)watch (T373758)
+				'editmywatchlist',
 
 				// Allow admins and oversighters to delete. For user pages we want to avoid the
 				// situation where an unprivileged user can post abusive content on
@@ -503,15 +529,21 @@ class PermissionManager {
 		}
 
 		$status = PermissionStatus::newEmpty();
-		foreach ( $checks as $method ) {
-			$method( $action, $user, $status, $rigor, $short, $page );
+		foreach ( $checks as $callback ) {
+			$callback( $action, $user, $status, $rigor, $short, $page );
 
 			if ( $short && !$status->isGood() ) {
 				break;
 			}
 		}
+
+		// Clone the status to prevent users of this hook from modifying the original
+		$this->hookRunner->onPermissionStatusAudit( $page, $user, $action, $rigor, clone $status );
+
 		if ( !$status->isGood() ) {
-			$errors = $status->toLegacyErrorArray();
+			// Deprecated method used only for a deprecated hook
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$errors = @$status->toLegacyErrorArray();
 			$this->hookRunner->onPermissionErrorAudit( $page, $user, $action, $rigor, $errors );
 		}
 
@@ -622,7 +654,7 @@ class PermissionManager {
 			// Shortcut for public wikis, allows skipping quite a bit of code
 			$allowed = true;
 		} elseif ( $this->userHasRight( $user, 'read' ) ) {
-			// If the user is allowed to read pages, he is allowed to read all pages
+			// If the user is allowed to read pages, they are allowed to read all pages
 			$allowed = true;
 		} elseif ( $this->isSameSpecialPage( 'Userlogin', $page )
 			|| $this->isSameSpecialPage( 'PasswordReset', $page )
@@ -788,6 +820,8 @@ class PermissionManager {
 		);
 
 		if ( $block ) {
+			$status->setBlock( $block );
+
 			// @todo FIXME: Pass the relevant context into this function.
 			$context = RequestContext::getMain();
 			$messages = $this->blockErrorFormatter->getMessages(
@@ -797,10 +831,7 @@ class PermissionManager {
 			);
 
 			foreach ( $messages as $message ) {
-				// TODO: We can pass $message directly once getPermissionErrors() is removed.
-				// For now we store the message key as a string here out of overabundance of caution,
-				// because there is a test case verifying that block messages use strings in that format.
-				$status->fatal( $message->getKey(), ...$message->getParams() );
+				$status->fatal( $message );
 			}
 		}
 	}
@@ -1343,8 +1374,8 @@ class PermissionManager {
 		// Check $wgNamespaceProtection for restricted namespaces
 		if ( $this->isNamespaceProtected( $title->getNamespace(), $user )
 			// Allow admins and oversighters to view deleted content, even if they
-			// cannot restore it. See T362536.
-			&& !in_array( $action, [ 'deletedhistory', 'deletedtext', 'viewsuppressed' ], true )
+			// cannot restore it. See T362536. Allow (un)watch too (T373758)
+			&& !in_array( $action, [ 'deletedhistory', 'deletedtext', 'viewsuppressed', 'editmywatchlist' ], true )
 		) {
 			$ns = $title->getNamespace() === NS_MAIN ?
 				wfMessage( 'nstab-main' )->text() : $title->getNsText();
@@ -1380,7 +1411,7 @@ class PermissionManager {
 		// TODO: remove & rework upon further use of LinkTarget
 		$title = Title::newFromLinkTarget( $page );
 
-		if ( $action === 'patrol' ) {
+		if ( $action === 'patrol' || $action === 'editmywatchlist' ) {
 			return;
 		}
 

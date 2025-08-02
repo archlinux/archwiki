@@ -92,7 +92,6 @@ class MultimediaViewerBootstrap {
 	 */
 	setupRouter( router ) {
 		router.addRoute( Config.ROUTE_REGEXP, this.route.bind( this ) );
-		router.addRoute( Config.LEGACY_ROUTE_REGEXP, this.route.bind( this ) );
 		this.router = router;
 	}
 
@@ -181,6 +180,12 @@ class MultimediaViewerBootstrap {
 		// viewer initialization state if this happens to let the MMVB.loadViewer() to process
 		// new images correctly
 		this.viewerInitialized = false;
+
+		// only clear if the main content of the page has been changed (T385297)
+		if ( $content && $content.attr( 'id' ) === 'mw-content-text' ) {
+			// clear to avoid duplicates when wikipage.content is run multiple times (T382520)
+			this.thumbs = [];
+		}
 
 		this.$parsoidThumbs = $content.find(
 			'[typeof*="mw:File"] a.mw-file-description img, ' +
@@ -535,7 +540,7 @@ class MultimediaViewerBootstrap {
 	 */
 	isViewerHash() {
 		const path = location.hash.slice( 1 );
-		return path.match( Config.ROUTE_REGEXP ) || path.match( Config.LEGACY_ROUTE_REGEXP );
+		return path.match( Config.ROUTE_REGEXP );
 	}
 
 	/**
@@ -602,7 +607,7 @@ class MultimediaViewerBootstrap {
 
 	/**
 	 * Makes sure event handlers are set up properly via MultimediaViewerBootstrap.setupEventHandlers().
-	 * Called before loading the main mmv module. At this point, event handers for MultimediaViewerBootstrap
+	 * Called before loading the main mmv module. At this point, event handlers for MultimediaViewerBootstrap
 	 * should have been set up, but due to bug 70756 it cannot be guaranteed.
 	 */
 	ensureEventHandlersAreSetUp() {

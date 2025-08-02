@@ -79,6 +79,7 @@ class ApiEchoMarkRead extends ApiBase {
 		$this->getResult()->addValue( 'query', $this->getModuleName(), $result );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return $this->getCrossWikiParams() + [
 			'list' => [
@@ -101,14 +102,17 @@ class ApiEchoMarkRead extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
@@ -128,6 +132,7 @@ class ApiEchoMarkRead extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Echo_(Notifications)/API';
 	}

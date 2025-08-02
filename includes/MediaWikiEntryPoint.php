@@ -21,9 +21,6 @@
 namespace MediaWiki;
 
 use Exception;
-use HttpStatus;
-use JobQueueGroup;
-use JobRunner;
 use Liuggio\StatsdClient\Sender\SocketSender;
 use Liuggio\StatsdClient\StatsdClient;
 use LogicException;
@@ -33,8 +30,11 @@ use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\TransactionRoundDefiningUpdate;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\JobQueue\JobQueueGroupFactory;
+use MediaWiki\JobQueue\JobRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebResponse;
@@ -43,18 +43,20 @@ use MediaWiki\Specials\SpecialRunJobs;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
 use MessageCache;
-use MWExceptionHandler;
 use Profiler;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Http\HttpStatus;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\SpanInterface;
+use Wikimedia\Telemetry\TracerState;
 
 /**
  * @defgroup entrypoint Entry points
@@ -214,8 +216,6 @@ abstract class MediaWikiEntryPoint {
 	 * Subclasses in core may override this to handle errors according
 	 * to the expected output format.
 	 * This method is not safe to override for extensions.
-	 *
-	 * @param Throwable $e
 	 */
 	protected function handleTopLevelError( Throwable $e ) {
 		// Type errors and such: at least handle it now and clean up the LBFactory state
@@ -677,10 +677,8 @@ abstract class MediaWikiEntryPoint {
 		// Any embedded profiler outputs were already processed in outputResponsePayload().
 		$profiler->logData();
 
-		// Send metrics gathered by StatsFactory
-		$this->getStatsFactory()->flush();
-
-		self::emitBufferedStatsdData(
+		self::emitBufferedStats(
+			$this->getStatsFactory(),
 			$this->getStatsdDataFactory(),
 			$this->config
 		);
@@ -689,11 +687,19 @@ abstract class MediaWikiEntryPoint {
 		$lbFactory->commitPrimaryChanges( __METHOD__ );
 		$lbFactory->shutdown( $lbFactory::SHUTDOWN_NO_CHRONPROT );
 
+		// End the root span of this request or process and export trace data.
+		$isServerError = $this->getStatusCode() >= 500 && $this->getStatusCode() < 600;
+		// This is too generic a place to determine if the request was truly successful.
+		// Err on the side of unset.
+		$spanStatus = $isServerError ? SpanInterface::SPAN_STATUS_ERROR : SpanInterface::SPAN_STATUS_UNSET;
+		TracerState::getInstance()->endRootSpan( $spanStatus );
+		$this->mediaWikiServices->getTracer()->shutdown();
+
 		wfDebug( "Request ended normally" );
 	}
 
 	/**
-	 * Send out any buffered statsd data according to sampling rules
+	 * Send out any buffered stats according to sampling rules
 	 *
 	 * For web requests, this is called once by MediaWiki::restInPeace(),
 	 * which is post-send (after the response is sent to the client).
@@ -714,14 +720,20 @@ abstract class MediaWikiEntryPoint {
 	 * - Any other long-running scripts will probably report progress to stdout
 	 *   in some way. We also flush from Maintenance::output().
 	 *
+	 * @param StatsFactory $statsFactory
 	 * @param IBufferingStatsdDataFactory $stats
 	 * @param Config $config
 	 * @throws ConfigException
 	 * @since 1.31 (formerly one the MediaWiki class)
 	 */
-	public static function emitBufferedStatsdData(
-		IBufferingStatsdDataFactory $stats, Config $config
+	public static function emitBufferedStats(
+		StatsFactory $statsFactory,
+		IBufferingStatsdDataFactory $stats,
+		Config $config
 	) {
+		// Send metrics gathered by StatsFactory
+		$statsFactory->flush();
+
 		if ( $config->get( MainConfigNames::StatsdServer ) && $stats->hasData() ) {
 			try {
 				$stats->updateCount( 'stats.statsdclient.buffered', $stats->getDataCount() );
@@ -827,8 +839,6 @@ abstract class MediaWikiEntryPoint {
 	 * This is intended as a stepping stone for migration.
 	 * Ideally, individual service objects should be injected
 	 * via the constructor.
-	 *
-	 * @return MediaWikiServices
 	 */
 	protected function getServiceContainer(): MediaWikiServices {
 		return $this->mediaWikiServices;

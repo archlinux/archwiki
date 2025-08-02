@@ -29,7 +29,7 @@ ve.dm.MWGalleryCaptionNode.static.matchTagNames = [ 'li' ];
 ve.dm.MWGalleryCaptionNode.static.matchFunction = function ( element ) {
 	const parentTypeof = ( element.parentNode && element.parentNode.getAttribute( 'typeof' ) ) || '';
 	return element.getAttribute( 'class' ) === 'gallerycaption' &&
-		parentTypeof.trim().split( /\s+/ ).indexOf( 'mw:Extension/gallery' ) !== -1;
+		parentTypeof.trim().split( /\s+/ ).includes( 'mw:Extension/gallery' );
 };
 
 ve.dm.MWGalleryCaptionNode.static.parentNodeTypes = [ 'mwGallery' ];

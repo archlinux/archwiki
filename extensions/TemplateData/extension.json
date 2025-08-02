@@ -1,6 +1,6 @@
 {
 	"name": "TemplateData",
-	"version": "0.1.2",
+	"version": "0.2.0",
 	"author": [
 		"Timo Tijhof",
 		"Moriel Schottlender",
@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -23,14 +23,20 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\TemplateData\\": "includes/"
 	},
+	"SpecialPages": {
+		"TemplateDiscovery": {
+			"class": "MediaWiki\\Extension\\TemplateData\\Special\\SpecialTemplateDiscovery"
+		}
+	},
 	"Hooks": {
-		"EditPage::showEditForm:fields": "main",
 		"ParserFirstCallInit": "main",
 		"MultiContentSave": "main",
 		"ResourceLoaderRegisterModules": "main",
 		"EditPage::showEditForm:initial": "main",
 		"ParserFetchTemplateData": "main",
-		"OutputPageBeforeHTML": "main"
+		"OutputPageBeforeHTML": "main",
+		"GetPreferences": "main",
+		"SaveUserOptions": "main"
 	},
 	"HookHandlers": {
 		"main": {
@@ -45,6 +51,9 @@
 			"i18n",
 			"i18n/api"
 		]
+	},
+	"ExtensionMessagesFiles": {
+		"TemplateDataAlias": "TemplateData.i18n.alias.php"
 	},
 	"ResourceModules": {
 		"ext.templateData": {
@@ -88,7 +97,6 @@
 				"widgets/LanguageResultWidget.js",
 				"widgets/LanguageSearchWidget.js",
 				"Dialog.js",
-				"Metrics.js",
 				"Target.js"
 			],
 			"dependencies": [
@@ -146,6 +154,7 @@
 				"templatedata-modal-button-removemap",
 				"templatedata-modal-button-saveparam",
 				"templatedata-modal-confirmcancel",
+				"templatedata-modal-button-discard",
 				"templatedata-modal-current-language",
 				"templatedata-modal-errormsg",
 				"templatedata-modal-errormsg-duplicate-name",
@@ -221,6 +230,56 @@
 					}
 				}
 			}
+		},
+		"ext.templateData.templateDiscovery": {
+			"localBasePath": "modules/ext.templateData.templateDiscovery",
+			"remoteExtPath": "TemplateData/modules/ext.templateData.templateDiscovery",
+			"styles": [
+				"TemplateSearchLayout.less"
+			],
+			"packageFiles": [
+				"init.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\TemplateData\\TemplateDiscoveryConfig::getConfig"
+				},
+				{
+					"name": "mwConfig.json",
+					"config": [
+						"TemplateDataEditorNamespaces"
+					]
+				},
+				"TemplateSearchLayout.js",
+				"TemplateList.js",
+				"SearchWidget.js",
+				"TemplateMenuItem.js",
+				"FavoritesStore.js",
+				"FavoriteButton.js",
+				"SpecialPage.js"
+			],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-widgets",
+				"oojs-ui.styles.icons-editing-advanced",
+				"oojs-ui.styles.icons-interactions",
+				"oojs-ui.styles.icons-moderation"
+			],
+			"messages": [
+				"notloggedin",
+				"redirectedfrom",
+				"templatedata-search-title",
+				"templatedata-search-description",
+				"templatedata-search-placeholder",
+				"templatedata-search-list-empty",
+				"templatedata-search-list-header",
+				"templatedata-favorite-add",
+				"templatedata-favorite-added",
+				"templatedata-favorite-disabled",
+				"templatedata-favorite-error",
+				"templatedata-favorite-remove",
+				"templatedata-favorite-removed",
+				"templatedata-favorite-maximum-reached"
+			]
 		}
 	},
 	"QUnitTestModule": {
@@ -243,7 +302,24 @@
 	"config": {
 		"TemplateDataUseGUI": {
 			"value": true
+		},
+		"TemplateDataEditorNamespaces": {
+			"value": [
+				10
+			],
+			"description": "The namespaces in which the template data editor appears when creating or editing a page."
+		},
+		"TemplateDataEnableDiscovery": {
+			"value": false,
+			"description": "Enable the template discovery and recall functionality."
+		},
+		"TemplateDataMaxFavorites": {
+			"value": 50,
+			"description": "The maximum number of favorite templates that can be stored."
 		}
+	},
+	"DefaultUserOptions": {
+		"templatedata-favorite-templates": "[]"
 	},
 	"manifest_version": 2
 }

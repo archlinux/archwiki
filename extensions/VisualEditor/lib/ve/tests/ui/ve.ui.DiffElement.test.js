@@ -1174,6 +1174,35 @@ QUnit.test( 'Diffing', ( assert ) => {
 				]
 			},
 			{
+				msg: 'Comparable link change (T344927)',
+				oldDoc: ve.dm.example.singleLine`
+					<p>
+						on his website at
+						<a href="http://example.org/website/" data-ignored="foo">http://example.org/website</a>.
+						Lorem ipsum sit dolor amet.
+					</p>
+				`,
+				newDoc: ve.dm.example.singleLine`
+					<p>
+						on
+						<a href="http://example.org/website/" data-ignored="bar">his website</a>.
+						Lorem ipsum sit dolor amet.
+					</p>
+				`,
+				expected: ve.dm.example.singleLine`
+					<p>
+						on
+						<del data-diff-action="remove">
+							 his website at
+							<a href="http://example.org/website/" data-ignored="bar">http://example.org/</a>
+						</del>
+						<ins data-diff-action="insert"><a href="http://example.org/website/" data-ignored="bar">his</a> </ins>
+						<a href="http://example.org/website/" data-ignored="bar">website</a>.
+						Lorem ipsum sit dolor amet.
+					</p>
+				`
+			},
+			{
 				msg: 'Nested annotation change',
 				oldDoc: '<p><a href="http://example.org/">foo bar baz</a></p>',
 				newDoc: '<p><a href="http://example.org/">foo <b>bar</b> baz</a></p>',
@@ -1816,7 +1845,7 @@ QUnit.test( 'Diffing', ( assert ) => {
 				expected: ve.dm.example.singleLine`
 					<p data-diff-action="none">Hi${ '<ref></ref>'.repeat( 6 ) }</p>
 					<ol>
-						<li value="1"><p>Foo<ins data-diff-action="insert"> 1</ins></p></li>
+						<li value="1">Foo<ins data-diff-action="insert"> 1</ins></li>
 						<li value="2"><p data-diff-action="remove">Bar</p></li>
 						<li value="2"><p data-diff-action="none">Baz1</p></li>
 						<li class="ve-ui-diffElement-internalListSpacer">${ spacer }</li>

@@ -3,13 +3,17 @@ namespace Wikimedia\Tests\Telemetry;
 
 use MediaWikiUnitTestCase;
 use Wikimedia\Telemetry\Clock;
+use Wikimedia\Telemetry\CompositePropagator;
+use Wikimedia\Telemetry\ContextPropagatorInterface;
 use Wikimedia\Telemetry\ExporterInterface;
 use Wikimedia\Telemetry\NoopSpan;
 use Wikimedia\Telemetry\SamplerInterface;
 use Wikimedia\Telemetry\SpanContext;
 use Wikimedia\Telemetry\SpanInterface;
+use Wikimedia\Telemetry\StaticInjectionPropagator;
 use Wikimedia\Telemetry\Tracer;
 use Wikimedia\Telemetry\TracerState;
+use Wikimedia\Telemetry\W3CTraceContextPropagator;
 
 /**
  * @covers \Wikimedia\Telemetry\Tracer
@@ -20,6 +24,8 @@ class TracerTest extends MediaWikiUnitTestCase {
 	private SamplerInterface $sampler;
 	private ExporterInterface $exporter;
 	private TracerState $tracerState;
+	private ContextPropagatorInterface $contextPropagator;
+	private string $xReqId = 'abcd-12345';
 
 	private Tracer $tracer;
 
@@ -29,16 +35,22 @@ class TracerTest extends MediaWikiUnitTestCase {
 		$this->clock = $this->createMock( Clock::class );
 		$this->sampler = $this->createMock( SamplerInterface::class );
 		$this->exporter = $this->createMock( ExporterInterface::class );
+
 		$this->tracerState = new TracerState();
+		$this->contextPropagator = new CompositePropagator( [
+			new StaticInjectionPropagator( [ 'X-Request-Id' => $this->xReqId ] ),
+			new W3CTraceContextPropagator(),
+		] );
 
 		$this->clock->method( 'getCurrentNanoTime' )
-			->willReturnCallback( fn () => hrtime( true ) );
+			->willReturnCallback( static fn () => hrtime( true ) );
 
 		$this->tracer = new Tracer(
 			$this->clock,
 			$this->sampler,
 			$this->exporter,
-			$this->tracerState
+			$this->tracerState,
+			$this->contextPropagator
 		);
 	}
 
@@ -132,7 +144,7 @@ class TracerTest extends MediaWikiUnitTestCase {
 		while ( array_pop( $spans ) !== null );
 
 		$exportedSpanIds = array_map(
-			fn ( SpanContext $spanContext ) => $spanContext->getSpanId(),
+			static fn ( SpanContext $spanContext ) => $spanContext->getSpanId(),
 			$this->tracerState->getSpanContexts()
 		);
 
@@ -144,7 +156,7 @@ class TracerTest extends MediaWikiUnitTestCase {
 
 	public function testCreatingSpansWithoutActiveSpan(): void {
 		$this->clock->method( 'getCurrentNanoTime' )
-			->willReturnCallback( fn () => hrtime( true ) );
+			->willReturnCallback( static fn () => hrtime( true ) );
 
 		$this->sampler->method( 'shouldSample' )
 			->willReturn( true );
@@ -221,5 +233,50 @@ class TracerTest extends MediaWikiUnitTestCase {
 		$this->assertInstanceOf( NoopSpan::class, $rootSpan );
 		$this->assertInstanceOf( NoopSpan::class, $span );
 		$this->assertInstanceOf( NoopSpan::class, $explicitParentSpan );
+	}
+
+	public function testGetRequestHeadersNoActiveSpan(): void {
+		$reqHdrs = $this->tracer->getRequestHeaders();
+
+		$this->assertArrayEquals( [ "X-Request-Id" => "abcd-12345" ], $reqHdrs );
+		$this->assertArrayNotHasKey( 'traceparent', $reqHdrs );
+	}
+
+	public function testGetRequestHeadersActiveSpan(): void {
+		$this->sampler->method( 'shouldSample' )
+			->willReturn( true );
+
+		$activeSpan = $this->tracer->createRootSpan( 'test active span' )
+			->start();
+		$activeSpan->activate();
+
+		$reqHdrs = $this->tracer->getRequestHeaders();
+
+		$this->assertArrayContains( [ "X-Request-Id" => "abcd-12345" ], $reqHdrs );
+		$this->assertArrayHasKey( 'traceparent', $reqHdrs );
+		$this->assertStringContainsString( $activeSpan->getContext()->getTraceId(), $reqHdrs['traceparent'] );
+		$this->assertStringContainsString( $activeSpan->getContext()->getSpanId(), $reqHdrs['traceparent'] );
+	}
+
+	public function testCreateSpanFromCarrierWithoutContext(): void {
+		$span = $this->tracer->createRootSpanFromCarrier( 'test span', [] );
+
+		$this->assertNull( $span->getContext()->getParentSpanId() );
+	}
+
+	public function testCreateRootSpanFromValidCarrier(): void {
+		$traceId = '0af7651916cd43dd8448eb211c80319c';
+		$spanId = 'b7ad6b7169203331';
+		$traceparent = "00-$traceId-$spanId-01";
+
+		$this->sampler->method( 'shouldSample' )
+			->willReturn( true );
+
+		$span = $this->tracer->createRootSpanFromCarrier( 'test span', [ 'traceparent' => $traceparent ] )
+			->start();
+
+		$this->assertSame( $traceId, $span->getContext()->getTraceId() );
+		$this->assertSame( $spanId, $span->getContext()->getParentSpanId() );
+		$this->assertTrue( $span->getContext()->isSampled() );
 	}
 }

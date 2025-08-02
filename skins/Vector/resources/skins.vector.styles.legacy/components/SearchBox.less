@@ -14,7 +14,7 @@
 	color: @color-emphasized;
 	width: 100%;
 	// Reduce height slightly from standard to match legacy Vector tabs.
-	height: unit( 28 / @font-size-browser / @font-size-search-input, em ); // Equals `2.15384615em`.
+	height: unit( ( 28 / @font-size-browser / @font-size-search-input ), em ); // Equals `2.15384615em`.
 	box-sizing: border-box;
 	border: @border-base;
 	border-radius: @border-radius-base;
@@ -84,7 +84,7 @@
 }
 
 .searchButton[ name='go' ] {
-	background: no-repeat center/unit( 16 / @font-size-browser / @font-size-search-input, em ) url( images/search.svg );
+	background: no-repeat center/unit( (16 / @font-size-browser / @font-size-search-input ), em ) url( images/search.svg );
 	opacity: 0.67;
 }
 

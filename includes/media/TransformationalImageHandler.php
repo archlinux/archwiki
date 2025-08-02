@@ -26,6 +26,7 @@
  * @ingroup Media
  */
 
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -158,7 +159,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 		}
 
 		wfDebug( __METHOD__ . ": creating {$scalerParams['physicalDimensions']} " .
-			"thumbnail at $dstPath using scaler $scalerName" );
+			"thumbnail of {$image->getPath()} at $dstPath using scaler $scalerName" );
 
 		if ( !$image->mustRender() &&
 			$scalerParams['physicalWidth'] == $scalerParams['srcWidth']
@@ -244,7 +245,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 		// path.
 		if ( is_array( $scaler ) && is_callable( $scaler ) ) {
 			// Allow subclasses to specify their own rendering methods.
-			$err = call_user_func( $scaler, $image, $scalerParams );
+			$err = $scaler( $image, $scalerParams );
 		} else {
 			switch ( $scaler ) {
 				case 'hookaborted':
@@ -364,7 +365,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	/**
 	 * Transform an image using ImageMagick
 	 *
-	 * This is a stub method. The real method is in BitmapHander.
+	 * This is a stub method. The real method is in BitmapHandler.
 	 *
 	 * @stable to override
 	 * @param File $image File associated with this thumbnail
@@ -379,7 +380,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	/**
 	 * Transform an image using the Imagick PHP extension
 	 *
-	 * This is a stub method. The real method is in BitmapHander.
+	 * This is a stub method. The real method is in BitmapHandler.
 	 *
 	 * @stable to override
 	 * @param File $image File associated with this thumbnail
@@ -394,7 +395,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	/**
 	 * Transform an image using a custom command
 	 *
-	 * This is a stub method. The real method is in BitmapHander.
+	 * This is a stub method. The real method is in BitmapHandler.
 	 *
 	 * @stable to override
 	 * @param File $image File associated with this thumbnail
@@ -421,7 +422,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	/**
 	 * Transform an image using the built in GD library
 	 *
-	 * This is a stub method. The real method is in BitmapHander.
+	 * This is a stub method. The real method is in BitmapHandler.
 	 *
 	 * @param File $image File associated with this thumbnail
 	 * @param array $params Array with scaler params

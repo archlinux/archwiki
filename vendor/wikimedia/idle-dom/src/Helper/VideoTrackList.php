@@ -158,6 +158,7 @@ trait VideoTrackList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\VideoTrackList $this';
 		// @var \Wikimedia\IDLeDOM\VideoTrackList $this

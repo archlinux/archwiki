@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz"
+		]
+	},
+	"checkuser-investigateblock-warning-confirmaction": "यदि आप विश्वासपूर्ण रूप से यही करना चाहते हैं, तो कृपया \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" की फ़ील्ड को नीचे से चुनिए।"
+}

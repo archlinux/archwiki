@@ -3,6 +3,8 @@
 namespace MediaWiki\Extension\AbuseFilter\View;
 
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\ReversibleConsequence;
@@ -20,9 +22,7 @@ use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
-use PermissionsError;
 use UnexpectedValueException;
-use UserBlockedError;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -358,6 +358,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 				$this->revertAction( $action, $result );
 			}
 		}
+		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		$this->getOutput()->addHTML( Html::successBox(
 			$this->msg(
 				'abusefilter-revert-success',
@@ -406,6 +407,6 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		)->inContentLanguage()->text();
 
 		$consequence = $this->getConsequence( $action, $result );
-		return $consequence->revert( $this->getUser(), $message );
+		return $consequence->revert( $this->getAuthority(), $message );
 	}
 }

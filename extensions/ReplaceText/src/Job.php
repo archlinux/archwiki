@@ -21,18 +21,18 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use Job as JobParent;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\JobQueue\Job as JobParent;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Watchlist\WatchlistManager;
-use RecentChange;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -47,7 +47,6 @@ class Job extends JobParent {
 	private WikiPageFactory $wikiPageFactory;
 
 	/**
-	 * Constructor.
 	 * @param Title $title
 	 * @param array|bool $params Cannot be === true
 	 * @param MovePageFactory $movePageFactory
@@ -56,7 +55,7 @@ class Job extends JobParent {
 	 * @param WatchlistManager $watchlistManager
 	 * @param WikiPageFactory $wikiPageFactory
 	 */
-	function __construct( $title, $params,
+	public function __construct( $title, $params,
 		MovePageFactory $movePageFactory,
 		PermissionManager $permissionManager,
 		UserFactory $userFactory,
@@ -75,7 +74,7 @@ class Job extends JobParent {
 	 * Run a replaceText job
 	 * @return bool success
 	 */
-	function run() {
+	public function run(): bool {
 		// T279090
 		$current_user = $this->userFactory->newFromId( $this->params['user_id'] );
 		if ( !$current_user->isRegistered() ) {

@@ -3,10 +3,12 @@
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Storage\PageUpdaterFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
@@ -166,16 +168,15 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 		$revisionRecord->setMinorEdit( $importableRevision->getMinor() );
 		$revisionRecord->setPageId( $pageId );
 
-		$latestRevId = $page->getLatest();
+		$updater = $this->pageUpdaterFactory->newDerivedPageDataUpdater( $page );
+		$latestRev = $updater->grabCurrentRevision();
+		$latestRevId = $latestRev ? $latestRev->getId() : null;
 
 		$inserted = $this->revisionStore->insertRevisionOn( $revisionRecord, $dbw );
-		if ( $latestRevId ) {
+		if ( $latestRev ) {
 			// If not found (false), cast to 0 so that the page is updated
 			// Just to be on the safe side, even though it should always be found
-			$latestRevTimestamp = (int)$this->revisionStore->getTimestampFromId(
-				$latestRevId,
-				IDBAccessObject::READ_LATEST
-			);
+			$latestRevTimestamp = $latestRev->getTimestamp();
 		} else {
 			$latestRevTimestamp = 0;
 		}
@@ -195,13 +196,14 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 			// countable/oldcountable stuff is handled in WikiImporter::finishImportPage
 
 			$options = [
+				PageRevisionUpdatedEvent::FLAG_SILENT => true,
+				PageRevisionUpdatedEvent::FLAG_IMPLICIT => true,
 				'created' => $mustCreatePage,
 				'oldcountable' => 'no-change',
-				'causeAction' => 'import-page',
-				'causeAgent' => $user->getName(),
 			];
 
-			$updater = $this->pageUpdaterFactory->newDerivedPageDataUpdater( $page );
+			$updater->setCause( PageUpdater::CAUSE_IMPORT );
+			$updater->setPerformer( $user ); // TODO: get the actual performer, not the revision author.
 			$updater->prepareUpdate( $inserted, $options );
 			$updater->doUpdates();
 		}

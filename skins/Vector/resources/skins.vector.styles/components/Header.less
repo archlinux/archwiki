@@ -1,11 +1,16 @@
 .mw-header {
 	// Vertical centering of header elements (IE>=11), requires Flexbox.
 	.flex-display();
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	// https://caniuse.com/#search=align-items
 	align-items: center;
 	padding-top: 8px;
 	padding-bottom: 8px;
+	gap: @spacing-100;
+
+	.vector-header-start {
+		gap: 20px;
+	}
 
 	.vector-header-start,
 	.vector-header-end {
@@ -20,12 +25,9 @@
 	.search-toggle {
 		// At lower resolutions the search input is hidden and a toggle is shown
 		display: inline-flex;
+		float: right;
 		// Ensures the button has a font size of 16px
-		font-size: unit( 16 / @font-size-browser, rem );
-
-		@media ( min-width: @min-width-breakpoint-mobile ) {
-			float: right;
-		}
+		font-size: unit( ( 16 / @font-size-browser ), rem );
 
 		@media ( min-width: @min-width-breakpoint-desktop ) {
 			// Override .cdx-button styles
@@ -38,13 +40,6 @@
 
 		@media ( min-width: @min-width-breakpoint-desktop ) {
 			display: block;
-		}
-	}
-
-	@media ( max-width: @max-width-breakpoint-mobile ) {
-		#p-search,
-		.vector-header-end {
-			.cdx-mixin-button-layout-flush( 'start', true );
 		}
 	}
 

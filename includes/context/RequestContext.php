@@ -35,27 +35,28 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSet;
 use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Skin\Skin;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
 use RuntimeException;
-use Skin;
-use Timing;
 use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\IPUtils;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\ScopedCallback;
-use WikiPage;
+use Wikimedia\Timing\Timing;
 
 /**
  * Group all the pieces relevant to the context of a request into one instance
@@ -142,9 +143,6 @@ class RequestContext implements IContextSource, MutableContext {
 	/** @var string|null */
 	private $skinName;
 
-	/**
-	 * @param Config $config
-	 */
 	public function setConfig( Config $config ) {
 		$this->config = $config;
 	}
@@ -160,9 +158,6 @@ class RequestContext implements IContextSource, MutableContext {
 		return $this->config;
 	}
 
-	/**
-	 * @param WebRequest $request
-	 */
 	public function setRequest( WebRequest $request ) {
 		$this->request = $request;
 	}
@@ -340,9 +335,6 @@ class RequestContext implements IContextSource, MutableContext {
 		}
 	}
 
-	/**
-	 * @param OutputPage $output
-	 */
 	public function setOutput( OutputPage $output ) {
 		$this->output = $output;
 	}
@@ -356,9 +348,6 @@ class RequestContext implements IContextSource, MutableContext {
 		return $this->output;
 	}
 
-	/**
-	 * @param User $user
-	 */
 	public function setUser( User $user ) {
 		$this->user = $user;
 		// Keep authority consistent
@@ -387,9 +376,13 @@ class RequestContext implements IContextSource, MutableContext {
 		return $this->user;
 	}
 
-	/**
-	 * @param Authority $authority
-	 */
+	public function hasUser(): bool {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
+			throw new LogicException( __METHOD__ . '() should be called only from tests!' );
+		}
+		return $this->user !== null;
+	}
+
 	public function setAuthority( Authority $authority ) {
 		$this->authority = $authority;
 		// If needed, a User object is constructed from this authority
@@ -516,9 +509,6 @@ class RequestContext implements IContextSource, MutableContext {
 		return $this->getLanguage();
 	}
 
-	/**
-	 * @param Skin $skin
-	 */
 	public function setSkin( Skin $skin ) {
 		$this->skin = clone $skin;
 		$this->skin->setContext( $this );
@@ -605,7 +595,9 @@ class RequestContext implements IContextSource, MutableContext {
 	 *
 	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys,
 	 *   or a MessageSpecifier.
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 */
 	public function msg( $key, ...$params ) {
@@ -614,8 +606,6 @@ class RequestContext implements IContextSource, MutableContext {
 
 	/**
 	 * Get the RequestContext object associated with the main request
-	 *
-	 * @return RequestContext
 	 */
 	public static function getMain(): RequestContext {
 		self::$instance ??= new self;
@@ -689,7 +679,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 * @since 1.21
 	 */
 	public static function importScopedSession( array $params ) {
-		if ( strlen( $params['sessionId'] ) &&
+		if ( $params['sessionId'] !== '' &&
 			SessionManager::getGlobalSession()->isPersistent()
 		) {
 			// Check to avoid sending random cookies for the wrong users.
@@ -725,7 +715,7 @@ class RequestContext implements IContextSource, MutableContext {
 
 			// Get new session, if applicable
 			$session = null;
-			if ( strlen( $params['sessionId'] ) ) { // don't make a new random ID
+			if ( $params['sessionId'] !== '' ) { // don't make a new random ID
 				$manager = SessionManager::singleton();
 				$session = $manager->getSessionById( $params['sessionId'], true )
 					?: $manager->getEmptySession();

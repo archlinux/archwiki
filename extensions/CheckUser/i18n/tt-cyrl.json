@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Don Alessandro",
+			"Ерней",
+			"Ильгиз",
+			"Ильнар"
+		]
+	},
+	"group-checkuser": "Кулланучыларны тикшереп торучылар",
+	"group-checkuser-member": "{{GENDER:$1|кулланучыларны тикшерүче}}",
+	"right-checkuser": "Кулланучыларның IP адресларын һәм башка мәгълүматларын тикшерү",
+	"checkuser-all": "барысы",
+	"checkuser-toollink-check": "тикшерү"
+}

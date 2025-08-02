@@ -83,7 +83,6 @@
 	"log-action-filter-oath-verify": "{{doc-log-action-filter-action|oath|verify}}",
 	"log-action-filter-oath-disable-other": "{{doc-log-action-filter-action|oath|disable-other}}",
 	"oathauth-ui-no-module": "User preference value for the type of two-factor authentication operation {{msg-mw|Log-action-filter-oath}} when no 2FA module is enabled.",
-	"oathauth-module-invalid": "Error message when the OATHAuth module registered by user is invalid",
 	"oathauth-module-totp-label": "User preference value when the TOTP module is enabled",
 	"oathauth-ui-manage": "Button on Special:Preferences, that leads to [[Special:OATHManage]]",
 	"oathmanage": "{{doc-special|OATHManage}}",
@@ -102,9 +101,6 @@
 	"oathauth-disable-method-warning-button-label": "Label for the button that confirms disabling current or switching to alternative 2FA method",
 	"oathauth-disable-method-warning": "Generic message warning the user of token/data loss when authentication method is disabled.\n$1 - Current method name",
 	"oathauth-disable-method-next-step": "Message telling user they will need to use their 2FA method on the next step to continue disabling it.\n$1 - Current method name",
-	"oathauth-switch-method-warning-header": "Page title for warning page when switching to an alternative 2FA method",
-	"oathauth-switch-method-warning": "Generic message warning the user of token/data loss when switching to an alternative method.\n$1 - Current method name, $2 - Name of the method that is being switched to",
-	"oathauth-switch-method-next-step": "Message telling user they will need to use their 2FA method on the next step to continue switching it..\n$1 - Current method name, $2 - Name of the method that is being switched to",
 	"oathauth-totp-disable-warning": "TOTP specific warning message when disabling/switching to alternative 2FA method",
 	"oathauth-invalidrequest": "Generic error message that is displayed when request cannot be processed due to an unpredicted reason",
 	"notification-header-oathauth-disable": "Notification header for when two-factor authentication has been disabled.\n$2 - Name of user for GENDER",
@@ -130,5 +126,6 @@
 	"oathauth-prefs-disabledgroups": "Label on Special:Preferences for groups in which the user's membership has been disabled for a lack of two-factor authentication.\n$1 - Number of groups",
 	"oathauth-prefs-disabledgroups-help": "Help message shown on Special:Preferences for the {{mw-msg|oathauth-prefs-disabledgroups}} field.\n$1 - Number of groups\n$2 - User name for GENDER",
 	"oathauth-qrcode-alt": "Accessibility label for the QR code image shown to users when enabling the TOTP on the [[Special:OATHManage]] page.",
-	"oathauth-hint": "Reminder that users can use recovery tokens if they don't have access to their device or application"
+	"oathauth-hint": "Reminder that users can use recovery tokens if they don't have access to their device or application",
+	"oathauth-must-be-central": "Used as an error message when an account does not have a central ID available."
 }

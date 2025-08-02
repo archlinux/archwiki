@@ -185,8 +185,9 @@ abstract class BaseBlacklist {
 			}
 		}
 
-		$thisHttp = wfExpandUrl( $title->getFullUrl( 'action=raw' ), PROTO_HTTP );
-		$thisHttpRegex = '/^' . preg_quote( $thisHttp, '/' ) . '(?:&.*)?$/';
+		$thisHttp = MediaWikiServices::getInstance()->getUrlUtils()
+			->expand( $title->getFullUrl( 'action=raw' ), PROTO_HTTP );
+		$thisHttpRegex = '/^' . preg_quote( (string)$thisHttp, '/' ) . '(?:&.*)?$/';
 
 		$files = [];
 		foreach ( self::$blacklistTypes as $type => $class ) {
@@ -336,7 +337,7 @@ abstract class BaseBlacklist {
 		wfDebugLog( 'SpamBlacklist', "$listType blacklist local cache cleared.\n" );
 	}
 
-	private function buildSharedBlacklists() {
+	private function buildSharedBlacklists(): array {
 		$regexes = [];
 		$listType = $this->getBlacklistType();
 		# Load lists
@@ -368,6 +369,10 @@ abstract class BaseBlacklist {
 		return $regexes;
 	}
 
+	/**
+	 * @param string $fileName
+	 * @return string|null|false
+	 */
 	private function getHttpText( $fileName ) {
 		global $wgMessageCacheType;
 		// FIXME: This is a hack to use Memcached where possible (incl. WMF),

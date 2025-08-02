@@ -30,7 +30,7 @@
 	"scribunto-common-timeout": "Le tempore allocate pro le execution de scripts ha expirate.",
 	"scribunto-common-oom": "Le quantitate de memoria permittite pro le execution de scripts ha essite excedite.",
 	"scribunto-common-backtrace": "Tracia a retro:",
-	"scribunto-common-no-details": "Il non ha altere detalios disponibile.",
+	"scribunto-common-no-details": "Il non ha detalios disponibile sur le position del codice.",
 	"scribunto-lua-in-function": "in function \"$1\"",
 	"scribunto-lua-in-main": "in le parte principal",
 	"scribunto-lua-in-function-at": "in le function a $1:$2",

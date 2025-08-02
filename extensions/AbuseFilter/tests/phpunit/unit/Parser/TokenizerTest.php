@@ -35,7 +35,7 @@ class TokenizerTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unclosedComment
+	 * @dataProvider provideUnclosedComment
 	 */
 	public function testUnclosedCommentException( $expr, $caller ) {
 		$this->exceptionTest( 'unclosedcomment', $expr, $caller );
@@ -48,7 +48,7 @@ class TokenizerTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function unclosedComment() {
+	public static function provideUnclosedComment() {
 		return [
 			[ '     /****    /  *  /', 'nextToken' ],
 		];
@@ -57,7 +57,7 @@ class TokenizerTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unrecognisedToken
+	 * @dataProvider provideUnrecognisedToken
 	 */
 	public function testUnrecognisedTokenException( $expr, $caller ) {
 		$this->exceptionTest( 'unrecognisedtoken', $expr, $caller );
@@ -70,7 +70,7 @@ class TokenizerTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function unrecognisedToken() {
+	public static function provideUnrecognisedToken() {
 		return [
 			[ '#', 'nextToken' ],
 		];
@@ -79,7 +79,7 @@ class TokenizerTest extends ParserTestCase {
 	/**
 	 * @param string $expr The expression to test
 	 * @param string $caller The function where the exception is thrown
-	 * @dataProvider unclosedString
+	 * @dataProvider provideUnclosedString
 	 */
 	public function testUnclosedStringException( $expr, $caller ) {
 		$this->exceptionTest( 'unclosedstring', $expr, $caller );
@@ -92,7 +92,7 @@ class TokenizerTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function unclosedString() {
+	public static function provideUnclosedString() {
 		return [
 			'Simple' => [ '"', 'readStringLiteral' ],
 			'Truncated escape sequence' => [ '"\\', 'readStringLiteral' ],

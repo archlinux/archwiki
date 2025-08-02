@@ -1,6 +1,5 @@
 const
 	LanguageSearchWidget = require( './widgets/LanguageSearchWidget.js' ),
-	Metrics = require( './Metrics.js' ),
 	Model = require( 'ext.templateDataGenerator.data' ).Model,
 	ParamImportWidget = require( './widgets/ParamImportWidget.js' ),
 	ParamSelectWidget = require( './widgets/ParamSelectWidget.js' ),
@@ -11,6 +10,7 @@ const
  *
  * @class
  * @extends OO.ui.ProcessDialog
+ * @property {Model} model
  *
  * @constructor
  * @param {Object} config Dialog configuration object
@@ -30,9 +30,6 @@ function Dialog( config ) {
 	this.propFieldLayout = {};
 	this.isSetup = false;
 	this.mapsCache = undefined;
-	this.descriptionChanged = false;
-	this.paramsReordered = false;
-	this.paramPropertyChangeTracking = {};
 
 	// Initialize
 	this.$element.addClass( 'tdg-templateDataDialog' );
@@ -466,11 +463,6 @@ Dialog.prototype.updateActions = function () {
  * @param {number} newIndex New index of the item
  */
 Dialog.prototype.onParamSelectReorder = function ( item, newIndex ) {
-	if ( !this.paramsReordered ) {
-		Metrics.logEvent( 'parameter-reorder' );
-	}
-	this.paramsReordered = true;
-
 	this.model.reorderParamOrderKey( item.getData(), newIndex );
 };
 
@@ -480,11 +472,6 @@ Dialog.prototype.onParamSelectReorder = function ( item, newIndex ) {
  * @param {string} value Description value
  */
 Dialog.prototype.onDescriptionInputChange = function ( value ) {
-	if ( !this.descriptionChanged ) {
-		Metrics.logEvent( 'template-description-change' );
-	}
-	this.descriptionChanged = true;
-
 	if ( this.model.getTemplateDescription( this.language ) !== value ) {
 		this.model.setTemplateDescription( value, this.language );
 	}
@@ -531,7 +518,7 @@ Dialog.prototype.onMapInfoChange = function ( value ) {
 				// Otherwise disable the done button if maps object is populated
 				this.actions.setAbilities( { done: false } );
 			} finally {
-				if ( this.mapsGroup.items.length === 0 ) {
+				if ( this.mapsGroup.isEmpty() ) {
 					this.actions.setAbilities( { done: true } );
 					this.removeMapButton.setDisabled( true );
 				}
@@ -577,30 +564,27 @@ Dialog.prototype.onCancelAddingMap = function ( highlightNext ) {
 	this.addNewMapButton.$element.show();
 	// move the list panel up back as add new map shrank
 	this.editMapsPanel.$element.removeClass( 'tdg-templateDataDialog-addingNewMap' );
-	this.removeMapButton.setDisabled( false );
+	this.removeMapButton.setDisabled( this.mapsGroup.isEmpty() );
 	this.mapsGroup.selectItem( highlightNext || this.mapsGroup.findFirstSelectableItem() );
 };
 
 /**
  * Handle clicking Enter event for promptMapName
  *
- * @param {jQuery.Event} response response from Enter action on promptMapName
+ * @param {jQuery.Event} [response] Response from Enter action on promptMapName
  */
 Dialog.prototype.onEmbedNewMap = function ( response ) {
 	const mapNameValue = response ? response.target.value : this.newMapNameInput.getValue();
 	this.mapsCache = this.mapsCache || {};
-	// Create a new empty map in maps object
-	this.mapsCache[ mapNameValue ] = {};
-	const newlyAddedMap = new OO.ui.OutlineOptionWidget( {
-		label: mapNameValue
-	} );
-	// Add the new map item and select it
-	if ( mapNameValue.length !== 0 ) {
-		this.mapsGroup.addItems( [ newlyAddedMap ], 0 );
-	} else {
-		delete this.mapsCache[ mapNameValue ];
+	let item;
+	if ( mapNameValue ) {
+		// Create a new empty map in maps object
+		this.mapsCache[ mapNameValue ] = {};
+		// Add the new map item and select it
+		item = new OO.ui.OutlineOptionWidget( { label: mapNameValue } );
+		this.mapsGroup.addItems( [ item ], 0 );
 	}
-	this.onCancelAddingMap( newlyAddedMap );
+	this.onCancelAddingMap( item );
 };
 
 /**
@@ -638,7 +622,6 @@ Dialog.prototype.onMapsGroupSelect = function () {
 		this.addNewMapButton.$element.show();
 		// move the list panel up back as add new map shrank
 		this.editMapsPanel.$element.removeClass( 'tdg-templateDataDialog-addingNewMap' );
-		this.removeMapButton.setDisabled( $.isEmptyObject( this.mapsCache ) );
 
 		this.mapsGroup.selectItem( item );
 		this.templateMapsInput.setDisabled( false );
@@ -651,6 +634,7 @@ Dialog.prototype.onMapsGroupSelect = function () {
 		const currentMapInfo = this.mapsCache[ item.label ];
 		this.templateMapsInput.setValue( this.stringifyObject( currentMapInfo ) );
 	}
+	this.removeMapButton.setDisabled( !item );
 };
 
 /**
@@ -708,7 +692,7 @@ Dialog.prototype.onNewLanguageSearchResultsChoose = function ( item ) {
 	const newLanguage = item.getData().code;
 
 	if ( newLanguage ) {
-		if ( this.availableLanguages.indexOf( newLanguage ) === -1 ) {
+		if ( !this.availableLanguages.includes( newLanguage ) ) {
 			// Add new language
 			this.availableLanguages.push( newLanguage );
 			const languageButton = new OO.ui.MenuOptionWidget( {
@@ -860,7 +844,7 @@ Dialog.prototype.onParamPropertyInputChange = function ( propName, value ) {
 		const changed = value !== this.selectedParamKey;
 		if ( invalid ) {
 			$errors = $errors.add( $( '<p>' ).text( mw.msg( 'templatedata-modal-errormsg', '|', '=', '}}' ) ) );
-		} else if ( changed && this.model.getAllParamNames().indexOf( value ) !== -1 ) {
+		} else if ( changed && this.model.getAllParamNames().includes( value ) ) {
 			// We're changing the name. Make sure it doesn't conflict.
 			$errors = $errors.add( $( '<p>' ).text( mw.msg( 'templatedata-modal-errormsg-duplicate-name' ) ) );
 		}
@@ -899,8 +883,6 @@ Dialog.prototype.onParamPropertyInputChange = function ( propName, value ) {
 	if ( propName === 'aliases' && this.propInputs.name.$element.hasClass( 'tdg-editscreen-input-error' ) ) {
 		this.onParamPropertyInputChange( 'name', this.propInputs.name.getValue() );
 	}
-
-	this.trackPropertyChange( propName );
 };
 
 Dialog.prototype.toggleSuggestedValues = function ( type ) {
@@ -916,7 +898,7 @@ Dialog.prototype.toggleSuggestedValues = function ( type ) {
 	// Don't show the suggested values field when the feature flag is
 	// disabled, or for inapplicable types.
 	this.propFieldLayout.suggestedvalues.toggle(
-		suggestedValuesAllowedTypes.indexOf( type ) !== -1
+		suggestedValuesAllowedTypes.includes( type )
 	);
 };
 
@@ -928,8 +910,6 @@ Dialog.prototype.toggleSuggestedValues = function ( type ) {
 Dialog.prototype.getParameterDetails = function ( paramKey ) {
 	const paramData = this.model.getParamData( paramKey );
 	const allProps = Model.static.getAllProperties( true );
-
-	this.stopParameterInputTracking();
 
 	for ( const prop in this.propInputs ) {
 		this.changeParamPropertyInput( paramKey, prop, paramData[ prop ], this.language );
@@ -971,52 +951,6 @@ Dialog.prototype.getParameterDetails = function ( paramKey ) {
 				this.propInputs.suggested.setSelected( selected === 'suggested' );
 			}
 		} );
-	}
-
-	this.startParameterInputTracking( paramData );
-};
-
-Dialog.prototype.stopParameterInputTracking = function () {
-	this.paramPropertyChangeTracking = {};
-};
-
-/**
- * Temporary metrics to understand how properties are edited, see T260343.
- *
- * @param {Object} paramValues parameter property values at dialog open time
- */
-Dialog.prototype.startParameterInputTracking = function ( paramValues ) {
-	this.paramPropertyChangeTracking = {};
-	for ( const prop in this.propInputs ) {
-		// Set to true, unless one of the exceptions applies.
-		this.paramPropertyChangeTracking[ prop ] = !(
-			// Setting type when we already have a specific type.
-			( prop === 'type' && paramValues[ prop ] !== undefined && paramValues[ prop ] !== 'unknown' ) ||
-
-			// Setting priority but already required, suggested, or deprecated.
-			( ( prop === 'required' || prop === 'suggested' || prop === 'deprecated' ) &&
-				( paramValues.required || paramValues.suggested || paramValues.deprecated ) ) ||
-
-			// Fields ignored by tracking.
-			( prop === 'name' || prop === 'aliases' || prop === 'autovalue' || prop === 'deprecatedValue' )
-		);
-	}
-};
-
-Dialog.prototype.trackPropertyChange = function ( property ) {
-	const eventKey = ( property === 'required' || property === 'suggested' || property === 'deprecated' ) ?
-		'parameter-priority-change' : 'parameter-' + property + '-change';
-
-	if ( this.paramPropertyChangeTracking[ property ] ) {
-		Metrics.logEvent( eventKey );
-	}
-	this.paramPropertyChangeTracking[ property ] = false;
-
-	// These properties form a conceptual group; suppress additional events.
-	if ( property === 'required' || property === 'suggested' || property === 'deprecated' ) {
-		this.paramPropertyChangeTracking.required =
-			this.paramPropertyChangeTracking.suggested =
-			this.paramPropertyChangeTracking.deprecated = false;
 	}
 };
 
@@ -1313,7 +1247,7 @@ Dialog.prototype.importParametersFromTemplateCode = function () {
 
 	let $message = $( [] ),
 		state = 'success';
-	if ( response.imported.length === 0 ) {
+	if ( !response.imported.length ) {
 		$message = $( '<p>' ).text( mw.msg( 'templatedata-modal-errormsg-import-noparams' ) );
 		state = 'error';
 	} else {
@@ -1376,7 +1310,7 @@ Dialog.prototype.getSetupProcess = function ( data ) {
 
 			this.availableLanguages = this.model.getExistingLanguageCodes().slice();
 			const defaultLanguage = this.model.getDefaultLanguage();
-			if ( this.availableLanguages.indexOf( defaultLanguage ) === -1 ) {
+			if ( !this.availableLanguages.includes( defaultLanguage ) ) {
 				this.availableLanguages.unshift( defaultLanguage );
 			}
 			const items = this.availableLanguages.map( ( lang ) => new OO.ui.MenuOptionWidget( {
@@ -1433,9 +1367,6 @@ Dialog.prototype.setupDetailsFromModel = function () {
 
 	// Repopulate the parameter list
 	this.repopulateParamSelectWidget();
-
-	Metrics.logEvent( this.model.getOriginalTemplateDataObject() ?
-		'dialog-open-edit' : 'dialog-open-create' );
 };
 
 /**
@@ -1477,13 +1408,29 @@ Dialog.prototype.switchPanels = function ( panel ) {
 			break;
 		case this.editMapsPanel:
 			this.actions.setMode( 'maps' );
-			this.templateMapsInput.adjustSize( true ).focus();
+			this.templateMapsInput.adjustSize( true );
+			if ( this.mapsGroup.isEmpty() ) {
+				this.addNewMapButton.focus();
+			} else {
+				this.templateMapsInput.focus();
+			}
 			break;
 		case this.languagePanel:
 			this.actions.setMode( 'language' );
 			this.newLanguageSearch.query.focus();
 			break;
 	}
+};
+
+/**
+ * @inheritdoc
+ */
+Dialog.prototype.getEscapeAction = function () {
+	const backCloseOrCancel = this.actions.get( { flags: [ 'back', 'close' ], actions: 'cancel', visible: true } );
+	if ( backCloseOrCancel.length ) {
+		return backCloseOrCancel[ 0 ].getAction();
+	}
+	return null;
 };
 
 /**
@@ -1506,6 +1453,7 @@ Dialog.prototype.getActionProcess = function ( action ) {
 			this.switchPanels();
 		} );
 	}
+	// Back button in the top-left corner of the "Add language" and "Add parameter" panels
 	if ( action === 'back' ) {
 		return new OO.ui.Process( () => {
 			this.switchPanels();
@@ -1516,6 +1464,7 @@ Dialog.prototype.getActionProcess = function ( action ) {
 			this.switchPanels( this.editMapsPanel );
 		} );
 	}
+	// "Cancel" button in the bottom-left corner of the "Edit maps" panel
 	if ( action === 'cancel' ) {
 		return new OO.ui.Process( () => {
 			this.mapsCache = OO.copy( this.model.getOriginalMapsInfo() );
@@ -1533,16 +1482,26 @@ Dialog.prototype.getActionProcess = function ( action ) {
 	}
 	if ( action === 'apply' ) {
 		return new OO.ui.Process( () => {
-			Metrics.logEvent( this.model.getOriginalTemplateDataObject() ?
-				'save-page-edit' : 'save-page-create' );
-
 			this.emit( 'apply', this.model.outputTemplateData() );
 			this.close( { action: action } );
 		} );
 	}
 	if ( !action && this.modified ) {
 		return new OO.ui.Process(
-			() => OO.ui.confirm( mw.msg( 'templatedata-modal-confirmcancel' ) )
+			() => OO.ui.confirm( mw.msg( 'templatedata-modal-confirmcancel' ), {
+				actions: [
+					{
+						action: 'reject',
+						label: mw.msg( 'templatedata-modal-button-back' ),
+						flags: 'safe'
+					},
+					{
+						action: 'accept',
+						label: mw.msg( 'templatedata-modal-button-discard' ),
+						flags: [ 'primary', 'destructive' ]
+					}
+				]
+			} )
 				.then( ( result ) => {
 					if ( result ) {
 						this.close();

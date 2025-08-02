@@ -2,8 +2,7 @@
 
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
-use MediaWiki\Block\BlockUtils;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\BlockTargetFactory;
 use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
@@ -15,6 +14,7 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\BlockListPager;
 use MediaWiki\Permissions\SimpleAuthority;
+use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Utils\MWTimestamp;
@@ -34,8 +34,8 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	/** @var BlockRestrictionStore */
 	private $blockRestrictionStore;
 
-	/** @var BlockUtils */
-	private $blockUtils;
+	/** @var BlockTargetFactory */
+	private $blockTargetFactory;
 
 	/** @var HideUserUtils */
 	private $hideUserUtils;
@@ -64,7 +64,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 		$services = $this->getServiceContainer();
 		$this->blockActionInfo = $services->getBlockActionInfo();
 		$this->blockRestrictionStore = $services->getBlockRestrictionStore();
-		$this->blockUtils = $services->getBlockUtils();
+		$this->blockTargetFactory = $services->getBlockTargetFactory();
 		$this->hideUserUtils = $services->getHideUserUtils();
 		$this->commentStore = $services->getCommentStore();
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
@@ -79,7 +79,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 			RequestContext::getMain(),
 			$this->blockActionInfo,
 			$this->blockRestrictionStore,
-			$this->blockUtils,
+			$this->blockTargetFactory,
 			$this->hideUserUtils,
 			$this->commentStore,
 			$this->linkBatchFactory,
@@ -175,7 +175,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 				$row,
 			],
 			[
-				'by',
+				'bl_by',
 				'<a %s><bdi>Admin</bdi></a>%s',
 				$row,
 			],
@@ -314,18 +314,17 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 		$target = '127.0.0.1';
 
 		// Test partial blocks.
-		$block = new DatabaseBlock( [
-			'address' => $target,
-			'by' => $this->getTestSysop()->getUser(),
-			'reason' => 'Parce que',
-			'expiry' => $this->getDb()->getInfinity(),
-			'sitewide' => false,
-		] );
-		$block->setRestrictions( [
-			new PageRestriction( 0, $page->getId() ),
-		] );
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$blockStore->insertBlock( $block );
+		$block = $this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'address' => $target,
+				'by' => $this->getTestSysop()->getUser(),
+				'reason' => 'Parce que',
+				'expiry' => $this->getDb()->getInfinity(),
+				'sitewide' => false,
+				'restrictions' => [
+					new PageRestriction( 0, $page->getId() ),
+				]
+			] );
 
 		$pager = $this->getBlockListPager();
 		$result = $this->getDb()->newSelectQueryBuilder()

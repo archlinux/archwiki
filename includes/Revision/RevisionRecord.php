@@ -30,8 +30,10 @@ use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\LegacyArticleIdAccess;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 
@@ -103,6 +105,19 @@ abstract class RevisionRecord implements WikiAwareEntity {
 	public function __construct( PageIdentity $page, RevisionSlots $slots, $wikiId = self::LOCAL ) {
 		$this->assertWikiIdParam( $wikiId );
 
+		// Make sure $page is immutable, see T380536. This is a nasty hack.
+		if ( !$page->canExist() ) {
+			// NOTE: We continue to support non-proper Titles for fake
+			// revisions used during parsing (T381982).
+			// TODO: Emit a deprecation warning for non-proper pages once
+			// we have a good alternative (T382341).
+		} elseif ( $page instanceof Title ) {
+			// Hack. Eventually, all PageIdentities should be immutable and "proper".
+			$page = $page->toPageIdentity();
+		} elseif ( $page instanceof WikiPage ) {
+			$page = $page->getTitle()->toPageIdentity();
+		}
+
 		$this->mPage = $page;
 		$this->mSlots = $slots;
 		$this->wikiId = $wikiId;
@@ -139,6 +154,18 @@ abstract class RevisionRecord implements WikiAwareEntity {
 	}
 
 	/**
+	 * Returns the Content of the main slot of this revision.
+	 *
+	 * @see getContent()
+	 *
+	 * @return Content|null The content of the main slot, or null on error
+	 * @throws RevisionAccessException
+	 */
+	public function getMainContentRaw(): ?Content {
+		return $this->getContent( SlotRecord::MAIN, self::RAW );
+	}
+
+	/**
 	 * Returns the Content of the given slot of this revision.
 	 * Call getSlotNames() to get a list of available slots.
 	 *
@@ -161,6 +188,16 @@ abstract class RevisionRecord implements WikiAwareEntity {
 			return null;
 		}
 		return $content->copy();
+	}
+
+	/**
+	 * Returns the content model of the main slot of this revision.
+	 *
+	 * @return string The content model
+	 * @throws RevisionAccessException
+	 */
+	public function getMainContentModel(): string {
+		return $this->getSlot( SlotRecord::MAIN, self::RAW )->getModel();
 	}
 
 	/**
@@ -254,8 +291,6 @@ abstract class RevisionRecord implements WikiAwareEntity {
 	 *
 	 * To find all slots modified by this revision against its immediate parent
 	 * revision, use RevisionSlotsUpdate::newFromRevisionSlots().
-	 *
-	 * @return RevisionSlots
 	 */
 	public function getOriginalSlots(): RevisionSlots {
 		return new RevisionSlots( $this->mSlots->getOriginalSlots() );
@@ -269,8 +304,6 @@ abstract class RevisionRecord implements WikiAwareEntity {
 	 * This is the case for rollbacks: slots of a rollback revision are inherited from
 	 * the rollback target, and are different from the slots in the parent revision,
 	 * which was rolled back.
-	 *
-	 * @return RevisionSlots
 	 */
 	public function getInheritedSlots(): RevisionSlots {
 		return new RevisionSlots( $this->mSlots->getInheritedSlots() );
@@ -373,9 +406,7 @@ abstract class RevisionRecord implements WikiAwareEntity {
 	 * @return LinkTarget
 	 */
 	public function getPageAsLinkTarget() {
-		// TODO: Should be TitleValue::newFromPage( $this->mPage ),
-		// but Title is used too much still, so let's keep propagating it
-		return Title::newFromPageIdentity( $this->mPage );
+		return TitleValue::newFromPage( $this->mPage );
 	}
 
 	/**

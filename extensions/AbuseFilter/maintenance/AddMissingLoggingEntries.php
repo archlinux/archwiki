@@ -10,8 +10,8 @@ if ( $IP === false ) {
 require_once "$IP/maintenance/Maintenance.php";
 // @codeCoverageIgnoreEnd
 
-use ManualLogEntry;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IExpression;

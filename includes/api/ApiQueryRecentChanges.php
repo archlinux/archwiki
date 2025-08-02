@@ -22,17 +22,18 @@
 
 namespace MediaWiki\Api;
 
-use ChangesList;
 use Exception;
-use LogEventsList;
-use LogFormatterFactory;
-use LogPage;
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogFormatterFactory;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\RecentChanges\ChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Storage\NameTableAccessException;
@@ -40,7 +41,6 @@ use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserNameUtils;
-use RecentChange;
 use stdClass;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -59,6 +59,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	private CommentStore $commentStore;
 	private RowCommentFormatter $commentFormatter;
 	private NameTableStore $changeTagDefStore;
+	private ChangeTagsStore $changeTagsStore;
 	private NameTableStore $slotRoleStore;
 	private SlotRoleRegistry $slotRoleRegistry;
 	private UserNameUtils $userNameUtils;
@@ -74,6 +75,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		CommentStore $commentStore,
 		RowCommentFormatter $commentFormatter,
 		NameTableStore $changeTagDefStore,
+		ChangeTagsStore $changeTagsStore,
 		NameTableStore $slotRoleStore,
 		SlotRoleRegistry $slotRoleRegistry,
 		UserNameUtils $userNameUtils,
@@ -84,6 +86,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		$this->commentStore = $commentStore;
 		$this->commentFormatter = $commentFormatter;
 		$this->changeTagDefStore = $changeTagDefStore;
+		$this->changeTagsStore = $changeTagsStore;
 		$this->slotRoleStore = $slotRoleStore;
 		$this->slotRoleRegistry = $slotRoleRegistry;
 		$this->userNameUtils = $userNameUtils;
@@ -336,8 +339,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 
 		if ( $this->fld_tags ) {
 			$this->addFields( [
-				'ts_tags' => MediaWikiServices::getInstance()->getChangeTagsStore()
-					->makeTagSummarySubquery( 'recentchanges' )
+				'ts_tags' => $this->changeTagsStore->makeTagSummarySubquery( 'recentchanges' )
 			] );
 		}
 

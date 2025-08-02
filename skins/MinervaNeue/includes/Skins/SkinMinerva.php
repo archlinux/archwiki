@@ -40,15 +40,14 @@ use MediaWiki\Minerva\Permissions\MinervaPagePermissions;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Skin\SkinMustache;
+use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\Utils\MWTimestamp;
-use RuntimeException;
-use SkinMustache;
-use SkinTemplate;
 use SpecialMobileHistory;
 
 /**
@@ -66,9 +65,6 @@ class SkinMinerva extends SkinMustache {
 	public $skinname = 'minerva';
 	/** @var string Name of this used template */
 	public $template = 'MinervaTemplate';
-
-	/** @var array|null */
-	private ?array $contentNavigationUrls;
 
 	private GenderCache $genderCache;
 	private LinkRenderer $linkRenderer;
@@ -136,8 +132,7 @@ class SkinMinerva extends SkinMustache {
 	 * @return bool
 	 */
 	private function hasPageActions(): bool {
-		$title = $this->getTitle();
-		return !$title->isSpecialPage() && !$title->isMainPage() &&
+		return !$this->getTitle()->isSpecialPage() &&
 			$this->getActionName() === 'view';
 	}
 
@@ -158,18 +153,17 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * Returns available page actions if the page has any.
 	 *
-	 * @param array $nav result of SkinTemplate::buildContentNavigationUrls
+	 * @param array $actions
+	 * @param array $views
 	 * @return array|null
 	 */
-	private function getPageActions( array $nav ): ?array {
+	private function getPageActions( array $actions, array $views ): ?array {
 		if ( $this->isFallbackEditor() || !$this->hasPageActions() ) {
 			return null;
 		}
 
 		$pageActionsDirector = $this->pageActions->getPageActionsDirector( $this->getContext() );
 		$sidebar = $this->buildSidebar();
-		$actions = $nav['actions'] ?? [];
-		$views = $nav['views'] ?? [];
 		return $pageActionsDirector->buildMenu( $sidebar['TOOLBOX'], $actions, $views );
 	}
 
@@ -282,7 +276,6 @@ class SkinMinerva extends SkinMustache {
 				$contentNavigationUrls['associated-pages'][ $id ]['rel'] = 'discussion';
 			}
 		}
-		$this->contentNavigationUrls = $contentNavigationUrls;
 
 		//
 		// Echo Technical debt!!
@@ -320,15 +313,44 @@ class SkinMinerva extends SkinMustache {
 	}
 
 	/**
+	 * Maps data returned by getTemplateData into a historic data format that can be used
+	 * in Minerva's menu code.
+	 * @param array $dataPortlet
+	 * @return array
+	 */
+	private function mapPortletData( array $dataPortlet ) {
+		$nav = [];
+		foreach ( $dataPortlet[ 'array-items' ] as $item ) {
+			$itemData = $item[ 'array-links' ][ 0 ];
+			$data = [
+				'class' => $item[ 'class' ] ?? '',
+				'text' => $itemData[ 'text' ] ?? '',
+				'icon' => $itemData[ 'icon' ] ?? null,
+				'context' => $item[ 'name' ] ?? null,
+			];
+			$attributes = $itemData['array-attributes' ] ?? [];
+			foreach ( $attributes as $attrDefinition ) {
+				$key = $attrDefinition[ 'key' ];
+				if ( in_array( $key, [ 'href', 'rel' ] ) ) {
+					$data[ $key ] = $attrDefinition[ 'value' ];
+				}
+			}
+			$nav[ $item[ 'name' ] ] = $data;
+		}
+		return $nav;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function getTemplateData(): array {
 		$data = parent::getTemplateData();
-		// FIXME: Can we use $data instead of calling buildContentNavigationUrls ?
-		$nav = $this->contentNavigationUrls;
-		if ( $nav === null ) {
-			throw new RuntimeException( 'contentNavigationUrls was not set as expected.' );
-		}
+		$portletData = $data[ 'data-portlets' ];
+		$navUserMenu = $this->mapPortletData( $portletData['data-user-menu'] ?? [] );
+
+		$actions = $this->mapPortletData( $portletData['data-actions'] ?? [] );
+		$views = $this->mapPortletData( $portletData['data-views'] ?? [] );
+
 		if ( !$this->hasCategoryLinks() ) {
 			unset( $data['html-categories'] );
 		}
@@ -353,10 +375,11 @@ class SkinMinerva extends SkinMustache {
 		$allVariants = $data['data-portlets']['data-variants']['array-items'] ?? [];
 		$notifications = $data['data-portlets']['data-notifications']['array-items'] ?? [];
 		$associatedPages = $data['data-portlets']['data-associated-pages'] ?? [];
+		$associatedPagesPortletData = $this->mapPortletData( $associatedPages );
 
 		return $data + [
 			'has-minerva-languages' => $allLanguages || $allVariants,
-			'array-minerva-banners' => $this->prepareBanners( $data['html-site-notice'] ),
+			'array-minerva-banners' => $this->prepareBanners( $data['html-site-notice'] ?? '' ),
 			'data-minerva-search-box' => $data['data-search-box'] + [
 				'data-btn' => [
 					'data-icon' => [
@@ -391,26 +414,25 @@ class SkinMinerva extends SkinMustache {
 						'key' => 'aria-hidden',
 						'value' => 'true',
 					],
-					[
-						'key' => 'data-event-name',
-						'value' => 'ui.mainmenu',
-					],
 				],
 				'text' => $this->msg( 'mobile-frontend-main-menu-button-tooltip' )->escaped(),
 			],
 			'data-minerva-main-menu' => $this->getMainMenu()->getMenuData(
-				$nav,
-				$this->buildSidebar()
+				$navUserMenu,
+				$this->buildSidebar(),
 			)['items'],
+			// Refer to https://phabricator.wikimedia.org/T388036#10608151 for the following line:
+			'data-donation-banner' => $this->skinOptions->get( SkinOptions::SHOW_DONATE_BANNER ) &&
+				$this->getUser()->isAnon(),
 			'html-minerva-tagline' => $this->getTaglineHtml(),
-			'html-minerva-user-menu' => $this->getPersonalToolsMenu( $nav['user-menu'] ),
+			'html-minerva-user-menu' => $this->getPersonalToolsMenu( $navUserMenu ),
 			'is-minerva-beta' => $this->skinOptions->get( SkinOptions::BETA_MODE ),
 			'data-minerva-notifications' => $notifications ? [
 				'array-buttons' => $this->getNotificationButtons( $notifications ),
 			] : null,
-			'data-minerva-tabs' => $this->getTabsData( $nav, $associatedPages ),
-			'data-minerva-page-actions' => $this->getPageActions( $nav ),
-			'data-minerva-secondary-actions' => $this->getSecondaryActions( $nav ),
+			'data-minerva-tabs' => $this->getTabsData( $associatedPagesPortletData, $associatedPages['id'] ?? null ),
+			'data-minerva-page-actions' => $this->getPageActions( $actions, $views ),
+			'data-minerva-secondary-actions' => $this->getSecondaryActions( $associatedPagesPortletData ),
 			'html-minerva-subject-link' => $this->getSubjectPage(),
 			'data-minerva-history-link' => $this->getHistoryLink( $this->getTitle() ),
 		];
@@ -457,6 +479,7 @@ class SkinMinerva extends SkinMustache {
 			}
 			$btns[] = [
 				'tag-name' => 'a',
+				'isButton' => true,
 				// FIXME: Move preg_replace when Echo no longer provides this class.
 				'classes' => preg_replace( '/oo-ui-icon-(bellOutline|tray)/', '', $classes ),
 				'array-attributes' => $attributes,
@@ -487,6 +510,7 @@ class SkinMinerva extends SkinMustache {
 	 */
 	private function hasPageTabs(): bool {
 		$title = $this->getTitle();
+
 		$isSpecialPageOrHistory = $title->isSpecialPage() ||
 			$this->isHistoryPage();
 		$subjectPage = $this->namespaceInfo->getSubjectPage( $title );
@@ -501,18 +525,18 @@ class SkinMinerva extends SkinMustache {
 	}
 
 	/**
-	 * @param array $contentNavigationUrls
-	 * @param array $associatedPages - data-associated-pages from template data, currently only used for ID
+	 * @param array $associatedPagesPortletData
+	 * @param string|null $id of portlet
 	 * @return array
 	 */
-	private function getTabsData( array $contentNavigationUrls, array $associatedPages ): array {
+	private function getTabsData( array $associatedPagesPortletData, $id = null ): array {
 		$hasPageTabs = $this->hasPageTabs();
 		if ( !$hasPageTabs ) {
 			return [];
 		}
-		return $contentNavigationUrls ? [
-			'items' => array_values( $contentNavigationUrls['associated-pages'] ),
-			'id' => $associatedPages['id'] ?? null,
+		return $associatedPagesPortletData ? [
+			'items' => array_values( $associatedPagesPortletData ),
+			'id' => $id,
 		] : [];
 	}
 
@@ -939,6 +963,7 @@ class SkinMinerva extends SkinMustache {
 				]
 			],
 			'tag-name' => 'a',
+			'isButton' => true,
 			'classes' => 'language-selector button',
 			'label' => $this->msg( 'mobile-frontend-language-article-heading' )->text()
 		];
@@ -963,6 +988,7 @@ class SkinMinerva extends SkinMustache {
 				]
 			],
 			'tag-name' => 'a',
+			'isButton' => true,
 			'classes' => 'talk button',
 			'label' => $label,
 		];
@@ -970,10 +996,10 @@ class SkinMinerva extends SkinMustache {
 
 	/**
 	 * Returns an array of links for page secondary actions
-	 * @param array $contentNavigationUrls
+	 * @param array $namespaces or associated pages
 	 * @return array|null
 	 */
-	protected function getSecondaryActions( array $contentNavigationUrls ): ?array {
+	protected function getSecondaryActions( array $namespaces ): ?array {
 		if ( $this->isFallbackEditor() || !$this->hasSecondaryActions() ) {
 			return null;
 		}
@@ -992,7 +1018,6 @@ class SkinMinerva extends SkinMustache {
 			// This whole code block can be removed when SkinOptions::TALK_AT_TOP is always true
 			$this->getUser()->isRegistered()
 		) {
-			$namespaces = $contentNavigationUrls['associated-pages'];
 			// FIXME [core]: This seems unnecessary..
 			$subjectId = $title->getNamespaceKey( '' );
 			$talkId = $subjectId === 'main' ? 'talk' : "{$subjectId}_talk";
@@ -1079,16 +1104,6 @@ class SkinMinerva extends SkinMustache {
 		$request = $this->getRequest();
 		$requestAction = $this->getActionName();
 		$viewAction = $requestAction === 'view';
-
-		// Warning box styles are needed when reviewing old revisions
-		// and inside the fallback editor styles to action=edit page.
-		if (
-			$title->getNamespace() !== NS_MAIN ||
-			$request->getCheck( 'oldid' ) ||
-			!$viewAction
-		) {
-			$styles[] = 'skins.minerva.messageBox.styles';
-		}
 
 		if ( $title->isMainPage() ) {
 			$styles[] = 'skins.minerva.mainPage.styles';

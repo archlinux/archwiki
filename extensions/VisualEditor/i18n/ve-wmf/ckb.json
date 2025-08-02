@@ -11,9 +11,9 @@
 			"ئارام بکر"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|دەستکاریی دیداری]]",
+	"tag-visualeditor": "دەستکاریی دیداری",
 	"tag-visualeditor-description": "دەستکاری بە [[{{MediaWiki:visualeditor-descriptionpagelink}}|دەستکاریکەری دیداری]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|دەستکاریکەری دیداری: تاوتوێ]]",
+	"tag-visualeditor-needcheck": "دەستکاریکەری دیداری: تاوتوێ",
 	"tag-visualeditor-wikitext": "دەستکاریی سەرچاوەی ٢٠١٧",
 	"visualeditor-feedback-tool": "فیدباک دەربارەی ئەم نەرمامێرە بدە",
 	"visualeditor-help-label": "ڕێنوێنیی بەکارھێنەر بخوێنەرەوە",

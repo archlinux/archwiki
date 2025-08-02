@@ -2,7 +2,7 @@
 
 namespace Wikimedia\Message;
 
-use MediaWiki\Json\JsonDeserializer;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
 
 /**
  * Value object representing a message for i18n with alternative
@@ -23,11 +23,10 @@ use MediaWiki\Json\JsonDeserializer;
  * @newable
  */
 class DataMessageValue extends MessageValue {
-	/** @var string */
-	private $code;
+	use JsonCodecableTrait;
 
-	/** @var array|null */
-	private $data;
+	private string $code;
+	private ?array $data;
 
 	/**
 	 * @stable to call
@@ -39,7 +38,7 @@ class DataMessageValue extends MessageValue {
 	 * @param array|null $data Structured data representing the concept
 	 *  behind this message.
 	 */
-	public function __construct( $key, $params = [], $code = null, ?array $data = null ) {
+	public function __construct( string $key, array $params = [], ?string $code = null, ?array $data = null ) {
 		parent::__construct( $key, $params );
 
 		$this->code = $code ?? $key;
@@ -48,21 +47,27 @@ class DataMessageValue extends MessageValue {
 
 	/**
 	 * Static constructor for easier chaining of `->params()` methods
+	 *
 	 * @param string $key
 	 * @param (MessageParam|MessageValue|string|int|float)[] $params
 	 * @param string|null $code
 	 * @param array|null $data
+	 *
 	 * @return DataMessageValue
 	 */
-	public static function new( $key, $params = [], $code = null, ?array $data = null ) {
+	public static function new(
+		string $key,
+		array $params = [],
+		?string $code = null,
+		?array $data = null
+	): DataMessageValue {
 		return new DataMessageValue( $key, $params, $code, $data );
 	}
 
 	/**
 	 * Get the message code
-	 * @return string
 	 */
-	public function getCode() {
+	public function getCode(): string {
 		return $this->code;
 	}
 
@@ -70,11 +75,11 @@ class DataMessageValue extends MessageValue {
 	 * Get the message's structured data
 	 * @return array|null
 	 */
-	public function getData() {
+	public function getData(): ?array {
 		return $this->data;
 	}
 
-	public function dump() {
+	public function dump(): string {
 		$contents = '';
 		if ( $this->getParams() ) {
 			$contents = '<params>';
@@ -94,16 +99,16 @@ class DataMessageValue extends MessageValue {
 			. '</datamessage>';
 	}
 
-	protected function toJsonArray(): array {
+	public function toJsonArray(): array {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		return parent::toJsonArray() + [
-			'code' => $this->code,
-			'data' => $this->data,
-		];
+				'code' => $this->code,
+				'data' => $this->data,
+			];
 	}
 
-	public static function newFromJsonArray( JsonDeserializer $deserializer, array $json ) {
+	public static function newFromJsonArray( array $json ): DataMessageValue {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		return new self( $json['key'], $json['params'], $json['code'], $json['data'] );

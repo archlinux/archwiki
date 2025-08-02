@@ -14,6 +14,8 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Parser\ParserStatus;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
+use MediaWiki\Language\RawMessage;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
@@ -30,7 +32,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 	use MockAuthorityTrait;
 
 	/**
-	 * @param AbuseFilterPermissionManager|null $permissionManager
+	 * @param AbuseFilterPermissionManager&MockObject|null $permissionManager
 	 * @param FilterEvaluator|null $ruleChecker
 	 * @param array $restrictions
 	 * @param array $validFilterGroups
@@ -57,6 +59,10 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		if ( !$permissionManager ) {
 			$permissionManager = $this->createMock( AbuseFilterPermissionManager::class );
 			$permissionManager->method( 'canEditFilter' )->willReturn( true );
+			$permissionManager->method( 'getUsedProtectedVariables' )
+				->willReturnCallback( static function ( $usedVariables ) {
+					return array_intersect( $usedVariables, [ 'user_unnamed_ip' ] );
+				} );
 		}
 		return new FilterValidator(
 			$this->createMock( ChangeTagValidator::class ),
@@ -67,22 +73,24 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 				[
 					'AbuseFilterActionRestrictions' => array_fill_keys( $restrictions, true ),
 					'AbuseFilterValidGroups' => $validFilterGroups,
-					'AbuseFilterProtectedVariables' => [ 'user_unnamed_ip' ],
 				]
 			)
 		);
 	}
 
 	/**
+	 * Return a map of method names to return value stubbings suitable for
+	 * creating a mock AbstractFilter via createConfiguredMock().
+	 *
 	 * @param array $actions
-	 * @return AbstractFilter|MockObject
+	 * @return array
 	 */
-	private function getFilterWithActions( array $actions ): AbstractFilter {
-		$ret = $this->createMock( AbstractFilter::class );
-		$ret->method( 'getRules' )->willReturn( '1' );
-		$ret->method( 'getName' )->willReturn( 'Foo' );
-		$ret->method( 'getActions' )->willReturn( $actions );
-		return $ret;
+	private static function getFilterSpecWithActions( array $actions ): array {
+		return [
+			'getRules' => '1',
+			'getName' => 'Foo',
+			'getActions' => $actions,
+		];
 	}
 
 	/**
@@ -114,17 +122,23 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$this->assertStatusMessagesExactly( $expected, $actual );
 	}
 
-	public function provideSyntax(): Generator {
+	public static function provideSyntax(): Generator {
 		yield 'valid' => [ null, Status::newGood() ];
 		$excText = 'Internal error text';
 		yield 'invalid, internal error' => [
 			new InternalException( $excText ),
 			Status::newFatal( 'abusefilter-edit-badsyntax', $excText )
 		];
-		$excMsg = $this->getMockMessage( $excText );
-		$excep = $this->createMock( UserVisibleException::class );
-		$excep->method( 'getMessageObj' )->willReturn( $excMsg );
-		yield 'invalid, user error' => [ $excep, Status::newFatal( 'abusefilter-edit-badsyntax', $excMsg ) ];
+
+		$e = new class( 'test', 0, [] ) extends UserVisibleException {
+			public function getMessageObj(): Message {
+				return new RawMessage( 'test' );
+			}
+		};
+
+		yield 'invalid, user error' => [
+			$e, Status::newFatal( 'abusefilter-edit-badsyntax', new RawMessage( 'test' ) )
+		];
 	}
 
 	/**
@@ -156,7 +170,11 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideEmptyMessages
 	 */
 	public function testCheckEmptyMessages( array $actions, ?string $expectedError ) {
-		$actual = $this->getFilterValidator()->checkEmptyMessages( $this->getFilterWithActions( $actions ) );
+		$filter = $this->createConfiguredMock(
+			AbstractFilter::class,
+			self::getFilterSpecWithActions( $actions )
+		);
+		$actual = $this->getFilterValidator()->checkEmptyMessages( $filter );
 		$this->assertFilterValidatorStatus( $expectedError, $actual );
 	}
 
@@ -233,7 +251,10 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideMessagesOnGlobalFilters
 	 */
 	public function testCheckMessagesOnGlobalFilters( array $actions, bool $isGlobal, ?string $expectedError ) {
-		$filter = $this->getFilterWithActions( $actions );
+		$filter = $this->createConfiguredMock(
+			AbstractFilter::class,
+			self::getFilterSpecWithActions( $actions )
+		);
 		$filter->method( 'isGlobal' )->willReturn( $isGlobal );
 		$actual = $this->getFilterValidator()->checkMessagesOnGlobalFilters( $filter );
 		$this->assertFilterValidatorStatus( $expectedError, $actual );
@@ -266,53 +287,55 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param AbstractFilter $newFilter
-	 * @param AbstractFilter $oldFilter
+	 * @param array $newFilterSpec Map of method names to return value stubbings
+	 * @param array $oldFilterSpec Map of method names to return value stubbings
 	 * @param array $restrictions
-	 * @param AbuseFilterPermissionManager $permManager
+	 * @param bool $canModify
 	 * @param string|null $expectedError
 	 * @dataProvider provideRestrictedActions
 	 */
 	public function testCheckRestrictedActions(
-		AbstractFilter $newFilter,
-		AbstractFilter $oldFilter,
+		array $newFilterSpec,
+		array $oldFilterSpec,
 		array $restrictions,
-		AbuseFilterPermissionManager $permManager,
+		bool $canModify,
 		?string $expectedError
 	) {
+		$permManager = $this->createMock( AbuseFilterPermissionManager::class );
+		$permManager->method( 'canEditFilterWithRestrictedActions' )
+			->willReturn( $canModify );
+
+		$newFilter = $this->createConfiguredMock( AbstractFilter::class, $newFilterSpec );
+		$oldFilter = $this->createConfiguredMock( AbstractFilter::class, $oldFilterSpec );
+
 		$validator = $this->getFilterValidator( $permManager, null, $restrictions );
 		$performer = $this->createMock( Authority::class );
 		$actual = $validator->checkRestrictedActions( $performer, $newFilter, $oldFilter );
 		$this->assertFilterValidatorStatus( $expectedError, $actual );
 	}
 
-	public function provideRestrictedActions(): Generator {
-		$canModifyRestrictedPM = $this->createMock( AbuseFilterPermissionManager::class );
-		$canModifyRestrictedPM->method( 'canEditFilterWithRestrictedActions' )->willReturn( true );
-		$cannotModifyRestrictedPM = $this->createMock( AbuseFilterPermissionManager::class );
-		$cannotModifyRestrictedPM->method( 'canEditFilterWithRestrictedActions' )->willReturn( false );
-
-		$newFilter = $oldFilter = $this->getFilterWithActions( [] );
+	public static function provideRestrictedActions(): Generator {
+		$newFilterSpec = $oldFilterSpec = self::getFilterSpecWithActions( [] );
 		yield 'no restricted actions, with modify-restricted' =>
-			[ $newFilter, $oldFilter, [], $canModifyRestrictedPM, null ];
+			[ $newFilterSpec, $oldFilterSpec, [], true, null ];
 		yield 'no restricted actions, no modify-restricted' =>
-			[ $newFilter, $oldFilter, [], $cannotModifyRestrictedPM, null ];
+			[ $newFilterSpec, $oldFilterSpec, [], false, null ];
 
 		$restrictions = [ 'degroup' ];
-		$restricted = $this->getFilterWithActions( [ 'warn' => [ 'foo' ], 'degroup' => [] ] );
-		$unrestricted = $this->getFilterWithActions( [ 'warn' => [ 'foo' ] ] );
+		$restricted = self::getFilterSpecWithActions( [ 'warn' => [ 'foo' ], 'degroup' => [] ] );
+		$unrestricted = self::getFilterSpecWithActions( [ 'warn' => [ 'foo' ] ] );
 
 		yield 'restricted actions in new version, no modify-restricted' =>
-			[ $restricted, $unrestricted, $restrictions, $cannotModifyRestrictedPM, 'abusefilter-edit-restricted' ];
+			[ $restricted, $unrestricted, $restrictions, false, 'abusefilter-edit-restricted' ];
 
 		yield 'restricted actions in old version, no modify-restricted' =>
-			[ $unrestricted, $restricted, $restrictions, $cannotModifyRestrictedPM, 'abusefilter-edit-restricted' ];
+			[ $unrestricted, $restricted, $restrictions, false, 'abusefilter-edit-restricted' ];
 
 		yield 'restricted actions in new version, with modify-restricted' =>
-			[ $restricted, $unrestricted, $restrictions, $canModifyRestrictedPM, null ];
+			[ $restricted, $unrestricted, $restrictions, true, null ];
 
 		yield 'restricted actions in old version, with modify-restricted' =>
-			[ $unrestricted, $restricted, $restrictions, $canModifyRestrictedPM, null ];
+			[ $unrestricted, $restricted, $restrictions, true, null ];
 	}
 
 	public function testCheckProtectedVariablesGood() {
@@ -470,23 +493,38 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param AbstractFilter $newFilter
+	 * @param array $newFilterSpec Map of method names to return value stubbings
 	 * @param string|null $expectedError
-	 * @param AbuseFilterPermissionManager|null $permissionManager
-	 * @param FilterEvaluator|null $ruleChecker
+	 * @param bool $canEditFilter
+	 * @param ParserStatus|null $parserStatus
 	 * @param array $restrictions
 	 * @param bool $isFatalError
+	 * @param bool $canEditRestricted
 	 * @dataProvider provideCheckAll
 	 */
 	public function testCheckAll(
-		AbstractFilter $newFilter,
+		array $newFilterSpec,
 		?string $expectedError,
-		?AbuseFilterPermissionManager $permissionManager = null,
-		?FilterEvaluator $ruleChecker = null,
+		bool $canEditFilter = true,
+		?ParserStatus $parserStatus = null,
 		array $restrictions = [],
-		bool $isFatalError = false
+		bool $isFatalError = false,
+		bool $canEditRestricted = true
 	) {
+		$permissionManager = $this->createMock( AbuseFilterPermissionManager::class );
+		$permissionManager->method( 'canEditFilter' )
+			->willReturn( $canEditFilter );
+		$permissionManager->method( 'canEditFilterWithRestrictedActions' )
+			->willReturn( $canEditRestricted );
+
+		$parserStatus ??= new ParserStatus( null, [], 1 );
+
+		$ruleChecker = $this->createMock( FilterEvaluator::class );
+		$ruleChecker->method( 'checkSyntax' )
+			->willReturn( $parserStatus );
+
 		$validator = $this->getFilterValidator( $permissionManager, $ruleChecker, $restrictions );
+		$newFilter = $this->createConfiguredMock( AbstractFilter::class, $newFilterSpec );
 		$origFilter = $this->createMock( AbstractFilter::class );
 
 		$actual = $validator->checkAll( $newFilter, $origFilter, $this->createMock( Authority::class ) );
@@ -499,71 +537,80 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		}
 	}
 
-	public function provideCheckAll(): Generator {
-		$noopFilter = $this->createMock( AbstractFilter::class );
-		$noopFilter->method( 'getRules' )->willReturn( '1' );
-		$noopFilter->method( 'getName' )->willReturn( 'Foo' );
-		$noopFilter->method( 'isEnabled' )->willReturn( true );
+	public static function provideCheckAll(): Generator {
+		$noopFilterSpec = [
+			'getRules' => '1',
+			'getName' => 'Foo',
+			'isEnabled' => true,
+		];
 
-		$ruleChecker = $this->createMock( FilterEvaluator::class );
-		$syntaxStatus = new ParserStatus( $this->createMock( UserVisibleException::class ), [], 1 );
-		$ruleChecker->method( 'checkSyntax' )->willReturn( $syntaxStatus );
-		yield 'invalid syntax' => [ $noopFilter, 'abusefilter-edit-badsyntax', null, $ruleChecker ];
+		$syntaxStatus = new ParserStatus( new UserVisibleException( 'test', 1, [] ), [], 1 );
 
-		$missingFieldsFilter = $this->createMock( AbstractFilter::class );
-		$missingFieldsFilter->method( 'getRules' )->willReturn( '' );
-		$missingFieldsFilter->method( 'getName' )->willReturn( '' );
-		yield 'missing required fields' => [ $missingFieldsFilter, 'abusefilter-edit-missingfields' ];
+		yield 'invalid syntax' => [ $noopFilterSpec, 'abusefilter-edit-badsyntax', true, $syntaxStatus ];
 
-		$conflictFieldsFilter = $this->createMock( AbstractFilter::class );
-		$conflictFieldsFilter->method( 'getRules' )->willReturn( '1' );
-		$conflictFieldsFilter->method( 'getName' )->willReturn( 'Foo' );
-		$conflictFieldsFilter->method( 'isEnabled' )->willReturn( true );
-		$conflictFieldsFilter->method( 'isDeleted' )->willReturn( true );
-		yield 'conflicting fields' => [ $conflictFieldsFilter, 'abusefilter-edit-deleting-enabled' ];
+		$missingFieldsFilterSpec = [
+			'getRules' => '',
+			'getName' => '',
+			'isEnabled' => true,
+		];
 
-		yield 'invalid tags' => [ $this->getFilterWithActions( [ 'tag' => [] ] ), 'tags-create-no-name' ];
+		yield 'missing required fields' => [ $missingFieldsFilterSpec, 'abusefilter-edit-missingfields' ];
+
+		$conflictFieldsFilterSpec = [
+			'getRules' => '1',
+			'getName' => 'Foo',
+			'isEnabled' => true,
+			'isDeleted' => true,
+		];
+
+		yield 'conflicting fields' => [ $conflictFieldsFilterSpec, 'abusefilter-edit-deleting-enabled' ];
+
+		yield 'invalid tags' => [ self::getFilterSpecWithActions( [ 'tag' => [] ] ), 'tags-create-no-name' ];
 
 		yield 'missing required messages' =>
-			[ $this->getFilterWithActions( [ 'warn' => [ '' ] ] ), 'abusefilter-edit-invalid-warn-message' ];
+			[ self::getFilterSpecWithActions( [ 'warn' => [ '' ] ] ), 'abusefilter-edit-invalid-warn-message' ];
 
 		yield 'invalid throttle params' => [
-			$this->getFilterWithActions( [ 'throttle' => [ '1', '5.3,23', 'user', 'ip' ] ] ),
+			self::getFilterSpecWithActions( [ 'throttle' => [ '1', '5.3,23', 'user', 'ip' ] ] ),
 			'abusefilter-edit-invalid-throttlecount'
 		];
 
-		$permManager = $this->createMock( AbuseFilterPermissionManager::class );
-		$permManager->method( 'canEditFilter' )->willReturn( false );
-		yield 'global filter, no modify-global' => [ $noopFilter, 'abusefilter-edit-notallowed-global', $permManager,
-			null, [], true ];
-
-		$customWarnFilter = $this->getFilterWithActions( [ 'warn' => [ 'foo' ] ] );
-		$customWarnFilter->method( 'isGlobal' )->willReturn( true );
-		yield 'global filter, custom message' => [ $customWarnFilter, 'abusefilter-edit-notallowed-global-custom-msg' ];
-
-		$permManager = $this->createMock( AbuseFilterPermissionManager::class );
-		$permManager->method( 'canEditFilter' )->willReturn( true );
-		$permManager->method( 'canEditFilterWithRestrictedActions' )->willReturn( false );
-		$restrictedFilter = $this->getFilterWithActions( [ 'degroup' => [] ] );
-		yield 'restricted actions' => [
-			$restrictedFilter,
-			'abusefilter-edit-restricted',
-			$permManager,
-			null,
-			[ 'degroup' ]
+		yield 'global filter, no modify-global' => [
+			$noopFilterSpec, 'abusefilter-edit-notallowed-global', false, null, [], true
 		];
 
-		$invalidGroupFilter = $this->createMock( AbstractFilter::class );
-		$invalidGroupFilter->method( 'getRules' )->willReturn( 'true' );
-		$invalidGroupFilter->method( 'getName' )->willReturn( 'Foo' );
-		$invalidGroupFilter->expects( $this->atLeastOnce() )->method( 'getGroup' )->willReturn( 'xxx-invalid' );
-		yield 'invalid group' => [ $invalidGroupFilter, 'abusefilter-edit-invalid-group' ];
+		$customWarnFilterSpec = self::getFilterSpecWithActions( [ 'warn' => [ 'foo' ] ] );
+		$customWarnFilterSpec += [ 'isGlobal' => true ];
+		yield 'global filter, custom message' => [
+			$customWarnFilterSpec, 'abusefilter-edit-notallowed-global-custom-msg'
+		];
 
-		$filter = $this->createMock( AbstractFilter::class );
-		$filter->method( 'getRules' )->willReturn( 'true' );
-		$filter->method( 'getName' )->willReturn( 'Foo' );
-		$filter->method( 'getGroup' )->willReturn( 'default' );
-		yield 'valid' => [ $filter, null ];
+		$restrictedFilterSpec = self::getFilterSpecWithActions( [ 'degroup' => [] ] );
+		yield 'restricted actions' => [
+			$restrictedFilterSpec,
+			'abusefilter-edit-restricted',
+			true,
+			null,
+			[ 'degroup' ],
+			false,
+			false
+		];
+
+		$invalidGroupFilterSpec = [
+			'getRules' => 'true',
+			'getName' => 'Foo',
+			'getGroup' => 'xxx-invalid',
+		];
+
+		yield 'invalid group' => [ $invalidGroupFilterSpec, 'abusefilter-edit-invalid-group' ];
+
+		$validFilterSpec = [
+			'getRules' => 'true',
+			'getName' => 'Foo',
+			'getGroup' => 'default',
+		];
+
+		yield 'valid' => [ $validFilterSpec, null ];
 	}
 
 	/**

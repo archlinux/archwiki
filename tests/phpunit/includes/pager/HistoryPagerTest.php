@@ -1,7 +1,10 @@
 <?php
 
+use MediaWiki\Actions\HistoryAction;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Pager\HistoryPager;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\MutableRevisionRecord;

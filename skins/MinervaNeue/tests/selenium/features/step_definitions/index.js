@@ -10,21 +10,19 @@ const { defineSupportCode } = require( '@cucumber/cucumber' ),
 		pageExists, iAmOnAPageThatDoesNotExist, iShouldSeeAToastNotification,
 		iShouldSeeAToastNotificationWithMessage, iAmUsingMobileScreenResolution,
 		iAmUsingTheMobileSite, iClickTheBrowserBackButton,
-		iClickTheOverlayCloseButton, iDoNotSeeAnOverlay,
+		iClickTheOverlayCloseButton,
 		iAmLoggedIntoTheMobileWebsite,
 		iAmOnPage, iAmInBetaMode
 	} = require( './common_steps' ),
 	{
 		iClickTheEditButton, iSeeTheWikitextEditorOverlay, iClearTheEditor,
 		iDoNotSeeTheWikitextEditorOverlay,
-		iTypeIntoTheEditor, iClickContinue, iClickSubmit, iSayOkayInTheConfirmDialog,
-		theTextOfTheFirstHeadingShouldBe, thereShouldBeARedLinkWithText
+		iTypeIntoTheEditor, iClickContinue, iClickSubmit, iSayOkayInTheConfirmDialog
 	} = require( './editor_steps' ),
 	{
-		theWatchstarShouldNotBeSelected, theWatchstarShouldBeSelected,
+		theWatchstarShouldBeSelected,
 		iClickTheWatchstar, iClickTheUnwatchStar } = require( './watch_steps' ),
-	{ iVisitMyUserPage, iShouldBeOnMyUserPage, thereShouldBeALinkToMyContributions,
-		thereShouldBeALinkToMyTalkPage
+	{ iVisitMyUserPage, iShouldBeOnMyUserPage
 	} = require( './user_page_steps' ),
 	{
 		iClickTheSearchIcon,
@@ -53,9 +51,6 @@ defineSupportCode( ( { Then, When, Given } ) => {
 	When( /^I say OK in the confirm dialog$/, iSayOkayInTheConfirmDialog );
 	When( /^I click the wikitext editor overlay close button$/, iClickTheOverlayCloseButton );
 	Then( /^I do not see the wikitext editor overlay$/, iDoNotSeeTheWikitextEditorOverlay );
-	Then( /^the text of the first heading should be "(.+)"$/, theTextOfTheFirstHeadingShouldBe );
-	Then( /^there should be a red link with text "(.+)"$/, thereShouldBeARedLinkWithText );
-	Then( /^I should not see the wikitext editor overlay$/, iDoNotSeeAnOverlay );
 
 	// common steps
 	Given( /^I am using the mobile site$/, iAmUsingTheMobileSite );
@@ -92,8 +87,6 @@ defineSupportCode( ( { Then, When, Given } ) => {
 	// user page
 	Given( /^I visit my user page$/, iVisitMyUserPage );
 	When( /^I should be on my user page$/, iShouldBeOnMyUserPage );
-	Then( /^there should be a link to my contributions$/, thereShouldBeALinkToMyContributions );
-	Then( /^there should be a link to my talk page$/, thereShouldBeALinkToMyTalkPage );
 
 	// search
 	When( /^I click the search icon$/, iClickTheSearchIcon );
@@ -111,7 +104,6 @@ defineSupportCode( ( { Then, When, Given } ) => {
 	// watchstar
 	When( /^I click the watch star$/, iClickTheWatchstar );
 	When( /^I click the unwatch star$/, iClickTheUnwatchStar );
-	Then( /^the watch star should not be selected$/, theWatchstarShouldNotBeSelected );
 	Then( /^the watch star should be selected$/, theWatchstarShouldBeSelected );
 
 } );

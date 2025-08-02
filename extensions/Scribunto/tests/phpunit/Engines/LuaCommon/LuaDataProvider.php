@@ -47,6 +47,7 @@ class LuaDataProvider implements Iterator {
 		return $this->key <= $this->exports['count'];
 	}
 
+	/** @return int */
 	#[\ReturnTypeWillChange]
 	public function key() {
 		return $this->key;
@@ -56,6 +57,7 @@ class LuaDataProvider implements Iterator {
 		$this->key++;
 	}
 
+	/** @return mixed */
 	#[\ReturnTypeWillChange]
 	public function current() {
 		return $this->engine->getInterpreter()->callFunction( $this->exports['provide'], $this->key );

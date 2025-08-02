@@ -17,8 +17,6 @@
 	"cite_error_ref_too_many_keys": "არასწორი ტეგი <code>&lt;ref&gt;</code>;\nარასწორი სახელები, ძალიან ბევრი.",
 	"cite_error_ref_no_input": "არასწორი ტეგი <ref>; ელემენტი უნდა შეიცავდეს შინაარს.",
 	"cite_error_references_invalid_parameters": "არასწორი ტეგი <code>&lt;references&gt;</code>;\nპარამეტრები არ არის დაშვებული.\nგამოიყენეთ <code>&lt;references /&gt;</code>",
-	"cite_error_references_no_backlink_label": "არ არის საკმარისი სიმბოლო მზარდი ჰიპერბმულებისათვის. საჭიროა გააფართოვოთ სისტემური შეტყობინება [[MediaWiki:Cite references link many format backlink labels]]",
-	"cite_error_no_link_label_group": "მომხმარებელთა ბმულების მონიშვნები ჯგუფისათვის „$1“ დასრულდა. განსაზღვრეთ დამატებითები შეტყობინებაში [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "არასწორი ტეგი <code>&lt;ref&gt;</code>;\nსქოლიოსათვის <code>$1</code> არ არის მითითებული ტექსტი",
 	"cite_error_included_ref": "დამხურავი ტეგი <code>&lt;/ref&gt;</code> დაკარგულია",
 	"cite_error_group_refs_without_references": "ჯგუფი „$1“ არსებული ტეგებისათვის <code>&lt;ref&gt;</code> ვერ მოიძებნა შესაბამისი ტეგი <code>&lt;references group=\"$1\"/&gt;</code>, ან გამოტოვებულია დამხურავი ტეგი <code>&lt;/ref&gt;</code>",

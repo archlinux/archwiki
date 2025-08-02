@@ -335,7 +335,7 @@ ve.dm.InternalList.prototype.addNode = function ( groupName, key, index, node ) 
 			group.firstNodes[ index ] = node;
 		}
 	}
-	if ( group.indexOrder.indexOf( index ) === -1 ) {
+	if ( !group.indexOrder.includes( index ) ) {
 		group.indexOrder.push( index );
 	}
 	this.markGroupAsChanged( groupName );
@@ -347,7 +347,7 @@ ve.dm.InternalList.prototype.addNode = function ( groupName, key, index, node ) 
  * @param {string} groupName Name of group which has changed
  */
 ve.dm.InternalList.prototype.markGroupAsChanged = function ( groupName ) {
-	if ( this.groupsChanged.indexOf( groupName ) === -1 ) {
+	if ( !this.groupsChanged.includes( groupName ) ) {
 		this.groupsChanged.push( groupName );
 	}
 };
@@ -414,6 +414,8 @@ ve.dm.InternalList.prototype.sortGroupIndexes = function ( group ) {
 		// Sometimes there is no node at the time of sorting (T350902) so move these to the end to be ignored
 		if ( !group.firstNodes[ index1 ] ) {
 			return !group.firstNodes[ index2 ] ? 0 : 1;
+		} else if ( !group.firstNodes[ index2 ] ) {
+			return -1;
 		}
 		// Sort placeholder nodes to the end, so they don't interfere with numbering
 		if ( group.firstNodes[ index1 ].getAttribute( 'placeholder' ) ) {

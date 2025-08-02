@@ -6,6 +6,7 @@ use DataValues\StringValue;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Site\Site;
 use Psr\Log\LoggerInterface;
 use Wikibase\DataModel\Entity\BasicEntityIdParser;
 use Wikibase\DataModel\Entity\EntityIdParsingException;
@@ -254,5 +255,45 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 			[ true ],
 			[ false ],
 		];
+	}
+
+	public function testGetUrlFromUnknownSymbol() {
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->expects( $this->once() )
+			->method( 'warning' )
+			->with( $this->stringContains( 'Cannot fetch QID Q9999 from Wikibase' ) );
+		$item = $this->setupMassEnergyEquivalenceItem( false );
+		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems(
+			new EntityRevision( $item ),
+			false,
+			$logger
+		);
+		$wikibaseConnector->getUrlFromSymbol( 'Q9999', 'en' );
+	}
+
+	public function testGetUrlFromSymbolWithValidParts() {
+		$item = $this->setupMassEnergyEquivalenceItem( true );
+		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems( new EntityRevision( $item ) );
+		$output = $wikibaseConnector->getUrlFromSymbol( 'Q1', 'en' );
+		self::assertEqualsCanonicalizing( [ 0 => [ 'url' => 'https://example.com/', 'title' => 'energy' ],
+		1 => [ 'url' => 'https://example.com/', 'title' => 'mass' ],
+		2 => [ 'url' => 'https://example.com/', 'title' => 'speed of light' ] ], $output );
+	}
+
+	public function testGetUrlFromSymbolWithPartHavingNullUrl() {
+		$item = $this->setupMassEnergyEquivalenceItem( true );
+		// mock return url with reflection
+		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems( new EntityRevision( $item ) );
+		$site_mock = $this->createMock( Site::class );
+		$site_mock->method( 'getGlobalId' )->willReturn( '' );
+		$site_mock->method( 'getPageUrl' )->willReturn( null );
+		$reflection = new \ReflectionClass( $wikibaseConnector );
+		$reflection_property = $reflection->getProperty( 'site' );
+		$reflection_property->setAccessible( true );
+		$reflection_property->setValue( $wikibaseConnector, $site_mock );
+		$output = $wikibaseConnector->getUrlFromSymbol( 'Q1', 'en' );
+		self::assertEqualsCanonicalizing( [ 0 => [ 'url' => '', 'title' => 'energy' ],
+			1 => [ 'url' => '', 'title' => 'mass' ],
+			2 => [ 'url' => '', 'title' => 'speed of light' ] ], $output );
 	}
 }

@@ -53,6 +53,7 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 		return GadgetDefinitionContent::class;
 	}
 
+	/** @inheritDoc */
 	public function makeEmptyContent() {
 		$class = $this->getContentClass();
 		return new $class( FormatJson::encode( $this->getEmptyDefinition(), "\t" ) );
@@ -72,10 +73,13 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 		return $status;
 	}
 
+	/**
+	 * @return array<string,array>
+	 */
 	public function getEmptyDefinition() {
 		return [
 			'settings' => [
-				'category' => '',
+				'section' => '',
 			],
 			'module' => [
 				'pages' => [],
@@ -84,6 +88,9 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 		];
 	}
 
+	/**
+	 * @return array<string,array>
+	 */
 	public function getDefaultMetadata() {
 		return [
 			'settings' => [
@@ -97,7 +104,7 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 				'namespaces' => [],
 				'categories' => [],
 				'contentModels' => [],
-				'category' => '',
+				'section' => '',
 				'supportsUrlLoad' => false,
 			],
 			'module' => [
@@ -133,18 +140,14 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 					if ( str_starts_with( $dep, 'ext.gadget.' ) ) {
 						$gadgetId = explode( 'ext.gadget.', $dep )[ 1 ];
 						$title = $this->gadgetRepo->getGadgetDefinitionTitle( $gadgetId );
-						if ( $title ) {
-							$this->makeLink( $parserOutput, $dep, $title );
-						}
+						$this->makeLink( $parserOutput, $dep, $title );
 					}
 				}
 			}
 			if ( isset( $data->module->peers ) ) {
 				foreach ( $data->module->peers as &$peer ) {
 					$title = $this->gadgetRepo->getGadgetDefinitionTitle( $peer );
-					if ( $title ) {
-						$this->makeLink( $parserOutput, $peer, $title );
-					}
+					$this->makeLink( $parserOutput, $peer, $title );
 				}
 			}
 			if ( isset( $data->module->messages ) ) {
@@ -153,11 +156,17 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 					$this->makeLink( $parserOutput, $msg, $title );
 				}
 			}
-			if ( isset( $data->settings->category ) && $data->settings->category ) {
+			if ( isset( $data->settings->categories ) ) {
+				foreach ( $data->settings->categories as &$category ) {
+					$title = Title::makeTitleSafe( NS_CATEGORY, $category );
+					$this->makeLink( $parserOutput, $category, $title );
+				}
+			}
+			if ( isset( $data->settings->section ) && $data->settings->section ) {
 				$this->makeLink(
 					$parserOutput,
-					$data->settings->category,
-					Title::makeTitleSafe( NS_MEDIAWIKI, "gadget-section-" . $data->settings->category )
+					$data->settings->section,
+					Title::makeTitleSafe( NS_MEDIAWIKI, "gadget-section-" . $data->settings->section )
 				);
 			}
 		}

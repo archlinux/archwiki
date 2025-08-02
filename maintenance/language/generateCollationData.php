@@ -25,7 +25,9 @@
 require_once __DIR__ . '/../Maintenance.php';
 // @codeCoverageIgnoreEnd
 
+use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\StaticArrayWriter;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Generate first letter data files for Collation.php
@@ -117,7 +119,7 @@ class GenerateCollationData extends Maintenance {
 		$uxr->readChars( [ $this, 'charCallback' ] );
 	}
 
-	private function charCallback( $data ) {
+	private function charCallback( array $data ) {
 		// Skip non-printable characters,
 		// but do not skip a normal space (U+0020) since
 		// people like to use that as a fake no header symbol.
@@ -316,11 +318,11 @@ class UcdXmlReader {
 	/** @var array */
 	public $currentBlock;
 
-	public function __construct( $fileName ) {
+	public function __construct( string $fileName ) {
 		$this->fileName = $fileName;
 	}
 
-	public function readChars( $callback ) {
+	public function readChars( callable $callback ) {
 		$this->getBlocks();
 		$this->currentBlock = reset( $this->blocks );
 		$xml = $this->open();
@@ -344,7 +346,7 @@ class UcdXmlReader {
 		$xml->close();
 	}
 
-	protected function open() {
+	protected function open(): XMLReader {
 		$this->xml = new XMLReader;
 		if ( !$this->xml->open( $this->fileName ) ) {
 			throw new RuntimeException( __METHOD__ . ": unable to open {$this->fileName}" );
@@ -400,11 +402,11 @@ class UcdXmlReader {
 			}
 
 			$attrs['cp'] = $hexCp;
-			call_user_func( $this->callback, $attrs );
+			( $this->callback )( $attrs );
 		}
 	}
 
-	public function getBlocks() {
+	public function getBlocks(): array {
 		if ( $this->blocks ) {
 			return $this->blocks;
 		}

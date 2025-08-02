@@ -365,6 +365,13 @@ ve.ce.FocusableNode.prototype.createInvisibleIcon = function () {
 		tabIndex: null,
 		icon: this.constructor.static.iconWhenInvisible
 	} );
+	// Add an invisible image to the button, which is expanded to cover the
+	// whole area, so that when selected the element is highlighted (T390733).
+	this.icon.$element.append(
+		$( '<img>' )
+			.addClass( 've-ce-focusableNode-invisibleIcon-selectionMask' )
+			.attr( 'src', ve.ce.minImgDataUri )
+	);
 	this.updateInvisibleIconLabel();
 };
 
@@ -440,7 +447,7 @@ ve.ce.FocusableNode.prototype.onFocusableMouseDown = function ( e ) {
 		setTimeout( () => {
 			// Undo ce=true as soon as the context menu is shown
 			this.$highlights.prop( 'contentEditable', 'false' );
-			this.focusableSurface.preparePasteTargetForCopy();
+			this.focusableSurface.prepareClipboardHandlerForCopy();
 		} );
 	}
 
@@ -499,7 +506,7 @@ ve.ce.FocusableNode.prototype.executeCommand = function () {
 ve.ce.FocusableNode.prototype.onFocusableDragStart = function ( e ) {
 	if ( this.focusableSurface ) {
 		// Pass event up to the surface
-		this.focusableSurface.onDocumentDragStart( e );
+		this.focusableSurface.$element.trigger( e );
 	}
 };
 
@@ -510,11 +517,11 @@ ve.ce.FocusableNode.prototype.onFocusableDragStart = function ( e ) {
  *
  * @param {jQuery.Event} e Drag end event
  */
-ve.ce.FocusableNode.prototype.onFocusableDragEnd = function () {
+ve.ce.FocusableNode.prototype.onFocusableDragEnd = function ( e ) {
 	// endRelocation is usually triggered by onDocumentDrop in the surface, but if it isn't
 	// trigger it here instead
 	if ( this.focusableSurface ) {
-		this.focusableSurface.endRelocation();
+		this.focusableSurface.$element.trigger( e );
 	}
 };
 

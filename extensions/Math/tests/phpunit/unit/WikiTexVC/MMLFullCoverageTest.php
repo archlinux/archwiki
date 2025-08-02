@@ -2,6 +2,7 @@
 namespace MediaWiki\Extension\Math\WikiTexVC;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\Tests\WikiTexVC\MathServiceContainerTrait;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLComparator;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLTestUtil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLTestUtilHTML;
@@ -22,6 +23,8 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
+	use MathServiceContainerTrait;
+
 	/** @var float */
 	private static $SIMILARITYTRESH = 0.7;
 	/** @var bool */
@@ -174,5 +177,10 @@ final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
 			$f = array_slice( $f, self::$FILTERSTART, self::$FILTERLENGTH );
 		}
 		return $f;
+	}
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->setUpMathServiceContainer();
 	}
 }

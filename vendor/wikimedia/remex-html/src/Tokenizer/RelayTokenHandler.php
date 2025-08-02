@@ -12,8 +12,7 @@ namespace Wikimedia\RemexHtml\Tokenizer;
  * @since 2.1.0
  */
 class RelayTokenHandler implements TokenHandler {
-	/** @var TokenHandler */
-	protected $nextHandler;
+	protected TokenHandler $nextHandler;
 
 	/**
 	 * Construct a RelayTokenHandler which will call $nextHandler on all events

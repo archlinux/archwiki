@@ -5,5 +5,7 @@
 			"Lydie maliki"
 		]
 	},
-	"cite_error": "Kotánga libunga: $1"
+	"cite_error": "Kotánga libunga: $1",
+	"cite_error_ref_follow_conflicts": "<code><ref follow=\"…\"></code> tag oyo ezali bolandi ya oyo ya liboso ekoki kopesama nkombo moko moko te to kozala na makambo ya mikemike te.",
+	"cite-configuration-backlink-description": "Ba lien ya nsima emonanaka na liste ya ba références mpe emonisaka maloba na nse ya lokasa. Soki balobeli yango mbala mingi, batyaka nimero na yango. Kobongisa yango epesi nzela na kosalela alfabɛ ya ndenge na ndenge mpo na mokano wana."
 }

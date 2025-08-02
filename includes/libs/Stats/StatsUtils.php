@@ -25,9 +25,6 @@ use InvalidArgumentException;
 use Wikimedia\Stats\Exceptions\InvalidConfigurationException;
 
 /**
- *
- * StatsUtils Implementation
- *
  * Functionality common to all metric types.
  *
  * @author Cole White
@@ -112,27 +109,6 @@ class StatsUtils {
 	}
 
 	/**
-	 * Merges two associative arrays of labels.  Prioritizes leftmost labels.
-	 *
-	 * @param array $leftLabels
-	 * @param array $rightLabels
-	 * @return array
-	 */
-	public static function mergeLabels( array $leftLabels, array $rightLabels ): array {
-		$output = [];
-		foreach ( $leftLabels as $key => $value ) {
-			$output[$key] = $value;
-		}
-		foreach ( $rightLabels as $key => $value ) {
-			if ( array_key_exists( $key, $output ) ) {
-				continue;
-			}
-			$output[$key] = $value;
-		}
-		return $output;
-	}
-
-	/**
 	 * Normalize an array of strings.
 	 *
 	 * @param string[] $entities
@@ -149,16 +125,18 @@ class StatsUtils {
 	/**
 	 * Normalize strings to a metrics-compatible format.
 	 *
-	 * Replace any other non-alphanumeric characters with underscores.
-	 * Eliminate repeated underscores.
+	 * Replace all other non-alphanumeric characters with an underscore.
 	 * Trim leading or trailing underscores.
+	 *
+	 * Note: We are not using /i (case-insensitive flag)
+	 * or \d (digit character class escape) here because
+	 * their behavior changes with respect to locale settings.
 	 *
 	 * @param string $entity
 	 * @return string
 	 */
 	public static function normalizeString( string $entity ): string {
-		$entity = preg_replace( "/[^a-z0-9]/i", "_", $entity );
-		$entity = preg_replace( "/_+/", "_", $entity );
-		return trim( $entity, "_" );
+		$entity = preg_replace( '/[^a-zA-Z0-9]+/', '_', $entity );
+		return trim( $entity, '_' );
 	}
 }

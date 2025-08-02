@@ -44,10 +44,6 @@ class SpecialComparePages extends SpecialPage {
 	/** @var DifferenceEngine */
 	private $differenceEngine;
 
-	/**
-	 * @param RevisionLookup $revisionLookup
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 */
 	public function __construct(
 		RevisionLookup $revisionLookup,
 		IContentHandlerFactory $contentHandlerFactory
@@ -150,9 +146,9 @@ class SpecialComparePages extends SpecialPage {
 		}
 	}
 
-	private function revOrTitle( $revision, $title ) {
+	private function revOrTitle( ?string $revision, ?string $title ): ?int {
 		if ( $revision ) {
-			return $revision;
+			return (int)$revision;
 		} elseif ( $title ) {
 			return Title::newFromText( $title )->getLatestRevID();
 		}

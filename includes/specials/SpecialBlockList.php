@@ -20,21 +20,27 @@
 
 namespace MediaWiki\Specials;
 
+use InvalidArgumentException;
+use MediaWiki\Block\AutoBlockTarget;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
-use MediaWiki\Block\BlockUtils;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\BlockTarget;
+use MediaWiki\Block\BlockTargetFactory;
+use MediaWiki\Block\BlockTargetWithIp;
 use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\HideUserUtils;
+use MediaWiki\Block\UserBlockTarget;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Pager\BlockListPager;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
-use Wikimedia\IPUtils;
+use MediaWiki\User\TempUser\TempUserConfig;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
@@ -59,10 +65,11 @@ class SpecialBlockList extends SpecialPage {
 	private BlockRestrictionStore $blockRestrictionStore;
 	private IConnectionProvider $dbProvider;
 	private CommentStore $commentStore;
-	private BlockUtils $blockUtils;
+	private BlockTargetFactory $blockTargetFactory;
 	private HideUserUtils $hideUserUtils;
 	private BlockActionInfo $blockActionInfo;
 	private RowCommentFormatter $rowCommentFormatter;
+	private TempUserConfig $tempUserConfig;
 
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
@@ -70,10 +77,11 @@ class SpecialBlockList extends SpecialPage {
 		BlockRestrictionStore $blockRestrictionStore,
 		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
-		BlockUtils $blockUtils,
+		BlockTargetFactory $blockTargetFactory,
 		HideUserUtils $hideUserUtils,
 		BlockActionInfo $blockActionInfo,
-		RowCommentFormatter $rowCommentFormatter
+		RowCommentFormatter $rowCommentFormatter,
+		TempUserConfig $tempUserConfig
 	) {
 		parent::__construct( 'BlockList' );
 
@@ -82,10 +90,11 @@ class SpecialBlockList extends SpecialPage {
 		$this->blockRestrictionStore = $blockRestrictionStore;
 		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
-		$this->blockUtils = $blockUtils;
+		$this->blockTargetFactory = $blockTargetFactory;
 		$this->hideUserUtils = $hideUserUtils;
 		$this->blockActionInfo = $blockActionInfo;
 		$this->rowCommentFormatter = $rowCommentFormatter;
+		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -119,6 +128,22 @@ class SpecialBlockList extends SpecialPage {
 		// Setup BlockListPager here to get the actual default Limit
 		$pager = $this->getBlockListPager();
 
+		$blockFilterOptions = [
+			'blocklist-tempblocks' => 'tempblocks',
+			'blocklist-indefblocks' => 'indefblocks',
+			'blocklist-autoblocks' => 'autoblocks',
+			'blocklist-addressblocks' => 'addressblocks',
+			'blocklist-rangeblocks' => 'rangeblocks',
+		];
+
+		if ( $this->tempUserConfig->isKnown() ) {
+			// Clarify that "userblocks" excludes named users only if temporary accounts are known (T380266)
+			$blockFilterOptions['blocklist-nameduserblocks'] = 'userblocks';
+			$blockFilterOptions['blocklist-tempuserblocks'] = 'tempuserblocks';
+		} else {
+			$blockFilterOptions['blocklist-userblocks'] = 'userblocks';
+		}
+
 		// Just show the block list
 		$fields = [
 			'Target' => [
@@ -130,14 +155,7 @@ class SpecialBlockList extends SpecialPage {
 			],
 			'Options' => [
 				'type' => 'multiselect',
-				'options-messages' => [
-					'blocklist-tempblocks' => 'tempblocks',
-					'blocklist-indefblocks' => 'indefblocks',
-					'blocklist-autoblocks' => 'autoblocks',
-					'blocklist-userblocks' => 'userblocks',
-					'blocklist-addressblocks' => 'addressblocks',
-					'blocklist-rangeblocks' => 'rangeblocks',
-				],
+				'options-messages' => $blockFilterOptions,
 				'flatlist' => true,
 			],
 		];
@@ -184,37 +202,27 @@ class SpecialBlockList extends SpecialPage {
 		$conds = [];
 		$db = $this->getDB();
 
+		// Add target conditions
 		if ( $this->target !== '' ) {
-			[ $target, $type ] = $this->blockUtils->parseBlockTarget( $this->target );
-
-			switch ( $type ) {
-				case DatabaseBlock::TYPE_ID:
-				case DatabaseBlock::TYPE_AUTO:
-					$conds['bl_id'] = $target;
-					break;
-
-				case DatabaseBlock::TYPE_IP:
-				case DatabaseBlock::TYPE_RANGE:
-					[ $start, $end ] = IPUtils::parseRange( $target );
-					$conds[] = $this->blockStore->getRangeCond( $start, $end );
-					$conds['bt_auto'] = 0;
-					break;
-
-				case DatabaseBlock::TYPE_USER:
-					if ( $target->getId() ) {
-						$conds['bt_user'] = $target->getId();
-						$conds['bt_auto'] = 0;
-					} else {
-						// No such user
-						$conds[] = '1=0';
-					}
-					break;
+			$target = $this->blockTargetFactory->newFromString( $this->target );
+			if ( $target ) {
+				$conds = $this->getTargetConds( $target );
 			}
 		}
 
 		// Apply filters
 		if ( in_array( 'userblocks', $this->options ) ) {
-			$conds['bt_user'] = null;
+			$namedUserConds = $db->expr( 'bt_user', '=', null );
+
+			// If temporary accounts are a known concept on this wiki,
+			// have the "Hide account blocks" filter exclude only named users (T380266).
+			if ( $this->tempUserConfig->isKnown() ) {
+				$namedUserConds = $namedUserConds->orExpr(
+					$this->tempUserConfig->getMatchCondition( $db, 'bt_user_text', IExpression::LIKE )
+				);
+			}
+
+			$conds[] = $namedUserConds;
 		}
 		if ( in_array( 'autoblocks', $this->options ) ) {
 			$conds['bl_parent_block_id'] = null;
@@ -228,6 +236,16 @@ class SpecialBlockList extends SpecialPage {
 			$conds[] = $db->expr( 'bt_user', '!=', null )->or( 'bt_range_start', '!=', null );
 		} elseif ( in_array( 'rangeblocks', $this->options ) ) {
 			$conds['bt_range_start'] = null;
+		}
+
+		if (
+			in_array( 'tempuserblocks', $this->options ) &&
+			$this->tempUserConfig->isKnown()
+		) {
+			$conds[] = $db->expr( 'bt_user', '=', null )
+				->orExpr(
+					$this->tempUserConfig->getMatchCondition( $db, 'bt_user_text', IExpression::NOT_LIKE )
+				);
 		}
 
 		$hideTemp = in_array( 'tempblocks', $this->options );
@@ -251,7 +269,7 @@ class SpecialBlockList extends SpecialPage {
 			$this->getContext(),
 			$this->blockActionInfo,
 			$this->blockRestrictionStore,
-			$this->blockUtils,
+			$this->blockTargetFactory,
 			$this->hideUserUtils,
 			$this->commentStore,
 			$this->linkBatchFactory,
@@ -261,6 +279,45 @@ class SpecialBlockList extends SpecialPage {
 			$this->getSpecialPageFactory(),
 			$conds
 		);
+	}
+
+	/**
+	 * Get conditions matching a parsed block target.
+	 *
+	 * The details are different from other similarly named functions elsewhere:
+	 *   - If an IP address or range is requested, autoblocks are not shown.
+	 *   - Requests for single IP addresses include range blocks covering the
+	 *     address. This is like a "vague target" query in DatabaseBlockStore,
+	 *     except that autoblocks are excluded.
+	 *   - If a named user doesn't exist, it is assumed that there are no blocks.
+	 *
+	 * @param BlockTarget $target
+	 * @return array
+	 */
+	private function getTargetConds( BlockTarget $target ) {
+		if ( $target instanceof AutoBlockTarget ) {
+			return [ 'bl_id' => $target->getId() ];
+		}
+		if ( $target instanceof BlockTargetWithIp ) {
+			$range = $target->toHexRange();
+			return [
+				$this->blockStore->getRangeCond( $range[0], $range[1] ),
+				'bt_auto' => 0
+			];
+		}
+		if ( $target instanceof UserBlockTarget ) {
+			$user = $target->getUserIdentity();
+			if ( $user->getId() ) {
+				return [
+					'bt_user' => $user->getId(),
+					'bt_auto' => 0
+				];
+			} else {
+				// No such user
+				return [ '1=0' ];
+			}
+		}
+		throw new InvalidArgumentException( 'Invalid block target type' );
 	}
 
 	/**
@@ -283,7 +340,10 @@ class SpecialBlockList extends SpecialPage {
 		}
 
 		if ( $pager->getNumRows() ) {
-			$out->addParserOutputContent( $pager->getFullOutput() );
+			$out->addParserOutputContent(
+				$pager->getFullOutput(),
+				ParserOptions::newFromContext( $this->getContext() )
+			);
 		} elseif ( $this->target ) {
 			$out->addWikiMsg( 'ipblocklist-no-results' );
 		} else {

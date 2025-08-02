@@ -35,14 +35,14 @@ ve.dm.MWGalleryImageNode.static.childNodeTypes = [ 'mwGalleryImageCaption' ];
 ve.dm.MWGalleryImageNode.static.matchFunction = function ( element ) {
 	const parentTypeof = ( element.parentNode && element.parentNode.getAttribute( 'typeof' ) ) || '';
 	return element.getAttribute( 'class' ) === 'gallerybox' &&
-		parentTypeof.trim().split( /\s+/ ).indexOf( 'mw:Extension/gallery' ) !== -1;
+		parentTypeof.trim().split( /\s+/ ).includes( 'mw:Extension/gallery' );
 };
 
 ve.dm.MWGalleryImageNode.static.parentNodeTypes = [ 'mwGallery' ];
 
 ve.dm.MWGalleryImageNode.static.preserveHtmlAttributes = function ( attribute ) {
 	const attributes = [ 'typeof', 'class', 'src', 'resource', 'width', 'height', 'href', 'rel', 'alt', 'data-mw' ];
-	return attributes.indexOf( attribute ) === -1;
+	return !attributes.includes( attribute );
 };
 // By handling our own children we ensure that original DOM attributes
 // are deep copied back by the converter (in renderHtmlAttributeList)
@@ -59,7 +59,7 @@ ve.dm.MWGalleryImageNode.static.textContentFromCaption = function textContentFro
 			content += c.nodeValue;
 		} else if (
 			c instanceof HTMLElement &&
-			( metaDataTags.indexOf( c.nodeName.toLowerCase() ) === -1 ) &&
+			( !metaDataTags.includes( c.nodeName.toLowerCase() ) ) &&
 			!/\bmw:Extension\/ref\b/.test( c.getAttribute( 'typeOf' ) )
 		) {
 			content += textContentFromCaption( c );

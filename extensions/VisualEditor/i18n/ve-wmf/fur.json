@@ -5,9 +5,9 @@
 			"Tocaibon"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
+	"tag-visualeditor": "VisualEditor",
 	"tag-visualeditor-description": "Edit made using the [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: controlâ]]",
+	"tag-visualeditor-needcheck": "VisualEditor: controlâ",
 	"tag-visualeditor-needcheck-description": "Edit made using the [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] dulâ che il sisteme al à cjatât des modifichis forsit no voludis intal wikitest.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Coments",
 	"visualeditor-feedback-tool": "Lasse un coment",

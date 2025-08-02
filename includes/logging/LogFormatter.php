@@ -23,6 +23,8 @@
  * @since 1.19
  */
 
+namespace MediaWiki\Logging;
+
 use MediaWiki\Api\ApiQueryBase;
 use MediaWiki\Api\ApiResult;
 use MediaWiki\CommentFormatter\CommentFormatter;
@@ -41,6 +43,10 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserIdentity;
+use stdClass;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Implements the default log formatting.
@@ -125,7 +131,7 @@ class LogFormatter {
 
 	/**
 	 * @see LogFormatter::getMessageParameters
-	 * @var array
+	 * @var array|null
 	 */
 	protected $parsedParameters;
 
@@ -141,7 +147,6 @@ class LogFormatter {
 
 	/**
 	 * Replace the default context
-	 * @param IContextSource $context
 	 */
 	public function setContext( IContextSource $context ) {
 		$this->context = $context;
@@ -657,7 +662,7 @@ class LogFormatter {
 	 * @see ManualLogEntry::setParameters() for how parameters are determined.
 	 */
 	protected function getMessageParameters() {
-		if ( isset( $this->parsedParameters ) ) {
+		if ( $this->parsedParameters !== null ) {
 			return $this->parsedParameters;
 		}
 
@@ -857,7 +862,9 @@ class LogFormatter {
 	/**
 	 * Shortcut for wfMessage which honors local context.
 	 * @param string $key
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message
 	 */
 	protected function msg( $key, ...$params ) {
@@ -944,7 +951,7 @@ class LogFormatter {
 		foreach ( $this->getParametersForApi() as $key => $value ) {
 			$vals = explode( ':', $key, 3 );
 			if ( count( $vals ) !== 3 ) {
-				if ( $value instanceof __PHP_Incomplete_Class ) {
+				if ( $value instanceof \__PHP_Incomplete_Class ) {
 					wfLogWarning( 'Log entry of type ' . $this->entry->getFullType() .
 						' contains unrecoverable extra parameters.' );
 					continue;
@@ -1036,3 +1043,6 @@ class LogFormatter {
 		return [ $name => $value ];
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LogFormatter::class, 'LogFormatter' );

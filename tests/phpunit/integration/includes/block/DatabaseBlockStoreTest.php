@@ -3,13 +3,17 @@
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
+use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\User;
 use Psr\Log\NullLogger;
 use Wikimedia\IPUtils;
+use Wikimedia\ScopedCallback;
 
 /**
  * Integration tests for DatabaseBlockStore.
@@ -22,6 +26,7 @@ use Wikimedia\IPUtils;
  */
 class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;
+	use TempUserTestTrait;
 
 	private User $sysop;
 	private int $expiredBlockId = 11111;
@@ -70,7 +75,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 			'readOnlyMode' => $readOnlyMode,
 			'userFactory' => $services->getUserFactory(),
 			'tempUserConfig' => $services->getTempUserConfig(),
-			'blockUtils' => $services->getBlockUtils(),
+			'blockTargetFactory' => $services->getBlockTargetFactory(),
 			'autoblockExemptionList' => $services->getAutoblockExemptionList(),
 		];
 		$constructorArgs = array_merge( $defaultConstructorArgs, $overrideConstructorArgs );
@@ -85,12 +90,21 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	 * @return DatabaseBlock
 	 */
 	private function getBlock( array $options = [] ): DatabaseBlock {
-		$target = $options['target'] ?? $this->getTestUser()->getUser();
+		$targetFactory = $this->getServiceContainer()->getBlockTargetFactory();
+		if ( isset( $options['target'] ) ) {
+			if ( $options['target'] instanceof User ) {
+				$target = $targetFactory->newFromUser( $options['target'] );
+			} else {
+				$target = $targetFactory->newFromString( $options['target'] );
+			}
+		} else {
+			$target = $targetFactory->newUserBlockTarget( $this->getTestUser()->getUser() );
+		}
 		$autoblock = $options['autoblock'] ?? false;
 
 		return new DatabaseBlock( [
 			'by' => $this->sysop,
-			'address' => $target,
+			'target' => $target,
 			'enableAutoblock' => $autoblock,
 		] );
 	}
@@ -137,18 +151,13 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::newFromRow
 	 */
 	public function testNewFromID_exists() {
-		$block = new DatabaseBlock( [
+		$store = $this->getStore();
+		$block = $store->insertBlockWithParams( [
 			'address' => '1.2.3.4',
 			'by' => $this->getTestSysop()->getUser(),
 		] );
-		$store = $this->getStore();
-		$inserted = $store->insertBlock( $block );
-		$this->assertTrue(
-			(bool)$inserted['id'],
-			'Block inserted correctly'
-		);
 
-		$blockId = $inserted['id'];
+		$blockId = $block->getId();
 		$newFromIdRes = $store->newFromID( $blockId );
 		$this->assertInstanceOf(
 			DatabaseBlock::class,
@@ -207,6 +216,39 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @covers ::newFromRow
+	 */
+	public function testNewFromRow() {
+		$badActor = $this->getTestUser()->getUser();
+		$sysop = $this->getTestSysop()->getUser();
+
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$block = $blockStore->insertBlockWithParams( [
+			'targetUser' => $badActor,
+			'by' => $sysop,
+			'expiry' => 'infinity',
+		] );
+
+		$blockQuery = $blockStore->getQueryInfo();
+		$db = $this->getDb();
+		$row = $db->newSelectQueryBuilder()
+			->queryInfo( $blockQuery )
+			->where( [
+				'bl_id' => $block->getId(),
+			] )
+			->caller( __METHOD__ )
+			->fetchRow();
+
+		$block = $blockStore->newFromRow( $db, $row );
+		$this->assertInstanceOf( DatabaseBlock::class, $block );
+		$this->assertEquals( $block->getBy(), $sysop->getId() );
+		$this->assertEquals( $block->getTargetName(), $badActor->getName() );
+		$this->assertEquals( $block->getTargetName(), $badActor->getName() );
+		$this->assertTrue( $block->isBlocking( $badActor ), 'Is blocking expected user' );
+		$this->assertEquals( $block->getTargetUserIdentity()->getId(), $badActor->getId() );
+	}
+
+	/**
 	 * @covers ::getQueryInfo
 	 */
 	public function testGetQueryInfo() {
@@ -231,16 +273,11 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::newFromRow
 	 */
 	public function testNewListFromIPs() {
-		$block = new DatabaseBlock( [
+		$store = $this->getStore();
+		$inserted = $store->insertBlockWithParams( [
 			'address' => '1.2.3.4',
 			'by' => $this->getTestSysop()->getUser(),
 		] );
-		$store = $this->getStore();
-		$inserted = $store->insertBlock( $block );
-		$this->assertTrue(
-			(bool)$inserted['id'],
-			'Sanity check: block inserted correctly'
-		);
 
 		// Early return of empty array if no ips in the list
 		$list = $store->newListFromIPs( [], true );
@@ -274,9 +311,115 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 			'Sanity check: DatabaseBlock returned'
 		);
 		$this->assertSame(
-			$inserted['id'],
+			$inserted->getId(),
 			$list[0]->getId(),
 			'Block returned is the correct one'
+		);
+	}
+
+	/**
+	 * @covers ::newListFromTarget
+	 * @covers ::newLoad
+	 */
+	public function testNewListFromTargetAuto() {
+		// Set up once and do multiple tests, faster than a provider
+		$store = $this->getStore();
+		$ip = '1.2.3.4';
+		$inserted = $store->insertBlockWithParams( [
+			'address' => $ip,
+			'by' => $this->getTestSysop()->getUser(),
+			'auto' => true,
+		] );
+
+		// ALL
+		$list = $store->newListFromTarget( $ip,
+			null, false, DatabaseBlockStore::AUTO_ALL );
+		$this->assertCount( 1, $list );
+
+		// Specified with IP
+		$list = $store->newListFromTarget( $ip,
+			null, false, DatabaseBlockStore::AUTO_SPECIFIED );
+		$this->assertCount( 0, $list );
+
+		// Specified autoblock ID
+		$list = $store->newListFromTarget( "#{$inserted->getId()}",
+			null, false, DatabaseBlockStore::AUTO_SPECIFIED );
+		$this->assertCount( 1, $list );
+
+		// None with IP
+		$list = $store->newListFromTarget( $ip,
+			null, false, DatabaseBlockStore::AUTO_NONE );
+		$this->assertCount( 0, $list );
+
+		// None with autoblock ID
+		$list = $store->newListFromTarget( "#{$inserted->getId()}",
+			null, false, DatabaseBlockStore::AUTO_NONE );
+		$this->assertCount( 0, $list );
+	}
+
+	public static function provideGetConditionForRanges() {
+		$hex1 = IPUtils::toHex( '1.2.3.4' );
+		$hex2 = IPUtils::toHex( '1.2.3.5' );
+		$hex3 = IPUtils::toHex( '1.2.3.6' );
+		$hex4 = IPUtils::toHex( '1.2.3.7' );
+		yield 'Both same end' => [
+			[ [ $hex1, null ], [ $hex2, null ] ],
+			[
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex1'"
+					. " AND bt_range_end >= '$hex1')",
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex2'"
+					. " AND bt_range_end >= '$hex2')",
+				"(bt_ip_hex IN ('01020304','01020305') AND bt_range_start IS NULL)"
+			],
+		];
+		yield 'Both different end' => [
+			[ [ $hex1, $hex2 ], [ $hex3, $hex4 ] ],
+			[
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex1'"
+					. " AND bt_range_end >= '$hex2')",
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex3'"
+					. " AND bt_range_end >= '$hex4')",
+			],
+		];
+		yield 'First same end, second different end' => [
+			[ [ $hex1, null ], [ $hex3, $hex4 ] ],
+			[
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex1'"
+					. " AND bt_range_end >= '$hex1')",
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex3'"
+					. " AND bt_range_end >= '$hex4')",
+				"(bt_ip_hex = '$hex1' AND bt_range_start IS NULL)",
+			],
+		];
+		yield 'First different end, second same end' => [
+			[ [ $hex1, $hex2 ], [ $hex3, null ] ],
+			[
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex1'"
+					. " AND bt_range_end >= '$hex2')",
+				"(bt_range_start LIKE '0102%' ESCAPE '`'"
+					. " AND bt_range_start <= '$hex3'"
+					. " AND bt_range_end >= '$hex3')",
+				"(bt_ip_hex = '$hex3' AND bt_range_start IS NULL)",
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetConditionForRanges
+	 * @covers ::getConditionForRanges
+	 * @covers ::getIpFragment
+	 */
+	public function testGetConditionForRanges( array $ranges, array $expect ) {
+		$this->assertSame(
+			$expect,
+			$this->getStore()->getConditionForRanges( $ranges )
 		);
 	}
 
@@ -287,34 +430,34 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		yield 'IPv4 start, same end' => [
 			$hex1,
 			null,
-			"((bt_ip_hex = '$hex1' AND bt_range_start IS NULL)"
-			. " OR (bt_range_start LIKE '0102%' ESCAPE '`'"
+			"((bt_range_start LIKE '0102%' ESCAPE '`'"
 			. " AND bt_range_start <= '$hex1'"
 			. " AND bt_range_end >= '$hex1'))"
+			. " OR ((bt_ip_hex = '$hex1' AND bt_range_start IS NULL))"
 		];
 		yield 'IPv4 start, different end' => [
 			$hex1,
 			$hex2,
-			"(bt_range_start LIKE '0102%' ESCAPE '`'"
+			"((bt_range_start LIKE '0102%' ESCAPE '`'"
 			. " AND bt_range_start <= '$hex1'"
-			. " AND bt_range_end >= '$hex2')"
+			. " AND bt_range_end >= '$hex2'))"
 		];
 		$hex3 = IPUtils::toHex( '2000:DEAD:BEEF:A:0:0:0:0' );
 		$hex4 = IPUtils::toHex( '2000:DEAD:BEEF:A:0:0:000A:000F' );
 		yield 'IPv6 start, same end' => [
 			$hex3,
 			null,
-			"((bt_ip_hex = '$hex3' AND bt_range_start IS NULL)"
-			. " OR (bt_range_start LIKE 'v6-2000%' ESCAPE '`'"
+			"((bt_range_start LIKE 'v6-2000%' ESCAPE '`'"
 			. " AND bt_range_start <= '$hex3'"
 			. " AND bt_range_end >= '$hex3'))"
+			. " OR ((bt_ip_hex = '$hex3' AND bt_range_start IS NULL))"
 		];
 		yield 'IPv6 start, different end' => [
 			$hex3,
 			$hex4,
-			"(bt_range_start LIKE 'v6-2000%' ESCAPE '`'"
+			"((bt_range_start LIKE 'v6-2000%' ESCAPE '`'"
 			. " AND bt_range_start <= '$hex3'"
-			. " AND bt_range_end >= '$hex4')"
+			. " AND bt_range_end >= '$hex4'))"
 		];
 	}
 
@@ -490,9 +633,38 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$store->insertBlock( $block );
 	}
 
+	public function testInsertExistingBlock() {
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$badActor = $this->getTestUser()->getUser();
+		$sysop = $this->getTestSysop()->getUser();
+
+		$page = $this->getExistingTestPage( 'Foo' );
+		$restriction = new PageRestriction( 0, $page->getId() );
+		$block = $blockStore->insertBlockWithParams( [
+			'targetUser' => $badActor,
+			'by' => $sysop,
+			'expiry' => 'infinity',
+			'restrictions' => [ $restriction ],
+		] );
+
+		// Insert the block again, which should result in a failure
+		$result = $blockStore->insertBlock( $block );
+
+		$this->assertFalse( $result );
+
+		// Ensure that there are no restrictions where the blockId is 0.
+		$count = $this->getDb()->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'ipblocks_restrictions' )
+			->where( [ 'ir_ipb_id' => 0 ] )
+			->caller( __METHOD__ )->fetchRowCount();
+		$this->assertSame( 0, $count );
+	}
+
 	public function testUpdateBlock() {
 		$store = $this->getStore();
 		$existingBlock = $store->newFromTarget( $this->sysop );
+		$existingBlockTimestamp = $existingBlock->getTimestamp();
 
 		// Insert an autoblock for T351173 regression testing
 		$autoblockId = $store->doAutoblock( $existingBlock, '127.0.0.1' );
@@ -508,6 +680,8 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$autoblock = $store->newFromID( $autoblockId );
 
 		$this->assertTrue( $updatedBlock->equals( $existingBlock ) );
+		// Check that the timestamp was updated
+		$this->assertGreaterThan( $existingBlockTimestamp, $updatedBlock->getTimestamp() );
 		$this->assertAutoblockEqualsBlock( $existingBlock, $autoblock );
 		$this->assertLessThanOrEqual( $newExpiry, $autoblock->getExpiry() );
 	}
@@ -644,6 +818,44 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * Regression test for T382881
+	 */
+	public function testPurgeExpiredBlocksMulti() {
+		// Make deferred updates be actually deferred
+		$scope = DeferredUpdates::preventOpportunisticUpdates();
+
+		// Add a second block
+		$store = $this->getStore();
+		$store->insertBlockWithParams( [
+			'address' => '1.1.1.1',
+			'expiry' => '2001-01-01T00:00:00',
+			'reason' => 'additional expired block',
+			'by' => $this->sysop,
+			'expectedTargetCount' => 1,
+		] );
+
+		// Check that there are really two blocks on that user now
+		$this->newSelectQueryBuilder()
+			->select( 'bt_count' )
+			->from( 'block_target' )
+			->where( [ 'bt_address' => '1.1.1.1' ] )
+			->caller( __METHOD__ )
+			->assertFieldValue( '2' );
+
+		// Run deferred updates, purging them both
+		ScopedCallback::consume( $scope );
+		$this->runDeferredUpdates();
+
+		// Now the block_target row should be gone
+		$this->newSelectQueryBuilder()
+			->select( 'bt_count' )
+			->from( 'block_target' )
+			->where( [ 'bt_address' => '1.1.1.1' ] )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
+	}
+
+	/**
 	 * In order to autoblock a user, they must have a recent change.
 	 *
 	 * Make a recent change for the test sysop. This user persists between test runs,
@@ -772,6 +984,132 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 			->rows( $restrictionData )
 			->caller( __METHOD__ )
 			->execute();
+	}
+
+	public function testHardBlocks() {
+		// Set up temp user config
+		$this->enableAutoCreateTempUser();
+
+		$targetFactory = $this->getServiceContainer()->getBlockTargetFactory();
+		$store = $this->getStore();
+		$blocker = $this->getTestUser()->getUser();
+
+		$block = new DatabaseBlock();
+		$block->setTarget( $targetFactory->newFromString( '1.2.3.4' ) );
+		$block->setBlocker( $blocker );
+		$block->setReason( 'test' );
+		$block->setExpiry( 'infinity' );
+		$block->isHardblock( false );
+		$store->insertBlock( $block );
+
+		$this->assertFalse(
+			(bool)$store->newFromTarget( '~1' ),
+			'Temporary user is not blocked directly'
+		);
+		$this->assertTrue(
+			(bool)$store->newFromTarget( '~1', '1.2.3.4' ),
+			'Temporary user is blocked by soft block'
+		);
+		$this->assertFalse(
+			(bool)$store->newFromTarget( $blocker, '1.2.3.4' ),
+			'Logged-in user is not blocked by soft block'
+		);
+	}
+
+	/**
+	 * Regression test for T31116 which relates to CheckUser asking for blocks with an
+	 * empty string for a vague target.
+	 *
+	 * @dataProvider provideT31116Data
+	 */
+	public function testT31116NewFromTargetWithEmptyIp( $vagueTarget ) {
+		$store = $this->getStore();
+		$target = $this->getTestUser()->getUser();
+		$initialBlock = $this->getBlock( [ 'target' => $target ] );
+		$store->insertBlock( $initialBlock );
+		$block = $this->getStore()->newFromTarget( $target->getName(), $vagueTarget );
+
+		$this->assertTrue(
+			$initialBlock->equals( $block ),
+			"newFromTarget() returns the same block as the one that was made when "
+			. "given empty vagueTarget param " . var_export( $vagueTarget, true )
+		);
+	}
+
+	public static function provideT31116Data() {
+		return [
+			[ null ],
+			[ '' ],
+			[ false ]
+		];
+	}
+
+	public static function provideNewFromTargetRangeBlocks() {
+		return [
+			'Blocks to IPv4 ranges' => [
+				[ '0.0.0.0/20', '0.0.0.0/30', '0.0.0.0/25' ],
+				'0.0.0.0',
+				'0.0.0.0/30'
+			],
+			'Blocks to IPv6 ranges' => [
+				[ '0:0:0:0:0:0:0:0/20', '0:0:0:0:0:0:0:0/30', '0:0:0:0:0:0:0:0/25' ],
+				'0:0:0:0:0:0:0:0',
+				'0:0:0:0:0:0:0:0/30'
+			],
+			'Blocks to wide IPv4 range and IP' => [
+				[ '0.0.0.0/16', '0.0.0.0' ],
+				'0.0.0.0',
+				'0.0.0.0'
+			],
+			'Blocks to narrow IPv4 range and IP' => [
+				[ '0.0.0.0/31', '0.0.0.0' ],
+				'0.0.0.0',
+				'0.0.0.0'
+			],
+			'Blocks to wide IPv6 range and IP' => [
+				[ '0:0:0:0:0:0:0:0/19', '0:0:0:0:0:0:0:0' ],
+				'0:0:0:0:0:0:0:0',
+				'0:0:0:0:0:0:0:0'
+			],
+			'Blocks to narrow IPv6 range and IP' => [
+				[ '0:0:0:0:0:0:0:0/127', '0:0:0:0:0:0:0:0' ],
+				'0:0:0:0:0:0:0:0',
+				'0:0:0:0:0:0:0:0'
+			],
+			'Blocks to wide IPv6 range and IP, large numbers' => [
+				[ '2000:DEAD:BEEF:A:0:0:0:0/19', '2000:DEAD:BEEF:A:0:0:0:0' ],
+				'2000:DEAD:BEEF:A:0:0:0:0',
+				'2000:DEAD:BEEF:A:0:0:0:0'
+			],
+			'Blocks to narrow IPv6 range and IP, large numbers' => [
+				[ '2000:DEAD:BEEF:A:0:0:0:0/127', '2000:DEAD:BEEF:A:0:0:0:0' ],
+				'2000:DEAD:BEEF:A:0:0:0:0',
+				'2000:DEAD:BEEF:A:0:0:0:0'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideNewFromTargetRangeBlocks
+	 */
+	public function testNewFromTargetRangeBlocks( $targets, $ip, $expectedTarget ) {
+		$blockStore = $this->getStore();
+		$targetFactory = $this->getServiceContainer()->getBlockTargetFactory();
+		$blocker = $this->getTestSysop()->getUser();
+
+		foreach ( $targets as $target ) {
+			$block = new DatabaseBlock();
+			$block->setTarget( $targetFactory->newFromString( $target ) );
+			$block->setBlocker( $blocker );
+			$blockStore->insertBlock( $block );
+		}
+
+		// Should find the block with the narrowest range
+		$block = $blockStore->newFromTarget( $this->getTestUser()->getUserIdentity(), $ip );
+		$this->assertSame(
+			$expectedTarget,
+			$block->getTargetName()
+		);
 	}
 
 }

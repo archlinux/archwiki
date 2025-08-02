@@ -28,6 +28,7 @@ use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\AllMessagesTablePager;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -43,12 +44,6 @@ class SpecialAllMessages extends SpecialPage {
 	private IConnectionProvider $dbProvider;
 	private LocalisationCache $localisationCache;
 
-	/**
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param LocalisationCache $localisationCache
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct(
 		LanguageFactory $languageFactory,
 		LanguageNameUtils $languageNameUtils,
@@ -166,7 +161,10 @@ class SpecialAllMessages extends SpecialPage {
 			->prepareForm()
 			->displayForm( false );
 
-		$out->addParserOutputContent( $pager->getFullOutput() );
+		$out->addParserOutputContent(
+			$pager->getFullOutput(),
+			ParserOptions::newFromContext( $this->getContext() )
+		);
 	}
 
 	protected function getGroupName() {

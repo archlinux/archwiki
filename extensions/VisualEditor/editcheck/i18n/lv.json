@@ -15,5 +15,7 @@
 	"editcheck-dialog-addref-reject-other": "Cits",
 	"editcheck-dialog-addref-success-notify": "Paldies, ka pievienoji atsauci!",
 	"editcheck-dialog-addref-title": "Pievienot atsauci",
-	"editcheck-dialog-title": "Pirms publicēšanas"
+	"editcheck-dialog-title": "Pirms publicēšanas",
+	"editcheck-copyvio-title": "Iekopētais saturs",
+	"editcheck-review-title": "Pārskatīt izmaiņas"
 }

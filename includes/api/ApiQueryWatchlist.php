@@ -22,23 +22,23 @@
 
 namespace MediaWiki\Api;
 
-use ChangesList;
-use LogEventsList;
-use LogFormatterFactory;
-use LogPage;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogFormatterFactory;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\RecentChanges\ChangesList;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\Watchlist\WatchedItem;
 use MediaWiki\Watchlist\WatchedItemQueryService;
-use RecentChange;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -268,7 +268,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		}
 	}
 
-	private function getFieldsToInclude() {
+	private function getFieldsToInclude(): array {
 		$includeFields = [];
 		if ( $this->fld_flags ) {
 			$includeFields[] = WatchedItemQueryService::INCLUDE_FLAGS;
@@ -298,7 +298,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		return $includeFields;
 	}
 
-	private function showParamsConflicting( array $show ) {
+	private function showParamsConflicting( array $show ): bool {
 		return ( isset( $show[WatchedItemQueryService::FILTER_MINOR] )
 			&& isset( $show[WatchedItemQueryService::FILTER_NOT_MINOR] ) )
 		|| ( isset( $show[WatchedItemQueryService::FILTER_BOT] )
@@ -315,7 +315,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			&& isset( $show[WatchedItemQueryService::FILTER_NOT_UNREAD] ) );
 	}
 
-	private function extractOutputData( WatchedItem $watchedItem, array $recentChangeInfo ) {
+	private function extractOutputData( WatchedItem $watchedItem, array $recentChangeInfo ): array {
 		/* Determine the title of the page that has been changed. */
 		$target = $watchedItem->getTarget();
 		if ( $target instanceof LinkTarget ) {

@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo\File;
+
+use InvalidArgumentException;
+use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\BlobStore;
@@ -102,10 +106,6 @@ class MetadataStorageHelper {
 		return $s;
 	}
 
-	/**
-	 * @param array $addresses
-	 * @return array
-	 */
 	public function getMetadataFromBlobStore( array $addresses ): array {
 		$result = [];
 		if ( $addresses ) {
@@ -150,3 +150,6 @@ class MetadataStorageHelper {
 	}
 
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( MetadataStorageHelper::class, 'MetadataStorageHelper' );

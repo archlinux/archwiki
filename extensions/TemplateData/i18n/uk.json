@@ -47,7 +47,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Користувач",
 	"templatedata-doc-params": "Параметри шаблону",
 	"templatedata-editbutton": "Редагувати дані шаблону",
-	"templatedata-errormsg-jsonbadformat": "Невірний JSON-формат. Ви можете скасувати цю операцію аби виправити його, вилучити поточні теги <templatedata> і повторити спробу, або ж продовжити й замінити поточний блок TemplateData новим.",
+	"templatedata-errormsg-jsonbadformat": "Поганий JSON-формат. Ви можете скасувати цю операцію, щоб виправити чи прибрати його, або ж продовжити й замінити поточний блок даних шаблону новим.",
 	"templatedata-errormsg-insertblank": "Ви впевнені, що хочете додати блок даних шаблону без інформації?",
 	"templatedata-exists-on-related-page": "Будь ласка, зверніть увагу: на пов'язаній сторінці «[[$1]]» вже є блок даних шаблону.",
 	"templatedata-helplink": "Інформація про дані шаблону",

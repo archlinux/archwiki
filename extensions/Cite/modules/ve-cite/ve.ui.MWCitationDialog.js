@@ -168,8 +168,7 @@ ve.ui.MWCitationDialog.prototype.getActionProcess = function ( action ) {
 					// Collapse returns a new fragment, so update this.fragment
 					this.fragment = this.getFragment().collapseToEnd();
 					this.referenceModel = new ve.dm.MWReferenceModel( doc );
-					this.referenceModel.insertInternalItem( surfaceModel );
-					this.referenceModel.insertReferenceNode( this.getFragment() );
+					this.referenceModel.insertIntoFragment( this.getFragment() );
 				}
 
 				const item = this.referenceModel.findInternalItem( surfaceModel );

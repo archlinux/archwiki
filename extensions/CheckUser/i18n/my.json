@@ -1,0 +1,40 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dr Lotus Black",
+			"Ninjastrikers",
+			"Teitei Para"
+		]
+	},
+	"checkuser": "စုံစမ်းစစ်ဆေးသူ",
+	"checkuserlog": "စုံစမ်းစစ်ဆေးသူ မှတ်တမ်း",
+	"checkuser-contribs": "စုံစမ်းစစ်ဆေးသူ အိုင်ပီလိပ်စာများ",
+	"checkuser-contribs-log": "အသုံးပြုသူစစ်ဆေးမှုများ",
+	"group-checkuser": "စုံစမ်းစစ်ဆေးသူများ",
+	"group-checkuser-member": "{{GENDER:$1|စုံစမ်းစစ်ဆေးသူ}}",
+	"right-checkuser": "စုံစမ်းစစ်ဆေးသူ၏ အိုင်ပီလိပ်စာများနှင့် အခြားအချက်အလက်များ",
+	"right-checkuser-log": "စုံစမ်းစစ်ဆေးမှုမှတ်တမ်းကို ကြည့်ရန်",
+	"action-checkuser": "စုံစမ်းစစ်ဆေးသူ၏ အိုင်ပီလိပ်စာများနှင့် အခြားအချက်အလက်များ",
+	"action-checkuser-log": "စုံစမ်းစစ်ဆေးသူ မှတ်တမ်းကို ကြည့်ရန်",
+	"grouppage-checkuser": "{{ns:project}}:စုံစမ်းစစ်ဆေးသူ",
+	"checkuser-reason": "အ​ကြောင်း​ပြ​ချက်:",
+	"checkuser-reason-api": "API: $1",
+	"checkuser-target": "အိုင်ပီလိပ်စာ သို့ အသုံးပြုသူအမည် :",
+	"checkuser-users": "အသုံးပြုသူများ ရယူရန်",
+	"checkuser-ips": "အိုင်ပီလိပ်စာများ ရယူရန်",
+	"checkuser-period": "ကာလ:",
+	"checkuser-week-1": "ယခင်အပတ်",
+	"checkuser-week-2": "ယခင်နှစ်ပတ်",
+	"checkuser-month": "ယခင် ရက် ၃၀",
+	"checkuser-all": "အားလုံး",
+	"checkuser-check": "စုံစမ်းစစ်ဆေးရန်",
+	"checkuser-check-this-user": "ဤအသုံးပြုသူအား စုံစမ်းစစ်ဆေးရန်",
+	"checkuser-recent-checks": "ဤပစ်မှတ်ကို စစ်ဆေးရန်",
+	"checkuser-search-submit": "ရှာဖွေရန်",
+	"checkuser-investigateblock": "အသုံးပြုသူများကို ပိတ်ပင်ရန်",
+	"checkuser-investigateblock-reason": "အကြောင်းပြချက်",
+	"checkuser-investigateblock-email-label": "အီးမေးလ်ပို့ခြင်းကို တားဆီးရန်",
+	"checkuser-investigate-notice-no-results": "ရလဒ်များ မရှိပါ။",
+	"checkuser-investigate-preliminary-table-header-blocked": "အခြေအနေ",
+	"checkuser-temporary-account-change-access-level-disable": "{{GENDER:$1| ပိတ်ထားသည်}}"
+}

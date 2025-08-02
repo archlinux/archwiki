@@ -26,9 +26,9 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Html\Html;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -46,12 +46,6 @@ class SpecialListRedirects extends QueryPage {
 	private WikiPageFactory $wikiPageFactory;
 	private RedirectLookup $redirectLookup;
 
-	/**
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param RedirectLookup $redirectLookup
-	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
@@ -109,7 +103,7 @@ class SpecialListRedirects extends QueryPage {
 			return;
 		}
 
-		$batch = $this->linkBatchFactory->newLinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
 			$redirTarget = $this->getRedirectTarget( $row );
@@ -123,11 +117,7 @@ class SpecialListRedirects extends QueryPage {
 		$res->seek( 0 );
 	}
 
-	/**
-	 * @param stdClass $row
-	 * @return Title|null
-	 */
-	protected function getRedirectTarget( $row ) {
+	protected function getRedirectTarget( stdClass $row ): ?Title {
 		if ( isset( $row->rd_title ) ) {
 			return Title::makeTitle(
 				$row->rd_namespace,

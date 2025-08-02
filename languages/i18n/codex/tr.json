@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"ToprakM",
+			"Andac",
 			"Joseph",
 			"Sümeyye",
-			"Andac"
+			"ToprakM"
 		]
 	},
 	"cdx-chip-input-chip-added": "$1 fiş eklendi.",
@@ -13,6 +13,7 @@
 	"cdx-dialog-close-button-label": "Kapat",
 	"cdx-label-optional-flag": "(isteğe bağlı)",
 	"cdx-message-dismiss-button-label": "Kapat",
+	"cdx-popover-close-button-label": "Kapat",
 	"cdx-search-input-search-button-label": "Ara",
 	"cdx-table-select-all-label": "Tüm satırları seç",
 	"cdx-table-select-row-label": "Satır $1/$2 seçin",
@@ -29,5 +30,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Birçok sonuçtan $1-$2 gösteriliyor",
 	"cdx-table-pagination-status-message-indeterminate-short": "Birçok sonuçtan $1-$2",
 	"cdx-table-pagination-status-message-indeterminate-final": "Son {{PLURAL:$1|$1 sonuç}} gösteriliyor",
-	"cdx-table-pagination-status-message-pending": "Sonuçlar yükleniyor..."
+	"cdx-table-pagination-status-message-pending": "Sonuçlar yükleniyor...",
+	"cdx-table-no-data-message": "Veri bulunmamaktadır."
 }

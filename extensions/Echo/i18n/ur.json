@@ -65,6 +65,7 @@
 	"notifications": "اطلاعات",
 	"tooltip-pt-notifications-alert": "{{GENDER:|آپ}}کی اطلاعات",
 	"tooltip-pt-notifications-notice": "{{GENDER:|آپ}} کے اعلانات",
+	"tooltip-pt-notifications": "آپ کے نوٹیفیکیشن",
 	"echo-displaynotificationsconfiguration": "ترتیب نمائش اطلاعات",
 	"echo-displaynotificationsconfiguration-summary": "اس ویکی پر اطلاع ناموں کو کس طرح مرتب کیا گیا ہے ذیل میں اس کی ایک جھلک دیکھیں۔",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "اطلاع نامے بلحاظ زمرہ",

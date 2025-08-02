@@ -33,8 +33,6 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use stdClass;
-use UnexpectedValueException;
-use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -143,32 +141,6 @@ class DatabaseBlock extends AbstractBlock {
 	}
 
 	/**
-	 * Return the tables, fields, and join conditions to be selected to create
-	 * a new block object.
-	 *
-	 * Since 1.34, ipb_by and ipb_by_text have not been present in the
-	 * database, but they continue to be available in query results as
-	 * aliases.
-	 *
-	 * @deprecated since 1.43, use DatabaseBlockStore::getQueryInfo()
-	 * @since 1.31
-	 *
-	 * @return array[] With three keys:
-	 *   - tables: (string[]) to include in the `$table` to `IDatabase->select()`
-	 *     or `SelectQueryBuilder::tables`
-	 *   - fields: (string[]) to include in the `$vars` to `IDatabase->select()`
-	 *     or `SelectQueryBuilder::fields`
-	 *   - joins: (array) to include in the `$join_conds` to `IDatabase->select()`
-	 *     or `SelectQueryBuilder::joinConds`
-	 * @phan-return array{tables:string[],fields:string[],joins:array}
-	 */
-	public static function getQueryInfo() {
-		wfDeprecated( __METHOD__, '1.43' );
-		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
-			->getQueryInfo( DatabaseBlockStore::SCHEMA_IPBLOCKS );
-	}
-
-	/**
 	 * Check if two blocks are effectively equal.  Doesn't check irrelevant things like
 	 * the blocking user or the block timestamp, only things which affect the blocked user
 	 *
@@ -177,8 +149,7 @@ class DatabaseBlock extends AbstractBlock {
 	 */
 	public function equals( DatabaseBlock $block ) {
 		return (
-			(string)$this->target == (string)$block->target
-			&& $this->type == $block->type
+			( $this->target ? $this->target->equals( $block->target ) : $block->target === null )
 			&& $this->auto == $block->auto
 			&& $this->isHardblock() == $block->isHardblock()
 			&& $this->isCreateAccountBlocked() == $block->isCreateAccountBlocked()
@@ -198,26 +169,15 @@ class DatabaseBlock extends AbstractBlock {
 	}
 
 	/**
-	 * Get a set of SQL conditions which will select range blocks encompassing a given range
-	 *
-	 * @deprecated since 1.43 use DatabaseBlockStore::getRangeCond
-	 *
-	 * @param string $start Hexadecimal IP representation
-	 * @param string|null $end Hexadecimal IP representation, or null to use $start = $end
-	 * @return string
-	 */
-	public static function getRangeCond( $start, $end = null ) {
-		wfDeprecated( __METHOD__, '1.43' );
-		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
-			->getRangeCond( $start, $end, DatabaseBlockStore::SCHEMA_IPBLOCKS );
-	}
-
-	/**
 	 * Create a new DatabaseBlock object from a database row
+	 *
+	 * @deprecated since 1.44 use DatabaseBlockStore::newFromRow
+	 *
 	 * @param stdClass $row Row from the ipblocks table
 	 * @return DatabaseBlock
 	 */
 	public static function newFromRow( $row ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		$services = MediaWikiServices::getInstance();
 		$db = $services->getConnectionProvider()->getReplicaDatabase();
 		return $services->getDatabaseBlockStore()->newFromRow( $db, $row );
@@ -230,6 +190,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @return bool
 	 */
 	public function delete() {
+		wfDeprecated( __METHOD__, '1.36' );
 		return MediaWikiServices::getInstance()
 			->getDatabaseBlockStoreFactory()
 			->getDatabaseBlockStore( $this->getWikiId() )
@@ -247,6 +208,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * 	('id' => block ID, 'autoIds' => array of autoblock IDs)
 	 */
 	public function insert() {
+		wfDeprecated( __METHOD__, '1.36' );
 		return MediaWikiServices::getInstance()
 			->getDatabaseBlockStoreFactory()
 			->getDatabaseBlockStore( $this->getWikiId() )
@@ -262,6 +224,7 @@ class DatabaseBlock extends AbstractBlock {
 	 *   ('id' => block ID, 'autoIds' => array of autoblock IDs)
 	 */
 	public function update() {
+		wfDeprecated( __METHOD__, '1.36' );
 		return MediaWikiServices::getInstance()
 			->getDatabaseBlockStoreFactory()
 			->getDatabaseBlockStore( $this->getWikiId() )
@@ -272,11 +235,13 @@ class DatabaseBlock extends AbstractBlock {
 	 * Checks whether a given IP is on the autoblock exemption list.
 	 *
 	 * @since 1.36
+	 * @deprecated since 1.44 use AutoblockExemptionList::isExempt
 	 *
 	 * @param string $ip The IP to check
 	 * @return bool
 	 */
 	public static function isExemptedFromAutoblocks( $ip ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		return MediaWikiServices::getInstance()->getAutoblockExemptionList()
 			->isExempt( $ip );
 	}
@@ -290,6 +255,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @return int|false ID if an autoblock was inserted, false if not.
 	 */
 	public function doAutoblock( $autoblockIP ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		return MediaWikiServices::getInstance()
 			->getDatabaseBlockStoreFactory()
 			->getDatabaseBlockStore( $this->getWikiId() )
@@ -313,6 +279,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @deprecated since 1.42, use DatabaseBlockStore::updateTimestamp instead
 	 */
 	public function updateTimestamp() {
+		wfDeprecated( __METHOD__, '1.42' );
 		MediaWikiServices::getInstance()
 			->getDatabaseBlockStoreFactory()
 			->getDatabaseBlockStore( $this->getWikiId() )
@@ -320,38 +287,41 @@ class DatabaseBlock extends AbstractBlock {
 	}
 
 	/**
-	 * Get the IP address at the start of the range in Hex form
-	 * @return string IP in Hex form
+	 * Get the IP address at the start of the range in hex form, or null if
+	 * the target is not a range.
+	 *
+	 * @return string|null
 	 */
 	public function getRangeStart() {
-		switch ( $this->type ) {
-			case self::TYPE_USER:
-				return '';
-			case self::TYPE_IP:
-				return IPUtils::toHex( $this->target );
-			case self::TYPE_RANGE:
-				[ $start, /*...*/ ] = IPUtils::parseRange( $this->target );
-				return $start;
-			default:
-				throw new UnexpectedValueException( "Block with invalid type" );
-		}
+		return $this->target instanceof RangeBlockTarget
+			? $this->target->getHexRangeStart() : null;
 	}
 
 	/**
-	 * Get the IP address at the end of the range in Hex form
-	 * @return string IP in Hex form
+	 * Get the IP address at the end of the range in hex form, or null if
+	 * the target is not a range.
+	 *
+	 * @return string|null
 	 */
 	public function getRangeEnd() {
-		switch ( $this->type ) {
-			case self::TYPE_USER:
-				return '';
-			case self::TYPE_IP:
-				return IPUtils::toHex( $this->target );
-			case self::TYPE_RANGE:
-				[ /*...*/, $end ] = IPUtils::parseRange( $this->target );
-				return $end;
-			default:
-				throw new UnexpectedValueException( "Block with invalid type" );
+		return $this->target instanceof RangeBlockTarget
+			? $this->target->getHexRangeEnd() : null;
+	}
+
+	/**
+	 * Get the IP address of the single-IP block or the start of the range in
+	 * hexadecimal form, or null if the target is not an IP.
+	 *
+	 * @since 1.44
+	 * @return string|null
+	 */
+	public function getIpHex() {
+		if ( $this->target instanceof RangeBlockTarget ) {
+			return $this->target->getHexRangeStart();
+		} elseif ( $this->target instanceof AnonIpBlockTarget ) {
+			return $this->target->toHex();
+		} else {
+			return null;
 		}
 	}
 
@@ -455,6 +425,9 @@ class DatabaseBlock extends AbstractBlock {
 
 	/**
 	 * Given a target and the target's type, get an existing block object if possible.
+	 *
+	 * @deprecated since 1.44
+	 *
 	 * @param string|UserIdentity|int|null $specificTarget A block target, which may be one of
 	 *   several types:
 	 *     * A user to block, in which case $target will be a User
@@ -479,12 +452,15 @@ class DatabaseBlock extends AbstractBlock {
 		$vagueTarget = null,
 		$fromPrimary = false
 	) {
+		wfDeprecated( __METHOD__, '1.44' );
 		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
 			->newFromTarget( $specificTarget, $vagueTarget, $fromPrimary );
 	}
 
 	/**
 	 * This is similar to DatabaseBlock::newFromTarget, but it returns all the relevant blocks.
+	 *
+	 * @deprecated since 1.44
 	 *
 	 * @since 1.34
 	 * @param string|UserIdentity|int|null $specificTarget
@@ -497,12 +473,15 @@ class DatabaseBlock extends AbstractBlock {
 		$vagueTarget = null,
 		$fromPrimary = false
 	) {
+		wfDeprecated( __METHOD__, '1.44' );
 		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
 			->newListFromTarget( $specificTarget, $vagueTarget, $fromPrimary );
 	}
 
 	/**
 	 * Get all blocks that match any IP from an array of IP addresses
+	 *
+	 * @deprecated since 1.44
 	 *
 	 * @param array $ipChain List of IPs (strings), usually retrieved from the
 	 *     X-Forwarded-For header of the request
@@ -513,6 +492,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @since 1.22
 	 */
 	public static function getBlocksForIPList( array $ipChain, $applySoftBlocks, $fromPrimary = false ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		return MediaWikiServices::getInstance()->getBlockManager()
 			->getBlocksForIPList( $ipChain, $applySoftBlocks, $fromPrimary );
 	}
@@ -521,7 +501,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @inheritDoc
 	 *
 	 * Autoblocks have whichever type corresponds to their target, so to detect if a block is an
-	 * autoblock, we have to check the mAuto property instead.
+	 * autoblock, we have to check the auto property instead.
 	 */
 	public function getType(): ?int {
 		return $this->auto
@@ -681,11 +661,6 @@ class DatabaseBlock extends AbstractBlock {
 		return null;
 	}
 
-	/**
-	 * Get a BlockRestrictionStore instance
-	 *
-	 * @return BlockRestrictionStore
-	 */
 	private function getBlockRestrictionStore(): BlockRestrictionStore {
 		// TODO: get rid of global state here
 		return MediaWikiServices::getInstance()

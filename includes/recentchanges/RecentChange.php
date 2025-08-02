@@ -18,12 +18,16 @@
  * @file
  */
 
+namespace MediaWiki\RecentChanges;
+
+use EmailNotification;
+use InvalidArgumentException;
 use MediaWiki\ChangeTags\Taggable;
 use MediaWiki\Config\Config;
 use MediaWiki\Debug\DeprecationHelper;
-use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Logging\PatrolLog;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
@@ -37,6 +41,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
+use RuntimeException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\IPUtils;
@@ -531,29 +536,15 @@ class RecentChange implements Taggable {
 		if ( self::isEnotifEnabled( $mainConfig ) ) {
 			$userFactory = $services->getUserFactory();
 			$editor = $userFactory->newFromUserIdentity( $this->getPerformerIdentity() );
-			$page = $this->getPage();
-			$title = Title::castFromPageReference( $page );
+			$title = Title::castFromPageReference( $this->getPage() );
 
-			// Never send an RC notification email about categorization changes
-			if (
-				$title &&
-				$hookRunner->onAbortEmailNotification( $editor, $title, $this ) &&
-				$this->mAttribs['rc_type'] != RC_CATEGORIZE
-			) {
+			if ( $title && $hookRunner->onAbortEmailNotification( $editor, $title, $this ) ) {
 				// @FIXME: This would be better as an extension hook
 				// Send emails or email jobs once this row is safely committed
 				$dbw->onTransactionCommitOrIdle(
-					function () use ( $editor, $title ) {
+					function () {
 						$enotif = new EmailNotification();
-						$enotif->notifyOnPageChange(
-							$editor,
-							$title,
-							$this->mAttribs['rc_timestamp'],
-							$this->mAttribs['rc_comment'],
-							$this->mAttribs['rc_minor'],
-							$this->mAttribs['rc_last_oldid'],
-							$this->mExtra['pageStatus']
-						);
+						$enotif->notifyOnPageChange( $this );
 					},
 					__METHOD__
 				);
@@ -813,15 +804,9 @@ class RecentChange implements Taggable {
 			'pageStatus' => 'changed'
 		];
 
-		DeferredUpdates::addCallableUpdate(
-			static function () use ( $rc, $tags, $editResult ) {
-				$rc->addTags( $tags );
-				$rc->setEditResult( $editResult );
-				$rc->save();
-			},
-			DeferredUpdates::POSTSEND,
-			MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
-		);
+		$rc->addTags( $tags );
+		$rc->setEditResult( $editResult );
+		$rc->save();
 
 		return $rc;
 	}
@@ -894,14 +879,8 @@ class RecentChange implements Taggable {
 			'pageStatus' => 'created'
 		];
 
-		DeferredUpdates::addCallableUpdate(
-			static function () use ( $rc, $tags ) {
-				$rc->addTags( $tags );
-				$rc->save();
-			},
-			DeferredUpdates::POSTSEND,
-			MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
-		);
+		$rc->addTags( $tags );
+		$rc->save();
 
 		return $rc;
 	}
@@ -1099,7 +1078,7 @@ class RecentChange implements Taggable {
 		$categoryWikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()
 			->newFromTitle( $categoryTitle );
 
-		'@phan-var WikiCategoryPage $categoryWikiPage';
+		'@phan-var \MediaWiki\Page\WikiCategoryPage $categoryWikiPage';
 		$params = [
 			'hidden-cat' => $categoryWikiPage->isHidden()
 		];
@@ -1291,7 +1270,7 @@ class RecentChange implements Taggable {
 		return ChangesList::showCharacterDifference( $old, $new );
 	}
 
-	private static function checkIPAddress( $ip ) {
+	private static function checkIPAddress( string $ip ): string {
 		global $wgRequest;
 
 		if ( $ip ) {
@@ -1370,7 +1349,6 @@ class RecentChange implements Taggable {
 		$mainConfig = $services->getMainConfig();
 		$useRCPatrol = $mainConfig->get( MainConfigNames::UseRCPatrol );
 		$useNPPatrol = $mainConfig->get( MainConfigNames::UseNPPatrol );
-		$localInterwikis = $mainConfig->get( MainConfigNames::LocalInterwikis );
 		$canonicalServer = $mainConfig->get( MainConfigNames::CanonicalServer );
 		$script = $mainConfig->get( MainConfigNames::Script );
 
@@ -1453,8 +1431,8 @@ class RecentChange implements Taggable {
 	): UserIdentity {
 		// XXX: Is this logic needed elsewhere? Should it be reusable?
 
-		$userId = isset( $userId ) ? (int)$userId : null;
-		$actorId = isset( $actorId ) ? (int)$actorId : 0;
+		$userId = $userId !== null ? (int)$userId : null;
+		$actorId = $actorId !== null ? (int)$actorId : 0;
 
 		$actorStore = MediaWikiServices::getInstance()->getActorStore();
 		if ( $userName && $actorId ) {
@@ -1493,3 +1471,6 @@ class RecentChange implements Taggable {
 		return $user;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RecentChange::class, 'RecentChange' );

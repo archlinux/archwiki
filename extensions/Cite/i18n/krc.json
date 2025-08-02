@@ -9,9 +9,12 @@
 	"cite_error": "Цитата этиуде халат: $1",
 	"cite-tracking-category-cite-error": "Белгилени кёргюзюу халатлары болгъан статьяла",
 	"cite-tracking-category-cite-error-desc": "Бу категориядагъа бетледе белги теглени хайырланыуда хата барды",
+	"cite-tracking-category-cite-diffing-error": "Кёрюнюу башхалыкълагъа себеб болгъан белги халатлары болгъан бетле",
+	"cite-tracking-category-cite-diffing-error-desc": "Бу категориядагъы бетледе белги теглерини хайырланыуда халатла бардыла эмда бу халатла эски парсер эмда Parsoid-де бир шекелде кёргюзюлмейдиле.",
 	"cite-wikieditor-tool-reference": "Белги",
 	"cite-wikieditor-help-page-references": "Белгиле",
 	"cite-wikieditor-help-content-reference-description": "Белги",
 	"cite-wikieditor-help-content-rereference-description": "Бир белгини джангыдан хайырланыу",
-	"cite-wikieditor-help-content-showreferences-description": "Белгилени кёргюз"
+	"cite-wikieditor-help-content-showreferences-description": "Белгилени кёргюз",
+	"cite-configuration-info": "Бу джарашдырыула Cite хайырланнган бютеу бетлеге эткили болады. Бу джарашдырыуланы къуру администраторла тюрлендирирге боллукъдула."
 }

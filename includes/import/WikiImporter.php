@@ -30,6 +30,7 @@ use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\SiteStatsUpdate;
+use MediaWiki\Exception\MWContentSerializationException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
@@ -52,6 +53,8 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ExternalUserNames;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\Rdbms\IDBAccessObject;
 
@@ -71,7 +74,7 @@ class WikiImporter {
 	/** @var array|null */
 	private $foreignNamespaces = null;
 
-	/** @var callable */
+	/** @var callable|null */
 	private $mLogItemCallback;
 
 	/** @var callable */
@@ -216,11 +219,13 @@ class WikiImporter {
 
 	/**
 	 * @param string $msg
-	 * @param mixed ...$params
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 */
 	public function notice( $msg, ...$params ) {
 		if ( is_callable( $this->mNoticeCallback ) ) {
-			call_user_func( $this->mNoticeCallback, $msg, $params );
+			( $this->mNoticeCallback )( $msg, $params );
 		} else { # No ImportReporter -> CLI
 			// T177997: the command line importers should call setNoticeCallback()
 			// for their own custom callback to echo the notice
@@ -565,11 +570,8 @@ class WikiImporter {
 	 * @return mixed|false
 	 */
 	private function siteInfoCallback( $siteInfo ) {
-		if ( isset( $this->mSiteInfoCallback ) ) {
-			return call_user_func_array(
-				$this->mSiteInfoCallback,
-				[ $siteInfo, $this ]
-			);
+		if ( $this->mSiteInfoCallback ) {
+			return ( $this->mSiteInfoCallback )( $siteInfo, $this );
 		} else {
 			return false;
 		}
@@ -580,8 +582,8 @@ class WikiImporter {
 	 * @param array $title
 	 */
 	public function pageCallback( $title ) {
-		if ( isset( $this->mPageCallback ) ) {
-			call_user_func( $this->mPageCallback, $title );
+		if ( $this->mPageCallback ) {
+			( $this->mPageCallback )( $title );
 		}
 	}
 
@@ -595,8 +597,8 @@ class WikiImporter {
 	 */
 	private function pageOutCallback( PageIdentity $pageIdentity, $foreignTitle, $revCount,
 			$sucCount, $pageInfo ) {
-		if ( isset( $this->mPageOutCallback ) ) {
-			call_user_func_array( $this->mPageOutCallback, func_get_args() );
+		if ( $this->mPageOutCallback ) {
+			( $this->mPageOutCallback )( $pageIdentity, $foreignTitle, $revCount, $sucCount, $pageInfo );
 		}
 	}
 
@@ -606,11 +608,8 @@ class WikiImporter {
 	 * @return bool|mixed
 	 */
 	private function revisionCallback( $revision ) {
-		if ( isset( $this->mRevisionCallback ) ) {
-			return call_user_func_array(
-				$this->mRevisionCallback,
-				[ $revision, $this ]
-			);
+		if ( $this->mRevisionCallback ) {
+			return ( $this->mRevisionCallback )( $revision, $this );
 		} else {
 			return false;
 		}
@@ -622,11 +621,8 @@ class WikiImporter {
 	 * @return mixed|false
 	 */
 	private function logItemCallback( $revision ) {
-		if ( isset( $this->mLogItemCallback ) ) {
-			return call_user_func_array(
-				$this->mLogItemCallback,
-				[ $revision, $this ]
-			);
+		if ( $this->mLogItemCallback ) {
+			return ( $this->mLogItemCallback )( $revision, $this );
 		} else {
 			return false;
 		}
@@ -983,7 +979,7 @@ class WikiImporter {
 		}
 	}
 
-	private function handleContent() {
+	private function handleContent(): array {
 		$this->debug( "Enter content handler" );
 		$contentInfo = [];
 
@@ -1219,7 +1215,7 @@ class WikiImporter {
 		}
 		$revision->setNoUpdates( $this->mNoUpdates );
 
-		return call_user_func( $this->mUploadCallback, $revision );
+		return ( $this->mUploadCallback )( $revision );
 	}
 
 	/**

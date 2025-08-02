@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Specials\Redirects;
 
-use LogPage;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\SpecialPage\RedirectSpecialPage;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -35,9 +35,6 @@ class SpecialMylog extends RedirectSpecialPage {
 
 	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param TempUserConfig $tempUserConfig
-	 */
 	public function __construct( TempUserConfig $tempUserConfig ) {
 		parent::__construct( 'Mylog' );
 

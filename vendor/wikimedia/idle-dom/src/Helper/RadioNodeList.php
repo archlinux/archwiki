@@ -145,6 +145,7 @@ trait RadioNodeList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\RadioNodeList $this';
 		// @var \Wikimedia\IDLeDOM\RadioNodeList $this
@@ -236,7 +237,7 @@ trait RadioNodeList {
 	/**
 	 * @return \Iterator<Node> Value iterator returning Node items
 	 */
-	public function getIterator() {
+	public function getIterator(): \Iterator {
 		'@phan-var \Wikimedia\IDLeDOM\RadioNodeList $this';
 		// @var \Wikimedia\IDLeDOM\RadioNodeList $this
 		for ( $i = 0; $i < $this->getLength(); $i++ ) {

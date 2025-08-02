@@ -22,10 +22,5 @@
 		"security/detect-non-literal-regexp": "off",
 		"max-len": "off",
 		"mediawiki/valid-package-file-require": "warn"
-	},
-	"settings": {
-		"polyfills": [
-			"URL"
-		]
 	}
 }

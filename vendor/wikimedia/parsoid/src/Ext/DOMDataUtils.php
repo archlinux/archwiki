@@ -3,10 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext;
 
-use stdClass;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\DataParsoidDiff;
 use Wikimedia\Parsoid\Utils\DOMDataUtils as DDU;
 
 /**
@@ -47,7 +47,7 @@ class DOMDataUtils {
 	 * @return bool
 	 */
 	public static function dataMwExists( Element $elt ): bool {
-		return DDU::validDataMw( $elt );
+		return !DDU::getDataMw( $elt )->isEmpty();
 	}
 
 	/**
@@ -62,18 +62,18 @@ class DOMDataUtils {
 	/**
 	 * Get data diff info from a DOM element.
 	 * @param Element $elt
-	 * @return ?stdClass
+	 * @return ?DataParsoidDiff
 	 */
-	public static function getDataParsoidDiff( Element $elt ): ?stdClass {
+	public static function getDataParsoidDiff( Element $elt ): ?DataParsoidDiff {
 		return DDU::getDataParsoidDiff( $elt );
 	}
 
 	/**
 	 * Set data diff info on a DOM element.
 	 * @param Element $elt
-	 * @param ?stdClass $diffObj data-parsoid-diff object
+	 * @param ?DataParsoidDiff $diffObj data-parsoid-diff object
 	 */
-	public static function setDataParsoidDiff( Element $elt, ?stdClass $diffObj ): void {
+	public static function setDataParsoidDiff( Element $elt, ?DataParsoidDiff $diffObj ): void {
 		DDU::setDataParsoidDiff( $elt, $diffObj );
 	}
 

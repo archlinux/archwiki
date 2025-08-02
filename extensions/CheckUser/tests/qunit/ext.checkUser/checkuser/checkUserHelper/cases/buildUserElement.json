@@ -1,0 +1,38 @@
+[
+	{
+		"msg": "A user with linkUserPage=false",
+		"expected": "<span>Do not link</span>",
+		"userName": "Do not link",
+		"userData": {
+			"linkUserPage": false,
+			"classes": ""
+		}
+	},
+	{
+		"msg": "A user with an empty list of classes to apply",
+		"expected": "<a href=\"/wiki/Special:Contributions/User_with_no_classes\"><bdi>User with no classes</bdi></a>",
+		"userName": "User with no classes",
+		"userData": {
+			"linkUserPage": true,
+			"classes": ""
+		}
+	},
+	{
+		"msg": "A non-expired temp user",
+		"expected": "<a href=\"/wiki/Special:Contributions/~2025-1\" class=\"mw-tempuserlink\"><bdi>~2025-1</bdi></a>",
+		"userName": "~2025-1",
+		"userData": {
+			"linkUserPage": true,
+			"classes": "mw-tempuserlink"
+		}
+	},
+	{
+		"msg": "An expired temp user",
+		"expected": "<span><a href=\"/wiki/Special:Contributions/~2025-1\" class=\"mw-userlink mw-tempuserlink mw-tempuserlink-expired\" aria-description=\"(tempuser-expired-link-tooltip)\"><bdi>~2025-1</bdi><span class=\"cdx-tooltip mw-tempuserlink-expired--tooltip\">(tempuser-expired-link-tooltip)</span></a></span>",
+		"userName": "~2025-1",
+		"userData": {
+			"linkUserPage": true,
+			"classes": "mw-userlink mw-tempuserlink mw-tempuserlink-expired"
+		}
+	}
+]

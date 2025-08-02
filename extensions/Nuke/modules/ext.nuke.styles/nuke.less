@@ -1,3 +1,70 @@
 .ext-nuke-italicize {
 	font-style: italic;
 }
+
+.ext-nuke-promptform-error {
+	margin: 12px 0;
+}
+
+.oo-ui-fieldLayout {
+	&.ext-nuke-promptForm-dateFrom,
+	&.ext-nuke-promptForm-dateTo,
+	&.ext-nuke-promptForm-minPageSize,
+	&.ext-nuke-promptForm-maxPageSize {
+		width: 294px; /* Keep the width */
+		display: inline-block; /* Ensure inline-block for all */
+		vertical-align: top;
+		margin-bottom: 12px; /* Add some vertical space below each field */
+	}
+
+	&.ext-nuke-promptForm-dateHelperText {
+		max-width: 600px;
+		font-size: 0.85em;
+		color: #54595d;
+		margin-top: 4px;
+	}
+}
+
+[ dir='ltr' ] .ext-nuke-promptForm-dateFrom {
+	margin-right: 12px; /* Reduced right margin */
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+}
+
+[ dir='rtl' ] .ext-nuke-promptForm-dateFrom {
+	margin-left: 12px; /* Reduced left margin */
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+}
+
+[ dir='ltr' ] .ext-nuke-promptForm-dateTo {
+	margin-right: 12px; /* Add right margin to separate from minPageSize */
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+}
+
+[ dir='rtl' ] .ext-nuke-promptForm-dateTo {
+	margin-left: 12px; /* Add left margin to separate from minPageSize */
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+}
+
+[ dir='ltr' ] .ext-nuke-promptForm-minPageSize {
+	margin-right: 12px; /* Reduced right margin */
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+	margin-top: 0; /* Reset top margin if any was previously set */
+}
+
+[ dir='rtl' ] .ext-nuke-promptForm-minPageSize {
+	margin-left: 12px; /* Reduced left margin */
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+	margin-top: 0; /* Reset top margin if any was previously set */
+}
+
+[ dir='ltr' ] .ext-nuke-promptForm-maxPageSize {
+	margin-right: 12px;
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+	margin-top: 0; /* Reset top margin if any was previously set */
+}
+
+[ dir='rtl' ] .ext-nuke-promptForm-maxPageSize {
+	margin-left: 12px;
+	margin-bottom: 12px; /* Ensure consistent bottom margin */
+	margin-top: 0; /* Reset top margin if any was previously set */
+}

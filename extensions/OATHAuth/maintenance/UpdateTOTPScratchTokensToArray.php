@@ -46,6 +46,7 @@ class UpdateTOTPScratchTokensToArray extends LoggedUpdateMaintenance {
 		$this->requireExtension( 'OATHAuth' );
 	}
 
+	/** @inheritDoc */
 	protected function doDBUpdates() {
 		$dbw = MediaWikiServices::getInstance()
 			->getDBLoadBalancerFactory()

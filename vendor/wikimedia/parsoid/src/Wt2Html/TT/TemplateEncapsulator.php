@@ -27,39 +27,30 @@ use Wikimedia\Parsoid\Wt2Html\Frame;
  * with the appropriate meta tags, adding argument info data.
  */
 class TemplateEncapsulator {
-	/** @var Env */
-	private $env;
-	/** @var Frame */
-	private $frame;
-	/** @var string */
-	private $wrapperType;
-	/** @var string */
-	private $wrappedObjectId;
-	/** @var Token */
-	public $token;
-	/** @var string|null */
-	public $variableName;
-	/** @var string|null */
-	public $parserFunctionName;
-	/** @var string|null */
-	public $resolvedTemplateTarget;
+	private Env $env;
+	private Frame $frame;
+	private string $wrapperType;
+	private string $aboutId;
+	public Token $token;
+	public ?string $variableName = null;
+	public ?string $parserFunctionName = null;
+	public ?string $resolvedTemplateTarget = null;
+	public bool $isV3ParserFunction = false;
 
-	public function __construct(
-		Env $env, Frame $frame, Token $token, string $wrapperType
-	) {
+	public function __construct( Env $env, Frame $frame, Token $token, string $wrapperType ) {
 		$this->env = $env;
 		$this->frame = $frame;
 		$this->token = $token;
 		$this->wrapperType = $wrapperType;
-		$this->wrappedObjectId = $env->newObjectId();
+		$this->aboutId = $env->newAboutId();
 	}
 
 	/**
 	 * Main entry point.
 	 * Encapsulate the template element, including the arguments.
 	 *
-	 * @param array $tokens
-	 * @return array
+	 * @param array<string|Token> $tokens
+	 * @return array<string|Token>
 	 */
 	public function encapTokens( array $tokens ): array {
 		$toks = $this->getEncapsulationInfo( $tokens );
@@ -225,6 +216,9 @@ class TemplateEncapsulator {
 			$ret->func = $this->variableName;
 		} elseif ( $this->parserFunctionName !== null ) {
 			$ret->func = $this->parserFunctionName;
+			if ( $this->isV3ParserFunction ) {
+				$ret->type = 'v3parserfunction';
+			}
 		} elseif ( $this->resolvedTemplateTarget !== null ) {
 			$ret->href = $this->resolvedTemplateTarget;
 		}
@@ -232,6 +226,9 @@ class TemplateEncapsulator {
 		return $ret;
 	}
 
+	/**
+	 * @return array<string|Token>
+	 */
 	private function getEncapsulationInfo( ?array $chunk = null ): array {
 		// TODO
 		// * only add this information for top-level includes, but track parameter
@@ -241,7 +238,7 @@ class TemplateEncapsulator {
 
 		$attrs = [
 			new KV( 'typeof', $this->wrapperType ),
-			new KV( 'about', '#' . $this->wrappedObjectId )
+			new KV( 'about', $this->aboutId )
 		];
 		$dp = new DataParsoid;
 		$dp->tsr = clone $this->token->dataParsoid->tsr;
@@ -259,7 +256,7 @@ class TemplateEncapsulator {
 		return new SelfclosingTagTk( 'meta',
 			[
 				new KV( 'typeof', $this->wrapperType . '/End' ),
-				new KV( 'about', '#' . $this->wrappedObjectId )
+				new KV( 'about', $this->aboutId )
 			],
 			$dp
 		);
@@ -302,7 +299,6 @@ class TemplateEncapsulator {
 			[
 				'pipelineType' => 'fullparse-wikitext-to-dom',
 				'pipelineOpts' => [
-					'isInclude' => false,
 					'expandTemplates' => true,
 					// No need to do paragraph-wrapping here
 					'inlineContext' => true
@@ -323,7 +319,7 @@ class TemplateEncapsulator {
 			$dp->dsr = null;
 		} );
 		$paramInfo->html = ContentUtils::ppToXML(
-			$domFragment, [ 'innerXML' => true ]
+			$domFragment, [ 'innerXML' => true, 'fragment' => true, ]
 		);
 	}
 

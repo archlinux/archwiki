@@ -1,0 +1,174 @@
+{
+	"before": {
+		"name": "cu_log_event",
+		"comment": "Table for log events that have an associated log ID in the logging table.",
+		"columns": [
+			{
+				"name": "cule_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cule_log_id",
+				"comment": "The log_id to the logging table entry associated with the current entry.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cule_actor",
+				"comment": "Actor ID. Same as the actor ID in the associated logging row. Included here for indexing purposes.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cule_timestamp",
+				"comment": "Event timestamp. Same as the timestamp in the associated logging row. Included here for indexing purposes.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cule_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cule_ip_hex",
+				"comment": "IP address as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cule_xff_hex",
+				"comment": "XFF header, last IP, as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cule_ip_hex_time",
+				"columns": [ "cule_ip_hex", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_xff_hex_time",
+				"columns": [ "cule_xff_hex", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_timestamp",
+				"columns": [ "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_actor_ip_time",
+				"columns": [ "cule_actor", "cule_ip", "cule_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cule_id" ]
+	},
+	"after": {
+		"name": "cu_log_event",
+		"comment": "Table for log events that have an associated log ID in the logging table.",
+		"columns": [
+			{
+				"name": "cule_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cule_log_id",
+				"comment": "The log_id to the logging table entry associated with the current entry.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cule_actor",
+				"comment": "Actor ID. Same as the actor ID in the associated logging row. Included here for indexing purposes.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cule_timestamp",
+				"comment": "Event timestamp. Same as the timestamp in the associated logging row. Included here for indexing purposes.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cule_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cule_ip_hex",
+				"comment": "IP address as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cule_xff_hex",
+				"comment": "XFF header, last IP, as hexadecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cule_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this log event.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cule_ip_hex_time",
+				"columns": [ "cule_ip_hex", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_xff_hex_time",
+				"columns": [ "cule_xff_hex", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_timestamp",
+				"columns": [ "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_actor_ip_time",
+				"columns": [ "cule_actor", "cule_ip", "cule_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cule_id" ]
+	}
+}

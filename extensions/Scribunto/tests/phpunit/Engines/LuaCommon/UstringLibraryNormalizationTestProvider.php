@@ -66,6 +66,7 @@ class UstringLibraryNormalizationTestProvider extends LuaDataProvider {
 		return $v;
 	}
 
+	/** @return string[] */
 	#[\ReturnTypeWillChange]
 	public function current() {
 		return $this->current;

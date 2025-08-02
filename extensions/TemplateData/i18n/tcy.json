@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"ChiK",
-			"Vishwanatha Badikana",
-			"Mahaveer Indra"
+			"Mahaveer Indra",
+			"Vishwanatha Badikana"
 		]
 	},
 	"templatedata-doc-param-default": "ಮೂಲೊಸ್ಥಿತಿ",
@@ -36,6 +36,7 @@
 	"templatedata-modal-button-done": "ಆಂಡ್",
 	"templatedata-modal-button-importParams": "ಪರಿಮಿತಿನ್ ಕಡಪುಡುಲೆ",
 	"templatedata-modal-button-saveparam": "ಒರಿಪಾಲೆ",
+	"templatedata-modal-button-discard": "ಬೊಡ್ಚಿ, ದೆಪ್ಪುಲೆ",
 	"templatedata-modal-format-block": "ಉಂತಾಲೆ",
 	"templatedata-modal-format-inline": "ಸಾಲ್‍ದ ಉಲಯಿ",
 	"templatedata-modal-json-error-replace": "ಜಾಗೆಡ್ದ್ ದೆಪ್ಪುಲೆ",

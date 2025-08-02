@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\Math;
 
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Extension\Math\Widget\MathTestInputForm;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use Psr\Log\LoggerInterface;
-use UserNotLoggedIn;
 
 /**
  * MediaWiki math extension

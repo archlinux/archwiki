@@ -23,7 +23,7 @@
 	"license-name": "MIT",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"callback": "MediaWiki\\Extension\\VisualEditor\\Hooks::onRegistration",
 	"ServiceWiringFiles": [
@@ -62,6 +62,7 @@
 			"value": true
 		},
 		"VisualEditorEnableVisualSectionEditing": {
+			"description": "When opened from a section edit link, only show that section in the editor (like in the wikitext editor). Can be boolean true for desktop and mobile, or 'mobile' for just mobile.",
 			"value": "mobile"
 		},
 		"VisualEditorEnableWikitext": {
@@ -105,6 +106,10 @@
 		"VisualEditorSourceFeedbackTitle": {
 			"value": false
 		},
+		"VisualEditorMobileInsertMenu": {
+			"description": "Temporary deployment flag for adding an insert menu on mobile.",
+			"value": false
+		},
 		"VisualEditorTabMessages": {
 			"value": {
 				"edit": null,
@@ -136,6 +141,14 @@
 			"value": false,
 			"description": "Enable experimental Edit Check feature. Can also be enabled using ?ecenable=1."
 		},
+		"VisualEditorEditCheckSingleCheckMode": {
+			"value": true,
+			"description": "Only allow a single edit check to be surfaced"
+		},
+		"VisualEditorEditCheckLoadExperimental": {
+			"value": false,
+			"description": "Load experimental edit checks from the `editchecks/experimental` directory. Can be `false` to not load anything, `true` to load everything, or an array of filenames to load only those checks"
+		},
 		"VisualEditorEditCheckABTest": {
 			"value": false,
 			"description": "A/B test Edit Check for all users. A/B bucket status will override VisualEditorEditCheck."
@@ -154,7 +167,7 @@
 				"UserOptionsLookup",
 				"WatchlistManager",
 				"ContentTransformer",
-				"StatsdDataFactory",
+				"StatsFactory",
 				"WikiPageFactory",
 				"IntroMessageBuilder",
 				"PreloadedContentBuilder",
@@ -166,7 +179,7 @@
 			"class": "MediaWiki\\Extension\\VisualEditor\\ApiVisualEditorEdit",
 			"services": [
 				"HookContainer",
-				"StatsdDataFactory",
+				"StatsFactory",
 				"PageEditStash",
 				"SkinFactory",
 				"WikiPageFactory",
@@ -213,14 +226,23 @@
 		"RecentChange_save": "VisualEditorHooks",
 		"RedirectSpecialArticleRedirectParams": "VisualEditorHooks",
 		"ResourceLoaderGetConfigVars": "VisualEditorHooks",
-		"ResourceLoaderRegisterModules": "VisualEditorHooks",
+		"ResourceLoaderRegisterModules": [
+			"VisualEditorHooks",
+			"EditCheckHooks"
+		],
 		"SkinEditSectionLinks": "VisualEditorHooks",
 		"SkinTemplateNavigation::Universal": "VisualEditorHooks",
 		"UserLoggedIn": "VisualEditorHooks"
 	},
 	"HookHandlers": {
 		"VisualEditorHooks": {
-			"class": "MediaWiki\\Extension\\VisualEditor\\Hooks"
+			"class": "MediaWiki\\Extension\\VisualEditor\\Hooks",
+			"services": [
+				"ExtensionRegistry"
+			]
+		},
+		"EditCheckHooks": {
+			"class": "MediaWiki\\Extension\\VisualEditor\\EditCheck\\Hooks"
 		},
 		"betapreferences": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\BetaPreferenceHooks",
@@ -612,15 +634,13 @@
 			"group": "visualEditorA",
 			"packageFiles": [
 				"editcheck/modules/init.js",
-				"editcheck/modules/EditCheckContextItem.js",
-				"editcheck/modules/EditCheckInspector.js",
+				"editcheck/modules/controller.js",
 				"editcheck/modules/EditCheckDialog.js",
+				"editcheck/modules/EditCheckGutterSidebarDialog.js",
 				"editcheck/modules/EditCheckFactory.js",
 				"editcheck/modules/EditCheckAction.js",
 				"editcheck/modules/BaseEditCheck.js",
-				"editcheck/modules/AddReferenceEditCheck.js",
-				"editcheck/modules/ConvertReferenceEditCheck.js",
-				"editcheck/modules/TextMatchEditCheck.js",
+				"editcheck/modules/editchecks/AddReferenceEditCheck.js",
 				{
 					"name": "editcheck/modules/config.json",
 					"callback": "\\MediaWiki\\Extension\\VisualEditor\\EditCheck\\ResourceLoaderData::getConfig"
@@ -647,7 +667,12 @@
 				"editcheck-dialog-addref-success-notify",
 				"editcheck-dialog-addref-title",
 				"editcheck-dialog-title",
-				"visualeditor-backbutton-tooltip"
+				"editcheck-copyvio-title",
+				"editcheck-copyvio-description",
+				"editcheck-review-title",
+				"visualeditor-backbutton-tooltip",
+				"next",
+				"last"
 			]
 		},
 		"ext.visualEditor.core.utils": {
@@ -704,6 +729,7 @@
 				"modules/ve-mw/init/apiresponsecache/ve.init.mw.GalleryImageInfoCache.js",
 				"modules/ve-mw/init/ve.init.mw.Platform.js",
 				"modules/ve-mw/init/ve.init.mw.Platform.init.js",
+				"modules/ve-mw/init/ve.init.mw.TargetFactory.js",
 				"modules/ve-mw/init/targets/ve.init.mw.Target.js"
 			],
 			"styles": [
@@ -933,6 +959,7 @@
 				"lib/ve/src/dm/nodes/ve.dm.InlineImageNode.js",
 				"lib/ve/src/dm/annotations/ve.dm.LinkAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.TextStyleAnnotation.js",
+				"lib/ve/src/dm/annotations/ve.dm.ImportedDataAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.AbbreviationAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.BidiAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.BigAnnotation.js",
@@ -942,6 +969,7 @@
 				"lib/ve/src/dm/annotations/ve.dm.DatetimeAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.DefinitionAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.DeleteAnnotation.js",
+				"lib/ve/src/dm/annotations/ve.dm.DiffAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.FontAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.HighlightAnnotation.js",
 				"lib/ve/src/dm/annotations/ve.dm.InsertAnnotation.js",
@@ -978,6 +1006,9 @@
 				"lib/ve/src/ce/ve.ce.ResizableNode.js",
 				"lib/ve/src/ce/ve.ce.TableCellableNode.js",
 				"lib/ve/src/ce/ve.ce.Selection.js",
+				"lib/ve/src/ce/ve.ce.ClipboardHandler.js",
+				"lib/ve/src/ce/ve.ce.DragDropHandler.js",
+				"lib/ve/src/ce/ve.ce.SelectionManager.js",
 				"lib/ve/src/ce/ve.ce.Surface.js",
 				"lib/ve/src/ce/ve.ce.SurfaceObserver.js",
 				"lib/ve/src/ce/ve.ce.KeyDownHandlerFactory.js",
@@ -1031,6 +1062,7 @@
 				"lib/ve/src/ce/annotations/ve.ce.NailedAnnotation.js",
 				"lib/ve/src/ce/annotations/ve.ce.LinkAnnotation.js",
 				"lib/ve/src/ce/annotations/ve.ce.TextStyleAnnotation.js",
+				"lib/ve/src/ce/annotations/ve.ce.ImportedDataAnnotation.js",
 				"lib/ve/src/ce/annotations/ve.ce.AbbreviationAnnotation.js",
 				"lib/ve/src/ce/annotations/ve.ce.BidiAnnotation.js",
 				"lib/ve/src/ce/annotations/ve.ce.BigAnnotation.js",
@@ -1084,7 +1116,6 @@
 				"lib/ve/src/ui/ve.ui.FragmentWindow.js",
 				"lib/ve/src/ui/ve.ui.NodeWindow.js",
 				"lib/ve/src/ui/ve.ui.TabIndexScope.js",
-				"lib/ve/src/ui/windowmanagers/ve.ui.SurfaceWindowManager.js",
 				"lib/ve/src/ui/actions/ve.ui.AnnotationAction.js",
 				"lib/ve/src/ui/actions/ve.ui.BlockquoteAction.js",
 				"lib/ve/src/ui/actions/ve.ui.CompletionAction.js",
@@ -1115,6 +1146,7 @@
 				"lib/ve/src/ui/commands/ve.ui.MergeCellsCommand.js",
 				"lib/ve/src/ui/dialogs/ve.ui.FragmentDialog.js",
 				"lib/ve/src/ui/dialogs/ve.ui.NodeDialog.js",
+				"lib/ve/src/ui/dialogs/ve.ui.SidebarDialog.js",
 				"lib/ve/src/ui/dialogs/ve.ui.ToolbarDialog.js",
 				"lib/ve/src/ui/dialogs/ve.ui.CommandHelpDialog.js",
 				"lib/ve/src/ui/dialogs/ve.ui.FindAndReplaceDialog.js",
@@ -1128,6 +1160,8 @@
 				"lib/ve/src/ui/datatransferhandlers/ve.ui.HTMLFileTransferHandler.js",
 				"lib/ve/src/ui/datatransferhandlers/ve.ui.UrlStringTransferHandler.js",
 				"lib/ve/src/ui/elements/ve.ui.PreviewElement.js",
+				"lib/ve/src/ui/windowmanagers/ve.ui.SurfaceWindowManager.js",
+				"lib/ve/src/ui/windowmanagers/ve.ui.SidebarDialogWindowManager.js",
 				"lib/ve/src/ui/windowmanagers/ve.ui.ToolbarDialogWindowManager.js",
 				"lib/ve/src/ui/widgets/ve.ui.AlignWidget.js",
 				"lib/ve/src/ui/widgets/ve.ui.TargetWidget.js",
@@ -1187,6 +1221,7 @@
 				"lib/ve/src/ce/styles/ve.ce.less",
 				"lib/ve/src/ce/styles/ve.ce.Surface.less",
 				"lib/ve/src/ui/styles/ve.ui.icons.less",
+				"lib/ve/src/ui/styles/dialogs/ve.ui.SidebarDialog.less",
 				"lib/ve/src/ui/styles/dialogs/ve.ui.ToolbarDialog.less",
 				"lib/ve/src/ui/styles/dialogs/ve.ui.CommandHelpDialog.less",
 				"lib/ve/src/ui/styles/dialogs/ve.ui.FindAndReplaceDialog.less",
@@ -1203,6 +1238,7 @@
 				"lib/ve/src/ui/styles/inspectors/ve.ui.FragmentInspector.less",
 				"lib/ve/src/ui/styles/layouts/ve.ui.SymbolListBookletLayout.less",
 				"lib/ve/src/ui/styles/widgets/ve.ui.TargetWidget.less",
+				"lib/ve/src/ui/styles/windowmanagers/ve.ui.SidebarDialogWindowManager.less",
 				"lib/ve/src/ui/styles/ve.ui.Context.less",
 				"lib/ve/src/ui/styles/ve.ui.ContextItem.less",
 				"lib/ve/src/ui/styles/contextitems/ve.ui.LinearContextItem.less",
@@ -1377,6 +1413,7 @@
 				"visualeditor-shortcuts-text-style",
 				"visualeditor-slug-insert",
 				"visualeditor-specialcharacter-button-tooltip",
+				"visualeditor-specialcharacter-recentlyused",
 				"visualeditor-table-context-col",
 				"visualeditor-table-context-row",
 				"visualeditor-table-contextitem-properties",
@@ -2401,6 +2438,7 @@
 			"scripts": [
 				"modules/ve-mw/dm/ve.dm.MWWikitextSurface.js",
 				"modules/ve-mw/dm/ve.dm.MWWikitextSurfaceFragment.js",
+				"modules/ve-mw/ce/ve.ce.MWWikitextClipboardHandler.js",
 				"modules/ve-mw/ce/ve.ce.MWWikitextSurface.js",
 				"modules/ve-mw/ui/ve.ui.MWWikitextCommandRegistry.js",
 				"modules/ve-mw/ui/ve.ui.MWWikitextSequenceRegistry.js",
@@ -2611,8 +2649,10 @@
 			"lib/ve/tests/ce/ve.ce.test.js",
 			"lib/ve/tests/ce/ve.ce.Document.test.js",
 			"modules/ve-mw/tests/ce/ve.ce.Document.test.js",
+			"lib/ve/tests/ce/ve.ce.ClipboardHandler.test.js",
+			"modules/ve-mw/tests/ce/ve.ce.ClipboardHandler.test.js",
+			"lib/ve/tests/ce/ve.ce.DragDropHandler.test.js",
 			"lib/ve/tests/ce/ve.ce.Surface.test.js",
-			"modules/ve-mw/tests/ce/ve.ce.Surface.test.js",
 			"lib/ve/tests/ce/ve.ce.RangeState.test.js",
 			"lib/ve/tests/ce/ve.ce.TextState.test.js",
 			"lib/ve/tests/ce/ve.ce.NodeFactory.test.js",

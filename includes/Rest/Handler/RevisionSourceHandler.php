@@ -9,6 +9,7 @@ use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Revision\RevisionRecord;
+use Wikimedia\Message\MessageValue;
 
 /**
  * A handler that returns page source and metadata for the following routes:
@@ -27,14 +28,10 @@ class RevisionSourceHandler extends SimpleHandler {
 		$this->contentHelper->init( $this->getAuthority(), $this->getValidatedParams() );
 	}
 
-	/**
-	 * @param RevisionRecord $rev
-	 * @return string
-	 */
 	private function constructHtmlUrl( RevisionRecord $rev ): string {
 		// TODO: once legacy "v1" routes are removed, just use the path prefix from the module.
 		$pathPrefix = $this->getModule()->getPathPrefix();
-		if ( strlen( $pathPrefix ) == 0 ) {
+		if ( $pathPrefix === '' ) {
 			$pathPrefix = 'v1';
 		}
 
@@ -79,21 +76,29 @@ class RevisionSourceHandler extends SimpleHandler {
 		return $response;
 	}
 
-	protected function getResponseBodySchemaFileName( string $method ): ?string {
-		// TODO: add fields based on the output mode to the schema
-		return 'includes/Rest/Handler/Schema/RevisionMetaData.json';
+	private function getTargetFormat(): string {
+		return $this->getConfig()['format'];
 	}
 
-	/**
-	 * @return string|null
-	 */
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
+		switch ( $this->getTargetFormat() ) {
+			case 'bare':
+				return 'includes/Rest/Handler/Schema/RevisionMetaDataBare.json';
+
+			case 'source':
+				return 'includes/Rest/Handler/Schema/RevisionMetaDataWithSource.json';
+
+			default:
+				throw new LocalizedHttpException(
+					new MessageValue( "rest-unsupported-target-format" ), 500
+				);
+		}
+	}
+
 	protected function getETag(): ?string {
 		return $this->contentHelper->getETag();
 	}
 
-	/**
-	 * @return string|null
-	 */
 	protected function getLastModified(): ?string {
 		return $this->contentHelper->getLastModified();
 	}

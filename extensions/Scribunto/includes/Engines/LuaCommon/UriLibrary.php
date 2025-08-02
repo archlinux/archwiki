@@ -6,6 +6,7 @@ use MediaWiki\Parser\CoreParserFunctions;
 use MediaWiki\Title\Title;
 
 class UriLibrary extends LibraryBase {
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'anchorEncode' => [ $this, 'anchorEncode' ],

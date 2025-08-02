@@ -23,7 +23,7 @@
 
 namespace MediaWiki\Api;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
@@ -134,7 +134,7 @@ class ApiRevisionDelete extends ApiBase {
 		$result->addValue( null, $this->getModuleName(), $data );
 	}
 
-	private function extractStatusInfo( Status $status ) {
+	private function extractStatusInfo( Status $status ): array {
 		$ret = [
 			'status' => $status->isOK() ? 'Success' : 'Fail',
 		];

@@ -25,6 +25,7 @@
  */
 
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\User\User;
 
@@ -158,7 +159,7 @@ TEXT
 		$this->nsFilter = array_unique( array_map( [ $this, 'getNsIndex' ], $namespaces ) );
 	}
 
-	private function getNsIndex( $namespace ) {
+	private function getNsIndex( string $namespace ): int {
 		$contLang = $this->getServiceContainer()->getContentLanguage();
 		$result = $contLang->getNsIndex( $namespace );
 		if ( $result !== false ) {
@@ -190,9 +191,6 @@ TEXT
 		$this->pageCount++;
 	}
 
-	/**
-	 * @param WikiRevision $rev
-	 */
 	public function handleRevision( WikiRevision $rev ) {
 		$title = $rev->getTitle();
 		if ( !$title ) {
@@ -209,7 +207,7 @@ TEXT
 		$this->report();
 
 		if ( !$this->dryRun ) {
-			call_user_func( $this->importCallback, $rev );
+			( $this->importCallback )( $rev );
 		}
 	}
 
@@ -228,7 +226,7 @@ TEXT
 
 			if ( !$this->dryRun ) {
 				// bluuuh hack
-				// call_user_func( $this->uploadCallback, $revision );
+				// ( $this->uploadCallback )( $revision );
 				$importer = $this->getServiceContainer()->getWikiRevisionUploadImporter();
 				$statusValue = $importer->import( $revision );
 
@@ -239,9 +237,6 @@ TEXT
 		return false;
 	}
 
-	/**
-	 * @param WikiRevision $rev
-	 */
 	public function handleLogItem( WikiRevision $rev ) {
 		if ( $this->skippedNamespace( $rev->getTitle() ) ) {
 			return;
@@ -250,11 +245,11 @@ TEXT
 		$this->report();
 
 		if ( !$this->dryRun ) {
-			call_user_func( $this->logItemCallback, $rev );
+			( $this->logItemCallback )( $rev );
 		}
 	}
 
-	private function report( $final = false ) {
+	private function report( bool $final = false ) {
 		if ( $final xor ( $this->pageCount % $this->reportingInterval == 0 ) ) {
 			$this->showReport();
 		}
@@ -280,11 +275,11 @@ TEXT
 		$this->waitForReplication();
 	}
 
-	private function progress( $string ) {
+	private function progress( string $string ) {
 		fwrite( $this->stderr, $string . "\n" );
 	}
 
-	private function importFromFile( $filename ) {
+	private function importFromFile( string $filename ): bool {
 		if ( preg_match( '/\.gz$/', $filename ) ) {
 			$filename = 'compress.zlib://' . $filename;
 		} elseif ( preg_match( '/\.bz2$/', $filename ) ) {
@@ -301,7 +296,7 @@ TEXT
 		return $this->importFromHandle( $file );
 	}
 
-	private function importFromStdin() {
+	private function importFromStdin(): bool {
 		$file = fopen( 'php://stdin', 'rt' );
 		if ( self::posix_isatty( $file ) ) {
 			$this->maybeHelp( true );
@@ -310,7 +305,10 @@ TEXT
 		return $this->importFromHandle( $file );
 	}
 
-	private function importFromHandle( $handle ) {
+	/**
+	 * @param resource $handle
+	 */
+	private function importFromHandle( $handle ): bool {
 		$this->startTime = microtime( true );
 
 		$user = User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] );

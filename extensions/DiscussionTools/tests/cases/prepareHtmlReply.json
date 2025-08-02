@@ -1,0 +1,22 @@
+[
+	{
+		"msg": "Removes empty paragraphs",
+		"html": "<p></p><p>Foo</p><p>  </p>",
+		"expected": "<p>Foo</p>"
+	},
+	{
+		"msg": "Preserves template-generated empty paragraphs",
+		"html": "<p typeof=\"mw:Transclusion\" data-mw=\"{}\"></p><p></p><p>Foo</p>",
+		"expected": "<p typeof=\"mw:Transclusion\" data-mw=\"{}\"></p><p>Foo</p>"
+	},
+	{
+		"msg": "Removes empty text nodes",
+		"html": " <p>Foo</p>   <p>bar</p>   ",
+		"expected": "<p>Foo</p><p>bar</p>"
+	},
+	{
+		"msg": "Preserves whitespace in elements",
+		"html": "<p> Foo  </p>",
+		"expected": "<p> Foo  </p>"
+	}
+]

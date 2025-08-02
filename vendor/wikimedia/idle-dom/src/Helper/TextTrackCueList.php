@@ -112,6 +112,7 @@ trait TextTrackCueList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\TextTrackCueList $this';
 		// @var \Wikimedia\IDLeDOM\TextTrackCueList $this

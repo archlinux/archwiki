@@ -25,5 +25,7 @@
 
 namespace Wikimedia\Timestamp;
 
-class TimestampException extends \Exception {
+use Exception;
+
+class TimestampException extends Exception {
 }

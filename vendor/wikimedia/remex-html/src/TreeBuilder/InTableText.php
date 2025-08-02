@@ -8,6 +8,7 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in table text" insertion mode
  */
 class InTableText extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$handleNonNull = function ( $text, $start, $length, $sourceStart, $sourceLength ) {
 			$this->builder->pendingTableCharacters[] = [
@@ -21,30 +22,35 @@ class InTableText extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->processPendingCharacters();
 		$this->dispatcher->restoreMode()
 			->doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function comment( $text, $sourceStart, $sourceLength ) {
 		$this->processPendingCharacters();
 		$this->dispatcher->restoreMode()
 			->comment( $text, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$this->processPendingCharacters();
 		$this->dispatcher->restoreMode()
 			->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$this->processPendingCharacters();
 		$this->dispatcher->restoreMode()
 			->endTag( $name, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->processPendingCharacters();
 		$this->dispatcher->restoreMode()

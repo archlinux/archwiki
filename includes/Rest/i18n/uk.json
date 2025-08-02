@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Base",
+			"Marvire",
 			"Movses",
 			"Piramidion",
 			"Vlad5250",
 			"Ата",
-			"Пан Хаунд",
-			"Marvire"
+			"Пан Хаунд"
 		]
 	},
 	"rest-prefix-mismatch": "Зазначений шлях ($1) не знайдено всередині базового шляху REST API ($2)",

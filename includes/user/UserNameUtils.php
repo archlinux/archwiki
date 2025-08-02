@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author DannyS712
  */
 
 namespace MediaWiki\User;
@@ -40,6 +38,8 @@ use Wikimedia\Message\MessageValue;
  * UserNameUtils service
  *
  * @since 1.35
+ * @ingroup User
+ * @author DannyS712
  */
 class UserNameUtils implements UserRigorOptions {
 
@@ -108,7 +108,7 @@ class UserNameUtils implements UserRigorOptions {
 	 * Checks if the input is a valid username, we don't want an empty string,
 	 * an IP address, any type of IP range, anything that contains slashes
 	 * (would mess up subpages), is longer than the maximum allowed username
-	 * size or doesn't begin with a capital letter.
+	 * size or begins with a lowercase letter.
 	 *
 	 * @param string $name Name to match
 	 * @return bool
@@ -335,7 +335,7 @@ class UserNameUtils implements UserRigorOptions {
 	 * addresses like this, if we allowed accounts like this to be created
 	 * new users could get the old edits of these anonymous users.
 	 *
-	 * This does //not// match IPv6 ranges (T239527)
+	 * This does //not// match IP ranges. See also T239527.
 	 *
 	 * @param string $name Name to check
 	 * @return bool

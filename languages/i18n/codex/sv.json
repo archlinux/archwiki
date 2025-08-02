@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"WikiPhoenix",
-			"Yupik"
+			"Yupik",
+			"Teaparty"
 		]
 	},
 	"cdx-chip-input-chip-added": "Chip $1 lades till.",
@@ -11,6 +12,7 @@
 	"cdx-dialog-close-button-label": "Stäng",
 	"cdx-label-optional-flag": "(valfritt)",
 	"cdx-message-dismiss-button-label": "Stäng",
+	"cdx-popover-close-button-label": "Stäng",
 	"cdx-search-input-search-button-label": "Sök",
 	"cdx-table-select-all-label": "Markera alla rader",
 	"cdx-table-select-row-label": "Markera rad $1 av $2",
@@ -27,5 +29,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Visar resultat $1–$2 av många",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 av många",
 	"cdx-table-pagination-status-message-indeterminate-final": "Visar {{PLURAL:$1|det senaste resultatet|de $1 senaste resultaten}}",
-	"cdx-table-pagination-status-message-pending": "Läser in resultat..."
+	"cdx-table-pagination-status-message-pending": "Läser in resultat...",
+	"cdx-table-no-data-message": "Det finns ingen tillgänglig data."
 }

@@ -43,7 +43,7 @@ OO.initClass( ve.dm.SurfaceFragment );
 /**
  * Get list of selected nodes and annotations.
  *
- * @param {boolean} [all] Include nodes and annotations which only cover some of the fragment
+ * @param {boolean} [all=false] Include nodes and annotations which only cover some of the fragment
  * @return {ve.dm.Model[]} Selected models
  */
 ve.dm.SurfaceFragment.prototype.getSelectedModels = function ( all ) {
@@ -341,7 +341,7 @@ ve.dm.SurfaceFragment.prototype.expandLinearSelection = function ( scope, type )
 			}
 			break;
 		case 'annotation':
-			newRange = this.document.data.getAnnotatedRangeFromSelection( oldRange, type );
+			newRange = this.document.data.getAnnotatedRangeFromRange( oldRange, type );
 			// Adjust selection if it does not contain the annotated range
 			if ( oldRange.start > newRange.start || oldRange.end < newRange.end ) {
 				// Maintain range direction
@@ -451,7 +451,7 @@ ve.dm.SurfaceFragment.prototype.containsOnlyText = function () {
  * By default, this will only get annotations that completely cover the fragment. Use the {all}
  * argument to get all annotations that occur within the fragment.
  *
- * @param {boolean} [all] Get annotations which only cover some of the fragment
+ * @param {boolean} [all=false] Get annotations which only cover some of the fragment
  * @return {ve.dm.AnnotationSet} All annotation objects range is covered by
  */
 ve.dm.SurfaceFragment.prototype.getAnnotations = function ( all ) {
@@ -1379,7 +1379,7 @@ ve.dm.SurfaceFragment.prototype.isolateAndUnwrap = function ( isolateForType ) {
 	let startSplitNode = nodes[ 0 ].node;
 	startOffset = startSplitNode.getOuterRange().start;
 	if ( allowedParents !== null ) {
-		while ( allowedParents.indexOf( startSplitNode.getParent().type ) === -1 ) {
+		while ( !allowedParents.includes( startSplitNode.getParent().type ) ) {
 			if ( startSplitNode.getParent().indexOf( startSplitNode ) > 0 ) {
 				startSplitRequired = true;
 			}
@@ -1397,7 +1397,7 @@ ve.dm.SurfaceFragment.prototype.isolateAndUnwrap = function ( isolateForType ) {
 	let endSplitNode = nodes[ nodes.length - 1 ].node;
 	endOffset = endSplitNode.getOuterRange().end;
 	if ( allowedParents !== null ) {
-		while ( allowedParents.indexOf( endSplitNode.getParent().type ) === -1 ) {
+		while ( !allowedParents.includes( endSplitNode.getParent().type ) ) {
 			if ( endSplitNode.getParent().indexOf( endSplitNode ) < endSplitNode.getParent().getChildren().length - 1 ) {
 				endSplitRequired = true;
 			}

@@ -68,17 +68,6 @@ class ExtractFormatterTest extends MediaWikiIntegrationTestCase {
 				false,
 			],
 			[
-				// New heading markup from T13555 (T363445)
-				"<p>hello</p><h2 id=\"heading\">heading</h2><p>bye</p>",
-				'<p>hello</p>' .
-					'<div class="mw-heading mw-heading2">' .
-					'<h2 id="heading">heading</h2>' .
-					'<span class="mw-editsection">xxx</span>' .
-					'</div>' .
-					'<p>bye</p>',
-				false,
-			],
-			[
 				// Verify that TOC is properly removed (HTML mode)
 				"Lead\n<h1>Section</h1>\n<p>Section text</p>",
 				$tocText,

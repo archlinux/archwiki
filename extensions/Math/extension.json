@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
@@ -22,6 +22,7 @@
 		"DummyPropertyDataTypeLookup": "tests/phpunit/DummyPropertyDataTypeLookup.php",
 		"MediaWiki\\Extension\\Math\\Tests\\MathWikibaseConnectorTestFactory": "tests/phpunit/unit/MathWikibaseConnectorTestFactory.php",
 		"MediaWiki\\Extension\\Math\\Tests\\MathMockHttpTrait": "tests/phpunit/MathMockHttpTrait.php",
+		"MediaWiki\\Extension\\Math\\Tests\\WikiTexVC\\MathServiceContainerTrait": "tests/phpunit/unit/WikiTexVC/MathServiceContainerTrait.php",
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLTestUtilHTML": "tests/phpunit/unit/WikiTexVC/MMLTestUtilHTML.php",
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLTestUtil": "tests/phpunit/unit/WikiTexVC/MMLTestUtil.php",
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLComparator": "tests/phpunit/unit/WikiTexVC/MMLComparator.php"
@@ -119,6 +120,10 @@
 		"MathEntitySelectorFallbackUrl": {
 			"description": "Fallback value for wbEntitySelector if wbRepo is not configured. See https://www.mediawiki.org/wiki/Manual:CORS for cross wiki communication.",
 			"value": "https://www.wikidata.org/w/api.php"
+		},
+		"MathTexMaxLength": {
+			"description": "Maximum string-length of a TeX expression for the Wikibase property type math. See Wikibase documentation on string-limits for other limits https://doc.wikimedia.org/Wikibase/master/php/docs_topics_options.html#autotoc_md317.",
+			"value": 400
 		},
 		"MathTexVCService": {
 			"description": "Determine which TexVC variant is used, currently available: 'mathoid', 'restbase' (default) and 'local'.",

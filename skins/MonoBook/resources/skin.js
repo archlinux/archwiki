@@ -1,11 +1,9 @@
 /* eslint-disable no-jquery/no-global-selector */
-$( function () {
-	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
+$( () => {
+	const mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
 		isResponsive = document.body.classList.contains( 'skin--responsive' ),
 		echo = require( './mobile-echo.js' ),
 		uls = require( './mobile-uls.js' ),
-		// Track if DOM has been set up for mobile fanciness yet
-		monobookMobileElements = false,
 		// Toggles and targets for popouts
 		toggles = {
 			'#sidebar-toggle': '#sidebar-mobilejs',
@@ -14,6 +12,8 @@ $( function () {
 			'#ca-languages a': '#p-lang',
 			'#ca-tools a': '#p-tb'
 		};
+	// Track if DOM has been set up for mobile fanciness yet
+	let monobookMobileElements = false;
 
 	// Close menus
 	function closeMenus() {
@@ -39,15 +39,15 @@ $( function () {
 
 			// Add extra cactions tabs - edit, editsource, contributions
 			// Wrap in function to keep jenkins from whining
-			$( function () {
-				var newTabs = [
+			$( () => {
+				const newTabs = [
 					'ca-edit',
 					// 'ca-ve-edit', // TODO when VE is more usable to begin with here
 					// 'ca-watch', 'ca-unwatch', // Maybe?
 					't-contributions'
 				];
-				newTabs.forEach( function ( item ) {
-					var $a = $( '#' + item + ' a' );
+				newTabs.forEach( ( item ) => {
+					const $a = $( '#' + item + ' a' );
 					// TODO check if we're on the page and add class=selected
 
 					if ( $a.length ) {
@@ -65,12 +65,12 @@ $( function () {
 			} );
 
 			// eslint-disable-next-line no-jquery/no-each-util
-			$.each( toggles, function ( toggle, target ) {
+			$.each( toggles, ( toggle, target ) => {
 				// Add close buttons
 				$( target ).append( $( '<div>' ).addClass( 'mobile-close-button' ) );
 
 				// Open menus
-				$( toggle ).on( 'click', function () {
+				$( toggle ).on( 'click', () => {
 					if ( mobileMediaQuery.matches ) {
 						$( target ).addClass( 'mobile-menu-active' );
 						$( '.menus-cover' ).addClass( 'visible' );

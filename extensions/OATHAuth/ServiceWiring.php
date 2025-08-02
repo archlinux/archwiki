@@ -11,6 +11,7 @@ return [
 	'OATHAuthModuleRegistry' => static function ( MediaWikiServices $services ): OATHAuthModuleRegistry {
 		return new OATHAuthModuleRegistry(
 			$services->getDBLoadBalancerFactory(),
+			$services->getObjectFactory(),
 			ExtensionRegistry::getInstance()->getAttribute( 'OATHAuthModules' ),
 		);
 	},

@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"-jem-",
 			"Avengium",
 			"Bruno44101",
 			"Canaan9801",
 			"Chopan050",
 			"DarkGames26",
+			"Dgstranz",
 			"DiegoAmbrocio",
 			"Ed g2s",
 			"Fewasser Traduce",
@@ -23,15 +25,13 @@
 			"Nelthal",
 			"No se",
 			"Pierpao",
+			"PoLuX124",
 			"Qwrop",
 			"Rodney Araujo",
 			"Themasterriot",
+			"Woytecr",
 			"ZealousBlaze",
 			"ZebaX2010",
-			"Woytecr",
-			"PoLuX124",
-			"-jem-",
-			"Dgstranz",
 			"JaimeDes"
 		]
 	},
@@ -221,9 +221,9 @@
 	"tag-discussiontools-description": "Edición hecha con DiscussionTools",
 	"tag-discussiontools-edit": "Comentario editado",
 	"tag-discussiontools-edit-description": "El usuario editó un comentario existente con DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Tema nuevo]",
+	"tag-discussiontools-newtopic": "Tema nuevo",
 	"tag-discussiontools-newtopic-description": "Se añadió un tema nuevo a la página mediante DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Responder]",
+	"tag-discussiontools-reply": "Responder",
 	"tag-discussiontools-reply-description": "El usuario respondió a un comentario con DiscussionTools",
 	"tag-discussiontools-source-description": "DiscussionTools estaba en modo de código",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools estaba en modo de código mejorado con la barra de herramientas",

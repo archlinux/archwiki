@@ -13,4 +13,10 @@ class AbuseFilterHookRunnerTest extends HookRunnerTestBase {
 	public static function provideHookRunners() {
 		yield AbuseFilterHookRunner::class => [ AbuseFilterHookRunner::class ];
 	}
+
+	protected static array $unabortableHooksNotReturningVoid = [
+		'onAbuseFilterCustomActions',
+		'onAbuseFilterCustomProtectedVariables',
+	];
+
 }

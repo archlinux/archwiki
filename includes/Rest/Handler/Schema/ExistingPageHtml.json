@@ -1,0 +1,64 @@
+{
+	"x-i18n-description": "rest-schema-desc-existing-page-html",
+	"required": [
+		"id",
+		"key",
+		"title",
+		"latest",
+		"content_model",
+		"license",
+		"html"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"x-i18n-description": "rest-property-desc-page-id"
+		},
+		"key": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-key"
+		},
+		"title": {
+			"type": "string",
+			"x-i18n-description": "rest-param-desc-page-content-title"
+		},
+		"latest": {
+			"type": "object",
+			"x-i18n-description": "rest-property-desc-page-latest",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"x-i18n-description": "rest-property-desc-page-latest-id"
+				},
+				"timestamp": {
+					"type": "string",
+					"format": "date-time",
+					"x-i18n-description": "rest-property-desc-page-timestamp-html",
+					"nullable": true
+				}
+			}
+		},
+		"content_model": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-contentmodel"
+		},
+		"license": {
+			"type": "object",
+			"x-i18n-description": "rest-property-desc-page-license",
+			"properties": {
+				"url": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-url-html"
+				},
+				"title": {
+					"type": "string",
+					"x-i18n-description": "rest-property-desc-page-license-title-html"
+				}
+			}
+		},
+		"html": {
+			"type": "string",
+			"x-i18n-description": "rest-property-desc-page-content-html"
+		}
+	}
+}

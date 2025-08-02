@@ -2,6 +2,10 @@
 @import '../../../minerva.less/minerva.mixins.less';
 @import 'mediawiki.mixins.less';
 
+.toggle-list {
+	position: relative;
+}
+
 .toggle-list-item {
 	display: block;
 }
@@ -25,6 +29,12 @@
 	// Always occlude the checkbox. The checkbox display cannot be none since its focus state is used
 	// for other selectors.
 	position: absolute;
-	z-index: @z-index-occluded;
+	z-index: @z-index-stacking-1;
 	opacity: 0;
+	top: 0;
+	left: 0;
+	height: 100%;
+	// Ensure checkbox covers full width of the label
+	width: calc( 100% + 12px );
+	margin: 0;
 }

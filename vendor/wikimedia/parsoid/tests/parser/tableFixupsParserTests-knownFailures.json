@@ -1,0 +1,12 @@
+{
+	"10. table-fixups td-td cell-combining: prev=double_pipe,no_content; cell=attrs": {
+		"wt2wt": "{|\n| |{{1x|1={{!}}class='x'{{!}}y}}\n|}"
+	},
+	"9. table-fixups td-td cell-combining: prev=double_pipe,no_content; cell=no_attrs": {
+		"wt2wt": "{|\n| |{{1x|{{!}}y}}\n|}"
+	},
+	"Ensure td-cell-type is switched to th when the first cell in a row is a <th>": {
+		"wt2html": "<table data-parsoid='{\"dsr\":[0,23,2,2]}'>\n<tbody data-parsoid='{\"dsr\":[3,21,0,0]}'><tr data-parsoid='{\"autoInsertedStart\":true,\"dsr\":[3,20,0,0]}'><th data-parsoid='{\"dsr\":[3,5,1,0]}'>a</th><th data-parsoid='{\"stx\":\"row\",\"startTagSrc\":\"||\",\"dsr\":[5,8,2,0]}'>b</th>\n<th data-parsoid='{\"dsr\":[9,11,1,0]}'>c</th><td about=\"#mwt\" typeof=\"mw:Transclusion\" data-parsoid='{\"startTagSrc\":\"|\",\"attrSepSrc\":\"|\",\"pi\":[[]],\"dsr\":[11,20,null,null,1,0]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"tdfoo\",\"href\":\"./Template:Tdfoo\"},\"params\":{},\"i\":0}}]}'>y</td></tr>\n</tbody></table>",
+		"wt2wt": "{|\n!a||b\n!c\n{{tdfoo}}\n|}"
+	}
+}

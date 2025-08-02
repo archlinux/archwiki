@@ -6,6 +6,7 @@
 			"Bachounda",
 			"Beginneruser",
 			"Calak",
+			"Cigaryno",
 			"Dyolf77 (WMF)",
 			"FShbib",
 			"Hubaishan",
@@ -28,8 +29,7 @@
 			"زكريا",
 			"عبد الإله صديقي",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"Cigaryno"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"skinname-vector": "فكتور القديم (2010)",
@@ -47,7 +47,7 @@
 	"vector-language-button-aria-label": "{{GENDER:|اذهب|اذهبي}} إلى المقالة في لغةٍ أخرى. مُتاحة في {{PLURAL:$1|لا لغة|لغة واحدة|لغتين|$1 لغات|$1 لغة}}",
 	"vector-language-button-label": "{{PLURAL:$1|لغة واحدة|$1 لغة}}",
 	"vector-no-language-button-label": "أضف لغات",
-	"vector-no-language-button-aria-label": "هذه المقالة تتواجد فقط في هذه اللغة. أضفها إلى اللغات الأخرى.",
+	"vector-no-language-button-aria-label": "هذه المقالة متوفرة بهذه اللغة فقط. أضف المقالة للغات أخرى.",
 	"vector-language-variant-switcher-label": "غيّر لهجة اللغة",
 	"vector-action-addsection": "أضف موضوعًا",
 	"vector-action-delete": "احذف",
@@ -66,6 +66,7 @@
 	"vector-more-actions": "المزيد",
 	"vector-appearance-label": "المظهر",
 	"vector-appearance-tooltip": "تغيير مظهر الصفحة، حجم الخط، العرض واللون",
+	"vector-personal-tools-tooltip": "الإعدادات الشخصية",
 	"vector-feature-limited-width-name": "العرض",
 	"vector-feature-limited-width-0-label": "عريض",
 	"vector-feature-limited-width-1-label": "قياسي",

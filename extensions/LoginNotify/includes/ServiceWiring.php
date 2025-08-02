@@ -14,7 +14,7 @@ return [
 			),
 			$services->getMainObjectStash(),
 			LoggerFactory::getInstance( 'LoginNotify' ),
-			$services->getStatsdDataFactory(),
+			$services->getStatsFactory(),
 			$services->getDBLoadBalancerFactory(),
 			$services->getJobQueueGroup(),
 			$services->getCentralIdLookup(),

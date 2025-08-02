@@ -2,13 +2,14 @@
 
 namespace MediaWiki\Tests\Action;
 
-use BadTitleError;
 use MediaWiki\Actions\ActionEntryPoint;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\DeferredUpdatesScopeMediaWikiStack;
 use MediaWiki\Deferred\DeferredUpdatesScopeStack;
+use MediaWiki\Exception\BadTitleError;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
 use MediaWiki\Request\WebRequest;
@@ -21,7 +22,6 @@ use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\Assert;
 use ReflectionMethod;
 use Wikimedia\TestingAccessWrapper;
-use WikiPage;
 
 // phpcs:disable MediaWiki.Usage.SuperGlobalsUsage.SuperGlobals
 
@@ -423,6 +423,101 @@ class ActionEntryPointTest extends MediaWikiIntegrationTestCase {
 
 		$expected = '<title>(pagetitle: ' . $page->getTitle()->getPrefixedText();
 		Assert::assertStringContainsString( $expected, $entryPoint->getCapturedOutput() );
+	}
+
+	public function testViewViaRedirect() {
+		$page = $this->getExistingTestPage( 'Origin_' . __METHOD__ );
+		$target = $this->getExistingTestPage( 'Target_' . __METHOD__ );
+		$link = $this->getServiceContainer()->getTitleFormatter()
+			->getPrefixedText( $target );
+
+		$this->editPage( $page, "#REDIRECT [[$link]]\n\nRedirect Footer" );
+		$this->editPage( $target, "Redirect Target" );
+
+		$request = new FauxRequest( [ 'title' => $page->getTitle()->getPrefixedDBkey() ] );
+		$env = new MockEnvironment( $request );
+
+		$entryPoint = $this->getEntryPoint( $env );
+		$entryPoint->run();
+		$output = $entryPoint->getCapturedOutput();
+
+		Assert::assertStringContainsString( '<title>(pagetitle: Target', $output );
+		Assert::assertStringContainsString( '(redirectedfrom: ', $output );
+		Assert::assertStringContainsString( '>Origin', $output );
+		Assert::assertStringContainsString( 'Target', $output );
+	}
+
+	public function testViewRedirectPage() {
+		$page = $this->getExistingTestPage( 'Origin_' . __METHOD__ );
+		$target = $this->getExistingTestPage( 'Target_' . __METHOD__ );
+		$link = $this->getServiceContainer()->getTitleFormatter()
+			->getPrefixedText( $target );
+
+		$this->editPage( $page, "#REDIRECT [[$link]]\n\nRedirect Footer" );
+		$this->editPage( $target, "Redirect Target" );
+
+		$request = new FauxRequest( [
+			'title' => $page->getTitle()->getPrefixedDBkey(),
+			'redirect' => 'no'
+		] );
+
+		$env = new MockEnvironment( $request );
+
+		$entryPoint = $this->getEntryPoint( $env );
+		$entryPoint->run();
+		$output = $entryPoint->getCapturedOutput();
+
+		Assert::assertStringContainsString( '<title>(pagetitle: Origin', $output );
+		Assert::assertStringContainsString( 'Redirect to:', $output );
+		Assert::assertStringContainsString( 'Footer', $output );
+	}
+
+	public function testViewRedirectNonExistingViewablePage() {
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'en' );
+		$page = $this->getExistingTestPage( 'Origin_' . __METHOD__ );
+		$target = $this->getNonexistingTestPage( 'MediaWiki:Mainpage' );
+		$link = $this->getServiceContainer()->getTitleFormatter()
+			->getPrefixedText( $target );
+
+		$this->editPage( $page, "#REDIRECT [[$link]]\n\nRedirect Footer" );
+		$this->editPage( $target, "Redirect Target" );
+
+		$request = new FauxRequest( [
+			'title' => $page->getTitle()->getPrefixedDBkey(),
+		] );
+
+		$env = new MockEnvironment( $request );
+
+		$entryPoint = $this->getEntryPoint( $env );
+		$entryPoint->run();
+		$output = $entryPoint->getCapturedOutput();
+
+		Assert::assertStringContainsString( '<title>(pagetitle: MediaWiki:Mainpage', $output );
+		Assert::assertStringContainsString( 'Mainpage', $output );
+	}
+
+	public function testViewRedirectNonExistingViewablePageInFrLanguageCode() {
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'fr' );
+		$page = $this->getExistingTestPage( 'Origin_' . __METHOD__ );
+		$target = $this->getNonexistingTestPage( 'MediaWiki:Mainpage' );
+		$link = $this->getServiceContainer()->getTitleFormatter()
+			->getPrefixedText( $target );
+
+		$this->editPage( $page, "#REDIRECT [[$link]]\n\nRedirect Footer" );
+		$this->editPage( $target, "Redirect Target" );
+
+		$request = new FauxRequest( [
+			'title' => $page->getTitle()->getPrefixedDBkey(),
+		] );
+
+		$env = new MockEnvironment( $request );
+
+		$entryPoint = $this->getEntryPoint( $env );
+		$entryPoint->run();
+		$output = $entryPoint->getCapturedOutput();
+
+		Assert::assertStringContainsString( '<title>(pagetitle: MediaWiki:Mainpage', $output );
+		Assert::assertStringContainsString( 'Accueil', $output );
 	}
 
 }

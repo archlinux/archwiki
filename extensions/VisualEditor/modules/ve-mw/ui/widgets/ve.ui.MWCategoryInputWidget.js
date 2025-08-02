@@ -105,7 +105,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupCacheDataFromResponse = function 
 		}
 		if (
 			linkCacheUpdate[ redirect.to ].redirectFrom &&
-			linkCacheUpdate[ redirect.to ].redirectFrom.indexOf( redirect.from ) === -1
+			!linkCacheUpdate[ redirect.to ].redirectFrom.includes( redirect.from )
 		) {
 			linkCacheUpdate[ redirect.to ].redirectFrom.push( redirect.from );
 		} else {
@@ -157,7 +157,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 			linkCacheUpdate[ suggestedCategoryTitle ] = { missing: false };
 		}
 		if (
-			existingCategories.indexOf( suggestedCategory ) === -1
+			!existingCategories.includes( suggestedCategory )
 		) {
 			if ( suggestedCacheEntry && suggestedCacheEntry.hidden ) {
 				hiddenCategoryItems.push( suggestedCategory );

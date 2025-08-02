@@ -37,7 +37,7 @@ class VectorComponentPinnableHeaderTest extends MediaWikiUnitTestCase {
 	 * This method provides different sets of parameters for tests, simulating different scenarios.
 	 * @return array[]
 	 */
-	public function provideTestCases(): array {
+	public static function provideTestCases(): array {
 		return [
 			// Test case with the header element intended to be movable.
 			'Pinnable Header With Moving Element' => [

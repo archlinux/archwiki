@@ -2,8 +2,10 @@
 
 namespace MediaWiki\Extension\CodeEditor;
 
-use ErrorPageError;
+use MediaWiki\Config\Config;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Extension\BetaFeatures\BetaFeatures;
 use MediaWiki\Extension\CodeEditor\Hooks\HookRunner;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook;
@@ -25,13 +27,16 @@ class Hooks implements
 {
 	private UserOptionsLookup $userOptionsLookup;
 	private HookRunner $hookRunner;
+	private array $enabledContentModels;
 
 	public function __construct(
 		UserOptionsLookup $userOptionsLookup,
-		HookContainer $hookContainer
+		HookContainer $hookContainer,
+		Config $config
 	) {
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->enabledContentModels = $config->get( 'CodeEditorContentModels' );
 	}
 
 	private function getPageLanguage( Title $title, string $model, string $format ): ?string {
@@ -67,8 +72,17 @@ class Hooks implements
 	 * @throws ErrorPageError
 	 */
 	public function onEditPage__showEditForm_initial( $editpage, $output ) {
-		$title = $editpage->getContextTitle();
 		$model = $editpage->contentModel;
+		if ( ( $this->enabledContentModels[ $model ] ?? true ) === false || (
+				// TODO: Remove after CodeMirror is out of Beta
+				ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' ) &&
+				BetaFeatures::isFeatureEnabled( $output->getUser(), 'codemirror-beta-feature-enable' )
+			)
+		) {
+			return;
+		}
+
+		$title = $editpage->getContextTitle();
 		$format = $editpage->contentFormat;
 
 		$lang = $this->getPageLanguage( $title, $model, $format );

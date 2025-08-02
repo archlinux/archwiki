@@ -33,6 +33,7 @@ function fetchJson( resource, init ) {
 		signal: controller.signal
 	} ) ).then( ( response ) => {
 		if ( !response.ok ) {
+			// eslint-disable-next-line unicorn/no-useless-promise-resolve-reject
 			return Promise.reject(
 				'Network request failed with HTTP code ' + response.status
 			);

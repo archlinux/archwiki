@@ -16,6 +16,7 @@
 	"echo-pref-email-frequency-weekly": "නිවේදනවල සතිපතා සාරාංශයක්",
 	"notifications": "නිවේදන",
 	"tooltip-pt-notifications-alert": "{{GENDER:|ඔබේ}} දැනුම්දීම්",
+	"tooltip-pt-notifications": "ඔබේ නිවේදන",
 	"echo-specialpage": "නිවේදන",
 	"echo-none": "ඔබට නිවේදන කිසිවක් නොමැත.",
 	"notification-edit-talk-page-email-subject2": "$1 විසින් ඔබ හට {{SITENAME}} හි පණිවුඩයක් {{GENDER:$2|තබා ඇත}}.",

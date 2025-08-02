@@ -1287,72 +1287,37 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Lint for missing image alt text
+	 * Lint ids in the page for:
 	 *
-	 * Linter category: `missing-image-alt-text`
-	 */
-	private function lintMissingAltText(
-		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
-	): void {
-		if ( !WTUtils::isGeneratedFigure( $c ) ) {
-			return;
-		}
-
-		// Extract the media element in its standard place
-		$media = $c->firstChild->firstChild ?? null;
-		if ( !( $media instanceof Element ) || DOMCompat::nodeName( $media ) !== 'img' ) {
-			// Videos and such are handled differently; check only
-			// simple image output for alt text.
-			return;
-		}
-
-		if ( $media->hasAttribute( 'alt' ) ) {
-			// Present and accounted for, either via explicit markup
-			// or filling in from an inline caption or other future
-			// source.
-			//
-			// Note that an explicit empty alt text will be counted
-			// as present, as this may be done deliberately for
-			// spacer images or similar.
-			return;
-		}
-
-		// Follow the parent tree looking for aria-hidden=true or equivalent roles
-		for ( $node = $media; $node->parentNode; $node = $node->parentNode ) {
-			$hidden = strtolower( DOMCompat::getAttribute( $node, 'aria-hidden' ) ?? '' );
-			$role = strtolower( DOMCompat::getAttribute( $node, 'role' ) ?? '' );
-			if ( $hidden === 'true'
-				|| $role === 'presentation'
-				|| $role === 'none' ) {
-				// This entire subtree is excluded from the accessibility tree.
-				return;
-			}
-		}
-
-		$resource = DOMCompat::getAttribute( $media, 'resource' ) ?? '';
-		$file = basename( urldecode( $resource ) );
-
-		$tplLintInfo = self::findEnclosingTemplateName( $env, $tplInfo );
-		$lintObj = [
-			'dsr' => self::findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
-			'templateInfo' => $tplLintInfo,
-			'params' => [
-				'file' => $file,
-			]
-		];
-		$env->recordLint( 'missing-image-alt-text', $lintObj );
-	}
-
-	/**
-	 * Lint duplicate ids in the page
+	 * - Duplicate ids
+	 * - Empty headings
 	 *
-	 * Linter category: `duplicate-ids`
+	 * Linter category: `duplicate-ids`, `empty-heading`
 	 */
-	private function lintDuplicateIds(
+	private function lintIds(
 		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	) {
 		$id = DOMCompat::getAttribute( $node, 'id' );
-		if ( $id === null ) {
+
+		if ( DOMUtils::isHeading( $node ) ) {
+			// FIXME: Should we consider WrapSectionState::shouldOmitFromTOC in this
+			// analysis, and I guess when assigning them as well?
+			if ( $id === null || $id === '' ) {
+				$tplLintInfo = self::findEnclosingTemplateName( $env, $tplInfo );
+				$lintObj = [
+					'dsr' => self::findLintDSR(
+						$tplLintInfo, $tplInfo, $dp->dsr ?? null
+					),
+					'templateInfo' => $tplLintInfo,
+				];
+				$env->recordLint( 'empty-heading', $lintObj );
+			}
+
+			// Heading ids are deduplicated, don't bother linting them
+			return;
+		}
+
+		if ( $id === null || $id === '' ) {
 			return;
 		}
 		if ( !isset( $this->seenIds[$id] ) ) {
@@ -1389,8 +1354,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		$this->lintLargeTables( $env, $node, $dp, $tplInfo );
 		$this->lintNightModeUnawareBackgroundColor( $env, $node, $dp, $tplInfo );
 		$this->lintFostered( $env, $node, $dp, $tplInfo );
-		$this->lintMissingAltText( $env, $node, $dp, $tplInfo );
-		$this->lintDuplicateIds( $env, $node, $dp, $tplInfo );
+		$this->lintIds( $env, $node, $dp, $tplInfo );
 	}
 
 	/**
@@ -1480,18 +1444,13 @@ class Linter implements Wt2HtmlDOMProcessor {
 		// Track time spent linting so we can evaluate benefits
 		// of migrating this code off the critical path to its own
 		// post processor.
-		$metrics = $env->getSiteConfig()->metrics();
-		$timer = null;
-		if ( $metrics ) {
-			$timer = Timing::start( $metrics );
-		}
+		$siteConfig = $env->getSiteConfig();
+		$timer = Timing::start( $siteConfig );
 
 		$this->findLints( $root, $env );
 		$this->postProcessLints( $env->getLints(), $env );
 
-		if ( $metrics ) {
-			$timer->end( "linting" );
-		}
+		$timer->end( "linting", "linting", [] );
 	}
 
 }

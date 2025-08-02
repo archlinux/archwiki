@@ -40,7 +40,7 @@ ve.dm.MWInlineImageNode.static.name = 'mwInlineImage';
 
 ve.dm.MWInlineImageNode.static.preserveHtmlAttributes = function ( attribute ) {
 	const attributes = [ 'typeof', 'class', 'src', 'resource', 'width', 'height', 'href', 'data-mw' ];
-	return attributes.indexOf( attribute ) === -1;
+	return !attributes.includes( attribute );
 };
 
 ve.dm.MWInlineImageNode.static.matchTagNames = [ 'span' ];
@@ -108,7 +108,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 	classes = typeof classes === 'string' ? classes.trim().split( /\s+/ ) : [];
 
 	// Deal with border flag
-	if ( classes.indexOf( 'mw-image-border' ) !== -1 ) {
+	if ( classes.includes( 'mw-image-border' ) ) {
 		attributes.borderImage = true;
 		recognizedClasses.push( 'mw-image-border' );
 	}
@@ -117,7 +117,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 	attributes.valign = 'default';
 	[ 'midde', 'baseline', 'sub', 'super', 'top', 'text-top', 'bottom', 'text-bottom' ].some( ( valign ) => {
 		const className = 'mw-valign-' + valign;
-		if ( classes.indexOf( className ) !== -1 ) {
+		if ( classes.includes( className ) ) {
 			attributes.valign = valign;
 			recognizedClasses.push( className );
 			return true;
@@ -126,13 +126,13 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 	} );
 
 	// Border
-	if ( classes.indexOf( 'mw-image-border' ) !== -1 ) {
+	if ( classes.includes( 'mw-image-border' ) ) {
 		attributes.borderImage = true;
 		recognizedClasses.push( 'mw-image-border' );
 	}
 
 	// Default-size
-	if ( classes.indexOf( 'mw-default-size' ) !== -1 ) {
+	if ( classes.includes( 'mw-default-size' ) ) {
 		attributes.defaultSize = true;
 		recognizedClasses.push( 'mw-default-size' );
 	}

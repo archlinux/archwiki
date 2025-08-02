@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\LogFormatter;
 
-use LogFormatter;
+use MediaWiki\Logging\LogFormatter;
 
 class AbuseFilterRightsLogFormatter extends LogFormatter {
 

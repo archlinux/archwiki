@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong",
-			"Tensama0415"
+			"Tensama0415",
+			"Ykhwong"
 		]
 	},
 	"paramvalidator-badexpiry": "만료 변수 \"$1\"에 유효하지 않은 값 \"$2\"이 지정되었습니다.",

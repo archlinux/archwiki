@@ -19,6 +19,7 @@ class SiteLibrary extends LibraryBase {
 	/** @var int[][] */
 	private $pagesInCategoryCache = [];
 
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'getNsIndex' => [ $this, 'getNsIndex' ],

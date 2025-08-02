@@ -20,8 +20,8 @@
 
 namespace MediaWiki\Storage;
 
-use JobQueueGroup;
-use RevertedTagUpdateJob;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob;
 
 /**
  * Class for managing delayed RevertedTagUpdateJob waiting for user approval.
@@ -40,10 +40,6 @@ class RevertedTagUpdateManager {
 	/** @var EditResultCache */
 	private $editResultCache;
 
-	/**
-	 * @param EditResultCache $editResultCache
-	 * @param JobQueueGroup $jobQueueGroup
-	 */
 	public function __construct(
 		EditResultCache $editResultCache,
 		JobQueueGroup $jobQueueGroup
@@ -64,7 +60,7 @@ class RevertedTagUpdateManager {
 	 */
 	public function approveRevertedTagForRevision( int $revertRevisionId ): bool {
 		$editResult = $this->editResultCache->get( $revertRevisionId );
-		if ( $editResult === null ) {
+		if ( $editResult === null || !$editResult->isRevert() ) {
 			return false;
 		}
 

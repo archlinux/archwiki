@@ -18,7 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo\File;
+
+use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
@@ -81,10 +85,6 @@ class LocalFileMoveBatch {
 	/** @var LocalFile|null */
 	private $targetFile;
 
-	/**
-	 * @param LocalFile $file
-	 * @param Title $target
-	 */
 	public function __construct( LocalFile $file, Title $target ) {
 		$this->file = $file;
 		$this->target = $target;
@@ -376,6 +376,38 @@ class LocalFileMoveBatch {
 	protected function doDBUpdates() {
 		$dbw = $this->db;
 
+		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
+		if ( ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) && $this->file->getFileIdFromName() ) {
+			$deleted = $dbw->newSelectQueryBuilder()
+				->select( 'file_id' )
+				->from( 'file' )
+				->where( [ 'file_name' => $this->newName ] )
+				->andWhere( [ 'file_deleted' => 1 ] )
+				->caller( __METHOD__ )->fetchField();
+			if ( $deleted ) {
+				// Overwriting an existing file that was deleted.
+				// Once the file deletion storage refactor starts,
+				// this should change to update deleted revisions too.
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'file' )
+					->where( [ 'file_name' => $this->newName ] )
+					->andWhere( [ 'file_deleted' => 1 ] )
+					->caller( __METHOD__ )->execute();
+				// Paranoia
+				$dbw->newUpdateQueryBuilder()
+					->update( 'filerevision' )
+					->set( [ 'fr_file' => $this->file->getFileIdFromName() ] )
+					->where( [ 'fr_file' => $deleted ] )
+					->caller( __METHOD__ )->execute();
+			}
+			$dbw->newUpdateQueryBuilder()
+				->update( 'file' )
+				->set( [ 'file_name' => $this->newName ] )
+				->where( [ 'file_id' => $this->file->getFileIdFromName() ] )
+				->caller( __METHOD__ )->execute();
+		}
 		// Update current image
 		$dbw->newUpdateQueryBuilder()
 			->update( 'image' )
@@ -488,3 +520,6 @@ class LocalFileMoveBatch {
 		$this->file->repo->cleanupBatch( $files );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LocalFileMoveBatch::class, 'LocalFileMoveBatch' );

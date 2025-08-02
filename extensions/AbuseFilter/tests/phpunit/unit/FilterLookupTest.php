@@ -255,7 +255,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testLocalCache() {
-		$row = $this->getRowsAndFilters()['no actions']['row'];
+		$row = self::provideRowsAndFilters()['no actions']['row'];
 		$db = $this->createMock( IDatabase::class );
 		$db->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $db ) );
 		$db->expects( $this->once() )->method( 'selectRow' )->willReturn( $row );
@@ -268,7 +268,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testClearLocalCache() {
-		$row = $this->getRowsAndFilters()['no actions']['row'];
+		$row = self::provideRowsAndFilters()['no actions']['row'];
 		$db = $this->createMock( IDatabase::class );
 		$db->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $db ) );
 		$db->expects( $this->exactly( 2 ) )->method( 'selectRow' )->willReturn( $row );
@@ -296,7 +296,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideIsCentral
 	 */
 	public function testGlobalCache( bool $isCentral ) {
-		$row = $this->getRowsAndFilters()['no actions']['row'];
+		$row = self::provideRowsAndFilters()['no actions']['row'];
 		$db = $this->createMock( IDatabase::class );
 		$db->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $db ) );
 		// Should be called twice: once for the filter, once for the actions
@@ -322,7 +322,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testFilterLookupClearNetworkCache() {
-		$row = $this->getRowsAndFilters()['no actions']['row'];
+		$row = self::provideRowsAndFilters()['no actions']['row'];
 		$db = $this->createMock( IDatabase::class );
 		$db->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $db ) );
 		// 4 calls: row, actions, row, actions
@@ -366,7 +366,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	 * @param stdClass $row
 	 * @param stdClass[] $actionsRows
 	 * @param ExistingFilter $expected
-	 * @dataProvider getRowsAndFilters
+	 * @dataProvider provideRowsAndFilters
 	 */
 	public function testGetFilter( stdClass $row, array $actionsRows, ExistingFilter $expected ) {
 		$db = $this->getDBWithMockRows( [ $row ], $actionsRows );
@@ -382,7 +382,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	 * @param stdClass $row
 	 * @param stdClass[] $actionsRows
 	 * @param ExistingFilter $expected
-	 * @dataProvider getRowsAndFilters
+	 * @dataProvider provideRowsAndFilters
 	 */
 	public function testGetFilter_global( stdClass $row, array $actionsRows, ExistingFilter $expected ) {
 		$db = $this->getDBWithMockRows( [ $row ], $actionsRows );
@@ -411,7 +411,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testGetAllActiveFiltersInGroup() {
-		$data = $this->getRowsAndFilters();
+		$data = self::provideRowsAndFilters();
 		$db = $this->getDBWithMockRows(
 			array_column( $data, 'row' ),
 			array_merge( ...array_column( $data, 'actions' ) )
@@ -438,7 +438,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideIsCentral
 	 */
 	public function testGetAllActiveFiltersInGroup_global( bool $isCentral ) {
-		$data = $this->getRowsAndFilters();
+		$data = self::provideRowsAndFilters();
 		$db = $this->getDBWithMockRows(
 			array_column( $data, 'row' ),
 			array_merge( ...array_column( $data, 'actions' ) )

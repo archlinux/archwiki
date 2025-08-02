@@ -2,9 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Meno25",
+			"Michel Bakni",
+			"Zaid1442011",
 			"ديفيد",
-			"علاء",
-			"Michel Bakni"
+			"علاء"
 		]
 	},
 	"loginnotify-desc": "إخطار المستخدمين حول تسجيلات الدخول المثيرة للشبهات من أجهزة و/أو عناوين الآيبي غير المعروفة",
@@ -13,6 +14,7 @@
 	"echo-category-title-login-success": "تسجيل دخول من جهاز غير معروف",
 	"echo-pref-tooltip-login-success": "أخطرني عندما يسجل شخص ما الدخول إلى حسابي من جهاز وآيبي غير معروف.",
 	"loginnotify-primary-link": "مساعدة",
+	"loginnotify-unknown-ip": "لقد حاولت تسجيل الدخول من عنوان IP غير مألوف، وتم تكوين {{SITENAME}} حاليًا لمنع عمليات تسجيل الدخول من عناوين IP غير مألوفة.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|محاولة فاشلة|عدة محاولات فاشلة}} لتسجيل الدخول إلى {{SITENAME}} ك$1",
 	"notification-loginnotify-login-success-email-subject": "تسجيل دخول إلى {{SITENAME}} من جهاز لم {{GENDER:$1|تستخدمه|تستخدميه}} مؤخرًا بحساب $1",
 	"notification-header-login-success": "شخص ما (غالبا {{GENDER:$1|أنت}}) مؤخرا سجل الدخول لحسابك من جهاز جديد. لو كان هذا أنت، فيمكنك تجاهل هذه الرسالة. إذا لم تكن أنت، فإنه يُوصى أن تُغير كلمة السر الخاصة بك، وتتحقق من نشاط حسابك.",

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"S4b1nuz E.656"
+		]
+	},
+	"group-checkuser": "Check users",
+	"group-checkuser-member": "{{GENDER:$1|check user}}",
+	"grouppage-checkuser": "{{ns:project}}:Check users",
+	"checkuser-investigateblock-warning-confirmaction": "Se t'ê segûo de voéilo fâ davéi, contròlla o cànpo \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" in fóndo."
+}

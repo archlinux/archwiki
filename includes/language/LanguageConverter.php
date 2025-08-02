@@ -42,9 +42,9 @@ use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use RuntimeException;
-use StringUtils;
 use UnexpectedValueException;
 use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Base class for multi-variant language conversion.
@@ -58,11 +58,12 @@ abstract class LanguageConverter implements ILanguageConverter {
 	 * languages supporting variants
 	 * @since 1.20
 	 * @var string[]
+	 * @phpcs-require-sorted-array
 	 */
 	public static $languagesWithVariants = [
 		'ban',
-		'en',
 		'crh',
+		'en',
 		'gan',
 		'iu',
 		'ku',
@@ -83,11 +84,12 @@ abstract class LanguageConverter implements ILanguageConverter {
 	 * for use with DefaultOptionsLookup.php
 	 * @since 1.40
 	 * @var array<string,string>
+	 * @phpcs-require-sorted-array
 	 */
 	public static $languagesWithStaticDefaultVariant = [
 		'ban' => 'ban',
-		'en' => 'en',
 		'crh' => 'crh',
+		'en' => 'en',
 		'gan' => 'gan',
 		'iu' => 'iu',
 		'ku' => 'ku',
@@ -200,8 +202,6 @@ abstract class LanguageConverter implements ILanguageConverter {
 	/**
 	 * Provides additional flags for converter. By default, it returns empty array and
 	 * typically should be overridden by implementation of converter.
-	 *
-	 * @return array
 	 */
 	protected function getAdditionalFlags(): array {
 		return [];
@@ -259,11 +259,6 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return ';';
 	}
 
-	/**
-	 * Get variant names.
-	 *
-	 * @return array
-	 */
 	public function getVariantNames(): array {
 		return MediaWikiServices::getInstance()
 			->getLanguageNameUtils()
@@ -390,7 +385,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 				// Get language variant preference from logged in users
 				if (
 					$this->getMainCode() ===
-					$services->getContentLanguage()->getCode()
+					$services->getContentLanguageCode()->toString()
 				) {
 					$optionName = 'variant';
 				} else {
@@ -501,11 +496,16 @@ abstract class LanguageConverter implements ILanguageConverter {
 			$scriptfix = '<script[^>]*+>[^<]*+(?:(?:(?!<\/script>).)[^<]*+)*+<\/script>|';
 			// disable conversion of <pre> tags
 			$prefix = '<pre[^>]*+>[^<]*+(?:(?:(?!<\/pre>).)[^<]*+)*+<\/pre>|';
+			// disable conversion of <math> tags
+			$mathfix = '<math[^>]*+>[^<]*+(?:(?:(?!<\/math>).)[^<]*+)*+<\/math>|';
+			// disable conversion of <svg> tags
+			$svgfix = '<svg[^>]*+>[^<]*+(?:(?:(?!<\/svg>).)[^<]*+)*+<\/svg>|';
 			// The "|.*+)" at the end, is in case we missed some part of html syntax,
 			// we will fail securely (hopefully) by matching the rest of the string.
 			$htmlFullTag = '<(?:[^>=]*+(?>[^>=]*+=\s*+(?:"[^"]*"|\'[^\']*\'|[^\'">\s]*+))*+[^>=]*+>|.*+)|';
 
-			$reg = '/' . $codefix . $scriptfix . $prefix . $htmlFullTag .
+			$reg = '/' . $codefix . $scriptfix . $prefix . $mathfix . $svgfix .
+				$htmlFullTag .
 				'&[a-zA-Z#][a-z0-9]++;' . $marker . $htmlfix . '|\004$/s';
 		}
 		$startPos = 0;
@@ -672,8 +672,6 @@ abstract class LanguageConverter implements ILanguageConverter {
 
 	/**
 	 * Apply manual conversion rules.
-	 *
-	 * @param ConverterRule $convRule
 	 */
 	protected function applyManualConv( ConverterRule $convRule ) {
 		// Use syntax -{T|zh-cn:TitleCN; zh-tw:TitleTw}- to custom
@@ -811,12 +809,14 @@ abstract class LanguageConverter implements ILanguageConverter {
 
 		$noScript = '<script.*?>.*?<\/script>(*SKIP)(*FAIL)';
 		$noStyle = '<style.*?>.*?<\/style>(*SKIP)(*FAIL)';
+		$noMath = '<math.*?>.*?<\/math>(*SKIP)(*FAIL)';
+		$noSvg = '<svg.*?>.*?<\/svg>(*SKIP)(*FAIL)';
 		// phpcs:ignore Generic.Files.LineLength
 		$noHtml = '<(?:[^>=]*+(?>[^>=]*+=\s*+(?:"[^"]*"|\'[^\']*\'|[^\'">\s]*+))*+[^>=]*+>|.*+)(*SKIP)(*FAIL)';
 		while ( $startPos < $length && $continue ) {
 			$continue = preg_match(
 				// Only match "-{" outside the html.
-				"/$noScript|$noStyle|$noHtml|-\{/",
+				"/$noScript|$noStyle|$noMath|$noSvg|$noHtml|-\{/",
 				$text,
 				$m,
 				PREG_OFFSET_CAPTURE,
@@ -1210,9 +1210,14 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $key;
 	}
 
-	public function updateConversionTable( LinkTarget $linkTarget ) {
-		if ( $linkTarget->getNamespace() === NS_MEDIAWIKI ) {
-			$t = explode( '/', $linkTarget->getDBkey(), 3 );
+	/**
+	 * @param PageIdentity $page Message page
+	 *
+	 * @return void
+	 */
+	public function updateConversionTable( PageIdentity $page ) {
+		if ( $page->getNamespace() === NS_MEDIAWIKI ) {
+			$t = explode( '/', $page->getDBkey(), 3 );
 			$c = count( $t );
 			if ( $c > 1 && $t[0] == 'Conversiontable' && $this->validateVariant( $t[1] ) ) {
 				$this->reloadTables();

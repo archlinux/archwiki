@@ -1,7 +1,9 @@
 <header class="header-container header-chrome">
 	<div class="minerva-header">
 		<nav class="navigation-drawer toggle-list view-border-box">
-			<input type="checkbox" id="main-menu-input" class="toggle-list__checkbox" role="button" aria-haspopup="true" aria-expanded="false" aria-labelledby="mw-mf-main-menu-button">
+			<input type="checkbox" id="main-menu-input"
+				data-event-name="ui.mainmenu"
+				class="toggle-list__checkbox" role="button" aria-haspopup="true" aria-expanded="false" aria-labelledby="mw-mf-main-menu-button">
 			{{#data-minerva-main-menu-btn}}{{>Button}}{{/data-minerva-main-menu-btn}}
 			{{#data-minerva-main-menu}}{{>menu}}{{/data-minerva-main-menu}}
 			<label class="main-menu-mask" for="main-menu-input"></label>

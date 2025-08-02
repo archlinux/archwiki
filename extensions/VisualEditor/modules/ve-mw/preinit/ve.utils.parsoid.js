@@ -147,7 +147,7 @@ mw.libs.ve.deduplicateStyles = function ( element ) {
 	 */
 	function isFosterablePosition( node ) {
 		const fosterablePositions = [ 'table', 'thead', 'tbody', 'tfoot', 'tr' ];
-		return node && fosterablePositions.indexOf( node.parentNode.nodeName.toLowerCase() ) !== -1;
+		return node && fosterablePositions.includes( node.parentNode.nodeName.toLowerCase() );
 	}
 
 	const styleTagKeys = {};
@@ -318,7 +318,7 @@ mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
 	const articleBaseRegex = new RegExp( regexEscape( articleBase ).replace( regexEscape( '$1' ), '(.*)' ) );
 	const matches = relativeHref.match( articleBaseRegex );
 	if ( matches ) {
-		if ( queryLength === 0 && matches && matches[ 1 ].split( '#' )[ 0 ].indexOf( '?' ) === -1 ) {
+		if ( queryLength === 0 && matches && !matches[ 1 ].split( '#' )[ 0 ].includes( '?' ) ) {
 			// Take the relative path
 			return returnInternalData( matches[ 1 ] );
 		}

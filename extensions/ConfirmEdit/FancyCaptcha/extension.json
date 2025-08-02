@@ -18,11 +18,7 @@
 		]
 	},
 	"AutoloadClasses": {
-		"FancyCaptcha": "includes/FancyCaptcha.php",
-		"MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\FancyCaptcha": "includes/FancyCaptcha.php"
-	},
-	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\": "includes/"
+		"FancyCaptcha": "../includes/FancyCaptcha/FancyCaptcha.php"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
@@ -37,14 +33,11 @@
 		}
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "resources",
-		"remoteExtPath": "ConfirmEdit/FancyCaptcha/resources"
+		"localBasePath": "../resources",
+		"remoteExtPath": "ConfirmEdit/resources"
 	},
 	"callback": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::onFancyCaptchaSetup",
 	"config": {
-		"CaptchaClass": {
-			"value": "MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\FancyCaptcha"
-		},
 		"CaptchaFileBackend": {
 			"value": ""
 		},

@@ -31,6 +31,7 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
@@ -226,9 +227,6 @@ class WikiExporter {
 		$this->dumpFrom( $condition );
 	}
 
-	/**
-	 * @param PageIdentity $page
-	 */
 	public function pageByTitle( PageIdentity $page ) {
 		$this->dumpFrom(
 			'page_namespace=' . $page->getNamespace() .

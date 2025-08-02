@@ -21,13 +21,13 @@
 
 namespace MediaWiki\Page;
 
-use MapCacheLRU;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleParser;
 use MediaWiki\Title\TitleValue;
 use Psr\Log\LoggerInterface;
-use RepoGroup;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -37,7 +37,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * @since 1.38
  */
 class RedirectStore implements RedirectLookup {
-	private IConnectionProvider $connectionProvider;
+	private IConnectionProvider $dbProvider;
 	private PageLookup $pageLookup;
 	private TitleParser $titleParser;
 	private RepoGroup $repoGroup;
@@ -45,18 +45,19 @@ class RedirectStore implements RedirectLookup {
 	private MapCacheLRU $procCache;
 
 	public function __construct(
-		IConnectionProvider $connectionProvider,
+		IConnectionProvider $dbProvider,
 		PageLookup $pageLookup,
 		TitleParser $titleParser,
 		RepoGroup $repoGroup,
 		LoggerInterface $logger
 	) {
-		$this->connectionProvider = $connectionProvider;
+		$this->dbProvider = $dbProvider;
 		$this->pageLookup = $pageLookup;
 		$this->titleParser = $titleParser;
 		$this->repoGroup = $repoGroup;
 		$this->logger = $logger;
-		$this->procCache = new MapCacheLRU( 16 );
+		// Must be 500+ for QueryPage and Pager uses to be effective
+		$this->procCache = new MapCacheLRU( 1_000 );
 	}
 
 	public function getRedirectTarget( PageIdentity $page ): ?LinkTarget {
@@ -89,7 +90,7 @@ class RedirectStore implements RedirectLookup {
 			return null;
 		}
 
-		$dbr = $this->connectionProvider->getReplicaDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$row = $dbr->newSelectQueryBuilder()
 			->select( [ 'rd_namespace', 'rd_title', 'rd_fragment', 'rd_interwiki' ] )
 			->from( 'redirect' )
@@ -150,7 +151,7 @@ class RedirectStore implements RedirectLookup {
 				return false;
 			}
 
-			$dbw = $this->connectionProvider->getPrimaryDatabase();
+			$dbw = $this->dbProvider->getPrimaryDatabase();
 			$dbw->startAtomic( __METHOD__ );
 
 			$truncatedFragment = self::truncateFragment( $rt->getFragment() );
@@ -186,7 +187,7 @@ class RedirectStore implements RedirectLookup {
 				)
 			);
 		} else {
-			$dbw = $this->connectionProvider->getPrimaryDatabase();
+			$dbw = $this->dbProvider->getPrimaryDatabase();
 			// This is not a redirect, remove row from redirect table
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom( 'redirect' )

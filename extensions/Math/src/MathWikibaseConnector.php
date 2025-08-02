@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Math;
 
 use DataValues\StringValue;
+use Exception;
 use InvalidArgumentException;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\ServiceOptions;
@@ -374,5 +375,32 @@ class MathWikibaseConnector {
 	 */
 	public function buildURL( string $qID ): string {
 		return $this->repoLinker->getEntityUrl( new ItemId( $qID ) );
+	}
+
+	/**
+	 * @param string $qid
+	 * @param string $langCode
+	 * @return array of form ['qid'] = {'url': str, 'title': str}
+	 */
+	public function getUrlFromSymbol( string $qid, string $langCode ): array {
+		$resultMap = [];
+		try {
+			$output = $this->fetchWikibaseFromId( $qid, $langCode );
+		} catch ( Exception $e ) {
+			$this->logger->warning(
+				"Cannot fetch QID " . $qid . " from Wikibase. Reason: " . $e->getMessage()
+			);
+			return []; // return empty array if qid or lang code not exists
+		}
+		$parts = $output->getParts();
+		foreach ( $parts as $part ) {
+			$partMap = [];
+			$partMap['url'] = $this->fetchPageUrl(
+				$this->idParser->parse(
+					$part->getId()->getSerialization() ) ) ?? '';
+			$partMap['title'] = $part->getLabel() ?? '';
+			$resultMap[$part->getSymbol()->getValue()] = $partMap;
+		}
+		return $resultMap;
 	}
 }

@@ -119,9 +119,10 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 		if ( !$this->user->isRegistered() ) {
 			$excludeKeyList = array_diff(
 				array_keys( $personalTools ),
-				[ 'login' ]
+				[ 'login', 'login-private' ]
 			);
 		}
+
 		$isTemp = $this->userIdentityUtils->isTemp( $this->user );
 		if ( $isTemp ) {
 			$excludeKeyList[] = 'mycontris';

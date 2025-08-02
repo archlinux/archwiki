@@ -48,12 +48,6 @@ class SpecialListGroupRights extends SpecialPage {
 	private ILanguageConverter $languageConverter;
 	private GroupPermissionsLookup $groupPermissionsLookup;
 
-	/**
-	 * @param NamespaceInfo $nsInfo
-	 * @param UserGroupManager $userGroupManager
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 */
 	public function __construct(
 		NamespaceInfo $nsInfo,
 		UserGroupManager $userGroupManager,
@@ -82,7 +76,7 @@ class SpecialListGroupRights extends SpecialPage {
 		$out->wrapWikiMsg( "<div class=\"mw-listgrouprights-key\">\n$1\n</div>", 'listgrouprights-key' );
 
 		$out->addHTML(
-			Html::openElement( 'table', [ 'class' => 'wikitable mw-listgrouprights-table' ] ) .
+			Html::openElement( 'table', [ 'class' => [ 'wikitable', 'mw-listgrouprights-table' ] ] ) .
 				'<tr>' .
 				Html::element( 'th', [], $this->msg( 'listgrouprights-group' )->text() ) .
 				Html::element( 'th', [], $this->msg( 'listgrouprights-rights' )->text() ) .

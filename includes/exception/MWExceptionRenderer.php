@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Exception;
+
+use Exception;
+use LocalisationCache;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
@@ -25,7 +29,10 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
+use Throwable;
 use Wikimedia\AtEase;
+use Wikimedia\Http\HttpStatus;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\DBExpectedError;
@@ -138,6 +145,7 @@ class MWExceptionRenderer {
 				$message = MWExceptionHandler::getPublicLogMessage( $e );
 			}
 			print nl2br( htmlspecialchars( $message ) ) . "\n";
+			print '<meta name="color-scheme" content="light dark">';
 			self::header( "Content-Length: " . ob_get_length() );
 			ob_end_flush();
 		}
@@ -171,13 +179,12 @@ class MWExceptionRenderer {
 
 	/**
 	 * Output the throwable report using HTML
-	 *
-	 * @param Throwable $e
 	 */
 	private static function reportHTML( Throwable $e ) {
 		if ( self::useOutputPage( $e ) ) {
 			$out = RequestContext::getMain()->getOutput();
 			$out->prepareErrorPage();
+			$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 			$out->setPageTitleMsg( self::getExceptionTitle( $e ) );
 
 			// Show any custom GUI message before the details
@@ -245,7 +252,9 @@ class MWExceptionRenderer {
 	 * @param string $key Message name
 	 * @param string $fallback Default message if the message cache can't be
 	 *                  called by the exception
-	 * @param mixed ...$params To pass to wfMessage()
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return string Message with arguments replaced
 	 */
 	public static function msg( $key, $fallback, ...$params ) {
@@ -261,7 +270,9 @@ class MWExceptionRenderer {
 	 * @param string $key Message name
 	 * @param string $fallback Default message if the message cache can't be
 	 *                  called by the exception
-	 * @param mixed ...$params To pass to wfMessage()
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return Message|RawMessage
 	 */
 	private static function msgObj( string $key, string $fallback, ...$params ): Message {
@@ -389,9 +400,6 @@ class MWExceptionRenderer {
 		}
 	}
 
-	/**
-	 * @param Throwable $e
-	 */
 	private static function reportOutageHTML( Throwable $e ) {
 		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
 		$showExceptionDetails = $mainConfig->get( MainConfigNames::ShowExceptionDetails );
@@ -436,3 +444,6 @@ class MWExceptionRenderer {
 		echo $html;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( MWExceptionRenderer::class, 'MWExceptionRenderer' );

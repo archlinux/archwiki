@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer",
 			"QW90",
+			"The Discoverer",
 			"Woytecr"
 		]
 	},
@@ -103,9 +103,9 @@
 	"tag-discussiontools-description": "BhasabhasAvtam vorvim kel'lo sompadon",
 	"tag-discussiontools-edit": "Sompadit xero",
 	"tag-discussiontools-edit-description": "Vaporpean BhasabhasAvtam vorvim ek ostitvant aslolea xereacho sompadon kela.",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Novo vixoy]",
+	"tag-discussiontools-newtopic": "Novo vixoy",
 	"tag-discussiontools-newtopic-description": "Vaporpean BhasabhasAvtam vorvim panar ek novo vixoi zoddla.",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Zobab di]",
+	"tag-discussiontools-reply": "Zobab di",
 	"tag-discussiontools-reply-description": "Vaporpean BhasabhasAvtam vorvim eka xereak zobab dila.",
 	"tag-discussiontools-source-description": "BhasabhasAvtam mull rupan aslo",
 	"tag-discussiontools-visual-description": "BhasabhasAvtam dixtti rupan aslo"

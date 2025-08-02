@@ -61,6 +61,7 @@ $specialPageAliases = [
 	'FileDuplicateSearch'       => [ 'Faili_duplikaatide_otsimine', 'Otsi_faili_duplikaate' ],
 	'Filepath'                  => [ 'Failitee' ],
 	'Import'                    => [ 'Lehekülgede_import' ],
+	'Interwiki'                 => [ 'Interviki' ],
 	'Invalidateemail'           => [ 'E-posti_kinnituse_tühistamine', 'Tühista_e-posti_kinnitus' ],
 	'JavaScriptTest'            => [ 'JavaScripti_katsetamine' ],
 	'LinkSearch'                => [ 'Välislinkide_otsimine', 'Otsi_välislinke' ],
@@ -292,4 +293,10 @@ $dateFormats = [
 	'et roman time' => 'H:i',
 	'et roman date' => 'j. xrm Y',
 	'et roman both' => 'j. xrm Y, "kell" H:i',
+];
+
+$jsDateFormats = [
+	// Browsers don't support roman numerals
+	'et roman date' => [ 'alias' => 'et numeric date' ],
+	'et roman both' => [ 'alias' => 'et numeric both' ],
 ];

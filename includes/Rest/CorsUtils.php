@@ -63,10 +63,6 @@ class CorsUtils implements BasicAuthorizerInterface {
 		return null;
 	}
 
-	/**
-	 * @param Origin $origin
-	 * @return bool
-	 */
 	private function allowOrigin( Origin $origin ): bool {
 		$allowed = array_merge( [ $this->getCanonicalDomain() ],
 			$this->options->get( MainConfigNames::CrossSiteAJAXdomains ) );
@@ -75,9 +71,6 @@ class CorsUtils implements BasicAuthorizerInterface {
 		return $origin->match( $allowed, $excluded );
 	}
 
-	/**
-	 * @return string
-	 */
 	private function getCanonicalDomain(): string {
 		$res = parse_url( $this->options->get( MainConfigNames::CanonicalServer ) );
 		'@phan-var array $res';
@@ -164,7 +157,7 @@ class CorsUtils implements BasicAuthorizerInterface {
 			// REST must allow Content-Type to be operational
 			'Content-Type',
 			// REST relies on conditional requests for some endpoints
-			'If-Mach',
+			'If-Match',
 			'If-None-Match',
 			'If-Modified-Since',
 		], $allowedHeaders ) );

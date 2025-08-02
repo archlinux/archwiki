@@ -64,7 +64,7 @@ ve.init.Platform.static.initializedPromise.then( () => {
 
 ve.ui.UrlStringTransferHandler.static.matchFunction = function ( item ) {
 	// Match all specific mime types
-	if ( ve.ui.UrlStringTransferHandler.static.types.indexOf( item.type ) >= 0 &&
+	if ( ve.ui.UrlStringTransferHandler.static.types.includes( item.type ) &&
 		item.type !== 'text/plain' ) {
 		return true;
 	}
@@ -138,9 +138,7 @@ ve.ui.UrlStringTransferHandler.prototype.process = function () {
 		}
 
 		ve.dm.Document.static.addAnnotationsToData( content, annotationSet );
-		for ( let i = 0; i < content.length; i++ ) {
-			result.push( content[ i ] );
-		}
+		ve.batchPush( result, content );
 	} );
 	this.resolve( result );
 };

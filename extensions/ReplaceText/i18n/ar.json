@@ -49,5 +49,6 @@
 	"replacetext_no_compress": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا تم تعيين $ wgCompressRevisions على \"true\".",
 	"replacetext_no_external_stores": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا كان $ wgExternalStores غير فارغ.",
 	"right-replacetext": "أجرِ استبدال النصّ في الويكي بأكملها",
-	"action-replacetext": "أجرِ استبدال النص في الويكي بأكملها"
+	"action-replacetext": "أجرِ استبدال النص في الويكي بأكملها",
+	"replacetext-summary-label": "ملخص لتحريرات الاستبدال (اتركه فارغًا لاستخدام الملخص الافتراضي)"
 }

@@ -1,23 +1,11 @@
 [
 	{
-		"resourceModule": "mediawiki.page.ready",
-		"maxSize": "3.2 kB"
-	},
-	{
 		"resourceModule": "skins.vector.styles.legacy",
 		"maxSize": "8.9 kB"
 	},
 	{
-		"resourceModule": "skins.vector.search.codex.styles",
-		"maxSize": "6.2 kB"
-	},
-	{
-		"resourceModule": "skins.vector.search.codex.scripts",
-		"maxSize": "15 kB"
-	},
-	{
 		"resourceModule": "skins.vector.styles",
-		"maxSize": "13.5 kB"
+		"maxSize": "13.7 kB"
 	},
 	{
 		"resourceModule": "skins.vector.js",

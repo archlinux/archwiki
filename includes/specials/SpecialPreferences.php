@@ -21,6 +21,7 @@
 namespace MediaWiki\Specials;
 
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MediaWikiServices;
@@ -30,7 +31,6 @@ use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use OOUI\FieldLayout;
 use OOUI\SearchInputWidget;
-use PermissionsError;
 use PreferencesFormOOUI;
 
 /**
@@ -43,10 +43,6 @@ class SpecialPreferences extends SpecialPage {
 	private PreferencesFactory $preferencesFactory;
 	private UserOptionsManager $userOptionsManager;
 
-	/**
-	 * @param PreferencesFactory|null $preferencesFactory
-	 * @param UserOptionsManager|null $userOptionsManager
-	 */
 	public function __construct(
 		?PreferencesFactory $preferencesFactory = null,
 		?UserOptionsManager $userOptionsManager = null
@@ -87,7 +83,10 @@ class SpecialPreferences extends SpecialPage {
 		if ( $session->get( 'specialPreferencesSaveSuccess' ) ) {
 			// Remove session data for the success message
 			$session->remove( 'specialPreferencesSaveSuccess' );
-			$out->addModuleStyles( 'mediawiki.notification.convertmessagebox.styles' );
+			$out->addModuleStyles( [
+				'mediawiki.codex.messagebox.styles',
+				'mediawiki.notification.convertmessagebox.styles'
+			] );
 
 			$out->addHTML(
 				Html::successBox(

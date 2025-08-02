@@ -550,7 +550,7 @@ class ForeignResourceManager {
 			}
 			if ( $module['authors'] ?? false ) {
 				$moduleCdx['authors'] = array_map(
-					fn ( $author ) => [ 'name' => $author ],
+					static fn ( $author ) => [ 'name' => $author ],
 					preg_split( '/,( and)? /', $module['authors'] )
 				);
 			}
@@ -562,6 +562,3 @@ class ForeignResourceManager {
 		return $cdx;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( ForeignResourceManager::class, 'ForeignResourceManager' );

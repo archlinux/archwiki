@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Araceletorres",
+			"EGobi",
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
@@ -10,8 +11,7 @@
 			"Re demz",
 			"Tark",
 			"TheEduGobi",
-			"YuriNikolai",
-			"EGobi"
+			"YuriNikolai"
 		]
 	},
 	"oathauth-desc": "Fornece suporte a autenticação usando HMAC com base em senhas de uso único",
@@ -69,7 +69,6 @@
 	"log-action-filter-oath-verify": "Verificando se a autenticação de dois fatores está ativada",
 	"log-action-filter-oath-disable-other": "Desativando a autenticação de dois fatores para outro usuário",
 	"oathauth-ui-no-module": "Nenhum ativado",
-	"oathauth-module-invalid": "O módulo OATHAuth que o usuário registrou é inválido.",
 	"oathauth-module-totp-label": "TOTP (token único)",
 	"oathauth-ui-manage": "Gerenciar",
 	"oathmanage": "Gerenciar autenticação de dois fatores",
@@ -87,8 +86,6 @@
 	"oathauth-disable-method-warning-header": "Confirme a desativação de um método de autenticação",
 	"oathauth-disable-method-warning-button-label": "Confirme e continue",
 	"oathauth-disable-method-warning": "Se você desabilitar o método de autenticação de dois fatores $1, não poderá mais usá-lo ao entrar e todos os dados associados a esse método de autenticação serão excluídos.",
-	"oathauth-switch-method-warning-header": "Confirme a mudança para um método de autenticação diferente",
-	"oathauth-switch-method-warning": "Ao mudar para o método de autenticação de dois fatores $2, o método atual ($1) será desativado e todos os dados associados ao método de autenticação atual serão excluídos",
 	"oathauth-totp-disable-warning": "Você não poderá mais usar o dispositivo de autenticação registrado nesta conta. Todos os tokens de rascunho associados a esta conta serão invalidados.",
 	"oathauth-invalidrequest": "Pedido inválido",
 	"notification-header-oathauth-disable": "A autenticação em duas etapas foi desativada em {{GENDER:$2|sua conta}}.",

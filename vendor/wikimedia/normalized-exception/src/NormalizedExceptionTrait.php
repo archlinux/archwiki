@@ -2,6 +2,8 @@
 
 namespace Wikimedia\NormalizedException;
 
+use Throwable;
+
 /**
  * Trait for creating a normalized exception
  */
@@ -51,6 +53,30 @@ trait NormalizedExceptionTrait {
 	/** @inheritDoc */
 	public function getMessageContext(): array {
 		return $this->messageContext;
+	}
+
+	/**
+	 * Convenience method for exceptions which use the standard exception constructor.
+	 * Such exceptions can just inherit this method as a constructor via `use ... { ... as ... }`.
+	 * @param string $normalizedMessage The normalized exception message.
+	 * @param array $messageContext The exception's context data.
+	 * @param int $code Error code.
+	 * @param Throwable|null $previous Previous exception, when chaining exceptions.
+	 * @see self::getMessageFromNormalizedMessage() for more information on the message and context.
+	 */
+	public function normalizedConstructor(
+		string $normalizedMessage,
+		array $messageContext = [],
+		int $code = 0,
+		?Throwable $previous = null
+	) {
+		$this->normalizedMessage = $normalizedMessage;
+		$this->messageContext = $messageContext;
+		parent::__construct(
+			self::getMessageFromNormalizedMessage( $normalizedMessage, $messageContext ),
+			$code,
+			$previous
+		);
 	}
 
 }

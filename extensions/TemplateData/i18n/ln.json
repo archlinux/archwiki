@@ -3,5 +3,11 @@
 		"authors": [
 			"BOKOBA VEROLY"
 		]
-	}
+	},
+	"templatedata-search-description": "Luka modèle oyo olingi kotia na kolukaka mot clé oyo eko identifier. Ba modèles oyo ezali na ba déscriptions ezalaka plus susceptible ya kosala bien.",
+	"templatedata-favorite-disabled": "Osengeli kokotisa yo na kati mpo olinga ndakisa",
+	"templatedata-favorite-added": "Template ebakisami na oyo olingaka",
+	"templatedata-favorite-removed": "Template elongwaki na oyo bato balingaka mingi",
+	"templatedata-favorite-error": "Kozanga makoki ya kobomba ba préférés",
+	"templatedata-favorite-maximum-reached": "Ozali na motango ya makasi ($1) ya ba templates oyo olingaka. Tosengi olongola yango na liste na yo liboso ya kobakisa mosusu."
 }

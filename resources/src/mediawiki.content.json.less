@@ -1,10 +1,7 @@
 /*!
- * CSS for styling HTML-formatted JSON Schema objects
- *
- * @file
- * @author Munaf Assaf <massaf@wikimedia.org>
+ * Style HTML-formatted JSON Schema objects
  */
-/* stylelint-disable selector-class-pattern */
+
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 
@@ -16,15 +13,13 @@
 	th,
 	td {
 		border: @border-base;
-		/* TODO: Re-evaluate whether we should keep this over-ride or switch to ems */
-		/* stylelint-disable-next-line declaration-property-unit-disallowed-list */
-		font-size: 16px;
-		padding: 0.5em 1em;
+		font-size: 1em;
+		padding: @spacing-50 @spacing-100;
 	}
 
 	tr {
 		background-color: @background-color-neutral;
-		margin-bottom: 0.5em;
+		margin-bottom: @spacing-50;
 	}
 
 	th {
@@ -42,9 +37,10 @@
 .mw-json-value,
 .mw-json-single-value {
 	background-color: #dcfae3;
-	font-family: monospace, monospace;
+	font-family: @font-family-monospace--fallback;
 	white-space: pre-wrap;
 
+	/* stylelint-disable selector-class-pattern */
 	html.skin-theme-clientpref-night & {
 		@media screen {
 			background-color: @background-color-transparent;
@@ -57,6 +53,7 @@
 			background-color: @background-color-transparent;
 		}
 	}
+	/* stylelint-enable selector-class-pattern */
 }
 
 .mw-json-single-value {

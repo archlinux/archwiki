@@ -31,7 +31,6 @@
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
 	"wikieditor-desc": "拡張可能なウィキテキスト編集インターフェイスと多数の機能モジュールを提供する",
-	"wikieditor-wikitext-tab": "ウィキテキスト",
 	"wikieditor-toolbar": "編集ツールバー",
 	"wikieditor-toolbar-desc": "使いやすさの向上したページ編集ツールバー",
 	"wikieditor-toolbar-preference": "編集ツールバーを有効にする",

@@ -18,7 +18,13 @@
  * @file
  */
 
+namespace MediaWiki\Exception;
+
+use Exception;
+use LocalisationCache;
 use MediaWiki\Debug\MWDebug;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * MediaWiki exception
@@ -65,7 +71,9 @@ class MWException extends Exception {
 	 * @param string $key Message name
 	 * @param string $fallback Default message if the message cache can't be
 	 *                  called by the exception
-	 * @param mixed ...$params To pass to wfMessage()
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return string Message with arguments replaced
 	 */
 	public function msg( $key, $fallback, ...$params ) {
@@ -117,3 +125,6 @@ class MWException extends Exception {
 	}
 
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( MWException::class, 'MWException' );

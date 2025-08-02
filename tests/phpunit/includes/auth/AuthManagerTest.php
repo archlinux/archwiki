@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Auth;
 
 use Closure;
-use DatabaseLogEntry;
 use DomainException;
 use DummySessionProvider;
 use DynamicPropertyTestHelper;
@@ -33,7 +32,6 @@ use MediaWiki\Auth\TemporaryPasswordAuthenticationRequest;
 use MediaWiki\Auth\UserDataAuthenticationRequest;
 use MediaWiki\Auth\UsernameAuthenticationRequest;
 use MediaWiki\Block\BlockManager;
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\SystemBlock;
 use MediaWiki\Config\Config;
@@ -45,6 +43,7 @@ use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
@@ -92,23 +91,13 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \MediaWiki\Auth\AuthManager
  */
 class AuthManagerTest extends MediaWikiIntegrationTestCase {
-	/** @var WebRequest */
-	protected $request;
-	/** @var Config */
-	protected $config;
-	/** @var ObjectFactory */
-	protected $objectFactory;
-	/** @var ReadOnlyMode */
-	protected $readOnlyMode;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var UserNameUtils */
-	protected $userNameUtils;
-
-	/** @var LoggerInterface */
-	protected $logger;
+	protected WebRequest $request;
+	protected Config $config;
+	protected ObjectFactory $objectFactory;
+	protected ReadOnlyMode $readOnlyMode;
+	private HookContainer $hookContainer;
+	protected UserNameUtils $userNameUtils;
+	protected LoggerInterface $logger;
 
 	/** @var AbstractPreAuthenticationProvider&MockObject[] */
 	protected $preauthMocks = [];
@@ -117,40 +106,20 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	/** @var AbstractSecondaryAuthenticationProvider&MockObject[] */
 	protected $secondaryauthMocks = [];
 
-	/** @var AuthManager */
-	protected $manager;
+	protected AuthManager $manager;
 	/** @var TestingAccessWrapper|AuthManager */
 	protected $managerPriv;
 
-	/** @var BlockManager */
-	private $blockManager;
-
-	/** @var WatchlistManager */
-	private $watchlistManager;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var LanguageConverterFactory */
-	private $languageConverterFactory;
-
-	/** @var BotPasswordStore */
-	private $botPasswordStore;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var UserIdentityLookup */
-	private $userIdentityLookup;
-
-	/** @var UserOptionsManager */
-	private $userOptionsManager;
-
-	/** @var ObjectCacheFactory */
-	private $objectCacheFactory;
+	private BlockManager $blockManager;
+	private WatchlistManager $watchlistManager;
+	private ILoadBalancer $loadBalancer;
+	private Language $contentLanguage;
+	private LanguageConverterFactory $languageConverterFactory;
+	private BotPasswordStore $botPasswordStore;
+	private UserFactory $userFactory;
+	private UserIdentityLookup $userIdentityLookup;
+	private UserOptionsManager $userOptionsManager;
+	private ObjectCacheFactory $objectCacheFactory;
 
 	/**
 	 * Registers a mock hook.
@@ -248,6 +217,10 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->config->set( MainConfigNames::LanguageCode, 'en' );
 		$this->config->set( MainConfigNames::NewUserLog, false );
 		$this->config->set( MainConfigNames::RememberMe, RememberMeAuthenticationRequest::CHOOSE_REMEMBER );
+		$this->config->set( MainConfigNames::TrxProfilerLimits, [
+			'POST' => [],
+			'PostSend-POST' => [],
+		] );
 	}
 
 	/**
@@ -255,84 +228,54 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $regen Force a call to $this->initializeConfig()
 	 */
 	protected function initializeManager( $regen = false ) {
-		// TODO clean this up, don't need to re fetch the services each time
-		if ( $regen || !$this->config ) {
+		if ( $regen || !isset( $this->config ) ) {
 			$this->config = new HashConfig();
 		}
-		if ( $regen || !$this->request ) {
+		if ( $regen || !isset( $this->request ) ) {
 			$this->request = new FauxRequest();
 		}
-		if ( $regen || !$this->objectFactory ) {
-			$services = $this->createNoOpAbstractMock( ContainerInterface::class );
-			$this->objectFactory = new ObjectFactory( $services );
-		}
-		if ( $regen || !$this->readOnlyMode ) {
-			$this->readOnlyMode = $this->getServiceContainer()->getReadOnlyMode();
-		}
-		if ( $regen || !$this->blockManager ) {
-			// Override BlockManager::checkHost. Formerly testAuthorizeCreateAccount_DNSBlacklist
-			// required *.localhost to resolve as 127.0.0.1, but that is system-dependent.
-			$this->blockManager = new class(
-				new ServiceOptions(
-					BlockManager::CONSTRUCTOR_OPTIONS,
-					$this->getServiceContainer()->getMainConfig()
-				),
-				$this->getServiceContainer()->getUserFactory(),
-				$this->getServiceContainer()->getUserIdentityUtils(),
-				LoggerFactory::getInstance( 'BlockManager' ),
-				$this->getServiceContainer()->getHookContainer(),
-				$this->getServiceContainer()->getDatabaseBlockStore(),
-				$this->getServiceContainer()->getProxyLookup()
-			) extends BlockManager {
-				protected function checkHost( $hostname ) {
-					return '127.0.0.1';
-				}
-			};
-		}
-		if ( $regen || !$this->watchlistManager ) {
-			$this->watchlistManager = $this->getServiceContainer()->getWatchlistManager();
-		}
-		if ( $regen || !$this->hookContainer ) {
-			// Set up a HookContainer we control
-			$this->hookContainer = new HookContainer(
-				new StaticHookRegistry( [], [], [] ),
-				$this->objectFactory
-			);
-		}
-		if ( $regen || !$this->userNameUtils ) {
-			$this->userNameUtils = $this->getServiceContainer()->getUserNameUtils();
-		}
-		if ( $regen || !$this->loadBalancer ) {
-			$this->loadBalancer = $this->getServiceContainer()->getDBLoadBalancer();
-		}
-		if ( $regen || !$this->contentLanguage ) {
-			$this->contentLanguage = $this->getServiceContainer()->getContentLanguage();
-		}
-		if ( $regen || !$this->languageConverterFactory ) {
-			$this->languageConverterFactory = $this->getServiceContainer()->getLanguageConverterFactory();
-		}
-		if ( $regen || !$this->botPasswordStore ) {
-			$this->botPasswordStore = $this->getServiceContainer()->getBotPasswordStore();
-		}
-		if ( $regen || !$this->userFactory ) {
-			$this->userFactory = $this->getServiceContainer()->getUserFactory();
-		}
-		if ( $regen || !$this->userIdentityLookup ) {
-			$this->userIdentityLookup = $this->getServiceContainer()->getUserIdentityLookup();
-		}
-		if ( $regen || !$this->userOptionsManager ) {
-			$this->userOptionsManager = $this->getServiceContainer()->getUserOptionsManager();
-		}
-		if ( $regen || !$this->objectCacheFactory ) {
-			$this->objectCacheFactory = $this->getServiceContainer()->getObjectCacheFactory();
-		}
-		if ( !$this->logger ) {
-			$this->logger = new TestLogger();
-		}
+
+		$this->objectFactory ??= new ObjectFactory( $this->createNoOpAbstractMock( ContainerInterface::class ) );
+		$this->readOnlyMode ??= $this->getServiceContainer()->getReadOnlyMode();
+		// Override BlockManager::checkHost. Formerly testAuthorizeCreateAccount_DNSBlacklist
+		// required *.localhost to resolve as 127.0.0.1, but that is system-dependent.
+		$this->blockManager ??= new class(
+			new ServiceOptions(
+				BlockManager::CONSTRUCTOR_OPTIONS,
+				$this->getServiceContainer()->getMainConfig()
+			),
+			$this->getServiceContainer()->getUserFactory(),
+			$this->getServiceContainer()->getUserIdentityUtils(),
+			LoggerFactory::getInstance( 'BlockManager' ),
+			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getDatabaseBlockStore(),
+			$this->getServiceContainer()->getBlockTargetFactory(),
+			$this->getServiceContainer()->getProxyLookup()
+		) extends BlockManager {
+			protected function checkHost( $hostname ) {
+				return '127.0.0.1';
+			}
+		};
+		$this->watchlistManager ??= $this->getServiceContainer()->getWatchlistManager();
+		$this->hookContainer ??= new HookContainer(
+			new StaticHookRegistry( [], [], [] ),
+			$this->objectFactory
+		);
+		$this->userNameUtils ??= $this->getServiceContainer()->getUserNameUtils();
+		$this->loadBalancer ??= $this->getServiceContainer()->getDBLoadBalancer();
+		$this->contentLanguage ??= $this->getServiceContainer()->getContentLanguage();
+		$this->languageConverterFactory ??= $this->getServiceContainer()->getLanguageConverterFactory();
+		$this->botPasswordStore ??= $this->getServiceContainer()->getBotPasswordStore();
+		$this->userFactory ??= $this->getServiceContainer()->getUserFactory();
+		$this->userIdentityLookup ??= $this->getServiceContainer()->getUserIdentityLookup();
+		$this->userOptionsManager ??= $this->getServiceContainer()->getUserOptionsManager();
+		$this->objectCacheFactory ??= $this->getServiceContainer()->getObjectCacheFactory();
+		$this->logger ??= new TestLogger();
 
 		if ( $regen || !$this->config->has( MainConfigNames::AuthManagerConfig ) ) {
 			$this->initializeConfig();
 		}
+
 		$this->manager = new AuthManager(
 			$this->request,
 			$this->config,
@@ -361,7 +304,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	 * @return array (MediaWiki\Session\SessionProvider, ScopedCallback)
 	 */
 	protected function getMockSessionProvider( $canChangeUser = null, array $methods = [] ) {
-		if ( !$this->config ) {
+		if ( !isset( $this->config ) ) {
 			$this->config = new HashConfig();
 			$this->initializeConfig();
 		}
@@ -398,7 +341,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 
 		$reset = TestUtils::setSessionManagerSingleton( $manager );
 
-		if ( $this->request ) {
+		if ( isset( $this->request ) ) {
 			$manager->getSessionForRequest( $this->request );
 		}
 
@@ -1090,30 +1033,16 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideAuthentication
-	 * @param StatusValue $preResponse
-	 * @param array<AuthenticationResponse|Exception> $primaryResponses
-	 * @param array<AuthenticationResponse|Exception> $secondaryResponses
-	 * @param array<AuthenticationResponse|Exception> $managerResponses
-	 * @param bool $link Whether the primary authentication provider is a "link" provider
 	 */
 	public function testAuthentication(
-		StatusValue $preResponse, array $primaryResponses, array $secondaryResponses,
-		array $managerResponses, $link = false
+		StatusValue $preResponse, $responses, $link = false
 	) {
 		$this->initializeManager();
 		$user = $this->getTestSysop()->getUser();
 		$id = $user->getId();
 		$name = $user->getName();
-		// Hack: replace placeholder usernames with that of the test user. A better solution would be to instantiate
-		// all responses here, only providing constructor arguments (like the status) from the data provider.
-		$responseArrays = [ $primaryResponses, $secondaryResponses, $managerResponses ];
-		foreach ( $responseArrays as $respArray ) {
-			foreach ( $respArray as $resp ) {
-				if ( $resp instanceof AuthenticationResponse && $resp->username === 'PLACEHOLDER' ) {
-					$resp->username = $name;
-				}
-			}
-		}
+		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
+		[ $primaryResponses, $secondaryResponses, $managerResponses ] = $responses( $this, $req, $name );
 
 		// Set up lots of mocks...
 		$req = new RememberMeAuthenticationRequest;
@@ -1332,158 +1261,207 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideAuthentication() {
-		$rememberReq = new RememberMeAuthenticationRequest;
-		$rememberReq->action = AuthManager::ACTION_LOGIN;
-
-		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
-		$restartResponse = AuthenticationResponse::newRestart(
-			$this->message( 'authmanager-authn-no-local-user' )
-		);
-		$restartResponse->neededRequests = [ $rememberReq ];
-
-		$restartResponse2Pass = AuthenticationResponse::newPass( null );
-		$restartResponse2Pass->linkRequest = $req;
-		$restartResponse2 = AuthenticationResponse::newRestart(
-			$this->message( 'authmanager-authn-no-local-user-link' )
-		);
-		$restartResponse2->createRequest = new CreateFromLoginAuthenticationRequest(
-			null, [ $req->getUniqueId() => $req ]
-		);
-		$restartResponse2->createRequest->action = AuthManager::ACTION_LOGIN;
-		$restartResponse2->neededRequests = [ $rememberReq, $restartResponse2->createRequest ];
-
-		// Hack: use a placeholder that will be replaced with the actual username in the test method.
-		$userNamePlaceholder = 'PLACEHOLDER';
-
+	public static function provideAuthentication() {
 		return [
 			'Failure in pre-auth' => [
 				StatusValue::newFatal( 'fail-from-pre' ),
-				[],
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'fail-from-pre' ) ),
-					AuthenticationResponse::newFail(
-						$this->message( 'authmanager-authn-not-in-progress' )
-					),
-				]
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					return [
+						[],
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'fail-from-pre' ) ),
+							AuthenticationResponse::newFail(
+								$testCase->message( 'authmanager-authn-not-in-progress' )
+							),
+						]
+					];
+				},
 			],
 			'Failure in primary' => [
 				StatusValue::newGood(),
-				$tmp = [
-					AuthenticationResponse::newFail( $this->message( 'fail-from-primary' ) ),
-				],
-				[],
-				$tmp
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					$tmp = [
+						AuthenticationResponse::newFail( $testCase->message( 'fail-from-primary' ) ),
+					];
+					return [
+						$tmp,
+						[],
+						$tmp
+					];
+				},
 			],
 			'All primary abstain' => [
 				StatusValue::newGood(),
-				[
-					AuthenticationResponse::newAbstain(),
-				],
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'authmanager-authn-no-primary' ) )
-				]
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					return [
+						[
+							AuthenticationResponse::newAbstain(),
+						],
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'authmanager-authn-no-primary' ) )
+						]
+					];
+				},
 			],
 			'Primary UI, then redirect, then fail' => [
 				StatusValue::newGood(),
-				$tmp = [
-					AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newRedirect( [ $req ], '/foo.html', [ 'foo' => 'bar' ] ),
-					AuthenticationResponse::newFail( $this->message( 'fail-in-primary-continue' ) ),
-				],
-				[],
-				$tmp
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					$tmp = [
+						AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) ),
+						AuthenticationResponse::newRedirect( [ $req ], '/foo.html', [ 'foo' => 'bar' ] ),
+						AuthenticationResponse::newFail( $testCase->message( 'fail-in-primary-continue' ) ),
+					];
+					return [
+						$tmp,
+						[],
+						$tmp
+					];
+				},
 			],
 			'Primary redirect, then abstain' => [
 				StatusValue::newGood(),
-				[
+				static function ( $testCase, $req, $userNamePlaceholder ) {
 					$tmp = AuthenticationResponse::newRedirect(
 						[ $req ], '/foo.html', [ 'foo' => 'bar' ]
-					),
-					AuthenticationResponse::newAbstain(),
-				],
-				[],
-				[
-					$tmp,
-					new DomainException(
-						'MockAbstractPrimaryAuthenticationProvider::continuePrimaryAuthentication() returned ABSTAIN'
-					)
-				]
+					);
+					return [
+						[
+							$tmp,
+							AuthenticationResponse::newAbstain(),
+						],
+						[],
+						[
+							$tmp,
+							new DomainException(
+								'MockAbstractPrimaryAuthenticationProvider::continuePrimaryAuthentication() returned ABSTAIN'
+							)
+						]
+					];
+				},
 			],
 			'Primary UI, then pass with no local user' => [
 				StatusValue::newGood(),
-				[
-					$tmp = AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newPass( null ),
-				],
-				[],
-				[
-					$tmp,
-					$restartResponse,
-				]
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					$rememberReq = new RememberMeAuthenticationRequest;
+					$rememberReq->action = AuthManager::ACTION_LOGIN;
+
+					$restartResponse = AuthenticationResponse::newRestart(
+						$testCase->message( 'authmanager-authn-no-local-user' )
+					);
+					$restartResponse->neededRequests = [ $rememberReq ];
+					$tmp = AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) );
+					return [
+						[
+							$tmp,
+							AuthenticationResponse::newPass( null ),
+						],
+						[],
+						[
+							$tmp,
+							$restartResponse,
+						]
+					];
+				},
 			],
 			'Primary UI, then pass with no local user (link type)' => [
 				StatusValue::newGood(),
-				[
-					$tmp = AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					$restartResponse2Pass,
-				],
-				[],
-				[
-					$tmp,
-					$restartResponse2,
-				],
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					$rememberReq = new RememberMeAuthenticationRequest;
+					$rememberReq->action = AuthManager::ACTION_LOGIN;
+
+					$restartResponse2Pass = AuthenticationResponse::newPass( null );
+					$restartResponse2Pass->linkRequest = $req;
+					$restartResponse2 = AuthenticationResponse::newRestart(
+						$testCase->message( 'authmanager-authn-no-local-user-link' )
+					);
+					$restartResponse2->createRequest = new CreateFromLoginAuthenticationRequest(
+						null, [ $req->getUniqueId() => $req ]
+					);
+					$restartResponse2->createRequest->action = AuthManager::ACTION_LOGIN;
+					$restartResponse2->neededRequests = [ $rememberReq, $restartResponse2->createRequest ];
+
+					$tmp = AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) );
+					return [
+						[
+							$tmp,
+							$restartResponse2Pass,
+						],
+						[],
+						[
+							$tmp,
+							$restartResponse2,
+						],
+					];
+				},
 				true
 			],
 			'Primary pass with invalid username' => [
 				StatusValue::newGood(),
-				[
-					AuthenticationResponse::newPass( '<>' ),
-				],
-				[],
-				[
-					new DomainException(
-						'MockAbstractPrimaryAuthenticationProvider returned an invalid username: <>'
-					),
-				]
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					return [
+						[
+							AuthenticationResponse::newPass( '<>' ),
+						],
+						[],
+						[
+							new DomainException(
+								'MockAbstractPrimaryAuthenticationProvider returned an invalid username: <>'
+							),
+						]
+					];
+				},
 			],
 			'Secondary fail' => [
 				StatusValue::newGood(),
-				[
-					AuthenticationResponse::newPass( $userNamePlaceholder ),
-				],
-				$tmp = [
-					AuthenticationResponse::newFail( $this->message( 'fail-in-secondary' ) ),
-				],
-				$tmp
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					$tmp = [
+						AuthenticationResponse::newFail( $testCase->message( 'fail-in-secondary' ) ),
+					];
+					return [
+						[
+							AuthenticationResponse::newPass( $userNamePlaceholder ),
+						],
+						$tmp,
+						$tmp
+					];
+				},
 			],
 			'Secondary UI, then abstain' => [
 				StatusValue::newGood(),
-				[
-					AuthenticationResponse::newPass( $userNamePlaceholder ),
-				],
-				[
-					$tmp = AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newAbstain()
-				],
-				[
-					$tmp,
-					AuthenticationResponse::newPass( $userNamePlaceholder ),
-				]
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					$tmp = AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) );
+					return [
+						[
+							AuthenticationResponse::newPass( $userNamePlaceholder ),
+						],
+						[
+							$tmp,
+							AuthenticationResponse::newAbstain()
+						],
+						[
+							$tmp,
+							AuthenticationResponse::newPass( $userNamePlaceholder ),
+						]
+					];
+				},
 			],
 			'Secondary pass' => [
 				StatusValue::newGood(),
-				[
-					AuthenticationResponse::newPass( $userNamePlaceholder ),
-				],
-				[
-					AuthenticationResponse::newPass()
-				],
-				[
-					AuthenticationResponse::newPass( $userNamePlaceholder ),
-				]
+				static function ( $testCase, $req, $userNamePlaceholder ) {
+					return [
+						[
+							AuthenticationResponse::newPass( $userNamePlaceholder ),
+						],
+						[
+							AuthenticationResponse::newPass()
+						],
+						[
+							AuthenticationResponse::newPass( $userNamePlaceholder ),
+						]
+					];
+				},
 			],
 		];
 	}
@@ -1538,6 +1516,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( AuthenticationResponse::newPass( 'UTDummy' ), $response );
 		$this->assertNotNull( $this->manager->getRequest()->getSession()->getUser() );
 		$this->assertSame( 'UTDummy', $this->manager->getRequest()->getSession()->getUser()->getName() );
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		// Will prevent login
 		$updateManager();
@@ -1549,6 +1528,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$response = $this->manager->beginAuthentication( [ $req ], 'http://localhost/' );
 		$this->assertEquals( AuthenticationResponse::newFail( wfMessage( 'hook-fail' ) ), $response );
 		$this->assertTrue( $this->manager->getRequest()->getSession()->getUser()->isAnon() );
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		// Will not allow invalid responses
 		$updateManager();
@@ -1563,6 +1543,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		} catch ( LogicException $ex ) {
 			$this->assertSame( '$response must be an AuthenticationResponse', $ex->getMessage() );
 		}
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		$updateManager();
 		$hook = $this->hook( 'AuthManagerVerifyAuthentication', AuthManagerVerifyAuthenticationHook::class, $this->once() );
@@ -1575,6 +1556,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		} catch ( LogicException $ex ) {
 			$this->assertSame( 'AuthManagerVerifyAuthenticationHook must not modify the response unless it returns false', $ex->getMessage() );
 		}
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		$updateManager();
 		$hook = $this->hook( 'AuthManagerVerifyAuthentication', AuthManagerVerifyAuthenticationHook::class, $this->once() );
@@ -1587,6 +1569,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		} catch ( LogicException $ex ) {
 			$this->assertSame( 'AuthManagerVerifyAuthenticationHook must set the response to FAIL if it returns false', $ex->getMessage() );
 		}
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		// Will prevent restart
 		$primaryConfig['beginPrimaryAuthentication'] = AuthenticationResponse::newPass( null );
@@ -1602,6 +1585,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( AuthenticationResponse::newFail( wfMessage( 'hook-fail' ) ), $response );
 		$this->assertTrue( $this->manager->getRequest()->getSession()->getUser()->isAnon() );
 		$this->assertNull( $this->manager->getRequest()->getSession()->get( AuthManager::AUTHN_STATE ) );
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 	}
 
 	/**
@@ -1826,16 +1810,14 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			TestUser::setPasswordForUser( $user, 'UTBlockeePassword' );
 			$user->saveSettings();
 		}
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$blockOptions = [
-			'address' => $user,
-			'by' => $this->getTestSysop()->getUser(),
-			'reason' => __METHOD__,
-			'expiry' => time() + 100500,
-			'createAccount' => true,
-		];
-		$block = new DatabaseBlock( $blockOptions );
-		$blockStore->insertBlock( $block );
+		$this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'address' => $user,
+				'by' => $this->getTestSysop()->getUser(),
+				'reason' => __METHOD__,
+				'expiry' => time() + 100500,
+				'createAccount' => true,
+			] );
 		$this->resetServices();
 		$this->initializeManager( true );
 		$status = $this->manager->authorizeCreateAccount( $user );
@@ -1849,17 +1831,15 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	public function testAuthorizeCreateAccount_ipBlocked() {
 		$this->setGroupPermissions( '*', 'createaccount', true );
 		$this->initializeManager( true );
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$blockOptions = [
-			'address' => '127.0.0.0/24',
-			'by' => $this->getTestSysop()->getUser(),
-			'reason' => __METHOD__,
-			'expiry' => time() + 100500,
-			'createAccount' => true,
-			'sitewide' => false,
-		];
-		$block = new DatabaseBlock( $blockOptions );
-		$blockStore->insertBlock( $block );
+		$this->getServiceContainer()->getDatabaseBlockStore()
+			->insertBlockWithParams( [
+				'address' => '127.0.0.0/24',
+				'by' => $this->getTestSysop()->getUser(),
+				'reason' => __METHOD__,
+				'expiry' => time() + 100500,
+				'createAccount' => true,
+				'sitewide' => false,
+			] );
 		$status = $this->manager->authorizeCreateAccount( new User );
 		$this->assertStatusError( 'blockedtext-partial', $status );
 	}
@@ -1875,19 +1855,19 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			],
 			MainConfigNames::ProxyWhitelist => [],
 		] );
+		unset( $this->blockManager );
 		$this->initializeManager( true );
-
-		// For User::getBlockedStatus()
-		$this->setService( 'BlockManager', $this->blockManager );
 
 		$status = $this->manager->authorizeCreateAccount( new User );
 		$this->assertStatusError( 'sorbs_create_account_reason', $status );
 
 		$this->overrideConfigValue( MainConfigNames::ProxyWhitelist, [ '127.0.0.1' ] );
+		unset( $this->blockManager );
 		$this->initializeManager( true );
-		$this->setService( 'BlockManager', $this->blockManager );
 		$status = $this->manager->authorizeCreateAccount( new User );
 		$this->assertStatusGood( $status );
+
+		unset( $this->blockManager );
 	}
 
 	/**
@@ -1904,26 +1884,22 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			$user->saveSettings();
 		}
 		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$blockOptions = [
-			'address' => $user,
+		$blockStore->insertBlockWithParams( [
+			'targetUser' => $user,
 			'by' => $this->getTestSysop()->getUser(),
 			'reason' => __METHOD__,
 			'expiry' => time() + 100500,
 			'createAccount' => false,
-		];
-		$block = new DatabaseBlock( $blockOptions );
-		$blockStore->insertBlock( $block );
+		] );
 
-		$blockOptions = [
+		$blockStore->insertBlockWithParams( [
 			'address' => '127.0.0.0/24',
 			'by' => $this->getTestSysop()->getUser(),
 			'reason' => __METHOD__,
 			'expiry' => time() + 100500,
 			'createAccount' => true,
 			'sitewide' => false,
-		];
-		$block = new DatabaseBlock( $blockOptions );
-		$blockStore->insertBlock( $block );
+		] );
 
 		$this->resetServices();
 		$this->initializeManager( true );
@@ -2221,6 +2197,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->hook( 'LocalUserCreated', LocalUserCreatedHook::class, $this->never() );
 		$cache = $this->objectCacheFactory->getLocalClusterInstance();
 		$lock = $cache->getScopedLock( $cache->makeGlobalKey( 'account', md5( $username ) ) );
+		$this->assertNotNull( $lock );
 		$ret = $this->manager->continueAccountCreation( [] );
 		unset( $lock );
 		$this->unhook( 'LocalUserCreated' );
@@ -2304,24 +2281,19 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideAccountCreation
-	 * @param StatusValue $preTest
-	 * @param StatusValue $primaryTest
-	 * @param StatusValue $secondaryTest
-	 * @param array $primaryResponses
-	 * @param array $secondaryResponses
-	 * @param array $managerResponses
 	 */
 	public function testAccountCreation(
 		StatusValue $preTest, $primaryTest, $secondaryTest,
-		array $primaryResponses, array $secondaryResponses, array $managerResponses
+		$responses
 	) {
 		$creator = $this->getTestSysop()->getUser();
 		$username = self::usernameForCreation();
 
 		$this->initializeManager();
+		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
+		[ $primaryResponses, $secondaryResponses, $managerResponses ] = $responses( $this, $req );
 
 		// Set up lots of mocks...
-		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
 		$mocks = [];
 		foreach ( [ 'pre', 'primary', 'secondary' ] as $key ) {
 			$class = ucfirst( $key ) . 'AuthenticationProvider';
@@ -2591,122 +2563,166 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 				->fetchField() );
 	}
 
-	public function provideAccountCreation() {
-		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
+	public static function provideAccountCreation() {
 		$good = StatusValue::newGood();
 
 		return [
 			'Pre-creation test fail in pre' => [
 				StatusValue::newFatal( 'fail-from-pre' ), $good, $good,
-				[],
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'fail-from-pre' ) ),
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[],
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'fail-from-pre' ) ),
+						]
+					];
+				},
 			],
 			'Pre-creation test fail in primary' => [
 				$good, StatusValue::newFatal( 'fail-from-primary' ), $good,
-				[],
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'fail-from-primary' ) ),
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[],
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'fail-from-primary' ) ),
+						]
+					];
+				},
 			],
 			'Pre-creation test fail in secondary' => [
 				$good, $good, StatusValue::newFatal( 'fail-from-secondary' ),
-				[],
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'fail-from-secondary' ) ),
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[],
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'fail-from-secondary' ) ),
+						]
+					];
+				},
 			],
 			'Failure in primary' => [
 				$good, $good, $good,
-				$tmp = [
-					AuthenticationResponse::newFail( $this->message( 'fail-from-primary' ) ),
-				],
-				[],
-				$tmp
+				static function ( $testCase, $req ) {
+					$tmp = [
+						AuthenticationResponse::newFail( $testCase->message( 'fail-from-primary' ) ),
+					];
+					return [
+						$tmp,
+						[],
+						$tmp
+					];
+				},
 			],
 			'All primary abstain' => [
 				$good, $good, $good,
-				[
-					AuthenticationResponse::newAbstain(),
-				],
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'authmanager-create-no-primary' ) )
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[
+							AuthenticationResponse::newAbstain(),
+						],
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'authmanager-create-no-primary' ) )
+						]
+					];
+				},
 			],
 			'Primary UI, then redirect, then fail' => [
 				$good, $good, $good,
-				$tmp = [
-					AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newRedirect( [ $req ], '/foo.html', [ 'foo' => 'bar' ] ),
-					AuthenticationResponse::newFail( $this->message( 'fail-in-primary-continue' ) ),
-				],
-				[],
-				$tmp
+				static function ( $testCase, $req ) {
+					$tmp = [
+						AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) ),
+						AuthenticationResponse::newRedirect( [ $req ], '/foo.html', [ 'foo' => 'bar' ] ),
+						AuthenticationResponse::newFail( $testCase->message( 'fail-in-primary-continue' ) ),
+					];
+					return [
+						$tmp,
+						[],
+						$tmp
+					];
+				},
 			],
 			'Primary redirect, then abstain' => [
 				$good, $good, $good,
-				[
+				static function ( $testCase, $req ) {
 					$tmp = AuthenticationResponse::newRedirect(
 						[ $req ], '/foo.html', [ 'foo' => 'bar' ]
-					),
-					AuthenticationResponse::newAbstain(),
-				],
-				[],
-				[
-					$tmp,
-					new DomainException(
-						'MockAbstractPrimaryAuthenticationProvider::continuePrimaryAccountCreation() returned ABSTAIN'
-					)
-				]
+					);
+					return [
+						[
+							$tmp,
+							AuthenticationResponse::newAbstain(),
+						],
+						[],
+						[
+							$tmp,
+							new DomainException(
+								'MockAbstractPrimaryAuthenticationProvider::continuePrimaryAccountCreation() returned ABSTAIN'
+							)
+						]
+					];
+				},
 			],
 			'Primary UI, then pass; secondary abstain' => [
 				$good, $good, $good,
-				[
-					$tmp1 = AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newPass(),
-				],
-				[
-					AuthenticationResponse::newAbstain(),
-				],
-				[
-					$tmp1,
-					'created' => AuthenticationResponse::newPass( '' ),
-				]
+				static function ( $testCase, $req ) {
+					$tmp = AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) );
+					return [
+						[
+							$tmp,
+							AuthenticationResponse::newPass(),
+						],
+						[
+							AuthenticationResponse::newAbstain(),
+						],
+						[
+							$tmp,
+							'created' => AuthenticationResponse::newPass( '' ),
+						]
+					];
+				},
 			],
 			'Primary pass; secondary UI then pass' => [
 				$good, $good, $good,
-				[
-					AuthenticationResponse::newPass( '' ),
-				],
-				[
-					$tmp1 = AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newPass( '' ),
-				],
-				[
-					'created' => $tmp1,
-					AuthenticationResponse::newPass( '' ),
-				]
+				static function ( $testCase, $req ) {
+					$tmp = AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) );
+					return [
+						[
+							AuthenticationResponse::newPass( '' ),
+						],
+						[
+							$tmp,
+							AuthenticationResponse::newPass( '' ),
+						],
+						[
+							'created' => $tmp,
+							AuthenticationResponse::newPass( '' ),
+						]
+					];
+				},
 			],
 			'Primary pass; secondary fail' => [
 				$good, $good, $good,
-				[
-					AuthenticationResponse::newPass(),
-				],
-				[
-					AuthenticationResponse::newFail( $this->message( '...' ) ),
-				],
-				[
-					'created' => new DomainException(
-						'MockAbstractSecondaryAuthenticationProvider::beginSecondaryAccountCreation() returned FAIL. ' .
-							'Secondary providers are not allowed to fail account creation, ' .
-							'that should have been done via testForAccountCreation().'
-					)
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[
+							AuthenticationResponse::newPass(),
+						],
+						[
+							AuthenticationResponse::newFail( $testCase->message( '...' ) ),
+						],
+						[
+							'created' => new DomainException(
+								'MockAbstractSecondaryAuthenticationProvider::beginSecondaryAccountCreation() returned FAIL. ' .
+									'Secondary providers are not allowed to fail account creation, ' .
+									'that should have been done via testForAccountCreation().'
+							)
+						]
+					];
+				},
 			],
 		];
 	}
@@ -2850,6 +2866,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( AuthenticationResponse::newPass( 'UTDummy' ), $response );
 		$this->assertNotNull( $this->manager->getRequest()->getSession()->getUser() );
 		$this->assertTrue( $this->getServiceContainer()->getUserFactory()->newFromName( 'UTDummy' )->isRegistered() );
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		// Will prevent login
 		unset( $secondaryConfig['beginSecondaryAccountCreation'] );
@@ -2864,6 +2881,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$response = $this->manager->beginAccountCreation( new User(), [ $req ], 'http://localhost/' );
 		$this->assertEquals( AuthenticationResponse::newFail( wfMessage( 'hook-fail' ) ), $response );
 		$this->assertFalse( $this->getServiceContainer()->getUserFactory()->newFromName( 'UTDummy2' )->isRegistered() );
+		$this->unhook( 'AuthManagerVerifyAuthentication' );
 
 		// the LogicError paths are already tested under testAuthentication_AuthManagerVerifyAuthentication
 	}
@@ -2878,8 +2896,12 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$username = self::usernameForCreation();
 		$expectedSource = AuthManager::AUTOCREATE_SOURCE_SESSION;
 
-		$this->setGroupPermissions( '*', 'createaccount', true );
-		$this->setGroupPermissions( '*', 'autocreateaccount', false );
+		$this->setGroupPermissions( [
+			'*' => [
+				'createaccount' => true,
+				'autocreateaccount' => false,
+			]
+		] );
 		$this->initializeManager( true );
 
 		// Set up lots of mocks...
@@ -3062,8 +3084,12 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'noname', $session->get( AuthManager::AUTOCREATE_BLOCKLIST ) );
 
 		// IP unable to create accounts
-		$this->setGroupPermissions( '*', 'createaccount', false );
-		$this->setGroupPermissions( '*', 'autocreateaccount', false );
+		$this->setGroupPermissions( [
+			'*' => [
+				'createaccount' => false,
+				'autocreateaccount' => false,
+			]
+		] );
 		$this->initializeManager( true );
 		$session = $this->request->getSession();
 		$user = User::newFromName( $username );
@@ -3084,8 +3110,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 
 		// maintenance scripts always work
 		$expectedSource = AuthManager::AUTOCREATE_SOURCE_MAINT;
-		$this->setGroupPermissions( '*', 'createaccount', false );
-		$this->setGroupPermissions( '*', 'autocreateaccount', false );
 		$this->initializeManager( true );
 		$session = $this->request->getSession();
 		$user = User::newFromName( $username );
@@ -3097,7 +3121,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		// Test that both permutations of permissions are allowed
 		// (this hits the two "ok" entries in $mocks['pre'])
 		$expectedSource = AuthManager::AUTOCREATE_SOURCE_SESSION;
-		$this->setGroupPermissions( '*', 'createaccount', false );
 		$this->setGroupPermissions( '*', 'autocreateaccount', true );
 		$this->initializeManager( true );
 		$session = $this->request->getSession();
@@ -3107,8 +3130,12 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->unhook( 'LocalUserCreated' );
 		$this->assertStatusError( 'ok', $ret );
 
-		$this->setGroupPermissions( '*', 'createaccount', true );
-		$this->setGroupPermissions( '*', 'autocreateaccount', false );
+		$this->setGroupPermissions( [
+			'*' => [
+				'createaccount' => true,
+				'autocreateaccount' => false,
+			]
+		] );
 		$this->initializeManager( true );
 		$session = $this->request->getSession();
 		$user = User::newFromName( $username );
@@ -3120,10 +3147,14 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 
 		// Test lock fail
 		$session->clear();
+		unset( $this->objectCacheFactory );
+		$this->initializeManager( true );
+		$session = $this->request->getSession();
 		$user = User::newFromName( $username );
 		$this->hook( 'LocalUserCreated', LocalUserCreatedHook::class, $this->never() );
 		$cache = $this->objectCacheFactory->getLocalClusterInstance();
 		$lock = $cache->getScopedLock( $cache->makeGlobalKey( 'account', md5( $username ) ) );
+		$this->assertNotNull( $lock );
 		$ret = $this->manager->autoCreateUser( $user, AuthManager::AUTOCREATE_SOURCE_SESSION, true, true );
 		unset( $lock );
 		$this->unhook( 'LocalUserCreated' );
@@ -3382,9 +3413,8 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 				'reason' => __METHOD__,
 				'expiry' => time() + 100500,
 			];
-			$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-			$block = new DatabaseBlock( $blockOptions );
-			$blockStore->insertBlock( $block );
+			$this->getServiceContainer()->getDatabaseBlockStore()
+				->insertBlockWithParams( $blockOptions );
 		}
 
 		if ( $performerType === 'sysop' ) {
@@ -3989,11 +4019,13 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideAccountLink
 	 */
 	public function testAccountLink(
-		StatusValue $preTest, array $primaryResponses, array $managerResponses
+		StatusValue $preTest, $responses
 	) {
 		$user = $this->getTestSysop()->getUser();
 
 		$this->initializeManager();
+		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
+		[ $primaryResponses, $managerResponses ] = $responses( $this, $req );
 
 		// Set up lots of mocks...
 		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
@@ -4152,77 +4184,108 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expectLog, $this->logger->getBuffer() );
 	}
 
-	public function provideAccountLink() {
-		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
+	public static function provideAccountLink() {
 		$good = StatusValue::newGood();
 
 		return [
 			'Pre-link test fail in pre' => [
 				StatusValue::newFatal( 'fail-from-pre' ),
-				[],
-				[
-					AuthenticationResponse::newFail( $this->message( 'fail-from-pre' ) ),
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'fail-from-pre' ) ),
+						]
+					];
+				},
 			],
 			'Failure in primary' => [
 				$good,
-				$tmp = [
-					AuthenticationResponse::newFail( $this->message( 'fail-from-primary' ) ),
-				],
-				$tmp
+				static function ( $testCase, $req ) {
+					$tmp = [
+						AuthenticationResponse::newFail( $testCase->message( 'fail-from-primary' ) ),
+					];
+					return [
+						$tmp,
+						$tmp
+					];
+				},
 			],
 			'All primary abstain' => [
 				$good,
-				[
-					AuthenticationResponse::newAbstain(),
-				],
-				[
-					AuthenticationResponse::newFail( $this->message( 'authmanager-link-no-primary' ) )
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[
+							AuthenticationResponse::newAbstain(),
+						],
+						[
+							AuthenticationResponse::newFail( $testCase->message( 'authmanager-link-no-primary' ) )
+						]
+					];
+				},
 			],
 			'Primary UI, then redirect, then fail' => [
 				$good,
-				$tmp = [
-					AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newRedirect( [ $req ], '/foo.html', [ 'foo' => 'bar' ] ),
-					AuthenticationResponse::newFail( $this->message( 'fail-in-primary-continue' ) ),
-				],
-				$tmp
+				static function ( $testCase, $req ) {
+					$tmp = [
+						AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) ),
+						AuthenticationResponse::newRedirect( [ $req ], '/foo.html', [ 'foo' => 'bar' ] ),
+						AuthenticationResponse::newFail( $testCase->message( 'fail-in-primary-continue' ) ),
+					];
+					return [
+						$tmp,
+						$tmp
+					];
+				},
 			],
 			'Primary redirect, then abstain' => [
 				$good,
-				[
+				static function ( $testCase, $req ) {
 					$tmp = AuthenticationResponse::newRedirect(
 						[ $req ], '/foo.html', [ 'foo' => 'bar' ]
-					),
-					AuthenticationResponse::newAbstain(),
-				],
-				[
-					$tmp,
-					new DomainException(
-						'MockAbstractPrimaryAuthenticationProvider::continuePrimaryAccountLink() returned ABSTAIN'
-					)
-				]
+					);
+					return [
+						[
+							$tmp,
+							AuthenticationResponse::newAbstain(),
+						],
+						[
+							$tmp,
+							new DomainException(
+								'MockAbstractPrimaryAuthenticationProvider::continuePrimaryAccountLink() returned ABSTAIN'
+							)
+						]
+					];
+				},
 			],
 			'Primary UI, then pass' => [
 				$good,
-				[
-					$tmp1 = AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ),
-					AuthenticationResponse::newPass(),
-				],
-				[
-					$tmp1,
-					AuthenticationResponse::newPass( '' ),
-				]
+				static function ( $testCase, $req ) {
+					$tmp = AuthenticationResponse::newUI( [ $req ], $testCase->message( '...' ) );
+					return [
+						[
+							$tmp,
+							AuthenticationResponse::newPass(),
+						],
+						[
+							$tmp,
+							AuthenticationResponse::newPass( '' ),
+						]
+					];
+				},
 			],
 			'Primary pass' => [
 				$good,
-				[
-					AuthenticationResponse::newPass( '' ),
-				],
-				[
-					AuthenticationResponse::newPass( '' ),
-				]
+				static function ( $testCase, $req ) {
+					return [
+						[
+							AuthenticationResponse::newPass( '' ),
+						],
+						[
+							AuthenticationResponse::newPass( '' ),
+						]
+					];
+				},
 			],
 		];
 	}

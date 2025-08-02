@@ -10,7 +10,7 @@
 	"descriptionmsg": "linter-desc",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"AutoloadClasses": {
 		"MediaWiki\\Linter\\Maintenance\\MigrateNamespace": "maintenance/migrateNamespace.php",
@@ -52,10 +52,21 @@
 		"APIQuerySiteInfoGeneralInfo": "main",
 		"InfoAction": "main",
 		"WikiPageDeletionUpdates": "main",
-		"RevisionFromEditComplete": "main",
 		"ParserLogLinterData": "main",
 		"RevisionDataUpdates": "main"
 	},
+	"DomainEventIngresses": [
+		{
+			"events": [
+				"PageRevisionUpdated"
+			],
+			"class": "MediaWiki\\Linter\\LintEventIngress",
+			"services": [
+				"Linter.TotalsLookup",
+				"Linter.Database"
+			]
+		}
+	],
 	"APIListModules": {
 		"linterrors": {
 			"class": "MediaWiki\\Linter\\ApiQueryLintErrors",
@@ -100,6 +111,11 @@
 			"scripts": "ext.linter.edit.js",
 			"dependencies": [
 				"jquery.textSelection"
+			]
+		},
+		"ext.linter.styles": {
+			"styles": [
+				"special.less"
 			]
 		}
 	},
@@ -250,6 +266,12 @@
 					"dbid": 25,
 					"enabled": true,
 					"priority": "high"
+				},
+				"empty-heading": {
+					"dbid": 26,
+					"enabled": true,
+					"priority": "low",
+					"no-params": true
 				}
 			}
 		},

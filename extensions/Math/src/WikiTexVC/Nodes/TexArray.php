@@ -311,15 +311,11 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 				$fullRenderedArray .= $this->createMMLwithContext( $currentColor, $current, $state, $arguments );
 			}
 
-			if ( array_key_exists( "not", $state ) ) {
-				unset( $state["not"] );
-			}
-			if ( array_key_exists( "limits", $state ) ) {
-				unset( $state["limits"] );
-			}
-			if ( array_key_exists( "deriv", $state ) ) {
-				unset( $state["deriv"] );
-			}
+			unset( $state['foundNamedFct'] );
+			unset( $state['not'] );
+			unset( $state['limits'] );
+			unset( $state['deriv'] );
+
 		}
 
 		foreach ( array_reverse( $mmlStyles ) as $mmlStyleEnd ) {
@@ -513,6 +509,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		}
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		if ( $this->curly ) {
 			return $this->inCurlies();

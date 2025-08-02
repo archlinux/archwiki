@@ -10,6 +10,7 @@
 	"cdx-dialog-close-button-label": "닫기",
 	"cdx-label-optional-flag": "(선택 사항)",
 	"cdx-message-dismiss-button-label": "닫기",
+	"cdx-popover-close-button-label": "닫기",
 	"cdx-search-input-search-button-label": "검색",
 	"cdx-table-select-all-label": "모든 줄 선택",
 	"cdx-table-select-row-label": "$2 중 $1 줄 선택",
@@ -26,5 +27,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "많은 결과 중 $1-$2 결과 표시",
 	"cdx-table-pagination-status-message-indeterminate-short": "많은 결과 중 $1-$2",
 	"cdx-table-pagination-status-message-indeterminate-final": "마지막 {{PLURAL:$1|$1개 결과}} 표시",
-	"cdx-table-pagination-status-message-pending": "결과를 불러오는 중..."
+	"cdx-table-pagination-status-message-pending": "결과를 불러오는 중...",
+	"cdx-table-no-data-message": "사용 가능한 데이터가 없습니다."
 }

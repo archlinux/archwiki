@@ -23,7 +23,6 @@
 namespace MediaWiki\Category;
 
 use Collation;
-use HtmlArmor;
 use ImageGalleryBase;
 use ImageGalleryClassNotFoundException;
 use InvalidArgumentException;
@@ -39,8 +38,10 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class CategoryViewer extends ContextSource {
@@ -104,6 +105,8 @@ class CategoryViewer extends ContextSource {
 	/** @var ILanguageConverter */
 	private $languageConverter;
 
+	private int $migrationStage;
+
 	/**
 	 * @since 1.19 $context is a second, required parameter
 	 * @param PageIdentity $page
@@ -136,6 +139,7 @@ class CategoryViewer extends ContextSource {
 		$this->from = $from;
 		$this->until = $until;
 		$this->limit = $context->getConfig()->get( MainConfigNames::CategoryPagingLimit );
+		$this->migrationStage = $context->getConfig()->get( MainConfigNames::CategoryLinksSchemaMigrationStage );
 		$this->cat = Category::newFromTitle( $page );
 		$this->query = $query;
 		$this->collation = MediaWikiServices::getInstance()->getCollationFactory()->getCategoryCollation();
@@ -151,7 +155,7 @@ class CategoryViewer extends ContextSource {
 	 */
 	public function getHTML() {
 		$this->showGallery = $this->getConfig()->get( MainConfigNames::CategoryMagicGallery )
-			&& !$this->getOutput()->getNoGallery();
+			&& !$this->getOutput()->getOutputFlag( ParserOutputFlags::NO_GALLERY );
 
 		$this->clearCategoryState();
 		$this->doCategoryQuery();
@@ -413,13 +417,10 @@ class CategoryViewer extends ContextSource {
 						'cat_pages',
 						'cat_files',
 						'cl_sortkey_prefix',
-						'cl_collation'
 					]
 				) )
 				->from( 'page' )
-				->where( [ 'cl_to' => $this->page->getDBkey() ] )
-				->andWhere( $extraConds )
-				->useIndex( [ 'categorylinks' => 'cl_sortkey' ] );
+				->andWhere( $extraConds );
 
 			if ( $this->flip[$type] ) {
 				$queryBuilder->orderBy( 'cl_sortkey', SelectQueryBuilder::SORT_DESC );
@@ -433,10 +434,22 @@ class CategoryViewer extends ContextSource {
 					'cat_title = page_title',
 					'page_namespace' => NS_CATEGORY
 				] )
-				->limit( $this->limit + 1 )
-				->caller( __METHOD__ );
+				->limit( $this->limit + 1 );
+			if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+				$queryBuilder->where( [ 'cl_to' => $this->page->getDBkey() ] )
+					->field( 'cl_collation' )
+					->useIndex( [ 'categorylinks' => 'cl_sortkey' ] );
+			} else {
+				$queryBuilder->join( 'linktarget', null, 'cl_target_id = lt_id' )
+					->where( [ 'lt_title' => $this->page->getDBkey(), 'lt_namespace' => NS_CATEGORY ] );
 
-			$res = $queryBuilder->fetchResultSet();
+				$queryBuilder->join( 'collation', null, 'cl_collation_id = collation_id' )
+					->field( 'collation_name', 'cl_collation' );
+
+				$queryBuilder->useIndex( [ 'categorylinks' => 'cl_sortkey_id' ] );
+			}
+
+			$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 			$this->getHookRunner()->onCategoryViewer__doCategoryQuery( $type, $res );
 			$linkCache = MediaWikiServices::getInstance()->getLinkCache();
@@ -839,6 +852,3 @@ class CategoryViewer extends ContextSource {
 		return $this->msg( "category-$type-count" )->numParams( $rescnt, $totalcnt )->parseAsBlock();
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( CategoryViewer::class, 'CategoryViewer' );

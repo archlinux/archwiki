@@ -32,6 +32,7 @@ use MediaWiki\Title\TitleValue;
 use Shellbox\Command\UnboxedResult;
 use Shellbox\Shellbox;
 use Wikimedia\Rdbms\DeleteQueryBuilder;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\Expression;
 use Wikimedia\Rdbms\InsertQueryBuilder;
 use Wikimedia\Rdbms\RawSQLExpression;
@@ -603,26 +604,6 @@ class TaintCheckAnnotationsTest {
 		echo Html::encodeJsCall( '', [ htmlspecialchars( '' ) ] );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
 	}
 
-	/**
-	 * Non-namespaced alias of the Html class.
-	 */
-	function testHtmlAlias() {
-		echo \Html::rawElement( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-XSS
-		\Html::rawElement( '', [ htmlspecialchars( '' ) ] );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
-		echo \Html::rawElement( '', $_GET['a'] );// Safe
-		echo \Html::rawElement( '', [], $_GET['a'] );// @phan-suppress-current-line SecurityCheck-XSS
-		echo \Html::rawElement( '', [], '' );// Safe
-		htmlspecialchars( \Html::rawElement( '', [], '' ) );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
-
-		echo \Html::element( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-XSS
-		\Html::element( '', [ htmlspecialchars( '' ) ] );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
-		echo \Html::element( '', $_GET['a'] );// Safe
-		echo \Html::element( '', [], htmlspecialchars( '' ) );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
-		echo \Html::element( '', [], $_GET['a'] );// Safe
-		echo \Html::element( '', [], '' );// Safe
-		htmlspecialchars( \Html::element( '', [], '' ) );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
-	}
-
 	function textXml() {
 		echo \MediaWiki\Xml\Xml::tags( $_GET['a'], [], '' );// @phan-suppress-current-line SecurityCheck-XSS
 		\MediaWiki\Xml\Xml::tags( '', [ htmlspecialchars( '' ) ], '' );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
@@ -785,14 +766,6 @@ class TaintCheckAnnotationsTest {
 		echo $store->getJoin( '' );// Safe
 	}
 
-	/**
-	 * Non-namespaced alias of the CommentStore class.
-	 */
-	function testCommentStoreAlias( \CommentStore $store, \Wikimedia\Rdbms\IDatabase $db ) {
-		echo $store->insert( $db, '' );// Safe
-		echo $store->getJoin( '' );// Safe
-	}
-
 	function testLinker( LinkTarget $target ) {
 		$unsafeTarget = $this->getUnsafeLinkTarget();
 		// Make sure taint-check knows it's unsafe
@@ -803,21 +776,6 @@ class TaintCheckAnnotationsTest {
 		echo Linker::linkKnown( $target, '', [], $_GET['a'] );// Safe
 		echo Linker::linkKnown( $target, '', [], [], $_GET['a'] );// Safe
 		htmlspecialchars( Linker::linkKnown( $target ) );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
-	}
-
-	/**
-	 * Non-namespaced alias of the Linker class.
-	 */
-	function testLinkerAlias( LinkTarget $target ) {
-		$unsafeTarget = $this->getUnsafeLinkTarget();
-		// Make sure taint-check knows it's unsafe
-		echo $unsafeTarget;// @phan-suppress-current-line SecurityCheck-XSS
-		echo \Linker::linkKnown( $unsafeTarget );// Safe
-		echo \Linker::linkKnown( $target, $_GET['a'] );// @phan-suppress-current-line SecurityCheck-XSS
-		echo \Linker::linkKnown( $target, '', $_GET['a'] );// Safe
-		echo \Linker::linkKnown( $target, '', [], $_GET['a'] );// Safe
-		echo \Linker::linkKnown( $target, '', [], [], $_GET['a'] );// Safe
-		htmlspecialchars( \Linker::linkKnown( $target ) );// @phan-suppress-current-line SecurityCheck-DoubleEscaped
 	}
 
 	function testLinkRenderer( LinkRenderer $linkRenderer, LinkTarget $target ) {

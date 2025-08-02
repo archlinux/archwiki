@@ -73,7 +73,7 @@ class MessageBlobStore implements LoggerAwareInterface {
 	 * @since 1.27
 	 * @param LoggerInterface $logger
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -128,8 +128,6 @@ class MessageBlobStore implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Global check key for ::clear()
-	 *
 	 * @param WANObjectCache $cache
 	 * @return string Cache key
 	 */
@@ -200,18 +198,8 @@ class MessageBlobStore implements LoggerAwareInterface {
 	/**
 	 * Invalidate cache keys for all known modules.
 	 *
-	 * Used by purgeMessageBlobStore.php
-	 */
-	public function clear() {
-		self::clearGlobalCacheEntry( $this->wanCache );
-	}
-
-	/**
-	 * Invalidate cache keys for all known modules.
-	 *
-	 * Used by LocalisationCache and DatabaseUpdater after regenerating l10n cache.
-	 *
-	 * @param WANObjectCache $cache
+	 * Used by LocalisationCache, DatabaseUpdater and purgeMessageBlobStore.php script
+	 * after regenerating l10n cache.
 	 */
 	public static function clearGlobalCacheEntry( WANObjectCache $cache ) {
 		// Disable holdoff TTL because:

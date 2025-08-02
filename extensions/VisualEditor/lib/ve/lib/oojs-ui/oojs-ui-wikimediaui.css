@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.51.1
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-09-19T17:13:45Z
+ * Date: 2025-03-11T00:03:34Z
  */
 .oo-ui-element-hidden {
   display: none !important;
@@ -28,7 +28,6 @@
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 .oo-ui-buttonElement > .oo-ui-buttonElement-button::-moz-focus-inner {
@@ -648,11 +647,9 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 .oo-ui-fieldsetLayout.oo-ui-iconElement > .oo-ui-fieldsetLayout-header,
 .oo-ui-fieldsetLayout.oo-ui-labelElement > .oo-ui-fieldsetLayout-header {
-  color: inherit;
-  display: inline-table;
+  display: block;
   box-sizing: border-box;
   padding: 0;
-  white-space: normal;
   float: left;
   width: 100%;
 }
@@ -737,16 +734,17 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   margin: 12px 0;
 }
 
-.oo-ui-horizontalLayout > .oo-ui-widget {
-  display: inline-block;
-  vertical-align: middle;
+.oo-ui-horizontalLayout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 8px;
 }
-.oo-ui-horizontalLayout > .oo-ui-layout {
-  display: inline-block;
+.oo-ui-horizontalLayout > .oo-ui-widget {
+  align-self: center;
 }
 .oo-ui-horizontalLayout > .oo-ui-layout,
 .oo-ui-horizontalLayout > .oo-ui-widget {
-  margin-right: 8px;
+  margin-right: 0;
 }
 .oo-ui-horizontalLayout > .oo-ui-layout:last-child,
 .oo-ui-horizontalLayout > .oo-ui-widget:last-child {
@@ -754,9 +752,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 .oo-ui-horizontalLayout > .oo-ui-layout {
   margin-top: 0;
-}
-.oo-ui-horizontalLayout > .oo-ui-widget {
-  margin-bottom: 8px;
 }
 
 
@@ -920,7 +915,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   clip: auto;
   margin: 0;
@@ -940,7 +934,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   clip: auto;
   margin: 0;
@@ -1075,7 +1068,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 .oo-ui-popupWidget-head > .oo-ui-labelElement-label {
@@ -1296,12 +1288,12 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   outline: 1px solid transparent;
 }
 .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type='checkbox']:hover + span {
-  border-color: var(--border-color-progressive--hover, #4b77d6);
+  background-color: var(--background-color-interactive-subtle--hover, #eaecf0);
+  border-color: var(--border-color-interactive--hover, #27292d);
 }
 .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type='checkbox']:active + span {
-  background-color: var(--background-color-progressive--active, #233566);
-  border-color: var(--border-color-input-binary--active, #233566);
-  box-shadow: inset 0 0 0 1px var(--box-shadow-color-progressive--active, #233566);
+  background-color: var(--background-color-interactive-subtle--hover, #dadde3);
+  border-color: var(--border-color-interactive--active, #202122);
 }
 .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type='checkbox']:checked + span,
 .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type='checkbox']:indeterminate + span {
@@ -1478,11 +1470,12 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   transition-duration: 100ms;
 }
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type='radio']:hover + span {
-  border-color: var(--border-color-progressive--hover, #4b77d6);
+  background-color: var(--background-color-interactive-subtle--hover, #eaecf0);
+  border-color: var(--border-color-interactive--hover, #27292d);
 }
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type='radio']:active + span {
-  background-color: var(--background-color-progressive--active, #233566);
-  border-color: var(--border-color-input-binary--active, #233566);
+  background-color: var(--background-color-interactive-subtle--hover, #dadde3);
+  border-color: var(--border-color-interactive--active, #202122);
 }
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type='radio']:checked + span {
   border-color: var(--border-color-input-binary--checked, #36c);
@@ -1567,7 +1560,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 .oo-ui-textInputWidget .oo-ui-inputWidget-input {
@@ -1665,15 +1657,11 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 .oo-ui-textInputWidget.oo-ui-widget-enabled > .oo-ui-indicatorElement-indicator {
   opacity: 0.87;
 }
-.oo-ui-textInputWidget.oo-ui-widget-enabled.oo-ui-flaggedElement-invalid .oo-ui-inputWidget-input {
+.oo-ui-textInputWidget.oo-ui-widget-enabled.oo-ui-flaggedElement-invalid .oo-ui-inputWidget-input:not( :focus ) {
   border-color: var(--border-color-error, #9f3526);
 }
-.oo-ui-textInputWidget.oo-ui-widget-enabled.oo-ui-flaggedElement-invalid .oo-ui-inputWidget-input:hover {
+.oo-ui-textInputWidget.oo-ui-widget-enabled.oo-ui-flaggedElement-invalid .oo-ui-inputWidget-input:not( :focus ):hover {
   border-color: var(--border-color-error, #9f3526);
-}
-.oo-ui-textInputWidget.oo-ui-widget-enabled.oo-ui-flaggedElement-invalid .oo-ui-inputWidget-input:focus {
-  border-color: var(--border-color-error, #9f3526);
-  box-shadow: inset 0 0 0 1px var(--box-shadow-color-destructive--focus, #36c);
 }
 .oo-ui-textInputWidget.oo-ui-widget-disabled .oo-ui-inputWidget-input {
   background-color: var(--background-color-disabled-subtle, #eaecf0);
@@ -1776,7 +1764,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   box-sizing: border-box;
 }
@@ -2174,7 +2161,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 .oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget,
@@ -2376,14 +2362,14 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 
 /*!
- * OOUI v0.51.1
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-09-19T17:13:45Z
+ * Date: 2025-03-11T00:03:34Z
  */
 .oo-ui-draggableElement-handle:not( .oo-ui-draggableElement-undraggable ),
 .oo-ui-draggableElement-handle:not( .oo-ui-draggableElement-undraggable ).oo-ui-widget {
@@ -2669,7 +2655,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   padding: 11px 12px;
   transition-property: background-color, color;
@@ -2748,22 +2733,17 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 .oo-ui-tabSelectWidget-mobile::after {
   content: '';
   position: absolute;
-  bottom: 0;
   right: 0;
+  margin-top: 6px;
   width: 18px;
-  height: 2.2857143em;
+  height: 2.07142859em;
   pointer-events: none;
 }
 .oo-ui-tabSelectWidget-mobile.oo-ui-tabSelectWidget-framed::after {
-  background-color: #eaecf0;
-  background-image: linear-gradient(to right, rgba(234, 236, 240, 0) 0, #eaecf0 100%);
-  background-color: transparent;
+  background-image: linear-gradient(to right, rgba(234, 236, 240, 0), var(--background-color-interactive, #eaecf0));
 }
 .oo-ui-tabSelectWidget-mobile.oo-ui-tabSelectWidget-frameless::after {
-  background-color: #ffffff;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0, #fff 100%);
-  background-color: transparent;
-  bottom: 0.14285714em;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
 }
 .oo-ui-tabSelectWidget.oo-ui-widget-enabled:focus {
   outline: 0;
@@ -3140,14 +3120,14 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 
 /*!
- * OOUI v0.51.1
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-09-19T17:13:45Z
+ * Date: 2025-03-11T00:03:34Z
  */
 .oo-ui-tool {
   box-sizing: border-box;
@@ -3673,8 +3653,8 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 
 .oo-ui-menuToolGroup {
-  border-left: 1px solid #eaecf0;
-  border-right: 1px solid #eaecf0;
+  border-left: 1px solid var(--border-color-subtle, #c8ccd1);
+  border-right: 1px solid var(--border-color-subtle, #c8ccd1);
 }
 .oo-ui-menuToolGroup-tools .oo-ui-tool {
   display: block;
@@ -3711,7 +3691,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 .oo-ui-toolbar-tools {
@@ -3732,7 +3711,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: default;
   -webkit-user-select: text;
   -moz-user-select: text;
-  -ms-user-select: text;
   user-select: text;
 }
 .oo-ui-toolbar-narrow .oo-ui-toolbar-tools,
@@ -3754,7 +3732,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: default;
   -webkit-user-select: text;
   -moz-user-select: text;
-  -ms-user-select: text;
   user-select: text;
 }
 .oo-ui-toolbar-bar {
@@ -3791,14 +3768,14 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 
 /*!
- * OOUI v0.51.1
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-09-19T17:13:45Z
+ * Date: 2025-03-11T00:03:34Z
  */
 
 .oo-ui-window {
@@ -3823,7 +3800,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 .oo-ui-window-body {
@@ -4218,15 +4194,24 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 
 /*!
- * OOUI v0.51.1
+ * OOUI v0.51.7
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2024 OOUI Team and other contributors.
+ * Copyright 2011–2025 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-09-19T17:13:45Z
+ * Date: 2025-03-11T00:03:34Z
  */
+.oo-ui-icon-arrowDown {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowDown.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-arrowDown {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowDown-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-arrowDown {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowDown-progressive.svg);
+}
 .oo-ui-icon-arrowNext {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowNext-ltr.svg);
 }
@@ -4244,6 +4229,15 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 .oo-ui-image-progressive.oo-ui-icon-arrowPrevious {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowPrevious-ltr-progressive.svg);
+}
+.oo-ui-icon-arrowUp {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowUp.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-arrowUp {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowUp-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-arrowUp {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowUp-progressive.svg);
 }
 .oo-ui-icon-collapse {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/collapse.svg);
@@ -5034,6 +5028,15 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 .oo-ui-image-progressive.oo-ui-icon-pageSettings {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/pageSettings-progressive.svg);
 }
+.oo-ui-icon-power {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/power.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-power {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/power-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-power {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/power-progressive.svg);
+}
 .oo-ui-icon-printer {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/printer.svg);
 }
@@ -5360,6 +5363,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-arab-ain.svg);
 }
 /* @noflip */
+.oo-ui-icon-bold:lang(az) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-q.svg);
+}
+/* @noflip */
 .oo-ui-icon-bold:lang(be) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-cyrl-te.svg);
 }
@@ -5405,6 +5412,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-icon-bold:lang(ksh) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-f.svg);
+}
+/* @noflip */
+.oo-ui-icon-bold:lang(nb) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-f.svg);
 }
 /* @noflip */
@@ -5491,6 +5502,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-arab-ain-invert.svg);
 }
 /* @noflip */
+.oo-ui-image-invert.oo-ui-icon-bold:lang(az) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-q-invert.svg);
+}
+/* @noflip */
 .oo-ui-image-invert.oo-ui-icon-bold:lang(be) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-cyrl-te-invert.svg);
 }
@@ -5536,6 +5551,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-image-invert.oo-ui-icon-bold:lang(ksh) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-f-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-bold:lang(nb) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-f-invert.svg);
 }
 /* @noflip */
@@ -5622,6 +5641,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-arab-ain-progressive.svg);
 }
 /* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-bold:lang(az) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-q-progressive.svg);
+}
+/* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-bold:lang(be) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-cyrl-te-progressive.svg);
 }
@@ -5667,6 +5690,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-bold:lang(ksh) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-f-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-bold:lang(nb) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/bold-f-progressive.svg);
 }
 /* @noflip */
@@ -5794,6 +5821,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-i.svg);
 }
 /* @noflip */
+.oo-ui-icon-italic:lang(az) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k.svg);
+}
+/* @noflip */
 .oo-ui-icon-italic:lang(be) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k.svg);
 }
@@ -5815,6 +5846,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-icon-italic:lang(ky) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k.svg);
+}
+/* @noflip */
+.oo-ui-icon-italic:lang(nb) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k.svg);
 }
 /* @noflip */
@@ -5925,6 +5960,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-i-invert.svg);
 }
 /* @noflip */
+.oo-ui-image-invert.oo-ui-icon-italic:lang(az) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-invert.svg);
+}
+/* @noflip */
 .oo-ui-image-invert.oo-ui-icon-italic:lang(be) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-invert.svg);
 }
@@ -5946,6 +5985,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-image-invert.oo-ui-icon-italic:lang(ky) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-italic:lang(nb) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-invert.svg);
 }
 /* @noflip */
@@ -6056,6 +6099,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-i-progressive.svg);
 }
 /* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-italic:lang(az) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-progressive.svg);
+}
+/* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-italic:lang(be) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-progressive.svg);
 }
@@ -6077,6 +6124,10 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-italic:lang(ky) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-italic:lang(nb) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/italic-k-progressive.svg);
 }
 /* @noflip */
@@ -6155,6 +6206,18 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s.svg);
 }
 /* @noflip */
+.oo-ui-icon-strikethrough:lang(nb) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s.svg);
+}
+/* @noflip */
+.oo-ui-icon-strikethrough:lang(nn) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s.svg);
+}
+/* @noflip */
+.oo-ui-icon-strikethrough:lang(no) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s.svg);
+}
+/* @noflip */
 .oo-ui-icon-strikethrough:lang(fi) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-y.svg);
 }
@@ -6166,6 +6229,18 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-invert.svg);
 }
 /* @noflip */
+.oo-ui-image-invert.oo-ui-icon-strikethrough:lang(nb) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-strikethrough:lang(nn) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-strikethrough:lang(no) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-invert.svg);
+}
+/* @noflip */
 .oo-ui-image-invert.oo-ui-icon-strikethrough:lang(fi) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-y-invert.svg);
 }
@@ -6174,6 +6249,18 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-strikethrough:lang(en) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-strikethrough:lang(nb) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-strikethrough:lang(nn) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-strikethrough:lang(no) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/strikethrough-s-progressive.svg);
 }
 /* @noflip */
@@ -6191,6 +6278,22 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 .oo-ui-icon-underline:lang(de) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u.svg);
 }
+/* @noflip */
+.oo-ui-icon-underline:lang(nb) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u.svg);
+}
+/* @noflip */
+.oo-ui-icon-underline:lang(nn) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u.svg);
+}
+/* @noflip */
+.oo-ui-icon-underline:lang(no) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u.svg);
+}
+/* @noflip */
+.oo-ui-icon-underline:lang(sv) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u.svg);
+}
 .oo-ui-image-invert.oo-ui-icon-underline {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-a-invert.svg);
 }
@@ -6202,6 +6305,22 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 .oo-ui-image-invert.oo-ui-icon-underline:lang(de) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-invert.svg);
 }
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-underline:lang(nb) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-underline:lang(nn) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-underline:lang(no) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-invert.svg);
+}
+/* @noflip */
+.oo-ui-image-invert.oo-ui-icon-underline:lang(sv) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-invert.svg);
+}
 .oo-ui-image-progressive.oo-ui-icon-underline {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-a-progressive.svg);
 }
@@ -6211,6 +6330,22 @@ html.oo-ui-windowManager-modal-active:not( .oo-ui-windowManager-modal-active-ful
 }
 /* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-underline:lang(de) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-underline:lang(nb) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-underline:lang(nn) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-underline:lang(no) {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-progressive.svg);
+}
+/* @noflip */
+.oo-ui-image-progressive.oo-ui-icon-underline:lang(sv) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/underline-u-progressive.svg);
 }
 .oo-ui-icon-textLanguage {

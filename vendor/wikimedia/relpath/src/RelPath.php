@@ -39,6 +39,7 @@ class RelPath {
 	 */
 	public static function splitPath( string $path ): array {
 		$fragments = [];
+		$countDots = 0;
 
 		while ( true ) {
 			$cur = dirname( $path );
@@ -55,16 +56,23 @@ class RelPath {
 			}
 
 			$fragment = trim( substr( $path, strlen( $cur ) ), '/' );
-
-			if ( !$fragments ) {
-				$fragments[] = $fragment;
-			} elseif ( $fragment === '..' && basename( $cur ) !== '..' ) {
-				$cur = dirname( $cur );
-			} elseif ( $fragment !== '.' ) {
-				$fragments[] = $fragment;
+			if ( $fragment === '..' ) {
+				// keep track of .. found
+				$countDots++;
+			} elseif ( !$fragments || $fragment !== '.' ) {
+				// If .. was previously found,
+				// don't add the previous basename which is the current fragment
+				if ( $countDots ) {
+					$countDots--;
+				} else {
+					$fragments[] = $fragment;
+				}
 			}
-
 			$path = $cur;
+		}
+
+		if ( $countDots ) {
+			$fragments = array_merge( $fragments, array_fill( 0, $countDots, '..' ) );
 		}
 
 		if ( $path !== '' ) {

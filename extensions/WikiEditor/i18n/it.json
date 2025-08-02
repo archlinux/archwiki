@@ -22,7 +22,6 @@
 	},
 	"wikieditor": "Interfaccia avanzata di modifica del wikitesto",
 	"wikieditor-desc": "Fornisce un'interfaccia di modifica avanzata del wikitesto estensibile",
-	"wikieditor-wikitext-tab": "Wikitesto",
 	"wikieditor-toolbar": "Barra degli strumenti di modifica",
 	"wikieditor-toolbar-desc": "Barra degli strumenti di modifica della pagina con migliorata usabilità",
 	"wikieditor-toolbar-preference": "Abilita la barra degli strumenti di modifica",

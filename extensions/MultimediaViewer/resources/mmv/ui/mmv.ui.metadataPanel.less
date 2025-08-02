@@ -1,6 +1,5 @@
 @import 'mediawiki.skin.variables.less';
 @import '../mmv.variables.less';
-@import '../mmv.mixins.less';
 
 @panel-below-fold-background-color: @background-color-interactive-subtle;
 
@@ -41,7 +40,7 @@
 		height: @height;
 		margin: 0 0 @horizontal-padding;
 		padding: @vertical-padding @horizontal-padding 0 @horizontal-padding;
-		line-height: floor( @height / 2 );  // two lines
+		line-height: floor( (@height / 2) );  // two lines
 		font-size: 16px;
 	}
 
@@ -55,7 +54,7 @@
 		bottom: 3px;
 
 		&::before {
-			.fade-out-horizontal( @panel-above-fold-background-color );
+			background-image: linear-gradient( to right, @background-color-transparent 0%, @panel-above-fold-background-color 100% );
 		}
 	}
 }
@@ -82,7 +81,7 @@
 		background-color: @panel-below-fold-background-color; // clip text
 
 		&::before {
-			.fade-out-horizontal( @panel-below-fold-background-color );
+			background-image: linear-gradient( to right, @background-color-transparent 0%, @panel-below-fold-background-color 100% );
 		}
 	}
 }

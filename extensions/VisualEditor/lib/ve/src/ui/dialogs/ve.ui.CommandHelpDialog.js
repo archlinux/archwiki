@@ -129,7 +129,7 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 					if ( command.trigger ) {
 						if (
 							!command.ignoreCommand && (
-								availableCommands.indexOf( command.trigger ) === -1 ||
+								!availableCommands.includes( command.trigger ) ||
 								!commandRegistry.lookup( command.trigger )
 							)
 						) {
@@ -142,7 +142,7 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 						if ( command.shortcuts ) {
 							if (
 								command.checkCommand && (
-									availableCommands.indexOf( command.checkCommand ) === -1 ||
+									!availableCommands.includes( command.checkCommand ) ||
 									!commandRegistry.lookup( command.checkCommand )
 								)
 							) {
@@ -157,6 +157,12 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 
 					const $shortcut = $( '<dt>' );
 					triggerList.forEach( ( trigger ) => {
+						if ( surface.doesAllowTabFocusChange() ) {
+							const triggerString = trigger.toString();
+							if ( triggerString === 'tab' || triggerString === 'shift+tab' ) {
+								return;
+							}
+						}
 						// Append an array of jQuery collections from buildKeyNode
 						// eslint-disable-next-line no-jquery/no-append-html
 						$shortcut.append( $( '<kbd>' ).addClass( 've-ui-commandHelpDialog-shortcut' ).append(

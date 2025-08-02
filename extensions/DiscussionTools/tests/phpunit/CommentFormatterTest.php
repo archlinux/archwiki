@@ -8,9 +8,9 @@ use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Skin;
 use Wikimedia\TestingAccessWrapper;
 
 /**

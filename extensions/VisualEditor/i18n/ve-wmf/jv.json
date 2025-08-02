@@ -8,12 +8,12 @@
 			"Sumbukompor"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Besutan visual]]",
+	"tag-visualeditor": "Besutan visual",
 	"tag-visualeditor-description": "Besutan sarana [[{{MediaWiki:visualeditor-descriptionpagelink}}|pambesut visual]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Besutan visual: Priksa]]",
+	"tag-visualeditor-needcheck": "Besutan visual: Priksa",
 	"tag-visualeditor-wikitext": "Besutan sumber",
 	"tag-visualeditor-wikitext-description": "Besutan nganggo pambesut tèks-wiki 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Besutan visual: Ganti]]",
+	"tag-visualeditor-switched": "Besutan visual: Ganti",
 	"tag-visualeditor-switched-description": "Naraguna wiwit mbesut sarana pambesut visual, banjur salin nganggo pambesut tèks-wiki.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Pamrayoga",
 	"visualeditor-feedback-tool": "Wènèhana saran ngenani piranti alus iki",

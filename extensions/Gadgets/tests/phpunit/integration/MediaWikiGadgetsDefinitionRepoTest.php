@@ -39,7 +39,7 @@ EOT;
 		$this->assertCount( 6, $gadgets );
 
 		$bar = $repo->getGadget( 'bar' );
-		$this->assertEquals( 'keep-section1', $bar->toArray()['category'] );
+		$this->assertEquals( 'keep-section1', $bar->toArray()['section'] );
 
 		$this->assertEquals( [ 'MediaWiki:Gadget-g1.js' ], $repo->getGadget( 'g1' )->getScripts() );
 		$this->assertEquals( [ 'MediaWiki:Gadget-g2.js' ], $repo->getGadget( 'g2' )->getScripts() );

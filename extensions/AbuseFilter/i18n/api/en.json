@@ -55,5 +55,6 @@
 	"apierror-abusefilter-cantcheck": "You don't have permission to check syntax of abuse filters.",
 	"apierror-abusefilter-canteval": "You don't have permission to evaluate AbuseFilter expressions.",
 	"apierror-abusefilter-nosuchlogid": "There is no abuselog entry with the id $1.",
+	"apierror-abusefilter-incompatible": "The requested change is not supported by the Abuse Filter.",
 	"apierror-abusefilter-badsyntax": "The filter has invalid syntax."
 }

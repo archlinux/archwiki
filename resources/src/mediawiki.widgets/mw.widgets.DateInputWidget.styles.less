@@ -16,7 +16,7 @@
 @padding-vertical-base: 6px;
 
 // `line-height` has to be relative/in `em` to enable user override in browser settings.
-@line-height-widget-base: unit( 18 / @ooui-font-size-browser / @ooui-font-size-base, @ooui-unit ); // equals `18px` at base `font-size: 14px;
+@line-height-widget-base: unit( ( 18 / @ooui-font-size-browser / @ooui-font-size-base ), @ooui-unit ); // equals `18px` at base `font-size: 14px;
 
 .oo-ui-inline-spacing( @spacing, @cancelled-spacing: 0 ) {
 	margin-right: @spacing;
@@ -31,7 +31,7 @@
 	&.oo-ui-textInputWidget {
 		display: inline-block;
 		max-width: 21em;
-		// .oo-ui-inline-spacing( 0.5em ); already inherited from `.oo-ui-inputWidget`
+		// .oo-ui-inline-spacing( @spacing-50 ); already inherited from `.oo-ui-inputWidget`
 
 		.oo-ui-labelElement-label {
 			line-height: @line-height-widget-base;
@@ -56,7 +56,7 @@
 		background-color: @background-color-base;
 		color: @color-emphasized;
 		box-sizing: border-box;
-		width: 100%;
+		width: @size-full;
 		border: @border-base;
 		border-radius: @border-radius-base;
 		padding: @padding-input-text;
@@ -91,4 +91,10 @@
 			cursor: text;
 		}
 	}
+}
+
+// Pending state (T382186)
+.client-nojs .mw-widget-dateInputWidget .mw-widgets-pendingTextInputWidget,
+.client-js .mw-widget-dateInputWidget input[ type='date' ] {
+	display: none;
 }

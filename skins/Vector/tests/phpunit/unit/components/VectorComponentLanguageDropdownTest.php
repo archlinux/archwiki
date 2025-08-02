@@ -35,7 +35,7 @@ class VectorComponentLanguageDropdownTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideLanguageDropdownData(): array {
+	public static function provideLanguageDropdownData(): array {
 		return [
 			'Subject page with languages' => [
 				'label' => 'Languages',

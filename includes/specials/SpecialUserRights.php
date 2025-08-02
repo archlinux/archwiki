@@ -20,14 +20,16 @@
 
 namespace MediaWiki\Specials;
 
-use LogEventsList;
-use LogPage;
-use ManualLogEntry;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\Field\HTMLUserTextField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
@@ -45,10 +47,7 @@ use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWiki\WikiMap\WikiMap;
-use MediaWiki\Xml\Xml;
 use MediaWiki\Xml\XmlSelect;
-use PermissionsError;
-use UserBlockedError;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
@@ -83,15 +82,6 @@ class SpecialUserRights extends SpecialPage {
 	private WatchlistManager $watchlistManager;
 	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param UserGroupManagerFactory|null $userGroupManagerFactory
-	 * @param UserNameUtils|null $userNameUtils
-	 * @param UserNamePrefixSearch|null $userNamePrefixSearch
-	 * @param UserFactory|null $userFactory
-	 * @param ActorStoreFactory|null $actorStoreFactory
-	 * @param WatchlistManager|null $watchlistManager
-	 * @param TempUserConfig|null $tempUserConfig
-	 */
 	public function __construct(
 		?UserGroupManagerFactory $userGroupManagerFactory = null,
 		?UserNameUtils $userNameUtils = null,
@@ -223,6 +213,7 @@ class SpecialUserRights extends SpecialPage {
 		$this->outputHeader();
 
 		$out->addModuleStyles( 'mediawiki.special' );
+		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		$this->addHelpLink( 'Help:Assigning permissions' );
 
 		$this->switchForm();
@@ -284,9 +275,11 @@ class SpecialUserRights extends SpecialPage {
 					return;
 				} else {
 					// Print an error message and redisplay the form
-					$out->wrapWikiTextAsInterface(
-						'error', $status->getWikiText( false, false, $this->getLanguage() )
-					);
+					foreach ( $status->getMessages() as $msg ) {
+						$out->addHTML( Html::errorBox(
+							$this->msg( $msg )->parse()
+						) );
+					}
 				}
 			}
 		}
@@ -297,7 +290,7 @@ class SpecialUserRights extends SpecialPage {
 		}
 	}
 
-	private function getSuccessURL() {
+	private function getSuccessURL(): string {
 		return $this->getPageTitle( $this->mTarget )->getFullURL();
 	}
 
@@ -873,7 +866,8 @@ class SpecialUserRights extends SpecialPage {
 							Html::label( $this->msg( 'userrights-reason' )->text(), 'wpReason' ) .
 						"</td>
 						<td class='mw-input'>" .
-							Xml::input( 'user-reason', 60, $this->getRequest()->getVal( 'user-reason' ) ?? false, [
+							Html::input( 'user-reason', $this->getRequest()->getVal( 'user-reason' ) ?? false, 'text', [
+								'size' => 60,
 								'id' => 'wpReason',
 								// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
 								// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
@@ -898,14 +892,14 @@ class SpecialUserRights extends SpecialPage {
 							'&nbsp;' . Html::label( $this->msg( 'userrights-watchuser' )->text(), 'wpWatch' ) .
 						"</td>
 					</tr>" .
-				Xml::closeElement( 'table' ) . "\n"
+				Html::closeElement( 'table' ) . "\n"
 			);
 		} else {
 			$this->getOutput()->addHTML( $grouplist );
 		}
 		$this->getOutput()->addHTML(
-			Xml::closeElement( 'fieldset' ) .
-			Xml::closeElement( 'form' ) . "\n"
+			Html::closeElement( 'fieldset' ) .
+			Html::closeElement( 'form' ) . "\n"
 		);
 	}
 
@@ -965,16 +959,16 @@ class SpecialUserRights extends SpecialPage {
 		}
 
 		// Build the HTML table
-		$ret .= Xml::openElement( 'table', [ 'class' => 'mw-userrights-groups' ] ) .
+		$ret .= Html::openElement( 'table', [ 'class' => 'mw-userrights-groups' ] ) .
 			"<tr>\n";
 		foreach ( $columns as $name => $column ) {
 			if ( $column === [] ) {
 				continue;
 			}
 			// Messages: userrights-changeable-col, userrights-unchangeable-col
-			$ret .= Xml::element(
+			$ret .= Html::element(
 				'th',
-				null,
+				[],
 				$this->msg( 'userrights-' . $name . '-col', count( $column ) )->text()
 			);
 		}
@@ -1019,11 +1013,11 @@ class SpecialUserRights extends SpecialPage {
 							$expiryFormatted = $uiLanguage->userTimeAndDate( $currentExpiry, $uiUser );
 							$expiryFormattedD = $uiLanguage->userDate( $currentExpiry, $uiUser );
 							$expiryFormattedT = $uiLanguage->userTime( $currentExpiry, $uiUser );
-							$expiryHtml = Xml::element( 'span', null,
+							$expiryHtml = Html::element( 'span', [],
 								$this->msg( 'userrights-expiry-current' )->params(
 								$expiryFormatted, $expiryFormattedD, $expiryFormattedT )->text() );
 						} else {
-							$expiryHtml = Xml::element( 'span', null,
+							$expiryHtml = Html::element( 'span', [],
 								$this->msg( 'userrights-expiry-none' )->text() );
 						}
 						// T171345: Add a hidden form element so that other groups can still be manipulated,

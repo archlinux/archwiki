@@ -4,8 +4,8 @@
 			"Merrahtar"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|пэ̄йель визуальнэ редактэр воа̄йхэсс]]",
+	"tag-visualeditor": "пэ̄йель визуальнэ редактэр воа̄йхэсс",
 	"tag-visualeditor-wikitext": "2017 викитекст редактэр",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальнэ редактэр]] элля ключчья",
+	"tag-visualeditor-switched": "визуальнэ редактэр элля ключчья",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Пӯррь пуэдӓнт}} са̄ййта $2"
 }

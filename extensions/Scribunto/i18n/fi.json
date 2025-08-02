@@ -6,12 +6,12 @@
 			"Crt",
 			"Nike",
 			"Pxos",
+			"Samoasambia",
 			"Silvonen",
 			"Stryn",
 			"Valtlai",
 			"Valtlait",
-			"VezonThunder",
-			"Samoasambia"
+			"VezonThunder"
 		]
 	},
 	"content-model-scribunto": "Scribunto-moduuli",
@@ -39,7 +39,7 @@
 	"scribunto-common-notafunction": "Komentosarjavirhe: ”$2” ei ole funktio.",
 	"scribunto-common-timeout": "Skriptien suorittamiseen varattu aika on päättynyt.",
 	"scribunto-common-oom": "Skriptien suorittamiseen sallittu muistin määrä on ylitetty.",
-	"scribunto-common-no-details": "Lisätietoja ei ole saatavilla.",
+	"scribunto-common-no-details": "Tietoja koodin sijainnista ei ole saatavilla.",
 	"scribunto-lua-in-function": "funktiossa ”$1”",
 	"scribunto-lua-in-function-at": "funktiossa kohdassa $1:$2",
 	"scribunto-lua-error-location": "Lua-virhe $1: $2.",

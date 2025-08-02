@@ -25,8 +25,8 @@ namespace MonoBook;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Output\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Output\OutputPage;
-use Skin;
-use SkinTemplate;
+use MediaWiki\Skin\Skin;
+use MediaWiki\Skin\SkinTemplate;
 
 /**
  * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName

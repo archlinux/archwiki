@@ -25,7 +25,7 @@
 
 	li {
 		// Tab fade background: Fade inside from light grey to white.
-		background-image: linear-gradient( to top, @border-color-content--tabs-inactive 0, #e8f2f8 1px, #fff 100% ); // Support: Standard (Firefox 16+, IE 10+, Safari 6.1+, Chrome 26+)
+		background-image: linear-gradient( to top, @border-color-content--tabs-inactive 0, #e8f2f8 1px, #fff 100% );
 		background-position: left bottom;
 		background-repeat: repeat-x;
 		float: left;
@@ -43,7 +43,7 @@
 			box-sizing: border-box;
 			display: block;
 			float: left;
-			height: unit( 40 / @font-size-tabs / @font-size-browser, em );
+			height: unit( ( 40 / @font-size-tabs / @font-size-browser ), em );
 			position: relative;
 			padding-top: 1.25em;
 			padding-left: @padding-horizontal-tabs;

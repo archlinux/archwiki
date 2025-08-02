@@ -152,6 +152,7 @@ trait TextTrackList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\TextTrackList $this';
 		// @var \Wikimedia\IDLeDOM\TextTrackList $this

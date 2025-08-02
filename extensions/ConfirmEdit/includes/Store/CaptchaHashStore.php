@@ -6,16 +6,12 @@ class CaptchaHashStore extends CaptchaStore {
 	/** @var array */
 	protected $data = [];
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function store( $index, $info ) {
 		$this->data[$index] = $info;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function retrieve( $index ) {
 		if ( array_key_exists( $index, $this->data ) ) {
 			return $this->data[$index];
@@ -23,17 +19,17 @@ class CaptchaHashStore extends CaptchaStore {
 		return false;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function clear( $index ) {
 		unset( $this->data[$index] );
 	}
 
+	/** @inheritDoc */
 	public function cookiesNeeded() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function clearAll() {
 		$this->data = [];
 	}

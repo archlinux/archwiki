@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Juanpabl"
+		]
+	},
+	"checkuser-summary": "Ista aina repasa os zaguers cambeos ta mirar as IPs usatas por un usuario u amostrar as edicions y datos d'usuario ta una adreza IP. Os usuarios y edicions feitos por un cliente IP pueden trobar-se por meyo de cabeceras XFF adhibindo a IP con \"/xff\". Se da soporte a IPv4 (CIDR $1-32) y IPv6 (CIDR $2-128).\nNo s'otendrán más de 5000 edicions por razons de prestacions. Faiga servir ista aina d'alcuerdo con as politicas d'o procheuto.",
+	"checkuser-desc": "Concede a os usuarios con o premiso adecuau a capacidat ta comprebar as adrezas IP d'os usuarios y atras informacions",
+	"checkuser": "Comprebación d'usuarios",
+	"checkuserlog": "Rechistro de CheckUser (comprebación d'usuarios)",
+	"group-checkuser": "Comprebadors d'usuarios",
+	"group-checkuser-member": "Comprebador d'usuarios",
+	"right-checkuser": "Comprebar as adrezas IP de l'usuario y atras informacions",
+	"right-checkuser-log": "Veyer o rechistro de comprebación d'usuarios",
+	"grouppage-checkuser": "{{ns:project}}:comprebación d'usuarios",
+	"checkuser-reason": "Razón:",
+	"checkuser-showlog": "Amostrar o rechistro",
+	"checkuser-query": "Mirar en os zaguers cambeos",
+	"checkuser-target": "Nombre d'usuario u adreza IP",
+	"checkuser-users": "Otener os nombres d'usuario",
+	"checkuser-ips": "Otener as adrezas IP",
+	"checkuser-all": "tot",
+	"checkuser-empty": "No bi ha garra elemento en o rechistro.",
+	"checkuser-nomatch": "No s'ha trobato garra concordancia",
+	"checkuser-check": "Comprebar",
+	"checkuser-blocked": "Bloqueyato",
+	"checkuser-search": "Mirar",
+	"checkuser-search-submit": "Mirar",
+	"checkuser-ipeditcount": "~$1 de totz os usuarios",
+	"checkuser-showmain": "Tornar ta o formulario prencipal de CheckUser (Comprebación d'usuarios)"
+}

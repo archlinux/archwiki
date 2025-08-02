@@ -18,7 +18,12 @@
  * @file
  */
 
+namespace MediaWiki\ChangeTags;
+
 use MediaWiki\Html\Html;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogFormatter;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\RevisionList\RevisionItemBase;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -108,8 +113,11 @@ class ChangeTagsLogItem extends RevisionItemBase {
 				$this->list->getContext()
 			);
 			$content .= " $tagSummary";
-			$attribs['class'] = implode( ' ', $classes );
+			$attribs['class'] = $classes;
 		}
 		return Html::rawElement( 'li', $attribs, $content );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ChangeTagsLogItem::class, 'ChangeTagsLogItem' );

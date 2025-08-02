@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Design System Team"
+			"Design System Team",
+			"Doğu Abaris"
 		]
 	},
 	"cdx-chip-input-chip-added": "Chip $1 was added.",
@@ -10,6 +11,7 @@
 	"cdx-dialog-close-button-label": "Close",
 	"cdx-label-optional-flag": "(optional)",
 	"cdx-message-dismiss-button-label": "Close",
+	"cdx-popover-close-button-label": "Close",
 	"cdx-search-input-search-button-label": "Search",
 	"cdx-table-select-all-label": "Select all rows",
 	"cdx-table-select-row-label": "Select row $1 of $2",
@@ -26,5 +28,6 @@
 	"cdx-table-pagination-status-message-indeterminate-long": "Showing results $1–$2 of many",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 of many",
 	"cdx-table-pagination-status-message-indeterminate-final": "Showing the last {{PLURAL:$1|$1 result|$1 results}}",
-	"cdx-table-pagination-status-message-pending": "Loading results..."
+	"cdx-table-pagination-status-message-pending": "Loading results...",
+	"cdx-table-no-data-message": "There is no data available."
 }

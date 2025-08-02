@@ -15,15 +15,13 @@ class KVSourceRange implements JsonCodecable {
 
 	/**
 	 * Source range for the key.
-	 * @var SourceRange
 	 */
-	public $key;
+	public SourceRange $key;
 
 	/**
 	 * Source range for the value.
-	 * @var SourceRange
 	 */
-	public $value;
+	public SourceRange $value;
 
 	/**
 	 * Create a new key-value source offset range.
@@ -39,6 +37,11 @@ class KVSourceRange implements JsonCodecable {
 	public function __construct( int $keyStart, int $keyEnd, int $valueStart, int $valueEnd ) {
 		$this->key = new SourceRange( $keyStart, $keyEnd );
 		$this->value = new SourceRange( $valueStart, $valueEnd );
+	}
+
+	public function __clone() {
+		$this->key = clone $this->key;
+		$this->value = clone $this->value;
 	}
 
 	/**

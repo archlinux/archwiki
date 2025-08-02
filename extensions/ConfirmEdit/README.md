@@ -6,23 +6,28 @@ ConfirmEdit extension for MediaWiki
 This extension provides various CAPTCHA tools for MediaWiki, to allow
 for protection against spambots and other automated tools.
 
-For more information, see the extension homepage at:
-https://www.mediawiki.org/wiki/Extension:ConfirmEdit
+You must set `$wgCaptchaClass` to a chosen module, otherwise
+the demo captcha will be used. For example, to use FancyCaptcha:
 
-### Overview
+```php
+$wgCaptchaClass = 'FancyCaptcha';
+````
 
 The following modules are included in ConfirmEdit:
 
-* SimpleCaptcha - users have to solve an arithmetic math problem
-* FancyCaptcha - users have to identify a series of characters, displayed
+* `SimpleCaptcha` - users have to solve an arithmetic math problem
+* `FancyCaptcha` - users have to identify a series of characters, displayed
 in a stylized way
-* QuestyCaptcha - users have to answer a question, out of a series of
+* `QuestyCaptcha` - users have to answer a question, out of a series of
 questions defined by the administrator(s)
-* ReCaptchaNoCaptcha - users have to solve different types of visually or
+* `ReCaptchaNoCaptcha` - users have to solve different types of visually or
 audially tasks.
-* hCaptcha - users have to solve visual tasks
-* Turnstile - users check a box, which runs some client-side JS
+* `hCaptcha` - users have to solve visual tasks
+* `Turnstile` - users check a box, which runs some client-side JS
 heuristics
+
+For more information, see the extension homepage at:
+https://www.mediawiki.org/wiki/Extension:ConfirmEdit
 
 ### License
 
@@ -40,14 +45,24 @@ Additional maintenance work was done by Yaron Koren.
 ### Configuration comments
 ```php
 /**
+ * Needs to be explicitly set to the Captcha implementation you want to use, otherwise it will use a demo captcha.
+ *
+ * For example, to use FancyCaptcha:
+ * ```
+ * $wgCaptchaClass ='FancyCaptcha';
+ * ```
+ */
+$wgCaptchaClass = 'SimpleCaptcha';
+
+/**
  * List of IP ranges to allow to skip the captcha, similar to the group setting:
  * "$wgGroupPermission[...]['skipcaptcha'] = true"
  *
  * Specific IP addresses or CIDR-style ranges may be used,
  * for instance:
- * $wgCaptchaWhitelistIP = array('192.168.1.0/24', '10.1.0.0/16');
+ * $wgCaptchaBypassIPs = [ '192.168.1.0/24', '10.1.0.0/16' ];
  */
-$wgCaptchaWhitelistIP = false;
+$wgCaptchaBypassIPs = false;
 
 /**
  * Actions which can trigger a captcha
@@ -163,10 +178,10 @@ $wgCaptchaBadLoginPerUserAttempts = 20;
 /**
  * Regex to ignore URLs to known-good sites...
  * For instance:
- * $wgCaptchaWhitelist = '#^https?://([a-z0-9-]+\\.)?(wikimedia|wikipedia)\.org/#i';
- * Local admins can define a whitelist under [[MediaWiki:captcha-addurl-whitelist]]
+ * $wgCaptchaIgnoredUrls = '#^https?://([a-z0-9-]+\\.)?(wikimedia|wikipedia)\.org/#i';
+ * Local admins can define a local allow list under [[MediaWiki:captcha-addurl-whitelist]]
  */
-$wgCaptchaWhitelist = false;
+$wgCaptchaIgnoredUrls = false;
 
 /**
  * Additional regexes to check for. Use full regexes; can match things

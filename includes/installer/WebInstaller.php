@@ -24,15 +24,17 @@
 namespace MediaWiki\Installer;
 
 use Exception;
-use HtmlArmor;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
+use MediaWiki\Installer\Task\TaskFactory;
+use MediaWiki\Installer\Task\TaskList;
+use MediaWiki\Installer\Task\TaskRunner;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
-use MediaWiki\Xml\Xml;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * Class for the core installer web interface.
@@ -148,9 +150,6 @@ class WebInstaller extends Installer {
 	 */
 	protected $currentPageName;
 
-	/**
-	 * @param WebRequest $request
-	 */
 	public function __construct( WebRequest $request ) {
 		parent::__construct();
 		$this->output = new WebInstallerOutput( $this );
@@ -630,14 +629,14 @@ class WebInstaller extends Installer {
 	 * Get small text indented help for a preceding form field.
 	 * Parameters like wfMessage().
 	 *
-	 * @param string $msg
-	 * @param mixed ...$args
+	 * @param string $msg Message key
+	 * @param string|int|float ...$params Message parameters
 	 * @return string HTML
 	 * @return-taint escaped
 	 */
-	public function getHelpBox( $msg, ...$args ) {
-		$args = array_map( 'htmlspecialchars', $args );
-		$text = wfMessage( $msg, $args )->useDatabase( false )->plain();
+	public function getHelpBox( $msg, ...$params ) {
+		$params = array_map( 'htmlspecialchars', $params );
+		$text = wfMessage( $msg, $params )->useDatabase( false )->plain();
 		$html = $this->parse( $text, true );
 
 		return "<div class=\"config-help-field-container\">\n" .
@@ -648,16 +647,6 @@ class WebInstaller extends Installer {
 			"cdx-message cdx-message--block cdx-message--notice\" style=\"margin: 10px\">" .
 			"<div class=\"cdx-message__content\">" . $html . "</div></div>\n" .
 			"</div>\n";
-	}
-
-	/**
-	 * Output a help box.
-	 * @param string $msg Key for wfMessage()
-	 * @param mixed ...$params
-	 */
-	public function showHelpBox( $msg, ...$params ) {
-		$html = $this->getHelpBox( $msg, ...$params );
-		$this->output->addHTML( $html );
 	}
 
 	/**
@@ -737,7 +726,7 @@ class WebInstaller extends Installer {
 
 		return "<div class=\"config-block\">\n" .
 			"  <div class=\"config-block-label\">\n" .
-			Xml::tags( 'label',
+			Html::rawElement( 'label',
 				$attributes,
 				$labelText
 			) . "\n" .
@@ -784,12 +773,13 @@ class WebInstaller extends Installer {
 			$params['label'],
 			$params['controlName'],
 			"<div class=\"cdx-text-input\">" .
-			Xml::input(
+			Html::input(
 				$params['controlName'],
-				30, // intended to be overridden by CSS
 				$params['value'],
+				'text',
 				$params['attribs'] + [
 					'id' => $params['controlName'],
+					'size' => 30, // intended to be overridden by CSS
 					'class' => 'cdx-text-input__input',
 					'tabindex' => $this->nextTabIndex()
 				]
@@ -831,13 +821,13 @@ class WebInstaller extends Installer {
 		return $this->label(
 			$params['label'],
 			$params['controlName'],
-			Xml::textarea(
+			Html::textarea(
 				$params['controlName'],
 				$params['value'],
-				30,
-				5,
 				$params['attribs'] + [
 					'id' => $params['controlName'],
+					'cols' => 30,
+					'rows' => 5,
 					'class' => 'config-input-text',
 					'tabindex' => $this->nextTabIndex()
 				]
@@ -878,21 +868,6 @@ class WebInstaller extends Installer {
 	}
 
 	/**
-	 * Add a class to an array of attributes. If the array already has a class,
-	 * append the new class to the list.
-	 *
-	 * @param array &$attribs
-	 * @param string $class
-	 */
-	private static function addClassAttrib( &$attribs, $class ) {
-		if ( isset( $attribs['class'] ) ) {
-			$attribs['class'] .= ' ' . $class;
-		} else {
-			$attribs['class'] = $class;
-		}
-	}
-
-	/**
 	 * Get a labelled checkbox to configure a boolean variable.
 	 *
 	 * @param mixed[] $params
@@ -927,11 +902,13 @@ class WebInstaller extends Installer {
 			$params['labelAttribs'] = [];
 		}
 		$labelText = $params['rawtext'] ?? $this->parse( wfMessage( $params['label'] )->plain() );
-		self::addClassAttrib( $params['attribs'], 'cdx-checkbox__input' );
-		self::addClassAttrib( $params['labelAttribs'], 'cdx-checkbox__label' );
+		$labelText = '<span class="cdx-label__label__text"> ' . $labelText . '</span>';
+		Html::addClass( $params['attribs']['class'], 'cdx-checkbox__input' );
+		Html::addClass( $params['labelAttribs']['class'], 'cdx-label__label' );
 
-		return "<div class=\"cdx-checkbox\" style=\"margin-top: 12px; margin-bottom: 2px;\">\n" .
-			Xml::check(
+		return "<div class=\"cdx-checkbox\" style=\"margin-top: 12px; margin-bottom: 2px;\">" .
+			"<div class=\"cdx-checkbox__wrapper\">\n" .
+			Html::check(
 				$params['controlName'],
 				$params['value'],
 				$params['attribs'] + [
@@ -940,6 +917,7 @@ class WebInstaller extends Installer {
 				]
 			) .
 			"<span class=\"cdx-checkbox__icon\"></span>" .
+			"<div class=\"cdx-checkbox__label cdx-label\">" .
 			Html::rawElement(
 				'label',
 				$params['labelAttribs'] + [
@@ -947,7 +925,7 @@ class WebInstaller extends Installer {
 				],
 				$labelText
 				) .
-			"</div>\n" . $params['help'];
+			"</div></div></div>\n" . $params['help'];
 	}
 
 	/**
@@ -1026,17 +1004,24 @@ class WebInstaller extends Installer {
 			$id = $params['controlName'] . '_' . $value;
 			$itemAttribs['id'] = $id;
 			$itemAttribs['tabindex'] = $this->nextTabIndex();
-			self::addClassAttrib( $itemAttribs, 'cdx-radio__input' );
+			Html::addClass( $itemAttribs['class'], 'cdx-radio__input' );
 
+			$radioText = $this->parse(
+				isset( $params['itemLabels'] ) ?
+					wfMessage( $params['itemLabels'][$value] )->plain() :
+					wfMessage( $params['itemLabelPrefix'] . strtolower( $value ) )->plain()
+			);
 			$items[$value] =
 				'<span class="cdx-radio">' .
-				Xml::radio( $params['controlName'], $value, $checked, $itemAttribs ) .
-				"<span class=\"cdx-radio__icon\"></span>\u{00A0}" .
-				Xml::tags( 'label', [ 'for' => $id, 'class' => 'cdx-radio__label' ], $this->parse(
-					isset( $params['itemLabels'] ) ?
-						wfMessage( $params['itemLabels'][$value] )->plain() :
-						wfMessage( $params['itemLabelPrefix'] . strtolower( $value ) )->plain()
-				) ) . '</span>';
+				'<span class="cdx-radio__wrapper">' .
+				Html::radio( $params['controlName'], $checked, $itemAttribs + [ 'value' => $value ] ) .
+				'<span class="cdx-radio__icon"></span>' .
+				'<span class="cdx-radio__label cdx-label">' .
+				Html::rawElement(
+					'label',
+					[ 'for' => $id, 'class' => 'cdx-label__label' ],
+					'<span class="cdx-label__label__text">' . $radioText . '</span>'
+				) . '</span></span></span>';
 		}
 
 		return $items;
@@ -1161,8 +1146,7 @@ class WebInstaller extends Installer {
 		return parent::envCheckPath();
 	}
 
-	public function envPrepPath() {
-		parent::envPrepPath();
+	protected function detectWebPaths() {
 		// PHP_SELF isn't available sometimes, such as when PHP is CGI but
 		// cgi.fix_pathinfo is disabled. In that case, fall back to SCRIPT_NAME
 		// to get the path to the current script... hopefully it's reliable. SIGH
@@ -1175,16 +1159,19 @@ class WebInstaller extends Installer {
 		if ( $path !== false ) {
 			$scriptPath = preg_replace( '{^(.*)/(mw-)?config.*$}', '$1', $path );
 
-			$this->setVar( 'wgScriptPath', "$scriptPath" );
-			// Update variables set from Setup.php that are derived from wgScriptPath
-			$this->setVar( 'wgScript', "$scriptPath/index.php" );
-			$this->setVar( 'wgLoadScript', "$scriptPath/load.php" );
-			$this->setVar( 'wgStylePath', "$scriptPath/skins" );
-			$this->setVar( 'wgLocalStylePath', "$scriptPath/skins" );
-			$this->setVar( 'wgExtensionAssetsPath', "$scriptPath/extensions" );
-			$this->setVar( 'wgUploadPath', "$scriptPath/images" );
-			$this->setVar( 'wgResourceBasePath', "$scriptPath" );
+			return [
+				'wgScriptPath' => "$scriptPath",
+				// Update variables set from Setup.php that are derived from wgScriptPath
+				'wgScript' => "$scriptPath/index.php",
+				'wgLoadScript' => "$scriptPath/load.php",
+				'wgStylePath' => "$scriptPath/skins",
+				'wgLocalStylePath' => "$scriptPath/skins",
+				'wgExtensionAssetsPath' => "$scriptPath/extensions",
+				'wgUploadPath' => "$scriptPath/images",
+				'wgResourceBasePath' => "$scriptPath",
+			];
 		}
+		return [];
 	}
 
 	/**
@@ -1195,6 +1182,13 @@ class WebInstaller extends Installer {
 			$this->getVar( 'wgAssumeProxiesUseDefaultProtocolPorts' );
 
 		return WebRequest::detectServer( $assumeProxiesUseDefaultProtocolPorts );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDefaultServer() {
+		return $this->envGetDefaultServer();
 	}
 
 	/**
@@ -1247,21 +1241,17 @@ class WebInstaller extends Installer {
 	public function doUpgrade() {
 		$dbInstaller = $this->getDBInstaller();
 		$dbInstaller->preUpgrade();
-		$this->restoreServices();
 
-		$ret = true;
+		$taskList = new TaskList;
+		$taskFactory = $this->getTaskFactory();
+		$taskFactory->registerWebUpgradeTasks( $taskList );
+		$taskRunner = new TaskRunner( $taskList, $taskFactory, TaskFactory::PROFILE_WEB_UPGRADE );
+
 		ob_start( [ $this, 'outputHandler' ] );
-		$up = DatabaseUpdater::newForDB(
-			$dbInstaller->definitelyGetConnection( DatabaseInstaller::CONN_CREATE_TABLES ) );
 		try {
-			$up->doUpdates();
-			$up->purgeCache();
+			$status = $taskRunner->execute();
+			$ret = $status->isOK();
 
-			// If they're going to possibly regenerate LocalSettings, we
-			// need to create the upgrade/secret keys. T28481
-			if ( !$this->getVar( '_ExistingDBSettings' ) ) {
-				$this->generateKeys();
-			}
 			$this->setVar( '_UpgradeDone', true );
 		} catch ( Exception $e ) {
 			// TODO: Should this use MWExceptionRenderer?

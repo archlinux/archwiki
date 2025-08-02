@@ -15,6 +15,5 @@ abstract class CaptchaTriggers {
 	public const LOGIN_ATTEMPT = 'loginattempt';
 	public const BAD_LOGIN = 'badlogin';
 	public const BAD_LOGIN_PER_USER = 'badloginperuser';
-
 	public const EXT_REG_ATTRIBUTE_NAME = 'CaptchaTriggers';
 }

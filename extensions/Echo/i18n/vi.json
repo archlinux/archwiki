@@ -6,6 +6,7 @@
 			"Flyplanevn27",
 			"Max20091",
 			"Minh Nguyen",
+			"NgocAnMaster",
 			"NguyenHung",
 			"Nguyên Lê",
 			"Phjtieudoc",
@@ -13,7 +14,7 @@
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"NgocAnMaster"
+			"Nvdtn19"
 		]
 	},
 	"echo-desc": "Hệ thống thông báo cho người dùng về các sự kiện và thay đổi quan trọng",
@@ -40,8 +41,8 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Văn bản thuần",
 	"echo-pref-cross-wiki-notifications": "Hiện thông báo từ wiki khác",
-	"echo-pref-notifications-blacklist": "Ẩn thông báo từ những người dùng này. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute tìm hiểu thêm])",
-	"echo-pref-notifications-page-linked-title-muted-list": "Ẩn thông báo “Liên kết đến trang” về các trang này. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute tìm hiểu thêm])",
+	"echo-pref-notifications-blacklist": "Không hiển thị thông báo từ những người dùng này ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute tìm hiểu thêm])",
+	"echo-pref-notifications-page-linked-title-muted-list": "Không hiển thị thông báo \"Liên kết đến trang\" về các trang này ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute tìm hiểu thêm])",
 	"echo-pref-dont-email-read-notifications": "Bỏ qua các thông báo đã đọc trong thư điện tử tóm tắt",
 	"echo-learn-more": "Tìm hiểu thêm",
 	"echo-log": "Nhật trình công khai",
@@ -78,6 +79,7 @@
 	"notifications": "Thông báo",
 	"tooltip-pt-notifications-alert": "Cảnh báo cho bạn",
 	"tooltip-pt-notifications-notice": "Thông báo cho bạn",
+	"tooltip-pt-notifications": "Thông báo cho {{GENDER:|bạn}}",
 	"echo-displaynotificationsconfiguration": "Cấu hình hiển thị thông báo",
 	"echo-displaynotificationsconfiguration-summary": "Đây là cấu hình hiển thị thông báo trên wiki này.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Thông báo theo lý do",
@@ -139,7 +141,6 @@
 	"notification-header-edit-user-talk-with-section": "$1 {{GENDER:$2}}đã để lại một tin nhắn trên <strong>trang thảo luận {{GENDER:$3}}của bạn</strong> trong “<strong>$4</strong>”.",
 	"notification-compact-header-edit-user-talk": "$1 {{GENDER:$2}}đã nhắn tin cho {{GENDER:$3}}bạn.",
 	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$2}}đã nhắn tin cho {{GENDER:$3}}bạn trong “<strong>$4</strong>”.",
-	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "Một liên kết đã được tạo từ <strong>$4</strong> tới <strong>$3</strong>.",
 	"notification-compact-header-page-linked": "Được liên kết tại <strong>$1</strong>.",
 	"notification-bundle-header-page-linked": "Các liên kết đã được tạo từ {{PLURAL:$5|một trang|$5 trang|100=99+ trang}} tới <strong>$3</strong>.",

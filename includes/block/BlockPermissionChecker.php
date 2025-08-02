@@ -21,10 +21,12 @@
 
 namespace MediaWiki\Block;
 
+use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Block permissions
@@ -37,9 +39,15 @@ use MediaWiki\User\UserIdentity;
  */
 class BlockPermissionChecker {
 	/**
-	 * @var UserIdentity|string|null Block target or null when unknown
+	 * Legacy target state
+	 * @var BlockTarget|null Block target or null when unknown
 	 */
 	private $target;
+
+	/**
+	 * @var BlockTargetFactory
+	 */
+	private $blockTargetFactory;
 
 	/**
 	 * @var Authority Block performer
@@ -57,20 +65,27 @@ class BlockPermissionChecker {
 
 	/**
 	 * @param ServiceOptions $options
-	 * @param BlockUtils $blockUtils
-	 * @param UserIdentity|string|null $target
+	 * @param BlockTargetFactory $blockTargetFactory For legacy branches only
 	 * @param Authority $performer
 	 */
 	public function __construct(
 		ServiceOptions $options,
-		BlockUtils $blockUtils,
-		$target,
+		BlockTargetFactory $blockTargetFactory,
 		Authority $performer
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
-		[ $this->target, ] = $blockUtils->parseBlockTarget( $target );
+		$this->blockTargetFactory = $blockTargetFactory;
 		$this->performer = $performer;
+	}
+
+	/**
+	 * @internal To support deprecated method BlockPermissionCheckerFactory::newBlockPermissionChecker()
+	 * @param UserIdentity|string $target
+	 * @return void
+	 */
+	public function setTarget( $target ) {
+		$this->target = $this->blockTargetFactory->newFromLegacyUnion( $target );
 	}
 
 	/**
@@ -104,10 +119,36 @@ class BlockPermissionChecker {
 	 *
 	 * T208965: Partially blocked admins can block and unblock others as normal.
 	 *
+	 * @param BlockTarget|UserIdentity|string|null $target The target of the
+	 *   proposed block or unblock operation. Passing null for this parameter
+	 *   is deprecated. This parameter will soon be required. Passing a
+	 *   UserIdentity or string for this parameter is deprecated. Pass a
+	 *   BlockTarget in new code.
+	 * @param int $freshness Indicates whether slightly stale data is acceptable
+	 *   in exchange for a fast response.
 	 * @return bool|string True when checks passed, message code for failures
 	 */
-	public function checkBlockPermissions() {
-		$block = $this->performer->getBlock(); // TODO: pass disposition parameter
+	public function checkBlockPermissions(
+		$target = null,
+		$freshness = IDBAccessObject::READ_NORMAL
+	) {
+		if ( $target === null ) {
+			if ( $this->target ) {
+				wfDeprecatedMsg(
+					'Passing null to checkBlockPermissions() for $target is deprecated since 1.44',
+					'1.44' );
+				$target = $this->target;
+			} else {
+				throw new InvalidArgumentException( 'A target is required' );
+			}
+		} elseif ( !( $target instanceof BlockTarget ) ) {
+			$target = $this->blockTargetFactory->newFromLegacyUnion( $target );
+			if ( !$target ) {
+				throw new InvalidArgumentException( 'Invalid block target' );
+			}
+		}
+
+		$block = $this->performer->getBlock( $freshness );
 		if ( !$block ) {
 			// User is not blocked, process as normal
 			return true;
@@ -121,8 +162,8 @@ class BlockPermissionChecker {
 		$performerIdentity = $this->performer->getUser();
 
 		if (
-			$this->target instanceof UserIdentity &&
-			$this->target->getId() === $performerIdentity->getId()
+			$target instanceof UserBlockTarget &&
+			$target->getUserIdentity()->getId() === $performerIdentity->getId()
 		) {
 			// Blocked admin is trying to alter their own block
 
@@ -140,9 +181,9 @@ class BlockPermissionChecker {
 		}
 
 		if (
-			$this->target instanceof UserIdentity &&
+			$target instanceof UserBlockTarget &&
 			$block->getBlocker() &&
-			$this->target->equals( $block->getBlocker() )
+			$target->getUserIdentity()->equals( $block->getBlocker() )
 		) {
 			// T150826: Blocked admins can always block the admin who blocked them
 			return true;

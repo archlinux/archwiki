@@ -181,17 +181,16 @@ ve.init.mw.DesktopArticleTarget.static.platformType = 'desktop';
  * @inheritdoc
  */
 ve.init.mw.DesktopArticleTarget.prototype.addSurface = function ( dmDoc, config ) {
+	const skinPadding = {
+		// Vector-2022 content area less padding, so popups can render too close
+		// to the edge of the text (T258501). The default of 10px is reduced to 3px.
+		// We still need a bit of padding to keep popups from touching the sidebar.
+		'vector-2022': 3,
+		monobook: -10
+	};
+	const skin = mw.config.get( 'skin' );
 	config = ve.extendObject( {
-		$overlayContainer: $(
-			document.querySelector( '[data-mw-ve-target-container]' ) ||
-			document.getElementById( 'content' )
-		),
-		// Vector-2022 content area has no padding itself, so popups render too close
-		// to the edge of the text (T258501). Use a negative value to allow popups to
-		// position slightly outside the content. Padding elsewhere means we are
-		// guaranteed 30px of space between the content and the edge of the viewport.
-		// Other skins pass 'undefined' to use the default padding of +10px.
-		overlayPadding: mw.config.get( 'skin' ) === 'vector-2022' ? -10 : undefined
+		overlayPadding: skin in skinPadding ? skinPadding[ skin ] : undefined
 	}, config );
 	return ve.init.mw.DesktopArticleTarget.super.prototype.addSurface.call( this, dmDoc, config );
 };
@@ -424,7 +423,12 @@ ve.init.mw.DesktopArticleTarget.prototype.activate = function ( dataPromise ) {
  * Edit mode has finished activating
  */
 ve.init.mw.DesktopArticleTarget.prototype.afterActivate = function () {
-	$( 'html' ).removeClass( 've-activating' ).addClass( 've-active' );
+	// eslint-disable-next-line mediawiki/class-doc
+	$( 'html' )
+		// Remove ve-activating when loading for the first time,
+		// and when switching remove previous mode's class.
+		.removeClass( 've-activating ve-active-visual ve-active-source' )
+		.addClass( 've-active ve-active-' + this.getSurface().getMode() );
 
 	// Disable TemplateStyles in the original content
 	// (We do this here because toggling 've-active' class above hides it)
@@ -475,6 +479,9 @@ ve.init.mw.DesktopArticleTarget.prototype.setSurface = function ( surface ) {
  * @param {ve.ui.Surface} surface
  */
 ve.init.mw.DesktopArticleTarget.prototype.setupNewSection = function ( surface ) {
+	if ( surface.getMode() === 'visual' && this.section === 'new' ) {
+		throw new Error( 'Adding new section is not supported in visual mode' );
+	}
 	if ( surface.getMode() === 'source' && this.section === 'new' ) {
 		if ( !this.sectionTitle ) {
 			this.sectionTitle = new OO.ui.TextInputWidget( {
@@ -889,26 +896,23 @@ ve.init.mw.DesktopArticleTarget.prototype.onToolbarMetaButtonClick = function ()
  * 'Edit' and single edit tab are bound in mw.DesktopArticleTarget.init.
  */
 ve.init.mw.DesktopArticleTarget.prototype.setupSkinTabs = function () {
-	if ( this.isViewPage ) {
-		const namespaceNumber = mw.config.get( 'wgNamespaceNumber' );
-		const namespaceName = mw.config.get( 'wgCanonicalNamespace' );
-		const isTalkNamespace = mw.Title.isTalkNamespace( namespaceNumber );
-		// Title::getNamespaceKey()
-		let namespaceKey = namespaceName.toLowerCase() || 'main';
-		if ( namespaceKey === 'file' ) {
-			namespaceKey = 'image';
-		}
-		let namespaceTabId;
-		// SkinTemplate::buildContentNavigationUrls()
-		if ( isTalkNamespace ) {
-			namespaceTabId = 'ca-talk';
-		} else {
-			namespaceTabId = 'ca-nstab-' + namespaceKey;
-		}
-		// Allow instant switching back to view mode, without refresh
-		$( '#ca-view' ).add( '#' + namespaceTabId ).find( 'a' )
-			.on( 'click.ve-target', this.onViewTabClick.bind( this ) );
+	const namespaceNumber = mw.config.get( 'wgNamespaceNumber' );
+	const namespaceName = mw.config.get( 'wgCanonicalNamespace' );
+	const isTalkNamespace = mw.Title.isTalkNamespace( namespaceNumber );
+	// Title::getNamespaceKey()
+	let namespaceKey = namespaceName.toLowerCase() || 'main';
+	if ( namespaceKey === 'file' ) {
+		namespaceKey = 'image';
 	}
+	let namespaceTabId;
+	// SkinTemplate::buildContentNavigationUrls()
+	if ( isTalkNamespace ) {
+		namespaceTabId = 'ca-talk';
+	} else {
+		namespaceTabId = 'ca-nstab-' + namespaceKey;
+	}
+	$( '#ca-view' ).add( '#' + namespaceTabId ).find( 'a' )
+		.on( 'click.ve-target', this.onViewTabClick.bind( this ) );
 
 	// Used by Extension:GuidedTour
 	mw.hook( 've.skinTabSetupComplete' ).fire();

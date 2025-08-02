@@ -10,6 +10,7 @@
 	"notifications": "कळोवण्यो",
 	"tooltip-pt-notifications-alert": "{{GENDER:|तुज्यो}} चत्रायो",
 	"tooltip-pt-notifications-notice": "तुज्यो कळोवण्यो",
+	"tooltip-pt-notifications": "तुमच्यो कळवण्यो",
 	"echo-specialpage": "कळोवण्यो",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1सॅ}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1मि}}",

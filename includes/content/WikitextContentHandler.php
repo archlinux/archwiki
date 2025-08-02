@@ -1,7 +1,5 @@
 <?php
 /**
- * Content handler for wiki text pages.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,10 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @since 1.21
- *
  * @file
- * @ingroup Content
  */
 
 namespace MediaWiki\Content;
@@ -31,6 +26,7 @@ use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOutput;
@@ -42,11 +38,11 @@ use MediaWiki\Title\TitleFactory;
 use SearchEngine;
 use SearchIndexField;
 use Wikimedia\UUID\GlobalIdGenerator;
-use WikiPage;
 
 /**
  * Content handler for wiki text pages.
  *
+ * @since 1.21
  * @ingroup Content
  */
 class WikitextContentHandler extends TextContentHandler {
@@ -410,7 +406,10 @@ class WikitextContentHandler extends TextContentHandler {
 			if ( $cpoParams->getGenerateHtml() ) {
 				$parserOutput->setRedirectHeader(
 					$this->linkRenderer->makeRedirectHeader(
-						$title->getPageLanguage(), $redir, false
+						$title->getPageLanguage(), $redir, false,
+						// Add link tag only if we're not using parsoid,
+						// since Parsoid adds one itself.
+						!$parserOptions->getUseParsoid()
 					)
 				);
 				$parserOutput->addModuleStyles( [ 'mediawiki.action.view.redirectPage' ] );

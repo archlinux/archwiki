@@ -4,9 +4,10 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Logger\NullSpi;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\NoopTracer;
 
 /**
- * @covers ObjectCacheFactory
+ * @covers \ObjectCacheFactory
  */
 class ObjectCacheFactoryTest extends MediaWikiUnitTestCase {
 	private function newObjectCacheFactory() {
@@ -16,7 +17,8 @@ class ObjectCacheFactoryTest extends MediaWikiUnitTestCase {
 			new NullSpi(),
 			static function () {
 			},
-			'testWikiId'
+			'testWikiId',
+			new NoopTracer()
 		);
 	}
 
@@ -36,5 +38,18 @@ class ObjectCacheFactoryTest extends MediaWikiUnitTestCase {
 		] );
 
 		$this->assertInstanceOf( HashBagOStuff::class, $objCache );
+	}
+
+	public function testShouldPassTracer(): void {
+		$factory = $this->newObjectCacheFactory();
+
+		$cache = $factory->newFromParams( [
+			'factory' => function ( array $params ): HashBagOStuff {
+				$this->assertInstanceOf( NoopTracer::class, $params['telemetry'] );
+				return new HashBagOStuff();
+			}
+		] );
+
+		$this->assertInstanceOf( HashBagOStuff::class, $cache );
 	}
 }

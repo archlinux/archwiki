@@ -24,11 +24,11 @@ use MediaWiki\Content\Content;
 use MediaWiki\Content\TextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use StringUtils;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeMatch;
 use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Utilities for formatting and querying the externallinks table.
@@ -287,7 +287,7 @@ class LinkFilter {
 		return $index;
 	}
 
-	private static function reverseDomain( $domain ) {
+	private static function reverseDomain( string $domain ): string {
 		if ( substr( $domain, 0, 3 ) === 'V6.' ) {
 			$ipv6 = str_replace( '.', ':', trim( substr( $domain, 3 ), '.' ) );
 			if ( IPUtils::isValid( $ipv6 ) ) {
@@ -528,6 +528,3 @@ class LinkFilter {
 		return $arr;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( LinkFilter::class, 'LinkFilter' );

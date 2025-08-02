@@ -1,0 +1,183 @@
+@import 'mediawiki.skin.variables.less';
+
+.mw-checkuser-links-no-parentheses > span:not( :first-child )::before {
+	content: ' @{msg-pipe-separator} ';
+}
+
+.mw-special-CheckUserLog {
+	.mw-checkuser-log-highlight-entry {
+		background-color: @background-color-destructive-subtle;
+	}
+}
+
+.mw-special-CheckUser {
+	.mw-checkuser-helper-count,
+	.mw-checkuser-actions-count {
+		display: inline-block;
+
+		&::before {
+			content: '@{msg-brackets-start}';
+		}
+
+		&::after {
+			content: '@{msg-brackets-end}';
+		}
+	}
+
+	.mw-checkuser-paging-links-form {
+		display: inline-block;
+		font-size: inherit;
+	}
+
+	.mw-checkuser-paging-links {
+		text-decoration: none;
+		color: @color-link;
+		background: none;
+		border: 0;
+		padding: 0;
+		font-size: unset;
+		font-family: inherit;
+	}
+
+	.mw-checkuser-paging-links:not( [ href ] ) {
+		cursor: pointer;
+	}
+
+	.mw-checkuser-paging-links:visited {
+		color: @color-link--visited;
+	}
+
+	.mw-checkuser-paging-links:active {
+		color: @color-link--active;
+	}
+
+	.mw-checkuser-paging-links:hover,
+	.mw-checkuser-paging-links:focus {
+		text-decoration: underline;
+	}
+
+	.mw-checkuser-indented {
+		margin-left: 2.5%;
+	}
+
+	.mw-checkuser-get-actions-results,
+	.mw-checkuser-clienthints-enabled-temporary-class.mw-checkuser-get-users-results {
+		.mw-checkuser-agent,
+		.mw-checkuser-client-hints {
+			color: @color-subtle;
+		}
+	}
+
+	.mw-checkuser-xff {
+		background-color: @background-color-warning-subtle;
+	}
+
+	.mw-checkuser-xff-trusted {
+		background-color: @background-color-success-subtle;
+	}
+
+	.mw-checkuser-multilock-link,
+	.mw-checkuser-multilock-link-header {
+		margin-top: 12px;
+		display: table;
+	}
+
+	.mw-checkuser-helper-count {
+		user-select: none;
+
+		&::before {
+			white-space: pre;
+			content: ' @{msg-brackets-start}';
+		}
+	}
+
+	.mw-checkuser-helper-table {
+		width: 100%;
+		margin: 0;
+
+		td:nth-child( 1 ),
+		td:nth-child( 2 ) {
+			@media ( max-width: @max-width-breakpoint-desktop ) {
+				min-width: 20%;
+			}
+
+			a {
+				word-wrap: anywhere;
+			}
+		}
+
+		.mw-checkuser-helper-count {
+			font-weight: bold;
+		}
+
+		&.mw-checkuser-clienthints-enabled-temporary-class {
+			.mw-checkuser-helper-user-agents,
+			.mw-checkuser-helper-client-hints {
+				font-size: 0.8em;
+			}
+		}
+	}
+
+	.mw-checkuser-helper-copy-text-layout {
+		margin-top: 0.5em;
+
+		.oo-ui-buttonElement,
+		.oo-ui-inputWidget {
+			position: absolute;
+		}
+
+		.oo-ui-copyTextLayout-multiline-button {
+			margin-bottom: 2em;
+		}
+	}
+
+	.mw-checkuser-clienthints-enabled-temporary-class {
+		&.mw-checkuser-get-users-results {
+			>ul {
+				list-style-type: none;
+				list-style-image: none;
+				margin-left: 1em;
+			}
+
+			li ul {
+				font-size: small;
+				margin-left: 3em;
+			}
+		}
+	}
+
+	.mw-widget-copyTextLayout {
+		margin: 0;
+	}
+
+	/** From CSS rules for Special:Block - makes dropdown be above reason input and also be full width */
+	.ext-checkuser-checkuserblock-block-reason .oo-ui-dropdownInputWidget,
+	.ext-checkuser-checkuserblock-block-reason .oo-ui-textInputWidget {
+		display: block;
+		max-width: 50em;
+	}
+
+	.ext-checkuser-checkuserblock-block-reason .oo-ui-textInputWidget {
+		margin-top: 0.5em;
+	}
+}
+
+html[ dir='rtl' ] .mw-special-CheckUser .mw-checkuser-helper-copy-text-layout {
+	.oo-ui-inputWidget {
+		right: -9999px;
+	}
+
+	.oo-ui-buttonElement {
+		right: 0;
+	}
+}
+
+html[ dir='ltr' ] .mw-special-CheckUser .mw-checkuser-helper-copy-text-layout {
+	.oo-ui-inputWidget {
+		left: -9999px;
+	}
+
+	.oo-ui-buttonElement {
+		left: 0;
+	}
+}

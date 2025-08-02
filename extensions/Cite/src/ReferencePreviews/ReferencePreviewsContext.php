@@ -3,9 +3,9 @@
 namespace Cite\ReferencePreviews;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Skin\Skin;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use Skin;
 
 /**
  * @license GPL-2.0-or-later

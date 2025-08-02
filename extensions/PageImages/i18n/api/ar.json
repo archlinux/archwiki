@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Meno25",
 			"SaldırganSincap",
-			"ديفيد",
-			"Meno25"
+			"ديفيد"
 		]
 	},
 	"apihelp-query+pageimages-summary": "يعرض معلومات حول الصور على الصفحة، مثل الصورة المصغرة ووجود الصور.",

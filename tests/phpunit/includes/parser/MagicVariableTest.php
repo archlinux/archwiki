@@ -1,17 +1,4 @@
 <?php
-
-/**
- * This file is intended to test magic variables in the parser
- * It was inspired by Raymond & Matěj Grabovský commenting about r66200
- *
- * As of february 2011, it only tests some revisions and date related
- * magic variables.
- *
- * @author Antoine Musso
- * @copyright Copyright © 2011, Antoine Musso
- * @file
- */
-
 namespace MediaWiki\Tests\Parser;
 
 use MediaWiki\MainConfigNames;
@@ -23,14 +10,19 @@ use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
+ * This file is intended to test magic variables in the parser
+ * It was inspired by Raymond & Matěj Grabovský commenting about r66200
+ *
+ * As of february 2011, it only tests some revisions and date related
+ * magic variables.
+ *
+ * @author Antoine Musso
  * @group Database
- * @covers \MediaWiki\Parser\Parser::expandMagicVariable
+ * @covers \MediaWiki\Parser\Parser
+ * @covers \MediaWiki\Parser\CoreMagicVariables
  */
 class MagicVariableTest extends MediaWikiIntegrationTestCase {
-	/**
-	 * @var Parser
-	 */
-	private $testParser = null;
+	private Parser $testParser;
 
 	/** setup a basic parser object */
 	protected function setUp(): void {
@@ -287,12 +279,7 @@ class MagicVariableTest extends MediaWikiIntegrationTestCase {
 	private function assertMagicPadding( $magic, $value, $format ) {
 		# Initialize parser timestamp as year 2010 at 12h34 56s.
 		# month and day are given by the caller ($value). Month < 12!
-		if ( $value > 12 ) {
-			$month = $value % 12;
-		} else {
-			$month = $value;
-		}
-
+		$month = ( $value + 11 ) % 12 + 1;
 		$this->setParserTimestamp(
 			sprintf( '2010%02d%02d123456', $month, $value )
 		);

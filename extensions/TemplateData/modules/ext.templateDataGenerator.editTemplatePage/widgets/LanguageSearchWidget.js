@@ -65,7 +65,7 @@ LanguageSearchWidget.prototype.setAvailableLanguages = function ( availableLangu
 
 	this.filteredLanguageResultWidgets = this.languageResultWidgets.map( ( languageResult ) => {
 		const data = languageResult.getData();
-		if ( availableLanguages.indexOf( data.code ) !== -1 ) {
+		if ( availableLanguages.includes( data.code ) ) {
 			return languageResult;
 		}
 		return null;
@@ -101,7 +101,7 @@ LanguageSearchWidget.prototype.addResults = function () {
 			return false;
 		} );
 
-		if ( query === '' || matchedProperty ) {
+		if ( !query || matchedProperty ) {
 			items.push(
 				languageResult
 					.updateLabel( query, matchedProperty, compare )

@@ -5,9 +5,9 @@
  * (in which case it is inside `.vector-menu-dropdown` instead of `.vector-menu-tabs`). */
 .vector-menu-tabs {
 	// `#ca-unwatch` & `#ca-watch` both carry `.mw-watchlink` as well.
-	@width-watchlink: unit( 28 / @font-size-tabs / @font-size-browser, em );
-	@height-watchlink: unit( 40 / @font-size-tabs / @font-size-browser, em );
-	@size-watchlink-icon: unit( 16 / @font-size-tabs / @font-size-browser, em );
+	@width-watchlink: unit( ( 28 / @font-size-tabs / @font-size-browser ), em );
+	@height-watchlink: unit( ( 40 / @font-size-tabs / @font-size-browser ), em );
+	@size-watchlink-icon: unit( ( 16 / @font-size-tabs / @font-size-browser ), em );
 
 	.mw-watchlink.icon a {
 		width: @width-watchlink;
@@ -23,8 +23,8 @@
 			content: '';
 			display: block;
 			position: absolute;
-			top: unit( 14 / @font-size-tabs / @font-size-browser, em );
-			left: unit( 5 / @font-size-tabs / @font-size-browser, em );
+			top: unit( ( 14 / @font-size-tabs / @font-size-browser ), em );
+			left: unit( ( 5 / @font-size-tabs / @font-size-browser ), em );
 			width: @size-watchlink-icon;
 			height: @size-watchlink-icon;
 		}

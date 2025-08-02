@@ -2,17 +2,19 @@
 
 namespace MediaWiki\Actions;
 
-use Action;
-use Article;
-use BadTitleError;
-use ErrorPageError;
-use HTMLFileCache;
-use HttpError;
+use MediaWiki\Cache\HTMLFileCache;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\BadTitleError;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\HttpError;
+use MediaWiki\Exception\MWExceptionRenderer;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiEntryPoint;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
+use MediaWiki\Page\WikiFilePage;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Request\DerivativeRequest;
@@ -22,13 +24,9 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use MWExceptionRenderer;
-use PermissionsError;
 use Profiler;
 use Throwable;
 use UnexpectedValueException;
-use ViewAction;
-use WikiFilePage;
 use Wikimedia\Rdbms\DBConnectionError;
 
 /**
@@ -42,7 +40,6 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 
 	/**
 	 * Overwritten to narrow the return type to RequestContext
-	 * @return RequestContext
 	 */
 	protected function getContext(): RequestContext {
 		/** @var RequestContext $context */
@@ -271,9 +268,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 					->getRevisionLookup()
 					->getRevisionById( $oldid );
 				if ( $revRecord ) {
-					$ret = Title::newFromLinkTarget(
-						$revRecord->getPageAsLinkTarget()
-					);
+					$ret = Title::newFromPageIdentity( $revRecord->getPage() );
 				}
 			}
 		}
@@ -425,7 +420,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 			if ( $rdfrom ) {
 				$url = $title->getFullURL( [ 'rdfrom' => $rdfrom ] );
 			} else {
-				$query = $request->getValues();
+				$query = $request->getQueryValues();
 				unset( $query['title'] );
 				$url = $title->getFullURL( $query );
 			}
@@ -665,7 +660,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 					// Rewrite environment to redirected article
 					$rpage = $services->getWikiPageFactory()->newFromTitle( $target );
 					$rpage->loadPageData();
-					if ( $rpage->exists() || ( is_object( $file ) && !$file->isLocal() ) ) {
+					if ( $target->isKnown() || ( is_object( $file ) && !$file->isLocal() ) ) {
 						$rarticle = Article::newFromWikiPage( $rpage, $context );
 						$rarticle->setRedirectedFrom( $title );
 

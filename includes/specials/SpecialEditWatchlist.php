@@ -26,6 +26,7 @@ use LogicException;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\HTMLForm\OOUIHTMLForm;
@@ -34,9 +35,6 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\WikiPageFactory;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
@@ -49,7 +47,6 @@ use MediaWiki\Title\TitleValue;
 use MediaWiki\Watchlist\WatchedItemStore;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
-use UserNotLoggedIn;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
 
@@ -90,15 +87,6 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	/** @var int|false where the value is one of the EDIT_ prefixed constants (e.g. EDIT_NORMAL) */
 	private $currentMode;
 
-	/**
-	 * @param WatchedItemStoreInterface|null $watchedItemStore
-	 * @param TitleParser|null $titleParser
-	 * @param GenderCache|null $genderCache
-	 * @param LinkBatchFactory|null $linkBatchFactory
-	 * @param NamespaceInfo|null $nsInfo
-	 * @param WikiPageFactory|null $wikiPageFactory
-	 * @param WatchlistManager|null $watchlistManager
-	 */
 	public function __construct(
 		?WatchedItemStoreInterface $watchedItemStore = null,
 		?TitleParser $titleParser = null,
@@ -244,11 +232,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 			return;
 		}
 
-		$pout = new ParserOutput;
-		$pout->setTOCData( $this->tocData );
-		$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-		$pout->setRawText( Parser::TOC_PLACEHOLDER );
-		$out->addParserOutput( $pout );
+		$out->addTOCPlaceholder( $this->tocData );
 
 		$form->displayForm( $result );
 	}
@@ -282,7 +266,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 
 		foreach ( $list as $text ) {
 			$text = trim( $text );
-			if ( strlen( $text ) > 0 ) {
+			if ( $text !== '' ) {
 				$title = Title::newFromText( $text );
 				if ( $title instanceof Title && $this->watchlistManager->isWatchable( $title ) ) {
 					$titles[] = $title;
@@ -947,7 +931,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 
 		return Html::rawElement(
 			'span',
-			[ 'class' => 'mw-watchlist-toollinks mw-changeslist-links' ],
+			[ 'class' => [ 'mw-watchlist-toollinks', 'mw-changeslist-links' ] ],
 			implode( '', $tools )
 		);
 	}

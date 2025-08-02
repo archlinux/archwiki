@@ -18,31 +18,37 @@
  * @file
  */
 
+namespace MediaWiki\Page;
+
+use LogicException;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\DatabaseBlockStore;
+use MediaWiki\Cache\HTMLFileCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\ParsoidCachePrewarmJob;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
-use MediaWiki\Page\ParserOutputAccess;
-use MediaWiki\Page\ProtectionForm;
-use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\BadRevisionException;
 use MediaWiki\Revision\RevisionRecord;
@@ -51,12 +57,10 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
-use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\Xml\Xml;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\IPUtils;
-use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -235,7 +239,6 @@ class Article implements Page {
 	/**
 	 * Tell the page view functions that this view was redirected
 	 * from another page on the wiki.
-	 * @param Title $from
 	 */
 	public function setRedirectedFrom( Title $from ) {
 		$this->mRedirectedFrom = $from;
@@ -510,6 +513,7 @@ class Article implements Page {
 		if ( $outputPage->isPrintable() ) {
 			$parserOptions->setIsPrintable( true );
 			$poOptions['enableSectionEditLinks'] = false;
+			$this->addMessageBoxStyles( $outputPage );
 			$outputPage->prependHTML(
 				Html::warningBox(
 					$outputPage->msg( 'printableversion-deprecated-warning' )->escaped()
@@ -565,9 +569,12 @@ class Article implements Page {
 			}
 		}
 
-		# Use adaptive TTLs for CDN so delayed/failed purges are noticed less often.
-		# This could use getTouched(), but that could be scary for major template edits.
-		$outputPage->adaptCdnTTL( $this->mPage->getTimestamp(), ExpirationAwareness::TTL_DAY );
+		// Enable 1-day CDN cache on this response
+		//
+		// To reduce impact of lost or delayed HTTP purges, the adaptive TTL will
+		// raise the TTL for pages not recently edited, upto $wgCdnMaxAge.
+		// This could use getTouched(), but that could be scary for major template edits.
+		$outputPage->adaptCdnTTL( $this->mPage->getTimestamp(), 86_400 );
 
 		$this->showViewFooter();
 		$this->mPage->doViewUpdates( $authority, $oldid, $this->fetchRevisionRecord() );
@@ -729,7 +736,7 @@ class Article implements Page {
 			);
 
 			if ( $pOutput ) {
-				$this->doOutputFromParserCache( $pOutput, $outputPage, $textOptions );
+				$this->doOutputFromParserCache( $pOutput, $parserOptions, $outputPage, $textOptions );
 				$this->doOutputMetaData( $pOutput, $outputPage );
 				return true;
 			}
@@ -764,7 +771,7 @@ class Article implements Page {
 				);
 
 				if ( $pOutput ) {
-					$this->doOutputFromParserCache( $pOutput, $outputPage, $textOptions );
+					$this->doOutputFromParserCache( $pOutput, $parserOptions, $outputPage, $textOptions );
 					$this->doOutputMetaData( $pOutput, $outputPage );
 					return true;
 				}
@@ -776,7 +783,7 @@ class Article implements Page {
 		$outputPage->setRevisionId( $this->getRevIdFetched() );
 		$outputPage->setRevisionIsCurrent( $rev->isCurrent() );
 		# Preload timestamp to avoid a DB hit
-		$outputPage->setRevisionTimestamp( $rev->getTimestamp() );
+		$outputPage->getMetadata()->setRevisionTimestamp( $rev->getTimestamp() );
 
 		# Pages containing custom CSS or JavaScript get special treatment
 		if ( $this->getTitle()->isSiteConfigPage() || $this->getTitle()->isUserConfigPage() ) {
@@ -864,6 +871,7 @@ class Article implements Page {
 			$rev,
 			$renderStatus,
 			$outputPage,
+			$parserOptions,
 			$textOptions
 		);
 
@@ -876,10 +884,6 @@ class Article implements Page {
 		return true;
 	}
 
-	/**
-	 * @param ?ParserOutput $pOutput
-	 * @param OutputPage $outputPage
-	 */
 	private function doOutputMetaData( ?ParserOutput $pOutput, OutputPage $outputPage ) {
 		# Adjust title for main page & pages with displaytitle
 		if ( $pOutput ) {
@@ -905,11 +909,13 @@ class Article implements Page {
 
 	/**
 	 * @param ParserOutput $pOutput
+	 * @param ParserOptions $pOptions
 	 * @param OutputPage $outputPage
 	 * @param array $textOptions
 	 */
 	private function doOutputFromParserCache(
 		ParserOutput $pOutput,
+		ParserOptions $pOptions,
 		OutputPage $outputPage,
 		array $textOptions
 	) {
@@ -918,11 +924,11 @@ class Article implements Page {
 		$oldid = $pOutput->getCacheRevisionId() ?? $this->getRevIdFetched();
 		$outputPage->setRevisionId( $oldid );
 		$outputPage->setRevisionIsCurrent( $oldid === $this->mPage->getLatest() );
-		$outputPage->addParserOutput( $pOutput, $textOptions );
+		$outputPage->addParserOutput( $pOutput, $pOptions, $textOptions );
 		# Preload timestamp to avoid a DB hit
 		$cachedTimestamp = $pOutput->getRevisionTimestamp();
 		if ( $cachedTimestamp !== null ) {
-			$outputPage->setRevisionTimestamp( $cachedTimestamp );
+			$outputPage->getMetadata()->setRevisionTimestamp( $cachedTimestamp );
 			$this->mPage->setTimestamp( $cachedTimestamp );
 		}
 	}
@@ -931,12 +937,14 @@ class Article implements Page {
 	 * @param RevisionRecord $rev
 	 * @param Status $renderStatus
 	 * @param OutputPage $outputPage
+	 * @param ParserOptions $parserOptions
 	 * @param array $textOptions
 	 */
 	private function doOutputFromRenderStatus(
 		RevisionRecord $rev,
 		Status $renderStatus,
 		OutputPage $outputPage,
+		ParserOptions $parserOptions,
 		array $textOptions
 	) {
 		$context = $this->getContext();
@@ -963,11 +971,11 @@ class Article implements Page {
 			$cachedId = $pOutput->getCacheRevisionId();
 			if ( $cachedId !== null ) {
 				$outputPage->setRevisionId( $cachedId );
-				$outputPage->setRevisionTimestamp( $pOutput->getTimestamp() );
+				$outputPage->getMetadata()->setRevisionTimestamp( $pOutput->getTimestamp() );
 			}
 		}
 
-		$outputPage->addParserOutput( $pOutput, $textOptions );
+		$outputPage->addParserOutput( $pOutput, $parserOptions, $textOptions );
 
 		if ( $this->getRevisionRedirectTarget( $rev ) ) {
 			$outputPage->addSubtitle( "<span id=\"redirectsub\">" .
@@ -989,7 +997,6 @@ class Article implements Page {
 
 	/**
 	 * Adjust title for pages with displaytitle, -{T|}- or language conversion
-	 * @param ParserOutput $pOutput
 	 */
 	public function adjustDisplayTitle( ParserOutput $pOutput ) {
 		$out = $this->getContext()->getOutput();
@@ -1043,7 +1050,7 @@ class Article implements Page {
 		$contentHandler = $services
 			->getContentHandlerFactory()
 			->getContentHandler(
-				$rev->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )->getModel()
+				$rev->getMainContentModel()
 			);
 		$de = $contentHandler->createDifferenceEngine(
 			$context,
@@ -1113,7 +1120,9 @@ class Article implements Page {
 			} else {
 				$specificTarget = $title->getRootText();
 			}
-			if ( $this->blockStore->newFromTarget( $specificTarget, $vagueTarget ) instanceof DatabaseBlock ) {
+			$block = $this->blockStore->newFromTarget(
+				$specificTarget, $vagueTarget, false, DatabaseBlockStore::AUTO_NONE );
+			if ( $block instanceof DatabaseBlock ) {
 				return [
 					'index' => 'noindex',
 					'follow' => 'nofollow'
@@ -1213,7 +1222,7 @@ class Article implements Page {
 		$rdfrom = $request->getVal( 'rdfrom' );
 
 		// Construct a URL for the current page view, but with the target title
-		$query = $request->getValues();
+		$query = $request->getQueryValues();
 		unset( $query['rdfrom'] );
 		unset( $query['title'] );
 		if ( $this->getTitle()->isRedirect() ) {
@@ -1222,7 +1231,7 @@ class Article implements Page {
 		}
 		$redirectTargetUrl = $this->getTitle()->getLinkURL( $query );
 
-		if ( isset( $this->mRedirectedFrom ) ) {
+		if ( $this->mRedirectedFrom ) {
 			// This is an internally redirected page view.
 			// We'll need a backlink to the source page for navigation.
 			if ( $this->getHookRunner()->onArticleViewRedirect( $this ) ) {
@@ -1320,6 +1329,7 @@ class Article implements Page {
 		$useNPPatrol = $mainConfig->get( MainConfigNames::UseNPPatrol );
 		$useRCPatrol = $mainConfig->get( MainConfigNames::UseRCPatrol );
 		$useFilePatrol = $mainConfig->get( MainConfigNames::UseFilePatrol );
+		$fileMigrationStage = $mainConfig->get( MainConfigNames::FileSchemaMigrationStage );
 		// Allow hooks to decide whether to not output this at all
 		if ( !$this->getHookRunner()->onArticleShowPatrolFooter( $this ) ) {
 			return false;
@@ -1393,12 +1403,22 @@ class Article implements Page {
 		$recentFileUpload = false;
 		if ( ( !$rc || $rc->getAttribute( 'rc_patrolled' ) ) && $useFilePatrol
 			&& $title->getNamespace() === NS_FILE ) {
-			// Retrieve timestamp from the current file (lastest upload)
-			$newestUploadTimestamp = $dbr->newSelectQueryBuilder()
-				->select( 'img_timestamp' )
-				->from( 'image' )
-				->where( [ 'img_name' => $title->getDBkey() ] )
-				->caller( __METHOD__ )->fetchField();
+			// Retrieve timestamp from the current file (latest upload)
+			if ( $fileMigrationStage & SCHEMA_COMPAT_READ_OLD ) {
+				$newestUploadTimestamp = $dbr->newSelectQueryBuilder()
+					->select( 'img_timestamp' )
+					->from( 'image' )
+					->where( [ 'img_name' => $title->getDBkey() ] )
+					->caller( __METHOD__ )->fetchField();
+			} else {
+				$newestUploadTimestamp = $dbr->newSelectQueryBuilder()
+					->select( 'fr_timestamp' )
+					->from( 'file' )
+					->join( 'filerevision', null, 'file_latest = fr_id' )
+					->where( [ 'file_name' => $title->getDBkey() ] )
+					->caller( __METHOD__ )->fetchField();
+			}
+
 			if ( $newestUploadTimestamp
 				&& RecentChange::isInRCLifespan( $newestUploadTimestamp, 21600 )
 			) {
@@ -1504,14 +1524,13 @@ class Article implements Page {
 
 		$contextUser = $context->getUser();
 
-		# Show info in user (talk) namespace. Does the user exist? Is he blocked?
+		# Show info in user (talk) namespace. Does the user exist? Are they blocked?
 		if ( $title->getNamespace() === NS_USER
 			|| $title->getNamespace() === NS_USER_TALK
 		) {
 			$rootPart = $title->getRootText();
-			$user = User::newFromName( $rootPart, false /* allow IP users */ );
-			$ip = $this->userNameUtils->isIP( $rootPart );
-			$block = $this->blockStore->newFromTarget( $user, $user );
+			$userFactory = $services->getUserFactory();
+			$user = $userFactory->newFromNameOrIp( $rootPart );
 
 			if ( $user && $user->isRegistered() && $user->isHidden() &&
 				!$context->getAuthority()->isAllowed( 'hideuser' )
@@ -1521,7 +1540,8 @@ class Article implements Page {
 				$user = false;
 			}
 
-			if ( !( $user && $user->isRegistered() ) && !$ip ) {
+			if ( !( $user && $user->isRegistered() ) && !$this->userNameUtils->isIP( $rootPart ) ) {
+				$this->addMessageBoxStyles( $outputPage );
 				// User does not exist
 				$outputPage->addHTML( Html::warningBox(
 					$context->msg( 'userpage-userdoesnotexist-view', wfEscapeWikiText( $rootPart ) )->parse(),
@@ -1540,34 +1560,20 @@ class Article implements Page {
 						'msgKey' => [ 'renameuser-renamed-notice', $title->getBaseText() ]
 					]
 				);
-			} elseif (
-				$block !== null &&
-				$block->getType() != DatabaseBlock::TYPE_AUTO &&
-				(
-					$block->isSitewide() ||
-					$services->getPermissionManager()->isBlockedFrom( $user, $title, true )
-				)
-			) {
-				// Show log extract if the user is sitewide blocked or is partially
-				// blocked and not allowed to edit their user page or user talk page
-				LogEventsList::showLogExtract(
-					$outputPage,
-					'block',
-					$services->getNamespaceInfo()->getCanonicalName( NS_USER ) . ':' .
-						$block->getTargetName(),
-					'',
-					[
-						'lim' => 1,
-						'showIfEmpty' => false,
-						'msgKey' => [
-							'blocked-notice-logextract',
-							$user->getName() # Support GENDER in notice
-						]
-					]
-				);
-				$validUserPage = !$title->isSubpage();
 			} else {
 				$validUserPage = !$title->isSubpage();
+
+				$blockLogBox = LogEventsList::getBlockLogWarningBox(
+					$this->blockStore,
+					$services->getNamespaceInfo(),
+					$this->getContext(),
+					$this->linkRenderer,
+					$user,
+					$title
+				);
+				if ( $blockLogBox !== null ) {
+					$outputPage->addHTML( $blockLogBox );
+				}
 			}
 		}
 
@@ -1640,7 +1646,7 @@ class Article implements Page {
 
 			$dir = $context->getLanguage()->getDir();
 			$lang = $context->getLanguage()->getHtmlCode();
-			$outputPage->addWikiTextAsInterface( Xml::openElement( 'div', [
+			$outputPage->addWikiTextAsInterface( Html::openElement( 'div', [
 				'class' => "noarticletext mw-content-$dir",
 				'dir' => $dir,
 				'lang' => $lang,
@@ -1658,6 +1664,7 @@ class Article implements Page {
 		$outputPage->disableClientCache();
 		$outputPage->setRobotPolicy( 'noindex,nofollow' );
 		$outputPage->clearHTML();
+		$this->addMessageBoxStyles( $outputPage );
 		$outputPage->addHTML( Html::errorBox( $outputPage->parseAsContent( $errortext ) ) );
 	}
 
@@ -1675,6 +1682,7 @@ class Article implements Page {
 		$outputPage = $this->getContext()->getOutput();
 		// Used in wikilinks, should not contain whitespaces
 		$titleText = $this->getTitle()->getPrefixedDBkey();
+		$this->addMessageBoxStyles( $outputPage );
 		// If the user is not allowed to see it...
 		if ( !$this->mRevisionRecord->userCan(
 			RevisionRecord::DELETED_TEXT,
@@ -1717,6 +1725,12 @@ class Article implements Page {
 
 			return true;
 		}
+	}
+
+	private function addMessageBoxStyles( OutputPage $outputPage ) {
+		$outputPage->addModuleStyles( [
+			'mediawiki.codex.messagebox.styles',
+		] );
 	}
 
 	/**
@@ -1769,7 +1783,6 @@ class Article implements Page {
 
 		$outputPage = $context->getOutput();
 		$outputPage->addModuleStyles( [
-			'mediawiki.codex.messagebox.styles',
 			'mediawiki.action.styles',
 			'mediawiki.interface.helpers.styles'
 		] );
@@ -1868,6 +1881,7 @@ class Article implements Page {
 		}
 
 		// the outer div is need for styling the revision info and nav in MobileFrontend
+		$this->addMessageBoxStyles( $outputPage );
 		$outputPage->addSubtitle(
 			Html::warningBox(
 				$revisionInfo .
@@ -2093,3 +2107,6 @@ class Article implements Page {
 		return $context->msg( 'missing-revision', $oldid );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( Article::class, 'Article' );

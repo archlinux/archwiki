@@ -2,10 +2,11 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -85,9 +86,6 @@ class PageHistoryHandler extends SimpleHandler {
 		);
 	}
 
-	/**
-	 * @return ExistingPageRecord|null
-	 */
 	private function getPage(): ?ExistingPageRecord {
 		if ( $this->page === false ) {
 			$this->page = $this->pageLookup->getExistingPageByText(
@@ -430,21 +428,25 @@ class PageHistoryHandler extends SimpleHandler {
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-title' ),
 			],
 			'older_than' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'integer',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-older-than' ),
 			],
 			'newer_than' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'integer',
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-newer-than' ),
 			],
 			'filter' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => self::ALLOWED_FILTER_TYPES,
 				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-filter' ),
 			],
 		];
 	}
@@ -483,5 +485,16 @@ class PageHistoryHandler extends SimpleHandler {
 	 */
 	protected function hasRepresentation() {
 		return (bool)$this->getPage();
+	}
+
+	public function getResponseBodySchemaFileName( string $method ): ?string {
+		return 'includes/Rest/Handler/Schema/PageHistory.json';
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
+		return $spec;
 	}
 }

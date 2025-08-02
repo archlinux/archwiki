@@ -94,7 +94,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 
 			$line = trim( $line );
 
-			if ( $line == '' || $line[0] == '#' ) {
+			if ( $line === '' || $line[0] === '#' ) {
 				continue;
 			}
 
@@ -104,7 +104,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				// The first line should have an image specification on it
 				// Extract it and render the HTML
 				$bits = explode( '|', $line, 2 );
-				if ( count( $bits ) == 1 ) {
+				if ( count( $bits ) === 1 ) {
 					$image = $bits[0];
 					$options = '';
 				} else {
@@ -154,9 +154,9 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 
 			// Handle desc spec
 			$cmd = strtok( $line, " \t" );
-			if ( $cmd == 'desc' ) {
+			if ( $cmd === 'desc' ) {
 				$typesText = wfMessage( 'imagemap_desc_types' )->inContentLanguage()->text();
-				if ( $descTypesCanonical != $typesText ) {
+				if ( $descTypesCanonical !== $typesText ) {
 					// i18n desc types exists
 					$typesText = $descTypesCanonical . ', ' . $typesText;
 				}
@@ -199,7 +199,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				true
 			);
 			$a = DOMCompat::querySelector( $linkFragment, 'a' );
-			if ( $a == null ) {
+			if ( $a === null ) {
 				// Meh, might be for other reasons
 				throw new ExtensionError( 'imagemap_invalid_title', $lineNum );
 			}
@@ -265,24 +265,22 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 					$attribs['target'] = $extLinkAttribs['target'];
 				}
 			}
-			if ( $shape != 'default' ) {
+			if ( $shape !== 'default' ) {
 				$attribs['shape'] = $shape;
 			}
 			if ( $coords ) {
 				$attribs['coords'] = implode( ',', $coords );
 			}
-			if ( $alt != '' ) {
-				if ( $shape != 'default' ) {
+			if ( $alt !== '' ) {
+				if ( $shape !== 'default' ) {
 					$attribs['alt'] = $alt;
 				}
 				$attribs['title'] = $alt;
 			}
-			if ( $shape == 'default' ) {
+			if ( $shape === 'default' ) {
 				$defaultLinkAttribs = $attribs;
 			} else {
-				if ( $mapHTML == null ) {
-					$mapHTML = $domFragment->ownerDocument->createElement( 'map' );
-				}
+				$mapHTML ??= $domFragment->ownerDocument->createElement( 'map' );
 				$area = $domFragment->ownerDocument->createElement( 'area' );
 				foreach ( $attribs as $key => $val ) {
 					$area->setAttribute( $key, $val );
@@ -307,7 +305,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 			throw new ExtensionError( 'imagemap_no_image' );
 		}
 
-		if ( $mapHTML != null ) {
+		if ( $mapHTML !== null ) {
 			// Construct the map
 
 			// Add a hash of the map HTML to avoid breaking cached HTML fragments that are

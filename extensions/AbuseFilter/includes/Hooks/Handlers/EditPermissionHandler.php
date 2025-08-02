@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
 use MediaWiki\Content\Hook\JsonValidateSaveHook;
 use MediaWiki\Content\JsonContent;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainStorage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;

@@ -8,7 +8,7 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  * description: "space"
  * category: "Token Elements"
  */
-class MMLmspace extends MMLbase {
+class MMLmspace extends MMLleaf {
 	public function __construct( string $texclass = "", array $attributes = [] ) {
 		parent::__construct( "mspace", $texclass, $attributes );
 	}

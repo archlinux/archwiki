@@ -23,7 +23,7 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 				{ type: 'retain', length: 5 },
 				{
 					type: 'replace',
-					remove: [ [ 'b', [ annHash( 'b' ) ] ], [ 'a', [ annHash( 'b' ) ] ], [ 'r', [ annHash( 'b' ) ] ] ],
+					remove: [ ...ve.dm.example.annotateText( 'bar', annHash( 'b' ) ) ],
 					insert: [ ...'bar' ]
 				},
 				{ type: 'retain', length: 7 }
@@ -54,7 +54,7 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 				{
 					type: 'replace',
 					remove: [ ...'bar' ],
-					insert: [ [ 'b', [ boldHash ] ], [ 'a', [ boldHash ] ], [ 'r', [ boldHash ] ] ]
+					insert: [ ...ve.dm.example.annotateText( 'bar', boldHash ) ]
 				},
 				{ type: 'retain', length: 7 }
 			]
@@ -115,11 +115,7 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 				{
 					type: 'replace',
 					remove: [ ...'bar' ],
-					insert: [
-						[ 'b', [ annHash( 'u' ), boldHash ] ],
-						[ 'a', [ annHash( 'u' ), boldHash ] ],
-						[ 'r', [ annHash( 'u' ), boldHash ] ]
-					]
+					insert: [ ...ve.dm.example.annotateText( 'bar', [ annHash( 'u' ), boldHash ] ) ]
 				},
 				{ type: 'retain', length: 6 }
 			]
@@ -133,16 +129,8 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 				{ type: 'retain', length: 5 },
 				{
 					type: 'replace',
-					remove: [
-						[ 'b', [ annHash( 'i' ), annHash( 'b' ) ] ],
-						[ 'a', [ annHash( 'i' ), annHash( 'b' ) ] ],
-						[ 'r', [ annHash( 'i' ), annHash( 'b' ) ] ]
-					],
-					insert: [
-						[ 'b', [ annHash( 'i' ) ] ],
-						[ 'a', [ annHash( 'i' ) ] ],
-						[ 'r', [ annHash( 'i' ) ] ]
-					]
+					remove: [ ...ve.dm.example.annotateText( 'bar', [ annHash( 'i' ), annHash( 'b' ) ] ) ],
+					insert: [ ...ve.dm.example.annotateText( 'bar', annHash( 'i' ) ) ]
 				},
 				{ type: 'retain', length: 7 }
 			]
@@ -171,16 +159,8 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 				{ type: 'retain', length: 5 },
 				{
 					type: 'replace',
-					remove: [
-						[ 'b', [ annHash( 'i' ) ] ],
-						[ 'a', [ annHash( 'i' ) ] ],
-						[ 'r', [ annHash( 'i' ) ] ]
-					],
-					insert: [
-						[ 'b', [ annHash( 'i' ), boldHash ] ],
-						[ 'a', [ annHash( 'i' ), boldHash ] ],
-						[ 'r', [ annHash( 'i' ), boldHash ] ]
-					]
+					remove: [ ...ve.dm.example.annotateText( 'bar', annHash( 'i' ) ) ],
+					insert: [ ...ve.dm.example.annotateText( 'bar', [ annHash( 'i' ), boldHash ] ) ]
 				},
 				{ type: 'retain', length: 7 }
 			]
@@ -240,16 +220,8 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 				{ type: 'retain', length: 5 },
 				{
 					type: 'replace',
-					remove: [
-						[ 'b', [ annHash( 'i' ) ] ],
-						[ 'a', [ annHash( 'i' ) ] ],
-						[ 'r', [ annHash( 'i' ) ] ]
-					],
-					insert: [
-						[ 'b', [ annHash( 'i' ), annHash( 'u' ), boldHash ] ],
-						[ 'a', [ annHash( 'i' ), annHash( 'u' ), boldHash ] ],
-						[ 'r', [ annHash( 'i' ), annHash( 'u' ), boldHash ] ]
-					]
+					remove: [ ...ve.dm.example.annotateText( 'bar', annHash( 'i' ) ) ],
+					insert: [ ...ve.dm.example.annotateText( 'bar', [ annHash( 'i' ), annHash( 'u' ), boldHash ] ) ]
 				},
 				{ type: 'retain', length: 6 }
 			]
@@ -267,7 +239,7 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 					// TODO: Reuse bold instead of creating a new bold?
 					// (Some annotation types may need specific rules as to
 					// when this can be done)
-					insert: [ [ 'b', [ boldHash ] ], [ 'a', [ boldHash ] ], [ 'z', [ boldHash ] ] ]
+					insert: [ ...ve.dm.example.annotateText( 'baz', boldHash ) ]
 				},
 				{ type: 'retain', length: 3 }
 			]
@@ -307,17 +279,13 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 					// then replaces the entire interior. In real life usage
 					// there won't usually be two separate changed regions.
 					remove: [
-						[ 'b', [ annHash( 'i' ) ] ],
-						[ 'a', [ annHash( 'i' ) ] ],
-						[ 'r', [ annHash( 'i' ) ] ],
+						...ve.dm.example.annotateText( 'bar', annHash( 'i' ) ),
 						...' baz'
 					],
 					// The first insertion get
 					insert: [
 						...'bar ',
-						[ 'b', [ annHash( 'b' ) ] ],
-						[ 'a', [ annHash( 'b' ) ] ],
-						[ 'z', [ annHash( 'b' ) ] ]
+						...ve.dm.example.annotateText( 'baz', annHash( 'b' ) )
 					]
 				},
 				{ type: 'retain', length: 3 }
@@ -366,10 +334,10 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 			$( '<div>' ).html( caseItem.oldInnerHtml )[ 0 ],
 			caseItem.msg + ' (oldInnerHtml)'
 		);
-		view.model.setSelection( new ve.dm.LinearSelection( new ve.Range( 1 ) ) );
+		view.model.setLinearSelection( new ve.Range( 1 ) );
 		const oldState = new ve.ce.RangeState( null, documentNode, false );
 		contentNode.$element.html( caseItem.newInnerHtml );
-		view.model.setSelection( new ve.dm.LinearSelection( new ve.Range( 1 ) ) );
+		view.model.setLinearSelection( new ve.Range( 1 ) );
 		const newState = new ve.ce.RangeState( oldState, documentNode, false );
 		const change = newState.textState.getChangeTransaction(
 			oldState.textState,
@@ -384,4 +352,16 @@ QUnit.test( 'getChangeTransaction', ( assert ) => {
 		);
 		view.destroy();
 	} );
+} );
+
+QUnit.test( 'getChunks', ( assert ) => {
+	const surface = ve.test.utils.createSurfaceFromHtml( '<p>foo<span rel="ve:Alien">bar</span>baz</p>' );
+	const p = surface.getView().$documentNode[ 0 ].firstChild;
+	const chunks = ve.ce.TextState.static.getChunks( p );
+	assert.deepEqual(
+		chunks.map( ( chunk ) => ( { elements: chunk.elements, text: chunk.text, type: chunk.type } ) ),
+		[ { elements: [], text: 'foo\u2603\u2603baz', type: 'text' } ],
+		'alien'
+	);
+	surface.destroy();
 } );

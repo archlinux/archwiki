@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Malafaya"
+		]
+	},
+	"checkuser-search": "Xerca",
+	"checkuser-search-submit": "Xerca",
+	"checkuser-investigateblock-warning-confirmaction": "Si tu es serta ce tu vole vera fa esta, marca la campo \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" a su, per favore."
+}

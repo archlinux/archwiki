@@ -7,11 +7,11 @@ use Exception;
 use InvalidArgumentException;
 use MediaWiki\Deferred\AtomicSectionUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWExceptionHandler;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -22,7 +22,6 @@ class NotificationMapper extends AbstractMapper {
 
 	/**
 	 * Insert a notification record
-	 * @param Notification $notification
 	 */
 	public function insert( Notification $notification ) {
 		$dbw = $this->dbFactory->getEchoDb( DB_PRIMARY );
@@ -195,7 +194,7 @@ class NotificationMapper extends AbstractMapper {
 		);
 	}
 
-	protected function getIdsForTitles( array $titles ) {
+	protected function getIdsForTitles( array $titles ): array {
 		$ids = [];
 		foreach ( $titles as $title ) {
 			if ( $title === null ) {

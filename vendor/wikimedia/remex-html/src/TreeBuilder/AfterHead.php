@@ -9,6 +9,7 @@ use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
  * The "after head" insertion mode
  */
 class AfterHead extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$dispatcher = $this->dispatcher;
@@ -31,6 +32,7 @@ class AfterHead extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;
@@ -81,6 +83,7 @@ class AfterHead extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$builder = $this->builder;
 		$dispatcher = $this->dispatcher;
@@ -104,6 +107,7 @@ class AfterHead extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$this->builder->insertElement( 'body', new PlainAttributes, false, $pos, 0 );
 		$this->dispatcher->switchMode( Dispatcher::IN_BODY )

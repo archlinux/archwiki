@@ -22,12 +22,13 @@ class MinervaPage extends Page {
 	 * Opens a page if it isn't already open.
 	 *
 	 * @param {string} path
+	 * @return {Promise<void>}
 	 */
-	open( path = 'Main_Page' ) {
+	async open( path = 'Main_Page' ) {
 		const currentPage = browser.getUrl(),
 			newPage = browser.options.baseUrl + '/index.php?title=' + path;
 		if ( currentPage !== newPage ) {
-			browser.url( newPage );
+			return super.openTitle( path );
 		}
 	}
 
@@ -41,7 +42,7 @@ class MinervaPage extends Page {
 	async setCookie( name, value ) {
 		const currentPage = await browser.getUrl();
 		if ( !currentPage.includes( await browser.options.baseUrl ) ) {
-			this.open();
+			await this.open();
 		}
 
 		const cookie = await browser.getCookies( [ name ] );
@@ -56,22 +57,15 @@ class MinervaPage extends Page {
 	/**
 	 * Set the mobile cookie
 	 */
-	setMobileMode() {
-		this.setCookie( 'mf_useformat', 'true' );
+	async setMobileMode() {
+		await this.setCookie( 'mf_useformat', 'true' );
 	}
 
 	/**
 	 * Set the beta cookie
 	 */
-	setBetaMode() {
-		this.setCookie( 'optin', 'beta' );
-	}
-
-	waitUntilResourceLoaderModuleReady( moduleName ) {
-		browser.waitUntil( () => {
-			const state = browser.execute( ( m ) => mw.loader.getState( m ), moduleName );
-			return state === 'ready';
-		} );
+	async setBetaMode() {
+		await this.setCookie( 'optin', 'beta' );
 	}
 }
 

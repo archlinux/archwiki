@@ -23,11 +23,11 @@ namespace MediaWiki\Watchlist;
 
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use MessageLocalizer;
-use RecentChange;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -235,10 +235,10 @@ class WatchedItem {
 		}
 
 		if ( $isDropdownOption ) {
-			return $msgLocalizer->msg( 'watchlist-expiry-days-left', [ $expiryInDays ] )->text();
+			return $msgLocalizer->msg( 'watchlist-expiry-days-left' )->numParams( $expiryInDays )->text();
 		}
 
-		return $msgLocalizer->msg( 'watchlist-expiring-days-full-text', [ $expiryInDays ] )->text();
+		return $msgLocalizer->msg( 'watchlist-expiring-days-full-text' )->numParams( $expiryInDays )->text();
 	}
 }
 /** @deprecated class alias since 1.43 */

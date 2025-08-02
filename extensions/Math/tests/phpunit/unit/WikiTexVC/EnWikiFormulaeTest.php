@@ -16,6 +16,8 @@ use MediaWikiUnitTestCase;
  * @group Stub
  */
 class EnWikiFormulaeTest extends MediaWikiUnitTestCase {
+	use MathServiceContainerTrait;
+
 	private const FILEPATH = __DIR__ . '/en-wiki-formulae-good.json';
 	private const REF_FILEPATH = __DIR__ . '/en-wiki-formulae-good-reference.json';
 	private const CHUNK_SIZE = 1000;
@@ -102,5 +104,10 @@ class EnWikiFormulaeTest extends MediaWikiUnitTestCase {
 				$this->assertTrue( false, $message );
 			}
 		}
+	}
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->setUpMathServiceContainer();
 	}
 }

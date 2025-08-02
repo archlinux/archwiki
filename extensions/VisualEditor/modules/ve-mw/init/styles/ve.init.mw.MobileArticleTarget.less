@@ -49,12 +49,13 @@
 	}
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
+/* stylelint-disable selector-class-pattern */
 .ve-init-mw-mobileArticleTarget.overlay {
 	// Override MobileFrontend `.overlay` styles.
 	// `padding-top` is instead set on a different element in adjustContentPadding().
 	padding-top: 0;
 }
+/* stylelint-enable selector-class-pattern */
 
 .ve-init-mw-mobileArticleTarget .ve-ui-overlay-local {
 	// Reset line height set by .content
@@ -71,12 +72,27 @@
 	position: fixed;
 }
 
+.ve-init-mw-mobileArticleTarget-toolbar.ve-ui-targetToolbar-mobile .oo-ui-toolbar-tools > {
+	.ve-ui-toolbar-group-back,
+	.ve-ui-toolbar-group-save {
+		flex: 0;
+		min-width: 2.75em;
+	}
+}
+
 @media screen and ( max-width: 767px ) {
 	.ve-init-mw-target-surface > .ve-ui-surface-placeholder > * {
 		/* Fix margin overlap */
 		margin-top: 0;
 		/* Placeholder doesn't need a border as well */
 		border: 0;
+	}
+}
+
+@media all and ( min-width: @min-width-breakpoint-desktop ) {
+	.ve-init-mw-target-surface {
+		// This should be in-sync with .overlay-header rule in MinervaNeue's overlay.less
+		max-width: calc( 993.3px + ( 2 * 1em ) );
 	}
 }
 

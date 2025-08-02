@@ -26,15 +26,17 @@ namespace MediaWiki\Specials;
 use Exception;
 use ImportReporter;
 use ImportStreamSource;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
-use PermissionsError;
 use UnexpectedValueException;
 use WikiImporterFactory;
+use Wikimedia\Rdbms\DBError;
+use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
  * MediaWiki page data importer
@@ -47,9 +49,6 @@ class SpecialImport extends SpecialPage {
 
 	private WikiImporterFactory $wikiImporterFactory;
 
-	/**
-	 * @param WikiImporterFactory $wikiImporterFactory
-	 */
 	public function __construct(
 		WikiImporterFactory $wikiImporterFactory
 	) {
@@ -87,23 +86,24 @@ class SpecialImport extends SpecialPage {
 		// Only show an error here if the user can't import using either method.
 		// If they can use at least one of the methods, allow access, and checks elsewhere
 		// will ensure that we only show the form(s) they can use.
+		$out = $this->getOutput();
 		if ( !$statusImport->isGood() && !$statusImportUpload->isGood() ) {
 			// Show separate messages for each check. There isn't a good way to merge them into a single
 			// message if the checks failed for different reasons.
-
-			$this->getOutput()->prepareErrorPage();
-			$this->getOutput()->setPageTitleMsg( $this->msg( 'permissionserrors' ) );
-			$this->getOutput()->addWikiTextAsInterface( Html::errorBox(
-				$this->getOutput()->formatPermissionStatus( $statusImport, 'import' )
+			$out->prepareErrorPage();
+			$out->setPageTitleMsg( $this->msg( 'permissionserrors' ) );
+			$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+			$out->addWikiTextAsInterface( Html::errorBox(
+				$out->formatPermissionStatus( $statusImport, 'import' )
 			) );
-			$this->getOutput()->addWikiTextAsInterface( Html::errorBox(
-				$this->getOutput()->formatPermissionStatus( $statusImportUpload, 'importupload' )
+			$out->addWikiTextAsInterface( Html::errorBox(
+				$out->formatPermissionStatus( $statusImportUpload, 'importupload' )
 			) );
 			return;
 		}
 
-		$this->getOutput()->addModules( 'mediawiki.misc-authed-ooui' );
-		$this->getOutput()->addModuleStyles( 'mediawiki.special.import.styles.ooui' );
+		$out->addModules( 'mediawiki.misc-authed-ooui' );
+		$out->addModuleStyles( 'mediawiki.special.import.styles.ooui' );
 
 		$this->checkReadOnly();
 
@@ -243,10 +243,14 @@ class SpecialImport extends SpecialPage {
 			$reporter->open();
 			try {
 				$importer->doImport();
+			} catch ( DBError | TimeoutException $e ) {
+				// Re-throw exceptions which are not safe to catch (T383933).
+				throw $e;
 			} catch ( Exception $e ) {
 				$exception = $e;
+			} finally {
+				$result = $reporter->close();
 			}
-			$result = $reporter->close();
 
 			if ( $exception ) {
 				# No source or XML parse error
@@ -272,7 +276,7 @@ class SpecialImport extends SpecialPage {
 		}
 	}
 
-	private function getMappingFormPart( $sourceName ) {
+	private function getMappingFormPart( string $sourceName ): array {
 		$defaultNamespace = $this->getConfig()->get( MainConfigNames::ImportTargetNamespace );
 		return [
 			'mapping' => [

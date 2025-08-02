@@ -23,16 +23,14 @@ namespace MediaWiki\Cache;
 
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
-use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Look up "gender" user preference.
  *
- * This primarily used in MediaWiki\Title\MediaWikiTitleCodec for title formatting
+ * This primarily used in MediaWiki\Title\TitleFormatter for title formatting
  * of pages in gendered namespace aliases, and in CoreParserFunctions for the
  * `{{gender:}}` parser function.
  *
@@ -53,17 +51,14 @@ class GenderCache {
 	protected $missLimit = 1000;
 
 	private NamespaceInfo $nsInfo;
-	private ?IConnectionProvider $dbProvider;
 	private UserOptionsLookup $userOptionsLookup;
 
 	public function __construct(
-		?NamespaceInfo $nsInfo = null,
-		?IConnectionProvider $dbProvider = null,
-		?UserOptionsLookup $userOptionsLookup = null
+		NamespaceInfo $nsInfo,
+		UserOptionsLookup $userOptionsLookup
 	) {
-		$this->nsInfo = $nsInfo ?? MediaWikiServices::getInstance()->getNamespaceInfo();
-		$this->dbProvider = $dbProvider;
-		$this->userOptionsLookup = $userOptionsLookup ?? MediaWikiServices::getInstance()->getUserOptionsLookup();
+		$this->nsInfo = $nsInfo;
+		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -146,40 +141,24 @@ class GenderCache {
 	 * @param string|null $caller Calling method for database profiling
 	 */
 	public function doQuery( $users, $caller = '' ) {
-		$default = $this->getDefault();
-
 		$usersToFetch = [];
-		foreach ( (array)$users as $value ) {
-			$name = self::normalizeUsername( $value );
-			if ( !isset( $this->cache[$name] ) ) {
-				// This may be overwritten below by a fetched value
-				$this->cache[$name] = $default;
-				// T267054: We don't need to fetch data for invalid usernames, but filtering breaks DI
-				$usersToFetch[] = $name;
+		foreach ( (array)$users as $userName ) {
+			$userName = self::normalizeUsername( $userName );
+			if ( !isset( $this->cache[$userName] ) ) {
+				$usersToFetch[] = $userName;
 			}
 		}
-
-		// Skip query when database is unavailable (e.g. via the installer)
-		if ( !$usersToFetch || !$this->dbProvider ) {
+		if ( !$usersToFetch ) {
 			return;
 		}
 
-		$caller = __METHOD__ . ( $caller ? "/$caller" : '' );
-
-		$res = $queryBuilder = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
-			->select( [ 'user_name', 'up_value' ] )
-			->from( 'user' )
-			->leftJoin( 'user_properties', null, [ 'user_id = up_user', 'up_property' => 'gender' ] )
-			->where( [ 'user_name' => $usersToFetch ] )
-			->caller( $caller )
-			->fetchResultSet();
-
-		foreach ( $res as $row ) {
-			$this->cache[$row->user_name] = $row->up_value ?: $default;
+		$genders = $this->userOptionsLookup->getOptionBatchForUserNames( $usersToFetch, 'gender' );
+		foreach ( $genders as $userName => $gender ) {
+			$this->cache[$userName] = $gender;
 		}
 	}
 
-	private static function normalizeUsername( $username ) {
+	private static function normalizeUsername( string $username ): string {
 		// Strip off subpages
 		$indexSlash = strpos( $username, '/' );
 		if ( $indexSlash !== false ) {

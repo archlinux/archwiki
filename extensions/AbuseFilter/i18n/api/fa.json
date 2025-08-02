@@ -60,5 +60,6 @@
 	"apierror-abusefilter-cantcheck": "شما اجازهٔ آزمایش نحوی پالایه‌های ویرایش را ندارید.",
 	"apierror-abusefilter-canteval": "شما مجاز به ارزیابی عبارت‌های پالایهٔ ویرایش نیستید.",
 	"apierror-abusefilter-nosuchlogid": "هیچ موردی در سیاههٔ ویرایش با شناسهٔ $1 وجود ندارد.",
+	"apierror-abusefilter-incompatible": "تغییر درخواست‌شده توسط پالایهٔ ویرایش پشتیبانی نمی‌شود.",
 	"apierror-abusefilter-badsyntax": "نحو پالایه غیرمجاز است"
 }

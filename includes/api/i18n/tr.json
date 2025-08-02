@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Andac",
 			"Anerka",
 			"BaRaN6161 TURK",
 			"Cobija",
@@ -20,8 +21,7 @@
 			"ToprakM",
 			"Uncitoyen",
 			"Uğurkent",
-			"İnternion",
-			"Andac"
+			"İnternion"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Belgelendirme]]\n* [[mw:Special:MyLanguage/API:Etiquette|Görgü kuralları ve kullanım kuralları]]\n* [[mw:Special:MyLanguage/API:FAQ|SSS]]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ Posta listesi]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ API Duyuruları]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Hatalar ve talepler]\n</div>\n<strong>Durum:</strong> MediaWiki API, aktif olarak desteklenen ve geliştirilen olgun ve kararlı bir arayüzdür. Bundan kaçınmaya çalışırken, zaman zaman kırılma değişiklikleri yapmamız gerekebilir; güncellemeleri bildirmek için [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ posta listesine] abone olun.\n\n<strong>Hatalı istekler:</strong> API'ya hatalı istekler gönderildiğinde, \"MediaWiki-API-Error\" anahtarını içeren bir HTTP başlığı gönderilir ve daha sonra hem başlığın değeri hem de geri gönderilen hata kodu olarak ayarlanır. aynı değer. Daha fazla bilgi için [[mw:Special:MyLanguage/API:Errors_and_warnings|API:Hatalar ve uyarılar]] sayfasına bakın.\n\n<p class=\"mw-apisandbox-link\"><strong>Deneme:</strong> API isteklerini test etme kolaylığı için, [[Special:ApiSandbox]] sayfasına bakın.</p>",
@@ -50,6 +50,7 @@
 	"apihelp-acquiretempusername-summary": "Geçici bir kullanıcı kullanıcı adı edinin ve geçici hesap oluşturma etkinleştirilmişse ve geçerli kullanıcı oturumdan çıkarılmışsa, geçerli oturumda saklayın. Bir ad zaten saklanmışsa, aynı adı döndürür.",
 	"apihelp-acquiretempusername-extended-description": "Eğer kullanıcı daha sonra geçici hesap oluşturmayla sonuçlanan bir eylem gerçekleştirirse, saklanan kullanıcı adı kendi hesapları için kullanılacaktır. Aynı şekilde, önizlemelerde de kullanılabilir. Ancak, hesap henüz oluşturulmamıştır ve isim henüz diğer kullanıcılar tarafından görülemez.",
 	"apihelp-block-summary": "Bir kullanıcıyı engelleyin.",
+	"apihelp-block-param-id": "Değiştirilecek blok kimliği.",
 	"apihelp-block-param-user": "Engellenecek kullanıcı.",
 	"apihelp-block-param-userid": "Bunun yerine <kbd>$1user=#<var>ID</var></kbd> belirtin.",
 	"apihelp-block-param-expiry": "Son kullanma tarihi. Göreli olabilir (ör. <kbd>5 veya <kbd>content</kbd></kbd> veya <kbd>2 weeks</kbd>) veya mutlak (ör. <kbd>2014-09-18T12:34:56Z</kbd>). <kbd>infinite</kbd>, <kbd>indefinite</kbd> veya <kbd>never</kbd> olarak ayarlanırsa, engel asla sona ermez.",
@@ -60,7 +61,8 @@
 	"apihelp-block-param-noemail": "Kullanıcının viki üzerinden e-posta göndermesini engelleyin. (<code>blockemail</code> hakkını gerektirir).",
 	"apihelp-block-param-hidename": "Kullanıcı adını blok günlüğünden gizleyin. (<code>hideuser</code> hakkını gerektirir).",
 	"apihelp-block-param-allowusertalk": "Kullanıcının kendi tarışma sayfasını düzenlemesine izin ver (<var>[[mw:Special:MyLanguage/Manual:$wgBlockAllowsUTEdit|$wgBlockAllowsUTEdit]]</var> üzerinde bağlı kalır).",
-	"apihelp-block-param-reblock": "Kullanıcı zaten engellenmişse, mevcut engelin üzerine yazın.",
+	"apihelp-block-param-reblock": "Kullanıcı zaten engellenmişse, mevcut engelin üzerine yazın. Eğer kullanıcı bir kereden fazla engellenmişse, bu başarısız olur. O durumda <var>id</var> parametresini kullanın.",
+	"apihelp-block-param-newblock": "Kullanıcı zaten engellenmişse bile başka bir engelleme ekleyin.",
 	"apihelp-block-param-watchuser": "Kullanıcının veya IP adresinin kullanıcı ve tartışma sayfalarını izleyin.",
 	"apihelp-block-param-watchlistexpiry": "İzleme listesi süresinin dolması zaman damgası. Geçerli bitiş tarihini değiştirmeden bırakmak için bu parametreyi tamamen atlayın.",
 	"apihelp-block-param-tags": "Engel günlüğündeki girişe uygulanacak etiketleri değiştirin.",
@@ -1678,7 +1680,6 @@
 	"apierror-compare-relative-to-deleted": "Silinmiş bir düzeltmeye göre <kbd>torelative=$1</kbd> kullanılamaz.",
 	"apierror-compare-relative-to-nothing": "<var>torelative</var> göreli olması için 'from' revizyonu yok.",
 	"apierror-contentserializationexception": "İçerik serileştirme başarısız oldu: $1",
-	"apierror-contenttoobig": "Sağladığınız içerik, $1 {{PLURAL:$1|kibibit}} ürün boyutu sınırını aşıyor.",
 	"apierror-contentmodel-mismatch": "Sağladığınız içerik, <kbd>$2</kbd> sayfasının mevcut içerik modelinden farklı olan <kbd>$1</kbd> içerik modeline sahip.",
 	"apierror-copyuploadbaddomain": "URL ile yüklemelere bu alan adından izin verilmiyor.",
 	"apierror-copyuploadbadurl": "Bu URL'den yüklemeye izin verilmiyor.",

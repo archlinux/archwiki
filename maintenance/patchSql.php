@@ -23,6 +23,7 @@
  */
 
 use MediaWiki\Installer\DatabaseUpdater;
+use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -39,10 +40,11 @@ class PatchSql extends Maintenance {
 		$this->addDescription( 'Run an SQL file into the DB, replacing prefix and charset vars' );
 		$this->addArg(
 			'patch-name',
-			'Name of the patch file, either full path or in maintenance/archives'
+			'Name of the patch file, either full path or in sql/$dbtype/'
 		);
 	}
 
+	/** @inheritDoc */
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}

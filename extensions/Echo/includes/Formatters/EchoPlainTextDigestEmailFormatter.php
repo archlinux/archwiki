@@ -14,6 +14,11 @@ class EchoPlainTextDigestEmailFormatter extends EchoEventDigestFormatter {
 	 */
 	protected $digestMode;
 
+	/**
+	 * @param User $user
+	 * @param Language $language
+	 * @param string $digestMode
+	 */
 	public function __construct( User $user, Language $language, $digestMode ) {
 		parent::__construct( $user, $language );
 		$this->digestMode = $digestMode;

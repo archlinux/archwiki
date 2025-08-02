@@ -11,7 +11,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.43",
+		"MediaWiki": ">= 1.44",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -55,9 +55,10 @@
 			"class": "MediaWiki\\Extension\\Thanks\\Api\\ApiCoreThank",
 			"services": [
 				"PermissionManager",
+				"ThanksLogStore",
+				"NotificationService",
 				"RevisionStore",
-				"UserFactory",
-				"ThanksLogStore"
+				"UserFactory"
 			]
 		}
 	},

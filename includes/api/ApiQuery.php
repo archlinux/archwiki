@@ -24,6 +24,7 @@ namespace MediaWiki\Api;
 
 use DumpStringOutput;
 use MediaWiki\Export\WikiExporterFactory;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
@@ -32,6 +33,7 @@ use MediaWiki\Title\TitleFormatter;
 use WikiExporter;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ScopedCallback;
 use XmlDumpWriter;
 
 /**
@@ -75,6 +77,7 @@ class ApiQuery extends ApiBase {
 				'ParserFactory',
 				'SlotRoleRegistry',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'LinkBatchFactory',
 				'ContentRenderer',
 				'ContentTransformer',
@@ -184,6 +187,7 @@ class ApiQuery extends ApiBase {
 				'ParserFactory',
 				'SlotRoleRegistry',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'ActorMigration',
 				'ContentRenderer',
 				'ContentTransformer',
@@ -234,6 +238,7 @@ class ApiQuery extends ApiBase {
 				'ParserFactory',
 				'SlotRoleRegistry',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'NamespaceInfo',
 				'ContentRenderer',
 				'ContentTransformer',
@@ -293,6 +298,7 @@ class ApiQuery extends ApiBase {
 				'SlotRoleRegistry',
 				'ActorMigration',
 				'NamespaceInfo',
+				'ChangeTagsStore',
 				'ContentRenderer',
 				'ContentTransformer',
 				'CommentFormatter',
@@ -336,6 +342,7 @@ class ApiQuery extends ApiBase {
 				'BlockRestrictionStore',
 				'CommentStore',
 				'HideUserUtils',
+				'CommentFormatter',
 			],
 		],
 		'categorymembers' => [
@@ -344,6 +351,9 @@ class ApiQuery extends ApiBase {
 				'CollationFactory',
 			]
 		],
+		'codexicons' => [
+			'class' => ApiQueryCodexIcons::class,
+		],
 		'deletedrevs' => [
 			'class' => ApiQueryDeletedrevs::class,
 			'services' => [
@@ -351,6 +361,7 @@ class ApiQuery extends ApiBase {
 				'RowCommentFormatter',
 				'RevisionStore',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'LinkBatchFactory',
 			],
 		],
@@ -391,6 +402,7 @@ class ApiQuery extends ApiBase {
 				'CommentStore',
 				'RowCommentFormatter',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'UserNameUtils',
 				'LogFormatterFactory',
 			],
@@ -423,6 +435,9 @@ class ApiQuery extends ApiBase {
 		],
 		'random' => [
 			'class' => ApiQueryRandom::class,
+			'services' => [
+				'ContentHandlerFactory'
+			]
 		],
 		'recentchanges' => [
 			'class' => ApiQueryRecentChanges::class,
@@ -430,6 +445,7 @@ class ApiQuery extends ApiBase {
 				'CommentStore',
 				'RowCommentFormatter',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'SlotRoleStore',
 				'SlotRoleRegistry',
 				'UserNameUtils',
@@ -459,6 +475,7 @@ class ApiQuery extends ApiBase {
 				'UserNameUtils',
 				'RevisionStore',
 				'ChangeTagDefStore',
+				'ChangeTagsStore',
 				'ActorMigration',
 				'CommentFormatter',
 			],
@@ -522,6 +539,7 @@ class ApiQuery extends ApiBase {
 			'services' => [
 				'UserOptionsLookup',
 				'UserGroupManager',
+				'HookContainer',
 				'LanguageConverterFactory',
 				'LanguageFactory',
 				'LanguageNameUtils',
@@ -535,7 +553,8 @@ class ApiQuery extends ApiBase {
 				'DBLoadBalancer',
 				'ReadOnlyMode',
 				'UrlUtils',
-				'TempUserConfig'
+				'TempUserConfig',
+				'GroupPermissionsLookup',
 			]
 		],
 		'userinfo' => [
@@ -673,6 +692,12 @@ class ApiQuery extends ApiBase {
 		$modules = $continuationManager->getRunModules();
 		'@phan-var ApiQueryBase[] $modules';
 
+		// Allow extensions to stop execution for arbitrary reasons.
+		$message = 'hookaborted';
+		if ( !$this->getHookRunner()->onApiQueryCheckCanExecute( $modules, $this->getUser(), $message ) ) {
+			$this->dieWithError( $message );
+		}
+
 		$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
 
 		if ( !$continuationManager->isGeneratorDone() ) {
@@ -682,8 +707,8 @@ class ApiQuery extends ApiBase {
 				// Augment api-query.$module.executeTiming metric with timings for requestExtraData()
 				$timer = $statsFactory->getTiming( 'api_query_extraDataTiming_seconds' )
 					->setLabel( 'module', $module->getModuleName() )
-					->copyToStatsdAt( 'api-query.' . $module->getModuleName() . '.extraDataTiming' );
-				$timer->start();
+					->copyToStatsdAt( 'api-query.' . $module->getModuleName() . '.extraDataTiming' )
+					->start();
 				$module->requestExtraData( $this->mPageSet );
 				$timer->stop();
 			}
@@ -702,13 +727,17 @@ class ApiQuery extends ApiBase {
 			// Break down of the api.query.executeTiming metric by query module.
 			$timer = $statsFactory->getTiming( 'api_query_executeTiming_seconds' )
 				->setLabel( 'module', $module->getModuleName() )
-				->copyToStatsdAt( 'api-query.' . $module->getModuleName() . '.executeTiming' );
-			$timer->start();
+				->copyToStatsdAt( 'api-query.' . $module->getModuleName() . '.executeTiming' )
+				->start();
 
 			$params = $module->extractRequestParams();
 			$cacheMode = $this->mergeCacheMode(
 				$cacheMode, $module->getCacheMode( $params ) );
+			$scope = LoggerFactory::getContext()->addScoped( [
+				'context.api_query_module_name' => $module->getModuleName(),
+			] );
 			$module->execute();
+			ScopedCallback::consume( $scope );
 
 			$timer->stop();
 

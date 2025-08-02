@@ -5,11 +5,7 @@
 		let popup;
 
 		$( '.scribunto-error' ).each( ( index, span ) => {
-			let matches = regex.exec( span.className );
-			if ( matches === null ) {
-				// T375539: backward-compatibility with old cached HTML
-				matches = regex.exec( span.id );
-			}
+			const matches = regex.exec( span.className );
 			if ( matches === null ) {
 				mw.log( 'mw.scribunto.errors: regex mismatch!' );
 				return;

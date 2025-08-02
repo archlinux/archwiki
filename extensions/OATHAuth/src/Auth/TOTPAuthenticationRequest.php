@@ -30,6 +30,7 @@ class TOTPAuthenticationRequest extends AuthenticationRequest {
 	/** @var string */
 	public $OATHToken;
 
+	/** @inheritDoc */
 	public function describeCredentials() {
 		return [
 			'provider' => wfMessage( 'oathauth-describe-provider' ),

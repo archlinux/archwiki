@@ -13,7 +13,6 @@ use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\WTSUtils;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwError;
-use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -625,9 +624,9 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$thumbtime = WTSUtils::getAttrFromDataMw( $dataMw, 'thumbtime', true );
 			$starttime = WTSUtils::getAttrFromDataMw( $dataMw, 'starttime', true );
 			if ( $thumbtime || $starttime ) {
-				$seek = isset( $thumbtime->value )
+				$seek = $thumbtime && $thumbtime->value !== null
 					? $thumbtime->value['txt']
-					: ( isset( $starttime->value ) ? $starttime->value['txt'] : '' );
+					: ( $starttime && $starttime->value !== null ? $starttime->value['txt'] : '' );
 				$seek = self::parseTimeString( $seek );
 				if ( $seek !== null ) {
 					$dims['seek'] = $seek;
@@ -678,7 +677,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
-		$start = microtime( true );
+		$start = hrtime( true );
 
 		$infos = $env->getDataAccess()->getFileInfo(
 			$env->getPageConfig(),
@@ -687,7 +686,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 
 		if ( $env->profiling() ) {
 			$profile = $env->getCurrentProfile();
-			$profile->bumpMWTime( "Media", 1000 * ( microtime( true ) - $start ), "api" );
+			$profile->bumpMWTime( "Media", hrtime( true ) - $start, "api" );
 			$profile->bumpCount( "Media" );
 		}
 
@@ -742,9 +741,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				$captionText = null;
 			} else {
 				if ( WTUtils::isInlineMedia( $container ) ) {
-					$caption = ContentUtils::createAndLoadDocumentFragment(
-						$container->ownerDocument, $dataMw->caption ?? ''
-					);
+					$caption = $dataMw->caption ?? $container->ownerDocument->createDocumentFragment();
 				} else {
 					$caption = DOMCompat::querySelector( $container, 'figcaption' );
 					// If the caption had tokens, it was placed in a DOMFragment

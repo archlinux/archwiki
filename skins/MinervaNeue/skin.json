@@ -22,9 +22,16 @@
 	"url": "https://www.mediawiki.org/wiki/Skin:MinervaNeue",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"config": {
+		"MinervaDonateBanner": {
+			"value": {
+				"base": false,
+				"loggedin": false,
+				"amc": false
+			}
+		},
 		"MinervaDonateLink": {
 			"value": {
 				"base": false
@@ -95,8 +102,8 @@
 		},
 		"MinervaNightMode": {
 			"value": {
-				"base": false,
-				"loggedin": false,
+				"base": true,
+				"loggedin": true,
 				"amc": true
 			}
 		},
@@ -141,13 +148,11 @@
 						"skins.minerva.scripts"
 					],
 					"styles": [
-						"skins.minerva.base.styles",
+						"skins.minerva.styles",
 						"skins.minerva.content.styles.images",
 						"mediawiki.hlist",
 						"skins.minerva.codex.styles",
-						"skins.minerva.icons.wikimedia",
-						"skins.minerva.mainMenu.icons",
-						"skins.minerva.mainMenu.styles"
+						"skins.minerva.icons"
 					],
 					"messages": [
 						"variants",
@@ -158,7 +163,11 @@
 						"searchbutton",
 						"minerva-user-navigation",
 						"mobile-frontend-main-menu-button-tooltip",
-						"mobile-frontend-footer-sitename"
+						"skin-minerva-donate-banner-message",
+						"skin-minerva-donate-banner-subtitle",
+						"skin-minerva-donate-banner-url",
+						"skin-minerva-donate-banner-gif",
+						"skin-minerva-donate-banner-reduced-motion"
 					],
 					"menus": [
 						"notifications",
@@ -229,9 +238,6 @@
 	},
 	"ResourceModuleSkinStyles": {
 		"minerva": {
-			"ext.visualEditor.core.mobile": [
-				"skinStyles/ext.visualEditor.core.mobile.less"
-			],
 			"ext.echo.styles.badge": [
 				"skinStyles/ext.echo.styles.badge.less"
 			],
@@ -323,19 +329,21 @@
 		}
 	},
 	"ResourceModules": {
-		"skins.minerva.base.styles": {
+		"skins.minerva.styles": {
 			"class": "MediaWiki\\ResourceLoader\\SkinModule",
 			"features": [
 				"normalize",
 				"accessibility",
 				"i18n-ordered-lists",
+				"content-media-dark",
 				"content-body",
 				"content-tables",
 				"interface-core"
 			],
 			"styles": [
-				"resources/skins.minerva.base.styles/CSSCustomProperties.less",
-				"resources/skins.minerva.base.styles/skin.less"
+				"resources/skins.minerva.styles/CSSCustomProperties.less",
+				"resources/skins.minerva.styles/skin.less",
+				"resources/skins.minerva.styles/index.less"
 			]
 		},
 		"skins.minerva.content.styles.images": {
@@ -396,8 +404,8 @@
 				"userGroup"
 			]
 		},
-		"skins.minerva.icons.wikimedia": {
-			"selectorWithoutVariant": ".minerva-icon--{name}-base20, .minerva-icon--{name}-disabled, .minerva-icon--{name}",
+		"skins.minerva.icons": {
+			"selectorWithoutVariant": ".minerva-icon--{name}",
 			"useDataURI": false,
 			"defaultColor": "#54595d",
 			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
@@ -415,7 +423,17 @@
 				"userTalk",
 				"star",
 				"halfStar",
-				"unStar"
+				"unStar",
+				"die",
+				"heart",
+				"home",
+				"logIn",
+				"logOut",
+				"mapPin",
+				"settings",
+				"userContributions",
+				"unStar",
+				"watchlist"
 			]
 		},
 		"skins.minerva.mainPage.styles": {
@@ -452,31 +470,6 @@
 			"variants": [],
 			"useDataURI": false
 		},
-		"skins.minerva.mainMenu.icons": {
-			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
-			"variants": [],
-			"useMaskImage": true,
-			"selectorWithoutVariant": ".minerva-icon--{name}",
-			"defaultColor": "#54595d",
-			"useDataURI": false,
-			"icons": [
-				"die",
-				"heart",
-				"home",
-				"logIn",
-				"logOut",
-				"mapPin",
-				"settings",
-				"userContributions",
-				"unStar",
-				"watchlist"
-			]
-		},
-		"skins.minerva.mainMenu.styles": {
-			"styles": [
-				"resources/skins.minerva.mainMenu.styles/index.less"
-			]
-		},
 		"skins.minerva.loggedin.styles": {
 			"styles": [
 				"resources/skins.minerva.loggedin.styles/styles.less"
@@ -486,14 +479,12 @@
 			"localBasePath": "resources/skins.minerva.scripts",
 			"remoteSkinPath": "MinervaNeue/resources/skins.minerva.scripts",
 			"dependencies": [
-				"skins.minerva.mainMenu.icons",
-				"skins.minerva.mainMenu.styles",
+				"skins.minerva.icons",
+				"skins.minerva.styles",
 				"mediawiki.cookie",
-				"skins.minerva.messageBox.styles",
 				"mediawiki.util",
 				"mediawiki.router",
 				"mediawiki.Title",
-				"mediawiki.Uri",
 				"mobile.startup",
 				"mediawiki.user",
 				"mediawiki.storage",
@@ -560,13 +551,6 @@
 				"watchstar.js"
 			]
 		},
-		"skins.minerva.messageBox.styles": {
-			"class": "MediaWiki\\ResourceLoader\\CodexModule",
-			"codexStyleOnly": true,
-			"codexComponents": [
-				"CdxMessage"
-			]
-		},
 		"skins.minerva.categories.styles": {
 			"class": "MediaWiki\\ResourceLoader\\SkinModule",
 			"features": [
@@ -577,8 +561,7 @@
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"codexStyleOnly": true,
 			"codexComponents": [
-				"CdxButton",
-				"CdxMessage"
+				"CdxButton"
 			]
 		}
 	},
@@ -587,12 +570,10 @@
 		"remoteSkinPath": "MinervaNeue/tests/qunit/skins.minerva.scripts",
 		"dependencies": [
 			"mediawiki.cookie",
-			"skins.minerva.messageBox.styles",
 			"skins.minerva.scripts",
 			"mobile.startup",
 			"mediawiki.user",
-			"mediawiki.experiments",
-			"mediawiki.Uri"
+			"mediawiki.experiments"
 		],
 		"scripts": [
 			"integration.test.js",

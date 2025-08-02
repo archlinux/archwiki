@@ -32,7 +32,7 @@ use Psr\Log\LoggerInterface;
 
 class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 	private BlockPermissionCheckerFactory $blockPermissionCheckerFactory;
-	private BlockUtils $blockUtils;
+	private BlockTargetFactory $blockTargetFactory;
 	private HookContainer $hookContainer;
 	private BlockRestrictionStore $blockRestrictionStore;
 	private ServiceOptions $options;
@@ -52,7 +52,7 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 		ServiceOptions $options,
 		HookContainer $hookContainer,
 		BlockPermissionCheckerFactory $blockPermissionCheckerFactory,
-		BlockUtils $blockUtils,
+		BlockTargetFactory $blockTargetFactory,
 		DatabaseBlockStore $blockStore,
 		BlockRestrictionStore $blockRestrictionStore,
 		UserFactory $userFactory,
@@ -66,7 +66,7 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 		$this->options = $options;
 		$this->hookContainer = $hookContainer;
 		$this->blockPermissionCheckerFactory = $blockPermissionCheckerFactory;
-		$this->blockUtils = $blockUtils;
+		$this->blockTargetFactory = $blockTargetFactory;
 		$this->blockStore = $blockStore;
 		$this->blockRestrictionStore = $blockRestrictionStore;
 		$this->userFactory = $userFactory;
@@ -79,7 +79,7 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 	/**
 	 * Create BlockUser
 	 *
-	 * @param string|UserIdentity $target Target of the block
+	 * @param BlockTarget|string|UserIdentity $target Target of the block
 	 * @param Authority $performer Performer of the block
 	 * @param string $expiry Expiry of the block (timestamp or 'infinity')
 	 * @param string $reason Reason of the block
@@ -102,7 +102,7 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 			$this->options,
 			$this->blockRestrictionStore,
 			$this->blockPermissionCheckerFactory,
-			$this->blockUtils,
+			$this->blockTargetFactory,
 			$this->blockActionInfo,
 			$this->hookContainer,
 			$this->blockStore,
@@ -110,6 +110,7 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 			$this->userEditTracker,
 			$this->logger,
 			$this->titleFactory,
+			null,
 			$target,
 			$performer,
 			$expiry,
@@ -121,7 +122,57 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 	}
 
 	/**
-	 * @param UserIdentity|string $target
+	 * Create a BlockUser which updates a specified block
+	 *
+	 * @since 1.44
+	 *
+	 * @param DatabaseBlock $block
+	 * @param Authority $performer Performer of the block
+	 * @param string $expiry New expiry of the block (timestamp or 'infinity')
+	 * @param string $reason Reason of the block
+	 * @param array $blockOptions
+	 * @param array $blockRestrictions
+	 * @param array|null $tags Tags that should be assigned to the log entry
+	 * @return BlockUser
+	 */
+	public function newUpdateBlock(
+		DatabaseBlock $block,
+		Authority $performer,
+		string $expiry,
+		string $reason = '',
+		array $blockOptions = [],
+		array $blockRestrictions = [],
+		$tags = []
+	): BlockUser {
+		return new BlockUser(
+			$this->options,
+			$this->blockRestrictionStore,
+			$this->blockPermissionCheckerFactory,
+			$this->blockTargetFactory,
+			$this->blockActionInfo,
+			$this->hookContainer,
+			$this->blockStore,
+			$this->userFactory,
+			$this->userEditTracker,
+			$this->logger,
+			$this->titleFactory,
+			$block,
+			null,
+			$performer,
+			$expiry,
+			$reason,
+			$blockOptions,
+			$blockRestrictions,
+			$tags ?? []
+		);
+	}
+
+	/**
+	 * Creates UnblockUser
+	 *
+	 * @since 1.44
+	 *
+	 * @param BlockTarget|UserIdentity|string $target
 	 * @param Authority $performer
 	 * @param string $reason
 	 * @param string[] $tags
@@ -137,10 +188,41 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 		return new UnblockUser(
 			$this->blockPermissionCheckerFactory,
 			$this->blockStore,
-			$this->blockUtils,
+			$this->blockTargetFactory,
 			$this->userFactory,
 			$this->hookContainer,
+			null,
 			$target,
+			$performer,
+			$reason,
+			$tags
+		);
+	}
+
+	/**
+	 * Creates UnblockUser to remove a specific block
+	 *
+	 * @param DatabaseBlock $block
+	 * @param Authority $performer
+	 * @param string $reason
+	 * @param array $tags
+	 *
+	 * @return UnblockUser
+	 */
+	public function newRemoveBlock(
+		DatabaseBlock $block,
+		Authority $performer,
+		string $reason,
+		array $tags = []
+	): UnblockUser {
+		return new UnblockUser(
+			$this->blockPermissionCheckerFactory,
+			$this->blockStore,
+			$this->blockTargetFactory,
+			$this->userFactory,
+			$this->hookContainer,
+			$block,
+			null,
 			$performer,
 			$reason,
 			$tags

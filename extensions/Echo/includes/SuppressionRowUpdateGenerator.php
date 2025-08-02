@@ -15,7 +15,7 @@ class SuppressionRowUpdateGenerator implements RowUpdateGenerator {
 	/**
 	 * @var callable Hack to allow replacing Title::makeTitleSafe in tests
 	 */
-	protected $newTitleFromNsAndText = [ 'Title', 'makeTitleSafe' ];
+	protected $newTitleFromNsAndText = [ '\MediaWiki\Title\Title', 'makeTitleSafe' ];
 
 	/**
 	 * @inheritDoc
@@ -46,7 +46,7 @@ class SuppressionRowUpdateGenerator implements RowUpdateGenerator {
 	 * @return Title|null The title located for the namespace + text, or null if invalid
 	 */
 	protected function newTitleFromNsAndText( $namespace, $text ) {
-		return call_user_func( $this->newTitleFromNsAndText, $namespace, $text );
+		return ( $this->newTitleFromNsAndText )( $namespace, $text );
 	}
 
 	/**

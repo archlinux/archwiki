@@ -28,6 +28,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -98,7 +99,6 @@ class DumpRenderer extends Maintenance {
 
 	/**
 	 * Callback function for each revision, turn into HTML and save
-	 * @param WikiRevision $rev
 	 */
 	public function handleRevision( WikiRevision $rev ) {
 		$title = $rev->getTitle();

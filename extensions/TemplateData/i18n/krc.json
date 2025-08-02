@@ -32,7 +32,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Хайырланыучу",
 	"templatedata-doc-params": "Шаблонну параметрлери",
 	"templatedata-editbutton": "Шаблонну билгисин тюзет",
-	"templatedata-errormsg-jsonbadformat": "Бузукъ JSON формат. Бу ишлеуню тохтатыб, тюзетир ючюн, баргъан <templatedata> теглени кетериб джангыдан сынаргъа неда баргъан шаблон билгини джангысы бла алмашдырыуну андан ары бардырыргъа боллукъсуз.",
+	"templatedata-errormsg-jsonbadformat": "Бузукъ JSON формат. Бу ишлеуню тохтатыб, тюзетирге неда къоратыргъа боллукъсуз неда баргъан шаблон билгини джангысы бла алмашдырыуну андан ары бардырыргъа боллукъсуз.",
 	"templatedata-helplink": "Шаблон билгини юсюнден информация",
 	"templatedata-invalid-duplicate-value": "«$1» («$3») шарт, «$2» шарты дубликатыды.",
 	"templatedata-invalid-empty-array": "«$1» шартны кесини массивинде эм аздан бир магъанасы болургъа керекди.",

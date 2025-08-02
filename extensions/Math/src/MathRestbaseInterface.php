@@ -134,6 +134,7 @@ class MathRestbaseInterface {
 		}
 	}
 
+	/** @return bool */
 	public function checkTeX() {
 		$request = $this->getCheckRequest();
 		$requestResult = $this->executeRestbaseCheckRequest( $request );

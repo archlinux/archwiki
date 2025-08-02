@@ -38,6 +38,7 @@
 	"echo-pref-tooltip-mention": "என் பயனர் பக்கத்துக்கு யாராவது இணைப்புகள் இட்டால் எனக்குத் தெரிவிக்கவும்.",
 	"notifications": "அறிவிப்புகள்",
 	"tooltip-pt-notifications-alert": "உமக்கான அறிவிப்புகள்",
+	"tooltip-pt-notifications": "உங்கள் அறிவிப்புகள்",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "புதிய பயனர்கள்",
 	"echo-specialpage": "அறிவிப்புகள்",
 	"echo-specialpage-pagefilters-title": "அண்மையச் செயல்கள்",

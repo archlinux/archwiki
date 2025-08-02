@@ -204,10 +204,12 @@ class Less_SourceMap_Generator extends Less_Configurable {
 			'generated_column' => $generatedColumn,
 			'original_line' => $originalLine,
 			'original_column' => $originalColumn,
-			'source_file' => $fileInfo['currentUri']
+			'source_file' => $fileInfo['currentUri'] ?? null
 		];
 
-		$this->sources[$fileInfo['currentUri']] = $fileInfo['filename'];
+		if ( isset( $fileInfo['currentUri'] ) ) {
+			$this->sources[$fileInfo['currentUri']] = $fileInfo['filename'];
+		}
 	}
 
 	/**

@@ -5,11 +5,11 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
+use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
+use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\TokenUtils;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 
 /**
  * OnlyInclude sadly forces synchronous template processing, as it needs to
@@ -28,66 +28,25 @@ class OnlyInclude extends TokenHandler {
 	private $foundOnlyInclude = false;
 
 	/**
-	 * @param TokenTransformManager $manager manager environment
-	 * @param array $options options
-	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
-		parent::__construct( $manager, $options );
-		if ( empty( $this->options['isInclude'] ) ) {
-			$this->accum = [];
-			$this->inOnlyInclude = false;
-			$this->foundOnlyInclude = false;
-		}
-	}
-
-	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
-		return !empty( $this->options['isInclude'] ) ? $this->onAnyInclude( $token ) : null;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
-		return empty( $this->options['isInclude'] ) && $token->getName() === 'onlyinclude' ?
-			$this->onOnlyInclude( $token ) : null;
-	}
-
-	private function onOnlyInclude( Token $token ): TokenHandlerResult {
-		$tsr = $token->dataParsoid->tsr;
-		$src = !$this->options['inTemplate']
-			? $token->getWTSource( $this->manager->getFrame() )
-			: null;
-		$attribs = [
-			new KV( 'typeof', 'mw:Includes/OnlyInclude' .
-				( ( $token instanceof EndTagTk ) ? '/End' : '' ) )
-		];
-		$dp = new DataParsoid;
-		$dp->tsr = $tsr;
-		$dp->src = $src;
-		$meta = new SelfclosingTagTk( 'meta', $attribs, $dp );
-		return new TokenHandlerResult( [ $meta ] );
+	public function onAny( $token ): ?array {
+		return !empty( $this->options['inTemplate'] ) ?
+			$this->onAnyInclude( $token ) : null;
 	}
 
 	/**
 	 * @param Token|array $token
-	 * @return TokenHandlerResult|null
+	 * @return ?array<string|Token>
 	 */
-	private function onAnyInclude( $token ): ?TokenHandlerResult {
-		$tagName = null;
-		$isTag = null;
-		$meta = null;
-
-		$tc = TokenUtils::getTokenType( $token );
-		if ( $tc === 'EOFTk' ) {
+	private function onAnyInclude( $token ): ?array {
+		if ( $token instanceof EOFTk ) {
 			$this->inOnlyInclude = false;
 			if ( count( $this->accum ) && !$this->foundOnlyInclude ) {
 				$res = $this->accum;
 				$res[] = $token;
 				$this->accum = [];
-				return new TokenHandlerResult( $res );
+				return $res;
 			} else {
 				$this->foundOnlyInclude = false;
 				$this->accum = [];
@@ -95,40 +54,43 @@ class OnlyInclude extends TokenHandler {
 			}
 		}
 
-		$isTag = $tc === 'TagTk' || $tc === 'EndTagTk' || $tc === 'SelfclosingTagTk';
-		if ( $isTag ) {
-			switch ( $token->getName() ) {
-				case 'onlyinclude':
-					$tagName = 'mw:Includes/OnlyInclude';
-					break;
-				case 'includeonly':
-					$tagName = 'mw:Includes/IncludeOnly';
-					break;
-				case 'noinclude':
-					$tagName = 'mw:Includes/NoInclude';
-					break;
-			}
-		}
+		$isTag = $token instanceof TagTk ||
+			$token instanceof EndTagTk ||
+			$token instanceof SelfclosingTagTk;
 
 		if ( $isTag && $token->getName() === 'onlyinclude' ) {
+			// FIXME: This doesn't seem to consider self-closing tags
+			// or close really
 			if ( !$this->inOnlyInclude ) {
 				$this->foundOnlyInclude = true;
 				$this->inOnlyInclude = true;
-				// wrap collected tokens into meta tag for round-tripping
-				$meta = TokenCollector::buildMetaToken( $this->manager, $tagName,
-					$tc === 'EndTagTk', $token->dataParsoid->tsr ?? null, '' );
 			} else {
 				$this->inOnlyInclude = false;
-				$meta = TokenCollector::buildMetaToken( $this->manager, $tagName,
-					$tc === 'EndTagTk', $token->dataParsoid->tsr ?? null, '' );
 			}
-			return new TokenHandlerResult( [ $meta ] );
+
+			$tagName = 'mw:Includes/OnlyInclude';
+			if ( $token instanceof EndTagTk ) {
+				$tagName .= '/End';
+			}
+
+			$dp = new DataParsoid;
+			$dp->tsr = $token->dataParsoid->tsr;
+			$dp->src = $dp->tsr->substr(
+				$this->manager->getFrame()->getSrcText()
+			);
+
+			// FIXME: Just drop these, we're inTemplate
+			$meta = new SelfclosingTagTk(
+				'meta', [ new KV( 'typeof', $tagName ) ], $dp
+			);
+
+			return [ $meta ];
 		} else {
 			if ( $this->inOnlyInclude ) {
 				return null;
 			} else {
 				$this->accum[] = $token;
-				return new TokenHandlerResult( [] );
+				return [];
 			}
 		}
 	}

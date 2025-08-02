@@ -18,9 +18,12 @@
  * @file
  */
 
+namespace MediaWiki\JobQueue;
+
 use MediaWiki\Http\Telemetry;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
+use UnexpectedValueException;
 
 /**
  * Job queue task description base code.
@@ -55,6 +58,8 @@ class JobSpecification implements IJobSpecification {
 	/**
 	 * @param string $type
 	 * @param array $params Map of key/values
+	 *   'requestId' - The request ID, as obtained from {@link Telemetry::getRequestId}. If not set,
+	 *   the value will be populated from the current instance of {@link Telemetry}.
 	 * @param array $opts Map of key/values
 	 *   'removeDuplicates' key - whether to remove duplicate jobs
 	 *   'removeDuplicatesIgnoreParams' key - array with parameters to ignore for deduplication
@@ -88,9 +93,6 @@ class JobSpecification implements IJobSpecification {
 		$this->opts = $opts;
 	}
 
-	/**
-	 * @param array $params
-	 */
 	protected function validateParams( array $params ) {
 		foreach ( $params as $p => $v ) {
 			if ( is_array( $v ) ) {
@@ -190,3 +192,6 @@ class JobSpecification implements IJobSpecification {
 		);
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( JobSpecification::class, 'JobSpecification' );

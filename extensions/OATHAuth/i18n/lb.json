@@ -82,5 +82,6 @@
 	"oathauth-verify-disabled": "{{GENDER:$1|De(n) $1|D'$1}} huet d'Zwee-Faktor-Authentifizéierung net aktivéiert.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Desaktivéierte Grupp|Desaktivéiert Gruppen}}",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Är Memberschaft}} an {{PLURAL:$1|dëser Grupp|dëse Gruppe}} gouf desaktivéiert, bis Dir d'[[Special:Manage Two-factor authentication|Zwee-Faktor-Authentifizéierung]] aktivéiert.",
-	"oathauth-qrcode-alt": "QR-Code fir ze scannen, deen de geheime Schlëssel representéiert."
+	"oathauth-qrcode-alt": "QR-Code fir ze scannen, deen de geheime Schlëssel representéiert.",
+	"oathauth-must-be-central": "{{GENDER:$1|Äre Kont}} muss mam zentralen Authentifizéierungssystem verbonne si fir d'Zwee-Faktor-Authentifizéierung benotzen ze kënnen."
 }

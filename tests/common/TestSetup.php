@@ -2,7 +2,9 @@
 
 use MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider;
 use MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider;
+use MediaWiki\JobQueue\JobQueueMemory;
 use MediaWiki\Logger\LegacySpi;
+use MediaWiki\Maintenance\MaintenanceFatalError;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Session\CookieSessionProvider;
@@ -50,6 +52,8 @@ class TestSetup {
 		global $wgShowExceptionDetails, $wgShowHostnames;
 		global $wgDBStrictWarnings, $wgUsePigLatinVariant;
 		global $wgOpenTelemetryConfig;
+		global $wgVirtualDomainsMapping;
+		global $wgAutoCreateTempUser;
 
 		$wgShowExceptionDetails = true;
 		$wgShowHostnames = true;
@@ -155,6 +159,12 @@ class TestSetup {
 		// Disable tracing in tests.
 		$wgOpenTelemetryConfig = null;
 
+		// Ensure code using virtual domains uses the local database for integration tests,
+		// since most test code isn't aware of virtual domains (T384238).
+		$wgVirtualDomainsMapping = [];
+
+		$wgAutoCreateTempUser['enabled'] = true;
+
 		// xdebug's default of 100 is too low for MediaWiki
 		ini_set( 'xdebug.max_nesting_level', 1000 );
 
@@ -215,9 +225,13 @@ class TestSetup {
 	 */
 	public static function maybeCheckComposerLockUpToDate(): void {
 		if ( !getenv( 'MW_SKIP_EXTERNAL_DEPENDENCIES' ) ) {
-			$composerLockUpToDate = new CheckComposerLockUpToDate();
-			$composerLockUpToDate->loadParamsAndArgs( 'phpunit', [ 'quiet' => true ] );
-			$composerLockUpToDate->execute();
+			try {
+				$composerLockUpToDate = new CheckComposerLockUpToDate();
+				$composerLockUpToDate->loadParamsAndArgs( 'phpunit', [ 'quiet' => true ] );
+				$composerLockUpToDate->execute();
+			} catch ( MaintenanceFatalError $e ) {
+				exit( $e->getCode() );
+			}
 		}
 	}
 
@@ -238,7 +252,7 @@ class TestSetup {
 		ini_set( 'memory_limit', '-1' );
 		ini_set( 'max_execution_time', '0' );
 
-		if ( isset( $wgDBadminuser ) ) {
+		if ( $wgDBadminuser !== null ) {
 			$wgDBuser = $wgDBadminuser;
 			$wgDBpassword = $wgDBadminpassword;
 

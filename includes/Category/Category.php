@@ -24,6 +24,7 @@
 namespace MediaWiki\Category;
 
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
@@ -33,6 +34,7 @@ use RuntimeException;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Category objects are immutable, strictly speaking. If you call methods that change the database,
@@ -77,11 +79,16 @@ class Category {
 	/** @var TitleFactory */
 	private $titleFactory;
 
+	private int $migrationStage;
+
 	private function __construct() {
 		$services = MediaWikiServices::getInstance();
 		$this->dbProvider = $services->getConnectionProvider();
 		$this->readOnlyMode = $services->getReadOnlyMode();
 		$this->titleFactory = $services->getTitleFactory();
+		$this->migrationStage = $services->getMainConfig()->get(
+			MainConfigNames::CategoryLinksSchemaMigrationStage
+		);
 	}
 
 	/**
@@ -135,13 +142,23 @@ class Category {
 		$this->mSubcats = (int)$row->cat_subcats;
 		$this->mFiles = (int)$row->cat_files;
 
-		# (T15683) If the count is negative, then 1) it's obviously wrong
-		# and should not be kept, and 2) we *probably* don't have to scan many
-		# rows to obtain the correct figure, so let's risk a one-time recount.
-		if ( $this->mPages < 0 || $this->mSubcats < 0 || $this->mFiles < 0 ) {
-			$this->mPages = max( $this->mPages, 0 );
+		# (T15683, T373773) If any of the per-link-type counts are negative
+		# (which may also make the total negative), then 1) the counts are
+		# obviously wrong and should not be kept, and 2) we *probably* don't
+		# have to scan many rows to obtain the correct figure, so let's risk
+		# a one-time recount.
+		if ( $this->mSubcats < 0 || $this->mFiles < 0
+			|| $this->mPages - $this->mSubcats - $this->mFiles < 0
+		) {
+			# Adjust any per-link-type counts that are negative, so callers
+			# of the getter methods will not see negative numbers. Adjust the
+			# total last; increasing a negative number other than the total
+			# to zero could cause the number of regular pages to go negative.
 			$this->mSubcats = max( $this->mSubcats, 0 );
 			$this->mFiles = max( $this->mFiles, 0 );
+			# For the number of regular pages to not be negative, the total
+			# number of members must be at least the sum of the other counts.
+			$this->mPages = max( $this->mPages, $this->mSubcats + $this->mFiles );
 
 			if ( $mode === self::LAZY_INIT_ROW ) {
 				DeferredUpdates::addCallableUpdate( [ $this, 'refreshCounts' ] );
@@ -159,16 +176,14 @@ class Category {
 	 * @return Category|bool Category, or false on a totally invalid name
 	 */
 	public static function newFromName( $name ) {
-		$cat = new self();
 		$title = Title::makeTitleSafe( NS_CATEGORY, $name );
-
-		if ( !is_object( $title ) ) {
+		if ( !$title ) {
 			return false;
 		}
 
+		$cat = new self();
 		$cat->mPage = $title;
 		$cat->mName = $title->getDBkey();
-
 		return $cat;
 	}
 
@@ -334,8 +349,8 @@ class Category {
 				'page_is_redirect', 'page_latest' ] )
 			->from( 'categorylinks' )
 			->join( 'page', null, [ 'cl_from = page_id' ] )
-			->where( [ 'cl_to' => $this->getName() ] )
 			->orderBy( 'cl_sortkey' );
+		$this->addWhereonCategoryName( $queryBuilder, $this->getName() );
 
 		if ( $limit ) {
 			$queryBuilder->limit( $limit );
@@ -397,40 +412,40 @@ class Category {
 			->forUpdate()
 			->acquireRowLocks();
 
-		$rowCount = $dbw->newSelectQueryBuilder()
+		$queryBuilder = $dbw->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'categorylinks' )
 			->join( 'page', null, 'page_id = cl_from' )
-			->where( [ 'cl_to' => $this->mName ] )
-			->limit( 110 )
-			->caller( __METHOD__ )->fetchRowCount();
+			->limit( 110 );
+		$this->addWhereonCategoryName( $queryBuilder, $this->mName );
+		$rowCount = $queryBuilder->caller( __METHOD__ )->fetchRowCount();
 		// Only lock if there are below 100 rows (T352628)
 		if ( $rowCount < 100 ) {
 			// Lock all the `categorylinks` records and gaps for this category;
 			// this is a separate query due to postgres limitations
-			$dbw->newSelectQueryBuilder()
+			$queryBuilder = $dbw->newSelectQueryBuilder()
 				->select( '*' )
 				->from( 'categorylinks' )
 				->join( 'page', null, 'page_id = cl_from' )
-				->where( [ 'cl_to' => $this->mName ] )
-				->lockInShareMode()
-				->caller( __METHOD__ )
-				->acquireRowLocks();
+				->lockInShareMode();
+			$this->addWhereonCategoryName( $queryBuilder, $this->mName );
+
+			$queryBuilder->caller( __METHOD__ )->acquireRowLocks();
 		}
 
 		// Get the aggregate `categorylinks` row counts for this category
 		$catCond = $dbw->conditional( [ 'page_namespace' => NS_CATEGORY ], '1', 'NULL' );
 		$fileCond = $dbw->conditional( [ 'page_namespace' => NS_FILE ], '1', 'NULL' );
-		$result = $dbw->newSelectQueryBuilder()
+		$queryBuilder = $dbw->newSelectQueryBuilder()
 			->select( [
 				'pages' => 'COUNT(*)',
 				'subcats' => "COUNT($catCond)",
 				'files' => "COUNT($fileCond)"
 			] )
 			->from( 'categorylinks' )
-			->join( 'page', null, 'page_id = cl_from' )
-			->where( [ 'cl_to' => $this->mName ] )
-			->caller( __METHOD__ )->fetchRow();
+			->join( 'page', null, 'page_id = cl_from' );
+		$this->addWhereonCategoryName( $queryBuilder, $this->mName );
+		$result = $queryBuilder->caller( __METHOD__ )->fetchRow();
 
 		$shouldExist = $result->pages > 0 || $this->getPage()->exists();
 
@@ -521,12 +536,12 @@ class Category {
 		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$dbw->startAtomic( __METHOD__ );
 
-		$typeOccurances = $dbw->newSelectQueryBuilder()
+		$queryBuilder = $dbw->newSelectQueryBuilder()
 			->select( 'cl_type' )
 			->from( 'categorylinks' )
-			->where( [ 'cl_to' => $this->getName() ] )
-			->limit( $maxSize + 1 )
-			->caller( __METHOD__ )->fetchFieldValues();
+			->limit( $maxSize + 1 );
+		$this->addWhereonCategoryName( $queryBuilder, $this->getName() );
+		$typeOccurances = $queryBuilder->caller( __METHOD__ )->fetchFieldValues();
 
 		if ( !$typeOccurances ) {
 			$doRefresh = true; // delete any category table entry
@@ -556,7 +571,13 @@ class Category {
 
 		return false;
 	}
-}
 
-/** @deprecated class alias since 1.40 */
-class_alias( Category::class, 'Category' );
+	private function addWhereonCategoryName( SelectQueryBuilder $queryBuilder, string $name ) {
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			$queryBuilder->where( [ 'cl_to' => $name ] );
+		} else {
+			$queryBuilder->join( 'linktarget', null, 'cl_target_id = lt_id' )
+				->where( [ 'lt_title' => $name, 'lt_namespace' => NS_CATEGORY ] );
+		}
+	}
+}

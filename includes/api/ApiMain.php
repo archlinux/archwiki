@@ -23,7 +23,6 @@
 
 namespace MediaWiki\Api;
 
-use ILocalizedException;
 use LogicException;
 use MediaWiki;
 use MediaWiki\Api\Validator\ApiParamValidator;
@@ -31,6 +30,9 @@ use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\Exception\ILocalizedException;
+use MediaWiki\Exception\MWExceptionHandler;
+use MediaWiki\Exception\MWExceptionRenderer;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -47,8 +49,6 @@ use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\User\UserRigorOptions;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use MWExceptionHandler;
-use MWExceptionRenderer;
 use Profiler;
 use Throwable;
 use UnexpectedValueException;
@@ -56,6 +56,7 @@ use Wikimedia\AtEase\AtEase;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Timestamp\TimestampException;
 
@@ -94,6 +95,7 @@ class ApiMain extends ApiBase {
 			'class' => ApiLogin::class,
 			'services' => [
 				'AuthManager',
+				'UserIdentityUtils'
 			],
 		],
 		'clientlogin' => [
@@ -332,8 +334,9 @@ class ApiMain extends ApiBase {
 				'TitleFactory',
 				'UserIdentityLookup',
 				'WatchedItemStore',
-				'BlockUtils',
+				'BlockTargetFactory',
 				'BlockActionInfo',
+				'DatabaseBlockStore',
 				'WatchlistManager',
 				'UserOptionsLookup',
 			]
@@ -347,6 +350,8 @@ class ApiMain extends ApiBase {
 				'WatchedItemStore',
 				'WatchlistManager',
 				'UserOptionsLookup',
+				'DatabaseBlockStore',
+				'BlockTargetFactory',
 			]
 		],
 		'move' => [
@@ -644,7 +649,7 @@ class ApiMain extends ApiBase {
 			// for uselang=user (see T85635).
 		} else {
 			if ( $uselang === 'content' ) {
-				$uselang = $services->getContentLanguage()->getCode();
+				$uselang = $services->getContentLanguageCode()->toString();
 			}
 			$code = RequestContext::sanitizeLangCode( $uselang );
 			$derivativeContext->setLanguage( $code );
@@ -729,10 +734,15 @@ class ApiMain extends ApiBase {
 		// JSONP mode
 		if ( $request->getCheck( 'callback' ) ||
 			// Anonymous CORS
-			$request->getVal( 'origin' ) === '*' ||
+			$request->getRawVal( 'origin' ) === '*' ||
 			// Header to be used from XMLHTTPRequest when the request might
 			// otherwise be used for XSS.
-			$request->getHeader( 'Treat-as-Untrusted' ) !== false
+			$request->getHeader( 'Treat-as-Untrusted' ) !== false ||
+			(
+				// Authenticated CORS with unsupported session provider (including preflight request)
+				$request->getCheck( 'crossorigin' ) &&
+				!$request->getSession()->getProvider()->safeAgainstCsrf()
+			)
 		) {
 			$this->lacksSameOriginSecurity = true;
 			return true;
@@ -772,10 +782,6 @@ class ApiMain extends ApiBase {
 		$this->mContinuationManager = $manager;
 	}
 
-	/**
-	 * Get the parameter validator
-	 * @return ApiParamValidator
-	 */
 	public function getParamValidator(): ApiParamValidator {
 		return $this->mParamValidator;
 	}
@@ -1080,9 +1086,11 @@ class ApiMain extends ApiBase {
 	}
 
 	/**
-	 * Check the &origin= query parameter against the Origin: HTTP header and respond appropriately.
+	 * Check the &origin= and/or &crossorigin= query parameters and respond appropriately.
 	 *
-	 * If no origin parameter is present, nothing happens.
+	 * If no origin or crossorigin parameter is present, nothing happens.
+	 * If both are present, a 403 status code is set and false is returned.
+	 *
 	 * If an origin parameter is present but doesn't match the Origin header, a 403 status code
 	 * is set and false is returned.
 	 * If the parameter and the header do match, the header is checked against $wgCrossSiteAJAXdomains
@@ -1091,23 +1099,49 @@ class ApiMain extends ApiBase {
 	 * https://www.w3.org/TR/cors/#resource-requests
 	 * https://www.w3.org/TR/cors/#resource-preflight-requests
 	 *
+	 * If the crossorigin parameter is set, but the current session provider is not safe against CSRF,
+	 * a 403 status code is set and false is returned.
+	 * If it is set and the session is safe, then the appropriate CORS headers are set.
+	 *
 	 * @return bool False if the caller should abort (403 case), true otherwise (all other cases)
 	 */
 	protected function handleCORS() {
 		$originParam = $this->getParameter( 'origin' ); // defaults to null
-		if ( $originParam === null ) {
-			// No origin parameter, nothing to do
+		$crossOriginParam = $this->getParameter( 'crossorigin' ); // defaults to false
+		if ( $originParam === null && !$crossOriginParam ) {
+			// No origin/crossorigin parameter, nothing to do
 			return true;
 		}
 
 		$request = $this->getRequest();
 		$response = $request->response();
+		$requestedMethod = $request->getHeader( 'Access-Control-Request-Method' );
+		$preflight = $request->getMethod() === 'OPTIONS' && $requestedMethod !== false;
 
 		$allowTiming = false;
 		$varyOrigin = true;
 
-		if ( $originParam === '*' ) {
-			// Request for anonymous CORS
+		if ( $originParam !== null && $crossOriginParam ) {
+			$response->statusHeader( 403 );
+			$response->header( 'Cache-control: no-cache' );
+			echo "'origin' and 'crossorigin' parameters cannot be used together\n";
+
+			return false;
+		}
+		if ( $crossOriginParam && !$request->getSession()->getProvider()->safeAgainstCsrf() && !$preflight ) {
+			$response->statusHeader( 403 );
+			$response->header( 'Cache-control: no-cache' );
+			$language = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+			$described = $request->getSession()->getProvider()->describe( $language );
+			echo "'crossorigin' cannot be used with $described\n";
+
+			return false;
+		}
+
+		if ( $originParam === '*' || $crossOriginParam ) {
+			// Request for CORS without browser-supplied credentials (e.g. cookies):
+			// may be anonymous (origin=*) or authenticated with request-supplied
+			// credentials (crossorigin=1 + Authorization header).
 			// Technically we should check for the presence of an Origin header
 			// and not process it as CORS if it's not set, but that would
 			// require us to vary on Origin for all 'origin=*' requests which
@@ -1151,8 +1185,6 @@ class ApiMain extends ApiBase {
 		}
 
 		if ( $matchedOrigin ) {
-			$requestedMethod = $request->getHeader( 'Access-Control-Request-Method' );
-			$preflight = $request->getMethod() === 'OPTIONS' && $requestedMethod !== false;
 			if ( $preflight ) {
 				// We allow the actual request to send the following headers
 				$requestedHeaders = $request->getHeader( 'Access-Control-Request-Headers' );
@@ -1334,7 +1366,7 @@ class ApiMain extends ApiBase {
 	 * Create the printer for error output
 	 */
 	private function createErrorPrinter() {
-		if ( !isset( $this->mPrinter ) ) {
+		if ( !$this->mPrinter ) {
 			$value = $this->getRequest()->getVal( 'format', self::API_DEFAULT_FORMAT );
 			if ( !$this->mModuleMgr->isDefined( $value, 'format' ) ) {
 				$value = self::API_DEFAULT_FORMAT;
@@ -1971,7 +2003,12 @@ class ApiMain extends ApiBase {
 			$this->setupExternalResponse( $module, $params );
 		}
 
+		$scope = LoggerFactory::getContext()->addScoped( [
+			'context.api_module_name' => $module->getModuleName(),
+			'context.api_client_useragent' => $this->getUserAgent(),
+		] );
 		$module->execute();
+		ScopedCallback::consume( $scope );
 		$this->getHookRunner()->onAPIAfterExecute( $module );
 
 		$this->reportUnusedParams();
@@ -1985,7 +2022,6 @@ class ApiMain extends ApiBase {
 
 	/**
 	 * Set database connection, query, and write expectations given this module request
-	 * @param ApiBase $module
 	 */
 	protected function setRequestExpectations( ApiBase $module ) {
 		$request = $this->getRequest();
@@ -2285,6 +2321,7 @@ class ApiMain extends ApiBase {
 			'curtimestamp' => false,
 			'responselanginfo' => false,
 			'origin' => null,
+			'crossorigin' => false,
 			'uselang' => [
 				ParamValidator::PARAM_DEFAULT => self::API_DEFAULT_USELANG,
 			],
@@ -2450,7 +2487,7 @@ class ApiMain extends ApiBase {
 	 * @return bool
 	 */
 	public function canApiHighLimits() {
-		if ( !isset( $this->mCanApiHighLimits ) ) {
+		if ( $this->mCanApiHighLimits === null ) {
 			$this->mCanApiHighLimits = $this->getAuthority()->isAllowed( 'apihighlimits' );
 		}
 

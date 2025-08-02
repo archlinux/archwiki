@@ -5,10 +5,10 @@
 			"Dasius",
 			"Ftillimi",
 			"GretaDoci",
+			"INNERLMNT",
 			"MicroBoy",
 			"Mikullovci11",
-			"Olsi",
-			"INNERLMNT"
+			"Olsi"
 		]
 	},
 	"skinname-vector": "Vector i vjetër (2010)",
@@ -24,7 +24,7 @@
 	"vector-language-button-aria-label": "Shkoni te një artikull në një gjuhë tjetër. Gjendet në {{PLURAL:$1|$1 gjuhë|$1 gjuhë}}",
 	"vector-language-button-label": "$1 gjuhë",
 	"vector-no-language-button-label": "Shtoni gjuhë",
-	"vector-no-language-button-aria-label": "Ky artikull ekziston vetëm në këtë gjuhë. Shto artikullin për gjuhë të tjera",
+	"vector-no-language-button-aria-label": "Ky artikull ekziston vetëm në këtë gjuhë. Shtoni artikullin për gjuhë tjera",
 	"vector-language-variant-switcher-label": "Ndërroni variantin e gjuhës",
 	"vector-action-addsection": "Shto një temë",
 	"vector-action-delete": "Fshije",
@@ -43,6 +43,7 @@
 	"vector-more-actions": "Më tepër",
 	"vector-appearance-label": "Pamja",
 	"vector-appearance-tooltip": "Ndryshoni pamjen e madhësisë, gjerësisë dhe ngjyrës së shkronjave në faqe",
+	"vector-personal-tools-tooltip": "Cilësimet personale",
 	"vector-feature-limited-width-name": "Gjerësia",
 	"vector-feature-limited-width-0-label": "E gjerë",
 	"vector-feature-limited-width-1-label": "Standarde",

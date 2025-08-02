@@ -3,10 +3,11 @@
 namespace MediaWiki\Deferred\LinksUpdate;
 
 use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\JobQueue\Utils\PurgeJobUtils;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Title\Title;
-use PurgeJobUtils;
 
 /**
  * imagelinks
@@ -27,7 +28,14 @@ class ImageLinksTable extends TitleLinksTable {
 	private $existingLinks;
 
 	public function setParserOutput( ParserOutput $parserOutput ) {
-		$this->newLinks = $parserOutput->getImages();
+		// Convert the format of the local links
+		$this->newLinks = [];
+		foreach (
+			$parserOutput->getLinkList( ParserOutputLinkTypes::MEDIA )
+			as [ 'link' => $link ]
+		) {
+			$this->newLinks[$link->getDBkey()] = 1;
+		}
 	}
 
 	protected function getTableName() {

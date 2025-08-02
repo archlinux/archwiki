@@ -60,5 +60,8 @@
 	"gadgets-validate-unknownpages": "Sodrživaje jednu ili veče stranic bez sufiksa .js, .css ili .json. One ne budut upotrěbjane.",
 	"gadgets-validate-duplicate": "Izjavjena byla vtora definicija gadžeta $1, ona bude ignorovana",
 	"gadgets-validate-nopage": "Stranica «$1» ne jestvuje.",
-	"gadgets-supports-urlload": "Tutoj gadžet poddrživaje včityvanje črěz URL s parametrom zapyta <code>?withgadget</code>."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Nedostavaje slědujuča zavisnost|Nedostavajut slědujuče zavisnosti}}: $1.",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Slědujuča zavisnost jest zastarěla|Slědujuče zavisnosti sut zastarěle}}: $1.",
+	"gadgets-supports-urlload": "Tutoj gadžet poddrživaje včityvanje črěz URL s parametrom zapyta <code>?withgadget</code>.",
+	"gadgets-hidden": "Tutoj gadžet jest [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden ukryty], čto znači, že ne javi se na stranici vaših nastavjenij."
 }

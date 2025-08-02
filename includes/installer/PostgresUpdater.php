@@ -75,7 +75,6 @@ class PostgresUpdater extends DatabaseUpdater {
 			[ 'changeField', 'l10n_cache', 'lc_value', 'TEXT', '' ],
 			[ 'changeField', 'l10n_cache', 'lc_key', 'VARCHAR(255)', '' ],
 			[ 'addIndex', 'l10n_cache', 'l10n_cache_pkey', 'patch-l10n_cache-pk.sql' ],
-			[ 'addIndex', 'module_deps', 'module_deps_pkey', 'patch-module_deps-pk.sql' ],
 			[ 'changeField', 'redirect', 'rd_namespace', 'INT', 'rd_namespace::INT DEFAULT 0' ],
 			[ 'setDefault', 'redirect', 'rd_title', '' ],
 			[ 'setDefault', 'redirect', 'rd_from', 0 ],
@@ -442,6 +441,12 @@ class PostgresUpdater extends DatabaseUpdater {
 			[ 'dropField', 'pagelinks', 'pl_title', 'patch-pagelinks-drop-pl_title.sql' ],
 			[ 'addPostDatabaseUpdateMaintenance', FixAutoblockLogTitles::class ],
 			[ 'migrateSearchindex' ],
+
+			// 1.44
+			[ 'addTable', 'file', 'patch-file.sql' ],
+			[ 'addField', 'categorylinks', 'cl_target_id', 'patch-categorylinks-target_id.sql' ],
+			[ 'addTable', 'collation', 'patch-collation.sql' ],
+			[ 'dropTable', 'module_deps' ],
 		];
 	}
 
@@ -707,7 +712,7 @@ END;
 			$this->output( "Changing column type of '$table.$field' from '{$fi->type()}' to '$newtype'\n" );
 			$table = $this->db->addIdentifierQuotes( $table );
 			$sql = "ALTER TABLE $table ALTER $field TYPE $newtype";
-			if ( strlen( $default ) ) {
+			if ( $default !== '' ) {
 				$res = [];
 				if ( preg_match( '/DEFAULT (.+)/', $default, $res ) ) {
 					$sqldef = "ALTER TABLE $table ALTER $field SET DEFAULT $res[1]";
@@ -772,7 +777,7 @@ END;
 	 */
 	protected function dropDefault( $table, $field ) {
 		$info = $this->db->fieldInfo( $table, $field );
-		if ( $info->defaultValue() !== false ) {
+		if ( $info && $info->defaultValue() !== false ) {
 			$this->output( "Removing '$table.$field' default value\n" );
 			$table = $this->db->addIdentifierQuotes( $table );
 			$this->db->query( "ALTER TABLE $table ALTER $field DROP DEFAULT", __METHOD__ );

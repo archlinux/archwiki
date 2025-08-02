@@ -42,6 +42,7 @@
 	"config-install-schema": "Creant schema",
 	"config-install-user": "Creant usator del base de data",
 	"config-install-user-alreadyexists": "Usator \"$1\" ja existe",
+	"config-install-tables": "Creant tabelles, passu un",
 	"config-install-interwiki": "Populant li tabelle uniform de interwiki",
 	"config-install-stats": "Inicialant statisticas",
 	"config-install-sysop": "Creant conto de usator administrator",

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"আফতাবুজ্জামান"
+		]
+	},
+	"apihelp-query+checkuser-param-reason": "পরীক্ষার কারণ।",
+	"checkuser-api-useragent-clienthints-revision-user-mismatch": "ব্যবহারকারী $1 $2 নং সংস্করণের লেখক নয়"
+}

@@ -22,8 +22,8 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
 class TokenizerUtils {
-	private static $protectAttrsRegExp;
-	private static $inclAnnRegExp;
+	private static ?string $protectAttrsRegExp = null;
+	private static ?string $inclAnnRegExp = null;
 
 	/**
 	 * @param mixed $e
@@ -50,7 +50,7 @@ class TokenizerUtils {
 					$res[] = $v;
 				}
 			} else {
-				throw new \RuntimeException( __METHOD__ . ": found falsy element $i" );
+				throw new \RuntimeException( __METHOD__ . ": found falsy element $v @ posn $i" );
 			}
 		}
 
@@ -126,6 +126,7 @@ class TokenizerUtils {
 	 * Build a token array representing <tag>$content</tag> alongwith
 	 * appropriate attributes and TSR info set on the tokens.
 	 *
+	 * @param string $pegSource
 	 * @param string $tagName
 	 * @param string $wtChar
 	 * @param mixed $attrInfo
@@ -136,8 +137,8 @@ class TokenizerUtils {
 	 * @return array (of tokens)
 	 */
 	public static function buildTableTokens(
-		string $tagName, string $wtChar, $attrInfo, SourceRange $tsr,
-		int $endPos, $content, bool $addEndTag = false
+		string $pegSource, string $tagName, string $wtChar, $attrInfo,
+		SourceRange $tsr, int $endPos, $content, bool $addEndTag = false
 	): array {
 		$dp = new DataParsoid;
 		$dp->tsr = $tsr;
@@ -148,11 +149,13 @@ class TokenizerUtils {
 				// encounter a "|...|" attribute box. This is useful when
 				// deciding which <td>/<th> cells need attribute fixups.
 				$dp->setTempFlag( TempData::NO_ATTRS );
-			} elseif ( !$attrInfo[0] && $attrInfo[1] === "" ) {
-				// FIXME: Skip comments between the two "|" chars
-				// [ [], "", "|"] => "||" syntax for first <td> on line
-				$dp->setTempFlag( TempData::NON_MERGEABLE_TABLE_CELL );
-				$dp->setTempFlag( TempData::NO_ATTRS );
+			} else {
+				if ( !$attrInfo[0] && $attrInfo[1] === "" ) {
+					// FIXME: Skip comments between the two "|" chars
+					// [ [], "", "|"] => "||" syntax for first <td> on line
+					$dp->setTempFlag( TempData::NON_MERGEABLE_TABLE_CELL );
+					$dp->setTempFlag( TempData::NO_ATTRS );
+				}
 			}
 		} elseif ( $tagName === 'th' ) {
 			if ( !$attrInfo ) {
@@ -174,6 +177,11 @@ class TokenizerUtils {
 
 		$a = [];
 		if ( $attrInfo ) {
+			if ( $tagName !== 'caption' ) {
+				$dp->getTemp()->attrSrc = substr(
+					$pegSource, $tsr->start, $tsr->end - $tsr->start - strlen( $attrInfo[2] )
+				);
+			}
 			$a = $attrInfo[0];
 			if ( !$a ) {
 				$dp->startTagSrc = $wtChar . $attrInfo[1];
@@ -184,6 +192,18 @@ class TokenizerUtils {
 				// 2. Not "|"
 				$dp->attrSepSrc = $attrInfo[2];
 			}
+		} elseif ( $tagName !== 'caption' ) {
+			$dp->getTemp()->attrSrc = '';
+		}
+
+		// We consider 1 the start because the table_data_tag and table_heading_tag
+		// rules don't include the pipe so it isn't accounted for in the tsr passed
+		// to this function.  The rules making use of those rules do some extra
+		// bookkeeping to adjust for that on the start token returned from this
+		// function.  Of course, table_caption_tag doesn't follow that same pattern
+		// but that isn't a concern here.
+		if ( $tagName !== 'caption' && $tsr->start === 1 ) {
+			$dp->setTempFlag( TempData::AT_SRC_START );
 		}
 
 		$tokens = [ new TagTk( $tagName, $a, $dp ) ];
@@ -356,15 +376,16 @@ class TokenizerUtils {
 					}
 				}
 				return false;
+
 			case '[':
-				// This is a special case in php's doTableStuff, added in
-				// response to T2553.  If it encounters a `[[`, it bails on
-				// parsing attributes and interprets it all as content.
+				// 'tableCellArg' check is a special case in php's doTableStuff
+				// added in response to T2553.  If it encounters a `[[`, it bails
+				// on parsing attributes and interprets it all as content.
 				return $stops['tableCellArg'] && $c2 === '[';
 
 			case '-':
-				// Same as above: a special case in doTableStuff, added
-				// as part of T153140
+				// Same as above for 'tableCellArg': a special case in doTableStuff,
+				// added as part of T153140
 				return $stops['tableCellArg'] && $c2 === '{';
 
 			case ']':

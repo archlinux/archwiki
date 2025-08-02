@@ -14,6 +14,7 @@
 	"echo-category-title-login-success": "Fərqli cihazdan daxil olma",
 	"echo-pref-tooltip-login-success": "Kimsə hesabıma əvvəllər istifadə etmədiyim cihaz və ya IP-ünvanından daxil olduqda mənə bildiriş göndər.",
 	"loginnotify-primary-link": "Kömək",
+	"loginnotify-unknown-ip": "Siz tanış olmayan IP ünvanından daxil olmağa cəhd etmisiniz və {{SITENAME}} hazırda tanımadığı IP ünvanlardan daxil olmanın qarşısını almağa konfiqurasiya edilib.",
 	"notification-loginnotify-login-fail-email-subject": "{{SITENAME}} saytına $1 olaraq daxil olmaq üçün {{PLURAL:$2|uğursuz giriş cəhdi|uğursuz giriş cəhdləri}}",
 	"notification-loginnotify-login-success-email-subject": "Əvvəllər istifadə {{GENDER:$1|etmədiyiniz}} cihazdan {{SITENAME}} layihəsinə $1 istifadəçi adı ilə daxilolma",
 	"notification-header-login-success": "Kimsə (ehtimal ki, {{GENDER:$1|siz}} özünüz), sizin istifadəçi hesabınıza yeni kompüterdən daxil olub. Əgər bu siz özünüz idinizsə, o halda bu bildirişə məhəl qoymayın. Əgər bu siz deyildinizsə, o zaman parolunuzu dəyişməyi və hesabınızdan edilmiş redaktələri nəzərdən keçirməyi məsləhət görürük.",

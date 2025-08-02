@@ -73,7 +73,7 @@ class RuleCheckerStatus extends ParserStatus {
 		return new self(
 			$value['result'],
 			$value['warmCache'],
-			$excClass !== null ? call_user_func( [ $excClass, 'fromArray' ], $value['exception'] ) : null,
+			$excClass !== null ? $excClass::fromArray( $value['exception'] ) : null,
 			array_map( [ UserVisibleWarning::class, 'fromArray' ], $value['warnings'] ),
 			$value['condsUsed']
 		);

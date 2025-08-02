@@ -24,15 +24,15 @@ class EditPage extends Page {
 		return $( 'button.cdx-button' );
 	}
 
-	openForEditing( title ) {
-		super.openTitle( title, { action: 'edit', mobileaction: 'toggle_view_mobile' } );
+	async openForEditing( title ) {
+		return super.openTitle( title, { action: 'edit', mobileaction: 'toggle_view_mobile' } );
 	}
 
-	edit( name, content ) {
-		this.openForEditing( name );
-		this.content.setValue( content );
-		this.next.click();
-		this.save.click();
+	async edit( name, content ) {
+		await this.openForEditing( name );
+		await this.content.setValue( content );
+		await this.next.click();
+		await this.save.click();
 		browser.acceptAlert();
 	}
 }

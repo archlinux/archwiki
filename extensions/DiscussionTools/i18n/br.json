@@ -4,8 +4,8 @@
 			"Adriendelucca",
 			"Fulup",
 			"Huñvreüs",
-			"Y-M D",
-			"Woytecr"
+			"Woytecr",
+			"Y-M D"
 		]
 	},
 	"discussiontools": "Benvegioù kaozeal",
@@ -70,7 +70,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "{{GENDER:|Koumanantet}} oc’h bet!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "N’ho {{GENDER:|po}} ken evezhiadennoù pa vo boulc’het kaozeadennoù nevez er bajenn-mañ.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Digoumanantet {{GENDER:|oc’h}} bet.",
-	"discussiontools-notification-added-topic-header": "Kaozeadenn nevez \"<strong>$4</strong>\" krouet e <strong>$3</strong> gant $2.",
+	"discussiontools-notification-added-topic-header": "Kaozeadenn nevez \"<strong>$4</strong>\"  {{GENDER:$2|krouet}} e <strong>$3</strong> gant $1.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Ur gaozeadenn nevez|$1 kaozeadenn nevez|100=99+ kaozeadenn nevez}} e \"<strong>$2</strong>\".",
 	"discussiontools-notification-added-topic-view": "Gwelout kaozeadenn",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|en|he}} deus trugarekaet {{GENDER:$4|ac’hanoc’h}} eus hoc’h evezhiadenn e \"<strong>$3</strong>\".",
@@ -196,7 +196,7 @@
 	"tag-discussiontools-edit-description": "Implijer en deus kemmet un evezhiadenn gant DiscussionTools",
 	"tag-discussiontools-newtopic": "Kaozeadenn nevez",
 	"tag-discussiontools-newtopic-description": "Implijer en deus ouzhpennet ur gaozeadenn nevez d’ar bajenn gant DiscussionTools",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respont]",
+	"tag-discussiontools-reply": "Respont",
 	"tag-discussiontools-reply-description": "Implijer en deus respontet d’un evezhiadenn gant DiscussionTools",
 	"tag-discussiontools-source-description": "E mod mammenn e oa DiscussionTools",
 	"tag-discussiontools-source-enhanced-description": "DiscussionTools a oa e mod gwellaet gant ar varrenn benvegioù",

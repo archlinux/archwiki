@@ -24,6 +24,7 @@
  */
 
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -172,7 +173,7 @@ class GetConfiguration extends Maintenance {
 		}
 	}
 
-	protected function formatVarDump( $res ) {
+	protected function formatVarDump( array $res ): string {
 		$ret = '';
 		foreach ( $res as $key => $value ) {
 			# intercept var_dump() output
@@ -186,7 +187,10 @@ class GetConfiguration extends Maintenance {
 		return trim( $ret, "\n" );
 	}
 
-	private function isAllowedVariable( $value ) {
+	/**
+	 * @param mixed $value
+	 */
+	private function isAllowedVariable( $value ): bool {
 		if ( is_array( $value ) ) {
 			foreach ( $value as $v ) {
 				if ( !$this->isAllowedVariable( $v ) ) {

@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.43.0"
+		"MediaWiki": ">= 1.44"
 	},
 	"AvailableRights": [
 		"abusefilter-modify",
@@ -89,7 +89,8 @@
 				"AbuseFilterSpecsFormatter",
 				"AbuseFilterVariablesFormatter",
 				"AbuseFilterVariablesManager",
-				"AbuseFilterAbuseLoggerFactory"
+				"AbuseFilterAbuseLoggerFactory",
+				"AbuseFilterFilterLookup"
 			]
 		},
 		"AbuseFilter": {
@@ -225,7 +226,8 @@
 				"AbuseFilterRuleCheckerFactory",
 				"AbuseFilterPermissionManager",
 				"AbuseFilterVariablesBlobStore",
-				"AbuseFilterVariableGeneratorFactory"
+				"AbuseFilterVariableGeneratorFactory",
+				"AbuseFilterFilterLookup"
 			]
 		},
 		"abuselogprivatedetails": {
@@ -244,13 +246,15 @@
 				"AbuseFilterVariablesBlobStore",
 				"AbuseFilterVariablesManager",
 				"UserFactory",
-				"AbuseFilterAbuseLoggerFactory"
+				"AbuseFilterAbuseLoggerFactory",
+				"AbuseFilterRuleCheckerFactory"
 			]
 		},
 		"abusefilters": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Api\\QueryAbuseFilters",
 			"services": [
-				"AbuseFilterPermissionManager"
+				"AbuseFilterPermissionManager",
+				"AbuseFilterFilterLookup"
 			]
 		}
 	},
@@ -273,6 +277,8 @@
 	},
 	"TestAutoloadClasses": {
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Unit\\Parser\\ParserTestCase": "tests/phpunit/unit/Parser/ParserTestCase.php",
+		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Unit\\GetFilterEvaluatorTestTrait": "tests/phpunit/unit/GetFilterEvaluatorTestTrait.php",
+		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\FilterFromSpecsTestTrait": "tests/phpunit/integration/FilterFromSpecsTestTrait.php",
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\Api\\AbuseFilterApiTestTrait": "tests/phpunit/integration/Api/AbuseFilterApiTestTrait.php",
 		"AbuseFilterUploadTestTrait": "tests/phpunit/AbuseFilterUploadTestTrait.php",
 		"AbuseFilterCreateAccountTestTrait": "tests/phpunit/AbuseFilterCreateAccountTestTrait.php",
@@ -389,13 +395,6 @@
 				"AbuseFilterEditRevUpdater"
 			]
 		},
-		"preferences": {
-			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\PreferencesHandler",
-			"services": [
-				"PermissionManager",
-				"AbuseFilterAbuseLoggerFactory"
-			]
-		},
 		"RecentChangeSave": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\RecentChangeSaveHandler",
 			"services": [
@@ -410,7 +409,9 @@
 				"AbuseFilterVariableGeneratorFactory",
 				"AbuseFilterEditRevUpdater",
 				"AbuseFilterBlockedDomainFilter",
-				"PermissionManager"
+				"PermissionManager",
+				"TitleFactory",
+				"UserFactory"
 			]
 		},
 		"CheckUser": {
@@ -431,10 +432,13 @@
 		}
 	},
 	"Hooks": {
-		"EditFilterMergedContent": [ "FilteredActions", "ConfirmEdit" ],
+		"EditFilterMergedContent": [
+			"FilteredActions",
+			"ConfirmEdit"
+		],
 		"GetAutoPromoteGroups": "AutoPromoteGroups",
 		"TitleMove": "FilteredActions",
-		"ArticleDelete": "FilteredActions",
+		"PageDelete": "FilteredActions",
 		"RecentChange_save": "RecentChangeSave",
 		"ListDefinedTags": "ChangeTags",
 		"ChangeTagsListActive": "ChangeTags",
@@ -452,9 +456,12 @@
 		"UserMergeAccountFields": "UserMerge",
 		"BeforeCreateEchoEvent": "Echo",
 		"ParserOutputStashForEdit": "FilteredActions",
-		"JsonValidateSave": "EditPermission",
-		"GetPreferences": "preferences",
-		"SaveUserOptions": "preferences"
+		"JsonValidateSave": "EditPermission"
+	},
+	"DeprecatedHooks": {
+		"AbuseFilter-filterAction": {
+			"deprecatedVersion": "1.34"
+		}
 	},
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
@@ -602,7 +609,7 @@
 			"value": [
 				"user_unnamed_ip"
 			],
-			"description": "Array of variables that are be considered protected (limited access) and require the abusefilter-access-protected-vars right to use/view."
+			"description": "Array of variables that are be considered protected (limited access) and require the abusefilter-access-protected-vars right to use/view. To access this list, use the AbuseFilterProtectedVariablesLookup service which will also include protected variables provided by other extensions."
 		}
 	},
 	"load_composer_autoloader": true,

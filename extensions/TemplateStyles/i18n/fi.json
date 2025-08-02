@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"MITO",
+			"Samoasambia"
+		]
+	},
+	"templatestyles-desc": "Toteuttaa mallinekohtaiset tyylisivut",
+	"templatestyles-missing-src": "TemplateStylesin <code>src</code>-attribuutti ei saa olla tyhjä.",
+	"templatestyles-invalid-src": "Virheellinen nimi TemplateStylesin <code>src</code>-attribuutissa.",
+	"templatestyles-invalid-wrapper": "Virheellinen arvo TemplateStylesin <code>wrapper</code>-attribuutissa.",
+	"templatestyles-bad-src-missing": "Sivulla [[:$1|$2]] ei ole sisältöä.",
+	"content-model-sanitized-css": "Puhdistettu CSS",
+	"templatestyles-stylesheet-error-category": "TemplateStyles-tyylisivut, joissa on virheitä",
+	"templatestyles-stylesheet-error-category-desc": "TemplateStyles-tyylisivussa on virhe.",
+	"templatestyles-page-error-category": "Sivut, joissa on TemplateStyles-virheitä",
+	"templatestyles-error-bad-character-in-url": "Virheellinen merkki URL-osoitteessa rivillä $1 kohdassa $2.",
+	"templatestyles-error-bad-escape": "Virheellinen merkki koodinvaihdossa rivillä $1 kohdassa $2.",
+	"templatestyles-error-bad-value-for-property": "Virheellinen tai ei-tuettu ominaisuuden <code>$3</code> arvo rivillä $1 kohdassa $2.",
+	"templatestyles-error-expected-at-rule": "Odotettiin <code>@$3</code> rivillä $1 kohdassa $2.",
+	"templatestyles-error-expected-colon": "Odotettiin kaksoispistettä rivillä $1 kohdassa $2.",
+	"templatestyles-error-expected-eof": "Odotettiin tyylisivun loppua rivillä $1 kohdassa $2.",
+	"templatestyles-error-expected-ident": "Odotettiin tunnistetta rivillä $1 kohdassa $2.",
+	"templatestyles-error-expected-qualified-rule": "Odotettiin tyylisääntöä rivillä $1 kohdassa $2.",
+	"templatestyles-error-expected-stylesheet": "Odotettiin tyylisivua rivillä $1 kohdassa $2.",
+	"templatestyles-error-newline-in-string": "Virheellinen rivinvaihto merkkijonossa rivillä $1 kohdassa $2.",
+	"templatestyles-error-recursion-depth-exceeded": "Liian monta sisäkkäistä ryhmää ja/tai funktiota rivillä $1 kohdassa $2.",
+	"templatestyles-error-unexpected-eof": "Odottamaton tyylisivun loppu rivillä $1 kohdassa $2."
+}

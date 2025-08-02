@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Andrei Stroe",
 			"Carcassonne93",
 			"Cezar",
 			"Firilacroco",
@@ -9,8 +10,7 @@
 			"Paloi Sciurala",
 			"Strainu",
 			"Turbojet",
-			"Woytecr",
-			"Andrei Stroe"
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Veți}} primi o notificare când cineva publică un nou comentariu în această discuție. Vă puteți ajusta setările de notificări în preferințe.",
@@ -197,9 +197,9 @@
 	"tag-discussiontools-description": "Editare făcută utilizând Unelte de discuție",
 	"tag-discussiontools-edit": "Comentariu editat",
 	"tag-discussiontools-edit-description": "Utilizatorul a editat un comentariu existent cu Unelte de discuție",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Subiect nou]",
+	"tag-discussiontools-newtopic": "Subiect nou",
 	"tag-discussiontools-newtopic-description": "Utilizatorul a adăugat un subiect nou paginii cu Unelte de discuție",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Răspuns]",
+	"tag-discussiontools-reply": "Răspuns",
 	"tag-discussiontools-reply-description": "Utilizatorul a răspuns unui comentariu cu Unelte de discuție",
 	"tag-discussiontools-source-description": "Unelte de discuție a fost în modul sursă",
 	"tag-discussiontools-source-enhanced-description": "Unelte de discuție era în modul sursă îmbunătățit cu bara de unelte",

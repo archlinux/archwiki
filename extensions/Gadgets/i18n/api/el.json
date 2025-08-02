@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Fotis A.",
 			"Geraki",
-			"Protnet",
-			"Fotis A."
+			"Protnet"
 		]
 	},
 	"apihelp-query+gadgetcategories-summary": "Επιστρέφει λίστα με τις κατηγορίες μικροεφαρμογών.",
 	"apihelp-query+gadgetcategories-param-prop": "Τι πληροφορίες για την κατηγορία της μικροεφαρμογής να ληφθούν:\n;name:Όνομα εσωτερικής κατηγορίας.\n;title:Τίτλος κατηγορίας.\n;members:Αριθμός μικροεφαρμογών σε αυτήν την κατηγορία.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Τίτλος ενότητας.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Αριθμός gadget στην ενότητα.",
 	"apihelp-query+gadgetcategories-param-names": "Τα ονόματα των κατηγοριών προς ανάκτηση.",
 	"apihelp-query+gadgetcategories-example-1": "Λήψη λίστας με τις υπάρχουσες κατηγορίες μικροεφαρμογών",
 	"apihelp-query+gadgetcategories-example-2": "Λήψη όλων των πληροφοριών σχετικά με τις κατηγορίες με ονόματα «τάδε» και «δείνα»",

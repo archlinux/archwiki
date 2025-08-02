@@ -12,18 +12,6 @@ use MediaWiki\Title\Title;
  */
 class HTMLReCaptchaNoCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 
-	public function setUp(): void {
-		parent::setUp();
-
-		$this->mergeMwGlobalArrayValue(
-			'wgAutoloadClasses',
-			[
-				'MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\HTMLReCaptchaNoCaptchaField'
-					=> __DIR__ . '/../../ReCaptchaNoCaptcha/includes/HTMLReCaptchaNoCaptchaField.php'
-			]
-		);
-	}
-
 	public function testSubmit() {
 		$request = new FauxRequest( [
 			'foo' => 'abc',

@@ -49,6 +49,7 @@
 	"notifications": "Meldingar og varsel",
 	"tooltip-pt-notifications-alert": "Varsla {{GENDER:|dine}}",
 	"tooltip-pt-notifications-notice": "Notisane {{GENDER:|dine}}",
+	"tooltip-pt-notifications": "Meldingane dine",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Nye brukarar",
 	"echo-specialpage": "Meldingar og varsel",
 	"echo-specialpage-section-markread": "Merk gruppa som lesen",

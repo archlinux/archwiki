@@ -17,9 +17,9 @@ class VariableHolder {
 	 * Utility function to translate an array with shape [ varname => value ] into a self instance
 	 *
 	 * @param array $vars
-	 * @return VariableHolder
+	 * @return self
 	 */
-	public static function newFromArray( array $vars ): VariableHolder {
+	public static function newFromArray( array $vars ): self {
 		$ret = new self();
 		foreach ( $vars as $var => $value ) {
 			$ret->setVar( $var, $value );
@@ -88,7 +88,7 @@ class VariableHolder {
 	 *
 	 * @param VariableHolder ...$holders
 	 */
-	public function addHolders( VariableHolder ...$holders ): void {
+	public function addHolders( self ...$holders ): void {
 		foreach ( $holders as $addHolder ) {
 			$this->mVars = array_merge( $this->mVars, $addHolder->mVars );
 		}

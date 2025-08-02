@@ -132,6 +132,7 @@ class MathMathML extends MathRenderer {
 		$this->allowedRootElements = $settings;
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		global $wgMathFullRestbaseURL, $wgMathSvgRenderer;
 		try {
@@ -505,6 +506,7 @@ class MathMathML extends MathRenderer {
 		return Html::rawElement( 'span', $attribs, $output );
 	}
 
+	/** @inheritDoc */
 	protected function dbOutArray() {
 		$out = parent::dbOutArray();
 		if ( $this->getMathTableName() === 'mathoid' ) {
@@ -514,6 +516,7 @@ class MathMathML extends MathRenderer {
 		return $out;
 	}
 
+	/** @inheritDoc */
 	protected function dbInArray() {
 		$out = parent::dbInArray();
 		if ( $this->getMathTableName() === 'mathoid' ) {

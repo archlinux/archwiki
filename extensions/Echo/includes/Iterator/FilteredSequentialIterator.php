@@ -81,8 +81,6 @@ class FilteredSequentialIterator implements IteratorAggregate {
 
 	/**
 	 * Satisfies IteratorAggregate interface
-	 *
-	 * @return Iterator
 	 */
 	public function getIterator(): Iterator {
 		$it = $this->createIterator();
@@ -127,7 +125,7 @@ class FilteredSequentialIterator implements IteratorAggregate {
 
 				return static function ( $user ) use ( $filters ) {
 					foreach ( $filters as $filter ) {
-						if ( !call_user_func( $filter, $user ) ) {
+						if ( !$filter( $user ) ) {
 							return false;
 						}
 					}

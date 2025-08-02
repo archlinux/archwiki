@@ -20,7 +20,6 @@ class FilterValidator {
 	public const CONSTRUCTOR_OPTIONS = [
 		'AbuseFilterValidGroups',
 		'AbuseFilterActionRestrictions',
-		'AbuseFilterProtectedVariables',
 	];
 
 	/** @var ChangeTagValidator */
@@ -38,17 +37,6 @@ class FilterValidator {
 	/** @var string[] */
 	private $validGroups;
 
-	/**
-	 * @var string[] Protected variables defined in config via AbuseFilterProtectedVariables
-	 */
-	private $protectedVariables;
-
-	/**
-	 * @param ChangeTagValidator $changeTagValidator
-	 * @param RuleCheckerFactory $ruleCheckerFactory
-	 * @param AbuseFilterPermissionManager $permManager
-	 * @param ServiceOptions $options
-	 */
 	public function __construct(
 		ChangeTagValidator $changeTagValidator,
 		RuleCheckerFactory $ruleCheckerFactory,
@@ -60,7 +48,6 @@ class FilterValidator {
 		$this->permManager = $permManager;
 		$this->restrictedActions = array_keys( array_filter( $options->get( 'AbuseFilterActionRestrictions' ) ) );
 		$this->validGroups = $options->get( 'AbuseFilterValidGroups' );
-		$this->protectedVariables = $options->get( 'AbuseFilterProtectedVariables' );
 	}
 
 	/**
@@ -268,7 +255,7 @@ class FilterValidator {
 			$uniqueSubGroups = true;
 			// Every group should be valid, and subgroups should have valid groups inside
 			foreach ( $throttleGroups as $group ) {
-				if ( strpos( $group, ',' ) !== false ) {
+				if ( str_contains( $group, ',' ) ) {
 					$subGroups = explode( ',', $group );
 					// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 					if ( $subGroups !== array_unique( $subGroups ) ) {
@@ -381,7 +368,7 @@ class FilterValidator {
 
 		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
 		$usedVariables = $ruleChecker->getUsedVars( $filter->getRules() );
-		$usedProtectedVariables = array_intersect( $usedVariables, $this->protectedVariables );
+		$usedProtectedVariables = $this->permManager->getUsedProtectedVariables( $usedVariables );
 
 		if (
 			count( $usedProtectedVariables ) > 0 &&

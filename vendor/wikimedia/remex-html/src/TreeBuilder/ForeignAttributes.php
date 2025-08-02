@@ -11,8 +11,7 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * have namespaces. Features lazy adjustment of attribute name case.
  */
 class ForeignAttributes implements Attributes {
-	/** @var Attributes */
-	protected $unadjusted;
+	protected Attributes $unadjusted;
 
 	/** @var array The map of lowercase attribute name to correct attribute name */
 	protected $table;
@@ -22,9 +21,8 @@ class ForeignAttributes implements Attributes {
 
 	/**
 	 * Adjustment tables for the case of attributes on MathML and SVG elements
-	 * @var array
 	 */
-	private static $adjustmentTables = [
+	private const ADJUSTMENT_TABLES = [
 		'math' => [
 			'definitionurl' => 'definitionURL',
 		],
@@ -94,10 +92,8 @@ class ForeignAttributes implements Attributes {
 	/**
 	 * The potentially namespaced attributes, and the namespaces they belong to.
 	 * Excepting xmlns since it is very special.
-	 *
-	 * @var array
 	 */
-	private static $namespaceMap = [
+	private const NAMESPACE_MAP = [
 		'xlink:actuate' => HTMLData::NS_XLINK,
 		'xlink:arcrole' => HTMLData::NS_XLINK,
 		'xlink:href' => HTMLData::NS_XLINK,
@@ -116,30 +112,35 @@ class ForeignAttributes implements Attributes {
 	 */
 	public function __construct( Attributes $unadjusted, $type ) {
 		$this->unadjusted = $unadjusted;
-		$this->table = self::$adjustmentTables[$type];
+		$this->table = self::ADJUSTMENT_TABLES[$type];
 	}
 
+	/** @inheritDoc */
 	public function offsetExists( $offset ): bool {
 		$offset = $this->table[$offset] ?? $offset;
 		return $this->unadjusted->offsetExists( $offset );
 	}
 
+	/** @inheritDoc */
 	public function &offsetGet( $offset ): string {
 		$offset = $this->table[$offset] ?? $offset;
 		$value = &$this->unadjusted->offsetGet( $offset );
 		return $value;
 	}
 
+	/** @inheritDoc */
 	public function offsetSet( $offset, $value ): void {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new TreeBuilderError( "Setting foreign attributes is not supported" );
 	}
 
+	/** @inheritDoc */
 	public function offsetUnset( $offset ): void {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new TreeBuilderError( "Setting foreign attributes is not supported" );
 	}
 
+	/** @inheritDoc */
 	public function getValues() {
 		$result = [];
 		foreach ( $this->unadjusted->getValues() as $name => $value ) {
@@ -149,6 +150,7 @@ class ForeignAttributes implements Attributes {
 		return $result;
 	}
 
+	/** @inheritDoc */
 	public function count(): int {
 		return $this->unadjusted->count();
 	}
@@ -157,6 +159,7 @@ class ForeignAttributes implements Attributes {
 		return new \ArrayIterator( $this->getValues() );
 	}
 
+	/** @inheritDoc */
 	public function getObjects() {
 		if ( $this->attrObjects === null ) {
 			$result = [];
@@ -168,8 +171,8 @@ class ForeignAttributes implements Attributes {
 					$prefix = null;
 					$namespace = HTMLData::NS_XMLNS;
 					$localName = $name;
-				} elseif ( isset( self::$namespaceMap[$name] ) ) {
-					$namespace = self::$namespaceMap[$name];
+				} elseif ( isset( self::NAMESPACE_MAP[$name] ) ) {
+					$namespace = self::NAMESPACE_MAP[$name];
 					[ $prefix, $localName ] = explode( ':', $name, 2 );
 				} else {
 					$prefix = null;
@@ -183,11 +186,13 @@ class ForeignAttributes implements Attributes {
 		return $this->attrObjects;
 	}
 
+	/** @inheritDoc */
 	public function merge( Attributes $other ) {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new TreeBuilderError( __METHOD__ . ': unimplemented' );
 	}
 
+	/** @inheritDoc */
 	public function clone() {
 		return $this;
 	}

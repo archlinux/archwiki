@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aleator",
 			"Anarhistička Maca",
 			"Armando-Martin",
 			"Danniel07",
@@ -16,8 +17,7 @@
 			"McDutchie",
 			"MuratTheTurkish",
 			"No se",
-			"PoLuX124",
-			"Aleator"
+			"PoLuX124"
 		]
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
@@ -76,7 +76,6 @@
 	"log-action-filter-oath-verify": "Verificar si la autenticación en dos pasos está activada",
 	"log-action-filter-oath-disable-other": "Desactivar la autenticación en dos pasos de otro usuario",
 	"oathauth-ui-no-module": "No se activó ninguna",
-	"oathauth-module-invalid": "El módulo de OATHAuth registrado por el usuario no es válido.",
 	"oathauth-module-totp-label": "TOTP (autenticador de uso único)",
 	"oathauth-ui-manage": "Gestionar",
 	"oathmanage": "Gestionar la autenticación en dos pasos",
@@ -94,8 +93,6 @@
 	"oathauth-disable-method-warning-header": "Confirmar la desactivación de un método de autenticación",
 	"oathauth-disable-method-warning-button-label": "Confirma y continúa",
 	"oathauth-disable-method-warning": "Si desactivas el método de autenticación de dos factores $1 ya no podrás utilizarlo para iniciar sesión y se eliminarán todos los datos asociados con dicho método.",
-	"oathauth-switch-method-warning-header": "Confirmar el cambio a un método distinto de autenticación",
-	"oathauth-switch-method-warning": "Al cambiar al método de autenticación de dos factores $2, el actual ($1) será desactivado y se eliminarán todos los datos asociados con aquel.",
 	"oathauth-totp-disable-warning": "Ya no podrás usar el dispositivo de autenticación registrado para esta cuenta. Todos los códigos de respaldo asociados con aquella han sido desactivados.",
 	"oathauth-invalidrequest": "Solicitud no válida",
 	"notification-header-oathauth-disable": "Se ha desactivado la autenticación en dos pasos de {{GENDER:$2|tu}} cuenta.",

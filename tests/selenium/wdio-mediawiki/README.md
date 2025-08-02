@@ -26,6 +26,7 @@ which typically come from `MEDIAWIKI_USER` and `MEDIAWIKI_PASSWORD` environment 
 * `createAccount(MWBot bot, string username, string password)`
 * `blockUser(MWBot bot, [ string username [, string expiry ] ])`
 * `unblockUser(MWBot bot, [ string username ])`
+* `addUserToGroup(MWBot bot, string username, string groupName)`
 
 Example:
 
@@ -46,6 +47,7 @@ making assertions that depend on its outcome.
 `Util` is a collection of popular utility methods.
 
 * `getTestString([ string prefix ])`
+* `isTargetNotWikitext(string target)`
 * `waitForModuleState(string moduleName [, string moduleStatus [, number timeout ] ])`
 
 ## Versioning

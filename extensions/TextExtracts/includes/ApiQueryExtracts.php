@@ -10,14 +10,14 @@ use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\TitleFormatter;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\ParamValidator\ParamValidator;
-use WikiPage;
 
 /**
  * @license GPL-2.0-or-later
@@ -27,7 +27,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 	/**
 	 * Bump when memcache needs clearing
 	 */
-	private const CACHE_VERSION = 2;
+	private const CACHE_VERSION = 3;
 
 	private const PREFIX = 'ex';
 
@@ -36,22 +36,11 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	private $params;
 
-	/**
-	 * @var Config
-	 */
-	private $config;
-	/**
-	 * @var WANObjectCache
-	 */
-	private $cache;
-	/**
-	 * @var LanguageConverterFactory
-	 */
-	private $langConvFactory;
-	/**
-	 * @var WikiPageFactory
-	 */
-	private $wikiPageFactory;
+	private Config $config;
+	private WANObjectCache $cache;
+	private LanguageConverterFactory $langConvFactory;
+	private ParserOutputAccess $parserOutputAccess;
+	private WikiPageFactory $wikiPageFactory;
 	private TitleFormatter $titleFormatter;
 
 	// TODO: Allow extensions to hook into this to opt-in.
@@ -61,21 +50,13 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	private $supportedContentModels = [ 'wikitext' ];
 
-	/**
-	 * @param ApiQuery $query API query module object
-	 * @param string $moduleName Name of this query module
-	 * @param ConfigFactory $configFactory
-	 * @param WANObjectCache $cache
-	 * @param LanguageConverterFactory $langConvFactory
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param TitleFormatter $titleFormatter
-	 */
 	public function __construct(
-		$query,
-		$moduleName,
+		ApiQuery $query,
+		string $moduleName,
 		ConfigFactory $configFactory,
 		WANObjectCache $cache,
 		LanguageConverterFactory $langConvFactory,
+		ParserOutputAccess $parserOutputAccess,
 		WikiPageFactory $wikiPageFactory,
 		TitleFormatter $titleFormatter
 	) {
@@ -83,6 +64,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 		$this->config = $configFactory->makeConfig( 'textextracts' );
 		$this->cache = $cache;
 		$this->langConvFactory = $langConvFactory;
+		$this->parserOutputAccess = $parserOutputAccess;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->titleFormatter = $titleFormatter;
 	}
@@ -242,10 +224,9 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	private function getFirstSection( $text, $plainText ) {
 		if ( $plainText ) {
-			$regexp = '/^.*?(?=' . ExtractFormatter::SECTION_MARKER_START .
-				'(?!.' . ExtractFormatter::SECTION_MARKER_END . '<h2 id="mw-toc-heading"))/s';
+			$regexp = '/^(.*?)(?=' . ExtractFormatter::SECTION_MARKER_START . ')/s';
 		} else {
-			$regexp = '/^.*?(?=<h[1-6]\b(?! id="mw-toc-heading"))/s';
+			$regexp = '/^(.*?)(?=<h[1-6]\b)/s';
 		}
 		if ( preg_match( $regexp, $text, $matches ) ) {
 			$text = $matches[0];
@@ -260,14 +241,13 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * @throws ApiUsageException
 	 */
 	private function parse( WikiPage $page ) {
-		$parserOutputAccess = MediaWikiServices::getInstance()->getParserOutputAccess();
-		$status = $parserOutputAccess->getParserOutput(
+		$status = $this->parserOutputAccess->getParserOutput(
 			$page->toPageRecord(),
 			ParserOptions::newFromAnon()
 		);
 		if ( $status->isOK() ) {
 			$pout = $status->getValue();
-			$text = $pout->getText( [ 'unwrap' => true ] );
+			$text = $pout->getRawText();
 			if ( $this->params['intro'] ) {
 				$text = $this->getFirstSection( $text, false );
 			}

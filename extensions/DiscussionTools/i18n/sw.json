@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Edwingudfriend",
-			"Matma Rex",
-			"Sheilawangari",
-			"Wangombe",
+			"Joeamj",
 			"Jon Harald Søby",
 			"Kisare",
-			"Joeamj"
+			"Matma Rex",
+			"Sheilawangari",
+			"Wangombe"
 		]
 	},
 	"discussiontools": "Zana za majadiliano",
@@ -20,6 +20,7 @@
 	"discussiontools-findcomment-label-search": "Tafuta",
 	"discussiontools-newtopic-missing-title": "Tafadhali toa kichwa cha mada ya mjadala wa {{GENDER:|yako}}.",
 	"discussiontools-newtopic-placeholder-title": "Mada",
+	"discussiontools-notification-added-topic-header": "Mada mpya \"<strong>$4</strong>\" {{GENDER:$2|kuundwa}} kwa <strong>$3</strong> kwa $1.",
 	"discussiontools-notification-added-topic-view": "Angalia mada",
 	"discussiontools-notification-removed-topic-view": "Angalia ukurasa",
 	"discussiontools-preference-replytool": "Washa kujibu haraka",

@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\VisualEditor;
 
 use MediaWiki\Output\OutputPage;
-use Skin;
+use MediaWiki\Skin\Skin;
 
 /**
  * VisualEditorBeforeEditorHook

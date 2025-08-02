@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alison",
+			"Ankry",
+			"Chaduvari",
+			"Dreamy Jazz",
+			"Tameamseo"
+		]
+	},
+	"checkuser-summary": "Scanann an uirlis seo na athruithe is déanaí chun na seolaidh IP úsáideoira a fháil ná taispeáin na sonraí eagarthóireachta/úsáideoira don seoladh IP.\nIs féidir úsáideoirí agus eagarthóireachta mar IP cliant a fháil le ceanntáisc XFF mar an IP a iarcheangail le \"/xff\". IPv4 (CIDR $1-32) agus IPv6 (CIDR $2-128) atá tacaíocht.\nLe fáth feidhmiúcháin, ní féidir níos mó ná 5000 eagarthóireachta a thabhairt ar ais ar an am cheana. Déan úsáid de réir polsaí.",
+	"checkuser": "Seic úsáideoir",
+	"checkuserlog": "Logaí checkuser",
+	"group-checkuser": "Seiceanna úsáideoir",
+	"group-checkuser-member": "Seic úsáideoir",
+	"right-checkuser-log": "Féach ar an log seic úsáideoir",
+	"checkuser-reason": "Fáth:",
+	"checkuser-showlog": "Taispeáin logaí",
+	"checkuser-query": "Iarratais ar athruithe úrnua",
+	"checkuser-target": "Seoladh IP ná úsáideoir:",
+	"checkuser-users": "Faigh úsáideoira",
+	"checkuser-ips": "Faigh Seolaidh IP",
+	"checkuser-week-1": "an tseachtain seo caite",
+	"checkuser-week-2": "dhá sheachtain seo caite",
+	"checkuser-month": "30 lae seo caite",
+	"checkuser-all": "iad uile",
+	"checkuser-empty": "Níl aon míreanna sa log.",
+	"checkuser-nomatch": "Ní faigheann aon comhoiriúnaigh.",
+	"checkuser-check": "Iarratais",
+	"checkuser-blocked": "Cosanta",
+	"checkuser-gblocked": "Cosanta domhandach",
+	"checkuser-locked": "Glasáilte",
+	"checkuser-massblock": "Cuir cosc ar na húsáideoirí roghnaithe",
+	"checkuser-search": "Cuardaigh",
+	"checkuser-search-submit": "Cuardaigh",
+	"checkuser-ipeditcount": "~$1 as na n-úsáideoir go léir",
+	"logentry-checkuser-private-event-autocreate-account": "a chruthú go huathoibríoch"
+}

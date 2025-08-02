@@ -12,10 +12,12 @@ use MediaWiki\User\User;
  */
 class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'user-rights';
 	}
 
+	/** @inheritDoc */
 	public function getHeaderMessage() {
 		[ $formattedName, $genderName ] = $this->getAgentForOutput();
 		$viewingUser = $this->getViewingUserForGender();
@@ -64,6 +66,7 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		$reason = $this->event->getExtraParam( 'reason' );
 		if ( $reason ) {
@@ -85,6 +88,7 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		$addedGroups = array_values( $this->event->getExtraParam( 'add', [] ) );
 		$removedGroups = array_values( $this->event->getExtraParam( 'remove', [] ) );
@@ -101,11 +105,12 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		return [ $this->getAgentLink(), $this->getLogLink() ];
 	}
 
-	private function getLogLink() {
+	private function getLogLink(): array {
 		$affectedUserPage = User::newFromId( $this->event->getExtraParam( 'user' ) )->getUserPage();
 		$query = [
 			'type' => 'rights',
@@ -121,6 +126,7 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
 		return 'notification-user-rights-email-subject';
 	}

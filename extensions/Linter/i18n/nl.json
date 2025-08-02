@@ -4,6 +4,7 @@
 			"Bdijkstra",
 			"Dark Loon",
 			"HanV",
+			"Jeroen N",
 			"Klaas van Buiten",
 			"KlaasZ4usV",
 			"Mainframe98",
@@ -13,8 +14,7 @@
 			"Patio",
 			"Robin van der Vliet",
 			"Romaine",
-			"Sjoerddebruin",
-			"Jeroen N"
+			"Sjoerddebruin"
 		]
 	},
 	"linterrors": "Lintfouten",
@@ -26,6 +26,8 @@
 	"linter-category-deletable-table-tag-desc": "Deze pagina's hebben table-elementen die verwijderd moeten worden.",
 	"linter-category-duplicate-ids": "Dubbele ID's",
 	"linter-category-duplicate-ids-desc": "Deze pagina’s bevatten elementen met dubbele ‘id’-attributen.",
+	"linter-category-empty-heading": "Lege koppen",
+	"linter-category-empty-heading-desc": "Deze pagina’s hebben lege koppen.",
 	"linter-category-fostered": "Misplaatste inhoud",
 	"linter-category-fostered-desc": "Deze pagina's hebben misplaatste inhoud.",
 	"linter-category-fostered-transparent": "Misplaatste onzichtbare inhoud",
@@ -93,6 +95,7 @@
 	"linter-pager-deletable-table-tag-details": "Te verwijderen table-element",
 	"linter-pager-details-header": "Aanvullende informatie",
 	"linter-pager-duplicate-ids-details": "Dubbele ID’s",
+	"linter-pager-empty-heading-details": "Lege koppen",
 	"linter-pager-fostered-details": "Misplaatste inhoud",
 	"linter-pager-fostered-transparent-details": "Misplaatste onzichtbare inhoud",
 	"linter-pager-html5-misnesting-details": "Foutief genest (inmiddels defect)",

@@ -5,11 +5,11 @@
 			"София"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Тута көрөн уларытыы]]",
+	"tag-visualeditor": "Тута көрөн уларытыы",
 	"tag-visualeditor-description": "Көннөрүү [[{{MediaWiki:visualeditor-descriptionpagelink}}|Көрөн уларытааччы эрэдээктэр]] көмөтүнэн оҥоһуллубут",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Көрөн уларытар эрэдээктэр]]: тургут",
+	"tag-visualeditor-needcheck": "Көрөн уларытар эрэдээктэр: тургут",
 	"tag-visualeditor-needcheck-description": "Көннөрүү[[{{MediaWiki:visualeditor-descriptionpagelink}}|көрөн уларытар эрэдээктэр көмөтүнэн]], систиэмэ бука алҕас уларытыллыбыт биики-разметканы булла.",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Тута көрөн уларытыы]]",
+	"tag-visualeditor-switched": "Тута көрөн уларытыы",
 	"tag-visualeditor-switched-description": "Бастаан Көрөн уларытар эрэдээктэр көмөтүнэн саҕалаабыт, онтон төрүт тиэкиһи уларытар эрэдээктэргэ көспүт.",
 	"visualeditor-feedback-link": "Project:Көрөн уларытар эрэдээктэр/Дьон туох диирэ",
 	"visualeditor-feedback-tool": "Бу баайым туһунан санааҕын эт",

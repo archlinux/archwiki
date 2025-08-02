@@ -25,8 +25,7 @@ class UnionQueryBuilder {
 	 */
 	private $sqbs = [];
 
-	/** @var IDatabase */
-	private $db;
+	private IDatabase $db;
 
 	/** @var bool */
 	private $all = IReadableDatabase::UNION_DISTINCT;
@@ -41,8 +40,6 @@ class UnionQueryBuilder {
 
 	/**
 	 * To create a UnionQueryBuilder instance, use `$db->newUnionQueryBuilder()` instead.
-	 *
-	 * @param IDatabase $db
 	 */
 	public function __construct( IDatabase $db ) {
 		$this->db = $db;

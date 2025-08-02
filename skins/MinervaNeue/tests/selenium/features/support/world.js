@@ -5,12 +5,8 @@
  * It is reset for each scenario.
  * https://github.com/cucumber/cucumber-js/blob/master/docs/support_files/world.md
  *
- * Contrary to Cucumber.js best practices, this `MinervaWorld` is not being
- * bound to scenarios with the `setWorldConstructor` like this:
- *
- * setWorldConstructor(MinervaWorld);
- *
- * Instead, it acts as a simple function that encapsulates all dependencies,
+ * We do not have a World function bound to scenarios with `setWorldConstructor`.
+ * Instead, we have a simple object that encapsulates all dependencies,
  * and is exported so that it can be imported into each step definition file,
  * allowing us to use the dependencies across scenarios.
  */
@@ -20,10 +16,7 @@
 const mwCorePages = require( '../support/pages/mw_core_pages' ),
 	minervaPages = require( '../support/pages/minerva_pages' );
 
-function MinervaWorld() {
-	/* pageObjects */
-	Object.assign( this, mwCorePages );
-	Object.assign( this, minervaPages );
-}
-
-module.exports = new MinervaWorld();
+module.exports = {
+	...mwCorePages,
+	...minervaPages
+};

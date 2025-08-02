@@ -12,12 +12,13 @@
 			"Robby",
 			"Rodney Araujo",
 			"Shirayuki",
+			"Sjoerddebruin",
 			"Tacsipacsi",
 			"Umherirrender",
-			"Wladek92",
-			"Sjoerddebruin"
+			"Wladek92"
 		]
 	},
+	"multimediaviewer-current-image-number": "Message for displaying the current image number ($1) and the total number of images ($2).",
 	"multimediaviewer-desc": "{{desc|name=Multimedia Viewer|url=https://www.mediawiki.org/wiki/Extension:MultimediaViewer}}",
 	"multimediaviewer-optin-pref": "Label for preference to enable the Media Viewer.",
 	"multimediaviewer-file-page": "Text for a link to the file page for an image.",

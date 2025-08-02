@@ -30,7 +30,6 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 			(object)[
 				'event_id' => 1,
 				'event_type' => 'test_event',
-				'event_variant' => '',
 				'event_extra' => '',
 				'event_page_id' => '',
 				'event_agent_id' => '',
@@ -59,7 +58,6 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 			(object)[
 				'event_id' => 1,
 				'event_type' => 'test_event',
-				'event_variant' => '',
 				'event_extra' => '',
 				'event_page_id' => '',
 				'event_agent_id' => '',
@@ -101,7 +99,6 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 		$dbResult = (object)[
 			'event_id' => 1,
 			'event_type' => 'test',
-			'event_variant' => '',
 			'event_extra' => '',
 			'event_page_id' => '',
 			'event_agent_id' => '',
@@ -253,8 +250,6 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 			->willReturn( $dbResult['delete'] );
 		$db->method( 'selectRow' )
 			->willReturn( $dbResult['selectRow'] );
-		$db->method( 'onTransactionCommitOrIdle' )
-			->will( new EchoExecuteFirstArgumentStub );
 		$db->method( 'newSelectQueryBuilder' )
 			->willReturnCallback( static function () use ( $db ) {
 				return new SelectQueryBuilder( $db );

@@ -22,11 +22,11 @@
  * @param {ve.dm.Document} [parentDocument] Document to use as root for created nodes, used when cloning
  * @param {ve.dm.InternalList} [internalList] Internal list to clone; passed when creating a document slice
  * @param {Array.<string|undefined>} [innerWhitespace] Inner whitespace to clone; passed when creating a document slice
- * @param {string} [lang] Language code
+ * @param {string} [lang='en'] Language code
  * @param {string} [dir='ltr'] Directionality (ltr/rtl)
  * @param {ve.dm.Document} [originalDocument] Original document form which this was cloned.
- * @param {boolean} [sourceMode] Document is in source mode
- * @param {Object} [persistentStorage] Persistent storage object
+ * @param {boolean} [sourceMode=false] Document is in source mode
+ * @param {Object} [persistentStorage={}] Persistent storage object
  */
 ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, internalList, innerWhitespace, lang, dir, originalDocument, sourceMode, persistentStorage ) {
 	// Parent constructor
@@ -122,9 +122,9 @@ OO.inheritClass( ve.dm.Document, ve.Document );
  * @static
  * @param {ve.dm.ElementLinearData|Array} data Data to apply annotations to
  * @param {ve.dm.AnnotationSet} annotationSet Annotations to apply
- * @param {boolean} [replaceComparable] Whether to remove annotations from the data which are comparable to those in annotationSet
+ * @param {boolean} [replaceComparable=false] Whether to remove annotations from the data which are comparable to those in annotationSet
  * @param {ve.dm.HashValueStore} [store] Store associated with the data; only needs to be provided if that data is associated with a different store than annotationSet
- * @param {boolean} [prepend] Whether to prepend annotationSet to the existing annotations
+ * @param {boolean} [prepend=false] Whether to prepend annotationSet to the existing annotations
  */
 ve.dm.Document.static.addAnnotationsToData = function ( data, annotationSet, replaceComparable, store, prepend ) {
 	const offset = prepend ? 0 : undefined;
@@ -785,6 +785,7 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 		delete element.internal.metaItems;
 		delete element.internal.loadMetaParentHash;
 		delete element.internal.loadMetaParentOffset;
+		delete element.internal.preservedAnnotations;
 		if ( Object.keys( element.internal ).length === 0 ) {
 			delete element.internal;
 		}
@@ -800,7 +801,7 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 				mode === 'noMetadata' ||
 				mode === 'roundTrip' && (
 					// Already inserted
-					insertedMetaItems.indexOf( item.originalDomElementsHash ) !== -1 ||
+					insertedMetaItems.includes( item.originalDomElementsHash ) ||
 					// Removable meta item that was not handled yet, which means that its entire branch node
 					// must have been removed, so it's out of place and should be removed too
 					ve.dm.nodeFactory.isRemovableMetaData( item.type ) && ve.getProp( item, 'internal', 'loadMetaParentOffset' )
@@ -831,6 +832,10 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 
 						delete metaItem.internal.loadBranchNodeHash;
 						delete metaItem.internal.loadBranchNodeOffset;
+						if ( metaItem.internal.preservedAnnotations ) {
+							metaItem.annotations = metaItem.internal.preservedAnnotations;
+							delete metaItem.internal.preservedAnnotations;
+						}
 						if ( Object.keys( metaItem.internal ).length === 0 ) {
 							delete metaItem.internal;
 						}
@@ -850,6 +855,8 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 		}
 		result.push( stripMetaLoadInfo( item ) );
 		if ( mode === 'roundTrip' && insertions[ i ] ) {
+			// There are meta items to reinsert outside of ContentBranchNodes.
+			// TODO: we should strip annotations from such meta items
 			for ( let j = 0, jLen = insertions[ i ].length; j < jLen; j++ ) {
 				metaItem = insertions[ i ][ j ];
 				result.push( metaItem );
@@ -1462,7 +1469,7 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 			do {
 				const allowedParents = ve.dm.nodeFactory.getParentNodeTypes( childType );
 				parentsOK = allowedParents === null ||
-					allowedParents.indexOf( parentType ) !== -1;
+					allowedParents.includes( parentType );
 				if ( !parentsOK ) {
 					// We can't have this as the parent
 					if ( allowedParents.length === 0 ) {
@@ -1482,7 +1489,7 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 			let suggestedParentsOK;
 			do {
 				suggestedParentsOK = suggestedParents === null ||
-					suggestedParents.indexOf( parentType ) !== -1;
+					suggestedParents.includes( parentType );
 				if ( !suggestedParentsOK ) {
 					closeElement( closings, reopenElements, childType, i );
 				}
@@ -1494,7 +1501,7 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 			do {
 				const allowedChildren = ve.dm.nodeFactory.getChildNodeTypes( parentType );
 				childrenOK = allowedChildren === null ||
-					allowedChildren.indexOf( childType ) !== -1;
+					allowedChildren.includes( childType );
 				// Also check if we're trying to insert structure into a node that has to contain
 				// content
 				childrenOK = childrenOK && !(
@@ -1788,12 +1795,17 @@ ve.dm.Document.prototype.getDir = function () {
  * Storage is used for static variables related to document state,
  * such as InternalList's nextUniqueNumber.
  *
+ * Values stored here must be JSON-serializable, as they are written/read
+ * with ve.init.SafeStorage#setObject and getObject.
+ *
  * @param {string|Object} [keyOrStorage] Key, or storage object to restore
  * @param {any} [value] Serializable value, if key is set
  * @fires ve.dm.Document#storage
  */
 ve.dm.Document.prototype.setStorage = function ( keyOrStorage, value ) {
 	if ( typeof keyOrStorage === 'string' ) {
+		// Attempt to JSON-serialize the value now so an error can be thrown if necessary.
+		JSON.stringify( { value: value } );
 		this.persistentStorage[ keyOrStorage ] = value;
 		this.emit( 'storage' );
 	} else {

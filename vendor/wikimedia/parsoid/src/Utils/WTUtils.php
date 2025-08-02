@@ -26,6 +26,9 @@ use Wikimedia\Parsoid\Wt2Html\Frame;
 
 /**
  * These utilites pertain to querying / extracting / modifying wikitext information from the DOM.
+ *
+ * @note Many of these methods are not safe to use unless the DOM has been
+ *  loaded and prepared, as they consult DataParsoid from the NodeData.
  */
 class WTUtils {
 	private const FIRST_ENCAP_REGEXP =
@@ -54,9 +57,6 @@ class WTUtils {
 	 * Check whether a node's data-parsoid object includes
 	 * an indicator that the original wikitext was a literal
 	 * HTML element (like table or p)
-	 *
-	 * @param DataParsoid $dp
-	 * @return bool
 	 */
 	public static function hasLiteralHTMLMarker( DataParsoid $dp ): bool {
 		return isset( $dp->stx ) && $dp->stx === 'html';
@@ -64,18 +64,12 @@ class WTUtils {
 
 	/**
 	 * Run a node through {@link #hasLiteralHTMLMarker}.
-	 * @param ?Node $node
-	 * @return bool
 	 */
 	public static function isLiteralHTMLNode( ?Node $node ): bool {
 		return $node instanceof Element &&
 			self::hasLiteralHTMLMarker( DOMDataUtils::getDataParsoid( $node ) );
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	public static function isZeroWidthWikitextElt( Node $node ): bool {
 		return isset( Consts::$ZeroWidthWikitextTags[DOMCompat::nodeName( $node )] ) &&
 			!self::isLiteralHTMLNode( $node );
@@ -85,9 +79,6 @@ class WTUtils {
 	 * Is `$node` a block node that is also visible in wikitext?
 	 * An example of an invisible block node is a `<p>`-tag that
 	 * Parsoid generated, or a `<ul>`, `<ol>` tag.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isBlockNodeWithVisibleWT( Node $node ): bool {
 		return DOMUtils::isWikitextBlockNode( $node ) &&
@@ -98,9 +89,6 @@ class WTUtils {
 	 * Helper functions to detect when an A-$node uses [[..]]/[..]/... style
 	 * syntax (for wikilinks, ext links, url links). rel-type is not sufficient
 	 * anymore since mw:ExtLink is used for all the three link syntaxes.
-	 *
-	 * @param Element $node
-	 * @return bool
 	 */
 	public static function isATagFromWikiLinkSyntax( Element $node ): bool {
 		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
@@ -116,9 +104,6 @@ class WTUtils {
 	 * Helper function to detect when an A-node uses ext-link syntax.
 	 * rel attribute is not sufficient anymore since mw:ExtLink is used for
 	 * multiple link types
-	 *
-	 * @param Element $node
-	 * @return bool
 	 */
 	public static function isATagFromExtLinkSyntax( Element $node ): bool {
 		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
@@ -134,9 +119,6 @@ class WTUtils {
 	 * Helper function to detect when an A-node uses url-link syntax.
 	 * rel attribute is not sufficient anymore since mw:ExtLink is used for
 	 * multiple link types
-	 *
-	 * @param Element $node
-	 * @return bool
 	 */
 	public static function isATagFromURLLinkSyntax( Element $node ): bool {
 		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
@@ -152,9 +134,6 @@ class WTUtils {
 	 * Helper function to detect when an A-node uses magic-link syntax.
 	 * rel attribute is not sufficient anymore since mw:ExtLink is used for
 	 * multiple link types
-	 *
-	 * @param Element $node
-	 * @return bool
 	 */
 	public static function isATagFromMagicLinkSyntax( Element $node ): bool {
 		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
@@ -179,9 +158,6 @@ class WTUtils {
 	/**
 	 * Check whether a typeof indicates that it signifies an
 	 * expanded attribute.
-	 *
-	 * @param Element $node
-	 * @return bool
 	 */
 	public static function hasExpandedAttrsType( Element $node ): bool {
 		return DOMUtils::matchTypeOf( $node, '/^mw:ExpandedAttrs(\/\S+)*$/' ) !== null;
@@ -189,9 +165,6 @@ class WTUtils {
 
 	/**
 	 * Check whether a node is a meta tag that signifies a template expansion.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isTplMarkerMeta( Node $node ): bool {
 		return DOMUtils::matchNameAndTypeOf( $node, 'meta', self::TPL_META_TYPE_REGEXP ) !== null;
@@ -199,9 +172,6 @@ class WTUtils {
 
 	/**
 	 * Check whether a node is a meta signifying the start of a template expansion.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isTplStartMarkerMeta( Node $node ): bool {
 		$t = DOMUtils::matchNameAndTypeOf( $node, 'meta', self::TPL_META_TYPE_REGEXP );
@@ -210,9 +180,6 @@ class WTUtils {
 
 	/**
 	 * Check whether a node is a meta signifying the end of a template expansion.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isTplEndMarkerMeta( Node $node ): bool {
 		$t = DOMUtils::matchNameAndTypeOf( $node, 'meta', self::TPL_META_TYPE_REGEXP );
@@ -221,16 +188,12 @@ class WTUtils {
 
 	/**
 	 * Find the first wrapper element of encapsulated content.
-	 * @param Node $node
-	 * @return Element|null
 	 */
 	public static function findFirstEncapsulationWrapperNode( Node $node ): ?Element {
 		if ( !self::isEncapsulatedDOMForestRoot( $node ) ) {
 			return null;
 		}
-		/** @var Element $node */
-		DOMUtils::assertElt( $node );
-
+		'@phan-var Element $node'; // @var ?Element $elt
 		$about = DOMCompat::getAttribute( $node, 'about' );
 		$prev = $node;
 		do {
@@ -258,9 +221,6 @@ class WTUtils {
 	 * As written, this function can only be used on non-template/extension content
 	 * or on the top-level nodes of template/extension content. This test will
 	 * return the wrong results on non-top-level $nodes of template/extension content.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isNewElt( Node $node ): bool {
 		// We cannot determine newness on text/comment $nodes.
@@ -276,38 +236,23 @@ class WTUtils {
 
 	/**
 	 * Check whether a pre is caused by indentation in the original wikitext.
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isIndentPre( Node $node ): bool {
 		return DOMCompat::nodeName( $node ) === "pre" && !self::isLiteralHTMLNode( $node );
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	public static function isInlineMedia( Node $node ): bool {
-		return self::isGeneratedFigure( $node ) &&
-			DOMCompat::nodeName( $node ) !== 'figure';  // span, figure-inline
+		return DOMCompat::nodeName( $node ) === 'span' &&
+			self::isGeneratedFigure( $node );
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	public static function isGeneratedFigure( Node $node ): bool {
-		// TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content
-		// is no longer supported
-		return DOMUtils::matchTypeOf( $node, '#^mw:(File|Image|Video|Audio)($|/)#D' ) !== null;
+		return DOMUtils::matchTypeOf( $node, '#^mw:File($|/)#D' ) !== null;
 	}
 
 	/**
 	 * Find how much offset is necessary for the DSR of an
 	 * indent-originated pre tag.
-	 *
-	 * @param Node $textNode
-	 * @return int
 	 */
 	public static function indentPreDSRCorrection( Node $textNode ): int {
 		// NOTE: This assumes a text-node and doesn't check that it is one.
@@ -331,19 +276,11 @@ class WTUtils {
 
 	/**
 	 * Check if $node is a root in an encapsulated DOM forest.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isEncapsulatedDOMForestRoot( Node $node ): bool {
-		$about = $node instanceof Element ?
-			DOMCompat::getAttribute( $node, 'about' ) : null;
-		if ( $about !== null ) {
-			// FIXME: Ensure that our DOM spec clarifies this expectation
-			return Utils::isParsoidObjectId( $about );
-		} else {
-			return false;
-		}
+		$about = $node instanceof Element ? DOMCompat::getAttribute( $node, 'about' ) : null;
+		// FIXME: Ensure that our DOM spec clarifies this expectation
+		return $about !== null && Utils::isParsoidObjectId( $about );
 	}
 
 	/**
@@ -381,9 +318,6 @@ class WTUtils {
 	 * switches, and include directives currently satisfy this definition.
 	 *
 	 * This should come close to matching TokenUtils.isSolTransparent()
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function emitsSolTransparentSingleLineWT( Node $node ): bool {
 		if ( $node instanceof Text ) {
@@ -403,9 +337,6 @@ class WTUtils {
 	/**
 	 * This is the span added to headings to add fallback ids for when legacy
 	 * and HTML5 ids don't match up. This prevents broken links to legacy ids.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isFallbackIdSpan( Node $node ): bool {
 		return DOMUtils::hasNameAndTypeOf( $node, 'span', 'mw:FallbackId' );
@@ -417,9 +348,6 @@ class WTUtils {
 	 * - In the PHP parser, they are completely stripped from the input early on.
 	 *   Because of this property, these rendering-transparent $nodes are also
 	 *   SOL-transparent for the purposes of parsing behavior.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isRenderingTransparentNode( Node $node ): bool {
 		// FIXME: Can we change this entire thing to
@@ -440,9 +368,6 @@ class WTUtils {
 	/**
 	 * Is $node nested inside a table tag that uses HTML instead of native
 	 * wikitext?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function inHTMLTableTag( Node $node ): bool {
 		$p = $node->parentNode;
@@ -461,9 +386,6 @@ class WTUtils {
 
 	/**
 	 * Is $node the first wrapper element of encapsulated content?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isFirstEncapsulationWrapperNode( Node $node ): bool {
 		return DOMUtils::matchTypeOf( $node, self::FIRST_ENCAP_REGEXP ) !== null;
@@ -471,9 +393,6 @@ class WTUtils {
 
 	/**
 	 * Is $node the first wrapper element of extension content?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isFirstExtensionWrapperNode( Node $node ): bool {
 		return DOMUtils::matchTypeOf( $node, "#mw:Extension/#" ) !== null;
@@ -482,9 +401,6 @@ class WTUtils {
 	/**
 	 * Checks whether a first encapsulation wrapper node is encapsulating an extension
 	 * that outputs MediaWiki Core DOM Spec HTML (https://www.mediawiki.org/wiki/Specs/HTML)
-	 * @param Node $node
-	 * @param Env $env
-	 * @return bool
 	 */
 	public static function isExtensionOutputtingCoreMwDomSpec( Node $node, Env $env ): bool {
 		if ( DOMUtils::matchTypeOf( $node, self::NON_EXTENSION_ENCAP_REGEXP ) !== null ) {
@@ -501,25 +417,16 @@ class WTUtils {
 	 *
 	 * All root-level $nodes of generated content are considered
 	 * encapsulation wrappers and share an about-id.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isEncapsulationWrapper( Node $node ): bool {
 		// True if it has an encapsulation type or while walking backwards
 		// over elts with identical about ids, we run into a $node with an
 		// encapsulation type.
-		if ( !( $node instanceof Element ) ) {
-			return false;
-		}
-		return self::findFirstEncapsulationWrapperNode( $node ) !== null;
+		return $node instanceof Element && self::findFirstEncapsulationWrapperNode( $node ) !== null;
 	}
 
 	/**
 	 * Is $node a DOMFragment wrapper?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isDOMFragmentWrapper( Node $node ): bool {
 		// See TokenUtils::hasDOMFragmentType
@@ -528,10 +435,6 @@ class WTUtils {
 
 	/**
 	 * Is $node a sealed DOMFragment of a specific type?
-	 *
-	 * @param Node $node
-	 * @param string $type
-	 * @return bool
 	 */
 	public static function isSealedFragmentOfType( Node $node, string $type ): bool {
 		return DOMUtils::hasTypeOf( $node, "mw:DOMFragment/sealed/$type" );
@@ -539,13 +442,10 @@ class WTUtils {
 
 	/**
 	 * Is $node a Parsoid-generated <section> tag?
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isParsoidSectionTag( Node $node ): bool {
-		return $node instanceof Element &&
-			DOMCompat::nodeName( $node ) === 'section' &&
+		return DOMCompat::nodeName( $node ) === 'section' &&
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$node->hasAttribute( 'data-mw-section-id' );
 	}
 
@@ -568,8 +468,6 @@ class WTUtils {
 
 	/**
 	 * Is $node from encapsulated (template, extension, etc.) content?
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function fromEncapsulatedContent( Node $node ): bool {
 		while ( $node && !DOMUtils::atTheTop( $node ) ) {
@@ -585,9 +483,6 @@ class WTUtils {
 	 * Compute, when possible, the wikitext source for a $node in
 	 * an environment env. Returns null if the source cannot be
 	 * extracted.
-	 * @param Frame $frame
-	 * @param Element $node
-	 * @return string|null
 	 */
 	public static function getWTSource( Frame $frame, Element $node ): ?string {
 		$dp = DOMDataUtils::getDataParsoid( $node );
@@ -648,9 +543,6 @@ class WTUtils {
 	 * by templates or extensions.  This function skips over all
 	 * following content nodes and returns the first non-template node
 	 * that follows it.
-	 *
-	 * @param Node $node
-	 * @return Node|null
 	 */
 	public static function skipOverEncapsulatedContent( Node $node ): ?Node {
 		$about = $node instanceof Element ?
@@ -786,20 +678,18 @@ class WTUtils {
 		return strlen( self::decodeComment( $value ) ) + $syntaxLen;
 	}
 
-	/**
-	 * @param Node $node
-	 * @return ?string
-	 */
 	public static function getExtTagName( Node $node ): ?string {
 		$match = DOMUtils::matchTypeOf( $node, '#^mw:Extension/(.+?)$#D' );
 		return $match ? mb_strtolower( substr( $match, strlen( 'mw:Extension/' ) ) ) : null;
 	}
 
-	/**
-	 * @param Env $env
-	 * @param Node $node
-	 * @return ?ExtensionTagHandler
-	 */
+	public static function getPFragmentHandlerKey( Node $node ): ?string {
+		// TODO (T390342): use ::getExtTagName() to look up extension tag
+		// PFragment handlers
+		$match = DOMUtils::matchTypeOf( $node, '#^mw:ParserFunction/(.+?)$#D' );
+		return $match ? substr( $match, strlen( 'mw:ParserFunction/' ) ) : null;
+	}
+
 	public static function getNativeExt( Env $env, Node $node ): ?ExtensionTagHandler {
 		$extTagName = self::getExtTagName( $node );
 		return $extTagName ? $env->getSiteConfig()->getExtTagImpl( $extTagName ) : null;
@@ -807,29 +697,15 @@ class WTUtils {
 
 	/**
 	 * Is this an include directive?
-	 * @param string $name
-	 * @return bool
 	 */
 	public static function isIncludeTag( string $name ): bool {
 		return $name === 'includeonly' || $name === 'noinclude' || $name === 'onlyinclude';
 	}
 
-	/**
-	 * Check if tag is annotation or extension directive
-	 * Adapted from similar grammar function
-	 *
-	 * @param Env $env
-	 * @param string $name
-	 * @return bool
-	 */
-	public static function isAnnOrExtTag( Env $env, string $name ): bool {
+	public static function isAnnotationTag( Env $env, string $name ): bool {
 		$tagName = mb_strtolower( $name );
 		$siteConfig = $env->getSiteConfig();
-		$extTags = $siteConfig->getExtensionTagNameMap();
-		$isInstalledExt = isset( $extTags[$tagName] );
-		$isIncludeTag = self::isIncludeTag( $tagName );
 		$isAnnotationTag = $siteConfig->isAnnotationTag( $tagName );
-
 		if ( !$isAnnotationTag ) {
 			// avoid crashing on <tvar|name> even if we don't support that syntax explicitly
 			$pipepos = strpos( $tagName, '|' );
@@ -838,7 +714,19 @@ class WTUtils {
 				$isAnnotationTag = $siteConfig->isAnnotationTag( $strBeforePipe );
 			}
 		}
-		return $isInstalledExt || $isIncludeTag || $isAnnotationTag;
+		return $isAnnotationTag;
+	}
+
+	/**
+	 * Check if tag is annotation or extension directive
+	 * Adapted from similar grammar function
+	 */
+	public static function isAnnOrExtTag( Env $env, string $name ): bool {
+		$tagName = mb_strtolower( $name );
+		$extTags = $env->getSiteConfig()->getExtensionTagNameMap();
+		return isset( $extTags[$tagName] ) ||
+			self::isIncludeTag( $tagName ) ||
+			self::isAnnotationTag( $env, $tagName );
 	}
 
 	/**
@@ -970,8 +858,6 @@ class WTUtils {
 	}
 
 	/** Check whether a node is an annotation meta; if yes, returns its type
-	 * @param Node $node
-	 * @return ?string
 	 */
 	public static function matchAnnotationMeta( Node $node ): ?string {
 		return DOMUtils::matchNameAndTypeOf( $node, 'meta', self::ANNOTATION_META_TYPE_REGEXP );
@@ -996,9 +882,6 @@ class WTUtils {
 
 	/**
 	 * Check whether a node is a meta signifying the start of an annotated part of the DOM
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isAnnotationStartMarkerMeta( Node $node ): bool {
 		if ( !$node instanceof Element || DOMCompat::nodeName( $node ) !== 'meta' ) {
@@ -1011,9 +894,6 @@ class WTUtils {
 
 	/**
 	 * Check whether a node is a meta signifying the end of an annotated part of the DOM
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isAnnotationEndMarkerMeta( Node $node ): bool {
 		if ( !$node instanceof Element || DOMCompat::nodeName( $node ) !== 'meta' ) {
@@ -1026,8 +906,6 @@ class WTUtils {
 
 	/**
 	 * Check whether the meta tag was moved from its initial position
-	 * @param Node $node
-	 * @return bool
 	 */
 	public static function isMovedMetaTag( Node $node ): bool {
 		if ( $node instanceof Element && self::matchAnnotationMeta( $node ) !== null ) {
@@ -1039,32 +917,18 @@ class WTUtils {
 		return false;
 	}
 
-	/** Returns true if a node is a (start or end) annotation meta tag
-	 * @param ?Node $n
-	 * @return bool
-	 */
+	/** Returns true if a node is a (start or end) annotation meta tag */
 	public static function isMarkerAnnotation( ?Node $n ): bool {
 		return $n !== null && self::matchAnnotationMeta( $n ) !== null;
 	}
 
-	/**
-	 * Extracts the media format from the attribute string
-	 *
-	 * @param Element $node
-	 * @return string
-	 */
+	/** Extracts the media format from the attribute string */
 	public static function getMediaFormat( Element $node ): string {
-		// TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content
-		// is no longer supported
-		$mediaType = DOMUtils::matchTypeOf( $node, '#^mw:(File|Image|Video|Audio)(/|$)#' );
+		$mediaType = DOMUtils::matchTypeOf( $node, '#^mw:File(/|$)#' );
 		$parts = explode( '/', $mediaType ?? '' );
 		return $parts[1] ?? '';
 	}
 
-	/**
-	 * @param Element $node
-	 * @return bool
-	 */
 	public static function hasVisibleCaption( Element $node ): bool {
 		$format = self::getMediaFormat( $node );
 		return in_array(
@@ -1077,9 +941,6 @@ class WTUtils {
 	 * linkbacks aren't available in the textContent added to the alt.
 	 * However, when serializing, they are in the caption elements.  So, this
 	 * special handler drops the linkbacks for the purpose of comparison.
-	 *
-	 * @param Node $node
-	 * @return string
 	 */
 	public static function textContentFromCaption( Node $node ): string {
 		$content = '';

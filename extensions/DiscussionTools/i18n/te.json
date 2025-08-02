@@ -4,10 +4,10 @@
 			"Arjunaraoc",
 			"Chaduvari",
 			"Matma Rex",
+			"SaiPhani02",
 			"V Bhavya",
 			"Veeven",
-			"Woytecr",
-			"SaiPhani02"
+			"Woytecr"
 		]
 	},
 	"discussiontools": "చర్చ ఉపకరణాలు",
@@ -122,9 +122,9 @@
 	"tag-discussiontools-description": "చర్చా ఉపకరణాలు వాడిన సవరణ",
 	"tag-discussiontools-edit": "వ్యాఖ్య సవరించు",
 	"tag-discussiontools-edit-description": "ఇప్పటికే వున్న వ్యాఖ్యని చర్చా ఉపకరణాలు వాడి వాడుకరి సవరించారు.",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} కొత్త విషయం]",
+	"tag-discussiontools-newtopic": "కొత్త విషయం",
 	"tag-discussiontools-newtopic-description": "చర్చా ఉపకరణాలు వాడి పేజీకి కొత్త విషయాన్ని వాడుకరి చేర్చారు.",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} ప్రత్యుత్తరం]",
+	"tag-discussiontools-reply": "ప్రత్యుత్తరం",
 	"tag-discussiontools-reply-description": "వ్యాఖ్యకు ప్రత్యుత్తరం చర్చా ఉపకరణాలు వాడి చేర్చారు.",
 	"tag-discussiontools-source-description": "చర్చా ఉపకరణాలు మూలం విధంలో వున్నది",
 	"tag-discussiontools-visual-description": "చర్చా ఉపకరణాలు విజువల్ విధంలో వున్నది"

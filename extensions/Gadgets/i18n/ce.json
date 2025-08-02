@@ -61,5 +61,8 @@
 	"gadgets-validate-unknownpages": "Цхьаъ йа масех агӀо йу .js, .css, .json суффиксаш йоцуш. Уьш лелора йац.",
 	"gadgets-validate-duplicate": "Гаджетан $1 шалха маьӀна карийна, тидаме оьцур йац.",
 	"gadgets-validate-nopage": "«$1» агӀо йац",
-	"gadgets-supports-urlload": "Гаджето гӀо до URL чохь <code>?withgadget</code> параметр лелош, чуйаккхарна."
+	"gadgets-validate-invaliddependencies": "ХӀара {{PLURAL:$2|дозуш хилар|дозуш хилар дац}}: $1.",
+	"gadgets-validate-deprecateddependencies": "ХӀара {{PLURAL:$2|дозуш хилар|дозуш хиларш}} ширделла ду: $1.",
+	"gadgets-supports-urlload": "Гаджето гӀо до URL чохь <code>?withgadget</code> параметр лелош, чуйаккхарна.",
+	"gadgets-hidden": "ХӀара гаджет [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden къайлаха] йу, и бохург ду иза гойтур йац нисдаран гӀирсан агӀонан тӀехь."
 }

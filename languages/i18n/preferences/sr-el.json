@@ -82,7 +82,7 @@
 	"prefs-help-email": "Imejl-adresa nije obavezna, ali je potrebna za resetovanje lozinke, ako je zaboravite.",
 	"prefs-help-email-required": "Potrebna je imejl-adresa.",
 	"prefs-help-email-others": "Možete da dopustite drugima da kontaktiraju s Vama putem imejla preko veze na Vašoj korisničkoj ili stranici za razgovor.\nImejl-adresa neće biti prikazana onima koji pokušavaju da kontaktiraju s Vama.",
-	"tog-requireemail": "Šalji imejlove za resetovanje lozinke samo kada su navedeni i imejl-adresa i korisničko ime.",
+	"tog-requireemail": "Šalji imejlove za resetovanje lozinke samo kada su navedeni i imejl-adresa i korisničko ime",
 	"prefs-help-requireemail": "Ovo poboljšava privatnost i pomaže u sprečavanju neželjenih imejlova.",
 	"noemailprefs": "Navedite imejl-adresu u podešavanjima za osposobljavanje ovih funkcija.",
 	"emailnotauthenticated": "Imejl-adresa još nije potvrđena.\nNijedan imejl neće biti poslat ni u jednom od sledećih slučajeva.",
@@ -229,6 +229,7 @@
 	"search-thumbnail-extra-namespaces-label": "Prikaži minijaturu u Posebno:Pretraži",
 	"search-thumbnail-extra-namespaces-message": "Prikazuje minijaturu za $1 {{PLURAL:$2|imenski prostor|imenske prostore}} u rezultatima na {{#special:search}}",
 	"prefs-advancedsearchoptions": "Napredne opcije",
+	"prefs-misc": "Razno",
 	"prefs-reset-intro": "Možete koristiti ovu stranicu da ponovo postavite svoja podešavanja na podrazumevane vrednosti sajta.\nOvo se ne može opozvati.",
 	"prefs-reset-confirm": "Da, želim da vratim podešavanja na podrazumevane vrednosti.",
 	"restoreprefs": "Vrati sve na podrazumevano"

@@ -52,6 +52,7 @@ class MultipleIterator implements RecursiveIterator {
 		}
 	}
 
+	/** @return array */
 	#[\ReturnTypeWillChange]
 	public function current() {
 		$result = [];

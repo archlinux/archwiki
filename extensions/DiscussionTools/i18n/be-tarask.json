@@ -73,6 +73,6 @@
 	"echo-pref-tooltip-dt-subscription": "Паведаміць мне, калі нехта напіша новы камэнтар у тэму, на якую я {{GENDER:|падпісаўся|падпісалася}}.",
 	"tag-discussiontools-edit": "Адрэдагаваны камэнтар",
 	"tag-discussiontools-edit-description": "Карыстальнік адрэдагаваў існы камэнтар праз DiscussionTools",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Новая тэма]",
+	"tag-discussiontools-newtopic": "Новая тэма",
 	"tag-discussiontools-newtopic-description": "Карыстальнік дадаў на старонку новую тэму праз DiscussionTools"
 }

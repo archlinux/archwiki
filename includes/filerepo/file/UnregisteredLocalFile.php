@@ -18,6 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo\File;
+
+use BadMethodCallException;
+use MediaHandler;
+use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use Wikimedia\FileBackend\FSFile\FSFile;
@@ -43,7 +48,7 @@ class UnregisteredLocalFile extends File {
 	/** @var string */
 	protected $path;
 
-	/** @var string|false */
+	/** @var string|false|null */
 	protected $mime;
 
 	/** @var array[]|bool[] Dimension data */
@@ -160,7 +165,7 @@ class UnregisteredLocalFile extends File {
 	 * @return string|false
 	 */
 	public function getMimeType() {
-		if ( !isset( $this->mime ) ) {
+		if ( $this->mime === null ) {
 			$refPath = $this->getLocalRefPath();
 			if ( $refPath !== false ) {
 				$magic = MediaWikiServices::getInstance()->getMimeAnalyzer();
@@ -194,7 +199,7 @@ class UnregisteredLocalFile extends File {
 		return $info['metadata'];
 	}
 
-	private function getSizeAndMetadata() {
+	private function getSizeAndMetadata(): array {
 		if ( $this->sizeAndMetadata === null ) {
 			if ( !$this->getHandler() ) {
 				$this->sizeAndMetadata = [ 'width' => 0, 'height' => 0, 'metadata' => [] ];
@@ -240,3 +245,6 @@ class UnregisteredLocalFile extends File {
 		$this->fsFile = $fsFile;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( UnregisteredLocalFile::class, 'UnregisteredLocalFile' );

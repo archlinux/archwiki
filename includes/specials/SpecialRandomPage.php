@@ -41,10 +41,6 @@ class SpecialRandomPage extends SpecialPage {
 
 	private IConnectionProvider $dbProvider;
 
-	/**
-	 * @param IConnectionProvider $dbProvider
-	 * @param NamespaceInfo $nsInfo
-	 */
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		NamespaceInfo $nsInfo
@@ -65,7 +61,10 @@ class SpecialRandomPage extends SpecialPage {
 		$this->namespaces = [ $ns ];
 	}
 
-	private function isValidNS( $ns ) {
+	/**
+	 * @param int|false $ns
+	 */
+	private function isValidNS( $ns ): bool {
 		return $ns !== false && $ns >= 0;
 	}
 
@@ -89,7 +88,7 @@ class SpecialRandomPage extends SpecialPage {
 		}
 
 		$redirectParam = $this->isRedirect() ? [ 'redirect' => 'no' ] : [];
-		$query = array_merge( $this->getRequest()->getValues(), $redirectParam );
+		$query = array_merge( $this->getRequest()->getQueryValues(), $redirectParam );
 		unset( $query['title'] );
 		$this->getOutput()->redirect( $title->getFullURL( $query ) );
 	}
@@ -212,7 +211,12 @@ class SpecialRandomPage extends SpecialPage {
 		];
 	}
 
-	private function selectRandomPageFromDB( $randstr, $fname ) {
+	/**
+	 * @param int|string $randstr
+	 * @param string $fname
+	 * @return \stdClass|false
+	 */
+	private function selectRandomPageFromDB( $randstr, string $fname ) {
 		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		$query = $this->getQueryInfo( $randstr );

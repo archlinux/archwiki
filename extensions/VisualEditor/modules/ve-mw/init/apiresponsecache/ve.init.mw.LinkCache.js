@@ -51,6 +51,7 @@ ve.init.mw.LinkCache.static.processPage = function ( page ) {
 		missing: page.missing !== undefined,
 		known: page.known !== undefined,
 		redirect: page.redirect !== undefined,
+		linkclasses: page.linkclasses || [],
 		disambiguation: ve.getProp( page, 'pageprops', 'disambiguation' ) !== undefined,
 		hidden: ve.getProp( page, 'pageprops', 'hiddencat' ) !== undefined,
 		imageUrl: ve.getProp( page, 'thumbnail', 'source' ),
@@ -79,6 +80,8 @@ ve.init.mw.LinkCache.prototype.styleElement = function ( title, $element, hasFra
 	}
 
 	promise.done( ( data ) => {
+		// eslint-disable-next-line mediawiki/class-doc
+		$element.addClass( data.linkclasses );
 		if ( data.missing && !data.known ) {
 			$element.addClass( 'new' );
 		} else {
@@ -86,6 +89,10 @@ ve.init.mw.LinkCache.prototype.styleElement = function ( title, $element, hasFra
 			if ( !hasFragment && this.constructor.static.normalizeTitle( title ) === this.constructor.static.normalizeTitle( mw.config.get( 'wgRelevantPageName' ) ) ) {
 				$element.addClass( 'mw-selflink' );
 			}
+
+			// The following two classes should already be added by data.linkclasses
+			// TODO: Decide if the linkclasses or the pageprop is canonical, and only use one.
+
 			// Provided by core MediaWiki, no styles by default.
 			if ( data.redirect ) {
 				$element.addClass( 'mw-redirect' );
@@ -167,6 +174,7 @@ ve.init.mw.LinkCache.prototype.getRequestPromise = function ( subqueue ) {
 	return this.api.get( {
 		action: 'query',
 		prop: 'info|pageprops|pageimages|description',
+		inprop: 'linkclasses',
 		pithumbsize: 80,
 		pilimit: subqueue.length,
 		ppprop: 'disambiguation|hiddencat',

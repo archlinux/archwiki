@@ -5,6 +5,7 @@ namespace MediaWiki\Minerva;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
@@ -12,8 +13,69 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @coversDefaultClass \MediaWiki\Minerva\Skins\SkinMinerva
  * @group MinervaNeue
+ * @group Database
  */
 class SkinMinervaTest extends MediaWikiIntegrationTestCase {
+	use MockAuthorityTrait;
+
+	private const MAIN_MENU_HOME_ENTRY = [
+		'tag-name' => 'a',
+		'label' => 'Home',
+		'array-attributes' => [
+			[
+				'key' => 'href',
+				'value' => '/wiki/Main_Page',
+			],
+			[
+				'key' => 'data-mw',
+				'value' => 'interface',
+			]
+		],
+		'classes' => 'menu__item--home',
+		'data-icon' => [
+			'icon' => 'home',
+		],
+		'isButton' => true,
+	];
+	private const MAIN_MENU_HOME = [
+		'name' => 'home',
+		'components' => [
+			self::MAIN_MENU_HOME_ENTRY
+		]
+	];
+	private const PAGE_ACTIONS = [
+		'toolbar' => [],
+		'overflowMenu' => [
+			'item-id' => 'page-actions-overflow',
+			'checkboxID' => 'page-actions-overflow-checkbox',
+			'toggleID' => 'page-actions-overflow-toggle',
+			'event' => 'ui.overflowmenu',
+			'data-btn' => [
+				'tag-name' => 'label',
+				'data-icon' => [
+					'icon' => 'ellipsis'
+				],
+				'classes' => 'toggle-list__toggle',
+				'array-attributes' => [
+					[
+						 'key' => 'id',
+						 'value' => 'page-actions-overflow-toggle',
+					],
+					[
+						'key' => 'for',
+						'value' => 'page-actions-overflow-checkbox',
+					],
+					[
+						'key' => 'aria-hidden',
+						'value' => 'true',
+					],
+				],
+				'label' => '(minerva-page-actions-overflow)',
+			],
+			'listID' => 'p-tb',
+			'listClass' => 'page-actions-overflow-list toggle-list__list--drop-down',
+		]
+	];
 	private const ATTRIBUTE_NOTIFICATION_HREF = [
 		'key' => 'href',
 		'value' => '/wiki/Special:Notifications',
@@ -36,15 +98,23 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		'value' => "Your alerts",
 	];
 
-	private function newSkinMinerva() {
+	/**
+	 * @param RequestContext|null $context
+	 * @return SkinMinerva
+	 */
+	private function newSkinMinerva( $context = null ): SkinMinerva {
 		$services = $this->getServiceContainer();
+		$permissions = $services->getService( 'Minerva.Permissions' );
+		if ( $context ) {
+			$permissions->setContext( $context );
+		}
 		return new SkinMinerva(
 			$services->getGenderCache(),
 			$services->getLinkRenderer(),
 			$services->getService( 'Minerva.LanguagesHelper' ),
 			$services->getService( 'Minerva.Menu.Definitions' ),
 			$services->getService( 'Minerva.Menu.PageActions' ),
-			$services->getService( 'Minerva.Permissions' ),
+			$permissions,
 			$services->getService( 'Minerva.SkinOptions' ),
 			$services->getService( 'Minerva.SkinUserPageHelper' ),
 			$services->getNamespaceInfo(),
@@ -54,10 +124,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @param array $options
-	 */
-	private function overrideSkinOptions( $options ) {
+	private function overrideSkinOptions( array $options ): void {
 		$services = $this->getServiceContainer();
 		$mockOptions = new SkinOptions(
 			$services->getHookContainer(),
@@ -71,7 +138,6 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		return [
 			[ NS_MAIN, 'test', 'view', true ],
 			[ NS_SPECIAL, 'test', 'view', false ],
-			[ NS_MAIN, 'Main Page', 'view', false ],
 			[ NS_MAIN, 'test', 'history', false ]
 		];
 	}
@@ -100,6 +166,23 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 			[ [ SkinOptions::TALK_AT_TOP => false ], NS_SPECIAL, 'test', 'view', true ],
 			[ [ SkinOptions::TALK_AT_TOP => false ], NS_MAIN, 'test', 'history', true ],
 		];
+	}
+
+	/**
+	 * @covers ::getDefaultModules
+	 */
+	public function testGetDefaultModules() {
+		$context = new RequestContext();
+		$context->setTitle( Title::makeTitle( 0, 'Hello' ) );
+		$context->setActionName( 'view' );
+
+		$skinFactory = $this->getServiceContainer()->getSkinFactory();
+		$skin = $skinFactory->makeSkin( 'minerva' );
+
+		$skin->setContext( $context );
+
+		$this->assertContains( 'skins.minerva.styles', $skin->getDefaultModules()['styles']['skin'],
+								'Check entry point' );
 	}
 
 	/**
@@ -133,11 +216,32 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$skin = $this->newSkinMinerva();
 		$skin->setContext( $context );
 
-		$contentNavigationUrls = [ 'associated-pages' => [ 'testkey' => 'testvalue' ] ];
-		$associatedPages = [ 'id' => 'test' ];
-		$data = TestingAccessWrapper::newFromObject( $skin )->getTabsData( $contentNavigationUrls, $associatedPages );
+		$contentNavigationUrls = [
+			'main' => [
+				'class' => 'hi',
+				'text' => 'article'
+			],
+			'talk' => [
+				'class' => 'selected',
+				'rel' => 'discussion',
+				'text' => 'talk'
+			],
+		];
+		$data = TestingAccessWrapper::newFromObject( $skin )->getTabsData(
+			$contentNavigationUrls, 'test'
+		);
 
-		$this->assertEquals( [ 'items' => [ 'testvalue' ], 'id' => 'test' ], $data );
+		$this->assertEquals( [ 'items' => [
+			[
+				'class' => 'hi',
+				'text' => 'article'
+			],
+			[
+				'class' => 'selected',
+				'rel' => 'discussion',
+				'text' => 'talk'
+			]
+		], 'id' => 'test' ], $data );
 	}
 
 	/**
@@ -146,6 +250,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 	public function testGetTabsDataNoPageTabs() {
 		$context = new RequestContext();
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) );
+		$context->setActionName( 'view' );
 
 		$skin = $this->newSkinMinerva();
 		$skin->setContext( $context );
@@ -184,11 +289,66 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$skin = $this->newSkinMinerva();
 		$skin->setContext( $context );
 
-		$contentNavigationUrls = [ 'associated-pages' => [ 'testkey' => 'testvalue' ] ];
+		$item = [
+			'class' => 'hi',
+			'text' => 'article'
+		];
+		$contentNavigationUrls = [
+			$item
+		];
 		$associatedPages = [];
-		$data = TestingAccessWrapper::newFromObject( $skin )->getTabsData( $contentNavigationUrls, $associatedPages );
+		$data = TestingAccessWrapper::newFromObject( $skin )->getTabsData( $contentNavigationUrls );
 
-		$this->assertEquals( [ 'items' => [ 'testvalue' ], 'id' => null ], $data );
+		$this->assertEquals( [ 'items' => [ $item ], 'id' => null ], $data );
+	}
+
+	/**
+	 * @covers ::mapPortletData
+	 */
+	public function testMapPortletData() {
+		$context = new RequestContext();
+		$context->setTitle( Title::makeTitle( NS_MAIN, 'test' ) );
+
+		$skin = $this->newSkinMinerva();
+		$skin->setContext( $context );
+
+		$portletData = [
+			'id' => 'nav',
+			'array-items' => [
+				[
+					'name' => 'h',
+					'class' => 'foo',
+					'array-links' => [
+						[
+							'text' => 'Home',
+							'icon' => 'home',
+							'array-attributes' => [
+								[
+									'key' => 'href',
+									'value' => '/wiki/Home',
+								],
+								[
+									'key' => 'rel',
+									'value' => 'main',
+								],
+							]
+						],
+					]
+				]
+			]
+		];
+		$data = TestingAccessWrapper::newFromObject( $skin )->mapPortletData( $portletData );
+
+		$this->assertEquals( [
+			'h' => [
+				'class' => 'foo',
+				'text' => 'Home',
+				'context' => 'h',
+				'icon' => 'home',
+				'href' => '/wiki/Home',
+				'rel' => 'main',
+			]
+		], $data );
 	}
 
 	/**
@@ -303,8 +463,6 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideHasCategoryLinks
-	 * @param array $categoryLinks
-	 * @param bool $expected
 	 * @covers ::setContext
 	 * @covers ::hasCategoryLinks
 	 */
@@ -480,5 +638,153 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected['data-attributes'] ?? [], $btns[0]['data-attributes'] ?? [] );
 		$this->assertEquals( $expected['data-icon'] ?? [], $btns[0]['data-icon'] ?? [] );
 		$this->assertEquals( $expected['data-label'] ?? '', $btns[0]['data-label'] ?? '' );
+	}
+
+	/**
+	 * @covers ::getTemplateData
+	 */
+	public function testGetTemplateData() {
+		$context = new RequestContext();
+		$title = $this->getExistingTestPage()->getTitle();
+		$context->setTitle( $title );
+		$context->setUser( $this->getTestUser()->getUser() );
+		$context->setLanguage( 'qqx' );
+
+		$skin = $this->newSkinMinerva();
+		$skin->setContext( $context );
+		$skin->getOutput()->setProperty( 'wgMFDescription', 'A description' );
+		$data = $skin->getTemplateData();
+
+		// Unset items which can vary depending on what extensions are installed
+		// and what hooks run
+		unset( $data['data-minerva-page-actions']['overflowMenu']['items'] );
+
+		$this->assertTrue( $data['has-minerva-languages'] );
+		$this->assertEquals( [
+			'<div id="siteNotice"></div>'
+		], $data['array-minerva-banners'] );
+		$this->assertEquals(
+			[
+				'data-icon' => [
+					'icon' => 'search',
+				],
+				'label' => '(searchbutton)',
+				'classes' => 'skin-minerva-search-trigger',
+				'array-attributes' => [
+					[
+						'key' => 'id',
+						'value' => 'searchIcon',
+					]
+				]
+			],
+			$data['data-minerva-search-box']['data-btn']
+		);
+		$this->assertEquals(
+			[
+				'data-icon' => [
+					'icon' => 'menu',
+				],
+				'tag-name' => 'label',
+				'classes' => 'toggle-list__toggle',
+				'array-attributes' => [
+					[
+						'key' => 'for',
+						'value' => 'main-menu-input',
+					],
+					[
+						'key' => 'id',
+						'value' => 'mw-mf-main-menu-button',
+					],
+					[
+						'key' => 'aria-hidden',
+						'value' => 'true',
+					],
+				],
+				'text' => '(mobile-frontend-main-menu-button-tooltip)',
+			],
+			$data['data-minerva-main-menu-btn']
+		);
+		$this->assertTrue( isset( $data['data-minerva-main-menu']['sitelinks'] ) );
+		$this->assertEquals( 'p-navigation', $data['data-minerva-main-menu']['groups'][0]['id'] );
+		$this->assertEquals( self::MAIN_MENU_HOME, $data['data-minerva-main-menu']['groups'][0]['entries'][0] );
+		$this->assertEquals( 'p-interaction', $data['data-minerva-main-menu']['groups'][1]['id'] );
+		$this->assertEquals( 'pt-preferences', $data['data-minerva-main-menu']['groups'][2]['id'] );
+		$this->assertEquals( '<div class="tagline">A description</div>', $data['html-minerva-tagline'] );
+		$this->assertTrue( isset( $data['html-minerva-user-menu'] ) );
+		$this->assertFalse( $data['is-minerva-beta'] );
+		$this->assertEquals( [
+			'id' => 'p-associated-pages',
+			'items' => [
+				[
+					'class' => 'selected mw-list-item',
+					'text' => '(nstab-main)',
+					'icon' => null,
+					'context' => 'main',
+					'href' => $title->getLocalURL(),
+				],
+				[
+					'class' => 'new mw-list-item',
+					'text' => '(nstab-talk / talk)',
+					'icon' => null,
+					'context' => 'talk',
+					'href' => $title->getTalkPage()->getLocalURL(
+						'action=edit&redlink=1'
+					),
+					'rel' => 'discussion'
+				]
+			],
+		], $data['data-minerva-tabs'] );
+		$this->assertEquals( self::PAGE_ACTIONS, $data['data-minerva-page-actions'] );
+		$this->assertEquals( [], $data['data-minerva-secondary-actions'] );
+		$this->assertSame( '', $data['html-minerva-subject-link'] );
+		$this->assertEquals( [
+			'href' => $title->getLocalURL(
+				'action=history'
+			),
+			'text' => '(mobile-frontend-history)',
+			'historyIcon' => [
+				'icon' => 'modified-history',
+				'size' => 'medium',
+			],
+			'arrowIcon' => [
+				'icon' => 'expand',
+				'size' => 'small'
+			],
+		], $data['data-minerva-history-link'] );
+	}
+
+	/**
+	 * @covers ::getSecondaryActions
+	 */
+	public function testMainPageTalkButton() {
+		$mainPageTitle = Title::makeTitle( NS_MAIN, 'Main Page' );
+		$mainPageTitle->setContentModel( CONTENT_MODEL_WIKITEXT );
+
+		$authority = $this->mockRegisteredUltimateAuthority();
+		$context = RequestContext::getMain();
+		$context->setTitle( $mainPageTitle );
+		$context->setActionName( 'view' );
+		$context->setAuthority( $authority );
+		$context->setUser( $this->getTestUser()->getUser() );
+		$skin = $this->newSkinMinerva( $context );
+		$context->setSkin( $skin );
+		$skin->setContext( $context );
+		$skin = TestingAccessWrapper::newFromObject( $context->getSkin() );
+		$contentNavigationUrls = [
+			'talk' => [
+				'text' => 'discuss',
+			],
+		];
+
+		// Registered users have talk button on mainpage
+		$actions = $skin->getSecondaryActions( $contentNavigationUrls );
+		$this->assertArrayHasKey( 'talk', $actions );
+		$this->assertSame( [ 'array-attributes', 'tag-name',
+			'isButton', 'classes', 'label' ], array_keys( $actions['talk'] ), );
+
+		// Unregistered users do not have talk button on mainpage
+		$context->setAuthority( $this->mockAnonUltimateAuthority() );
+		$actions = $skin->getSecondaryActions( $contentNavigationUrls );
+		$this->assertArrayNotHasKey( 'talk', $actions );
 	}
 }

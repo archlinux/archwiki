@@ -22,7 +22,7 @@ abstract class ApiThank extends ApiBase {
 
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		PermissionManager $permissionManager,
 		LogStore $storage
 	) {
@@ -83,25 +83,27 @@ abstract class ApiThank extends ApiBase {
 		}
 	}
 
-	protected function markResultSuccess( $recipientName ) {
+	protected function markResultSuccess( string $recipientName ) {
 		$this->getResult()->addValue( null, 'result', [
 			'success' => 1,
 			'recipient' => $recipientName,
 		] );
 	}
 
-	protected function haveAlreadyThanked( User $thanker, $uniqueId ) {
+	protected function haveAlreadyThanked( User $thanker, string $uniqueId ): bool {
 		return $this->storage->haveThanked( $thanker, $uniqueId );
 	}
 
-	protected function logThanks( User $user, User $recipient, $uniqueId ) {
+	protected function logThanks( User $user, User $recipient, string $uniqueId ) {
 		$this->storage->thank( $user, $recipient, $uniqueId );
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		// Writes to the Echo database and sometimes log tables.
 		return true;

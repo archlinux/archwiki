@@ -32,7 +32,6 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 use stdClass;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -74,15 +73,6 @@ class AllMessagesTablePager extends TablePager {
 
 	private LocalisationCache $localisationCache;
 
-	/**
-	 * @param IContextSource $context
-	 * @param Language $contentLanguage
-	 * @param LanguageFactory $languageFactory
-	 * @param LinkRenderer $linkRenderer
-	 * @param IConnectionProvider $dbProvider
-	 * @param LocalisationCache $localisationCache
-	 * @param FormOptions $opts
-	 */
 	public function __construct(
 		IContextSource $context,
 		Language $contentLanguage,
@@ -133,7 +123,7 @@ class AllMessagesTablePager extends TablePager {
 		}
 	}
 
-	private function getAllMessages( $descending ) {
+	private function getAllMessages( bool $descending ): array {
 		$messageNames = $this->localisationCache->getSubitemList( 'en', 'messages' );
 
 		// Normalise message names so they look like page titles and sort correctly - T86139
@@ -255,7 +245,7 @@ class AllMessagesTablePager extends TablePager {
 	}
 
 	protected function getStartBody() {
-		return Xml::openElement( 'table', [
+		return Html::openElement( 'table', [
 			'class' => $this->getTableClass(),
 			'id' => 'mw-allmessagestable'
 		] ) .

@@ -2,18 +2,18 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Actions;
 
-use Article;
-use ErrorPageError;
-use FormAction;
+use MediaWiki\Actions\FormAction;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Extension\DiscussionTools\SubscriptionItem;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Page\Article;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use UserNotLoggedIn;
 
 class UnsubscribeAction extends FormAction {
 

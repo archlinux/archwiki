@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\DiscussionTools;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class SpecialFindComment extends FormSpecialPage {
 
@@ -106,8 +107,16 @@ class SpecialFindComment extends FormSpecialPage {
 		}
 
 		if ( $results ) {
-			$out->addHTML(
-				$this->msg( 'discussiontools-findcomment-gotocomment', $this->idOrName )->parseAsBlock() );
+			// (T389741) Comment IDs/names may use characters that are not valid in page titles, like '<'.
+			// Omit the message with the wikilink to Special:GoToComment/… if the link would be invalid.
+			// They can only be linked to using external links to Special:FindComment?idorname=…
+			// or wikilinks to the target page with a fragment identifier, for example Talk:Foo#….
+			// It's a pity we haven't realized this before deciding on this linking scheme. Oops.
+			$specialPageTitle = SpecialPage::getSafeTitleFor( 'GoToComment', $this->idOrName );
+			if ( $specialPageTitle !== null ) {
+				$out->addHTML(
+					$this->msg( 'discussiontools-findcomment-gotocomment', $this->idOrName )->parseAsBlock() );
+			}
 		} else {
 			$out->addHTML(
 				$this->msg( 'discussiontools-findcomment-noresults' )->parseAsBlock() );

@@ -10,7 +10,7 @@ use Wikimedia\Parsoid\Config\Api\SiteConfig;
  */
 class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 
-	private static $siteConfig;
+	private static ?SiteConfig $siteConfig = null;
 
 	protected function getSiteConfig(): SiteConfig {
 		if ( self::$siteConfig === null ) {
@@ -59,7 +59,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $expected, preg_match( $re, " mw:PageProp/$upper " ) );
 	}
 
-	public function bswPagePropProvider() {
+	public static function bswPagePropProvider() {
 		return [
 			// Case sensitive
 			[ 'NOGLOBAL', true ],
@@ -390,9 +390,6 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 				'ref' => true,
 				'references' => true,
 				'section' => true,
-				'labeledsectiontransclusion' => true,
-				'labeledsectiontransclusion/begin' => true,
-				'labeledsectiontransclusion/end' => true
 			],
 			array_fill_keys( array_keys( $this->getSiteConfig()->getExtensionTagNameMap() ), true )
 		);

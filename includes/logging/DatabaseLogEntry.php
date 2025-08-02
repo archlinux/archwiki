@@ -23,10 +23,13 @@
  * @since 1.19
  */
 
+namespace MediaWiki\Logging;
+
+use InvalidArgumentException;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\Logging\LoggingSelectQueryBuilder;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
+use stdClass;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\IReadableDatabase;
 
@@ -105,9 +108,9 @@ class DatabaseLogEntry extends LogEntryBase {
 		$row = (object)$row;
 		if ( isset( $row->rc_logid ) ) {
 			return new RCDatabaseLogEntry( $row );
-		} else {
-			return new self( $row );
 		}
+
+		return new self( $row );
 	}
 
 	/**
@@ -133,7 +136,7 @@ class DatabaseLogEntry extends LogEntryBase {
 	/** @var UserIdentity */
 	protected $performer;
 
-	/** @var array Parameters for log entry */
+	/** @var array|null Parameters for log entry */
 	protected $params;
 
 	/** @var int A rev id associated to the log entry */
@@ -180,7 +183,7 @@ class DatabaseLogEntry extends LogEntryBase {
 	}
 
 	public function getParameters() {
-		if ( !isset( $this->params ) ) {
+		if ( $this->params === null ) {
 			$blob = $this->getRawParameters();
 			AtEase::suppressWarnings();
 			$params = LogEntryBase::extractParams( $blob );
@@ -249,3 +252,6 @@ class DatabaseLogEntry extends LogEntryBase {
 		return $this->row->log_deleted;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( DatabaseLogEntry::class, 'DatabaseLogEntry' );

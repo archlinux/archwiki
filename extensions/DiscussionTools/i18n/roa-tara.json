@@ -41,5 +41,5 @@
 	"discussiontools-topicsubscription-notify-subscribed-title": "T'è {{GENDER:|iscritte}}!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Non {{GENDER:|g'è}} cchiù le notifeche de commende nuéve a stu 'ngazzamende.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "E' {{GENDER:|annullate}} l'iscrizione.",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respunne]"
+	"tag-discussiontools-reply": "Respunne"
 }

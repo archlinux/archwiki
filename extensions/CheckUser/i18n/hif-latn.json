@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Karthi.dr",
+			"Thakurji"
+		]
+	},
+	"checkuser": "Sadasya ke check karo",
+	"checkuserlog": "Sadasya ke IP address check karo",
+	"checkuser-contribs": "haali ke sadasya ke check",
+	"group-checkuser": "Sadasya logan ke check karo",
+	"group-checkuser-member": "{{GENDER:$1|sadasya ke check karo}}",
+	"right-checkuser": "Sadasya ke IP address aur duusra information check karo",
+	"right-checkuser-log": "Checkuser log ke dekho",
+	"action-checkuser": "sadasya ke IP address aur information check karo",
+	"action-checkuser-log": "sadasya ke log ke dekho",
+	"grouppage-checkuser": "{{ns:project}}:Sadasya check karo",
+	"checkuser-reason": "Kaaran:",
+	"checkuser-target": "IP address aur naam",
+	"checkuser-users": "Sadasya khojo",
+	"checkuser-ips": "IP addresses khojo",
+	"checkuser-period": "Ketna deri talak:",
+	"checkuser-week-1": "pichhle hafta",
+	"checkuser-month": "pichhle tiis din",
+	"checkuser-all": "sab",
+	"checkuser-empty": "Log me koi chij nai hae.",
+	"checkuser-nomatch": "Koi match nai mila",
+	"checkuser-check": "Check karo",
+	"checkuser-blocked": "Block karaa gais",
+	"checkuser-gblocked": "Globally block karaa gais",
+	"checkuser-locked": "lock karaa gais",
+	"checkuser-wasblocked": "pahile block karaa gais",
+	"checkuser-massblock": "Select karaa gais sadasya ke block karo",
+	"checkuser-search": "Khojo",
+	"checkuser-search-submit": "Khojo",
+	"logentry-checkuser-private-event-create-account": "banae dewa gais rahaa"
+}

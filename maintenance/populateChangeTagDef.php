@@ -16,6 +16,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
+
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
@@ -41,6 +43,7 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 		$this->addOption( 'set-user-tags-only', 'Only update ctd_user_defined from valid_tag table' );
 	}
 
+	/** @inheritDoc */
 	protected function doDBUpdates() {
 		$this->setBatchSize( $this->getOption( 'batch-size', $this->getBatchSize() ) );
 
@@ -185,7 +188,7 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 		}
 	}
 
-	private function backpopulateChangeTagPerTag( $tagName, $tagId ) {
+	private function backpopulateChangeTagPerTag( string $tagName, int $tagId ) {
 		$dbr = $this->getReplicaDB();
 		$dbw = $this->getPrimaryDB();
 		$sleep = (int)$this->getOption( 'sleep', 0 );
@@ -231,6 +234,7 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 		$this->output( "Finished adding ct_tag_id = {$tagId} for ct_tag = {$tagName}\n" );
 	}
 
+	/** @inheritDoc */
 	protected function getUpdateKey() {
 		return __CLASS__;
 	}

@@ -5,13 +5,13 @@
 			"NoiX180"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Uahan visual]]",
+	"tag-visualeditor": "Uahan visual",
 	"tag-visualeditor-description": "Uahan sané nganggén [[{{MediaWiki:visualeditor-descriptionpagelink}}|panguahan visual]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Panguahan visual: Periksa]]",
+	"tag-visualeditor-needcheck": "Panguahan visual: Periksa",
 	"tag-visualeditor-needcheck-description": "Uahan sané nganggén [[{{MediaWiki:visualeditor-descriptionpagelink}}|panguahan visual]] ring sistem sané nguningayang kawéntenan teks wiki prasida mikolehin pauahan sané nénten kamanutin.",
 	"tag-visualeditor-wikitext": "Uahan wit 2017",
 	"tag-visualeditor-wikitext-description": "Nguahin nganggén panguah teks wiki 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Uahan visual: Silurin]]",
+	"tag-visualeditor-switched": "Uahan visual: Silurin",
 	"tag-visualeditor-switched-description": "Sang anganggé ngawitin panguahan nganggén uahan visual selanturné nyilurin manados uahan teks wiki.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Pamrayoga",
 	"visualeditor-feedback-tool": "Ngicain sara antuk piranti lunak puniki",

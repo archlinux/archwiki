@@ -77,6 +77,7 @@
 	"prefs-help-email": "Opcional pone el email address, pero ta necesita este na password resets, en caso lang que olvida tu de tu password.",
 	"prefs-help-email-required": "Necesita el email address.",
 	"prefs-help-email-others": "Puede tambien el maga otro man contact contigo usando email, pone lang tu un link na de tuyo paginay user o paginay discusion.\nHende revelao el email address de tuyo mientras ta'n contact maga otro contigo.",
+	"tog-requireemail": "Envia lang maga password reset emails cuando el ambos email address y username ya dale ya.",
 	"prefs-help-requireemail": "Ta hace este vale el privacidad y ta ayuda este preveni maga email hende solicitao.",
 	"noemailprefs": "Especifica un email address na preferencia de tuyo para puede funciona este maga features.",
 	"emailnotauthenticated": "El email address de tuyo hende pa confirmao. \nDespues tu hace con este, el siguiente maga features el queda hende avaible.",
@@ -223,6 +224,7 @@
 	"search-thumbnail-extra-namespaces-label": "Dale mira maga thumbnail na Special:Search on Desktop",
 	"search-thumbnail-extra-namespaces-message": "Hace display maga thumbnail para $1 resulta del {{PLURAL:$2|namespace|maga namespaces}} para na pagina de {{#special:search}}",
 	"prefs-advancedsearchoptions": "Maga opcion avanzao",
+	"prefs-misc": "Miscellaneous",
 	"prefs-reset-intro": "Puede tu usa con este pagina para hace reset de tuyo maga preferencia na defaults del sitio. No puede mas ya hace con este vira otra vez.",
 	"prefs-reset-confirm": "Si, quiere yo hace reset de tuyo preferencia.",
 	"restoreprefs": "Hace reset todo'l preferencia"

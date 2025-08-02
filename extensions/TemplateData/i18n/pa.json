@@ -18,5 +18,8 @@
 	"templatedata-invalid-parse": "JSON ਵਿਚ ਵਾਕ-ਰਚਨਾ ਦੋਸ਼",
 	"templatedata-invalid-value": "\"$1\" ਮਲਕੀਅਤ ਲਈ ਗ਼ਲਤ ਮੁੱਲ",
 	"templatedata-modal-button-changelang": "ਭਾਸ਼ਾ ਬਦਲੋ",
-	"templatedata-modal-format-null": "ਦੱਸਿਆ ਨਹੀਂ ਗਿਆ"
+	"templatedata-modal-button-discard": "ਖਾਰਜ ਕਰੋ",
+	"templatedata-modal-format-null": "ਦੱਸਿਆ ਨਹੀਂ ਗਿਆ",
+	"templatedata-search-title": "ਫਰਮਾ ਖੋਜ",
+	"templatedata-search-placeholder": "ਫਰਮਾ ਲੱਭੋ"
 }

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"22593",
 			"A Retired User",
 			"Aaron Liu",
 			"Anakmalaysia",
@@ -63,8 +64,7 @@
 			"神樂坂秀吉",
 			"科劳",
 			"范",
-			"飞舞回堂前",
-			"22593"
+			"飞舞回堂前"
 		]
 	},
 	"echo-desc": "用于通知用户事件和留言的系统",
@@ -92,8 +92,8 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "纯文本",
 	"echo-pref-cross-wiki-notifications": "显示来自其他wiki的通知",
-	"echo-pref-notifications-blacklist": "不显示来自这些用户的通知。（[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute 了解更多]）",
-	"echo-pref-notifications-page-linked-title-muted-list": "不显示这些页面的“页面链接”通知。（[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute 了解更多]）",
+	"echo-pref-notifications-blacklist": "不显示来自这些用户的通知（[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute 了解更多]）",
+	"echo-pref-notifications-page-linked-title-muted-list": "不显示这些页面的“页面链接”通知（[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute 了解更多]）",
 	"echo-pref-dont-email-read-notifications": "不在通知摘要邮件里包括已读通知",
 	"echo-learn-more": "了解更多",
 	"echo-log": "公开日志",
@@ -133,6 +133,7 @@
 	"notifications": "通知",
 	"tooltip-pt-notifications-alert": "{{GENDER:|您的}}重要通知",
 	"tooltip-pt-notifications-notice": "{{GENDER:|您的}}常规通知",
+	"tooltip-pt-notifications": "{{GENDER:|您的}}通知",
 	"echo-displaynotificationsconfiguration": "显示通知配置",
 	"echo-displaynotificationsconfiguration-summary": "这是此wiki的通知配置情况的总览。",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "通知类别",
@@ -195,7 +196,6 @@
 	"notification-compact-header-edit-user-page": "$1{{GENDER:$2|编辑了}}{{GENDER:$3|您的}}用户页。",
 	"notification-compact-header-edit-user-talk": "$1给{{GENDER:$3|您}}{{GENDER:$2|留}}了言。",
 	"notification-compact-header-edit-user-talk-with-section": "$1在“<strong>$4</strong>”章节给{{GENDER:$3|您}}{{GENDER:$2|留}}了言。",
-	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "您创建的<strong>$3</strong>页面在<strong>$4</strong>页面被人链接。",
 	"notification-compact-header-page-linked": "在<strong>$1</strong>被人链接。",
 	"notification-bundle-header-page-linked": "您创建的<strong>$3</strong>页面在{{PLURAL:$5||$5个页面|100=99+个页面}}被人链接。",
@@ -275,8 +275,10 @@
 	"echo-email-html-footer-with-link": "要管理我们给{{GENDER:$2|您}}发送的邮件的类别，请$1。",
 	"echo-notification-alert": "{{PLURAL:$1|重要通知（$1）|100=重要通知（99+）}}",
 	"echo-notification-notice": "{{PLURAL:$1|常规通知（$1）|100=常规通知（99+）}}",
+	"echo-notification-all": "{{PLURAL:$1|通知（$1）|100=通知（99+）}}",
 	"echo-notification-alert-text-only": "重要通知",
 	"echo-notification-notice-text-only": "常规通知",
+	"echo-notification-all-text-only": "通知",
 	"echo-overlay-link": "所有通知",
 	"echo-overlay-title": "<b>通知</b>",
 	"echo-mark-all-as-read": "标记{{PLURAL:$1|全部}}通知为已读",

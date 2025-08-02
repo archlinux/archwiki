@@ -96,7 +96,7 @@ ve.dm.MWSyntaxHighlightNode.static.convertLanguageToAce = function ( language ) 
  * @return {boolean} The language is supported; always true when called with no language
  */
 ve.dm.MWSyntaxHighlightNode.static.isLanguageSupported = function ( language ) {
-	return supportedLanguages.indexOf( language || undefined ) !== -1;
+	return supportedLanguages.includes( language || undefined );
 };
 
 /**

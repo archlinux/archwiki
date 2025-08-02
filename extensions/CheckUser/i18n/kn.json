@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"HPNadig",
+			"Nayvik"
+		]
+	},
+	"checkuser": "ಸದಸ್ಯನನ್ನು ಚೆಕ್ ಮಾಡಿ",
+	"checkuser-reason": "ಕಾರಣ:",
+	"checkuser-all": "ಎಲ್ಲಾ",
+	"checkuser-search": "ಹುಡುಕು",
+	"checkuser-search-submit": "ಹುಡುಕು"
+}

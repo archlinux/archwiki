@@ -26,6 +26,13 @@ $specialPageAliases['arz'] = [
 	'OATHManage' => [ 'اواث', 'اواث_اوث' ],
 ];
 
+/** Azerbaijani (azərbaycanca) */
+$specialPageAliases['az'] = [
+	'DisableOATHForUser' => [ 'İstifadəçiÜçünOATHSöndür' ],
+	'OATHManage' => [ 'İki-faktorlu_autentifikasiya', '2FAİdarə', 'OATHİdarə' ],
+	'VerifyOATHForUser' => [ 'İstifadəçiÜçünOATHTəsdiqlə' ],
+];
+
 /** Czech (čeština) */
 $specialPageAliases['cs'] = [
 	'OATHManage' => [ 'Spravovat_dvoufaktorové_ověření', 'Dvoufaktorové_ověření' ],

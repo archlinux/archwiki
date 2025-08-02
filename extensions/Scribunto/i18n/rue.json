@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"KHMELNYTSKYIA",
-			"Constraque"
+			"Constraque",
+			"KHMELNYTSKYIA"
 		]
 	},
 	"scribunto-doc-page-does-not-exist": "''Документацію к тому модулу може быти створена в [[$1]]''",

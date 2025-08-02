@@ -8,11 +8,13 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in template" insertion mode
  */
 class InTemplate extends InsertionMode {
+	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->dispatcher->inBody->characters(
 			$text, $start, $length, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$dispatcher = $this->dispatcher;
 
@@ -63,6 +65,7 @@ class InTemplate extends InsertionMode {
 			->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 	}
 
+	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$dispatcher = $this->dispatcher;
 
@@ -77,6 +80,7 @@ class InTemplate extends InsertionMode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function endDocument( $pos ) {
 		$builder = $this->builder;
 		$stack = $builder->stack;

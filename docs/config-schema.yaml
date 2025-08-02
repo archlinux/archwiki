@@ -152,8 +152,8 @@ config-schema:
             - 'null'
         description: |-
             Extensions directory in the file system.
-            @note Set to "{$IP}/extensions" by Setup.php before loading local settings.
-            @note this configuration variable is used to locate extensions while loading settings.
+            Defaults to "{$IP}/extensions" in Setup.php
+            @note This configuration variable is used to locate extensions while loading settings.
             @since 1.25
     StyleDirectory:
         default: null
@@ -162,18 +162,9 @@ config-schema:
             - 'null'
         description: |-
             Skins directory in the file system.
-            @note Set to "{$IP}/skins" by Setup.php before loading local settings.
-            @note this configuration variable is used to locate skins while loading settings.
+            Defaults to "{$IP}/skins" in Setup.php.
+            @note This configuration variable is used to locate skins while loading settings.
             @since 1.3
-    BaseDirectory:
-        default: null
-        description: |-
-            Absolute filesystem path of the root directory of the MediaWiki installation.
-            The MW_INSTALL_PATH environment variable can be used to set this.
-            @note Automatically set in Setup.php before loading local settings.
-            @note Do not modify in settings files! Must remain equal to the MW_INSTALL_PATH constant
-                  defined in Setup.php.
-            @since 1.38
     ArticlePath:
         default: false
         dynamicDefault:
@@ -211,10 +202,13 @@ config-schema:
             @since 1.36
     UploadDirectory:
         default: false
-        dynamicDefault:
-            use: [BaseDirectory]
-            callback: [MediaWiki\MainConfigSchema, getDefaultUploadDirectory]
-        description: 'The filesystem path of the images directory. Defaults to "{$IP}/images".'
+        type:
+            - string
+            - boolean
+            - 'null'
+        description: |-
+            The filesystem path of the images directory.
+            Defaults to "{$IP}/images" in Setup.php.
     FileCacheDirectory:
         default: false
         dynamicDefault:
@@ -1371,6 +1365,28 @@ config-schema:
             Defines what namespaces thumbnails will be displayed for in Special:Search.
             This is the list of namespaces for which thumbnails (or a placeholder in
             the absence of a thumbnail) will be shown:
+    ThumbnailSteps:
+        default: null
+        type:
+            - array
+            - 'null'
+        description: |-
+            When defined, is an array of image widths used as steps for thumbnail sizes.
+            The thumbnail with smallest step that has larger value than requested will be shown
+            but it will be downsized via HTML values.
+            It increases the bandwidth to the users by serving slightly large thumbnail sizes they
+            have requested but it will save resources by de-duplicating thumbnail generation and storage.
+            Note that these steps are "best effort" and MediaWiki might decide to use the requested size
+            for any reason.
+    ThumbnailStepsRatio:
+        default: null
+        type:
+            - number
+            - 'null'
+        description: |-
+            Ratio of images that will use the thumbnail steps
+            This is to allow for gradual roll out of thumbnail steps. It should be a number between 0 and 1.
+            The precision of this value is up to 0.001, anything below that will be ignored.
     ThumbnailBuckets:
         default: null
         type:
@@ -1677,11 +1693,13 @@ config-schema:
             always uses UTC as the time zone, and doesn't include the username.
             For pages with many users watching, this can significantly reduce mail load.
             Has no effect when using sendmail rather than SMTP.
+            @deprecated since 1.44
     EnotifMaxRecips:
         default: 500
         description: |-
             Maximum number of users to mail at once when using impersonal mail. Should
             match the limit on your mail server.
+            @deprecated since 1.44
     EnotifUseRealName:
         default: false
         description: 'Use real name instead of username in e-mail "from" field.'
@@ -1794,7 +1812,7 @@ config-schema:
         description: |-
             SQL Mode - default is turning off all modes, including strict, if set.
             null can be used to skip the setting for performance reasons and assume
-            DBA has done his best job.
+            the DBA has done their best job.
             String override can be used for some additional fun :-)
     DBDefaultGroup:
         default: null
@@ -1943,16 +1961,31 @@ config-schema:
         items:
             type: string
         description: |-
-            Other wikis on this site, can be administered from a single developer account.
-            List of wiki DB domain IDs; the format of each ID consist of 1-3 hyphen
-              delimited alphanumeric components (each with no hyphens nor spaces) of any of the forms:
-              - "<DB NAME>-<DB SCHEMA>-<TABLE PREFIX>"
-              - "<DB NAME>-<TABLE PREFIX>"
-              - "<DB NAME>"
+            List of all wiki IDs that reside on the current wiki farm.
+            The wikis listed here must meet the following requirements in order to
+            be be considered part of the same wiki farm:
+            - reachable for cross-wiki database queries, via \Wikimedia\Rdbms\IConnectionProvider,
+              as configured by $wgLBFactoryConf
+            - share the same $wgMainCacheType backend (e.g. the same Memcached cluster),
+              so that cache updates and purges via BagOStuff::makeGlobalKey and
+              WANObjectCache work correctly.
+            Examples of cross-wiki features enabled through this setting:
+            - SpecialUserRights, to assign a local user group from a central wiki.
+            - JobQueueGroup::push, to queue a job for another wiki
+              (e.g. GlobalUsage, MassMessage, and Wikibase extensions).
+            - RenameUser (when using $wgSharedDB), to globally apply the rename to revisions
+              logging tables on all wikis.
+            Each wiki ID must consist of 1-3 hyphen-delimited alphanumeric components (each with no
+            hyphens nor spaces) of any of the forms:
+            - "<DB NAME>"
+            - "<DB NAME>-<TABLE PREFIX>"
+            - "<DB NAME>-<DB SCHEMA>-<TABLE PREFIX>"
             If hyphens appear in any of the components, then the domain ID parsing may not work
-            in all cases and site functionality might be affected. If the schema ($wgDBmwschema)
-            is left to the default "mediawiki" for all wikis, then the schema should be omitted
-            from these IDs.
+            and site functionality might be affected. If the schema ($wgDBmwschema) is set to the
+            default of "mediawiki" on all wikis, then the schema should be omitted from wiki IDs.
+            @see WikiMap::getWikiIdFromDbDomain
+            @see SiteConfiguration::getLocalDatabases
+            @see self::LocalVirtualHosts
     DatabaseReplicaLagWarning:
         default: 10
         description: |-
@@ -1994,6 +2027,26 @@ config-schema:
             History:
               - 1.41: Added
               - 1.43: Default has changed to SCHEMA_COMPAT_NEW.
+    FileSchemaMigrationStage:
+        default: 3
+        type: integer
+        description: |-
+            Migration stage for file tables
+            Use the SCHEMA_COMPAT_XXX flags. Supported values:
+              - SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD (SCHEMA_COMPAT_OLD)
+              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+            History:
+              - 1.44: Added
+    CategoryLinksSchemaMigrationStage:
+        default: 3
+        type: integer
+        description: |-
+            Migration stage for categorylinks tables
+            Use the SCHEMA_COMPAT_XXX flags. Supported values:
+              - SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD (SCHEMA_COMPAT_OLD)
+              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+            History:
+              - 1.44: Added
     ExternalLinksDomainGaps:
         default: {  }
         type: object
@@ -2449,6 +2502,14 @@ config-schema:
                  key hashing. This helps mitigate MySQL bugs 61735 and 61736.
               - writeBatchSize: Default maximum number of rows to change in each query for write
                  operations that can be chunked into a set of smaller writes.
+              - dataRedundancy: When set to a number higher than one, instead of sharding values,
+                it writes to that many servers (out of all servers) and reads from all of them too.
+                In case of inconsistency between servers, it picks the value with the highest exptime.
+                Mostly useful for stronger consistency such as mainstash.
+                This option has many limitations (for example when TTL is set to indef or changes)
+                and it shouldn't be used to handle race conditions nor canonical data.
+                The main point of data redundancy is to allow depool of a cluster for maintenance
+                without displacing too many keys.
             For MemcachedPhpBagOStuff parameters see {@link MemcachedPhpBagOStuff::__construct}
             For MemcachedPeclBagOStuff parameters see {@link MemcachedPeclBagOStuff::__construct}
             For RedisBagOStuff parameters see {@link Wikimedia\ObjectCache\RedisBagOStuff::__construct}
@@ -2578,6 +2639,21 @@ config-schema:
         description: |-
             The expiry time for the parser cache, in seconds.
             The default is 86400 (one day).
+    ParserCacheAsyncExpireTime:
+        default: 60
+        description: |-
+            The expiry time for "not ready" asynchronous content in the parser
+            cache, in seconds.  This should be rather short, to allow the
+            "not ready" content to be replaced by "ready" content.
+            The default is 60 (one minute).
+            @since 1.44
+    ParserCacheAsyncRefreshJobs:
+        default: true
+        description: |-
+            Whether to re-run the refresh links jobs when asynchronous content
+            becomes ready.  This is needed if the asynchronous content can affect
+            categories or other page metadata.
+            @since 1.44
     OldRevisionParserCacheExpireTime:
         default: 3600
         description: |-
@@ -3114,7 +3190,6 @@ config-schema:
         default:
             - copyright
             - history_copyright
-            - googlesearch
         type: array
         items:
             type: string
@@ -3127,12 +3202,14 @@ config-schema:
             letter.
             @since 1.32
     AllowRawHtmlCopyrightMessages:
-        default: true
+        default: false
         type: boolean
+        deprecated: 'since 1.44'
         description: |-
             Whether on-wiki overrides for the 'copyright' and 'history_copyright' messages, which allow raw
             HTML, will be used.
             @since 1.43
+            @deprecated since 1.44
     Localtimezone:
         dynamicDefault:
             callback: [MediaWiki\MainConfigSchema, getDefaultLocaltimezone]
@@ -3293,7 +3370,7 @@ config-schema:
     FooterIcons:
         default:
             copyright: { copyright: [] }
-            poweredby: { mediawiki: { src: null, url: 'https://www.mediawiki.org/', alt: 'Powered by MediaWiki' } }
+            poweredby: { mediawiki: { src: null, url: 'https://www.mediawiki.org/', alt: 'Powered by MediaWiki', lang: en } }
         type: object
         description: |-
             Abstract list of footer icons for skins in place of old copyrightico and poweredbyico code
@@ -3441,6 +3518,7 @@ config-schema:
               the script path of the %MediaWiki install or the location of the extensions
               directory.
               This option is mutually exclusive with `remoteBasePath`.
+            - remoteSkinPath `{string}`: Like `remoteExtPath`, but relative to $wgStylePath.
             - styles `{string[]|string|array<string,array>}`:
               Styles to always include in the module.
               %File path or list of file paths, relative to `localBasePath`.
@@ -3627,7 +3705,7 @@ config-schema:
               'styles' => 'resources/bar/main.css',
             ];
             $wgResourceModuleSkinStyles['foo'] = [
-              'bar' => 'skins/Foo/bar.css',
+              'bar' => 'skins/Foo/styles/bar.css',
             ];
             ```
             This is effectively equivalent to:
@@ -3637,7 +3715,7 @@ config-schema:
               'scripts' => 'resources/bar/bar.js',
               'styles' => 'resources/bar/main.css',
               'skinStyles' => [
-                'foo' => skins/Foo/bar.css',
+                'foo' => skins/Foo/styles/bar.css',
               ],
             ];
             ```
@@ -3656,7 +3734,7 @@ config-schema:
             ];
             // Note the '+' character:
             $wgResourceModuleSkinStyles['foo'] = [
-              '+bar' => 'skins/Foo/bar.css',
+              '+bar' => 'skins/Foo/styles/bar.css',
             ];
             ```
             This is effectively equivalent to:
@@ -3669,7 +3747,7 @@ config-schema:
                 'default' => 'resources/bar/additional.css',
                 'foo' => [
                   'resources/bar/additional.css',
-                  'skins/Foo/bar.css',
+                  'skins/Foo/styles/bar.css',
                 ],
               ],
             ];
@@ -3684,8 +3762,8 @@ config-schema:
             $wgResourceModuleSkinStyles['foo'] = [
               'bar' => 'bar.css',
               'quux' => 'quux.css',
-              'remoteSkinPath' => 'Foo',
-              'localBasePath' => __DIR__,
+              'remoteSkinPath' => 'Foo/styles',
+              'localBasePath' => __DIR__ . '/styles',
             ];
             ```
     ResourceLoaderSources:
@@ -3717,12 +3795,6 @@ config-schema:
               - versioned
               - unversioned
             @see \MediaWiki\ResourceLoader\ResourceLoader::__construct
-            @since 1.35
-    ResourceLoaderUseObjectCacheForDeps:
-        default: true
-        description: |-
-            Use the main stash instead of the module_deps table for indirect dependency tracking
-            @deprecated since 1.43; This will be removed in 1.44
             @since 1.35
     ResourceLoaderDebug:
         default: false
@@ -4188,6 +4260,19 @@ config-schema:
             Overriding the default configuration is strongly discouraged in
             production.
             @since 1.39
+    ParsoidExperimentalParserFunctionOutput:
+        default: false
+        type: boolean
+        description: |-
+            If set, Parsoid's HTML output for parser functions will be different
+            from Parsoid HTML spec 2.x.x and lets us experiment with a better
+            output that might be rolled out in a future 3.x Parsoid HTML version.
+            Parsoid will start generating this output for wikifunctions parser function
+            whenever that code is rolled out to production and will let us experiment
+            with this new format and tweak it now. This also lets Parsoid developers
+            experiment with it locally.
+            This is an experimental flag and might be removed without notice.
+            @unstable EXPERIMENTAL
     ParserEnableLegacyMediaDOM:
         default: false
         deprecated: 'since 1.41'
@@ -4198,7 +4283,8 @@ config-schema:
             @deprecated since 1.41
             @since 1.36
     ParserEnableLegacyHeadingDOM:
-        default: true
+        default: false
+        deprecated: 'since 1.44'
         description: |-
             Enable legacy HTML structure for headings in the output from the Parser.
             The legacy structure includes section edit links (and other markup added
@@ -4206,6 +4292,7 @@ config-schema:
             to poor accessibility. This doesn't affect headings on special pages.
             Note that each skin also has to indicate support for the new structure.
             More information: https://www.mediawiki.org/wiki/Heading_HTML_changes
+            @deprecated since 1.44
             @since 1.43
     UseContentMediaStyles:
         default: false
@@ -4335,7 +4422,7 @@ config-schema:
     ActiveUserDays:
         default: 30
         description: |-
-            How many days user must be idle before he is considered inactive. Will affect
+            How many days user must be idle before they are considered inactive. Will affect
             the number shown on Special:Statistics, Special:ActiveUsers, and the
             {{NUMBEROFACTIVEUSERS}} magic word in wikitext.
             You might want to leave this as the default value, to provide comparable
@@ -4405,7 +4492,7 @@ config-schema:
         description: 'Central ID lookup provider to use by default'
     UserRegistrationProviders:
         default:
-            local: { class: MediaWiki\User\Registration\LocalUserRegistrationProvider, services: [UserFactory] }
+            local: { class: MediaWiki\User\Registration\LocalUserRegistrationProvider, services: [UserFactory, ConnectionProvider] }
         type: object
         description: |-
             User registration timestamp provider classes
@@ -4861,7 +4948,7 @@ config-schema:
             matchPattern: { type: [string, array, 'null'], default: null }
             reservedPattern: { type: [string, 'null'], default: ~$1 }
             serialProvider: { type: object, default: { type: local, useYear: true } }
-            serialMapping: { type: object, default: { type: plain-numeric } }
+            serialMapping: { type: object, default: { type: readable-numeric } }
             expireAfterDays: { type: [integer, 'null'], default: 90 }
             notifyBeforeExpirationDays: { type: [integer, 'null'], default: 10 }
         type: object
@@ -4908,6 +4995,7 @@ config-schema:
               - serialMapping: (array) Configuration for mapping integer indexes to strings
                 to substitute into genPattern.
                   - type: (string) May be
+                    - "readable-numeric" to use ASCII decimal numbers broken up with hyphens
                     - "plain-numeric" to use ASCII decimal numbers
                     - "localized-numeric" to use numbers localized using a specific language
                     - "filtered-radix" to use numbers in an arbitrary base between 2 and 36,
@@ -4922,15 +5010,20 @@ config-schema:
                     be zero-based array indexes.
                   - uppercase: (bool) With "filtered-radix", whether to use uppercase
                     letters, default false.
-                  - offset: (int) With "plain-numeric", a constant to add to the stored index.
+                  - offset: (int) With "plain-numeric" and "readable-numeric", a constant to add to the
+                    stored index.
                - expireAfterDays: (int|null, default 90) If not null, how many days should the temporary
-                 accounts expire? Requires expireTemporaryAccounts.php to be periodically executed in
-                 order to work.
+                 accounts expire? You should run expireTemporaryAccounts.php periodically to expire
+                 temporary accounts. Otherwise they are expired when they try to edit.
                - notifyBeforeExpirationDays: (int|null, default 10) If not null, how many days before the
                  expiration of a temporary account should it be notified that their account is to be expired.
             @unstable EXPERIMENTAL
             @since 1.39
         default: null
+    AutoblockExemptions:
+        default: []
+        type: array
+        description: 'List of IP addresses or CIDR ranges that are exempt from autoblocks.'
     AutoblockExpiry:
         default: 86400
         description: 'Number of seconds before autoblock entries expire. Default 86400 = 1 day.'
@@ -5272,10 +5365,10 @@ config-schema:
              - [ APCOND_EDITCOUNT, number of edits (if null or missing $wgAutoConfirmCount will be used)]:
                  true if user has the at least the number of edits as the passed parameter
              - [ APCOND_AGE, seconds since registration (if null or missing $wgAutoConfirmAge will be used)]:
-                 true if the length of time since the user created his/her account
+                 true if the length of time since the user created their account
                  is at least the same length of time as the passed parameter
              - [ APCOND_AGE_FROM_EDIT, seconds since first edit ]:
-                 true if the length of time since the user made his/her first edit
+                 true if the length of time since the user made their first edit
                  is at least the same length of time as the passed parameter
              - [ APCOND_INGROUPS, group1, group2, ... ]:
                  true if the user is a member of each of the passed groups
@@ -5313,9 +5406,18 @@ config-schema:
         description: |-
             Put user rights log entries for autopromotion in recent changes?
             @since 1.18
+    AutopromoteOnceRCExcludedGroups:
+        default: []
+        type: array
+        description: |-
+            Defines a denylist of group names. One-shot autopromotions into these groups will not cause a
+            RecentChanges entry to be inserted even if AutopromoteOnceLogInRC is set, as long as they are the
+            only new groups the user was autopromoted to.
+            @since 1.44
     AddGroups:
         default: {  }
         type: object
+        mergeStrategy: array_merge_recursive
         description: |-
             $wgAddGroups and $wgRemoveGroups can be used to give finer control over who
             can assign which groups at Special:Userrights.
@@ -5339,6 +5441,7 @@ config-schema:
     RemoveGroups:
         default: {  }
         type: object
+        mergeStrategy: array_merge_recursive
         description: '@see self::AddGroups'
     AvailableRights:
         default: []
@@ -6187,7 +6290,7 @@ config-schema:
             Destination of statsd metrics.
             A host or host:port of a statsd server. Port defaults to 8125.
             If not set, statsd metrics will not be collected.
-            @see MediaWiki::emitBufferedStatsdData()
+            @see MediaWiki::emitBufferedStats()
             @since 1.25
     StatsdMetricPrefix:
         default: MediaWiki
@@ -6481,6 +6584,23 @@ config-schema:
             %r will be replaced with a URL-encoded version of $1.
             %R will be replaced with $1 and no URL-encoding
             @since 1.20
+    InstallerInitialPages:
+        default:
+            - { titlemsg: mainpage, text: "{{subst:int:mainpagetext}}\n\n{{subst:int:mainpagedocfooter}}" }
+        type: array
+        description: |-
+            Initial content to create when installing a wiki. An array of page info
+            arrays. Each must contain at least one of:
+              - title: The title to create (string)
+              - titlemsg: The name of a message to read the title from
+            And one of:
+              - text: The text to write to the page (string)
+              - textmsg: The name of a message to read the page contents from
+            The text may contain
+              - {{InstallerOption:<name>}}: This will be replaced with the named option value
+              - {{InstallerConfig:<name>}}: This will be replaced with the named config value
+            @see \InstallPreConfigured
+            @since 1.44
     RCMaxAge:
         default: 7776000
         description: |-
@@ -6719,6 +6839,7 @@ config-schema:
             mw-changed-redirect-target: true
             mw-blank: true
             mw-replace: true
+            mw-recreated: true
             mw-rollback: true
             mw-undo: true
             mw-manual-revert: true
@@ -6731,17 +6852,18 @@ config-schema:
             List of core tags to enable.
             @since 1.31
             @since 1.36 Added 'mw-manual-revert' and 'mw-reverted'
-            @see \ChangeTags::TAG_CONTENT_MODEL_CHANGE
-            @see \ChangeTags::TAG_NEW_REDIRECT
-            @see \ChangeTags::TAG_REMOVED_REDIRECT
-            @see \ChangeTags::TAG_CHANGED_REDIRECT_TARGET
-            @see \ChangeTags::TAG_BLANK
-            @see \ChangeTags::TAG_REPLACE
-            @see \ChangeTags::TAG_ROLLBACK
-            @see \ChangeTags::TAG_UNDO
-            @see \ChangeTags::TAG_MANUAL_REVERT
-            @see \ChangeTags::TAG_REVERTED
-            @see \ChangeTags::TAG_SERVER_SIDE_UPLOAD
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_CONTENT_MODEL_CHANGE
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_NEW_REDIRECT
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_REMOVED_REDIRECT
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_CHANGED_REDIRECT_TARGET
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_BLANK
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_REPLACE
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_RECREATE
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_ROLLBACK
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_UNDO
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_MANUAL_REVERT
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_REVERTED
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_SERVER_SIDE_UPLOAD
     UnwatchedPageThreshold:
         default: false
         description: |-
@@ -7134,33 +7256,35 @@ config-schema:
               injection in MediaWiki.
     JobClasses:
         default:
-            deletePage: DeletePageJob
-            refreshLinks: RefreshLinksJob
-            deleteLinks: DeleteLinksJob
-            htmlCacheUpdate: HTMLCacheUpdateJob
+            deletePage: MediaWiki\JobQueue\Jobs\DeletePageJob
+            refreshLinks: MediaWiki\JobQueue\Jobs\RefreshLinksJob
+            deleteLinks: MediaWiki\JobQueue\Jobs\DeleteLinksJob
+            htmlCacheUpdate: MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob
             sendMail: { class: EmaillingJob, services: [Emailer] }
             enotifNotify: EnotifNotifyJob
-            fixDoubleRedirect: { class: DoubleRedirectJob, services: [RevisionLookup, MagicWordFactory, WikiPageFactory], needsPage: true }
-            AssembleUploadChunks: AssembleUploadChunksJob
-            PublishStashedFile: PublishStashedFileJob
-            ThumbnailRender: ThumbnailRenderJob
-            UploadFromUrl: UploadFromUrlJob
-            recentChangesUpdate: RecentChangesUpdateJob
-            refreshLinksPrioritized: RefreshLinksJob
-            refreshLinksDynamic: RefreshLinksJob
+            fixDoubleRedirect: { class: MediaWiki\JobQueue\Jobs\DoubleRedirectJob, services: [RevisionLookup, MagicWordFactory, WikiPageFactory], needsPage: true }
+            AssembleUploadChunks: MediaWiki\JobQueue\Jobs\AssembleUploadChunksJob
+            PublishStashedFile: MediaWiki\JobQueue\Jobs\PublishStashedFileJob
+            ThumbnailRender: MediaWiki\JobQueue\Jobs\ThumbnailRenderJob
+            UploadFromUrl: MediaWiki\JobQueue\Jobs\UploadFromUrlJob
+            recentChangesUpdate: MediaWiki\RecentChanges\RecentChangesUpdateJob
+            refreshLinksPrioritized: MediaWiki\JobQueue\Jobs\RefreshLinksJob
+            refreshLinksDynamic: MediaWiki\JobQueue\Jobs\RefreshLinksJob
             activityUpdateJob: MediaWiki\Watchlist\ActivityUpdateJob
-            categoryMembershipChange: CategoryMembershipChangeJob
+            categoryMembershipChange: MediaWiki\JobQueue\Jobs\CategoryMembershipChangeJob
             clearUserWatchlist: MediaWiki\Watchlist\ClearUserWatchlistJob
             watchlistExpiry: MediaWiki\Watchlist\WatchlistExpiryJob
-            cdnPurge: CdnPurgeJob
+            cdnPurge: MediaWiki\JobQueue\Jobs\CdnPurgeJob
             userGroupExpiry: UserGroupExpiryJob
             clearWatchlistNotifications: MediaWiki\Watchlist\ClearWatchlistNotificationsJob
             userOptionsUpdate: UserOptionsUpdateJob
-            revertedTagUpdate: RevertedTagUpdateJob
-            'null': NullJob
+            revertedTagUpdate: MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob
+            'null': MediaWiki\JobQueue\Jobs\NullJob
             userEditCountInit: UserEditCountInitJob
-            parsoidCachePrewarm: { class: ParsoidCachePrewarmJob, services: [ParserOutputAccess, PageStore, RevisionLookup, ParsoidSiteConfig], needsPage: false }
-            renameUser: { class: MediaWiki\RenameUser\RenameUserJob, services: [MainConfig, DBLoadBalancerFactory] }
+            parsoidCachePrewarm: { class: MediaWiki\JobQueue\Jobs\ParsoidCachePrewarmJob, services: [ParserOutputAccess, PageStore, RevisionLookup, ParsoidSiteConfig], needsPage: false }
+            renameUserTable: { class: MediaWiki\RenameUser\Job\RenameUserTableJob, services: [MainConfig, DBLoadBalancerFactory] }
+            renameUserDerived: { class: MediaWiki\RenameUser\Job\RenameUserDerivedJob, services: [RenameUserFactory, UserFactory] }
+            renameUser: { class: MediaWiki\RenameUser\Job\RenameUserTableJob, services: [MainConfig, DBLoadBalancerFactory] }
         type: object
         description: |-
             Maps jobs to their handlers; extensions
@@ -7206,7 +7330,7 @@ config-schema:
             These settings should be global to all wikis.
     JobTypeConf:
         default:
-            default: { class: JobQueueDB, order: random, claimTTL: 3600 }
+            default: { class: MediaWiki\JobQueue\JobQueueDB, order: random, claimTTL: 3600 }
         additionalProperties:
             type: object
             properties: { class: { type: string }, order: { type: string }, claimTTL: { type: integer } }
@@ -7316,6 +7440,7 @@ config-schema:
             - upload
             - move
             - import
+            - interwiki
             - patrol
             - merge
             - suppress
@@ -7408,52 +7533,55 @@ config-schema:
             Extensions with custom log types may add to this array.
     LogActionsHandlers:
         default:
-            block/block: BlockLogFormatter
-            block/reblock: BlockLogFormatter
-            block/unblock: BlockLogFormatter
-            contentmodel/change: ContentModelLogFormatter
-            contentmodel/new: ContentModelLogFormatter
-            delete/delete: DeleteLogFormatter
-            delete/delete_redir: DeleteLogFormatter
-            delete/delete_redir2: DeleteLogFormatter
-            delete/event: DeleteLogFormatter
-            delete/restore: DeleteLogFormatter
-            delete/revision: DeleteLogFormatter
-            import/interwiki: ImportLogFormatter
-            import/upload: ImportLogFormatter
-            managetags/activate: LogFormatter
-            managetags/create: LogFormatter
-            managetags/deactivate: LogFormatter
-            managetags/delete: LogFormatter
-            merge/merge: MergeLogFormatter
-            move/move: MoveLogFormatter
-            move/move_redir: MoveLogFormatter
-            patrol/patrol: PatrolLogFormatter
-            patrol/autopatrol: PatrolLogFormatter
-            protect/modify: ProtectLogFormatter
-            protect/move_prot: ProtectLogFormatter
-            protect/protect: ProtectLogFormatter
-            protect/unprotect: ProtectLogFormatter
-            renameuser/renameuser: RenameuserLogFormatter
-            rights/autopromote: RightsLogFormatter
-            rights/rights: RightsLogFormatter
-            suppress/block: BlockLogFormatter
-            suppress/delete: DeleteLogFormatter
-            suppress/event: DeleteLogFormatter
-            suppress/reblock: BlockLogFormatter
-            suppress/revision: DeleteLogFormatter
-            tag/update: TagLogFormatter
-            upload/overwrite: UploadLogFormatter
-            upload/revert: UploadLogFormatter
-            upload/upload: UploadLogFormatter
+            block/block: { class: MediaWiki\Logging\BlockLogFormatter, services: [TitleParser, NamespaceInfo] }
+            block/reblock: { class: MediaWiki\Logging\BlockLogFormatter, services: [TitleParser, NamespaceInfo] }
+            block/unblock: { class: MediaWiki\Logging\BlockLogFormatter, services: [TitleParser, NamespaceInfo] }
+            contentmodel/change: MediaWiki\Logging\ContentModelLogFormatter
+            contentmodel/new: MediaWiki\Logging\ContentModelLogFormatter
+            delete/delete: MediaWiki\Logging\DeleteLogFormatter
+            delete/delete_redir: MediaWiki\Logging\DeleteLogFormatter
+            delete/delete_redir2: MediaWiki\Logging\DeleteLogFormatter
+            delete/event: MediaWiki\Logging\DeleteLogFormatter
+            delete/restore: MediaWiki\Logging\DeleteLogFormatter
+            delete/revision: MediaWiki\Logging\DeleteLogFormatter
+            import/interwiki: MediaWiki\Logging\ImportLogFormatter
+            import/upload: MediaWiki\Logging\ImportLogFormatter
+            interwiki/iw_add: MediaWiki\Logging\InterwikiLogFormatter
+            interwiki/iw_delete: MediaWiki\Logging\InterwikiLogFormatter
+            interwiki/iw_edit: MediaWiki\Logging\InterwikiLogFormatter
+            managetags/activate: MediaWiki\Logging\LogFormatter
+            managetags/create: MediaWiki\Logging\LogFormatter
+            managetags/deactivate: MediaWiki\Logging\LogFormatter
+            managetags/delete: MediaWiki\Logging\LogFormatter
+            merge/merge: { class: MediaWiki\Logging\MergeLogFormatter, services: [TitleParser] }
+            move/move: { class: MediaWiki\Logging\MoveLogFormatter, services: [TitleParser] }
+            move/move_redir: { class: MediaWiki\Logging\MoveLogFormatter, services: [TitleParser] }
+            patrol/patrol: MediaWiki\Logging\PatrolLogFormatter
+            patrol/autopatrol: MediaWiki\Logging\PatrolLogFormatter
+            protect/modify: { class: MediaWiki\Logging\ProtectLogFormatter, services: [TitleParser] }
+            protect/move_prot: { class: MediaWiki\Logging\ProtectLogFormatter, services: [TitleParser] }
+            protect/protect: { class: MediaWiki\Logging\ProtectLogFormatter, services: [TitleParser] }
+            protect/unprotect: { class: MediaWiki\Logging\ProtectLogFormatter, services: [TitleParser] }
+            renameuser/renameuser: { class: MediaWiki\Logging\RenameuserLogFormatter, services: [TitleParser] }
+            rights/autopromote: MediaWiki\Logging\RightsLogFormatter
+            rights/rights: MediaWiki\Logging\RightsLogFormatter
+            suppress/block: { class: MediaWiki\Logging\BlockLogFormatter, services: [TitleParser, NamespaceInfo] }
+            suppress/delete: MediaWiki\Logging\DeleteLogFormatter
+            suppress/event: MediaWiki\Logging\DeleteLogFormatter
+            suppress/reblock: { class: MediaWiki\Logging\BlockLogFormatter, services: [TitleParser, NamespaceInfo] }
+            suppress/revision: MediaWiki\Logging\DeleteLogFormatter
+            tag/update: MediaWiki\Logging\TagLogFormatter
+            upload/overwrite: MediaWiki\Logging\UploadLogFormatter
+            upload/revert: MediaWiki\Logging\UploadLogFormatter
+            upload/upload: MediaWiki\Logging\UploadLogFormatter
         type: object
         description: |-
             The same as above, but here values are class names or ObjectFactory specifications,
             not messages. The specification must resolve to a LogFormatter subclass,
             and will receive the LogEntry object as its first constructor argument.
             The type can be specified as '*' (e.g. 'block/*') to handle all types.
-            @see \LogPage::actionText
-            @see \LogFormatter
+            @see \MediaWiki\Logging\LogPage::actionText
+            @see \MediaWiki\Logging\LogFormatter
     ActionFilteredLogs:
         default:
             block: { block: [block], reblock: [reblock], unblock: [unblock] }
@@ -7876,15 +8004,8 @@ config-schema:
         default: {  }
         type: object
         description: |-
-            Local virtual hosts.
-            This lists domains that are configured as virtual hosts on the same machine.
-            It is expected that each domain can be identified by its hostname alone,
-            without any ports.
-            This affects the following:
-            - MWHttpRequest: If a request is to be made to a domain listed here, or any
-              subdomain thereof, then $wgLocalHTTPProxy will be used.
-              Command-line scripts are not affected by this setting and will always use
-              the proxy if it is configured.
+            A list of URL domains that will be routed to the proxy specified by
+            $wgLocalHTTPProxy.
             @since 1.25
     LocalHTTPProxy:
         default: false
@@ -7892,10 +8013,7 @@ config-schema:
             - string
             - boolean
         description: |-
-            Reverse proxy to use for requests to domains in $wgLocalVirtualHosts
-            When used, any port in the request URL will be dropped. The behavior of
-            redirects and cookies is dependent upon the reverse proxy actually in use,
-            as MediaWiki doesn't implement any special handling for them.
+            Proxy to use for requests to domains in $wgLocalVirtualHosts
             If set to false, no reverse proxy will be used for local requests.
             @since 1.38
     AllowExternalReqID:
@@ -8090,3 +8208,29 @@ config-schema:
             OutputPipelineStages to add to the DefaultOutputPipeline.
             @unstable EXPERIMENTAL
             @since 1.43
+    FeatureShutdown:
+        default: []
+        type: array
+        description: |-
+            Allow temporarily disabling use of certain features. Useful for
+            large site operators to push people to newer APIs while still
+            keeping the breakage short and contained.
+            This should be an array, where a key is a feature name and the value
+            is an array of shutdown arrays, each containing the following keys:
+            	'start' => Shutdown start, parsed with strtotime(). (required)
+            	'end' => Shutdown end, parsed with strtotime(). (required)
+            	'percentage' => Number between 0 and 100. If set, only a certain
+            	  percentage of requests will be blocked.
+            For example:
+            @code
+            $wgFeatureShutdown = [
+              'pre-1.24-tokens' => [
+                [
+                  'start' => '2021-07-01T00:00 +00:00',
+                  'end' => '2021-08-01T00:00 +00:00',
+                  'percentage' => 50,
+                ],
+              ],
+            ];
+            @encdode
+            @since 1.44

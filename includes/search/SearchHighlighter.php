@@ -135,11 +135,11 @@ class SearchHighlighter {
 								break;
 							} else {
 								// end of nested element
-								$level -= 1;
+								$level--;
 							}
 						} else {
 							// nested
-							$level += 1;
+							$level++;
 						}
 						$offset = $endMatches[0][1] + strlen( $endMatches[0][0] );
 					}
@@ -196,7 +196,7 @@ class SearchHighlighter {
 		$first = 0;
 		$firstText = '';
 		foreach ( $textExt as $index => $line ) {
-			if ( strlen( $line ) > 0 && $line[0] != ';' && $line[0] != ':' ) {
+			if ( $line !== '' && $line[0] != ';' && $line[0] != ':' ) {
 				$firstText = $this->extract( $line, 0, $contextchars * $contextlines );
 				$first = $index;
 				break;

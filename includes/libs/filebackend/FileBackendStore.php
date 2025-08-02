@@ -25,8 +25,6 @@ namespace Wikimedia\FileBackend;
 
 use InvalidArgumentException;
 use LockManager;
-use MapCacheLRU;
-use MediaWiki\Json\FormatJson;
 use Shellbox\Command\BoxedCommand;
 use StatusValue;
 use Traversable;
@@ -43,6 +41,7 @@ use Wikimedia\FileBackend\FileOps\MoveFileOp;
 use Wikimedia\FileBackend\FileOps\NullFileOp;
 use Wikimedia\FileBackend\FileOps\StoreFileOp;
 use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
@@ -396,9 +395,9 @@ abstract class FileBackendStore extends FileBackend {
 		$scopeLockS = $this->getScopedFileLocks( $params['srcs'], LockManager::LOCK_UW, $status );
 		if ( $status->isOK() ) {
 			// Actually do the file concatenation...
-			$start_time = microtime( true );
+			$hrStart = hrtime( true );
 			$status->merge( $this->doConcatenate( $params ) );
-			$sec = microtime( true ) - $start_time;
+			$sec = ( hrtime( true ) - $hrStart ) / 1e9;
 			if ( !$status->isOK() ) {
 				$this->logger->error( static::class . "-{$this->name}" .
 					" failed to concatenate " . count( $params['srcs'] ) . " file(s) [$sec sec]" );
@@ -1338,8 +1337,9 @@ abstract class FileBackendStore extends FileBackend {
 				$subStatus->success[$i] = false;
 				++$subStatus->failCount;
 			}
-			$this->logger->error( static::class . "-{$this->name} " .
-				" stat failure; aborted operations: " . FormatJson::encode( $ops ) );
+			$this->logger->error( static::class . "-{$this->name} stat failure",
+				[ 'aborted_operations' => $ops ]
+			);
 		}
 
 		// Merge errors into StatusValue fields
@@ -1849,8 +1849,6 @@ abstract class FileBackendStore extends FileBackend {
 	 * Do a batch lookup from cache for container stats for all containers
 	 * used in a list of container names or storage paths objects.
 	 * This loads the persistent cache values into the process cache.
-	 *
-	 * @param array $items
 	 */
 	final protected function primeContainerCache( array $items ) {
 		/** @noinspection PhpUnusedLocalVariableInspection */
@@ -2063,7 +2061,7 @@ abstract class FileBackendStore extends FileBackend {
 	 */
 	protected function getContentType( $storagePath, $content, $fsPath ) {
 		if ( $this->mimeCallback ) {
-			return call_user_func_array( $this->mimeCallback, func_get_args() );
+			return ( $this->mimeCallback )( $storagePath, $content, $fsPath );
 		}
 
 		$mime = ( $fsPath !== null ) ? mime_content_type( $fsPath ) : false;

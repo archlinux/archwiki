@@ -38,7 +38,7 @@
 	"scribunto-common-timeout": "Закінчився час, виділений для виконання скриптів.",
 	"scribunto-common-oom": "Перевищено розмір пам'яті, дозволений для виконання скриптів.",
 	"scribunto-common-backtrace": "Зворотне трасування:",
-	"scribunto-common-no-details": "Немає жодних деталей.",
+	"scribunto-common-no-details": "Немає відомостей про розташування коду.",
 	"scribunto-lua-in-function": "у функції «$1»",
 	"scribunto-lua-in-main": "в головній частині коду",
 	"scribunto-lua-in-function-at": "у функції в $1:$2",

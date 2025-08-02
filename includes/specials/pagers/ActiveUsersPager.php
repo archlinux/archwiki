@@ -30,6 +30,7 @@ use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityValue;
@@ -65,16 +66,6 @@ class ActiveUsersPager extends UsersPager {
 	/** @var string[] */
 	private $excludegroups;
 
-	/**
-	 * @param IContextSource $context
-	 * @param HookContainer $hookContainer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param UserGroupManager $userGroupManager
-	 * @param UserIdentityLookup $userIdentityLookup
-	 * @param HideUserUtils $hideUserUtils
-	 * @param FormOptions $opts
-	 */
 	public function __construct(
 		IContextSource $context,
 		HookContainer $hookContainer,
@@ -83,6 +74,7 @@ class ActiveUsersPager extends UsersPager {
 		UserGroupManager $userGroupManager,
 		UserIdentityLookup $userIdentityLookup,
 		HideUserUtils $hideUserUtils,
+		TempUserConfig $tempUserConfig,
 		FormOptions $opts
 	) {
 		parent::__construct(
@@ -93,6 +85,7 @@ class ActiveUsersPager extends UsersPager {
 			$userGroupManager,
 			$userIdentityLookup,
 			$hideUserUtils,
+			$tempUserConfig,
 			null,
 			null
 		);

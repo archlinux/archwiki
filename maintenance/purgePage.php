@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 
 // @codeCoverageIgnoreStart
@@ -50,7 +51,7 @@ class PurgePage extends Maintenance {
 		}
 	}
 
-	private function purge( $titleText ) {
+	private function purge( string $titleText ) {
 		$title = Title::newFromText( $titleText );
 
 		if ( $title === null ) {

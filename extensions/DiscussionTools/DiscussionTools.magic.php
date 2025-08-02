@@ -7,6 +7,12 @@ $magicWords['bn'] = [
 	'notalk' => [ 0, '__কোন_আলোচনা_নয়__' ],
 ];
 
+/** Azerbaijani (Azərbaycanca) */
+$magicWords['az'] = [
+	'archivedtalk' => [ 0, '__ARXİVLƏŞDİRİLMİŞMÜZAKİRƏ__' ],
+	'notalk' => [ 0, '__MÜZAKİRƏDEYİL__' ]
+];
+
 /** English (English) */
 $magicWords['en'] = [
 	'archivedtalk' => [ 0, '__ARCHIVEDTALK__' ],

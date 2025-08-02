@@ -83,7 +83,7 @@
 	"prefs-help-email": "E-posti aadressi sisestamine pole kohustuslik, kuid võimaldab sul tellida parooli meeldetuletuse, kui peaksid oma parooli unustama.",
 	"prefs-help-email-required": "E-posti aadress on vajalik.",
 	"prefs-help-email-others": "Võid ka paluda teistel sinu kasutaja- või aruteluleheküljel sinuga ühendust võtta, selle asemel, et peaksid oma isikuandmeid avaldama.",
-	"tog-requireemail": "Saada parooli lähtestamise e-kiri ainult siis, kui ära on toodud nii e-posti aadress kui ka kasutajanimi.",
+	"tog-requireemail": "Saada parooli lähtestamise e-kiri ainult siis, kui ära on toodud nii e-posti aadress kui ka kasutajanimi",
 	"prefs-help-requireemail": "See parandab andmekaitset ja aitab vältida soovimatuid e-kirju.",
 	"noemailprefs": "Järgmiste võimaluste toimimiseks on vaja määrata e-posti aadress.",
 	"emailnotauthenticated": "Sinu e-posti aadress pole veel kinnitatud.\nJärgmiste funktsioonidega seotud e-kirju ei saadeta.",
@@ -230,6 +230,7 @@
 	"search-thumbnail-extra-namespaces-label": "Näita lauaarvutis otsingu erilehel pisipilte",
 	"search-thumbnail-extra-namespaces-message": "Kuvab leheküljel {{#special:search}} pisipildid {{PLURAL:$2|nimeruumist|nimeruumidest}} $1 pärit tulemuste juures.",
 	"prefs-advancedsearchoptions": "Täpsemad eelistused",
+	"prefs-misc": "Muu",
 	"prefs-reset-intro": "Sellel leheküljel saad oma eelistused lähtestada võrgukoha vaike-eelistusteks.\nToimingut ei saa hiljem tühistada.",
 	"prefs-reset-confirm": "Jah, soovin enda eelistused lähtestada.",
 	"restoreprefs": "Taasta kõik vaike-eelistused"

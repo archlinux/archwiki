@@ -35,7 +35,7 @@ class CiteDbTest extends \MediaWikiIntegrationTestCase {
 
 		$this->assertStringContainsString(
 			'cite_ref-2',
-			$parserOutput->getText(),
+			$parserOutput->getRawText(),
 			'Internal counter should not reset to 1 for text #3'
 		);
 	}

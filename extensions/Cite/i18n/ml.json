@@ -11,12 +11,9 @@
 	"cite_error_ref_numeric_key": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nനാമത്തിൽ സംഖ്യ മാത്രമായി അനുവദനീയമല്ല. വിവരണാത്മകമായ തലക്കെട്ട് ഉപയോഗിക്കുക.",
 	"cite_error_ref_no_key": "തുറക്കാനുള്ള <code>&lt;ref&gt;</code> ടാഗിൽ പിഴവുണ്ട് അല്ലെങ്കിൽ പേരിൽ കുഴപ്പമുണ്ട്",
 	"cite_error_ref_too_many_keys": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nഅസാധുവായ പേരുകൾ, ഉദാ: too many",
-	"cite_error_ref_nested_extends": "<code>&lt;ref&gt;</code> റ്റാഗുകൾ ഒരു തലത്തിലധികം വ്യാപിപ്പിക്കുന്നത് അനുവദിച്ചിട്ടില്ല",
 	"cite_error_ref_no_input": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nപേരില്ലാത്ത അവലംബത്തിനു ഉള്ളടക്കമുണ്ടായിരിക്കണം.",
 	"cite_error_references_duplicate_key": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്; \"$1\" എന്ന പേര് വ്യത്യസ്തമായ ഉള്ളടക്കത്തോടെ നിരവധി തവണ നിർവ്വചിച്ചിരിക്കുന്നു",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> ടാഗിൽ അസാധുവായ ചരം ഉൾപ്പെട്ടിരിക്കുന്നു.",
-	"cite_error_references_no_backlink_label": "പിൻകണ്ണികൾക്കായി നൽകുന്ന ഇച്ഛാനുസരണ കുറികൾ തീർന്നുപോയിരിക്കുന്നു. കൂടുതൽ [[MediaWiki:Cite references link many format backlink labels]] സന്ദേശത്തിൽ നിർവചിക്കുക.",
-	"cite_error_no_link_label_group": "\"$1\" സംഘത്തിലെ കണ്ണികൾക്കായി നൽകുന്ന ഇച്ഛാനുസരണ കുറികൾ തീർന്നുപോയിരിക്കുന്നു. കൂടുതൽ [[MediaWiki:$2]] സന്ദേശത്തിൽ നിർവചിക്കുക.",
 	"cite_error_references_no_text": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\n<code>$1</code> എന്ന പേരിലെ അവലംബങ്ങൾക്ക് എഴുത്തൊന്നും നൽകിയിട്ടില്ല.",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> റ്റാഗിനു <code>&lt;/ref&gt;</code> എന്ന അന്ത്യറ്റാഗ് നൽകിയിട്ടില്ല",
 	"cite_error_included_references": "<code>&lt;references&gt;</code> എന്നതിൽ അടയ്ക്കൽ റ്റാഗ് ഇല്ല",
@@ -32,6 +29,7 @@
 	"cite-reference-previews-journal": "ജേണൽ അവലംബം",
 	"cite-reference-previews-news": "വാർത്താ അവലംബം",
 	"cite-reference-previews-web": "വെബ് അവലംബം",
+	"cite-reference-previews-preference-label": "അവലംബ പ്രിവ്യൂകൾ (കുറിപ്പുകളുടെ പ്രിവ്യൂകൾ എടുക്കുക)",
 	"cite_references_link_accessibility_label": "മുകളിലേയ്ക്ക്",
 	"cite_references_link_many_accessibility_label": "മുകളിൽ ഇവിടേയ്ക്ക്:",
 	"cite_references_link_accessibility_back_label": "മുകളിലേക്ക് പോവുക",
@@ -44,6 +42,5 @@
 	"cite-wikieditor-help-content-named-reference-description": "പേരുള്ള അവലംബം",
 	"cite-wikieditor-help-content-rereference-description": "അതേ അവലംബത്തിന്റെ കൂടുതൽ ഉപയോഗം",
 	"cite-wikieditor-help-content-showreferences-description": "അവലംബങ്ങൾ പ്രദർശിപ്പിക്കുക",
-	"cite-wikieditor-help-content-reference-example-extra-details": "അധിക വിശദാംശങ്ങൾ",
-	"popups-refpreview-user-preference-label": "അവലംബ പ്രിവ്യൂകൾ (കുറിപ്പുകളുടെ പ്രിവ്യൂകൾ എടുക്കുക)"
+	"cite-wikieditor-help-content-reference-example-extra-details": "അധിക വിശദാംശങ്ങൾ"
 }

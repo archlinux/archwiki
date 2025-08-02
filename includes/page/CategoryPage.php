@@ -18,9 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Page;
+
 use MediaWiki\Category\CategoryViewer;
 use MediaWiki\Title\Title;
-use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 
 /**
  * Special handling for category description pages.
@@ -70,7 +71,7 @@ class CategoryPage extends Article {
 		$outputPage = $this->getContext()->getOutput();
 		$outputPage->adaptCdnTTL(
 			$this->getPage()->getTouched(),
-			ExpirationAwareness::TTL_MINUTE
+			60
 		);
 	}
 
@@ -84,7 +85,7 @@ class CategoryPage extends Article {
 		$oldFrom = $request->getVal( 'from' );
 		$oldUntil = $request->getVal( 'until' );
 
-		$reqArray = $request->getValues();
+		$reqArray = $request->getQueryValues();
 
 		$from = $until = [];
 		foreach ( [ 'page', 'subcat', 'file' ] as $type ) {
@@ -115,3 +116,6 @@ class CategoryPage extends Article {
 		$this->addHelpLink( 'Help:Categories' );
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( CategoryPage::class, 'CategoryPage' );

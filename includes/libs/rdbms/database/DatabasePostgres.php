@@ -37,7 +37,7 @@ class DatabasePostgres extends Database {
 	private $port;
 	/** @var string */
 	private $tempSchema;
-	/** @var float|string */
+	/** @var float|string|null */
 	private $numericVersion;
 
 	/** @var Result|null */
@@ -299,27 +299,31 @@ class DatabasePostgres extends Database {
 	public function indexInfo( $table, $index, $fname = __METHOD__ ) {
 		$components = $this->platform->qualifiedTableComponents( $table );
 		if ( count( $components ) === 1 ) {
-			$schema = $this->getCoreSchema();
+			$schemas = $this->getCoreSchemas();
 			$tableComponent = $components[0];
 		} elseif ( count( $components ) === 2 ) {
 			[ $schema, $tableComponent ] = $components;
+			$schemas = [ $schema ];
 		} else {
 			[ , $schema, $tableComponent ] = $components;
+			$schemas = [ $schema ];
 		}
-		$encSchema = $this->addQuotes( $schema );
-		$encTable = $this->addQuotes( $tableComponent );
-		$encIndex = $this->addQuotes( $this->platform->indexName( $index ) );
-		$query = new Query(
-			"SELECT indexname,indexdef FROM pg_indexes " .
+		foreach ( $schemas as $schema ) {
+			$encSchema = $this->addQuotes( $schema );
+			$encTable = $this->addQuotes( $tableComponent );
+			$encIndex = $this->addQuotes( $this->platform->indexName( $index ) );
+			$query = new Query(
+				"SELECT indexname,indexdef FROM pg_indexes " .
 				"WHERE schemaname=$encSchema AND tablename=$encTable AND indexname=$encIndex",
-			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
-			'SELECT'
-		);
-		$res = $this->query( $query );
-		$row = $res->fetchObject();
+				self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
+				'SELECT'
+			);
+			$res = $this->query( $query );
+			$row = $res->fetchObject();
 
-		if ( $row ) {
-			return [ 'unique' => ( strpos( $row->indexdef, 'CREATE UNIQUE ' ) === 0 ) ];
+			if ( $row ) {
+				return [ 'unique' => ( strpos( $row->indexdef, 'CREATE UNIQUE ' ) === 0 ) ];
+			}
 		}
 
 		return false;
@@ -772,7 +776,7 @@ __INDEXATTR__;
 	}
 
 	public function getServerVersion() {
-		if ( !isset( $this->numericVersion ) ) {
+		if ( $this->numericVersion === null ) {
 			// Works on PG 7.4+
 			$this->numericVersion = pg_version( $this->getBindingHandle() )['server'];
 		}

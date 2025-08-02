@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +16,21 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Content
- *
- * @author Art Baltai
  */
 
 namespace MediaWiki\Content;
 
 use InvalidArgumentException;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
-use MWUnknownContentModelException;
 use Psr\Log\LoggerInterface;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
- * Class ContentHandlerFactory
- * @package MediaWiki\Content
- * @ingroup Content
  * @since 1.35
+ * @ingroup Content
+ * @author Art Baltai
  */
 final class ContentHandlerFactory implements IContentHandlerFactory {
 
@@ -152,11 +147,6 @@ final class ContentHandlerFactory implements IContentHandlerFactory {
 		return array_keys( $formats );
 	}
 
-	/**
-	 * @param string $modelID
-	 *
-	 * @return bool
-	 */
 	public function isDefinedModel( string $modelID ): bool {
 		return in_array( $modelID, $this->getContentModels(), true );
 	}

@@ -52,12 +52,15 @@ class DateTimeInputWidget extends InputWidget {
 
 		// Initialization
 		$this->addClasses( [ 'mw-widgets-datetime-dateTimeInputWidget' ] );
+		$this->appendContent( new PendingTextInputWidget() );
 	}
 
+	/** @inheritDoc */
 	protected function getJavaScriptClassName() {
 		return 'mw.widgets.datetime.DateTimeInputWidget';
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$config['type'] = $this->type;
 		if ( $this->min !== null ) {
@@ -72,6 +75,7 @@ class DateTimeInputWidget extends InputWidget {
 		return parent::getConfig( $config );
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		return ( new Tag( 'input' ) )->setAttributes( [ 'type' => $this->type ] );
 	}

@@ -170,6 +170,6 @@
 	"echo-pref-tooltip-dt-subscription-archiving": "Pranešti man, kai tema, kurią {{GENDER:|prenumeruoju}}, yra archyvuojama arba pašalinta iš puslapio, arba jei pranešimų apie naujus komentarus, paskelbtus toje temoje, nepavyksta išsiųsti dėl kitų priežasčių.",
 	"tag-discussiontools-added-comment-description": "Šiame keitime buvo pridėtas aptarimo puslapio komentaras",
 	"tag-discussiontools-edit": "Redaguotas komentaras",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nauja tema]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Atsakyti]"
+	"tag-discussiontools-newtopic": "Nauja tema",
+	"tag-discussiontools-reply": "Atsakyti"
 }

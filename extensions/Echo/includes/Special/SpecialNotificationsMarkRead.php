@@ -20,24 +20,28 @@ class SpecialNotificationsMarkRead extends FormSpecialPage {
 		parent::__construct( 'NotificationsMarkRead' );
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
+		// Redirect to login page and inform user of the need to login
+		$this->requireLogin( 'echo-notification-loginrequired' );
+
 		parent::execute( $par );
 
 		$out = $this->getOutput();
 		$out->setPageTitleMsg( $this->msg( 'echo-specialpage-markasread' ) );
-
-		// Redirect to login page and inform user of the need to login
-		$this->requireLogin( 'echo-notification-loginrequired' );
 	}
 
+	/** @inheritDoc */
 	public function isListed() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getDisplayFormat() {
 		return 'ooui';
 	}
@@ -123,7 +127,6 @@ class SpecialNotificationsMarkRead extends FormSpecialPage {
 	 *
 	 * This is only called when the form is actually visited directly, which is not the
 	 *   main intended use.
-	 * @param HTMLForm $form
 	 */
 	protected function alterForm( HTMLForm $form ) {
 		$form->setSubmitText( $this->msg( 'echo-notification-markasread' )->text() );

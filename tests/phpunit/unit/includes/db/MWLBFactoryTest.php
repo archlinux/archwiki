@@ -27,7 +27,8 @@ use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\LBFactorySimple;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\RequestTimeout\RequestTimeout;
-use Wikimedia\Stats\NullStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\NoopTracer;
 
 /**
  * @covers \Wikimedia\Rdbms\LBFactory
@@ -45,8 +46,9 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 			new EmptyBagOStuff(),
 			new WANObjectCache( [ 'cache' => new EmptyBagOStuff() ] ),
 			new CriticalSectionProvider( RequestTimeout::singleton(), 1, null, null ),
-			new NullStatsdDataFactory(),
-			[]
+			StatsFactory::newNull(),
+			[],
+			new NoopTracer(),
 		);
 	}
 
@@ -96,7 +98,7 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function setDomainAliasesProvider() {
+	public static function setDomainAliasesProvider() {
 		return [
 			[ 'enwiki', '', 'enwiki' ],
 			[ 'wikipedia', 'fr_', 'wikipedia-fr_' ],

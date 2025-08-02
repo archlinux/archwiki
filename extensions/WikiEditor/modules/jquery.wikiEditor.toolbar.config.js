@@ -3,10 +3,9 @@
  *
  * @private
  */
-var configData = require( './data.json' ),
+const configData = require( './data.json' ),
 	fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[ 6 ],
-	specialCharacterGroups = require( 'mediawiki.language.specialCharacters' ),
-	toolbarConfig;
+	specialCharacterGroups = require( 'mediawiki.language.specialCharacters' );
 
 /**
  * Replace link targets from example messages with hash
@@ -18,7 +17,7 @@ var configData = require( './data.json' ),
  */
 function delink( $message ) {
 	// dummy div to append the message to
-	var $div = $( '<div>' );
+	const $div = $( '<div>' );
 
 	$div.append( $message );
 	$div.find( 'a' ).attr( 'href', '#' );
@@ -26,7 +25,7 @@ function delink( $message ) {
 	return $div.html();
 }
 
-toolbarConfig = {
+const toolbarConfig = {
 	toolbar: {
 		// Main section
 		main: {
@@ -45,7 +44,8 @@ toolbarConfig = {
 									peri: mw.msg( 'wikieditor-toolbar-tool-bold-example' ),
 									post: "'''"
 								}
-							}
+							},
+							hotkey: 66 // B
 						},
 						italic: {
 							section: 'main',
@@ -61,7 +61,8 @@ toolbarConfig = {
 									peri: mw.msg( 'wikieditor-toolbar-tool-italic-example' ),
 									post: "''"
 								}
-							}
+							},
+							hotkey: 73 // I
 						}
 					}
 				},
@@ -175,6 +176,8 @@ toolbarConfig = {
 									pre: '* ',
 									peri: mw.msg( 'wikieditor-toolbar-tool-ulist-example' ),
 									post: '',
+									regex: /^([*#:;]*)\s*(.*)$/gm,
+									regexReplace: '$1* $2',
 									ownline: true,
 									splitlines: true
 								}
@@ -190,8 +193,23 @@ toolbarConfig = {
 									pre: '# ',
 									peri: mw.msg( 'wikieditor-toolbar-tool-olist-example' ),
 									post: '',
+									regex: /^([*#:;]*)\s*(.*)$/gm,
+									regexReplace: '$1# $2',
 									ownline: true,
 									splitlines: true
+								}
+							}
+						},
+						code: {
+							label: mw.msg( 'wikieditor-toolbar-tool-code' ),
+							type: 'button',
+							oouiIcon: 'code',
+							action: {
+								type: 'encapsulate',
+								options: {
+									pre: '<code>',
+									peri: mw.msg( 'wikieditor-toolbar-tool-code-example' ),
+									post: '</code>'
 								}
 							}
 						},
@@ -206,7 +224,8 @@ toolbarConfig = {
 									peri: mw.msg( 'wikieditor-toolbar-tool-nowiki-example' ),
 									post: '</nowiki>'
 								}
-							}
+							},
+							hotkey: 220 // Backslash (\)
 						},
 						newline: {
 							label: mw.msg( 'wikieditor-toolbar-tool-newline' ),
@@ -260,7 +279,8 @@ toolbarConfig = {
 									peri: mw.msg( 'wikieditor-toolbar-tool-superscript-example' ),
 									post: '</sup>'
 								}
-							}
+							},
+							hotkey: 190 // Period (.)
 						},
 						subscript: {
 							label: mw.msg( 'wikieditor-toolbar-tool-subscript' ),
@@ -273,7 +293,8 @@ toolbarConfig = {
 									peri: mw.msg( 'wikieditor-toolbar-tool-subscript-example' ),
 									post: '</sub>'
 								}
-							}
+							},
+							hotkey: 188 // Comma (,)
 						}
 					}
 				},
@@ -317,6 +338,11 @@ toolbarConfig = {
 			type: 'booklet',
 			deferLoad: true,
 			pages: {
+				recent: {
+					label: mw.msg( 'special-characters-recently-used' ),
+					layout: 'characters',
+					characters: []
+				},
 				latin: {
 					label: mw.msg( 'special-characters-group-latin' ),
 					layout: 'characters',
@@ -452,9 +478,9 @@ toolbarConfig = {
 					label: mw.msg( 'wikieditor-toolbar-help-page-format' ),
 					layout: 'table',
 					headings: [
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-description' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-syntax' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-result' ).parse() }
+						{ msg: 'wikieditor-toolbar-help-heading-description' },
+						{ msg: 'wikieditor-toolbar-help-heading-syntax' },
+						{ msg: 'wikieditor-toolbar-help-heading-result' }
 					],
 					rows: [
 						{
@@ -496,9 +522,9 @@ toolbarConfig = {
 					label: mw.msg( 'wikieditor-toolbar-help-page-link' ),
 					layout: 'table',
 					headings: [
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-description' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-syntax' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-result' ).parse() }
+						{ msg: 'wikieditor-toolbar-help-heading-description' },
+						{ msg: 'wikieditor-toolbar-help-heading-syntax' },
+						{ msg: 'wikieditor-toolbar-help-heading-result' }
 					],
 					rows: [
 						{
@@ -540,9 +566,9 @@ toolbarConfig = {
 					label: mw.msg( 'wikieditor-toolbar-help-page-heading' ),
 					layout: 'table',
 					headings: [
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-description' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-syntax' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-result' ).parse() }
+						{ msg: 'wikieditor-toolbar-help-heading-description' },
+						{ msg: 'wikieditor-toolbar-help-heading-syntax' },
+						{ msg: 'wikieditor-toolbar-help-heading-result' }
 					],
 					rows: [
 						{
@@ -595,9 +621,9 @@ toolbarConfig = {
 					label: mw.msg( 'wikieditor-toolbar-help-page-list' ),
 					layout: 'table',
 					headings: [
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-description' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-syntax' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-result' ).parse() }
+						{ msg: 'wikieditor-toolbar-help-heading-description' },
+						{ msg: 'wikieditor-toolbar-help-heading-syntax' },
+						{ msg: 'wikieditor-toolbar-help-heading-result' }
 					],
 					rows: [
 						{
@@ -636,9 +662,9 @@ toolbarConfig = {
 					label: mw.msg( 'wikieditor-toolbar-help-page-file' ),
 					layout: 'table',
 					headings: [
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-description' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-syntax' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-result' ).parse() }
+						{ msg: 'wikieditor-toolbar-help-heading-description' },
+						{ msg: 'wikieditor-toolbar-help-heading-syntax' },
+						{ msg: 'wikieditor-toolbar-help-heading-result' }
 					],
 					rows: [
 						{
@@ -670,9 +696,9 @@ toolbarConfig = {
 					label: mw.msg( 'wikieditor-toolbar-help-page-discussion' ),
 					layout: 'table',
 					headings: [
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-description' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-syntax' ).parse() },
-						{ html: mw.message( 'wikieditor-toolbar-help-heading-result' ).parse() }
+						{ msg: 'wikieditor-toolbar-help-heading-description' },
+						{ msg: 'wikieditor-toolbar-help-heading-syntax' },
+						{ msg: 'wikieditor-toolbar-help-heading-result' }
 					],
 					rows: [
 						{

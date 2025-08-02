@@ -21,12 +21,9 @@
 
 namespace MediaWiki\Pager;
 
-use ChangesList;
-use ChangeTags;
-use HtmlArmor;
 use InvalidArgumentException;
-use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
@@ -38,6 +35,7 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\RecentChanges\ChangesList;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -47,6 +45,8 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
 use stdClass;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -70,6 +70,11 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 	protected $isArchive;
 
 	/**
+	 * @var bool Run hooks to allow extensions to modify the page
+	 */
+	protected $runHooks;
+
+	/**
 	 * @var string User name, or a string describing an IP address range
 	 */
 	protected $target;
@@ -87,44 +92,44 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 	/**
 	 * @var bool Set to true to invert the tag selection
 	 */
-	private $tagInvert;
+	private bool $tagInvert;
 
 	/**
 	 * @var bool Set to true to invert the namespace selection
 	 */
-	private $nsInvert;
+	private bool $nsInvert;
 
 	/**
 	 * @var bool Set to true to show both the subject and talk namespace, no matter which got
 	 *  selected
 	 */
-	private $associated;
+	private bool $associated;
 
 	/**
 	 * @var bool Set to true to show only deleted revisions
 	 */
-	private $deletedOnly;
+	private bool $deletedOnly;
 
 	/**
 	 * @var bool Set to true to show only latest (a.k.a. current) revisions
 	 */
-	private $topOnly;
+	private bool $topOnly;
 
 	/**
 	 * @var bool Set to true to show only new pages
 	 */
-	private $newOnly;
+	private bool $newOnly;
 
 	/**
 	 * @var bool Set to true to hide edits marked as minor by the user
 	 */
-	private $hideMinor;
+	private bool $hideMinor;
 
 	/**
 	 * @var bool Set to true to only include mediawiki revisions.
 	 * (restricts extensions from executing additional queries to include their own contributions)
 	 */
-	private $revisionsOnly;
+	private bool $revisionsOnly;
 
 	/** @var bool */
 	private $preventClickjacking = false;
@@ -148,7 +153,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 	private CommentFormatter $commentFormatter;
 	private HookRunner $hookRunner;
 	private LinkBatchFactory $linkBatchFactory;
-	private NamespaceInfo $namespaceInfo;
+	protected NamespaceInfo $namespaceInfo;
 	protected RevisionStore $revisionStore;
 
 	/** @var string[] */
@@ -199,6 +204,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 		?UserIdentity $targetUser
 	) {
 		$this->isArchive = $options['isArchive'] ?? false;
+		$this->runHooks = $options['runHooks'] ?? true;
 
 		// Set ->target before calling parent::__construct() so
 		// parent can call $this->getIndexField() and get the right result. Set
@@ -327,7 +333,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 			->joinConds( $join_conds )
 			->setMaxExecutionTime( $this->getConfig()->get( MainConfigNames::MaxExecutionTimeForExpensiveQueries ) )
 			->fetchResultSet() ];
-		if ( !$this->revisionsOnly ) {
+		if ( !$this->revisionsOnly && $this->runHooks ) {
 			// These hooks were moved from ContribsPager and DeletedContribsPager. For backwards
 			// compatability, they keep the same names. But they should be run for any contributions
 			// pager, otherwise the entries from extensions would be missing.
@@ -350,7 +356,11 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 				// Left-pad with zeroes, because these values will be sorted as strings
 				$index = str_pad( (string)$index, strlen( (string)$limit ), '0', STR_PAD_LEFT );
 				// use index column as key, allowing us to easily sort in PHP
-				$result[$row->{$this->getIndexField()} . "-$index"] = $row;
+				$indexFieldValues = array_map(
+					static fn ( $fieldName ) => $row->$fieldName,
+					(array)$this->mIndexField
+				);
+				$result[implode( '-', $indexFieldValues ) . "-$index"] = $row;
 			}
 		}
 
@@ -411,10 +421,17 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 				) . ' != ' . RevisionRecord::SUPPRESSED_USER;
 		}
 
-		// $this->getIndexField() must be in the result rows, as reallyDoQuery() tries to access it.
-		$indexField = $this->getIndexField();
-		if ( $indexField !== $this->revisionTimestampField ) {
-			$queryInfo['fields'][] = $indexField;
+		// Index fields must be present in the result rows, as reallyDoQuery() tries to access them.
+		$indexFields = array_diff(
+			(array)$this->mIndexField,
+			$queryInfo['fields']
+		);
+
+		foreach ( $indexFields as $indexField ) {
+			// Skip if already added as an alias
+			if ( !array_key_exists( $indexField, $queryInfo['fields'] ) ) {
+				$queryInfo['fields'][] = $indexField;
+			}
 		}
 
 		MediaWikiServices::getInstance()->getChangeTagsStore()->modifyDisplayQuery(
@@ -427,7 +444,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 			$this->tagInvert,
 		);
 
-		if ( !$this->isArchive ) {
+		if ( !$this->isArchive && $this->runHooks ) {
 			$this->hookRunner->onContribsPager__getQueryInfo( $this, $queryInfo );
 		}
 
@@ -481,6 +498,23 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 	 */
 	public function getNamespace() {
 		return $this->namespace;
+	}
+
+	/**
+	 * Whether the pager has any filters applied, ignoring whether the target username / IP
+	 * for this check.
+	 *
+	 * Used to determine whether the current search may produce results if the
+	 * filters were changed for UI messages when no results are displayed.
+	 *
+	 * Currently does not support checking if filters added via the
+	 * onSpecialContributions__getForm__filters hook are applied to the current query.
+	 *
+	 * @return bool
+	 */
+	public function hasAppliedFilters(): bool {
+		return $this->startOffset || $this->endOffset || $this->namespace !== '' || $this->tagFilter ||
+			$this->deletedOnly || $this->newOnly || $this->hideMinor || $this->topOnly;
 	}
 
 	protected function doBatchLookups() {
@@ -559,6 +593,13 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 	 */
 	protected function getEndBody() {
 		return "</section>\n";
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getEmptyBody() {
+		return $this->msg( 'nocontribs' )->parse();
 	}
 
 	/**
@@ -879,12 +920,14 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 		$revUserId = $revUser ? $revUser->getId() : 0;
 		$revUserText = $revUser ? $revUser->getName() : '';
 		if ( $this->target !== $revUserText ) {
-			$userlink = ' <span class="mw-changeslist-separator"></span> '
-				. Html::rawElement( 'bdi', [ 'dir' => $dir ],
-					Linker::userLink( $revUserId, $revUserText ) );
-			$userlink .= ' ' . $this->msg( 'parentheses' )->rawParams(
-				Linker::userTalkLink( $revUserId, $revUserText ) )->escaped() . ' ';
+			$userPageLink = Linker::userLink( $revUserId, $revUserText );
+			$userTalkLink = Linker::userTalkLink( $revUserId, $revUserText );
+
+			$userlink = ' <span class="mw-changeslist-separator"></span> ' .
+				Html::rawElement( 'bdi', [ 'dir' => $dir ], $userPageLink ) .
+				Linker::renderUserToolLinksArray( [ $userTalkLink ], false );
 		}
+
 		return $userlink;
 	}
 
@@ -1000,11 +1043,14 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 			$ret = $this->getProcessedTemplate( $templateParams );
 		}
 
-		// Let extensions add data
-		$lineEndingsHook = $this->isArchive ?
-			'onDeletedContributionsLineEnding' :
-			'onContributionsLineEnding';
-		$this->hookRunner->$lineEndingsHook( $this, $ret, $row, $classes, $attribs );
+		if ( $this->runHooks ) {
+			// Let extensions add data
+			$lineEndingsHook = $this->isArchive ?
+				'onDeletedContributionsLineEnding' :
+				'onContributionsLineEnding';
+			$this->hookRunner->$lineEndingsHook( $this, $ret, $row, $classes, $attribs );
+		}
+
 		$attribs = array_filter( $attribs,
 			[ Sanitizer::class, 'isReservedDataAttribute' ],
 			ARRAY_FILTER_USE_KEY
@@ -1046,7 +1092,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 		$del = $this->formatVisibilityLink( $row );
 		$tagSummary = $this->formatTags( $row, $classes );
 
-		if ( !$this->isArchive ) {
+		if ( !$this->isArchive && $this->runHooks ) {
 			$this->hookRunner->onSpecialContributions__formatRow__flags(
 				$this->getContext(), $row, $flags );
 		}

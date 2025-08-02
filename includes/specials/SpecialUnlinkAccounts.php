@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\SpecialPage\AuthManagerSpecialPage;
@@ -19,9 +19,6 @@ class SpecialUnlinkAccounts extends AuthManagerSpecialPage {
 	/** @inheritDoc */
 	protected static $allowedActions = [ AuthManager::ACTION_UNLINK ];
 
-	/**
-	 * @param AuthManager $authManager
-	 */
 	public function __construct( AuthManager $authManager ) {
 		parent::__construct( 'UnlinkAccounts' );
 		$this->setAuthManager( $authManager );

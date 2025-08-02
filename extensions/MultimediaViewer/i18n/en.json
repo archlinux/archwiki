@@ -4,6 +4,7 @@
 			"Mark Holmquist <mtraceur@member.fsf.org>"
 		]
 	},
+	"multimediaviewer-current-image-number": "$1 ⁄ $2",
 	"multimediaviewer-desc": "Expand thumbnails in a larger size in a fullscreen interface",
 	"multimediaviewer-optin-pref": "Enable <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-file-page": "Go to corresponding file page",

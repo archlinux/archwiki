@@ -19,8 +19,6 @@
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> चुकीचा कोड; निनावी संदर्भांमध्ये माहिती असणे गरजेचे आहे",
 	"cite_error_references_duplicate_key": "अवैध <code>&lt;ref&gt;</code> tag; नाव \"$1\" वेगवेगळ्या मजकूराशी अनेकदा जोडलेले आहे",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> हा चुकीचा वापर आहे; यामधे पॅरामीटर्स देणे निषिद्ध आहे,\n<code>&lt;references /&gt;</code> असा कोड वापरा",
-	"cite_error_references_no_backlink_label": "तयार केलेली मागीलदुवे देणारी नावे संपलेली आहेत, अधिक नावे [[MediaWiki:Cite references link many format backlink labels]] या प्रणाली संदेशात लिहा",
-	"cite_error_no_link_label_group": "\"$1\" करिता नमूदकेलेल्या कस्टम लिंक खूणा संपल्या . [[MediaWiki:$2]] संदेशात अधिक खूणा नमूद करा",
 	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> चुकीचा कोड; <code>$1</code> नावाने दिलेल्या संदर्भांमध्ये काहीही माहिती नाही",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> ला बंद करणारी <code>&lt;/ref&gt;</code> ही खूणपताका गायब आहे.",
 	"cite_error_group_refs_without_references": "\"$1\" नावाच्या गटाकरिता <code>&lt;ref&gt;</code>खूणपताका उपलब्ध आहेत, पण संबंधीत <code>&lt;references group=\"$1\"/&gt;</code>  खूण मिळाली नाही.",
@@ -37,6 +35,7 @@
 	"cite-reference-previews-note": "नोंद",
 	"cite-reference-previews-web": "संकेतस्थळ स्रोत",
 	"cite-reference-previews-collapsible-placeholder": "या संदर्भात एक रंगकला दडलेली आहे, जी या पूर्वावलोकनात दृश्य होऊ शकत नाही.",
+	"cite-reference-previews-preference-label": "संदर्भाचे पूर्वावलोकन सक्षम करा (पान वाचत असताना संदर्भाचे तात्काळ पूर्वावलोकन मिळवा.",
 	"cite_references_link_accessibility_label": "वर जा",
 	"cite_references_link_many_accessibility_label": "यावर जा",
 	"cite_section_preview_references": "संदर्भांची झलक दाखवा",
@@ -47,6 +46,5 @@
 	"cite-wikieditor-help-content-reference-description": "संदर्भ",
 	"cite-wikieditor-help-content-named-reference-description": "नामित संदर्भ",
 	"cite-wikieditor-help-content-rereference-description": "याच संदर्भाचा अतिरिक्त वापर",
-	"cite-wikieditor-help-content-showreferences-description": "संदर्भ दर्शवा",
-	"popups-refpreview-user-preference-label": "संदर्भाचे पूर्वावलोकन सक्षम करा (पान वाचत असताना संदर्भाचे तात्काळ पूर्वावलोकन मिळवा."
+	"cite-wikieditor-help-content-showreferences-description": "संदर्भ दर्शवा"
 }

@@ -11,13 +11,13 @@
 			"TomášPolonec"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizuálny editor]]",
+	"tag-visualeditor": "vizuálny editor",
 	"tag-visualeditor-description": "Úprava vykonaná pomocou [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálneho editora]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizuálny editor: na kontrolu]]",
+	"tag-visualeditor-needcheck": "vizuálny editor: na kontrolu",
 	"tag-visualeditor-needcheck-description": "Úprava pomocou [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizuálneho editora]], pri ktorej systém odhalil možné nezamýšľané zmeny wikitextu.",
 	"tag-visualeditor-wikitext": "editor wikitextu 2017",
 	"tag-visualeditor-wikitext-description": "Úprava vykonaná pomocou editoru wikitextu 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizuálny editor: prepnuté]]",
+	"tag-visualeditor-switched": "vizuálny editor: prepnuté",
 	"tag-visualeditor-switched-description": "Používateľ začal editovať pomocou VisualEditoru, potom sa prepol do režimu editácie wikitextu.",
 	"visualeditor-feedback-link": "Project:Vizuálny editor/Názory",
 	"visualeditor-feedback-tool": "Zanechať spätnú väzbu",

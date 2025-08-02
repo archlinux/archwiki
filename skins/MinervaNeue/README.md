@@ -60,6 +60,18 @@ Controls whether the category button should be displayed.
 
 When enabled a donate link will be added to the main menu. The donate link uses the `sitesupport` and `sitesupport-url` mediawiki messages.
 
+#### $wgMinervaDonateBanner
+
+* Type: `Array`
+* Default:
+```php
+  [
+    'base' => false,
+  ]
+```
+
+When enabled and associated messages have been defined (skin-minerva-donate-banner-url) a banner will appear at the bottom of the mobile main menu.
+
 #### $wgMinervaTalkAtTop
 
 * Type: `Array`

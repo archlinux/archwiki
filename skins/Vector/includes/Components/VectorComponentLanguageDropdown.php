@@ -52,11 +52,15 @@ class VectorComponentLanguageDropdown implements VectorComponent {
 	 */
 	public function getTemplateData(): array {
 		$title = $this->title;
-		$isSubjectPage = $title && $title->exists() && !$title->isTalkPage();
+		$isSubjectPage = ( $title && $title->exists() && !$title->isTalkPage() ) ||
+			( $title && $title->isSpecialPage() && $this->numLanguages );
 		// If page doesn't exist or if it's in a talk namespace, we should
 		// display a less prominent "language" button, without a label, and
 		// quiet instead of progressive. For this reason some default values
 		// should be updated for this case. (T316559)
+		//
+		// However, if it is a special page and has interlanguage links, those
+		// should be displayed. (T389192)
 		$buttonClasses = 'cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet';
 		if ( !$isSubjectPage ) {
 			$icon = 'language';

@@ -110,7 +110,7 @@ abstract class Benchmarker extends Maintenance {
 		foreach ( $normBenchs as $name => $bench ) {
 			// Optional setup called outside time measure
 			if ( isset( $bench['setup'] ) ) {
-				call_user_func( $bench['setup'] );
+				$bench['setup']();
 			}
 
 			// Run benchmarks
@@ -122,7 +122,7 @@ abstract class Benchmarker extends Maintenance {
 				}
 				$t = microtime( true );
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
-				call_user_func_array( $bench['function'], $bench['args'] );
+				$bench['function']( ...$bench['args'] );
 				$t = ( microtime( true ) - $t ) * 1000;
 				if ( $verbose ) {
 					$this->verboseRun( $i );
@@ -159,7 +159,7 @@ abstract class Benchmarker extends Maintenance {
 		);
 	}
 
-	public function addResult( $res ) {
+	public function addResult( array $res ) {
 		$ret = sprintf( "%s\n  %' 6s: %d\n",
 			$res['name'],
 			'count',
@@ -189,7 +189,7 @@ abstract class Benchmarker extends Maintenance {
 		$this->output( "$ret\n" );
 	}
 
-	protected function verboseRun( $iteration ) {
+	protected function verboseRun( int $iteration ) {
 		$this->output( sprintf( "#%3d - memory: %-10s - peak: %-10s\n",
 			$iteration,
 			$this->formatSize( memory_get_usage( true ) ),

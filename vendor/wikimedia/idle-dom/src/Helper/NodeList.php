@@ -123,6 +123,7 @@ trait NodeList {
 	 * @param mixed $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		'@phan-var \Wikimedia\IDLeDOM\NodeList $this';
 		// @var \Wikimedia\IDLeDOM\NodeList $this
@@ -214,7 +215,7 @@ trait NodeList {
 	/**
 	 * @return \Iterator<Node> Value iterator returning Node items
 	 */
-	public function getIterator() {
+	public function getIterator(): \Iterator {
 		'@phan-var \Wikimedia\IDLeDOM\NodeList $this';
 		// @var \Wikimedia\IDLeDOM\NodeList $this
 		for ( $i = 0; $i < $this->getLength(); $i++ ) {

@@ -27,6 +27,7 @@
 
 use MediaWiki\Config\Config;
 use MediaWiki\Content\Content;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
@@ -629,11 +630,17 @@ abstract class SearchEngine {
 				->autoConvertToAllVariants( $search );
 			$fallbackSearches = array_diff( array_unique( $fallbackSearches ), [ $search ] );
 
+			$origLimit = $this->limit;
+			$origOffset = $this->offset;
 			foreach ( $fallbackSearches as $fbs ) {
-				$this->setLimitOffset( $fallbackLimit );
-				$fallbackSearchResult = $this->completionSearch( $fbs );
-				$results->appendAll( $fallbackSearchResult );
-				$fallbackLimit -= $fallbackSearchResult->getSize();
+				try {
+					$this->setLimitOffset( $fallbackLimit );
+					$fallbackSearchResult = $this->completionSearch( $fbs );
+					$results->appendAll( $fallbackSearchResult );
+					$fallbackLimit -= $fallbackSearchResult->getSize();
+				} finally {
+					$this->setLimitOffset( $origLimit, $origOffset );
+				}
 				if ( $fallbackLimit <= 0 ) {
 					break;
 				}
@@ -667,12 +674,13 @@ abstract class SearchEngine {
 
 		$search = trim( $search );
 		// preload the titles with LinkBatch
-		$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
-		$lb = $linkBatchFactory->newLinkBatch( $suggestions->map( static function ( SearchSuggestion $sugg ) {
+		$suggestedTitles = $suggestions->map( static function ( SearchSuggestion $sugg ) {
 			return $sugg->getSuggestedTitle();
-		} ) );
-		$lb->setCaller( __METHOD__ );
-		$lb->execute();
+		} );
+		$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
+		$linkBatchFactory->newLinkBatch( $suggestedTitles )
+			->setCaller( __METHOD__ )
+			->execute();
 
 		$diff = $suggestions->filter( static function ( SearchSuggestion $sugg ) {
 			return $sugg->getSuggestedTitle()->isKnown();
@@ -836,8 +844,6 @@ abstract class SearchEngine {
 
 	/**
 	 * Augment search results with extra data.
-	 *
-	 * @param ISearchResultSet $resultSet
 	 */
 	public function augmentSearchResults( ISearchResultSet $resultSet ) {
 		$setAugmentors = [];

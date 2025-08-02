@@ -8,9 +8,9 @@
 			"Markingdots",
 			"Priviet",
 			"SeoJeongHo",
+			"Whatback11",
 			"Ykhwong",
-			"아라",
-			"Whatback11"
+			"아라"
 		]
 	},
 	"content-model-scribunto": "Scribunto 모듈",
@@ -39,7 +39,7 @@
 	"scribunto-common-timeout": "스크립트를 실행하는 데 할당한 시간이 만료되었습니다.",
 	"scribunto-common-oom": "스크립트를 실행하는 데 허용하는 메모리 크기를 초과했습니다.",
 	"scribunto-common-backtrace": "역추적:",
-	"scribunto-common-no-details": "더 자세한 정보를 사용할 수 없습니다.",
+	"scribunto-common-no-details": "코드 위치에 대한 세부정보가 없습니다.",
 	"scribunto-lua-in-function": "\"$1\" 함수에서",
 	"scribunto-lua-in-main": "메인 청크에서",
 	"scribunto-lua-in-function-at": "함수 $1, $2번째 줄에서",

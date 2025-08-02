@@ -78,9 +78,8 @@ class RawMessage extends Message {
 	/**
 	 * To conform to the MessageSpecifier interface, always return 'rawmessage',
 	 * which is a real message key that can be used with MessageValue and other classes.
-	 * @return string
 	 */
-	public function getKey() {
+	public function getKey(): string {
 		return 'rawmessage';
 	}
 
@@ -89,7 +88,7 @@ class RawMessage extends Message {
 	 * 'rawmessage' message, and can be used with MessageValue and other classes.
 	 * @return string[]
 	 */
-	public function getParams() {
+	public function getParams(): array {
 		// If the provided text is equivalent to 'rawmessage', return the provided params.
 		if ( $this->key === '$1' ) {
 			return $this->parameters;
@@ -105,5 +104,7 @@ class RawMessage extends Message {
 
 }
 
+// This alias can not be removed, because serialized instances of this class are stored in Echo
+// tables, until we either migrate to JSON serialization (T325703) or expire those events (T383948).
 /** @deprecated class alias since 1.40 */
 class_alias( RawMessage::class, 'RawMessage' );

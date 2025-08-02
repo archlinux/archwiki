@@ -7,6 +7,7 @@
 		]
 	},
 	"tooltip-pt-notifications-alert": "{{GENDER:|Jouw}} meldingen",
+	"tooltip-pt-notifications": "Jouw meldingen",
 	"echo-none": "Je hebt geen meldingen.",
 	"echo-email-plain-footer": "Om te bepalen welke e-mails wij je sturen, geef je hier jouw voorkeuren aan:{{GENDER:$1|}}",
 	"echo-email-batch-subject-daily": "Je hebt {{PLURAL:$2|een nieuwe melding|nieuwe meldingen}} op {{SITENAME}}",

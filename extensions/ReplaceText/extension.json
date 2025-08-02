@@ -10,7 +10,7 @@
 	"descriptionmsg": "replacetext-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"type": "specialpage",
 	"GroupPermissions": {
@@ -64,6 +64,9 @@
 		"ext.ReplaceText": {
 			"scripts": [
 				"ext.ReplaceText.js"
+			],
+			"dependencies": [
+				"oojs-ui-core"
 			]
 		},
 		"ext.ReplaceTextStyles": {

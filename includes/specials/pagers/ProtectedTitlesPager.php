@@ -34,29 +34,18 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class ProtectedTitlesPager extends AlphabeticPager {
 
-	/** @var string|null */
-	private $level;
-
-	/** @var int|null */
-	private $namespace;
+	private ?string $level;
+	private ?int $namespace;
 
 	private LinkBatchFactory $linkBatchFactory;
 
-	/**
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param IConnectionProvider $dbProvider
-	 * @param string|null $level
-	 * @param int|null $namespace
-	 */
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
-		$level,
-		$namespace
+		?string $level,
+		?int $namespace
 	) {
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
@@ -68,12 +57,11 @@ class ProtectedTitlesPager extends AlphabeticPager {
 
 	protected function doBatchLookups() {
 		$this->mResult->seek( 0 );
-		$lb = $this->linkBatchFactory->newLinkBatch();
 
+		$lb = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
 		foreach ( $this->mResult as $row ) {
 			$lb->add( $row->pt_namespace, $row->pt_title );
 		}
-
 		$lb->execute();
 	}
 

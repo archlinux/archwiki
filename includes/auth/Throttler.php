@@ -22,6 +22,7 @@
 namespace MediaWiki\Auth;
 
 use InvalidArgumentException;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -37,8 +38,10 @@ use Wikimedia\ObjectCache\BagOStuff;
  * @since 1.27
  */
 class Throttler implements LoggerAwareInterface {
+
 	/** @var string */
 	protected $type;
+
 	/**
 	 * See documentation of $wgPasswordAttemptThrottle for format. Old (pre-1.27) format is not
 	 * allowed here.
@@ -46,12 +49,13 @@ class Throttler implements LoggerAwareInterface {
 	 * @see https://www.mediawiki.org/wiki/Manual:$wgPasswordAttemptThrottle
 	 */
 	protected $conditions;
-	/** @var BagOStuff */
-	protected $cache;
-	/** @var LoggerInterface */
-	protected $logger;
+
 	/** @var int|float */
 	protected $warningLimit;
+
+	protected BagOStuff $cache;
+	protected LoggerInterface $logger;
+	private HookRunner $hookRunner;
 
 	/**
 	 * @param array|null $conditions An array of arrays describing throttling conditions.
@@ -71,6 +75,8 @@ class Throttler implements LoggerAwareInterface {
 		}
 
 		$services = MediaWikiServices::getInstance();
+		$this->hookRunner = new HookRunner( $services->getHookContainer() );
+
 		$objectCacheFactory = $services->getObjectCacheFactory();
 
 		if ( $conditions === null ) {
@@ -97,7 +103,7 @@ class Throttler implements LoggerAwareInterface {
 		$this->setLogger( LoggerFactory::getInstance( 'throttler' ) );
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
@@ -147,6 +153,9 @@ class Throttler implements LoggerAwareInterface {
 					'method' => $caller ?: __METHOD__,
 					// @codeCoverageIgnoreEnd
 				] );
+
+				// Allow extensions to perform actions when a throttle causes throttling.
+				$this->hookRunner->onAuthenticationAttemptThrottled( $this->type, $username, $ip );
 
 				return [ 'throttleIndex' => $index, 'count' => $count, 'wait' => $expiry ];
 			} else {

@@ -21,6 +21,7 @@ class TitleLibrary extends LibraryBase {
 	/** @var (Title|null)[] */
 	private $idCache = [ 0 => null ];
 
+	/** @inheritDoc */
 	public function register() {
 		$lib = [
 			'newTitle' => [ $this, 'newTitle' ],
@@ -291,7 +292,7 @@ class TitleLibrary extends LibraryBase {
 	 */
 	private function getContentInternal( $text ) {
 		$title = Title::newFromText( $text );
-		if ( !$title || $title->isExternal() ) {
+		if ( !$title || !$title->canExist() ) {
 			return null;
 		}
 

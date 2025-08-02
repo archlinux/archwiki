@@ -3,22 +3,17 @@ const
 	View = mobile.View;
 
 /**
- * IssueNotice
- *
- * @class
  * @ignore
- * @extends View
- *
- * @param {IssueSummary} props
+ * @param {IssueSummary} issue
+ * @return {View}
  */
-function IssueNotice( props ) {
-	View.call( this, props );
-}
-OO.inheritClass( IssueNotice, View );
-IssueNotice.prototype.tagName = 'li';
-IssueNotice.prototype.template = mw.template.get( 'skins.minerva.scripts', 'IssueNotice.mustache' );
-IssueNotice.prototype.postRender = function () {
-	View.prototype.postRender.apply( this, arguments );
-	this.$el.find( '.issue-notice' ).prepend( this.options.issue.iconElement );
+module.exports = function issueNotice( issue ) {
+	const $renderedTemplate = mw.template.get(
+		'skins.minerva.scripts',
+		'IssueNotice.mustache'
+	).render( issue );
+	$renderedTemplate.prepend( issue.issue.iconElement );
+	return View.make( {
+		tagName: 'li'
+	}, [ $renderedTemplate ] );
 };
-module.exports = IssueNotice;

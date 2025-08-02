@@ -1,33 +1,42 @@
 
-// Codex Design Tokens v1.14.0
+// Codex Design Tokens v1.23.0
 // Design System for Wikimedia
 // See https://doc.wikimedia.org/codex/latest/design-tokens/overview.html
 
-@size-tooltip: max-content;
-@background-image-input-checkbox--checked: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%23fff" d="M7 14.17L2.83 10l-1.41 1.41L7 17 19 5l-1.41-1.42z"/></svg>' );
 @color-base: var( --color-base, #202122 );
 @color-base-fixed: var( --color-base-fixed, #202122 );
 @color-base--hover: var( --color-base--hover, #404244 );
 @color-emphasized: var( --color-emphasized, #101418 );
 @color-subtle: var( --color-subtle, #54595d );
 @color-placeholder: var( --color-placeholder, #72777d );
-@color-disabled: var( --color-disabled, #72777d );
+@color-disabled: var( --color-disabled, #a2a9b1 );
+@color-disabled-emphasized: var( --color-disabled-emphasized, #a2a9b1 );
 @color-inverted: var( --color-inverted, #fff );
 @color-inverted-fixed: var( --color-inverted-fixed, #fff ); // The same as color-inverted in light mode, but does not change in dark mode. Use this for things that should be white in both modes.
 @color-progressive: var( --color-progressive, #36c ); // 'Progressive' Color and states
-@color-progressive--hover: var( --color-progressive--hover, #4b77d6 );
+@color-progressive--hover: var( --color-progressive--hover, #3056a9 );
 @color-progressive--active: var( --color-progressive--active, #233566 );
 @color-progressive--focus: var( --color-progressive--focus, #36c );
-@color-destructive: var( --color-destructive, #d73333 ); // 'Destructive' Color and states
-@color-destructive--hover: var( --color-destructive--hover, #fc493b );
-@color-destructive--active: var( --color-destructive--active, #9f3526 );
+@color-destructive: var( --color-destructive, #bf3c2c ); // 'Destructive' Color and states
+@color-destructive--hover: var( --color-destructive--hover, #9f3526 );
+@color-destructive--active: var( --color-destructive--active, #612419 );
 @color-destructive--focus: var( --color-destructive--focus, #36c );
 @color-visited: var( --color-visited, #6a60b0 ); // 'Visited' color. In combination with progressive. Used for default links.
+@color-visited--hover: var( --color-visited--hover, #534fa3 );
+@color-visited--active: var( --color-visited--active, #353262 );
 @color-destructive--visited: var( --color-destructive--visited, #9f5555 ); // Red link 'Visited' color. Used for visited red links.
-@color-error: var( --color-error, #d73333 );
-@color-warning: var( --color-warning, #eeb533 ); // Note, this is only meant for warning icon for contrast reasons.
-@color-success: var( --color-success, #177860 ); // Note, this needs to use a tone darker than Red and Yellow for contrast reasons with background White.
-@color-notice: var( --color-notice, #202122 );
+@color-destructive--visited--hover: var( --color-destructive--visited--hover, #854848 );
+@color-destructive--visited--active: var( --color-destructive--visited--active, #512e2e );
+@color-error: var( --color-error, #bf3c2c );
+@color-error--hover: var( --color-error--hover, #9f3526 );
+@color-error--active: var( --color-error--active, #612419 );
+@color-warning: var( --color-warning, #886425 );
+@color-success: var( --color-success, #177860 );
+@color-notice: var( --color-notice, #404244 );
+@color-icon-error: var( --color-icon-error, #f54739 );
+@color-icon-warning: var( --color-icon-warning, #ab7f2a );
+@color-icon-success: var( --color-icon-success, #099979 );
+@color-icon-notice: var( --color-icon-notice, #72777d );
 @color-content-added: var( --color-content-added, #006400 );
 @color-content-removed: var( --color-content-removed, #8b0000 );
 @opacity-base: 1;
@@ -49,6 +58,7 @@
 @z-index-off-canvas: 350;
 @z-index-overlay-backdrop: 400;
 @z-index-overlay: 450;
+@z-index-popover: 700;
 @z-index-tooltip: 800;
 @z-index-toast-notification: 900;
 @z-index-top: 9999;
@@ -82,6 +92,9 @@
 @size-viewport-height-full: 100vh;
 @size-absolute-1: 1px;
 @size-absolute-9999: 9999px;
+@size-content-min: min-content;
+@size-content-fit: fit-content;
+@size-content-max: max-content;
 @size-third: 33.33%;
 @size-half: 50%;
 @size-full: 100%;
@@ -97,23 +110,26 @@
 @max-width-button: 28rem; // Note, that this is a slight amendment from WikimediaUI Base from `28.75em` = `460px` to `448px` – `dimension.2800`
 @border-style-base: solid;
 @border-style-dashed: dashed;
-@box-shadow-drop-small: 0 1px 1px rgba( 0, 0, 0, 0.2 ); // This features color as part of the theme token value.
-@box-shadow-drop-medium: 0 2px 2px 0 rgba( 0, 0, 0, 0.2 ); // This features color as part of the theme token value.
-@box-shadow-drop-xx-large: 0 20px 48px 0 rgba( 0, 0, 0, 0.2 ); // This features color as part of the theme token value.
 @box-shadow-inset-small: inset 0 0 0 1px;
 @box-shadow-inset-medium: inset 0 0 0 2px;
 @box-shadow-inset-medium-vertical: inset 0 -2px 0 0;
 @box-shadow-outset-small: 0 0 0 1px;
 @box-shadow-outset-small-top: 0 -1px 0 0;
+@box-shadow-outset-small-bottom: 0 1px 0 0;
 @box-shadow-outset-small-start: -1px 0 0 0;
-@box-shadow-color-base: var( --box-shadow-color-base, #000 );
+@box-shadow-outset-medium-below: 0 4px 4px 0;
+@box-shadow-outset-medium-around: 0 0 8px 0;
+@box-shadow-outset-large-below: 0 4px 8px 0;
+@box-shadow-outset-large-around: 0 0 16px 0;
+@box-shadow-color-base: var( --box-shadow-color-base, #a2a9b1 );
 @box-shadow-color-progressive--active: var( --box-shadow-color-progressive--active, #233566 );
 @box-shadow-color-progressive--focus: var( --box-shadow-color-progressive--focus, #36c );
 @box-shadow-color-progressive-selected: var( --box-shadow-color-progressive-selected, #36c );
-@box-shadow-color-progressive-selected--hover: var( --box-shadow-color-progressive-selected--hover, #4b77d6 );
+@box-shadow-color-progressive-selected--hover: var( --box-shadow-color-progressive-selected--hover, #3056a9 );
 @box-shadow-color-progressive-selected--active: var( --box-shadow-color-progressive-selected--active, #233566 );
 @box-shadow-color-destructive--focus: var( --box-shadow-color-destructive--focus, #36c );
 @box-shadow-color-inverted: var( --box-shadow-color-inverted, #fff );
+@box-shadow-color-alpha-base: var( --box-shadow-color-alpha-base, rgba( 0, 0, 0, 0.06 ) );
 @box-shadow-color-transparent: var( --box-shadow-color-transparent, transparent );
 @font-family-base: sans-serif; // Reference Vector's default fallback sans instead of the deprecated value `font-family-sans` in WikimediaUI Base.
 @font-family-system-sans: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Inter', 'Helvetica', 'Arial', sans-serif;
@@ -145,6 +161,9 @@
 @text-overflow-clip: clip;
 @text-overflow-ellipsis: ellipsis;
 @tab-size-base: 4;
+@transform-checkbox-tick--checked: rotate( 45deg );
+@transform-progress-indicator-spinner-start: rotate( -45deg );
+@transform-progress-indicator-spinner-end: rotate( 315deg );
 @transition-duration-base: 100ms;
 @transition-duration-medium: 250ms;
 @transition-property-base: background-color, color, border-color, box-shadow;
@@ -156,7 +175,8 @@
 @transition-timing-function-user: ease-out;
 @animation-delay-none: 0ms;
 @animation-delay-medium: -160ms;
-@animation-delay-slow: -330ms;
+@animation-delay-slow: -320ms;
+@animation-duration-fast: 1000ms;
 @animation-duration-medium: 1600ms;
 @animation-duration-slow: 2000ms;
 @animation-timing-function-base: linear;
@@ -175,29 +195,41 @@
 @cursor-text: text;
 @cursor-zoom-in: zoom-in;
 @cursor-zoom-out: zoom-out;
+@mix-blend-mode-base: var( --mix-blend-mode-base, normal );
+@mix-blend-mode-blend: var( --mix-blend-mode-blend, multiply );
 @background-color-base: var( --background-color-base, #fff ); // Background Colors for static elements (for page layout, sections, etc.) from here on.
 @background-color-base-fixed: var( --background-color-base-fixed, #fff ); // The same as background-color-base in light mode, but does not change in dark mode. Use this for things that should be white in both modes.
 @background-color-neutral: var( --background-color-neutral, #eaecf0 );
 @background-color-neutral-subtle: var( --background-color-neutral-subtle, #f8f9fa );
 @background-color-interactive: var( --background-color-interactive, #eaecf0 );
+@background-color-interactive--hover: var( --background-color-interactive--hover, #dadde3 );
+@background-color-interactive--active: var( --background-color-interactive--active, #c8ccd1 );
 @background-color-interactive-subtle: var( --background-color-interactive-subtle, #f8f9fa );
-@background-color-disabled: var( --background-color-disabled, #c8ccd1 ); // Components like Buttons, Checkboxes, Radios, ProgressBars….
+@background-color-interactive-subtle--hover: var( --background-color-interactive-subtle--hover, #eaecf0 );
+@background-color-interactive-subtle--active: var( --background-color-interactive-subtle--active, #dadde3 );
+@background-color-disabled: var( --background-color-disabled, #dadde3 ); // Components like Buttons, Checkboxes, Radios, ProgressBars….
 @background-color-disabled-subtle: var( --background-color-disabled-subtle, #eaecf0 ); // Components like TextInputs, Selects….
 @background-color-inverted: var( --background-color-inverted, #101418 );
 @background-color-progressive: var( --background-color-progressive, #36c );
-@background-color-progressive--hover: var( --background-color-progressive--hover, #4b77d6 );
+@background-color-progressive--hover: var( --background-color-progressive--hover, #3056a9 );
 @background-color-progressive--active: var( --background-color-progressive--active, #233566 );
 @background-color-progressive--focus: var( --background-color-progressive--focus, #36c );
 @background-color-progressive-subtle: var( --background-color-progressive-subtle, #f1f4fd );
-@background-color-destructive: var( --background-color-destructive, #d73333 );
-@background-color-destructive--hover: var( --background-color-destructive--hover, #fc493b );
-@background-color-destructive--active: var( --background-color-destructive--active, #9f3526 );
+@background-color-progressive-subtle--hover: var( --background-color-progressive-subtle--hover, #dce3f9 );
+@background-color-progressive-subtle--active: var( --background-color-progressive-subtle--active, #cbd6f6 );
+@background-color-destructive: var( --background-color-destructive, #bf3c2c );
+@background-color-destructive--hover: var( --background-color-destructive--hover, #9f3526 );
+@background-color-destructive--active: var( --background-color-destructive--active, #612419 );
 @background-color-destructive--focus: var( --background-color-destructive--focus, #36c );
 @background-color-destructive-subtle: var( --background-color-destructive-subtle, #ffe9e5 );
-@background-color-error: var( --background-color-error, #d73333 );
-@background-color-error--hover: var( --background-color-error--hover, #fc493b );
-@background-color-error--active: var( --background-color-error--active, #9f3526 );
+@background-color-destructive-subtle--hover: var( --background-color-destructive-subtle--hover, #ffdad3 );
+@background-color-destructive-subtle--active: var( --background-color-destructive-subtle--active, #ffc8bd );
+@background-color-error: var( --background-color-error, #f54739 );
+@background-color-error--hover: var( --background-color-error--hover, #d74032 );
+@background-color-error--active: var( --background-color-error--active, #bf3c2c );
 @background-color-error-subtle: var( --background-color-error-subtle, #ffe9e5 );
+@background-color-error-subtle--hover: var( --background-color-error-subtle--hover, #ffdad3 );
+@background-color-error-subtle--active: var( --background-color-error-subtle--active, #ffc8bd );
 @background-color-warning-subtle: var( --background-color-warning-subtle, #fdf2d5 );
 @background-color-success-subtle: var( --background-color-success-subtle, #dff2eb );
 @background-color-notice-subtle: var( --background-color-notice-subtle, #eaecf0 );
@@ -254,21 +286,25 @@
 @border-color-subtle: var( --border-color-subtle, #c8ccd1 );
 @border-color-muted: var( --border-color-muted, #dadde3 );
 @border-color-interactive: var( --border-color-interactive, #72777d );
+@border-color-interactive--hover: var( --border-color-interactive--hover, #27292d );
+@border-color-interactive--active: var( --border-color-interactive--active, #202122 );
 @border-color-disabled: var( --border-color-disabled, #c8ccd1 );
 @border-color-inverted: var( --border-color-inverted, #fff );
-@border-color-progressive: var( --border-color-progressive, #36c );
-@border-color-progressive--hover: var( --border-color-progressive--hover, #4b77d6 );
+@border-color-inverted-fixed: var( --border-color-inverted-fixed, #fff ); // The same as color-inverted in light mode, but does not change in dark mode. Use this for things that should be white in both modes.
+@border-color-progressive: var( --border-color-progressive, #6485d1 );
+@border-color-progressive--hover: var( --border-color-progressive--hover, #3056a9 );
 @border-color-progressive--active: var( --border-color-progressive--active, #233566 );
 @border-color-progressive--focus: var( --border-color-progressive--focus, #36c );
-@border-color-destructive: var( --border-color-destructive, #d73333 );
-@border-color-destructive--hover: var( --border-color-destructive--hover, #fc493b );
-@border-color-destructive--active: var( --border-color-destructive--active, #9f3526 );
+@border-color-destructive: var( --border-color-destructive, #f54739 );
+@border-color-destructive--hover: var( --border-color-destructive--hover, #9f3526 );
+@border-color-destructive--active: var( --border-color-destructive--active, #612419 );
 @border-color-destructive--focus: var( --border-color-destructive--focus, #36c );
-@border-color-error: var( --border-color-error, #9f3526 );
-@border-color-error--hover: var( --border-color-error--hover, #fc493b );
-@border-color-warning: var( --border-color-warning, #987027 );
-@border-color-success: var( --border-color-success, #196551 );
-@border-color-notice: var( --border-color-notice, #54595d );
+@border-color-error: var( --border-color-error, #f54739 );
+@border-color-error--hover: var( --border-color-error--hover, #9f3526 );
+@border-color-error--active: var( --border-color-error--active, #612419 );
+@border-color-warning: var( --border-color-warning, #ab7f2a );
+@border-color-success: var( --border-color-success, #099979 );
+@border-color-notice: var( --border-color-notice, #72777d );
 @border-color-content-added: var( --border-color-content-added, #a3d3ff );
 @border-color-content-removed: var( --border-color-content-removed, #ffe49c );
 @border-color-transparent: var( --border-color-transparent, transparent );
@@ -286,7 +322,14 @@
 @color-link-red--active: @color-destructive--active;
 @color-link-red--focus: @color-destructive--focus;
 @color-link-red--visited: @color-destructive--visited;
-@accent-color-base: #36c;
+@color-link-red--visited--hover: @color-destructive--visited--hover;
+@color-link-red--visited--active: @color-destructive--visited--active;
+@box-shadow-small: @box-shadow-outset-small @box-shadow-color-base;
+@box-shadow-small-top: @box-shadow-outset-small-top @box-shadow-color-base;
+@box-shadow-small-bottom: @box-shadow-outset-small-bottom @box-shadow-color-base;
+@box-shadow-medium: @box-shadow-outset-medium-below @box-shadow-color-alpha-base, @box-shadow-outset-medium-around @box-shadow-color-alpha-base;
+@box-shadow-large: @box-shadow-outset-large-below @box-shadow-color-alpha-base, @box-shadow-outset-large-around @box-shadow-color-alpha-base;
+@accent-color-base: var( --accent-color-base, #36c );
 @position-offset-border-width-base: -@border-width-base;
 @spacing-horizontal-button: @spacing-75 - @border-width-base; // Padding should equal 12px of spacing minus the width of the border
 @spacing-horizontal-button-icon-only: @spacing-35 - @border-width-base; // Padding should equal 6px of spacing minus the width of the border
@@ -310,7 +353,13 @@
 // DEPRECATED TOKENS
 // Warning: the following token name is deprecated (Use `color-subtle` instead. Note, that `color-subtle` is using `color.gray600` instead of `color.gray500` now.)
 @color-base--subtle: var( --color-base--subtle, #54595d );
+// Warning: the following token name is deprecated (For elements which previously used `xx-large`, consider using `large` instead, or referring to the guidance above to best choose the appropriate shadow.)
+@box-shadow-drop-xx-large: 0 20px 48px 0 rgba( 0, 0, 0, 0.2 );
 // Warning: the following token name is deprecated (Use `font-family-sans--fallback` instead. See T247166.)
 @font-family-sans: 'Helvetica Neue', 'Helvetica', 'Liberation Sans', 'Arial', sans-serif;
 // Warning: the following token name is deprecated (Legacy line-height. Use `line-height-small` instead.)
 @line-height-x-small: 1.4285714;
+// Warning: the following token name is deprecated (Shadow shorthands should be used in place of `drop` shadows.)
+@box-shadow-drop-small: @box-shadow-outset-small @box-shadow-color-base;
+// Warning: the following token name is deprecated (Shadow shorthands should be used in place of `drop` shadows.)
+@box-shadow-drop-medium: @box-shadow-outset-medium-below @box-shadow-color-alpha-base, @box-shadow-outset-medium-around @box-shadow-color-alpha-base;

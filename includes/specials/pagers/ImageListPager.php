@@ -21,11 +21,12 @@
 
 namespace MediaWiki\Pager;
 
-use LocalRepo;
 use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
@@ -34,9 +35,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\Xml\Xml;
-use RepoGroup;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -49,27 +49,28 @@ use Wikimedia\Rdbms\Subquery;
 class ImageListPager extends TablePager {
 
 	/** @var string[]|null */
-	protected $mFieldNames = null;
+	protected ?array $mFieldNames = null;
 	/**
 	 * @deprecated Subclasses should override {@see buildQueryConds} instead
 	 * @var array
 	 */
 	protected $mQueryConds = [];
-	/** @var string|null */
-	protected $mUserName = null;
-	/** @var User|null The relevant user */
-	protected $mUser = null;
-	/** @var bool */
-	protected $mIncluding = false;
-	/** @var bool */
-	protected $mShowAll = false;
-	/** @var string */
-	protected $mTableName = 'image';
+	protected ?string $mUserName = null;
+	/** The relevant user */
+	protected ?User $mUser = null;
+	protected ?bool $mIncluding = false;
+	protected bool $mShowAll = false;
+	protected string $mTableName = 'image';
 
 	private CommentStore $commentStore;
 	private LocalRepo $localRepo;
-	private CommentFormatter $commentFormatter;
+	private RowCommentFormatter $rowCommentFormatter;
 	private LinkBatchFactory $linkBatchFactory;
+
+	/** @var string[] */
+	private array $formattedComments = [];
+
+	private int $migrationStage;
 
 	/**
 	 * The unique sort fields for the sort options for unique paginate
@@ -80,20 +81,6 @@ class ImageListPager extends TablePager {
 		'img_size' => [ 'img_size', 'img_name' ],
 	];
 
-	/**
-	 * @param IContextSource $context
-	 * @param CommentStore $commentStore
-	 * @param LinkRenderer $linkRenderer
-	 * @param IConnectionProvider $dbProvider
-	 * @param RepoGroup $repoGroup
-	 * @param UserNameUtils $userNameUtils
-	 * @param CommentFormatter $commentFormatter
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param string $userName
-	 * @param string $search
-	 * @param bool $including
-	 * @param bool $showAll
-	 */
 	public function __construct(
 		IContextSource $context,
 		CommentStore $commentStore,
@@ -101,12 +88,12 @@ class ImageListPager extends TablePager {
 		IConnectionProvider $dbProvider,
 		RepoGroup $repoGroup,
 		UserNameUtils $userNameUtils,
-		CommentFormatter $commentFormatter,
+		RowCommentFormatter $rowCommentFormatter,
 		LinkBatchFactory $linkBatchFactory,
-		$userName,
-		$search,
-		$including,
-		$showAll
+		?string $userName,
+		string $search,
+		?bool $including,
+		bool $showAll
 	) {
 		$this->setContext( $context );
 
@@ -142,8 +129,11 @@ class ImageListPager extends TablePager {
 		parent::__construct( $context, $linkRenderer );
 		$this->commentStore = $commentStore;
 		$this->localRepo = $repoGroup->getLocalRepo();
-		$this->commentFormatter = $commentFormatter;
+		$this->rowCommentFormatter = $rowCommentFormatter;
 		$this->linkBatchFactory = $linkBatchFactory;
+		$this->migrationStage = $this->getConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
 	}
 
 	/**
@@ -161,10 +151,16 @@ class ImageListPager extends TablePager {
 	 * @param string $userName Unescaped user name
 	 */
 	protected function outputUserDoesNotExist( $userName ) {
-		$this->getOutput()->addHTML( Html::warningBox(
-			$this->getOutput()->msg( 'listfiles-userdoesnotexist', wfEscapeWikiText( $userName ) )->parse(),
-			'mw-userpage-userdoesnotexist'
-		) );
+		$out = $this->getOutput();
+		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+		$out->addHTML(
+			Html::warningBox(
+				$out->msg(
+					'listfiles-userdoesnotexist', wfEscapeWikiText( $userName )
+				)->parse(),
+				'mw-userpage-userdoesnotexist'
+			)
+		);
 	}
 
 	/**
@@ -174,7 +170,7 @@ class ImageListPager extends TablePager {
 	 * @param string $table Either "image" or "oldimage"
 	 * @return array The query conditions.
 	 */
-	protected function buildQueryConds( $table ) {
+	protected function buildQueryCondsOld( $table ) {
 		$conds = [];
 
 		if ( $this->mUserName !== null ) {
@@ -191,6 +187,23 @@ class ImageListPager extends TablePager {
 
 		// Add mQueryConds in case anyone was subclassing and using the old variable.
 		return $conds + $this->mQueryConds;
+	}
+
+	private function buildQueryConds(): array {
+		$conds = [
+			'file_deleted' => 0,
+			'fr_deleted' => 0,
+		];
+
+		if ( $this->mUserName !== null ) {
+			// getQueryInfoReal() should have handled the tables and joins.
+			$conds['actor_name'] = $this->mUserName;
+		}
+
+		if ( !$this->mShowAll ) {
+			$conds[] = 'file_latest = fr_id';
+		}
+		return $conds;
 	}
 
 	protected function getFieldNames() {
@@ -243,10 +256,55 @@ class ImageListPager extends TablePager {
 	}
 
 	public function getQueryInfo() {
-		// Hacky Hacky Hacky - I want to get query info
-		// for two different tables, without reimplementing
-		// the pager class.
-		return $this->getQueryInfoReal( $this->mTableName );
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			// Hacky Hacky Hacky - I want to get query info
+			// for two different tables, without reimplementing
+			// the pager class.
+			return $this->getQueryInfoReal( $this->mTableName );
+		}
+		$dbr = $this->getDatabase();
+		$tables = [ 'filerevision', 'file', 'actor' ];
+		$fields = [
+			'img_timestamp' => 'fr_timestamp',
+			'img_name' => 'file_name',
+			'img_size' => 'fr_size',
+			'top' => 'CASE WHEN file_latest = fr_id THEN \'yes\' ELSE \'no\' END',
+		];
+		$join_conds = [
+			'filerevision' => [ 'JOIN', 'fr_file=file_id' ],
+			'actor' => [ 'JOIN', 'actor_id=fr_actor' ]
+		];
+
+		# Description field
+		$commentQuery = $this->commentStore->getJoin( 'fr_description' );
+		$tables += $commentQuery['tables'];
+		$fields += $commentQuery['fields'];
+		$join_conds += $commentQuery['joins'];
+		$fields['description_field'] = $dbr->addQuotes( "fr_description" );
+
+		# Actor fields
+		$fields[] = 'actor_user';
+		$fields[] = 'actor_name';
+
+		# Depends on $wgMiserMode
+		# Will also not happen if mShowAll is true.
+		if ( array_key_exists( 'count', $this->getFieldNames() ) ) {
+			$fields['count'] = new Subquery( $dbr->newSelectQueryBuilder()
+				->select( 'COUNT(fr_archive_name)' )
+				->from( 'filerevision' )
+				->where( 'fr_file = file_id' )
+				->caller( __METHOD__ )
+				->getSQL()
+			);
+		}
+
+		return [
+			'tables' => $tables,
+			'fields' => $fields,
+			'conds' => $this->buildQueryConds(),
+			'options' => [],
+			'join_conds' => $join_conds
+		];
 	}
 
 	/**
@@ -310,10 +368,18 @@ class ImageListPager extends TablePager {
 		return [
 			'tables' => $tables,
 			'fields' => $fields,
-			'conds' => $this->buildQueryConds( $table ),
+			'conds' => $this->buildQueryCondsOld( $table ),
 			'options' => [],
 			'join_conds' => $join_conds
 		];
+	}
+
+	public function reallyDoQuery( $offset, $limit, $order ) {
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			return $this->reallyDoQueryOld( $offset, $limit, $order );
+		} else {
+			return parent::reallyDoQuery( $offset, $limit, $order );
+		}
 	}
 
 	/**
@@ -324,7 +390,7 @@ class ImageListPager extends TablePager {
 	 * @param bool $order IndexPager::QUERY_ASCENDING or IndexPager::QUERY_DESCENDING
 	 * @return IResultWrapper
 	 */
-	public function reallyDoQuery( $offset, $limit, $order ) {
+	public function reallyDoQueryOld( $offset, $limit, $order ) {
 		$dbr = $this->getDatabase();
 		$prevTableName = $this->mTableName;
 		$this->mTableName = 'image';
@@ -439,13 +505,34 @@ class ImageListPager extends TablePager {
 
 	protected function doBatchLookups() {
 		$this->mResult->seek( 0 );
-		$batch = $this->linkBatchFactory->newLinkBatch();
-		foreach ( $this->mResult as $row ) {
-			$batch->add( NS_USER, $row->actor_name );
-			$batch->add( NS_USER_TALK, $row->actor_name );
+		$batch = $this->linkBatchFactory->newLinkBatch()->setCaller( __METHOD__ );
+		$rowsWithComments = [ 'img_description' => [], 'oi_description' => [], 'fr_description' => [] ];
+		foreach ( $this->mResult as $i => $row ) {
+			$batch->addUser( new UserIdentityValue( $row->actor_user ?? 0, $row->actor_name ) );
 			$batch->add( NS_FILE, $row->img_name );
+			$rowsWithComments[$row->description_field][$i] = $row;
 		}
 		$batch->execute();
+
+		// Format the comments
+		if ( $rowsWithComments['img_description'] ) {
+			$this->formattedComments += $this->rowCommentFormatter->formatRows(
+				$rowsWithComments['img_description'],
+				'img_description'
+			);
+		}
+		if ( $rowsWithComments['oi_description'] ) {
+			$this->formattedComments += $this->rowCommentFormatter->formatRows(
+				$rowsWithComments['oi_description'],
+				'oi_description'
+			);
+		}
+		if ( $rowsWithComments['fr_description'] ) {
+			$this->formattedComments += $this->rowCommentFormatter->formatRows(
+				$rowsWithComments['fr_description'],
+				'fr_description'
+			);
+		}
 	}
 
 	/**
@@ -486,7 +573,7 @@ class ImageListPager extends TablePager {
 					$opt = [ 'time' => wfTimestamp( TS_MW, $this->mCurrentRow->img_timestamp ) ];
 					$file = $this->localRepo->findFile( $value, $opt );
 					if ( $file ) {
-						$download = Xml::element(
+						$download = Html::element(
 							'a',
 							[ 'href' => $file->getUrl() ],
 							$imgfile
@@ -517,11 +604,13 @@ class ImageListPager extends TablePager {
 			case 'img_size':
 				return htmlspecialchars( $this->getLanguage()->formatSize( (int)$value ) );
 			case 'img_description':
-				$field = $this->mCurrentRow->description_field;
-				$value = $this->commentStore->getComment( $field, $this->mCurrentRow )->text;
-				return $this->commentFormatter->format( $value );
+				return $this->formattedComments[$this->getResultOffset()];
 			case 'count':
-				return htmlspecialchars( $this->getLanguage()->formatNum( intval( $value ) + 1 ) );
+				if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+					return htmlspecialchars( $this->getLanguage()->formatNum( intval( $value ) + 1 ) );
+				} else {
+					return htmlspecialchars( $this->getLanguage()->formatNum( intval( $value ) ) );
+				}
 			case 'top':
 				// Messages: listfiles-latestversion-yes, listfiles-latestversion-no
 				return $this->msg( 'listfiles-latestversion-' . $value )->escaped();
@@ -532,7 +621,6 @@ class ImageListPager extends TablePager {
 
 	/**
 	 * Escape the options list
-	 * @return array
 	 */
 	private function getEscapedLimitSelectList(): array {
 		$list = $this->getLimitSelectList();

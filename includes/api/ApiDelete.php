@@ -22,20 +22,20 @@
 
 namespace MediaWiki\Api;
 
-use ChangeTags;
-use File;
+use MediaWiki\ChangeTags\ChangeTags;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Page\File\FileDeleteForm;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
-use RepoGroup;
 use StatusValue;
 use Wikimedia\ParamValidator\ParamValidator;
-use WikiPage;
 
 /**
  * API module that facilitates deleting pages. The API equivalent of action=delete.

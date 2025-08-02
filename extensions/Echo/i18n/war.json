@@ -7,5 +7,6 @@
 	"echo-pref-web": "Web",
 	"echo-pref-email": "Email",
 	"echo-pref-email-format-html": "HTML",
-	"tooltip-pt-notifications-alert": "{{GENDER:|Your}} mga alerto"
+	"tooltip-pt-notifications-alert": "{{GENDER:|Your}} mga alerto",
+	"tooltip-pt-notifications": "Imo mga pasabot"
 }

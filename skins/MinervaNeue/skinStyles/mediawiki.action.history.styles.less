@@ -70,9 +70,6 @@
 	// The large "Compare selected revisions" button container
 	.mw-history-compareselectedversions {
 		background: @background-color-base;
-		.position-sticky();
-		top: 0;
-		z-index: @z-index-above-content;
 
 		// "Compare selected revisions" button
 		.mw-history-compareselectedversions-button {
@@ -107,6 +104,13 @@
 				display: block;
 			}
 		}
+	}
+
+	// for the first "compare revisions" (should be above content)
+	form > .mw-history-compareselectedversions:first-of-type {
+		top: 0;
+		z-index: @z-index-above-content;
+		.position-sticky();
 	}
 
 	.mw-thanks-thank-link {

@@ -24,9 +24,9 @@
 
 namespace MediaWiki\Page\File;
 
-use LocalFile;
-use ManualLogEntry;
+use MediaWiki\FileRepo\File\LocalFile;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Status\Status;
@@ -92,7 +92,7 @@ class FileDeleteForm {
 				wfEscapeWikiText( $title->getPrefixedText() )
 			);
 			$page = $services->getWikiPageFactory()->newFromTitle( $title );
-			'@phan-var \WikiFilePage $page';
+			'@phan-var \MediaWiki\Page\WikiFilePage $page';
 			$deleter = $services->getUserFactory()->newFromUserIdentity( $user );
 			$deletePage = $services->getDeletePageFactory()->newDeletePage( $page, $deleter );
 			if ( $deleteTalk ) {
@@ -171,6 +171,3 @@ class FileDeleteForm {
 			&& strpos( $oldimage, '\\' ) === false;
 	}
 }
-
-/** @deprecated class alias since 1.40 */
-class_alias( FileDeleteForm::class, 'FileDeleteForm' );

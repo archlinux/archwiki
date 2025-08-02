@@ -74,12 +74,6 @@ Do not rely on any of the feature flags documented here. They should not be cons
 
   - Removal ticket: [https://phabricator.wikimedia.org/T358273](https://phabricator.wikimedia.org/T358273)
 
-- wgVectorStickyHeader
-
-  - Determines whether a sticky header is provided.
-
-  - Removal ticket: [https://phabricator.wikimedia.org/T332728](https://phabricator.wikimedia.org/T332728)
-
 - wgVectorLanguageInMainPageHeader
 
   - Shows language selector beside the main page title.

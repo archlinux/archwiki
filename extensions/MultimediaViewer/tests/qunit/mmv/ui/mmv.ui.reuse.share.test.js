@@ -17,41 +17,38 @@
 
 const { Share } = require( 'mmv.ui.reuse' );
 
-( function () {
-	function makeShare() {
-		return new Share( $( '#qunit-fixture' ) );
-	}
+function makeShare() {
+	return new Share( $( '#qunit-fixture' ) );
+}
 
-	QUnit.module( 'mmv.ui.reuse.share', QUnit.newMwEnvironment() );
+QUnit.module( 'mmv.ui.reuse.share', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sense test, object creation and UI construction', ( assert ) => {
-		const share = makeShare();
+QUnit.test( 'Sense test, object creation and UI construction', ( assert ) => {
+	const share = makeShare();
 
-		assert.true( share instanceof Share, 'Share UI element is created.' );
-		assert.true( share.$pageInput[ 0 ] instanceof HTMLElement, 'Text field created.' );
-	} );
+	assert.true( share instanceof Share, 'Share UI element is created.' );
+	assert.true( share.$pageInput[ 0 ] instanceof HTMLElement, 'Text field created.' );
+} );
 
-	QUnit.test( 'set()/empty():', ( assert ) => {
-		const share = makeShare();
-		const image = { // fake ImageModel
-			title: new mw.Title( 'File:Foobar.jpg' ),
-			url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			descriptionUrl: '//commons.wikimedia.org/wiki/File:Foobar.jpg'
-		};
+QUnit.test( 'set()/empty():', ( assert ) => {
+	const share = makeShare();
+	const image = { // fake ImageModel
+		title: new mw.Title( 'File:Foobar.jpg' ),
+		url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
+		descriptionUrl: '//commons.wikimedia.org/wiki/File:Foobar.jpg'
+	};
 
-		assert.notStrictEqual( !share.$pageInput.val(), '', 'pageInput is empty.' );
+	assert.notStrictEqual( !share.$pageInput.val(), '', 'pageInput is empty.' );
 
-		share.select = function () {
-			assert.true( true, 'Text has been selected after data is set.' );
-		};
+	share.select = function () {
+		assert.true( true, 'Text has been selected after data is set.' );
+	};
 
-		share.set( image );
+	share.set( image );
 
-		assert.notStrictEqual( share.$pageInput.val(), '', 'pageInput is not empty.' );
+	assert.notStrictEqual( share.$pageInput.val(), '', 'pageInput is not empty.' );
 
-		share.empty();
+	share.empty();
 
-		assert.notStrictEqual( !share.$pageInput.val(), '', 'pageInput is empty.' );
-	} );
-
-}() );
+	assert.notStrictEqual( !share.$pageInput.val(), '', 'pageInput is empty.' );
+} );

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"apihelp-abusefilterchecksyntax-example-1": "Syntax vun engem valabele Filter nokucken",
@@ -11,5 +12,5 @@
 	"apihelp-query+abusefilters-example-2": "E puer Detailer iwwer Filtere weisen",
 	"apierror-abusefilter-canttest": "Dir sidd net berechtegt fir Mëssbrauchsfilteren ze testen.",
 	"apierror-abusefilter-cantcheck": "Dir sidd net berechtegt fir d'Syntax vu Mëssbrauchsfilteren no ze kucken.",
-	"apierror-abusefilter-badsyntax": "De Filter huet eng net valabel Syntax."
+	"apierror-abusefilter-badsyntax": "De Filter huet eng ongülteg Syntax."
 }

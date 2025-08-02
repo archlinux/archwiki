@@ -32,7 +32,7 @@ class CiteParserTagHooks {
 	 * Parser hook for the <ref> tag.
 	 *
 	 * @param ?string $text Raw, untrimmed wikitext content of the <ref> tag, if any
-	 * @param string[] $argv
+	 * @param array<string,?string> $argv
 	 * @param Parser $parser
 	 * @param PPFrame $frame
 	 *
@@ -63,7 +63,7 @@ class CiteParserTagHooks {
 	 * Parser hook for the <references> tag.
 	 *
 	 * @param ?string $text Raw, untrimmed wikitext content of the <references> tag, if any
-	 * @param string[] $argv
+	 * @param array<string,?string> $argv
 	 * @param Parser $parser
 	 * @param PPFrame $frame
 	 *

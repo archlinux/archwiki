@@ -149,6 +149,7 @@ class Preprocessor_Hash extends Preprocessor {
 	 * @return array JSON-serializable document object model array
 	 */
 	private function buildDomTreeArrayFromText( $text, $flags ) {
+		$textStartsInSOLState = $flags & self::START_IN_SOL_STATE;
 		$forInclusion = ( $flags & self::DOM_FOR_INCLUSION );
 		$langConversionDisabled = ( $flags & self::DOM_LANG_CONVERSION_DISABLED );
 
@@ -606,7 +607,7 @@ class Preprocessor_Hash extends Preprocessor {
 					: strspn( $text, $curChar, $i );
 
 				$savedPrefix = '';
-				$lineStart = $i > 0 && $text[$i - 1] === "\n";
+				$lineStart = ( $i === 0 ) ? $textStartsInSOLState : ( $text[$i - 1] === "\n" );
 
 				if ( $curChar === "-{" && $count > $curLen ) {
 					// -{ => {{ transition because rightmost wins
@@ -711,7 +712,7 @@ class Preprocessor_Hash extends Preprocessor {
 					$children[] = $titleNode;
 					$argIndex = 1;
 					foreach ( $parts as $part ) {
-						if ( isset( $part->eqpos ) ) {
+						if ( $part->eqpos !== null ) {
 							$equalsNode = $part->out[$part->eqpos];
 							$nameNode = [ 'name', array_slice( $part->out, 0, $part->eqpos ) ];
 							$valueNode = [ 'value', array_slice( $part->out, $part->eqpos + 1 ) ];
@@ -803,7 +804,7 @@ class Preprocessor_Hash extends Preprocessor {
 		return [ [ 'root', $stack->rootAccum ] ];
 	}
 
-	private static function addLiteral( array &$accum, $text ) {
+	private static function addLiteral( array &$accum, string $text ) {
 		$n = count( $accum );
 		if ( $n && is_string( $accum[$n - 1] ) ) {
 			$accum[$n - 1] .= $text;

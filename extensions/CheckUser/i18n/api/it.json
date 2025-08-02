@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16",
+			"Gianfranco",
+			"McDutchie",
+			"Melos",
+			"Nivit"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Controlla quali indirizzi IP vengono usati da un determinato nome utente o quali nomi utente vengono usati da un dato indirizzo IP.",
+	"apihelp-query+checkuser-param-request": "Tipo di richiesta CheckUser:",
+	"apihelp-query+checkuser-param-target": "Nome utente, indirizzo IP, o range CIDR da controllare.",
+	"apihelp-query+checkuser-param-reason": "Ragione per controllare.",
+	"apihelp-query+checkuser-param-limit": "Limite di righe.",
+	"apihelp-query+checkuser-param-timecond": "Il limite di tempo dei dati utente (come \"-2 weeks\" o \"2 weeks ago\").",
+	"apihelp-query+checkuser-param-xff": "Utilizzare dati XFF invece dell'indirizzo IP.",
+	"apihelp-query+checkuser-example-1": "Ottieni indirizzi IP per [[User:Example]]",
+	"apihelp-query+checkuser-example-2": "Ottieni le azioni eseguite da 192.0.2.0/24",
+	"apihelp-query+checkuserlog-summary": "Ottieni i risultati dal registro CheckUser.",
+	"apihelp-query+checkuserlog-param-user": "Nome del CheckUser.",
+	"apihelp-query+checkuserlog-param-target": "Utente, indirizzo IP, o range CIDR controllato.",
+	"apihelp-query+checkuserlog-param-limit": "Limite di righe.",
+	"apihelp-query+checkuserlog-param-from": "Il timestamp da cui iniziare l'elenco.",
+	"apihelp-query+checkuserlog-param-to": "Il timestamp al quale interrompere l'elenco.",
+	"apihelp-query+checkuserlog-example-1": "Mostra controlli di [[User:Example]]",
+	"apihelp-query+checkuserlog-example-2": "Mostra controlli di 192.0.2.0/24 dopo il 2011-10-15T23:00:00Z",
+	"apihelp-query+globalcontributions-summary": "Mostra le modifiche più recenti in tutti i wiki per un determinato utente registrato.",
+	"apihelp-query+globalcontributions-param-target": "Nome utente da cercare (non deve essere un IP).",
+	"apihelp-query+globalcontributions-param-limit": "Limite di righe.",
+	"apihelp-query+globalcontributions-example-1": "Mostra le modifiche più recenti in tutti i wiki per un determinato utente.",
+	"apierror-checkuser-missingsummary": "Devi indicare una motivazione per il controllo.",
+	"apierror-checkuser-timelimit": "Devi utilizzare un corretto limite temporale (come \"-2 settimane\" o \"2 settimane fa\").",
+	"apierror-checkuser-invalidmode": "Modalità di richiesta non valida"
+}

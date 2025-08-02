@@ -9,7 +9,7 @@
 		"plugins/markdown"
 	],
 	"source": {
-		"include": [ "modules" ]
+		"include": [ "modules", "modules/README.md" ]
 	},
 	"templates": {
 		"cleverLinks": true,

@@ -18,14 +18,19 @@
  * @file
  */
 
+namespace MediaWiki\RecentChanges;
+
+use DomainException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * Generate a list of changes using an Enhanced system (uses javascript).
@@ -60,7 +65,8 @@ class EnhancedChangesList extends ChangesList {
 		$this->cacheEntryFactory = new RCCacheEntryFactory(
 			$context,
 			$this->message,
-			$this->linkRenderer
+			$this->linkRenderer,
+			$this->userLinkRenderer
 		);
 		$this->templateParser = new TemplateParser();
 	}
@@ -115,8 +121,6 @@ class EnhancedChangesList extends ChangesList {
 	/**
 	 * Put accumulated information into the cache, for later display.
 	 * Page moves go on their own line.
-	 *
-	 * @param RCCacheEntry $cacheEntry
 	 */
 	protected function addCacheEntry( RCCacheEntry $cacheEntry ) {
 		$cacheGroupingKey = $this->makeCacheGroupingKey( $cacheEntry );
@@ -316,7 +320,7 @@ class EnhancedChangesList extends ChangesList {
 
 		$prefix = '';
 		if ( is_callable( $this->changeLinePrefixer ) ) {
-			$prefix = call_user_func( $this->changeLinePrefixer, $block[0], $this, true );
+			$prefix = ( $this->changeLinePrefixer )( $block[0], $this, true );
 		}
 
 		$templateParams = [
@@ -704,7 +708,7 @@ class EnhancedChangesList extends ChangesList {
 
 		$prefix = '';
 		if ( is_callable( $this->changeLinePrefixer ) ) {
-			$prefix = call_user_func( $this->changeLinePrefixer, $rcObj, $this, false );
+			$prefix = ( $this->changeLinePrefixer )( $rcObj, $this, false );
 		}
 
 		$line = Html::openElement( 'table', $attribs ) . Html::openElement( 'tr' );
@@ -831,3 +835,6 @@ class EnhancedChangesList extends ChangesList {
 		return $this->recentChangesBlock() . '</div>';
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( EnhancedChangesList::class, 'EnhancedChangesList' );

@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -583,6 +584,11 @@ class SvgHandler extends ImageHandler {
 		if ( $code !== self::SVG_DEFAULT_RENDER_LANG ) {
 			$lang = 'lang' . strtolower( $code ) . '-';
 		}
+
+		if ( isset( $params['physicalWidth'] ) && $params['physicalWidth'] ) {
+			return "$lang{$params['physicalWidth']}px";
+		}
+
 		if ( !isset( $params['width'] ) ) {
 			return false;
 		}

@@ -5,9 +5,9 @@
 			"아라"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
+	"tag-visualeditor": "VisualEditor",
 	"tag-visualeditor-description": "Rætting sum er gjørd við [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: Kanna eftir]]",
+	"tag-visualeditor-needcheck": "VisualEditor: Kanna eftir",
 	"tag-visualeditor-needcheck-description": "Rættin ið varð gjørd við at brúka [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] har ið skipanin hevur funnið fram til at wikiteksturin kann hava ótilætlaðar broytingar.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Feedback",
 	"visualeditor-feedback-tool": "Gev afturmelding",

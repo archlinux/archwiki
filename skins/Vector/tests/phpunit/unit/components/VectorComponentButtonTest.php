@@ -38,7 +38,7 @@ class VectorComponentButtonTest extends MediaWikiUnitTestCase {
 	 *
 	 * @return array[] An array of test cases with parameters and expected values.
 	 */
-	public function provideButtonData(): array {
+	public static function provideButtonData(): array {
 		return [
 			'Basic Button' => [
 				// The visible text on the button.

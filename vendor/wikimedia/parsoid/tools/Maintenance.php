@@ -55,15 +55,15 @@ if ( $parsoidMode === 'integrated' ) {
 	] );
 
 	abstract class Maintenance extends \Maintenance {
-		private $requiresParsoid;
+		private bool $requiresParsoid;
 
 		/**
 		 * @param bool $requiresParsoid Whether parsoid-specific processing
 		 *   should be done (default: true)
 		 */
 		public function __construct( bool $requiresParsoid = true ) {
-			parent::__construct();
 			$this->requiresParsoid = $requiresParsoid;
+			parent::__construct();
 			if ( $this->requiresParsoid ) {
 				$this->requireExtension( 'Parsoid' );
 			}

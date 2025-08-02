@@ -3,6 +3,7 @@ namespace MediaWiki\Search;
 
 use ISearchResultSet;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\ILanguageConverter;
@@ -14,7 +15,6 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserNameUtils;
-use RepoGroup;
 use SearchNearMatchResultSet;
 
 /**
@@ -28,55 +28,15 @@ class TitleMatcher {
 		MainConfigNames::EnableSearchContributorsByIP,
 	];
 
-	/**
-	 * @var ServiceOptions
-	 */
-	private $options;
-
-	/**
-	 * Current language
-	 * @var Language
-	 */
-	private $language;
-
-	/**
-	 * Current language converter
-	 * @var ILanguageConverter
-	 */
-	private $languageConverter;
-
-	/**
-	 * @var HookRunner
-	 */
-	private $hookRunner;
-
-	/**
-	 * @var WikiPageFactory
-	 */
-	private $wikiPageFactory;
-
-	/**
-	 * @var UserNameUtils
-	 */
-	private $userNameUtils;
-
-	/**
-	 * @var RepoGroup
-	 */
-	private $repoGroup;
-
+	private ServiceOptions $options;
+	private Language $language;
+	private ILanguageConverter $languageConverter;
+	private HookRunner $hookRunner;
+	private WikiPageFactory $wikiPageFactory;
+	private UserNameUtils $userNameUtils;
+	private RepoGroup $repoGroup;
 	private TitleFactory $titleFactory;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param Language $contentLanguage
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param HookContainer $hookContainer
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param UserNameUtils $userNameUtils
-	 * @param RepoGroup $repoGroup
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		Language $contentLanguage,

@@ -20,21 +20,28 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Exception\BadRequestError;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Exception\ThrottledError;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\RollbackPageFactory;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Revision\SlotRecord;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
+use Profiler;
 
 /**
  * User interface for the rollback action
@@ -265,8 +272,7 @@ class RollbackAction extends FormAction {
 		if ( !$request->getBool( 'hidediff', false ) &&
 			!$this->userOptionsLookup->getBoolOption( $this->getUser(), 'norollbackdiff' )
 		) {
-			$contentModel = $current->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )
-				->getModel();
+			$contentModel = $current->getMainContentModel();
 			$contentHandler = $this->contentHandlerFactory->getContentHandler( $contentModel );
 			$de = $contentHandler->createDifferenceEngine(
 				$this->getContext(),
@@ -319,3 +325,6 @@ class RollbackAction extends FormAction {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RollbackAction::class, 'RollbackAction' );

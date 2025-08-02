@@ -21,8 +21,6 @@
 
 namespace MediaWiki\Pager;
 
-use LogEventsList;
-use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
@@ -30,53 +28,32 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentityValue;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class ProtectedPagesPager extends TablePager {
 
-	/** @var string */
-	private $type;
-	/** @var string */
-	private $level;
-	/** @var int|null */
-	private $namespace;
-	/** @var string */
-	private $sizetype;
-	/** @var int */
-	private $size;
-	/** @var bool */
-	private $indefonly;
-	/** @var bool */
-	private $cascadeonly;
-	/** @var bool */
-	private $noredirect;
+	private string $type;
+	private ?string $level;
+	private ?int $namespace;
+	private ?string $sizetype;
+	private int $size;
+	private bool $indefonly;
+	private bool $cascadeonly;
+	private bool $noredirect;
 
 	private CommentStore $commentStore;
 	private LinkBatchFactory $linkBatchFactory;
 	private RowCommentFormatter $rowCommentFormatter;
 
 	/** @var string[] */
-	private $formattedComments = [];
+	private array $formattedComments = [];
 
-	/**
-	 * @param IContextSource $context
-	 * @param CommentStore $commentStore
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param LinkRenderer $linkRenderer
-	 * @param IConnectionProvider $dbProvider
-	 * @param RowCommentFormatter $rowCommentFormatter
-	 * @param string $type
-	 * @param string $level
-	 * @param int|null $namespace
-	 * @param string $sizetype
-	 * @param int|null $size
-	 * @param bool $indefonly
-	 * @param bool $cascadeonly
-	 * @param bool $noredirect
-	 */
 	public function __construct(
 		IContextSource $context,
 		CommentStore $commentStore,
@@ -84,14 +61,14 @@ class ProtectedPagesPager extends TablePager {
 		LinkRenderer $linkRenderer,
 		IConnectionProvider $dbProvider,
 		RowCommentFormatter $rowCommentFormatter,
-		$type,
-		$level,
-		$namespace,
-		$sizetype,
-		$size,
-		$indefonly,
-		$cascadeonly,
-		$noredirect
+		?string $type,
+		?string $level,
+		?int $namespace,
+		?string $sizetype,
+		?int $size,
+		bool $indefonly,
+		bool $cascadeonly,
+		bool $noredirect
 	) {
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
@@ -99,14 +76,14 @@ class ProtectedPagesPager extends TablePager {
 		$this->commentStore = $commentStore;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->rowCommentFormatter = $rowCommentFormatter;
-		$this->type = $type ?: 'edit';
+		$this->type = $type ?? 'edit';
 		$this->level = $level;
 		$this->namespace = $namespace;
 		$this->sizetype = $sizetype;
-		$this->size = intval( $size );
-		$this->indefonly = (bool)$indefonly;
-		$this->cascadeonly = (bool)$cascadeonly;
-		$this->noredirect = (bool)$noredirect;
+		$this->size = $size ?? 0;
+		$this->indefonly = $indefonly;
+		$this->cascadeonly = $cascadeonly;
+		$this->noredirect = $noredirect;
 	}
 
 	public function preprocessResults( $result ) {
@@ -118,8 +95,7 @@ class ProtectedPagesPager extends TablePager {
 			$lb->add( $row->page_namespace, $row->page_title );
 			// for old protection rows, user and comment are missing
 			if ( $row->actor_name !== null ) {
-				$lb->add( NS_USER, $row->actor_name );
-				$lb->add( NS_USER_TALK, $row->actor_name );
+				$lb->addUser( new UserIdentityValue( $row->actor_user, $row->actor_name ) );
 			}
 			if ( $row->log_timestamp !== null ) {
 				$rowsWithComments[] = $row;

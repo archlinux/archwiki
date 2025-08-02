@@ -8,11 +8,11 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\SvgWriter;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
-use MWException;
 
 class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 	/**

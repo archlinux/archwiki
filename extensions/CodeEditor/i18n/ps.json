@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"codeeditor-desc": "د جاوا سکريپټ او سي‌اېس‌اېس مخونو لپاره د [https://ace.c9.io/ ايس سمونگر] په کارولو سره د غونډلپوهې-روښانه‌شوی سمون کول",
+	"codeeditor-next-annotation": "راتلونکي څنگ‌ليک ته ورتلل",
+	"codeeditor-toolbar-toggle": "کوډ سمونگر بدلول",
+	"codeeditor-save-with-errors": "لاسوند تېروتنې لري. ايا تاسو ډاډه ياست چې خپور يې کړئ؟",
+	"codeeditor-invisibleChars-toggle": "نه ليد‌وړ لوښې بدلول",
+	"codeeditor-lineWrapping-toggle": "د کرښې نغاړل بدلول"
+}

@@ -4,11 +4,7 @@
 
 namespace MediaWiki\Extension\Thanks;
 
-use Article;
-use DatabaseLogEntry;
 use DifferenceEngine;
-use LogEventsList;
-use LogPage;
 use MediaWiki\Api\ApiModuleManager;
 use MediaWiki\Api\Hook\ApiMain__moduleManagerHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
@@ -29,19 +25,23 @@ use MediaWiki\Hook\PageHistoryBeforeListHook;
 use MediaWiki\Hook\PageHistoryPager__doBatchLookupsHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use Skin;
 
 /**
  * Hooks for Thanks extension
@@ -305,6 +305,7 @@ class Hooks implements
 		}
 	}
 
+	/** @inheritDoc */
 	public function onPageHistoryPager__doBatchLookups( $pager, $result ) {
 		$userNames = [];
 		foreach ( $result as $row ) {
@@ -318,6 +319,7 @@ class Hooks implements
 		}
 	}
 
+	/** @inheritDoc */
 	public function onChangesListInitRows( $changesList, $rows ) {
 		$userNames = [];
 		foreach ( $rows as $row ) {
@@ -366,6 +368,7 @@ class Hooks implements
 		$types[] = 'thanks';
 	}
 
+	/** @inheritDoc */
 	public function onGetAllBlockActions( &$actions ) {
 		$actions[ 'thanks' ] = 100;
 	}
@@ -413,6 +416,7 @@ class Hooks implements
 					"services" => [
 						"PermissionManager",
 						"ThanksLogStore",
+						"NotificationService",
 						"UserFactory",
 					]
 				]

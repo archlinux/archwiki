@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Cache\RevisionLocalCache;
 use MediaWiki\Extension\Notifications\Cache\TitleLocalCache;
@@ -39,8 +40,9 @@ return [
 	): NotificationServiceClient {
 		$echoConfig = $services->getConfigFactory()->makeConfig( 'Echo' );
 		$httpRequestFactory = $services->getHttpRequestFactory();
+		$statusFormatter = $services->getFormatterFactory()->getStatusFormatter( RequestContext::getMain() );
 		$url = $echoConfig->get( 'EchoPushServiceBaseUrl' );
-		$client = new NotificationServiceClient( $httpRequestFactory, $url );
+		$client = new NotificationServiceClient( $httpRequestFactory, $statusFormatter, $url );
 		$client->setLogger( LoggerFactory::getInstance( 'Echo' ) );
 		return $client;
 	},

@@ -22,8 +22,7 @@ use Exception;
 use MediaWiki\Message\Message;
 
 class ExprError extends Exception {
-	/** @var Message */
-	private $mwMessage;
+	private Message $mwMessage;
 
 	/**
 	 * @param string $msg

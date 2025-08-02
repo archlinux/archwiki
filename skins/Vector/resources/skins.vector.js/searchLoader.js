@@ -1,10 +1,3 @@
-/**
- * Disabling this rule as it's only necessary for
- * combining multiple class names and documenting the output.
- * That doesn't happen in this file but the linter still throws an error.
- * https://github.com/wikimedia/eslint-plugin-mediawiki/blob/master/docs/rules/class-doc.md
- */
-
 /** @interface VectorResourceLoaderVirtualConfig */
 /** @interface MediaWikiPageReadyModule */
 

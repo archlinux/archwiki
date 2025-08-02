@@ -7,8 +7,14 @@
 			"NoiX180"
 		]
 	},
+	"fancycaptcha-desc": "Generator Fancy CAPTCHA antuk Confirm Edit",
+	"fancycaptcha-addurl": "Uahan ragané madaging pranala jaba anyar.\nAnggén nyaga wiki saking spam otomatis, iraga nunas mangda ragané ngeranjingang kruna-kruna sané medal ring sor ring kotak ([[Special:Captcha/help|info sejangkepné]]):",
+	"fancycaptcha-badlogin": "Anggén nyaibin wikiné saking sané ngardi akun otomatis, iraga nunas ragané ngadagingin kruna ring sor puniki majeng ring kotaké ([[Special:Captcha/help|pidarta salanturnyané]]):",
 	"fancycaptcha-captcha": "Pamréksa kaamanan",
 	"fancycaptcha-accountcreate": "Anggén nyaibin wikiné saking sané ngardi akun otomatis, titiang nunas ida ngadagingin kruna ring sor puniki majeng ring kotaké ([[Special:Captcha/help|pidarta salanturnyané]]):",
+	"fancycaptcha-create": "Anggén ngaryanin kaca, ketik kruna-kruna sané medal ring sor ring kotak ([[Special:Captcha/help|info sejangkepnyané]]):",
+	"fancycaptcha-edit": "Anggén nguah kaca puniki, ketik kruna-kruna sané medal ring sor ring kotak ([[Special:Captcha/help|info sejangkepnyané]]):",
 	"fancycaptcha-imgcaptcha-ph": "Dagingin suratan sané cingakin ragané ring gambar",
+	"fancycaptcha-sendemail": "Anggén nyaibin wikiné saking sané ngardi akun otomatis, iraga nunas ragané ngadagingin kruna ngenah sor puniki ring kotaké ([[Special:Captcha/help|info salanturnyané]]):",
 	"fancycaptcha-reload-text": "Segerang"
 }

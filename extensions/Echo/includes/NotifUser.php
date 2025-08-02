@@ -203,23 +203,10 @@ class NotifUser {
 			return 0;
 		}
 
-		global $wgEchoCrossWikiNotifications;
-		if ( !$wgEchoCrossWikiNotifications ) {
-			// Ignore the $global parameter
-			$global = false;
-		}
-
-		if ( $global === 'preference' ) {
-			$global = $this->getForeignNotifications()->isEnabledByUser();
-		}
-
-		$data = $this->getCountsAndTimestamps( $global );
-		if ( $global && $data['global'] === null ) {
-			// No global user exists, no data. Use only local count
-			$global = false;
-		}
-		$count = $data[$global ? 'global' : 'local'][$section]['count'];
-		return (int)$count;
+		$data = $this->getCountsAndTimestamps( $this->resolveGlobalParam( $global ) );
+		// No global user exists, no data. Use only local count
+		$data = $data['global'] ?? $data['local'];
+		return (int)$data[$section]['count'];
 	}
 
 	/**
@@ -255,23 +242,26 @@ class NotifUser {
 			return false;
 		}
 
+		$data = $this->getCountsAndTimestamps( $this->resolveGlobalParam( $global ) );
+		// No global user exists, no data. Use only local count
+		$data = $data['global'] ?? $data['local'];
+		$timestamp = $data[$section]['timestamp'];
+		return $timestamp === -1 ? false : new MWTimestamp( $timestamp );
+	}
+
+	/**
+	 * @param bool|string $global
+	 * @return bool
+	 */
+	private function resolveGlobalParam( $global ): bool {
 		global $wgEchoCrossWikiNotifications;
 		if ( !$wgEchoCrossWikiNotifications ) {
 			// Ignore the $global parameter
-			$global = false;
+			return false;
+		} elseif ( $global === 'preference' ) {
+			return $this->getForeignNotifications()->isEnabledByUser();
 		}
-
-		if ( $global === 'preference' ) {
-			$global = $this->getForeignNotifications()->isEnabledByUser();
-		}
-
-		$data = $this->getCountsAndTimestamps( $global );
-		if ( $global && $data['global'] === null ) {
-			// No global user exists, no data. Use only local count
-			$global = false;
-		}
-		$timestamp = $data[$global ? 'global' : 'local'][$section]['timestamp'];
-		return $timestamp === -1 ? false : new MWTimestamp( $timestamp );
+		return $global;
 	}
 
 	/**
@@ -552,9 +542,9 @@ class NotifUser {
 	 * the 'global' key will not be present. It could be null, if no global user exists.
 	 *
 	 * @param bool $includeGlobal Whether to include cross-wiki notifications as well
-	 * @return array
+	 * @return array[]
 	 */
-	public function getCountsAndTimestamps( $includeGlobal = false ) {
+	public function getCountsAndTimestamps( $includeGlobal = false ): array {
 		if ( $this->localCountsAndTimestamps === null ) {
 			$this->localCountsAndTimestamps = $this->cache->getWithSetCallback(
 				$this->getMemcKey( self::CACHE_KEY ),

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"MarcoAurelio"
+		]
+	},
+	"apierror-checkuser-missingsummary": "Debe introducir una razón para la comprobación.",
+	"apierror-checkuser-timelimit": "Necesita introducir un plazo máximo de tiempo correcto (como \"-2 weeks\" o \"2 weeks ago\")."
+}

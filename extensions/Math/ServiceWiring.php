@@ -7,6 +7,7 @@ use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\MathFormatter;
 use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Extension\Math\Render\RendererFactory;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\VisitorFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -56,5 +57,8 @@ return [
 			new MathFormatter( SnakFormatter::FORMAT_HTML ),
 			LoggerFactory::getInstance( 'Math' )
 		);
+	},
+	'Math.MathMLTreeVisitor' => static function ( MediaWikiServices $services ): VisitorFactory {
+		return new VisitorFactory();
 	}
 ];

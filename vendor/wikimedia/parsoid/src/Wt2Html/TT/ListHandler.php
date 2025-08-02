@@ -12,7 +12,7 @@ use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
-use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
+use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * Create list tag around list items and map wiki bullet levels to html.
@@ -20,10 +20,10 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 class ListHandler extends TokenHandler {
 	/** @var array<ListFrame> */
 	private array $listFrames = [];
-	/** @var ?ListFrame */
-	private $currListFrame;
-	/** @var int */
-	private $nestedTableCount;
+	private ?ListFrame $currListFrame;
+	private int $nestedTableCount;
+	private bool $inT2529Mode = false;
+
 	/**
 	 * Debug string output of bullet character mappings.
 	 * @var array<string,array<string,string>>
@@ -52,10 +52,10 @@ class ListHandler extends TokenHandler {
 	}
 
 	/**
-	 * @param TokenTransformManager $manager manager environment
+	 * @param TokenHandlerPipeline $manager manager environment
 	 * @param array $options options
 	 */
-	public function __construct( TokenTransformManager $manager, array $options ) {
+	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 		$this->reset();
 	}
@@ -79,19 +79,26 @@ class ListHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?TokenHandlerResult {
+	public function onTag( Token $token ): ?array {
 		return $token->getName() === 'listItem' ? $this->onListItem( $token ) : null;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ): ?TokenHandlerResult {
-		$this->env->log( 'trace/list', $this->pipelineId,
-			'ANY:', static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			} );
+	public function onAny( $token ): ?array {
+		$this->env->trace( 'list', $this->pipelineId, 'ANY: ', $token );
 		$tokens = null;
+
+		if ( $token instanceof Token && TokenUtils::matchTypeOf( $token, '#^mw:Transclusion$#' ) ) {
+			// We are now in T2529 scenario where legacy would have added a newline
+			// if it had encountered a list-start character. So, if we encounter
+			// a listItem token next, we should first execute the same actions
+			// as if we had run onAny on a NlTk (see below).
+			$this->inT2529Mode = true;
+		} elseif ( !TokenUtils::isSolTransparent( $this->env, $token ) ) {
+			$this->inT2529Mode = false;
+		}
 
 		if ( !$this->currListFrame ) {
 			// this.currListFrame will be null only when we are in a table
@@ -109,7 +116,7 @@ class ListHandler extends TokenHandler {
 				$this->nestedTableCount++;
 			}
 
-			$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', $token );
+			$this->env->trace( 'list', $this->pipelineId, 'RET: ', $token );
 			return null;
 		}
 
@@ -118,39 +125,54 @@ class ListHandler extends TokenHandler {
 		if ( $token instanceof TagTk
 			// Table tokens will push the frame and remain balanced.
 			// They're safe to ignore in the bookkeeping.
-			&& $token->getName() !== 'table' ) {
+			&& $token->getName() !== 'table'
+		) {
 			$this->currListFrame->numOpenTags += 1;
-		} elseif ( $token instanceof EndTagTk && $this->currListFrame->numOpenTags > 0 ) {
-			$this->currListFrame->numOpenTags -= 1;
-		}
+		} elseif ( $token instanceof EndTagTk ) {
+			if ( $this->currListFrame->numOpenTags > 0 ) {
+				$this->currListFrame->numOpenTags -= 1;
+			}
 
-		if ( $token instanceof EndTagTk ) {
 			if ( $token->getName() === 'table' ) {
 				// close all open lists and pop a frame
 				$ret = $this->closeLists( $token );
 				$this->currListFrame = array_pop( $this->listFrames );
-				return new TokenHandlerResult( $ret );
+				return $ret;
 			} elseif ( self::generateImpliedEndTags( $token->getName() ) ) {
 				if ( $this->currListFrame->numOpenBlockTags === 0 ) {
 					// Unbalanced closing block tag in a list context ==> close all previous lists
-					return new TokenHandlerResult( $this->closeLists( $token ) );
+					return $this->closeLists( $token );
 				} else {
 					$this->currListFrame->numOpenBlockTags--;
 					if ( $this->currListFrame->atEOL ) {
 						// Non-list item in newline context ==> close all previous lists
-						return new TokenHandlerResult( $this->closeLists( $token ) );
+						return $this->closeLists( $token );
 					} else {
-						$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', $token );
+						$this->env->trace( 'list', $this->pipelineId, 'RET: ', $token );
 						return null;
 					}
 				}
 			}
 
 			/* Non-block tag -- fall-through to other tests below */
+		} elseif ( $token instanceof NlTk ) {
+			if ( $this->currListFrame->atEOL ) {
+				// Non-list item in newline context ==> close all previous lists
+				return $this->closeLists( $token );
+			} else {
+				$this->currListFrame->atEOL = true;
+				$this->currListFrame->nlTk = $token;
+				$this->currListFrame->haveDD = false;
+				// php's findColonNoLinks is run in doBlockLevels, which examines
+				// the text line-by-line. At nltk, any open tags will cease having
+				// an effect.
+				$this->currListFrame->numOpenTags = 0;
+				return [];
+			}
 		}
 
 		if ( $this->currListFrame->atEOL ) {
-			if ( !$token instanceof NlTk && TokenUtils::isSolTransparent( $this->env, $token ) ) {
+			if ( TokenUtils::isSolTransparent( $this->env, $token ) ) {
 				// Hold on to see where the token stream goes from here
 				// - another list item, or
 				// - end of list
@@ -159,22 +181,11 @@ class ListHandler extends TokenHandler {
 					$this->currListFrame->nlTk = null;
 				}
 				$this->currListFrame->solTokens[] = $token;
-				return new TokenHandlerResult( [] );
+				return [];
 			} else {
 				// Non-list item in newline context ==> close all previous lists
-				return new TokenHandlerResult( $this->closeLists( $token ) );
+				return $this->closeLists( $token );
 			}
-		}
-
-		if ( $token instanceof NlTk ) {
-			$this->currListFrame->atEOL = true;
-			$this->currListFrame->nlTk = $token;
-			$this->currListFrame->haveDD = false;
-			// php's findColonNoLinks is run in doBlockLevels, which examines
-			// the text line-by-line. At nltk, any open tags will cease having
-			// an effect.
-			$this->currListFrame->numOpenTags = 0;
-			return new TokenHandlerResult( [] );
 		}
 
 		if ( $token instanceof TagTk ) {
@@ -184,22 +195,20 @@ class ListHandler extends TokenHandler {
 			} elseif ( self::generateImpliedEndTags( $token->getName() ) ) {
 				$this->currListFrame->numOpenBlockTags++;
 			}
-			$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', $token );
+			$this->env->trace( 'list', $this->pipelineId, 'RET: ', $token );
 			return null;
 		}
 
 		// Nothing else left to do
-		$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', $token );
+		$this->env->trace( 'list', $this->pipelineId, 'RET: ', $token );
 		return null;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
-		$this->env->log( 'trace/list', $this->pipelineId,
-			'END:', static function () use ( $token ) { return PHPUtils::jsonEncode( $token );
-			} );
+	public function onEnd( EOFTk $token ): ?array {
+		$this->env->trace( 'list', $this->pipelineId, 'END: ', $token );
 
 		$this->listFrames = [];
 		if ( !$this->currListFrame ) {
@@ -209,14 +218,14 @@ class ListHandler extends TokenHandler {
 		}
 		$toks = $this->closeLists( $token );
 		$this->reset();
-		return new TokenHandlerResult( $toks );
+		return $toks;
 	}
 
 	/**
 	 * Handle close list processing
 	 *
 	 * @param Token|string $token
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function closeLists( $token ): array {
 		// pop all open list item tokens
@@ -236,19 +245,34 @@ class ListHandler extends TokenHandler {
 
 		$this->resetCurrListFrame();
 
-		$this->env->log( 'trace/list', $this->pipelineId, '----closing all lists----' );
-		$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', $tokens );
+		$this->env->trace( 'list', $this->pipelineId, '----closing all lists----' );
+		$this->env->trace( 'list', $this->pipelineId, 'RET: ', $tokens );
 
 		return $tokens;
 	}
 
 	/**
 	 * Handle a list item
-	 *
-	 * @param Token $token
-	 * @return TokenHandlerResult|null
+	 * @return ?array<string|Token>
 	 */
-	private function onListItem( Token $token ): ?TokenHandlerResult {
+	private function onListItem( Token $token ): ?array {
+		if ( $this->inT2529Mode ) {
+			// See comment in onAny where this property is set to true
+			// The only relevant change is to 'haveDD'.
+			if ( $this->currListFrame ) {
+				$this->currListFrame->haveDD = false;
+			}
+			$this->inT2529Mode = false;
+
+			// 'atEOL' and NlTk changes don't apply.
+			//
+			// This might be a divergence, but, I don't think we should
+			// close open tags here as in the NlTk case. So, this means that
+			// this wikitext ";term: def=foo<b>{{1x|:bar}}</b>"
+			// will generate different output in Parsoid & legacy..
+			// I believe Parsoid's output is better, but we can comply
+			// if we see a real regression for this.
+		}
 		if ( $token instanceof TagTk ) {
 			$this->onAnyEnabled = true;
 			$bullets = $token->getAttributeV( 'bullets' );
@@ -258,30 +282,23 @@ class ListHandler extends TokenHandler {
 				if ( PHPUtils::lastItem( $bullets ) === ':'
 					&& ( $this->currListFrame->haveDD || $this->currListFrame->numOpenTags > 0 )
 				) {
-					$this->env->log( 'trace/list', $this->pipelineId,
-						'ANY:', static function () use ( $token ) { return PHPUtils::jsonEncode( $token );
-						} );
-					$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', ':' );
-					return new TokenHandlerResult( [ ':' ] );
+					$this->env->trace( 'list', $this->pipelineId, 'ANY: ', $token );
+					$this->env->trace( 'list', $this->pipelineId, 'RET: ', ':' );
+					return [ ':' ];
 				}
 			} else {
 				$this->currListFrame = new ListFrame;
 			}
 			// convert listItem to list and list item tokens
-			$res = $this->doListItem( $this->currListFrame->bstack, $bullets, $token );
-			return new TokenHandlerResult( $res );
+			return $this->doListItem( $this->currListFrame->bstack, $bullets, $token );
 		}
 
-		$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', $token );
+		$this->env->trace( 'list', $this->pipelineId, 'RET: ', $token );
 		return null;
 	}
 
 	/**
 	 * Determine the minimum common prefix length
-	 *
-	 * @param array $x
-	 * @param array $y
-	 * @return int
 	 */
 	private function commonPrefixLength( array $x, array $y ): int {
 		$minLength = min( count( $x ), count( $y ) );
@@ -300,7 +317,7 @@ class ListHandler extends TokenHandler {
 	 * @param array $container
 	 * @param DataParsoid $dp1
 	 * @param DataParsoid $dp2
-	 * @return array
+	 * @return array<Token>
 	 */
 	private function pushList( array $container, DataParsoid $dp1, DataParsoid $dp2 ): array {
 		$this->currListFrame->endtags[] = new EndTagTk( $container['list'] );
@@ -322,7 +339,7 @@ class ListHandler extends TokenHandler {
 	 * Handle popping tags after processing
 	 *
 	 * @param int $n
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function popTags( int $n ): array {
 		$tokens = [];
@@ -362,21 +379,17 @@ class ListHandler extends TokenHandler {
 	 * @param array $bs
 	 * @param array $bn
 	 * @param Token $token
-	 * @return array
+	 * @return array<string|Token>
 	 */
 	private function doListItem( array $bs, array $bn, Token $token ): array {
-		$this->env->log(
-			'trace/list', $this->pipelineId, 'BEGIN:',
-			static function () use ( $token ) { return PHPUtils::jsonEncode( $token );
-			}
-		);
+		$this->env->trace( 'list', $this->pipelineId, 'BEGIN: ', $token );
 
 		$prefixLen = $this->commonPrefixLength( $bs, $bn );
 		$prefix = array_slice( $bn, 0, $prefixLen/*CHECK THIS*/ );
 		$dp = $token->dataParsoid;
 
 		$makeDP = static function ( $k, $j ) use ( $dp ) {
-			$newDP = $dp->clone();
+			$newDP = clone $dp;
 			$tsr = $dp->tsr ?? null;
 			if ( $tsr ) {
 				$newDP->tsr = new SourceRange( $tsr->start + $k, $tsr->start + $j );
@@ -390,15 +403,15 @@ class ListHandler extends TokenHandler {
 		$itemToken = null;
 
 		// emit close tag tokens for closed lists
-		$this->env->log(
-			'trace/list', $this->pipelineId,
+		$this->env->trace(
+			'list', $this->pipelineId,
 			static function () use ( $bs, $bn ) {
 				return '    bs: ' . PHPUtils::jsonEncode( $bs ) . '; bn: ' . PHPUtils::jsonEncode( $bn );
 			}
 		);
 
 		if ( count( $prefix ) === count( $bs ) && count( $bn ) === count( $bs ) ) {
-			$this->env->log( 'trace/list', $this->pipelineId, '    -> no nesting change' );
+			$this->env->trace( 'list', $this->pipelineId, '    -> no nesting change' );
 
 			// same list item types and same nesting level
 			$itemToken = array_pop( $this->currListFrame->endtags );
@@ -448,11 +461,11 @@ class ListHandler extends TokenHandler {
 					// stx='row' is only set for single-line dt-dd lists (see tokenizer)
 					// In this scenario, the dd token we are building a token for has no prefix
 					// Ex: ;a:b, *;a:b, #**;a:b, etc. Compare with *;a\n*:b, #**;a\n#**:b
-					$this->env->log( 'trace/list', $this->pipelineId,
+					$this->env->trace( 'list', $this->pipelineId,
 						'    -> single-line dt->dd transition' );
 					$newTag = new TagTk( $newName, [], $makeDP( 0, 1 ) );
 				} else {
-					$this->env->log( 'trace/list', $this->pipelineId, '    -> other dt/dd transition' );
+					$this->env->trace( 'list', $this->pipelineId, '    -> other dt/dd transition' );
 					$newTag = new TagTk( $newName, [], $makeDP( 0, $prefixLen + 1 ) );
 				}
 
@@ -462,7 +475,7 @@ class ListHandler extends TokenHandler {
 
 				$prefixCorrection = 1;
 			} else {
-				$this->env->log( 'trace/list', $this->pipelineId, '    -> reduced nesting' );
+				$this->env->trace( 'list', $this->pipelineId, '    -> reduced nesting' );
 				$tokens = array_merge(
 					$this->currListFrame->solTokens,
 					$tokens,
@@ -516,13 +529,13 @@ class ListHandler extends TokenHandler {
 				$listDP = null;
 				$listItemDP = null;
 				if ( $i === $prefixLen ) {
-					$this->env->log( 'trace/list', $this->pipelineId,
+					$this->env->trace( 'list', $this->pipelineId,
 						'    -> increased nesting: first'
 					);
 					$listDP = $makeDP( 0, 0 );
 					$listItemDP = $makeDP( 0, $i + 1 );
 				} else {
-					$this->env->log( 'trace/list', $this->pipelineId,
+					$this->env->trace( 'list', $this->pipelineId,
 						'    -> increased nesting: 2nd and higher'
 					);
 					$listDP = $makeDP( $i, $i );
@@ -541,11 +554,7 @@ class ListHandler extends TokenHandler {
 		$this->currListFrame->nlTk = null;
 		$this->currListFrame->atEOL = false;
 
-		$this->env->log(
-			'trace/list', $this->pipelineId, 'RET:',
-			static function () use ( $res ) { return PHPUtils::jsonEncode( $res );
-			}
-		);
+		$this->env->trace( 'list', $this->pipelineId, 'RET: ', $res );
 		return $res;
 	}
 }

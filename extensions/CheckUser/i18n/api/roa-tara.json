@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Verifiche quale IP so ausate da 'nu certe nome utende o quale nome de utinde so ausate da 'nu certe IP.",
+	"apihelp-query+checkuser-param-request": "Tipe de richieste de CheckUser:\n;userips:Pigghie l'indirizze IP de l'utende de destinazione.\n;edits:Pigghie le cangiaminde da l'indirizze IP de destinazione o de l'indervalle.\n;ipusers:Pigghie le utinde da l'indirizze IP de destinazione o de l'indervalle..",
+	"apihelp-query+checkuser-param-target": "Nome de l'utende, indirizze IP o indervalle CIDR da verificà.",
+	"apihelp-query+checkuser-param-reason": "Mutive d'u condrolle.",
+	"apihelp-query+checkuser-param-limit": "Limite de righe.",
+	"apihelp-query+checkuser-param-timecond": "Tiembe limite de le date utende (cumme \"2 sumàne\" o \"2 sumàne fa\").",
+	"apihelp-query+checkuser-param-xff": "Ause date XFF invece de l'indirizze IP.",
+	"apihelp-query+checkuser-example-1": "Verifiche l'indirizze IP pe [[User:Example]]",
+	"apihelp-query+checkuser-example-2": "Verifiche le cangiaminde da 192.0.2.0/24",
+	"apihelp-query+checkuserlog-summary": "Pigghie le v147sce de l'archivije d'u CheckUser.",
+	"apihelp-query+checkuserlog-param-user": "Nome de l'utende de CheckUser.",
+	"apihelp-query+checkuserlog-param-target": "Utende condrollate, indirizze IP o indervalle CIDR.",
+	"apihelp-query+checkuserlog-param-limit": "Limite de righe.",
+	"apihelp-query+checkuserlog-param-from": "Orarie da addò accumenze l'enumerazione.",
+	"apihelp-query+checkuserlog-param-to": "Orarie da addò spicce l'enumerazione.",
+	"apihelp-query+checkuserlog-example-1": "Fà vedè le verifiche sus a [[User:Example]]",
+	"apihelp-query+checkuserlog-example-2": "Fà vedè le verifiche de 192.0.2.0/24 apprisse 2011-10-15T23:00:00Z",
+	"apierror-checkuser-missingsummary": "Tu ha dicere 'nu mutive de verifiche.",
+	"apierror-checkuser-timelimit": "Tu è abbesogne de ausà 'u limite de tiembe corrette (cumme \"-2 sumàne\" o \"2 sumàne rrete\").",
+	"apierror-checkuser-invalidmode": "Mode de richieste invalide",
+	"checkuser-api-help-param-direction": "Jndr'à ce direzione amma numerà:\n;newer:Elenghe apprime le cchiù vicchie. Note: $1from adda avenè apprime de $1to.\n;older:Elenghe apprime le cchiù nuève (predefinite). Note: $1from adda avenè apprisse a $1to."
+}

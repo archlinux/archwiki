@@ -28,7 +28,6 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\NullLogger;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Core\ClientError;
@@ -36,9 +35,6 @@ use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Stats\BufferingStatsdDataFactory;
-use Wikimedia\Stats\Emitters\NullEmitter;
-use Wikimedia\Stats\StatsCache;
 use Wikimedia\Stats\StatsFactory;
 
 /**
@@ -112,16 +108,16 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	private function getTextFromFile( string $name ): string {
+	private static function getTextFromFile( string $name ): string {
 		return trim( file_get_contents( __DIR__ . "/../data/Transform/$name" ) );
 	}
 
-	private function getJsonFromFile( string $name ): array {
-		$text = $this->getTextFromFile( $name );
+	private static function getJsonFromFile( string $name ): array {
+		$text = self::getTextFromFile( $name );
 		return json_decode( $text, JSON_OBJECT_AS_ARRAY );
 	}
 
-	public function provideRequests() {
+	public static function provideRequests() {
 		$profileVersion = '2.4.0';
 		$wikitextProfileUri = 'https://www.mediawiki.org/wiki/Specs/wikitext/1.0.0';
 		$htmlProfileUri = 'https://www.mediawiki.org/wiki/Specs/HTML/' . $profileVersion;
@@ -142,7 +138,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should convert html to wikitext ///////////////////////////////////
-		$html = $this->getTextFromFile( 'MainPage-data-parsoid.html' );
+		$html = self::getTextFromFile( 'MainPage-data-parsoid.html' );
 		$expectedText = [
 			'MediaWiki has been successfully installed',
 			'== Getting started ==',
@@ -168,7 +164,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should accept original wikitext in body ////////////////////
-		$originalWikitext = $this->getTextFromFile( 'OriginalMainPage.wikitext' );
+		$originalWikitext = self::getTextFromFile( 'OriginalMainPage.wikitext' );
 		$params = [];
 		$body = [
 			'html' => $html,
@@ -188,7 +184,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should use original html for selser (default) //////////////////////
-		$originalDataParsoid = $this->getJsonFromFile( 'MainPage-original.data-parsoid' );
+		$originalDataParsoid = self::getJsonFromFile( 'MainPage-original.data-parsoid' );
 		$params = [
 			'from' => ParsoidFormatHelper::FORMAT_PAGEBUNDLE,
 		];
@@ -197,7 +193,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 			'original' => [
 				'html' => [
 					'headers' => $htmlHeaders,
-					'body' => $this->getTextFromFile( 'MainPage-original.html' ),
+					'body' => self::getTextFromFile( 'MainPage-original.html' ),
 				],
 				'data-parsoid' => [
 					'headers' => [
@@ -224,7 +220,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 						//      version given in the HTML?
 						'content-type' => 'text/html; profile="mediawiki.org/specs/html/1.1.1"',
 					],
-					'body' => $this->getTextFromFile( 'MainPage-data-parsoid-1.1.1.html' ),
+					'body' => self::getTextFromFile( 'MainPage-data-parsoid-1.1.1.html' ),
 				],
 				'data-parsoid' => [
 					'headers' => [
@@ -253,7 +249,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 						'content-type' => 'text/html; profile="mediawiki.org/specs/html/1.1.1"',
 					],
 					// No schema version in HTML
-					'body' => $this->getTextFromFile( 'MainPage-original.html' ),
+					'body' => self::getTextFromFile( 'MainPage-original.html' ),
 				],
 				'data-parsoid' => [
 					'headers' => [
@@ -489,7 +485,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should apply original data-mw when modified is absent (captions 1) ///////////
-		$html = $this->getTextFromFile( 'Image.html' );
+		$html = self::getTextFromFile( 'Image.html' );
 		$dataParsoid = [ 'ids' => [
 			'mwAg' => [ 'optList' => [ [ 'ck' => 'caption', 'ak' => 'Testing 123' ] ] ],
 			'mwAw' => [ 'a' => [ 'href' => './File:Foobar.jpg' ], 'sa' => [] ],
@@ -523,7 +519,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should give precedence to inline data-mw over modified (captions 2) /////////////
-		$htmlModified = $this->getTextFromFile( 'Image-data-mw.html' );
+		$htmlModified = self::getTextFromFile( 'Image-data-mw.html' );
 		$dataMediaWikiModified = [
 			'ids' => [
 				'mwAg' => [ 'caption' => 'Testing 123' ]
@@ -602,7 +598,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should apply version downgrade ///////////
-		$htmlOfMinimal = $this->getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
+		$htmlOfMinimal = self::getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
 		$params = [
 			'from' => ParsoidFormatHelper::FORMAT_PAGEBUNDLE,
 		];
@@ -628,7 +624,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should not apply version downgrade if versions are the same ///////////
-		$htmlOfMinimal = $this->getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
+		$htmlOfMinimal = self::getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
 		$params = [];
 		$body = [
 			'html' => $htmlOfMinimal,
@@ -651,7 +647,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// should convert html to json ///////////////////////////////////
-		$html = $this->getTextFromFile( 'JsonConfig.html' );
+		$html = self::getTextFromFile( 'JsonConfig.html' );
 		$expectedText = [
 			'{"a":4,"b":3}',
 		];
@@ -668,7 +664,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// page bundle input should work with no original data present  ///////////
-		$htmlOfMinimal = $this->getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
+		$htmlOfMinimal = self::getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
 		$params = [];
 		$body = [
 			'html' => $htmlOfMinimal,
@@ -692,7 +688,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 	 * @param array $params
 	 * @param string|string[]|null $expectedText Null means use the original content.
 	 * @param array $expectedHeaders
-	 * @dataProvider provideRequests()
+	 * @dataProvider provideRequests
 	 * @covers \MediaWiki\Rest\Handler\Helper\HtmlInputTransformHelper
 	 * @covers \MediaWiki\Parser\Parsoid\HtmlToContentTransform
 	 */
@@ -709,13 +705,11 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 			$originalContent = '';
 		}
 
-		$statsCache = new StatsCache();
-		$statsdFactory = new BufferingStatsdDataFactory( '' );
-		$stats = new StatsFactory( $statsCache, new NullEmitter(), new NullLogger() );
-		$stats = $stats->withStatsdDataFactory( $statsdFactory );
+		$statsHelper = StatsFactory::newUnitTestingHelper();
+		$statsFactory = $statsHelper->getStatsFactory();
 
 		// TODO: find a way to test $pageLanguage
-		$helper = $this->newHelper( [], $stats, $page, $body, $params );
+		$helper = $this->newHelper( [], $statsFactory, $page, $body, $params );
 
 		$response = $this->createResponse();
 		$helper->putContent( $response );
@@ -736,30 +730,21 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		// Ensure that exactly one key with the given prefix is set.
 		// This ensures that the number of keys set always adds up to 100%,
 		// for any set of keys under this prefix.
-		$this->assertMetricsCount( 1, $statsdFactory, 'html_input_transform.original_html.' );
+		$this->assertMetricsCount( 1, $statsHelper, 'html_input_transform_total' );
 	}
 
-	private function assertMetricsCount( $expected, BufferingStatsdDataFactory $stats, $prefix = '' ) {
-		$keys = [];
-		foreach ( $stats->getData() as $datum ) {
-			if ( str_starts_with( $datum->getKey(), $prefix ) ) {
-				$keys[] = $datum->getKey();
-			}
-		}
-
-		$this->addToAssertionCount( 1 );
-		if ( count( $keys ) !== $expected ) {
-			$this->fail(
-				"Failed to assert that the number of metrics keys starting with '$prefix' is $expected. Keys: \n\t"
-				. implode( "\n\t", $keys )
-			);
-		}
+	private function assertMetricsCount( $expected, $statsHelper, string $selector ) {
+		$this->assertSame(
+			(float)$expected,
+			$statsHelper->sum( $selector ),
+			"\nMetrics buffer:\n" . implode( "\n", $statsHelper->getAllFormatted() ) . "\n"
+		);
 	}
 
-	public function provideOriginal() {
+	public static function provideOriginal() {
 		$unchangedPB = new PageBundle(
-			$this->getTextFromFile( 'MainPage-original.html' ),
-			$this->getJsonFromFile( 'MainPage-original.data-parsoid' ),
+			self::getTextFromFile( 'MainPage-original.html' ),
+			self::getJsonFromFile( 'MainPage-original.data-parsoid' ),
 			null,
 			Parsoid::defaultHTMLVersion()
 		);
@@ -781,7 +766,6 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		// should load original wikitext by revision id ////////////////////
 		yield 'should load original wikitext by revision id' => [
 			$selserContext,
 			1, // will be replaced by the actual revid
@@ -789,11 +773,9 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 			null, // Selser should preserve the original content.
 		];
 
-		// should use wikitext from fake revision ////////////////////
 		$page = PageIdentityValue::localIdentity( 7, NS_MAIN, 'HtmlInputTransformHelperTest' );
 		$rev = new MutableRevisionRecord( $page );
 		$rev->setContent( SlotRecord::MAIN, new WikitextContent( 'Goats are great!' ) );
-
 		yield 'should use wikitext from fake revision' => [
 			$selserContext,
 			$rev,
@@ -801,7 +783,6 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 			'Goats are great!', // Text from the fake revision. Selser should preserve it.
 		];
 
-		// should get original HTML from stash ////////////////////
 		yield 'should get original HTML from stash' => [
 			$selserContext,
 			$rev,
@@ -811,7 +792,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideOriginal()
+	 * @dataProvider provideOriginal
 	 *
 	 * @param SelserContext|null $stashed
 	 * @param RevisionRecord|int|null $rev
@@ -849,19 +830,17 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 			$stash->set( $renderID, $stashed );
 		}
 
-		$html = $this->getTextFromFile( 'MainPage-original.html' );
+		$html = self::getTextFromFile( 'MainPage-original.html' );
 
 		$params = [];
 		$body = [
 			'html' => $html
 		];
 
-		$statsCache = new StatsCache();
-		$statsdFactory = new BufferingStatsdDataFactory( '' );
-		$stats = new StatsFactory( $statsCache, new NullEmitter(), new NullLogger() );
-		$stats = $stats->withStatsdDataFactory( $statsdFactory );
+		$statsHelper = StatsFactory::newUnitTestingHelper();
+		$statsFactory = $statsHelper->getStatsFactory();
 
-		$helper = $this->newHelper( [], $stats, $page, $body, $params );
+		$helper = $this->newHelper( [], $statsFactory, $page, $body, $params );
 		$helper->setOriginal( $rev, $originalRendering );
 
 		$response = $this->createResponse();
@@ -879,10 +858,18 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		// Ensure that exactly one key with the given prefix is set.
 		// This ensures that the number of keys set always adds up to 100%,
 		// for any set of keys under this prefix.
-		if ( $rev || $originalRendering ) {
-			$this->assertMetricsCount( 1, $statsdFactory, 'html_input_transform.original_html.given' );
+		if ( $originalRendering instanceof ParsoidRenderID ) {
+			// NOTE: This increments both
+			// - first, original_html_given=false
+			// - then, original_html_given=as_renderid
+			$this->assertMetricsCount( 1, $statsHelper, 'html_input_transform_total{original_html_given=as_renderid}' );
+		} elseif ( $rev || $originalRendering ) {
+			// NOTE: This increments both
+			// - first, original_html_given=false
+			// - then, original_html_given=true
+			$this->assertMetricsCount( 1, $statsHelper, 'html_input_transform_total{original_html_given=true}' );
 		} else {
-			$this->assertMetricsCount( 1, $statsdFactory, 'html_input_transform.original_html.not_given' );
+			$this->assertMetricsCount( 1, $statsHelper, 'html_input_transform_total{original_html_given=false}' );
 		}
 	}
 
@@ -912,7 +899,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 	public function testResponseForFakeRevision() {
 		$wikitext = 'Unsaved Revision Content';
 
-		$html = $this->getTextFromFile( 'Minimal.html' );
+		$html = self::getTextFromFile( 'Minimal.html' );
 		$page = PageIdentityValue::localIdentity( 7, NS_MAIN, $body['pageName'] ?? 'HtmlInputTransformHelperTest' );
 
 		// Create a fake revision. Since the HTML didn't change, we expect to get back the content
@@ -958,8 +945,8 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage();
 		$oldWikitext = $page->getContent()->serialize();
 
-		$html = $this->getTextFromFile( 'MainPage-original.html' );
-		$dataParsoid = $this->getJsonFromFile( 'MainPage-original.data-parsoid' );
+		$html = self::getTextFromFile( 'MainPage-original.html' );
+		$dataParsoid = self::getJsonFromFile( 'MainPage-original.data-parsoid' );
 
 		$pb = new PageBundle(
 			$html,
@@ -1003,8 +990,8 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 
 		$page = $this->getNonexistingTestPage();
 
-		$html = $this->getTextFromFile( 'MainPage-original.html' );
-		$dataParsoid = $this->getJsonFromFile( 'MainPage-original.data-parsoid' );
+		$html = self::getTextFromFile( 'MainPage-original.html' );
+		$dataParsoid = self::getJsonFromFile( 'MainPage-original.data-parsoid' );
 		$oldWikitext = 'Fake old wikitext';
 
 		$content = new WikitextContent( $oldWikitext );

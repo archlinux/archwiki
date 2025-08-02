@@ -31,52 +31,62 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 	// Properties
 	this.placeholder = placeholder;
 
-	this.addTemplateInput = new ve.ui.MWTemplateTitleInputWidget( {
-		$overlay: config.$overlay,
-		showDescriptions: true,
-		api: ve.init.target.getContentApi()
-	} )
-		.connect( this, {
-			change: 'onTemplateInputChange',
-			enter: 'onAddTemplate'
+	this.usingTemplateDiscovery = mw.templateData !== undefined && mw.templateData.TemplateSearchLayout !== undefined;
+	if ( this.usingTemplateDiscovery ) {
+		// This variable name is slightly misleading here as this isn't a fieldset.
+		this.addTemplateFieldset = new mw.templateData.TemplateSearchLayout( { padded: false } );
+		this.addTemplateFieldset.connect( this, { choose: this.onAddTemplate } );
+		// Expose the internal widget for now, but this will be removed once we've switched to the new widget.
+		this.addTemplateInput = this.addTemplateFieldset.searchWidget;
+
+	} else {
+		this.addTemplateInput = new ve.ui.MWTemplateTitleInputWidget( {
+			$overlay: config.$overlay,
+			showDescriptions: true,
+			api: ve.init.target.getContentApi()
+		} )
+			.connect( this, {
+				change: 'onTemplateInputChange',
+				enter: 'onAddTemplate'
+			} );
+
+		this.addTemplateInput.getLookupMenu().connect( this, {
+			choose: 'onAddTemplate'
 		} );
 
-	this.addTemplateInput.getLookupMenu().connect( this, {
-		choose: 'onAddTemplate'
-	} );
+		this.addTemplateButton = new OO.ui.ButtonWidget( {
+			label: ve.msg( 'visualeditor-dialog-transclusion-add-template-save' ),
+			flags: [ 'progressive' ],
+			classes: [ 've-ui-mwTransclusionDialog-addButton' ],
+			disabled: true
+		} )
+			.connect( this, { click: 'onAddTemplate' } );
 
-	this.addTemplateButton = new OO.ui.ButtonWidget( {
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-template-save' ),
-		flags: [ 'progressive' ],
-		classes: [ 've-ui-mwTransclusionDialog-addButton' ],
-		disabled: true
-	} )
-		.connect( this, { click: 'onAddTemplate' } );
+		const addTemplateActionFieldLayout = new OO.ui.ActionFieldLayout(
+			this.addTemplateInput,
+			this.addTemplateButton,
+			{
+				label: ve.msg( 'visualeditor-dialog-transclusion-template-search-help' ),
+				align: 'top'
+			}
+		);
 
-	const addTemplateActionFieldLayout = new OO.ui.ActionFieldLayout(
-		this.addTemplateInput,
-		this.addTemplateButton,
-		{
-			label: ve.msg( 'visualeditor-dialog-transclusion-template-search-help' ),
-			align: 'top'
-		}
-	);
+		const dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
+			'visualeditor-dialog-transclusion-template-search' :
+			'visualeditor-dialog-transclusion-add-template';
 
-	const dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
-		'visualeditor-dialog-transclusion-template-search' :
-		'visualeditor-dialog-transclusion-add-template';
+		const addTemplateFieldsetConfig = {
+			// The following messages are used here:
+			// * visualeditor-dialog-transclusion-template-search
+			// * visualeditor-dialog-transclusion-add-template
+			label: ve.msg( dialogTitle ),
+			icon: 'puzzle',
+			classes: [ 've-ui-mwTransclusionDialog-addTemplateFieldset' ],
+			items: [ addTemplateActionFieldLayout ]
+		};
 
-	const addTemplateFieldsetConfig = {
-		// The following messages are used here:
-		// * visualeditor-dialog-transclusion-template-search
-		// * visualeditor-dialog-transclusion-add-template
-		label: ve.msg( dialogTitle ),
-		icon: 'puzzle',
-		classes: [ 've-ui-mwTransclusionDialog-addTemplateFieldset' ],
-		items: [ addTemplateActionFieldLayout ]
-	};
-
-	this.addTemplateFieldset = new OO.ui.FieldsetLayout( addTemplateFieldsetConfig );
+		this.addTemplateFieldset = new OO.ui.FieldsetLayout( addTemplateFieldsetConfig );
+	}
 
 	// Initialization
 	this.$element
@@ -104,18 +114,24 @@ ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
 
 /**
  * @private
+ * @param {Object|undefined} templateData The choosen template's data (if TemplateDiscovery is enabled).
  */
-ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
-	const transclusion = this.placeholder.getTransclusion(),
-		menu = this.addTemplateInput.getLookupMenu();
+ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function ( templateData ) {
+	const transclusion = this.placeholder.getTransclusion();
 
-	if ( menu.isVisible() ) {
-		menu.chooseItem( menu.findSelectedItem() );
-	}
-	const name = this.addTemplateInput.getMWTitle();
-	if ( !name ) {
-		// Invalid titles return null, so abort here.
-		return;
+	let name = null;
+	if ( !this.usingTemplateDiscovery ) {
+		const menu = this.addTemplateInput.getLookupMenu();
+		if ( menu.isVisible() ) {
+			menu.chooseItem( menu.findSelectedItem() );
+		}
+		name = this.addTemplateInput.getMWTitle();
+		if ( !name ) {
+			// Invalid titles return null, so abort here.
+			return;
+		}
+	} else {
+		name = mw.Title.newFromText( templateData.title );
 	}
 
 	// TODO tracking will only be implemented temporarily to answer questions on
@@ -136,10 +152,12 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 	transclusion.replacePart( this.placeholder, part ).then(
 		transclusion.addPromptedParameters.bind( transclusion )
 	);
-	this.addTemplateInput.pushPending();
-	// abort pending lookups, also, so the menu can't appear after we've left the page
-	this.addTemplateInput.closeLookupMenu();
-	this.addTemplateButton.setDisabled( true );
+	if ( !this.usingTemplateDiscovery ) {
+		this.addTemplateInput.pushPending();
+		// abort pending lookups, also, so the menu can't appear after we've left the page
+		this.addTemplateInput.closeLookupMenu();
+		this.addTemplateButton.setDisabled( true );
+	}
 };
 
 /**

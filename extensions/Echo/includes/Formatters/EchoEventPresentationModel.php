@@ -7,8 +7,10 @@ use JsonSerializable;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -489,6 +491,22 @@ abstract class EchoEventPresentationModel implements JsonSerializable, MessageLo
 			$primaryLink['url'] = wfAppendQuery( $primaryLink['url'], $queryParams );
 		}
 		return $primaryLink;
+	}
+
+	/**
+	 * @return Message
+	 */
+	final protected function getRevisionCommentMessage() {
+		$revision = $this->event->getRevision();
+		if ( $revision && $revision->getComment() && $this->userCan( RevisionRecord::DELETED_COMMENT ) ) {
+			// TODO: what's the difference from DiscussionParser::getTextSnippetFromSummary?
+			$summary = $revision->getComment()->text;
+			$summary = MediaWikiServices::getInstance()->getCommentFormatter()->format( $summary );
+			$summary = Sanitizer::stripAllTags( $summary );
+		} else {
+			$summary = $this->msg( 'rev-deleted-comment' )->text();
+		}
+		return new RawMessage( '$1', [ Message::plaintextParam( $summary ) ] );
 	}
 
 	/**

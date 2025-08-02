@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Iflaq",
+			"Matma Rex",
 			"Tajamul9",
-			"Teashae",
-			"Matma Rex"
+			"Teashae"
 		]
 	},
 	"discussiontools": "کَتھ باتھ اَوزار",
@@ -63,6 +63,6 @@
 	"discussiontools-topicsubscription-pager-page": "صَفہٕ",
 	"discussiontools-topicsubscription-pager-topic": "موضوٗع",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "سَبَسکرایِب کٔرِو رَد",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} نٔو موضوٗع ]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} جَواب]"
+	"tag-discussiontools-newtopic": "نٔو موضوٗع",
+	"tag-discussiontools-reply": "جَواب"
 }

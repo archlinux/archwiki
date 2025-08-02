@@ -23,10 +23,10 @@ use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryBase;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\Flags;
-use MediaWiki\Extension\AbuseFilter\FilterUtils;
-use MediaWiki\Utils\MWTimestamp;
+use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Query module to list abuse filter details.
@@ -39,21 +39,18 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class QueryAbuseFilters extends ApiQueryBase {
 
-	/** @var AbuseFilterPermissionManager */
-	private $afPermManager;
+	private AbuseFilterPermissionManager $afPermManager;
+	private FilterLookup $filterLookup;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
-		AbuseFilterPermissionManager $afPermManager
+		string $moduleName,
+		AbuseFilterPermissionManager $afPermManager,
+		FilterLookup $filterLookup
 	) {
 		parent::__construct( $query, $moduleName, 'abf' );
 		$this->afPermManager = $afPermManager;
+		$this->filterLookup = $filterLookup;
 	}
 
 	/**
@@ -79,23 +76,11 @@ class QueryAbuseFilters extends ApiQueryBase {
 
 		$result = $this->getResult();
 
-		$this->addTables( 'abuse_filter' );
-
-		$this->addFields( 'af_id' );
-		$this->addFields( 'af_hidden' );
-		$this->addFieldsIf( 'af_hit_count', $fld_hits );
-		$this->addFieldsIf( 'af_enabled', $fld_status );
-		$this->addFieldsIf( 'af_deleted', $fld_status );
-		$this->addFieldsIf( 'af_public_comments', $fld_desc );
-		$this->addFieldsIf( 'af_pattern', $fld_pattern );
-		$this->addFieldsIf( 'af_actions', $fld_actions );
-		$this->addFieldsIf( 'af_comments', $fld_comments );
-		if ( $fld_user ) {
-			$this->addTables( 'actor' );
-			$this->addFields( [ 'af_user_text' => 'actor_name' ] );
-			$this->addJoinConds( [ 'actor' => [ 'JOIN', 'actor_id = af_actor' ] ] );
-		}
-		$this->addFieldsIf( 'af_timestamp', $fld_time );
+		// Use the SelectQueryBuilder from the FilterLookup service as a base so that we can construct
+		// Filter objects from the rows got in the query.
+		$this->getQueryBuilder()->queryInfo(
+			$this->filterLookup->getAbuseFilterQueryBuilder( $this->getDB() )->getQueryInfo()
+		);
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
@@ -138,68 +123,75 @@ class QueryAbuseFilters extends ApiQueryBase {
 		$res = $this->select( __METHOD__ );
 
 		$showhidden = $this->afPermManager->canViewPrivateFilters( $this->getAuthority() );
-		$showProtected = $this->afPermManager->canViewProtectedVariables( $this->getAuthority() );
 
 		$count = 0;
 		foreach ( $res as $row ) {
-			$filterId = intval( $row->af_id );
+			// FilterLookup::filterFromRow will override af_actions, so we need to define the callback to generate
+			// the data. We do not need to define anything other than the names because we only call
+			// AbstractFilter::getActionNames.
+			$actions = array_flip( explode( ',', $row->af_actions ) );
+			$filter = $this->filterLookup->filterFromRow( $row, $actions );
 			if ( ++$count > $params['limit'] ) {
 				// We've had enough
-				$this->setContinueEnumParameter( 'startid', $filterId );
+				$this->setContinueEnumParameter( 'startid', $filter->getID() );
 				break;
 			}
+
+			// Hide the pattern and non-public comments from the API response if the user would not
+			// be able to open the editor for the filter.
+			$canViewExtendedDetailsAboutFilter = ( !$filter->isHidden() || $showhidden );
+
+			if ( $filter->isProtected() && $canViewExtendedDetailsAboutFilter ) {
+				$canViewExtendedDetailsAboutFilter = $this->afPermManager
+					->canViewProtectedVariablesInFilter( $this->getAuthority(), $filter )
+					->isGood();
+			}
+
 			$entry = [];
 			if ( $fld_id ) {
-				$entry['id'] = $filterId;
+				$entry['id'] = $filter->getID();
 			}
 			if ( $fld_desc ) {
-				$entry['description'] = $row->af_public_comments;
+				$entry['description'] = $filter->getName();
 			}
-			if (
-				$fld_pattern &&
-				( !FilterUtils::isHidden( $row->af_hidden ) || $showhidden ) &&
-				( !FilterUtils::isProtected( $row->af_hidden ) || $showProtected )
-			) {
-				$entry['pattern'] = $row->af_pattern;
+			if ( $fld_pattern && $canViewExtendedDetailsAboutFilter ) {
+				$entry['pattern'] = $filter->getRules();
 			}
 			if ( $fld_actions ) {
-				$entry['actions'] = $row->af_actions;
+				$entry['actions'] = implode( ',', $filter->getActionsNames() );
 			}
 			if ( $fld_hits ) {
-				$entry['hits'] = intval( $row->af_hit_count );
+				$entry['hits'] = $filter->getHitCount();
 			}
-			if (
-				$fld_comments &&
-				( !FilterUtils::isHidden( $row->af_hidden ) || $showhidden ) &&
-				( !FilterUtils::isProtected( $row->af_hidden ) || $showProtected )
-			) {
-				$entry['comments'] = $row->af_comments;
+			if ( $fld_comments && $canViewExtendedDetailsAboutFilter ) {
+				$entry['comments'] = $filter->getComments();
 			}
 			if ( $fld_user ) {
-				$entry['lasteditor'] = $row->af_user_text;
+				$entry['lasteditor'] = $filter->getLastEditInfo()->getUserName();
 			}
 			if ( $fld_time ) {
-				$ts = new MWTimestamp( $row->af_timestamp );
-				$entry['lastedittime'] = $ts->getTimestamp( TS_ISO_8601 );
+				$entry['lastedittime'] = ConvertibleTimestamp::convert(
+					TS_ISO_8601, $filter->getLastEditInfo()->getTimestamp()
+				);
 			}
-			if ( $fld_private && FilterUtils::isHidden( $row->af_hidden ) ) {
+			if ( $fld_private && $filter->isHidden() ) {
 				$entry['private'] = '';
 			}
-			if ( $fld_protected && FilterUtils::isProtected( $row->af_hidden ) ) {
+			if ( $fld_protected && $filter->isProtected() ) {
 				$entry['protected'] = '';
 			}
 			if ( $fld_status ) {
-				if ( $row->af_enabled ) {
+				if ( $filter->isEnabled() ) {
 					$entry['enabled'] = '';
 				}
-				if ( $row->af_deleted ) {
+				if ( $filter->isDeleted() ) {
 					$entry['deleted'] = '';
 				}
 			}
 			if ( $entry ) {
 				$fit = $result->addValue( [ 'query', $this->getModuleName() ], null, $entry );
 				if ( !$fit ) {
-					$this->setContinueEnumParameter( 'startid', $filterId );
+					$this->setContinueEnumParameter( 'startid', $filter->getID() );
 					break;
 				}
 			}

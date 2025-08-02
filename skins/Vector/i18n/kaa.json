@@ -4,8 +4,8 @@
 			"Ajiniyaz Nurniyazov",
 			"Atabek",
 			"Inabat Allanova",
-			"Nurlan",
-			"Janabaevazizbek"
+			"Janabaevazizbek",
+			"Nurlan"
 		]
 	},
 	"skinname-vector": "Vektor, eski (2010)",
@@ -40,6 +40,7 @@
 	"vector-more-actions": "Jáne",
 	"vector-appearance-label": "Kórinis",
 	"vector-appearance-tooltip": "Bettiń shrift ólshemi, eni hám reńiniń kórinisin ózgertiń",
+	"vector-personal-tools-tooltip": "Paydalanıwshı sazlawları",
 	"vector-feature-limited-width-name": "Keńlik",
 	"vector-feature-limited-width-0-label": "Enli",
 	"vector-feature-limited-width-1-label": "Standart",

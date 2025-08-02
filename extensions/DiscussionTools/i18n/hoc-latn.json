@@ -43,5 +43,7 @@
 	"discussiontools-topicsubscription-pager-page": "Sakam",
 	"discussiontools-topicsubscription-pager-topic": "Topic",
 	"echo-category-title-dt-subscription": "Japagarsakam {{PLURAL:$1|Subscription}}",
-	"tag-discussiontools-edit": "Olruaa akan Comment"
+	"tag-discussiontools-edit": "Olruaa akan Comment",
+	"tag-discussiontools-newtopic": "Nama Topic",
+	"tag-discussiontools-reply": "Kajigoṅe"
 }

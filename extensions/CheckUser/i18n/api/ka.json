@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Otogi"
+		]
+	},
+	"apihelp-query+checkuser-param-reason": "შეჩერების მიზეზი",
+	"apihelp-query+checkuser-param-limit": "რიგების ლიმიტი",
+	"apihelp-query+checkuserlog-param-limit": "რიგების ლიმიტი"
+}

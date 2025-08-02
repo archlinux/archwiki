@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 found=0
 
-for svgfile in `find resources -type f -name "*.svg"`; do
+find resources -type f -name "*.svg" | while read svgfile ; do
 	outfile="$svgfile.tmp"
 	echo -n "Checking compression: $svgfile ... "
 	node_modules/.bin/svgo --config .svgo.config.js -i "$svgfile" -o "$outfile" -q
-	if [ -f $outfile ]; then
+	if [ -f "$outfile" ]; then
 		if [ "$(wc -c < "$svgfile")" -gt "$(wc -c < "$outfile")" ]; then
 			echo "File $svgfile is not compressed."
 			found=$((found + 1))

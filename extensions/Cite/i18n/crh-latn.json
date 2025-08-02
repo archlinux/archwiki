@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Don Alessandro",
 			"TayfunEt.",
-			"Zolgoyo",
-			"Don Alessandro"
+			"Zolgoyo"
 		]
 	},
 	"cite_error": "Alıntı hatası: $1",
+	"cite-reference-previews-preference-label": "Atıflarnı ögünden baqıp çıquv faalleştirilsin (bir saifeni oquğanda bir atıfnı tez baqıp çıquv qullanılır)",
 	"cite-wikieditor-tool-reference": "Tüpbilgiler"
 }

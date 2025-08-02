@@ -42,6 +42,7 @@
 	"notifications": "Jakinarazpenak",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Zure}} alertak",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Zure}} mezuak",
+	"tooltip-pt-notifications": "Zure jakinarazpenak",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Erabiltzaile berriak",
 	"echo-specialpage": "Jakinarazpenak",
 	"echo-specialpage-section-markread": "Markatu taldea irakurritzat",

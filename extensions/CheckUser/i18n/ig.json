@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meritkosy",
+			"Okenwa",
+			"Timzy D'Great",
+			"Ukabia"
+		]
+	},
+	"checkuser": "Lé ọ'bànifé anya",
+	"group-checkuser": "Lèma òjìème",
+	"group-checkuser-member": "Lé ọ'bànifé anya",
+	"action-checkuser-temporary-account-no-preference": "lelee adreesị IP nke akaụntụ nwa oge na-eji",
+	"checkuser-reason": "Mgbághapụtà:",
+	"checkuser-showlog": "Zí ndétu nchétá",
+	"checkuser-users": "Nàta òjìème",
+	"checkuser-ips": "Gá nwèté ónúọgụgụ IP",
+	"checkuser-period": "Ógè ȯ wèrè:",
+	"checkuser-week-1": "izù nke gáráni",
+	"checkuser-month": "úbochi 30 gárání",
+	"checkuser-all": "nke nílé",
+	"checkuser-check": "Lechányá",
+	"checkuser-blocked": "Kwàchịrị",
+	"checkuser-locked": "Gbàchịrị",
+	"checkuser-centralauth-multilock-list-item": "Njikọ $1",
+	"checkuser-search": "Chọwa",
+	"checkuser-search-submit": "Tùwe"
+}

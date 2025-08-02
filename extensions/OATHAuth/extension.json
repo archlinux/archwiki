@@ -11,13 +11,18 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
 		"OATHAuth": {
 			"Modules": {
-				"totp": "\\MediaWiki\\Extension\\OATHAuth\\Module\\TOTP::factory"
+				"totp": {
+					"class": "\\MediaWiki\\Extension\\OATHAuth\\Module\\TOTP",
+					"services": [
+						"OATHUserRepository"
+					]
+				}
 			}
 		}
 	},
@@ -49,14 +54,14 @@
 		"getUserPermissionsErrors": "main",
 		"UserEffectiveGroups": "main",
 		"UserGetRights": "main",
-		"BeforeCreateEchoEvent": "echo",
-		"MediaWikiServices": "mwservices"
+		"BeforeCreateEchoEvent": "echo"
 	},
 	"HookHandlers": {
 		"main": {
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\HookHandler",
 			"services": [
 				"OATHUserRepository",
+				"OATHAuthModuleRegistry",
 				"PermissionManager",
 				"MainConfig",
 				"UserGroupManager"
@@ -67,9 +72,6 @@
 		},
 		"echo": {
 			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\EchoHandler"
-		},
-		"mwservices": {
-			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\MWServicesHandler"
 		}
 	},
 	"MessagesDirs": {
@@ -82,10 +84,6 @@
 		"OATHAuthWindowRadius": {
 			"value": 4,
 			"description": "Number of token windows on either side of current time to be considered valid for authentication."
-		},
-		"OATHAuthDatabase": {
-			"value": false,
-			"description": "Deprecated; configure the virtual-oathauth virtual domain instead."
 		},
 		"OATHAuthAccountPrefix": {
 			"value": false,
@@ -184,7 +182,13 @@
 		"oath": "internal"
 	},
 	"APIModules": {
-		"oathvalidate": "\\MediaWiki\\Extension\\OATHAuth\\Api\\Module\\ApiOATHValidate"
+		"oathvalidate": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Api\\Module\\ApiOATHValidate",
+			"services": [
+				"OATHUserRepository",
+				"UserFactory"
+			]
+		}
 	},
 	"APIMetaModules": {
 		"oath": {

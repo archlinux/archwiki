@@ -22,7 +22,6 @@
 
 namespace MediaWiki\Api;
 
-use Article;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
@@ -32,36 +31,40 @@ use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Exception\MWContentSerializationException;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Skin\Skin;
+use MediaWiki\Skin\SkinFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
-use MWContentSerializationException;
-use Skin;
-use SkinFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
-use WikiPage;
+use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 
 /**
  * @ingroup API
@@ -148,7 +151,7 @@ class ApiParse extends ApiBase {
 		PageReference $page,
 		?RevisionRecord $revision,
 		ParserOptions $popts
-	) {
+	): ParserOutput {
 		$worker = new PoolCounterWorkViaCallback( 'ApiParser', $this->getPoolKey(),
 			[
 				'doWork' => function () use ( $content, $page, $revision, $popts ) {
@@ -164,7 +167,7 @@ class ApiParse extends ApiBase {
 		return $worker->execute();
 	}
 
-	private function getUserForPreview() {
+	private function getUserForPreview(): UserIdentity {
 		$user = $this->getUser();
 		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
 			return $this->userFactory->newUnsavedTempUser(
@@ -174,9 +177,10 @@ class ApiParse extends ApiBase {
 		return $user;
 	}
 
+	/** @return ParserOutput|false */
 	private function getPageParserOutput(
 		WikiPage $page,
-		$revId,
+		?int $revId,
 		ParserOptions $popts,
 		bool $suppressCache
 	) {
@@ -335,7 +339,7 @@ class ApiParse extends ApiBase {
 					$this->dieWithError( [ 'apierror-nosuchrevid', $revid ] );
 				}
 				$pTitleObj = $titleObj;
-				$titleObj = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
+				$titleObj = Title::newFromPageIdentity( $rev->getPage() );
 				if ( $titleProvided ) {
 					if ( !$titleObj->equals( $pTitleObj ) ) {
 						$this->addWarning( [ 'apierror-revwrongpage', $rev->getId(),
@@ -472,7 +476,6 @@ class ApiParse extends ApiBase {
 			// - Hook: LanguageLinks
 			// - Hook: SkinSubPageSubtitle
 			// - Hook: OutputPageParserOutput
-			// - Hook: OutputPageMakeCategoryLinks
 			// - Hook: OutputPageRenderCategoryLink
 			// - Hook: OutputPageBeforeHTML
 			// HACK Adding the 'mobileformat' parameter *also* enables the skin, for compatibility with legacy
@@ -506,7 +509,6 @@ class ApiParse extends ApiBase {
 			// Required for subtitle to appear
 			$outputPage->setArticleFlag( true );
 
-			$outputPage->addParserOutputMetadata( $p_result );
 			if ( $this->content ) {
 				$outputPage->addContentOverride( $titleObj, $this->content );
 			}
@@ -556,6 +558,12 @@ class ApiParse extends ApiBase {
 			}
 		}
 
+		if ( $outputPage ) {
+			// This needs to happen after running the OutputTransform pipeline so that the metadata inserted by
+			// the pipeline is also added to the OutputPage
+			$outputPage->addParserOutputMetadata( $p_result );
+		}
+
 		if ( $params['summary'] !== null ||
 			( $params['sectiontitle'] !== null && $this->section === 'new' )
 		) {
@@ -567,11 +575,24 @@ class ApiParse extends ApiBase {
 			if ( $skin ) {
 				$langlinks = $outputPage->getLanguageLinks();
 			} else {
-				$langlinks = $p_result->getLanguageLinks();
+				$langlinks = array_map(
+					static fn ( $item ) => $item['link'],
+					$p_result->getLinkList( ParserOutputLinkTypes::LANGUAGE )
+				);
 				// The deprecated 'effectivelanglinks' option pre-dates OutputPage
 				// support via 'useskin'. If not already applied, then run just this
 				// one hook of OutputPage::addParserOutputMetadata here.
 				if ( $params['effectivelanglinks'] ) {
+					# for compatibility with old hook, convert to string[]
+					$compat = [];
+					foreach ( $langlinks as $link ) {
+						$s = $link->getInterwiki() . ':' . $link->getText();
+						if ( $link->hasFragment() ) {
+							$s .= '#' . $link->getFragment();
+						}
+						$compat[] = $s;
+					}
+					$langlinks = $compat;
 					$linkFlags = [];
 					$this->getHookRunner()->onLanguageLinks( $titleObj, $langlinks, $linkFlags );
 				}
@@ -587,17 +608,18 @@ class ApiParse extends ApiBase {
 			$result_array[ApiResult::META_BC_SUBELEMENTS][] = 'categorieshtml';
 		}
 		if ( isset( $prop['links'] ) ) {
-			$result_array['links'] = $this->formatLinks( $p_result->getLinks() );
+
+			$result_array['links'] = $this->formatLinks( $p_result->getLinkList( ParserOutputLinkTypes::LOCAL ) );
 		}
 		if ( isset( $prop['templates'] ) ) {
-			$result_array['templates'] = $this->formatLinks( $p_result->getTemplates() );
+			$result_array['templates'] = $this->formatLinks(
+				$p_result->getLinkList( ParserOutputLinkTypes::TEMPLATE )
+			);
 		}
 		if ( isset( $prop['images'] ) ) {
-			// Cast image links to string since PHP coerces numeric string array keys to numbers
-			// (T346265).
 			$result_array['images'] = array_map(
-				fn ( $link ) => (string)$link,
-				array_keys( $p_result->getImages() )
+				static fn ( $item ) => $item['link']->getDBkey(),
+				$p_result->getLinkList( ParserOutputLinkTypes::MEDIA )
 			);
 		}
 		if ( isset( $prop['externallinks'] ) ) {
@@ -687,7 +709,11 @@ class ApiParse extends ApiBase {
 		}
 
 		if ( isset( $prop['iwlinks'] ) ) {
-			$result_array['iwlinks'] = $this->formatIWLinks( $p_result->getInterwikiLinks() );
+			$links = array_map(
+				static fn ( $item ) => $item['link'],
+				$p_result->getLinkList( ParserOutputLinkTypes::INTERWIKI )
+			);
+			$result_array['iwlinks'] = $this->formatIWLinks( $links );
 		}
 
 		if ( isset( $prop['wikitext'] ) ) {
@@ -913,14 +939,27 @@ class ApiParse extends ApiBase {
 		return $this->commentFormatter->format( $summary, $title, $this->section === 'new' );
 	}
 
-	private function formatLangLinks( $links ) {
+	/**
+	 * @param string[]|ParsoidLinkTarget[] $links
+	 * @return array
+	 */
+	private function formatLangLinks( $links ): array {
 		$result = [];
 		foreach ( $links as $link ) {
 			$entry = [];
-			[ $lang, $titleWithFrag ] = explode( ':', $link, 2 );
-			[ $title, $frag ] = array_pad( explode( '#', $titleWithFrag, 2 ), 2, '' );
-			$title = TitleValue::tryNew( NS_MAIN, $title, $frag, $lang );
-			$title = $title ? Title::newFromLinkTarget( $title ) : null;
+			if ( is_string( $link ) ) {
+				[ $lang, $titleWithFrag ] = explode( ':', $link, 2 );
+				[ $title, $frag ] = array_pad( explode( '#', $titleWithFrag, 2 ), 2, '' );
+				$title = TitleValue::tryNew( NS_MAIN, $title, $frag, $lang );
+			} else {
+				$title = $link;
+				$lang = $link->getInterwiki();
+				$titleWithFrag = $link->getText();
+				if ( $link->hasFragment() ) {
+					$titleWithFrag .= '#' . $link->getFragment();
+				}
+			}
+			$title = Title::castFromLinkTarget( $title );
 
 			$entry['lang'] = $lang;
 			if ( $title ) {
@@ -942,7 +981,7 @@ class ApiParse extends ApiBase {
 		return $result;
 	}
 
-	private function formatCategoryLinks( $links ) {
+	private function formatCategoryLinks( array $links ): array {
 		$result = [];
 
 		if ( !$links ) {
@@ -989,42 +1028,41 @@ class ApiParse extends ApiBase {
 		return $result;
 	}
 
-	private function formatLinks( $links ) {
+	/**
+	 * @param list<array{link:ParsoidLinkTarget,pageid?:int}> $links
+	 * @return array
+	 */
+	private function formatLinks( array $links ): array {
 		$result = [];
-		foreach ( $links as $ns => $nslinks ) {
-			foreach ( $nslinks as $title => $id ) {
-				$entry = [];
-				$entry['ns'] = $ns;
-				ApiResult::setContentValue( $entry, 'title', Title::makeTitle( $ns, $title )->getFullText() );
-				$entry['exists'] = $id != 0;
-				$result[] = $entry;
-			}
+		foreach ( $links as [ 'link' => $link, 'pageid' => $id ] ) {
+			$entry = [];
+			$entry['ns'] = $link->getNamespace();
+			ApiResult::setContentValue( $entry, 'title', Title::newFromLinkTarget( $link )->getFullText() );
+			$entry['exists'] = $id != 0;
+			$result[] = $entry;
 		}
 
 		return $result;
 	}
 
-	private function formatIWLinks( $iw ) {
+	private function formatIWLinks( array $iw ): array {
 		$result = [];
-		foreach ( $iw as $prefix => $titles ) {
-			foreach ( $titles as $title => $_ ) {
-				$entry = [];
-				$entry['prefix'] = $prefix;
-
-				$title = Title::newFromText( "{$prefix}:{$title}" );
-				if ( $title ) {
-					$entry['url'] = (string)$this->urlUtils->expand( $title->getFullURL(), PROTO_CURRENT );
-				}
+		foreach ( $iw as $linkTarget ) {
+			$entry = [];
+			$entry['prefix'] = $linkTarget->getInterwiki();
+			$title = Title::newFromLinkTarget( $linkTarget );
+			if ( $title ) {
+				$entry['url'] = (string)$this->urlUtils->expand( $title->getFullURL(), PROTO_CURRENT );
 
 				ApiResult::setContentValue( $entry, 'title', $title->getFullText() );
-				$result[] = $entry;
 			}
+			$result[] = $entry;
 		}
 
 		return $result;
 	}
 
-	private function formatHeadItems( $headItems ) {
+	private function formatHeadItems( array $headItems ): array {
 		$result = [];
 		foreach ( $headItems as $tag => $content ) {
 			$entry = [];
@@ -1036,7 +1074,7 @@ class ApiParse extends ApiBase {
 		return $result;
 	}
 
-	private function formatLimitReportData( $limitReportData ) {
+	private function formatLimitReportData( array $limitReportData ): array {
 		$result = [];
 
 		foreach ( $limitReportData as $name => $value ) {
@@ -1053,7 +1091,7 @@ class ApiParse extends ApiBase {
 		return $result;
 	}
 
-	private function setIndexedTagNames( &$array, $mapping ) {
+	private function setIndexedTagNames( array &$array, array $mapping ) {
 		foreach ( $mapping as $key => $name ) {
 			if ( isset( $array[$key] ) ) {
 				ApiResult::setIndexedTagName( $array[$key], $name );

@@ -226,6 +226,7 @@
 	"search-thumbnail-extra-namespaces-label": "డెస్క్‌టాపు కూర్పులో చూస్తున్నపుడు ప్రత్యేక:అన్వేషణ లో థంబ్‌నెయిల్‌లను చూపించు",
 	"search-thumbnail-extra-namespaces-message": "{{#special:search}} పేజీలో, $1 {{PLURAL:$2|పేరుబరి|పేరుబరుల}} ఫలితాల్లో థంబ్‌నెయిళ్ళను చూపిస్తుంది",
 	"prefs-advancedsearchoptions": "ఉన్నత ఎంపికలు",
+	"prefs-misc": "ఇతరత్రా",
 	"prefs-reset-intro": "ఈ పేజీలో, మీ అభిరుచులను సైటు డిఫాల్టు విలువలకు మార్చుకోవచ్చు. మళ్ళీ వెనక్కి తీసుకుపోలేరు.",
 	"prefs-reset-confirm": "ఔను, నేను నా అభిరుచులను రీసెట్ చేయాలనుకుంటున్నాను.",
 	"restoreprefs": "అప్రమేయ అమరికలన్నిటినీ పునఃస్థాపించు"

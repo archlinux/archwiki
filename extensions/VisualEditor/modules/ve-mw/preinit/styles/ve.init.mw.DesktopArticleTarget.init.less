@@ -65,7 +65,6 @@
 	pointer-events: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 	opacity: 0.5;
 }
@@ -75,7 +74,6 @@
 		/* Override the styles above to allow the heading to be selected, for copy-pasting */
 		-webkit-user-select: text;
 		-moz-user-select: text;
-		-ms-user-select: text;
 		user-select: text;
 		pointer-events: auto;
 		cursor: text;
@@ -91,7 +89,7 @@
 
 		&:hover {
 			/* focusableNode highlight equivalent styling */
-			background: #e9f2fd;
+			background: fade( #6da9f7, 15% );
 		}
 
 		a {
@@ -141,16 +139,4 @@
 /* OOUI may not have loaded yet */
 .oo-ui-element-hidden {
 	display: none !important; /* stylelint-disable-line declaration-no-important */
-}
-
-/* Section edit links */
-
-.mw-editsection {
-	&::before {
-		content: '\200B';
-	}
-
-	a {
-		white-space: nowrap;
-	}
 }

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Robby",
+			"Volvox"
+		]
+	},
+	"apihelp-query+checkuser-param-reason": "Grond fir nozekucken.",
+	"apihelp-query+globalcontributions-param-target": "Benotzernumm fir nozekucken (däerf keng IP sinn).",
+	"apihelp-query+globalcontributions-param-limit": "Limitt vun den Zeilen.",
+	"checkuser-api-useragent-clienthints-nonexistent-id": "D'$1-ID $2 gëtt et net"
+}

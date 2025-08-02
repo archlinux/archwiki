@@ -46,7 +46,7 @@ ve.ui.MWReferenceGroupInputWidget.prototype.populateMenu = function ( groups ) {
 		label: this.emptyGroupName
 	} ) ];
 	groups.forEach( ( groupName ) => {
-		const match = groupName.match( /^mwReference\/(.+)/ );
+		const match = /^mwReference\/(.+)/.exec( groupName );
 		if ( match ) {
 			items.push( new OO.ui.MenuOptionWidget( { data: match[ 1 ], label: match[ 1 ] } ) );
 		}

@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Specials;
 
-use HttpError;
+use MediaWiki\Exception\HttpError;
 use MediaWiki\LinkedData\PageDataRequestHandler;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 
@@ -50,8 +50,6 @@ class SpecialPageData extends UnlistedSpecialPage {
 	 *
 	 * If no request handler is set using this method, a default handler is created
 	 * on demand by initDependencies().
-	 *
-	 * @param PageDataRequestHandler $requestHandler
 	 */
 	public function setRequestHandler( PageDataRequestHandler $requestHandler ) {
 		$this->requestHandler = $requestHandler;

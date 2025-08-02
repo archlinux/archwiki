@@ -4,6 +4,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Shell\CommandFactory;
 use MediaWiki\SyntaxHighlight\Pygmentize;
 use MediaWiki\SyntaxHighlight\SyntaxHighlight;
+use MediaWiki\SyntaxHighlight\Tests\TestPSRClientException;
 use Shellbox\Command\BoxedCommand;
 use Shellbox\Command\BoxedResult;
 use Shellbox\ShellboxError;
@@ -21,6 +22,14 @@ class PygmentizeTest extends MediaWikiIntegrationTestCase {
 			// Silence wfWarn for the expected Shellbox error
 			MainConfigNames::DevelopmentWarnings => false,
 		] );
+	}
+
+	private function newInstance(): SyntaxHighlight {
+		$services = $this->getServiceContainer();
+		return new SyntaxHighlight(
+			$services->getMainConfig(),
+			$services->getMainWANObjectCache()
+		);
 	}
 
 	private function stubShellbox( ?BoxedResult $result, ?Exception $e ) {
@@ -60,9 +69,14 @@ class PygmentizeTest extends MediaWikiIntegrationTestCase {
 			null,
 			'<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre>"example"</pre></div>'
 		];
-		yield 'pre-fallback for network error (T292663)' => [
+		yield 'pre-fallback for Shellbox error (T292663)' => [
 			null,
 			new ShellboxError( 'Wazaaaa', 0 ),
+			'<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre>"example"</pre></div>'
+		];
+		yield 'pre-fallback for network error (T292663)' => [
+			null,
+			new TestPSRClientException( 'Empty reponse from server', 0 ),
 			'<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre>"example"</pre></div>'
 		];
 	}
@@ -73,7 +87,11 @@ class PygmentizeTest extends MediaWikiIntegrationTestCase {
 	public function testHighlightBasic( ?BoxedResult $result, ?Exception $e, string $expect ) {
 		$this->stubShellbox( $result, $e );
 
+		$this->hideDeprecated( SyntaxHighlight::class . '::highlight' );
 		$status = SyntaxHighlight::highlight( '"example"', 'json' );
+		$this->assertSame( $expect, $status->getValue() );
+
+		$status = $this->newInstance()->syntaxHighlight( '"example"', 'json' );
 		$this->assertSame( $expect, $status->getValue() );
 	}
 

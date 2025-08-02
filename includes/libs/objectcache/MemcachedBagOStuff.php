@@ -60,7 +60,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 * @see BagOStuff::makeKeyInternal
 	 *
 	 * @param string $keyspace
-	 * @param string[]|int[] $components
+	 * @param string[]|int[]|null $components
 	 *
 	 * @return string
 	 */
@@ -72,7 +72,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 		$charsLeft = 205 - strlen( $keyspace ) - count( $components );
 
 		foreach ( $components as &$component ) {
-			$component = strtr( $component, ' ', '_' );
+			$component = strtr( $component ?? '', ' ', '_' );
 
 			// Make sure %, #, and non-ASCII chars are escaped
 			$component = preg_replace_callback(
@@ -90,6 +90,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 
 			$charsLeft -= strlen( $component );
 		}
+		unset( $component );
 
 		if ( $charsLeft < 0 ) {
 			return $keyspace . ':BagOStuff-long-key:##' . md5( implode( ':', $components ) );

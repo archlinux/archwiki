@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"EileenSanda",
+			"Spacebirdy"
+		]
+	},
+	"checkuser": "Rannsakanar brúkari",
+	"group-checkuser": "Rannsakanar brúkari",
+	"group-checkuser-member": "{{GENDER:$1|kanna brúkara}}",
+	"grouppage-checkuser": "{{ns:project}}:Rannsakanar brúkari",
+	"checkuser-search": "Leita"
+}

@@ -34,6 +34,7 @@
 	"notifications": "Белдермәләр",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Сезнең}} искәртүләр",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Сезнең}} хәбәрнамәләр",
+	"tooltip-pt-notifications": "Сезнең хәбәрләр",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Яңа кулланучылар",
 	"echo-specialpage": "Белдермәләр",
 	"echo-specialpage-section-markread": "Тупламны укылган дип билгеләү",

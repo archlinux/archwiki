@@ -57,7 +57,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $expect, $siteConfig->makeExtResourceURL( $match, $href, $content ) );
 	}
 
-	public function provideMakeExtResourceURL(): array {
+	public static function provideMakeExtResourceURL(): array {
 		return [
 			[
 				[ 'ISBN', '9780615720302' ], './Special:Booksources/9780615720302', 'ISBN 978-0615720302',
@@ -147,7 +147,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->testInterwikiMatcher( $href, $expect, 1 );
 	}
 
-	public function provideInterwikiMatcher() {
+	public static function provideInterwikiMatcher() {
 		return [
 			[ 'https://de.wikipedia.org/wiki/Foobar', [ ':de', 'Foobar' ] ],
 			[ 'https://en.wikipedia.org/wiki/Foobar', [ ':en', 'Foobar' ] ], // not 'w'
@@ -209,7 +209,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $expectFind, $siteConfig->findValidProtocol( $link ) );
 	}
 
-	public function provideProtocolMethods() {
+	public static function provideProtocolMethods() {
 		return [
 			[ 'http://wikipedia.org', false, false ],
 			[ 'https://wikipedia.org', true, true ],
@@ -246,7 +246,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $res, $matcher( $input ) );
 	}
 
-	public function provideGetResourceURLPatternMatcher() {
+	public static function provideGetResourceURLPatternMatcher() {
 		$isbnTests = [
 			[ "Special:BookSources/1234567890X", [ 'ISBN', '1234567890X' ] ],
 			[ "Special:Booksources/1234567890X", [ 'ISBN', '1234567890X' ] ],
@@ -328,14 +328,19 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @dataProvider provideGetMagicWordForFunctionHooks
+	 * @dataProvider provideGetMagicWordForParserFunctions
 	 */
-	public function testGetMagicWordForFunctionHooks( $input, $res ) {
+	public function testGetMagicWordForParserFunction( $input, $res ) {
 		$siteConfig = $this->setupMagicWordTestConfig();
-		$this->assertSame( $res, $siteConfig->getMagicWordForFunctionHook( $input ) );
+		$isNative = true;
+		$this->assertSame(
+			// All of these are "legacy" parser functions
+			[ 'key' => $res, 'isNative' => false ],
+			$siteConfig->getMagicWordForParserFunction( $input )
+		);
 	}
 
-	public function provideGetMagicWordForFunctionHooks() {
+	public static function provideGetMagicWordForParserFunctions() {
 		return [
 			[ "LCFIRST", "lcfirst" ],
 			[ "lcfirst", "lcfirst" ],
@@ -357,7 +362,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $res, $siteConfig->getMagicWordForVariable( $input ) );
 	}
 
-	public function provideGetMagicWordForVariable() {
+	public static function provideGetMagicWordForVariable() {
 		return [
 			[ "numberofwikis", "numberofwikis" ],
 			[ "NUMBEROFWIKIS", null ],
@@ -374,7 +379,7 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $res, $siteConfig->linkTrailRegex() );
 	}
 
-	public function provideLinkTrailRegex() {
+	public static function provideLinkTrailRegex() {
 		return [
 			[ '/^([a-z]+)(.*)$/sD', '/^([a-z]+)/sD' ], // enwiki
 			[ '/^()(.*)$/sD', null ] // zhwiki

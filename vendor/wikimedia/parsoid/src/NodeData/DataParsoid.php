@@ -54,7 +54,9 @@ use Wikimedia\Parsoid\Utils\Utils;
  * the objects are not fully populated.
  * @property ParamInfo[][]|null $pi
  *
- * Expanded template HTML (native preprocessor only).
+ * DOM fragment identifier for DocumentFragment tunneled through Tokens.
+ * The identifier here indexes into Env::$fragmentMap to map to a
+ * DocumentFragment.
  * @property string|null $html
  *
  * On mw:Entity spans this is set to the decoded entity value.
@@ -75,9 +77,6 @@ use Wikimedia\Parsoid\Utils\Utils;
  * is documented as "mixed" but may possibly be a nullable string.
  * @property array|null $sa Source attributes
  *
- * FIXME never written
- * @property bool|null $strippedNL
- *
  * The number of extra dashes in the source of an hr
  * @property int|null $extra_dashes
  *
@@ -88,16 +87,12 @@ use Wikimedia\Parsoid\Utils\Utils;
  * assignment of a new id attribute.
  * @property bool|null $reusedId
  *
- * FIXME: Get rid of this property and the code that reads it after content
- * version 2.2.0 has expired from caches.
- * @property mixed $liHackSrc
- *
  * The link token associated with a redirect
  * @property Token|null $linkTk
  *
  * On a meta mw:EmptyLine, the associated comment and whitespace tokens. Used
  * in this sense by both the tokenizer and TokenStreamPatcher.
- * @property array $tokens
+ * @property array<Token> $tokens
  *
  * This is set to "extlink" on auto URL (external hotlink) image links.
  * @property string|null $type
@@ -188,14 +183,13 @@ use Wikimedia\Parsoid\Utils\Utils;
  * Porting note: this can be '0', handle emptiness checks with care
  * @property string|null $prefix
  *
- * True if the link was a pipetrick (`[[Foo|]]`).
- * @note This will likely be removed soon since this should not show up in saved wikitext since
- * this is a pre-save transformation trick.
- * @property bool|null $pipeTrick
- *
  * Did the link use interwiki syntax?
  * Probably redundant with the rel=mw:WikiLink/Interwiki
  * @property bool|null $isIW
+ *
+ * Source for first separator in a wikilink to account for variation
+ * Ex. [[Test{{!}}123]]
+ * @property string|null $firstPipeSrc
  *
  * == Tables ==
  *
@@ -244,47 +238,36 @@ class DataParsoid implements JsonCodecable {
 	/**
 	 * Holds a number of transient properties in the wt->html pipeline to pass information between
 	 * stages. Dropped before serialization.
-	 * @var TempData|null
 	 */
-	public $tmp;
+	public ?TempData $tmp;
 
 	/**
 	 * Deeply clone this object
-	 *
-	 * @return DataParsoid
 	 */
-	public function clone(): self {
-		$dp = clone $this;
+	public function __clone() {
 		// Properties that need deep cloning
-		if ( isset( $dp->tmp ) ) {
-			$dp->tmp = Utils::clone( $dp->tmp );
+		if ( isset( $this->tmp ) ) {
+			$this->tmp = clone $this->tmp;
 		}
-		if ( isset( $dp->linkTk ) ) {
-			$dp->linkTk = Utils::clone( $dp->linkTk );
+		if ( isset( $this->linkTk ) ) {
+			$this->linkTk = clone $this->linkTk;
 		}
-		if ( isset( $dp->tokens ) ) {
-			$dp->tokens = Utils::clone( $dp->tokens );
+		if ( isset( $this->tokens ) ) {
+			$this->tokens = Utils::cloneArray( $this->tokens );
 		}
-
-		// Properties that need shallow cloning
-		if ( isset( $dp->tsr ) ) {
-			$dp->tsr = clone $dp->tsr;
+		if ( isset( $this->tsr ) ) {
+			$this->tsr = clone $this->tsr;
 		}
-		if ( isset( $dp->dsr ) ) {
-			$dp->dsr = clone $dp->dsr;
+		if ( isset( $this->dsr ) ) {
+			$this->dsr = clone $this->dsr;
 		}
-		if ( isset( $dp->extTagOffsets ) ) {
-			$dp->extTagOffsets = clone $dp->extTagOffsets;
+		if ( isset( $this->extTagOffsets ) ) {
+			$this->extTagOffsets = clone $this->extTagOffsets;
 		}
-
-		// The remaining properties were sufficiently handled by the clone operator
-		return $dp;
 	}
 
 	public function isModified(): bool {
-		// NOTE: strict equality will not work in this comparison
-		// @phan-suppress-next-line PhanPluginComparisonObjectEqualityNotStrict
-		return $this != new self;
+		return $this->toJsonArray() !== [];
 	}
 
 	/**
@@ -347,8 +330,8 @@ class DataParsoid implements JsonCodecable {
 	public static function jsonClassHintFor( string $keyname ) {
 		static $hints = null;
 		if ( $hints === null ) {
-			$dsr = Hint::build( DomSourceRange::class, Hint::USE_SQUARE );
-			$sr = Hint::build( SourceRange::class, Hint::USE_SQUARE );
+			$dsr = DomSourceRange::hint();
+			$sr = SourceRange::hint();
 			$hints = [
 				'dsr' => $dsr,
 				'extTagOffsets' => $dsr,

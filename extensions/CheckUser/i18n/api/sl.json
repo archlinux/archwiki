@@ -1,0 +1,40 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar",
+			"Janezdrilc"
+		]
+	},
+	"apihelp-query+checkuser-summary": "Preveri, katere IPnaslove uporablja navedeni uporabnik ali katera uporabniška imena uporablja navedeni IP-naslov.",
+	"apihelp-query+checkuser-param-request": "Vrsta zahtevka za preverjanje uporabnika:",
+	"apihelp-query+checkuser-paramvalue-request-userips": "Pridobitev IP-naslova ciljnega uporabnika.",
+	"apihelp-query+checkuser-paramvalue-request-actions": "Pridobitev dejanj, ki jih izvaja ciljni IP-naslov ali razpon.",
+	"apihelp-query+checkuser-paramvalue-request-ipusers": "Pridobitev uporabnikov iz ciljnega IP-naslova ali razpona.",
+	"apihelp-query+checkuser-param-target": "Uporabniško ime, IP-naslov ali razpon CIDR za preverbo.",
+	"apihelp-query+checkuser-param-reason": "Razlog preverbe.",
+	"apihelp-query+checkuser-param-limit": "Omejitev vrstic.",
+	"apihelp-query+checkuser-param-timecond": "Časovna omejitev uporabniških podatkov (na primer »-2 weeks« ali »2 weeks ago«).",
+	"apihelp-query+checkuser-param-xff": "Uporabi podatke XFF namesto IP-naslova.",
+	"apihelp-query+checkuser-example-1": "Pridobi IP-naslove za [[User:Example]]",
+	"apihelp-query+checkuser-example-2": "Pridobi dejanja uporabnika 192.0.2.0/24",
+	"apihelp-query+checkuserlog-summary": "Pridobi zapise iz dnevnika preverjanj uporabnikov.",
+	"apihelp-query+checkuserlog-param-user": "Uporabniško ime preverjevalca uporabnikov.",
+	"apihelp-query+checkuserlog-param-target": "Uporabniško ime, IP-naslov ali razpon CIDR.",
+	"apihelp-query+checkuserlog-param-reason": "Navedeni razlog za preverjanje.",
+	"apihelp-query+checkuserlog-param-limit": "Omejitev vrstic.",
+	"apihelp-query+checkuserlog-param-from": "Datum začetka izpisa.",
+	"apihelp-query+checkuserlog-param-to": "Datum konca izpisa.",
+	"apihelp-query+checkuserlog-example-1": "Prikaži preverjanja za [[User:Example]]",
+	"apihelp-query+checkuserlog-example-2": "Prikaži preverjanja za 192.0.2.0/24 po 2011-10-15T23:00:00Z",
+	"apierror-checkuser-missingsummary": "Treba je navesti razlog za preverjanje.",
+	"apierror-checkuser-timelimit": "Treba je uporabiti pravilno časovno omejitev (na primer »-2 weeks« ali »2 weeks ago«).",
+	"apierror-checkuser-invalidmode": "Neveljaven način zaprositve",
+	"apierror-checkuser-nosuchuser": "Za to uporabniško ime ni takega uporabnika",
+	"checkuser-api-help-param-direction": "V kateri smeri naj poteka oštevilčevanje:",
+	"checkuser-api-help-paramvalue-direction-newer": "Najprej navedi najstarejše. Opomba: $1from mora biti pred $1to.",
+	"checkuser-api-help-paramvalue-direction-older": "Najprej je navedeno najnovejše (privzeto). Opomba: $1from mora biti pozneje kot $1to.",
+	"checkuser-api-useragent-clienthints-revision-user-mismatch": "Uporabnik $1 ni avtor redakcije $2",
+	"checkuser-api-useragent-clienthints-mappings-exist": "Preslikave namigov strank za $1 $2 že obstajajo",
+	"checkuser-api-useragent-clienthints-called-too-late": "$1 $2 je prestar, da bi omogočal beleženje podatkov o nasvetih strank",
+	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} zbira podatke o namigih odjemalcev uporabniških agentov za pomoč pri moderiranju vandalizma in zlorab. Za več podrobnosti glejte https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints."
+}

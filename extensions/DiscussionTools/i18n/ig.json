@@ -4,14 +4,14 @@
 			"Goodymeraj",
 			"Karen",
 			"Lebron jay",
+			"Matma Rex",
 			"Nwonwu Uchechukwu P",
 			"Oby Ezeilo",
 			"Olugold",
+			"Sayvhior",
 			"Senator Choko",
 			"Timzy D'Great",
-			"Matma Rex",
-			"Woytecr",
-			"Sayvhior"
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Ị ga-anata ozi mgbe mmadụ tinyere okwu ọhụụ n'ebe akpamnkata. Ị nwere ike idozi ebe ọkwa nnata ozi gi ebe mmasị gị.",
@@ -137,7 +137,7 @@
 	"tag-discussiontools-description": "Ndezi eji akọrọngwa mkparịta ụka mee",
 	"tag-discussiontools-edit": "Nkọwa edeziri",
 	"tag-discussiontools-edit-description": "onye ọrụ ji akọrọngwa mkparịta ụka dezie okwu di adị",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} New topic]",
+	"tag-discussiontools-newtopic": "New topic",
 	"tag-discussiontools-newtopic-description": "Onye ọrụ ji akọrọngwa mkparịta ụka tinye isiokwu ọhụụ",
 	"tag-discussiontools-reply-description": "Onye ọrụ ji akọrọngwa mkparịta ụka wee zaghachi okwu",
 	"tag-discussiontools-source-description": "Akọrọngwa mkparịta ụka dị mode nsinweta",

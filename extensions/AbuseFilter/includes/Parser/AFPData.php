@@ -41,7 +41,7 @@ class AFPData {
 	 */
 	public $type;
 	/**
-	 * @var mixed|null|AFPData[] The actual data contained in this object
+	 * @var mixed|null|self[] The actual data contained in this object
 	 * @internal Use $this->getData() instead
 	 */
 	public $data;
@@ -54,7 +54,7 @@ class AFPData {
 	}
 
 	/**
-	 * @return AFPData[]|mixed|null
+	 * @return self[]|mixed|null
 	 */
 	public function getData() {
 		return $this->data;
@@ -62,7 +62,7 @@ class AFPData {
 
 	/**
 	 * @param string $type
-	 * @param AFPData[]|mixed|null $val
+	 * @param self[]|mixed|null $val
 	 */
 	public function __construct( $type, $val = null ) {
 		if ( $type === self::DUNDEFINED && $val !== null ) {
@@ -75,27 +75,27 @@ class AFPData {
 
 	/**
 	 * @param mixed $var
-	 * @return AFPData
+	 * @return self
 	 * @throws InternalException
 	 */
 	public static function newFromPHPVar( $var ) {
 		switch ( gettype( $var ) ) {
 			case 'string':
-				return new AFPData( self::DSTRING, $var );
+				return new self( self::DSTRING, $var );
 			case 'integer':
-				return new AFPData( self::DINT, $var );
+				return new self( self::DINT, $var );
 			case 'double':
-				return new AFPData( self::DFLOAT, $var );
+				return new self( self::DFLOAT, $var );
 			case 'boolean':
-				return new AFPData( self::DBOOL, $var );
+				return new self( self::DBOOL, $var );
 			case 'array':
 				$result = [];
 				foreach ( $var as $item ) {
 					$result[] = self::newFromPHPVar( $item );
 				}
-				return new AFPData( self::DARRAY, $result );
+				return new self( self::DARRAY, $result );
 			case 'NULL':
-				return new AFPData( self::DNULL );
+				return new self( self::DNULL );
 			default:
 				throw new InternalException(
 					'Data type ' . get_debug_type( $var ) . ' is not supported by AbuseFilter'
@@ -104,11 +104,11 @@ class AFPData {
 	}
 
 	/**
-	 * @param AFPData $orig
+	 * @param self $orig
 	 * @param string $target
-	 * @return AFPData
+	 * @return self
 	 */
-	public static function castTypes( AFPData $orig, $target ) {
+	public static function castTypes( self $orig, $target ) {
 		if ( $orig->type === $target ) {
 			return $orig;
 		}
@@ -119,67 +119,67 @@ class AFPData {
 		}
 		if ( $target === self::DNULL ) {
 			// We don't expose any method to cast to null. And, actually, should we?
-			return new AFPData( self::DNULL );
+			return new self( self::DNULL );
 		}
 
 		if ( $orig->type === self::DARRAY ) {
 			if ( $target === self::DBOOL ) {
-				return new AFPData( self::DBOOL, (bool)count( $orig->data ) );
+				return new self( self::DBOOL, (bool)count( $orig->data ) );
 			} elseif ( $target === self::DFLOAT ) {
-				return new AFPData( self::DFLOAT, floatval( count( $orig->data ) ) );
+				return new self( self::DFLOAT, floatval( count( $orig->data ) ) );
 			} elseif ( $target === self::DINT ) {
-				return new AFPData( self::DINT, count( $orig->data ) );
+				return new self( self::DINT, count( $orig->data ) );
 			} elseif ( $target === self::DSTRING ) {
 				$s = '';
 				foreach ( $orig->data as $item ) {
 					$s .= $item->toString() . "\n";
 				}
 
-				return new AFPData( self::DSTRING, $s );
+				return new self( self::DSTRING, $s );
 			}
 		}
 
 		if ( $target === self::DBOOL ) {
-			return new AFPData( self::DBOOL, (bool)$orig->data );
+			return new self( self::DBOOL, (bool)$orig->data );
 		} elseif ( $target === self::DFLOAT ) {
-			return new AFPData( self::DFLOAT, floatval( $orig->data ) );
+			return new self( self::DFLOAT, floatval( $orig->data ) );
 		} elseif ( $target === self::DINT ) {
-			return new AFPData( self::DINT, intval( $orig->data ) );
+			return new self( self::DINT, intval( $orig->data ) );
 		} elseif ( $target === self::DSTRING ) {
-			return new AFPData( self::DSTRING, strval( $orig->data ) );
+			return new self( self::DSTRING, strval( $orig->data ) );
 		} elseif ( $target === self::DARRAY ) {
 			// We don't expose any method to cast to array
-			return new AFPData( self::DARRAY, [ $orig ] );
+			return new self( self::DARRAY, [ $orig ] );
 		}
 		throw new InternalException( 'Cannot cast ' . $orig->type . " to $target." );
 	}
 
 	/**
-	 * @return AFPData
+	 * @return self
 	 */
 	public function boolInvert() {
 		if ( $this->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		}
-		return new AFPData( self::DBOOL, !$this->toBool() );
+		return new self( self::DBOOL, !$this->toBool() );
 	}
 
 	/**
-	 * @param AFPData $exponent
-	 * @return AFPData
+	 * @param self $exponent
+	 * @return self
 	 */
-	public function pow( AFPData $exponent ) {
+	public function pow( self $exponent ) {
 		if ( $this->type === self::DUNDEFINED || $exponent->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		}
 		$res = pow( $this->toNumber(), $exponent->toNumber() );
 		$type = is_int( $res ) ? self::DINT : self::DFLOAT;
 
-		return new AFPData( $type, $res );
+		return new self( $type, $res );
 	}
 
 	/**
-	 * @param AFPData $d2
+	 * @param self $d2
 	 * @param bool $strict whether to also check types
 	 * @return bool
 	 * @throws InternalException if $this or $d2 is a DUNDEFINED. This shouldn't happen, because this method
@@ -187,7 +187,7 @@ class AFPData {
 	 *  be changed to be a DUNDEFINED from here.
 	 * @internal
 	 */
-	public function equals( AFPData $d2, $strict = false ) {
+	public function equals( self $d2, $strict = false ) {
 		if ( $this->type === self::DUNDEFINED || $d2->type === self::DUNDEFINED ) {
 			throw new InternalException(
 				__METHOD__ . " got a DUNDEFINED. This should be handled at a higher level"
@@ -226,34 +226,34 @@ class AFPData {
 	}
 
 	/**
-	 * @return AFPData
+	 * @return self
 	 */
 	public function unaryMinus() {
 		if ( $this->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		} elseif ( $this->type === self::DINT ) {
-			return new AFPData( $this->type, -$this->toInt() );
+			return new self( $this->type, -$this->toInt() );
 		} else {
-			return new AFPData( $this->type, -$this->toFloat() );
+			return new self( $this->type, -$this->toFloat() );
 		}
 	}
 
 	/**
-	 * @param AFPData $b
+	 * @param self $b
 	 * @param string $op
-	 * @return AFPData
+	 * @return self
 	 * @throws InternalException
 	 */
-	public function boolOp( AFPData $b, $op ) {
+	public function boolOp( self $b, $op ) {
 		$a = $this->type === self::DUNDEFINED ? false : $this->toBool();
 		$b = $b->type === self::DUNDEFINED ? false : $b->toBool();
 
 		if ( $op === '|' ) {
-			return new AFPData( self::DBOOL, $a || $b );
+			return new self( self::DBOOL, $a || $b );
 		} elseif ( $op === '&' ) {
-			return new AFPData( self::DBOOL, $a && $b );
+			return new self( self::DBOOL, $a && $b );
 		} elseif ( $op === '^' ) {
-			return new AFPData( self::DBOOL, $a xor $b );
+			return new self( self::DBOOL, $a xor $b );
 		}
 		// Should never happen.
 		// @codeCoverageIgnoreStart
@@ -262,35 +262,35 @@ class AFPData {
 	}
 
 	/**
-	 * @param AFPData $b
+	 * @param self $b
 	 * @param string $op
-	 * @return AFPData
+	 * @return self
 	 * @throws InternalException
 	 */
-	public function compareOp( AFPData $b, $op ) {
+	public function compareOp( self $b, $op ) {
 		if ( $this->type === self::DUNDEFINED || $b->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		}
 		if ( $op === '==' || $op === '=' ) {
-			return new AFPData( self::DBOOL, $this->equals( $b ) );
+			return new self( self::DBOOL, $this->equals( $b ) );
 		} elseif ( $op === '!=' ) {
-			return new AFPData( self::DBOOL, !$this->equals( $b ) );
+			return new self( self::DBOOL, !$this->equals( $b ) );
 		} elseif ( $op === '===' ) {
-			return new AFPData( self::DBOOL, $this->equals( $b, true ) );
+			return new self( self::DBOOL, $this->equals( $b, true ) );
 		} elseif ( $op === '!==' ) {
-			return new AFPData( self::DBOOL, !$this->equals( $b, true ) );
+			return new self( self::DBOOL, !$this->equals( $b, true ) );
 		}
 
 		$a = $this->toString();
 		$b = $b->toString();
 		if ( $op === '>' ) {
-			return new AFPData( self::DBOOL, $a > $b );
+			return new self( self::DBOOL, $a > $b );
 		} elseif ( $op === '<' ) {
-			return new AFPData( self::DBOOL, $a < $b );
+			return new self( self::DBOOL, $a < $b );
 		} elseif ( $op === '>=' ) {
-			return new AFPData( self::DBOOL, $a >= $b );
+			return new self( self::DBOOL, $a >= $b );
 		} elseif ( $op === '<=' ) {
-			return new AFPData( self::DBOOL, $a <= $b );
+			return new self( self::DBOOL, $a <= $b );
 		}
 		// Should never happen
 		// @codeCoverageIgnoreStart
@@ -299,19 +299,19 @@ class AFPData {
 	}
 
 	/**
-	 * @param AFPData $b
+	 * @param self $b
 	 * @param string $op
 	 * @param int $pos
-	 * @return AFPData
+	 * @return self
 	 * @throws UserVisibleException
 	 * @throws InternalException
 	 */
-	public function mulRel( AFPData $b, $op, $pos ) {
+	public function mulRel( self $b, $op, $pos ) {
 		if ( $b->type === self::DUNDEFINED ) {
 			// The LHS type is checked later, because we first need to ensure we're not
 			// dividing or taking modulo by 0 (and that should throw regardless of whether
 			// the LHS is undefined).
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		}
 
 		$b = $b->toNumber();
@@ -325,7 +325,7 @@ class AFPData {
 		}
 
 		if ( $this->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		}
 		$a = $this->toNumber();
 
@@ -344,40 +344,40 @@ class AFPData {
 
 		$type = is_int( $data ) ? self::DINT : self::DFLOAT;
 
-		return new AFPData( $type, $data );
+		return new self( $type, $data );
 	}
 
 	/**
-	 * @param AFPData $b
-	 * @return AFPData
+	 * @param self $b
+	 * @return self
 	 */
-	public function sum( AFPData $b ) {
+	public function sum( self $b ) {
 		if ( $this->type === self::DUNDEFINED || $b->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		} elseif ( $this->type === self::DSTRING || $b->type === self::DSTRING ) {
-			return new AFPData( self::DSTRING, $this->toString() . $b->toString() );
+			return new self( self::DSTRING, $this->toString() . $b->toString() );
 		} elseif ( $this->type === self::DARRAY && $b->type === self::DARRAY ) {
-			return new AFPData( self::DARRAY, array_merge( $this->toArray(), $b->toArray() ) );
+			return new self( self::DARRAY, array_merge( $this->toArray(), $b->toArray() ) );
 		} else {
 			$res = $this->toNumber() + $b->toNumber();
 			$type = is_int( $res ) ? self::DINT : self::DFLOAT;
 
-			return new AFPData( $type, $res );
+			return new self( $type, $res );
 		}
 	}
 
 	/**
-	 * @param AFPData $b
-	 * @return AFPData
+	 * @param self $b
+	 * @return self
 	 */
-	public function sub( AFPData $b ) {
+	public function sub( self $b ) {
 		if ( $this->type === self::DUNDEFINED || $b->type === self::DUNDEFINED ) {
-			return new AFPData( self::DUNDEFINED );
+			return new self( self::DUNDEFINED );
 		}
 		$res = $this->toNumber() - $b->toNumber();
 		$type = is_int( $res ) ? self::DINT : self::DFLOAT;
 
-		return new AFPData( $type, $res );
+		return new self( $type, $res );
 	}
 
 	/**

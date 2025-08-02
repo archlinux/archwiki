@@ -53,7 +53,7 @@ class PostgresConnectForm extends DatabaseConnectForm {
 
 		// Validate them
 		$status = Status::newGood();
-		if ( !strlen( $newValues['wgDBname'] ) ) {
+		if ( ( $newValues['wgDBname'] ?? '' ) === '' ) {
 			$status->fatal( 'config-missing-db-name' );
 		} elseif ( !preg_match( '/^[a-zA-Z0-9_]+$/', $newValues['wgDBname'] ) ) {
 			$status->fatal( 'config-invalid-db-name', $newValues['wgDBname'] );
@@ -91,7 +91,6 @@ class PostgresConnectForm extends DatabaseConnectForm {
 
 	/**
 	 * Downcast the DatabaseInstaller
-	 * @return PostgresInstaller
 	 */
 	private function getPostgresInstaller(): PostgresInstaller {
 		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType

@@ -2,30 +2,14 @@
 
 namespace MediaWiki\Skin;
 
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 class SkinComponentUtils {
-	/**
-	 * Adds a class to the existing class value, supporting it as a string
-	 * or array.
-	 *
-	 * @param string|array $class to update.
-	 * @param string $newClass to add.
-	 * @return string|array classes.
-	 * @internal
-	 */
-	public static function addClassToClassList( $class, string $newClass ) {
-		if ( is_array( $class ) ) {
-			$class[] = $newClass;
-		} else {
-			$class .= ' ' . $newClass;
-			$class = trim( $class );
-		}
-		return $class;
-	}
 
 	/**
 	 * Builds query params for the page to return to, used when building links
@@ -37,6 +21,28 @@ class SkinComponentUtils {
 	 * @return string[]
 	 */
 	public static function getReturnToParam( $title, $request, $authority ) {
+		// T379295/T381216: Preserve authentication query params so they don't get lost
+		// during switching between Login/Logout or CreateAccount pages where we need them.
+		// See AuthManagerSpecialPage/LoginSignupSpecialPage::getPreservedParams().
+		// This special case also avoids "nesting" returnto values on these pages.
+		if (
+			$title->isSpecial( 'Userlogin' )
+			|| $title->isSpecial( 'CreateAccount' )
+			|| $title->isSpecial( 'Userlogout' )
+		) {
+			$params = [
+				'uselang' => $request->getVal( 'uselang' ),
+				'variant' => $request->getVal( 'variant' ),
+				'display' => $request->getVal( 'display' ),
+				'returnto' => $request->getVal( 'returnto' ),
+				'returntoquery' => $request->getVal( 'returntoquery' ),
+				'returntoanchor' => $request->getVal( 'returntoanchor' ),
+			];
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+				->onAuthPreserveQueryParams( $params, [ 'request' => $request, 'reset' => true ] );
+			return array_filter( $params, static fn ( $val ) => $val !== null );
+		}
+
 		# Due to T34276, if a user does not have read permissions,
 		# $this->getTitle() will just give Special:Badtitle, which is
 		# not especially useful as a returnto parameter. Use the title
@@ -46,30 +52,22 @@ class SkinComponentUtils {
 		} else {
 			$page = Title::newFromText( $request->getVal( 'title', '' ) );
 		}
-		$page = $request->getVal( 'returnto', $page );
 
 		$query = [];
 		if ( !$request->wasPosted() ) {
-			$query = $request->getValues();
+			$query = $request->getQueryValues();
 			unset( $query['title'] );
-			unset( $query['returnto'] );
-			unset( $query['returntoquery'] );
 		}
 
-		$thisquery = wfArrayToCgi( $query );
-
-		$returnto = [];
-		if ( strval( $page ) !== '' ) {
-			$returnto['returnto'] = $page;
-			$query = $request->getVal( 'returntoquery', $thisquery );
-			$paramsArray = wfCgiToArray( $query );
-			$query = wfArrayToCgi( $paramsArray );
-			if ( $query != '' ) {
-				$returnto['returntoquery'] = $query;
+		$params = [];
+		if ( $page ) {
+			$params['returnto'] = $page->getPrefixedText();
+			if ( $query ) {
+				$params['returntoquery'] = wfArrayToCgi( $query );
 			}
 		}
 
-		return $returnto;
+		return $params;
 	}
 
 	/**

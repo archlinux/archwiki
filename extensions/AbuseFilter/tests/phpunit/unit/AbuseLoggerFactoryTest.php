@@ -4,16 +4,20 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseLogger;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
+use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
+use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\User;
 use MediaWikiUnitTestCase;
@@ -33,10 +37,13 @@ class AbuseLoggerFactoryTest extends MediaWikiUnitTestCase {
 			$this->createMock( VariablesBlobStore::class ),
 			$this->createMock( VariablesManager::class ),
 			$this->createMock( EditRevUpdater::class ),
+			$this->createMock( AbuseFilterPermissionManager::class ),
+			$this->createMock( RuleCheckerFactory::class ),
 			$this->createMock( LBFactory::class ),
 			$this->createMock( ActorStore::class ),
+			$this->createMock( TitleFactory::class ),
 			new ServiceOptions(
-				AbuseLogger::CONSTRUCTOR_OPTIONS,
+				AbuseLoggerFactory::CONSTRUCTOR_OPTIONS,
 				[
 					'AbuseFilterLogIP' => false,
 					'AbuseFilterNotifications' => 'rc',
@@ -45,7 +52,8 @@ class AbuseLoggerFactoryTest extends MediaWikiUnitTestCase {
 			),
 			'wikiID',
 			'1.2.3.4',
-			$this->createMock( LoggerInterface::class )
+			$this->createMock( LoggerInterface::class ),
+			$this->createMock( AbuseFilterHookRunner::class )
 		);
 		$logger = $factory->newLogger(
 			$this->createMock( Title::class ),

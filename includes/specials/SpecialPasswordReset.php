@@ -20,14 +20,14 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\ThrottledError;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\User\PasswordReset;
 use MediaWiki\User\User;
-use ThrottledError;
 
 /**
  * Special page for requesting a password reset email.
@@ -41,9 +41,6 @@ use ThrottledError;
 class SpecialPasswordReset extends FormSpecialPage {
 	private PasswordReset $passwordReset;
 
-	/**
-	 * @param PasswordReset $passwordReset
-	 */
 	public function __construct( PasswordReset $passwordReset ) {
 		parent::__construct( 'PasswordReset', 'editmyprivateinfo' );
 

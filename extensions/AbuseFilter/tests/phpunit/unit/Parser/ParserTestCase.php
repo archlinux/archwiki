@@ -22,52 +22,24 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Parser;
 
-use LanguageEn;
-use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
-use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
-use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
-use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
-use MediaWiki\Language\Language;
+use MediaWiki\Extension\AbuseFilter\Tests\Unit\GetFilterEvaluatorTestTrait;
 use MediaWikiUnitTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
-use Wikimedia\Equivset\Equivset;
-use Wikimedia\ObjectCache\EmptyBagOStuff;
-use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * Helper for parser-related tests
  */
 abstract class ParserTestCase extends MediaWikiUnitTestCase {
+	use GetFilterEvaluatorTestTrait;
+
 	/**
 	 * @param LoggerInterface|null $logger
 	 * @return FilterEvaluator
 	 */
 	protected function getParser( ?LoggerInterface $logger = null ) {
-		// We're not interested in caching or logging; tests should call respectively setCache
-		// and setLogger if they want to test any of those.
-		$keywordsManager = new KeywordsManager( $this->createMock( AbuseFilterHookRunner::class ) );
-		$varManager = new VariablesManager(
-			$keywordsManager,
-			$this->createMock( LazyVariableComputer::class )
-		);
-		$equivset = $this->createMock( Equivset::class );
-		$equivset->method( 'normalize' )->willReturnArgument( 0 );
-
-		$evaluator = new FilterEvaluator(
-			$this->getLanguageMock(),
-			new EmptyBagOStuff(),
-			$logger ?? new \Psr\Log\NullLogger(),
-			$keywordsManager,
-			$varManager,
-			new NullStatsdDataFactory(),
-			$equivset,
-			1000
-		);
-		$evaluator->toggleConditionLimit( false );
-		return $evaluator;
+		return $this->getFilterEvaluator( $logger );
 	}
 
 	/**
@@ -122,23 +94,5 @@ abstract class ParserTestCase extends MediaWikiUnitTestCase {
 	protected function exceptionTestInSkippedBlock( $excep, $expr, $caller = '' ) {
 		$expr = "false & ( $expr )";
 		$this->exceptionTestInternal( $excep, $expr, $caller, true );
-	}
-
-	/**
-	 * Get a mock of LanguageEn with only the methods we need in the parser
-	 *
-	 * @return Language|MockObject
-	 */
-	private function getLanguageMock() {
-		$lang = $this->createMock( LanguageEn::class );
-		$lang->method( 'uc' )
-			->willReturnCallback( static function ( $x ) {
-				return mb_strtoupper( $x );
-			} );
-		$lang->method( 'lc' )
-			->willReturnCallback( static function ( $x ) {
-				return mb_strtolower( $x );
-			} );
-		return $lang;
 	}
 }

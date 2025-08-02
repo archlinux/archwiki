@@ -2,9 +2,10 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use ErrorPageError;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
 
 class SpecialTopicSubscriptions extends SpecialPage {
@@ -48,7 +49,10 @@ class SpecialTopicSubscriptions extends SpecialPage {
 			$this->threadItemStore,
 			$this->threadItemFormatter
 		);
-		$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
+		$this->getOutput()->addParserOutputContent(
+			$pager->getFullOutput(),
+			ParserOptions::newFromContext( $this->getContext() )
+		);
 	}
 
 	/**

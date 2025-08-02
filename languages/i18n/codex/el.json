@@ -7,6 +7,7 @@
 	"cdx-dialog-close-button-label": "Κλείσιμο",
 	"cdx-label-optional-flag": "(προαιρετικό)",
 	"cdx-message-dismiss-button-label": "Κλείσιμο",
+	"cdx-popover-close-button-label": "Κλείσιμο",
 	"cdx-search-input-search-button-label": "Αναζήτηση",
 	"cdx-table-select-all-label": "Επιλογή όλων των γραμμών",
 	"cdx-table-select-row-label": "Επιλογή γραμμών $1 ή $2",
@@ -21,5 +22,6 @@
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 από $3",
 	"cdx-table-pagination-status-message-indeterminate-long": "Εμφάνιση αποτελεσμάτων $1–$2 από πολλά",
 	"cdx-table-pagination-status-message-indeterminate-short": "$1–$2 από πολλά",
-	"cdx-table-pagination-status-message-pending": "Φόρτωση αποτελεσμάτων..."
+	"cdx-table-pagination-status-message-pending": "Φόρτωση αποτελεσμάτων...",
+	"cdx-table-no-data-message": "Δεν υπάρχουν διαθέσιμα δεδομένα."
 }

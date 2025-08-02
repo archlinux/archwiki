@@ -18,13 +18,19 @@
  * @file
  */
 
+namespace MediaWiki\RecentChanges;
+
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Linker\UserLinkRenderer;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ExternalUserNames;
+use Wikimedia\HtmlArmor\HtmlArmor;
+use Wikimedia\MapCacheLRU\MapCacheLRU;
 
 /**
  * Create a RCCacheEntry from a RecentChange to use in EnhancedChangesList
@@ -44,28 +50,26 @@ class RCCacheEntryFactory {
 	 */
 	private $linkRenderer;
 
-	/**
-	 * @var MapCacheLRU
-	 */
-	private MapCacheLRU $userLinkCache;
+	private UserLinkRenderer $userLinkRenderer;
 
-	/**
-	 * @var MapCacheLRU
-	 */
 	private MapCacheLRU $toolLinkCache;
 
 	/**
 	 * @param IContextSource $context
 	 * @param string[] $messages
 	 * @param LinkRenderer $linkRenderer
+	 * @param UserLinkRenderer $userLinkRenderer
 	 */
 	public function __construct(
-		IContextSource $context, $messages, LinkRenderer $linkRenderer
+		IContextSource $context,
+		$messages,
+		LinkRenderer $linkRenderer,
+		UserLinkRenderer $userLinkRenderer
 	) {
 		$this->context = $context;
 		$this->messages = $messages;
 		$this->linkRenderer = $linkRenderer;
-		$this->userLinkCache = new MapCacheLRU( 50 );
+		$this->userLinkRenderer = $userLinkRenderer;
 		$this->toolLinkCache = new MapCacheLRU( 50 );
 	}
 
@@ -162,7 +166,7 @@ class RCCacheEntryFactory {
 		return $clink;
 	}
 
-	private function getLogLink( $logType ) {
+	private function getLogLink( string $logType ): string {
 		$logtitle = SpecialPage::getTitleFor( 'Log', $logType );
 		$logpage = new LogPage( $logType );
 		$logname = $logpage->getName()->text();
@@ -312,22 +316,10 @@ class RCCacheEntryFactory {
 			$userLink = ' <span class="' . $deletedClass . '">' .
 				$this->context->msg( 'rev-deleted-user' )->escaped() . '</span>';
 		} else {
-			/**
-			 * UserLink requires parser to render which when run on thousands of records can add
-			 * up to significant amount of processing time.
-			 * @see RCCacheEntryFactory::newFromRecentChange
-			 */
-			$userLink = $this->userLinkCache->getWithSetCallback(
-				$this->userLinkCache->makeKey(
-					$cacheEntry->mAttribs['rc_user_text'],
-					$this->context->getUser()->getName(),
-					$this->context->getLanguage()->getCode()
-				),
-				static fn () => Linker::userLink(
-					$cacheEntry->mAttribs['rc_user'],
-					$cacheEntry->mAttribs['rc_user_text'],
-					ExternalUserNames::getLocal( $cacheEntry->mAttribs['rc_user_text'] )
-				)
+			return $this->userLinkRenderer->userLink(
+				$cacheEntry->getPerformerIdentity(),
+				$this->context,
+				ExternalUserNames::getLocal( $cacheEntry->mAttribs['rc_user_text'] )
 			);
 		}
 
@@ -344,3 +336,6 @@ class RCCacheEntryFactory {
 	}
 
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( RCCacheEntryFactory::class, 'RCCacheEntryFactory' );

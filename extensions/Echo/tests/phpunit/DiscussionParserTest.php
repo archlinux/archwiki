@@ -318,8 +318,7 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 					],
 				],
 			],
-			// T68512, leading colon in user page link in signature
-			[
+			"T68512, leading colon in user page link in signature" => [
 				'new' => 612485855,
 				'old' => 612485595,
 				'username' => 'Admin',
@@ -340,8 +339,7 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 				],
 				'precondition' => 'isParserFunctionsInstalled',
 			],
-			// T154406 unintended mentions when changing content
-			[
+			"T154406 unintended mentions when changing content" => [
 				'new' => 987667999,
 				'old' => 987667998,
 				'username' => 'Admin',
@@ -1051,100 +1049,103 @@ TEXT
 
 		$output = DiscussionParser::getUserFromLine( $line );
 
-		if ( $output === false ) {
-			$this->assertFalse( $expectedUser );
-		} elseif ( is_array( $expectedUser ) ) {
-			// Sometimes testing for correct user detection,
-			// sometimes testing for offset detection
-			$this->assertEquals( $expectedUser, $output );
-		} else {
-			$this->assertEquals( $expectedUser, $output[1] );
-		}
+		$this->assertEquals( $expectedUser, $output );
 	}
 
 	public static function signingDetectionDataProvider() {
 		$ts = self::EXEMPLAR_TIMESTAMP;
 
 		return [
-			// Basic
-			[
+			"Basic" => [
 				"I like this. [[User:Werdna|Werdna]] ([[User talk:Werdna|talk]]) $ts",
 				[
 					13,
 					'Werdna'
 				],
 			],
-			// Confounding
-			[
+			"Confounding" => [
 				"[[User:Jorm]] is a meanie. --[[User:Werdna2|Andrew]] $ts",
 				[
 					29,
 					"Werdna2"
 				],
 			],
-			// Talk page link only
-			[
+			"Talk page link only" => [
 				"[[User:Swalling|Steve]] is the best person I have ever met. --[[User talk:Werdna3|Andrew]] $ts",
 				[
 					62,
 					'Werdna3'
 				],
 			],
-			// Anonymous user
-			[
+			"Anonymous user" => [
 				"I am anonymous because I like my IP address. --[[Special:Contributions/127.0.0.1|127.0.0.1]] $ts",
 				[
 					47,
 					'127.0.0.1'
 				],
 			],
-			// No signature
-			[
+			"Anonymous user (not a standard signature - userpage link)" => [
+				"I am anonymous because I like my IP address. --[[User:127.0.0.1|127.0.0.1]] $ts",
+				false,
+			],
+			"No signature" => [
 				"Well, \nI do think that [[User:Newyorkbrad]] is pretty cool, but what do I know?",
 				false
 			],
-			// Hash symbols in usernames
-			[
+			"Invalid username link" => [
+				"I'm evil! [[User:Template:Invalid|Invalid]] $ts",
+				false
+			],
+			"Invalid username link, followed by a valid one" => [
+				"I'm silly! --[[User:JarJar|JarJar]] ([[User talk:JarJar|talk]]) [[User:Template:Invalid|Invalid]] $ts",
+				[
+					13,
+					'JarJar'
+				]
+			],
+			"Invalid username link, preceded by a valid one" => [
+				"I'm silly! [[User:Template:Invalid|Invalid]] --[[User:JarJar|JarJar]] ([[User talk:JarJar|talk]]) $ts",
+				[
+					13 + 34,
+					'JarJar'
+				]
+			],
+			"Hash symbols in usernames" => [
 				"What do you think? [[User talk:We buried our secrets in the garden#top|wbositg]] $ts",
 				[
 					19,
 					'We buried our secrets in the garden'
 				],
 			],
-			// Title that gets normalized different than it is provided in the wikitext
-			[
+			"Title that gets normalized different than it is provided in the wikitext" => [
 				"Beep boop [[User:I_Heart_Spaces]] ([[User_talk:I_Heart_Spaces]]) $ts",
 				[
 					strlen( "Beep boop " ),
 					'I Heart Spaces'
 				],
 			],
-			// Accepts ] in the pipe
-			[
+			"Accepts ] in the pipe" => [
 				"Shake n Bake --[[User:Werdna4|wer]dna]] $ts",
 				[
 					strlen( "Shake n Bake --" ),
 					'Werdna4',
 				],
 			],
-
-			[
+			"???" => [
 				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxã? [[User:Jam]] $ts",
 				[
 					strlen( "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxã? " ),
 					"Jam"
 				],
 			],
-			// extra long signature
-			[
+			"extra long signature" => [
 				"{{U|He7d3r}}, xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxã? [[User:Reverta-me|<span style=\"font-size:13px; color:blue;font-family:Lucida Handwriting;text-shadow:aqua 5px 3px 12px;\">Aaaaa Bbbbbbb</span>]]'' <sup>[[User Talk:Reverta-me|<font color=\"gold\" face=\"Lucida Calligraphy\">Discussão</font>]]</sup>''",
 				[
 					strlen( "{{U|He7d3r}}, xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxã? " ),
 					'Reverta-me',
 				],
 			],
-			// Bug: T87852
-			[
+			"Bug: T87852" => [
 				"Test --[[Benutzer:Schnark]] ([[Benutzer:Schnark/js|js]])",
 				[
 					strlen( "Test --" ),

@@ -4,7 +4,8 @@
 			"Timo Tijhof",
 			"James D. Forrester",
 			"Moriel Schottlender",
-			"Marielle Volz"
+			"Marielle Volz",
+			"Sammy Fox"
 		]
 	},
 	"templatedata-desc": "Implements data storage for template parameters (using JSON)",
@@ -42,7 +43,7 @@
 	"templatedata-doc-params": "Template parameters",
 	"templatedata-doc-subpage": "doc",
 	"templatedata-editbutton": "Edit template data",
-	"templatedata-errormsg-jsonbadformat": "Bad JSON format. You can cancel this operation so you can correct it, delete the current <templatedata> tags and try again, or continue to replace the current template data with a new one.",
+	"templatedata-errormsg-jsonbadformat": "Bad JSON format. You can cancel this operation so you can correct or remove it, or continue to replace the current template data with a new one.",
 	"templatedata-errormsg-insertblank": "Are you sure you want to insert template data with no information?",
 	"templatedata-exists-on-related-page": "Please note: there is already a template data block on the related page \"[[$1]]\".",
 	"templatedata-helplink": "Information about template data",
@@ -72,6 +73,7 @@
 	"templatedata-modal-button-removemap": "Remove map",
 	"templatedata-modal-button-saveparam": "Save",
 	"templatedata-modal-confirmcancel": "Are you sure you want to discard your changes?",
+	"templatedata-modal-button-discard": "Discard",
 	"templatedata-modal-current-language": "Current language: $1",
 	"templatedata-modal-errormsg": "Errors found. Please make sure there are no empty or duplicate parameter names, and that the parameter name does not include \"$1\", \"$2\" or \"$3\".",
 	"templatedata-modal-errormsg-duplicate-name": "Error found. The chosen name is already in use by another parameter.",
@@ -114,5 +116,19 @@
 	"templatedata-modal-title-templateformat": "Suggested wikitext formatting",
 	"templatedata-modal-title-templateformatstring": "Custom format string",
 	"templatedata-modal-title-templateparam-details": "Parameter details: $1",
-	"templatedata-modal-title-templateparams": "Template parameters"
+	"templatedata-modal-title-templateparams": "Template parameters",
+	"templatedata-search-title": "Template search",
+	"templatedata-search-description": "Find the template you want to insert by searching for an identifying keyword. Templates that have descriptions are more likely to work well.",
+	"templatedata-search-placeholder": "Find template",
+	"templatedata-search-list-header": "Favorites",
+	"templatedata-search-list-empty": "Templates you mark as favorites will appear here",
+	"templatedata-template-discovery-disabled": "Template discovery is disabled on this wiki.",
+	"templatediscovery": "Template discovery",
+	"templatedata-favorite-disabled": "You must be logged in to favorite a template",
+	"templatedata-favorite-add": "Add template to favorites",
+	"templatedata-favorite-added": "Template added to favorites",
+	"templatedata-favorite-remove": "Remove template from favorites",
+	"templatedata-favorite-removed": "Template removed from favorites",
+	"templatedata-favorite-error": "Unable to save favorites",
+	"templatedata-favorite-maximum-reached": "You have reached the maximum number ($1) of favorite templates. Please remove some from your list before adding more."
 }

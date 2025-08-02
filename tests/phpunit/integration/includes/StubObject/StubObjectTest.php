@@ -31,14 +31,8 @@ use MediaWiki\StubObject\StubObject;
  */
 class StubObjectTest extends MediaWikiIntegrationTestCase {
 
-	/** @var int */
-	private $oldErrorLevel;
-
 	protected function setUp(): void {
 		parent::setUp();
-
-		// Make sure deprecation notices are seen
-		$this->oldErrorLevel = error_reporting( -1 );
 
 		global $wgDummy;
 		$wgDummy = new StubObject(
@@ -47,16 +41,9 @@ class StubObjectTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	protected function tearDown(): void {
-		error_reporting( $this->oldErrorLevel );
-		parent::tearDown();
-	}
-
 	/**
 	 * Static factory method for creating the underlying global, which is
 	 * a DemoStubbed with the starting value of 5
-	 *
-	 * @return DemoStubbed
 	 */
 	public static function factory(): DemoStubbed {
 		return new DemoStubbed( 5 );
@@ -172,16 +159,10 @@ class DemoStubbed {
 	/** @var int */
 	public $num;
 
-	/**
-	 * @param int $num
-	 */
 	public function __construct( int $num ) {
 		$this->num = $num;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getNum(): int {
 		return $this->num;
 	}

@@ -39,13 +39,12 @@ use MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
-use Skin;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -180,18 +179,16 @@ class Hooks implements
 
 	/**
 	 * Entry point for the <categorytree> tag parser hook.
-	 * This loads CategoryTreeFunctions.php and calls CategoryTree::getTag()
-	 * @param string $cat
+	 * This loads CategoryTree and calls CategoryTree::getTag()
+	 * @param string|null $cat
 	 * @param array $argv
 	 * @param Parser|null $parser
-	 * @param PPFrame|null $frame
 	 * @return bool|string
 	 */
 	public function parserHook(
-		$cat,
+		?string $cat,
 		array $argv,
-		?Parser $parser = null,
-		?PPFrame $frame = null
+		?Parser $parser = null
 	) {
 		if ( $parser ) {
 			$parserOutput = $parser->getOutput();

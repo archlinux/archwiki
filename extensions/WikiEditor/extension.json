@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -90,7 +90,6 @@
 				"dialogReplace.html": "templates/dialogReplace.html"
 			},
 			"messages": [
-				"wikieditor-wikitext-tab",
 				"wikieditor-toolbar-tool-bold",
 				"wikieditor-toolbar-tool-bold-example",
 				"wikieditor-toolbar-tool-italic",
@@ -130,6 +129,8 @@
 				"wikieditor-toolbar-tool-ulist-example",
 				"wikieditor-toolbar-tool-olist",
 				"wikieditor-toolbar-tool-olist-example",
+				"wikieditor-toolbar-tool-code",
+				"wikieditor-toolbar-tool-code-example",
 				"wikieditor-toolbar-tool-nowiki",
 				"wikieditor-toolbar-tool-nowiki-example",
 				"wikieditor-toolbar-tool-redirect",
@@ -246,6 +247,7 @@
 			],
 			"dependencies": [
 				"mediawiki.cookie",
+				"jquery.client",
 				"jquery.textSelection",
 				"jquery.ui",
 				"mediawiki.api",

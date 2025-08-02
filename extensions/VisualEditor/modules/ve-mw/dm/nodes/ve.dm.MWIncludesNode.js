@@ -26,6 +26,8 @@ OO.inheritClass( ve.dm.MWIncludesNode, ve.dm.AlienInlineNode );
 
 ve.dm.MWIncludesNode.static.name = 'mwIncludes';
 
+ve.dm.MWIncludesNode.static.preserveHtmlAttributes = true;
+
 ve.dm.MWIncludesNode.static.matchRdfaTypes = [
 	/^mw:Includes\//
 ];

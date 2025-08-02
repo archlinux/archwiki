@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
+use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -26,10 +27,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * @group Database
  */
 class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
-	/**
-	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::getModuleIds
-	 */
-	public function testGetModuleIds() {
+	private function makeTestRegistry(): OATHAuthModuleRegistry {
 		$this->getDb()->newInsertQueryBuilder()
 			->insertInto( 'oathauth_types' )
 			->row( [ 'oat_name' => 'first' ] )
@@ -37,17 +35,34 @@ class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
 			->execute();
 
 		$database = $this->createMock( IConnectionProvider::class );
-		$database->method( 'getPrimaryDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->db );
-		$database->method( 'getReplicaDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->db );
+		$database->method( 'getPrimaryDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->getDb() );
+		$database->method( 'getReplicaDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->getDb() );
 
-		$registry = new OATHAuthModuleRegistry(
+		return new OATHAuthModuleRegistry(
 			$database,
+			$this->createNoOpMock( ObjectFactory::class ),
 			[
 				'first'  => 'does not matter',
 				'second' => 'does not matter',
 				'third'  => 'does not matter',
 			]
 		);
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::moduleExists
+	 */
+	public function testModuleExists() {
+		$registry = $this->makeTestRegistry();
+		$this->assertTrue( $registry->moduleExists( 'first' ) );
+		$this->assertFalse( $registry->moduleExists( 'nonexistent' ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::getModuleIds
+	 */
+	public function testGetModuleIds() {
+		$registry = $this->makeTestRegistry();
 
 		$this->assertEquals(
 			[ 'first', 'second', 'third' ],

@@ -111,7 +111,7 @@ class DefaultOverflowBuilder implements IOverflowBuilder {
 			'page-actions-overflow-' . $name,
 			$originalMsg,
 			$href,
-			$toolbox[$name]['class'] ?? false
+			$toolbox[$name]['class'] ?? ''
 		);
 
 		return $href ? $entry->setIcon( $icon )->trackClicks( $name ) : null;

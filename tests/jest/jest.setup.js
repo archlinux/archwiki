@@ -32,6 +32,7 @@ config.global.directives = {
 };
 
 function ApiMock() {}
+ApiMock.prototype.abort = jest.fn();
 ApiMock.prototype.get = jest.fn();
 ApiMock.prototype.post = jest.fn();
 ApiMock.prototype.postWithEditToken = jest.fn();
@@ -55,9 +56,13 @@ const mw = {
 	config: {
 		get: jest.fn()
 	},
+	hook: jest.fn().mockReturnValue( {
+		add: jest.fn(),
+		fire: jest.fn()
+	} ),
 	message: jest.fn( ( key ) => ( {
 		text: jest.fn( () => key ),
-		parse: jest.fn()
+		parse: jest.fn( () => key )
 	} ) ),
 	msg: jest.fn( ( key ) => key ),
 	user: {
@@ -74,8 +79,12 @@ const mw = {
 	},
 	Title: TitleMock,
 	util: {
-		getUrl: jest.fn(),
-		isInfinity: jest.fn()
+		debounce: jest.fn( ( fn ) => fn() ),
+		getUrl: jest.fn( ( pageName ) => '/wiki/' + pageName ),
+		isIPAddress: jest.fn(),
+		isInfinity: jest.fn(),
+		sanitizeIP: jest.fn(),
+		getParamValue: jest.fn().mockReturnValue( null )
 	},
 	Rest: RestMock
 	// Add more mw properties as needed…

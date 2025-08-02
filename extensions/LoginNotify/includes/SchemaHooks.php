@@ -10,9 +10,12 @@ class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
 	 * @param DatabaseUpdater $updater
 	 */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
-		$updater->addExtensionTable(
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			'virtual-LoginNotify',
+			'addTable',
 			'loginnotify_seen_net',
-			dirname( __DIR__ ) . "/sql/{$updater->getDB()->getType()}/tables-generated.sql"
-		);
+			dirname( __DIR__ ) . "/sql/{$updater->getDB()->getType()}/tables-generated.sql",
+			true
+		] );
 	}
 }

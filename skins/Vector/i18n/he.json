@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"A100Star",
 			"Amire80",
 			"Guycn2",
 			"Rotemliss",
 			"דגש",
-			"פוילישער",
-			"A100Star"
+			"פוילישער"
 		]
 	},
 	"skinname-vector": "וקטור ישן (2010)",
@@ -22,7 +22,7 @@
 	"vector-language-button-aria-label": "מעבר לערך בשפה אחרת. זמין {{PLURAL:$1|בשפה אחת|ב־$1 שפות}}",
 	"vector-language-button-label": "{{PLURAL:$1|שפה אחת|$1 שפות}}",
 	"vector-no-language-button-label": "הוספת שפות",
-	"vector-no-language-button-aria-label": "הערך הזה קיים רק בשפה הזאת. {{GENDER:|הוסף|הוסיפי|מוזמנים להוסיף}} את הערך לשפות אחרות",
+	"vector-no-language-button-aria-label": "הערך הזה זמין רק בשפה הזאת. {{GENDER:|הוסף|הוסיפי|מוזמנים להוסיף}} את הערך לשפות אחרות",
 	"vector-language-variant-switcher-label": "שינוי הגוון השפה",
 	"vector-action-addsection": "פסקה חדשה",
 	"vector-action-delete": "מחיקה",
@@ -41,6 +41,7 @@
 	"vector-more-actions": "עוד",
 	"vector-appearance-label": "מראה",
 	"vector-appearance-tooltip": "שינוי המראה של גודל הגופן, הרוחב והצבע של הדף",
+	"vector-personal-tools-tooltip": "הגדרות אישיות",
 	"vector-feature-limited-width-name": "רוחב",
 	"vector-feature-limited-width-0-label": "רחב",
 	"vector-feature-limited-width-1-label": "רגיל",

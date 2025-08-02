@@ -11,8 +11,8 @@
 			"Vago",
 			"Vugar 1981",
 			"Wertuose",
-			"Əkrəm Cəfər",
-			"Əkrəm"
+			"Əkrəm",
+			"Əkrəm Cəfər"
 		]
 	},
 	"skinname-vector": "Köhnə Vektor (2010)",
@@ -49,6 +49,7 @@
 	"vector-more-actions": "Daha çox",
 	"vector-appearance-label": "Görünüş",
 	"vector-appearance-tooltip": "Səhifənin şrift ölçüsünün, eninin və rənginin görünüşünü dəyişdirin",
+	"vector-personal-tools-tooltip": "Şəxsi parametrlər",
 	"vector-feature-limited-width-name": "Genişlik",
 	"vector-feature-limited-width-0-label": "Enli",
 	"vector-feature-limited-width-1-label": "Standart",
@@ -99,7 +100,7 @@
 	"vector-night-mode-issue-reporting-notice-tooltip": "Tünd rejim rəngləri yazıları oxumağı çətinləşdirirsə xəbər verin.",
 	"vector-night-mode-issue-reporting-link-label": "Qaranlıq rejimlə bağlı problem bildirin",
 	"vector-night-mode-issue-reporting-link-notification": "Göndərildi!",
-	"vector-night-mode-issue-reporting-preload-title": "$1 qaranlıq rejim xətası",
+	"vector-night-mode-issue-reporting-preload-title": "$1 səhifəsində qaranlıq rejimlə bağlı problem",
 	"vector-night-mode-issue-reporting-preload-content": "<!--\nTəlimatlar\n\nQaranlıq rejim rənglərinin Vikipediyanın oxunmasını necə çətinləşdirdiyini təsvir edin. \nZəhmət olmasa məqalənin problemi tapdığınız bölməni daxil edin. \n-->\n'''Problemin təsviri'''",
 	"vector-night-mode-beta-tag": "(beta)"
 }

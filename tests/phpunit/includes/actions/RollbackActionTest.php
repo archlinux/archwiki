@@ -2,19 +2,19 @@
 
 namespace MediaWiki\Tests\Action;
 
-use Article;
-use ErrorPageError;
+use MediaWiki\Actions\RollbackAction;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Page\Article;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use RollbackAction;
 
 /**
- * @covers \RollbackAction
+ * @covers \MediaWiki\Actions\RollbackAction
  * @group Database
  */
 class RollbackActionTest extends MediaWikiIntegrationTestCase {
@@ -92,6 +92,9 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testRollback() {
+		$editTracker = $this->getServiceContainer()->getUserEditTracker();
+		$editCount = $editTracker->getUserEditCount( $this->sysop );
+
 		$request = new FauxRequest( [
 			'from' => $this->vandal->getName(),
 			'token' => $this->sysop->getEditToken( 'rollback' ),
@@ -110,6 +113,11 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 		$recentChange = $revisionStore->getRecentChange( $latestRev );
 		$this->assertSame( '0', $recentChange->getAttribute( 'rc_bot' ) );
 		$this->assertSame( $this->sysop->getName(), $recentChange->getAttribute( 'rc_user_text' ) );
+
+		// T382592
+		$editTracker->clearUserEditCache( $this->sysop );
+		$this->runDeferredUpdates();
+		$this->assertSame( $editCount + 1, $editTracker->getUserEditCount( $this->sysop ) );
 	}
 
 	public function testRollbackMarkBot() {

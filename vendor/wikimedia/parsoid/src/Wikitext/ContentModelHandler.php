@@ -3,8 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wikitext;
 
+use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ContentModelHandler as IContentModelHandler;
+use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\DOMProcessor as ExtDOMProcessor;
@@ -36,14 +38,13 @@ class ContentModelHandler extends IContentModelHandler {
 	 * Bring DOM to expected canonical form
 	 */
 	private function canonicalizeDOM(
-		Env $env, Document $doc, bool $isSelectiveUpdate
+		Env $env, Document $doc
 	): void {
+		Assert::invariant(
+			DOMDataUtils::isPreparedAndLoaded( $doc ),
+			"doc should already be prepared and loaded"
+		);
 		$body = DOMCompat::getBody( $doc );
-
-		// Convert DOM to internal canonical form
-		DOMDataUtils::visitAndLoadDataAttribs( $body, [
-			'markNew' => !$isSelectiveUpdate,
-		] );
 
 		// Update DSR offsets if necessary.
 		ContentUtils::convertOffsets(
@@ -111,17 +112,20 @@ class ContentModelHandler extends IContentModelHandler {
 
 			// FIXME(T266838): Create a new Env for this parse?  Something is
 			// needed to avoid this rigmarole.
-			$topLevelDoc = $env->topLevelDoc;
+			$topLevelDoc = $env->getTopLevelDoc();
 			$env->setupTopLevelDoc();
 			// This effectively parses $selserData->revText for us because
 			// $selserData->revText = $env->getPageconfig()->getPageMainContent()
 			$doc = $this->toDOM( $extApi );
-			$env->topLevelDoc = $topLevelDoc;
+			$env->setupTopLevelDoc( $topLevelDoc );
 		} else {
-			$doc = ContentUtils::createDocument( $selserData->revHTML, true );
+			$doc = ContentUtils::createAndLoadDocument(
+				$selserData->revHTML,
+				[ 'markNew' => true, 'validateXMLNames' => true, ]
+			);
 		}
 
-		$this->canonicalizeDOM( $env, $doc, false );
+		$this->canonicalizeDOM( $env, $doc );
 		$selserData->revDOM = $doc;
 	}
 
@@ -139,12 +143,8 @@ class ContentModelHandler extends IContentModelHandler {
 		// Given that, the for-loop below implements "last-one-wins" semantics
 		// for indicators that use the same name key.
 		foreach ( $indicators as $meta ) {
-			// Since the DOM is in "stored" state, we have to reparse data-mw here.
-			$codec = DOMDataUtils::getCodec( $doc );
-			$dataMwAttr = DOMCompat::getAttribute( $meta, 'data-mw' );
-			$dmw = $dataMwAttr === null ? null :
-				$codec->newFromJsonString( $dataMwAttr, DOMDataUtils::getCodecHints()['data-mw'] );
-			$name = $dmw->attrs->name;
+			$dmw = DOMDataUtils::getDataMw( $meta );
+			$name = $dmw->getExtAttrib( 'name' );
 			$iData[$name] = $dmw->html;
 		}
 
@@ -164,9 +164,19 @@ class ContentModelHandler extends IContentModelHandler {
 		$pipelineFactory = $env->getPipelineFactory();
 
 		if ( $selectiveUpdateData ) {
-			$doc = ContentUtils::createDocument( $selectiveUpdateData->revHTML, true );
+			$doc = ContentUtils::createAndLoadDocument(
+				$selectiveUpdateData->revHTML,
+				[
+					'markNew' => false, // !isSelectiveUpdate
+					'validateXMLNames' => true,
+				]
+			);
+			Assert::invariant(
+				!DomPageBundle::isSingleDocument( $doc ),
+				"toplevelDoc should not be a single-document page bundle"
+			);
 			$env->setupTopLevelDoc( $doc );
-			$this->canonicalizeDOM( $env, $env->topLevelDoc, true );
+			$this->canonicalizeDOM( $env, $env->getTopLevelDoc() );
 			$selectiveUpdateData->revDOM = $doc;
 			$doc = $pipelineFactory->selectiveDOMUpdate( $selectiveUpdateData );
 		} else {
@@ -182,6 +192,10 @@ class ContentModelHandler extends IContentModelHandler {
 			$this->processIndicators( $doc, $extApi );
 		}
 
+		Assert::invariant(
+			DOMDataUtils::isPreparedAndLoaded( $doc ),
+			"toDOM should return a prepared and loaded doc"
+		);
 		return $doc;
 	}
 
@@ -226,7 +240,7 @@ class ContentModelHandler extends IContentModelHandler {
 		$siteConfig = $env->getSiteConfig();
 		$setupTiming = Timing::start( $siteConfig );
 
-		$this->canonicalizeDOM( $env, $env->topLevelDoc, false );
+		$this->canonicalizeDOM( $env, $env->getTopLevelDoc() );
 
 		$serializerOpts = [ 'selserData' => $selserData ];
 		if ( $selserData ) {
@@ -242,11 +256,11 @@ class ContentModelHandler extends IContentModelHandler {
 		$setupTiming->end( 'html2wt.setup', 'html2wt_setup_seconds', [] );
 
 		$preprocTiming = Timing::start( $siteConfig );
-		$this->preprocessEditedDOM( $env, $env->topLevelDoc );
+		$this->preprocessEditedDOM( $env, $env->getTopLevelDoc() );
 		$preprocTiming->end( 'html2wt.preprocess', 'html2wt_preprocess_seconds', [] );
 
 		$serializeTiming = Timing::start( $siteConfig );
-		$res = $serializer->serializeDOM( $env->topLevelDoc );
+		$res = $serializer->serializeDOM( $env->getTopLevelDoc() );
 		$serializeTiming->end(
 			"html2wt.{$wtsType}.serialize",
 			"html2wt_serialize_seconds",

@@ -26,6 +26,8 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\LoginSignupSpecialPage;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 use StatusValue;
 
 /**
@@ -48,12 +50,12 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		'authform-wrongtoken' => 'sessionfailure',
 	];
 
-	/**
-	 * @param AuthManager $authManager
-	 */
-	public function __construct( AuthManager $authManager ) {
+	private UserIdentityUtils $identityUtils;
+
+	public function __construct( AuthManager $authManager, UserIdentityUtils $identityUtils ) {
 		parent::__construct( 'Userlogin' );
 		$this->setAuthManager( $authManager );
+		$this->identityUtils = $identityUtils;
 	}
 
 	public function doesWrites() {
@@ -92,7 +94,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		if ( $subPage === 'signup' || $this->getRequest()->getText( 'type' ) === 'signup' ) {
 			// B/C for old account creation URLs
 			$title = SpecialPage::getTitleFor( 'CreateAccount' );
-			$query = array_diff_key( $this->getRequest()->getValues(),
+			$query = array_diff_key( $this->getRequest()->getQueryValues(),
 				array_fill_keys( [ 'type', 'title' ], true ) );
 			$url = $title->getFullURL( $query, false, PROTO_CURRENT );
 			$this->getOutput()->redirect( $url );
@@ -168,10 +170,11 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		return 'login';
 	}
 
-	protected function logAuthResult( $success, $status = null ) {
+	protected function logAuthResult( $success, UserIdentity $performer, $status = null ) {
 		LoggerFactory::getInstance( 'authevents' )->info( 'Login attempt', [
 			'event' => 'login',
 			'successful' => $success,
+			'accountType' => $this->identityUtils->getShortUserTypeInternal( $performer ),
 			'status' => strval( $status ),
 		] );
 	}

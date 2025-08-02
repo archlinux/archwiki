@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Tests\PageImages;
 
-use File;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\Title\Title;
 use MediaWikiUnitTestCase;
 use PageImages\PageImageCandidate;

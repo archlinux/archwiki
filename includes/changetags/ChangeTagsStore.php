@@ -21,11 +21,12 @@
 namespace MediaWiki\ChangeTags;
 
 use InvalidArgumentException;
-use ManualLogEntry;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
@@ -33,7 +34,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
-use RecentChange;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -79,6 +79,7 @@ class ChangeTagsStore {
 		'mw-changed-redirect-target',
 		'mw-blank',
 		'mw-replace',
+		'mw-recreated',
 		'mw-rollback',
 		'mw-undo',
 		'mw-manual-revert',
@@ -138,6 +139,16 @@ class ChangeTagsStore {
 			$availableSoftwareTags,
 			self::DEFINED_SOFTWARE_TAGS
 		);
+	}
+
+	/**
+	 * Expose the codebase-level defined software tags.
+	 * No filtering is available for this function.
+	 *
+	 * @return array Array of all core-defined tags
+	 */
+	public function getCoreDefinedTags(): array {
+		return self::DEFINED_SOFTWARE_TAGS;
 	}
 
 	/**
@@ -381,7 +392,7 @@ class ChangeTagsStore {
 
 		return $this->wanCache->getWithSetCallback(
 			$this->wanCache->makeKey( 'tags-usage-statistics' ),
-			WANObjectCache::TTL_MINUTE * 5,
+			WANObjectCache::TTL_HOUR,
 			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $fname, $dbProvider ) {
 				$dbr = $dbProvider->getReplicaDatabase();
 				$res = $dbr->newSelectQueryBuilder()
@@ -400,7 +411,7 @@ class ChangeTagsStore {
 			},
 			[
 				'checkKeys' => [ $this->wanCache->makeKey( 'tags-usage-statistics' ) ],
-				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'lockTSE' => WANObjectCache::TTL_HOUR,
 				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
@@ -420,7 +431,7 @@ class ChangeTagsStore {
 
 		return $this->wanCache->getWithSetCallback(
 			$this->wanCache->makeKey( 'valid-tags-db' ),
-			WANObjectCache::TTL_MINUTE * 5,
+			WANObjectCache::TTL_HOUR,
 			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $fname, $dbProvider ) {
 				$dbr = $dbProvider->getReplicaDatabase();
 				$setOpts += Database::getCacheSetOptions( $dbr );
@@ -435,7 +446,7 @@ class ChangeTagsStore {
 			},
 			[
 				'checkKeys' => [ $this->wanCache->makeKey( 'valid-tags-db' ) ],
-				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'lockTSE' => WANObjectCache::TTL_HOUR,
 				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
@@ -460,7 +471,7 @@ class ChangeTagsStore {
 		$dbProvider = $this->dbProvider;
 		return $this->wanCache->getWithSetCallback(
 			$this->wanCache->makeKey( 'valid-tags-hook' ),
-			WANObjectCache::TTL_MINUTE * 5,
+			WANObjectCache::TTL_HOUR,
 			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $tags, $hookRunner, $dbProvider ) {
 				$setOpts += Database::getCacheSetOptions( $dbProvider->getReplicaDatabase() );
 				$hookRunner->onListDefinedTags( $tags );
@@ -468,7 +479,7 @@ class ChangeTagsStore {
 			},
 			[
 				'checkKeys' => [ $this->wanCache->makeKey( 'valid-tags-hook' ) ],
-				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'lockTSE' => WANObjectCache::TTL_HOUR,
 				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
@@ -746,7 +757,7 @@ class ChangeTagsStore {
 
 		return $this->wanCache->getWithSetCallback(
 			$this->wanCache->makeKey( 'active-tags' ),
-			WANObjectCache::TTL_MINUTE * 5,
+			WANObjectCache::TTL_HOUR,
 			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $tags, $hookRunner, $dbProvider ) {
 				$setOpts += Database::getCacheSetOptions( $dbProvider->getReplicaDatabase() );
 
@@ -756,7 +767,7 @@ class ChangeTagsStore {
 			},
 			[
 				'checkKeys' => [ $this->wanCache->makeKey( 'active-tags' ) ],
-				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'lockTSE' => WANObjectCache::TTL_HOUR,
 				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia"
+		]
+	},
+	"apihelp-query+checkuser-param-target": "Nama pengguna, alamat IP atau 'CIDR range' untuk disemak.",
+	"apihelp-query+checkuser-param-xff": "Gunakan data XFF daripada alamat IP.",
+	"apihelp-query+checkuser-example-1": "Semak alamat IP untuk [[User:Example]]"
+}

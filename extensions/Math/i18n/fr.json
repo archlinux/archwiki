@@ -9,6 +9,7 @@
 			"Grind24",
 			"Hello71",
 			"Macofe",
+			"Mahabarata",
 			"Mattho69",
 			"Orlodrim",
 			"Peter17",
@@ -20,8 +21,7 @@
 			"Wladek92",
 			"Wyz",
 			"Yona b",
-			"Zebulon84",
-			"Mahabarata"
+			"Zebulon84"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

@@ -4,26 +4,6 @@ input {
 	font-family: @fonts;
 }
 
-// Because weird special cases that get broken by this usually aren't forms?
-form {
-	// Special-case out the datetime widget and revision-compare button
-	input:not( .mw-widgets-datetime-dateTimeInputWidget-editField ):not( .mw-history-compareselectedversions-button ) {
-		margin: 0.5em 0;
-		padding: 0.35em;
-	}
-
-	// Special-case out also rather more normal multiselect
-	.oo-ui-tagMultiselectWidget-handle input {
-		margin: unset;
-		padding: unset;
-	}
-
-	// Padding on checkboxes seems to cause misalignment with its text
-	.oo-ui-checkboxInputWidget input:not( .mw-widgets-datetime-dateTimeInputWidget-editField ):not( .mw-history-compareselectedversions-button ) {
-		margin: unset;
-	}
-}
-
 .oo-ui-buttonElement-framed.oo-ui-labelElement > .oo-ui-buttonElement-button,
 .oo-ui-textInputWidget .oo-ui-inputWidget-input,
 .oo-ui-dropdownWidget-handle,
@@ -84,11 +64,18 @@ div.editOptions {
 	}
 }
 
-form:not( .oo-ui-layout ) {
+// Modify forms that are not either OOUI or Codex.
+form:not( .oo-ui-layout ):not( .mw-htmlform-codex ) {
 	textarea,
 	input {
 		border: solid 1px @base70;
 		border-radius: 2px;
+	}
+
+	// The latter selector is due to T389358
+	input:not( [ type='submit' ] ):not( [ name='search' ] ) {
+		margin: 0.5em 0;
+		padding: 0.35em;
 	}
 
 	input[ type='file' ] {

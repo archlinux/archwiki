@@ -132,16 +132,16 @@ ve.ui.DiffElement.prototype.onDescriptionsHighlight = function ( item ) {
 	if ( item ) {
 		const overlayRect = this.$overlays[ 0 ].getBoundingClientRect();
 		const elementRects = ve.ce.FocusableNode.static.getRectsForElement( this.getDiffElementById( item.getData() ), overlayRect ).rects;
-		for ( let i = 0, l = elementRects.length; i < l; i++ ) {
+		elementRects.forEach( ( rect ) => {
 			this.$overlays.append(
 				$( '<div>' ).addClass( 've-ui-diffElement-highlight' ).css( {
-					top: elementRects[ i ].top,
-					left: elementRects[ i ].left,
-					width: elementRects[ i ].width,
-					height: elementRects[ i ].height
+					top: rect.top,
+					left: rect.left,
+					width: rect.width,
+					height: rect.height
 				} )
 			);
-		}
+		} );
 		this.lastItem = item;
 	}
 };
@@ -224,21 +224,23 @@ ve.ui.DiffElement.prototype.processQueue = function processQueue( queue ) {
 		}
 	}
 
-	for ( let k = 0, klen = queue.length; k < klen; k++ ) {
+	queue.forEach( ( item, i ) => {
+		const prevItem = queue[ i - 1 ];
+		const nextItem = queue[ i + 1 ];
 		if (
-			!isUnchanged( queue[ k - 1 ] ) ||
-			!isUnchanged( queue[ k ] ) ||
-			!isUnchanged( queue[ k + 1 ] )
+			!isUnchanged( prevItem ) ||
+			!isUnchanged( item ) ||
+			!isUnchanged( nextItem )
 		) {
 			hasChanges = true;
 			if ( headingContext ) {
 				// Don't render headingContext if current or next node is a heading
-				if ( !isHeading( queue[ k ] ) && !isHeading( queue[ k + 1 ] ) ) {
+				if ( !isHeading( item ) && !isHeading( nextItem ) ) {
 					if ( headingContextSpacer ) {
 						addSpacer();
 					}
 					addItem( headingContext );
-				} else if ( isHeading( queue[ k + 1 ] ) ) {
+				} else if ( isHeading( nextItem ) ) {
 					// Skipping the context header becuase the next node is a heading
 					// so reinstate the spacer.
 					needsSpacer = true;
@@ -249,23 +251,23 @@ ve.ui.DiffElement.prototype.processQueue = function processQueue( queue ) {
 				addSpacer();
 				needsSpacer = false;
 			}
-			addItem( queue[ k ] );
+			addItem( item );
 
-			if ( isHeading( queue[ k ] ) ) {
+			if ( isHeading( item ) ) {
 				// Heading was rendered, no need to show it as context
 				headingContext = null;
 			}
 		} else {
 			// Heading skipped, maybe show as context later
-			if ( isHeading( queue[ k ] ) ) {
-				headingContext = isUnchanged( queue[ k ] ) ? queue[ k ] : null;
+			if ( isHeading( item ) ) {
+				headingContext = isUnchanged( item ) ? item : null;
 				headingContextSpacer = needsSpacer;
 				needsSpacer = false;
 			} else {
 				needsSpacer = true;
 			}
 		}
-	}
+	} );
 
 	// Trailing spacer
 	if ( hasChanges && needsSpacer && !lastItemSpacer ) {
@@ -766,12 +768,12 @@ ve.ui.DiffElement.prototype.iterateDiff = function ( diff, callbacks ) {
 				callbacks.remove( diff.oldNodes[ i ], i );
 				i++;
 			}
-		} else if ( diff.remove.indexOf( i ) !== -1 ) {
+		} else if ( diff.remove.includes( i ) ) {
 			// The old node is a remove. Decrement the new node index
 			// to compare the same new node to the next old node
 			callbacks.remove( diff.oldNodes[ i ], i );
 			j--;
-		} else if ( diff.insert.indexOf( j ) !== -1 ) {
+		} else if ( diff.insert.includes( j ) ) {
 			// The new node is an insert. Decrement the old node index
 			// to compare the same old node to the next new node
 			callbacks.insert( diff.newNodes[ j ], j );
@@ -1032,7 +1034,7 @@ ve.ui.DiffElement.prototype.getChangedTreeNodeData = function ( oldTreeNode, new
 	const highlightRemovedNode = ( nodeIndex ) => {
 
 		const findRemovedAncestor = ( n ) => {
-			if ( !n.parent || structuralRemoves.indexOf( n.parent.index ) === -1 ) {
+			if ( !n.parent || !structuralRemoves.includes( n.parent.index ) ) {
 				return n.index;
 			} else {
 				return findRemovedAncestor( n.parent );
@@ -1097,16 +1099,17 @@ ve.ui.DiffElement.prototype.getChangedTreeNodeData = function ( oldTreeNode, new
 				// processed)
 				const siblingNodes = highestRemovedAncestor.parent.children;
 				let newPreviousNodeIndex;
-				for ( let x = 0, xlen = siblingNodes.length; x < xlen; x++ ) {
-					if ( siblingNodes[ x ].index === highestRemovedAncestor.index ) {
-						break;
+				siblingNodes.every( ( siblingNode ) => {
+					if ( siblingNode.index === highestRemovedAncestor.index ) {
+						return false;
 					} else {
-						const oldPreviousNodeIndex = siblingNodes[ x ].index;
+						const oldPreviousNodeIndex = siblingNode.index;
 						if ( correspondingNodes.oldToNew[ oldPreviousNodeIndex ] !== undefined ) {
 							newPreviousNodeIndex = correspondingNodes.oldToNew[ oldPreviousNodeIndex ];
 						}
 					}
-				}
+					return true;
+				} );
 
 				// If previous node was found among siblings, insert the removed subtree just
 				// after its corresponding node in the new document. Otherwise insert the
@@ -1307,7 +1310,7 @@ ve.ui.DiffElement.prototype.getInternalListChangedNodeElements = function ( diff
 	let data = this.getChangedDocListData( newNode, diff, true );
 
 	// Remove internal list wrapper
-	data = data.slice( 1, data.length - 2 );
+	data = data.slice( 1, -1 );
 
 	this.markMove( move, listItemNode );
 	const newDoc = newNode.getRoot().getDocument();
@@ -1362,17 +1365,17 @@ ve.ui.DiffElement.prototype.getChangeDescriptionItem = function ( changes, class
 	const elementId = this.elementId;
 	let $label = $( [] );
 
-	for ( let i = 0, l = changes.length; i < l; i++ ) {
+	changes.forEach( ( change ) => {
 		const $change = $( '<div>' );
-		if ( typeof changes[ i ] === 'string' ) {
-			$change.text( changes[ i ] );
+		if ( typeof change === 'string' ) {
+			$change.text( change );
 		} else {
 			// changes[ i ] is definitely not an HTML string in this branch
 			// eslint-disable-next-line no-jquery/no-append-html
-			$change.append( changes[ i ] );
+			$change.append( change );
 		}
 		$label = $label.add( $change );
-	}
+	} );
 	// eslint-disable-next-line mediawiki/class-doc
 	const item = new OO.ui.OptionWidget( {
 		label: $label,
@@ -1442,11 +1445,7 @@ ve.ui.DiffElement.prototype.markMove = function ( move, elementOrData, offset ) 
  * @return {Array} Data with annotations added
  */
 ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff, newNode ) {
-	const DIFF_DELETE = ve.DiffMatchPatch.static.DIFF_DELETE,
-		DIFF_INSERT = ve.DiffMatchPatch.static.DIFF_INSERT,
-		DIFF_CHANGE_DELETE = ve.DiffMatchPatch.static.DIFF_CHANGE_DELETE,
-		DIFF_CHANGE_INSERT = ve.DiffMatchPatch.static.DIFF_CHANGE_INSERT,
-		items = [],
+	const items = [],
 		newDoc = newNode.getRoot().getDocument();
 	let start = 0; // The starting index for a range for building an annotation
 
@@ -1464,35 +1463,8 @@ ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff, newNode ) {
 		const end = start + linearDiff[ i ][ 1 ].length;
 		if ( start !== end ) {
 			const range = new ve.Range( start, end );
-			const type = linearDiff[ i ][ 0 ];
-			if ( type !== 0 ) {
-				let typeAsString, domElementType, annType;
-				switch ( type ) {
-					case DIFF_DELETE:
-						typeAsString = 'remove';
-						domElementType = 'del';
-						annType = 'textStyle/delete';
-						break;
-					case DIFF_INSERT:
-						typeAsString = 'insert';
-						domElementType = 'ins';
-						annType = 'textStyle/insert';
-						break;
-					case DIFF_CHANGE_DELETE:
-						typeAsString = 'change-remove';
-						domElementType = 'span';
-						annType = 'textStyle/span';
-						break;
-					case DIFF_CHANGE_INSERT:
-						typeAsString = 'change-insert';
-						domElementType = 'span';
-						annType = 'textStyle/span';
-						break;
-				}
-				const domElement = document.createElement( domElementType );
-				domElement.setAttribute( 'data-diff-action', typeAsString );
-				const domElements = [ domElement ];
-
+			const action = linearDiff[ i ][ 0 ];
+			if ( action !== 0 ) {
 				const changes = [];
 				if ( linearDiff[ i ].annotationChanges ) {
 					linearDiff[ i ].annotationChanges.forEach( ( annotationChange ) => {
@@ -1524,21 +1496,20 @@ ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff, newNode ) {
 						) );
 					} );
 				}
+				const diffAnnotationElement = {
+					type: 'textStyle/diff',
+					attributes: {
+						action: action
+					}
+				};
 				if ( changes.length ) {
 					const item = this.getChangeDescriptionItem( changes );
-					domElement.setAttribute( 'data-diff-id', item.getData() );
+					diffAnnotationElement.attributes.id = item.getData();
 					items.push( item );
 				}
 
-				const originalDomElementsHash = diffDoc.getStore().hash(
-					domElements,
-					domElements.map( ve.getNodeHtml ).join( '' )
-				);
 				const annHash = diffDoc.getStore().hash(
-					ve.dm.annotationFactory.create( annType, {
-						type: annType,
-						originalDomElementsHash: originalDomElementsHash
-					} )
+					ve.dm.annotationFactory.create( diffAnnotationElement.type, diffAnnotationElement )
 				);
 
 				// Insert annotation above annotations that span the entire range

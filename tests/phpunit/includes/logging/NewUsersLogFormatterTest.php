@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Logging\NewUsersLogFormatter;
+
 /**
- * @covers \NewUsersLogFormatter
+ * @covers \MediaWiki\Logging\NewUsersLogFormatter
  * @group Database
  */
 class NewUsersLogFormatterTest extends LogFormatterTestCase {
@@ -11,11 +13,36 @@ class NewUsersLogFormatterTest extends LogFormatterTestCase {
 
 		// Register LogHandler, see $wgNewUserLog in Setup.php
 		$this->mergeMwGlobalArrayValue( 'wgLogActionsHandlers', [
-			'newusers/newusers' => NewUsersLogFormatter::class,
-			'newusers/create' => NewUsersLogFormatter::class,
-			'newusers/create2' => NewUsersLogFormatter::class,
-			'newusers/byemail' => NewUsersLogFormatter::class,
-			'newusers/autocreate' => NewUsersLogFormatter::class,
+			'newusers/newusers' => [
+				'class' => NewUsersLogFormatter::class,
+				'services' => [
+					'NamespaceInfo',
+				]
+			],
+			'newusers/create' => [
+				'class' => NewUsersLogFormatter::class,
+				'services' => [
+					'NamespaceInfo',
+				]
+			],
+			'newusers/create2' => [
+				'class' => NewUsersLogFormatter::class,
+				'services' => [
+					'NamespaceInfo',
+				]
+			],
+			'newusers/byemail' => [
+				'class' => NewUsersLogFormatter::class,
+				'services' => [
+					'NamespaceInfo',
+				]
+			],
+			'newusers/autocreate' => [
+				'class' => NewUsersLogFormatter::class,
+				'services' => [
+					'NamespaceInfo',
+				]
+			],
 		] );
 	}
 

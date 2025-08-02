@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -35,7 +36,7 @@ class CleanUp {
 			// Sometimes a non-tpl meta node might get the mw:Transclusion typeof
 			// element attached to it. So, check if the node has data-mw,
 			// in which case we also have to keep it.
-			( !DOMDataUtils::validDataMw( $node ) && (
+			( DOMDataUtils::getDataMw( $node )->isEmpty() && (
 				(
 					DOMUtils::hasTypeOf( $node, 'mw:Placeholder/StrippedTag' ) &&
 					// NOTE: In ComputeDSR, we don't zero out the width of these
@@ -282,14 +283,15 @@ class CleanUp {
 			// still clean them up as if they are the head of encapsulation.
 			WTUtils::isParsoidSectionTag( $node );
 
-		// Remove dp.src from elements that have valid data-mw and dsr.
+		// Remove dp.src from elements that have non-empty data-mw and dsr.
 		// This should reduce data-parsoid bloat.
 		//
 		// Presence of data-mw is a proxy for us knowing how to serialize
 		// this content from HTML. Token handlers should strip src for
 		// content where data-mw isn't necessary and html2wt knows how to
 		// handle the HTML markup.
-		$validDSR = DOMDataUtils::validDataMw( $node ) && Utils::isValidDSR( $dp->dsr ?? null );
+		$validDSR = Utils::isValidDSR( $dp->dsr ?? null ) &&
+			!DOMDataUtils::getDataMw( $node )->isEmpty();
 		$isPageProp = DOMCompat::nodeName( $node ) === 'meta' &&
 			str_starts_with( DOMCompat::getAttribute( $node, 'property' ) ?? '', 'mw:PageProp/' );
 		if ( $validDSR && !$isPageProp ) {
@@ -304,10 +306,6 @@ class CleanUp {
 		if ( property_exists( $dp, 'tsr' ) ) {
 			unset( $dp->tsr );
 		}
-
-		// Remove temporary information
-		// @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
-		unset( $dp->tmp );
 
 		// Various places, like ContentUtils::shiftDSR, can set this to `null`
 		if ( property_exists( $dp, 'dsr' ) && $dp->dsr === null ) {
@@ -357,22 +355,17 @@ class CleanUp {
 	}
 
 	/**
-	 * Perform some final cleanup
+	 * Mark which data-parsoid attributes can be discarded
 	 *
 	 * @param Node $node
 	 * @param DTState $state
 	 * @return bool|Node The next node or true to continue with $node->nextSibling
 	 */
-	public static function saveDataParsoid( Node $node, DTState $state ) {
+	public static function markDiscardableDataParsoid( Node $node, DTState $state ) {
 		if ( !( $node instanceof Element ) ) {
 			return true;
 		}
 		Assert::invariant( $state->atTopLevel, 'This pass should only be run on the top-level' );
-		$usedIdIndex = &$state->usedIdIndex;
-		if ( DOMUtils::isBody( $node ) ) {
-			// Initialization
-			$usedIdIndex = DOMDataUtils::usedIdIndex( $node );
-		}
 
 		$env = $state->env;
 		$dp = DOMDataUtils::getDataParsoid( $node );
@@ -380,37 +373,46 @@ class CleanUp {
 			// Traversal isn't done with tplInfo for section tags, but we should
 			// still clean them up as if they are the head of encapsulation.
 			WTUtils::isParsoidSectionTag( $node );
-		$discardDataParsoid = $env->discardDataParsoid;
 
 		// Strip data-parsoid from templated content, where unnecessary.
-		if ( ( $state->tplInfo ?? null ) &&
+		$discardDataParsoid = (
+			( $state->tplInfo ?? null ) &&
 			// Always keep info for the first node
 			!$isFirstEncapsulationWrapperNode &&
 			// We can't remove data-parsoid from inside <references> text,
 			// as that's the only HTML representation we have left for it.
 			!self::inNativeContent( $env, $node ) &&
-			// FIXME: We can't remove dp from nodes with stx information
-			// because the serializer uses stx information in some cases to
+			// FIXME(T100856): stx is semantic info and should probably be
+			// moved out of data-parsoid.  We can't remove dp from nodes
+			// with stx information for two scenarios.
+			//
+			// 1. The serializer uses stx information in some cases to
 			// emit the right newline separators.
 			//
 			// For example, "a\n\nb" and "<p>a</p><p>b/p>" both generate
 			// identical html but serialize to different wikitext.
 			//
-			// This is only needed for the last top-level node .
-			( empty( $dp->stx ) || ( $state->tplInfo->last ?? null ) !== $node )
-		) {
-			$discardDataParsoid = true;
-		}
-
-		DOMDataUtils::storeDataAttribs( $node, [
-				'discardDataParsoid' => $discardDataParsoid,
-				// Even though we're passing in the `env`, this is the only place
-				// we want the storage to happen, so don't refactor this in there.
-				'storeInPageBundle' => $env->pageBundle,
-				'idIndex' => $usedIdIndex,
-				'env' => $env
-			]
+			// This is only needed for the last top-level node.
+			//
+			// 2. We omit heading wrapping for html literals in core's
+			// OutputTransform stages and need a way to distinguish them.
+			( empty( $dp->stx ) || !(
+				( $state->tplInfo->last ?? null ) === $node ||
+				DOMUtils::isHeading( $node )
+			) )
 		);
+
+		// Mark this as an empty AND new data-parsoid
+		if ( $discardDataParsoid ) {
+			// We cannot unset data-parsoid because any code that runs after
+			// this that calls DOMDataUtils::getDataParsoid will reinitialize
+			// it to an empty object. So, we do that re-init here and set the
+			// IS_NEW flag to ensure DOMDataUtils::storeDataAttribs discards this
+			// if unmodified. The empty data-parsoid blob is considered unmodified.
+			$dp = new DataParsoid;
+			$dp->setTempFlag( TempData::IS_NEW );
+			DOMDataUtils::setDataParsoid( $node, $dp );
+		}
 
 		return true;
 	}

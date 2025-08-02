@@ -3,8 +3,8 @@
 		"authors": [
 			"CapitainAfrika",
 			"Eruedin",
-			"Moyogo",
-			"Lydie maliki"
+			"Lydie maliki",
+			"Moyogo"
 		]
 	},
 	"vector-skin-desc": "Epesi 2 mposo ya Vecteur:\n* 2011 - Version Moderne ya MonoBook na lolenge ya sika mpe na bobongisi mingi ya bosaleli.\n* 2022 - Vecteur oyo etongami lokola eteni ya projet WMF [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements].",
@@ -36,6 +36,7 @@
 	"vector-more-actions": "Elandí",
 	"vector-appearance-label": "Komonana",
 	"vector-appearance-tooltip": "Bobongola ndenge bonene ya makomi, bonene mpe langi ya lokasa yango ezali komonana",
+	"vector-personal-tools-tooltip": "Ba paramètres ya moto ye moko",
 	"vector-feature-limited-width-name": "Molai ya moke",
 	"vector-feature-limited-width-0-label": "Monene",
 	"vector-feature-limited-width-1-label": "Ya malamu",

@@ -18,8 +18,15 @@
  * @file
  */
 
+namespace MediaWiki\FileRepo;
+
+use Closure;
+use InvalidArgumentException;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\File\OldLocalFile;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
@@ -28,6 +35,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\BlobStore;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
+use stdClass;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -122,9 +130,9 @@ class LocalRepo extends FileRepo {
 	 */
 	public function newFileFromRow( $row ) {
 		if ( isset( $row->img_name ) ) {
-			return call_user_func( $this->fileFromRowFactory, $row, $this );
+			return ( $this->fileFromRowFactory )( $row, $this );
 		} elseif ( isset( $row->oi_name ) ) {
-			return call_user_func( $this->oldFileFromRowFactory, $row, $this );
+			return ( $this->oldFileFromRowFactory )( $row, $this );
 		} else {
 			throw new InvalidArgumentException( __METHOD__ . ': invalid row' );
 		}
@@ -667,8 +675,6 @@ class LocalRepo extends FileRepo {
 	/**
 	 * Get a BlobStore for storing and retrieving large metadata, or null if
 	 * that can't be done.
-	 *
-	 * @return ?BlobStore
 	 */
 	public function getBlobStore(): ?BlobStore {
 		if ( !$this->blobStore ) {
@@ -678,3 +684,6 @@ class LocalRepo extends FileRepo {
 		return $this->blobStore;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( LocalRepo::class, 'LocalRepo' );

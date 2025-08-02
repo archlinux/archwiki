@@ -119,9 +119,9 @@
 	"tag-discussiontools-description": "Vọjlado he yin bibasi gbọn DiscussionTools yiyizan dali",
 	"tag-discussiontools-edit": "Gblọndo he yin vivọjlado",
 	"tag-discussiontools-edit-description": "Zinzantọ ehe yi DiscussionTools zan nado vọ gblọndo he tin to aimẹ dé jlado",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Hosọ yọyọ]",
+	"tag-discussiontools-newtopic": "Hosọ yọyọ",
 	"tag-discussiontools-newtopic-description": "Zinzantọ ehe yi DiscussionTools zan nado gọ́ hosọ yọyọ dé na weda lọ",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Na gblọndo]",
+	"tag-discussiontools-reply": "Na gblọndo",
 	"tag-discussiontools-reply-description": "Zinzantọ ehe yi DiscussionTools zan nado dọ linlẹn etọn gando gblọndo dé go",
 	"tag-discussiontools-source-description": "DiscussionTools tin to ninọmẹ asisa tọn mẹ dai",
 	"tag-discussiontools-visual-description": "DiscussionTools tin to ninọmẹ nupinpọn tọn mẹ dai"

@@ -26,6 +26,7 @@ use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Exception\MWContentSerializationException;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -37,7 +38,7 @@ use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
-use MWContentSerializationException;
+use MediaWiki\User\UserIdentity;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -123,7 +124,7 @@ class ApiComparePages extends ApiBase {
 					$fromRelRev = $fromRev;
 					$fromValsRev = $fromRev;
 					if ( !$fromRev ) {
-						$title = Title::newFromLinkTarget( $toRelRev->getPageAsLinkTarget() );
+						$title = Title::newFromPageIdentity( $toRelRev->getPage() );
 						$this->addWarning( [
 							'apiwarn-compare-no-prev',
 							wfEscapeWikiText( $title->getPrefixedText() ),
@@ -132,12 +133,10 @@ class ApiComparePages extends ApiBase {
 
 						// (T203433) Create an empty dummy revision as the "previous".
 						// The main slot has to exist, the rest will be handled by DifferenceEngine.
-						$fromRev = new MutableRevisionRecord(
-							$title ?: $toRev->getPage()
-						);
+						$fromRev = new MutableRevisionRecord( $title );
 						$fromRev->setContent(
 							SlotRecord::MAIN,
-							$toRelRev->getContent( SlotRecord::MAIN, RevisionRecord::RAW )
+							$toRelRev->getMainContentRaw()
 								->getContentHandler()
 								->makeEmptyContent()
 						);
@@ -149,7 +148,7 @@ class ApiComparePages extends ApiBase {
 					$toRelRev = $toRev;
 					$toValsRev = $toRev;
 					if ( !$toRev ) {
-						$title = Title::newFromLinkTarget( $fromRelRev->getPageAsLinkTarget() );
+						$title = Title::newFromPageIdentity( $fromRelRev->getPage() );
 						$this->addWarning( [
 							'apiwarn-compare-no-next',
 							wfEscapeWikiText( $title->getPrefixedText() ),
@@ -199,10 +198,10 @@ class ApiComparePages extends ApiBase {
 		// Get the diff
 		$context = new DerivativeContext( $this->getContext() );
 		if ( $fromRelRev && $fromRelRev->getPageAsLinkTarget() ) {
-			$context->setTitle( Title::newFromLinkTarget( $fromRelRev->getPageAsLinkTarget() ) );
+			$context->setTitle( Title::newFromPageIdentity( $fromRelRev->getPage() ) );
 		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable T240141
 		} elseif ( $toRelRev && $toRelRev->getPageAsLinkTarget() ) {
-			$context->setTitle( Title::newFromLinkTarget( $toRelRev->getPageAsLinkTarget() ) );
+			$context->setTitle( Title::newFromPageIdentity( $toRelRev->getPage() ) );
 		} else {
 			$guessedTitle = $this->guessTitle();
 			if ( $guessedTitle ) {
@@ -312,7 +311,7 @@ class ApiComparePages extends ApiBase {
 			if ( $params["{$prefix}rev"] !== null ) {
 				$rev = $this->getRevisionById( $params["{$prefix}rev"] );
 				if ( $rev ) {
-					$this->guessedTitle = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
+					$this->guessedTitle = Title::newFromPageIdentity( $rev->getPage() );
 					break;
 				}
 			}
@@ -451,7 +450,7 @@ class ApiComparePages extends ApiBase {
 			if ( !$rev ) {
 				$this->dieWithError( [ 'apierror-nosuchrevid', $revId ] );
 			}
-			$title = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
+			$title = Title::newFromPageIdentity( $rev->getPage() );
 
 			// If we don't have supplied content, return here. Otherwise,
 			// continue on below with the supplied content.
@@ -616,7 +615,7 @@ class ApiComparePages extends ApiBase {
 	 */
 	private function setVals( &$vals, $prefix, $rev ) {
 		if ( $rev ) {
-			$title = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
+			$title = Title::newFromPageIdentity( $rev->getPage() );
 			if ( isset( $this->props['ids'] ) ) {
 				$vals["{$prefix}id"] = $title->getArticleID();
 				$vals["{$prefix}revid"] = $rev->getId();
@@ -682,7 +681,7 @@ class ApiComparePages extends ApiBase {
 		}
 	}
 
-	private function getUserForPreview() {
+	private function getUserForPreview(): UserIdentity {
 		$user = $this->getUser();
 		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
 			return $this->userFactory->newUnsavedTempUser(

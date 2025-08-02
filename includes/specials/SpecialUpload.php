@@ -21,20 +21,25 @@
 namespace MediaWiki\Specials;
 
 use BitmapHandler;
-use ChangeTags;
-use ErrorPageError;
 use ImageGalleryBase;
-use JobQueueGroup;
-use LocalFile;
-use LocalRepo;
-use LogEventsList;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\Config\Config;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\FileRepo\File\LocalFile;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\UploadFromUrlJob;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\WikiFilePage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -44,15 +49,11 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\Watchlist\WatchlistManager;
-use PermissionsError;
 use Psr\Log\LoggerInterface;
-use RepoGroup;
 use UnexpectedValueException;
 use UploadBase;
 use UploadForm;
 use UploadFromStash;
-use UserBlockedError;
-use WikiFilePage;
 
 /**
  * Form for uploading media files.
@@ -71,12 +72,6 @@ class SpecialUpload extends SpecialPage {
 	private JobQueueGroup $jobQueueGroup;
 	private LoggerInterface $log;
 
-	/**
-	 * @param RepoGroup|null $repoGroup
-	 * @param UserOptionsLookup|null $userOptionsLookup
-	 * @param NamespaceInfo|null $nsInfo
-	 * @param WatchlistManager|null $watchlistManager
-	 */
 	public function __construct(
 		?RepoGroup $repoGroup = null,
 		?UserOptionsLookup $userOptionsLookup = null,
@@ -97,6 +92,10 @@ class SpecialUpload extends SpecialPage {
 			$this->getConfig()->get( MainConfigNames::EnableAsyncUploadsByURL )
 		);
 		$this->log = LoggerFactory::getInstance( 'SpecialUpload' );
+	}
+
+	private function addMessageBoxStyling() {
+		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 	}
 
 	public function doesWrites() {
@@ -408,6 +407,7 @@ class SpecialUpload extends SpecialPage {
 					$status->getWikiText( false, false, $this->getLanguage() )
 				);
 				$message = '<h2>' . $this->msg( 'uploaderror' )->escaped() . '</h2>' . HTML::errorBox( $statusmsg );
+				$this->addMessageBoxStyling();
 				$this->showUploadForm( $this->getUploadForm( $message ) );
 				break;
 		}
@@ -593,6 +593,7 @@ class SpecialUpload extends SpecialPage {
 		$message = '<h2>' . $this->msg( 'uploaderror' )->escaped() . '</h2>' .
 			Html::errorBox( $message );
 
+		$this->addMessageBoxStyling();
 		$form = $this->getUploadForm( $message, $sessionKey );
 		$form->setSubmitText( $this->msg( $uploadWarning )->escaped() );
 		$this->showUploadForm( $form );
@@ -719,6 +720,7 @@ class SpecialUpload extends SpecialPage {
 		$message = '<h2>' . $this->msg( 'uploadwarning' )->escaped() . '</h2>' .
 			Html::errorBox( $message );
 		$this->showUploadForm( $this->getUploadForm( $message ) );
+		$this->addMessageBoxStyling();
 	}
 
 	/**
@@ -759,10 +761,13 @@ class SpecialUpload extends SpecialPage {
 
 		// Verify permissions for this title
 		$user = $this->getUser();
-		$permErrors = $this->mUpload->verifyTitlePermissions( $user );
-		if ( $permErrors !== true ) {
-			$code = array_shift( $permErrors[0] );
-			$this->showRecoverableUploadError( $this->msg( $code, $permErrors[0] )->parse() );
+		$status = $this->mUpload->authorizeUpload( $user );
+		if ( !$status->isGood() ) {
+			$this->showRecoverableUploadError(
+				$this->getOutput()->parseAsInterface(
+					Status::wrap( $status )->getWikiText( false, false, $this->getLanguage() )
+				)
+			);
 
 			return false;
 		}
@@ -879,7 +884,7 @@ class SpecialUpload extends SpecialPage {
 		[ $pageText, $changeTags ] = $pageAndTags;
 
 		// Create a new job to process the upload from url
-		$job = new \UploadFromUrlJob(
+		$job = new UploadFromUrlJob(
 			[
 				'filename' => $this->mUpload->getDesiredDestName(),
 				'url' => $this->mUpload->getUrl(),
@@ -1064,17 +1069,6 @@ class SpecialUpload extends SpecialPage {
 				unset( $details['status'] );
 				$code = array_shift( $details['details'] );
 				$this->showUploadError( $this->msg( $code, $details['details'] )->parse() );
-				break;
-			case UploadBase::HOOK_ABORTED:
-				if ( is_array( $details['error'] ) ) { # allow hooks to return error details in an array
-					$args = $details['error'];
-					$error = array_shift( $args );
-				} else {
-					$error = $details['error'];
-					$args = null;
-				}
-
-				$this->showUploadError( $this->msg( $error, $args )->parse() );
 				break;
 			default:
 				throw new UnexpectedValueException( __METHOD__ . ": Unknown value `{$details['status']}`" );

@@ -28,9 +28,9 @@
 			"Tucvbif",
 			"Ukhant Erdemt",
 			"Vlad5250",
+			"Yurina Tatiana",
 			"Александр Сигачёв",
 			"З. ӘЙЛЕ",
-			"Yurina Tatiana",
 			"MidnightLG"
 		]
 	},
@@ -68,6 +68,7 @@
 	"vector-more-actions": "Ещё",
 	"vector-appearance-label": "Внешний вид",
 	"vector-appearance-tooltip": "Измените внешний вид страницы, размер, ширину и цвет шрифта.",
+	"vector-personal-tools-tooltip": "Персональные настройки",
 	"vector-feature-limited-width-name": "Ширина",
 	"vector-feature-limited-width-0-label": "Широко",
 	"vector-feature-limited-width-1-label": "Стандартно",

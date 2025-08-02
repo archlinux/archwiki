@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Seipinne",
+			"Yupik"
+		]
+	},
+	"checkuser-clienthints-name-architecture": "Arkkitektuur",
+	"checkuser-reason": "Suijâ:",
+	"checkuser-target": "IP-čujottâs teikâ kevtteenommâ:",
+	"checkuser-all": "puoh",
+	"checkuser-search-submit": "Uusâ",
+	"checkuser-investigateblock-target": "Kevtteenoomah já IP-čujottâsah",
+	"checkuser-investigate-subtitle-cancel-button-label": "Jooskâ",
+	"checkuser-investigate-subtitle-continue-button-label": "Juáđhi",
+	"checkuser-investigate-targets-label": "Kevtteenoomah já IP-čujottâsah:",
+	"checkuser-investigate-targets-placeholder": "Kevtteenommâ teikâ 1.1.1.1",
+	"checkuser-investigate-reason-label": "Suijâ",
+	"checkuser-investigate-preliminary-table-header-name": "Kevtteenommâ",
+	"checkuser-investigate-filters-legend": "Silleeh",
+	"checkuser-investigate-compare-copy-button-label": "Čääiti wikiteevstâ",
+	"checkuser-investigate-compare-copy-button-label-hide": "Čievâ wikiteevstâ",
+	"checkuser-investigate-compare-table-button-contribs-label": "Hammiimeh",
+	"checkuser-investigate-compare-table-header-username": "Kevtteenommâ"
+}

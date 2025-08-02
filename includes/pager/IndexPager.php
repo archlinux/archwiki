@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Pager;
 
-use HtmlArmor;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
@@ -29,6 +28,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Navigation\PagerNavigationBuilder;
 use MediaWiki\Request\WebRequest;
 use stdClass;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -134,7 +134,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 *
 	 * Like $mIndexField, $mDefaultDirection will be a single value even if the
 	 * class supports multiple default directions for different order types.
-	 * @var bool
+	 * @var bool|null
 	 */
 	public $mDefaultDirection;
 	/** @var bool */
@@ -151,9 +151,9 @@ abstract class IndexPager extends ContextSource implements Pager {
 	protected $mFirstShown;
 	/** @var array */
 	protected $mPastTheEndIndex;
-	/** @var array */
+	/** @var array|null */
 	protected $mDefaultQuery;
-	/** @var string */
+	/** @var string|null */
 	protected $mNavigationBar;
 
 	/**
@@ -200,7 +200,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 				->getLimitOffsetForUser( $this->getUser() );
 		}
 
-		$this->mIsBackwards = ( $this->mRequest->getVal( 'dir' ) == 'prev' );
+		$this->mIsBackwards = ( $this->mRequest->getRawVal( 'dir' ) === 'prev' );
 		// Let the subclass set the DB here; otherwise use a replica DB for the current wiki
 		if ( !$this->mDb ) {
 			$this->mDb = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
@@ -237,7 +237,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 			}
 		}
 
-		if ( !isset( $this->mDefaultDirection ) ) {
+		if ( $this->mDefaultDirection === null ) {
 			$dir = $this->getDefaultDirections();
 			$this->mDefaultDirection = is_array( $dir )
 				? $dir[$this->mOrderType]
@@ -723,7 +723,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @return array Associative array
 	 */
 	public function getDefaultQuery() {
-		if ( !isset( $this->mDefaultQuery ) ) {
+		if ( $this->mDefaultQuery === null ) {
 			$this->mDefaultQuery = $this->getRequest()->getQueryValues();
 			unset( $this->mDefaultQuery['title'] );
 			unset( $this->mDefaultQuery['dir'] );

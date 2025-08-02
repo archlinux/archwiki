@@ -23,22 +23,30 @@
 
 namespace MediaWiki\Session;
 
-use ErrorPageError;
 use InvalidArgumentException;
 use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\Rest\Handler;
+use MediaWiki\Rest\HttpException;
+use MediaWiki\Rest\LocalizedHttpException;
+use MediaWiki\Rest\Module\Module;
+use MediaWiki\Rest\RequestInterface;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
 use MWRestrictions;
 use Psr\Log\LoggerInterface;
 use Stringable;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Message\MessageValue;
 
 /**
  * A SessionProvider provides SessionInfo and support for Session
@@ -88,23 +96,12 @@ use Stringable;
  */
 abstract class SessionProvider implements Stringable, SessionProviderInterface {
 
-	/** @var LoggerInterface */
-	protected $logger;
-
-	/** @var Config */
-	protected $config;
-
-	/** @var SessionManager */
-	protected $manager;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var UserNameUtils */
-	protected $userNameUtils;
+	protected LoggerInterface $logger;
+	protected Config $config;
+	protected SessionManager $manager;
+	private HookContainer $hookContainer;
+	private HookRunner $hookRunner;
+	protected UserNameUtils $userNameUtils;
 
 	/** @var int Session priority. Used for the default newSessionInfo(), but
 	 * could be used by subclasses too.
@@ -124,12 +121,6 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 	 * @since 1.37
 	 * @internal In production code SessionManager will initialize the
 	 * SessionProvider, in tests SessionProviderTestTrait must be used.
-	 *
-	 * @param LoggerInterface $logger
-	 * @param Config $config
-	 * @param SessionManager $manager
-	 * @param HookContainer $hookContainer
-	 * @param UserNameUtils $userNameUtils
 	 */
 	public function init(
 		LoggerInterface $logger,
@@ -239,11 +230,6 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
-	/**
-	 * Get the HookContainer
-	 *
-	 * @return HookContainer
-	 */
 	protected function getHookContainer(): HookContainer {
 		return $this->hookContainer;
 	}
@@ -729,7 +715,9 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 	 * API requests), and the returned SessionInfo should be returned by provideSessionInfo().
 	 *
 	 * @param string $key Key for the error message
-	 * @param mixed ...$params Parameters as strings.
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$params
+	 *   See Message::params()
 	 * @return SessionInfo An anonymous session info with maximum priority, to force an
 	 *   anonymous session in case throwing the exception doesn't happen.
 	 */
@@ -745,7 +733,16 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 				}
 			);
 		} elseif ( defined( 'MW_REST_API' ) ) {
-			// There are no suitable hooks in the REST API (T252591)
+			$this->hookContainer->register(
+				'RestCheckCanExecute',
+				static function ( Module $module, Handler $handler, string $path,
+					RequestInterface $request, ?HttpException &$error ) use ( $key, $params )
+				{
+					$msg = new MessageValue( $key, $params );
+					$error = new LocalizedHttpException( $msg, 403 );
+					return false;
+				}
+			);
 		} else {
 			$this->hookContainer->register(
 				'BeforeInitialize',

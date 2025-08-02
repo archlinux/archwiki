@@ -25,13 +25,13 @@ use MediaWiki\Languages\LanguageFactory;
  *
  * Uses the same collation rules as Persian / Farsi ('fa'), but different characters for digits.
  *
+ * @deprecated since 1.44 use CentralKurdishCollation instead
  * @since 1.23
  */
 class CollationCkb extends IcuCollation {
-	/**
-	 * @param LanguageFactory $languageFactory
-	 */
+
 	public function __construct( LanguageFactory $languageFactory ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		// This will set $locale and collators, which affect the actual sorting order
 		parent::__construct( $languageFactory, 'fa' );
 		// Override the 'fa' language set by parent constructor, which affects #getFirstLetterData()

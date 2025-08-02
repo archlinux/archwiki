@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Specials;
 
-use ErrorPageError;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Mail\EmailUserFactory;
 use MediaWiki\MainConfigNames;
@@ -51,13 +51,6 @@ class SpecialEmailUser extends SpecialPage {
 	private EmailUserFactory $emailUserFactory;
 	private UserFactory $userFactory;
 
-	/**
-	 * @param UserNameUtils $userNameUtils
-	 * @param UserNamePrefixSearch $userNamePrefixSearch
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param EmailUserFactory $emailUserFactory
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
@@ -212,6 +205,8 @@ class SpecialEmailUser extends SpecialPage {
 				'label-message' => 'emailusername',
 				'id' => 'emailusertarget',
 				'autofocus' => true,
+				// Exclude temporary accounts from the autocomplete, as they cannot have email addresses.
+				'excludetemp' => true,
 				// Skip validation when visit directly without subpage (T347854)
 				'default' => '',
 				// Prefill for subpage syntax and old target param.

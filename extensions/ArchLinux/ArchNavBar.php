@@ -4,9 +4,9 @@ namespace MediaWiki\Extensions\ArchLinux;
 
 /**
  * @var string $title
- * @var array $archNavBar
+ * @var array<string,string> $archNavBar
  * @var string $archHome
- * @var array $archNavBarSelected
+ * @var string[] $archNavBarSelected
  * @var string $archNavBarSelectedDefault
  */
 ?>

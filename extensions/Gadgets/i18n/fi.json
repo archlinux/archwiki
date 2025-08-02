@@ -45,5 +45,6 @@
 	"gadgets-validate-notset": "Ominaisuutta <code>$1</code> ei ole asetettu.",
 	"gadgets-validate-wrongtype": "Ominaisuuden <code>$1</code> on oltava tyyppiä <code>$2</code>.",
 	"gadgets-validate-invalidtitle": "Sivun \"$1\" otsikko on virheellinen",
-	"gadgets-validate-nopage": "Sivua \"$1\" ei ole olemassa."
+	"gadgets-validate-nopage": "Sivua \"$1\" ei ole olemassa.",
+	"gadgets-hidden": "Tämä pienoisohjelma on [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden piilotettu], eli se ei näy asetussivulla."
 }

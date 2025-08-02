@@ -1,13 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer",
-			"QW90"
+			"QW90",
+			"The Discoverer"
 		]
 	},
 	"wikieditor": "Sudarit wikimozkur sompadonacho interface",
 	"wikieditor-desc": "Ek sudarit, vistrut korum ieta toslem wikimozkur sompadonacho interface purvonn korta",
-	"wikieditor-wikitext-tab": "Wikimozkur",
 	"wikieditor-toolbar": "Sompadon sadhon-pott'tti",
 	"wikieditor-toolbar-desc": "Sudarlolem sompadon panachi sadhon-pott’tti",
 	"wikieditor-toolbar-preference": "Sompadonachi sadhon-pott’tti xokeo kor",

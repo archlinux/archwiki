@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -25,6 +25,7 @@
 	},
 	"Hooks": {
 		"APIQuerySiteInfoGeneralInfo": "main",
+		"CommunityConfigurationProvider_initList": "communityconfiguration",
 		"ContentHandlerDefaultModelFor": "main",
 		"GetPreferences": "main",
 		"ParserAfterParse": "parser",
@@ -38,6 +39,9 @@
 		"UserGetDefaultOptions": "main"
 	},
 	"HookHandlers": {
+		"communityconfiguration": {
+			"class": "Cite\\Config\\CommunityConfigurationHooks"
+		},
 		"main": {
 			"class": "Cite\\Hooks\\CiteHooks",
 			"services": [
@@ -88,6 +92,7 @@
 				"ve.ui.MWReferencesListCommand.js"
 			],
 			"styles": [
+				"ve.ce.MWReferenceNode.less",
 				"ve.ce.MWReferencesListNode.less"
 			],
 			"dependencies": [
@@ -218,13 +223,11 @@
 				"cite-wikieditor-help-content-reference-example-ref-normal",
 				"cite-wikieditor-help-content-reference-example-ref-named",
 				"cite-wikieditor-help-content-reference-example-ref-reuse",
-				"cite-wikieditor-help-content-reference-example-ref-extends",
 				"cite-wikieditor-help-content-reference-example-ref-result",
 				"cite-wikieditor-help-content-reference-example-reflist",
 				"cite-wikieditor-help-content-reference-description",
 				"cite-wikieditor-help-content-named-reference-description",
 				"cite-wikieditor-help-content-rereference-description",
-				"cite-wikieditor-help-content-extended-reference-description",
 				"cite-wikieditor-help-content-showreferences-description",
 				"cite_reference_backlink_symbol"
 			]
@@ -246,6 +249,48 @@
 				"cite_references_link_many_accessibility_label",
 				"cite_references_link_accessibility_back_label"
 			]
+		},
+		"ext.cite.community-configuration": {
+			"localBasePath": "modules/community-configuration",
+			"remoteExtPath": "Cite/modules/community-configuration",
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"dependencies": [
+				"vue"
+			],
+			"messages": [
+				"cite-configuration-title",
+				"cite-configuration-submit",
+				"cite-configuration-backlink-title",
+				"cite-configuration-backlink-description",
+				"cite-configuration-backlink-alpha-suggestion",
+				"cite-configuration-backlink-marker-label",
+				"cite-configuration-backlink-marker-description",
+				"cite-configuration-backlink-marker-help"
+			],
+			"packageFiles": [
+				"init.js",
+				"components/BacklinkSettings.vue",
+				"components/CommunityConfiguration.vue",
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconAdd",
+						"cdxIconTrash"
+					]
+				}
+			],
+			"codexComponents": [
+				"CdxButton",
+				"CdxIcon",
+				"CdxField",
+				"CdxTextInput",
+				"CdxLookup",
+				"CdxToggleSwitch",
+				"CdxLabel",
+				"CdxTextArea",
+				"CdxCard"
+			]
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -256,33 +301,36 @@
 		"src/ServiceWiring.php"
 	],
 	"QUnitTestModule": {
-		"localBasePath": "",
-		"remoteExtPath": "Cite",
+		"localBasePath": "tests/qunit",
+		"remoteExtPath": "Cite/tests/qunit",
 		"scripts": [
-			"tests/qunit/ve-cite/ve.dm.citeExample.js",
-			"tests/qunit/ve-cite/ve.dm.Converter.test.js",
-			"tests/qunit/ve-cite/ve.dm.MWDocumentReferences.test.js",
-			"tests/qunit/ve-cite/ve.dm.MWGroupReferences.test.js",
-			"tests/qunit/ve-cite/ve.dm.InternalList.test.js",
-			"tests/qunit/ve-cite/ve.dm.MWReferenceModel.test.js",
-			"tests/qunit/ve-cite/ve.dm.MWReferenceNode.test.js",
-			"tests/qunit/ve-cite/ve.dm.MWReferencesListNode.test.js",
-			"tests/qunit/ve-cite/ve.dm.Transaction.test.js",
-			"tests/qunit/ve-cite/ve.ui.DiffElement.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWCitationDialogTool.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferenceContextItem.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferenceEditPanel.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferenceGroupInputWidget.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferenceResultWidget.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferenceSearchWidget.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferencesListDialog.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWUseExistingReferenceCommand.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWWikitextStringTransferHandler.test.js",
-			"tests/qunit/ext.cite.referencePreviews/createReferenceGateway.test.js",
-			"tests/qunit/ext.cite.referencePreviews/isReferencePreviewsEnabled.test.js",
-			"tests/qunit/ext.cite.referencePreviews/renderer.test.js"
+			"ve-cite/ve.dm.citeExample.js",
+			"ve-cite/ve.dm.Converter.test.js",
+			"ve-cite/ve.dm.MWDocumentReferences.test.js",
+			"ve-cite/ve.dm.MWGroupReferences.test.js",
+			"ve-cite/ve.dm.InternalList.test.js",
+			"ve-cite/ve.dm.MWReferenceModel.test.js",
+			"ve-cite/ve.dm.MWReferenceNode.test.js",
+			"ve-cite/ve.dm.MWReferencesListNode.test.js",
+			"ve-cite/ve.dm.Transaction.test.js",
+			"ve-cite/ve.ce.ClipboardHandler.test.js",
+			"ve-cite/ve.ui.DiffElement.test.js",
+			"ve-cite/ve.ui.MWCitationDialogTool.test.js",
+			"ve-cite/ve.ui.MWReferenceContextItem.test.js",
+			"ve-cite/ve.ui.MWReferenceEditPanel.test.js",
+			"ve-cite/ve.ui.MWReferenceGroupInputWidget.test.js",
+			"ve-cite/ve.ui.MWReferenceResultWidget.test.js",
+			"ve-cite/ve.ui.MWReferenceSearchWidget.test.js",
+			"ve-cite/ve.ui.MWReferencesListDialog.test.js",
+			"ve-cite/ve.ui.MWUseExistingReferenceCommand.test.js",
+			"ve-cite/ve.ui.MWWikitextStringTransferHandler.test.js",
+			"ext.cite.referencePreviews/createReferenceGateway.test.js",
+			"ext.cite.referencePreviews/isReferencePreviewsEnabled.test.js",
+			"ext.cite.referencePreviews/renderer.test.js",
+			"ext.cite.highlighting.test.js"
 		],
 		"dependencies": [
+			"ext.cite.ux-enhancements",
 			"ext.cite.visualEditor",
 			"test.VisualEditor"
 		],
@@ -296,6 +344,39 @@
 			"TagModes": {
 				"ref": "text/mediawiki",
 				"references": "text/mediawiki"
+			}
+		},
+		"CommunityConfiguration": {
+			"EditorCapabilities": {
+				"citeEditor": {
+					"class": "Cite\\Config\\CiteEditorCapability",
+					"services": [
+						"Cite.AlphabetsProvider",
+						"CommunityConfiguration.MediaWikiConfigReader",
+						"ContentLanguage",
+						"LinkRenderer"
+					]
+				}
+			},
+			"Providers": {
+				"Cite": {
+					"store": {
+						"type": "wikipage",
+						"args": [
+							"MediaWiki:CiteConfig.json"
+						]
+					},
+					"validator": {
+						"type": "jsonschema",
+						"args": [
+							"Cite\\Config\\Schemas\\CiteSchema"
+						]
+					},
+					"type": "mw-config",
+					"options": {
+						"editorCapability": "citeEditor"
+					}
+				}
 			}
 		},
 		"EventLogging": {
@@ -318,8 +399,8 @@
 		"cite": "GlobalVarConfig::newInstance"
 	},
 	"config": {
-		"CiteBookReferencing": {
-			"description": "Temporary feature flag while the extends=\"…\" feature (a way to nest citations and e.g. reference pages in a book) is in development.",
+		"CiteSubReferencing": {
+			"description": "Temporary feature flag while the sub-referencing feature (a way to nest citations and e.g. reference pages in a book) is in development.",
 			"public": true,
 			"value": false
 		},
@@ -349,6 +430,21 @@
 		"CiteReferencePreviewsConflictingRefTooltipsGadgetName": {
 			"description": "@var string: Name of a gadget that would cause duplicate reference preview popups. Known conflicting gadgets include \"ReferenceTooltips\", \"CiteTooltip\" alias \"RefTooltip\", \"ReferencePopups\", and \"tooltipRef\" (see T274353).",
 			"value": "ReferenceTooltips"
+		},
+		"CiteUseLegacyBacklinkLabels": {
+			"description": "Feature flag switching between numeric and legacy i18n backlink labels (true) and new-style Community Configuration and CLDR alphabet sequences (false).",
+			"public": true,
+			"value": true
+		},
+		"CiteBacklinkCommunityConfiguration": {
+			"description": "Feature flag to enable the Cite community configuration.",
+			"public": true,
+			"value": false
+		},
+		"CiteDefaultBacklinkAlphabet": {
+			"description": "List of letters in the Alphabet to be used to auto-generate backlink labels. Separated by spaces. Defaults to English Alphabet \"a\" to \"z\" when not specified. Currently only used when CiteUseLegacyBacklinkLabels is set to false.",
+			"public": true,
+			"value": null
 		}
 	},
 	"AutoloadNamespaces": {
@@ -358,15 +454,16 @@
 		"Cite\\Tests\\": "tests/phpunit/"
 	},
 	"TrackingCategories": [
+		"cite-tracking-category-cite-diffing-error",
 		"cite-tracking-category-cite-error",
-		"cite-tracking-category-ref-extends"
+		"cite-tracking-category-ref-details"
 	],
 	"ParsoidModules": [
 		{
 			"name": "Cite",
 			"domProcessors": [
 				{
-					"class": "Cite\\Parsoid\\RefProcessor",
+					"class": "Cite\\Parsoid\\CiteDocumentPostProcessor",
 					"services": [
 						"MainConfig"
 					]
@@ -375,7 +472,12 @@
 			"tags": [
 				{
 					"name": "ref",
-					"handler": "Cite\\Parsoid\\Ref",
+					"handler": {
+						"class": "Cite\\Parsoid\\RefTagHandler",
+						"services": [
+							"MainConfig"
+						]
+					},
 					"options": {
 						"wt2html": {
 							"unpackOutput": false,
@@ -387,7 +489,7 @@
 				{
 					"name": "references",
 					"handler": {
-						"class": "Cite\\Parsoid\\References",
+						"class": "Cite\\Parsoid\\ReferenceListTagHandler",
 						"services": [
 							"MainConfig"
 						]

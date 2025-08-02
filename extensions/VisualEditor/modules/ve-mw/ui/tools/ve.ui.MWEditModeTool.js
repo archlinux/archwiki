@@ -62,11 +62,23 @@ ve.ui.MWEditModeVisualTool = function VeUiMWEditModeVisualTool() {
 };
 OO.inheritClass( ve.ui.MWEditModeVisualTool, mw.libs.ve.MWEditModeVisualTool );
 OO.mixinClass( ve.ui.MWEditModeVisualTool, ve.ui.MWEditModeTool );
+
 /**
  * @inheritdoc
  */
 ve.ui.MWEditModeVisualTool.prototype.switch = function () {
 	this.toolbar.getTarget().switchToVisualEditor();
+};
+
+/**
+ * @inheritdoc
+ */
+ve.ui.MWEditModeVisualTool.prototype.isModeAvailable = function ( mode ) {
+	// Adding a new section is not supported in visual mode
+	if ( mode === 'visual' && this.toolbar.getTarget().section === 'new' ) {
+		return false;
+	}
+	return ve.ui.MWEditModeVisualTool.super.prototype.isModeAvailable( mode );
 };
 ve.ui.toolFactory.register( ve.ui.MWEditModeVisualTool );
 

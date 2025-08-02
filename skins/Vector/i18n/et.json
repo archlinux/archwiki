@@ -5,8 +5,8 @@
 			"Cumbril",
 			"Ker",
 			"Pikne",
-			"WikedKentaur",
-			"Rivoz"
+			"Rivoz",
+			"WikedKentaur"
 		]
 	},
 	"skinname-vector": "Vana Vektor (2010)",
@@ -24,7 +24,7 @@
 	"vector-language-button-aria-label": "Mine teises keeles artiklisse. Saadaval {{PLURAL:$1|$1 keeles}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 keel|$1 keelt}}",
 	"vector-no-language-button-label": "Lisa keeli",
-	"vector-no-language-button-aria-label": "See artikkel on olemas ainult selles keeles. Lisa artikkel teistes keeltes",
+	"vector-no-language-button-aria-label": "See artikkel on saadaval ainult selles keeles. Lisa artikkel teistes keeltes",
 	"vector-language-variant-switcher-label": "Muuda keelevarianti",
 	"vector-action-addsection": "Lisa teema",
 	"vector-action-delete": "Kustuta",
@@ -43,6 +43,7 @@
 	"vector-more-actions": "Veel",
 	"vector-appearance-label": "Ilme",
 	"vector-appearance-tooltip": "Muuda lehekülje kirjasuurust, laiust ja värvust",
+	"vector-personal-tools-tooltip": "Isiklikud sätted",
 	"vector-feature-limited-width-name": "Laius",
 	"vector-feature-limited-width-0-label": "Lai",
 	"vector-feature-limited-width-1-label": "Harilik",

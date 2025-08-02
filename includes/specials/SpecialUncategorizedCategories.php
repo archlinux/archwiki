@@ -22,9 +22,9 @@ namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -41,12 +41,6 @@ class SpecialUncategorizedCategories extends SpecialUncategorizedPages {
 	 */
 	private $exceptionList = null;
 
-	/**
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param IConnectionProvider $dbProvider
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
 		IConnectionProvider $dbProvider,

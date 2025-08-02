@@ -59,7 +59,7 @@ ve.dm.MWReferencesListNode.static.enableAboutGrouping = true;
 // TODO: Make this less fragile.
 ve.dm.MWReferencesListNode.static.matchFunction = function ( domElement ) {
 	function hasTypeof( el, type ) {
-		return ( el.getAttribute( 'typeof' ) || '' ).indexOf( type ) !== -1;
+		return ( el.getAttribute( 'typeof' ) || '' ).includes( type );
 	}
 	function isRefList( el ) {
 		return el && el.nodeType === Node.ELEMENT_NODE && hasTypeof( el, 'mw:Extension/references' );
@@ -90,7 +90,7 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 
 	let refListNode;
 	// We may have matched a mw:Transclusion wrapping a reference list, so pull out the refListNode
-	if ( type.indexOf( 'mw:Extension/references' ) !== -1 ) {
+	if ( type.includes( 'mw:Extension/references' ) ) {
 		refListNode = domElements[ 0 ];
 	} else {
 		refListNode = domElements[ 0 ].querySelector( '[typeof*="mw:Extension/references"]' ) ||
@@ -104,7 +104,7 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 	const refGroup = mwAttrs.group || '';
 	const responsiveAttr = mwAttrs.responsive;
 	const listGroup = 'mwReference/' + refGroup;
-	const templateGenerated = type.indexOf( 'mw:Transclusion' ) !== -1;
+	const templateGenerated = type.includes( 'mw:Transclusion' );
 	const isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' );
 
 	const referencesListElement = {
@@ -250,7 +250,11 @@ ve.dm.MWReferencesListNode.static.describeChange = function ( key, change ) {
 		} else if ( !change.to ) {
 			return ve.htmlMsg( 'cite-ve-changedesc-reflist-group-from', this.wrapText( 'del', change.from ) );
 		} else {
-			return ve.htmlMsg( 'cite-ve-changedesc-reflist-group-both', this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
+			return ve.htmlMsg(
+				'cite-ve-changedesc-reflist-group-both',
+				this.wrapText( 'del', change.from ),
+				this.wrapText( 'ins', change.to )
+			);
 		}
 	}
 

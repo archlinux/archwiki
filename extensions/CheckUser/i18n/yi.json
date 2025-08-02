@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Pacha Tchernof",
+			"פוילישער"
+		]
+	},
+	"checkuser": "בודק זײַן באניצער",
+	"checkuserlog": "קאנטראל לאגבוך",
+	"checkuser-contribs": "בודק זײַן באניצער IP אדרעסן",
+	"group-checkuser": "בודקים",
+	"group-checkuser-member": "{{GENDER:$1|בודק}}",
+	"right-checkuser": "בודק זײַן א באניצערס IP אדרעסן און  אנדער אינפארמאציע",
+	"right-checkuser-log": "באקוקן דאס קאנטראל לאגבוך",
+	"grouppage-checkuser": "{{ns:project}}:בודק",
+	"checkuser-reason": "אורזאַך:",
+	"checkuser-reason-api": "API: $1",
+	"checkuser-showlog": "אריבער צו קאנטראל־באניצער לאגבוך",
+	"checkuser-target": "IP אַדרעס אדער באַניצער נאָמען:",
+	"checkuser-period": "דויער:",
+	"checkuser-week-1": "פֿאריגע וואך",
+	"checkuser-week-2": "פֿאריגע צוויי וואכן",
+	"checkuser-month": "פֿאריגע 30 טעג",
+	"checkuser-all": "אַלע",
+	"checkuser-empty": "דאס לאגבוך אנטהאלט נישט קיין איינסן.",
+	"checkuser-nomatch": "נישט געטראפֿן קיין פאָר.",
+	"checkuser-nomatch-edits": "נישט געטראפֿן קיין פאָרן.\nלעצטע רעדאַקטירונג געווען אום $1 אין $2.",
+	"checkuser-check": "בודק זײַן",
+	"checkuser-blocked": "בלאקירט",
+	"checkuser-gblocked": "בלאקירט גלאבאַליש",
+	"checkuser-locked": "פֿאַרשלאסן",
+	"checkuser-search": "זוכן קאנטראל־באניצער־לאגבוך פרטים",
+	"checkuser-search-submit": "זוכן",
+	"checkuser-ipeditcount": "~$1 פון אלע באניצער",
+	"logentry-checkuser-private-event-create-account": "איז געווארן געשאפן",
+	"checkuser-investigate-subtitle-cancel-button-label": "אַנולירן"
+}

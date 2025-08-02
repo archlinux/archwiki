@@ -22,8 +22,12 @@
  * @since 1.26
  */
 
+namespace MediaWiki\Logging;
+
 use MediaWiki\Message\Message;
+use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleParser;
 
 /**
  * This class formats protect log entries.
@@ -31,11 +35,24 @@ use MediaWiki\Title\Title;
  * @since 1.26
  */
 class ProtectLogFormatter extends LogFormatter {
+	private TitleParser $titleParser;
+
+	public function __construct(
+		LogEntry $entry,
+		TitleParser $titleParser
+	) {
+		parent::__construct( $entry );
+		$this->titleParser = $titleParser;
+	}
+
 	public function getPreloadTitles() {
 		$subtype = $this->entry->getSubtype();
 		if ( $subtype === 'move_prot' ) {
 			$params = $this->extractParameters();
-			return [ Title::newFromText( $params[3] ) ];
+			try {
+				return [ $this->titleParser->parseTitle( $params[3] ) ];
+			} catch ( MalformedTitleException $_ ) {
+			}
 		}
 		return [];
 	}
@@ -206,7 +223,7 @@ class ProtectLogFormatter extends LogFormatter {
 		return $protectDescription;
 	}
 
-	private function formatExpiry( $expiry ) {
+	private function formatExpiry( string $expiry ): string {
 		if ( wfIsInfinity( $expiry ) ) {
 			return $this->context->msg( 'protect-expiry-indefinite' )->text();
 		}
@@ -221,3 +238,6 @@ class ProtectLogFormatter extends LogFormatter {
 	}
 
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( ProtectLogFormatter::class, 'ProtectLogFormatter' );

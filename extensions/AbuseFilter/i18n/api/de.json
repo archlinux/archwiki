@@ -60,5 +60,6 @@
 	"apierror-abusefilter-cantcheck": "Du hast keine Berechtigung, die Syntax von Missbrauchsfiltern zu überprüfen.",
 	"apierror-abusefilter-canteval": "Du hast keine Berechtigung zum Auswerten von AbuseFilter-Ausdrücken.",
 	"apierror-abusefilter-nosuchlogid": "Es existiert kein Missbrauchsfilter-Logbuch-Eintrag mit der Kennung $1.",
+	"apierror-abusefilter-incompatible": "Die gewünschte Änderung wird vom Missbrauchsfilter nicht unterstützt.",
 	"apierror-abusefilter-badsyntax": "Der Filter hat eine ungültige Syntax."
 }

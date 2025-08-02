@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Kizule",
+			"Krinkle",
 			"Milicevic01",
 			"Obsuser",
 			"Zoranzoki21",
-			"Сербијана",
-			"Krinkle"
+			"Сербијана"
 		]
 	},
 	"config-desc": "Instalacioni program za MediaWiki",
@@ -232,14 +232,13 @@
 	"config-install-user-missing": "Navedeni korisnik „$1” ne postoji.",
 	"config-install-user-missing-create": "Navedeni korisnik „$1” ne postoji.\nKliknite na polje za potvrdu „otvori nalog” ispod ako želite da ga otvorite.",
 	"config-install-restore-services": "Vraćanje servisa Medijavikija",
-	"config-install-tables": "Pravljenje tabela, prvi korak",
+	"config-install-tables": "Pravljenje tabela",
 	"config-install-tables-exist": "<strong>Upozorenje:</strong> Izgleda da MediaWiki tabele već postoje.\nPreskakanje pravljenja.",
 	"config-install-tables-failed": "<strong>Greška:</strong> Pravljenje tabele nije uspelo zbog sledeće greške: $1",
 	"config-install-interwiki": "Popunjavanje podrazumevane tabele međuvikija",
 	"config-install-interwiki-list": "Nije moguće čitati datoteku <code>interwiki.list</code>.",
 	"config-install-interwiki-exists": "<strong>Upozorenje:</strong> Izgleda da tabela međuvikija već ima unose.\nPreskakanje podrazumevane liste.",
 	"config-install-stats": "Pokretanje statistike",
-	"config-install-keys": "Generisanje tajnih ključeva",
 	"config-install-updates": "Spreči pokretanje nepotrebnih ažuriranja",
 	"config-install-updates-failed": "<strong>Greška:</strong> Umetanje klučeva za ažuriranje u tabele nije uspelo zbog sledeće greške: $1",
 	"config-install-sysop": "Otvaranje korisničkog naloga administratora",

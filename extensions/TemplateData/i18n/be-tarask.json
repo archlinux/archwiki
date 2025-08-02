@@ -40,7 +40,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Удзельнік",
 	"templatedata-doc-params": "Парамэтры шаблёнаў",
 	"templatedata-editbutton": "Рэдагаваць зьвесткі шаблёну",
-	"templatedata-errormsg-jsonbadformat": "Благі фармат JSON. Можаце скасаваць гэтую апэрацыю, каб выправіць яго, выдаліць цяперашнія цэтлікі <templatedata> і паспрабаваць зноўку, альбо працягнуць замену цяперашніх зьвестак шаблёну новымі.",
+	"templatedata-errormsg-jsonbadformat": "Благі фармат JSON. Можаце скасаваць гэтую апэрацыю, каб выправіць ці выдаліць яго, альбо працягнуць замену цяперашніх зьвестак шаблёну новымі.",
 	"templatedata-errormsg-insertblank": "Вы ўпэўненыя, што хочаце ўставіць зьвесткі шаблёну без інфармацыі?",
 	"templatedata-exists-on-related-page": "Зьвярніце ўвагу: на зьвязанай старонцы «[[$1]]» ужо існуе блёк зьвестак шаблёну.",
 	"templatedata-helplink": "Інфармацыя пра зьвесткі шаблёну",

@@ -184,7 +184,7 @@ ve.ui.MWAddParameterPage.prototype.getValidationErrors = function ( name ) {
 	const spec = this.template.getSpec();
 
 	let key;
-	if ( spec.getParameterAliases( name ).indexOf( name ) !== -1 ) {
+	if ( spec.getParameterAliases( name ).includes( name ) ) {
 		key = 'visualeditor-dialog-transclusion-add-param-error-alias';
 	} else if ( this.template.hasParameter( name ) ) {
 		key = 'visualeditor-dialog-transclusion-add-param-error-exists-selected';

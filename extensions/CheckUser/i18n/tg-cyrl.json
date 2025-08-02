@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dreamy Jazz",
+			"Ibrahim",
+			"ToJack"
+		]
+	},
+	"checkuser-summary": "Ин абзор тағйироти охирро барои ба даст овардани нишонаҳои интернетӣ IP  истифода шуда тавассути як корбар ё таъйини вироишҳои анчом шуда тариқи як нишонаи интернетӣ IP, ҷустуҷӯ мекунад.\nКорбарон ва вироишҳои як нишонаи интернетии IP-ро метавон бо таваҷҷӯҳ ба иттилоот сар оянд тариқи XFF бо афзудан нишонаи интернетӣ IP бо \"/xff\" пайдо кард. Ҳар ду протокол IPv4 (CIDR $1-32) ва IPv6 (CIDR $2-128) тавассути ин абзор пуштибонӣ мешаванд.\nНа беш аз 5000 вироиш бо далелҳои зудкорӣ баргардонида хоҳанд шуд. Бо мувофиқи сиёсат ва қоидаҳо инро истода кунед.",
+	"checkuser-desc": "Ба корбарон ихтиёроти лозимиро барои баррасии нишонаҳои интернетӣ IP корбарон ва иттилооти дигар, иҷозат медиҳад",
+	"checkuser": "Бозрасии корбар",
+	"checkuserlog": "БозрасиКорбар гузориш",
+	"group-checkuser": "Бозрасии корбарон",
+	"group-checkuser-member": "Бозрасии корбар",
+	"right-checkuser": "Барраси кардани нишонаи IP ва дигар иттилооти корбар",
+	"grouppage-checkuser": "{{ns:project}}:Бозрасии корбар",
+	"checkuser-reason": "Сабаб:",
+	"checkuser-showlog": "Намоиши гузориш",
+	"checkuser-query": "Ҷустуҷӯи тағйироти охир",
+	"checkuser-target": "Корбар ё нишонаи IP",
+	"checkuser-users": "Феҳрист кардани корбарон",
+	"checkuser-ips": "Феҳрист кардани нишонаҳои IP",
+	"checkuser-period": "Тӯл:",
+	"checkuser-week-1": "ҳафта гузашта",
+	"checkuser-week-2": "ду ҳафтаи гузашта",
+	"checkuser-month": "30 рӯзи гузашта",
+	"checkuser-all": "ҳама",
+	"checkuser-empty": "Гузориш холӣ аст.",
+	"checkuser-nomatch": "Мавриде ки мутобиқат дошта бошад пайдо нашуд",
+	"checkuser-nomatch-edits": "Ҳеҷ мутобиқате ёфт нашуд.\nОхирин вироиш дар $1 соати $2 буд.",
+	"checkuser-check": "Барраси",
+	"checkuser-blocked": "Дастрасӣ қатъ шуд",
+	"checkuser-gblocked": "Басташуда сартосарӣ",
+	"checkuser-wasblocked": "Қаблан баста шуда",
+	"checkuser-localonly": "Якка нашуда",
+	"checkuser-massblock": "Корбарони интихобшуда баста шаванд",
+	"checkuser-search": "Ҷустуҷӯ",
+	"checkuser-search-submit": "Ҷустуҷӯ",
+	"checkuser-showmain": "Бозгашт ба форми аслии бозрасии корбар",
+	"logentry-checkuser-private-event-autocreate-account": "ба таври худкор эҷод шуда буд",
+	"checkuser-investigate-reason-label": "Сабаб"
+}

@@ -20,15 +20,24 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\Article;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
 use MediaWiki\Watchlist\WatchedItem;
 use MediaWiki\Watchlist\WatchedItemStore;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWiki\Xml\XmlSelect;
+use MessageLocalizer;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 
 /**
@@ -232,9 +241,13 @@ class WatchAction extends FormAction {
 	 * 8. addedwatchexpiryhours-talk
 	 */
 	public function onSuccess() {
-		$msgKey = $this->getTitle()->isTalkPage() ? 'addedwatchtext-talk' : 'addedwatchtext';
-		$expiryLabel = null;
 		$submittedExpiry = $this->getContext()->getRequest()->getText( 'wp' . $this->expiryFormFieldName );
+		$this->getOutput()->addWikiMsg( $this->makeSuccessMessage( $submittedExpiry ) );
+	}
+
+	protected function makeSuccessMessage( string $submittedExpiry ): MessageValue {
+		$msgKey = $this->getTitle()->isTalkPage() ? 'addedwatchtext-talk' : 'addedwatchtext';
+		$params = [];
 		if ( $submittedExpiry ) {
 			// We can't use $this->watcheditem to get the expiry because it's not been saved at this
 			// point in the request and so its values are those from before saving.
@@ -244,25 +257,28 @@ class WatchAction extends FormAction {
 			$expiryDays = WatchedItem::calculateExpiryInDays( $expiry );
 			$defaultLabels = static::getExpiryOptions( $this->getContext(), false )['options'];
 			$localizedExpiry = array_search( $submittedExpiry, $defaultLabels );
-			$expiryLabel = $expiryDays && $localizedExpiry === false
-				? $this->getContext()->msg( 'days', $expiryDays )->text()
-				: $localizedExpiry;
 
 			// Determine which message to use, depending on whether this is a talk page or not
 			// and whether an expiry was selected.
 			$isTalk = $this->getTitle()->isTalkPage();
 			if ( wfIsInfinity( $expiry ) ) {
 				$msgKey = $isTalk ? 'addedwatchindefinitelytext-talk' : 'addedwatchindefinitelytext';
-			} elseif ( $expiryDays > 0 ) {
+			} elseif ( $expiryDays >= 1 ) {
 				$msgKey = $isTalk ? 'addedwatchexpirytext-talk' : 'addedwatchexpirytext';
-			} elseif ( $expiryDays < 1 ) {
+				$params[] = $localizedExpiry === false
+					? $this->getContext()->msg( 'days', $expiryDays )->text()
+					: $localizedExpiry;
+			} else {
 				$msgKey = $isTalk ? 'addedwatchexpiryhours-talk' : 'addedwatchexpiryhours';
 			}
 		}
-		$this->getOutput()->addWikiMsg( $msgKey, $this->getTitle()->getPrefixedText(), $expiryLabel );
+		return MessageValue::new( $msgKey )->params( $this->getTitle()->getPrefixedText(), ...$params );
 	}
 
 	public function doesWrites() {
 		return true;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( WatchAction::class, 'WatchAction' );

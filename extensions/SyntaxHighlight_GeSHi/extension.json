@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.43",
+		"MediaWiki": ">= 1.44",
 		"platform": {
 			"ability-shell": true
 		}
@@ -25,7 +25,8 @@
 		]
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\SyntaxHighlight\\": "includes/"
+		"MediaWiki\\SyntaxHighlight\\": "includes/",
+		"MediaWiki\\SyntaxHighlight\\Tests\\": "tests/phpunit/"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
@@ -77,14 +78,19 @@
 	},
 	"Hooks": {
 		"ParserFirstCallInit": "main",
-		"ContentGetParserOutput": "main",
+		"ContentAlterParserOutput": "main",
 		"ApiFormatHighlight": "main",
 		"SoftwareInfo": "main",
 		"ResourceLoaderRegisterModules": "main"
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight"
+			"class": "MediaWiki\\SyntaxHighlight\\Hooks",
+			"services": [
+				"MainConfig",
+				"ParserFactory",
+				"SyntaxHighlight.SyntaxHighlight"
+			]
 		}
 	},
 	"ParsoidModules": [
@@ -115,6 +121,9 @@
 		"syntaxhighlight-error-category",
 		"syntaxhighlight-enclose-category",
 		"syntaxhighlight-source-category"
+	],
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
 	],
 	"manifest_version": 2
 }

@@ -1,0 +1,243 @@
+{
+	"before": {
+		"name": "cu_log",
+		"columns": [
+			{
+				"name": "cul_id",
+				"comment": "Unique identifier",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_timestamp",
+				"comment": "Timestamp of CheckUser action",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cul_actor",
+				"comment": "User who performed the action",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_reason",
+				"comment": "Reason given",
+				"type": "binary",
+				"options": {
+					"notnull": true,
+					"length": 255,
+					"default": ""
+				}
+			},
+			{
+				"name": "cul_reason_id",
+				"comment": "Reason for the check stored as a comment_id. Default of 0 is used to indicate using cul_reason.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_reason_plaintext_id",
+				"comment": "Reason for the check with wikitext removed stored as a comment_id. Default of 0 is used to indicate using cul_reason.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_type",
+				"comment": "String indicating the type of query, may be: 'useredits', 'userips', 'ipedits', 'ipusers', 'ipedits-xff', 'ipusers-xff' or 'investigate' if the check was performed from Special:Investigate",
+				"type": "binary",
+				"options": { "notnull": true, "length": 30 }
+			},
+			{
+				"name": "cul_target_id",
+				"comment": " Integer target, interpretation depends on cul_type For username targets, this is the user_id",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cul_target_text",
+				"comment": "Text target, interpretation depends on cul_type",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cul_target_hex",
+				"comment": "If the target was an IP address, this contains the hexadecimal form of the IP",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_start",
+				"comment": "If the target was an IP range, this field contain the start, in hex form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_end",
+				"comment": "If the target was an IP range, this field contain the end, in hex form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cul_actor_time",
+				"columns": [ "cul_actor", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_type_target",
+				"columns": [ "cul_type", "cul_target_id", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_target_hex",
+				"columns": [ "cul_target_hex", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_range_start",
+				"columns": [ "cul_range_start", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_timestamp",
+				"columns": [ "cul_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cul_id" ]
+	},
+	"after": {
+		"name": "cu_log",
+		"columns": [
+			{
+				"name": "cul_id",
+				"comment": "Unique identifier",
+				"type": "integer",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cul_timestamp",
+				"comment": "Timestamp of CheckUser action",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cul_actor",
+				"comment": "User who performed the action",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "cul_reason",
+				"comment": "Reason given",
+				"type": "binary",
+				"options": {
+					"notnull": true,
+					"length": 255,
+					"default": ""
+				}
+			},
+			{
+				"name": "cul_reason_id",
+				"comment": "Reason for the check stored as a comment_id. Default of 0 is used to indicate using cul_reason.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_reason_plaintext_id",
+				"comment": "Reason for the check with wikitext removed stored as a comment_id. Default of 0 is used to indicate using cul_reason.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "cul_type",
+				"comment": "String indicating the type of query, may be: 'useredits', 'userips', 'ipedits', 'ipusers', 'ipedits-xff', 'ipusers-xff' or 'investigate' if the check was performed from Special:Investigate",
+				"type": "binary",
+				"options": { "notnull": true, "length": 30 }
+			},
+			{
+				"name": "cul_target_id",
+				"comment": " Integer target, interpretation depends on cul_type For username targets, this is the user_id",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cul_target_text",
+				"comment": "Text target, interpretation depends on cul_type",
+				"type": "blob",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "cul_target_hex",
+				"comment": "If the target was an IP address, this contains the hexadecimal form of the IP",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_start",
+				"comment": "If the target was an IP range, this field contain the start, in hex form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cul_range_end",
+				"comment": "If the target was an IP range, this field contain the end, in hex form",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cul_actor_time",
+				"columns": [ "cul_actor", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_type_target",
+				"columns": [ "cul_type", "cul_target_id", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_target_hex",
+				"columns": [ "cul_target_hex", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_range_start",
+				"columns": [ "cul_range_start", "cul_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cul_timestamp",
+				"columns": [ "cul_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cul_id" ]
+	}
+}

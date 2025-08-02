@@ -3,6 +3,7 @@
 		"authors": [
 			"Florian COLLIN",
 			"Gomoko",
+			"JLTRY",
 			"Manu1400",
 			"Orlodrim",
 			"Thibaut120094",
@@ -59,5 +60,6 @@
 	"apierror-abusefilter-cantcheck": "Vous n’avez pas la permission de vérifier la syntaxe des filtres anti-abus.",
 	"apierror-abusefilter-canteval": "Vous n’avez pas le droit d’évaluer les expressions AbuseFilter.",
 	"apierror-abusefilter-nosuchlogid": "Il n’y a pas d’entrée dans le journal des abus avec l’identifiant $1.",
+	"apierror-abusefilter-incompatible": "La modification demandée n'est pas prise en charge par le filtre d'abus.",
 	"apierror-abusefilter-badsyntax": "Le filtre a une syntaxe non valide."
 }

@@ -4,6 +4,7 @@ namespace Test\Parsoid\Wt2Html\DOM\Processors;
 
 use PHPUnit\Framework\TestCase;
 use Wikimedia\Parsoid\Mocks\MockEnv;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -40,7 +41,7 @@ class PWrapTest extends TestCase {
 		$this->verifyPWrap( $html, $expected );
 	}
 
-	public function provideNoPWrapper() {
+	public static function provideNoPWrapper() {
 		// NOTE: verifyPWrap doesn't store data attribs. Hence no data-parsoid in output.
 		return [
 			[ '', '' ],
@@ -48,12 +49,12 @@ class PWrapTest extends TestCase {
 			[ ' <!--c--> ', ' <!--c--> ' ],
 			[
 				// "empty" span gets no p-wrapper
-				'<span about="#mwt1" data-parsoid=\'{"tmp":{"tagId":null,"bits":16}}\'><!--x--></span>',
+				'<span about="#mwt1" data-parsoid=\'{"tmp":{"tagId":null,"bits":' . TempData::WRAPPER . '}}\'><!--x--></span>',
 				'<span about="#mwt1"><!--x--></span>'
 			],
 			[
 				// "empty" span gets no p-wrapper
-				'<style>p{}</style><span about="#mwt1" data-parsoid=\'{"tmp":{"tagId":null,"bits":16}}\'><!--x--></span>',
+				'<style>p{}</style><span about="#mwt1" data-parsoid=\'{"tmp":{"tagId":null,"bits":' . TempData::WRAPPER . '}}\'><!--x--></span>',
 				'<style>p{}</style><span about="#mwt1"><!--x--></span>'
 			],
 			[ '<div>a</div>', '<div>a</div>' ],
@@ -75,7 +76,7 @@ class PWrapTest extends TestCase {
 		$this->verifyPWrap( $html, $expected );
 	}
 
-	public function provideSimplePWrapper(): array {
+	public static function provideSimplePWrapper(): array {
 		return [
 			[ 'a', '<p>a</p>' ],
 			// <span> is not a splittable tag, but gets p-wrapped in simple wrapping scenarios
@@ -101,7 +102,7 @@ class PWrapTest extends TestCase {
 		$this->verifyPWrap( $html, $expected );
 	}
 
-	public function provideComplexPWrapper(): array {
+	public static function provideComplexPWrapper(): array {
 		return [
 			[
 				'<i>x<div>a</div>y</i>',

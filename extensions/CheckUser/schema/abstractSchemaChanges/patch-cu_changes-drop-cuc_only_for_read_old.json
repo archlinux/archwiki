@@ -1,0 +1,283 @@
+{
+	"before": {
+		"name": "cu_changes",
+		"columns": [
+			{
+				"name": "cuc_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_namespace",
+				"comment": "When pages are renamed, their RC entries do _not_ change.",
+				"type": "integer",
+				"options": { "notnull": true, "default": 0 }
+			},
+			{
+				"name": "cuc_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_actor",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_actiontext",
+				"comment": "Edit summary",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_comment_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_minor",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "cuc_page_id",
+				"comment": "Key to page_id (was cur_id prior to 1.5). This will keep links working after moves while retaining the at-the-time name in the changes list.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_this_oldid",
+				"comment": "rev_id of the given revision",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_last_oldid",
+				"comment": "rev_id of the prior revision, for generating diff links.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_type",
+				"comment": "RecentChange type identifiers: RC_EDIT, RC_NEW or RC_LOG",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "unsigned": true, "length": 3, "default": 0 }
+			},
+			{
+				"name": "cuc_timestamp",
+				"comment": "Event timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cuc_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_ip_hex",
+				"comment": "IP address as hexidecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_xff_hex",
+				"comment": "XFF header, last IP, as hexidecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this change.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_private",
+				"comment": "Private Data",
+				"type": "blob",
+				"options": { "notnull": false, "length": 16777215 }
+			},
+			{
+				"name": "cuc_only_for_read_old",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cuc_ip_hex_time",
+				"columns": [ "cuc_ip_hex", "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_xff_hex_time",
+				"columns": [ "cuc_xff_hex", "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_timestamp",
+				"columns": [ "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_actor_ip_time",
+				"columns": [ "cuc_actor", "cuc_ip", "cuc_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cuc_id" ]
+	},
+	"after": {
+		"name": "cu_changes",
+		"columns": [
+			{
+				"name": "cuc_id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": { "autoincrement": true, "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_namespace",
+				"comment": "When pages are renamed, their RC entries do _not_ change.",
+				"type": "integer",
+				"options": { "notnull": true, "default": 0 }
+			},
+			{
+				"name": "cuc_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_actor",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_actiontext",
+				"comment": "Edit summary",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_comment_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "cuc_minor",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "cuc_page_id",
+				"comment": "Key to page_id (was cur_id prior to 1.5). This will keep links working after moves while retaining the at-the-time name in the changes list.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_this_oldid",
+				"comment": "rev_id of the given revision",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_last_oldid",
+				"comment": "rev_id of the prior revision, for generating diff links.",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_type",
+				"comment": "RecentChange type identifiers: RC_EDIT, RC_NEW or RC_LOG",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "unsigned": true, "length": 3, "default": 0 }
+			},
+			{
+				"name": "cuc_timestamp",
+				"comment": "Event timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cuc_ip",
+				"comment": "IP address, visible",
+				"type": "string",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_ip_hex",
+				"comment": "IP address as hexidecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_xff",
+				"comment": "XFF header, visible, all data",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255, "default": "" }
+			},
+			{
+				"name": "cuc_xff_hex",
+				"comment": "XFF header, last IP, as hexidecimal",
+				"type": "string",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_agent",
+				"comment": "User agent",
+				"type": "binary",
+				"options": { "notnull": false, "length": 255 }
+			},
+			{
+				"name": "cuc_agent_id",
+				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this change.",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true, "default": 0 }
+			},
+			{
+				"name": "cuc_private",
+				"comment": "Private Data",
+				"type": "blob",
+				"options": { "notnull": false, "length": 16777215 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cuc_ip_hex_time",
+				"columns": [ "cuc_ip_hex", "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_xff_hex_time",
+				"columns": [ "cuc_xff_hex", "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_timestamp",
+				"columns": [ "cuc_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cuc_actor_ip_time",
+				"columns": [ "cuc_actor", "cuc_ip", "cuc_timestamp" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cuc_id" ]
+	}
+}

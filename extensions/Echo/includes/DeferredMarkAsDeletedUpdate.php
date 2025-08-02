@@ -18,9 +18,6 @@ class DeferredMarkAsDeletedUpdate implements DeferrableUpdate {
 	 */
 	protected $events = [];
 
-	/**
-	 * @param Event $event
-	 */
 	public static function add( Event $event ) {
 		static $update;
 		if ( $update === null ) {
@@ -30,14 +27,11 @@ class DeferredMarkAsDeletedUpdate implements DeferrableUpdate {
 		$update->addInternal( $event );
 	}
 
-	/**
-	 * @param Event $event
-	 */
 	private function addInternal( Event $event ) {
 		$this->events[] = $event;
 	}
 
-	private function filterEventsWithTitleDbLag() {
+	private function filterEventsWithTitleDbLag(): array {
 		return array_filter(
 			$this->events,
 			static function ( Event $event ) {

@@ -10,6 +10,7 @@ use InvalidArgumentException;
  * errors.
  */
 trait PropGuard {
+	/** @var bool */
 	public static $armed = true;
 
 	public function __set( $name, $value ) {

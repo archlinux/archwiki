@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\OATHAuth\Module;
 
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\OATHAuth\Auth\TOTPSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm;
@@ -12,16 +13,19 @@ use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Extension\OATHAuth\Special\OATHManage;
-use MWException;
 
 class TOTP implements IModule {
-	public static function factory() {
-		return new static();
+	public const MODULE_NAME = "totp";
+
+	private OATHUserRepository $userRepository;
+
+	public function __construct( OATHUserRepository $userRepository ) {
+		$this->userRepository = $userRepository;
 	}
 
 	/** @inheritDoc */
 	public function getName() {
-		return "totp";
+		return self::MODULE_NAME;
 	}
 
 	/** @inheritDoc */
@@ -49,7 +53,8 @@ class TOTP implements IModule {
 	 */
 	public function getSecondaryAuthProvider() {
 		return new TOTPSecondaryAuthenticationProvider(
-			$this
+			$this,
+			$this->userRepository
 		);
 	}
 

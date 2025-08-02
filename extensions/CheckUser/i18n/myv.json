@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amdf",
+			"Botuzhaleny-sodamo",
+			"Rueter",
+			"Tupikovs"
+		]
+	},
+	"checkuser-reason": "Тувталось:",
+	"checkuser-showlog": "Ванны журналонть",
+	"checkuser-target": "IP-адресэсь эли совицясь:",
+	"checkuser-period": "Зярс моли:",
+	"checkuser-week-1": "меельсе тарго",
+	"checkuser-week-2": "меельсе кавто таргт",
+	"checkuser-month": "меельсе 30 чить",
+	"checkuser-all": "весе",
+	"checkuser-blocked": "Саймес саезь",
+	"checkuser-locked": "Сёлгозь",
+	"checkuser-search": "Вешнемс совицятнеде журналонть эйстэ",
+	"checkuser-search-submit": "Вешнемс"
+}

@@ -7,7 +7,7 @@ declare( strict_types = 1 );
  * (Grammar.pegphp)
  *
  * Use along with a {@link Wt2Html/TreeBuilder/TreeBuilderStage} and the
- * {@link DOMPostProcessor}(s) for HTML output.
+ * {@link DOMProcessorPipeline}(s) for HTML output.
  */
 
 namespace Wikimedia\Parsoid\Wt2Html;
@@ -17,13 +17,33 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
+use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\WikiPEG\SyntaxError;
 
 class PegTokenizer extends PipelineStage {
-	private $options;
-	private $offsets;
+	/**
+	 * Cache <src,startRule> --> token array.
+	 * No need to retokenize identical strings
+	 * Expected benefits:
+	 * - same expanded template source used multiple times on a page
+	 * - convertToString calls
+	 * - calls from TableFixups and elsewhere to tokenize* methods
+	 */
+	private static array $cache = [];
+	/**
+	 * Track how often a tokenizer string is seen -- can be used
+	 * to reduce caching overheads by only caching on the second
+	 * occurence.
+	 * @var array<string,int>
+	 */
+	private static array $sourceCounts = [];
+
+	private array $options;
+	private array $offsets;
 	private ?SyntaxError $lastError = null;
-	private ?Grammar $grammar = null;
+	/** @var Grammar|TracingGrammar|null */
+	private $grammar = null;
+	private bool $tracing;
 
 	public function __construct(
 		Env $env, array $options = [], string $stageId = "",
@@ -33,11 +53,12 @@ class PegTokenizer extends PipelineStage {
 		$this->env = $env;
 		$this->options = $options;
 		$this->offsets = [];
+		$this->tracing = $env->hasTraceFlag( 'grammar' );
 	}
 
 	private function initGrammar() {
 		if ( !$this->grammar ) {
-			$this->grammar = new Grammar;
+			$this->grammar = $this->tracing ? new TracingGrammar : new Grammar;
 		}
 	}
 
@@ -110,6 +131,10 @@ class PegTokenizer extends PipelineStage {
 			'startRule' => 'start_async',
 		];
 
+		if ( $this->tracing ) {
+			$args['tracer'] = new Tracer( $text );
+		}
+
 		try {
 			// Wrap wikipeg's generator with our own generator
 			// to catch exceptions and track time usage.
@@ -145,11 +170,33 @@ class PegTokenizer extends PipelineStage {
 			'env' => $this->env
 		];
 
+		if ( $this->tracing ) {
+			$args['tracer'] = new Tracer( $text );
+		}
+
+		// crc32 is much faster than md5 and since we are verifying a
+		// $text match when reusing cache contents, hash collisions are okay.
+		//
+		// NOTE about inclusion of pipelineOffset in the cache key:
+		// The PEG tokenizer returns tokens with offsets shifted by
+		// $args['pipelineOffset'], so we cannot reuse tokens across
+		// differing values of this option. If required, we could refactor
+		// to move that and the logging code into this file.
+		$cacheKey = crc32( $text ) .
+			"|" . (int)$args['sol'] .
+			"|" . $args['startRule'] .
+			"|" . $args['pipelineOffset'];
+		$cachedOutput = self::$cache[$cacheKey] ?? null;
+		if ( $cachedOutput && $cachedOutput['text'] === $text ) {
+			$res = Utils::cloneArray( $cachedOutput['tokens'] );
+			return $res;
+		}
+
 		$start = null;
 		$profile = null;
 		if ( $this->env->profiling() ) {
 			$profile = $this->env->getCurrentProfile();
-			$start = microtime( true );
+			$start = hrtime( true );
 		}
 
 		try {
@@ -160,9 +207,17 @@ class PegTokenizer extends PipelineStage {
 		}
 
 		if ( $profile ) {
-			$profile->bumpTimeUse(
-				'PEG', 1000 * ( microtime( true ) - $start ), 'PEG' );
+			$profile->bumpTimeUse( 'PEG', hrtime( true ) - $start, 'PEG' );
 		}
+
+		self::$sourceCounts[$cacheKey] = ( self::$sourceCounts[$cacheKey] ?? 0 ) + 1;
+		if ( is_array( $toks ) && self::$sourceCounts[$cacheKey] > 1 ) {
+			self::$cache[$cacheKey] = [
+				'text' => $text,
+				'tokens' => Utils::cloneArray( $toks )
+			];
+		}
+
 		return $toks;
 	}
 

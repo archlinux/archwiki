@@ -20,9 +20,9 @@
 
 namespace MediaWiki\Deferred;
 
-use CdnPurgeJob;
 use Exception;
 use InvalidArgumentException;
+use MediaWiki\JobQueue\Jobs\CdnPurgeJob;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
@@ -160,7 +160,8 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		/** @var PageReference $page */
 
 		// Avoid multiple queries for HTMLCacheUpdater::getUrls() call
-		$lb = $services->getLinkBatchFactory()->newLinkBatch();
+		$lb = $services->getLinkBatchFactory()->newLinkBatch()
+			->setCaller( __METHOD__ );
 		foreach ( $this->pageTuples as [ $page, ] ) {
 			$lb->addObj( $page );
 		}

@@ -23,6 +23,7 @@ class LanguageLibrary extends LibraryBase {
 	/** @var int */
 	public $maxLangCacheSize;
 
+	/** @inheritDoc */
 	public function register() {
 		// Pre-populate the language cache
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
@@ -61,8 +62,7 @@ class LanguageLibrary extends LibraryBase {
 			$lib[$name] = [ $this, $name ];
 		}
 		foreach ( $methods as $name ) {
-			$lib[$name] = function () use ( $name ) {
-				$args = func_get_args();
+			$lib[$name] = function ( ...$args ) use ( $name ) {
 				return $this->languageMethod( $name, $args );
 			};
 		}
@@ -401,7 +401,7 @@ class LanguageLibrary extends LibraryBase {
 		# Set output timezone.
 		if ( $local ) {
 			$localtimezone = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::Localtimezone );
-			if ( isset( $localtimezone ) ) {
+			if ( $localtimezone !== null ) {
 				$tz = new DateTimeZone( $localtimezone );
 			} else {
 				$tz = new DateTimeZone( date_default_timezone_get() );

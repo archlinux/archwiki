@@ -18,20 +18,27 @@
  * @ingroup Actions
  */
 
+namespace MediaWiki\Actions;
+
+use Exception;
+use InvalidArgumentException;
 use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\Article;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Session\CsrfTokenSet;
-use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\Title\TitleFormatter;
@@ -157,9 +164,11 @@ class DeleteAction extends FormAction {
 			$outputPage->setPageTitleMsg(
 				$context->msg( 'cannotdelete-title' )->plaintextParams( $title->getPrefixedText() )
 			);
-			$outputPage->wrapWikiMsg( "<div class=\"error mw-error-cannotdelete\">\n$1\n</div>",
-				[ 'cannotdelete', wfEscapeWikiText( $title->getPrefixedText() ) ]
-			);
+			$outputPage->addHTML( Html::errorBox(
+				$context->msg( 'cannotdelete', wfEscapeWikiText( $title->getPrefixedText() ) )->parse(),
+				'',
+				'mw-error-cannotdelete'
+			) );
 			$this->showLogEntries();
 
 			return;
@@ -208,17 +217,11 @@ class DeleteAction extends FormAction {
 			if ( !$status->isGood() ) {
 				// If the page (and/or its talk) couldn't be found (e.g. because it was deleted in another request),
 				// let the user know.
-				$outputPage->addHTML(
-					Html::warningBox(
-						$outputPage->parseAsContent(
-							Status::wrap( $status )->getWikiText(
-								false,
-								false,
-								$context->getLanguage()
-							)
-						)
-					)
-				);
+				foreach ( $status->getMessages() as $msg ) {
+					$outputPage->addHTML(
+						Html::warningBox( $context->msg( $msg )->parse() )
+					);
+				}
 			}
 
 			$this->showSuccessMessages(
@@ -235,10 +238,14 @@ class DeleteAction extends FormAction {
 				$this->msg( 'cannotdelete-title' )->plaintextParams( $this->getTitle()->getPrefixedText() )
 			);
 
-			$outputPage->wrapWikiTextAsInterface(
-				'error mw-error-cannotdelete',
-				Status::wrap( $status )->getWikiText( false, false, $context->getLanguage() )
-			);
+			foreach ( $status->getMessages() as $msg ) {
+				$outputPage->addHTML( Html::errorBox(
+					$context->msg( $msg )->parse(),
+					'',
+					'mw-error-cannotdelete'
+				) );
+			}
+
 			$this->showLogEntries();
 		}
 
@@ -325,12 +332,11 @@ class DeleteAction extends FormAction {
 		);
 
 		if ( $title->isBigDeletion() ) {
-			$context->getOutput()->wrapWikiMsg( "<div class='error'>\n$1\n</div>\n",
-				[
-					'delete-warning-toobig',
-					$context->getLanguage()->formatNum( $this->deleteRevisionsLimit )
-				]
-			);
+			$context->getOutput()->addHTML( Html::errorBox(
+				$context->msg( 'delete-warning-toobig' )
+					->numParams( $this->deleteRevisionsLimit )
+					->parse()
+			) );
 		}
 	}
 
@@ -434,16 +440,10 @@ class DeleteAction extends FormAction {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
 	protected function isSuppressionAllowed(): bool {
 		return $this->getAuthority()->isAllowed( 'suppressrevision' );
 	}
 
-	/**
-	 * @return array
-	 */
 	protected function getFormFields(): array {
 		$user = $this->getUser();
 		$title = $this->getTitle();
@@ -535,9 +535,6 @@ class DeleteAction extends FormAction {
 		return $fields;
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getDeleteReason(): string {
 		$deleteReasonList = $this->getRequest()->getText( 'wpDeleteReasonList', 'other' );
 		$deleteReason = $this->getRequest()->getText( 'wpReason' );
@@ -566,7 +563,10 @@ class DeleteAction extends FormAction {
 	protected function prepareOutputForForm(): void {
 		$outputPage = $this->getOutput();
 		$outputPage->addModules( 'mediawiki.misc-authed-ooui' );
-		$outputPage->addModuleStyles( 'mediawiki.action.styles' );
+		$outputPage->addModuleStyles( [
+			'mediawiki.action.styles',
+			'mediawiki.codex.messagebox.styles',
+		] );
 		$outputPage->enableOOUI();
 	}
 
@@ -599,17 +599,12 @@ class DeleteAction extends FormAction {
 		return $this->msg( $messages[$field] );
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getFormAction(): string {
 		return $this->getTitle()->getLocalURL( 'action=delete' );
 	}
 
 	/**
 	 * Default reason to be used for the deletion form
-	 *
-	 * @return string
 	 */
 	protected function getDefaultReason(): string {
 		$requestReason = $this->getRequest()->getText( 'wpReason' );
@@ -651,3 +646,6 @@ class DeleteAction extends FormAction {
 		return $res > 1;
 	}
 }
+
+/** @deprecated class alias since 1.44 */
+class_alias( DeleteAction::class, 'DeleteAction' );

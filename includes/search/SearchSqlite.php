@@ -108,6 +108,7 @@ class SearchSqlite extends SearchDatabase {
 				if ( count( $strippedVariants ) > 1 ) {
 					$searchon .= '(';
 				}
+				$count = 0;
 				foreach ( $strippedVariants as $stripped ) {
 					if ( $nonQuoted && strpos( $stripped, ' ' ) !== false ) {
 						// Hack for Chinese: we need to toss in quotes for
@@ -115,7 +116,11 @@ class SearchSqlite extends SearchDatabase {
 						// added spaces between them to make word breaks.
 						$stripped = '"' . trim( $stripped ) . '"';
 					}
+					if ( $count > 0 ) {
+						$searchon .= " OR ";
+					}
 					$searchon .= "$quote$stripped$quote$wildcard ";
+					++$count;
 				}
 				if ( count( $strippedVariants ) > 1 ) {
 					$searchon .= ')';
@@ -138,7 +143,7 @@ class SearchSqlite extends SearchDatabase {
 		return " $field MATCH $searchon ";
 	}
 
-	private function regexTerm( $string, $wildcard ) {
+	private function regexTerm( string $string, string $wildcard ): string {
 		$regex = preg_quote( $string, '/' );
 		if ( MediaWikiServices::getInstance()->getContentLanguage()->hasWordBreaks() ) {
 			if ( $wildcard ) {
@@ -275,7 +280,7 @@ class SearchSqlite extends SearchDatabase {
 			"WHERE page_id=$searchindex.rowid AND $match";
 	}
 
-	private function getCountQuery( $filteredTerm, $fulltext ) {
+	private function getCountQuery( string $filteredTerm, bool $fulltext ): string {
 		$match = $this->parseQuery( $filteredTerm, $fulltext );
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		$page = $dbr->tableName( 'page' );

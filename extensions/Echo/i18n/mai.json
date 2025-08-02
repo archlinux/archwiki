@@ -28,6 +28,7 @@
 	"echo-category-title-user-rights": "{{PLURAL:$1|प्रयोगकर्ता अधिकार परिवर्तन|प्रयोगकर्ता अधिकार परिवर्तन भेल}}",
 	"notifications": "अधिसूचनासभ",
 	"tooltip-pt-notifications-alert": "{{GENDER:|अहाँक}} सूचना",
+	"tooltip-pt-notifications": "आपने के अधिसूचना",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "स्वचालित रुपसँ सक्षम करी",
 	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "वर्तमान प्रयोगकर्तासभ",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "नव प्रयोगकर्तासभ",

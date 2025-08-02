@@ -15,9 +15,9 @@ use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ConstrainedText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ExtLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\MagicLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\WikiLinkText;
+use Wikimedia\Parsoid\Html2Wt\DOMHandlers\FallbackHTMLHandler;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
-use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -32,8 +32,8 @@ use Wikimedia\Parsoid\Wt2Html\TokenizerUtils;
  * Serializes link markup.
  */
 class LinkHandlerUtils {
-	private static $REDIRECT_TEST_RE = '/^([ \t\n\r\0\x0b])*$/D';
-	private static $MW_TITLE_WHITESPACE_RE
+	private const REDIRECT_TEST_RE = '/^([ \t\n\r\0\x0b])*$/D';
+	private const MW_TITLE_WHITESPACE_RE
 		= '/[ _\xA0\x{1680}\x{180E}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u';
 
 	/**
@@ -186,22 +186,28 @@ class LinkHandlerUtils {
 			'linkType' => null
 		];
 		$rtData->content = new stdClass;
+		$isIW = false;
 
 		// Figure out the type of the link
 		if ( $node->hasAttribute( 'rel' ) ) {
 			$rel = DOMCompat::getAttribute( $node, 'rel' ) ?? '';
-			// Parsoid only emits and recognizes ExtLink, WikiLink, and PageProp rel values.
+			// Parsoid only emits and recognizes ExtLink, WikiLink, MediaLink and PageProp rel values.
 			// Everything else defaults to ExtLink during serialization (unless it is
 			// serializable to a wikilink)
 			// We're keeping the preg_match here instead of going through DOMUtils::matchRel
 			// because we have \b guards to handle the multivalue, and we're keeping the matches,
 			// which matchRel doesn't do.
-			if ( preg_match( '/\b(mw:(WikiLink|ExtLink|MediaLink|PageProp)\S*)\b/', $rel, $typeMatch ) ) {
+			if ( preg_match( '/\b(mw:(WikiLink|ExtLink|MediaLink|PageProp)(\S*))\b/', $rel, $typeMatch ) ) {
 				$rtData->type = $typeMatch[1];
 				// Strip link subtype info
 				if ( $typeMatch[2] === 'WikiLink' || $typeMatch[2] === 'ExtLink' ) {
 					$rtData->type = 'mw:' . $typeMatch[2];
 				}
+				$isIW = (
+					( $typeMatch[2] === 'WikiLink' && ( $typeMatch[3] ?? '' ) === '/Interwiki' ) ||
+					// TODO: Remove this when we no longer have to worry about Flow boards
+					( $typeMatch[2] === 'ExtLink' && ( $dp->isIW ?? false ) )
+				);
 			}
 		}
 
@@ -290,6 +296,12 @@ class LinkHandlerUtils {
 		// Check if the href matches any of our interwiki URL patterns
 		$interwikiMatch = $siteConfig->interwikiMatcher( $href );
 		if ( !$interwikiMatch ) {
+			if ( $isIW ) {
+				// If this is an interwiki but we can't find it then ignore the
+				// data-parsoid href (which is proably just the interwiki link again)
+				// and use the href from the <a> tag
+				$rtData->target = DOMCompat::getAttribute( $node, 'href' );
+			}
 			return $rtData;
 		}
 
@@ -331,10 +343,9 @@ class LinkHandlerUtils {
 				!empty( $rtData->content->string ) ||
 				!empty( $rtData->contentNode )
 			) &&
-			( !empty( $dp->isIW ) || !empty( $target['modified'] ) || !empty( $rtData->contentModified ) )
+			( $isIW || !empty( $target['modified'] ) || !empty( $rtData->contentModified ) )
 		) {
 			// External link that is really an interwiki link. Convert it.
-			// TODO: Leaving this for backwards compatibility, remove when 1.5 is no longer bound
 			if ( $rtData->type === 'mw:ExtLink' ) {
 				$rtData->type = 'mw:WikiLink';
 			}
@@ -568,7 +579,7 @@ class LinkHandlerUtils {
 				// normalize as titles and compare
 				// FIXME: This will strip an interwiki prefix.  Is that right?
 				$env->normalizedTitleKey( $contentString, true )
-					=== preg_replace( self::$MW_TITLE_WHITESPACE_RE, '_', $decodedTarget ) ||
+					=== preg_replace( self::MW_TITLE_WHITESPACE_RE, '_', $decodedTarget ) ||
 				// Relative link
 				(
 					(
@@ -808,7 +819,7 @@ class LinkHandlerUtils {
 			}
 
 			// Buffer redirect text if it is not in start of file position
-			if ( !preg_match( self::$REDIRECT_TEST_RE, $state->out . $state->currLine->text ) ) {
+			if ( !preg_match( self::REDIRECT_TEST_RE, $state->out . $state->currLine->text ) ) {
 				$state->redirectText = $linkData->prefix . '[[' . $linkTarget . ']]';
 				$state->emitChunk( '', $node ); // Flush separators for this node
 				// Flush separators for this node
@@ -833,13 +844,14 @@ class LinkHandlerUtils {
 			$state->needsEscaping = $needsEscaping;
 			$state->emitChunk( $linkData->prefix . $pipedText . $linkData->tail, $node );
 		} else {
+			$pipe = $dp->firstPipeSrc ?? '|';
 			if ( $isPiped && $needsEscaping ) {
 				// We are definitely not in sol context since content
 				// will be preceded by "[[" or "[" text in target wikitext.
-				$pipedText = '|' . $state->serializer->wteHandlers
+				$pipedText = $pipe . $state->serializer->wteHandlers
 					->escapeLinkContent( $state, $contentSrc, false, $node, false );
 			} elseif ( $isPiped ) {
-				$pipedText = '|' . $contentSrc;
+				$pipedText = $pipe . $contentSrc;
 			} else {
 				$pipedText = '';
 			}
@@ -1046,6 +1058,7 @@ class LinkHandlerUtils {
 				"Couldn't parse media structure: ",
 				DOMCompat::getOuterHTML( $node )
 			);
+			( new FallbackHTMLHandler )->handle( $node, $state );
 			return;
 		}
 		$ct = self::figureToConstrainedText( $state, $ms );
@@ -1174,13 +1187,8 @@ class LinkHandlerUtils {
 		}
 
 		// Reconstruct the caption
-		if ( !$captionElt && is_string( $outerDMW->caption ?? null ) ) {
-			// IMPORTANT: Assign to a variable to prevent the fragment
-			// from getting GCed before we are done with it.
-			$fragment = ContentUtils::createAndLoadDocumentFragment(
-				$outerElt->ownerDocument, $outerDMW->caption,
-				[ 'markNew' => true ]
-			);
+		if ( !$captionElt && ( $outerDMW->caption ?? null ) !== null ) {
+			$fragment = $outerDMW->caption;
 			// FIXME: We should just be able to serialize the children of the
 			// fragment, however, we need some way of marking this as being
 			// inInsertedContent so that any bare text is assured to be escaped

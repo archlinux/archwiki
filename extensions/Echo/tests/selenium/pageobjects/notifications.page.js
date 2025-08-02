@@ -8,8 +8,8 @@ class NotificationsPage extends Page {
 		return $( '#firstHeading' );
 	}
 
-	open() {
-		super.openTitle( 'Special:Notifications', { uselang: 'en' } );
+	async open() {
+		return super.openTitle( 'Special:Notifications', { uselang: 'en' } );
 	}
 }
 

@@ -3,8 +3,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 
-use DOMDocument;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -51,11 +51,11 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 				return;
 			}
 
-			$start = microtime( true );
+			$start = hrtime( true );
 			$titleMap = $env->getDataAccess()->getPageInfo( $env->getPageConfig(), array_keys( $titles ) );
 			if ( $env->profiling() ) {
 				$profile = $env->getCurrentProfile();
-				$profile->bumpMWTime( "RedLinks", 1000 * ( microtime( true ) - $start ), "api" );
+				$profile->bumpMWTime( "RedLinks", hrtime( true ) - $start, "api" );
 				$profile->bumpCount( "RedLinks" );
 			}
 
@@ -180,14 +180,14 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 	 * Attempt to resolve nonexistent link targets using their variants (T258856)
 	 *
 	 * @param Env $env
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @param array $titles map keyed by page titles
 	 * @param array $titleMap map of resolved page data keyed by title
 	 * @return array map of resolved variant page data keyed by original title
 	 */
 	private function getVariantTitles(
 		Env $env,
-		DOMDocument $doc,
+		Document $doc,
 		array $titles,
 		array $titleMap
 	): array {
@@ -240,7 +240,7 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 				}
 
 				foreach ( $origsByVariant[$variantTitle] as $origTitle ) {
-					$variantsByOrig[$origTitle] = [ 'variantTitle' => $variantTitle ] + $pageData;
+					$variantsByOrig[$origTitle] = [ 'variantTitle' => (string)$variantTitle ] + $pageData;
 				}
 			}
 		}

@@ -21,6 +21,7 @@
  * @ingroup RevisionDelete
  */
 
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
@@ -140,7 +141,15 @@ class RevisionDeleteUser {
 		return true;
 	}
 
-	private static function buildSetBitDeletedField( $field, $op, $value, IDatabase $dbw ) {
+	/**
+	 * @param string $field
+	 * @param string $op
+	 * @param string|int $value
+	 * @param IDatabase $dbw
+	 */
+	private static function buildSetBitDeletedField(
+		string $field, string $op, $value, IDatabase $dbw
+	): array {
 		return [ $field => new RawSQLValue( $op === '&'
 			? $dbw->bitAnd( $field, $value )
 			: $dbw->bitOr( $field, $value )

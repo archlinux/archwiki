@@ -13,6 +13,7 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\RedirectStore;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig as ParsoidSiteConfig;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
 use MediaWiki\Permissions\Authority;
@@ -54,8 +55,8 @@ class PageRestHelperFactory {
 	private RedirectStore $redirectStore;
 	private LanguageConverterFactory $languageConverterFactory;
 	private TitleFactory $titleFactory;
-	private IConnectionProvider $connectionProvider;
-	private ChangeTagsStore $changeTagStore;
+	private IConnectionProvider $dbProvider;
+	private ChangeTagsStore $changeTagsStore;
 	private StatsFactory $statsFactory;
 
 	public function __construct(
@@ -74,8 +75,8 @@ class PageRestHelperFactory {
 		RedirectStore $redirectStore,
 		LanguageConverterFactory $languageConverterFactory,
 		TitleFactory $titleFactory,
-		IConnectionProvider $connectionProvider,
-		ChangeTagsStore $changeTagStore,
+		IConnectionProvider $dbProvider,
+		ChangeTagsStore $changeTagsStore,
 		StatsFactory $statsFactory
 	) {
 		$this->options = $options;
@@ -94,8 +95,8 @@ class PageRestHelperFactory {
 		$this->languageConverterFactory = $languageConverterFactory;
 		$this->statsFactory = $statsFactory;
 		$this->titleFactory = $titleFactory;
-		$this->connectionProvider = $connectionProvider;
-		$this->changeTagStore = $changeTagStore;
+		$this->dbProvider = $dbProvider;
+		$this->changeTagsStore = $changeTagsStore;
 	}
 
 	public function newRevisionContentHelper(): RevisionContentHelper {
@@ -105,8 +106,8 @@ class PageRestHelperFactory {
 			$this->titleFormatter,
 			$this->pageLookup,
 			$this->titleFactory,
-			$this->connectionProvider,
-			$this->changeTagStore
+			$this->dbProvider,
+			$this->changeTagsStore
 		);
 	}
 
@@ -117,8 +118,8 @@ class PageRestHelperFactory {
 			$this->titleFormatter,
 			$this->pageLookup,
 			$this->titleFactory,
-			$this->connectionProvider,
-			$this->changeTagStore
+			$this->dbProvider,
+			$this->changeTagsStore
 		);
 	}
 
@@ -137,13 +138,16 @@ class PageRestHelperFactory {
 	 * @param ?Authority $authority
 	 * @param int|RevisionRecord|null $revision
 	 * @param bool $lenientRevHandling
+	 * @param ParserOptions|null $parserOptions
+	 * @return HtmlOutputRendererHelper
 	 */
 	public function newHtmlOutputRendererHelper(
 		$page = null,
 		array $parameters = [],
 		?Authority $authority = null,
 		$revision = null,
-		bool $lenientRevHandling = false
+		bool $lenientRevHandling = false,
+		?ParserOptions $parserOptions = null
 	): HtmlOutputRendererHelper {
 		if ( is_bool( $page ) ) {
 			// Backward compatibility w/ pre-1.43 (deprecated)
@@ -172,7 +176,8 @@ class PageRestHelperFactory {
 			$parameters,
 			$authority,
 			$revision,
-			$lenientRevHandling
+			$lenientRevHandling,
+			$parserOptions
 		);
 	}
 

@@ -3,10 +3,10 @@
 namespace MediaWiki\Skins\Vector;
 
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Skin\SkinMustache;
+use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\Skins\Vector\Components\VectorComponentSearchBox;
 use MediaWiki\Skins\Vector\Components\VectorComponentVariants;
-use SkinMustache;
-use SkinTemplate;
 
 /**
  * @ingroup Skins

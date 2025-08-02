@@ -8,7 +8,7 @@
 	"descriptionmsg": "nuke-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.43"
+		"MediaWiki": ">= 1.44"
 	},
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
@@ -29,22 +29,33 @@
 		"ListDefinedTags": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags",
 		"ChangeTagsListActive": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags"
 	},
-	"ResourceModules": {
-		"ext.nuke.confirm": {
-			"scripts": [
-				"ext.nuke.confirm.js"
-			],
-			"dependencies": [
-				"mediawiki.jqueryMsg"
-			],
-			"messages": [
-				"nuke-confirm"
-			]
+	"config": {
+		"NukeMaxAge": {
+			"value": 0,
+			"description": "The maximum age of a new page creation or file upload before it becomes ineligible for mass deletion. Defaults to the value of $wgRCMaxAge."
 		},
+		"NukeUIType": {
+			"value": "htmlform",
+			"description": "The UI type to use for Special:Nuke."
+		}
+	},
+	"ResourceModules": {
 		"ext.nuke.styles": {
 			"localBasePath": "modules/ext.nuke.styles",
 			"styles": [
 				"nuke.less"
+			]
+		},
+		"ext.nuke.fields.NukeDateTimeField": {
+			"packageFiles": [
+				"ext.nuke.fields.NukeDateTimeField/init.js"
+			],
+			"messages": [
+				"nuke-date-limited"
+			],
+			"dependencies": [
+				"moment",
+				"mediawiki.widgets.DateInputWidget"
 			]
 		}
 	},
@@ -73,12 +84,12 @@
 				"DBLoadBalancerFactory",
 				"PermissionManager",
 				"RepoGroup",
-				"UserFactory",
 				"UserOptionsLookup",
 				"UserNamePrefixSearch",
 				"UserNameUtils",
 				"NamespaceInfo",
 				"ContentLanguage",
+				"RedirectLookup",
 				"NukeIPLookup"
 			],
 			"styles": [
@@ -88,6 +99,9 @@
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Nuke\\": "includes/"
+	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\Extension\\Nuke\\Test\\": "tests/phpunit/"
 	},
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
