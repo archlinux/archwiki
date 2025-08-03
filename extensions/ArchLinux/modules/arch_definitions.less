@@ -5,33 +5,23 @@
  */
 
 :root {
+  /* TODO: choose suitable dark colors */
   --archwiki-background-color-base: var(--archwiki-body-background-color);
-  --archwiki-body-background-color: #f6f9fc;
-  --archwiki-text-color: #222;
-  --archwiki-content-background-color: #fff;
+  --archwiki-body-background-color: light-dark(#f6f9fc, var(--background-color-base));
+  --archwiki-text-color: light-dark(#222, var(--color-base));
+  --archwiki-content-background-color: light-dark(#fff, var(--background-color-base));
   --archwiki-content-border-width: 1px;
   --archwiki-content-border-style: var(--archwiki-content-border-width) solid;
-  --archwiki-content-border-color: #ccc;
-  --archwiki-toc-background-color: #f9faff;
+  --archwiki-content-border-color: light-dark(#ccc, var(--background-color-base));
+  --archwiki-toc-background-color: light-dark(#f9faff, var(--background-color-base));
   --archwiki-toc-border-style: 1px solid;
   --archwiki-toc-border-color: #d7dfe3;
-  --archwiki-code-background-color: #ebf1f5;
+  --archwiki-code-background-color: light-dark(#ebf1f5, #080c10);
   --archwiki-code-border-style: 1px solid;
-  --archwiki-code-border-color: #bcd;
+  --archwiki-code-border-color: light-dark(#bcd, #384756);
   --archwiki-link-color-normal: #07b;
   --archwiki-link-color-hover: #999;
   --archwiki-link-color-active: #e90;
   --archwiki-link-color-visited: #795cb2;
   --archwiki-link-color-new: #b00;
-}
-
-.dark-mode-colors() {
-  // this resets to MediaWiki colors
-  --archwiki-body-background-color: var(--background-color-base);
-  --archwiki-text-color: var(--color-base);
-  --archwiki-content-background-color: var(--background-color-base);
-  --archwiki-content-border-color: var(--background-color-base);
-  --archwiki-toc-background-color: var(--background-color-base);
-  --archwiki-code-border-color: #384756;
-  --archwiki-code-background-color: #080c10;
 }
