@@ -123,7 +123,16 @@ body {
     }
 }
 
-/* Colors of links in the content, MediaWiki navigation and the footer */
+/* Colors of links */
+a {
+	color: var(--archwiki-link-color-normal);
+	&:visited {
+		color: var(--archwiki-link-color-visited);
+	}
+	&:active {
+		color: var(--archwiki-link-color-active);
+	}
+}
 #content,
 header.mw-header li:not(.new), // Vector
 #mw-panel-toc,                // Vector
