@@ -6,6 +6,14 @@
 	},
 	"apierror-visualeditor-difffailed": "Ӏалашйан цайелира",
 	"apihelp-visualeditor-param-etag": "ETag дӀайахьийта.",
+	"apihelp-visualeditor-param-paction": "Кхочушбан безаш болу ардамаш.",
+	"apihelp-visualeditor-param-page": "Ардам кхочушбан беза агӀо.",
+	"apihelp-visualeditoredit-param-plugins": "API-н дехарца йоьзна плагинаш.",
 	"apihelp-visualeditoredit-param-etag": "ETag дӀайахьийта.",
-	"apihelp-visualeditoredit-param-summary": "Хийцамах лаьцнарг тадар"
+	"apihelp-visualeditoredit-param-minor": "Жимачу хийцамашна байракх.",
+	"apihelp-visualeditoredit-param-paction": "Кхочушбан безаш болу ардамаш.",
+	"apihelp-visualeditoredit-param-page": "Ардам кхочушбан беза агӀо.",
+	"apihelp-visualeditoredit-param-sectiontitle": "Керлачу декъан цӀе.",
+	"apihelp-visualeditoredit-param-summary": "Хийцамах лаьцнарг тадар",
+	"apihelp-visualeditoredit-summary": "MediaWiki агӀо Ӏалашйе HTML5 форматехь (викитексте хийцина Parsoid лелош)."
 }

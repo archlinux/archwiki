@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"NikolasKHF"
+		]
+	},
+	"fancycaptcha-captcha": "Pengekir keamanan",
+	"fancycaptcha-accountcreate": "Adén ite bau jagaq akun haq tepiaq otomatis léq ti, tamaq kata haq muncul léq bawaq ni ([[Special:Captcha/help|ape ni?]]):",
+	"fancycaptcha-imgcaptcha-ph": "Petamaq teks haq side éngat léq gambar ni",
+	"fancycaptcha-reload-text": "Nyegeran"
+}

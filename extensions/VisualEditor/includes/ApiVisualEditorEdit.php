@@ -515,9 +515,13 @@ class ApiVisualEditorEdit extends ApiBase {
 				if ( isset( $saveresult['edit']['newtimestamp'] ) ) {
 					$ts = $saveresult['edit']['newtimestamp'];
 
+					$date = $lang->userDate( $ts, $user );
+					$time = $lang->userTime( $ts, $user );
+
 					$result['lastModified'] = [
-						'date' => $lang->userDate( $ts, $user ),
-						'time' => $lang->userTime( $ts, $user )
+						'date' => $date,
+						'time' => $time,
+						'message' => $this->msg( 'lastmodifiedat', $date, $time )->parse(),
 					];
 				}
 

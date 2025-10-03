@@ -74,6 +74,7 @@
 	"linter-category-wikilink-in-extlink-desc": "これらのページには外部リンク内に置かれたウィキリンクがあり、修正が可能です",
 	"linter-desc": "外部サービスから lint エラーを追跡し、利用者に表示する",
 	"linter-lints-prefix-search-page-desc": "ページ名の先頭か全体に一致するLintエラーのあるページを検索",
+	"linter-invalid-title": "名前空間またはページ名が見つからないか形式が正しくありません",
 	"linter-form-exact-match": "特定のページ名を検索する",
 	"linter-form-prefix-match": "ページ名の先頭に一致するすべてのページを検索する",
 	"linter-form-exact-or-prefix": "特定のページタイトルを検索するか、共通のタイトル接頭辞を持つすべてのページを検索するか",

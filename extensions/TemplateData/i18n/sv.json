@@ -93,6 +93,7 @@
 	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Autovärde",
 	"templatedata-modal-table-param-default": "Standard ($1)",
+	"templatedata-modal-table-param-status": "Status",
 	"templatedata-modal-table-param-deprecated": "Föråldrad",
 	"templatedata-modal-table-param-deprecatedValue": "Föråldrad guide",
 	"templatedata-modal-table-param-description": "Beskrivning ($1)",
@@ -115,5 +116,17 @@
 	"templatedata-modal-title-templateformat": "Föreslaget wikitextformat",
 	"templatedata-modal-title-templateformatstring": "Anpassad formatsträng",
 	"templatedata-modal-title-templateparam-details": "Parameterdetaljer: $1",
-	"templatedata-modal-title-templateparams": "Mallparametrar"
+	"templatedata-modal-title-templateparams": "Mallparametrar",
+	"templatedata-search-title": "Mallsökning",
+	"templatedata-search-list-header": "Favoriter",
+	"templatedata-search-list-empty": "Mallar som du markerar som favoriter visas här",
+	"templatedata-template-discovery-disabled": "Mallupptäckt är inaktiverat på denna wiki.",
+	"templatediscovery": "Mallupptäckt",
+	"templatedata-favorite-disabled": "Du måste vara inloggad för att favoritmarkera en mall",
+	"templatedata-favorite-add": "Lägg till mall i favoriter",
+	"templatedata-favorite-added": "Mallen har lagts till i favoriter",
+	"templatedata-favorite-remove": "Ta bort mallen från favoriter",
+	"templatedata-favorite-removed": "Mall borttagen från favoriter",
+	"templatedata-favorite-error": "Det gick inte att spara favoriter",
+	"templatedata-favorite-maximum-reached": "Du har nått det maximala antalet ($1) favoritmallar. Ta bort några från din lista innan du lägger till fler."
 }

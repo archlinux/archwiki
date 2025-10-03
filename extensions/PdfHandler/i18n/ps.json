@@ -1,8 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
+	"pdf-desc": "په انځوريز ونگ‌ډول د پي‌ډي‌اېف دوتنو کتلو لپاره سمبالوونکی",
+	"pdf-file-page-warning": "پي‌ډي‌اېف يوه پېچلې بڼه ده چې په ځينو مواردو کې ستاسو ځينې ځاني مالومات بربنډولی شي. ځان ډاډه کړئ چې خپل پي‌ډي‌اېف کتونکي مو په خوندي ډول ترتيب کړې دي.",
+	"pdf-file-page-warning-header": "د پټنتيا بياکتنې",
+	"pdf-file-page-warning-footer": "دا ستونزه په دې ځانگړې دوتنې پورې اړوند نه ده، بلکې د پي‌‌ډي‌اېف بڼې سره اړوند يوه ټوليزه ستونزه ده.",
+	"pdf-file-page-warning-info": "د دې ستونزې په اړه نور پوهېدل.",
+	"pdf_no_metadata": "له پي‌ډي‌اېف څخه مېټا‌اومتوک نشي ترلاسه کېدای.",
+	"pdf_page_error": "مخ شمېره په چاپېريال کې نشته.",
+	"exif-pdf-producer": "اړونې خپرونه",
+	"exif-pdf-version": "د پي‌ډي‌اېف بڼې بلبڼه",
+	"exif-pdf-encrypted": "کوډ شوی",
 	"exif-pdf-pagesize": "مخ کچه"
 }

@@ -1,8 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
-	"imagemap_description": "ددې انځور په اړه"
+	"imagemap_desc": "د <code>&lt;imagemap&gt;</code> نښلن کارولو سره د پېرن‌پټې کليک کولو وړ انځور نخچو ته اجازه ورکوي.",
+	"imagemap_no_image": "تېروتنه: بايد په لومړۍ کرښه کې يو انځور مشخص کړئ.",
+	"imagemap_invalid_image": "تېروتنه: انځور ناسم دی، يا شتون نه لري.",
+	"imagemap_bad_image": "تېروتنه: دې مخ کې انځور ته اجازه نشته.",
+	"imagemap_no_link": "تېروتنه: $1 کرښې پای کې هېڅ باوري تړونی ونه موندل شو.",
+	"imagemap_invalid_title": "تېروتنه: $1 کرښې تړوني کې ناسم سرليک.",
+	"imagemap_missing_coord": "تېروتنه: $1 کرښه کې د څېرې لپاره مناسبه همغږي نشته.",
+	"imagemap_unrecognised_shape": "تېروتنه: $1 کرښه کې ناپېژانده څېره، هره کرښه بايد له دې څخه په يوه پيل شي: <code>default</code>, <code>rect</code>، <code>circle</code> or <code>poly</code>.",
+	"imagemap_invalid_coord": "تېروتنه: $1 کرښه کې ناچله همغږي، بايد يوه شمېره وي.",
+	"imagemap_invalid_desc": "تېروتنه: د څرگنداوي ناسم مشخصات، بايد يو: <code>$1</code> وي.",
+	"imagemap_description": "ددې انځور په اړه",
+	"imagemap_poly_odd": "تېروتنه: په $1 کرښه کې د بې‌جوړې شمېرو همغږي لرونکی څوڅنډيز وموندل شو"
 }

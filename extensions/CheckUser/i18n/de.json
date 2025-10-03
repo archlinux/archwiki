@@ -22,7 +22,10 @@
 			"Umherirrender",
 			"WikiBayer",
 			"Schniggendiller",
-			"Dreamy Jazz"
+			"Dreamy Jazz",
+			"Johannnes89",
+			"XenonX3",
+			"Inkowik"
 		]
 	},
 	"checkuser-summary": "Dieses Werkzeug durchsucht die letzten Änderungen, um die IP-Adressen eines Benutzers bzw. die Bearbeitungen/Benutzernamen für eine IP-Adresse zu ermitteln. Benutzer und Bearbeitungen einer IP-Adresse können auch nach Informationen aus den XFF-Headern abgefragt werden, indem der IP-Adresse ein „/xff“ angehängt wird. IPv4 (CIDR $1–32) und IPv6 (CIDR $2–128) werden unterstützt.\nZur Aufrechterhaltung der Leistungsfähigkeit werden maximal $3 Bearbeitungen ausgegeben. Benutze CheckUser ausschließlich in Übereinstimmung mit den Datenschutzrichtlinien.",
@@ -46,7 +49,7 @@
 	"grant-checkuser-temporary-account": "Zugriff auf Checkuser-Daten für temporäre Konten",
 	"action-checkuser": "IP-Adressen sowie Zusammenhänge zwischen IP-Adressen und angemeldeten Benutzern zu prüfen",
 	"action-checkuser-log": "das Checkuser-Logbuch einzusehen",
-	"action-checkuser-temporary-account": "Anzeigen von IP-Adressen, die von temporären Konten verwendet werden",
+	"action-checkuser-temporary-account": "IP-Adressen, die von temporären Konten verwendet werden, anzeigen zu lassen.",
 	"action-checkuser-temporary-account-no-preference": "anzeigen von IP-Adressen, die von temporären Konten verwendet werden",
 	"action-checkuser-temporary-account-log": "das Protokoll des Zugriffs auf temporäre Konto-IP-Adressen anzuzeigen",
 	"action-checkuser-temporary-account-auto-reveal": "automatisch IP-Adressen, die von temporären Konten verwendet werden, anzuzeigen",
@@ -343,8 +346,8 @@
 	"logentry-checkuser-temporary-account-change-access": "$1 $4 {{GENDER:$2|seinen|ihren}} eigenen Zugriff, um die IP-Adressen temporärer Konten anzuzeigen",
 	"checkuser-temporary-account-change-access-level-disable": "{{GENDER:$1|deaktivierte}}",
 	"checkuser-temporary-account-change-access-level-enable": "{{GENDER:$1|aktivierte}}",
-	"checkuser-temporary-account-change-access-level-disable-globally": "global {{GENDER:$1|deaktiviert}}",
-	"checkuser-temporary-account-change-access-level-enable-globally": "global {{GENDER:$1|aktiviert}}",
+	"checkuser-temporary-account-change-access-level-disable-globally": "global {{GENDER:$1|deaktivierte}}",
+	"checkuser-temporary-account-change-access-level-enable-globally": "global {{GENDER:$1|aktivierte}}",
 	"logentry-checkuser-temporary-account-disable-auto-reveal": "$1 {{GENDER:$2|deaktivierte}} die Anzeige von IP-Adressen für temporäre Konten",
 	"logentry-checkuser-temporary-account-enable-auto-reveal": "$1 {{GENDER:$2|aktivierte}} die Anzeige von IP-Adressen für temporäre Konten bis $5",
 	"logentry-checkuser-temporary-account-view-ips": "$1 hat IP-Adressen für $3 {{GENDER:$2|angesehen}}",
@@ -357,5 +360,5 @@
 	"logentry-checkuser-temporary-account-af-change-access-disable": "$1 hat {{GENDER:$2|seinen|ihren|den}} eigenen Zugriff zum Anzeigen geschützter Variablen deaktiviert",
 	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 hat geschützte Variablen {{GENDER:$2|angezeigt}}, die mit $3 verknüpft sind",
 	"ext-ipinfo-global-contributions-url-text": "Globale Beiträge anzeigen",
-	"checkuser-userinfocard-enable-preference-help": "Zeige neben den Benutzernamen eine Schaltfläche an, um ein Popover mit Informationen zu einem Konto zu öffnen."
+	"checkuser-userinfocard-enable-preference-help": "Zeigt neben Benutzernamen eine Schaltfläche an, die ein Pop-up mit Informationen zu dem Konto öffnet."
 }

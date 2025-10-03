@@ -29,7 +29,8 @@
 			"ZhuofanWu",
 			"佛壁灯",
 			"科劳",
-			"铁桶"
+			"铁桶",
+			"Peterxy12"
 		]
 	},
 	"oathauth-desc": "提供“基于HMAC的一次性密码”的身份验证支持",
@@ -78,7 +79,10 @@
 	"oathauth-auth-token-label": "双重身份验证令牌或恢复代码",
 	"oathauth-auth-token-help": "作为双重身份验证中第二个因素的一次性密码。",
 	"oathauth-auth-token-help-ui": "输入您的身份验证设备提供的代码，或者输入恢复代码",
-	"oathauth-auth-ui": "请输入由您的双重身份验证应用（如[https://authy.com/ Authy]、[https://freeotp.github.io/ FreeOTP]、[https://support.google.com/accounts/answer/1066447 Google Authenticator]、[https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator]或[https://1password.com/ 1Password]）提供的代码。",
+	"oathauth-auth-ui": "请输入由您的双重身份验证应用（如[https://www.authy.com Authy]、[https://freeotp.github.io/ FreeOTP]、[https://support.google.com/accounts/answer/1066447 Google Authenticator]、[https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator]或[https://1password.com/ 1Password]）提供的代码。",
+	"oathauth-auth-switch-module-label": "切换到不同的身份验证方法",
+	"oathauth-auth-switch-module-help": "将<code>newModule</code>设置为新模块的名称，以便从其他 2FA 模块获取新的验证挑战。如果您要验证当前验证，请留空。",
+	"oathauth-auth-switch-module-keep": "（不要切换）",
 	"oathauth-throttled": "已尝试太多次验证！请稍等$1。",
 	"oathauth-login-failed": "验证失败。",
 	"oathauth-describe-provider": "双重身份验证（OATH）。",
@@ -136,5 +140,6 @@
 	"oathauth-prefs-disabledgroups-help": "在您启用[[Special:Manage Two-factor authentication|双重身份验证]]之前，{{GENDER:$2|您}}于{{PLURAL:$1|此用户组|这些用户组}}的成员资格会处于禁用状态。",
 	"oathauth-qrcode-alt": "代表密钥的可扫描二维码。",
 	"oathauth-hint": "无法访问您的设备或应用？您可以在此字段中输入恢复代码（启用2FA时显示）。",
-	"oathauth-must-be-central": "{{GENDER:$1|您的账号}}必须链接到中央身份验证系统，才能使用双重身份验证。"
+	"oathauth-must-be-central": "{{GENDER:$1|您的账号}}必须链接到中央身份验证系统，才能使用双重身份验证。",
+	"oathauth-error-multiple-modules": "目前不支持使用多种2FA身份验证方法。您只能在禁用$2后启用$1 。"
 }

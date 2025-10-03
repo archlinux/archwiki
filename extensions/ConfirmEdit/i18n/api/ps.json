@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"captcha-apihelp-param-captchaword": "کپچا ته ځواب",
+	"captcha-apihelp-param-captchaid": "له مخکېنۍ غوښتنې څخه کپچا پېژند"
+}

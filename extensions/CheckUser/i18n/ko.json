@@ -20,7 +20,9 @@
 			"관인생략",
 			"렌즈",
 			"아라",
-			"YeBoy371"
+			"YeBoy371",
+			"Bisang",
+			"Msz2001"
 		]
 	},
 	"checkuser-summary": "이 도구는 최근의 변경사항을 검사하여 특정 사용자가 이용한 IP 주소를 검색하거나 특정 IP 주소에 대한 편집/사용자 정보를 보여줍니다.\n클라이언트 IP를 통한 사용자와 편집은 IP 주소 뒤에 \"/xff\"를 추가함으로써 XFF 헤더를 통해 조사할 수 있습니다. IPv4 (CIDR $1-32)와 IPv6 (CIDR $2-128)을 지원합니다.\n성능상의 이유로 최대 $3개의 편집만 반환됩니다.\n이 도구는 정책에 맞게 사용하십시오.",
@@ -119,7 +121,7 @@
 	"checkuser-ipeditcount": "모든 사용자로부터 편집 $1개",
 	"checkuser-showmain": "{{#special:CheckUser}}로 전환",
 	"checkuser-show-investigate": "{{#special:Investigate}}로 전환",
-	"checkuser-log-entry-userips": "$3, $1님이 $2의 IP 주소를 조회했습니다",
+	"checkuser-log-entry-userips": "$3, $1님이 $2의 IP {{GENDER:$7|주소를}} {{GENDER:$6|조회했습니다}}",
 	"checkuser-log-entry-ipusers": "$3, $1님이 <bdi>$2</bdi> IP를 사용한 계정을 조회했습니다",
 	"checkuser-log-entry-ipusers-xff": "$3, $1님이 XFF <bdi>$2</bdi>의 사용자를 조회했습니다",
 	"checkuser-log-entry-investigate": "$3에, $1님이 $2에 대한 정보를 조회했습니다",
@@ -299,8 +301,10 @@
 	"checkuser-tempaccount-reveal-ip-error": "오류",
 	"checkuser-tempaccount-reveal-ip-permission-error-description": "임시 계정의 IP 주소를 조회하려면 [[Special:Preferences|환경 설정]]에서 동의를 수락해 주십시오.",
 	"checkuser-tempaccount-reveal-blocked-header": "임시 계정 IP 표시가 꺼져 있습니다",
+	"checkuser-tempaccount-reveal-blocked-description": "다음 사유로 이 기능을 사용할 권한이 없습니다:",
 	"checkuser-tempaccount-specialblock-ips": "다음 {{PLURAL:$1|IP}}를 사용한 임시 사용자입니다: $2",
 	"checkuser-temporary-account-log-name": "검사관 임시 계정 기록",
+	"checkuser-temporary-account-log-header": "이 기록은 다음 내용을 기록합니다.\n\n# 임시 계정에서 사용한 IP 주소를 열람한 기록\n# 특정 IP 주소 또는 IP 대역에서 사용한 임시 계정의 목록을 열람한 기록\n# 사용자가 임시 계정이 사용한 IP 주소를 열람할 권한을 변경한 록",
 	"logentry-checkuser-temporary-account-change-access": "$1님이 임시 계정의 IP 주소를 조회하도록 {{GENDER:$2|자신의}} 접근 권한을 $4",
 	"checkuser-temporary-account-change-access-level-disable": "{{GENDER:$1|비활성화함}}",
 	"checkuser-temporary-account-change-access-level-enable": "{{GENDER:$1|활성화함}}",
@@ -315,5 +319,6 @@
 	"logentry-checkuser-temporary-account-af-change-access-enable": "$1님이 {{GENDER:$2|자신}}에게 보호된 변수를 볼 권한을 활성화함",
 	"logentry-checkuser-temporary-account-af-change-access-disable": "$1님이 {{GENDER:$2|자신}}에게 보호된 변수를 볼 권한을 비활성화함",
 	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1님이 $3 문서와 관련한 보호된 변수를 {{GENDER:$2|조회함}}",
-	"ext-ipinfo-global-contributions-url-text": "전역 기여 보기"
+	"ext-ipinfo-global-contributions-url-text": "전역 기여 보기",
+	"checkuser-userinfocard-enable-preference-help": "사용자 이름 옆에 버튼을 표시하여 계정 정보가 있는 팝오버를 엽니다."
 }

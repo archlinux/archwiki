@@ -37,7 +37,8 @@
 			"فلورانس",
 			"محمد أحمد عبد الفتاح",
 			"محمد عصام",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"Mdktb"
 		]
 	},
 	"collabpad-doctitle": "كولاب باد: $1",
@@ -76,7 +77,7 @@
 	"visualeditor-changedesc-mwcategory-sortkey-set": "تم تعيين مفتاح الفرز على $1",
 	"visualeditor-changedesc-mwcategory-sortkey-unset": "لم يتم ضبط مفتاح الفرز من $1",
 	"visualeditor-changedesc-mwlanguagevariant": "صيغة تنويعة اللغة تغيرت",
-	"visualeditor-changedesc-mwredirect": "تم تغيير التحويلة من $1 إلى $2",
+	"visualeditor-changedesc-mwredirect": "هدف التحويلة تغيّر من $1 إلى $2",
 	"visualeditor-changedesc-mwtransclusion": "محددات القالب تغيرت",
 	"visualeditor-desc": "المحرر المرئي لميدياويكي",
 	"visualeditor-descriptionpagelink": "Project:المحرر المرئي",
@@ -94,9 +95,11 @@
 	"visualeditor-dialog-media-info-artist": "رُفع بواسطة $1",
 	"visualeditor-dialog-media-info-audiofile": "ملف صوتي",
 	"visualeditor-dialog-media-info-created": "أنشأ بواسطة: $1",
+	"visualeditor-dialog-media-info-ellipsis": "…",
 	"visualeditor-dialog-media-info-meta-artist": "المؤلف: $1",
 	"visualeditor-dialog-media-info-moreinfo": "مزيد من المعلومات",
 	"visualeditor-dialog-media-info-readmore": "اقرأ المزيد",
+	"visualeditor-dialog-media-info-separator": "·",
 	"visualeditor-dialog-media-info-uploaded": "رفع في: $1",
 	"visualeditor-dialog-media-page-advanced": "متقدم",
 	"visualeditor-dialog-media-page-general": "عام",

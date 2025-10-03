@@ -13,7 +13,8 @@
 			"Toniher",
 			"Townie",
 			"Vriullop",
-			"Xavier Dengra"
+			"Xavier Dengra",
+			"Sma1997"
 		]
 	},
 	"skinname-vector": "Vector (versió 2010)",
@@ -53,14 +54,14 @@
 	"vector-feature-limited-width-0-label": "Sencera",
 	"vector-feature-limited-width-1-label": "Predefinida",
 	"vector-feature-custom-font-size-name": "Text",
-	"vector-feature-custom-font-size-0-label": "Menut",
-	"vector-feature-custom-font-size-1-label": "Predefinit",
-	"vector-feature-custom-font-size-2-label": "Gros",
+	"vector-feature-custom-font-size-0-label": "Petit",
+	"vector-feature-custom-font-size-1-label": "Estàndard",
+	"vector-feature-custom-font-size-2-label": "Gran",
 	"skin-theme-name": "Color",
 	"skin-theme-day-label": "Clar",
 	"skin-theme-night-label": "Fosc",
 	"skin-theme-os-label": "Automàtic",
-	"skin-theme-exclusion-notice": "Aquesta pàgina és sempre en mode clar.",
+	"skin-theme-exclusion-notice": "Aquesta pàgina sempre està en mode clar.",
 	"vector-search-loader": "Carregant els suggeriments de cerca",
 	"vector-searchsuggest-containing": "Cerca les pàgines que continguin <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introducció",

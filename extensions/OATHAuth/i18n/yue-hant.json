@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"JeffreyKim",
+			"Yueman"
+		]
+	},
+	"oathauth-account": "戶口名：",
+	"oathauth-enable": "啟用兩步驟驗證",
+	"oathauth-disable": "停用兩步驟驗證",
+	"oathauth-prefs-label": "兩步驟驗證：",
+	"oathauth-notifications-disable-help": "幫手",
+	"oathauth-notifications-enable-help": "幫手",
+	"oathauth-notifications-recoverycodesleft-help": "幫手"
+}

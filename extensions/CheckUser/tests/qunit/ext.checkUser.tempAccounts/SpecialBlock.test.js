@@ -240,7 +240,7 @@ QUnit.test( 'Test onLoad for an existing temporary account with IP data', async 
 		}
 	} );
 	await performOnLoadTestWhenButtonClicked(
-		'(checkuser-tempaccount-specialblock-ips: 2, 172.20.0.1(and)(word-separator)1.2.3.4)',
+		'(checkuser-tempaccount-specialblock-ips: 2, <a href="https://www.example.com/wiki/Special:IPContributions/172.20.0.1">172.20.0.1</a>(and)(word-separator)<a href="https://www.example.com/wiki/Special:IPContributions/1.2.3.4">1.2.3.4</a>)',
 		assert, done
 	);
 	// Check that the IPs in the element that replaced the button are

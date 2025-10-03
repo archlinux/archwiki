@@ -20,13 +20,17 @@
 	"checkuser-contribs-log-initiator": "праверкі, выкананыя гэтым удзельнікам",
 	"group-checkuser": "Правяраючыя ўдзельнікаў",
 	"group-checkuser-member": "{{GENDER:$1|правяраючы|правяраючая}} ўдзельнікаў",
+	"group-temporary-account-viewer": "Праглядальнікі IP часовых уліковых запісаў",
+	"group-temporary-account-viewer-member": "{{GENDER:$1|праглядальнік|праглядальніца}} IP часовых уліковых запісаў",
 	"right-checkuser": "Праверка ІР-адрасоў ды іншай інфармацыі ўдзельніка",
 	"right-checkuser-log": "Прагляд журнала праверкі ўдзельнікаў",
 	"right-checkuser-temporary-account": "Прагляд IP-адрэсаў, выкарыстоўваных часовымі ўліковымі запісамі",
 	"right-checkuser-temporary-account-no-preference": "Прагляд IP-адрасоў часовых уліковых запісаў без патрэбы ўключэньня налады",
 	"right-checkuser-temporary-account-log": "Прагляд журналу доступу да IP-адрэсаў часовых уліковых запісаў",
+	"right-checkuser-temporary-account-auto-reveal": "Аўтаматычнае раскрыцьцё IP-адрасоў, ужываных часовымі ўліковымі запісамі",
 	"action-checkuser": "праверку ІР-адрасоў і іншай інфармацыі ўдзельніка",
 	"action-checkuser-log": "прагляд журнала праверкі ўдзельнікаў",
+	"action-checkuser-temporary-account-auto-reveal": "аўтаматычна адкрываць IP-адрасы, якімі карыстаюцца часовыя ўліковыя запісы",
 	"grouppage-checkuser": "{{ns:project}}:Праверка ўдзельнікаў",
 	"checkuser-reason": "Прычына:",
 	"checkuser-reason-api": "API: $1",
@@ -107,5 +111,6 @@
 	"checkuser-investigate-compare-table-header-ip": "IP",
 	"checkuser-investigate-compare-table-header-useragent": "Агент удзельніка",
 	"checkuser-global-contributions-link": "глябальны ўнёсак",
-	"checkuser-global-contributions-link-sidebar": "Глябальны ўнёсак"
+	"checkuser-global-contributions-link-sidebar": "Глябальны ўнёсак",
+	"checkuser-userinfocard-enable-preference-help": "Паказваць побач зь імёнамі карыстальнікаў кнопку, якая адкрые выплыўнае вакенца з інфармацыяй пра ўліковы запіс."
 }

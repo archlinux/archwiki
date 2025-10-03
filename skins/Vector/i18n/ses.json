@@ -4,6 +4,9 @@
 			"Songhay"
 		]
 	},
+	"vector-languages": "Senney",
+	"vector-language-button-label": "{{PLURAL:$1|senni}}",
+	"vector-no-language-button-label": "Senney tonton",
 	"vector-action-addsection": "Furari tonton",
 	"vector-action-delete": "Tuusu",
 	"vector-action-move": "Ganandi",
@@ -12,5 +15,27 @@
 	"vector-view-edit": "Barmay",
 	"vector-view-history": "Taarikoo guna",
 	"vector-view-view": "Caw",
-	"vector-more-actions": "Ka tonton"
+	"vector-more-actions": "Ka tonton",
+	"vector-appearance-label": "Alhaali",
+	"vector-feature-limited-width-name": "Hayri",
+	"vector-feature-limited-width-0-label": "Hayante",
+	"vector-feature-limited-width-1-label": "Sasawante",
+	"vector-feature-custom-font-size-name": "Hantum",
+	"vector-feature-custom-font-size-0-label": "Kaccu",
+	"vector-feature-custom-font-size-1-label": "Sasawante",
+	"vector-feature-custom-font-size-2-label": "Beeri",
+	"skin-theme-name": "Noone",
+	"skin-theme-day-label": "Kaaray",
+	"skin-theme-night-label": "Kubay",
+	"skin-theme-os-label": "Boŋdirandi",
+	"skin-theme-exclusion-notice": "Moɲoo woo goo kaaray alhaali ra waati kul.",
+	"vector-toc-label": "Gundekuna",
+	"vector-toc-beginning": "Sintin",
+	"vector-anon-user-menu-pages": "Moɲey goo fasalkaw fattantey se",
+	"vector-main-menu-label": "Silbayɲaa",
+	"vector-feature-custom-font-size-exclusion-notice": "Moɲoo woo ga goy sigira kaccu waati kul",
+	"vector-page-tools-label": "Goyjinawey",
+	"vector-page-tools-general-label": "Hayakul",
+	"vector-page-tools-actions-label": "Teerey",
+	"vector-unpin-element-label": "tugu"
 }

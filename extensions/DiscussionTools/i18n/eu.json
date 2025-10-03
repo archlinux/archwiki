@@ -5,7 +5,8 @@
 			"Izendegi",
 			"Joseba",
 			"Theklan",
-			"Woytecr"
+			"Woytecr",
+			"Xabier Armendaritz"
 		]
 	},
 	"discussiontools": "Eztabaida tresnak",
@@ -26,8 +27,8 @@
 	"discussiontools-error-noswitchtove-table": "taula sintaxia",
 	"discussiontools-error-noswitchtove-template": "txantiloi sintaxia",
 	"discussiontools-error-noswitchtove-title": "Editore bisuala desgaitu da",
-	"discussiontools-newtopic-missing-title": "Mesedez, jarri izenburu bat eztabaida gaiari. \"{{int:discussiontools-replywidget-newtopic}}\" klik egiten baduzu, zure gaiak ez du izango izenbururik.",
-	"discussiontools-newtopic-placeholder-title": "Izenburua",
+	"discussiontools-newtopic-missing-title": "Mesedez, jarri izenburu bat eztabaida gaiari.",
+	"discussiontools-newtopic-placeholder-title": "Gaia",
 	"discussiontools-notification-subscribed-new-comment-header": "$1(e)k {{GENDER:$2|erantzun du}} \"<strong>$4</strong>\" eztabaidan.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Erantzun berri bat|$1 erantzun berri|100=99+ erantzun berri}} \"<strong>$3</strong>\" gaian.",
 	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
@@ -72,7 +73,7 @@
 	"discussiontools-replywidget-watchthis": "Gehitu orri hau zure [[Special:Watchlist|jarraipen zerrendan]]",
 	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|Pertsona bat|$1 pertsona}} eztabaida honetan",
-	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|Iruzkin 1|$1 iruzkin}}",
+	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|Iruzkin bat|$1 iruzkin}}",
 	"discussiontools-topicheader-latestcomment": "Azken iruzkina: $1",
 	"discussiontools-topicsubscription-action-unsubscribe-button": "Harpidetza kendu",
 	"discussiontools-topicsubscription-action-unsubscribe-prompt": "Gai honetatik harpidetza kendu?",

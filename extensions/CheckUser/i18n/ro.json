@@ -12,7 +12,8 @@
 			"Minisarm",
 			"NGC 54",
 			"Paloi Sciurala",
-			"Trotinel Iftode"
+			"Trotinel Iftode",
+			"SalinaTheTranslator"
 		]
 	},
 	"checkuser-summary": "Acestă unealtă scanează schimbările recente pentru a regăsi adresele IP folosite de un utilizator sau arată modificările/utilizatorul pentru o anumită adresă IP.\nUtilizatorii și modificările efectuate de un client IP pot fi regăsite prin antetele XFF atașând adresa IP prin intermediul „/xff”. IPv4 (CIDR $1-32) și IPv6 (CIDR $2-128) sunt acceptate.\nNu mai mult de 5000 de modificări vor fi returnate din motive de performanță.\nUtilizați unealta în concordanță cu politica proiectului.",

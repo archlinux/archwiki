@@ -3,7 +3,8 @@
 		"authors": [
 			"Les Meloures",
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"GilPe"
 		]
 	},
 	"apierror-visualeditor-difffailed": "Feeler beim Ënnerscheed",
@@ -18,6 +19,6 @@
 	"apihelp-visualeditoredit-param-paction": "Aktioun fir ze maachen.",
 	"apihelp-visualeditoredit-param-page": "D'Säit op där Aktioune gemaach soll ginn.",
 	"apihelp-visualeditoredit-param-sectiontitle": "Titel fir neien Abschnitt.",
-	"apihelp-visualeditoredit-param-summary": "Resumé änneren.",
+	"apihelp-visualeditoredit-param-summary": "Resümmee änneren.",
 	"apihelp-visualeditoredit-param-wikitext": "De Wikitext mat deem geschafft gëtt."
 }

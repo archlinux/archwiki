@@ -1,11 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Olve Utne"
+			"Olve Utne",
+			"Yupik"
 		]
 	},
 	"checkuser-blocked": "Buđđusum",
 	"checkuser-investigateblock": "Buđđusä adnejijt",
 	"checkuser-investigate-indicator-logs": "Låggå",
-	"checkuser-investigate-preliminary-table-cell-blocked": "Buđđusum"
+	"checkuser-investigate-preliminary-table-cell-blocked": "Buđđusum",
+	"checkuser-investigate-preliminary-table-header-name": "Adnejnamma",
+	"checkuser-investigate-compare-table-header-username": "Adnejnamma"
 }

@@ -60,7 +60,7 @@
 	"visualeditor-dialog-extension-abandonedit": "Queres pechar esta ventá sen aplicar os teus cambios?",
 	"visualeditor-dialog-media-alttext-checkbox": "Usar o pé de foto como texto alternativo",
 	"visualeditor-dialog-media-alttext-section": "Texto alternativo",
-	"visualeditor-dialog-media-alttext-section-help": "Podes usar isto para escribir unha descrición textual para as persoas que non poden ver o elemento. A descrición debe ser suficiente para que poidan entender a finalidade e a información que proporciona o elemento multimedia. Isto é vital para as persoas cegas ou para aquelas que empreguen programas de lectura de pantalla ou navegadores de só texto.",
+	"visualeditor-dialog-media-alttext-section-help": "Podes usar isto para escribir unha descrición textual para as persoas que non poden ver o elemento. A descrición debe ser suficiente para que poidan entender a finalidade e a información que proporciona o elemento multimedia. Isto é vital para as persoas cegas ou para aquelas que empreguen programas de lectura de pantalla ou navegadores de texto só.",
 	"visualeditor-dialog-media-change-image": "Cambiar a imaxe",
 	"visualeditor-dialog-media-choose-image": "Utilizar esta imaxe",
 	"visualeditor-dialog-media-content-description-link": "(páxina de descrición)",

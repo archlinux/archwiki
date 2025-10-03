@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Yaw tuba"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ndase}}}}"
+}

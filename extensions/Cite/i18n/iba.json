@@ -4,5 +4,15 @@
 			"Song GK"
 		]
 	},
-	"cite_error": "Penyalat nyebut: $1"
+	"cite_error": "Penyalat nyebut: $1",
+	"cite-reference-previews-reference": "Kereban sanding",
+	"cite-reference-previews-book": "Kereban sanding bup",
+	"cite-reference-previews-journal": "Kereban sanding jurnal",
+	"cite-reference-previews-news": "Kereban sanding berita",
+	"cite-reference-previews-note": "Nota",
+	"cite-reference-previews-web": "Kereban sanding web",
+	"cite-wikieditor-tool-reference": "Kereban sanding",
+	"cite-wikieditor-help-page-references": "Kereban sanding",
+	"cite-wikieditor-help-content-reference-description": "Kereban sanding",
+	"cite-wikieditor-help-content-named-reference-description": "Kereban sanding benama"
 }

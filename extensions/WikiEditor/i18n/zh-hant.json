@@ -95,6 +95,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "符號清單項目",
 	"wikieditor-toolbar-tool-olist": "編號清單",
 	"wikieditor-toolbar-tool-olist-example": "編號清單項目",
+	"wikieditor-toolbar-tool-code": "電腦程式碼",
+	"wikieditor-toolbar-tool-code-example": "電腦程式碼",
 	"wikieditor-toolbar-tool-nowiki": "不使用 wiki 格式化語法",
 	"wikieditor-toolbar-tool-nowiki-example": "插入非格式化文字",
 	"wikieditor-toolbar-tool-redirect": "重新導向",

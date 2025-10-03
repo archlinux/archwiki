@@ -86,7 +86,6 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 				'config' => $services->getMainConfig(),
 				'jobQueueGroup' => $this->createMock( JobQueueGroup::class ),
 				'permissionManager' => $permissionManager,
-				'preferencesFactory' => $services->getPreferencesFactory(),
 				'userNameUtils' => $userNameUtils,
 				'dbProvider' => $services->getDBLoadBalancerFactory(),
 				'actorStore' => $actorStore,
@@ -94,6 +93,8 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 				'revisionStore' => $mockRevisionStore,
 				'checkUserPermissionManager' => $checkUserPermissionManager,
 				'readOnlyMode' => $services->getReadOnlyMode(),
+				'checkUserTemporaryAccountAutoRevealLookup' =>
+					$services->get( 'CheckUserTemporaryAccountAutoRevealLookup' ),
 			],
 			$options
 		) ) );

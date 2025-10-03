@@ -31,7 +31,7 @@
 		"MediaWiki\\Extension\\OATHAuth\\Maintenance\\": "maintenance/"
 	},
 	"TestAutoloadNamespaces": {
-		"MediaWiki\\Extension\\OATHAuth\\Tests\\": "tests/phpunit/"
+		"MediaWiki\\Extension\\OATHAuth\\Tests\\Integration\\": "tests/phpunit/integration"
 	},
 	"AuthManagerAutoConfig": {
 		"secondaryauth": {
@@ -210,9 +210,6 @@
 				60
 			]
 		}
-	},
-	"ReauthenticateTime": {
-		"oathauth-enable": 60
 	},
 	"load_composer_autoloader": true,
 	"LogTypes": [

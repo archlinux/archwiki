@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"MRidhaAJ"
+			"MRidhaAJ",
+			"Mohammdaon"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "راح ندز إشعار من ينشر واحد تعليق بهاي المناقشة. تكدر تضبط إعدادات الإشعارات بالتفضيلات.",
@@ -32,11 +33,13 @@
 	"discussiontools-ledesection-title": "عن صفحة النقاش هاي",
 	"discussiontools-newtopic-missing-title": "خلي اسم للسالفه {{GENDER:|مالتك|مالتج}}.",
 	"discussiontools-newtopic-missing-title-prompt": "ما {{GENDER:|خليت|خليتي}} اسم للسالفه {{GENDER:|مالتك|مالتج}}. صدك {{GENDER:|انته تريد تخلي|انتي تردين تخلين}} السالفه بدون اسم؟",
+	"discussiontools-newtopic-placeholder-title": "الموضوع",
 	"discussiontools-replylink": "{{GENDER:|ردّ|ردّي}}",
 	"discussiontools-replywidget-advanced": "خيارات متقدمة",
 	"discussiontools-replywidget-cancel": "الغي",
 	"discussiontools-replywidget-mode-source": "مصدر",
 	"discussiontools-replywidget-mode-visual": "مرئي",
+	"discussiontools-replywidget-placeholder-newtopic": "الوصف",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|رد|ردي}} على {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "معاينة",
 	"discussiontools-replywidget-reply": "{{GENDER:|ردّ|ردّي}}",

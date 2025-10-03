@@ -45,7 +45,9 @@
 	"action-oathauth-enable": "abilitare l'autenticazione a due fattori",
 	"oathauth-auth-token-label": "Token a due fattori o codice di ripristino",
 	"oathauth-auth-token-help": "La password a uso singolo utilizzata come secondo fattore per l'autenticazione a due fattori.",
-	"oathauth-auth-ui": "Inserisci un codice dalla tua applicazione di autenticazione a due fattori (come [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] o [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Inserisci un codice dalla tua applicazione di autenticazione a due fattori (come [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] o [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-label": "Passa a un metodo di autenticazione diverso",
+	"oathauth-auth-switch-module-keep": "(non cambiare)",
 	"oathauth-throttled": "Troppi tentativi di verifica! Attendi $1.",
 	"oathauth-login-failed": "Verifica non riuscita.",
 	"oathauth-describe-provider": "Autenticazione a due fattori (OATH).",
@@ -75,5 +77,6 @@
 	"oathauth-notifications-enable-help": "Aiuto",
 	"oathauth-notifications-enable-primary": "Controlla le impostazioni di autenticazione a due fattori",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ha l'autenticazione a due fattori abilitata.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} non ha l'autenticazione a due fattori abilitata."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} non ha l'autenticazione a due fattori abilitata.",
+	"oathauth-error-multiple-modules": "Per il momento, l'utilizzo di più metodi di autenticazione 2FA non è supportato. Puoi attivare $1 solo dopo aver disabilitato $2."
 }

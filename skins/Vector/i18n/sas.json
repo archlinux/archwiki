@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"NikolasKHF"
+		]
+	},
+	"vector-languages": "Base",
+	"vector-language-button-label": "{{PLURAL:$1|$1 base}}",
+	"vector-no-language-button-label": "Tambah base",
+	"vector-action-addsection": "Romboq raosan",
+	"vector-action-delete": "Apus",
+	"vector-action-move": "Alih",
+	"vector-action-protect": "Jagaq",
+	"vector-view-create": "Piaq",
+	"vector-view-history": "Èngat riwayat",
+	"vector-more-actions": "Haq lain",
+	"vector-appearance-label": "Ruen",
+	"vector-feature-limited-width-name": "Ukuran",
+	"vector-feature-limited-width-0-label": "Beléq",
+	"vector-feature-limited-width-1-label": "Biase",
+	"vector-feature-custom-font-size-name": "Tulisan",
+	"vector-feature-custom-font-size-0-label": "Kocét",
+	"vector-feature-custom-font-size-1-label": "Biase",
+	"vector-feature-custom-font-size-2-label": "Beléq",
+	"skin-theme-name": "Warne",
+	"skin-theme-day-label": "Menah",
+	"skin-theme-night-label": "Peteng",
+	"skin-theme-os-label": "Otomatis",
+	"skin-theme-exclusion-notice": "Halaman ni selalu kadu ruén menah.",
+	"vector-toc-label": "Daptar isi",
+	"vector-toc-beginning": "Awal",
+	"vector-anon-user-menu-pages": "Halaman pengerisaq haq wah sugul",
+	"vector-main-menu-label": "Menu utama",
+	"vector-feature-custom-font-size-exclusion-notice": "Halaman ni selalu kadu urup kocét",
+	"vector-page-tools-label": "Pekakas",
+	"vector-page-tools-general-label": "Awam",
+	"vector-page-tools-actions-label": "Gawéq",
+	"vector-unpin-element-label": "seboq"
+}

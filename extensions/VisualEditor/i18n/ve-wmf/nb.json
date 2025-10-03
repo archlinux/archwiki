@@ -19,6 +19,8 @@
 	"tag-editcheck-references-description": "EditCheck tror en referanse kan ha vært nødvendig",
 	"tag-editcheck-references-activated": "Redigeringssjekk (referanser) aktivert",
 	"tag-editcheck-references-activated-description": "Redigeringssjekk tror at en referanse kan ha vært nødvendig, og brukergrensesnittet for dette ble vist",
+	"tag-editcheck-references-shown": "Redigeringssjekk (referanser) vist",
+	"tag-editcheck-references-shown-description": "Redigeringssjekk tror en referanse kan være nødvendig, og grensesnittet ble vist",
 	"tag-visualeditor": "Visuell redigering",
 	"tag-visualeditor-description": "Redigering gjort med [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuell redigering]]",
 	"tag-visualeditor-needcheck": "Visuell redigering: Sjekk",

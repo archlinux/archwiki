@@ -8,10 +8,11 @@
 			"Sfic",
 			"Shyam123.ckp",
 			"Siddhartha Ghai",
-			"Wikiuser13"
+			"Wikiuser13",
+			"Saurmandal"
 		]
 	},
-	"categorytree": "श्रेणीवृक्ष",
+	"categorytree": "श्रेणी वृक्ष",
 	"categorytree-portlet": "श्रेणियाँ",
 	"categorytree-legend": "श्रेणीवृक्ष दिखायें",
 	"categorytree-desc": "विकि की [[Special:CategoryTree|श्रेणी संरचना]] देखें",
@@ -20,7 +21,7 @@
 	"categorytree-go": "वृक्ष दिखायें",
 	"categorytree-parents": "पालक",
 	"categorytree-mode-label": "मोड:",
-	"categorytree-mode-categories": "सिर्फ़ श्रेणीयाँ",
+	"categorytree-mode-categories": "केवल श्रेणियाँ",
 	"categorytree-mode-pages": "फ़ाइलों के अतिरिक्त पृष्ठ",
 	"categorytree-mode-all": "सभी पृष्ठ",
 	"categorytree-collapse": "छोटा करें",

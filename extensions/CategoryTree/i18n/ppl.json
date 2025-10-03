@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"TimumachtikanNawat"
+		]
+	},
+	"categorytree-num-categories": "$1 C",
+	"categorytree-num-pages": "$1 P",
+	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "Isel",
+	"categorytree-load": "Shikajkuki",
+	"categorytree-loading": "tekiti...",
+	"categorytree-nothing-found": "Tesu nikajsik datka"
+}

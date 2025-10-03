@@ -8,7 +8,8 @@
 			"Ерней",
 			"З. ӘЙЛЕ",
 			"Ильнар",
-			"Рашат Якупов"
+			"Рашат Якупов",
+			"Ильгиз"
 		]
 	},
 	"wikieditor": "Викитекстны үзгәртү буенча киңәйтелгән интерфейс",
@@ -122,7 +123,7 @@
 	"wikieditor-toolbar-help-page-heading": "Башлыклар",
 	"wikieditor-toolbar-help-page-list": "Исемлекләр",
 	"wikieditor-toolbar-help-page-file": "Файллар",
-	"wikieditor-toolbar-help-page-discussion": "Бәхәс",
+	"wikieditor-toolbar-help-page-discussion": "Фикер алышу",
 	"wikieditor-toolbar-help-content-italic-description": "Авышлы",
 	"wikieditor-toolbar-help-content-italic-example": "Курсив белән билгеләнгән текст",
 	"wikieditor-toolbar-help-content-bold-description": "Куе төс",

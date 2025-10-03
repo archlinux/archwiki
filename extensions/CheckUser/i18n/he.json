@@ -11,7 +11,8 @@
 			"דגש",
 			"דגש חזק",
 			"לואיקה",
-			"מקף"
+			"מקף",
+			"Neriah"
 		]
 	},
 	"checkuser-summary": "הכלי הזה סורק את השינויים האחרונים כדי למצוא את כתובות ה־IP שמשתמש מסוים השתמש בהן או כדי להציג את כל המידע על המשתמשים שהשתמשו בכתובת IP מסוימת ועל העריכות שבוצעו ממנה.\nניתן לקבל עריכות ומשתמשים מכתובות IP של הכותרת X-Forwarded-For באמצעות הוספת הטקסט \"<span dir=\"ltr\">/xff</span>\" לסוף הכתובת. הן כתובות IPv4 (כלומר, CIDR $1-32) והן כתובות IPv6 (כלומר, CIDR $2-128) נתמכות.\nלא יוחזרו יותר מ־$3 עריכות מסיבות של עומס על השרתים.\nיש להשתמש בכלי הזה בהתאם למדיניות.",
@@ -264,7 +265,7 @@
 	"checkuser-investigate-tour-copywikitext-desc": "{{GENDER:|העתק|העתיקי|נא להעתיק}} את טבלת ההשוואה בלחיצה אחת {{GENDER:|וקח|וקחי|ולקחת}} אותה ל־CUWiki. {{GENDER:|שים לב שאתה מעתיק|שימי לב שאת מעתיקה|נא לשים לב לכך שהעתקת}} רק את מה שמוצג ולא את כל דפי החקירה.",
 	"checkuser-ip-contributions": "חיפוש תרומות IP",
 	"checkuser-ip-contributions-permission-error-title": "שגיאת הרשאה",
-	"checkuser-ip-contributions-permission-error-description": "כדי לצפות בתרומות חשבון חולף עבור כתובת IP, נא לקבל את ההסכם ב[[Special:Preferences|העדפות שלך]].",
+	"checkuser-ip-contributions-permission-error-description": "כדי לצפות בתרומות של חשבונות חולפים בכתובת IP מסוימת, נא לקבל את ההסכם ב[[Special:Preferences|העדפות שלך]].",
 	"checkuser-ip-contributions-subtitle": "הצגת תוצאות {{PLURAL:$1|מהיום האחרון|מהיומיים האחרונים|מ־$1 הימים האחרונים}}.",
 	"checkuser-ip-contributions-target-label": "כתובת IP או טווח:",
 	"checkuser-ip-contributions-target-error-no-ip": "נא להזין כתובת IP תקינה או טווח IP תקין",
@@ -282,7 +283,7 @@
 	"checkuser-ip-contributions-special-contributions-button": "עריכות IP מהסוג הישן",
 	"checkuser-global-contributions-link": "תרומות גלובליות",
 	"checkuser-global-contributions-link-sidebar": "תרומות גלובליות",
-	"checkuser-global-contributions-summary": "קבתל עריכות שנעשו על־ידי משתמש בכל מיזמי הוויקי במהלך {{PLURAL:$1|היום האחרון|היומיים האחרונים|$1 הימים האחרונים}}.",
+	"checkuser-global-contributions-summary": "קבלת עריכות שנעשו על־ידי משתמש בכל מיזמי הוויקי במהלך {{PLURAL:$1|היום האחרון|היומיים האחרונים|$1 הימים האחרונים}}.",
 	"checkuser-global-contributions": "חיפוש תרומות גלובליות",
 	"checkuser-global-contributions-permission-error-title": "שגיאת הרשאה",
 	"checkuser-global-contributions-permission-error-description": "כדי לצפות בתרומות גלובליות, יש לקבל את ההסכם ב[[Special:GlobalPreferences|העדפות הגלובליות שלך]].",
@@ -295,7 +296,7 @@
 	"checkuser-global-contributions-no-results-no-global-preference": "<strong>אין תוצאות שתואמות לשאילתה.</strong> ייתכן שהתוצאות האלו אינן שלמות מכיוון שעליך לאשר את ההסכם ב[$1 העדפות הגלובליות שלך].",
 	"checkuser-global-contributions-no-global-preference": "ייתכן שהתוצאות האלו אינן שלמות מכיוון שעליך לאשר את ההסכם ב[$1 העדפות הגלובליות שלך].",
 	"checkuser-global-contributions-api-lookup-error": "שגיאה בטעינת נתונים מכמה אתרי ויקי. התוצאות האלו אינן שלמות. <strong>אולי זה יעזור לנסות שוב.</strong>",
-	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>אין תוצאות תואמות לשאילתה.</strong> למשתמש \"$1\" אין תרומות שאפשר לצפות בהן.",
+	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>אין תוצאות תואמות לשאילתה.</strong> {{GENDER:$1|למשתמש|למשתמשת}} \"$1\" אין תרומות שאפשר לצפות בהן.",
 	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>אין תוצאות שתואמות לשאילתה.</strong> ייתכן {{GENDER:|שתמצא|שתמצאי}} תרומות אם תשנה את הפרמטרים של החיפוש שלך.",
 	"checkuser-global-contributions-no-summary-available": "אין תקציר עריכה זמין",
 	"checkuser-global-contributions-page-when-no-namespace-translation-available": "מרחב שם<$1>:$2",

@@ -1,13 +1,33 @@
 {
 	"@metadata": {
 		"authors": [
-			"ChoiChong"
+			"ChoiChong",
+			"さきじょーぐー"
 		]
 	},
-	"discussiontools-replylink": "{{GENDER:|応(いれー)いん}}",
+	"discussiontools-defaultsummary-reply": "返信",
+	"discussiontools-newtopic-missing-title": "御主ぬトピックんかいタイトルを付きてぃくぃみしぇーびれー。",
+	"discussiontools-newtopic-placeholder-title": "件名",
+	"discussiontools-replylink": "{{GENDER:|いれーいん}}",
 	"discussiontools-replywidget-cancel": "とぅりちゃーすん",
 	"discussiontools-replywidget-mode-source": "原典",
 	"discussiontools-replywidget-mode-visual": "ビジュアル",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}んかい応(いれー)いん",
-	"discussiontools-replywidget-reply": "応(いれー)いん"
+	"discussiontools-replywidget-newtopic": "トピックを{{GENDER:|入りしーん}}",
+	"discussiontools-replywidget-placeholder-newtopic": "説明",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}んかいいれーいん",
+	"discussiontools-replywidget-preview": "プレビュー",
+	"discussiontools-replywidget-reply": "{{GENDER:|いれーいん}}",
+	"discussiontools-replywidget-summary": "要約欄",
+	"discussiontools-replywidget-watchthis": "自分の[[Special:Watchlist|ウォッチリスト]]んかいくぬページ入りーん",
+	"discussiontools-topicheader-authorcount": "$1{{PLURAL:$1|たい}}ぬあらがーんかい参加そーん",
+	"discussiontools-topicheader-commentcount": "$1件ぬ{{PLURAL:$1|コメント}}",
+	"discussiontools-topicheader-latestcomment": "いっちんみーさるコメント:$1",
+	"discussiontools-topicsubscription-button-subscribe": "更新ぬ通知受き取いん",
+	"discussiontools-topicsubscription-button-subscribe-label": "通知受き取いん",
+	"discussiontools-topicsubscription-button-unsubscribe": "通知受け取らん",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "通知受き取らん",
+	"discussiontools-topicsubscription-notify-subscribed-body": "くぬトピックんかいみーさるコメントぬちゅーねー知らさびーん。",
+	"discussiontools-topicsubscription-notify-subscribed-title": "通知登録さびたん。",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "くぬトピックんかいみーさるコメントぬっちん知らさびらん。",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "通知解除さびたん。"
 }

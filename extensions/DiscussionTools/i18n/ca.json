@@ -16,7 +16,8 @@
 			"Toniher",
 			"Vriullop",
 			"Woytecr",
-			"Xavier Dengra"
+			"Xavier Dengra",
+			"Sma1997"
 		]
 	},
 	"discussiontools": "Eines de discussió",
@@ -64,7 +65,7 @@
 	"discussiontools-limitreport-errorreqid": "Identificador de sol·licitud d'error de DiscussionTools",
 	"discussiontools-limitreport-timeusage": "Temps d'ús de DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|segon|segons}}",
-	"discussiontools-newtopic-missing-title": "Proporcioneu un títol per al {{GENDER:|vostre}} tema de discussió. Si feu clic a «{{int:discussiontools-replywidget-newtopic}}», el tema s'afegirà sense títol.",
+	"discussiontools-newtopic-missing-title": "Proporcioneu un títol per al {{GENDER:|vostre}} tema de discussió.",
 	"discussiontools-newtopic-placeholder-title": "Assumpte",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Subscriu-m'hi",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Subscripció per rebre notificacions quan s'iniciïn nous temes en aquesta pàgina.",
@@ -86,7 +87,7 @@
 	"discussiontools-notification-removed-topic-disable": "Deixa d'enviar notificacions com aquesta",
 	"discussiontools-notification-removed-topic-disabled-title": "No {{GENDER:|rebreu}} més notificacions quan un tema s'arxivi o s'elimini.",
 	"discussiontools-notification-removed-topic-disabled-body": "Podeu canviar-ho a [[Special:Preferences#mw-prefsection-echo-echosubscriptions|les vostres preferències]].",
-	"discussiontools-notification-subscribed-new-comment-header": "$1 us ha {{GENDER:$2|respost}} a «<strong>$4</strong>».",
+	"discussiontools-notification-subscribed-new-comment-header": "$1 ha {{GENDER:$2|respost}} a «<strong>$4</strong>».",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Una nova resposta|$1 noves respostes|100=99+ noves respostes}} a «<strong>$3</strong>».",
 	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Mostra el comentari",

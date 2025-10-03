@@ -40,7 +40,7 @@ for release in data['releases'][latest_version]:
         break
 
 if not url:
-        raise RuntimeError('No suitable package found.')
+    raise RuntimeError('No suitable package found.')
 
 print('Retrieving version %s (%s)...' % (latest_version, url))
 req = urllib.request.urlopen(url)
@@ -66,6 +66,12 @@ os.chmod(file_path, file_st.st_mode | stat.S_IEXEC)
 
 with open(os.path.join(script_dir, 'VERSION'), 'w') as f:
     f.write(latest_version + '\n')
+
+with open(os.path.join(script_dir, 'AUTHORS'), 'w') as f:
+    url = 'https://raw.githubusercontent.com/pygments/pygments/refs/tags/' + latest_version + '/AUTHORS'
+    req = urllib.request.urlopen(url)
+    authors_text = req.read().decode('utf-8')
+    f.write(authors_text)
 
 print('Done. Wrote %s bytes to %s' % (len(data), file_path))
 print("Don't forget to run updateCSS.php and updateLexerList.php (in ../maintenance).")

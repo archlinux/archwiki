@@ -2,20 +2,28 @@
 	"@metadata": {
 		"authors": [
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"Ильгиз"
 		]
 	},
 	"prefs-gadgets": "Гаджетлар",
+	"prefs-description-gadgets": "Хисапъязмагыз өчен өстәмә функцияләр кабызыгыз.",
 	"special-gadgets": "Гаджетлар",
+	"gadgetusage": "Гаджетларны куллану статистикасы",
 	"gadgetusage-gadget": "Гаджет",
 	"gadgetusage-usercount": "Кулланучылар саны",
 	"gadgetusage-noresults": "Бернинди дә гаджетлар табылмады.",
 	"gadgetusage-activeusers": "Актив кулланучылар",
 	"gadgetusage-default": "Гадәттәге",
 	"gadgets-title": "Гаджетлар",
+	"gadgets-editdescription": "Тасвирламаны үзгәрт",
+	"gadgets-viewdescription": "Тасвирламаны күрсәт",
 	"gadgets-uses": "Кулланыла",
+	"gadgets-required-rights": "{{PLURAL:$2|Хокук|Хокуклар}} кирәк:\n\n$1.",
+	"gadgets-default": "Стандартлыча һәркем өчен кабызылган.",
 	"gadgets-export": "Экспортлау",
 	"gadgets-export-title": "Гаджетны экспортлау",
 	"gadgets-not-found": "\"$1\" гаджеты табылмады.",
-	"gadgets-export-download": "Күчереп алу"
+	"gadgets-export-download": "Йөкләп ал",
+	"gadgets-requires-es6": "Бу гаджет ES6 белән эшләүче браузерларда гына эшли."
 }

@@ -530,7 +530,7 @@
 	"abusefilter-log-noresults": "Нема резултата",
 	"abusefilter-diff-title": "Разлике између измена",
 	"abusefilter-diff-item": "Ставка",
-	"abusefilter-diff-version": "{{GENDER:$3|Аутор}}: $2; датум: $1",
+	"abusefilter-diff-version": "{{GENDER:$3|Аутор|Ауторка}}: $2; датум: $1",
 	"abusefilter-diff-info": "Основни подаци",
 	"abusefilter-diff-pattern": "Услови филтера",
 	"abusefilter-diff-invalid": "Није могуће прибавити тражене измене",

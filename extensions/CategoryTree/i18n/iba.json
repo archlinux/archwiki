@@ -10,6 +10,9 @@
 	"categorytree-mode-categories": "mina kategori",
 	"categorytree-mode-pages": "lambar kelimpah ari fail",
 	"categorytree-mode-all": "semua lambar",
+	"categorytree-num-empty": "puang",
+	"categorytree-load": "undan",
+	"categorytree-loading": "ngundan...",
 	"categorytree-nothing-found": "nadai utai ditemu",
 	"categorytree-no-subcategories": "nadai subkategori"
 }

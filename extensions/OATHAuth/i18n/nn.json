@@ -16,7 +16,7 @@
 	"oathauth-step3": "Steg 3: Skriv ned attopprettingskodane",
 	"oathauth-step4": "Steg 4: Stadfesting",
 	"oathauth-entertoken": "Skriv inn ein kode frå autentiseringseininga di for å stadfesta:",
-	"oathauth-auth-ui": "Skriv inn ein kode frå tofaktorautentiseringsapplikasjonen din (som [https://authy.com/ Authy], [https//freeotp.github.io/ FreeOTP], [http://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authentication] eller [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Skriv inn ein kode frå tofaktorautentiseringsapplikasjonen din (som [https://www.authy.com Authy], [https//freeotp.github.io/ FreeOTP], [http://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authentication] eller [https://1password.com/ 1Password]).",
 	"oathauth-module-totp-label": "TOTP (eingongsnykel)",
 	"oathauth-ui-manage": "Handsam",
 	"oathmanage": "Handsam tofaktorautentisering",

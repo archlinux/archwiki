@@ -4,6 +4,13 @@
 			"Jagwar"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck dia mihevitra fa misy votoatiny vaovao nampiana tamin'ilay pejy",
+	"tag-editcheck-newreference-description": "Nisy tsiahy nampiana tamin'ilay pejy",
+	"tag-editcheck-references-description": "EditCheck dia mihevitra fa mety nisy tsiahy nampiana tamin'ilay pejy",
+	"tag-editcheck-references-activated": "Miasa ny mpanamarina fiovana (tsiahy)",
+	"tag-editcheck-references-activated-description": "Mihevitra ny EditCheck fa mety nilaina ny tsiahy, ary naseho ny UI",
+	"tag-editcheck-references-shown": "EditCheck (tsiahy) misehoS",
+	"tag-editcheck-references-shown-description": "EditCheck dia mihevitra fa mety ilaina ny fanondroana, ary naseho ny UI",
 	"tag-visualeditor": "Hanova araka ny hitan'ny maso",
 	"tag-visualeditor-description": "Fanovana natao tamin'ny alalan'i [[{{MediaWiki:visualeditor-descriptionpagelink}}|mpanova ara-maso]]",
 	"tag-visualeditor-needcheck": "mpanova ara-maso: tokony homarinina",
@@ -20,5 +27,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Misaotra anao manampy an'izao tontolo izao hahita zava-baovao be kokoa!",
 	"visualeditor-welcomedialog-switch": "Hivadika amin'ny mpanova fango",
 	"visualeditor-welcomedialog-switch-ve": "Hivadika amin'ny mpanova ara-maso",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|}}Tonga soa eto amin'i $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Tonga soa}} eto amin'i $2"
 }

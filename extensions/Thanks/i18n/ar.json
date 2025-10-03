@@ -19,14 +19,15 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"Mohammed Qays"
 		]
 	},
 	"thanks-desc": "تضيف وصلات لشكر المستخدمين على التعديلات والتعليقات، إلخ.",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|شكر}}}}",
-	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|تم الشكر}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|شَكَرته|شَكَرتها}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|شكر}}}}",
-	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|تم الشكر}}}}",
+	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|شَكَرتَ|شَكَرتِ}}}}",
 	"thanks-error-undefined": "فشل الشكر، (رمز العطل: $1) {{GENDER:|حاول|حاولي|حاولوا}} مجددًا.",
 	"thanks-error-invalid-log-id": "إدخال السجل غير موجود",
 	"thanks-error-invalid-log-type": "نوع السجل '$1' ليس في قائمة أنواع السجلات المسموح بها.",

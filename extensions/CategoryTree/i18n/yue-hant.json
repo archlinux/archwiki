@@ -1,7 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"JeffreyKim",
+			"Ktchankt",
+			"Yueman"
 		]
 	},
 	"categorytree": "分類樹",
@@ -24,12 +27,16 @@
 	"categorytree-num-files": "$1 F",
 	"categorytree-num-empty": "空",
 	"categorytree-load": "載入",
-	"categorytree-loading": "撈緊…",
+	"categorytree-loading": "載入緊…",
 	"categorytree-nothing-found": "搵唔到任何嘢",
 	"categorytree-no-subcategories": "冇細分類",
 	"categorytree-no-parent-categories": "冇父分類",
 	"categorytree-no-pages": "冇版或者細分類",
 	"categorytree-not-found": "搵唔到<i>$1</i>分類",
 	"categorytree-error": "載入資料嗰陣發生咗錯誤。",
-	"categorytree-retry": "請等多一陣再試過。"
+	"categorytree-retry": "請等多一陣再試過。",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: 參數<code>onlyroot</code>已經唔再用。請改用<code>depth=\"0\"</code>。",
+	"categorytree-deprecation-warning": "'''警告:''' 呢個頁面用咗<code>& lt; 類別樹 & gt;</code>同埋唔再使用嘅參數。",
+	"categorytree-deprecation-category": "用咗唔再用嘅類別樹參數嘅頁面",
+	"categorytree-deprecation-category-desc": "呢個頁面會用已經唔再使用嘅類別樹參數，例如<code>onlyroot</code>。"
 }

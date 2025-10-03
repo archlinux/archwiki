@@ -19,6 +19,7 @@ class CheckUserExtensionJsonTest extends ExtensionJsonTestBase {
 			'AbuseFilterHandler' => 'Abuse Filter',
 			'GlobalPreferencesHandler' => 'GlobalPreferences',
 			'GlobalBlockingHandler' => 'GlobalBlocking',
+			'IPInfoHandler' => 'IPInfo',
 			'UserMerge' => 'UserMerge',
 		];
 		foreach ( $this->getExtensionJson()['HookHandlers'] ?? [] as $name => $specification ) {

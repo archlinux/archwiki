@@ -6,7 +6,8 @@
 			"LNDDYL",
 			"Lakejason0",
 			"Laundry Machine",
-			"Xiplus"
+			"Xiplus",
+			"Z423x5c6"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "檢查防濫用過濾器是否符合變數集、編輯、或是所記錄的防濫用過濾器事件。",
@@ -57,5 +58,6 @@
 	"apierror-abusefilter-cantcheck": "您沒有權限來檢查防濫用過濾器的語法。",
 	"apierror-abusefilter-canteval": "您沒有權限來評估 AbuseFilter 表達式。",
 	"apierror-abusefilter-nosuchlogid": "沒有 ID 為 $1 的濫用日誌項目。",
+	"apierror-abusefilter-incompatible": "濫用過濾器不支援請求的變更。",
 	"apierror-abusefilter-badsyntax": "此過濾器含有無效語法。"
 }

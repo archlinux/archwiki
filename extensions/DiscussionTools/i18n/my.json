@@ -38,7 +38,7 @@
 	"discussiontools-ledesection-button": "ဤစာမျက်နှာအကြောင်း ပိုမိုလေ့လာပါ",
 	"discussiontools-ledesection-title": "ဤဆွေးနွေးစာမျက်နှာအကြောင်း",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|စက္ကန့်}}",
-	"discussiontools-newtopic-missing-title": "{{GENDER:|သင့်}}ဆွေးနွေးမှုအကြောင်းအရာအတွက် ခေါင်းစဉ်ကို ကျေးဇူးပြု၍ ထည့်သွင်းပါ။ \"{{int:discussiontools-replywidget-newtopic}}\" ကို နှိပ်လိုက်ပါက သင့်အကြောင်းအရာအား ခေါင်းစဉ်မပါဘဲ ထည့်သွင်းသွားလိမ့်မည် ဖြစ်သည်။",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|သင့်}}ဆွေးနွေးမှုအကြောင်းအရာအတွက် ခေါင်းစဉ်ကို ကျေးဇူးပြု၍ ထည့်သွင်းပါ။",
 	"discussiontools-newtopic-placeholder-title": "အကြောင်းအရာ",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "စာရင်းသွင်းပါ",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "စာရင်းမှဖြုတ်ပါ",

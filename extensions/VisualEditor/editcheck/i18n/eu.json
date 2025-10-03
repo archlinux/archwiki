@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Theklan"
+		]
+	},
+	"editcheck-dialog-action-no": "Ez",
+	"editcheck-dialog-action-yes": "Bai",
+	"editcheck-dialog-addref-description": "Lagundu irakurleei ulertzen nondik datorren informazio hau erreferentzia bat gehituz.",
+	"editcheck-dialog-addref-reject-question": "Zergatik ez duzu erreferentzia bat gehitzen?",
+	"editcheck-dialog-addref-reject-description": "Beste editore batzuek jakin nahiko dute zergatik ez duzun erreferentzia bat jartzeko beharrik ikusi.",
+	"editcheck-dialog-addref-reject-irrelevant": "Ez dut uste erreferentziak beharrezkoak direla egin dudan aldaketan",
+	"editcheck-dialog-addref-reject-common-knowledge": "Gehitu dudan informazioa oso ezaguna da",
+	"editcheck-dialog-addref-reject-uncertain": "Ez nago ziur zein erreferentzia gehitu",
+	"editcheck-dialog-addref-reject-other": "Bestelakoa",
+	"editcheck-dialog-addref-success-notify": "Eskerrik asko erreferentzia bat gehitzeagatik!",
+	"editcheck-dialog-addref-title": "Erreferentzia gehitu",
+	"editcheck-dialog-title": "Argitaratu aurretik",
+	"editcheck-copyvio-title": "Itsatsitako edukia",
+	"editcheck-review-title": "Aldaketak ikusi",
+	"tag-editcheck-reference-decline-common-knowledge": "Edit Check (erreferentziak) ukatua (ezagutza orokorra)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "EditCheck erreferentzia ukatu da ezagutza orokorra delako",
+	"tag-editcheck-reference-decline-irrelevant": "Edit Check (erreferentziak)  ukatua (garrantzirik gabekoa)",
+	"tag-editcheck-reference-decline-irrelevant-description": "EditChek erreferentzia ukatu da garrantzirik gabekoa delako",
+	"tag-editcheck-reference-decline-other": "Edit Check (erreferentziak) ukatua (beste bat)",
+	"tag-editcheck-reference-decline-other-description": "EditCheck erreferentzia ukatu da zerrendan ez zegoen arrazoi baten ondorioz",
+	"tag-editcheck-reference-decline-uncertain": "EditChek (erreferentziak) ukatua (ez dago ziur)",
+	"tag-editcheck-reference-decline-uncertain-description": "EditChek erreferentzia ukatu da ez dagoelako ziur"
+}

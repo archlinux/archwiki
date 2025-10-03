@@ -77,7 +77,7 @@
 	"discussiontools-replywidget-mode-source": "Inkomoko",
 	"discussiontools-replywidget-mode-visual": "Biboneka",
 	"discussiontools-replywidget-newcomments-button": "Erekana $1 igitekerezo gishya {{PLURAL:$1|ibitekerezo}}",
-	"discussiontools-replywidget-newtopic": "{{GENDER: | Ongeraho}} insanganyamatsiko",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Ongeraho}} insanganyamatsiko",
 	"discussiontools-replywidget-placeholder-newtopic": "Ibisobanuro",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Subiza}} kuri {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Ibyifuzo",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
 	"thanks-desc": "Dodaje mogućnost zahvaljivanja korisnicima za izmjene, komentare itd.",
@@ -20,7 +21,7 @@
 	"thanks-error-invalidrecipient": "Ne mogu da nađem ispravnog primaoca",
 	"thanks-error-invalidrecipient-bot": "Ne možete zahvaljivati botovima",
 	"thanks-error-invalidrecipient-self": "Ne možete zahvaliti sami sebi",
-	"thanks-error-notloggedin": "Anonimni korisnici ne mogu slati zahvalnice",
+	"thanks-error-notloggedin": "Neprijavljeni korisnici ne mogu slati zahvalnice",
 	"thanks-error-ratelimited": "{{GENDER:$1|Prekoračili ste}} ograničenje za slanje zahvalnica. Pričekajte neko vrijeme pa pokušajte ponovo.",
 	"thanks-error-api-params": "Mora se navesti parametar „revid” ili „logid”",
 	"thanks-thank-tooltip": "{{GENDER:$1|Pošaljite}} zahvalnicu {{GENDER:$2|ovom korisniku|оvoj korisnici}}",

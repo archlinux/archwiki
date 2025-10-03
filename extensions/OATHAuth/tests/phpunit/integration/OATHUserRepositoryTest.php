@@ -74,6 +74,7 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		$oathUser = $repository->findByUser( $user );
 		$this->assertEquals( 12345, $oathUser->getCentralId() );
 		$this->assertEquals( [], $oathUser->getKeys() );
+		$this->expectDeprecationAndContinue( '/OATHUser::getModule/' );
 		$this->assertNull( $oathUser->getModule() );
 
 		/** @var TOTPKey $key */
@@ -92,6 +93,7 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$this->assertArrayEquals( [ $key ], $oathUser->getKeys() );
+		$this->expectDeprecationAndContinue( '/OATHUser::getModule/' );
 		$this->assertEquals( $module, $oathUser->getModule() );
 
 		// Test looking it up again from the database
@@ -114,6 +116,7 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$this->assertEquals( [], $oathUser->getKeys() );
+		$this->expectDeprecationAndContinue( '/OATHUser::getModule/' );
 		$this->assertNull( $oathUser->getModule() );
 		$this->assertEquals( [], $repository->findByUser( $user )->getKeys() );
 	}

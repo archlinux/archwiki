@@ -7,13 +7,21 @@
 	},
 	"oathauth-account": "Konta nosaukums:",
 	"oathauth-enable": "Iespējot divpakāpju autentifikāciju",
+	"oathauth-recoverycodes-download": "Lejupielādēt",
+	"oathauth-recoverycodes-copy": "Kopēt",
+	"oathauth-prefs-label": "Divfaktoru autentifikācija:",
+	"oathauth-enteruser": "Lietotājvārds:",
 	"right-oathauth-enable": "Iespējot divpakāpju autentifikāciju",
 	"action-oathauth-enable": "iespējot divpakāpju autentifikāciju",
 	"oathauth-auth-token-label": "Kods",
 	"oathauth-auth-ui": "Lūdzu, ievadi verifikācijas kodu no autentifikācijas ierīces.",
+	"oath-log-name": "Divfaktoru autentifikācijas žurnāls",
 	"oathauth-ui-no-module": "Nav iespējots",
 	"oathauth-ui-manage": "Pārvaldīt",
 	"oathauth-ui-available-modules": "Pieejamās metodes",
 	"oathauth-disable-method-warning-button-label": "Apstiprināt un turpināt",
-	"oathauth-invalidrequest": "Nederīgs pieprasījums"
+	"oathauth-invalidrequest": "Nederīgs pieprasījums",
+	"oathauth-notifications-disable-help": "Palīdzība",
+	"oathauth-notifications-enable-help": "Palīdzība",
+	"oathauth-notifications-recoverycodesleft-help": "Palīdzība"
 }

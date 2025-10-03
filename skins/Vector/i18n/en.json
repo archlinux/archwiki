@@ -85,7 +85,7 @@
 	"vector-2022-beta-preview-description": "Get early access to the new reading accessibility features, such as typography improvements and dark mode.",
 	"vector-night-mode-gadget-names": "dark-mode|dark-mode-toggle|dark-mode-toggle-pagestyles",
 	"vector-night-mode-gadget-warning": "You're using a dark mode gadget that interferes with this feature. [[Special:Preferences#mw-prefsection-gadgets|Disable the gadget]] to use dark mode.",
-	"vector-night-mode-issue-reporting-notice-url": "https://www.mediawiki.org/wiki/Reading/Web/Accessibility_for_reading/Reporting/$1?section=new&action=submit&preloadtitle=$2&preload=MediaWiki:vector-night-mode-issue-reporting-preload-content",
+	"vector-night-mode-issue-reporting-notice-url": "",
 	"vector-night-mode-issue-reporting-notice-tooltip": "Report when dark mode colors make things difficult to read.",
 	"vector-night-mode-issue-reporting-link-label": "Report an issue with dark mode",
 	"vector-night-mode-issue-reporting-link-notification": "Report received!",

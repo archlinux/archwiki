@@ -93,5 +93,12 @@
 	"templatedata-modal-title-templatedesc": "Sjabloonbeskrywing ($1)",
 	"templatedata-modal-title-templateformat": "Voorgestelde sjabloonformaat",
 	"templatedata-modal-title-templateparam-details": "Parameterbesonderhede: $1",
-	"templatedata-modal-title-templateparams": "Sjabloonparameters"
+	"templatedata-modal-title-templateparams": "Sjabloonparameters",
+	"templatedata-search-list-header": "Gunstelinge",
+	"templatedata-search-list-empty": "Sjablone wat jy as gunstelinge merk, sal hier verskyn",
+	"templatedata-favorite-add": "Voeg sjabloon by gunstelinge",
+	"templatedata-favorite-added": "Sjabloon by gunstelinge bygevoeg",
+	"templatedata-favorite-remove": "Verwyder sjabloon uit gunstelinge",
+	"templatedata-favorite-removed": "Sjabloon verwyder uit gunstelinge",
+	"templatedata-favorite-error": "Kan nie gunstelinge stoor nie"
 }

@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Htawmonzel",
-			"咽頭べさ"
+			"咽頭べさ",
+			"Ayane Fumihiro"
 		]
 	},
 	"scribunto-console-clear": "ဖအး",
-	"scribunto-common-error-category": "မုလိက် နွံဗၠေတ်မံင်မွဲမွဲသိုက်",
+	"scribunto-common-error-category": "မုလိက် နွံဗၠေတ်မံၚ်မွဲမွဲသိုက်",
 	"scribunto-lua-error": "Lua ဗၠေတ်: $2."
 }

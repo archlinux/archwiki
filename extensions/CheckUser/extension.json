@@ -47,6 +47,10 @@
 			"value": false,
 			"description": "The wiki ID to use when redirecting users to [[Special:GlobalContributions]] on a central wiki. This wiki should know about temporary accounts. If set to false, no redirect occurs."
 		},
+		"CheckUserGlobalContributionsSkippedWikiIds": {
+			"value": [],
+			"description": "An array of wiki IDs that will be skipped when querying for user's global contributions. Edits from these wikis will not be shown on [[Special:GlobalContributions]], regardless of the viewer permissions."
+		},
 		"CheckUserCAMultiLock": {
 			"value": false,
 			"description": "Whether to add a link to Special:MultiLock by CentralAuth to the Special:CheckUser's mass block form. This requires CentralAuth extension to be installed on the wiki. To enable this, set this to an array with a central wiki's database name and an array with the name(s) of the global group(s) to add the link for. Example: [ 'centralDB' => 'metawiki', 'groups' => [ 'steward' ] ]"
@@ -248,13 +252,13 @@
 				"MainConfig",
 				"JobQueueGroup",
 				"PermissionManager",
-				"PreferencesFactory",
 				"UserNameUtils",
 				"DBLoadBalancerFactory",
 				"ActorStore",
 				"BlockManager",
 				"CheckUserPermissionManager",
-				"ReadOnlyMode"
+				"ReadOnlyMode",
+				"CheckUserTemporaryAccountAutoRevealLookup"
 			]
 		},
 		{
@@ -283,14 +287,14 @@
 				"MainConfig",
 				"JobQueueGroup",
 				"PermissionManager",
-				"PreferencesFactory",
 				"UserNameUtils",
 				"DBLoadBalancerFactory",
 				"ActorStore",
 				"BlockManager",
 				"RevisionStore",
 				"CheckUserPermissionManager",
-				"ReadOnlyMode"
+				"ReadOnlyMode",
+				"CheckUserTemporaryAccountAutoRevealLookup"
 			]
 		},
 		{
@@ -301,13 +305,13 @@
 				"MainConfig",
 				"JobQueueGroup",
 				"PermissionManager",
-				"PreferencesFactory",
 				"UserNameUtils",
 				"DBLoadBalancerFactory",
 				"ActorStore",
 				"BlockManager",
 				"CheckUserPermissionManager",
-				"ReadOnlyMode"
+				"ReadOnlyMode",
+				"CheckUserTemporaryAccountAutoRevealLookup"
 			]
 		},
 		{
@@ -318,14 +322,14 @@
 				"MainConfig",
 				"JobQueueGroup",
 				"PermissionManager",
-				"PreferencesFactory",
 				"UserNameUtils",
 				"DBLoadBalancerFactory",
 				"ActorStore",
 				"BlockManager",
 				"RevisionStore",
 				"CheckUserPermissionManager",
-				"ReadOnlyMode"
+				"ReadOnlyMode",
+				"CheckUserTemporaryAccountAutoRevealLookup"
 			]
 		},
 		{
@@ -354,7 +358,9 @@
 			"services": [
 				"PermissionManager",
 				"CheckUserTemporaryAccountLoggerFactory",
-				"MainConfig"
+				"MainConfig",
+				"CheckUserTemporaryAccountAutoRevealLookup",
+				"CheckUserPermissionManager"
 			]
 		},
 		"GlobalPreferencesHandler": {
@@ -529,58 +535,6 @@
 			"dependencies": [
 				"mediawiki.api",
 				"mediawiki.base"
-			]
-		},
-		"ext.checkUser.tempAccountOnboarding": {
-			"localBasePath": "modules/ext.checkUser.tempAccountsOnboarding",
-			"remoteExtPath": "CheckUser/modules/ext.checkUser.tempAccountsOnboarding",
-			"packageFiles": [
-				"init.js",
-				"components/App.vue",
-				"components/TempAccountsOnboardingDialog.vue",
-				"components/TempAccountsOnboardingStep.vue",
-				"components/TempAccountsOnboardingStepper.vue",
-				"components/TempAccountsOnboardingIntroStep.vue",
-				"components/TempAccountsOnboardingIPInfoStep.vue",
-				"components/TempAccountsOnboardingIPRevealStep.vue",
-				{
-					"name": "components/icons.json",
-					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
-					"callbackParam": [
-						"cdxIconNext",
-						"cdxIconPrevious"
-					]
-				}
-			],
-			"messages": [
-				"checkuser-temporary-accounts-onboarding-dialog-title",
-				"checkuser-temporary-accounts-onboarding-dialog-skip-all",
-				"checkuser-temporary-accounts-onboarding-dialog-stepper-label",
-				"checkuser-temporary-accounts-onboarding-dialog-previous-label",
-				"checkuser-temporary-accounts-onboarding-dialog-next-label",
-				"checkuser-temporary-accounts-onboarding-dialog-close-label",
-				"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title",
-				"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-content",
-				"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-image-aria-label",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-image-aria-label",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-error",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-success",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-warning",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-info-save-preference",
-				"ipinfo-preference-use-agreement",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content",
-				"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-image-aria-label"
-			],
-			"dependencies": [
-				"vue",
-				"@wikimedia/codex",
-				"mediawiki.api",
-				"mediawiki.user",
-				"mediawiki.jqueryMsg"
 			]
 		},
 		"ext.checkUser.tempAccounts": {

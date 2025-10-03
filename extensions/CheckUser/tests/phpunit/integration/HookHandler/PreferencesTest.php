@@ -2,10 +2,14 @@
 
 namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
 
+use MediaWiki\CheckUser\CheckUserPermissionStatus;
 use MediaWiki\CheckUser\HookHandler\Preferences;
 use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
@@ -29,6 +33,12 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 	/** @var (Preferences&MockObject) */
 	private Preferences $sut;
 
+	/** @var (CheckUserTemporaryAccountAutoRevealLookup&MockObject) */
+	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
+
+	/** @var (CheckUserPermissionManager&MockObject) */
+	private CheckUserPermissionManager $checkUserPermissionManager;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -39,12 +49,16 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 		$this->loggerFactory = $this->createMock(
 			TemporaryAccountLoggerFactory::class
 		);
+		$this->autoRevealLookup = $this->createMock( CheckUserTemporaryAccountAutoRevealLookup::class );
+		$this->checkUserPermissionManager = $this->createMock( CheckUserPermissionManager::class );
 
 		$this->setUserLang( 'qqx' );
 		$this->sut = new Preferences(
 			$this->permissionManager,
 			$this->loggerFactory,
-			$this->getServiceContainer()->getMainConfig()
+			$this->getServiceContainer()->getMainConfig(),
+			$this->autoRevealLookup,
+			$this->checkUserPermissionManager
 		);
 	}
 
@@ -162,6 +176,71 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 			'Site config set to false' => [ false, '(checkuser-helper-table-collapse-by-default-preference-never)' ],
 			'Site config set to true' => [ true, '(checkuser-helper-table-collapse-by-default-preference-always)' ],
 			'Site config set to 200' => [ 200, '200' ],
+		];
+	}
+
+	/** @dataProvider provideOnGetPreferencesForAutoRevealPreference */
+	public function testOnGetPreferencesForAutoRevealPreference( bool $isAutoRevealAvailable ) {
+		$this->autoRevealLookup->method( 'isAutoRevealAvailable' )
+			->willReturn( $isAutoRevealAvailable );
+
+		$this->sut->onGetPreferences( $this->user, $prefs );
+		$this->assertSame( $isAutoRevealAvailable, isset( $prefs['checkuser-temporary-account-enable-auto-reveal'] ) );
+	}
+
+	public static function provideOnGetPreferencesForAutoRevealPreference(): array {
+		return [
+			'Auto-reveal is available' => [ true ],
+			'Auto-reveal is not available' => [ false ],
+		];
+	}
+
+	/** @dataProvider provideOnGetPreferencesValidatesAutoRevealPreference */
+	public function testOnGetPreferencesValidatesAutoRevealPreference(
+		bool $canUserUseAutoReveal, bool $isAutoRevealExpiryValid, mixed $autoRevealPreferenceValue,
+		string|null $expectedErrorMessageKey
+	) {
+		$this->autoRevealLookup->method( 'isAutoRevealAvailable' )
+			->willReturn( true );
+		$this->autoRevealLookup->method( 'isAutoRevealExpiryValid' )
+			->with( $autoRevealPreferenceValue )
+			->willReturn( $isAutoRevealExpiryValid );
+		$this->checkUserPermissionManager->method( 'canAutoRevealIPAddresses' )
+			->willReturn(
+				$canUserUseAutoReveal ? CheckUserPermissionStatus::newGood() :
+					CheckUserPermissionStatus::newFatal( 'test' )
+			);
+
+		$this->sut->onGetPreferences( $this->user, $prefs );
+
+		$this->assertTrue( isset( $prefs['checkuser-temporary-account-enable-auto-reveal'] ) );
+		$this->assertArrayHasKey( 'validation-callback', $prefs['checkuser-temporary-account-enable-auto-reveal'] );
+
+		$mockHtmlForm = $this->createMock( HTMLForm::class );
+		$mockHtmlForm->method( 'getAuthority' )
+			->willReturn( $this->user );
+
+		$actualValidationStatus = $prefs['checkuser-temporary-account-enable-auto-reveal']['validation-callback'](
+			$autoRevealPreferenceValue, [], $mockHtmlForm
+		);
+		if ( $expectedErrorMessageKey === null ) {
+			$this->assertStatusGood( $actualValidationStatus );
+		} else {
+			$this->assertStatusNotGood( $actualValidationStatus );
+			$this->assertStatusError( $expectedErrorMessageKey, $actualValidationStatus );
+		}
+	}
+
+	public static function provideOnGetPreferencesValidatesAutoRevealPreference(): array {
+		return [
+			'Auto-reveal preference value is null (to unset the preference)' => [ false, true, null, null ],
+			'User lacks right to use auto-reveal' => [
+				false, true, 1234, 'checkuser-ip-auto-reveal-missing-permission',
+			],
+			'Auto-reveal preference value provided is not valid' => [
+				true, false, 1234, 'checkuser-ip-auto-reveal-expiry-invalid',
+			],
+			'Auto-reveal preference value is valid' => [ true, true, 1234, null ],
 		];
 	}
 

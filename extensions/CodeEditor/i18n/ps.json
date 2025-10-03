@@ -9,5 +9,11 @@
 	"codeeditor-toolbar-toggle": "کوډ سمونگر بدلول",
 	"codeeditor-save-with-errors": "لاسوند تېروتنې لري. ايا تاسو ډاډه ياست چې خپور يې کړئ؟",
 	"codeeditor-invisibleChars-toggle": "نه ليد‌وړ لوښې بدلول",
-	"codeeditor-lineWrapping-toggle": "د کرښې نغاړل بدلول"
+	"codeeditor-lineWrapping-toggle": "د کرښې نغاړل بدلول",
+	"codeeditor-gotoline": "د کرښې شمېرې ته ورتلل",
+	"codeeditor-gotoline-placeholder": "کرښه [:ستون]",
+	"codeeditor-gotoline-prompt": "کرښې شمېره وليکئ",
+	"codeeditor-indent": "دننکوږی",
+	"codeeditor-outdent": "بهرکوږی",
+	"codeeditor-error-message": "کوډسمونگر د ويکي‌سمونگر بارولو ته اړتيا لري."
 }

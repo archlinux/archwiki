@@ -74,5 +74,7 @@
 	"oathauth-disable-method-warning-button-label": "Potvrdit a pokračovat",
 	"oathauth-disable-method-warning": "Pokud vypnete metodu dvoufaktorového ověřování „$1“, již ji nebudete moci použít pro přihlašování a všechna data spojená s touto metodou ověřování budou smazána.",
 	"oathauth-totp-disable-warning": "Již nebudete moci použít ověřovací zařízení registrované na tento účet. Všechny provizorní kódy přiřazené k tomuto účtu budou neplatné.",
-	"oathauth-invalidrequest": "Neplatný požadavek"
+	"oathauth-invalidrequest": "Neplatný požadavek",
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Zablokovaná skupina|Zablokované skupiny}}:",
+	"oathauth-prefs-disabledgroups-help": "Vaše členství v {{PLURAL:$1|této skupině|těchto skupinách}} je zablokováno, dokud si {{GENDER:$2|nezapnete}} [[Special:Manage Two-factor authentication|dvoufaktorovou autentizaci]]."
 }

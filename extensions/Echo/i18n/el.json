@@ -17,7 +17,8 @@
 			"Tsoukali",
 			"Xaris333",
 			"ZaDiak",
-			"Ανώνυμος Βικιπαιδιστής"
+			"Ανώνυμος Βικιπαιδιστής",
+			"Warudo"
 		]
 	},
 	"echo-desc": "Σύστημα για την ενημέρωση των χρηστών σχετικά με τα γεγονότα και μηνύματα",
@@ -45,8 +46,8 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Απλό κείμενο",
 	"echo-pref-cross-wiki-notifications": "Εμφάνιση ενημερώσεων από άλλα wiki",
-	"echo-pref-notifications-blacklist": "Να μην εμφανίζονται ειδοποιήσεις από αυτούς τους χρήστες.([[mw:Special:MyLanguage/Help:Notifications#mute|μάθετε περισσότερα]])",
-	"echo-pref-notifications-page-linked-title-muted-list": "Να μην εμφανίζονται ειδοποιήσεις «σύνδεσης σελίδας» για αυτές τις σελίδες.([[mw:Special:MyLanguage/Help:Notifications#mute|μάθετε περισσότερα]])",
+	"echo-pref-notifications-blacklist": "Να μην εμφανίζονται ειδοποιήσεις από αυτούς τους χρήστες.([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute μάθετε περισσότερα])",
+	"echo-pref-notifications-page-linked-title-muted-list": "Να μην εμφανίζονται ειδοποιήσεις «σύνδεσης σελίδας» για αυτές τις σελίδες.([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute μάθετε περισσότερα])",
 	"echo-pref-dont-email-read-notifications": "Να μην περιλαμβάνονται ενημερώσεις ανάγνωσης στα συνοπτικά email",
 	"echo-learn-more": "Μάθετε περισσότερα",
 	"echo-log": "Δημόσια καταγραφή",
@@ -153,8 +154,8 @@
 	"notification-link-text-what-links-here": "Όλοι οι σύνδεσμοι προς αυτήν τη σελίδα",
 	"notification-header-mention-other": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σε}} ανάφερε στη <strong>$4</strong> στο «<strong>$5</strong>».",
 	"notification-header-mention-other-nosection": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σε}} ανάφερε στη <strong>$4</strong>.",
-	"notification-header-mention-user-talkpage-v2": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σε}} ανάφερε στη <strong>σελίδα συζήτησης {{GENDER:$5|του|της}} $4</strong> στο «<strong>$6</strong>».",
-	"notification-header-mention-user-talkpage-nosection": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σε}} ανάφερε στη <strong>σελίδα συζήτησης {{GENDER:$5|του|της}} $4</strong>.",
+	"notification-header-mention-user-talkpage-v2": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σας}} ανέφερε στη <strong>σελίδα συζήτησης {{GENDER:$5|του|της}} $4</strong> στο «<strong>$6</strong>».",
+	"notification-header-mention-user-talkpage-nosection": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σας}} ανέφερε στη <strong>σελίδα συζήτησης {{GENDER:$5|του|της}} $4</strong>.",
 	"notification-header-mention-agent-talkpage": "{{GENDER:$2|Ο|Η}} $1 σας {{GENDER:$3|ανάφερε}} στην  <strong>σελίδα συζήτησής {{GENDER:$2|του|της}}</strong> στο «<strong>$4</strong>».",
 	"notification-header-mention-agent-talkpage-nosection": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σε}} ανάφερε στη <strong>σελίδα συζήτησής {{GENDER:$2|του|της|του}}.",
 	"notification-header-mention-article-talkpage": "{{GENDER:$2|Ο|Η}} $1 {{GENDER:$3|σε}} ανάφερε στη <strong>σελίδα συζήτησης $4</strong> στο «<strong>$5</strong>».",

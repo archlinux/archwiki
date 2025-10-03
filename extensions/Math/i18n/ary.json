@@ -3,12 +3,14 @@
 		"authors": [
 			"Anass Sedrati",
 			"Enzoreg",
-			"Zanatos"
+			"Zanatos",
+			"Ideophagous"
 		]
 	},
-	"math_failure": "khata flmat",
+	"popups-settings-option-math": "لماط",
+	"math_failure": "لپارصاج ماصدقش",
 	"math_syntax_error": "khata fsiyagha",
 	"math_unknown_error": "khat mjhol",
 	"math_unknown_function": "وظيفة مامعروفاش «$1»",
-	"prefs-math": "mat"
+	"prefs-math": "لماط"
 }

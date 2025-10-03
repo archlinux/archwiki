@@ -142,7 +142,7 @@
 	"visualeditor-dialog-meta-settings-redirect-label": "Преусмери страницу на",
 	"visualeditor-dialog-meta-settings-redirect-placeholder": "Одредишна страница",
 	"visualeditor-dialog-meta-settings-redirect-statichelp": "Можете спречити да се ово преусмерење аутоматски ажурира када се страница на коју оно води премести, у врло ретком случају када је то потребно.",
-	"visualeditor-dialog-meta-settings-redirect-staticlabel": "Спречи ажурирање овог преусмеравања када се одредишна страница премести",
+	"visualeditor-dialog-meta-settings-redirect-staticlabel": "Статичко преусмерење.",
 	"visualeditor-dialog-meta-settings-section": "Подешавања странице",
 	"visualeditor-dialog-meta-settings-toc-default": "Ако је потребно",
 	"visualeditor-dialog-meta-settings-toc-disable": "Никад",

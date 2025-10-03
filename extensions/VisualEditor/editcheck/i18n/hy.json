@@ -1,9 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Սահակ"
+			"Սահակ",
+			"Kareyac"
 		]
 	},
 	"editcheck-dialog-action-no": "Ոչ",
-	"editcheck-dialog-action-yes": "Այո"
+	"editcheck-dialog-action-yes": "Այո",
+	"editcheck-dialog-addref-reject-other": "Այլ",
+	"editcheck-dialog-addref-success-notify": "Շնորհակալություն մեջբերում ավելացնելու համար",
+	"editcheck-dialog-addref-title": "Ավելացնել մեջբերում",
+	"editcheck-dialog-title": "Հրապարակումից առաջ"
 }

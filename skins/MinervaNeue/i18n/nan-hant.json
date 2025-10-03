@@ -12,5 +12,6 @@
 	"mobile-frontend-main-menu-nearby": "附近",
 	"mobile-frontend-main-menu-settings": "設定",
 	"mobile-frontend-placeholder": "佇{{SITENAME}}揣",
-	"mobile-frontend-random-button": "隨機"
+	"mobile-frontend-random-button": "隨機",
+	"minerva-page-actions-overflow": "閣看"
 }

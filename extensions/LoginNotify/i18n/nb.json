@@ -10,6 +10,7 @@
 	"echo-category-title-login-success": "Innlogging fra en ukjent enhet",
 	"echo-pref-tooltip-login-success": "Varsle meg når noen logger seg inn på kontoen min fra en ukjent enhet og IP-adresse.",
 	"loginnotify-primary-link": "Hjelp",
+	"loginnotify-unknown-ip": "Du har forsøkt å logge inn fra en ukjent IP-adresse, og {{SITENAME}} er for tiden konfigurert til å forhindre innlogginger fra ukjente IP-adresser.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Ett mislykket|Flere mislykkede}} forsøk på å logge inn på {{SITENAME}} som $1",
 	"notification-loginnotify-login-success-email-subject": "Innlogging på {{SITENAME}} som $1 fra en enhet {{GENDER:$1|du}} ikke har brukt i det siste",
 	"notification-header-login-success": "Noen (trolig {{GENDER:$1|du}}) logget nylig inn på kontoen din fra en ny enhet. Om dette var deg kan du se bort fra denne beskjeden. Om det ikke var deg bør du endre passordet ditt og sjekke kontoaktiviteten.",

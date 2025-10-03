@@ -126,7 +126,7 @@
 	"discussiontools-replywidget-mode-source": "Ункссь",
 	"discussiontools-replywidget-mode-visual": "Няемга",
 	"discussiontools-replywidget-newcomments-button": "Няфтемс $1{{PLURAL:$1|од сёрманя/од сёрманят}}",
-	"discussiontools-replywidget-newtopic": "{{GENDER:|поладомс}} мезень колга (темать)",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Поладомс}} мезень колга (темать)",
 	"discussiontools-replywidget-placeholder-newtopic": "Сембе ширде няфтема-азондома",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Пшкядемс}} {{BIDI:$1}}-ньди",
 	"discussiontools-replywidget-preferences": "Ладяматне-тиематне",

@@ -41,7 +41,8 @@
 			"沈澄心",
 			"落花有意12138",
 			"魔琴",
-			"Key0121"
+			"Key0121",
+			"Ericliu1912"
 		]
 	},
 	"skinname-vector": "旧版Vector（2010）",
@@ -95,7 +96,7 @@
 	"vector-searchsuggest-containing": "搜索包含<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>的页面",
 	"vector-intro-page": "Help:新手入门",
 	"vector-toc-label": "目录",
-	"vector-toc-beginning": "序言",
+	"vector-toc-beginning": "（首段）",
 	"vector-toc-toggle-button-label": "开关$1子章节",
 	"vector-anon-user-menu-pages": "未登录编辑者的页面",
 	"vector-anon-user-menu-pages-learn": "了解详情",

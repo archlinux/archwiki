@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
-	"captcha-edit": "Da biste uredili ovu stranicu potrebno je da nađite rješenje zadatka postavljenog ispod i da upišite odgovor u polje ([[Special:Captcha/help|više info]]):",
+	"captcha-edit": "Da biste uredili ovu stranicu potrebno je da nađite rješenje zadatka postavljenog ispod i da unesete odgovor u polje ([[Special:Captcha/help|više info]]):",
 	"captcha-edit-fail": "Netačan unos ili nedostatak koda za potvrđivanje.",
 	"captcha-desc": "Omogućava CAPTCHA tehnike za zaštitu protiv spama i probijanja lozinke",
 	"captcha-help": "Rješenje za unos CAPTCHA",
@@ -16,7 +17,7 @@
 	"captcha-badlogin": "Da bi ste pomogli zaštititi nas od automatiziranog probijanja lozinki, ljubazno Vas molimo da riješite naredni zadatak ispod i odgovor unesete u kutijicu ([[Special:Captcha/help|više informacija]]):",
 	"captcha-createaccount": "Da bi ste pomogli zaštititi nas od automatiziranog pravljenja računa, ljubazno Vas molimo da riješite naredni zadatak ispod i odgovor unesete u kutijicu ([[Special:Captcha/help|više info]]):",
 	"captcha-createaccount-fail": "Netačan unos ili nedostatak koda za potvrđivanje.",
-	"captcha-create": "Da biste napravili stranicu, prvo riješite naredni zadatak ispod i upišite odgovor u polje ([[Special:Captcha/help|više info]]):",
+	"captcha-create": "Da biste napravili stranicu, prvo riješite naredni zadatak ispod i unesite odgovor u polje ([[Special:Captcha/help|više info]]):",
 	"captcha-sendemail": "Da bismo zaštitili se od automatskog spamiranja, ljubazno vas molimo da riješite naredni zadatak ispod i odgovor unesete u kutijicu ([[Special:Captcha/help|više informacija]]):",
 	"captcha-sendemail-fail": "Netačan unos ili nedostajući CAPTCHA.",
 	"captcha-disabledinapi": "Ova radnja traži captchu, tako da se ne može izvršiti preko iavršnik.",

@@ -20,7 +20,7 @@
 	"categorytree-mode-all": "све странице",
 	"categorytree-collapse": "сакриј",
 	"categorytree-expand": "проширите",
-	"categorytree-member-counts": "Садржи {{PLURAL:$1|једну поткатегорију|$1 поткатегорије|$1 поткатегорија}}, {{PLURAL:$2|једну страницу|$2 странице|$2 страница}} и {{PLURAL:$3|једну датотеку|$3 датотеке|$3 датотека}}",
+	"categorytree-member-counts": "Садржи {{PLURAL:$1|једну поткатегорију|$1 поткатегорије}}, {{PLURAL:$2|једну страницу|$2 страница}} и {{PLURAL:$3|једну датотеку|$3 датотека}}",
 	"categorytree-num-categories": "$1 К",
 	"categorytree-num-pages": "$1 С",
 	"categorytree-num-files": "$1 Д",

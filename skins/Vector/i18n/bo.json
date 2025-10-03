@@ -3,9 +3,12 @@
 		"authors": [
 			"Freeyak",
 			"Phurbutsering",
-			"ཁ་བཏགས་ནག་པོ"
+			"ཁ་བཏགས་ནག་པོ",
+			"Tenzin Thoesam"
 		]
 	},
+	"vector-languages": "སྐད་སྣ་",
+	"vector-no-language-button-label": "སྐད་ཡིག་གཞན་སྣོན།",
 	"vector-action-addsection": "བརྗོད་གཞི་ཁ་སྣོན།",
 	"vector-action-delete": "སུབས།",
 	"vector-action-move": "སྤོར་བ།",
@@ -17,5 +20,27 @@
 	"vector-view-history": "ལོ་རྒྱུས་ལ་ལྟ་བ།",
 	"vector-view-view": "ཀློག་པ།",
 	"vector-view-viewsource": "ཁུངས་ལ་ལྟ་བ།",
-	"vector-more-actions": "དེ་ལས་མང་བ།"
+	"vector-more-actions": "དེ་ལས་མང་བ།",
+	"vector-appearance-label": "མཐོང་རིས་",
+	"vector-feature-limited-width-name": "ཞེང་།",
+	"vector-feature-limited-width-0-label": "རྒྱ་ཆེ་བ་",
+	"vector-feature-limited-width-1-label": "འབྲིང་",
+	"vector-feature-custom-font-size-name": "ཡིག་འབྲུ་ཆེ་ཆུང་།",
+	"vector-feature-custom-font-size-0-label": "ཆུང་བ་",
+	"vector-feature-custom-font-size-1-label": "འབྲིང་།",
+	"vector-feature-custom-font-size-2-label": "ཆེ་བ་",
+	"skin-theme-name": "ཚོན་",
+	"skin-theme-day-label": "ཚོན་སླ་བོ།",
+	"skin-theme-night-label": "ཚོན་གར་པོ་",
+	"skin-theme-os-label": "རང་འགུལ་",
+	"skin-theme-exclusion-notice": "ཤོག་ངོས་འདིར་རྒྱུན་དུ་ཚོན་སླ་བ་ལས་སྤྱོད་མི་ཐུབ།",
+	"vector-toc-label": "དཀར་ཆག",
+	"vector-toc-beginning": "མགོ་ཚུགས་",
+	"vector-anon-user-menu-pages": "ཐོ་འགོད་མེད་པའི་ཞུ་དག་པའི་ཤོག་ངོས།",
+	"vector-main-menu-label": "དེམས་བྱང་གཙོ་བོ།",
+	"vector-feature-custom-font-size-exclusion-notice": "ཤོག་ངོས་འདིར་རྟག་ཏུ་ཡིག་གཟུགས་ཆུང་བ་ལས་སྤྱོད་མི་ཐུབ།",
+	"vector-page-tools-label": "ལག་ཆའི་སྒམ་",
+	"vector-page-tools-general-label": "སྤྱི་བ་",
+	"vector-page-tools-actions-label": "བྱེད་སྒོ་",
+	"vector-unpin-element-label": "སྦས་"
 }

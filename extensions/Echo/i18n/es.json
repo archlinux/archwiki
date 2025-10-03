@@ -42,7 +42,8 @@
 			"The Anonymouse",
 			"TheBITLINK",
 			"Themasterriot",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"JorgeElias2302"
 		]
 	},
 	"echo-desc": "Sistema para notificar a los usuarios sobre eventos y mensajes",
@@ -254,6 +255,7 @@
 	"echo-notification-notice": "{{PLURAL:$1|Aviso ($1)|Avisos ($1)|100=Avisos (99+)}}",
 	"echo-notification-alert-text-only": "Alertas",
 	"echo-notification-notice-text-only": "Avisos",
+	"echo-notification-all-text-only": "Notificaciones",
 	"echo-overlay-link": "Todas las notificaciones",
 	"echo-overlay-title": "<b>Notificaciones</b>",
 	"echo-mark-all-as-read": "Marcar {{PLURAL:$1|todo}} como leído",

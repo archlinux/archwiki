@@ -6,11 +6,11 @@ use MediaWiki\Block\BlockManager;
 use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
 use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\ParamValidator\TypeDef\ArrayDef;
 use MediaWiki\Permissions\PermissionManager;
-use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\Rest\Response;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\User\ActorStore;
@@ -27,21 +27,21 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	use TemporaryAccountLogTrait;
 	use TemporaryAccountAutoRevealTrait;
 
-	private PreferencesFactory $preferencesFactory;
 	private RevisionStore $revisionStore;
+	private CheckUserTemporaryAccountAutoRevealLookup $checkUserTemporaryAccountAutoRevealLookup;
 
 	public function __construct(
 		Config $config,
 		JobQueueGroup $jobQueueGroup,
 		PermissionManager $permissionManager,
-		PreferencesFactory $preferencesFactory,
 		UserNameUtils $userNameUtils,
 		IConnectionProvider $dbProvider,
 		ActorStore $actorStore,
 		BlockManager $blockManager,
 		RevisionStore $revisionStore,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		ReadOnlyMode $readOnlyMode
+		ReadOnlyMode $readOnlyMode,
+		CheckUserTemporaryAccountAutoRevealLookup $checkUserTemporaryAccountAutoRevealLookup
 	) {
 		parent::__construct(
 			$config,
@@ -54,8 +54,8 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 			$checkUserPermissionsManager,
 			$readOnlyMode
 		);
-		$this->preferencesFactory = $preferencesFactory;
 		$this->revisionStore = $revisionStore;
+		$this->checkUserTemporaryAccountAutoRevealLookup = $checkUserTemporaryAccountAutoRevealLookup;
 	}
 
 	/**
@@ -189,14 +189,11 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	/**
 	 * @inheritDoc
 	 */
-	protected function getPreferencesFactory(): PreferencesFactory {
-		return $this->preferencesFactory;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	protected function getUserNameUtils(): UserNameUtils {
 		return $this->userNameUtils;
+	}
+
+	protected function getCheckUserAutoRevealLookup(): CheckUserTemporaryAccountAutoRevealLookup {
+		return $this->checkUserTemporaryAccountAutoRevealLookup;
 	}
 }

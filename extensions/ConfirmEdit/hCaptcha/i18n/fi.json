@@ -6,8 +6,8 @@
 			"Samoasambia"
 		]
 	},
-	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha]-moduuli Confirm Editiin",
-	"hcaptcha-edit": "Automaattisten spämmimuokkausten estämiseksi pyydämme sinua ratkaisemaan seuraavan CAPTCHAn:",
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha]-moduuli Confirm Edit -laajennukselle",
+	"hcaptcha-edit": "Automaattisten roskamuokkausten estämiseksi pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
 	"hcaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä. Automaattisesti lisättyjen mainoslinkkien estämiseksi pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
 	"hcaptcha-badlogin": "Wiki on suojattu estämään automaattinen salasanojen murtaminen. Pyydämme sinua ratkaisemaan seuraavan hCaptchan:",
 	"hcaptcha-createaccount": "Wiki on suojattu estämään automaattinen tunnusten luonti. Pyydämme sinua ratkaisemaan seuraavan hCaptchan:",

@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"hcaptcha-desc": "Confirm Edit üçün [https://www.hcaptcha.com/ hCaptcha] modulu",
+	"hcaptcha-edit": "Vikini avtomatlaşdırılmış spamdan qorumaq üçün sizdən aşağıdakı hCaptcha sualını həll etməyinizi xahiş edirik:",
+	"hcaptcha-addurl": "Redaktəniz yeni xarici keçidlər ehtiva edir. Vikini avtomatlaşdırılmış spamdan qorumaq üçün sizdən aşağıdakı hCaptcha-nı həll etməyinizi xahiş edirik:",
+	"hcaptcha-badlogin": "Vikini avtomatik parol sındırılmasından qorumaq üçün sizdən aşağıdakı hCaptcha-nı həll etməyinizi xahiş edirik:",
+	"hcaptcha-createaccount": "Vikini avtomatlaşdırılmış hesab yaradılmasından qorumaq üçün sizdən aşağıdakı hCaptcha-nı həll etməyinizi xahiş edirik:",
+	"hcaptcha-createaccount-fail": "Deyəsən hCaptcha-nı hələ həll etməmisiniz.",
+	"hcaptcha-create": "Vikini avtomatlaşdırılmış səhifə yaradılmasından qorumaq üçün sizdən aşağıdakı hCaptcha problemini həll etməyinizi xahiş edirik:",
+	"hcaptcha-help": "Zəhmət olmasa hCaptcha problemini həll edin və cavabı captchaWord olaraq qaytarın.",
+	"hcaptcha-privacy-policy": "Bu sayt hCaptcha tərəfindən qorunur və onun [https://www.hcaptcha.com/privacy Məxfilik Siyasəti] və [https://www.hcaptcha.com/terms İstifadə Şərtləri] tətbiq edilir."
+}

@@ -47,6 +47,7 @@
 	"nuke-skipped-summary": "{{PLURAL:$1|'''En side'''|'''$1 sider'''}} ble ikke valgt for sletting.",
 	"nuke-delete-more": "[[Special:Nuke|Slett flere sider]]",
 	"nuke-pattern": "SQL-LIKE-mønster (f.eks. %) for sidenavnet:",
+	"nuke-nolist": "For å fortsette, trykk først på «{{int:nuke-submit-list}}» og velg deretter sidene som skal legges i kø for sletting.",
 	"nuke-nopages-global": "Ingen sider samsvarer med søket.",
 	"nuke-searchnotice-minmorethanmax": "Minstestørrelsen i byte er større enn maksstørrelsen i byte, så det er ikke mulig for noen sider å møte dette kriteriet.",
 	"nuke-searchnotice-negmax": "Maksimumsstørrelsen i byte er mindre enn null, og vil derfor ignoreres.",

@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\DiscussionTools\BatchModifyElements;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
@@ -102,19 +103,25 @@ class CommentFormatterTest extends IntegrationTestCase {
 
 		OutputPage::setupOOUI();
 
-		$actual = $preprocessed;
+		$batchModifyElements = new BatchModifyElements();
 
-		$actual = MockCommentFormatter::postprocessTopicSubscription(
-			$actual, $outputPage, $subscriptionStore, $isMobile, $useButtons
+		MockCommentFormatter::postprocessTimestampLinks(
+			$preprocessed, $batchModifyElements, $outputPage
 		);
 
-		$actual = MockCommentFormatter::postprocessVisualEnhancements(
-			$actual, $outputPage, $isMobile
+		MockCommentFormatter::postprocessTopicSubscription(
+			$preprocessed, $batchModifyElements, $outputPage, $subscriptionStore, $isMobile, $useButtons
 		);
 
-		$actual = MockCommentFormatter::postprocessReplyTool(
-			$actual, $outputPage, $isMobile, $useButtons
+		MockCommentFormatter::postprocessVisualEnhancements(
+			$preprocessed, $batchModifyElements, $outputPage, $isMobile
 		);
+
+		MockCommentFormatter::postprocessReplyTool(
+			$preprocessed, $batchModifyElements, $outputPage, $isMobile, $useButtons
+		);
+
+		$actual = $batchModifyElements->apply( $preprocessed );
 
 		// OOUI ID's are non-deterministic, so strip them from test output
 		$actual = preg_replace( '/ id=[\'"]ooui-php-[0-9]+[\'"]/', '', $actual );

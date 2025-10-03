@@ -13,7 +13,8 @@
 			"Winston Sung",
 			"Xiaomingyan",
 			"Yfdyh000",
-			"沈澄心"
+			"沈澄心",
+			"Libamidi"
 		]
 	},
 	"content-model-scribunto": "Scribunto模块",
@@ -39,10 +40,10 @@
 	"scribunto-common-nofunction": "脚本错误：您必须指定要调用的函数。",
 	"scribunto-common-nosuchfunction": "脚本错误：函数“$2”不存在。",
 	"scribunto-common-notafunction": "脚本错误：“$2”不是函数。",
-	"scribunto-common-timeout": "分配用于运行脚本的时间已到期。",
+	"scribunto-common-timeout": "脚本运行超时。",
 	"scribunto-common-oom": "运行的脚本超出允许的内存用量。",
 	"scribunto-common-backtrace": "回溯：",
-	"scribunto-common-no-details": "没有可用的进一步细节。",
+	"scribunto-common-no-details": "没有有关此处代码的更多详情。",
 	"scribunto-lua-in-function": "在函数“$1”中",
 	"scribunto-lua-in-main": "在主块中",
 	"scribunto-lua-in-function-at": "在函数$1:$2内",

@@ -1,10 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Anakmalaysia"
+			"Anakmalaysia",
+			"Hakimi97"
 		]
 	},
+	"timeless-desc": "Rupa abadi (timeless) yang direka berdasarkan prototaip Musim Sejuk oleh Brandon Harris, dan pelbagai gaya oleh Yayasan Wikimedia",
+	"timeless-anonymous": "Awanama",
+	"timeless-loggedinas": "Log masuk sebagai '''$1'''",
+	"timeless-notloggedin": "Belum log masuk",
+	"timeless-userpage": "Laman {{GENDER:$1|pengguna}}",
+	"timeless-talkpage": "Laman perbincangan {{GENDER:$1|pengguna}}",
+	"timeless-pagelog": "Log laman",
+	"timeless-more": "Lagi",
+	"timeless-sitetools": "Alat Wiki",
+	"timeless-pageactions": "Alat laman",
+	"timeless-userpagetools": "Alat laman pengguna",
+	"timeless-action-addsection": "Topik baharu",
+	"timeless-view-view": "Baca",
+	"timeless-pagemisc": "Lagi",
+	"timeless-namespaces": "Ruang nama",
+	"timeless-pagetools": "Tindakan laman",
 	"timeless-languages": "Bahasa",
+	"timeless-projects": "Projek lain",
 	"timeless-view-history": "Sejarah",
 	"timeless-action-undelete": "Nyahhapus {{PLURAL:$1|satu suntingan|$1 suntingan}}"
 }

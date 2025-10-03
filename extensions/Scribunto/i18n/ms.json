@@ -4,9 +4,11 @@
 			"Anakmalaysia",
 			"Aurora",
 			"Pizza1016",
-			"Zulfadli51"
+			"Zulfadli51",
+			"Hakimi97"
 		]
 	},
+	"content-model-scribunto": "Modul Scribunto",
 	"scribunto-desc": "Kerangka untuk pembenaman bahasa skrip ke dalam laman MediaWiki",
 	"scribunto-line": "pada baris $1",
 	"scribunto-module-line": "pada baris $2 di $1",
@@ -32,7 +34,7 @@
 	"scribunto-common-timeout": "Masa yang diperuntukkan untuk menjalankan skrip sudah luput.",
 	"scribunto-common-oom": "Jumlah ingatan yang dibenarkan untuk menjalankan skrip sudah dilampaui.",
 	"scribunto-common-backtrace": "Jejak balik:",
-	"scribunto-common-no-details": "Tiada butiran lanjut.",
+	"scribunto-common-no-details": "Tiada butiran tentang lokasi kod tersedia.",
 	"scribunto-lua-in-function": "dalam fungsi \"$1\"",
 	"scribunto-lua-in-main": "dalam ketulan utama",
 	"scribunto-lua-in-function-at": "dalam fungsi di $1:$2",
@@ -40,6 +42,7 @@
 	"scribunto-lua-error-location": "Ralat Lua $1: $2.",
 	"scribunto-lua-error": "Ralat Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Ralat skrip: Modul memulangkan nilai $2. Ia sepatutnya memulangkan jadual eksport.",
+	"scribunto-lua-warning": "Amaran skrip: $1",
 	"scribunto-luastandalone-proc-error": "Ralat Lua: Tidak dapat mencipta proses.",
 	"scribunto-luastandalone-proc-error-msg": "Ralat Lua: Tidak dapat mencipta proses: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Ralat Lua: Tidak dapat mencipta proses: proc_open tidak tersedia. Semak arahan konfigurasi \"disable_functions\" PHP.",
@@ -54,12 +57,17 @@
 	"scribunto-limitreport-timeusage": "Penggunakan masa Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 saat",
 	"scribunto-limitreport-virtmemusage": "saiz maya Lua",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|bait}}",
 	"scribunto-limitreport-estmemusage": "Penggunaan ingatan Lua yang dianggarkan",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|bait}}",
 	"scribunto-limitreport-memusage": "penggunaan ingatan Lua",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|bait}}",
 	"scribunto-limitreport-profile": "Profil Lua",
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "log Lua",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "Lihat laman modul"
+	"tooltip-ca-nstab-module": "Lihat laman modul",
+	"namespaceinfo-description-ns828": "Ruang nama untuk modul kod Lua, yang boleh diguna melalui laman wiki dan laman pendokumenannya",
+	"namespaceinfo-description-ns829": "Laman perbincangan untuk modul dan pendokumenan"
 }

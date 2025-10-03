@@ -14,7 +14,8 @@
 			"Peter Alberti",
 			"Saederup92",
 			"Sarrus",
-			"Steenth"
+			"Steenth",
+			"Msz2001"
 		]
 	},
 	"checkuser-summary": "Dette værktøj scanner de seneste ændringer for at finde de IP-adresser, der bruges af en bruger eller vise redigerings-/brugerdataene for en IP-adresse.\nBrugere og redigeringer af en klient-IP-adresse kan hentes via XFF-headers ved at tilføje IP-adressen med \" /xff\". IPv4 (CIDR $1 -32) og IPv6 (CIDR $2 -128) understøttes.\nDer vil ikke blive returneret mere end $3 redigeringer af ydeevneårsager.\nBrug dette i overensstemmelse med retningslinjerne.",

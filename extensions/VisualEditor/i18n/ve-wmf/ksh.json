@@ -18,5 +18,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Mer danke doför, dat de Wält mih erusfenge kann!",
 	"visualeditor-welcomedialog-switch": "Ömschallde op Wikkitäx",
 	"visualeditor-welcomedialog-switch-ve": "Op der <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"„Projramm för ‚seeschbaa‘ aan Täxte jät ze änndere“\">VisualEditor</i> ömschallde",
-	"visualeditor-welcomedialog-title": "Wellkumme {{ucfirst:{{GRAMMAR:em|{{ucfirst:$2}}}}}}{{GENDER:$1|}}"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Wellkumme}} {{GRAMMAR:em|$2}}"
 }

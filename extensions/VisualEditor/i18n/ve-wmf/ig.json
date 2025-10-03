@@ -29,5 +29,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Daalụ maka inyere ụwa aka ịmatakwu!",
 	"visualeditor-welcomedialog-switch": "Banye na ndezi ebe osi",
 	"visualeditor-welcomedialog-switch-ve": "Gbanwee gaa na ndezi anya na-ele",
-	"visualeditor-welcomedialog-title": "{{Gender: $1|Nnọọ}}, na $2!"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Nnọọ}}, na $2!"
 }

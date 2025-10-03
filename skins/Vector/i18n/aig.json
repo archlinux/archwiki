@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"CROIX2"
+		]
+	},
+	"vector-languages": "Langwij dem",
+	"vector-language-button-label": "{{PLURAL:$1|$1 langwij|$1 langwij dem}}",
+	"vector-no-language-button-label": "Add langwij dem",
+	"vector-action-addsection": "Put tapik",
+	"vector-action-delete": "Deeleet",
+	"vector-action-move": "Muuv",
+	"vector-action-protect": "Protek",
+	"vector-view-create": "Mek",
+	"vector-view-history": "Luk a istori",
+	"vector-more-actions": "Muo",
+	"vector-appearance-label": "Apiyrans",
+	"vector-feature-limited-width-name": "Wid",
+	"vector-feature-limited-width-0-label": "Waid",
+	"vector-feature-limited-width-1-label": "Staand'd",
+	"vector-feature-custom-font-size-name": "Text",
+	"vector-feature-custom-font-size-0-label": "Likl",
+	"vector-feature-custom-font-size-1-label": "Staand'd",
+	"vector-feature-custom-font-size-2-label": "Big",
+	"skin-theme-name": "Kala",
+	"skin-theme-day-label": "Lait",
+	"skin-theme-night-label": "Daak",
+	"skin-theme-os-label": "Otomatik",
+	"skin-theme-exclusion-notice": "Dis ya piej alweiz enna lait moud.",
+	"vector-toc-label": "Kantent dem",
+	"vector-toc-beginning": "Staat",
+	"vector-anon-user-menu-pages": "Piej dem fu edita weh dem log aat",
+	"vector-main-menu-label": "Mien menyuu",
+	"vector-feature-custom-font-size-exclusion-notice": "Dis piej alweiz yuus likl fant saiz.",
+	"vector-page-tools-label": "Chuul dem",
+	"vector-page-tools-general-label": "Jinaral",
+	"vector-page-tools-actions-label": "Axhan dem",
+	"vector-unpin-element-label": "haid"
+}

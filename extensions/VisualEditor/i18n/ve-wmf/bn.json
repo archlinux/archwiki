@@ -13,6 +13,7 @@
 	},
 	"tag-editcheck-newreference-description": "পাতাটিতে একটি তথ্যসূত্র যোগ হয়েছে",
 	"tag-editcheck-references-activated": "সম্পাদনা পরীক্ষা (তথ্যসূত্র) সক্রিয় করা হয়েছে",
+	"tag-editcheck-references-shown": "সম্পাদনা পরীক্ষা (তথ্যসূত্র) দেখানো হয়েছে",
 	"tag-visualeditor": "দৃশ্যমান সম্পাদনা",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|দৃশ্যমান সম্পাদনা]] ব্যবহার করে সম্পাদিত",
 	"tag-visualeditor-needcheck": "দৃশ্যমান সম্পাদনা: যাচাই করুন",

@@ -33,7 +33,7 @@
 	"scribunto-common-timeout": "Tiden som er avsatt til å kjøre skript har løpt ut.",
 	"scribunto-common-oom": "Mengden minne tillatt for å kjøre skript er overskredet.",
 	"scribunto-common-backtrace": "Tilbakesporing:",
-	"scribunto-common-no-details": "Ingen flere detaljer er tilgjengelig.",
+	"scribunto-common-no-details": "Ingen detaljer tilgjengelig om kodens plassering.",
 	"scribunto-lua-in-function": "i funksjon \"$1\"",
 	"scribunto-lua-in-main": "i hoveddelen",
 	"scribunto-lua-in-function-at": "i funksjonen ved $1:$2",
@@ -64,5 +64,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua logger",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "Vis modulsiden"
+	"tooltip-ca-nstab-module": "Vis modulsiden",
+	"namespaceinfo-description-ns828": "Navnerom for Lua-moduler, som kan påkalles fra wikisider, og deres dokumentasjonssider",
+	"namespaceinfo-description-ns829": "Diskusjonssider for modulene og dokumentasjonen"
 }

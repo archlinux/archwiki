@@ -43,5 +43,6 @@
 	"math-wikibase-header": "Информация за математически обекти",
 	"math-wikibase-formula-information": "Информация за математическа формула",
 	"math-wikibase-special-form-header": "Посочете името на формулата:",
-	"math-wikibase-special-form-placeholder": "Наименование на формулата"
+	"math-wikibase-special-form-placeholder": "Наименование на формулата",
+	"math-wikibase-special-form-button": "Заявка за информация"
 }

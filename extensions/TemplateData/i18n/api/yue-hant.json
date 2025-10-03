@@ -1,8 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"JeffreyKim",
+			"Ktchankt",
+			"Yueman"
 		]
 	},
-	"apierror-templatedata-corrupt": "頁#$1嘅模板數據(templatedata)規格有錯：$2"
+	"apihelp-templatedata-summary": "攞由 TemplateData 擴充程式儲存嘅資料。",
+	"apihelp-templatedata-example-1": "返返去[[Template:Foobar]]嘅模數據，如果模唔存在或者存在但係冇模數據，就會返返去結果",
+	"apihelp-templatedata-example-2": "返返去[[Template:Phabricator]]嘅模數據，如果模唔存在或者存在但係冇模數據，就冇結果",
+	"apihelp-templatedata-param-includeMissingTitles": "即使標題缺少或者缺乏範本資料，都會返返去有關標題嘅資料。預設情況下，只有喺存在同埋有範本資料嘅情況下先至會返去。",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "即使標題缺少或者缺乏範本資料，都會返回有關標題嘅資料。預設情況下（為咗向後兼容），只有喺存在同埋有範本資料嘅情況下先至會返返去。",
+	"apihelp-templatedata-param-lang": "返去呢種語言嘅本地化值。預設情況下，所有可用嘅翻譯都會傳送返去。",
+	"apierror-templatedata-corrupt": "頁#$1嘅模板數據(templatedata)規格有錯：$2",
+	"apiwarn-templatedata-deprecation-format": "預設輸出格式喺將來會變成<kbd>jsonfm</kbd>。 唔該明確噉指明<kbd>format=json</kbd>。."
 }

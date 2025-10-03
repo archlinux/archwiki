@@ -83,7 +83,7 @@ class Hooks implements
 	public function onEditFilterMergedContent( IContextSource $context, Content $content, Status $status,
 		$summary, User $user, $minorEdit
 	) {
-		$simpleCaptcha = self::getInstance();
+		$simpleCaptcha = self::getInstance( CaptchaTriggers::EDIT );
 		// Set a flag indicating that ConfirmEdit's implementation of
 		// EditFilterMergedContent ran.
 		// This can be checked by other MediaWiki extensions, e.g. AbuseFilter.

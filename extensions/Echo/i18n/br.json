@@ -149,7 +149,7 @@
 	"notification-header-mention-user-talkpage-nosection": "$1 {{GENDER:$2|en|he}} deus meneget {{GENDER:$3|ac’hanoc’h}} war <strong>bajenn gaozeal implijer{{GENDER:$5||ez}} $4</strong>.",
 	"notification-header-mention-agent-talkpage": "{{GENDER:$2|Meneget}} {{GENDER:$3|oc’h}} bet gant $1 war <strong>{{GENDER:$2|e bajenn|he fajenn|ar bajenn}} kaozeal e rannbennad \"<strong>$4</strong>\".",
 	"notification-header-mention-agent-talkpage-nosection": "$1 {{GENDER:$2|en|he}} deus meneget {{GENDER:$3|ac’hanoc’h}} war <strong>{{GENDER:$2|e bajenn|he fajenn}} gaozeal</strong>.",
-	"notification-header-mention-article-talkpage": "{{GENDER:$2|Meneget}} {{GENDER:$3|oc’h}} bet gant $1 war ar bajenn gaozeaz <strong>$4</strong> e \"<strong>$5</strong>\".",
+	"notification-header-mention-article-talkpage": "{{GENDER:$2|Meneget}} {{GENDER:$3|oc’h}} bet gant $1 war ar bajenn gaozeal <strong>$4</strong> e \"<strong>$5</strong>\".",
 	"notification-header-mention-article-talkpage-nosection": "$1 {{GENDER:$2|en|he}} deus meneget {{GENDER:$3|ac’hanoc’h}} war bajenn gaozeal <strong>$4</strong>.",
 	"notification-header-mention-failure-user-unknown": "N'haller ket kas {{GENDER:$2|ho}} meneg eus <strong>$3</strong> peogwir n'eus kont ebet gant an anv-mañ.",
 	"notification-header-mention-failure-user-anonymous": "N'haller ket kas {{GENDER:$2|ho}} meneg eus <strong>$3</strong> peogwir eo dizanv an den.",

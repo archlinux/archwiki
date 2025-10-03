@@ -17,7 +17,8 @@
 			"Ladsgroup",
 			"Reza1615",
 			"Saadat",
-			"Sunfyre"
+			"Sunfyre",
+			"Darafsh"
 		]
 	},
 	"templatedata-desc": "پیاده‌سازی ذخیره‌سازی داده‌های پارامترهای الگو (با استفاده از جی‌سن)",
@@ -54,10 +55,11 @@
 	"templatedata-doc-param-type-wiki-user-name": "کاربر",
 	"templatedata-doc-params": "پارامترهای الگو",
 	"templatedata-editbutton": "ویرایش داده‌های الگو",
-	"templatedata-errormsg-jsonbadformat": "قالب جی‌سان نادرست است. می‌توانید برای درست‌کردن آن این عملیات را لغو کنید، برچسب‌های کنونی <templatedata> را حذف کنید و دوباره امتحان کنید یا به جایگزین کردن داده‌های کنونی الگو با مقدار جدید ادامه دهید",
+	"templatedata-errormsg-jsonbadformat": "قالب JSON نامعتبر است. می‌توانید این عملیات را لغو کنید تا آن را اصلاح یا حذف کنید، یا ادامه دهید و داده‌های الگوی فعلی را با یک دادهٔ جدید جایگزین کنید.",
 	"templatedata-errormsg-insertblank": "آیا از درج داده‌های الگو بدون اطلاعات مطمئن هستید؟",
 	"templatedata-exists-on-related-page": "لطفاً توجه کنید: از پیش قطعهٔ داده‌های الگو در صفحهٔ مرتبط «[[$1]]» وجود دارد.",
 	"templatedata-helplink": "اطلاعات در مورد داده‌های الگو",
+	"templatedata-invalid-unnamed-parameter": "نام پارامترها نمی‌تواند خالی باشد. برای مستندسازی پارامترهای بی‌نام از شماره‌های داخلی آن‌ها مانند «۱»، «۲» و غیره استفاده کنید.",
 	"templatedata-invalid-duplicate-value": "ویژگی «$1» («$3») تکرار «$2» است.",
 	"templatedata-invalid-empty-array": "ویژگی «$1» باید حداقل یک مقدار در آرایه‌اش داشته باشد.",
 	"templatedata-invalid-format": "انتظار می‌رود که ویژگی «$1» برابر با «inline»، «block» یا یک رشتهٔ قالب‌بندی معتبر باشد.",
@@ -101,7 +103,8 @@
 	"templatedata-modal-search-input-placeholder": "جستجو بر پایهٔ نام یا کد زبان",
 	"templatedata-modal-table-param-aliases": "نام‌های مستعار",
 	"templatedata-modal-table-param-autovalue": "مقدار خودکار",
-	"templatedata-modal-table-param-default": "پیش‌گزیده ($1)",
+	"templatedata-modal-table-param-default": "پیش‌فرض ($1)",
+	"templatedata-modal-table-param-status": "وضعیت",
 	"templatedata-modal-table-param-deprecated": "منسوخ‌شده",
 	"templatedata-modal-table-param-deprecatedValue": "راهنمای منسوخ",
 	"templatedata-modal-table-param-description": "شرح ($1)",
@@ -128,8 +131,15 @@
 	"templatedata-search-title": "جستجوی الگو",
 	"templatedata-search-description": "با جستجو کلیدواژه‌های شناسایی، الگویی که می‌خواهید درج کنید را پیدا کنید. احتمال عملکرد صحیح برای الگوهایی که دارای توضیحات باشند، بیشتر است.",
 	"templatedata-search-placeholder": "یافتن الگو",
+	"templatedata-search-list-header": "علاقه‌مندی‌ها",
+	"templatedata-search-list-empty": "الگوهایی که به‌عنوان موردعلاقه علامت بزنید اینجا ظاهر خواهند شد",
 	"templatedata-template-discovery-disabled": "اکتشاف الگو در این ویکی غیر فعال است.",
+	"templatediscovery": "کشف الگو",
+	"templatedata-favorite-disabled": "برای افزودن الگو به علاقه‌مندی‌ها باید وارد حساب کاربری شوید",
+	"templatedata-favorite-add": "افزودن الگو به علاقه‌مندی‌ها",
 	"templatedata-favorite-added": "الگو به فهرست علاقه‌مندی‌ها اضافه شد",
+	"templatedata-favorite-remove": "حذف الگو از علاقه‌مندی‌ها",
 	"templatedata-favorite-removed": "الگو از فهرست علاقه‌مندی‌ها حذف شد",
+	"templatedata-favorite-error": "امکان ذخیرهٔ علاقه‌مندی‌ها وجود ندارد",
 	"templatedata-favorite-maximum-reached": "شما به حداکثر تعداد مجاز برای الگوی مورد علاقه ($1) رسیده‌اید. پیش از افزودن الگوهای بیشتر، لطفاً ابتدا برخی از الگوها را از فهرست خود حذف کنید."
 }

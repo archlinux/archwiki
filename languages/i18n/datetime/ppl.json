@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"A R King",
-			"TimumachtikanNawat"
+			"TimumachtikanNawat",
+			"Taty Flores de Constante",
+			"Jose Antonio Guillen Landaverde"
 		]
 	},
 	"january": "Metzti se",
@@ -47,12 +49,13 @@
 	"thursday": "Tunal nawi",
 	"friday": "Tunal makwil",
 	"saturday": "Tunal chikwasen",
-	"sunday": "Domingoj",
+	"sunday": "Tunal Chikume",
 	"mon": "Tunal1",
 	"tue": "Tunal2",
 	"wed": "Tunal3",
 	"thu": "Tunal4",
 	"fri": "Tunal5",
 	"sat": "Tunal6",
-	"sun": "Tunal1"
+	"sun": "Tunal1",
+	"duration-days": "$1 {{PLURAL:$1|tanestuk|tajtanestuk}}"
 }

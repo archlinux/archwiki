@@ -1,13 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lookruk"
+			"Lookruk",
+			"RenKtv"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ຕອບກັບ",
+	"discussiontools-newtopic-missing-title": "ກະລຸນາລະບຸຫົວຂໍ້ສົນທະນາ.",
+	"discussiontools-newtopic-placeholder-title": "ຫົວຂໍ້",
 	"discussiontools-replylink": "{{GENDER:|ຕອບກັບ}}",
 	"discussiontools-replywidget-advanced": "ຂັ້ນສູງ",
 	"discussiontools-replywidget-cancel": "ຍົກເລີກ",
+	"discussiontools-replywidget-mode-source": "ແຫຼ່ງທີ່ມາ",
+	"discussiontools-replywidget-mode-visual": "ວິຊວລ",
+	"discussiontools-replywidget-newtopic": "ເພີ່ມຫົວຂໍ້",
+	"discussiontools-replywidget-placeholder-newtopic": "ຄຳອະທິບາຍ",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ຕອບກັບ}} ຫາ {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "ເບິ່ງຕົວຢ່າງ",
 	"discussiontools-replywidget-reply": "{{GENDER:|ຕອບກັບ}}",
@@ -20,6 +27,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "ຕິດຕາມ",
 	"discussiontools-topicsubscription-button-unsubscribe": "ເຊົາຕິດຕາມ",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "ເຊົາຕິດຕາມ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "ທ່ານຈະໄດ້ຮັບການແຈ້ງເຕືອນກ່ຽວກັບຄຳເຫັນໃໝ່ໃນຫົວຂໍ້ນີ້.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|ທ່ານ}}ໄດ້ຕິດຕາມແລ້ວ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "ທ່ານຈະບໍ່ໄດ້ຮັບການແຈ້ງເຕືອນກ່ຽວກັບຄຳເຫັນໃໝ່ໃນຫົວຂໍ້ນີ້ອີກຕໍ່ໄປ.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ທ່ານ}}ໄດ້ເລີກຕິດຕາມແລ້ວ"
 }

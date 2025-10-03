@@ -3,13 +3,15 @@
 		"authors": [
 			"Anzx",
 			"~aanzx",
-			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
+			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ",
+			"ChiK"
 		]
 	},
 	"discussiontools-autotopicsubpopup-preferences": "ಪ್ರಾಶಸ್ತ್ಯಗಳು",
 	"discussiontools-defaultsummary-reply": "ಪ್ರತಿಕ್ರಿಯೆ",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|ಸೆಕೆಂಡ್|ಸೆಕೆಂಡ್‌ಗಳು}}",
 	"discussiontools-newtopic-placeholder-title": "ವಿಷಯ",
+	"discussiontools-replylink": "{{GENDER:|ಪ್ರತ್ಯುತ್ತರ}}",
 	"discussiontools-replywidget-advanced": "ಮುಂದುವರೆದ",
 	"discussiontools-replywidget-cancel": "ರದ್ದುಮಾಡಿ",
 	"discussiontools-replywidget-mode-source": "ಮೂಲ",

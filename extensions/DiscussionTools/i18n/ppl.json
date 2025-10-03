@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"AliciaMarroquín",
+			"Jose Antonio Guillen Landaverde",
+			"TimumachtikanNawat"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "tanankilis",
+	"discussiontools-newtopic-missing-title": "Shikmaka se itukey pal {{GENDER:|taja}} taketzalis.",
+	"discussiontools-newtopic-placeholder-title": "Ipanpa",
+	"discussiontools-replylink": "{{GENDER:|shiknankili}}",
+	"discussiontools-replywidget-advanced": "Yankwik",
+	"discussiontools-replywidget-cancel": "Tea nikneki",
+	"discussiontools-replywidget-mode-source": "Tajtapual",
+	"discussiontools-replywidget-mode-visual": "tachialis",
+	"discussiontools-replywidget-newtopic": "shikajshitili  itukey",
+	"discussiontools-replywidget-placeholder-newtopic": "itachiska",
+	"discussiontools-replywidget-placeholder-reply": "{{shiknankili:|Reply}} to {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Achtutachialis",
+	"discussiontools-replywidget-reply": "{{GENDER:|Shiknankili}}",
+	"discussiontools-replywidget-summary": "Taneshtilis kutu:",
+	"discussiontools-replywidget-watchthis": "Shiktali ini amat tik [[Special:Watchlist|watchlist]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|TUKNEW|TUIJIKNIWAN}} PAL NE TASUMALIS",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|Yultaketzalis|Yultajtaketzalis}}",
+	"discussiontools-topicheader-latestcomment": " Yultajtaketzalis ka talchi :$1",
+	"discussiontools-topicsubscription-button-subscribe": "shikwawasu",
+	"discussiontools-topicsubscription-button-subscribe-label": "shikwawasu",
+	"discussiontools-topicsubscription-button-unsubscribe": "tea  nikneki ninemi kalijtik",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "shikwawasu",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Taja}} Tiu-tikpia yankwik tanawatilis ipanpa ini itekiw",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|You}} timuwawasujtuk!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Taja}} Tea tiu-tikpia yankwik tanawatilis ipanpa ini itekiw.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} tea tinemi timuwawasuj."
+}

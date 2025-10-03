@@ -22,7 +22,9 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Mdktb",
+			"Mohammed Qays"
 		]
 	},
 	"minerva-last-modified-date": "آخر تعديل بتاريخ $1، في $2",
@@ -51,7 +53,7 @@
 	"mobile-frontend-pageaction-edit-tooltip": "تحرير مقطع المقدمة في هذه الصفحة",
 	"mobile-frontend-placeholder": "ابحث في {{SITENAME}}",
 	"mobile-frontend-random-button": "عشوائي",
-	"mobile-frontend-redirected-from": "تم التحويل من \"[[$1]]\"",
+	"mobile-frontend-redirected-from": "حُوِّلَت من \"[[$1]]\"",
 	"mobile-frontend-talk-back-to-filepage": "عد إلى الملف «$1».",
 	"mobile-frontend-talk-back-to-page": "عُد إلى صفحة \"$1\".",
 	"mobile-frontend-talk-back-to-projectpage": "عد إلى صفحة المشروع «$1»",

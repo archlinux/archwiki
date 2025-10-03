@@ -69,7 +69,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Претплатени {{GENDER:|сте}}!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Повеќе нема да {{GENDER:|добивате}} известувања кога некој ќе почне нова тема на оваа страница.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Отпишани {{GENDER:|сте}}.",
-	"discussiontools-notification-added-topic-header": "Отпочната нова тема „<strong>$4</strong>“ на <strong>$3</strong> од $2.",
+	"discussiontools-notification-added-topic-header": "{{GENDER:$2|Отпочната}} нова тема „<strong>$4</strong>“ на <strong>$3</strong> од $1.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Отпочната е една нова тема|Отпочнати се $1 нови теми|100=99+ нови теми}} на „<strong>$2</strong>“.",
 	"discussiontools-notification-added-topic-view": "Погл. темата",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|ви}} {{GENDER:$4|благодари}} за вашиот коментар на „<strong>$3</strong>“.",

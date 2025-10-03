@@ -134,6 +134,7 @@
 	"log-action-filter-suppress-abuselog": "Подтискане на дневника за злоупотреби",
 	"logentry-abusefilterprivatedetails-access": "$1 {{GENDER:$2|осъществи достъп до}} личнните данни за $3",
 	"abusefilterprivatedetails-log-name": "Дневник на достъп до лични данни от Филтъра срещу злоупотреби",
+	"log-name-abusefilterblockeddomainhit": "Дневник на посещенията на блокирани домейни",
 	"abusefilter-list": "Всички филтри",
 	"abusefilter-list-id": "ID на филтър",
 	"abusefilter-list-pattern": "Шаблон",

@@ -12,7 +12,8 @@
 			"Timzy D'Great",
 			"Tochiprecious",
 			"Ukabia",
-			"Uzoma Ozurumba"
+			"Uzoma Ozurumba",
+			"Iwuala Lucy"
 		]
 	},
 	"vector-skin-desc": "Na-enye akpụkpọ anụ vector 2: * 2011 - MonoBook nke ọgbara ọhụrụ nwere anya dị ọhụrụ yana ọtụtụ nkwalite ojiji.\n* 2022 - Vector wuru dị ka akụkụ nke ọrụ WMF [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements].",
@@ -23,7 +24,7 @@
 	"vector-action-toggle-sidebar": "Gbanwee ogwe akụkụ",
 	"vector-languages": "Asụsụ",
 	"vector-language-button-aria-label": "Gaa na akụkọ na asụsụ ọzọ. Dị na {{PLURAL:$1|$1 asụsụ|$1 asụsụ}}",
-	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ|$1 asụsụ}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ}}",
 	"vector-no-language-button-label": "Tinye asụsụ gasị",
 	"vector-no-language-button-aria-label": "Edemede a dị naanị n'asụsụ a. Tinye akụkọ maka asụsụ ndị ọzọ",
 	"vector-language-variant-switcher-label": "Gbanwee ụdị asụsụ",

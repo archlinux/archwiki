@@ -5,7 +5,8 @@
 			"Fitoschido",
 			"Hamilton Abreu",
 			"Mansil",
-			"Vitorvicentevalente"
+			"Vitorvicentevalente",
+			"Mansil alfalb"
 		]
 	},
 	"oathauth-desc": "Fornece suporte à autenticação usando palavras-passe de uso único baseadas em códigos HMAC",
@@ -48,7 +49,7 @@
 	"action-oathauth-enable": "ativar autenticação de dois fatores",
 	"oathauth-auth-token-label": "Chave de dois fatores ou código de recuperação",
 	"oathauth-auth-token-help": "A palavra-passe de uso único usada como segundo fator da autenticação de dois fatores.",
-	"oathauth-auth-ui": "Insira um código da sua aplicação de autenticação de dois fatores (como o Google Authenticator)",
+	"oathauth-auth-ui": "Por favor, insira um código da sua aplicação de autenticação de dois fatores (tal como [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] ou [https://1password.com/ 1Password]).",
 	"oathauth-throttled": "Ocorreram demasiadas tentativas de verificação! Por favor, aguarde $1.",
 	"oathauth-login-failed": "A verificação falhou.",
 	"oathauth-describe-provider": "Autenticação de dois fatores (OATH).",

@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"CROIX2"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Taak bak",
+	"discussiontools-newtopic-missing-title": "Pleez aad wan niem fu {{GENDER:|yu}} big taak tapik.",
+	"discussiontools-newtopic-placeholder-title": "Subjek",
+	"discussiontools-replylink": "{{GENDER:|taak bak}}",
+	"discussiontools-replywidget-advanced": "Advaans",
+	"discussiontools-replywidget-cancel": "Kans'l",
+	"discussiontools-replywidget-mode-source": "Sarce",
+	"discussiontools-replywidget-mode-visual": "Vizyuual",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Aad}} tapik",
+	"discussiontools-replywidget-placeholder-newtopic": "Diskripshan",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Taak bak}} fu {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Pree-luk",
+	"discussiontools-replywidget-reply": "{{GENDER:|Taak bak}}",
+	"discussiontools-replywidget-summary": "Sumari",
+	"discussiontools-replywidget-watchthis": "Aad dis piej fu yu [[Special:Watchlist|wachlis]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|(uu)man|peepl}} eena big taak",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kament|kament dem}}",
+	"discussiontools-topicheader-latestcomment": "Nyuuis kament: $1",
+	"discussiontools-topicsubscription-button-subscribe": "subskraib",
+	"discussiontools-topicsubscription-button-subscribe-label": "Subskraib",
+	"discussiontools-topicsubscription-button-unsubscribe": "staap-subskraib",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Staap-subskraib",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Yu}} gee updiet dem bout nyuu kament dem eena dis tapik.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Yu}} min subskraib!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Yu}} gee no muo updiet dem bout nyuu kament dem eena dis tapik.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Yu}} min staap-subskraib"
+}

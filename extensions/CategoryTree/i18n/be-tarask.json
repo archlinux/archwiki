@@ -5,7 +5,8 @@
 			"EugeneZelenko",
 			"Jim-by",
 			"Red Winged Duck",
-			"Wizardist"
+			"Wizardist",
+			"Renessaince"
 		]
 	},
 	"categorytree": "Дрэва катэгорыяў",
@@ -35,5 +36,6 @@
 	"categorytree-no-pages": "няма старонак ці падкатэгорыяў",
 	"categorytree-not-found": "Катэгорыя <i>$1</i> ня знойдзена",
 	"categorytree-error": "Праблема загрузкі зьвестак.",
-	"categorytree-retry": "Калі ласка, пачакайце і паспрабуйце яшчэ раз."
+	"categorytree-retry": "Калі ласка, пачакайце і паспрабуйце яшчэ раз.",
+	"categorytree-deprecation-category": "Старонкі, якія выкарыстоўваюць састарэлыя парамэтры дрэва катэгорый"
 }

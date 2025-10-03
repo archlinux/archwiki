@@ -5,7 +5,8 @@
 			"Fwolff",
 			"Naudefj",
 			"Neil P. Quinn",
-			"Oesjaar"
+			"Oesjaar",
+			"Rooiratel"
 		]
 	},
 	"tooltip-ca-ve-edit": "Redigeer hierdie bladsy",
@@ -122,6 +123,7 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Gaan in elk geval voort",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Nodige {{PLURAL:$1|veld|velde}} ontbreek",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Wil u definitief voortgaan sonder om die $1 {{PLURAL:$2|veld|velde}} in te vul?",
+	"visualeditor-dialog-transclusion-title-insert-template": "Voeg 'n sjabloon in",
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-template-tooltip": "Sjabloon",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|kennisgewing|kennisgewings}}",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ajiniyaz Nurniyazov",
-			"Inabat Allanova"
+			"Inabat Allanova",
+			"Janabaevazizbek"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|raxmet}}}}",
@@ -20,6 +21,7 @@
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Bir paydalanıwshı|$1 paydalanıwshı|100=99+ paydalanıwshı}} <strong>$2</strong> betindegi ózgertiwlerińiz\nushın {{GENDER:$3|sizge}} alǵıs ayttı.",
 	"log-name-thanks": "Raxmet aytıw jurnalı",
 	"logentry-thanks-thank": "$1 atlı paydalanıwshı {{GENDER:$4|$3}} atlı paydalanıwshıǵa {{GENDER:$2|raxmetin}} bildirdi.",
+	"logeventslist-thanks-log": "Raxmet aytıw jurnalı",
 	"thanks-confirmation-special-rev": "Usı redaktorlaw ushın járiyalı kóriniste alǵıs aytıwdı qáleysiz be?",
 	"flow-thanks-confirmation-special": "Usı kommentariy ushın járiyalı kóriniste alǵıs aytıwdı qáleysiz be?",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Bir paydalanıwshı|$1 paydalanıwshı|100=99+ paydalanıwshı}} <strong>$2</strong> betindegi pikirińiz\nushın {{GENDER:$3|sizge}} alǵıs ayttı."

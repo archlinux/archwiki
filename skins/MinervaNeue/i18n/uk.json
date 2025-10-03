@@ -70,6 +70,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категорії",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Переглянути категорії сторінок",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "На жаль, групування результатів за сторінками не доступне у мобільному вигляді. Якщо ви хочете скористатися функцією групування за сторінками, будь ласка, відкрийте стаціонарну версію сайту.",
+	"skin-minerva-night-mode-unavailable": "Сторінка доступна лише у світлій кольоровій темі.",
 	"minerva.css": "/* Усі CSS тут будуть завантажені для користувачів скіна MinervaNeue */",
 	"minerva.js": "/* Усі JavaScript тут будуть завантажені для користувачів скіна MinervaNeue */"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Huji"
+			"Huji",
+			"Jeeputer"
 		]
 	},
 	"apihelp-query+checkuser-summary": "بررسی کنید کدام نشانی‌های آی‌پی توسط یک حساب استفاده شده‌اند، یا کدام حساب‌ها توسط یک نشانی آی‌پی به کار رفته‌اند.",
@@ -23,5 +24,7 @@
 	"apihelp-query+checkuserlog-example-2": "نمایش بازرسی‌های 192.0.2.0/24 پس از 2011‎-10-15T23:00:00Z",
 	"apierror-checkuser-missingsummary": "باید دلیل بازرسی را مشخص کنید.",
 	"apierror-checkuser-timelimit": "باید بازهٔ زمانی درست استفاده کنید (نظیر «‎2 weeks ago» یا «‎-2 weeks»).",
-	"apierror-checkuser-invalidmode": "شیوهٔ درخواست نامعتبر"
+	"apierror-checkuser-invalidmode": "شیوهٔ درخواست نامعتبر",
+	"checkuser-ip-auto-reveal-expiry-invalid": "انقضای ارائه‌شده برای آشکارسازی خودکار نامعتبر است.",
+	"checkuser-ip-auto-reveal-missing-permission": "شما اختیارات لازم برای استفاده از آشکارسازی خودکار آی‌پی را ندارید."
 }

@@ -11,7 +11,8 @@
 			"Samoasambia",
 			"Silvonen",
 			"Stryn",
-			"Veikk0.ma"
+			"Veikk0.ma",
+			"Taavi"
 		]
 	},
 	"oathauth-desc": "Tarjoaa tunnistautumista HMAC-pohjaisten kertakäyttöisten salasanojen avulla",
@@ -57,7 +58,8 @@
 	"oathauth-auth-token-label": "Kaksivaiheisen tunnistautumisen poletti tai palautuskoodi",
 	"oathauth-auth-token-help": "Kertakäyttöinen salasana jota käytetään kaksivaiheisen tunnistautumisen toisena vaiheena.",
 	"oathauth-auth-token-help-ui": "Syötä joko koodi tunnistautumislaitteestasi tai palautuskoodi",
-	"oathauth-auth-ui": "Syötä vahvistuskoodi tunnistautumissovelluksestasi (kuten [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] tai [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Syötä vahvistuskoodi todennussovelluksessasi (kuten [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] tai [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-keep": "(älä vaihda)",
 	"oathauth-throttled": "Liian monta todennusyritystä! Odota hetki $1.",
 	"oathauth-login-failed": "Todennus epäonnistui",
 	"oathauth-describe-provider": "Kaksivaiheinen tunnistautuminen (OATH).",

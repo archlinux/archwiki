@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Умар"
+		]
+	},
+	"captcha-apihelp-param-captchaword": "Капчана жоп ло",
+	"captcha-apihelp-param-captchaid": "Хьалха динчу дехарера CAPTCHA ID"
+}

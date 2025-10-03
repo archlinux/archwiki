@@ -29,7 +29,10 @@
 			"Wladek92",
 			"NicoScribe",
 			"Derugon",
-			"Antimuonium"
+			"Antimuonium",
+			"Goombiis",
+			"Escargot bleu",
+			"Marphy 123"
 		]
 	},
 	"templatedata-desc": "Met en place un stockage de données pour les paramètres des modèles (en utilisant JSON)",
@@ -143,7 +146,7 @@
 	"templatedata-search-description": "Recherchez le modèle que vous souhaitez insérer en recherchant un mot-clé d'identification. Les modèles qui comportent des descriptions sont plus susceptibles de bien fonctionner.",
 	"templatedata-search-placeholder": "Rechercher un modèle",
 	"templatedata-search-list-header": "Favoris",
-	"templatedata-search-list-empty": "Les modèles que vous marquez comme favoris apparaîtront ici",
+	"templatedata-search-list-empty": "Les modèles que vous ajoutez à vos favoris apparaîtront ici",
 	"templatedata-template-discovery-disabled": "La découverte de modèles est désactivée sur ce wiki.",
 	"templatediscovery": "Découverte de modèles",
 	"templatedata-favorite-disabled": "Vous devez être connecté pour ajouter un modèle à vos favoris",

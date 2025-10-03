@@ -8,7 +8,7 @@
 			"SpeedyGonsales"
 		]
 	},
-	"linterrors": "Sintaksne greške",
+	"linterrors": "Sintaksne pogreške",
 	"linter-category-bogus-image-options": "Pogrješke mogućnosti prikaza datoteka",
 	"linter-category-misnested-tag": "Nepravilno ugniježđene oznake",
 	"linter-category-missing-end-tag": "Nedostaje zatvarajuća oznaka",

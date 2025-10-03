@@ -52,5 +52,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "إن $1 $2 قديم جدا بحيث لا يسمح بتسجيل بيانات تلميحات العميل",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "المعرف $1 ل$2 غير موجود",
 	"checkuser-api-useragent-clienthints-explanation": "يجمع موقع {{SITENAME}} بيانات تلميحات عميل وكيل المستخدم للمساعدة في إدارة التخريب والإساءة. راجع https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints لمزيد من التفاصيل.",
-	"apihelp-logout-param-checkuserclienthints": "بيانات تلميحات العميل المقدمة مع الطلبات المقدمة إلى ApiLogout. للاستخدام الداخلي فقط."
+	"apihelp-logout-param-checkuserclienthints": "بيانات تلميحات العميل المقدمة مع الطلبات المقدمة إلى ApiLogout. للاستخدام الداخلي فقط.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "تاريخ انتهاء الصلاحية للكشف التلقائي المقدم غير صالح.",
+	"checkuser-ip-auto-reveal-missing-permission": "ليس لديك الإذن اللازم لاستخدام الكشف التلقائي عن عنوان IP."
 }

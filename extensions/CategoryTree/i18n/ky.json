@@ -31,7 +31,7 @@
 	"categorytree-no-subcategories": "ички категориялар табылган жок",
 	"categorytree-no-parent-categories": "Башкы категориялар табылган жок",
 	"categorytree-no-pages": "макалалар же баш ийген категориялар жок",
-	"categorytree-not-found": "<i>$1</i> Категориясы табылган жок",
+	"categorytree-not-found": "\"<i>$1</i>\" категориясы табылган жок",
 	"categorytree-error": "Маалымат жүктөөдө ката кетти",
 	"categorytree-retry": "Кичине күтүп туруп, жаңы аракет кылыңыз"
 }

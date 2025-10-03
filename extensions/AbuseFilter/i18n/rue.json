@@ -7,7 +7,8 @@
 			"Gazeb",
 			"Matma Rex",
 			"Matěj Suchánek",
-			"Vlad5250"
+			"Vlad5250",
+			"Constraque"
 		]
 	},
 	"abusefilter-desc": "Придавать автоматічны геврістікы до едітовань",
@@ -117,7 +118,7 @@
 	"abusefilter-reautoconfirm-done": "Статус схваленого хоснователя быв обновленый",
 	"abusefilter-status": "{{PLURAL:$1|Почас послїднёй дїї|З подлїднїх $2 дїй}} {{PLURAL:$2|досягла|досягли|досягло}} $2 ($3 %) ліміт $4 подмінок і $5 ($6 %) {{PLURAL:$5|была захоплена|были захпоплены|было захоплено}} єдным із запнутых філтрів.",
 	"abusefilter-edit-subtitle": "Едітованя філтру $1",
-	"abusefilter-edit-subtitle-new": "Створїня філтра",
+	"abusefilter-edit-subtitle-new": "Вытворїня філтра",
 	"abusefilter-edit-oldwarning": "<strong>Едітуєте старшу верзію того філтру. Уведены штатістікы платять про актуалну верзію. Кідь уложыте свої зміны, перепишете новшы управы.</strong> &bull; [[Special:AbuseFilter/history/$2|Вернути ся на історію того філтру]].",
 	"abusefilter-edit-status-label": "Штатістіка:",
 	"abusefilter-edit-status": "Z {{PLURAL:$1|1 послїдня дїя|послїднїх $1 дїй}} тому філтру {{PLURAL:$2|одповідала|одповідали|одповідало}} $2 ($3 %).",

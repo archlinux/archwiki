@@ -7,5 +7,18 @@
 	},
 	"checkuser-target": "لادريسة د لأيپي ؤلا السمية د لخدايمي:",
 	"checkuser-all": "كلشي",
-	"checkuser-investigate-preliminary-table-header-groups": "لݣروپات"
+	"checkuser-temporary-accounts-onboarding-dialog-title": "تقديم ديال لكونطات لمؤقتة",
+	"checkuser-temporary-accounts-onboarding-dialog-skip-all": "نقّز كولشي",
+	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "شنو هوّ لكونط لمؤقت؟",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title": "بيّن معلومات د IP",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content": "لأداة ديال [https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/IP_Info IP Information] (معلومات IP) راها كاتسهّل على لمسؤولين و لي كيحاربو التخريب و لخدايميا مالين لخبرة باش يوصلو للمعلومات على لادريسات IP بلا مايشوفو هاد لادريسات براسهم.\n\nيقدرو لخدايميا لي كيستوفيو الشروط باش يفعّلو معلومات IP ف تفضيلاتهم. غير غايفعّلوها، غادي يبان سريجم ديال معلومات IP حدا لكونطات لمؤقتة و لادريسات د IP لقديمة. غادي تبان معلومات IP حتى ف الصفحة د لمساهمات.",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "فعّل معلومات IP",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title": "بيّن لادريسة د  IP",
+	"checkuser-investigate-preliminary-table-header-groups": "لݣروپات",
+	"checkuser-ip-auto-reveal-link-sidebar": "تبيان تلقائي د لادريسة د IP",
+	"checkuser-ip-auto-reveal-notification-on": "<strong>راه تدار التبيان التلقائي د لادريسة د IP</strong>",
+	"checkuser-ip-auto-reveal-notification-off": "<strong>راه تحيّد التبيان التلقائي د لادريسة د IP</strong>",
+	"checkuser-ip-auto-reveal-on-dialog-title": "فعّل التبيان التلقائي د لادريسة د IP",
+	"checkuser-ip-auto-reveal-off-dialog-title": "راه تفعّل التبيان التلقائي د لادريسة د IP",
+	"checkuser-tempaccount-reveal-ip-button-label": "بيّن لادريسة د IP"
 }

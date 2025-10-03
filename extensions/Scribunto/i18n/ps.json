@@ -4,9 +4,12 @@
 			"Af420",
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
-			"Baloch Khan"
+			"Baloch Khan",
+			"شاه زمان پټان"
 		]
 	},
 	"scribunto-doc-page-name": "Module:$1/لاسوند",
-	"scribunto-lua-error": "لوا تېروتنه: $2."
+	"scribunto-lua-error": "لوا تېروتنه: $2.",
+	"namespaceinfo-description-ns828": "د لوا کوډ چلنوالو لپاره نوم‌تشيال، کوم چې د ويکي‌مخونو او د دوی لاسوندمخونو څخه غوښتل کېدای شي",
+	"namespaceinfo-description-ns829": "چلنوالو او لاسوندونو لپاره د خبرو اترو مخونه"
 }

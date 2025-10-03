@@ -15,6 +15,11 @@ class SqliteCreateSearchIndexTask extends Task {
 		return 'search';
 	}
 
+	/** @inheritDoc */
+	public function getDependencies() {
+		return [ 'tables' ];
+	}
+
 	public function execute(): Status {
 		$status = Status::newGood();
 		$db = $this->definitelyGetConnection( ITaskContext::CONN_CREATE_TABLES );
@@ -28,9 +33,9 @@ class SqliteCreateSearchIndexTask extends Task {
 
 		if ( $fts3tTable && !$module ) {
 			$status->warning( 'config-sqlite-fts3-downgrade' );
-			$this->applySourceFile( $db, 'searchindex-no-fts.sql' );
+			$status->merge( $this->applySourceFile( $db, 'searchindex-no-fts.sql' ) );
 		} elseif ( !$fts3tTable && $module == 'FTS3' ) {
-			$this->applySourceFile( $db, 'searchindex-fts3.sql' );
+			$status->merge( $this->applySourceFile( $db, 'searchindex-fts3.sql' ) );
 		}
 
 		return $status;

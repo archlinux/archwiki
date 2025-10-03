@@ -4,7 +4,16 @@
 			"Volvox"
 		]
 	},
-	"editcheck-dialog-action-no": "Neen",
+	"editcheck-dialog-action-no": "Nee",
 	"editcheck-dialog-action-yes": "Jo",
+	"editcheck-dialog-addref-reject-question": "Firwat setzt Dir keng Referenz derbäi?",
+	"editcheck-dialog-addref-reject-irrelevant": "Menger Meenung no si Referenzen fir d'Ännerung, déi ech maachen, net relevant",
+	"editcheck-dialog-addref-reject-common-knowledge": "D'Informatiounen, déi ech derbäisetzen, sinn allgemeng bekannt",
+	"editcheck-dialog-addref-reject-uncertain": "Ech si mer net sécher, wat fir eng Referenz ech derbäisetze sollt",
+	"editcheck-dialog-addref-reject-other": "Anerer",
+	"editcheck-dialog-addref-success-notify": "Merci, datt Dir eng Referenz derbäigesat hutt!",
+	"editcheck-dialog-addref-title": "Eng Referenz derbäisetzen",
+	"editcheck-dialog-title": "Virum Verëffentlechen",
+	"editcheck-copyvio-title": "Agesaten Inhalt",
 	"editcheck-review-title": "Ännerungen nokucken"
 }

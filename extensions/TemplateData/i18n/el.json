@@ -4,7 +4,8 @@
 			"Geraki",
 			"Glavkos",
 			"Norhorn",
-			"P.a.a"
+			"P.a.a",
+			"Αντιγόνη"
 		]
 	},
 	"templatedata-desc": "Υλοποίηση αποθήκευσης δεδομένων για παραμέτρους προτύπων (με χρήση JSON)",
@@ -110,5 +111,6 @@
 	"templatedata-modal-title-templateformat": "Συνιστώμενη μορφή κώδικα wiki",
 	"templatedata-modal-title-templateformatstring": "Συμβολοσειρά προσαρμοσμένη μορφής",
 	"templatedata-modal-title-templateparam-details": "Λεπτομέρειες παραμέτρου: $1",
-	"templatedata-modal-title-templateparams": "Παράμετροι προτύπου"
+	"templatedata-modal-title-templateparams": "Παράμετροι προτύπου",
+	"templatedata-favorite-add": "Προσθήκη προτύπου στα αγαπημένα"
 }

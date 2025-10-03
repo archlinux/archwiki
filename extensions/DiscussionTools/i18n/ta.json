@@ -10,7 +10,7 @@
 	"discussiontools-defaultsummary-reply": "பதில்",
 	"discussiontools-newtopic-missing-title": "உங்கள் விவாத தலைப்புக்கு ஒரு தலைப்பை வழங்கவும்.",
 	"discussiontools-newtopic-placeholder-title": "பொருள்",
-	"discussiontools-replylink": "பதிலளி",
+	"discussiontools-replylink": "{{GENDER:|பதிலளி}}",
 	"discussiontools-replywidget-advanced": "மேம்பட்ட",
 	"discussiontools-replywidget-cancel": "கைவிடு",
 	"discussiontools-replywidget-mode-source": "மூலம்",

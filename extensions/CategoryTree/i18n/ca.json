@@ -9,7 +9,8 @@
 			"Qllach",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Sma1997"
 		]
 	},
 	"categorytree": "Categories en arbre",
@@ -39,5 +40,9 @@
 	"categorytree-no-pages": "no hi ha articles o subcategories.",
 	"categorytree-not-found": "No s’ha trobat la categoria <i>$1</i>",
 	"categorytree-error": "Problema en la càrrega de dades.",
-	"categorytree-retry": "Torneu-ho a intentar en uns moments."
+	"categorytree-retry": "Torneu-ho a intentar en uns moments.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: El paràmetre <code>onlyroot</code> és obsolet. Utilitzeu <code>depth=\"0\"</code> en el seu lloc.",
+	"categorytree-deprecation-warning": "'''Avís:''' Aquesta pàgina utilitza <code>&lt;categorytree&gt;</code> amb un paràmetre obsolet.",
+	"categorytree-deprecation-category": "Pàgines que utilitzen paràmetres de categorytree obsolets",
+	"categorytree-deprecation-category-desc": "La pàgina utilitza paràmetres de categorytree obsolets com <code>onlyroot</code>."
 }

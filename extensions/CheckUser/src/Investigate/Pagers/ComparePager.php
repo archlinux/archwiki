@@ -213,10 +213,10 @@ class ComparePager extends TablePager {
 				// Hide the username if it is hidden from the current authority.
 				$user = $this->userFactory->newFromName( $value );
 				if ( $user !== null && $user->isHidden() && !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
-					return $this->msg( 'rev-deleted-user' )->text();
+					return $this->msg( 'rev-deleted-user' )->escaped();
 				}
 				if ( IPUtils::isValid( $value ) ) {
-					$formatted = $this->msg( 'checkuser-investigate-compare-table-cell-unregistered' )->text();
+					$formatted = $this->msg( 'checkuser-investigate-compare-table-cell-unregistered' )->escaped();
 				} else {
 					$formatted = Linker::userLink( $row->user ?? 0, $value );
 				}

@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Yakubu Hami"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|thank}}}}"
+}

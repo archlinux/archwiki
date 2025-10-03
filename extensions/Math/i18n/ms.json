@@ -13,7 +13,9 @@
 	},
 	"math-desc": "Mengolah rumus-rumus matematik antara teg-teg <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
 	"popups-settings-option-math-tooltip": "Terangkan rumus matematik apabila menggerakkan kursor.",
+	"math-visualeditor-mwchemdialog-title": "Rumus kimia",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Sunting pantas",
+	"math-visualeditor-mwlatexdialog-card-formula": "Rumus",
 	"math-visualeditor-mwlatexinspector-display": "Paparan",
 	"math-visualeditor-mwlatexinspector-display-block": "Sekat",
 	"math-visualeditor-mwlatexinspector-display-default": "Asali",
@@ -35,6 +37,8 @@
 	"prefs-math": "Matematik",
 	"mathstatus": "Status Math",
 	"math-wikibase-header": "Maklumat Item Matematik",
+	"math-wikibase-formula-type": "Jenis",
 	"math-wikibase-special-form-header": "Nyatakan secara khusus nama formula:",
-	"math-wikibase-special-form-button": "Meminta Maklumat"
+	"math-wikibase-special-form-button": "Meminta Maklumat",
+	"math-wikibase-special-error-header": "Ralat"
 }

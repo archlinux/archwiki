@@ -3404,17 +3404,17 @@
         },
         {
             "name": "wikimedia/parsoid",
-            "version": "v0.21.0",
-            "version_normalized": "0.21.0.0",
+            "version": "v0.21.1",
+            "version_normalized": "0.21.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/mediawiki-services-parsoid.git",
-                "reference": "0426b8548c523634e2150fa54d10e307d6a072ce"
+                "reference": "73dd5f50537b9f72f70ca53c723124a2d26c1427"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/0426b8548c523634e2150fa54d10e307d6a072ce",
-                "reference": "0426b8548c523634e2150fa54d10e307d6a072ce",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/73dd5f50537b9f72f70ca53c723124a2d26c1427",
+                "reference": "73dd5f50537b9f72f70ca53c723124a2d26c1427",
                 "shasum": ""
             },
             "require": {
@@ -3424,7 +3424,7 @@
                 "ext-json": "*",
                 "justinrainbow/json-schema": "5.3.0",
                 "liuggio/statsd-php-client": "^1.0.18",
-                "php": ">=7.4.0",
+                "php": ">=8.1.0",
                 "psr/container": "~1.1.2 || ~2.0.2",
                 "psr/log": "^1.1.4",
                 "symfony/polyfill-php80": "^1.23.1",
@@ -3461,7 +3461,7 @@
             "suggest": {
                 "wikimedia/langconv": "Provides script conversion support"
             },
-            "time": "2025-05-05T21:20:32+00:00",
+            "time": "2025-09-29T14:55:25+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3487,7 +3487,7 @@
             ],
             "support": {
                 "irc": "irc://irc.libera.chat/mediawiki-parsoid",
-                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.21.0",
+                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.21.1",
                 "wiki": "https://www.mediawiki.org/wiki/Parsoid"
             },
             "install-path": "../wikimedia/parsoid"

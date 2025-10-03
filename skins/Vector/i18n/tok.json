@@ -12,7 +12,8 @@
 			"Robin van der Vliet",
 			"Tamzin",
 			"Tbodt",
-			"שוקו מוקה"
+			"שוקו מוקה",
+			"Ne"
 		]
 	},
 	"skinname-vector": "selo Vector pini (2010)",
@@ -43,7 +44,8 @@
 	"vector-jumptocontent": "o tawa jo lipu",
 	"vector-more-actions": "ante",
 	"vector-appearance-label": "selo",
-	"vector-appearance-tooltip": "ilo li ante e suli sitelen, e suli lipu, e kule.",
+	"vector-appearance-tooltip": "o ante e suli sitelen e suli poka e kule",
+	"vector-personal-tools-tooltip": "ijo sina",
 	"vector-feature-limited-width-name": "suli poka",
 	"vector-feature-limited-width-0-label": "suli",
 	"vector-feature-limited-width-1-label": "lili",
@@ -52,7 +54,7 @@
 	"vector-feature-custom-font-size-1-label": "insa",
 	"vector-feature-custom-font-size-2-label": "suli",
 	"skin-theme-name": "kule",
-	"skin-theme-description": "[ilo li namako, li ken pakala] ilo li pimeja e selo lipu.",
+	"skin-theme-description": "[ilo ni li sin li ken pakala] ilo li pimeja e selo lipu.",
 	"skin-theme-day-label": "walo",
 	"skin-theme-night-label": "pimeja",
 	"skin-theme-os-label": "tan ilo",
@@ -60,7 +62,7 @@
 	"vector-search-loader": "mi kama e alasa ken",
 	"vector-searchsuggest-containing": "o alasa e lipu ni: nimi \"<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>\" li lon ona li lon ona",
 	"vector-intro-page": "Help:kama sin",
-	"vector-toc-label": "lipu ni la",
+	"vector-toc-label": "ijo pi lipu ni",
 	"vector-toc-beginning": "open",
 	"vector-toc-toggle-button-label": "o suli e kipisi $1",
 	"vector-anon-user-menu-pages": "lipu tawa jan pi sijelo ala",
@@ -70,7 +72,7 @@
 	"vector-toc-menu-tooltip": "jo lipu",
 	"vector-toc-collapsible-button-label": "o suli e jo lipu",
 	"vector-site-nav-label": "lipu",
-	"vector-main-menu-label": "ijo suli",
+	"vector-main-menu-label": "poki nasin",
 	"vector-feature-custom-font-size-exclusion-notice": "lipu ni li kepeken sitelen lili lon tenpo ale",
 	"vector-feature-limited-width-exclusion-notice": "sitelen li suli ale tawa ilo lukin sina.",
 	"vector-page-tools-label": "ilo",
@@ -90,5 +92,5 @@
 	"vector-night-mode-issue-reporting-link-notification": "toki sina li kama!",
 	"vector-night-mode-issue-reporting-preload-title": "lipu $1 la pakala pi selo pijema",
 	"vector-night-mode-issue-reporting-preload-content": "<!--\no sona:\no toki pona e ni: selo pimeja li pakala e lukin lon seme?\no toki e kipisi lipu ni: pakala li lon.\n-->\n'''sona pakala'''",
-	"vector-night-mode-beta-tag": "(namako)"
+	"vector-night-mode-beta-tag": "(ilo sin)"
 }

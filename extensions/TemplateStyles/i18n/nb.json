@@ -15,6 +15,7 @@
 	"templatestyles-bad-src": "Siden [[:$1|$2]] må ha innholdsmodellen «{{int:content-model-sanitized-css}}» for TemplateStyles (den gjeldende modellen er «$3»).",
 	"templatestyles-errorcomment": "Feil under prosessering av stilark [[:$1]] (rev. $2):\n$3",
 	"templatestyles-size-exceeded": "Stilarket er større enn den maksimalt tillatte størrelsen $2.",
+	"templatestyles-tag-injection": "Det angitte stilarket inneholder noe som ligner på en HTML-tagg, noe som ikke er tillatt.",
 	"content-model-sanitized-css": "Sanert CSS",
 	"templatestyles-stylesheet-error-category": "TemplateStyles-stilark med feil",
 	"templatestyles-stylesheet-error-category-desc": "TemplateStyles-stilarket har en feil.",

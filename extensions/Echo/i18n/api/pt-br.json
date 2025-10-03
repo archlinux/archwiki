@@ -8,6 +8,8 @@
 			"TheEduGobi"
 		]
 	},
+	"apihelp-echocreateevent-example": "Enviar uma notificação",
+	"apihelp-echocreateevent-param-user": "Usuário para quem enviar a notificação",
 	"apihelp-echomarkread-summary": "Marcar notificações como lidas para o usuário atual.",
 	"apihelp-echomarkread-param-list": "Uma lista de IDs de notificação para marcar como lidos.",
 	"apihelp-echomarkread-param-unreadlist": "Uma lista de IDs de notificação para marcar como não lido.",

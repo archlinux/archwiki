@@ -86,6 +86,7 @@
 	"action-abusefilter-hide-log": "ocultar entradas no registro de abuso",
 	"action-abusefilter-hidden-log": "ver entradas de registro de abuso ocultos",
 	"action-abusefilter-modify-global": "criar ou modificar filtros globais de abuso",
+	"action-abusefilter-protected-vars-log": "ver registros que revelam variáveis protegidas",
 	"abusefilter-log-summary": "Este registro mostra uma lista de todas as ações capturadas pelos filtros.",
 	"abusefilter-log-search": "Pesquisar o registro de abusos",
 	"abusefilter-log-search-user": "Usuário:",

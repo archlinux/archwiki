@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Martin Urbanec",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"WikipedistaOndra"
 		]
 	},
 	"editcheck-dialog-action-no": "Ne",
@@ -17,6 +18,7 @@
 	"editcheck-dialog-addref-success-notify": "Děkujeme za přidání reference!",
 	"editcheck-dialog-addref-title": "Přidat referenci",
 	"editcheck-dialog-title": "Před zveřejněním",
+	"editcheck-copyvio-title": "Vložený obsah",
 	"tag-editcheck-reference-decline-common-knowledge": "Kontrola editace (reference) odmítnuta (všeobecné znalosti)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Kontrola editace (reference) odmítnuta jako všeobecná znalost",
 	"tag-editcheck-reference-decline-irrelevant": "Kontrola editace (reference) odmítnuta (irelevantní)",

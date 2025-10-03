@@ -12,11 +12,18 @@ use MediaWiki\Api\ApiBase;
  */
 class ApiFancyCaptchaReload extends ApiBase {
 	public function execute() {
+		$result = $this->getResult();
+
+		if ( $this->getUser()->pingLimiter( 'badcaptcha', 1 ) ) {
+			$result->addValue( null, $this->getModuleName(), [ 'index' => 0 ] );
+			return;
+		}
+
+		# Get a new FancyCaptcha form data
 		$captcha = new FancyCaptcha();
 		$info = $captcha->getCaptcha();
 		$captchaIndex = $captcha->storeCaptcha( $info );
 
-		$result = $this->getResult();
 		$result->addValue( null, $this->getModuleName(), [ 'index' => $captchaIndex ] );
 	}
 

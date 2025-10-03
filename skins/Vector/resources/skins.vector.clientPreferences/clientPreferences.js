@@ -204,6 +204,9 @@ function appendRadioToggle( parent, featureName, value, currentValue, config, us
  * @param {HTMLElement} betaMessageElement
  */
 function makeFeedbackLink( betaMessageElement ) {
+	if ( !mw.msg( 'vector-night-mode-issue-reporting-notice-url' ) ) {
+		return;
+	}
 	const pageWikiLink = `[https://${ window.location.hostname + mw.util.getUrl( mw.config.get( 'wgPageName' ) ) } ${ mw.config.get( 'wgTitle' ) }]`;
 	const preloadTitle = mw.message( 'vector-night-mode-issue-reporting-preload-title', pageWikiLink ).text();
 	const link = mw.msg( 'vector-night-mode-issue-reporting-notice-url', window.location.host, preloadTitle );

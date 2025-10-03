@@ -60,7 +60,7 @@
 	"echo-notification-more-options-tooltip": "Aukera gehiago",
 	"notification-link-text-expand-all": "Zabaldu",
 	"notification-link-text-expand-alert-count": "Ikusi {{PLURAL:$1|alerta $1|$1 alertak}}",
-	"notification-link-text-expand-notice-count": "Ikus {{PLURAL:$1|mezua $1|$1 mezu}}",
+	"notification-link-text-expand-notice-count": "Ikus {{PLURAL:$1|mezua bat|$1 mezu}}",
 	"notification-link-text-collapse-all": "Itxi",
 	"notification-link-text-view-message": "Ikusi mezua",
 	"notification-link-text-view-mention": "Ikusi aipamena",

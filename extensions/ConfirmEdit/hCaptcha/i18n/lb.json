@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"hcaptcha-createaccount-fail": "Et schéngt wéi wann Dir den hCAPTCHA net geléist hätt."

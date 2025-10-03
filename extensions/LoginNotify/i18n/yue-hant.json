@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ktchankt",
+			"Yueman"
+		]
+	},
+	"loginnotify-desc": "通知用戶有可疑簽到，嚟自唔係用開嘅裝置同埋/或者IP位址",
+	"echo-category-title-login-fail": "失敗嘅簽到嘗試",
+	"echo-pref-tooltip-login-fail": "我個戶口有失敗嘅簽到嘗試，話我知。",
+	"echo-category-title-login-success": "由唔熟悉嘅裝置簽到",
+	"echo-pref-tooltip-login-success": "有人由唔熟悉嘅裝置同IP地址簽到我個戶口，話我知。",
+	"loginnotify-primary-link": "幫手",
+	"loginnotify-unknown-ip": "你用咗唔係用開嘅IP位址簽到。根據{{SITENAME}}嘅設定，唔畀用唔係用開嘅IP位址簽到。",
+	"notification-loginnotify-login-fail-email-subject": "曾經有{{PLURAL:$2|失敗咗嘅嘗試|幾次失敗咗嘅嘗試}}係用$1嘅身份簽到{{SITENAME}}",
+	"notification-loginnotify-login-success-email-subject": "有唔係{{GENDER:$1|你}}用開嘅裝置用$1嘅身份簽到{{SITENAME}}",
+	"notification-header-login-success": "最近有人（可能係{{GENDER:$1|你}}）用咗新裝置簽到你個戶口。如果真係你，可以唔使理呢個訊息。如果唔係你，建議你改密碼同檢查戶口嘅活動。",
+	"notification-new-bundled-header-login-fail": "自你上次簽到之後，曾經有{{PLURAL:$1|'''一次失敗咗嘅嘗試'''|'''幾次失敗咗嘅嘗試'''}}係用新裝置簽到你個戶口。如果唔係你，確保你個戶口改咗個強嘅密碼。",
+	"notification-known-header-login-fail": "自你上次簽到之後，曾經有{{PLURAL:$1|'''一次失敗咗嘅嘗試'''|'''幾次失敗咗嘅嘗試'''}}係簽到你個戶口。如果唔係你，確保你個戶口改咗個強嘅密碼。",
+	"notification-new-unbundled-header-login-fail": "曾經有{{PLURAL:$1|'''一次失敗咗嘅嘗試'''|'''幾次失敗咗嘅嘗試'''}}係用新裝置簽到你個戶口。確保你個戶口改咗個強嘅密碼。"
+}

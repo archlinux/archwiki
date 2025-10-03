@@ -41,6 +41,7 @@
 	"discussiontools-notification-removed-topic-header-compact": "Темата „$4“ беше архивирана или премахната.",
 	"discussiontools-notification-removed-topic-view": "Преглед на страницата",
 	"discussiontools-notification-removed-topic-disable": "Спри да получаваш такива съобщения",
+	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Един нов отговор|$1 нови отговора|100=99+ нови отговора}} в „<strong>$3</strong>“.",
 	"discussiontools-notification-subscribed-new-comment-view": "Преглед на коментара",
 	"discussiontools-pageframe-latestcomment": "Последен коментар: $1 от $2 в тема $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Последен коментар: $1 от $2",

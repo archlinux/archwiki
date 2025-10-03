@@ -2,14 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
-			"عثمان خان شاہ"
+			"عثمان خان شاہ",
+			"شاه زمان پټان"
 		]
 	},
 	"categorytree": "د وېشنيزو ونه",
 	"categorytree-portlet": "وېشنيزې",
 	"categorytree-legend": "د وېشنيزې ونه ښکاره کول",
+	"categorytree-header": "د وېشنيزې نوم وليکئ؛ ترڅو د هغې منځپانگې د ونې جوړښت په څېر وگورئ. (جاواسکريپټ ته اړتيا لري.)",
 	"categorytree-category": ":وېشنيزه",
 	"categorytree-go": "ونه ښکاره کول",
+	"categorytree-parents": "لويې‌وېشنيزې",
+	"categorytree-mode-label": "ونگ‌ډول:",
 	"categorytree-mode-categories": "يوازې وېشنيزې",
 	"categorytree-mode-pages": "مخونه پرته د دوتنو نه",
 	"categorytree-mode-all": "ټول مخونه",

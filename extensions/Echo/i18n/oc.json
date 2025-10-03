@@ -53,7 +53,7 @@
 	"echo-specialpage-markasread": "Notificacion : marcar coma legida",
 	"echo-specialpage-pagefilters-subtitle": "Paginas amb de notificacions pas legidas",
 	"echo-none": "Avètz pas recebut cap de notificacion.",
-	"echo-notification-placeholder": "I a pas cap de notificacion.",
+	"echo-notification-placeholder": "Cap de notificacions actualament.",
 	"echo-notification-placeholder-filters": "Non i a cap de notificacion que coïncidís amb aqueles critèris.",
 	"echo-notification-markasread": "Marcar coma legit",
 	"echo-notification-markasunread": "Marcar coma pas legit",

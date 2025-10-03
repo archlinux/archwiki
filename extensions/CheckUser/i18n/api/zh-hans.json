@@ -10,7 +10,8 @@
 			"U.T.",
 			"WhitePhosphorus",
 			"Xzonn",
-			"Yfdyh000"
+			"Yfdyh000",
+			"Peterxy12"
 		]
 	},
 	"apihelp-query+checkuser-summary": "检查指定用户名使用过的IP地址或指定IP地址使用过的用户名。",
@@ -34,6 +35,13 @@
 	"apihelp-query+checkuserlog-param-to": "结束枚举的时间戳。",
 	"apihelp-query+checkuserlog-example-1": "显示[[User:Example]]的查核",
 	"apihelp-query+checkuserlog-example-2": "显示2011-10-15T23:00:00Z之后对192.0.2.0/24的查核",
+	"apihelp-query+checkuserformattedblockinfo-summary": "返回影响当前用户的站点范围阻止的格式化阻止详细信息。",
+	"apihelp-query+globalcontributions-summary": "显示特定注册用户在所有wiki上的最新编辑。",
+	"apihelp-query+globalcontributions-param-target": "要查找的用户名（不能是IP）。",
+	"apihelp-query+globalcontributions-param-limit": "限定行数。",
+	"apihelp-query+globalcontributions-param-offset": "恢复枚举的延续偏移量。",
+	"apihelp-query+globalcontributions-example-1": "显示特定用户在所有wiki上的最新编辑。",
+	"apihelp-query+globalcontributions-example-2": "显示给定用户从给定延续偏移量开始的所有wiki中的最新编辑，并带有自定义限制。",
 	"apierror-checkuser-missingsummary": "您必须定义查核原因。",
 	"apierror-checkuser-timelimit": "您需要使用正确的时间限制（例如“-2 weeks”或“2 weeks ago”）。",
 	"apierror-checkuser-invalidmode": "无效的请求模式",
@@ -46,5 +54,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "$1$2太旧而无法记录客户端提示数据",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "$1 ID $2不存在",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}}收集user-agent客户端提示数据以协助遏制破坏和滥用行为。详情请参阅<nowiki/>https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints<nowiki/>。",
-	"apihelp-logout-param-checkuserclienthints": "客户端提示随 ApiLogout 请求提供的数据。仅供内部使用。"
+	"apihelp-logout-param-checkuserclienthints": "客户端提示随 ApiLogout 请求提供的数据。仅供内部使用。",
+	"checkuser-ip-auto-reveal-expiry-invalid": "提供的自动显示到期时间无效。",
+	"checkuser-ip-auto-reveal-missing-permission": "您没有使用IP自动显示所需的权限。"
 }

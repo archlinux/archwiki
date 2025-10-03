@@ -326,7 +326,7 @@
 	"checkuser-global-contributions-registered-user-tools": "{{ignored}}",
 	"checkuser-global-contributions-permission-error-title": "Title of an error page shown if a user cannot access Special:GlobalContributions because they need to accept an agreement in their preferences",
 	"checkuser-global-contributions-permission-error-description": "Contents of an error page shown if a user cannot access Special:GlobalContributions because they need to accept an agreement in their preferences",
-	"checkuser-global-contributions-subtitle": "Subtitle shown on Special:GlobalContributions that lets the user know that revisions shown on the page will not be more than a configurable number days ago old, and that a limited number of results are shown.\n\nParameters:\n* $1 - The maximum number of days old that revisions can be in the results.\n* $2 - The maximum number of revisions displayed per wiki.",
+	"checkuser-global-contributions-subtitle": "Subtitle shown on Special:GlobalContributions that lets the user know that revisions shown on the page will not be more than a configurable number days ago old, and that a limited number of results are shown. Reminds the user that some wikis may be skipped due to the not having sufficient rights on these wikis.\n\nParameters:\n* $1 - The maximum number of days old that revisions can be in the results.\n* $2 - The maximum number of revisions displayed per wiki.",
 	"checkuser-global-contributions-target-label": "Label for a field in the [[Special:GlobalContributions]] form",
 	"checkuser-global-contributions-target-placeholder": "Placeholder for a field in the [[Special:GlobalContributions]] form",
 	"checkuser-global-contributions-search-form-wrapper": "Legend for the search form on [[Special:GlobalContributions]]",

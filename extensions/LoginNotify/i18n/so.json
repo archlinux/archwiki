@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Abshirdheere"
+		]
+	},
+	"notification-new-unbundled-header-login-fail": "Waxaa jirtay {{PLURAL:$1|iskuday '''fashilantay'''|waxaa jirtay '''iskudayo farabadan'''}} in laga soo galo akoonkaada qalab cusub. Fadlan hubi akoonkaada in uu yeesho ereysir adag."
+}

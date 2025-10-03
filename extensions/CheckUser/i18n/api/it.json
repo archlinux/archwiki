@@ -31,5 +31,6 @@
 	"apihelp-query+globalcontributions-example-1": "Mostra le modifiche più recenti in tutti i wiki per un determinato utente.",
 	"apierror-checkuser-missingsummary": "Devi indicare una motivazione per il controllo.",
 	"apierror-checkuser-timelimit": "Devi utilizzare un corretto limite temporale (come \"-2 settimane\" o \"2 settimane fa\").",
-	"apierror-checkuser-invalidmode": "Modalità di richiesta non valida"
+	"apierror-checkuser-invalidmode": "Modalità di richiesta non valida",
+	"checkuser-ip-auto-reveal-missing-permission": "Non hai il permessi necessari per utilizzare la rivelazione automatica dell'IP."
 }

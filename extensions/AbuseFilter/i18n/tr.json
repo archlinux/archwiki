@@ -33,7 +33,8 @@
 			"Uncitoyen",
 			"Vito Genovese",
 			"Wooze",
-			"Ömer Berkay"
+			"Ömer Berkay",
+			"LisafBia"
 		]
 	},
 	"abusefilter-desc": "Değişikliklere otomatik bulucu yöntemler uygular",
@@ -243,6 +244,8 @@
 	"abusefilter-edit-enabled": "Bu süzgeci etkinleştir",
 	"abusefilter-edit-deleted": "Silinmiş olarak işaretle",
 	"abusefilter-edit-hidden": "Bu süzgecin ayrıntılarını genel görünümden gizle",
+	"abusefilter-edit-protected": "<strong>Bu filtrede [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables korumalı değişkenlerin] kullanımını etkinleştir</strong>",
+	"abusefilter-edit-protected-help-message": "Bu filtrenin ayrıntıları, korunan değişkenleri göremeyen kullanıcılardan gizlenecektir. Bu işlem kalıcıdır ve geri alınamaz.",
 	"abusefilter-edit-global": "Küresel filtre",
 	"abusefilter-edit-rules": "Şartlar:",
 	"abusefilter-edit-field-conditions": "şartlar",

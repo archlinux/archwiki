@@ -11,5 +11,6 @@
 	"hcaptcha-createaccount": "Om de wiki te beschermen tegen het automatisch aanmaken van accounts vragen wij u vriendelijk de volgende hCaptcha op te lossen:",
 	"hcaptcha-createaccount-fail": "Het lijkt erop dat u de hCaptcha niet hebt opgelost.",
 	"hcaptcha-create": "Om de wiki te beschermen tegen het automatisch aanmaken van pagina's vragen wij u vriendelijk de volgende hCaptcha op te lossen:",
-	"hcaptcha-help": "Los een hCaptcha-uitdaging op en retourneer de antwoordwaarde als captchaWord."
+	"hcaptcha-help": "Los een hCaptcha-uitdaging op en retourneer de antwoordwaarde als captchaWord.",
+	"hcaptcha-privacy-policy": "Deze site wordt beschermd door hCaptcha en het [https://www.hcaptcha.com/privacy Privacybeleid] en de [https://www.hcaptcha.com/terms Servicevoorwaarden] zijn van toepassing."
 }

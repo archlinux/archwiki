@@ -18,7 +18,8 @@
 			"Tks4Fish",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"ItsaMeSandy"
 		]
 	},
 	"checkuser-summary": "Esta ferramenta varre as mudanças recentes para obter os endereços IP de um utilizador ou para apresentar os dados de edições/utilizadores para um determinado IP.\nOs utilizadores e edições de um determinado IP, podem ser obtidos através de cabeçalhos XFF, acrescentando \"/xff\" no final do endereço. São suportados endereços IPv4 (CIDR $1-32) e IPv6 (CIDR $2-128).\nPor motivos de desempenho não serão fornecidas mais do que $3 edições.\nO uso desta ferramenta deverá respeitar as normas e recomendações.",
@@ -226,6 +227,7 @@
 	"checkuser-investigate-tour-copywikitext-title": "Quer copiar os dados?",
 	"checkuser-investigate-tour-copywikitext-desc": "Copie a tabela de comparação com um clique e leve-a para a CUWiki. Repare que só está a copiar aquilo que é visível e não todas as páginas da investigação.",
 	"checkuser-global-contributions-link": "contribuições globais",
+	"checkuser-ip-auto-reveal-link-sidebar": "Revelação automática de IP",
 	"prefs-checkuser-tempaccount": "Revelação de IP de contas temporárias",
 	"checkuser-tempaccount-enable-preference": "Ativar a revelação dos endereços IP de contas temporárias",
 	"checkuser-tempaccount-no-ip-results": "Não existem dados de endereço IP para este utilizador temporário nos últimos $1 {{PLURAL:$1|dia|dias}}",

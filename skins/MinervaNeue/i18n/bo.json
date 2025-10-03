@@ -3,12 +3,17 @@
 		"authors": [
 			"TayfunEt.",
 			"Zolgoyo",
-			"ཁ་བཏགས་ནག་པོ"
+			"ཁ་བཏགས་ནག་པོ",
+			"Tenzin Thoesam"
 		]
 	},
+	"mobile-frontend-history": "ཤོག་ངོས་འདིའི་ཞུ་དག་ལོ་རྒྱུས་ལྟ་ས།",
 	"mobile-frontend-home-button": "མ་ངོས།",
 	"mobile-frontend-language-article-heading": "སྐད་རིགས།",
 	"mobile-frontend-main-menu-login": "ནང་འཛུལ།",
+	"mobile-frontend-main-menu-nearby": "ཉེ་འདབས་",
 	"mobile-frontend-main-menu-settings": "སྒྲིག་བཀོད།",
-	"mobile-frontend-placeholder": "འཚོལ། {{SITENAME}}"
+	"mobile-frontend-placeholder": "འཚོལ། {{SITENAME}}",
+	"mobile-frontend-random-button": "རིམ་བྲལ་",
+	"minerva-page-actions-overflow": "འཕར་མ་"
 }

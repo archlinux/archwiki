@@ -22,7 +22,7 @@
 	"vector-language-button-aria-label": "Gå til en artikkel på et annet språk. Tilgjengelig på {{PLURAL:$1|$1 språk}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 språk}}",
 	"vector-no-language-button-label": "Legg til språk",
-	"vector-no-language-button-aria-label": "Artikkelen finnes kun på dette språket. Legg til artikkelen på andre språk",
+	"vector-no-language-button-aria-label": "Artikkelen er kun tilgjengelig på dette språket. Legg til artikkelen på andre språk",
 	"vector-language-variant-switcher-label": "Bytt språkvariant",
 	"vector-action-addsection": "Nytt emne",
 	"vector-action-delete": "Slett",

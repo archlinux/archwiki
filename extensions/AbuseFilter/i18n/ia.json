@@ -136,7 +136,7 @@
 	"logentry-rights-restoreautopromote": "$1 {{GENDER:$2|restaurava}} le possibilitate de autopromotion pro {{GENDER:$4|$3}}",
 	"logentry-abusefilterblockeddomainhit-hit": "{{GENDER:$2|$1}} ha provocate un activation del lista de dominios blocate sur $3 con su tentativa de inserer $4.",
 	"abusefilterprivatedetails-log-name": "Registro de accesso al detalios private del filtro anti-abuso",
-	"log-name-abusefilterblockeddomainhit": "Registro de activationes del lista de dominios blocate",
+	"log-name-abusefilterblockeddomainhit": "Registro de colpos de dominios blocate",
 	"abusefilter-list": "Tote le filtros",
 	"abusefilter-list-id": "ID del filtro",
 	"abusefilter-list-pattern": "Patrono",

@@ -9,7 +9,8 @@
 			"SomeyaMako",
 			"VulpesVulpes825",
 			"Wenyuan Liu",
-			"Yfdyh000"
+			"Yfdyh000",
+			"Peterxy12"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "检查以查看滥用过滤器是否匹配某个变量集、某次编辑或某条日志记载的过滤器活动。",
@@ -60,5 +61,6 @@
 	"apierror-abusefilter-cantcheck": "您没有权限检查滥用过滤器的语法。",
 	"apierror-abusefilter-canteval": "您没有计算 AbuseFilter 表达式的权限。",
 	"apierror-abusefilter-nosuchlogid": "没有id为$1的滥用日志记录。",
+	"apierror-abusefilter-incompatible": "滥用过滤器不支持请求的更改。",
 	"apierror-abusefilter-badsyntax": "过滤器存在语法错误。"
 }

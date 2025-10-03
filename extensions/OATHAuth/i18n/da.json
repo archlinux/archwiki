@@ -4,7 +4,8 @@
 			"Saederup92",
 			"Sarrus",
 			"Tinamalmgren",
-			"Weblars"
+			"Weblars",
+			"Naitsa"
 		]
 	},
 	"disableoathforuser": "Deaktivere brugeres tofaktorgodkendelse",
@@ -23,7 +24,7 @@
 	"action-oathauth-enable": "aktivere tofaktorgodkendelse",
 	"oathauth-auth-token-label": "Nøgle",
 	"oathauth-auth-token-help-ui": "Skriv enten en kode fra din autentifikationsenhed, eller en gendannelseskode",
-	"oathauth-auth-ui": "Angiv en bekræftelseskode fra din godkendelsesenhed.",
+	"oathauth-auth-ui": "Indtast venligst en kode fra din applikation til to-faktor autentificering (såsom [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] eller [https://1password.com/ 1Password]).",
 	"oathauth-throttled": "For mange verificeringsforsøg! Vent i $1.",
 	"oathauth-login-failed": "Verificering mislykkedes",
 	"oathauth-user-not-found": "Der blev ikke fundet nogen brugerkonto med det navn",

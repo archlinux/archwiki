@@ -9,7 +9,7 @@
 	"discussiontools-defaultsummary-reply": "ⵔⴰⵔ",
 	"discussiontools-newtopic-missing-title": "ⵎⴽ ⴰⵙ ⵜⵓⴼⵉⴷ ⴼⴽ ⴰⵣⵡⵍ ⵉ ⵉⵎⵔⵙⵉ ⵏ ⵓⵎⵙⴰⵡⴰⵍ {{GENDER:|ⵏⵏⴽ|ⵏⵏⵎ}}.",
 	"discussiontools-newtopic-placeholder-title": "ⵉⵎⵔⵙⵉ",
-	"discussiontools-replylink": "{{GENDER:|}}ⵔⴰⵔ",
+	"discussiontools-replylink": "{{GENDER:|ⵔⴰⵔ}}",
 	"discussiontools-replywidget-advanced": "ⵓⵜⵜⵉⵢ",
 	"discussiontools-replywidget-cancel": "ⴼⴼⵖ",
 	"discussiontools-replywidget-mode-source": "ⴰⵖⴱⴰⵍⵓ",

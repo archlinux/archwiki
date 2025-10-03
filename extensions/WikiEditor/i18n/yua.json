@@ -3,7 +3,9 @@
 		"authors": [
 			"Azul25",
 			"Chab2079",
-			"Primavera11"
+			"Primavera11",
+			"Coala23",
+			"Kuxtal"
 		]
 	},
 	"wikieditor": "Interfaz avanzada u edición wikitexto",
@@ -37,5 +39,13 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "tàanxelil liink",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "tàanxelil liink",
 	"wikieditor-toolbar-tool-file": "wìimvala' yèetel multimedia",
-	"wikieditor-toolbar-tool-file-title": "ts'àa archivo"
+	"wikieditor-toolbar-tool-file-title": "ts'àa archivo",
+	"wikieditor-toolbar-file-size": "Buka'aj u p'iisil",
+	"wikieditor-toolbar-file-float": "Tojkíinsej",
+	"wikieditor-toolbar-file-default": "Beetpaja'an",
+	"wikieditor-toolbar-file-format": "Tsoolil meyaj",
+	"wikieditor-toolbar-file-format-none": "MIX JUMP'ÉEL WA MIX BA'AL",
+	"wikieditor-toolbar-tool-file-insert": "oksej wa ts'otej",
+	"wikieditor-toolbar-tool-file-cancel": "p'atej le meyaja'",
+	"wikieditor-toolbar-tool-signature": "JORONTS'ÍIB YÉETEL BA'AX K'IINIL TÁAN U YÚUCHUL"
 }

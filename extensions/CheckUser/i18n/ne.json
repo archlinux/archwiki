@@ -67,5 +67,6 @@
 	"checkuser-investigate-compare-table-header-username": "प्रयोगकर्ता नाम",
 	"checkuser-investigate-compare-table-header-activity": "मिति सीमा",
 	"checkuser-investigate-compare-table-header-ip": "आइपी",
-	"checkuser-investigate-compare-table-header-useragent": "प्रयोगकर्ता दलाल"
+	"checkuser-investigate-compare-table-header-useragent": "प्रयोगकर्ता दलाल",
+	"checkuser-global-contributions-link": "विश्वव्यापी योगदानहरू"
 }

@@ -1,8 +1,20 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"شاه زمان پټان"
+		]
 	},
 	"skinname-monobook": "مونوبوک",
+	"monobook-desc": "د ۲۰۰۴ راهيسې د کلاسيک مېډياويکي پوښۍ چې وروسته يې د مخ شاليد کې د کتاب تور او سپين انځور په نوم مشهور شو",
+	"monobook-jumptotop": "بېرته سر ته",
+	"monobook-jumptopersonal": "کارن توکي",
+	"monobook-jumptonavigation": "چلند ته ورتلل",
+	"monobook-jumptosearch": "پلټنې ته ورتلل",
+	"monobook-more-actions": "نور",
+	"cactions-mobile": "مخ چارې",
+	"monobook-cactions-label": "مخ چارې",
+	"monobook-notifications-link": "خبرتیاوې ( $1 )",
+	"monobook-notifications-link-none": "خبرتياوې",
 	"monobook-view-history": "پېښليک",
 	"monobook-action-undelete": "{{PLURAL:$1|يو سمون|$1 سمونې}} ناړنگول"
 }

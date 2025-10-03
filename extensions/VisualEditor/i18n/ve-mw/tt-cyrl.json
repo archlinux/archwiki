@@ -6,7 +6,8 @@
 			"Don Alessandro",
 			"Ерней",
 			"З. ӘЙЛЕ",
-			"Ильнар"
+			"Ильнар",
+			"Ильгиз"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -22,7 +23,7 @@
 	"visualeditor-ca-createlocaldescriptionsource": "Локаль тасвирлама өстәү",
 	"visualeditor-ca-createsource": "Чыганак коды булдыру",
 	"visualeditor-ca-editsource": "Вики-текстны үзгәртү",
-	"visualeditor-ca-editsource-section": "вики-текстны үзгәртү",
+	"visualeditor-ca-editsource-section": "вики-текстны үзгәрт",
 	"visualeditor-categories-tool": "Төркемнәр",
 	"visualeditor-desc": "MediaWiki өчен күрсәтмәле төзәткеч",
 	"visualeditor-descriptionpagelink": "Project:Күрсәтмәле төзәтмә",
@@ -138,7 +139,7 @@
 	"visualeditor-mweditmodeve-popup-title": "Сез чыганак кодны мөхәррирләү режимына күчтегез",
 	"visualeditor-mweditmodeve-progress": "Күрсәтмә үзгәртүгә күчү…",
 	"visualeditor-mweditmodeve-showagain": "Бу хәбәрне бүтән күрсәтелмесен",
-	"visualeditor-mweditmodeve-tool-current": "Күрсәтмә үзгәртү",
+	"visualeditor-mweditmodeve-tool-current": "Күрсәтмәле үзгәртү",
 	"visualeditor-mweditmodewt-popup-body": "Шушы тамгага басып, сез теләсә кайсы вакытта, кире чыганак текстны мөхәррирләүгә кайта аласыз.",
 	"visualeditor-mweditmodewt-popup-title": "Сез күрсәтмә үзгәртүгә күчтегез",
 	"visualeditor-mwgallerycontext-description": "$1 {{PLURAL:$1|сурәт}}",
@@ -167,7 +168,7 @@
 	"visualeditor-preference-tabs": "Үзгәртү режимы:",
 	"visualeditor-preference-tabs-remember-last": "Соңгы мөхәрриремне хәтерләү",
 	"visualeditor-rebase-client-export": "Чыгару",
-	"visualeditor-rebase-client-import": "Кертү",
+	"visualeditor-rebase-client-import": "Импортла",
 	"visualeditor-rebase-client-import-name": "Битнең исеме",
 	"visualeditor-redirect-description": "$1 битенә юнәлтү",
 	"visualeditor-savedialog-identify-anon": "Сез бу битне аноним кулланучы буларак сакларга телисезме? Сезнең IP адресы бу битнең үзгәртүләр тарихында сакланып калачак.",

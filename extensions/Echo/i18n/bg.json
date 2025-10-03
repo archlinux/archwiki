@@ -195,6 +195,7 @@
 	"echo-notification-notice": "{{PLURAL:$1|Съобщение ($1)|Съобщения ($1)|100=Съобщения (99+)}}",
 	"echo-notification-alert-text-only": "Известия",
 	"echo-notification-notice-text-only": "Уведомления",
+	"echo-notification-all-text-only": "Известия",
 	"echo-overlay-link": "Всички известия",
 	"echo-overlay-title": "<b>Известия</b>",
 	"echo-mark-all-as-read": "Отбелязване на {{PLURAL:$1|всички}} като прочетени",

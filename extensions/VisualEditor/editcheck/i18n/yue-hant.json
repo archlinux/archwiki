@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"JeffreyKim",
+			"Ktchankt"
+		]
+	},
+	"editcheck-dialog-action-no": "唔係",
+	"editcheck-dialog-action-yes": "係",
+	"editcheck-dialog-addref-description": "加個文獻引用去幫讀者了解呢項資料係邊度嚟。",
+	"editcheck-dialog-addref-reject-question": "點解你唔加文獻引用？",
+	"editcheck-dialog-addref-reject-description": "其他編者想知點解你唔加文獻引用。",
+	"editcheck-dialog-addref-reject-irrelevant": "我唔認為文獻引用關我改嘅嘢事。",
+	"editcheck-dialog-addref-reject-common-knowledge": "我加嘅嘢好多人都識。",
+	"editcheck-dialog-addref-reject-uncertain": "我唔肯定要加咩文獻引用。",
+	"editcheck-dialog-addref-reject-other": "其他",
+	"editcheck-dialog-addref-success-notify": "多謝你加文獻引用！",
+	"editcheck-dialog-addref-title": "加文獻引用",
+	"editcheck-dialog-title": "發佈前",
+	"editcheck-copyvio-title": "貼上嘅內容",
+	"editcheck-copyvio-description": "一般情況下唔好由其他來源直接複製文字貼過嚟。咁做多數都係侵犯版權同抄襲。",
+	"editcheck-review-title": "審核改動",
+	"tag-editcheck-reference-decline-common-knowledge": "編輯檢查（參考）被拒（常識）",
+	"tag-editcheck-reference-decline-common-knowledge-description": "編輯檢查參考功能被拒，畀嘅原因係加嘅內容係常識",
+	"tag-editcheck-reference-decline-irrelevant": "編輯檢查（參考）被拒（唔關事）",
+	"tag-editcheck-reference-decline-irrelevant-description": "編輯檢查參考功能被拒，畀嘅原因係加嘅內容係唔關事",
+	"tag-editcheck-reference-decline-other": "編輯檢查（參考）被拒（其他）",
+	"tag-editcheck-reference-decline-other-description": "編輯檢查參考功能被拒，畀嘅係其他原因",
+	"tag-editcheck-reference-decline-uncertain": "編輯檢查（參考）被拒（唔肯定）",
+	"tag-editcheck-reference-decline-uncertain-description": "編輯檢查參考功能被拒，畀嘅原因係唔肯定加咩參考"
+}

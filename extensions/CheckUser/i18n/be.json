@@ -9,7 +9,8 @@
 			"Plaga med",
 			"Tomato Cream",
 			"Vlad5250",
-			"Тест"
+			"Тест",
+			"ZlyiLev"
 		]
 	},
 	"checkuser-desc": "Дае магчымасць удзельнікам з адпаведнымі правамі правяраць ІР-адрасы і іншую інфармацыю ўдзельнікаў",
@@ -108,5 +109,6 @@
 	"checkuser-investigate-compare-table-cell-unregistered": "Незарэгістраваны",
 	"checkuser-investigate-compare-table-header-username": "Імя ўдзельніка",
 	"checkuser-investigate-compare-table-header-activity": "Дыяпазон дат",
-	"checkuser-investigate-compare-table-header-ip": "IP"
+	"checkuser-investigate-compare-table-header-ip": "IP",
+	"checkuser-global-contributions-link": "глабальны ўклад"
 }

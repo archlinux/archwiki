@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Anakmalaysia"
+			"Anakmalaysia",
+			"Tofeiku"
 		]
 	},
 	"multimediaviewer-optin-pref": "Hidupkan <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
@@ -11,6 +12,7 @@
 	"multimediaviewer-reuse-link": "Sebarkan atau terapkan fail ini",
 	"multimediaviewer-download-link": "Muat turun fail ini",
 	"multimediaviewer-view-expanded": "Buka dalam Media Viewer",
+	"multimediaviewer-copy-button": "Salin",
 	"multimediaviewer-disable-confirmation-header": "Anda telah mamtikan Media Viewer",
 	"multimediaviewer-enable-dialog-header": "Hidupkan Media Viewer?",
 	"multimediaviewer-enable-text-header": "Hidupkan ciri-ciri tayangan media untuk semua fail secara asal.",

@@ -53,7 +53,10 @@
 	"oathauth-auth-token-label": "Pase de dous factores ou código de recuperación",
 	"oathauth-auth-token-help": "O contrasinal dun único uso empregado como segundo factor da autenticación de dous factores.",
 	"oathauth-auth-token-help-ui": "Introduce un código do teu dispositivo de autenticación ou un código de recuperación",
-	"oathauth-auth-ui": "Introduce un código da túa aplicación de autentificación de dous factores (como [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] ou [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Introduce un código da túa aplicación de autentificación de dous factores (como [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] ou [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-label": "Cambiar a un método de autenticación diferente",
+	"oathauth-auth-switch-module-help": "Configura <code>newModule</code> como o nome do módulo novo para obter un novo desafío dun módulo de autenticación de dous factores diferente. Déixao baleiro se estás a responder ao desafío actual.",
+	"oathauth-auth-switch-module-keep": "(non cambiar)",
 	"oathauth-throttled": "Demasiados intentos de verificación! Agarda $1.",
 	"oathauth-login-failed": "Fallou a verificación.",
 	"oathauth-describe-provider": "Autenticación de dous factores (OATH).",
@@ -111,5 +114,6 @@
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|A túa pertenza}} a {{PLURAL:$1|este grupo|estes grupos}} está desactivada ata que actives a [[Special:Manage Two-factor authentication|autenticación de dous factores]].",
 	"oathauth-qrcode-alt": "Código QR escaneable que representa a clave secreta.",
 	"oathauth-hint": "Non tes acceso ao teu dispositivo ou á túa aplicación? Podes introducir neste campo un código de recuperación (presentados cando activaches a autenticación de dous factores).",
-	"oathauth-must-be-central": "{{GENDER:$1|A túa conta}} debe estar ligada ao sistema de autenticación central para usar a autenticación en dous pasos."
+	"oathauth-must-be-central": "{{GENDER:$1|A túa conta}} debe estar ligada ao sistema de autenticación central para usar a autenticación en dous pasos.",
+	"oathauth-error-multiple-modules": "Polo de agora non se admite o uso de múltiples métodos de autenticación de dous factores. Unicamente podes activar «$1» despois de desactivares «$2»."
 }

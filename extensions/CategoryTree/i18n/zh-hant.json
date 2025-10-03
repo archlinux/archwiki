@@ -47,7 +47,7 @@
 	"categorytree-not-found": "找不到分類<b>$1</b>",
 	"categorytree-error": "讀取資料時發生錯誤。",
 	"categorytree-retry": "請稍候再試一次。",
-	"categorytree-onlyroot-message": "參數 <code>onlyroot</code> 已棄用。請改用 <code>depth=\"0\"</code>。",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]：參數 <code>onlyroot</code> 已棄用。請改用 <code>depth=\"0\"</code>。",
 	"categorytree-deprecation-warning": "'''警告：'''此頁面使用到帶有已棄用參數的 <code>&lt;categorytree&gt;</code>。",
 	"categorytree-deprecation-category": "使用到已棄用 categorytree 參數的頁面",
 	"categorytree-deprecation-category-desc": "頁面使用到已棄用的 categorytree 參數，如：<code>onlyroot</code>。"

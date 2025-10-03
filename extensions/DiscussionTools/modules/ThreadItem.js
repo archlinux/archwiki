@@ -117,6 +117,18 @@ ThreadItem.static.newFromJSON = function ( json, rootNode ) {
 		endOffset: 0
 	};
 
+	if ( item.type === 'comment' ) {
+		const sigMarker = document.querySelector( '[data-mw-comment-sig="' + idEscaped + '"]' );
+		if ( sigMarker ) {
+			item.signatureRanges = [ {
+				startContainer: sigMarker.parentNode,
+				startOffset: utils.childIndexOf( sigMarker ) + 1,
+				endContainer: item.range.endContainer,
+				endOffset: item.range.endOffset
+			} ];
+		}
+	}
+
 	return item;
 };
 

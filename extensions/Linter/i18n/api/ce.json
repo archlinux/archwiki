@@ -5,5 +5,14 @@
 		]
 	},
 	"apihelp-query+linterrors-summary": "Статикин анализаторан долу карийна гӀалаташ",
-	"apihelp-query+linterrors-param-categories": "Статикин анализаторан гӀалатийн категореш"
+	"apihelp-query+linterrors-param-categories": "Статикин анализаторан гӀалатийн категореш",
+	"apihelp-query+linterrors-param-invisible-categories": "Гуш доцу линтер гӀалатийн категореш",
+	"apihelp-query+linterrors-param-limit": "Йухадерзийначу жамӀийн дукхалла",
+	"apihelp-query+linterrors-param-from": "Дехар дӀалолина гӀалатан идентификатор",
+	"apihelp-query+linterrors-param-namespace": "Билгалйаьхначу цӀерийн меттигашкара гӀалаташ бен йукъа ма даха",
+	"apihelp-query+linterrors-param-pageid": "Билгалйаьхна ID-ш йолчу агӀонаш тӀера гӀалаташ бен йукъа ма даха",
+	"apihelp-query+linterrors-param-title": "Билгалйаьккхинчу агӀонан тӀера гӀалаташ бен йукъа ма даха",
+	"apihelp-query+linterrors-example-1": "Дерриге а гӀалаташ схьаэца ширйеллачу тегийн категорера",
+	"apihelp-query+linterstats-summary": "ХӀора категорехь гӀалатийн дукхалла схьаэцар",
+	"apihelp-query+linterstats-example-1": "ХӀора категорехь гӀалатийн дукхалла схьаэца"
 }

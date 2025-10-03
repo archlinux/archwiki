@@ -6,5 +6,5 @@
 		]
 	},
 	"tag-visualeditor": "Вироиши визуалӣ",
-	"visualeditor-welcomedialog-title": "Хуш омадед ба Википедиа"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Хуш омадед}} ба $1"
 }

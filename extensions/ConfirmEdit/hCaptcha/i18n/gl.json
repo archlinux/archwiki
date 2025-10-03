@@ -11,6 +11,6 @@
 	"hcaptcha-createaccount": "Para protexer o wiki contra a creación automática de contas, pedímosche amablemente que resolvas o seguinte hCaptcha:",
 	"hcaptcha-createaccount-fail": "Parece que non resolviches o hCaptcha.",
 	"hcaptcha-create": "Para protexer o wiki contra a creación automática de páxinas, pedímosche amablemente que resolvas o seguinte hCaptcha:",
-	"hcaptcha-help": "Por favor, resolve o enigma hCaptcha e devolve os valores de resposta como captchaWord.",
+	"hcaptcha-help": "Resolve un desafío hCaptcha e devolve os valores de resposta como captchaWord.",
 	"hcaptcha-privacy-policy": "Este sitio está protexido por hCaptcha e aplícanse a súa [https://www.hcaptcha.com/privacy política de protección de datos] e os seus [https://www.hcaptcha.com/terms termos de servizo]."
 }

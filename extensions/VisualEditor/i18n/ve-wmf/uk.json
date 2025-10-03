@@ -25,6 +25,8 @@
 	"tag-editcheck-references-description": "Звіряння редагування показало, що варто додати посилання на джерело",
 	"tag-editcheck-references-activated": "Звіряння редагувань (посилання на джерела) активовано",
 	"tag-editcheck-references-activated-description": "Звіряння редагування показало, що варто додати посилання на джерело, і показано інтерфейс користувача для цього",
+	"tag-editcheck-references-shown": "Звіряння редагувань (посилання на джерела) показано",
+	"tag-editcheck-references-shown-description": "Звіряння редагування показало, що варто додати посилання на джерело, і показано інтерфейс користувача для цього",
 	"tag-visualeditor": "Візуальний редактор",
 	"tag-visualeditor-description": "Редагування виконано з використанням [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуального редактора]]",
 	"tag-visualeditor-needcheck": "Візуальний редактор: Перевірити",

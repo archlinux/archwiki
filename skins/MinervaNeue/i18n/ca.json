@@ -13,7 +13,8 @@
 			"Pginer",
 			"QuimGil",
 			"Skurz0",
-			"Vriullop"
+			"Vriullop",
+			"Sma1997"
 		]
 	},
 	"minerva-last-modified-date": "Darrera modificació: $1 a les $2",
@@ -24,13 +25,13 @@
 	"mobile-frontend-editor-redlink-create": "Crea una pàgina",
 	"mobile-frontend-editor-redlink-explain": "Aquesta pàgina encara no ha estat creada.",
 	"mobile-frontend-editor-redlink-leave": "No, gràcies.",
-	"mobile-frontend-history": "Vista de l'historial d'edició d'aquesta pàgina.",
+	"mobile-frontend-history": "Mostrar l'historial d'edició d'aquesta pàgina.",
 	"mobile-frontend-home-button": "Inici",
 	"mobile-frontend-language-article-heading": "Llengua",
 	"mobile-frontend-languages-not-available": "Aquesta pàgina no està disponible en altres idiomes.",
 	"mobile-frontend-main-menu-button-tooltip": "Obre el menú principal",
 	"mobile-frontend-main-menu-contributions": "Contribucions",
-	"mobile-frontend-main-menu-login": "Inici de sessió",
+	"mobile-frontend-main-menu-login": "Inicia la sessió",
 	"mobile-frontend-main-menu-logout": "Finalitza la sessió",
 	"mobile-frontend-main-menu-nearby": "A prop",
 	"mobile-frontend-main-menu-settings": "Configuració",

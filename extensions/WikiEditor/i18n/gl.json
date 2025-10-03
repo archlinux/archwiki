@@ -43,7 +43,7 @@
 	"wikieditor-toolbar-file-target": "Nome do ficheiro:",
 	"wikieditor-toolbar-file-caption": "Pé de foto:",
 	"wikieditor-toolbar-file-alt": "Texto alternativo:",
-	"wikieditor-toolbar-file-alt-help": "Podes usar este campo opcional para escribir unha descrición textual para as persoas que non poden ver o ficheiro.\nA descrición debe ser suficiente para que poidan entender a finalidade e a información que proporciona o elemento multimedia. Isto é vital para as persoas cegas ou para aquelas que empreguen programas de lectura de pantalla ou navegadores de só texto.",
+	"wikieditor-toolbar-file-alt-help": "Podes usar este campo opcional para escribir unha descrición textual para as persoas que non poden ver o ficheiro.\nA descrición debe ser suficiente para que poidan entender a finalidade e a información que proporciona o elemento multimedia. Isto é vital para as persoas cegas ou para aquelas que empreguen programas de lectura de pantalla ou navegadores de texto só.",
 	"wikieditor-toolbar-file-alt-help-label": "(Amosar a axuda)",
 	"wikieditor-toolbar-file-size": "Tamaño:",
 	"wikieditor-toolbar-file-float": "Aliñamento:",

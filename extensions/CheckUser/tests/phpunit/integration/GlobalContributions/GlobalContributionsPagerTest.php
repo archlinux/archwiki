@@ -503,6 +503,30 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( [], $pager->permissions );
 	}
 
+	public function testSkipWikisInConfig() {
+		$this->overrideConfigValue( 'CheckUserGlobalContributionsSkippedWikiIds', [ 'skippedwiki' ] );
+
+		// Mock fetching the recently active wikis
+		$globalContributionsLookup = $this->createMock( CheckUserGlobalContributionsLookup::class );
+		$globalContributionsLookup->method( 'getActiveWikis' )
+			->willReturn( [ 'somewiki', 'skippedwiki' ] );
+
+		// Mock the central user exists
+		$centralIdLookup = $this->createMock( CentralIdLookup::class );
+		$centralIdLookup->method( 'centralIdFromName' )
+			->willReturn( 45678 );
+
+		$pager = $this->getPagerWithOverrides( [
+			'CentralIdLookup' => $centralIdLookup,
+			'GlobalContributionsLookup' => $globalContributionsLookup,
+			'UserName' => 'SomeUser',
+		] );
+		$pager = TestingAccessWrapper::newFromObject( $pager );
+		$wikis = $pager->fetchWikisToQuery();
+
+		$this->assertSame( [ 'somewiki' ], $wikis );
+	}
+
 	/**
 	 * @dataProvider provideQueryData
 	 *

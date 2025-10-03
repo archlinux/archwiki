@@ -6,5 +6,7 @@
 	},
 	"editcheck-dialog-action-no": "ХӀан-хӀа",
 	"editcheck-dialog-action-yes": "ХӀаъ",
-	"editcheck-dialog-addref-reject-other": "Кхийерг"
+	"editcheck-dialog-addref-reject-other": "Кхийерг",
+	"editcheck-dialog-addref-title": "Хьост тӀетоха",
+	"editcheck-dialog-title": "Публикаци йале"
 }

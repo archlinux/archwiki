@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"JeffreyKim",
+			"Ktchankt"
+		]
+	},
+	"codeeditor-desc": "用[https://ace.c9.io/Ace editor]嚟編輯JavaScript同CSS頁面嘅語法突顯",
+	"codeeditor-next-annotation": "去下一個註解",
+	"codeeditor-toolbar-toggle": "切換代碼編輯器",
+	"codeeditor-save-with-errors": "呢份文件包含啲錯誤。 你肯定你想發佈？",
+	"codeeditor-invisibleChars-toggle": "切換隱形字元",
+	"codeeditor-lineWrapping-toggle": "切換線條包裝",
+	"codeeditor-searchReplace-toggle": "切換搜尋同替換對話框",
+	"codeeditor-gotoline": "去行嘅冧巴 ...",
+	"codeeditor-gotoline-placeholder": "行[:欄]",
+	"codeeditor-gotoline-prompt": "輸入一個行嘅冧巴",
+	"codeeditor-indent": "縮排",
+	"codeeditor-outdent": "過時",
+	"codeeditor-error-title": "依賴失敗咗",
+	"codeeditor-error-message": "代碼編輯器需要加載維基編輯器。"
+}

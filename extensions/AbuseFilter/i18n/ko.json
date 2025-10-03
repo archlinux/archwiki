@@ -35,7 +35,8 @@
 			"관인생략",
 			"렌즈",
 			"밝은소년",
-			"아라"
+			"아라",
+			"YeBoy371"
 		]
 	},
 	"abusefilter-desc": "사용자 편집을 규칙에 따라 자동으로 검사합니다",
@@ -360,7 +361,7 @@
 	"abusefilter-edit-builder-op-bool-not": "부정 ($1)",
 	"abusefilter-edit-builder-op-bool-and": "그리고 ($1)",
 	"abusefilter-edit-builder-op-bool-or": "또는 ($1)",
-	"abusefilter-edit-builder-op-bool-xor": "배타적 논리합 ($1)",
+	"abusefilter-edit-builder-op-bool-xor": "XOR ($1)",
 	"abusefilter-edit-builder-group-misc": "기타",
 	"abusefilter-edit-builder-misc-in": "문자열에 포함 ($1)",
 	"abusefilter-edit-builder-misc-contains": "왼쪽 문자열이 오른쪽 문자열을 포함 ($1)",

@@ -21,7 +21,8 @@
 			"SMP",
 			"Solde",
 			"Ssola",
-			"Toniher"
+			"Toniher",
+			"Yupik"
 		]
 	},
 	"checkuser-summary": "Aquest instrument efectua una cerca als canvis recents per a comprovar les adreces IP fetes servir per un usuari o per a mostrar les edicions d'una certa adreça IP.\nLes edicions i usuaris d'un client IP es poden obtenir via capçaleres XFF afegint /xff al final de la IP. Tant les adreces IPv4 (CIDR $1-32) com les IPv6 (CIDR $2-128) són admeses.\nPer raons d'efectivitat i de memòria no es retornen més de 5000 edicions. Recordeu que aquesta eina només es pot usar d'acord amb les polítiques corresponents i amb respecte a la legislació sobre privadesa.",
@@ -68,6 +69,8 @@
 	"logentry-checkuser-private-event-create-account": "va ser creat",
 	"checkuser-link-investigate-label": "Provi la nova eina CheckUser",
 	"checkuser-investigateblock-warning-confirmaction": "Si esteu segur que voleu fer-ho, marqueu el camp «{{int:checkuser-investigateblock-confirm-blocks-label}}» a la part inferior.",
+	"checkuser-investigate-preliminary-table-header-name": "Nom d'usuari",
+	"checkuser-investigate-compare-table-header-username": "Nom d'usuari",
 	"checkuser-investigate-tour-addusertargets-title": "Necessiteu més context?",
 	"checkuser-global-contributions-link": "contribucions globals",
 	"checkuser-global-contributions-link-sidebar": "Contribucions globals",

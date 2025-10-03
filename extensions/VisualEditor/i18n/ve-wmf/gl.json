@@ -5,7 +5,8 @@
 			"Elisardojm",
 			"Kscanne",
 			"Toliño",
-			"아라"
+			"아라",
+			"Xosecalvo"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck cre que se engadiu contido novo á páxina",
@@ -27,7 +28,7 @@
 	"visualeditor-feedback-tool": "Deixa un comentario sobre este programa",
 	"visualeditor-help-label": "Ler a guía de usuario",
 	"visualeditor-welcomedialog-action": "Comezar a editar",
-	"visualeditor-welcomedialog-content": "Calquera persoa pode editar, e todas as melloras axudan.",
+	"visualeditor-welcomedialog-content": "Calquera persoa pode editar e todas as melloras axudan.",
 	"visualeditor-welcomedialog-content-thanks": "Grazas por axudar á xente a descubrir e aprender cousas novas!",
 	"visualeditor-welcomedialog-switch": "Cambiar ao editor de código",
 	"visualeditor-welcomedialog-switch-ve": "Cambiar ao editor visual",

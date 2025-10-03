@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Eraldkerciku"
+			"Eraldkerciku",
+			"Xhulianoo"
 		]
 	},
-	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Shtoni një seksion të ri diskutimi dhe komentin e parë në të."
+	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Shto një pjesë të re diskutimi dhe komentin e parë në të."
 }

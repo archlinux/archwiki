@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Stjn"
+			"Stjn",
+			"Okras",
+			"Kareyac"
 		]
 	},
 	"editcheck-dialog-action-no": "Нет",

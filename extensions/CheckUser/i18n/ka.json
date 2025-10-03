@@ -18,6 +18,7 @@
 	"checkuser-contribs-log": "მომხმარებლის ბოლოდროინდელი შემოწმებები",
 	"group-checkuser": "ჩეკიუზერები",
 	"group-checkuser-member": "{{GENDER:$1|მომხმარებლის შემმოწმებელი}}",
+	"group-temporary-account-viewer": "დროებითი ანგარიშის IP მისამართის შემმოწმებელი",
 	"group-temporary-account-viewer-member": "{{GENDER:$1|დროებითი ანგარიშის IP მისამართის შემმოწმებელი}}",
 	"right-checkuser": "მომხმარებლების IP მისამართებისა და სხვა ინფორმაციების შემოწმება",
 	"right-checkuser-log": "მომხმარებლთა შემოწმების ჟურნალის ხილვა",

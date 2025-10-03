@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Owobusingye"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ekyokugarukamu",
+	"discussiontools-newtopic-missing-title": "Nyabura we heereza engyenderwaho yo {{GENDER:|your}} omutwe gw'okuhanuura",
+	"discussiontools-newtopic-placeholder-title": "Ekintu",
+	"discussiontools-replylink": "{{GENDER:|kugarukamu}}",
+	"discussiontools-replywidget-advanced": "Ebirikukyiraho",
+	"discussiontools-replywidget-cancel": "Shazamu",
+	"discussiontools-replywidget-mode-source": "Oburugo",
+	"discussiontools-replywidget-mode-visual": "Ebyokureeba",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Kwongyera}} omutwe",
+	"discussiontools-replywidget-placeholder-newtopic": "Ebirikugambaho",
+	"discussiontools-replywidget-placeholder-reply": "{GENDER:Reply} ahari {BIDI:$1}",
+	"discussiontools-replywidget-preview": "Okukirikushusha",
+	"discussiontools-replywidget-reply": "{{GENDER:|Kugarukamu}}",
+	"discussiontools-replywidget-summary": "Omubugufu",
+	"discussiontools-replywidget-watchthis": "Oyongyere orupapura oru ahari [[Special:Watchlist|watchlist]] yawe",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|omuntu|abantu}} omu kuhanuura",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ekiteiso|ebiteiso}}",
+	"discussiontools-topicheader-latestcomment": "Ekyahererukireyo kuhandikwa: $1",
+	"discussiontools-topicsubscription-button-subscribe": "Yehandikise",
+	"discussiontools-topicsubscription-button-subscribe-label": "Yehandikise",
+	"discussiontools-topicsubscription-button-unsubscribe": "yeihemu omubahandikisibwe",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Yeihe omubahandikisibwe",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|You}} Noija kutunga okumanyisibwa ebirikukwata aha nshonga nsya omu mutwe ogu.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|You}} Wahandikizibwa!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|You}} Torikwija kugaruka kutunga okumanyisibwa ebirikukwata aha nshonga nsya omu mutwe ogu.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} wayeyiha omubahandikisibwe"
+}

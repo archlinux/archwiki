@@ -5,12 +5,17 @@
 			"Patoasado97",
 			"Juanchuy0",
 			"VicenteCancheM",
-			"Shadow.666"
+			"Shadow.666",
+			"BECHI"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} yaan u k'amik jump'éel notificación ken yaan máax ku ts'íibtik jump'éel túumben ts'íibiltuukul te'el tsikbala'. Je'el u páajtal a wutskíinsik u configuración notificaciones ti' preferencias.",
 	"discussiontools-autotopicsubpopup-dismiss": "Ma'alob, tin na'ataj",
+	"discussiontools-autotopicsubpopup-title": "teche' ts'o'ok a ts'íibta'al",
 	"discussiontools-defaultsummary-reply": "Jeel áale",
+	"discussiontoolsdebug-title": "u nu'ukulil u tsoolil k'aaba'",
+	"discussiontoolsdebug-pagetitle": "u k'aaba' juntséel ju'un",
+	"discussiontools-desc": "u nu'ukulil u ma'alobil juntséel ju'un",
 	"discussiontools-newtopic-missing-title": "Béet ts'áa jump'éel k'aaba' uti'al {{GENDER:|a}} chun tuukulo' tsikbal.",
 	"discussiontools-newtopic-placeholder-title": "Máaxil",
 	"discussiontools-replylink": "{{GENER:|núukik}}",

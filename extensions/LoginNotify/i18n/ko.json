@@ -5,7 +5,8 @@
 			"Jerrykim306",
 			"Kwj2772",
 			"Ykhwong",
-			"렌즈"
+			"렌즈",
+			"YeBoy371"
 		]
 	},
 	"loginnotify-desc": "낯선 기기나 IP 주소로부터 의심스러운 로그인이 있으면 사용자에게 알립니다",
@@ -14,6 +15,7 @@
 	"echo-category-title-login-success": "낯선 기기에서의 로그인",
 	"echo-pref-tooltip-login-success": "누군가가 낯선 기기와 IP 주소로 내 계정에 로그인하면 내게 알립니다.",
 	"loginnotify-primary-link": "도움말",
+	"loginnotify-unknown-ip": "당신은 낯선 IP 주소에서 로그인을 시도하려 했으나, 현재 {{SITENAME}}님이 낯선 IP 주소에서 로그인하지 못하도록 설정했습니다.",
 	"notification-loginnotify-login-fail-email-subject": "$1님으로 로그인 {{PLURAL:$2|시도를 실패했습니다|시도를 여러 번 실패했습니다}}",
 	"notification-loginnotify-login-success-email-subject": "{{GENDER:$1|당신}}이 최근에 사용한 적이 없는 장치로부터 $1님으로 {{SITENAME}}에 로그인",
 	"notification-header-login-success": "누군가 (아마도 {{GENDER:$1|당신}}이) 최근에 사용한 적 없는 장치로부터 로그인했습니다. 만약 이것이 본인이 맞다면 이 메시지를 무시해 주세요. 본인이 아닌 경우, 비밀번호를 변경하고 계정 활동을 확인하는 것 확인하는 것이 좋습니다.",

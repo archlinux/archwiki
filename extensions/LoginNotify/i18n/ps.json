@@ -4,5 +4,13 @@
 			"شاه زمان پټان"
 		]
 	},
-	"echo-category-title-login-success": "له ناپېژانده سولگر څخه ننوتنه"
+	"loginnotify-desc": "کارنانو ته د ناپېژانده وسيلو او/يا وېبپاڼو څخه د شکمنو ننوتلو خبرتيا ورکوي",
+	"echo-category-title-login-fail": "د ننوتلو ناکامې هڅې",
+	"echo-pref-tooltip-login-fail": "کله چې زما گڼون ته د ننوتلو ناکامه هڅه وشي؛ نو ماته دې خبر راکړل شي.",
+	"echo-category-title-login-success": "له ناپېژانده سولگر څخه ننوتنه",
+	"echo-pref-tooltip-login-success": "کله چې څوک زما گڼون ته د ناپېژانده وسيلې او وېبپتې څخه ننوځي؛ نو ماته دې خبر راکړل شي.",
+	"loginnotify-primary-link": "لارښود",
+	"loginnotify-unknown-ip": "تاسو د يو ناپېژانده وېبپتې څخه د ننوتلو هڅه کړې او {{SITENAME}} وسمهال د ناپېژانده وېبپتې څخه د ننوتلو مخنيوي لپاره تنظيم شوې ده.",
+	"notification-loginnotify-login-fail-email-subject": "د $1 په توگه {{SITENAME}} ته د ننوتلو {{PLURAL:$2| ناکامه هڅه|گڼ شمېر ناکامې هڅې}}",
+	"notification-loginnotify-login-success-email-subject": "{{SITENAME}} ته $1 په توگه د هغه وسیلې څخه ننوتل {{GENDER:$1| تاسو}} پدې وروستیو کې نه دی کارولی."
 }

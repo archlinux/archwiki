@@ -18,10 +18,17 @@
 			"Themasterriot",
 			"YoViajo",
 			"아라",
-			"JaimeDes"
+			"JaimeDes",
+			"Teen12",
+			"Virum Mundi"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck cree que se ha añadido nuevo contenido a la página",
 	"tag-editcheck-newreference-description": "Se agregó una referencia a la página.",
+	"tag-editcheck-references-description": "EditCheck cree que podría haber faltado una referencia",
+	"tag-editcheck-references-activated": "Comprobación de ediciones (referencias) activada",
+	"tag-editcheck-references-activated-description": "EditCheck cree que una referencia podría ser necesaria, se ha mostrado la interfaz de usuario",
+	"tag-editcheck-references-shown": "Comprobación de ediciones (referencias) mostrada",
 	"tag-visualeditor": "Edición visual",
 	"tag-visualeditor-description": "Modificación hecha con el [[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor visual]]",
 	"tag-visualeditor-needcheck": "Edición visual: comprobar",

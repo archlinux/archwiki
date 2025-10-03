@@ -7,7 +7,8 @@
 			"Janatkg",
 			"Ztimur",
 			"Викиней",
-			"Элдин беги"
+			"Элдин беги",
+			"Incall"
 		]
 	},
 	"skinname-vector": "Эски Вектор (2010)",
@@ -29,7 +30,7 @@
 	"vector-language-variant-switcher-label": "Тилди өзгөртүү",
 	"vector-action-addsection": "Тема кошуу",
 	"vector-action-delete": "Өчүрүү",
-	"vector-action-move": "Аталышын өзгөртүү",
+	"vector-action-move": "Аталышты өзгөртүү",
 	"vector-action-protect": "Коргоо",
 	"vector-action-undelete": "Калыбына келтирүү",
 	"vector-action-unprotect": "Коргоону өзгөртүү",
@@ -37,7 +38,7 @@
 	"vector-view-edit": "Түзөтүү",
 	"vector-view-history": "Тарыхын кароо",
 	"vector-view-view": "Окуу",
-	"vector-view-viewsource": "Булагын кароо",
+	"vector-view-viewsource": "Булагын көрүү",
 	"vector-jumptonavigation": "Навигацияга өтүү",
 	"vector-jumptosearch": "Издөөгө өтүү",
 	"vector-jumptocontent": "Мазмунга өтүү",
@@ -55,6 +56,7 @@
 	"skin-theme-day-label": "Күндүзгү",
 	"skin-theme-night-label": "Түнкү",
 	"skin-theme-os-label": "Ыңгайлашкан",
+	"skin-theme-exclusion-notice": "Бул бет дайыма жарык режиминде болот.",
 	"vector-search-loader": "Издөө натыйжалары жүктөлүүдө",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">«$1»</strong> камтыган барактарды издөө",
 	"vector-intro-page": "Жардам:Бет ачар",

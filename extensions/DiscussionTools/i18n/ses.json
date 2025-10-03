@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Songhay"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Zaabi",
+	"discussiontools-newtopic-placeholder-title": "Dalil",
+	"discussiontools-replylink": "{{GENDER:|zaabi}}",
+	"discussiontools-replywidget-advanced": "Koyjinante",
+	"discussiontools-replywidget-cancel": "Naŋ",
+	"discussiontools-replywidget-mode-source": "Assil",
+	"discussiontools-replywidget-mode-visual": "Diira fasal",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Tonton}} furari",
+	"discussiontools-replywidget-placeholder-newtopic": "Silbayyan",
+	"discussiontools-replywidget-preview": "Moofur",
+	"discussiontools-replywidget-reply": "{{GENDER:|Zaabi}}",
+	"discussiontools-replywidget-summary": "Duurandi",
+	"discussiontools-replywidget-watchthis": "Moɲoo woo tonton ni [[Special:Watchlist|watchlist]] ga",
+	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|boro|boro}} $1 faakaaray ra",
+	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|daara|daara}} $1",
+	"discussiontools-topicheader-latestcomment": "Daara kokorante: $1",
+	"discussiontools-topicsubscription-button-subscribe": "maa hantum",
+	"discussiontools-topicsubscription-button-subscribe-label": "Maa hantum",
+	"discussiontools-topicsubscription-button-unsubscribe": "maa kaa",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Maa ka"
+}

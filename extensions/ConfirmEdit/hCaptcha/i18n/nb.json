@@ -12,5 +12,6 @@
 	"hcaptcha-createaccount": "Vi ber deg løse følgende hCaptcha for å beskytte wikien mot automatisk kontooppretting:",
 	"hcaptcha-createaccount-fail": "Det ser ut som du ikke har løst hCaptcha-en.",
 	"hcaptcha-create": "Vi ber deg løse følgende hCaptcha for å beskytte wikien mot automatisk sideopprettelse:",
-	"hcaptcha-help": "Løs en hCaptcha-utfordring og returner responsverdien som et captchaWord."
+	"hcaptcha-help": "Løs en hCaptcha-utfordring og returner responsverdien som et captchaWord.",
+	"hcaptcha-privacy-policy": "Dette nettstedet beskyttes av hCaptcha, og deres [https://www.hcaptcha.com/privacy personvernspolitikk] og [htps://www.hcaptcha.com/terms tjenestevilkår] gjelder."
 }

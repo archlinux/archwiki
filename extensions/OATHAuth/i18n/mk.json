@@ -50,7 +50,10 @@
 	"oathauth-auth-token-label": "Двочинителска заверка или код за повраток",
 	"oathauth-auth-token-help": "Еднократната лозинка што служи како втор чинител во двочинителската заверка.",
 	"oathauth-auth-token-help-ui": "Внесете код од уредот за заверка или пак код за повраток",
-	"oathauth-auth-ui": "Внесете код од вашиот прилог за двочинителска заверка (како на пр. [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] или [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Внесете код од вашиот прилог за двочинителска заверка (како на пр. [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] или [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-label": "Префрли на друг начин на заверка",
+	"oathauth-auth-switch-module-help": "За <code>newModule</code> ставете ново име на модул за да добиете нов предизвик од поинеков модул за двочинителска заверка. Оставете го празно ако одговарате на тековниот предизвик.",
+	"oathauth-auth-switch-module-keep": "(не префрлај)",
 	"oathauth-throttled": "Направивте премногу обиди за заверка! Почекајте $1.",
 	"oathauth-login-failed": "Заверката не успеа.",
 	"oathauth-describe-provider": "Двочинителска заверка (OATH).",
@@ -108,5 +111,6 @@
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Вашето членство}} во {{PLURAL:$1|оваа група|овие групи}} е оневозможено додека не овозможите [[Special:Manage Two-factor authentication|двочинителска заверка]].",
 	"oathauth-qrcode-alt": "Отчитлив QR-код што го претставува тајниот клуч.",
 	"oathauth-hint": "Немате пристап до вашиот уред или прилог? Можете да внесувате кодови за повраток (претставени кога го овозможивте 2FA) во ова поле.",
-	"oathauth-must-be-central": "{{GENDER:$1|Вашата сметка}} мора да биде поврзана со централниот систем за заверка за да користи двочинителска заверка."
+	"oathauth-must-be-central": "{{GENDER:$1|Вашата сметка}} мора да биде поврзана со централниот систем за заверка за да користи двочинителска заверка.",
+	"oathauth-error-multiple-modules": "Засега не е поддржано користење на повеќе начини на двочинителска заверка. Можете да го овозможите $1 само откако ќе го оневозможите $2."
 }

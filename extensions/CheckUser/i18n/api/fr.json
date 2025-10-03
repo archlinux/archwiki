@@ -10,7 +10,8 @@
 			"McDutchie",
 			"Thibaut120094",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Escargot bleu"
 		]
 	},
 	"apihelp-query+checkuser-summary": "Vérifier quelles adresses IP sont utilisées pour un nom d’utilisateur donné ou quels noms d’utilisateur sont utilisés pour une adresse IP donnée.",
@@ -53,5 +54,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "Le $1 $2 est trop ancien pour permettre d’enregistrer les données de conseil client",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "L'identifiant $2 pour le type $1 n'existe pas",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} collecte des données d’information du user-agent du client pour aider à modérer le vandalisme et les abus. Voir https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints pour plus de détails.",
-	"apihelp-logout-param-checkuserclienthints": "Données de conseils client fournies avec les requêtes adressées à ApiLogout. Pour usage interne uniquement."
+	"apihelp-logout-param-checkuserclienthints": "Données de conseils client fournies avec les requêtes adressées à ApiLogout. Pour usage interne uniquement.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "La date d'expiration saisie est invalide.",
+	"checkuser-ip-auto-reveal-missing-permission": "Vous n'avez pas les droits requis pour activer la révélation automatique des adresses IP."
 }

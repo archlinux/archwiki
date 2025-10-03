@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Coala23",
+			"Cohuoucan",
+			"Gutypc712",
+			"JhonRambo",
+			"Tunichmay",
+			"ValentinaTec",
+			"Chester1",
+			"Ebenezer",
+			"Miguelos1976",
+			"DeBolsillo",
+			"Geom"
+		]
+	},
+	"tag-editcheck-newcontent-description": "EditCheck ku tukultik ts'áab túumben kaambal tu' páaginaí",
+	"tag-editcheck-newreference-description": "junp'eel referencia tsaaba u tia'al le paginao'",
+	"tag-editcheck-references-description": "EditCheck ku tukultik jump'éel éesajile' je'el u páajtal u k'abeejtale'",
+	"tag-editcheck-references-activated": "paakat edicion T’aab",
+	"tag-editcheck-references-activated-description": "EditCheck ku tukultik junp'éel éesajile' je'el u páajtal u k'a'abéettal, yéetel chikpají le máax meyajtiko'",
+	"tag-editcheck-references-shown": "Editar Check (referencias) ku ye'esik",
+	"tag-editcheck-references-shown-description": "EditCheck ku tukultik jump'éel referencia je'el u páajtal u k'a'abéettal, ka le UI bin u ye'esa'al",
+	"tag-visualeditor": "Edición visual",
+	"tag-visualeditor-description": "Edición beeta'an yéetel le [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]].",
+	"tag-visualeditor-needcheck": "Edición visual: Compruebe",
+	"tag-visualeditor-needcheck-description": "Edición beeta'an yéetel le [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]] tu'ux le yaan detectó le wikitexto posiblemente yaantal cambios ma' previstos.",
+	"tag-visualeditor-wikitext": "editor de código 2017",
+	"tag-visualeditor-wikitext-description": "Edición beeta'an yéetel le editor wikitexto 2017",
+	"tag-visualeditor-switched": "Edición visual: K'ex",
+	"tag-visualeditor-switched-description": "El usuario comenzó a editar utilizando el editor visual y luego cambió al editor de wikitexto.",
+	"visualeditor-feedback-link": "Project:Editor visual/Comentarios",
+	"visualeditor-feedback-tool": "Deja tus comentarios acerca de este software",
+	"visualeditor-help-label": "Leer la guía de usuario",
+	"visualeditor-welcomedialog-action": "Empezar a editar",
+	"visualeditor-welcomedialog-content": "Cualquiera puede editar, y cada mejora ayuda.",
+	"visualeditor-welcomedialog-content-thanks": "¡Gracias por ayudar al mundo a descubrir más!",
+	"visualeditor-welcomedialog-switch": "K'ex le \"editor de codigo\"'",
+	"visualeditor-welcomedialog-switch-ve": "K'ex ti' le editor visual",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|}} ti' $2"
+}

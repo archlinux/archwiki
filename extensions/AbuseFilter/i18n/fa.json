@@ -114,6 +114,7 @@
 	"abusefilter-log-entry": "$1: $2 در حال {{GENDER:$8|انجام}} عمل «$3» بر روی $4 یک پالایهٔ ویرایش را فعال {{GENDER:$8|کرد}}.\nاقدام صورت‌گرفته: $5؛\nتوضیحات پالایه: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 در حال {{GENDER:$8|انجام}} عمل «$3» بر روی $4 یک پالایهٔ ویرایش را فعال {{GENDER:$8|کرد}}.‌\nاقدام صورت‌گرفته: $5؛\nتوضیحات پالایه: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 در حال {{GENDER:$9|انجام}} عمل «$4» روی $5 $3 را فعال {{GENDER:$9|کرد}}.\nاقدام صورت‌گرفته: $6؛\nتوضیحات پالایه: $7 ($8)",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1: $2 در حال {{GENDER:$9|انجام}} عمل «$4» روی $5 $3 را {{GENDER:$9|فعال کرد}}.\nاقدام صورت‌گرفته: $6؛\nتوضیحات پالایه: $7",
 	"abusefilter-log-detailedentry-global": "پالایهٔ سراسری $1",
 	"abusefilter-log-detailedentry-local": "پالایهٔ $1",
 	"abusefilter-log-detailslink": "جزئیات",

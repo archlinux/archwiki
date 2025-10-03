@@ -3,12 +3,17 @@
 namespace MediaWiki\CheckUser\HookHandler;
 
 use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use MediaWiki\User\UserIdentity;
+use StatusValue;
 
 class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 
@@ -47,15 +52,21 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 	private PermissionManager $permissionManager;
 	private TemporaryAccountLoggerFactory $loggerFactory;
 	private Config $config;
+	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
+	private CheckUserPermissionManager $checkUserPermissionManager;
 
 	public function __construct(
 		PermissionManager $permissionManager,
 		TemporaryAccountLoggerFactory $loggerFactory,
-		Config $config
+		Config $config,
+		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		CheckUserPermissionManager $checkUserPermissionManager
 	) {
 		$this->permissionManager = $permissionManager;
 		$this->loggerFactory = $loggerFactory;
 		$this->config = $config;
+		$this->autoRevealLookup = $autoRevealLookup;
+		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
 
 	/**
@@ -74,9 +85,14 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 			'type' => 'api',
 		];
 
-		$preferences[self::ENABLE_IP_AUTO_REVEAL] = [
-			'type' => 'api',
-		];
+		if ( $this->autoRevealLookup->isAutoRevealAvailable() ) {
+			$preferences[self::ENABLE_IP_AUTO_REVEAL] = [
+				'type' => 'api',
+				'validation-callback' => function ( mixed $preferenceValue, array $alldata, HTMLForm $form ) {
+					return $this->validateAutoRevealPreferenceValue( $preferenceValue, $form->getAuthority() );
+				}
+			];
+		}
 
 		$messageLocalizer = RequestContext::getMain();
 
@@ -200,5 +216,36 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 		$defaultOptions += [
 			self::ENABLE_USER_INFO_CARD => false
 		];
+	}
+
+	/**
+	 * Validates that the 'checkuser-temporary-account-enable-auto-reveal' preference value is valid.
+	 *
+	 * The value is valid if:
+	 * * It's null (i.e. the preference is unset and is the default value)
+	 * * It's a valid UNIX timestamp as defined by
+	 *     {@link CheckUserTemporaryAccountAutoRevealLookup::isAutoRevealExpiryValid} and the user has the rights
+	 *     needed to use IP auto-reveal.
+	 *
+	 * This does not include checking if the feature is enabled on the wiki as the preference isn't set if this
+	 * is the case.
+	 */
+	private function validateAutoRevealPreferenceValue(
+		mixed $preferenceValue, Authority $authority
+	): StatusValue {
+		// Always allow users to unset the IP auto-reveal preference.
+		if ( $preferenceValue === null ) {
+			return StatusValue::newGood();
+		}
+
+		if ( !$this->checkUserPermissionManager->canAutoRevealIPAddresses( $authority )->isGood() ) {
+			return StatusValue::newFatal( 'checkuser-ip-auto-reveal-missing-permission' );
+		}
+
+		if ( !$this->autoRevealLookup->isAutoRevealExpiryValid( $preferenceValue ) ) {
+			return StatusValue::newFatal( 'checkuser-ip-auto-reveal-expiry-invalid' );
+		}
+
+		return StatusValue::newGood();
 	}
 }

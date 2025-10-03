@@ -137,7 +137,7 @@
 	"discussiontools-replywidget-mode-source": "Sursă",
 	"discussiontools-replywidget-mode-visual": "Vizual",
 	"discussiontools-replywidget-newcomments-button": "Arată $1 {{PLURAL:$1|comentariu nou|comentarii noi}}",
-	"discussiontools-replywidget-newtopic": "Adaugă {{GENDER:|subiectul}}",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Adaugă}} subiectul",
 	"discussiontools-replywidget-placeholder-newtopic": "Descriere",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Răspunde}} lui {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Preferințe",

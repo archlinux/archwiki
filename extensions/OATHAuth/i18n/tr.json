@@ -15,7 +15,8 @@
 			"TmY e12",
 			"ToprakM",
 			"Vito Genovese",
-			"Wooze"
+			"Wooze",
+			"Leo"
 		]
 	},
 	"oathauth-desc": "HMAC tabanlı tek kullanımlık parolalar kullanarak kimlik doğrulama desteği sağlar",
@@ -64,7 +65,7 @@
 	"oathauth-auth-token-label": "İki faktörlü token veya kurtarma kodu",
 	"oathauth-auth-token-help": "İki faktörlü kimlik doğrulamanın ikinci faktörü olarak kullanılan tek kullanımlık şifre.",
 	"oathauth-auth-token-help-ui": "Kimlik doğrulama aygıtınızdan bir kod veya bir kurtarma kodu girin",
-	"oathauth-auth-ui": "İki faktörlü kimlik doğrulama için bir program indirin. Bu, [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] veya [https://1password.com/ 1Password] gibi bir mobil veya masaüstü uygulaması olabilir.",
+	"oathauth-auth-ui": "İki faktörlü kimlik doğrulama için bir program indirin. Bu, [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] veya [https://1password.com/ 1Password] gibi bir mobil veya masaüstü uygulaması olabilir.",
 	"oathauth-throttled": "Çok fazla doğrulama girişimi! Lütfen $1 bekleyin.",
 	"oathauth-login-failed": "Doğrulama başarısız oldu.",
 	"oathauth-describe-provider": "İki faktörlü kimlik doğrulama (OATH).",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"H78c67c",
-			"Winston Sung"
+			"Winston Sung",
+			"Yueman"
 		]
 	},
 	"content-model-scribunto": "Scribunto 模組",
@@ -11,6 +12,7 @@
 	"scribunto-common-error-category": "有腳本錯誤嘅版",
 	"scribunto-lua-error": "Lua出錯：$2。",
 	"scribunto-luastandalone-decode-error": "Lua錯：内部錯：解碼唔到訊息。",
+	"scribunto-limitreport-timeusage-value": "$1/$2秒",
 	"scribunto-limitreport-profile-ms": "$1毫秒",
 	"nstab-module": "模組",
 	"tooltip-ca-nstab-module": "睇吓模組頁"

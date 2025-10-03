@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"N. Longo"
+		]
+	},
+	"editcheck-dialog-action-no": "No",
+	"editcheck-dialog-action-yes": "Scì",
+	"editcheck-dialog-addref-description": "Agiùtta i letoî a capî da dónde vêgnan st'informaçioìn chi azonzéndoghe 'na nòtta.",
+	"editcheck-dialog-addref-reject-question": "Perché ti no gh'azónzi 'na nòtta?",
+	"editcheck-dialog-addref-reject-description": "Di âtri editoî dexidiéivan savéine de ciù in sciâ tò decixón de no métte de nòtte.",
+	"editcheck-dialog-addref-reject-irrelevant": "No créddo che de nòtte séggian inportànti pe-a modìfica che véuggio fâ.",
+	"editcheck-dialog-addref-reject-common-knowledge": "E informaçioìn che són aprêuvo a-azónze són bén bén sconpartîe",
+	"editcheck-dialog-addref-reject-uncertain": "No són segûo de che nòtta azónzighe",
+	"editcheck-dialog-addref-reject-other": "Âtro",
+	"editcheck-dialog-addref-success-notify": "Gràçie p'avéighe azónto 'na nòtta!",
+	"editcheck-dialog-addref-title": "Azónzi 'na çitaçión",
+	"editcheck-dialog-title": "Prìmma de pubricâ",
+	"editcheck-copyvio-title": "Contegnûo inpastetòu",
+	"editcheck-copyvio-description": "Cómme régola generâle, no copiâ do tèsto da de âtre vivàgne. De sòlito st'açión chi a l'é tànto 'na violaçión do dirìtto d'outô che 'n plâgio.",
+	"editcheck-review-title": "Rivéddi modìfiche",
+	"tag-editcheck-reference-decline-common-knowledge": "Edit Check (nòtte) refuòu (conoscénsa sconpartîa)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "O riferiménto a l'EditCheck o l'é stæto refuòu cómme conoscénsa sconpartîa",
+	"tag-editcheck-reference-decline-irrelevant": "Edit Check (nòtte) refuòu (sénsa d'inportànsa)",
+	"tag-editcheck-reference-decline-irrelevant-description": "O riferiménto a l'EditCheck o l'é stæto refuòu cómme sénsa d'inportànsa",
+	"tag-editcheck-reference-decline-other": "Edit Check (nòtte) refuòu (âtro)",
+	"tag-editcheck-reference-decline-other-description": "O riferiménto a l'EditCheck o l'é stæto refuòu pe 'na raxón no indicâ",
+	"tag-editcheck-reference-decline-uncertain": "Edit Check (nòtte) refuòu (no segûo)",
+	"tag-editcheck-reference-decline-uncertain-description": "O riferiménto a l'EditCheck o l'é stæto refuòu cómme no segûo"
+}

@@ -1,8 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"H78c67c"
+			"H78c67c",
+			"Ktchankt",
+			"Yueman"
 		]
 	},
-	"linter-category-night-mode-unaware-background-color-desc": "呢啲頁面有 inline 背景色彩樣式但冇對應嘅文字色彩，會整壞黑暗模式"
+	"linterrors": "Lint出錯",
+	"linter-category-night-mode-unaware-background-color-desc": "呢啲頁面有 inline 背景色彩樣式但冇對應嘅文字色彩，會整壞黑暗模式",
+	"linter-desc": "由外間服務追蹤Lint出錯，向用戶顯示",
+	"linter-lints-prefix-search-page-desc": "用版面標題字頭或完整標題去搵Lint出錯嘅版",
+	"linter-prefix-search-subpage": "配對到字頭或完整標題而有Lint出錯嘅版：$1",
+	"linterrors-subpage": "Lint出錯：$1",
+	"pageinfo-linter": "Lint出錯",
+	"pageinfo-linter-moreinfo": "睇Lint出錯嘅詳情。"
 }

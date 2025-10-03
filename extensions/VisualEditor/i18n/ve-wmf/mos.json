@@ -25,5 +25,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Y barka fo sẽn song tɩ duni fãa bãng wʋsga",
 	"visualeditor-welcomedialog-switch": "Lébsé n kêng zii tékɩ",
 	"visualeditor-welcomedialog-switch-ve": "Lébsé n kêng geese n tékɩ",
-	"visualeditor-welcomedialog-title": "{{sɩg-roogo:$1|waoongo}} tɩ $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Waoongo}} tɩ $2"
 }

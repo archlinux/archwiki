@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-query+gadgetcategories-summary": "د ويښيارتوکي برخو لړليک راگرځوي.",
+	"apihelp-query+gadgetcategories-param-prop": "د ويښيارتوکي کومې برخې مالومات دې واخيستل شي:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "دنننۍ برخې نوم.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "د برخې سرلیک.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "په برخه کې د ويښيارتوکو شمېر.",
+	"apihelp-query+gadgetcategories-param-names": "د برخو نومونه چې بايد ترلاسه شي.",
+	"apihelp-query+gadgetcategories-example-1": "د شته ويښيارتوکي برخو لړليک راخيستل",
+	"apihelp-query+gadgetcategories-example-2": "د \"foo\" او \"bar\" په نوم برخو ټول مالومات اخيستل",
+	"apihelp-query+gadgets-summary": "دې ويکي کې د کارېدونکو ويښيارتوکو لړليک راگرڅوي.",
+	"apihelp-query+gadgets-param-prop": "د کوم ويښيارتوکي مالومات راواخيستل شي:",
+	"apihelp-query+gadgets-paramvalue-prop-id": "د دننني ويښيارتوکي پېژند.",
+	"apihelp-query+gadgets-paramvalue-prop-metadata": "د ويښيارتوکي مېټااومتوک.",
+	"apihelp-query+gadgets-paramvalue-prop-desc": "د ويښيارتوکي څرگنداوی په اېچ‌ټي‌اېم‌اېل بدل شوی (کېدای شي ورو وي، یوازې هغه وخت يې وکاروئ چې ورته رښتينې اړتیا وي).",
+	"apihelp-query+gadgets-param-categories": "کومو وېشنيزو نه ويښيارتوکي بياترلاسنه يې غواړئ.",
+	"apihelp-query+gadgets-param-ids": "ويښيارتوکو پېژند چې بياترلاسنه يې غواړئ.",
+	"apihelp-query+gadgets-param-allowedonly": "يوازې د هغه ويښيارتوکو لړليک چې اوسنی کارن يې پرېښولی لري.",
+	"apihelp-query+gadgets-param-enabledonly": "يوازې د هغه ويښيارتوکو لړليک چې اوسني کارن چارن‌کړې دي.",
+	"apihelp-query+gadgets-example-1": "د ويښيارتوکو لړليک د هغوی له څرگنداويو سره ترلاسه کړئ",
+	"apihelp-query+gadgets-example-2": "د ويښيارتوکو لړليک د هغوی ټولو شونو ځانتياوو سره ترلاسه کول",
+	"apihelp-query+gadgets-example-3": "د \"foo\" وېشنيزې اړوند ويښيارتوکو لړليک ترلاسه کول",
+	"apihelp-query+gadgets-example-4": "د \"foo\" او \"bar\" ويښيارتوکو په اړه مالومات ترلاسه کول",
+	"apihelp-query+gadgets-example-5": "د هغه ويښيارتوکو لړليک ترلاسه کول چې اوسني کارن چارن‌کړې دي"
+}

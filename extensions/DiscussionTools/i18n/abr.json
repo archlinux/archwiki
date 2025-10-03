@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Yaw tuba"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ma mmuaeɛ",
+	"discussiontools-newtopic-missing-title": "Yɛsrɛ sɛ fa asɛmti bi ma {{GENDER:wo}} nkɔmmɔbɔ asɛmti he.",
+	"discussiontools-newtopic-placeholder-title": "Subject",
+	"discussiontools-replylink": "{{GENDER:|ma mmuaeɛ}}",
+	"discussiontools-replywidget-advanced": "Nea ɛwɔ n'anim",
+	"discussiontools-replywidget-cancel": "Twa mu",
+	"discussiontools-replywidget-mode-source": "Beaɛ bɛ ɛfiri",
+	"discussiontools-replywidget-mode-visual": "Mfoni",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Fa ka ho}} topic",
+	"discussiontools-replywidget-placeholder-newtopic": "Ɛmu nkyerɛkyere mu",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Fa mmuaeɛ}} kɔ ma {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Hwɛ ansa",
+	"discussiontools-replywidget-reply": "{{GENDER:|Ma mmuaeɛ}}",
+	"discussiontools-replywidget-summary": "Tɔfabɔ",
+	"discussiontools-replywidget-watchthis": "Fa simpie yi ka nea [[Special:Watchlist|bɛni wɔ ho]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|nipa|nnipa}} wɔ adwenkyerɛ mu",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ka ho asem|nsɛm ahodoɔ}}",
+	"discussiontools-topicheader-latestcomment": "Mmuaeɛ a foforɔ koraa: $1",
+	"discussiontools-topicsubscription-button-subscribe": "di akyi",
+	"discussiontools-topicsubscription-button-subscribe-label": "Di akyi",
+	"discussiontools-topicsubscription-button-unsubscribe": "nni akyire",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Nni akyire",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:Wo}} bɛnya amanneɛbɔ a ɛfa nsɛm foforɔ a bɛka wɔ saa asɛmti yi mu ho.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Wo}} akyerɛw wo dini!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Wo}} rennya amanneɛbɔ a ɛfa nsɛm foforɔ a bɛ ka wɔ asɛmti yi mu ho bio.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Wo}} eyi wo dini!"
+}

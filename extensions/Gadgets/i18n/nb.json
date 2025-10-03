@@ -64,6 +64,8 @@
 	"gadgets-validate-unknownpages": "Inneholder én eller flere sider uten .js-, .css- eller .json-filendelse. Den/de vil ikke bli brukt.",
 	"gadgets-validate-duplicate": "En annen definisjon av tilleggsfunksjonen $1 ble oppdaget, og skal ignoreres",
 	"gadgets-validate-nopage": "Siden «$1» finnes ikke.",
+	"gadgets-validate-invaliddependencies": "Følgende {{PLURAL:$2|avhengighet|avhengigheter}} mangler: $1.",
+	"gadgets-validate-deprecateddependencies": "Følgende {{PLURAL:$2|avhengighet er utdatert|avhengigheter er utdaterte}}: $1.",
 	"gadgets-supports-urlload": "Denne tilleggsfunksjonen støtter lasting via URL med URL-parameteren <code>?withgadget</code>.",
 	"gadgets-hidden": "Denne tillggsfunksjonen er [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skjult], noe som betyr at den ikke blir vist på innstillingssiden."
 }

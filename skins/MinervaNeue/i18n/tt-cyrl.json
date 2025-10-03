@@ -5,7 +5,8 @@
 			"Don Alessandro",
 			"Ilnur efende",
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"Ильгиз"
 		]
 	},
 	"mobile-frontend-editor-edit": "Үзгәртү",
@@ -13,7 +14,7 @@
 	"mobile-frontend-editor-redlink-create": "Мәкалә ясау",
 	"mobile-frontend-editor-redlink-leave": "Юк, рәхмәт.",
 	"mobile-frontend-history": "Әлеге битнең үзгәртүләр тарихын карау.",
-	"mobile-frontend-home-button": "Баш",
+	"mobile-frontend-home-button": "Баш бит",
 	"mobile-frontend-language-article-heading": "Тел",
 	"mobile-frontend-main-menu-button-tooltip": "Төп менюны ачу",
 	"mobile-frontend-main-menu-contributions": "Кертем",
@@ -26,7 +27,7 @@
 	"mobile-frontend-meta-data-issues-categories": "Бу төркем турында",
 	"mobile-frontend-meta-data-issues-header": "Бит мәсьәләсе",
 	"mobile-frontend-pageaction-edit-tooltip": "Битнең төп бүлеген үзгәртү",
-	"mobile-frontend-placeholder": "{{SITENAME}} эчендә эзләү",
+	"mobile-frontend-placeholder": "{{SITENAME}} эчендә эзлә",
 	"mobile-frontend-random-button": "Очраклы",
 	"mobile-frontend-redirected-from": "«[[$1]]» битеннән юнәлтелде",
 	"mobile-frontend-talk-back-to-filepage": "«$1» файлына кире кайту.",
@@ -39,6 +40,7 @@
 	"mobile-frontend-user-page-member-since": "$1 {{GENDER:$2|кушылды}}",
 	"mobile-frontend-user-page-talk": "Бәхәс",
 	"minerva-user-menu-button": "Кулланучы менюсы",
+	"minerva-page-actions-overflow": "Күбрәк",
 	"minerva-page-actions-language-switcher": "Телләр",
 	"minerva-page-actions-history": "Тарих",
 	"skin-minerva-issue-learn-more": "Күбрәк белү",

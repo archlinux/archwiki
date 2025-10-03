@@ -48,6 +48,7 @@
 	"abusefilter-throttle-ip": "IP-čujottâs",
 	"abusefilter-throttle-user": "kevtteetubdâldâh",
 	"abusefilter-throttle-page": "sijđo",
+	"abusefilter-block-user": "eesti registeristum kevtteid",
 	"abusefilter-edit-history": "Historjá:",
 	"abusefilter-history-foruser": "Kevttee $1 hammiimeh",
 	"abusefilter-history-hidden": "Čiehhum",

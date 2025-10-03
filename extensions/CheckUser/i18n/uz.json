@@ -3,8 +3,11 @@
 		"authors": [
 			"CoderSI",
 			"Jamshiduralovofficial",
-			"Sociologist"
+			"Sociologist",
+			"Nataev"
 		]
 	},
-	"group-checkuser": "Foydalanuvchilarni tekshiruvchilar"
+	"group-checkuser": "Foydalanuvchilarni tekshiruvchilar",
+	"checkuser-global-contributions-link-sidebar": "Global hissasi",
+	"checkuser-ip-auto-reveal-link-sidebar": "IP-adresni avtomatik tarzda koʻrsat"
 }

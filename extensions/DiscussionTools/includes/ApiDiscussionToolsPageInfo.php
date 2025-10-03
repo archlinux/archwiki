@@ -112,6 +112,8 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 			return new ContentThreadItemSet;
 		}
 
+		$this->checkTitleUserPermissions( $title, 'read' );
+
 		if ( !$revision->audienceCan( RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_PUBLIC ) ) {
 			$this->dieWithError( [ 'apierror-missingcontent-revid', $revision->getId() ], 'missingcontent' );
 		}

@@ -37,7 +37,8 @@
 			"WikiBayer",
 			"Wikifan",
 			"Wnme",
-			"Xqt"
+			"Xqt",
+			"PretzelRocky"
 		]
 	},
 	"abusefilter-desc": "Wendet Heuristiken automatisch auf Bearbeitungen an",
@@ -64,7 +65,7 @@
 	"right-abusefilter-modify-restricted": "Missbrauchsfilter mit privilegierten Aktionen bearbeiten",
 	"right-abusefilter-revert": "Alle Bearbeitungen durch einen bestimmten Missbrauchsfilter zurücksetzen",
 	"right-abusefilter-view-private": "Als privat markierte Missbrauchsfilter einsehen",
-	"right-abusefilter-log-private": "Als privat markierte Einträge im Missbrauchsfilter einsehen",
+	"right-abusefilter-log-private": "Logbucheinträge von als privat markierten Missbrauchsfiltern einsehen",
 	"right-abusefilter-hide-log": "Einträge aus dem Missbrauchsfilter-Logbuch ausblenden",
 	"right-abusefilter-hidden-log": "Versteckte Einträge im Missbrauchsfilter-Logbuch einsehen",
 	"right-abusefilter-modify-global": "Globale Missbrauchsfilter erstellen oder verändern",

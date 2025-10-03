@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zulfadli51"
+			"Zulfadli51",
+			"Hakimi97"
 		]
 	},
 	"apihelp-templatedata-summary": "Ambil data yang disimpan oleh pelanjutan DataTemplat.",
-	"apihelp-templatedata-example-1": "Kembalikan DataTemplat untuk [[Template:Stub]] dan [[Template:Example]], dengan hasil jika templat tidak wujud atau wujud namun tiada DataTemplat",
-	"apihelp-templatedata-example-2": "Kembalikan DataTemplat untuk [[Template:Stub]] dan [[Template:Example]], dengan tiada hasil jika templat tidak wujud atau wujud namun tiada DataTemplat",
+	"apihelp-templatedata-example-1": "Kembalikan TemplateData untuk [[Template:Foobar]], dengan hasil jika templat tidak wujud atau wujud tetapi tidak mempunyai TemplateData",
+	"apihelp-templatedata-example-2": "Kembalikan TemplateData untuk [[Templat:Phabricator]], tanpa hasil jika templat tidak wujud atau wujud tetapi tidak mempunyai TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "Kembalikan data tentang tajuk walaupun ia tiada atau tiada TemplateData. Secara lalai, tajuk hanya dikembalikan jika ia wujud dan mempunyai TemplateData.",
 	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Kembalikan data tentang tajuk walaupun ianya hilang atau kekurangan DataTemplat. Secara tersedia (untuk keserasian ke belakang) tajuk hanya dikembalikan jika ianya wujud dan mempunyai DataTemplat.",
 	"apihelp-templatedata-param-lang": "Kembalikan nilai setempat dalam bahasa ini. Secara tersedia semua terjemahan sedia ada dikembalikan.",
 	"apierror-templatedata-corrupt": "Halaman $1 datatemplat mengandungi data tidak sah: $2",

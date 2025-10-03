@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Brettchenweber"
+		]
 	},
 	"editcheck-dialog-action-no": "Nein",
 	"editcheck-dialog-action-yes": "Ja",

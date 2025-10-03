@@ -240,6 +240,42 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 			return;
 		}
 
+		// We compute all lazily loaded variables here, because we want to display all variables in ::showExaminer
+		$varsArray = $this->varManager->dumpAllVars( $vars, true );
+
+		// Filter out any protected variables that the user cannot see. Keep any protected variables that the user
+		// can see. This will unconditionally generate log entries when viewing the examiner that contains protected
+		// variables, as there is no way to specify the variables to select in the RecentChanges examiner.
+		$protectedVariableValuesShown = [];
+		foreach ( $this->afPermManager->getProtectedVariables() as $protectedVariable ) {
+			if ( array_key_exists( $protectedVariable, $varsArray ) ) {
+				// Try each variable at a time, as the user may be able to see some but not all of the
+				// protected variables.
+				$canViewProtectedVariable = $this->afPermManager
+					->canViewProtectedVariables( $this->getAuthority(), [ $protectedVariable ] )->isGood();
+				if ( !$canViewProtectedVariable ) {
+					// Remove protected variables the user cannot see because they didn't specifically ask for them.
+					unset( $varsArray[$protectedVariable] );
+				} else {
+					// Only log if there was a value set. This is to be consistent with
+					// self::showExaminerForLogEntry
+					if ( $varsArray[$protectedVariable] !== null ) {
+						$protectedVariableValuesShown[] = $protectedVariable;
+					}
+				}
+			}
+		}
+		$vars = VariableHolder::newFromArray( $varsArray );
+
+		if ( count( $protectedVariableValuesShown ) ) {
+			$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
+			$logger->logViewProtectedVariableValue(
+				$this->getUser(),
+				$varsArray['user_name'] ?? $varsArray['accountname'],
+				$protectedVariableValuesShown
+			);
+		}
+
 		$out->addJsConfigVars( [
 			'abuseFilterExamine' => [ 'type' => 'rc', 'id' => $rcid ]
 		] );
@@ -302,13 +338,12 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		}
 
 		$vars = $this->varBlobStore->loadVarDump( $row );
-		$varsArray = $this->varManager->dumpAllVars( $vars, true );
 
 		// Check that the user can see the protected variables that are being examined if the filter is protected.
 		$userAuthority = $this->getAuthority();
 		if (
 			$filter->isProtected() &&
-			!$this->afPermManager->canViewProtectedVariables( $userAuthority, array_keys( $varsArray ) )->isGood()
+			!$this->afPermManager->canViewProtectedVariables( $userAuthority, array_keys( $vars->getVars() ) )->isGood()
 		) {
 			$out->addWikiMsg( 'abusefilter-examine-protected-vars-permission' );
 			return;
@@ -322,6 +357,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		// instead only check for access to the protected variables and redact them if the user
 		// shouldn't see them.
 		$protectedVariableValuesShown = [];
+		$varsArray = $this->varManager->dumpAllVars( $vars, $this->afPermManager->getProtectedVariables() );
 		foreach ( $this->afPermManager->getProtectedVariables() as $protectedVariable ) {
 			if ( isset( $varsArray[$protectedVariable] ) ) {
 				// Try each variable at a time, as the user may be able to see some but not all of the

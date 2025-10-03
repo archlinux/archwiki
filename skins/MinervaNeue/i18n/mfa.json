@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Lam Takuma",
-			"Mirlim"
+			"Mirlim",
+			"EmpAhmadK"
 		]
 	},
 	"mobile-frontend-history": "Keléh sjaroh nnyuténg muko ni.",
@@ -10,8 +11,8 @@
 	"mobile-frontend-language-article-heading": "Bahaso",
 	"mobile-frontend-main-menu-login": "Log masók",
 	"mobile-frontend-main-menu-nearby": "Hok ddekak",
-	"mobile-frontend-main-menu-settings": "Tetakpe",
-	"mobile-frontend-placeholder": "Cari dale {{SITENAME}}",
+	"mobile-frontend-main-menu-settings": "Tetakpae",
+	"mobile-frontend-placeholder": "Cari dalae {{SITENAME}}",
 	"mobile-frontend-random-button": "Kók sé",
 	"minerva-page-actions-overflow": "Lagi"
 }

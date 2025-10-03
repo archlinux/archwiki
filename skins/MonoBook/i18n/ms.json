@@ -4,7 +4,8 @@
 			"Anakmalaysia",
 			"Aviator",
 			"Izington",
-			"Pizza1016"
+			"Pizza1016",
+			"Hakimi97"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -16,6 +17,7 @@
 	"monobook-jumptonavigation": "Pergi ke navigasi",
 	"monobook-jumptosearch": "Pergi ke carian",
 	"monobook-more-actions": "Lagi",
+	"cactions-mobile": "Tindakan laman",
 	"monobook-cactions-label": "Pilihan laman",
 	"monobook-notifications-link": "Pemberitahuan $1",
 	"monobook-notifications-link-none": "Pemberitahuan",

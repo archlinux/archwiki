@@ -11,7 +11,8 @@
 			"Ykhwong",
 			"렌즈",
 			"밝은소년",
-			"아라"
+			"아라",
+			"YeBoy371"
 		]
 	},
 	"discussiontools": "토론 도구",
@@ -39,7 +40,7 @@
 	"discussiontools-emptystate-title-user-temp": "{{PAGENAME}}{{GENDER:{{PAGENAME}}|님}}과 토론을 시작하세요",
 	"discussiontools-error-comment-conflict": "다른 사용자가 당신과 동시에 의견을 남겼기 때문에 당신의 의견이 저장되지 않았습니다. 다시 시도하거나, 페이지를 새로고침하여 새 의견을 확인해 주세요.",
 	"discussiontools-error-comment-disappeared": "답변할 의견을 문서에서 찾을 수 없습니다. 해당 의견이 삭제되었거나 다른 문서로 옮겨졌을 수 있습니다.",
-	"discussiontools-error-comment-disappeared-reload": "페이지를 다시 로드한 다음 다시 시도해 주십시오.",
+	"discussiontools-error-comment-disappeared-reload": "페이지를 {{GENDER:|다시 로드}}한 다음 다시 시도해 주십시오.",
 	"discussiontools-error-comment-is-transcluded": "이 의견에 답변하는 데에 \"{{int:discussiontools-replylink}}\" 링크를 사용할 수 없습니다. 답변을 하고자 하신다면 \"$1\"을 클릭하여 전체 위키텍스트 편집기를 이용해 주세요.",
 	"discussiontools-error-comment-is-transcluded-title": "이 의견에 답변하는 데에 \"{{int:discussiontools-replylink}}\" 링크를 사용할 수 없습니다. 의견이 다른 문서에서 로드되고 있습니다. 답변을 하려면 [[$1]] 문서로 이동해 주세요.",
 	"discussiontools-error-comment-not-saved": "{{GENDER:|당신}}의 댓글을 최신 버전의 문서에 게시할 수 없습니다. 최신 변경사항을 보려면 초안 댓글을 복사한 다음 브라우저를 사용하여 페이지를 새로 고치세요.",
@@ -61,6 +62,7 @@
 	"discussiontools-limitreport-timeusage": "DiscussionTools 시간 사용",
 	"discussiontools-limitreport-timeusage-value": "$1{{PLURAL:$1|초}}",
 	"discussiontools-newtopic-missing-title": "토론 주제에 대한 제목을 정해주세요.",
+	"discussiontools-newtopic-missing-title-prompt": "토론 주제에 대한 제목을 지정하지 않았습니다. 제목 없이 주제를 추가하시겠습니까?",
 	"discussiontools-newtopic-placeholder-title": "주제",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "구독",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "이 문서에서 새 주제가 시작될 때 알림을 받기 위해 구독합니다.",
@@ -70,6 +72,8 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "이 문서에 새로운 주제가 시작될 때 알림을 더 이상 받지 않습니다.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "구독을 해지했습니다.",
 	"discussiontools-notification-added-topic-view": "주제 보기",
+	"discussiontools-notification-comment-thank-header": "$1님이 {{GENDER:$4|당신}}의 \"<strong>$3</strong>\"에서의 댓글에 대해 {{GENDER:$2|감사를 표했습니다}}.",
+	"discussiontools-notification-comment-thank-header-compact": "$1님이 {{GENDER:$3|당신}}에게 {{GENDER:$2|감사}}를 표했습니다.",
 	"discussiontools-notification-removed-topic-body": "{{PLURAL:$1|이 주제}}에 관해 더 이상 알림을 받지 않게 됩니다.",
 	"discussiontools-notification-removed-topic-header": "\"<strong>$4</strong>\" 주제는 $3 문서에서 보관 또는 제거되었습니다.",
 	"discussiontools-notification-removed-topic-header-compact": "주제 \"<strong>$4</strong>\"이(가) 보존되거나 제거되었습니다.",

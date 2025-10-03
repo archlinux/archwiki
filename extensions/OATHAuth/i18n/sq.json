@@ -1,9 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Liridon"
+			"Liridon",
+			"Xhulianoo"
 		]
 	},
 	"oathauth-account": "Emri i llogarisë",
-	"oathauth-auth-ui": "Ju lutemi shkruani kodin e verifikimit tuaj nga pajisje të legalizuara"
+	"oathauth-prefs-label": "Vërtetimi me dy faktorë:",
+	"oathauth-auth-ui": "Ju lutemi shkruani kodin e verifikimit tuaj nga pajisje të legalizuara",
+	"oathauth-ui-no-module": "Asnjë i aktivizuar",
+	"oathauth-ui-manage": "Menaxho",
+	"oathmanage": "Menaxho vërtetimin me dy faktorë"
 }

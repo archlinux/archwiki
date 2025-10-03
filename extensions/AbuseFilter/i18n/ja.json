@@ -53,7 +53,8 @@
 			"もなー(偽物)",
 			"春春眠眠",
 			"青子守歌",
-			"Foomin10"
+			"Foomin10",
+			"Shulmj"
 		]
 	},
 	"abusefilter-desc": "編集操作の監視機能を追加する",
@@ -450,10 +451,10 @@
 	"abusefilter-edit-builder-vars-movedto-last-edit-age": "最後の移動先ページの編集からの経過期間 (秒) ($1)",
 	"abusefilter-edit-builder-vars-user-editcount": "利用者の編集回数 ($1)",
 	"abusefilter-edit-builder-vars-user-age": "利用者アカウントの登録期間 ($1)",
-	"abusefilter-edit-builder-vars-user-unnamed-ip": "利用者アカウントの IP (匿名利用者と臨時アカウントのみ) ($1)",
+	"abusefilter-edit-builder-vars-user-unnamed-ip": "利用者アカウントの IP (匿名利用者と仮アカウントのみ) ($1)",
 	"abusefilter-edit-builder-vars-user-name": "利用者のアカウント名 ($1)",
 	"abusefilter-edit-builder-vars-user-type": "利用者アカウントの種類 ($1)",
-	"abusefilter-edit-builder-vars-user-groups": "利用者が属するグループ (暗黙的なものも含む) ($1)",
+	"abusefilter-edit-builder-vars-user-groups": "利用者が属するグループ (自動追加分も含む) ($1)",
 	"abusefilter-edit-builder-vars-user-rights": "利用者が持つ権限 ($1)",
 	"abusefilter-edit-builder-vars-user-blocked": "利用者がブロックされているかどうか ($1)",
 	"abusefilter-edit-builder-vars-user-emailconfirm": "メールアドレスを確認した時刻 ($1)",

@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"NikolasKHF"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Bales",
+	"discussiontools-newtopic-missing-title": "Béng judul juq topik gundeman {{GENDER:|side}}.",
+	"discussiontools-newtopic-placeholder-title": "Subjék",
+	"discussiontools-replylink": "{{GENDER:|bales}}",
+	"discussiontools-replywidget-advanced": "Lebihan",
+	"discussiontools-replywidget-cancel": "Ndéq jari",
+	"discussiontools-replywidget-mode-source": "Sumber",
+	"discussiontools-replywidget-mode-visual": "Ruen",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Romboq}} raosan",
+	"discussiontools-replywidget-placeholder-newtopic": "Déskripsi",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Bales}} juq {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Pragitaq",
+	"discussiontools-replywidget-reply": "{{GENDER:|Bales}}",
+	"discussiontools-replywidget-summary": "Ringkesan",
+	"discussiontools-replywidget-watchthis": "Romboq halaman ni juq [[Special:Watchlist|daptar lingoqanm]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|dengan}} léq gundeman ni",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komentar}}",
+	"discussiontools-topicheader-latestcomment": "Gundeman haq terakhir: $1",
+	"discussiontools-topicsubscription-button-subscribe": "pasuh",
+	"discussiontools-topicsubscription-button-subscribe-label": "Pasuh",
+	"discussiontools-topicsubscription-button-unsubscribe": "betelah pasuh",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Betelah pasuh",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Side}} tebéng naon baréh lamun araq gundeman baru léq ti.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Side}} wah bepasuh!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Side}} ndéq tebéng naon maliq lamun araq gundeman baru léq ti.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Side}} wah betelah bepasuh."
+}

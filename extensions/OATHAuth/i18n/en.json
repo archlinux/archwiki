@@ -51,7 +51,10 @@
 	"oathauth-auth-token-label": "Two-factor token or recovery code",
 	"oathauth-auth-token-help": "The one-time password used as the second factor of two-factor authentication.",
 	"oathauth-auth-token-help-ui": "Enter either a code from your authentication device, or a recovery code",
-	"oathauth-auth-ui": "Please enter a code from your two-factor authentication application (such as [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] or [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Please enter a code from your two-factor authentication application (such as [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] or [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-label": "Switch to a different authentication method",
+	"oathauth-auth-switch-module-help": "Set <code>newModule</code> to the name of the new module to get a new challenge from a different 2FA module. Leave empty if you are answering the current challenge.",
+	"oathauth-auth-switch-module-keep": "(do not switch)",
 	"oathauth-throttled": "Too many verification attempts! Please wait $1.",
 	"oathauth-login-failed": "Verification failed.",
 	"oathauth-describe-provider": "Two-factor authentication (OATH).",
@@ -112,5 +115,6 @@
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Your membership}} in {{PLURAL:$1|this group|these groups}} is disabled until you enable [[Special:Manage Two-factor authentication|two-factor authentication]].",
 	"oathauth-qrcode-alt": "Scannable QR code representing the secret key.",
 	"oathauth-hint": "Don't have access to your device or application? You can enter recovery codes (presented when you enabled 2FA) in this field.",
-	"oathauth-must-be-central": "{{GENDER:$1|Your account}} must linked to the central authentication system to use two-factor authentication."
+	"oathauth-must-be-central": "{{GENDER:$1|Your account}} must linked to the central authentication system to use two-factor authentication.",
+	"oathauth-error-multiple-modules": "For now, using multiple 2FA authentication methods is not supported. You can only enable $1 after disabling $2."
 }

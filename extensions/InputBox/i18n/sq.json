@@ -3,7 +3,8 @@
 		"authors": [
 			"Dori",
 			"Klein Muçi",
-			"Olsi"
+			"Olsi",
+			"Xhulianoo"
 		]
 	},
 	"inputbox-desc": "Lejoni përfshirjen e formave HTML të paracaktuara",
@@ -13,7 +14,7 @@
 	"inputbox-searchfulltext": "Kërkoni tekstin e plotë",
 	"inputbox-createarticle": "Krijoni faqen",
 	"inputbox-movearticle": "Lëvizni faqen",
-	"inputbox-postcomment": "Shtoni një pjesë të re",
-	"inputbox-postcommenttitle": "Shtoni një pjesë të re",
+	"inputbox-postcomment": "Pjesë e re",
+	"inputbox-postcommenttitle": "Pjesë e re",
 	"inputbox-ns-main": "Kryesor"
 }

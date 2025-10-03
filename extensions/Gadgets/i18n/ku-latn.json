@@ -5,7 +5,8 @@
 			"Bikarhêner",
 			"George Animal",
 			"Ghybu",
-			"Gomada"
+			"Gomada",
+			"Guherto"
 		]
 	},
 	"prefs-gadgets": "Amûr",
@@ -13,7 +14,7 @@
 	"special-gadgets": "Amûr",
 	"gadgets-title": "Amûr",
 	"gadgets-uses": "Bikaranîn",
-	"gadgets-required-rights": "{{PLURAL:$2|Mafa|Mafên}} di dorê de pêwîst in:\n\n$1",
+	"gadgets-required-rights": "Ev {{PLURAL:$2|heq}} jê re lazim {{PLURAL:$2|e|in}}: $1",
 	"gadgets-export": "Derxe",
 	"gadgets-not-found": " Gadget \"$1\" nehate dîtin.",
 	"gadgets-export-download": "Daxe"

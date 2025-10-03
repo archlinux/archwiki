@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hamilton Abreu"
+			"Hamilton Abreu",
+			"Mansil alfalb",
+			"BraunOBruno"
 		]
 	},
 	"editcheck-dialog-action-no": "Não",
@@ -16,6 +18,8 @@
 	"editcheck-dialog-addref-success-notify": "Obrigado por acrescentar uma citação!",
 	"editcheck-dialog-addref-title": "Adicionar uma citação",
 	"editcheck-dialog-title": "Antes de publicar",
+	"editcheck-copyvio-title": "Conteúdo colado",
+	"editcheck-review-title": "Rever alterações",
 	"tag-editcheck-reference-decline-common-knowledge": "Verificação de Edições (referências) recusada (conhecimento comum)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "A referência da Verificação de Edições foi recusada como conhecimento comum",
 	"tag-editcheck-reference-decline-irrelevant": "Verificação de Edições (referências) recusada (irrelevante)",

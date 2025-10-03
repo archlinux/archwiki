@@ -46,5 +46,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "האירוע $1 $2 ישן מכדי לאפשר לרשם נתוני רמז לקוח",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "מזהה של $1 שמספרו $2 אינו קיים",
 	"checkuser-api-useragent-clienthints-explanation": "אתר {{SITENAME}} אוסף נתוני רמז לקוח סוכן משתמש (user-agent client hint data) כדי לסייע בהפחתת השחתה ושימוש לרעה. ר' https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints לפרטים נוספים.",
-	"apihelp-logout-param-checkuserclienthints": "נתוני רמז לקח מסופקים יחד עם בקשות ל־ApiLogout. לשימוש פנימי בלבד."
+	"apihelp-logout-param-checkuserclienthints": "נתוני רמז לקח מסופקים יחד עם בקשות ל־ApiLogout. לשימוש פנימי בלבד.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "תוקף החשיפה האוטומטית שסופק אינו תקין.",
+	"checkuser-ip-auto-reveal-missing-permission": "אין לך את ההרשאה הנדרשת לשימוש בחשיפת IP אוטומטית."
 }

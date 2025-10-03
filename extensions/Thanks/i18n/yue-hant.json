@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"H78c67c",
-			"Winston Sung"
+			"Winston Sung",
+			"Ktchankt",
+			"Yueman"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|多謝}}}}",
@@ -12,5 +14,19 @@
 	"thanks-error-undefined": "多謝失敗（錯誤代碼：$1）。麻煩再試多次。",
 	"thanks-error-invalidrevision": "錯嘅版本號",
 	"thanks-thank-tooltip": "{{GENDER:$1|送}}封多謝信畀呢位{{GENDER:$2|用戶}}",
-	"echo-category-title-edit-thank": "人哋嘅多謝"
+	"thanks-confirmation2": "真係要公開{{GENDER:$1|多謝}}？",
+	"thanks-thanked-notice": "{{GENDER:$3|你}}多謝咗{{GENDER:$2|$1}}。",
+	"echo-pref-tooltip-edit-thank": "有人多謝我做嘅修改嗰陣話我知。",
+	"echo-category-title-edit-thank": "人哋嘅多謝",
+	"notification-header-rev-thank": "$1{{GENDER:$2|多謝咗}}{{GENDER:$4|你}}對<strong>$3</strong>嘅編輯。",
+	"notification-header-creation-thank": "$1{{GENDER:$2|多謝咗}}{{GENDER:$4|你}}對<strong>$3</strong>嘅開版。",
+	"notification-header-log-thank": "$1{{GENDER:$2|多謝咗}}{{GENDER:$4|你}}對<strong>$3</strong>嘅相關操作。",
+	"notification-compact-header-edit-thank": "$1{{GENDER:$2|多謝咗}}{{GENDER:$3|你}}。",
+	"notification-bundle-header-rev-thank": "有{{PLURAL:$1|1個人|$1個人|100=99+個人}}多謝咗 {{GENDER:$3|你}}對<strong>$2</strong>嘅編輯。",
+	"notification-bundle-header-log-thank": "有{{PLURAL:$1|1個人|$1個人|100=99+個人}}多謝咗 {{GENDER:$3|你}}對<strong>$2</strong>嘅相關操作。",
+	"logentry-thanks-thank": "$1{{GENDER:$2|多謝咗}}{{GENDER:$4|$3}}。",
+	"flow-thanks-thanked-notice": "{{GENDER:$3|你}}多謝咗$1{{GENDER:$2|嘅}}留言。",
+	"notification-header-flow-thank": "$1 {{GENDER:$2|多謝咗}}{{GENDER:$5|你}}喺「<strong>$3</strong>」嘅留言。",
+	"notification-compact-header-flow-thank": "$1{{GENDER:$2|多謝咗}}{{GENDER:$3|你}}。",
+	"notification-bundle-header-flow-thank": "有{{PLURAL:$1|1個人|$1個人|100=99+個人}}多謝咗 {{GENDER:$3|你}}喺「<strong>$2</strong>」嘅留言。"
 }

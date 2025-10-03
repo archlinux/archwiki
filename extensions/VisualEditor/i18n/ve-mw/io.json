@@ -53,6 +53,7 @@
 	"visualeditor-dialog-meta-advancedsettings-section": "Specala figurizo",
 	"visualeditor-dialog-meta-categories-category": "Kategorio",
 	"visualeditor-dialog-meta-categories-data-label": "Kategorii",
+	"visualeditor-dialog-meta-categories-defaultsort-help": "Vu povas modifikar quale ca pagino ordinesas kande montrata en kategorio, establisanta diferanta indexo por ordinar ol. To ofte facesas por ke pagini pri personi klasifikesez segun surnomo, malgre ke la nomo montresas avane, en la titulo.",
 	"visualeditor-dialog-meta-categories-hidden": "Ica kategorio ne montresos en pagini a qui ol adjuntesas.",
 	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Celita kategorii",
 	"visualeditor-dialog-meta-categories-input-matchingcategorieslabel": "Konkordanta kategorii",

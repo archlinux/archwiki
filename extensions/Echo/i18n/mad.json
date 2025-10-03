@@ -5,7 +5,7 @@
 			"Munajad.MH"
 		]
 	},
-	"echo-desc": "Sistem pratèla ḍâ' pangangghuy taghâut lajhing bân pokpara",
+	"echo-desc": "Sistem ka'angghuy martèla pangangghuy bhâb kagiyâdhân bân pessen",
 	"prefs-echo": "Pamratèla'an",
 	"prefs-description-echo": "Pèlè notifikasi ka'emma sè {{GENDER:|Abâ'na}} ka'anḍi' bân tarèka sobhâna.",
 	"prefs-emailsettings": "Opsi sorasa",
@@ -33,7 +33,7 @@
 	"echo-pref-dont-email-read-notifications": "Jhâ' sareng'aghi pamartèla kamaos ḍâlem sorasa panotèng",
 	"echo-learn-more": "Ladru abibârân",
 	"echo-log": "Cateṭṭan publik",
-	"echo-new-messages": "Abâ'na anḍi' lajhing anyar neng pelataran pakanḍhâ'ân",
+	"echo-new-messages": "Bâ'na anḍi' sèttong pessen anyar è kaca Pakanḍhâ'ân",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Pranala}} pelataran",
 	"echo-category-title-reverted": "{{PLURAL:$1|Pangambâliân}} beccè'an",
 	"echo-category-title-mention-failure": "{{PLURAL:$1|sebbhutan}} burung",

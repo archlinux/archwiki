@@ -7,11 +7,12 @@
 		]
 	},
 	"hcaptcha-desc": "ConfirmEdit的[https://www.hcaptcha.com/ hCaptcha]模块",
-	"hcaptcha-edit": "为保护wiki免于自动化编辑破坏，我们恳请您输入下面的hCaptcha验证码：",
-	"hcaptcha-addurl": "您的编辑包含新的外部链接。为保护wiki免于自动化破坏，我们恳请您输入下面的验证码：",
-	"hcaptcha-badlogin": "为保护wiki免于自动化密码破解，我们希望您输入下面的hCaptcha验证码：",
-	"hcaptcha-createaccount": "为保护wiki免于自动化账户创建，我们恳请您输入下面的hCaptcha验证码：",
-	"hcaptcha-createaccount-fail": "看起来您未输入正确的hCaptcha验证码。",
-	"hcaptcha-create": "为保护wiki免于自动化页面创建，我们恳请您输入下面的hCaptcha验证码：",
-	"hcaptcha-help": "请解决hCaptcha验证码挑战，并将响应值作为captchaWord返回。"
+	"hcaptcha-edit": "为保护wiki免于自动化编辑破坏，我们恳请您通过以下hCaptcha验证：",
+	"hcaptcha-addurl": "您的编辑包含新的外部链接。为保护wiki免于自动化破坏，我们恳请您通过以下hCaptcha验证：",
+	"hcaptcha-badlogin": "为保护wiki免于自动化密码破解，我们恳请您通过以下hCaptcha验证：",
+	"hcaptcha-createaccount": "为保护wiki免于自动化账户创建，我们恳请您通过以下hCaptcha验证：",
+	"hcaptcha-createaccount-fail": "看起来您未能通过hCaptcha验证。",
+	"hcaptcha-create": "为保护wiki免于自动化页面创建，我们恳请您通过以下hCaptcha验证：",
+	"hcaptcha-help": "请通过hCaptcha验证问题，并将响应值作为captchaWord返回。",
+	"hcaptcha-privacy-policy": "本站受hCaptcha保护，并适用其[https://www.hcaptcha.com/privacy 隐私政策]和[https://www.hcaptcha.com/terms 服务条款]。"
 }

@@ -23,7 +23,8 @@
 			"Vlad5250",
 			"WindEwriX",
 			"Александр Сигачёв",
-			"Лилиә"
+			"Лилиә",
+			"Vonavy"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -45,9 +46,9 @@
 	"gadgets-editdescription": "Править описание",
 	"gadgets-viewdescription": "Просмотр описания",
 	"gadgets-uses": "Использует",
-	"gadgets-required-rights": "{{PLURAL:$2|1=Требуется право|Требуются права}}:\n\n$1",
+	"gadgets-required-rights": "{{PLURAL:$2|1=Требуется право|Требуются права}}: $1.",
 	"gadgets-required-skins": "Доступен в {{PLURAL:$2|1=теме оформления «$1»|следующих темах оформления: $1}}.",
-	"gadgets-required-actions": "Ограничен {{PLURAL:$2|1=действием страницы <code>$1</code>|следующими действиями страницы: <code>$1</code>}}.",
+	"gadgets-required-actions": "Ограничен {{PLURAL:$2|1=действием со страницей «$1»|следующими действиями со страницей: $1}}.",
 	"gadgets-required-namespaces": "Ограничен {{PLURAL:$2|1=пространством имён «$1»|следующими пространствами имён: $1}}.",
 	"gadgets-required-categories": "Ограничен {{PLURAL:$2|1=категорией «$1»|следующими категориями: $1}}.",
 	"gadgets-required-contentmodels": "Ограничен {{PLURAL:$2|1=моделью содержимого «$1»|следующими моделями содержимого: $1}}.",
@@ -82,5 +83,8 @@
 	"gadgets-validate-unknownpages": "Содержит одну или больше страниц без суффиксов .js, .css или .json. Они не будут использованы.",
 	"gadgets-validate-duplicate": "Найдено повторное определение гаджета $1, оно будет проигнорировано.",
 	"gadgets-validate-nopage": "Страница «$1» не существует.",
-	"gadgets-supports-urlload": "Гаджет поддерживает загрузку с использованием параметра <code>?withgadget</code> в URL."
+	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Отсутствует зависимость|Отсутствуют следующие зависимости}}: $1",
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Зависимость устарела|Следующие зависимости устарели}}: $1",
+	"gadgets-supports-urlload": "Гаджет поддерживает загрузку с использованием параметра <code>?withgadget</code> в URL.",
+	"gadgets-hidden": "Этот гаджет [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden скрыт]. Это означает, что он не будет отображаться на странице настроек."
 }

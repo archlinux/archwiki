@@ -1,8 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hasslaebetch"
+			"Hasslaebetch",
+			"Alidu Yakubu",
+			"Yakubu Hami"
 		]
 	},
-	"discussiontools-replywidget-cancel": "N-bubu"
+	"discussiontools-replylink": "{{GENDER:|nyɛ bɔŋ-bɔŋ}}",
+	"discussiontools-replywidget-advanced": "N-tiŋmɔ kpahiŋ kpahiŋ",
+	"discussiontools-replywidget-cancel": "N-bubu",
+	"discussiontools-replywidget-mode-source": "Dɛɛr kpɛɛli",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Add}} Ŋɔ kpɛɛli",
+	"discussiontools-replywidget-placeholder-newtopic": "Wuɔm na",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} to {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Nyɛ bɔŋ-bɔŋ",
+	"discussiontools-replywidget-reply": "{{GENDER:|Labɛ wuɔm}}",
+	"discussiontools-replywidget-summary": "N-naat kpɛla",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|person people}} Ŋɔ kpɛɛli ŋunŋmɛ",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL\n:$1|Wuɔm bu|Wuɔm bu naŋa}}",
+	"discussiontools-topicsubscription-button-subscribe": "Dɛɛr kpɛɛli",
+	"discussiontools-topicsubscription-button-subscribe-label": "Dɛɛr kpɛɛli",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Kpihiŋ kpɛla",
+	"discussiontools-topicsubscription-notify-subscribed-body": "A ŋunŋmɛ kpɛɛli ŋɔ naabu ŋunŋmɛ",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|You}} A ŋunŋmɛ ŋɔ na",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:||You}}  ŋunŋmɛ bu ŋunŋmɛ ŋɔ naabu.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} A bu kpɛɛli na"
 }

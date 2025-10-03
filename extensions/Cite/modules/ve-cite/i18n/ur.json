@@ -7,7 +7,8 @@
 			"Syedalinaqinaqvi",
 			"عثمان خان شاہ",
 			"عرفان ارشد",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"BukhariSaeed"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "کتاب",
@@ -15,6 +16,7 @@
 	"visualeditor-cite-tool-name-news": "خبر",
 	"visualeditor-cite-tool-name-web": "ویب سائٹ",
 	"cite-ve-citationneeded-button": "حوالہ درج کریں",
+	"cite-ve-dialog-reference-editing-reused-long": "جناب! یہ حوالہ اس صفحہ پر {{PLURAL:$1|ایک دفعہ|2=دو دفعہ|$1 دفعہ}} استعمال ہوا ہے۔ یہاں کی جانے والی تبدیلیاں اُن تمام جگہوں پر لاگو ہوں گی جہاں یہ حوالہ دوبارہ استعمال ہوا ہے۔",
 	"cite-ve-dialog-reference-options-group-label": "اس گروہ کو استعمال کریں",
 	"cite-ve-dialog-reference-options-group-placeholder": "عمومی حوالہ جات",
 	"cite-ve-dialog-reference-options-section": "اختیارات",

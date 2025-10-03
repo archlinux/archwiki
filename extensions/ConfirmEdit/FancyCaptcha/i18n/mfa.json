@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mirlim"
+			"Mirlim",
+			"EmpAhmadK"
 		]
 	},
-	"fancycaptcha-captcha": "Preksoe keslamakte",
-	"fancycaptcha-accountcreate": "Nok lindóng wiki ni dari bbukok ekaung scaro autometik, demo keno isi pekatoe-pekatoe bbowoh dale kotok hok nyo age ([[Special:Captcha/help|maklumak prabih]]):",
-	"fancycaptcha-imgcaptcha-ph": "Mmasók tulise hok demo keléh dale gamba",
+	"fancycaptcha-captcha": "Preksoae keslamaktae",
+	"fancycaptcha-accountcreate": "Nok lindóng wiki ni dari bbukok èkaung scaro otomètik, dèmo keno isi pekatoae-pekatoae bbowoh dalae kotok hok nyo agae ([[Special:Captcha/help|maklumak prabih]]):",
+	"fancycaptcha-imgcaptcha-ph": "Mmasók tulisae hok dèmo keléh dalae gamba",
 	"fancycaptcha-reload-text": "Sega smula"
 }

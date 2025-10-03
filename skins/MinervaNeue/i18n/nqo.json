@@ -43,13 +43,15 @@
 	"mobile-frontend-user-page-talk": "ߞߎߡߊ߫",
 	"minerva-user-menu-button": "ߟߊ߬ߓߊ߰ߙߊ߬ߟߊ ߟߊ߫ ߢߣߊߕߊߟߌ",
 	"minerva-user-navigation": "ߟߊ߬ߓߊ߰ߙߊ߬ߟߊ ߟߊ߫ ߛߏ߲߯ߓߊߟߌ",
+	"minerva-page-actions-editfull": "ߞߐߜߍ ߡߎ߰ߡߍ ߡߊߦߟߍ߬ߡߊ߲߫",
 	"minerva-page-actions-overflow": "ߡߊ߬ߞߊ߬ߝߏ߬ ߜߘߍ ߟߎ߬",
 	"minerva-page-actions-language-switcher": "ߞߊ߲ ߠߎ߬",
 	"minerva-page-actions-history": "ߘߐ߬ߝߐ",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|ߘߊߘߐߖߊߥߏ]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue]",
 	"minerva-skin-desc": "ߝߊߘߌߦߊߓߐ߫ ߘߏ߫ ߟߊߞߎߣߎ߲ߣߍ߲߫ ߦߋ߫ mobile ߢߍ߫",
 	"skin-minerva-issue-learn-more": "ߘߏߜߘߍ߫ ߟߎ߫ ߘߐߞߊ߬ߙߊ߲߬",
 	"skin-minerva-mobile-option-MinervaShowCategories": "ߦߌߟߡߊ ߟߎ߬",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "ߞߐߜߍ ߟߎ߬ ߦߌߟߡߊ ߟߎ߬ ߦߋ߫",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "ߞߏ߬ߣߌ߲߬ ߥߊߦߌߞߊ߫߸ ߞߐߜߍ ߞߐߝߟߌ ߟߎ߬ ߘߟߊߘߍ߯ߟߌ ߕߍ߫ ߜߋߟߋ߲ߜߋߟߋ߲ ߠߊ߫. ߣߌ߫ ߞߐߜߍ ߟߎ߬ ߘߟߊߘߍ߰ ߞߙߎ ߡߊ ߗߋߘߊ ߞߊߘߴߌ ߢߍ߫߸ ߕߊ߯ ߓߐ߫ ߕߟߋ߬ߓߊ߮ ߓߟߐߟߐ߫ ߞߍߦߙߐ ߞߊ߲߬ ߖߊ߰ߣߌ߲߫."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "ߞߏ߬ߣߌ߲߬ ߥߊߦߌߞߊ߫߸ ߞߐߜߍ ߞߐߝߟߌ ߟߎ߬ ߘߟߊߘߍ߯ߟߌ ߕߍ߫ ߜߋߟߋ߲ߜߋߟߋ߲ ߠߊ߫. ߣߌ߫ ߞߐߜߍ ߟߎ߬ ߘߟߊߘߍ߰ ߞߙߎ ߡߊ ߗߋߘߊ ߞߊߘߴߌ ߢߍ߫߸ ߕߊ߯ ߓߐ߫ ߕߟߋ߬ߓߊ߮ ߓߟߐߟߐ߫ ߞߍߦߙߐ ߞߊ߲߬ ߖߊ߰ߣߌ߲߫.",
+	"skin-minerva-night-mode-unavailable": "ߞߐߜߍ ߦߋ߫ ߝߊ߬ߘߌ߬ ߜߍߡߊ߲ ߘߐߙߐ߲߫ ߠߋ߬ ߘߐ߫."
 }

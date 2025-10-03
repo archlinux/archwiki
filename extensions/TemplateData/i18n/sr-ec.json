@@ -119,5 +119,9 @@
 	"templatedata-modal-title-templateformatstring": "Ниска прилагођеног формата",
 	"templatedata-modal-title-templateparam-details": "Детаљи параметра: $1",
 	"templatedata-modal-title-templateparams": "Параметри шаблона",
-	"templatedata-search-list-header": "Омиљено"
+	"templatedata-search-list-header": "Омиљено",
+	"templatedata-favorite-add": "Додај шаблон у омиљене",
+	"templatedata-favorite-added": "Шаблон додат у омиљене",
+	"templatedata-favorite-remove": "Уклони шаблон из омиљених",
+	"templatedata-favorite-removed": "Шаблон уклоњен из омиљених"
 }

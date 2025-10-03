@@ -139,7 +139,7 @@ class PreliminaryCheckPager extends TablePager {
 			case 'name':
 				// Hide the username if it is hidden from the current authority.
 				if ( $userIsHidden ) {
-					$formatted = $this->msg( 'rev-deleted-user' )->text();
+					$formatted = $this->msg( 'rev-deleted-user' )->escaped();
 				} else {
 					$formatted = htmlspecialchars( $value );
 				}
@@ -164,7 +164,7 @@ class PreliminaryCheckPager extends TablePager {
 						$wiki->getDisplayName()
 					);
 				} else {
-					$formatted = $this->msg( 'checkuser-investigate-preliminary-table-cell-wiki-nowiki' )->text();
+					$formatted = $this->msg( 'checkuser-investigate-preliminary-table-cell-wiki-nowiki' )->escaped();
 				}
 				break;
 			case 'editcount':

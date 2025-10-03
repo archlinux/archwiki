@@ -11,5 +11,6 @@
 	"vector-view-history": "看歷史",
 	"vector-more-actions": "閣看",
 	"vector-searchsuggest-containing": "搜揣有<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>的頁",
-	"vector-page-tools-label": "家私"
+	"vector-page-tools-label": "家私",
+	"vector-page-tools-actions-label": "操作"
 }

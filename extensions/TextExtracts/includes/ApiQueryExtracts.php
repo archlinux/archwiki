@@ -80,6 +80,15 @@ class ApiQueryExtracts extends ApiQueryBase {
 		}
 		$isXml = $this->getMain()->isInternalMode()
 			|| $this->getMain()->getPrinter()->getFormat() == 'XML';
+		foreach ( $titles as $id => $t ) {
+			if ( !$this->getAuthority()->authorizeRead( 'read', $t ) ) {
+				$this->addWarning( [
+					'apierror-cannotviewtitle',
+					wfEscapeWikiText( $this->titleFormatter->getPrefixedText( $t ) )
+				] );
+				unset( $titles[$id] );
+			}
+		}
 		$result = $this->getResult();
 		$params = $this->params = $this->extractRequestParams();
 		$this->requireMaxOneParameter( $params, 'chars', 'sentences' );

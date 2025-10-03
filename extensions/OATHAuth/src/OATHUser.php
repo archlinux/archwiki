@@ -18,9 +18,7 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use InvalidArgumentException;
 use MediaWiki\User\UserIdentity;
-use ReflectionClass;
 
 /**
  * Class representing a user from OATH's perspective
@@ -33,7 +31,6 @@ class OATHUser {
 
 	/** @var IAuthKey[] */
 	private array $keys = [];
-	private ?IModule $module = null;
 
 	/**
 	 * Constructor. Can't be called directly. Use OATHUserRepository::findByUser instead.
@@ -85,15 +82,38 @@ class OATHUser {
 	}
 
 	/**
-	 * Set the key associated with this user.
-	 *
-	 * @param IAuthKey[] $keys
+	 * @param string $moduleName As in IModule::getName().
+	 * @return IAuthKey[]
 	 */
-	public function setKeys( array $keys = [] ) {
-		$this->keys = [];
-		foreach ( $keys as $key ) {
-			$this->addKey( $key );
-		}
+	public function getKeysForModule( string $moduleName ): array {
+		return array_values(
+			array_filter(
+				$this->keys,
+				static fn ( IAuthKey $key ) => $key->getModule() === $moduleName
+			)
+		);
+	}
+
+	public function removeKey( IAuthKey $key ) {
+		$keyId = $key->getId();
+		$this->keys = array_values(
+			array_filter(
+				$this->keys,
+				static fn ( IAuthKey $key ) => $key->getId() !== $keyId
+			)
+		);
+	}
+
+	/**
+	 * @param string $moduleName As in IModule::getName()
+	 */
+	public function removeKeysForModule( string $moduleName ): void {
+		$this->keys = array_values(
+			array_filter(
+				$this->keys,
+				static fn ( IAuthKey $key ) => $key->getModule() !== $moduleName
+			)
+		);
 	}
 
 	/**
@@ -102,7 +122,6 @@ class OATHUser {
 	 * @param IAuthKey $key
 	 */
 	public function addKey( IAuthKey $key ) {
-		$this->checkKeyTypeCorrect( $key );
 		$this->keys[] = $key;
 	}
 
@@ -113,17 +132,12 @@ class OATHUser {
 	 * @deprecated Use {@link IAuthKey::getModule()} instead
 	 */
 	public function getModule() {
-		return $this->module;
-	}
-
-	/**
-	 * Sets the module instance associated with this user
-	 *
-	 * @param IModule|null $module
-	 * @internal
-	 */
-	public function setModule( ?IModule $module = null ) {
-		$this->module = $module;
+		wfDeprecated( 'OATHUser::getModule()', '1.44', 'OATHAuth' );
+		if ( !$this->keys ) {
+			return null;
+		}
+		$key = $this->keys[0];
+		return OATHAuthServices::getInstance()->getModuleRegistry()->getModuleByKey( $key->getModule() );
 	}
 
 	/**
@@ -138,24 +152,5 @@ class OATHUser {
 	 */
 	public function disable() {
 		$this->keys = [];
-		$this->module = null;
-	}
-
-	/**
-	 * All keys set for the user must be of the same type
-	 * @param IAuthKey $key
-	 */
-	private function checkKeyTypeCorrect( IAuthKey $key ): void {
-		$newKeyClass = get_class( $key );
-		foreach ( $this->keys as $keyToTest ) {
-			if ( get_class( $keyToTest ) !== $newKeyClass ) {
-				$first = ( new ReflectionClass( $keyToTest ) )->getShortName();
-				$second = ( new ReflectionClass( $key ) )->getShortName();
-
-				throw new InvalidArgumentException(
-					"User already has a key from a different two-factor module enabled ($first !== $second)"
-				);
-			}
-		}
 	}
 }

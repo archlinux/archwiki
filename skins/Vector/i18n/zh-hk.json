@@ -5,7 +5,8 @@
 			"LuciferianThomas",
 			"StarrySky",
 			"Winston Sung",
-			"Wxyveronica"
+			"Wxyveronica",
+			"Lakejason0"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1}} 種語言",
@@ -15,5 +16,5 @@
 	"vector-view-view": "閱讀",
 	"vector-more-actions": "更多",
 	"vector-toc-label": "目次",
-	"vector-toc-beginning": "序言"
+	"vector-toc-beginning": "首段"
 }

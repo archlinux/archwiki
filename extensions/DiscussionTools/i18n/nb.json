@@ -130,7 +130,7 @@
 	"discussiontools-replywidget-abandontopic-keep": "Fortsett å skrive",
 	"discussiontools-replywidget-advanced": "Avansert",
 	"discussiontools-replywidget-anon-warning": "<strong>Du er ikke innlogget.</strong> For å få varsel når noen svarer og for å bli kreditert med navnet ditt i stedet for IP-adressa di kan du [$1 logge inn] eller [$2 opprette en konto].",
-	"discussiontools-replywidget-autocreate-warning": "<strong>Du er ikke logget inn.</strong> Når du gjør en redigering blir en midlertidig konto opprettet for deg. [[$3|Lør mer]]. [$1 Logg inn] eller [$2 opprett en konto] for å bli varslet når noen svarer etter at denne kontoen utløper, og for å få tilgang til flere funksjoner.",
+	"discussiontools-replywidget-autocreate-warning": "<strong>Du er ikke logget inn.</strong> Når du gjør en redigering blir en midlertidig konto opprettet for deg. [[$3|Lær mer]]. [$1 Logg inn] eller [$2 opprett en konto] for å bli varslet når noen svarer etter at denne kontoen utløper, og for å få tilgang til flere funksjoner.",
 	"discussiontools-replywidget-cancel": "Avbryt",
 	"discussiontools-replywidget-feedback": "{{GENDER:|Gi}} tilbakemelding på denne funksjonen",
 	"discussiontools-replywidget-feedback-link": "https://www.mediawiki.org/wiki/Talk:Talk_pages_project/Replying",

@@ -6,7 +6,8 @@
 			"Li-sung",
 			"LordMsz",
 			"Matěj Suchánek",
-			"Mormegil"
+			"Mormegil",
+			"WikipedistaOndra"
 		]
 	},
 	"categorytree": "Strom kategorií",
@@ -36,5 +37,6 @@
 	"categorytree-no-pages": "žádné články ani podkategorie.",
 	"categorytree-not-found": "Kategorie <em>$1</em> nenalezena",
 	"categorytree-error": "Chyba při načítání dat.",
-	"categorytree-retry": "Počkejte chvilku a zkuste to znova."
+	"categorytree-retry": "Počkejte chvilku a zkuste to znova.",
+	"categorytree-deprecation-warning": "'''Varování:''' Tato stránka používá <code>&lt;categorytree&gt;</code> se zastaralým parametrem."
 }

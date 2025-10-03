@@ -90,5 +90,7 @@
 	"templatedata-modal-title-templateformat": "פֿארגעשלאגענע וויקיטעקסט־פֿארמאטירונג",
 	"templatedata-modal-title-templateformatstring": "באניצער־דעפינירטע פארמאט־שנורל",
 	"templatedata-modal-title-templateparam-details": "פאראמעטער איינצלהייטן: $1",
-	"templatedata-modal-title-templateparams": "מוסטער־פאראמעטערס"
+	"templatedata-modal-title-templateparams": "מוסטער־פאראמעטערס",
+	"templatedata-search-list-empty": "מוסטערן וואָס איר האט מאַרקירט ווי פֿאַוואריטן וועלן דערשיינען דאָ",
+	"templatedata-favorite-maximum-reached": "איר האָט דערגרייכט די מאַקסימום צאָל ($1) פון פֿאַוואריטע מוסטערן. זייט אזוי גוט און נעמט אַראָפּ עטלעכע פון אייער ליסטע איידער איר לייגט צו נאך."
 }

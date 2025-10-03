@@ -49,5 +49,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "$1 $2 é demasiado antigo para permitir rexistrar correspondencias de cliente",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "Non existe o identificador $2 para o tipo $1",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} recolle datos do cliente do usuario para axudar a reducir o vandalismo e os comportamentos abusivos. Consulta https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints para obter máis detalles.",
-	"apihelp-logout-param-checkuserclienthints": "Datos de suxestións do cliente proporcionados xunto coas solicitudes a ApiLogout. Só para uso interno."
+	"apihelp-logout-param-checkuserclienthints": "Datos de suxestións do cliente proporcionados xunto coas solicitudes a ApiLogout. Só para uso interno.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "A data de caducidade da revelación automática proporcionada non é válida.",
+	"checkuser-ip-auto-reveal-missing-permission": "Non tes o permiso necesario para usar a revelación automática de enderezos IP."
 }

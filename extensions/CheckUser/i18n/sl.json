@@ -217,6 +217,7 @@
 	"checkuser-investigate-tour-copywikitext-title": "Želite kopirati podatke?",
 	"checkuser-investigate-tour-copywikitext-desc": "Kopirajte primerjalno tabelo z enim klikom in jo prenesite v CUWiki. Upoštevajte, da kopirate samo tisto, kar je vidno, in ne vseh strani preiskave.",
 	"checkuser-ip-contributions": "Iskanje prispevkov IP",
+	"checkuser-ip-contributions-permission-error-title": "Napaka dovoljenja",
 	"checkuser-ip-contributions-tab-label-contributions": "Prispevki",
 	"checkuser-ip-contributions-tab-label-archive-contributions": "Izbrisani prispevki",
 	"checkuser-ip-contributions-search-form-wrapper": "Iskanje prispevkov IP",
@@ -225,6 +226,7 @@
 	"checkuser-global-contributions-link": "globalni prispevki",
 	"checkuser-global-contributions-link-sidebar": "Globalni prispevki",
 	"checkuser-global-contributions": "Iskanje globalnih prispevkov",
+	"checkuser-global-contributions-permission-error-title": "Napaka dovoljenja",
 	"checkuser-global-contributions-permission-error-description": "Za ogled globalnih prispevkov sprejmite sporazum v [[Special:GlobalPreferences|svojih globalnih nastavitvah]].",
 	"checkuser-global-contributions-search-form-wrapper": "Iskanje globalnih prispevkov",
 	"checkuser-global-contributions-results-title": "Globalni prispevki $1",
@@ -234,7 +236,7 @@
 	"checkuser-tempaccount-reveal-ip-button-label": "Pokaži IP",
 	"checkuser-tempaccount-reveal-ip-missing": "ni na voljo",
 	"checkuser-tempaccount-reveal-ip-error": "napaka",
-	"checkuser-tempaccount-specialblock-ips": "To je začasen uporabnik, ki uporablja naslednje {{PLURAL:$1|IP|IP-je}}: $2",
+	"checkuser-tempaccount-specialblock-ips": "To je začasni uporabnik, ki uporablja naslednje {{PLURAL:$1|IP|IP-je}}: $2",
 	"checkuser-temporary-account-log-name": "Dnevnik začasnih računov CheckUser",
 	"checkuser-temporary-account-log-header": "To je dnevnik:\n# ogledov IP-naslovov, ki jih uporablja začasni račun; \n# ogledov začasnihv računov, povezanih z IP-naslovom ali razponom IP-naslovov; in\n# sprememb ravni uporabniškega dostopa za ogled IP-naslovov, ki jih uporabljajo začasni računi.",
 	"logentry-checkuser-temporary-account-change-access": "$1 $4 {{GENDER:$2|svoj}} lastni dostop za ogled IP-naslovov začasnih računov",
@@ -246,5 +248,6 @@
 	"log-action-filter-checkuser-temporary-account": "Vrsta dejanja:",
 	"log-action-filter-checkuser-temporary-account-change-access": "Sprememba dostopa",
 	"log-action-filter-checkuser-temporary-account-view-ips": "Dostop do začasnih podatkov IP-računa",
-	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 si je ogledal zaščitene spremenljivke, povezane z $3"
+	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 si je ogledal zaščitene spremenljivke, povezane z $3",
+	"checkuser-userinfocard-enable-preference-help": "Zraven uporabniških imen prikaži gumb za odpiranje pojavnega okna s podatki o računu."
 }

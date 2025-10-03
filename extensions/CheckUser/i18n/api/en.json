@@ -47,5 +47,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "The $1 $2 is too old to allow recording client hints data",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "The $1 ID $2 does not exist",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} collects user-agent client hint data to assist in moderating vandalism and abuse. See https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints for more details.",
-	"apihelp-logout-param-checkuserclienthints": "Client hints data supplied alongside requests to ApiLogout. For internal use only."
+	"apihelp-logout-param-checkuserclienthints": "Client hints data supplied alongside requests to ApiLogout. For internal use only.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "The provided auto-reveal expiry is invalid.",
+	"checkuser-ip-auto-reveal-missing-permission": "You do not have the permission needed to use IP auto-reveal."
 }

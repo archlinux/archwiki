@@ -12,6 +12,7 @@ namespace MediaWiki\Extension\DiscussionTools\Hooks;
 use MediaWiki\Actions\Hook\GetActionNameHook;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\DiscussionTools\BatchModifyElements;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
@@ -249,6 +250,13 @@ class PageHooks implements
 		// This hook can be executed more than once per page view if the page content is composed from
 		// multiple sources!
 
+		$batchModifyElements = new BatchModifyElements();
+
+		// Match the check in ParserHooks::transformHtml which adds the timestamp link placeholders
+		if ( HookUtils::isAvailableForTitle( $output->getTitle() ) ) {
+			CommentFormatter::postprocessTimestampLinks( $text, $batchModifyElements, $output );
+		}
+
 		$isMobile = $this->isMobile();
 		$visualEnhancementsEnabled =
 			HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS );
@@ -258,16 +266,20 @@ class PageHooks implements
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION ) ) {
 			// Just enable OOUI PHP - the OOUI subscribe button isn't infused unless VISUALENHANCEMENTS are enabled
 			$output->setupOOUI();
-			$text = CommentFormatter::postprocessTopicSubscription(
-				$text, $output, $this->subscriptionStore, $isMobile, $visualEnhancementsEnabled
+			CommentFormatter::postprocessTopicSubscription(
+				$text, $batchModifyElements, $output, $this->subscriptionStore, $isMobile, $visualEnhancementsEnabled
 			);
+		} else {
+			CommentFormatter::removeTopicSubscription( $batchModifyElements );
 		}
 
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::REPLYTOOL ) ) {
 			$output->enableOOUI();
-			$text = CommentFormatter::postprocessReplyTool(
-				$text, $output, $isMobile, $visualEnhancementsReplyEnabled
+			CommentFormatter::postprocessReplyTool(
+				$text, $batchModifyElements, $output, $isMobile, $visualEnhancementsReplyEnabled
 			);
+		} else {
+			CommentFormatter::removeReplyTool( $batchModifyElements );
 		}
 
 		if ( $visualEnhancementsEnabled ) {
@@ -296,8 +308,12 @@ class PageHooks implements
 					'oojs-ui.styles.icons-editing-core',
 				] );
 			}
-			$text = CommentFormatter::postprocessVisualEnhancements( $text, $output, $isMobile );
+			CommentFormatter::postprocessVisualEnhancements( $text, $batchModifyElements, $output, $isMobile );
+		} else {
+			CommentFormatter::removeVisualEnhancements( $batchModifyElements );
 		}
+
+		$text = $batchModifyElements->apply( $text );
 
 		// Append empty state if the OutputPageParserOutput hook decided that we should.
 		// This depends on the order in which the hooks run. Hopefully it doesn't change.

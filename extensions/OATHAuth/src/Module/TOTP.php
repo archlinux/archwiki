@@ -19,6 +19,14 @@ class TOTP implements IModule {
 
 	private OATHUserRepository $userRepository;
 
+	/**
+	 * @return TOTPKey[]
+	 */
+	public static function getTOTPKeys( OATHUser $user ): array {
+		// @phan-suppress-next-line PhanTypeMismatchReturn
+		return $user->getKeysForModule( self::MODULE_NAME );
+	}
+
 	public function __construct( OATHUserRepository $userRepository ) {
 		$this->userRepository = $userRepository;
 	}
@@ -69,8 +77,8 @@ class TOTP implements IModule {
 			return false;
 		}
 
-		foreach ( $user->getKeys() as $key ) {
-			if ( $key instanceof TOTPKey && $key->verify( $data, $user ) ) {
+		foreach ( self::getTOTPKeys( $user ) as $key ) {
+			if ( $key->verify( $data, $user ) ) {
 				return true;
 			}
 		}
@@ -85,13 +93,7 @@ class TOTP implements IModule {
 	 * @return bool
 	 */
 	public function isEnabled( OATHUser $user ): bool {
-		foreach ( $user->getKeys() as $key ) {
-			if ( $key instanceof TOTPKey ) {
-				return true;
-			}
-		}
-
-		return false;
+		return (bool)self::getTOTPKeys( $user );
 	}
 
 	/**

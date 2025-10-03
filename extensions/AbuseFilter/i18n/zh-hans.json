@@ -92,7 +92,8 @@
 			"逆襲的天邪鬼",
 			"铁桶",
 			"飞小RAN",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Peterxy12"
 		]
 	},
 	"abusefilter-desc": "对编辑行为进行自动化条件判定",
@@ -167,6 +168,7 @@
 	"abusefilter-log-entry": "$1：$2在$4{{GENDER:$8|执行}}操作“$3”时{{GENDER:$8|触发}}了过滤器。采取的行动：$5；过滤器描述：$6",
 	"abusefilter-log-entry-withdiff": "$1：$2在$4{{GENDER:$8|执行}}操作“$3”时{{GENDER:$8|触发}}了过滤器。采取的行动：$5；过滤器描述：$6（$7）",
 	"abusefilter-log-detailedentry-meta": "$1：$2在$5{{GENDER:$9|执行}}操作“$4”时{{GENDER:$9|触发}}了$3。采取的行动：$6；过滤器描述：$7（$8）",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1：$2在$5{{GENDER:$9|执行}}操作“$4”时{{GENDER:$9|触发}}了$3。采取的行动：$6；过滤器描述：$7",
 	"abusefilter-log-detailedentry-global": "全域过滤器$1",
 	"abusefilter-log-detailedentry-local": "过滤器$1",
 	"abusefilter-log-detailslink": "详情",

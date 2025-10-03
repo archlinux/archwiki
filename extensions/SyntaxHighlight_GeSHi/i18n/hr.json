@@ -9,12 +9,21 @@
 			"SpeedyGonsales"
 		]
 	},
-	"syntaxhighlight-desc": "Omogućava bojanje sintakse <code>&lt;syntaxhighlight&gt;</code> korištenjem [http://pygments.org/ Pygments-a]",
+	"syntaxhighlight-desc": "Omogućava bojanje sintakse <code>&lt;syntaxhighlight&gt;</code> s pomoću programa [http://pygments.org/ Pygments]",
 	"syntaxhighlight-error-category": "Stranice s pogreškama u isticanju sintakse",
+	"syntaxhighlight-error-category-desc": "Došlo je do pogreške prilikom bojanja sintakse koda.",
+	"syntaxhighlight-enclose-category-desc": "Isticanje sintakse koristi zastarjelu sintaksu za »enclose«.",
 	"syntaxhighlight-source-category": "Stranice koje rabe zastarjele oznake izvora",
+	"syntaxhighlight-source-category-desc": "Isticanje sintakse koristi zastarjele oznake »source«.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kôd",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "—",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Prikaži brojeve redova",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Broj početnog reda",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Računalni kôd"
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Računalni kôd",
+	"syntaxhighlight-error-pygments-invocation-failure": "Pozivanje programa Pygments nije uspjelo",
+	"syntaxhighlight-error-unknown-language": "Nepoznat jezik \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Veličina koda od $1 {{PLURAL:$1|bajt|bajta|bajtova}} prelazi dopušteni maksimum od $2 {{PLURAL:$2|bajt|bajta|bajtova}}",
+	"syntaxhighlight-button-copy": "kopiraj",
+	"syntaxhighlight-button-copied": "kopirano!"
 }

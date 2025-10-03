@@ -55,7 +55,7 @@
 	"oathauth-auth-token-label": "Kétlépcsős token vagy helyreállítási kód",
 	"oathauth-auth-token-help": "A kétlépcsős azonosítás második lépcsőjeként használt egyszeri jelszó.",
 	"oathauth-auth-token-help-ui": "Írd be az azonosításhoz használt eszközön látható kódot vagy a helyreállítási kódot",
-	"oathauth-auth-ui": "Írj be egy megerősítő kódot a kétlépcsős azonosítási alkalmazásodból (pl. [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Hitelesítő], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] vagy [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Írj be egy megerősítő kódot a kétlépcsős azonosítási alkalmazásodból (pl. [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Hitelesítő], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] vagy [https://1password.com/ 1Password]).",
 	"oathauth-throttled": "Túl sok hitelesítési kísérlet! Várj $1 ideig.",
 	"oathauth-login-failed": "Ellenőrzés sikertelen",
 	"oathauth-describe-provider": "Kétlépcsős azonosítás (OATH).",

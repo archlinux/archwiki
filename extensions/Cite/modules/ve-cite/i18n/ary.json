@@ -5,9 +5,19 @@
 			"Reda Benkhadra"
 		]
 	},
+	"visualeditor-cite-tool-name-book": "كتاب",
+	"visualeditor-cite-tool-name-journal": "جورنال",
+	"visualeditor-cite-tool-name-news": "خبار",
 	"visualeditor-cite-tool-name-web": "سيت",
+	"cite-ve-changedesc-ref-group-both": "لڭروپ د لمراجع داز من \"$1\" ل \"$2\"",
+	"cite-ve-changedesc-ref-group-from": "لڭروپ د لمراجع داز من \"$1\" للڭروپ لعام",
+	"cite-ve-changedesc-ref-group-to": "لڭروپ ديال لمراجع راه داز من لڭروپ لعام ل \"$1\"",
+	"cite-ve-changedesc-reflist-group-both": "لڭروپ د ليستة لمراجع داز من \"$1\" ل \"$2\"",
+	"cite-ve-changedesc-reflist-group-from": "لڭروپ د ليستة لمراجع داز من \"$1\" للڭروپ لعام",
+	"cite-ve-changedesc-reflist-group-to": "لڭروپ د ليستة لمراجع داز من لڭروپ لعام ل \"$1\"",
+	"cite-ve-changedesc-reflist-responsive-set": "الليستة د لمراجع تبدلات باش تبان ف لعمايد لمستاجبة",
 	"cite-ve-dialog-reference-editing-reused": "هاد لعين مخدمة {{PLURAL:$1|مرة وحدة|2=جوج د لمرات|$1 مرات}} ف هاد صفحة.",
-	"cite-ve-dialog-reference-useexisting-tool": "عاود تخدام",
+	"cite-ve-dialog-reference-useexisting-tool": "عاود خدّم",
 	"cite-ve-reference-input-placeholder": "تقلاب بين عيون لكلام لي خدمتي",
 	"cite-ve-referenceslist-missingref-in-list": "هاد لعين معرّفة ف لوسط ديال موضيل ؤلا شي بلوك مولّد، و ماتقدر تشاف غير ف ليديتور ب لكوض."
 }

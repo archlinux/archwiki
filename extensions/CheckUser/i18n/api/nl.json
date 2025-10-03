@@ -49,5 +49,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "$1 $2 is te oud om gegevens over client-hints op te nemen",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "De $1-ID $2 bestaat niet",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} verzamelt gegevens over client-hints van de browser om te helpen bij het modereren van vandalisme en misbruik. Zie https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints voor meer informatie.",
-	"apihelp-logout-param-checkuserclienthints": "“Client hints”-gegevens die worden meegestuurd met verzoeken aan ApiLogout. Alleen voor intern gebruik."
+	"apihelp-logout-param-checkuserclienthints": "“Client hints”-gegevens die worden meegestuurd met verzoeken aan ApiLogout. Alleen voor intern gebruik.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "De opgegeven vervaldatum voor automatisch onthullen is onjuist.",
+	"checkuser-ip-auto-reveal-missing-permission": "U beschikt niet over de benodigde toestemming om het automatisch onthullen van IP-adressen te gebruiken."
 }

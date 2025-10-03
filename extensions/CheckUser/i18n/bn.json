@@ -162,6 +162,8 @@
 	"checkuser-investigateblock-warning-confirmaction": "আপনি যদি নিশ্চিত হন আপনি এটি সত্যিকার অর্থেই করতে চান তাহলে অনুগ্রহ করে উপরের \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" ঘরটি দেখুন।",
 	"checkuser-investigate": "তদন্ত করুন",
 	"checkuser-investigate-page-subtitle": "$1-এর জন্য তদন্ত",
+	"checkuser-investigate-subtitle-block-accounts-button-label": "অ্যাকাউন্টগুলিকে বাধা দিন",
+	"checkuser-investigate-subtitle-block-ips-button-label": "আইপিগুলিকে বাধা দিন",
 	"checkuser-investigate-subtitle-cancel-button-label": "বাতিল",
 	"checkuser-investigate-subtitle-continue-button-label": "অব্যাহত",
 	"checkuser-investigate-indicator-new-investigation": "নতুন তদন্ত",
@@ -212,6 +214,7 @@
 	"checkuser-investigate-subtitle-link-restart-tour": "ট্যুর পুনরাম্ভ করুন",
 	"checkuser-investigate-tour-targets-title": "একাধিক ব্যবহারকারী ও আইপি পরীক্ষা করছেন?",
 	"checkuser-investigate-tour-block-title": "বাধা দিতে চান?",
+	"checkuser-investigate-tour-copywikitext-title": "উপাত্ত অনুলিপি করতে চান?",
 	"checkuser-ip-contributions": "আইপি অবদানের জন্য অনুসন্ধান করুন",
 	"checkuser-ip-contributions-permission-error-title": "অনুমতি ত্রুটি",
 	"checkuser-ip-contributions-subtitle": "গত $1 {{PLURAL:$1|দিনের}} ফলাফল দেখানো হচ্ছে।",
@@ -264,6 +267,8 @@
 	"checkuser-tempaccount-reveal-ip-missing": "অনুপলব্ধ",
 	"checkuser-tempaccount-reveal-ip-error": "ত্রুটি",
 	"checkuser-tempaccount-reveal-ip-permission-error-description": "অস্থায়ী অ্যাকাউন্টগুলোর আইপি ঠিকানা দেখতে হলে, অনুগ্রহ করে [[Special:Preferences|আপনার পছন্দসমূহে]] গিয়ে চুক্তিটি গ্রহণ করুন।",
+	"checkuser-tempaccount-reveal-blocked-loading": "বাধাপ্রাপ্তির বিবরণ লোড হচ্ছে",
+	"checkuser-tempaccount-reveal-blocked-title": "বাধাপ্রাপ্তির বিবরণ দেখুন",
 	"checkuser-tempaccount-reveal-blocked-header": "অস্থায়ী অ্যাকাউন্টের আইপি প্রকাশ বন্ধ করা হয়েছে",
 	"checkuser-tempaccount-specialblock-ips": "ইনি একজন অস্থায়ী ব্যবহারকারী যিনি নিম্নলিখিত {{PLURAL:$1|আইপি|আইপিগুলি}} ব্যবহার করছেন: $2",
 	"checkuser-temporary-account-log-name": "ব্যবহারকারী পরীক্ষণ অস্থায়ী অ্যাকাউন্টের লগ",
@@ -274,5 +279,6 @@
 	"log-action-filter-checkuser-temporary-account": "কাজের ধরন:",
 	"log-action-filter-checkuser-temporary-account-change-access": "প্রবেশাধিকার পরিবর্তন",
 	"log-action-filter-checkuser-temporary-account-view-ips": "অস্থায়ী অ্যাকাউন্টের আইপি উপাত্তে প্রবেশাধিকার",
-	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 $3-এর সাথে যুক্ত সুরক্ষিত ভেরিয়েবল {{GENDER:$2|পরিদর্শন করেছেন}}"
+	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 $3-এর সাথে যুক্ত সুরক্ষিত ভেরিয়েবল {{GENDER:$2|পরিদর্শন করেছেন}}",
+	"checkuser-userinfocard-enable-preference-help": "অ্যাকাউন্ট সম্পর্কিত তথ্যসহ একটি পপওভার খুলতে ব্যবহারকারীর নামের পাশে একটি বোতাম দেখায়।"
 }

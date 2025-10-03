@@ -44,6 +44,7 @@
 	"multimediaviewer-medium-embed-dimensions": "मध्यम $1",
 	"multimediaviewer-small-embed-dimensions": "सानो $1",
 	"multimediaviewer-description-page-button-text": "यस फाइलको बारेमा थप विवरणहरू",
+	"multimediaviewer-view-expanded": "मिडिया दर्शकमा खोल्नुहोस्",
 	"multimediaviewer-view-config": "अभिरुचिहरू",
 	"multimediaviewer-close-popup-text": "यो उपकरण बन्द गर्नुहोस् (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "पूर्ण स्क्रिनमा देखाउनुहोस्",

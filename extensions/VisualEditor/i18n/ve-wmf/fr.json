@@ -37,7 +37,9 @@
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"아라"
+			"아라",
+			"Derugon",
+			"Escargot bleu"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck pense que du nouveau contenu a été ajouté à la page",
@@ -63,5 +65,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Merci pour votre aide afin que le monde fasse plus de découvertes !",
 	"visualeditor-welcomedialog-switch": "Basculer vers l’éditeur de wikicode",
 	"visualeditor-welcomedialog-switch-ve": "Basculer vers l’éditeur visuel",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|}}Bienvenue sur $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Bienvenue}} sur $2"
 }

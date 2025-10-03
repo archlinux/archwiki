@@ -1,11 +1,27 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"JeffreyKim",
+			"Ktchankt",
+			"Yueman",
+			"H78c67c"
 		]
 	},
+	"templatestyles-desc": "實現每個範本嘅樣式表",
 	"templatestyles-missing-src": "TemplateStyles嘅<code>src</code>屬性毋吉得。",
+	"templatestyles-invalid-src": "模樣式嘅標題無效嘅<code>src</code>屬性。",
+	"templatestyles-invalid-wrapper": "模樣式嘅值無效嘅<code>wrapper</code>屬性。",
 	"templatestyles-bad-src-missing": "版[[:$1|$2]]無内容。",
+	"templatestyles-bad-src": "頁面[[:$1|$2]]必須有模樣式嘅內容模型\"{{int:content-model-sanitized-css}}\"（而家嘅模型係\"$3\"）。",
+	"templatestyles-errorcomment": "錯誤處理樣式表[[:$1]] (版本 $2) ：\n$3",
+	"templatestyles-size-exceeded": "個樣式表大過 $2 嘅最大嘥士。",
+	"templatestyles-tag-injection": "畀出嚟嘅樣式表包含一啲睇落似 html 標籤嘅嘢，呢個係唔俾嘅。",
 	"content-model-sanitized-css": "過濾咗嘅CSS",
-	"templatestyles-stylesheet-error-category": "有錯嘅TemplateStyles樣式表"
+	"templatestyles-stylesheet-error-category": "有錯嘅TemplateStyles樣式表",
+	"templatestyles-stylesheet-error-category-desc": "「範本樣式」樣式表有錯誤。",
+	"templatestyles-page-error-category": "有模樣式錯誤嘅頁面",
+	"templatestyles-page-error-category-desc": "處理嗰陣有錯誤嘅<code><nowiki><templatestyles/></nowiki></code>喺頁面上面嘅標籤。",
+	"templatestyles-error-at-rule-block-not-allowed": "唔可以封鎖<code>@$3</code>喺行 $1 字元 $2。",
+	"templatestyles-error-at-rule-block-required": "喺第 $1 行第 $2 個字元嘅 <code>@$3</code> 需要代碼塊。"
 }

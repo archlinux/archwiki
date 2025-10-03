@@ -183,7 +183,7 @@
 	"discussiontools-topicsubscription-pager-page": "Stran",
 	"discussiontools-topicsubscription-pager-topic": "Tema",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Odnaroči",
-	"discussiontools-topicsubscription-preferences-editsubscriptions": "Uredi naročila",
+	"discussiontools-topicsubscription-preferences-editsubscriptions": "uredi naročila",
 	"discussiontools-topicsubscription-special-intro": "Naročila {{GENDER:|vam}} omogočajo spremljanje tem na pogovornih straneh. Ko bo kdo odgovoril na temo, boste prejeli obvestilo o tem.\n\nNačin in mesto prejemanja tovrstnih obvestil lahko prilagodite v [[Special:Preferences#mw-prefsection-echo|svojih nastavitvah]].",
 	"discussiontools-topicsubscription-special-title": "Naročila na teme",
 	"echo-category-title-dt-subscription": "{{PLURAL:$1|Naročilo na pogovorno stran|Naročili na pogovorni strani|Naročila na pogovorne strani}}",

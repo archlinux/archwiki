@@ -3,13 +3,14 @@
 		"authors": [
 			"Dyolf77 (WMF)",
 			"Meno25",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Mohammed Qays"
 		]
 	},
 	"editcheck-dialog-action-no": "لا",
 	"editcheck-dialog-action-yes": "نعم",
 	"editcheck-dialog-addref-description": "ساعدوا القراء على فهم مصدر هذه المعلومات عن طريق إضافة استشهاد.",
-	"editcheck-dialog-addref-reject-question": "لماذا لن تضيفوا استشهادًا؟",
+	"editcheck-dialog-addref-reject-question": "لماذا لا تُضيف استشهادًا؟",
 	"editcheck-dialog-addref-reject-description": "سيقدر المحرّرون الآخرون معرفة المزيد عن قرارك بتجاوز الاستشهاد.",
 	"editcheck-dialog-addref-reject-irrelevant": "لا أعتقد أن الاستشهادات ضروريّة للتعديل الذي أقوم به",
 	"editcheck-dialog-addref-reject-common-knowledge": "المعلومات التي أقوم بإضافتها معروفة على نطاق واسع",
@@ -19,7 +20,7 @@
 	"editcheck-dialog-addref-title": "إضافة استشهاد",
 	"editcheck-dialog-title": "قبل النشر",
 	"editcheck-copyvio-title": "محتوى ملصوق",
-	"editcheck-copyvio-description": "كقاعدة عامة، لا تنسخ نصًا من مصادر أخرى. هذا عادة ما يشكل انتهاكًا لحقوق الطبع والنشر وسرقة أدبية.",
+	"editcheck-copyvio-description": "كقاعدة عامة، لا تنسخ نصًا من مصادر أخرى. عادة، يُشكل هذا انتهاكًا لحقوق الطبع والنشر وسرقة أدبية.",
 	"editcheck-review-title": "مراجعة التغييرات",
 	"tag-editcheck-reference-decline-common-knowledge": "تم رفض (ثقافة عامة) التحقّق من التحرير (مراجع)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "تم رفض مرجع EditCheck (أداة التحقّق) باعتباره ثقافةً عامة",

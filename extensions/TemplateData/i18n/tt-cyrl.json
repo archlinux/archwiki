@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"Ильгиз"
 		]
 	},
 	"templatedata-desc": "Калып көйләнмәләре өчен мәгълүмат саклагычын ясау (JSON ярдәмендә)",
@@ -21,6 +22,7 @@
 	"templatedata-doc-param-status-optional": "мәҗбүри түгел",
 	"templatedata-doc-param-status-required": "мәҗбүри",
 	"templatedata-doc-param-status-suggested": "тәкъдим ителгән",
+	"templatedata-doc-param-suggestedvalues": "Тәкъдим ителүче кыйммәтләр",
 	"templatedata-doc-param-type": "Төр",
 	"templatedata-doc-param-type-boolean": "Логик мәгънәсе",
 	"templatedata-doc-param-type-content": "Эчтәлек",
@@ -72,6 +74,7 @@
 	"templatedata-modal-table-param-name": "Исем",
 	"templatedata-modal-table-param-required": "Мәҗбүри",
 	"templatedata-modal-table-param-suggested": "Тәкъдим ителгән",
+	"templatedata-modal-table-param-suggestedvalues": "Тәкъдим ителүче кыйммәтләр",
 	"templatedata-modal-table-param-type": "Төр",
 	"templatedata-modal-title": "Калып документациясе төзәткече",
 	"templatedata-modal-title-addparam": "Яңа параметр өстәү",

@@ -4,9 +4,11 @@
 			"Ammartivari",
 			"Kosovastar",
 			"Liridon",
-			"Olsi"
+			"Olsi",
+			"Xhulianoo"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|falëndero}}}}",
-	"thanks-thank-tooltip": "{{GENDER:$1|Dërgoji}} një njoftim faleminderimi {{GENDER:$2|këtij përdoruesi|kësaj përdorueseje}}"
+	"thanks-thank-tooltip": "{{GENDER:$1|Dërgoji}} një njoftim faleminderimi {{GENDER:$2|këtij përdoruesi|kësaj përdorueseje}}",
+	"logeventslist-thanks-log": "Regjistri i falënderimeve"
 }

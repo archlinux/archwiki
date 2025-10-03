@@ -13,7 +13,8 @@
 			"Xzonn",
 			"Yfdyh000",
 			"阿南之人",
-			"飞小RAN"
+			"飞小RAN",
+			"SaoMikoto"
 		]
 	},
 	"replacetext": "替换文字",
@@ -56,5 +57,6 @@
 	"replacetext_no_compress": "您的wiki会无法使用ReplaceText：当$wgCompressRevisions设置为true时文字替换无法运行。",
 	"replacetext_no_external_stores": "您的wiki会无法使用ReplaceText：当$wgExternalStores不为空时文字替换无法运行。",
 	"right-replacetext": "在整个wiki进行字符串替换",
-	"action-replacetext": "在整个wiki进行字符串替换"
+	"action-replacetext": "在整个wiki进行字符串替换",
+	"replacetext-summary-label": "替换编辑的摘要（留空则使用默认摘要）"
 }

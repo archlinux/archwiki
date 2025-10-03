@@ -13,7 +13,8 @@
 			"Tacsipacsi",
 			"Umherirrender",
 			"Verdy p",
-			"Vriullop"
+			"Vriullop",
+			"Jon Harald Søby"
 		]
 	},
 	"discussiontools": "{{name}}\nThe name of the extension",
@@ -153,7 +154,7 @@
 	"discussiontools-replywidget-mention-tool-title": "Title text for the user mention tool.",
 	"discussiontools-replywidget-mode-source": "Label for the widget's source mode.\n\nThis should not include the word 'edit' or 'editor', and where possible should avoid 'wikitext' which is MediaWiki-specific terminology.",
 	"discussiontools-replywidget-mode-visual": "Label for the widget's visual mode.\n\nThis should not include the word 'edit' or 'editor', and should not use the product name VisualEditor.",
-	"discussiontools-replywidget-newcomments-button": "Button shown when new comments have been posted in the section the user is drafting a reply in.",
+	"discussiontools-replywidget-newcomments-button": "Button shown when new comments have been posted in the section the user is drafting a reply in.\n\nParameters:\n* $1 - number of new comments",
 	"discussiontools-replywidget-newtopic": "Label for button to post a new topic",
 	"discussiontools-replywidget-placeholder-newtopic": "Placeholder summarizing the discussion.\n{{identical|Description}}",
 	"discussiontools-replywidget-placeholder-reply": "Placeholder describing who is being replied to.\n\nParameters:\n* $1 – username of the person who wrote the previous comment",

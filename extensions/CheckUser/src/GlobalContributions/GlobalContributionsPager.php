@@ -180,12 +180,23 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 	private function fetchWikisToQuery() {
 		$this->needsToEnableGlobalPreferenceAtWiki = '';
 
-		if ( $this->isValidIPOrQueryableRange( $this->target, $this->getConfig() ) ) {
+		try {
 			$activeWikis = $this->globalContributionsLookup->getActiveWikis(
 				$this->target,
 				$this->getAuthority()
 			);
+		} catch ( InvalidArgumentException ) {
+			// No central user found or viewable and target is not an IP, flag it and then return
+			// an empty array for active wikis which will eventually return an empty results set
+			$this->centralUserExists = false;
+			$this->wikisWithPermissionsCount = 0;
+			return [];
+		}
 
+		$skippedWikis = $this->getConfig()->get( 'CheckUserGlobalContributionsSkippedWikiIds' );
+		$activeWikis = array_diff( $activeWikis, $skippedWikis );
+
+		if ( $this->isValidIPOrQueryableRange( $this->target, $this->getConfig() ) ) {
 			// Look up external permissions
 			$this->getExternalWikiPermissions(
 				array_filter( $activeWikis, static function ( $wikiId ) {
@@ -239,18 +250,7 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 				}
 			}
 		} else {
-			try {
-				$wikisToQuery = $this->globalContributionsLookup->getActiveWikis(
-					$this->target,
-					$this->getAuthority()
-				);
-			} catch ( InvalidArgumentException $e ) {
-				// No central user found or viewable, flag it and then return an empty array for active wikis
-				// which will eventually return an empty results set
-				$this->centralUserExists = false;
-				$this->wikisWithPermissionsCount = 0;
-				return [];
-			}
+			$wikisToQuery = $activeWikis;
 		}
 
 		$this->wikisWithPermissionsCount = count( $wikisToQuery );

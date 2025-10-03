@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Canjura",
-			"TimumachtikanNawat"
+			"TimumachtikanNawat",
+			"Jose Antonio Guillen Landaverde",
+			"Taty Flores de Constante"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "Takutunchin ka ijtik ne wiki",
+	"visualeditor-ca-createsource": "Shikinchiwa itajtachiska tajkwilulchichin",
 	"visualeditor-ca-editsource": "Shikpata ne tajkwilulchin",
 	"visualeditor-ca-editsource-section": "Shikpata ne tajkwilulchin"
 }

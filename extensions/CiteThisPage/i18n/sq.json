@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Olsi"
+			"Olsi",
+			"Xhulianoo"
 		]
 	},
 	"citethispage": "Citate",
 	"citethispage-desc": "Shton një faqe speciale [[Special:Cite|citimi]] dhe një lidhje veglash.",
-	"citethispage-link": "Cito artikullin",
+	"citethispage-link": "Cito këtë faqe",
 	"tooltip-citethispage": "Informacion mbi mënyrën e citimit të kësaj faqeje",
 	"citethispage-change-submit": "Citoje",
 	"citethispage-change-target": "Faqja:",

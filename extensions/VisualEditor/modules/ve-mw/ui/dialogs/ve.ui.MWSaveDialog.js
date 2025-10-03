@@ -365,9 +365,12 @@ ve.ui.MWSaveDialog.prototype.swapPanel = function ( panel, noFocus ) {
 						this.$previewEditSummary.parent().addClass( 'oo-ui-element-hidden' );
 						this.$previewEditSummary.empty();
 					} else {
+						// Escape message before inserting parameter to prevent i18n XSS
+						const wrappedSummary = ve.escapeHtml( ve.msg( 'parentheses' ) )
+							.replace( '$1', () => result.parse.parsedsummary );
 						// Intentionally treated as HTML
 						// eslint-disable-next-line no-jquery/no-html
-						this.$previewEditSummary.html( ve.msg( 'parentheses', result.parse.parsedsummary ) );
+						this.$previewEditSummary.html( wrappedSummary );
 						ve.targetLinksToNewWindow( this.$previewEditSummary[ 0 ] );
 					}
 				} ).fail( () => {

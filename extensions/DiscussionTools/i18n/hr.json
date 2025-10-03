@@ -127,7 +127,7 @@
 	"discussiontools-replywidget-mode-source": "Kôd",
 	"discussiontools-replywidget-mode-visual": "Vizualno",
 	"discussiontools-replywidget-newcomments-button": "Prikaži $1 {{PLURAL:$1|novi komentar|nova komentara|novih komentara}}",
-	"discussiontools-replywidget-newtopic": "Dodaj temu{{GENDER:|}}",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Dodaj}} temu",
 	"discussiontools-replywidget-placeholder-newtopic": "Opis",
 	"discussiontools-replywidget-placeholder-reply": "Odgovor {{GENDER:|suradniku|suradnici|suradniku/suradnici}} {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Postavke",

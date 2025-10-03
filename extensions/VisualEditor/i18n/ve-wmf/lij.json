@@ -1,24 +1,32 @@
 {
 	"@metadata": {
 		"authors": [
-			"Giromin Cangiaxo"
+			"Giromin Cangiaxo",
+			"N. Longo"
 		]
 	},
-	"tag-visualeditor": "Modiffica visuale",
-	"tag-visualeditor-description": "Modiffica fæta dœuviando l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor vixoâ]]",
-	"tag-visualeditor-needcheck": "Modiffica vixoâ: controlâ",
-	"tag-visualeditor-needcheck-description": "Modiffica fæta dœuviando l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor vixoâ]] donde-o scistema o l'ha rilevou de poscibbile modiffiche non vosciue into wikitesto.",
-	"tag-visualeditor-wikitext": "Editor wikitesto 2017",
-	"tag-visualeditor-wikitext-description": "Modiffica fæta dœuviando l'editor wikitesto 2017",
-	"tag-visualeditor-switched": "Modiffica vixoâ: Cangiou",
-	"tag-visualeditor-switched-description": "L'utente o l'ha inçou e modiffiche dœuviando l'editor vixoâ, doppo o l'è passou a l'editor de wikitesto.",
-	"visualeditor-feedback-link": "Project:VisualEditor/Commenti",
-	"visualeditor-feedback-tool": "Scrivi un commento sciu questo software",
-	"visualeditor-help-label": "Lezi a guidda utente",
-	"visualeditor-welcomedialog-action": "Comensa a modificâ",
-	"visualeditor-welcomedialog-content": "Pœu contribuî chissessæ, e ogni megioiia a l'agiutta.",
-	"visualeditor-welcomedialog-content-thanks": "Grassie pe agiutâ o mondo a scrovî sempre cose nœuve!",
-	"visualeditor-welcomedialog-switch": "Passa a l'editor wikitesto",
-	"visualeditor-welcomedialog-switch-ve": "Passa a l'editor vixoâ",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|Benvegnuo|Benvegnua|Benvegnuo/a}} sciu $2"
+	"tag-editcheck-newcontent-description": "EditCheck o crédde che do nêuvo contegnûo o ségge stæto azónto a-a pàgina",
+	"tag-editcheck-newreference-description": "Ina nòtta a l'é stæta azónta a-a pàgina",
+	"tag-editcheck-references-description": "EditCheck o crédde che 'na nòtta a poriéiva êse necesâia",
+	"tag-editcheck-references-activated": "Edit Check (nòtte) ativòu",
+	"tag-editcheck-references-activated-description": "EditCheck o crédde che 'na nòtta a poriéiva êse necesâia e che l'UI a l'é stæta mostrâ",
+	"tag-editcheck-references-shown": "Edit Check (nòtte) mostròu",
+	"tag-editcheck-references-shown-description": "EditCheck o crédde che 'na nòtta a poriéiva êse necesâia e che l'UI a l'é stæta mostrâ",
+	"tag-visualeditor": "Modìfica vizoâle",
+	"tag-visualeditor-description": "Modìfica fæta dêuviàndo l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor vizoâle]]",
+	"tag-visualeditor-needcheck": "Modìfica vizoâle: controlâ",
+	"tag-visualeditor-needcheck-description": "Modìfica fæta dêuviàndo l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor vizoâle]] dónde o scistêma o l'à rilevòu de poscìbili modìfiche no vosciûe into wikitèsto.",
+	"tag-visualeditor-wikitext": "Editor wikitèsto 2017",
+	"tag-visualeditor-wikitext-description": "Modìfica fæta dêuviàndo l'editor wikitèsto 2017",
+	"tag-visualeditor-switched": "Modìfica vizoâle: Cangiòu",
+	"tag-visualeditor-switched-description": "L'uténte o l'à comensòu e modìfiche dêuviàndo l'editor vizoâle, dòppo o l'é pasòu a l'editor do wikitèsto.",
+	"visualeditor-feedback-link": "Project:VisualEditor/Coménti",
+	"visualeditor-feedback-tool": "Scrîvi 'n coménto in sce sto software chi",
+	"visualeditor-help-label": "Lêzi a goìdda uténte",
+	"visualeditor-welcomedialog-action": "Coménsa a modificâ",
+	"visualeditor-welcomedialog-content": "Peu contriboî chi se sæ, e ògni megioaménto o l'agiùtta.",
+	"visualeditor-welcomedialog-content-thanks": "Gràçie pe agiutâ o móndo a scrovî sénpre cöse nêuve!",
+	"visualeditor-welcomedialog-switch": "Pàssa a l'editor wikitèsto",
+	"visualeditor-welcomedialog-switch-ve": "Pàssa a l'editor vizoâle",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Benvegnûo|Benvegnûa|Benvegnûo/a}} sciù $2"
 }

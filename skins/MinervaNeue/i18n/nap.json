@@ -5,7 +5,8 @@
 			"C.R.",
 			"Cryptex nap",
 			"Finizio",
-			"Ruthven"
+			"Ruthven",
+			"Chelin"
 		]
 	},
 	"minerva-last-modified-date": "Urtemo cagnamiento 'o $1, a 'e $2",
@@ -43,5 +44,6 @@
 	"mobile-frontend-user-newmessages": "Tenisse mmasciate nnove ncopp'â paggena 'e chiàcchiera toia",
 	"mobile-frontend-user-page-contributions": "Cuntribbute",
 	"mobile-frontend-user-page-member-since": "Membro d' 'o $1",
-	"mobile-frontend-user-page-talk": "Chiàcchiera"
+	"mobile-frontend-user-page-talk": "Chiàcchiera",
+	"minerva-page-actions-overflow": "Ato"
 }

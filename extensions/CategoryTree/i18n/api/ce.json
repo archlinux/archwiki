@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Умар"
+		]
+	},
+	"apihelp-categorytree-summary": "CategoryTree шордарна лерина чоьхьара модуль.",
+	"apihelp-categorytree-param-category": "Категорин цӀерийн меттигехь йолу цӀе, дешхьалхе тидаме ца оьцу, нагахь санна билгалйаьккхинехь.",
+	"apihelp-categorytree-param-options": "JSON объект санна CategoryTree конструкторан варианташ. <var>depth</var> (кӀоргалла) параметр Ӏад йитаран кепаца йу <kbd>1</kbd>.",
+	"apierror-categorytree-invalidjson": "Варианташ нийса JSON объекташ хила йеза.",
+	"apierror-categorytree-invalidjson-option": "«$1» параметр тӀехь нийса доцу маьӀна ду."
+}

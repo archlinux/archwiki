@@ -5,7 +5,8 @@
 			"Jdforrester",
 			"Jon Harald Søby",
 			"Kingu",
-			"Tarjeimo"
+			"Tarjeimo",
+			"EdoAug"
 		]
 	},
 	"templatedata-desc": "Implementerer datalager for malparametre (med JSON)",
@@ -118,9 +119,14 @@
 	"templatedata-search-title": "Malsøk",
 	"templatedata-search-description": "Finn malen du ønsker å sette inn ved å søke etter et nøkkelord. Maler som har beskrivelser fungerer som regel bedre enn andre.",
 	"templatedata-search-placeholder": "Finn mal",
+	"templatedata-search-list-header": "Favoritter",
+	"templatedata-search-list-empty": "Maler du merker som favoritter vises her",
 	"templatedata-template-discovery-disabled": "Maloppdagelse er deaktivert på denne wikien.",
+	"templatediscovery": "Finn maler",
 	"templatedata-favorite-disabled": "Du må være logget inn for å merke en mal som favoritt",
+	"templatedata-favorite-add": "Legg til mal i favoritter",
 	"templatedata-favorite-added": "Malen ble lagt til i favoritter",
+	"templatedata-favorite-remove": "Fjern mal fra favoritter",
 	"templatedata-favorite-removed": "Malen ble fjernet fra favoritter",
 	"templatedata-favorite-error": "Kunne ikke lagre favoritter",
 	"templatedata-favorite-maximum-reached": "Du har nådd maksimumsgrensen ($1) for antall favorittmaler. Fjern noen maler fra lista før du legger til flere."

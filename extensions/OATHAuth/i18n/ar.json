@@ -9,7 +9,8 @@
 			"أَحمد",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Mohammed Qays"
 		]
 	},
 	"oathauth-desc": "يوفر دعم المصادقة باستخدام كلمات مرور لمرة واحدة تستند إلى HMAC",
@@ -58,7 +59,10 @@
 	"oathauth-auth-token-label": "رمزٌ ذو عاملين أو رمز الاسترداد",
 	"oathauth-auth-token-help": "تُستخدَم كلمة المرور لمرة واحدة كعامل ثاني للمصادقة الثنائية.",
 	"oathauth-auth-token-help-ui": "أدخل رمزًا إما من جهاز المصادقة الخاص بك، أو رمز استرداد",
-	"oathauth-auth-ui": "يرجى إدخال رمز من تطبيق المصادقة الثنائية الخاص بك (مثل [https://authy.com/ أوثي]، [https://freeotp.github.io/ فري أوه.تي.بي]، [https://support.google.com/accounts/answer/1066447 جوجل أوثنتيكاتور]، [https://www.microsoft.com/en/account/authenticator/ مايكروسوفت أوثنتيكاتور]، [https://1password.com/ باسورد1]).",
+	"oathauth-auth-ui": "يرجى إدخال رمز من تطبيق المصادقة الثنائية الخاص بك (مثل [https://www.authy.com أوثي]، [https://freeotp.github.io/ فري أوه.تي.بي]، [https://support.google.com/accounts/answer/1066447 جوجل أوثنتيكاتور]، [https://www.microsoft.com/en-us/security/mobile-authenticator-app مايكروسوفت أوثنتيكاتور]، [https://1password.com/ باسورد1]).",
+	"oathauth-auth-switch-module-label": "التبديل إلى طريقة مصادقة مختلفة",
+	"oathauth-auth-switch-module-help": "اضبط <code>newModule</code> على اسم الوحدة الجديدة للحصول على تحدٍّ جديد من وحدة مصادقة ثنائية مختلفة. اتركه فارغًا إذا كنت تُجيب على التحدي الحالي.",
+	"oathauth-auth-switch-module-keep": "(لا تقم بالتبديل)",
 	"oathauth-throttled": "هناك الكثير من محاولات التحقق! الرجاء انتظار $1.",
 	"oathauth-login-failed": "فشل التحقق.",
 	"oathauth-describe-provider": "توثيق ذو عاملين (OATH)",
@@ -116,5 +120,6 @@
 	"oathauth-prefs-disabledgroups-help": "سيتم تعطيل {{GENDER:$2|عضويتك}} في {{PLURAL:$1| هذه المجموعة|هذه المجموعات}} حتى تقوم بتمكين [[Special:Manage Two-factor authentication|المصادقة الثنائية]].",
 	"oathauth-qrcode-alt": "رمز الاستجابة السريعة القابل للمسح يمثل المفتاح السري.",
 	"oathauth-hint": "ليس لديك إمكانية الوصول إلى جهازك أو تطبيقك؟ يمكنك إدخال رموز الاسترداد (التي تظهر عند تمكين 2FA) في هذا الحقل.",
-	"oathauth-must-be-central": "يجب ربط {{GENDER:$1|حسابك}} بنظام المصادقة المركزي لاستخدام المصادقة الثنائية."
+	"oathauth-must-be-central": "يجب ربط {{GENDER:$1|حسابك}} بنظام المصادقة المركزي لاستخدام المصادقة الثنائية.",
+	"oathauth-error-multiple-modules": "حاليًا، لا يُدعم استخدام طرق مصادقة ثنائية متعددة. يمكنك تفعيل $1 فقط بعد تعطيل $2 ."
 }

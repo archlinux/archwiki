@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Cedric31",
-			"Jfblanc"
+			"Jfblanc",
+			"Lhanars"
 		]
 	},
 	"tag-visualeditor": "Editor visual",
@@ -13,5 +14,8 @@
 	"visualeditor-feedback-link": "Project:VisualEditor/Feedback",
 	"visualeditor-feedback-tool": "Daissar un comentari sus l'Editor Visual",
 	"visualeditor-help-label": "Legir lo manual de l'utilizaire",
+	"visualeditor-welcomedialog-content": "Totòm pòt editar, e cada melhorament es util.",
+	"visualeditor-welcomedialog-content-thanks": "Mercé per ajudar lo mond a descobrir totjorn mai!",
+	"visualeditor-welcomedialog-switch": "Cambia a l'editor de còdi",
 	"visualeditor-welcomedialog-switch-ve": "Bascular cap a l’editor visual"
 }

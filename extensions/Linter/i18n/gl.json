@@ -115,7 +115,7 @@
 	"linter-pager-wikilink-in-extlink-details": "Ligazóns dentro de ligazóns",
 	"linter-prefix-search-subpage": "Páxinas con erros de Lint que coinciden co prefixo do título ou co título completo: $1",
 	"linterrors-subpage": "Erros de Lint: $1",
-	"linterrors-summary": "<strong>Nota:</strong> O reconto para as categorías non é exacto pois se basea en estimacións.",
+	"linterrors-summary": "<strong>Nota:</strong> As contaxes para as categorías non son exactas pois se basean en estimacións.",
 	"multi-part-template-block": "O resultado non procede dun só modelo",
 	"pageinfo-linter": "Erros detectados por Lint",
 	"pageinfo-linter-moreinfo": "Ollar información detallada sobre os erros de Lint."

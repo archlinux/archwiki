@@ -14,7 +14,8 @@
 			"Jefersonmoraes",
 			"Luckas",
 			"Luk3",
-			"Opraco"
+			"Opraco",
+			"BraunOBruno"
 		]
 	},
 	"templatedata-desc": "Implementa o armazenamento de dados para os parâmetros das predefinições (em JSON)",
@@ -80,6 +81,7 @@
 	"templatedata-modal-button-removemap": "Remover mapa",
 	"templatedata-modal-button-saveparam": "Salvar",
 	"templatedata-modal-confirmcancel": "Tem certeza de que deseja descartar suas alterações?",
+	"templatedata-modal-button-discard": "Descartar",
 	"templatedata-modal-current-language": "Idioma atual: $1",
 	"templatedata-modal-errormsg": "Erros encontrados. Certifique-se de que não existam nomes de parâmetros vazios ou duplicados e que o nome do parâmetro não inclua \"$1\", \"$2\" ou \"$3\".",
 	"templatedata-modal-errormsg-duplicate-name": "Foi encontrado um erro. O nome escolhido já está para ser utilizado por outro parâmetro.",
@@ -99,6 +101,7 @@
 	"templatedata-modal-table-param-aliases": "Nomes alternativos",
 	"templatedata-modal-table-param-autovalue": "Valor automático",
 	"templatedata-modal-table-param-default": "Padrão ($1)",
+	"templatedata-modal-table-param-status": "Status",
 	"templatedata-modal-table-param-deprecated": "Obsoleto",
 	"templatedata-modal-table-param-deprecatedValue": "Guia obsoleta",
 	"templatedata-modal-table-param-description": "Descrição ($1)",
@@ -121,5 +124,17 @@
 	"templatedata-modal-title-templateformat": "Formatação do texto wiki sugerida",
 	"templatedata-modal-title-templateformatstring": "String de formato personalizado",
 	"templatedata-modal-title-templateparam-details": "Detalhes do parâmetro: $1",
-	"templatedata-modal-title-templateparams": "Parâmetros da predefinição"
+	"templatedata-modal-title-templateparams": "Parâmetros da predefinição",
+	"templatedata-search-title": "Pesquisa de predefinição",
+	"templatedata-search-list-header": "Favoritos",
+	"templatedata-search-list-empty": "Predefinições que você marcar como favoritas aparecerão aqui",
+	"templatedata-template-discovery-disabled": "A descoberta de predefinições está desativada nesta wiki.",
+	"templatediscovery": "Descoberta de predefinições",
+	"templatedata-favorite-disabled": "Você deve estar conectado para adicionar uma predefinição aos favoritos.",
+	"templatedata-favorite-add": "Adicionar predefinição aos favoritos",
+	"templatedata-favorite-added": "Predefinição adicionada aos favoritos",
+	"templatedata-favorite-remove": "Remover predefinição dos favoritos",
+	"templatedata-favorite-removed": "Predefinição removida dos favoritos",
+	"templatedata-favorite-error": "Não é possível salvar favoritos",
+	"templatedata-favorite-maximum-reached": "Você atingiu o número máximo ($1) de predefinições favoritos. Remova alguns da sua lista antes de adicionar mais."
 }

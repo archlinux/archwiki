@@ -20,7 +20,9 @@
 			"Winston Sung",
 			"Xiplus",
 			"捍粵者",
-			"魔琴"
+			"魔琴",
+			"Lakejason0",
+			"Ericliu1912"
 		]
 	},
 	"skinname-vector": "舊版Vector（2010）",
@@ -74,7 +76,7 @@
 	"vector-searchsuggest-containing": "搜尋包含 <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 的頁面",
 	"vector-intro-page": "Help:新手入門",
 	"vector-toc-label": "目次",
-	"vector-toc-beginning": "序言",
+	"vector-toc-beginning": "（首段）",
 	"vector-toc-toggle-button-label": "切換 $1 子章節",
 	"vector-anon-user-menu-pages": "用於已登出編輯者的頁面",
 	"vector-anon-user-menu-pages-learn": "了解更多",

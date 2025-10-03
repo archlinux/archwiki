@@ -57,5 +57,6 @@
 	"apierror-abusefilter-cantcheck": "Você não tem permissão para conferir a sintaxe de filtros de edições.",
 	"apierror-abusefilter-canteval": "Você não tem permissão para avaliar expressões do AbuseFilter.",
 	"apierror-abusefilter-nosuchlogid": "Não há entrada no registro de abusos com o id $1.",
+	"apierror-abusefilter-incompatible": "A alteração solicitada não é suportada pelo Filtro de Abuso.",
 	"apierror-abusefilter-badsyntax": "O filtro tem sintaxe inválida."
 }

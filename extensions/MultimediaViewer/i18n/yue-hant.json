@@ -1,8 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"Ktchankt",
+			"Yueman"
 		]
 	},
-	"multimediaviewer-repository-local": "更多細節"
+	"multimediaviewer-optin-pref": "開着<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About 媒體檢視器]</span>",
+	"multimediaviewer-repository-local": "更多細節",
+	"multimediaviewer-original-embed-dimensions": "原本檔案$1",
+	"multimediaviewer-view-expanded": "喺媒體檢視器開",
+	"multimediaviewer-title-popup-text": "描述",
+	"multimediaviewer-enable-dialog-header": "開着媒體檢視器？",
+	"multimediaviewer-enable-submit-button": "開着媒體檢視器"
 }

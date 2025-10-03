@@ -2,16 +2,18 @@
 
 namespace MediaWiki\Extension\OATHAuth\Auth;
 
+use LogicException;
 use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
-use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
+use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 
 class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationProvider {
+
 	/**
 	 * @param string $action
 	 * @param array $options
@@ -43,13 +45,21 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
 		$authUser = OATHAuthServices::getInstance()->getUserRepository()->findByUser( $user );
 
-		$module = $authUser->getModule();
-		if ( $module === null ) {
+		if ( !$authUser->isTwoFactorAuthEnabled() ) {
 			return AuthenticationResponse::newAbstain();
 		}
 
-		return $this->getProviderForModule( $module )
-			->beginSecondaryAuthentication( $user, $reqs );
+		$module = $this->getModule( $authUser, $reqs );
+		if ( !$module ) {
+			throw new LogicException( 'Not possible' );
+		}
+		$response = $this->getProviderForModule( $module )->beginSecondaryAuthentication( $user, [] );
+
+		// Include information about used module in request so that the correct
+		// provider can be used when continuing
+		$this->maybeAddSelectAuthenticationRequest( $authUser, $response, $module );
+
+		return $response;
 	}
 
 	/**
@@ -59,20 +69,72 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
 		$authUser = OATHAuthServices::getInstance()->getUserRepository()->findByUser( $user );
 
-		$module = $authUser->getModule();
+		$module = $this->getModule( $authUser, $reqs );
+		if ( !$module ) {
+			return AuthenticationResponse::newFail( wfMessage( 'oathauth-invalidrequest' ) );
+		}
 		$provider = $this->getProviderForModule( $module );
-		$response = $provider->continueSecondaryAuthentication( $user, $reqs );
+
+		/** @var TwoFactorModuleSelectAuthenticationRequest $request */
+		$request = AuthenticationRequest::getRequestByClass( $reqs, TwoFactorModuleSelectAuthenticationRequest::class );
+		if ( $request && $request->newModule ) {
+			// The user is switching modules, restart
+			$response = $provider->beginSecondaryAuthentication( $user, [] );
+		} else {
+			$response = $provider->continueSecondaryAuthentication( $user, $reqs );
+		}
+
 		if ( $response->status === AuthenticationResponse::PASS ) {
 			$user->getRequest()->getSession()->set( OATHAuth::AUTHENTICATED_OVER_2FA, true );
 		}
+
+		$this->maybeAddSelectAuthenticationRequest( $authUser, $response, $module );
 		return $response;
 	}
 
+	private function getModule( OATHUser $authUser, array $reqs ): ?string {
+		return $this->getModuleFromRequest( $authUser, $reqs )
+			?? $this->getDefaultModule( $authUser );
+	}
+
 	/**
-	 * @param IModule $module
-	 * @return AbstractSecondaryAuthenticationProvider
+	 * Return the ID of the module corresponding to the 2FA type option the user selected in the
+	 * login form (or null if not selected / invalid).
+	 * @param OATHUser $authUser
+	 * @param AuthenticationRequest[] $reqs
+	 * @return string|null
 	 */
-	private function getProviderForModule( IModule $module ) {
+	private function getModuleFromRequest( OATHUser $authUser, array $reqs ): ?string {
+		/** @var TwoFactorModuleSelectAuthenticationRequest $request */
+		$request = AuthenticationRequest::getRequestByClass( $reqs, TwoFactorModuleSelectAuthenticationRequest::class );
+		if ( !$request ) {
+			return null;
+		}
+		$module = $request->newModule ?: $request->currentModule;
+
+		// Validate that the specified module ID is valid
+		// and enabled for the user.
+		foreach ( $authUser->getKeys() as $key ) {
+			if ( $key->getModule() === $module ) {
+				return $module;
+			}
+		}
+
+		return null;
+	}
+
+	private function getDefaultModule( OATHUser $authUser ): ?string {
+		// TODO: come up with a way to prioritize some modules over others
+		//   e.g. a hypothetical split recovery code module should not be shown
+		//   by default if other modules are enabled
+		return $authUser->getKeys() ? $authUser->getKeys()[0]->getModule() : null;
+	}
+
+	private function getProviderForModule( string $moduleId ): AbstractSecondaryAuthenticationProvider {
+		$module = OATHAuthServices::getInstance()
+			->getModuleRegistry()
+			->getModuleByKey( $moduleId );
+
 		$provider = $module->getSecondaryAuthProvider();
 		$services = MediaWikiServices::getInstance();
 		$provider->init(
@@ -83,5 +145,28 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 			$services->getUserNameUtils()
 		);
 		return $provider;
+	}
+
+	private function maybeAddSelectAuthenticationRequest(
+		OATHUser $authUser,
+		AuthenticationResponse $response,
+		string $currentModule
+	): void {
+		if ( !in_array( $response->status, [ AuthenticationResponse::UI, AuthenticationResponse::REDIRECT ] ) ) {
+			return;
+		}
+
+		$allowedModules = [];
+		$moduleRegistry = OATHAuthServices::getInstance( MediaWikiServices::getInstance() )
+			->getModuleRegistry();
+		foreach ( $authUser->getKeys() as $key ) {
+			$module = $moduleRegistry->getModuleByKey( $key->getModule() );
+			$allowedModules[$module->getName()] = $module->getDisplayName();
+		}
+		// Do not add the select request if there's nothing else to select.
+		if ( count( $allowedModules ) > 1 ) {
+			$selectRequest = new TwoFactorModuleSelectAuthenticationRequest( $currentModule, $allowedModules );
+			$response->neededRequests[] = $selectRequest;
+		}
 	}
 }

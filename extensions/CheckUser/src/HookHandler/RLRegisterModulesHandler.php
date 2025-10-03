@@ -53,6 +53,58 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 			];
 		}
 
+		$modules['ext.checkUser.tempAccountOnboarding'] = [
+			'localBasePath' => $dir . 'ext.checkUser.tempAccountsOnboarding',
+			'remoteExtPath' => 'CheckUser/modules/ext.checkUser.tempAccountsOnboarding',
+			'packageFiles' => [
+				'init.js',
+				'components/App.vue',
+				'components/TempAccountsOnboardingDialog.vue',
+				'components/TempAccountsOnboardingStep.vue',
+				'components/TempAccountsOnboardingStepper.vue',
+				'components/TempAccountsOnboardingIntroStep.vue',
+				'components/TempAccountsOnboardingIPInfoStep.vue',
+				'components/TempAccountsOnboardingIPRevealStep.vue',
+				[
+					'name' => 'components/icons.json',
+					'callback' => 'MediaWiki\\ResourceLoader\\CodexModule::getIcons',
+					'callbackParam' => [
+						'cdxIconNext',
+						'cdxIconPrevious'
+					],
+				]
+			],
+			'messages' => [
+				'checkuser-temporary-accounts-onboarding-dialog-title',
+				'checkuser-temporary-accounts-onboarding-dialog-skip-all',
+				'checkuser-temporary-accounts-onboarding-dialog-stepper-label',
+				'checkuser-temporary-accounts-onboarding-dialog-previous-label',
+				'checkuser-temporary-accounts-onboarding-dialog-next-label',
+				'checkuser-temporary-accounts-onboarding-dialog-close-label',
+				'checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title',
+				'checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-content',
+				'checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-image-aria-label',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-step-image-aria-label',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-error',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-success',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-warning',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-info-save-preference',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content',
+				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-image-aria-label',
+			],
+			'dependencies' => [
+				'vue',
+				'@wikimedia/codex',
+				'mediawiki.api',
+				'mediawiki.user',
+				'mediawiki.jqueryMsg'
+			],
+		];
+
 		if ( $this->extensionRegistry->isLoaded( 'IPInfo' ) ) {
 			$modules[ 'ext.checkUser.ipInfo.hooks' ] = [
 				'localBasePath' => $dir . 'ext.checkUser.ipInfo.hooks',
@@ -65,6 +117,7 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 					'ext-ipinfo-global-contributions-url-text',
 				]
 			];
+			$modules[ 'ext.checkUser.tempAccountOnboarding' ]['messages'][] = 'ipinfo-preference-use-agreement';
 		}
 
 		if ( count( $modules ) ) {

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"NikolasKHF"
+		]
+	},
+	"editcheck-dialog-action-no": "Tidak",
+	"editcheck-dialog-action-yes": "Ya",
+	"editcheck-dialog-addref-description": "Bantu pembaca memahami dari mana informasi ini datang dengan menambahkan sebuah kutipan.",
+	"editcheck-dialog-addref-reject-question": "Mengapa Anda tidak menambahkan kutipan?",
+	"editcheck-dialog-addref-reject-description": "Penyunting lain akan senang mempelajari keputusan Anda untuk tidak menambahkan kutipan.",
+	"editcheck-dialog-addref-reject-irrelevant": "Saya rasa kutipan tidak relevan pada perubahan yang saya buat",
+	"editcheck-dialog-addref-reject-common-knowledge": "Informasi yang saya tambahkan diketahui secara luas",
+	"editcheck-dialog-addref-reject-uncertain": "Saya tidak yakin kutipan apa yang harus saya tambahkan",
+	"editcheck-dialog-addref-reject-other": "Lainnya",
+	"editcheck-dialog-addref-success-notify": "Terima kasih sudah menambahkan kutipan!",
+	"editcheck-dialog-addref-title": "Tambahkan kutipan",
+	"editcheck-dialog-title": "Sebelum diterbitkan",
+	"editcheck-copyvio-title": "Konten yang ditempel",
+	"editcheck-review-title": "Tinjau perubahan",
+	"tag-editcheck-reference-decline-common-knowledge": "Pemeriksaan Suntingan (referensi) ditolak (pengetahuan umum)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "EditCheck referensi ditolak karena merupakan pengetahuan umum",
+	"tag-editcheck-reference-decline-irrelevant": "Pemeriksaan Suntingan (referensi) ditolak (tidak relevan)",
+	"tag-editcheck-reference-decline-irrelevant-description": "EditCheck referensi ditolak karena tidak relevan",
+	"tag-editcheck-reference-decline-other": "Pemeriksaan Suntingan (referensi) ditolak (lainnya)",
+	"tag-editcheck-reference-decline-other-description": "EditCheck referensi ditolak untuk alasan yang tidak tercantum",
+	"tag-editcheck-reference-decline-uncertain": "Pemeriksaan Suntingan (referensi) ditolak (tidak pasti)",
+	"tag-editcheck-reference-decline-uncertain-description": "EditCheck referensi ditolak karena tidak pasti"
+}

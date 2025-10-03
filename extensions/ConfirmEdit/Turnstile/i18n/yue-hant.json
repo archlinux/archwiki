@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"JeffreyKim",
+			"Ktchankt"
+		]
+	},
+	"turnstile-desc": "加入咗對Cloudflare轉門嘅支援去確認編輯",
+	"turnstile-edit": "為咗保護維基免受自動編輯垃圾內容嘅影響，請解決以下嘅驗證：",
+	"turnstile-addurl": "你嘅編輯包括新嘅外部拎，為咗保護維基免受自動垃圾內容嘅影響，請解決以下嘅驗證：",
+	"turnstile-badlogin": "為咗保護維基免受自動密碼破解，請解決以下嘅驗證：",
+	"turnstile-createaccount": "為咗保護維基免受自動開戶口嘅影響，請解決以下嘅驗證：",
+	"turnstile-createaccount-fail": "睇嚟你仲未解到CAPTCHA。",
+	"turnstile-create": "為咗保護維基免受自動頁面建立嘅影響，請解決以下嘅驗證：",
+	"turnstile-help": "請解決一個轉門挑戰，然後將回應值返返去為驗證字。"
+}

@@ -31,6 +31,15 @@ class RLRegisterModulesHandlerTest extends MediaWikiUnitTestCase {
 		$handler->onResourceLoaderRegisterModules( $rl );
 
 		$this->assertEquals( array_key_exists( 'ext.checkUser.ipInfo.hooks', $rlModules ), $isLoaded );
+		$this->assertArrayHasKey( 'ext.checkUser.tempAccountOnboarding', $rlModules );
+
+		if ( $isLoaded ) {
+			$this->assertContains(
+				'ipinfo-preference-use-agreement',
+				$rlModules['ext.checkUser.tempAccountOnboarding']['messages'],
+				'tempAccountOnboarding module has ipinfo agreement message',
+			);
+		}
 	}
 
 	public static function provideTestIPInfoHooksModuleRegistration() {

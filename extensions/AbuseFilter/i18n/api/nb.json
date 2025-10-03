@@ -52,5 +52,6 @@
 	"apierror-abusefilter-cantcheck": "Du har ikke tillatelse til å sjekke syntaksen til misbruksfiltre.",
 	"apierror-abusefilter-canteval": "Du har ikke tillatelse til å evaluere misbruksfilteruttrykk.",
 	"apierror-abusefilter-nosuchlogid": "Det er ingen misbruksloggoppføring med ID $1.",
+	"apierror-abusefilter-incompatible": "Den etterspurte endringen støttes ikke av misbruksfilteret.",
 	"apierror-abusefilter-badsyntax": "Filteret har ugyldig syntaks."
 }

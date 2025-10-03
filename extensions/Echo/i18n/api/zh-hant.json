@@ -22,7 +22,7 @@
 	"apihelp-echomarkread-param-sections": "要標記為已讀的章節清單。",
 	"apihelp-echomarkread-param-wikis": "要標記為已讀取的 wiki 清單（預設為目前的 wiki）。",
 	"apihelp-echomarkread-example-1": "把通知 8 標記為已讀",
-	"apihelp-echomarkread-example-2": "把所有通知標記為已讀",
+	"apihelp-echomarkread-example-2": "將所有通知標記為已讀",
 	"apihelp-echomarkread-example-3": "把通知 1 標記為未讀",
 	"apihelp-echomarkseen-summary": "把目前使用者的通知標記為已看過",
 	"apihelp-echomarkseen-example-1": "把所有類型的通知標記為已讀",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Arianit",
 			"Eagleal",
-			"Olsi"
+			"Olsi",
+			"Xhulianoo"
 		]
 	},
 	"categorytree": "Pema e kategorive",
@@ -19,13 +20,13 @@
 	"categorytree-mode-all": "të gjitha faqet",
 	"categorytree-collapse": "mbylle",
 	"categorytree-expand": "hape",
-	"categorytree-member-counts": "përmban $1 nënkategori, $2 faqe, dhe {{PLURAL:$3|1 skedë|$3 skeda}}",
+	"categorytree-member-counts": "Përmban {{PLURAL:$1|1 nënkategori|$1 nënkategori}}, {{PLURAL:$2|1 faqe|$2 faqe}} dhe {{PLURAL:$3|1 skedar|$3 skedarë}}",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 F",
 	"categorytree-num-files": "$1 S",
 	"categorytree-num-empty": "bosh",
 	"categorytree-load": "hape",
-	"categorytree-loading": "duke plotësuar",
+	"categorytree-loading": "duke u ngarkuar…",
 	"categorytree-nothing-found": "Ju kërkoj ndjesë, nuk u gjet asgjë.",
 	"categorytree-no-subcategories": "Asnjë nënkategori.",
 	"categorytree-no-parent-categories": "nuk ka kategori prindërore",

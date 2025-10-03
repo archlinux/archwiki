@@ -62,6 +62,23 @@ CommentItem.prototype.getTimestampString = function () {
 };
 
 /**
+ * @return {Range} Range of the comment's "body"
+ */
+CommentItem.prototype.getBodyRange = function () {
+	if ( !this.signatureRanges.length ) {
+		return this.getRange();
+	}
+	// Exclude last signature from body
+	const lastSignature = this.signatureRanges[ this.signatureRanges.length - 1 ];
+	const doc = this.range.startContainer.ownerDocument;
+	const nativeRange = doc.createRange();
+	nativeRange.setStart( this.range.startContainer, this.range.startOffset );
+	// Subtract 1 from the end offset to exclude the signature marker itself
+	nativeRange.setEnd( lastSignature.startContainer, lastSignature.startOffset - 1 );
+	return nativeRange;
+};
+
+/**
  * @return {HeadingItem} Closest ancestor which is a HeadingItem
  */
 CommentItem.prototype.getHeading = function () {

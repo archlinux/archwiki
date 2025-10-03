@@ -67,6 +67,9 @@
 	"oathauth-auth-token-help": "Extended help message for the second factor field in the API.",
 	"oathauth-auth-token-help-ui": "Label for token field during login",
 	"oathauth-auth-ui": "Shown on top of the login form when second factor is required",
+	"oathauth-auth-switch-module-label": "Label for the 2FA method switcher dropdown on login",
+	"oathauth-auth-switch-module-help": "API help for the 2FA method switcher on login",
+	"oathauth-auth-switch-module-keep": "Default option for the 2FA method switcher on login",
 	"oathauth-throttled": "Error message when throttling limit is hit.\n\nParameters:\n* $1 - throttle block duration",
 	"oathauth-login-failed": "Error message when verifying the second factor failed.",
 	"oathauth-describe-provider": "Description of the extension as an authentication provider.",
@@ -125,7 +128,8 @@
 	"oathauth-verify-disabled": "Notice that a user does not have 2FA enabled, shown on success at [[Special:VerifyOATHForUser]].\n$1 - Name of user",
 	"oathauth-prefs-disabledgroups": "Label on Special:Preferences for groups in which the user's membership has been disabled for a lack of two-factor authentication.\n$1 - Number of groups",
 	"oathauth-prefs-disabledgroups-help": "Help message shown on Special:Preferences for the {{mw-msg|oathauth-prefs-disabledgroups}} field.\n$1 - Number of groups\n$2 - User name for GENDER",
-	"oathauth-qrcode-alt": "Accessibility label for the QR code image shown to users when enabling the TOTP on the [[Special:OATHManage]] page.",
+	"oathauth-qrcode-alt": "Accessibility label for the QR code image shown to users when enabling an authenticator app on the [[Special:AccountSecurity]] page.",
 	"oathauth-hint": "Reminder that users can use recovery tokens if they don't have access to their device or application",
-	"oathauth-must-be-central": "Used as an error message when an account does not have a central ID available."
+	"oathauth-must-be-central": "Used as an error message when an account does not have a central ID available.",
+	"oathauth-error-multiple-modules": "Error message shown when the user tries to set up a second type of 2FA module."
 }

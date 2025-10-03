@@ -87,6 +87,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 				'default' =>
 					$this->msg( 'oathauth-step2-qrcode' )->escaped() . '<br/>'
 					. Html::element( 'img', [
+						'class' => 'mw-oauth-qrcode',
 						'src' => $qrCode->getDataUri(),
 						'alt' => $this->msg( 'oathauth-qrcode-alt' ),
 						'width' => 256,

@@ -2,10 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
-			"Lookruk"
+			"Lookruk",
+			"RenKtv"
 		]
 	},
+	"vector-languages": "ພາສາ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ພາສາ}}",
+	"vector-no-language-button-label": "ເພີ່ມພາສາ",
 	"vector-action-addsection": "ເພີ່ມຫົວຂໍ້",
 	"vector-action-delete": "ລຶບ",
 	"vector-action-move": "ຍ້າຍ",
@@ -15,5 +18,24 @@
 	"vector-view-history": "ເບິ່ງປະຫວັດ",
 	"vector-view-view": "ອ່ານ",
 	"vector-more-actions": "ເພີ່ມເຕີມ",
-	"vector-searchsuggest-containing": "ຊອກຫາໜ້າເວັບທີ່ມີ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-appearance-label": "ຮູບຮ່າງການສະແດງຜົນ",
+	"vector-feature-limited-width-name": "ກ້ວາງ",
+	"vector-feature-limited-width-1-label": "ມາດຕະຖານ",
+	"vector-feature-custom-font-size-name": "ຂໍ້ຄວາມ",
+	"vector-feature-custom-font-size-0-label": "ນ້ອຍ",
+	"vector-feature-custom-font-size-1-label": "ມາດຕະຖານ",
+	"vector-feature-custom-font-size-2-label": "ໃຫຍ່",
+	"skin-theme-name": "ສີ",
+	"skin-theme-day-label": "ແຈ້ງ",
+	"skin-theme-night-label": "ມືດ",
+	"skin-theme-os-label": "ອັດຕະໂນມັດ",
+	"skin-theme-exclusion-notice": "ໜ້ານີ້ມັກຈະຢູ່ໃນໂໝດແຈ້ງ",
+	"vector-searchsuggest-containing": "ຊອກຫາໜ້າເວັບທີ່ມີ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "ເນື້ອໃນ",
+	"vector-toc-beginning": "ທຳອິດ",
+	"vector-main-menu-label": "ເມນູຫຼັກ",
+	"vector-feature-custom-font-size-exclusion-notice": "ໜ້ານີ້ມັກຈະໃຊ້ຟອນຂະໜາດນ້ອຍ",
+	"vector-page-tools-label": "ເຄື່ອງມື",
+	"vector-page-tools-general-label": "ທົ່ວໄປ",
+	"vector-unpin-element-label": "ເຊື່ອງ"
 }

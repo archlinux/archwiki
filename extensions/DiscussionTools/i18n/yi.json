@@ -3,7 +3,8 @@
 		"authors": [
 			"Matma Rex",
 			"וויקיפּעדלער",
-			"פוילישער"
+			"פוילישער",
+			"Shvermer"
 		]
 	},
 	"discussiontools": "שמועס־געצייג",
@@ -27,6 +28,7 @@
 	"discussiontools-error-noswitchtove-template": "מוסטער סינטאַקס",
 	"discussiontools-findcomment-label-search": "זוכן",
 	"discussiontools-findcomment-title": "זוכן הערה",
+	"discussiontools-newtopic-missing-title": "ביטע געבן א טיטל פאר {{GENDER:|דיין}} דיסקוסיע טעמע.",
 	"discussiontools-newtopic-placeholder-title": "טעמע",
 	"discussiontools-notification-removed-topic-view": "באַקוקן בלאַט",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|האט געענטפֿערט}} אין \"<strong>$4</strong>\".",
@@ -42,10 +44,11 @@
 	"discussiontools-replywidget-mode-source": "מקור",
 	"discussiontools-replywidget-mode-visual": "וויזועל",
 	"discussiontools-replywidget-newtopic": "צושטעלן טעמע",
-	"discussiontools-replywidget-placeholder-reply": "ענטפֿער צו  {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-newtopic": "באַשרײבונג",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ענטפער}} צו {{BIDI: $1 }}",
 	"discussiontools-replywidget-preferences": "פרעפֿערענצן",
 	"discussiontools-replywidget-preview": "פֿאראויסקוק",
-	"discussiontools-replywidget-reply": "ענטפֿער",
+	"discussiontools-replywidget-reply": "ענטפער",
 	"discussiontools-replywidget-summary": "רעזומע",
 	"discussiontools-replywidget-watchthis": "צןלייגן דעם בלאַט צו אייער [[Special:Watchlist|נאכפֿאלג־ליסטע]]",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| מענטש|מענטשן}} אין דיסקוסיע",

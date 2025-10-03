@@ -59,7 +59,7 @@
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Vu}} recevos avizi pri nova komenti refere ca temo.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Vu}} subskribis!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Vu}} ne pluse recevos avizi pri komenti en ca temo.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{{{GENDER:|Vu}}}} desabonis.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Vu}} desabonis.",
 	"discussiontools-topicsubscription-pager-actions": "Agadi",
 	"discussiontools-topicsubscription-pager-page": "Pagino",
 	"discussiontools-topicsubscription-pager-topic": "Temo",

@@ -56,7 +56,10 @@
 	"oathauth-auth-token-label": "İki faktorlu token və ya bərpa kodu",
 	"oathauth-auth-token-help": "İki faktorlu autentifikasiyanın ikinci faktoru kimi istifadə olunan birdəfəlik parol.",
 	"oathauth-auth-token-help-ui": "Doğrulama cihazınızdan gələn kodu və ya bərpa kodunu daxil edin",
-	"oathauth-auth-ui": "Zəhmət olmasa, iki faktorlu autentifikasiya tətbiqinizdəki kodu daxil edin (məsələn, [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] və ya [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Zəhmət olmasa, iki faktorlu autentifikasiya tətbiqinizdəki kodu daxil edin (məsələn, [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] və ya [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-label": "Fərqli autentifikasiya metoduna keç",
+	"oathauth-auth-switch-module-help": "Fərqli 2FA modulundan yeni problem əldə etmək üçün <code>newModule</code> parametrini yeni modulun adına təyin edin. Cari çağırışa cavab verirsinizsə, boş buraxın.",
+	"oathauth-auth-switch-module-keep": "(dəyişmə)",
 	"oathauth-throttled": "Çox saylı doğrulama cəhdi! Zəhmət olmasa $1 gözləyin.",
 	"oathauth-login-failed": "Təsdiqləmə uğursuz oldu.",
 	"oathauth-describe-provider": "İki faktorlu autentifikasiya (OATH).",
@@ -72,7 +75,7 @@
 	"log-action-filter-oath": "İki faktorlu autentifikasiya əməliyyatının növü:",
 	"log-action-filter-oath-verify": "İki faktorlu autentifikasiyanın aktiv olub olmadığının yoxlanması",
 	"log-action-filter-oath-disable-other": "Digər istifadəçinin iki faktorlu autentifikasiyasının deaktiv edilməsi",
-	"oathauth-ui-no-module": "Qoşulmayıb",
+	"oathauth-ui-no-module": "Heç biri aktiv deyil",
 	"oathauth-module-totp-label": "TOTP (birdəfəlik token)",
 	"oathauth-ui-manage": "İdarə et",
 	"oathmanage": "İki faktorlu autentifikasiyanı idarə et",
@@ -114,5 +117,6 @@
 	"oathauth-prefs-disabledgroups-help": "Bu {{PLURAL:$1|qrupdakı|qruplardakı}} {{GENDER:$2|üzvlüyünüz}} \n[[Special:Manage Two-factor authentication|iki faktorlu autentifikasiyanı]] aktivləşdirənə qədər dondurulub.",
 	"oathauth-qrcode-alt": "Gizli açarı təmsil edən skan edilə bilən QR kodu.",
 	"oathauth-hint": "Cihazınıza və ya tətbiqinizə girişiniz yoxdur? Bu hissəyə bərpa kodlarınızı (2FA-nı aktivləşdirdiyiniz zaman təqdim olunur) daxil edə bilərsiniz.",
-	"oathauth-must-be-central": "İki faktorlu autentifikasiyadan istifadə etmək üçün {{GENDER:$1|hesabınız}} mərkəzi autentifikasiya sisteminə qoşulmalıdır."
+	"oathauth-must-be-central": "İki faktorlu autentifikasiyadan istifadə etmək üçün {{GENDER:$1|hesabınız}} mərkəzi autentifikasiya sisteminə qoşulmalıdır.",
+	"oathauth-error-multiple-modules": "Hələlik çoxlu 2FA autentifikasiya metodlarından istifadə dəstəklənmir. Siz yalnız $2 söndürdükdən sonra $1 aktiv edə bilərsiniz."
 }

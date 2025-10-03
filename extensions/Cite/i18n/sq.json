@@ -3,11 +3,12 @@
 		"authors": [
 			"Eraldkerciku",
 			"Mikullovci11",
-			"Olsi"
+			"Olsi",
+			"Xhulianoo"
 		]
 	},
 	"cite-desc": "Shton etiketa <code>&lt;ref[ name=id]&gt;</code> dhe <code>&lt;references/&gt;</code> për citime",
-	"cite_error": "Gabim referencash: $1",
+	"cite_error": "Gabim citimi: $1",
 	"cite_error_ref_numeric_key": "Etiketë <code>&lt;ref&gt;</code> e pavlefshme;\nemri nuk mund të jetë një numër i plotë i thjeshtë. Përdorni një titull përshkrues",
 	"cite_error_ref_no_key": "Etiketë <code>&lt;ref&gt;</code> e pavlefshme;\nrefs pa përmbajtje duhet të kenë një emër",
 	"cite_error_ref_too_many_keys": "Etiketë <code>&lt;ref&gt;</code> e pavlefshme;\nemra të pavlefshëm, p.sh. shumë",

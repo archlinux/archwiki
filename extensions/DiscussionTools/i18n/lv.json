@@ -47,6 +47,7 @@
 	"discussiontools-newtopic-missing-title": "Lūdzu, norādi virsrakstu savai diskusiju tēmai.",
 	"discussiontools-newtopic-placeholder-title": "Temats",
 	"discussiontools-notification-added-topic-view": "Skatīt tēmu",
+	"discussiontools-notification-comment-thank-header-compact": "$1 {{GENDER:$2|pateicās}} {{GENDER:$3|tev}}.",
 	"discussiontools-notification-removed-topic-body": "Iespējams, tu vairs nesaņemsi paziņojumus par {{PLURAL:$1|šīm tēmām|šo tēmu|šīm tēmām}}.",
 	"discussiontools-notification-removed-topic-header": "Tēma \"<strong>$4</strong>\" tika arhivēta vai noņemta no $3.",
 	"discussiontools-notification-removed-topic-header-bundled": "{{PLURAL:$1|1=Viena tēma tika|$1 tēma tika|$1 tēmas tika|100=99+ tēmas tika}} arhivētas vai noņemtas no $2.",

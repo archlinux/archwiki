@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Yueman"
+		]
+	},
+	"captcha-apihelp-param-captchaword": "答驗證碼",
+	"captcha-apihelp-param-captchaid": "之前請求嘅驗證碼ID"
+}

@@ -9,7 +9,8 @@
 			"MarcoAurelio",
 			"McDutchie",
 			"Tokvo",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"checkuser-summary": "Esta ferramienta escanea los cambios recientes pa sacar les IP usaes por un usuariu o p'amosar los datos d'ediciones/usuarios d'una IP.\nLos usuarios y ediciones correspondientes a una IP puen sacase per aciu de les cabeceres XFF amestando depués de la IP \\\"/xff\\\". Puen usase los protocolos IPv4 (CIDR $1-32) ya IPv6 (CIDR $2-128).\nPor razones de rindimientu nun s'amosarán más de 5.000 ediciones.\nEmplega esta ferramienta acordies cola política d'usu.",
@@ -66,6 +67,9 @@
 	"checkuser-token-fail": "Fallu de la sesión. Vuelvi a intentalo.",
 	"logentry-checkuser-private-event-autocreate-account": "creóse automáticamente",
 	"logentry-checkuser-private-event-create-account": "creóse",
+	"checkuser-temporary-accounts-onboarding-dialog-title": "Introducción a les cuentes temporales",
+	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "¿Qué ye una cuenta temporal?",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title": "Ver información de la IP",
 	"checkuser-investigateblock-warning-confirmaction": "Si ta seguru de que quier facelo, por favor, marque'l campu «{{int:checkuser-investigateblock-confirm-blocks-label}}» al final.",
 	"checkuser-investigate": "Investigar",
 	"checkuser-investigate-legend": "Buscar nomes d'usuariu, direiciones IP o intervalos d'IP",

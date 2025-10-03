@@ -105,7 +105,7 @@
 	"visualeditor-dialog-media-title": "Impostazioni file multimediali",
 	"visualeditor-dialog-media-type-border": "Bordo",
 	"visualeditor-dialog-media-type-frame": "Frame",
-	"visualeditor-dialog-media-type-frameless": "Senza frame",
+	"visualeditor-dialog-media-type-frameless": "Senza cornice",
 	"visualeditor-dialog-media-type-none": "Base",
 	"visualeditor-dialog-media-type-section": "Tipo immagine",
 	"visualeditor-dialog-media-type-section-help": "Puoi selezionare in che modo viene visualizzato l'elemento multimediale. Dovrebbe essere in formato miniatura per essere coerente con la maggioranza delle altre pagine.",

@@ -2,10 +2,42 @@
 	"@metadata": {
 		"authors": [
 			"Abdul Fatawu 352",
-			"Hasslaebetch"
+			"Hasslaebetch",
+			"Alidu Yakubu",
+			"Andani Inusah",
+			"Nurul deen"
 		]
 	},
+	"vector-languages": "Bɔɔlɛŋtɔɔ",
+	"vector-language-button-label": "{{PLURAL:$1|$1 n-yɛli|$1 n-yɛli kpaleŋ}}",
+	"vector-no-language-button-label": "“Suŋ n-yɛli” ✅",
+	"vector-action-addsection": "Yiŋ taali yɛlbuŋ",
+	"vector-action-delete": "Kpɛŋ",
+	"vector-action-move": "Bɔŋ",
+	"vector-action-protect": "Gbɛŋ",
 	"vector-view-create": "kpankpan",
+	"vector-view-history": "Nyɛ kabia",
 	"vector-more-actions": "Sɩna",
-	"vector-page-tools-actions-label": "Bɔnkpɩ"
+	"vector-appearance-label": "“Sɔri",
+	"vector-feature-limited-width-name": "→ N-yɔɔbɔŋ naat",
+	"vector-feature-limited-width-0-label": "Wide→ N-yɔɔbɔŋ naat",
+	"vector-feature-limited-width-1-label": "Kɔŋkpahiŋ",
+	"vector-feature-custom-font-size-name": "\"Bɔɔlɛ",
+	"vector-feature-custom-font-size-0-label": "“Zɔŋ”",
+	"vector-feature-custom-font-size-1-label": "Kpɛɛni",
+	"vector-feature-custom-font-size-2-label": "“Bɔŋ",
+	"skin-theme-name": "N-kpɛli",
+	"skin-theme-day-label": "\"Nyaŋ",
+	"skin-theme-night-label": "Bɔli",
+	"skin-theme-os-label": "“Yɛli kpɛŋkpɛŋɛ”",
+	"skin-theme-exclusion-notice": "Tiŋkpang ni ŋun yɛ la ŋmɔri kaŋa piɛlɛ.\"",
+	"vector-toc-label": "Nyɛlabɔ",
+	"vector-toc-beginning": "Bɔhira",
+	"vector-anon-user-menu-pages": "\"Tiŋkpang kɔli ni ba naŋ kɔli yɛri kpɛma\"",
+	"vector-main-menu-label": "Kɔligu kpɛŋkpɛŋɛ",
+	"vector-feature-custom-font-size-exclusion-notice": "\"Pagɔ ni yaa kpɛɛli yɛlɛ kpɛɛ zɔŋ kpɔŋ kpɛɛ\"",
+	"vector-page-tools-label": "Zɔŋkpɔŋ",
+	"vector-page-tools-general-label": "Kpɛŋkpɛŋɛ",
+	"vector-page-tools-actions-label": "Bɔnkpɩ",
+	"vector-unpin-element-label": "“Zuɣu"
 }

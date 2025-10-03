@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
 	"categorytree": "Stablasti prikaz hijerarhije kategorija",
 	"categorytree-portlet": "Kategorije",
 	"categorytree-legend": "Prikaži stablo kategorija",
 	"categorytree-desc": "Dinamička navigacija [[Special:CategoryTree|strukture kategorija]].",
-	"categorytree-header": "Upišite naziv kategorije da biste vidjeli njen sadržaj u obliku stabla (zahtijeva JavaScript).",
+	"categorytree-header": "Unesite naziv kategorije da biste vidjeli njen sadržaj u obliku stabla (zahtijeva JavaScript).",
 	"categorytree-category": "Kategorija:",
 	"categorytree-go": "Prikaži stablo",
 	"categorytree-parents": "Nadkategorije - Наткатегорије",

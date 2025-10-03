@@ -83,6 +83,7 @@
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],
+	"callback": "PageImages\\PageImages::onRegistration",
 	"config": {
 		"PageImagesScores": {
 			"description": "Images <120px are usually from maintenance or stub templates; >600px are panoramas, less suitable.",
@@ -133,9 +134,7 @@
 			"value": false
 		},
 		"PageImagesNamespaces": {
-			"value": [
-				0
-			]
+			"value": false
 		},
 		"PageImagesLeadSectionOnly": {
 			"description": "Whether page images should be restricted to those in section 0",

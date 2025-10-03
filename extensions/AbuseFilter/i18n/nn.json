@@ -136,6 +136,7 @@
 	"abusefilter-reautoconfirm-done": "Brukarkontoen si stoda som automatisk godkjend er vorten gjeven attende",
 	"abusefilter-status": "Av {{PLURAL:$1|den siste handlinga|dei siste $1 handlingane}} har $2 ($3 %) nådd grenseverdien $4. $5 ($6 %) passa med eit av dei aktiverte filtera.",
 	"abusefilter-edit": "Endrar endringsfilter",
+	"abusefilter-edit-specific": "Endrar endringsfilter $1: $2",
 	"abusefilter-edit-subtitle": "Endrar filter $1",
 	"abusefilter-edit-subtitle-new": "Opprettar filter",
 	"abusefilter-edit-oldwarning": "<strong>Du endrar ein gammal versjon av dette filteret. Den oppgjevne statistikken gjeld for den seinaste versjonen av filteret. Om du lagrar endringane dine, kjem du til å skriva over alle endringane som blei gjort etter versjonen du no endrar. </strong> &bull; [[Special:AbuseFilter/history/$2|Tilbake til filterhistorikken]]",

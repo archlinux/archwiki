@@ -100,6 +100,7 @@
 	"abusefilter-log-entry": "$1: $2 utløste et redigeringsfilter ved å {{GENDER:$8|gjøre}} en $3 på $4.\nReaksjon: $5;\nfilterbeskrivelse: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 utløste et misbruksfilter, ved å {{GENDER:$8|utføre}} handlingen «$3» på $4.\nUtførte handlinger: $5;\nFilterbeskrivelse: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 utløste redigeringsfilter $3, ved å {{GENDER:$9|gjøre}} handlingen «$4» på $5.\nReaksjon: $6;\nFilterbeskrivelse: $7 ($8)",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1: $2 {{GENDER:$9|utløste}} $3 ved å utføre handlingen «$4» på $5.\nHandlinger som ble utført: $6;\nFilterbeskrivelse: $7",
 	"abusefilter-log-detailedentry-global": "globalt filter $1",
 	"abusefilter-log-detailedentry-local": "filter $1",
 	"abusefilter-log-detailslink": "detaljer",

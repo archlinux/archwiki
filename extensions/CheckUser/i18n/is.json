@@ -6,7 +6,8 @@
 			"Spacebirdy",
 			"Stefán Örvar Sigmundsson",
 			"Sveinn í Felli",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Bjarki S"
 		]
 	},
 	"checkuser-desc": "Veitir notendum með viðeigandi heimild möguleika á að athuga IP-staðföng notenda og aðrar upplýsingar",
@@ -14,7 +15,7 @@
 	"group-checkuser": "Athugendur",
 	"group-checkuser-member": "{{GENDER:$1|athugandi}}",
 	"group-temporary-account-viewer": "Athugendur tímabundra aðganga",
-	"group-temporary-account-viewer-member": "{{GENDER:$1|Athugandi tímabundra aðganga}}",
+	"group-temporary-account-viewer-member": "{{GENDER:$1|athugandi tímabundinna aðganga}}",
 	"grouppage-checkuser": "{{ns:project}}:Athugandi",
 	"checkuser-reason": "Ástæða:",
 	"checkuser-reason-api": "HFV: $1",
@@ -39,6 +40,11 @@
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "Hvað er tímabundinn aðgangur?",
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-content": "Í hvert skipti sem notandi gefur út breytingu án þess að skrá sig inn, er búinn til [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Temporary_accounts tímabundinn aðgangur].\n\nÞessi aðgangur fær sjálfgefið notendanafn. Vefkaka verður búin til í vafranum þegar aðgangurinn er búinn til. Vísað verður í notendanafnið sem höfundur breytinga, jafnvel ef vistfang tímabundna aðgangsins breytist. Með tímabundna aðganginum getur vistfangið bara verið skoðað af traustum meðlimum samfélagsins.",
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-image-aria-label": "Mynd sem sýnir einkennismerki tímabundra aðganga.",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title": "Skoðun IP upplýsinga",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content": "[https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/IP_Info IP upplýsinga] (IP uppl.) tólið gerir stjórnendum, þeim sem fylgjast með skemmdarvörgum og reyndum notendum auðveldara að nálgast upplýsingar um IP upplýsingar án þess að sjá IP töluna sjálfir.\n\nNotendur sem ná aðgangsheimildum geta virkjað IP upplýsingar í stillingunum. Þegar það hefur verið virkjað mun IP uppl. sprettigluggi vera sýndur við hliðiná tímabundna aðgöngum og gömlum visfanga breytingum. IP uppl. verður einnig sýnilegt á framlags síðunni.",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-image-aria-label": "Mynd sem sýnir IP uppl. tólið í notkun til að fletta upp upplýsingum um tímabundinn aðgang á síðu, þar sem smellt hefur verið á upplýsinga merki til að opna sprettiglugga.",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "Virkja IP upplýsingar",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title": "Birting vistfangs",
 	"checkuser-ip-contributions": "Leita eftir framlögum vistfanga",
 	"checkuser-ip-contributions-permission-error-title": "Aðgangsvilla",
 	"checkuser-ip-contributions-permission-error-description": "Til að skoða breytingar tímabundnra aðganga fyrir vistföng, skalt þú staðfesta samkomulagið í [[Special:Preferences|stillingunum þínum]].",
@@ -56,6 +62,7 @@
 	"checkuser-ip-contributions-special-ip-contributions-button": "Breytingar tímabundra notenda á vistfangi",
 	"checkuser-ip-contributions-special-ip-contributions-button-mobile": "Breytingar tímab. notenda á IP-tölu",
 	"checkuser-ip-contributions-special-contributions-button": "Eldri vistfanga breytingar",
+	"checkuser-global-contributions-link": "altæk framlög",
 	"checkuser-global-contributions": "Leita eftir altækum framlögum",
 	"checkuser-global-contributions-permission-error-title": "Aðgangsvilla",
 	"checkuser-global-contributions-permission-error-description": "Til að skoða altæk framlög, vinsamlegast staðfestu samkomulagið í [[Special:GlobalPreferences|stillingunum þínum]].",
@@ -71,5 +78,6 @@
 	"checkuser-tempaccount-reveal-ip-missing": "óáfáanlegt",
 	"checkuser-tempaccount-reveal-ip-error": "villa",
 	"checkuser-tempaccount-reveal-ip-permission-error-description": "Til þess að skoða vistföng fyrir tímabundna aðganga, vinsamlegast samþykktu samkomulagið í [[Special:Preferences|stillingunum þínum]].",
-	"checkuser-tempaccount-specialblock-ips": "Þetta er tímabundinn aðgangur sem notar eftirfarandi {{PLURAL:$1|vistfang|vistföng}}: $2"
+	"checkuser-tempaccount-specialblock-ips": "Þetta er tímabundinn aðgangur sem notar eftirfarandi {{PLURAL:$1|vistfang|vistföng}}: $2",
+	"checkuser-userinfocard-enable-preference-help": "Sýna takka við hliðiná notendanafni til að opna sprettiglugga með upplýsingum um aðgang"
 }

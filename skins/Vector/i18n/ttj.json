@@ -30,7 +30,7 @@
 	"vector-jumptonavigation": "Gurukira omuhanda",
 	"vector-jumptosearch": "Gurukira ekiserra",
 	"vector-jumptocontent": "Gurukira ebirumu",
-	"vector-more-actions": "Muno",
+	"vector-more-actions": "Ebindi",
 	"vector-appearance-label": "Enzooka",
 	"vector-feature-limited-width-name": "Obugazi",
 	"vector-feature-limited-width-0-label": "Galihya",
@@ -75,5 +75,7 @@
 	"vector-main-menu-unpinned-popup": "Orukarra rw'emirimo orukuru rwihirwe hanu.",
 	"vector-appearance-unpinned-popup": "Orukarra rw'enzooka rwihirwe hanu.",
 	"vector-2022-beta-preview-label": "Obutungibwa bw'Okusoma (Vekitoli 2022)",
-	"vector-2022-beta-preview-description": "Tunga kara obusobozi obuhyaka bw'obutungibwa bw'okusoma, nk'enkiza z'okuhandiika n'omulingo gw'omwirima."
+	"vector-2022-beta-preview-description": "Tunga kara obusobozi obuhyaka bw'obutungibwa bw'okusoma, nk'enkiza z'okuhandiika n'omulingo gw'omwirima.",
+	"vector-night-mode-issue-reporting-preload-title": "Ensobi y'omulingo gw'omwirima ha $1",
+	"vector-night-mode-beta-tag": "(bbeta)"
 }

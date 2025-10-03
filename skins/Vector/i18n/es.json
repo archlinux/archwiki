@@ -37,7 +37,8 @@
 			"JaimeDes",
 			"Cenzontle25",
 			"Laquin",
-			"Virum Mundi"
+			"Virum Mundi",
+			"Geom"
 		]
 	},
 	"skinname-vector": "Versión heredada de Vector (2010)",
@@ -85,7 +86,7 @@
 	"skin-theme-name": "Color",
 	"skin-theme-description": "[Versión experimental, altas probabilidades de experimentar problemas] Reduce la luz emitida por las pantallas de los dispositivos.",
 	"skin-theme-day-label": "Claro",
-	"skin-theme-night-label": "Noche",
+	"skin-theme-night-label": "Oscuro",
 	"skin-theme-os-label": "Automático",
 	"skin-theme-exclusion-notice": "Esta página siempre está en modo claro.",
 	"vector-search-loader": "Cargando las sugerencias de búsqueda",

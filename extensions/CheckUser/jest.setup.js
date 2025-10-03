@@ -9,7 +9,8 @@ global.mw = mockMediaWiki();
 
 global.mw.message = jest.fn( ( ...messageKeyAndParams ) => ( {
 	text: () => `(${ messageKeyAndParams.join( ', ' ) })`,
-	parse: () => `(${ messageKeyAndParams.join( ', ' ) })`
+	parse: () => `(${ messageKeyAndParams.join( ', ' ) })`,
+	escaped: () => `(${ messageKeyAndParams.join( ', ' ) })`
 } ) );
 
 global.mw.storage = {

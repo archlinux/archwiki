@@ -81,7 +81,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "{{GENDER:|您}}已訂閱！",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "當此頁面上有新話題時，{{GENDER:|您}}將不再收到通知。",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|您}}已取消訂閱。",
-	"discussiontools-notification-added-topic-header": "$2在<strong>$3</strong>上建立了新話題「<strong>$4</strong>」。",
+	"discussiontools-notification-added-topic-header": "$1在<strong>$3</strong>{{GENDER:$2|建立了}}新話題「<strong>$4</strong>」。",
 	"discussiontools-notification-added-topic-header-bundled": "在「<strong>$2</strong>」上有 {{PLURAL:$1|1|$1|100=99+}} 則新話題。",
 	"discussiontools-notification-added-topic-view": "新話題",
 	"discussiontools-notification-comment-thank-header": "$1{{GENDER:$2|感謝}}{{GENDER:$4|您}}在「<strong>$3</strong>」的留言。",

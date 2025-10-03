@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kuzayet"
+			"Kuzayet",
+			"Kambai Akau"
 		]
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "Mbrang ka̱tyyei du̱tyin ka̱ryyi",
 	"visualeditor-ca-createsource": "Yrang du̱tyin",
 	"visualeditor-ca-editsource": "Shang du̱tyin ti",
-	"visualeditor-ca-editsource-section": "Shang du̱tyin ti",
+	"visualeditor-ca-editsource-section": "shang du̱tyin ti",
 	"visualeditor-descriptionpagelink": "Project:a̱ssu̱ a̱shang"
 }

@@ -17,7 +17,8 @@
 			"Robin van der Vliet",
 			"Romaine",
 			"Siebrand",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"Mbch331"
 		]
 	},
 	"discussiontools": "Overleghulpmiddelen",
@@ -37,7 +38,7 @@
 	"discussiontools-emptystate-desc-self-temp": "Mensen op {{SITENAME}} kunnen deze [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|overlegpagina]] gebruiken om voor u een openbaar bericht te plaatsen.\n\nUiteindelijk [[{{MediaWiki:tempuser-helppage}}|verloopt deze pagina]]. Om meldingen te blijven ontvangen en toegang te krijgen tot andere functies, [$1 maakt u een account aan] of [$2 meldt u zich aan].",
 	"discussiontools-emptystate-desc-user": "Op [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|overlegpagina's]] wordt besproken hoe we de inhoud op {{SITENAME}} zo goed mogelijk kunnen maken. Begin een nieuw overleg om verbinding te maken en samen te werken met [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Wat u hier schrijft, is openbaar zodat anderen het kunnen zien.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Overlegpagina's]] zijn plekken waar mensen bespreken hoe ze de inhoud op {{SITENAME}} zo goed mogelijk kunnen maken. Gebruik deze pagina om een overleg te starten over de bewerkingen die vanaf dit IP-adres zijn gemaakt. Wat u hier schrijft, is openbaar zodat anderen het kunnen zien. Veel IP-adressen veranderen periodiek en worden vaak door meerdere mensen gedeeld.",
-	"discussiontools-emptystate-desc-user-temp": "Op deze [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|overlegpagina]] kunt u met [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] in overleg gaan over hoe u {{SITENAME}} kunt verbeteren. Wat u hier schijft is voor iedereen zichtbaar. Aangezien [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] een [[{{MediaWiki:tempuser-helppage}}|tijdelijk account]] is, verloopt deze overlegpagina uiteindelijk. [[{{MediaWiki:tempuser-helppage}}|Meer informatie]].",
+	"discussiontools-emptystate-desc-user-temp": "Op deze [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|overlegpagina]] kunt u met [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] in overleg gaan over hoe u {{SITENAME}} kunt verbeteren. Wat u hier schrijft is voor iedereen zichtbaar. Aangezien [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] een [[{{MediaWiki:tempuser-helppage}}|tijdelijk account]] is, verloopt deze overlegpagina uiteindelijk. [[{{MediaWiki:tempuser-helppage}}|Meer informatie]].",
 	"discussiontools-emptystate-title": "Begin een overleg over {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "Welkom op uw overlegpagina",
 	"discussiontools-emptystate-title-self-anon": "Welkom op deze overlegpagina",
@@ -116,7 +117,7 @@
 	"discussiontools-preference-newtopictool-createpage": "Als ik een overlegpagina bezoek die nog niet is aangemaakt:",
 	"discussiontools-preference-newtopictool-createpage-editor": "Open de wikitekst-bewerker",
 	"discussiontools-preference-newtopictool-createpage-newtopictool": "Bied aan om een nieuw onderwerp toe te voegen",
-	"discussiontools-preference-newtopictool-help": "Met deze instelling wordt een inline-formulier weergegeven voor het toevoegen van nieuwe onderwerpen.",
+	"discussiontools-preference-newtopictool-help": "Hiermee wordt een formulier in de tekst opgenomen voor het toevoegen van nieuwe onderwerpen.",
 	"discussiontools-preference-replytool": "Snel reageren inschakelen",
 	"discussiontools-preference-replytool-help": "Met deze instelling wordt een koppeling weergegeven om met één klik op opmerkingen op een overlegpagina te kunnen reageren.",
 	"discussiontools-preference-sourcemodetoolbar": "Bewerkingshulpmiddelen inschakelen in bronmodus",

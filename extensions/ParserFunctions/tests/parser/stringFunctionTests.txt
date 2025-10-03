@@ -54,3 +54,20 @@ some unescaped string
 !! html
 
 !! end
+
+!! test
+#explode with negative offset (T403241)
+!! wikitext
+{{#explode:Foo*Bar|*|-1}}
+!! html
+<p>Bar
+</p>
+!! end
+
+!! test
+#explode with bad negative offset (T403241)
+!! wikitext
+{{#explode:Foo*Bar|*|- 1}}
+!! html
+
+!! end

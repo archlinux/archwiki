@@ -1,10 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kakonjo"
+			"Kakonjo",
+			"Owobusingye"
 		]
 	},
+	"vector-languages": "Endimi",
 	"vector-language-button-label": "{{PLURAL:$1|$1 orurimi|$1 endimi}}",
+	"vector-no-language-button-label": "Okwongyera endimi",
 	"vector-action-addsection": "Taho omuhajaano",
 	"vector-action-delete": "Sangura",
 	"vector-action-move": "Tambuza",
@@ -14,5 +17,27 @@
 	"vector-view-history": "Reba ebi'kozirwe",
 	"vector-view-view": "Shoma",
 	"vector-more-actions": "Ebikukiraho",
-	"vector-toc-toggle-button-label": "Rabyamu $1 Akacweeka"
+	"vector-appearance-label": "Endebeka",
+	"vector-feature-limited-width-name": "Obugazi",
+	"vector-feature-limited-width-0-label": "Obugazi",
+	"vector-feature-limited-width-1-label": "Omutindo",
+	"vector-feature-custom-font-size-name": "Ekihandiiko",
+	"vector-feature-custom-font-size-0-label": "Kakye",
+	"vector-feature-custom-font-size-1-label": "Omutindo",
+	"vector-feature-custom-font-size-2-label": "Kihango",
+	"skin-theme-name": "Erangi",
+	"skin-theme-day-label": "Ekyererezi",
+	"skin-theme-night-label": "Omwirima",
+	"skin-theme-os-label": "otomatiki",
+	"skin-theme-exclusion-notice": "Orupapura oru buriijo ruri omu muringo gw'ekyererezi.",
+	"vector-toc-label": "Ebirimu",
+	"vector-toc-beginning": "Obutandikiro",
+	"vector-toc-toggle-button-label": "Rabyamu $1 Akacweeka",
+	"vector-anon-user-menu-pages": "Eby'ashunshuzi abarugire omu Wiki",
+	"vector-main-menu-label": "Ebikwato ebikuru",
+	"vector-feature-custom-font-size-exclusion-notice": "Orupapura oru nirukoresa enyukuta bukye",
+	"vector-page-tools-label": "Ebikoreso",
+	"vector-page-tools-general-label": "Ekyabyoona",
+	"vector-page-tools-actions-label": "Ebikorwa",
+	"vector-unpin-element-label": "shereka"
 }

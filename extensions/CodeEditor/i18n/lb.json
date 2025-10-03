@@ -1,14 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"codeeditor-desc": "Ännere vu JavaScript an CSS-Säite mam [https://ace.c9.io/ Ace editor] deen d'Syntax faarweg duerstellt",
 	"codeeditor-next-annotation": "Op déi nächst Notiz goen",
 	"codeeditor-toolbar-toggle": "Editeur vum Code an- an ausschalten",
-	"codeeditor-save-with-errors": "Et si Feeler am Dokument. Sidd Dir sécher datt dir e et späichere wëllt?",
-	"codeeditor-gotoline": "Gitt op d'Linn mat der Nummer...",
+	"codeeditor-save-with-errors": "Et si Feeler am Dokument. Sidd Dir sécher, datt Dir et verëffentleche wëllt?",
+	"codeeditor-invisibleChars-toggle": "Onsiichtbar Zeechen ëmschalten",
+	"codeeditor-lineWrapping-toggle": "Zeilenëmbroch ëmschalten",
+	"codeeditor-searchReplace-toggle": "Sichen-an-Ersetzen-Dialog ëmschalten",
+	"codeeditor-gotoline": "Gitt op d'Zeil mat der Nummer…",
+	"codeeditor-gotoline-placeholder": "Zeil[:Kolonn]",
+	"codeeditor-gotoline-prompt": "Gitt eng Zeilennummer an",
 	"codeeditor-indent": "Eraréckelen",
 	"codeeditor-outdent": "Erausréckelen",
 	"codeeditor-error-title": "Ofhängegkeet feelgeschlo",

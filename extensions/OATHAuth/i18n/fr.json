@@ -70,7 +70,10 @@
 	"oathauth-auth-token-label": "Jeton d'authentification à deux facteurs ou code de récupération",
 	"oathauth-auth-token-help": "Un mot de passe à usage unique utilisé comme seconde étape d’une authentification à deux facteurs.",
 	"oathauth-auth-token-help-ui": "Entrez soit un code de votre appareil d'authentification, soit un code de récupération",
-	"oathauth-auth-ui": "Veuillez entrer un code à partir de votre application d’authentification à deux facteurs (telle que [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en/account/authenticator/ Microsoft Authenticator] ou [https://1password.com/ 1Password]).",
+	"oathauth-auth-ui": "Veuillez entrer un code à partir de votre application d’authentification à deux facteurs (telle que [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] ou [https://1password.com/ 1Password]).",
+	"oathauth-auth-switch-module-label": "Passer à une autre méthode d'authentification",
+	"oathauth-auth-switch-module-help": "Définissez <code>newModule</code> comme le nom du nouveau module pour obtenir un nouveau défi d'un autre module 2FA. Laissez ce champ vide si vous répondez au défi actuel.",
+	"oathauth-auth-switch-module-keep": "(ne pas changer)",
 	"oathauth-throttled": "Trop de tentatives de vérification ! Veuillez attendre au moins $1.",
 	"oathauth-login-failed": "Échec de la vérification.",
 	"oathauth-describe-provider": "Authentification à deux facteurs (OATH).",
@@ -128,5 +131,6 @@
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|}}Votre statut de membre de ce{{PLURAL:$1||s}} groupe{{PLURAL:$1||s}} restera désactivé tant que vous n’aurez pas activé l’[[Special:Manage Two-factor authentication|authentification à deux facteurs]].",
 	"oathauth-qrcode-alt": "Code QR à scanner représentant la clé secrète.",
 	"oathauth-hint": "Vous n'avez pas accès à votre appareil ou à votre application ? Vous pouvez saisir un code de récupération (qui vous ont été fournis lorsque vous avez activé l'authentification à deux facteurs) dans ce champ.",
-	"oathauth-must-be-central": "{{GENDER:$1|}}Votre compte doit être lié au système d’authentification central pour pouvoir utiliser l’authentification à deux facteurs."
+	"oathauth-must-be-central": "{{GENDER:$1|}}Votre compte doit être lié au système d’authentification central pour pouvoir utiliser l’authentification à deux facteurs.",
+	"oathauth-error-multiple-modules": "Pour l'instant, l'utilisation de plusieurs méthodes d'authentification 2FA n'est pas prise en charge. Vous ne pouvez activer $1 qu'après avoir désactivé $2 ."
 }

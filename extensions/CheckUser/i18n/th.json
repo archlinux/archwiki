@@ -83,6 +83,8 @@
 	"logentry-checkuser-private-event-create-account": "ถูกสร้างขึ้น",
 	"group-checkuser.css": "/* CSS ในที่นี้จะมีผลต่อผู้ตรวจสอบผู้ใช้เท่านั้น */",
 	"group-checkuser.js": "/* JS ในที่นี้จะมีผลต่อผู้ตรวจสอบผู้ใช้เท่านั้น */",
+	"checkuser-temporary-accounts-onboarding-dialog-close-label": "ปิด",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "เปิดใช้งานสารสนเทศไอพี",
 	"checkuser-link-investigate-label": "ลองใช้เครื่องมือ {{#special:investigate}}",
 	"checkuser-investigateblock": "บล็อกผู้ใช้ (สืบสวน)",
 	"checkuser-investigateblock-target": "ชื่อผู้ใช้และเลขที่อยู่ไอพี",

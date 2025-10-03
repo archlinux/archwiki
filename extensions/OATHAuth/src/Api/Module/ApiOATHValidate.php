@@ -21,6 +21,7 @@ namespace MediaWiki\Extension\OATHAuth\Api\Module;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\ApiResult;
+use MediaWiki\Extension\OATHAuth\Module\TOTP;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Logger\LoggerFactory;
@@ -76,7 +77,8 @@ class ApiOATHValidate extends ApiBase {
 
 		if ( $user->isNamed() ) {
 			$authUser = $this->oathUserRepository->findByUser( $user );
-			if ( $authUser->isTwoFactorAuthEnabled() ) {
+			$keys = TOTP::getTOTPKeys( $authUser );
+			if ( $keys ) {
 				$result['enabled'] = true;
 
 				$data = [];
@@ -85,7 +87,7 @@ class ApiOATHValidate extends ApiBase {
 					$data = $decoded;
 				}
 
-				foreach ( $authUser->getKeys() as $key ) {
+				foreach ( $keys as $key ) {
 					if ( $key->verify( $data, $authUser ) !== false ) {
 						$result['valid'] = true;
 						break;

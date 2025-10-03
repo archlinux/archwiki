@@ -15,7 +15,8 @@
 			"Liridon",
 			"Ritam",
 			"Techlik",
-			"Vyolla"
+			"Vyolla",
+			"Xhulianoo"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libër",
@@ -30,7 +31,7 @@
 	"cite-ve-changedesc-reflist-group-to": "Grupi i listës së referencave u ndryshua nga grupi i përgjithshëm në \"$1\"",
 	"cite-ve-changedesc-reflist-responsive-set": "U ndryshua listë referencash për t’u shfaqur në shtylla reaguese",
 	"cite-ve-changedesc-reflist-responsive-unset": "U ndryshua listë referencash për t’u shfaqur në një shtyllë të vetme",
-	"cite-ve-citationneeded-button": "Shtoni një citim",
+	"cite-ve-citationneeded-button": "Shto një citim",
 	"cite-ve-citationneeded-description": "Një editues ka treguar që kjo kërkesë ka nevojë për citimin me burim të besueshëm.",
 	"cite-ve-citationneeded-reason": "Arsyeja e dhënë:",
 	"cite-ve-citationneeded-title": "Ka nevojë për citim",

@@ -15,7 +15,8 @@
 			"OsamaK",
 			"ديفيد",
 			"زكريا",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Mdktb"
 		]
 	},
 	"cite-desc": "يضيف وسمي <code>&lt;ref&gt;</code> و<code>&lt;references&gt;</code> للاستشهادات",
@@ -41,7 +42,7 @@
 	"cite_error_empty_references_define": "علامة <code><ref></code> بالاسم \" $1 \" المحددة في مجموعة <code><references></code> \" $2 \" لا تحتوي على محتوى.",
 	"cite-tracking-category-cite-error": "صفحات بأخطاء في المراجع",
 	"cite-tracking-category-cite-error-desc": "الصفحات في هذا التصنيف بها أخطاء في استخدام وسوم المراجع.",
-	"cite-tracking-category-cite-diffing-error": "صفحات تحتوي على أخطاء مرئية في المراجع",
+	"cite-tracking-category-cite-diffing-error": "صفحات تحوي على أخطاء مرئية في المراجع",
 	"cite-tracking-category-cite-diffing-error-desc": "تحتوي الصفحات الموجودة في هذه الفئة على أخطاء في استخدام علامات المراجع، وهذه الأخطاء لا يتم عرضها بنفس الطريقة في المحلل القديم وفي Parsoid.",
 	"cite-tracking-category-ref-details": "الصفحات التي تستخدم المراجع الفرعية",
 	"cite-tracking-category-ref-details-desc": "تستخدم الصفحات في هذه الفئة سمة \"التفاصيل\" للعلامة <ref>.",

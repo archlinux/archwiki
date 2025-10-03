@@ -73,6 +73,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Punktlisteelement",
 	"wikieditor-toolbar-tool-olist": "Nummerert liste",
 	"wikieditor-toolbar-tool-olist-example": "Nummerert liste-element",
+	"wikieditor-toolbar-tool-code": "Datakode",
+	"wikieditor-toolbar-tool-code-example": "Datakode",
 	"wikieditor-toolbar-tool-nowiki": "Ingen wikiformatering",
 	"wikieditor-toolbar-tool-nowiki-example": "Sett inn uformatert tekst her",
 	"wikieditor-toolbar-tool-redirect": "Omdiriger",

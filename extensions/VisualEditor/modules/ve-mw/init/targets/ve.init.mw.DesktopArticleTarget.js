@@ -1236,13 +1236,9 @@ ve.init.mw.DesktopArticleTarget.prototype.replacePageContent = function (
 			);
 		}
 
-		// Intentionally treated as HTML
+		// Intentionally treated as HTML (message is parsed)
 		// eslint-disable-next-line no-jquery/no-html
-		$( '#footer-info-lastmod' ).html( ' ' + mw.msg(
-			'lastmodifiedat',
-			lastModified.date,
-			lastModified.time
-		) );
+		$( '#footer-info-lastmod' ).html( ' ' + lastModified.message );
 	}
 
 	this.$originalCategories = null;

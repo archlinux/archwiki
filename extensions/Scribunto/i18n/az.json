@@ -25,7 +25,7 @@
 	"scribunto-console-too-large": "Bu konsol sessiyası çox böyükdür. Zəhmət olmasa tarixçəni təmizləyin ya da modulun ölçüsünü azaldın.",
 	"scribunto-console-current-src": "konsol girişi",
 	"scribunto-console-clear": "Təmizlə",
-	"scribunto-console-cleared": "Konsol təmizləndi çünki modul yenilənib.",
+	"scribunto-console-cleared": "Modulda dəyişikliklər aparıldığı üçün konsol təmizləndi.",
 	"scribunto-console-cleared-session-lost": "Konsol təmizləndi çünki sessiya datası itib.",
 	"scribunto-common-error-category": "Skript xətaları olan səhifələr",
 	"scribunto-common-error-category-desc": "Bu səhifədəki modulları işləyərkən xəta baş verdi.",

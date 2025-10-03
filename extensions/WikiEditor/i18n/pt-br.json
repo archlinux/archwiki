@@ -86,6 +86,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Item de lista com marcadores",
 	"wikieditor-toolbar-tool-olist": "Lista numerada",
 	"wikieditor-toolbar-tool-olist-example": "Item de lista numerada",
+	"wikieditor-toolbar-tool-code": "Código de computador",
+	"wikieditor-toolbar-tool-code-example": "Código de computador",
 	"wikieditor-toolbar-tool-nowiki": "Sem formatação wiki",
 	"wikieditor-toolbar-tool-nowiki-example": "Inserir aqui texto sem formatação",
 	"wikieditor-toolbar-tool-redirect": "Redirecionamento",

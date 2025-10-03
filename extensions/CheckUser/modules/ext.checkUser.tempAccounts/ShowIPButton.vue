@@ -117,17 +117,17 @@ module.exports = exports = defineComponent( {
 						message.value = mw.message(
 							'checkuser-tempaccount-specialblock-ips',
 							ipLinks.length,
-							mw.language.listToText( ipLinks )
-						).text();
+							Object.assign( mw.language.listToText( ipLinks ) )
+						).parse();
 					} else {
 						message.value = mw.message(
 							'checkuser-tempaccount-no-ip-results',
 							Math.round( mw.config.get( 'wgCUDMaxAge' ) / 86400 )
-						).text();
+						).escaped();
 					}
 				} )
 				.catch( () => {
-					message.value = mw.message( 'checkuser-tempaccount-reveal-ip-error' ).text();
+					message.value = mw.message( 'checkuser-tempaccount-reveal-ip-error' ).escaped();
 				} );
 		}
 

@@ -10,6 +10,7 @@
 	"visualeditor-cite-tool-name-news": "Novaji",
 	"visualeditor-cite-tool-name-web": "Retosituo",
 	"cite-ve-dialog-reference-editing-reused": "Ica refero uzesas $1 {{PLURAL:$1|foye}} en ca pagino",
+	"cite-ve-dialog-reference-editing-reused-long": "Ca refero uzesas {{PLURAL:$1|unfoye|2=dufoye|$1-foye}} en ca pagino. Modifikuri facita hike aplikesos omnaloke ube ca refero uzesos.",
 	"cite-ve-dialog-reference-options-group-label": "Uzar ica grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Generala referi",
 	"cite-ve-dialog-reference-options-section": "Selekti",

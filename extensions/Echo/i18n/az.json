@@ -59,7 +59,7 @@
 	"echo-category-title-system-noemail": "{{PLURAL:$1|Sistem}}",
 	"echo-category-title-system-emailonly": "{{PLURAL:$1|Sistem}}",
 	"echo-category-title-user-rights": "{{PLURAL:$1|İstifadəçi hüquqları dəyişikliyi|İstifadəçi hüquqları dəyişiklikləri}}",
-	"echo-category-title-emailuser": "{{PLURAL:$1|Başqa istifadəçidən gələn e-məktub|Başqa istifadəçilərdən gələn e-məktublar}}",
+	"echo-category-title-emailuser": "{{PLURAL:$1|Başqa istifadəçidən gələn e-poçt|Başqa istifadəçilərdən gələn e-poçt}}",
 	"echo-category-title-article-reminder": "Səhifə {{PLURAL:$1|xatırlatması|xatırlatmaları}}",
 	"echo-category-title-thank-you-edit": "Əlamətdar {{PLURAL:$1|redaktə|redaktələr}}",
 	"echo-category-title-watchlist": "İzlənilən səhifəyə edilən redaktə",

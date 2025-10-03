@@ -4,7 +4,8 @@
 			"Balyozxane",
 			"Bikarhêner",
 			"George Animal",
-			"Ghybu"
+			"Ghybu",
+			"Guherto"
 		]
 	},
 	"templatedata-desc": "Ji bo parametreyên şablonê embarkirina daneyan bi cih tîne (bi bikaranîna JSONê)",
@@ -21,8 +22,8 @@
 	"templatedata-doc-param-name": "Parametre",
 	"templatedata-doc-param-status": "Rewş",
 	"templatedata-doc-param-status-deprecated": "nayê bikaranîn",
-	"templatedata-doc-param-status-optional": "ne pêwîst",
-	"templatedata-doc-param-status-required": "pêwîst",
+	"templatedata-doc-param-status-optional": "ne mecbûrî",
+	"templatedata-doc-param-status-required": "mecbûrî",
 	"templatedata-doc-param-status-suggested": "pêşniyazkirî",
 	"templatedata-doc-param-suggestedvalues": "Nirxên pêşniyazkirî",
 	"templatedata-doc-param-type": "Cure",
@@ -96,7 +97,7 @@
 	"templatedata-modal-table-param-importoption-subtitle": "Dihewîne: $1",
 	"templatedata-modal-table-param-label": "Navê parametreyê ($1)",
 	"templatedata-modal-table-param-name": "Parametre",
-	"templatedata-modal-table-param-required": "Pêwîst",
+	"templatedata-modal-table-param-required": "Mecbûrî",
 	"templatedata-modal-table-param-suggested": "Pêşniyazkirî",
 	"templatedata-modal-table-param-suggestedvalues": "Nirxên pêşniyazkirî",
 	"templatedata-modal-placeholder-multiselect": "Nirxek lê zêde bike...",

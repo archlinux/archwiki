@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Jawak",
-	"discussiontools-newtopic-missing-title": "Mitok buwi tajók nok wak topik bbice {{GENDER:|mung}}.",
+	"discussiontools-newtopic-missing-title": "Mitok buwi tajók nok wak topik bbicae {{GENDER:|dèmo}}.",
 	"discussiontools-newtopic-placeholder-title": "Pekaro",
 	"discussiontools-replylink": "{{GENDER:|jawak}}",
 	"discussiontools-replywidget-advanced": "Lanjókte",
@@ -18,7 +18,7 @@
 	"discussiontools-replywidget-preview": "Keléh awa-awa",
 	"discussiontools-replywidget-reply": "{{GENDER:|Jawak}}",
 	"discussiontools-replywidget-summary": "Ppendek crito",
-	"discussiontools-replywidget-watchthis": "Tamboh halame ni kak [[Special:Watchlist|snara prati]] mung",
+	"discussiontools-replywidget-watchthis": "Tamboh muko ni kak [[Special:Watchlist|snara prati]] dèmo",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ore}} dale bbice",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ulase}}",
 	"discussiontools-topicheader-latestcomment": "Ulase lloni: $1",
@@ -26,8 +26,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Langge",
 	"discussiontools-topicsubscription-button-unsubscribe": "tok sé langge",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Tok sé langge",
-	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Mung}} pah ni ado trimo broyak pasa ulase-ulase baru dale topik ni.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Mung}} doh langge yo!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Mung}} pah ni tok trimo doh broyak pasa ulase-ulase kobaru dale topik ni.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Mung}} tok sé langge doh yo."
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Dèmo}} pah ni ado trimo broyak pasa ulasae-ulasae baru dalae topik ni.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Dèmo}} doh langgae yo!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Dèmo}} pah ni tok trimo doh broyak pasa ulasae-ulasae baru dale topik ni.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Dèmo}} tok sé doh langgae yo."
 }

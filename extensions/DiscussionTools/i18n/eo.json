@@ -39,7 +39,7 @@
 	"discussiontools-error-lint": "Komentoj sur ĉi tiu paĝo ne povas esti responditaj pro eraro en la vikiteksto. {{GENDER:|Vi}} povas lerni pri ĉi tiu eraro [$1 legante la dokumentaron], peti helpon per [$2 afiŝado ĉi tie] aŭ ripari la eraron [$3 malfermante la plenan paĝan redaktilon].",
 	"discussiontools-newtopic-placeholder-title": "Titolo",
 	"discussiontools-postedit-confirmation-published": "Via komento estis publikigita.",
-	"discussiontools-replylink": "{{GENDER:|Respondi}}",
+	"discussiontools-replylink": "{{GENDER:|respondi}}",
 	"discussiontools-replywidget-advanced": "Altnivela",
 	"discussiontools-replywidget-cancel": "Nuligi",
 	"discussiontools-replywidget-mention-tool-header": "Trovi uzanton: $1",

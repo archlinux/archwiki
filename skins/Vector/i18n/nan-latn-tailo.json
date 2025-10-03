@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"SupaplexTW"
+			"SupaplexTW",
+			"Winston Sung"
 		]
 	},
 	"vector-skin-desc": "Thê-kiong 2 tsióng Vector guā-kuan:\n* 2011 - Hiān-tāi-pán ê MonoBook, ū khah sî-kiânn ê guā-kuan kah tsuē-tsuē khó-iōng-sìng ê kái-tsìn.\n* 2022 - Tsit-ê Vector sī Uî-ki Muî-thé Ki-kim-huē [https://www.mediawiki.org/wiki/Desktop_Improvements Toh-bīn Khuân-kíng kái-tsìn] kè-uē.",
 	"prefs-vector-enable-vector-1-label": "Su-iōng kū-pán Vector",
 	"vector-opt-out": "Tshiat-uānn kū guā-kuan",
 	"vector-languages": "Gú-giân",
-	"vector-language-button-label": "{{PLURAL:$1|$1 tsióng gú-giân}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 tsióng gí-giân}}",
 	"vector-no-language-button-label": "Ka-thiam gú-giân",
 	"vector-action-addsection": "Ke tsi̍t-ê tuān-lo̍h",
 	"vector-action-delete": "Thâi",

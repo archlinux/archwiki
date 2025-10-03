@@ -11,7 +11,8 @@
 			"Winston Sung",
 			"Xiplus",
 			"Yfdyh000",
-			"捍粵者"
+			"捍粵者",
+			"Lakejason0"
 		]
 	},
 	"content-model-scribunto": "Scribunto模組",
@@ -37,7 +38,7 @@
 	"scribunto-common-nofunction": "腳本錯誤：您必須指定要呼叫的函數。",
 	"scribunto-common-nosuchfunction": "腳本錯誤：函數 \"$2\" 不存在。",
 	"scribunto-common-notafunction": "腳本錯誤：\"$2\" 不是函數。",
-	"scribunto-common-timeout": "分配用來執行腳本的時間已到期。",
+	"scribunto-common-timeout": "模組指令碼執行逾時。",
 	"scribunto-common-oom": "已超出執行腳本允許的記憶體用量。",
 	"scribunto-common-backtrace": "回溯：",
 	"scribunto-common-no-details": "沒有其它可用詳情。",

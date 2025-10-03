@@ -24,7 +24,8 @@
 			"Xiplus",
 			"列维劳德",
 			"張詠涵",
-			"Shrubs"
+			"Shrubs",
+			"優枰"
 		]
 	},
 	"gadgets-desc": "讓使用者可以於[[Special:Preferences#mw-prefsection-gadgets|偏好設定]]自訂 [[Special:Gadgets|CSS 與 JavaScript 小工具]]",
@@ -54,21 +55,21 @@
 	"gadgets-required-contentmodels": "僅限{{PLURAL:$2|「$1」內容模型|以下內容模型：$1}}。",
 	"gadgets-default": "所有人預設開啟。",
 	"gadgets-legacy": "未載入小工具，請改使用 ResourceLoader。\n([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) 了解更多])",
-	"gadgets-packaged": "此小工具[https://www.mediawiki.org/wiki/ResourceLoader/Package_files 已封裝]，進入點位於$1",
+	"gadgets-packaged": "此小工具已[https://www.mediawiki.org/wiki/ResourceLoader/Package_files 封裝]，進入點位於$1",
 	"gadgets-export": "匯出",
 	"gadgets-export-title": "匯出小工具",
 	"gadgets-not-found": "查無小工具 \"$1\"。",
 	"gadgets-export-text": "要匯出 $1 小工具，請點選「{{int:gadgets-export-download}}」按鈕，並儲存下載的檔案，前往目標 Wiki 的 Special:Import 並將其上傳。然後將下列文字新增到 MediaWiki:Gadgets-definition 頁面：\n<pre>$2</pre>\n您必須擁有目標 Wiki 的適當權限（包括編輯系統訊息的權限），且須開啟透過檔案上傳匯入的功能。",
 	"gadgets-export-download": "下載",
-	"gadgets-requires-es6": "此小工具僅被支援在兼容 ES6 的瀏覽器上",
+	"gadgets-requires-es6": "此小工具僅支援兼容ES6的瀏覽器",
 	"gadgets-validate-notset": "屬性 <code>$1</code> 尚未設定。",
 	"gadgets-validate-wrongtype": "屬性 <code>$1</code> 必須是 <code>$2</code> 類型。",
 	"gadgets-validate-json": "已指定 JSON 檔案但未使用。它們僅在封裝的小工具裡有效。",
 	"gadgets-validate-es6default": "預設無法啟用需要 ES6 的小工具。",
 	"gadgets-validate-noentrypoint": "由於未指定腳本檔案，因此忽略套件標誌。",
-	"gadgets-validate-noscripts": "已忽略腳本，因為此小工具設定 <code>type=styles</code>。",
+	"gadgets-validate-noscripts": "此小工具設定了<code>type=styles</code>，因此腳本會被忽略。",
 	"gadgets-validate-stylepeers": "已忽略對等小工具，因為這是僅限樣式的小工具。請設定 <code>type=general</code> 來覆蓋。",
-	"gadgets-validate-scriptsnotallowed": "未使用腳本與資料檔案，因為此小工具設定了 <code>type=styles</code>。",
+	"gadgets-validate-scriptsnotallowed": "此小工具設定了<code>type=styles</code>，因此不使用腳本與資料檔案。",
 	"gadgets-validate-invalidjs": "由於內容模型「$2」無效，因此未使用到腳本$1。",
 	"gadgets-validate-invalidcss": "由於內容模型「$2」無效，因此未使用到樣式表$1。",
 	"gadgets-validate-invalidjson": "由於內容模型「$2」無效，因此未使用到資料頁面$1。",
@@ -86,5 +87,5 @@
 	"gadgets-validate-invaliddependencies": "以下{{PLURAL:$2|個依賴項缺失}}：$1",
 	"gadgets-validate-deprecateddependencies": "以下{{PLURAL:$2|依賴項}}已廢棄：$1。",
 	"gadgets-supports-urlload": "此小工具支援透過包含<code>?withgadget</code>查詢參數的URL來載入。",
-	"gadgets-hidden": "這個小工具已 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 隱藏]，將不會顯示於偏好設定頁面。"
+	"gadgets-hidden": "此小工具已[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 隱藏]，不會顯示於偏好設定頁面。"
 }

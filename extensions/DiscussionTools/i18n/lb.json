@@ -4,7 +4,8 @@
 			"Les Meloures",
 			"Robby",
 			"Soued031",
-			"Volvox"
+			"Volvox",
+			"GilPe"
 		]
 	},
 	"discussiontools": "Diskussiouns-Geschier",
@@ -94,7 +95,7 @@
 	"discussiontools-preference-replytool-help": "Hei gëtt Iech e Link gewisen, mat deem Dir mat engem Klick op Kommentaren op der Diskussiounssäit äntwere kënnt.",
 	"discussiontools-preference-sourcemodetoolbar": "Aktivéiere vun der Geschierkëscht fir Ännerungen am Wikitextmodus",
 	"discussiontools-preference-sourcemodetoolbar-help": "Dëst setzt am Quelltextmodus eng Läischt mat Geschier fir d'Funktiounen 'Séier äntweren' a 'Sujete séier derbäisetzen' derbäi an där och Tastekombinatioune fir d'Upingen an Derbäisetze vu Linke mat dra sinn.",
-	"discussiontools-preference-summary": "Dir kënnt méi iwwer dës Funktionalitéite gewuer gi wann Dir de [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary Resumé vun der Funktioun] liest.",
+	"discussiontools-preference-summary": "Dir kënnt méi iwwer dës Funktionalitéite gewuer gi wann Dir de [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary Resümmee vun der Funktioun] liest.",
 	"discussiontools-preference-topicsubscription": "Abonnement fir Sujeten aktivéieren",
 	"discussiontools-preference-visualenhancements": "Diskussiounsaktivitéit weisen",
 	"discussiontools-replybutton": "{{GENDER:|Äntweren}}",
@@ -123,8 +124,8 @@
 	"discussiontools-replywidget-preview": "Kucken ouni ofzespäicheren",
 	"discussiontools-replywidget-reply": "{{GENDER:|Äntweren}}",
 	"discussiontools-replywidget-return-to-newtopic": "Zréck bei den neie Sujet",
-	"discussiontools-replywidget-return-to-reply": "Zréck bei d'Äntwert",
-	"discussiontools-replywidget-summary": "Resumé",
+	"discussiontools-replywidget-return-to-reply": "Zeréck bei d'Äntwert",
+	"discussiontools-replywidget-summary": "Resümmee",
 	"discussiontools-replywidget-terms-click": "Andeems Dir op „$1“ klickt, sidd Dir mat de Benotzungs-Bedingunge vun dëser Wiki averstanen.",
 	"discussiontools-replywidget-transcluded": "Äre Kommentar gëtt op [[$1]] gespäichert.",
 	"discussiontools-replywidget-watchthis": "Dës Säit op Är [[Special:Watchlist|Iwwerwaachungslëscht]] derbäisetzen",

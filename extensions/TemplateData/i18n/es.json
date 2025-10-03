@@ -18,7 +18,9 @@
 			"Ovruni",
 			"Rodney Araujo",
 			"Sethladan",
-			"Vfrico"
+			"Vfrico",
+			"Danielyepezgarces",
+			"JorgeElias2302"
 		]
 	},
 	"templatedata-desc": "Implementa almacenamiento de datos para parámetros de plantillas (mediante JSON).",
@@ -84,6 +86,7 @@
 	"templatedata-modal-button-removemap": "Eliminar mapa",
 	"templatedata-modal-button-saveparam": "Guardar",
 	"templatedata-modal-confirmcancel": "¿Confirmas que quieres descartar tus cambios?",
+	"templatedata-modal-button-discard": "Descartar",
 	"templatedata-modal-current-language": "Idioma actual: $1",
 	"templatedata-modal-errormsg": "Se encontraron errores. Asegúrate de que no haya nombres de parámetros vacíos o duplicados, y de que estos no incluyan «$1», «$2» ni «$3».",
 	"templatedata-modal-errormsg-duplicate-name": "Se encontró un error. El nombre elegido ya lo utiliza otro parámetro.",
@@ -103,6 +106,7 @@
 	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Valor automático",
 	"templatedata-modal-table-param-default": "Predeterminado ($1)",
+	"templatedata-modal-table-param-status": "Estado",
 	"templatedata-modal-table-param-deprecated": "En desuso",
 	"templatedata-modal-table-param-deprecatedValue": "Guía desaconsejada",
 	"templatedata-modal-table-param-description": "Descripción ($1)",
@@ -125,5 +129,15 @@
 	"templatedata-modal-title-templateformat": "Formato de wikitexto sugerido",
 	"templatedata-modal-title-templateformatstring": "Cadena de formato personalizado",
 	"templatedata-modal-title-templateparam-details": "Detalles del parámetro: $1",
-	"templatedata-modal-title-templateparams": "Parámetros de la plantilla"
+	"templatedata-modal-title-templateparams": "Parámetros de la plantilla",
+	"templatedata-search-list-header": "Favoritos",
+	"templatedata-search-list-empty": "Las plantillas que marques como favoritas aparecerán aquí",
+	"templatedata-template-discovery-disabled": "El descubrimiento de plantillas está deshabilitado en esta wiki.",
+	"templatedata-favorite-disabled": "Debe iniciar sesión para agregar una plantilla a favoritos",
+	"templatedata-favorite-add": "Añadir plantilla a favoritos",
+	"templatedata-favorite-added": "Plantilla añadida a favoritos",
+	"templatedata-favorite-remove": "Eliminar plantilla de favoritos",
+	"templatedata-favorite-removed": "Plantilla eliminada de favoritos",
+	"templatedata-favorite-error": "No se pueden guardar favoritos",
+	"templatedata-favorite-maximum-reached": "Has alcanzado el número máximo ($1) de plantillas favoritas. Elimina algunas de tu lista antes de agregar más."
 }

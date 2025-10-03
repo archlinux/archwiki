@@ -53,7 +53,7 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools klaidos užklausos ID",
 	"discussiontools-limitreport-timeusage": "DiscussionTools laiko naudojimas",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekundė|sekundės}}",
-	"discussiontools-newtopic-missing-title": "Nurodykite {{GENDER:|savo}} aptarimo temos pavadinimą. Jei paspausite „{{int:discussiontools-replywidget-newtopic}}“, nauja tema bus pridėta be pavadinimo.",
+	"discussiontools-newtopic-missing-title": "Nurodykite {{GENDER:|savo}} aptarimo temos pavadinimą.",
 	"discussiontools-newtopic-placeholder-title": "Antraštė",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Prenumeruoti",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Prenumeruokite, kad gautumėte pranešimus, kai šiame puslapyje bus pradėtos naujos temos.",

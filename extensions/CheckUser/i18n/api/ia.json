@@ -44,5 +44,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "Le $1 $2 es troppo ancian pro permitter le registration de datos de \"client hints\"",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "Le ID $1 $2 non existe",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} collige datos sur \"user-agent client hints\" pro adjutar a moderar vandalismo e abuso sur projectos Wikimedia. Vide https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints pro plus detalios.",
-	"apihelp-logout-param-checkuserclienthints": "Datos “client hint” fornite con requestas a ApiLogout. Pro uso interne solmente."
+	"apihelp-logout-param-checkuserclienthints": "Datos “client hint” fornite con requestas a ApiLogout. Pro uso interne solmente.",
+	"checkuser-ip-auto-reveal-expiry-invalid": "Le expiration de auto-revelation fornite non es valide.",
+	"checkuser-ip-auto-reveal-missing-permission": "Tu non ha le permission necessari pro usar le auto-revelation de adresses IP."
 }

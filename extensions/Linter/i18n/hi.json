@@ -2,13 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Rajatkatiyar10",
-			"Sfic"
+			"Sfic",
+			"Saurmandal"
 		]
 	},
+	"linterrors": "लिंट त्रुटियाँ",
 	"linter-category-multiple-unclosed-formatting-tags": "एकाधिक असंबद्ध स्वरूपण टैग्स",
 	"linter-category-multiple-unclosed-formatting-tags-desc": "इन पन्नों में एकाधिक असम्बद्ध स्वरूपण टैग हैं",
 	"linter-form-namespace": "नामस्थान:",
 	"linter-heading-high-priority": "उच्च प्राथमिकता",
 	"linter-heading-low-priority": "निम्न प्राथमिकता",
-	"linter-heading-medium-priority": "मध्यम प्राथमिकता"
+	"linter-heading-medium-priority": "मध्यम प्राथमिकता",
+	"linterrors-summary": "<strong>नोट:</strong> श्रेणियों की गणनाएँ सटीक नहीं हैं, बल्कि अनुमानों पर आधारित हैं।"
 }

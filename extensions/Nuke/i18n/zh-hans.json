@@ -18,7 +18,8 @@
 			"Xiplus",
 			"Yfdyh000",
 			"铁桶",
-			"阿pp"
+			"阿pp",
+			"Libamidi"
 		]
 	},
 	"nuke": "大量删除",
@@ -37,7 +38,7 @@
 	"right-nuke": "删除大量页面",
 	"nuke-userorip": "用户名、IP地址或留空：",
 	"nuke-maxpages": "要检索的页面数（最多500）：",
-	"nuke-editby": "由[[Special:Contributions/$1|{{GENDER:$1|$1}}]]创建。",
+	"nuke-editby": "由[[Special:Contributions/$1|{{GENDER:$1|$1}}]]创建",
 	"nuke-delete-summary": "已将'''{{PLURAL:$1|$1个页面}}'''列入队列以待删除。",
 	"nuke-delete-summary-user": "已将[[{{ns:user}}:$2|$2]]（[[{{ns:user_talk}}:$2|{{int:talkpagelinktext}}]] {{int:pipe-separator}} [[{{ns:special}}:Contributions/$2|{{int:contribslink}}]] {{int:pipe-separator}} [[{{ns:special}}:Block/$2|{{int:blocklink}}]]）'''{{GENDER:$2|创建}}的{{PLURAL:$1|$1个页面}}'''列入队列以待删除。",
 	"nuke-deleted": "已删除页面'''$1'''。",

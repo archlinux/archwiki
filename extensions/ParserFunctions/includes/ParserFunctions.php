@@ -932,8 +932,8 @@ class ParserFunctions {
 
 		if ( $inPos >= 0 && isset( $matches[$inPos] ) ) {
 			$result = $matches[$inPos];
-		} elseif ( $inPos < 0 && isset( $matches[count( $matches ) + $inPos] ) ) {
-			$result = $matches[count( $matches ) + $inPos];
+		} elseif ( $inPos < 0 && isset( $matches[count( $matches ) + (int)$inPos] ) ) {
+			$result = $matches[count( $matches ) + (int)$inPos];
 		} else {
 			$result = '';
 		}

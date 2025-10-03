@@ -5,6 +5,6 @@
 			"KHMELNYTSKYIA"
 		]
 	},
-	"scribunto-doc-page-does-not-exist": "''Документацію к тому модулу може быти створена в [[$1]]''",
+	"scribunto-doc-page-does-not-exist": "''Документація про тот модул може быти вытворена на [[$1]]''",
 	"scribunto-lua-error": "Помилка Lua: $2."
 }

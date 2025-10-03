@@ -4,10 +4,12 @@
 			"Fitoschido",
 			"Lluis Cat",
 			"Paucabot",
-			"SMP"
+			"SMP",
+			"Yupik"
 		]
 	},
 	"right-oathauth-view-log": "Accedir al registre de canvis de l'autenticació de doble factor",
+	"oathauth-enteruser": "Nom d'usuari:",
 	"right-oathauth-enable": "Activar l'autenticació de dos factors",
 	"oathauth-auth-ui": "Introduïu un codi de verificació provinent de la vostra aplicació d’autenticació (com per exemple Google Authenticator).",
 	"oathauth-ui-no-module": "No se n’ha habilitat cap",

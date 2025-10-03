@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hakimi97"
+		]
+	},
+	"templatestyles-desc": "Laksanakan lembaran gaya per templat",
+	"templatestyles-missing-src": "Atribut <code>src</code> TemplateStyles tidak boleh kosong.",
+	"templatestyles-invalid-src": "Tajuk tidak sah untuk atribut <code>src</code> TemplateStyles.",
+	"templatestyles-invalid-wrapper": "Nilai tidak sah untuk atribut <code>wrapper</code> TemplateStyles.",
+	"templatestyles-bad-src-missing": "Laman [[:$1|$2]] tiada kandungan.",
+	"templatestyles-bad-src": "Laman [[:$1|$2]] mesti mempunyai model kandungan \"{{int:content-model-sanitized-css}}\" untuk TemplateStyles (model semasa ialah \"$3\").",
+	"templatestyles-errorcomment": "Ralat memproses lembaran gaya [[:$1]] (semakan $2):\n $3",
+	"templatestyles-size-exceeded": "Lembaran gaya lebih besar daripada saiz maksimum $2.",
+	"templatestyles-tag-injection": "Lembaran gaya yang dibekalkan mengandungi sesuatu yang kelihatan seperti teg html yang tidak dibenarkan.",
+	"content-model-sanitized-css": "CSS tersanitasi",
+	"templatestyles-stylesheet-error-category": "Lembaran gaya TemplateStyles dengan ralat",
+	"templatestyles-stylesheet-error-category-desc": "Lembaran gaya TemplateStyles mempunyai ralat.",
+	"templatestyles-page-error-category": "Laman dengan ralat TemplateStyles",
+	"templatestyles-page-error-category-desc": "Terdapat ralat semasa memproses a<code><nowiki><templatestyles/></nowiki></code> tag pada laman tersebut.",
+	"templatestyles-error-at-rule-block-not-allowed": "Sekatan tidak dibenarkan untuk <code>@$3</code> pada baris $1 aksara $2."
+}

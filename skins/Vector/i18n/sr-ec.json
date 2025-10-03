@@ -66,7 +66,7 @@
 	"vector-searchsuggest-containing": "Претражи странице које садрже <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
 	"vector-toc-label": "Садржај",
-	"vector-toc-beginning": "Почетак",
+	"vector-toc-beginning": "(Врх)",
 	"vector-toc-toggle-button-label": "Садржај одељка $1",
 	"vector-anon-user-menu-pages": "Странице за одјављене уреднике",
 	"vector-anon-user-menu-pages-learn": "детаљније",

@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Castillo92",
+			"ROJOVIVO"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Áanalte'",
+	"visualeditor-cite-tool-name-journal": "Ju'unil péektsil",
+	"visualeditor-cite-tool-name-news": "Xi'ik'nal péektsilo'ob",
+	"visualeditor-cite-tool-name-web": "Kúuchil web",
+	"cite-ve-changedesc-ref-group-both": "1",
+	"cite-ve-changedesc-ref-group-from": "$1",
+	"cite-ve-changedesc-reflist-group-both": "Yáax tsool ts'íib k'eexil ti' jump'éep péeso yéetel doos péesus",
+	"cite-ve-changedesc-reflist-group-from": "$1",
+	"cite-ve-citationneeded-button": "Ts'áa jump'éel cita",
+	"cite-ve-citationneeded-description": "Juntúul editor ts'o'ok u indicado u le reclamo k'a'abet jump'éel cita ti' jump'éel fuente confiable."
+}

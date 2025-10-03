@@ -19,7 +19,8 @@
 			"Troefkaart",
 			"Vistaus",
 			"Xbaked potatox",
-			"XXBlackburnXx"
+			"XXBlackburnXx",
+			"Kippenvlees1"
 		]
 	},
 	"checkuser-summary": "Dit hulpmiddel doorzoekt de recente wijzigingen om de IP-adressen van een gebruiker te achterhalen, of om voor een IP-adres de bewerkings- en gebruikersgegegevens weer te geven.\nDe met een bepaald IP-adres in verband staande gebruikers en bewerkingen kunnen via XFF-headers achterhaald worden door \"/xff\" achter het IP-adres toe te voegen. Daarbij worden zowel IPv4 (CIDR $1-32) als IPv6 (CIDR $2-128) ondersteund.\nOm prestatieredenen worden niet meer dan $3 bewerkingen weergegeven.\nGebruik dit hulpmiddel alleen in overeenstemming met het vastgestelde beleid.",
@@ -29,7 +30,7 @@
 	"checkuser-contribs": "IP-adressen van gebruiker controleren",
 	"checkuser-contribs-log": "gebruikerscontroles",
 	"checkuser-contribs-log-initiator": "door deze gebruiker uitgevoerde controles",
-	"group-checkuser": "controlegebruikers",
+	"group-checkuser": "Controlegebruikers",
 	"group-checkuser-member": "{{GENDER:$1|controlegebruiker}}",
 	"group-temporary-account-viewer": "Inzage IP-adressen tijdelijke accounts",
 	"group-temporary-account-viewer-member": "{{GENDER:$1|inzage IP-adressen tijdelijke accounts}}",
@@ -353,5 +354,6 @@
 	"logentry-checkuser-temporary-account-af-change-access-enable": "$1 heeft {{GENDER:$2|zijn|haar|de}} eigen toegang tot het bekijken van beveiligde variabelen ingeschakeld",
 	"logentry-checkuser-temporary-account-af-change-access-disable": "$1 heeft {{GENDER:$2|zijn|haar|de}} eigen toegang tot het bekijken van beveiligde variabelen uitgeschakeld",
 	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 {{GENDER:$2|heeft}} de met $3 geassocieerde beveiligde variabelen bekeken",
-	"ext-ipinfo-global-contributions-url-text": "Globale bijdragen bekijken"
+	"ext-ipinfo-global-contributions-url-text": "Globale bijdragen bekijken",
+	"checkuser-userinfocard-enable-preference-help": "Naast gebruikersnamen een knop weergeven waarmee een deelvenster met informatie over een account wordt geopend."
 }

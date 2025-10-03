@@ -60,7 +60,7 @@
 	"discussiontools-limitreport-errorreqid": "Хаталы DiscussionTools белән сорату идентификаторы",
 	"discussiontools-limitreport-timeusage": "DiscussionTools куллану вакыты",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|секунд}}",
-	"discussiontools-newtopic-missing-title": "{{GENDER:|Үзегезнең}} фикер алышу темасын языгыз. Әгәр «{{int:discussiontools-replywidget-newtopic}}» бассагыз, темагыз исемсез өстәләчәк.",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|Үзегезнең}} фикер алышу темасын языгыз.",
 	"discussiontools-newtopic-placeholder-title": "Тема",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Язылу",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Бу биттә яңа темалар өстәлү турында хәбәрнамәләрне алу өчен  язылыгыз.",

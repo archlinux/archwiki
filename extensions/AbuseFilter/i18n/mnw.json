@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"咽頭べさ"
+			"咽頭べさ",
+			"Htawmonzel"
 		]
 	},
 	"abuselog": "စၟတ်သမ္တီၜေဟ်ကၠဟ်",
@@ -15,7 +16,7 @@
 	"abusefilter-deleted": "ပလီုတုဲယျ",
 	"abusefilter-edit-warn-actions": "ပွကၠောန်သ္ပလဝ်:",
 	"abusefilter-edit-builder-vars-action": "ပွကၠောန်သ္ပလဝ်",
-	"abusefilter-history-actions": "ပွကၠောန်သ္ပလဝ်ဂမၠိုၚ်",
+	"abusefilter-history-actions": "ကမၠောန်ဂမၠိုင်",
 	"abusefilter-history-deleted": "ပလီုတုဲယျ",
 	"abusefilter-topnav-log": "စၟတ်သမ္တီၜေဟ်ကၠဟ်"
 }

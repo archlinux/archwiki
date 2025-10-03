@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Умар"
+		]
+	},
+	"apihelp-query+gadgetcategories-summary": "Гаджетан дакъойн могӀам йухаберзабо.",
+	"apihelp-query+gadgetcategories-param-prop": "Гаджетийн декъех лаьцна хӀун информаци эца йиш йу:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "Декъан чоьхьара цӀе.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Дакъан цӀе.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Декъера гаджетийн дукхалла.",
+	"apihelp-query+gadgetcategories-param-names": "Йухадерзочу дакъойн цӀераш.",
+	"apihelp-query+gadgetcategories-example-1": "ХӀинца йолчу гаджетийан дакъойн могӀам схьаэца",
+	"apihelp-query+gadgetcategories-example-2": "«Foo» а, «Bar» а цӀерашца йолчу дакъошна лерина йерриг информаци схьаэца",
+	"apihelp-query+gadgets-summary": "ХӀокху вики чохь лелийначу гаджетийн могӀам йухаберзабо.",
+	"apihelp-query+gadgets-param-prop": "Гаджетах лаьцна хӀун информаци схьаоьцу:",
+	"apihelp-query+gadgets-paramvalue-prop-id": "Гаджетан чоьхьара идентификатор.",
+	"apihelp-query+gadgets-paramvalue-prop-metadata": "Гаджетан метахаамаш.",
+	"apihelp-query+gadgets-paramvalue-prop-desc": "Гаджетах лаьцна хаам HTML тӀе хийцина (меллаша хила тарло, леладе нагахь санна чӀогӀа оьшуш хилча).",
+	"apihelp-query+gadgets-param-categories": "Гаджеташ муьлхачу категорешкара схьаэца йеза.",
+	"apihelp-query+gadgets-param-ids": "Схьаэца леррина гаджетан идентификаторш.",
+	"apihelp-query+gadgets-param-allowedonly": "Карарчу декъашхочунна бакъо йела йолу гаджеташ бен ма гайта",
+	"apihelp-query+gadgets-param-enabledonly": "Карарчу декъашхочо дӀахӀоттийна гаджеташ бен ма гайта.",
+	"apihelp-query+gadgets-example-1": "Гаджетийн могӀам схьаэца царех лаьцна хаамашца цхьаьна",
+	"apihelp-query+gadgets-example-2": "Гаджетийн могӀам схьаэца, церан массо а хила тарлучу башхаллашца",
+	"apihelp-query+gadgets-example-3": "Схьаэца гаджетийн могӀам «foo» категорехь",
+	"apihelp-query+gadgets-example-4": "«foo» а, «bar» а гаджетех лаьцна информаци схьаэца",
+	"apihelp-query+gadgets-example-5": "ХӀокху декъашхочо дӀахӀоттийна гаджеташ гайта."
+}

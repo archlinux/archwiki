@@ -3,10 +3,11 @@
 		"authors": [
 			"Ammartivari",
 			"Macofe",
-			"Mdupont"
+			"Mdupont",
+			"Xhulianoo"
 		]
 	},
-	"wikieditor": "redaktimi i avancuar wikitext interface",
+	"wikieditor": "Ndërfaqja e përparuar e redaktimit të wikitekstit",
 	"wikieditor-desc": "Siguron një ndërfaqe të vazhdohet redaktimi wikitext dhe module shumë me metrazh të siguruar",
 	"wikieditor-toolbar": "Editing toolbar",
 	"wikieditor-toolbar-desc": "toolbar Redakto faqe me të përdorshmërisë zgjeruar",
@@ -36,7 +37,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Lidhje e jashtme",
 	"wikieditor-toolbar-tool-file": "Embedded file",
 	"wikieditor-toolbar-tool-signature": "Nënshkrimi dhe gjithë kohë",
-	"wikieditor-toolbar-section-advanced": "I avancuar",
+	"wikieditor-toolbar-section-advanced": "Të përparuara",
 	"wikieditor-toolbar-tool-heading": "Titull",
 	"wikieditor-toolbar-tool-heading-1": "Niveli 1",
 	"wikieditor-toolbar-tool-heading-2": "Niveli 2",
@@ -104,7 +105,7 @@
 	"wikieditor-toolbar-help-page-heading": "Titujt",
 	"wikieditor-toolbar-help-page-list": "Listat",
 	"wikieditor-toolbar-help-page-file": "Files",
-	"wikieditor-toolbar-help-page-discussion": "Diskutim",
+	"wikieditor-toolbar-help-page-discussion": "Diskutimi",
 	"wikieditor-toolbar-help-content-italic-description": "Kursiv",
 	"wikieditor-toolbar-help-content-italic-example": "Teksti i pjerrët",
 	"wikieditor-toolbar-help-content-bold-description": "Guximtar",

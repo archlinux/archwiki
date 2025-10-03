@@ -7,6 +7,9 @@
 			"Farorud"
 		]
 	},
+	"skinname-vector": "Вектор, кӯҳна (2010)",
+	"skinname-vector-2022": "Вектор (2022)",
+	"vector-specialversion-name": "Вектор",
 	"vector-languages": "Забонҳо",
 	"vector-language-button-label": "{{PLURAL:$1|$1 забон}}",
 	"vector-no-language-button-label": "Иловаи забонҳо",
@@ -21,8 +24,11 @@
 	"vector-view-history": "Намоиши таърих",
 	"vector-view-view": "Хондан",
 	"vector-view-viewsource": "Намоиши манбаъ",
+	"vector-jumptonavigation": "Ҷаҳиш ба новбарӣ",
+	"vector-jumptosearch": "Ҷаҳиш ба ҷустуҷӯ",
+	"vector-jumptocontent": "Ҷаҳиш ба мӯҳтаво",
 	"vector-more-actions": "Бештар",
-	"vector-appearance-label": "Зоҳир",
+	"vector-appearance-label": "Намуди зоҳир",
 	"vector-feature-limited-width-name": "Паҳно",
 	"vector-feature-limited-width-0-label": "Паҳн",
 	"vector-feature-limited-width-1-label": "Стандарт",
@@ -39,10 +45,17 @@
 	"vector-toc-label": "Муҳтавоҳо",
 	"vector-toc-beginning": "Ибтидо",
 	"vector-anon-user-menu-pages": "Саҳифаҳо барои корбарони ворид наушда",
-	"vector-main-menu-label": "Оғоза",
+	"vector-anon-user-menu-pages-learn": "бештар фаҳмидан",
+	"vector-anon-user-menu-pages-label": "Бештар дар бораи вироиш",
+	"vector-main-menu-tooltip": "Менюи асосӣ",
+	"vector-toc-menu-tooltip": "Мундариҷа",
+	"vector-toc-collapsible-button-label": "Нишон додан/Пӯшидани мундариҷа",
+	"vector-site-nav-label": "Сомона",
+	"vector-main-menu-label": "Менюи асосӣ",
 	"vector-feature-custom-font-size-exclusion-notice": "Дар ин саҳифа ҳамеша андозаи хурди матн истифода мешавад",
 	"vector-page-tools-label": "Абзорҳо",
 	"vector-page-tools-general-label": "Умумӣ",
 	"vector-page-tools-actions-label": "Амалҳо",
-	"vector-unpin-element-label": "Пинҳон кардан"
+	"vector-unpin-element-label": "Пинҳон кардан",
+	"vector-night-mode-beta-tag": "(бета)"
 }

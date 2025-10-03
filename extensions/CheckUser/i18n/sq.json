@@ -4,11 +4,16 @@
 			"Ammartivari",
 			"Dori",
 			"Toplove12",
-			"Vanished 456321456"
+			"Vanished 456321456",
+			"Xhulianoo"
 		]
 	},
 	"checkuser": "Kontrollo përdoruesin",
 	"checkuser-reason": "Arsyeja:",
 	"checkuser-blocked": "Bllokuar",
-	"checkuser-wasblocked": "Bllokuar më parë"
+	"checkuser-wasblocked": "Bllokuar më parë",
+	"checkuser-global-contributions-link": "kontributet globale",
+	"checkuser-global-contributions-link-sidebar": "Kontributet globale",
+	"checkuser-global-contributions-permission-error-title": "Gabime lejeje",
+	"checkuser-global-contributions-results-title": "Kontributet globale për $1"
 }

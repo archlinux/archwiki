@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Abshirdheere"
+		]
+	},
+	"discussiontools-pageframe-latestcomment": "Faalladii ugu dambaysay: $1 ee $2 qodobka $3",
+	"discussiontools-pageframe-latestcomment-notopic": "faalladii ugu dambaysay: $1 ee $2",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|qof|qofood}} baa ku jirta doodda",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|faallo|faallo}}",
+	"discussiontools-topicheader-latestcomment": "Faalladii ugu dambaysay: $1"
+}

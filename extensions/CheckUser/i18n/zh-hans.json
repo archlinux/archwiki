@@ -51,7 +51,9 @@
 			"沈澄心",
 			"白布飘扬",
 			"铁桶",
-			"Peterxy12"
+			"Peterxy12",
+			"范",
+			"Libamidi"
 		]
 	},
 	"checkuser-summary": "本工具会从最近更改中获取某个用户使用过的IP地址，或者显示某个IP地址下的编辑/用户。\n可在IP地址后方附加“/xff”以使用XFF头信息来获取同一客户端IP地址下的用户和编辑。支持IPv4（CIDR $1-32）和IPv6（CIDR $2-128）。\n由于性能问题，本工具最多返回$3笔最近编辑信息。\n请确保您的操作符合方针。",
@@ -207,6 +209,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-image-aria-label": "该图像显示了使用后的 IP 显示工具，其中显示了与临时帐户关联的 IP 地址。按下按钮查看此信息时会标有“显示 IP”文字，并显示在临时帐户用户名旁边。",
 	"checkuser-rest-access-denied": "您没有权限来执行此操作",
 	"checkuser-rest-access-denied-blocked-user": "您没有权限来执行此操作，因为您的账号已被封禁",
+	"checkuser-rest-userinfo-user-not-found": "提供的用户ID无效。",
 	"checkuser-link-investigate-label": "尝试{{#special:investigate}}",
 	"checkuser-investigateblock": "封禁用户",
 	"checkuser-investigateblock-target": "用户名和IP地址",
@@ -216,6 +219,7 @@
 	"checkuser-investigateblock-email-label": "阻止发送电子邮件",
 	"checkuser-investigateblock-usertalk-label": "在封禁期间阻止其编辑自己的讨论页",
 	"checkuser-investigateblock-reblock-label": "覆盖现有的封禁",
+	"checkuser-investigateblock-newblock-label": "添加到现有块",
 	"checkuser-investigateblock-notice-user-page-label": "在用户页留下通知",
 	"checkuser-investigateblock-notice-talk-page-label": "在用户讨论页留下通知",
 	"checkuser-investigateblock-notice-position-label": "位置",
@@ -225,6 +229,7 @@
 	"checkuser-investigateblock-notice-replace": "替换页面",
 	"checkuser-investigateblock-confirm-blocks-label": "确认封禁",
 	"checkuser-investigateblock-failure": "没有用户被封禁。要覆盖现有封禁，请检查：“{{int:checkuser-investigateblock-reblock-label}}”。如果新的封禁与现有封禁相同，则不会覆盖封禁。",
+	"checkuser-investigateblock-failure-multi": "没有用户被封禁。要向现有封禁列表中添加另一个封禁，请检查：{{int:checkuser-investigateblock-newblock-label}}。",
 	"checkuser-investigateblock-success": "{{PLURAL:$2|用户}}$1{{PLURAL:$2|现已}}被封禁。",
 	"checkuser-investigateblock-notices-failed": "某些通知无法添加到用户页或用户讨论页。",
 	"checkuser-investigateblock-warning-ips-and-users-in-targets": "您将要利用CheckUser的数据以相同的理由同时封禁账号和IP。这可能违反网站的隐私政策。您确定要这样做吗？",
@@ -333,6 +338,8 @@
 	"checkuser-global-contributions-no-global-preference": "这些结果可能不完整，因为您需要接受 [ $1您的全局偏好设置] 中的协议。",
 	"checkuser-global-contributions-api-lookup-error": "从某些 wiki 加载数据时出错。这些结果不完整。<strong>重试可能会有帮助。</strong>",
 	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>没有符合查询条件的结果。</strong>用户“ $1 ”没有可见的贡献。",
+	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>没有符合查询条件的结果。</strong>如果您更改搜索参数，也许能找到贡献内容。",
+	"checkuser-global-contributions-page-when-no-namespace-translation-available": "命名空间<$1>:$2",
 	"checkuser-ip-auto-reveal-link-sidebar": "IP地址自动显示",
 	"checkuser-ip-auto-reveal-notification-on": "<strong>IP地址自动显示已开启</strong>",
 	"checkuser-ip-auto-reveal-notification-off": "<strong>IP地址自动显示已关闭</strong>",
@@ -357,6 +364,7 @@
 	"checkuser-tempaccount-reveal-blocked-loading": "正在加载封禁的详细信息",
 	"checkuser-tempaccount-reveal-blocked-title": "查看封禁的详细信息",
 	"checkuser-tempaccount-reveal-blocked-missingblock": "您的账号由于先前受到封禁，无法访问临时账号的IP地址信息。该封禁现已解除。请刷新本页。",
+	"checkuser-tempaccount-reveal-blocked-error": "获取封禁详情时出错。请刷新页面并重试。",
 	"checkuser-tempaccount-reveal-blocked-header": "临时账号IP显示功能已关闭",
 	"checkuser-tempaccount-reveal-blocked-description": "由于以下原因，您无权使用此功能：",
 	"checkuser-tempaccount-specialblock-ips": "此为使用以下{{PLURAL:$1|IP}}的临时用户：$2",
@@ -377,5 +385,6 @@
 	"log-action-filter-checkuser-temporary-account-view-ips": "访问临时账号IP数据",
 	"logentry-checkuser-temporary-account-af-change-access-enable": "$1已启用{{GENDER:$2|其}}自身查看受保护变量的权限",
 	"logentry-checkuser-temporary-account-af-change-access-disable": "$1已禁用{{GENDER:$2|其}}自身查看受保护变量的权限",
-	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1{{GENDER:$2|查看}}了与$3相关的受保护变量"
+	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1{{GENDER:$2|查看}}了与$3相关的受保护变量",
+	"checkuser-userinfocard-enable-preference-help": "在用户名旁边显示一个按钮，打开包含有关账号信息的弹出窗口。"
 }

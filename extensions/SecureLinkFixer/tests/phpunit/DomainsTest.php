@@ -29,7 +29,7 @@ class DomainsTest extends MediaWikiIntegrationTestCase {
 
 	public function testReproducibility() {
 		$domains = file_get_contents( __DIR__ . '/../../domains.php' );
-		preg_match( '/mozilla\/gecko-dev@([0-9a-f]*?) \((.*?)\)/', $domains, $matches );
+		preg_match( '/mozilla-firefox\/firefox@([0-9a-f]*?) \((.*?)\)/', $domains, $matches );
 		$this->assertCount( 3, $matches );
 		[ , $rev, $date ] = $matches;
 		$lf = new ListFetcher();

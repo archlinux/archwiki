@@ -14,7 +14,8 @@
 			"Wehwei",
 			"Winston Sung",
 			"Xiplus",
-			"Zhxy 519"
+			"Zhxy 519",
+			"LowensteinYang"
 		]
 	},
 	"templatedata-desc": "實現模板參數的資料儲存（使用 JSON）",
@@ -51,7 +52,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "使用者",
 	"templatedata-doc-params": "模板參數",
 	"templatedata-editbutton": "編輯模板資料",
-	"templatedata-errormsg-jsonbadformat": "錯誤的 JSON 格式。您可以透過取消這次操作來修正問題、刪除目前的 <templatedata> 標籤後重試、或者繼續以新的來取代目前模板資料。",
+	"templatedata-errormsg-jsonbadformat": "錯誤的 JSON 格式。您可以取消此操作以便修正或刪除，或以新的模板資料取代當前模板資料來繼續。",
 	"templatedata-errormsg-insertblank": "您確定您要插入不帶資訊的模板資料？",
 	"templatedata-exists-on-related-page": "請注意：已存在與頁面「[[$1]]」相關的模板資料區塊。",
 	"templatedata-helplink": "有關模板資料的資訊",
@@ -80,6 +81,7 @@
 	"templatedata-modal-button-removemap": "移除映射",
 	"templatedata-modal-button-saveparam": "儲存",
 	"templatedata-modal-confirmcancel": "您確定您要捨棄您的更改嗎？",
+	"templatedata-modal-button-discard": "捨棄",
 	"templatedata-modal-current-language": "目前語言：$1",
 	"templatedata-modal-errormsg": "發現錯誤，請確定沒有使用空白或重複的參數名稱，且參數名稱不包含 \"$1\"、\"$2\" 或 \"$3\"。",
 	"templatedata-modal-errormsg-duplicate-name": "發生錯誤。所選名稱已被其它參數使用。",
@@ -122,5 +124,16 @@
 	"templatedata-modal-title-templateformat": "建議的 wikitext 格式",
 	"templatedata-modal-title-templateformatstring": "自訂格式字串",
 	"templatedata-modal-title-templateparam-details": "參數詳細資料：$1",
-	"templatedata-modal-title-templateparams": "模板參數"
+	"templatedata-modal-title-templateparams": "模板參數",
+	"templatedata-search-list-header": "我的最愛",
+	"templatedata-search-list-empty": "您標記為最愛的模板將顯示於此處",
+	"templatedata-template-discovery-disabled": "本維基已停用模板的發現功能。",
+	"templatediscovery": "模板的發現",
+	"templatedata-favorite-disabled": "您必須登入才能將模板加入我的最愛",
+	"templatedata-favorite-add": "將模板加入我的最愛",
+	"templatedata-favorite-added": "此模板已加入我的最愛",
+	"templatedata-favorite-remove": "將模板移出我的最愛",
+	"templatedata-favorite-removed": "此模板已移出我的最愛",
+	"templatedata-favorite-error": "無法儲存我的最愛",
+	"templatedata-favorite-maximum-reached": "您已達到我的最愛模板的上限（$1）。請先從清單中移除的部份模板，才能新增更多內容。"
 }
