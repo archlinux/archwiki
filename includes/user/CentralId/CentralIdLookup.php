@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -22,12 +8,11 @@ namespace MediaWiki\User\CentralId;
 
 use InvalidArgumentException;
 use LogicException;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
-use Throwable;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
@@ -53,23 +38,6 @@ abstract class CentralIdLookup {
 
 	private UserIdentityLookup $userIdentityLookup;
 	private UserFactory $userFactory;
-
-	/**
-	 * Fetch a CentralIdLookup
-	 * @deprecated since 1.37 Use MediaWikiServices to obtain an instance.
-	 * @param string|null $providerId Provider ID from $wgCentralIdLookupProviders
-	 * @return CentralIdLookup|null
-	 */
-	public static function factory( $providerId = null ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		try {
-			return MediaWikiServices::getInstance()
-				->getCentralIdLookupFactory()
-				->getLookup( $providerId );
-		} catch ( Throwable $unused ) {
-			return null;
-		}
-	}
 
 	/**
 	 * Initialize the provider.
@@ -374,6 +342,27 @@ abstract class CentralIdLookup {
 		$name = $user->getName();
 		$nameToId = $this->lookupAttachedUserNames( [ $name => 0 ], $audience, $flags );
 		return $nameToId[$name];
+	}
+
+	/**
+	 * Return a scope that can be used to differentiate the central IDs returned by this object
+	 * from central IDs returned by different CentralIdLookup implementations and/or on
+	 * different wikis of the same farm.
+	 *
+	 * The scope will take the form of `<provider-id>:<instance-id>` where `<provider-id>` is the
+	 * CentralIdLookup provider's ID (as in {@link ::getProviderId()}), and `<instance-id>` is used
+	 * to differentiate between multiple instances of the same provider (e.g. could be a wiki ID
+	 * for farms where each wiki has its own userbase); it is an arbitrary string (possibly empty)
+	 * except it can't contain any more `:` characters.
+	 *
+	 * Most subclasses should override the default implementation.
+	 *
+	 * @stable to override
+	 * @return string
+	 * @since 1.45
+	 */
+	public function getScope(): string {
+		return $this->getProviderId() . ':' . strtr( WikiMap::getCurrentWikiId(), [ ':' => '-' ] );
 	}
 
 }

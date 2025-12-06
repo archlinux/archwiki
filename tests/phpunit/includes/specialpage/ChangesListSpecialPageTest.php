@@ -5,7 +5,9 @@ namespace MediaWiki\Tests\SpecialPage;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\RecentChanges\ChangesListBooleanFilterGroup;
+use MediaWiki\RecentChanges\ChangesListFilterGroupContainer;
 use MediaWiki\RecentChanges\ChangesListStringOptionsFilterGroup;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -29,6 +31,8 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @covers \MediaWiki\SpecialPage\ChangesListSpecialPage
  */
 class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase {
+	/** @var string Default rc_timestamp condition */
+	private $cutoffCond;
 
 	use TempUserTestTrait {
 		enableAutoCreateTempUser as _enableAutoCreateTempUser;
@@ -36,12 +40,22 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	}
 
 	protected function setUp(): void {
+		ExtensionRegistry::getInstance()->setAttributeForTest(
+			'RecentChangeSources', [] );
 		$this->overrideConfigValue(
 			MainConfigNames::GroupPermissions,
 			[ '*' => [ 'edit' => true ] ]
 		);
+		$this->setFakeTime( '20201231000000' );
 		parent::setUp();
 		$this->clearHooks();
+	}
+
+	private function setFakeTime( $fakeTime ) {
+		ConvertibleTimestamp::setFakeTime( $fakeTime );
+		$db = $this->getDb();
+		$expectedCutoff = $db->timestamp( ConvertibleTimestamp::time() - 86_400 );
+		$this->cutoffCond = "rc_timestamp >= '$expectedCutoff'";
 	}
 
 	/**
@@ -54,15 +68,18 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 					'ChangesListSpecialPage',
 					'',
 					$this->getServiceContainer()->getUserIdentityUtils(),
-					$this->getServiceContainer()->getTempUserConfig()
+					$this->getServiceContainer()->getTempUserConfig(),
+					$this->getServiceContainer()->getRecentChangeFactory(),
+					$this->getServiceContainer()->getChangesListQueryFactory(),
 				]
 			)
-			->onlyMethods( [ 'getPageTitle' ] )
+			->onlyMethods( [ 'getPageTitle', 'getDefaultDays' ] )
 			->getMockForAbstractClass();
 
 		$mock->method( 'getPageTitle' )->willReturn(
 			Title::makeTitle( NS_SPECIAL, 'ChangesListSpecialPage' )
 		);
+		$mock->method( 'getDefaultDays' )->willReturn( 1.0 );
 
 		$mock = TestingAccessWrapper::newFromObject(
 			$mock
@@ -83,33 +100,13 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 		$this->changesListSpecialPage->setContext( $context );
 		$formOptions = $this->changesListSpecialPage->setup( null );
-
-		# Filter out rc_timestamp conditions which depends on the test runtime
-		# This condition is not needed as of march 2, 2011 -- hashar
-		# @todo FIXME: Find a way to generate the correct rc_timestamp
-
-		$tables = [];
-		$fields = [];
-		$queryConditions = [];
-		$query_options = [];
-		$join_conds = [];
-
-		call_user_func_array(
-			[ $this->changesListSpecialPage, 'buildQuery' ],
-			[
-				&$tables,
-				&$fields,
-				&$queryConditions,
-				&$query_options,
-				&$join_conds,
-				$formOptions
-			]
-		);
-
-		$queryConditions = array_filter(
-			$queryConditions,
-			[ __CLASS__, 'filterOutRcTimestampCondition' ]
-		);
+		$query = $this->changesListSpecialPage->buildQuery( $formOptions );
+		$query->allowDeletedLogAction();
+		$query->sqbMutator( static function ( &$sqb ) use ( &$queryConditions ) {
+			$queryConditions = $sqb->getQueryInfo()['conds'];
+			$sqb = null;
+		} );
+		$query->fetchResult();
 
 		return $queryConditions;
 	}
@@ -128,6 +125,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		?User $user = null
 	) {
 		$queryConditions = $this->buildQuery( $requestOptions, $user );
+		$expected[] = $this->cutoffCond;
 
 		$this->assertEquals(
 			$this->normalizeCondition( $expected ),
@@ -151,17 +149,6 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		);
 		sort( $normalized );
 		return $normalized;
-	}
-
-	/**
-	 * @param array|string|IExpression $var
-	 * @return bool false if condition begins with 'rc_timestamp '
-	 */
-	private static function filterOutRcTimestampCondition( $var ): bool {
-		if ( $var instanceof IExpression ) {
-			$var = $var->toGeneralizedSql();
-		}
-		return is_array( $var ) || !str_contains( (string)$var, 'rc_timestamp ' );
 	}
 
 	public function testRcNsFilter() {
@@ -295,6 +282,43 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		);
 	}
 
+	public function testRcSubpageofSingle() {
+		$this->assertConditions(
+			[
+				'((rc_namespace = 0 AND rc_title LIKE \'Base/%\' ESCAPE \'`\'))'
+			],
+			[
+				'subpageof' => 'Base',
+			],
+			'rc conditions: subpageof=Base'
+		);
+	}
+
+	public function testRcSubpageofInvalid() {
+		$this->assertConditions(
+			[],
+			[
+				'subpageof' => '__',
+			],
+			'rc conditions with invalid subpageof'
+		);
+	}
+
+	public function testRcSubpageofMulti() {
+		$this->assertConditions(
+			[
+				'((rc_namespace = 0 AND ' .
+				'(rc_title LIKE \'A/%\' ESCAPE \'`\' OR rc_title LIKE \'B/%\' ESCAPE \'`\'))' .
+				' OR (rc_namespace = 1 AND ' .
+				'(rc_title LIKE \'C/%\' ESCAPE \'`\' OR rc_title LIKE \'D/%\' ESCAPE \'`\')))'
+			],
+			[
+				'subpageof' => 'A|B|Talk:C|Talk:D',
+			],
+			'rc conditions: subpageof with multiple base pages'
+		);
+	}
+
 	public function testRcHidemyselfFilter() {
 		$user = $this->getTestUser()->getUser();
 		$this->assertConditions(
@@ -325,7 +349,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$user = $this->getTestUser()->getUser();
 		$this->assertConditions(
 			[ # expected
-				'actor_user' => $user->getId(),
+				"actor_user = {$user->getId()}",
 			],
 			[
 				'hidebyothers' => 1,
@@ -337,7 +361,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$user = User::newFromName( '10.11.12.13', false );
 		$this->assertConditions(
 			[ # expected
-				'actor_name' => '10.11.12.13',
+				"actor_name = '10.11.12.13'",
 			],
 			[
 				'hidebyothers' => 1,
@@ -350,7 +374,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testRcHidepageedits() {
 		$this->assertConditions(
 			[ # expected
-				"rc_type != 0",
+				"rc_source IN ('mw.new','mw.log','mw.categorize')",
 			],
 			[
 				'hidepageedits' => 1,
@@ -362,7 +386,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testRcHidenewpages() {
 		$this->assertConditions(
 			[ # expected
-				"rc_type != 1",
+				"rc_source IN ('mw.edit','mw.log','mw.categorize')",
 			],
 			[
 				'hidenewpages' => 1,
@@ -374,7 +398,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testRcHidelog() {
 		$this->assertConditions(
 			[ # expected
-				"rc_type != 3",
+				"rc_source IN ('mw.edit','mw.new','mw.categorize')",
 			],
 			[
 				'hidelog' => 1,
@@ -386,7 +410,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testRcHidehumans() {
 		$this->assertConditions(
 			[ # expected
-				'rc_bot' => 1,
+				'rc_bot = 1',
 			],
 			[
 				'hidebots' => 0,
@@ -398,7 +422,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testRcHidepatrolledDisabledFilter() {
 		$this->overrideConfigValue( MainConfigNames::UseRCPatrol, false );
-		$this->changesListSpecialPage->filterGroups = [];
+		$this->changesListSpecialPage->filterGroups = new ChangesListFilterGroupContainer();
 		$user = $this->getTestUser()->getUser();
 		$this->assertConditions(
 			[ # expected
@@ -413,7 +437,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testRcHideunpatrolledDisabledFilter() {
 		$this->overrideConfigValue( MainConfigNames::UseRCPatrol, false );
-		$this->changesListSpecialPage->filterGroups = [];
+		$this->changesListSpecialPage->filterGroups = new ChangesListFilterGroupContainer();
 		$user = $this->getTestUser()->getUser();
 		$this->assertConditions(
 			[ # expected
@@ -430,7 +454,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$user = $this->getTestSysop()->getUser();
 		$this->assertConditions(
 			[ # expected
-				'rc_patrolled' => 0,
+				'rc_patrolled = 0',
 			],
 			[
 				'hidepatrolled' => 1,
@@ -444,7 +468,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$user = $this->getTestSysop()->getUser();
 		$this->assertConditions(
 			[ # expected
-				'rc_patrolled' => [ 1, 2 ],
+				'rc_patrolled IN (1,2)',
 			],
 			[
 				'hideunpatrolled' => 1,
@@ -458,7 +482,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$user = $this->getTestSysop()->getUser();
 		$this->assertConditions(
 			[ # expected
-				'rc_patrolled' => 1,
+				'rc_patrolled = 1',
 			],
 			[
 				'reviewStatus' => 'manual'
@@ -468,7 +492,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		);
 		$this->assertConditions(
 			[ # expected
-				'rc_patrolled' => [ 0, 2 ],
+				'rc_patrolled IN (0,2)',
 			],
 			[
 				'reviewStatus' => 'unpatrolled;auto'
@@ -506,7 +530,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				"rc_type != 6"
+				"rc_source IN ('mw.edit','mw.new','mw.log')"
 			],
 			[
 				'hidecategorization' => 1
@@ -687,7 +711,6 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testFilterUserExpLevelLearner() {
 		$this->disableAutoCreateTempUser();
-		ConvertibleTimestamp::setFakeTime( '20201231000000' );
 		$this->assertConditions(
 			[
 				# expected
@@ -705,7 +728,6 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testFilterUserExpLevelLearnerWhenTemporaryAccountsEnabled() {
 		$this->enableAutoCreateTempUser();
-		ConvertibleTimestamp::setFakeTime( '20201231000000' );
 
 		$notLikeTempUserMatchExpression = $this->getServiceContainer()->getTempUserConfig()
 			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::NOT_LIKE )
@@ -728,7 +750,6 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testFilterUserExpLevelUnregisteredOrExperienced() {
 		$this->disableAutoCreateTempUser();
-		ConvertibleTimestamp::setFakeTime( '20201231000000' );
 		$this->assertConditions(
 			[
 				# expected
@@ -746,7 +767,6 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testFilterUserExpLevelUnregisteredOrExperiencedWhenTemporaryAccountsEnabled() {
 		$this->enableAutoCreateTempUser();
-		ConvertibleTimestamp::setFakeTime( '20201231000000' );
 
 		$notLikeTempUserMatchExpression = $this->getServiceContainer()->getTempUserConfig()
 			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::NOT_LIKE )
@@ -776,159 +796,26 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 			[ '*' => [ 'edit' => false ] ]
 		);
 		parent::setUp();
-		$this->assertCount( 3, $this->changesListSpecialPage->filterGroupDefinitions[1]['filters'] );
-
-		$actualFilterGroupDefinitions = [];
-		foreach ( $this->changesListSpecialPage->filterGroupDefinitions[1]['filters'] as $key => $value ) {
-			if ( $value['name'] ) {
-				array_push( $actualFilterGroupDefinitions, $value['name'] );
-			}
-		}
-		$this->assertSame( [ "newcomer", "learner", "experienced" ], $actualFilterGroupDefinitions );
+		$filterNames = array_keys(
+			$this->changesListSpecialPage->getFilterGroup( 'userExpLevel' )->getFilters() );
+		$this->assertSame( [ "newcomer", "learner", "experienced" ], $filterNames );
 	}
 
 	public function testFilterUserExpLevelRegistrationNotRequiredToEditDoesNotRemoveRegistrationFilters() {
-		$this->assertCount( 5, $this->changesListSpecialPage->filterGroupDefinitions[1]['filters'] );
-
-		$actualFilterGroupDefinitions = [];
-		foreach ( $this->changesListSpecialPage->filterGroupDefinitions[1]['filters'] as $key => $value ) {
-			if ( $value['name'] ) {
-				array_push( $actualFilterGroupDefinitions, $value['name'] );
-			}
-		}
-		$this->assertSame( [ "unregistered", "registered", "newcomer", "learner", "experienced" ], $actualFilterGroupDefinitions );
-	}
-
-	public function testFilterUserExpLevel() {
-		$now = time();
-		$this->overrideConfigValues( [
-			MainConfigNames::LearnerEdits => 10,
-			MainConfigNames::LearnerMemberSince => 4,
-			MainConfigNames::ExperiencedUserEdits => 500,
-			MainConfigNames::ExperiencedUserMemberSince => 30,
-		] );
-
-		$this->createUsers( [
-			'Newcomer1' => [ 'edits' => 2, 'days' => 2 ],
-			'Newcomer2' => [ 'edits' => 12, 'days' => 3 ],
-			'Newcomer3' => [ 'edits' => 8, 'days' => 5 ],
-			'Learner1' => [ 'edits' => 15, 'days' => 10 ],
-			'Learner2' => [ 'edits' => 450, 'days' => 20 ],
-			'Learner3' => [ 'edits' => 460, 'days' => 33 ],
-			'Learner4' => [ 'edits' => 525, 'days' => 28 ],
-			'Experienced1' => [ 'edits' => 538, 'days' => 33 ],
-		], $now );
-
-		// newcomers only
-		$this->assertArrayEquals(
-			[ 'Newcomer1', 'Newcomer2', 'Newcomer3' ],
-			$this->fetchUsers( [ 'newcomer' ], $now )
+		$this->overrideConfigValue(
+			MainConfigNames::GroupPermissions,
+			[ '*' => [ 'edit' => true ] ]
 		);
-
-		// newcomers and learner
-		$this->assertArrayEquals(
-			[
-				'Newcomer1', 'Newcomer2', 'Newcomer3',
-				'Learner1', 'Learner2', 'Learner3', 'Learner4',
-			],
-			$this->fetchUsers( [ 'newcomer', 'learner' ], $now )
-		);
-
-		// newcomers and more learner
-		$this->assertArrayEquals(
-			[
-				'Newcomer1', 'Newcomer2', 'Newcomer3',
-				'Experienced1',
-			],
-			$this->fetchUsers( [ 'newcomer', 'experienced' ], $now )
-		);
-
-		// learner only
-		$this->assertArrayEquals(
-			[ 'Learner1', 'Learner2', 'Learner3', 'Learner4' ],
-			$this->fetchUsers( [ 'learner' ], $now )
-		);
-
-		// more experienced only
-		$this->assertArrayEquals(
-			[ 'Experienced1' ],
-			$this->fetchUsers( [ 'experienced' ], $now )
-		);
-
-		// learner and more experienced
-		$this->assertArrayEquals(
-			[
-				'Learner1', 'Learner2', 'Learner3', 'Learner4',
-				'Experienced1',
-			],
-			$this->fetchUsers( [ 'learner', 'experienced' ], $now )
-		);
-	}
-
-	private function createUsers( array $specs, int $now ) {
-		$dbw = $this->getDb();
-		foreach ( $specs as $name => $spec ) {
-			User::createNew(
-				$name,
-				[
-					'editcount' => $spec['edits'],
-					'registration' => $dbw->timestamp( $this->daysAgo( $spec['days'], $now ) ),
-					'email' => 'ut',
-				]
-			);
-		}
-	}
-
-	private function fetchUsers( array $filters, int $now ): array {
-		$tables = [];
-		$conds = [];
-		$fields = [];
-		$query_options = [];
-		$join_conds = [];
-
-		sort( $filters );
-
-		call_user_func_array(
-			[ $this->changesListSpecialPage, 'filterOnUserExperienceLevel' ],
-			[
-				get_class( $this->changesListSpecialPage ),
-				$this->changesListSpecialPage->getContext(),
-				$this->changesListSpecialPage->getDB(),
-				&$tables,
-				&$fields,
-				&$conds,
-				&$query_options,
-				&$join_conds,
-				$filters,
-				$now
-			]
-		);
-
-		// @todo: This is not at all safe or sensible. It just blindly assumes
-		// nothing in $conds depends on any other tables.
-		$result = $this->getDb()->newSelectQueryBuilder()
-			->select( 'user_name' )
-			->from( 'user' )
-			->leftJoin( 'actor', null, 'actor_user=user_id' )
-			->where( $conds )
-			->andWhere( [ 'user_email' => 'ut' ] )
-			->fetchResultSet();
-
-		$usernames = [];
-		foreach ( $result as $row ) {
-			$usernames[] = $row->user_name;
-		}
-
-		return $usernames;
-	}
-
-	private function daysAgo( int $days, int $now ): int {
-		$secondsPerDay = 86400;
-		return $now - $days * $secondsPerDay;
+		parent::setUp();
+		$filterNames = array_keys(
+			$this->changesListSpecialPage->getFilterGroup( 'userExpLevel' )->getFilters() );
+		$this->assertSame( [ "unregistered", "registered", "newcomer", "learner", "experienced" ], $filterNames );
 	}
 
 	public function testGetStructuredFilterJsData() {
-		$this->changesListSpecialPage->filterGroups = [];
+		// TODO: Move to ChangesListFilterGroupContainerTest
+		// For now, ChangesListSpecialPage is used as a filter factory
+		$this->changesListSpecialPage->filterGroups = new ChangesListFilterGroupContainer();
 
 		$definition = [
 			[
@@ -1089,7 +976,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		);
 	}
 
-	public function provideParseParameters() {
+	public static function provideParseParameters() {
 		return [
 			[ 'hidebots', [ 'hidebots' => true ] ],
 
@@ -1171,88 +1058,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		];
 	}
 
-	public static function provideGetFilterConflicts() {
-		return [
-			[
-				"parameters" => [],
-				"expectedConflicts" => false,
-			],
-			[
-				"parameters" => [
-					"hideliu" => true,
-					"userExpLevel" => "newcomer",
-				],
-				"expectedConflicts" => false,
-			],
-			[
-				"parameters" => [
-					"hideanons" => true,
-					"userExpLevel" => "learner",
-				],
-				"expectedConflicts" => false,
-			],
-			[
-				"parameters" => [
-					"hidemajor" => true,
-					"hidenewpages" => true,
-					"hidepageedits" => true,
-					"hidecategorization" => false,
-					"hidelog" => true,
-					"hideWikidata" => true,
-				],
-				"expectedConflicts" => true,
-			],
-			[
-				"parameters" => [
-					"hidemajor" => true,
-					"hidenewpages" => false,
-					"hidepageedits" => true,
-					"hidecategorization" => false,
-					"hidelog" => false,
-					"hideWikidata" => true,
-				],
-				"expectedConflicts" => true,
-			],
-			[
-				"parameters" => [
-					"hidemajor" => true,
-					"hidenewpages" => false,
-					"hidepageedits" => false,
-					"hidecategorization" => true,
-					"hidelog" => true,
-					"hideWikidata" => true,
-				],
-				"expectedConflicts" => false,
-			],
-			[
-				"parameters" => [
-					"hideminor" => true,
-					"hidenewpages" => true,
-					"hidepageedits" => true,
-					"hidecategorization" => false,
-					"hidelog" => true,
-					"hideWikidata" => true,
-				],
-				"expectedConflicts" => false,
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider provideGetFilterConflicts
-	 */
-	public function testGetFilterConflicts( $parameters, $expectedConflicts ) {
-		$context = new RequestContext;
-		$context->setRequest( new FauxRequest( $parameters ) );
-		$this->changesListSpecialPage->setContext( $context );
-
-		$this->assertEquals(
-			$expectedConflicts,
-			$this->changesListSpecialPage->areFiltersInConflict()
-		);
-	}
-
-	public function validateOptionsProvider() {
+	public static function validateOptionsProvider() {
 		return [
 			[
 				[ 'hideanons' => 1, 'hideliu' => 1, 'hidebots' => 1 ],

@@ -3,6 +3,12 @@
 @import 'mediawiki.mixins.less';
 @import 'icons.less';
 
+@size-icon-search: unit( ( 18 / @font-size-browser ), em );
+@size-icon-search-gutter: unit( ( 8 / @font-size-browser ), em );
+@size-modifier-border: unit( ( 1 / @font-size-browser ), em );
+@padding-vertical-search: 8px - @border-width-base;
+@padding-start-search-icon: @size-icon-search + ( 2 * @size-icon-search-gutter ) - @size-modifier-border;
+
 /* stylelint-disable no-descending-specificity */
 html,
 body {
@@ -83,7 +89,8 @@ ul {
 	flex-grow: 1;
 	align-items: center;
 
-	> button {
+	// stylelint-disable-next-line selector-max-id
+	#searchIcon {
 		margin-left: auto;
 	}
 }
@@ -95,11 +102,6 @@ ul {
 // Search input
 // Used in minerva header and search overlay header
 .search-box .search {
-	@size-icon-search: unit( ( 18 / @font-size-browser ), em );
-	@size-icon-search-gutter: unit( ( 8 / @font-size-browser ), em );
-	@size-modifier-border: unit( ( 1 / @font-size-browser ), em );
-	@padding-vertical-search: 8px - @border-width-base;
-	@padding-start-search-icon: @size-icon-search + ( 2 * @size-icon-search-gutter ) - @size-modifier-border;
 	background-color: @background-color-base; // Support Fennec, Opera Mini: Remove default background, see T38490.
 	// Support Safari: Get rid of rounded corners.
 	-webkit-appearance: none;
@@ -127,6 +129,13 @@ ul {
 	}
 }
 
+// FIXME: Merge these styles with above after minerva typeahead is enabled everywhere
+.search-box--typeahead .search {
+	padding: 4px 0 4px @padding-start-search-icon;
+	height: unset;
+}
+
+// FIXME: Delete this selector after cached HTML is resolved from I7d88ef62bffc7241f7778f5b079fcc9dc693eeaa
 .search-box-icon-overlay {
 	position: absolute;
 	display: flex;
@@ -134,6 +143,10 @@ ul {
 	left: 8px;
 	top: 0;
 	bottom: 0;
+
+	.cdx-text-input--has-start-icon & {
+		left: 23px;
+	}
 }
 
 // Provide focus styles only in non-JS and overlay to prevent double transition.
@@ -151,7 +164,7 @@ ul {
 	}
 
 	// Only reveal section edit links in expanded section headings.
-	// The .section-heading class is only present on mobile.
+	// The .section-heading class is only present on mobile when using the legacy parser.
 	.section-heading {
 		.mw-editsection {
 			visibility: hidden;
@@ -166,8 +179,7 @@ ul {
 	/* For legacy parser */
 	.mw-parser-output > .mw-heading2,
 	.mw-parser-output > h2,
-	.mw-parser-output[ data-mw-parsoid-version ] > section > .mw-heading2,
-	.section-heading {
+	.mw-parser-output[ data-mw-parsoid-version ] > section > .mw-heading2 {
 		border-bottom: @border-width-base @border-style-base @border-color-muted;
 		margin-bottom: @margin-heading;
 	}
@@ -175,33 +187,18 @@ ul {
 	.mw-parser-output {
 		// We want to apply display: flex to the heading wrapper elements to style them right (T305971),
 		// but not to the heading text elements, because it results in bad text layout (T367468).
-		// This turns out to be difficult, because mobile/desktop, legacy/modern/unwrapped headings,
-		// and DiscussionTools/normal page generate a lot of different combinations of HTML markup.
-
-		// Support modern headings, DiscussionTools, and mobile mode
-		.mw-heading,
-		.section-heading {
+		.mw-heading {
 			display: flex;
-			// T356513: display after floated elements
+			// T316670: display after floated elements
 			min-width: fit-content;
 		}
 
-		// Support desktop Minerva legacy headings (this can only be done with a :has() selector,
-		// there's no other way to distinguish them from unwrapped headings, even though it lacks
-		// support for some browsers). Will be no longer needed when legacy headings are gone.
-		// FIXME: Remove this block when $wgParserEnableLegacyHeadingDOM is removed.
-		:is( h1, h2, h3, h4, h5, h6 ):has( .mw-headline ) {
-			display: flex;
-		}
-
-		// FIXME: Remove `.mw-headline` when $wgParserEnableLegacyHeadingDOM is removed.
 		h1,
 		h2,
 		h3,
 		h4,
 		h5,
-		h6,
-		.mw-headline {
+		h6 {
 			flex-grow: 1;
 			flex-basis: 0;
 			margin-left: 0;

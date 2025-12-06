@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AbuseFilter\Maintenance\MigrateActorsAF;
-use MediaWiki\Extension\AbuseFilter\Maintenance\UpdateVarDumps;
+use MediaWiki\Extension\AbuseFilter\Maintenance\PopulateAbuseFilterLogIPHex;
 use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 use MediaWiki\MediaWikiServices;
@@ -56,6 +56,7 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 	 */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
 		$dbType = $updater->getDB()->getType();
+		$maintenanceDb = $updater->getDB();
 		$dir = __DIR__ . "/../../../db_patches";
 
 		$updater->addExtensionTable(
@@ -200,9 +201,42 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 			"$dir/$dbType/patch-drop-afl_patrolled_by.sql", true
 		] );
 
+		// 1.45
+		$updater->addExtensionIndex(
+			'abuse_filter_log', 'afl_var_dump_timestamp',
+			"$dir/$dbType/patch-add-index-afl_var_dump_timestamp.sql"
+		);
+		$updater->addExtensionField(
+			'abuse_filter_log', 'afl_ip_hex',
+			"$dir/$dbType/patch-add-afl_ip_hex.sql"
+		);
+		$updater->addExtensionUpdate( [
+			'runMaintenance',
+			PopulateAbuseFilterLogIPHex::class,
+		] );
+		$updater->modifyExtensionField(
+			'abuse_filter_log', 'afl_ip',
+			"$dir/$dbType/patch-add-default-afl_ip.sql"
+		);
+		// Only run this for SQLite if afl_ip exists, as modifyExtensionField does not take into
+		// account that SQLite patches that use temporary tables. If the afl_ip field does not exist
+		// this SQL would fail, however, afl_ip not existing also means this change has
+		// been previously applied.
+		if (
+			$dbType !== 'sqlite' ||
+			$maintenanceDb->fieldExists( 'abuse_filter_log', 'afl_ip', __METHOD__ )
+		) {
+			$updater->modifyExtensionField(
+				'abuse_filter_log', 'afl_ip_hex',
+				"$dir/$dbType/patch-remove-default-afl_ip_hex.sql"
+			);
+		}
+		$updater->dropExtensionField(
+			'abuse_filter_log', 'afl_ip',
+			"$dir/$dbType/patch-drop-afl_ip.sql"
+		);
+
 		$updater->addExtensionUpdate( [ [ $this, 'createAbuseFilterUser' ] ] );
-		// 1.35
-		$updater->addPostDatabaseUpdateMaintenance( UpdateVarDumps::class );
 	}
 
 	/**

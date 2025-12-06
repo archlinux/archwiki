@@ -1,14 +1,24 @@
 /**
- * This file is a LESS import match for "mediawiki.skin.variables.less"
+ * This file is a Less import match for "mediawiki.skin.variables.less"
  * when legacy Vector (useskin=vector) is the active skin.
  */
 
 @import 'mediawiki.skin.defaults.less';
 
-// Use the legacy version (for a 14px base font size) of the wikimedia-ui theme
+// Use the legacy version (for a 14px equivalent base font size) of the
+// "WikimediaUI" theme.
+// See https://doc.wikimedia.org/codex/latest/design-tokens/overview.html for
+// the "Wikimedia UI" themed default values.
 @import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui.less';
 
-// Overrides for Codex variables:
+// Legacy Vector specific overrides for Codex Design Tokens.
+// Set pre July 2022 colors for links (T213778).
+@color-link: #0645ad;
+@color-link--visited: #0b0080;
+@color-link--active: #faa700;
+
+@color-link-red: #ba0000;
+@color-link-red--visited: #a55858;
 
 // Body content uses the user setting in browser / the system default sans-serif font:
 // Arial on Windows, Roboto on Android.
@@ -19,16 +29,10 @@
 // TODO: These variables can be removed once the new font modes typographic styles are
 // fully implemented.
 @line-height-xx-small: 1.375;
+@line-height-small: 1.5714285;
 @line-height-medium: 1.6;
 
-// Overrides for non-Codex variables:
-
-// Set pre July 2022 colors for links (T213778).
-@color-link: #0645ad;
-@color-link--visited: #0b0080;
-@color-link--active: #faa700;
-@color-link-new: #ba0000;
-@color-link-new--visited: #a55858;
+// Non-Codex Legacy Vector Variables
 
 // Note these colors are different from Vector 2022 for historic reasons:
 @color-link-external: #36b;

@@ -24,6 +24,19 @@ class ProtectedVarsAccessLogFormatter extends LogFormatter {
 	/**
 	 * @inheritDoc
 	 */
+	protected function getMessageKey() {
+		$key = parent::getMessageKey();
+		$params = $this->entry->getParameters();
+		if ( isset( $params['variables'] ) && count( $params['variables'] ) > 0 ) {
+			return 'logentry-abusefilter-protected-vars-view-protected-var-value-varnames';
+		}
+
+		return $key;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	protected function getMessageParameters() {
 		$params = parent::getMessageParameters();
 
@@ -34,6 +47,13 @@ class ProtectedVarsAccessLogFormatter extends LogFormatter {
 			$params[2] = Message::rawParam(
 				Linker::userLink( 0, $this->userFactory->newUnsavedTempUser( $tempUserName ) )
 			);
+		}
+
+		$logParams = $this->entry->getParameters();
+
+		if ( isset( $logParams['variables'] ) && count( $logParams['variables'] ) > 0 ) {
+			$params[3] = count( $logParams['variables'] );
+			$params[4] = $this->formatParameterValue( 'list', $logParams['variables'] );
 		}
 
 		return $params;

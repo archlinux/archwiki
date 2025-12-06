@@ -15,7 +15,7 @@ class TargetPageMapper extends AbstractMapper {
 	 */
 	protected static $fields = [
 		'etp_page',
-		'etp_event'
+		'etp_event',
 	];
 
 	/**

@@ -72,19 +72,16 @@ module.exports = {
 				}
 			} )
 			.wikiEditor( 'addToToolbar', {
-				section: 'advanced',
-				groups: {
-					search: {
-						tools: {
-							replace: {
-								label: mw.msg( 'wikieditor-toolbar-tool-replace' ),
-								type: 'button',
-								oouiIcon: 'articleSearch',
-								action: {
-									type: 'dialog',
-									module: 'search-and-replace'
-								}
-							}
+				section: 'secondary',
+				group: 'default',
+				tools: {
+					replace: {
+						label: mw.msg( 'wikieditor-toolbar-tool-replace' ),
+						type: 'button',
+						oouiIcon: 'articleSearch',
+						action: {
+							type: 'dialog',
+							module: 'search-and-replace'
 						}
 					}
 				}

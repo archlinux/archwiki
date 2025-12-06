@@ -146,10 +146,7 @@ class AbuseFilterPager extends TablePager {
 
 		$filtered = [];
 		foreach ( $res as $row ) {
-			// FilterLookup::filterFromRow $actions is either an array or callable. We want to provide
-			// an empty array, as we don't need to use actions for this code. Phan detects an empty callable,
-			// which is a bug.
-			// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
+			// We don't need the actual $actions here.
 			$filter = $this->filterLookup->filterFromRow( $row, [] );
 
 			// Exclude filters from the search result which include variables the user cannot see to avoid
@@ -173,8 +170,7 @@ class AbuseFilterPager extends TablePager {
 			krsort( $filtered );
 		}
 		$filtered = array_slice( $filtered, 0, $limit );
-		// Phan false positive: FakeResultWrapper requires sequential indexes starting at 0
-		// @phan-suppress-next-line PhanRedundantArrayValuesCall
+		// FakeResultWrapper requires sequential indexes starting at 0
 		$filtered = array_values( $filtered );
 		return new FakeResultWrapper( $filtered );
 	}
@@ -188,16 +184,12 @@ class AbuseFilterPager extends TablePager {
 	 */
 	private function matchesPattern( $subject ) {
 		$pattern = $this->searchPattern;
-		switch ( $this->searchMode ) {
-			case 'RLIKE':
-				return (bool)preg_match( "/$pattern/u", $subject );
-			case 'IRLIKE':
-				return (bool)preg_match( "/$pattern/ui", $subject );
-			case 'LIKE':
-				return mb_stripos( $subject, $pattern ) !== false;
-			default:
-				throw new LogicException( "Unknown search type {$this->searchMode}" );
-		}
+		return match ( $this->searchMode ) {
+			'RLIKE' => (bool)preg_match( "/$pattern/u", $subject ),
+			'IRLIKE' => (bool)preg_match( "/$pattern/ui", $subject ),
+			'LIKE' => mb_stripos( $subject, $pattern ) !== false,
+			default => throw new LogicException( "Unknown search type {$this->searchMode}" ),
+		};
 	}
 
 	/**
@@ -301,9 +293,7 @@ class AbuseFilterPager extends TablePager {
 				}
 				return $lang->commaList( $flagMsgs );
 			case 'af_hit_count':
-				// FilterLookup::filterFromRow $actions is either an array or callable. We want to provide
-				// an empty array, as we don't need to use actions for this code.
-				// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
+				// We don't need the actual $actions here.
 				$filter = $this->filterLookup->filterFromRow( $row, [] );
 				if ( $this->afPermManager->canSeeLogDetailsForFilter( $this->getAuthority(), $filter ) ) {
 					$count_display = $this->msg( 'abusefilter-hitcount' )

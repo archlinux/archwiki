@@ -1,23 +1,11 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\ObjectCache;
+
+use LogicException;
 
 /**
  * Wrap any BagOStuff and add an in-process memory cache to it.
@@ -39,6 +27,13 @@ class CachedBagOStuff extends BagOStuff {
 	protected $procCache;
 
 	/**
+	 * Whether the last get() call was read from cache ($procCache) or the actual store.
+	 * Null means not applicable (e.g. there was no get() call yet).
+	 * Should be called immediately after a get() call. getMulti() is not supported.
+	 */
+	protected ?bool $wasLastGetCached = null;
+
+	/**
 	 * @stable to call
 	 *
 	 * @param BagOStuff $backend Permanent backend to use
@@ -54,9 +49,11 @@ class CachedBagOStuff extends BagOStuff {
 		$this->attrMap = $backend->attrMap;
 	}
 
+	/** @inheritDoc */
 	public function get( $key, $flags = 0 ) {
 		$value = $this->procCache->get( $key, $flags );
 		if ( $value !== false || $this->procCache->hasKey( $key ) ) {
+			$this->wasLastGetCached = true;
 			return $value;
 		}
 
@@ -69,10 +66,13 @@ class CachedBagOStuff extends BagOStuff {
 		);
 		$this->set( $key, $value, self::TTL_INDEFINITE, self::WRITE_CACHE_ONLY );
 
+		$this->wasLastGetCached = false;
 		return $value;
 	}
 
+	/** @inheritDoc */
 	public function getMulti( array $keys, $flags = 0 ) {
+		$this->wasLastGetCached = null;
 		$valueByKeyCached = [];
 
 		$keysFetch = [];
@@ -97,6 +97,7 @@ class CachedBagOStuff extends BagOStuff {
 		return $valueByKeyCached + $valueByKeyFetched;
 	}
 
+	/** @inheritDoc */
 	public function set( $key, $value, $exptime = 0, $flags = 0 ) {
 		$this->procCache->set( $key, $value, $exptime, $flags );
 
@@ -113,6 +114,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function delete( $key, $flags = 0 ) {
 		$this->procCache->delete( $key, $flags );
 
@@ -129,6 +131,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function add( $key, $value, $exptime = 0, $flags = 0 ) {
 		if ( $this->get( $key ) === false ) {
 			return $this->set( $key, $value, $exptime, $flags );
@@ -141,6 +144,7 @@ class CachedBagOStuff extends BagOStuff {
 	// These just call the backend (tested elsewhere)
 	// @codeCoverageIgnoreStart
 
+	/** @inheritDoc */
 	public function merge( $key, callable $callback, $exptime = 0, $attempts = 10, $flags = 0 ) {
 		$this->procCache->delete( $key );
 
@@ -153,6 +157,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function changeTTL( $key, $exptime = 0, $flags = 0 ) {
 		$this->procCache->delete( $key );
 
@@ -165,6 +170,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function lock( $key, $timeout = 6, $exptime = 6, $rclass = '' ) {
 		return $this->store->proxyCall(
 			__FUNCTION__,
@@ -175,6 +181,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function unlock( $key ) {
 		return $this->store->proxyCall(
 			__FUNCTION__,
@@ -185,6 +192,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function deleteObjectsExpiringBefore(
 		$timestamp,
 		?callable $progress = null,
@@ -202,6 +210,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function setMulti( array $valueByKey, $exptime = 0, $flags = 0 ) {
 		$this->procCache->setMulti( $valueByKey, $exptime, $flags );
 
@@ -218,6 +227,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function deleteMulti( array $keys, $flags = 0 ) {
 		$this->procCache->deleteMulti( $keys, $flags );
 
@@ -234,6 +244,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function changeTTLMulti( array $keys, $exptime, $flags = 0 ) {
 		$this->procCache->changeTTLMulti( $keys, $exptime, $flags );
 
@@ -250,6 +261,7 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function incrWithInit( $key, $exptime, $step = 1, $init = null, $flags = 0 ) {
 		$this->procCache->delete( $key );
 
@@ -262,10 +274,30 @@ class CachedBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function setMockTime( &$time ) {
 		parent::setMockTime( $time );
 		$this->procCache->setMockTime( $time );
 		$this->store->setMockTime( $time );
+	}
+
+	/**
+	 * True if the last get() call was read from cache, false if it was a cache miss.
+	 * Should be called immediately after a get() call (might throw otherwise).
+	 * getMulti() is not supported.
+	 * @since 1.45
+	 */
+	public function wasLastGetCached(): bool {
+		if ( $this->wasLastGetCached === null ) {
+			throw new LogicException( __METHOD__ . ' must be called immediately after get()' );
+		}
+
+		$status = $this->wasLastGetCached;
+		// Disallow multiple calls without a get() in between as we expect this method to
+		// be used right after a get().
+		$this->wasLastGetCached = null;
+
+		return $status;
 	}
 
 	// @codeCoverageIgnoreEnd

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tamzin"
+		]
+	},
+	"checkuser-global-contributions-link": "pali pi ma ale",
+	"checkuser-global-contributions-link-sidebar": "pali pi ma ale",
+	"checkuser-ip-auto-reveal-link-sidebar-on": "sina lukin e nanpa IP lon tenpo ale",
+	"checkuser-ip-auto-reveal-on-dialog-title": "o lukin e nanpa IP lon tenpo ale",
+	"checkuser-ip-auto-reveal-on-dialog-text": "sina ni la, sijelo pi tenpo lili la sina lukin e nanpa IP ale lon tenpo pi ale ala. [https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/Temporary_Accounts/Access_to_IP#Automatically_showing_IPs_for_temporary_accounts o sona.]"
+}

@@ -1,0 +1,51 @@
+@import 'mediawiki.skin.variables.less';
+
+// @TODO put this style wherever it actually belongs or remove it
+// Eslint exception here as this is an overwrite of a style
+/* stylelint-disable-next-line selector-class-pattern */
+.history-user {
+	position: relative;
+}
+
+.ext-checkuser-userinfocard-button {
+	// Eslint exception here as this is an overwrite of a style
+	/* stylelint-disable-next-line selector-class-pattern */
+	&.cdx-button {
+		min-width: @size-150;
+		min-height: @size-150;
+		padding-left: @spacing-0;
+		padding-right: @spacing-0;
+		position: relative;
+		top: @spacing-25;
+		margin-top: -8px;
+		margin-bottom: -6px;
+		margin-right: @spacing-12;
+	}
+
+	&__icon {
+		padding: @spacing-12;
+
+		&--userAvatar {
+			.cdx-mixin-css-icon( @cdx-icon-user-avatar, @param-is-button-icon: true, @param-size-icon: @size-icon-small );
+			// This is important for the arrow popover because we're customizing the icon size
+			min-width: @size-125;
+		}
+
+		&--userTemporary {
+			.cdx-mixin-css-icon( @cdx-icon-user-temporary, @param-is-button-icon: true, @param-size-icon: @size-icon-small );
+			// This is important for the arrow popover because we're customizing the icon size
+			min-width: @size-125;
+		}
+	}
+}
+
+// Eslint exception here as this is an overwrite of a style
+/* stylelint-disable-next-line selector-class-pattern */
+.ext-checkuser-userinfocard-button.cdx-button .ext-checkuser-userinfocard-button__icon.cdx-button__icon {
+	background-color: @color-subtle;
+}
+
+// T398350
+.mw-changeslist-user-in-group:last-of-type {
+	margin-right: @spacing-25;
+}

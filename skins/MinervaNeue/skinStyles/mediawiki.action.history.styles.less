@@ -226,6 +226,21 @@
 		.mw-mf-amc-enabled & {
 			margin-left: -5px;
 		}
+
+		.mw-tempuserlink {
+			background-color: transparent;
+			outline: 0;
+			padding: 0;
+
+			// Add the background color on the bdi instead
+			// to avoid including the icon
+			bdi {
+				// @background-color-interactive
+				background-color: @background-color-interactive;
+				outline: 2px solid @background-color-interactive;
+				border-radius: @border-radius-base;
+			}
+		}
 	}
 
 	.mw-history-undo {

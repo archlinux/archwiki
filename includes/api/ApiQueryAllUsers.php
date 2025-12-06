@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -25,6 +11,7 @@ namespace MediaWiki\Api;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
@@ -46,6 +33,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 	private GroupPermissionsLookup $groupPermissionsLookup;
 	private Language $contentLanguage;
 	private TempUserConfig $tempUserConfig;
+	private RecentChangeLookup $recentChangeLookup;
 
 	public function __construct(
 		ApiQuery $query,
@@ -54,7 +42,8 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		UserGroupManager $userGroupManager,
 		GroupPermissionsLookup $groupPermissionsLookup,
 		Language $contentLanguage,
-		TempUserConfig $tempUserConfig
+		TempUserConfig $tempUserConfig,
+		RecentChangeLookup $recentChangeLookup
 	) {
 		parent::__construct( $query, $moduleName, 'au' );
 		$this->userFactory = $userFactory;
@@ -62,6 +51,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
 		$this->contentLanguage = $contentLanguage;
 		$this->tempUserConfig = $tempUserConfig;
+		$this->recentChangeLookup = $recentChangeLookup;
 	}
 
 	/**
@@ -249,7 +239,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 				->join( 'actor', null, 'rc_actor = actor_id' )
 				->where( [
 					'actor_user = user_id',
-					$db->expr( 'rc_type', '!=', RC_EXTERNAL ), // no wikidata
+					$db->expr( 'rc_source', '=', $this->recentChangeLookup->getPrimarySources() ),
 					$db->expr( 'rc_log_type', '=', null )
 						->or( 'rc_log_type', '!=', 'newusers' ),
 					$db->expr( 'rc_timestamp', '>=', $timestamp ),
@@ -378,10 +368,12 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		$result->addIndexedTagName( [ 'query', $this->getModuleName() ], 'u' );
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'anon-public-user-private';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams( $flags = 0 ) {
 		$userGroups = $this->userGroupManager->listAllGroups();
 
@@ -453,6 +445,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=allusers&aufrom=Y'
@@ -460,6 +453,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Allusers';
 	}

@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Vlad5250",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Knjiga",
 	"visualeditor-cite-tool-name-journal": "Časopis",
 	"visualeditor-cite-tool-name-news": "Vijesti",
-	"visualeditor-cite-tool-name-web": "Veb-sajt",
+	"visualeditor-cite-tool-name-web": "Sajt",
 	"cite-ve-changedesc-ref-group-both": "Grupa referenci je smijenjena iz „$1” u „$2”",
 	"cite-ve-changedesc-ref-group-from": "Grupa referenci je smijenjena iz „$1” u opštu grupu",
 	"cite-ve-changedesc-ref-group-to": "Grupa referenci je smijenjena iz opšte grupe na „$1”",
@@ -24,9 +24,9 @@
 	"cite-ve-citationneeded-title": "Nedostaje referenca",
 	"cite-ve-dialog-reference-editing-reused": "Ova referenca koristi se {{PLURAL:$1|jednom|2=dvaput|$1 puta}} u ovoj stranici.",
 	"cite-ve-dialog-reference-editing-reused-long": "Ova referenca koristi se {{PLURAL:$1|jednom|2=dvaput|$1 puta}} na ovoj stranici. Ovdje napravljene promjene utjecati će na sva područja njegove upotrebe.",
-	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",
+	"cite-ve-dialog-reference-options-group-label": "Grupa",
 	"cite-ve-dialog-reference-options-group-placeholder": "Opće reference",
-	"cite-ve-dialog-reference-options-responsive-label": "Koristi odzivan raspored kolona",
+	"cite-ve-dialog-reference-options-responsive-label": "Prilagodljivi raspored kolona",
 	"cite-ve-dialog-reference-options-section": "Opcije",
 	"cite-ve-dialog-reference-placeholder": "Ovdje napišite ili prekopirajte referencu, ili pak umetnite šablon za reference.",
 	"cite-ve-dialog-reference-title": "Referentni broj",
@@ -39,7 +39,7 @@
 	"cite-ve-dialogbutton-reference-full-label": "Osnovna",
 	"cite-ve-dialogbutton-reference-title": "Referenca",
 	"cite-ve-dialogbutton-reference-tooltip": "Osnovna",
-	"cite-ve-dialogbutton-referenceslist-tooltip": "Spisak referenci",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Lista referenci",
 	"cite-ve-reference-input-placeholder": "Pretražite postojeće reference",
 	"cite-ve-referenceslist-isempty": "Nema referenci u grupi \"$1\" na ovoj stranici.",
 	"cite-ve-referenceslist-isempty-default": "Nema referenci na ovoj stranici koje bi mogle biti uključene u ovaj popis.",

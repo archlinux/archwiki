@@ -8,6 +8,7 @@
 			"DreZhsh",
 			"Eihel",
 			"Eneelk",
+			"Escargot bleu",
 			"Framawiki",
 			"Gomoko",
 			"Goombiis",
@@ -28,8 +29,7 @@
 			"VIGNERON",
 			"Verdy p",
 			"Wladek92",
-			"Woytecr",
-			"Escargot bleu"
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Outils de discussion",
@@ -112,7 +112,7 @@
 	"discussiontools-notification-topic-hidden": "(sujet supprimé)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1{{GENDER:$2|}} a répondu dans « <strong>$4</strong> ».",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Une nouvelle réponse|$1 nouvelles réponses|100=Plus de cent nouvelles réponses}} dans « <strong>$3</strong> ».",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1 : <em>$3</em>.",
+	"discussiontools-notification-subscribed-new-comment-header-compact": "$1 : <em>$3</em>",
 	"discussiontools-notification-subscribed-new-comment-view": "Afficher le commentaire",
 	"discussiontools-pageframe-latestcomment": "Dernier commentaire : $1 par $2 dans le sujet $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Dernier commentaire : $1 par $2",

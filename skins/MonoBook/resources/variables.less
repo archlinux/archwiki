@@ -1,6 +1,14 @@
 // Variables for common colors and other properties
 
 @import 'mediawiki.skin.variables.less';
+@import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui-mixin-small.less';
+
+// Define CSS custom properties on the `:root` pseudo-class so they are available globally.
+:root {
+	// Use the "small" font mode, based on a 0.875rem font size. This ensures Codex components use
+	// a typography scale similar to MonoBook font sizes.
+	.cdx-mode-small();
+}
 
 @background: #f9f9f9; // don't change this; matches headbg images
 @content-background: #fff;

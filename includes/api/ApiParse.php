@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -33,6 +19,7 @@ use MediaWiki\Context\DerivativeContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Exception\MWContentSerializationException;
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Json\JsonCodec;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Message\Message;
@@ -65,6 +52,7 @@ use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
+use Wikimedia\Parsoid\Core\TOCData;
 
 /**
  * @ingroup API
@@ -98,6 +86,7 @@ class ApiParse extends ApiBase {
 	private UserFactory $userFactory;
 	private UrlUtils $urlUtils;
 	private TitleFormatter $titleFormatter;
+	private JsonCodec $jsonCodec;
 
 	public function __construct(
 		ApiMain $main,
@@ -116,7 +105,8 @@ class ApiParse extends ApiBase {
 		TempUserCreator $tempUserCreator,
 		UserFactory $userFactory,
 		UrlUtils $urlUtils,
-		TitleFormatter $titleFormatter
+		TitleFormatter $titleFormatter,
+		JsonCodec $jsonCodec
 	) {
 		parent::__construct( $main, $action );
 		$this->revisionLookup = $revisionLookup;
@@ -134,6 +124,7 @@ class ApiParse extends ApiBase {
 		$this->userFactory = $userFactory;
 		$this->urlUtils = $urlUtils;
 		$this->titleFormatter = $titleFormatter;
+		$this->jsonCodec = $jsonCodec;
 	}
 
 	private function getPoolKey(): string {
@@ -518,8 +509,6 @@ class ApiParse extends ApiBase {
 				// Based on OutputPage::output()
 				$outputPage->loadSkinModules( $skin );
 			}
-
-			$this->getHookRunner()->onApiParseMakeOutputPage( $this, $outputPage );
 		}
 
 		if ( $oldid !== null ) {
@@ -562,6 +551,8 @@ class ApiParse extends ApiBase {
 			// This needs to happen after running the OutputTransform pipeline so that the metadata inserted by
 			// the pipeline is also added to the OutputPage
 			$outputPage->addParserOutputMetadata( $p_result );
+
+			$this->getHookRunner()->onApiParseMakeOutputPage( $this, $outputPage );
 		}
 
 		if ( $params['summary'] !== null ||
@@ -627,17 +618,38 @@ class ApiParse extends ApiBase {
 		}
 		if ( isset( $prop['sections'] ) ) {
 			$result_array['sections'] = $p_result->getSections();
+		}
+		if ( isset( $prop['tocdata'] ) ) {
+			$result_array['tocdata'] = $this->jsonCodec->toJsonArray(
+				$p_result->getTOCData(), TOCData::class
+			);
+		}
+		if ( isset( $prop['sections'] ) || isset( $prop['tocdata'] ) ) {
 			$result_array['showtoc'] = $p_result->getOutputFlag( ParserOutputFlags::SHOW_TOC );
 		}
-		if ( isset( $prop['parsewarnings'] ) ) {
-			$result_array['parsewarnings'] = $p_result->getWarnings();
-		}
-		if ( isset( $prop['parsewarningshtml'] ) ) {
-			$warnings = $p_result->getWarnings();
-			$warningsHtml = array_map( static function ( $warning ) {
-				return ( new RawMessage( '$1', [ $warning ] ) )->parse();
-			}, $warnings );
-			$result_array['parsewarningshtml'] = $warningsHtml;
+		if ( isset( $prop['parsewarnings'] ) || isset( $prop['parsewarningshtml'] ) ) {
+			$warnings = array_map(
+				static fn ( $mv ) => Message::newFromSpecifier( $mv )
+					->page( $titleObj )
+					// Note that we use ContentLanguage here
+					->inContentLanguage()
+					->text(),
+				$p_result->getWarningMsgs()
+			);
+			if ( $warnings === [] ) {
+				// Backward compatibilty with cached ParserOutput from
+				// MW <= 1.45 which didn't store the MessageValues (T343048)
+				$warnings = $p_result->getWarnings();
+			}
+			if ( isset( $prop['parsewarnings'] ) ) {
+				$result_array['parsewarnings'] = $warnings;
+			}
+			if ( isset( $prop['parsewarningshtml'] ) ) {
+				$warningsHtml = array_map( static function ( $warning ) {
+					return ( new RawMessage( '$1', [ $warning ] ) )->parse();
+				}, $warnings );
+				$result_array['parsewarningshtml'] = $warningsHtml;
+			}
 		}
 
 		if ( isset( $prop['displaytitle'] ) ) {
@@ -762,6 +774,7 @@ class ApiParse extends ApiBase {
 			'externallinks' => 'el',
 			'iwlinks' => 'iw',
 			'sections' => 's',
+			'tocdata' => 'toc',
 			'headitems' => 'hi',
 			'modules' => 'm',
 			'indicators' => 'ind',
@@ -815,8 +828,11 @@ class ApiParse extends ApiBase {
 		if ( $params['wrapoutputclass'] !== '' ) {
 			$popts->setWrapOutputClass( $params['wrapoutputclass'] );
 		}
-		if ( $params['parsoid'] ) {
-			$popts->setUseParsoid();
+		if ( $params['parsoid'] || $params['parser'] === 'parsoid' ) {
+			$popts->setUseParsoid( true );
+		}
+		if ( $params['parser'] === 'legacy' ) {
+			$popts->setUseParsoid( false );
 		}
 
 		$reset = null;
@@ -1099,6 +1115,7 @@ class ApiParse extends ApiBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'title' => null,
@@ -1119,7 +1136,7 @@ class ApiParse extends ApiBase {
 			],
 			'prop' => [
 				ParamValidator::PARAM_DEFAULT => 'text|langlinks|categories|links|templates|' .
-					'images|externallinks|sections|revid|displaytitle|iwlinks|' .
+					'images|externallinks|sections|tocdata|revid|displaytitle|iwlinks|' .
 					'properties|parsewarnings',
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_TYPE => [
@@ -1132,6 +1149,7 @@ class ApiParse extends ApiBase {
 					'images',
 					'externallinks',
 					'sections',
+					'tocdata',
 					'revid',
 					'displaytitle',
 					'subtitle',
@@ -1159,7 +1177,20 @@ class ApiParse extends ApiBase {
 			],
 			'wrapoutputclass' => 'mw-parser-output',
 			'usearticle' => false, // since 1.43
-			'parsoid' => false, // since 1.41
+			'parsoid' => [ // since 1.41
+				ParamValidator::PARAM_TYPE => 'boolean',
+				ParamValidator::PARAM_DEFAULT => false,
+				ParamValidator::PARAM_DEPRECATED => true,
+			],
+			'parser' => [ // since 1.45
+				ParamValidator::PARAM_TYPE => [
+					'parsoid',
+					'default',
+					'legacy'
+				],
+				ParamValidator::PARAM_DEFAULT => 'default',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+			],
 			'pst' => false,
 			'onlypst' => false,
 			'effectivelanglinks' => [
@@ -1202,6 +1233,7 @@ class ApiParse extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=parse&page=Project:Sandbox'
@@ -1215,6 +1247,7 @@ class ApiParse extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Parsing_wikitext';
 	}

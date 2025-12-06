@@ -23,7 +23,6 @@ class MathLaTeXMLCacheTest extends MediaWikiIntegrationTestCase {
 	protected static function getMethod( $name ) {
 		$class = new ReflectionClass( MathLaTeXML::class );
 		$method = $class->getMethod( $name );
-		$method->setAccessible( true );
 		return $method;
 	}
 

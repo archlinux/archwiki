@@ -12,6 +12,7 @@ use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserGroupAssignmentService;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNamePrefixSearch;
@@ -51,6 +52,7 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 		UserFactory $userFactory,
 		UserIdentityLookup $userIdentityLookup,
 		DatabaseBlockStore $blockStore,
+		UserGroupAssignmentService $userGroupAssignmentService,
 		CentralIdLookup $centralIdLookup,
 		GlobalContributionsPagerFactory $pagerFactory,
 		StatsFactory $statsFactory
@@ -65,6 +67,7 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 			$userFactory,
 			$userIdentityLookup,
 			$blockStore,
+			$userGroupAssignmentService,
 			'GlobalContributions'
 		);
 		$this->centralIdLookup = $centralIdLookup;
@@ -218,13 +221,11 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 	protected function contributionsSub( $userObj, $targetName ) {
 		$contributionsSub = parent::contributionsSub( $userObj, $targetName );
 
-		// Add subtitle text describing that the data shown is limited to wgCUDMaxAge seconds ago. The count should
+		// A subtitle text describing that the data shown is limited to wgCUDMaxAge seconds ago. The count should
 		// be in days, as this makes it easier to translate the message.
-		$contributionsSub .= $this->msg( 'checkuser-global-contributions-subtitle' )
-			->numParams(
-				$this->getMaxAgeForMessage(),
-				GlobalContributionsPager::REVISION_COUNT_LIMIT
-			)->parse();
+		// Also, it reminds that the user might not have rights to view contributions on some wikis but it
+		// applies only to checks for IP addresses and ranges.
+		$limitMsg = $this->msg( 'checkuser-global-contributions-subtitle' );
 
 		// Allow linking to relevant tools to surface more global contributions (T380562).
 		if ( IPUtils::isValidRange( $targetName ) ) {
@@ -233,7 +234,17 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 			$toolsMsg = $this->msg( 'checkuser-global-contributions-anon-tools' );
 		} else {
 			$toolsMsg = $this->msg( 'checkuser-global-contributions-registered-user-tools' );
+
+			// Viewing contributions by account name requires no special permissions, so we can
+			// show a simpler message, without the reminder about some wikis being potentially skipped.
+			$limitMsg = $this->msg( 'checkuser-global-contributions-subtitle-account' );
 		}
+
+		$contributionsSub .= $limitMsg
+			->numParams(
+				$this->getMaxAgeForMessage(),
+				GlobalContributionsPager::REVISION_COUNT_LIMIT
+			)->parse();
 
 		if ( $toolsMsg && !$toolsMsg->isDisabled() ) {
 			$contributionsSub .= $toolsMsg

@@ -31,8 +31,6 @@ use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Output\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
-use MediaWiki\RecentChanges\ChangesList;
-use MediaWiki\RecentChanges\ChangesListFilterGroup;
 use MediaWiki\RecentChanges\OldChangesList;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\Context;
@@ -147,11 +145,8 @@ class Hooks implements
 	 * Disable recent changes enhanced mode (table mode)
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/FetchChangesList
 	 *
-	 * @param User $user
-	 * @param Skin $skin
-	 * @param ChangesList|null &$list
-	 * @param ChangesListFilterGroup[] $groups
-	 * @return bool|null
+	 * @inheritDoc
+	 * @return false|void False to stop others from interacting with the hook
 	 */
 	public function onFetchChangesList( $user, $skin, &$list, $groups ) {
 		if ( $skin->getSkinName() === 'minerva' ) {
@@ -280,7 +275,7 @@ class Hooks implements
 		array &$config
 	): void {
 		if ( $context->getSkin() === 'minerva' ) {
-			$config['search'] = false;
+			$config['searchModule'] = 'skins.minerva.search';
 			// Enable collapsible styles on Minerva. Projects are already doing this via gadgets
 			// which creates an unpredictable testing environment so it is better to match production.
 			// NOTE: This is enabled despite the well documented problems with the current design on T111565.

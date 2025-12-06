@@ -73,8 +73,8 @@ class SpecialNotificationsMarkRead extends FormSpecialPage {
 						}
 					}
 					return true;
-				}
-			]
+				},
+			],
 		];
 	}
 

@@ -22,13 +22,12 @@ class SeenTime {
 	 */
 	private static $allowedTypes = [ 'alert', 'message' ];
 
-	private UserIdentity $user;
-
 	/**
 	 * @param UserIdentity $user A logged in user
 	 */
-	private function __construct( UserIdentity $user ) {
-		$this->user = $user;
+	private function __construct(
+		private readonly UserIdentity $user,
+	) {
 	}
 
 	public static function newFromUser( UserIdentity $user ): self {
@@ -84,13 +83,6 @@ class SeenTime {
 		}
 
 		$data = self::cache()->get( $this->getMemcKey( $type ) );
-
-		if ( $data === false ) {
-			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
-			// Check if the user still has it set in their preferences
-			$data = $userOptionsLookup->getOption( $this->user, 'echo-seen-time', false );
-		}
-
 		if ( $data === false ) {
 			// We can't remember their real seen time, so reset everything to
 			// unseen.

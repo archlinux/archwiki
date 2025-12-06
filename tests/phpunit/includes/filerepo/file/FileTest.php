@@ -188,7 +188,6 @@ class FileTest extends MediaWikiMediaTestCase {
 
 		$reflection = new ReflectionClass( $fileMock );
 		$reflection_property = $reflection->getProperty( 'handler' );
-		$reflection_property->setAccessible( true );
 		$reflection_property->setValue( $fileMock, $handlerMock );
 
 		if ( $data['tmpBucketedThumbCache'] !== null ) {
@@ -196,7 +195,6 @@ class FileTest extends MediaWikiMediaTestCase {
 				$tmpBucketed = str_replace( '/tmp', $tempDir, $tmpBucketed );
 			}
 			$reflection_property = $reflection->getProperty( 'tmpBucketedThumbCache' );
-			$reflection_property->setAccessible( true );
 			$reflection_property->setValue( $fileMock, $data['tmpBucketedThumbCache'] );
 		}
 
@@ -286,7 +284,6 @@ class FileTest extends MediaWikiMediaTestCase {
 			->willReturn( $handlerMock );
 
 		$reflectionMethod = new ReflectionMethod( File::class, 'generateBucketsIfNeeded' );
-		$reflectionMethod->setAccessible( true );
 
 		$fileMock->method( 'getWidth' )
 			->willReturn( $data['width'] );
@@ -450,7 +447,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		yield [ 'some name.jpg', 'Some_name.jpg' ];
 		yield [ new TitleValue( NS_FILE, 'Some_name.jpg' ), 'Some_name.jpg' ];
 		yield [ new TitleValue( NS_MEDIA, 'Some_name.jpg' ), 'Some_name.jpg' ];
-		yield [ new PageIdentityValue( 0, NS_FILE, 'Some_name.jpg', false ), 'Some_name.jpg' ];
+		yield [ PageIdentityValue::localIdentity( 0, NS_FILE, 'Some_name.jpg' ), 'Some_name.jpg' ];
 	}
 
 	/**
@@ -468,7 +465,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		yield [ '' ];
 		yield [ '#' ];
 		yield [ new TitleValue( NS_USER, 'Some_name.jpg' ) ];
-		yield [ new PageIdentityValue( 0, NS_USER, 'Some_name.jpg', false ) ];
+		yield [ PageIdentityValue::localIdentity( 0, NS_USER, 'Some_name.jpg' ) ];
 	}
 
 	/**

@@ -181,9 +181,10 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Env $env
 	 * @param Document $doc
-	 * @param array $titles map keyed by page titles
-	 * @param array $titleMap map of resolved page data keyed by title
-	 * @return array map of resolved variant page data keyed by original title
+	 * @param array<string,true> $titles map keyed by page titles
+	 * @param array<string,array> $titleMap map of resolved page data keyed by title
+	 *
+	 * @return array<string,array> map of resolved variant page data keyed by original title
 	 */
 	private function getVariantTitles(
 		Env $env,
@@ -198,6 +199,12 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 
 		$origsByVariant = [];
 
+		$langConverter = LanguageConverter::loadLanguageConverter( $env );
+
+		if ( !$langConverter ) {
+			return [];
+		}
+
 		// Gather all nonexistent page titles to search for their variants
 		foreach ( array_keys( $titles ) as $title ) {
 			if (
@@ -210,7 +217,7 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 
 			// array_keys converts strings representing numbers to ints.
 			// So, cast $title to string explicitly.
-			$variantTitles = LanguageConverter::autoConvertToAllVariants( $env, $doc, (string)$title );
+			$variantTitles = LanguageConverter::autoConvertToAllVariants( $doc, (string)$title, $langConverter );
 
 			foreach ( $variantTitles as $variantTitle ) {
 				$origsByVariant[$variantTitle][] = $title;
@@ -244,7 +251,6 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 				}
 			}
 		}
-
 		return $variantsByOrig;
 	}
 }

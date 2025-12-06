@@ -15,15 +15,10 @@ use StatusValue;
  * local wiki to be known if the request did not have a previous login cookie.
  */
 class KnownIPPreAuthenticationProvider extends AbstractPreAuthenticationProvider {
-	private LoginNotify $loginNotify;
-	private UserFactory $userFactory;
-
 	public function __construct(
-		LoginNotify $loginNotify,
-		UserFactory $userFactory
+		private readonly LoginNotify $loginNotify,
+		private readonly UserFactory $userFactory,
 	) {
-		$this->loginNotify = $loginNotify;
-		$this->userFactory = $userFactory;
 	}
 
 	public function testForAuthentication( array $reqs ): StatusValue {

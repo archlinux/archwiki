@@ -13,8 +13,8 @@ use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\JobQueue\Jobs\CategoryMembershipChangeJob;
 use MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
-use MediaWiki\Page\Event\PageRevisionUpdatedListener;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedListener;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
@@ -33,7 +33,7 @@ use MediaWiki\User\UserNameUtils;
  */
 class ChangeTrackingEventIngress
 	extends DomainEventIngress
-	implements PageRevisionUpdatedListener
+	implements PageLatestRevisionChangedListener
 {
 
 	/**
@@ -41,7 +41,7 @@ class ChangeTrackingEventIngress
 	 * @see registerListeners()
 	 */
 	public const EVENTS = [
-		PageRevisionUpdatedEvent::TYPE
+		PageLatestRevisionChangedEvent::TYPE
 	];
 
 	/**
@@ -64,9 +64,10 @@ class ChangeTrackingEventIngress
 			'MainConfig',
 			'JobQueueGroup',
 			'ContentHandlerFactory',
+			'RecentChangeFactory',
 		],
 		'events' => [ // see registerListeners()
-			PageRevisionUpdatedEvent::TYPE
+			PageLatestRevisionChangedEvent::TYPE
 		],
 	];
 
@@ -79,6 +80,7 @@ class ChangeTrackingEventIngress
 	private TalkPageNotificationManager $talkPageNotificationManager;
 	private JobQueueGroup $jobQueueGroup;
 	private IContentHandlerFactory $contentHandlerFactory;
+	private RecentChangeFactory $recentChangeFactory;
 	private bool $useRcPatrol;
 	private bool $rcWatchCategoryMembership;
 
@@ -92,7 +94,8 @@ class ChangeTrackingEventIngress
 		TalkPageNotificationManager $talkPageNotificationManager,
 		Config $mainConfig,
 		JobQueueGroup $jobQueueGroup,
-		IContentHandlerFactory $contentHandlerFactory
+		IContentHandlerFactory $contentHandlerFactory,
+		RecentChangeFactory $recentChangeFactory
 	) {
 		// NOTE: keep in sync with self::OBJECT_SPEC
 		$this->changeTagsStore = $changeTagsStore;
@@ -104,6 +107,7 @@ class ChangeTrackingEventIngress
 		$this->talkPageNotificationManager = $talkPageNotificationManager;
 		$this->jobQueueGroup = $jobQueueGroup;
 		$this->contentHandlerFactory = $contentHandlerFactory;
+		$this->recentChangeFactory = $recentChangeFactory;
 
 		$this->useRcPatrol = $mainConfig->get( MainConfigNames::UseRCPatrol );
 		$this->rcWatchCategoryMembership = $mainConfig->get(
@@ -121,8 +125,9 @@ class ChangeTrackingEventIngress
 		TalkPageNotificationManager $talkPageNotificationManager,
 		Config $mainConfig,
 		JobQueueGroup $jobQueueGroup,
-		IContentHandlerFactory $contentHandlerFactory
-	) {
+		IContentHandlerFactory $contentHandlerFactory,
+		RecentChangeFactory $recentChangeFactory
+	): self {
 		$ingress = new self(
 			$changeTagsStore,
 			$userEditTracker,
@@ -133,13 +138,14 @@ class ChangeTrackingEventIngress
 			$talkPageNotificationManager,
 			$mainConfig,
 			$jobQueueGroup,
-			$contentHandlerFactory
+			$contentHandlerFactory,
+			$recentChangeFactory
 		);
 		$ingress->initSubscriber( self::OBJECT_SPEC );
 		return $ingress;
 	}
 
-	private static function getEditFlags( PageRevisionUpdatedEvent $event ): int {
+	private static function getEditFlags( PageLatestRevisionChangedEvent $event ): int {
 		$flags = $event->isCreation() ? EDIT_NEW : EDIT_UPDATE;
 
 		$flags |= (int)$event->isBotUpdate() * EDIT_FORCE_BOT;
@@ -151,12 +157,12 @@ class ChangeTrackingEventIngress
 	}
 
 	/**
-	 * Listener method for PageRevisionUpdatedEvent, to be registered with an
+	 * Listener method for PageLatestRevisionChangedEvent, to be registered with an
 	 * DomainEventSource.
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function handlePageRevisionUpdatedEvent( PageRevisionUpdatedEvent $event ) {
+	public function handlePageLatestRevisionChangedEvent( PageLatestRevisionChangedEvent $event ): void {
 		if ( $event->changedLatestRevisionId()
 			&& !$event->isSilent()
 		) {
@@ -197,21 +203,21 @@ class ChangeTrackingEventIngress
 	 * if the relevant config is enabled.
 	 * This should only be triggered for actual edits, not reconciliation events (T390636).
 	 *
-	 * @param PageRevisionUpdatedEvent $event
+	 * @param PageLatestRevisionChangedEvent $event
 	 */
-	private function generateCategoryMembershipChanges( PageRevisionUpdatedEvent $event ): void {
+	private function generateCategoryMembershipChanges( PageLatestRevisionChangedEvent $event ): void {
 		if ( $this->rcWatchCategoryMembership
-			&& !$event->hasCause( PageRevisionUpdatedEvent::CAUSE_UNDELETE )
+			&& !$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UNDELETE )
 			&& $this->anyChangedSlotSupportsCategories( $event )
 		) {
 			// Note: jobs are pushed after deferred updates, so the job should be able to see
 			// the recent change entry (also done via deferred updates) and carry over any
-			// bot/deletion/IP flags, ect.
+			// bot/deletion/IP flags, etc.
 			$this->jobQueueGroup->lazyPush(
 				CategoryMembershipChangeJob::newSpec(
 					$event->getPage(),
 					$event->getLatestRevisionAfter()->getTimestamp(),
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_IMPORT )
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_IMPORT )
 				)
 			);
 		}
@@ -219,10 +225,12 @@ class ChangeTrackingEventIngress
 
 	/**
 	 * Determine whether any slots changed in this update supports categories.
-	 * @param PageRevisionUpdatedEvent $event
+	 *
+	 * @param PageLatestRevisionChangedEvent $event
+	 *
 	 * @return bool
 	 */
-	private function anyChangedSlotSupportsCategories( PageRevisionUpdatedEvent $event ): bool {
+	private function anyChangedSlotSupportsCategories( PageLatestRevisionChangedEvent $event ): bool {
 		$slotsUpdate = $event->getSlotsUpdate();
 		foreach ( $slotsUpdate->getModifiedRoles() as $role ) {
 			$model = $slotsUpdate->getModifiedSlot( $role )->getModel();
@@ -247,9 +255,8 @@ class ChangeTrackingEventIngress
 		array $tags,
 		?EditResult $editResult
 	) {
-		// Update recentchanges
 		if ( !$oldRevisionRecord ) {
-			RecentChange::notifyNew(
+			$recentChange = $this->recentChangeFactory->createNewPageRecentChange(
 				$newRevisionRecord->getTimestamp(),
 				$newRevisionRecord->getPage(),
 				$newRevisionRecord->isMinor(),
@@ -263,15 +270,13 @@ class ChangeTrackingEventIngress
 				$tags
 			);
 		} else {
-			// Add RC row to the DB
-			RecentChange::notifyEdit(
+			$recentChange = $this->recentChangeFactory->createEditRecentChange(
 				$newRevisionRecord->getTimestamp(),
 				$newRevisionRecord->getPage(),
 				$newRevisionRecord->isMinor(),
 				$newRevisionRecord->getUser( RevisionRecord::RAW ),
 				$newRevisionRecord->getComment( RevisionRecord::RAW )->text,
 				$oldRevisionRecord->getId(),
-				$newRevisionRecord->getTimestamp(),
 				$forceBot,
 				'',
 				$oldRevisionRecord->getSize(),
@@ -282,6 +287,8 @@ class ChangeTrackingEventIngress
 				$editResult
 			);
 		}
+
+		$this->recentChangeFactory->insertRecentChange( $recentChange );
 	}
 
 	private function updateUserEditTrackerAfterPageUpdated( UserIdentity $author ) {
@@ -289,11 +296,11 @@ class ChangeTrackingEventIngress
 	}
 
 	/**
-	 * Listener method for PageRevisionUpdatedEvent, to be registered with a DomainEventSource.
+	 * Listener method for PageLatestRevisionChangedEvent, to be registered with a DomainEventSource.
 	 *
 	 * @noinspection PhpUnused
 	 */
-	private function updateNewTalkAfterPageUpdated( PageRevisionUpdatedEvent $event ) {
+	private function updateNewTalkAfterPageUpdated( PageLatestRevisionChangedEvent $event ) {
 		// If this is another user's talk page, update newtalk.
 		// Don't do this if $options['changed'] = false (null-edits) nor if
 		// it's a minor edit and the user making the edit doesn't generate notifications for those.
@@ -332,7 +339,7 @@ class ChangeTrackingEventIngress
 		}
 	}
 
-	private function updateRevertTagAfterPageUpdated( PageRevisionUpdatedEvent $event ) {
+	private function updateRevertTagAfterPageUpdated( PageLatestRevisionChangedEvent $event ) {
 		$patrolStatus = $event->getPatrolStatus();
 		$wikiPage = $this->wikiPageFactory->newFromTitle( $event->getPage() );
 

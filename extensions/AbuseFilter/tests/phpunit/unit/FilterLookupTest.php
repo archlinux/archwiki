@@ -16,6 +16,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\HistoryFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use stdClass;
 use Wikimedia\ObjectCache\HashBagOStuff;
@@ -112,9 +113,6 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expected, $filterLookup->getFilterVersion( $version ) );
 	}
 
-	/**
-	 * @return Generator
-	 */
 	public static function provideFilterVersions(): Generator {
 		$version = 163;
 		$filters = [
@@ -134,8 +132,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 				),
 				[],
 				new LastEditInfo(
-					42,
-					'FilterManager',
+					UserIdentityValue::newRegistered( 42, 'FilterManager' ),
 					'20180706142932'
 				),
 				1,
@@ -157,8 +154,7 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 				),
 				[ 'degroup' => [], 'disallow' => [] ],
 				new LastEditInfo(
-					42,
-					'FilterManager',
+					UserIdentityValue::newRegistered( 42, 'FilterManager' ),
 					'20180706142932'
 				),
 				1,

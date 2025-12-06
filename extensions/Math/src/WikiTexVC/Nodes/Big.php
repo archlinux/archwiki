@@ -17,16 +17,10 @@ class Big extends TexNode {
 		$this->arg = $arg;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getFname(): string {
 		return $this->fname;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getArg(): string {
 		return $this->arg;
 	}
@@ -42,7 +36,7 @@ class Big extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function renderMML( $arguments = [], &$state = [] ): string {
+	public function toMMLTree( array $arguments = [], array &$state = [] ) {
 		return $this->parseToMML( $this->fname, $arguments, null );
 	}
 

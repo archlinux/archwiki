@@ -31,11 +31,5 @@
 	"minerva-page-actions-language-switcher": "ሉቃት",
 	"minerva-page-actions-history": "ታሪኽ",
 	"skin-minerva-issue-learn-more": "ዝያዳ ተዓለም",
-	"skin-minerva-time-ago-seconds": "ቀደም {{PLURAL:$1|$1 ሰንየት|$1 ሳንየት }}",
-	"skin-minerva-time-ago-minutes": "ቀደም {{PLURAL:$1|$1 ደቂቀት|$1 ደቃይቅ}}",
-	"skin-minerva-time-ago-hours": "ቀደም {{PLURAL:$1|$1 ስዓት|$1 ሳዓት}}",
-	"skin-minerva-time-ago-days": "ቀደም {{PLURAL:$1|$1 መዓል|$1 አምዕል}}",
-	"skin-minerva-time-ago-months": "ቀደም {{PLURAL:$1|$1 ወረሕ |$1 ኣዋርሕ}}",
-	"skin-minerva-time-ago-years": "ቀደም {{PLURAL:$1|$1  ሰነት|$1 ስኒን}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "ሐሽምት"
 }

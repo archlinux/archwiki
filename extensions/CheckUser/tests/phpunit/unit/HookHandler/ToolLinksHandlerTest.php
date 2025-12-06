@@ -67,7 +67,7 @@ class ToolLinksHandlerTest extends MediaWikiUnitTestCase {
 			->willReturn( $specialPageResolveAliasResult );
 		$items = [];
 		$hookHandler = $this->newServiceInstance( ToolLinksHandler::class, [
-			'specialPageFactory' => $specialPageFactory
+			'specialPageFactory' => $specialPageFactory,
 		] );
 		$hookHandler->onUserToolLinksEdit( $testUser->getId(), $testUser->getName(), $items );
 		$this->assertCount(
@@ -90,7 +90,7 @@ class ToolLinksHandlerTest extends MediaWikiUnitTestCase {
 		$mockPermissionManager->method( 'userHasRight' )
 			->willReturn( false );
 		$hookHandler = $this->newServiceInstance( ToolLinksHandler::class, [
-			'permissionManager' => $mockPermissionManager
+			'permissionManager' => $mockPermissionManager,
 		] );
 		// Mock arguments to ::onContributionsToolLinks
 		$mockUser = $this->createMock( User::class );

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms\Platform;
@@ -31,24 +17,34 @@ class PostgresPlatform extends SQLPlatform {
 	/** @var string */
 	private $coreSchema;
 
+	/** @inheritDoc */
 	public function limitResult( $sql, $limit, $offset = false ) {
 		return "$sql LIMIT $limit " . ( is_numeric( $offset ) ? " OFFSET {$offset} " : '' );
 	}
 
+	/** @inheritDoc */
 	public function buildConcat( $stringList ) {
 		return implode( ' || ', $stringList );
 	}
 
+	/** @inheritDoc */
+	public function buildGroupConcat( $field, $delim ): string {
+		return "array_to_string(array_agg($field)," . $this->quoter->addQuotes( $delim ) . ')';
+	}
+
+	/** @inheritDoc */
 	public function timestamp( $ts = 0 ) {
 		$ct = new ConvertibleTimestamp( $ts );
 
 		return $ct->getTimestamp( TS_POSTGRES );
 	}
 
+	/** @inheritDoc */
 	public function buildStringCast( $field ) {
 		return $field . '::text';
 	}
 
+	/** @inheritDoc */
 	public function implicitOrderby() {
 		return false;
 	}
@@ -61,6 +57,7 @@ class PostgresPlatform extends SQLPlatform {
 		$this->coreSchema = $coreSchema;
 	}
 
+	/** @inheritDoc */
 	public function selectSQLText(
 		$tables, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
@@ -118,6 +115,7 @@ class PostgresPlatform extends SQLPlatform {
 		return parent::selectSQLText( $tables, $vars, $conds, $fname, $options, $join_conds );
 	}
 
+	/** @inheritDoc */
 	protected function makeSelectOptions( array $options ) {
 		$preLimitTail = $postLimitTail = '';
 		$startOpts = '';
@@ -136,7 +134,7 @@ class PostgresPlatform extends SQLPlatform {
 		if ( isset( $options['FOR UPDATE'] ) ) {
 			$postLimitTail .= ' FOR UPDATE OF ' . implode(
 				', ',
-				array_map( [ $this, 'addIdentifierQuotes' ], $options['FOR UPDATE'] )
+				array_map( $this->addIdentifierQuotes( ... ), $options['FOR UPDATE'] )
 			);
 		} elseif ( isset( $noKeyOptions['FOR UPDATE'] ) ) {
 			$postLimitTail .= ' FOR UPDATE';
@@ -149,6 +147,7 @@ class PostgresPlatform extends SQLPlatform {
 		return [ $startOpts, $preLimitTail, $postLimitTail ];
 	}
 
+	/** @inheritDoc */
 	public function getDatabaseAndTableIdentifier( string $table ) {
 		$components = $this->qualifiedTableComponents( $table );
 		switch ( count( $components ) ) {
@@ -163,6 +162,7 @@ class PostgresPlatform extends SQLPlatform {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function relationSchemaQualifier() {
 		if ( $this->coreSchema === $this->currentDomain->getSchema() ) {
 			// The schema to be used is now in the search path; no need for explicit qualification
@@ -172,14 +172,7 @@ class PostgresPlatform extends SQLPlatform {
 		return parent::relationSchemaQualifier();
 	}
 
-	public function buildGroupConcatField(
-		$delim, $tables, $field, $conds = '', $join_conds = []
-	) {
-		$fld = "array_to_string(array_agg($field)," . $this->quoter->addQuotes( $delim ) . ')';
-
-		return '(' . $this->selectSQLText( $tables, $fld, $conds, static::CALLER_SUBQUERY, [], $join_conds ) . ')';
-	}
-
+	/** @inheritDoc */
 	public function makeInsertLists( array $rows, $aliasPrefix = '', array $typeByColumn = [] ) {
 		$firstRow = $rows[0];
 		if ( !is_array( $firstRow ) || !$firstRow ) {
@@ -194,8 +187,9 @@ class PostgresPlatform extends SQLPlatform {
 			// VALUES(...) requires a uniform correspondence of (column => value)
 			if ( $rowColumns !== $tupleColumns ) {
 				throw new DBLanguageError(
-					'Got row columns (' . implode( ', ', $rowColumns ) . ') ' .
-					'instead of expected (' . implode( ', ', $tupleColumns ) . ')'
+					'All rows must specify the same columns in multi-row inserts. Found a row with (' .
+					implode( ', ', $rowColumns ) . ') ' .
+					'instead of expected (' . implode( ', ', $tupleColumns ) . ') as in the first row'
 				);
 			}
 			// Make the value tuple that defines this row
@@ -225,10 +219,12 @@ class PostgresPlatform extends SQLPlatform {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function makeInsertNonConflictingVerbAndOptions() {
 		return [ 'INSERT INTO', 'ON CONFLICT DO NOTHING' ];
 	}
 
+	/** @inheritDoc */
 	protected function makeUpdateOptionsArray( $options ) {
 		$options = $this->normalizeOptions( $options );
 		// PostgreSQL doesn't support anything like "ignore" for UPDATE.
@@ -237,11 +233,13 @@ class PostgresPlatform extends SQLPlatform {
 		return parent::makeUpdateOptionsArray( $options );
 	}
 
+	/** @inheritDoc */
 	public function isTransactableQuery( Query $sql ) {
 		return parent::isTransactableQuery( $sql ) &&
 			!preg_match( '/^SELECT\s+pg_(try_|)advisory_\w+\(/', $sql->getSQL() );
 	}
 
+	/** @inheritDoc */
 	public function lockSQLText( $lockName, $timeout ) {
 		// http://www.postgresql.org/docs/9.2/static/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
 		$key = $this->quoter->addQuotes( $this->bigintFromLockName( $lockName ) );
@@ -251,6 +249,7 @@ class PostgresPlatform extends SQLPlatform {
 			"END) AS acquired";
 	}
 
+	/** @inheritDoc */
 	public function lockIsFreeSQLText( $lockName ) {
 		// http://www.postgresql.org/docs/9.2/static/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
 		$key = $this->quoter->addQuotes( $this->bigintFromLockName( $lockName ) );
@@ -258,6 +257,7 @@ class PostgresPlatform extends SQLPlatform {
 			WHEN FALSE THEN FALSE ELSE pg_advisory_unlock($key) END) AS unlocked";
 	}
 
+	/** @inheritDoc */
 	public function unlockSQLText( $lockName ) {
 		// http://www.postgresql.org/docs/9.2/static/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
 		$key = $this->quoter->addQuotes( $this->bigintFromLockName( $lockName ) );

@@ -32,7 +32,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Dieđut dán kategoriija birra",
 	"mobile-frontend-meta-data-issues-header": "Siidováttisvuođat",
 	"minerva-meta-data-issues-section-header": "Sekšuvdna čuolmmat",
-	"mobile-frontend-pageaction-edit-tooltip": "Divo siiddu álggahusoasi",
 	"mobile-frontend-placeholder": "Oza {{SITENAME}}:is/as",
 	"mobile-frontend-random-button": "Summal/Sahtedohko",
 	"mobile-frontend-redirected-from": "Stivrejuvvon ođđasit siiddus \"[[$1]]\"",
@@ -54,14 +53,8 @@
 	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Ságastallan]",
 	"minerva-skin-desc": "Dohkálaš olggosoainnihahte telefovdna ",
 	"skin-minerva-issue-learn-more": "Oahpa eambbo",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekunda|$1 sekundda}} áigi",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minuhtta|$1 minuvtta}} áigi",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 diibmu|$1 diimmu}} áigi",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 beaivi|$1 beaivvi}} áigi",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 mánnu|$1 mánu}} áigi",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 jahki|$1 jagi}} áigi",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriijat",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Čájet siidduid kategoriijaid",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Dađibahábut ii sáhte bohtosiid juohkit joavkkuide telefuvnnas. Jus áiggut dan funkšuvnna atnit, fertet neahttasiiddu ohcat dihtorveršuvnnas.",
-	"skin-minerva-night-mode-unavailable": "Siidu lea dušše olámuttos «Čuovga» ivdnefáttáin."
+	"skin-minerva-night-mode-unavailable": "Siidu lea dušše olámuttos čuvges ivdnefárddain."
 }

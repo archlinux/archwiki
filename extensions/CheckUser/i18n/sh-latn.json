@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
 	"checkuser-summary": "Ova alatka pregleda skorašnje izmene i vraća IP adrese koje je korisnik koristio ili pokazuje podatke o korisniku/izmenama za dati IP. Korisnici i izmene klijentskog IP se mogu dobaviti preko XFF zaglavlja dodavanjem <code>/xff</code> iza IP adrese. Podržani su formati IPv4 (CIDR $1-32) i IPv6 (CIDR $2-128).\nZbog performansi neće biti vraćeno više od $3 izmena.\nAlatku koristite u skladu sa politikom.",
@@ -138,9 +138,12 @@
 	"checkuser-investigate-compare-table-header-activity": "Datumski raspon",
 	"checkuser-investigate-compare-table-header-ip": "IP",
 	"checkuser-investigate-compare-table-header-useragent": "Korisnički vršilac",
-	"checkuser-investigate-tour-targets-title": "Provjeravate više korisnika i IP adresa?",
-	"checkuser-investigate-tour-targets-desc": "Dodajte do $1 {{PLURAL:$1|korisničkog imena ili IP-a|korisničkih imena ili IP-ova}} i dobijte sve informacije na jednom mjestu. Ne brinite, stvorit ćemo zaseban dnevnik čekjuzera za svakog od njih.",
 	"checkuser-global-contributions-link-sidebar": "Globalni doprinosi",
 	"checkuser-ip-auto-reveal-link-sidebar": "Otkrij IP adrese",
-	"checkuser-tempaccount-reveal-ip-button-label": "Prikaži IP"
+	"prefs-checkuser-tempaccount": "Otkrivanje IP adresa privremenih računa",
+	"checkuser-tempaccount-enable-preference": "Otkrivanje IP adresa privremenih računa",
+	"checkuser-tempaccount-reveal-ip-button-label": "Prikaži IP",
+	"checkuser-userinfocard-enable-preference-description": "[[mw:Trust_and_Safety_Product/Anti-abuse_signals/User_Info|Korisnička infokartica]]",
+	"checkuser-userinfocard-enable-preference-help": "Prikazuje dugme pored korisničkog imena koje otvara iskačući prozor s podacima o računu.",
+	"tooltip-t-global-contributions": "Lista doprinosa {{GENDER:$1|ovoga korisnika|ove korisnice|ovoga korisnika ili korisnice}} sa svih projekata"
 }

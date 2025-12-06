@@ -59,120 +59,90 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuChanges */
-	public function testGetQueryInfoForCuChanges( $displayClientHints, $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuChanges( $expectedQueryInfo ) {
 		$this->commonGetQueryInfoForTableSpecificMethod(
 			'getQueryInfoForCuChanges',
-			[ 'displayClientHints' => $displayClientHints ],
+			[],
 			$expectedQueryInfo
 		);
 	}
 
 	public static function provideGetQueryInfoForCuChanges() {
 		return [
-			'Returns expected keys to arrays and includes cu_changes in tables' => [
-				false, [
-					// Fields should be an array
-					'fields' => [],
-					// Assert at least cu_changes in the table list
-					'tables' => [ 'cu_changes' ],
-					// Should be all of these as arrays
-					'conds' => [],
-					'options' => [],
-					'join_conds' => [],
-				]
-			],
-			'Client Hints enabled' => [
-				true,
-				[
-					'fields' => [
-						'client_hints_reference_id' => 'cuc_this_oldid',
-						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES
-					]
-				]
-			],
+			'Returns expected keys to arrays and includes cu_changes in tables' => [ [
+				// Fields should be an array
+				'fields' => [
+					'client_hints_reference_id' => 'cuc_this_oldid',
+					'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+				],
+				// Assert at least cu_changes in the table list
+				'tables' => [ 'cu_changes' ],
+				// Should be all of these as arrays
+				'conds' => [],
+				'options' => [],
+				'join_conds' => [],
+			] ],
 		];
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuLogEvent */
-	public function testGetQueryInfoForCuLogEvent( $displayClientHints, $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuLogEvent( $expectedQueryInfo ) {
 		$this->commonGetQueryInfoForTableSpecificMethod(
 			'getQueryInfoForCuLogEvent',
-			[
-				'displayClientHints' => $displayClientHints
-			],
+			[],
 			$expectedQueryInfo
 		);
 	}
 
 	public static function provideGetQueryInfoForCuLogEvent() {
 		return [
-			'Returns expected keys to arrays and includes cu_log_event in tables' => [
-				false,
-				[
-					# Fields should be an array
-					'fields' => [],
-					# Tables array should have at least cu_private_event
-					'tables' => [ 'cu_log_event' ],
-					# All other values should be arrays
-					'conds' => [],
-					'options' => [],
-					'join_conds' => [],
-				]
-			],
-			'Client Hints enabled' => [
-				true,
-				[
-					'fields' => [
-						'client_hints_reference_id' => 'cule_log_id',
-						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT
-					]
-				]
-			],
+			'Returns expected keys to arrays and includes cu_log_event in tables' => [ [
+				# Fields should be an array
+				'fields' => [
+					'client_hints_reference_id' => 'cule_log_id',
+					'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT,
+				],
+				# Tables array should have at least cu_private_event
+				'tables' => [ 'cu_log_event' ],
+				# All other values should be arrays
+				'conds' => [],
+				'options' => [],
+				'join_conds' => [],
+			] ],
 		];
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuPrivateEvent */
-	public function testGetQueryInfoForCuPrivateEvent( $displayClientHints, $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuPrivateEvent( $expectedQueryInfo ) {
 		$this->commonGetQueryInfoForTableSpecificMethod(
 			'getQueryInfoForCuPrivateEvent',
-			[
-				'displayClientHints' => $displayClientHints
-			],
+			[],
 			$expectedQueryInfo
 		);
 	}
 
 	public static function provideGetQueryInfoForCuPrivateEvent() {
 		return [
-			'Returns expected keys to arrays and includes cu_private_event in tables' => [
-				false,
-				[
-					# Fields should be an array
-					'fields' => [],
-					# Tables array should have at least cu_private_event
-					'tables' => [ 'cu_private_event' ],
-					# All other values should be arrays
-					'conds' => [],
-					'options' => [],
-					// The actor table should be joined using a LEFT JOIN
-					'join_conds' => [ 'actor_cupe_actor' => [ 'LEFT JOIN', 'actor_cupe_actor.actor_id=cupe_actor' ] ],
-				]
-			],
-			'Client Hints enabled' => [
-				true,
-				[
-					'fields' => [
-						'client_hints_reference_id' => 'cupe_id',
-						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT
-					]
-				]
-			],
+			'Returns expected keys to arrays and includes cu_private_event in tables' => [ [
+				# Fields should be an array
+				'fields' => [
+					'client_hints_reference_id' => 'cupe_id',
+					'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT,
+				],
+				# Tables array should have at least cu_private_event
+				'tables' => [ 'cu_private_event' ],
+				# All other values should be arrays
+				'conds' => [],
+				'options' => [],
+				// The actor table should be joined using a LEFT JOIN
+				'join_conds' => [ 'actor_cupe_actor' => [ 'LEFT JOIN', 'actor_cupe_actor.actor_id=cupe_actor' ] ],
+			] ],
 		];
 	}
 
 	/** @dataProvider providePreprocessResults */
 	public function testPreprocessResults(
-		$results, $displayClientHints, $expectedReferenceIdsForLookup, $expectedUserSets
+		$results, $expectedReferenceIdsForLookup, $expectedUserSets
 	) {
 		// Get the object to test with
 		$objectUnderTest = $this->getMockBuilder( CheckUserGetUsersPager::class )
@@ -180,35 +150,26 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 			->onlyMethods( [] )
 			->getMock();
 		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
-		// Set whether to display Client Hints.
-		$objectUnderTest->displayClientHints = $displayClientHints;
-		if ( $displayClientHints ) {
-			// If displaying Client Hints, then expect that the method under test looks up
-			// the Client Hints data objects using the UserAgentClientHintsLookup service
-			// and also that the reference IDs being used are as expected.
-			$mockClientHintsLookup = $this->createMock( UserAgentClientHintsLookup::class );
-			$mockClientHintsLookup->expects( $this->once() )
-				->method( 'getClientHintsByReferenceIds' )
-				->with( $this->callback( function ( $referenceIds ) use ( $expectedReferenceIdsForLookup ) {
-					// Assert that the ClientHintsReferenceIds object passed has the
-					// correct reference IDs
-					// If this is the case, then return true.
-					$this->assertArrayEquals(
-						$expectedReferenceIdsForLookup->getReferenceIds(),
-						$referenceIds->getReferenceIds(),
-						false,
-						true,
-						'::preprocessResults did use the expected reference IDs to lookup the Client Hints data.'
-					);
-					return true;
-				} ) );
-			$objectUnderTest->clientHintsLookup = $mockClientHintsLookup;
-		} else {
-			// If not displaying Client Hints data, no lookup should be done.
-			$mockClientHintsLookup = $this->createMock( UserAgentClientHintsLookup::class );
-			$mockClientHintsLookup->expects( $this->never() )->method( 'getClientHintsByReferenceIds' );
-			$objectUnderTest->clientHintsLookup = $mockClientHintsLookup;
-		}
+
+		// Expect that the method under test looks up the Client Hints data objects using the
+		// UserAgentClientHintsLookup service and also that the reference IDs being used are as expected.
+		$mockClientHintsLookup = $this->createMock( UserAgentClientHintsLookup::class );
+		$mockClientHintsLookup->expects( $this->once() )
+			->method( 'getClientHintsByReferenceIds' )
+			->with( $this->callback( function ( $referenceIds ) use ( $expectedReferenceIdsForLookup ) {
+				// Assert that the ClientHintsReferenceIds object passed has the
+				// correct reference IDs
+				// If this is the case, then return true.
+				$this->assertArrayEquals(
+					$expectedReferenceIdsForLookup->getReferenceIds(),
+					$referenceIds->getReferenceIds(),
+					false,
+					true,
+					'::preprocessResults did use the expected reference IDs to lookup the Client Hints data.'
+				);
+				return true;
+			} ) );
+		$objectUnderTest->clientHintsLookup = $mockClientHintsLookup;
 
 		$linkBatch = $this->createMock( LinkBatch::class );
 
@@ -273,10 +234,8 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 		return [
 			'No rows in the result' => [
 				new FakeResultWrapper( [] ),
-				// Whether to display client hints
-				false,
 				// Expected ClientHintsReferenceIds used for lookup
-				null,
+				new ClientHintsReferenceIds( [] ),
 				[
 					'first' => [],
 					'last' => [],
@@ -285,9 +244,9 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 					'infosets' => [],
 					'agentsets' => [],
 					'clienthints' => [],
-				]
+				],
 			],
-			'One row in the result with Client Hints disabled' => [
+			'One row in the result' => [
 				new FakeResultWrapper( [
 					[
 						'user_text' => 'Test',
@@ -296,13 +255,14 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'ip' => '127.0.0.1',
 						'xff' => null,
 						'agent' => 'Testing user agent',
-						'timestamp' => $largestFakeTimestamp
+						'timestamp' => $largestFakeTimestamp,
+						'client_hints_reference_id' => 1,
+						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
 					],
 				] ),
-				// Whether to display client hints
-				false,
-				// Expected ClientHintsReferenceIds used for lookup
-				null,
+				new ClientHintsReferenceIds( [
+					UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 1 ],
+				] ),
 				[
 					'first' => [ 'Test' => $largestFakeTimestamp ],
 					'last' => [ 'Test' => $largestFakeTimestamp ],
@@ -310,10 +270,14 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 					'ids' => [ 'Test' => 1 ],
 					'infosets' => [ 'Test' => [ [ '127.0.0.1', null ] ] ],
 					'agentsets' => [ 'Test' => [ 'Testing user agent' ] ],
-					'clienthints' => [ 'Test' => new ClientHintsReferenceIds() ],
-				]
+					'clienthints' => [
+						'Test' => new ClientHintsReferenceIds( [
+							UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 1 ],
+						] ),
+					],
+				],
 			],
-			'Multiple rows in the result with Client Hints display enabled' => [
+			'Multiple rows in the result' => [
 				new FakeResultWrapper( [
 					[
 						'user_text' => 'Test',
@@ -370,10 +334,8 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'timestamp' => $smallestFakeTimestamp,
 						'client_hints_reference_id' => 456,
 						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT,
-					]
+					],
 				] ),
-				// Whether to display client hints
-				true,
 				// Expected ClientHintsReferenceIds used for lookup
 				new ClientHintsReferenceIds( [
 					UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 1, 123 ],
@@ -395,7 +357,9 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 					'ids' => [ 'Test' => 1, 'Testing' => 2, '127.0.0.1' => 0 ],
 					'infosets' => [
 						'Test' => [
-							[ '127.0.0.1', '125.6.5.4' ], [ '127.0.0.2', null ], [ '127.0.0.1', null ]
+							[ '127.0.0.1', '125.6.5.4' ],
+							[ '127.0.0.2', null ],
+							[ '127.0.0.1', null ],
 						],
 						'Testing' => [ [ '127.0.0.2', null ] ],
 						'127.0.0.1' => [ [ '127.0.0.1', null ] ],
@@ -417,8 +381,8 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'127.0.0.1' => new ClientHintsReferenceIds( [
 							UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT => [ 456 ],
 						] ),
-					]
-				]
+					],
+				],
 			],
 		];
 	}

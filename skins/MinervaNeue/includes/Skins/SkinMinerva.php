@@ -21,7 +21,6 @@
 namespace MediaWiki\Minerva\Skins;
 
 use MediaWiki\Cache\GenderCache;
-use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
@@ -42,6 +41,7 @@ use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Skin\SkinMustache;
 use MediaWiki\Skin\SkinTemplate;
+use MediaWiki\Skins\Vector\ConfigHelper;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
@@ -78,6 +78,7 @@ class SkinMinerva extends SkinMustache {
 	private RevisionLookup $revisionLookup;
 	private UserIdentityUtils $userIdentityUtils;
 	private UserOptionsManager $userOptionsManager;
+	private FeaturesHelper $featuresHelper;
 
 	/**
 	 * @param GenderCache $genderCache
@@ -92,6 +93,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param RevisionLookup $revisionLookup
 	 * @param UserIdentityUtils $userIdentityUtils
 	 * @param UserOptionsManager $userOptionsManager
+	 * @param ConfigHelper|null $configHelper
 	 * @param array $options
 	 */
 	public function __construct(
@@ -107,6 +109,7 @@ class SkinMinerva extends SkinMustache {
 		RevisionLookup $revisionLookup,
 		UserIdentityUtils $userIdentityUtils,
 		UserOptionsManager $userOptionsManager,
+		?ConfigHelper $configHelper,
 		$options = []
 	) {
 		parent::__construct( $options );
@@ -126,26 +129,18 @@ class SkinMinerva extends SkinMustache {
 		$this->revisionLookup = $revisionLookup;
 		$this->userIdentityUtils = $userIdentityUtils;
 		$this->userOptionsManager = $userOptionsManager;
+		$this->featuresHelper = new FeaturesHelper( $configHelper );
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function hasPageActions(): bool {
 		return !$this->getTitle()->isSpecialPage() &&
 			$this->getActionName() === 'view';
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function hasSecondaryActions(): bool {
 		return !$this->skinUserPageHelper->isUserPage();
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function isFallbackEditor(): bool {
 		return $this->getActionName() === 'edit';
 	}
@@ -170,8 +165,6 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * A notification icon that links to Special:Mytalk when Echo is not installed.
 	 * Consider upstreaming this to core or removing at a future date.
-	 *
-	 * @return array
 	 */
 	private function getNotificationFallbackButton(): array {
 		return [
@@ -180,85 +173,6 @@ class SkinMinerva extends SkinMustache {
 				[ 'returnto' => $this->getTitle()->getPrefixedText() ]
 			),
 		];
-	}
-
-	/**
-	 * @param array $alert
-	 * @param array $notice
-	 * @return array
-	 */
-	private function getCombinedNotificationButton( array $alert, array $notice ): array {
-		// Start by just copying alert data
-		$combinedNotification = $alert;
-		// Sum the notifications from the two original buttons
-		$notifCount = ( $alert['data']['counter-num'] ?? 0 ) + ( $notice['data']['counter-num'] ?? 0 );
-		$combinedNotification['data']['counter-num'] = $notifCount;
-		// @phan-suppress-next-line PhanUndeclaredClassReference
-		if ( class_exists( NotificationController::class ) ) {
-			$combinedNotification['data']['counter-text'] =
-				// @phan-suppress-next-line PhanUndeclaredClassMethod
-				NotificationController::formatNotificationCount( $notifCount );
-		} else {
-			$combinedNotification['data']['counter-text'] = $notifCount;
-		}
-		// This text is not shown, but re-use the counter text for accessibility.
-		$combinedNotification['text'] = $alert['data']['counter-text'];
-
-		$linkClassAlert = $alert['link-class'] ?? [];
-		$linkClassNotice = $notice['link-class'] ?? [];
-		$hasUnseenAlerts = is_array( $linkClassAlert ) &&
-			in_array( 'mw-echo-unseen-notifications', $linkClassAlert );
-		$hasUnseenNotices = is_array( $linkClassNotice ) &&
-			in_array( 'mw-echo-unseen-notifications', $linkClassNotice );
-		// The circle should only appear if there are unseen notifications.
-		// Once the notifications are seen (by opening the notification drawer)
-		// then the icon reverts to a gray circle, but on page refresh
-		// it should revert back to a bell icon.
-		// If you try and change this behaviour, at time of writing
-		// (December 2022) JavaScript will correct it.
-		if ( $notifCount > 0 && ( $hasUnseenAlerts || $hasUnseenNotices ) ) {
-			return $this->getNotificationCircleButton( $combinedNotification );
-		} else {
-			return $this->getNotificationButton( $combinedNotification );
-		}
-	}
-
-	/**
-	 * Minerva differs from other skins in that for users with unread notifications
-	 * instead of a bell with a small square indicating the number of notifications
-	 * it shows a red circle with a number inside. Ideally Vector and Minerva would
-	 * be treated the same but we'd need to talk to a designer about consolidating these
-	 * before making such a decision.
-	 *
-	 * @param array $notification
-	 * @return array
-	 */
-	private function getNotificationCircleButton( array $notification ): array {
-		$notification['icon'] = 'circle';
-		$linkClass = $notification['link-class'] ?? [];
-		$linkClass[] = 'notification-count';
-		$linkClass[] = 'notification-unseen';
-		$linkClass[] = 'mw-echo-unseen-notifications';
-		$notification['link-class'] = $linkClass;
-		return $notification;
-	}
-
-	/**
-	 * Removes the OOUI icon class and adds Minerva notification classes.
-	 *
-	 * @param array $notification
-	 * @return array
-	 */
-	private function getNotificationButton( array $notification ): array {
-		$linkClass = $notification['link-class'];
-		$notification['link-class'] = array_filter(
-			$linkClass,
-			static function ( $class ) {
-				return $class !== 'oo-ui-icon-bellOutline';
-			}
-		);
-		$notification['icon'] = 'bellOutline';
-		return $notification;
 	}
 
 	/**
@@ -277,37 +191,10 @@ class SkinMinerva extends SkinMustache {
 			}
 		}
 
-		//
-		// Echo Technical debt!!
-		// * Convert the Echo button into a single button
-		// * Switch out the icon.
-		//
 		if ( $this->getUser()->isRegistered() ) {
 			if ( count( $contentNavigationUrls['notifications'] ) === 0 ) {
 				// Shown to logged in users when Echo is not installed:
 				$contentNavigationUrls['notifications']['mytalks'] = $this->getNotificationFallbackButton();
-			} elseif ( $this->skinOptions->get( SkinOptions::SINGLE_ECHO_BUTTON ) ) {
-				// Combine notification icons. Minerva only shows one entry point to notifications.
-				// This can be reconsidered with a solution to https://phabricator.wikimedia.org/T142981
-				$alert = $contentNavigationUrls['notifications']['notifications-alert'] ?? null;
-				$notice = $contentNavigationUrls['notifications']['notifications-notice'] ?? null;
-				if ( $alert && $notice ) {
-					unset( $contentNavigationUrls['notifications']['notifications-notice'] );
-					$contentNavigationUrls['notifications']['notifications-alert'] =
-						$this->getCombinedNotificationButton( $alert, $notice );
-				}
-			} else {
-				// Show desktop alert icon.
-				$alert = $contentNavigationUrls['notifications']['notifications-alert'] ?? null;
-				if ( $alert ) {
-					// Correct the icon to be the bell filled rather than the outline to match
-					// Echo's badge.
-					$linkClass = $alert['link-class'] ?? [];
-					$alert['link-class'] = array_filter( $linkClass, static function ( $class ) {
-						return $class !== 'oo-ui-icon-bellOutline';
-					} );
-					$contentNavigationUrls['notifications']['notifications-alert'] = $alert;
-				}
 			}
 		}
 	}
@@ -329,13 +216,19 @@ class SkinMinerva extends SkinMustache {
 				'context' => $item[ 'name' ] ?? null,
 			];
 			$attributes = $itemData['array-attributes' ] ?? [];
-			foreach ( $attributes as $attrDefinition ) {
+			$attributesNew = [];
+			foreach ( $attributes as $key => $attrDefinition ) {
 				$key = $attrDefinition[ 'key' ];
 				if ( in_array( $key, [ 'href', 'rel' ] ) ) {
 					$data[ $key ] = $attrDefinition[ 'value' ];
+				} elseif ( $key !== 'class' ) {
+					// ignore class name but copy across other attributes
+					$attributesNew[] = $attrDefinition;
 				}
 			}
-			$nav[ $item[ 'name' ] ] = $data;
+			$nav[ $item[ 'name' ] ] = $data + [
+				'array-attributes' => $attributesNew,
+			];
 		}
 		return $nav;
 	}
@@ -360,7 +253,7 @@ class SkinMinerva extends SkinMustache {
 		$isUserPage = $this->skinUserPageHelper->isUserPage();
 		$isUserPageAccessible = $this->skinUserPageHelper->isUserPageAccessibleToCurrentUser();
 		if ( $isUserPage && $isUserPageAccessible ) {
-			$data['html-title-heading'] = $this->getUserPageHeadingHtml( $data['html-title-heading' ] );
+			$data['html-title-heading'] = $this->getUserPageHeadingHtml();
 		}
 
 		$usermessage = $data['html-user-message'] ?? '';
@@ -426,7 +319,6 @@ class SkinMinerva extends SkinMustache {
 				$this->getUser()->isAnon(),
 			'html-minerva-tagline' => $this->getTaglineHtml(),
 			'html-minerva-user-menu' => $this->getPersonalToolsMenu( $navUserMenu ),
-			'is-minerva-beta' => $this->skinOptions->get( SkinOptions::BETA_MODE ),
 			'data-minerva-notifications' => $notifications ? [
 				'array-buttons' => $this->getNotificationButtons( $notifications ),
 			] : null,
@@ -480,8 +372,7 @@ class SkinMinerva extends SkinMustache {
 			$btns[] = [
 				'tag-name' => 'a',
 				'isButton' => true,
-				// FIXME: Move preg_replace when Echo no longer provides this class.
-				'classes' => preg_replace( '/oo-ui-icon-(bellOutline|tray)/', '', $classes ),
+				'classes' => $classes,
 				'array-attributes' => $attributes,
 				'data-icon' => [
 					'icon' => $icon,
@@ -492,9 +383,6 @@ class SkinMinerva extends SkinMustache {
 		return $btns;
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function isHistoryPage(): bool {
 		return $this->getRequest()->getRawVal( 'action' ) === 'history';
 	}
@@ -505,8 +393,6 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * Special pages have tabs if SkinOptions::TABS_ON_SPECIALS is enabled.
 	 * This is used by Extension:GrowthExperiments
-	 *
-	 * @return bool
 	 */
 	private function hasPageTabs(): bool {
 		$title = $this->getTitle();
@@ -542,8 +428,6 @@ class SkinMinerva extends SkinMustache {
 
 	/**
 	 * Build the Main Menu Director by passing the skin options
-	 *
-	 * @return MainMenuDirector
 	 */
 	protected function getMainMenu(): MainMenuDirector {
 		$showMobileOptions = $this->skinOptions->get( SkinOptions::MOBILE_OPTIONS );
@@ -587,9 +471,6 @@ class SkinMinerva extends SkinMustache {
 		return $userMenuDirector->renderMenuData( $personalUrls );
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getSubjectPage(): string {
 		$title = $this->getTitle();
 
@@ -651,8 +532,6 @@ class SkinMinerva extends SkinMustache {
 	 */
 	public function getPageClasses( $title ): string {
 		$className = parent::getPageClasses( $title );
-		$className .= ' ' . ( $this->skinOptions->get( SkinOptions::BETA_MODE )
-				? 'beta' : 'stable' );
 
 		if ( $this->getUser()->isRegistered() ) {
 			$className .= ' is-authenticated';
@@ -693,8 +572,6 @@ class SkinMinerva extends SkinMustache {
 	 * Provides skin-specific modifications to the HTML element attributes
 	 *
 	 * Currently only used for adding the night mode class
-	 *
-	 * @return array
 	 */
 	public function getHtmlElementAttributes(): array {
 		$attributes = parent::getHtmlElementAttributes();
@@ -705,8 +582,7 @@ class SkinMinerva extends SkinMustache {
 
 		// get skin config of night mode to check what is execluded
 		$nightModeConfig = $this->getConfig()->get( 'MinervaNightModeOptions' );
-		$featuresHelper = new FeaturesHelper();
-		$shouldDisableNightMode = $featuresHelper->shouldDisableNightMode( $nightModeConfig,
+		$shouldDisableNightMode = $this->featuresHelper->shouldDisableNightMode( $nightModeConfig,
 			$webRequest,
 			$this->getTitle()
 		);
@@ -737,7 +613,6 @@ class SkinMinerva extends SkinMustache {
 
 	/**
 	 * Whether the output page contains category links and the category feature is enabled.
-	 * @return bool
 	 */
 	private function hasCategoryLinks(): bool {
 		if ( !$this->skinOptions->get( SkinOptions::CATEGORIES ) ) {
@@ -918,10 +793,9 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * Returns the HTML representing the heading.
 	 *
-	 * @param string $heading The heading suggested by core.
 	 * @return string HTML for header
 	 */
-	private function getUserPageHeadingHtml( string $heading ): string {
+	private function getUserPageHeadingHtml(): string {
 		// The heading is just the username without namespace
 		return Html::element( 'h1',
 			// These IDs and classes should match Skin::getTemplateData
@@ -952,7 +826,6 @@ class SkinMinerva extends SkinMustache {
 
 	/**
 	 * Returns an array with details for a language button.
-	 * @return array
 	 */
 	protected function getLanguageButton(): array {
 		return [
@@ -1058,7 +931,6 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * Returns the javascript entry modules to load. Only modules that need to
 	 * be overriden or added conditionally should be placed here.
-	 * @return array
 	 */
 	public function getDefaultModules(): array {
 		$modules = parent::getDefaultModules();
@@ -1095,8 +967,6 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * Any styles returned by this method are loaded on the critical rendering path as linked
 	 * stylesheets. I.e., they are required to load on the client before first paint.
-	 *
-	 * @return array
 	 */
 	protected function getPageSpecificStyles(): array {
 		$styles = [];
@@ -1117,7 +987,7 @@ class SkinMinerva extends SkinMustache {
 
 		// When any of these features are enabled in production
 		// remove the if condition
-		// and move the associated LESS file inside `skins.minerva.amc.styles`
+		// and move the associated Less file inside 'skins.minerva.amc.styles'
 		// into a more appropriate module.
 		if (
 			// T356117 - enable on all special pages - some special pages e.g. Special:Contribute have tabs.
@@ -1143,8 +1013,6 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 *  Any styles returned by this method are loaded on the critical rendering path as linked
 	 *  stylesheets. I.e., they are required to load on the client before first paint.
-	 *
-	 * @return array
 	 */
 	protected function getFeatureSpecificStyles(): array {
 		$styles = [];

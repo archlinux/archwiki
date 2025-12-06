@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"1233qwer1234qwer4",
+			"Constraque",
 			"DannyS712",
 			"Dim Grits",
 			"Gazeb",
 			"Matma Rex",
 			"Matěj Suchánek",
-			"Vlad5250",
-			"Constraque"
+			"Vlad5250"
 		]
 	},
 	"abusefilter-desc": "Придавать автоматічны геврістікы до едітовань",
@@ -253,7 +253,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "Новый вікітекст, по едітованю сторінкы",
 	"abusefilter-edit-builder-vars-added-links": "Вшыткы екстерны одказы приданы почас едітованя",
 	"abusefilter-edit-builder-vars-removed-links": "Вшыткы екстерны одказы одстранены почас едітованя",
-	"abusefilter-edit-builder-vars-all-links": "Вшыткы екстеры одказы в новім текстї",
+	"abusefilter-edit-builder-vars-old-links": "Одказы на сторінцї перед едітованём",
 	"abusefilter-edit-builder-vars-new-text": "Новый текст сторінкы очіщеный од форматованя",
 	"abusefilter-edit-builder-vars-new-html": "Выґенерованый HTML код новой верзії",
 	"abusefilter-edit-builder-vars-restrictions-edit": "Рівень замкнутя сторінкы про едітованя",
@@ -261,7 +261,6 @@
 	"abusefilter-edit-builder-vars-restrictions-create": "Створити замок той сторінкы",
 	"abusefilter-edit-builder-vars-restrictions-upload": "Уровень замку про наладованя файлу",
 	"abusefilter-edit-builder-vars-recent-contributors": "Остатнїх десять хоснователїв, котры едітовали сторінку",
-	"abusefilter-edit-builder-vars-old-links": "Одказы на сторінцї перед едітованём",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA-1 геш обсягу файлу",
 	"abusefilter-edit-builder-vars-old-text": "Старый текст сторінкы очіщеный од вшыткых значок",
 	"abusefilter-edit-builder-vars-old-html": "Вікітекст старой сторінкы, перетвореный до HTML",

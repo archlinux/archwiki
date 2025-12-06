@@ -2,29 +2,31 @@
 
 namespace Wikimedia\WikiPEG;
 
+use stdClass;
+
 abstract class PEGParserBase {
-	protected static $FAILED;
-	protected static $UNDEFINED;
-	protected $currPos;
-	protected $savedPos;
-	protected $input;
-	protected $inputLength;
-	protected $options;
+	protected static ?stdClass $FAILED = null;
+	protected static ?stdClass $UNDEFINED = null;
+	protected int $currPos;
+	protected int $savedPos;
+	protected string $input;
+	protected int $inputLength;
+	protected array $options;
+	/** @var array */
 	protected $cache;
 
 	/** @var array<int,array{line:int,column:int,seenCR:bool}> */
-	protected $posDetailsCache;
-	protected $maxFailPos;
-	protected $maxFailExpected;
+	protected array $posDetailsCache;
+	protected int $maxFailPos;
+	protected array $maxFailExpected;
 
 	/** @var array Associative arrays of expectation info */
 	protected $expectations;
 
 	/** @var Expectation[] */
-	private $expectationCache;
+	private array $expectationCache;
 
-	/** @var Tracer */
-	protected $tracer;
+	protected Tracer $tracer;
 
 	public function __construct() {
 		if ( !self::$FAILED ) {
@@ -35,7 +37,8 @@ abstract class PEGParserBase {
 		}
 	}
 
-	protected function traceCall( $parseFunc, $name, $argNames, $args ) {
+	/** @return mixed */
+	protected function traceCall( callable $parseFunc, string $name, array $argNames, array $args ) {
 		$argMap = [];
 		foreach ( $args as $i => $argValue ) {
 			$argMap[$argNames[$i]] = $argValue;
@@ -47,7 +50,7 @@ abstract class PEGParserBase {
 			'location' => $this->computeLocation( $startPos, $startPos ),
 			'args' => $argMap
 		] );
-		$result = call_user_func_array( $parseFunc, $args );
+		$result = $parseFunc( ...$args );
 		if ( $result !== self::$FAILED ) {
 			$this->tracer->trace( [
 				'type' => 'rule.match',
@@ -65,11 +68,11 @@ abstract class PEGParserBase {
 		return $result;
 	}
 
-	protected function text() {
+	protected function text(): string {
 		return substr( $this->input, $this->savedPos, $this->currPos - $this->savedPos );
 	}
 
-	protected function location() {
+	protected function location(): LocationRange {
 		return $this->computeLocation( $this->savedPos, $this->currPos );
 	}
 
@@ -99,7 +102,7 @@ abstract class PEGParserBase {
 		);
 	}
 
-	public static function charAt( $s, $byteOffset ) {
+	public static function charAt( string $s, int $byteOffset ): string {
 		if ( !isset( $s[$byteOffset] ) ) {
 			return '';
 		}
@@ -117,7 +120,7 @@ abstract class PEGParserBase {
 		return $char;
 	}
 
-	public static function charsAt( $s, $byteOffset, $numChars ) {
+	public static function charsAt( string $s, int $byteOffset, int $numChars ): string {
 		$ret = '';
 		for ( $i = 0; $i < $numChars; $i++ ) {
 			$ret .= self::consumeChar( $s, $byteOffset );
@@ -125,7 +128,7 @@ abstract class PEGParserBase {
 		return $ret;
 	}
 
-	public static function consumeChar( $s, &$byteOffset ) {
+	public static function consumeChar( string $s, int &$byteOffset ): string {
 		if ( !isset( $s[$byteOffset] ) ) {
 			return '';
 		}
@@ -143,6 +146,26 @@ abstract class PEGParserBase {
 		return $char;
 	}
 
+	public static function advanceChar( string $s, int &$byteOffset ): void {
+		if ( !isset( $s[$byteOffset] ) ) {
+			return;
+		}
+		$byte1 = ord( $s[$byteOffset++] );
+		if ( ( $byte1 & 0xc0 ) === 0xc0 ) {
+			$byteOffset++;
+		}
+		if ( ( $byte1 & 0xe0 ) === 0xe0 ) {
+			$byteOffset++;
+		}
+		if ( ( $byte1 & 0xf0 ) === 0xf0 ) {
+			$byteOffset++;
+		}
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return mixed
+	 */
 	public static function &newRef( $value ) {
 		return $value;
 	}
@@ -165,7 +188,8 @@ abstract class PEGParserBase {
 		while ( $p < $pos ) {
 			$ch = self::charAt( $this->input, $p );
 			if ( $ch === "\n" ) {
-				if ( !$details['seenCR'] ) { $details['line']++;
+				if ( !$details['seenCR'] ) {
+					$details['line']++;
 				}
 				$details['column'] = 1;
 				$details['seenCR'] = false;
@@ -185,7 +209,7 @@ abstract class PEGParserBase {
 		return $details;
 	}
 
-	protected function computeLocation( $startPos, $endPos ) {
+	protected function computeLocation( int $startPos, int $endPos ): LocationRange {
 		if ( $endPos > $this->inputLength ) {
 			$endPos--;
 		}
@@ -202,7 +226,7 @@ abstract class PEGParserBase {
 		);
 	}
 
-	protected function fail( $expected ) {
+	protected function fail( int $expected ) {
 		if ( $this->currPos < $this->maxFailPos ) {
 			return;
 		}
@@ -234,7 +258,7 @@ abstract class PEGParserBase {
 		return $expanded;
 	}
 
-	private function buildMessage( $expected, $found ) {
+	private function buildMessage( array $expected, ?string $found ): string {
 		$expectedDescs = [];
 
 		foreach ( $expected as $info ) {
@@ -251,7 +275,9 @@ abstract class PEGParserBase {
 		return "Expected " . $expectedDesc . " but " . $foundDesc . " found.";
 	}
 
-	protected function buildException( $message, $expected, $found, $location ) {
+	protected function buildException(
+		?string $message, ?array $expected, ?string $found, LocationRange $location
+	): SyntaxError {
 		if ( $expected !== null ) {
 			sort( $expected );
 			$expected = array_unique( $expected );
@@ -271,7 +297,7 @@ abstract class PEGParserBase {
 		);
 	}
 
-	protected function buildParseException() {
+	protected function buildParseException(): SyntaxError {
 		$char = self::charAt( $this->input, $this->maxFailPos );
 		return $this->buildException(
 			null,
@@ -284,7 +310,7 @@ abstract class PEGParserBase {
 	protected function initialize() {
 	}
 
-	protected function initInternal( $input, $options ) {
+	protected function initInternal( string $input, array $options ) {
 		$this->currPos = 0;
 		$this->savedPos = 0;
 		$this->input = $input;
@@ -299,5 +325,6 @@ abstract class PEGParserBase {
 		$this->initialize();
 	}
 
-	abstract public function parse( $input, $options = [] );
+	/** @return mixed */
+	abstract public function parse( string $input, array $options = [] );
 }

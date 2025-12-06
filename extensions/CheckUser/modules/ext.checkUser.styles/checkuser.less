@@ -61,7 +61,7 @@
 	}
 
 	.mw-checkuser-get-actions-results,
-	.mw-checkuser-clienthints-enabled-temporary-class.mw-checkuser-get-users-results {
+	.mw-checkuser-get-users-results {
 		.mw-checkuser-agent,
 		.mw-checkuser-client-hints {
 			color: @color-subtle;
@@ -110,11 +110,9 @@
 			font-weight: bold;
 		}
 
-		&.mw-checkuser-clienthints-enabled-temporary-class {
-			.mw-checkuser-helper-user-agents,
-			.mw-checkuser-helper-client-hints {
-				font-size: 0.8em;
-			}
+		.mw-checkuser-helper-user-agents,
+		.mw-checkuser-helper-client-hints {
+			font-size: 0.8em;
 		}
 	}
 
@@ -131,18 +129,16 @@
 		}
 	}
 
-	.mw-checkuser-clienthints-enabled-temporary-class {
-		&.mw-checkuser-get-users-results {
-			>ul {
-				list-style-type: none;
-				list-style-image: none;
-				margin-left: 1em;
-			}
+	.mw-checkuser-get-users-results {
+		>ul {
+			list-style-type: none;
+			list-style-image: none;
+			margin-left: 1em;
+		}
 
-			li ul {
-				font-size: small;
-				margin-left: 3em;
-			}
+		li ul {
+			font-size: small;
+			margin-left: 3em;
 		}
 	}
 

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aca"
+		]
+	},
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(nijedan)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Brojevi redova",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Broj početnog reda",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Računarski kod"
+}

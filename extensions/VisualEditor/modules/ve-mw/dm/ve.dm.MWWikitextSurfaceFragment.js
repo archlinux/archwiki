@@ -40,10 +40,10 @@ ve.dm.MWWikitextSurfaceFragment.prototype.hasMatchingAncestor = function ( type,
 				all = !/^([ =]|<blockquote>)/.test( text );
 				break;
 			case 'mwPreformatted':
-				all = text.slice( 0, 1 ) === ' ';
+				all = text.startsWith( ' ' );
 				break;
 			case 'blockquote':
-				all = text.slice( 0, 12 ) === '<blockquote>';
+				all = text.startsWith( '<blockquote>' );
 				break;
 			case 'mwHeading':
 				all = new RegExp( '^={' + attributes.level + '}[^=]' ).test( text ) &&
@@ -79,8 +79,8 @@ ve.dm.MWWikitextSurfaceFragment.prototype.wrapText = function ( before, after, p
 	function unwrap( fragment ) {
 		const text = fragment.getText();
 		if (
-			( !before || text.slice( 0, before.length ) === before ) &&
-			( !after || text.slice( -after.length ) === after )
+			( !before || text.startsWith( before ) ) &&
+			( !after || text.endsWith( after ) )
 		) {
 			fragment.unwrapText( before.length, after.length );
 			// Just the placeholder left, nothing meaningful was selected so just remove it
@@ -136,7 +136,7 @@ ve.dm.MWWikitextSurfaceFragment.prototype.convertToSource = function ( doc ) {
 	const progressPromise = ve.init.target.getSurface().createProgress(
 		wikitextPromise, ve.msg( 'visualeditor-generating-wikitext-progress' )
 	).then( ( progressBar, cancelPromise ) => {
-		cancelPromise.fail( () => {
+		cancelPromise.then( null, () => {
 			wikitextPromise.abort();
 		} );
 	} );

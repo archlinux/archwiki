@@ -22,9 +22,6 @@ class ChangeTagger {
 	 */
 	private $changeTagsManager;
 
-	/**
-	 * @param ChangeTagsManager $changeTagsManager
-	 */
 	public function __construct( ChangeTagsManager $changeTagsManager ) {
 		$this->changeTagsManager = $changeTagsManager;
 	}
@@ -36,17 +33,10 @@ class ChangeTagger {
 		self::$tagsToSet = [];
 	}
 
-	/**
-	 * @param ActionSpecifier $specifier
-	 */
 	public function addConditionsLimitTag( ActionSpecifier $specifier ): void {
 		$this->addTags( $specifier, [ $this->changeTagsManager->getCondsLimitTag() ] );
 	}
 
-	/**
-	 * @param ActionSpecifier $specifier
-	 * @param array $tags
-	 */
 	public function addTags( ActionSpecifier $specifier, array $tags ): void {
 		$id = $this->getActionID( $specifier );
 		$this->bufferTagsToSetByAction( [ $id => $tags ] );
@@ -86,10 +76,6 @@ class ChangeTagger {
 		return $this->getTagsForID( $id, $clear );
 	}
 
-	/**
-	 * @param RecentChange $recentChange
-	 * @return string
-	 */
 	private function getIDFromRecentChange( RecentChange $recentChange ): string {
 		$title = new TitleValue(
 			$recentChange->getAttribute( 'rc_namespace' ),

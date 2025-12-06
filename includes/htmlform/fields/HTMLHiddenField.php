@@ -4,7 +4,7 @@ namespace MediaWiki\HTMLForm\Field;
 
 use MediaWiki\HTMLForm\HTMLFormField;
 
-/*
+/**
  * @stable to extend
  */
 class HTMLHiddenField extends HTMLFormField {
@@ -27,6 +27,10 @@ class HTMLHiddenField extends HTMLFormField {
 		unset( $this->mParams['required'] );
 	}
 
+	/**
+	 * @param mixed $value
+	 * @return array
+	 */
 	public function getHiddenFieldData( $value ) {
 		$params = [];
 		if ( $this->mID ) {
@@ -40,6 +44,7 @@ class HTMLHiddenField extends HTMLFormField {
 		return [ $this->mName, $value, $params ];
 	}
 
+	/** @inheritDoc */
 	public function getTableRow( $value ) {
 		[ $name, $value, $params ] = $this->getHiddenFieldData( $value );
 		$this->mParent->addHiddenField( $name, $value, $params );
@@ -64,18 +69,22 @@ class HTMLHiddenField extends HTMLFormField {
 		return $this->getTableRow( $value );
 	}
 
+	/** @inheritDoc */
 	public function getCodex( $value ) {
 		return $this->getTableRow( $value );
 	}
 
+	/** @inheritDoc */
 	public function getInputHTML( $value ) {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function canDisplayErrors() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function hasVisibleOutput() {
 		return false;
 	}

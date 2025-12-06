@@ -15,16 +15,16 @@ class MMLmsubsup extends MMLbase {
 
 	/**
 	 * Creates a new subtree element with base and scripts
-	 * @param MMLbase $base Main content element
-	 * @param MMLbase $subscript Element placed below the base (subscript)
-	 * @param MMLbase $superscript Element placed above the base (superscript)
+	 * @param MMLbase|string $base Main content element
+	 * @param MMLbase|string $subscript Element placed below the base (subscript)
+	 * @param MMLbase|string $superscript Element placed above the base (superscript)
 	 * @param string $texclass Optional TeX class for styling
 	 * @param array $attributes Additional HTML attributes for the element
 	 * @return static New instance with children in order: [base, subscript, superscript]
 	 */
-	public static function newSubtree( MMLbase $base,
-									   MMLbase $subscript,
-									   MMLbase $superscript,
+	public static function newSubtree( $base,
+									   $subscript,
+									   $superscript,
 									   string $texclass = "",
 									   array $attributes = [] ) {
 		$instance = new self( $texclass, $attributes );

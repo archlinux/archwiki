@@ -3,17 +3,17 @@
 		"authors": [
 			"Freeyak",
 			"Jason (on bo.wikipedia.org)",
+			"Pecha-Tsewang",
 			"Phurbutsering",
 			"Sawuche",
 			"Shirayuki",
 			"TayfunEt.",
+			"Tenzin Thoesam",
 			"TseRigs",
 			"YeshiTuhden",
 			"Zolgoyo",
 			"ཁ་བཏགས་ནག་པོ",
-			"아라",
-			"Pecha-Tsewang",
-			"Tenzin Thoesam"
+			"아라"
 		]
 	},
 	"pagecategories": "{{PLURAL:|སྡེ་ཚན་|སྡེ་ཚན་ $1}}",
@@ -218,7 +218,6 @@
 	"actionthrottled": "བྱ་འགུལ་ཁེགས་སོང་།",
 	"namespaceprotected": "ཁྱེད་ལ་'''$1''' མིང་གནས་ནང་གི་ཤོག་ངོས་བཟོ་བཅོས་ཀྱི་ཆོག་མཆན་མེད།",
 	"ns-specialprotected": "དམིགས་བསམ་ཤོག་ངོས་རྣམས་བཟོ་བཅོས་བྱེད་མི་ཐུབ།",
-	"virus-unknownscanner": "ངོས་མ་ཟིན་པའི་དྲ་འབུ།",
 	"welcomeuser": "བྱོན་པ་ལེགས་སོ།,$1!",
 	"yourname": "སྤྱོད་མིང་།",
 	"userlogin-yourname-ph": "བེད་སྤྱོད་གཏོང་མིའི་མིང་བླུག་རོགས།",

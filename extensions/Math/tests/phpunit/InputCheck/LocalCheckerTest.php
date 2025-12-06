@@ -78,6 +78,19 @@ class LocalCheckerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
+	public function testSpecialError() {
+		$checker = new LocalChecker( WANObjectCache::newEmpty(), '\tripledash' );
+		$this->assertFalse( $checker->isValid() );
+		$this->assertStringContainsString(
+			Message::newFromKey( 'math_other_error', 'virtual mhchemtexified package required.' )
+				->inContentLanguage()
+				->escaped(),
+			$checker->getError()
+				->inContentLanguage()
+				->escaped()
+		);
+	}
+
 	public function testGetMML() {
 		$checker = new LocalChecker( WANObjectCache::newEmpty(), 'e^{i \pi} + 1 = 0' );
 		$mml = $checker->getPresentationMathMLFragment();

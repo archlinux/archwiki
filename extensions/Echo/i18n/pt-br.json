@@ -27,11 +27,11 @@
 			"Raylton P. Sousa",
 			"Re demz",
 			"Rodrigo codignoli",
+			"Stanglavine",
 			"TheEduGobi",
 			"TheGabrielZaum",
 			"Vonil55",
-			"YuriNikolai",
-			"Stanglavine"
+			"YuriNikolai"
 		]
 	},
 	"echo-desc": "Sistema para notificar usuários sobre eventos e mensagens",
@@ -83,15 +83,12 @@
 	"echo-category-title-watchlist": "Editar na página vigiadas",
 	"echo-category-title-minor-watchlist": "Edição menores na página vigiadas",
 	"echo-category-title-api-triggered": "Notificações acionadas por API",
-	"echo-pref-tooltip-edit-user-talk": "Notifique-me quando alguém editar a minha página de discussão de usuário.",
-	"echo-pref-tooltip-edit-user-page": "Notifique-me quando alguém editar a minha página de usuário.",
+	"echo-category-title-verify-email-reminder": "Lembretes de confirmação por e-mail",
 	"echo-pref-tooltip-article-linked": "Notifique-me quando alguém criar um link para uma página que criei a partir de uma página de artigo.",
 	"echo-pref-tooltip-reverted": "Notifique-me quando alguém reverter uma edição que fiz usando desfazer ou a ferramenta de reversão.",
 	"echo-pref-tooltip-mention": "Notificar-me quando alguém criar links para a minha página de usuário.",
 	"echo-pref-tooltip-mention-failure": "Avise-me quando eu não puder enviar uma menção a alguém.",
 	"echo-pref-tooltip-mention-success": "Notifique me quando eu enviar uma menção para alguém.",
-	"echo-pref-tooltip-user-rights": "Notificar-me quando alguém alterar minhas permissões de usuário.",
-	"echo-pref-tooltip-emailuser": "Notificar-me quando alguém me enviar um e-mail.",
 	"echo-pref-tooltip-article-reminder": "Avise-me sobre esta página quando eu perguntar.",
 	"echo-pref-tooltip-thank-you-edit": "Notificar-me quando eu atingir a primeira, décima, centésima... edição.",
 	"echo-pref-tooltip-watchlist": "Notifique-me quando alguém fizer uma edição (não menor) em uma página da minha lista de páginas vigiadas.",
@@ -108,8 +105,8 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "Métodos de notificação permitidos",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "Quais os métodos de notificação são suportados para cada categoria",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Habilitado por padrão",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Usuários existentes",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Novos usuários",
+	"echo-displaynotificationsconfiguration-enabled-default-legend": "Opções padrão",
+	"echo-displaynotificationsconfiguration-enabled-default-conditional-legend": "Opções para usuários que cumprem as condições: $1",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Métodos de notificação necessários",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Quais os métodos de notificação são obrigatórios para cada categoria",
 	"echo-specialpage": "Notificações",
@@ -268,5 +265,7 @@
 	"action-manage-all-push-subscriptions": "gerenciar todas as inscrições push",
 	"group-push-subscription-manager": "Gerenciar inscrições push",
 	"group-push-subscription-manager-member": "{{GENDER:$1|gerente de inscrições push}}",
-	"grouppage-push-subscription-manager": "{{ns:project}}:Gerenciar inscrições push"
+	"grouppage-push-subscription-manager": "{{ns:project}}:Gerenciar inscrições push",
+	"notification-link-text-verify-email-reminder": "Gerenciar preferências de e-mail",
+	"notification-verify-email-reminder-link-label": "Confirmar e-mail"
 }

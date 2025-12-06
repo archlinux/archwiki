@@ -74,8 +74,7 @@ ve.ui.MWWikitextDataTransferHandlerFactory.prototype.create = function () {
 			}
 
 			ve.init.target.getWikitextFragment( doc, false )
-				.done( resolve )
-				.fail( () => {
+				.then( resolve, () => {
 					handler.abort();
 				} );
 		}

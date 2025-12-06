@@ -26,9 +26,7 @@ use MediaWiki\Title\Title;
 
 class DisablePresentationModel extends EchoEventPresentationModel {
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'site';
 	}
@@ -40,9 +38,7 @@ class DisablePresentationModel extends EchoEventPresentationModel {
 			: 'notification-header-oathauth-remove-device';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		return [
 			'url' => SpecialPage::getTitleFor( 'OATHManage' )->getLocalURL(),
@@ -50,9 +46,7 @@ class DisablePresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		$link = $this->msg( 'oathauth-notifications-disable-helplink' )->inContentLanguage();
 		$title = Title::newFromText( $link->plain() );
@@ -67,9 +61,7 @@ class DisablePresentationModel extends EchoEventPresentationModel {
 		] ];
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		$helpMessageKey = $this->event->getExtraParam( 'self', true )
 			? 'notification-body-oathauth-disable'

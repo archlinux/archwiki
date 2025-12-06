@@ -2,21 +2,7 @@
 /**
  * Fsck for MediaWiki
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance ExternalStorage
  */
@@ -69,7 +55,7 @@ class CheckStorage extends Maintenance {
 		'fixable' => 'Errors which would already be fixed if --fix was specified',
 	];
 
-	public function check( $fix = false, $xml = '' ) {
+	public function check( bool $fix = false, string|false $xml = '' ) {
 		$dbr = $this->getReplicaDB();
 		if ( $fix ) {
 			print "Checking, will fix errors if possible...\n";
@@ -525,7 +511,7 @@ class CheckStorage extends Maintenance {
 		$importer = $this->getServiceContainer()
 			->getWikiImporterFactory()
 			->getWikiImporter( $source, new UltimateAuthority( $user ) );
-		$importer->setRevisionCallback( [ $this, 'importRevision' ] );
+		$importer->setRevisionCallback( $this->importRevision( ... ) );
 		$importer->setNoticeCallback( static function ( $msg, $params ) {
 			echo wfMessage( $msg, $params )->text() . "\n";
 		} );
@@ -535,7 +521,7 @@ class CheckStorage extends Maintenance {
 	/**
 	 * @param WikiRevision $revision
 	 */
-	public function importRevision( $revision ) {
+	private function importRevision( $revision ) {
 		$id = $revision->getID();
 		$content = $revision->getContent();
 		$id = $id ?: '';

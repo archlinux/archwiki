@@ -39,8 +39,6 @@ class ImmutableRange {
 	/**
 	 * Find the common ancestor container of two nodes
 	 *
-	 * @param Node $a
-	 * @param Node $b
 	 * @return Node Common ancestor container
 	 */
 	private static function findCommonAncestorContainer( Node $a, Node $b ): Node {
@@ -154,7 +152,6 @@ class ImmutableRange {
 	 * @param string $type Which boundary point should be set. Valid values are start or end.
 	 * @param Node $node The Node that will become the boundary.
 	 * @param int $offset The offset within the given Node that will be the boundary.
-	 * @return self
 	 */
 	private function setStartOrEnd( string $type, Node $node, int $offset ): self {
 		if ( $node instanceof DocumentType ) {
@@ -205,7 +202,6 @@ class ImmutableRange {
 	 * @see https://dom.spec.whatwg.org/#partially-contained
 	 *
 	 * @param Node $node The Node to check against.
-	 * @return bool
 	 */
 	private function isPartiallyContainedNode( Node $node ): bool {
 		return CommentUtils::contains( $node, $this->mStartContainer ) xor
@@ -219,7 +215,6 @@ class ImmutableRange {
 	 * @see https://dom.spec.whatwg.org/#contained
 	 *
 	 * @param Node $node The Node to check against.
-	 * @return bool
 	 */
 	private function isFullyContainedNode( Node $node ): bool {
 		return static::getRootNode( $node ) === static::getRootNode( $this->mStartContainer )
@@ -577,7 +572,6 @@ class ImmutableRange {
 	 * @see https://dom.spec.whatwg.org/#dom-range-insertnode
 	 *
 	 * @param Node $node The Node to be inserted.
-	 * @return void
 	 */
 	public function insertNode( Node $node ): void {
 		if ( ( $this->mStartContainer instanceof ProcessingInstruction
@@ -632,7 +626,6 @@ class ImmutableRange {
 	 * @see https://dom.spec.whatwg.org/#dom-range-surroundcontents
 	 *
 	 * @param Node $newParent New parent node for contents
-	 * @return void
 	 */
 	public function surroundContents( Node $newParent ): void {
 		$commonAncestor = $this->commonAncestorContainer;
@@ -677,10 +670,6 @@ class ImmutableRange {
 	 *
 	 * @see https://dom.spec.whatwg.org/#concept-range-bp-position
 	 *
-	 * @param Node $nodeA
-	 * @param int $offsetA
-	 * @param Node $nodeB
-	 * @param int $offsetB
 	 * @return string 'before'|'after'|'equal'
 	 */
 	private function computePosition(

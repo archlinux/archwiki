@@ -5,21 +5,7 @@
  * Copyright © 2009 Aryeh Gregor
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -712,18 +698,15 @@ class Html {
 	 * @return string Raw HTML
 	 */
 	public static function check( $name, $checked = false, array $attribs = [] ) {
-		if ( isset( $attribs['value'] ) ) {
-			$value = $attribs['value'];
-			unset( $attribs['value'] );
-		} else {
-			$value = 1;
-		}
-
-		if ( $checked ) {
-			$attribs[] = 'checked';
-		}
-
-		return self::input( $name, $value, 'checkbox', $attribs );
+		$value = $attribs['value'] ?? 1;
+		unset( $attribs['value'] );
+		return self::element( 'input', [
+			...$attribs,
+			'checked' => (bool)$checked,
+			'type' => 'checkbox',
+			'value' => $value,
+			'name' => $name,
+		] );
 	}
 
 	/**
@@ -768,7 +751,7 @@ class Html {
 	 * @param string|array $iconClassName (optional) corresponding to notice icon
 	 * @return string of HTML representing the notice
 	 */
-	public static function noticeBox( $html, $className, $heading = '', $iconClassName = '' ) {
+	public static function noticeBox( $html, $className = '', $heading = '', $iconClassName = '' ) {
 		return self::messageBox( $html, [
 			'cdx-message--notice',
 			$className
@@ -842,18 +825,15 @@ class Html {
 	 * @return string Raw HTML
 	 */
 	public static function radio( $name, $checked = false, array $attribs = [] ) {
-		if ( isset( $attribs['value'] ) ) {
-			$value = $attribs['value'];
-			unset( $attribs['value'] );
-		} else {
-			$value = 1;
-		}
-
-		if ( $checked ) {
-			$attribs[] = 'checked';
-		}
-
-		return self::input( $name, $value, 'radio', $attribs );
+		$value = $attribs['value'] ?? 1;
+		unset( $attribs['value'] );
+		return self::element( 'input', [
+			...$attribs,
+			'checked' => (bool)$checked,
+			'type' => 'radio',
+			'value' => $value,
+			'name' => $name,
+		] );
 	}
 
 	/**
@@ -881,7 +861,12 @@ class Html {
 	 * @return string Raw HTML
 	 */
 	public static function hidden( $name, $value, array $attribs = [] ) {
-		return self::input( $name, $value, 'hidden', $attribs );
+		return self::element( 'input', [
+			...$attribs,
+			'type' => 'hidden',
+			'value' => $value,
+			'name' => $name,
+		] );
 	}
 
 	/**
@@ -899,7 +884,7 @@ class Html {
 	public static function textarea( $name, $value = '', array $attribs = [] ) {
 		$attribs['name'] = $name;
 
-		if ( substr( $value ?? '', 0, 1 ) == "\n" ) {
+		if ( str_starts_with( $value ?? '', "\n" ) ) {
 			// Workaround for T14130: browsers eat the initial newline
 			// assuming that it's just for show, but they do keep the later
 			// newlines, which we may want to preserve during editing.
@@ -1233,7 +1218,7 @@ class Html {
 			if ( $value == '' ) {
 				continue;
 			}
-			if ( substr( $value, 0, 1 ) == '*' && substr( $value, 1, 1 ) != '*' ) {
+			if ( str_starts_with( $value, '*' ) && !str_starts_with( $value, '**' ) ) {
 				# A new group is starting...
 				$value = trim( substr( $value, 1 ) );
 				if ( $value !== '' &&
@@ -1244,7 +1229,7 @@ class Html {
 				} else {
 					$optgroup = false;
 				}
-			} elseif ( substr( $value, 0, 2 ) == '**' ) {
+			} elseif ( str_starts_with( $value, '**' ) ) {
 				# groupmember
 				$opt = trim( substr( $value, 2 ) );
 				if ( $optgroup === false ) {

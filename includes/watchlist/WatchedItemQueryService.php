@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @license GPL-2.0-or-later
+ */
+
 namespace MediaWiki\Watchlist;
 
 use MediaWiki\Api\ApiUsageException;
@@ -28,10 +32,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  *
  * @since 1.28
  *
- * @file
  * @ingroup Watchlist
- *
- * @license GPL-2.0-or-later
  */
 class WatchedItemQueryService {
 
@@ -134,6 +135,8 @@ class WatchedItemQueryService {
 	}
 
 	/**
+	 * @deprecated since 1.45 use ChangesListQuery
+	 *
 	 * @param User $user
 	 * @param array $options Allowed keys:
 	 *        'includeFields'       => string[] RecentChange fields to be included in the result,
@@ -173,12 +176,14 @@ class WatchedItemQueryService {
 	 *         - 'rc_title',
 	 *         - 'rc_timestamp',
 	 *         - 'rc_type',
+	 *         - 'rc_source',
 	 *         - 'rc_deleted',
 	 *         Additional keys could be added by specifying the 'includeFields' option
 	 */
 	public function getWatchedItemsWithRecentChangeInfo(
 		User $user, array $options = [], &$startFrom = null
 	) {
+		wfDeprecated( __METHOD__, '1.45' );
 		$options += [
 			'includeFields' => [],
 			'namespaceIds' => [],
@@ -410,6 +415,7 @@ class WatchedItemQueryService {
 			'rc_title',
 			'rc_timestamp',
 			'rc_type',
+			'rc_source',
 			'rc_deleted',
 			'wl_notificationtimestamp'
 		];
@@ -433,7 +439,7 @@ class WatchedItemQueryService {
 		$fields = array_merge( $fields, $rcIdFields );
 
 		if ( in_array( self::INCLUDE_FLAGS, $options['includeFields'] ) ) {
-			$fields = array_merge( $fields, [ 'rc_type', 'rc_minor', 'rc_bot' ] );
+			$fields = array_merge( $fields, [ 'rc_minor', 'rc_bot' ] );
 		}
 		if ( in_array( self::INCLUDE_USER, $options['includeFields'] ) ) {
 			$fields['rc_user_text'] = 'watchlist_actor.actor_name';
@@ -476,7 +482,7 @@ class WatchedItemQueryService {
 
 		if ( !$options['allRevisions'] ) {
 			$conds[] = $db->makeList(
-				[ 'rc_this_oldid=page_latest', 'rc_type=' . RC_LOG ],
+				[ 'rc_this_oldid=page_latest', $db->expr( 'rc_source', '=', RecentChange::SRC_LOG ) ],
 				LIST_OR
 			);
 		}
@@ -644,7 +650,7 @@ class WatchedItemQueryService {
 		}
 		if ( $bitmask ) {
 			return $db->makeList( [
-				'rc_type != ' . RC_LOG,
+				$db->expr( 'rc_source', '!=', RecentChange::SRC_LOG ),
 				$db->bitAnd( 'rc_deleted', $bitmask ) . " != $bitmask",
 			], LIST_OR );
 		}

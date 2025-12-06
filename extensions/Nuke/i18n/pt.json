@@ -4,12 +4,12 @@
 			"555",
 			"Hamilton Abreu",
 			"Imperadeiro98",
+			"ItsaMeSandy",
 			"Luckas",
 			"Malafaya",
+			"Mansil alfalb",
 			"Mbs262",
-			"Vitorvicentevalente",
-			"ItsaMeSandy",
-			"Mansil alfalb"
+			"Vitorvicentevalente"
 		]
 	},
 	"nuke": "Eliminação em massa",
@@ -28,10 +28,12 @@
 	"nuke-deletion-queued": "A página '''$1''' foi colocada na fila para eliminação.",
 	"nuke-not-deleted": "Não foi possível eliminar a página [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Eliminar mais páginas]]",
+	"nuke-deletemore": "Eliminar mais páginas",
 	"nuke-pattern": "Padrão do tipo SQL LIKE (por exemplo %) para o nome da página:",
 	"nuke-nopages-global": "Não existem títulos de página que correspondam à sua pesquisa.",
 	"nuke-viewchanges": "histórico",
 	"nuke-namespace": "Limitar ao espaço nominal:",
+	"nuke-namespace-invalid": "Este espaço nominal não é válido. Por favor, selecione apenas opções do menu.",
 	"nuke-linkoncontribs": "eliminação em massa",
 	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que {{GENDER:$1|este utilizador é o único autor|esta utilizadora é a única autora}}"
 }

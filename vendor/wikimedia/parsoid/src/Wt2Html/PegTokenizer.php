@@ -1,62 +1,56 @@
 <?php
 declare( strict_types = 1 );
 
-/**
- * Tokenizer for wikitext, using WikiPEG and a
- * separate PEG grammar file
- * (Grammar.pegphp)
- *
- * Use along with a {@link Wt2Html/TreeBuilder/TreeBuilderStage} and the
- * {@link DOMProcessorPipeline}(s) for HTML output.
- */
-
 namespace Wikimedia\Parsoid\Wt2Html;
 
 use Generator;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\Source;
+use Wikimedia\Parsoid\Core\SourceString;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\EOFTk;
-use Wikimedia\Parsoid\Tokens\SourceRange;
-use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\WikiPEG\SyntaxError;
 
+/**
+ * Tokenizer for wikitext, using WikiPEG and a
+ * separate PEG grammar file (Grammar.pegphp)
+ */
 class PegTokenizer extends PipelineStage {
+	private array $options;
+	/** @var Grammar|TracingGrammar|null */
+	private $grammar = null;
+	private bool $tracing;
 	/**
-	 * Cache <src,startRule> --> token array.
 	 * No need to retokenize identical strings
+	 * Cache <src,startRule> --> token array.
 	 * Expected benefits:
 	 * - same expanded template source used multiple times on a page
 	 * - convertToString calls
 	 * - calls from TableFixups and elsewhere to tokenize* methods
 	 */
-	private static array $cache = [];
-	/**
-	 * Track how often a tokenizer string is seen -- can be used
-	 * to reduce caching overheads by only caching on the second
-	 * occurence.
-	 * @var array<string,int>
-	 */
-	private static array $sourceCounts = [];
+	private PipelineContentCache $cache;
 
-	private array $options;
-	private array $offsets;
-	private ?SyntaxError $lastError = null;
-	/** @var Grammar|TracingGrammar|null */
-	private $grammar = null;
-	private bool $tracing;
-
-	public function __construct(
-		Env $env, array $options = [], string $stageId = "",
-		?PipelineStage $prevStage = null
-	) {
-		parent::__construct( $env, $prevStage );
+	public function __construct( Env $env, array $options = [], string $stageId = "" ) {
+		parent::__construct( $env );
 		$this->env = $env;
 		$this->options = $options;
-		$this->offsets = [];
-		$this->tracing = $env->hasTraceFlag( 'grammar' );
+		$this->tracing = $env->hasTraceFlag( 'grammar' ) ||
+			// Allow substitution of a custom tracer for unit testing
+			isset( $options['tracer'] );
+		// Cache only on seeing the same source the second time.
+		// This minimizes cache bloat & token cloning penalties.
+		$this->cache = $this->env->getCache(
+			"PegTokenizer",
+			[ "repeatThreshold" => 1, "cloneValue" => true ]
+		);
 	}
 
-	private function initGrammar() {
+	private function initGrammar(): void {
 		if ( !$this->grammar ) {
 			$this->grammar = $this->tracing ? new TracingGrammar : new Grammar;
 		}
@@ -72,79 +66,118 @@ class PegTokenizer extends PipelineStage {
 		return $this->options;
 	}
 
-	/**
-	 * Set start and end offsets of the source that generated this DOM.
-	 *
-	 * @param SourceRange $so
-	 */
-	public function setSourceOffsets( SourceRange $so ): void {
-		$this->offsets['startOffset'] = $so->start;
-		$this->offsets['endOffset'] = $so->end;
+	public function getFrame(): Frame {
+		return $this->frame ?? $this->env->topFrame;
 	}
 
 	/**
 	 * See PipelineStage::process docs as well. This doc block refines
 	 * the generic arg types to be specific to this pipeline stage.
 	 *
-	 * @param string $input wikitext to tokenize
-	 * @param array{sol:bool} $opts
+	 * @param string|array|DocumentFragment|Element $input
+	 *   Wikitext to tokenize. In practice this should be a string.
+	 * @param array{sol:bool} $options
 	 * - atTopLevel: (bool) Whether we are processing the top-level document
 	 * - sol: (bool) Whether input should be processed in start-of-line context
-	 * @return array|false The token array, or false for a syntax error
+	 *
+	 * @return array The token array
+	 * @throws SyntaxError
 	 */
-	public function process( $input, array $opts ) {
+	public function process(
+		string|array|DocumentFragment|Element $input,
+		array $options
+	): array|Element|DocumentFragment {
 		Assert::invariant( is_string( $input ), "Input should be a string" );
-		return $this->tokenizeSync( $input, $opts );
+		$result = $this->tokenizeSync( $input, $options, $exception );
+		if ( $result === false ) {
+			// Should never happen.
+			throw $exception;
+		}
+
+		// Downstream stages expect EOFTk at the end of the token stream.
+		$result[] = new EOFTk();
+		return $result;
 	}
 
 	/**
-	 * The text is tokenized in chunks (one per top-level block)
-	 * and registered event listeners are called with the chunk
-	 * to let it get processed further.
+	 * The text is tokenized in chunks (one per top-level block).
 	 *
-	 * The main worker. Sets up event emission ('chunk' and 'end' events).
-	 * Consumers are supposed to register with PegTokenizer before calling
-	 * process().
-	 *
-	 * @param string $text
-	 * @param array{sol:bool} $opts
+	 * @param string|array|DocumentFragment|Element $input
+	 *   Wikitext to tokenize. In practice this should be a string.
+	 * @param array{atTopLevel:bool,sol:bool} $options
+	 *   - atTopLevel: (bool) Whether we are processing the top-level document
 	 *   - sol (bool) Whether text should be processed in start-of-line context.
-	 * @return Generator
+	 * @return Generator<list<Token|string>>
 	 */
-	public function processChunkily( $text, array $opts ): Generator {
+	public function processChunkily(
+		string|array|DocumentFragment|Element $input,
+		array $options
+	): Generator {
 		if ( !$this->grammar ) {
 			$this->initGrammar();
 		}
 
-		Assert::invariant( is_string( $text ), "Input should be a string" );
-		Assert::invariant( isset( $opts['sol'] ), "Sol should be set" );
+		Assert::invariant( is_string( $input ), "Input should be a string" );
+		Assert::invariant( isset( $options['sol'] ), "Sol should be set" );
 
 		// Kick it off!
-		$pipelineOffset = $this->offsets['startOffset'] ?? 0;
 		$args = [
 			'env' => $this->env,
 			'pipelineId' => $this->getPipelineId(),
 			'pegTokenizer' => $this,
-			'pipelineOffset' => $pipelineOffset,
-			'sol' => $opts['sol'],
+			'pipelineOffset' => $this->srcOffsets->start ?? 0,
+			'source' => $this->srcOffsets->source,
+			'sol' => $options['sol'],
 			'stream' => true,
 			'startRule' => 'start_async',
 		];
 
 		if ( $this->tracing ) {
-			$args['tracer'] = new Tracer( $text );
+			$args['tracer'] = $this->options['tracer'] ?? new Tracer( $input );
 		}
 
-		try {
+		foreach ( $this->onlyIncludeOffsets( $input, $args ) as [ $start, $end ] ) {
+			$piece = substr( $input, $start, $end - $start );
 			// Wrap wikipeg's generator with our own generator
-			// to catch exceptions and track time usage.
+			// to track time usage.
 			// @phan-suppress-next-line PhanTypeInvalidYieldFrom
-			yield from $this->grammar->parse( $text, $args );
-			yield [ new EOFTk() ];
-		} catch ( SyntaxError $e ) {
-			$this->lastError = $e;
-			throw $e;
+			yield from $this->grammar->parse( $piece, [
+				'pipelineOffset' => $args['pipelineOffset'] + $start,
+			] + $args );
 		}
+	}
+
+	/**
+	 * Provide the offsets into $input needed for <onlyinclude> processing
+	 * if `inTemplate` mode.  Otherwise just return the start and end
+	 * of the string.
+	 */
+	private function onlyIncludeOffsets( string $input, array $args ): array {
+		// Handle <onlyinclude>
+		if (
+			( $this->options['inTemplate'] ?? false ) &&
+			str_contains( $input, '<onlyinclude>' ) &&
+			str_contains( $input, '</onlyinclude>' )
+		) {
+			try {
+				return $this->grammar->parse( $input, [
+					'stream' => false,
+					'startRule' => 'preproc_find_only_include',
+					'pipelineOffset' => 0,
+				] + $args );
+			} catch ( SyntaxError ) {
+				/* ignore, fall through to process the whole input */
+				$this->env->log( 'warn', "Couldn't extract <onlyinclude>" );
+			}
+		}
+		return [ [ 0, strlen( $input ) ] ];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function finalize(): Generator {
+		yield [ new EOFTk() ];
 	}
 
 	/**
@@ -155,9 +188,10 @@ class PegTokenizer extends PipelineStage {
 	 * @param array{sol:bool} $args
 	 * - sol: (bool) Whether input should be processed in start-of-line context.
 	 * - startRule: (string) which tokenizer rule to tokenize with
+	 * @param SyntaxError|null &$exception a syntax error, if thrown.
 	 * @return array|false The token array, or false for a syntax error
 	 */
-	public function tokenizeSync( string $text, array $args ) {
+	public function tokenizeSync( string $text, array $args, &$exception = null ) {
 		if ( !$this->grammar ) {
 			$this->initGrammar();
 		}
@@ -165,14 +199,13 @@ class PegTokenizer extends PipelineStage {
 		$args += [
 			'pegTokenizer' => $this,
 			'pipelineId' => $this->getPipelineId(),
-			'pipelineOffset' => $this->offsets['startOffset'] ?? 0,
+			'pipelineOffset' => $this->srcOffsets->start ?? 0,
+			'source' => $this->srcOffsets->source ?? null,
 			'startRule' => 'start',
 			'env' => $this->env
 		];
-
-		if ( $this->tracing ) {
-			$args['tracer'] = new Tracer( $text );
-		}
+		Assert::invariant( $args['startRule'] !== null, 'null start rule' );
+		Assert::invariant( !( $args['stream'] ?? false ), 'synchronous parse' );
 
 		// crc32 is much faster than md5 and since we are verifying a
 		// $text match when reusing cache contents, hash collisions are okay.
@@ -185,11 +218,16 @@ class PegTokenizer extends PipelineStage {
 		$cacheKey = crc32( $text ) .
 			"|" . (int)$args['sol'] .
 			"|" . $args['startRule'] .
-			"|" . $args['pipelineOffset'];
-		$cachedOutput = self::$cache[$cacheKey] ?? null;
-		if ( $cachedOutput && $cachedOutput['text'] === $text ) {
-			$res = Utils::cloneArray( $cachedOutput['tokens'] );
+			"|" . $args['pipelineOffset'] .
+			"|" . ( $args['source'] ? spl_object_id( $args['source'] ) : "" ) .
+			"|" . ( $this->options['enableOnlyInclude'] ?? false );
+		$res = $this->cache->lookup( $cacheKey, $text );
+		if ( $res !== null ) {
 			return $res;
+		}
+
+		if ( $this->tracing ) {
+			$args['tracer'] = $this->options['tracer'] ?? new Tracer( $text );
 		}
 
 		$start = null;
@@ -200,9 +238,41 @@ class PegTokenizer extends PipelineStage {
 		}
 
 		try {
-			$toks = $this->grammar->parse( $text, $args );
+			if ( $this->options['enableOnlyInclude'] ?? false ) {
+				$toks = [];
+				foreach ( $this->onlyIncludeOffsets( $text, $args ) as [ $start, $end ] ) {
+					$piece = substr( $text, $start, $end - $start );
+					$result = $this->grammar->parse( $piece, [
+						'pipelineOffset' => $args['pipelineOffset'] + $start,
+					] + $args );
+					if ( !is_array( $result ) ) {
+						$result = [ $result ];
+					}
+					// The 'start' and 'start_async' rules manually call
+					// ::shiftTokenTSR before returning tokens.  For all
+					// others, we still need to perform the shift by the
+					// requested $args['pipelineOffset'].
+					if ( $args['startRule'] !== 'start' ) {
+						TokenUtils::shiftTokenTSR(
+							$result, $args['pipelineOffset'] + $start
+						);
+					}
+					PHPUtils::pushArray( $toks, $result );
+				}
+			} else {
+				$toks = $this->grammar->parse( $text, $args );
+				// The 'start' and 'start_async' rules manually call
+				// ::shiftTokenTSR before returning tokens.  For all
+				// others, we still need to perform the shift by the
+				// requested $args['pipelineOffset'].
+				if ( $args['startRule'] !== 'start' ) {
+					TokenUtils::shiftTokenTSR(
+						is_array( $toks ) ? $toks : [ $toks ], $args['pipelineOffset']
+					);
+				}
+			}
 		} catch ( SyntaxError $e ) {
-			$this->lastError = $e;
+			$exception = $e;
 			return false;
 		}
 
@@ -210,12 +280,8 @@ class PegTokenizer extends PipelineStage {
 			$profile->bumpTimeUse( 'PEG', hrtime( true ) - $start, 'PEG' );
 		}
 
-		self::$sourceCounts[$cacheKey] = ( self::$sourceCounts[$cacheKey] ?? 0 ) + 1;
-		if ( is_array( $toks ) && self::$sourceCounts[$cacheKey] > 1 ) {
-			self::$cache[$cacheKey] = [
-				'text' => $text,
-				'tokens' => Utils::cloneArray( $toks )
-			];
+		if ( is_array( $toks ) ) {
+			$this->cache->cache( $cacheKey, $toks, $text );
 		}
 
 		return $toks;
@@ -224,16 +290,25 @@ class PegTokenizer extends PipelineStage {
 	/**
 	 * Tokenizes a string as a rule
 	 *
-	 * @param string $text The input text
+	 * @param string|Source $text The input text
 	 * @param string $rule The rule name
 	 * @param bool $sol Start of line flag
 	 * @return array|false Array of tokens/strings or false on error
 	 */
-	public function tokenizeAs( string $text, string $rule, bool $sol ) {
+	public function tokenizeAs( string|Source $text, string $rule, bool $sol ) {
+		if ( $text instanceof Source ) {
+			$source = $text;
+			$text = $source->getSrcText();
+		} else {
+			// XXX T405759 Should probably take a SourceRange to allow
+			// tokenizing substrings of the original source.
+			$source = new SourceString( $text );
+		}
 		$args = [
 			'startRule' => $rule,
 			'sol' => $sol,
-			'pipelineOffset' => 0
+			'pipelineOffset' => 0,
+			'source' => $source,
 		];
 		return $this->tokenizeSync( $text, $args );
 	}
@@ -244,6 +319,9 @@ class PegTokenizer extends PipelineStage {
 	 * @return array|false Array of tokens/strings or false on error
 	 */
 	public function tokenizeURL( string $text ) {
+		// XXX T405759 This returns tokens with a unique (not top-level)
+		// source in the TSR; if this is retokenizing part of the top-level
+		// source this should pass srcOffsets.
 		return $this->tokenizeAs( $text, 'url', /* sol */true );
 	}
 
@@ -254,32 +332,20 @@ class PegTokenizer extends PipelineStage {
 	 * @return array|false Array of tokens/strings or false on error
 	 */
 	public function tokenizeTableCellAttributes( string $text, bool $sol ) {
+		// XXX T405759 This returns tokens with a unique (not top-level)
+		// source in the TSR; if this is retokenizing part of the top-level
+		// source this should pass srcOffsets.
 		return $this->tokenizeAs( $text, 'row_syntax_table_args', $sol );
-	}
-
-	/**
-	 * If a tokenize method returned false, this will return a string describing the error,
-	 * suitable for use in a log entry. If there has not been any error, returns false.
-	 *
-	 * @return string|false
-	 */
-	public function getLastErrorLogMessage() {
-		if ( $this->lastError ) {
-			return "Tokenizer parse error at input location {$this->lastError->location}: " .
-				$this->lastError->getMessage();
-		} else {
-			return false;
-		}
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function resetState( array $opts ): void {
+	public function resetState( array $options ): void {
 		TokenizerUtils::resetAnnotationIncludeRegex();
 		if ( $this->grammar ) {
 			$this->grammar->resetState();
 		}
-		parent::resetState( $opts );
+		parent::resetState( $options );
 	}
 }

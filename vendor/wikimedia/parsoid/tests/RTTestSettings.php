@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 // This file is loaded from wmf-config's CommonSettings.php
 
@@ -11,7 +12,7 @@ $wgReadOnly = "parsoidtest1001 access is read-only for Parsoid testing. " .
 // Parsoid included from the vendor/wikimedia/parsoid directory)
 AutoLoader::registerNamespaces( [
 	// Keep this in sync with the "autoload" clause in /composer.json!
-	'Wikimedia\\Parsoid\\' => __DIR__ . "/../src"
+	'Wikimedia\\Parsoid\\' => __DIR__ . "/../src/"
 ] );
 
 // When Parsoid is enabled in production context, this will
@@ -31,3 +32,6 @@ $wgParsoidSettings['linting'] = (bool)$wgReadOnly;
 $wgParsoidSettings['metricsPrefix'] = 'Parsoid-Tests.';
 # Note that logs on the test server are redirected using a puppet
 # rule, not a configuration change; see T232042.
+
+// Proofreadpage extension parsoid testing
+$wgProofreadPageUseParsoid = true;

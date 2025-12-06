@@ -141,7 +141,15 @@ class TimelinePagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/** @dataProvider provideReallyDoQuery */
-	public function testReallyDoQuery( $offset, $limit, $order, $filteredTargets, $expectedRows ) {
+	public function testReallyDoQuery( $offsetParts, $limit, $order, $filteredTargets, $expectedRows ) {
+		if ( is_array( $offsetParts ) ) {
+			// Convert the timestamp value to the appropriate format in $offsetParts and then combine to make $offset
+			$offsetParts['timestamp'] = $this->getDb()->timestamp( $offsetParts['timestamp'] );
+			$offset = implode( '|', $offsetParts );
+		} else {
+			$offset = $offsetParts;
+		}
+
 		$objectUnderTest = $this->getObjectUnderTest();
 		$objectUnderTest->filteredTargets = $filteredTargets;
 		// Pass the expected timestamp through IReadableTimestamp::timestamp to ensure it is in the right format
@@ -187,7 +195,8 @@ class TimelinePagerTest extends MediaWikiIntegrationTestCase {
 				] ],
 			],
 			'Offset set, limit 1, order DESC, InvestigateTestUser1 as target' => [
-				'20230405060710|1', 1, IndexPager::QUERY_DESCENDING, [ 'InvestigateTestUser1' ],
+				[ 'timestamp' => '20230405060710', 'id' => '1' ], 1, IndexPager::QUERY_DESCENDING,
+				[ 'InvestigateTestUser1' ],
 				[ (object)[
 					'timestamp' => '20230405060708', 'namespace' => NS_MAIN, 'title' => 'CheckUserTestPage',
 					'minor' => '0', 'page_id' => '1', 'type' => RC_NEW,
@@ -216,7 +225,7 @@ class TimelinePagerTest extends MediaWikiIntegrationTestCase {
 						'comment_text' => '', 'comment_data' => null, 'actor' => null,
 						'log_type' => 'bar', 'log_action' => 'foo', 'log_params' => '', 'log_deleted' => 0,
 					],
-				]
+				],
 			],
 			// Testing limit where the number of rows is less than the specified limit
 			'Limit 100, order DESC, InvestigateTestUser2 as target' => [
@@ -233,7 +242,7 @@ class TimelinePagerTest extends MediaWikiIntegrationTestCase {
 			],
 			// Testing rows in cu_log_event and cu_changes
 			'Offset set, Limit 2, order DESC, 1.2.3.5 as target' => [
-				'20230405060719|10', 2, IndexPager::QUERY_DESCENDING, [ '1.2.3.5' ], [
+				[ 'timestamp' => '20230405060719', 'id' => '10' ], 2, IndexPager::QUERY_DESCENDING, [ '1.2.3.5' ], [
 					(object)[
 						'timestamp' => '20230405060718', 'namespace' => NS_MAIN, 'title' => 'CheckUserTestPage',
 						'minor' => null, 'page_id' => '1', 'type' => RC_LOG,

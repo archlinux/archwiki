@@ -119,11 +119,21 @@
 	"templatedata-modal-title-templateformatstring": "Vlastní formátovací řetězec",
 	"templatedata-modal-title-templateparam-details": "Podrobnosti k parametru $1",
 	"templatedata-modal-title-templateparams": "Parametry šablony",
+	"templatedata-search-description": "Hledat šablonu",
+	"templatedata-search-placeholder": "Vložte název šablony",
+	"templatedata-search-placeholder-cirrussearch": "Vložte název šablony nebo klíčová slova",
 	"templatedata-search-list-header": "Oblíbené",
 	"templatedata-search-list-empty": "Šablony, které označíte jako oblíbené, se zobrazí zde",
 	"templatedata-favorite-disabled": "Pro přidání šablony do oblíbených se musíte přihlásit",
 	"templatedata-favorite-add": "Přidat šablonu do oblíbených",
 	"templatedata-favorite-added": "Šablona přidána do oblíbených",
 	"templatedata-favorite-remove": "Odebrat šablonu z oblíbených",
-	"templatedata-favorite-removed": "Šablona odebrána z oblíbených"
+	"templatedata-favorite-removed": "Šablona odebrána z oblíbených",
+	"templatedata-category-browser-header": "Kategorie",
+	"templatedata-category-switch-label": "Kategorie nejvyšší úrovně:",
+	"templatedata-category-rootcat": "Šablony",
+	"templatedata-category-switch-button": "Procházet",
+	"templatedata-featured-list-header": "Doporučené",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Doporučené šablony",
+	"templatedata-featured-list-config-link": "Upravit seznam doporučených"
 }

@@ -1,18 +1,5 @@
 <?php
 
-namespace MediaWiki\Extension\CategoryTree;
-
-use MediaWiki\Api\ApiBase;
-use MediaWiki\Api\ApiMain;
-use MediaWiki\Json\FormatJson;
-use MediaWiki\Languages\LanguageConverterFactory;
-use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\MainConfigNames;
-use MediaWiki\Title\Title;
-use Wikimedia\ObjectCache\WANObjectCache;
-use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Rdbms\IConnectionProvider;
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,31 +17,34 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-class ApiCategoryTree extends ApiBase {
-	private LanguageConverterFactory $languageConverterFactory;
-	private LinkRenderer $linkRenderer;
-	private IConnectionProvider $dbProvider;
-	private WANObjectCache $wanCache;
+namespace MediaWiki\Extension\CategoryTree;
 
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Rdbms\IConnectionProvider;
+
+class ApiCategoryTree extends ApiBase {
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		IConnectionProvider $dbProvider,
-		LanguageConverterFactory $languageConverterFactory,
-		LinkRenderer $linkRenderer,
-		WANObjectCache $wanCache
+		private readonly CategoryTreeFactory $categoryTreeFactory,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly LanguageConverterFactory $languageConverterFactory,
+		private readonly WANObjectCache $wanCache,
 	) {
 		parent::__construct( $main, $action );
-		$this->languageConverterFactory = $languageConverterFactory;
-		$this->linkRenderer = $linkRenderer;
-		$this->dbProvider = $dbProvider;
-		$this->wanCache = $wanCache;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function execute() {
+	public function execute(): void {
 		$params = $this->extractRequestParams();
 
 		$options = $this->extractOptions( $params );
@@ -66,7 +56,7 @@ class ApiCategoryTree extends ApiBase {
 
 		$depth = isset( $options['depth'] ) ? (int)$options['depth'] : 1;
 
-		$ct = new CategoryTree( $options, $this->getConfig(), $this->dbProvider, $this->linkRenderer );
+		$ct = $this->categoryTreeFactory->newCategoryTree( $options );
 		$depth = $ct->optionManager->capDepth( $depth );
 		$html = $this->getHTML( $ct, $title, $depth );
 
@@ -104,11 +94,7 @@ class ApiCategoryTree extends ApiBase {
 		return get_object_vars( $options );
 	}
 
-	/**
-	 * @param string $condition
-	 *
-	 * @return bool|null|string
-	 */
+	/** @inheritDoc */
 	public function getConditionalRequestData( $condition ) {
 		if ( $condition === 'last-modified' ) {
 			$params = $this->extractRequestParams();
@@ -123,6 +109,7 @@ class ApiCategoryTree extends ApiBase {
 				->caller( __METHOD__ )
 				->fetchField();
 		}
+		return null;
 	}
 
 	/**
@@ -146,9 +133,7 @@ class ApiCategoryTree extends ApiBase {
 				$this->getConfig()->get( MainConfigNames::RenderHashAppend )
 			),
 			$this->wanCache::TTL_DAY,
-			static function () use ( $ct, $title, $depth ) {
-				return $ct->renderChildren( $title, $depth );
-			},
+			static fn () => $ct->renderChildren( $title, $depth ),
 			[
 				'touchedCallback' => function () {
 					$timestamp = $this->getConditionalRequestData( 'last-modified' );
@@ -162,7 +147,7 @@ class ApiCategoryTree extends ApiBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function getAllowedParams() {
+	public function getAllowedParams(): array {
 		return [
 			'category' => [
 				ParamValidator::PARAM_TYPE => 'string',
@@ -177,7 +162,7 @@ class ApiCategoryTree extends ApiBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function isInternal() {
+	public function isInternal(): bool {
 		return true;
 	}
 }

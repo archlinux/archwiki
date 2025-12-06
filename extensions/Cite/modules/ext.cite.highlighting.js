@@ -28,7 +28,7 @@
 		}
 
 		// Either the ID is already a reuse, or at least one reuse exists somewhere else on the page
-		return id.slice( -2 ) !== '-0' ||
+		return !id.endsWith( '-0' ) ||
 			$content.find( '.references a[href="#' + $.escapeSelector( id.slice( 0, -1 ) ) + '1"]' ).length;
 	}
 

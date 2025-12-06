@@ -6,7 +6,7 @@
 		]
 	},
 	"thanks-desc": "რსხილეფიშ გეძინა მახვარებუეფიშო მარდიშ მაშინაფალო რედაქტირაფეფიშ, კომენტარეფიშ დო შხვ. გეშა",
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2| მარდი}}}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|მარდი}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|მარდი მოშინელი რე}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|მარდი}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|მარდი მოშინელი რე}}}}",

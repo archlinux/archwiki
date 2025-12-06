@@ -20,7 +20,6 @@
 	"echo-category-title-reverted": "የ{{PLURAL:$1|ተገለበጠ ለውጥ|ተገለበጡ ለውጦች}}",
 	"echo-category-title-mention": "{{PLURAL:$1|ስም ማንሳት}}",
 	"echo-category-title-other": "{{PLURAL:$1|ሌላ|ሌሎች}}",
-	"echo-pref-tooltip-edit-user-talk": "ማንኛውም ሰው በውይይት ገጼ ላይ ሲጽፍ አስታውቀኝ።",
 	"echo-pref-tooltip-article-linked": "ማንኛው ሰው እኔ ወደ ፈጠርኩት መጣጥፍ በሌላ መጣጥፍ ውስጥ መያያዣ ሲያቀርብ አስታውቀኝ።",
 	"echo-pref-tooltip-reverted": "ማንኛው ሰው የእኔን ለውጦች ሲገለብጥ አስታውቀኝ።",
 	"echo-pref-tooltip-mention": "ማንኛውም ሰው ወደ እኔ ውይይት ገጽ በሌላ ውይይት ገጽ ላይ መያያዣ ሲያቀርብ አስታውቀኝ።",

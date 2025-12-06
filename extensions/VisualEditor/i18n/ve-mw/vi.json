@@ -18,6 +18,7 @@
 			"Nguyên Lê",
 			"Nguyễn Mạnh An",
 			"Nhatminh01",
+			"Nvdtn19",
 			"P.T.Đ",
 			"Pisceskaze",
 			"Plantaest",
@@ -26,8 +27,7 @@
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"Đỗ Thảo",
-			"Nvdtn19"
+			"Đỗ Thảo"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -47,7 +47,7 @@
 	"visualeditor-annotations-default-start": "Bắt đầu phạm vi chú thích",
 	"visualeditor-annotations-extended-documentation": "Phạm vi chú thích này đã được mở rộng vì nội dung mà nó bao gồm không được lồng ghép tốt. Nên đảm bảo rằng nội dung được chú thích được lồng ghép tốt trước khi chỉnh sửa; nếu không, phạm vi chú thích có thể lớn hơn dự kiến.",
 	"visualeditor-autosave-modified-prompt-accept": "Sửa tiếp",
-	"visualeditor-autosave-modified-prompt-message": "Trang này được sửa đổi sau khi bạn tải nó lần cuối cùng. Bạn có muốn tiếp tục sửa đổi phiên bản cũ hoặc sửa đổi phiên bản hiện tại từ đầu?",
+	"visualeditor-autosave-modified-prompt-message": "Trang này đã được sửa đổi sau khi bạn tải nó gần đây nhất. Bạn có muốn tiếp tục sửa đổi phiên bản cũ hoặc bắt đầu sửa đổi phiên bản hiện tại?",
 	"visualeditor-autosave-modified-prompt-reject": "Sửa đổi từ đầu",
 	"visualeditor-autosave-modified-prompt-title": "Sửa tiếp?",
 	"visualeditor-autosave-not-recovered-text": "Không thể khôi phục các thay đổi chưa lưu của bạn.",

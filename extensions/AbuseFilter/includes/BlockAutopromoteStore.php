@@ -133,11 +133,8 @@ class BlockAutopromoteStore {
 		return true;
 	}
 
-	/**
-	 * @param UserIdentity $target
-	 * @return string
-	 */
 	private function getAutoPromoteBlockKey( UserIdentity $target ): string {
+		// TODO: Migration strategy to abusefilter-block-autopromote keygroup
 		return $this->store->makeKey( 'abusefilter', 'block-autopromote', $target->getId() );
 	}
 }

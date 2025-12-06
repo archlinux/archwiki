@@ -4,11 +4,13 @@ namespace MediaWiki\CheckUser\Maintenance;
 
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for fixing trailing spaces issue in cu_log (see T275704)
@@ -57,7 +59,7 @@ class FixTrailingSpacesInLogs extends LoggedUpdateMaintenance {
 				->set( [ 'cul_target_text = TRIM(cul_target_text)' ] )
 				->where( [
 					$dbw->expr( 'cul_id', '>', $prevId ),
-					$dbw->expr( 'cul_id', '<=', $curId )
+					$dbw->expr( 'cul_id', '<=', $curId ),
 				] )
 				->caller( __METHOD__ )
 				->execute();
@@ -72,5 +74,7 @@ class FixTrailingSpacesInLogs extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = FixTrailingSpacesInLogs::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

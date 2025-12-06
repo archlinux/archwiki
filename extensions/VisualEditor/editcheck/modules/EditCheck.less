@@ -1,49 +1,103 @@
 @import '../../lib/codex-design-tokens/theme-wikimedia-ui.less';
 
-@media ( max-width: 1492px ) {
-	/* Hides the Vector sidebar while an editcheck-enabled editing session is occurring. See T379443. */
-	/* stylelint-disable selector-class-pattern */
-	.ve-editcheck-available {
+.skin-vector-2022 {
+	.ve-editcheck-available & {
+		.mw-page-container-inner {
+			transition: grid-template-columns 250ms, column-gap 250ms; /* stylelint-disable-line plugin/no-unsupported-browser-features */
+		}
+
+		.mw-body {
+			transition: padding 250ms;
+			padding-right: 0;
+
+			.vector-column-end {
+				transition: width 250ms;
+			}
+		}
+
+		.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ui-sidebarDialog {
+			// Sidebar fades in and slides in from the right side of the screen
+			margin-right: -300px;
+			overflow-x: visible;
+			opacity: 0;
+			left: 150px;
+			transition: opacity 250ms, left 250ms;
+		}
+
 		.mw-body .vector-column-end,
 		.vector-pinnable-header-pin-button {
+			@media screen and ( max-width: 1492px ) {
+				// Pre-emptively hide right sidebar below width at which it would start
+				// squashing the main content area. Not 100% necessary but reduces amount
+				// of movement when EditCheck opens at these widths.
+				display: none !important;  /* stylelint-disable-line declaration-no-important */
+			}
+		}
+	}
+
+	.ve-editcheck-enabled &,
+	.ve-editcheck-transitioning & {
+		.mw-body .vector-column-end,
+		.vector-main-menu-landmark,
+		.vector-pinnable-header-pin-button {
+			// Hide sidebars during transitions as they reflow their own text when the change width
 			display: none !important;  /* stylelint-disable-line declaration-no-important */
 		}
 	}
-	/* stylelint-enable selector-class-pattern */
+
+	/* stylelint-disable-next-line selector-not-notation */
+	.ve-editcheck-enabled:not( .vector-feature-main-menu-pinned-disabled.vector-toc-not-available, .vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 ) & {
+		.mw-page-container-inner {
+			// At maximum width:
+			// 7rem is approximate half the difference between the maximum width
+			// of the main page container and VE + EditCheck, so this places VE
+			// in the center. Using a numeric value for centering allows the
+			// transition to animate correctly.
+			grid-template-columns: ~'7rem minmax( 0, 1fr )';
+			column-gap: 0;
+
+			@media screen and ( max-width: @max-width-breakpoint-desktop ) {
+				// Width constrained by viewport:
+				// Calculate centering value as ( 100vw - <VE+EC width> ) / 2
+				grid-template-columns: ~'calc(50vw - 44rem) minmax( 0, 1fr )';
+			}
+		}
+	}
+
+	.ve-editcheck-enabled & {
+		.mw-body {
+			// Padding to prevent EditCheck sidebar from going off screen
+			padding-right: 300px;
+		}
+
+		.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ui-sidebarDialog {
+			opacity: 1;
+			left: 0;
+		}
+	}
+
+	.ve-editcheck-transitioning.vector-feature-main-menu-pinned-disabled.vector-toc-not-available &,
+	.ve-editcheck-enabled.vector-feature-main-menu-pinned-disabled.vector-toc-not-available &,
+	.ve-editcheck-transitioning.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 &,
+	.ve-editcheck-enabled.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 & {
+		@media screen and ( min-width: @min-width-breakpoint-desktop ) {
+			.mw-body {
+				padding-right: 0;
+			}
+		}
+
+		.mw-body .vector-column-end {
+			display: block !important;  /* stylelint-disable-line declaration-no-important */
+			visibility: hidden;
+			width: 300px;
+		}
+	}
 }
 
 /* Toolbar */
 
-.ve-ui-editCheck-toolbar {
-	font-size: 0.875rem; // ignore content scaling
-
-	.mw-mf & {
-		font-size: inherit;
-	}
-
-	.oo-ui-toolbar-bar {
-		display: flex;
-		flex-wrap: wrap;
-	}
-
-	.oo-ui-toolbar-tools {
-		flex: 1;
-		display: flex;
-	}
-
-	.oo-ui-toolbar-tools.oo-ui-toolbar-after {
-		flex: 0;
-	}
-
-	.oo-ui-toolbar-actions + div {
-		// There's a clear div that we need to enhance slightly
-		flex-basis: 100%;
-		height: 0;
-	}
-
-	&.ve-init-mw-mobileArticleTarget-toolbar .oo-ui-toolbar-tools.oo-ui-toolbar-after {
-		display: none;
-	}
+.ve-ui-editCheck-toolbar-tools {
+	display: flex;
 }
 
 .ve-ui-toolbar-group-title {
@@ -56,22 +110,19 @@
 /* Actions */
 
 .ve-ui-editCheckDialog {
-	font-size: 0.875rem; // ignore content scaling
-
-	&-title {
-		display: block;
-		font-weight: bold;
-		padding: @spacing-50 0;
-		margin-bottom: @spacing-50;
-		border-bottom: 1px solid @border-color-base;
-	}
-
 	&-footer {
 		display: flex;
 		justify-content: flex-end;
+		gap: 0;
 
 		> .oo-ui-labelWidget {
 			align-content: center;
+			margin-right: @spacing-50;
+			color: @color-subtle;
+
+			&.oo-ui-widget-disabled {
+				color: @color-disabled;
+			}
 		}
 	}
 
@@ -82,6 +133,7 @@
 		padding: @spacing-50 @spacing-75;
 		cursor: pointer;
 		overflow: hidden;
+		border-radius: @border-radius-base;
 
 		> .oo-ui-iconElement-icon {
 			// Fixes icon placement in WMUI theme
@@ -96,11 +148,30 @@
 			cursor: auto;
 			background-color: @background-color-base;
 			margin: @spacing-50 -@spacing-75 -@spacing-50 -@spacing-75;
-			padding: @spacing-50 @spacing-75 @spacing-100;
+			padding: @spacing-75;
+		}
+
+		&-prompt {
+			margin-bottom: @spacing-75;
+			font-weight: @font-weight-semi-bold;
+			display: block;
 		}
 
 		&-actions {
 			margin-top: @spacing-100;
+
+			&-prompted {
+				margin-top: @spacing-75;
+			}
+		}
+
+		&-footer {
+			margin-top: @spacing-100;
+			color: @color-subtle;
+		}
+
+		&:not( .ve-ui-editCheckActionWidget-collapsed ) {
+			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.2 );
 		}
 
 		&.ve-ui-editCheckActionWidget-collapsed {
@@ -144,12 +215,25 @@
 		}
 
 		.ve-ui-editCheckActionWidget-feedback {
-			.oo-ui-fieldLayout-header {
+			.oo-ui-fieldLayout-header,
+			.oo-ui-radioSelectWidget {
 				padding-bottom: @spacing-100;
 			}
 
 			.oo-ui-labelElement-label {
 				font-size: inherit;
+			}
+		}
+
+		.ve-ui-editCheckActionWidget-feedback ~ * {
+			display: none;
+		}
+
+		&-suggestion {
+			background: @background-color-success-subtle;
+
+			> .oo-ui-labelElement-label {
+				color: @color-success;
 			}
 		}
 	}
@@ -158,32 +242,29 @@
 		display: none;
 	}
 
+	// See: .ve-ui-mobileContext, which this is closely mimicking
 	.mw-mf & {
 		top: auto;
-		// See: .ve-ui-mobileContext, which this is closely mimicking
-		background-color: @background-color-interactive-subtle;
 		/* Match toolbar border & shadow */
 		border-top: @border-subtle;
 		box-shadow: 0 -1px 1px 0 rgba( 0, 0, 0, 0.1 );
 		/* Transition out faster, as keyboard may be coming up */
 		transition: transform 100ms;
 		transform: translateY( 0% );
-		max-width: 995px;
+		// See: .ve-init-mw-target-surface in ve.init.mw.MobileArticleTarget.less
+		max-width: calc( 993.3px + (2 * 1em) );
 		margin: 0 auto;
-
-		&-title {
-			padding: @spacing-75 @spacing-100;
-			margin-bottom: 0;
-		}
 
 		&-close {
 			position: absolute;
 			right: 0;
 			top: 2px;
+			z-index: 1;
 		}
 
 		&-footer {
-			margin: 0 @spacing-100 @spacing-50;
+			border-top: @border-subtle;
+			padding: @spacing-12 @spacing-100;
 		}
 
 		&.ve-ui-editCheckDialog-collapsed {
@@ -198,13 +279,17 @@
 
 		.ve-ui-editCheckActionWidget {
 			margin: 0;
+			padding: 0.5em 1em;
 			border-width: 0;
+			box-shadow: none;
 			background-color: transparent !important;  /* stylelint-disable-line declaration-no-important */
 
+			/* Matches .ve-ui-mobileContext .ve-ui-linearContextItem-body */
 			&-body {
+				border-top: @border-subtle;
 				background-color: transparent;
-				padding-left: 2em;
-				margin-left: 0;
+				margin: 0.5em -1em 0 -1em;
+				padding: 0.5em 1em;
 			}
 		}
 	}
@@ -219,7 +304,7 @@
 /* Mobile sidebar */
 
 .ve-ui-editCheck-gutter-active {
-	div.ve-ui-editCheckGutterSidebarDialog {
+	div.ve-ui-gutterSidebarEditCheckDialog {
 		background-color: @background-color-interactive-subtle;
 
 		.ve-ui-editCheck-gutter-action {
@@ -267,6 +352,19 @@
 			&-inactive {
 				border-left: 2px solid @border-color-base;
 			}
+
+			&-quickaction {
+				border-left: 0;
+
+				.oo-ui-buttonElement-button {
+					background: @background-color-progressive;
+					margin-top: -6px;
+				}
+
+				.oo-ui-widget-disabled .oo-ui-buttonElement-button {
+					background: @background-color-disabled;
+				}
+			}
 		}
 	}
 }
@@ -312,63 +410,94 @@
 
 /* Selections */
 
-.ve-ce-surface-reviewMode + .ve-ui-overlay .ve-ce-surface-selections-editCheck .ve-ce-surface-selection {
-	opacity: 0.2;
-	pointer-events: auto;
-}
+.ve-ce-surface-selections-editCheck {
+	&-active {
+		.ve-ce-surface-selection {
+			&-rects {
+				opacity: 0.2;
+			}
 
-.ve-ce-surface-selections-editCheck .ve-ce-surface-selection > div {
-	mix-blend-mode: darken;
-	// Adjust target colours to account for 50% opacity
-	background: ( ( #fce7fe - 0.8 * ( #fff ) ) / 0.2 );
-	// border: 1px solid ( ( #d02aac - 0.8 * ( #fff ) ) / 0.2 );
-	border-radius: 2px;
-	padding: 2px;
-	margin: -2px 0 0 -2px;
-}
+			&-rect {
+				// Adjust target colours to account for 50% opacity
+				background: ( ( #fef6e7 - 0.8 * ( #fff ) ) / 0.2 );
+				// border: 1px solid ( ( #a66200 - 0.8 * ( #fff ) ) / 0.2 );
+				border-radius: 2px;
+				padding: 2px;
+				margin: -2px 0 0 -2px;
+			}
 
-.ve-ce-surface-selections-editCheckWarning .ve-ce-surface-selection {
-	opacity: 0.2;
+			&-bounding {
+				@padding: 3px;
+				@border: 2px;
+				@color: #36c;
+				padding: @padding;
+				margin: -( @padding + @border ) 0 0 -@padding;
+				border-style: solid;
+				border-color: @color;
+				border-width: @border 0;
+				@triangleSize: 5px;
 
-	> div {
-		mix-blend-mode: darken;
-		// Adjust target colours to account for 50% opacity
-		background: ( ( #fef6e7 - 0.8 * ( #fff ) ) / 0.2 );
-		// border: 1px solid ( ( #a66200 - 0.8 * ( #fff ) ) / 0.2 );
-		border-radius: 2px;
-		padding: 2px;
-		margin: -2px 0 0 -2px;
+				&::before,
+				&::after {
+					content: '';
+					position: absolute;
+					width: 0;
+					height: 0;
+				}
+
+				&::before {
+					left: 0;
+					top: 0;
+					border-left: @triangleSize solid @color;
+					border-bottom: @triangleSize solid transparent;
+				}
+
+				&::after {
+					right: 0;
+					bottom: 0;
+					border-right: @triangleSize solid @color;
+					border-top: @triangleSize solid transparent;
+				}
+			}
+
+			&-editCheck-pending .ve-ce-surface-selection-bounding {
+				border-color: @color-disabled;
+
+				&::before {
+					border-left-color: @color-disabled;
+				}
+
+				&::after {
+					border-right-color: @color-disabled;
+				}
+			}
+		}
+
+		.ve-ce-surface-selection-gutter {
+			background-color: @color-base;
+			z-index: 1;
+		}
+
+		.ve-ce-surface-selection-editCheck {
+			&-error .ve-ce-surface-selection-gutter {
+				background-color: @color-error;
+			}
+
+			&-warning .ve-ce-surface-selection-gutter {
+				background-color: @color-warning;
+			}
+
+			&-notice .ve-ce-surface-selection-gutter {
+				background-color: @color-notice;
+			}
+
+			&-success .ve-ce-surface-selection-gutter {
+				background-color: @color-success;
+			}
+		}
 	}
-}
 
-.ve-ui-editCheck-gutter-highlight {
-	position: absolute;
-	left: 0;
-	width: 2px;
-	overflow: hidden;
-	background-color: @color-base;
-
-	&-error {
-		background-color: @color-error;
-	}
-
-	&-warning {
-		background-color: @color-warning;
-	}
-
-	&-notice {
-		background-color: @color-notice;
-	}
-
-	&-success {
-		background-color: @color-success;
-	}
-
-	&-inactive {
+	&-inactive .ve-ce-surface-selection-gutter {
 		background-color: @border-color-base;
-	}
-
-	.mw-mf & {
-		left: -10px;
 	}
 }

@@ -137,7 +137,6 @@ class SubscriptionStore {
 	 * @param string $itemName
 	 * @param int[]|null $state An array of SubscriptionStore::STATE_* constants
 	 * @param array $options
-	 * @return array
 	 */
 	public function getSubscriptionItemsForTopic(
 		string $itemName,
@@ -281,7 +280,6 @@ class SubscriptionStore {
 	 * @param string $field Timestamp field name
 	 * @param UserIdentity|null $user
 	 * @param string $itemName
-	 * @return bool
 	 */
 	private function updateSubscriptionTimestamp(
 		string $field,

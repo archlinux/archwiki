@@ -7,7 +7,6 @@
 		]
 	},
 	"vector-specialversion-name": "ଭେକ୍ଟର",
-	"vector-opt-out": "ପୁରୁଣା ରୂପକୁ ବଦଳାନ୍ତୁ",
 	"vector-action-toggle-sidebar": "ପାଖପଟି ବଦଳାନ୍ତୁ",
 	"vector-languages": "ଭାଷାସମୂହ",
 	"vector-language-button-label": "{{PLURAL:$1|$1ଟି ଭାଷା}}",
@@ -41,8 +40,6 @@
 	"skin-theme-night-label": "ଗାଢ଼",
 	"skin-theme-os-label": "ଆପେଆପେ",
 	"skin-theme-exclusion-notice": "ଏ ପୃଷ୍ଠାଟି ସବୁବେଳେ ଫିକା ମୋଡ୍‌ରେ ରହେ ।",
-	"vector-search-loader": "ଖୋଜା ପରାମର୍ଶ ଖୋଲୁଛି",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ଥିବା ପୃଷ୍ଠାସବୁ ଖୋଜନ୍ତୁ",
 	"vector-intro-page": "Help:Introduction",
 	"vector-toc-label": "ବିଷୟସୂଚୀ",
 	"vector-toc-beginning": "ଆରମ୍ଭ",

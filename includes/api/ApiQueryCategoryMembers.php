@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -24,6 +10,7 @@ namespace MediaWiki\Api;
 
 use Collation;
 use MediaWiki\Collation\CollationFactory;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -37,7 +24,6 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 	private Collation $collation;
-	private int $migrationStage;
 
 	public function __construct(
 		ApiQuery $query,
@@ -46,19 +32,18 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 	) {
 		parent::__construct( $query, $moduleName, 'cm' );
 		$this->collation = $collationFactory->getCategoryCollation();
-		$this->migrationStage = $query->getConfig()->get(
-			MainConfigNames::CategoryLinksSchemaMigrationStage
-		);
 	}
 
 	public function execute() {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -92,6 +77,9 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		$fld_timestamp = isset( $prop['timestamp'] );
 		$fld_type = isset( $prop['type'] );
 
+		$this->setVirtualDomain( CategoryLinksTable::VIRTUAL_DOMAIN );
+		$db = $this->getDB();
+
 		if ( $resultPageSet === null ) {
 			$this->addFields( [ 'cl_from', 'cl_sortkey', 'cl_type', 'page_namespace', 'page_title' ] );
 			$this->addFieldsIf( 'page_id', $fld_ids );
@@ -103,17 +91,13 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 		$this->addFieldsIf( 'cl_timestamp', $fld_timestamp || $params['sort'] == 'timestamp' );
 
-		$this->addTables( [ 'page', 'categorylinks' ] ); // must be in this order for 'USE INDEX'
-		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
-			$this->addWhereFld( 'cl_to', $categoryTitle->getDBkey() );
-		} else {
-			$this->addTables( 'linktarget' );
-			$this->addJoinConds( [ 'linktarget' => [ 'JOIN', 'cl_target_id = lt_id ' ] ] );
-			$this->addWhere( [
-				'lt_namespace' => NS_CATEGORY,
-				'lt_title' => $categoryTitle->getDBkey(),
-			] );
-		}
+		$this->addTables( [ 'page', 'categorylinks', 'linktarget' ] );
+		$this->addJoinConds( [ 'categorylinks' => [ 'JOIN', 'cl_from=page_id' ] ] );
+		$this->addJoinConds( [ 'linktarget' => [ 'JOIN', 'cl_target_id = lt_id ' ] ] );
+		$this->addWhere( [
+			'lt_namespace' => NS_CATEGORY,
+			'lt_title' => $categoryTitle->getDBkey(),
+		] );
 
 		$queryTypes = $params['type'];
 		$contWhere = false;
@@ -140,14 +124,11 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			if ( $params['continue'] !== null ) {
 				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
 				$op = ( $dir === 'newer' ? '>=' : '<=' );
-				$db = $this->getDB();
 				$this->addWhere( $db->buildComparison( $op, [
 					'cl_timestamp' => $db->timestamp( $cont[0] ),
 					'cl_from' => $cont[1],
 				] ) );
 			}
-
-			$this->addOption( 'USE INDEX', [ 'categorylinks' => 'cl_timestamp' ] );
 		} else {
 			if ( $params['continue'] ) {
 				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'string', 'string', 'int' ] );
@@ -160,7 +141,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$this->dieContinueUsageIf( !$this->validateHexSortkey( $cont[1] ) );
 				$op = $dir == 'newer' ? '>=' : '<=';
 				// $contWhere is used further down
-				$contWhere = $this->getDB()->buildComparison( $op, [
+				$contWhere = $db->buildComparison( $op, [
 					'cl_sortkey' => hex2bin( $cont[1] ),
 					'cl_from' => $cont[2],
 				] );
@@ -198,14 +179,8 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 					$endsortkey );
 				$this->addWhereRange( 'cl_from', $dir, null, null );
 			}
-			if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
-				$this->addOption( 'USE INDEX', [ 'categorylinks' => 'cl_sortkey' ] );
-			} else {
-				$this->addOption( 'USE INDEX', [ 'categorylinks' => 'cl_sortkey_id' ] );
-			}
+			$this->addOption( 'USE INDEX', [ 'categorylinks' => 'cl_sortkey_id' ] );
 		}
-
-		$this->addWhere( 'cl_from=page_id' );
 
 		$limit = $params['limit'];
 		$this->addOption( 'LIMIT', $limit + 1 );
@@ -257,7 +232,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				if ( $params['sort'] == 'timestamp' ) {
 					$this->setContinueEnumParameter(
 						'continue',
-						$this->getDB()->timestamp( $row->cl_timestamp ) . "|$row->cl_from"
+						$db->timestamp( $row->cl_timestamp ) . "|$row->cl_from"
 					);
 				} else {
 					$sortkey = bin2hex( $row->cl_sortkey );
@@ -305,7 +280,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 					if ( $params['sort'] == 'timestamp' ) {
 						$this->setContinueEnumParameter(
 							'continue',
-							$this->getDB()->timestamp( $row->cl_timestamp ) . "|$row->cl_from"
+							$db->timestamp( $row->cl_timestamp ) . "|$row->cl_from"
 						);
 					} else {
 						$sortkey = bin2hex( $row->cl_sortkey );
@@ -326,6 +301,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$ret = [
 			'title' => [
@@ -416,6 +392,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=categorymembers&cmtitle=Category:Physics'
@@ -425,6 +402,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Categorymembers';
 	}

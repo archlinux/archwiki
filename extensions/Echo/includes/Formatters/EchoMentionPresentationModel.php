@@ -11,10 +11,7 @@ use MediaWiki\User\User;
 
 class EchoMentionPresentationModel extends EchoEventPresentationModel {
 
-	/**
-	 * @var EchoPresentationModelSection
-	 */
-	protected $section;
+	protected EchoPresentationModelSection $section;
 
 	/**
 	 * @inheritDoc
@@ -106,7 +103,7 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		return [
 			// Need FullURL so the section is included
 			'url' => $this->section->getTitleWithSection()->getFullURL(),
-			'label' => $this->msg( 'notification-link-text-view-mention' )->text()
+			'label' => $this->msg( 'notification-link-text-view-mention' )->text(),
 		];
 	}
 
@@ -114,7 +111,7 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 	public function getSecondaryLinks() {
 		$url = $this->event->getTitle()->getLocalURL( [
 			'oldid' => 'prev',
-			'diff' => $this->event->getExtraParam( 'revid' )
+			'diff' => $this->event->getExtraParam( 'revid' ),
 		] );
 		$viewChangesLink = [
 			'url' => $url,

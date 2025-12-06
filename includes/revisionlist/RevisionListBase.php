@@ -2,21 +2,7 @@
 /**
  * Holders of revision list for a single page
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -105,9 +91,8 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 	 * Initialise the current iteration pointer
 	 */
 	protected function initCurrent() {
-		$row = $this->res->current();
-		if ( $row ) {
-			$this->current = $this->newItem( $row );
+		if ( $this->res->valid() ) {
+			$this->current = $this->newItem( $this->res->current() );
 		} else {
 			$this->current = false;
 		}
@@ -135,7 +120,7 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 
 	/**
 	 * Get the current list item, or false if we are at the end
-	 * @return RevisionItemBase|false
+	 * @return RevisionItemBase
 	 */
 	#[\ReturnTypeWillChange]
 	public function current() {

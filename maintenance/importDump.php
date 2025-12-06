@@ -5,21 +5,7 @@
  * Copyright © 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
@@ -156,7 +142,7 @@ TEXT
 
 			return;
 		}
-		$this->nsFilter = array_unique( array_map( [ $this, 'getNsIndex' ], $namespaces ) );
+		$this->nsFilter = array_unique( array_map( $this->getNsIndex( ... ), $namespaces ) );
 	}
 
 	private function getNsIndex( string $namespace ): int {
@@ -187,7 +173,7 @@ TEXT
 		return is_array( $this->nsFilter ) && !in_array( $ns, $this->nsFilter );
 	}
 
-	public function reportPage( $page ) {
+	public function reportPage( array $page ) {
 		$this->pageCount++;
 	}
 
@@ -343,16 +329,16 @@ TEXT
 			$importer->setPageOffset( $nthPage );
 			$this->pageCount = $nthPage - 1;
 		}
-		$importer->setPageCallback( [ $this, 'reportPage' ] );
+		$importer->setPageCallback( $this->reportPage( ... ) );
 		$importer->setNoticeCallback( static function ( $msg, $params ) {
 			echo wfMessage( $msg, $params )->text() . "\n";
 		} );
 		$this->importCallback = $importer->setRevisionCallback(
-			[ $this, 'handleRevision' ] );
+			$this->handleRevision( ... ) );
 		$this->uploadCallback = $importer->setUploadCallback(
-			[ $this, 'handleUpload' ] );
+			$this->handleUpload( ... ) );
 		$this->logItemCallback = $importer->setLogItemCallback(
-			[ $this, 'handleLogItem' ] );
+			$this->handleLogItem( ... ) );
 		if ( $this->uploads ) {
 			$importer->setImportUploads( true );
 		}

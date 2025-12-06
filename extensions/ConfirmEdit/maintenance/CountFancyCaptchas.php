@@ -20,6 +20,10 @@
  * @file
  * @ingroup Maintenance
  */
+
+namespace MediaWiki\Extension\ConfirmEdit\Maintenance;
+
+// @codeCoverageIgnoreStart
 if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = getenv( 'MW_INSTALL_PATH' );
 } else {
@@ -27,6 +31,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
 }
 
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Extension\ConfirmEdit\FancyCaptcha\FancyCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
@@ -67,5 +72,7 @@ class CountFancyCaptchas extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CountFancyCaptchas::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

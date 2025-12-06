@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -68,6 +54,7 @@ use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\DebugInfo\DebugInfoTrait;
 use Wikimedia\Message\MessageParam;
 use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\ReplacementArray;
 use Wikimedia\StringUtils\StringUtils;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -370,8 +357,9 @@ class Language implements Bcp47Code {
 	}
 
 	/**
-	 * Returns an array of localised namespaces indexed by their numbers. If the namespace is not
-	 * available in localised form, it will be included in English.
+	 * Returns an array of localised namespaces (with underscores, without considering language
+	 * variants) indexed by their numbers. If the namespace is not available in localised form, it
+	 * will be included in English.
 	 *
 	 * @return array<int,string> List of localized namespace names, indexed by numeric namespace ID.
 	 */
@@ -434,10 +422,13 @@ class Language implements Bcp47Code {
 	}
 
 	/**
-	 * A convenience function that returns getNamespaces() with spaces instead of underscores
-	 * in values. Useful for producing output to be displayed e.g. in `<select>` forms.
+	 * A convenience function that returns {@see getNamespaces} with spaces instead of underscores
+	 * in values.
 	 *
-	 * @return string[]
+	 * NOTE: This is not suitable for UI text, as language variants of namespace names defined via
+	 * system messages are ignored. Use {@see LanguageConverter::convertNamespace} instead.
+	 *
+	 * @return array<int,string>
 	 */
 	public function getFormattedNamespaces() {
 		$ns = $this->getNamespaces();
@@ -2571,7 +2562,7 @@ class Language implements Bcp47Code {
 	 */
 	public function getDurationIntervals( $seconds, array $chosenIntervals = [] ) {
 		if ( !$chosenIntervals ) {
-			// Default intervals. Do not include `months` as they were not part of the origional default implementaiton
+			// Default intervals. Do not include `months` as they were not part of the original default implementation
 			$chosenIntervals = [
 				'millennia',
 				'centuries',
@@ -2907,7 +2898,12 @@ class Language implements Bcp47Code {
 	 * @return string The string with uppercase conversion applied to the first character
 	 */
 	public function ucfirst( $str ) {
-		$octetCode = ord( $str );
+		// T410920: ord() doesn't like an empty string, so just return early
+		if ( $str === '' ) {
+			return '';
+		}
+
+		$octetCode = ord( $str[0] );
 		// See https://en.wikipedia.org/wiki/ASCII#Printable_characters
 		if ( $octetCode < 96 ) {
 			// Assume this is an uppercase/uncased ASCII character
@@ -2953,7 +2949,12 @@ class Language implements Bcp47Code {
 	 * @return string The string with lowercase conversion applied to the first character
 	 */
 	public function lcfirst( $str ) {
-		$octetCode = ord( $str );
+		// T410920: ord() doesn't like an empty string, so just return early
+		if ( $str === '' ) {
+			return '';
+		}
+
+		$octetCode = ord( $str[0] );
 		// See https://en.wikipedia.org/wiki/ASCII#Printable_characters
 		if ( $octetCode < 96 ) {
 			// Assume this is an uppercase/uncased ASCII character
@@ -3476,13 +3477,13 @@ class Language implements Bcp47Code {
 		if ( $number === '' ) {
 			return $number;
 		}
-		if ( $number === (string)NAN ) {
+		if ( $number === 'NAN' ) {
 			return $this->msg( 'formatnum-nan' )->text();
 		}
-		if ( $number === (string)INF ) {
+		if ( $number === 'INF' ) {
 			return "∞";
 		}
-		if ( $number === (string)-INF ) {
+		if ( $number === '-INF' ) {
 			return "\u{2212}∞";
 		}
 		if ( !is_numeric( $number ) ) {
@@ -3601,16 +3602,16 @@ class Language implements Bcp47Code {
 	 */
 	public function parseFormattedNumber( $number ) {
 		if ( $number === $this->msg( 'formatnum-nan' )->text() ) {
-			return (string)NAN;
+			return "NAN";
 		}
 		if ( $number === "∞" ) {
-			return (string)INF;
+			return "INF";
 		}
 		// Accept either ASCII hyphen-minus or the unicode minus emitted by
 		// ::formatNum()
 		$number = strtr( $number, [ "\u{2212}" => '-' ] );
 		if ( $number === "-∞" ) {
-			return (string)-INF;
+			return "-INF";
 		}
 		$s = $this->digitTransformTable();
 		if ( $s ) {
@@ -3697,7 +3698,7 @@ class Language implements Bcp47Code {
 	 * @param-taint $list tainted
 	 * @return string
 	 */
-	public function commaList( array $list ) {
+	public function commaList( array $list ): string {
 		return implode(
 			$this->msg( 'comma-separator' )->escaped(),
 			$list
@@ -3711,7 +3712,7 @@ class Language implements Bcp47Code {
 	 * @param-taint $list tainted
 	 * @return string
 	 */
-	public function semicolonList( array $list ) {
+	public function semicolonList( array $list ): string {
 		return implode(
 			$this->msg( 'semicolon-separator' )->escaped(),
 			$list
@@ -3724,7 +3725,7 @@ class Language implements Bcp47Code {
 	 * @param-taint $list tainted
 	 * @return string
 	 */
-	public function pipeList( array $list ) {
+	public function pipeList( array $list ): string {
 		return implode(
 			$this->msg( 'pipe-separator' )->escaped(),
 			$list
@@ -3857,7 +3858,7 @@ class Language implements Bcp47Code {
 	 */
 	protected function removeBadCharLast( $string ) {
 		if ( $string != '' ) {
-			$char = ord( $string[strlen( $string ) - 1] );
+			$char = ord( substr( $string, -1 ) );
 			$m = [];
 			if ( $char >= 0xc0 ) {
 				# We got the first byte only of a multibyte char; remove it.
@@ -4304,7 +4305,7 @@ class Language implements Bcp47Code {
 	 * @since 1.42
 	 * @param bool $includeOther Whether to include the 'other' option in the list of
 	 *     suggestions
-	 * @return string[]
+	 * @return array<string,string>
 	 */
 	public function getBlockDurations( $includeOther = true ): array {
 		$msg = $this->msg( 'ipboptions' )->text();
@@ -4510,7 +4511,7 @@ class Language implements Bcp47Code {
 	 * @return string
 	 */
 	private function fixVariableInNamespace( $talk ) {
-		if ( strpos( $talk, '$1' ) === false ) {
+		if ( !str_contains( $talk, '$1' ) ) {
 			return $talk;
 		}
 
@@ -4793,7 +4794,7 @@ class Language implements Bcp47Code {
 			}
 			// @suppress PhanParamTooFew Phan thinks this always requires 3 parameters, that's wrong
 			return new NumberFormatter( $code, NumberFormatter::DECIMAL );
-		} catch ( \ValueError $_ ) {
+		} catch ( \ValueError ) {
 			// Value Errors are thrown since php8.4 for invalid locales
 			return null;
 		}

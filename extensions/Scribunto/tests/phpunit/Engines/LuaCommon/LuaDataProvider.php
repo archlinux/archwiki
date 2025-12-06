@@ -8,18 +8,14 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 use MediaWiki\Title\Title;
 
 class LuaDataProvider implements Iterator {
-	/** @var LuaEngine|null */
-	protected $engine = null;
+
+	protected ?LuaEngine $engine;
 	/** @var mixed|null */
 	protected $exports = null;
 	/** @var int */
 	protected $key = 1;
 
-	/**
-	 * @param LuaEngine $engine
-	 * @param string $moduleName
-	 */
-	public function __construct( $engine, $moduleName ) {
+	public function __construct( LuaEngine $engine, string $moduleName ) {
 		$this->engine = $engine;
 		$this->key = 1;
 		$module = $engine->fetchModuleFromParser(

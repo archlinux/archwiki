@@ -16,7 +16,6 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
@@ -66,21 +65,16 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		$throttle->execute();
 	}
 
-	public function provideThrottle() {
+	public static function provideThrottle() {
 		foreach ( [ false, true ] as $global ) {
 			$globalStr = $global ? 'global' : 'local';
-			yield "no groups, $globalStr" => [ $this->getThrottle( [ 'groups' => [] ], null, $global ), true ];
+			yield "no groups, $globalStr" => [ [ 'groups' => [] ], $global, true ];
 
-			$cache = $this->getMockBuilder( HashBagOStuff::class )->onlyMethods( [ 'incrWithInit' ] )->getMock();
-			yield "no cache value set, $globalStr" => [ $this->getThrottle( [], $cache, $global ), true, $cache ];
+			yield "no cache value set, $globalStr" => [ [], $global, true, true ];
 
 			$groups = [ 'ip', 'user', 'range', 'creationdate', 'editcount', 'site', 'page' ];
 			foreach ( $groups as $group ) {
-				$throttle = $this->getThrottle( [ 'groups' => [ $group ], 'count' => 0 ], null, $global );
-				/** @var Throttle $throttleWr */
-				$throttleWr = TestingAccessWrapper::newFromObject( $throttle );
-				$throttleWr->setThrottled( $group );
-				yield "$group set, $globalStr" => [ $throttle, false ];
+				yield "$group set, $globalStr" => [ [ 'groups' => [ $group ], 'count' => 0 ], $global, false ];
 			}
 		}
 	}
@@ -88,14 +82,32 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideThrottle
 	 */
-	public function testShouldDisableOtherConsequences( Throttle $throttle, bool $shouldDisable ) {
+	public function testShouldDisableOtherConsequences(
+		array $throttleParams, bool $globalFilter, bool $shouldDisable
+	) {
+		$throttle = $this->getThrottle( $throttleParams, null, $globalFilter );
+		if ( ( $throttleParams['groups'] ?? [] ) !== [] ) {
+			$wrapper = TestingAccessWrapper::newFromObject( $throttle );
+			$wrapper->setThrottled( $throttleParams['groups'][0] );
+		}
+
 		$this->assertSame( $shouldDisable, $throttle->shouldDisableOtherConsequences() );
 	}
 
 	/**
 	 * @dataProvider provideThrottle
 	 */
-	public function testExecute( Throttle $throttle, bool $shouldDisable, ?MockObject $cache = null ) {
+	public function testExecute(
+		array $throttleParams, bool $globalFilter, bool $shouldDisable, bool $withCache = false
+	) {
+		$cache = $withCache
+			? $this->getMockBuilder( HashBagOStuff::class )->onlyMethods( [ 'incrWithInit' ] )->getMock()
+			: null;
+		$throttle = $this->getThrottle( $throttleParams, $cache, $globalFilter );
+		if ( ( $throttleParams['groups'] ?? [] ) !== [] ) {
+			$wrapper = TestingAccessWrapper::newFromObject( $throttle );
+			$wrapper->setThrottled( $throttleParams['groups'][0] );
+		}
 		if ( $cache ) {
 			/** @var Throttle $wrapper */
 			$wrapper = TestingAccessWrapper::newFromObject( $throttle );
@@ -113,10 +125,19 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		string $type,
 		?string $expected,
 		string $ip,
-		Title $title,
-		UserIdentity $user,
-		?UserEditTracker $editTracker = null
+		array $userSpec,
+		?int $editCount = null
 	) {
+		$title = $this->createMock( Title::class );
+		$title->method( 'getPrefixedText' )->willReturn( 'AbuseFilter test throttle identifiers' );
+		$user = new UserIdentityValue( ...$userSpec );
+		if ( $editCount !== null ) {
+			$editTracker = $this->createMock( UserEditTracker::class );
+			$editTracker->method( 'getUserEditCount' )->with( $user )->willReturn( $editCount );
+		} else {
+			$editTracker = null;
+		}
+
 		$throttle = $this->getThrottle( [], null, false, $user, $title, $editTracker, $ip );
 		/** @var Throttle $throttleWrapper */
 		$throttleWrapper = TestingAccessWrapper::newFromObject( $throttle );
@@ -128,30 +149,25 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $throttleWrapper->throttleIdentifier( $type ) );
 	}
 
-	public function provideThrottleDataForIdentifiers(): Generator {
-		$pageName = 'AbuseFilter test throttle identifiers';
-		$title = $this->createMock( Title::class );
-		$title->method( 'getPrefixedText' )->willReturn( $pageName );
+	public static function provideThrottleDataForIdentifiers(): Generator {
 		$ip = '42.42.42.42';
-		$anon = new UserIdentityValue( 0, $ip );
+		$anon = [ 0, $ip ];
 
-		yield 'IP, simple' => [ 'ip', "ip-$ip", $ip, $title, $anon ];
-		yield 'user, anonymous' => [ 'user', 'user-0', $ip, $title, $anon ];
+		yield 'IP, simple' => [ 'ip', "ip-$ip", $ip, $anon ];
+		yield 'user, anonymous' => [ 'user', 'user-0', $ip, $anon ];
 
 		$userID = 123;
-		$user = new UserIdentityValue( $userID, 'Username' );
-		yield 'user, registered' => [ 'user', "user-$userID", $ip, $title, $user ];
+		$user = [ $userID, 'Username' ];
+		yield 'user, registered' => [ 'user', "user-$userID", $ip, $user ];
 
 		$editcount = 5;
-		$uet = $this->createMock( UserEditTracker::class );
-		$uet->method( 'getUserEditCount' )->with( $user )->willReturn( $editcount );
-		yield 'editcount, simple' => [ 'editcount', "editcount-$editcount", $ip, $title, $user, $uet ];
+		yield 'editcount, simple' => [ 'editcount', "editcount-$editcount", $ip, $user, $editcount ];
 
-		yield 'page, simple' => [ 'page', "page-$pageName", $ip, $title, $user ];
+		yield 'page, simple' => [ 'page', "page-AbuseFilter test throttle identifiers", $ip, $user ];
 
-		yield 'site, simple' => [ 'site', 'site-1', $ip, $title, $user ];
+		yield 'site, simple' => [ 'site', 'site-1', $ip, $user ];
 
-		yield 'non-existing throttle type' => [ 'foo', null, $ip, $title, $user ];
+		yield 'non-existing throttle type' => [ 'foo', null, $ip, $user ];
 
 		$testingIPs = [
 			'123.123.123.123' => '123.123.0.0/16',
@@ -165,7 +181,7 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 			'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' => 'FFFF:FFFF:FFFF:FFFF:0:0:0:0/64'
 		];
 		foreach ( $testingIPs as $testIP => $expected ) {
-			yield "range, $testIP" => [ 'range', "range-$expected", $testIP, $title, $user ];
+			yield "range, $testIP" => [ 'range', "range-$expected", $testIP, $user ];
 		}
 	}
 }

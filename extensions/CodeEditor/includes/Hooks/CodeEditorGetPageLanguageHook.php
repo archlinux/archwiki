@@ -15,6 +15,10 @@ interface CodeEditorGetPageLanguageHook {
 	/**
 	 * Allows to set a code language for extensions content models
 	 *
+	 * As of MW 1.45, implementations of this interface should check
+	 * Hooks::tempIsCodeMirrorBetaFeatureEnabled() if the extension
+	 * also has integration with CodeMirror.
+	 *
 	 * @param Title $title The title the language is for
 	 * @param string|null &$lang The language to use
 	 * @param string $model The content model of the title

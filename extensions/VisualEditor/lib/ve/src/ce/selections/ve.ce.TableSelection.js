@@ -31,7 +31,8 @@ ve.ce.TableSelection.static.name = 'table';
  * @inheritdoc
  */
 ve.ce.TableSelection.prototype.getSelectionRects = function () {
-	return [ this.getSelectionBoundingRect() ];
+	const boundingRect = this.getSelectionBoundingRect();
+	return boundingRect ? [ boundingRect ] : [];
 };
 
 /**
@@ -39,7 +40,7 @@ ve.ce.TableSelection.prototype.getSelectionRects = function () {
  */
 ve.ce.TableSelection.prototype.getSelectionBoundingRect = function () {
 	const surface = this.getSurface(),
-		tableNode = surface.getDocument().getBranchNodeFromOffset( this.model.tableRange.start + 1 ),
+		tableNode = this.getTableNode(),
 		nodes = tableNode.getCellNodesFromSelection( this.getModel() ),
 		surfaceRect = surface.getSurface().getBoundingClientRect();
 
@@ -67,6 +68,7 @@ ve.ce.TableSelection.prototype.getSelectionBoundingRect = function () {
 	} );
 
 	// Browser tweaks to adjust for border-collapse:collapse
+	/* istanbul ignore next */
 	if ( !ve.test ) {
 		switch ( $.client.profile().layout ) {
 			case 'webkit':
@@ -96,17 +98,22 @@ ve.ce.TableSelection.prototype.getSelectionBoundingRect = function () {
 };
 
 /**
+ * @inheritdoc
+ */
+ve.ce.TableSelection.prototype.getSelectionFocusRect = function () {
+	// Table selections render the focus at 'from', instead of 'to'.
+	const fromSelection = new this.constructor( this.getModel().collapseToFrom(), this.surface );
+	return fromSelection.getSelectionBoundingRect();
+};
+
+/**
  * Get the bounding rectangle of the parent table
  *
  * @return {Object|null} Selection rectangle, with keys top, bottom, left, right, width, height
  */
 ve.ce.TableSelection.prototype.getTableBoundingRect = function () {
 	const surface = this.getSurface(),
-		tableNode = surface.getDocument().getBranchNodeFromOffset( this.model.tableRange.start + 1 );
-
-	if ( !tableNode ) {
-		return null;
-	}
+		tableNode = this.getTableNode();
 
 	const surfaceRect = surface.getSurface().getBoundingClientRect();
 	const boundingRect = tableNode.$element[ 0 ].getBoundingClientRect();
@@ -115,6 +122,16 @@ ve.ce.TableSelection.prototype.getTableBoundingRect = function () {
 		return null;
 	}
 	return ve.translateRect( boundingRect, -surfaceRect.left, -surfaceRect.top );
+};
+
+/**
+ * Get the selection's table node
+ *
+ * @return {ve.ce.TableNode} Table node
+ */
+ve.ce.TableSelection.prototype.getTableNode = function () {
+	const doc = this.getSurface().getDocument();
+	return doc.getBranchNodeFromOffset( this.getModel().tableRange.start + 1 );
 };
 
 /**

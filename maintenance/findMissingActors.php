@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
@@ -71,6 +57,7 @@ class FindMissingActors extends Maintenance {
 			'img_actor' => [ 'image', 'img_actor', 'img_name' ],
 			'oi_actor' => [ 'oldimage', 'oi_actor', 'oi_archive_name' ], // no index on oi_archive_name!
 			'fa_actor' => [ 'filearchive', 'fa_actor', 'fa_id' ],
+			'fr_actor' => [ 'filerevision', 'fr_actor', 'fr_id' ],
 			'rc_actor' => [ 'recentchanges', 'rc_actor', 'rc_id' ],
 			'log_actor' => [ 'logging', 'log_actor', 'log_id' ],
 			'rev_actor' => [ 'revision', 'rev_actor', 'rev_id' ],
@@ -121,7 +108,7 @@ class FindMissingActors extends Maintenance {
 
 		try {
 			$actorId = $this->actorNormalization->acquireActorId( $user, $dbw );
-		} catch ( CannotCreateActorException $e ) {
+		} catch ( CannotCreateActorException ) {
 			$this->fatalError( "Failed to acquire an actor ID for user '$user'" );
 		}
 

@@ -138,5 +138,7 @@ class AddMissingLoggingEntries extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = AddMissingLoggingEntries::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

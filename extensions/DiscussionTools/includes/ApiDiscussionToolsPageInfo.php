@@ -189,6 +189,18 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 					$array['html'] = $item->getHTML();
 				}
 
+				if ( $item instanceof ContentHeadingItem ) {
+					$array['commentCount'] = $item->getCommentCount();
+					$array['authorCount'] = count( $item->getAuthorsBelow() );
+					$lastestReply = $item->getLatestReply();
+					if ( $lastestReply ) {
+						$array['latestReplyTimestamp'] =
+							wfTimestamp( TS_ISO_8601, $lastestReply->getTimestamp()->getTimestamp() );
+					} else {
+						$array['latestReplyTimestamp'] = null;
+					}
+				}
+
 				if ( $item instanceof CommentItem ) {
 					// We want timestamps to be consistently formatted in API
 					// output instead of varying based on comment time

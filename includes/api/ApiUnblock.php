@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -162,9 +148,9 @@ class ApiUnblock extends ApiBase {
 		$targetName = $targetType === Block::TYPE_AUTO ? '' : $block->getTargetName();
 		$targetUserId = $block->getTargetUserIdentity() ? $block->getTargetUserIdentity()->getId() : 0;
 
-		$watchlistExpiry = $this->getExpiryFromParams( $params );
-		$watchuser = $params['watchuser'];
 		$userPage = Title::makeTitle( NS_USER, $targetName );
+		$watchlistExpiry = $this->getExpiryFromParams( $params, $userPage, $this->getUser() );
+		$watchuser = $params['watchuser'];
 		if ( $watchuser && $targetType !== Block::TYPE_RANGE && $targetType !== Block::TYPE_AUTO ) {
 			$this->setWatch( 'watch', $userPage, $this->getUser(), null, $watchlistExpiry );
 		} else {
@@ -191,14 +177,17 @@ class ApiUnblock extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$params = [
 			'id' => [
@@ -237,10 +226,12 @@ class ApiUnblock extends ApiBase {
 		return $params;
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=unblock&id=105'
@@ -250,6 +241,7 @@ class ApiUnblock extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Block';
 	}

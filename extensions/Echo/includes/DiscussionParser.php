@@ -12,6 +12,7 @@ use MediaWiki\Page\Article;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -158,9 +159,12 @@ abstract class DiscussionParser {
 		}
 
 		// Notify users mentioned in edit summary
-		global $wgEchoMaxMentionsInEditSummary;
-
-		if ( $wgEchoMaxMentionsInEditSummary > 0 && !$user->isBot() && !$isRevert ) {
+		global $wgEchoMaxMentionsInEditSummary, $wgEchoMentionsInEditSummaryBots;
+		if (
+			$wgEchoMaxMentionsInEditSummary > 0 &&
+			( !$user->isBot() || $wgEchoMentionsInEditSummaryBots ) &&
+			!$isRevert
+		) {
 			$summaryParser = new SummaryParser();
 			$usersInSummary = $summaryParser->parse( $revision->getComment()->text );
 
@@ -473,14 +477,13 @@ abstract class DiscussionParser {
 	 * Array of links in the user namespace with DBKey => ID.
 	 */
 	public static function getUserLinks( $content, Title $title ) {
-		$output = self::parseNonEditWikitext( $content, new Article( $title ) );
-		$links = $output->getLinks();
-
-		if ( !isset( $links[NS_USER] ) || !is_array( $links[NS_USER] ) ) {
-			return [];
+		$parserOutput = self::parseNonEditWikitext( $content, new Article( $title ) );
+		$links = [];
+		foreach ( $parserOutput->getLinkList( ParserOutputLinkTypes::LOCAL, NS_USER ) as
+				[ 'link' => $link, 'pageid' => $pageid ] ) {
+			$links[$link->getDBkey()] = $pageid;
 		}
-
-		return $links[NS_USER];
+		return $links;
 	}
 
 	private static function hasSubpage( string $dbk ): bool {
@@ -796,7 +799,7 @@ abstract class DiscussionParser {
 	private static function getSectionSpan( $offset, array $lines ) {
 		return [
 			self::getSectionStartIndex( $offset, $lines ),
-			self::getSectionEndIndex( $offset, $lines )
+			self::getSectionEndIndex( $offset, $lines ),
 		];
 	}
 
@@ -878,7 +881,7 @@ abstract class DiscussionParser {
 		if ( !preg_match_all( '/' . self::HEADER_REGEX . '/um', $text, $matches, PREG_OFFSET_CAPTURE ) ) {
 			return [ [
 				'header' => false,
-				'content' => $text
+				'content' => $text,
 			] ];
 		}
 
@@ -889,7 +892,7 @@ abstract class DiscussionParser {
 		if ( $matches[0][0][1] > 1 ) {
 			$sections[] = [
 				'header' => false,
-				'content' => substr( $text, 0, $matches[0][0][1] - 1 )
+				'content' => substr( $text, 0, $matches[0][0][1] - 1 ),
 			];
 		}
 		for ( $i = 0; $i < $sectionNum; $i++ ) {
@@ -900,7 +903,7 @@ abstract class DiscussionParser {
 			}
 			$sections[] = [
 				'header' => self::extractHeader( $matches[0][$i][0] ),
-				'content' => trim( $content )
+				'content' => trim( $content ),
 			];
 		}
 

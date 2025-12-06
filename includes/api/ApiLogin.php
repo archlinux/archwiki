@@ -3,21 +3,7 @@
  * Copyright © 2006-2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com",
  * Daniel Cannon (cannon dot danielc at gmail dot com)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -29,7 +15,6 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\UserIdentityUtils;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -62,6 +47,7 @@ class ApiLogin extends ApiBase {
 		$this->identityUtils = $identityUtils;
 	}
 
+	/** @inheritDoc */
 	protected function getExtendedDescription() {
 		if ( $this->getConfig()->get( MainConfigNames::EnableBotPasswords ) ) {
 			return 'apihelp-login-extended-description';
@@ -129,7 +115,7 @@ class ApiLogin extends ApiBase {
 		$result = [];
 
 		// Make sure session is persisted
-		$session = SessionManager::getGlobalSession();
+		$session = $this->getRequest()->getSession();
 		$session->persist();
 
 		// Make sure it's possible to log in
@@ -284,23 +270,28 @@ class ApiLogin extends ApiBase {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function isDeprecated() {
 		return !$this->getConfig()->get( MainConfigNames::EnableBotPasswords );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isReadMode() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		// (T283394) Logging in triggers some database writes, so should be marked appropriately.
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'name' => null,
@@ -317,6 +308,7 @@ class ApiLogin extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=login&lgname=user&lgpassword=password&lgtoken=123ABC'
@@ -324,6 +316,7 @@ class ApiLogin extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Login';
 	}

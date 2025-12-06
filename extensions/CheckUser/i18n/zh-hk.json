@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"A2093064",
+			"Dabao qian",
 			"Liuxinyu970226",
 			"LuciferianThomas",
 			"Xiplus",
 			"捍粵者",
-			"星海",
-			"Dabao qian"
+			"星海"
 		]
 	},
 	"checkuser": "查核用戶",
@@ -19,5 +19,6 @@
 	"grouppage-checkuser": "{{ns:project}}:用戶查核員",
 	"checkuser-target": "IP位址或用戶名：",
 	"checkuser-users": "查詢用戶",
-	"checkuser-ipeditcount": "~於全部用戶中 $1"
+	"checkuser-ipeditcount": "~於全部用戶中 $1",
+	"tooltip-t-global-contributions": "檢視{{GENDER:$1|該用戶}}的全域貢獻清單"
 }

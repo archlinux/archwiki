@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"BraunOBruno",
 			"Hamilton Abreu",
 			"He7d3r",
 			"Malafaya",
@@ -22,5 +23,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloco de código",
 	"syntaxhighlight-error-pygments-invocation-failure": "Erro na invocação do Pygments",
 	"syntaxhighlight-error-unknown-language": "Língua \"$1\" desconhecida",
-	"syntaxhighlight-error-exceeds-size-limit": "O tamanho do código, $1 {{PLURAL:$1|bytes}}, excede o máximo permitido, $2 {{PLURAL:$2|bytes}}"
+	"syntaxhighlight-error-exceeds-size-limit": "O tamanho do código, $1 {{PLURAL:$1|bytes}}, excede o máximo permitido, $2 {{PLURAL:$2|bytes}}",
+	"syntaxhighlight-button-copy": "Copiar",
+	"syntaxhighlight-button-copied": "Copiado!"
 }

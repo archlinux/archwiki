@@ -48,6 +48,21 @@ class InBody extends InsertionMode {
 		'html' => true,
 	];
 
+	private const IMPLICIT_CLOSE_END_DOCUMENT = [
+		'dd' => true,
+		'dt' => true,
+		'li' => true,
+		'p' => true,
+		'tbody' => true,
+		'td' => true,
+		'tfoot' => true,
+		'th' => true,
+		'thead' => true,
+		'tr' => true,
+		'body' => true,
+		'html' => true,
+	];
+
 	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$handleNonNull = function ( $text, $start, $length, $sourceStart, $sourceLength ) {
@@ -661,22 +676,7 @@ class InBody extends InsertionMode {
 
 	/** @inheritDoc */
 	public function endDocument( $pos ) {
-		$allowed = [
-			'dd' => true,
-			'dt' => true,
-			'li' => true,
-			'p' => true,
-			'tbody' => true,
-			'td' => true,
-			'tfoot' => true,
-			'th' => true,
-			'thead' => true,
-			'tr' => true,
-			'body' => true,
-			'html' => true,
-		];
-
-		$this->builder->checkUnclosed( $allowed, $pos );
+		$this->builder->checkUnclosed( self::IMPLICIT_CLOSE_END_DOCUMENT, $pos );
 		if ( !$this->dispatcher->templateModeStack->isEmpty() ) {
 			$this->dispatcher->inTemplate->endDocument( $pos );
 		} else {

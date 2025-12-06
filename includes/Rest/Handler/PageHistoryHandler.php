@@ -19,8 +19,6 @@ use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\NameTableStoreFactory;
 use MediaWiki\Title\TitleFormatter;
 use Wikimedia\Message\MessageValue;
-use Wikimedia\Message\ParamType;
-use Wikimedia\Message\ScalarParam;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -123,7 +121,7 @@ class PageHistoryHandler extends SimpleHandler {
 			foreach ( ChangeTags::REVERT_TAGS as $tagName ) {
 				try {
 					$tagIds[] = $this->changeTagDefStore->getId( $tagName );
-				} catch ( NameTableAccessException $exception ) {
+				} catch ( NameTableAccessException ) {
 					// If no revisions are tagged with a name, no tag id will be present
 				}
 			}
@@ -133,16 +131,13 @@ class PageHistoryHandler extends SimpleHandler {
 
 		if ( !$page ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-nonexistent-title',
-					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ]
-				),
+				( new MessageValue( 'rest-nonexistent-title' ) )->plaintextParams( $title ),
 				404
 			);
 		}
 		if ( !$this->getAuthority()->authorizeRead( 'read', $page ) ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-permission-denied-title',
-					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ] ),
+				( new MessageValue( 'rest-permission-denied-title' ) )->plaintextParams( $title ),
 				403
 			);
 		}
@@ -166,9 +161,8 @@ class PageHistoryHandler extends SimpleHandler {
 			);
 			if ( !$rev ) {
 				throw new LocalizedHttpException(
-					new MessageValue( 'rest-nonexistent-title-revision',
-						[ $relativeRevId, new ScalarParam( ParamType::PLAINTEXT, $title ) ]
-					),
+					( new MessageValue( 'rest-nonexistent-title-revision', [ $relativeRevId ] ) )
+						->plaintextParams( $title ),
 					404
 				);
 			}
@@ -418,10 +412,12 @@ class PageHistoryHandler extends SimpleHandler {
 		return $response;
 	}
 
+	/** @inheritDoc */
 	public function needsWriteAccess() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getParamSettings() {
 		return [
 			'title' => [
@@ -489,12 +485,5 @@ class PageHistoryHandler extends SimpleHandler {
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
 		return 'includes/Rest/Handler/Schema/PageHistory.json';
-	}
-
-	protected function generateResponseSpec( string $method ): array {
-		$spec = parent::generateResponseSpec( $method );
-
-		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-		return $spec;
 	}
 }

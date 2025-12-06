@@ -2,21 +2,7 @@
 /**
  * Generic operation result.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -50,6 +36,10 @@ use StatusValue;
  * so that a lack of error-handling will be explicit.
  *
  * @newable
+ * @template T Type of the value stored in the status when the operation result is OK.
+ *   May be 'never' to indicate that there's no meaningful value, and that
+ *   this status is only used to keep track of errors and warnings.
+ * @extends StatusValue<T>
  */
 class Status extends StatusValue {
 	/** @var callable|false */
@@ -61,6 +51,12 @@ class Status extends StatusValue {
 	private ?StatusFormatter $formatter = null;
 
 	/**
+	 * @suppress PhanGenericConstructorTypes
+	 */
+	public function __construct() {
+	}
+
+	/**
 	 * Succinct helper method to wrap a StatusValue
 	 *
 	 * This is useful when formatting StatusValue objects:
@@ -69,7 +65,7 @@ class Status extends StatusValue {
 	 * @endcode
 	 *
 	 * @param StatusValue|Status $sv
-	 * @return Status
+	 * @return static
 	 */
 	public static function wrap( $sv ) {
 		if ( $sv instanceof static ) {
@@ -157,21 +153,10 @@ class Status extends StatusValue {
 	}
 
 	/**
-	 * Splits this Status object into two new Status objects, one which contains only
-	 * the error messages, and one that contains the warnings, only. The returned array is
-	 * defined as:
-	 * [
-	 *     0 => object(Status) # The Status with error messages, only
-	 *     1 => object(Status) # The Status with warning messages, only
-	 * ]
-	 *
-	 * @return Status[]
+	 * @inheritDoc
 	 */
 	public function splitByErrorType() {
 		[ $errorsOnlyStatus, $warningsOnlyStatus ] = parent::splitByErrorType();
-		// phan/phan#2133?
-		'@phan-var Status $errorsOnlyStatus';
-		'@phan-var Status $warningsOnlyStatus';
 
 		if ( $this->messageLocalizer ) {
 			$errorsOnlyStatus->setMessageLocalizer = $this->messageLocalizer;
@@ -190,7 +175,7 @@ class Status extends StatusValue {
 
 	/**
 	 * Returns the wrapped StatusValue object
-	 * @return StatusValue
+	 * @return StatusValue<T>
 	 * @since 1.27
 	 */
 	public function getStatusValue() {

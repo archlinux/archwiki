@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
+			"Foomin10",
 			"Fryed-peach",
 			"Funa-enpitu",
 			"Hinaloe",
@@ -21,8 +22,7 @@
 			"Yusuke1109",
 			"そらたこ",
 			"神樂坂秀吉",
-			"組曲師",
-			"Foomin10"
+			"組曲師"
 		]
 	},
 	"minerva-last-modified-date": "最終更新: $1 $2",
@@ -48,7 +48,6 @@
 	"mobile-frontend-meta-data-issues-categories": "このカテゴリについて",
 	"mobile-frontend-meta-data-issues-header": "ページの問題点",
 	"minerva-meta-data-issues-section-header": "節の問題点",
-	"mobile-frontend-pageaction-edit-tooltip": "このページの導入部を編集する",
 	"mobile-frontend-placeholder": "{{SITENAME}}内を検索",
 	"mobile-frontend-random-button": "おまかせ表示",
 	"mobile-frontend-redirected-from": "「[[$1]]」から転送されました",
@@ -70,12 +69,6 @@
 	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue 議論]",
 	"minerva-skin-desc": "レスポンシブ対応のモバイル優先外装",
 	"skin-minerva-issue-learn-more": "詳細",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1}}秒前",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1}}分前",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1}}時間前",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1}}日前",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1}}ヶ月前",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1}}年前",
 	"skin-minerva-mobile-option-MinervaShowCategories": "カテゴリ",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "ページが属するカテゴリを表示",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "残念ながら、モバイルビューでは複数の変更をページごとにまとめて表示することはできません。ページごとにまとめて表示する機能を利用したい場合はデスクトップサイトにアクセスしてください。",

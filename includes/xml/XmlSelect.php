@@ -2,21 +2,7 @@
 /**
  * Class for generating HTML <select> elements.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,15 +14,19 @@ use MediaWiki\Html\Html;
  * Class for generating HTML <select> or <datalist> elements.
  */
 class XmlSelect {
-	/** @var array[] */
-	protected $options = [];
-	/** @var string|array|false */
-	protected $default = false;
-	/** @var string|array */
-	protected $tagName = 'select';
+	/** @var array<array<string,string|int|float|array>> */
+	private array $options = [];
+	/** @var string|int|float|array|false */
+	private $default;
+	private string $tagName = 'select';
 	/** @var (string|int)[] */
-	protected $attributes = [];
+	private array $attributes = [];
 
+	/**
+	 * @param string|false $name
+	 * @param string|false $id
+	 * @param string|int|float|array|false $default
+	 */
 	public function __construct( $name = false, $id = false, $default = false ) {
 		if ( $name ) {
 			$this->setAttribute( 'name', $name );
@@ -46,22 +36,21 @@ class XmlSelect {
 			$this->setAttribute( 'id', $id );
 		}
 
-		if ( $default !== false ) {
-			$this->default = $default;
-		}
-	}
-
-	/**
-	 * @param string|array $default
-	 */
-	public function setDefault( $default ) {
 		$this->default = $default;
 	}
 
 	/**
-	 * @param string|array $tagName
+	 * @param string|int|float|array $default
 	 */
-	public function setTagName( $tagName ) {
+	public function setDefault( $default ): void {
+		$this->default = $default;
+	}
+
+	/**
+	 * @deprecated since 1.45
+	 */
+	public function setTagName( string $tagName ): void {
+		wfDeprecated( __METHOD__, '1.45' );
 		$this->tagName = $tagName;
 	}
 
@@ -69,7 +58,7 @@ class XmlSelect {
 	 * @param string $name
 	 * @param string|int $value
 	 */
-	public function setAttribute( $name, $value ) {
+	public function setAttribute( string $name, $value ): void {
 		$this->attributes[$name] = $value;
 	}
 
@@ -77,15 +66,15 @@ class XmlSelect {
 	 * @param string $name
 	 * @return string|int|null
 	 */
-	public function getAttribute( $name ) {
+	public function getAttribute( string $name ) {
 		return $this->attributes[$name] ?? null;
 	}
 
 	/**
 	 * @param string $label
-	 * @param string|int|float|false $value If not given, assumed equal to $label
+	 * @param string|int|float|array|false $value If not given, assumed equal to $label
 	 */
-	public function addOption( $label, $value = false ) {
+	public function addOption( string $label, $value = false ): void {
 		$value = $value !== false ? $value : $label;
 		$this->options[] = [ $label => $value ];
 	}
@@ -95,9 +84,9 @@ class XmlSelect {
 	 * label => value
 	 * label => ( label => value, label => value )
 	 *
-	 * @param array $options
+	 * @param array<string,string|int|float|array> $options
 	 */
-	public function addOptions( $options ) {
+	public function addOptions( array $options ): void {
 		$this->options[] = $options;
 	}
 
@@ -106,11 +95,11 @@ class XmlSelect {
 	 * label => value
 	 * label => ( label => value, label => value )
 	 *
-	 * @param array $options
-	 * @param string|array|false $default
-	 * @return string
+	 * @param array<string,string|int|float|array> $options
+	 * @param string|int|float|array|false $default
+	 * @return string HTML
 	 */
-	public static function formatOptions( $options, $default = false ) {
+	public static function formatOptions( array $options, $default = false ): string {
 		$data = '';
 
 		foreach ( $options as $label => $value ) {
@@ -129,10 +118,7 @@ class XmlSelect {
 		return $data;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getHTML() {
+	public function getHTML(): string {
 		$contents = '';
 
 		foreach ( $this->options as $options ) {
@@ -148,19 +134,15 @@ class XmlSelect {
 	 * @since 1.35
 	 * @link https://translatewiki.net/wiki/Template:Doc-mediawiki-options-list
 	 * @param string $msg The message to parse.
-	 * @return string[] The options array, where keys are option labels (i.e. translations)
+	 * @return array<string,string> The options array, where keys are option labels (i.e. translations)
 	 * and values are option values (i.e. untranslated).
 	 */
 	public static function parseOptionsMessage( string $msg ): array {
 		$options = [];
 		foreach ( explode( ',', $msg ) as $option ) {
+			$parts = explode( ':', $option, 2 );
 			// Normalize options that only have one part.
-			if ( strpos( $option, ':' ) === false ) {
-				$option = "$option:$option";
-			}
-			// Extract the two parts.
-			[ $label, $value ] = explode( ':', $option );
-			$options[ trim( $label ) ] = trim( $value );
+			$options[ trim( $parts[0] ) ] = trim( $parts[1] ?? $parts[0] );
 		}
 		return $options;
 	}

@@ -167,7 +167,7 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 <p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr">foo</code>
 </p>
 !! html/parsoid
-<p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/syntaxhighlight mw:Transclusion" data-mw='{"name":"syntaxhighlight","attrs":{"lang":"text","inline":"none"},"body":{"extsrc":"foo"},"parts":[{"template":{"target":{"wt":"#tag:syntaxhighlight","function":"tag"},"params":{"1":{"wt":"&lt;nowiki>foo&lt;/nowiki>"},"lang":{"wt":"\"text\""},"inline":{"wt":"none"}},"i":0}}]}'>foo</code></p>
+<p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr" typeof="mw:Extension/syntaxhighlight mw:Transclusion" data-mw='{"name":"syntaxhighlight","attrs":{"lang":"text","inline":"none"},"body":{"extsrc":"foo"},"parts":[{"template":{"target":{"wt":"#tag:syntaxhighlight","function":"tag"},"params":{"1":{"wt":"&lt;nowiki>foo&lt;/nowiki>"},"2":{"wt":"lang=\"text\""},"3":{"wt":"inline=none"}},"i":0}}]}'>foo</code></p>
 !! end
 
 !! test

@@ -23,18 +23,20 @@ abstract class ExtensionTagHandler {
 
 	/**
 	 * Convert an extension tag's content to "prepared and loaded" DOM.
+	 *
 	 * @param ParsoidExtensionAPI $extApi
-	 * @param string $src Extension tag content
-	 * @param array $extArgs Extension tag arguments
+	 * @param string $content Extension tag content
+	 * @param array $args Extension tag arguments
 	 *   The extension tag arguments should be treated as opaque objects
 	 *   and any necessary inspection should be handled through the API.
 	 * @return DocumentFragment|false|null
 	 *   `DocumentFragment` if returning some parsed content
 	 *   `false` to fallback to the default handler for the content
 	 *   `null` to drop the instance completely
+	 * @throws ExtensionError
 	 */
 	public function sourceToDom(
-		ParsoidExtensionAPI $extApi, string $src, array $extArgs
+		ParsoidExtensionAPI $extApi, string $content, array $args
 	) {
 		return false; /* Use default wrapper */
 	}
@@ -113,13 +115,14 @@ abstract class ExtensionTagHandler {
 	 */
 	public function lintHandler(
 		ParsoidExtensionAPI $extApi, Element $rootNode, callable $defaultHandler
-	) {
+	): bool {
 		/* Use default linter */
 		return false;
 	}
 
 	/**
 	 * Serialize a DOM node created by this extension to wikitext.
+	 *
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param Element $node A node in a "prepared and loaded" document.
 	 * @param bool $wrapperUnmodified

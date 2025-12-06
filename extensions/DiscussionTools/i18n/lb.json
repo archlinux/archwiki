@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"GilPe",
 			"Les Meloures",
 			"Robby",
 			"Soued031",
-			"Volvox",
-			"GilPe"
+			"Volvox"
 		]
 	},
 	"discussiontools": "Diskussiouns-Geschier",
@@ -14,6 +14,7 @@
 	"discussiontools-autotopicsubpopup-preferences": "Astellungen änneren",
 	"discussiontools-autotopicsubpopup-title": "Dir gouft abonéiert",
 	"discussiontools-defaultsummary-reply": "Äntweren",
+	"discussiontoolsdebug-title": "Datestruktur vum Diskussiounsgeschier",
 	"discussiontoolsdebug-pagetitle": "Titel vun der Säit",
 	"discussiontools-desc": "Geschier fir Diskussiounsäiten ze verbesseren.",
 	"discussiontools-emptystate-button": "Eng Diskussioun ufänken",
@@ -28,11 +29,11 @@
 	"discussiontools-emptystate-title-user": "Fänkt eng Diskussioun {{GENDER:{{PAGENAME}}|mam}} {{PAGENAME}} un",
 	"discussiontools-emptystate-title-user-anon": "Wëllkomm op dëser Diskussiounssäit",
 	"discussiontools-emptystate-title-user-temp": "Fänkt eng Diskussioun mam {{PAGENAME}} un",
-	"discussiontools-error-comment-conflict": "Äre Kommentar konnt net gespäichert ginn, well am selwechte Moment een aneren e Kommentar gemaach huet. Probéiert et wgl. nach eng Kéier oder luet d'Säit nei fir dee leschte Kommentar ze gesinn.",
+	"discussiontools-error-comment-conflict": "{{GENDER:|Äre}} Kommentar konnt net gespäichert ginn, well am selwechte Moment een aneren e Kommentar gemaach huet. Probéiert et wgl. nach eng Kéier oder luet d'Säit nei fir dee leschte Kommentar ze gesinn.",
 	"discussiontools-error-comment-disappeared": "De Kommentar, op deen Dir äntwere wollt, konnt op dëser Säit net fonnt ginn. E gouf eventuell geläscht oder op eng aner Säit geréckelt.",
 	"discussiontools-error-comment-disappeared-reload": "Luet d'Säit wgl. nei a probéiert nach eng Kéier.",
 	"discussiontools-error-comment-is-transcluded": "De Link „{{int:discussiontools-replylink}}“ kann net benotzt gi fir op dëse Kommentar z'äntweren. Fir z'äntweren benotzt wgl. den Editeur fir déi komplett Säit, andeems Dir op „$1“ klickt.",
-	"discussiontools-error-comment-not-saved": "Äre Kommentar konnt net op der rezentster Versioun vun der Säit verëffentlecht ginn. Fir déi rezentst Ännerungen ze gesinn, kopéiert d'Preparatioun vun Ärem Kommentar a benotzt dann Äre Browser fir d'Säit nei ze lueden.",
+	"discussiontools-error-comment-not-saved": "{{GENDER:|Äre}} Kommentar konnt net op der rezentster Versioun vun der Säit verëffentlecht ginn. Fir déi rezentst Ännerungen ze gesinn, kopéiert d'Preparatioun vun Ärem Kommentar a benotzt dann Äre Browser fir d'Säit nei ze lueden.",
 	"discussiontools-error-noswitchtove-extension": "Erweiderungs- oder Referenzsyntax",
 	"discussiontools-error-noswitchtove-table": "Tabellesyntax",
 	"discussiontools-error-noswitchtove-template": "Schablounesyntax",
@@ -58,7 +59,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Dir hutt Iech desabonéiert.",
 	"discussiontools-notification-added-topic-header": "Neie Sujet „<strong>$4</strong>“ op <strong>$3</strong> {{GENDER:$2|ugeluecht}} vum $1.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Een neie Sujet|$1 nei Sujeten|100=Méi wéi 99 nei Sujeten}} op „<strong>$2</strong>“.",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Sujet weisen",
 	"discussiontools-notification-comment-thank-header": "{{GENDER:$2|De(n) $1|D'$1}} huet {{GENDER:$4|Iech}} fir Äre Kommentar op „<strong>$3</strong>“ Merci gesot.",
 	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Eng Persoun huet|$1 Persounen hunn|100=Méi wéi 99 Persounen hunn}} {{GENDER:$3|Iech}} fir Äre Kommentar op „<strong>$2</strong>“ Merci gesot.",
@@ -74,7 +74,6 @@
 	"discussiontools-notification-topic-hidden": "(Sujet ewechgeholl)",
 	"discussiontools-notification-subscribed-new-comment-header": "{{GENDER:$2|De(n) $1|D'$1}} huet op „<strong>$4</strong>“ geäntwert.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Eng nei Äntwert|$1 nei Äntwerten|100=Méi wéi 99 nei Äntwerten}} op „<strong>$3</strong>“.",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Kommentar weisen",
 	"discussiontools-pageframe-latestcomment": "Leschte Kommentar: $1 vum $2 am Sujet $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Leschte Kommentar: $1 vum $2",

@@ -5,8 +5,6 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-@import 'mediawiki.mixins.less';
-
 .client-nojs .ve-init-mw-diffPage-diffMode {
 	display: none;
 }
@@ -17,7 +15,6 @@
 }
 
 .ve-init-mw-diffPage-revSlider-visual {
-
 	@new: #39b79c;
 	@old: #d73c34;
 
@@ -63,20 +60,20 @@
 
 	.mw-revslider-pointer {
 		&.mw-revslider-pointer-newer {
+			background-image: linear-gradient( lighten( @new, 30% ), @new );
 			border-color: @new;
-			.vertical-gradient( lighten( @new, 30% ), @new );
 
 			&:hover {
-				.vertical-gradient( lighten( @new, 40% ), @new );
+				background-image: linear-gradient( lighten( @new, 40% ), @new );
 			}
 		}
 
 		&.mw-revslider-pointer-older {
+			background-image: linear-gradient( lighten( @old, 30% ), @old );
 			border-color: @old;
-			.vertical-gradient( lighten( @old, 30% ), @old );
 
 			&:hover {
-				.vertical-gradient( lighten( @old, 40% ), @old );
+				background-image: linear-gradient( lighten( @old, 40% ), @old );
 			}
 		}
 	}

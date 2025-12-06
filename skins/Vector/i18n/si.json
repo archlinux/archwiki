@@ -5,9 +5,13 @@
 			"Thushara",
 			"දසනැබළයෝ",
 			"පසිඳු කාවින්ද",
-			"සුරනිමල"
+			"සුරනිමල",
+			"BuddhikaW88"
 		]
 	},
+	"vector-languages": "භාෂා",
+	"vector-language-button-label": "{{PLURAL:$1| භාෂාව $1 | භාෂා $1 }}",
+	"vector-no-language-button-label": "භාෂා එකතු කිරීම",
 	"vector-action-addsection": "මාතෘකාවක් එක්කරන්න",
 	"vector-action-delete": "මකන්න",
 	"vector-action-move": "ගෙනයන්න",
@@ -19,5 +23,27 @@
 	"vector-view-history": "ඉතිහාසය බලන්න",
 	"vector-view-view": "කියවන්න",
 	"vector-view-viewsource": "මූලාශ්‍රය නරඹන්න",
-	"vector-more-actions": "තවත්"
+	"vector-more-actions": "තවත්",
+	"vector-appearance-label": "පෙනුම",
+	"vector-feature-limited-width-name": "පළල",
+	"vector-feature-limited-width-0-label": "පළල",
+	"vector-feature-limited-width-1-label": "සම්මත",
+	"vector-feature-custom-font-size-name": "පෙළ",
+	"vector-feature-custom-font-size-0-label": "කුඩා",
+	"vector-feature-custom-font-size-1-label": "සම්මත",
+	"vector-feature-custom-font-size-2-label": "විශාල",
+	"skin-theme-name": "වර්ණය",
+	"skin-theme-day-label": "ලා",
+	"skin-theme-night-label": "අදුරු",
+	"skin-theme-os-label": "ස්වයංක්‍රීය",
+	"skin-theme-exclusion-notice": "මෙම පිටුව සැමවිටම අඩු මාදිලියේ පවතී.",
+	"vector-toc-label": "අන්තර්ගතයන්",
+	"vector-toc-beginning": "ආරම්භය",
+	"vector-anon-user-menu-pages": "නික්මූ සංස්කාරකවරුන් සඳහා පිටු",
+	"vector-main-menu-label": "ප්‍රධාන මෙනුව",
+	"vector-feature-custom-font-size-exclusion-notice": "මෙම පිටුව සැමවිටම කුඩා අකුරු ප්‍රමාණයක් භාවිතා කරයි",
+	"vector-page-tools-label": "මෙවලම්",
+	"vector-page-tools-general-label": "සාමාන්‍ය",
+	"vector-page-tools-actions-label": "කාර්යයන්",
+	"vector-unpin-element-label": "සඟවන්න"
 }

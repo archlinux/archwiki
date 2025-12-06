@@ -3,8 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\NodeData;
 
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
 // phpcs:disable MediaWiki.Commenting.PropertyDocumentation.ObjectTypeHintVar
@@ -38,7 +40,9 @@ class NodeData {
 		// undecoded rich attributes and hints are not, but they are immutable
 		// and thus don't need to be deep-cloned.)
 		foreach ( get_object_vars( $this ) as $k => $v ) {
-			if ( is_object( $v ) ) {
+			if ( $v instanceof DocumentFragment ) {
+				$this->$k = DOMDataUtils::cloneDocumentFragment( $v );
+			} elseif ( is_object( $v ) ) {
 				$this->$k = clone $v;
 			}
 		}
@@ -48,8 +52,9 @@ class NodeData {
 	 * Deep clone this object
 	 * If $stripSealedFragments is true, sealed DOMFragment included in expanded attributes are deleted in the
 	 * clone.
+	 *
 	 * @param bool $stripSealedFragments
-	 * @return self
+	 * @return static
 	 */
 	public function cloneNodeData( bool $stripSealedFragments = false ): self {
 		$nd = clone $this;

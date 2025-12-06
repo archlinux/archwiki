@@ -32,7 +32,6 @@
 	"mobile-frontend-meta-data-issues": "Vandamál varðandi síðu",
 	"mobile-frontend-meta-data-issues-categories": "Um þennan flokk",
 	"mobile-frontend-meta-data-issues-header": "Vandamál varðandi síðu",
-	"mobile-frontend-pageaction-edit-tooltip": "Breyta innganginum að þessari síðu.",
 	"mobile-frontend-placeholder": "Leita á {{SITENAME}}",
 	"mobile-frontend-random-button": "Handahófsvalið",
 	"mobile-frontend-redirected-from": "Endurbeint frá: [[$1]]",

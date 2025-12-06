@@ -52,8 +52,6 @@ class EditRevUpdater {
 
 	/**
 	 * Set the WikiPage object used for the ongoing edit
-	 *
-	 * @param WikiPage $page
 	 */
 	public function setLastEditPage( WikiPage $page ): void {
 		$this->wikiPage = $page;
@@ -86,7 +84,11 @@ class EditRevUpdater {
 	 */
 	public function updateRev( WikiPage $wikiPage, RevisionRecord $revisionRecord ): bool {
 		$key = $this->getCacheKey( $wikiPage->getTitle() );
-		if ( !isset( $this->logIds[ $key ] ) || $wikiPage !== $this->wikiPage ) {
+		if (
+			!isset( $this->logIds[ $key ] ) ||
+			$this->wikiPage === null ||
+			!$this->wikiPage->isSamePageAs( $wikiPage )
+		) {
 			// This isn't the edit $this->logIds was set for
 			$this->logIds = [];
 			return false;
@@ -130,10 +132,6 @@ class EditRevUpdater {
 		return $ret;
 	}
 
-	/**
-	 * @param LinkTarget $target
-	 * @return string
-	 */
 	private function getCacheKey( LinkTarget $target ): string {
 		return $target->getNamespace() . '|' . $target->getText();
 	}

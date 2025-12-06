@@ -4,15 +4,13 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
 
 class ChemWord extends TexNode {
-
-	/** @var TexNode */
-	public $left;
-	/** @var TexNode */
-	public $right;
+	public TexNode $left;
+	public TexNode $right;
 
 	public function __construct( TexNode $left, TexNode $right ) {
 		parent::__construct( $left, $right );
@@ -20,16 +18,10 @@ class ChemWord extends TexNode {
 		$this->right = $right;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getLeft(): TexNode {
 		return $this->left;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getRight(): TexNode {
 		return $this->right;
 	}
@@ -40,16 +32,29 @@ class ChemWord extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function renderMML( $arguments = [], &$state = [] ) {
-		$mmlMrow = new MMLmrow();
-		$mtextLeft = new MMLmtext( "", [ "mathcolor" => "red" ] );
-		$mtextRight = new MMLmtext();
-		// If right has empty literal content is resolved as dash
-		$right = $this->getRight()->getArgs()[0] == "" ? "-" : $this->getRight()->renderMML( [],
-			$state );
-		return $mmlMrow->encapsulateRaw( $mmlMrow->encapsulateRaw(
-			$mtextLeft->encapsulateRaw( $this->getLeft()->renderMML( [], $state ) )
-			. $mtextRight->encapsulateRaw( $right ) ) );
+	public function toMMLTree( array $arguments = [], array &$state = [] ) {
+		// If the right has an empty literal value, content is resolved as dash
+		$right = $this->getRight()->getArgs()[0] == ""
+			? "-"
+			: $this->getRight()->toMMLTree( [], $state );
+		return new MMLmrow(
+			TexClass::ORD,
+			[],
+			new MMLmrow(
+				TexClass::ORD,
+				[],
+				new MMLmtext(
+					"",
+					[ "mathcolor" => "red" ],
+					(string)$this->getLeft()->toMMLTree( [], $state )
+				),
+				new MMLmtext(
+					"",
+					[],
+					(string)$right
+				)
+			)
+		);
 	}
 
 	/** @inheritDoc */

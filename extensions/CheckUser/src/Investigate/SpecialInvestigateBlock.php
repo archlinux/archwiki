@@ -89,7 +89,7 @@ class SpecialInvestigateBlock extends FormSpecialPage {
 	 */
 	public function getFormFields() {
 		$this->getOutput()->addModules( [
-			'ext.checkUser'
+			'ext.checkUser',
 		] );
 		$this->getOutput()->addModuleStyles( [
 			'mediawiki.widgets.TagMultiselectWidget.styles',
@@ -132,7 +132,7 @@ class SpecialInvestigateBlock extends FormSpecialPage {
 						[
 							'classes' => [ 'mw-htmlform-ooui-header-warnings' ],
 							'warnings' => [
-								$this->msg( 'checkuser-investigateblock-warning-users-truncated', $maxBlocks )->parse()
+								$this->msg( 'checkuser-investigateblock-warning-users-truncated', $maxBlocks )->parse(),
 							],
 						]
 					) );
@@ -323,7 +323,7 @@ class SpecialInvestigateBlock extends FormSpecialPage {
 		if ( $this->checkForIPsAndUsersInTargetsParam( $data['Targets'] ) && !$data['Confirm'] ) {
 			return [
 				'checkuser-investigateblock-warning-ips-and-users-in-targets',
-				'checkuser-investigateblock-warning-confirmaction'
+				'checkuser-investigateblock-warning-confirmaction',
 			];
 		}
 
@@ -458,7 +458,7 @@ class SpecialInvestigateBlock extends FormSpecialPage {
 
 		try {
 			$api->execute();
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			$this->noticesFailed = true;
 		}
 	}

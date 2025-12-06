@@ -10,6 +10,7 @@ return [
 			$services->getMainConfig(),
 			$services->getDBLoadBalancerFactory(),
 			$services->getRepoGroup(),
+			$services->getUrlUtils(),
 			$services->getUserOptionsLookup()
 		);
 	},

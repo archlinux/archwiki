@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Test\Parsoid;
 
@@ -143,7 +144,7 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 
 		$pageContent = new MockPageContent( [ 'main' => $testOpts['pageContent'] ?? '' ] );
 		$pageConfig = new MockPageConfig( $siteConfig, [
-			'pageLanguage' => $testOpts['pageLanguage'] ?? 'en'
+			'pageLanguage' => $testOpts['pageLanguage'] ?? new Bcp47CodeValue( 'en' ),
 		], $pageContent );
 		$pb = new PageBundle(
 			$input['html'],
@@ -429,15 +430,15 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$metrics = $siteConfig->metrics();
 		$this->assertInstanceOf( MockMetrics::class, $metrics );
 		$log = $metrics->log;
-		$this->assertCount( 14, $log );
-
+		$this->assertCount( 14, array_filter( $log, static fn ( $elem ) => $elem[0] === 'timing' ) );
+		$this->assertCount( 3, array_filter( $log, static fn ( $elem ) => $elem[0] === 'histogram' ) );
 		$this->assertEquals(
 			[ 'timing', 'entry.html2wt.size.input', 11.0 ],
 			$log[6]
 		);
 		$this->assertEquals(
 			[ 'timing', 'entry.html2wt.size.output', 4.0 ],
-			$log[10]
+			$log[11]
 		);
 	}
 

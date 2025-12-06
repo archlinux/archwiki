@@ -103,9 +103,10 @@ class ToolbarBuilder {
 	/**
 	 * @param array $actions
 	 * @param array $views
+	 * @param bool $isBookmarkEnabled
 	 * @return Group
 	 */
-	public function getGroup( array $actions, array $views ): Group {
+	public function getGroup( array $actions, array $views, bool $isBookmarkEnabled = false ): Group {
 		$group = new Group( 'p-views' );
 		$permissions = $this->permissions;
 		$userPageOrUserTalkPageWithOverflowMode = $this->skinOptions->get( SkinOptions::TOOLBAR_SUBMENU )
@@ -123,20 +124,41 @@ class ToolbarBuilder {
 				true
 			) );
 		}
+		// Don't render the "view" action.
+		unset( $views[  'view' ] );
 
 		$watchKey = $key = isset( $actions['unwatch'] ) ? 'unwatch' : 'watch';
 		// The watchstar is typically not shown to anonymous users but it is in Minerva.
-		$watchData = $actions[ $watchKey ] ?? [
-			'icon' => 'star',
-			'class' => '',
-			'href' => $this->getLoginUrl( [ 'returnto' => $this->title ] ),
-			'text' => $this->context->msg( 'watch' ),
-		];
-		if ( $permissions->isAllowed( IMinervaPagePermissions::WATCHABLE ) && $watchData ) {
-			$group->insertEntry( $this->createWatchPageAction( $watchKey, $watchData ) );
+		$watchData = $actions[ $watchKey ] ?? null;
+		// If the watchstar doesn't exist AND the user is not named (e.g. anonymous )
+		// we inject a watchstar icon that links to the login page. This will open a drawer
+		// that informs the user that this feature exists.
+		// We don't want to do this in the case the user is already logged in (this situation
+		// arises when the ReadingList extension is installed which may unset the watchstar icon).
+		// If the watchstar is null and the user is logged in, it means the page is not watchable
+		// (for example special pages) so we should not worry about this case (L145 will ignore it).
+		if ( !$watchData && !$this->user->isNamed() ) {
+			$watchData = [
+				'icon' => 'star',
+				'class' => '',
+				'href' => $this->getLoginUrl( [ 'returnto' => $this->title ] ),
+				'text' => $this->context->msg( 'watch' ),
+			];
+		}
+		if ( $isBookmarkEnabled ) {
+			// Relocate bookmark icon to front so it is consistent with watchstar position
+			self::copyItemToGroup( $views['bookmark'], 'bookmark', $group, $this->context );
+			unset( $views[ 'bookmark' ] );
+		} else {
+			// THIS WILL ONLY HAPPEN IF NO BOOKMARK IS DETECTED IN THE VIEWS MENU
+			if ( $permissions->isAllowed( IMinervaPagePermissions::WATCHABLE ) && $watchData ) {
+				$group->insertEntry( $this->createWatchPageAction( $watchKey, $watchData ) );
+			}
 		}
 
 		$historyView = $views[ 'history'] ?? [];
+		unset( $views[ 'history' ] );
+
 		if ( $historyView && $permissions->isAllowed( IMinervaPagePermissions::HISTORY ) ) {
 			$group->insertEntry( $this->getHistoryPageAction( $historyView ) );
 		}
@@ -163,24 +185,35 @@ class ToolbarBuilder {
 					$group->insertEntry( $this->createEditPageAction( $key, $viewData ) );
 				}
 			} elseif ( isset( $viewData[ 'icon' ] ) ) {
-				// Everything else (e.g., 'bookmark', 'share') is added normally
-				$entry = new SingleMenuEntry(
-					'page-actions-' . $key,
-					$viewData['text'] ?? $key,
-					$viewData['href'] ?? '#',
-					$viewData['class'] ?? ''
-				);
-
-				$entry
-					->setIcon( $viewData['icon'] )
-					->trackClicks( $key )
-					->setTitle( $this->context->msg( 'tooltip-' . $key ) )
-					->setNodeID( 'ca-' . $key );
-
-				$group->insertEntry( $entry );
+				self::copyItemToGroup( $viewData, $key, $group, $this->context );
 			}
 		}
 		return $group;
+	}
+
+	/**
+	 * @param array $viewData
+	 * @param string $key
+	 * @param Group $group
+	 * @param IContextSource $context
+	 */
+	private static function copyItemToGroup( $viewData, $key, $group, $context ) {
+		$entry = new SingleMenuEntry(
+			'page-actions-' . $key,
+			$viewData['text'] ?? $key,
+			$viewData['href'] ?? '#',
+			$viewData['class'] ?? '',
+			true,
+			$viewData['array-attributes'] ?? []
+		);
+
+		$entry
+			->setIcon( $viewData['icon'] )
+			->trackClicks( $key )
+			->setTitle( $context->msg( 'tooltip-' . $key ) )
+			->setNodeID( 'ca-' . $key );
+
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -206,7 +239,7 @@ class ToolbarBuilder {
 
 	/**
 	 * Creates the "edit" page action: the well-known pencil icon that, when tapped, will open an
-	 * editor with the lead section loaded.
+	 * editor.
 	 *
 	 * @param string $key
 	 * @param array $editAction

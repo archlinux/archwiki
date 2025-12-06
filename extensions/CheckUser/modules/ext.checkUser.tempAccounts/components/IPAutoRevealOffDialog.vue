@@ -12,14 +12,21 @@
 		<!-- eslint-disable vue/no-v-html -->
 		<p v-html="expiry"></p>
 		<cdx-message
-			v-if="showExtendError"
+			v-if="extendError !== ''"
 			type="error"
 			:inline="true"
 		>
-			<p>{{ $i18n( 'checkuser-ip-auto-reveal-off-dialog-error-extend-limit' ).text() }}</p>
+			<p>{{ extendError }}</p>
+		</cdx-message>
+		<cdx-message
+			v-if="disableError !== ''"
+			type="error"
+			:inline="true"
+		>
+			<p>{{ disableError }}</p>
 		</cdx-message>
 		<template #footer-text>
-			<p>{{ $i18n( 'checkuser-ip-auto-reveal-off-dialog-text-info' ).text() }}</p>
+			<p v-i18n-html:checkuser-ip-auto-reveal-off-dialog-text-info></p>
 		</template>
 	</cdx-dialog>
 </template>
@@ -29,6 +36,10 @@ const { ref } = require( 'vue' );
 const { CdxDialog, CdxMessage } = require( '@wikimedia/codex' );
 const { setAutoRevealStatus } = require( './../ipRevealUtils.js' );
 const { disableAutoReveal } = require( './../ipReveal.js' );
+const useInstrument = require( '../useInstrument.js' );
+
+// The duration message for the error was translated using PHP's Message::durationParams.
+const maxDurationError = require( './../maxDurationError.json' );
 
 // @vue/component
 module.exports = exports = {
@@ -39,24 +50,31 @@ module.exports = exports = {
 	},
 	props: {
 		expiryTimestamp: {
-			type: String,
+			type: Number,
+			required: true
+		},
+		toolLink: {
+			type: Object,
 			required: true
 		}
 	},
 	setup( props ) {
+		const logEvent = useInstrument();
+
 		const open = ref( true );
-		const showExtendError = ref( false );
+		const extendError = ref( '' );
+		const disableError = ref( '' );
 
 		const defaultAction = {
-			label: mw.message( 'checkuser-ip-auto-reveal-off-dialog-extend-action' ).text()
+			label: mw.msg( 'checkuser-ip-auto-reveal-off-dialog-extend-action' )
 		};
 		const primaryAction = ref( {
-			label: mw.message( 'checkuser-ip-auto-reveal-off-dialog-off-action' ).text(),
+			label: mw.msg( 'checkuser-ip-auto-reveal-off-dialog-off-action' ),
 			actionType: 'progressive'
 		} );
 
 		function onExtend() {
-			const currentExpiryInSeconds = Number( props.expiryTimestamp );
+			const currentExpiryInSeconds = props.expiryTimestamp;
 			const extendBySeconds = 10 * 60;
 
 			let newRelativeExpiryInSeconds;
@@ -70,26 +88,40 @@ module.exports = exports = {
 			setAutoRevealStatus( newRelativeExpiryInSeconds ).then(
 				() => {
 					open.value = false;
+					logEvent( 'session_extend' );
 				},
 				() => {
-					showExtendError.value = true;
+					extendError.value = maxDurationError.translation;
 				}
 			);
 		}
 
 		function onRemove() {
-			disableAutoReveal();
-			open.value = false;
+			disableAutoReveal().then(
+				() => {
+					open.value = false;
 
-			mw.notify( mw.message( 'checkuser-ip-auto-reveal-notification-off' ), {
-				classes: [ 'ext-checkuser-ip-auto-reveal-notification-off' ],
-				type: 'success'
-			} );
+					props.toolLink.text(
+						mw.message( 'checkuser-ip-auto-reveal-link-sidebar' )
+					);
+
+					mw.notify( mw.message( 'checkuser-ip-auto-reveal-notification-off' ), {
+						classes: [ 'ext-checkuser-ip-auto-reveal-notification-off' ],
+						type: 'success'
+					} );
+
+					logEvent( 'session_end' );
+				},
+				( error ) => {
+					disableError.value = error;
+				}
+			);
 		}
 
 		return {
 			open,
-			showExtendError,
+			extendError,
+			disableError,
 			defaultAction,
 			primaryAction,
 			onExtend,
@@ -97,7 +129,7 @@ module.exports = exports = {
 		};
 	},
 	data( props ) {
-		const expiryTime = new Date( Number( props.expiryTimestamp ) * 1000 );
+		const expiryTime = new Date( props.expiryTimestamp * 1000 );
 		const secondsUntilExpiry = Math.round( ( expiryTime - Date.now() ) / 1000 );
 		return {
 			secondsUntilExpiry: secondsUntilExpiry,
@@ -106,18 +138,23 @@ module.exports = exports = {
 	},
 	methods: {
 		formatExpiryTime( secondsUntilExpiry ) {
+			const daysUntilExpiry = Math.floor( secondsUntilExpiry / ( 3600 * 24 ) );
 			const hoursUntilExpiry = Math.floor( secondsUntilExpiry / 3600 );
 			const minutesUntilExpiry = Math.floor( secondsUntilExpiry / 60 );
 
+			const remainderHours = hoursUntilExpiry % 24;
 			const remainderMinutes = minutesUntilExpiry % 60;
 			const remainderSeconds = secondsUntilExpiry % 60;
 
-			const displayTime =
-				String( hoursUntilExpiry ) + ':' +
+			const displayTime = String( remainderHours ) + ':' +
 				( remainderMinutes < 10 ? '0' : '' ) + String( remainderMinutes ) + ':' +
 				( remainderSeconds < 10 ? '0' : '' ) + String( remainderSeconds );
 
-			return mw.message( 'checkuser-ip-auto-reveal-off-dialog-text-expiry', displayTime ).parse();
+			return mw.message(
+				'checkuser-ip-auto-reveal-off-dialog-text-expiry',
+				displayTime,
+				daysUntilExpiry
+			).parse();
 
 		}
 	},

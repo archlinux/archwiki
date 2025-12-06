@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Robby",
+			"Volvox"
+		]
+	},
+	"hcaptcha-createaccount-fail": "Et schéngt wéi wann Dir den hCAPTCHA net geléist hätt.",
+	"hcaptcha-challenge-closed": "Fir virunzefuere musst Dir de Captcha léisen.",
+	"hcaptcha-challenge-expired": "D'Zäitlimitt fir de Captcha ze léisen ass ofgelaf. Probéiert wgl. nach eng Kéier.",
+	"hcaptcha-generic-error": "Et gouf e Feeler beim Luede vum Formulaire. Fir virunzefuere musst Dir d'Säit nei lueden.",
+	"hcaptcha-missing-token": "De Formulaire ass nach net fäerdeg gelueden. Waart wgl. e puer Sekonnen a probéiert dann nach eng Kéier."
+}

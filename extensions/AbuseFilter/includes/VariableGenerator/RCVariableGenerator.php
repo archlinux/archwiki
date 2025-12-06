@@ -64,9 +64,6 @@ class RCVariableGenerator extends VariableGenerator {
 		$this->contextUser = $contextUser;
 	}
 
-	/**
-	 * @return VariableHolder|null
-	 */
 	public function getVars(): ?VariableHolder {
 		if ( $this->rc->getAttribute( 'rc_source' ) === RecentChange::SRC_LOG ) {
 			switch ( $this->rc->getAttribute( 'rc_log_type' ) ) {
@@ -122,7 +119,7 @@ class RCVariableGenerator extends VariableGenerator {
 			'moved_from_last_edit_age',
 			'revision-age',
 			[
-				// rc_last_oldid is zero (RecentChange::newLogEntry)
+				// rc_last_oldid is zero (RecentChangeFactory::createLogRecentChange)
 				'revid' => $this->rc->getAttribute( 'rc_this_oldid' ),
 				'parent' => true,
 				'asof' => $this->rc->getAttribute( 'rc_timestamp' ),
@@ -138,13 +135,9 @@ class RCVariableGenerator extends VariableGenerator {
 	 * @return $this
 	 */
 	private function addCreateAccountVars(): self {
-		$this->vars->setVar(
-			'action',
-			// XXX: as of 1.43, the following is never true
-			$this->rc->getAttribute( 'rc_log_action' ) === 'autocreate'
-				? 'autocreateaccount'
-				: 'createaccount'
-		);
+		// XXX: as of 1.43, the following is never true
+		$autocreate = $this->rc->getAttribute( 'rc_log_action' ) === 'autocreate';
+		$this->vars->setVar( 'action', $autocreate ? 'autocreateaccount' : 'createaccount' );
 
 		$name = Title::castFromPageReference( $this->rc->getPage() )->getText();
 		// Add user data if the account was created by a registered user
@@ -162,6 +155,14 @@ class RCVariableGenerator extends VariableGenerator {
 		}
 
 		$this->vars->setVar( 'accountname', $name );
+
+		// $name is a valid title, so should pass the only check for UserFactory::RIGOR_NONE (the title does
+		// not include a "#" character).
+		$createdUser = $this->userFactory->newFromName( $name, UserFactory::RIGOR_NONE );
+		'@phan-var User $createdUser';
+		$this->hookRunner->onAbuseFilterGenerateAccountCreationVars(
+			$this->vars, $userIdentity, $createdUser, $autocreate, $this->rc
+		);
 
 		return $this;
 	}
@@ -201,7 +202,7 @@ class RCVariableGenerator extends VariableGenerator {
 			'page_last_edit_age',
 			'revision-age',
 			[
-				// rc_last_oldid is zero (RecentChange::newLogEntry)
+				// rc_last_oldid is zero (RecentChangeFactory::createLogRecentChange)
 				'revid' => $this->rc->getAttribute( 'rc_this_oldid' ),
 				'parent' => true,
 				'asof' => $this->rc->getAttribute( 'rc_timestamp' ),
@@ -241,19 +242,53 @@ class RCVariableGenerator extends VariableGenerator {
 			[ 'revid' => $this->rc->getAttribute( 'rc_this_oldid' ), 'contextUser' => $this->contextUser ] );
 		$this->vars->setLazyLoadVar( 'old_wikitext', 'revision-text',
 			[
-				// rc_last_oldid is zero (RecentChange::newLogEntry)
+				// rc_last_oldid is zero (RecentChangeFactory::createLogRecentChange)
 				'revid' => $this->rc->getAttribute( 'rc_this_oldid' ),
 				'parent' => true,
 				'contextUser' => $this->contextUser,
 			] );
 
-		$this->addEditVars(
-			$this->wikiPageFactory->newFromTitle( $title ),
-			$this->contextUser,
-			false
-		);
+		$this->addDerivedVarsForTitle( $title );
 
 		return $this;
+	}
+
+	private function addDerivedVarsForTitle( Title $title ) {
+		$page = $this->wikiPageFactory->newFromTitle( $title );
+		$this->addDerivedEditVars();
+
+		// TODO: all these are legacy methods
+		$this->vars->setLazyLoadVar( 'new_links', 'links-from-wikitext',
+			[
+				'text-var' => 'new_wikitext',
+				'article' => $page,
+				'forFilter' => false,
+				'contextUserIdentity' => $this->contextUser
+			] );
+
+		// Note: this claims "or database" but it will never reach it
+		$this->vars->setLazyLoadVar( 'old_links', 'links-from-wikitext-or-database',
+			[
+				'article' => $page,
+				'text-var' => 'old_wikitext',
+				'forFilter' => false,
+				'contextUserIdentity' => $this->contextUser
+			] );
+
+		$this->vars->setLazyLoadVar( 'new_pst', 'parse-wikitext',
+			[
+				'wikitext-var' => 'new_wikitext',
+				'article' => $page,
+				'pst' => true,
+				'contextUserIdentity' => $this->contextUser
+			] );
+
+		$this->vars->setLazyLoadVar( 'new_html', 'parse-wikitext',
+			[
+				'wikitext-var' => 'new_wikitext',
+				'article' => $page,
+				'contextUserIdentity' => $this->contextUser
+			] );
 	}
 
 	/**
@@ -288,11 +323,7 @@ class RCVariableGenerator extends VariableGenerator {
 			$this->vars->setVar( 'page_last_edit_age', null );
 		}
 
-		$this->addEditVars(
-			$this->wikiPageFactory->newFromTitle( $title ),
-			$this->contextUser,
-			false
-		);
+		$this->addDerivedVarsForTitle( $title );
 
 		return $this;
 	}

@@ -23,7 +23,6 @@ use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
 use Wikimedia\Parsoid\Utils\Title;
-use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
 
 /**
@@ -202,6 +201,7 @@ class TestRunner {
 	 * @var array
 	 */
 	private $envOptions;
+	private array $skipped = [];
 
 	/**
 	 * @param string $testFilePath
@@ -274,16 +274,19 @@ class TestRunner {
 		return $env;
 	}
 
-	private function normalizeTitleKey( string $title ): string {
+	private function normalizeTitleKey( string $title ): ?string {
 		return $this->dummyEnv->normalizedTitleKey( $title, false, true );
 	}
 
+	/**
+	 * @return list<callable():void>
+	 */
 	private function addArticle( Article $art ): array {
 		$key = $this->normalizeTitleKey( $art->title );
 		$oldVal = $this->articles[$key] ?? null;
 		$this->articles[$key] = $art->text;
 		$teardown = [
-			function () use ( $key, $oldVal ) {
+			function () use ( $key, $oldVal ): void {
 				$this->articles[$key] = $oldVal;
 			},
 			$this->mockApi->addArticle( $key, $art ),
@@ -365,7 +368,6 @@ class TestRunner {
 	 * @return string
 	 */
 	private function convertHtml2Wt( Env $env, Test $test, string $mode, Document $doc ): string {
-		$startsAtWikitext = $mode === 'wt2wt' || $mode === 'wt2html' || $mode === 'selser';
 		if ( $mode === 'selser' ) {
 			$selserData = new SelectiveUpdateData( $test->wikitext, $test->cachedBODYstr );
 		} else {
@@ -412,18 +414,6 @@ class TestRunner {
 		// The test can explicitly opt-in to variant conversion with the
 		// 'langconv' option.
 		if ( $testOpts['langconv'] ?? null ) {
-			// These test option names are deprecated:
-			// (Note that test options names are lowercased by the reader.)
-			if ( $testOpts['sourcevariant'] ?? false ) {
-				$this->envOptions['wtVariantLanguage'] = Utils::mwCodeToBcp47(
-					$testOpts['sourcevariant'], true, $this->siteConfig->getLogger()
-				);
-			}
-			if ( $testOpts['variant'] ?? false ) {
-				$this->envOptions['htmlVariantLanguage'] = Utils::mwCodeToBcp47(
-					$testOpts['variant'], true, $this->siteConfig->getLogger()
-				);
-			}
 			// Preferred option names, which are also specified in bcp-47 codes
 			// (Note that test options names are lowercased by the reader.)
 			if ( $testOpts['wtvariantlanguage'] ?? false ) {
@@ -448,7 +438,6 @@ class TestRunner {
 			!isset( $testOpts['parsoid']['normalizePhp'] )
 		);
 		$test->time['start'] = hrtime( true );
-		$doc = null;
 		$wt = null;
 
 		if ( isset( $test->sections['html/parsoid+standalone'] ) ) {
@@ -458,16 +447,16 @@ class TestRunner {
 		// Source preparation
 		if ( $startsAtHtml ) {
 			$html = $test->parsoidHtml ?? '';
-			if ( !$parsoidOnly ) {
-				// Strip some php output that has no wikitext representation
-				// (like .mw-editsection) and won't html2html roundtrip and
-				// therefore causes false failures.
-				$html = TestUtils::normalizePhpOutput( $html );
-			}
 			// FUTURE WORK: it would be better if we used
 			// ContentUtils::createAndLoadDocument() here -- and for all of the
 			// ::parseHTML() calls below this as well.
 			$doc = DOMUtils::parseHTML( $html );
+			if ( !$parsoidOnly ) {
+				// Strip some php output that has no wikitext representation
+				// (like .mw-editsection) and won't html2html roundtrip and
+				// therefore causes false failures.
+				TestUtils::normalizePhpOutput( DOMCompat::getBody( $doc ) );
+			}
 			$wt = $this->convertHtml2Wt( $env, $test, $mode, $doc );
 		} else { // startsAtWikitext
 			// Always serialize DOM to string and reparse before passing to wt2wt
@@ -582,7 +571,7 @@ class TestRunner {
 		}
 
 		if ( isset( $opts['extlinks'] ) ) {
-			foreach ( $output->getExternalLinks() as $url => $ignore ) {
+			foreach ( $output->getExternalLinks() as $url => $_ignore ) {
 				$after[] = "extlink=$url";
 			}
 		}
@@ -806,39 +795,6 @@ class TestRunner {
 		);
 	}
 
-	/**
-	 * Removes DSR from data-parsoid for test normalization of a complete document. If
-	 * data-parsoid gets subsequently empty, removes it too.
-	 * @param string $raw
-	 * @return string
-	 */
-	private function filterDsr( string $raw ): string {
-		$doc = ContentUtils::createAndLoadDocument( $raw );
-		foreach ( $doc->childNodes as $child ) {
-			if ( $child instanceof Element ) {
-				$this->filterNodeDsr( $child );
-			}
-		}
-		$ret = ContentUtils::ppToXML( DOMCompat::getBody( $doc ), [ 'innerXML' => true ] );
-		$ret = preg_replace( '/\sdata-parsoid="{}"/', '', $ret );
-		return $ret;
-	}
-
-	/**
-	 * Removes DSR from data-parsoid for test normalization of an element.
-	 */
-	private function filterNodeDsr( Element $el ) {
-		$dp = DOMDataUtils::getDataParsoid( $el );
-		unset( $dp->dsr );
-		// XXX: could also set TempData::IS_NEW if !$dp->isModified(),
-		// rather than using the preg_replace above.
-		foreach ( $el->childNodes as $child ) {
-			if ( $child instanceof Element ) {
-				$this->filterNodeDsr( $child );
-			}
-		}
-	}
-
 	private function checkWikitext(
 		Test $test, string $out, array $options, string $mode
 	): bool {
@@ -877,6 +833,9 @@ class TestRunner {
 			$this->stats, $test, $options, $mode, $expected, $actual );
 	}
 
+	/**
+	 * @return array{exitCode: int, stats: Stats, file: string, knownFailuresChanged: bool}
+	 */
 	private function updateKnownFailures( array $options ): array {
 		// Check in case any tests were removed but we didn't update
 		// the knownFailures
@@ -889,11 +848,11 @@ class TestRunner {
 				isset( $options['maxtests'] )
 			);
 		$offsetType = $options['offsetType'] ?? 'byte';
-
 		// Update knownFailures, if requested
 		if ( $allModes ||
 			ScriptUtils::booleanOption( $options['updateKnownFailures'] ?? null )
 		) {
+			$testKnownFailures = [];
 			if ( $this->knownFailuresPath !== null ) {
 				$old = file_get_contents( $this->knownFailuresPath );
 			} else {
@@ -902,16 +861,66 @@ class TestRunner {
 				// end up with an empty array of known failures below.
 				$old = '{}';
 			}
-			$testKnownFailures = [];
+
 			$kfModes = array_merge( $options['modes'], [ 'metadata' ] );
+
+			if ( !$allModes ) {
+				$testKnownFailures = json_decode( $old, true );
+				foreach ( $testKnownFailures as $key => $knownFailure ) {
+					if ( !in_array( $key, $this->skipped, true ) ) {
+						$testKnownFailures[$key] = array_filter( $knownFailure,
+							static function ( $k ) use ( $kfModes ) {
+								return !in_array( $k, $kfModes, true ) &&
+									( !str_starts_with( $k, 'selser' ) || !in_array( 'selser', $kfModes, true ) );
+							}, ARRAY_FILTER_USE_KEY );
+					}
+				}
+			}
+
 			foreach ( $kfModes as $mode ) {
 				foreach ( $this->stats->modes[$mode]->failList as $fail ) {
 					$testKnownFailures[$fail['testName']] ??= [];
-					Assert::invariant(
-						!isset( $testKnownFailures[$fail['testName']][$mode . $fail['suffix']] ),
-						"Overwriting known failures result for " . $fail['testName'] . " " . $mode . $fail['suffix']
-					);
 					$testKnownFailures[$fail['testName']][$mode . $fail['suffix']] = $fail['raw'];
+				}
+			}
+
+			if ( !$allModes ) {
+				foreach ( $testKnownFailures as $key => $knownFailure ) {
+					if ( !in_array( $key, $this->skipped, true ) ) {
+						uksort( $knownFailure, static function ( string $a, string $b ) {
+							if ( str_starts_with( $a, 'selser' ) && str_starts_with( $b, 'selser' ) ) {
+								return 0;
+							}
+							if ( str_starts_with( $a, 'selser' ) ) {
+								if ( str_starts_with( $b, 'metadata' ) ) {
+									return -1;
+								}
+
+								return 1;
+							}
+							if ( str_starts_with( $b, 'selser' ) ) {
+								if ( str_starts_with( $a, 'metadata' ) ) {
+									return 1;
+								}
+
+								return -1;
+							}
+							$order =
+								[
+									'wt2html' => 1,
+									'wt2wt' => 2,
+									'html2wt' => 3,
+									'html2html' => 4,
+									'metadata' => 5
+								];
+							if ( $order[$a] < $order[$b] ) {
+								return -1;
+							} elseif ( $order[$b] < $order[$a] ) {
+								return 1;
+							}
+							return 0;
+						} );
+					}
 				}
 			}
 			// Sort, otherwise, titles get added above based on the first
@@ -959,7 +968,7 @@ class TestRunner {
 							 ')/m';
 						$fail['noDsr'] = $fail['raw'];
 						if ( $updateFormat === 'noDsr' && $mode !== 'metadata' ) {
-							$fail['noDsr'] = $this->filterDsr( $fail['noDsr'] );
+							$fail['noDsr'] = TestUtils::filterDsr( $fail['noDsr'] );
 						}
 						$fileContent = preg_replace_callback(
 							$exp,
@@ -1008,28 +1017,8 @@ class TestRunner {
 		}
 
 		$testOpts = $test->options;
-
-		// ensure that test is not skipped if it has a wikitext/edited or
-		// html/parsoid+langconv section (but not a parsoid html section)
-		$haveHtml = ( $test->parsoidHtml !== null ) ||
-			isset( $test->sections['wikitext/edited'] ) ||
-			isset( $test->sections['html/parsoid+standalone'] ) ||
-			isset( $test->sections['html/parsoid+langconv'] ) ||
-			self::getStandaloneMetadataSection( $test ) !== null;
-		$hasHtmlParsoid =
-			isset( $test->sections['html/parsoid'] ) ||
-			isset( $test->sections['html/parsoid+standalone'] );
-
-		// Skip test whose title does not match --filter
-		// or which is disabled or php-only
-		if ( $test->wikitext === null ||
-			!$haveHtml ||
-			( isset( $testOpts['disabled'] ) && !$this->runDisabled ) ||
-			( isset( $testOpts['php'] ) && !(
-				$hasHtmlParsoid || $this->runPHP )
-			) ||
-			!$test->matchesFilter( $this->testFilter )
-		) {
+		if ( $this->shouldSkipTest( $test, $testOpts ) ) {
+			$this->skipped[] = $test->testName;
 			return;
 		}
 
@@ -1131,7 +1120,7 @@ class TestRunner {
 			);
 		}
 
-		$this->siteConfig->v3pf = $test->config['wgParsoidExperimentalParserFunctionSupport'] ?? false;
+		$this->siteConfig->v3pf = $test->config['wgParsoidExperimentalParserFunctionOutput'] ?? false;
 
 		// Process test-specific options
 		if ( $testOpts ) {
@@ -1184,7 +1173,6 @@ class TestRunner {
 		// Ensure ParserHook is always registered!
 		$teardown[] = $this->siteConfig->registerParserTestExtension( ParserHook::class );
 
-		$runner = $this;
 		$test->testAllModes( $targetModes, $options, Closure::fromCallable( [ $this, 'runTest' ] ) );
 
 		foreach ( array_reverse( $teardown ) as $t ) {
@@ -1272,7 +1260,7 @@ class TestRunner {
 			try {
 				$this->envOptions = $defaultOpts;
 				$this->processTest( $test, $options );
-			} catch ( UnexpectedException $e ) {
+			} catch ( UnexpectedException ) {
 				// Exit unexpected
 				break;
 			}
@@ -1280,5 +1268,23 @@ class TestRunner {
 
 		// Update knownFailures
 		return $this->updateKnownFailures( $options );
+	}
+
+	private function shouldSkipTest( Test $test, array $testOpts ): bool {
+		// ensure that test is not skipped if it has a wikitext/edited or
+		// html/parsoid+langconv section (but not a parsoid html section)
+		$haveHtml =
+			( $test->parsoidHtml !== null ) || isset( $test->sections['wikitext/edited'] ) ||
+			isset( $test->sections['html/parsoid+standalone'] ) ||
+			isset( $test->sections['html/parsoid+langconv'] ) ||
+			self::getStandaloneMetadataSection( $test ) !== null;
+		$hasHtmlParsoid =
+			isset( $test->sections['html/parsoid'] ) || isset( $test->sections['html/parsoid+standalone'] );
+
+		// Skip test whose title does not match --filter
+		// or which is disabled or php-only
+		return ( $test->wikitext === null || !$haveHtml || ( isset( $testOpts['disabled'] ) && !$this->runDisabled ) ||
+			( isset( $testOpts['php'] ) && !( $hasHtmlParsoid || $this->runPHP ) ) ||
+			!$test->matchesFilter( $this->testFilter ) );
 	}
 }

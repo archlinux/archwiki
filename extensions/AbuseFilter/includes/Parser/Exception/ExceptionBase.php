@@ -8,7 +8,6 @@ abstract class ExceptionBase extends Exception {
 
 	/**
 	 * Serialize data for edit stash
-	 * @return array
 	 */
 	public function toArray(): array {
 		return [

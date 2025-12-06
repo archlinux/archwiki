@@ -1,25 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use LogicException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Html\Html;
@@ -54,10 +41,12 @@ class SpecialPreferences extends SpecialPage {
 		$this->userOptionsManager = $userOptionsManager ?? $services->getUserOptionsManager();
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -104,7 +93,7 @@ class SpecialPreferences extends SpecialPage {
 
 		// Load the user from the primary DB to reduce CAS errors on double post (T95839)
 		if ( $this->getRequest()->wasPosted() ) {
-			$user = $this->getUser()->getInstanceForUpdate() ?: $this->getUser();
+			$user = $this->getUser()->getInstanceFromPrimary() ?? $this->getUser();
 		} else {
 			$user = $this->getUser();
 		}
@@ -165,20 +154,24 @@ class SpecialPreferences extends SpecialPage {
 			->setTitle( $this->getPageTitle( 'reset' ) ) // Reset subpage
 			->setSubmitTextMsg( 'restoreprefs' )
 			->setSubmitDestructive()
-			->setSubmitCallback( [ $this, 'submitReset' ] )
+			->setSubmitCallback( $this->submitReset( ... ) )
 			->showCancel()
 			->setCancelTarget( $this->getPageTitle() )
 			->show();
 	}
 
+	/**
+	 * @param array $formData
+	 * @return bool
+	 */
 	public function submitReset( $formData ) {
 		if ( !$this->getAuthority()->isAllowed( 'editmyoptions' ) ) {
 			throw new PermissionsError( 'editmyoptions' );
 		}
 
-		$user = $this->getUser()->getInstanceForUpdate();
+		$user = $this->getUser()->getInstanceFromPrimary() ?? throw new LogicException( 'No user' );
 		$this->userOptionsManager->resetAllOptions( $user );
-		$user->saveSettings();
+		$this->userOptionsManager->saveOptions( $user );
 
 		// Set session data for the success message
 		$this->getRequest()->getSession()->set( 'specialPreferencesSaveSuccess', 1 );
@@ -189,6 +182,7 @@ class SpecialPreferences extends SpecialPage {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'login';
 	}

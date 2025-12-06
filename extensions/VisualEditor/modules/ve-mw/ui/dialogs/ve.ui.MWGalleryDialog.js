@@ -435,7 +435,7 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 				// Populate menu and edit panels
 				this.imagesPromise = this.requestImages( {
 					titles: imageTitles
-				} ).done( () => {
+				} ).then( () => {
 					this.onHighlightItem();
 				} );
 
@@ -621,7 +621,7 @@ ve.ui.MWGalleryDialog.prototype.requestImages = function ( options ) {
 	const promises = options.titles.map( ( title ) => ve.init.platform.galleryImageInfoCache.get( title ) );
 
 	return ve.promiseAll( promises )
-		.done( ( ...args ) => {
+		.then( ( ...args ) => {
 			const resp = {};
 			options.titles.forEach( ( title, i ) => {
 				resp[ title ] = args[ i ];
@@ -704,7 +704,7 @@ ve.ui.MWGalleryDialog.prototype.addNewImage = function ( title ) {
 	// Request image
 	this.requestImages( {
 		titles: [ title ]
-	} ).done( () => {
+	} ).then( () => {
 		// populate edit panel with the new image
 		const items = this.galleryGroup.items;
 		this.onHighlightItem( items[ items.length - 1 ] );

@@ -360,7 +360,7 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 						'type' => 'mention-summary',
 						'agent' => 'Admin',
 						'section-title' => null,
-					]
+					],
 				],
 				'precondition' => '',
 				'summary' => 'Hey [[User:Werdna|Werdna]] and [[User:Jorm]], [[User:Admin]] here',
@@ -927,7 +927,7 @@ TEXT
 			// enable mention failure and success notifications
 			'EchoMentionStatusNotifications' => true,
 			// lower limit for the mention-failure-too-many notification
-			'EchoMaxMentionsCount' => 5
+			'EchoMaxMentionsCount' => 5,
 		] );
 		$this->clearHook( 'EchoGetEventsForRevision' );
 
@@ -946,7 +946,7 @@ TEXT
 		$this->setContentLang( $lang );
 		$this->overrideConfigValues( [
 			// this one allows MediaWiki:xyz pages to be set as messages
-			MainConfigNames::UseDatabaseMessages => true
+			MainConfigNames::UseDatabaseMessages => true,
 		] );
 
 		// pages to be created: templates may be used to ping users (e.g.
@@ -975,7 +975,6 @@ TEXT
 		$title = Title::newFromText( $title );
 		$object = new ReflectionObject( $title );
 		$property = $object->getProperty( 'mDbPageLanguage' );
-		$property->setAccessible( true );
 		$property->setValue( $title, $lang );
 
 		// create stub MutableRevisionRecord object
@@ -1060,28 +1059,28 @@ TEXT
 				"I like this. [[User:Werdna|Werdna]] ([[User talk:Werdna|talk]]) $ts",
 				[
 					13,
-					'Werdna'
+					'Werdna',
 				],
 			],
 			"Confounding" => [
 				"[[User:Jorm]] is a meanie. --[[User:Werdna2|Andrew]] $ts",
 				[
 					29,
-					"Werdna2"
+					"Werdna2",
 				],
 			],
 			"Talk page link only" => [
 				"[[User:Swalling|Steve]] is the best person I have ever met. --[[User talk:Werdna3|Andrew]] $ts",
 				[
 					62,
-					'Werdna3'
+					'Werdna3',
 				],
 			],
 			"Anonymous user" => [
 				"I am anonymous because I like my IP address. --[[Special:Contributions/127.0.0.1|127.0.0.1]] $ts",
 				[
 					47,
-					'127.0.0.1'
+					'127.0.0.1',
 				],
 			],
 			"Anonymous user (not a standard signature - userpage link)" => [
@@ -1090,38 +1089,38 @@ TEXT
 			],
 			"No signature" => [
 				"Well, \nI do think that [[User:Newyorkbrad]] is pretty cool, but what do I know?",
-				false
+				false,
 			],
 			"Invalid username link" => [
 				"I'm evil! [[User:Template:Invalid|Invalid]] $ts",
-				false
+				false,
 			],
 			"Invalid username link, followed by a valid one" => [
 				"I'm silly! --[[User:JarJar|JarJar]] ([[User talk:JarJar|talk]]) [[User:Template:Invalid|Invalid]] $ts",
 				[
 					13,
-					'JarJar'
-				]
+					'JarJar',
+				],
 			],
 			"Invalid username link, preceded by a valid one" => [
 				"I'm silly! [[User:Template:Invalid|Invalid]] --[[User:JarJar|JarJar]] ([[User talk:JarJar|talk]]) $ts",
 				[
 					13 + 34,
-					'JarJar'
-				]
+					'JarJar',
+				],
 			],
 			"Hash symbols in usernames" => [
 				"What do you think? [[User talk:We buried our secrets in the garden#top|wbositg]] $ts",
 				[
 					19,
-					'We buried our secrets in the garden'
+					'We buried our secrets in the garden',
 				],
 			],
 			"Title that gets normalized different than it is provided in the wikitext" => [
 				"Beep boop [[User:I_Heart_Spaces]] ([[User_talk:I_Heart_Spaces]]) $ts",
 				[
 					strlen( "Beep boop " ),
-					'I Heart Spaces'
+					'I Heart Spaces',
 				],
 			],
 			"Accepts ] in the pipe" => [
@@ -1135,7 +1134,7 @@ TEXT
 				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxã? [[User:Jam]] $ts",
 				[
 					strlen( "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxã? " ),
-					"Jam"
+					"Jam",
 				],
 			],
 			"extra long signature" => [
@@ -1151,7 +1150,7 @@ TEXT
 					strlen( "Test --" ),
 					'Schnark',
 				],
-				'de'
+				'de',
 			],
 			// when adding additional tests, make sure to add the non-anon users
 			// to DiscussionParserTest::$testUsers - the DiscussionParser
@@ -1189,7 +1188,7 @@ TEXT
 					'content' => 'line 2',
 					'left-pos' => 2,
 					'right-pos' => 2,
-				] ]
+				] ],
 			],
 			[
 				<<<TEXT
@@ -1211,7 +1210,7 @@ TEXT
 					'content' => 'line 2.5',
 					'left-pos' => 3,
 					'right-pos' => 3,
-				] ]
+				] ],
 			],
 			[
 				<<<TEXT
@@ -1233,7 +1232,7 @@ TEXT
 					'new_content' => 'line b',
 					'left-pos' => 2,
 					'right-pos' => 2,
-				] ]
+				] ],
 			],
 			[
 				<<<TEXT
@@ -1318,6 +1317,7 @@ line d',
 I do not like you. [[User:Jorm|Jorm]] ([[User talk:Jorm|talk]]) $ts
 :What do you think? [[User:Werdna|Werdna]] ([[User talk:Werdna|talk]]) $ts
 TEXT
+,
 					],
 				],
 			],
@@ -1361,6 +1361,7 @@ TEXT
 I do not like you. [[User:Jorm|Jorm]] ([[User talk:Jorm|talk]]) $ts
 :What do you think? [[User:Werdna|Werdna]] ([[User talk:Werdna|talk]]) $ts
 TEXT
+,
 					],
 				],
 			],
@@ -1452,6 +1453,7 @@ I do not like you. [[User:Jorm|Jorm]] ([[User talk:Jorm|talk]]) $ts
 :What do you think? [[User:Werdna|Werdna]] ([[User talk:Werdna|talk]]) $ts
 :New Comment [[User:JarJar|JarJar]] ([[User talk:JarJar|talk]]) $ts
 TEXT
+,
 					],
 					[
 						'type' => 'add-comment',
@@ -1461,6 +1463,7 @@ TEXT
 Hai [[User:Bsitu|Bsitu]] ([[User talk:Bsitu|talk]]) $ts
 :Other New Comment [[User:JarJar|JarJar]] ([[User talk:JarJar|talk]]) $ts
 TEXT
+,
 					],
 				],
 			],
@@ -1526,7 +1529,7 @@ $comment
 $comment
 				",
 				// user signing new comment
-				$name
+				$name,
 			],
 
 			[
@@ -1546,7 +1549,7 @@ $comment
 %s
 				",
 				// user signing new comment
-				$name
+				$name,
 			],
 
 			[
@@ -1568,7 +1571,7 @@ $comment
 
 				",
 				// user signing new comment
-				$name
+				$name,
 			],
 
 			[
@@ -1582,7 +1585,7 @@ $comment
 %s
 				",
 				// user signing new comment
-				$name
+				$name,
 			],
 
 			[
@@ -1597,7 +1600,7 @@ $comment
 %s
 				",
 				// user signing new comment
-				$name
+				$name,
 			],
 		];
 	}
@@ -1717,7 +1720,7 @@ TEXT
 					'unknownUsers' => [ 'NotKnown1' ],
 					'anonymousUsers' => [],
 				],
-				1
+				1,
 			],
 			[
 				[ '127.0.0.1' => 0 ],
@@ -1726,7 +1729,7 @@ TEXT
 					'unknownUsers' => [],
 					'anonymousUsers' => [ '127.0.0.1' ],
 				],
-				1
+				1,
 			],
 		];
 	}
@@ -1778,7 +1781,7 @@ TEXT
 
 		$this->overrideConfigValues( [
 			// lower limit for the mention-too-many notification
-			'EchoMaxMentionsCount' => 3
+			'EchoMaxMentionsCount' => 3,
 		] );
 
 		$title = Title::newFromText( 'Test' );

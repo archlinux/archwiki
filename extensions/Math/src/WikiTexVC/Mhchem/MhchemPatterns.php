@@ -23,13 +23,11 @@ use RuntimeException;
  */
 class MhchemPatterns {
 
-	/** @var array */
 	private array $patterns;
 
 	/**
 	 * Matching patterns
 	 * either regexes or function that return null or {match_:"a", remainder:"bc"}
-	 * @return array
 	 */
 	public function getPatterns(): array {
 		return $this->patterns;
@@ -48,8 +46,9 @@ class MhchemPatterns {
 	 * @param bool|null $combine
 	 */
 	public function findObserveGroups( $input, $begExcl, $begIncl, $endIncl,
-								$endExcl = null, $beg2Excl = null, $beg2Incl = null,
-								$end2Incl = null, $end2Excl = null, $combine = null ): ?array {
+			$endExcl = null, $beg2Excl = null, $beg2Incl = null,
+			$end2Incl = null, $end2Excl = null, $combine = null
+	): ?array {
 		$match = $this->matchObsGrInner( $input, $begExcl );
 		if ( $match === null ) {
 			return null;
@@ -75,18 +74,19 @@ class MhchemPatterns {
 				"match_" => $match1,
 				"remainder" => substr( $input, $e["endMatchEnd"] )
 			];
-		} else {
-			$group2 = $this->findObserveGroups( substr( $input, $e["endMatchEnd"] ),
-				$beg2Excl, $beg2Incl, $end2Incl, $end2Excl );
-			if ( $group2 === null ) {
-				return null;
-			}
-			$matchRet = [ $match1, $group2["match_"] ];
-			return [
-				"match_" => ( $combine ? implode( "", $matchRet ) : $matchRet ),
-				"remainder" => $group2["remainder"]
-			];
 		}
+
+		$group2 = $this->findObserveGroups( substr( $input, $e["endMatchEnd"] ),
+			$beg2Excl, $beg2Incl, $end2Incl, $end2Excl );
+		if ( $group2 === null ) {
+			return null;
+		}
+		$matchRet = [ $match1, $group2["match_"] ];
+
+		return [
+			"match_" => ( $combine ? implode( "", $matchRet ) : $matchRet ),
+			"remainder" => $group2["remainder"]
+		];
 	}
 
 	/**
@@ -124,16 +124,18 @@ class MhchemPatterns {
 			$match = $this->matchObsGrInner( substr( $input, $i ), $endChars );
 			if ( $match !== null && $braces === 0 ) {
 				return [ "endMatchBegin" => $i, "endMatchEnd" => $i + strlen( $match ) ];
-			} elseif ( $a === "{" ) {
+			}
+
+			if ( $a === "{" ) {
 				$braces++;
 			} elseif ( $a === "}" ) {
 				if ( $braces === 0 ) {
 					// Unexpected character
 					throw new RuntimeException(
 						"ExtraCloseMissingOpen: Extra close brace or missing open brace" );
-				} else {
-					$braces--;
 				}
+
+				$braces--;
 			}
 			$i++;
 		}
@@ -388,7 +390,9 @@ class MhchemPatterns {
 		if ( !$pattern ) {
 			// Trying to use non-existing pattern
 			throw new RuntimeException( "MhchemBugP: mhchem bug P. Please report. (" . $m . ")" );
-		} elseif ( $pattern instanceof Reg ) {
+		}
+
+		if ( $pattern instanceof Reg ) {
 			$matches = [];
 			$match = preg_match( $pattern->getRegExp(), $input, $matches );
 			if ( $match ) {
@@ -398,20 +402,22 @@ class MhchemPatterns {
 						"remainder" => substr( $input, strlen( $matches[0] ) )
 					];
 
-				} else {
-					return [
-						"match_" => MhchemUtil::issetJS( $matches[1] ?? null ) ? $matches[1] : $matches[0],
-						"remainder" => substr( $input, strlen( $matches[0] ) )
-					];
 				}
+
+				return [
+					"match_" => MhchemUtil::issetJS( $matches[1] ?? null ) ? $matches[1] : $matches[0],
+					"remainder" => substr( $input, strlen( $matches[0] ) )
+				];
 			}
 			return null;
-		} elseif ( is_callable( $pattern ) ) {
+		}
+
+		if ( is_callable( $pattern ) ) {
 			// $pattern cannot be an instance of MhchemRegExp here, which causes this warning.
 			/* @phan-suppress-next-line PhanUndeclaredInvokeInCallable */
 			return $this->patterns[$m]( $input );
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 }

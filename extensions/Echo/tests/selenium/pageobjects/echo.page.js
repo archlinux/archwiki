@@ -1,5 +1,4 @@
-'use strict';
-const Page = require( 'wdio-mediawiki/Page' );
+import Page from 'wdio-mediawiki/Page';
 
 class EchoPage extends Page {
 
@@ -24,4 +23,5 @@ class EchoPage extends Page {
 	}
 
 }
-module.exports = new EchoPage();
+
+export default new EchoPage();

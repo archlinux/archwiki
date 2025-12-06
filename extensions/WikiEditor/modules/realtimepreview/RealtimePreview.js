@@ -6,8 +6,10 @@ const localStorage = require( 'mediawiki.storage' ).local;
 
 /**
  * @class
+ * @param {Object} context The WikiEditor context.
  */
-function RealtimePreview() {
+function RealtimePreview( context ) {
+	this.context = context;
 	this.configData = mw.loader.moduleRegistry[ 'ext.wikiEditor' ].script.files[ 'data.json' ];
 	// Preference name, must match what's in extension.json and Hooks.php.
 	this.prefName = 'wikieditor-realtimepreview';
@@ -23,6 +25,7 @@ function RealtimePreview() {
 		.addClass( 'ext-WikiEditor-realtimepreview-preview' )
 		.attr( 'tabindex', '1' ) // T317108
 		.append( $previewContent );
+	this.createToolbarButton();
 
 	// Loading bar.
 	this.$loadingBar = $( '<div>' ).addClass( 'ext-WikiEditor-realtimepreview-loadingbar' ).append( '<div>' );
@@ -37,11 +40,12 @@ function RealtimePreview() {
 		}.bind( this )
 	} );
 
-	// Manual reload button (visible on hover).
+	// Manual reload button.
 	this.reloadButton = new OO.ui.ButtonWidget( {
-		classes: [ 'ext-WikiEditor-reloadButton' ],
+		// Add the .tool class.
+		classes: [ 'tool', 'ext-WikiEditor-reloadButton' ],
 		icon: 'reload',
-		label: mw.msg( 'wikieditor-realtimepreview-reload' ),
+		framed: false,
 		accessKey: mw.msg( 'accesskey-wikieditor-realtimepreview' ),
 		title: mw.msg( 'wikieditor-realtimepreview-reload-title' )
 	} );
@@ -51,19 +55,21 @@ function RealtimePreview() {
 			if ( this.enabled ) {
 				this.doRealtimePreview( true );
 			}
-			// Let other things happen after refreshing.
+			// Let other things happen after reloading.
+			// The button used to appear only when hovering on the preview pane, hence the hook name.
 			mw.hook( 'ext.WikiEditor.realtimepreview.reloadHover' ).fire( this );
 		}.bind( this )
 	} );
+	this.reloadButton.toggle( this.enabled );
 
 	// Manual mode widget.
-	this.manualWidget = new ManualWidget( this, this.reloadButton );
+	this.manualWidget = new ManualWidget( this );
 	// Set up a property for reducedMotion — useful for customising the UI message.
 	this.reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 	// If the user has "prefers-reduced-motion" set, force us into manual mode.
 	this.inManualMode = this.reducedMotion;
 
-	this.twoPaneLayout.getPane2().append( this.manualWidget.$element, this.reloadButton.$element, this.$loadingBar, this.$previewNode, this.errorLayout.$element );
+	this.twoPaneLayout.getPane2().append( this.manualWidget.$element, this.$loadingBar, this.$previewNode, this.errorLayout.$element );
 	this.eventNames = 'change.realtimepreview input.realtimepreview cut.realtimepreview paste.realtimepreview';
 	// Used to ensure we wait for a response before making new requests.
 	this.isPreviewing = false;
@@ -76,19 +82,16 @@ function RealtimePreview() {
 }
 
 /**
- * @public
- * @param {Object} context The WikiEditor context.
- * @return {jQuery}
+ * @private
  */
-RealtimePreview.prototype.getToolbarButton = function ( context ) {
-	this.context = context;
-	const $uiText = context.$ui.find( '.wikiEditor-ui-text' );
+RealtimePreview.prototype.createToolbarButton = function () {
+	const $uiText = this.context.$ui.find( '.wikiEditor-ui-text' );
 
 	// Fix the height of the textarea, before adding a resizing bar below it.
-	const height = context.$textarea.height();
+	const height = this.context.$textarea.height();
 	$uiText.css( 'height', height + 'px' );
-	context.$textarea.removeAttr( 'rows cols' );
-	context.$textarea.addClass( 'ext-WikiEditor-realtimepreview-textbox' );
+	this.context.$textarea.removeAttr( 'rows cols' );
+	this.context.$textarea.addClass( 'ext-WikiEditor-realtimepreview-textbox' );
 
 	// Add the resizing bar.
 	const bottomDragBar = new ResizingDragBar( { isEW: false, id: 'ext-WikiEditor-bottom-dragbar' } );
@@ -114,8 +117,22 @@ RealtimePreview.prototype.getToolbarButton = function ( context ) {
 
 	// Remove the old onboarding-status storage that was discontinued in March 2023.
 	localStorage.remove( 'WikiEditor-RealtimePreview-onboarding-dismissed' );
+};
 
-	return $( '<div>' ).append( this.button.$element );
+/**
+ * @public
+ * @return {jQuery}
+ */
+RealtimePreview.prototype.getToolbarButton = function () {
+	return this.button.$element;
+};
+
+/**
+ * @public
+ * @return {jQuery}
+ */
+RealtimePreview.prototype.getToolbarReloadButton = function () {
+	return this.reloadButton.$element;
 };
 
 /**
@@ -186,6 +203,9 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 		// Let other things happen after disabling.
 		mw.hook( 'ext.WikiEditor.realtimepreview.disable' ).fire( this );
 
+		// Remove the reload button from the toolbar.
+		this.reloadButton.toggle( false );
+
 	} else {
 		// Add the layout before the text div of the UI and then move the text div into it.
 		$uiText.before( this.twoPaneLayout.$element );
@@ -211,6 +231,9 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 		$form.on( 'submit.realtimepreview', () => {
 			this.isSubmitting = true;
 		} );
+
+		// Show the reload button in the toolbar.
+		this.reloadButton.toggle( true );
 
 		// Let other things happen after enabling.
 		mw.hook( 'ext.WikiEditor.realtimepreview.enable' ).fire( this );
@@ -293,7 +316,6 @@ RealtimePreview.prototype.showError = function ( $msg ) {
 		return;
 	}
 	this.$previewNode.hide();
-	this.reloadButton.toggle( false );
 	this.manualWidget.toggle( false );
 	// There is no need for a default message because mw.Api.getErrorMessage() will
 	// always provide something (even for no network connection, server-side fatal errors, etc.).
@@ -340,7 +362,7 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 		return;
 	}
 
-	const $textareaNode = $( '#wpTextbox1' );
+	const $textareaNode = this.context.$textarea;
 	const wikitext = $textareaNode.textSelection( 'getContents' );
 	if ( !forceUpdate && wikitext === this.lastWikitext ) {
 		// Wikitext unchanged, no update necessary
@@ -381,10 +403,6 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 	).then( () => {
 		this.$loadingBar.hide();
 		this.reloadButton.setDisabled( false );
-		if ( !this.errorLayout.isVisible() ) {
-			// Only re-show the reload button if no error message is currently showing.
-			this.reloadButton.toggle( true );
-		}
 		// Show the manual mode if applicable (but not if an error is displayed).
 		this.manualWidget.toggle( this.inManualMode && !this.errorLayout.isVisible() );
 		this.manualWidget.setDisabled( false );

@@ -12,6 +12,7 @@
 			"Mormegil",
 			"Nike",
 			"PoLuX124",
+			"Ponor",
 			"Purodha",
 			"Pxos",
 			"Raymond",
@@ -22,8 +23,7 @@
 			"Siebrand",
 			"Trevor Parscal",
 			"Umherirrender",
-			"Verdy p",
-			"Ponor"
+			"Verdy p"
 		]
 	},
 	"tag-editcheck-newcontent": "{{ignored}}Short description of the editcheck-newcontent tag.\n\nHidden tag added when EditCheck thinks new content was added to the page.\n\nSee also:\n* {{msg-mw|Tag-editcheck-newcontent-description}}\n{{Related|tag-newcontent-references-description}}",
@@ -38,6 +38,14 @@
 	"tag-editcheck-references-shown": "Short description of the editcheck-references-shown tag.\n\nTag added when EditCheck thinks that added content might need a reference, and the UI was shown.\n\nSee also:\n* {{msg-mw|Tag-editcheck-references-shown-description}}\n{{Related|tag-editcheck-references-shown-description}}",
 	"tag-editcheck-references-shown-description": "Long description of the editcheck-references-shown tag.\n\nHidden tag added when EditCheck thinks added content might need a reference, and the UI was shown.\n\nSee also:\n* {{msg-mw|Tag-editcheck-references-shown}}\n{{Related|tag-editcheck-references-shown}}",
 	"tag-editcheck-references-shown-helppage": "{{notranslate}}\nLink to the false positives reporting page of EditCheck.\n\nUsed in:\n* {{msg-mw|tag-editcheck-references-shown}}",
+	"tag-editcheck-tone": "{{ignored}}Short description of the editcheck-tone tag.\n\nHidden tag added when EditCheck detected a potential issue with the tone of some added content.",
+	"tag-editcheck-tone-description": "Long description of the editcheck-tone tag.\n\nHidden tag added when EditCheck detected a potential issue with the tone of some added content.",
+	"tag-editcheck-tone-shown": "Short description of the editcheck-tone-shown tag.\n\nTag added when EditCheck thinks that added content might need its tone adjusted, and the UI was shown.\n\nSee also:\n* {{msg-mw|Tag-editcheck-tone-shown-description}}\n{{Related|tag-editcheck-tone-shown-description}}",
+	"tag-editcheck-tone-shown-description": "Long description of the editcheck-tone-shown tag.\n\nTag added when EditCheck thinks added content might need its tone adjusted, and the UI was shown.\n\nSee also:\n* {{msg-mw|Tag-editcheck-tone-shown}}\n{{Related|tag-editcheck-tone-shown}}",
+	"tag-editcheck-tone-shown-helppage": "{{notranslate}}\nLink to the tone check section of the EditCheck help page.\n\nUsed in:\n* {{msg-mw|tag-editcheck-tone-shown}}",
+	"tag-editcheck-paste-shown": "Short description of the editcheck-paste-shown tag.\n\nTag added when EditCheck detected pasted content, and the UI was shown.\n\nSee also:\n* {{msg-mw|Tag-editcheck-paste-shown-description}}\n{{Related|tag-editcheck-paste-shown-description}}",
+	"tag-editcheck-paste-shown-description": "Long description of the editcheck-paste-shown tag.\n\nTag added when EditCheck detected pasted content, and the UI was shown.\n\nSee also:\n* {{msg-mw|Tag-editcheck-paste-shown}}\n{{Related|tag-editcheck-paste-shown}}",
+	"tag-editcheck-paste-shown-helppage": "{{notranslate}}\nLink to the paste check section of the EditCheck help page.\n\nUsed in:\n* {{msg-mw|tag-editcheck-paste-shown}}",
 	"tag-visualeditor": "Short description of the visualeditor tag. Do not translate the link target, but do translate the words \"Visual edit\".\n\nShown on lists of changes (history, recentchanges, etc.) for each edit made using VisualEditor.\n\nRefers to {{msg-mw|Visualeditor-descriptionpagelink}}.\n\nSee also:\n* {{msg-mw|Tag-visualeditor-needcheck}}\n{{Related|Tag-visualeditor}}\n{{Identical|VisualEditor}}",
 	"tag-visualeditor-description": "Long description of the visualeditor tag ({{msg-mw|Tag-visualeditor}}).\n\nShown on [[Special:Tags]].\n\nRefers to {{msg-mw|Visualeditor-descriptionpagelink}}.\n\nSee also:\n* {{msg-mw|Tag-visualeditor-needcheck-description}}\n{{Related|Tag-visualeditor}}",
 	"tag-visualeditor-helppage": "{{notranslate}}\nHelp link for the tag {{msg-mw|tag-visualeditor}}. Uses {{msg-mw|visualeditor-descriptionpagelink}}",

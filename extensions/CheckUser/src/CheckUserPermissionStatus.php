@@ -6,6 +6,9 @@ use StatusValue;
 
 /**
  * Type-safe StatusValue holding the result of a permission check performed by CheckUser.
+ *
+ * @template T
+ * @inherits StatusValue<T>
  */
 class CheckUserPermissionStatus extends StatusValue {
 	/**
@@ -20,6 +23,9 @@ class CheckUserPermissionStatus extends StatusValue {
 	 */
 	private ?string $permission = null;
 
+	/**
+	 * @suppress PhanGenericConstructorTypes
+	 */
 	protected function __construct() {
 		// Use typed static factory methods.
 	}

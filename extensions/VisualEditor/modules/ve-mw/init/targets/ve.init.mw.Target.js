@@ -311,7 +311,10 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
 		// Reset to visual mode for target widgets
 		modes: [ 'visual' ],
 		defaultMode: 'visual',
-		toolbarGroups: this.toolbarGroups.filter( ( group ) => group.align !== 'after' ),
+		toolbarGroups: this.toolbarGroups.filter( ( group ) => !group.excludeFromTargetWidget &&
+			// Deprecated: Don't rely on alignment to exclude from target widgets, use
+			// excludeFromTargetWidget instead.
+			group.align !== 'after' ),
 		surfaceClasses: this.getSurfaceClasses()
 	}, config ) );
 };
@@ -319,7 +322,7 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
 /**
  * @inheritdoc
  */
-ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config ) {
+ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config = {} ) {
 	if ( config && config.mode === 'source' ) {
 		const importRules = ve.copy( this.constructor.static.importRules );
 		importRules.all = importRules.all || {};
@@ -431,15 +434,7 @@ ve.init.mw.Target.prototype.setSurface = function ( surface ) {
  * @param {ve.init.SafeStorage} [config.storage] Storage interface
  * @param {number} [config.storageExpiry] Storage expiry time in seconds (optional)
  */
-ve.init.mw.Target.prototype.initAutosave = function ( config ) {
-	// Old function signature
-	// TODO: Remove after fixed downstream
-	if ( typeof config === 'boolean' ) {
-		config = { suppressNotification: config };
-	} else {
-		config = config || {};
-	}
-
+ve.init.mw.Target.prototype.initAutosave = function ( config = {} ) {
 	const surfaceModel = this.getSurface().getModel();
 
 	if ( config.docId ) {
@@ -610,9 +605,8 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
  * @param {Object} [ajaxOptions]
  * @return {jQuery.Promise} Abortable promise
  */
-ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, doc, ajaxOptions ) {
+ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, doc, ajaxOptions = {} ) {
 	const api = this.getContentApi( doc );
-	ajaxOptions = ajaxOptions || {};
 	const abortable = api.makeAbortablePromise( ajaxOptions );
 
 	// Acquire a temporary user username before previewing or diffing, so that signatures and
@@ -657,8 +651,7 @@ ve.init.mw.Target.prototype.getPageName = function () {
  *  include action=query, format=json, and formatversion=2 if not specified otherwise.
  * @return {mw.Api}
  */
-ve.init.mw.Target.prototype.getContentApi = function ( doc, options ) {
-	options = options || {};
+ve.init.mw.Target.prototype.getContentApi = function ( doc, options = {} ) {
 	options.parameters = ve.extendObject( { formatversion: 2 }, options.parameters );
 	return new mw.Api( options );
 };
@@ -672,8 +665,7 @@ ve.init.mw.Target.prototype.getContentApi = function ( doc, options ) {
  * @param {Object} [options] API options
  * @return {mw.Api}
  */
-ve.init.mw.Target.prototype.getLocalApi = function ( options ) {
-	options = options || {};
+ve.init.mw.Target.prototype.getLocalApi = function ( options = {} ) {
 	options.parameters = ve.extendObject( { formatversion: 2 }, options.parameters );
 	return new mw.Api( options );
 };

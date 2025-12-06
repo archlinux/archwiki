@@ -5,21 +5,7 @@
  * Copyright (C) 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Dump
  * @ingroup Maintenance
@@ -50,6 +36,7 @@ use RuntimeException;
 use WikiExporter;
 use Wikimedia\AtEase\AtEase;
 use XmlDumpWriter;
+use XMLParser;
 
 /**
  * @ingroup Maintenance
@@ -198,7 +185,7 @@ TEXT
 
 	public function execute() {
 		$this->processOptions();
-		$this->dump( true );
+		$this->dump( $this->history );
 	}
 
 	protected function processOptions() {
@@ -242,11 +229,13 @@ TEXT
 		}
 	}
 
+	/** @inheritDoc */
 	public function initProgress( $history = WikiExporter::FULL ) {
-		parent::initProgress();
+		parent::initProgress( $history );
 		$this->timeOfCheckpoint = $this->startTime;
 	}
 
+	/** @inheritDoc */
 	public function dump( $history, $text = WikiExporter::TEXT ) {
 		// Notice messages will foul up your XML output even if they're
 		// relatively harmless.
@@ -254,7 +243,7 @@ TEXT
 			ini_set( 'display_errors', 'stderr' );
 		}
 
-		$this->initProgress( $this->history );
+		$this->initProgress( $history );
 
 		$this->egress = new ExportProgressFilter( $this->sink, $this );
 
@@ -432,10 +421,10 @@ TEXT
 
 		xml_set_element_handler(
 			$parser,
-			[ $this, 'startElement' ],
-			[ $this, 'endElement' ]
+			$this->startElement( ... ),
+			$this->endElement( ... )
 		);
-		xml_set_character_data_handler( $parser, [ $this, 'characterData' ] );
+		xml_set_character_data_handler( $parser, $this->characterData( ... ) );
 
 		$offset = 0; // for context extraction on error reporting
 		do {
@@ -453,8 +442,6 @@ TEXT
 					xml_get_current_column_number( $parser ),
 					$byte . ( $chunk === false ? '' : ( '; "' . substr( $chunk, $byte - $offset, 16 ) . '"' ) ),
 					xml_error_string( xml_get_error_code( $parser ) ) )->escaped();
-
-				xml_parser_free( $parser );
 
 				throw new MWException( $msg );
 			}
@@ -487,7 +474,6 @@ TEXT
 				$this->egress->closeAndRename( $newFilenames );
 			}
 		}
-		xml_parser_free( $parser );
 
 		return true;
 	}
@@ -713,7 +699,7 @@ TEXT
 	 */
 	private function getTextDb( $id ) {
 		$store = $this->getBlobStore();
-		$address = ( is_int( $id ) || strpos( $id, ':' ) === false )
+		$address = ( is_int( $id ) || !str_contains( $id, ':' ) )
 			? SqlBlobStore::makeAddressFromTextId( (int)$id )
 			: $id;
 
@@ -725,7 +711,7 @@ TEXT
 				->normalize( $stripped );
 
 			return $normalized;
-		} catch ( BlobAccessException $ex ) {
+		} catch ( BlobAccessException ) {
 			// XXX: log a warning?
 			return false;
 		}
@@ -842,7 +828,7 @@ TEXT
 			return false;
 		}
 		$newAddress = trim( $newAddress );
-		if ( strpos( $newAddress, ':' ) === false ) {
+		if ( !str_contains( $newAddress, ':' ) ) {
 			$newAddress = SqlBlobStore::makeAddressFromTextId( intval( $newAddress ) );
 		}
 
@@ -888,6 +874,11 @@ TEXT
 		return $normalized;
 	}
 
+	/**
+	 * @param XMLParser $parser
+	 * @param string $name
+	 * @param array $attribs
+	 */
 	protected function startElement( $parser, string $name, array $attribs ) {
 		$this->checkpointJustWritten = false;
 
@@ -942,6 +933,10 @@ TEXT
 		}
 	}
 
+	/**
+	 * @param XMLParser $parser
+	 * @param string $name
+	 */
 	protected function endElement( $parser, string $name ) {
 		$this->checkpointJustWritten = false;
 
@@ -1003,6 +998,10 @@ TEXT
 		}
 	}
 
+	/**
+	 * @param XMLParser $parser
+	 * @param string $data
+	 */
 	protected function characterData( $parser, string $data ) {
 		$this->clearOpenElement( null );
 		if ( $this->lastName == "id" ) {

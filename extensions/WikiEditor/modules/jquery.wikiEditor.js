@@ -136,6 +136,7 @@ $.wikiEditor = {
 	 * @return {string}
 	 */
 	autoMsg: function ( object, property ) {
+		mw.log.warn( 'autoMsg is deprecated. Use mw.message() instead.' );
 		// Accept array of possible properties, of which the first one found will be used
 		if ( typeof property === 'object' ) {
 			for ( const i in property ) {
@@ -177,6 +178,7 @@ $.wikiEditor = {
 	 * @return {string}
 	 */
 	autoSafeMsg: function ( object, property ) {
+		mw.log.warn( 'autoSafeMsg is deprecated. Use mw.message() instead.' );
 		// Accept array of possible properties, of which the first one found will be used
 		if ( typeof property === 'object' ) {
 			for ( const i in property ) {

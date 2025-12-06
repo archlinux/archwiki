@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Kizule",
-			"Zoranzoki21",
-			"Aca"
+			"Zoranzoki21"
 		]
 	},
 	"apihelp-query+oath-param-user": "Корисник за којег је потребно добити информацију. Подразумеван је тренутни корисник.",

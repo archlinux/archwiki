@@ -10,10 +10,10 @@
 			"Kghbln",
 			"Kurt Jansson",
 			"Metalhead64",
+			"MoritzMT20",
 			"Murma174",
 			"Se4598",
-			"Tomabrafix",
-			"MoritzMT20"
+			"Tomabrafix"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck geht davon aus, dass der Seite neue Inhalte hinzugefügt wurden",
@@ -23,6 +23,11 @@
 	"tag-editcheck-references-activated-description": "EditCheck geht davon aus, dass möglicherweise ein Einzelnachweis erforderlich war, und die Benutzeroberfläche wurde angezeigt",
 	"tag-editcheck-references-shown": "Bearbeitungsprüfung (Belege) wurde angezeigt",
 	"tag-editcheck-references-shown-description": "Die Bearbeitungsprüfung ist der Meinung, dass ein Beleg erforderlich gewesen sein könnte; die Benutzeroberfläche wurde angezeigt",
+	"tag-editcheck-tone-description": "EditCheck hat ein potenzielles Problem mit dem Tonfall einiger hinzugefügter Inhalte festgestellt",
+	"tag-editcheck-tone-shown": "EditCheck (Tonfall) angezeigt",
+	"tag-editcheck-tone-shown-description": "EditCheck meint, dass eine Anpassung des Tonfalls in einigen Inhalten nötig gewesen wäre, und die Benutzeroberfläche wurde angezeigt",
+	"tag-editcheck-paste-shown": "Bearbeitungsprüfung (Einfügen) angezeigt",
+	"tag-editcheck-paste-shown-description": "Die Bearbeitungsprüfung bat um Klarstellung über den Inhalt, den der Benutzer eingefügt hat, der dann entweder entfernt oder als zulässig bestätigt wurde",
 	"tag-visualeditor": "Visuelle Bearbeitung",
 	"tag-visualeditor-description": "Bearbeitungen, die mit dem [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuellen Editor]] ausgeführt wurden.",
 	"tag-visualeditor-needcheck": "Visuelle Bearbeitung: Überprüfung",
@@ -36,7 +41,7 @@
 	"visualeditor-help-label": "Lies das Benutzerhandbuch",
 	"visualeditor-welcomedialog-action": "Jetzt bearbeiten",
 	"visualeditor-welcomedialog-content": "Jeder kann hier mitarbeiten und Artikel verbessern.",
-	"visualeditor-welcomedialog-content-thanks": "Damit hilfst du, das menschliche Wissen allen zugänglich zu machen!",
+	"visualeditor-welcomedialog-content-thanks": "Damit {{#FORMAL:hilfst du|helfen Sie}}, das menschliche Wissen allen zugänglich zu machen!",
 	"visualeditor-welcomedialog-switch": "Zum Quelltext-Editor",
 	"visualeditor-welcomedialog-switch-ve": "Zum visuellen Editor wechseln",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Willkommen}} bei $2"

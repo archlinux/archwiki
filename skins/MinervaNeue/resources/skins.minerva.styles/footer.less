@@ -115,4 +115,9 @@
 	}
 }
 
+// T376228: Hide the footer when a modal is active to prevent overlap.
+body.oo-ui-windowManager-modal-active .mw-footer {
+	display: none;
+}
+
 @import 'LastModifiedBar.less';

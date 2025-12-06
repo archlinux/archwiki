@@ -25,7 +25,6 @@
 	"gadgetusage-usercount": "Antal användare",
 	"gadgetusage-noresults": "Inga finesser hittades.",
 	"gadgetusage-intro": "Denna tabell visar antalet användare som har aktiverat respektive finess via sina inställningar på denna wiki. En aktiv användare är någon som har gjort en redigering {{PLURAL:$1|den senaste dagen|de senaste $1 dagarna}}. Listan visar ingen statistik för finesser som har aktiverats för alla som standard och kan innehålla finesser som inte längre finns.",
-	"gadgetusage-intro-noactive": "Denna tabell anger antalet användare som har aktiverat respektive finess på denna wiki. Denna lista exkluderar statistik för finesser som har aktiverats för alla som standard och kan innehålla finesser som inte längre finns.",
 	"gadgetusage-activeusers": "Aktiva användare",
 	"gadgetusage-default": "Standard",
 	"gadgets-title": "Finesser",

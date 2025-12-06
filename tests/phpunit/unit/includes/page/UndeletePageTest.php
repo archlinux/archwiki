@@ -8,7 +8,6 @@ use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Page\UndeletePage;
@@ -27,7 +26,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
- * @coversDefaultClass \MediaWiki\Page\UndeletePage
+ * @covers \MediaWiki\Page\UndeletePage
  */
 class UndeletePageTest extends MediaWikiUnitTestCase {
 	/**
@@ -63,7 +62,6 @@ class UndeletePageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canProbablyUndeleteAssociatedTalk
 	 * @dataProvider provideAssociatedTalk
 	 */
 	public function testCanProbablyUndeleteAssociatedTalk(
@@ -100,7 +98,7 @@ class UndeletePageTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideAssociatedTalk(): Generator {
-		$talkPage = new PageIdentityValue( 42, NS_TALK, 'Test talk page', PageIdentity::LOCAL );
+		$talkPage = PageIdentityValue::localIdentity( 42, NS_TALK, 'Test talk page' );
 		yield 'Talk page' => [
 			$talkPage,
 			false,
@@ -108,7 +106,7 @@ class UndeletePageTest extends MediaWikiUnitTestCase {
 			'undelete-error-associated-alreadytalk'
 		];
 
-		$nonTalkPage = new PageIdentityValue( 44, NS_MAIN, 'Test article', PageIdentity::LOCAL );
+		$nonTalkPage = PageIdentityValue::localIdentity( 44, NS_MAIN, 'Test article' );
 
 		yield 'Article whose talk page exists and does not have deleted revisions' => [
 			$nonTalkPage,

@@ -165,7 +165,7 @@ final class MhchemBasicTest extends MediaWikiUnitTestCase {
 		$this->assertFalse( MhchemUtil::issetJS( 0 ) );
 
 		// checkEmpty(new Object("")); tbd
-		$this->assertTrue( MhchemUtil::issetJS( new \stdClass( "" ) ) );
+		$this->assertTrue( MhchemUtil::issetJS( (object)[] ) );
 		$this->assertTrue( MhchemUtil::issetJS( "abc" ) );
 		$this->assertTrue( MhchemUtil::issetJS( "false" ) );
 		$this->assertTrue( MhchemUtil::issetJS( [] ) );

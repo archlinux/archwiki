@@ -1,20 +1,9 @@
 <?php
+declare( strict_types = 1 );
 /**
  * Copyright (C) 2011-2022 Wikimedia Foundation and others.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Parser\Parsoid\Config;
@@ -37,35 +26,14 @@ use Wikimedia\Parsoid\Config\PageContent as IPageContent;
  * @internal
  */
 class PageConfig extends IPageConfig {
-	private ParserOptions $parserOptions;
-	private SlotRoleHandler $slotRoleHandler;
-	private Title $title;
-	private ?RevisionRecord $revision = null;
-	private Bcp47Code $pageLanguage;
-	private string $pageLanguageDir;
-
-	/**
-	 * @param ParserOptions $parserOptions
-	 * @param SlotRoleHandler $slotRoleHandler
-	 * @param Title $title Title being parsed
-	 * @param ?RevisionRecord $revision
-	 * @param Bcp47Code $pageLanguage
-	 * @param string $pageLanguageDir
-	 */
 	public function __construct(
-		ParserOptions $parserOptions,
-		SlotRoleHandler $slotRoleHandler,
-		Title $title,
-		?RevisionRecord $revision,
-		Bcp47Code $pageLanguage,
-		string $pageLanguageDir
+		private readonly ParserOptions $parserOptions,
+		private readonly SlotRoleHandler $slotRoleHandler,
+		private readonly Title $title,
+		private readonly ?RevisionRecord $revision,
+		private readonly Bcp47Code $pageLanguage,
+		private readonly string $pageLanguageDir,
 	) {
-		$this->parserOptions = $parserOptions;
-		$this->slotRoleHandler = $slotRoleHandler;
-		$this->title = $title;
-		$this->revision = $revision;
-		$this->pageLanguage = $pageLanguage;
-		$this->pageLanguageDir = $pageLanguageDir;
 	}
 
 	public function getContentModel(): string {

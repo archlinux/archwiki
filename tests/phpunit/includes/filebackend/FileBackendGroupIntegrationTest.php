@@ -8,7 +8,7 @@ use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 
 /**
- * @coversDefaultClass \MediaWiki\FileBackend\FileBackendGroup
+ * @covers \MediaWiki\FileBackend\FileBackendGroup
  */
 class FileBackendGroupIntegrationTest extends MediaWikiIntegrationTestCase {
 	use FileBackendGroupTestTrait;
@@ -37,7 +37,6 @@ class FileBackendGroupIntegrationTest extends MediaWikiIntegrationTestCase {
 		$serviceMembers = [
 			'readOnlyMode' => 'ReadOnlyMode',
 			'srvCache' => 'LocalServerObjectCache',
-			'wanCache' => 'MainWANObjectCache',
 			'mimeAnalyzer' => 'MimeAnalyzer',
 			'lmgFactory' => 'LockManagerGroupFactory',
 			'tmpFileFactory' => 'TempFSFileFactory',

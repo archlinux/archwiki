@@ -158,6 +158,7 @@ class EventDispatchEngine implements DomainEventDispatcher, DomainEventSource {
 
 		if ( $this->pendingSubscribers[$eventType] ) {
 			// If more pending subscribers got added, recurse!
+			// @phan-suppress-next-line PhanPossiblyInfiniteRecursionSameParams We've changed the data
 			$this->resolveSubscribers( $eventType );
 		}
 	}
@@ -189,7 +190,7 @@ class EventDispatchEngine implements DomainEventDispatcher, DomainEventSource {
 		// the current transactional context!
 		$dbw = $dbProvider->getPrimaryDatabase();
 		DeferredUpdates::addUpdate( new MWCallableUpdate(
-			function () use ( $callback, $event, $dbProvider ) {
+			function () use ( $callback, $event ) {
 				$this->invoke( $callback, $event );
 			},
 			__METHOD__,

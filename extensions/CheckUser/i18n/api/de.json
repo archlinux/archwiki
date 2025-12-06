@@ -10,6 +10,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Überprüfen, welche IP-Adressen durch einen bestimmten Benutzernamen oder welche Benutzernamen von einer bestimmten IP-Adresse verwendet werden.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''Diese API wurde von den Site-Administratoren deaktiviert. Eine Abfrage der API wird keine Daten liefern.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Art der CheckUser-Anfrage:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "IP-Adresse des Zielbenutzers abrufen.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Aktionen abrufen, die von Ziel-IP-Adresse oder -Bereich ausgeführt wurden.",
@@ -41,6 +42,7 @@
 	"apierror-checkuser-timelimit": "Du musst das korrekte Zeitlimit verwenden (wie „-2 weeks“ oder „2 weeks ago“).",
 	"apierror-checkuser-invalidmode": "Ungültiger Abfragemodus",
 	"apierror-checkuser-nosuchuser": "Für diesen Benutzernamen gibt es keinen solchen Benutzer",
+	"apierror-checkuser-disabled": "Die Abfrage-API „Checkuser“ wurde von den Site-Administratoren deaktiviert.",
 	"checkuser-api-help-param-direction": "In welcher Richtung soll aufgezählt werden:",
 	"checkuser-api-help-paramvalue-direction-newer": "Älteste zuerst auflisten. Hinweis: $1from muss vor $1to liegen.",
 	"checkuser-api-help-paramvalue-direction-older": "Neueste zuerst auflisten (Standard). Hinweis: $1from muss später sein als $1to.",
@@ -51,5 +53,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} sammelt Daten über die „User-Agent Client Hints“ zur Unterstützung bei der Moderation von Vandalismus und Missbrauch. Weitere Details findest du unter https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints.",
 	"apihelp-logout-param-checkuserclienthints": "Client-Hinweisdaten, die zusammen mit Anfragen an ApiLogout bereitgestellt werden. Nur für die interne Verwendung.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "Das angegebene Ablaufdatum für die automatische Anzeige ist ungültig.",
-	"checkuser-ip-auto-reveal-missing-permission": "Du verfügst nicht über die erforderliche Berechtigung zur Verwendung der automatischen IP-Offenlegung."
+	"checkuser-ip-auto-reveal-missing-permission": "Du verfügst nicht über die erforderliche Berechtigung zur Verwendung der automatischen IP-Offenlegung.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "Die angegebene Fall-ID existiert nicht",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "Die Funktion „Vorgeschlagene Untersuchungen“ ist nicht aktiviert"
 }

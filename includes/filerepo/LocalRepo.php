@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -302,6 +288,7 @@ class LocalRepo extends FileRepo {
 		return false; // no redirect
 	}
 
+	/** @inheritDoc */
 	public function findFiles( array $items, $flags = 0 ) {
 		$finalFiles = []; // map of (DB key => corresponding File) for matches
 
@@ -550,6 +537,7 @@ class LocalRepo extends FileRepo {
 		return $this->hasAccessibleSharedCache;
 	}
 
+	/** @inheritDoc */
 	public function getSharedCacheKey( $kClassSuffix, ...$components ) {
 		// T267668: do not include the repo name in the key
 		return $this->hasAcessibleSharedCache()
@@ -579,18 +567,22 @@ class LocalRepo extends FileRepo {
 		}
 	}
 
+	/** @inheritDoc */
 	public function store( $srcPath, $dstZone, $dstRel, $flags = 0 ) {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
 
+	/** @inheritDoc */
 	public function storeBatch( array $triplets, $flags = 0 ) {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
 
+	/** @inheritDoc */
 	public function cleanupBatch( array $files, $flags = 0 ) {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
 
+	/** @inheritDoc */
 	public function publish(
 		$src,
 		$dstRel,
@@ -601,14 +593,17 @@ class LocalRepo extends FileRepo {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
 
+	/** @inheritDoc */
 	public function publishBatch( array $ntuples, $flags = 0 ) {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
 
+	/** @inheritDoc */
 	public function delete( $srcRel, $archiveRel ) {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
 
+	/** @inheritDoc */
 	public function deleteBatch( array $sourceDestPairs ) {
 		return $this->skipWriteOperationIfSha1( __FUNCTION__, func_get_args() );
 	}
@@ -664,10 +659,12 @@ class LocalRepo extends FileRepo {
 		return $this->splitMetadataThreshold;
 	}
 
+	/** @inheritDoc */
 	public function isMetadataUpdateEnabled() {
 		return $this->updateCompatibleMetadata;
 	}
 
+	/** @inheritDoc */
 	public function isMetadataReserializeEnabled() {
 		return $this->reserializeMetadata;
 	}

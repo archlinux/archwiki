@@ -44,6 +44,7 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 		$this->revisionLookup = $revisionLookup;
 	}
 
+	/** @inheritDoc */
 	public function needsWriteAccess() {
 		return true;
 	}
@@ -164,8 +165,6 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 		$spec['201'][parent::OPENAPI_DESCRIPTION_KEY] = 'OK';
 		$spec['201']['content']['application/json']['schema'] =
 			$spec['200']['content']['application/json']['schema'];
-		$spec['403'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-		$spec['409'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
 
 		return $spec;
 	}

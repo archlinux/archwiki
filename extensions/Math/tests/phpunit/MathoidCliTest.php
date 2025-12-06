@@ -18,8 +18,7 @@ class MathoidCliTest extends MediaWikiIntegrationTestCase {
 	protected static $hasMathoidCli;
 
 	public static function setUpBeforeClass(): void {
-		global $wgMathoidCli;
-		if ( is_array( $wgMathoidCli ) && is_executable( $wgMathoidCli[0] ) ) {
+		if ( MathMathMLCli::isMathoidCliConfigured() ) {
 			self::$hasMathoidCli = true;
 		}
 	}

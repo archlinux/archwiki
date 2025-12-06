@@ -6,6 +6,7 @@ use MediaWiki\Parser\ParserOutput;
 
 class DummyNonTextContentHandler extends DummyContentHandlerForTesting {
 
+	/** @inheritDoc */
 	public function __construct( $dataModel ) {
 		parent::__construct( $dataModel, [ "testing-nontext" ] );
 	}
@@ -42,14 +43,13 @@ class DummyNonTextContentHandler extends DummyContentHandlerForTesting {
 		return new DummyNonTextContent( '' );
 	}
 
+	/** @inheritDoc */
 	public function supportsDirectApiEditing() {
 		return true;
 	}
 
 	/**
 	 * @see ContentHandler::fillParserOutput()
-	 *
-	 * @since 1.38
 	 * @param Content $content
 	 * @param ContentParseParams $cpoParams
 	 * @param ParserOutput &$output The output object to fill (reference).

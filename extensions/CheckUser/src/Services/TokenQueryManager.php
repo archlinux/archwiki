@@ -71,7 +71,7 @@ class TokenQueryManager {
 
 		try {
 			return $this->tokenManager->decode( $request->getSession(), $token );
-		} catch ( \Exception $e ) {
+		} catch ( \Exception ) {
 			return [];
 		}
 	}

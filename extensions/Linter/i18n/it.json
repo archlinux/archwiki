@@ -81,7 +81,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|errore|errori}})",
 	"linter-page-edit": "modifica",
 	"linter-page-history": "cronologia",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "visualizza wikitesto",
 	"linter-pager-bogus-image-options-details": "Parametro di \"File:\" inesistente",
 	"linter-pager-category-header": "Categoria",

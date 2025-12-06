@@ -7,28 +7,14 @@
  * Specification in Gnome repository:
  *   http://svn.gnome.org/viewvc/gimp/trunk/devel-docs/xcf.txt?view=markup
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
 
 use MediaWiki\FileRepo\File\File;
-use MediaWiki\Libs\UnpackFailedException;
 use Wikimedia\StringUtils\StringUtils;
+use Wikimedia\UnpackFailedException;
 
 /**
  * Handler for the Gimp's native file format; getimagesize() doesn't
@@ -104,7 +90,7 @@ class XCFHandler extends BitmapHandler {
 					"/Nbase_type", # /
 				$binaryHeader
 			);
-		} catch ( UnpackFailedException $_ ) {
+		} catch ( UnpackFailedException ) {
 			return null;
 		}
 
@@ -122,6 +108,7 @@ class XCFHandler extends BitmapHandler {
 		return $header;
 	}
 
+	/** @inheritDoc */
 	public function getSizeAndMetadata( $state, $filename ) {
 		$header = self::getXCFMetaData( $filename );
 		$metadata = [];
@@ -169,6 +156,7 @@ class XCFHandler extends BitmapHandler {
 		return self::METADATA_GOOD;
 	}
 
+	/** @inheritDoc */
 	protected function hasGDSupport() {
 		return false;
 	}

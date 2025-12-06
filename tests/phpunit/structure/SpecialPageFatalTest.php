@@ -12,10 +12,9 @@ use MediaWiki\User\UserIdentityValue;
  * UltimateAuthority is used to run as much of the special page code as possible without
  * actually knowing the details of the special page.
  *
- * @since 1.32
- * @author Addshore
  * @coversNothing
  * @group Database
+ * @author Addshore
  */
 class SpecialPageFatalTest extends MediaWikiIntegrationTestCase {
 
@@ -49,7 +48,7 @@ class SpecialPageFatalTest extends MediaWikiIntegrationTestCase {
 
 		try {
 			$executor->executeSpecialPage( $page, '', null, 'qqx', $authority );
-		} catch ( ErrorPageError $_ ) {
+		} catch ( ErrorPageError ) {
 			// Only checked exceptions are allowed
 		}
 

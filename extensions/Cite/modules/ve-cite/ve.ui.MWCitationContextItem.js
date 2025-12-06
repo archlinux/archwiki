@@ -7,11 +7,14 @@
  * @license MIT
  */
 
+const MWCitationDialogTool = require( './ve.ui.MWCitationDialogTool.js' );
+const MWReferenceContextItem = require( './ve.ui.MWReferenceContextItem.js' );
+
 /**
  * Context item for a MWCitation.
  *
  * @constructor
- * @extends ve.ui.MWReferenceContextItem
+ * @extends MWReferenceContextItem
  * @param {ve.ui.LinearContext} context Context the item is in
  * @param {ve.dm.Model} model Model the item is related to
  * @param {Object} [config]
@@ -26,7 +29,7 @@ ve.ui.MWCitationContextItem = function VeUiMWCitationContextItem() {
 
 /* Inheritance */
 
-OO.inheritClass( ve.ui.MWCitationContextItem, ve.ui.MWReferenceContextItem );
+OO.inheritClass( ve.ui.MWCitationContextItem, MWReferenceContextItem );
 
 /* Static Properties */
 
@@ -43,7 +46,9 @@ ve.ui.MWCitationContextItem.static.template = null;
 
 /**
  * @static
- * @localdoc Sharing implementation with ve.ui.MWCitationDialogTool
+ * @localdoc Sharing implementation with MWCitationDialogTool
  */
 ve.ui.MWCitationContextItem.static.isCompatibleWith =
-	ve.ui.MWCitationDialogTool.static.isCompatibleWith;
+	MWCitationDialogTool.static.isCompatibleWith;
+
+module.exports = ve.ui.MWCitationContextItem;

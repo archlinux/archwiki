@@ -2,21 +2,7 @@
 /**
  * Copyright © 2010 Derk-Jan Hartman <hartman@videolan.org>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -80,7 +66,7 @@ class SpecialComparePages extends SpecialPage {
 				'label-message' => 'compare-rev1',
 				'size' => '8',
 				'section' => 'page1',
-				'validation-callback' => [ $this, 'checkExistingRevision' ],
+				'validation-callback' => $this->checkExistingRevision( ... ),
 			],
 			'Page2' => [
 				'type' => 'title',
@@ -97,7 +83,7 @@ class SpecialComparePages extends SpecialPage {
 				'label-message' => 'compare-rev2',
 				'size' => '8',
 				'section' => 'page2',
-				'validation-callback' => [ $this, 'checkExistingRevision' ],
+				'validation-callback' => $this->checkExistingRevision( ... ),
 			],
 			'Action' => [
 				'type' => 'hidden',
@@ -111,7 +97,7 @@ class SpecialComparePages extends SpecialPage {
 
 		$form->setMethod( 'get' )
 			->setSubmitTextMsg( 'compare-submit' )
-			->setSubmitCallback( [ $this, 'showDiff' ] )
+			->setSubmitCallback( $this->showDiff( ... ) )
 			->show();
 
 		if ( $this->differenceEngine ) {
@@ -120,11 +106,10 @@ class SpecialComparePages extends SpecialPage {
 	}
 
 	/**
-	 * @internal Callback for HTMLForm
 	 * @param array $data
 	 * @param HTMLForm $form
 	 */
-	public function showDiff( $data, HTMLForm $form ) {
+	private function showDiff( $data, HTMLForm $form ) {
 		$rev1 = $this->revOrTitle( $data['Revision1'], $data['Page1'] );
 		$rev2 = $this->revOrTitle( $data['Revision2'], $data['Page2'] );
 
@@ -157,12 +142,11 @@ class SpecialComparePages extends SpecialPage {
 	}
 
 	/**
-	 * @internal Callback for HTMLForm
 	 * @param string|null $value
 	 * @param array $alldata
 	 * @return string|bool
 	 */
-	public function checkExistingRevision( $value, $alldata ) {
+	private function checkExistingRevision( $value, $alldata ) {
 		if ( $value === '' || $value === null ) {
 			return true;
 		}
@@ -174,6 +158,7 @@ class SpecialComparePages extends SpecialPage {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

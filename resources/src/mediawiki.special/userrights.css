@@ -1,12 +1,13 @@
 /*!
  * Styles for Special:UserRights
  */
-.mw-userrights-nested {
+.mw-userrights-nested,
+.mw-userrights-annotation {
 	margin-left: 1.2em;
 }
 
 .mw-userrights-nested span {
-	margin-left: 0.3em;
+	margin-right: 0.3em;
 	display: inline-block;
 	vertical-align: middle;
 }

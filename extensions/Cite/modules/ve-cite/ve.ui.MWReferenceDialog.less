@@ -5,12 +5,38 @@
  * @license MIT
  */
 
-.ve-ui-mwReferenceDialog-reuseWarning,
-.ve-ui-mwReferenceDialog-extendsWarning {
+@import 'mediawiki.skin.variables.less';
+
+.ve-ui-mwReferenceEditPanel > .oo-ui-layout {
+	padding: @spacing-75 @spacing-100 @spacing-100 @spacing-100;
+}
+
+.ve-ui-mwReferenceDialog-reuseWarning {
 	font-weight: normal;
 	margin-bottom: 1em;
+}
 
-	.ve-ui-previewElement {
-		margin: 1em 0;
+.ve-ui-mwReferenceDialog-helpLink {
+	margin-top: 0.5em;
+}
+
+.ve-ui-mwReference-details-preview-panel {
+	border-bottom: @border-style-base @border-color-divider @border-width-base;
+
+	.ve-ui-mwReference-details-preview-item {
+		margin-top: @spacing-50;
+		margin-left: @spacing-200;
+	}
+
+	.ve-ui-mwReference-icon-newline {
+		transform: scaleX( -1 );
+		display: inline-block;
+		margin-left: -@spacing-200;
+
+		> span {
+			.cdx-mixin-css-icon( @cdx-icon-newline );
+			margin-left: @spacing-65;
+			margin-right: @spacing-25;
+		}
 	}
 }

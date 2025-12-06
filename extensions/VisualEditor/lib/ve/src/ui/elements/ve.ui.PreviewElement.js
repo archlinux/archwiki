@@ -18,9 +18,7 @@
  * @param {boolean} [config.useView=false] Use the view HTML, and don't bother generating model HTML, which
  *  is a bit slower
  */
-ve.ui.PreviewElement = function VeUiPreviewElement( model, config ) {
-	config = config || {};
-
+ve.ui.PreviewElement = function VeUiPreviewElement( model, config = {} ) {
 	// Parent constructor
 	ve.ui.PreviewElement.super.call( this, config );
 
@@ -146,8 +144,10 @@ ve.ui.PreviewElement.prototype.updatePreview = function () {
  */
 ve.ui.PreviewElement.prototype.afterRender = function () {
 	// Cleanup
-	this.view.destroy();
-	this.view = null;
+	if ( this.view ) {
+		this.view.destroy();
+		this.view = null;
+	}
 
 	// Event
 	this.emit( 'render' );

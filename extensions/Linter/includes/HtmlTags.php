@@ -42,7 +42,6 @@ class HtmlTags {
 
 	/**
 	 * Create an associative array out of all valid and deprecated HTML tags
-	 * @return array
 	 */
 	private function createAllowedHTMLTags(): array {
 		$allowedHtmlTags = [
@@ -74,17 +73,10 @@ class HtmlTags {
 		return array_combine( $allowedHtmlTags, $allowedHtmlTags );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getAllowedHTMLTags(): array {
 		return self::$allowedHtmlTags;
 	}
 
-	/**
-	 * @param string $tag
-	 * @return bool
-	 */
 	public function checkAllowedHTMLTags( string $tag ): bool {
 		return in_array( $tag, self::$allowedHtmlTags, true );
 	}

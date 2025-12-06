@@ -1,4 +1,6 @@
-!! version 2
+!! options
+version=2
+!! end
 
 !! test
 Smoke test for duplicated references with the same text

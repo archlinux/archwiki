@@ -2,21 +2,7 @@
 /**
  * Handler for Google's WebP format <https://developers.google.com/speed/webp/>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -55,6 +41,7 @@ class WebPHandler extends BitmapHandler {
 	private const VP8X_XMP = 4;
 	private const VP8X_ANIM = 2;
 
+	/** @inheritDoc */
 	public function getSizeAndMetadata( $state, $filename ) {
 		$parsedWebPData = self::extractMetadata( $filename );
 		if ( !$parsedWebPData ) {
@@ -70,10 +57,12 @@ class WebPHandler extends BitmapHandler {
 		return $info;
 	}
 
+	/** @inheritDoc */
 	public function getMetadataType( $image ) {
 		return 'parsed-webp';
 	}
 
+	/** @inheritDoc */
 	public function isFileMetadataValid( $image ) {
 		$data = $image->getMetadataArray();
 		if ( $data === [ '_error' => self::BROKEN_FILE ] ) {
@@ -208,7 +197,7 @@ class WebPHandler extends BitmapHandler {
 			// The Exif section of a webp file is basically a tiff file without an image.
 			// Some files start with an Exif\0\0. This is wrong according to standard and
 			// will prevent us from reading file, so remove for compatibility.
-			if ( substr( $exifData, 0, 6 ) === "Exif\x00\x00" ) {
+			if ( str_starts_with( $exifData, "Exif\x00\x00" ) ) {
 				$exifData = substr( $exifData, 6 );
 			}
 			$tmpFile = MediaWikiServices::getInstance()->
@@ -344,6 +333,7 @@ class WebPHandler extends BitmapHandler {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function canAnimateThumbnail( $file ) {
 		return false;
 	}
@@ -360,15 +350,18 @@ class WebPHandler extends BitmapHandler {
 		return [ 'png', 'image/png' ];
 	}
 
+	/** @inheritDoc */
 	protected function hasGDSupport() {
 		return function_exists( 'gd_info' ) && ( gd_info()['WebP Support'] ?? false );
 	}
 
+	/** @inheritDoc */
 	public function getCommonMetaArray( File $image ) {
 		$meta = $image->getMetadataArray();
 		return $meta['media-metadata'] ?? [];
 	}
 
+	/** @inheritDoc */
 	public function formatMetadata( $image, $context = false ) {
 		$meta = $this->getCommonMetaArray( $image );
 		if ( !$meta ) {

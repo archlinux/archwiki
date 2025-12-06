@@ -2,21 +2,7 @@
 /**
  * Mock of a filesystem file.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
@@ -37,6 +23,7 @@ class MockFSFile extends FSFile {
 	/** @inheritDoc */
 	protected $sha1Base36 = null;
 
+	/** @inheritDoc */
 	public function exists() {
 		return true;
 	}
@@ -50,10 +37,12 @@ class MockFSFile extends FSFile {
 		return 1911;
 	}
 
+	/** @inheritDoc */
 	public function getTimestamp() {
 		return wfTimestamp( TS_MW );
 	}
 
+	/** @inheritDoc */
 	public function getProps( $ext = true ) {
 		return [
 			'fileExists' => $this->exists(),
@@ -63,6 +52,7 @@ class MockFSFile extends FSFile {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getSha1Base36( $recache = false ) {
 		return '1234567890123456789012345678901';
 	}

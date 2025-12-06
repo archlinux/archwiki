@@ -1,13 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"BraunOBruno",
 			"Hamilton Abreu",
-			"Mansil alfalb",
-			"BraunOBruno"
+			"Mansil alfalb"
 		]
 	},
 	"editcheck-dialog-action-no": "Não",
 	"editcheck-dialog-action-yes": "Sim",
+	"editcheck-dialog-action-decline": "Rejeitar",
+	"editcheck-dialog-action-revise": "Rever",
+	"editcheck-dialog-action-recheck": "Reverificar",
+	"editcheck-dialog-action-back": "Anterior",
+	"editcheck-dialog-action-submit": "Submeter",
 	"editcheck-dialog-addref-description": "Ajude os leitores a entender de onde vêm estas informações, adicionando uma citação.",
 	"editcheck-dialog-addref-reject-question": "Porque não adicionou uma citação?",
 	"editcheck-dialog-addref-reject-description": "Os outros editores gostariam de saber mais sobre a sua decisão de não adicionar uma citação.",
@@ -19,6 +24,12 @@
 	"editcheck-dialog-addref-title": "Adicionar uma citação",
 	"editcheck-dialog-title": "Antes de publicar",
 	"editcheck-copyvio-title": "Conteúdo colado",
+	"editcheck-copyvio-prompt": "Você escreveu este texto?",
+	"editcheck-tone-description": "Outros utilizadores costumam revisar esse tipo de redação, dizendo que o tom é desequilibrado. [$1 Saiba mais]",
+	"editcheck-tone-footer": "Identificado usando um [$1 modelo BERT]",
+	"editcheck-tone-reject-uncertain": "Eu não tenho a certeza de como rever o tom",
+	"editcheck-tone-reject-other": "Outros",
+	"editcheck-tone-thank": "Obrigado por rever o tom!",
 	"editcheck-review-title": "Rever alterações",
 	"tag-editcheck-reference-decline-common-knowledge": "Verificação de Edições (referências) recusada (conhecimento comum)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "A referência da Verificação de Edições foi recusada como conhecimento comum",

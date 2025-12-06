@@ -56,7 +56,6 @@
 	"cite_references_link_many_accessibility_label": "Hoppa upp till:",
 	"cite_references_link_accessibility_back_label": "Hoppa längst upp",
 	"cite_section_preview_references": "Förhandsgranskning av referenser",
-	"cite_warning": "Referensvarning: $1",
 	"cite_warning_sectionpreview_no_text": "Taggen <code>&lt;ref&gt;</code> med namnet <code>$1</code> kan inte förhandsgranskas då den definieras utanför det aktuella avsnittet eller inte har definierats alls.",
 	"cite-wikieditor-tool-reference": "Referens",
 	"cite-wikieditor-help-page-references": "Referenser",

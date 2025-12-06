@@ -7,8 +7,6 @@
  * https://github.com/cucumber/cucumber-js/blob/master/docs/support_files/hooks.md
  */
 
-'use strict';
-
 const { After, Before } = require( '@cucumber/cucumber' );
 
 Before( () => {

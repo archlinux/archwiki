@@ -1,5 +1,4 @@
-'use strict';
-const Page = require( 'wdio-mediawiki/Page' );
+import Page from 'wdio-mediawiki/Page';
 
 class MathPage extends Page {
 
@@ -8,4 +7,5 @@ class MathPage extends Page {
 	}
 
 }
-module.exports = new MathPage();
+
+export default new MathPage();

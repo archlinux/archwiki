@@ -241,9 +241,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( fragment, config ) {
  *
  * @param {Object} [data] Dialog tear down data
  */
-ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
-	// Data initialization
-	data = data || {};
+ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data = {} ) {
 	if ( data.action !== 'done' ) {
 		return;
 	}

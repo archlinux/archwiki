@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bennylin"
+		]
+	},
+	"vector-languages": "ꦧꦱ",
+	"vector-language-button-label": "$1ꦧꦱ",
+	"vector-no-language-button-label": "ꦠꦩ꧀ꦧꦃ​ꦧꦱ",
+	"vector-action-addsection": "ꦠꦩ꧀ꦧꦃ​ꦉꦩ꧀ꦧꦸꦒ꧀",
+	"vector-action-delete": "ꦧꦸꦱꦏ꧀",
+	"vector-action-move": "ꦭꦶꦃ",
+	"vector-action-protect": "ꦉꦏ꧀ꦱ",
+	"vector-view-create": "ꦒꦮꦺ",
+	"vector-view-history": "ꦢꦼꦊꦁ​ꦱꦗꦫꦃ",
+	"vector-more-actions": "ꦭꦶꦪꦤꦺ",
+	"vector-appearance-label": "ꦥꦿꦲꦺꦤ꧀",
+	"vector-feature-limited-width-name": "ꦲꦩ꧀ꦧ",
+	"vector-feature-limited-width-0-label": "ꦲꦩ꧀ꦧ",
+	"vector-feature-limited-width-1-label": "ꦱ꧀ꦠꦤ꧀ꦢꦂ",
+	"vector-feature-custom-font-size-name": "ꦠꦸꦭꦶꦱ꧀ꦱꦤ꧀",
+	"vector-feature-custom-font-size-0-label": "ꦕꦶꦭꦶꦏ꧀",
+	"vector-feature-custom-font-size-1-label": "ꦱ꧀ꦠꦤ꧀ꦢꦂ",
+	"vector-feature-custom-font-size-2-label": "ꦒꦺꦝꦺ",
+	"skin-theme-name": "ꦮꦼꦂꦤ",
+	"skin-theme-day-label": "ꦥꦝꦁ",
+	"skin-theme-night-label": "ꦥꦼꦠꦼꦁ",
+	"skin-theme-os-label": "ꦲꦺꦴꦠꦺꦴꦩꦠꦶꦱ꧀",
+	"skin-theme-exclusion-notice": "ꦏꦕ​ꦲꦶꦏꦶ​ꦠꦤ꧀ꦱꦃ​ꦲꦶꦁ​ꦩꦺꦴꦝꦼ​ꦥꦝꦁ꧉",
+	"vector-toc-label": "ꦥꦿꦠꦺꦭ꧀ꦭꦤ꧀ꦤꦶꦁ​ꦲꦶꦱꦶ",
+	"vector-toc-beginning": "ꦮꦶꦮꦶꦠ꧀ꦠꦤ꧀",
+	"vector-anon-user-menu-pages": "ꦏꦕ​ꦥꦩ꧀ꦧꦼꦱꦸꦠ꧀ꦏꦁ​ꦩꦼꦠꦸ​ꦭꦺꦴꦒ꧀",
+	"vector-main-menu-label": "ꦩꦼꦤꦸ​ꦥꦺꦴꦏꦺꦴꦏ꧀",
+	"vector-feature-custom-font-size-exclusion-notice": "ꦏꦕ​ꦲꦶꦏꦶ​ꦠꦤ꧀ꦱꦃ​ꦔꦁꦒꦺꦴ​ꦲꦸꦏꦸꦫꦤ꧀ꦥ꦳ꦺꦴꦤ꧀ꦠ​ꦕꦶꦭꦶꦏ꧀",
+	"vector-page-tools-label": "ꦥꦶꦫꦤ꧀ꦠꦶ",
+	"vector-page-tools-general-label": "ꦲꦸꦩꦸꦩ꧀",
+	"vector-page-tools-actions-label": "ꦭꦏꦸ",
+	"vector-unpin-element-label": "ꦝꦺꦭꦶꦏ꧀ꦏꦏꦺ"
+}

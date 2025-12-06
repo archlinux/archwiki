@@ -28,9 +28,6 @@ class ParserStatus {
 		$this->condsUsed = $condsUsed;
 	}
 
-	/**
-	 * @return ExceptionBase|null
-	 */
 	public function getException(): ?ExceptionBase {
 		return $this->excep;
 	}
@@ -42,9 +39,6 @@ class ParserStatus {
 		return $this->warnings;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getCondsUsed(): int {
 		return $this->condsUsed;
 	}

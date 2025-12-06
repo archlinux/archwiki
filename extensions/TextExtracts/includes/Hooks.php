@@ -19,7 +19,7 @@ class Hooks implements
 	SearchResultProvideDescriptionHook
 {
 
-	private Config $config;
+	private readonly Config $config;
 
 	public function __construct(
 		ConfigFactory $configFactory

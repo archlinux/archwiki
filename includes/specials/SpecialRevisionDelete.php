@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -133,10 +119,12 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		$this->repoGroup = $repoGroup;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->useTransactionalTimeLimit();
 
@@ -195,7 +183,9 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		);
 
 		# We need a target page!
-		if ( $this->targetObj === null ) {
+		if ( $this->targetObj === null ||
+			( $this->typeName !== 'logging' && !$this->targetObj->canExist() )
+		) {
 			$output->addWikiMsg( 'undelete-header' );
 
 			return;
@@ -343,6 +333,11 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	 * @param string $archiveName
 	 */
 	protected function tryShowFile( $archiveName ) {
+		if ( $this->targetObj->getNamespace() !== NS_FILE ) {
+			$this->getOutput()->addWikiMsg( 'revdelete-no-file' );
+
+			return;
+		}
 		$repo = $this->repoGroup->getLocalRepo();
 		$oimage = $repo->newFromArchiveName( $this->targetObj, $archiveName );
 		$oimage->load();
@@ -428,9 +423,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		$numRevisions = 0;
 		// Live revisions...
 		$list = $this->getList();
-		for ( $list->reset(); $list->current(); $list->next() ) {
-			$item = $list->current();
-
+		foreach ( $list as $item ) {
 			if ( !$item->canView() ) {
 				if ( !$this->submitClicked ) {
 					throw new PermissionsError( 'suppressrevision' );
@@ -741,6 +734,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

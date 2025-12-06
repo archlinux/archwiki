@@ -5,9 +5,9 @@
  */
 
 /**
- * Transaction on ve.dm.ElementLinearData, preserving ve.dm.Document tree validity
+ * Transaction on ve.dm.LinearData, preserving ve.dm.Document tree validity
  *
- * A transaction represents a mapping on ve.dm.ElementLinearData, from one state (the start
+ * A transaction represents a mapping on ve.dm.LinearData, from one state (the start
  * state) to another (the end state). The transaction is guaranteed not to break tree validity:
  * if the start state represents a syntactically valid ve.dm.Document tree (without unbalanced
  * tags, bare listItems, bare table cells etc), then the end state tree must be syntactically
@@ -20,10 +20,10 @@
  *
  * @class
  * @constructor
- * @param {Object[]} [operations] Operations preserving tree validity as a whole; default []
- * @param {number|null} [authorId] Positive integer author ID; default null
+ * @param {Object[]} [operations=[]] Operations preserving tree validity as a whole
+ * @param {number|null} [authorId=null] Positive integer author ID; default null
  */
-ve.dm.Transaction = function VeDmTransaction( operations, authorId ) {
+ve.dm.Transaction = function VeDmTransaction( operations = [], authorId = null ) {
 	this.operations = operations || [];
 	// TODO: remove this backwards-incompatibility check
 	this.operations.forEach( ( op ) => {
@@ -32,7 +32,7 @@ ve.dm.Transaction = function VeDmTransaction( operations, authorId ) {
 		}
 	} );
 	this.applied = false;
-	this.authorId = authorId || null;
+	this.authorId = authorId;
 	this.isReversed = false;
 };
 
@@ -116,16 +116,16 @@ ve.dm.Transaction.static.deserialize = function ( data ) {
 };
 
 /**
- * Simpified comparison of linear data elements
+ * Simpified comparison of linear data items
  *
- * Identical to ve.dm.ElementLinearData.static.compareElementsUnannotated, but without
+ * Identical to ve.dm.LinearData.static.compareElementsUnannotated, but without
  * the complex comparison of node elements that requires the model registry.
  *
  * For the purposes of translateOffset it is just sufficient that we catch obvious
  * cases of annotations being set/clear.
  *
- * @param {Object|Array|string} a First element
- * @param {Object|Array|string} b Second element
+ * @param {ve.dm.LinearData.Item} a First item
+ * @param {ve.dm.LinearData.Item} b Second item
  * @return {boolean} Elements are comparable
  */
 ve.dm.Transaction.static.compareElementsForTranslate = function ( a, b ) {
@@ -232,27 +232,6 @@ ve.dm.Transaction.prototype.serialize = ve.dm.Transaction.prototype.toJSON;
  */
 ve.dm.Transaction.prototype.pushRetainOp = function ( length ) {
 	this.operations.push( { type: 'retain', length: length } );
-};
-
-/**
- * Build a replace operation
- *
- * The `insertedDataOffset` and `insertedDataLength` parameters indicate the intended insertion
- * is wrapped with fixup data to preserve HTML validity. For instance, an intended table cell
- * insertion may have been fixed up by wrapping inside a table row, table section and table.
- *
- * @param {Array} remove Data to remove
- * @param {Array} insert Data to insert, possibly fixed up
- * @param {number} [insertedDataOffset] Offset of intended insertion within fixed up data
- * @param {number} [insertedDataLength] Length of intended insertion within fixed up data
- */
-ve.dm.Transaction.prototype.pushReplaceOp = function ( remove, insert, insertedDataOffset, insertedDataLength ) {
-	const op = { type: 'replace', remove: remove, insert: insert };
-	if ( insertedDataOffset !== undefined && insertedDataLength !== undefined ) {
-		op.insertedDataOffset = insertedDataOffset;
-		op.insertedDataLength = insertedDataLength;
-	}
-	this.operations.push( op );
 };
 
 /**
@@ -507,17 +486,10 @@ ve.dm.Transaction.prototype.translateRangeWithAuthor = function ( range, authorI
  * @param {boolean} [options.excludeAttributes] Exclude attribute changes
  * @return {ve.Range|null} Range covering modifications, or null for a no-op transaction
  */
-ve.dm.Transaction.prototype.getModifiedRange = function ( doc, options ) {
+ve.dm.Transaction.prototype.getModifiedRange = function ( doc, options = {} ) {
 	let docEndOffset = doc.data.getLength(),
 		oldOffset = 0,
 		offset = 0;
-
-	if ( typeof options === 'boolean' ) {
-		// Backwards compatibility
-		options = { includeInternalList: options };
-	} else {
-		options = options || {};
-	}
 
 	if ( !options.includeInternalList ) {
 		const internalListNode = doc.getInternalList().getListNode();
@@ -672,83 +644,4 @@ ve.dm.Transaction.prototype.adjustRetain = function ( place, diff ) {
 		throw new Error( 'Negative retain length' );
 	}
 	ops.splice( start ? 0 : ops.length, 0, { type: 'retain', length: diff } );
-};
-
-/**
- * Split (in place) the retain at the given offset, if any
- *
- * Offset cannot be in the interior of a replace operation (i.e. the interior of its removed content).
- *
- * @param {number} offset The offset at which to split
- * @return {number} Index in operations starting at offset
- * @throws {Error} Offset is in the interior of a replace operation
- */
-ve.dm.Transaction.prototype.trySplit = function ( offset ) {
-	let n = 0;
-	let i, iLen;
-	for ( i = 0, iLen = this.operations.length; i < iLen; i++ ) {
-		const op = this.operations[ i ];
-		const opLen = ( op.type === 'retain' ? op.length : op.type === 'replace' ? op.remove.length : 0 );
-		if ( n + opLen <= offset ) {
-			n += opLen;
-			continue;
-		}
-		if ( n === offset ) {
-			// At start edge; no need to split
-			return i;
-		}
-		// Else n < offset < n + opLen
-		if ( op.type !== 'retain' ) {
-			throw new Error( 'Cannot split operation of type ' + op.type );
-		}
-		// Split the retain operation
-		op.length -= n + opLen - offset;
-		this.operations.splice( i + 1, 0, { type: 'retain', length: n + opLen - offset } );
-		return i + 1;
-	}
-	if ( n === offset ) {
-		return iLen + 1;
-	}
-	throw new Error( 'Offset beyond end of transaction' );
-};
-
-/**
- * Unsplit (in place) the two operations around the given index, if possible
- *
- * @param {number} index The index at which to unsplit
- */
-ve.dm.Transaction.prototype.tryUnsplit = function ( index ) {
-	const op1 = this.operations[ index - 1 ],
-		op2 = this.operations[ index ];
-	if ( !op1 || !op2 || op1.type !== op2.type ) {
-		return;
-	}
-	if ( op1.type === 'retain' ) {
-		op1.length += op2.length;
-		this.operations.splice( index, 1 );
-	} else if ( op1.type === 'replace' ) {
-		ve.batchSplice( op1.remove, op1.remove.length, 0, op2.remove );
-		ve.batchSplice( op1.insert, op1.insert.length, 0, op2.insert );
-		this.operations.splice( index, 1 );
-	}
-};
-
-/**
- * Insert (in place) operations at the given offset
- *
- * Merges into existing operations where possible. Offset cannot be in the interior of a replace
- * operation (i.e. the interior of its removed content).
- *
- * @param {number} offset The offset at which to insert
- * @param {Object[]} operations The operations to insert
- * @throws {Error} Offset is in the interior of a replace operation
- */
-ve.dm.Transaction.prototype.insertOperations = function ( offset, operations ) {
-	if ( operations.length === 0 ) {
-		return;
-	}
-	const opIndex = this.trySplit( offset );
-	ve.batchSplice( this.operations, opIndex, 0, ve.copy( operations ) );
-	this.tryUnsplit( opIndex + operations.length );
-	this.tryUnsplit( opIndex );
 };

@@ -10,9 +10,9 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					pages: [
 						'User:Admin',
 						'User talk:Admin',
-						null
+						null,
 					],
-					count: 24
+					count: 24,
 				},
 				{
 					ns: 2,
@@ -20,9 +20,9 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					unprefixed: 'RandomUser',
 					pages: [
 						'User:RandomUser',
-						'User talk:RandomUser'
+						'User talk:RandomUser',
 					],
-					count: 6
+					count: 6,
 				},
 				{
 					ns: 0,
@@ -30,17 +30,17 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					unprefixed: 'Moai',
 					pages: [
 						'Moai',
-						'Talk:Moai'
+						'Talk:Moai',
 					],
-					count: 3
-				}
+					count: 3,
+				},
 			],
 			totalCount: 33,
 			source: {
 				title: 'LocalWiki',
 				url: 'http://dev.wiki.local.wmftest.net:8080/w/api.php',
-				base: 'http://dev.wiki.local.wmftest.net:8080/wiki/$1'
-			}
+				base: 'http://dev.wiki.local.wmftest.net:8080/wiki/$1',
+			},
 		},
 		hewiki: {
 			pages: [
@@ -51,9 +51,9 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					pages: [
 						'Foo',
 						'Talk:Foo',
-						null
+						null,
 					],
-					count: 10
+					count: 10,
 				},
 				{
 					ns: 0,
@@ -61,18 +61,18 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					unprefixed: 'Bar',
 					pages: [
 						'User:Bar',
-						'User talk:Bar'
+						'User talk:Bar',
 					],
-					count: 5
-				}
+					count: 5,
+				},
 			],
 			totalCount: 15,
 			source: {
 				title: 'Hebrew Wikipedia',
 				url: 'http://he.wiki.local.wmftest.net:8080/w/api.php',
-				base: 'http://he.wiki.local.wmftest.net:8080/wiki/$1'
-			}
-		}
+				base: 'http://he.wiki.local.wmftest.net:8080/wiki/$1',
+			},
+		},
 	};
 
 	QUnit.test( 'Creating source-page map', ( assert ) => {
@@ -83,27 +83,27 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 		assert.strictEqual(
 			model.getCurrentSource(),
 			'local',
-			'Default source is local'
+			'Default source is local',
 		);
 		assert.strictEqual(
 			model.getCurrentPage(),
 			null,
-			'Default page is null'
+			'Default page is null',
 		);
 		assert.deepEqual(
 			model.getSourcesArray(),
 			[ 'local', 'hewiki' ],
-			'Source array includes all sources'
+			'Source array includes all sources',
 		);
 		assert.strictEqual(
 			model.getSourceTitle( 'hewiki' ),
 			'Hebrew Wikipedia',
-			'Source title'
+			'Source title',
 		);
 		assert.strictEqual(
 			model.getSourceTotalCount( 'hewiki' ),
 			15,
-			'Source total count'
+			'Source total count',
 		);
 		assert.deepEqual(
 			model.getSourcePages( 'local' ),
@@ -113,10 +113,10 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					ns: 0,
 					pages: [
 						'Moai',
-						'Talk:Moai'
+						'Talk:Moai',
 					],
 					title: 'Moai',
-					unprefixed: 'Moai'
+					unprefixed: 'Moai',
 				},
 				'User:Admin': {
 					count: 24,
@@ -124,32 +124,32 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 					pages: [
 						'User:Admin',
 						'User talk:Admin',
-						null
+						null,
 					],
 					title: 'User:Admin',
-					unprefixed: 'Admin'
+					unprefixed: 'Admin',
 				},
 				'User:RandomUser': {
 					count: 6,
 					ns: 2,
 					pages: [
 						'User:RandomUser',
-						'User talk:RandomUser'
+						'User talk:RandomUser',
 					],
 					title: 'User:RandomUser',
-					unprefixed: 'RandomUser'
-				}
+					unprefixed: 'RandomUser',
+				},
 			},
-			'Outputting source pages'
+			'Outputting source pages',
 		);
 		assert.deepEqual(
 			model.getGroupedPagesForTitle( 'local', 'User:Admin' ),
 			[
 				'User:Admin',
 				'User talk:Admin',
-				null
+				null,
 			],
-			'Grouped pages per title'
+			'Grouped pages per title',
 		);
 
 		// Change source
@@ -158,12 +158,12 @@ QUnit.module( 'ext.echo.dm - SourcePagesModel', () => {
 		assert.strictEqual(
 			model.getCurrentSource(),
 			'hewiki',
-			'Source changed successfully'
+			'Source changed successfully',
 		);
 		assert.strictEqual(
 			model.getCurrentPage(),
 			'User:Bar',
-			'Page changed successfully'
+			'Page changed successfully',
 		);
 
 	} );

@@ -2,11 +2,12 @@ const controller = require( 'ext.discussionTools.init' ).controller,
 	utils = require( 'ext.discussionTools.init' ).utils,
 	ModeTabSelectWidget = require( './ModeTabSelectWidget.js' ),
 	ModeTabOptionWidget = require( './ModeTabOptionWidget.js' ),
-	contLangMessages = require( './contLangMessages.json' ),
 	licenseMessages = require( './licenseMessages.json' ),
 	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
 	enable2017Wikitext = featuresEnabled.sourcemodetoolbar,
 	dtConf = require( 'ext.discussionTools.init' ).config;
+
+mw.messages.set( require( './contLangMessages.json' ) );
 
 require( './AbandonCommentDialog.js' );
 require( './AbandonTopicDialog.js' );
@@ -285,7 +286,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 				.params( [
 					mw.util.getUrl( 'Special:Userlogin', returnTo ),
 					mw.util.getUrl( 'Special:Userlogin/signup', returnTo ),
-					contLangMessages[ 'tempuser-helppage' ]
+					mw.msg( 'tempuser-helppage' )
 				] )
 				.parseDom()
 		} );
@@ -529,11 +530,10 @@ ReplyWidget.prototype.onAdvancedToggleClick = function () {
 				selectFromIndex = titleText.length + '/* '.length + ' */ '.length;
 			}
 		} else {
-			// Same as summary.endsWith( defaultReplyTrail )
-			const defaultReplyTrail = '*/ ' + mw.msg( 'discussiontools-defaultsummary-reply' );
-			const endCommentIndex = summary.indexOf( defaultReplyTrail );
-			if ( endCommentIndex + defaultReplyTrail.length === summary.length ) {
-				selectFromIndex = endCommentIndex + 3;
+			const defaultReply = mw.msg( 'discussiontools-defaultsummary-reply' );
+			const defaultReplyTrail = '*/ ' + defaultReply;
+			if ( summary.endsWith( defaultReplyTrail ) ) {
+				selectFromIndex = summary.length - defaultReply.length;
 			}
 		}
 

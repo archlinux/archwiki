@@ -32,11 +32,13 @@ trait ApiWatchlistTrait {
 	private $watchlistMaxDuration;
 
 	private ?WatchlistManager $watchlistManager = null;
+	private WatchedItemStoreInterface $watchedItemStore;
 	private ?UserOptionsLookup $userOptionsLookup = null;
 
 	private function initServices() {
 		// This trait is used outside of core and therefor fallback to global state - T263904
 		$this->watchlistManager ??= MediaWikiServices::getInstance()->getWatchlistManager();
+		$this->watchedItemStore ??= MediaWikiServices::getInstance()->getWatchedItemStore();
 		$this->userOptionsLookup ??= MediaWikiServices::getInstance()->getUserOptionsLookup();
 	}
 
@@ -148,17 +150,40 @@ trait ApiWatchlistTrait {
 	}
 
 	/**
-	 * Get formatted expiry from the given parameters, or null if no expiry was provided.
+	 * Get formatted expiry from the given parameters. If no expiry was provided,
+	 * return the current expiry if the user is watching the page, or check
+	 * against user-preferred expiry for this action if they are not watching it.
+	 *
 	 * @param array $params Request parameters passed to the API.
+	 * @param ?PageIdentity $page
+	 * @param ?UserIdentity $user
+	 * @param string $userOption The name of the watchlist preference for this action.
 	 * @return string|null
 	 */
-	protected function getExpiryFromParams( array $params ): ?string {
+	protected function getExpiryFromParams(
+		array $params,
+		?PageIdentity $page = null,
+		?UserIdentity $user = null,
+		string $userOption = 'watchdefault-expiry'
+	): ?string {
 		$watchlistExpiry = null;
-		if ( $this->watchlistExpiryEnabled && isset( $params['watchlistexpiry'] ) ) {
-			$watchlistExpiry = ApiResult::formatExpiry( $params['watchlistexpiry'] );
+		if ( $this->watchlistExpiryEnabled ) {
+			// At this point, the ParamValidator has already normalized $params['watchlistexpiry'].
+			// Use the value provided in the API call, if any.
+			$watchlistExpiry = $params['watchlistexpiry'] ?? null;
+			// If expiry was not provided, and the user is already watching the page, keep the expiry value.
+			if ( $user && $page && $watchlistExpiry === null && $this->watchedItemStore->isWatched( $user, $page ) ) {
+				return $this->getWatchlistExpiry( $this->watchedItemStore, $page, $user );
+			}
+			// If the user is not watching the page, and expiry was not provided, use the default.
+			if ( $user && $watchlistExpiry === null ) {
+				$watchlistExpiry = ExpiryDef::normalizeExpiry(
+					$this->userOptionsLookup->getOption( $user, $userOption )
+				);
+			}
 		}
 
-		return $watchlistExpiry;
+		return ApiResult::formatExpiry( $watchlistExpiry );
 	}
 
 	/**

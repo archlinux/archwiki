@@ -216,8 +216,6 @@ all additional text is vanished
 Language converter glossary rules inside attributes (T119158)
 !! options
 language=sr htmlVariantLanguage=sr-Latn
-!! config
-wgParserEnableLegacyMediaDOM=false
 !! wikitext
 -{H|foAjrjvi=>sr-el:" onload="alert(1)" data-foo="}-
 
@@ -467,11 +465,11 @@ conversion:
 
 ==Latinski==
 !! html/php
-<h2><span id="-.7BNaslov.7D-"></span><span class="mw-headline" id="-{Naslov}-">Naslov</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Уредите одељак „Naslov”">уреди</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="-{Naslov}-"><span id="-.7BNaslov.7D-"></span>Naslov</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Уредите одељак „Naslov”">уреди</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>Ноте тхат евен ан унпротецтед хеадлине ИД ис нот аффецтед бy лангуаге
 цонверсион:
 </p>
-<h2><span class="mw-headline" id="Latinski">Латински</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Уредите одељак „Латински”">уреди</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Latinski">Латински</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Уредите одељак „Латински”">уреди</a><span class="mw-editsection-bracket">]</span></span></div>
 !! html/parsoid
 <h2 id="-{Naslov}-"><span id="-.7BNaslov.7D-" typeof="mw:FallbackId"></span><span typeof="mw:LanguageVariant" data-mw-variant='{"disabled":{"t":"Naslov"}}'></span></h2>
 
@@ -505,6 +503,36 @@ language=zh htmlVariantLanguage=zh-Hant-TW
 </p>
 !! html/parsoid
 <p><span typeof="mw:LanguageVariant" data-parsoid='{"tSp":[6]}' data-mw-variant='{"twoway":[{"l":"zh","t":"China"},{"l":"zh-Hant-TW","t":"Taiwan"}]}'></span>, not China</p>
+!! end
+
+!! test
+html2wt support for edited wildcard rule (strip trailing semi where needed)
+!! options
+language=zh htmlVariantLanguage=zh-Hant-TW
+parsoid={
+  "modes": ["wt2wt", "selser"],
+  "changes": [
+    ["meta[typeof]", "attr", "data-mw-variant", "{\"add\":true,\"twoway\":[{\"l\":\"*\",\"t\":\"content\"}]}"]
+  ]
+}
+!! wikitext
+test: -{H|zh:content; }-
+!! wikitext/edited
+test: -{H|content}-
+!! end
+
+!! test
+html2wt support for wildcard rule with whitespace around flag value
+!! options
+language=zh htmlVariantLanguage=zh-Hant-TW
+parsoid=wt2html,wt2wt,html2html
+!! wikitext
+test: -{ H  |all variants}-
+!! html/php
+<p>test: 
+</p>
+!! html/parsoid
+<p>test: <meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"*","t":"all variants"}]}'/></p>
 !! end
 
 !! test
@@ -1680,7 +1708,7 @@ parsoid=html2wt
 !! test
 Nonexistent internal link targets should be resolved using variants (T258856)
 !! options
-language=sr variant=sr-ec
+language=sr htmlVariantLanguage=sr-Cyrl
 !! wikitext
 [[Test]]
 !! html/php

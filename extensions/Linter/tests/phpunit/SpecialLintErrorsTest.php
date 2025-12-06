@@ -182,9 +182,6 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 		$this->assertCount( 0, $errorsFromDb );
 	}
 
-	/**
-	 * @param array $pageData
-	 */
 	private function createPagesWithLintErrorsFromData( array $pageData ) {
 		foreach ( $pageData as $data ) {
 			$titleAndPage = $this->createTitleAndPage( $data[ 'name' ], $data[ 'ns' ] );
@@ -205,39 +202,36 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
 	private function createTitleAndPageAndLintErrorData(): array {
 		$pageData = [];
-		$pageData[] = [ 'name' => 'Lint Error One', 'ns' => 0,
+		$pageData[] = [ 'name' => 'Lint Error One', 'ns' => NS_MAIN,
 			'lintErrors' => [
 				[ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ],
 				[ 'type' => 'misnested-tag', 'location' => [ 20, 30 ] ]
 			]
 		];
-		$pageData[] = [ 'name' => 'LintErrorTwo', 'ns' => 3,
+		$pageData[] = [ 'name' => 'LintErrorTwo', 'ns' => NS_USER_TALK,
 			'lintErrors' => [ [ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ] ]
 		];
-		$pageData[] = [ 'name' => 'NotANamespace:LintErrorThree', 'ns' => 0,
+		$pageData[] = [ 'name' => 'NotANamespace:LintErrorThree', 'ns' => NS_MAIN,
 			'lintErrors' => [
 				[ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ],
 				[ 'type' => 'misnested-tag', 'location' => [ 20, 30 ] ]
 			]
 		];
-		$pageData[] = [ 'name' => 'NotANamespace:LintErrorFour', 'ns' => 0,
+		$pageData[] = [ 'name' => 'NotANamespace:LintErrorFour', 'ns' => NS_MAIN,
 			'lintErrors' => [
 				[ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ],
 				[ 'type' => 'misnested-tag', 'location' => [ 20, 30 ] ]
 			]
 		];
-		$pageData[] = [ 'name' => 'Some other page', 'ns' => 0,
+		$pageData[] = [ 'name' => 'Some other page', 'ns' => NS_MAIN,
 			'lintErrors' => [ [ 'type' => 'bogus-image-options', 'location' => [ 30, 40 ] ] ]
 		];
-		$pageData[] = [ 'name' => 'FooBar:ErrorFive', 'ns' => 3,
+		$pageData[] = [ 'name' => 'FooBar:ErrorFive', 'ns' => NS_USER_TALK,
 			'lintErrors' => [ [ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ] ]
 		];
-		$pageData[] = [ 'name' => 'ErrorSix', 'ns' => 3,
+		$pageData[] = [ 'name' => 'ErrorSix', 'ns' => NS_USER_TALK,
 			'lintErrors' => [
 				[ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ],
 				[ 'type' => 'misnested-tag', 'location' => [ 20, 30 ] ]

@@ -376,7 +376,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "Nový wikitext stránky po úprave",
 	"abusefilter-edit-builder-vars-added-links": "Všetky externé odkazy pridané v úprave",
 	"abusefilter-edit-builder-vars-removed-links": "Všetky externé odkazy odstránené v úprave",
-	"abusefilter-edit-builder-vars-all-links": "Všetky externé odkazy v novom texte",
+	"abusefilter-edit-builder-vars-old-links": "Odkazy na stránke pred úpravou",
 	"abusefilter-edit-builder-vars-new-pst": "Nový wikitext stránky, po transformácii pred uložením",
 	"abusefilter-edit-builder-vars-diff-pst": "Zjednotený diff zmien vykonaných pri úprave, po transformácii pred uložením",
 	"abusefilter-edit-builder-vars-addedlines-pst": "Riadky pridané pri úprave, po transformácii pred uložením",
@@ -400,7 +400,6 @@
 	"abusefilter-edit-builder-vars-movedto-restrictions-upload": "Úroveň zámku stránky, na ktorú sa presúva, pre upload",
 	"abusefilter-edit-builder-vars-movedto-recent-contributors": "Posledných desať používateľov, ktorí editovali stránku, na ktorú sa presúva",
 	"abusefilter-edit-builder-vars-movedto-first-contributor": "Prvý používateľ, ktorý editoval stránku, na ktorú sa presúva",
-	"abusefilter-edit-builder-vars-old-links": "Odkazy na stránke pred úpravou",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA1 haš obsahu súboru",
 	"abusefilter-edit-builder-vars-file-size": "Veľkosť súboru v bajtoch",
 	"abusefilter-edit-builder-vars-file-mime": "MIME typ súboru",
@@ -543,5 +542,7 @@
 	"abusefilter-view-privatedetails-legend": "Zobraziť súkromné detaily",
 	"abusefilter-view-privatedetails-reason": "Dôvod prístupu k súkromným detailom:",
 	"abusefilter-log-details-id": "ID záznamu",
+	"blockedexternaldomains": "Blokované externé domény",
+	"abusefilter-blocked-domains-title": "Blokované externé domény",
 	"abusefilter-log-ip-not-available": "Nedostupné"
 }

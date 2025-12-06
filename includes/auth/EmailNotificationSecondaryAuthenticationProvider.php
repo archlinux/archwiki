@@ -10,6 +10,8 @@ use Wikimedia\Rdbms\IConnectionProvider;
  *
  * Set 'no-email' to true (via AuthManager::setAuthenticationSessionData) to skip this provider.
  * Primary providers doing so are expected to take care of email address confirmation.
+ *
+ * @ingroup Auth
  */
 class EmailNotificationSecondaryAuthenticationProvider
 	extends AbstractSecondaryAuthenticationProvider
@@ -37,14 +39,17 @@ class EmailNotificationSecondaryAuthenticationProvider
 				&& $this->config->get( MainConfigNames::EmailAuthentication );
 	}
 
+	/** @inheritDoc */
 	public function getAuthenticationRequests( $action, array $options ) {
 		return [];
 	}
 
+	/** @inheritDoc */
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
 		return AuthenticationResponse::newAbstain();
 	}
 
+	/** @inheritDoc */
 	public function beginSecondaryAccountCreation( $user, $creator, array $reqs ) {
 		if (
 			$this->sendConfirmationEmail
@@ -54,7 +59,7 @@ class EmailNotificationSecondaryAuthenticationProvider
 			// TODO show 'confirmemail_oncreate'/'confirmemail_sendfailed' message
 			$this->dbProvider->getPrimaryDatabase()->onTransactionCommitOrIdle(
 				function () use ( $user ) {
-					$user = $user->getInstanceForUpdate();
+					$user = $user->getInstanceFromPrimary() ?? $user;
 					$status = $user->sendConfirmationMail();
 					$user->saveSettings();
 					if ( !$status->isGood() ) {

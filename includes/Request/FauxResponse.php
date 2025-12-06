@@ -3,21 +3,7 @@
 /**
  * Classes used to send headers and cookies back to the user
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -26,6 +12,7 @@ namespace MediaWiki\Request;
 use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @ingroup HTTP
@@ -78,6 +65,7 @@ class FauxResponse extends WebResponse {
 		$this->code = intval( $code );
 	}
 
+	/** @inheritDoc */
 	public function headersSent() {
 		return false;
 	}
@@ -113,10 +101,9 @@ class FauxResponse extends WebResponse {
 	}
 
 	/**
-	 * @param string $name The name of the cookie.
-	 * @param string $value The value to be stored in the cookie.
-	 * @param int|null $expire Ignored in this faux subclass.
-	 * @param array $options Ignored in this faux subclass.
+	 * @inheritDoc
+	 *
+	 * The `sameSite` $options value is ignored (not implemented in this subclass).
 	 */
 	public function setCookie( $name, $value, $expire = 0, $options = [] ) {
 		if ( $this->disableForPostSend ) {
@@ -144,7 +131,7 @@ class FauxResponse extends WebResponse {
 		if ( $expire === null ) {
 			$expire = 0; // Session cookie
 		} elseif ( $expire == 0 && $cookieExpiration != 0 ) {
-			$expire = time() + $cookieExpiration;
+			$expire = ConvertibleTimestamp::time() + $cookieExpiration;
 		}
 
 		$this->cookies[$options['prefix'] . $name] = [
@@ -171,7 +158,7 @@ class FauxResponse extends WebResponse {
 
 	/**
 	 * @param string $name
-	 * @return array|null
+	 * @return array{value:string,expire:int,domain:string,path:string,secure:bool,httpOnly:bool}|null
 	 */
 	public function getCookieData( $name ) {
 		return $this->cookies[$name] ?? null;

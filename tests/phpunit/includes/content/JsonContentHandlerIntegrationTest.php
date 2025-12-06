@@ -1,7 +1,6 @@
 <?php
 
 use MediaWiki\Content\JsonContent;
-use MediaWiki\Content\JsonContentHandler;
 use MediaWiki\Content\ValidationParams;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Page\PageIdentity;
@@ -54,7 +53,7 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 			[
 				(object)[ '<script>alert("evil!")</script>' ],
 				'<div class="noresize"><table class="mw-json"><tbody><tr><th><span>0</span></th><td class="mw-json-value">"' .
-				'&lt;script&gt;alert("evil!")&lt;/script&gt;"' .
+				'&lt;script>alert("evil!")&lt;/script>"' .
 				'</td></tr></tbody></table></div>',
 			],
 			[
@@ -91,7 +90,8 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 	}
 
 	public function testValidateSave() {
-		$handler = new JsonContentHandler();
+		$handler = $this->getServiceContainer()->getContentHandlerFactory()
+			->getContentHandler( CONTENT_MODEL_JSON );
 		$validationParams = new ValidationParams(
 			PageIdentityValue::localIdentity( 123, NS_MEDIAWIKI, 'Config.json' ),
 			0

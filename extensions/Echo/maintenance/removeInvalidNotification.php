@@ -8,9 +8,11 @@
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Maintenance\Maintenance;
 
+// @codeCoverageIgnoreStart
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
 	: __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that removes invalid notifications
@@ -105,5 +107,7 @@ class RemoveInvalidNotification extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RemoveInvalidNotification::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

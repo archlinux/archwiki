@@ -99,7 +99,7 @@ class BadFileLookup {
 		$lines = explode( "\n", $list );
 		foreach ( $lines as $line ) {
 			// List items only
-			if ( substr( $line, 0, 1 ) !== '*' ) {
+			if ( !str_starts_with( $line, '*' ) ) {
 				continue;
 			}
 
@@ -115,7 +115,7 @@ class BadFileLookup {
 			foreach ( $m[1] as $i => $titleText ) {
 				try {
 					$title = $this->titleParser->parseTitle( $titleText );
-				} catch ( MalformedTitleException $e ) {
+				} catch ( MalformedTitleException ) {
 					continue;
 				}
 				if ( $i == 0 ) {

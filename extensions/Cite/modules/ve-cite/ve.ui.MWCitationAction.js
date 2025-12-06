@@ -47,6 +47,4 @@ ve.ui.MWCitationAction.prototype.open = function ( windowData ) {
 	return true;
 };
 
-/* Registration */
-
-ve.ui.actionFactory.register( ve.ui.MWCitationAction );
+module.exports = ve.ui.MWCitationAction;

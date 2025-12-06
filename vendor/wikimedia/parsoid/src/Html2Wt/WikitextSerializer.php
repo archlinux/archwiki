@@ -19,9 +19,6 @@ use Wikimedia\Parsoid\Html2Wt\DOMHandlers\DOMHandler;
 use Wikimedia\Parsoid\Html2Wt\DOMHandlers\DOMHandlerFactory;
 use Wikimedia\Parsoid\NodeData\ParamInfo;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
-use Wikimedia\Parsoid\Tokens\KV;
-use Wikimedia\Parsoid\Tokens\TagTk;
-use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -61,7 +58,6 @@ use Wikimedia\Parsoid\Wikitext\Consts;
  * - add a generic 'can this HTML node be serialized to wikitext in this
  *   context' detection method and use that to adaptively switch between
  *   wikitext and HTML serialization.
- *
  */
 class WikitextSerializer {
 
@@ -100,17 +96,13 @@ class WikitextSerializer {
 		'sepSuffixWithNlsRE' => '/\n[ \t\r\n]*$/D',
 	];
 
-	/** @var WikitextEscapeHandlers */
-	public $wteHandlers;
+	public Env $env;
+	private SerializerState $state;
+	public WikitextEscapeHandlers $wteHandlers;
+	private ?string $commentsOrAnnotationsRE = null;
 
-	/** @var Env */
-	public $env;
-
-	/** @var SerializerState */
-	private $state;
-
-	/** @var string Trace type for Env::trace() */
-	public $logType;
+	/** Trace type for Env::trace() */
+	public string $logType;
 
 	/**
 	 * @param Env $env
@@ -123,6 +115,12 @@ class WikitextSerializer {
 		$this->logType = $options['logType'] ?? 'wts';
 		$this->state = new SerializerState( $this, $options );
 		$this->wteHandlers = new WikitextEscapeHandlers( $env, $options['extName'] ?? null );
+
+		$annotationTags = $env->getSiteConfig()->getAnnotationTags();
+		$this->commentsOrAnnotationsRE = "#(" .
+			Utils::COMMENT_REGEXP_FRAGMENT .
+			( $annotationTags ? "|</?(?:" . implode( '|', $annotationTags ) . ")[^>]*>" : '' ) .
+			")#ui";
 	}
 
 	/**
@@ -221,8 +219,9 @@ class WikitextSerializer {
 	/**
 	 * @param Element $node
 	 * @param string $key
-	 * @return array|null A tuple in {@link WTSUtils::getShadowInfo()} format,
-	 *   with an extra 'fromDataMW' flag.
+	 *
+	 * @return ?array{value: string, modified: false, fromsrc: true, fromDataMW: true}
+	 *   A tuple in {@link WTSUtils::getShadowInfo()} format, with an extra 'fromDataMW' flag.
 	 */
 	public function getAttributeValueAsShadowInfo( Element $node, string $key ): ?array {
 		$v = $this->getAttributeValue( $node, $key );
@@ -265,9 +264,10 @@ class WikitextSerializer {
 		return WTUtils::isAnnOrExtTag( $this->env, $name );
 	}
 
-	public function wrapAngleBracket( Token $token, string $inner ): string {
+	public function wrapAngleBracket( Element $node, string $inner ): string {
+		$name = DOMUtils::nodeName( $node );
 		if (
-			$this->tagNeedsEscaping( $token->getName() ) &&
+			$this->tagNeedsEscaping( $name ) &&
 			!(
 				// Allow for html tags that shadow extension tags found in source
 				// to roundtrip.  They only parse as html tags if they are unclosed,
@@ -276,8 +276,8 @@ class WikitextSerializer {
 				// This only applies when wrapAngleBracket() is being called for
 				// start tags, but we wouldn't be here if it was autoInsertedEnd
 				// anyways.
-				isset( Consts::$Sanitizer['AllowedLiteralTags'][$token->getName()] ) &&
-				!empty( $token->dataParsoid->autoInsertedEnd )
+				isset( Consts::$Sanitizer['AllowedLiteralTags'][$name] ) &&
+				!empty( DOMDataUtils::getDataParsoid( $node )->autoInsertedEnd )
 			)
 		) {
 			return "&lt;{$inner}&gt;";
@@ -286,87 +286,70 @@ class WikitextSerializer {
 	}
 
 	public function serializeHTMLTag( Element $node, bool $wrapperUnmodified ): string {
-		// TODO(arlolra): As of 1.3.0, html pre is considered an extension
-		// and wrapped in encapsulation.  When that version is no longer
-		// accepted for serialization, we can remove this backwards
-		// compatibility code.
-		//
-		// 'inHTMLPre' flag has to be updated always,
-		// even when we are selsering in the wrapperUnmodified case.
-		$token = WTSUtils::mkTagTk( $node );
-		if ( $token->getName() === 'pre' ) {
-			// html-syntax pre is very similar to nowiki
-			$this->state->inHTMLPre = true;
-		}
-
 		if ( $wrapperUnmodified ) {
 			$dsr = DOMDataUtils::getDataParsoid( $node )->dsr;
 			return $this->state->getOrigSrc( $dsr->openRange() ) ?? '';
 		}
 
-		$da = $token->dataParsoid;
+		$da = DOMDataUtils::getDataParsoid( $node );
 		if ( !empty( $da->autoInsertedStart ) ) {
 			return '';
 		}
 
 		$close = '';
-		if ( ( Utils::isVoidElement( $token->getName() ) && empty( $da->noClose ) ) ||
+		if ( ( Utils::isVoidElement( DOMUtils::nodeName( $node ) ) && empty( $da->noClose ) ) ||
 			!empty( $da->selfClose )
 		) {
 			$close = ' /';
 		}
 
-		$sAttribs = $this->serializeAttributes( $node, $token );
+		$sAttribs = $this->serializeAttributes( $node );
 		if ( strlen( $sAttribs ) > 0 ) {
 			$sAttribs = ' ' . $sAttribs;
 		}
 
 		// srcTagName cannot be '' so, it is okay to use ?? operator
-		$tokenName = $da->srcTagName ?? $token->getName();
-		$inner = "{$tokenName}{$sAttribs}{$close}";
-		return $this->wrapAngleBracket( $token, $inner );
+		$name = $da->srcTagName ?? DOMUtils::nodeName( $node );
+		$inner = "{$name}{$sAttribs}{$close}";
+		return $this->wrapAngleBracket( $node, $inner );
 	}
 
-	/**
-	 * @param Element $node
-	 * @param bool $wrapperUnmodified
-	 * @return string
-	 */
-	public function serializeHTMLEndTag( Element $node, $wrapperUnmodified ): string {
+	public function serializeHTMLEndTag( Element $node, bool $wrapperUnmodified ): string {
 		if ( $wrapperUnmodified ) {
 			$dsr = DOMDataUtils::getDataParsoid( $node )->dsr;
 			return $this->state->getOrigSrc( $dsr->closeRange() ) ?? '';
 		}
 
-		$token = WTSUtils::mkEndTagTk( $node );
-		if ( $token->getName() === 'pre' ) {
-			$this->state->inHTMLPre = false;
-		}
+		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
 
 		// srcTagName cannot be '' so, it is okay to use ?? operator
-		$tokenName = $token->dataParsoid->srcTagName ?? $token->getName();
+		$name = $dataParsoid->srcTagName ?? DOMUtils::nodeName( $node );
 		$ret = '';
 
-		if ( empty( $token->dataParsoid->autoInsertedEnd )
-			&& !Utils::isVoidElement( $token->getName() )
-			&& empty( $token->dataParsoid->selfClose )
+		if ( empty( $dataParsoid->autoInsertedEnd )
+			&& !Utils::isVoidElement( DOMUtils::nodeName( $node ) )
+			&& empty( $dataParsoid->selfClose )
 		) {
-			$ret = $this->wrapAngleBracket( $token, "/{$tokenName}" );
+			$ret = $this->wrapAngleBracket( $node, "/{$name}" );
 		}
 
 		return $ret;
 	}
 
-	public function serializeAttributes( Element $node, Token $token, bool $isWt = false ): string {
-		$attribs = $token->attribs;
-
+	/**
+	 * @param Element $node
+	 * @param ?array $attrs Optional attributes array to serialize in the
+	 *   context of $node instead of using the default DOMCompat::attributes
+	 *   call on $node.
+	 * @return string
+	 */
+	public function serializeAttributes( Element $node, ?array $attrs = null ): string {
 		$out = [];
-		foreach ( $attribs as $kv ) {
-			// Tokens created during html2wt don't have nested tokens for keys.
-			// But, they could be integers but we want strings below.
-			$k = (string)$kv->k;
-			$v = null;
-			$vInfo = null;
+		$attrs ??= DOMCompat::attributes( $node );
+		foreach ( $attrs as $k => $v ) {
+			// Explicit conversion to string because PHP will convert to int
+			// if $k is numeric
+			$k = (string)$k;
 
 			// Unconditionally ignore
 			// (all of the IGNORED_ATTRIBUTES should be filtered out earlier,
@@ -379,11 +362,11 @@ class WikitextSerializer {
 			// by clients and shouldn't be serialized. This can also happen
 			// in v2/v3 API when there is no matching data-parsoid entry found
 			// for this id.
-			if ( $k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $kv->v ) ) {
+			if ( $k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $v ) ) {
 				if ( WTUtils::isNewElt( $node ) ) {
 					// Parsoid id found on element without a matching data-parsoid. Drop it!
 				} else {
-					$vInfo = $token->getAttributeShadowInfo( $k );
+					$vInfo = WTSUtils::getShadowInfo( $node, $k, $v );
 					if ( !$vInfo['modified'] && $vInfo['fromsrc'] ) {
 						$out[] = $k . '=' . '"' . str_replace( '"', '&quot;', $vInfo['value'] ) . '"';
 					}
@@ -395,7 +378,7 @@ class WikitextSerializer {
 			// be stripped out, except if this is not auto-generated id.
 			if ( $k === 'id' && DOMUtils::isHeading( $node ) ) {
 				if ( !empty( DOMDataUtils::getDataParsoid( $node )->reusedId ) ) {
-					$vInfo = $token->getAttributeShadowInfo( $k );
+					$vInfo = WTSUtils::getShadowInfo( $node, $k, $v );
 					// PORT-FIXME: is this safe? value could be a token or token array
 					$out[] = $k . '="' . str_replace( '"', '&quot;', $vInfo['value'] ) . '"';
 				}
@@ -404,10 +387,16 @@ class WikitextSerializer {
 
 			// Strip Parsoid-inserted class="mw-empty-elt" attributes
 			if ( $k === 'class'
-				 && isset( Consts::$Output['FlaggedEmptyElts'][DOMCompat::nodeName( $node )] )
+				 && isset( Consts::$Output['FlaggedEmptyElts'][DOMUtils::nodeName( $node )] )
 			) {
-				$kv->v = preg_replace( '/\bmw-empty-elt\b/', '', $kv->v, 1 );
-				if ( !$kv->v ) {
+				// Overwrite $v.  Cleanup::handleEmptyElements may have made
+				// this multivalued.  It's a bit ambiguous what to do here
+				// if a client added a class to an mw-empty-elt since, for the
+				// most part, it won't html2html with the mw-empty-elt anymore.
+				// It might be better to force clients to remove mw-empty-elt
+				// if they want to add a class though.
+				$v = preg_replace( '/\b ?mw-empty-elt\b/', '', $v, 1 );
+				if ( !$v ) {
 					continue;
 				}
 			}
@@ -418,33 +407,53 @@ class WikitextSerializer {
 			// that show up in wikitext, we could unconditionally strip these
 			// away right now.
 			$parsoidValueRegExp = self::PARSOID_ATTRIBUTES[$k] ?? null;
-			if ( $parsoidValueRegExp && preg_match( $parsoidValueRegExp, $kv->v ) ) {
-				$v = preg_replace( $parsoidValueRegExp, '', $kv->v );
-				if ( $v ) {
-					$out[] = $k . '="' . $v . '"';
+			if ( $parsoidValueRegExp && preg_match( $parsoidValueRegExp, $v ) ) {
+				$rv = preg_replace( $parsoidValueRegExp, '', $v );
+				if ( $rv ) {
+					$out[] = $k . '="' . $rv . '"';
 				}
 				continue;
 			}
 
 			if ( strlen( $k ) > 0 ) {
-				$vInfo = $token->getAttributeShadowInfo( $k );
-				$v = $vInfo['value'];
+				// Pass in $v since the DOMCompat::getAttribute call in
+				// WTSUtils::getAttributeShadowInfo won't return namespaced values
+				// See the parser test, "T72867: Don't block XML namespace declaration"
+				$vInfo = WTSUtils::getShadowInfo( $node, $k, $v );
+				$value = $vInfo['value'];
 				// Deal with k/v's that were template-generated
 				$kk = $this->getAttributeKey( $node, $k );
 				// Pass in $k, not $kk since $kk can potentially
 				// be original wikitext source for 'k' rather than
 				// the string value of the key.
-				$vv = $this->getAttributeValue( $node, $k ) ?? $v;
+				$vv = $this->getAttributeValue( $node, $k ) ?? $value;
 				// Remove encapsulation from protected attributes
 				// in pegTokenizer.pegjs:generic_newline_attribute
 				$kk = preg_replace( '/^data-x-/i', '', $kk, 1 );
 				// PORT-FIXME: is this type safe? $vv could be a ConstrainedText
 				if ( $vv !== null && strlen( $vv ) > 0 ) {
-					if ( !$vInfo['fromsrc'] && !$isWt ) {
-						// Escape wikitext entities
-						$vv = str_replace( '>', '&gt;', Utils::escapeWtEntities( $vv ) );
+					if ( !$vInfo['fromsrc'] ) {
+						$vs = preg_split(
+							$this->commentsOrAnnotationsRE, $vv, -1,
+							PREG_SPLIT_DELIM_CAPTURE
+						);
+						$vv = '';
+						foreach ( $vs as $i => $vsi ) {
+							if ( $i % 2 === 0 ) {
+								// Escape wikitext entities
+								$vsi = Utils::escapeWtEntities( $vsi );
+								$vsi = str_replace( '>', '&gt;', $vsi );
+								$vsi = str_replace( '"', '&quot;', $vsi );
+								$vv .= $vsi;
+							} else {
+								// Don't escape annotation tags
+								$vv .= $vsi;
+							}
+						}
+						$out[] = $kk . '="' . $vv . '"';
+					} else {
+						$out[] = $kk . '="' . str_replace( '"', '&quot;', $vv ) . '"';
 					}
-					$out[] = $kk . '="' . str_replace( '"', '&quot;', $vv ) . '"';
 				} elseif ( preg_match( '/[{<]/', $kk ) ) {
 					// Templated, <*include*>, or <ext-tag> generated
 					$out[] = $kk;
@@ -452,10 +461,9 @@ class WikitextSerializer {
 					$out[] = $kk . '=""';
 				}
 				continue;
-			// PORT-FIXME: is this type safe? $k->v could be a Token or Token array
-			} elseif ( strlen( $kv->v ) ) {
+			} elseif ( strlen( $v ) ) {
 				// not very likely..
-				$out[] = $kv->v;
+				$out[] = $v;
 			}
 		}
 
@@ -467,21 +475,21 @@ class WikitextSerializer {
 		//
 		// 'a' data attribs -- look for attributes that were removed
 		// as part of sanitization and add them back
-		$dataParsoid = $token->dataParsoid;
+		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
 		if ( isset( $dataParsoid->a ) && isset( $dataParsoid->sa ) ) {
 			$aKeys = array_keys( $dataParsoid->a );
 			foreach ( $aKeys as $k ) {
 				// Attrib not present -- sanitized away!
-				if ( !KV::lookupKV( $attribs, (string)$k ) ) {
-					$v = $dataParsoid->sa[$k] ?? null;
+				if ( DOMCompat::getAttribute( $node, (string)$k ) === null ) {
+					$sv = $dataParsoid->sa[$k] ?? null;
 					// FIXME: The tokenizer and attribute shadowing currently
 					// don't make much effort towards distinguishing the use
 					// of HTML empty attribute syntax.  We can derive whether
 					// empty attribute syntax was used from the attributes
 					// srcOffsets in the Sanitizer, from the key end position
 					// and value start position being different.
-					if ( $v !== null && $v !== '' ) {
-						$out[] = $k . '="' . str_replace( '"', '&quot;', $v ) . '"';
+					if ( $sv !== null && $sv !== '' ) {
+						$out[] = $k . '="' . str_replace( '"', '&quot;', $sv ) . '"';
 					} else {
 						$out[] = $k;
 					}
@@ -548,7 +556,7 @@ class WikitextSerializer {
 		}
 		// Canonical parameter key gets the same order as an alias parameter
 		// found in the original wikitext.
-		foreach ( $dpArgInfo as $i => $argInfo ) {
+		foreach ( $dpArgInfo as $argInfo ) {
 			$canon = $aliasMap[$argInfo->k] ?? null;
 			if ( $canon !== null && !array_key_exists( $canon['key'], $origOrder ) ) {
 				$origOrder[$canon['key']] = $origOrder[$argInfo->k];
@@ -558,7 +566,7 @@ class WikitextSerializer {
 		// so that newly-added parameters are placed near the parameters which
 		// templatedata says they should be adjacent to.
 		$nearestOrder = $origOrder;
-		$reduceF = static function ( $acc, $val ) use ( &$origOrder, &$nearestOrder ) {
+		$reduceF = static function ( array $acc, $val ) use ( &$origOrder, &$nearestOrder ): array {
 			if ( isset( $origOrder[$val] ) ) {
 				$acc = $origOrder[$val];
 			}
@@ -668,7 +676,7 @@ class WikitextSerializer {
 		// Short-circuit transclusions without params
 		$paramKeys = array_map( static fn ( ParamInfo $pi ) => $pi->k, $part->paramInfos );
 		if ( !$paramKeys ) {
-			if ( substr( $formatEnd, 0, 1 ) === "\n" ) {
+			if ( str_starts_with( $formatEnd, "\n" ) ) {
 				$formatEnd = substr( $formatEnd, 1 );
 			}
 			return $buf . $formatEnd;
@@ -688,7 +696,7 @@ class WikitextSerializer {
 		// Account for clients not setting the `i`, see T238721
 		$dpArgInfo = $part->i !== null ? ( $dp->pi[$part->i] ?? [] ) : [];
 
-		// Build a key -> arg info map
+		// Build a key -> arg info map (array<string,ParamInfo>)
 		$dpArgInfoMap = [];
 		foreach ( $dpArgInfo as $info ) {
 			$dpArgInfoMap[$info->k] = $info;
@@ -705,7 +713,7 @@ class WikitextSerializer {
 		foreach ( $tplKeysFromDataMw as $key => $param ) {
 			// Storing keys in an array can turn them into ints; stringify.
 			$key = (string)$key;
-			$argInfo = $dpArgInfoMap[$key] ?? [];
+			$argInfo = $dpArgInfoMap[$key] ?? new ParamInfo( $key );
 
 			// TODO: Other formats?
 			// Only consider the html parameter if the wikitext one
@@ -728,11 +736,10 @@ class WikitextSerializer {
 			Assert::invariant( is_string( $value ), "For param: $key, wt property should be a string '
 				. 'but got: $value" );
 
-			$serializeAsNamed = !empty( $argInfo->named );
+			$serializeAsNamed = $argInfo->named;
 
 			// The name is usually equal to the parameter key, but
 			// if there's a key->wt attribute, use that.
-			$name = null;
 			if ( $param->keyWt !== null ) {
 				$name = $param->keyWt;
 				// And make it appear even if there wasn't any data-parsoid information.
@@ -757,7 +764,7 @@ class WikitextSerializer {
 
 		$numPositionalArgs = 0;
 		foreach ( $dpArgInfo as $pi ) {
-			if ( isset( $tplKeysFromDataMw[trim( $pi->k )] ) && empty( $pi->named ) ) {
+			if ( isset( $tplKeysFromDataMw[trim( $pi->k )] ) && !$pi->named ) {
 				$numPositionalArgs++;
 			}
 		}
@@ -823,7 +830,7 @@ class WikitextSerializer {
 				// by adding missing newlines.
 				$spc = $dpArgInfoMap[$arg['dpKey']]->spc ?? null;
 				if ( $spc && ( !$format || preg_match( Utils::COMMENT_REGEXP, $spc[3] ?? '' ) ) ) {
-					$nl = ( substr( $formatParamName, 0, 1 ) === "\n" ) ? "\n" : '';
+					$nl = str_starts_with( $formatParamName, "\n" ) ? "\n" : '';
 					$modFormatParamName = $nl . '|' . $spc[0] . '_' . $spc[1] . '=' . $spc[2];
 					$modFormatParamValue = '_' . $spc[3];
 				} else {
@@ -834,7 +841,7 @@ class WikitextSerializer {
 
 			// Don't create duplicate newlines.
 			$trailing = preg_match( self::TRAILING_COMMENT_OR_WS_AFTER_NL_REGEXP, $buf );
-			if ( $trailing && substr( $formatParamName, 0, 1 ) === "\n" ) {
+			if ( $trailing && str_starts_with( $formatParamName, "\n" ) ) {
 				$modFormatParamName = substr( $formatParamName, 1 );
 			}
 
@@ -844,7 +851,7 @@ class WikitextSerializer {
 
 		// Don't create duplicate newlines.
 		if ( preg_match( self::TRAILING_COMMENT_OR_WS_AFTER_NL_REGEXP, $buf )
-			 && substr( $formatEnd, 0, 1 ) === "\n"
+			&& str_starts_with( $formatEnd, "\n" )
 		) {
 			$buf .= substr( $formatEnd, 1 );
 		} else {
@@ -860,10 +867,10 @@ class WikitextSerializer {
 				while ( $next instanceof Comment ) {
 					$next = DiffDOMUtils::nextNonDeletedSibling( $next );
 				}
-				if ( !( $next instanceof Text ) || substr( $next->nodeValue, 0, 1 ) !== "\n" ) {
+				if ( !( $next instanceof Text ) || !str_starts_with( $next->nodeValue, "\n" ) ) {
 					$buf .= "\n";
 				}
-			} elseif ( !is_string( $nextPart ) || substr( $nextPart, 0, 1 ) !== "\n" ) {
+			} elseif ( !is_string( $nextPart ) || !str_starts_with( $nextPart, "\n" ) ) {
 				// If nextPart is another template, and it wants a leading nl,
 				// this \n we add here will count towards that because of the
 				// formatSOL check at the top.
@@ -923,7 +930,6 @@ class WikitextSerializer {
 			//
 			// Fetch template data for the template
 			$tplData = null;
-			$apiResp = null;
 			if ( $part->href !== null && $useTplData ) {
 				// Not a parser function
 				try {
@@ -955,22 +961,28 @@ class WikitextSerializer {
 		// key='value'
 		// FIXME: with no dataParsoid, shadow info will mark it as new
 		$attrs = $dataMw->getExtAttribs() ?? [];
-		$extTok = new TagTk( $extTagName, array_map( static function ( $key ) use ( $attrs ) {
-			// explicit conversion to string because PHP will convert to int
-			// if $key is numeric
-			return new KV( (string)$key, $attrs[$key] );
-		}, array_keys( $attrs ) ) );
 
 		$about = DOMCompat::getAttribute( $node, 'about' );
 		if ( $about !== null ) {
-			$extTok->addAttribute( 'about', $about );
+			$attrs['about'] = $about;
 		}
 		$typeof = DOMCompat::getAttribute( $node, 'typeof' );
 		if ( $typeof !== null ) {
-			$extTok->addAttribute( 'typeof', $typeof );
+			$attrs['typeof'] = $typeof;
 		}
 
-		$attrStr = $this->serializeAttributes( $node, $extTok );
+		// Create a new node since we want serialization semantics
+		// for $extTagName and not DOMUtils::nodeName( $node )
+		$extTag = $node->ownerDocument->createElement( $extTagName );
+		DOMDataUtils::setNodeData(
+			$extTag, clone DOMDataUtils::getNodeData( $node )
+		);
+
+		// We pass in $attrs rather than trying to set them on $extTag
+		// because attribute parsing is more lenient than setting and
+		// the keys from getExtAttribs can come directly from parsing.
+		// See the parser test, "Less than in attribute position"
+		$attrStr = $this->serializeAttributes( $extTag, $attrs );
 		$src = '<' . $extTagName;
 		if ( $attrStr ) {
 			$src .= ' ' . $attrStr;
@@ -1110,7 +1122,7 @@ class WikitextSerializer {
 				// tries to handle that scenario.
 				|| (
 					$dp->dsr->end === $dp->dsr->start && (
-						in_array( DOMCompat::nodeName( $node ), [ 'p', 'br' ], true )
+						in_array( DOMUtils::nodeName( $node ), [ 'p', 'br' ], true )
 						|| !empty( DOMDataUtils::getDataMw( $node )->autoGenerated )
 						// FIXME: This is only necessary while outputContentVersion
 						// 2.1.2 - 2.2.0 are still valid
@@ -1165,9 +1177,9 @@ class WikitextSerializer {
 				// and we'll dirty the text.
 				$suppressSLC = WTUtils::isFirstEncapsulationWrapperNode( $node )
 					|| DOMUtils::hasTypeOf( $node, 'mw:Nowiki' )
-					|| in_array( DOMCompat::nodeName( $node ), [ 'dl', 'ul', 'ol', 'a' ], true )
-					|| ( DOMCompat::nodeName( $node ) === 'table'
-						&& DOMCompat::nodeName( $node->parentNode ) === 'dd'
+					|| in_array( DOMUtils::nodeName( $node ), [ 'dl', 'ul', 'ol', 'a' ], true )
+					|| ( DOMUtils::nodeName( $node ) === 'table'
+						&& DOMUtils::nodeName( $node->parentNode ) === 'dd'
 						&& DiffDOMUtils::previousNonSepSibling( $node ) === null );
 
 				// Use selser to serialize this text!  The original
@@ -1226,8 +1238,7 @@ class WikitextSerializer {
 	 * @return ?Node
 	 */
 	public function serializeNode( Node $node ): ?Node {
-		$nodeName = DOMCompat::nodeName( $node );
-		$domHandler = $method = null;
+		$nodeName = DOMUtils::nodeName( $node );
 		$domHandlerFactory = new DOMHandlerFactory();
 		$state = $this->state;
 		$state->currNode = $node;
@@ -1327,7 +1338,7 @@ class WikitextSerializer {
 			return $line;
 		}
 
-		$escaper = static function ( string $wt ) use ( $state ) {
+		$escaper = static function ( string $wt ) use ( $state ): string {
 			$ret = $state->serializer->wteHandlers->escapedText( $state, false, $wt, false, true );
 			return $ret;
 		};
@@ -1361,7 +1372,7 @@ class WikitextSerializer {
 			$reqd = !preg_match( $this->env->getSiteConfig()->solTransparentWikitextRegexp(), $rest );
 
 			if ( $reqd ) {
-				foreach ( $htmlTags[0] as $j => $rawTagName ) {
+				foreach ( $htmlTags[0] as $rawTagName ) {
 					// Strip </, attributes, and > to get the tagname
 					$tagName = preg_replace( '/<\/?|\s.*|>/', '', $rawTagName );
 					if ( !isset( Consts::$HTML['HTML5Tags'][$tagName] ) ) {
@@ -1486,8 +1497,8 @@ class WikitextSerializer {
 				// We only want to process:
 				// - trailing single quotes (bar')
 				// - or single quotes by themselves without a preceding '' sequence
-				if ( substr( $p[$j - 1], -1 ) === "'"
-					&& !( $p[$j - 1] === "'" && $j > 1 && substr( $p[$j - 2], -2 ) === "''" )
+				if ( str_ends_with( $p[$j - 1], "'" )
+					&& !( $p[$j - 1] === "'" && $j > 1 && str_ends_with( $p[$j - 2], "''" ) )
 					// Consider <b>foo<i>bar'</i>baz</b> or <b>foo'<i>bar'</i>baz</b>.
 					// The <nowiki/> before the <i> or </i> cannot be stripped
 					// if the <i> is embedded inside another quote.

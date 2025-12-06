@@ -59,13 +59,20 @@ mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 				const userinfo = resp.query.users[ 0 ];
 
 				if ( resp.query.users.length !== 1 || userinfo.invalid ) {
+					mw.track( 'specialCreateAccount.validationErrors', [ 'no_user_name' ] );
 					return { valid: false, messages: [ mw.message( 'noname' ).parseDom() ] };
 				} else if ( userinfo.userid !== undefined ) {
+					mw.track( 'specialCreateAccount.validationErrors', [ 'user_exists' ] );
 					return { valid: false, messages: [ mw.message( 'userexists' ).parseDom() ] };
 				} else if ( !userinfo.cancreate ) {
+					const canCreateError = userinfo.cancreateerror || [];
+					mw.track(
+						'specialCreateAccount.validationErrors',
+						canCreateError.map( ( m ) => m.code.replace( '-', '_' ) )
+					);
 					return {
 						valid: false,
-						messages: userinfo.cancreateerror ? userinfo.cancreateerror.map( ( m ) => m.html ) : []
+						messages: canCreateError.map( ( m ) => m.html )
 					};
 				} else if ( userinfo.name !== username ) {
 					return { valid: true, messages: [
@@ -82,6 +89,8 @@ mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 			return $.Deferred().resolve( { valid: true, messages: [] } );
 		}
 
+		mw.track( 'stats.mediawiki_signup_validatepassword_total' );
+
 		return api.post( {
 			action: 'validatepassword',
 			user: $usernameInput.val(),
@@ -95,10 +104,16 @@ mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 		}, { signal } )
 			.then( ( resp ) => {
 				const pwinfo = resp.validatepassword || {};
+				const validityMessages = pwinfo.validitymessages || [];
+
+				mw.track(
+					'specialCreateAccount.validationErrors',
+					validityMessages.map( ( m ) => m.code )
+				);
 
 				return {
 					valid: pwinfo.validity === 'Good',
-					messages: pwinfo.validitymessages ? pwinfo.validitymessages.map( ( m ) => m.html ) : []
+					messages: validityMessages.map( ( m ) => m.html )
 				};
 			} );
 	}

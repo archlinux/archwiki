@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLnodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
 use MediaWikiUnitTestCase;
 
@@ -14,7 +15,7 @@ use MediaWikiUnitTestCase;
  */
 class MMLmtextTest extends MediaWikiUnitTestCase {
 	public function testConstructor() {
-		$mtext = new MMLmtext( '', [ 'mathvariant' => 'bold' ], 'test' );
+		$mtext = new MMLmtext( '', [ 'mathvariant' => Variants::BOLD ], 'test' );
 		$this->assertEquals( "mtext", $mtext->getName() );
 		$this->assertEquals( "test", $mtext->getText() );
 	}

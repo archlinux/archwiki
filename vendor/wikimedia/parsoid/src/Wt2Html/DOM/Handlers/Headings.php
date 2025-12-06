@@ -44,7 +44,7 @@ class Headings {
 		while ( $c ) {
 			$next = $c->nextSibling;
 			if ( $c instanceof Element ) {
-				$cName = DOMCompat::nodeName( $c );
+				$cName = DOMUtils::nodeName( $c );
 				if ( DOMUtils::hasTypeOf( $c, 'mw:LanguageVariant' ) ) {
 					// Special case for -{...}-
 					$dp = DOMDataUtils::getDataParsoid( $c );
@@ -70,7 +70,7 @@ class Headings {
 					} else {
 						# We strip any parameter from accepted tags except dir="rtl|ltr" from <span>,
 						# to allow setting directionality in toc items.
-						foreach ( DOMUtils::attributes( $c ) as $key => $val ) {
+						foreach ( DOMCompat::attributes( $c ) as $key => $val ) {
 							if ( $cName === 'span' ) {
 								if ( $key !== 'dir' || ( $val !== 'ltr' && $val !== 'rtl' ) ) {
 									$c->removeAttribute( $key );
@@ -157,7 +157,9 @@ class Headings {
 			// Set a zero-width dsr range for the fallback id
 			if ( Utils::isValidDSR( $nodeDsr ) ) {
 				$offset = $nodeDsr->innerStart();
-				DOMDataUtils::getDataParsoid( $span )->dsr = new DomSourceRange( $offset, $offset, null, null );
+				DOMDataUtils::getDataParsoid( $span )->dsr = new DomSourceRange(
+					$offset, $offset, null, null, source: $nodeDsr->source
+				);
 			}
 			$node->insertBefore( $span, $node->firstChild );
 		}
@@ -175,7 +177,7 @@ class Headings {
 		try {
 			$title = $env->makeTitleFromURLDecodedStr( "#{$text}" );
 			return $title->getFragment();
-		} catch ( TitleException $e ) {
+		} catch ( TitleException ) {
 			return $text;
 		}
 	}

@@ -15,7 +15,7 @@ use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\Extension\Notifications\SeenTime;
-use MediaWiki\Extension\Notifications\Services;
+use MediaWiki\Json\JsonCodec;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
@@ -32,9 +32,15 @@ class ApiEchoNotifications extends ApiQueryBase {
 	protected $crossWikiSummary = false;
 
 	/** @var string[] */
-	private $allowedNotifierTypes;
+	private readonly array $allowedNotifierTypes;
 
-	public function __construct( ApiQuery $query, string $moduleName, Config $mainConfig ) {
+	public function __construct(
+		ApiQuery $query,
+		string $moduleName,
+		private readonly AttributeManager $attributeManager,
+		Config $mainConfig,
+		private readonly JsonCodec $jsonCodec,
+	) {
 		parent::__construct( $query, $moduleName, 'not' );
 		$this->allowedNotifierTypes = array_keys( $mainConfig->get( 'EchoNotifiers' ) );
 	}
@@ -128,10 +134,9 @@ class ApiEchoNotifications extends ApiQueryBase {
 					}
 				}
 			} else {
-				$attributeManager = Services::getInstance()->getAttributeManager();
 				$result = $this->getPropList(
 					$user,
-					$attributeManager->getUserEnabledEventsBySections( $user, $params['notifiertypes'],
+					$this->attributeManager->getUserEnabledEventsBySections( $user, $params['notifiertypes'],
 						$params['sections'] ),
 					$params['filter'], $params['limit'], $params['continue'], $params['format'],
 					$titles, $params['unreadfirst'], $params['bundle']
@@ -194,13 +199,12 @@ class ApiEchoNotifications extends ApiQueryBase {
 		$bundle = false,
 		array $notifierTypes = [ 'web' ]
 	) {
-		$attributeManager = Services::getInstance()->getAttributeManager();
-		$sectionEvents = $attributeManager->getUserEnabledEventsBySections( $user, $notifierTypes, [ $section ] );
+		$sectionEvents = $this->attributeManager->getUserEnabledEventsBySections( $user, $notifierTypes, [ $section ] );
 
 		if ( !$sectionEvents ) {
 			$result = [
 				'list' => [],
-				'continue' => null
+				'continue' => null,
 			];
 		} else {
 			$result = $this->getPropList(
@@ -239,7 +243,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	) {
 		$result = [
 			'list' => [],
-			'continue' => null
+			'continue' => null,
 		];
 
 		$notifMapper = new NotificationMapper();
@@ -422,7 +426,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		}
 
 		// Sort wikis by timestamp, in descending order (newest first)
-		usort( $wikis, static function ( $a, $b ) use ( $section, $timestampsByWiki ) {
+		usort( $wikis, static function ( $a, $b ) use ( $timestampsByWiki ) {
 			return ( $timestampsByWiki[$b] ? $timestampsByWiki[$b]->getTimestamp( TS_UNIX ) : -1 )
 				<=> ( $timestampsByWiki[$a] ? $timestampsByWiki[$a]->getTimestamp( TS_UNIX ) : -1 );
 		} );
@@ -433,10 +437,10 @@ class ApiEchoNotifications extends ApiQueryBase {
 			'event_agent_id' => $user->getId(),
 			'event_agent_ip' => null,
 			'event_page_id' => null,
-			'event_extra' => serialize( [
+			'event_extra' => $this->jsonCodec->serialize( [
 				'section' => $section ?: 'all',
 				'wikis' => $wikis,
-				'count' => $count
+				'count' => $count,
 			] ),
 			'event_deleted' => 0,
 

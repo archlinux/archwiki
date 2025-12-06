@@ -18,23 +18,18 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::FragmentMode, [ 'html5' ] );
 	}
 
-	public function testBackLink() {
+	public function testWikitextSafeLinks() {
 		$formatter = new AnchorFormatter();
 
 		$this->assertSame(
 			'cite_ref-1',
-			$formatter->backLink( null, 1, 0 ) );
+			$formatter->wikitextSafeBacklink( null, 1, 0 ) );
 		$this->assertSame(
 			'cite_ref-name_2-0',
-			$formatter->backLink( 'name', 2, 1 ) );
-	}
-
-	public function testJumpLink() {
-		$formatter = new AnchorFormatter();
-
+			$formatter->wikitextSafeBacklink( 'name_', 2, 1 ) );
 		$this->assertSame(
 			'cite_note-name-1',
-			$formatter->jumpLink( 'name', 1 ) );
+			$formatter->wikitextSafeNoteLink( 'name', 1 ) );
 	}
 
 	/**

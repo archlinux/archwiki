@@ -2,22 +2,16 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
+use FormatJson;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\OOUIHTMLForm;
+use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\User\Options\UserOptionsManager;
-use MediaWiki\User\User;
 
 class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
-	/**
-	 * AttributeManager to access notification configuration
-	 *
-	 * @var AttributeManager
-	 */
-	protected $attributeManager;
-
 	/**
 	 * Category names, mapping internal name to HTML-formatted name
 	 *
@@ -57,18 +51,14 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	protected $flippedNotifyTypes;
 
 	/**
-	 * @var UserOptionsManager
+	 * @param AttributeManager $attributeManager AttributeManager to access notification configuration
+	 * @param UserOptionsManager $userOptionsManager
 	 */
-	private $userOptionsManager;
-
 	public function __construct(
-		AttributeManager $attributeManager,
-		UserOptionsManager $userOptionsManager
+		protected AttributeManager $attributeManager,
+		private readonly UserOptionsManager $userOptionsManager,
 	) {
 		parent::__construct( 'DisplayNotificationsConfiguration' );
-
-		$this->attributeManager = $attributeManager;
-		$this->userOptionsManager = $userOptionsManager;
 	}
 
 	/** @inheritDoc */
@@ -85,7 +75,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 			$formattedFriendlyCategoryName = Html::element(
 				'strong',
 				[],
-				$this->msg( 'echo-category-title-' . $internalCategoryName )->numParams( 1 )->text()
+				$this->msg( $this->attributeManager->getCategoryTitle( $internalCategoryName ) )->numParams( 1 )->text()
 			);
 
 			$formattedInternalCategoryName = $this->msg( 'parentheses' )->rawParams(
@@ -156,7 +146,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 					'columns' => $columnLabelMapping,
 					'default' => $value,
 					'disabled' => true,
-				]
+				],
 			],
 			$this->getContext()
 		);
@@ -265,22 +255,6 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	}
 
 	/**
-	 * View-only overrides of notification preferences for new users
-	 *
-	 * @todo (Likely) remove the underlying functionality, see
-	 * https://phabricator.wikimedia.org/T357219.
-	 * @return bool[]
-	 */
-	private static function getNewUserPreferenceOverrides(): array {
-		return [
-			'echo-subscriptions-web-reverted' => false,
-			'echo-subscriptions-web-article-linked' => true,
-			'echo-subscriptions-email-mention' => true,
-			'echo-subscriptions-email-article-linked' => true,
-		];
-	}
-
-	/**
 	 * Output which notification categories are turned on by default, for each notify type
 	 */
 	protected function outputEnabledDefault() {
@@ -291,62 +265,63 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 		) );
 
 		// Some of the preferences are mapped to existing ones defined in core MediaWiki
-		$virtualOptions = EchoHooks::getVirtualUserOptions();
+		$virtualOptions = EchoHooks::getVirtualUserOptions( $this->getConfig() );
 
-		// In reality, anon users are not relevant to Echo, but this lets us easily query default options.
-		$anonUser = new User;
+		$defaults = $this->userOptionsManager->getDefaultOptions();
+		$conditionalDefaults = $this->getConfig()->get( MainConfigNames::ConditionalUserOptions );
 
-		$byCategoryValueExisting = [];
+		$byCategory = [];
+		$byCategoryConditional = [];
 		foreach ( $this->notifyTypes as $notifyType => $displayNotifyType ) {
 			foreach ( $this->categoryNames as $category => $displayCategory ) {
 				$prefKey = "echo-subscriptions-$notifyType-$category";
 				if ( isset( $virtualOptions[ $prefKey ] ) ) {
 					$prefKey = $virtualOptions[ $prefKey ];
 				}
-				if ( $this->userOptionsManager->getOption( $anonUser, $prefKey ) ) {
-					$byCategoryValueExisting[] = "$notifyType-$category";
+
+				$byCategory["$notifyType-$category"] = $defaults[$prefKey];
+
+				foreach ( $conditionalDefaults[$prefKey] ?? [] as $conditionalDefault ) {
+					// At the zeroth index of the conditional case, the intended value is found; the rest
+					// of the array are conditions.
+					$value = array_shift( $conditionalDefault );
+					$serializedCondition = FormatJson::encode( $conditionalDefault, true );
+
+					$byCategoryConditional[$serializedCondition]["$notifyType-$category"] = $value;
 				}
 			}
 		}
 
 		$this->outputCheckMatrix(
 			'enabled-by-default-generic',
-			'echo-displaynotificationsconfiguration-enabled-default-existing-users-legend',
+			'echo-displaynotificationsconfiguration-enabled-default-legend',
 			$this->flippedCategoryNames,
 			$this->flippedNotifyTypes,
-			$byCategoryValueExisting
+			array_keys( array_filter( $byCategory ) )
 		);
 
-		$loggedInUser = new User;
-
-		// NOTE: This is not reliable, and will break if other variables than those hardcoded in
-		// the method below are changed for new users, either via a hook or via conditional
-		// defaults. See T357219 for details.
-		$overrides = $this->getNewUserPreferenceOverrides();
-		foreach ( $overrides as $prefKey => $value ) {
-			$this->userOptionsManager->setOption( $loggedInUser, $prefKey, $value );
-		}
-
-		$byCategoryValueNew = [];
-		foreach ( $this->notifyTypes as $notifyType => $displayNotifyType ) {
-			foreach ( $this->categoryNames as $category => $displayCategory ) {
-				$prefKey = "echo-subscriptions-$notifyType-$category";
-				if ( isset( $virtualOptions[ $prefKey ] ) ) {
-					$prefKey = $virtualOptions[ $prefKey ];
+		$i = 0;
+		foreach ( $byCategoryConditional as $condition => $overrides ) {
+			// Remove rows identical to the defaults
+			$flippedCategoryNames = $this->flippedCategoryNames;
+			foreach ( $this->categoryNames as $internal => $formatted ) {
+				foreach ( $overrides as $key => $unused ) {
+					if ( str_ends_with( $key, "-$internal" ) ) {
+						continue 2;
+					}
 				}
-				if ( $this->userOptionsManager->getOption( $loggedInUser, $prefKey ) ) {
-					$byCategoryValueNew[] = "$notifyType-$category";
-				}
+				unset( $flippedCategoryNames[$formatted] );
 			}
-		}
 
-		$this->outputCheckMatrix(
-			'enabled-by-default-new',
-			'echo-displaynotificationsconfiguration-enabled-default-new-users-legend',
-			$this->flippedCategoryNames,
-			$this->flippedNotifyTypes,
-			$byCategoryValueNew
-		);
+			$this->outputCheckMatrix(
+				'enabled-by-default-conditional' . ++$i,
+				$this->msg( 'echo-displaynotificationsconfiguration-enabled-default-conditional-legend' )
+					->plaintextParams( $condition ),
+				$flippedCategoryNames,
+				$this->flippedNotifyTypes,
+				array_keys( array_filter( array_merge( $byCategory, $overrides ) ) )
+			);
+		}
 	}
 
 	/**

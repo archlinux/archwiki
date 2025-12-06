@@ -7,7 +7,8 @@
 			"TMg",
 			"Wizardist",
 			"Zedlik",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"Ucukor"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -29,8 +30,8 @@
 	"visualeditor-ca-createlocaldescriptionsource": "Дадаць крыніцу лякальнага апісаньня",
 	"visualeditor-ca-createsource": "Стварыць крыніцу",
 	"visualeditor-ca-editlocaldescriptionsource": "Рэдагаваць крыніцу лякальнага апісаньня",
-	"visualeditor-ca-editsource": "Рэдагаваць крыніцу",
-	"visualeditor-ca-editsource-section": "рэдагаваць крыніцу",
+	"visualeditor-ca-editsource": "Рэдагаваць",
+	"visualeditor-ca-editsource-section": "рэдагаваць",
 	"visualeditor-categories-tool": "Катэгорыі",
 	"visualeditor-changedesc-mwlanguagevariant": "Зьмененая разьметка варыянту мовы",
 	"visualeditor-changedesc-mwredirect": "Мэта перанакіраваньня зьмененая з $1 на $2",

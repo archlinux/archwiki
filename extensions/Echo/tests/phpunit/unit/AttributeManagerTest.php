@@ -45,7 +45,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public static function getUserLocatorsProvider() {
 		$defaultLocator = [
 			[ UserLocator::class, 'locateFromEventExtra' ],
-			[ Event::RECIPIENTS_IDX ]
+			[ Event::RECIPIENTS_IDX ],
 		];
 
 		return [
@@ -66,8 +66,8 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				'test-event',
 				// notification configuration
 				[
-					'test-event' => []
-				]
+					'test-event' => [],
+				],
 			],
 			[
 				'Returns selected notification configuration',
@@ -115,13 +115,13 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetCategoryEligibility() {
 		$notif = [
 			'event_one' => [
-				'category' => 'category_one'
+				'category' => 'category_one',
 			],
 		];
 		$category = [
 			'category_one' => [
-				'priority' => 10
-			]
+				'priority' => 10,
+			],
 		];
 		$manager = $this->getAttributeManager( $notif, $category );
 		$this->assertTrue( $manager->getCategoryEligibility( $this->getUser(), 'category_one' ) );
@@ -129,9 +129,9 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 			'category_one' => [
 				'priority' => 10,
 				'usergroups' => [
-					'sysop'
-				]
-			]
+					'sysop',
+				],
+			],
 		];
 		$manager = $this->getAttributeManager( $notif, $category );
 		$this->assertFalse( $manager->getCategoryEligibility( $this->getUser(), 'category_one' ) );
@@ -140,13 +140,13 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetNotificationCategory() {
 		$notif = [
 			'event_one' => [
-				'category' => 'category_one'
+				'category' => 'category_one',
 			],
 		];
 		$category = [
 			'category_one' => [
-				'priority' => 10
-			]
+				'priority' => 10,
+			],
 		];
 		$manager = $this->getAttributeManager( $notif, $category );
 		$this->assertEquals( 'category_one', $manager->getNotificationCategory( 'event_one' ) );
@@ -156,13 +156,13 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 
 		$notif = [
 			'event_one' => [
-				'category' => 'category_two'
+				'category' => 'category_two',
 			],
 		];
 		$category = [
 			'category_one' => [
-				'priority' => 10
-			]
+				'priority' => 10,
+			],
 		];
 		$manager = $this->getAttributeManager( $notif, $category );
 		$this->assertEquals( 'other', $manager->getNotificationCategory( 'event_one' ) );
@@ -171,20 +171,20 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetCategoryPriority() {
 		$notif = [
 			'event_one' => [
-				'category' => 'category_two'
+				'category' => 'category_two',
 			],
 		];
 		$category = [
 			'category_one' => [
-				'priority' => 6
+				'priority' => 6,
 			],
 			'category_two' => [
-				'priority' => 100
+				'priority' => 100,
 			],
 			'category_three' => [
-				'priority' => -10
+				'priority' => -10,
 			],
-			'category_four' => []
+			'category_four' => [],
 		];
 		$manager = $this->getAttributeManager( $notif, $category );
 		$this->assertSame( 6, $manager->getCategoryPriority( 'category_one' ) );
@@ -196,29 +196,29 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetNotificationPriority() {
 		$notif = [
 			'event_one' => [
-				'category' => 'category_one'
+				'category' => 'category_one',
 			],
 			'event_two' => [
-				'category' => 'category_two'
+				'category' => 'category_two',
 			],
 			'event_three' => [
-				'category' => 'category_three'
+				'category' => 'category_three',
 			],
 			'event_four' => [
-				'category' => 'category_four'
-			]
+				'category' => 'category_four',
+			],
 		];
 		$category = [
 			'category_one' => [
-				'priority' => 6
+				'priority' => 6,
 			],
 			'category_two' => [
-				'priority' => 100
+				'priority' => 100,
 			],
 			'category_three' => [
-				'priority' => -10
+				'priority' => -10,
 			],
-			'category_four' => []
+			'category_four' => [],
 		];
 		$manager = $this->getAttributeManager( $notif, $category );
 		$this->assertSame( 6, $manager->getNotificationPriority( 'event_one' ) );
@@ -280,37 +280,37 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetUserEnabledEvents() {
 		$notif = [
 			'event_one' => [
-				'category' => 'category_one'
+				'category' => 'category_one',
 			],
 			'event_two' => [
-				'category' => 'category_two'
+				'category' => 'category_two',
 			],
 			'event_three' => [
-				'category' => 'category_three'
+				'category' => 'category_three',
 			],
 			'event_four' => [
-				'category' => 'category_four'
-			]
+				'category' => 'category_four',
+			],
 		];
 		$category = [
 			'category_one' => [
 				'priority' => 10,
 				'usergroups' => [
-					'sysop'
-				]
+					'sysop',
+				],
 			],
 			'category_two' => [
 				'priority' => 10,
 				'usergroups' => [
-					'echo_group'
-				]
+					'echo_group',
+				],
 			],
 			'category_three' => [
 				'priority' => 10,
 			],
 			'category_four' => [
 				'priority' => 10,
-			]
+			],
 		];
 		$defaultNotifyTypeAvailability = [
 			'web' => true,
@@ -320,7 +320,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 			'category_three' => [
 				'web' => false,
 				'email' => true,
-			]
+			],
 		];
 		$manager = $this->getAttributeManager(
 			$notif,
@@ -341,22 +341,22 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetUserEnabledEventsBySections() {
 		$notif = [
 			'event_one' => [
-				'category' => 'category_one'
+				'category' => 'category_one',
 			],
 			'event_two' => [
 				'category' => 'category_two',
-				'section' => 'message'
+				'section' => 'message',
 			],
 			'event_three' => [
 				'category' => 'category_three',
-				'section' => 'alert'
+				'section' => 'alert',
 			],
 			'event_four' => [
 				'category' => 'category_three',
 			],
 			'event_five' => [
-				'category' => 'category_five'
-			]
+				'category' => 'category_five',
+			],
 		];
 		$category = [
 			'category_one' => [
@@ -366,11 +366,11 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				'priority' => 10,
 			],
 			'category_three' => [
-				'priority' => 10
+				'priority' => 10,
 			],
 			'category_five' => [
-				'priority' => 10
-			]
+				'priority' => 10,
+			],
 		];
 		$defaultNotifyTypeAvailability = [
 			'web' => true,
@@ -380,7 +380,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 			'category_five' => [
 				'web' => false,
 				'email' => true,
-			]
+			],
 		];
 		$manager = $this->getAttributeManager(
 			$notif,
@@ -451,8 +451,8 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 					'event_five' => [
 						'category' => 'category_one',
 					],
-				]
-			]
+				],
+			],
 		];
 	}
 
@@ -478,7 +478,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				'category_one',
 				'web',
 				[ 'web' => true, 'email' => true ],
-				[]
+				[],
 			],
 			[
 				'Fallback to default for single type',
@@ -490,7 +490,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 					'category_two' => [
 						'web' => true,
 					],
-				]
+				],
 			],
 			[
 				'Use override',
@@ -536,7 +536,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				[
 					'category_one' => [
 						'no-dismiss' => [ 'all' ],
-					]
+					],
 				],
 				'category_one',
 				'web',
@@ -547,7 +547,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				[
 					'category_two' => [
 						'no-dismiss' => [ 'email' ],
-					]
+					],
 				],
 				'category_two',
 				'email',
@@ -558,7 +558,7 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 				[
 					'category_three' => [
 						'no-dismiss' => [ 'web' ],
-					]
+					],
 				],
 				'category_three',
 				'email',
@@ -621,22 +621,22 @@ class AttributeManagerTest extends MediaWikiUnitTestCase {
 			'event_one' => [],
 			'event_two' => [
 				'bundle' => [
-					'web' => true
-				]
+					'web' => true,
+				],
 			],
 			'event_three' => [
 				'bundle' => [
 					'web' => true,
 					'email' => false,
-					'expandable' => false
-				]
+					'expandable' => false,
+				],
 			],
 			'event_four' => [
 				'bundle' => [
 					'web' => true,
 					'email' => true,
-					'expandable' => true
-				]
+					'expandable' => true,
+				],
 			],
 		] );
 		$actual = $am->isBundleExpandable( $type );

@@ -1,6 +1,5 @@
-'use strict';
-const EditPage = require( '../pageobjects/edit.page' );
-const Util = require( 'wdio-mediawiki/Util' );
+import EditPage from '../pageobjects/edit.page.js';
+import * as Util from 'wdio-mediawiki/Util';
 
 describe( 'Toolbar', () => {
 

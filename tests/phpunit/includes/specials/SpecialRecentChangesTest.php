@@ -1,7 +1,6 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Language\MessageParser;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialRecentChanges;
@@ -9,7 +8,6 @@ use MediaWiki\Tests\SpecialPage\AbstractChangesListSpecialPageTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
-use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -29,9 +27,10 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 			$this->getServiceContainer()->getWatchedItemStore(),
 			$this->getServiceContainer()->getMessageParser(),
 			$this->getServiceContainer()->getUserOptionsLookup(),
-			$this->getServiceContainer()->getChangeTagsStore(),
 			$this->getServiceContainer()->getUserIdentityUtils(),
-			$this->getServiceContainer()->getTempUserConfig()
+			$this->getServiceContainer()->getTempUserConfig(),
+			$this->getServiceContainer()->getRecentChangeFactory(),
+			$this->getServiceContainer()->getChangesListQueryFactory(),
 		);
 	}
 
@@ -45,7 +44,7 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 	// Below providers should only be for features specific to
 	// RecentChanges.  Otherwise, it should go in ChangesListSpecialPageTest
 
-	public function provideParseParameters() {
+	public static function provideParseParameters() {
 		return [
 			[ 'limit=123', [ 'limit' => '123' ] ],
 
@@ -65,7 +64,7 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 		];
 	}
 
-	public function validateOptionsProvider() {
+	public static function validateOptionsProvider() {
 		return [
 			[
 				// hidebots=1 is default for Special:RecentChanges
@@ -218,68 +217,5 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 		);
 		$this->assertStringNotContainsString( 'rcshowhideliu', $html );
 		$this->assertStringNotContainsString( 'rcshowhideanons', $html );
-	}
-
-	/**
-	 * This integration test just tries to run the isDenseFilter() queries, to
-	 * check for syntax errors etc. It doesn't verify the logic.
-	 */
-	public function testIsDenseTagFilter() {
-		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'rc-test-tag' );
-		$req = new FauxRequest();
-		$req->setVal( 'tagfilter', 'rc-test-tag' );
-		$page = $this->getPage();
-
-		// Make sure thresholds are passed
-		$page->denseRcSizeThreshold = 0;
-		$this->overrideConfigValue( MainConfigNames::MiserMode, true );
-
-		( new SpecialPageExecutor() )->executeSpecialPage( $page, '', $req );
-		$this->assertTrue( true );
-	}
-
-	public static function provideDenseTagFilter() {
-		return [
-			[ false ],
-			[ true ]
-		];
-	}
-
-	/**
-	 * This integration test injects the return value of isDenseFilter(),
-	 * verifying the correctness of the resulting STRAIGHT_JOIN.
-	 *
-	 * @dataProvider provideDenseTagFilter
-	 */
-	public function testDenseTagFilter( $dense ) {
-		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'rc-test-tag' );
-		$req = new FauxRequest();
-		$req->setVal( 'tagfilter', 'rc-test-tag' );
-
-		$page = new class (
-			$dense,
-			$this->getServiceContainer()->getWatchedItemStore(),
-			$this->getServiceContainer()->getMessageParser(),
-			$this->getServiceContainer()->getUserOptionsLookup()
-		)  extends SpecialRecentChanges {
-			private $dense;
-
-			public function __construct(
-				$dense,
-				?WatchedItemStoreInterface $watchedItemStore = null,
-				?MessageParser $messageParser = null,
-				?\MediaWiki\User\Options\UserOptionsLookup $userOptionsLookup = null
-			) {
-				parent::__construct( $watchedItemStore, $messageParser, $userOptionsLookup );
-				$this->dense = $dense;
-			}
-
-			protected function isDenseTagFilter( $tagIds, $limit ) {
-				return $this->dense;
-			}
-		};
-
-		( new SpecialPageExecutor() )->executeSpecialPage( $page, '', $req );
-		$this->assertTrue( true );
 	}
 }

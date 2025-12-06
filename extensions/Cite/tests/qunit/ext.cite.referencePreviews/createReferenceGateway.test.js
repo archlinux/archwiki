@@ -1,14 +1,6 @@
 'use strict';
 
-( function () {
-	function createStubTitle( fragment = null ) {
-		return {
-			getFragment() {
-				return fragment;
-			}
-		};
-	}
-
+{
 	QUnit.module.if( 'ext.cite.referencePreviews#createReferenceGateway',
 		mw.loader.getModuleNames().includes( 'ext.popups.main' ),
 		{
@@ -50,6 +42,8 @@
 			}
 		}
 	);
+
+	const createStubTitle = ( fragment = null ) => ( { getFragment: () => fragment } );
 
 	QUnit.test( 'Reference preview gateway returns the correct data', function ( assert ) {
 		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
@@ -178,4 +172,4 @@
 
 		assert.strictEqual( typeof promise.abort, 'function' );
 	} );
-}() );
+}

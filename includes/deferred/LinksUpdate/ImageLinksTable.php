@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
-use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\JobQueue\Utils\PurgeJobUtils;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\ParserOutput;
@@ -17,6 +16,7 @@ use MediaWiki\Title\Title;
  * @since 1.38
  */
 class ImageLinksTable extends TitleLinksTable {
+	public const VIRTUAL_DOMAIN = 'virtual-imagelinks';
 	/**
 	 * @var array New links with the name in the key, value arbitrary
 	 */
@@ -38,18 +38,22 @@ class ImageLinksTable extends TitleLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getTableName() {
 		return 'imagelinks';
 	}
 
+	/** @inheritDoc */
 	protected function getFromField() {
 		return 'il_from';
 	}
 
+	/** @inheritDoc */
 	protected function getExistingFields() {
 		return [ 'il_to' ];
 	}
 
+	/** @inheritDoc */
 	protected function getNewLinkIDs() {
 		foreach ( $this->newLinks as $link => $unused ) {
 			yield (string)$link;
@@ -71,24 +75,29 @@ class ImageLinksTable extends TitleLinksTable {
 		return $this->existingLinks;
 	}
 
+	/** @inheritDoc */
 	protected function getExistingLinkIDs() {
 		foreach ( $this->getExistingLinks() as $link => $unused ) {
 			yield (string)$link;
 		}
 	}
 
+	/** @inheritDoc */
 	protected function isExisting( $linkId ) {
 		return \array_key_exists( $linkId, $this->getExistingLinks() );
 	}
 
+	/** @inheritDoc */
 	protected function isInNewSet( $linkId ) {
 		return \array_key_exists( $linkId, $this->newLinks );
 	}
 
+	/** @inheritDoc */
 	protected function needForcedLinkRefresh() {
 		return $this->isCrossNamespaceMove();
 	}
 
+	/** @inheritDoc */
 	protected function insertLink( $linkId ) {
 		$this->insertRow( [
 			'il_from_namespace' => $this->getSourcePage()->getNamespace(),
@@ -96,18 +105,22 @@ class ImageLinksTable extends TitleLinksTable {
 		] );
 	}
 
+	/** @inheritDoc */
 	protected function deleteLink( $linkId ) {
 		$this->deleteRow( [ 'il_to' => $linkId ] );
 	}
 
+	/** @inheritDoc */
 	protected function makePageReferenceValue( $linkId ): PageReferenceValue {
-		return new PageReferenceValue( NS_FILE, $linkId, WikiAwareEntity::LOCAL );
+		return PageReferenceValue::localReference( NS_FILE, $linkId );
 	}
 
+	/** @inheritDoc */
 	protected function makeTitle( $linkId ): Title {
 		return Title::makeTitle( NS_FILE, $linkId );
 	}
 
+	/** @inheritDoc */
 	protected function deduplicateLinkIds( $linkIds ) {
 		if ( !is_array( $linkIds ) ) {
 			$linkIds = iterator_to_array( $linkIds );
@@ -135,5 +148,10 @@ class ImageLinksTable extends TitleLinksTable {
 		PurgeJobUtils::invalidatePages(
 			$this->getDB(), NS_FILE,
 			array_merge( $insertedLinks, $deletedLinks ) );
+	}
+
+	/** @inheritDoc */
+	protected function virtualDomain() {
+		return self::VIRTUAL_DOMAIN;
 	}
 }

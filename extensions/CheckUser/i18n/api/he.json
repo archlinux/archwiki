@@ -7,6 +7,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "בדיקה אילו כתובות IP משמשות שם משתמש מסוים או אילו שמות משתמש משמשות כתובת IP מסוימת.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''ה־API הזה הושבת על־ידי מנהלי האתר. שאילתה ב־API לא תחזיר נתונים.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "סוג בדיקת משתמש:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "לקבל את כתובות ה־IP של המשתמש המיועד.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "קבלת הפעולות שנעשו לפי כתובת IP או טווח יעד.",
@@ -38,6 +39,7 @@
 	"apierror-checkuser-timelimit": "עליך להגדיר מגבלת זמן נכונה (למשל \"<span dir=\"ltr\">-2 weeks</span>\" או \"<span dir=\"ltr\">2 weeks ago</span>\").",
 	"apierror-checkuser-invalidmode": "מצב בקשה בלתי־תקין",
 	"apierror-checkuser-nosuchuser": "אין משתמש כזה עבור שם המשתמש הזה",
+	"apierror-checkuser-disabled": "ה־API לשאילתות \"checkuser\" הושבת על־ידי מנהלי האתר.",
 	"checkuser-api-help-param-direction": "באיזה כיוון למנות:",
 	"checkuser-api-help-paramvalue-direction-newer": "לרשום את הישנים ביותר בהתחלה. לתשומת ליבך: $1from חייב להיות לפני $1to.",
 	"checkuser-api-help-paramvalue-direction-older": "לרשום את החדשים ביותר בהתחלה (ברירת מחדל). לתשומת ליבך: $1from חייב להיות אחרי $1to.",
@@ -48,5 +50,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "אתר {{SITENAME}} אוסף נתוני רמז לקוח סוכן משתמש (user-agent client hint data) כדי לסייע בהפחתת השחתה ושימוש לרעה. ר' https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints לפרטים נוספים.",
 	"apihelp-logout-param-checkuserclienthints": "נתוני רמז לקח מסופקים יחד עם בקשות ל־ApiLogout. לשימוש פנימי בלבד.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "תוקף החשיפה האוטומטית שסופק אינו תקין.",
-	"checkuser-ip-auto-reveal-missing-permission": "אין לך את ההרשאה הנדרשת לשימוש בחשיפת IP אוטומטית."
+	"checkuser-ip-auto-reveal-missing-permission": "אין לך את ההרשאה הנדרשת לשימוש בחשיפת IP אוטומטית.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "מזהה תיק החקירה שסופק אינו קיים",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "אפשרות החקירות המוצעות אינה מופעלת"
 }

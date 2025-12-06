@@ -133,7 +133,7 @@ ve.ui.MWLatexDialog.prototype.initialize = function () {
 		classes: [ 've-ui-mwLatexDialog-symbols' ]
 	} );
 	this.pages = [];
-	this.symbolsPromise = mw.loader.using( this.constructor.static.symbolsModule ).done( ( require ) => {
+	this.symbolsPromise = mw.loader.using( this.constructor.static.symbolsModule ).then( ( require ) => {
 		// eslint-disable-next-line security/detect-non-literal-require
 		const symbols = require( this.constructor.static.symbolsModule );
 		const symbolData = {};
@@ -299,7 +299,7 @@ ve.ui.MWLatexDialog.prototype.onWindowManagerResize = function () {
 			've-ui-mwLatexDialog-menuLayout-short', this.menuLayout.$element.height() < 450
 		);
 
-		// ...So wait for the possible menuLayout transition to finish
+		// ...so wait for the possible menuLayout transition to finish
 		setTimeout( () => {
 			// Give the input the right number of rows to fit the space
 			const availableSpace = this.menuLayout.$content.height() - this.input.$element.position().top;
@@ -310,9 +310,9 @@ ve.ui.MWLatexDialog.prototype.onWindowManagerResize = function () {
 			const borderAndPadding = 2 * ( border + padding );
 			const maxInputHeight = availableSpace - borderAndPadding;
 			const minRows = Math.floor( maxInputHeight / singleLineHeight );
-			this.input.loadingPromise.done( () => {
+			this.input.loadingPromise.then( () => {
 				this.input.setMinRows( minRows );
-			} ).fail( () => {
+			}, () => {
 				this.input.$input.attr( 'rows', minRows );
 			} );
 		}, OO.ui.theme.getDialogTransitionDuration() );

@@ -199,7 +199,7 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 			// * visualeditor-mwlanguagevariantcontextitem-flag-describe
 			// * visualeditor-mwlanguagevariantcontextitem-flag-hidden
 			// * visualeditor-mwlanguagevariantcontextitem-flag-title
-			$body.append( $( '<p>' ).text( OO.ui.msg(
+			$body.append( $( '<p>' ).text( ve.msg(
 				'visualeditor-mwlanguagevariantcontextitem-flag-' + flag
 			) ) );
 		}

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Milicevic01",
 			"Millosh",
@@ -8,8 +9,7 @@
 			"Prevodim",
 			"Rancher",
 			"Sasa Stefanovic",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"syntaxhighlight-desc": "Омогућава истицање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем алатке [http://pygments.org/ Pygments — Пајтон истицач синтаксе]",

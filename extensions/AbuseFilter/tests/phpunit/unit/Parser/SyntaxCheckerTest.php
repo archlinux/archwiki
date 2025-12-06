@@ -94,8 +94,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testArity
-	 *
-	 * @return array
 	 */
 	public static function provideArity(): array {
 		return [
@@ -121,8 +119,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testFunctionName
-	 *
-	 * @return array
 	 */
 	public static function provideFunctionName(): array {
 		return [
@@ -145,8 +141,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testAssign
-	 *
-	 * @return array
 	 */
 	public static function provideAssign(): array {
 		// array assignments need to lookup first, so error will differ.
@@ -192,8 +186,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testLookup
-	 *
-	 * @return array
 	 */
 	public static function provideLookup(): array {
 		return [
@@ -224,8 +216,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testModeDiffer
-	 *
-	 * @return array
 	 */
 	public static function provideModeDiffer(): array {
 		$testSketches = [
@@ -261,8 +251,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testModeAgree
-	 *
-	 * @return array
 	 */
 	public static function provideModeAgree(): array {
 		$testSketches = [
@@ -307,8 +295,6 @@ class SyntaxCheckerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Data provider for testUnusedVars
-	 *
-	 * @return array
 	 */
 	public static function provideUnusedVars(): array {
 		return [

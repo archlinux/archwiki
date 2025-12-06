@@ -26,5 +26,6 @@
 	"templatedata-modal-table-param-name": "Név",
 	"templatedata-modal-table-param-suggested": "Javasolt",
 	"templatedata-modal-title-choose-language": "Válasszon nyelvet",
-	"templatedata-modal-title-language": "Nyelv"
+	"templatedata-modal-title-language": "Nyelv",
+	"templatedata-category-browser-header": "Kategóriák"
 }

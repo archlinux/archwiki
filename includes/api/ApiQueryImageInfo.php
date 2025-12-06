@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -93,6 +79,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
+		/** @var array<string,true> $prop */
 		$prop = array_fill_keys( $params['prop'], true );
 
 		$scale = $this->getScale( $params );
@@ -196,7 +183,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 					$info['badfile'] = (bool)$this->badFileLookup->isBadFile( $title, $badFileContextTitle );
 				}
 
-				$fit = $result->addValue( [ 'query', 'pages' ], (int)$pageId, $info );
+				// Use ApiResult::IGNORE_CONFLICT_KEYS, the module is extended and the value can be set twice (T402438)
+				$fit = $result->addValue( [ 'query', 'pages' ], (int)$pageId, $info, ApiResult::IGNORE_CONFLICT_KEYS );
 				if ( !$fit ) {
 					if ( count( $pageIds[NS_FILE] ) == 1 ) {
 						// The user is screwed. imageinfo can't be solely
@@ -299,22 +287,17 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 */
 	public function getScale( $params ) {
 		if ( $params['urlwidth'] != -1 ) {
-			$scale = [];
-			$scale['width'] = $params['urlwidth'];
-			$scale['height'] = $params['urlheight'];
+			return [ 'width' => $params['urlwidth'], 'height' => $params['urlheight'] ];
 		} elseif ( $params['urlheight'] != -1 ) {
 			// Height is specified but width isn't
 			// Don't set $scale['width']; this signals mergeThumbParams() to fill it with the image's width
-			$scale = [];
-			$scale['height'] = $params['urlheight'];
+			return [ 'height' => $params['urlheight'] ];
 		} elseif ( $params['urlparam'] ) {
 			// Audio files might not have a width/height.
-			$scale = [];
+			return [];
 		} else {
-			$scale = null;
+			return null;
 		}
-
-		return $scale;
 	}
 
 	/** Validate and merge scale parameters with handler thumb parameters, give error if invalid.
@@ -334,9 +317,9 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		if ( !isset( $thumbParams['width'] ) && isset( $thumbParams['height'] ) ) {
 			// We want to limit only by height in this situation, so pass the
 			// image's full width as the limiting width. But some file types
-			// don't have a width of their own, so pick something arbitrary so
-			// thumbnailing the default icon works.
-			if ( $image->getWidth() <= 0 ) {
+			// don't have a width of their own, or are scalable, so pick
+			// something arbitrary so thumbnailing the default icon works.
+			if ( $image->getWidth() <= 0 || $image->isVectorized() ) {
 				$thumbParams['width'] =
 					max( $this->getConfig()->get( MainConfigNames::ThumbLimits ) );
 			} else {
@@ -418,7 +401,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 * Get result information for an image revision
 	 *
 	 * @param File $file
-	 * @param array $prop Array of properties to get (in the keys)
+	 * @param array<string,true> $prop Array of properties to get (in the keys)
 	 * @param ApiResult $result
 	 * @param array|null $thumbParams Containing 'width' and 'height' items, or null
 	 * @param array|false|string $opts Options for data fetching.
@@ -693,7 +676,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	/**
 	 * @param array $metadata
 	 * @param ApiResult $result
-	 * @return array
+	 * @return array[]
 	 */
 	public static function processMetaData( $metadata, $result ) {
 		$retval = [];
@@ -716,6 +699,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		return $retval;
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		if ( $this->userCanSeeRevDel() ) {
 			return 'private';
@@ -733,6 +717,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		return $img->getOriginalTitle()->getDBkey() . '|' . ( $start ?? $img->getTimestamp() );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'prop' => [
@@ -803,8 +788,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	/**
 	 * Returns all possible parameters to iiprop
 	 *
-	 * @param array $filter List of properties to filter out
-	 * @return array
+	 * @param string[] $filter List of properties to filter out
+	 * @return string[]
 	 */
 	public static function getPropertyNames( $filter = [] ) {
 		return array_keys( static::getPropertyMessages( $filter ) );
@@ -813,8 +798,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	/**
 	 * Returns messages for all possible parameters to iiprop
 	 *
-	 * @param array $filter List of properties to filter out
-	 * @return array
+	 * @param string[] $filter List of properties to filter out
+	 * @return array<string,string>
 	 */
 	public static function getPropertyMessages( $filter = [] ) {
 		return array_diff_key(
@@ -844,6 +829,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&titles=File:Albert%20Einstein%20Head.jpg&prop=imageinfo'
@@ -854,6 +840,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imageinfo';
 	}

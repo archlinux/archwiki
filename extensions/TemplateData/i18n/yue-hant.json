@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"H78c67c",
-			"Winston Sung",
 			"JeffreyKim",
 			"Ktchankt",
+			"Winston Sung",
 			"Yueman"
 		]
 	},
@@ -115,8 +115,12 @@
 	"templatedata-modal-title-templateformatstring": "自訂格式字串",
 	"templatedata-modal-title-templateparam-details": "參數細節： $1",
 	"templatedata-modal-title-templateparams": "模版參數",
+	"templatedata-search-description": "搵個模",
+	"templatedata-search-placeholder": "輸入模名",
+	"templatedata-search-placeholder-cirrussearch": "輸入模名或者關鍵字",
 	"templatedata-search-list-header": "最鍾意嘅",
 	"templatedata-search-list-empty": "你標記為最愛嘅範本會喺呢度顯示",
+	"templatedata-search-list-empty-anon": "請簽到嚟將範本標記為收藏",
 	"templatedata-template-discovery-disabled": "呢個 wiki 停用咗模發現功能。",
 	"templatediscovery": "發掘模",
 	"templatedata-favorite-disabled": "你一定要簽到先至可以收藏一個範本",
@@ -125,5 +129,22 @@
 	"templatedata-favorite-remove": "由收藏入面剷走個模",
 	"templatedata-favorite-removed": "喺收藏入面剷走咗範本",
 	"templatedata-favorite-error": "儲存唔到最愛",
-	"templatedata-favorite-maximum-reached": "你已經達到最鍾意嘅範本數量嘅上限（$1）。喺加多啲之前，請喺你嘅清單入面剷走一啲。"
+	"templatedata-favorite-maximum-reached": "你已經達到最鍾意嘅範本數量嘅上限（$1）。喺加多啲之前，請喺你嘅清單入面剷走一啲。",
+	"templatedata-category-browser-header": "類別",
+	"templatedata-category-switch-label": "頂級類別：",
+	"templatedata-category-rootcat": "模",
+	"templatedata-category-switch-button": "瀏覽",
+	"templatedata-category-column-empty": "喺[[$1]]入面搵唔到範本或者子類別",
+	"templatedata-category-browser-loadmore": "... 加多啲嘢",
+	"templatedata-category-column-error": "發生咗個錯誤",
+	"templatedata-category-use-template": "用呢個模",
+	"templatedata-category-categories": "其他類別",
+	"templatedata-category-no-cats": "冇。",
+	"templatedata-featured-list-header": "精選",
+	"templatedata-featured-list-empty": "精選模係指社群標記咗做有用嘅模。仲未設定任何精選模。",
+	"communityconfiguration-templatedata-featuredtemplates-title": "精選模",
+	"communityconfiguration-templatedata-featuredtemplates-description": "精選模係指社群標記咗做有用嘅模。佢哋可以經模板發掘工具度攞嚟用。",
+	"templatedata-featured-list-config-link": "編輯精選一覽",
+	"templatedata-featured-list-help": "精選模係指社群標記咗做有用嘅模。",
+	"templatedata-favorite-count": "你有$1/$2個收藏咗嘅模"
 }

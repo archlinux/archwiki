@@ -28,14 +28,14 @@ class SkinOptionsTest extends MediaWikiUnitTestCase {
 	 */
 	public function testSettersAndGetters() {
 		$options = $this->newSkinOptions();
-		$defaultValue = $options->get( SkinOptions::BETA_MODE );
-		$options->setMultiple( [ SkinOptions::BETA_MODE => !$defaultValue ] );
+		$defaultValue = $options->get( SkinOptions::SHOW_DONATE );
+		$options->setMultiple( [ SkinOptions::SHOW_DONATE => !$defaultValue ] );
 
 		$allOptions = $options->getAll();
 
-		$this->assertEquals( !$defaultValue, $options->get( SkinOptions::BETA_MODE ) );
-		$this->assertArrayHasKey( SkinOptions::BETA_MODE, $allOptions );
-		$this->assertEquals( !$defaultValue, $allOptions[ SkinOptions::BETA_MODE ] );
+		$this->assertEquals( !$defaultValue, $options->get( SkinOptions::SHOW_DONATE ) );
+		$this->assertArrayHasKey( SkinOptions::SHOW_DONATE, $allOptions );
+		$this->assertEquals( !$defaultValue, $allOptions[ SkinOptions::SHOW_DONATE ] );
 	}
 
 	/**

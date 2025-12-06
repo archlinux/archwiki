@@ -2,9 +2,10 @@
 
 namespace MediaWiki\Tests\Api;
 
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageCreatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Tests\ExpectCallbackTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use PHPUnit\Framework\Assert;
 
@@ -39,7 +40,7 @@ class ApiImportTest extends ApiUploadTestCase {
 
 		$title = $this->getNonexistingTestPage()->getTitle();
 
-		// We expect two PageRevisionUpdated events, one triggered by
+		// We expect two PageLatestChanged events, one triggered by
 		// ImportableOldRevisionImporter when importing the latest revision;
 		// And one triggered by ApiImportReporter when creating a dummy revision.
 		// NOTE: it's not clear whether this is intentional or desirable!
@@ -48,15 +49,15 @@ class ApiImportTest extends ApiUploadTestCase {
 
 		// Declare expectations
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 2,
-			static function ( PageRevisionUpdatedEvent $event ) use ( &$calls, $title ) {
+			PageLatestRevisionChangedEvent::TYPE, 2,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( &$calls, $title ) {
 				$calls++;
 
 				Assert::assertTrue( $event->getPage()->isSamePageAs( $title ) );
 
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_IMPORT ),
-					PageRevisionUpdatedEvent::CAUSE_IMPORT
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_IMPORT ),
+					PageLatestRevisionChangedEvent::CAUSE_IMPORT
 				);
 
 				Assert::assertTrue( $event->isSilent(), 'isSilent' );
@@ -89,6 +90,8 @@ class ApiImportTest extends ApiUploadTestCase {
 				}
 			}
 		);
+
+		$this->expectDomainEvent( PageCreatedEvent::TYPE, 1 );
 
 		// Hooks fired by PageUpdater
 		$this->expectHook( 'RevisionFromEditComplete', 1 );

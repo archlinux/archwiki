@@ -7,7 +7,6 @@
 			"Sławobóg"
 		]
 	},
-	"vector-opt-out": "Wróćo k staremu napohladej",
 	"vector-action-toggle-sidebar": "Bóčnicu přešaltować",
 	"vector-languages": "Rěče",
 	"vector-language-button-aria-label": "K zapiskej w druhej rěči hić. Přistupny w {{PLURAL:$1|$1 rěči|$1 rěčomaj|$1 rěčach|$1 rěčach}}",
@@ -42,8 +41,6 @@
 	"skin-theme-day-label": "Swětła",
 	"skin-theme-night-label": "Ćmowa",
 	"skin-theme-os-label": "Awtomatiska",
-	"vector-search-loader": "Pytanske namjety začitać",
-	"vector-searchsuggest-containing": "Pytaj za stronami, kotrež <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> wobsahuja.",
 	"vector-toc-label": "Wobsah",
 	"vector-toc-beginning": "Spočatk",
 	"vector-toc-toggle-button-label": "Podwotrězk $1 přešaltować",

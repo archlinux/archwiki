@@ -1,14 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku",
-			"Hakimi97"
+			"Hakimi97",
+			"Tofeiku"
 		]
 	},
 	"skinname-vector": "ليڬسي ۏيكتور (2010)",
 	"skinname-vector-2022": "ۏيکتور (2022)",
 	"vector-specialversion-name": "ۏيکتور",
-	"vector-opt-out": "توکر کواجه لاما",
 	"vector-languages": "بهاس",
 	"vector-language-button-label": "{{PLURAL:$1|$1 بهاس}}",
 	"vector-no-language-button-label": "تمبه بهاس",
@@ -34,7 +33,6 @@
 	"skin-theme-night-label": "ݢلڤ",
 	"skin-theme-os-label": "اءوتوماتيک",
 	"skin-theme-exclusion-notice": "لامن اين سنتياس دالم مود ترڠ.",
-	"vector-searchsuggest-containing": "چاري لامن يڠ مڠاندوڠي <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "کاندوڠن",
 	"vector-toc-beginning": "ڤرمولاءن",
 	"vector-main-menu-tooltip": "مينو اوتام",

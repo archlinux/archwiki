@@ -36,11 +36,14 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\WikiMap\WikiMap;
 use OOUI\ButtonInputWidget;
 use stdClass;
+use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LBFactory;
 
 class SpecialAbuseLog extends AbuseFilterSpecialPage {
@@ -117,6 +120,8 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	private VariablesManager $varManager;
 	private AbuseLoggerFactory $abuseLoggerFactory;
 	private FilterLookup $filterLookup;
+	private TempUserConfig $tempUserConfig;
+	private ExtensionRegistry $extensionRegistry;
 
 	public function __construct(
 		LBFactory $lbFactory,
@@ -130,7 +135,9 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 		VariablesFormatter $variablesFormatter,
 		VariablesManager $varManager,
 		AbuseLoggerFactory $abuseLoggerFactory,
-		FilterLookup $filterLookup
+		FilterLookup $filterLookup,
+		TempUserConfig $tempUserConfig,
+		ExtensionRegistry $extensionRegistry
 	) {
 		parent::__construct( self::PAGE_NAME, 'abusefilter-log', $afPermissionManager );
 		$this->lbFactory = $lbFactory;
@@ -146,6 +153,8 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 		$this->varManager = $varManager;
 		$this->abuseLoggerFactory = $abuseLoggerFactory;
 		$this->filterLookup = $filterLookup;
+		$this->tempUserConfig = $tempUserConfig;
+		$this->extensionRegistry = $extensionRegistry;
 	}
 
 	/**
@@ -235,7 +244,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 		$searchUsername = trim( $request->getText( 'wpSearchUser' ) );
 		$userTitle = Title::newFromText( $searchUsername, NS_USER );
-		$this->mSearchUser = $userTitle ? $userTitle->getText() : null;
+		$this->mSearchUser = $userTitle?->getText();
 		if ( $this->getConfig()->get( 'AbuseFilterIsCentral' ) ) {
 			$this->mSearchWiki = $request->getText( 'wpSearchWiki' );
 		}
@@ -284,6 +293,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 				'label-message' => 'abusefilter-log-search-user',
 				'type' => 'user',
 				'ipallowed' => true,
+				'iprange' => true,
 				'default' => $this->mSearchUser,
 			],
 			'SearchPeriodStart' => [
@@ -422,20 +432,59 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 		// Generate conditions list.
 		$conds = [];
+		$dbr = $this->lbFactory->getReplicaDatabase();
 
 		if ( $this->mSearchUser !== null ) {
-			$searchedUser = $this->userIdentityLookup->getUserIdentityByName( $this->mSearchUser );
-
-			if ( !$searchedUser ) {
-				$conds['afl_user'] = 0;
-				$conds['afl_user_text'] = $this->mSearchUser;
+			// If temporary accounts are enabled and the user can reveal their IP addresses, support:
+			// - lookup of temporary accounts that used the IP via afl_ip_hex
+			// - lookup of temporary accounts that used an IP in a range via afl_ip_hex
+			// - lookup of historical anonymous edits via matches on afl_user_text
+			if (
+				IPUtils::isIPAddress( $this->mSearchUser ) &&
+				$this->extensionRegistry->isLoaded( 'CheckUser' ) &&
+				$this->tempUserConfig->isKnown() &&
+				MediaWikiServices::getInstance()->getService( 'CheckUserPermissionManager' )
+					->canAccessTemporaryAccountIPAddresses( $performer )->isGood()
+			) {
+				[ $rangeStart, $rangeEnd ] = IPUtils::parseRange( $this->mSearchUser );
+				if ( $rangeStart === $rangeEnd ) {
+					// if rangeStart is equal to rangeEnd, target is actually an IP hex
+					// Return temporary accounts or anonymous users that match the IP
+					$conds[] = $dbr->orExpr( [
+						$dbr
+							->expr( 'afl_ip_hex', '=', $rangeStart )
+							->andExpr(
+								$this->tempUserConfig
+									->getMatchCondition( $dbr, 'afl_user_text', IExpression::LIKE )
+							),
+						$dbr
+							->expr( 'afl_user_text', '=', IPUtils::formatHex( $rangeStart ) )
+							->and( 'afl_user', '=', 0 )
+					] );
+				} else {
+					// Otherwise a range was passed through. Only return temporary accounts that
+					// used an IP in that range as range lookups of anonymous edits aren't supported
+					$conds[] = $dbr
+						->expr( 'afl_ip_hex', '>=', $rangeStart )
+						->and( 'afl_ip_hex', '<=', $rangeEnd )
+						->andExpr(
+							$this->tempUserConfig
+								->getMatchCondition( $dbr, 'afl_user_text', IExpression::LIKE )
+						);
+				}
 			} else {
-				$conds['afl_user'] = $searchedUser->getId();
-				$conds['afl_user_text'] = $searchedUser->getName();
+				// Otherwise search only afl_user and afl_user_text
+				$searchedUser = $this->userIdentityLookup->getUserIdentityByName( $this->mSearchUser );
+				if ( !$searchedUser ) {
+					$conds['afl_user'] = 0;
+					$conds['afl_user_text'] = $this->mSearchUser;
+				} else {
+					$conds['afl_user'] = $searchedUser->getId();
+					$conds['afl_user_text'] = $searchedUser->getName();
+				}
 			}
 		}
 
-		$dbr = $this->lbFactory->getReplicaDatabase();
 		if ( $this->mSearchPeriodStart ) {
 			$conds[] = $dbr->expr( 'afl_timestamp', '>=',
 				$dbr->timestamp( strtotime( $this->mSearchPeriodStart ) ) );
@@ -473,7 +522,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 			foreach ( $rawFilters as $filter ) {
 				try {
 					$filtersList[] = GlobalNameUtils::splitGlobalName( $filter );
-				} catch ( InvalidArgumentException $e ) {
+				} catch ( InvalidArgumentException ) {
 					$foundInvalid = true;
 					continue;
 				}
@@ -738,13 +787,28 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 		$vars = $this->varBlobStore->loadVarDump( $row );
 
 		// Prevent users seeing logs which contain protected variables that the user cannot see.
-		if (
-			$filter->isProtected() &&
-			!$this->afPermissionManager->canViewProtectedVariables( $performer, array_keys( $vars->getVars() ) )
-				->isGood()
-		) {
-			$out->addWikiMsg( 'abusefilter-examine-protected-vars-permission' );
-			return;
+		if ( $filter->isProtected() ) {
+			$permStatus = $this->afPermissionManager->canViewProtectedVariables(
+				$performer, array_keys( $vars->getVars() )
+			);
+			if ( !$permStatus->isGood() ) {
+				if ( $permStatus->getPermission() ) {
+					$out->addWikiMsg( $this->msg(
+						'abusefilter-examine-error-protected-due-to-permission',
+						$this->msg( "action-{$permStatus->getPermission()}" )->plain()
+					) );
+					return;
+				}
+
+				// Add any messages in the status after a generic error message.
+				$additional = '';
+				foreach ( $permStatus->getMessages() as $message ) {
+					$additional .= $this->msg( $message )->parseAsBlock();
+				}
+
+				$out->addWikiMsg( $this->msg( 'abusefilter-examine-error-protected' )->rawParams( $additional ) );
+				return;
+			}
 		}
 
 		$output = Html::element(
@@ -856,19 +920,24 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	/**
 	 * Helper function to select a row with private details and some more context
 	 * for an AbuseLog entry.
-	 * @todo Create a service for this
 	 *
+	 * @deprecated Since 1.45. Use {@link AbuseFilterLogDetailsLookup::getIPForAbuseFilterLog} instead.
 	 * @param Authority $authority The user who's trying to view the row
 	 * @param int $id The ID of the log entry
 	 * @return Status A status object with the requested row stored in the value property,
 	 *  or an error and no row.
 	 */
 	public static function getPrivateDetailsRow( Authority $authority, $id ) {
-		$afPermissionManager = AbuseFilterServices::getPermissionManager();
-		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+		$afLogPrivateDetailsLookup = AbuseFilterServices::getLogDetailsLookup();
 
+		$ipForAbuseFilterLogStatus = $afLogPrivateDetailsLookup->getIPForAbuseFilterLog( $authority, $id );
+		if ( !$ipForAbuseFilterLogStatus->isGood() ) {
+			return Status::wrap( $ipForAbuseFilterLogStatus );
+		}
+
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$row = $dbr->newSelectQueryBuilder()
-			->select( [ 'afl_id', 'afl_user_text', 'afl_filter_id', 'afl_global', 'afl_timestamp', 'afl_ip' ] )
+			->select( [ 'afl_id', 'afl_user_text', 'afl_filter_id', 'afl_global', 'afl_timestamp' ] )
 			->from( 'abuse_filter_log' )
 			->where( [ 'afl_id' => $id ] )
 			->caller( __METHOD__ )
@@ -878,13 +947,11 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 			return Status::newFatal( 'abusefilter-log-nonexistent' );
 		}
 
-		$filter = AbuseFilterServices::getFilterLookup()->getFilter( $row->afl_filter_id, $row->afl_global );
-		if ( !$afPermissionManager->canSeeLogDetailsForFilter( $authority, $filter ) ) {
-			return Status::newFatal( 'abusefilter-log-cannot-see-details' );
-		}
+		// Append the afl_ip to the row
+		$row->afl_ip = $ipForAbuseFilterLogStatus->getValue();
 
-		// Because FilterLookup::getFilter gets the data for us, don't duplicate queries and use the data
-		// from the ExistingFilter object to populate information about the filter in the $row.
+		// Append details about the filter to the row.
+		$filter = AbuseFilterServices::getFilterLookup()->getFilter( $row->afl_filter_id, $row->afl_global );
 		$row->af_id = (string)$filter->getId();
 		$row->af_public_comments = $filter->getName();
 		$row->af_hidden = $filter->getPrivacyLevel();
@@ -969,7 +1036,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 		// IP address
 		if ( $row->afl_ip !== '' ) {
-			if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) &&
+			if ( $this->extensionRegistry->isLoaded( 'CheckUser' ) &&
 				$this->permissionManager->userHasRight( $this->getUser(), 'checkuser' )
 			) {
 				$CULink = '&nbsp;&middot;&nbsp;' . $linkRenderer->makeKnownLink(

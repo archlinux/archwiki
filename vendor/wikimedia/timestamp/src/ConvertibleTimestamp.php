@@ -30,6 +30,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use Psr\Clock\ClockInterface;
 use ValueError;
 
 /**
@@ -38,9 +39,8 @@ use ValueError;
 class ConvertibleTimestamp {
 	/**
 	 * Standard gmdate() formats for the different timestamp types.
-	 * @var string[]
 	 */
-	private static $formats = [
+	private const FORMATS = [
 		TS_UNIX => 'U',
 		TS_MW => 'YmdHis',
 		TS_DB => 'Y-m-d H:i:s',
@@ -59,11 +59,11 @@ class ConvertibleTimestamp {
 	/**
 	 * Regexes for setTimestamp(). Named capture groups correspond to format codes for
 	 * DateTime::createFromFormat(). Unnamed groups are ignored.
-	 * @var string[]
 	 */
-	private static $regexes = [
+	private const REGEXES = [
 		// 'TS_DB' => subset of TS_ISO_8601 (with no 'T')
 		'TS_MW' => '/^(?<Y>\d{4})(?<m>\d\d)(?<d>\d\d)(?<H>\d\d)(?<i>\d\d)(?<s>\d\d)$/D',
+		'TS_UNIX' => '/^(?<U>-?\d{1,13})$/D',
 		'TS_ISO_8601' =>
 			'/^(?<Y>\d{4})-(?<m>\d{2})-(?<d>\d{2})[T ]' .
 				'(?<H>\d{2}):(?<i>\d{2}):(?<s>\d{2})(?:[.,](?<u>\d{1,6}))?' .
@@ -71,7 +71,6 @@ class ConvertibleTimestamp {
 		'TS_ISO_8601_BASIC' =>
 			'/^(?<Y>\d{4})(?<m>\d{2})(?<d>\d{2})T(?<H>\d{2})(?<i>\d{2})(?<s>\d{2})(?:[.,](?<u>\d{1,6}))?' .
 				'(?<O>Z|[+\-]\d{2}(?::?\d{2})?)?$/',
-		'TS_UNIX' => '/^(?<U>-?\d{1,13})$/D',
 		'TS_UNIX_MICRO' => '/^(?<U>-?\d{1,13})\.(?<u>\d{1,6})$/D',
 		'TS_ORACLE' =>
 			'/^(?<d>\d{2})-(?<m>\d{2})-(?<Y>\d{4}) (?<H>\d{2}):(?<i>\d{2}):(?<s>\d{2})\.(?<u>\d{6})$/',
@@ -125,43 +124,7 @@ class ConvertibleTimestamp {
 	 * @return int UNIX epoch
 	 */
 	public static function time() {
-		return static::$fakeTimeCallback ? (int)call_user_func( static::$fakeTimeCallback ) : \time();
-	}
-
-	/**
-	 * Get the current time as seconds since the epoch, with sub-second precision.
-	 *
-	 * This is equivalent to calling PHP's built-in `microtime(true)`.
-	 * The exact precision depends on the underlying operating system.
-	 *
-	 * You can overwrite microtime for testing purposes by calling setFakeTime().
-	 * In that case, this will re-use the fake time() value in seconds, and add a
-	 * fake microsecond fraction based on an increasing counter.
-	 *
-	 * Repeated calls to microtime() are likely to return unique and increasing values.
-	 * But, there is no guarantee of this, due to clock skew and clock drift correction.
-	 * To measure time spent between two points in the code, use the ::hrtime() instead.
-	 *
-	 * @deprecated To measure relative duration, use ::hrtime(). For timestamps, use ::time().
-	 * @return float Seconds since the epoch
-	 */
-	public static function microtime(): float {
-		trigger_error( __METHOD__ . ' use ::hrtime() instead.', E_USER_DEPRECATED );
-
-		static $fakeSecond = 0;
-		static $fakeOffset = 0.0;
-		if ( static::$fakeTimeCallback ) {
-			$sec = static::time();
-			if ( $sec !== $fakeSecond ) {
-				$fakeSecond = $sec;
-				$fakeOffset = 0.0;
-			} else {
-				$fakeOffset++;
-			}
-			return $fakeSecond + $fakeOffset * 0.000001;
-		} else {
-			return microtime( true );
-		}
+		return static::$fakeTimeCallback ? (int)( static::$fakeTimeCallback )() : \time();
 	}
 
 	/**
@@ -241,6 +204,13 @@ class ConvertibleTimestamp {
 	}
 
 	/**
+	 * Get a PSR-20 clock that respects setFakeTime()
+	 */
+	public static function getClock(): ClockInterface {
+		return new Clock();
+	}
+
+	/**
 	 * The actual timestamp being wrapped (DateTime object).
 	 * @var DateTime
 	 */
@@ -281,7 +251,7 @@ class ConvertibleTimestamp {
 			$strtime = (string)self::time();
 			$format = 'U';
 		} else {
-			foreach ( self::$regexes as $name => $regex ) {
+			foreach ( self::REGEXES as $name => $regex ) {
 				if ( !preg_match( $regex, $ts, $m ) ) {
 					continue;
 				}
@@ -332,14 +302,16 @@ class ConvertibleTimestamp {
 					$m['u'] = 1000000 - (int)str_pad( $m['u'], 6, '0' );
 				}
 
-				$filtered = [];
+				$formatFiltered = [];
+				$strtimeFiltered = [];
 				foreach ( $m as $k => $v ) {
 					if ( !is_int( $k ) && $v !== '' ) {
-						$filtered[$k] = $v;
+						$formatFiltered[] = $k;
+						$strtimeFiltered[] = $v;
 					}
 				}
-				$format = implode( ' ', array_keys( $filtered ) );
-				$strtime = implode( ' ', array_values( $filtered ) );
+				$format = implode( ' ', $formatFiltered );
+				$strtime = implode( ' ', $strtimeFiltered );
 
 				break;
 			}
@@ -375,7 +347,7 @@ class ConvertibleTimestamp {
 		try {
 			$ct = new static( $ts );
 			return $ct->getTimestamp( $style );
-		} catch ( TimestampException $e ) {
+		} catch ( TimestampException ) {
 			return false;
 		}
 	}
@@ -401,8 +373,8 @@ class ConvertibleTimestamp {
 	 * @return string The formatted timestamp
 	 */
 	public function getTimestamp( $style = TS_UNIX ) {
-		if ( !isset( self::$formats[$style] ) ) {
-			throw new TimestampException( __METHOD__ . ': Illegal timestamp output type.' );
+		if ( !isset( self::FORMATS[$style] ) ) {
+			throw new InvalidArgumentException( __METHOD__ . ': Illegal timestamp output type.' );
 		}
 
 		// All our formats are in UTC, so make sure to use that timezone
@@ -421,7 +393,7 @@ class ConvertibleTimestamp {
 			return sprintf( "%d.%06d", $seconds, $microseconds );
 		}
 
-		$output = $timestamp->format( self::$formats[$style] );
+		$output = $timestamp->format( self::FORMATS[$style] );
 
 		if ( $style == TS_RFC2822 ) {
 			$output .= ' GMT';
@@ -447,8 +419,8 @@ class ConvertibleTimestamp {
 	 * Calculate the difference between two ConvertibleTimestamp objects.
 	 *
 	 * @param ConvertibleTimestamp $relativeTo Base time to calculate difference from
-	 * @return DateInterval|false The DateInterval object representing the
-	 *   difference between the two dates or false on failure
+	 * @return DateInterval The DateInterval object representing the
+	 *   difference between the two dates
 	 */
 	public function diff( ConvertibleTimestamp $relativeTo ) {
 		return $this->timestamp->diff( $relativeTo->timestamp );

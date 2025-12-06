@@ -1,0 +1,67 @@
+<div class="cdx-table{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{! }}{{#id}} id="{{ id }}"{{/id}}>
+    <div class="cdx-table__header">
+      {{^hideCaption}}
+        {{#caption}}
+          <div class="cdx-table__header__caption">
+            {{ caption }}
+          </div>
+        {{/caption}}
+      {{/hideCaption}}
+      {{#headerContent}}
+        <div class="cdx-table__header__header-content">
+          {{{ headerContent }}}
+        </div>
+      {{/headerContent}}
+    </div>
+    <div class="cdx-table__table-wrapper">
+      <table class="cdx-table__table {{!
+        }}{{#showVerticalBorders}}cdx-table__table--borders-vertical{{/showVerticalBorders}}">
+        {{#caption}}
+          <caption>{{ caption }}</caption>
+        {{/caption}}
+        {{#hasData}}
+        <thead>
+        <tr>
+          {{#columns}}
+            <th scope="col" class="{{ align }} {{#sortable}}cdx-table__table__cell--has-sort{{/sortable}}">
+              {{#sortable}}
+                <a class="cdx-table__table__sort-button cdx-button--fake-button cdx-button--fake-button--enabled" href="{{ sortUrl }}" aria-selected="{{ isCurrentSort }}">
+                  {{ label }}
+                  <span class="cdx-icon cdx-icon--small cdx-table__sort-icon {{ sortIconClass }}"></span>
+                </a>
+              {{/sortable}}
+              {{^sortable}}
+                <span class="cdx-table__th-content">{{ label }}</span>
+              {{/sortable}}
+            </th>
+          {{/columns}}
+        </tr>
+        </thead>
+        {{/hasData}}
+        <tbody>
+        {{#rows}}
+          <tr>
+            {{#columns}}
+              <td class="{{ align }}">{{{ cellData }}}</td>
+            {{/columns}}
+          </tr>
+        {{/rows}}
+        {{^hasData}}
+            <tr class="cdx-table__table__empty-state">
+                <td class="cdx-table__table__empty-state-content">
+                    {{#i18n}}cdx-table-no-data-message{{/i18n}}
+                </td>
+            </tr>
+        {{/hasData}}
+        </tbody>
+      </table>
+    </div>
+    {{#hasData}}
+    {{#pager}}
+      {{{ pager }}}
+    {{/pager}}
+    {{/hasData}}
+    {{#footer}}
+      <div class="cdx-table__footer">{{ footer }}</div>
+    {{/footer}}
+  </div>

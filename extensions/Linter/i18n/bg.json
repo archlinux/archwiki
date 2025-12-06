@@ -80,7 +80,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|грешка|грешки}})",
 	"linter-page-edit": "редактиране",
 	"linter-page-history": "история",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "преглед на кода",
 	"linter-pager-bogus-image-options-details": "Неправилен параметър на файл",
 	"linter-pager-category-header": "Категория",

@@ -8,8 +8,8 @@ use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\DiffUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 
 class THHandler extends DOMHandler {
 
@@ -36,9 +36,10 @@ class THHandler extends DOMHandler {
 		$max = $state->sep->constraints['max'] ?? 1;
 		if ( $min > 0 || ( $max > 0 && str_contains( $state->sep->src ?? '', "\n" ) ) ) {
 			// You can use both "!!" and "||" for same-row headings (ugh!)
+			// but for single-row heading we need to use "!"
 			$startTagSrc = preg_replace( '/!!/', '!', $startTagSrc, 1 );
-			$startTagSrc = preg_replace( '/\|\|/', '!', $startTagSrc, 1 );
-			$startTagSrc = preg_replace( '/{{!}}{{!}}/', '{{!}}', $startTagSrc, 1 );
+			$startTagSrc = preg_replace( '/(\||{{!}})\|/', '!', $startTagSrc, 1 );
+			$startTagSrc = preg_replace( '/(\||{{!}}){{!}}/', '!', $startTagSrc, 1 );
 		}
 
 		$thTag = $this->serializeTableTag( $startTagSrc, $attrSepSrc, $state, $node, $wrapperUnmodified );
@@ -83,7 +84,7 @@ class THHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function before( Element $node, Node $otherNode, SerializerState $state ): array {
-		if ( DOMCompat::nodeName( $otherNode ) === 'th'
+		if ( DOMUtils::nodeName( $otherNode ) === 'th'
 			&& ( DOMDataUtils::getDataParsoid( $node )->stx ?? null ) === 'row'
 		) {
 			// force single line
@@ -95,7 +96,7 @@ class THHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function after( Element $node, Node $otherNode, SerializerState $state ): array {
-		if ( DOMCompat::nodeName( $otherNode ) === 'td' ) {
+		if ( DOMUtils::nodeName( $otherNode ) === 'td' ) {
 			// Force a newline break
 			return [ 'min' => 1, 'max' => $this->maxNLsInTable( $node, $otherNode ) ];
 		} else {

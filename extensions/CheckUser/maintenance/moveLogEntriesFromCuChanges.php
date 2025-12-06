@@ -5,11 +5,13 @@ namespace MediaWiki\CheckUser\Maintenance;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Move log entries from cu_changes to cu_private_event.
@@ -113,14 +115,14 @@ class MoveLogEntriesFromCuChanges extends LoggedUpdateMaintenance {
 					'cuc_xff',
 					'cuc_xff_hex',
 					'cuc_agent',
-					'cuc_private'
+					'cuc_private',
 				] )
 				->table( 'cu_changes' )
 				->where( [
 					$dbw->expr( 'cuc_id', '>=', $blockStart ),
 					$dbw->expr( 'cuc_id', '<=', $blockEnd ),
 					'cuc_type' => RC_LOG,
-					'cuc_only_for_read_old' => 0
+					'cuc_only_for_read_old' => 0,
 				] )
 				->caller( __METHOD__ )
 				->fetchResultSet();
@@ -142,7 +144,7 @@ class MoveLogEntriesFromCuChanges extends LoggedUpdateMaintenance {
 					'cupe_xff' => $row->cuc_xff,
 					'cupe_xff_hex' => $row->cuc_xff_hex,
 					'cupe_agent' => $row->cuc_agent,
-					'cupe_private' => $row->cuc_private
+					'cupe_private' => $row->cuc_private,
 				];
 				$setOnlyForReadOldBatch[] = $row->cuc_id;
 			}
@@ -172,5 +174,7 @@ class MoveLogEntriesFromCuChanges extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MoveLogEntriesFromCuChanges::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

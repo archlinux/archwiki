@@ -6,13 +6,13 @@
 			"Dream Star.cn",
 			"Kly",
 			"LNDDYL",
+			"Lakejason0",
 			"Liuxinyu970226",
 			"Spring Roll Conan",
 			"Winston Sung",
 			"Xiplus",
 			"Yfdyh000",
-			"捍粵者",
-			"Lakejason0"
+			"捍粵者"
 		]
 	},
 	"content-model-scribunto": "Scribunto模組",
@@ -41,7 +41,7 @@
 	"scribunto-common-timeout": "模組指令碼執行逾時。",
 	"scribunto-common-oom": "已超出執行腳本允許的記憶體用量。",
 	"scribunto-common-backtrace": "回溯：",
-	"scribunto-common-no-details": "沒有其它可用詳情。",
+	"scribunto-common-no-details": "沒有關於該代碼位置的可用詳情。",
 	"scribunto-lua-in-function": "於函數 \"$1\"",
 	"scribunto-lua-in-main": "於主要區塊",
 	"scribunto-lua-in-function-at": "於函數 $1:$2",
@@ -73,5 +73,7 @@
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Lua 日誌",
 	"nstab-module": "模組",
-	"tooltip-ca-nstab-module": "檢視模組頁面"
+	"tooltip-ca-nstab-module": "檢視模組頁面",
+	"namespaceinfo-description-ns828": "用於 Lua 程式碼模組的命名空間，這些可從 wiki 頁面及該文件頁面呼叫。",
+	"namespaceinfo-description-ns829": "模組和文件的討論頁"
 }

@@ -102,24 +102,22 @@ function createTable( data, showCounts ) {
 		td = tr.insertCell();
 		td.appendChild( uas );
 
-		if ( mw.config.get( 'wgCheckUserDisplayClientHints' ) ) {
-			const clientHints = document.createElement( 'ul' );
-			clientHints.className = 'mw-checkuser-helper-client-hints';
-			for ( let i = 0, len = userData.sorted.uach.length; i < len; i++ ) {
-				const clientHintText = userData.sorted.uach[ i ];
-				const clientHint = document.createElement( 'li' );
-				clientHint.textContent = clientHintText;
-				if ( showCounts ) {
-					const counter = document.createElement( 'span' );
-					counter.className = 'mw-checkuser-helper-count';
-					counter.textContent = userData.uach[ clientHintText ];
-					clientHint.append( counter );
-				}
-				clientHints.appendChild( clientHint );
+		const clientHints = document.createElement( 'ul' );
+		clientHints.className = 'mw-checkuser-helper-client-hints';
+		for ( let i = 0, len = userData.sorted.uach.length; i < len; i++ ) {
+			const clientHintText = userData.sorted.uach[ i ];
+			const clientHint = document.createElement( 'li' );
+			clientHint.textContent = clientHintText;
+			if ( showCounts ) {
+				const counter = document.createElement( 'span' );
+				counter.className = 'mw-checkuser-helper-count';
+				counter.textContent = userData.uach[ clientHintText ];
+				clientHint.append( counter );
 			}
-			td = tr.insertCell();
-			td.appendChild( clientHints );
+			clientHints.appendChild( clientHint );
 		}
+		td = tr.insertCell();
+		td.appendChild( clientHints );
 	}
 	mw.hook( 'wikipage.content' ).fire( $( '.mw-checkuser-helper-table' ) );
 }

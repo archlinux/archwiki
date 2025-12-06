@@ -139,7 +139,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		// Loading local json file
 		$file = TexUtil::getJsonFile();
 		// json_encode cannot generate tabs required by WMF convention https://github.com/php/php-src/issues/8864
-		$encP = json_encode( $out, JSON_PRETTY_PRINT );
+		$encP = json_encode( $out, JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE );
 		$encP = preg_replace( '/\n\s+/', "\n", $encP ) . "\n";
 		// unescape slashes for comparison as escaping is not allowed in the json file
 		$encP = str_replace( '\/', '/', $encP );
@@ -159,10 +159,12 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		foreach ( $sets as $set ) {
 			$functions = $tu->getBaseElements()[ $set ];
 			foreach ( $functions as $symbol => $function ) {
-					$methodName = is_array( $function ) ? $function[0] : $function;
-
-					$this->assertTrue( method_exists( BaseParsing::class, $methodName ),
-						'Method ' . $methodName . ' for symbol ' . $symbol . ' does not exist in BaseParsing' );
+					$methodString = is_array( $function ) ? $function[0] : $function;
+					$methodParts = explode( '::', $methodString, 2 );
+					$methodName = array_pop( $methodParts );
+					$class = array_pop( $methodParts ) ?? BaseParsing::class;
+					$this->assertTrue( method_exists( $class, $methodName ),
+						'Method ' . $methodString . ' for symbol ' . $symbol . ' does not exist in BaseParsing' );
 			}
 		}
 	}
@@ -184,8 +186,8 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testGetOperatorByKey() {
-		$this->assertEquals( '&#x221A;', TexUtil::getInstance()->operator_rendering( '\\surd' )[0] );
-		$this->assertEquals( '&#x2212;', TexUtil::getInstance()->operator_rendering( '-' )[0] );
+		$this->assertEquals( '√', TexUtil::getInstance()->operator_rendering( '\\surd' )[0] );
+		$this->assertEquals( '−', TexUtil::getInstance()->operator_rendering( '-' )[0] );
 	}
 
 	public function testGetColorByKey() {

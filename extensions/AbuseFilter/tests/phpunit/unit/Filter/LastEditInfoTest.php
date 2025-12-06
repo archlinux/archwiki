@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Filter;
 
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
 /**
@@ -15,7 +16,8 @@ class LastEditInfoTest extends MediaWikiUnitTestCase {
 		$userID = 42;
 		$userName = 'Admin';
 		$timestamp = '20181016155634';
-		$lastEditInfo = new LastEditInfo( $userID, $userName, $timestamp );
+		$userIdentifier = UserIdentityValue::newRegistered( $userID, $userName );
+		$lastEditInfo = new LastEditInfo( $userIdentifier, $timestamp );
 
 		$this->assertSame( $userID, $lastEditInfo->getUserID(), 'user ID' );
 		$this->assertSame( $userName, $lastEditInfo->getUserName(), 'user name' );
@@ -29,7 +31,7 @@ class LastEditInfoTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideSetters
 	 */
 	public function testSetters( $value, string $setter, string $getter ) {
-		$lastEditInfo = new LastEditInfo( 1, 'x', '123' );
+		$lastEditInfo = new LastEditInfo( UserIdentityValue::newAnonymous( "x" ), '123' );
 
 		$lastEditInfo->$setter( $value );
 		$this->assertSame( $value, $lastEditInfo->$getter() );
@@ -40,8 +42,7 @@ class LastEditInfoTest extends MediaWikiUnitTestCase {
 	 */
 	public static function provideSetters() {
 		return [
-			'user ID' => [ 163, 'setUserID', 'getUserID' ],
-			'username' => [ 'Sysop', 'setUserName', 'getUserName' ],
+			'user identity' => [ UserIdentityValue::newAnonymous( "y" ), 'setUserIdentity', 'getUserIdentity' ],
 			'timestamp' => [ '123456', 'setTimestamp', 'getTimestamp' ],
 		];
 	}

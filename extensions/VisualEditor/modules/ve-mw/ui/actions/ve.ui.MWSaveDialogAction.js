@@ -104,7 +104,8 @@ ve.ui.commandRegistry.register(
 		'showChanges', 'mwSaveDialog', 'review'
 	)
 );
-if ( mw.libs.ve.isWikitextAvailable ) {
+// TODO: mw.libs.ve.isWikitextAvailable is only available on desktop
+if ( mw.libs.ve.isWikitextAvailable && mw.libs.ve.isWikitextAvailable() ) {
 	// Ensure wikitextCommandRegistry has finished loading
 	mw.loader.using( 'ext.visualEditor.mwwikitext' ).then( () => {
 		ve.ui.wikitextCommandRegistry.register(

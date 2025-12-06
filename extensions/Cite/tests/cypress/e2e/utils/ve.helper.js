@@ -48,7 +48,7 @@ export function getVEReferenceContextItem() {
 }
 
 export function getVEReferenceContextItemEdit() {
-	return cy.get( '.ve-ui-context-menu .ve-ui-mwReferenceContextItem .oo-ui-buttonElement-button' );
+	return cy.get( '.ve-ui-context-menu .ve-ui-mwReferenceContextItem .ve-ui-linearContextItem-actions .oo-ui-buttonElement-button' );
 }
 
 export function getVEReferenceEditDialog() {

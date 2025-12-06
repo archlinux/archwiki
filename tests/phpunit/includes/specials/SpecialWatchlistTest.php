@@ -6,7 +6,10 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialWatchlist;
+use MediaWiki\User\StaticUserOptionsLookup;
+use Wikimedia\Rdbms\LBFactorySingle;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @author Addshore
@@ -55,9 +58,10 @@ class SpecialWatchlistTest extends SpecialPageTestBase {
 			$services->getWatchedItemStore(),
 			$services->getWatchlistManager(),
 			$services->getUserOptionsLookup(),
-			$services->getChangeTagsStore(),
 			$services->getUserIdentityUtils(),
-			$services->getTempUserConfig()
+			$services->getTempUserConfig(),
+			$services->getRecentChangeFactory(),
+			$services->getChangesListQueryFactory(),
 		);
 	}
 
@@ -206,5 +210,118 @@ class SpecialWatchlistTest extends SpecialPageTestBase {
 				],
 			],
 		];
+	}
+
+	/**
+	 * Check the exact SQL used in the main query so that we can see if
+	 * refactoring changes it.
+	 *
+	 * We could probably delete this when we are done with refactoring.
+	 */
+	public function testDoMainQuery() {
+		ConvertibleTimestamp::setFakeTime( '20250101000000' );
+		$user = $this->getTestUser()->getUser();
+		$db = new DatabaseTestHelper( SpecialWatchlist::class );
+		$this->setService(
+			'ConnectionProvider',
+			LBFactorySingle::newFromConnection( $db )
+		);
+		$userOptionsLookup = new StaticUserOptionsLookup( [], [ 'wllimit' => 50 ] );
+		$this->setService(
+			'UserOptionsLookup',
+			$userOptionsLookup
+		);
+		$page = $this->newSpecialPage();
+		TestingAccessWrapper::newFromObject( $page )->userOptionsLookup
+			= $userOptionsLookup;
+		$page->getContext()->setUser( $user );
+		$page->getRows();
+		// Warning: significant line-ending whitespace
+		$expected = <<<SQL
+SELECT 
+	recentchanges_actor.actor_user AS rc_user,
+	recentchanges_actor.actor_name AS rc_user_text,
+	rc_bot,
+	rc_minor,
+	rc_this_oldid,
+	page_latest,
+	rc_source,
+	rc_log_type,
+	rc_timestamp,
+	rc_namespace,
+	rc_title,
+	wl_notificationtimestamp,
+	(
+		SELECT GROUP_CONCAT(ctd_name SEPARATOR ',') 
+		FROM change_tag JOIN change_tag_def ON ((ct_tag_id=ctd_id)) 
+		WHERE (ct_rc_id=rc_id)  
+	) AS ts_tags,
+	rc_id,
+	rc_cur_id,
+	rc_last_oldid,
+	rc_type,
+	rc_patrolled,
+	rc_ip,
+	rc_old_len,
+	rc_new_len,
+	rc_deleted,
+	rc_logid,
+	rc_log_action,
+	rc_params,
+	rc_actor,
+	recentchanges_comment.comment_text AS rc_comment_text,
+	recentchanges_comment.comment_data AS rc_comment_data,
+	recentchanges_comment.comment_id AS rc_comment_id,
+	we_expiry 
+FROM recentchanges 
+	JOIN actor recentchanges_actor ON ((actor_id=rc_actor)) 
+	JOIN comment recentchanges_comment ON ((comment_id=rc_comment_id)) 
+	LEFT JOIN page ON ((page_id=rc_cur_id)) 
+	JOIN watchlist ON ((wl_namespace=rc_namespace) AND (wl_title=rc_title) AND wl_user = 1) 
+	LEFT JOIN watchlist_expiry ON ((we_item=wl_id)) 
+WHERE ((rc_this_oldid = page_latest OR rc_this_oldid = 0)) 
+	AND ((we_expiry IS NULL OR we_expiry > '20250101000000')) 
+	AND ((rc_source != 'mw.log' OR (rc_deleted & 1) != 1)) 
+	AND (rc_timestamp >= '20250101000000') 
+ORDER BY rc_timestamp DESC,rc_id DESC 
+LIMIT 50
+SQL;
+
+		$this->assertSame(
+			$this->normalizeSql( $expected ),
+			$this->normalizeSql( $db->getLastSqls() )
+		);
+	}
+
+	private function normalizeSql( $sql ) {
+		$sql = preg_replace( '/^\t*/m', '', $sql );
+		$sql = str_replace( "\n", '', $sql );
+		$sql = preg_replace( '/(?!\'),/', ",\n", $sql );
+		$sql = preg_replace( '/SELECT|FROM|LEFT JOIN|JOIN|AND|WHERE|ORDER BY|LIMIT/', "\n$0", $sql );
+		return $sql;
+	}
+
+	/**
+	 * Regression test for T407996
+	 */
+	public function testUnstructuredFilters() {
+		$user = $this->getTestUser()->getUser();
+		$userOptionsLookup = new StaticUserOptionsLookup( [], [
+			'wlenhancedfilters-disable' => true,
+			'extendwatchlist' => false,
+		] );
+		$this->setService(
+			'UserOptionsLookup',
+			$userOptionsLookup
+		);
+		$page = $this->newSpecialPage();
+		TestingAccessWrapper::newFromObject( $page )->userOptionsLookup
+			= $userOptionsLookup;
+		$page->getContext()->setUser( $user );
+		$page->getRows();
+		$this->assertTrue(
+			$page->getFilterGroup( 'extended-group' )->getFilter( 'extended' )
+				->isActive( $page->getOptions(), false )
+		);
 	}
 }

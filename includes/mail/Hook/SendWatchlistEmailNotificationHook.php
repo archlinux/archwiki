@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Hook;
 
-use EmailNotification;
+use MediaWiki\RecentChanges\RecentChangeNotifier;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
@@ -10,7 +10,7 @@ use MediaWiki\User\User;
  * This is a hook handler interface, see docs/Hooks.md.
  * Use the hook name "SendWatchlistEmailNotification" to register handlers implementing this interface.
  *
- * @stable to implement
+ * @deprecated since 1.45, use the Notification Middleware to filter/replace Watchlist notifications
  * @ingroup Hooks
  */
 interface SendWatchlistEmailNotificationHook {
@@ -21,7 +21,7 @@ interface SendWatchlistEmailNotificationHook {
 	 *
 	 * @param User $targetUser User whom to send watchlist email notification
 	 * @param Title $title Page title
-	 * @param EmailNotification $enotif
+	 * @param RecentChangeNotifier $enotif
 	 * @return bool|void True or no return value to send watchlist email
 	 *   notification, or false to abort
 	 */

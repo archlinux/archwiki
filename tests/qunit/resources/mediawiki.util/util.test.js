@@ -203,7 +203,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		const $el = $( '<div>' ).attr( 'id', 'mw-addcsstest' ).appendTo( '#qunit-fixture' );
 		const style = util.addCSS( '#mw-addcsstest { visibility: hidden; }' );
 		assert.strictEqual( typeof style, 'object', 'addCSS returned an object' );
-		assert.strictEqual( style.disabled, false, 'property "disabled" is available and set to false' );
+		assert.false( style.disabled, 'property "disabled" is available and set to false' );
 
 		assert.strictEqual( $el.css( 'visibility' ), 'hidden', 'Added style properties are in effect' );
 
@@ -287,30 +287,48 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( warningMessage.querySelector( '.cdx-message__content' ).textContent, 'hello world!' );
 	} );
 
-	QUnit.test( 'addPortlet does not append to DOM if no `before` is provided', ( assert ) => {
+	QUnit.test( 'addPortlet [no selectorHint]', ( assert ) => {
 		$( '#qunit-fixture' ).html(
-			'<div class="portlet" id="p-toolbox"></div>'
+			'<div class="portlet" id="p-tb"></div>'
 		);
 		const portlet = util.addPortlet( 'test', 'Hello' );
-		assert.true( portlet !== null, 'A portlet node is returned.' );
-		assert.true( portlet.parentNode === null, 'Portlet has no parent node' );
+		assert.true( !!portlet, 'portlet node' );
+		assert.false( !!portlet.parentNode, 'portlet connected' );
 	} );
 
-	QUnit.test( 'addPortlet returns null if bad selector given', ( assert ) => {
+	QUnit.test( 'addPortlet [invalid selectorHint]', ( assert ) => {
 		$( '#qunit-fixture' ).html(
-			'<div class="portlet" id="p-toolbox"></div>'
+			'<div class="portlet" id="p-tb"></div>'
 		);
-		const portlet = util.addPortlet( 'test', 'Hello', '#?saasp-toolbox' );
-		assert.true( portlet === null, 'No portlet created.' );
+		const portlet = util.addPortlet( 'test', 'Hello', '#?saasp-invalid' );
+		assert.false( !!portlet, 'portlet node' );
 	} );
 
-	QUnit.test( 'addPortlet appends to DOM if before provided', ( assert ) => {
+	QUnit.test( 'addPortlet [valid selectorHint found]', ( assert ) => {
 		$( '#qunit-fixture' ).html(
-			'<div class="portlet" id="p-toolbox"></div>'
+			'<div class="portlet" id="p-navigation"></div>' +
+				'<div class="portlet" id="p-tb"></div>' +
+				'<div class="portlet" id="p-lang"></div>'
 		);
-		const portlet = util.addPortlet( 'test', 'Hello', '#p-toolbox' );
-		assert.true( !!portlet, 'A portlet node is returned.' );
-		assert.true( portlet.parentNode !== null, 'It is appended to the DOM' );
+		const portlet = util.addPortlet( 'test', 'Hello', '#p-tb' );
+		const ids = $( '#qunit-fixture' ).children().get().map( ( el ) => el.id );
+
+		assert.true( !!portlet, 'portlet node' );
+		assert.true( !!portlet.parentNode, 'portlet connected' );
+		assert.deepEqual( ids, [ 'p-navigation', 'p-tb', 'test', 'p-lang' ], 'order' );
+	} );
+
+	QUnit.test( 'addPortlet [valid selectorHint not found]', ( assert ) => {
+		$( '#qunit-fixture' ).html(
+			'<div class="portlet" id="p-navigation"></div>' +
+				'<div class="portlet" id="p-tb"></div>' +
+				'<div class="portlet" id="p-lang"></div>'
+		);
+		const portlet = util.addPortlet( 'test', 'Hello', '#p-unknown' );
+		const ids = $( '#qunit-fixture' ).children().get().map( ( el ) => el.id );
+
+		assert.false( !!portlet, 'portlet node' );
+		assert.deepEqual( ids, [ 'p-navigation', 'p-tb', 'p-lang' ], 'order' );
 	} );
 
 	QUnit.test( 'addPortletLink (Vector list)', ( assert ) => {
@@ -429,15 +447,15 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 
 	QUnit.test( 'validateEmail', ( assert ) => {
 		assert.strictEqual( util.validateEmail( '' ), null, 'Should return null for empty string ' );
-		assert.strictEqual( util.validateEmail( 'user@localhost' ), true, 'Return true for a valid e-mail address' );
+		assert.true( util.validateEmail( 'user@localhost' ), 'Return true for a valid e-mail address' );
 
 		// testEmailWithCommasAreInvalids
-		assert.strictEqual( util.validateEmail( 'user,foo@example.org' ), false, 'Emails with commas are invalid' );
-		assert.strictEqual( util.validateEmail( 'userfoo@ex,ample.org' ), false, 'Emails with commas are invalid' );
+		assert.false( util.validateEmail( 'user,foo@example.org' ), 'Emails with commas are invalid' );
+		assert.false( util.validateEmail( 'userfoo@ex,ample.org' ), 'Emails with commas are invalid' );
 
 		// testEmailWithHyphens
-		assert.strictEqual( util.validateEmail( 'user-foo@example.org' ), true, 'Emails may contain a hyphen' );
-		assert.strictEqual( util.validateEmail( 'userfoo@ex-ample.org' ), true, 'Emails may contain a hyphen' );
+		assert.true( util.validateEmail( 'user-foo@example.org' ), 'Emails may contain a hyphen' );
+		assert.true( util.validateEmail( 'userfoo@ex-ample.org' ), 'Emails may contain a hyphen' );
 	} );
 
 	// Based on mediawiki/libs/IPUtils: provideInvalidIPv4Addresses

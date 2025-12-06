@@ -7,6 +7,8 @@ jquery.ui.datepicker.css
 
 jquery.ui.dialog.css
 * Extra customizations.
+* Ia48990a7f3 Fix jQuery UI's dialog placement in RTL
+  https://phabricator.wikimedia.org/T344467
 
 jquery.ui.resizable.css
 * Add @noflip to prevent CSSJanus flipping.

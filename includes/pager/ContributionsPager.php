@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -280,6 +266,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 		$this->tagsCache = new MapCacheLRU( 50 );
 	}
 
+	/** @inheritDoc */
 	public function getDefaultQuery() {
 		$query = parent::getDefaultQuery();
 		$query['target'] = $this->target;
@@ -388,6 +375,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 	 */
 	abstract protected function getRevisionQuery();
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$queryInfo = $this->getRevisionQuery();
 
@@ -451,7 +439,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 		return $queryInfo;
 	}
 
-	protected function getNamespaceCond() {
+	protected function getNamespaceCond(): array {
 		if ( $this->namespace !== '' ) {
 			$dbr = $this->getDatabase();
 			$namespaces = [ $this->namespace ];
@@ -868,10 +856,7 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 			$chardiff .= Linker::formatRevisionSize( $row->{$this->revisionLengthField} );
 			$chardiff .= ' <span class="mw-changeslist-separator"></span> ';
 		} else {
-			$parentLen = 0;
-			if ( isset( $this->mParentLens[$row->{$this->revisionParentIdField}] ) ) {
-				$parentLen = $this->mParentLens[$row->{$this->revisionParentIdField}];
-			}
+			$parentLen = $this->getParentRevisionSize( $row );
 
 			$chardiff = ' <span class="mw-changeslist-separator"></span> ';
 			$chardiff .= ChangesList::showCharacterDifference(
@@ -882,6 +867,15 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 			$chardiff .= ' <span class="mw-changeslist-separator"></span> ';
 		}
 		return $chardiff;
+	}
+
+	/**
+	 * Get the byte length of the parent revision of a given row.
+	 * @param stdClass $row
+	 * @return int
+	 */
+	protected function getParentRevisionSize( $row ): int {
+		return $this->mParentLens[$row->{$this->revisionParentIdField}] ?? 0;
 	}
 
 	/**

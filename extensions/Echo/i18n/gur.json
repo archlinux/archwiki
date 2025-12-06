@@ -42,8 +42,6 @@
 	"echo-category-title-thank-you-edit": "Demese {{PLURAL:$1|milestone|milestones}}",
 	"echo-category-title-watchlist": "Demese la fu bisɛ pɛgerɛ",
 	"echo-category-title-minor-watchlist": "Demese fii la fu bisɛ pɛgerɛ",
-	"echo-pref-tooltip-edit-user-talk": "Tiɛ mam bɛra san demese mam tuuma tɔgum pɛgerɛ",
-	"echo-pref-tooltip-edit-user-page": "Tiɛ mam nɛra san demese mam tuuma pɛgerɛ",
 	"notifications": "Lahebaari tiirɛ",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Your}} tiirɛ duma",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Your}} tiirɛ",

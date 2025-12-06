@@ -1,0 +1,128 @@
+{
+	"query": {
+		"namespaces": {
+			"-2": {
+				"id": -2,
+				"case": "case-sensitive",
+				"canonical": "Media",
+				"*": "Media"
+			},
+			"-1": {
+				"id": -1,
+				"case": "first-letter",
+				"canonical": "Special",
+				"*": "Special"
+			},
+			"0": {
+				"id": 0,
+				"case": "case-sensitive",
+				"content": "",
+				"*": ""
+			},
+			"1": {
+				"id": 1,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Talk",
+				"*": "Talk"
+			},
+			"2": {
+				"id": 2,
+				"case": "first-letter",
+				"subpages": "",
+				"canonical": "User",
+				"*": "User"
+			},
+			"3": {
+				"id": 3,
+				"case": "first-letter",
+				"subpages": "",
+				"canonical": "User talk",
+				"*": "User talk"
+			},
+			"4": {
+				"id": 4,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Project",
+				"*": "Project"
+			},
+			"5": {
+				"id": 5,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Project talk",
+				"*": "Project talk"
+			},
+			"6": {
+				"id": 6,
+				"case": "case-sensitive",
+				"canonical": "File",
+				"*": "File"
+			},
+			"7": {
+				"id": 7,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "File talk",
+				"*": "File talk"
+			},
+			"8": {
+				"id": 8,
+				"case": "first-letter",
+				"subpages": "",
+				"canonical": "MediaWiki",
+				"namespaceprotection": "editinterface",
+				"*": "MediaWiki"
+			},
+			"9": {
+				"id": 9,
+				"case": "first-letter",
+				"subpages": "",
+				"canonical": "MediaWiki talk",
+				"*": "MediaWiki talk"
+			},
+			"10": {
+				"id": 10,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Template",
+				"*": "Template"
+			},
+			"11": {
+				"id": 11,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Template talk",
+				"*": "Template talk"
+			},
+			"12": {
+				"id": 12,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Help",
+				"*": "Help"
+			},
+			"13": {
+				"id": 13,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Help talk",
+				"*": "Help talk"
+			},
+			"14": {
+				"id": 14,
+				"case": "case-sensitive",
+				"canonical": "Category",
+				"*": "Category"
+			},
+			"15": {
+				"id": 15,
+				"case": "case-sensitive",
+				"subpages": "",
+				"canonical": "Category talk",
+				"*": "Category talk"
+			}
+		}
+	}
+}

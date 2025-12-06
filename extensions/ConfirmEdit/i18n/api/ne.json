@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"बडा काजी"
+		]
+	},
+	"captcha-apihelp-param-captchaword": "क्याप्चाको जवाफ",
+	"captcha-apihelp-param-captchaid": "अघिल्लो अनुरोधबाट प्राप्त क्याप्चा आईडी"
+}

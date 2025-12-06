@@ -23,7 +23,6 @@ class ToolLinksHandler implements
 
 	/**
 	 * ToolLinksHandler constructor.
-	 * @param AbuseFilterPermissionManager $afPermManager
 	 */
 	public function __construct( AbuseFilterPermissionManager $afPermManager ) {
 		$this->afPermManager = $afPermManager;

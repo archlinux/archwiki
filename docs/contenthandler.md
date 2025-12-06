@@ -15,7 +15,7 @@ Built-in content types are:
 
 In PHP, use the corresponding `CONTENT_MODEL_XXX` constant.
 
-A page's content model is available using the `Title::getContentModel()` method. A page's default model is determined by `ContentHandler::getDefaultModelFor($title)` as follows:
+A page's content model is available using the `Title::getContentModel()` method. A page's default model is determined by the slot's `getDefaultModel()` as follows:
 
 * The global setting `$wgNamespaceContentModels` specifies a content model for the given namespace.
 * The hook `ContentHandlerDefaultModelFor` may be used to override the page's default model.
@@ -34,7 +34,7 @@ Two class hierarchies are used to provide the functionality associated with the 
 
 The most important function of ContentHandler is to act as a factory for the appropriate implementation of Content. These `Content` objects are to be used by MediaWiki everywhere, instead of passing page content around as text. All manipulation and analysis of page content must be done via the appropriate methods of the Content object.
 
-For each content model, a subclass of ContentHandler has to be registered with `$wgContentHandlers`. The ContentHandler object for a given content model can be obtained using `ContentHandler::getForModelID( $id )`. Also `Title` and `WikiPage` now have `getContentHandler()` methods for convenience.
+For each content model, a subclass of ContentHandler has to be registered with `$wgContentHandlers`. The ContentHandler object for a given content model can be obtained using `ContentHandlerFactor::getContentHandler( $id )`. Also `Title` and `WikiPage` now have `getContentHandler()` methods for convenience.
 
 `ContentHandler` objects are singletons that provide functionality specific to the content type, but not directly acting on the content of some page. `ContentHandler::makeEmptyContent()` and `ContentHandler::unserializeContent()` can be used to create a Content object of the appropriate type. However, it is recommended to instead use `WikiPage::getContent()` resp. `RevisionRecord::getContent()` to get a page's content as a Content object. These two methods should be the ONLY way in which page content is accessed.
 For `WikiPage::getContent()` the content of the main slot is returned, other slots can be retrieved by using `RevisionRecord::getContent()` and specifying the slot.
@@ -73,7 +73,7 @@ Most importantly, the following functions have been deprecated:
 
 Also, the old `Article::getContent()` (which returns text) is superceded by `Article::getContentObject()`. However, both methods should be avoided since they do not provide clean access to the page's actual content. For instance, they may return a system message for non-existing pages. Use `WikiPage::getContent()` instead.
 
-Code that relies on a textual representation of the page content should eventually be rewritten. However, `ContentHandler::getContentText()` provides a stop-gap that can be used to get text for a page. It will return the text for text based content, and null for any other content.
+Code that relies on a textual representation of the page content should eventually be rewritten.
 
 For rendering page content, `Content::getParserOutput()` should be used instead of accessing the parser directly. `WikiPage::makeParserOptions()` can be used to construct appropriate options.
 
@@ -95,7 +95,7 @@ Page content is stored in the database using the same mechanism as before. Non-t
 
 Each revision's content model and serialization format is stored in the revision table (resp. in the archive table, if the revision was deleted). The page's (current) content model (that is, the content model of the latest revision) is also stored in the page table.
 
-Note however that the content model and format is only stored if it differs from the page's default, as determined by `ContentHandler::getDefaultModelFor( $title )`. The default values are represented as `NULL` in the database, to preserve space.
+Note however that the content model and format is only stored if it differs from the page's default, as determined by `Title::getContentModel()`. The default values are represented as `NULL` in the database, to preserve space.
 
 ## Globals
 

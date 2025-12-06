@@ -49,7 +49,7 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 					// Should be all of these as arrays
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 		];
 	}
@@ -81,7 +81,7 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 					'conds' => [],
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 		];
 	}
@@ -113,7 +113,7 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 					'conds' => [],
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 		];
 	}
@@ -197,7 +197,7 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 						'count' => 34,
 						'first' => '20220904094043',
 						'last' => $currentTimestamp,
-					]
+					],
 				],
 				[
 					$currentTimestamp => [ (object)[
@@ -206,8 +206,8 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 						'count' => 34,
 						'first' => '20220904094043',
 						'last' => $currentTimestamp,
-					] ]
-				]
+					] ],
+				],
 			],
 			'One IP that is repeated' => [
 				[
@@ -233,8 +233,8 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 						'count' => 46,
 						'first' => '20220903094043',
 						'last' => $currentTimestamp,
-					] ]
-				]
+					] ],
+				],
 			],
 			'Multiple IPs with repeated IPs' => [
 				[
@@ -264,22 +264,22 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 						'ip_hex' => IPUtils::toHex( 'fd12:3456:789a:1::' ),
 						'count' => 123,
 						'first' => '20221004094043',
-						'last' => '20231004094043'
+						'last' => '20231004094043',
 					],
 					(object)[
 						'ip' => 'fd12:3456:789a:1::',
 						'ip_hex' => IPUtils::toHex( 'fd12:3456:789a:1::' ),
 						'count' => 12,
 						'first' => '20211004094043',
-						'last' => '20231004104043'
+						'last' => '20231004104043',
 					],
 					(object)[
 						'ip' => '125.3.4.5',
 						'ip_hex' => IPUtils::toHex( '125.3.4.5' ),
 						'count' => 11,
 						'first' => '20211004094043',
-						'last' => '20231004104043'
-					]
+						'last' => '20231004104043',
+					],
 				],
 				[
 					'20231004094043' => [ (object)[
@@ -302,17 +302,17 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 							'ip_hex' => IPUtils::toHex( 'fd12:3456:789a:1::' ),
 							'count' => 135,
 							'first' => '20211004094043',
-							'last' => '20231004104043'
+							'last' => '20231004104043',
 						],
 						(object)[
 							'ip' => '125.3.4.5',
 							'ip_hex' => IPUtils::toHex( '125.3.4.5' ),
 							'count' => 11,
 							'first' => '20211004094043',
-							'last' => '20231004104043'
+							'last' => '20231004104043',
 						],
-					]
-				]
+					],
+				],
 			],
 			'Same IP but different hex' => [
 				[
@@ -363,9 +363,9 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerUnitTestBase {
 							'first' => '20220904094043',
 							'last' => $currentTimestamp,
 						],
-					]
-				]
-			]
+					],
+				],
+			],
 		];
 	}
 }

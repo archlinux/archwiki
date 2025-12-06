@@ -4,7 +4,8 @@
 			"Kareyac",
 			"Nerogaf",
 			"Red Winged Duck",
-			"Renessaince"
+			"Renessaince",
+			"Ucukor"
 		]
 	},
 	"linterrors": "Lint-памылкі",
@@ -77,7 +78,7 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|памылка|памылкі|памылак}})",
 	"linter-page-edit": "рэдагаваць",
 	"linter-page-history": "гісторыя",
-	"linter-page-viewsource": "паказаць крыніцу",
+	"linter-page-viewsource": "прагляд коду",
 	"linter-pager-bogus-image-options-details": "Няслушны парамэтар файлу",
 	"linter-pager-category-header": "Катэгорыя",
 	"linter-pager-deletable-table-tag-details": "Тэг табліцы, які мае быць выдалены",

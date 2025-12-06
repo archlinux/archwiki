@@ -14,6 +14,12 @@ use MediaWikiIntegrationTestCase;
  */
 class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 
+	private function newInstance(): FeaturesHelper {
+		return new FeaturesHelper(
+			$this->getServiceContainer()->getService( 'Vector.ConfigHelper' )
+		);
+	}
+
 	public static function provideShouldDisableNightModeExcluded() {
 		$options = [
 			'exclude' => [
@@ -48,7 +54,7 @@ class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testShouldDisableNightModeExcluded(
 		array $options, WebRequest $request, ?Title $title = null, bool $expected = false ) {
-		$featuresHelper = new FeaturesHelper();
+		$featuresHelper = $this->newInstance();
 		$shouldDisableNightMode = $featuresHelper->shouldDisableNightMode( $options, $request, $title );
 		$this->assertSame( $expected, $shouldDisableNightMode );
 	}
@@ -71,7 +77,7 @@ class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 		$context = new RequestContext();
 		$request = $context->getRequest();
 		$includedTitle = Title::makeTitle( NS_MAIN, 'Included Page' );
-		$featuresHelper = new FeaturesHelper();
+		$featuresHelper = $this->newInstance();
 		$shouldDisableNightMode = $featuresHelper->shouldDisableNightMode( $options, $request, $includedTitle );
 		$this->assertFalse( $shouldDisableNightMode );
 	}

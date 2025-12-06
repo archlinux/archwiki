@@ -5,6 +5,7 @@ namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
 use MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
 use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -72,7 +73,7 @@ class MoveLogEntriesFromCuChangesTest extends MaintenanceBaseTestCase {
 		for ( $i = 0; $i < $numberOfRows / 2; $i++ ) {
 			// Insert rows for edits, which do not need moving.
 			$this->commonTestsUpdateCheckUserData(
-				array_merge( self::getDefaultRecentChangeAttribs(), [ 'rc_type' => RC_EDIT ] ),
+				array_merge( self::getDefaultRecentChangeAttribs(), [ 'rc_source' => RecentChange::SRC_EDIT ] ),
 				[],
 				$expectedRow
 			);
@@ -116,15 +117,9 @@ class MoveLogEntriesFromCuChangesTest extends MaintenanceBaseTestCase {
 
 	public static function provideBatchSize() {
 		return [
-			'cu_changes row count 3 and batch size 1' => [
-				6, 4
-			],
-			'cu_changes row count 10 and batch size 5' => [
-				10, 5
-			],
-			'cu_changes row count 10 and batch size 100' => [
-				10, 100
-			],
+			'cu_changes row count 3 and batch size 1' => [ 6, 4 ],
+			'cu_changes row count 10 and batch size 5' => [ 10, 5 ],
+			'cu_changes row count 10 and batch size 100' => [ 10, 100 ],
 		];
 	}
 

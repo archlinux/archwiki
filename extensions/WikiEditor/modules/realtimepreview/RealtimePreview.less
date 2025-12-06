@@ -15,6 +15,7 @@
 }
 
 /* stylelint-disable selector-max-id */
+.ext-WikiEditor-realtimepreview-textbox,
 .ext-WikiEditor-realtimepreview-textbox#wpTextbox1,
 .mw-editform .ext-WikiEditor-realtimepreview-textbox#wpTextbox1 {
 	resize: none;
@@ -60,21 +61,5 @@
 
 	100% {
 		left: calc( 100% - @width-loading-bar );
-	}
-}
-
-.ext-WikiEditor-twopanes-pane2 {
-	.ext-WikiEditor-reloadButton {
-		opacity: 0;
-		transition: opacity 100ms;
-		position: absolute;
-		top: 8px;
-		right: 15px;
-		z-index: 5;
-		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
-	}
-
-	&:hover .ext-WikiEditor-reloadButton {
-		opacity: 1;
 	}
 }

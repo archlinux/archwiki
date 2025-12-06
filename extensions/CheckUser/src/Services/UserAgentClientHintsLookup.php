@@ -78,7 +78,7 @@ class UserAgentClientHintsLookup {
 		$clientHintsRowsAsArray = [];
 		foreach ( $clientHintsRows as $row ) {
 			$clientHintsRowsAsArray[$row->uach_id] = [
-				'uach_name' => $row->uach_name, 'uach_value' => $row->uach_value
+				'uach_name' => $row->uach_name, 'uach_value' => $row->uach_value,
 			];
 		}
 

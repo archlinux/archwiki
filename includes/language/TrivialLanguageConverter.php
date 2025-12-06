@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 use MediaWiki\Language\ILanguageConverter;
@@ -66,29 +52,34 @@ class TrivialLanguageConverter implements ILanguageConverter {
 		$this->titleFormatter = $titleFormatter ?? MediaWikiServices::getInstance()->getTitleFormatter();
 	}
 
+	/** @inheritDoc */
 	public function autoConvert( $text, $variant = false ) {
 		return $text;
 	}
 
+	/** @inheritDoc */
 	public function autoConvertToAllVariants( $text ) {
 		return [ $this->language->getCode() => $text ];
 	}
 
+	/** @inheritDoc */
 	public function convert( $t ) {
 		return $t;
 	}
 
+	/** @inheritDoc */
 	public function convertTo( $text, $variant, bool $clearState = true ) {
 		return $text;
 	}
 
+	/** @inheritDoc */
 	public function convertSplitTitle( $title ) {
 		$mainText = $this->titleFormatter->getText( $title );
 
 		$index = $title->getNamespace();
 		try {
 			$nsWithUnderscores = $this->titleFormatter->getNamespaceName( $index, $mainText );
-		} catch ( InvalidArgumentException $e ) {
+		} catch ( InvalidArgumentException ) {
 			// T165149: see TitleFormatter::formatTitle()
 			$nsWithUnderscores = $this->language->getNsText( NS_SPECIAL );
 			$mainText = "Badtitle/NS$index:$mainText";
@@ -98,57 +89,71 @@ class TrivialLanguageConverter implements ILanguageConverter {
 		return [ $nsText, ':', $mainText ];
 	}
 
+	/** @inheritDoc */
 	public function convertTitle( $title ) {
 		return $this->titleFormatter->getPrefixedText( $title );
 	}
 
+	/** @inheritDoc */
 	public function convertNamespace( $index, $variant = null ) {
 		return $this->language->getFormattedNsText( $index );
 	}
 
+	/** @inheritDoc */
 	public function getVariants() {
 		return [ $this->language->getCode() ];
 	}
 
+	/** @inheritDoc */
 	public function getVariantFallbacks( $variant ) {
 		return $this->language->getCode();
 	}
 
+	/** @inheritDoc */
 	public function getPreferredVariant() {
 		return $this->language->getCode();
 	}
 
+	/** @inheritDoc */
 	public function getDefaultVariant() {
 		return $this->language->getCode();
 	}
 
+	/** @inheritDoc */
 	public function getURLVariant() {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function getConvRuleTitle() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function findVariantLink( &$l, &$n, $ignoreOtherCond = false ) {
 	}
 
+	/** @inheritDoc */
 	public function getExtraHashOptions() {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function guessVariant( $text, $variant ) {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function markNoConversion( $text, $noParse = false ) {
 		return $text;
 	}
 
+	/** @inheritDoc */
 	public function convertCategoryKey( $key ) {
 		return $key;
 	}
 
+	/** @inheritDoc */
 	public function validateVariant( $variant = null ) {
 		if ( $variant === null ) {
 			return null;
@@ -157,10 +162,12 @@ class TrivialLanguageConverter implements ILanguageConverter {
 		return $variant === $this->language->getCode() ? $variant : null;
 	}
 
+	/** @inheritDoc */
 	public function translate( $text, $variant ) {
 		return $text;
 	}
 
+	/** @inheritDoc */
 	public function updateConversionTable( PageIdentity $page ) {
 	}
 
@@ -172,14 +179,17 @@ class TrivialLanguageConverter implements ILanguageConverter {
 	private function reloadTables() {
 	}
 
+	/** @inheritDoc */
 	public function hasVariants() {
 		return count( $this->getVariants() ) > 1;
 	}
 
+	/** @inheritDoc */
 	public function hasVariant( $variant ) {
 		return $variant && ( $variant === $this->validateVariant( $variant ) );
 	}
 
+	/** @inheritDoc */
 	public function convertHtml( $text ) {
 		return htmlspecialchars( $this->convert( $text ) );
 	}

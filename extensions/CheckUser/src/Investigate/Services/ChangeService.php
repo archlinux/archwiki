@@ -4,25 +4,31 @@ namespace MediaWiki\CheckUser\Investigate\Services;
 
 use MediaWiki\CheckUser\CheckUserQueryInterface;
 use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityLookup;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 abstract class ChangeService implements CheckUserQueryInterface {
 
 	protected IConnectionProvider $dbProvider;
 	protected CheckUserLookupUtils $checkUserLookupUtils;
+	protected TempUserConfig $tempUserConfig;
 	private UserIdentityLookup $userIdentityLookup;
 
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		UserIdentityLookup $userIdentityLookup,
-		CheckUserLookupUtils $checkUserLookupUtils
+		CheckUserLookupUtils $checkUserLookupUtils,
+		TempUserConfig $tempUserConfig
 	) {
 		$this->dbProvider = $dbProvider;
 		$this->userIdentityLookup = $userIdentityLookup;
 		$this->checkUserLookupUtils = $checkUserLookupUtils;
+		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -142,5 +148,70 @@ abstract class ChangeService implements CheckUserQueryInterface {
 		// TODO: T360712: Add ID fields to the start conds to ensure unique ordering
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		return $dbr->expr( self::RESULT_TABLE_TO_PREFIX[$table] . 'timestamp', '>=', $dbr->timestamp( $start ) );
+	}
+
+	/**
+	 * Given a query builder, adds additional clauses depending on the table it
+	 * targets in order to make the query exclude temp accounts from results.
+	 *
+	 * @param IReadableDatabase $dbr Database connection used to build expressions.
+	 * @param SelectQueryBuilder $queryBuilder Query builder to add clauses to.
+	 * @param string $table Result table the query builder is for.
+	 *
+	 * @return SelectQueryBuilder
+	 */
+	protected function excludeTempAccountsFromQuery(
+		IReadableDatabase $dbr,
+		SelectQueryBuilder $queryBuilder,
+		string $table
+	): SelectQueryBuilder {
+		$temporaryAccountsFilterExpr = $this->tempUserConfig->getMatchCondition(
+			$dbr,
+			'actor_name',
+			IExpression::NOT_LIKE
+		);
+
+		// These tables don't store a username directly but only an actor ID:
+		// the 'actor_name' below comes from joining with the actor table.
+		$condition = match ( $table ) {
+			// We cannot use cu_private_event.cupe_title here because that
+			// column is not indexed.
+			self::PRIVATE_LOG_EVENT_TABLE => $dbr->orExpr( [
+					// Explicitly adding rows where cupe_actor is null
+					// so that events such as Failed Logins that do not have
+					// a value in cupe_actor are still listed.
+					$dbr->expr( 'cupe_actor', '=', null ),
+					$temporaryAccountsFilterExpr,
+				] ),
+
+			// cule_actor & cuc_actor are declared as NOT NULL, so there is no
+			// need to explicitly keep rows where the actor ID is NULL for the
+			// log and changes tables as it happened for cu_private_event.
+			self::CHANGES_TABLE, self::LOG_EVENT_TABLE => $temporaryAccountsFilterExpr,
+			default => null,
+		};
+
+		if ( $condition ) {
+			$queryBuilder->andWhere( $condition );
+		}
+
+		return $queryBuilder;
+	}
+
+	/**
+	 * Given a list of usernames, returns a new array where all temporary
+	 * account names have been removed.
+	 *
+	 * Note that evaluating whether a username represents a temp account is
+	 * delegated to the TempUserConfig instance passed through the constructor.
+	 *
+	 * @param string[] $usernames A list of usernames.
+	 * @return string[]
+	 */
+	protected function removeTempNamesFromArray( array $usernames ): array {
+		return array_filter(
+			$usernames,
+			fn ( $target ) => !$this->tempUserConfig->isTempName( $target )
+		);
 	}
 }

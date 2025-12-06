@@ -9,8 +9,6 @@
 		]
 	},
 	"skinname-vector": "Vector (version 2010)",
-	"vector-opt-out": "Cambiar a l'ancian aspècte",
-	"vector-opt-out-tooltip": "Cambiar la configuracion per tornar a l'ancian aspècte de l'aparéncia (Vector eretat)",
 	"vector.css": "/* Lo CSS plaçat aicí afectarà los utilizaires de l’abilhatge Vector */",
 	"vector.js": "/* Tot JavaScript aicí serà cargat amb las paginas accedidas pels utilizaires de l’abilhatge Vector unicament. */",
 	"vector-languages": "Lengas",
@@ -33,7 +31,6 @@
 	"vector-more-actions": "Mai",
 	"vector-appearance-label": "Aparéncia",
 	"vector-appearance-tooltip": "Modificar la dimension, la largor e la color del tèxte.",
-	"vector-searchsuggest-containing": "Cercar las paginas que contènon <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Somari",
 	"vector-toc-beginning": "Començament",
 	"vector-anon-user-menu-pages": "Paginas pels editors non registrats.",

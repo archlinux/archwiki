@@ -37,7 +37,7 @@
 	"scribunto-common-timeout": "Betikleri çalıştırmak için ayrılan süre doldu.",
 	"scribunto-common-oom": "Betikleri çalıştırmak için izin verilen bellek miktarı aşıldı.",
 	"scribunto-common-backtrace": "Geritakip:",
-	"scribunto-common-no-details": "Daha fazla bilgi mevcut değildir.",
+	"scribunto-common-no-details": "Kodun konumu hakkında herhangi bir ayrıntı mevcut değil.",
 	"scribunto-lua-in-function": "\"$1\" işlevinde",
 	"scribunto-lua-in-main": "ana grupta",
 	"scribunto-lua-in-function-at": "işlevinde $1:$2",

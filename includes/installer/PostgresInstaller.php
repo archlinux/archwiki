@@ -2,21 +2,7 @@
 /**
  * PostgreSQL-specific installer.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Installer
  */
@@ -59,10 +45,12 @@ class PostgresInstaller extends DatabaseInstaller {
 	/** @inheritDoc */
 	protected static $notMinimumVersionMessage = 'config-postgres-old';
 
+	/** @inheritDoc */
 	public function getName() {
 		return 'postgres';
 	}
 
+	/** @inheritDoc */
 	public function isCompiled() {
 		return self::checkExtension( 'pgsql' );
 	}
@@ -150,6 +138,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function changeConnTypeFromSchemaToTables( IMaintainableDatabase $conn ) {
 		if ( !( $conn instanceof DatabasePostgres ) ) {
 			throw new InvalidArgumentException( 'Invalid connection type' );
@@ -167,7 +156,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		return $status;
 	}
 
-	public function openConnectionToAnyDB( $user, $password ) {
+	public function openConnectionToAnyDB( string $user, string $password ): ConnectionStatus {
 		$dbs = [
 			'template1',
 			'postgres',
@@ -204,6 +193,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getLocalSettings() {
 		$port = $this->getVar( 'wgDBport' );
 		$useSsl = $this->getVar( 'wgDBssl' ) ? 'true' : 'false';
@@ -224,6 +214,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		$wgDBpassword = $this->getVar( '_InstallPassword' );
 	}
 
+	/** @inheritDoc */
 	public function getGlobalDefaults() {
 		// The default $wgDBmwschema is null, which breaks Postgres and other DBMSes that require
 		// the use of a schema, so we need to set it here

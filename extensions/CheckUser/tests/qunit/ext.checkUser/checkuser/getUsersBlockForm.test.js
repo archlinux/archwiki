@@ -1,6 +1,6 @@
 'use strict';
 
-const getUsersBlockForm = require( '../../../../modules/ext.checkUser/checkuser/getUsersBlockForm.js' );
+const getUsersBlockForm = require( 'ext.checkUser/checkuser/getUsersBlockForm.js' );
 
 QUnit.module( 'ext.checkUser.checkuser.getUsersBlockForm', QUnit.newMwEnvironment() );
 
@@ -8,8 +8,10 @@ QUnit.module( 'ext.checkUser.checkuser.getUsersBlockForm', QUnit.newMwEnvironmen
  * Set up the QUnit fixture for testing the getUsersBlockForm function.
  *
  * @param {Object.<string, boolean>} targets
+ * @param {boolean} hasLocalBlockButtons
+ * @param {boolean} hasGlobalBlockButtons
  */
-function setUpDocumentForTest( targets ) {
+function setUpDocumentForTest( targets, hasLocalBlockButtons = true, hasGlobalBlockButtons = true ) {
 	// eslint-disable-next-line no-jquery/no-global-selector
 	const $qunitFixture = $( '#qunit-fixture' );
 
@@ -51,23 +53,42 @@ function setUpDocumentForTest( targets ) {
 	const fieldset = document.createElement( 'fieldset' );
 	blockForm.appendChild( fieldset );
 
-	// Add the block accounts button to the fieldset
-	const accountsBlockButtonWrapper = document.createElement( 'div' );
-	accountsBlockButtonWrapper.className = 'mw-checkuser-massblock-button mw-checkuser-massblock-accounts-button';
-	accountsBlockButtonWrapper.appendChild( document.createElement( 'button' ) );
-	fieldset.appendChild( accountsBlockButtonWrapper );
+	if ( hasLocalBlockButtons ) {
+		// Add the local block accounts button to the fieldset
+		const accountsBlockButtonWrapper = document.createElement( 'div' );
+		accountsBlockButtonWrapper.className = 'mw-checkuser-massblock-button mw-checkuser-massblock-accounts-button';
+		accountsBlockButtonWrapper.appendChild( document.createElement( 'button' ) );
+		fieldset.appendChild( accountsBlockButtonWrapper );
 
-	// Add the block IPs button to the fieldset
-	const ipsBlockButtonWrapper = document.createElement( 'div' );
-	ipsBlockButtonWrapper.className = 'mw-checkuser-massblock-button mw-checkuser-massblock-ips-button';
-	ipsBlockButtonWrapper.appendChild( document.createElement( 'button' ) );
-	fieldset.appendChild( ipsBlockButtonWrapper );
+		// Add the local block IPs button to the fieldset
+		const ipsBlockButtonWrapper = document.createElement( 'div' );
+		ipsBlockButtonWrapper.className = 'mw-checkuser-massblock-button mw-checkuser-massblock-ips-button';
+		ipsBlockButtonWrapper.appendChild( document.createElement( 'button' ) );
+		fieldset.appendChild( ipsBlockButtonWrapper );
+	}
+
+	if ( hasGlobalBlockButtons ) {
+		// Add the local block accounts button to the fieldset
+		const accountsBlockButtonWrapper = document.createElement( 'div' );
+		accountsBlockButtonWrapper.className =
+			'mw-checkuser-massglobalblock-accounts-button mw-checkuser-massblock-button';
+		accountsBlockButtonWrapper.appendChild( document.createElement( 'button' ) );
+		fieldset.appendChild( accountsBlockButtonWrapper );
+
+		// Add the local block IPs button to the fieldset
+		const ipsBlockButtonWrapper = document.createElement( 'div' );
+		ipsBlockButtonWrapper.className = 'mw-checkuser-massglobalblock-ips-button mw-checkuser-massblock-button';
+		ipsBlockButtonWrapper.appendChild( document.createElement( 'button' ) );
+		fieldset.appendChild( ipsBlockButtonWrapper );
+	}
 
 	// Add the fieldset to the QUnit test fixture.
 	$qunitFixture.append( blockForm );
 }
 
-function performBlockFormSubmitTest( assert, cssClass, $qunitFixture, expectedTargets, done ) {
+function performBlockFormSubmitTest(
+	assert, cssClass, $qunitFixture, expectedTargets, expectedTargetSpecialPage, done
+) {
 	// Listen for any submits of the hidden form and prevent them to avoid opening a new tab when
 	// running the tests. At the same time, if this event is triggered, then indicate that
 	// the test passed.
@@ -93,8 +114,8 @@ function performBlockFormSubmitTest( assert, cssClass, $qunitFixture, expectedTa
 		);
 		assert.strictEqual(
 			$formElement.attr( 'action' ),
-			new mw.Title( 'Special:InvestigateBlock' ).getUrl(),
-			'Form sends data to Special:InvestigateBlock'
+			new mw.Title( expectedTargetSpecialPage ).getUrl(),
+			'Form sends data to ' + expectedTargetSpecialPage
 		);
 		// Assert that the targets are as expected.
 		const $targetsInput = $formElement.find( 'input[name="wpTargets"]' );
@@ -121,7 +142,7 @@ function performBlockFormSubmitTest( assert, cssClass, $qunitFixture, expectedTa
 
 // performBlockFormSubmitTest resolves the done async callback, but eslint doesn't detect this.
 // eslint-disable-next-line qunit/resolve-async
-QUnit.test( 'Test blocking accounts', ( assert ) => {
+QUnit.test( 'Test locally blocking accounts', ( assert ) => {
 	// We need the test to wait a small amount of time for the click events to finish.
 	const done = assert.async();
 
@@ -139,13 +160,14 @@ QUnit.test( 'Test blocking accounts', ( assert ) => {
 		'.mw-checkuser-massblock-accounts-button',
 		$qunitFixture,
 		[ 'Test' ],
+		'Special:InvestigateBlock',
 		done
 	);
 } );
 
 // performBlockFormSubmitTest resolves the done async callback, but eslint doesn't detect this.
 // eslint-disable-next-line qunit/resolve-async
-QUnit.test( 'Test blocking IPs', ( assert ) => {
+QUnit.test( 'Test locally blocking IPs', ( assert ) => {
 	// We need the test to wait a small amount of time for the click events to finish.
 	const done = assert.async();
 
@@ -163,6 +185,59 @@ QUnit.test( 'Test blocking IPs', ( assert ) => {
 		'.mw-checkuser-massblock-ips-button',
 		$qunitFixture,
 		[ '1.2.3.4', '4.5.6.0/24' ],
+		'Special:InvestigateBlock',
+		done
+	);
+} );
+
+// performBlockFormSubmitTest resolves the done async callback, but eslint doesn't detect this.
+// eslint-disable-next-line qunit/resolve-async
+QUnit.test( 'Test globally blocking accounts', ( assert ) => {
+	mw.config.set( 'wgCUMassGlobalBlockUrl', new mw.Title( 'Special:MassGlobalBlock' ).getUrl() );
+	// We need the test to wait a small amount of time for the click events to finish.
+	const done = assert.async();
+
+	// Set the HTML that is added by Special:CheckUser.
+	setUpDocumentForTest( { Test: true, '1.2.3.4': true, Test2: false, '4.5.6.0/24': false } );
+
+	// Call the function, specifying the QUnit fixture as the document root to avoid the
+	// form being kept in the DOM for other JavaScript tests.
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $qunitFixture = $( '#qunit-fixture' );
+	assert.strictEqual( getUsersBlockForm( $qunitFixture ), true );
+
+	performBlockFormSubmitTest(
+		assert,
+		'.mw-checkuser-massglobalblock-accounts-button',
+		$qunitFixture,
+		[ 'Test' ],
+		'Special:MassGlobalBlock',
+		done
+	);
+} );
+
+// performBlockFormSubmitTest resolves the done async callback, but eslint doesn't detect this.
+// eslint-disable-next-line qunit/resolve-async
+QUnit.test( 'Test globally blocking IPs', ( assert ) => {
+	mw.config.set( 'wgCUMassGlobalBlockUrl', new mw.Title( 'Special:MassGlobalBlock' ).getUrl() );
+	// We need the test to wait a small amount of time for the click events to finish.
+	const done = assert.async();
+
+	// Set the HTML that is added by Special:CheckUser.
+	setUpDocumentForTest( { Test: true, '1.2.3.4': true, Test2: false, '4.5.6.0/24': true } );
+
+	// Call the function, specifying the QUnit fixture as the document root to avoid the
+	// form being kept in the DOM for other JavaScript tests.
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $qunitFixture = $( '#qunit-fixture' );
+	assert.strictEqual( getUsersBlockForm( $qunitFixture ), true );
+
+	performBlockFormSubmitTest(
+		assert,
+		'.mw-checkuser-massglobalblock-ips-button',
+		$qunitFixture,
+		[ '1.2.3.4', '4.5.6.0/24' ],
+		'Special:MassGlobalBlock',
 		done
 	);
 } );
@@ -197,27 +272,9 @@ QUnit.test( 'Test MultiLock link', ( assert ) => {
 	);
 } );
 
-QUnit.test( 'Test load without block buttons or MultiLock URL', ( assert ) => {
+QUnit.test( 'Test load without local block buttons, global block buttons, or MultiLock URL', ( assert ) => {
 	// eslint-disable-next-line no-jquery/no-global-selector
 	const $qunitFixture = $( '#qunit-fixture' );
-
-	// Call the function and expect it to return false.
-	assert.strictEqual( getUsersBlockForm( $qunitFixture ), false );
-} );
-
-QUnit.test( 'Test load without block buttons, but MultiLock URL defined', ( assert ) => {
-	// Set wgCUCAMultiLockCentral to a URL. It must be set for the test to work.
-	mw.config.set( 'wgCUCAMultiLockCentral', 'https://example.com/wiki/Special:MultiLock' );
-
-	// Set the HTML that is added by Special:CheckUser.
-	setUpDocumentForTest( { Test: true, '1.2.3.4': true, Test2: false, '4.5.6.0/24': false } );
-
-	// eslint-disable-next-line no-jquery/no-global-selector
-	const $qunitFixture = $( '#qunit-fixture' );
-
-	// Remove the block buttons for the test.
-	$( '.mw-checkuser-massblock-accounts-button', $qunitFixture ).remove();
-	$( '.mw-checkuser-massblock-ips-button', $qunitFixture ).remove();
 
 	// Call the function and expect it to return false.
 	assert.strictEqual( getUsersBlockForm( $qunitFixture ), false );

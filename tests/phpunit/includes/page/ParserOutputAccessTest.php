@@ -27,8 +27,10 @@ use Psr\Log\NullLogger;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Stats\UnitTestingHelper;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -37,8 +39,12 @@ use Wikimedia\TestingAccessWrapper;
  */
 class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 
+	private UnitTestingHelper $statsHelper;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->statsHelper = new UnitTestingHelper();
 
 		// always hit the sample code
 		$this->overrideConfigValue(
@@ -100,7 +106,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			'19900220000000',
 			$this->getServiceContainer()->getHookContainer(),
 			new JsonCodec( $this->getServiceContainer() ),
-			StatsFactory::newNull(),
+			$this->statsHelper->getStatsFactory(),
 			new NullLogger(),
 			$this->getServiceContainer()->getTitleFactory(),
 			$this->getServiceContainer()->getWikiPageFactory(),
@@ -169,6 +175,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 				'getDirty',
 				'makeParserOutputKey',
 				'getMetadata',
+				'save'
 			]
 		);
 
@@ -285,16 +292,15 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$parserCacheFactory,
 			$this->getServiceContainer()->getRevisionLookup(),
 			$revRenderer,
-			$this->getServiceContainer()->getStatsFactory(),
-			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->statsHelper->getStatsFactory(),
 			$chronologyProtector,
-			LoggerFactory::getProvider(),
 			$this->getServiceContainer()->getWikiPageFactory(),
 			$this->getServiceContainer()->getTitleFormatter(),
 			$this->getServiceContainer()->getTracer(),
 			$poolCounterFactory
 		);
 
+		$mock->setLogger( LoggerFactory::getInstance( 'ParserOutputAccess' ) );
 		return $mock;
 	}
 
@@ -361,6 +367,11 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$output = $status->getValue();
 		$this->assertContainsHtml( 'Hello <i>World</i>!', $output->getRawText() );
 
+		$this->assertStatsKeyContains( '#case:current' );
+		$this->assertStatsKeyContains( '#pool:none', 'Should count direct render' );
+		$this->assertStatsKeyNotContains( '#pool:articleview', 'Should not count poolcounter work' );
+		$this->flushStats();
+
 		// Check that the output was cached.
 		// Create a new instance so we bypass the in-object cache.
 		$access = $this->getParserOutputAccess( [
@@ -370,6 +381,12 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$cachedOutput = $access->getCachedParserOutput( $page, $parserOptions );
 		$this->assertNotNull( $cachedOutput );
 		$this->assertSame( $output->getRawText(), $cachedOutput->getRawText() );
+
+		$this->assertStatsKeyContains(
+			'#cache:primary,reason:hit,type:hit',
+			'Should count cache hit'
+		);
+		$this->assertStatsKeyNotContains( '#pool:none', 'Should not count direct render' );
 	}
 
 	/**
@@ -426,9 +443,17 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			[ ParserOutputAccess::OPT_POOL_COUNTER => ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW ]
 		);
 		$this->assertContainsHtml( 'Hello <i>World</i>!', $status );
+
+		$this->assertStatsKeyContains( '#case:current' );
+		$this->assertStatsKeyContains( '#cache:primary,reason:miss,type:miss' );
+		$this->assertStatsKeyContains(
+			'#pool:articleview,cache:primary',
+			'Should count poolcounter work'
+		);
+		$this->assertStatsKeyNotContains( '#pool:none', 'Should not count direct render' );
 	}
 
 	/**
@@ -466,6 +491,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
+			// keep bitmap form of options, so we keep testing that
 			ParserOutputAccess::OPT_LINKS_UPDATE | ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
 		);
 		$this->assertContainsHtml( 'Hello <i>World</i>!', $status );
@@ -483,10 +509,13 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$this->editPage( $page, 'Hello \'\'World\'\'!' );
 
 		$access->getParserOutput( $page, $parserOptions );
+		$this->flushStats();
 
 		// The second call should use cached output
 		$status = $access->getParserOutput( $page, $parserOptions );
 		$this->assertContainsHtml( 'Hello <i>World</i>!', $status );
+
+		$this->assertStatsKeyNotContains( 'parseroutputaccess_render_total' );
 	}
 
 	/**
@@ -509,10 +538,13 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_FORCE_PARSE
+			[ ParserOutputAccess::OPT_FORCE_PARSE => true ]
 		);
 		$this->assertNotSameHtml( $cachedOutput, $status );
 		$this->assertContainsHtml( 'Hello <i>World</i>!', $status );
+
+		$this->assertStatsKeyContains( 'mediawiki.parseroutputaccess_render_total:1|c|#pool:none,cache:none' );
+		$this->assertStatsKeyNotContains( 'mediawiki.parseroutputaccess_render_total:1|c|#pool:articleview,cache:primary' );
 	}
 
 	/**
@@ -572,12 +604,11 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetCachedParserOutputForObsoleteParsoidVersion() {
-		$fakeBundle = [
-			'version' => '0.0' // an obsolete version
-		];
-		$output = new ParserOutput( 'test' );
-		$output->setExtensionData(
-			PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY,
+		$fakeBundle = new HtmlPageBundle(
+			html: 'test',
+			version: '0.0', // an obsolete version
+		);
+		$output = PageBundleParserOutputConverter::parserOutputFromPageBundle(
 			$fakeBundle
 		);
 		$parserCache = $this->createMockParserCache( $output, true );
@@ -600,7 +631,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_IGNORE_PROFILE_VERSION
+			[ ParserOutputAccess::OPT_IGNORE_PROFILE_VERSION => true ]
 		);
 		$this->assertNotNull( $output );
 	}
@@ -749,7 +780,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			[ ParserOutputAccess::OPT_POOL_COUNTER => ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW ]
 		);
 		$this->assertContainsHtml( 'Second', $status );
 
@@ -758,7 +789,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			$firstRev,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			[ ParserOutputAccess::OPT_POOL_COUNTER => ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW ]
 		);
 		$this->assertContainsHtml( 'First', $status );
 
@@ -810,7 +841,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			$firstRev,
-			ParserOutputAccess::OPT_NO_AUDIENCE_CHECK
+			[ ParserOutputAccess::OPT_NO_AUDIENCE_CHECK => true ]
 		);
 		$this->assertContainsHtml( 'First', $status );
 
@@ -924,7 +955,8 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			$rev,
-			ParserOutputAccess::OPT_NO_CACHE
+			// test multi-bit options key
+			[ ParserOutputAccess::OPT_NO_CACHE => true ]
 		);
 		$this->assertContainsHtml( 'fake text', $fakeResult );
 
@@ -999,7 +1031,6 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 
 		MWTimestamp::setFakeTime( '2020-04-04T01:02:03' );
 
-		// generate a result in the cache
 		$access = $this->getParserOutputAccess( [
 			'poolCounterFactory' => $this->makePoolCounterFactory( [
 				'mockAcquire' => Status::newGood( PoolCounter::LOCKED ),
@@ -1008,20 +1039,28 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			'parserCache' => $cache
 		] );
 
+		// generate a result in the cache
 		$page = $this->getNonexistingTestPage( __METHOD__ );
 		$this->editPage( $page, 'Hello \'\'World\'\'!' );
 
 		$parserOptions = $this->getParserOptions();
+		$options = [
+			ParserOutputAccess::OPT_POOL_COUNTER
+				=> ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW,
+			ParserOutputAccess::OPT_POOL_COUNTER_FALLBACK => true
+		];
+
 		$result = $access->getParserOutput(
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			$options
 		);
 		$this->assertContainsHtml( 'World', $result, 'fresh result' );
 
 		$testingAccess = TestingAccessWrapper::newFromObject( $access );
 		$testingAccess->localCache->clear();
+		$this->flushStats();
 
 		$access = $this->getParserOutputAccess( [
 			'poolCounterFactory' => $this->makePoolCounterFactory( [
@@ -1039,12 +1078,15 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			$options
 		);
 		$this->assertContainsHtml( 'World', $cachedResult, 'cached result' );
 
 		$this->assertStatusWarning( $expectedMessage, $cachedResult );
 		$this->assertStatusWarning( 'view-pool-dirty-output', $cachedResult );
+
+		$this->assertStatsKeyContains( '#pool:articleview', 'Count poolcoutner work' );
+		$this->assertStatsKeyContains( 'status:miss,reason:expired', 'Count expired' );
 	}
 
 	/**
@@ -1071,9 +1113,14 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parserOptions,
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			[ ParserOutputAccess::OPT_POOL_COUNTER => ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW ]
 		);
 		$this->assertStatusError( 'pool-timeout', $result );
+
+		$this->assertStatsKeyContains(
+			'#pool:articleview',
+			'Should count poolcounter work'
+		);
 	}
 
 	/**
@@ -1096,6 +1143,12 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$parserOptions = $this->getParserOptions();
 		$result = $access->getParserOutput( $page, $parserOptions );
 		$this->assertContainsHtml( 'World', $result );
+
+		$this->assertStatsKeyContains( '#pool:none', 'Should count direct render' );
+		$this->assertStatsKeyNotContains(
+			'#pool:articleview',
+			'Should not count poolcounter work'
+		);
 	}
 
 	public function testParsoidCacheSplit() {
@@ -1222,7 +1275,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			'parserCache' => $bag
 		] );
 
-		$options = ParserOutputAccess::OPT_FOR_ARTICLE_VIEW;
+		$options = [ ParserOutputAccess::OPT_POOL_COUNTER => ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW ];
 
 		// cache miss
 		$this->assertNull( $access1->getCachedParserOutput( $page, $popt, null, $options ) );
@@ -1234,7 +1287,31 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $access1->getCachedParserOutput( $page, $popt, null, $options ) );
 	}
 
-	public function testFallbackFromOutdatedParserCache() {
+	public static function provideFallbackFromOutdatedParserCache() {
+		yield 'fallback but no poolcounter' => [
+			[ ParserOutputAccess::OPT_POOL_COUNTER_FALLBACK => true ],
+			true,
+			null // freshly parsed output, no warnings
+		];
+		yield 'poolcounter but no fallback' => [
+			[ ParserOutputAccess::OPT_POOL_COUNTER => 'test' ],
+			false,
+			'pool-timeout'
+		];
+		yield 'poolcounter and fallback' => [
+			[
+				ParserOutputAccess::OPT_POOL_COUNTER => 'test',
+				ParserOutputAccess::OPT_POOL_COUNTER_FALLBACK => true
+			],
+			true,
+			'view-pool-dirty-output'
+		];
+	}
+
+	/**
+	 * @dataProvider provideFallbackFromOutdatedParserCache
+	 */
+	public function testFallbackFromOutdatedParserCache( $options, $expectedOk, $expectedMessage ) {
 		// Fake Unix timestamps
 		$lastWrite = 10;
 		$outdated = $lastWrite;
@@ -1242,7 +1319,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$chronologyProtector = $this->createNoOpMock( ChronologyProtector::class, [ 'getTouched' ] );
 		$chronologyProtector->method( 'getTouched' )->willReturn( $lastWrite );
 
-		$output = new ParserOutput( 'hello world' );
+		$output = new ParserOutput( 'cached content' );
 		$output->setCacheTime( $outdated );
 
 		$parserCache = $this->createMockParserCache( $output, false );
@@ -1258,25 +1335,30 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$this->getExistingTestPage(),
 			$this->getParserOptions(),
 			null,
-			ParserOutputAccess::OPT_NO_CHECK_CACHE
-			| ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			$options
 		);
 
-		$this->assertStatusOk( $status );
-		$this->assertInstanceOf( ParserOutput::class, $status->getValue() );
-		$this->assertStatusWarning( 'view-pool-overload', $status );
+		if ( $expectedOk ) {
+			$this->assertStatusOk( $status );
+			$this->assertInstanceOf( ParserOutput::class, $status->getValue() );
+		} else {
+			$this->assertStatusNotOK( $status );
+		}
+
+		if ( $expectedMessage ) {
+			$this->assertStatusMessage( $expectedMessage, $status );
+		}
 	}
 
 	public function testFallbackFromMoreRecentParserCache() {
-		// Fake Unix timestamps
-		$lastWrite = 10;
-		$moreRecent = $lastWrite + 1;
+		// Fake Unix timestamp
+		$cacheTime = 1301648400;
 
 		$chronologyProtector = $this->createNoOpMock( ChronologyProtector::class, [ 'getTouched' ] );
-		$chronologyProtector->method( 'getTouched' )->willReturn( $lastWrite );
+		$chronologyProtector->method( 'getTouched' )->willReturn( false );
 
 		$output = new ParserOutput( 'hello world' );
-		$output->setCacheTime( $moreRecent );
+		$output->setCacheTime( $cacheTime );
 
 		$parserCache = $this->createMockParserCache( $output, true );
 
@@ -1292,6 +1374,8 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$this->getParserOptions(),
 			null,
+			// keep bitmap form of options, so we keep testing that.
+			// Note that OPT_FOR_ARTICLE_VIEW implies OPT_POOL_COUNTER_FALLBACK.
 			ParserOutputAccess::OPT_NO_CHECK_CACHE
 			| ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
 		);
@@ -1313,7 +1397,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$this->getExistingTestPage(),
 			$this->getParserOptions(),
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW
+			[ ParserOutputAccess::OPT_POOL_COUNTER => ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW ]
 		);
 
 		$this->assertFalse( $status->isOK() );
@@ -1358,7 +1442,8 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$this->getParserOptions(),
 			$fakeRevision,
-			ParserOutputAccess::OPT_NO_CACHE
+			// test multi-bit option key!
+			[ ParserOutputAccess::OPT_NO_CACHE => true ]
 		);
 
 		$this->assertStatusGood( $status );
@@ -1386,12 +1471,19 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$rev1 = $page->getRevisionRecord();
 		$rev2 = $this->editPage( $page, 'dummy' )->getNewRevision();
 
+		// test mixing string keys and bit keys
+		$options = [
+			ParserOutputAccess::OPT_POOL_COUNTER
+				=> ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW,
+			ParserOutputAccess::OPT_NO_CHECK_CACHE => true,
+		];
+
 		// get current revision output
 		$status = $access->getParserOutput(
 			$page,
 			$this->getParserOptions(),
 			null,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW | ParserOutputAccess::OPT_NO_CHECK_CACHE
+			$options
 		);
 
 		$this->assertTrue( $status->isOK() );
@@ -1402,11 +1494,54 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$this->getParserOptions(),
 			$rev1,
-			ParserOutputAccess::OPT_FOR_ARTICLE_VIEW | ParserOutputAccess::OPT_NO_CHECK_CACHE
+			$options
 		);
 
 		$this->assertTrue( $status->isOK() );
 		$this->assertSame( $output->getRawText(), $status->getValue()->getRawText() );
+	}
+
+	private function flushStats(): void {
+		$this->statsHelper->consumeAllFormatted();
+	}
+
+	private function assertStatsKeyContains( $key, $message = '' ): void {
+		$stats = $this->statsHelper->getAllFormatted();
+
+		if ( $message ) {
+			$message = "$message\n";
+		}
+
+		$this->assertTrue(
+			self::arrayContainsSubstring( $key, $stats ),
+			"{$message}Stats should contain $key:\n\t" . implode( "\n\t", $stats )
+		);
+	}
+
+	private function assertStatsKeyNotContains( $key, $message = '' ): void {
+		$stats = $this->statsHelper->getAllFormatted();
+
+		if ( $message ) {
+			$message = "$message\n";
+		}
+
+		$this->assertFalse(
+			self::arrayContainsSubstring(
+				$key,
+				$this->statsHelper->getAllFormatted()
+			),
+			"{$message}Stats should not contain $key:\n\t" . implode( "\n\t", $stats )
+		);
+	}
+
+	private static function arrayContainsSubstring( string $prefix, array $array ): bool {
+		foreach ( $array as $value ) {
+			if ( strpos( $value, $prefix ) !== false ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

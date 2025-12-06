@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\Tests\Parser\Parsoid;
 
@@ -47,8 +48,10 @@ class ParsoidParserTest extends MediaWikiIntegrationTestCase {
 			'collapsibleSections',
 			'disableContentConversion',
 			'interfaceMessage',
+			'isMessage',
 			'isPreview',
 			'suppressSectionEditLinks',
+			'useParsoid',
 			'wrapclass',
 		];
 		$this->assertEqualsCanonicalizing( $usedOptions, $output->getUsedOptions() );
@@ -95,8 +98,10 @@ class ParsoidParserTest extends MediaWikiIntegrationTestCase {
 			'collapsibleSections',
 			'disableContentConversion',
 			'interfaceMessage',
+			'isMessage',
 			'isPreview',
 			'suppressSectionEditLinks',
+			'useParsoid',
 			'wrapclass',
 		];
 		$this->assertArrayEquals( $usedOptions, $output->getUsedOptions() );

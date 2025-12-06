@@ -19,7 +19,7 @@ use Wikimedia\CSS\Util;
 
 /**
  * Sanitizes a CSS \@import rule
- * @see https://www.w3.org/TR/2018/CR-css-cascade-4-20180828/#at-import
+ * @see https://www.w3.org/TR/2022/CR-css-cascade-4-20220113/#at-import
  */
 class ImportAtRuleSanitizer extends RuleSanitizer {
 

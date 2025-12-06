@@ -33,9 +33,9 @@ class ParsoidAnchorFormatterTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider provideBackLinkIdentifiers
+	 * @dataProvider provideBacklinkIdentifiers
 	 */
-	public function testBackLinkIdentifiers(
+	public function testBacklinkIdentifiers(
 		?string $name,
 		int $globalId,
 		int $visibleNodes,
@@ -46,14 +46,14 @@ class ParsoidAnchorFormatterTest extends \MediaWikiUnitTestCase {
 		$ref->name = $name;
 		$ref->globalId = $globalId;
 		$ref->visibleNodes = $visibleNodes;
-		$id = ParsoidAnchorFormatter::getBackLinkIdentifier( $ref, $count );
+		$id = ParsoidAnchorFormatter::getBacklinkIdentifier( $ref, $count );
 		$this->assertSame( $expected, $id );
 	}
 
-	public static function provideBackLinkIdentifiers() {
+	public static function provideBacklinkIdentifiers() {
 		return [
-			[ null, 0, 99, null, 'cite_ref-0' ],
-			[ null, 1, 99, null, 'cite_ref-1' ],
+			[ null, 0, 1, null, 'cite_ref-0' ],
+			[ null, 1, 99, null, 'cite_ref-1-98' ],
 			[ 'a', 1, 5, null, 'cite_ref-a_1-4' ],
 			[ 'a', 1, 5, 3, 'cite_ref-a_1-2' ],
 			[ ' _a __  b_', 6, 1, null, 'cite_ref-_a_b_6-0' ],

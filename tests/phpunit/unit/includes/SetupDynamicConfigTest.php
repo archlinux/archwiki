@@ -481,7 +481,19 @@ class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 		yield 'Set $wgLocalFileRepo' => [
 			[ MainConfigNames::LocalFileRepo => [ 'name' => 'asdfgh' ] ],
 			[ MainConfigNames::LocalFileRepo => [
-				'name' => 'asdfgh', 'backend' => 'asdfgh-backend'
+				'name' => 'asdfgh',
+				'directory' => '/install/path/images',
+				'scriptDirUrl' => '/wiki',
+				'favicon' => '/favicon.ico',
+				'url' => '/wiki/images',
+				'hashLevels' => 2,
+				'thumbScriptUrl' => false,
+				'transformVia404' => false,
+				'deletedDir' => '/install/path/images/deleted',
+				'deletedHashLevels' => 3,
+				'updateCompatibleMetadata' => false,
+				'reserializeMetadata' => false,
+				'backend' => 'asdfgh-backend',
 			] ],
 		];
 		$sharedUploadsExpected = [
@@ -637,8 +649,6 @@ class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 				MainConfigNames::EmailAuthentication => true,
 				MainConfigNames::EnableUserEmail => true,
 				MainConfigNames::EnotifFromEditor => true,
-				MainConfigNames::EnotifImpersonal => true,
-				MainConfigNames::EnotifMaxRecips => 0,
 				MainConfigNames::EnotifMinorEdits => true,
 				MainConfigNames::EnotifRevealEditorAddress => true,
 				MainConfigNames::EnotifUseRealName => true,
@@ -652,8 +662,6 @@ class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 				MainConfigNames::EmailAuthentication => false,
 				MainConfigNames::EnableUserEmail => false,
 				MainConfigNames::EnotifFromEditor => false,
-				MainConfigNames::EnotifImpersonal => false,
-				MainConfigNames::EnotifMaxRecips => 0,
 				MainConfigNames::EnotifMinorEdits => false,
 				MainConfigNames::EnotifRevealEditorAddress => false,
 				MainConfigNames::EnotifUseRealName => false,

@@ -54,7 +54,7 @@ class FilteredSequentialIteratorTest extends MediaWikiUnitTestCase {
 				// list of iterators/arrays/etc each containing users
 				[ [ 1, 2, 3 ] ],
 				// list of filters to apply on output
-				[]
+				[],
 			],
 			[
 				'Basic iteration with one array and one filters',

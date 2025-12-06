@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmover;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
@@ -23,16 +24,10 @@ class UQ extends TexNode {
 		$this->up = $up;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getBase(): TexNode {
 		return $this->base;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getUp(): TexNode {
 		return $this->up;
 	}
@@ -43,8 +38,7 @@ class UQ extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function renderMML( $arguments = [], &$state = [] ) {
-		$mrow = new MMLmrow();
+	public function toMMLTree( $arguments = [], &$state = [] ) {
 		$mmlBase = new MMLmsup();
 		$base = $this->getBase();
 		$up = $this->getUp();
@@ -56,20 +50,19 @@ class UQ extends TexNode {
 		}
 
 		// If the superscript has empty elements, render them with empty mi elements to prevent browser issues
-		$mi = new MMLmi();
 		if ( $base instanceof TexArray && $base->getLength() == 0 ) {
-			$baseRendered = $mi->getEmpty();
+			$baseRendered = new MMLmi();
 		} else {
-			$baseRendered = $base->renderMML( $arguments, $state );
+			$baseRendered = $base->toMMLTree( $arguments, $state ) ?? "";
 		}
 		if ( $up instanceof TexArray && $up->getLength() == 0 ) {
-			$upRendered = $mi->getEmpty();
+			$upRendered = new MMLmi();
 		} else {
 			// up is inferring a new mrow if it has some content
-			$upRendered = $mrow->encapsulateRaw( $up->renderMML( $arguments, $state ) );
+			$upRendered = new MMLmrow( TexClass::ORD, [], $up->toMMLTree( $arguments, $state ) );
 		}
 
-		return $mmlBase->encapsulateRaw( $baseRendered . $upRendered );
+		return $mmlBase::newSubtree( $baseRendered, $upRendered );
 	}
 
 }

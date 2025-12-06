@@ -3,21 +3,7 @@
  * Obligatory redundant license notice. Exception to the GPL's "keep intact all
  * the notices" clause with respect to this notice is hereby granted.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
@@ -201,6 +187,7 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 		);
 		$this->processTable( $db, self::MOVE, 'page', 'page_namespace', 'page_title', [ 'page_id' ] );
 		$this->processTable( $db, self::MOVE, 'image', NS_FILE, 'img_name', [] );
+		$this->processTable( $db, self::MOVE, 'file', NS_FILE, 'file_name', [ 'file_id' ] );
 		$this->processTable(
 			$db, self::UPPERCASE, 'redirect', 'rd_namespace', 'rd_title', [ 'rd_from' ]
 		);

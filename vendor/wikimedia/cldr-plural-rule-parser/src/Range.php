@@ -41,7 +41,7 @@ class Range {
 	 *   otherwise, number simply has to be inside the range.
 	 * @return bool True if the number is inside the range; otherwise, false.
 	 */
-	public function isNumberIn( $number, $integerConstraint = true ) {
+	public function isNumberIn( $number, $integerConstraint = true ): bool {
 		foreach ( $this->parts as $part ) {
 			if ( is_array( $part ) ) {
 				if ( ( !$integerConstraint || floor( $number ) === (float)$number )
@@ -66,7 +66,7 @@ class Range {
 	 * @param int $number The number to check
 	 * @return bool True if the number is inside the range; otherwise, false.
 	 */
-	public function isNumberWithin( $number ) {
+	public function isNumberWithin( $number ): bool {
 		return $this->isNumberIn( $number, false );
 	}
 

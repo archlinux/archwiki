@@ -2,26 +2,13 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\Xml\Xml;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -41,11 +28,12 @@ class ApiFormatXml extends ApiFormatBase {
 	/** @var string|null */
 	private $mXslt = null;
 
+	/** @inheritDoc */
 	public function getMimeType() {
 		return 'text/xml';
 	}
 
-	public function setRootElement( $rootElemName ) {
+	public function setRootElement( string $rootElemName ) {
 		$this->mRootElemName = $rootElemName;
 	}
 
@@ -267,6 +255,10 @@ class ApiFormatXml extends ApiFormatBase {
 	}
 
 	protected function addXslt() {
+		if ( !$this->getConfig()->get( MainConfigNames::EnableUnsafeXsltOption ) ) {
+			$this->addWarning( 'apiwarn-xslt-disabled' );
+			return;
+		}
 		$nt = Title::newFromText( $this->mXslt );
 		if ( $nt === null || !$nt->exists() ) {
 			$this->addWarning( 'apiwarn-invalidxmlstylesheet' );
@@ -287,6 +279,7 @@ class ApiFormatXml extends ApiFormatBase {
 			htmlspecialchars( $nt->getLocalURL( 'action=raw' ) ) . '" type="text/xsl" ?>' );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return parent::getAllowedParams() + [
 			'xslt' => [

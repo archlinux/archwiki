@@ -20,7 +20,7 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	/**
 	 * @var string In-object cache for {@see getJSONForDatabase}
 	 */
-	private string $jsonDB;
+	private readonly string $jsonDB;
 
 	/**
 	 * @inheritDoc

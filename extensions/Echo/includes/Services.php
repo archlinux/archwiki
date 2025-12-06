@@ -10,9 +10,6 @@ use MediaWiki\MediaWikiServices;
 
 class Services {
 
-	/** @var MediaWikiServices */
-	private $services;
-
 	public static function getInstance(): Services {
 		return new self( MediaWikiServices::getInstance() );
 	}
@@ -21,8 +18,7 @@ class Services {
 		return new self( $services );
 	}
 
-	public function __construct( MediaWikiServices $services ) {
-		$this->services = $services;
+	public function __construct( private readonly MediaWikiServices $services ) {
 	}
 
 	public function getPushNotificationServiceClient(): NotificationServiceClient {

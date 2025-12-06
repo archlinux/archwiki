@@ -13,26 +13,15 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class DbFactory {
 
 	/**
-	 * The cluster for the database
-	 * @var string|false
+	 * @param string|null $cluster The cluster for the database
+	 * @param string|null $shared
+	 * @param string|null $sharedCluster
 	 */
-	private $cluster;
-
-	/** @var string|false */
-	private $shared;
-
-	/** @var string|false */
-	private $sharedCluster;
-
-	/**
-	 * @param string|false $cluster
-	 * @param string|false $shared
-	 * @param string|false $sharedCluster
-	 */
-	public function __construct( $cluster = false, $shared = false, $sharedCluster = false ) {
-		$this->cluster = $cluster;
-		$this->shared = $shared;
-		$this->sharedCluster = $sharedCluster;
+	public function __construct(
+		private readonly ?string $cluster = null,
+		private readonly ?string $shared = null,
+		private readonly ?string $sharedCluster = null,
+	) {
 	}
 
 	/**
@@ -45,7 +34,11 @@ class DbFactory {
 	public static function newFromDefault() {
 		global $wgEchoCluster, $wgEchoSharedTrackingDB, $wgEchoSharedTrackingCluster;
 
-		return new self( $wgEchoCluster, $wgEchoSharedTrackingDB, $wgEchoSharedTrackingCluster );
+		return new self(
+			$wgEchoCluster ?: null,
+			$wgEchoSharedTrackingDB ?: null,
+			$wgEchoSharedTrackingCluster ?: null
+		);
 	}
 
 	/**

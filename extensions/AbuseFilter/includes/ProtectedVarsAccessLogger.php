@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter;
 
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
+use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
@@ -137,9 +138,7 @@ class ProtectedVarsAccessLogger {
 		if ( !$actorId ) {
 			$shouldLog = true;
 		} else {
-			$logline = $dbw->newSelectQueryBuilder()
-				->select( '*' )
-				->from( 'logging' )
+			$logRows = DatabaseLogEntry::newSelectQueryBuilder( $dbw )
 				->where( [
 					'log_type' => self::LOG_TYPE,
 					'log_action' => self::ACTION_VIEW_PROTECTED_VARIABLE_VALUE,
@@ -149,11 +148,22 @@ class ProtectedVarsAccessLogger {
 					$dbw->expr( 'log_timestamp', '>', $dbw->timestamp( $timestampMinusDelay ) ),
 				] )
 				->caller( __METHOD__ )
-				->fetchRow();
+				->fetchResultSet();
 
-			if ( !$logline ) {
-				$shouldLog = true;
+			$params['variables'] = array_values( $params['variables'] );
+			$variablesToFind = $params['variables'];
+
+			foreach ( $logRows as $logRow ) {
+				$logEntry = DatabaseLogEntry::newFromRow( $logRow );
+				$loggedVariables = $logEntry->getParameters()['variables'] ?? [];
+
+				$variablesToFind = array_diff( $variablesToFind, $loggedVariables );
+				if ( count( $variablesToFind ) === 0 ) {
+					break;
+				}
 			}
+
+			$shouldLog = count( $variablesToFind ) > 0;
 		}
 
 		// Actually write to logging table

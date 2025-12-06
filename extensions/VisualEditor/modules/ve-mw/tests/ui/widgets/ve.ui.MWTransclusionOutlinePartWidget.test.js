@@ -16,13 +16,13 @@ QUnit.test( 'Constructor', ( assert ) => {
 		widget.$element.find( '.ve-ui-mwTransclusionOutlineButtonWidget .oo-ui-buttonElement-button' ).text(),
 		'Example'
 	);
-	assert.strictEqual( widget.isSelected(), false );
+	assert.false( widget.isSelected() );
 	let $ariaDescription = widget.$element.find( '#' + $ariaElement.attr( 'aria-describedby' ) );
 	assert.strictEqual( $ariaDescription.text(), 'Help when unselected' );
 
 	widget.setSelected( true );
 
-	assert.strictEqual( widget.isSelected(), true );
+	assert.true( widget.isSelected() );
 	$ariaDescription = widget.$element.find( '#' + $ariaElement.attr( 'aria-describedby' ) );
 	assert.strictEqual( $ariaDescription.text(), 'Help when selected' );
 } );

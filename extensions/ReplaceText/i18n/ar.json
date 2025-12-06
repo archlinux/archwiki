@@ -50,5 +50,7 @@
 	"replacetext_no_external_stores": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا كان $ wgExternalStores غير فارغ.",
 	"right-replacetext": "أجرِ استبدال النصّ في الويكي بأكملها",
 	"action-replacetext": "أجرِ استبدال النص في الويكي بأكملها",
-	"replacetext-summary-label": "ملخص لتحريرات الاستبدال (اتركه فارغًا لاستخدام الملخص الافتراضي)"
+	"replacetext-summary-label": "ملخص لتحريرات الاستبدال (اتركه فارغًا لاستخدام الملخص الافتراضي)",
+	"tag-replacetext": "[[Special:ReplaceText|استبدال النص]]",
+	"tag-replacetext-description": "تم إجراء التعديلات التلقائية عبر [[{{#Special:ReplaceText}}]]."
 }

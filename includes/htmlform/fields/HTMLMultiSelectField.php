@@ -149,6 +149,12 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 		return $html;
 	}
 
+	/**
+	 * @param bool $checked
+	 * @param array $attribs
+	 * @param string $label
+	 * @return string
+	 */
 	protected function getOneCheckbox( $checked, $attribs, $label ) {
 		if ( $this->mParent instanceof OOUIHTMLForm ) {
 			throw new RuntimeException( __METHOD__ . ' is not supported' );
@@ -165,6 +171,7 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 		}
 	}
 
+	/** @inheritDoc */
 	public function getOptionsOOUI() {
 		$optionsOouiSections = [];
 		$options = $this->getOptions();
@@ -273,10 +280,12 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 		return implode( '', $out );
 	}
 
+	/** @inheritDoc */
 	protected function getOOUIModules() {
 		return $this->mDropdown ? [ 'mediawiki.widgets.MenuTagMultiselectWidget' ] : [];
 	}
 
+	/** @inheritDoc */
 	protected function shouldInfuseOOUI() {
 		return $this->mDropdown;
 	}

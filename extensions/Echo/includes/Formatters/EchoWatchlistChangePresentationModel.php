@@ -46,7 +46,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		if ( $this->isBundled() ) {
 			return [
 				'url' => $this->getEventTitle()->getLocalUrl(),
-				'label' => $this->msg( 'notification-link-text-view-page' )->text()
+				'label' => $this->msg( 'notification-link-text-view-page' )->text(),
 			];
 		}
 		return [
@@ -107,12 +107,12 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 		$revid = $this->event->getExtraParam( 'revid' );
 		if ( $revid === 0 ) {
 			$url = SpecialPage::getTitleFor( 'Log' )->getLocalUrl( [
-				'logid' => $this->event->getExtraParam( 'logid' )
+				'logid' => $this->event->getExtraParam( 'logid' ),
 			] );
 		} else {
 			$url = $this->getEventTitle()->getLocalURL( [
 				'oldid' => 'prev',
-				'diff' => $revid
+				'diff' => $revid,
 			] );
 		}
 		return $url;

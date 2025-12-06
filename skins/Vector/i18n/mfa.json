@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"EmpAhmadK",
 			"Lam Takuma",
-			"Mirlim",
-			"EmpAhmadK"
+			"Mirlim"
 		]
 	},
 	"vector-languages": "Bahaso",
@@ -29,7 +29,6 @@
 	"skin-theme-night-label": "Gelak",
 	"skin-theme-os-label": "Otomètik",
 	"skin-theme-exclusion-notice": "Muko ni sokmo dalae keadoae ceroh.",
-	"vector-searchsuggest-containing": "Cari lame hok ado <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Kandóngae",
 	"vector-toc-beginning": "Mulo-mulo",
 	"vector-anon-user-menu-pages": "Muko utók penyuténg hok log tubék",

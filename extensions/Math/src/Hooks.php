@@ -8,8 +8,6 @@
 
 namespace MediaWiki\Extension\Math;
 
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
-
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Hook\MaintenanceRefreshLinksInitHook;

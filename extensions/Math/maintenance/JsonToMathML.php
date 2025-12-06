@@ -21,7 +21,9 @@
 use MediaWiki\Extension\Math\MathRenderer;
 use MediaWiki\Maintenance\Maintenance;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * From a specified json file with (La)TeX formula as input,
@@ -217,5 +219,7 @@ class JsonToMathML extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = JsonToMathML::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

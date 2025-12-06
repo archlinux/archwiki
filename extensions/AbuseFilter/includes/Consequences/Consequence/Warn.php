@@ -68,9 +68,6 @@ class Warn extends Consequence implements HookAborterConsequence, ConsequencesDi
 		];
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function shouldBeWarned(): bool {
 		// Make sure the session is started prior to using it
 		$this->session->persist();
@@ -89,7 +86,6 @@ class Warn extends Consequence implements HookAborterConsequence, ConsequencesDi
 	/**
 	 * Generate a unique key to determine whether the user has already been warned.
 	 * We'll warn again if one of these changes: session, page, triggered filter, or action
-	 * @return string
 	 */
 	private function getWarnKey(): string {
 		$globalFilterName = GlobalNameUtils::buildGlobalName(

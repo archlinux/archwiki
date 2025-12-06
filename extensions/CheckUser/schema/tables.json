@@ -121,6 +121,11 @@
 				"name": "cuc_actor_ip_time",
 				"columns": [ "cuc_actor", "cuc_ip", "cuc_timestamp" ],
 				"unique": false
+			},
+			{
+				"name": "cuc_actor_ip_hex_time",
+				"columns": [ "cuc_actor", "cuc_ip_hex", "cuc_timestamp" ],
+				"unique": false
 			}
 		],
 		"pk": [ "cuc_id" ]
@@ -209,6 +214,11 @@
 			{
 				"name": "cule_actor_ip_time",
 				"columns": [ "cule_actor", "cule_ip", "cule_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cule_actor_ip_hex_time",
+				"columns": [ "cule_actor", "cule_ip_hex", "cule_timestamp" ],
 				"unique": false
 			}
 		],
@@ -338,6 +348,11 @@
 			{
 				"name": "cupe_actor_ip_time",
 				"columns": [ "cupe_actor", "cupe_ip", "cupe_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "cupe_actor_ip_hex_time",
+				"columns": [ "cupe_actor", "cupe_ip_hex", "cupe_timestamp" ],
 				"unique": false
 			}
 		],
@@ -534,8 +549,8 @@
 				"unique": false
 			},
 			{
-				"name": "cul_type_target",
-				"columns": [ "cul_type", "cul_target_id", "cul_timestamp" ],
+				"name": "cul_target",
+				"columns": [ "cul_target_id", "cul_timestamp" ],
 				"unique": false
 			},
 			{

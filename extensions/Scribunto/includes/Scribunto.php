@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
-use MediaWiki\Config\ConfigException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
@@ -12,80 +11,19 @@ use MediaWiki\Title\Title;
  */
 class Scribunto {
 	/**
-	 * Create a new engine object with specified parameters.
-	 *
-	 * @param array $options
-	 * @return ScribuntoEngineBase
-	 */
-	public static function newEngine( $options ) {
-		if ( isset( $options['factory'] ) ) {
-			return $options['factory']( $options );
-		} else {
-			$class = $options['class'];
-			return new $class( $options );
-		}
-	}
-
-	/**
-	 * Create a new engine object with default parameters
-	 *
-	 * @param array $extraOptions Extra options to pass to the constructor,
-	 *  in addition to the configured options
-	 * @return ScribuntoEngineBase
-	 */
-	public static function newDefaultEngine( $extraOptions = [] ) {
-		$config = MediaWikiServices::getInstance()->getMainConfig();
-		$defaultEngine = $config->get( 'ScribuntoDefaultEngine' );
-		if ( !$defaultEngine ) {
-			throw new ConfigException(
-				'Scribunto extension is enabled but $wgScribuntoDefaultEngine is not set'
-			);
-		}
-
-		$engineConf = $config->get( 'ScribuntoEngineConf' );
-		if ( !isset( $engineConf[$defaultEngine] ) ) {
-			throw new ConfigException( 'Invalid scripting engine is specified in $wgScribuntoDefaultEngine' );
-		}
-		$options = $extraOptions + $engineConf[$defaultEngine];
-		// @phan-suppress-next-line PhanTypeMismatchArgument false positive
-		return self::newEngine( $options );
-	}
-
-	/**
 	 * Get an engine instance for the given parser, and cache it in the parser
 	 * so that subsequent calls to this function for the same parser will return
 	 * the same engine.
 	 *
 	 * @param Parser $parser
 	 * @return ScribuntoEngineBase
+	 * @deprecated Use EngineFactory::getEngineForParser
 	 */
 	public static function getParserEngine( Parser $parser ) {
-		if ( $parser->scribunto_engine === null ) {
-			$parser->scribunto_engine = self::newDefaultEngine( [ 'parser' => $parser ] );
-			$parser->scribunto_engine->setTitle( $parser->getTitle() );
-		}
-		return $parser->scribunto_engine;
-	}
-
-	/**
-	 * Check if an engine instance is present in the given parser
-	 *
-	 * @param Parser $parser
-	 * @return bool
-	 */
-	public static function isParserEnginePresent( Parser $parser ) {
-		return $parser->scribunto_engine !== null;
-	}
-
-	/**
-	 * Remove the current engine instance from the parser
-	 * @param Parser $parser
-	 */
-	public static function resetParserEngine( Parser $parser ) {
-		if ( $parser->scribunto_engine !== null ) {
-			$parser->scribunto_engine->destroy();
-			$parser->scribunto_engine = null;
-		}
+		/** @var EngineFactory $engineFactory */
+		$engineFactory = MediaWikiServices::getInstance()->getService( 'Scribunto.EngineFactory' );
+		'@phan-var EngineFactory $engineFactory';
+		return $engineFactory->getEngineForParser( $parser );
 	}
 
 	/**

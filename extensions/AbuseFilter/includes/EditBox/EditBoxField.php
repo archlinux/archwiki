@@ -13,9 +13,6 @@ class EditBoxField extends HTMLFormField {
 	/** @var string */
 	private $html;
 
-	/**
-	 * @param array $params
-	 */
 	public function __construct( array $params ) {
 		parent::__construct( $params );
 		$this->html = $params['html'];

@@ -64,7 +64,9 @@ ve.ce.MWInternalLinkAnnotation.prototype.updateClasses = function () {
 		ve.init.platform.linkCache.styleElement(
 			model.getAttribute( 'lookupTitle' ),
 			this.$anchor,
-			!!model.getFragment()
+			!!model.getFragment(),
+			// Skip the "missing link" cache and ensure all styles are applied
+			false
 		);
 	}
 };

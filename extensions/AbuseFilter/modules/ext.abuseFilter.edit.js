@@ -61,15 +61,11 @@
 	 * Switch between Ace Editor and classic textarea
 	 */
 	function switchEditor() {
+		useAce = !useAce;
+		$filterBox.toggle( useAce );
+		$plainTextBox.toggle( !useAce );
 		if ( useAce ) {
-			useAce = false;
-			$filterBox.hide();
-			$plainTextBox.show();
-		} else {
-			useAce = true;
 			filterEditor.session.setValue( $plainTextBox.val() );
-			$filterBox.show();
-			$plainTextBox.hide();
 		}
 	}
 
@@ -214,18 +210,10 @@
 	 * that don't have checked boxes
 	 */
 	function hideDeselectedActions() {
-		$( '.mw-abusefilter-action-checkbox input' ).each( function showHideParams() {
+		$( '.mw-abusefilter-action-checkbox input' ).each( ( i, element ) => {
 			// mw-abusefilter-action-checkbox-{$action}
-			const action = this.parentNode.id.slice( 31 ),
-				$params = $( '#mw-abusefilter-' + action + '-parameters' );
-
-			if ( $params.length ) {
-				if ( this.checked ) {
-					$params.show();
-				} else {
-					$params.hide();
-				}
-			}
+			const action = element.parentNode.id.slice( 31 );
+			$( '#mw-abusefilter-' + action + '-parameters' ).toggle( element.checked );
 		} );
 	}
 
@@ -342,17 +330,14 @@
 		const $warnOptions = $( '#mw-abusefilter-warn-parameters > table' ),
 			$disallowOptions = $( '#mw-abusefilter-disallow-parameters > table' );
 
-		if ( $( '#wpFilterGlobal' ).is( ':checked' ) ) {
+		const isGlobalFilter = $( '#wpFilterGlobal' ).is( ':checked' );
+		if ( isGlobalFilter ) {
 			// It's a global filter, so use the default message and hide the option from the user
 			warnMessageExisting.setValue( 'abusefilter-warning' );
 			disallowMessageExisting.setValue( 'abusefilter-disallowed' );
-
-			$warnOptions.hide();
-			$disallowOptions.hide();
-		} else {
-			$warnOptions.show();
-			$disallowOptions.show();
 		}
+		$warnOptions.toggle( !isGlobalFilter );
+		$disallowOptions.toggle( !isGlobalFilter );
 	}
 
 	/**
@@ -362,7 +347,7 @@
 	 * @param {jQuery.Event} e The event fired when the function is called
 	 */
 	function onFilterKeypress( e ) {
-		if ( e.type === 'keypress' && e.which === 13 ) {
+		if ( e.type === 'keypress' && e.which === OO.ui.Keys.ENTER ) {
 			e.preventDefault();
 			$( '#mw-abusefilter-load' ).trigger( 'click' );
 		}
@@ -376,9 +361,7 @@
 			origValues = $form.serialize();
 
 		const warnOnLeave = mw.confirmCloseWindow( {
-			test: function () {
-				return $form.serialize() !== origValues;
-			},
+			test: () => $form.serialize() !== origValues,
 			message: mw.msg( 'abusefilter-edit-warn-leave' )
 		} );
 
@@ -473,7 +456,7 @@
 
 				// Ace setup from codeEditor extension
 				let basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
-				if ( basePath.slice( 0, 2 ) === '//' ) {
+				if ( basePath.startsWith( '//' ) ) {
 					// ACE uses web workers, which have importScripts, which don't like
 					// relative links. This is a problem only when the assets are on another
 					// server, so this rewrite should suffice.
@@ -484,7 +467,15 @@
 				// Settings for Ace editor box
 				const readOnly = mw.config.get( 'aceConfig' ).aceReadOnly;
 
-				filterEditor.setTheme( 'ace/theme/textmate' );
+				// Get theme of user and set it for the editor
+				// Copied from CodeEditor extension commit 8b7b17f9ee357d2c789909f452a57fa7b4237384
+				const htmlClasses = document.documentElement.classList;
+				const inDarkMode = htmlClasses.contains( 'skin-theme-clientpref-night' ) || (
+					htmlClasses.contains( 'skin-theme-clientpref-os' ) &&
+					window.matchMedia && window.matchMedia( '( prefers-color-scheme: dark )' ).matches
+				);
+
+				filterEditor.setTheme( inDarkMode ? 'ace/theme/monokai' : 'ace/theme/textmate' );
 				filterEditor.setReadOnly( readOnly );
 				filterEditor.$blockScrolling = Infinity;
 
@@ -510,7 +501,6 @@
 					// Refresh Ace editor size (notably its scrollbars) when the container
 					// is resized, otherwise it would be refreshed only on window resize
 					new ResizeObserver( () => {
-
 						filterEditor.resize();
 					} ).observe( $filterBox[ 0 ] );
 				}

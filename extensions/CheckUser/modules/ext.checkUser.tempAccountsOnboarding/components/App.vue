@@ -34,13 +34,14 @@ module.exports = exports = {
 		// Generate the steps to be shown in the onboarding dialog. We need to generate
 		// these steps programmatically as the IPInfo step will only be shown if
 		// IPInfo is installed.
-		const steps = [ { componentName: 'TempAccountsOnboardingIntroStep' } ];
+		const steps = [
+			{ componentName: 'TempAccountsOnboardingIntroStep' },
+			{ componentName: 'TempAccountsOnboardingIPRevealStep' }
+		];
 
 		if ( mw.config.get( 'wgCheckUserIPInfoExtensionLoaded' ) ) {
 			steps.push( { componentName: 'TempAccountsOnboardingIPInfoStep' } );
 		}
-
-		steps.push( { componentName: 'TempAccountsOnboardingIPRevealStep' } );
 
 		steps.forEach( ( step, index ) => {
 			step.name = 'step' + ( index + 1 );

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Kizule",
 			"Milicevic01",
@@ -10,8 +11,7 @@
 			"Srdjan m",
 			"Vlad5250",
 			"Zoranzoki21",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"captcha-edit": "За измену ове стране, решите следећи задатак испод и унесите одговор у кутију ([[Special:Captcha/help|детаљније]]):",

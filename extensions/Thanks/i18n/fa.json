@@ -16,6 +16,7 @@
 			"Huji",
 			"Iriman",
 			"Ladsgroup",
+			"LordProfo",
 			"Macofe",
 			"Mardetanha",
 			"Mjbmr",
@@ -48,8 +49,8 @@
 	"thanks-thank-tooltip-yes": "آگاه‌سازی تشکر از شما را {{GENDER:$1|بفرستید}}",
 	"thanks-confirmation2": "{{GENDER:$1|فرستادن}} تشکر علنی؟",
 	"thanks-thanked-notice": "{{GENDER:$3|شما}} از {{GENDER:$2|$1}} تشکر کردید.",
-	"thanks": "ارسال تشکر",
-	"thanks-submit": "ارسال تشکر",
+	"thanks": "فرستادن تشکر",
+	"thanks-submit": "فرستادن تشکر",
 	"echo-pref-subscription-edit-thank": "تشکر از من بابت ویرایشم",
 	"echo-pref-tooltip-edit-thank": "وقتی کسی از ویرایش‌های من تشکر می‌کند مرا آگاه کن.",
 	"echo-category-title-edit-thank": "تشکرها",
@@ -74,5 +75,5 @@
 	"notification-header-flow-thank": "$1 از {{GENDER:$5|شما}} به خاطر نظرتان در «<strong>$3</strong>» {{GENDER:$2|تشکر کرد}}.",
 	"notification-compact-header-flow-thank": "$1 از {{GENDER:$3|شما}} {{GENDER:$2|تشکر کرد}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|یک نفر|$1 نفر|100=بیش از ۹۹ نفر}} از شما برای نظرتان در «<strong>$2</strong>» {{GENDER:$3|تشکر}} {{PLURAL:$1|کرد|کردند}}.",
-	"ipb-action-thanks": "ارسال تشکر"
+	"ipb-action-thanks": "در حال فرستادن تشکر"
 }

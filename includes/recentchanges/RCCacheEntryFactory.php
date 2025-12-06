@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -87,7 +73,7 @@ class RCCacheEntryFactory {
 		// Should patrol-related stuff be shown?
 		$cacheEntry->unpatrolled = ChangesList::isUnpatrolled( $baseRC, $user );
 
-		$cacheEntry->watched = $cacheEntry->mAttribs['rc_type'] == RC_LOG ? false : $watched;
+		$cacheEntry->watched = $cacheEntry->mAttribs['rc_source'] == RecentChange::SRC_LOG ? false : $watched;
 		$cacheEntry->numberofWatchingusers = $baseRC->numberofWatchingusers;
 		$cacheEntry->watchlistExpiry = $baseRC->watchlistExpiry;
 
@@ -142,10 +128,10 @@ class RCCacheEntryFactory {
 	 * @return string
 	 */
 	private function buildCLink( RCCacheEntry $cacheEntry ) {
-		$type = $cacheEntry->mAttribs['rc_type'];
+		$source = $cacheEntry->mAttribs['rc_source'];
 
 		// Log entries
-		if ( $type == RC_LOG ) {
+		if ( $source == RecentChange::SRC_LOG ) {
 			$logType = $cacheEntry->mAttribs['rc_log_type'];
 
 			if ( $logType ) {
@@ -212,12 +198,12 @@ class RCCacheEntryFactory {
 	 */
 	private function buildCurLink( RecentChange $cacheEntry, $showDiffLinks ) {
 		$curMessage = $this->getMessage( 'cur' );
-		$logTypes = [ RC_LOG ];
+		$logTypes = [ RecentChange::SRC_LOG ];
 		if ( $cacheEntry->mAttribs['rc_this_oldid'] == $cacheEntry->getAttribute( 'page_latest' ) ) {
 			$showDiffLinks = false;
 		}
 
-		if ( !$showDiffLinks || in_array( $cacheEntry->mAttribs['rc_type'], $logTypes ) ) {
+		if ( !$showDiffLinks || in_array( $cacheEntry->mAttribs['rc_source'], $logTypes ) ) {
 			$curLink = $curMessage;
 		} else {
 			$queryParams = $this->buildCurQueryParams( $cacheEntry );
@@ -250,13 +236,13 @@ class RCCacheEntryFactory {
 	private function buildDiffLink( RecentChange $cacheEntry, $showDiffLinks ) {
 		$queryParams = $this->buildDiffQueryParams( $cacheEntry );
 		$diffMessage = $this->getMessage( 'diff' );
-		$logTypes = [ RC_NEW, RC_LOG ];
+		$logTypes = [ RecentChange::SRC_NEW, RecentChange::SRC_LOG ];
 
 		if ( !$showDiffLinks ) {
 			$diffLink = $diffMessage;
-		} elseif ( in_array( $cacheEntry->mAttribs['rc_type'], $logTypes ) ) {
+		} elseif ( in_array( $cacheEntry->mAttribs['rc_source'], $logTypes ) ) {
 			$diffLink = $diffMessage;
-		} elseif ( $cacheEntry->getAttribute( 'rc_type' ) == RC_CATEGORIZE ) {
+		} elseif ( $cacheEntry->getAttribute( 'rc_source' ) == RecentChange::SRC_CATEGORIZE ) {
 			$rcCurId = $cacheEntry->getAttribute( 'rc_cur_id' );
 			$pageTitle = Title::newFromID( $rcCurId );
 			if ( $pageTitle === null ) {
@@ -284,11 +270,11 @@ class RCCacheEntryFactory {
 	private function buildLastLink( RecentChange $cacheEntry, $showDiffLinks ) {
 		$lastOldid = $cacheEntry->mAttribs['rc_last_oldid'];
 		$lastMessage = $this->getMessage( 'last' );
-		$type = $cacheEntry->mAttribs['rc_type'];
-		$logTypes = [ RC_LOG ];
+		$source = $cacheEntry->mAttribs['rc_source'];
+		$logTypes = [ RecentChange::SRC_LOG ];
 
 		// Make "last" link
-		if ( !$showDiffLinks || !$lastOldid || in_array( $type, $logTypes ) ) {
+		if ( !$showDiffLinks || !$lastOldid || in_array( $source, $logTypes ) ) {
 			$lastLink = $lastMessage;
 		} else {
 			$lastLink = $this->linkRenderer->makeKnownLink(

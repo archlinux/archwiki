@@ -12,7 +12,8 @@ use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageCreatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\WikiPage;
@@ -26,7 +27,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Title\Title;
@@ -423,7 +424,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	private function makeDomainEventSourceListener(
+	private function makePageLatestChangedListener(
 		array $flags,
 		string $cause,
 		UserIdentity $performer,
@@ -432,7 +433,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$contentChange = true,
 		$silent = false
 	) {
-		return static function ( PageRevisionUpdatedEvent $event ) use (
+		return static function ( PageLatestRevisionChangedEvent $event ) use (
 			&$counter, $flags, $cause, $performer, $old,
 			$revisionChange, $contentChange, $silent
 		) {
@@ -513,10 +514,44 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater->setContent( SlotRecord::MAIN, $content );
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			$this->makeDomainEventSourceListener(
-				[], PageRevisionUpdatedEvent::CAUSE_EDIT, $user, null
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			$this->makePageLatestChangedListener(
+				[], PageLatestRevisionChangedEvent::CAUSE_EDIT, $user, null
 			)
+		);
+
+		$this->expectDomainEvent(
+			PageCreatedEvent::TYPE, 1,
+			static function ( PageCreatedEvent $event ) use ( $content ) {
+				Assert::assertSame(
+					PageLatestRevisionChangedEvent::CAUSE_EDIT,
+					$event->getCause(),
+					'getCause'
+				);
+
+				Assert::assertNull(
+					$event->getPageRecordBefore(),
+					'getPageRecordBefore should return null'
+				);
+
+				Assert::assertNotSame(
+					0,
+					$event->getPageRecordAfter()->getId(),
+					'getPageRecordAfter should return a valid PageRecord'
+				);
+
+				Assert::assertSame(
+					$event->getPageRecordAfter()->getLatest(),
+					$event->getLatestRevisionAfter()->getId()
+				);
+
+				Assert::assertSame(
+					$content,
+					$event->getLatestRevisionAfter()->getMainContentRaw()
+				);
+
+				Assert::assertSame( 'Just a test', $event->getReason() );
+			}
 		);
 
 		$this->expectHook( 'RevisionFromEditComplete', 1 );
@@ -536,18 +571,18 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater->setContent( SlotRecord::MAIN, $content );
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			$this->makeDomainEventSourceListener(
-				[], PageRevisionUpdatedEvent::CAUSE_EDIT,
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			$this->makePageLatestChangedListener(
+				[], PageLatestRevisionChangedEvent::CAUSE_EDIT,
 				$user, $page->getRevisionRecord()
 			)
 		);
 
-		// Also check that we can receive the event under its legacy name (T388588)
+		// Also check that we can receive the event under its legacy name
 		$this->expectDomainEvent(
-			'PageUpdated', 1,
-			$this->makeDomainEventSourceListener(
-				[], PageRevisionUpdatedEvent::CAUSE_EDIT,
+			'PageRevisionUpdated', 1,
+			$this->makePageLatestChangedListener(
+				[], PageLatestRevisionChangedEvent::CAUSE_EDIT,
 				$user, $page->getRevisionRecord()
 			)
 		);
@@ -557,6 +592,23 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 
 		$summary = CommentStoreComment::newUnsavedComment( 'Just a test' );
 		$updater->saveRevision( $summary );
+	}
+
+	public function testEventEmission_suppressed() {
+		$page = $this->getExistingTestPage();
+		$user = $this->getTestUser()->getUser();
+
+		$this->runDeferredUpdates(); // flush
+
+		$this->expectDomainEvent( PageLatestRevisionChangedEvent::TYPE, 0 );
+		$this->expectHook( 'RevisionFromEditComplete', 0 );
+		$this->expectHook( 'PageSaveComplete', 0 );
+
+		$updater = $page->newPageUpdater( $user );
+		$updater->setContent( SlotRecord::MAIN, new TextContent( 'Lorem Ipsum' ) );
+
+		$updater->setHints( [ 'suppressDerivedDataUpdates' => true ] )
+			->saveRevision( 'Just a test' );
 	}
 
 	public function testEventEmission_implicit() {
@@ -570,10 +622,10 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater->setFlags( EDIT_IMPLICIT );
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			$this->makeDomainEventSourceListener(
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			$this->makePageLatestChangedListener(
 				[ 'isImplicit' => true ],
-				PageRevisionUpdatedEvent::CAUSE_EDIT,
+				PageLatestRevisionChangedEvent::CAUSE_EDIT,
 				$user,
 				$page->getRevisionRecord()
 			)
@@ -590,9 +642,9 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater = $page->newPageUpdater( $user );
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			$this->makeDomainEventSourceListener(
-				[], PageRevisionUpdatedEvent::CAUSE_EDIT,
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			$this->makePageLatestChangedListener(
+				[], PageLatestRevisionChangedEvent::CAUSE_EDIT,
 					$user, $page->getRevisionRecord(), false, false
 			)
 		);
@@ -612,9 +664,9 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater = $page->newPageUpdater( $user );
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			$this->makeDomainEventSourceListener(
-				[], PageRevisionUpdatedEvent::CAUSE_UNDELETE,
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			$this->makePageLatestChangedListener(
+				[], PageLatestRevisionChangedEvent::CAUSE_UNDELETE,
 					$user, $page->getRevisionRecord(), true, false, true
 			)
 		);
@@ -623,7 +675,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->expectHook( 'PageSaveComplete', 1 );
 
 		// dummy revision
-		$updater->setCause( PageRevisionUpdatedEvent::CAUSE_UNDELETE );
+		$updater->setCause( PageLatestRevisionChangedEvent::CAUSE_UNDELETE );
 		$updater->saveDummyRevision( 'Just a test', EDIT_SILENT | EDIT_MINOR );
 	}
 
@@ -638,9 +690,9 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater = $page->newPageUpdater( $user );
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			$this->makeDomainEventSourceListener(
-				[ 'isRevert' => true ], PageRevisionUpdatedEvent::CAUSE_EDIT,
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			$this->makePageLatestChangedListener(
+				[ 'isRevert' => true ], PageLatestRevisionChangedEvent::CAUSE_EDIT,
 				$user, $page->getRevisionRecord()
 			)
 		);
@@ -660,7 +712,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 
 		$updater = $page->newPageUpdater( $user );
 
-		$this->expectDomainEvent( PageRevisionUpdatedEvent::TYPE, 0 );
+		$this->expectDomainEvent( PageLatestRevisionChangedEvent::TYPE, 0 );
 
 		$this->expectHook( 'RevisionFromEditComplete', 0 );
 
@@ -1159,7 +1211,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertStatusError( 'content-not-allowed-here', $status );
 	}
 
-	public static function provideSetRcPatrolStatus( $patrolled ) {
+	public static function provideSetRcPatrolStatus() {
 		yield [ RecentChange::PRC_UNPATROLLED ];
 		yield [ RecentChange::PRC_AUTOPATROLLED ];
 	}
@@ -1434,7 +1486,8 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 			$services->getTalkPageNotificationManager(),
 			$services->getMainConfig(),
 			$services->getJobQueueGroup(),
-			$services->getContentHandlerFactory()
+			$services->getContentHandlerFactory(),
+			$services->getRecentChangeStore()
 		);
 
 		$services->getDomainEventSource()
@@ -1520,7 +1573,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$user = User::newFromName( 'A user for ' . __METHOD__ );
 		$user->addToDatabase();
 
-		$title = $this->getDummyTitle( __METHOD__ . '-' . $this->getName() );
+		$title = $this->getDummyTitle( __METHOD__ );
 		$this->insertPage( $title );
 
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );

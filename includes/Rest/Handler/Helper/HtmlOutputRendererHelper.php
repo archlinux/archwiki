@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace MediaWiki\Rest\Handler\Helper;
@@ -35,6 +21,7 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ContentHolder;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig as ParsoidSiteConfig;
@@ -53,17 +40,18 @@ use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use RuntimeException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Parsoid\Core\ClientError;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Parsoid;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Stats\StatsFactory;
@@ -123,14 +111,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 * Usually happens because of page moves. This should be set to true only for internal API calls.
 	 */
 	private bool $lenientRevHandling = false;
-
-	/**
-	 * Flags to be passed as $options to ParserOutputAccess::getParserOutput,
-	 * to control parser cache access.
-	 *
-	 * @var int Use ParserOutputAccess::OPT_*
-	 */
-	private $parserOutputAccessOptions = 0;
 
 	/**
 	 * @see the $options parameter on Parsoid::wikitext2html
@@ -375,7 +355,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			$handler = $this->contentHandlerFactory->getContentHandler( $model );
 			$content = $handler->unserializeContent( $source );
 			$this->setContent( $content );
-		} catch ( MWUnknownContentModelException $ex ) {
+		} catch ( MWUnknownContentModelException ) {
 			throw new LocalizedHttpException( new MessageValue( "rest-bad-content-model", [ $model ] ), 400 );
 		}
 	}
@@ -715,7 +695,9 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 				$contentLanguage = $this->pageLanguage;
 			} else {
 				LoggerFactory::getInstance( 'HtmlOutputRendererHelper' )->warning(
-					"ParserOutput does not specify a language and no page language set in helper."
+					"ParserOutput does not specify a language and no page language set in helper.",
+					// (T387453) Add a stack trace to help debug the sources of this issue
+					[ 'fauxerror' => new RuntimeException( 'Dummy error for a trace' ) ]
 				);
 
 				$title = Title::newFromPageIdentity( $this->page );
@@ -756,10 +738,10 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	}
 
 	/**
-	 * Returns the rendered HTML as a PageBundle object.
+	 * Returns the rendered HTML as a HtmlPageBundle object.
 	 */
-	public function getPageBundle(): PageBundle {
-		// XXX: converting between PageBundle and ParserOutput is inefficient!
+	public function getPageBundle(): HtmlPageBundle {
+		// XXX: converting between HtmlPageBundle and ParserOutput is inefficient!
 		$parserOutput = $this->getParserOutput();
 		$pb = PageBundleParserOutputConverter::pageBundleFromParserOutput( $parserOutput );
 
@@ -808,7 +790,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 * There already is a stripUnnecessaryWrappersAndSyntheticNodes but
 	 * it targets html2wt and does a lot more than just section unwrapping.
 	 */
-	private function stripParsoidSectionTags( Element $elt ): void {
+	private function stripParsoidSectionTags( DocumentFragment|Element $elt ): void {
 		$n = $elt->firstChild;
 		while ( $n ) {
 			$next = $n->nextSibling;
@@ -863,11 +845,13 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			$this->isCacheable = false;
 		}
 
-		// TODO: Decide whether we want to allow stale content for speed for the
-		// 'view' flavor. In that case, we would want to use PoolCounterWork,
-		// either directly or through ParserOutputAccess.
-
-		$flags = $this->parserOutputAccessOptions;
+		$parserOutputAccessOptions = [
+			// Use pool counter (T387478).
+			// Use it even if the output is not cacheable, to protect against
+			// load spikes.
+			ParserOutputAccess::OPT_POOL_COUNTER =>
+				ParserOutputAccess::POOL_COUNTER_REST_API
+		];
 
 		// Find page
 		$pageRecord = $this->getPageRecord();
@@ -914,7 +898,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 						);
 					}
 					// Don't cache this!
-					$flags |= ParserOutputAccess::OPT_NO_UPDATE_CACHE;
+					$parserOutputAccessOptions[ ParserOutputAccess::OPT_NO_UPDATE_CACHE ] = true;
 				} else {
 					throw new RevisionAccessException(
 						'Revision {revId} does not belong to page {name}',
@@ -934,7 +918,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			'@phan-var PageRecord $pageRecord';
 			try {
 				$status = $this->parserOutputAccess->getParserOutput(
-					$pageRecord, $this->parserOptions, $revision, $flags
+					$pageRecord, $this->parserOptions, $revision, $parserOutputAccessOptions
 				);
 			} catch ( ClientError $e ) {
 				$status = Status::newFatal( 'parsoid-client-error', $e->getMessage() );
@@ -956,11 +940,10 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 				// NOTE: This introduces an extra html -> dom -> html roundtrip
 				// This will get addressed once HtmlHolder work is complete
 				$parserOutput = $status->getValue();
-				$body = DOMCompat::getBody( DOMUtils::parseHTML( $parserOutput->getRawText() ) );
-				if ( $body ) {
-					$this->stripParsoidSectionTags( $body );
-					$parserOutput->setText( DOMCompat::getInnerHTML( $body ) );
-				}
+				$body = $parserOutput->getContentHolder()->getAsDom(
+					ContentHolder::BODY_FRAGMENT
+				);
+				$this->stripParsoidSectionTags( $body );
 			}
 			Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		}

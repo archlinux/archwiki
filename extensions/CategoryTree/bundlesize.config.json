@@ -1,0 +1,10 @@
+[
+	{
+		"resourceModule": "ext.categoryTree",
+		"maxSize": "5 kB"
+	},
+	{
+		"resourceModule": "ext.categoryTree.styles",
+		"maxSize": "3 kB"
+	}
+]

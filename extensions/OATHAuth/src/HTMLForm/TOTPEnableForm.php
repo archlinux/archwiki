@@ -8,22 +8,33 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\SvgWriter;
 use MediaWiki\Config\ConfigException;
-use MediaWiki\Exception\MWException;
+use MediaWiki\Extension\OATHAuth\IAuthKey;
+use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
+use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
+use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
+use OOUI\FieldLayout;
+use OOUI\HtmlSnippet;
+use OOUI\Widget;
+use UnexpectedValueException;
 
 class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
+
+	use KeySessionStorageTrait;
+	use RecoveryCodesTrait;
+
 	/**
 	 * @param array|bool|Status|string $submitResult
 	 * @return string
 	 */
 	public function getHTML( $submitResult ) {
 		$out = $this->getOutput();
-		$out->addModuleStyles( 'ext.oath.styles' );
-		$out->addModules( 'ext.oath' );
-
+		$out->addModuleStyles( 'ext.oath.totpenable.styles' );
+		$out->addModuleStyles( 'ext.oath.recovery.styles' );
+		$out->addModules( 'ext.oath.recovery' );
 		return parent::getHTML( $submitResult );
 	}
 
@@ -38,16 +49,9 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 	 * @return array
 	 */
 	protected function getDescriptors() {
-		$keyData = $this->getRequest()->getSessionData( 'oathauth_totp_key' ) ?? [];
-		$key = TOTPKey::newFromArray( $keyData );
-		if ( !$key instanceof TOTPKey ) {
-			$key = TOTPKey::newFromRandom();
-			$this->getRequest()->setSessionData(
-				'oathauth_totp_key',
-				$key->jsonSerialize()
-			);
-		}
-
+		/** @var TOTPKey $key */
+		$key = $this->setKeyDataInSession( 'TOTPKey' );
+		'@phan-var TOTPKey $key';
 		$secret = $key->getSecret();
 		$issuer = $this->oathUser->getIssuer();
 		$account = $this->oathUser->getAccount();
@@ -59,28 +63,31 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			. "&issuer="
 			. rawurlencode( $issuer );
 
-		$qrCode = Builder::create()
-			->writer( new SvgWriter() )
-			->writerOptions( [ SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true ] )
-			->data( $qrcodeUrl )
-			->encoding( new Encoding( 'UTF-8' ) )
-			->errorCorrectionLevel( ErrorCorrectionLevel::High )
-			->roundBlockSizeMode( RoundBlockSizeMode::None )
-			->size( 256 )
-			->margin( 0 )
-			->build();
+		$qrCode = ( new Builder(
+			writer: new SvgWriter(),
+			writerOptions: [ SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true ],
+			data: $qrcodeUrl,
+			encoding: new Encoding( 'UTF-8' ),
+			errorCorrectionLevel: ErrorCorrectionLevel::High,
+			size: 256,
+			margin: 0,
+			roundBlockSizeMode: RoundBlockSizeMode::None,
+		) )->build();
 
-		$now = wfTimestampNow();
-		$recoveryCodes = $this->getScratchTokensForDisplay( $key );
-		$this->getOutput()->addJsConfigVars( 'oathauth-recoverycodes', $this->createTextList( $recoveryCodes ) );
-
-		// messages used: oathauth-step1, oathauth-step2, oathauth-step3, oathauth-step4
+		// messages used: oathauth-step1, oathauth-step-friendly-name oathauth-step2, oathauth-step3, oathauth-step4
 		return [
 			'app' => [
 				'type' => 'info',
 				'default' => $this->msg( 'oathauth-step1-test' )->parse(),
 				'raw' => true,
 				'section' => 'step1',
+			],
+			'friendly_name' => [
+				'type' => 'text',
+				'default' => '',
+				'label-message' => 'oathauth-step-friendly-name-text',
+				'name' => 'friendly-name',
+				'section' => 'step-friendly-name',
 			],
 			'qrcode' => [
 				'type' => 'info',
@@ -89,7 +96,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 					. Html::element( 'img', [
 						'class' => 'mw-oauth-qrcode',
 						'src' => $qrCode->getDataUri(),
-						'alt' => $this->msg( 'oathauth-qrcode-alt' ),
+						'alt' => $this->msg( 'oathauth-qrcode-alt' )->text(),
 						'width' => 256,
 						'height' => 256,
 					] ),
@@ -98,33 +105,22 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			],
 			'manual' => [
 				'type' => 'info',
-				'label-message' => 'oathauth-step2alt',
-				'default' =>
-					'<strong>' . $this->msg( 'oathauth-secret' )->escaped() . '</strong><br/>'
-					. '<kbd>' . $this->getSecretForDisplay( $key ) . '</kbd><br/>'
-					. '<strong>' . $this->msg( 'oathauth-account' )->escaped() . '</strong><br/>'
-					. htmlspecialchars( $label ) . '<br/><br/>',
+				'default' => $this->generateAltStep2Content( $key, $label ),
 				'raw' => true,
+				// We need to use a "rawrow" to prevent being wrapped by a label element.
+				'rawrow' => true,
 				'section' => 'step2',
 			],
-			'scratchtokens' => [
+			'recoverycodes' => [
 				'type' => 'info',
 				'default' =>
-					'<strong>' . $this->msg( 'oathauth-recoverycodes-important' )->escaped() . '</strong><br/>' .
-					$this->msg( 'oathauth-recoverycodes' )->escaped() . '<br/><br/>' .
-					$this->msg( 'rawmessage' )->rawParams(
-						$this->msg(
-							'oathauth-recoverytokens-createdat',
-							$this->getLanguage()->userTimeAndDate( $now, $this->oathUser->getUser() )
-						)->parse()
-						. $this->msg( 'word-separator' )->escaped()
-						. $this->msg( 'parentheses' )->rawParams( wfTimestamp( TS_ISO_8601, $now ) )->escaped()
-					) . '<br/>' .
-					$this->createResourceList( $recoveryCodes ) . '<br/>' .
-					'<strong>' . $this->msg( 'oathauth-recoverycodes-neveragain' )->escaped() . '</strong><br/>' .
-					$this->createCopyButton() .
-					$this->createDownloadLink( $recoveryCodes ),
+					$this->generateRecoveryCodesContent(
+						$this->getRecoveryCodesForDisplay( $this->getRecoveryKeysFromSessionOrDefault() ),
+						true
+					),
 				'raw' => true,
+				// We need to use a "rawrow" to prevent being wrapped by a label element.
+				'rawrow' => true,
 				'section' => 'step3',
 			],
 			'token' => [
@@ -140,57 +136,28 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 		];
 	}
 
-	/**
-	 * @param array $resources
-	 * @return string
-	 */
-	private function createResourceList( $resources ) {
-		$resourceList = '';
-		foreach ( $resources as $resource ) {
-			$resourceList .= Html::rawElement( 'li', [], Html::rawElement( 'kbd', [], $resource ) );
+	private function getRecoveryKeysFromSessionOrDefault(): RecoveryCodeKeys {
+		$keyDataRecCodes = $this->getKeyDataInSession( 'RecoveryCodeKeys' );
+		if ( $keyDataRecCodes ) {
+			return RecoveryCodeKeys::newFromArray( $keyDataRecCodes );
 		}
-		return Html::rawElement( 'ul', [], $resourceList );
-	}
 
-	/**
-	 * @param array $items
-	 *
-	 * @return string
-	 */
-	private function createTextList( $items ) {
-		return "* " . implode( "\n* ", $items );
-	}
-
-	private function createDownloadLink( array $scratchTokensForDisplay ): string {
-		$icon = Html::element( 'span', [
-			'class' => [ 'mw-oathauth-recoverycodes-download-icon', 'cdx-button__icon' ],
-			'aria-hidden' => 'true',
-		] );
-		return Html::rawElement(
-			'a',
-			[
-				'href' => 'data:text/plain;charset=utf-8,'
-					// https://bugzilla.mozilla.org/show_bug.cgi?id=1895687
-					. rawurlencode( implode( PHP_EOL, $scratchTokensForDisplay ) ),
-				'download' => 'recovery-codes.txt',
-				'class' => [
-					'mw-oathauth-recoverycodes-download',
-					'cdx-button', 'cdx-button--fake-button', 'cdx-button--fake-button--enabled',
-				],
-			],
-			$icon . $this->msg( 'oathauth-recoverycodes-download' )->escaped()
+		$keyDataRecCodes = [ 'recoverycodekeys' => [] ];
+		return $this->setKeyDataInSession(
+			'RecoveryCodeKeys',
+			$keyDataRecCodes
 		);
 	}
 
-	private function createCopyButton(): string {
-		return Html::rawElement( 'button', [
-			'class' => 'cdx-button mw-oathauth-recoverycodes-copy-button',
-			'type' => 'button',
-		], Html::element( 'span', [
-			'class' => 'cdx-button__icon',
-			'aria-hidden' => 'true',
-		] ) . $this->msg( 'oathauth-recoverycodes-copy' )->escaped()
-		);
+	private function generateAltStep2Content( IAuthKey $key, string $label ): FieldLayout {
+		$snippet = new HtmlSnippet( '<p>'
+			. $this->msg( 'oathauth-step2alt' )->escaped() . '</p>'
+			. '<strong>' . $this->msg( 'oathauth-secret' )->escaped() . '</strong><br>'
+			. '<kbd>' . $this->getSecretForDisplay( $key ) . '</kbd></p>'
+			. '<p><strong>' . $this->msg( 'oathauth-account' )->escaped() . '</strong><br>'
+			. htmlspecialchars( $label ) . '</p>' );
+		// rawrow only accepts fieldlayouts
+		return new FieldLayout( new Widget( [ 'content' => $snippet ] ) );
 	}
 
 	/**
@@ -198,49 +165,30 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 	 *
 	 * The characters of the token are split in groups of 4
 	 *
-	 * @param TOTPKey $key
+	 * @param IAuthKey $key
 	 * @return string
 	 */
-	protected function getSecretForDisplay( TOTPKey $key ) {
+	protected function getSecretForDisplay( IAuthKey $key ) {
+		/** @var TOTPKey $key */
+		'@phan-var TOTPKey $key';
 		return $this->tokenFormatterFunction( $key->getSecret() );
-	}
-
-	/**
-	 * Retrieve current recovery codes for display purposes
-	 *
-	 * The characters of the token are split in groups of 4
-	 *
-	 * @param TOTPKey $key
-	 * @return string[]
-	 */
-	protected function getScratchTokensForDisplay( TOTPKey $key ) {
-		return array_map( [ $this, 'tokenFormatterFunction' ], $key->getScratchTokens() );
-	}
-
-	/**
-	 * Formats a key or recovery code by creating groups of 4 separated by space characters
-	 *
-	 * @param string $token Token to format
-	 * @return string The token formatted for display
-	 */
-	private function tokenFormatterFunction( $token ) {
-		return implode( ' ', str_split( $token, 4 ) );
 	}
 
 	/**
 	 * @param array $formData
 	 * @return array|bool
 	 * @throws ConfigException
-	 * @throws MWException
+	 * @throws UnexpectedValueException
 	 */
 	public function onSubmit( array $formData ) {
-		$keyData = $this->getRequest()->getSessionData( 'oathauth_totp_key' ) ?? [];
-		$key = TOTPKey::newFromArray( $keyData );
-		if ( !$key instanceof TOTPKey ) {
+		$keyData = $this->getKeyDataInSession( 'TOTPKey' );
+		$keyData['friendly_name'] = $formData["friendly_name"];
+		$TOTPkey = TOTPKey::newFromArray( $keyData );
+		if ( !$TOTPkey instanceof TOTPKey ) {
 			return [ 'oathauth-invalidrequest' ];
 		}
 
-		if ( $key->isScratchToken( $formData['token'] ) ) {
+		if ( $this->getRecoveryKeysFromSessionOrDefault()->isValidRecoveryCode( $formData['token'] ) ) {
 			// A recovery code is not allowed for enrollment
 			LoggerFactory::getInstance( 'authentication' )->info(
 				'OATHAuth {user} attempted to enable 2FA using a recovery code from {clientip}', [
@@ -250,7 +198,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			);
 			return [ 'oathauth-noscratchforvalidation' ];
 		}
-		if ( !$key->verify( [ 'token' => $formData['token'] ], $this->oathUser ) ) {
+		if ( !$TOTPkey->verify( [ 'token' => $formData['token'] ], $this->oathUser ) ) {
 			LoggerFactory::getInstance( 'authentication' )->info(
 				'OATHAuth {user} failed to provide a correct token while enabling 2FA from {clientip}', [
 					'user' => $this->getUser()->getName(),
@@ -260,11 +208,33 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			return [ 'oathauth-failedtovalidateoath' ];
 		}
 
-		$this->getRequest()->setSessionData( 'oathauth_totp_key', null );
+		$moduleDbKeys = $this->oathUser->getKeysForModule( RecoveryCodes::MODULE_NAME );
+
+		// only create the recovery code module entry if this is the first 2FA key a user is creating
+		if ( count( $moduleDbKeys ) > RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
+			throw new UnexpectedValueException(
+				$this->msg( 'oathauth-recoverycodes-too-many-instances' )->escaped()
+			);
+		}
+
+		if ( count( $moduleDbKeys ) < RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
+			$keyData = $this->getKeyDataInSession( 'RecoveryCodeKeys' );
+			$recCodeKeys = RecoveryCodeKeys::newFromArray( $keyData );
+			$this->setKeyDataInSessionToNull( 'RecoveryCodeKeys' );
+			$moduleRegistry = OATHAuthServices::getInstance()->getModuleRegistry();
+			$this->oathRepo->createKey(
+				$this->oathUser,
+				$moduleRegistry->getModuleByKey( RecoveryCodes::MODULE_NAME ),
+				$recCodeKeys->jsonSerialize(),
+				$this->getRequest()->getIP()
+			);
+		}
+
+		$this->setKeyDataInSessionToNull( 'TOTPKey' );
 		$this->oathRepo->createKey(
 			$this->oathUser,
 			$this->module,
-			$key->jsonSerialize(),
+			$TOTPkey->jsonSerialize(),
 			$this->getRequest()->getIP()
 		);
 

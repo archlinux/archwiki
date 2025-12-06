@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Zhengzhu Feng <zhengzhu@gmail.com>
  * @author fdcn <fdcn64@gmail.com>
@@ -44,6 +30,7 @@ use MediaWiki\User\User;
 use RuntimeException;
 use UnexpectedValueException;
 use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ReplacementArray;
 use Wikimedia\StringUtils\StringUtils;
 
 /**
@@ -124,7 +111,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 	/** @var string|null */
 	private $mVarSeparatorPattern;
 
-	private const CACHE_VERSION_KEY = 'VERSION 7';
+	private const CACHE_VERSION_KEY = 'VERSION 8';
 
 	/**
 	 * @param Language|StubUserLang $langobj
@@ -265,20 +252,24 @@ abstract class LanguageConverter implements ILanguageConverter {
 			->getLanguageNames();
 	}
 
+	/** @inheritDoc */
 	final public function getVariants() {
 		$disabledVariants = MediaWikiServices::getInstance()->getMainConfig()->get(
 			MainConfigNames::DisabledVariants );
 		return array_diff( $this->getLanguageVariants(), $disabledVariants );
 	}
 
+	/** @inheritDoc */
 	public function getVariantFallbacks( $variant ) {
 		return $this->getVariantsFallbacks()[$variant] ?? $this->getStaticDefaultVariant();
 	}
 
+	/** @inheritDoc */
 	public function getConvRuleTitle() {
 		return $this->mConvRuleTitle;
 	}
 
+	/** @inheritDoc */
 	public function getPreferredVariant() {
 		$req = $this->getURLVariant();
 
@@ -313,6 +304,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $req ?? $this->getStaticDefaultVariant();
 	}
 
+	/** @inheritDoc */
 	public function getDefaultVariant() {
 		$defaultLanguageVariant = MediaWikiServices::getInstance()->getMainConfig()->get(
 			MainConfigNames::DefaultLanguageVariant );
@@ -326,6 +318,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $req ?? $this->getStaticDefaultVariant();
 	}
 
+	/** @inheritDoc */
 	public function validateVariant( $variant = null ) {
 		if ( $variant === null ) {
 			return null;
@@ -349,6 +342,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return null;
 	}
 
+	/** @inheritDoc */
 	public function getURLVariant() {
 		if ( $this->mURLVariant ) {
 			return $this->mURLVariant;
@@ -458,6 +452,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $this->mHeaderVariant;
 	}
 
+	/** @inheritDoc */
 	public function autoConvert( $text, $toVariant = false ) {
 		$this->loadTables();
 
@@ -615,11 +610,25 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $output;
 	}
 
+	/** @inheritDoc */
 	public function translate( $text, $variant ) {
 		// If $text is empty or only includes spaces, do nothing
 		// Otherwise translate it
 		if ( trim( $text ) ) {
 			$this->loadTables();
+			// (T337427) Debugging / note error state if mTables not initialised
+			if ( !$this->mTables[$variant] ) {
+				$log = LoggerFactory::getInstance( 'languageconverter' );
+				$log->error( "Tables not initialised for variant in " . __METHOD__
+					. ". No language conversion made for this string.",
+					[
+						"method" => __METHOD__,
+						"variant" => $variant,
+						"startOfText" => substr( $text, 0, 500 )
+					]
+				);
+				return $text;
+			}
 			$text = $this->mTables[$variant]->replace( $text );
 		}
 		return $text;
@@ -659,6 +668,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function autoConvertToAllVariants( $text ) {
 		$this->loadTables();
 
@@ -704,6 +714,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		}
 	}
 
+	/** @inheritDoc */
 	public function convertSplitTitle( $title ) {
 		$variant = $this->getPreferredVariant();
 
@@ -716,6 +727,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return [ $nsText, ':', $mainText ];
 	}
 
+	/** @inheritDoc */
 	public function convertTitle( $title ) {
 		[ $nsText, $nsSeparator, $mainText ] = $this->convertSplitTitle( $title );
 		return $nsText !== '' ?
@@ -723,6 +735,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 			$mainText;
 	}
 
+	/** @inheritDoc */
 	public function convertNamespace( $index, $variant = null ) {
 		if ( $index === NS_MAIN ) {
 			return '';
@@ -743,42 +756,36 @@ abstract class LanguageConverter implements ILanguageConverter {
 
 	/**
 	 * @param int $index
-	 * @param string|null $variant
+	 * @param string $variant
 	 * @return string
 	 */
-	private function computeNsVariantText( int $index, ?string $variant ): string {
+	private function computeNsVariantText( int $index, string $variant ): string {
 		$nsVariantText = false;
 
-		// First check if a message gives a converted name in the target variant.
+		// Check if a message for this namespace exists. Note that this would follow
+		// the fallback chain, and the site's content language as the last resort.
 		$nsConvMsg = wfMessage( 'conversion-ns' . $index )->inLanguage( $variant );
 		if ( $nsConvMsg->exists() ) {
 			$nsVariantText = $nsConvMsg->plain();
 		}
 
-		// Then check if a message gives a converted name in content language
-		// which needs extra translation to the target variant.
-		if ( $nsVariantText === false ) {
-			$nsConvMsg = wfMessage( 'conversion-ns' . $index )->inContentLanguage();
-			if ( $nsConvMsg->exists() ) {
-				$nsVariantText = $this->translate( $nsConvMsg->plain(), $variant );
-			}
-		}
-
 		if ( $nsVariantText === false ) {
 			// No message exists, retrieve it from the target variant's namespace names.
-			$mLangObj = MediaWikiServices::getInstance()
+			$langObj = MediaWikiServices::getInstance()
 				->getLanguageFactory()
 				->getLanguage( $variant );
-			$nsVariantText = $mLangObj->getFormattedNsText( $index );
+			$nsVariantText = $langObj->getFormattedNsText( $index );
 		}
 		return $nsVariantText;
 	}
 
+	/** @inheritDoc */
 	public function convert( $text ) {
 		$variant = $this->getPreferredVariant();
 		return $this->convertTo( $text, $variant );
 	}
 
+	/** @inheritDoc */
 	public function convertTo( $text, $variant, bool $clearState = true ) {
 		$languageConverterFactory = MediaWikiServices::getInstance()->getLanguageConverterFactory();
 		if ( $languageConverterFactory->isConversionDisabled() ) {
@@ -922,6 +929,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return '-{' . $this->autoConvert( $inner, $variant );
 	}
 
+	/** @inheritDoc */
 	public function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
 		# If the article has already existed, there is no need to
 		# check it again. Otherwise it may cause a fault.
@@ -996,12 +1004,14 @@ abstract class LanguageConverter implements ILanguageConverter {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getExtraHashOptions() {
 		$variant = $this->getPreferredVariant();
 
 		return '!' . $variant;
 	}
 
+	/** @inheritDoc */
 	public function guessVariant( $text, $variant ) {
 		return false;
 	}
@@ -1197,6 +1207,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function markNoConversion( $text, $noParse = false ) {
 		# don't mark if already marked
 		if ( str_contains( $text, '-{' ) || str_contains( $text, '}-' ) ) {
@@ -1206,6 +1217,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return "-{R|$text}-";
 	}
 
+	/** @inheritDoc */
 	public function convertCategoryKey( $key ) {
 		return $key;
 	}
@@ -1268,14 +1280,17 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return $this->mVarSeparatorPattern;
 	}
 
+	/** @inheritDoc */
 	public function hasVariants() {
 		return count( $this->getVariants() ) > 1;
 	}
 
+	/** @inheritDoc */
 	public function hasVariant( $variant ) {
 		return $variant && ( $variant === $this->validateVariant( $variant ) );
 	}
 
+	/** @inheritDoc */
 	public function convertHtml( $text ) {
 		// @phan-suppress-next-line SecurityCheck-DoubleEscaped convert() is documented to return html
 		return htmlspecialchars( $this->convert( $text ) );

@@ -2,21 +2,7 @@
 /**
  * Print serialized output of MediaWiki config vars.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  * @author Tim Starling
@@ -39,6 +25,9 @@ class GetConfiguration extends Maintenance {
 
 	/** @var string|null */
 	protected $regex = null;
+
+	/** @var string|null */
+	protected $format = null;
 
 	/** @var array */
 	protected $settings_list = [];
@@ -73,9 +62,9 @@ class GetConfiguration extends Maintenance {
 		$error_out = false;
 
 		# Get the format and make sure it is set to a valid default value
-		$format = strtolower( $this->getOption( 'format', 'PHP' ) );
+		$this->format = strtolower( $this->getOption( 'format', 'PHP' ) );
 
-		$validFormat = in_array( $format, self::OUT_FORMATS );
+		$validFormat = in_array( $this->format, self::OUT_FORMATS );
 		if ( !$validFormat ) {
 			$this->error( "--format set to an unrecognized format" );
 			$error_out = true;
@@ -125,7 +114,13 @@ class GetConfiguration extends Maintenance {
 
 		# Default: dump any wg / wmg variable
 		if ( !$this->regex && !$this->getOption( 'settings' ) ) {
-			$this->regex = '/^wm?g/';
+			// Avoid fatal "Exception: Serialization of Closure is not allowed"
+			//
+			// * Exclude legacy singletons that are not configuration but
+			//   non-serializable objects, such as $wgUser.
+			// * Exclude config arrays such as wgHooks which may contain closures
+			//   via LocalSettings.php.
+			$this->regex = '/^wm?g(?!User|Out|Request|Hooks).*$/';
 		}
 
 		# Filter out globals based on the regex
@@ -146,7 +141,7 @@ class GetConfiguration extends Maintenance {
 
 		ksort( $res );
 
-		switch ( strtolower( $this->getOption( 'format' ) ) ) {
+		switch ( $this->format ) {
 			case 'serialize':
 			case 'php':
 				$out = serialize( $res );

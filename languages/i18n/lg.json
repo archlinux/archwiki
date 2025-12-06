@@ -194,9 +194,7 @@
 	"namespaceprotected": "Tolina buyinza bwa kukyusa ku mpapula ez'omu kkuŋaanizo erya '''$1'''.",
 	"ns-specialprotected": "Empapula enjawule tezikukkiriza kuzikyusaako.",
 	"titleprotected": "[[User:$1|$1]] ataddewo ekikugizo ekigaana okukozesa omutwe guno.<br />\nEnsonga gy'awadde eri nti <em>$2</em>.",
-	"virus-badscanner": "Kiremya mu nteekateeka: ekinoonya vayirasi kino tekimanyidwa: ''$1''",
 	"virus-scanfailed": "okunoonya vayirasi kulemye (obubaka buli $1)",
-	"virus-unknownscanner": "ekinoonya vayirasi ekitamanyidwa:",
 	"logouttext": "'''Kati ovuddemu.'''\n\nOsobola okusigala nga okozesa {{SITENAME}} nga at'eyanjudde, ate osobola <span class='plainlinks'>[$1 n'okuddamu okuyingira]</span> nga bw'obadde oba nga okozesezza ery'obwa memba eddala.\nWekkaanye, empapula ezimu ziyinza okukweyolekera nga bwe zibadde nga oyingidde - okutuusa lw'okunkumula eggwanika ezzibizi erya kalambula-neti yo.",
 	"yourname": "Ery'obwa memba",
 	"userlogin-yourname": "Erinnya lyo erya Wiki",
@@ -228,7 +226,6 @@
 	"userexists": "Ery'obwa memba ly'owandise wali omulala alirina.<br />\nLonda eddala.",
 	"loginerror": "Okuyingira kuzzeko kiremya:",
 	"createaccounterror": "Nemedwa okukolawo akawunti: $1",
-	"nocookiesnew": "Akawunti w'eri, naye sisitemu tekuyingizza.<br />\nOkuyingira {{SITENAME}} nga memba kyesigamizidwa ku bujjukiza.<br />\nKalambulanetti yo kakano etegekedwa butakkiriza obujjukiza obwo.<br />\nOkusobola okuyingira, kyusa entegeka ya yo ebukkirize eryoke okozese ery'obwa memba n'ekigambo ekikuumi byo.",
 	"nocookieslogin": "Okuyingira {{SITENAME}} nga memba kyesigamizidwa ku bujjukiza.<br />\nKalambulanetti yo kakano etegekedwa butakkiriza obujjukiza obwo.<br />\nOkusobola okuyingira, kyusa entegeka ya yo ebukkirize eryoke oddemu okugeza okuyingira.",
 	"nocookiesfornew": "Akawunti ey'obwa memba tekoledwawo, kubanga tetusobodde okutegeera w'oyimye okugikola.<br />\nKalambulanetti yo gitegeke ekkirize obujjukiza, ddamu owange olupapula luno oryoke oddemu okugeza okukolawo akawunti.",
 	"noname": "Towandise linnya ly'obwa memba eriyinz'okukkirizibwa.",
@@ -243,7 +240,6 @@
 	"mailmypassword": "Nsindikira ekigambo ekikuumi ekipya",
 	"passwordremindertitle": "Ekigambo ekikuumi eky'oku {{SITENAME}} ekipya. Kya kiseerabuseera.",
 	"passwordremindertext": "Waliwo eyayimidde ku ndagiriro eya IP $1 (tusuubiri nti ye ggwe) n'asaba ekigambo ekikuumi eky'oku {{SITENAME}} ($4) ekipya.<br />\nMemba \"$2\" tumukoleddewo ekigambo ekikuumi eky'ekiseerabuseera, \"$3\". Kino bwe kiba nga kye kyewagenderedde,<br />\nwetaaga kugenda kati oyingire akawunti yo okyuse ekigambo ekikuumi okolewo ekya ddala.<br />\nEkigambo eky'ekiseerabuseera kijjakuleker'awo okukola mu {{PLURAL:$5|lunaku lumu|nnaku $5}}.",
-	"noemail": "Tetulina ndagiriro eya E-mail eya memba \"$1\".",
 	"noemailcreate": "Wetaaga kuwayo ndagiriro eya E-mail ekola",
 	"passwordsent": "Ekigambo ekikuumi ekipya tukisindise ku E-mail eyatuwebwa nga eya \"$1\".<br />\nBw'omala okukifuna nga oryoka oddamu okuyingira.",
 	"blocked-mailpassword": "Okulwanyisa nkozesa mbi, tetukkiriza okukyusa eby'oku {{SITENAME}} okuva ku ndagiriro eya IP kw'oyimye.<br />\nKino kitwaliramu n'obutakkiriza okufuna ebigambo bikuumi ebipya.",
@@ -729,7 +725,7 @@
 	"metadata-help": "Ekyakozesebwa okutegeka fayiro eno esobole okugenda ku kompyuta, okugeza kamera oba sikaana, kyagiwandikamu ebigikwatako. Ebyawandikibwa ebyo biyinz'okuba nga tebikyamalayo fayiro ebigikwatako bw'ebanga okuva lweyasooka kutegebwa yakolebwako n'ate.",
 	"metadata-expand": "Laba ebisingawo",
 	"metadata-collapse": "Kisako ebimu, wasigalewo ebisinga obukulu",
-	"metadata-fields": "Ebiddako bye ebikwata ku fayiro eno ebyagiwandikibwamu ekyagitegekera kompyuta ebijakusigala nga biragibwa.<br />\nEbirala biyinza butalabika okujjako ng'okiragidde.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
+	"metadata-fields": "Ebiddako bye ebikwata ku fayiro eno ebyagiwandikibwamu ekyagitegekera kompyuta ebijakusigala nga biragibwa.<br />\nEbirala biyinza butalabika okujjako ng'okiragidde.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname\n* digitalsourcetype",
 	"namespacesall": "Gonna",
 	"monthsall": "gyonna",
 	"confirm_purge_button": "Kale",
@@ -759,6 +755,5 @@
 	"skin-action-protect": "Ssiba",
 	"skin-action-undelete": "Zawo",
 	"skin-action-delete": "Gyawo olupapula luno",
-	"skin-action-move": "Simbuliza",
-	"interwiki_edit": "Kyusa"
+	"skin-action-move": "Simbuliza"
 }

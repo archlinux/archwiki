@@ -3,6 +3,7 @@
 namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
 
 use ArrayUtils;
+use GlobalPreferences\GlobalPreferencesFactory;
 use MediaWiki\Block\Block;
 use MediaWiki\CheckUser\CheckUserPermissionStatus;
 use MediaWiki\CheckUser\HookHandler\PageDisplay;
@@ -11,6 +12,7 @@ use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\IPInfo\HookHandler\AbstractPreferencesHandler;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -23,6 +25,7 @@ use MediaWikiIntegrationTestCase;
 
 /**
  * @covers \MediaWiki\CheckUser\HookHandler\PageDisplay
+ * @covers \MediaWiki\CheckUser\Services\CheckUserIPRevealManager
  */
 class PageDisplayTest extends MediaWikiIntegrationTestCase {
 
@@ -38,11 +41,12 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $tempAccountsKnown Whether temporary accounts are known
 	 * @param bool $hasSeenOnboardingDialog Whether the user has seen the onboarding dialog
 	 * @param bool $hasEnabledIpReveal Whether the user has enabled the IP reveal preference
+	 * @param bool $hasEnabledIPInfo Whether the user has enabled the IPInfo use agreement
 	 * @param bool $hasIpRevealPermission Whether the user has the permission to reveal IPs
 	 * @param bool $hasIpInfoPermission Whether the user has the permission to access IP information
 	 * @param bool $isBlockedSitewide Whether the user is sitewide blocked
-	 * @param bool $isOnboardingDialogEnabled Whether the onboarding dialog is enabled in local configuration
 	 * @param bool $isIpInfoAvailable Whether the IPInfo extension is loaded
+	 * @param bool $isGlobalPreferencesAvailable Whether the GlobalPreferences extension is loaded
 	 */
 	public function testOnBeforePageDisplay(
 		?string $specialPageName,
@@ -50,12 +54,20 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		bool $tempAccountsKnown,
 		bool $hasSeenOnboardingDialog,
 		bool $hasEnabledIpReveal,
+		bool $hasEnabledIPInfo,
 		bool $hasIpRevealPermission,
 		bool $hasIpInfoPermission,
 		bool $isBlockedSitewide,
-		bool $isOnboardingDialogEnabled,
-		bool $isIpInfoAvailable
+		bool $isIpInfoAvailable,
+		bool $isGlobalPreferencesAvailable
 	): void {
+		if ( $isIpInfoAvailable ) {
+			$this->markTestSkippedIfExtensionNotLoaded( 'IPInfo' );
+		}
+		if ( $isGlobalPreferencesAvailable ) {
+			$this->markTestSkippedIfExtensionNotLoaded( 'GlobalPreferences' );
+		}
+
 		if ( $tempAccountsKnown ) {
 			$this->enableAutoCreateTempUser();
 		} else {
@@ -96,12 +108,30 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 			$testAuthority = $this->mockRegisteredAuthorityWithPermissions( $permissions );
 		}
 
-		$this->setService( 'UserOptionsLookup', new StaticUserOptionsLookup(
-			[], [
-				Preferences::TEMPORARY_ACCOUNTS_ONBOARDING_DIALOG_SEEN => (int)$hasSeenOnboardingDialog,
-				Preferences::ENABLE_IP_REVEAL => (int)$hasEnabledIpReveal,
-			]
-		) );
+		$options = [
+			Preferences::TEMPORARY_ACCOUNTS_ONBOARDING_DIALOG_SEEN => (int)$hasSeenOnboardingDialog,
+			Preferences::ENABLE_IP_REVEAL => (int)$hasEnabledIpReveal,
+		];
+
+		if ( $isIpInfoAvailable ) {
+			$options[AbstractPreferencesHandler::IPINFO_USE_AGREEMENT] = $hasEnabledIPInfo;
+		}
+
+		$this->setService( 'UserOptionsLookup', new StaticUserOptionsLookup( [], $options ) );
+
+		if ( $isGlobalPreferencesAvailable ) {
+			// The GlobalPreferencesFactory::getGlobalPreferencesValues method will cause a read from the database,
+			// so we mock it to avoid accessing the database and slowing these tests.
+			$mockGlobalPreferencesFactory = $this->createMock( GlobalPreferencesFactory::class );
+			$mockGlobalPreferencesFactory->method( 'getGlobalPreferencesValues' )
+				->willReturnCallback( function ( $actualUser ) use ( $testAuthority, $options ) {
+					$this->assertTrue( $testAuthority->getUser()->equals( $actualUser ) );
+
+					return $options;
+				} );
+
+			$this->setService( 'PreferencesFactory', $mockGlobalPreferencesFactory );
+		}
 
 		$context->setAuthority( $testAuthority );
 		$output = $context->getOutput();
@@ -109,21 +139,30 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 
 		$extensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$extensionRegistry->method( 'isLoaded' )
-			->with( 'IPInfo' )
-			->willReturn( $isIpInfoAvailable );
+			->willReturnCallback( static function ( $name ) use ( $isIpInfoAvailable, $isGlobalPreferencesAvailable ) {
+				if ( $name === 'IPInfo' ) {
+					return $isIpInfoAvailable;
+				}
+				if ( $name === 'GlobalPreferences' ) {
+					return $isGlobalPreferencesAvailable;
+				}
+				return false;
+			} );
 
 		$pageDisplayHookHandler = new PageDisplay(
 			new HashConfig( [
 				'CheckUserTemporaryAccountMaxAge' => 1234,
 				'CheckUserSpecialPagesWithoutIPRevealButtons' => [ 'BlockList' ],
 				'CUDMaxAge' => 12345,
-				'CheckUserEnableTempAccountsOnboardingDialog' => $isOnboardingDialogEnabled,
+				'CheckUserAutoRevealMaximumExpiry' => 1,
 			] ),
 			$this->getServiceContainer()->get( 'CheckUserPermissionManager' ),
+			$this->getServiceContainer()->get( 'CheckUserIPRevealManager' ),
 			$this->getServiceContainer()->getTempUserConfig(),
 			$this->getServiceContainer()->getUserOptionsLookup(),
 			$extensionRegistry,
-			$this->getServiceContainer()->getUserIdentityUtils()
+			$this->getServiceContainer()->getUserIdentityUtils(),
+			$this->getServiceContainer()->getPreferencesFactory()
 		);
 
 		$pageDisplayHookHandler->onBeforePageDisplay(
@@ -140,6 +179,7 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		if (
 			$tempAccountsKnown &&
 			( $specialPageName || $actionName ) &&
+			$specialPageName !== 'BlockList' &&
 			$hasIpRevealPermission
 		) {
 			if ( $hasEnabledIpReveal ) {
@@ -156,14 +196,14 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 				}
 			}
 
-			if (
-				$isOnboardingDialogEnabled &&
-				!$hasSeenOnboardingDialog &&
-				( $actionName === 'history' || $specialPageName === 'Watchlist' )
-			) {
+			if ( !$hasSeenOnboardingDialog && ( $actionName === 'history' || $specialPageName === 'Watchlist' ) ) {
 				$expectedConfigVars += [
 					'wgCheckUserIPInfoExtensionLoaded' => $isIpInfoAvailable,
-					'wgCheckUserUserHasIPInfoRight' => $isIpInfoAvailable && $hasIpInfoPermission
+					'wgCheckUserUserHasIPInfoRight' => $isIpInfoAvailable && $hasIpInfoPermission,
+					'wgCheckUserIPInfoPreferenceChecked' => $isIpInfoAvailable && $hasEnabledIPInfo,
+					'wgCheckUserIPRevealPreferenceGloballyChecked' => $hasEnabledIpReveal,
+					'wgCheckUserIPRevealPreferenceLocallyChecked' => $hasEnabledIpReveal,
+					'wgCheckUserGlobalPreferencesExtensionLoaded' => $isGlobalPreferencesAvailable,
 				];
 				$expectedModules[] = 'ext.checkUser.tempAccountOnboarding';
 				$expectedModuleStyles[] = 'ext.checkUser.images';
@@ -176,7 +216,7 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 			array_unique( $expectedModuleStyles ),
 			$output->getModuleStyles()
 		);
-		$this->assertArrayEquals(
+		$this->assertArrayContains(
 			$expectedConfigVars,
 			$output->getJsConfigVars(),
 			false,
@@ -187,7 +227,7 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 	public static function provideOnBeforePageDisplayCases(): iterable {
 		$testCases = ArrayUtils::cartesianProduct(
 			// special pages
-			[ 'Watchlist', 'Block', null ],
+			[ 'Watchlist', 'Block', 'BlockList', null ],
 			// actions
 			[ 'info', 'history', null ],
 			// whether temporary accounts are known
@@ -196,15 +236,17 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 			[ true, false ],
 			// whether the user has enabled the IP reveal preference
 			[ true, false ],
+			// whether the user has enabled the IPInfo use agreement preference
+			[ true, false ],
 			// whether the user has the permission to reveal IPs
 			[ true, false ],
 			// whether the user has the permission to access IP information
 			[ true, false ],
 			// whether the user is sitewide blocked
 			[ true, false ],
-			// whether the onboarding dialog is enabled in local configuration
-			[ true, false ],
 			// whether the IPInfo extension is loaded
+			[ true, false ],
+			// whether the GlobalPreferences extension is loaded
 			[ true, false ]
 		);
 
@@ -215,11 +257,12 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 				$tempAccountsKnown,
 				$hasSeenOnboardingDialog,
 				$hasEnabledIpReveal,
+				$hasEnabledIPInfo,
 				$hasIpRevealPermission,
 				$hasIpInfoPermission,
 				$isBlockedSitewide,
-				$isOnboardingDialogEnabled,
 				$isIpInfoAvailable,
+				$isGlobalPreferencesAvailable,
 			] = $params;
 
 			// Special pages can't have actions.
@@ -227,18 +270,13 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 				continue;
 			}
 
-			// The presence of IPInfo and related permissions only influence config variables
-			// related to the onboarding dialog, so don't generate permutations involving them
+			// The presence of IPInfo and related permissions, and GlobalPreferences only influences config variables
+			// related to the onboarding dialog. So don't generate permutations involving these
 			// if we do not expect to show the dialog.
-			if ( $hasSeenOnboardingDialog || !$isOnboardingDialogEnabled ) {
-				if ( $isIpInfoAvailable || $hasIpInfoPermission ) {
+			if ( $hasSeenOnboardingDialog ) {
+				if ( $isIpInfoAvailable || $hasIpInfoPermission || $isGlobalPreferencesAvailable ) {
 					continue;
 				}
-			}
-
-			// Exclude permutations where features would be doubly disabled.
-			if ( !$isOnboardingDialogEnabled && $hasSeenOnboardingDialog ) {
-				continue;
 			}
 
 			if ( $isBlockedSitewide && !$hasIpRevealPermission ) {
@@ -250,31 +288,97 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 				(
 					$isBlockedSitewide ||
 					!$hasIpRevealPermission ||
-					$hasSeenOnboardingDialog ||
-					!$isOnboardingDialogEnabled
+					$hasSeenOnboardingDialog
 				)
 			) {
 				continue;
 			}
 
 			$description = sprintf(
-				'%s%s temporary accounts %s, onboarding dialog %s, IP reveal %s, ' .
-				'%s IP reveal permission, %s IP info permission, %s, onboarding dialog %s, ' .
-				'IPInfo extension %s',
+				'%s%s temporary accounts %s, onboarding dialog %s, IP reveal %s, IPInfo %s, ' .
+				'%s IP reveal permission, %s IP info permission, %s, IPInfo extension %s, ' .
+				'GlobalPreferences extension %s',
 				$specialPageName ? "Special:$specialPageName, " : '',
 				$actionName ? "action=$actionName," : '',
 				$tempAccountsKnown ? 'known' : 'not known',
 				$hasSeenOnboardingDialog ? 'seen' : 'not seen',
 				$hasEnabledIpReveal ? 'enabled' : 'disabled',
+				$hasEnabledIPInfo ? 'enabled' : 'disabled',
 				$hasIpRevealPermission ? 'with' : 'no',
 				$hasIpInfoPermission ? 'with' : 'no',
 				$isBlockedSitewide ? 'blocked sitewide' : 'not blocked',
-				$isOnboardingDialogEnabled ? 'enabled' : 'disabled',
-				$isIpInfoAvailable ? 'loaded' : 'not loaded'
+				$isIpInfoAvailable ? 'loaded' : 'not loaded',
+				$isGlobalPreferencesAvailable ? 'loaded' : 'not loaded'
 			);
 
 			yield $description => $params;
 		}
+	}
+
+	/** @dataProvider provideOnBeforePageDisplayForUserInfoCard */
+	public function testOnBeforePageDisplayForUserInfoCard(
+		bool $isEnabled,
+		bool $performerIsNamed,
+		array $expected
+	) {
+		$this->disableAutoCreateTempUser();
+
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$performer = $performerIsNamed ?
+			$this->mockRegisteredUltimateAuthority() :
+			$this->mockAnonUltimateAuthority();
+		$context->setAuthority( $performer );
+		$output = $context->getOutput();
+		$output->setContext( $context );
+
+		$options = [ Preferences::ENABLE_USER_INFO_CARD => (int)$isEnabled ];
+		$this->setService( 'UserOptionsLookup', new StaticUserOptionsLookup( [], $options ) );
+
+		$pageDisplayHookHandler = new PageDisplay(
+			new HashConfig(),
+			$this->getServiceContainer()->get( 'CheckUserPermissionManager' ),
+			$this->getServiceContainer()->get( 'CheckUserIPRevealManager' ),
+			$this->getServiceContainer()->getTempUserConfig(),
+			$this->getServiceContainer()->getUserOptionsLookup(),
+			$this->getServiceContainer()->getExtensionRegistry(),
+			$this->getServiceContainer()->getUserIdentityUtils(),
+			$this->getServiceContainer()->getPreferencesFactory()
+		);
+		$pageDisplayHookHandler->onBeforePageDisplay(
+			$output, $this->createMock( Skin::class )
+		);
+
+		$this->assertArrayEquals(
+			$expected,
+			$output->getJsConfigVars(),
+			false,
+			true
+		);
+	}
+
+	public static function provideOnBeforePageDisplayForUserInfoCard() {
+		return [
+			'UserInfoCard is enabled, performer is a non-temp user' => [
+				'isEnabled' => true,
+				'performerIsNamed' => true,
+				'expected' => [
+					'wgCheckUserCanAccessTemporaryAccountLog' => true,
+					'wgCheckUserCanBlock' => true,
+					'wgCheckUserCanPerformCheckUser' => true,
+					'wgCheckUserCanViewCheckUserLog' => true,
+				],
+			],
+			'UserInfoCard is enabled, performer is a temp user' => [
+				'isEnabled' => true,
+				'performerIsNamed' => false,
+				'expected' => [],
+			],
+			'UserInfoCard is disabled' => [
+				'isEnabled' => false,
+				'performerIsNamed' => false,
+				'expected' => [],
+			],
+		];
 	}
 
 	/** @dataProvider provideOnBeforePageDisplayForIPInfoHookCases */
@@ -285,6 +389,10 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		bool $ipInfoLoaded,
 		bool $shouldLoadModule
 	) {
+		if ( $ipInfoLoaded ) {
+			$this->markTestSkippedIfExtensionNotLoaded( 'IPInfo' );
+		}
+
 		// Set up a IContextSource where the title is $pageTitle
 		$context = new DerivativeContext( RequestContext::getMain() );
 		$context->setTitle( SpecialPage::getTitleFor( $pageTitle ) );
@@ -306,18 +414,26 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 
 		$mockExtensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$mockExtensionRegistry->method( 'isLoaded' )
-			->with( 'IPInfo' )
-			->willReturn( $ipInfoLoaded );
+			->willReturnCallback( static function ( $name ) use ( $ipInfoLoaded ) {
+				if ( $name === 'IPInfo' ) {
+					return $ipInfoLoaded;
+				}
+				return false;
+			} );
 
 		$pageDisplayHookHandler = new PageDisplay(
 			new HashConfig( [
-				'CheckUserEnableTempAccountsOnboardingDialog' => false,
+				'CheckUserTemporaryAccountMaxAge' => 1234,
+				'CheckUserSpecialPagesWithoutIPRevealButtons' => [],
+				'CheckUserAutoRevealMaximumExpiry' => 1,
 			] ),
 			$cuPermissionManager,
+			$this->getServiceContainer()->get( 'CheckUserIPRevealManager' ),
 			$this->getServiceContainer()->getTempUserConfig(),
 			$this->getServiceContainer()->getUserOptionsLookup(),
 			$mockExtensionRegistry,
-			$this->getServiceContainer()->getUserIdentityUtils()
+			$this->getServiceContainer()->getUserIdentityUtils(),
+			$this->getServiceContainer()->getPreferencesFactory()
 		);
 
 		$pageDisplayHookHandler->onBeforePageDisplay(

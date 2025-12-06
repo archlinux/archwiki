@@ -5,12 +5,13 @@
 			"Hedda",
 			"Joseph",
 			"MuratTheTurkish",
+			"ToprakM",
 			"Vito Genovese"
 		]
 	},
 	"questycaptcha-desc": "Onayla Düzenleme için Questy CAPTCHA üreteci",
 	"questycaptcha-addurl": "Değişikliğiniz yeni dış bağlantı içeriyor.\nOtomatik reklama karşı korunmaya yardımcı olmak ve viki'yi otomatik spam düzenlemeye karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
-	"questycaptcha-badlogin": "Viki'yi otomatik şifre kırmaya karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
+	"questycaptcha-badlogin": "Viki'yi otomatik parola kırmaya karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"questycaptcha-createaccount": "Viki'yi otomatik hesap oluşturmaya karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ediyoruz ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"questycaptcha-create": "Sayfayı oluşturmak için, lütfen ([[Special:Captcha/help|daha fazla bilgi]]) bölümünün altında yer alan soruya cevap verin:",
 	"questycaptcha-edit": "Sayfayı değiştirmek için, lütfen bölümünün altında yer alan soruya cevap verin ([[Special:Captcha/help|daha fazla bilgi]]):",

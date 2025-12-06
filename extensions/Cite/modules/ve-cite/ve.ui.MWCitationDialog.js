@@ -1,6 +1,6 @@
 'use strict';
 
-/*
+/**
  * VisualEditor user interface MWCitationDialog class.
  *
  * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
@@ -25,6 +25,9 @@ ve.ui.MWCitationDialog = function VeUiMWCitationDialog( config ) {
 	this.inDialog = '';
 };
 
+const MWReferenceModel = require( './ve.dm.MWReferenceModel.js' );
+const MWReferenceNode = require( './ve.dm.MWReferenceNode.js' );
+
 /* Inheritance */
 
 OO.inheritClass( ve.ui.MWCitationDialog, ve.ui.MWTransclusionDialog );
@@ -38,12 +41,12 @@ ve.ui.MWCitationDialog.static.name = 'cite';
 /**
  * Get the reference node to be edited.
  *
- * @return {ve.dm.MWReferenceNode|null} Reference node to be edited, null if none exists
+ * @return {MWReferenceNode|null} Reference node to be edited, null if none exists
  */
 ve.ui.MWCitationDialog.prototype.getReferenceNode = function () {
 	const selectedNode = this.getFragment().getSelectedNode();
 
-	if ( selectedNode instanceof ve.dm.MWReferenceNode ) {
+	if ( selectedNode instanceof MWReferenceNode ) {
 		return selectedNode;
 	}
 
@@ -108,7 +111,7 @@ ve.ui.MWCitationDialog.prototype.getSetupProcess = function ( data ) {
 			// Initialization
 			this.referenceNode = this.getReferenceNode();
 			if ( this.referenceNode ) {
-				this.referenceModel = ve.dm.MWReferenceModel.static.newFromReferenceNode(
+				this.referenceModel = MWReferenceModel.static.newFromReferenceNode(
 					this.referenceNode
 				);
 			}
@@ -167,7 +170,7 @@ ve.ui.MWCitationDialog.prototype.getActionProcess = function ( action ) {
 				if ( !this.referenceModel ) {
 					// Collapse returns a new fragment, so update this.fragment
 					this.fragment = this.getFragment().collapseToEnd();
-					this.referenceModel = new ve.dm.MWReferenceModel( doc );
+					this.referenceModel = new MWReferenceModel( doc );
 					this.referenceModel.insertIntoFragment( this.getFragment() );
 				}
 
@@ -205,7 +208,7 @@ ve.ui.MWCitationDialog.prototype.getActionProcess = function ( action ) {
 				);
 				this.referenceModel.updateInternalItem( surfaceModel );
 
-				this.close( { action: action } );
+				this.close( { action } );
 			} ).always( deferred.resolve );
 
 			return deferred;
@@ -240,6 +243,4 @@ ve.ui.MWCitationDialog.prototype.onInputChange = function () {
 	}
 };
 
-/* Registration */
-
-ve.ui.windowFactory.register( ve.ui.MWCitationDialog );
+module.exports = ve.ui.MWCitationDialog;

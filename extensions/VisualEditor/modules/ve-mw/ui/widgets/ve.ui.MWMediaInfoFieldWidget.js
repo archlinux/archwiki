@@ -24,10 +24,7 @@
  * @param {string} [config.type='attribute'] Field type, either 'description' or 'attribute'
  * @param {string} [config.descriptionHeight='4em'] Height limit for description fields
  */
-ve.ui.MWMediaInfoFieldWidget = function VeUiMWMediaInfoFieldWidget( content, config ) {
-	// Configuration initialization
-	config = config || {};
-
+ve.ui.MWMediaInfoFieldWidget = function VeUiMWMediaInfoFieldWidget( content, config = {} ) {
 	// Parent constructor
 	ve.ui.MWMediaInfoFieldWidget.super.call( this, config );
 
@@ -53,18 +50,16 @@ ve.ui.MWMediaInfoFieldWidget = function VeUiMWMediaInfoFieldWidget( content, con
 		}
 
 		if ( config.href ) {
+			// For the cases where we get urls that are "local"
+			// without http(s) prefix, we will add that prefix
+			// ourselves
+			const href = !/^(https?:)?\/\//.test( config.href ) ?
+				'//' + config.href :
+				config.href;
 			// This variable may contain either jQuery objects or strings
 			// eslint-disable-next-line no-jquery/variable-pattern
-			content = $( '<a>' )
-				.attr( 'href',
-					// For the cases where we get urls that are "local"
-					// without http(s) prefix, we will add that prefix
-					// ourselves
-					!/^(https?:)?\/\//.test( config.href ) ?
-						'//' + config.href :
-						config.href
-				)
-				.text( content );
+			content = $( '<a>' ).text( content );
+			ve.setAttributeSafe( content[ 0 ], 'href', href );
 		}
 	}
 

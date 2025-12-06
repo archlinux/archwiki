@@ -11,6 +11,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserCacheFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Parser\Parsoid\HtmlToContentTransform;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
@@ -32,7 +33,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Tests\Rest\RestTestTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
-use MediaWiki\Title\TitleValue;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -121,6 +122,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$dataAccess,
 			$methodOverrides
 		) extends ParsoidHandler {
+			/** @var array */
 			private $overrides;
 
 			public function __construct(
@@ -308,13 +310,16 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$rev = $revIdOrText;
 		}
 
-		return $this->getServiceContainer()->getParsoidPageConfigFactory()->create( $page, null, $rev );
+		return $this->getServiceContainer()->getParsoidPageConfigFactory()
+			->createFromParserOptions(
+				ParserOptions::newFromAnon(), $page, $rev
+			);
 	}
 
 	private function getPageConfigFactory( PageIdentity $page ): PageConfigFactory {
 		/** @var PageConfigFactory|MockObject $pageConfigFactory */
-		$pageConfigFactory = $this->createNoOpMock( PageConfigFactory::class, [ 'create' ] );
-		$pageConfigFactory->method( 'create' )->willReturn( $this->getPageConfig( $page ) );
+		$pageConfigFactory = $this->createNoOpMock( PageConfigFactory::class, [ 'createFromParserOptions' ] );
+		$pageConfigFactory->method( 'createFromParserOptions' )->willReturn( $this->getPageConfig( $page ) );
 		return $pageConfigFactory;
 	}
 
@@ -943,7 +948,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function makePage( $title, $wikitext ): RevisionRecord {
-		$title = new TitleValue( NS_MAIN, $title );
+		$title = Title::makeTitle( NS_MAIN, $title );
 		$rev = $this->getServiceContainer()->getRevisionLookup()->getRevisionByTitle( $title );
 
 		if ( $rev ) {
@@ -1268,7 +1273,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 
 		// TODO: ResourceLimitExceededException from $parsoid->dom2wikitext -> 413
 		// TODO: ClientError from $parsoid->dom2wikitext -> 413
-		// TODO: Errors from PageBundle->validate
+		// TODO: Errors from HtmlPageBundle->validate
 	}
 
 	/**
@@ -1500,16 +1505,26 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 	/** @return Generator */
 	public static function provideTryToCreatePageConfigDataThrows() {
 		$en = new Bcp47CodeValue( 'en' );
+		$missingRevisionException = new LocalizedHttpException(
+			new MessageValue(
+				"rest-specified-revision-unavailable",
+				[ 'The specified revision does not exist.' ]
+			),
+			404
+		);
+
 		yield "PageConfig with oldid that doesn't exist" => [
 			'attribs' => [ 'oldid' => null, 'pageName' => 'Test', 'pagelanguage' => $en ],
 			'wikitext' => null,
 			'html2WtMode' => false,
+			'expected' => $missingRevisionException,
 		];
 
 		yield 'PageConfig with a bad title' => [
 			[ 'oldid' => null, 'pageName' => 'Special:Badtitle', 'pagelanguage' => $en ],
 			'wikitext' => null,
 			'html2WtMode' => false,
+			'expected' => $missingRevisionException,
 		];
 
 		yield "PageConfig with a revision that doesn't exist" => [
@@ -1518,6 +1533,23 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			[ 'oldid' => 12345678, 'pageName' => 'Test', 'pagelanguage' => $en ],
 			'wikitext' => null,
 			'html2WtMode' => false,
+			'expected' => new LocalizedHttpException(
+				new MessageValue(
+					"rest-specified-revision-unavailable",
+					[ 'Can\'t find revision 12345678' ]
+				),
+				404
+			),
+		];
+
+		yield 'PageConfig with an invalid title' => [
+			[ 'oldid' => null, 'pageName' => 'Talk:File:Foo.jpg', 'pagelanguage' => $en ],
+			'wikitext' => null,
+			'html2WtMode' => false,
+			'expected' => new LocalizedHttpException(
+				new MessageValue( "rest-invalid-title", [ 'pageName' ] ),
+				400
+			),
 		];
 	}
 
@@ -1526,11 +1558,25 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @dataProvider provideTryToCreatePageConfigDataThrows
 	 */
-	public function testTryToCreatePageConfigThrows( array $attribs, $wikitext, $html2WtMode ) {
-		$this->expectException( HttpException::class );
-		$this->expectExceptionCode( 404 );
+	public function testTryToCreatePageConfigThrows(
+		array $attribs,
+		$wikitext,
+		$html2WtMode,
+		HttpException $expected
+	) {
+		try {
+			$this->newParsoidHandler()->tryToCreatePageConfig( $attribs, $wikitext, $html2WtMode );
+			$this->fail( 'Expected exception: ' . get_class( $expected ) );
+		} catch ( HttpException $e ) {
+			$this->assertSame( get_class( $expected ), get_class( $e ) );
+			$this->assertSame( $expected->getMessage(), $e->getMessage() );
+			$this->assertSame( $expected->getCode(), $e->getCode() );
 
-		$this->newParsoidHandler()->tryToCreatePageConfig( $attribs, $wikitext, $html2WtMode );
+			if ( $expected instanceof LocalizedHttpException ) {
+				$this->assertEquals( $expected->getMessageValue(), $e->getMessageValue() );
+				$this->assertSame( $expected->getErrorData(), $e->getErrorData() );
+			}
+		}
 	}
 
 	public static function provideRoundTripNoSelser() {
@@ -2143,12 +2189,17 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( 'Page 1 revision content', $data );
 
 		// Test 3 repeated with ParserCache to ensure nothing is written to cache!
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'get', 'getDirty', 'makeParserOutputKey' ] );
+		$parserCache = $this->createNoOpMock(
+			ParserCache::class,
+			[ 'save', 'get', 'getDirty', 'getMetadata', 'makeParserOutputKey', ]
+		);
+
 		// This is the critical assertion -- no cache svaes for mismatched rev & page params
 		$parserCache->expects( $this->never() )->method( 'save' );
 		// Ensures there is a cache miss
 		$parserCache->method( 'get' )->willReturn( false );
 		$parserCache->method( 'getDirty' )->willReturn( false );
+		$parserCache->method( 'getMetadata' )->willReturn( null );
 		// Verify that the cache is queried
 		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 		$parserCacheFactory = $this->createNoOpMock(
@@ -2168,13 +2219,18 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage();
 		$pageConfig = $this->getPageConfig( $page );
 
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'get', 'getDirty', 'makeParserOutputKey' ] );
+		$parserCache = $this->createNoOpMock(
+			ParserCache::class,
+			[ 'save', 'get', 'getDirty', 'getMetadata', 'makeParserOutputKey', ]
+		);
 
 		// This is the critical assertion in this test case: the save() method should
 		// be called exactly once!
 		$parserCache->expects( $this->once() )->method( 'save' );
 		$parserCache->method( 'get' )->willReturn( false );
 		$parserCache->method( 'getDirty' )->willReturn( false );
+		$parserCache->method( 'getMetadata' )->willReturn( null );
+
 		// These methods will be called by ParserOutputAccess:qa
 		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 

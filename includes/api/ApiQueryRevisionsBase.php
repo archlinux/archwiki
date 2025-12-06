@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -171,6 +157,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -394,7 +381,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		if ( $this->fld_size ) {
 			try {
 				$vals['size'] = (int)$revision->getSize();
-			} catch ( RevisionAccessException $e ) {
+			} catch ( RevisionAccessException ) {
 				// Back compat: If there's no size, return 0.
 				// @todo: Gergő says to mention T198099 as a "todo" here.
 				$vals['size'] = 0;
@@ -410,7 +397,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			if ( !( $revDel & self::CANNOT_VIEW ) ) {
 				try {
 					$vals['sha1'] = \Wikimedia\base_convert( $revision->getSha1(), 36, 16, 40 );
-				} catch ( RevisionAccessException $e ) {
+				} catch ( RevisionAccessException ) {
 					// Back compat: If there's no sha1, return empty string.
 					// @todo: Gergő says to mention T198099 as a "todo" here.
 					$vals['sha1'] = '';
@@ -495,7 +482,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		if ( $this->slotRoles === null ) {
 			try {
 				$slot = $revision->getSlot( SlotRecord::MAIN, RevisionRecord::RAW );
-			} catch ( RevisionAccessException $e ) {
+			} catch ( RevisionAccessException ) {
 				// Back compat: If there's no slot, there's no content, so set 'textmissing'
 				// @todo: Gergő says to mention T198099 as a "todo" here.
 				$vals['textmissing'] = true;
@@ -527,7 +514,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			foreach ( $roles as $role ) {
 				try {
 					$slot = $revision->getSlot( $role, RevisionRecord::RAW );
-				} catch ( RevisionAccessException $e ) {
+				} catch ( RevisionAccessException ) {
 					// Don't error out here so the client can still process other slots/revisions.
 					// @todo: Gergő says to mention T198099 as a "todo" here.
 					$vals['slots'][$role]['missing'] = true;
@@ -608,7 +595,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			if ( !( $revDel & self::CANNOT_VIEW ) ) {
 				try {
 					$content = $slot->getContent();
-				} catch ( RevisionAccessException $e ) {
+				} catch ( RevisionAccessException ) {
 					// @todo: Gergő says to mention T198099 as a "todo" here.
 					$vals['textmissing'] = true;
 				}
@@ -650,7 +637,6 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 					Parser::OT_PREPROCESS
 				);
 				$dom = $parser->preprocessToDom( $t );
-				// @phan-suppress-next-line PhanUndeclaredMethodInCallable
 				if ( is_callable( [ $dom, 'saveXML' ] ) ) {
 					// @phan-suppress-next-line PhanUndeclaredMethod
 					$xml = $dom->saveXML();

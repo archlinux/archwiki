@@ -10,13 +10,17 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TreeBuilder;
 
 use Generator;
+use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\NodeData;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
+use Wikimedia\Parsoid\Tokens\CompoundTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\NlTk;
@@ -52,11 +56,8 @@ class TreeBuilderStage extends PipelineStage {
 	/** @var string */
 	private $textContentBuffer = '';
 
-	public function __construct(
-		Env $env, array $options = [], string $stageId = "",
-		?PipelineStage $prevStage = null
-	) {
-		parent::__construct( $env, $prevStage );
+	public function __construct( Env $env, array $options = [], string $stageId = "" ) {
+		parent::__construct( $env );
 
 		// Reset variable state and set up the parser
 		$this->resetState( [] );
@@ -135,26 +136,21 @@ class TreeBuilderStage extends PipelineStage {
 		}
 	}
 
+	/**
+	 * @return DocumentFragment|Element
+	 */
 	public function finalizeDOM(): Node {
-		// Check if the EOFTk actually made it all the way through, and flag the
-		// page where it did not!
-		if ( $this->lastToken !== null && !( $this->lastToken instanceof EOFTk ) ) {
-			$this->env->log(
-				'error', 'EOFTk was lost in page',
-				$this->env->getContextTitle()->getPrefixedText()
-			);
-		}
+		Assert::invariant( $this->lastToken instanceof EOFTk, 'EOFTk was lost!' );
 
 		if ( $this->toFragment ) {
-			// This is similar to DOMCompat::setInnerHTML() in that we can
-			// consider it equivalent to the fragment parsing algorithm,
-			// https://html.spec.whatwg.org/#html-fragment-parsing-algorithm
-			$node = $this->env->getTopLevelDoc()->createDocumentFragment();
-			DOMUtils::migrateChildrenBetweenDocs(
-				DOMCompat::getBody( $this->remexPipeline->doc ), $node
-			);
+			$node = $this->remexPipeline->documentFragment;
 		} else {
-			$node = DOMCompat::getBody( $this->remexPipeline->doc );
+			// Migrate remex children to top level document element
+			DOMUtils::migrateChildren(
+				$this->remexPipeline->documentFragment,
+				DOMCompat::getBody( $this->env->getTopLevelDoc() )
+			);
+			$node = DOMCompat::getBody( $this->env->getTopLevelDoc() );
 		}
 
 		return $node;
@@ -172,9 +168,10 @@ class TreeBuilderStage extends PipelineStage {
 	/**
 	 * Keep this in sync with `DOMDataUtils.setNodeData()`
 	 *
-	 * @param array $attribs
+	 * @param array<string,string> $attribs
 	 * @param DataParsoid $dataParsoid
-	 * @return array
+	 * @param ?DataMw $dataMw
+	 * @return array<string,string>
 	 */
 	private function stashDataAttribs( array $attribs, DataParsoid $dataParsoid, ?DataMw $dataMw ): array {
 		$data = new NodeData;
@@ -195,6 +192,8 @@ class TreeBuilderStage extends PipelineStage {
 	 * @param Token|string $token
 	 */
 	public function processToken( $token ): void {
+		$this->env->trace( 'html', $this->pipelineId, $token );
+
 		if ( $this->pipelineId === 0 ) {
 			if ( $this->env->bumpWt2HtmlResourceUse( 'token' ) === false ) {
 				// `false` indicates that this bump pushed us over the threshold
@@ -217,8 +216,6 @@ class TreeBuilderStage extends PipelineStage {
 		if ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) {
 			$tmp->tagId = $this->tagId++;
 		}
-
-		$this->env->trace( 'html', $this->pipelineId, $token );
 
 		// Store the last token
 		$this->lastToken = $token;
@@ -253,6 +250,10 @@ class TreeBuilderStage extends PipelineStage {
 			$data = $token instanceof NlTk ? "\n" : $token;
 			// Combine string tokens to be finalized later
 			$this->textContentBuffer .= $data;
+		} elseif ( $token instanceof CompoundTk ) {
+			$this->env->trace( 'html', $this->pipelineId, "---- START NESTED TOKENS ----" );
+			$this->processChunk( $token->getNestedTokens() );
+			$this->env->trace( 'html', $this->pipelineId, "---- END NESTED TOKENS ----" );
 		} elseif ( $token instanceof TagTk ) {
 			$tName = $token->getName();
 			if ( $tName === 'table' ) {
@@ -280,12 +281,6 @@ class TreeBuilderStage extends PipelineStage {
 			}
 		} elseif ( $token instanceof SelfclosingTagTk ) {
 			$tName = $token->getName();
-
-			// Re-expand an empty-line meta-token into its constituent comment + WS tokens
-			if ( TokenUtils::isEmptyLineMetaToken( $token ) ) {
-				$this->processChunk( $dataParsoid->tokens );
-				return;
-			}
 
 			$wasInserted = false;
 
@@ -398,12 +393,12 @@ class TreeBuilderStage extends PipelineStage {
 		if ( ( $dp->stx ?? null ) !== 'html' &&
 			( $name === 'td' || $name === 'tr' || $name === 'th' )
 		) {
-			// A stripped wikitext-syntax table tag outside of a table. Re-insert the original
-			// page source.
+			// A stripped wikitext-syntax table tag outside of a table.
+			// Re-insert the original page source.
 			if ( !empty( $dp->tsr ) &&
 				$dp->tsr->start !== null && $dp->tsr->end !== null
 			) {
-				$origTxt = $dp->tsr->substr( $this->frame->getSrcText() );
+				$origTxt = $dp->tsr->substr( $this->frame->getSource() );
 			} else {
 				switch ( $name ) {
 					case 'td':
@@ -438,7 +433,7 @@ class TreeBuilderStage extends PipelineStage {
 	 */
 	private function insertPlaceholderMeta(
 		string $name, DataParsoid $dp, bool $isStart
-	) {
+	): void {
 		// If node is in a position where the placeholder node will get fostered
 		// out, don't bother adding one since the browser and other compliant
 		// clients will move the placeholder out of the table.
@@ -450,7 +445,7 @@ class TreeBuilderStage extends PipelineStage {
 
 		if ( !$src ) {
 			if ( !empty( $dp->tsr ) ) {
-				$src = $dp->tsr->substr( $this->frame->getSrcText() );
+				$src = $dp->tsr->substr( $this->frame->getSource() );
 			} elseif ( WTUtils::hasLiteralHTMLMarker( $dp ) ) {
 				if ( $isStart ) {
 					$src = '<' . $name . '>';
@@ -476,26 +471,33 @@ class TreeBuilderStage extends PipelineStage {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( $input, array $opts ) {
+	public function process(
+		string|array|DocumentFragment|Element $input,
+		array $options
+	): array|Element|DocumentFragment {
+		Assert::invariant( is_array( $input ), "Input should be an array" );
 		'@phan-var array $input'; // @var array $input
 		$this->processChunk( $input );
-		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $this->finalizeDOM();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function processChunkily( $input, array $opts ): Generator {
-		if ( $this->prevStage ) {
-			foreach ( $this->prevStage->processChunkily( $input, $opts ) as $chunk ) {
-				'@phan-var array $chunk'; // @var array $chunk
-				$this->processChunk( $chunk );
-			}
-			yield $this->finalizeDOM();
-		} else {
-			yield $this->process( $input, $opts );
-		}
+	public function processChunkily(
+		string|array|DocumentFragment|Element $input,
+		array $options
+	): Generator {
+		'@phan-var array $input'; // @var array $chunk
+		$this->processChunk( $input );
+		yield [];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function finalize(): Generator {
+		yield $this->finalizeDOM();
 	}
 
 	private function hasAfe(): bool {

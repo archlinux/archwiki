@@ -15,18 +15,21 @@
 	"license-name": "MIT",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"APIMetaModules": {
 		"notifications": {
 			"class": "MediaWiki\\Extension\\Notifications\\Api\\ApiEchoNotifications",
 			"services": [
-				"MainConfig"
+				"EchoAttributeManager",
+				"MainConfig",
+				"JsonCodec"
 			]
 		},
 		"unreadnotificationpages": {
 			"class": "MediaWiki\\Extension\\Notifications\\Api\\ApiEchoUnreadNotificationPages",
 			"services": [
+				"EchoAttributeManager",
 				"PageStore",
 				"TitleFactory"
 			]
@@ -165,11 +168,11 @@
 	"ResourceModules": {
 		"ext.echo.ui.desktop": {
 			"scripts": [
-				"ui/mw.echo.ui.BadgeLinkWidget.js",
-				"ui/mw.echo.ui.NotificationBadgeWidget.js"
+				"ui/mw.echo.ui.BadgeLinkController.js",
+				"ui/mw.echo.ui.NotificationBadgeController.js"
 			],
 			"styles": [
-				"styles/mw.echo.ui.NotificationBadgeWidget.less"
+				"styles/mw.echo.ui.NotificationBadgeController.less"
 			],
 			"dependencies": [
 				"ext.echo.ui",
@@ -259,6 +262,7 @@
 				"echo-mark-wiki-as-read",
 				"echo-notification-alert",
 				"echo-notification-notice",
+				"echo-notification-all",
 				"echo-notification-loginrequired",
 				"echo-notification-popup-loginrequired",
 				"notification-link-text-expand-all",
@@ -283,8 +287,6 @@
 				"echo-notification-all-text-only",
 				"echo-email-batch-bullet",
 				"echo-notification-placeholder",
-				"tooltip-pt-notifications-alert",
-				"tooltip-pt-notifications-notice",
 				"mytalk",
 				"mypreferences",
 				"sunday",
@@ -485,16 +487,12 @@
 		"EmailUserComplete": "main",
 		"LoginFormValidErrorMessages": "main",
 		"OutputPageCheckLastModified": "main",
-		"ArticleDeleteComplete": "main",
 		"ArticleUndelete": "main",
 		"UserMergeAccountFields": "usermerge",
 		"MergeAccountFromTo": "usermerge",
 		"UserMergeAccountDeleteTables": "usermerge",
-		"PageSaveComplete": "main",
-		"LocalUserCreated": "main",
 		"RollbackComplete": "main",
 		"UserSaveSettings": "main",
-		"SendWatchlistEmailNotification": "main",
 		"GetNewMessagesAlert": "main",
 		"LinksUpdateComplete": "main",
 		"SpecialMuteModifyFormFields": "main",
@@ -515,8 +513,8 @@
 				"ContentLanguage",
 				"LinkRenderer",
 				"NamespaceInfo",
+				"NotificationService",
 				"PermissionManager",
-				"RevisionStore",
 				"StatsFactory",
 				"TalkPageNotificationManager",
 				"UserEditTracker",
@@ -528,17 +526,41 @@
 			"class": "MediaWiki\\Extension\\Notifications\\SchemaHooks"
 		},
 		"usermerge": {
-			"class": "MediaWiki\\Extension\\Notifications\\UserMergeHooks"
+			"class": "MediaWiki\\Extension\\Notifications\\UserMergeHooks",
+			"services": [
+				"EchoAttributeManager"
+			]
 		}
 	},
+	"DomainEventIngresses": [
+		{
+			"events": [
+				"PageDeleted",
+				"PageLatestRevisionChanged"
+			],
+			"class": "MediaWiki\\Extension\\Notifications\\MediaWikiEventIngress\\PageEventIngress",
+			"services": [
+				"RevisionStore",
+				"UserEditTracker",
+				"EchoEventMapper"
+			]
+		}
+	],
 	"NotificationMiddleware": [
 		{
 			"class": "MediaWiki\\Extension\\Notifications\\Notifications\\RecentChangeNotificationMiddleware",
 			"services": [
-				"MainConfig"
+				"MainConfig",
+				"UserFactory",
+				"EchoAttributeManager"
 			]
 		}
 	],
+	"DeprecatedHooks": {
+		"EventInsertComplete": {
+			"deprecatedVersion": "1.45"
+		}
+	},
 	"config": {
 		"EchoEnableEmailBatch": {
 			"value": true
@@ -614,6 +636,10 @@
 				"thank-you-edit": {
 					"web": true,
 					"email": false
+				},
+				"verify-email-reminder": {
+					"web": true,
+					"email": true
 				}
 			},
 			"merge_strategy": "array_plus_2d"
@@ -660,8 +686,7 @@
 					]
 				},
 				"user-rights": {
-					"priority": 9,
-					"tooltip": "echo-pref-tooltip-user-rights"
+					"priority": 9
 				},
 				"other": {
 					"no-dismiss": [
@@ -672,12 +697,10 @@
 					"priority": 1,
 					"no-dismiss": [
 						"web"
-					],
-					"tooltip": "echo-pref-tooltip-edit-user-talk"
+					]
 				},
 				"edit-user-page": {
-					"priority": 1,
-					"tooltip": "echo-pref-tooltip-edit-user-page"
+					"priority": 1
 				},
 				"reverted": {
 					"priority": 9,
@@ -700,8 +723,7 @@
 					"tooltip": "echo-pref-tooltip-mention-success"
 				},
 				"emailuser": {
-					"priority": 9,
-					"tooltip": "echo-pref-tooltip-emailuser"
+					"priority": 9
 				},
 				"article-reminder": {
 					"priority": 1,
@@ -722,12 +744,20 @@
 				"api-triggered": {
 					"priority": 9,
 					"tooltip": "echo-pref-tooltip-api-triggered"
+				},
+				"verify-email-reminder": {
+					"priority": 1,
+					"tooltip": "echo-pref-tooltip-verify-email-reminder"
 				}
 			},
 			"merge_strategy": "array_plus_2d"
 		},
 		"EchoNotificationIcons": {
 			"value": {
+				"alert": {
+					"path": "Echo/modules/icons/alert.svg",
+					"url": false
+				},
 				"watchlist-progressive": {
 					"path": {
 						"ltr": "Echo/modules/icons/watchlist-ltr-progressive.svg",
@@ -1005,6 +1035,12 @@
 					"group": "neutral",
 					"section": "alert"
 				},
+				"verify-email-reminder": {
+					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoVerifyEmailReminderPresentationModel",
+					"category": "verify-email-reminder",
+					"group": "negative",
+					"section": "alert"
+				},
 				"foreign": {
 					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoForeignPresentationModel",
 					"user-locators": [
@@ -1047,6 +1083,12 @@
 					"group": "neutral",
 					"section": "message",
 					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoManualPresentationModel"
+				},
+				"mediawiki.simple": {
+					"category": "other",
+					"group": "neutral",
+					"section": "message",
+					"presentation-model": "MediaWiki\\Extension\\Notifications\\Formatters\\EchoSimpleMessagePresentationModel"
 				}
 			},
 			"merge_strategy": "array_plus_2d"
@@ -1061,6 +1103,10 @@
 		"EchoMaxMentionsInEditSummary": {
 			"value": 0,
 			"description": "Maximum nubmer of users that will be notified that they were linked from an edit summary or 0 for no notifications"
+		},
+		"EchoMentionsInEditSummaryBots": {
+			"value": false,
+			"description": "Whether to allow mentions by bot accounts in edit summaries to trigger notifications (subject to EchoMaxMentionsInEditSummary limit)"
 		},
 		"EchoPollForUpdates": {
 			"value": 0,
@@ -1127,7 +1173,7 @@
 		"RecomputeNotifCounts": "maintenance/recomputeNotifCounts.php",
 		"RemoveInvalidNotification": "maintenance/removeInvalidNotification.php",
 		"RemoveOrphanedEvents": "maintenance/removeOrphanedEvents.php",
-		"EchoUpdatePerUserBlacklist": "maintenance/updatePerUserBlacklist.php",
+		"UpdatePerUserBlacklist": "maintenance/updatePerUserBlacklist.php",
 		"EchoPush\\PushNotifier": "includes/Push/PushNotifier.php",
 		"MediaWiki\\Extension\\Notifications\\Push\\PushNotifier": "includes/Push/PushNotifier.php"
 	},
@@ -1145,7 +1191,7 @@
 		"ServiceWiring.php"
 	],
 	"ConfigRegistry": {
-		"Echo": "GlobalVarConfig::newInstance"
+		"Echo": "MediaWiki\\Config\\GlobalVarConfig::newInstance"
 	},
 	"InstallerTasks": [
 		{

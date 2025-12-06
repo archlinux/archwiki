@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -23,7 +9,6 @@ namespace MediaWiki\EditPage;
 use BadMethodCallException;
 use MediaWiki\Actions\WatchAction;
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\CommentStore\CommentStoreComment;
@@ -35,14 +20,11 @@ use MediaWiki\Content\TextContent;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Debug\DeprecationHelper;
-use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\EditPage\Constraint\AccidentalRecreationConstraint;
 use MediaWiki\EditPage\Constraint\AuthorizationConstraint;
-use MediaWiki\EditPage\Constraint\BrokenRedirectConstraint;
 use MediaWiki\EditPage\Constraint\ChangeTagsConstraint;
 use MediaWiki\EditPage\Constraint\ContentModelChangeConstraint;
 use MediaWiki\EditPage\Constraint\DefaultTextConstraint;
-use MediaWiki\EditPage\Constraint\DoubleRedirectConstraint;
 use MediaWiki\EditPage\Constraint\EditConstraintFactory;
 use MediaWiki\EditPage\Constraint\EditConstraintRunner;
 use MediaWiki\EditPage\Constraint\EditFilterMergedContentHookConstraint;
@@ -52,7 +34,7 @@ use MediaWiki\EditPage\Constraint\ImageRedirectConstraint;
 use MediaWiki\EditPage\Constraint\MissingCommentConstraint;
 use MediaWiki\EditPage\Constraint\NewSectionMissingSubjectConstraint;
 use MediaWiki\EditPage\Constraint\PageSizeConstraint;
-use MediaWiki\EditPage\Constraint\SelfRedirectConstraint;
+use MediaWiki\EditPage\Constraint\RedirectConstraint;
 use MediaWiki\EditPage\Constraint\SpamRegexConstraint;
 use MediaWiki\EditPage\Constraint\UnicodeConstraint;
 use MediaWiki\Exception\ErrorPageError;
@@ -81,7 +63,6 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPage;
-use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputLinkTypes;
@@ -95,6 +76,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Session\SessionManager;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
@@ -102,12 +84,13 @@ use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\User\TempUser\CreateStatus;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserNameUtils;
+use MediaWiki\Watchlist\WatchedItem;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use MessageLocalizer;
@@ -243,9 +226,6 @@ class EditPage implements IEditObject {
 	private $incompleteForm = false;
 
 	/** @var bool */
-	private $missingComment = false;
-
-	/** @var bool */
 	private $missingSummary = false;
 
 	/** @var bool */
@@ -257,26 +237,14 @@ class EditPage implements IEditObject {
 	/** @var bool */
 	private $allowBlankArticle = false;
 
-	/** @var bool */
-	private $selfRedirect = false;
+	/** @var ?Title */
+	private $problematicRedirectTarget = null;
+
+	/** @var ?Title */
+	private $allowedProblematicRedirectTarget = null;
 
 	/** @var bool */
-	private $allowSelfRedirect = false;
-
-	/** @var bool */
-	private $brokenRedirect = false;
-
-	/** @var bool */
-	private $allowBrokenRedirects = false;
-
-	/** @var bool */
-	private $doubleRedirect = false;
-
-	/** @var bool */
-	private $doubleRedirectLoop = false;
-
-	/** @var bool */
-	private $allowDoubleRedirects = false;
+	private $ignoreProblematicRedirects = false;
 
 	/** @var string */
 	private $autoSumm = '';
@@ -471,16 +439,15 @@ class EditPage implements IEditObject {
 	private IContentHandlerFactory $contentHandlerFactory;
 	private PermissionManager $permManager;
 	private RevisionStore $revisionStore;
-	private WikiPageFactory $wikiPageFactory;
 	private WatchlistManager $watchlistManager;
-	private UserNameUtils $userNameUtils;
 	private RedirectLookup $redirectLookup;
 	private UserOptionsLookup $userOptionsLookup;
 	private TempUserCreator $tempUserCreator;
 	private UserFactory $userFactory;
 	private IConnectionProvider $dbProvider;
-	private BlockErrorFormatter $blockErrorFormatter;
 	private AuthManager $authManager;
+	private UserRegistrationLookup $userRegistrationLookup;
+	private SessionManager $sessionManager;
 
 	/** @var User|null */
 	private $placeholderTempUser;
@@ -538,9 +505,7 @@ class EditPage implements IEditObject {
 		$this->watchlistExpiryEnabled = $this->getContext()->getConfig() instanceof Config
 			&& $this->getContext()->getConfig()->get( MainConfigNames::WatchlistExpiry );
 		$this->watchedItemStore = $services->getWatchedItemStore();
-		$this->wikiPageFactory = $services->getWikiPageFactory();
 		$this->watchlistManager = $services->getWatchlistManager();
-		$this->userNameUtils = $services->getUserNameUtils();
 		$this->redirectLookup = $services->getRedirectLookup();
 		$this->userOptionsLookup = $services->getUserOptionsLookup();
 		$this->tempUserCreator = $services->getTempUserCreator();
@@ -550,9 +515,9 @@ class EditPage implements IEditObject {
 		$this->restrictionStore = $services->getRestrictionStore();
 		$this->commentStore = $services->getCommentStore();
 		$this->dbProvider = $services->getConnectionProvider();
-		$this->blockErrorFormatter = $services->getFormatterFactory()
-			->getBlockErrorFormatter( $this->context );
 		$this->authManager = $services->getAuthManager();
+		$this->userRegistrationLookup = $services->getUserRegistrationLookup();
+		$this->sessionManager = $services->getSessionManager();
 
 		$this->deprecatePublicProperty( 'textbox2', '1.44', __CLASS__ );
 		$this->deprecatePublicProperty( 'action', '1.38', __CLASS__ );
@@ -689,9 +654,7 @@ class EditPage implements IEditObject {
 			$user = $this->context->getUser();
 			if ( $user->getBlock() && !$readOnlyMode->isReadOnly() ) {
 				// Auto-block user's IP if the account was "hard" blocked
-				DeferredUpdates::addCallableUpdate( static function () use ( $user ) {
-					$user->spreadAnyEditBlock();
-				} );
+				$user->scheduleSpreadBlock();
 			}
 			$this->displayPermissionStatus( $status );
 
@@ -825,14 +788,27 @@ class EditPage implements IEditObject {
 			if ( $expiryAfterDays ) {
 				$expirationCutoff = (int)ConvertibleTimestamp::now( TS_UNIX ) - ( 86_400 * $expiryAfterDays );
 
-				// If the user was created before the expiration cutoff, then log them out. If no registration is
-				// set then do nothing, as if registration date system is broken it would cause a new temporary account
-				// for each edit.
+				// If the user was created before the expiration cutoff, then log them out, expire any other existing
+				// sessions, and revoke any access to the account that may exist.
+				// If no registration is set then do nothing, as if registration date system is broken it would
+				// cause a new temporary account for each edit.
+				$firstUserRegistration = $this->userRegistrationLookup->getFirstRegistration( $user );
 				if (
-					$user->getRegistration() &&
-					ConvertibleTimestamp::convert( TS_UNIX, $user->getRegistration() ) < $expirationCutoff
+					$firstUserRegistration &&
+					ConvertibleTimestamp::convert( TS_UNIX, $firstUserRegistration ) < $expirationCutoff
 				) {
+					// Log the user out of the expired temporary account.
 					$user->logout();
+
+					// Clear any stashed temporary account name (if any is set), as we want a new name for the user.
+					$session = $this->context->getRequest()->getSession();
+					$session->set( 'TempUser:name', null );
+					$session->save();
+
+					// Invalidate any sessions for the expired temporary account
+					$this->sessionManager->invalidateSessionsForUser(
+						$this->userFactory->newFromUserIdentity( $user )
+					);
 				}
 			}
 		}
@@ -1036,7 +1012,7 @@ class EditPage implements IEditObject {
 		} else {
 			try {
 				$text = $this->toEditText( $content );
-			} catch ( MWException $e ) {
+			} catch ( MWException ) {
 				# Serialize using the default format if the content model is not supported
 				# (e.g. for an old revision with a different model)
 				$text = $content->serialize();
@@ -1190,7 +1166,7 @@ class EditPage implements IEditObject {
 
 		try {
 			$handler = $this->contentHandlerFactory->getContentHandler( $this->contentModel );
-		} catch ( MWUnknownContentModelException $e ) {
+		} catch ( MWUnknownContentModelException ) {
 			throw new ErrorPageError(
 				'editpage-invalidcontentmodel-title',
 				'editpage-invalidcontentmodel-text',
@@ -1333,15 +1309,15 @@ class EditPage implements IEditObject {
 
 		$this->minoredit = $request->getCheck( 'wpMinoredit' );
 		$this->watchthis = $request->getCheck( 'wpWatchthis' );
-		$expiry = $request->getText( 'wpWatchlistExpiry' );
-		if ( $this->watchlistExpiryEnabled && $expiry !== '' ) {
+		$submittedExpiry = $request->getText( 'wpWatchlistExpiry' );
+		if ( $this->watchlistExpiryEnabled && $submittedExpiry !== '' ) {
 			// This parsing of the user-posted expiry is done for both preview and saving. This
 			// is necessary because ApiEditPage uses preview when it saves (yuck!). Note that it
 			// only works because the unnormalized value is retrieved again below in
 			// getCheckboxesDefinitionForWatchlist().
-			$expiry = ExpiryDef::normalizeExpiry( $expiry, TS_ISO_8601 );
-			if ( $expiry !== false ) {
-				$this->watchlistExpiry = $expiry;
+			$submittedExpiry = ExpiryDef::normalizeExpiry( $submittedExpiry, TS_ISO_8601 );
+			if ( $submittedExpiry !== false ) {
+				$this->watchlistExpiry = $submittedExpiry;
 			}
 		}
 
@@ -1358,9 +1334,10 @@ class EditPage implements IEditObject {
 		$this->autoSumm = $request->getText( 'wpAutoSummary' );
 
 		$this->allowBlankArticle = $request->getBool( 'wpIgnoreBlankArticle' );
-		$this->allowSelfRedirect = $request->getBool( 'wpIgnoreSelfRedirect' );
-		$this->allowBrokenRedirects = $request->getBool( 'wpIgnoreBrokenRedirects' );
-		$this->allowDoubleRedirects = $request->getBool( 'wpIgnoreDoubleRedirects' );
+		$allowedProblematicRedirectTargetText = $request->getText( 'wpAllowedProblematicRedirectTarget' );
+		$this->allowedProblematicRedirectTarget = $allowedProblematicRedirectTargetText === ''
+			? null : Title::newFromText( $allowedProblematicRedirectTargetText );
+		$this->ignoreProblematicRedirects = $request->getBool( 'wpIgnoreProblematicRedirects' );
 
 		$changeTags = $request->getVal( 'wpChangeTags' );
 		$changeTagsAfterPreview = $request->getVal( 'wpChangeTagsAfterPreview' );
@@ -1898,11 +1875,7 @@ class EditPage implements IEditObject {
 			case self::AS_ARTICLE_WAS_DELETED:
 			case self::AS_CONFLICT_DETECTED:
 			case self::AS_SUMMARY_NEEDED:
-			case self::AS_TEXTBOX_EMPTY:
 			case self::AS_END:
-			case self::AS_BLANK_ARTICLE:
-			case self::AS_SELF_REDIRECT:
-			case self::AS_DOUBLE_REDIRECT:
 			case self::AS_REVISION_WAS_DELETED:
 				return true;
 
@@ -1911,10 +1884,16 @@ class EditPage implements IEditObject {
 
 			// Status codes that provide their own error/warning messages. Most error scenarios that don't
 			// need custom user interface (e.g. edit conflicts) should be handled here, one day (T384399).
+			case self::AS_BLANK_ARTICLE:
 			case self::AS_BROKEN_REDIRECT:
+			case self::AS_DOUBLE_REDIRECT:
+			case self::AS_DOUBLE_REDIRECT_LOOP:
 			case self::AS_CONTENT_TOO_BIG:
+			case self::AS_INVALID_REDIRECT_TARGET:
 			case self::AS_MAX_ARTICLE_SIZE_EXCEEDED:
 			case self::AS_PARSE_ERROR:
+			case self::AS_SELF_REDIRECT:
+			case self::AS_TEXTBOX_EMPTY:
 			case self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT:
 			case self::AS_UNICODE_NOT_SUPPORTED:
 				foreach ( $status->getMessages() as $msg ) {
@@ -2168,6 +2147,9 @@ class EditPage implements IEditObject {
 		$constraintFactory = MediaWikiServices::getInstance()->getService( '_EditConstraintFactory' );
 		$constraintRunner = new EditConstraintRunner();
 
+		// Message key of the label of the submit button - used by some constraint error messages
+		$submitButtonLabel = $this->getSubmitButtonLabel();
+
 		// UnicodeConstraint: ensure that `$this->unicodeCheck` is the correct unicode
 		$constraintRunner->addConstraint(
 			new UnicodeConstraint( $this->unicodeCheck )
@@ -2299,7 +2281,8 @@ class EditPage implements IEditObject {
 				new DefaultTextConstraint(
 					$this->mTitle,
 					$this->allowBlankArticle,
-					$this->textbox1
+					$this->textbox1,
+					$submitButtonLabel
 				)
 			);
 
@@ -2508,38 +2491,22 @@ class EditPage implements IEditObject {
 		// Check for length errors again now that the section is merged in
 		$this->contentLength = strlen( $this->toEditText( $content ) );
 
-		// Message key of the label of the submit button - used by some constraint error messages
-		$submitButtonLabel = $this->getSubmitButtonLabel();
-
 		// BEGINNING OF MIGRATION TO EDITCONSTRAINT SYSTEM (see T157658)
 		// Create a new runner to avoid rechecking the prior constraints, use the same factory
 		$constraintRunner = new EditConstraintRunner();
-		$constraintRunner->addConstraint(
-			new SelfRedirectConstraint(
-				$this->allowSelfRedirect,
-				$content,
-				$this->getCurrentContent(),
-				$this->getTitle()
-			)
-		);
-		$constraintRunner->addConstraint(
-			new BrokenRedirectConstraint(
-				$this->allowBrokenRedirects,
-				$content,
-				$this->getCurrentContent(),
-				$this->getTitle(),
-				$submitButtonLabel
-			)
-		);
-		$constraintRunner->addConstraint(
-			new DoubleRedirectConstraint(
-				$this->allowDoubleRedirects,
-				$content,
-				$this->getCurrentContent(),
-				$this->getTitle(),
-				$this->redirectLookup
-			)
-		);
+		if ( !$this->ignoreProblematicRedirects ) {
+			$constraintRunner->addConstraint(
+				new RedirectConstraint(
+					$this->allowedProblematicRedirectTarget,
+					$content,
+					$this->getCurrentContent(),
+					$this->getTitle(),
+					$submitButtonLabel,
+					$this->contentFormat,
+					$this->redirectLookup
+				)
+			);
+		}
 		$constraintRunner->addConstraint(
 			// Same constraint is used to check size before and after merging the
 			// edits, which use different failure codes
@@ -2594,6 +2561,8 @@ class EditPage implements IEditObject {
 			) {
 				$this->isConflict = true;
 				// Destroys data doEdit() put in $status->value but who cares
+				// TODO: We should care, this puts an `int` value into a `Status<array>`
+				// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
 				$doEditStatus->value = self::AS_END;
 			}
 			return $doEditStatus;
@@ -2657,15 +2626,8 @@ class EditPage implements IEditObject {
 			$failed instanceof NewSectionMissingSubjectConstraint
 		) {
 			$this->missingSummary = true;
-		} elseif ( $failed instanceof MissingCommentConstraint ) {
-			$this->missingComment = true;
-		} elseif ( $failed instanceof SelfRedirectConstraint ) {
-			$this->selfRedirect = true;
-		} elseif ( $failed instanceof BrokenRedirectConstraint ) {
-			$this->brokenRedirect = true;
-		} elseif ( $failed instanceof DoubleRedirectConstraint ) {
-			$this->doubleRedirect = true;
-			$this->doubleRedirectLoop = $failed->willCreateSelfRedirect;
+		} elseif ( $failed instanceof RedirectConstraint ) {
+			$this->problematicRedirectTarget = $failed->problematicTarget;
 		}
 	}
 
@@ -3193,16 +3155,13 @@ class EditPage implements IEditObject {
 			$out->addHTML( Html::hidden( 'wpUndoAfter', $this->undoAfter ) );
 		}
 
-		if ( $this->selfRedirect ) {
-			$out->addHTML( Html::hidden( 'wpIgnoreSelfRedirect', true ) );
-		}
-
-		if ( $this->brokenRedirect ) {
-			$out->addHTML( Html::hidden( 'wpIgnoreBrokenRedirects', true ) );
-		}
-
-		if ( $this->doubleRedirect ) {
-			$out->addHTML( Html::hidden( 'wpIgnoreDoubleRedirects', true ) );
+		if ( $this->problematicRedirectTarget !== null ) {
+			// T395767, T395768: Save the target to a variable so the constraint can fail again if the redirect is
+			// still problematic but has changed between two save attempts
+			$out->addHTML( Html::hidden(
+				'wpAllowedProblematicRedirectTarget',
+				$this->problematicRedirectTarget->getFullText()
+			) );
 		}
 
 		$autosumm = $this->autoSumm !== '' ? $this->autoSumm : md5( $this->summary );
@@ -3389,10 +3348,6 @@ class EditPage implements IEditObject {
 
 			$buttonLabel = $this->context->msg( $this->getSubmitButtonLabel() )->text();
 
-			if ( $this->missingComment ) {
-				$out->wrapWikiMsg( "<div id='mw-missingcommenttext'>\n$1\n</div>", 'missingcommenttext' );
-			}
-
 			if ( $this->missingSummary && $this->section !== 'new' ) {
 				$out->wrapWikiMsg(
 					"<div id='mw-missingsummary'>\n$1\n</div>",
@@ -3405,47 +3360,6 @@ class EditPage implements IEditObject {
 					"<div id='mw-missingcommentheader'>\n$1\n</div>",
 					[ 'missingcommentheader', $buttonLabel ]
 				);
-			}
-
-			if ( $this->blankArticle ) {
-				$out->wrapWikiMsg(
-					"<div id='mw-blankarticle'>\n$1\n</div>",
-					[ 'blankarticle', $buttonLabel ]
-				);
-			}
-
-			if ( $this->selfRedirect ) {
-				$out->wrapWikiMsg(
-					"<div id='mw-selfredirect'>\n$1\n</div>",
-					[ 'selfredirect', $buttonLabel ]
-				);
-			}
-
-			if ( $this->doubleRedirect ) {
-				if ( $this->doubleRedirectLoop ) {
-					$out->wrapWikiMsg(
-						"<div id='mw-doubleredirectloop'>\n$1\n</div>",
-						[ 'edit-constraint-doubleredirect-loop', $buttonLabel ]
-					);
-				} else {
-					$editContent = $this->toEditContent( $this->textbox1 );
-					$redirectTarget = $editContent->getRedirectTarget();
-
-					$doubleRedirectTarget = $this->redirectLookup->getRedirectTarget( $redirectTarget );
-					$doubleRedirectTargetTitle = Title::castFromLinkTarget( $doubleRedirectTarget );
-
-					$suggestedRedirectContent =
-						$editContent->getContentHandler()->makeRedirectContent( $doubleRedirectTargetTitle );
-					$suggestedRedirectCode =
-						Html::element( 'pre', [], $this->toEditText( $suggestedRedirectContent ) );
-
-					$out->wrapWikiMsg( "<div id='mw-doubleredirect'>\n$1\n</div>", [
-						'edit-constraint-doubleredirect',
-						$buttonLabel,
-						wfEscapeWikiText( $doubleRedirectTargetTitle->getPrefixedText() ),
-						$suggestedRedirectCode,
-					] );
-				}
 			}
 
 			if ( $this->hookError !== '' ) {
@@ -3662,7 +3576,7 @@ class EditPage implements IEditObject {
 		);
 	}
 
-	protected function showTextbox( $text, $name, $customAttribs = [] ) {
+	protected function showTextbox( string $text, string $name, array $customAttribs = [] ) {
 		$builder = new TextboxBuilder();
 		$attribs = $builder->buildTextboxAttribs(
 			$name,
@@ -3930,7 +3844,7 @@ class EditPage implements IEditObject {
 		return $limitReport;
 	}
 
-	protected function showStandardInputs( &$tabindex = 2 ) {
+	protected function showStandardInputs( int &$tabindex = 2 ) {
 		$out = $this->context->getOutput();
 		$out->addHTML( "<div class='editOptions'>\n" );
 
@@ -3941,7 +3855,7 @@ class EditPage implements IEditObject {
 
 		// When previewing, override the selected dropdown option to select whatever was posted
 		// (if it's a valid option) rather than the current value for watchlistExpiry.
-		// See also above in $this->importFormData().
+		// See also above in $this->importFormDataPosted().
 		$expiryFromRequest = null;
 		if ( $this->preview || $this->diff || $this->isConflict ) {
 			$expiryFromRequest = $this->getContext()->getRequest()->getText( 'wpWatchlistExpiry' );
@@ -4191,6 +4105,11 @@ class EditPage implements IEditObject {
 					if ( $level === 'user' && !$config->get( MainConfigNames::AllowUserJs ) ) {
 						$format = false;
 					}
+				} elseif ( $content->getModel() === CONTENT_MODEL_VUE ) {
+					$format = 'vue';
+					if ( $level === 'user' && !$config->get( MainConfigNames::AllowUserJs ) ) {
+						$format = false;
+					}
 				} else {
 					$format = false;
 				}
@@ -4221,8 +4140,8 @@ class EditPage implements IEditObject {
 				$out->addContentOverride( $this->getTitle(), $content );
 			}
 
-			if ( count( $parserOutput->getWarnings() ) ) {
-				$note .= "\n\n" . implode( "\n\n", $parserOutput->getWarnings() );
+			foreach ( $parserOutput->getWarningMsgs() as $mv ) {
+				$note .= "\n\n" . $this->context->msg( $mv )->text();
 			}
 
 		} catch ( MWContentSerializationException $ex ) {
@@ -4443,15 +4362,43 @@ class EditPage implements IEditObject {
 		];
 		if ( $this->watchlistExpiryEnabled ) {
 			$watchedItem = $this->watchedItemStore->getWatchedItem( $this->getContext()->getUser(), $this->getTitle() );
-			$expiryOptions = WatchAction::getExpiryOptions( $this->getContext(), $watchedItem );
+			if ( $watchedItem instanceof WatchedItem && $watchedItem->getExpiry() === null ) {
+				// Not temporarily watched, so we always default to infinite.
+				$userPreferredExpiry = 'infinite';
+			} else {
+				$userPreferredExpiryOption = !$this->getTitle()->exists()
+					? 'watchcreations-expiry'
+					: 'watchdefault-expiry';
+				$userPreferredExpiry = $this->userOptionsLookup->getOption(
+					$this->getContext()->getUser(),
+					$userPreferredExpiryOption,
+					'infinite'
+				);
+			}
+
+			$expiryOptions = WatchAction::getExpiryOptions(
+				$this->getContext(),
+				$watchedItem,
+				$userPreferredExpiry
+			);
+
 			if ( $watchexpiry && in_array( $watchexpiry, $expiryOptions['options'] ) ) {
 				$expiryOptions['default'] = $watchexpiry;
 			}
+			// When previewing, override the selected dropdown option to select whatever was posted
+			// (if it's a valid option) rather than the current value for watchlistExpiry.
+			// See also above in $this->importFormDataPosted().
+			$expiryFromRequest = $this->getContext()->getRequest()->getText( 'wpWatchlistExpiry' );
+			if ( ( $this->preview || $this->diff ) && in_array( $expiryFromRequest, $expiryOptions['options'] ) ) {
+				$expiryOptions['default'] = $expiryFromRequest;
+			}
+
 			// Reformat the options to match what DropdownInputWidget wants.
 			$options = [];
 			foreach ( $expiryOptions['options'] as $label => $value ) {
 				$options[] = [ 'data' => $value, 'label' => $label ];
 			}
+
 			$fieldDefs['wpWatchlistExpiry'] = [
 				'id' => 'wpWatchlistExpiry',
 				'label-message' => 'confirm-watch-label',
@@ -4699,26 +4646,15 @@ class EditPage implements IEditObject {
 	}
 
 	/**
-	 * Turns section name wikitext into anchors for use in HTTP redirects. Various
-	 * versions of Microsoft browsers misinterpret fragment encoding of Location: headers
-	 * resulting in mojibake in address bar. Redirect them to legacy section IDs,
-	 * if possible. All the other browsers get HTML5 if the wiki is configured for it, to
-	 * spread the new style links more efficiently.
+	 * Turns section name wikitext into anchors for use in HTTP redirects.
 	 *
 	 * @param string $text
 	 * @return string
 	 */
 	private function guessSectionName( $text ): string {
-		// Detect Microsoft browsers
-		$userAgent = $this->context->getRequest()->getHeader( 'User-Agent' );
 		$parser = MediaWikiServices::getInstance()->getParser();
-		if ( $userAgent && preg_match( '/MSIE|Edge/', $userAgent ) ) {
-			// ...and redirect them to legacy encoding, if available
-			return $parser->guessLegacySectionNameFromWikiText( $text );
-		}
-		// Meanwhile, real browsers get real anchors
 		$name = $parser->guessSectionNameFromWikiText( $text );
-		// With one little caveat: per T216029, fragments in HTTP redirects need to be urlencoded,
+		// Per T216029, fragments in HTTP redirects need to be urlencoded,
 		// otherwise Chrome double-escapes the rest of the URL.
 		return '#' . urlencode( mb_substr( $name, 1 ) );
 	}

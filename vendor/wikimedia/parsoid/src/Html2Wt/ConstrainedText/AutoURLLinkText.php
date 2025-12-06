@@ -6,7 +6,7 @@ namespace Wikimedia\Parsoid\Html2Wt\ConstrainedText;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
  * An autolink to an external resource, like `http://example.com`.
@@ -44,7 +44,7 @@ class AutoURLLinkText extends RegExpConstrainedText {
 		'[' . self::EXT_LINK_URL_CLASS . self::TRAILING_PUNCT . '\)]/u';
 
 	private static function badSuffix( string $url ): string {
-		return strpos( $url, '(' ) === false ?
+		return !str_contains( $url, '(' ) ?
 			self::NOPAREN_AUTOURL_BAD_SUFFIX :
 			self::PAREN_AUTOURL_BAD_SUFFIX;
 	}
@@ -52,12 +52,12 @@ class AutoURLLinkText extends RegExpConstrainedText {
 	protected static function fromSelSerImpl(
 		string $text, Element $node, DataParsoid $dataParsoid,
 		Env $env, array $opts
-	): ?AutoURLLinkText {
+	): ?self {
 		$stx = $dataParsoid->stx ?? null;
 		$type = $dataParsoid->type ?? null;
 		if (
-			( DOMCompat::nodeName( $node ) === 'a' && $stx === 'url' ) ||
-			( DOMCompat::nodeName( $node ) === 'img' && $type === 'extlink' )
+			( DOMUtils::nodeName( $node ) === 'a' && $stx === 'url' ) ||
+			( DOMUtils::nodeName( $node ) === 'img' && $type === 'extlink' )
 		) {
 			return new AutoURLLinkText( $text, $node );
 		}

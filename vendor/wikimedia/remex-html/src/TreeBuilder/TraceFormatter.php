@@ -6,6 +6,19 @@ use Wikimedia\RemexHtml\Serializer\SerializerNode;
 use Wikimedia\RemexHtml\Tokenizer\Attributes;
 
 class TraceFormatter {
+
+	private const PREPOSITION_NAME = [
+		TreeBuilder::BEFORE => 'before',
+		TreeBuilder::UNDER => 'under',
+		TreeBuilder::ROOT => 'under root',
+	];
+
+	private const QUIRKS_TYPES = [
+		TreeBuilder::QUIRKS => 'quirks',
+		TreeBuilder::NO_QUIRKS => 'no-quirks',
+		TreeBuilder::LIMITED_QUIRKS => 'limited-quirks',
+	];
+
 	/**
 	 * Get a debug tag for an element or null
 	 *
@@ -41,12 +54,7 @@ class TraceFormatter {
 	 * @return string
 	 */
 	public static function getPrepositionName( $prep ) {
-		$names = [
-			TreeBuilder::BEFORE => 'before',
-			TreeBuilder::UNDER => 'under',
-			TreeBuilder::ROOT => 'under root'
-		];
-		return $names[$prep] ?? '???';
+		return self::PREPOSITION_NAME[$prep] ?? '???';
 	}
 
 	/** @inheritDoc */
@@ -90,12 +98,7 @@ class TraceFormatter {
 	/** @inheritDoc */
 	public static function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength
 	) {
-		$quirksTypes = [
-			TreeBuilder::QUIRKS => 'quirks',
-			TreeBuilder::NO_QUIRKS => 'no-quirks',
-			TreeBuilder::LIMITED_QUIRKS => 'limited-quirks'
-		];
-		$quirksMsg = $quirksTypes[$quirks];
+		$quirksMsg = self::QUIRKS_TYPES[$quirks];
 		return "doctype $name, public=\"$public\", system=\"$system\", " .
 			"$quirksMsg, pos=$sourceStart, len=$sourceLength";
 	}

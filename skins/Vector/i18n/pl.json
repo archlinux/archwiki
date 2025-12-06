@@ -10,7 +10,8 @@
 			"Sp5uhe",
 			"Tar Lócesilion",
 			"WaldiSt",
-			"Woytecr"
+			"Woytecr",
+			"IOIOI"
 		]
 	},
 	"skinname-vector": "Stary Wektor (2010)",
@@ -19,8 +20,6 @@
 	"vector-skin-desc": "Dodaje dwie skórki Wektor:\n* 2011 – Odświeżona wersja skórki Książka, z nowym wyglądem i usprawnieniami.\n* 2022 – Skórka Wektor zbudowana jako część projektu [https://www.mediawiki.org/wiki/Desktop_Improvements ulepszania interfejsu] Fundacji Wikimedia.",
 	"prefs-vector-enable-vector-1-label": "Użyj starego Wektora",
 	"prefs-vector-enable-vector-1-help": "W ciągu najbliższych kilku lat będziemy stopniowo aktualizować skórkę Wektor. Stary Wektor umożliwi ci używanie poprzedniej wersji skórki (na grudzień 2019). Aby dowiedzieć się więcej o aktualizacjach przejdź do naszej [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements strony projektu].",
-	"vector-opt-out": "Przełącz na stary widok",
-	"vector-opt-out-tooltip": "Zmień ustawienia, aby powrócić do starego wyglądu skórki (stary Wektor)",
 	"vector.css": "/* Umieszczony tutaj kod CSS zostanie załadowany przez użytkowników korzystających ze skórki Wektor */",
 	"vector.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany przez użytkowników korzystających ze skórki Wektor */",
 	"vector-action-toggle-sidebar": "Przełącz panel boczny",
@@ -28,7 +27,7 @@
 	"vector-language-button-aria-label": "Przejdź do artykułu w innym języku. Treść dostępna w {{PLURAL:$1|$1 języku|$1 językach}}",
 	"vector-language-button-label": "$1 {{PLURAL:$1|język|języki|języków}}",
 	"vector-no-language-button-label": "Dodaj języki",
-	"vector-no-language-button-aria-label": "Ten artykuł istnieje tylko w tym języku. Dodaj artykuły w innych językach.",
+	"vector-no-language-button-aria-label": "Ten artykuł jest dostępny tylko w tym języku. Dodaj artykuły w innych językach.",
 	"vector-language-variant-switcher-label": "Zmień wariant języka",
 	"vector-action-addsection": "Dodaj temat",
 	"vector-action-delete": "Usuń",
@@ -61,8 +60,6 @@
 	"skin-theme-night-label": "Ciemny",
 	"skin-theme-os-label": "Automatyczny",
 	"skin-theme-exclusion-notice": "Ta strona zawsze jest wyświetlana w motywie jasnym.",
-	"vector-search-loader": "Wczytywanie sugestii",
-	"vector-searchsuggest-containing": "Szukaj stron zawierających <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Pierwsze kroki",
 	"vector-toc-label": "Spis treści",
 	"vector-toc-beginning": "Początek",

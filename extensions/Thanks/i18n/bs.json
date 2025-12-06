@@ -41,5 +41,6 @@
 	"thanks-error-no-id-specified": "Morate navesti ID izmjene za koju se želite zahvaliti.",
 	"notification-link-text-view-post": "Pogledaj komentar",
 	"thanks-error-invalidpostid": "ID objave nije ispravan.",
-	"flow-thanks-confirmation-special": "Želite se javno zahvaliti za ovaj komentar?"
+	"flow-thanks-confirmation-special": "Želite se javno zahvaliti za ovaj komentar?",
+	"ipb-action-thanks": "Slanje zahvala"
 }

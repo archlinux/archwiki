@@ -2,6 +2,12 @@
 	"prefix": "oo-ui-icon",
 	"intro": "@import '../../../../src/styles/common.less';",
 	"images": {
+		"bookmarkList": {
+			"file": {
+				"ltr": "../wikimediaui/images/icons/bookmarkList-ltr.svg",
+				"rtl": "../wikimediaui/images/icons/bookmarkList-rtl.svg"
+			}
+		},
 		"userAdd": {
 			"file": {
 				"ltr": "../wikimediaui/images/icons/userAdd-ltr.svg",
@@ -39,6 +45,12 @@
 			"file": {
 				"ltr": "../wikimediaui/images/icons/userTemporary-ltr.svg",
 				"rtl": "../wikimediaui/images/icons/userTemporary-rtl.svg"
+			}
+		},
+		"userTemporaryLocation": {
+			"file": {
+				"ltr": "../wikimediaui/images/icons/userTemporaryLocation-ltr.svg",
+				"rtl": "../wikimediaui/images/icons/userTemporaryLocation-rtl.svg"
 			}
 		},
 		"watchlist": {

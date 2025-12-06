@@ -21,7 +21,6 @@ namespace MediaWiki\SyntaxHighlight;
 use MediaWiki\Config\Config;
 use MediaWiki\Html\Html;
 use MediaWiki\Json\FormatJson;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Status\Status;
@@ -40,33 +39,17 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	/** @var int Cache version. Increment whenever the HTML changes. */
 	private const CACHE_VERSION = 2;
 
-	private Config $config;
-	private WANObjectCache $cache;
+	/** Maximum number of lines that may be selected for highlighting */
+	private readonly int $maxLines;
+	/** Maximum input size for the highlighter */
+	private readonly int $maxBytes;
 
 	public function __construct(
 		Config $config,
-		WANObjectCache $cache
+		private readonly WANObjectCache $cache,
 	) {
-		$this->config = $config;
-		$this->cache = $cache;
-	}
-
-	/**
-	 * Returns the maximum number of lines that may be selected for highlighting
-	 *
-	 * @return int
-	 */
-	private function getMaxLines(): int {
-		return $this->config->get( 'SyntaxHighlightMaxLines' );
-	}
-
-	/**
-	 * Returns the maximum input size for the highlighter
-	 *
-	 * @return int
-	 */
-	private function getMaxBytes(): int {
-		return $this->config->get( 'SyntaxHighlightMaxBytes' );
+		$this->maxLines = $config->get( 'SyntaxHighlightMaxLines' );
+		$this->maxBytes = $config->get( 'SyntaxHighlightMaxBytes' );
 	}
 
 	/**
@@ -125,7 +108,6 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	}
 
 	/**
-	 *
 	 * @param string $text
 	 * @param array $args
 	 * @param ?Parser $parser
@@ -234,7 +216,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	 * @param string|null $lang
 	 * @param array $args
 	 * @param Parser|null $parser Parser, if generating content to be parsed.
-	 * @return Status
+	 * @return Status<string>
 	 */
 	private function highlightInner( $code, $lang = null, $args = [], ?Parser $parser = null ) {
 		$status = new Status;
@@ -251,13 +233,13 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		}
 
 		$length = strlen( $code );
-		if ( strlen( $code ) > $this->getMaxBytes() ) {
+		if ( strlen( $code ) > $this->maxBytes ) {
 			// Disable syntax highlighting
 			$lexer = null;
 			$status->warning(
 				'syntaxhighlight-error-exceeds-size-limit',
 				$length,
-				$this->getMaxBytes()
+				$this->maxBytes
 			);
 		}
 
@@ -353,7 +335,6 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	 * This produces raw HTML (wrapped by Status), the caller is responsible
 	 * for making sure the "ext.pygments" module is loaded in the output.
 	 *
-	 * @deprecated Use syntaxHighlight instead
 	 * @param string $code Code to highlight.
 	 * @param string|null $lang Language name, or null to use plain markup.
 	 * @param array $args Associative array of additional arguments.
@@ -367,35 +348,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	 *   of the value. Similar to the lineanchors+linespans features in Pygments.
 	 *  If it contains a 'copy' key, a link will be shown for copying content to the clipboard.
 	 * @param Parser|null $parser Parser, if generating content to be parsed.
-	 * @return Status Status object, with HTML representing the highlighted
-	 *  code as its value.
-	 */
-	public static function highlight( $code, $lang = null, $args = [], ?Parser $parser = null ) {
-		wfDeprecated( __METHOD__, '1.44' );
-		return MediaWikiServices::getInstance()->getService( 'SyntaxHighlight.SyntaxHighlight' )
-			->syntaxHighlight( $code, $lang, $args, $parser );
-	}
-
-	/**
-	 * Highlight a code-block using a particular lexer.
-	 *
-	 * This produces raw HTML (wrapped by Status), the caller is responsible
-	 * for making sure the "ext.pygments" module is loaded in the output.
-	 *
-	 * @param string $code Code to highlight.
-	 * @param string|null $lang Language name, or null to use plain markup.
-	 * @param array $args Associative array of additional arguments.
-	 *  If it contains a 'line' key, the output will include line numbers.
-	 *  If it includes a 'highlight' key, the value will be parsed as a
-	 *   comma-separated list of lines and line-ranges to highlight.
-	 *  If it contains a 'start' key, the value will be used as the line at which to
-	 *   start highlighting.
-	 *  If it contains a 'inline' key, the output will not be wrapped in `<div><pre/></div>`.
-	 *  If it contains a 'linelinks' key, lines will have links and anchors with a prefix
-	 *   of the value. Similar to the lineanchors+linespans features in Pygments.
-	 *  If it contains a 'copy' key, a link will be shown for copying content to the clipboard.
-	 * @param Parser|null $parser Parser, if generating content to be parsed.
-	 * @return Status Status object, with HTML representing the highlighted
+	 * @return Status<string> Status object, with HTML representing the highlighted
 	 *  code as its value.
 	 */
 	public function syntaxHighlight( $code, $lang = null, $args = [], ?Parser $parser = null ) {
@@ -522,8 +475,8 @@ class SyntaxHighlight extends ExtensionTagHandler {
 					}
 				}
 			}
-			if ( count( $lines ) > $this->getMaxLines() ) {
-				$lines = array_slice( $lines, 0, $this->getMaxLines() );
+			if ( count( $lines ) > $this->maxLines ) {
+				$lines = array_slice( $lines, 0, $this->maxLines );
 				break;
 			}
 		}
@@ -544,6 +497,6 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		// given range to reduce the impact.
 		return $start > 0 &&
 			$start < $end &&
-			$end - $start < $this->getMaxLines();
+			$end - $start < $this->maxLines;
 	}
 }

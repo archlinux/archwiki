@@ -30,7 +30,7 @@ class ApiOptionsTest extends ApiTestCase {
 
 	/** @var MockObject */
 	private $mUserMock;
-	/** @var MockObject */
+	/** @var MockObject|UserOptionsManager */
 	private $userOptionsManagerMock;
 	/** @var ApiOptions */
 	private $mTested;
@@ -47,7 +47,7 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock = $this->createMock( User::class );
 
 		// No actual DB data
-		$this->mUserMock->method( 'getInstanceForUpdate' )->willReturn( $this->mUserMock );
+		$this->mUserMock->method( 'getInstanceFromPrimary' )->willReturn( $this->mUserMock );
 
 		$this->mUserMock->method( 'isAllowedAny' )->willReturn( true );
 
@@ -65,7 +65,7 @@ class ApiOptionsTest extends ApiTestCase {
 
 		$this->userOptionsManagerMock = $this->createNoOpMock(
 			UserOptionsManager::class,
-			[ 'getOptions', 'resetOptionsByName', 'setOption', 'isOptionGlobal' ]
+			[ 'getOptions', 'resetOptionsByName', 'setOption', 'isOptionGlobal', 'saveOptions' ]
 		);
 		// Needs to return something
 		$this->userOptionsManagerMock->method( 'getOptions' )->willReturn( [] );
@@ -75,7 +75,7 @@ class ApiOptionsTest extends ApiTestCase {
 			[ 'getFormDescriptor', 'listResetKinds', 'getResetKinds', 'getOptionNamesForReset' ]
 		);
 		$preferencesFactory->method( 'getFormDescriptor' )
-			->willReturnCallback( [ $this, 'getPreferencesFormDescription' ] );
+			->willReturnCallback( $this->getPreferencesFormDescription( ... ) );
 		$preferencesFactory->method( 'listResetKinds' )->willReturn(
 			[
 				'registered',
@@ -87,7 +87,7 @@ class ApiOptionsTest extends ApiTestCase {
 			]
 		);
 		$preferencesFactory->method( 'getResetKinds' )
-			->willReturnCallback( [ $this, 'getResetKinds' ] );
+			->willReturnCallback( $this->getResetKinds( ... ) );
 		$preferencesFactory->method( 'getOptionNamesForReset' )
 			->willReturn( [] );
 
@@ -185,7 +185,7 @@ class ApiOptionsTest extends ApiTestCase {
 		return array_merge( $request, $custom );
 	}
 
-	private function executeQuery( $request ) {
+	private function executeQuery( array $request ) {
 		$this->mContext->setRequest( new FauxRequest( $request, true, $this->mSession ) );
 		$this->mUserMock->method( 'getRequest' )->willReturn( $this->mContext->getRequest() );
 
@@ -241,8 +241,8 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->userOptionsManagerMock->expects( $this->never() )
 			->method( 'setOption' );
 
-		$this->mUserMock->expects( $this->never() )
-			->method( 'saveSettings' );
+		$this->userOptionsManagerMock->expects( $this->never() )
+			->method( 'saveOptions' );
 
 		try {
 			$request = $this->getSampleRequest();
@@ -272,11 +272,11 @@ class ApiOptionsTest extends ApiTestCase {
 		if ( $expectException ) {
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
-			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->never() )->method( 'saveOptions' );
 		} else {
 			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
-			$this->mUserMock->expects( $this->once() )->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->once() )->method( 'saveOptions' );
 		}
 		$request = $this->getSampleRequest( [ 'reset' => '' ] );
 		try {
@@ -302,13 +302,13 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock->method( 'isRegistered' )->willReturn( $isRegistered );
 		$this->mUserMock->method( 'isNamed' )->willReturn( $isNamed );
 		if ( $expectException ) {
-			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->never() )->method( 'saveOptions' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
 		} else {
 			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
-			$this->mUserMock->expects( $this->once() )->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->once() )->method( 'saveOptions' );
 		}
 		$request = $this->getSampleRequest( [ 'reset' => '', 'resetkinds' => 'registered' ] );
 		try {
@@ -337,7 +337,7 @@ class ApiOptionsTest extends ApiTestCase {
 		if ( $expectException ) {
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
-			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->never() )->method( 'saveOptions' );
 		} else {
 			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptionsByName' );
 			$expectedOptions = [
@@ -352,7 +352,7 @@ class ApiOptionsTest extends ApiTestCase {
 					$this->assertSame( $expectedOptions[$oname], $val );
 					unset( $expectedOptions[$oname] );
 				} );
-			$this->mUserMock->expects( $this->once() )->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->once() )->method( 'saveOptions' );
 		}
 
 		$args = [
@@ -380,10 +380,10 @@ class ApiOptionsTest extends ApiTestCase {
 	}
 
 	/**
-	 * @dataProvider provideOptionManupulation
+	 * @dataProvider provideOptionManipulation
 	 */
-	public function testOptionManupulation( array $params, array $setOptions, ?array $result = null,
-		$message = ''
+	public function testOptionManipulation(
+		array $params, array $setOptions, ?array $result = null, ?bool $isOptionGlobal = false
 	) {
 		$this->mUserMock->method( 'isRegistered' )->willReturn( true );
 		$this->mUserMock->method( 'isNamed' )->willReturn( true );
@@ -396,19 +396,29 @@ class ApiOptionsTest extends ApiTestCase {
 		}
 		$this->userOptionsManagerMock->expects( $this->exactly( count( $setOptions ) ) )
 			->method( 'setOption' )
-			->willReturnCallback( function ( $user, $oname, $val ) use ( &$expectedOptions ) {
+			->willReturnCallback( function ( $user, $oname, $val, $global ) use ( &$expectedOptions, $params ) {
 				$this->assertSame( $this->mUserMock, $user );
 				$this->assertArrayHasKey( $oname, $expectedOptions );
 				$this->assertSame( $expectedOptions[$oname], $val );
 				unset( $expectedOptions[$oname] );
+
+				if ( !isset( $params['global'] ) ) {
+					$expectedGlobalValue = UserOptionsManager::GLOBAL_IGNORE;
+				} else {
+					$expectedGlobalValue = $params['global'];
+				}
+				$this->assertSame( $expectedGlobalValue, $global );
 			} );
+		$this->userOptionsManagerMock->method( 'isOptionGlobal' )
+			->with( $this->mUserMock )
+			->willReturn( $isOptionGlobal );
 
 		if ( $setOptions ) {
-			$this->mUserMock->expects( $this->once() )
-				->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->once() )
+				->method( 'saveOptions' );
 		} else {
-			$this->mUserMock->expects( $this->never() )
-				->method( 'saveSettings' );
+			$this->userOptionsManagerMock->expects( $this->never() )
+				->method( 'saveOptions' );
 		}
 
 		$request = $this->getSampleRequest( $params );
@@ -417,40 +427,32 @@ class ApiOptionsTest extends ApiTestCase {
 		if ( !$result ) {
 			$result = self::SUCCESS;
 		}
-		$this->assertEquals( $result, $response, $message );
+		$this->assertEquals( $result, $response );
 	}
 
-	public static function provideOptionManupulation() {
+	public static function provideOptionManipulation() {
 		return [
-			[
+			'Setting userjs options' => [
 				[ 'change' => 'userjs-option=1' ],
 				[ [ 'userjs-option', '1' ] ],
-				null,
-				'Setting userjs options',
 			],
-			[
+			'Basic option setting' => [
 				[ 'change' => 'willBeNull|willBeEmpty=|willBeHappy=Happy' ],
 				[
 					[ 'willBeNull', null ],
 					[ 'willBeEmpty', '' ],
 					[ 'willBeHappy', 'Happy' ],
 				],
-				null,
-				'Basic option setting',
 			],
-			[
+			'Changing radio options' => [
 				[ 'change' => 'testradio=option2' ],
 				[ [ 'testradio', 'option2' ] ],
-				null,
-				'Changing radio options',
 			],
-			[
+			'Resetting radio options' => [
 				[ 'change' => 'testradio' ],
 				[ [ 'testradio', null ] ],
-				null,
-				'Resetting radio options',
 			],
-			[
+			'Unrecognized options should be rejected' => [
 				[ 'change' => 'unknownOption=1' ],
 				[],
 				[
@@ -461,9 +463,8 @@ class ApiOptionsTest extends ApiTestCase {
 						],
 					],
 				],
-				'Unrecognized options should be rejected',
 			],
-			[
+			'Refuse setting special options' => [
 				[ 'change' => 'special=1' ],
 				[],
 				[
@@ -474,9 +475,8 @@ class ApiOptionsTest extends ApiTestCase {
 						]
 					]
 				],
-				'Refuse setting special options',
 			],
-			[
+			'Setting multiselect options' => [
 				[
 					'change' => 'testmultiselect-opt1=1|testmultiselect-opt2|'
 						. 'testmultiselect-opt3=|testmultiselect-opt4=0'
@@ -487,22 +487,16 @@ class ApiOptionsTest extends ApiTestCase {
 					[ 'testmultiselect-opt3', false ],
 					[ 'testmultiselect-opt4', false ],
 				],
-				null,
-				'Setting multiselect options',
 			],
-			[
+			'Setting options via optionname/optionvalue' => [
 				[ 'optionname' => 'name', 'optionvalue' => 'value' ],
 				[ [ 'name', 'value' ] ],
-				null,
-				'Setting options via optionname/optionvalue'
 			],
-			[
+			'Resetting options via optionname without optionvalue' => [
 				[ 'optionname' => 'name' ],
 				[ [ 'name', null ] ],
-				null,
-				'Resetting options via optionname without optionvalue',
 			],
-			[
+			'Options with too long value should be rejected' => [
 				[ 'optionname' => 'name', 'optionvalue' => str_repeat( '测试', 16383 ) ],
 				[],
 				[
@@ -513,7 +507,32 @@ class ApiOptionsTest extends ApiTestCase {
 						],
 					],
 				],
-				'Options with too long value should be rejected',
+			],
+			'global param is set to ignore and option is global' => [
+				[ 'optionname' => 'name', 'optionvalue' => 'value', 'global' => 'ignore' ],
+				[],
+				[
+					'options' => 'success',
+					'warnings' => [
+						'options' => [
+							'warnings' => 'Option "name" is globally overridden. You can use "global=update" to ' .
+								'change the option globally, or "global=override" to set a local override.'
+						],
+					],
+				],
+				true,
+			],
+			'global param is set to update' => [
+				[ 'optionname' => 'name', 'optionvalue' => 'value', 'global' => 'update' ],
+				[ [ 'name', 'value' ] ],
+			],
+			'global param is set to override' => [
+				[ 'optionname' => 'name', 'optionvalue' => 'value', 'global' => 'override' ],
+				[ [ 'name', 'value' ] ],
+			],
+			'global param is set to create' => [
+				[ 'optionname' => 'name', 'optionvalue' => 'value', 'global' => 'create' ],
+				[ [ 'name', 'value' ] ],
 			],
 		];
 	}

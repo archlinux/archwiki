@@ -7,7 +7,6 @@
 			"Sultanselim baloch"
 		]
 	},
-	"vector-opt-out": "پݔسری وڈئی سۏج دئ",
 	"vector-languages": "زبانان",
 	"vector-language-button-label": "{{PLURAL:$1|$1ءِ زبان}}",
 	"vector-no-language-button-label": "زبانانءِ ھۏر کنگ",
@@ -23,7 +22,6 @@
 	"vector-view-view": "وانگ",
 	"vector-view-viewsource": "سرچممگءِ سۏج",
 	"vector-more-actions": "گݔشتِر",
-	"vector-searchsuggest-containing": "شۏھاز مہ تاکانءِ تۏکا <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "تلمبار",
 	"vector-toc-beginning": "بُنرِد",
 	"vector-main-menu-tooltip": "رݔدگݔن منو",

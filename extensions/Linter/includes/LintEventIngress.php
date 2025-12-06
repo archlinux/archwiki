@@ -4,9 +4,10 @@ namespace MediaWiki\Linter;
 
 use MediaWiki\DomainEvent\DomainEventIngress;
 use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageRevisionUpdatedListener;
 use MediaWiki\Revision\SlotRecord;
 
-class LintEventIngress extends DomainEventIngress {
+class LintEventIngress extends DomainEventIngress implements PageRevisionUpdatedListener {
 	private TotalsLookup $totalsLookup;
 	private Database $database;
 
@@ -22,7 +23,7 @@ class LintEventIngress extends DomainEventIngress {
 	 * @param PageRevisionUpdatedEvent $event
 	 * @return void
 	 */
-	public function handlePageRevisionUpdatedEvent( PageRevisionUpdatedEvent $event ) {
+	public function handlePageRevisionUpdatedEvent( PageRevisionUpdatedEvent $event ): void {
 		$page = $event->getPage();
 		$tags = $event->getTags();
 

@@ -39,9 +39,10 @@ class CommentUtilsTest extends MediaWikiUnitTestCase {
 
 		static::assertEquals( $expected, $actual, $name );
 
-		$expectedBackwards = array_map( static function ( $a ) {
-			return ( substr( $a, 0, 5 ) === 'enter' ? 'leave' : 'enter' ) . substr( $a, 5 );
-		}, array_reverse( $expected ) );
+		$expectedBackwards = array_map(
+			static fn ( $a ) => ( $a[0] === 'e' ? 'leave' : 'enter' ) . substr( $a, 5 ),
+			array_reverse( $expected )
+		);
 		static::assertEquals( $expectedBackwards, $actualBackwards, $name . ' (backwards)' );
 	}
 

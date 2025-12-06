@@ -25,22 +25,27 @@ use MediaWiki\Deferred\DataUpdate;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use Wikimedia\Stats\StatsFactory;
 
 class LintUpdate extends DataUpdate {
 
+	private StatsFactory $statsFactory;
 	private WikiPageFactory $wikiPageFactory;
 	private ParserOutputAccess $parserOutputAccess;
 	private RenderedRevision $renderedRevision;
 
 	public function __construct(
+		StatsFactory $statsFactory,
 		WikiPageFactory $wikiPageFactory,
 		ParserOutputAccess $parserOutputAccess,
 		RenderedRevision $renderedRevision
 	) {
 		parent::__construct();
+		$this->statsFactory = $statsFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->parserOutputAccess = $parserOutputAccess;
 		$this->renderedRevision = $renderedRevision;
@@ -83,9 +88,65 @@ class LintUpdate extends DataUpdate {
 		// of ParsoidCachePrewarmJob / DiscussionTools
 		// (note that even with OPT_NO_UPDATE_CACHE we still update the
 		// *local* cache, which prevents wasting effort on duplicate parses)
-		$this->parserOutputAccess->getParserOutput(
+		$status = $this->parserOutputAccess->getParserOutput(
 			$page, $pOptions, $rev,
 			ParserOutputAccess::OPT_NO_UPDATE_CACHE
 		);
+		if ( $status->isOK() ) {
+			self::updateParserPerformanceStats(
+				$this->statsFactory,
+				$status->getValue(),
+				/* this is parsoid output: */
+				true
+			);
+		}
+	}
+
+	/** Collect statistics for the given ParserOutput. */
+	public static function updateParserPerformanceStats(
+		StatsFactory $statsFactory, ParserOutput $po, bool $useParsoid
+	) {
+		$limitReport = $po->getLimitReportData();
+		$lnSize = strval( ceil( log(
+			( $limitReport['limitreport-revisionsize'][0] ?? 0 ) +
+			( $limitReport['limitreport-postexpandincludesize'][0] ?? 0 ) +
+			// add 1 to avoid log(0)
+			1,
+			// log_10(size) or "how many digits in the size"
+			10
+		) ) );
+		$labels = [
+			'parser' => $useParsoid ? 'parsoid' : 'legacy',
+			// T393400: add label w/ buckets based on
+			// original wikitext size (revision size + post-include size)
+			'wikitext_size_exp' => $lnSize,
+		];
+		$cpuTime = $po->getTimeProfile( 'cpu' );
+		$wallTime = $po->getTimeProfile( 'wall' );
+		if ( $cpuTime === null || $wallTime === null ) {
+			return;
+		}
+		$statCounter = $statsFactory
+			->getCounter( "lintupdate_parse_count" )
+			->setLabels( $labels )
+			->increment();
+		// Collect timing comparison data (T393399/T393400)
+		// Average time can be computed by dividing this counter (over some
+		// time period) by the $statsCounter with label 'cache_miss' (for
+		// the same time period).
+		$statCpuTime = $statsFactory
+			->getCounter( "lintupdate_parse_cpu_seconds" )
+			->setLabels( $labels )
+			->incrementBy( $cpuTime );
+		$statWallTime = $statsFactory
+			->getCounter( "lintupdate_parse_wall_seconds" )
+			->setLabels( $labels )
+			->incrementBy( $wallTime );
+
+		// Collect HTML size comparison data
+		$statHtmlSize = $statsFactory
+			->getCounter( "lintupdate_parse_html_bytes" )
+			->setLabels( $labels )
+			->incrementBy( strlen( $po->getRawText() ?? '' ) );
 	}
 }

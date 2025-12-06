@@ -13,7 +13,6 @@ use MediaWiki\Session\ImmutableSessionProviderWithCookie;
 use MediaWiki\Session\SessionBackend;
 use MediaWiki\Session\SessionId;
 use MediaWiki\Session\SessionInfo;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\Session\UserInfo;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\NullLogger;
@@ -45,7 +44,9 @@ class ImmutableSessionProviderWithCookieTest extends MediaWikiIntegrationTestCas
 		$provider = $this->getMockBuilder( ImmutableSessionProviderWithCookie::class )
 			->setConstructorArgs( [ $params ] )
 			->getMockForAbstractClass();
-		$this->initProvider( $provider, $logger ?? new TestLogger(), $config, new SessionManager() );
+		$this->initProvider(
+			$provider, $logger ?? new TestLogger(), $config, $this->getServiceContainer()->getSessionManager()
+		);
 
 		return $provider;
 	}
@@ -224,7 +225,7 @@ class ImmutableSessionProviderWithCookieTest extends MediaWikiIntegrationTestCas
 				'userInfo' => UserInfo::newFromUser( $user, true ),
 				'idIsSafe' => true,
 			] ),
-			new TestBagOStuff(),
+			$this->getServiceContainer()->getSessionStore(),
 			new NullLogger(),
 			$this->createHookContainer(),
 			10

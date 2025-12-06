@@ -13,5 +13,6 @@
 	"checkuser-investigate-preliminary-table-header-name": "მახვარებუშ ჯოხო",
 	"checkuser-investigate-preliminary-table-header-registration": "თარიღი ეკოჸუნს",
 	"checkuser-investigate-preliminary-table-header-wiki": "ვიკი:",
-	"checkuser-investigate-compare-table-button-add-user-targets-label": "თე მახვარებუშ არძა IP-მიოწურაფუშ ძირაფა"
+	"checkuser-investigate-compare-table-button-add-user-targets-label": "თე მახვარებუშ არძა IP-მიოწურაფუშ ძირაფა",
+	"checkuser-userinfocard-groups": "ბუნეფი: $1"
 }

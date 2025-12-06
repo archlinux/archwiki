@@ -45,7 +45,7 @@ class ApiEchoCreateEventTest extends ApiTestCase {
 			'header' => 'notification header',
 			'content' => 'notification content',
 			'email' => true,
-			'section' => 'alert'
+			'section' => 'alert',
 		], null, $this->getTestUser()->getUser() );
 		$this->assertEquals( 'success', $result[0]['echocreateevent']['result'] );
 

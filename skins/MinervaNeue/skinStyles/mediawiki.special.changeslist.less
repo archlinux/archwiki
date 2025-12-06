@@ -147,6 +147,7 @@ ul.mw-contributions-list li .mw-rollback-link {
 
 	.mw-tempuserlink {
 		background-color: transparent;
+		outline: 0;
 		padding: 0;
 
 		// Since the user link is split over two lines,
@@ -154,7 +155,7 @@ ul.mw-contributions-list li .mw-rollback-link {
 		bdi {
 			// @background-color-interactive
 			background-color: @background-color-interactive;
-			padding: 2px 8px 2px 8px;
+			outline: 2px solid @background-color-interactive;
 			border-radius: @border-radius-base;
 		}
 	}
@@ -196,10 +197,19 @@ ul.mw-contributions-list li .mw-rollback-link {
 
 		.mw-userlink {
 			color: @color-subtle;
-			display: block;
 
 			bdi {
 				word-break: break-word;
+			}
+
+			&::after {
+				display: block;
+				content: '';
+			}
+
+			// Only display the performer in a separate line; don't break the log action text into around target user
+			~ .mw-userlink::after {
+				display: none;
 			}
 		}
 
@@ -293,6 +303,17 @@ ul.mw-contributions-list li .mw-rollback-link {
 			.mw-tempuserlink::before {
 				.cdx-mixin-css-icon( @cdx-icon-user-temporary, @color-subtle );
 			}
+		}
+
+		// Makes links within rows in history pages clickable again (T395148).
+		.mw-pager-body ul.mw-contributions-list li .history-user {
+			// Put the link to the user on top of the link to the diff page: The
+			// latter covers the full row width and has z-index=1, preventing
+			// clicks on links to user contributions pages and widgets like the
+			// CheckUser extension temporary account IP Reveal button.
+			// Setting z-index requires relative positioning.
+			z-index: 2;
+			position: relative;
 		}
 	}
 }

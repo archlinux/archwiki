@@ -32,8 +32,8 @@ class ParsoidAnchorFormatter {
 	 * The clickable href="#…" backlink and id="…" target to jump from the reference list back up to
 	 * one of the possibly many footnote markers in the article.
 	 */
-	public static function getBackLinkIdentifier( RefGroupItem $ref, ?int $count = null ): string {
-		return AnchorFormatter::getBackLinkIdentifier( $ref->name, $ref->globalId,
+	public static function getBacklinkIdentifier( RefGroupItem $ref, ?int $count = null ): string {
+		return AnchorFormatter::getBacklinkIdentifier( $ref->name, $ref->globalId,
 			$count ?? $ref->visibleNodes );
 	}
 

@@ -9,7 +9,9 @@
 			"Mormegil",
 			"Paxt",
 			"Slepi",
-			"Vks"
+			"Vks",
+			". M .",
+			"Polda18"
 		]
 	},
 	"replacetext": "Nahradit text",
@@ -46,5 +48,7 @@
 	"replacetext_editsummary": "Nahrazení textu „$1“ textem „$2“",
 	"replacetext_reminder": "Pokud také chcete na jiných stránkách upravit odkazy na tuto stránku, jděte na $1.",
 	"right-replacetext": "Hledání a nahrazování textu na celé wiki",
-	"action-replacetext": "nahrazovat text na celé wiki"
+	"action-replacetext": "nahrazovat text na celé wiki",
+	"tag-replacetext": "[[Special:ReplaceText|Nahradit text]]",
+	"tag-replacetext-description": "Automatické úpravy byly provedeny pomocí [[{{#Special:ReplaceText}}]]."
 }

@@ -83,7 +83,7 @@ class CheckUserLogService {
 			'cul_target_text' => trim( $target ),
 			'cul_target_hex' => $targetHex,
 			'cul_range_start' => $rangeStart,
-			'cul_range_end' => $rangeEnd
+			'cul_range_end' => $rangeEnd,
 		];
 
 		$plaintextReason = $this->getPlaintextReason( $reason );
@@ -103,7 +103,7 @@ class CheckUserLogService {
 						->insertInto( 'cu_log' )
 						->row(
 							[
-								'cul_timestamp' => $dbw->timestamp( $timestamp )
+								'cul_timestamp' => $dbw->timestamp( $timestamp ),
 							] + $data
 						)
 						->caller( $fname )
@@ -144,32 +144,28 @@ class CheckUserLogService {
 		$result = $this->verifyTarget( $target );
 		if ( is_array( $result ) ) {
 			$dbr = $this->dbProvider->getReplicaDatabase();
-			switch ( count( $result ) ) {
-				case 1:
-					return [
-						$dbr->expr( 'cul_target_hex', '=', $result[0] )
-							->orExpr(
-								$dbr->expr( 'cul_range_end', '>=', $result[0] )
-									->and( 'cul_range_start', '<=', $result[0] )
-							)
-					];
-				case 2:
-					return [
-						$dbr->orExpr( [
-							$dbr->expr( 'cul_target_hex', '>=', $result[0] )
-								->and( 'cul_target_hex', '<=', $result[1] ),
+			return match ( count( $result ) ) {
+				1 => [
+					$dbr->expr( 'cul_target_hex', '=', $result[0] )
+						->orExpr(
 							$dbr->expr( 'cul_range_end', '>=', $result[0] )
-								->and( 'cul_range_start', '<=', $result[1] ),
-						] )
-					];
-				default:
-					throw new LogicException(
-						"Array returned from ::verifyTarget had the wrong number of items."
-					);
-			}
+								->and( 'cul_range_start', '<=', $result[0] )
+						),
+				],
+				2 => [
+					$dbr->orExpr( [
+						$dbr->expr( 'cul_target_hex', '>=', $result[0] )
+							->and( 'cul_target_hex', '<=', $result[1] ),
+						$dbr->expr( 'cul_range_end', '>=', $result[0] )
+							->and( 'cul_range_start', '<=', $result[1] ),
+					] ),
+				],
+				default => throw new LogicException(
+					"Array returned from ::verifyTarget had the wrong number of items."
+				)
+			};
 		} elseif ( is_int( $result ) ) {
 			return [
-				'cul_type' => [ 'userips', 'useredits', 'investigate' ],
 				'cul_target_id' => $result,
 			];
 		}

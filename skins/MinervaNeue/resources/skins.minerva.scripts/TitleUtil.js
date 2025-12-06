@@ -39,8 +39,8 @@ const UriUtil = require( './UriUtil.js' );
  *
  * @ignore
  * @param {URL|Object|string} [url] Passed to URL constructor.
-* @param {Object|boolean} [options]
-* @param {Object|boolean} [options.validateReadOnlyLink] If true, only links that would show a
+ * @param {Object|boolean} [options]
+ * @param {Object|boolean} [options.validateReadOnlyLink] If true, only links that would show a
  *     page for reading are considered. E.g., `/wiki/Foo` and `/w/index.php?title=Foo` would
  *     validate but `/w/index.php?title=Foo&action=bar` would not.
  * @return {mw.Title|null} A Title or `null`.

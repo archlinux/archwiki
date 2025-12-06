@@ -56,6 +56,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		$this->collationFactory = $collationFactory;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -72,6 +73,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	 */
 	private $oldRevision;
 
+	/** @inheritDoc */
 	protected function setParameter( $par ) {
 		$par = $this->getRequest()->getVal( 'pagetitle', $par );
 		$title = Title::newFromText( $par );
@@ -83,6 +85,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function postHtml() {
 		$text = '';
 		if ( $this->title ) {
@@ -95,6 +98,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		return $text;
 	}
 
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
@@ -116,7 +120,11 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		}
 	}
 
-	public function validateTitle( $title ) {
+	/**
+	 * @param string $title
+	 * @return string|bool
+	 */
+	private function validateTitle( $title ) {
 		// Already validated by HTMLForm, but if not, throw
 		// an exception instead of a fatal
 		$titleObj = Title::newFromTextThrow( $title );
@@ -135,6 +143,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		$fields = [
 			'pagetitle' => [
@@ -143,7 +152,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 				'name' => 'pagetitle',
 				'default' => $this->par,
 				'label-message' => 'changecontentmodel-title-label',
-				'validation-callback' => [ $this, 'validateTitle' ],
+				'validation-callback' => $this->validateTitle( ... ),
 			],
 		];
 		if ( $this->title ) {
@@ -223,6 +232,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		return $options;
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( array $data ) {
 		$this->title = Title::newFromText( $data['pagetitle'] );
 		$page = $this->wikiPageFactory->newFromTitle( $this->title );
@@ -268,6 +278,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		return $this->prefixSearchString( $search, $limit, $offset, $this->searchEngineFactory );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

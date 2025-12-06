@@ -62,7 +62,7 @@
 		progressBar.toggle( true );
 		form.toggle( false );
 
-		modulePromise.done( () => {
+		modulePromise.then( () => {
 			target = ve.init.mw.targetFactory.create( 'collab', title, conf.rebaserUrl, { importTitle: importTitle } );
 			// If the target emits a 'close' event (via the toolbar back button on mobile) then go to the landing page.
 			target.once( 'close', () => {
@@ -186,7 +186,7 @@
 							target.revid = importedDocument.revid;
 						}
 					}
-					initPromise.fail( ( err ) => {
+					initPromise.then( null, ( err ) => {
 						setTimeout( () => {
 							throw new Error( err );
 						} );
@@ -197,12 +197,12 @@
 				} );
 			} );
 
+		}, ( err ) => {
+			mw.log.error( err );
+			showForm( true );
 		} ).always( () => {
 			form.toggle( false );
 			progressBar.toggle( false );
-		} ).fail( ( err ) => {
-			mw.log.error( err );
-			showForm( true );
 		} );
 	}
 

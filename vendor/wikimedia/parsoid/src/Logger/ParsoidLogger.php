@@ -7,9 +7,10 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Wikimedia\JsonCodec\JsonCodec;
 use Wikimedia\Parsoid\DOM\Node;
-use Wikimedia\Parsoid\Utils\CompatJsonCodec;
+use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMDataCodec;
 use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 class ParsoidLogger {
 	private LoggerInterface $backendLogger;
@@ -66,7 +67,10 @@ class ParsoidLogger {
 	 */
 	public function __construct( LoggerInterface $backendLogger, array $options ) {
 		$this->backendLogger = $backendLogger;
-		$this->codec = new CompatJsonCodec;
+		$this->codec = new DOMDataCodec(
+			$options['ownerDoc'] ?? DOMCompat::newDocument( true ),
+			[ 'noSideEffects' => true, ]
+		);
 
 		$rePatterns = $options['logLevels'];
 		if ( $options['traceFlags'] ) {
@@ -149,7 +153,6 @@ class ParsoidLogger {
 	 * @return string
 	 */
 	private function logMessage( ?string $logType, array $args ): string {
-		$numArgs = count( $args );
 		$output = $logType ? "[$logType]" : '';
 		foreach ( $args as $arg ) {
 			// don't use is_callable, it would return true for any string that happens to be a function name
@@ -165,7 +168,7 @@ class ParsoidLogger {
 				}
 			} elseif ( $arg instanceof Node ) {
 				$output .= ' ' .
-					XMLSerializer::serialize( $arg, [ 'saveData' => true ] )['html'];
+					XHtmlSerializer::serialize( $arg, [ 'noSideEffects' => true ] )['html'];
 			} else {
 				$encode = fn ( $x ) => $this->codec->toJsonArray(
 					$x,
@@ -182,7 +185,7 @@ class ParsoidLogger {
 				} else {
 					$a = $encode( $arg );
 				}
-				$output .= PHPUtils::jsonEncode( $a );
+				$output .= ' ' . PHPUtils::jsonEncode( $a );
 			}
 		}
 

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -339,28 +325,6 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Get an array of the headers
-	 * @return array
-	 */
-	protected function getHeaderList() {
-		$list = [];
-
-		if ( $this->cookieJar ) {
-			$this->reqHeaders['Cookie'] =
-				$this->cookieJar->serializeToHttpRequest(
-					$this->parsedUrl['path'],
-					$this->parsedUrl['host']
-				);
-		}
-
-		foreach ( $this->reqHeaders as $name => $value ) {
-			$list[] = "$name: $value";
-		}
-
-		return $list;
-	}
-
-	/**
 	 * Set a read callback to accept data read from the HTTP request.
 	 * By default, data is appended to an internal buffer which can be
 	 * retrieved through $req->getContent().
@@ -391,7 +355,7 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	 */
 	protected function doSetCallback( $callback ) {
 		if ( $callback === null ) {
-			$callback = [ $this, 'read' ];
+			$callback = $this->read( ... );
 		} elseif ( !is_callable( $callback ) ) {
 			$this->status->fatal( 'http-internal-error' );
 			throw new InvalidArgumentException( __METHOD__ . ': invalid callback' );
@@ -594,9 +558,7 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	 * @param array $attr
 	 */
 	public function setCookie( $name, $value, array $attr = [] ) {
-		if ( !$this->cookieJar ) {
-			$this->cookieJar = new CookieJar;
-		}
+		$this->cookieJar ??= new CookieJar;
 
 		if ( $this->parsedUrl && !isset( $attr['domain'] ) ) {
 			$attr['domain'] = $this->parsedUrl['host'];
@@ -609,9 +571,7 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	 * Parse the cookies in the response headers and store them in the cookie jar.
 	 */
 	protected function parseCookies() {
-		if ( !$this->cookieJar ) {
-			$this->cookieJar = new CookieJar;
-		}
+		$this->cookieJar ??= new CookieJar;
 
 		if ( isset( $this->respHeaders['set-cookie'] ) ) {
 			$url = parse_url( $this->getFinalUrl() );

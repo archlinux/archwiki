@@ -115,7 +115,9 @@ class SpecialDiscussionToolsDebug extends FormSpecialPage {
 			)->getFullText()
 		)->parseAsBlock() );
 
-		$pageLang = $this->languageFactory->getLanguage( $parserOutput->getLanguage() );
+		$parsedLanguage = $parserOutput->getLanguage();
+		$pageLang = $parsedLanguage !== null ?
+			$this->languageFactory->getLanguage( $parsedLanguage ) : $this->getLanguage();
 		$pageLangAttribs = [
 			'lang' => $pageLang->getHtmlCode(),
 			'dir' => $pageLang->getDir(),
@@ -134,8 +136,6 @@ class SpecialDiscussionToolsDebug extends FormSpecialPage {
 	/**
 	 * Format a thread item with replies.
 	 *
-	 * @param ContentThreadItem $comment
-	 * @param array $pageLangAttribs
 	 * @return string HTML
 	 */
 	private function formatComments( ContentThreadItem $comment, array $pageLangAttribs ) {

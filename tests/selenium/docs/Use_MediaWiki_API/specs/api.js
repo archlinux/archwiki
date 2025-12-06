@@ -1,43 +1,36 @@
 // Example code for Selenium/How-to/Use MediaWiki API
 // https://www.mediawiki.org/wiki/Selenium/How-to/Use_MediaWiki_API
 
-'use strict';
+import assert from 'assert';
+import { createApiClient } from 'wdio-mediawiki/Api.js';
 
-const assert = require( 'assert' );
-const MWBot = require( 'mwbot' );
-
-// apiUrl is required for our continuous integration.
+// baseUrl is required for our continuous integration.
 // If you don't have MW_SERVER and MW_SCRIPT_PATH environment variables set
 // you can probably hardcode it to something like this:
-// const apiUrl = 'http://localhost:8080/w/api.php';
-const apiUrl = `${ process.env.MW_SERVER }${ process.env.MW_SCRIPT_PATH }/api.php`;
+// const baseUrl = 'http://localhost:8080/';
+const baseUrl = `${ process.env.MW_SERVER }${ process.env.MW_SCRIPT_PATH }`;
 
-const bot = new MWBot( {
-	apiUrl: apiUrl
+const apiClient = await createApiClient( {
+	baseUrl
 } );
-
-// Since mwbot v2 the script either needs to log in immediately or hardcode MediaWiki version.
-// Without the line below, this error message is displayed:
-// Invalid version. Must be a string. Got type "object".
-bot.mwversion = '0.0.0';
 
 describe( 'API', () => {
 
 	it( 'Main Page should exist', async () => {
-		const response = await bot.read( 'Main Page' );
+		const response = await apiClient.read( 'Main Page' );
 
 		// console.log( response );
-		// { batchcomplete: '' (...) query: { pages: { '1': [Object] } } }
+		// { batchcomplete: '' (...) query: { pages: { '3': [Object] } } }
 
 		// console.log( response.query );
-		// { pages: { '1': { pageid: 1, ns: 0, title: 'Main Page', revisions: [Array] } } }
+		// { pages: { '3': { pageid: 3, ns: 0, title: 'Main Page', revisions: [Array] } } }
 
-		assert.strictEqual( response.query.pages[ '1' ].pageid, 1 );
+		assert.strictEqual( Object.values( response.query.pages )[ 0 ].pageid > 0, true );
 
 	} );
 
 	it( 'Missing Page should not exist', async () => {
-		const response = await bot.read( 'Missing Page' );
+		const response = await apiClient.read( 'Missing Page' );
 
 		// console.log( response );
 		// { batchcomplete: '', query: { pages: { '-1': [Object] } } }

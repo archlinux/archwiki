@@ -8,6 +8,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 
 /**
@@ -27,7 +28,10 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 			->willReturnCallback( function ( $filter, $global ) use ( $userID ) {
 				$userID ??= self::USER_IDS[ $global ? "global-$filter" : $filter ] ?? 0;
 				$filterObj = $this->createMock( ExistingFilter::class );
-				$filterObj->method( 'getUserID' )->willReturn( $userID );
+				$filterObj->method( 'getUserIdentity' )->willReturn(
+					UserIdentityValue::newRegistered( $userID, 'Test' )
+				);
+				$filterObj->method( 'getID' )->willReturn( $filter );
 				return $filterObj;
 			} );
 		return $lookup;
@@ -36,37 +40,40 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 	public static function provideDataForEvent(): array {
 		return [
 			[ true, 1, 1 ],
-			[ true, 2, 42 ],
-			[ false, 1, 1 ],
-			[ false, 2, 42 ],
+			[ true, 2, 42 ]
 		];
 	}
 
 	/**
 	 * @dataProvider provideDataForEvent
 	 */
-	public function testGetDataForEvent( bool $loaded, int $filter, int $userID ) {
+	public function testNotifyForFilterHasCorrectData( bool $loaded, int $filter, int $userID ) {
+		$this->markTestSkippedIfExtensionNotLoaded( 'Echo' );
 		$expectedThrottledActions = [];
 		$notifier = new EchoNotifier(
 			$this->getFilterLookup(),
 			$this->createMock( ConsequencesRegistry::class ),
 			$loaded
 		);
-		[
-			'type' => $type,
-			'title' => $title,
-			'extra' => $extra
-		] = $notifier->getDataForEvent( $filter );
 
-		$this->assertSame( EchoNotifier::EVENT_TYPE, $type );
-		$this->assertInstanceOf( Title::class, $title );
-		$this->assertSame( -1, $title->getNamespace() );
-		[ , $subpage ] = explode( '/', $title->getText(), 2 );
-		$this->assertSame( (string)$filter, $subpage );
-		$this->assertSame( [ 'user' => $userID, 'throttled-actions' => $expectedThrottledActions ], $extra );
+		$this->setTemporaryHook( 'BeforeEchoEventInsert',
+			function ( Event $event ) use ( $filter, $expectedThrottledActions, $userID ) {
+				$title = $event->getTitle();
+				$extra = $event->getExtra();
+				$this->assertSame( EchoNotifier::EVENT_TYPE, $event->getType() );
+				$this->assertInstanceOf( Title::class, $title );
+				$this->assertSame( -1, $title->getNamespace() );
+				[ , $subpage ] = explode( '/', $title->getText(), 2 );
+				$this->assertSame( (string)$filter, $subpage );
+				$this->assertSame( $expectedThrottledActions, $extra['throttled-actions'] );
+				$this->assertSame( [ $userID ], $extra[ Event::RECIPIENTS_IDX ] );
+				// we can stop here, no need to trigger entire Echo flow
+				return false;
+			} );
+		$notifier->notifyForFilter( $filter );
 	}
 
-	public function testNotifyForFilter() {
+	public function testNotifyReturnsEvent() {
 		$this->markTestSkippedIfExtensionNotLoaded( 'Echo' );
 		// Use a real user, or Echo will throw an exception.
 		$user = $this->getTestUser()->getUserIdentity();

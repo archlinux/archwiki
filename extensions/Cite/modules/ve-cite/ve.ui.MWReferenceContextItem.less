@@ -14,7 +14,7 @@
 		line-height: 1.5;
 	}
 
-	.ve-ui-previewElement {
+	.ve-ui-mwPreviewElement {
 		/* Reference links can often be too long, so break them up */
 		word-break: break-word;
 		word-wrap: break-word;
@@ -28,4 +28,92 @@
 			margin-bottom: 0.5em;
 		}
 	}
+
+	.ve-ui-mwReferenceContextItem-detailsPreview {
+		margin-left: @spacing-100;
+		margin-top: 1em;
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+
+		.ve-ui-mwPreviewElement {
+			flex: 1;
+		}
+	}
+
+	.ve-ui-mwReferenceContextItem-detailsPreview .oo-ui-horizontalLayout {
+		align-items: center;
+	}
+
+	.ve-ui-mwReferenceContextItem-subrefHeader {
+		display: flex;
+		margin-top: -0.25em;
+		align-items: center;
+		height: 100%;
+
+		> .oo-ui-labelWidget {
+			flex-grow: 1;
+			align-self: center;
+		}
+
+		> .ve-ui-mwReferenceContextItem-editButton {
+			margin: 0 @spacing-50;
+
+			.skin-minerva & {
+				margin-right: 0.5em;
+				margin-top: 1em;
+				position: absolute;
+				right: 0;
+			}
+		}
+	}
+
+	.ve-ui-mwReferenceContextItem-reuse {
+		margin-left: auto;
+		margin-right: -@spacing-50;
+		padding: @spacing-6 @spacing-35;
+		background-color: @background-color-neutral;
+		color: @color-subtle;
+		border-radius: @border-radius-pill;
+		text-align: center;
+
+		.skin-minerva & {
+			margin: 0;
+		}
+	}
+
+	.ve-ui-mwReferenceContextItem-addDetailsSeparator {
+		border-bottom: @border-width-base @border-style-base @border-color-subtle;
+		margin: @spacing-125 0;
+	}
+
+	.ve-ui-mwReferenceContextItem-reuse-layout {
+		margin-bottom: @spacing-75;
+		display: flex;
+	}
+
+	.ve-ui-mwReferenceContextItem-addDetailsButton {
+		position: relative;
+		// give room for the pulsating button to avoid a scrollbar
+		margin-bottom: 5px;
+
+		> .oo-ui-buttonElement-button:hover {
+			background-color: @background-color-interactive-subtle--hover;
+		}
+
+		> .oo-ui-buttonElement-button:active {
+			background-color: @background-color-interactive-subtle--active;
+		}
+
+		.mw-pulsating-dot {
+			position: absolute;
+			left: 50%;
+			bottom: 0;
+			pointer-events: none;
+		}
+	}
+}
+
+.ve-ui-mwSubReferenceHelpDialog .oo-ui-window-body {
+	padding: @spacing-100;
 }

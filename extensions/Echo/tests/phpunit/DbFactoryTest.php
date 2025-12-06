@@ -35,7 +35,6 @@ class DbFactoryTest extends MediaWikiIntegrationTestCase {
 	public function testGetLB( DbFactory $db ) {
 		$reflection = new ReflectionClass( DbFactory::class );
 		$method = $reflection->getMethod( 'getLB' );
-		$method->setAccessible( true );
 		$this->assertInstanceOf( ILoadBalancer::class, $method->invoke( $db ) );
 	}
 

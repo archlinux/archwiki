@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -99,11 +85,10 @@ class NewPagesPager extends ReverseChronologicalPager {
 		$this->tagsCache = new MapCacheLRU( 50 );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
-		$rcQuery = RecentChange::getQueryInfo();
-
 		$conds = [];
-		$conds['rc_new'] = 1;
+		$conds['rc_source'] = RecentChange::SRC_NEW;
 
 		$username = $this->opts->getValue( 'username' );
 		$user = Title::makeTitleSafe( NS_USER, $username );
@@ -120,6 +105,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 
 		if ( $user ) {
 			$conds['actor_name'] = $user->getText();
+			$joinFlags = 0;
 		} elseif ( $this->opts->getValue( 'hideliu' ) ) {
 			// Only include anonymous users if the 'hideliu' option has been provided.
 			$anonOnlyExpr = $this->getDatabase()->expr( 'actor_user', '=', null );
@@ -129,6 +115,9 @@ class NewPagesPager extends ReverseChronologicalPager {
 				) );
 			}
 			$conds[] = $anonOnlyExpr;
+			$joinFlags = 0;
+		} else {
+			$joinFlags = RecentChange::STRAIGHT_JOIN_ACTOR;
 		}
 
 		$conds = array_merge( $conds, $this->getNamespaceCond() );
@@ -147,6 +136,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 		}
 
 		// Allow changes to the New Pages query
+		$rcQuery = RecentChange::getQueryInfo( $joinFlags );
 		$tables = array_merge( $rcQuery['tables'], [ 'page' ] );
 		$fields = array_merge( $rcQuery['fields'], [
 			'length' => 'page_len', 'rev_id' => 'page_latest', 'page_namespace', 'page_title',
@@ -179,8 +169,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 		return $info;
 	}
 
-	// Based on ContribsPager.php
-	private function getNamespaceCond() {
+	private function getNamespaceCond(): array {
 		$namespace = $this->opts->getValue( 'namespace' );
 		if ( $namespace === 'all' || $namespace === '' ) {
 			return [];
@@ -205,10 +194,12 @@ class NewPagesPager extends ReverseChronologicalPager {
 		return [ $dbr->expr( 'rc_namespace', $eq_op, $namespaces ) ];
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ [ 'rc_timestamp', 'rc_id' ] ];
 	}
 
+	/** @inheritDoc */
 	public function formatRow( $row ) {
 		$title = Title::newFromRow( $row );
 

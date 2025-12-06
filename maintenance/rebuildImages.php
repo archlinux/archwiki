@@ -10,21 +10,7 @@
  * Copyright © 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Brooke Vibber <bvibber@wikimedia.org>
  * @ingroup Maintenance
@@ -178,8 +164,11 @@ class ImageBuilder extends Maintenance {
 	}
 
 	private function buildImage() {
-		$callback = [ $this, 'imageCallback' ];
-		$this->buildTable( 'image', FileSelectQueryBuilder::newForFile( $this->getReplicaDB() ), $callback );
+		$this->buildTable(
+			'image',
+			FileSelectQueryBuilder::newForFile( $this->getReplicaDB() ),
+			$this->imageCallback( ... )
+		);
 	}
 
 	private function imageCallback( \stdClass $row ): bool {
@@ -191,8 +180,11 @@ class ImageBuilder extends Maintenance {
 	}
 
 	private function buildOldImage() {
-		$this->buildTable( 'oldimage', FileSelectQueryBuilder::newForOldFile( $this->getReplicaDB() ),
-			[ $this, 'oldimageCallback' ] );
+		$this->buildTable(
+			'oldimage',
+			FileSelectQueryBuilder::newForOldFile( $this->getReplicaDB() ),
+			$this->oldimageCallback( ... )
+		);
 	}
 
 	private function oldimageCallback( \stdClass $row ): bool {
@@ -209,10 +201,10 @@ class ImageBuilder extends Maintenance {
 	}
 
 	private function crawlMissing() {
-		$this->getRepo()->enumFiles( [ $this, 'checkMissingImage' ] );
+		$this->getRepo()->enumFiles( $this->checkMissingImage( ... ) );
 	}
 
-	public function checkMissingImage( string $fullpath ) {
+	private function checkMissingImage( string $fullpath ) {
 		$filename = wfBaseName( $fullpath );
 		$row = $this->dbw->newSelectQueryBuilder()
 			->select( [ 'img_name' ] )

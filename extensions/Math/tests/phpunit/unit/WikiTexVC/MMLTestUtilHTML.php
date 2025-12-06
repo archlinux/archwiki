@@ -11,11 +11,10 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util;
 class MMLTestUtilHTML {
 
 	public static function generateHTMLtableItem( string $input, bool $bold = false ): string {
-		if ( !$bold ) {
-			return "<td class=\"tg-0lax\">" . $input . "</td>";
-		} else {
-			return "<td class=\"tg-0lax\">" . "<b>" . $input . "</b>" . "</td>";
+		if ( $bold ) {
+			$input = "<b>$input</b>";
 		}
+		return "<td class=\"tg-0lax\">$input</td>";
 	}
 
 	public static function generateHTMLEnd( string $filePath, bool $active = true ) {

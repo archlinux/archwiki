@@ -189,15 +189,12 @@ class PersistRevisionThreadItems extends Maintenance {
 
 	/**
 	 * @param stdClass $row Database table row
-	 * @return bool
 	 */
 	private function processRow( stdClass $row ): bool {
 		$changed = false;
 		try {
 			$rev = $this->revStore->newRevisionFromRow( $row );
-			$title = Title::newFromLinkTarget(
-				$rev->getPageAsLinkTarget()
-			);
+			$title = Title::newFromPageIdentity( $rev->getPage() );
 			if ( HookUtils::isAvailableForTitle( $title ) ) {
 				$threadItemSet = HookUtils::parseRevisionParsoidHtml( $rev, false )->getValueOrThrow();
 

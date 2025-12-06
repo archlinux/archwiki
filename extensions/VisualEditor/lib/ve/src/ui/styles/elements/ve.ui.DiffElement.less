@@ -249,7 +249,7 @@ ins[ data-diff-action='insert' ] + span[ data-diff-action='change-remove' ] {
 [ data-diff-move ] {
 	&:empty::before,
 	*:empty::before {
-		content: url( data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7 );
+		content: '\00a0';
 	}
 }
 
@@ -263,8 +263,7 @@ ins[ data-diff-action='insert' ] + span[ data-diff-action='change-remove' ] {
 	clear: both;
 }
 
-[ data-diff-list-spacer ],
-.ve-ui-diffElement-internalListSpacer {
+.ve-ui-diffElement-spacer-listWrapper {
 	list-style-type: none !important; /* stylelint-disable-line declaration-no-important */
 	list-style-image: none;
 }

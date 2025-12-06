@@ -1,0 +1,28 @@
+@import 'mediawiki.skin.variables.less';
+
+.ext-checkuser-suggestedinvestigations-description {
+	display: inline-flex;
+	margin-bottom: @spacing-100;
+
+	& > :first-child {
+		padding-right: @spacing-25;
+	}
+}
+
+.ext-checkuser-suggestedinvestigations-signals-popover-icon {
+	.cdx-mixin-css-icon( @cdx-icon-info );
+	cursor: pointer;
+}
+
+.ext-checkuser-suggestedinvestigations-signals-popover-icon-wrapper {
+	// Ensure that the wrapper has the same height as the icon, so that the
+	// focus styles appear uniformly around the icon
+	height: @size-icon-medium;
+	padding-bottom: 1px;
+
+	&:has( .ext-checkuser-suggestedinvestigations-signals-popover-icon:focus ) {
+		border-color: @border-color-progressive--focus;
+		box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus;
+		outline: @outline-base--focus;
+	}
+}

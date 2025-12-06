@@ -3,6 +3,7 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX cul_user ON /*_*/cu_log;
+
 ALTER TABLE /*_*/cu_log
   DROP cul_user,
   DROP cul_user_text;

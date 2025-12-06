@@ -2,25 +2,12 @@
 
 // phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
 // phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
+// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 
 /**
  * Delayed loading of global objects.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -119,7 +106,6 @@ class StubObject {
 	 * @param array $args Arguments
 	 * @return mixed
 	 */
-	// phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 	public function _call( $name, $args ) {
 		$this->_unstub( $name, 5 );
 		return $GLOBALS[$this->global]->$name( ...$args );
@@ -129,7 +115,6 @@ class StubObject {
 	 * Create a new object to replace this stub object.
 	 * @return object
 	 */
-	// phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 	public function _newObject() {
 		$params = $this->factory
 			? [ 'factory' => $this->factory ]
@@ -161,7 +146,6 @@ class StubObject {
 	 * @param string $name Name of the property to get
 	 * @return mixed
 	 */
-	// phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 	public function _get( $name ) {
 		$this->_unstub( "__get($name)", 5 );
 		return $GLOBALS[$this->global]->$name;
@@ -184,7 +168,6 @@ class StubObject {
 	 * @param string $name Name of the property to set
 	 * @param mixed $value New property value
 	 */
-	// phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 	public function _set( $name, $value ) {
 		$this->_unstub( "__set($name)", 5 );
 		$GLOBALS[$this->global]->$name = $value;
@@ -212,7 +195,6 @@ class StubObject {
 	 *   who called this function.
 	 * @return object The unstubbed version of itself
 	 */
-	// phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 	public function _unstub( $name = '_unstub', $level = 2 ) {
 		static $recursionLevel = 0;
 

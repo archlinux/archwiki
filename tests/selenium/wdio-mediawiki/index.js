@@ -1,6 +1,4 @@
-'use strict';
-
-const fs = require( 'fs' );
+import { mkdir } from 'fs/promises';
 
 /**
  * @since 1.1.0
@@ -26,7 +24,7 @@ function testTitle( title ) {
  * @return {string} Full path of screenshot/video file
  */
 function filePath( title, extension ) {
-	return `${ browser.config.screenshotPath }/${ testTitle( title ) }-${ makeFilenameDate() }.${ extension }`;
+	return `${ browser.options.capabilities[ 'mw:screenshotPath' ] }/${ testTitle( title ) }-${ makeFilenameDate() }.${ extension }`;
 }
 
 /**
@@ -39,14 +37,9 @@ function filePath( title, extension ) {
 async function saveScreenshot( title ) {
 	// Create sensible file name for current test title
 	const path = filePath( title, 'png' );
-	// Ensure directory exists, based on WebDriverIO#saveScreenshotSync()
-	try {
-		// eslint-disable-next-line security/detect-non-literal-fs-filename
-		fs.statSync( browser.config.screenshotPath );
-	} catch ( err ) {
-		// eslint-disable-next-line security/detect-non-literal-fs-filename
-		fs.mkdirSync( browser.config.screenshotPath );
-	}
+
+	// eslint-disable-next-line security/detect-non-literal-fs-filename
+	await mkdir( browser.options.capabilities[ 'mw:screenshotPath' ], { recursive: true } );
 	// Create and save screenshot
 	await browser.saveScreenshot( path );
 	return path;
@@ -58,10 +51,10 @@ async function saveScreenshot( title ) {
  * @param {string} title Test title
  * @return {Object} ffmpeg object is returned so it could be used in stopVideo()
  */
-function startVideo( ffmpeg, title ) {
+async function startVideo( ffmpeg, title ) {
 	if ( process.env.DISPLAY && process.env.DISPLAY.startsWith( ':' ) ) {
 		const videoPath = filePath( title, 'mp4' );
-		const { spawn } = require( 'child_process' );
+		const { spawn } = await import( 'child_process' );
 		ffmpeg = spawn( 'ffmpeg', [
 			'-f', 'x11grab', //  grab the X11 display
 			'-video_size', '1280x1024', // video size
@@ -100,7 +93,7 @@ function stopVideo( ffmpeg ) {
 	}
 }
 
-module.exports = {
+export {
 	makeFilenameDate,
 	saveScreenshot,
 	startVideo,

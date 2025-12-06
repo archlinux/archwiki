@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"hcaptcha-desc": "Módulo [https://www.hcaptcha.com/ hCaptcha] para Confirm Edit",
+	"hcaptcha-edit": "Para protexer o wiki contra edicións de spam automatizadas, pedímosche amablemente que resolvas o seguinte hCaptcha:",
+	"hcaptcha-addurl": "A túa edición inclúe novas ligazóns externas. Para protexer o wiki contra o spam automático, pedímosche amablemente que resolvas o seguinte hCaptcha:",
+	"hcaptcha-badlogin": "Para protexer o wiki contra o descifrado automático de contrasinais, pedímosche amablemente que resolvas o seguinte hCaptcha:",
+	"hcaptcha-createaccount": "Para protexer o wiki contra a creación automática de contas, pedímosche amablemente que resolvas o seguinte hCaptcha:",
+	"hcaptcha-createaccount-fail": "Parece que non resolviches o hCaptcha.",
+	"hcaptcha-create": "Para protexer o wiki contra a creación automática de páxinas, pedímosche amablemente que resolvas o seguinte hCaptcha:",
+	"hcaptcha-help": "Resolve un desafío hCaptcha e devolve os valores de resposta como captchaWord.",
+	"hcaptcha-privacy-policy": "Este sitio está protexido por hCaptcha e aplícanse a súa [https://www.hcaptcha.com/privacy política de protección de datos] e os seus [https://www.hcaptcha.com/terms termos de servizo].",
+	"hcaptcha-challenge-closed": "Para continuar, debes completar o CAPTCHA.",
+	"hcaptcha-challenge-expired": "O límite de tempo para completar o CAPTCHA expirou. Inténtao de novo.",
+	"hcaptcha-generic-error": "Houbo un erro ao cargar o formulario. Para continuar, terás que recargar a páxina.",
+	"hcaptcha-loading-indicator-label": "Agarda mentres remata a carga do formulario...",
+	"hcaptcha-missing-token": "Non rematou a carga do formulario. Agarda uns segundos e inténtao de novo.",
+	"hcaptcha-noscript": "Cómpre JavaScript para continuar. Activa JavaScript na configuración do teu navegador e actualiza a páxina."
+}

@@ -22,8 +22,6 @@
 	"tooltip-pt-notifications-alert": "{{GENDER:|መጠንቀቕታታትካ|መጠንቀቕታታትኪ}}",
 	"tooltip-pt-notifications-notice": "{{GENDER:|ምልክታታትካ|ምልክታታትኪ}}",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "መፍለጢታት ብመደብ",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "ነባራት ተጠቀምቲ",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "ሓደሽቲ ተጠቀምቲ",
 	"echo-specialpage": "መፍለጢታት",
 	"echo-specialpage-section-markread": "ክፋል ከም ዘይተነበበ ኣመልክት",
 	"echo-specialpage-markasread": "መፍለጢ፦ ከም ዘይተነበበ ኣመልክት",

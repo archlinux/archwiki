@@ -5,6 +5,7 @@ namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
 use MediaWiki\CheckUser\Maintenance\PopulateCheckUserTable;
 use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
@@ -103,8 +104,52 @@ class PopulateCheckUserTableTest extends MaintenanceBaseTestCase {
 	public static function provideTestPopulation() {
 		return [
 			'recentchanges row count 4' => [
-				4, 2, null, 2
+				4, 2, null, 2,
 			],
 		];
+	}
+
+	public function testPopulationForExcludedSources() {
+		$recentChangesStore = $this->getServiceContainer()->getRecentChangeStore();
+
+		// Insert a SRC_CATEGORIZE entry
+		$rc = new RecentChange();
+		$rc->setAttribs( array_merge(
+			$this->getDefaultRecentChangeAttribs(),
+			[ 'rc_source' => RecentChange::SRC_CATEGORIZE ]
+		) );
+		$recentChangesStore->insertRecentChange( $rc );
+
+		// Insert a RecentChange with an unknown source
+		$rc = new RecentChange();
+		$rc->setAttribs( array_merge(
+			$this->getDefaultRecentChangeAttribs(),
+			[ 'rc_source' => 'unknown-abc' ]
+		) );
+		$recentChangesStore->insertRecentChange( $rc );
+
+		// Clear cu_changes, cu_private_event and cu_log_event because entries may have been inserted
+		// by CheckUserInsert through the above test code.
+		// We only want to test that the maintenance script does not add the above entries to
+		// the CheckUser result tables.
+		$this->truncateTables( [ 'cu_changes', 'cu_log_event', 'cu_private_event' ] );
+
+		$this->maintenance->execute();
+
+		$this->newSelectQueryBuilder()
+			->select( 'cuc_id' )
+			->from( 'cu_changes' )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
+		$this->newSelectQueryBuilder()
+			->select( 'cule_id' )
+			->from( 'cu_log_event' )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
+		$this->newSelectQueryBuilder()
+			->select( 'cupe_id' )
+			->from( 'cu_private_event' )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
 	}
 }

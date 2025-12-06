@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Amire80",
 			"Ans",
 			"Arjunaraoc",
@@ -289,6 +290,7 @@
 	"visualeditor-includes-includeonly-description": "Additional explanation for a pair of <code>&lt;includeonly>&lt;/includeonly></code> tags. This is followed by the content of the tags.",
 	"visualeditor-includes-documentation": "Link to documentation displayed below each of these messages:\n* {{msg-mw|visualeditor-includes-noinclude-description}}\n* {{msg-mw|visualeditor-includes-onlyinclude-description}}\n* {{msg-mw|visualeditor-includes-includeonly-description}}",
 	"visualeditor-languages-tool": "Tool for opening the languages links section of the meta dialog.\n{{Identical|Language}}",
+	"visualeditor-linkcontext-uneditable": "Message shown in the link context menu when the link target can't be edited (the 'Edit' button is not displayed).",
 	"visualeditor-linkinspector-button-link-external": "Button label for entering an link to an external site.",
 	"visualeditor-linkinspector-button-link-internal": "Prompt users' with assitive technologies to search an internal page",
 	"visualeditor-linkinspector-convert-link-isbn": "Button label for converting a simple link to a ISBN magic link.",
@@ -394,6 +396,7 @@
 	"visualeditor-loaderror-wrongmode": "Error message shown when loading the editor.\n\nParameters:\n* $1 and $2: names for editing modes (not translateable)",
 	"visualeditor-settings-tool": "Text of tool in the toolbar the lets users set specific page settings.\n{{Identical|Page settings}}",
 	"visualeditor-special-characters-group-other": "Label of the special character group shown if the wiki has visualeditor-quick-access-characters.json set up.",
+	"visualeditor-template-sandbox-subpage": "{{notranslate}}\nSub-page of template where sandbox testing is done by convention on the wiki.",
 	"visualeditor-template-tools-definition.json": "{{notranslate}}\n{{ignored}}\n\nJSON object mapping context items to templates. See ve.ui.MWDefinedTransclusionContextItem.js.",
 	"visualeditor-templatesused-tool": "Label of toolbar tool that shows templates used on this page.",
 	"visualeditor-title-error": "Error displayed when a page title is invalid.",

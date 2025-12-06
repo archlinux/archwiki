@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\Config\PageContent;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\LinkTarget;
+use Wikimedia\Parsoid\Fragments\LiteralStringPFragment;
 use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Parsoid\ParserTests\MockApiHelper;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -269,6 +270,7 @@ class MockDataAccess extends DataAccess {
 		"Датотека:Foobar.jpg" => 'Foobar.jpg',
 		'Image:Foobar.svg' => 'Foobar.svg',
 		'File:Foobar.svg' => 'Foobar.svg',
+		'File:File_&_file.jpg' => 'File_&_file.jpg',
 		'Image:Thumb.png' => 'Thumb.png',
 		'File:Thumb.png' => 'Thumb.png',
 		'File:LoremIpsum.djvu' => 'LoremIpsum.djvu',
@@ -296,6 +298,15 @@ class MockDataAccess extends DataAccess {
 			'bits' => 8,
 			'mime' => 'image/jpeg',
 			'sha1' => '0000000000000000000000000000001', // Wikimedia\base_convert( '1', 16, 36, 31 )
+			'timestamp' => '20010115123500',
+		],
+		'File_&_file.jpg' => [
+			'size' => 7881,
+			'width' => 1941,
+			'height' => 220,
+			'bits' => 8,
+			'mime' => 'image/jpeg',
+			'sha1' => '0000000000000000000000000000004', // Wikimedia\base_convert( '4', 16, 36, 31 )
 			'timestamp' => '20010115123500',
 		],
 		'Thumb.png' => [
@@ -557,6 +568,11 @@ class MockDataAccess extends DataAccess {
 				$html = "";
 				break;
 
+			case 'math':
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				$html = '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>x</mi></mstyle></mrow></math>';
+				break;
+
 			default:
 				throw new Error( 'Unhandled extension type encountered in: ' . $wikitext );
 		}
@@ -594,6 +610,10 @@ class MockDataAccess extends DataAccess {
 				Title::newFromText( 'Category:Mangle', $this->siteConfig ),
 				'ho'
 			);
+		} elseif ( $wikitext === '{{loop}}' ) {
+			$lit = LiteralStringPFragment::newFromLiteral( 'meh', null );
+			$wt = '{{loop}}';
+			return WikitextPFragment::newFromSplitWt( [ $lit, $wt ] );
 		} else {
 			$ret = '';
 		}

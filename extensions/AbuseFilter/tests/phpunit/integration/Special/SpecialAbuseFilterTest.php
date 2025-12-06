@@ -26,6 +26,7 @@ use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewRevert;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTestBatch;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTools;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
@@ -379,18 +380,32 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 	}
 
 	public function testViewEditForProtectedFilterWhenUserLacksAuthority() {
-		[ $html, ] = $this->executeSpecialPage(
-			'1',
-			new FauxRequest(),
-			null,
-			$this->authorityCannotUseProtectedVar
-		);
+		[ $html, ] = $this->executeSpecialPage( '1', null, null, $this->authorityCannotUseProtectedVar );
 
 		$this->assertStringContainsString(
-			'(abusefilter-edit-denied-protected-vars',
+			'(abusefilter-edit-denied-protected-vars-because-of-permission: ' .
+				'(action-abusefilter-access-protected-vars))',
 			$html,
 			'The protected filter permission error was not present.'
 		);
+	}
+
+	public function testViewEditForProtectedFilterWhenHookPreventsAccess() {
+		$this->setTemporaryHook(
+			'AbuseFilterCanViewProtectedVariables',
+			static function ( $performer, $variables, AbuseFilterPermissionStatus $returnStatus ) {
+				$returnStatus->fatal( new RawMessage( 'Testing-custom-message-for-abuse-filter' ) );
+			}
+		);
+
+		[ $html, ] = $this->executeSpecialPage( '1', null, null, $this->authorityCanUseProtectedVar );
+
+		$this->assertStringContainsString(
+			'(abusefilter-edit-denied-protected-vars:',
+			$html,
+			'The protected filter access error was not present.'
+		);
+		$this->assertStringContainsString( 'Testing-custom-message-for-abuse-filter', $html );
 	}
 
 	public function testViewEditProtectedVarsCheckboxAbsentForUnprotectedFilter() {
@@ -713,10 +728,33 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		);
 
 		$this->assertStringContainsString(
-			'(abusefilter-history-error-protected)',
+			'(abusefilter-history-error-protected-due-to-permission: (action-abusefilter-access-protected-vars))',
 			$html,
 			'The protected filter permission error was not present.'
 		);
+		$this->assertStringNotContainsString(
+			'abusefilter-history-select-user',
+			$html,
+			'The filter history should not be shown if the user cannot see the filter.'
+		);
+	}
+
+	public function testViewHistoryForProtectedFilterWhenHookPreventsAccess() {
+		$this->setTemporaryHook(
+			'AbuseFilterCanViewProtectedVariables',
+			static function ( $performer, $variables, AbuseFilterPermissionStatus $returnStatus ) {
+				$returnStatus->fatal( new RawMessage( 'Testing-custom-message-for-abuse-filter' ) );
+			}
+		);
+
+		[ $html, ] = $this->executeSpecialPage( 'history/1', null, null, $this->authorityCanUseProtectedVar );
+
+		$this->assertStringContainsString(
+			'(abusefilter-history-error-protected:',
+			$html,
+			'The protected filter permission error was not present.'
+		);
+		$this->assertStringContainsString( 'Testing-custom-message-for-abuse-filter', $html );
 		$this->assertStringNotContainsString(
 			'abusefilter-history-select-user',
 			$html,
@@ -849,29 +887,46 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		];
 	}
 
-	/** @dataProvider provideViewDiffForProtectedFilterWhenUserLacksAuthority */
+	/** @dataProvider provideViewDiffWhenAtLeastOneVersionContainsProtectedFilterVersion */
 	public function testViewDiffForProtectedFilterWhenUserLacksAuthority( $subPage ) {
-		[ $html, ] = $this->executeSpecialPage(
-			$subPage,
-			new FauxRequest(),
-			null,
-			$this->authorityCannotUseProtectedVar
-		);
+		[ $html, ] = $this->executeSpecialPage( $subPage, null, null, $this->authorityCannotUseProtectedVar );
 
 		$this->assertStringContainsString(
-			'(abusefilter-history-error-protected)',
+			'(abusefilter-history-error-protected-due-to-permission: (action-abusefilter-access-protected-vars))',
 			$html,
 			'The protected filter permission error was not present.'
 		);
 	}
 
-	public static function provideViewDiffForProtectedFilterWhenUserLacksAuthority() {
+	public static function provideViewDiffWhenAtLeastOneVersionContainsProtectedFilterVersion() {
 		return [
 			'Diff between version which was not protected and a version which is protected' => [
 				'history/1/diff/next/1'
 			],
+			'Diff between version which was protected and a version which is not protected' => [
+				'history/1/diff/prev/2'
+			],
 			'Diff between two protected versions of the filter' => [ 'history/1/diff/3/prev' ],
 		];
+	}
+
+	/** @dataProvider provideViewDiffWhenAtLeastOneVersionContainsProtectedFilterVersion */
+	public function testViewDiffForProtectedFilterWhenHookPreventsAccess( $subPage ) {
+		$this->setTemporaryHook(
+			'AbuseFilterCanViewProtectedVariables',
+			static function ( $performer, $variables, AbuseFilterPermissionStatus $returnStatus ) {
+				$returnStatus->fatal( new RawMessage( 'Testing-custom-message-for-abuse-filter' ) );
+			}
+		);
+
+		[ $html, ] = $this->executeSpecialPage( $subPage, null, null, $this->authorityCanUseProtectedVar );
+
+		$this->assertStringContainsString(
+			'(abusefilter-history-error-protected: ',
+			$html,
+			'The protected filter access error was not present.'
+		);
+		$this->assertStringContainsString( 'Testing-custom-message-for-abuse-filter', $html );
 	}
 
 	private function verifyHasExamineIntroMessage( string $html ) {
@@ -912,6 +967,28 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		);
 	}
 
+	public function testViewExamineForLogEntryWhereUserCannotSeeSpecificProtectedVariableDueToPermission() {
+		// Mock that all users lack access to user_unnamed_ip only, so we can test denying access based on the
+		// protected variables that are present in the log.
+		$this->setTemporaryHook(
+			'AbuseFilterCanViewProtectedVariables',
+			static function ( Authority $performer, array $variables, AbuseFilterPermissionStatus $returnStatus ) {
+				if ( in_array( 'user_unnamed_ip', $variables ) ) {
+					$returnStatus->setPermission( 'test-permission' );
+				}
+			}
+		);
+
+		[ $html, ] = $this->executeSpecialPage( 'examine/log/1', null, null, $this->authorityCanUseProtectedVar );
+
+		$this->verifyHasExamineIntroMessage( $html );
+		$this->assertStringContainsString(
+			'(abusefilter-examine-error-protected-due-to-permission: (action-test-permission))',
+			$html,
+			'Missing protected filter access error.'
+		);
+	}
+
 	public function testViewExamineForLogEntryWhereUserCannotSeeSpecificProtectedVariable() {
 		// Mock that all users lack access to user_unnamed_ip only, so we can test denying access based on the
 		// protected variables that are present in the log.
@@ -933,7 +1010,7 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 
 		$this->verifyHasExamineIntroMessage( $html );
 		$this->assertStringContainsString(
-			'(abusefilter-examine-protected-vars-permission)',
+			'(abusefilter-examine-error-protected:',
 			$html,
 			'Missing protected filter access error.'
 		);

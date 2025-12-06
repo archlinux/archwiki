@@ -2,21 +2,7 @@
 /**
  * Contains a class for formatting log entries
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Niklas Laxström
  * @license GPL-2.0-or-later
@@ -470,9 +456,17 @@ class LogFormatter {
 				break;
 
 			case 'merge':
-				$text = wfMessage( 'pagemerge-logentry' )
-					->rawParams( $target, $parameters['4::dest'], $parameters['5::mergepoint'] )
-					->inContentLanguage()->escaped();
+				switch ( $entry->getSubtype() ) {
+					case 'merge':
+						$text = wfMessage( 'pagemerge-logentry' )
+							->rawParams( $target, $parameters['4::dest'], $parameters['5::mergepoint'] )
+							->inContentLanguage()->escaped();
+						break;
+
+					case 'merge-into':
+						// Nothing for IRC (already covered by the log at the source page)
+						return '';
+				}
 				break;
 
 			case 'block':
@@ -618,7 +612,7 @@ class LogFormatter {
 
 		// Filter out parameters which are not in format #:foo
 		foreach ( $entry->getParameters() as $key => $value ) {
-			if ( strpos( $key, ':' ) === false ) {
+			if ( !str_contains( $key, ':' ) ) {
 				continue;
 			}
 			[ $index, $type, ] = explode( ':', $key, 3 );

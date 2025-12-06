@@ -22,6 +22,7 @@ use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\UserIdentity;
 use SpecialPageTestBase;
 use stdClass;
@@ -38,11 +39,12 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 class SpecialAbuseLogTest extends SpecialPageTestBase {
 	use FilterFromSpecsTestTrait;
 	use MockAuthorityTrait;
-
-	private static UserIdentity $logPerformer;
+	use TempUserTestTrait;
 
 	private Authority $authorityCannotUseProtectedVar;
 	private Authority $authorityCanUseProtectedVar;
+	private static Authority $authorityCanRevealTempAccountIPs;
+	private static Authority $authorityNoRights;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -75,6 +77,17 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 				'abusefilter-log-detail',
 			]
 		);
+
+		// Create an authority who can reveal IPs of temporary accounts
+		self::$authorityCanRevealTempAccountIPs = $this->mockUserAuthorityWithPermissions(
+			$this->getTestUser()->getUserIdentity(),
+			[
+				'checkuser-temporary-account-no-preference'
+			]
+		);
+
+		// Create an authority who has no additional rights
+		self::$authorityNoRights = $this->getTestUser()->getAuthority();
 	}
 
 	/**
@@ -178,7 +191,7 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 		$this->assertStatusValue(
 			(object)[
 				'afl_id' => '1',
-				'afl_user_text' => self::$logPerformer->getName(),
+				'afl_user_text' => '~2024-01',
 				'afl_filter_id' => '1',
 				'afl_global' => '0',
 				'afl_timestamp' => '20240506070809',
@@ -257,7 +270,8 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 		// Verify that both log entries are displayed, but that no extended details can be seen because the user
 		// lacks access to the log and filter.
 		$this->assertSame( 2, substr_count( $html, '(abusefilter-log-entry' ) );
-		$this->assertSame( 0, substr_count( $html, '(abusefilter-log-detailedentry-meta' ) );
+		// 3 public hits
+		$this->assertSame( 4, substr_count( $html, '(abusefilter-log-detailedentry-meta' ) );
 
 		// Verify some contents of the log line
 		$this->assertStringContainsString( '(abusefilter-log-noactions', $html );
@@ -271,7 +285,7 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 
 		// Verify that both log entries are displayed along with links to look at the log, as they can access
 		// the log and filter.
-		$this->assertSame( 2, substr_count( $html, '(abusefilter-log-detailedentry-meta' ) );
+		$this->assertSame( 6, substr_count( $html, '(abusefilter-log-detailedentry-meta' ) );
 
 		// Verify some contents of the log line
 		$this->assertStringContainsString( '(abusefilter-changeslist-examine', $html );
@@ -339,7 +353,7 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 		[ $html ] = $this->executeSpecialPage(
 			'1', null, null, $this->authorityCanUseProtectedVar
 		);
-		$this->assertStringContainsString( '(abusefilter-examine-protected-vars-permission', $html );
+		$this->assertStringContainsString( '(abusefilter-examine-error-protected', $html );
 	}
 
 	public function testViewLogWhenAssociatedFilterIsGlobalAndGlobalFiltersHaveBeenDisabled() {
@@ -389,6 +403,119 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( '(abusefilter-log-hide-no-selected)', $html );
 	}
 
+	public static function provideIPLookups() {
+		return [
+			'IP with temp account results, user with rights' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '1.2.3.4',
+				'expectedResultCount' => 2,
+				'tempAccountsKnown' => true,
+			],
+			'IP with temp account results, user with rights, temp accounts unknown' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '1.2.3.4',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => false,
+			],
+			'IP range with temp account results, user with rights' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '1.2.3.0/16',
+				'expectedResultCount' => 2,
+				'tempAccountsKnown' => true,
+			],
+			'IP with no results, user with rights' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '1.2.3.5',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => true,
+			],
+			'IP range with no results, user with rights' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '4.3.2.1/16',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => true,
+			],
+			'IP with temp account results, user without rights' => [
+				'performer' => static fn () => self::$authorityNoRights,
+				'target' => '1.2.3.4',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => true,
+			],
+			'IP range with temp account results, user without rights' => [
+				'performer' => static fn () => self::$authorityNoRights,
+				'target' => '1.2.3.0/16',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => true,
+			],
+			'IP with mix of temp and anonymous results, user with rights' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '5.6.7.8',
+				'expectedResultCount' => 2,
+				'tempAccountsKnown' => true,
+			],
+			'IP with mix of temp and anonymous results, user without rights' => [
+				'performer' => static fn () => self::$authorityNoRights,
+				'target' => '5.6.7.8',
+				'expectedResultCount' => 1,
+				'tempAccountsKnown' => true,
+			],
+			'IP range with mix of temp and anonymous results, user with rights, should only return temp accounts' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '5.6.7.0/16',
+				'expectedResultCount' => 1,
+				'tempAccountsKnown' => true,
+			],
+			'IP range with anonymous results only, user with rights, temp accounts unknown' => [
+				'performer' => static fn () => self::$authorityCanRevealTempAccountIPs,
+				'target' => '5.6.7.0/16',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => false,
+			],
+			'IP with anonymous results only, user without rights' => [
+				'performer' => static fn () => self::$authorityNoRights,
+				'target' => '6.7.8.9',
+				'expectedResultCount' => 1,
+				'tempAccountsKnown' => true,
+			],
+			'IP range with anonymous results only, user with rights' => [
+				'performer' => static fn () => self::$authorityNoRights,
+				'target' => '6.7.8.0/16',
+				'expectedResultCount' => 0,
+				'tempAccountsKnown' => true,
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider provideIPLookups
+	 */
+	public function testTempAccountIPLookup(
+		$performerProvider,
+		$target,
+		$expectedResultCount,
+		$tempAccountsKnown
+	) {
+		$this->markTestSkippedIfExtensionNotLoaded( 'CheckUser' );
+
+		if ( $tempAccountsKnown ) {
+			$this->enableAutoCreateTempUser();
+		} else {
+			$this->disableAutoCreateTempUser();
+		}
+		[ $html ] = $this->executeSpecialPage(
+			'',
+			new FauxRequest( [ 'wpSearchUser' => $target ] ),
+			null,
+			$performerProvider()
+		);
+		if ( $expectedResultCount ) {
+			$this->assertStringNotContainsString( '(abusefilter-log-noresults)', $html );
+			$this->assertSame( $expectedResultCount, substr_count( $html, 'abusefilter-log-entry' ) );
+		} else {
+			$this->assertStringContainsString( '(abusefilter-log-noresults)', $html );
+		}
+	}
+
 	public function addDBDataOnce() {
 		// Clear the protected access hooks, as in CI other extensions (such as CheckUser) may attempt to
 		// define additional restrictions that cause the tests to fail.
@@ -413,12 +540,14 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 		// Insert two hits on the filter, one with user_unnamed_ip and with old_wikitext. This so that we can
 		// simulate a user having access to the filter but not the log due to a variable specific restriction.
 		RequestContext::getMain()->getRequest()->setIP( '1.2.3.4' );
-		$logPerformer = $this->getTestUser();
-		self::$logPerformer = $logPerformer->getUserIdentity();
+		$this->enableAutoCreateTempUser();
+		$user = $this->getServiceContainer()
+			->getTempUserCreator()
+			->create( '~2024-01', RequestContext::getMain()->getRequest() )->getUser();
 		$abuseFilterLoggerFactory = AbuseFilterServices::getAbuseLoggerFactory();
 		$abuseFilterLoggerFactory->newLogger(
 			$this->getExistingTestPage()->getTitle(),
-			$logPerformer->getUser(),
+			$user,
 			VariableHolder::newFromArray( [
 				'action' => 'edit',
 				'user_name' => '~2024-1',
@@ -427,13 +556,81 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 		)->addLogEntries( [ 1 => [] ] );
 		$abuseFilterLoggerFactory->newLogger(
 			$this->getExistingTestPage()->getTitle(),
-			$logPerformer->getUser(),
+			$user,
 			VariableHolder::newFromArray( [
 				'action' => 'edit',
 				'user_name' => '~2024-1',
 				'old_wikitext' => 'abc',
 			] )
 		)->addLogEntries( [ 1 => [] ] );
+
+		// Create a filter that's public
+		$this->assertStatusGood( AbuseFilterServices::getFilterStore()->saveFilter(
+			$performer, null,
+			$this->getFilterFromSpecs( [
+				'id' => '2',
+				'name' => 'Public filter',
+				'privacy' => Flags::FILTER_PUBLIC,
+				'rules' => 'action = "edit"',
+			] ),
+			MutableFilter::newDefault()
+		) );
+
+		// Insert a hit on the public filter from a temporary account
+		RequestContext::getMain()->getRequest()->setIP( '5.6.7.8' );
+		$this->resetServices();
+		$user = $this->getServiceContainer()
+			->getTempUserCreator()
+			->create( '~2024-02', RequestContext::getMain()->getRequest() )->getUser();
+		AbuseFilterServices::getAbuseLoggerFactory()->newLogger(
+				$this->getExistingTestPage()->getTitle(),
+				$user,
+				VariableHolder::newFromArray( [
+					'action' => 'edit',
+					'user_name' => '~2024-02',
+					'user_unnamed_ip' => '5.6.7.8',
+				] )
+			)->addLogEntries( [ 2 => [] ] );
+
+		// Insert a hit on the public filter from a registered user on an IP shared with a temporary
+		// account and an IP. This is useful for testing that the registered user is not caught in
+		// lookups of hits from temporary accounts and anonymous users.
+		$this->resetServices();
+		$user = $this->getTestUser()->getUser();
+		AbuseFilterServices::getAbuseLoggerFactory()->newLogger(
+			$this->getExistingTestPage()->getTitle(),
+			$user,
+			VariableHolder::newFromArray( [
+				'action' => 'edit',
+				'user_name' => $user->getName(),
+				'user_unnamed_ip' => '5.6.7.8',
+			] )
+		)->addLogEntries( [ 2 => [] ] );
+
+		// Insert two hits on the public filter from anonymous users.
+		$this->disableAutoCreateTempUser();
+		$user = $this->getServiceContainer()->getUserFactory()->newAnonymous( '5.6.7.8' );
+		AbuseFilterServices::getAbuseLoggerFactory()->newLogger(
+			$this->getExistingTestPage()->getTitle(),
+			$user,
+			VariableHolder::newFromArray( [
+				'action' => 'edit',
+				'user_name' => '5.6.7.8',
+				'user_unnamed_ip' => '5.6.7.8',
+			] )
+		)->addLogEntries( [ 2 => [] ] );
+		RequestContext::getMain()->getRequest()->setIP( '6.7.8.9' );
+		$this->resetServices();
+		$user = $this->getServiceContainer()->getUserFactory()->newAnonymous( '6.7.8.9' );
+		AbuseFilterServices::getAbuseLoggerFactory()->newLogger(
+			$this->getExistingTestPage()->getTitle(),
+			$user,
+			VariableHolder::newFromArray( [
+				'action' => 'edit',
+				'user_name' => '6.7.8.9',
+				'user_unnamed_ip' => '6.7.8.9',
+			] )
+		)->addLogEntries( [ 2 => [] ] );
 	}
 
 	protected function newSpecialPage() {

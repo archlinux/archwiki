@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Samoasambia"
+		]
+	},
+	"apierror-checkuser-nosuchuser": "Tämän nimistä käyttäjää ei ole",
+	"checkuser-api-useragent-clienthints-revision-user-mismatch": "Käyttäjä $1 ei ole version $2 tekijä",
+	"checkuser-api-useragent-clienthints-nonexistent-id": "$1-tunnistetta $2 ei ole olemassa",
+	"checkuser-ip-auto-reveal-expiry-invalid": "Annettu autopaljastuksen aikaraja on virheellinen.",
+	"checkuser-ip-auto-reveal-missing-permission": "Sinulla ei ole oikeutta käyttää IP-osoitteiden autopaljastusta.",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "Ehdotetut tutkimukset -ominaisuus ei ole käytössä"
+}

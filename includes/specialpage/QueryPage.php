@@ -2,21 +2,7 @@
 /**
  * Base code for "query" special pages.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  */
@@ -28,6 +14,7 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -66,8 +53,10 @@ use MediaWiki\Specials\SpecialWantedFiles;
 use MediaWiki\Specials\SpecialWantedPages;
 use MediaWiki\Specials\SpecialWantedTemplates;
 use MediaWiki\Specials\SpecialWithoutInterwiki;
+use RuntimeException;
 use stdClass;
 use Wikimedia\Rdbms\DBError;
+use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -122,6 +111,9 @@ abstract class QueryPage extends SpecialPage {
 	/** @var LinkBatchFactory|null */
 	private $linkBatchFactory = null;
 
+	/** @var HttpRequestFactory|null */
+	private $httpRequestFactory = null;
+
 	/**
 	 * Get a list of query page classes and their associated special pages,
 	 * for periodic updates.
@@ -129,7 +121,7 @@ abstract class QueryPage extends SpecialPage {
 	 * When changing this list, you should ensure that maintenance/updateSpecialPages.php still works
 	 * including when test data exists.
 	 *
-	 * @return array[] List of [ string $class, string $specialPageName, ?int $limit (optional) ].
+	 * @return array[] List of [ class-string $class, string $specialPageName, ?int $limit (optional) ].
 	 *  Limit defaults to $wgQueryCacheLimit if not given.
 	 */
 	public static function getPages() {
@@ -196,6 +188,18 @@ abstract class QueryPage extends SpecialPage {
 			$this->linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
 		}
 		return $this->linkBatchFactory;
+	}
+
+	/**
+	 * @return HttpRequestFactory
+	 */
+	private function getHttpRequestFactory(): HttpRequestFactory {
+		if ( $this->httpRequestFactory === null ) {
+			// Fallback if not provided
+			// TODO Do not rely on global state
+			$this->httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		}
+		return $this->httpRequestFactory;
 	}
 
 	/**
@@ -351,6 +355,22 @@ abstract class QueryPage extends SpecialPage {
 	}
 
 	/**
+	 * Check if this query page is configured to fetch data from an external source via HTTP.
+	 *
+	 * @since 1.45
+	 * @stable to override
+	 * @return bool True if configured to use an external data source, false otherwise
+	 */
+	public function usesExternalSource(): bool {
+		$config = $this->getConfig();
+		$externalSources = $config->get( MainConfigNames::ExternalQuerySources );
+		$pageName = $this->getName();
+
+		return !empty( $externalSources[$pageName]['enabled'] ) &&
+			!empty( $externalSources[$pageName]['url'] );
+	}
+
+	/**
 	 * Formats the results of the query for display. The skin is the current
 	 * skin; you can use it for making links. The result is a single row of
 	 * result data. You should be able to grab SQL results from it.
@@ -440,7 +460,7 @@ abstract class QueryPage extends SpecialPage {
 
 			$dbw->doAtomicSection(
 				$fname,
-				function ( IDatabase $dbw, $fname ) use ( $vals ) {
+				function ( IDatabase $dbw, $fname ) {
 					// Clear out any old cached data
 					$dbw->newDeleteQueryBuilder()
 						->deleteFrom( 'querycache' )
@@ -473,11 +493,10 @@ abstract class QueryPage extends SpecialPage {
 	/**
 	 * Get a DB connection to be used for slow recache queries
 	 * @stable to override
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
 	protected function getRecacheDB() {
-		return $this->getDBLoadBalancer()
-			->getConnection( ILoadBalancer::DB_REPLICA, 'vslow' );
+		return $this->getDatabaseProvider()->getReplicaDatabase( false, 'vslow' );
 	}
 
 	/**
@@ -531,7 +550,22 @@ abstract class QueryPage extends SpecialPage {
 	 * @since 1.18
 	 */
 	public function reallyDoQuery( $limit, $offset = false ) {
-		$fname = static::class . '::reallyDoQuery';
+		if ( $this->usesExternalSource() ) {
+			return $this->reallyDoQueryExternal( $limit, $offset );
+		}
+
+		return $this->reallyDoQueryInternal( $limit, $offset );
+	}
+
+	/**
+	 * Run the query and return the result
+	 *
+	 * @param int|false $limit Numerical limit or false for no limit
+	 * @param int|false $offset Numerical offset or false for no offset
+	 * @return IResultWrapper
+	 */
+	private function reallyDoQueryInternal( $limit, $offset = false ) {
+		$fname = static::class . '::reallyDoQueryInternal';
 		$dbr = $this->getRecacheDB();
 		$query = $this->getQueryInfo();
 		$order = $this->getOrderFields();
@@ -568,6 +602,74 @@ abstract class QueryPage extends SpecialPage {
 		}
 
 		return $queryBuilder->fetchResultSet();
+	}
+
+	/**
+	 * Run the query and return the result
+	 *
+	 * @param int|false $limit Numerical limit or false for no limit
+	 * @param int|false $offset Numerical offset or false for no offset
+	 * @return IResultWrapper
+	 */
+	private function reallyDoQueryExternal( $limit, $offset = false ) {
+		$fname = static::class . '::reallyDoQueryExternal';
+		$httpRequestFactory = $this->getHttpRequestFactory();
+		$externalSources = $this->getConfig()->get( MainConfigNames::ExternalQuerySources );
+		$pageName = $this->getName();
+		$config = $externalSources[$pageName];
+
+		$options = [];
+		if ( isset( $config['timeout'] ) ) {
+			$options['timeout'] = (int)$config['timeout'];
+		}
+
+		$request = $httpRequestFactory->create( $config['url'], $options, $fname );
+
+		$status = $request->execute();
+		if ( !$status->isOK() ) {
+			throw new RuntimeException( "Failed to fetch data from external source '{$pageName}': " .
+				$status->getMessage()->text() );
+		}
+
+		$content = $request->getContent();
+		if ( $content === null || $content === '' ) {
+			throw new RuntimeException( "Empty response received from external source '{$pageName}'" );
+		}
+
+		$decoded = json_decode( $content, true );
+		if ( $decoded === null ) {
+			throw new RuntimeException( "Invalid JSON response from external source '{$pageName}': " .
+				json_last_error_msg() );
+		}
+
+		if ( !is_array( $decoded ) ) {
+			throw new RuntimeException( "Expected array data from external source '{$pageName}', got " .
+				gettype( $decoded ) );
+		}
+
+		$result = [];
+		foreach ( $decoded as $i => $row ) {
+			if ( !is_array( $row ) ) {
+				throw new RuntimeException( "Invalid row data at index {$i} from external source '{$pageName}': " .
+					'expected array, got ' . gettype( $row ) );
+			}
+
+			$requiredFields = [ 'qc_namespace', 'qc_title', 'qc_value' ];
+			foreach ( $requiredFields as $field ) {
+				if ( !array_key_exists( $field, $row ) ) {
+					throw new RuntimeException(
+						"Missing required field '{$field}' in row {$i} from external source '{$pageName}'" );
+				}
+			}
+
+			$result[] = (object)[
+				'namespace' => $row['qc_namespace'],
+				'title' => $row['qc_title'],
+				'value' => $row['qc_value']
+			];
+		}
+
+		return new FakeResultWrapper( $result );
 	}
 
 	/**
@@ -886,7 +988,7 @@ abstract class QueryPage extends SpecialPage {
 	/**
 	 * Do any necessary preprocessing of the result object.
 	 * @stable to override
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param IResultWrapper $res
 	 */
 	protected function preprocessResults( $db, $res ) {

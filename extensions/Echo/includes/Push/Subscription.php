@@ -6,18 +6,6 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class Subscription {
 
-	/** @var string */
-	private $provider;
-
-	/** @var string */
-	private $token;
-
-	/** @var ConvertibleTimestamp */
-	private $updated;
-
-	/** @var string|null */
-	private $topic;
-
 	/**
 	 * Construct a subscription from a DB result row.
 	 * @param \stdClass $row echo_push_subscription row from IResultWrapper::fetchRow
@@ -32,11 +20,12 @@ class Subscription {
 		);
 	}
 
-	public function __construct( string $provider, string $token, ?string $topic, ConvertibleTimestamp $updated ) {
-		$this->provider = $provider;
-		$this->token = $token;
-		$this->topic = $topic;
-		$this->updated = $updated;
+	public function __construct(
+		private readonly string $provider,
+		private readonly string $token,
+		private readonly ?string $topic,
+		private readonly ConvertibleTimestamp $updated,
+	) {
 	}
 
 	/** @return string provider */

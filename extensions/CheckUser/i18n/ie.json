@@ -120,10 +120,5 @@
 	"checkuser-investigate-compare-table-header-username": "Nómine de usator",
 	"checkuser-investigate-compare-table-header-activity": "Range de date",
 	"checkuser-investigate-compare-table-header-ip": "IP",
-	"checkuser-investigate-compare-table-header-useragent": "Agente de usator",
-	"checkuser-investigate-subtitle-link-restart-tour": "Recomensar tur",
-	"checkuser-investigate-tour-targets-title": "Verificar multiplica usatores e IPs?",
-	"checkuser-investigate-tour-filterip-title": "Restricter tui investigation?",
-	"checkuser-investigate-tour-block-title": "Vu desira blocar?",
-	"checkuser-investigate-tour-copywikitext-title": "Vu desira copiar li data?"
+	"checkuser-investigate-compare-table-header-useragent": "Agente de usator"
 }

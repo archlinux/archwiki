@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"Tbodt"
 		]
 	},
+	"templatedata-doc-param-example": "sama ni",
 	"templatedata-modal-title-language": "toki"
 }

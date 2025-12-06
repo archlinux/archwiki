@@ -31,7 +31,7 @@ class UnreadWikisTest extends MediaWikiIntegrationTestCase {
 				'foobar' => [
 					'alert' => [ 'count' => '2', 'ts' => '20220322222222' ],
 					'message' => [ 'count' => '3', 'ts' => '20220322222223' ],
-				]
+				],
 			],
 			$unread->getUnreadCounts()
 		);
@@ -52,7 +52,7 @@ class UnreadWikisTest extends MediaWikiIntegrationTestCase {
 				'foobar' => [
 					'alert' => [ 'count' => '3', 'ts' => '00000000000000' ],
 					'message' => [ 'count' => '4', 'ts' => '00000000000000' ],
-				]
+				],
 			],
 			$unread->getUnreadCounts()
 		);

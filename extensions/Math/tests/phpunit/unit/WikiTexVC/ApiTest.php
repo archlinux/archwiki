@@ -2,9 +2,12 @@
 
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC;
 
+use LogicException;
+use MediaWiki\Extension\Math\WikiTexVC\ParserUtil;
 use MediaWiki\Extension\Math\WikiTexVC\SyntaxError;
 use MediaWiki\Extension\Math\WikiTexVC\TexVC;
 use MediaWikiUnitTestCase;
+use stdClass;
 
 /**
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
@@ -147,6 +150,11 @@ class ApiTest extends MediaWikiUnitTestCase {
 				'in' => '{\\begin{aligned}a\\\\[-2.563pt]b\\\\c\\\\[2em]d\\end{aligned}}',
 				'ams_required' => true,
 			],
+			[
+				'in' => '\\tripledash',
+				'status' => 'C',
+				'details' => 'virtual mhchemtexified package required.'
+			]
 		];
 		foreach ( $testCases as $case ) {
 			yield $case['in'] => [ $case ];
@@ -279,4 +287,32 @@ class ApiTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( 'C', $result['status'] );
 		$this->assertFalse( $result['success'] );
 	}
+
+	public function testError() {
+		$options = ParserUtil::createOptions( [] );
+		unset( $options['debug'] );
+		$result = $this->texVC->check( '\\frac', $options );
+		$this->assertEquals( 'S', $result['status'] );
+		$this->assertFalse( $result['success'] );
+	}
+
+	public function testHandlingUnexpectedError() {
+		$result = $this->texVC->handleTexError( new \Exception( 'Unexpected error' ), [] );
+		$this->assertEquals( '-', $result['status'] );
+		$this->assertFalse( $result['success'] );
+		$this->assertEquals( 'Unexpected error', $result['details'] );
+	}
+
+	public function testPreProcessMhChemTeXify() {
+		$options = ParserUtil::createOptions( [] );
+		$options['usemhchem'] = true;
+		$input = $this->texVC->preProcessInput( true, $options, '\\ce{H2O}' );
+		$this->assertEquals( '{\mathrm {H} {\vphantom {A}}_{\smash[{t}]{2}}\mathrm {O} }', $input->render() );
+	}
+
+	public function testPreProcessStdClass() {
+		$this->expectException( LogicException::class );
+		$this->texVC->preProcessInput( false, [], new StdClass() );
+	}
+
 }

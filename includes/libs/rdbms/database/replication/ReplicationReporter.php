@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms\Replication;
@@ -40,16 +26,27 @@ class ReplicationReporter {
 	/** @var array|null Replication lag estimate at the time of BEGIN for the last transaction */
 	private $trxReplicaLagStatus = null;
 
+	/**
+	 * @param string $topologyRole
+	 * @param LoggerInterface $logger
+	 * @param BagOStuff $srvCache
+	 */
 	public function __construct( $topologyRole, $logger, $srvCache ) {
 		$this->topologyRole = $topologyRole;
 		$this->logger = $logger;
 		$this->srvCache = $srvCache;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getTopologyRole() {
 		return $this->topologyRole;
 	}
 
+	/**
+	 * @return float|int|false
+	 */
 	public function getLag( IDatabase $conn ) {
 		if ( $this->topologyRole === IDatabase::ROLE_STREAMING_MASTER ) {
 			return 0; // this is the primary DB
@@ -89,7 +86,7 @@ class ReplicationReporter {
 			// Avoid exceptions as this is used internally in critical sections
 			try {
 				$lag = $this->getLag( $conn );
-			} catch ( DBError $e ) {
+			} catch ( DBError ) {
 				$lag = false;
 			}
 		} else {
@@ -99,16 +96,28 @@ class ReplicationReporter {
 		return [ 'lag' => $lag, 'since' => microtime( true ) ];
 	}
 
+	/**
+	 * @param IDatabase $conn
+	 * @param DBPrimaryPos $pos
+	 * @param int $timeout
+	 * @return int|null
+	 */
 	public function primaryPosWait( IDatabase $conn, DBPrimaryPos $pos, $timeout ) {
 		// Real waits are implemented in the subclass.
 		return 0;
 	}
 
+	/**
+	 * @return DBPrimaryPos|false
+	 */
 	public function getReplicaPos( IDatabase $conn ) {
 		// Stub
 		return false;
 	}
 
+	/**
+	 * @return DBPrimaryPos|false
+	 */
 	public function getPrimaryPos( IDatabase $conn ) {
 		// Stub
 		return false;
@@ -155,6 +164,9 @@ class ReplicationReporter {
 		return $conn->trxLevel() ? $this->trxReplicaLagStatus : null;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getSessionLagStatus( IDatabase $conn ) {
 		return $this->getRecordedTransactionLagStatus( $conn ) ?: $this->getApproximateLagStatus( $conn );
 	}
@@ -167,13 +179,10 @@ class ReplicationReporter {
 	 * @return array
 	 */
 	protected function getLogContext( IDatabase $conn, array $extras = [] ) {
-		return array_merge(
-			[
-				'db_server' => $conn->getServerName(),
-				'db_name' => $conn->getDBname(),
-				// TODO: Add db_user
-			],
-			$extras
-		);
+		return $extras + [
+			'db_server' => $conn->getServerName(),
+			'db_name' => $conn->getDBname(),
+			// TODO: Add db_user
+		];
 	}
 }

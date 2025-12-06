@@ -64,7 +64,7 @@ Describe the idea of how to solve the problem.
 
 Examples:
 1. Numbered equations are challenging since the math extension is not aware of the context. A solution could be to use [CSS counters](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Lists_and_Counters/Using_CSS_counters).
-2.  Whitelist the appropriate LaTeX commands in the texvc grammar.
+2. Allow the appropriate LaTeX commands in the texvc grammar.
 3. Show a warning if any of the non-standard commands are used.
 
 ### Step 3 (Obtain commuinity consenus)

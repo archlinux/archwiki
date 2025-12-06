@@ -6,7 +6,8 @@
 	QUnit.module( 've.ui.MWTemplateTitleInputWidget', ve.test.utils.newMwEnvironment( {
 		messages: {
 			// Force `templateDataInstalled` condition
-			'templatedata-doc-subpage': '(templatedata-doc-subpage)'
+			'templatedata-doc-subpage': '(templatedata-doc-subpage)',
+			'visualeditor-template-sandbox-subpage': '(template-sandbox-subpage)'
 		},
 		// Config will be reset by newMwEnvironment's teardown
 		beforeEach: function () {
@@ -160,7 +161,9 @@
 						{ pageid: 101, title: 'B' },
 						{ pageid: 102, title: 'A' },
 						// Documentation subpage, expected to be stripped
-						{ pageid: 103, title: 'A/(templatedata-doc-subpage)', index: 2 }
+						{ pageid: 103, title: 'A/(templatedata-doc-subpage)', index: 2 },
+						// Sandbox subpage, expected to be stripped
+						{ pageid: 104, title: 'A/(template-sandbox-subpage)', index: 3 }
 					],
 					redirects: [
 						// Alternative source for indexes, expected to be copied to the pages array

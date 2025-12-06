@@ -12,18 +12,7 @@ use Wikimedia\Message\MessageSpecifier;
 
 abstract class SpecialNukeUIRenderer {
 
-	/**
-	 * The context of the form.
-	 *
-	 * @var NukeContext
-	 */
-	protected NukeContext $context;
-
-	/**
-	 * @param NukeContext $context
-	 */
-	public function __construct( NukeContext $context ) {
-		$this->context = $context;
+	public function __construct( protected readonly NukeContext $context ) {
 	}
 
 	/**
@@ -93,5 +82,65 @@ abstract class SpecialNukeUIRenderer {
 	 * @return void
 	 */
 	abstract public function showResultPage( array $deletedPageStatuses ): void;
+
+	/**
+	 * Output the access status header, stating:
+	 * If the user has access to delete pages
+	 * If so, the instructions for deleting pages
+	 * If not, the reason why the user does not have access
+	 *
+	 * @param OutputPage $out
+	 * @param int $accessStatus
+	 * @return void
+	 */
+	protected function outputAccessStatusHeader( OutputPage $out, int $accessStatus ) {
+		switch ( $accessStatus ) {
+			case NukeContext::NUKE_ACCESS_GRANTED:
+				// the user has normal access, give them the tools prompt
+				$out->addWikiMsg( 'nuke-tools-prompt' );
+				break;
+			case NukeContext::NUKE_ACCESS_NO_PERMISSION:
+				// tell the user that they don't have the permission
+				$out->addWikiMsg( 'nuke-tools-notice-noperm' );
+				break;
+			case NukeContext::NUKE_ACCESS_BLOCKED:
+				// tell the user that they are blocked
+				$out->addWikiMsg( 'nuke-tools-notice-blocked' );
+				break;
+			case NukeContext::NUKE_ACCESS_INTERNAL_ERROR:
+			default:
+				// it's either internal error
+				// or a new case we don't support in the code yet
+				// in both cases we want to tell the user
+				// that there's been an error
+				$out->addWikiMsg( 'nuke-tools-notice-error' );
+				break;
+		}
+		// if $accessStatus isn't normal, then tell the user that their access is restricted
+		if ( $accessStatus !== NukeContext::NUKE_ACCESS_GRANTED ) {
+			$out->addWikiMsg( 'nuke-tools-prompt-restricted' );
+		}
+	}
+
+	/**
+	 * @param float $nukeMaxAgeInDays
+	 * @param float $recentChangesMaxAgeInDays
+	 * @return Message
+	 */
+	protected function getDateRangeHelperText(
+		float $nukeMaxAgeInDays,
+		float $recentChangesMaxAgeInDays
+	): Message {
+		$nukeMaxAgeDisplay = ( $nukeMaxAgeInDays > 0 ) ? $nukeMaxAgeInDays : 90;
+		if ( $nukeMaxAgeInDays !== $recentChangesMaxAgeInDays ) {
+			$recentChangesMaxAgeDisplay = ( $recentChangesMaxAgeInDays > 0 ) ? $recentChangesMaxAgeInDays : 30;
+			return $this->msg( 'nuke-daterange-helper-text-max-age-different' )
+				->params( [ $nukeMaxAgeDisplay,
+					$recentChangesMaxAgeDisplay ] );
+		}
+		return $this->msg( 'nuke-daterange-helper-text-max-age-same' )->params(
+			[ $nukeMaxAgeDisplay ]
+		);
+	}
 
 }

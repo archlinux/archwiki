@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
@@ -8,8 +9,7 @@
 			"Rancher",
 			"Sasa Stefanovic",
 			"Zoranzoki21",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"exif-imagewidth": "Ширина",
@@ -400,5 +400,15 @@
 	"exif-posepitchdegrees": "Угао по вертикали (степени)",
 	"exif-poserolldegrees": "Нагиб (степени)",
 	"exif-fullpanowidthpixels": "Панорама пуна ширина",
-	"exif-fullpanoheightpixels": "Панорама пуна висина"
+	"exif-fullpanoheightpixels": "Панорама пуна висина",
+	"exif-digitalsourcetype": "Извор дигиталног медија",
+	"exif-digitalsourcetype-digitalcapture": "Дигитална камера или снимач",
+	"exif-digitalsourcetype-minorhumanedits": "Оригиналан медији са минималним људским изменама",
+	"exif-digitalsourcetype-humanedits": "Људски измењен медији",
+	"exif-digitalsourcetype-compositewithtrainedalgorithmicmedia": "Уређено помоћу генеративне AI",
+	"exif-digitalsourcetype-algorithmicallyenhanced": "Алгоритмом измењен медији",
+	"exif-digitalsourcetype-softwareimage": "Направљено помоћу софтвера",
+	"exif-digitalsourcetype-digitalart": "Направио човек помоћу дигиталних алата",
+	"exif-digitalsourcetype-trainedalgorithmicmedia": "Направљено помоћу генеративне AI",
+	"exif-digitalsourcetype-screencapture": "Снимак екрана"
 }

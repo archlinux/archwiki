@@ -1,7 +1,8 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmfrac;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
@@ -18,20 +19,20 @@ use MediaWikiUnitTestCase;
  */
 class MMLmfracTest extends MediaWikiUnitTestCase {
 	public function testConstructor() {
-		$frac = new MMLmfrac( '', [ 'mathvariant' => 'bold' ] );
+		$frac = new MMLmfrac( '', [ 'mathvariant' => Variants::BOLD ] );
 		$this->assertEquals( 'mfrac', $frac->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $frac->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $frac->getAttributes() );
 	}
 
 	public function testTreeConstructor() {
 		$mi = new MMLmi( '', [], 'x' );
 		$mo = new MMLmo( '', [], '+' );
 		$mn = new MMLmn( '', [], '5' );
-		$mrowNumerator = new MMLmrow( '', [ 'mathvariant' => 'bold' ], $mi, $mo, $mn );
-		$mrowDenominator = new MMLmrow( '', [ 'mathvariant' => 'bold' ], $mn, $mo, $mi );
-		$frac = MMLmfrac::newSubtree( $mrowNumerator, $mrowDenominator, '', [ 'mathvariant' => 'bold' ] );
+		$mrowNumerator = new MMLmrow( '', [ 'mathvariant' => Variants::BOLD ], $mi, $mo, $mn );
+		$mrowDenominator = new MMLmrow( '', [ 'mathvariant' => Variants::BOLD ], $mn, $mo, $mi );
+		$frac = MMLmfrac::newSubtree( $mrowNumerator, $mrowDenominator, '', [ 'mathvariant' => Variants::BOLD ] );
 		$this->assertEquals( 'mfrac', $frac->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $frac->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $frac->getAttributes() );
 		$this->assertEquals( $frac->getChildren(), [ $mrowNumerator, $mrowDenominator ] );
 	}
 }

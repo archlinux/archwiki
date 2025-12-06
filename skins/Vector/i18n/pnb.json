@@ -7,7 +7,6 @@
 			"Khalid Mahmood"
 		]
 	},
-	"vector-opt-out": "پرانی وضع اُتے پرتو",
 	"vector-languages": "بولیاں",
 	"vector-language-button-label": "{{PLURAL:$1|$1 بولی|$1 بولیاں}}",
 	"vector-no-language-button-label": "بولیاں جوڑو",
@@ -23,7 +22,6 @@
 	"vector-view-view": "پڑھو",
 	"vector-view-viewsource": "سورس ویکھو",
 	"vector-more-actions": "ہور",
-	"vector-searchsuggest-containing": "اس ٹرم نوں صفحےآں وچ کھوجو <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-page-tools-label": "سند",
 	"vector-page-tools-general-label": "عام",
 	"vector-unpin-element-label": "لُکاؤ"

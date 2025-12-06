@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -48,6 +34,9 @@ use Wikimedia\Message\MessageValue;
  * @newable
  * @stable to extend
  * @since 1.25
+ * @template T Type of the value stored in the status when the operation result is OK.
+ *   May be 'never' to indicate that there's no meaningful value, and that
+ *   this status is only used to keep track of errors and warnings.
  */
 class StatusValue implements Stringable {
 
@@ -65,7 +54,7 @@ class StatusValue implements Stringable {
 	 */
 	protected $errors = [];
 
-	/** @var mixed */
+	/** @var T */
 	public $value;
 
 	/** @var bool[] Map of (key => bool) to indicate success of each part of batch operations */
@@ -81,15 +70,20 @@ class StatusValue implements Stringable {
 	public $statusData;
 
 	/**
+	 * @suppress PhanGenericConstructorTypes
+	 */
+	public function __construct() {
+	}
+
+	/**
 	 * Factory function for fatal errors
 	 *
 	 * @param string|MessageSpecifier $message Message key or object
 	 * @phpcs:ignore Generic.Files.LineLength
 	 * @param MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float> ...$parameters
 	 *   See Message::params()
-	 * @return static
 	 */
-	public static function newFatal( $message, ...$parameters ) {
+	public static function newFatal( $message, ...$parameters ): static {
 		$result = new static();
 		$result->fatal( $message, ...$parameters );
 		return $result;
@@ -99,9 +93,8 @@ class StatusValue implements Stringable {
 	 * Factory function for good results
 	 *
 	 * @param mixed|null $value
-	 * @return static
 	 */
-	public static function newGood( $value = null ) {
+	public static function newGood( $value = null ): static {
 		$result = new static();
 		$result->value = $value;
 		return $result;
@@ -155,7 +148,7 @@ class StatusValue implements Stringable {
 	}
 
 	/**
-	 * @return mixed
+	 * @return T
 	 */
 	public function getValue() {
 		return $this->value;
@@ -189,7 +182,9 @@ class StatusValue implements Stringable {
 	 * Change operation result
 	 *
 	 * @param bool $ok Whether the operation completed
-	 * @param mixed|null $value
+	 * @phpcs:ignore MediaWiki.Commenting.FunctionComment.DefaultNullTypeParam -- `T|null` causes false Phan warnings
+	 * @param T $value If `$ok` is true, this should be a value of the template type `T`.
+	 *   Otherwise it may be null or omitted.
 	 * @return $this
 	 */
 	public function setResult( $ok, $value = null ) {

@@ -1,6 +1,6 @@
 'use strict';
 
-const addBlockForm = require( '../../../../modules/ext.checkUser/investigate/blockform.js' );
+const addBlockForm = require( 'ext.checkUser/investigate/blockform.js' );
 
 QUnit.module( 'ext.checkUser.investigate.blockform', QUnit.newMwEnvironment() );
 

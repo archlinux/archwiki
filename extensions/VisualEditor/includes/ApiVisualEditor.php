@@ -352,7 +352,7 @@ class ApiVisualEditor extends ApiBase {
 						$revision,
 						$user,
 						$params['editintro'],
-						null,
+						$params['paction'] === 'wikitext' ? 'veaction=editsource' : 'veaction=edit',
 						false,
 						$section
 					);
@@ -457,7 +457,7 @@ class ApiVisualEditor extends ApiBase {
 					'starttimestamp' => wfTimestampNow(),
 					'wouldautocreate' => $wouldautocreate,
 				];
-				// phpcs:enable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment
+				// phpcs:enable
 				if ( isset( $restbaseHeaders['etag'] ) ) {
 					$result['etag'] = $restbaseHeaders['etag'];
 				}
@@ -544,21 +544,25 @@ class ApiVisualEditor extends ApiBase {
 	/**
 	 * Check if the configured allowed namespaces include the specified namespace
 	 *
+	 * @deprecated Since 1.45. Use {@link VisualEditorAvailabilityLookup::isAllowedNamespace} instead
 	 * @param Config $config
 	 * @param int $namespaceId Namespace ID
 	 * @return bool
 	 */
 	public static function isAllowedNamespace( Config $config, int $namespaceId ): bool {
+		wfDeprecated( __METHOD__, '1.45' );
 		return in_array( $namespaceId, self::getAvailableNamespaceIds( $config ), true );
 	}
 
 	/**
 	 * Get a list of allowed namespace IDs
 	 *
+	 * @deprecated Since 1.45. Use {@link VisualEditorAvailabilityLookup::getAvailableNamespaceIds} instead
 	 * @param Config $config
 	 * @return int[]
 	 */
 	public static function getAvailableNamespaceIds( Config $config ): array {
+		wfDeprecated( __METHOD__, '1.45' );
 		$namespaceInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
 		$configuredNamespaces = array_replace(
 			ExtensionRegistry::getInstance()->getAttribute( 'VisualEditorAvailableNamespaces' ),
@@ -577,11 +581,13 @@ class ApiVisualEditor extends ApiBase {
 	/**
 	 * Check if the configured allowed content models include the specified content model
 	 *
+	 * @deprecated Since 1.45. Use {@link VisualEditorAvailabilityLookup::isAllowedContentType} instead
 	 * @param Config $config
 	 * @param string $contentModel Content model ID
 	 * @return bool
 	 */
 	public static function isAllowedContentType( Config $config, string $contentModel ): bool {
+		wfDeprecated( __METHOD__, '1.45' );
 		$availableContentModels = array_merge(
 			ExtensionRegistry::getInstance()->getAttribute( 'VisualEditorAvailableContentModels' ),
 			$config->get( 'VisualEditorAvailableContentModels' )

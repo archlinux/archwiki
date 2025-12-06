@@ -126,6 +126,4 @@ ve.ui.MWCitationNeededContextItem.prototype.renderBody = function () {
 	this.$body.append( this.addButton.$element );
 };
 
-/* Registration */
-
-ve.ui.contextItemFactory.register( ve.ui.MWCitationNeededContextItem );
+module.exports = ve.ui.MWCitationNeededContextItem;

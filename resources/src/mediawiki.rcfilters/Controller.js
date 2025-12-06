@@ -243,7 +243,7 @@ Controller.prototype.initialize = function ( filterStructure, namespaceStructure
 	// groups; if we ever expand it, this might need further generalization:
 	for ( const viewName in views ) {
 		const viewData = views[ viewName ];
-		viewData.groups.forEach( ( groupData ) => {
+		for ( const groupData of viewData.groups ) {
 			const extraValues = [];
 			if ( groupData.allowArbitrary ) {
 				// If the value in the URL isn't in the group, add it
@@ -256,7 +256,7 @@ Controller.prototype.initialize = function ( filterStructure, namespaceStructure
 				}
 				this.addNumberValuesToGroup( groupData, extraValues );
 			}
-		} );
+		}
 	}
 
 	// Initialize the model
@@ -420,7 +420,7 @@ Controller.prototype.addNumberValuesToGroup = function ( groupData, arbitraryVal
 	// We assume these are the only groups that will allow for
 	// arbitrary, since it doesn't make any sense for the other
 	// groups.
-	arbitraryValues.forEach( ( val ) => {
+	for ( const val of arbitraryValues ) {
 		if (
 			// If the group allows for arbitrary data
 			groupData.allowArbitrary &&
@@ -448,7 +448,7 @@ Controller.prototype.addNumberValuesToGroup = function ( groupData, arbitraryVal
 				groupData.filters.sort( groupData.sortFunc );
 			}
 		}
-	} );
+	}
 };
 
 /**
@@ -1042,13 +1042,15 @@ Controller.prototype._getDefaultParams = function () {
  * @return {jQuery.Promise} Promise object resolved with { content, status }
  */
 Controller.prototype._queryChangesList = function ( counterId, params ) {
-	const uri = this.uriProcessor.getUpdatedUri(),
+	const url = this.uriProcessor.getUpdatedUri(),
 		stickyParams = this.filtersModel.getStickyParamsValues();
 
 	params = params || {};
-	params.action = 'render'; // bypasses MW chrome
+	params.action = 'render'; // disable MediaWiki skin wrapper
 
-	uri.extend( params );
+	for ( const key in params ) {
+		url.searchParams.set( key, params[ key ] );
+	}
 
 	this.requestCounter[ counterId ] = this.requestCounter[ counterId ] || 0;
 	const requestId = ++this.requestCounter[ counterId ];
@@ -1062,9 +1064,11 @@ Controller.prototype._queryChangesList = function ( counterId, params ) {
 	// be normalized out) the sticky parameters are
 	// always being sent to the server with their
 	// current/default values
-	uri.extend( stickyParams );
+	for ( const key in stickyParams ) {
+		url.searchParams.set( key, stickyParams[ key ] );
+	}
 
-	return $.ajax( uri.toString() )
+	return $.ajax( url.toString() )
 		.then(
 			( content, message, jqXHR ) => {
 				if ( !latestRequest() ) {

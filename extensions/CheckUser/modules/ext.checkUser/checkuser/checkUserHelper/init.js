@@ -20,16 +20,11 @@ function init() {
 	}
 	const tbl = document.createElement( 'table' );
 	tbl.className = 'wikitable mw-checkuser-helper-table';
-	if ( mw.config.get( 'wgCheckUserDisplayClientHints' ) ) {
-		tbl.className += ' mw-checkuser-clienthints-enabled-temporary-class';
-	}
 	const tr = tbl.insertRow();
 	tr.appendChild( $( '<th>' ).text( mw.message( 'checkuser-helper-user' ) )[ 0 ] );
 	tr.appendChild( $( '<th>' ).text( mw.message( 'checkuser-helper-ips' ) )[ 0 ] );
 	tr.appendChild( $( '<th>' ).text( mw.message( 'checkuser-helper-uas' ) )[ 0 ] );
-	if ( mw.config.get( 'wgCheckUserDisplayClientHints' ) ) {
-		tr.appendChild( $( '<th>' ).text( mw.message( 'checkuser-helper-client-hints' ) )[ 0 ] );
-	}
+	tr.appendChild( $( '<th>' ).text( mw.message( 'checkuser-helper-client-hints' ) )[ 0 ] );
 	$panelLayout.html( tbl );
 	// eslint-disable-next-line no-jquery/no-class-state
 	const tooManyResults = $( '.oo-ui-fieldsetLayout', $checkUserHelperFieldset ).hasClass( 'mw-collapsed' );

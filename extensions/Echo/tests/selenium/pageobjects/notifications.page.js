@@ -1,6 +1,4 @@
-'use strict';
-
-const Page = require( 'wdio-mediawiki/Page' );
+import Page from 'wdio-mediawiki/Page';
 
 class NotificationsPage extends Page {
 
@@ -11,6 +9,7 @@ class NotificationsPage extends Page {
 	async open() {
 		return super.openTitle( 'Special:Notifications', { uselang: 'en' } );
 	}
+
 }
 
-module.exports = new NotificationsPage();
+export default new NotificationsPage();

@@ -13,7 +13,7 @@
  * @constructor
  * @param {Object} [config] Configuration options
  */
-ve.ui.ProgressDialog = function VeUiProgressDialog( config ) {
+ve.ui.ProgressDialog = function VeUiProgressDialog( config = {} ) {
 	// Parent constructor
 	ve.ui.ProgressDialog.super.call( this, config );
 };
@@ -60,9 +60,7 @@ ve.ui.ProgressDialog.prototype.initialize = function () {
 /**
  * @inheritdoc
  */
-ve.ui.ProgressDialog.prototype.getSetupProcess = function ( data ) {
-	data = data || {};
-
+ve.ui.ProgressDialog.prototype.getSetupProcess = function ( data = {} ) {
 	// Parent method
 	return ve.ui.ProgressDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( () => {

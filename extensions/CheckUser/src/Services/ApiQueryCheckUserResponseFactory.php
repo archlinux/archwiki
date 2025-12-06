@@ -82,7 +82,7 @@ class ApiQueryCheckUserResponseFactory {
 			case 'edits':
 				$module->addDeprecation(
 					[
-						'apiwarn-deprecation-withreplacement', 'curequest=edits', 'curequest=actions'
+						'apiwarn-deprecation-withreplacement', 'curequest=edits', 'curequest=actions',
 					],
 					'curequest=edits'
 				);

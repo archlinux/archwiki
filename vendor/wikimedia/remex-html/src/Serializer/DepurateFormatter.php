@@ -29,10 +29,9 @@ class DepurateFormatter extends HtmlFormatter {
 			$s .= " $attrName=\"$encValue\"";
 		}
 		if ( $node->namespace === HTMLData::NS_HTML ) {
-			if ( isset( $this->prefixLfElements[$name] )
-			) {
+			if ( isset( HTMLData::TAGS['prefixLF'][$name] ) ) {
 				$s .= ">\n$contents</$name>";
-			} elseif ( !isset( $this->voidElements[$name] ) ) {
+			} elseif ( !isset( HTMLData::TAGS['void'][$name] ) ) {
 				$s .= ">$contents</$name>";
 			} else {
 				$s .= " />";

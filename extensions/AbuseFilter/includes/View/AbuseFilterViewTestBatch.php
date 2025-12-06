@@ -18,6 +18,7 @@ use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Message\Message;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\LBFactory;
@@ -50,6 +51,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 	 */
 	private $varGeneratorFactory;
 	private AbuseLoggerFactory $abuseLoggerFactory;
+	private RecentChangeFactory $recentChangeFactory;
 
 	/**
 	 * @param LBFactory $lbFactory
@@ -58,6 +60,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 	 * @param RuleCheckerFactory $ruleCheckerFactory
 	 * @param VariableGeneratorFactory $varGeneratorFactory
 	 * @param AbuseLoggerFactory $abuseLoggerFactory
+	 * @param RecentChangeFactory $recentChangeFactory
 	 * @param IContextSource $context
 	 * @param LinkRenderer $linkRenderer
 	 * @param string $basePageName
@@ -70,6 +73,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		RuleCheckerFactory $ruleCheckerFactory,
 		VariableGeneratorFactory $varGeneratorFactory,
 		AbuseLoggerFactory $abuseLoggerFactory,
+		RecentChangeFactory $recentChangeFactory,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
@@ -81,6 +85,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$this->ruleCheckerFactory = $ruleCheckerFactory;
 		$this->varGeneratorFactory = $varGeneratorFactory;
 		$this->abuseLoggerFactory = $abuseLoggerFactory;
+		$this->recentChangeFactory = $recentChangeFactory;
 	}
 
 	/**
@@ -272,20 +277,20 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$contextUser = $this->getUser();
 		$ruleChecker->toggleConditionLimit( false );
 		foreach ( $res as $row ) {
-			$rc = RecentChange::newFromRow( $row );
+			$rc = $this->recentChangeFactory->newRecentChangeFromRow( $row );
 			if ( !$formData['ShowNegative'] ) {
-				$type = (int)$rc->getAttribute( 'rc_type' );
+				$source = $rc->getAttribute( 'rc_source' );
 				$deletedValue = (int)$rc->getAttribute( 'rc_deleted' );
 				if (
 					(
-						$type === RC_LOG &&
+						$source === RecentChange::SRC_LOG &&
 						!LogEventsList::userCanBitfield(
 							$deletedValue,
 							LogPage::SUPPRESSED_ACTION | LogPage::SUPPRESSED_USER,
 							$contextUser
 						)
 					) || (
-						$type !== RC_LOG &&
+						$source !== RecentChange::SRC_LOG &&
 						!RevisionRecord::userCanBitfield( $deletedValue, RevisionRecord::SUPPRESSED_ALL, $contextUser )
 					)
 				) {

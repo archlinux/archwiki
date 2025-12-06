@@ -18,5 +18,6 @@
 	"nuke-maxpages": "அதிகபட்ச பக்கங்களின் எண்ணிக்கை:",
 	"nuke-deleted": "பக்கம் '''$1''' அழிக்கப்பட்டுள்ளது.",
 	"nuke-delete-more": "[[Special:Nuke|இன்னும் பக்கங்களை அழி]]",
+	"nuke-deletemore": "மேலும் பக்கங்களை நீக்கு",
 	"nuke-viewchanges": "மாற்றங்களைப் பார்"
 }

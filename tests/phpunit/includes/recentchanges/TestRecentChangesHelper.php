@@ -15,9 +15,9 @@ use MediaWiki\User\UserIdentity;
  */
 class TestRecentChangesHelper {
 
-	public function makeEditRecentChange( UserIdentity $user, $titleText, $curid, $thisid, $lastid,
-		$timestamp, $counter, $watchingUsers
-	) {
+	public function makeEditRecentChange( UserIdentity $user, string $titleText, ?int $curid, ?int $thisid, ?int $lastid,
+		string $timestamp, int $counter, int $watchingUsers
+	): RecentChange {
 		$attribs = array_merge(
 			$this->getDefaultAttributes( $titleText, $timestamp ),
 			[
@@ -33,9 +33,9 @@ class TestRecentChangesHelper {
 	}
 
 	public function makeLogRecentChange(
-		$logType, $logAction, UserIdentity $user, $titleText, $timestamp, $counter, $watchingUsers,
-		$additionalAttribs = []
-	) {
+		string $logType, string $logAction, UserIdentity $user, string $titleText, string $timestamp, int $counter, int $watchingUsers,
+		array $additionalAttribs = []
+	): RecentChange {
 		$attribs = array_merge(
 			$this->getDefaultAttributes( $titleText, $timestamp ),
 			[
@@ -50,7 +50,7 @@ class TestRecentChangesHelper {
 				'rc_logid' => 25,
 				'rc_log_type' => $logType,
 				'rc_log_action' => $logAction,
-				'rc_source' => 'mw.log'
+				'rc_source' => RecentChange::SRC_LOG
 			],
 			$additionalAttribs
 		);
@@ -58,9 +58,9 @@ class TestRecentChangesHelper {
 		return $this->makeRecentChange( $attribs, $counter, $watchingUsers );
 	}
 
-	public function makeDeletedEditRecentChange( UserIdentity $user, $titleText, $timestamp, $curid,
-		$thisid, $lastid, $counter, $watchingUsers
-	) {
+	public function makeDeletedEditRecentChange( UserIdentity $user, string $titleText, string $timestamp, ?int $curid,
+		?int $thisid, ?int $lastid, int $counter, int $watchingUsers
+	): RecentChange {
 		$attribs = array_merge(
 			$this->getDefaultAttributes( $titleText, $timestamp ),
 			[
@@ -76,9 +76,9 @@ class TestRecentChangesHelper {
 		return $this->makeRecentChange( $attribs, $counter, $watchingUsers );
 	}
 
-	public function makeNewBotEditRecentChange( UserIdentity $user, $titleText, $curid, $thisid, $lastid,
-		$timestamp, $counter, $watchingUsers
-	) {
+	public function makeNewBotEditRecentChange( UserIdentity $user, string $titleText, ?int $curid, ?int $thisid, ?int $lastid,
+		string $timestamp, int $counter, int $watchingUsers
+	): RecentChange {
 		$attribs = array_merge(
 			$this->getDefaultAttributes( $titleText, $timestamp ),
 			[
@@ -89,7 +89,7 @@ class TestRecentChangesHelper {
 				'rc_cur_id' => $curid,
 				'rc_type' => 1,
 				'rc_bot' => 1,
-				'rc_source' => 'mw.new'
+				'rc_source' => RecentChange::SRC_NEW
 			]
 		);
 
@@ -105,7 +105,7 @@ class TestRecentChangesHelper {
 		return $change;
 	}
 
-	public function getCacheEntry( $recentChange ) {
+	public function getCacheEntry( RecentChange $recentChange ): RecentChange {
 		$rcCacheFactory = new RCCacheEntryFactory(
 			new RequestContext(),
 			[ 'diff' => 'diff', 'cur' => 'cur', 'last' => 'last' ],
@@ -116,12 +116,13 @@ class TestRecentChangesHelper {
 	}
 
 	public function makeCategorizationRecentChange(
-		UserIdentity $user, $titleText, $curid, $thisid, $lastid, $timestamp
-	) {
+		UserIdentity $user, string $titleText, ?int $curid, ?int $thisid, ?int $lastid, string $timestamp
+	): RecentChange {
 		$attribs = array_merge(
 			$this->getDefaultAttributes( $titleText, $timestamp ),
 			[
 				'rc_type' => RC_CATEGORIZE,
+				'rc_source' => RecentChange::SRC_CATEGORIZE,
 				'rc_user' => $user->getId(),
 				'rc_user_text' => $user->getName(),
 				'rc_this_oldid' => $thisid,
@@ -161,7 +162,7 @@ class TestRecentChangesHelper {
 			'rc_log_type' => null,
 			'rc_log_action' => '',
 			'rc_params' => '',
-			'rc_source' => 'mw.edit'
+			'rc_source' => RecentChange::SRC_EDIT
 		];
 	}
 

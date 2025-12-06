@@ -2,21 +2,7 @@
 /**
  * Core installer web interface.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Installer
  */
@@ -32,6 +18,7 @@ use MediaWiki\Installer\Task\TaskRunner;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
 use Wikimedia\HtmlArmor\HtmlArmor;
@@ -323,7 +310,7 @@ class WebInstaller extends Installer {
 		}
 
 		$this->phpErrors = [];
-		set_error_handler( [ $this, 'errorHandler' ] );
+		set_error_handler( $this->errorHandler( ... ) );
 		try {
 			session_name( 'mw_installer_session' );
 			session_start( $options );
@@ -368,6 +355,7 @@ class WebInstaller extends Installer {
 		] ) );
 	}
 
+	/** @inheritDoc */
 	public function showError( $msg, ...$params ) {
 		if ( !( $msg instanceof Message ) ) {
 			$msg = wfMessage(
@@ -666,6 +654,7 @@ class WebInstaller extends Installer {
 			"</div></div>\n";
 	}
 
+	/** @inheritDoc */
 	public function showSuccess( $msg, ...$params ) {
 		$html = '<div class="cdx-message cdx-message--block cdx-message--success">' .
 			'<span class="cdx-message__icon"></span><div class="cdx-message__content">' .
@@ -674,6 +663,7 @@ class WebInstaller extends Installer {
 		$this->output->addHTML( $html );
 	}
 
+	/** @inheritDoc */
 	public function showMessage( $msg, ...$params ) {
 		$html = '<div class="cdx-message cdx-message--block cdx-message--notice">' .
 			'<span class="cdx-message__icon"></span><div class="cdx-message__content">' .
@@ -682,6 +672,7 @@ class WebInstaller extends Installer {
 		$this->output->addHTML( $html );
 	}
 
+	/** @inheritDoc */
 	public function showWarning( $msg, ...$params ) {
 		$html = '<div class="cdx-message cdx-message--block cdx-message--warning">' .
 			'<span class="cdx-message__icon"></span><div class="cdx-message__content">' .
@@ -690,6 +681,7 @@ class WebInstaller extends Installer {
 		$this->output->addHTML( $html );
 	}
 
+	/** @inheritDoc */
 	public function showStatusMessage( Status $status ) {
 		// Show errors at the top in web installer to make them easier to notice
 		foreach ( $status->getMessages( 'error' ) as $msg ) {
@@ -1146,6 +1138,7 @@ class WebInstaller extends Installer {
 		return parent::envCheckPath();
 	}
 
+	/** @inheritDoc */
 	protected function detectWebPaths() {
 		// PHP_SELF isn't available sometimes, such as when PHP is CGI but
 		// cgi.fix_pathinfo is disabled. In that case, fall back to SCRIPT_NAME
@@ -1195,6 +1188,7 @@ class WebInstaller extends Installer {
 	 * Actually output LocalSettings.php for download
 	 */
 	private function outputLS() {
+		ContentSecurityPolicy::sendRestrictiveHeader();
 		$this->request->response()->header( 'Content-type: application/x-httpd-php' );
 		$this->request->response()->header(
 			'Content-Disposition: attachment; filename="LocalSettings.php"'
@@ -1213,6 +1207,7 @@ class WebInstaller extends Installer {
 	 */
 	public function outputCss() {
 		$this->request->response()->header( 'Content-type: text/css' );
+		ContentSecurityPolicy::sendRestrictiveHeader();
 		echo $this->output->getCSS();
 	}
 
@@ -1247,7 +1242,7 @@ class WebInstaller extends Installer {
 		$taskFactory->registerWebUpgradeTasks( $taskList );
 		$taskRunner = new TaskRunner( $taskList, $taskFactory, TaskFactory::PROFILE_WEB_UPGRADE );
 
-		ob_start( [ $this, 'outputHandler' ] );
+		ob_start( $this->outputHandler( ... ) );
 		try {
 			$status = $taskRunner->execute();
 			$ret = $status->isOK();
@@ -1264,7 +1259,7 @@ class WebInstaller extends Installer {
 		return $ret;
 	}
 
-	public function outputHandler( $string ) {
+	public function outputHandler( string $string ): string {
 		return htmlspecialchars( $string );
 	}
 

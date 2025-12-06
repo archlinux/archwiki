@@ -12,25 +12,15 @@ class LazyLoadedVariable {
 	 */
 	private $parameters;
 
-	/**
-	 * @param string $method
-	 * @param array $parameters
-	 */
 	public function __construct( string $method, array $parameters ) {
 		$this->method = $method;
 		$this->parameters = $parameters;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getMethod(): string {
 		return $this->method;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getParameters(): array {
 		return $this->parameters;
 	}

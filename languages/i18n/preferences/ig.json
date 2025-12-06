@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nwonwu Uchechukwu P",
-			"Oby Ezeilo",
-			"Ucmbachu",
-			"Ukabia",
-			"King ChristLike",
-			"Nachi kim",
 			"Chiraldine",
 			"Iwuala Lucy",
-			"Sylvaline39"
+			"King ChristLike",
+			"Nachi kim",
+			"Nwonwu Uchechukwu P",
+			"Oby Ezeilo",
+			"Sylvaline39",
+			"Ucmbachu",
+			"Ukabia"
 		]
 	},
 	"preferences": "Nhọrọ",
@@ -202,6 +202,8 @@
 	"rcfilters-watchlist-preference-label": "Jiri ntụgharị ọrụ na-enweghị JavaScrip",
 	"rcfilters-watchlist-preference-help": "\n\nNa-ebunye [[{{#special:Watchlist}}|ndepụta nche]] na-enweghị ọrụ nchịkọta, ọchụchọ, ma ọ bụ ngosipụta ngosi.",
 	"prefs-changeswatchlist": " Ndi mmegharị e gosipụtara",
+	"tog-watchstar-expiry": "Oge ndabere na ndepụta nche maka ibe e tinyere aka:",
+	"tog-watch-expiry": " Oge ndabere",
 	"tog-watchlisthideminor": "Zonari orü ntakịrị fwuör ndetu ihem ne lé",
 	"tog-watchlisthidebots": "Zonari orü bot fwuör ndetu ihem ne lé",
 	"tog-watchlisthideown": "Zonari orüm fwuör ndetu ihem ne lé",

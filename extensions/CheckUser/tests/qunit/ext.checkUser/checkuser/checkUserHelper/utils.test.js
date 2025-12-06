@@ -1,6 +1,6 @@
 'use strict';
 
-const Utils = require( '../../../../../modules/ext.checkUser/checkuser/checkUserHelper/utils.js' );
+const Utils = require( 'ext.checkUser/checkuser/checkUserHelper/utils.js' );
 
 QUnit.module( 'ext.checkUser.checkuser.checkUserHelper.utils' );
 

@@ -74,7 +74,7 @@ class SpecialCheckUserLog extends SpecialPage {
 		$out->addModules( [ 'ext.checkUser' ] );
 		$out->addModuleStyles( [
 			'ext.checkUser.styles',
-			'mediawiki.interface.helpers.styles'
+			'mediawiki.interface.helpers.styles',
 		] );
 		$request = $this->getRequest();
 
@@ -180,6 +180,16 @@ class SpecialCheckUserLog extends SpecialPage {
 				);
 			}
 
+			if (
+				$this->getConfig()->get( 'CheckUserSuggestedInvestigationsEnabled' ) &&
+				!$this->getConfig()->get( 'CheckUserSuggestedInvestigationsHidden' )
+			) {
+				$links[] = $this->getLinkRenderer()->makeKnownLink(
+					SpecialPage::getTitleFor( 'SuggestedInvestigations' ),
+					$this->msg( 'checkuser-show-suggestedinvestigations' )->text()
+				);
+			}
+
 			$this->getOutput()->addSubtitle( Html::rawElement(
 					'span',
 					[ "class" => "mw-checkuser-links-no-parentheses" ],
@@ -208,7 +218,7 @@ class SpecialCheckUserLog extends SpecialPage {
 				'size' => 40,
 				'label-message' => 'checkuser-log-search-target',
 				'default' => $this->opts['target'],
-				'id' => 'mw-target-user-or-ip'
+				'id' => 'mw-target-user-or-ip',
 			],
 			'initiator' => [
 				'type' => 'user',
@@ -218,7 +228,7 @@ class SpecialCheckUserLog extends SpecialPage {
 				'name' => 'cuInitiator',
 				'size' => 40,
 				'label-message' => 'checkuser-log-search-initiator',
-				'default' => $this->opts['initiator']
+				'default' => $this->opts['initiator'],
 			],
 			'reason' => [
 				'type' => 'text',
@@ -226,22 +236,22 @@ class SpecialCheckUserLog extends SpecialPage {
 				'size' => 40,
 				'label-message' => 'checkuser-log-search-reason',
 				'default' => $this->opts['reason'],
-				'help-message' => 'checkuser-log-search-reason-help'
+				'help-message' => 'checkuser-log-search-reason-help',
 			],
 			'start' => [
 				'type' => 'date',
 				'default' => '',
 				'id' => 'mw-date-start',
 				'label' => $this->msg( 'date-range-from' )->text(),
-				'name' => 'start'
+				'name' => 'start',
 			],
 			'end' => [
 				'type' => 'date',
 				'default' => '',
 				'id' => 'mw-date-end',
 				'label' => $this->msg( 'date-range-to' )->text(),
-				'name' => 'end'
-			]
+				'name' => 'end',
+			],
 		];
 
 		$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() );

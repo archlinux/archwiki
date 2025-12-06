@@ -15,7 +15,8 @@ $specialPageAliases['en'] = [
 	'GlobalContributions' => [ 'GlobalContributions', 'GlobalContribs' ],
 	'Investigate' => [ 'Investigate' ],
 	'InvestigateBlock' => [ 'InvestigateBlock' ],
-	'IPContributions' => [ 'IPContributions' ],
+	'IPContributions' => [ 'IPContributions', 'IPContribs' ],
+	'SuggestedInvestigations' => [ 'SuggestedInvestigations' ],
 ];
 
 /** Arabic (العربية) */
@@ -264,8 +265,12 @@ $specialPageAliases['it'] = [
 
 /** Japanese (日本語) */
 $specialPageAliases['ja'] = [
-	'CheckUser' => [ 'チェックユーザー', 'チェックユーザ', '利用者調査' ],
-	'CheckUserLog' => [ 'チェックユーザー記録', '利用者調査記録' ],
+	'CheckUser' => [ 'チェックユーザー' ],
+	'CheckUserLog' => [ 'チェックユーザー記録' ],
+	'GlobalContributions' => [ 'グローバル投稿記録' ],
+	'Investigate' => [ '調査' ],
+	'InvestigateBlock' => [ '調査ブロック' ],
+	'IPContributions' => [ 'IP投稿記録' ],
 ];
 
 /** Georgian (ქართული) */
@@ -524,21 +529,40 @@ $specialPageAliases['vep'] = [
 $specialPageAliases['vi'] = [
 	'CheckUser' => [ 'Kiểm_tra_người_dùng' ],
 	'CheckUserLog' => [ 'Nhật_trình_kiểm_tra_người_dùng' ],
+	'IPContributions' => [ 'Đóng_góp_IP' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'CheckUser' => [ 'CheckUser' ],
+	'CheckUserLog' => [ 'CheckUserLog' ],
+	'GlobalContributions' => [ 'GlobalContributions' ],
+	'Investigate' => [ 'Investigate' ],
+	'InvestigateBlock' => [ 'InvestigateBlock' ],
+	'IPContributions' => [ 'IPContributions' ],
+];
+
+/** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'CheckUser' => [ '用户查核' ],
 	'CheckUserLog' => [ '用户查核日志' ],
+	'GlobalContributions' => [ '全域贡献' ],
+	'Investigate' => [ '调查' ],
+	'InvestigateBlock' => [ '调查封禁' ],
+	'IPContributions' => [ 'IP贡献' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $specialPageAliases['zh-hant'] = [
 	'CheckUser' => [ '使用者查核' ],
 	'CheckUserLog' => [ '使用者查核日誌' ],
+	'GlobalContributions' => [ '全域貢獻' ],
+	'Investigate' => [ '調查' ],
+	'InvestigateBlock' => [ '調查封鎖' ],
+	'IPContributions' => [ 'IP貢獻' ],
 ];
 
-/** Chinese (Hong Kong) (中文（香港）‎) */
+/** Chinese (Hong Kong) (中文（香港）) */
 $specialPageAliases['zh-hk'] = [
 	'CheckUser' => [ '用戶查核' ],
 	'CheckUserLog' => [ '用戶查核日誌' ],

@@ -71,13 +71,13 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 						case $this->postByOtherUser->getPostId():
 							return [
 								'post' => $this->postByOtherUser,
-								'root' => $this->topic
+								'root' => $this->topic,
 							];
 
 						case $this->postByMe->getPostId():
 							return [
 								'post' => $this->postByMe,
-								'root' => $this->topic
+								'root' => $this->topic,
 							];
 
 						default:
@@ -129,7 +129,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testValidRequest() {
-		[ $result,, ] = $this->doApiRequestWithToken( [
+		[ $result ] = $this->doApiRequestWithToken( [
 			'action' => 'flowthank',
 			'postid' => $this->postByOtherUser->getPostId()->getAlphadecimal(),
 		] );

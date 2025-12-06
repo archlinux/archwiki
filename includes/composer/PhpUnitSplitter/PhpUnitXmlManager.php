@@ -4,10 +4,12 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Composer\PhpUnitSplitter;
 
+use Composer\IO\IOInterface;
 use Composer\Script\Event;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use MediaWiki\Composer\ComposerLaunchParallel;
+use MediaWiki\Composer\ComposerSystemInterface;
 use PHPUnit\Framework\ErrorTestCase;
 use Shellbox\Shellbox;
 
@@ -58,8 +60,8 @@ class PhpUnitXmlManager {
 		return $this->rootDir . DIRECTORY_SEPARATOR . $this->phpunitConfigFile;
 	}
 
-	private function getPhpUnitXmlDist(): string {
-		return $this->rootDir . DIRECTORY_SEPARATOR . "phpunit.xml.dist";
+	public static function getPhpUnitXmlDist( string $rootDir ): string {
+		return $rootDir . DIRECTORY_SEPARATOR . "phpunit.xml.dist";
 	}
 
 	private function getTestsList(): string {
@@ -67,7 +69,7 @@ class PhpUnitXmlManager {
 	}
 
 	private function loadPhpUnitXmlDist(): PhpUnitXml {
-		return $this->loadPhpUnitXml( $this->getPhpUnitXmlDist() );
+		return $this->loadPhpUnitXml( self::getPhpUnitXmlDist( $this->rootDir ) );
 	}
 
 	private function loadPhpUnitXml( string $targetFile ): PhpUnitXml {
@@ -117,7 +119,7 @@ class PhpUnitXmlManager {
 				if ( $testDescriptor->getFullClassname() === ErrorTestCase::class ) {
 					throw new PhpUnitErrorTestCaseFoundException();
 				}
-				throw new UnlocatedTestException( $testDescriptor );
+				throw new UnlocatedTestException( $testDescriptor, $filename );
 			} else {
 				return null;
 			}
@@ -160,14 +162,16 @@ class PhpUnitXmlManager {
 		$testFiles = $this->scanForTestFiles();
 		$testClasses = $this->loadTestClasses();
 		$seenFiles = [];
+		$validClasses = [];
 		foreach ( $testClasses as $testDescriptor ) {
 			$file = $this->resolveFileForTest( $testDescriptor, $testFiles );
 			if ( is_string( $file ) && !array_key_exists( $file, $seenFiles ) ) {
 				$testDescriptor->setFilename( $file );
+				$validClasses[] = $testDescriptor;
 				$seenFiles[$file] = 1;
 			}
 		}
-		$suites = $this->buildSuites( $testClasses, $groups - 1 );
+		$suites = $this->buildSuites( $validClasses, $groups - 1 );
 		$unitFile->addSplitGroups( $suites );
 		$unitFile->addSpecialCaseTests( $groups );
 		$unitFile->saveToDisk( $this->getPhpUnitXmlTarget() );
@@ -193,6 +197,13 @@ class PhpUnitXmlManager {
 		return $serverUrlBase . '/' . $matches[0];
 	}
 
+	private static function createGuzzleClient(): Client {
+		return new Client( [
+			'timeout' => 5,
+			'headers' => [ 'User-Agent' => 'MediaWiki Composer' ]
+		] );
+	}
+
 	/**
 	 * We don't have access to Mediawiki's HTTPRequestFactory here since we are in a minimal
 	 * bootstrap and Mediawiki Services are not loaded. Use Guzzle to make a simple
@@ -202,10 +213,7 @@ class PhpUnitXmlManager {
 	 * @throws GuzzleException
 	 */
 	private static function downloadResultsCacheFile( string $resultsCacheUrl ): ?string {
-		$client = new Client( [
-			'timeout' => 5,
-			'headers' => [ 'User-Agent' => 'MediaWiki Composer' ]
-		] );
+		$client = self::createGuzzleClient();
 		$content = $client->get( $resultsCacheUrl )->getBody()->getContents();
 		if ( !$content ) {
 			return null;
@@ -225,7 +233,7 @@ class PhpUnitXmlManager {
 		}
 		// We want to put the cache file in a tmp directory, but we don't have MainConfigSchema::TmpDirectory available
 		// to us, so use the system temp folder.
-		$cacheFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . self::RESULTS_CACHE_FILE;
+		$cacheFile = self::resultsCacheFileLocation();
 		$event->getIO()->write( '' );
 		if ( file_exists( $cacheFile ) ) {
 			$event->getIO()->write( 'Using existing PHPUnit results cache ' . self::RESULTS_CACHE_FILE );
@@ -257,10 +265,76 @@ class PhpUnitXmlManager {
 		$event->getIO()->write( '' );
 	}
 
+	/**
+	 * We don't have access to Mediawiki's HTTPRequestFactory here since we are in a minimal
+	 * bootstrap and Mediawiki Services are not loaded. Use Guzzle to make a simple
+	 * unauthenticated POST to the results server, to let it know that new results are available
+	 * for this job.
+	 *
+	 * @throws GuzzleException
+	 */
+	private static function notifyJobComplete( string $resultsCacheUrl ): bool {
+		$client = self::createGuzzleClient();
+		$response = $client->post( $resultsCacheUrl );
+		if ( $response->getStatusCode() < 400 ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Called after a parallel run, to let the results server know that new results will be available
+	 * soon to be fetched. We assume LOG_PATH is set (or if not, that a warning about that has already
+	 * been emitted).
+	 */
+	public static function notifyResultsServer( Event $event ): void {
+		$resultsCacheServerBaseUrl = getenv( 'MW_RESULTS_CACHE_SERVER_BASE_URL' );
+		if ( !is_string( $resultsCacheServerBaseUrl ) ) {
+			return;
+		}
+		$resultsCacheUrl = self::generateResultsCacheUrl( $resultsCacheServerBaseUrl, getenv( 'LOG_PATH' ) );
+		if ( $resultsCacheUrl === null ) {
+			return;
+		}
+		$event->getIO()->write( '' );
+		try {
+			if ( self::notifyJobComplete( $resultsCacheUrl ) ) {
+				$event->getIO()->write(
+					'Notified results server at ' . $resultsCacheUrl .
+					' that new results will soon be available'
+				);
+			} else {
+				$event->getIO()->warning(
+					'Unable to notify the results server at ' . $resultsCacheUrl .
+					' that new results will soon be available'
+				);
+			}
+		} catch ( GuzzleException $ge ) {
+			$event->getIO()->warning(
+				'GuzzleException when notifying results server: ' . $ge->getMessage()
+			);
+		}
+		$event->getIO()->write( '' );
+	}
+
 	public static function listTestsNotice( Event $event ) {
 		$event->getIO()->write( '' );
 		$event->getIO()->write( 'Running `phpunit --list-tests-xml` to get a list of expected tests ... ' );
 		$event->getIO()->write( '' );
+	}
+
+	public static function newSplitGroupExecutor(
+		IOInterface $io, ComposerSystemInterface $system
+	): SplitGroupExecutor {
+		return new SplitGroupExecutor(
+			self::getPhpUnitXmlDist( $system->getcwd() ),
+			Shellbox::createUnboxedExecutor(),
+			$io
+		);
+	}
+
+	private static function resultsCacheFileLocation(): string {
+		return sys_get_temp_dir() . DIRECTORY_SEPARATOR . self::RESULTS_CACHE_FILE;
 	}
 
 	/**
@@ -274,8 +348,10 @@ class PhpUnitXmlManager {
 		string $testGroup,
 		string $testListFile,
 		?string $testSuite,
-		string $phpunitConfigFile,
-		Event $event
+		string $phpunitConfigOutputFile,
+		ComposerSystemInterface $system,
+		SplitGroupExecutor $executor,
+		?IOInterface $io
 	) {
 		/**
 		 * We split into 8 groups here, because experimentally that generates 100% CPU load
@@ -283,38 +359,51 @@ class PhpUnitXmlManager {
 		 * Parser tests (which we have to run in a group on their own - see T345481)
 		 */
 		try {
-			$resultsCacheFile = file_exists( self::RESULTS_CACHE_FILE ) ? self::RESULTS_CACHE_FILE : null;
+			$cacheFileLocation = self::resultsCacheFileLocation();
+			$resultsCacheFile = file_exists( $cacheFileLocation ) ? $cacheFileLocation : null;
+			if ( $io && !$resultsCacheFile ) {
+				$io->warning( 'No results cache file found at ' . $cacheFileLocation );
+			}
 			( new PhpUnitXmlManager(
-				getcwd(),
+				$system->getcwd(),
 				$testListFile,
-				$phpunitConfigFile,
+				$phpunitConfigOutputFile,
 				$testGroup,
 				$resultsCacheFile
 			) )->createPhpUnitXml( 8 );
+			if ( $io ) {
+				$io->write( '' );
+				$io->info( 'Created modified `%s` with test suite groups', [ $phpunitConfigOutputFile ] );
+			}
+			// Quibble still expects a `phpunit.xml` file to be generated by parallel runs.
+			// Create this file for now to make the Quibble migration easier. Delete this when
+			// Quibble has been updated to expect the correct files (T378797)
+			copy( $phpunitConfigOutputFile, $system->getcwd() . DIRECTORY_SEPARATOR . 'phpunit.xml' );
 		} catch ( PhpUnitErrorTestCaseFoundException $tce ) {
-			$event->getIO()->error( $tce->getMessage() );
+			if ( $io ) {
+				$io->error( $tce->getMessage() );
+			}
+			copy(
+				self::getPhpUnitXmlDist( $system->getcwd() ),
+				$system->getcwd() . DIRECTORY_SEPARATOR . 'phpunit.xml'
+			);
 			if ( $testSuite !== null ) {
 				/* Parallel test suite run failed. Run the tests in linear order to work out
 				 * which test actually has an error (see T379764 for some discussion of why this
 				 * is necessary)
+				 *
+				 * For a "custom" run, no test suite is specified.
+				 * This only happens when users manually run the 'split' function from composer on the command
+				 * line and supply their own `tests-list.xml` file and does not happen as part of a CI run, so a
+				 * fallback run of the test suite is not desired / expected.
 				 */
-				$executor = new SplitGroupExecutor(
-					$phpunitConfigFile,
-					Shellbox::createUnboxedExecutor(),
-					$event
-				);
 				$executor->runLinearFallback( $testSuite );
-				$event->getIO()->error( "Test suite splitting failed" );
-				exit( ComposerLaunchParallel::EXIT_STATUS_PHPUNIT_LIST_TESTS_ERROR );
+				if ( $io ) {
+					$io->error( "Test suite splitting failed" );
+				}
 			}
-			exit( ComposerLaunchParallel::EXIT_STATUS_PHPUNIT_LIST_TESTS_ERROR );
+			$system->exit( ComposerLaunchParallel::EXIT_STATUS_PHPUNIT_LIST_TESTS_ERROR );
 		}
-		$event->getIO()->write( '' );
-		$event->getIO()->info( 'Created modified `%s` with test suite groups', [ $phpunitConfigFile ] );
-		// Quibble still expects a `phpunit.xml` file to be generated by parallel runs.
-		// Create this file for now to make the Quibble migration easier. Delete this when
-		// Quibble has been updated to expect the correct files (T378797)
-		copy( $phpunitConfigFile, 'phpunit.xml' );
 	}
 
 	/**
@@ -324,19 +413,24 @@ class PhpUnitXmlManager {
 	 * @throws SuiteGenerationException
 	 */
 	public static function splitTestsListExtensions( Event $event ) {
+		$systemInterface = new ComposerSystemInterface();
 		self::splitTestsList(
 			'database',
 			'tests-list-extensions.xml',
 			'extensions',
 			'phpunit-database.xml',
-			$event
+			$systemInterface,
+			self::newSplitGroupExecutor( $event->getIO(), $systemInterface ),
+			$event->getIO()
 		);
 		self::splitTestsList(
 			'databaseless',
 			'tests-list-extensions.xml',
 			'extensions',
 			'phpunit-databaseless.xml',
-			$event
+			$systemInterface,
+			self::newSplitGroupExecutor( $event->getIO(), $systemInterface ),
+			$event->getIO()
 		);
 	}
 
@@ -347,19 +441,24 @@ class PhpUnitXmlManager {
 	 * @throws SuiteGenerationException
 	 */
 	public static function splitTestsListDefault( Event $event ) {
+		$systemInterface = new ComposerSystemInterface();
 		self::splitTestsList(
 			'database',
 			'tests-list-default.xml',
 			'default',
 			'phpunit-database.xml',
-			$event
+			$systemInterface,
+			self::newSplitGroupExecutor( $event->getIO(), $systemInterface ),
+			$event->getIO()
 		);
 		self::splitTestsList(
 			'databaseless',
 			'tests-list-default.xml',
 			'default',
 			'phpunit-databaseless.xml',
-			$event
+			$systemInterface,
+			self::newSplitGroupExecutor( $event->getIO(), $systemInterface ),
+			$event->getIO()
 		);
 	}
 
@@ -375,12 +474,15 @@ class PhpUnitXmlManager {
 			exit( 1 );
 		}
 		$filename = $_SERVER["argv"][2];
+		$systemInterface = new ComposerSystemInterface();
 		self::splitTestsList(
 			'custom',
 			$filename,
 			null,
 			'phpunit-custom.xml',
-			$event
+			$systemInterface,
+			self::newSplitGroupExecutor( $event->getIO(), $systemInterface ),
+			$event->getIO()
 		);
 	}
 }

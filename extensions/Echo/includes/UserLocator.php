@@ -28,7 +28,7 @@ class UserLocator {
 		}
 		$provider = MediaWikiServices::getInstance()->getConnectionProvider();
 		$batchRowIt = new BatchRowIterator(
-			$provider->getReplicaDatabase( false, 'watchlist' ),
+			$provider->getReplicaDatabase(),
 			/* $table = */ 'watchlist',
 			/* $primaryKeys = */ [ 'wl_user' ],
 			$batchSize
@@ -147,6 +147,7 @@ class UserLocator {
 			->where( [ 'rev_page' => $articleId ] )
 			->orderBy( [ 'rev_timestamp', 'rev_id' ] )
 			->joinConds( $revQuery['joins'] )
+			->useIndex( [ 'revision' => 'rev_page_timestamp' ] )
 			->caller( __METHOD__ )
 			->fetchRow();
 		if ( !$res || !$res->rev_user ) {

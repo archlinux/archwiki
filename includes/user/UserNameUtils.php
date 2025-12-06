@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -129,13 +115,13 @@ class UserNameUtils implements UserRigorOptions {
 		// such as with extra namespace keys at the start.
 		try {
 			$title = $this->titleParser->parseTitle( $name );
-		} catch ( MalformedTitleException $_ ) {
+		} catch ( MalformedTitleException ) {
 			$title = null;
 		}
 
 		if ( $title === null
 			|| $title->getNamespace()
-			|| strcmp( $name, $title->getText() )
+			|| $name !== $title->getText()
 		) {
 			return false;
 		}
@@ -271,7 +257,7 @@ class UserNameUtils implements UserRigorOptions {
 		// Reject names containing '#'; these will be cleaned up
 		// with title normalisation, but then it's too late to
 		// check elsewhere
-		if ( strpos( $name, '#' ) !== false ) {
+		if ( str_contains( $name, '#' ) ) {
 			return false;
 		}
 
@@ -292,7 +278,7 @@ class UserNameUtils implements UserRigorOptions {
 		// but only when validation is requested (T14654)
 		try {
 			$title = $this->titleParser->parseTitle( $name, NS_USER );
-		} catch ( MalformedTitleException $_ ) {
+		} catch ( MalformedTitleException ) {
 			$title = null;
 		}
 
@@ -399,10 +385,16 @@ class UserNameUtils implements UserRigorOptions {
 	/**
 	 * Get a placeholder name for a temporary user before serial acquisition
 	 *
+	 * This method throws if temporary users are not enabled, and you can't check whether they are or
+	 * not from this class, so you have to check from the TempUserConfig class first, and then you
+	 * might as well use TempUserConfig::getPlaceholderName() directly.
+	 *
 	 * @since 1.39
+	 * @deprecated since 1.45 Use TempUserConfig::getPlaceholderName() instead
 	 * @return string
 	 */
 	public function getTempPlaceholder() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->tempUserConfig->getPlaceholderName();
 	}
 }

@@ -182,9 +182,7 @@
 	"namespaceprotected": "Şumo içozati viroişi sahifahoi fazoinomi '''$1'''-ro nadored.",
 	"ns-specialprotected": "Sahifahoi viƶa ƣajri qobili viroiş hastand.",
 	"titleprotected": "Eçodi sahifae bo in unvon az tarafi [[User:$1|$1]] çilavgirī şudaast.\nDaleli zikrşuda az in qaror ast <em>$2</em>.",
-	"virus-badscanner": "Tanzimoti bad: puişgari virusi noşinoxta: ''$1''",
 	"virus-scanfailed": "puiş nomuvaffaq (ramzi $1)",
-	"virus-unknownscanner": "antivirusi noşinos:",
 	"logouttext": "'''Aknun az sistem xoriç şudaed.'''\n\nŞumo metavoned gumnom az {{SITENAME}} istifodabariro idoma dihed, jo metavoned bo hamin nomi korbariaton va jo nomi korbariji digare <span class='plainlinks'>[$1 boz vurud kuned]</span>.\nTavvaçūh kuned, ki ba'ze az sahifaho qablan ci tavre namoiş şuda budan hamin tavr namoiş doda meşavand, to dame ki şumo hofizai mururgaratonro pok kuned.",
 	"yourname": "Nomi korbar",
 	"yourpasswordagain": "Kalimai uburro boz navised",
@@ -201,7 +199,6 @@
 	"userexists": "Nomi korbariji doxil kardaşuda mavridi istifoda ast.\nNomi digareroro intixob kuned.",
 	"loginerror": "Iştiboh dar vurud",
 	"createaccounterror": "Imkoni soxtani in hisob vuçud nadorad: $1",
-	"nocookiesnew": "Hisobi korbarī eçod şud, ammo şumo voridi somona naşudaed. {{SITENAME}} baroi vurud kardani korbaron ba somona az kukiho (cookies) istifoda mekunad. Şumo bojad kukihoro fa'ol kuned. Lutfan kukihoro fa'ol kuned, ba'dan ba sistem bo nomi korbariji çadid va kalimai uburaton vurud kuned.",
 	"nocookieslogin": "{{SITENAME}} baroi vorid kardani korbaron ba sistem az kukiho (cookies) istifoda mekunad. Kukiho fa'ol nestand. Lutfan kukihoro fa'ol karda bori digar bisançed.",
 	"noname": "Nomi korbari durustero şumo peşnihod nakarded.",
 	"loginsuccesstitle": "Vurud bo muvaffaqijat",
@@ -214,7 +211,6 @@
 	"wrongpasswordempty": "Kalimai uburi doxil şuda xolī ast. Bori digar sançed.",
 	"mailmypassword": "Guzarvoƶai navro ba E-mail bifiristed",
 	"passwordremindertitle": "Muvaqqatan kalimai uburī çadid baroi {{SITENAME}}",
-	"noemail": "Heç nişonai poctai elektronī baroi korbar \"$1\" sabt naşudaast.",
 	"noemailcreate": "Şumo bojad jak nişonai poctai elektroniji mū'tabarro vorid kuned",
 	"passwordsent": "Kalimai uburi nav ba adresi e-mail, ki baroi \"$1\" nomnavis şudaast firistoda şud.\nBa'd az dastras kardani on, marhamat karda vurud kuned.",
 	"blocked-mailpassword": "Nişonai IP şumo az viroiş boz doşta şudaast va az in rū ba manzuri çilavgirī az sūiistifoda az bahragirī az qobilijati barqaror kardani kalimai uburro nadorad.",
@@ -1162,8 +1158,6 @@
 	"bydate": "az rūi sana",
 	"sp-newimages-showfrom": "Nişon dodani akshoi nav şurū' az $2, $1",
 	"bad_image_list": "Ittilootro bojad bo in şakl vorid kuned:\n\nFaqat satrhoe, ki bo * şurū' şavand ba nazar girifta meşavand. Avvalin pajvand dar har satr, bojad pajvande ba jak tasvir va jo aksi bad boşad. Pajvandhoi ba'dī dar hamon satr, ba unvoni mavridi istisno ba nazar girifta meşavad.",
-	"variantname-tg": "kirillikī",
-	"variantname-tg-latn": "lotinī",
 	"metadata": "Metadoda",
 	"metadata-help": "In parvanda ittilooti ilovagiro dar bar megirad, ehtimol az aksbardoraki raqamī jo skaner dar vaqti soxtan va raqamī kardan, ilova şudaast. Agar parvanda az vaz'ijati ibtidoiaş taƣjir doda boşad, mumkin ast, şarhu tafsiloti mavçudi ittilooti aksro tamoman boztob nadihad.",
 	"metadata-expand": "Namoişi çuz'ijoti tafsilī",
@@ -1307,7 +1301,5 @@
 	"renameuser-page-unmoved": "Imkoni kūconidani sahifai $1 ba $2 vuçud nadorad.",
 	"log-name-renameuser": "Guzorişi taƣjiri nomi korbar",
 	"renameuser-move-log": "Sahifa dar vaqti taƣjiri nomi korbar  \"[[User:$1|$1]]\" ba \"[[User:$2|$2]]\" ba tavri xudkor kūconida şud",
-	"right-renameuser": "Taƣjiri nomi korbaron",
-	"interwiki_reasonfield": "Sabab:",
-	"interwiki_addbutton": "Ilova"
+	"right-renameuser": "Taƣjiri nomi korbaron"
 }

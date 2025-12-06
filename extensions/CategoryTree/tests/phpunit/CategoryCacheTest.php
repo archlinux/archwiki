@@ -46,6 +46,7 @@ class CategoryCacheTest extends MediaWikiIntegrationTestCase {
 			new TitleValue( NS_MAIN, 'CategoryTreeCategoryCacheTest' ),
 			'[[Category:Exists]]'
 		);
+		$this->runJobs();
 
 		$categoryCache = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->get( 'CategoryTree.CategoryCache' )
@@ -69,6 +70,7 @@ class CategoryCacheTest extends MediaWikiIntegrationTestCase {
 			new TitleValue( NS_MAIN, 'CategoryTreeCategoryCacheTest' ),
 			'[[Category:Exists]]'
 		);
+		$this->runJobs();
 
 		$categoryCache = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->get( 'CategoryTree.CategoryCache' )

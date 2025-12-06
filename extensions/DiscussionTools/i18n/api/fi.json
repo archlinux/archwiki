@@ -8,10 +8,11 @@
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Kommenttia tunnisteella '$1' ei löydy.",
-	"apierror-discussiontools-commentname-ambiguous": "Nimellä '$1' löytyi useampi kommentti, käytä sen sijaan ID-tunnistetta.",
+	"apierror-discussiontools-commentname-ambiguous": "Nimellä '$1' löytyi useampi kommentti, vaaditaan <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Kommenttia nimellä '$1' ei löytynyt.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Sivulla ei ole koskaan ollut keskusteluja.",
 	"apierror-discussiontools-formtoken-used": "Kommentti on jo lähetetty. Lataa sivu uudelleen nähdäksesi sen.",
 	"apierror-discussiontools-subscription-failed-add": "Tätä aihetta ei voitu tilata.",
 	"apierror-discussiontools-subscription-failed-remove": "Tilauksen poistaminen tästä aiheesta ei onnistunut.",
-	"apihelp-discussiontoolsedit-param-wikitext": "Wikiteksti"
+	"apihelp-discussiontoolsedit-param-wikitext": "Lähetettävä sisältö wikitekstinä. Ei voida käyttää yhdessä <var>html</var> kanssa."
 }

@@ -16,7 +16,7 @@ moment.defineLocale( 'echo-shortRelativeTime', {
 			M: 'months',
 			MM: 'months',
 			y: 'years',
-			yy: 'years'
+			yy: 'years',
 		};
 		// The following messages are used here:
 		// * notification-timestamp-ago-seconds
@@ -43,10 +43,10 @@ moment.defineLocale( 'echo-shortRelativeTime', {
 					'wednesday',
 					'thursday',
 					'friday',
-					'saturday'
+					'saturday',
 				][ this.day() ] ) + ']';
-		}
-	}
+		},
+	},
 } );
 // Reset back to original locale
 moment.locale( momentOrigLocale );

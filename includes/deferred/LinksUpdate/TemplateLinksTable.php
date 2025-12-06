@@ -12,6 +12,8 @@ use MediaWiki\Parser\ParserOutputLinkTypes;
  * @since 1.38
  */
 class TemplateLinksTable extends GenericPageLinksTable {
+	public const VIRTUAL_DOMAIN = 'virtual-templatelinks';
+
 	public function setParserOutput( ParserOutput $parserOutput ) {
 		// Convert the format of the template links
 		$this->newLinks = [];
@@ -23,28 +25,34 @@ class TemplateLinksTable extends GenericPageLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getTableName() {
 		return 'templatelinks';
 	}
 
+	/** @inheritDoc */
 	protected function getFromField() {
 		return 'tl_from';
 	}
 
+	/** @inheritDoc */
 	protected function getNamespaceField() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new LogicException( 'not supported' );
 	}
 
+	/** @inheritDoc */
 	protected function getTitleField() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new LogicException( 'not supported' );
 	}
 
+	/** @inheritDoc */
 	protected function getFromNamespaceField() {
 		return 'tl_from_namespace';
 	}
 
+	/** @inheritDoc */
 	protected function getTargetIdField() {
 		return 'tl_target_id';
 	}
@@ -54,5 +62,10 @@ class TemplateLinksTable extends GenericPageLinksTable {
 	 */
 	protected function linksTargetNormalizationStage(): int {
 		return MIGRATION_NEW;
+	}
+
+	/** @inheritDoc */
+	protected function virtualDomain() {
+		return self::VIRTUAL_DOMAIN;
 	}
 }

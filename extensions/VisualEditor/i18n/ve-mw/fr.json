@@ -15,6 +15,7 @@
 			"Drongou",
 			"Elitre",
 			"Eneelk",
+			"Escargot bleu",
 			"Gomoko",
 			"Guillom",
 			"Harmonia Amanda",
@@ -59,8 +60,7 @@
 			"Wyz",
 			"Zarisi",
 			"Zebulon84",
-			"Zetud",
-			"Escargot bleu"
+			"Zetud"
 		]
 	},
 	"collabpad-doctitle": "CollabPad : $1",
@@ -303,6 +303,7 @@
 	"visualeditor-includes-includeonly-description": "Lorsque le contenu de cette page est utilisé par une autre page, le contenu supplémentaire suivant y sera inclus :",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion En savoir plus sur l’inclusion partielle]",
 	"visualeditor-languages-tool": "Langues",
+	"visualeditor-linkcontext-uneditable": "Désolé, ce lien ne peut pour l'instant être modifié qu'en mode source.",
 	"visualeditor-linkinspector-button-link-external": "Site externe",
 	"visualeditor-linkinspector-button-link-internal": "Chercher des pages internes",
 	"visualeditor-linkinspector-convert-link-isbn": "Convertir en lien ISBN",

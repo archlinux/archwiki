@@ -40,7 +40,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 			if ( $this->event->getExtraParam( 'revid' ) ) {
 				$params = [
 					'oldid' => 'prev',
-					'diff' => $this->event->getExtraParam( 'revid' )
+					'diff' => $this->event->getExtraParam( 'revid' ),
 				];
 			}
 
@@ -59,7 +59,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 			'label' => $this->msg( 'notification-link-text-what-links-here' )->text(),
 			'description' => '',
 			'icon' => 'linked',
-			'prioritized' => true
+			'prioritized' => true,
 		];
 
 		return [ $whatLinksHereLink, $this->getMuteLink() ];
@@ -99,9 +99,9 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 						->params(
 							$prefTitle->getFullURL(),
 							$this->getViewingUserForGender()
-						)
-				]
-			]
+						),
+				],
+			],
 		];
 		$data['params'][$isPageMuted ? 'unmute' : 'mute'] = $title->getPrefixedText();
 

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
 	"captcha-edit": "Da biste uredili ovu stranicu potrebno je da nađite rješenje zadatka postavljenog ispod i da unesete odgovor u polje ([[Special:Captcha/help|više info]]):",

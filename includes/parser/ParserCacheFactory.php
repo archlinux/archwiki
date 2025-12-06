@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Cache Parser
  */
@@ -46,40 +32,11 @@ class ParserCacheFactory {
 	/** @var string name of RevisionOutputCache for the default parser */
 	public const DEFAULT_RCACHE_NAME = 'rcache';
 
-	/** @var BagOStuff */
-	private $parserCacheBackend;
-
-	/** @var WANObjectCache */
-	private $revisionOutputCacheBackend;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var JsonCodec */
-	private $jsonCodec;
-
-	/** @var StatsFactory */
-	private $stats;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var TitleFactory */
-	private $titleFactory;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	private GlobalIdGenerator $globalIdGenerator;
-
 	/** @var ParserCache[] */
 	private $parserCaches = [];
 
 	/** @var RevisionOutputCache[] */
 	private $revisionOutputCaches = [];
-
-	/** @var ServiceOptions */
-	private $options;
 
 	/**
 	 * @internal
@@ -90,42 +47,19 @@ class ParserCacheFactory {
 		MainConfigNames::OldRevisionParserCacheExpireTime,
 	];
 
-	/**
-	 * @param BagOStuff $parserCacheBackend
-	 * @param WANObjectCache $revisionOutputCacheBackend
-	 * @param HookContainer $hookContainer
-	 * @param JsonCodec $jsonCodec
-	 * @param StatsFactory $stats
-	 * @param LoggerInterface $logger
-	 * @param ServiceOptions $options
-	 * @param TitleFactory $titleFactory
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param GlobalIdGenerator $globalIdGenerator
-	 */
 	public function __construct(
-		BagOStuff $parserCacheBackend,
-		WANObjectCache $revisionOutputCacheBackend,
-		HookContainer $hookContainer,
-		JsonCodec $jsonCodec,
-		StatsFactory $stats,
-		LoggerInterface $logger,
-		ServiceOptions $options,
-		TitleFactory $titleFactory,
-		WikiPageFactory $wikiPageFactory,
-		GlobalIdGenerator $globalIdGenerator
+		private readonly BagOStuff $parserCacheBackend,
+		private readonly WANObjectCache $revisionOutputCacheBackend,
+		private readonly HookContainer $hookContainer,
+		private readonly JsonCodec $jsonCodec,
+		private readonly StatsFactory $stats,
+		private readonly LoggerInterface $logger,
+		private readonly ServiceOptions $options,
+		private readonly TitleFactory $titleFactory,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly GlobalIdGenerator $globalIdGenerator,
 	) {
-		$this->parserCacheBackend = $parserCacheBackend;
-		$this->revisionOutputCacheBackend = $revisionOutputCacheBackend;
-		$this->hookContainer = $hookContainer;
-		$this->jsonCodec = $jsonCodec;
-		$this->stats = $stats;
-		$this->logger = $logger;
-
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->titleFactory = $titleFactory;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->globalIdGenerator = $globalIdGenerator;
 	}
 
 	/**

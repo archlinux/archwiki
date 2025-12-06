@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
 
 use JsonSchema\Constraints\Constraint;
@@ -54,13 +41,14 @@ trait JsonSchemaAssertionTrait {
 	 * @param string|array|stdClass $json A JSONic data structure, or a JSON string.
 	 * @param array<string, string> $resources Mapping of schema IDs to local files,
 	 *        to avoid loading schemas over the network during testing.
+	 * @param string $message
 	 */
-	private function assertMatchesJsonSchema( $schema, $json, array $resources = [] ): void {
+	private function assertMatchesJsonSchema( $schema, $json, array $resources = [], string $message = '' ): void {
 		if ( is_string( $json ) ) {
 			try {
 				$json = json_decode( $json, false, JSON_THROW_ON_ERROR );
 			} catch ( JsonException $ex ) {
-				self::fail( 'Invalid JSON: ' . $ex->getMessage() );
+				self::fail( ( $message !== '' ? $message . ' - ' : '' ) . 'Invalid JSON: ' . $ex->getMessage() );
 			}
 		}
 		if ( is_string( $schema ) ) {
@@ -87,7 +75,7 @@ trait JsonSchemaAssertionTrait {
 		if ( !$validator->isValid() ) {
 			foreach ( $validator->getErrors() as $error ) {
 				$error = json_encode( $error );
-				self::fail( "JSON schema validation failed: $error" );
+				self::fail( ( $message !== '' ? $message . ' - ' : '' ) . "JSON schema validation failed: $error" );
 			}
 		}
 
@@ -100,14 +88,15 @@ trait JsonSchemaAssertionTrait {
 	 * Currently only works for schemas that match Draft-4.
 	 *
 	 * @param array $schema The schema to validate.
+	 * @param string $message
 	 * @throws LogicException if the schema is invalid
 	 */
-	public function assertValidJsonSchema( array $schema ): void {
+	public function assertValidJsonSchema( array $schema, string $message = '' ): void {
 		// Load the draft-04 schema from the local file
 		$metaSchema = MW_INSTALL_PATH . '/vendor/justinrainbow/json-schema/dist/' .
 			'schema/json-schema-draft-04.json';
 
-		self::assertMatchesJsonSchema( $metaSchema, $schema );
+		self::assertMatchesJsonSchema( $metaSchema, $schema, [], $message );
 	}
 
 }

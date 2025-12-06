@@ -5,11 +5,11 @@ namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
 use MediaWiki\CheckUser\CheckUserPermissionStatus;
 use MediaWiki\CheckUser\HookHandler\SidebarLinksHandler;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Skin\Skin;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
@@ -36,8 +36,8 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 	/** @var (CheckUserPermissionStatus&MockObject) */
 	private CheckUserPermissionStatus $permissionStatus;
 
-	/** @var (ExtensionRegistry&MockObject) */
-	private ExtensionRegistry $extensionRegistry;
+	/** (CheckUserTemporaryAccountAutoRevealLookup&MockObject) */
+	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
 
 	/** @var (UserIdentity&MockObject) */
 	private UserIdentity $relevantUser;
@@ -58,8 +58,8 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->permissionManager = $this->createMock(
 			CheckUserPermissionManager::class
 		);
-		$this->extensionRegistry = $this->createMock(
-			ExtensionRegistry::class
+		$this->autoRevealLookup = $this->createMock(
+			CheckUserTemporaryAccountAutoRevealLookup::class
 		);
 		$this->relevantUser = $this->createMock(
 			UserIdentity::class
@@ -68,7 +68,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->sut = new SidebarLinksHandler(
 			$this->config,
 			$this->permissionManager,
-			$this->extensionRegistry
+			$this->autoRevealLookup
 		);
 	}
 
@@ -131,12 +131,12 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 				'expected' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [ 'TOOLBOX array' ],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'sidebar' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [ 'TOOLBOX array' ],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'hasRelevantUser' => false,
 				'hasAccess' => false,
@@ -145,12 +145,12 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 				'expected' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [ 'TOOLBOX array' ],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'sidebar' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [ 'TOOLBOX array' ],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'hasRelevantUser' => true,
 				'hasAccess' => false,
@@ -174,6 +174,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
 							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
+							'tooltip-params' => [ 'Relevant User name' ],
 						],
 					],
 				],
@@ -187,33 +188,34 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					'TOOLBOX' => [
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
 							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
+							'tooltip-params' => [ 'Relevant User name' ],
 						],
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
-							'text' => 'What links here'
+							'text' => 'What links here',
 						],
 					],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'sidebar' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
-							'text' => 'What links here'
+							'text' => 'What links here',
 						],
 					],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'hasRelevantUser' => true,
 				'hasAccess' => true,
@@ -224,41 +226,42 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					'TOOLBOX' => [
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
-							'text' => 'What links here'
+							'text' => 'What links here',
 						],
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
 							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
+							'tooltip-params' => [ 'Relevant User name' ],
 						],
 						'something-else' => [
 							'id' => 't-something-else',
 							'text' => 'something-else',
-						]
+						],
 					],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'sidebar' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
-							'text' => 'What links here'
+							'text' => 'What links here',
 						],
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 						'something-else' => [
 							'id' => 't-something-else',
 							'text' => 'something-else',
-						]
+						],
 					],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'hasRelevantUser' => true,
 				'hasAccess' => true,
@@ -269,37 +272,38 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					'TOOLBOX' => [
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
-							'text' => 'What links here'
+							'text' => 'What links here',
 						],
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
 							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
-						]
+							'tooltip-params' => [ 'Relevant User name' ],
+						],
 					],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'sidebar' => [
 					'navigation' => [ 'navigation array' ],
 					'TOOLBOX' => [
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
-							'text' => 'What links here'
+							'text' => 'What links here',
 						],
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 					],
-					'LANGUAGES' => [ 'LANGUAGES array' ]
+					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
 				'hasRelevantUser' => true,
 				'hasAccess' => true,
-			]
+			],
 		];
 	}
 
@@ -308,6 +312,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		array $sidebar,
 		bool $canAutoReveal,
 		bool $globalPreferencesIsLoaded,
+		bool $autoRevealIsOn,
 		array $expected
 	): void {
 		$this->setUserLang( 'qqx' );
@@ -320,8 +325,12 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 			->method( 'canAutoRevealIPAddresses' )
 			->willReturn( $this->permissionStatus );
 
-		$this->extensionRegistry
-			->method( 'isLoaded' )
+		$this->autoRevealLookup
+			->method( 'isAutoRevealOn' )
+			->willReturn( $autoRevealIsOn );
+
+		$this->autoRevealLookup
+			->method( 'isAutoRevealAvailable' )
 			->willReturn( $globalPreferencesIsLoaded );
 
 		$this->skin
@@ -342,44 +351,77 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 				'sidebar' => [],
 				'canAutoReveal' => false,
 				'globalPreferencesIsLoaded' => true,
+				'autoRevealIsOn' => false,
 				'expected' => [],
 			],
 			'Not added if GlobalPreferences is not loaded' => [
 				'sidebar' => [],
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => false,
+				'autoRevealIsOn' => false,
 				'expected' => [],
 			],
-			'Added to existing sidebar toolbox' => [
+			'Added to existing sidebar toolbox, auto-reveal is off' => [
 				'sidebar' => [
 					'TOOLBOX' => [
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 					],
 				],
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => true,
+				'autoRevealIsOn' => false,
 				'expected' => [
 					'TOOLBOX' => [
 						'contributions' => [
 							'id' => 't-contributions',
-							'text' => 'User contributions'
+							'text' => 'User contributions',
 						],
 						'checkuser-ip-auto-reveal' => [
 							'id' => 't-checkuser-ip-auto-reveal',
 							'text' => '(checkuser-ip-auto-reveal-link-sidebar)',
 							'href' => '#',
 							'class' => 'checkuser-ip-auto-reveal',
+							'icon' => 'userTemporaryLocation',
 						],
 					],
 				],
 			],
-			'Added to sidebar without existing toolbox' => [
+			'Added to existing sidebar toolbox, auto-reveal is on' => [
+				'sidebar' => [
+					'TOOLBOX' => [
+						'contributions' => [
+							'id' => 't-contributions',
+							'text' => 'User contributions',
+						],
+					],
+				],
+				'canAutoReveal' => true,
+				'globalPreferencesIsLoaded' => true,
+				'autoRevealIsOn' => true,
+				'expected' => [
+					'TOOLBOX' => [
+						'contributions' => [
+							'id' => 't-contributions',
+							'text' => 'User contributions',
+						],
+						'checkuser-ip-auto-reveal' => [
+							'id' => 't-checkuser-ip-auto-reveal',
+							'text' => '(checkuser-ip-auto-reveal-link-sidebar-on)',
+							'href' => '#',
+							'class' => 'checkuser-ip-auto-reveal',
+							'icon' => 'userTemporaryLocation',
+						],
+					],
+				],
+			],
+			'Added to sidebar without existing toolbox, auto-reveal is off' => [
 				'sidebar' => [],
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => true,
+				'autoRevealIsOn' => false,
 				'expected' => [
 					'TOOLBOX' => [
 						'checkuser-ip-auto-reveal' => [
@@ -387,6 +429,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 							'text' => '(checkuser-ip-auto-reveal-link-sidebar)',
 							'href' => '#',
 							'class' => 'checkuser-ip-auto-reveal',
+							'icon' => 'userTemporaryLocation',
 						],
 					],
 				],

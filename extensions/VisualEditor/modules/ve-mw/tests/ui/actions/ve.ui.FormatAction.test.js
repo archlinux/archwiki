@@ -67,12 +67,13 @@ QUnit.test.each( 'convert (MW-specific types)',
 	],
 	( assert, caseItem ) => {
 		ve.test.utils.runActionTest(
-			'format', assert, caseItem.html || ve.dm.example.isolationHtml, false, 'convert',
-			[ caseItem.type, caseItem.attributes ], caseItem.rangeOrSelection, caseItem.msg,
+			assert,
 			{
-				expectedData: caseItem.expectedData,
-				expectedRangeOrSelection: caseItem.expectedRangeOrSelection,
-				undo: caseItem.undo
+				actionName: 'format',
+				method: 'convert',
+				html: ve.dm.example.isolationHtml,
+				args: [ caseItem.type, caseItem.attributes ],
+				...caseItem
 			}
 		);
 	}

@@ -16,10 +16,7 @@
  * @param {Object} [config] Configuration options
  * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
  */
-ve.ui.MWCategoriesPage = function VeUiMWCategoriesPage( name, config ) {
-	// Configuration initialization
-	config = config || {};
-
+ve.ui.MWCategoriesPage = function VeUiMWCategoriesPage( name, config = {} ) {
 	// Parent constructor
 	ve.ui.MWCategoriesPage.super.apply( this, arguments );
 
@@ -224,12 +221,12 @@ ve.ui.MWCategoriesPage.prototype.getCategoryItemForInsertion = function ( item, 
  * Setup categories page.
  *
  * @param {ve.dm.SurfaceFragment} fragment Surface fragment
- * @param {Object} config
+ * @param {Object} [config]
  * @param {Object} [config.data] Dialog setup data
  * @param {boolean} [config.isReadOnly=false] Dialog is in read-only mode
  * @return {jQuery.Promise}
  */
-ve.ui.MWCategoriesPage.prototype.setup = function ( fragment, config ) {
+ve.ui.MWCategoriesPage.prototype.setup = function ( fragment, config = {} ) {
 	this.fragment = fragment;
 	this.fragment.getDocument().getMetaList().connect( this, {
 		insert: 'onMetaListInsert',

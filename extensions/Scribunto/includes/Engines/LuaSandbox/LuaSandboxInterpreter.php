@@ -143,7 +143,7 @@ class LuaSandboxInterpreter extends LuaInterpreter {
 					__METHOD__ . ': LuaSandboxFunction::call returned false' );
 			}
 			return $ret;
-		} catch ( LuaSandboxTimeoutError $e ) {
+		} catch ( LuaSandboxTimeoutError ) {
 			throw $this->engine->newException( 'scribunto-common-timeout' );
 		} catch ( LuaSandboxError $e ) {
 			throw $this->convertSandboxError( $e );

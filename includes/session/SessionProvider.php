@@ -1,24 +1,7 @@
 <?php
 /**
- * MediaWiki session provider base class
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
@@ -89,10 +72,10 @@ use Wikimedia\Message\MessageValue;
  * session cookie names should be used for different providers to avoid
  * collisions.
  *
- * @stable to extend
- * @ingroup Session
- * @since 1.27
  * @see https://www.mediawiki.org/wiki/Manual:SessionManager_and_AuthManager
+ * @stable to extend
+ * @since 1.27
+ * @ingroup Session
  */
 abstract class SessionProvider implements Stringable, SessionProviderInterface {
 
@@ -149,38 +132,6 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 	}
 
 	/**
-	 * Sets a logger instance on the object.
-	 *
-	 * @deprecated since 1.37. For extension-defined session providers
-	 * that were using this method to trigger other work, please override
-	 * SessionProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the logger of an existing
-	 * SessionProvider object, please file a report on phabricator
-	 * - there is no non-deprecated way to do this anymore.
-	 * @param LoggerInterface $logger
-	 */
-	public function setLogger( LoggerInterface $logger ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		$this->logger = $logger;
-	}
-
-	/**
-	 * Set configuration
-	 *
-	 * @deprecated since 1.37. For extension-defined session providers
-	 * that were using this method to trigger other work, please override
-	 * SessionProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the Config of an existing
-	 * SessionProvider object, please file a report on phabricator
-	 * - there is no non-deprecated way to do this anymore.
-	 * @param Config $config
-	 */
-	public function setConfig( Config $config ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		$this->config = $config;
-	}
-
-	/**
 	 * Get the config
 	 *
 	 * @since 1.37
@@ -191,43 +142,11 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 	}
 
 	/**
-	 * Set the session manager
-	 *
-	 * @deprecated since 1.37. For extension-defined session providers
-	 * that were using this method to trigger other work, please override
-	 * SessionProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the SessionManager of an existing
-	 * SessionProvider object, please file a report on phabricator
-	 * - there is no non-deprecated way to do this anymore.
-	 * @param SessionManager $manager
-	 */
-	public function setManager( SessionManager $manager ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		$this->manager = $manager;
-	}
-
-	/**
 	 * Get the session manager
 	 * @return SessionManager
 	 */
 	public function getManager() {
 		return $this->manager;
-	}
-
-	/**
-	 * @internal
-	 * @deprecated since 1.37. For extension-defined session providers
-	 * that were using this method to trigger other work, please override
-	 * SessionProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the HookContainer of an existing
-	 * SessionProvider object, please file a report on phabricator
-	 * - there is no non-deprecated way to do this anymore.
-	 * @param HookContainer $hookContainer
-	 */
-	public function setHookContainer( $hookContainer ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		$this->hookContainer = $hookContainer;
-		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
 	protected function getHookContainer(): HookContainer {
@@ -497,7 +416,7 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 	public function preventSessionsForUser( $username ) {
 		if ( !$this->canChangeUser() ) {
 			throw new \BadMethodCallException(
-				__METHOD__ . ' must be implemented when canChangeUser() is false'
+				get_called_class() . '::' . __FUNCTION__ . ' must be implemented when canChangeUser() is false'
 			);
 		}
 	}
@@ -546,6 +465,16 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 
 	/**
 	 * Get a suggested username for the login form
+	 *
+	 * This is usually null, but may return the user name of a previous login session
+	 * from the same device. This is meant to reduce login friction by reminding
+	 * infrequent editors about their chosen username.
+	 *
+	 * The default CookieSessionProvider stores the last username in a dedicated cookie
+	 * that, unlike the "Token" session ID cookie, is not removed during logout
+	 * (via User::doLogout, SessionBackend::unpersist, SessionBackedn::save,
+	 * and finally  CookieSessionProvider::unpersistSession).
+	 *
 	 * @stable to override
 	 * @note For use by \MediaWiki\Session\SessionBackend only
 	 * @param WebRequest $request
@@ -581,6 +510,8 @@ abstract class SessionProvider implements Stringable, SessionProviderInterface {
 	 *
 	 * @since 1.42
 	 * @stable to override
+	 *
+	 * @param array|null $providerMetadata
 	 * @return MWRestrictions|null
 	 */
 	public function getRestrictions( ?array $providerMetadata ): ?MWRestrictions {

@@ -17,7 +17,7 @@ namespace Wikimedia\Parsoid\Core;
  * In core this is implemented by ParserOutput.  Core uses
  * ParserOutput to record the rendered HTML (and rendered table of
  * contents HTML), but on the Parsoid side we're going to keep
- * rendered HTML DOM out of this interface (we use PageBundle for
+ * rendered HTML DOM out of this interface (we use HtmlPageBundle for
  * this).
  */
 interface ContentMetadataCollector {
@@ -34,7 +34,7 @@ interface ContentMetadataCollector {
 	 * ::setRevisionUsedSha1Base36()
 	 * ::setSpeculativePageIdUsed()
 	 *   T292865: these should be plumbed through direct from ParserOptions
-	 *   or use the ::setOutputFlag() or addOutputData() mechanism.
+	 *   or use the ::setOutputFlag() or appendOutputStrings() mechanism.
 	 * ::setTimestamp()
 	 *   This is used by ParserCache and is a little optimization used to
 	 *   show the correct 'article was last edited on blablablah' box on
@@ -102,8 +102,11 @@ interface ContentMetadataCollector {
 	 * ::addExtraCSPDefaultSrc()
 	 * ::addExtraCSPStyleSrc()
 	 * ::addExtraCSPScriptSrc()
-	 * ::updateRuntimeAdaptiveExpiry()
 	 *   T296345: handled through ::appendOutputStrings()
+	 * ::updateRuntimeAdaptiveExpiry()
+	 *   See discussion in T296345.  Parsoid shouldn't need to know about
+	 *   this; extensions can bypass Parsoid to invoke the ParserOutput
+	 *   method directly.
 	 *
 	 * == Temporarily omitted ==
 	 * ::addTemplate()
@@ -116,18 +119,6 @@ interface ContentMetadataCollector {
 	 *   T293514: This contains the title in HTML and is redundant with
 	 *   ::setDisplayTitle()
 	 */
-
-	/**
-	 * Merge strategy to use for ContentMetadataCollector
-	 * accumulators: "union" means that values are strings, stored as
-	 * a set, and exposed as a PHP associative array mapping from
-	 * values to `true`.
-	 *
-	 * This constant should be treated as @internal until we expose
-	 * alternative merge strategies for external use.
-	 * @internal
-	 */
-	public const MERGE_STRATEGY_UNION = 'union';
 
 	/**
 	 * Add a category, with the given sort key.
@@ -383,15 +374,14 @@ interface ContentMetadataCollector {
 	 * @param string $key The key for accessing the data. Extensions should take care to avoid
 	 *   conflicts in naming keys. It is suggested to use the extension's name as a prefix.
 	 *
-	 * @param int|string $value The value to append to the list.
-	 * @param string $strategy Merge strategy:
-	 *  only MW_MERGE_STRATEGY_UNION is currently supported and external callers
-	 *  should treat this parameter as @internal at this time and omit it.
+	 * @param string|int $value The value to append to the list.
+	 * @param MergeStrategy $strategy Merge strategy; defaults to
+	 *  MergeStrategy::UNION.
 	 */
 	public function appendExtensionData(
 		string $key,
-		$value,
-		string $strategy = self::MERGE_STRATEGY_UNION
+		string|int $value,
+		string|MergeStrategy $strategy = MergeStrategy::UNION
 	): void;
 
 	/**
@@ -424,15 +414,14 @@ interface ContentMetadataCollector {
 	 * will get `[0=>true]` out.
 	 *
 	 * @param string $key Key to use under mw.config
-	 * @param string $value Value to append to the configuration variable.
-	 * @param string $strategy Merge strategy:
-	 *  only MW_MERGE_STRATEGY_UNION is currently supported and external callers
-	 *  should treat this parameter as @internal at this time and omit it.
+	 * @param string|int $value Value to append to the configuration variable.
+	 * @param MergeStrategy $strategy Merge strategy; defaults to
+	 *  MergeStrategy::UNION.
 	 */
 	public function appendJsConfigVar(
 		string $key,
-		string $value,
-		string $strategy = self::MERGE_STRATEGY_UNION
+		string|int $value,
+		string|MergeStrategy $strategy = MergeStrategy::UNION
 	): void;
 
 	/**
@@ -444,10 +433,10 @@ interface ContentMetadataCollector {
 
 	/**
 	 * @see OutputPage::addModuleStyles
-	 * @param string[] $modules
+	 * @param string[] $moduleStyles
 	 * @deprecated use ::appendOutputStrings(::MODULE_STYLE, ...)
 	 */
-	public function addModuleStyles( array $modules ): void;
+	public function addModuleStyles( array $moduleStyles ): void;
 
 	/**
 	 * Sets parser limit report data for a key

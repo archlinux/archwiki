@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -57,6 +43,7 @@ class SpecialTags extends SpecialPage {
 		$this->changeTagsStore = $changeTagsStore;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -115,7 +102,7 @@ class SpecialTags extends SpecialPage {
 				->setAction( $this->getPageTitle( 'create' )->getLocalURL() )
 				->setWrapperLegendMsg( 'tags-create-heading' )
 				->setHeaderHtml( $this->msg( 'tags-create-explanation' )->parseAsBlock() )
-				->setSubmitCallback( [ $this, 'processCreateTagForm' ] )
+				->setSubmitCallback( $this->processCreateTagForm( ... ) )
 				->setSubmitTextMsg( 'tags-create-submit' )
 				->show();
 
@@ -305,7 +292,7 @@ class SpecialTags extends SpecialPage {
 		return Html::rawElement( 'tr', [], $newRow ) . "\n";
 	}
 
-	public function processCreateTagForm( array $data, HTMLForm $form ) {
+	private function processCreateTagForm( array $data, HTMLForm $form ): bool {
 		$context = $form->getContext();
 		$out = $context->getOutput();
 
@@ -347,6 +334,9 @@ class SpecialTags extends SpecialPage {
 		}
 	}
 
+	/**
+	 * @param string $tag
+	 */
 	protected function showDeleteTagForm( $tag ) {
 		$authority = $this->getAuthority();
 		if ( !$authority->isAllowed( 'deletechangetags' ) ) {
@@ -409,6 +399,10 @@ class SpecialTags extends SpecialPage {
 			->show();
 	}
 
+	/**
+	 * @param string $tag
+	 * @param bool $activate
+	 */
 	protected function showActivateDeactivateForm( $tag, $activate ) {
 		$actionStr = $activate ? 'activate' : 'deactivate';
 
@@ -518,6 +512,7 @@ class SpecialTags extends SpecialPage {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'changes';
 	}

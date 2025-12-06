@@ -27,15 +27,13 @@ use RuntimeException;
  * @license GPL-2.0-or-later
  */
 class MhchemParser {
-	/** @var MhchemPatterns */
+
 	private MhchemPatterns $mhchemPatterns;
 
-	/** @var MhchemStateMachines */
 	private MhchemStateMachines $mhchemStateMachines;
 
 	/** @var LoggerInterface */
 	private $logger;
-	/** @var int */
 	private int $debugIndex;
 
 	/**
@@ -64,8 +62,7 @@ class MhchemParser {
 	 */
 	public function toTex( $input, $type, bool $optimizeMhchemForTexVC = false ): string {
 		$parsed = $this->go( $input, $type );
-		$mhchemTexifiy = new MhchemTexify( $optimizeMhchemForTexVC );
-		return $mhchemTexifiy->go( $parsed, $type !== "tex" );
+		return ( new MhchemTexify( $optimizeMhchemForTexVC ) )->go( $parsed, $type !== "tex" );
 	}
 
 	/**
@@ -87,10 +84,9 @@ class MhchemParser {
 		$buffer['parenthesisLevel'] = 0;
 
 		if ( $input != null ) {
-			$input = preg_replace( "/\n/", "", $input );
+			$input = preg_replace( "/\n+/", "", $input );
 			$input = preg_replace( "/[\x{2212}\x{2013}\x{2014}\x{2010}]/u", "-", $input );
 			$input = preg_replace( "/[\x{2026}]/u", "...", $input );
-
 		}
 
 		// Looks through _mhchemParser.transitions, to execute a matching action
@@ -110,32 +106,36 @@ class MhchemParser {
 			$machine = $this->mhchemStateMachines->stateMachines[$stateMachine];
 			$t = $machine["transitions"][$state] ?? $machine["transitions"]['*'];
 
-			for ( $i = 0; $i < count( $t ); $i++ ) {
-				$matches = $this->mhchemPatterns->match( $t[$i]["pattern"], $input ?? "" );
+			foreach ( $t as $i => $value ) {
+				$matches = $this->mhchemPatterns->match( $value["pattern"], $input ?? "" );
 
 				if ( $matches ) {
 					if ( $this->logger ) {
-						$this->logger->debug( "\n Match at: " . $i . "\tPattern: " . $t[$i]["pattern"] .
-								"\t State-machine: " . $stateMachine );
+						$this->logger->debug( "\n Match at: " . $i . "\tPattern: " . $value["pattern"] .
+							"\t State-machine: " . $stateMachine );
 					}
 
 					// Execute actions
-					$task = $t[$i]["task"];
-					for ( $iA = 0; $iA < count( $task["action_"] ); $iA++ ) {
+					$task = $value["task"];
+					for ( $iA = 0, $iAMax = count( $task["action_"] ); $iA < $iAMax; $iA++ ) {
 						$this->debugIndex++;
 
 						$o = null;
 
 						// Find and execute action
 						if ( array_key_exists( $task["action_"][$iA]["type_"], $machine["actions"] ) ) {
-							$option = $task["action_"][$iA]["option"] ?? null; // tbd, setting null ok ?
+							// tbd, setting null ok ?
+							$option = $task["action_"][$iA]["option"] ?? null;
 							if ( $this->logger ) {
 								$this->logger->debug( "\n action: \t" . $task["action_"][$iA]["type_"] );
 							}
 							$o = $machine["actions"][$task["action_"][$iA]["type_"]]
 								( $buffer, $matches["match_"], $option );
-						} elseif ( array_key_exists( $task["action_"][$iA]["type_"],
-									$this->mhchemStateMachines->getGenericActions() ) ) {
+						} elseif ( array_key_exists(
+								$task["action_"][$iA]["type_"],
+								$this->mhchemStateMachines->getGenericActions()
+							)
+						) {
 							$option = $task["action_"][$iA]["option"] ?? null;
 							if ( $this->logger ) {
 								$this->logger->debug( "\n action: \t" . $task["action_"][$iA]["type_"] );

@@ -122,9 +122,6 @@ class ConsequencesExecutorTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expectedKeys, $actualKeys );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function provideConsequences(): array {
 		return [
 			'warn and throttle exclude other actions' => [

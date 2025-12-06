@@ -111,5 +111,9 @@
 	"templatedata-modal-title-templateformat": "Predlagana postavitev vikibesedila",
 	"templatedata-modal-title-templateformatstring": "Niz za postavitev po meri",
 	"templatedata-modal-title-templateparam-details": "Podrobnosti parametra: $1",
-	"templatedata-modal-title-templateparams": "Parametri predloge"
+	"templatedata-modal-title-templateparams": "Parametri predloge",
+	"templatedata-featured-list-empty": "Izbrane predloge so predloge, ki jih je skupnost označila kot uporabne. Določena ni še nobena izbrana predloga.",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Izbrane predloge",
+	"communityconfiguration-templatedata-featuredtemplates-description": "Izbrane predloge so predloge, ki jih je skupnost označila kot koristne. Na voljo so v orodju za odkrivanje predlog.",
+	"templatedata-featured-list-help": "Izbrane predloge so predloge, ki jih skupnost označila kot koristne."
 }

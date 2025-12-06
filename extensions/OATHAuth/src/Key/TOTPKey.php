@@ -24,15 +24,15 @@ use DomainException;
 use Exception;
 use jakobo\HOTP\HOTP;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
+use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
-use MediaWiki\Extension\OATHAuth\Notifications\Manager;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 
 /**
@@ -43,107 +43,123 @@ use Wikimedia\ObjectCache\EmptyBagOStuff;
  * @ingroup Extensions
  */
 class TOTPKey implements IAuthKey {
-	/** @var int|null */
-	private ?int $id;
-
-	/** @var array Two factor binary secret */
+	/** @var array TOTP binary secret */
 	private $secret;
-
-	/** @var string[] List of recovery codes */
-	private $recoveryCodes = [];
-
-	/**
-	 * The upper threshold number of recovery codes that if a user has less than, we'll try and notify them...
-	 */
-	private const RECOVERY_CODES_NOTIFICATION_NUMBER = 2;
-
-	/**
-	 * Number of recovery codes to be generated
-	 */
-	public const RECOVERY_CODES_COUNT = 10;
-
-	/**
-	 * Length (in bytes) that recovery codes should be
-	 */
-	private const RECOVERY_CODE_LENGTH = 10;
 
 	/**
 	 * @return TOTPKey
 	 * @throws Exception
 	 */
 	public static function newFromRandom() {
-		$object = new self(
+		return new self(
+			null,
+			null,
 			null,
 			// 26 digits to give 128 bits - https://phabricator.wikimedia.org/T396951
-			Base32::encode( random_bytes( 26 ) ),
-			[]
+			self::removeBase32Padding( Base32::encode( random_bytes( 26 ) ) ),
 		);
+	}
 
-		$object->regenerateScratchTokens();
-
-		return $object;
+	/**
+	 * @param string $paddedBase32String
+	 * @return string
+	 * @see T408225, T401393
+	 */
+	public static function removeBase32Padding( string $paddedBase32String ) {
+		return rtrim( $paddedBase32String, '=' );
 	}
 
 	/**
 	 * @param array $data
 	 * @return TOTPKey|null on invalid data
+	 * @throws UnexpectedValueException When encryption is not configured but db is encrypted
 	 */
 	public static function newFromArray( array $data ) {
-		if ( !isset( $data['secret'] ) || !isset( $data['scratch_tokens'] ) ) {
+		if ( !isset( $data['secret'] ) ) {
 			return null;
 		}
-		return new static( $data['id'] ?? null, $data['secret'], $data['scratch_tokens'] );
+
+		if ( isset( $data['nonce'] ) ) {
+			$encryptionHelper = OATHAuthServices::getInstance()->getEncryptionHelper();
+			if ( !$encryptionHelper->isEnabled() ) {
+				throw new UnexpectedValueException(
+					'Encryption is not configured but OATHAuth is attempting to use encryption'
+				);
+			}
+			$data['encrypted_secret'] = $data['secret'];
+			$data['secret'] = $encryptionHelper->decrypt( $data['secret'], $data['nonce'] );
+		} else {
+			$data['encrypted_secret'] = '';
+			$data['nonce'] = '';
+		}
+
+		return new static(
+			$data['id'] ?? null,
+			$data['friendly_name'] ?? null,
+			$data['created_timestamp'] ?? null,
+			$data['secret'] ?? '',
+			$data['encrypted_secret'],
+			$data['nonce']
+		);
 	}
 
-	/**
-	 * @param int|null $id the database id of this key
-	 * @param string $secret
-	 * @param array $recoveryCodes
-	 */
-	public function __construct( ?int $id, $secret, array $recoveryCodes ) {
-		$this->id = $id;
-
+	public function __construct(
+		private readonly ?int $id,
+		private readonly ?string $friendlyName,
+		private readonly ?string $createdTimestamp,
+		string $secret,
+		string $encryptedSecret = '',
+		string $nonce = ''
+	) {
 		// Currently hardcoded values; might be used in the future
 		$this->secret = [
 			'mode' => 'hotp',
 			'secret' => $secret,
 			'period' => 30,
 			'algorithm' => 'SHA1',
+			'encrypted_secret' => $encryptedSecret,
+			'nonce' => $nonce
 		];
-		$this->recoveryCodes = array_values( $recoveryCodes );
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function getId(): ?int {
 		return $this->id;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getSecret() {
+	public function getFriendlyName(): ?string {
+		return $this->friendlyName;
+	}
+
+	public function getSecret(): string {
 		return $this->secret['secret'];
 	}
 
-	/**
-	 * @return string[]
-	 */
-	public function getScratchTokens() {
-		return $this->recoveryCodes;
+	public function getCreatedTimestamp(): ?string {
+		return $this->createdTimestamp;
+	}
+
+	public function setEncryptedSecretAndNonce( string $encryptedSecret, string $nonce ) {
+		$this->secret['encrypted_secret'] = $encryptedSecret;
+		$this->secret['nonce'] = $nonce;
+	}
+
+	public function getEncryptedSecretAndNonce(): array {
+		return [
+			$this->secret['encrypted_secret'],
+			$this->secret['nonce'],
+		];
 	}
 
 	/**
 	 * @param array $data
 	 * @param OATHUser $user
 	 * @return bool
-	 * @throws MWException
+	 * @throws DomainException
 	 */
 	public function verify( $data, OATHUser $user ) {
 		global $wgOATHAuthWindowRadius;
 
-		$token = $data['token'];
+		$token = $data['token'] ?? '';
 
 		if ( $this->secret['mode'] !== 'hotp' ) {
 			throw new DomainException( 'OATHAuth extension does not support non-HOTP tokens' );
@@ -178,76 +194,49 @@ class TOTPKey implements IAuthKey {
 		// Check to see if the user's given token is in the list of tokens generated
 		// for the time window.
 		foreach ( $results as $window => $result ) {
-			if ( $window > $lastWindow && hash_equals( $result->toHOTP( 6 ), $token ) ) {
-				$lastWindow = $window;
-
-				$logger->info( 'OATHAuth user {user} entered a valid OTP from {clientip}', [
-					'user' => $user->getAccount(),
-					'clientip' => $clientIP,
-				] );
-
-				$store->set(
-					$key,
-					$lastWindow,
-					$this->secret['period'] * ( 1 + 2 * $wgOATHAuthWindowRadius )
-				);
-
-				return true;
+			if ( $window <= $lastWindow || !hash_equals( $result->toHOTP( 6 ), $token ) ) {
+				continue;
 			}
+
+			$lastWindow = $window;
+
+			$logger->info( 'OATHAuth user {user} entered a valid OTP from {clientip}', [
+				'user' => $user->getAccount(),
+				'clientip' => $clientIP,
+			] );
+
+			$store->set(
+				$key,
+				$lastWindow,
+				$this->secret['period'] * ( 1 + 2 * $wgOATHAuthWindowRadius )
+			);
+
+			return true;
 		}
 
-		// See if the user is using a recovery code
-		foreach ( $this->recoveryCodes as $i => $recoveryCode ) {
-			if ( hash_equals( $token, $recoveryCode ) ) {
-				// If we used a recovery code, remove it from the recovery code list.
-				// This is saved below via OATHUserRepository::persist
-				array_splice( $this->recoveryCodes, $i, 1 );
+		// TODO: We should deprecate (T408043) logging in on the TOTP form using recovery codes, and eventually
+		// remove this ability (T408044).
+		$moduleDbKeysRecCodes = $user->getKeysForModule( RecoveryCodes::MODULE_NAME );
 
-				// TODO: Probably a better home for this...
-				// It could go in OATHUserRepository::persist(), but then we start having to hard code checks
-				// for Keys being TOTPKey...
-				// And eventually we want to do T232336 to split them to their own 2FA method...
-				if ( count( $this->recoveryCodes ) <= self::RECOVERY_CODES_NOTIFICATION_NUMBER ) {
-					Manager::notifyRecoveryTokensRemaining(
-						$user,
-						self::RECOVERY_CODES_NOTIFICATION_NUMBER,
-						self::RECOVERY_CODES_COUNT
-					);
-				}
-
-				$logger->info( 'OATHAuth user {user} used a recovery token from {clientip}', [
-					'user' => $user->getAccount(),
-					'clientip' => $clientIP,
-				] );
-
-				OATHAuthServices::getInstance()
-					->getUserRepository()
-					->updateKey( $user, $this );
-				return true;
+		if ( array_key_exists( 0, $moduleDbKeysRecCodes ) ) {
+			/** @var RecoveryCodeKeys $recoveryCodeKeys */
+			$recoveryCodeKeys = array_shift( $moduleDbKeysRecCodes );
+			'@phan-var RecoveryCodeKeys $recoveryCodeKeys';
+			$res = $recoveryCodeKeys->verify( [ 'recoverycode' => $token ], $user );
+			if ( $res ) {
+				$logger->info(
+					// phpcs:ignore
+					"OATHAuth {user} used a recovery code from {clientip} on TOTP form.", [
+						'user' => $user->getUser()->getName(),
+						'clientip' => $clientIP
+					]
+				);
 			}
+
+			return $res;
 		}
 
 		return false;
-	}
-
-	public function regenerateScratchTokens() {
-		$codes = [];
-		for ( $i = 0; $i < self::RECOVERY_CODES_COUNT; $i++ ) {
-			$codes[] = Base32::encode( random_bytes( self::RECOVERY_CODE_LENGTH ) );
-		}
-		$this->recoveryCodes = $codes;
-	}
-
-	/**
-	 * Check if a token is one of the recovery codes for this two-factor key.
-	 *
-	 * @param string $token Token to verify
-	 *
-	 * @return bool true if this is a recovery code.
-	 */
-	public function isScratchToken( $token ) {
-		$token = preg_replace( '/\s+/', '', $token );
-		return in_array( $token, $this->recoveryCodes, true );
 	}
 
 	/** @inheritDoc */
@@ -258,14 +247,26 @@ class TOTPKey implements IAuthKey {
 	/**
 	 * @return LoggerInterface
 	 */
-	private function getLogger() {
+	private function getLogger(): LoggerInterface {
 		return LoggerFactory::getInstance( 'authentication' );
 	}
 
 	public function jsonSerialize(): array {
-		return [
-			'secret' => $this->getSecret(),
-			'scratch_tokens' => $this->getScratchTokens()
-		];
+		$encryptedData = $this->getEncryptedSecretAndNonce();
+		$encryptionHelper = OATHAuthServices::getInstance()->getEncryptionHelper();
+		if ( $encryptionHelper->isEnabled() && in_array( '', $encryptedData ) ) {
+			$data = $encryptionHelper->encrypt( $this->getSecret() );
+			$this->setEncryptedSecretAndNonce( $data['secret'], $data['nonce'] );
+		} elseif ( $encryptionHelper->isEnabled() ) {
+			$data = [
+				'secret' => $encryptedData[0],
+				'nonce' => $encryptedData[1]
+			];
+		} else {
+			$data = [ 'secret' => $this->getSecret() ];
+		}
+
+		$data['friendly_name'] = $this->friendlyName;
+		return $data;
 	}
 }

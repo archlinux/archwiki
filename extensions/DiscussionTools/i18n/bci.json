@@ -42,7 +42,6 @@
 	"discussiontools-newtopic-placeholder-title": "Akpassoua douman",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|tè li sou}} in \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Liké sou tèlè ouflè koun|$1 Liké sou tèlè ouflè moun|100=99+ liké sou tèlè ouflè moun}} mô bé wo \"<strong>$3</strong>\" sou.",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Klé djôlè'n",
 	"discussiontools-postedit-confirmation-published": "Bé fali amoun djôlè fa fitéli.",
 	"discussiontools-postedit-confirmation-topicadded": "Bé fali amoun ndè fa gouali sou.",

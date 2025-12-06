@@ -205,7 +205,8 @@ class InstallPreConfigured extends Maintenance {
 	 */
 	private function createTaskRunner( TaskList $taskList, TaskFactory $taskFactory ) {
 		$taskRunner = new TaskRunner( $taskList, $taskFactory, TaskFactory::PROFILE_ADD_WIKI );
-		$taskRunner->setSkippedTasks( $this->getOption( 'skip' ) ?? [] );
+		$skippedTasks = array_merge( $this->getOption( 'skip' ) ?? [], $this->getTaskSkips() );
+		$taskRunner->setSkippedTasks( $skippedTasks );
 
 		$taskRunner->addTaskStartListener( function ( Task $task ) {
 			$name = $task->getName();
@@ -222,13 +223,25 @@ class InstallPreConfigured extends Maintenance {
 			if ( !$status->isGood() ) {
 				try {
 					$this->error( $status );
-				} catch ( InvalidArgumentException $e ) {
+				} catch ( InvalidArgumentException ) {
 					$this->error( (string)$status );
 				}
 			}
 		} );
 
 		return $taskRunner;
+	}
+
+	/**
+	 * Subclasses can override this to provide specification arrays for
+	 * tasks to skip during install.
+	 *
+	 * @stable to override
+	 *
+	 * @return array<string>
+	 */
+	protected function getTaskSkips(): array {
+		return [];
 	}
 
 	/**

@@ -6,7 +6,6 @@
 		]
 	},
 	"vector-specialversion-name": "وکتور",
-	"vector-opt-out": "ویکیِ قبلی قیافه ره هارشین",
 	"vector-languages": "زوون",
 	"vector-language-button-label": "{{PLURAL:$1|$1 زوون}}",
 	"vector-no-language-button-label": "زوون اضافه هکردن",
@@ -35,7 +34,6 @@
 	"skin-theme-night-label": "تاریک",
 	"skin-theme-os-label": "اۏتوماتیک",
 	"skin-theme-exclusion-notice": "این ولگ تاریک نوونه.",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> دار صفحه‌ئون دله چرخه‌تو هکردن",
 	"vector-toc-label": "فهرست",
 	"vector-toc-beginning": "لید",
 	"vector-anon-user-menu-pages": "صفحه‌ئونی که بریم در-بورد دچی‌کَرون ره به‌درد خرنه",

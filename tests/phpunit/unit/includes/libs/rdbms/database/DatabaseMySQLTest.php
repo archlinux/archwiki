@@ -2,21 +2,7 @@
 /**
  * Holds tests for DatabaseMySQL class.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Antoine Musso
  * @copyright © 2013 Antoine Musso
@@ -471,52 +457,6 @@ class DatabaseMySQLTest extends TestCase {
 			->getSQL();
 		$this->assertSame(
 			'SELECT  aa  FROM `a` STRAIGHT_JOIN `b` ON ((bb=aa))    ',
-			$sql
-		);
-	}
-
-	/**
-	 * @covers \Wikimedia\Rdbms\Database
-	 * @covers \Wikimedia\Rdbms\DatabaseMySQL
-	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
-	 */
-	public function testIndexAliases() {
-		$db = $this->getMockBuilder( DatabaseMySQL::class )
-			->disableOriginalConstructor()
-			->onlyMethods( [ 'strencode', 'dbSchema', 'tablePrefix' ] )
-			->getMock();
-		$db->method( 'strencode' )->willReturnCallback(
-			static function ( $s ) {
-				return str_replace( "'", "\\'", $s );
-			}
-		);
-		$wdb = TestingAccessWrapper::newFromObject( $db );
-		$wdb->platform = new MySQLPlatform( new AddQuoterMock() );
-
-		/** @var IDatabase $db */
-		$db->setIndexAliases( [ 'a_b_idx' => 'a_c_idx' ] );
-		$sql = $db->newSelectQueryBuilder()
-			->select( 'field' )
-			->from( 'zend' )
-			->where( [ 'a' => 'x' ] )
-			->useIndex( 'a_b_idx' )
-			->caller( __METHOD__ )->getSQL();
-
-		$this->assertSameSql(
-			"SELECT  field  FROM `zend` FORCE INDEX (a_c_idx)    WHERE a = 'x'  ",
-			$sql
-		);
-
-		$db->setIndexAliases( [] );
-		$sql = $db->newSelectQueryBuilder()
-			->select( 'field' )
-			->from( 'zend' )
-			->where( [ 'a' => 'x' ] )
-			->useIndex( 'a_b_idx' )
-			->caller( __METHOD__ )->getSQL();
-
-		$this->assertSameSql(
-			"SELECT  field  FROM `zend` FORCE INDEX (a_b_idx)    WHERE a = 'x'",
 			$sql
 		);
 	}

@@ -8,7 +8,6 @@
 			"Penguinlay"
 		]
 	},
-	"vector-opt-out": "ပုံစံဟောင်းသို့ပြောင်းပါ",
 	"vector-languages": "ဘာသာစကားများ",
 	"vector-language-button-label": "{{PLURAL:$1|ဘာသာစကား $1 ခု|$1 ဘာသာစကားများ $1 ခု}}",
 	"vector-no-language-button-label": "ဘာသာစကားများ ထည့်သွင်းရန်",
@@ -42,8 +41,6 @@
 	"skin-theme-night-label": "အမှောင်",
 	"skin-theme-os-label": "အလိုအလျောက်",
 	"skin-theme-exclusion-notice": "ဤစာမျက်နှာသည် အမြဲတမ်းအလင်းမုဒ်တွင် ရှိနေသည်။",
-	"vector-search-loader": "ရှာဖွေမှုအကြံပြုချက်များကို ဝန်ဆွဲတင်နေပါသည်",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ပါဝင်သော စာမျက်နှာများ ရှာဖွေရန်",
 	"vector-intro-page": "အကူအညီ:မိတ်ဆက်",
 	"vector-toc-label": "မာတိကာ",
 	"vector-toc-beginning": "အစပိုင်း",

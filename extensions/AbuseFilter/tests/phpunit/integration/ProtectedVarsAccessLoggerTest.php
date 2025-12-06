@@ -33,10 +33,10 @@ class ProtectedVarsAccessLoggerTest extends MediaWikiIntegrationTestCase {
 		$performer = $this->getTestSysop();
 		AbuseFilterServices::getAbuseLoggerFactory()
 			->getProtectedVarsAccessLogger()
-			->logViewProtectedVariableValue( $performer->getUserIdentity(), '~2024-01', [] );
+			->logViewProtectedVariableValue( $performer->getUserIdentity(), '~2024-01', [ 'protected_var' ] );
 		AbuseFilterServices::getAbuseLoggerFactory()
 			->getProtectedVarsAccessLogger()
-			->logViewProtectedVariableValue( $performer->getUserIdentity(), '~2024-01', [] );
+			->logViewProtectedVariableValue( $performer->getUserIdentity(), '~2024-01', [ 'protected_var' ] );
 		DeferredUpdates::doUpdates();
 
 		// Assert that the log is only inserted once into abusefilter's protected vars logging table
@@ -55,10 +55,10 @@ class ProtectedVarsAccessLoggerTest extends MediaWikiIntegrationTestCase {
 		$performer = $this->getTestSysop();
 		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
 		$protectedVarsAccessLogger->logViewProtectedVariableValue(
-			$performer->getUserIdentity(), 'Username with spaces', []
+			$performer->getUserIdentity(), 'Username with spaces', [ 'protected_var' ]
 		);
 		$protectedVarsAccessLogger->logViewProtectedVariableValue(
-			$performer->getUserIdentity(), 'Username with spaces', []
+			$performer->getUserIdentity(), 'Username with spaces', [ 'protected_var' ]
 		);
 		DeferredUpdates::doUpdates();
 
@@ -71,6 +71,101 @@ class ProtectedVarsAccessLoggerTest extends MediaWikiIntegrationTestCase {
 				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
 			] )
 			->assertFieldValue( 1 );
+	}
+
+	public function testDebouncedLogs_LogsDifferentVars() {
+		// Attempt to create two protected var access logs where the target is a username with spaces.
+		$performer = $this->getTestSysop();
+		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1' ]
+		);
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var2' ]
+		);
+		DeferredUpdates::doUpdates();
+
+		// Assert that two logs are created, as the variables are different (T399819)
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->assertFieldValue( 2 );
+	}
+
+	public function testDebouncedLogs_LogsDifferentVarsSupersetOfPrevious() {
+		// Attempt to create two protected var access logs where the target is a username with spaces.
+		$performer = $this->getTestSysop();
+		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1' ]
+		);
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1', 'protected_var2' ]
+		);
+		DeferredUpdates::doUpdates();
+
+		// Assert that two logs are created, as the second variable is a superset of the first
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->assertFieldValue( 2 );
+	}
+
+	public function testDebouncedLogs_LogsDifferentVarsSubsetOfPrevious() {
+		// Attempt to create two protected var access logs where the target is a username with spaces.
+		$performer = $this->getTestSysop();
+		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1', 'protected_var2' ]
+		);
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1' ]
+		);
+		DeferredUpdates::doUpdates();
+
+		// Assert that one log is created, as the second variable is in a subset of the first
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->assertFieldValue( 1 );
+	}
+
+	public function testDebouncedLogs_LogsVarsCoveredByMultiplePrevious() {
+		// Attempt to create two protected var access logs where the target is a username with spaces.
+		$performer = $this->getTestSysop();
+		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1' ]
+		);
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var2' ]
+		);
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), 'Username', [ 'protected_var1', 'protected_var2' ]
+		);
+		DeferredUpdates::doUpdates();
+
+		// Assert that two logs are created, as the third access uses variables that were already logged
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->assertFieldValue( 2 );
 	}
 
 	public function testProtectedVarsAccessLogger_HookModification() {

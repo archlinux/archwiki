@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"BaRaN6161 TURK",
+			"Joseph"
+		]
+	},
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] Düzenlemeyi Onaylama modülü",
+	"hcaptcha-edit": "Vikiyi otomatik düzenleme spam'lerine karşı korumak için, aşağıdaki hCaptcha'yı çözmenizi rica ederiz:",
+	"hcaptcha-addurl": "Düzenlemeniz yeni dış bağlantılar içeriyor. Vikiyi otomatik spam'a karşı korumak için sizden aşağıdaki hCaptcha'yı çözmenizi rica ediyoruz:",
+	"hcaptcha-badlogin": "Vikiyi otomatik parola kırmaya karşı korumak için, aşağıdaki hCaptcha'yı çözmenizi rica ederiz:",
+	"hcaptcha-createaccount": "Vikiyi otomatik hesap oluşturmaya karşı korumak için sizden aşağıdaki hCaptcha'yı çözmenizi rica ediyoruz:",
+	"hcaptcha-createaccount-fail": "Görünüşe göre hCaptcha'yı çözmediniz.",
+	"hcaptcha-create": "Vikiyi otomatik sayfa oluşturmaya karşı korumak için, aşağıdaki hCaptcha'yı çözmenizi rica ederiz:",
+	"hcaptcha-help": "Lütfen bir hCaptcha sorununu çözün ve yanıt değerini captchaWord olarak döndürün.",
+	"hcaptcha-privacy-policy": "Bu site hCaptcha tarafından korunmaktadır ve [https://www.hcaptcha.com/privacy Gizlilik İlkesi] ve [https://www.hcaptcha.com/terms Hizmet Şartları] geçerlidir.",
+	"hcaptcha-challenge-closed": "Devam etmek için captcha'yı tamamlamanız gerekmektedir.",
+	"hcaptcha-challenge-expired": "Captcha'yı tamamlamak için verilen süre doldu. Lütfen yeniden deneyin.",
+	"hcaptcha-generic-error": "Form yüklenirken bir hata oluştu. Devam etmek için sayfayı yeniden yüklemeniz gerekiyor.",
+	"hcaptcha-loading-indicator-label": "Lütfen formun yüklenmesi tamamlanırken bekleyin...",
+	"hcaptcha-missing-token": "Formun yüklenmesini henüz tamamlamadık. Lütfen birkaç saniye bekleyip yeniden deneyin.",
+	"hcaptcha-noscript": "Devam etmek için JavaScript gereklidir. Tarayıcı ayarlarınızdan JavaScript'i açın ve sayfayı yenileyin."
+}

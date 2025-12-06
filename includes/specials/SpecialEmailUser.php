@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -66,15 +52,17 @@ class SpecialEmailUser extends SpecialPage {
 		$this->userFactory = $userFactory;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getDescription() {
 		return $this->msg( 'emailuser-title-notarget' );
 	}
 
-	protected function getFormFields( User $target ) {
+	protected function getFormFields( User $target ): array {
 		$linkRenderer = $this->getLinkRenderer();
 		$user = $this->getUser();
 		return [
@@ -124,22 +112,10 @@ class SpecialEmailUser extends SpecialPage {
 		];
 	}
 
-	public function execute( $par ) {
-		$this->setHeaders();
-		$this->outputHeader();
-
-		$out = $this->getOutput();
-		$request = $this->getRequest();
-		$out->addModuleStyles( 'mediawiki.special' );
-
-		// Error out if sending user cannot do this. Don't authorize yet.
-		$emailUser = $this->emailUserFactory->newEmailUserBC(
-			$this->getUser(),
-			$this->getConfig()
-		);
-		$emailUser->setEditToken( (string)$request->getVal( 'wpEditToken' ) );
-		$status = $emailUser->canSend();
-
+	/**
+	 * Handles a {@link StatusValue} from {@link EmailUser::canSend}.
+	 */
+	private function handleCanSendEmailStatus( StatusValue $status ): void {
 		if ( !$status->isGood() ) {
 			if ( $status instanceof PermissionStatus ) {
 				$status->throwErrorPageError();
@@ -157,6 +133,37 @@ class SpecialEmailUser extends SpecialPage {
 				throw new ErrorPageError( $this->getDescription(), Status::wrap( $status )->getMessage() );
 			}
 		}
+	}
+
+	/** @inheritDoc */
+	public function execute( $par ) {
+		$this->setHeaders();
+		$this->outputHeader();
+
+		$out = $this->getOutput();
+		$request = $this->getRequest();
+		$out->addModuleStyles( 'mediawiki.special' );
+
+		// Check if the user can send emails without authorizing the action.
+		$emailUser = $this->emailUserFactory->newEmailUserBC(
+			$this->getUser(),
+			$this->getConfig()
+		);
+		$emailUser->setEditToken( (string)$request->getVal( 'wpEditToken' ) );
+		$status = $emailUser->canSend();
+
+		// If user emailing is disabled, then prioritise this error over anything else (including the
+		// ::requireNamedUser check). This is because a user would still be unable access the form if they were to
+		// log in or create account.
+		if ( !$status->isGood() && $status->hasMessage( 'usermaildisabled' ) ) {
+			$this->handleCanSendEmailStatus( $status );
+		}
+
+		// If the user is not logged into a named account, then display this error. This should redirect to
+		// Special:UserLogin or Special:CreateAccount to not interrupt the flow.
+		$this->requireNamedUser( 'mailnologintext', 'mailnologin' );
+
+		$this->handleCanSendEmailStatus( $status );
 
 		// Always go through the userform, it will do validations on the target
 		// and display the emailform for us.
@@ -232,7 +239,7 @@ class SpecialEmailUser extends SpecialPage {
 		$htmlForm
 			->setMethod( 'GET' )
 			->setTitle( $this->getPageTitle() ) // Remove subpage
-			->setSubmitCallback( [ $this, 'sendEmailForm' ] )
+			->setSubmitCallback( $this->sendEmailForm( ... ) )
 			->setId( 'askusername' )
 			->setWrapperLegendMsg( 'emailtarget' )
 			->setSubmitTextMsg( 'emailusernamesubmit' )
@@ -243,7 +250,7 @@ class SpecialEmailUser extends SpecialPage {
 	 * @param array $data
 	 * @return bool
 	 */
-	public function sendEmailForm( array $data ) {
+	private function sendEmailForm( array $data ) {
 		$out = $this->getOutput();
 
 		// HTMLForm checked that this is a valid user name, the return value can never be null.
@@ -254,7 +261,7 @@ class SpecialEmailUser extends SpecialPage {
 			->setTitle( $this->getPageTitle() ) // Remove subpage
 			->addPreHtml( $this->msg( 'emailpagetext', $target->getName() )->parse() )
 			->setSubmitTextMsg( 'emailsend' )
-			->setSubmitCallback( [ $this, 'onFormSubmit' ] )
+			->setSubmitCallback( $this->onFormSubmit( ... ) )
 			->setWrapperLegendMsg( 'email-legend' )
 			->prepareForm();
 
@@ -277,9 +284,8 @@ class SpecialEmailUser extends SpecialPage {
 	/**
 	 * @param array $data
 	 * @return StatusValue|false
-	 * @internal Only public because it's used as an HTMLForm callback.
 	 */
-	public function onFormSubmit( array $data ) {
+	private function onFormSubmit( array $data ) {
 		// HTMLForm checked that this is a valid user name, the return value can never be null.
 		$target = $this->userFactory->newFromName( $data['Target'] );
 
@@ -337,6 +343,7 @@ class SpecialEmailUser extends SpecialPage {
 		return $this->getConfig()->get( MainConfigNames::EnableUserEmail );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'users';
 	}

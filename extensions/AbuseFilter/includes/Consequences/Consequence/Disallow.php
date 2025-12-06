@@ -12,10 +12,6 @@ class Disallow extends Consequence implements HookAborterConsequence {
 	/** @var string */
 	private $message;
 
-	/**
-	 * @param Parameters $parameters
-	 * @param string $message
-	 */
 	public function __construct( Parameters $parameters, string $message ) {
 		parent::__construct( $parameters );
 		$this->message = $message;

@@ -5,11 +5,13 @@ namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\Core\Source;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -17,7 +19,6 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
-use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\TT\PreHandler;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
@@ -70,7 +71,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 		// - html tags with 'stx' set
 		// - tags with certain typeof properties (Parsoid-generated
 		//   constructs: placeholders, lang variants)
-		$name = DOMCompat::nodeName( $n );
+		$name = DOMUtils::nodeName( $n );
 		return !(
 			isset( self::WT_TAGS_WITH_LIMITED_TSR[$name] ) ||
 			DOMUtils::matchTypeOf(
@@ -244,7 +245,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 			$stWidth = 2; // -{
 			$etWidth = 2; // }-
 		} else {
-			$nodeName = DOMCompat::nodeName( $node );
+			$nodeName = DOMUtils::nodeName( $node );
 			// 'tr' tags not in the original source have zero width
 			if ( $nodeName === 'tr' && !isset( $dp->startTagSrc ) ) {
 				$stWidth = 0;
@@ -284,7 +285,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 	 * tags that the tokenizer generates, the TSR values applies to the entire
 	 * DOM subtree (opening tag + content + closing tag).
 	 *
-	 * Ex: So [[foo]] will get tokenized to a SelfClosingTagTk(...) with a TSR
+	 * Ex: So [[foo]] will get tokenized to a SelfclosingTagTk(...) with a TSR
 	 * value of [0,7].  The DSR algorithm will then use that info and assign
 	 * the a-tag rooted at the <a href='...'>foo</a> DOM subtree a DSR value of
 	 * [0,7,2,2], where 2 and 2 refer to the opening and closing tag widths.
@@ -292,24 +293,25 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 	 * [s,e) -- if defined, start/end position of wikitext source that generated
 	 *          node's subtree
 	 *
-	 * @param Frame $frame
+	 * @param Env $env
+	 * @param Source $source
 	 * @param Node $node node to process
 	 * @param ?int $s start position, inclusive
 	 * @param ?int $e end position, exclusive
 	 * @param int $dsrCorrection
 	 * @param array $opts
-	 * @return array
+	 *
+	 * @return list{?int, ?int}
 	 */
 	private function computeNodeDSR(
-		Frame $frame, Node $node, ?int $s, ?int $e, int $dsrCorrection,
+		Env $env, Source $source, Node $node, ?int $s, ?int $e, int $dsrCorrection,
 		array $opts
 	): array {
-		$env = $frame->getEnv();
 		if ( $e === null && !$node->hasChildNodes() ) {
 			$e = $s;
 		}
 
-		$env->trace( "dsr", "BEG: ", DOMCompat::nodeName( $node ), "with [s, e]=", [ $s, $e ] );
+		$env->trace( "dsr", "BEG: ", DOMUtils::nodeName( $node ), "with [s, e]=", [ $s, $e ] );
 
 		/** @var int|null $ce Child end */
 		$ce = $e;
@@ -357,7 +359,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 					!DOMUtils::isNestedInListItem( $next )
 				) {
 					if ( isset( Consts::$WTQuoteTags[$ndp->name] ) &&
-						isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $child )] ) ) {
+						isset( Consts::$WTQuoteTags[DOMUtils::nodeName( $child )] ) ) {
 						$correction = strlen( $ndp->src );
 						$ce += $correction;
 						$dsrCorrection = $correction;
@@ -366,7 +368,9 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 							// since it will now get corrected to zero width
 							// since child acquires its width->
 							$ndp->getTemp()->origDSR = new DomSourceRange(
-								$ndp->dsr->start, $ndp->dsr->end, null, null );
+								$ndp->dsr->start, $ndp->dsr->end, null, null,
+								source: $ndp->dsr->source
+							);
 						}
 					}
 				}
@@ -375,18 +379,18 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 			$env->trace( "dsr", static function () use ( $child, $cs, $ce ) {
 				// slow, for debugging only
 				$i = 0;
-				foreach ( $child->parentNode->childNodes as $x ) {
+				foreach ( DOMUtils::childNodes( $child->parentNode ) as $x ) {
 					if ( $x === $child ) {
 						break;
 					}
 					$i++;
 				}
-				return "     CHILD: <" . DOMCompat::nodeName( $child->parentNode ) . ":" . $i .
+				return "     CHILD: <" . DOMUtils::nodeName( $child->parentNode ) . ":" . $i .
 					">=" .
 					( $child instanceof Element ? '' : ( $child instanceof Text ? '#' : '!' ) ) .
 					( ( $child instanceof Element ) ?
-						( DOMCompat::nodeName( $child ) === 'meta' ?
-							DOMCompat::getOuterHTML( $child ) : DOMCompat::nodeName( $child ) ) :
+						( DOMUtils::nodeName( $child ) === 'meta' ?
+							DOMCompat::getOuterHTML( $child ) : DOMUtils::nodeName( $child ) ) :
 							PHPUtils::jsonEncode( $child->nodeValue ) ) .
 					" with " . PHPUtils::jsonEncode( [ $cs, $ce ] );
 			} );
@@ -426,14 +430,14 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 				if ( $ce !== null && !empty( $dp->autoInsertedEnd ) &&
 					DOMUtils::isQuoteElt( $child )
 				) {
-					$correction = 3 + strlen( DOMCompat::nodeName( $child ) );
+					$correction = 3 + strlen( DOMUtils::nodeName( $child ) );
 					if ( $correction === $dsrCorrection ) {
 						$ce -= $correction;
 						$dsrCorrection = 0;
 					}
 				}
 
-				if ( DOMCompat::nodeName( $child ) === "meta" ) {
+				if ( DOMUtils::nodeName( $child ) === "meta" ) {
 					if ( $tsr ) {
 						if ( WTUtils::isTplMarkerMeta( $child ) ) {
 							// If this is a meta-marker tag (for templates, extensions),
@@ -544,7 +548,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 						$newDsr = [ $ccs, $cce ];
 					} else {
 						$env->trace( "dsr", static function () use (
-							$env, $cs, $ce, $stWidth, $etWidth, $ccs, $cce
+							$cs, $ce, $stWidth, $etWidth, $ccs, $cce
 						) {
 							return "     before-recursing:" .
 								"[cs,ce]=" . PHPUtils::jsonEncode( [ $cs, $ce ] ) .
@@ -553,7 +557,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 						} );
 
 						$env->trace( "dsr", "<recursion>" );
-						$newDsr = $this->computeNodeDSR( $frame, $child, $ccs, $cce, $dsrCorrection, $opts );
+						$newDsr = $this->computeNodeDSR( $env, $source, $child, $ccs, $cce, $dsrCorrection, $opts );
 						$env->trace( "dsr", "</recursion>" );
 					}
 
@@ -577,8 +581,8 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 				if ( $cs !== null || $ce !== null ) {
 					if ( $ce < 0 ) {
 						if ( !$fosteredNode ) {
-							$env->log( "info/dsr/negative",
-								"Negative DSR for node: " . DOMCompat::nodeName( $node ) . "; resetting to zero" );
+							$env->trace( "dsr/negative",
+								"Negative DSR for node: " . DOMUtils::nodeName( $node ) . "; resetting to zero" );
 						}
 						$ce = 0;
 					}
@@ -590,13 +594,13 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 						if ( $origCE < 0 ) {
 							$origCE = 0;
 						}
-						$dp->dsr = new DomSourceRange( $origCE, $origCE, null, null );
+						$dp->dsr = new DomSourceRange( $origCE, $origCE, null, null, source: $source );
 					} else {
-						$dp->dsr = new DomSourceRange( $cs, $ce, $stWidth, $etWidth );
+						$dp->dsr = new DomSourceRange( $cs, $ce, $stWidth, $etWidth, source: $source );
 					}
 
-					$env->trace( "dsr", static function () use ( $frame, $child, $cs, $ce, $dp ) {
-						return "     UPDATING " . DOMCompat::nodeName( $child ) .
+					$env->trace( "dsr", static function () use ( $child, $cs, $ce ) {
+						return "     UPDATING " . DOMUtils::nodeName( $child ) .
 							" with " . PHPUtils::jsonEncode( [ $cs, $ce ] ) .
 							"; typeof: " . ( DOMCompat::getAttribute( $child, "typeof" ) ?? '' );
 					} );
@@ -620,7 +624,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 						} elseif ( $nType === XML_ELEMENT_NODE ) {
 							'@phan-var Element $sibling'; // @var Element $sibling
 							$siblingDP = DOMDataUtils::getDataParsoid( $sibling );
-							$siblingDP->dsr ??= new DomSourceRange( null, null, null, null );
+							$siblingDP->dsr ??= new DomSourceRange( null, null, null, null, source: $source );
 							$sdsrStart = $siblingDP->dsr->start;
 							if ( !empty( $siblingDP->fostered ) ||
 								( $sdsrStart !== null && $sdsrStart === $newCE ) ||
@@ -636,8 +640,8 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 							}
 
 							// Update and move right
-							$env->trace( "dsr", static function () use ( $frame, $newCE, $sibling, $siblingDP ) {
-								return "     CHANGING ce.start of " . DOMCompat::nodeName( $sibling ) .
+							$env->trace( "dsr", static function () use ( $newCE, $sibling, $siblingDP ) {
+								return "     CHANGING ce.start of " . DOMUtils::nodeName( $sibling ) .
 									" from " . $siblingDP->dsr->start . " to " . $newCE;
 							} );
 
@@ -684,11 +688,11 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 
 		// Detect errors
 		if ( $s !== null && $cs !== $s && !$this->acceptableInconsistency( $opts, $node, $cs, $s ) ) {
-			$env->log( "info/dsr/inconsistent", "DSR inconsistency: cs/s mismatch for node:",
-				DOMCompat::nodeName( $node ), "s:", $s, "; cs:", $cs );
+			$env->trace( "dsr/inconsistent", "DSR inconsistency: cs/s mismatch for node:",
+				DOMUtils::nodeName( $node ), "s:", $s, "; cs:", $cs );
 		}
 
-		$env->trace( "dsr", "END: ", DOMCompat::nodeName( $node ), "returning: ", $cs, ", ", $e );
+		$env->trace( "dsr", "END: ", DOMUtils::nodeName( $node ), "returning: ", $cs, ", ", $e );
 
 		return [ $cs, $e ];
 	}
@@ -700,7 +704,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 	 * @param Env $env The environment/context for the parse pipeline
 	 * @param Node $root The root of the tree for which DSR has to be computed
 	 * @param array $options Options governing DSR computation
-	 * - sourceOffsets: [start, end] source offset. If missing, this defaults to
+	 * - srcOffsets   : [start, end] source offset. If missing, this defaults to
 	 *                  [0, strlen($frame->getSrcText())]
 	 * - attrExpansion: Is this an attribute expansion pipeline?
 	 * @param bool $atTopLevel Are we running this on the top level?
@@ -714,17 +718,20 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 		}
 
 		$frame = $options['frame'] ?? $env->topFrame;
-		$startOffset = $options['sourceOffsets']->start ?? 0;
-		$endOffset = $options['sourceOffsets']->end ?? strlen( $frame->getSrcText() );
+		$srcOffsets = $options['srcOffsets'] ??
+			SourceRange::fromSource( $frame->getSource() );
+		$startOffset = $srcOffsets->start;
+		$endOffset = $srcOffsets->end;
+		$source = $srcOffsets->source ?? $frame->getSource();
 		$env->trace( "dsr", "------- tracing DSR computation -------" );
 
 		// The actual computation buried in trace/debug stmts.
 		$opts = [ 'attrExpansion' => $options['attrExpansion'] ?? false ];
-		$this->computeNodeDSR( $frame, $root, $startOffset, $endOffset, 0, $opts );
+		$this->computeNodeDSR( $env, $source, $root, $startOffset, $endOffset, 0, $opts );
 
 		if ( $root instanceof Element ) {
 			$dp = DOMDataUtils::getDataParsoid( $root );
-			$dp->dsr = new DomSourceRange( $startOffset, $endOffset, 0, 0 );
+			$dp->dsr = new DomSourceRange( $startOffset, $endOffset, 0, 0, source: $source );
 		}
 		$env->trace( "dsr", "------- done tracing computation -------" );
 	}

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -38,8 +24,8 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logging\LogFormatterFactory;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\Event\PageMovedEvent;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
@@ -103,8 +89,8 @@ class MovePage {
 	 * @see MovePageFactory
 	 */
 	public function __construct(
-		Title $oldTitle,
-		Title $newTitle,
+		PageIdentity $oldTitle,
+		PageIdentity $newTitle,
 		ServiceOptions $options,
 		IConnectionProvider $dbProvider,
 		NamespaceInfo $nsInfo,
@@ -125,8 +111,8 @@ class MovePage {
 		DeletePageFactory $deletePageFactory,
 		LogFormatterFactory $logFormatterFactory
 	) {
-		$this->oldTitle = $oldTitle;
-		$this->newTitle = $newTitle;
+		$this->oldTitle = Title::newFromPageIdentity( $oldTitle );
+		$this->newTitle = Title::newFromPageIdentity( $newTitle );
 
 		$this->options = $options;
 		$this->dbProvider = $dbProvider;
@@ -183,8 +169,8 @@ class MovePage {
 			$status->fatal( 'spamprotectiontext' );
 		}
 
-		$tp = $this->restrictionStore->getCreateProtection( $this->newTitle ) ?: false;
-		if ( $tp !== false && !$performer->isAllowed( $tp['permission'] ) ) {
+		$tp = $this->restrictionStore->getCreateProtection( $this->newTitle );
+		if ( $tp && !$performer->isAllowed( $tp['permission'] ) ) {
 			$status->fatal( 'cantmove-titleprotected' );
 		}
 
@@ -468,7 +454,7 @@ class MovePage {
 	 * @param string|null $reason
 	 * @param bool $createRedirect Ignored if user doesn't have suppressredirect permission
 	 * @param string[] $changeTags Change tags to apply to the entry in the move log
-	 * @return Status
+	 * @return Status<array>
 	 */
 	public function moveIfAllowed(
 		Authority $performer, $reason = null, $createRedirect = true, array $changeTags = []
@@ -622,7 +608,7 @@ class MovePage {
 	 * @param string $reason
 	 * @param bool $createRedirect
 	 * @param string[] $changeTags Change tags to apply to the entry in the move log
-	 * @return Status
+	 * @return Status<array>
 	 */
 	private function moveUnsafe( UserIdentity $user, $reason, $createRedirect, array $changeTags ) {
 		$status = Status::newGood();
@@ -745,7 +731,9 @@ class MovePage {
 		$this->eventDispatcher->dispatch( new PageMovedEvent(
 			$pageStateBeforeMove,
 			$this->newTitle->toPageRecord( IDBAccessObject::READ_LATEST ),
-			$user
+			$user,
+			$reason,
+			$moveAttemptResult->getValue()['redirectPage']
 		), $this->dbProvider );
 
 		$dbw->endAtomic( __METHOD__ );
@@ -808,7 +796,7 @@ class MovePage {
 	 * @param bool $createRedirect Whether to leave a redirect at the old title. Does not check
 	 *   if the user has the suppressredirect right
 	 * @param string[] $changeTags Change tags to apply to the entry in the move log
-	 * @return Status Status object with the following value on success:
+	 * @return Status<array> Status object with the following value on success:
 	 *   [
 	 *     'nullRevision' => The ("null") revision created by the move (RevisionRecord)
 	 *     'redirectRevision' => The initial revision of the redirect if it was created (RevisionRecord|null)
@@ -935,7 +923,7 @@ class MovePage {
 		// NOTE: Use FLAG_SILENT to avoid redundant RecentChanges entry.
 		//       The move log already generates one.
 		$nullRevision = $newpage->newPageUpdater( $user )
-			->setCause( PageRevisionUpdatedEvent::CAUSE_MOVE )
+			->setCause( PageLatestRevisionChangedEvent::CAUSE_MOVE )
 			->setHints( [
 				'oldtitle' => $this->oldTitle,
 				'oldcountable' => $oldcountable,
@@ -948,6 +936,7 @@ class MovePage {
 
 		// Recreate the redirect, this time in the other direction.
 		$redirectRevision = null;
+		$redirectArticle = null;
 		if ( $redirectContent ) {
 			$redirectArticle = $this->wikiPageFactory->newFromTitle( $this->oldTitle );
 			$redirectArticle->loadFromRow( false, IDBAccessObject::READ_LOCKING ); // T48397
@@ -969,6 +958,7 @@ class MovePage {
 		return Status::newGood( [
 			'nullRevision' => $nullRevision,
 			'redirectRevision' => $redirectRevision,
+			'redirectPage' => $redirectArticle?->toPageRecord()
 		] );
 	}
 }

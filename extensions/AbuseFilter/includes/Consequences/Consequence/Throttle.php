@@ -126,8 +126,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 
 	/**
 	 * Updates the throttle status with the given parameters
-	 *
-	 * @param string $types
 	 */
 	private function setThrottled( string $types ): void {
 		$key = $this->throttleKey( $types );
@@ -138,10 +136,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 		$this->mainStash->incrWithInit( $key, $this->throttleParams['period'] );
 	}
 
-	/**
-	 * @param string $type
-	 * @return string
-	 */
 	private function throttleKey( string $type ): string {
 		$types = explode( ',', $type );
 
@@ -153,6 +147,7 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 
 		$identifier = sha1( implode( ':', $identifiers ) );
 
+		// TODO: Migration strategy to abusefilter-throttle keygroup
 		if ( $this->parameters->getIsGlobalFilter() && !$this->filterIsCentral ) {
 			return $this->mainStash->makeGlobalKey(
 				'abusefilter', 'throttle', $this->centralDB, $this->throttleParams['id'], $identifier
@@ -162,10 +157,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 		return $this->mainStash->makeKey( 'abusefilter', 'throttle', $this->throttleParams['id'], $identifier );
 	}
 
-	/**
-	 * @param string $type
-	 * @return string
-	 */
 	private function throttleIdentifier( string $type ): string {
 		$user = $this->parameters->getUser();
 		switch ( $type ) {

@@ -5,7 +5,8 @@ namespace MediaWiki\Extension\VisualEditor\EditCheck;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\ApiUsageException;
-use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainValidator;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\IBlockedDomainStorage;
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
 use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -13,16 +14,22 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiEditCheckReferenceUrl extends ApiBase {
 
 	/** @phan-suppress-next-line PhanUndeclaredTypeProperty */
-	private ?BlockedDomainStorage $blockedDomainStorage;
+	private ?IBlockedDomainStorage $blockedDomainStorage;
+
+	/** @phan-suppress-next-line PhanUndeclaredTypeProperty */
+	private ?BlockedDomainValidator $blockedDomainValidator;
 
 	public function __construct(
 		ApiMain $main,
 		string $name,
 		// @phan-suppress-next-line PhanUndeclaredTypeParameter
-		?BlockedDomainStorage $blockedDomainStorage
+		?IBlockedDomainStorage $blockedDomainStorage,
+		// @phan-suppress-next-line PhanUndeclaredTypeParameter
+		?BlockedDomainValidator $blockedDomainValidator
 	) {
 		parent::__construct( $main, $name );
 		$this->blockedDomainStorage = $blockedDomainStorage;
+		$this->blockedDomainValidator = $blockedDomainValidator;
 	}
 
 	/**
@@ -44,12 +51,12 @@ class ApiEditCheckReferenceUrl extends ApiBase {
 	}
 
 	private function isInBlockedExternalDomains( string $url ): bool {
-		if ( !$this->blockedDomainStorage ) {
+		if ( !$this->blockedDomainValidator ) {
 			return false;
 		}
 
 		// @phan-suppress-next-line PhanUndeclaredClassMethod
-		$domain = $this->blockedDomainStorage->validateDomain( $url );
+		$domain = $this->blockedDomainValidator->validateDomain( $url );
 		// @phan-suppress-next-line PhanUndeclaredClassMethod
 		$blockedDomains = $this->blockedDomainStorage->loadComputed();
 		return !empty( $blockedDomains[ $domain ] );

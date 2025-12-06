@@ -197,7 +197,6 @@ class JsonCodec implements JsonCodecInterface {
 		$is_complex = false;
 		$className = 'array';
 		$codec = null;
-		$classHintCodec = null;
 
 		// Process class hints
 		$arrayClassHint = null;
@@ -228,6 +227,9 @@ class JsonCodec implements JsonCodecInterface {
 				// Allow the hint to match subclasses of the hinted class
 				$classHint = $classHint->parent;
 				$allowInherited = true;
+			} elseif ( $classHint->modifier === Hint::ONLY_FOR_DECODE ) {
+				// Don't use this hint for serialization.
+				$classHint = null;
 			} elseif ( $classHint->modifier === Hint::DEFAULT ) {
 				// No-op, included for completeness
 				$classHint = $classHint->parent;

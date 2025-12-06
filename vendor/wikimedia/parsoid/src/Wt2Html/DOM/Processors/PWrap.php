@@ -11,7 +11,6 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\TempData;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
@@ -30,7 +29,7 @@ class PWrap implements Wt2HtmlDOMProcessor {
 	}
 
 	private static function pWrapOptionalChildren( Env $env, Node $n ): bool {
-		foreach ( $n->childNodes as $c ) {
+		foreach ( DOMUtils::childNodes( $n ) as $c ) {
 			if ( !self::pWrapOptional( $env, $c ) ) {
 				return false;
 			}
@@ -49,28 +48,31 @@ class PWrap implements Wt2HtmlDOMProcessor {
 	 *   have identical p-wrapping behavior on these tags. This is a superset of
 	 *   \\MediaWiki\Tidy\RemexCompatMunger::$metadataElements.
 	 * - parsoid-added span wrappers around pwrap-optional nodes
+	 * - Empty nowikis
 	 *
 	 * @param Env $env
 	 * @param Node $n
 	 * @return bool
 	 */
 	public static function pWrapOptional( Env $env, Node $n ): bool {
-		if (
-			$n instanceof Element &&
+		if ( $n instanceof Comment ) {
+			return true;
+		}
+		if ( $n instanceof Text ) {
+			return (bool)preg_match( '/^\s*$/D', $n->nodeValue );
+		}
+		'@phan-var Element $n'; // @var Element $n
+		if ( DOMUtils::hasTypeOf( $n, 'mw:DOMFragment' ) ) {
+			$domFragment = DOMDataUtils::getDataParsoid( $n )->html;
+			return self::pWrapOptionalChildren( $env, $domFragment );
+		} elseif (
+			DOMUtils::hasTypeOf( $n, 'mw:Nowiki' ) ||
 			DOMDataUtils::getDataParsoid( $n )->getTempFlag( TempData::WRAPPER )
 		) {
-			if ( DOMUtils::hasTypeOf( $n, 'mw:DOMFragment' ) ) {
-				$domFragment = $env->getDOMFragment(
-					DOMDataUtils::getDataParsoid( $n )->html
-				);
-				return self::pWrapOptionalChildren( $env, $domFragment );
-			} else {
-				return self::pWrapOptionalChildren( $env, $n );
-			}
+			return self::pWrapOptionalChildren( $env, $n );
+		} else {
+			return DOMUtils::isMetaDataTag( $n );
 		}
-		return $n instanceof Comment ||
-			( $n instanceof Text && preg_match( '/^\s*$/D', $n->nodeValue ) ) ||
-			( $n instanceof Element && DOMUtils::isMetaDataTag( $n ) );
 	}
 
 	/**
@@ -97,7 +99,7 @@ class PWrap implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Element $n
 	 * @param array $a
-	 * @return array
+	 * @return list<array{pwrap: mixed, node?: Element}>
 	 */
 	private function mergeRuns( Element $n, array $a ): array {
 		$ret = [];
@@ -120,7 +122,7 @@ class PWrap implements Wt2HtmlDOMProcessor {
 				$dp = DOMDataUtils::getDataParsoid( $ret[$i]['node'] );
 				$dp->autoInsertedEnd = true;
 				unset( $dp->tmp->endTSR );
-				$cnode = DOMDataUtils::cloneNode( $n, false );
+				$cnode = DOMDataUtils::cloneElement( $n, false );
 				$ret[] = [ 'pwrap' => $v['pwrap'], 'node' => $cnode ];
 				$i++;
 				DOMDataUtils::getDataParsoid( $ret[$i]['node'] )->autoInsertedStart = true;
@@ -163,18 +165,17 @@ class PWrap implements Wt2HtmlDOMProcessor {
 			return [ [ 'pwrap' => null, 'node' => $n ] ];
 		} elseif ( $n instanceof Text ) {
 			return [ [ 'pwrap' => true, 'node' => $n ] ];
-		} elseif ( !$this->isSplittableTag( $n ) || count( $n->childNodes ) === 0 ) {
+		} elseif ( !$this->isSplittableTag( $n ) || $n->firstChild === null ) {
 			// block tag OR non-splittable inline tag
 			return [
 				[ 'pwrap' => !DOMUtils::hasBlockTag( $n ), 'node' => $n ]
 			];
 		} else {
-			DOMUtils::assertElt( $n );
+			'@phan-var Element $n'; // @var Element $n
 			// splittable inline tag
 			// split for each child and merge runs
-			$children = $n->childNodes;
 			$splits = [];
-			foreach ( $children as $child ) {
+			foreach ( DOMUtils::childNodes( $n ) as $child ) {
 				$splits[] = $this->split( $env, $child );
 			}
 			return $this->mergeRuns( $n, $this->flatten( $splits ) );
@@ -222,7 +223,7 @@ class PWrap implements Wt2HtmlDOMProcessor {
 	 * @param Env $env
 	 * @param Element|DocumentFragment $root
 	 */
-	private function pWrapDOM( Env $env, Node $root ) {
+	private function pWrapDOM( Env $env, Node $root ): void {
 		$state = new PWrapState( $env );
 		$c = $root->firstChild;
 		while ( $c ) {
@@ -268,12 +269,12 @@ class PWrap implements Wt2HtmlDOMProcessor {
 	 * @param Element|DocumentFragment $root
 	 * @param string $tagName
 	 */
-	private function pWrapInsideTag( Env $env, Node $root, string $tagName ) {
+	private function pWrapInsideTag( Env $env, Node $root, string $tagName ): void {
 		$c = $root->firstChild;
 		while ( $c ) {
 			$next = $c->nextSibling;
 			if ( $c instanceof Element ) {
-				if ( DOMCompat::nodeName( $c ) === $tagName ) {
+				if ( DOMUtils::nodeName( $c ) === $tagName ) {
 					$this->pWrapDOM( $env, $c );
 				} else {
 					$this->pWrapInsideTag( $env, $c, $tagName );

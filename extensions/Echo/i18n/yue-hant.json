@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Ktchankt"
+			"Ktchankt",
+			"Winston Sung"
 		]
 	},
 	"echo-desc": "通知用戶活動同訊息嘅系統",
@@ -54,7 +54,7 @@
 	"echo-category-title-watchlist": "對監視頁面嘅編輯",
 	"echo-category-title-minor-watchlist": "對監視頁面嘅細編輯",
 	"echo-category-title-api-triggered": "API觸發嘅通知",
-	"echo-pref-tooltip-edit-user-talk": "有人喺我傾偈版留信或者回覆，話我知。",
+	"echo-category-title-verify-email-reminder": "電郵確認提示",
 	"echo-pref-tooltip-article-linked": "有人喺其他版連過去我開嘅版，話我知",
 	"echo-pref-tooltip-reverted": "有人用「還原」或者「反轉」將我嘅修改打回頭，就話我知。",
 	"echo-pref-tooltip-mention": "有人擺連結連去我嘅用戶頁，話我知。",
@@ -65,6 +65,7 @@
 	"echo-pref-tooltip-watchlist": "當有人喺我監視清單入面嘅版做（唔細嘅）編輯，通知我。",
 	"echo-pref-tooltip-minor-watchlist": "當有人喺我監視清單入面嘅版做細編輯，通知我。",
 	"echo-pref-tooltip-api-triggered": "經API送我由機械人或者架撐仔觸發嘅通知。",
+	"echo-pref-tooltip-verify-email-reminder": "如果未確認我個電郵地址，提示我。",
 	"notifications": "通知",
 	"tooltip-pt-notifications-alert": "{{GENDER:|你}}嘅提示",
 	"tooltip-pt-notifications-notice": "{{GENDER:|你}}嘅告示",
@@ -77,6 +78,8 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "畀用嘅通知方法",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "各類通知支援邊種通知方法",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "預設開着",
+	"echo-displaynotificationsconfiguration-enabled-default-legend": "預設選項",
+	"echo-displaynotificationsconfiguration-enabled-default-conditional-legend": "滿足條件嘅用戶嘅選項：$1",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "要求嘅通知方法",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "各類通知強制用邊種通知方法",
 	"echo-specialpage": "通知",
@@ -235,5 +238,9 @@
 	"action-manage-all-push-subscriptions": "管理所有推送訂閱",
 	"group-push-subscription-manager": "推送訂閱管理人",
 	"group-push-subscription-manager-member": "{{GENDER:$1|推送訂閱管理人}}",
-	"grouppage-push-subscription-manager": "{{ns:project}}:推送訂閱管理人"
+	"grouppage-push-subscription-manager": "{{ns:project}}:推送訂閱管理人",
+	"notification-subject-email-verify-email-reminder": "核實{{GENDER:$1|你嘅}}電郵",
+	"notification-header-verify-email-reminder": "請<strong>核實{{GENDER:$1|你嘅}}電郵地址</strong>，等我哋肯定{{GENDER:$1|你嘅}}戶口嘅電郵地址係你名下嘅。",
+	"notification-link-text-verify-email-reminder": "管理電郵喜好設定",
+	"notification-verify-email-reminder-link-label": "確認電郵"
 }

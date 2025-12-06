@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Aafi",
+			"BukhariSaeed",
 			"Matma Rex",
 			"Muhammad Shuaib",
-			"TheAafi",
-			"BukhariSaeed"
+			"TheAafi"
 		]
 	},
 	"discussiontools": "آلات گفتگو",
@@ -19,6 +19,9 @@
 	"discussiontools-desc": "بحث کے صفحات کو بہتر کرنے کے آلات",
 	"discussiontools-emptystate-button": "گفتگو شروع کریں",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|تبادلۂ خیال صفحات]] پر ویکی صارفین اس امر پر گفتگو کرتے ہیں کہ کس طرح {{SITENAME}} کے مندرجات و مشمولات کو حتی الامکان خوب سے خوب تر بنایا جائے۔ چنانچہ {{GENDER:|آپ}} بھی زیر نظر صفحہ پر [[:{{SUBJECTPAGENAME}}]] کو مزید بہتر بنانے کے لیے اپنے خیالات پیش کر سکتے ہیں۔",
+	"discussiontools-emptystate-desc-self": "{{SITENAME}} پر لوگ اس [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|تبادلۂ خیال صفحے]] پر {{GENDER:|آپ}} کے لیے پیغام چھوڑ سکتے ہیں اور جب کوئی پیغام دے گا تو آپ کو اس کی اطلاع مل جائے گی۔",
+	"discussiontools-emptystate-desc-self-anon": "{{SITENAME}} پر موجود صارفین اس [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|تبادلۂ خیال صفحے]] کو استعمال کر کے اس آئی پی پتے سے کی گئی ترامیم کے بارے میں پیغام بھیج سکتے ہیں جسے آپ فی الحال استعمال کر رہے ہیں۔\n\nبہت سے آئی پی پتے وقتاً فوقتاً تبدیل ہوتے رہتے ہیں اور اکثر کئی افراد کے درمیان مشترک ہوتے ہیں۔ آپ مستقبل میں لاگ آؤٹ صارفین سے پیدا ہونے والے ابہام سے بچنے کے لیے [$1 ایک کھاتہ بنا سکتے ہیں] یا [$2 لاگ ان] کر سکتے ہیں۔ کھاتہ بنانے سے آپ کا آئی پی پتہ بھی پوشیدہ رہے گا۔",
+	"discussiontools-emptystate-desc-self-temp": "{{SITENAME}} پر موجود صارفین اس [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|تبادلۂ خیال صفحے]] پر آپ کے لیے پیغام چھوڑ سکتے ہیں۔\n\n[[{{MediaWiki:tempuser-helppage}}|یہ صفحہ بالآخر ختم ہو جائے گا]]۔ اطلاعات موصول کرتے رہنے اور دیگر خصوصیات تک رسائی کے لیے [$1 کھاتہ بنائیں] یا [$2 لاگ ان کریں]۔",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|تبادلۂ خیال کے صفحات]] وہ مراکز ہوتے ہیں جہاں صارفین {{SITENAME}} پر مواد کو بہتر بنانے کے لیے بات چیت کرتے ہیں۔ نئی گفتگو کا آغاز کریں تاکہ [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] کے ساتھ رابطہ قائم کرنے اور مل کر مضمون کی بہتری کے لیے گفتگو کا آغاز کیجیے۔ آپ کی یہاں کی گئی گفتگو سب کے لیے قابلِ مشاہدہ ہوگی۔",
 	"discussiontools-emptystate-desc-user-temp": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|تبادلۂ خیال صفحہ]] استعمال کریں تاکہ [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] {{GENDER:{{PAGENAME}}|کے ساتھ}} {{SITENAME}} کو بہتر بنانے پر گفتگو شروع کی جا سکے۔ جو کچھ {{GENDER:|آپ}} کہیں گے وہ دوسروں کے لیے ظاہر ہوگا۔ چونکہ [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] ایک [[{{MediaWiki:tempuser-helppage}}|عارضی کھاتہ]] ہے، یہ تبادلۂ خیال صفحہ بالآخر ختم ہو جائے گا۔ [[{{MediaWiki:tempuser-helppage}}|مزید جانیں]]۔",
 	"discussiontools-emptystate-title": "{{SUBJECTPAGENAME}} سے متعلق گفتگو کا آغاز کریں",
@@ -27,7 +30,9 @@
 	"discussiontools-emptystate-title-user": "{{PAGENAME}} کے {{GENDER:{{PAGENAME}}|ساتھ}} گفتگو کا آغاز کیجیے",
 	"discussiontools-emptystate-title-user-anon": "اس تبادلۂ خیال صفحہ پر {{GENDER:|خوش آمدید}}",
 	"discussiontools-emptystate-title-user-temp": "{{PAGENAME}} کے {{GENDER:{{PAGENAME}}|ساتھ}} گفتگو کا آغاز کیجیے",
-	"discussiontools-error-comment-conflict": "{{GENDER:|آپ کا}} تبصرہ محفوظ نہیں کیا جا سکا کیونکہ آپ کے ساتھ ہی کسی اور نے تبصرہ کیا تھا۔ براہ مہربانی دوبارہ کوشش کریں یا تازہ ترین تبصرے دیکھنے کے لیے صفحہ کو دوبارہ لوڈ کریں۔",
+	"discussiontools-error-comment-conflict": "{{GENDER:|آپ کا}} تبصرہ محفوظ نہیں کیا جا سکا کیونکہ آپ کے ساتھ ہی کسی اور نے تبصرہ کیا تھا۔ براہ مہربانی دوبارہ کوشش کریں یا تازہ ترین تبصرے دیکھنے کے لیے صفحہ کو تازہ کریں۔",
+	"discussiontools-error-comment-disappeared": "صفحے پر وہ تبصرہ نہیں مل سکا جس کا {{GENDER:|آپ جواب دے رہے ہیں|آپ جواب دے رہی ہیں}}۔\nممکن ہے کہ وہ تبصرہ حذف کر دیا گیا ہو یا کسی دوسرے صفحے پر منتقل کر دیا گیا ہو۔",
+	"discussiontools-error-comment-disappeared-reload": "براہ مہربانی صفحہ {{GENDER:|تازہ}} کریں اور دوبارہ کوشش کریں۔",
 	"discussiontools-error-noswitchtove-title": "بصری موڈ غیر فعال کیا گیا۔",
 	"discussiontools-findcomment-label-idorname": "تبصرہ آئی ڈی یا نام",
 	"discussiontools-findcomment-label-search": "تلاش کریں",
@@ -36,7 +41,7 @@
 	"discussiontools-ledesection-button": "اس صفحہ کے بارے میں مزید جانیں۔",
 	"discussiontools-ledesection-title": "اس تبادلۂ خیال صفحہ کا تعارف",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|سیکنڈ}}",
-	"discussiontools-newtopic-missing-title": "براہ کرم {{GENDER:|اپنے}} موضوع بحث کے لیے عنوان فراہم کریں۔ اگر آپ \"{{int:discussiontools-replywidget-newtopic}}\" پر کلک کرتے ہیں تو آپ کا تبصرہ بغیر عنوان کے شامل کر دیا جائے گا۔",
+	"discussiontools-newtopic-missing-title": "براہ مہربانی {{GENDER:|اپنے}} موضوع بحث کے لیے عنوان فراہم کریں۔",
 	"discussiontools-newtopic-placeholder-title": "عنوان",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "شریک ہوں",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "شرکت ختم کریں",

@@ -8,11 +8,13 @@ namespace MediaWiki\Extension\TemplateStyles;
  */
 
 use CSSJanus;
+use MediaWiki\Category\TrackingCategories;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Content\CodeContentHandler;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\ValidationParams;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Status\Status;
@@ -25,11 +27,19 @@ use Wikimedia\CSS\Util as CSSUtil;
  */
 class TemplateStylesContentHandler extends CodeContentHandler {
 
-	/**
-	 * @param string $modelId
-	 */
-	public function __construct( $modelId = 'sanitized-css' ) {
+	private Config $config;
+
+	public function __construct(
+		string $modelId,
+		private readonly TrackingCategories $trackingCategories,
+		private readonly ConfigFactory $configFactory,
+	) {
 		parent::__construct( $modelId, [ CONTENT_FORMAT_CSS ] );
+	}
+
+	private function getConfig(): Config {
+		$this->config ??= $this->configFactory->makeConfig( 'templatestyles' );
+		return $this->config;
 	}
 
 	/**
@@ -59,7 +69,6 @@ class TemplateStylesContentHandler extends CodeContentHandler {
 		ParserOutput &$output
 	) {
 		'@phan-var TemplateStylesContent $content';
-		$services = MediaWikiServices::getInstance();
 		$page = $cpoParams->getPage();
 		$parserOptions = $cpoParams->getParserOptions();
 
@@ -79,11 +88,11 @@ class TemplateStylesContentHandler extends CodeContentHandler {
 		$output->setRawText( $html );
 
 		$status = $this->sanitize( $content, [ 'novalue' => true, 'class' => $parserOptions->getWrapOutputClass() ] );
-		if ( $status->getErrors() ) {
-			foreach ( $status->getErrors() as $error ) {
-				$output->addWarningMsg( $error['message'], $error['params'] );
+		if ( $status->getMessages() ) {
+			foreach ( $status->getMessages() as $msg ) {
+				$output->addWarningMsgVal( $msg );
 			}
-			$services->getTrackingCategories()->addTrackingCategory(
+			$this->trackingCategories->addTrackingCategory(
 				$output,
 				'templatestyles-stylesheet-error-category',
 				$page
@@ -135,7 +144,7 @@ class TemplateStylesContentHandler extends CodeContentHandler {
 		$status = Status::newGood();
 
 		$style = $content->getText();
-		$maxSize = Hooks::getConfig()->get( 'TemplateStylesMaxStylesheetSize' );
+		$maxSize = $this->getConfig()->get( 'TemplateStylesMaxStylesheetSize' );
 		if ( $maxSize !== null && strlen( $style ) > $maxSize ) {
 			$status->fatal(
 				// Status::getWikiText() chokes on the Message::sizeParam if we

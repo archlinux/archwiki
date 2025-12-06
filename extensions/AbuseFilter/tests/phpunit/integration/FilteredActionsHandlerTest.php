@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 use MediaWiki\Content\Content;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainFilter;
-use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\IBlockedDomainStorage;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
 use MediaWiki\Extension\AbuseFilter\FilterRunner;
 use MediaWiki\Extension\AbuseFilter\FilterRunnerFactory;
@@ -16,10 +16,15 @@ use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\WikiPage;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\TempUser\TempUserConfig;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Stats\NullStatsdDataFactory;
@@ -108,7 +113,7 @@ class FilteredActionsHandlerTest extends MediaWikiIntegrationTestCase {
 		$variablesManager->method( 'getVar' )
 			->willReturnCallback( static fn ( $unused, $vars ) => AFPData::newFromPHPVar( $urlsAdded ) );
 
-		$blockedDomainStorage = $this->createMock( BlockedDomainStorage::class );
+		$blockedDomainStorage = $this->createMock( IBlockedDomainStorage::class );
 		$blockedDomainStorage->method( 'loadComputed' )
 			->willReturn( $this->blockedDomains );
 		$blockedDomainFilter = new BlockedDomainFilter( $variablesManager, $blockedDomainStorage );
@@ -125,7 +130,80 @@ class FilteredActionsHandlerTest extends MediaWikiIntegrationTestCase {
 			$blockedDomainFilter,
 			$permissionManager,
 			$this->createMock( TitleFactory::class ),
-			$this->createMock( UserFactory::class )
+			$this->createMock( UserFactory::class ),
+			$this->createNoOpMock( TempUserConfig::class )
 		);
+	}
+
+	/**
+	 * @dataProvider provideParserOutputStashForEdit
+	 */
+	public function testParserOutputStashForEdit(
+		bool $isPerformerRegistered,
+		bool $tempAccountsEnabled,
+		bool $shouldRunFilters
+	): void {
+		$user = $this->createMock( User::class );
+		$user->method( 'isRegistered' )
+			->willReturn( $isPerformerRegistered );
+
+		$title = $this->createNoOpMock( Title::class );
+
+		$page = $this->createMock( WikiPage::class );
+		$page->method( 'getTitle' )
+			->willReturn( $title );
+
+		$content = $this->createNoOpMock( Content::class );
+		$summary = 'test';
+
+		$mockRunner = $this->createMock( FilterRunner::class );
+		$mockRunner->expects( $shouldRunFilters ? $this->once() : $this->never() )
+			->method( 'runForStash' );
+		$filterRunnerFactory = $this->createMock( FilterRunnerFactory::class );
+		$filterRunnerFactory->method( 'newRunner' )
+			->willReturn( $mockRunner );
+
+		$vars = new VariableHolder();
+
+		$variableGenerator = $this->createMock( RunVariableGenerator::class );
+		$variableGenerator->method( 'getStashEditVars' )
+			->with( $content, $summary, SlotRecord::MAIN, $page )
+			->willReturn( $vars );
+
+		$variableGeneratorFactory = $this->createMock( VariableGeneratorFactory::class );
+		$variableGeneratorFactory->method( 'newRunGenerator' )
+			->with( $user, $title )
+			->willReturn( $variableGenerator );
+
+		$tempUserConfig = $this->createMock( TempUserConfig::class );
+		$tempUserConfig->method( 'isEnabled' )
+			->willReturn( $tempAccountsEnabled );
+
+		$handler = new FilteredActionsHandler(
+			new NullStatsdDataFactory(),
+			$filterRunnerFactory,
+			$variableGeneratorFactory,
+			$this->createNoOpMock( EditRevUpdater::class ),
+			$this->createNoOpMock( BlockedDomainFilter::class ),
+			$this->createNoOpMock( PermissionManager::class ),
+			$this->createNoOpMock( TitleFactory::class ),
+			$this->createNoOpMock( UserFactory::class ),
+			$tempUserConfig
+		);
+
+		$handler->onParserOutputStashForEdit(
+			$page,
+			$content,
+			new ParserOutput(),
+			$summary,
+			$user
+		);
+	}
+
+	public static function provideParserOutputStashForEdit(): iterable {
+		yield 'registered performer, temporary accounts not enabled' => [ true, false, true ];
+		yield 'unregistered performer, temporary accounts not enabled' => [ false, false, true ];
+		yield 'registered performer, temporary accounts enabled' => [ true, true, true ];
+		yield 'unregistered performer, temporary accounts enabled' => [ false, true, false ];
 	}
 }

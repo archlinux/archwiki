@@ -21,7 +21,8 @@ class DisallowTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideGetMessageParameters
 	 */
-	public function testGetMessage( Parameters $params ) {
+	public function testGetMessage( callable $params ) {
+		$params = $params( $this );
 		$msg = 'some-disallow-message';
 		$rangeBlock = new Disallow( $params, $msg );
 		$this->doTestGetMessage( $rangeBlock, $params, $msg );

@@ -198,6 +198,15 @@ function appendRadioToggle( parent, featureName, value, currentValue, config, us
 	input.addEventListener( 'change', () => {
 		toggleDocClassAndSave( featureName, value, config, userPreferences );
 	} );
+
+	// Prevent repeated arrow key navigation when key is held down
+	// to avoid rapid color changes that may trigger photosensitive reactions.
+	// Refer to [[phab:T402285]]
+	input.addEventListener( 'keydown', ( event ) => {
+		if ( event.key.startsWith( 'Arrow' ) && event.repeat ) {
+			event.preventDefault();
+		}
+	} );
 }
 
 /**

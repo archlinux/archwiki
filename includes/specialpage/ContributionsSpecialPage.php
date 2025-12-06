@@ -2,21 +2,7 @@
 /**
  * Implements Special:Contributions
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  */
@@ -30,11 +16,12 @@ use MediaWiki\HTMLForm\Field\HTMLMultiSelectField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\ContribsPager;
 use MediaWiki\Pager\ContributionsPager;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
-use MediaWiki\Specials\SpecialUserRights;
+use MediaWiki\Specials\Contribute\ContributeFactory;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
@@ -42,11 +29,13 @@ use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserGroupAssignmentService;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRigorOptions;
+use OOUI\ButtonWidget;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -83,6 +72,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 	protected UserFactory $userFactory;
 	protected UserIdentityLookup $userIdentityLookup;
 	protected DatabaseBlockStore $blockStore;
+	protected UserGroupAssignmentService $userGroupAssignmentService;
 
 	/**
 	 * @param PermissionManager $permissionManager
@@ -94,6 +84,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 	 * @param UserFactory $userFactory
 	 * @param UserIdentityLookup $userIdentityLookup
 	 * @param DatabaseBlockStore $blockStore
+	 * @param mixed $userGroupAssignmentService
 	 * @param string $name
 	 * @param string $restriction
 	 */
@@ -107,9 +98,21 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		UserFactory $userFactory,
 		UserIdentityLookup $userIdentityLookup,
 		DatabaseBlockStore $blockStore,
-		$name,
+		$userGroupAssignmentService,
+		$name = '',
 		$restriction = ''
 	) {
+		// For backwards compatability, temporarily handle the $userGroupAssignmentService
+		// being a string
+		if ( $userGroupAssignmentService instanceof UserGroupAssignmentService ) {
+			$this->userGroupAssignmentService = $userGroupAssignmentService;
+		} else {
+			// Shift params by one
+			$restriction = $name;
+			$name = $userGroupAssignmentService;
+			$this->userGroupAssignmentService = MediaWikiServices::getInstance()
+				->getUserGroupAssignmentService();
+		}
 		parent::__construct( $name, $restriction );
 		$this->permissionManager = $permissionManager;
 		$this->dbProvider = $dbProvider;
@@ -239,6 +242,24 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 				->params( $target )
 		);
 
+		// "+ New contribution" button
+		$contributeEnabled = ContributeFactory::isEnabledOnCurrentSkin(
+			$this->getSkin(),
+			$this->getConfig()->get( MainConfigNames::SpecialContributeSkinsEnabled )
+		);
+		$isOwnContributionPage = $user->getName() === $target;
+		if ( $contributeEnabled && $isOwnContributionPage ) {
+			$out->enableOOUI();
+			$out->addHTML( new ButtonWidget( [
+				'id' => 'mw-specialcontributions-newcontribution',
+				'href' => SpecialPage::getTitleFor( 'Contribute' )->getLinkURL(),
+				'label' => $this->msg( 'sp-contributions-newcontribution' )->text(),
+				'icon' => 'add',
+				'framed' => true,
+				'flags' => 'progressive',
+			] ) );
+		}
+
 		# For IP ranges, we want the contributionsSub, but not the skin-dependent
 		# links under 'Tools', which may include irrelevant links like 'Logs'.
 		if ( $notExternal && !IPUtils::isValidRange( $target ) &&
@@ -344,7 +365,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 					$poolKey .= 'u:' . $this->getUser()->getId();
 				}
 				$work = new PoolCounterWorkViaCallback( 'Special' . $this->mName, $poolKey, [
-					'doWork' => function () use ( $pager, $out, $target ) {
+					'doWork' => function () use ( $pager, $out ) {
 						# Show a message about replica DB lag, if applicable
 						$lag = $pager->getDatabase()->getSessionLagStatus()['lag'];
 						if ( $lag > 0 ) {
@@ -382,6 +403,13 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 				$message = 'sp-contributions-footer-anon-range';
 			} elseif ( IPUtils::isIPAddress( $target ) ) {
 				$message = 'sp-contributions-footer-anon';
+			} elseif ( $userObj->isTemp() ) {
+				$message = 'sp-contributions-footer-temp';
+				if ( $this->msg( $message )->isDisabled() ) {
+					// As temp accounts and named accounts have similar properties,
+					// fall back to the "registered" version of the footer
+					$message = 'sp-contributions-footer';
+				}
 			} elseif ( $userObj->isAnon() ) {
 				// No message for non-existing users
 				$message = '';
@@ -427,75 +455,31 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			}
 			$links = trim( $links ) . Html::closeElement( 'span' );
 
-			// Show a note if the user is blocked and display the last block log entry.
-			// Do not expose the autoblocks, since that may lead to a leak of accounts' IPs,
-			// and also this will display a totally irrelevant log entry as a current block.
-			$shouldShowBlocks = $this->shouldShowBlockLogExtract( $userObj );
-			if ( $shouldShowBlocks ) {
-				// For IP ranges you must give DatabaseBlock::newFromTarget the CIDR string
-				// and not a user object.
-				if ( IPUtils::isValidRange( $userObj->getName() ) ) {
-					$blocks = $this->blockStore->newListFromTarget(
-						$userObj->getName(), $userObj->getName(), false,
-						DatabaseBlockStore::AUTO_NONE );
-				} else {
-					$blocks = $this->blockStore->newListFromTarget(
-						$userObj, $userObj, false, DatabaseBlockStore::AUTO_NONE );
-				}
-
-				$sitewide = false;
-				$logTargetPage = '';
-				foreach ( $blocks as $block ) {
-					if ( $block->isSitewide() ) {
-						$sitewide = true;
-					}
-					$logTargetPage = $this->namespaceInfo->getCanonicalName( NS_USER ) .
-						':' . $block->getTargetName();
-				}
-
-				if ( count( $blocks ) ) {
-					if ( count( $blocks ) === 1 ) {
-						if ( $userObj->isAnon() ) {
-							$msgKey = $sitewide ?
-								'sp-contributions-blocked-notice-anon' :
-								'sp-contributions-blocked-notice-anon-partial';
-						} else {
-							$msgKey = $sitewide ?
-								'sp-contributions-blocked-notice' :
-								'sp-contributions-blocked-notice-partial';
-						}
-					} else {
-						if ( $userObj->isAnon() ) {
-							$msgKey = 'sp-contributions-blocked-notice-anon-multi';
-						} else {
-							$msgKey = 'sp-contributions-blocked-notice-multi';
-						}
-					}
-					// Allow local styling overrides for different types of block
-					$class = $sitewide ?
-						'mw-contributions-blocked-notice' :
-						'mw-contributions-blocked-notice-partial';
-					LogEventsList::showLogExtract(
-						$out,
-						'block',
-						$logTargetPage,
-						'',
-						[
-							'lim' => 1,
-							'showIfEmpty' => false,
-							'msgKey' => [
-								$msgKey,
-								$userObj->getName(), # Support GENDER in 'sp-contributions-blocked-notice'
-								count( $blocks )
-							],
-							'offset' => '', # don't use WebRequest parameter offset
+			// If the user is blocked, display the latest active block log entry
+			if ( $this->shouldShowBlockLogExtract( $userObj ) ) {
+				$blockLogBox = LogEventsList::getBlockLogWarningBox(
+					$this->blockStore,
+					$this->namespaceInfo,
+					$this,
+					$this->getLinkRenderer(),
+					$userObj,
+					null,
+					static function ( array $data ): array {
+						// Allow local styling overrides for different types of block
+						$class = $data['sitewide'] ?
+							'mw-contributions-blocked-notice' :
+							'mw-contributions-blocked-notice-partial';
+						return [
 							'wrap' => Html::rawElement(
 								'div',
 								[ 'class' => $class ],
 								'$1'
-							),
-						]
-					);
+							)
+						];
+					}
+				);
+				if ( $blockLogBox !== null ) {
+					$out->addHTML( $blockLogBox );
 				}
 			}
 		}
@@ -733,9 +717,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		# (T373988) Don't show some links for temporary accounts
 		if ( !$target->isTemp() ) {
 			# Add a link to change user rights for privileged users
-			$userrightsPage = new SpecialUserRights();
-			$userrightsPage->setContext( $sp->getContext() );
-			if ( $userrightsPage->userCanChangeRights( $target ) ) {
+			if ( $this->userGroupAssignmentService->userCanChangeRights( $sp->getUser(), $target ) ) {
 				$tools['userrights'] = $linkRenderer->makeKnownLink(
 					SpecialPage::getTitleFor( 'Userrights', $username ),
 					$sp->msg( 'sp-contributions-userrights', $username )->text(),
@@ -871,7 +853,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		$fields['tagInvert'] = [
 			'type' => 'check',
 			'id' => 'tagInvert',
-			'label' => $this->msg( 'invert' ),
+			'label-message' => 'invert',
 			'name' => 'tagInvert',
 			'hide-if' => [ '===', 'tagfilter', '' ],
 			'section' => 'contribs-top',

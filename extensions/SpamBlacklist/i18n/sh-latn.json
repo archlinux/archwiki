@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aca"
+		]
+	},
+	"log-name-spamblacklist": "Dnevnik liste neželjenog sadržaja",
+	"log-description-spamblacklist": "Ovaj dnevnik navodi pogotke u listi neželjenog sadržaja.",
+	"right-spamblacklistlog": "Pregled dnevnika liste neželjenog sadržaja",
+	"action-spamblacklistlog": "pregledate dnevnik liste neželjenog sadržaja"
+}

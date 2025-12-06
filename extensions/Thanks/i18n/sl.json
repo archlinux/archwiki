@@ -27,7 +27,7 @@
 	"thanks-error-notloggedin": "Anonimni uporabniki ne morejo pošiljati zahval",
 	"thanks-error-ratelimited": "{{GENDER:$1|Presegli}} ste omejitev hitrosti. Počakajte nekaj časa in nato poskusite znova.",
 	"thanks-error-api-params": "Obstajati mora parameter 'revid' ali 'logid'",
-	"thanks-thank-tooltip": "{{GENDER:$1|Pošljite}} {{GENDER:$2|temu uporabniku|tej uporabnici|temu_tej uporabnik_ci}} zahvalo",
+	"thanks-thank-tooltip": "{{GENDER:$1|Pošljite}} {{GENDER:$2|temu uporabniku|tej uporabnici|tem uporabniku}} zahvalo",
 	"thanks-thank-tooltip-no": "{{GENDER:$1|Prekliči}} obvestilo zahvale",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Pošlji}} obvestilo zahvale",
 	"thanks-confirmation2": "Se {{GENDER:$1|želite}} javno zahvaliti?",

@@ -6,7 +6,6 @@
 			"Zolgoyo"
 		]
 	},
-	"vector-opt-out": "Eski körünişke qayt",
 	"vector-languages": "Tiller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 til}}",
 	"vector-no-language-button-label": "Til qoş",
@@ -36,7 +35,6 @@
 	"skin-theme-night-label": "Qaranlıq",
 	"skin-theme-os-label": "Avtomatik",
 	"skin-theme-exclusion-notice": "Bu saife er vaqıt yarıq rejimindedir.",
-	"vector-searchsuggest-containing": "İçinde <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> olğan saifelerni qıdır",
 	"vector-toc-label": "Münderice",
 	"vector-toc-beginning": "Kiriş",
 	"vector-main-menu-label": "Esas menü",

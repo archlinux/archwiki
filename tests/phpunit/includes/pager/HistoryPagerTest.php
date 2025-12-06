@@ -22,16 +22,17 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @param array $results for passing to FakeResultWrapper and deriving
 	 *  RevisionRecords and formatted comments.
+	 * @param array $requestOpts Options for FauxRequest
 	 * @return HistoryPager
 	 */
-	private function getHistoryPager( array $results ) {
+	private function getHistoryPager( array $results, array $requestOpts = [] ) {
 		$wikiPageMock = $this->createMock( WikiPage::class );
 		$contextMock = $this->getMockBuilder( RequestContext::class )
 			->disableOriginalConstructor()
 			->onlyMethods( [ 'getRequest', 'getWikiPage', 'getTitle' ] )
 			->getMock();
 		$contextMock->method( 'getRequest' )->willReturn(
-			new FauxRequest( [] )
+			new FauxRequest( $requestOpts )
 		);
 		$title = Title::makeTitle( NS_MAIN, 'HistoryPagerTest' );
 		$contextMock->method( 'getTitle' )->willReturn( $title );
@@ -90,6 +91,29 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 		}, $results );
 
 		return $pager;
+	}
+
+	/**
+	 * @covers \MediaWiki\Pager\HistoryPager::fixQueryOffset
+	 */
+	public function testQueryOffset() {
+		$offset = [ 'offset' => '20251105123000' ];
+		$queryOffset = $this->getHistoryPager( [], $offset )->getOffset();
+		$dbTimestamp = $this->getDb()->timestamp( $queryOffset );
+
+		$this->assertSame( $queryOffset, $dbTimestamp );
+	}
+
+	/**
+	 * @covers \MediaWiki\Pager\HistoryPager::fixQueryOffset
+	 */
+	public function testQueryOffsetMultiple() {
+		$offset = [ 'offset' => '20251105123000|123' ];
+		$queryOffset = $this->getHistoryPager( [], $offset )->getOffset();
+		$timestamp = explode( '|', $queryOffset, 2 )[ 0 ];
+		$dbTimestamp = $this->getDb()->timestamp( $timestamp );
+
+		$this->assertSame( $timestamp, $dbTimestamp );
 	}
 
 	/**

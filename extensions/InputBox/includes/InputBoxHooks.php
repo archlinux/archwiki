@@ -15,6 +15,7 @@ use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -32,13 +33,17 @@ class InputBoxHooks implements
 	/** @var Config */
 	private $config;
 
+	private ExtensionRegistry $extensionRegistry;
+
 	/**
 	 * @param Config $config
 	 */
 	public function __construct(
-		Config $config
+		Config $config,
+		ExtensionRegistry $extensionRegistry
 	) {
 		$this->config = $config;
+		$this->extensionRegistry = $extensionRegistry;
 	}
 
 	/**
@@ -51,9 +56,11 @@ class InputBoxHooks implements
 	}
 
 	/**
-	 * Prepend prefix to wpNewTitle if necessary
+	 * If necssary, prepend prefix to wpNewTitle, or update the search parameter with the searchfilter.
+	 *
 	 * @param SpecialPage $special
-	 * @param string $subPage
+	 * @param string|null $subPage Subpage string, or null if no subpage was specified
+	 * @return bool|void True or no return value to continue or false to prevent execution
 	 */
 	public function onSpecialPageBeforeExecute( $special, $subPage ) {
 		$request = $special->getRequest();
@@ -65,8 +72,13 @@ class InputBoxHooks implements
 			$request->setVal( 'wpNewTitle', $prefix . $title );
 			$request->unsetVal( 'prefix' );
 		}
-		if ( $special->getName() === 'Search' && $searchfilter !== '' ) {
-			$request->setVal( 'search', $search . ' ' . $searchfilter );
+		if ( in_array( $special->getName(), [ 'Search', 'MediaSearch' ] ) && $searchfilter !== '' ) {
+			// Redirect to Special:Search after modifying the search parameter.
+			$searchQuery = $request->getQueryValues();
+			$searchQuery[ 'search' ] = trim( $search ) . ' ' . $searchfilter;
+			unset( $searchQuery['searchfilter'], $searchQuery['title'] );
+			$special->getOutput()->redirect( $special->getPageTitle()->getFullURL( $searchQuery ) );
+			return false;
 		}
 	}
 
@@ -83,7 +95,7 @@ class InputBoxHooks implements
 		}
 
 		// Create InputBox
-		$inputBox = new InputBox( $this->config, $parser );
+		$inputBox = new InputBox( $this->config, $this->extensionRegistry, $parser );
 
 		// Configure InputBox
 		$inputBox->extractOptions( $parser->replaceVariables( $input ) );

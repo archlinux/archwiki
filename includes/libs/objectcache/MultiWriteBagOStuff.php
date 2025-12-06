@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\ObjectCache;
@@ -163,6 +149,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		$this->cacheIndexes = array_keys( $this->caches );
 	}
 
+	/** @inheritDoc */
 	public function get( $key, $flags = 0 ) {
 		$args = func_get_args();
 
@@ -214,6 +201,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		return $value;
 	}
 
+	/** @inheritDoc */
 	public function set( $key, $value, $exptime = 0, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -224,6 +212,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function delete( $key, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -234,6 +223,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function add( $key, $value, $exptime = 0, $flags = 0 ) {
 		// Try the write to the top-tier cache
 		$ok = $this->callKeyMethodOnTierCache(
@@ -263,6 +253,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		return $ok;
 	}
 
+	/** @inheritDoc */
 	public function merge( $key, callable $callback, $exptime = 0, $attempts = 10, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -273,6 +264,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function changeTTL( $key, $exptime = 0, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -283,6 +275,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function lock( $key, $timeout = 6, $exptime = 6, $rclass = '' ) {
 		// Only need to lock the first cache; also avoids deadlocks
 		return $this->callKeyMethodOnTierCache(
@@ -294,6 +287,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function unlock( $key ) {
 		// Only the first cache is locked
 		return $this->callKeyMethodOnTierCache(
@@ -305,6 +299,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function deleteObjectsExpiringBefore(
 		$timestamp,
 		?callable $progress = null,
@@ -321,6 +316,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function getMulti( array $keys, $flags = 0 ) {
 		// Just iterate over each key in order to handle all the backfill logic
 		$res = [];
@@ -334,6 +330,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		return $res;
 	}
 
+	/** @inheritDoc */
 	public function setMulti( array $valueByKey, $exptime = 0, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -344,6 +341,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function deleteMulti( array $keys, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -354,6 +352,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function changeTTLMulti( array $keys, $exptime, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -364,6 +363,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function incrWithInit( $key, $exptime, $step = 1, $init = null, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -374,6 +374,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
+	/** @inheritDoc */
 	public function setMockTime( &$time ) {
 		parent::setMockTime( $time );
 		foreach ( $this->caches as $cache ) {

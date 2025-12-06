@@ -150,6 +150,7 @@ function mwtext.nowiki( s )
 	s = string.gsub( s, '__', '_&#95;' )
 	s = string.gsub( s, '://', '&#58;//' )
 	s = string.gsub( s, '~~~', '~~&#126;' )
+	s = string.gsub( s, '＿', '&#xFF3F;' )
 	-- protect first and last character
 	s = string.gsub( s, '^[%-+_~]', nowikiRepl3 )
 	s = string.gsub( s, '[_~\r\n\t]$', nowikiRepl4 )

@@ -7,8 +7,10 @@ use Wikimedia\JsonCodec\Hint;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 
 /**
@@ -52,12 +54,10 @@ use Wikimedia\Parsoid\Utils\Utils;
  *
  * Template parameter infos produced by TemplateHandler. After unserialization,
  * the objects are not fully populated.
- * @property ParamInfo[][]|null $pi
+ * @property list<list<ParamInfo>>|null $pi
  *
- * DOM fragment identifier for DocumentFragment tunneled through Tokens.
- * The identifier here indexes into Env::$fragmentMap to map to a
- * DocumentFragment.
- * @property string|null $html
+ * DocumentFragment content tunneled through for DOMFragment Token.
+ * @property DocumentFragment|null $html
  *
  * On mw:Entity spans this is set to the decoded entity value.
  * @property string|null $srcContent
@@ -89,10 +89,6 @@ use Wikimedia\Parsoid\Utils\Utils;
  *
  * The link token associated with a redirect
  * @property Token|null $linkTk
- *
- * On a meta mw:EmptyLine, the associated comment and whitespace tokens. Used
- * in this sense by both the tokenizer and TokenStreamPatcher.
- * @property array<Token> $tokens
  *
  * This is set to "extlink" on auto URL (external hotlink) image links.
  * @property string|null $type
@@ -245,24 +241,26 @@ class DataParsoid implements JsonCodecable {
 	 * Deeply clone this object
 	 */
 	public function __clone() {
-		// Properties that need deep cloning
-		if ( isset( $this->tmp ) ) {
-			$this->tmp = clone $this->tmp;
+		// Deep clone non-primitive properties
+
+		// 1. Properties which are lists of cloneable objects
+		foreach ( [ 'pi' ] as $prop ) {
+			if ( isset( $this->$prop ) ) {
+				$this->$prop = Utils::cloneArray( $this->$prop );
+			}
 		}
-		if ( isset( $this->linkTk ) ) {
-			$this->linkTk = clone $this->linkTk;
+
+		// 2. Properties which are cloneable objects
+		foreach ( [ 'tmp', 'linkTk', 'tsr', 'dsr', 'extTagOffsets' ] as $prop ) {
+			if ( isset( $this->$prop ) ) {
+				$this->$prop = clone $this->$prop;
+			}
 		}
-		if ( isset( $this->tokens ) ) {
-			$this->tokens = Utils::cloneArray( $this->tokens );
-		}
-		if ( isset( $this->tsr ) ) {
-			$this->tsr = clone $this->tsr;
-		}
-		if ( isset( $this->dsr ) ) {
-			$this->dsr = clone $this->dsr;
-		}
-		if ( isset( $this->extTagOffsets ) ) {
-			$this->extTagOffsets = clone $this->extTagOffsets;
+		// 3. Properties which are DocumentFragments
+		foreach ( [ 'html' ] as $field ) {
+			if ( isset( $this->$field ) ) {
+				$this->$field = DOMDataUtils::cloneDocumentFragment( $this->$field );
+			}
 		}
 	}
 
@@ -338,6 +336,7 @@ class DataParsoid implements JsonCodecable {
 				'tsr' => $sr,
 				'pi' => Hint::build( ParamInfo::class, Hint::LIST, Hint::LIST ),
 				'linkTk' => Token::class,
+				'html' => DocumentFragment::class,
 			];
 		}
 		return $hints[$keyname] ?? null;

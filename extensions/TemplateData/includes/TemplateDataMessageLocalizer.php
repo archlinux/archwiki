@@ -11,10 +11,9 @@ use MessageLocalizer;
  */
 class TemplateDataMessageLocalizer implements MessageLocalizer {
 
-	private Language $language;
-
-	public function __construct( Language $language ) {
-		$this->language = $language;
+	public function __construct(
+		private readonly Language $language,
+	) {
 	}
 
 	/** @inheritDoc */

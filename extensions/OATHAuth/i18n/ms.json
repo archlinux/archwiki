@@ -10,14 +10,16 @@
 	"oathauth-secret": "Kunci rahsia pengesahihan dwifaktor:",
 	"oathauth-enable": "Hidupkan Penentusahan Dwifaktor",
 	"oathauth-recoverycodes": "Senarai berikut ialah senarai kod pemulihan guna sekali. Kod ini hanya boleh digunakan sekali sahaja dan untuk kegunaan kecemasan apabila anda tidak mempunyai akses kepada peranti anda. Sila catat kod ini dan simpan di lokasi yang selamat. Anda disyorkan untuk menanda setiap kod sebagai \"telah diguna\" apabila anda telah log masuk menggunakan kod tersebut. Jika anda kehilangan peranti anda, kod ini adalah satu-satunya cara untuk menyelamatkan akaun anda.",
+	"oathauth-failedtovalidateoath": "Watikah dwifaktor gagal disahkan",
 	"oathauth-disable": "Matikan Penentusahan Dwifaktor",
 	"oathauth-validatedoath": "Watikah dwifaktor disahkan. Penentusahan dwifaktor kini akan berkuatkuasa.",
-	"oathauth-failedtovalidateoath": "Watikah dwifaktor gagal disahkan",
 	"oathauth-disabledoath": "Penentusahan dwifaktor dimatikan.",
 	"oathauth-prefs-label": "Penentusahan dwifaktor:",
 	"right-oathauth-view-log": "Mengakses log perubahan penyahihan dua-faktor",
 	"action-oathauth-view-log": "mengakses log perubahan penyahihan dua-faktor",
 	"oathauth-auth-token-label": "Token dwifaktor atau kod pemulihan",
 	"oathauth-auth-token-help-ui": "Masukkan sama ada kod dari perisian pengesahihan ataupun kod pemulihan",
-	"oathauth-module-totp-label": "TOTP (token guna sekali)"
+	"oathauth-module-totp-label": "TOTP (token guna sekali)",
+	"group-oathauth-twofactorauth": "Pengguna yang mungkin menggunakan pengesahihan dwifaktor",
+	"group-oathauth-twofactorauth-member": "Pengguna yang mungkin menggunakan pengesahihan dwifaktor"
 }

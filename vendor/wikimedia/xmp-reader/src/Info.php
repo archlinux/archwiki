@@ -1112,6 +1112,11 @@ class Info {
 				'validate' => 'validateInteger',
 				'map_name' => 'OriginalImageWidth',
 			],
+			'DigitalSourceType' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+			],
+
 			// LocationShown and LocationCreated are handled
 			// specially because they are hierarchical, but we
 			// also want to merge with the old non-hierarchical.
@@ -1177,7 +1182,6 @@ class Info {
 			/* Other props that might be interesting but
 			 * Not currently extracted:
 			 * ArtworkOrObject, (info about objects in picture)
-			 * DigitalSourceType
 			 * RegistryId
 			 */
 		],

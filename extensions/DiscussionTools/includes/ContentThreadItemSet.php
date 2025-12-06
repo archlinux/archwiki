@@ -28,7 +28,6 @@ class ContentThreadItemSet implements ThreadItemSet {
 
 	/**
 	 * @inheritDoc
-	 * @param ThreadItem $item
 	 */
 	public function addThreadItem( ThreadItem $item ) {
 		Assert::precondition( $item instanceof ContentThreadItem, 'Must be ContentThreadItem' );
@@ -51,7 +50,6 @@ class ContentThreadItemSet implements ThreadItemSet {
 
 	/**
 	 * @inheritDoc
-	 * @param ThreadItem $item
 	 */
 	public function updateIdAndNameMaps( ThreadItem $item ) {
 		Assert::precondition( $item instanceof ContentThreadItem, 'Must be ContentThreadItem' );

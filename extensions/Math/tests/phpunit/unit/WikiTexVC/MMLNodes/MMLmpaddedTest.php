@@ -1,7 +1,8 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
@@ -20,10 +21,10 @@ class MMLmpaddedTest extends MediaWikiUnitTestCase {
 		$mi = new MMLmi( '', [], 'x' );
 		$mo = new MMLmo( '', [], '+' );
 		$mn = new MMLmn( '', [], '5' );
-		$mpadded = new MMLmpadded( '', [ 'mathvariant' => 'bold' ], $mi, $mo, $mn );
+		$mpadded = new MMLmpadded( '', [ 'mathvariant' => Variants::BOLD ], $mi, $mo, $mn );
 
 		$this->assertEquals( 'mpadded', $mpadded->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $mpadded->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $mpadded->getAttributes() );
 		$this->assertEquals( $mpadded->getChildren(), [ $mi, $mo, $mn ] );
 	}
 }

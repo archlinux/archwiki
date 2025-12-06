@@ -1,53 +1,116 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials\Redirects;
 
+use MediaWiki\Auth\AuthManager;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\RedirectSpecialArticle;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
+use MediaWiki\User\TempUser\TempUserCreator;
 
 /**
  * Special page pointing to current user's talk page.
+ *
+ * This acts as a redirect to the user's talk page in most situations.
+ * Exceptions to this, with temporary accounts enabled:
+ * - If the user is logged out and not blocked, prompts the user to log in.
+ * - If the user is logged out and the IP is blocked but allows the user
+ *   to edit their own talk page, show a form that explains the situation
+ *   to the user and allows them to create a temporary account to edit
+ *   their own talk page.
  *
  * @ingroup SpecialPage
  */
 class SpecialMytalk extends RedirectSpecialArticle {
 
 	private TempUserConfig $tempUserConfig;
+	private TempUserCreator $tempUserCreator;
+	private AuthManager $authManager;
+	private bool $shouldRedirect = true;
 
-	public function __construct( TempUserConfig $tempUserConfig ) {
+	public function __construct(
+		TempUserConfig $tempUserConfig,
+		TempUserCreator $tempUserCreator,
+		AuthManager $authManager
+	) {
 		parent::__construct( 'Mytalk' );
 
 		$this->tempUserConfig = $tempUserConfig;
+		$this->tempUserCreator = $tempUserCreator;
+		$this->authManager = $authManager;
+	}
+
+	/** @inheritDoc */
+	public function execute( $subpage ) {
+		if ( $this->tempUserConfig->isEnabled() && $this->getUser()->isAnon() ) {
+			$this->shouldRedirect = false;
+			$block = $this->getUser()->getBlock();
+			if ( $block && $block->isUsertalkEditAllowed() ) {
+				// Show the user a form for creating a temporary user to appeal their block
+				$this->setHeaders();
+				$this->outputHeader( 'mytalk-appeal-summary' );
+				$form = $this->getUserTalkAppealForm();
+				$status = $form->show();
+				if ( $status && $status->isOK() ) {
+					// Set the context user to the new temporary user, and continue to
+					// redirect to the talk page.
+					$this->authManager->setRequestContextUserFromSessionUser();
+				} else {
+					if ( $status instanceof Status ) {
+						$this->getOutput()->addWikiMsg( $status->getMessage() );
+					}
+					return;
+				}
+			} else {
+				// Redirect to login for anon users when temp accounts are enabled.
+				$this->requireLogin();
+				return;
+			}
+		}
+		parent::execute( $subpage );
 	}
 
 	/**
-	 * @param string|null $subpage
-	 * @return Title
+	 * @return HTMLForm
 	 */
+	private function getUserTalkAppealForm() {
+		$form = HTMLForm::factory( 'ooui', [], $this->getContext() );
+		$form->setMethod( 'post' )
+			->setSubmitTextMsg( 'mytalk-appeal-submit' )
+			->setSubmitCallback( [ $this, 'onSubmit' ] );
+		return $form;
+	}
+
+	/**
+	 * Attempt to create a new temporary user on form submission.
+	 *
+	 * @return Status
+	 */
+	public function onSubmit() {
+		return $this->tempUserCreator->create(
+			null,
+			$this->getContext()->getRequest()
+		);
+	}
+
+	/** @inheritDoc */
+	public function getDescription() {
+		if ( !$this->shouldRedirect ) {
+			return $this->msg( 'mytalk-appeal' );
+		}
+	}
+
+	/** @inheritDoc */
 	public function getRedirect( $subpage ) {
-		// Redirect to login for anon users when temp accounts are enabled.
 		if ( $this->tempUserConfig->isEnabled() && $this->getUser()->isAnon() ) {
-			$this->requireLogin();
+			return false;
 		}
 
 		if ( $subpage === null || $subpage === '' ) {

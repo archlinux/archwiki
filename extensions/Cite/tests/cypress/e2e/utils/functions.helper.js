@@ -52,7 +52,7 @@ export function editPage( title, wikiText ) {
 		await win.mw.loader.using( 'mediawiki.api' );
 		const response = await new win.mw.Api().postWithEditToken( {
 			action: 'edit',
-			title: title,
+			title,
 			text: wikiText,
 			formatversion: '2'
 		} );

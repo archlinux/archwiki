@@ -17,9 +17,6 @@ class ChangeTagValidator {
 	/** @var ChangeTagsManager */
 	private $changeTagsManager;
 
-	/**
-	 * @param ChangeTagsManager $changeTagsManager
-	 */
 	public function __construct( ChangeTagsManager $changeTagsManager ) {
 		$this->changeTagsManager = $changeTagsManager;
 	}

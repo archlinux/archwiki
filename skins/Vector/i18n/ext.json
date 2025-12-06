@@ -8,7 +8,6 @@
 			"Julio Nepote"
 		]
 	},
-	"vector-opt-out": "Mual ala aparencia anteriol",
 	"vector-languages": "Idiomas",
 	"vector-language-button-label": "$1 idioma{{PLURAL:$1||s}}",
 	"vector-no-language-button-label": "Añidil idiomas",
@@ -37,13 +36,12 @@
 	"skin-theme-night-label": "Escuru",
 	"skin-theme-os-label": "Utomática",
 	"skin-theme-exclusion-notice": "Esta página sempri está en mou cralu",
-	"vector-searchsuggest-containing": "Precural páginas que recadin <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Conteníus",
 	"vector-toc-beginning": "Prencipiu",
 	"vector-anon-user-menu-pages": "Páginas p'aditoris que no prencipiarun sessión.",
 	"vector-main-menu-label": "Menú prencipal",
 	"vector-feature-custom-font-size-exclusion-notice": "Esta página siempri gasta una huenti de letra chiquenina",
-	"vector-page-tools-label": "Heramientas",
+	"vector-page-tools-label": "Herramientas",
 	"vector-page-tools-general-label": "General",
 	"vector-page-tools-actions-label": "Acionis",
 	"vector-unpin-element-label": "incultal"

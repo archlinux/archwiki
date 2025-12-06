@@ -14,8 +14,11 @@ const mwConfig = require( './mwConfig.json' );
  * @param {FavoritesStore} config.favoritesStore Data store
  */
 function SearchWidget( config ) {
+	const placeholder = templateDiscoveryConfig.cirrusSearchLoaded ?
+		OO.ui.deferMsg( 'templatedata-search-placeholder-cirrussearch' ) :
+		OO.ui.deferMsg( 'templatedata-search-placeholder' );
 	config = Object.assign( {
-		placeholder: OO.ui.deferMsg( 'templatedata-search-placeholder' ),
+		placeholder: placeholder,
 		icon: 'search'
 	}, config );
 	SearchWidget.super.call( this, config );
@@ -24,6 +27,11 @@ function SearchWidget( config ) {
 	this.limit = config.limit || 10;
 	this.api = config.api || new mw.Api();
 	this.favoritesStore = config.favoritesStore;
+
+	// Handle early enter key press
+	this.connect( this, {
+		enter: 'onEnterKeyPress'
+	} );
 }
 
 /* Setup */
@@ -143,6 +151,7 @@ SearchWidget.prototype.addExactMatch = function ( response ) {
 	return this.api.get( {
 		action: 'templatedata',
 		includeMissingTitles: 1,
+		redirects: 1,
 		lang: mw.config.get( 'wgUserLanguage' ),
 		// Can't use a direct lookup by title because we need this to be case-insensitive
 		generator: 'prefixsearch',
@@ -219,6 +228,15 @@ SearchWidget.prototype.getLookupCacheDataFromResponse = function ( response ) {
 			return null;
 		}
 
+		// Skip common subpages
+		const subpages = mw.msg( 'templatedata-excluded-subpages' )
+			.split( '|' )
+			.map( ( e ) => e.trim() )
+			.filter( Boolean );
+		if ( subpages.some( ( s ) => title.getMainText().endsWith( '/' + s ) ) ) {
+			return null;
+		}
+
 		/**
 		 * Config for the {@see TemplateMenuItem} widget:
 		 * - data: {@see OO.ui.Element} and getData()
@@ -288,6 +306,33 @@ SearchWidget.prototype.getLookupMenuOptionsFromData = function ( data ) {
 SearchWidget.prototype.onLookupMenuChoose = function ( item ) {
 	this.setValue( item.getLabel() );
 	this.emit( 'choose', item.getData() );
+};
+
+/**
+ * Handle Enter key press to select template based on current input value.
+ *
+ * @protected
+ * @fires choose
+ */
+SearchWidget.prototype.onEnterKeyPress = function () {
+	// TODO: Do we also need to stop the favorites list, etc., queries too?
+	// Immediately abort any pending lookup requests
+	this.abortLookupRequest();
+
+	const currentValue = this.getValue().trim();
+	if ( !currentValue ) {
+		return;
+	}
+
+	// Create a title from the current value, and if it is valid, emit a 'choose' event
+	const title = mw.Title.newFromText( currentValue, mw.config.get( 'wgNamespaceIds' ).template );
+	if ( title ) {
+		const templateData = {
+			title: title.getPrefixedText(),
+			missing: true
+		};
+		this.emit( 'choose', templateData );
+	}
 };
 
 module.exports = SearchWidget;

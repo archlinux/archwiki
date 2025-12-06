@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Foomin10",
 			"Frozen-mikan",
 			"Fryed-peach",
 			"Kiri",
@@ -9,8 +10,7 @@
 			"Shirayuki",
 			"TAKAHASHI Shuuji",
 			"Whym",
-			"Yusuke1109",
-			"Foomin10"
+			"Yusuke1109"
 		]
 	},
 	"content-model-scribunto": "Scribuntoモジュール",

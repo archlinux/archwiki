@@ -1,8 +1,6 @@
 /**
  * @module referencePreview
  */
-const { isTrackingEnabled, LOGGING_SCHEMA } = require( './referencePreviewsInstrumentation.js' );
-
 const TEMPLATE = document.createElement( 'template' );
 TEMPLATE.innerHTML = `
 <div class="mwe-popups mwe-popups mwe-popups-type-reference" aria-hidden>
@@ -119,41 +117,10 @@ function renderReferencePreview(
 	settingsButton.append( settingsButtonLabel );
 	el.querySelector( '.mwe-popups-settings' ).appendChild( settingsButton );
 
-	if ( isTrackingEnabled() ) {
-		el.querySelector( '.mw-parser-output' ).addEventListener( 'click', ( ev ) => {
-			if ( !ev.target.matches( 'a' ) ) {
-				return;
-			}
-			mw.track( LOGGING_SCHEMA, {
-				action: 'clickedReferencePreviewsContentLink'
-			} );
-		} );
-	}
-
 	el.querySelector( '.mwe-popups-scroll' ).addEventListener( 'scroll', ( e ) => {
 		const element = e.target,
 			// We are dealing with floating point numbers here when the page is zoomed!
 			scrolledToBottom = element.scrollTop >= element.scrollHeight - element.clientHeight - 1;
-
-		if ( isTrackingEnabled() ) {
-			if ( !element.isOpenRecorded ) {
-				mw.track( LOGGING_SCHEMA, {
-					action: 'poppedOpen',
-					scrollbarsPresent: element.scrollHeight > element.clientHeight
-				} );
-				element.isOpenRecorded = true;
-			}
-
-			if (
-				element.scrollTop > 0 &&
-				!element.isScrollRecorded
-			) {
-				mw.track( LOGGING_SCHEMA, {
-					action: 'scrolled'
-				} );
-				element.isScrollRecorded = true;
-			}
-		}
 
 		if ( !scrolledToBottom && element.isScrolling ) {
 			return;

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Kizule",
 			"Milicevic01",
@@ -9,8 +10,7 @@
 			"Sasa Stefanovic",
 			"Zoranzoki21",
 			"Жељко Тодоровић",
-			"Михајло Анђелковић",
-			"Aca"
+			"Михајло Анђелковић"
 		]
 	},
 	"action-titleblacklistlog": "прегледате дневник црне листе наслова",

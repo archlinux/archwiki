@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
-use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
@@ -16,7 +15,8 @@ use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Title\Title;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\CentralId\CentralIdLookupFactory;
 use MediaWiki\User\Hook\UserEffectiveGroupsHook;
 use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
@@ -34,59 +34,84 @@ class HookHandler implements
 	UserEffectiveGroupsHook,
 	UserGetRightsHook
 {
-	private OATHUserRepository $userRepo;
-	private OATHAuthModuleRegistry $moduleRegistry;
-	private PermissionManager $permissionManager;
-	private Config $config;
-	private UserGroupManager $userGroupManager;
-
 	public function __construct(
-		OATHUserRepository $userRepo,
-		OATHAuthModuleRegistry $moduleRegistry,
-		PermissionManager $permissionManager,
-		Config $config,
-		UserGroupManager $userGroupManager
+		private readonly OATHUserRepository $userRepo,
+		private readonly OATHAuthModuleRegistry $moduleRegistry,
+		private readonly PermissionManager $permissionManager,
+		private readonly Config $config,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly CentralIdLookupFactory $centralIdLookupFactory,
 	) {
-		$this->userRepo = $userRepo;
-		$this->moduleRegistry = $moduleRegistry;
-		$this->permissionManager = $permissionManager;
-		$this->config = $config;
-		$this->userGroupManager = $userGroupManager;
 	}
 
-	/**
-	 * @param AuthenticationRequest[] $requests
-	 * @param array $fieldInfo
-	 * @param array &$formDescriptor
-	 * @param string $action
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function onAuthChangeFormFields( $requests, $fieldInfo, &$formDescriptor, $action ) {
-		if ( !isset( $fieldInfo['OATHToken'] ) ) {
-			return true;
+		if ( isset( $fieldInfo['OATHToken'] ) ) {
+			$formDescriptor['OATHToken'] += [
+				'cssClass' => 'loginText',
+				'id' => 'wpOATHToken',
+				'size' => 20,
+				'dir' => 'ltr',
+				'autofocus' => true,
+				'persistent' => false,
+				'autocomplete' => 'one-time-code',
+				'spellcheck' => false,
+				'help-message' => 'oathauth-auth-token-help-ui',
+			];
 		}
 
-		$formDescriptor['OATHToken'] += [
-			'cssClass' => 'loginText',
-			'id' => 'wpOATHToken',
-			'size' => 20,
-			'dir' => 'ltr',
-			'autofocus' => true,
-			'persistent' => false,
-			'autocomplete' => 'one-time-code',
-			'spellcheck' => false,
-			'help-message' => 'oathauth-auth-token-help-ui',
-		];
+		if ( isset( $fieldInfo['newModule'] ) ) {
+			// HACK: Hide the newModule <select>, but keep it in form, otherwise HTMLForm won't
+			// understand the button weirdness below. There's no great way for us to inject CSS, so
+			// abuse a CSS class from core that has display: none; on it.
+			// TODO: Make this multi-button thing a real HTMLForm field (T404664)
+			$formDescriptor['newModule']['cssclass'] = 'emptyPortlet';
+			if ( isset( $formDescriptor['OATHToken'] ) ) {
+				// Don't make the TOTP token field required. Otherwise, the "Switch to XYZ" submit
+				// buttons can't be used without filling in this field
+				$formDescriptor['OATHToken']['required'] = false;
+			}
+			// Check the weight of the form submit button to make sure other authentication
+			// options are placed below it
+			$loginButtonWeight = $formDescriptor['loginattempt']['weight'] ?? 100;
+
+			$availableModules = $fieldInfo['newModule']['options'];
+			// Remove the empty option for not switching first
+			unset( $availableModules[''] );
+
+			// Reorder 2FA types according to OATHPrioritizedModules
+			$orderedModules = [];
+			foreach ( $this->config->get( 'OATHPrioritizedModules' ) as $moduleName ) {
+				if ( isset( $availableModules[$moduleName] ) ) {
+					$orderedModules[$moduleName] = $availableModules[$moduleName];
+					unset( $availableModules[$moduleName] );
+				}
+			}
+			// Append any remaining modules that weren’t in the priority list
+			$availableModules = $orderedModules + $availableModules;
+
+			$extraWeight = 1;
+			foreach ( $availableModules as $moduleName => $ignored ) {
+				// Add a switch button for each alternative module, all with name="newModule"
+				// Whichever button is clicked will submit the form, with newModule set to its value
+				$buttonMessage = $this->moduleRegistry->getModuleByKey( $moduleName )->getLoginSwitchButtonMessage();
+				$formDescriptor["newModule_$moduleName"] = [
+					'type' => 'submit',
+					'name' => 'newModule',
+					'default' => $moduleName,
+					'buttonlabel' => $buttonMessage->text(),
+					// Make sure these buttons appear after the loginattempt button
+					'weight' => $loginButtonWeight + $extraWeight,
+					'flags' => [],
+				];
+				$extraWeight++;
+			}
+		}
+
 		return true;
 	}
 
-	/**
-	 * @param User $user
-	 * @param array &$preferences
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function onGetPreferences( $user, &$preferences ) {
 		$oathUser = $this->userRepo->findByUser( $user );
 
@@ -143,9 +168,8 @@ class HookHandler implements
 			'section' => 'personal/info',
 		];
 
-		$dbGroups = $this->userGroupManager->getUserGroups( $user );
-		$disabledGroups = $this->getDisabledGroups( $user, $dbGroups );
-		if ( !$oathUser->isTwoFactorAuthEnabled() && $disabledGroups ) {
+		$disabledGroups = $this->getDisabledGroups( $user, $this->userGroupManager->getUserGroups( $user ) );
+		if ( $disabledGroups && !$oathUser->isTwoFactorAuthEnabled() ) {
 			$context = RequestContext::getMain();
 			$list = [];
 			foreach ( $disabledGroups as $disabledGroup ) {
@@ -199,24 +223,28 @@ class HookHandler implements
 	/**
 	 * Remove groups if 2FA is required for them and it's not enabled
 	 *
-	 * @param User $user User to get groups for
-	 * @param string[] &$groups Current effective groups
+	 * @inheritDoc
 	 */
 	public function onUserEffectiveGroups( $user, &$groups ) {
 		$disabledGroups = $this->getDisabledGroups( $user, $groups );
 		if ( $disabledGroups ) {
 			$groups = array_diff( $groups, $disabledGroups );
 		}
+
+		// Enable 2FA for users in gradual rollout if MFARollout is enabled.
+		// Exclude temp users and users without email addresses; check this first
+		// so that we don't try to look up central user IDs for non-named users.
+		if ( $user->isNamed() && $user->getEmail() ) {
+			$centralID = $this->centralIdLookupFactory->getLookup()
+				->centralIdFromLocalUser( $user, CentralIdLookup::AUDIENCE_RAW );
+			$MFARollout = $this->config->get( 'OATHRolloutPercent' );
+			if ( $centralID % 100 < $MFARollout ) {
+				$groups[] = "oathauth-twofactorauth";
+			}
+		}
 	}
 
-	/**
-	 * @param Title $title
-	 * @param User $user
-	 * @param string $action
-	 * @param string &$result
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function onGetUserPermissionsErrors( $title, $user, $action, &$result ) {
 		if ( !$this->config->has( 'OATHExclusiveRights' ) ) {
 			return true;
@@ -225,7 +253,7 @@ class HookHandler implements
 		// TODO: Get the session from somewhere more... sane?
 		$session = $user->getRequest()->getSession();
 		if (
-			!(bool)$session->get( OATHAuth::AUTHENTICATED_OVER_2FA, false ) &&
+			!$session->get( OATHAuth::AUTHENTICATED_OVER_2FA, false ) &&
 			in_array( $action, $this->config->get( 'OATHExclusiveRights' ) )
 		) {
 			$result = 'oathauth-action-exclusive-to-2fa';
@@ -238,8 +266,7 @@ class HookHandler implements
 	 * If a user has groups disabled for not having 2FA enabled, make sure they
 	 * have "oathauth-enable" so they can turn it on
 	 *
-	 * @param User $user User to get rights for
-	 * @param string[] &$rights Current rights
+	 * @inheritDoc
 	 */
 	public function onUserGetRights( $user, &$rights ) {
 		if ( in_array( 'oathauth-enable', $rights ) ) {

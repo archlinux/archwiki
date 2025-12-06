@@ -15,9 +15,7 @@ use Wikimedia\UUID\GlobalIdGenerator;
  * @since 1.38
  */
 class ContentRenderer {
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
+	private IContentHandlerFactory $contentHandlerFactory;
 	private GlobalIdGenerator $globalIdGenerator;
 
 	public function __construct(
@@ -45,19 +43,13 @@ class ContentRenderer {
 	public function getParserOutput(
 		Content $content,
 		PageReference $page,
-		$revision = null,
+		?RevisionRecord $revision = null,
 		?ParserOptions $parserOptions = null,
 		$hints = []
 	): ParserOutput {
-		$revId = null;
-		$revTimestamp = null;
-		if ( is_int( $revision ) ) {
-			wfDeprecated( __METHOD__ . ' with integer revision id', '1.42' );
-			$revId = $revision;
-		} elseif ( $revision !== null ) {
-			$revId = $revision->getId();
-			$revTimestamp = $revision->getTimestamp();
-		}
+		$revId = $revision?->getId();
+		$revTimestamp = $revision?->getTimestamp();
+
 		if ( is_bool( $hints ) ) {
 			// For backward compatibility.
 			$hints = [ 'generate-html' => $hints ];

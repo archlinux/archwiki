@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bennylin"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "ꦩꦁꦱꦸꦭ꧀ꦭꦶ",
+	"discussiontools-newtopic-missing-title": "ꦩꦁꦒ​ꦮꦺꦤꦺꦃꦲꦶ​ꦱꦼꦱꦶꦫꦃꦲꦤ꧀ꦏꦁꦒꦺꦴ​ꦉꦩ꧀ꦧꦸꦒ꧀ꦒꦤ꧀ꦥꦚ꧀ꦗꦼꦤꦼꦁꦔꦤ꧀꧈",
+	"discussiontools-newtopic-placeholder-title": "ꦲꦶꦫꦃ​ꦲꦶꦫꦃꦲꦤ꧀",
+	"discussiontools-replylink": "ꦮꦁꦱꦸꦭ꧀ꦭꦶ",
+	"discussiontools-replywidget-advanced": "ꦭꦸꦔꦶꦢ꧀ꦢꦤ꧀",
+	"discussiontools-replywidget-cancel": "ꦮꦸꦫꦸꦁ",
+	"discussiontools-replywidget-mode-source": "ꦱꦸꦩ꧀ꦧꦼꦂ",
+	"discussiontools-replywidget-mode-visual": "ꦥ꦳ꦶꦱꦸꦲꦭ꧀",
+	"discussiontools-replywidget-newtopic": "ꦠꦩ꧀ꦧꦃ​ꦉꦩ꧀ꦧꦸꦒ꧀",
+	"discussiontools-replywidget-placeholder-newtopic": "ꦮꦼꦝꦂꦫꦤ꧀",
+	"discussiontools-replywidget-placeholder-reply": "ꦥꦮꦁꦱꦸꦭ꧀ꦭꦤ꧀ꦩꦫꦁ{{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "ꦥꦿꦠꦸꦢꦸꦃ",
+	"discussiontools-replywidget-reply": "ꦮꦁꦱꦸꦭ꧀ꦭꦶ",
+	"discussiontools-replywidget-summary": "ꦫꦶꦁꦏꦼꦱ꧀ꦱꦤ꧀",
+	"discussiontools-replywidget-watchthis": "ꦠꦩ꧀ꦧꦃ​ꦏꦕ​ꦲꦶꦏꦶ​ꦩꦼꦚꦁ​[[Special:Watchlist|ꦥꦿꦠꦺꦭ꧀ꦭꦤ꧀ꦥꦮꦮꦁꦔꦤ꧀ꦩꦸ]]",
+	"discussiontools-topicheader-authorcount": "$1{{PLURAL:$1|ꦮꦺꦴꦁ}}ꦲꦤ​ꦲꦶꦁ​ꦥꦉꦩ꧀ꦧꦸꦒ꧀ꦒꦤ꧀",
+	"discussiontools-topicheader-commentcount": "$1{{PLURAL:$1|ꦠꦁꦒꦼꦥ꧀ꦥꦤ꧀}}",
+	"discussiontools-topicheader-latestcomment": "ꦠꦁꦒꦼꦥ꧀ꦥꦤ꧀ꦥꦭꦶꦁ​ꦲꦚꦂ꧇$1",
+	"discussiontools-topicsubscription-button-subscribe": "ꦭꦁꦒꦤ꧀ꦤꦤ꧀",
+	"discussiontools-topicsubscription-button-subscribe-label": "ꦭꦁꦒꦤ꧀ꦤꦤ꧀",
+	"discussiontools-topicsubscription-button-unsubscribe": "ꦮꦸꦫꦸꦁ​ꦭꦁꦒꦤ꧀ꦤꦤ꧀",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "ꦮꦸꦫꦸꦁ​ꦭꦁꦒꦤ꧀ꦤꦤ꧀",
+	"discussiontools-topicsubscription-notify-subscribed-body": "ꦥꦚ꧀ꦗꦼꦤꦼꦁꦔꦤ꧀ꦧꦏꦭ꧀ꦤꦩ꧀ꦥ​ꦤꦺꦴꦠꦶꦥ꦳ꦶꦏꦱꦶ​ꦧꦧ꧀ꦠꦁꦒꦼꦥ꧀ꦥꦤ꧀ꦲꦚꦂ​ꦲꦶꦁ​ꦉꦩ꧀ꦧꦸꦒ꧀ꦒꦤ꧀ꦲꦶꦏꦶ꧉",
+	"discussiontools-topicsubscription-notify-subscribed-title": "ꦏꦺꦴꦮꦺ​ꦤꦼꦩ꧀ꦧꦺ​ꦭꦁꦒꦤꦤ꧀!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "ꦥꦚ꧀ꦗꦼꦤꦼꦁꦔꦤ꧀ꦲꦺꦴꦫ​ꦧꦏꦭ꧀ꦤꦩ꧀ꦥ​ꦤꦺꦴꦠꦶꦥ꦳ꦶꦏꦱꦶ​ꦩꦤꦺꦃ​ꦧꦧ꧀ꦠꦁꦒꦼꦥ꧀ꦥꦤ꧀ꦲꦚꦂ​ꦲꦶꦁ​ꦉꦩ꧀ꦧꦸꦒ꧀ꦒꦤ꧀ꦲꦶꦏꦶ꧉",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "ꦥꦚ꧀ꦗꦼꦤꦼꦁꦔꦤ꧀ꦩꦸꦫꦸꦁꦔꦏꦺ​ꦭꦁꦒꦤꦤ꧀꧈"
+}

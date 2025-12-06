@@ -1,11 +1,9 @@
 <?php
 
 use GlobalPreferences\GlobalPreferencesFactory;
-use GrowthExperiments\UserImpact\UserImpactLookup;
 use MediaWiki\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
 use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
 use MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPagerFactory;
-use MediaWiki\CheckUser\GuidedTour\TourLauncher;
 use MediaWiki\CheckUser\Hook\HookRunner;
 use MediaWiki\CheckUser\Investigate\Pagers\ComparePagerFactory;
 use MediaWiki\CheckUser\Investigate\Pagers\PreliminaryCheckPagerFactory;
@@ -20,9 +18,12 @@ use MediaWiki\CheckUser\IPContributions\IPContributionsPagerFactory;
 use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
 use MediaWiki\CheckUser\Services\AccountCreationDetailsLookup;
 use MediaWiki\CheckUser\Services\ApiQueryCheckUserResponseFactory;
+use MediaWiki\CheckUser\Services\CheckUserCentralIndexLookup;
 use MediaWiki\CheckUser\Services\CheckUserCentralIndexManager;
 use MediaWiki\CheckUser\Services\CheckUserDataPurger;
+use MediaWiki\CheckUser\Services\CheckUserExpiredIdsLookupService;
 use MediaWiki\CheckUser\Services\CheckUserInsert;
+use MediaWiki\CheckUser\Services\CheckUserIPRevealManager;
 use MediaWiki\CheckUser\Services\CheckUserLogService;
 use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
@@ -35,6 +36,10 @@ use MediaWiki\CheckUser\Services\TokenQueryManager;
 use MediaWiki\CheckUser\Services\UserAgentClientHintsFormatter;
 use MediaWiki\CheckUser\Services\UserAgentClientHintsLookup;
 use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\CheckUser\SuggestedInvestigations\Instrumentation\SuggestedInvestigationsInstrumentationClient;
+use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseLookupService;
+use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
+use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsSignalMatchService;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
@@ -80,14 +85,16 @@ return [
 			),
 			$services->getDBLoadBalancerFactory(),
 			$services->getUserIdentityLookup(),
-			$services->get( 'CheckUserLookupUtils' )
+			$services->get( 'CheckUserLookupUtils' ),
+			$services->getTempUserConfig()
 		);
 	},
 	'CheckUserTimelineService' => static function ( MediaWikiServices $services ): TimelineService {
 		return new TimelineService(
 			$services->getDBLoadBalancerFactory(),
 			$services->getUserIdentityLookup(),
-			$services->get( 'CheckUserLookupUtils' )
+			$services->get( 'CheckUserLookupUtils' ),
+			$services->getTempUserConfig()
 		);
 	},
 	'CheckUserTokenManager' => static function ( MediaWikiServices $services ): TokenManager {
@@ -102,12 +109,6 @@ return [
 	},
 	'CheckUserDurationManager' => static function ( MediaWikiServices $services ): DurationManager {
 		return new DurationManager();
-	},
-	'CheckUserGuidedTourLauncher' => static function ( MediaWikiServices $services ): TourLauncher {
-		return new TourLauncher(
-			ExtensionRegistry::getInstance(),
-			$services->getLinkRenderer()
-		);
 	},
 	'CheckUserPreliminaryCheckPagerFactory' => static function (
 		MediaWikiServices $services
@@ -197,13 +198,13 @@ return [
 			$services->getMainConfig(),
 			$services->get( 'CheckUserLookupUtils' ),
 			$services->getCentralIdLookup(),
-			$services->get( 'CheckUserApiRequestAggregator' ),
 			$services->get( 'CheckUserGlobalContributionsLookup' ),
 			$services->getPermissionManager(),
 			$preferencesFactory,
 			$services->getDBLoadBalancerFactory(),
 			$services->getJobQueueGroup(),
-			$services->getStatsFactory()
+			$services->getUserLinkRenderer(),
+			$services->getRevisionStoreFactory(),
 		);
 	},
 	'CheckUserApiRequestAggregator' => static function (
@@ -218,6 +219,18 @@ return [
 			LoggerFactory::getInstance( 'CheckUser' )
 		);
 	},
+	'CheckUserExpiredIdsLookupService' => static function (
+		MediaWikiServices $services
+	): CheckUserExpiredIdsLookupService {
+		return new CheckUserExpiredIdsLookupService(
+			new ServiceOptions(
+				CheckUserExpiredIdsLookupService::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->getConnectionProvider(),
+			$services->getExtensionRegistry()
+		);
+	},
 	'CheckUserGlobalContributionsLookup' => static function (
 		MediaWikiServices $services
 	): CheckUserGlobalContributionsLookup {
@@ -226,14 +239,34 @@ return [
 			$services->getExtensionRegistry(),
 			$services->getCentralIdLookup(),
 			$services->get( 'CheckUserLookupUtils' ),
-			$services->getMainConfig()
+			$services->getMainConfig(),
+			$services->getRevisionStore(),
+			$services->get( 'CheckUserApiRequestAggregator' ),
+			$services->getMainWANObjectCache(),
+			$services->getStatsFactory()
 		);
 	},
 	'CheckUserTemporaryAccountAutoRevealLookup' => static function (
 		MediaWikiServices $services
 	): CheckUserTemporaryAccountAutoRevealLookup {
 		return new CheckUserTemporaryAccountAutoRevealLookup(
+			new ServiceOptions(
+				CheckUserTemporaryAccountAutoRevealLookup::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
 			$services->getPreferencesFactory(),
+			$services->get( 'CheckUserPermissionManager' )
+		);
+	},
+	'CheckUserIPRevealManager' => static function (
+		MediaWikiServices $services
+	): CheckUserIPRevealManager {
+		return new CheckUserIPRevealManager(
+			new ServiceOptions(
+				CheckUserIPRevealManager::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->getTempUserConfig(),
 			$services->get( 'CheckUserPermissionManager' )
 		);
 	},
@@ -291,11 +324,19 @@ return [
 			$services->get( 'CheckUserCentralIndexManager' ),
 			$services->get( 'UserAgentClientHintsManager' ),
 			$services->getJobQueueGroup(),
+			$services->getRecentChangeLookup(),
 			LoggerFactory::getInstance( 'CheckUser' )
 		);
 	},
 	'CheckUserDataPurger' => static function () {
 		return new CheckUserDataPurger();
+	},
+	'CheckUserCentralIndexLookup' => static function (
+		MediaWikiServices $services
+	) {
+		return new CheckUserCentralIndexLookup(
+			$services->getConnectionProvider()
+		);
 	},
 	'CheckUserCentralIndexManager' => static function (
 		MediaWikiServices $services
@@ -397,7 +438,8 @@ return [
 			$services->getTempUserConfig(),
 			$services->getUserFactory(),
 			$services->getPermissionManager(),
-			$services->getUserOptionsLookup()
+			$services->getUserOptionsLookup(),
+			$services->get( 'CheckUserLookupUtils' )
 		);
 	},
 	'CheckUserPermissionManager' => static function ( MediaWikiServices $services ): CheckUserPermissionManager {
@@ -411,19 +453,84 @@ return [
 	'CheckUserUserInfoCardService' => static function (
 		MediaWikiServices $services
 	): CheckUserUserInfoCardService {
-		$userImpactLookup = $services->getService( 'GrowthExperimentsUserImpactLookup' );
-		if ( !( $userImpactLookup instanceof UserImpactLookup ) ) {
-			throw new LogicException(
-				'Cannot instantiate CheckUserUserInfoCardService without UserImpactLookup'
-			);
+		$extensionRegistry = $services->getExtensionRegistry();
+		$userImpactLookup = null;
+		if ( $extensionRegistry->isLoaded( 'GrowthExperiments' ) ) {
+			$userImpactLookup = $services->getService( 'GrowthExperimentsUserImpactLookup' );
+		}
+		$globalContributionsLookup = null;
+		if ( $extensionRegistry->isLoaded( 'CentralAuth' ) ) {
+			$globalContributionsLookup = $services->get( 'CheckUserGlobalContributionsLookup' );
 		}
 		return new CheckUserUserInfoCardService(
 			$userImpactLookup,
 			$services->getExtensionRegistry(),
-			$services->getUserOptionsLookup(),
 			$services->getUserRegistrationLookup(),
-			$services->getUserGroupManager()
+			$services->getUserGroupManager(),
+			$globalContributionsLookup,
+			$services->getConnectionProvider(),
+			$services->getStatsFactory(),
+			$services->get( 'CheckUserPermissionManager' ),
+			$services->getUserFactory(),
+			$services->getUserEditTracker(),
+			$services->get( 'CheckUserTemporaryAccountsByIPLookup' ),
+			new DerivativeContext( RequestContext::getMain() ),
+			$services->getTitleFactory(),
+			$services->getGenderCache(),
+			$services->getTempUserConfig(),
+			new ServiceOptions(
+				CheckUserUserInfoCardService::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->getCentralIdLookup()
 		);
+	},
+	'CheckUserSuggestedInvestigationsCaseManager' => static function (
+		MediaWikiServices $services
+	): SuggestedInvestigationsCaseManagerService {
+		return new SuggestedInvestigationsCaseManagerService(
+			new ServiceOptions(
+				SuggestedInvestigationsCaseManagerService::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->getConnectionProvider(),
+			$services->get( 'CheckUserSuggestedInvestigationsInstrumentationClient' )
+		);
+	},
+	'CheckUserSuggestedInvestigationsCaseLookup' => static function (
+		MediaWikiServices $services
+	): SuggestedInvestigationsCaseLookupService {
+		return new SuggestedInvestigationsCaseLookupService(
+			new ServiceOptions(
+				SuggestedInvestigationsCaseLookupService::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->getConnectionProvider(),
+			LoggerFactory::getInstance( 'CheckUser' ),
+		);
+	},
+	'SuggestedInvestigationsSignalMatchService' => static function (
+		MediaWikiServices $services
+	): SuggestedInvestigationsSignalMatchService {
+		return new SuggestedInvestigationsSignalMatchService(
+			new ServiceOptions(
+				SuggestedInvestigationsSignalMatchService::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$services->get( 'CheckUserHookRunner' ),
+			$services->get( 'CheckUserSuggestedInvestigationsCaseLookup' ),
+			$services->get( 'CheckUserSuggestedInvestigationsCaseManager' ),
+			LoggerFactory::getInstance( 'CheckUser' ),
+		);
+	},
+	'CheckUserSuggestedInvestigationsInstrumentationClient' => static function (
+		MediaWikiServices $services
+	): SuggestedInvestigationsInstrumentationClient {
+		$eventLoggingMetricsClientFactory = null;
+		if ( $services->has( 'EventLogging.MetricsClientFactory' ) ) {
+			$eventLoggingMetricsClientFactory = $services->get( 'EventLogging.MetricsClientFactory' );
+		}
+		return new SuggestedInvestigationsInstrumentationClient( $eventLoggingMetricsClientFactory );
 	},
 ];
 // @codeCoverageIgnoreEnd

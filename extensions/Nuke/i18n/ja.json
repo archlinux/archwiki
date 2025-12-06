@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ant176",
 			"Aotake",
 			"Chqaz",
+			"Dragoniez",
 			"Fievarsty",
 			"Hosiryuhosi",
 			"JtFuruhata",
@@ -16,9 +18,7 @@
 			"Shirayuki",
 			"Waki285",
 			"春春眠眠",
-			"青子守歌",
-			"Ant176",
-			"Dragoniez"
+			"青子守歌"
 		]
 	},
 	"nuke": "一括削除",
@@ -31,6 +31,7 @@
 	"nuke-tools-tempaccount": "このツールを使用すると、特定の利用者または仮アカウントによって最近追加されたページを一括削除できます。削除するページのリストを取得するには、利用者名またはIPアドレスを入力してください。すべての利用者を取得する場合は空白のままにします。IPアドレスを入力すると、そのIPアドレスまたはそのIPアドレスから使用された仮アカウントによって作成されたすべてのページがリストされます。",
 	"nuke-tools-prompt": "ページをリストした後、削除するページを選択して、「{{int:nuke-submit-continue}}」をクリックします。リダイレクトは斜体で表示されます。",
 	"nuke-tools-prompt-restricted": "このツールを使用してページを一覧表示することは可能ですが、削除することはできません。",
+	"nuke-tools-notice-error": "ページを一括削除するための権限の有無を判定する際にエラーが発生したため、削除できません。",
 	"nuke-tools-notice-noperm": "ページを一括削除するための権限がありません。",
 	"nuke-tools-confirm": "次の{{PLURAL:$1|ページが|$1ページが}}削除対象として選択されました。編集の要約を入力し、「{{int:nuke-submit-delete}}」をクリックしてページの削除を開始してください。",
 	"nuke-submit-list": "一覧取得",

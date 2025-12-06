@@ -2,21 +2,7 @@
 /**
  * Page history
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Actions
  */
@@ -57,22 +43,27 @@ class HistoryAction extends FormlessAction {
 	/** @var array Array of message keys and strings */
 	public $message;
 
+	/** @inheritDoc */
 	public function getName() {
 		return 'history';
 	}
 
+	/** @inheritDoc */
 	public function requiresWrite() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function requiresUnblock() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getPageTitle() {
 		return $this->msg( 'history-title' )->plaintextParams( $this->getTitle()->getPrefixedText() );
 	}
 
+	/** @inheritDoc */
 	protected function getDescription() {
 		// Creation of a subtitle link pointing to [[Special:Log]]
 		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
@@ -189,7 +180,7 @@ class HistoryAction extends FormlessAction {
 		if ( HTMLFileCache::useFileCache( $this->getContext() ) ) {
 			$cache = new HTMLFileCache( $this->getTitle(), 'history' );
 			if ( !$cache->isCacheGood( /* Assume up to date */ ) ) {
-				ob_start( [ &$cache, 'saveToFileCache' ] );
+				ob_start( [ $cache, 'saveToFileCache' ] );
 			}
 		}
 
@@ -390,6 +381,7 @@ class HistoryAction extends FormlessAction {
 		$request = $this->getRequest();
 
 		$feedClasses = $this->context->getConfig()->get( MainConfigNames::FeedClasses );
+		'@phan-var array<string,class-string<ChannelFeed>> $feedClasses';
 		/** @var ChannelFeed $feed */
 		$feed = new $feedClasses[$type](
 			$this->getTitle()->getPrefixedText() . ' - ' .

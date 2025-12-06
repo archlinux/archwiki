@@ -2,21 +2,7 @@
 /**
  * Copyright © 2016 Wikimedia Foundation and contributors
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -97,20 +83,24 @@ class ApiRemoveAuthenticationData extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), [ 'status' => 'success' ] );
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return ApiAuthManagerHelper::getStandardParams( $this->authAction,
 			'request'
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$path = $this->getModulePath();
 		$action = $this->getModuleName();
@@ -120,6 +110,7 @@ class ApiRemoveAuthenticationData extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Manage_authentication_data';
 	}

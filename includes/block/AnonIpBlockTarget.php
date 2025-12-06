@@ -18,11 +18,7 @@ use Wikimedia\IPUtils;
 class AnonIpBlockTarget extends BlockTarget implements BlockTargetWithUserPage, BlockTargetWithIp {
 	private string $addr;
 
-	/**
-	 * @param string $addr
-	 * @param string|false $wikiId
-	 */
-	public function __construct( string $addr, $wikiId = WikiAwareEntity::LOCAL ) {
+	public function __construct( string $addr, string|false $wikiId = WikiAwareEntity::LOCAL ) {
 		parent::__construct( $wikiId );
 		$this->addr = $addr;
 	}
@@ -35,6 +31,7 @@ class AnonIpBlockTarget extends BlockTarget implements BlockTargetWithUserPage, 
 		return Block::TYPE_IP;
 	}
 
+	/** @inheritDoc */
 	public function getSpecificity() {
 		return 2;
 	}
@@ -74,6 +71,7 @@ class AnonIpBlockTarget extends BlockTarget implements BlockTargetWithUserPage, 
 		return [ $hex, $hex ];
 	}
 
+	/** @inheritDoc */
 	protected function getLegacyUnion() {
 		return $this->getUserIdentity();
 	}

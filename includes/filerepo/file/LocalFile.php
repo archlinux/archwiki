@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -83,7 +69,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * The convenience services $services->getRepoGroup()->getLocalRepo()->newFile()
  * and $services->getRepoGroup()->findFile() should be sufficient in most cases.
  *
- * @TODO: DI - Instead of using MediaWikiServices::getInstance(), a service should
+ * @todo DI - Instead of using MediaWikiServices::getInstance(), a service should
  * ideally accept a RepoGroup in its constructor and then, use $this->repoGroup->findFile()
  * and $this->repoGroup->getLocalRepo()->newFile().
  *
@@ -241,10 +227,8 @@ class LocalFile extends File {
 	 * @param Title $title
 	 * @param LocalRepo $repo
 	 * @param null $unused
-	 *
-	 * @return static
 	 */
-	public static function newFromTitle( $title, $repo, $unused = null ) {
+	public static function newFromTitle( $title, $repo, $unused = null ): static {
 		return new static( $title, $repo );
 	}
 
@@ -256,10 +240,8 @@ class LocalFile extends File {
 	 *
 	 * @param stdClass $row
 	 * @param LocalRepo $repo
-	 *
-	 * @return static
 	 */
-	public static function newFromRow( $row, $repo ) {
+	public static function newFromRow( $row, $repo ): static {
 		$title = Title::makeTitle( NS_FILE, $row->img_name );
 		$file = new static( $title, $repo );
 		$file->loadFromRow( $row );
@@ -278,7 +260,7 @@ class LocalFile extends File {
 	 * @param string|false $timestamp MW_timestamp (optional)
 	 * @return static|false
 	 */
-	public static function newFromKey( $sha1, $repo, $timestamp = false ) {
+	public static function newFromKey( $sha1, $repo, $timestamp = false ): static|false {
 		$dbr = $repo->getReplicaDB();
 		$queryBuilder = FileSelectQueryBuilder::newForFile( $dbr );
 
@@ -611,7 +593,7 @@ class LocalFile extends File {
 		$prefixLength = strlen( $prefix );
 
 		// Double check prefix once
-		if ( substr( array_key_first( $array ), 0, $prefixLength ) !== $prefix ) {
+		if ( !str_starts_with( array_key_first( $array ), $prefix ) ) {
 			throw new InvalidArgumentException( __METHOD__ . ': incorrect $prefix parameter' );
 		}
 
@@ -778,7 +760,7 @@ class LocalFile extends File {
 					} else {
 						$this->reserializeMetadata();
 					}
-				} catch ( LocalFileLockError $e ) {
+				} catch ( LocalFileLockError ) {
 					// let the other process handle it (or do it next time)
 				}
 			} );
@@ -863,7 +845,7 @@ class LocalFile extends File {
 		}
 	}
 
-	protected function getFileTypeId() {
+	protected function getFileTypeId(): int {
 		if ( $this->fileTypeId ) {
 			return $this->fileTypeId;
 		}
@@ -1460,7 +1442,7 @@ class LocalFile extends File {
 					$files[] = $file;
 				}
 			}
-		} catch ( FileBackendError $e ) {
+		} catch ( FileBackendError ) {
 		} // suppress (T56674)
 
 		return $files;

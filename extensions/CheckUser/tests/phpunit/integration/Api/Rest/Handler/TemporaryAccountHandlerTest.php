@@ -71,9 +71,11 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 				'actorStore' => $actorStore,
 				'blockManager' => $services->getBlockManager(),
 				'checkUserPermissionManager' => $checkUserPermissionManager,
+				'autoRevealLookup' => $services->get(
+					'CheckUserTemporaryAccountAutoRevealLookup'
+				),
+				'LoggerFactory' => $services->get( 'CheckUserTemporaryAccountLoggerFactory' ),
 				'readOnlyMode' => $services->getReadOnlyMode(),
-				'checkUserTemporaryAccountAutoRevealLookup' =>
-					$services->get( 'CheckUserTemporaryAccountAutoRevealLookup' ),
 			],
 			$options
 		) ) );
@@ -201,7 +203,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testExecutePermissionErrorsNoRight( bool $named, array $expected ) {
 		$handler = $this->getTemporaryAccountHandler( [
 			'permissionManager' => $this->getServiceContainer()->getPermissionManager(),
-			'checkUserPermissionManager' => $this->getServiceContainer()->getService( 'CheckUserPermissionManager' )
+			'checkUserPermissionManager' => $this->getServiceContainer()->getService( 'CheckUserPermissionManager' ),
 		] );
 
 		$user = $this->getTestUser()->getUser();
@@ -238,14 +240,14 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 			'Anon or temporary user' => [
 				false,
 				[
-					'code' => 401
-				]
+					'code' => 401,
+				],
 			],
 			'Registered (named) user' => [
 				true,
 				[
-					'code' => 403
-				]
+					'code' => 403,
+				],
 			],
 		];
 	}
@@ -253,7 +255,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testExecutePermissionErrorsNoPreference() {
 		$handler = $this->getTemporaryAccountHandler( [
 			'userOptionsLookup' => $this->getServiceContainer()->getUserOptionsLookup(),
-			'checkUserPermissionManager' => $this->getServiceContainer()->getService( 'CheckUserPermissionManager' )
+			'checkUserPermissionManager' => $this->getServiceContainer()->getService( 'CheckUserPermissionManager' ),
 		] );
 
 		$user = $this->getTestUser()->getUser();
@@ -316,7 +318,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 
 		// Can't use executeHandlerAndGetHttpException, since it doesn't take an Authority
 		$handler = $this->getTemporaryAccountHandler( [
-			'checkUserPermissionManager' => $this->getServiceContainer()->getService( 'CheckUserPermissionManager' )
+			'checkUserPermissionManager' => $this->getServiceContainer()->getService( 'CheckUserPermissionManager' ),
 		] );
 		$this->executeHandler(
 			$handler,
@@ -334,7 +336,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testExecutePermissionErrorsBadName( $name ) {
 		$handler = $this->getTemporaryAccountHandler( [
-			'userNameUtils' => $this->getServiceContainer()->getUserNameUtils()
+			'userNameUtils' => $this->getServiceContainer()->getUserNameUtils(),
 		] );
 
 		$authority = $this->createMock( Authority::class );
@@ -365,7 +367,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 	public static function provideExecutePermissionErrorsBadName() {
 		return [
 			'Registered username' => [ 'SomeName' ],
-			'IP address' => [ '127.0.0.1' ]
+			'IP address' => [ '127.0.0.1' ],
 		];
 	}
 

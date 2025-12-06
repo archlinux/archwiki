@@ -8,15 +8,18 @@ use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Tokens\CommentTk;
+use Wikimedia\Parsoid\Tokens\EmptyLineTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\KVSourceRange;
 use Wikimedia\Parsoid\Tokens\NlTk;
+use Wikimedia\Parsoid\Tokens\PreprocTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
 /**
@@ -27,15 +30,6 @@ use Wikimedia\Parsoid\Wikitext\Consts;
 class TokenUtils {
 	public const SOL_TRANSPARENT_LINK_REGEX =
 		'/(?:^|\s)mw:PageProp\/(?:Category|redirect|Language)(?=$|\s)/D';
-
-	/**
-	 * Gets a string type value for a token
-	 * @param Token|string $token
-	 * @return string
-	 */
-	public static function getTokenType( $token ): string {
-		return is_string( $token ) ? 'string' : $token->getType();
-	}
 
 	/**
 	 * @param string $name
@@ -104,10 +98,7 @@ class TokenUtils {
 	 * @return bool
 	 */
 	public static function isHTMLTag( $token ): bool {
-		return $token && !is_string( $token ) &&
-			( $token instanceof TagTk ||
-			$token instanceof EndTagTk ||
-			$token instanceof SelfClosingTagTk ) &&
+		return ( $token instanceof XMLTagTk ) &&
 			isset( $token->dataParsoid->stx ) &&
 			$token->dataParsoid->stx === 'html';
 	}
@@ -140,11 +131,7 @@ class TokenUtils {
 	 * @return bool
 	 */
 	public static function isSolTransparentLinkTag( $token ): bool {
-		return (
-				$token instanceof SelfclosingTagTk ||
-				$token instanceof TagTk ||
-				$token instanceof EndTagTk
-			) &&
+		return ( $token instanceof XMLTagTk ) &&
 			$token->getName() === 'link' &&
 			preg_match( self::SOL_TRANSPARENT_LINK_REGEX, $token->getAttributeV( 'rel' ) ?? '' );
 	}
@@ -181,6 +168,8 @@ class TokenUtils {
 		if ( is_string( $token ) ) {
 			return (bool)preg_match( '/^[ \t]*$/D', $token );
 		} elseif ( self::isSolTransparentLinkTag( $token ) ) {
+			return true;
+		} elseif ( $token instanceof EmptyLineTk ) {
 			return true;
 		} elseif ( $token instanceof CommentTk && !self::isTranslationUnitMarker( $env, $token ) ) {
 			return true;
@@ -235,18 +224,6 @@ class TokenUtils {
 	}
 
 	/**
-	 * Is token a transparent link tag?
-	 *
-	 * @param Token|string $token
-	 * @return bool
-	 */
-	public static function isEmptyLineMetaToken( $token ): bool {
-		return $token instanceof SelfclosingTagTk &&
-			$token->getName() === 'meta' &&
-			$token->getAttributeV( 'typeof' ) === 'mw:EmptyLine';
-	}
-
-	/**
 	 * Determine whether the token matches the given `typeof` attribute value.
 	 *
 	 * @param Token $t The token to test
@@ -286,67 +263,88 @@ class TokenUtils {
 	}
 
 	/**
-	 * Shift TSR of a token
-	 *
-	 * PORT-FIXME: In JS this was sometimes called with $offset=undefined, which meant do
-	 * nothing by default, except if there was a third parameter set to true, in which case it
-	 * meant the same thing as $offset = null. We can't pass in undefined in PHP, so this should
-	 * usually be handled with isset() is the caller. But isset() returns true if the variable is
-	 * null, so let's use false instead of null for whatever the previous code meant by a null
-	 * offset.
-	 *
-	 * @param array<Token|string> $tokens
-	 * @param int|false $offset
+	 * @param Env $env
+	 * @param array<mixed> $maybeTokens
+	 *   Attribute arrays in tokens may be tokens or something else.
 	 */
-	public static function shiftTokenTSR( array $tokens, $offset ): void {
+	public static function dedupeAboutIds( Env $env, array $maybeTokens ): void {
+		$aboutMap = [];
+		foreach ( $maybeTokens as $t ) {
+			if ( $t instanceof Token ) {
+				foreach ( $t->attribs ?? [] as $kv ) {
+					if ( $kv->k === 'about' ) {
+						$oldAbout = $kv->v;
+						$newAbout = $aboutMap[$oldAbout] ?? null;
+						if ( !$newAbout ) {
+							$newAbout = $aboutMap[$oldAbout] = $env->newAboutId();
+						}
+						$t->setAttribute( 'about', $newAbout );
+					} else {
+						if ( $kv->k instanceof Token ) {
+							self::dedupeAboutIds( $env, [ $kv->k ] );
+						} elseif ( is_array( $kv->k ) ) {
+							self::dedupeAboutIds( $env, $kv->k );
+						}
+
+						if ( $kv->v instanceof Token ) {
+							self::dedupeAboutIds( $env, [ $kv->v ] );
+						} elseif ( is_array( $kv->v ) ) {
+							self::dedupeAboutIds( $env, $kv->v );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Shift TSR of a token by the requested $offset value.
+	 * A null value of $offset resets TSR on all tokens since we cannot
+	 * compute a reliable new value of $tsr and the old value of $tsr
+	 * should not be used either.
+	 */
+	public static function shiftTokenTSR( array $tokens, ?int $offset ): void {
 		// Bail early if we can
 		if ( $offset === 0 ) {
 			return;
 		}
 
-		// JS b/c
-		if ( $offset === null ) {
-			$offset = false;
-		}
-
 		// update/clear tsr
 		for ( $i = 0, $n = count( $tokens );  $i < $n;  $i++ ) {
 			$t = $tokens[$i];
-			switch ( is_object( $t ) ? get_class( $t ) : null ) {
-				case TagTk::class:
-				case SelfclosingTagTk::class:
-				case NlTk::class:
-				case CommentTk::class:
-				case EndTagTk::class:
+			switch ( true ) {
+				case $t instanceof XMLTagTk:
+				case $t instanceof NlTk:
+				case $t instanceof CommentTk:
+				case $t instanceof PreprocTk:
 					$da = $t->dataParsoid;
-					$tsr = $da->tsr;
+					$tsr = $da->tsr ?? null;
 					if ( $tsr ) {
-						if ( $offset ) {
-							$da->tsr = $tsr->offset( $offset );
-						} else {
-							$da->tsr = null;
+						$da->tsr = ( $offset === null ) ? null : $tsr->offset( $offset );
+					}
+
+					if ( $offset !== null ) {
+						if ( isset( $da->extTagOffsets ) ) {
+							$da->extTagOffsets =
+								$da->extTagOffsets->offset( $offset );
 						}
-					}
 
-					if ( $offset && isset( $da->extTagOffsets ) ) {
-						$da->extTagOffsets =
-							$da->extTagOffsets->offset( $offset );
-					}
+						// SSS FIXME: offset will always be available in
+						// chunky-tokenizer mode in which case we wont have
+						// buggy offsets below.  The null scenario is only
+						// for when the token-stream-patcher attempts to
+						// reparse a string -- it is likely to only patch up
+						// small string fragments and the complicated use cases
+						// below should not materialize.
+						// CSA: token-stream-patcher shouldn't have problems
+						// now that $tsr->source/$frame->srcText is always
+						// accurate?
 
-					// SSS FIXME: offset will always be available in
-					// chunky-tokenizer mode in which case we wont have
-					// buggy offsets below.  The null scenario is only
-					// for when the token-stream-patcher attempts to
-					// reparse a string -- it is likely to only patch up
-					// small string fragments and the complicated use cases
-					// below should not materialize.
-					// CSA: token-stream-patcher shouldn't have problems
-					// now that $frame->srcText is always accurate?
-
-					// content offsets for ext-links
-					if ( $offset && isset( $da->tmp->extLinkContentOffsets ) ) {
-						$da->tmp->extLinkContentOffsets =
-							$da->tmp->extLinkContentOffsets->offset( $offset );
+						// content offsets for ext-links
+						if ( isset( $da->tmp->extLinkContentOffsets ) ) {
+							$da->tmp->extLinkContentOffsets =
+								$da->tmp->extLinkContentOffsets->offset( $offset );
+						}
 					}
 
 					// Process attributes
@@ -361,7 +359,7 @@ class TokenUtils {
 							}
 
 							// src offsets used to set mw:TemplateParams
-							if ( !$offset ) {
+							if ( $offset === null ) {
 								$a->srcOffsets = null;
 							} elseif ( $a->srcOffsets !== null ) {
 								$a->srcOffsets = $a->srcOffsets->offset( $offset );
@@ -540,7 +538,7 @@ class TokenUtils {
 			}
 		} );
 		self::convertOffsets( $s, $from, $to, $offsets );
-		self::collectOffsets( $tokens, static function ( $sr ) use ( &$offsets ) {
+		self::collectOffsets( $tokens, static function ( $sr ) {
 			if ( $sr instanceof DomSourceRange ) {
 				// Adjust widths back from being character offsets
 				if ( $sr->openWidth !== null ) {
@@ -575,9 +573,6 @@ class TokenUtils {
 			if ( isset( $input->dataParsoid->tmp->extLinkContentOffsets ) ) {
 				self::collectOffsets( $input->dataParsoid->tmp->extLinkContentOffsets, $offsetFunc );
 			}
-			if ( isset( $input->dataParsoid->tokens ) ) {
-				self::collectOffsets( $input->dataParsoid->tokens, $offsetFunc );
-			}
 			if ( isset( $input->dataParsoid->extTagOffsets ) ) {
 				self::collectOffsets( $input->dataParsoid->extTagOffsets, $offsetFunc );
 			}
@@ -606,8 +601,9 @@ class TokenUtils {
 
 	/**
 	 * Transform `"\n"` and `"\r\n"` in the input string to {@link NlTk} tokens.
+	 *
 	 * @param string $str
-	 * @return array (interspersed string and NlTk tokens)
+	 * @return non-empty-list<NlTk|string> (interspersed string and NlTk tokens)
 	 */
 	public static function newlinesToNlTks( string $str ): array {
 		$toks = preg_split( '/\n|\r\n/', $str );
@@ -627,13 +623,10 @@ class TokenUtils {
 	 * @param bool $strict Whether to abort as soon as we find a token we
 	 *   can't stringify.
 	 * @param array<string,bool|Env> $opts
-	 * @return string|array{0:string,1:Array<Token|string>}
+	 * @return string|list{string,array<Token|string>}
 	 *   The stringified tokens. If $strict is true, returns a two-element
 	 *   array containing string prefix and the remainder of the tokens as
 	 *   soon as we encounter something we can't stringify.
-	 *
-	 * Unsure why phan is whining about $opts array accesses.
-	 * So for now, I am simply suppressing those warnings.
 	 */
 	public static function tokensToString( $tokens, bool $strict = false, array $opts = [] ) {
 		if ( is_string( $tokens ) ) {
@@ -661,12 +654,14 @@ class TokenUtils {
 			} elseif ( is_array( $token ) ) {
 				Assert::invariant( !$strict, "strict case handled above" );
 				$out .= self::tokensToString( $token, $strict, $opts );
+			} elseif ( $token instanceof PreprocTk ) {
+				$out .= $token->print( pretty: false );
 			} elseif (
 				$token instanceof CommentTk ||
 				( empty( $opts['retainNLs'] ) && $token instanceof NlTk )
 			) {
 				// strip comments and newlines
-			} elseif ( !empty( $opts['stripEmptyLineMeta'] ) && self::isEmptyLineMetaToken( $token ) ) {
+			} elseif ( !empty( $opts['stripEmptyLines'] ) && ( $token instanceof EmptyLineTk ) ) {
 				// If requested, strip empty line meta tokens too.
 			} elseif ( !empty( $opts['includeEntities'] ) && self::isEntitySpanToken( $token ) ) {
 				$out .= $token->dataParsoid->src;
@@ -682,10 +677,8 @@ class TokenUtils {
 				self::hasDOMFragmentType( $token )
 			) {
 				// Handle dom fragments
-				$domFragment = $opts['env']->getDOMFragment(
-					$token->dataParsoid->html
-				);
-				// Calling `env->removeDOMFragment()` here is case dependent
+				$domFragment = $token->dataParsoid->html;
+				// Removing the DOMFragment here is case dependent
 				// but should be rare enough when permissible that it can be
 				// ignored.
 				// FIXME: The correct thing to do would be to return
@@ -774,6 +767,22 @@ class TokenUtils {
 		}
 
 		return $tokens;
+	}
+
+	/**
+	 * Detect, if array (or any iterable container) contains template token
+	 * @param null|array<string|Token> $tokens
+	 * @return bool
+	 */
+	public static function hasTemplateToken( $tokens ): bool {
+		if ( is_array( $tokens ) ) {
+			foreach ( $tokens as $t ) {
+				if ( self::isTemplateToken( $t ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

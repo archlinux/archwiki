@@ -45,7 +45,7 @@ class CheckUserPagerNavigationBuilder extends PagerNavigationBuilder {
 			return Html::element(
 				'span',
 				[
-					'class' => $class
+					'class' => $class,
 				],
 				$text
 			);
@@ -76,16 +76,30 @@ class CheckUserPagerNavigationBuilder extends PagerNavigationBuilder {
 		$formFields = [ Html::hidden(
 			'wpEditToken',
 			$this->csrfTokenSet->getToken(),
-			[ 'id' => 'wpEditToken' ]
+			[ 'id' => 'wpEditToken', 'class' => 'mw-checkuser-paging-links-edit-token' ]
 		) ];
 		$formFields[] = Html::hidden(
 			'token',
-			$this->tokenQueryManager->updateToken( $this->request, $fieldData )
+			$this->tokenQueryManager->updateToken( $this->request, $fieldData ),
+			[ 'class' => 'mw-checkuser-paging-links-token' ]
 		);
+
+		// Append filter fields to the form, as these are not managed through the token and therefore need to
+		// be set on each POST request (otherwise they will revert back to their default value).
+		$filterFields = array_filter(
+			array_keys( AbstractCheckUserPager::FILTER_FIELDS ),
+			static function ( $field ) use ( $opts ) {
+				return $opts->validateName( $field );
+			}
+		);
+		foreach ( $filterFields as $field ) {
+			$formFields[] = Html::hidden( $field, $opts->getValue( $field ) );
+		}
+
 		$formFields[] = Html::submitButton(
 			$text,
 			[
-				'class' => $class . ' mw-checkuser-paging-links'
+				'class' => $class . ' mw-checkuser-paging-links',
 			]
 		);
 		return Html::rawElement(
@@ -94,7 +108,7 @@ class CheckUserPagerNavigationBuilder extends PagerNavigationBuilder {
 				'method' => 'post',
 				'class' => 'mw-checkuser-paging-links-form',
 				'rel' => $rel,
-				'title' => $tooltip
+				'title' => $tooltip,
 			],
 			implode( '', $formFields )
 		);

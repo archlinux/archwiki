@@ -1,7 +1,6 @@
-'use strict';
-const EditPage = require( '../pageobjects/edit.page' );
-const LoginPage = require( 'wdio-mediawiki/LoginPage' );
-const Util = require( 'wdio-mediawiki/Util' );
+import EditPage from '../pageobjects/edit.page.js';
+import LoginPage from 'wdio-mediawiki/LoginPage';
+import * as Util from 'wdio-mediawiki/Util';
 
 describe( 'Content Editable', () => {
 
@@ -33,7 +32,8 @@ describe( 'Content Editable', () => {
 		await expect( await EditPage.veRootNode ).toHaveText( content );
 	} );
 
-	it( 'should save an edit', async () => {
+	// Skipped starting 2025-08-14 because of T401573
+	it.skip( 'should save an edit', async () => {
 		await EditPage.veRootNode.setValue( content );
 		await EditPage.savePageDots.click();
 		await EditPage.savePage.waitForClickable();
@@ -43,7 +43,8 @@ describe( 'Content Editable', () => {
 		await expect( await EditPage.notification ).toHaveText( 'The page has been created.' );
 	} );
 
-	it( 'should insert a table', async () => {
+	// Skipped starting 2025-08-14 because of T401573
+	it.skip( 'should insert a table', async () => {
 		await EditPage.insertTable();
 
 		await expect( await EditPage.insertedTable ).toBeDisplayed();

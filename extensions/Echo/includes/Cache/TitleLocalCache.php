@@ -12,16 +12,11 @@ use MediaWiki\Title\TitleFactory;
  * deemed necessary. See also T344124.
  */
 class TitleLocalCache extends LocalCache {
-	private PageStore $pageStore;
-	private TitleFactory $titleFactory;
-
 	public function __construct(
-		PageStore $pageStore,
-		TitleFactory $titleFactory
+		private readonly PageStore $pageStore,
+		private readonly TitleFactory $titleFactory,
 	) {
 		parent::__construct();
-		$this->pageStore = $pageStore;
-		$this->titleFactory = $titleFactory;
 	}
 
 	/**

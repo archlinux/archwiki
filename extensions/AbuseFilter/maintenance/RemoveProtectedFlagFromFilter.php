@@ -79,5 +79,7 @@ class RemoveProtectedFlagFromFilter extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RemoveProtectedFlagFromFilter::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

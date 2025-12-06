@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\OutputTransform\Stages;
 
@@ -21,7 +22,7 @@ class DeduplicateStyles extends ContentTextTransformStage {
 
 	protected function transformText( string $text, ParserOutput $po, ?ParserOptions $popts, array &$options ): string {
 		$seen = [];
-		$isParsoidContent = $options['isParsoidContent'] ?? false;
+		$isParsoidContent = $po->getContentHolder()->isParsoidContent();
 
 		$transform = static function ( $fragment ) use ( &$seen, $isParsoidContent ) {
 			return HtmlHelper::modifyElements(

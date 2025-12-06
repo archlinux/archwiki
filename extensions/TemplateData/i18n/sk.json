@@ -3,10 +3,10 @@
 		"authors": [
 			"Luky001",
 			"Robert Važan",
+			"Spider 001757",
 			"Sudo77(new)",
 			"Teslaton",
-			"TomášPolonec",
-			"Spider 001757"
+			"TomášPolonec"
 		]
 	},
 	"templatedata-desc": "Implementuje dátové úložisko pre parametre šablón (pomocou JSON)",
@@ -96,8 +96,12 @@
 	"templatedata-modal-title-templateformatstring": "Vlastný formátovací vzor",
 	"templatedata-modal-title-templateparam-details": "Podrobnosti k parametru $1",
 	"templatedata-modal-title-templateparams": "Parametre šablóny",
+	"templatedata-search-description": "Vyhľadať šablónu",
+	"templatedata-search-placeholder": "Zadajte názov šablóny",
+	"templatedata-search-placeholder-cirrussearch": "Zadajte názov šablóny alebo kľúčové slová",
 	"templatedata-search-list-header": "Obľúbené",
 	"templatedata-search-list-empty": "Šablóny, ktoré označíte ako obľúbené, sa zobrazia tu",
+	"templatedata-search-list-empty-anon": "Pre označenie šablón ako obľúbených sa, prosím, prihláste",
 	"templatedata-template-discovery-disabled": "Vyhľadávanie šablón je na tejto wiki vypnuté.",
 	"templatedata-favorite-disabled": "Pre pridanie šablóny medzi obľúbené sa musíte prihlásiť",
 	"templatedata-favorite-add": "Pridať šablónu k obľúbeným",
@@ -105,5 +109,17 @@
 	"templatedata-favorite-remove": "Odstrániť šablónu z obľúbených",
 	"templatedata-favorite-removed": "Šablóna bola odstránená z obľúbených",
 	"templatedata-favorite-error": "Nepodarilo sa uložiť obľúbené",
-	"templatedata-favorite-maximum-reached": "Dosiahli ste maximálny počet ($1) obľúbených šablón. Pred pridaním ďalších niektoré zo zoznamu odstráňte."
+	"templatedata-favorite-maximum-reached": "Dosiahli ste maximálny počet ($1) obľúbených šablón. Pred pridaním ďalších niektoré zo zoznamu odstráňte.",
+	"templatedata-category-browser-header": "Kategórie",
+	"templatedata-category-switch-label": "Hlavná kategória:",
+	"templatedata-category-rootcat": "Šablóny",
+	"templatedata-category-switch-button": "Prehľadávať",
+	"templatedata-category-column-empty": "V [[$1]] sa nenašli žiadne šablóny ani podkategórie",
+	"templatedata-category-browser-loadmore": "...načítať viac",
+	"templatedata-category-column-error": "Vyskytla sa chyba",
+	"templatedata-category-categories": "Ďalšie kategórie",
+	"templatedata-featured-list-header": "Odporúčané",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Odporúčané šablóny",
+	"templatedata-featured-list-config-link": "Upraviť zoznam odporúčaných",
+	"templatedata-featured-list-help": "Odporúčané šablóny sú šablóny, ktoré komunita označila ako užitočné."
 }

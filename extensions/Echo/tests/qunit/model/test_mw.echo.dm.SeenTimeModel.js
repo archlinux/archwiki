@@ -6,7 +6,7 @@ QUnit.test( '.getTypes()', ( assert ) => {
 	assert.deepEqual(
 		model.getTypes(),
 		[ 'alert', 'message' ],
-		'Default model has both types'
+		'Default model has both types',
 	);
 } );
 
@@ -19,7 +19,7 @@ QUnit.test( '.setSeenTime() reflected', ( assert ) => {
 	assert.deepEqual(
 		model.getSeenTime(),
 		'20160101010000',
-		'Model sets seen time for both types'
+		'Model sets seen time for both types',
 	);
 
 	model = new mw.echo.dm.SeenTimeModel( { types: 'alert' } );
@@ -28,7 +28,7 @@ QUnit.test( '.setSeenTime() reflected', ( assert ) => {
 	assert.deepEqual(
 		model.getSeenTime(),
 		'20160101010001',
-		'Alerts seen time model returns correct time'
+		'Alerts seen time model returns correct time',
 	);
 } );
 
@@ -49,6 +49,6 @@ QUnit.test( '.setSeenTime() events', ( assert ) => {
 	assert.deepEqual(
 		results,
 		[ '1', '2' ],
-		'events emitted'
+		'events emitted',
 	);
 } );

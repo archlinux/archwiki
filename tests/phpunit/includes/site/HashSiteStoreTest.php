@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @license GPL-2.0-or-later
+ * @file
+ */
 namespace MediaWiki\Tests\Site;
 
 use MediaWiki\Site\HashSiteStore;
@@ -9,34 +12,12 @@ use MediaWiki\Site\SiteList;
 use MediaWikiIntegrationTestCase;
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
- * @since 1.25
- *
- * @ingroup Site
+ * @covers \MediaWiki\Site\HashSiteStore
  * @group Site
- *
  * @author Katie Filbert < aude.wiki@gmail.com >
  */
 class HashSiteStoreTest extends MediaWikiIntegrationTestCase {
 
-	/**
-	 * @covers \MediaWiki\Site\HashSiteStore::getSites
-	 */
 	public function testGetSites() {
 		$expectedSites = [];
 
@@ -50,10 +31,6 @@ class HashSiteStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( new SiteList( $expectedSites ), $siteStore->getSites() );
 	}
 
-	/**
-	 * @covers \MediaWiki\Site\HashSiteStore::saveSite
-	 * @covers \MediaWiki\Site\HashSiteStore::getSite
-	 */
 	public function testSaveSite() {
 		$store = new HashSiteStore();
 
@@ -68,9 +45,6 @@ class HashSiteStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $site, $store->getSite( 'dewiki' ), 'Store has dewiki' );
 	}
 
-	/**
-	 * @covers \MediaWiki\Site\HashSiteStore::saveSites
-	 */
 	public function testSaveSites() {
 		$store = new HashSiteStore();
 
@@ -95,9 +69,6 @@ class HashSiteStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $store->getSites()->hasSite( 'eswiki' ), 'Store has eswiki' );
 	}
 
-	/**
-	 * @covers \MediaWiki\Site\HashSiteStore::clear
-	 */
 	public function testClear() {
 		$store = new HashSiteStore();
 

@@ -3,6 +3,8 @@ declare( strict_types = 1 );
 
 namespace Cite\Parsoid;
 
+use Cite\MarkSymbolRenderer;
+use Countable;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
@@ -15,24 +17,40 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
  * Helper class used by `<references>` implementation.
  * @license GPL-2.0-or-later
  */
-class RefGroup {
+class RefGroup implements Countable {
 
-	public string $name;
 	/** @var RefGroupItem[] */
-	public array $refs = [];
+	private array $refs = [];
 	/** @var array<string,RefGroupItem> Lookup map only for named refs */
-	public array $indexByName = [];
+	private array $indexByName = [];
+
 	/** @var int Counter to track order of ref appearance in article */
 	private int $nextIndex = 1;
 	/** @var array<string,int> Counter to provide subreference indexes */
 	private array $subRefCountByName = [];
 
-	public function __construct( string $group = '' ) {
-		$this->name = $group;
+	public function __construct(
+		public readonly string $name = '',
+	) {
+	}
+
+	public function push( RefGroupItem $ref ): void {
+		$this->refs[] = $ref;
+		if ( $ref->name ) {
+			$this->indexByName[$ref->name] = $ref;
+		}
 	}
 
 	public function lookupRefByName( string $name ): ?RefGroupItem {
 		return $this->indexByName[$name] ?? null;
+	}
+
+	public function count(): int {
+		return count( $this->refs );
+	}
+
+	public function toArray(): array {
+		return $this->refs;
 	}
 
 	/**
@@ -54,8 +72,8 @@ class RefGroup {
 		return $a;
 	}
 
-	public function renderLine(
-		ParsoidExtensionAPI $extApi, Element $refsList, RefGroupItem $ref
+	public function renderReferenceListElement(
+		ParsoidExtensionAPI $extApi, Element $refsList, RefGroupItem $ref, MarkSymbolRenderer $markSymbolRenderer
 	): void {
 		$ownerDoc = $refsList->ownerDocument;
 
@@ -63,13 +81,16 @@ class RefGroup {
 		// We then append the rest of the ref nodes before the first node
 		$li = $ownerDoc->createElement( 'li' );
 		$refDir = $ref->dir;
+		$footnoteNumber = $markSymbolRenderer->renderFootnoteNumber(
+			$ref->group, $ref->numberInGroup, $ref->subrefIndex );
 		$noteId = ParsoidAnchorFormatter::getNoteIdentifier( $ref );
 		$refContentId = $ref->contentId;
 		$refGroup = $ref->group;
 		DOMUtils::addAttributes( $li, [
 				'about' => '#' . $noteId,
 				'id' => $noteId,
-				'class' => ( $refDir === 'rtl' || $refDir === 'ltr' ) ? 'mw-cite-dir-' . $refDir : null
+				'class' => ( $refDir === 'rtl' || $refDir === 'ltr' ) ? 'mw-cite-dir-' . $refDir : null,
+				'data-mw-footnote-number' => $footnoteNumber
 			]
 		);
 		$reftextSpan = $ownerDoc->createElement( 'span' );
@@ -82,6 +103,10 @@ class RefGroup {
 				'class' => 'mw-reference-text reference-text',
 			]
 		);
+		if ( $refGroup ) {
+			// Add group so that list defined refs can expose it to VE T400596
+			$reftextSpan->setAttribute( 'data-mw-group', $refGroup );
+		}
 		if ( $refContentId ) {
 			// `sup` is the wrapper created by RefTagHandler::sourceToDom()'s call to
 			// `extApi->extTagToDOM()`.  Only its contents are relevant.
@@ -108,6 +133,7 @@ class RefGroup {
 				}
 				$reported[] = $error;
 				$errorFragment = $errorUtils->renderParsoidError( $error );
+				$li->appendChild( $ownerDoc->createTextNode( ' ' ) );
 				$li->appendChild( $errorFragment );
 			}
 		}
@@ -119,14 +145,14 @@ class RefGroup {
 		$linkbackSpan = $ownerDoc->createElement( 'span' );
 		if ( $ref->visibleNodes === 1 ) {
 			// Can be an unnamed reference or a named one that's just never reused
-			$lb = ParsoidAnchorFormatter::getBackLinkIdentifier( $ref );
+			$lb = ParsoidAnchorFormatter::getBacklinkIdentifier( $ref );
 			$linkback = self::createLinkback( $extApi, $lb, $refGroup, "↑", $ownerDoc );
 			DOMUtils::addRel( $linkback, 'mw:referencedBy' );
 			$linkbackSpan->appendChild( $linkback );
 		} else {
 			DOMUtils::addRel( $linkbackSpan, 'mw:referencedBy' );
 			for ( $i = 1; $i <= $ref->visibleNodes; $i++ ) {
-				$lb = ParsoidAnchorFormatter::getBackLinkIdentifier( $ref, $i );
+				$lb = ParsoidAnchorFormatter::getBacklinkIdentifier( $ref, $i );
 				$linkbackSpan->appendChild(
 					self::createLinkback( $extApi, $lb, $refGroup, (string)$i, $ownerDoc )
 				);

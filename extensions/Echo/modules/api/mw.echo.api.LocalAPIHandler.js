@@ -11,7 +11,7 @@ mw.echo.api.LocalAPIHandler = function MwEchoApiLocalAPIHandler( config ) {
 	// Parent constructor
 	mw.echo.api.LocalAPIHandler.super.call( this,
 		new mw.Api( { ajax: { cache: false } } ),
-		config
+		config,
 	);
 };
 
@@ -43,7 +43,7 @@ mw.echo.api.LocalAPIHandler.prototype.updateSeenTime = function ( type ) {
 	return this.api.get( {
 		action: 'echomarkseen',
 		type: type.length === 1 ? type[ 0 ] : 'all',
-		timestampFormat: 'ISO_8601'
+		timestampFormat: 'ISO_8601',
 	} )
 		.then( ( data ) => data.query.echomarkseen.timestamp );
 };
@@ -53,7 +53,7 @@ mw.echo.api.LocalAPIHandler.prototype.updateSeenTime = function ( type ) {
  */
 mw.echo.api.LocalAPIHandler.prototype.markAllRead = function ( source, type ) {
 	const data = {
-		action: 'echomarkread'
+		action: 'echomarkread',
 	};
 	type = Array.isArray( type ) ? type : [ type ];
 	if ( type.includes( 'all' ) ) {
@@ -77,7 +77,7 @@ mw.echo.api.LocalAPIHandler.prototype.markAllRead = function ( source, type ) {
  */
 mw.echo.api.LocalAPIHandler.prototype.markItemsRead = function ( source, itemIdArray, isRead ) {
 	const data = {
-		action: 'echomarkread'
+		action: 'echomarkread',
 	};
 
 	if ( !this.isSourceLocal( source ) ) {
@@ -111,7 +111,7 @@ mw.echo.api.LocalAPIHandler.prototype.fetchUnreadCount = function ( type, ignore
 			notmessageunreadfirst: 1,
 			notlimit: this.limit,
 			notprop: 'count',
-			uselang: this.userLang
+			uselang: this.userLang,
 		};
 
 	if ( !ignoreCrossWiki ) {
@@ -133,6 +133,6 @@ mw.echo.api.LocalAPIHandler.prototype.fetchUnreadCount = function ( type, ignore
  */
 mw.echo.api.LocalAPIHandler.prototype.getTypeParams = function ( type ) {
 	return Object.assign( {}, this.typeParams[ type ], {
-		notcrosswikisummary: 1
+		notcrosswikisummary: 1,
 	} );
 };

@@ -12,7 +12,16 @@
  * @author לערי ריינהארט
  */
 
-$fallback = 'sh, sh-cyrl, bs, sr-el, sr-latn, hr';
+/**
+ * Fallback prioritizes language codes in the following order:
+ *
+ * 1. Latin-script Ijekavian codes
+ * 2. Latin-script Ekavian codes
+ * 3. Cyrillic-script Ekavian codes
+ *
+ * This order aligns with T399126.
+ */
+$fallback = 'sh, bs, hr, sr-latn, sr-el, sh-cyrl, sr-cyrl, sr-ec';
 
 $namespaceNames = [
 	NS_SPECIAL          => 'Posebno',
@@ -163,7 +172,7 @@ $magicWords = [
 	'fullpagenamee'             => [ '1', 'PUNOIMESTRANEE', 'PUNOIMESTRANICEE', 'FULLPAGENAMEE' ],
 	'fullurl'                   => [ '0', 'PUNIURL:', 'PUNURL:', 'FULLURL:' ],
 	'fullurle'                  => [ '0', 'PUNIURLE:', 'PUNURLE:', 'FULLURLE:' ],
-	'hiddencat'                 => [ '1', '__SAKRIVENAKATEGORIJA__', 'SKRIVENAKAT', '__SAKRIVENAKAT__', '__HIDDENCAT__' ],
+	'hiddencat'                 => [ '1', '__SAKRIVENAKATEGORIJA__', '__SKRIVENAKAT__', '__SAKRIVENAKAT__', '__HIDDENCAT__' ],
 	'img_baseline'              => [ '1', 'osnovnacrta', 'pocetna_linija', 'baseline' ],
 	'img_border'                => [ '1', 'granica', 'obrub', 'border' ],
 	'img_bottom'                => [ '1', 'dno', 'bottom' ],

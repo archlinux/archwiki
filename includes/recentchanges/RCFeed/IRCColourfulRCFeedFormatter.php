@@ -1,21 +1,7 @@
 <?php
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -50,17 +36,18 @@ class IRCColourfulRCFeedFormatter implements RCFeedFormatter {
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$services = MediaWikiServices::getInstance();
+		$recentChangeRCFeedNotifier = $services->getRecentChangeRCFeedNotifier();
 		$mainConfig = $services->getMainConfig();
 		$localInterwikis = $mainConfig->get( MainConfigNames::LocalInterwikis );
 		$useRCPatrol = $mainConfig->get( MainConfigNames::UseRCPatrol );
 		$useNPPatrol = $mainConfig->get( MainConfigNames::UseNPPatrol );
 		$attribs = $rc->getAttributes();
-		if ( $attribs['rc_type'] == RC_CATEGORIZE ) {
-			// Don't send RC_CATEGORIZE events to IRC feed (T127360)
+		if ( $attribs['rc_source'] == RecentChange::SRC_CATEGORIZE ) {
+			// Don't send SRC_CATEGORIZE events to IRC feed (T127360)
 			return null;
 		}
 
-		if ( $attribs['rc_type'] == RC_LOG ) {
+		if ( $attribs['rc_source'] == RecentChange::SRC_LOG ) {
 			// Don't use SpecialPage::getTitleFor, backwards compatibility with
 			// IRC API which expects "Log".
 			$titleObj = Title::newFromText( 'Log/' . $attribs['rc_log_type'], NS_SPECIAL );
@@ -70,7 +57,7 @@ class IRCColourfulRCFeedFormatter implements RCFeedFormatter {
 		$title = $titleObj->getPrefixedText();
 		$title = self::cleanupForIRC( $title );
 
-		$notifyUrl = $rc->getNotifyUrl() ?? '';
+		$notifyUrl = $recentChangeRCFeedNotifier->getNotifyUrl( $rc ) ?? '';
 
 		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
@@ -87,7 +74,7 @@ class IRCColourfulRCFeedFormatter implements RCFeedFormatter {
 
 		$user = self::cleanupForIRC( $attribs['rc_user_text'] );
 
-		if ( $attribs['rc_type'] == RC_LOG ) {
+		if ( $attribs['rc_source'] == RecentChange::SRC_LOG ) {
 			$targetText = $rc->getTitle()->getPrefixedText();
 			$comment = self::cleanupForIRC( str_replace(
 				"[[$targetText]]",
@@ -100,11 +87,11 @@ class IRCColourfulRCFeedFormatter implements RCFeedFormatter {
 			$comment = self::cleanupForIRC( $store->getComment( 'rc_comment', $attribs )->text );
 			$flag = '';
 			if ( !$attribs['rc_patrolled']
-				&& ( $useRCPatrol || ( $attribs['rc_type'] == RC_NEW && $useNPPatrol ) )
+				&& ( $useRCPatrol || ( $attribs['rc_source'] == RecentChange::SRC_NEW && $useNPPatrol ) )
 			) {
 				$flag .= '!';
 			}
-			$flag .= ( $attribs['rc_type'] == RC_NEW ? "N" : "" )
+			$flag .= ( $attribs['rc_source'] == RecentChange::SRC_NEW ? "N" : "" )
 				. ( $attribs['rc_minor'] ? "M" : "" ) . ( $attribs['rc_bot'] ? "B" : "" );
 		}
 

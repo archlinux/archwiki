@@ -4,7 +4,10 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\Tokens\CompoundTk;
+use Wikimedia\Parsoid\Tokens\EmptyLineTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\NlTk;
@@ -12,50 +15,32 @@ use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wt2html\TokenHandlerPipeline;
-
-/**
- * PORT-FIXME: Maybe we need to look at all uses of flatten
- * and move it to a real helper in PHPUtils.js
- *
- * Flattens arrays with nested arrays
- */
-function array_flatten( array $array ): array {
-	$ret = [];
-	foreach ( $array as $key => $value ) {
-		if ( is_array( $value ) ) {
-			PHPUtils::pushArray( $ret, array_flatten( $value ) );
-		} else {
-			$ret[$key] = $value;
-		}
-	}
-	return $ret;
-}
+use Wikimedia\Parsoid\Wt2html\TokenizerUtils;
 
 /**
  * MediaWiki-compatible italic/bold handling as a token stream transformation.
  */
-class QuoteTransformer extends TokenHandler {
+class QuoteTransformer extends LineBasedHandler {
 	/** Chunks alternate between quote tokens and sequences of non-quote
 	 * tokens.  The quote tokens are later replaced with the actual tag
 	 * token for italic or bold.  The first chunk is a non-quote chunk.
-	 * @var array
 	 */
-	private $chunks;
+	private array $chunks;
 
 	/**
 	 * The current chunk we're accumulating into.
-	 * @var array
 	 */
-	private $currentChunk;
+	private array $currentChunk;
 
 	/**
 	 * Last italic / last bold open tag seen.  Used to add autoInserted flags
 	 * where necessary.
-	 * @var array
 	 */
-	private $last;
+	private array $last;
 
 	/**
 	 * @param TokenHandlerPipeline $manager manager environment
@@ -68,7 +53,6 @@ class QuoteTransformer extends TokenHandler {
 
 	/**
 	 * Reset the buffering of chunks
-	 *
 	 */
 	private function reset(): void {
 		// Chunks alternate between quote tokens and sequences of non-quote
@@ -86,7 +70,6 @@ class QuoteTransformer extends TokenHandler {
 
 	/**
 	 * Make a copy of the token context
-	 *
 	 */
 	private function startNewChunk(): void {
 		$this->chunks[] = $this->currentChunk;
@@ -97,11 +80,14 @@ class QuoteTransformer extends TokenHandler {
 	 * Handles mw-quote tokens and td/th tokens
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		$tkName = $token->getName();
 		if ( $tkName === 'mw-quote' ) {
 			return $this->onQuote( $token );
-		} elseif ( $tkName === 'td' || $tkName === 'th' ) {
+		} elseif (
+			( $tkName === 'td' || $tkName === 'th' ) &&
+			!TokenUtils::isHTMLTag( $token )
+		) {
 			return $this->processQuotes( $token );
 		} else {
 			return null;
@@ -122,6 +108,49 @@ class QuoteTransformer extends TokenHandler {
 	 */
 	public function onEnd( EOFTk $token ): ?array {
 		return $this->processQuotes( $token );
+	}
+
+	/**
+	 * Process nested tokens and update the compound token
+	 * for where the integrity of the token isn't compromised.
+	 *
+	 * @inheritDoc
+	 */
+	public function onCompoundTk( CompoundTk $ctk, TokenHandler $tokensHandler ): ?array {
+		if ( $ctk instanceof EmptyLineTk ) {
+			// TSP might create EmptyLineTk by swallowing a NlTk into it
+			// rather than requiring it to precede a EmptyLineTk.
+			// So, call processQuotes always.
+			// * If there was a NlTk seen before it, the buffers are empty,
+			//   and we return null and $ctk is passed through.
+			// * If there was no NlTk before it (TSP case), we effectively
+			//   flush the buffers and send the $ctk after that.
+			// In either case, we are good.
+			return $this->processQuotes( $ctk );
+		}
+
+		$newToks = $tokensHandler->process( $ctk->getNestedTokens() );
+		if ( $ctk->setsEOLContext() ) {
+			$flushedOutput = $this->processQuotes();
+			if ( $flushedOutput ) {
+				PHPUtils::pushArray( $newToks, $flushedOutput );
+			}
+			$ctk->setNestedTokens( $newToks );
+			return null;
+		} else {
+			throw new UnreachableException(
+				"QuoteTransformer: We don't support non-eol-setting compound tokens."
+			);
+
+			// An alternative if/when we support other compound tokens
+			// that end up in this else branch would be to flatten them out.
+			//
+			// Since quote-transformer might buffer some of the
+			// nested tokens, the integrity of $ctk is compromised.
+			// Flatten it out.
+			//
+			// return $newToks;
+		}
 	}
 
 	/**
@@ -156,31 +185,17 @@ class QuoteTransformer extends TokenHandler {
 	}
 
 	/**
-	 * Handle NEWLINE tokens, which trigger the actual quote analysis on the
-	 * collected quote tokens so far.
-	 * @return ?array<string|Token>
+	 * Handle explicit EOL (NlTk/EOFTk) or implicit EOL, which trigger the
+	 * actual quote analysis on the collected quote tokens so far.
+	 * @return ?list<string|Token>
 	 */
-	private function processQuotes( Token $token ): ?array {
+	private function processQuotes( ?Token $token = null ): ?array {
 		if ( !$this->onAnyEnabled ) {
 			// Nothing to do, quick abort.
 			return null;
 		}
 
-		$this->env->trace(
-			"quote",
-			$this->pipelineId,
-			"NL    |",
-			static function () use( $token ) {
-				return PHPUtils::jsonEncode( $token );
-			}
-		);
-
-		if (
-			( $token->getName() === 'td' || $token->getName() === 'th' ) &&
-			( $token->dataParsoid->stx ?? '' ) === 'html'
-		) {
-			return null;
-		}
+		$this->env->trace( "quote", $this->pipelineId, "NL    |", $token );
 
 		// count number of bold and italics
 		$numbold = 0;
@@ -245,12 +260,13 @@ class QuoteTransformer extends TokenHandler {
 		$this->convertQuotesToTags();
 
 		// return all collected tokens including the newline
-		$this->currentChunk[] = $token;
+		if ( $token ) {
+			$this->currentChunk[] = $token;
+			$this->env->trace( "quote", $this->pipelineId, "-----> ", $token );
+		}
 		$this->startNewChunk();
-		// PORT-FIXME: Is there a more efficient way of doing this?
-		$res = array_flatten( $this->chunks );
 
-		$this->env->trace( "quote", $this->pipelineId, "-----> ", $token );
+		$res = TokenizerUtils::flattenIfArray( $this->chunks );
 
 		// prepare for next line
 		$this->reset();
@@ -275,7 +291,7 @@ class QuoteTransformer extends TokenHandler {
 		$oldbold = $this->chunks[$i][0];
 		$tsr = $oldbold->dataParsoid->tsr ?? null;
 		if ( $tsr ) {
-			$tsr = new SourceRange( $tsr->start + 1, $tsr->end );
+			$tsr = new SourceRange( $tsr->start + 1, $tsr->end, $tsr->source );
 		}
 		$dp = new DataParsoid;
 		$dp->tsr = $tsr;
@@ -408,14 +424,14 @@ class QuoteTransformer extends TokenHandler {
 				} elseif ( $i === 2 && $ignoreBogusTwo ) {
 					$tags[$i]->dataParsoid->autoInsertedStartToken = true;
 				} elseif ( $tags[$i]->getName() === 'b' ) {
-					$tags[$i]->dataParsoid->tsr = new SourceRange( $startpos, $startpos + 3 );
+					$tags[$i]->dataParsoid->tsr = new SourceRange( $startpos, $startpos + 3, $tsr->source );
 					$startpos = $tags[$i]->dataParsoid->tsr->end;
 				} elseif ( $tags[$i]->getName() === 'i' ) {
-					$tags[$i]->dataParsoid->tsr = new SourceRange( $startpos, $startpos + 2 );
+					$tags[$i]->dataParsoid->tsr = new SourceRange( $startpos, $startpos + 2, $tsr->source );
 					$startpos = $tags[$i]->dataParsoid->tsr->end;
 				}
 			}
-			$this->last[$tags[$i]->getName()] = ( $tags[$i]->getType() === "EndTagTk" ) ? null : $tags[$i];
+			$this->last[$tags[$i]->getName()] = ( $tags[$i] instanceof EndTagTk ) ? null : $tags[$i];
 			$result[] = $tags[$i];
 		}
 		if ( $tsr ) {

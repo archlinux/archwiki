@@ -37,7 +37,6 @@ class MhchemStateMachines {
 	 */
 	private array $genericActions;
 
-	/** @var MhchemParser */
 	private MhchemParser $mhchemParser;
 
 	private static function mhchemCreateTransitions( array $o ): array {
@@ -45,10 +44,10 @@ class MhchemStateMachines {
 		// 1. Collect all states
 		foreach ( $o as $pattern => $d1 ) {
 			foreach ( $d1 as $state => $d2 ) {
-				$stateArray = preg_split( "/\|/", strval( $state ), -1, PREG_SPLIT_NO_EMPTY );
-					$o[$pattern][$state]["stateArray"] = $stateArray;
-				for ( $i = 0; $i < count( $stateArray ); $i++ ) {
-					$transitions[$stateArray[$i]] = [];
+				$stateArray = preg_split( "/\|+/", strval( $state ), -1, PREG_SPLIT_NO_EMPTY );
+				$o[$pattern][$state]["stateArray"] = $stateArray;
+				foreach ( $stateArray as $value ) {
+					$transitions[$value] = [];
 				}
 			}
 		}
@@ -58,7 +57,7 @@ class MhchemStateMachines {
 			foreach ( $d1 as $d2 ) {
 				$stateArray = $d2["stateArray"] ?? [];
 
-				for ( $i = 0; $i < count( $stateArray ); $i++ ) {
+				foreach ( $stateArray as $val ) {
 					// 2a. Normalize actions into array:  'text=' ==> [{type_:'text='}]
 					$p = $d2;
 					if ( is_string( $p["action_"] ) ) {
@@ -73,15 +72,15 @@ class MhchemStateMachines {
 					}
 
 					// 2.b Multi-insert
-					$patternArray = preg_split( "/\|/", strval( $pattern ), -1, PREG_SPLIT_NO_EMPTY );
-					for ( $j = 0; $j < count( $patternArray ); $j++ ) {
-						if ( $stateArray[$i] === '*' ) {
+					$patternArray = preg_split( "/\|+/", strval( $pattern ), -1, PREG_SPLIT_NO_EMPTY );
+					foreach ( $patternArray as $val2 ) {
+						if ( $val === '*' ) {
 							// insert into all
 							foreach ( $transitions as $t => $dEmpty ) {
-								$transitions[$t][] = [ "pattern" => $patternArray[$j], "task" => $p ];
+								$transitions[$t][] = [ "pattern" => $val2, "task" => $p ];
 							}
 						} else {
-							$transitions[$stateArray[$i]][] = [ "pattern" => $patternArray[$j], "task" => $p ];
+							$transitions[$val][] = [ "pattern" => $val2, "task" => $p ];
 						}
 					}
 				}
@@ -91,9 +90,6 @@ class MhchemStateMachines {
 		return $transitions;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getGenericActions(): array {
 		return $this->genericActions;
 	}
@@ -224,17 +220,21 @@ class MhchemStateMachines {
 				"transitions" => self::mhchemCreateTransitions( [
 					"empty" => [ "*" => [ "action_" => "output" ] ],
 					"else" => [ "0|1|2" => [ "action_" => "beginsWithBond=false",
-						"revisit" => true, "toContinue" => true ] ],
+						"revisit" => true, "toContinue" => true ]
+					],
 					"oxidation$" => [ "0" => [ "action_" => 'oxidation-output' ] ],
 					"CMT" => [ 'r' => [ "action_" => "rdt=", "nextState" => "rt" ],
-						"rd" => [ "action_" => "rqt=", "nextState" => "rdt" ] ],
+						"rd" => [ "action_" => "rqt=", "nextState" => "rdt" ]
+					],
 					"arrowUpDown" => [ '0|1|2|as' =>
-						[ "action_" => [ 'sb=false', 'output', 'operator' ], "nextState" => '1' ] ],
+						[ "action_" => [ 'sb=false', 'output', 'operator' ], "nextState" => '1' ]
+					],
 					"uprightEntities" => [ "0|1|2" => [ "action_" => [ 'o=', 'output' ], "nextState" => "1" ] ],
 					"orbital" => [ "0|1|2|3" => [ "action_" => "o=", "nextState" => "o" ] ],
 					"->" => [ "0|1|2|3" => [ "action_" => "r=", "nextState" => "r" ],
 						"a|as" => [ "action_" => [ 'output', 'r=' ], "nextState" => "r" ],
-						"*" => [ "action_" => [ 'output', 'r=' ], "nextState" => "r" ] ],
+						"*" => [ "action_" => [ 'output', 'r=' ], "nextState" => "r" ]
+					],
 					"+" => [
 						"o" => [ "action_" => "d= kv", "nextState" => "d" ],
 						"d|D" => [ "action_" => 'd=', "nextState" => 'd' ],
@@ -245,9 +245,11 @@ class MhchemStateMachines {
 					],
 					"amount" => [ "0|2" => [ "action_" => "a=", "nextState" => "a" ] ],
 					"pm-operator" => [ "0|1|2|a|as" => [ "action_" => [ 'sb=false', 'output',
-						[ "type_" => 'operator', "option" => '\\pm' ] ], "nextState" => '0' ] ],
+						[ "type_" => 'operator', "option" => '\\pm' ] ], "nextState" => '0' ]
+					],
 					"operator" => [ "0|1|2|a|as" =>
-						[ "action_" => [ 'sb=false', 'output', 'operator' ], "nextState" => '0' ] ],
+						[ "action_" => [ 'sb=false', 'output', 'operator' ], "nextState" => '0' ]
+					],
 					"-$" => [
 						"o|q" => [ "action_" => [ 'charge or bond', 'output' ], "nextState" => 'qd' ],
 						"d" => [ "action_" => 'd=', "nextState" => 'd' ],
@@ -256,15 +258,18 @@ class MhchemStateMachines {
 						"q" => [ "action_" => 'd=', "nextState" => 'qd' ],
 						"qd" => [ "action_" => 'd=', "nextState" => 'qd' ],
 						"qD|dq" => [ "action_" => [ 'output',
-							[ "type_" => "bond", "option" => "-" ] ], "nextState" => '3' ]
+							[ "type_" => "bond", "option" => "-" ] ], "nextState" => '3'
+						]
 					],
 					"-9" => [ "3|o" => [ "action_" =>
-						[ 'output', [ "type_" => "insert", "option" => "hyphen" ] ], "nextState" => '3' ] ],
+						[ 'output', [ "type_" => "insert", "option" => "hyphen" ] ], "nextState" => '3' ]
+					],
 					'- orbital overlap' => [
 						'o' => [ "action_" => [ 'output',
 							[ "type_" => 'insert', "option" => 'hyphen' ] ], "nextState" => '2' ],
 						'd' => [ "action_" => [ 'output',
-							[ "type_" => 'insert', "option" => 'hyphen' ] ], "nextState" => '2' ] ],
+							[ "type_" => 'insert', "option" => 'hyphen' ] ], "nextState" => '2' ]
+					],
 					'-' => [
 						'0|1|2' => [ "action_" => [ [ "type_" => 'output', "option" => 1 ],
 							'beginsWithBond=true', [ "type_" => 'bond', "option" => "-" ] ], "nextState" => '3' ],
@@ -277,15 +282,21 @@ class MhchemStateMachines {
 						'o' => [ "action_" => [ [ "type_" => '- after o/d', "option" => false ] ], "nextState" => '2' ],
 						'q' => [ "action_" => [ [ "type_" => '- after o/d', "option" => false ] ], "nextState" => '2' ],
 						'd|qd|dq' => [ "action_" =>
-							[ [ "type_" => '- after o/d', "option" => true ] ], "nextState" => '2' ],
+							[ [ "type_" => '- after o/d', "option" => true ] ],
+							"nextState" => '2'
+						],
 						'D|qD|p' => [ "action_" =>
-							[ 'output', [ "type_" => 'bond', "option" => "-" ] ], "nextState" => '3' ] ],
+							[ 'output', [ "type_" => 'bond', "option" => "-" ] ],
+							"nextState" => '3'
+						]
+					],
 					'amount2' => [
 						'1|3' => [ "action_" => 'a=', "nextState" => 'a' ] ],
 					'letters' => [
 						'0|1|2|3|a|as|b|p|bp|o' => [ "action_" => 'o=', "nextState" => 'o' ],
 						'q|dq' => [ "action_" => [ 'output', 'o=' ], "nextState" => 'o' ],
-						'd|D|qd|qD' => [ "action_" => 'o after d', "nextState" => 'o' ] ],
+						'd|D|qd|qD' => [ "action_" => 'o after d', "nextState" => 'o' ]
+					],
 					'digits' => [
 						'o' => [ "action_" => 'q=', "nextState" => 'q' ],
 						'd|D' => [ "action_" => 'q=', "nextState" => 'dq' ],
@@ -298,115 +309,150 @@ class MhchemStateMachines {
 						'0' => [ "action_" => 'sb=false' ],
 						'1|2' => [ "action_" => 'sb=true' ],
 						'r|rt|rd|rdt|rdq' => [ "action_" => 'output', "nextState" => '0' ],
-						'*' => [ "action_" => [ 'output', 'sb=true' ], "nextState" => '1' ] ],
+						'*' => [ "action_" => [ 'output', 'sb=true' ], "nextState" => '1' ]
+					],
 					'1st-level escape' => [
 						'1|2' => [ "action_" => [ 'output',
-							[ "type_" => 'insert+p1', "option" => '1st-level escape' ] ] ],
+							[ "type_" => 'insert+p1', "option" => '1st-level escape' ] ]
+						],
 						'*' => [ "action_" => [ 'output',
-							[ "type_" => 'insert+p1', "option" => '1st-level escape' ] ], "nextState" => '0' ] ],
+							[ "type_" => 'insert+p1', "option" => '1st-level escape' ] ], "nextState" => '0'
+						]
+					],
 					'[(...)]' => [
 						'r|rt' => [ "action_" => 'rd=', "nextState" => 'rd' ],
-						'rd|rdt' => [ "action_" => 'rq=', "nextState" => 'rdq' ] ],
+						'rd|rdt' => [ "action_" => 'rq=', "nextState" => 'rdq' ]
+					],
 					'...' => [
 						'o|d|D|dq|qd|qD' => [ "action_" =>
 							[ 'output', [ "type_" => 'bond', "option" => "..." ] ], "nextState" => '3' ],
 						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 1 ],
-							[ "type_" => 'insert', "option" => 'ellipsis' ] ], "nextState" => '1' ] ],
+							[ "type_" => 'insert', "option" => 'ellipsis' ] ], "nextState" => '1' ]
+					],
 					'. __* ' => [
 						'*' => [ "action_" => [ 'output',
-							[ "type_" => 'insert', "option" => 'addition compound' ] ], "nextState" => '1' ] ],
+							[ "type_" => 'insert', "option" => 'addition compound' ] ], "nextState" => '1' ]
+					],
 					'state of aggregation $' => [
-						'*' => [ "action_" => [ 'output', 'state of aggregation' ], "nextState" => '1' ] ],
+						'*' => [ "action_" => [ 'output', 'state of aggregation' ], "nextState" => '1' ]
+					],
 					'{[(' => [
 						'a|as|o' => [ "action_" => [ 'o=', 'output', 'parenthesisLevel++' ], "nextState" => '2' ],
 						'0|1|2|3' => [ "action_" => [ 'o=', 'output', 'parenthesisLevel++' ], "nextState" => '2' ],
 						'*' => [ "action_" =>
-							[ 'output', 'o=', 'output', 'parenthesisLevel++' ], "nextState" => '2' ] ],
+							[ 'output', 'o=', 'output', 'parenthesisLevel++' ], "nextState" => '2' ]
+					],
 					')]}' => [
 						'0|1|2|3|b|p|bp|o' => [ "action_" => [ 'o=', 'parenthesisLevel--' ], "nextState" => 'o' ],
 						'a|as|d|D|q|qd|qD|dq' =>
-							[ "action_" => [ 'output', 'o=', 'parenthesisLevel--' ], "nextState" => 'o' ] ],
+							[ "action_" => [ 'output', 'o=', 'parenthesisLevel--' ], "nextState" => 'o' ]
+					],
 					', ' => [
-						'*' => [ "action_" => [ 'output', 'comma' ], "nextState" => '0' ] ],
+						'*' => [ "action_" => [ 'output', 'comma' ], "nextState" => '0' ]
+					],
 					'^_' => [
-						'*' => [ "action_" => [] ] ],
+						'*' => [ "action_" => [] ]
+					],
 					'^{(...)}|^($...$)' => [
 						'0|1|2|as' => [ "action_" => 'b=', "nextState" => 'b' ],
 						'p' => [ "action_" => 'b=', "nextState" => 'bp' ],
 						'3|o' => [ "action_" => 'd= kv', "nextState" => 'D' ],
 						'q' => [ "action_" => 'd=', "nextState" => 'qD' ],
-						'd|D|qd|qD|dq' => [ "action_" => [ 'output', 'd=' ], "nextState" => 'D' ] ],
+						'd|D|qd|qD|dq' => [ "action_" => [ 'output', 'd=' ], "nextState" => 'D' ]
+					],
 					'^a|^\\x{}{}|^\\x{}|^\\x|\'' => [
 						'0|1|2|as' => [ "action_" => 'b=', "nextState" => 'b' ],
 						'p' => [ "action_" => 'b=', "nextState" => 'bp' ],
 						'3|o' => [ "action_" => 'd= kv', "nextState" => 'd' ],
 						'q' => [ "action_" => 'd=', "nextState" => 'qd' ],
 						'd|qd|D|qD' => [ "action_" => 'd=' ],
-						'dq' => [ "action_" => [ 'output', 'd=' ], "nextState" => 'd' ] ],
+						'dq' => [ "action_" => [ 'output', 'd=' ], "nextState" => 'd' ]
+					],
 					'_{(state of aggregation)}$' => [
-						'd|D|q|qd|qD|dq' => [ "action_" => [ 'output', 'q=' ], "nextState" => 'q' ] ],
+						'd|D|q|qd|qD|dq' => [ "action_" => [ 'output', 'q=' ], "nextState" => 'q' ]
+					],
 					'_{(...)}|_($...$)|_9|_\\x{}{}|_\\x{}|_\\x' => [
 						'0|1|2|as' => [ "action_" => 'p=', "nextState" => 'p' ],
 						'b' => [ "action_" => 'p=', "nextState" => 'bp' ],
 						'3|o' => [ "action_" => 'q=', "nextState" => 'q' ],
 						'd|D' => [ "action_" => 'q=', "nextState" => 'dq' ],
-						'q|qd|qD|dq' => [ "action_" => [ 'output', 'q=' ], "nextState" => 'q' ] ],
+						'q|qd|qD|dq' => [ "action_" => [ 'output', 'q=' ], "nextState" => 'q' ]
+					],
 					'=<>' => [
 						'0|1|2|3|a|as|o|q|d|D|qd|qD|dq' => [ "action_" =>
-							[ [ "type_" => 'output', "option" => 2 ], 'bond' ], "nextState" => '3' ] ],
+							[ [ "type_" => 'output', "option" => 2 ], 'bond' ], "nextState" => '3' ]
+					],
 					'#' => [
 						'0|1|2|3|a|as|o' => [ "action_" => [ [ "type_" => 'output', "option" => 2 ],
-							[ "type_" => 'bond', "option" => "#" ] ], "nextState" => '3' ] ],
+							[ "type_" => 'bond', "option" => "#" ] ], "nextState" => '3' ]
+					],
 					'{}^' => [
 						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 1 ],
-							[ "type_" => 'insert', "option" => 'tinySkip' ] ], "nextState" => '1' ] ],
+							[ "type_" => 'insert', "option" => 'tinySkip' ] ], "nextState" => '1' ]
+					],
 					'{}' => [
-						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 1 ] ], "nextState" => '1' ] ],
+						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 1 ] ], "nextState" => '1' ]
+					],
 					'{...}' => [
 						'0|1|2|3|a|as|b|p|bp' => [ "action_" => 'o=', "nextState" => 'o' ],
-						'o|d|D|q|qd|qD|dq' => [ "action_" => [ 'output', 'o=' ], "nextState" => 'o' ] ],
+						'o|d|D|q|qd|qD|dq' => [ "action_" => [ 'output', 'o=' ], "nextState" => 'o' ]
+					],
 					'$...$' => [
 						'a' => [ "action_" => 'a=' ],
 						'0|1|2|3|as|b|p|bp|o' => [ "action_" => 'o=', "nextState" => 'o' ],
 						'as|o' => [ "action_" => 'o=' ],
-						'q|d|D|qd|qD|dq' => [ "action_" => [ 'output', 'o=' ], "nextState" => 'o' ] ],
+						'q|d|D|qd|qD|dq' => [ "action_" => [ 'output', 'o=' ], "nextState" => 'o' ]
+					],
 					'\\bond{(...)}' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 2 ], 'bond' ], "nextState" => "3" ] ],
+							[ "type_" => 'output', "option" => 2 ], 'bond' ], "nextState" => "3" ]
+					],
 					'\\frac{(...)}' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 1 ], 'frac-output' ], "nextState" => '3' ] ],
+							[ "type_" => 'output', "option" => 1 ], 'frac-output' ], "nextState" => '3' ]
+					],
 					'\\overset{(...)}' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 2 ], 'overset-output' ], "nextState" => '3' ] ],
+							[ "type_" => 'output', "option" => 2 ], 'overset-output' ], "nextState" => '3' ]
+					],
 					'\\underset{(...)}' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 2 ], 'underset-output' ], "nextState" => '3' ] ],
+							[ "type_" => 'output', "option" => 2 ], 'underset-output' ], "nextState" => '3' ]
+					],
 					'\\underbrace{(...)}' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 2 ], 'underbrace-output' ], "nextState" => '3' ] ],
+							[ "type_" => 'output', "option" => 2 ], 'underbrace-output' ], "nextState" => '3' ]
+					],
 					'\\color{(...)}{(...)}' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 2 ], 'color-output' ], "nextState" => '3' ] ],
+							[ "type_" => 'output', "option" => 2 ], 'color-output' ], "nextState" => '3' ]
+					],
 					'\\color{(...)}' => [
-						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 2 ], 'color0-output' ] ] ],
+						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 2 ], 'color0-output' ] ]
+					],
 					'\\ce{(...)}' => [
-						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 2 ], 'ce' ], "nextState" => '3' ] ],
+						'*' => [ "action_" => [ [ "type_" => 'output', "option" => 2 ], 'ce' ], "nextState" => '3' ]
+					],
 					'\\,' => [
 						'*' => [ "action_" => [
-							[ "type_" => 'output', "option" => 1 ], 'copy' ], "nextState" => '1' ] ],
+							[ "type_" => 'output', "option" => 1 ], 'copy' ], "nextState" => '1' ]
+					],
 					'\\pu{(...)}' => [
 						'*' => [ "action_" => [ 'output', [ "type_" => 'write', "option" => "{" ],
-							'pu', [ "type_" => 'write', "option" => "}" ] ], "nextState" => '3' ] ],
+							'pu', [ "type_" => 'write', "option" => "}" ] ], "nextState" => '3' ]
+					],
 					'\\x{}{}|\\x{}|\\x' =>
 						[ '0|1|2|3|a|as|b|p|bp|o|c0' => [ "action_" => [ 'o=', 'output' ], "nextState" => '3' ],
-						'*' => [ "action_" => [ 'output', 'o=', 'output' ], "nextState" => '3' ] ],
+						'*' => [ "action_" => [ 'output', 'o=', 'output' ], "nextState" => '3' ]
+						],
 					'others' => [ '*' => [ "action_" =>
-						[ [ "type_" => 'output', "option" => 1 ], 'copy' ], "nextState" => '3' ] ],
+						[ [ "type_" => 'output', "option" => 1 ], 'copy' ], "nextState" => '3' ]
+					],
 					'else2' => [ 'a' => [ "action_" => 'a to o', "nextState" => 'o', "revisit" => true ],
 						'as' => [ "action_" => [ 'output', 'sb=true' ], "nextState" => '1', "revisit" => true ],
 						'r|rt|rd|rdt|rdq' => [ "action_" => [ 'output' ], "nextState" => '0', "revisit" => true ],
-						'*' => [ "action_" => [ 'output', 'copy' ], "nextState" => '3' ] ]
+						'*' => [ "action_" => [ 'output', 'copy' ], "nextState" => '3' ]
+					]
 				] ),
 				"actions" => [
 					'o after d' => function ( &$buffer, $m ) {
@@ -509,8 +555,10 @@ class MhchemStateMachines {
 						return null;
 					},
 					'state of aggregation' => function ( $_buffer, $m ) {
-						return [ "type_" => 'state of aggregation',
-							"p1" => $this->mhchemParser->go( $m, 'o' ) ];
+						return [
+							"type_" => 'state of aggregation',
+							"p1" => $this->mhchemParser->go( $m, 'o' )
+						];
 					},
 					'comma' => static function ( $buffer, $m ) {
 						// $a = preg_replace('/\s*$/', '', $m); tbd: final check if using rtrim is ok
@@ -518,9 +566,9 @@ class MhchemStateMachines {
 						$withSpace = ( $a !== $m );
 						if ( $withSpace && $buffer['parenthesisLevel'] === 0 ) {
 							return [ "type_" => 'comma enumeration L', "p1" => $a ];
-						} else {
-							return [ "type_" => 'comma enumeration M', "p1" => $a ];
 						}
+
+						return [ "type_" => 'comma enumeration M', "p1" => $a ];
 					},
 					'output' => function ( &$buffer, $_m, $entityFollows ) {
 						if ( !isset( $buffer["r"] ) ) {
@@ -611,28 +659,39 @@ class MhchemStateMachines {
 						return $ret;
 					},
 					'frac-output' => function ( $_buffer, $m ) {
-						return [ "type_" => 'frac-ce',
-								"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
-								"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' ) ];
+						return [
+							"type_" => 'frac-ce',
+							"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
+							"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' )
+						];
 					},
 					'overset-output' => function ( $_buffer, $m ) {
-						return [ "type_" => 'overset',
-								"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
-								"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' ) ];
+						return [
+							"type_" => 'overset',
+							"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
+							"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' )
+						];
 					},
 					'underset-output' => function ( $_buffer, $m ) {
-						return [ "type_" => 'underset',
-								"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
-								"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' ) ];
+						return [
+							"type_" => 'underset',
+							"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
+							"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' )
+						];
 					},
 					'underbrace-output' => function ( $_buffer, $m ) {
-						return [ "type_" => 'underbrace',
-								"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
-								"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' ) ];
+						return [
+							"type_" => 'underbrace',
+							"p1" => $this->mhchemParser->go( $m[0] ?? null, 'ce' ),
+							"p2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' )
+						];
 					},
 					'color-output' => function ( $_buffer, $m ) {
-						return [ "type_" => 'color', "color1" => $m[0] ?? null,
-								"color2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' ) ];
+						return [
+							"type_" => 'color',
+							"color1" => $m[0] ?? null,
+							"color2" => $this->mhchemParser->go( $m[1] ?? null, 'ce' )
+						];
 					},
 					'r=' => static function ( &$buffer, $m ) {
 						$buffer["r"] = $m;
@@ -701,7 +760,8 @@ class MhchemStateMachines {
 					],
 					'\\pu{(...)}' => [
 						'*' => [ "action_" => [ [ "type_" => 'write', "option" => "{" ],
-							'pu', [ "type_" => 'write', "option" => "}" ] ] ]
+							'pu', [ "type_" => 'write', "option" => "}" ] ]
+						]
 					],
 					'\\x{}{}|\\x{}|\\x' => [
 						'*' => [ "action_" => 'copy' ]
@@ -711,7 +771,8 @@ class MhchemStateMachines {
 					],
 					'{(...)}' => [
 						'*' => [ "action_" => [ [ "type_" => 'write', "option" => "{" ],
-							'text', [ "type_" => 'write', "option" => "}" ] ] ]
+							'text', [ "type_" => 'write', "option" => "}" ] ]
+						]
 					],
 					'else2' => [
 						'*' => [ "action_" => 'copy' ]
@@ -735,7 +796,8 @@ class MhchemStateMachines {
 					],
 					'\\pu{(...)}' => [
 						'*' => [ "action_" => [ 'output', [ "type_" => 'write', "option" => "{" ],
-							'pu', [ "type_" => 'write', "option" => "}" ] ] ]
+							'pu', [ "type_" => 'write', "option" => "}" ] ]
+						]
 					],
 					'\\,|\\x{}{}|\\x{}|\\x' => [
 						'*' => [ "action_" => [ 'output', 'copy' ] ]
@@ -878,7 +940,8 @@ class MhchemStateMachines {
 					],
 					'\\pu{(...)}' => [
 						'*' => [ "action_" => [ [ "type_" => 'write', "option" => "{" ],
-							'pu', [ "type_" => 'write', "option" => "}" ] ] ]
+							'pu', [ "type_" => 'write', "option" => "}" ] ]
+						]
 					],
 					'\\,|\\x{}{}|\\x{}|\\x' => [
 						'*' => [ "action_" => 'copy' ]
@@ -889,8 +952,11 @@ class MhchemStateMachines {
 				] ),
 				"actions" => [
 					'color-output' => function ( $_buffer, $m ) {
-						return [ "type_" => 'color', "color1" => $m[0] ?? null,
-								"color2" => $this->mhchemParser->go( $m[1] ?? null, 'bd' ) ];
+						return [
+							"type_" => 'color',
+							"color1" => $m[0] ?? null,
+							"color2" => $this->mhchemParser->go( $m[1] ?? null, 'bd' )
+						];
 					}
 				]
 			],
@@ -954,7 +1020,8 @@ class MhchemStateMachines {
 					],
 					'\\pu{(...)}' => [
 						'*' => [ "action_" => [ 'output', [ "type_" => 'write', "option" => "{" ],
-							'pu', [ "type_" => 'write', "option" => "}" ] ] ]
+							'pu', [ "type_" => 'write', "option" => "}" ] ]
+						]
 					],
 					'{...}|\\,|\\x{}{}|\\x{}|\\x' => [
 						'*' => [ "action_" => 'o=' ]

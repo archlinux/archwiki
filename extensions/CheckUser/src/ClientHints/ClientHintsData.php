@@ -22,7 +22,7 @@ class ClientHintsData implements JsonSerializable {
 		"Sec-CH-UA-Model" => "model",
 		"Sec-CH-UA-Platform" => "platform",
 		"Sec-CH-UA-Platform-Version" => "platformVersion",
-		"Sec-CH-UA-WoW64" => "woW64"
+		"Sec-CH-UA-WoW64" => "woW64",
 	];
 
 	private ?string $architecture;
@@ -223,7 +223,7 @@ class ClientHintsData implements JsonSerializable {
 					$brandName = implode( ' ', $explodedValue );
 					$data[$row['uach_name']][] = [
 						"brand" => $brandName,
-						"version" => $versionNumber
+						"version" => $versionNumber,
 					];
 				} else {
 					// No space was found, therefore keep the value as is.
@@ -316,7 +316,7 @@ class ClientHintsData implements JsonSerializable {
 				foreach ( $itemsAsString as $item ) {
 					$rows[] = [
 						'uach_name' => $key,
-						'uach_value' => $item
+						'uach_value' => $item,
 					];
 				}
 			}

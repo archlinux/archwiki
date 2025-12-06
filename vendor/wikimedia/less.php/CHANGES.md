@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.2.2
+
+Fixed:
+* Fix ParseError on CSS variable when there is no trailing semicolon (Hannah Okwelum) [T386077](https://phabricator.wikimedia.org/T386077)
+* Support functions calls in CSS variable value after first comma (Hannah Okwelum) [T386079](https://phabricator.wikimedia.org/T386079)
+
 ## v5.2.1
 
 Fixed:

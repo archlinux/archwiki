@@ -5,21 +5,7 @@
  *
  * This is used when the database schema is modified and we need to apply patches.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @todo document
  * @ingroup Maintenance
@@ -189,9 +175,9 @@ class UpdateMediaWiki extends Maintenance {
 		// Using an implicit marker (rev_actor was introduced in 1.34)
 		// TODO: Use an explicit marker
 		// See T259771
-		if ( !$updater->fieldExists( 'revision', 'rev_actor' ) ) {
+		if ( !$updater->tableExists( 'linktarget' ) ) {
 			$this->fatalError(
-				"Can not upgrade from versions older than 1.35, please upgrade to that version or later first."
+				"Can not upgrade from versions older than 1.38, please upgrade to that version or later first."
 			);
 		}
 

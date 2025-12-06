@@ -1,6 +1,5 @@
 <?php
 
-use MediaWiki\Category\Category;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
@@ -12,7 +11,8 @@ use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
+use MediaWiki\Page\Event\PageProtectionChangedEvent;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\WikiPage;
@@ -25,7 +25,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
@@ -409,7 +409,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		try {
 			$page = $this->newPage( $title );
 			$page->doUserEditContent( $content, $user1, "[[testing]] 1", EDIT_NEW );
-		} catch ( Exception $ex ) {
+		} catch ( Exception ) {
 			// Throwing is an acceptable way to react to an invalid title,
 			// as long as no garbage is written to the database.
 		}
@@ -942,12 +942,12 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 			[
 				CONTENT_MODEL_JAVASCRIPT,
 				"var test='<h2>not really a heading</h2>';",
-				"<pre class=\"mw-code mw-js\" dir=\"ltr\">var test='&lt;h2&gt;not really a heading&lt;/h2&gt;';\n</pre>",
+				"<pre class=\"mw-code mw-js\" dir=\"ltr\">\nvar test='&lt;h2>not really a heading&lt;/h2>';\n</pre>",
 			],
 			[
 				CONTENT_MODEL_CSS,
 				"/* Not ''wikitext'' */",
-				"<pre class=\"mw-code mw-css\" dir=\"ltr\">/* Not ''wikitext'' */\n</pre>",
+				"<pre class=\"mw-code mw-css\" dir=\"ltr\">\n/* Not ''wikitext'' */\n</pre>",
 			],
 			// @todo more...?
 		];
@@ -1238,31 +1238,6 @@ more stuff
 		$this->assertTrue( $page->wasLoadedFrom( IDBAccessObject::READ_EXCLUSIVE ) );
 	}
 
-	public function testUpdateCategoryCounts() {
-		$page = new WikiPage( Title::newFromText( __METHOD__ ) );
-
-		// Add an initial category
-		$page->updateCategoryCounts( [ 'A' ], [], 0 );
-
-		$this->assertSame( 1, Category::newFromName( 'A' )->getMemberCount() );
-		$this->assertSame( 0, Category::newFromName( 'B' )->getMemberCount() );
-		$this->assertSame( 0, Category::newFromName( 'C' )->getMemberCount() );
-
-		// Add a new category
-		$page->updateCategoryCounts( [ 'B' ], [], 0 );
-
-		$this->assertSame( 1, Category::newFromName( 'A' )->getMemberCount() );
-		$this->assertSame( 1, Category::newFromName( 'B' )->getMemberCount() );
-		$this->assertSame( 0, Category::newFromName( 'C' )->getMemberCount() );
-
-		// Add and remove a category
-		$page->updateCategoryCounts( [ 'C' ], [ 'A' ], 0 );
-
-		$this->assertSame( 0, Category::newFromName( 'A' )->getMemberCount() );
-		$this->assertSame( 1, Category::newFromName( 'B' )->getMemberCount() );
-		$this->assertSame( 1, Category::newFromName( 'C' )->getMemberCount() );
-	}
-
 	public static function provideUpdateRedirectOn() {
 		yield [ '#REDIRECT [[Foo]]', true, null, true, true, [] ];
 		yield [ '#REDIRECT [[Foo]]', true, 'Foo', true, true, [ [ NS_MAIN, 'Foo' ] ] ];
@@ -1551,29 +1526,59 @@ more stuff
 
 		$cascade = false;
 
-		// Expect that the onArticleProtect and onArticleProtectComplete hooks are called for successful calls.
-		$articleProtectHookCalled = false;
-		$this->setTemporaryHook(
-			'ArticleProtect',
-			static function () use ( &$articleProtectHookCalled ) {
-				$articleProtectHookCalled = true;
-			},
-			false
-		);
+		// Expect that the onArticleProtect and onArticleProtectComplete hooks.
+		$this->expectHook( 'ArticleProtect' );
+		$this->expectHook( 'ArticleProtectComplete' );
 
-		$articleProtectCompleteHookCalled = false;
-		$this->setTemporaryHook(
-			'ArticleProtectComplete',
-			static function () use ( &$articleProtectCompleteHookCalled ) {
-				$articleProtectCompleteHookCalled = true;
-			},
-			false
+		// Expect PageProtectionChangedEvent
+		$this->expectDomainEvent(
+			PageProtectionChangedEvent::TYPE, 1,
+			static function ( PageProtectionChangedEvent $event ) use (
+				$page,
+				$user,
+				$cascade,
+				$expectedRestrictions,
+				$expectedRestrictionExpiries
+			) {
+				Assert::assertTrue( $page->isSamePageAs( $event->getPage() ), 'getPage' );
+				Assert::assertSame( $page->getId(), $event->getPageId() );
+
+				Assert::assertSame(
+					$user->getName(),
+					$event->getPerformer()->getName(),
+					'getPerformer'
+				);
+				Assert::assertSame(
+					$cascade,
+					$event->isCascadingAfter(),
+					'isCascadingAfter'
+				);
+
+				$defaultRestrictions = array_fill_keys(
+					array_keys( $expectedRestrictions ),
+					[]
+				);
+
+				$defaultExpiry = array_fill_keys(
+					array_keys( $expectedRestrictions ),
+					'infinity'
+				);
+
+				Assert::assertSame( $defaultRestrictions,
+					$event->getRestrictionMapBefore(),
+					'getRestrictionMapBefore' );
+
+				Assert::assertSame( $expectedRestrictions,
+					$event->getRestrictionMapAfter(),
+					'getRestrictionMapAfter' );
+
+				Assert::assertSame( $expectedRestrictionExpiries + $defaultExpiry,
+					$event->getExpiryAfter(),
+					'getExpiryAfter' );
+			}
 		);
 
 		$status = $page->doUpdateRestrictions( $limit, $expiry, $cascade, 'aReason', $userIdentity, [] );
-
-		$this->assertTrue( $articleProtectCompleteHookCalled );
-		$this->assertTrue( $articleProtectHookCalled );
 
 		$logId = $status->getValue();
 		$restrictionStore = $this->getServiceContainer()->getRestrictionStore();
@@ -1639,6 +1644,12 @@ more stuff
 		// The first entry should have a logId as it did something
 		$this->assertStatusGood( $status );
 		$this->assertIsInt( $status->getValue() );
+
+		// Expect no hooks and events (flush pending events first)
+		$this->runDeferredUpdates();
+		$this->expectHook( 'ArticleProtect', 0 );
+		$this->expectHook( 'ArticleProtectComplete', 0 );
+		$this->expectDomainEvent( PageProtectionChangedEvent::TYPE, 0 );
 
 		$status = $page->doUpdateRestrictions(
 			$limit,
@@ -1825,16 +1836,16 @@ more stuff
 		$this->runDeferredUpdates();
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			static function ( PageRevisionUpdatedEvent $event ) use ( &$calls, $page ) {
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( &$calls, $page ) {
 				Assert::assertFalse( $event->isCreation(), 'isCreation' );
 				Assert::assertTrue( $event->changedLatestRevisionId(), 'changedLatestRevisionId' );
 				Assert::assertFalse( $event->isEffectiveContentChange(), 'isEffectiveContentChange' );
 				Assert::assertSame( $page->getId(), $event->getPage()->getId() );
 
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_PROTECTION_CHANGE ),
-					PageRevisionUpdatedEvent::CAUSE_PROTECTION_CHANGE
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_PROTECTION_CHANGE ),
+					PageLatestRevisionChangedEvent::CAUSE_PROTECTION_CHANGE
 				);
 
 				Assert::assertTrue( $event->isSilent(), 'isSilent' );

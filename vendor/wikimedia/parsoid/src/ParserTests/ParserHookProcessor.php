@@ -32,8 +32,7 @@ class ParserHookProcessor extends ExtDOMProcessor {
 				}
 			} elseif ( WTUtils::isSealedFragmentOfType( $node, 'sealtag' ) ) {
 				$dp = DOMDataUtils::getDataParsoid( $node );
-				$contentId = $dp->html;
-				$content = $extApi->getContentDOM( $contentId );
+				$content = $dp->html;
 				$span = $content->firstChild;
 
 				// In case it's templated
@@ -48,7 +47,7 @@ class ParserHookProcessor extends ExtDOMProcessor {
 				DOMUtils::addTypeOf( $span, 'mw:Extension/sealtag' );
 
 				$node->parentNode->replaceChild( $span, $node );
-				$extApi->clearContentDOM( $contentId );
+				unset( $dp->html );
 			}
 			$extApi->processAttributeEmbeddedDom(
 				$node, function ( $domFragment ) use ( $extApi ) {
@@ -63,13 +62,13 @@ class ParserHookProcessor extends ExtDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function wtPostprocess(
-		ParsoidExtensionAPI $extApi, Node $node, array $options
+		ParsoidExtensionAPI $extApi, Node $root, array $options
 	): void {
 		// Pass an object since we want the data to be carried around across
 		// nodes in the DOM. Passing an array won't work since visitDOM doesn't
 		// use a reference on its end. Maybe we could fix that separately.
 		DOMUtils::visitDOM(
-			$node,
+			$root,
 			[ $this, 'staticTagPostProcessor' ],
 			$extApi,
 			(object)[ 'buf' => '' ]

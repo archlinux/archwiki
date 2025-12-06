@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -193,6 +179,7 @@ class SpecialUndelete extends SpecialPage {
 		$this->watchlistManager = $watchlistManager;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -296,6 +283,7 @@ class SpecialUndelete extends SpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	public function userCanExecute( User $user ) {
 		return $this->isAllowed( $this->mRestriction, $user );
 	}
@@ -326,6 +314,7 @@ class SpecialUndelete extends SpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->useTransactionalTimeLimit();
 
@@ -648,7 +637,7 @@ class SpecialUndelete extends SpecialPage {
 				RevisionRecord::FOR_THIS_USER,
 				$user
 			);
-		} catch ( RevisionAccessException $e ) {
+		} catch ( RevisionAccessException ) {
 			$content = null;
 		}
 
@@ -714,7 +703,7 @@ class SpecialUndelete extends SpecialPage {
 				$out->addParserOutput( $pout, $popts, [
 					'enableSectionEditLinks' => false,
 				] );
-			} catch ( RevisionAccessException $e ) {
+			} catch ( RevisionAccessException ) {
 			}
 		}
 
@@ -864,7 +853,7 @@ class SpecialUndelete extends SpecialPage {
 		foreach ( $tagIds as $tagId ) {
 			try {
 				$tags[] = $this->changeTagDefStore->getName( (int)$tagId );
-			} catch ( NameTableAccessException $exception ) {
+			} catch ( NameTableAccessException ) {
 				continue;
 			}
 		}
@@ -1316,10 +1305,14 @@ class SpecialUndelete extends SpecialPage {
 		} else {
 			$out->addHTML( $history );
 		}
-
-		return true;
 	}
 
+	/**
+	 * @param \stdClass $row
+	 * @param string $earliestLiveTime
+	 * @param int $remaining
+	 * @return string
+	 */
 	protected function formatRevisionRow( $row, $earliestLiveTime, $remaining ) {
 		$revRecord = $this->revisionStore->newRevisionFromArchiveRow(
 				$row,
@@ -1673,6 +1666,7 @@ class SpecialUndelete extends SpecialPage {
 		return $this->prefixSearchString( $search, $limit, $offset, $this->searchEngineFactory );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

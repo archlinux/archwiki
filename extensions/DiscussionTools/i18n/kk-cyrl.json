@@ -76,7 +76,6 @@
 	"discussiontools-notification-removed-topic-disabled-body": "[[Special:Preferences#mw-prefsection-echo-echosubscriptions|Бапталымдарыңыздан]] бұны өзгерте аласыз.",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 \"<strong>$4</strong>\" тақырыбына {{GENDER:$2|жауап берді}}.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "\"<strong>$3</strong>\" тақырыбындағы {{PLURAL:$1|Бір жаңа жауап|$1 жаңа жауап|100=99+ жаңа жауап}}.",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Пікірді көру",
 	"discussiontools-pageframe-latestcomment": "Ең соңғы пікір: $3 тақырыбындағы $1 $2 жазған",
 	"discussiontools-pageframe-latestcomment-notopic": "Ең соңғы пікір: $1 $2 жазған",

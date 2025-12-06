@@ -1,6 +1,6 @@
 'use strict';
 
-const rest = require( '../../../modules/ext.checkUser.tempAccounts/rest.js' );
+const rest = require( 'ext.checkUser.tempAccounts/rest.js' );
 
 let server;
 
@@ -16,7 +16,17 @@ QUnit.module( 'ext.checkUser.tempAccounts.rest', QUnit.newMwEnvironment( {
 } ) );
 
 function performRevealRequestTest(
-	assert, target, logIds, revIds, expectedUrl, responseCode, responseContent, shouldFail
+	assert,
+	target,
+	logIds,
+	revIds,
+	aflIds,
+	expectedUrl,
+	responseCode,
+	responseContent,
+	shouldFail,
+	expectedBody = null,
+	expectedReturnValue = null
 ) {
 	server.respond( ( request ) => {
 		if ( request.url.endsWith( expectedUrl ) ) {
@@ -36,41 +46,99 @@ function performRevealRequestTest(
 			// unexpected API request is made.
 			assert.true( false, 'Unexpected API request to' + request.url );
 		}
+
+		if ( expectedBody !== null ) {
+			const actual = JSON.parse( request.requestBody );
+			delete actual.token;
+
+			assert.deepEqual( actual, expectedBody );
+		}
 	} );
 
 	// Call the method under test
-	const promise = rest.performRevealRequest( '~1', revIds, logIds );
+	const promise = rest.performRevealRequest(
+		'~1',
+		revIds,
+		logIds,
+		aflIds,
+		false
+	);
 
 	if ( shouldFail ) {
 		return assert.rejects( promise, 'Request should have failed' );
 	}
 
 	return promise.then( ( data ) => {
-		assert.deepEqual( data, responseContent, 'Response data' );
+		assert.deepEqual( data, expectedReturnValue, 'Response data' );
 	} );
 }
 
 QUnit.test( 'Test performRevealRequest for 500 response when requesting one IP', ( assert ) => performRevealRequestTest(
-	assert, '~1', {}, {}, 'checkuser/v0/temporaryaccount/~1?limit=1', 500, '', true
+	assert, '~1', {}, {}, {},
+	'checkuser/v0/batch-temporaryaccount', 500, '', true,
+	{
+		users: {
+			'~1': {
+				lastUsedIp: true,
+				logIds: [],
+				revIds: []
+			}
+		}
+	}
 ) );
 
 QUnit.test( 'Test performRevealRequest for 500 response when getting IPs for rev IDs', ( assert ) => performRevealRequestTest(
-	assert, '~1', {}, { allIds: [ '1', '2' ] },
-	'checkuser/v0/temporaryaccount/~1/revisions/1|2', 500, '', true
+	assert, '~1', {}, { allIds: [ '1', '2' ] }, {},
+	'checkuser/v0/batch-temporaryaccount', 500, '', true,
+	{
+		users: {
+			'~1': {
+				lastUsedIp: true,
+				logIds: [],
+				revIds: [ '1', '2' ]
+			}
+		}
+	}
 ) );
 
 QUnit.test( 'Test performRevealRequest for 500 response when getting IPs for log IDs', ( assert ) => performRevealRequestTest(
-	assert, '~1', { allIds: [ '1', '2' ] }, {},
-	'checkuser/v0/temporaryaccount/~1/logs/1|2', 500, '', true
+	assert, '~1', { allIds: [ '1', '2' ] }, {}, {},
+	'checkuser/v0/batch-temporaryaccount', 500, '', true,
+	{
+		users: {
+			'~1': {
+				lastUsedIp: true,
+				logIds: [ '1', '2' ],
+				revIds: []
+			}
+		}
+	}
 ) );
 
 QUnit.test( 'Test performRevealRequest for 200 response when requesting one IP', ( assert ) => performRevealRequestTest(
-	assert, '~1', {}, {}, 'checkuser/v0/temporaryaccount/~1?limit=1', 200,
-	{ test: 'test' }, false
+	assert, '~1', {}, {}, {},
+	'checkuser/v0/batch-temporaryaccount', 200,
+	{ autoReveal: false, '~1': { lastUsedIp: '127.0.0.1' } }, false,
+	{
+		users: {
+			'~1': {
+				lastUsedIp: true,
+				logIds: [],
+				revIds: []
+			}
+		}
+	},
+	{
+		autoReveal: false,
+		ips: [
+			'127.0.0.1'
+		]
+	}
 ) );
 
 QUnit.test( 'Test performRevealRequest on bad CSRF token for both attempts', ( assert ) => performRevealRequestTest(
-	assert, '~1', {}, {}, 'checkuser/v0/temporaryaccount/~1?limit=1', 500,
+	assert, '~1', {}, {}, {},
+	'checkuser/v0/batch-temporaryaccount', 500,
 	{ errorKey: 'rest-badtoken' }, true
 ) );
 
@@ -95,7 +163,7 @@ QUnit.test( 'Test performFullRevealRequest for only target username', ( assert )
 	} );
 
 	// Call the method under test
-	return rest.performFullRevealRequest( '~1', {}, {} ).then( ( data ) => {
+	return rest.performFullRevealRequest( '~1' ).then( ( data ) => {
 		assert.deepEqual( data, { ips: [ '127.0.0.1', '1.2.3.4' ] }, 'Response data' );
 	} );
 } );
@@ -136,7 +204,7 @@ QUnit.test( 'Test performFullRevealRequest on bad CSRF token for first attempt',
 	} );
 
 	// Call the method under test
-	return rest.performFullRevealRequest( '~1', {}, {} ).then( ( data ) => {
+	return rest.performFullRevealRequest( '~1' ).then( ( data ) => {
 		assert.deepEqual( data, { ips: [ '127.0.0.1', '1.2.3.4' ] }, 'Response data' );
 	} );
 } );

@@ -6,13 +6,14 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"APIPropModules": {
 		"pageimages": {
 			"class": "PageImages\\ApiQueryPageImages",
 			"services": [
-				"RepoGroup"
+				"RepoGroup",
+				"UrlUtils"
 			]
 		}
 	},
@@ -45,6 +46,7 @@
 				"MainConfig",
 				"DBLoadBalancerFactory",
 				"RepoGroup",
+				"UrlUtils",
 				"UserOptionsLookup"
 			]
 		},
@@ -147,6 +149,18 @@
 		"PageImagesOpenGraphFallbackImage": {
 			"description": "A url to fallback image that will be shown when there is no image on a page.",
 			"value": false
+		}
+	},
+	"attributes": {
+		"Scribunto": {
+			"LuaExtraTitleAttributes": {
+				"pageImage": {
+					"class": "PageImages\\LuaPageImageResolver",
+					"services": [
+						"PageImages.PageImages"
+					]
+				}
+			}
 		}
 	},
 	"manifest_version": 2

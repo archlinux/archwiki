@@ -11,7 +11,8 @@
 			"Sadrettin",
 			"SaldırganSincap",
 			"Sayginer",
-			"Stultiwikia"
+			"Stultiwikia",
+			"ToprakM"
 		]
 	},
 	"captcha-edit": "Bu sayfayı düzenlemek için, lütfen aşağıdaki görevi çözün ve cevabı kutuya girin ([[Special:Captcha/help|daha fazla bilgi]]):",
@@ -22,7 +23,7 @@
 	"captcha-id-label": "CAPTCHA kimliği",
 	"captcha-id-help": "Bu değer değişmeden geri gönderilmelidir.",
 	"captcha-addurl": "Düzenlemeniz yeni harici bağlantılar içeriyor.\nVikiyi otomatik spam'e karşı korumak için, aşağıdaki görevi çözmenizi ve düzenlemenizi kaydetmek için kutuya cevabı yazmanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
-	"captcha-badlogin": "Vikiyi otomatik şifre kırma işlemine karşı korumak için, aşağıdaki görevi çözmenizi ve cevabı kutuya yazmanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
+	"captcha-badlogin": "Vikiyi otomatik parola kırmaya karşı korumak için, aşağıdaki görevi çözmenizi ve cevabı kutuya yazmanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"captcha-createaccount": "Vikiyi otomatik hesap oluşturmaya karşı korumak için, aşağıdaki problemi çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-createaccount-fail": "Hatalı ya da eksik CAPTCHA.",
 	"captcha-create": "Sayfayı oluşturmak için, lütfen aşağıdaki görevi çöz ve cevabı kutuya yazın ([[Special:Captcha/help|daha fazla bilgi]]):",

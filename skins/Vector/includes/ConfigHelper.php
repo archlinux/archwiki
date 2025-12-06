@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Skins\Vector;
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 
 /**
@@ -11,6 +11,10 @@ use MediaWiki\Title\Title;
  * @see doc/adr/0004-code-sharing-between-vector-and-minerva.md
  */
 class ConfigHelper {
+	public function __construct(
+		private readonly SpecialPageFactory $specialPageFactory,
+	) {
+	}
 
 	/**
 	 * Determine whether the configuration should be disabled on the page.
@@ -32,7 +36,7 @@ class ConfigHelper {
 	 *
 	 * @return bool
 	 */
-	public static function shouldDisable( array $options, WebRequest $request, ?Title $title = null ) {
+	public function shouldDisable( array $options, WebRequest $request, ?Title $title = null ) {
 		$canonicalTitle = $title ? $title->getRootTitle() : null;
 
 		$exclusions = $options[ 'exclude' ] ?? [];
@@ -55,8 +59,7 @@ class ConfigHelper {
 			return $exclusions[ 'mainpage' ] ?? false;
 		}
 		if ( $canonicalTitle && $canonicalTitle->isSpecialPage() ) {
-			$spFactory = MediaWikiServices::getInstance()->getSpecialPageFactory();
-			[ $canonicalName, $par ] = $spFactory->resolveAlias( $canonicalTitle->getDBKey() );
+			[ $canonicalName, $par ] = $this->specialPageFactory->resolveAlias( $canonicalTitle->getDBKey() );
 			if ( $canonicalName ) {
 				$canonicalTitle = Title::makeTitle( NS_SPECIAL, $canonicalName );
 			}

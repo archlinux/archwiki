@@ -1,24 +1,13 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
@@ -48,10 +37,8 @@ class GuzzleHttpRequest extends MWHttpRequest {
 
 	/** @var callable|null */
 	protected $handler = null;
-	/** @var StreamInterface|null */
-	protected $sink = null;
-	/** @var array */
-	protected $guzzleOptions = [ 'http_errors' => false ];
+	protected ?StreamInterface $sink = null;
+	protected array $guzzleOptions = [ 'http_errors' => false ];
 
 	/**
 	 * @internal Use HttpRequestFactory
@@ -124,7 +111,8 @@ class GuzzleHttpRequest extends MWHttpRequest {
 		$this->prepare();
 
 		if ( !$this->status->isOK() ) {
-			return Status::wrap( $this->status ); // TODO B/C; move this to callers
+			// TODO B/C; move this to callers
+			return Status::wrap( $this->status );
 		}
 
 		if ( $this->proxy ) {
@@ -143,7 +131,7 @@ class GuzzleHttpRequest extends MWHttpRequest {
 			];
 		}
 
-		if ( $this->method == 'POST' ) {
+		if ( $this->method === 'POST' ) {
 			$postData = $this->postData;
 			if ( is_array( $postData ) ) {
 				$this->guzzleOptions['form_params'] = $postData;
@@ -167,7 +155,6 @@ class GuzzleHttpRequest extends MWHttpRequest {
 		// which is in MediaWiki CookieJar format, not in Guzzle-specific CookieJar format.
 		// Note: received cookies (from HTTP response) don't need to be handled here,
 		// they will be added back into the CookieJar by MWHttpRequest::parseCookies().
-		// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 		$stack->remove( 'cookies' );
 		$mwCookieJar = $this->getCookieJar();
 		$stack->push( Middleware::mapRequest(
@@ -218,13 +205,13 @@ class GuzzleHttpRequest extends MWHttpRequest {
 
 			$this->respVersion = $response->getProtocolVersion();
 			$this->respStatus = $response->getStatusCode() . ' ' . $response->getReasonPhrase();
-		} catch ( GuzzleHttp\Exception\ConnectException $e ) {
+		} catch ( ConnectException $e ) {
 			// ConnectException is thrown for several reasons besides generic "timeout":
-			//   Connection refused
-			//   couldn't connect to host
-			//   connection attempt failed
-			//   Could not resolve IPv4 address for host
-			//   Could not resolve IPv6 address for host
+			//  - Connection refused
+			//  - couldn't connect to host
+			//  - connection attempt failed
+			//  - Could not resolve IPv4 address for host
+			//  - Could not resolve IPv6 address for host
 			if ( $this->usingCurl() ) {
 				$handlerContext = $e->getHandlerContext();
 				if ( $handlerContext['errno'] == CURLE_OPERATION_TIMEOUTED ) {
@@ -235,20 +222,20 @@ class GuzzleHttpRequest extends MWHttpRequest {
 			} else {
 				$this->status->fatal( 'http-request-error' );
 			}
-		} catch ( GuzzleHttp\Exception\RequestException $e ) {
+		} catch ( RequestException $e ) {
 			if ( $this->usingCurl() ) {
 				$handlerContext = $e->getHandlerContext();
 				$this->status->fatal( 'http-curl-error', $handlerContext['error'] );
 			} else {
 				// Non-ideal, but the only way to identify connection timeout vs other conditions
 				$needle = 'Connection timed out';
-				if ( strpos( $e->getMessage(), $needle ) !== false ) {
+				if ( str_contains( $e->getMessage(), $needle ) ) {
 					$this->status->fatal( 'http-timed-out', $this->url );
 				} else {
 					$this->status->fatal( 'http-request-error' );
 				}
 			}
-		} catch ( GuzzleHttp\Exception\GuzzleException $e ) {
+		} catch ( GuzzleException ) {
 			$this->status->fatal( 'http-internal-error' );
 		}
 
@@ -265,7 +252,8 @@ class GuzzleHttpRequest extends MWHttpRequest {
 		$this->parseHeader();
 		$this->setStatus();
 
-		return Status::wrap( $this->status ); // TODO B/C; move this to callers
+		// TODO B/C; move this to callers
+		return Status::wrap( $this->status );
 	}
 
 	protected function prepare() {

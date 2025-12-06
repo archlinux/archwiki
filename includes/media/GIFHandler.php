@@ -2,21 +2,7 @@
 /**
  * Handler for GIF images.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -38,6 +24,7 @@ class GIFHandler extends BitmapHandler {
 	 */
 	private const BROKEN_FILE = '0';
 
+	/** @inheritDoc */
 	public function getSizeAndMetadata( $state, $filename ) {
 		try {
 			$parsedGIFMetadata = BitmapMetadataHandler::GIF( $filename );
@@ -129,10 +116,12 @@ class GIFHandler extends BitmapHandler {
 		return $this->getImageArea( $file ) <= $maxAnimatedGifArea;
 	}
 
+	/** @inheritDoc */
 	public function getMetadataType( $image ) {
 		return 'parsed-gif';
 	}
 
+	/** @inheritDoc */
 	public function isFileMetadataValid( $image ) {
 		$data = $image->getMetadataArray();
 		if ( $data === [ '_error' => self::BROKEN_FILE ] ) {
@@ -185,7 +174,7 @@ class GIFHandler extends BitmapHandler {
 		}
 
 		if ( $metadata['duration'] ) {
-			$info[] = $wgLang->formatTimePeriod( $metadata['duration'] );
+			$info[] = htmlspecialchars( $wgLang->formatTimePeriod( $metadata['duration'] ), ENT_QUOTES );
 		}
 
 		return $wgLang->commaList( $info );

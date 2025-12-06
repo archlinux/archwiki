@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Ed g2s",
 			"Kizule",
 			"Matma Rex",
 			"Milicevic01",
 			"Vlad5250",
-			"Zoranzoki21",
-			"Aca"
+			"Zoranzoki21"
 		]
 	},
 	"discussiontools": "Алатке за разговор",
@@ -36,9 +36,9 @@
 	"discussiontools-emptystate-title-user": "Започните дискусију {{GENDER:{{PAGENAME}}|са}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "Добро дошли на ову страницу за разговор",
 	"discussiontools-emptystate-title-user-temp": "Започните дискусију {{GENDER:{{PAGENAME}}|са}} {{PAGENAME}}",
-	"discussiontools-error-comment-conflict": "Није могуће сачувати Ваш коментар, јер је неко други прокоментарисао у исто време. Покушајте поново или поново учитајте страницу да бисте видели најновији коментар.",
+	"discussiontools-error-comment-conflict": "Није могуће сачувати {{GENDER:|Ваш}} коментар, јер је неко други прокоментарисао у исто време. Покушајте поново или освежите страницу да бисте видели најновији коментар.",
 	"discussiontools-error-comment-disappeared": "Нема коментара на који желите да одговорите. Вероватно је избрисан или премештен на другу страницу.",
-	"discussiontools-error-comment-disappeared-reload": "Поново учитајте страницу па покушајте поново.",
+	"discussiontools-error-comment-disappeared-reload": "Молимо {{GENDER:|освежите}} страницу па покушајте поново.",
 	"discussiontools-error-comment-is-transcluded": "Није могуће одговорити на овај коментар везом „{{int:discussiontools-replylink}}”. Покушајте то помоћу уређивача целе странице кликом на дугме „$1”.",
 	"discussiontools-error-comment-is-transcluded-title": "Није могуће одговорити на овај коментар везом „{{int:discussiontools-replylink}}”, јер је учитана с друге странице. Идите на страницу [[$1]] да бисте одговорили на њега.",
 	"discussiontools-error-comment-not-saved": "{{GENDER:|Ваш}} коментар није објављен. Копирајте Ваш коментар, освежите страницу па покушајте поново.",

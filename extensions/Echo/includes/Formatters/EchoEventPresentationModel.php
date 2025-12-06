@@ -57,48 +57,21 @@ abstract class EchoEventPresentationModel implements JsonSerializable, MessageLo
 	 */
 	public const SECTION_TITLE_RECOMMENDED_LENGTH = 50;
 
-	/**
-	 * @var Event
-	 */
-	protected $event;
-
-	/**
-	 * @var Language
-	 */
-	protected $language;
-
-	/**
-	 * @var string
-	 */
-	protected $type;
-
-	/**
-	 * @var User for permissions checking
-	 */
-	private $user;
-
-	/**
-	 * @var string 'web' or 'email'
-	 */
-	private $distributionType;
+	protected string $type;
 
 	/**
 	 * @param Event $event
 	 * @param Language $language
 	 * @param User $user Only used for permissions checking and GENDER
-	 * @param string $distributionType
+	 * @param string $distributionType 'web' or 'email'
 	 */
 	protected function __construct(
-		Event $event,
-		Language $language,
-		User $user,
-		$distributionType
+		protected Event $event,
+		protected Language $language,
+		private readonly User $user,
+		private readonly string $distributionType,
 	) {
-		$this->event = $event;
 		$this->type = $event->getType();
-		$this->language = $language;
-		$this->user = $user;
-		$this->distributionType = $distributionType;
 	}
 
 	/**
@@ -315,7 +288,7 @@ abstract class EchoEventPresentationModel implements JsonSerializable, MessageLo
 			// Not deleted
 			return [
 				$this->getTruncatedUsername( $agent ),
-				$agent->getName()
+				$agent->getName(),
 			];
 		} else {
 			// Deleted/hidden

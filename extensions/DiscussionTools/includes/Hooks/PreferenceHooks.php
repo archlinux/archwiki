@@ -35,9 +35,6 @@ class PreferenceHooks implements
 	/**
 	 * Rename a key in an array while preserving the order of associative array keys.
 	 *
-	 * @param array $array
-	 * @param string $from
-	 * @param string $to
 	 * @return array Modified array
 	 */
 	private static function arrayRenameKey( array $array, string $from, string $to ): array {

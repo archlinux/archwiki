@@ -21,7 +21,8 @@
 			"Wladek92",
 			"Wyz",
 			"Yona b",
-			"Zebulon84"
+			"Zebulon84",
+			"JLTRY"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -89,6 +90,7 @@
 	"math_invalidresponse": "$1 : réponse non valide(« $3 ») du serveur « $2 » :",
 	"math_invalidxml": "Le code MathML ou SVG n’est pas du XML valide.",
 	"math_mathoid_error": "Erreur de conversion. Le serveur (« $1 ») a indiqué : « $2 »",
+	"math_other_error": "Autre erreur : $1",
 	"math-status-introduction": "Cette page affiche des informations sur le{{PLURAL:$1||s}} mode{{PLURAL:$1||s}} de rendu mathématique activé{{PLURAL:$1||s}}.\n\nLe{{PLURAL:$1||s}} mode{{PLURAL:$1||s}} de rendu suivant{{PLURAL:$1||s}} {{PLURAL:$1|est|sont}} activé{{PLURAL:$1||s}} :",
 	"math_syntax_error": "erreur de syntaxe",
 	"math_timeout": "Délai dépassé pour le rendu $1 sur « $2 ».",

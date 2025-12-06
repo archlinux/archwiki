@@ -29,25 +29,17 @@ class UserVisibleException extends ExceptionBase {
 		parent::__construct( $exception_id );
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getPosition(): int {
 		return $this->mPosition;
 	}
 
 	/**
 	 * Returns the error message for use in logs
-	 *
-	 * @return string
 	 */
 	public function getMessageForLogs(): string {
 		return "ID: {$this->mExceptionID}; position: {$this->mPosition}; params: " . implode( ', ', $this->mParams );
 	}
 
-	/**
-	 * @return Message
-	 */
 	public function getMessageObj(): Message {
 		// Give grep a chance to find the usages:
 		// abusefilter-exception-unexpectedatend, abusefilter-exception-expectednotfound
@@ -70,7 +62,6 @@ class UserVisibleException extends ExceptionBase {
 
 	/**
 	 * Serialize data for edit stash
-	 * @return array
 	 */
 	public function toArray(): array {
 		return [

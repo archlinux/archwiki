@@ -14,7 +14,7 @@
  * @param {ve.ui.Surface} surface Surface to debug
  * @param {Object} [config] Configuration options
  */
-ve.ui.DebugBar = function VeUiDebugBar( surface, config ) {
+ve.ui.DebugBar = function VeUiDebugBar( surface, config = {} ) {
 	// Parent constructor
 	ve.ui.DebugBar.super.call( this, config );
 
@@ -195,7 +195,7 @@ ve.ui.DebugBar.prototype.updateDump = function () {
 /**
  * Get an ordered list representation of some linear data
  *
- * @param {ve.dm.ElementLinearData} linearData Linear data
+ * @param {ve.dm.LinearData} linearData Linear data
  * @return {jQuery} Ordered list
  */
 ve.ui.DebugBar.prototype.generateListFromLinearData = function ( linearData ) {
@@ -441,10 +441,7 @@ ve.ui.DebugBar.prototype.testSquasher = function () {
 	for ( let i = 1, iLen = transactions.length - 1; i < iLen; i++ ) {
 		const squashedBefore = squashTransactions( transactions.slice( 0, i ) );
 		const squashedAfter = squashTransactions( transactions.slice( i ) );
-		const doubleSquashed = squashTransactions( [].concat(
-			squashedBefore,
-			squashedAfter
-		) );
+		const doubleSquashed = squashTransactions( [ ...squashedBefore, ...squashedAfter ] );
 		const dump = JSON.stringify( squashed );
 		const doubleDump = JSON.stringify( doubleSquashed );
 		if ( dump !== doubleDump ) {

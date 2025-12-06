@@ -18,8 +18,6 @@
 	"notifications": "अधिसूचना",
 	"tooltip-pt-notifications-alert": "{{GENDER:|आपका}} जागरूकता संदेश",
 	"tooltip-pt-notifications": "आप कय अधिसूचना",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "वर्तमान सदस्य",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "नये सदस्य",
 	"echo-specialpage": "अधिसूचना",
 	"echo-specialpage-markasread-invalid-id": "अमान्य आयोजन आईडी",
 	"echo-specialpage-pagefilters-title": "हाल कय गतिविधि",

@@ -66,8 +66,8 @@ mw.echo.ui.SortedListWidget.prototype.onItemSortChange = function ( item ) {
 				// state of the item instead
 				read: !item.isRead(),
 				foreign: item.isForeign(),
-				timestamp: item.getTimestamp()
-			}
+				timestamp: item.getTimestamp(),
+			},
 		);
 
 		// remove real item from item list, without touching the DOM

@@ -58,7 +58,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|σφάλμα|σφάλματα}})",
 	"linter-page-edit": "επεξεργασία",
 	"linter-page-history": "ιστορικό",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "προβολή κώδικα",
 	"linter-pager-bogus-image-options-details": "Ψευδής επιλογή αρχείου",
 	"linter-pager-deletable-table-tag-details": "Ετικέτα Πίνακα που πρέπει να διαγραφεί",

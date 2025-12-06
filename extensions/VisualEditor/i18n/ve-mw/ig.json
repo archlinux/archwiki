@@ -1,16 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aminwa 21",
 			"Edith Nwobu",
 			"Izuchi Onyeike",
+			"King ChristLike",
 			"Olugold",
 			"Sayvhior",
 			"Timzy D'Great",
 			"Tochiprecious",
 			"Ukabia",
 			"Uzoma Ozurumba",
-			"Aminwa 21",
-			"King ChristLike",
 			"Victor chukwuemerie Mbah"
 		]
 	},
@@ -253,6 +253,7 @@
 	"visualeditor-includes-includeonly-description": "Mgbe ọdịnaya sitere na ibe a na-eji ibe ọzọ, a ga-etinye ọdịnaya ndị ọzọ ebe a:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Mụta ihe banyere transclusion akụkụ]",
 	"visualeditor-languages-tool": "Asụsụ",
+	"visualeditor-linkcontext-uneditable": "Ndo, njikọ a nwere ike dezie naanị na ọnọdụ isi iyi maka ugbu a.",
 	"visualeditor-linkinspector-button-link-external": "Jikodo di èzí",
 	"visualeditor-linkinspector-button-link-internal": "Chọọ peeji ndị dị n'ime",
 	"visualeditor-linkinspector-convert-link-isbn": "Tọghata ka ISBN njikọ",

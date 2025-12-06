@@ -1,5 +1,3 @@
-'use strict';
-
 const { ArticlePage } = require( '../support/world.js' );
 const ArticlePageWithOverlay = require( '../support/pages/article_page_with_overlay' );
 

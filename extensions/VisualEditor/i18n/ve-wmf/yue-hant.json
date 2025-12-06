@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
 			"JeffreyKim",
-			"Ktchankt"
+			"Ktchankt",
+			"Winston Sung"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck認為頁面加入咗新內容",
@@ -13,6 +13,9 @@
 	"tag-editcheck-references-activated-description": "EditCheck認為可能需要返啲參考資料，並且顯示埋用戶介面",
 	"tag-editcheck-references-shown": "編輯檢查（參考）顯示咗",
 	"tag-editcheck-references-shown-description": "EditCheck認為可能需要返啲參考資料，並且顯示埋用戶介面",
+	"tag-editcheck-tone-description": "EditCheck偵測到部分新增內容嘅語氣有潛在問題",
+	"tag-editcheck-tone-shown": "編輯顯示咗嘅檢查（音色）",
+	"tag-editcheck-tone-shown-description": "EditCheck認為可能需要調整返某啲內容嘅音色，所以就顯示咗個用戶介面",
 	"tag-visualeditor": "可見修改",
 	"tag-visualeditor-description": "用[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]改嘅",
 	"tag-visualeditor-needcheck": "VisualEditor: 請檢查",

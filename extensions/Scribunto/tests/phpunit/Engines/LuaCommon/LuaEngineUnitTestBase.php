@@ -126,11 +126,10 @@ abstract class LuaEngineUnitTestBase extends TestCase {
 			try {
 				$actual = $this->provideLuaData()->run( $key );
 			} catch ( LuaError $ex ) {
-				if ( substr( $ex->getLuaMessage(), 0, 6 ) === 'SKIP: ' ) {
+				if ( str_starts_with( $ex->getLuaMessage(), 'SKIP: ' ) ) {
 					$this->markTestSkipped( substr( $ex->getLuaMessage(), 6 ) );
-				} else {
-					throw $ex;
 				}
+				throw $ex;
 			}
 			$this->assertSame( $expected, $actual );
 		}

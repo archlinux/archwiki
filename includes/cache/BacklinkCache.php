@@ -3,21 +3,7 @@
  * Class for fetching backlink lists, approximate backlink counts and
  * partitions.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Tim Starling
  * @copyright © 2009, Tim Starling, Domas Mituzas
@@ -30,6 +16,11 @@ namespace MediaWiki\Cache;
 use Iterator;
 use LogicException;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ExistenceLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinksMigration;
@@ -156,10 +147,11 @@ class BacklinkCache {
 	/**
 	 * Get the replica DB connection to the database
 	 *
+	 * @param string|false $domain
 	 * @return IReadableDatabase
 	 */
-	private function getDB() {
-		return $this->dbProvider->getReplicaDatabase();
+	private function getDB( string|false $domain = false ): IReadableDatabase {
+		return $this->dbProvider->getReplicaDatabase( $domain );
 	}
 
 	/**
@@ -247,6 +239,7 @@ class BacklinkCache {
 			'categorylinks' => 'cl',
 			'templatelinks' => 'tl',
 			'redirect' => 'rd',
+			'existencelinks' => 'exl',
 		];
 
 		if ( isset( $prefixes[$table] ) ) {
@@ -271,8 +264,17 @@ class BacklinkCache {
 	 * @return SelectQueryBuilder
 	 */
 	private function initQueryBuilderForTable( string $table, string $select ): SelectQueryBuilder {
+		$domainMap = [
+			'categorylinks' => CategoryLinksTable::VIRTUAL_DOMAIN,
+			'existencelinks' => ExistenceLinksTable::VIRTUAL_DOMAIN,
+			'imagelinks' => ImageLinksTable::VIRTUAL_DOMAIN,
+			'pagelinks' => PageLinksTable::VIRTUAL_DOMAIN,
+			'templatelinks' => TemplateLinksTable::VIRTUAL_DOMAIN,
+		];
+		$domain = $domainMap[$table] ?? false;
+
 		$prefix = $this->getPrefix( $table );
-		$queryBuilder = $this->getDB()->newSelectQueryBuilder();
+		$queryBuilder = $this->dbProvider->getReplicaDatabase( $domain )->newSelectQueryBuilder();
 		$joinPageTable = $select !== 'ids';
 
 		if ( $select === 'ids' ) {
@@ -295,6 +297,8 @@ class BacklinkCache {
 		switch ( $table ) {
 			case 'pagelinks':
 			case 'templatelinks':
+			case 'categorylinks':
+			case 'existencelinks':
 				$queryBuilder->where(
 					$this->linksMigration->getLinksConditions( $table, TitleValue::newFromPage( $this->page ) )
 				);
@@ -307,7 +311,6 @@ class BacklinkCache {
 				] );
 				break;
 			case 'imagelinks':
-			case 'categorylinks':
 				$queryBuilder->where( [
 					"{$prefix}_to" => $this->page->getDBkey(),
 				] );
@@ -535,47 +538,59 @@ class BacklinkCache {
 	 * @return stdClass[]
 	 */
 	private function getCascadeProtectedLinksInternal(): array {
-		$dbr = $this->getDB();
+		$cascadePages = $this->getDB()->newSelectQueryBuilder()
+			->select( [ 'page_id', 'page_namespace', 'page_title' ] )
+			->from( 'page' )
+			->join( 'page_restrictions', null, 'page_id = pr_page' )
+			->where( [ 'pr_cascade' => 1 ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
-		// @todo: use UNION without breaking tests that use temp tables
-		$resSets = [];
+		if ( !$cascadePages->numRows() ) {
+			return [];
+		}
+
+		$cascadePagesById = [];
+		foreach ( $cascadePages as $row ) {
+			$cascadePagesById[$row->page_id] = $row;
+		}
+
 		$linkConds = $this->linksMigration->getLinksConditions(
 			'templatelinks', TitleValue::newFromPage( $this->page )
 		);
-		$resSets[] = $dbr->newSelectQueryBuilder()
-			->select( [ 'page_namespace', 'page_title', 'page_id' ] )
+		$templatelinkPages = $this->getDB( TemplateLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
+			->select( 'tl_from' )
 			->from( 'templatelinks' )
-			->join( 'page_restrictions', null, 'tl_from = pr_page' )
-			->join( 'page', null, 'page_id = tl_from' )
 			->where( $linkConds )
-			->andWhere( [ 'pr_cascade' => 1 ] )
-			->distinct()
-			->caller( __METHOD__ )->fetchResultSet();
-		if ( $this->page->getNamespace() === NS_FILE ) {
-			$resSets[] = $dbr->newSelectQueryBuilder()
-				->select( [ 'page_namespace', 'page_title', 'page_id' ] )
-				->from( 'imagelinks' )
-				->join( 'page_restrictions', null, 'il_from = pr_page' )
-				->join( 'page', null, 'page_id = il_from' )
-				->where( [
-					'il_to' => $this->page->getDBkey(),
-					'pr_cascade' => 1,
-				] )
-				->distinct()
-				->caller( __METHOD__ )->fetchResultSet();
+			->andWhere( [ 'tl_from' => array_keys( $cascadePagesById ) ] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
+
+		$result = [];
+		foreach ( $templatelinkPages as $pageId ) {
+			$result[] = $cascadePagesById[$pageId];
 		}
 
-		// Combine and de-duplicate the results
-		$mergedRes = [];
-		foreach ( $resSets as $res ) {
-			foreach ( $res as $row ) {
-				// Index by page_id to remove duplicates
-				$mergedRes[$row->page_id] = $row;
+		if ( $this->page->getNamespace() === NS_FILE ) {
+			$imagelinkPages = $this->getDB( ImageLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
+				->select( 'il_from' )
+				->from( 'imagelinks' )
+				->where( [
+					'il_from' => array_keys( $cascadePagesById ),
+					'il_to' => $this->page->getDBkey()
+				] )
+				->caller( __METHOD__ )
+				->fetchFieldValues();
+
+			foreach ( $imagelinkPages as $pageId ) {
+				if ( !isset( $cascadePagesById[$pageId] ) ) {
+					continue;
+				}
+				$result[] = $cascadePagesById[$pageId];
 			}
 		}
 
-		// Now that we've de-duplicated, throw away the keys
-		return array_values( $mergedRes );
+		return $result;
 	}
 }
 

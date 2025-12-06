@@ -19,11 +19,9 @@
  * @param {Object} [config.actionGroups] Toolbar groups, defaults to this.constructor.static.actionGroups
  * @param {string[]} [config.modes] Available editing modes. Defaults to static.modes
  * @param {string} [config.defaultMode] Default mode for new surfaces. Must be in this.modes and defaults to first item.
- * @param {boolean} [register=true] Register the target at ve.init.target
+ * @param {boolean} [config.register=true] Register the target at ve.init.target
  */
-ve.init.Target = function VeInitTarget( config ) {
-	config = config || {};
-
+ve.init.Target = function VeInitTarget( config = {} ) {
 	// Parent constructor
 	ve.init.Target.super.call( this, config );
 
@@ -158,6 +156,7 @@ ve.init.Target.static.toolbarGroups = [
 		name: 'pageMenu',
 		type: 'list',
 		align: 'after',
+		excludeFromTargetWidget: true,
 		icon: 'menu',
 		indicator: null,
 		header: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
@@ -229,7 +228,7 @@ ve.init.Target.static.enforceResizesContent = false;
  *
  * One set for external (non-VE) paste sources and one for all paste sources.
  *
- * Most rules are handled in ve.dm.ElementLinearData#sanitize, but htmlBlacklist
+ * Most rules are handled in ve.dm.LinearData#sanitize, but htmlBlacklist
  * is handled in ve.ce.Surface#afterPaste.
  *
  * @type {Object}
@@ -452,8 +451,7 @@ ve.init.Target.prototype.getScrollContainer = function () {
  * Handle scroll container scroll events
  */
 ve.init.Target.prototype.onContainerScroll = function () {
-	// Don't use getter as it creates the toolbar
-	const toolbar = this.toolbar;
+	const toolbar = this.getToolbar();
 
 	if ( toolbar && toolbar.isFloatable() ) {
 		const wasFloating = toolbar.isFloating();
@@ -537,9 +535,22 @@ ve.init.Target.prototype.onToolbarResize = function () {
 	if ( !this.getSurface() ) {
 		return;
 	}
-	this.getSurface().setPadding( {
-		top: this.getToolbar().getHeight() + this.toolbarScrollOffset
-	} );
+	this.getSurface().getView().emit( 'position', true );
+};
+
+/**
+ * Get an object describing the amount of padding the toolbar adds to the surface.
+ *
+ * @return {ve.ui.Surface.Padding|null} Padding object, or null
+ */
+ve.init.Target.prototype.getToolbarSurfacePadding = function () {
+	const toolbar = this.getToolbar();
+	if ( !toolbar ) {
+		return null;
+	}
+	return {
+		top: toolbar.getHeight() + this.toolbarScrollOffset
+	};
 };
 
 /**
@@ -548,9 +559,9 @@ ve.init.Target.prototype.onToolbarResize = function () {
  * @param {Object} [config] Configuration options
  * @return {ve.ui.TargetWidget}
  */
-ve.init.Target.prototype.createTargetWidget = function ( config ) {
+ve.init.Target.prototype.createTargetWidget = function ( config = {} ) {
 	return new ve.ui.TargetWidget( ve.extendObject( {
-		toolbarGroups: this.toolbarGroups
+		toolbarGroups: this.toolbarGroups.filter( ( group ) => !group.excludeFromTargetWidget )
 	}, config ) );
 };
 
@@ -561,7 +572,7 @@ ve.init.Target.prototype.createTargetWidget = function ( config ) {
  * @param {Object} [config] Configuration options
  * @return {ve.ui.Surface}
  */
-ve.init.Target.prototype.createSurface = function ( dmDocOrSurface, config ) {
+ve.init.Target.prototype.createSurface = function ( dmDocOrSurface, config = {} ) {
 	return new ve.ui.Surface( this, dmDocOrSurface, this.getSurfaceConfig( config ) );
 };
 
@@ -571,7 +582,7 @@ ve.init.Target.prototype.createSurface = function ( dmDocOrSurface, config ) {
  * @param {Object} config Configuration option overrides
  * @return {Object} Surface configuration options
  */
-ve.init.Target.prototype.getSurfaceConfig = function ( config ) {
+ve.init.Target.prototype.getSurfaceConfig = function ( config = {} ) {
 	return ve.extendObject( {
 		$scrollContainer: this.$scrollContainer,
 		$scrollListener: this.$scrollListener,
@@ -596,7 +607,7 @@ ve.init.Target.prototype.getSurfaceConfig = function ( config ) {
  * @param {Object} [config] Configuration options
  * @return {ve.ui.Surface}
  */
-ve.init.Target.prototype.addSurface = function ( dmDocOrSurface, config ) {
+ve.init.Target.prototype.addSurface = function ( dmDocOrSurface, config = {} ) {
 	const surface = this.createSurface( dmDocOrSurface, ve.extendObject( { mode: this.getDefaultMode() }, config ) );
 	this.surfaces.push( surface );
 	surface.getView().connect( this, {
@@ -664,14 +675,11 @@ ve.init.Target.prototype.getSurface = function () {
 };
 
 /**
- * Get the target's toolbar
+ * Get the target's toolbar, if it exists
  *
- * @return {ve.ui.TargetToolbar} Toolbar
+ * @return {ve.ui.TargetToolbar|null}
  */
 ve.init.Target.prototype.getToolbar = function () {
-	if ( !this.toolbar ) {
-		this.toolbar = new ve.ui.PositionedTargetToolbar( this, this.toolbarConfig );
-	}
 	return this.toolbar;
 };
 
@@ -691,36 +699,48 @@ ve.init.Target.prototype.getActions = function () {
 };
 
 /**
- * Set up the toolbar, attaching it to a surface.
+ * Set up the toolbar if it doesn't exist, and attach it to a surface
  *
- * @param {ve.ui.Surface} surface
+ * If the toolbar already exists it can still be attached
+ * to another surface.
+ *
+ * @param {ve.ui.Surface} newSurface
  */
-ve.init.Target.prototype.setupToolbar = function ( surface ) {
-	const toolbar = this.getToolbar();
-	if ( this.actionGroups.length ) {
-		// Backwards-compatibility
-		if ( !this.actionsToolbar ) {
-			this.actionsToolbar = this.getToolbar();
+ve.init.Target.prototype.setupToolbar = function ( newSurface ) {
+	// Create toolbar if it doesn't exist
+	if ( !this.toolbar ) {
+		const toolbar = this.toolbar = new ve.ui.PositionedTargetToolbar( this, this.toolbarConfig );
+		if ( this.actionGroups.length ) {
+			// Backwards-compatibility
+			if ( !this.actionsToolbar ) {
+				this.actionsToolbar = this.getToolbar();
+			}
 		}
-	}
 
-	if ( this.constructor.static.enforceResizesContent ) {
-		this.toggleResizesContent( true );
-	}
+		if ( this.constructor.static.enforceResizesContent ) {
+			this.toggleResizesContent( true );
+		}
 
-	toolbar.connect( this, {
-		resize: 'onToolbarResize',
-		active: 'onToolbarActive'
-	} );
+		toolbar.connect( this, {
+			resize: 'onToolbarResize',
+			active: 'onToolbarActive'
+		} );
 
-	if ( surface.nullSelectionOnBlur ) {
 		toolbar.$element
 			.on( 'focusin', () => {
+				const surface = toolbar.getSurface();
+				if ( !surface || !surface.nullSelectionOnBlur ) {
+					return;
+				}
 				// When the focus moves to the toolbar, deactivate the surface but keep the selection (even if
 				// nullSelectionOnBlur is true), to allow tools to act on that selection.
 				surface.getView().deactivate( /* showAsActivated= */ true );
 			} )
 			.on( 'focusout', ( e ) => {
+				const surface = toolbar.getSurface();
+				if ( !surface || !surface.nullSelectionOnBlur ) {
+					return;
+				}
 				const newFocusedElement = e.relatedTarget;
 				if ( !OO.ui.contains( [ toolbar.$element[ 0 ], toolbar.$overlay[ 0 ] ], newFocusedElement, true ) ) {
 					// When the focus moves out of the toolbar:
@@ -742,12 +762,13 @@ ve.init.Target.prototype.setupToolbar = function ( surface ) {
 			} );
 	}
 
+	// Connect to surface
 	this.actionGroups.forEach( ( group ) => {
 		group.align = 'after';
 	} );
 	const groups = [ ...this.toolbarGroups, ...this.actionGroups ];
 
-	toolbar.setup( groups, surface );
+	this.toolbar.setup( groups, newSurface );
 	this.attachToolbar();
 	requestAnimationFrame( this.onContainerScrollHandler );
 };

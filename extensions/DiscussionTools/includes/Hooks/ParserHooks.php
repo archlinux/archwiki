@@ -11,6 +11,7 @@ namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigFactory;
+use MediaWiki\Extension\DiscussionTools\BatchModifyElements;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
 use MediaWiki\Hook\GetDoubleUnderscoreIDsHook;
 use MediaWiki\Hook\ParserAfterTidyHook;
@@ -70,7 +71,9 @@ class ParserHooks implements
 			CommentFormatter::addDiscussionTools( $html, $pout, $title );
 
 			if ( $isPreview ) {
-				$html = CommentFormatter::removeInteractiveTools( $html );
+				$batchModifyElements = new BatchModifyElements();
+				CommentFormatter::removeInteractiveTools( $batchModifyElements );
+				$html = $batchModifyElements->apply( $html );
 				// Suppress the empty state
 				$pout->setExtensionData( 'DiscussionTools-isEmptyTalkPage', null );
 			}
@@ -107,7 +110,7 @@ class ParserHooks implements
 	 */
 	public function onParserAfterTidy( $parser, &$text ) {
 		$pOpts = $parser->getOptions();
-		if ( $pOpts->getInterfaceMessage() ) {
+		if ( $pOpts->isMessage() ) {
 			return;
 		}
 

@@ -8,9 +8,8 @@ ace:
   src: https://codeload.github.com/ajaxorg/ace-builds/tar.gz/v1.39.1
   integrity: sha384-H7Ib7B2/OYIfQJ97NgYu7dUPfbzoIeTwBkFkival//AiXJ0S7OGMYSASFw2JVHvE
   dest:
-    ace-builds-*/CHANGELOG.md:
-    ace-builds-*/LICENSE:
-    ace-builds-*/README.md:
-    ace-builds-*/src-noconflict/*.js:
-    ace-builds-*/src-noconflict/snippets/:
-
+    ace-builds-*/CHANGELOG.md: .
+    ace-builds-*/LICENSE: .
+    ace-builds-*/README.md: .
+    ace-builds-*/src-noconflict/*.js: .
+    ace-builds-*/src-noconflict/snippets: .

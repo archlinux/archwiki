@@ -122,7 +122,7 @@ class SpecialPageBeforeExecuteHandlerTest extends MediaWikiIntegrationTestCase {
 		yield 'request with no params' => [
 			[],
 			'GlobalContributions',
-			'https://meta.example.org/wiki/Special:GlobalContributions'
+			'https://meta.example.org/wiki/Special:GlobalContributions',
 		];
 
 		yield 'request with target' => [
@@ -134,13 +134,13 @@ class SpecialPageBeforeExecuteHandlerTest extends MediaWikiIntegrationTestCase {
 		yield 'request with superfluous title parameter' => [
 			[ 'target' => '127.0.0.1', 'title' => 'Special:GlobalContributions' ],
 			'GlobalContributions',
-			'https://meta.example.org/wiki/Special:GlobalContributions?target=127.0.0.1'
+			'https://meta.example.org/wiki/Special:GlobalContributions?target=127.0.0.1',
 		];
 
 		yield 'request with target set in subpage' => [
 			[],
 			'GlobalContributions/127.0.0.1',
-			'https://meta.example.org/wiki/Special:GlobalContributions/127.0.0.1'
+			'https://meta.example.org/wiki/Special:GlobalContributions/127.0.0.1',
 		];
 	}
 }

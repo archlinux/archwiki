@@ -1,25 +1,10 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Testing
  */
 
-use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\DeferredUpdatesScopeMediaWikiStack;
@@ -29,7 +14,6 @@ use MediaWiki\Logger\NullSpi;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
-use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Services\NoSuchServiceException;
@@ -51,6 +35,8 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 	private static $originalGlobals;
 	/** @var array */
 	private static $unitGlobals;
+	/** @var \MediaWiki\Logger\Spi */
+	private static $originalSpi;
 
 	private ?MediaWikiServices $serviceContainer = null;
 
@@ -121,26 +107,12 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 		MediaWikiServices::disallowGlobalInstanceInUnitTests();
 		ExtensionRegistry::disableForTest();
 		SettingsBuilder::disableAccessForUnitTests();
-	}
 
-	/**
-	 * @inheritDoc
-	 */
-	protected function runTest() {
-		try {
-			// Don't let LoggerFactory::getProvider() access globals or other things we don't want.
-			LoggerFactory::registerProvider( ObjectFactory::getObjectFromSpec( [
-				'class' => NullSpi::class
-			] ) );
-			return parent::runTest();
-		} catch ( ConfigException $exception ) {
-			throw new Exception(
-				'Config variables must be mocked, they cannot be accessed directly in tests which extend '
-				. self::class,
-				$exception->getCode(),
-				$exception
-			);
-		}
+		// Don't let LoggerFactory::getProvider() access globals or other things we don't want.
+		self::$originalSpi = LoggerFactory::getProvider();
+		LoggerFactory::registerProvider( ObjectFactory::getObjectFromSpec( [
+			'class' => NullSpi::class
+		] ) );
 	}
 
 	/**
@@ -180,6 +152,7 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 		DeferredUpdates::setScopeStack( new DeferredUpdatesScopeMediaWikiStack() );
 		ExtensionRegistry::enableForTest();
 		SettingsBuilder::enableAccessAfterUnitTests();
+		LoggerFactory::registerProvider( self::$originalSpi );
 	}
 
 	/**

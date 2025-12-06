@@ -2,19 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"122112ê",
+			"AmazingJus",
 			"Protostar"
 		]
 	},
-	"mobile-frontend-editor-edit": "Èdit",
+	"mobile-frontend-editor-edit": "Ɛdit",
 	"mobile-frontend-history": "Luk di ɛdit istri fɔ dis pej.",
 	"mobile-frontend-home-button": "Om",
 	"mobile-frontend-language-article-heading": "Langwej",
-	"mobile-frontend-main-menu-button-tooltip": "Opin men mènu",
+	"mobile-frontend-main-menu-button-tooltip": "Opin di men mɛnyu",
 	"mobile-frontend-main-menu-login": "Lɔgin",
 	"mobile-frontend-main-menu-nearby": "Nia",
-	"mobile-frontend-main-menu-settings": "Sɛtindɛm",
+	"mobile-frontend-main-menu-settings": "Sɛtin dɛn",
 	"mobile-frontend-main-menu-watchlist": "Wachlist",
-	"mobile-frontend-pageaction-edit-tooltip": "Èdit dhis pejim tòp sèkshòn.",
-	"mobile-frontend-placeholder": "Sach {{SITENAME}}",
-	"mobile-frontend-random-button": "Randɔm"
+	"mobile-frontend-placeholder": "Sɔch {{SITENAME}}",
+	"mobile-frontend-random-button": "Randɔm",
+	"minerva-page-actions-overflow": "Mɔ"
 }

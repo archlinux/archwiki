@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
 	"oathauth-desc": "Omogućuje autentifikaciju korisnika pomoću HMAC-a na temelju jednokratnih lozinki",
@@ -13,12 +13,12 @@
 	"oathauth-secret": "Tajni ključ za dvofaktorsku autentifikaciju:",
 	"oathauth-enable": "Omogućavanje dvofaktorske autentifikacije",
 	"oathauth-recoverycodes": "Ovo je spisak jednokratnih žetona. Mogu se koristiti samo jednom i poslužiti za nepredviđene slučajeve. Zapišite ih i čuvajte na sigurnom mjestu. Ako izgubite telefon, žetoni su jedini način za povratak računa. '''Ovi žetoni se više nikada neće prikazati.'''",
+	"oathauth-failedtovalidateoath": "Nisam uspio potvrditi dvofaktorske akreditive",
 	"oathauth-disable": "Onemogućavanje dvofaktorske autentifikacije",
 	"oathauth-validatedoath": "Ovjereno je dvofaktorsko punomoćje. Sada stupa na snagu.",
 	"oathauth-noscratchforvalidation": "Ne možete koristiti pričuvni kod za potvrđivanje dvofaktorske autentifikacije. Ovi kodovi su slobodni i imaju isključivo namjensku upotrebu. Poslužite s kodom iz Vašeg generatora koda.",
-	"oathauth-failedtovalidateoath": "Nisam uspio potvrditi dvofaktorske akreditive",
 	"oathauth-disabledoath": "Onemogućena dvofaktorska autentifikacija.",
-	"oathauth-prefs-label": "Dvofaktorska autentifikacija:",
+	"oathauth-prefs-label": "Dvofaktorska autentifikacija",
 	"oathauth-step1": "1. korak: Preuzmite program za dvofaktorsku autentifikaciju",
 	"oathauth-step1-test": "Preuzmite program za dvofaktorsku autentifikaciju. To može biti prilog za mobilne uređaje (kao što je Google Authenticator) ili prilog za računare.",
 	"oathauth-step2": "2. korak: Skenirajte QR kôd",
@@ -43,6 +43,7 @@
 	"action-oathauth-enable": "omogućavanje dvofaktorske autentifikacije",
 	"oathauth-auth-token-label": "Dvofaktorski žeton ili kod za oporavak",
 	"oathauth-auth-token-help": "Jednokratna lozinka koja služi kao drugi faktor u dvofaktorskoj autentifikaciji.",
+	"oathauth-auth-recovery-code-label": "Kodovi za oporavak",
 	"oathauth-auth-ui": "Unesite kod iz aplikacije za dvofaktorsku potvrdu identiteta (kao što je [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] ili [https://1password.com/ 1Password]).",
 	"oathauth-throttled": "Napravili ste previše pokušaja potvrde! Sačekajte $1.",
 	"oathauth-login-failed": "Potvrda nije uspjela.",
@@ -59,7 +60,8 @@
 	"log-action-filter-oath": "Vrsta operacije dvofaktorske autentifikacije:",
 	"oathauth-ui-no-module": "Nije uključena",
 	"oathauth-module-totp-label": "TOTP (jednokratni žeton)",
-	"oathauth-ui-manage": "Upravljaj",
+	"oathauth-module-recoverycodes-label": "Kodovi za oporavak",
+	"oathauth-ui-manage": "Upravljaj autentifikacijom",
 	"oathmanage": "Upravljanje dvofaktorskom autentifikacijom",
 	"oathauth-ui-not-enabled-modules": "Prebaci se na alternativnu metodu",
 	"oathauth-ui-enabled-module": "Omogućena metoda autentifikacije",
@@ -72,11 +74,10 @@
 	"oathauth-ui-available-modules": "Raspoložive metode",
 	"oathauth-ui-general-help": "'''Multifaktorska autentifikacija''' ('''MFA''') metoda je za ovlašćavanje kojom se korisniku omogućava pristup tek nakon uspješnog unosa dva ili više potvrdnih dijelova (ili faktora) ovlastitelju: saznanje (ono što zna samo taj korisnik), vlasništvo (ono što posjeduje samo taj korisnik) i pripadanje (ono što je samo taj korisnik). [https://en.wikipedia.org/wiki/Multi-factor_authentication Pročitajte više]",
 	"oathauth-totp-description": "Jednokratni algoritam zasnovan na vremenu (TOTP) proširenje je algoritma zasnovanog na HMAC-u (HOTP) i generira jednokratnu lozinku uzimajući jedinstvenost trenutnog vremena.",
-	"oathauth-disable-method-warning-header": "Potvrda onemogućavanja metoda autentifikacije",
-	"oathauth-disable-method-warning-button-label": "Potvrdi i nastavi",
 	"oathauth-disable-method-warning": "Ako onemogućite dvofaktorsku autentifikaciju $1, više nećete biti u mogućnosti koristiti tu metodu pri prijavljivanju, a svi će podaci povezani sa njoj biti izbrisani.",
 	"oathauth-totp-disable-warning": "Više nećete moći koristiti uređaj za autentifikaciju registrovan ovim računom. Svi pričuvni žetoni povezani sa njim biće proglašeni nevažećim.",
 	"oathauth-invalidrequest": "Nevažeći zahtjev",
 	"oathauth-notifications-disable-help": "Pomoć",
-	"oathauth-notifications-enable-help": "Pomoć"
+	"oathauth-notifications-enable-help": "Pomoć",
+	"group-oathauth-twofactorauth": "Korisnici s dvofaktorskom autentifikacijom"
 }

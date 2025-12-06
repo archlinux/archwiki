@@ -7,6 +7,7 @@
 			"H78c67c",
 			"Hello903hello",
 			"Jdforrester",
+			"JeffreyKim",
 			"Ktchankt",
 			"Moon0319",
 			"Roy17",
@@ -14,8 +15,7 @@
 			"William915",
 			"Winston Sung",
 			"Yueman",
-			"捍粵者",
-			"JeffreyKim"
+			"捍粵者"
 		]
 	},
 	"collabpad-doctitle": "協作板：$1",
@@ -257,6 +257,7 @@
 	"visualeditor-includes-includeonly-description": "當呢個頁面嘅內容畀另一個頁面使用嗰陣，呢度會包括以下額外內容：",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion 了解多啲有關部分轉錄嘅資訊]",
 	"visualeditor-languages-tool": "話",
+	"visualeditor-linkcontext-uneditable": "唔好意思，呢個連結暫時淨係可以喺源碼模式下編輯。",
 	"visualeditor-linkinspector-button-link-external": "外部網站",
 	"visualeditor-linkinspector-button-link-internal": "搵內部版",
 	"visualeditor-linkinspector-convert-link-isbn": "轉做ISBN連結",

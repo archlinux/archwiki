@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abshirdheere",
 			"Brian Wolff",
 			"Liuxinyu970226",
 			"Mar(c)",
 			"Mormegil",
 			"Niharika",
-			"Verdy p",
-			"Abshirdheere"
+			"Verdy p"
 		]
 	},
 	"loginnotify-desc": "{{desc|name=LoginNotify|url=https://www.mediawiki.org/wiki/Extension:LoginNotify}}",

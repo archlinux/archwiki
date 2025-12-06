@@ -33,6 +33,7 @@
 	"nuke-not-deleted": "D'Säit [[:$1]] '''konnt net''' geläscht ginn.",
 	"nuke-skipped-summary": "{{PLURAL:$1|'''Eng Säit''' gouf|'''$1 Säite''' goufen}} net ausgewielt fir geläscht ze ginn.",
 	"nuke-delete-more": "[[Special:Nuke|Méi Säite läschen]]",
+	"nuke-deletemore": "Méi Säite läschen",
 	"nuke-pattern": "SQL-LIKE-Muster (z.&nbsp;B. %) fir de Säitennumm:",
 	"nuke-nopages-global": "Keng Säiten entspriechen der Sich.",
 	"nuke-searchnotice-minmorethanmax": "Déi minimal Gréisst a Byte ass méi grouss wéi déi maximal Gréisst a Byte, esou datt keng Säit déi Krittären erfëlle kann.",
@@ -41,6 +42,7 @@
 	"nuke-noselected": "Fir virunzefueren, wielt Säiten aus, déi an d'Waardeschlaang fir geläscht ze gi kommen.",
 	"nuke-viewchanges": "Versiounen",
 	"nuke-namespace": "Op dës Nummraim limitéieren:",
+	"nuke-namespace-invalid": "Dësen Nummraum ass ongülteg. Wielt wgl. nëmmen Optiounen aus dem Menü.",
 	"nuke-linkoncontribs": "Masseläschungen",
 	"nuke-linkoncontribs-text": "All Säiten zesummeläsche  wou {{GENDER:$1|dëse Benotzer}} den eenzegen Auteur ass",
 	"tag-nuke": "Nuke"

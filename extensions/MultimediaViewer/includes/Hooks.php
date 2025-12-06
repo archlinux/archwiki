@@ -51,26 +51,12 @@ class Hooks implements
 	ResourceLoaderGetConfigVarsHook,
 	ThumbnailBeforeProduceHTMLHook
 {
-	private Config $config;
-	private SpecialPageFactory $specialPageFactory;
-	private UserOptionsLookup $userOptionsLookup;
-	private ?MobileContext $mobileContext;
-
-	/**
-	 * @param Config $config
-	 * @param SpecialPageFactory $specialPageFactory
-	 * @param UserOptionsLookup $userOptionsLookup
-	 */
 	public function __construct(
-		Config $config,
-		SpecialPageFactory $specialPageFactory,
-		UserOptionsLookup $userOptionsLookup,
-		?MobileContext $mobileContext
+		private readonly Config $config,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly ?MobileContext $mobileContext,
 	) {
-		$this->config = $config;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->mobileContext = $mobileContext;
 	}
 
 	/**

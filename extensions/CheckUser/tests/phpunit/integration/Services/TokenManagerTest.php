@@ -40,7 +40,7 @@ class TokenManagerTest extends MediaWikiIntegrationTestCase {
 		] );
 
 		$encoded = $tokenManager->encode( $request->getSession(), [
-			'targets' => $targets
+			'targets' => $targets,
 		] );
 
 		$decoded = $tokenManager->decode( $request->getSession(), $encoded );

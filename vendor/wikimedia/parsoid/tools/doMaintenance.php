@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 /**
  * We want to make this whole thing as seamless as possible to the
  * end-user. Unfortunately, we can't do _all_ of the work in the class
@@ -45,10 +46,6 @@ $maintenance = new $maintClass();
 $maintenance->setup();
 
 $maintenance->finalSetup();
-
-// Set an appropriate locale (T291234)
-// Matches core's Setup.php
-putenv( "LC_ALL=" . setlocale( LC_ALL, 'C.UTF-8', 'C' ) );
 
 $maintenance->validateParamsAndArgs();
 

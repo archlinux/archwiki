@@ -7,13 +7,9 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
+use Wikimedia\Message\ListType;
 
 abstract class GadgetRepo {
-
-	/**
-	 * @var GadgetRepo|null
-	 */
-	private static $instance;
 
 	/** @internal */
 	public const RESOURCE_TITLE_PREFIX = 'MediaWiki:Gadget-';
@@ -70,7 +66,7 @@ abstract class GadgetRepo {
 		foreach ( $this->getGadgetIds() as $id ) {
 			try {
 				$gadget = $this->getGadget( $id );
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 				continue;
 			}
 			$list[$gadget->getSection()][$gadget->getName()] = $gadget;
@@ -120,7 +116,7 @@ abstract class GadgetRepo {
 				if ( $peerGadget->getType() !== 'styles' ) {
 					$warnings[] = wfMessage( "gadgets-validate-invalidpeer", $peer );
 				}
-			} catch ( InvalidArgumentException $ex ) {
+			} catch ( InvalidArgumentException ) {
 				$warnings[] = wfMessage( "gadgets-validate-nopeer", $peer );
 			}
 		}
@@ -242,33 +238,8 @@ abstract class GadgetRepo {
 		}
 		if ( $invalidEntries ) {
 			$warnings[] = wfMessage( $message,
-				Message::listParam( $invalidEntries, 'comma' ),
+				Message::listParam( $invalidEntries, ListType::COMMA ),
 				count( $invalidEntries ) );
 		}
-	}
-
-	/**
-	 * Get the configured default GadgetRepo.
-	 *
-	 * @deprecated Use the GadgetsRepo service instead
-	 * @return GadgetRepo
-	 */
-	public static function singleton() {
-		wfDeprecated( __METHOD__, '1.42' );
-		if ( self::$instance === null ) {
-			return MediaWikiServices::getInstance()->getService( 'GadgetsRepo' );
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * Should only be used by unit tests
-	 *
-	 * @deprecated Use the GadgetsRepo service instead
-	 * @param GadgetRepo|null $repo
-	 */
-	public static function setSingleton( $repo = null ) {
-		wfDeprecated( __METHOD__, '1.42' );
-		self::$instance = $repo;
 	}
 }

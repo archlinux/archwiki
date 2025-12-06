@@ -79,7 +79,7 @@ mw.libs.ve.EditingTabDialog.prototype.getActionProcess = function ( action ) {
 			this.pushPending();
 
 			// Same as ve.init.target.getLocalApi()
-			new mw.Api().saveOption( 'visualeditor-tabs', action ).done( () => {
+			new mw.Api().saveOption( 'visualeditor-tabs', action ).then( () => {
 				actionWidget.popPending();
 				mw.user.options.set( 'visualeditor-tabs', action );
 				this.close( { action: action } );

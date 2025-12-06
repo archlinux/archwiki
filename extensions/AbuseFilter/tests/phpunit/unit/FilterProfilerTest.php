@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use TestLogger;
 use Wikimedia\ObjectCache\HashBagOStuff;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\NullStatsdDataFactory;
 use Wikimedia\WRStats\BagOStuffStatsStore;
 use Wikimedia\WRStats\WRStatsFactory;
 
@@ -43,7 +43,7 @@ class FilterProfilerTest extends MediaWikiUnitTestCase {
 			new WRStatsFactory( new BagOStuffStatsStore( new HashBagOStuff() ) ),
 			new ServiceOptions( FilterProfiler::CONSTRUCTOR_OPTIONS, $options ),
 			'wiki',
-			$this->createMock( IBufferingStatsdDataFactory::class ),
+			new NullStatsdDataFactory(),
 			$logger ?: new NullLogger()
 		);
 	}

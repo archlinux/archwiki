@@ -2,20 +2,7 @@
 /**
  * User interface for the difference engine.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  *
  * @file
  * @ingroup DifferenceEngine
@@ -44,6 +31,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\RecentChanges\ChangesList;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\BadRevisionException;
 use MediaWiki\Revision\RevisionRecord;
@@ -258,6 +246,7 @@ class DifferenceEngine extends ContextSource {
 	private UserGroupManager $userGroupManager;
 	private UserEditTracker $userEditTracker;
 	private UserIdentityUtils $userIdentityUtils;
+	private RecentChangeLookup $recentChangeLookup;
 
 	/** @var Message[] */
 	private $revisionLoadErrors = [];
@@ -297,6 +286,7 @@ class DifferenceEngine extends ContextSource {
 		$this->userGroupManager = $services->getUserGroupManager();
 		$this->userEditTracker = $services->getUserEditTracker();
 		$this->userIdentityUtils = $services->getUserIdentityUtils();
+		$this->recentChangeLookup = $services->getRecentChangeLookup();
 	}
 
 	/**
@@ -408,7 +398,7 @@ class DifferenceEngine extends ContextSource {
 		}
 		try {
 			return $slot->getContent();
-		} catch ( BadRevisionException $e ) {
+		} catch ( BadRevisionException ) {
 			$this->addRevisionLoadError( $which );
 			return null;
 		}
@@ -613,18 +603,6 @@ class DifferenceEngine extends ContextSource {
 	}
 
 	/**
-	 * Get the permission errors associated with the revisions for the current diff.
-	 *
-	 * @deprecated since 1.44 Use authorizeView() instead
-	 * @param Authority $performer
-	 * @return array[] Array of arrays of the arguments to wfMessage to explain permissions problems.
-	 */
-	public function getPermissionErrors( Authority $performer ) {
-		wfDeprecated( __METHOD__, '1.44' );
-		return $this->authorizeView( $performer )->toLegacyErrorArray();
-	}
-
-	/**
 	 * Check whether the user can read both of the pages for the current diff.
 	 *
 	 * This does not check access to deleted revisions, use isUserAllowedToSeeRevisions() for that.
@@ -801,6 +779,7 @@ class DifferenceEngine extends ContextSource {
 
 		$revisionTools = [];
 		$breadCrumbs = '';
+		$newMobileFooter = '';
 
 		# mOldRevisionRecord is false if the difference engine is called with a "vague" query for
 		# a diff between a version V and its previous version V' AND the version V
@@ -847,6 +826,7 @@ class DifferenceEngine extends ContextSource {
 					if ( $rollbackLink ) {
 						$out->getMetadata()->setPreventClickjacking( true );
 						$rollback = "\u{00A0}\u{00A0}\u{00A0}" . $rollbackLink;
+						$newMobileFooter .= $rollback;
 					}
 				}
 
@@ -978,6 +958,7 @@ class DifferenceEngine extends ContextSource {
 				$tool
 			);
 			$formattedRevisionTools[] = $element;
+			$newMobileFooter .= $element;
 		}
 
 		$newRevRecord = $this->mNewRevisionRecord;
@@ -993,6 +974,9 @@ class DifferenceEngine extends ContextSource {
 			$defaultComment = $this->msg( 'changeslist-nocomment' )->escaped();
 			$newRevComment = "<span class=\"comment mw-comment-none\">$defaultComment</span>";
 		}
+
+		$newMobileFooter .= Linker::revUserTools( $newRevRecord, !$this->unhide ) .
+			$this->getUserMetaData( $newRevRecord->getUser() );
 
 		$newHeader = '<div id="mw-diff-ntitle1"><strong>' . $newRevisionHeader . '</strong></div>' .
 			'<div id="mw-diff-ntitle2">' . Linker::revUserTools( $newRevRecord, !$this->unhide ) .
@@ -1012,6 +996,12 @@ class DifferenceEngine extends ContextSource {
 			Html::rawElement( 'div', [
 				'class' => 'mw-diff-revision-history-links'
 			], $breadCrumbs )
+		);
+
+		$out->addHTML(
+			Html::rawElement( 'div', [
+				'class' => 'mw-diff-mobile-footer'
+			], $newMobileFooter )
 		);
 		$addMessageBoxStyles = false;
 		# If the diff cannot be shown due to a deleted revision, then output
@@ -1152,7 +1142,7 @@ class DifferenceEngine extends ContextSource {
 			RecentChange::isInRCLifespan( $this->mNewRevisionRecord->getTimestamp(), 21600 )
 		) {
 			// Look for an unpatrolled change corresponding to this diff
-			$change = RecentChange::newFromConds(
+			$change = $this->recentChangeLookup->getRecentChangeByConds(
 				[
 					'rc_this_oldid' => $this->mNewid,
 					'rc_patrolled' => RecentChange::PRC_UNPATROLLED
@@ -1520,7 +1510,6 @@ class DifferenceEngine extends ContextSource {
 	 *
 	 * @param string $headerText The text of the header
 	 * @return string
-	 *
 	 */
 	protected function getSlotHeader( $headerText ) {
 		// The old revision is missing on oldid=<first>&diff=prev; only 2 columns in that case.
@@ -1854,7 +1843,7 @@ class DifferenceEngine extends ContextSource {
 				if ( $numUsers == 1 && $users[0]->getName() == $newRevUserText ) {
 					$numUsers = 0; // special case to say "by the same user" instead of "by one other user"
 				}
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 				$numUsers = 0;
 			}
 
@@ -2264,7 +2253,7 @@ class DifferenceEngine extends ContextSource {
 			foreach ( $tagIds as $tagId ) {
 				try {
 					$tags[] = $changeTagDefStore->getName( (int)$tagId );
-				} catch ( NameTableAccessException $exception ) {
+				} catch ( NameTableAccessException ) {
 					continue;
 				}
 			}
@@ -2282,7 +2271,7 @@ class DifferenceEngine extends ContextSource {
 		foreach ( $tagIds as $tagId ) {
 			try {
 				$tags[] = $changeTagDefStore->getName( (int)$tagId );
-			} catch ( NameTableAccessException $exception ) {
+			} catch ( NameTableAccessException ) {
 				continue;
 			}
 		}
@@ -2297,7 +2286,6 @@ class DifferenceEngine extends ContextSource {
 	 *
 	 * @return bool Whether the content of both revisions could be loaded successfully.
 	 *   (When mOldRev is false, that still counts as a success.)
-	 *
 	 */
 	public function loadText() {
 		if ( $this->mTextLoaded == 2 ) {

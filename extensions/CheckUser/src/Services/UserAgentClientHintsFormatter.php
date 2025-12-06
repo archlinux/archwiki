@@ -16,7 +16,7 @@ class UserAgentClientHintsFormatter {
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'CheckUserClientHintsForDisplay',
-		'CheckUserClientHintsValuesToHide'
+		'CheckUserClientHintsValuesToHide',
 	];
 
 	public const NAME_TO_MESSAGE_KEY = [
@@ -30,7 +30,7 @@ class UserAgentClientHintsFormatter {
 		"model" => "checkuser-clienthints-name-model",
 		"platform" => "checkuser-clienthints-name-platform",
 		"platformVersion" => "checkuser-clienthints-name-platform-version",
-		"woW64" => "checkuser-clienthints-name-wow64"
+		"woW64" => "checkuser-clienthints-name-wow64",
 	];
 
 	private MessageLocalizer $messageLocalizer;

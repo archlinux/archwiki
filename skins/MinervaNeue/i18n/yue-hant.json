@@ -25,7 +25,6 @@
 	"mobile-frontend-meta-data-issues": "版面問題",
 	"mobile-frontend-meta-data-issues-categories": "關於呢類",
 	"mobile-frontend-meta-data-issues-header": "版面問題",
-	"mobile-frontend-pageaction-edit-tooltip": "改呢頁嘅頭一段",
 	"mobile-frontend-placeholder": "喺{{SITENAME}}度搵",
 	"mobile-frontend-random-button": "是但",
 	"mobile-frontend-redirected-from": "由「[[$1]]」跳轉來呢度",
@@ -41,11 +40,5 @@
 	"minerva-page-actions-language-switcher": "話",
 	"minerva-page-actions-history": "史",
 	"skin-minerva-issue-learn-more": "知多啲",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1秒}}前",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1分鐘}}前",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1個鐘頭}}前",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1日}}前",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1個月}}前",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1年}}前",
 	"skin-minerva-mobile-option-MinervaShowCategories": "分類"
 }

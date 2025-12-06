@@ -103,7 +103,7 @@ class MaintenanceRunner {
 	 *
 	 * @return never
 	 */
-	private function showHelpAndExit( $code = 0 ) {
+	private function showHelpAndExit( $code = 0 ): never {
 		foreach ( $this->parameters->getErrors() as $error ) {
 			$this->error( "$error\n" );
 			$code = 1;
@@ -214,7 +214,7 @@ class MaintenanceRunner {
 		}
 
 		// make sure we clean up after ourselves.
-		register_shutdown_function( [ $this, 'cleanup' ] );
+		register_shutdown_function( $this->cleanup( ... ) );
 
 		// Turn off output buffering if it's on
 		while ( ob_get_level() > 0 ) {
@@ -262,7 +262,7 @@ class MaintenanceRunner {
 		return $extension;
 	}
 
-	private function loadScriptFile( string $scriptFile ): string {
+	private function loadScriptFile( string $scriptFile ): ?string {
 		$maintClass = null;
 
 		// It's a file, include it
@@ -276,13 +276,7 @@ class MaintenanceRunner {
 			$scriptClass = $maintClass;
 		}
 
-		if ( !is_string( $scriptClass ) ) {
-			$this->error( "ERROR: The script file '{$scriptFile}' cannot be executed using MaintenanceRunner.\n" );
-			$this->error( "It does not set \$maintClass and does not return a class name.\n" );
-			$this->fatalError( "Try running it directly as a php script: php $scriptFile\n" );
-		}
-
-		return $scriptClass;
+		return is_string( $scriptClass ) ? $scriptClass : null;
 	}
 
 	private function splitScript( string $script ): array {
@@ -419,8 +413,19 @@ class MaintenanceRunner {
 		$scriptFile = $this->expandScriptFile( $scriptName, $extension );
 
 		if ( !class_exists( $scriptClass ) && file_exists( $scriptFile ) ) {
+			// The guessed class is not registered with the autoloader.
+			// Let's see if the script defines the class to use in the old way.
 			$scriptFileClass = $this->loadScriptFile( $scriptFile );
-			if ( $scriptFileClass ) {
+			if ( !$scriptFileClass && class_exists( $scriptClass ) ) {
+				// It doesn't, but instead it contains the guessed class, so it should have been autoloaded.
+				$this->error( "WARNING: The script class '{$scriptClass}' is not registered with the autoloader.\n" );
+			} elseif ( !$scriptFileClass ) {
+				// It doesn't.
+				$this->error( "ERROR: The script file '{$scriptFile}' cannot be executed using MaintenanceRunner.\n" );
+				$this->error( "It does not set \$maintClass and does not return a class name.\n" );
+				$this->fatalError( "Try running it directly as a php script: php $scriptFile\n" );
+			} else {
+				// It does! We'll check whether the class really exists below.
 				$scriptClass = $scriptFileClass;
 			}
 		}
@@ -478,7 +483,6 @@ class MaintenanceRunner {
 		// Basic checks and such
 		$this->scriptObject->setup();
 
-		// Set the memory limit
 		$this->adjustMemoryLimit();
 
 		// Override any config settings
@@ -495,32 +499,31 @@ class MaintenanceRunner {
 	}
 
 	/**
-	 * Normally we disable the memory_limit when running admin scripts.
-	 * Some scripts may wish to actually set a limit, however, to avoid
-	 * blowing up unexpectedly.
-	 * @see Maintenance::memoryLimit()
-	 * @return string
+	 * Adjusts PHP's memory limit to better suit our needs, if needed.
+	 *
+	 * @see Maintenance::memoryLimit
 	 */
-	private function memoryLimit() {
+	private function adjustMemoryLimit() {
 		if ( $this->parameters->hasOption( 'memory-limit' ) ) {
 			$limit = $this->parameters->getOption( 'memory-limit', 'max' );
 			$limit = trim( $limit, "\" '" ); // trim quotes in case someone misunderstood
-			return $limit;
+		} else {
+			$limit = $this->scriptObject->memoryLimit() ?: 'max';
 		}
-
-		$limit = $this->scriptObject->memoryLimit();
-		return $limit ?: 'max';
-	}
-
-	/**
-	 * Adjusts PHP's memory limit to better suit our needs, if needed.
-	 */
-	private function adjustMemoryLimit() {
-		$limit = $this->memoryLimit();
 		if ( $limit == 'max' ) {
 			$limit = -1; // no memory limit
 		}
 		if ( $limit != 'default' ) {
+			// NOTE: This should not override $wgMemoryLimit and ride the wfMemoryLimit() call in Setup.php.
+			//
+			// We are still in MW_FINAL_SETUP_CALLBACK in Setup.php, before that calls wfMemoryLimit(),
+			// and we can still set $wgMemoryLimit here or in MaintenanceRunner::overrideConfig.
+			// But, $wgMemoryLimit is a way to *raise* the memory limit, mainly for web requests
+			// where the system default is often less than what we need.
+			//
+			// Maintenance::memoryLimit, however, is to *lower* the memory limit (often -1 for PHP-CLI).
+			// If we override $wgMemoryLimit and let Setup.php call wfMemoryLimit, it would do nothing
+			// when memory_limit=-1 and run maintenance scripts with unlimited memory.
 			ini_set( 'memory_limit', $limit );
 		}
 	}
@@ -599,7 +602,6 @@ class MaintenanceRunner {
 
 	/**
 	 * @param SettingsBuilder $settingsBuilder
-	 *
 	 * @return void
 	 */
 	private function overrideConfig( SettingsBuilder $settingsBuilder ) {
@@ -725,7 +727,7 @@ class MaintenanceRunner {
 	 * @param int $exitCode PHP exit status. Should be in range 1-254.
 	 * @return never
 	 */
-	protected function fatalError( $msg, $exitCode = 1 ) {
+	protected function fatalError( $msg, $exitCode = 1 ): never {
 		$this->error( $msg );
 		exit( $exitCode );
 	}
@@ -772,7 +774,7 @@ class MaintenanceRunner {
 	 * @internal
 	 * @return void
 	 */
-	public function cleanup() {
+	protected function cleanup() {
 		if ( $this->scriptObject ) {
 			$this->scriptObject->cleanupChanneled();
 		}
@@ -809,9 +811,7 @@ class MaintenanceRunner {
 		$profiler->logDataPageOutputOnly();
 
 		MediaWiki::emitBufferedStats(
-			$this->getServiceContainer()->getStatsFactory(),
-			$this->getServiceContainer()->getStatsdDataFactory(),
-			$this->getConfig()
+			$this->getServiceContainer()->getStatsFactory()
 		);
 
 		if ( $lbFactory ) {

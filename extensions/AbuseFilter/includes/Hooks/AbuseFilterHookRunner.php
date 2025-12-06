@@ -26,15 +26,15 @@ class AbuseFilterHookRunner implements
 	AbuseFilterCustomActionsHook,
 	AbuseFilterCustomProtectedVariablesHook,
 	AbuseFilterDeprecatedVariablesHook,
-	AbuseFilterFilterActionHook,
 	AbuseFilterGenerateGenericVarsHook,
 	AbuseFilterGenerateTitleVarsHook,
 	AbuseFilterGenerateUserVarsHook,
+	AbuseFilterGenerateAccountCreationVarsHook,
 	AbuseFilterGenerateVarsForRecentChangeHook,
+	AbuseFilterGetDangerousActionsHook,
 	AbuseFilterInterceptVariableHook,
 	AbuseFilterProtectedVarsAccessLoggerHook,
-	AbuseFilterShouldFilterActionHook,
-	AbuseFilterGetDangerousActionsHook
+	AbuseFilterShouldFilterActionHook
 {
 	public const SERVICE_NAME = 'AbuseFilterHookRunner';
 
@@ -95,19 +95,6 @@ class AbuseFilterHookRunner implements
 	/**
 	 * @inheritDoc
 	 */
-	public function onAbuseFilter_filterAction(
-		VariableHolder &$vars,
-		Title $title
-	) {
-		return $this->hookContainer->run(
-			'AbuseFilter-filterAction',
-			[ &$vars, $title ]
-		);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function onAbuseFilterAlterVariables(
 		VariableHolder &$vars,
 		Title $title,
@@ -145,6 +132,20 @@ class AbuseFilterHookRunner implements
 		return $this->hookContainer->run(
 			'AbuseFilter-generateUserVars',
 			[ $vars, $user, $rc ]
+		);
+	}
+
+	/** @inheritDoc */
+	public function onAbuseFilterGenerateAccountCreationVars(
+		VariableHolder $vars,
+		UserIdentity $creator,
+		UserIdentity $createdUser,
+		bool $autocreate,
+		?RecentChange $rc
+	) {
+		return $this->hookContainer->run(
+			'AbuseFilterGenerateAccountCreationVars',
+			[ $vars, $creator, $createdUser, $autocreate, $rc ]
 		);
 	}
 
@@ -248,11 +249,11 @@ class AbuseFilterHookRunner implements
 		string $action,
 		bool $shouldDebounce,
 		int $timestamp,
-		array $params
+		array &$params
 	) {
 		return $this->hookContainer->run(
 			'AbuseFilterLogProtectedVariableValueAccess',
-			[ $performer, $target, $action, $shouldDebounce, $timestamp, $params ],
+			[ $performer, $target, $action, $shouldDebounce, $timestamp, &$params ],
 			[ 'abortable' => true ]
 		);
 	}

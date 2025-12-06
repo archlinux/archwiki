@@ -18,16 +18,20 @@ use StatusValue;
 class SpecialUnlinkAccounts extends AuthManagerSpecialPage {
 	/** @inheritDoc */
 	protected static $allowedActions = [ AuthManager::ACTION_UNLINK ];
+	private SessionManager $sessionManager;
 
-	public function __construct( AuthManager $authManager ) {
+	public function __construct( AuthManager $authManager, SessionManager $sessionManager ) {
 		parent::__construct( 'UnlinkAccounts' );
 		$this->setAuthManager( $authManager );
+		$this->sessionManager = $sessionManager;
 	}
 
+	/** @inheritDoc */
 	protected function getLoginSecurityLevel() {
 		return 'UnlinkAccount';
 	}
 
+	/** @inheritDoc */
 	protected function getDefaultAction( $subPage ) {
 		return AuthManager::ACTION_UNLINK;
 	}
@@ -40,14 +44,17 @@ class SpecialUnlinkAccounts extends AuthManagerSpecialPage {
 		return 'login';
 	}
 
+	/** @inheritDoc */
 	public function isListed() {
 		return $this->getAuthManager()->canLinkAccounts();
 	}
 
+	/** @inheritDoc */
 	protected function getRequestBlacklist() {
 		return $this->getConfig()->get( MainConfigNames::RemoveCredentialsBlacklist );
 	}
 
+	/** @inheritDoc */
 	public function execute( $subPage ) {
 		$this->setHeaders();
 		$this->loadAuth( $subPage );
@@ -91,13 +98,14 @@ class SpecialUnlinkAccounts extends AuthManagerSpecialPage {
 		// log attackers out from sessions obtained via that account.
 		$session = $this->getRequest()->getSession();
 		$user = $this->getUser();
-		SessionManager::singleton()->invalidateSessionsForUser( $user );
+		$this->sessionManager->invalidateSessionsForUser( $user );
 		$session->setUser( $user );
 		$session->resetId();
 
 		$this->displayForm( $status );
 	}
 
+	/** @inheritDoc */
 	public function handleFormSubmit( $data ) {
 		// unlink requests do not accept user input so repeat parent code but skip call to
 		// AuthenticationRequest::loadRequestsFromSubmission

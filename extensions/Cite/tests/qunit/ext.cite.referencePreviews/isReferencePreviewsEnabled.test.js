@@ -1,30 +1,20 @@
 'use strict';
 
-( function () {
-	function createStubUserSettings( expectEnabled ) {
-		return {
-			isPreviewTypeEnabled() {
-				return expectEnabled !== false;
-			}
-		};
-	}
-
-	function createStubUser( isAnon, options ) {
-		return {
-			isNamed() {
-				return !isAnon;
-			},
-			isAnon() {
-				return isAnon;
-			},
-			options
-		};
-	}
-
-	const options = { get: () => '1' };
-
+{
 	QUnit.module.if( 'ext.cite.referencePreviews#isReferencePreviewsEnabled',
 		mw.loader.getModuleNames().includes( 'ext.popups.main' ) );
+
+	const createStubUserSettings = () => ( {
+		isPreviewTypeEnabled: () => false
+	} );
+
+	const createStubUser = ( isAnon, options ) => ( {
+		isNamed: () => !isAnon,
+		isAnon: () => isAnon,
+		options
+	} );
+
+	const options = { get: () => '1' };
 
 	QUnit.test( 'relevant combinations of anonymous flags', ( assert ) => {
 		[
@@ -83,7 +73,7 @@
 
 	QUnit.test( 'it should display reference previews when conditions are fulfilled', ( assert ) => {
 		const user = createStubUser( false, options ),
-			userSettings = createStubUserSettings( false ),
+			userSettings = createStubUserSettings(),
 			config = new Map();
 
 		config.set( 'wgCiteReferencePreviewsActive', true );
@@ -96,7 +86,7 @@
 
 	QUnit.test( 'it should not be enabled when the global is disabling it', ( assert ) => {
 		const user = createStubUser( false ),
-			userSettings = createStubUserSettings( false ),
+			userSettings = createStubUserSettings(),
 			config = new Map();
 
 		config.set( 'wgCiteReferencePreviewsActive', false );
@@ -107,4 +97,4 @@
 			'Reference Previews is disabled.'
 		);
 	} );
-}() );
+}

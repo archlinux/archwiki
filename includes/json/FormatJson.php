@@ -2,21 +2,7 @@
 /**
  * Wrapper for json_encode and json_decode.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -85,10 +71,6 @@ class FormatJson {
 	 *
 	 * @note Empty arrays are encoded as numeric arrays, not as objects, so cast any associative
 	 *       array that might be empty to an object before encoding it.
-	 *
-	 * @note In pre-1.22 versions of MediaWiki, using this function for generating inline script
-	 *       blocks may result in an XSS vulnerability, and quite likely will in XML documents
-	 *       (cf. FormatJson::XMLMETA_OK). Use Xml::encodeJsVar() instead in such cases.
 	 *
 	 * @param mixed $value The value to encode. Can be any type except a resource.
 	 * @param string|bool $pretty If a string, add non-significant whitespace to improve

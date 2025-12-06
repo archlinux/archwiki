@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Juwan",
+			"Ne"
+		]
+	},
+	"timeless-userpage": "lipu {{GENDER:$1|jan}}",
+	"timeless-talkpage": "lipu toki {{GENDER:$1|jan}}",
+	"timeless-more": "ante",
+	"timeless-sitetools": "ilo",
+	"timeless-pageactions": "ilo lipu",
+	"timeless-userpagetools": "ilo pi lipu jan",
+	"timeless-view-view": "o lukin",
+	"timeless-pagemisc": "ante",
+	"timeless-languages": "toki",
+	"timeless-projects": "pali ante",
+	"timeless-view-history": "tenpo pini"
+}

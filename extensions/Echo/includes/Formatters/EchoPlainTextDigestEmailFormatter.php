@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
+use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Language\Language;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -9,19 +11,20 @@ use MediaWiki\User\User;
 
 class EchoPlainTextDigestEmailFormatter extends EchoEventDigestFormatter {
 
-	/**
-	 * @var string 'daily' or 'weekly'
-	 */
-	protected $digestMode;
+	private readonly AttributeManager $attributeManager;
 
 	/**
 	 * @param User $user
 	 * @param Language $language
-	 * @param string $digestMode
+	 * @param string $digestMode 'daily' or 'weekly'
 	 */
-	public function __construct( User $user, Language $language, $digestMode ) {
+	public function __construct(
+		User $user,
+		Language $language,
+		protected string $digestMode,
+	) {
 		parent::__construct( $user, $language );
-		$this->digestMode = $digestMode;
+		$this->attributeManager = Services::getInstance()->getAttributeManager();
 	}
 
 	/**
@@ -46,9 +49,9 @@ class EchoPlainTextDigestEmailFormatter extends EchoEventDigestFormatter {
 		// Does this need to be a message?
 		$bullet = $this->msg( 'echo-email-batch-bullet' )->text();
 
-		foreach ( $content as $type => $items ) {
+		foreach ( $content as $category => $items ) {
 			$text .= "\n\n--\n\n";
-			$text .= $this->getCategoryTitle( $type, count( $items ) );
+			$text .= $this->getCategoryTitle( $category, count( $items ) );
 			$text .= "\n";
 			foreach ( $items as $item ) {
 				$text .= "\n$bullet $item";
@@ -78,12 +81,12 @@ class EchoPlainTextDigestEmailFormatter extends EchoEventDigestFormatter {
 	}
 
 	/**
-	 * @param string $type Notification type
-	 * @param int $count Number of notifications in this type's section
+	 * @param string $category Notification category
+	 * @param int $count Number of notifications in this category's section
 	 * @return string Formatted category section title
 	 */
-	private function getCategoryTitle( $type, $count ) {
-		return $this->msg( "echo-category-title-$type" )
+	private function getCategoryTitle( $category, $count ) {
+		return $this->msg( $this->attributeManager->getCategoryTitle( $category ) )
 			->numParams( $count )
 			->text();
 	}

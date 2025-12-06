@@ -2,21 +2,7 @@
 /**
  * Contains a class for dealing with database log entries
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Niklas Laxström
  * @license GPL-2.0-or-later
@@ -59,14 +45,12 @@ class DatabaseLogEntry extends LogEntryBase {
 	public static function getSelectQueryData() {
 		$commentQuery = MediaWikiServices::getInstance()->getCommentStore()->getJoin( 'log_comment' );
 
-		$tables = array_merge(
-			[
-				'logging',
-				'logging_actor' => 'actor',
-				'user'
-			],
-			$commentQuery['tables']
-		);
+		$tables = [
+			'logging',
+			'logging_actor' => 'actor',
+			'user',
+			...$commentQuery['tables'],
+		];
 		$fields = [
 			'log_id', 'log_type', 'log_action', 'log_timestamp',
 			'log_namespace', 'log_title', // unused log_page
@@ -93,7 +77,7 @@ class DatabaseLogEntry extends LogEntryBase {
 		];
 	}
 
-	public static function newSelectQueryBuilder( IReadableDatabase $db ) {
+	public static function newSelectQueryBuilder( IReadableDatabase $db ): LoggingSelectQueryBuilder {
 		return new LoggingSelectQueryBuilder( $db );
 	}
 
@@ -145,6 +129,9 @@ class DatabaseLogEntry extends LogEntryBase {
 	/** @var bool Whether the parameters for this log entry are stored in new or old format. */
 	protected $legacy;
 
+	/**
+	 * @param stdClass $row
+	 */
 	protected function __construct( $row ) {
 		$this->row = $row;
 	}
@@ -168,20 +155,24 @@ class DatabaseLogEntry extends LogEntryBase {
 		return $this->row->log_params;
 	}
 
+	/** @inheritDoc */
 	public function isLegacy() {
 		// This extracts the property
 		$this->getParameters();
 		return $this->legacy;
 	}
 
+	/** @inheritDoc */
 	public function getType() {
 		return $this->row->log_type;
 	}
 
+	/** @inheritDoc */
 	public function getSubtype() {
 		return $this->row->log_action;
 	}
 
+	/** @inheritDoc */
 	public function getParameters() {
 		if ( $this->params === null ) {
 			$blob = $this->getRawParameters();
@@ -205,12 +196,14 @@ class DatabaseLogEntry extends LogEntryBase {
 		return $this->params;
 	}
 
+	/** @inheritDoc */
 	public function getAssociatedRevId() {
 		// This extracts the property
 		$this->getParameters();
 		return $this->revId;
 	}
 
+	/** @inheritDoc */
 	public function getPerformerIdentity(): UserIdentity {
 		if ( !$this->performer ) {
 			$actorStore = MediaWikiServices::getInstance()->getActorStore();
@@ -233,21 +226,25 @@ class DatabaseLogEntry extends LogEntryBase {
 		return $this->performer;
 	}
 
+	/** @inheritDoc */
 	public function getTarget() {
 		$namespace = $this->row->log_namespace;
 		$page = $this->row->log_title;
 		return MediaWikiServices::getInstance()->getTitleFactory()->makeTitle( $namespace, $page );
 	}
 
+	/** @inheritDoc */
 	public function getTimestamp() {
 		return wfTimestamp( TS_MW, $this->row->log_timestamp );
 	}
 
+	/** @inheritDoc */
 	public function getComment() {
 		return MediaWikiServices::getInstance()->getCommentStore()
 			->getComment( 'log_comment', $this->row )->text;
 	}
 
+	/** @inheritDoc */
 	public function getDeleted() {
 		return $this->row->log_deleted;
 	}

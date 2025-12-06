@@ -96,7 +96,10 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MaintenanceBaseTestCa
 	public static function provideRandomlyAssignXFFHeader() {
 		return [
 			'One IP to be used in XFF header' => [
-				[ 0.1, 0.8 ], [ '1.2.3.4', '1.2.3.5' ], '1.2.3.4', '1.2.3.5'
+				[ 0.1, 0.8 ],
+				[ '1.2.3.4', '1.2.3.5' ],
+				'1.2.3.4',
+				'1.2.3.5',
 			],
 		];
 	}
@@ -120,7 +123,9 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MaintenanceBaseTestCa
 
 	public static function provideGetNewIp() {
 		return [
-			'Three IPs' => [ [ '128.0.4.1', '127.0.0.1', '2001:0db8:85a3:0000:0000:8a2e:0370:7334' ] ],
+			'Three IPs' => [
+				[ '128.0.4.1', '127.0.0.1', '2001:0db8:85a3:0000:0000:8a2e:0370:7334' ],
+			],
 		];
 	}
 
@@ -213,7 +218,7 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MaintenanceBaseTestCa
 						"Android",
 						"10.0.0",
 						false
-					)
+					),
 			] ],
 		];
 	}

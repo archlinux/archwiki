@@ -41,6 +41,7 @@ class GadgetTest extends MediaWikiUnitTestCase {
 				'datas' => [],
 				'dependencies' => [ 'moment' ],
 				'peers' => [],
+				'codexIcons' => [],
 				'messages' => [ 'blanknamespace' ],
 				'type' => 'general',
 			]
@@ -58,6 +59,7 @@ class GadgetTest extends MediaWikiUnitTestCase {
 		$this->assertCount( 0, $g->getJSONs() );
 		$this->assertCount( 1, $g->getDependencies() );
 		$this->assertCount( 1, $g->getMessages() );
+		$this->assertCount( 0, $g->getCodexIcons() );
 
 		// Ensure parity and internal consistency
 		// between Gadget::serializeDefinition and Gadget::toArray
@@ -93,14 +95,15 @@ class GadgetTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testPackaged() {
-		$g = $this->makeGadget( '* foo bar[ResourceLoader|package]| foo.css|foo.js|foo.bar|foo.json' );
+		$g = $this->makeGadget( '* foo bar[ResourceLoader|package]| foo.css|foo.js|foo.bar|foo.json|foo.vue' );
 		$this->assertEquals( 'foo_bar', $g->getName() );
 		$this->assertEquals( 'ext.gadget.foo_bar', Gadget::getModuleName( $g->getName() ) );
 		$this->assertEquals( [ 'MediaWiki:Gadget-foo.js' ], $g->getScripts() );
 		$this->assertEquals( [ 'MediaWiki:Gadget-foo.css' ], $g->getStyles() );
 		$this->assertEquals( [ 'MediaWiki:Gadget-foo.json' ], $g->getJSONs() );
-		$this->assertEquals( [ 'MediaWiki:Gadget-foo.js', 'MediaWiki:Gadget-foo.css', 'MediaWiki:Gadget-foo.json' ],
-			$g->getScriptsAndStyles() );
+		$this->assertEquals( [ 'MediaWiki:Gadget-foo.vue' ], $g->getVues() );
+		$this->assertEquals( [ 'MediaWiki:Gadget-foo.js', 'MediaWiki:Gadget-foo.css', 'MediaWiki:Gadget-foo.json',
+			'MediaWiki:Gadget-foo.vue' ], $g->getScriptsAndStyles() );
 		$this->assertEquals( [], $g->getLegacyScripts() );
 		$this->assertTrue( $g->supportsResourceLoader() );
 		$this->assertTrue( $g->hasModule() );

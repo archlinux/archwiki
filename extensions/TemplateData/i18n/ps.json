@@ -36,5 +36,13 @@
 	"templatedata-modal-title": "کينډۍ اومتوک سمونگر",
 	"templatedata-modal-title-choose-language": "ژبه ټاکل",
 	"templatedata-modal-title-language": "ژبه",
-	"templatedata-modal-title-templatedesc": "د کينډۍ څرگندونه ($1)"
+	"templatedata-modal-title-templatedesc": "د کينډۍ څرگندونه ($1)",
+	"templatedata-category-browser-header": "وېشنيزې",
+	"templatedata-category-rootcat": "کينډۍ",
+	"templatedata-category-use-template": "دا کينډۍ کارول",
+	"templatedata-category-categories": "نورې وېشنيزې",
+	"templatedata-category-no-cats": "هيڅ.",
+	"communityconfiguration-templatedata-featuredtemplates-description": "ځانگړې کينډۍ هغه کيڼډۍ دي چې د ټولنې له خوا د گټورو کينډيو په توگه نشه شوې وي. دلته لړليک شوې کينډۍ د کينډۍ موندونکي توکي د کارولو لپاره چمتو شوې دي.",
+	"communityconfiguration-templatedata-featuredtemplates-info-text": "دلته لړليک شوې کينډۍ د کينډۍ موندونکي توکي د کارولو لپاره چمتو شوې دي.",
+	"templatedata-featured-list-help": "ځانگړې کينډۍ هغه کيڼډۍ دي چې د ټولنې له خوا د گټورو کينډيو په توگه نشه شوې وي."
 }

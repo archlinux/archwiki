@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"ITZQing"
+		]
+	},
+	"mobile-frontend-history": "Pogledaj istoriju izmjena ove stranice.",
+	"mobile-frontend-home-button": "Početna",
+	"mobile-frontend-language-article-heading": "Jezik",
+	"mobile-frontend-main-menu-login": "Prijavi se",
+	"mobile-frontend-main-menu-nearby": "U blizini",
+	"mobile-frontend-main-menu-settings": "Postavke",
+	"mobile-frontend-placeholder": "Pretraga {{SITENAME}}",
+	"mobile-frontend-random-button": "Nasumičan",
+	"minerva-page-actions-overflow": "Više"
+}

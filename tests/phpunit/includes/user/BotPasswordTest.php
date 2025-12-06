@@ -8,12 +8,9 @@ use MediaWiki\Password\Password;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Status\Status;
-use MediaWiki\Tests\Session\TestUtils;
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\CentralId\CentralIdLookup;
-use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\Rdbms\IDBAccessObject;
-use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -42,25 +39,23 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 		$this->testUser = $this->getMutableTestUser();
 		$this->testUserName = $this->testUser->getUser()->getName();
 
-		$mock1 = $this->getMockForAbstractClass( CentralIdLookup::class );
-		$mock1->method( 'isAttached' )
-			->willReturn( true );
-		$mock1->method( 'lookupUserNamesWithFilter' )
-			->willReturn( [ $this->testUserName => 42, 'UTDummy' => 43, 'UTInvalid' => 0 ] );
-		$mock1->expects( $this->never() )->method( 'lookupCentralIds' );
-
-		$mock2 = $this->getMockForAbstractClass( CentralIdLookup::class );
-		$mock2->method( 'isAttached' )
-			->willReturn( false );
-		$mock2->method( 'lookupUserNamesWithFilter' )
-			->willReturnArgument( 0 );
-		$mock2->expects( $this->never() )->method( 'lookupCentralIds' );
-
 		$this->mergeMwGlobalArrayValue( 'wgCentralIdLookupProviders', [
-			'BotPasswordTest OkMock' => [ 'factory' => static function () use ( $mock1 ) {
+			'BotPasswordTest OkMock' => [ 'factory' => function () {
+				$mock1 = $this->getMockForAbstractClass( CentralIdLookup::class );
+				$mock1->method( 'isAttached' )
+					->willReturn( true );
+				$mock1->method( 'lookupUserNamesWithFilter' )
+					->willReturn( [ $this->testUserName => 42, 'UTDummy' => 43, 'UTInvalid' => 0 ] );
+				$mock1->expects( $this->never() )->method( 'lookupCentralIds' );
 				return $mock1;
 			} ],
-			'BotPasswordTest FailMock' => [ 'factory' => static function () use ( $mock2 ) {
+			'BotPasswordTest FailMock' => [ 'factory' => function () {
+				$mock2 = $this->getMockForAbstractClass( CentralIdLookup::class );
+				$mock2->method( 'isAttached' )
+					->willReturn( false );
+				$mock2->method( 'lookupUserNamesWithFilter' )
+					->willReturnArgument( 0 );
+				$mock2->expects( $this->never() )->method( 'lookupCentralIds' );
 				return $mock2;
 			} ],
 		] );
@@ -261,27 +256,35 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function testLogin() {
-		// Test failure when bot passwords aren't enabled
+	public function testLoginFailure() {
 		$this->overrideConfigValue( MainConfigNames::EnableBotPasswords, false );
 		$status = BotPassword::login( "{$this->testUserName}@BotPassword", 'foobaz', new FauxRequest );
 		$this->assertEquals( Status::newFatal( 'botpasswords-disabled' ), $status );
 		$this->overrideConfigValue( MainConfigNames::EnableBotPasswords, true );
 
+		$mainConfig = $this->getServiceContainer()->getMainConfig();
+
 		// Test failure when BotPasswordSessionProvider isn't configured
-		$manager = new SessionManager( [
-			'logger' => new Psr\Log\NullLogger,
-			'store' => new EmptyBagOStuff,
-		] );
-		$reset = TestUtils::setSessionManagerSingleton( $manager );
+		$manager = new SessionManager(
+			$mainConfig,
+			new Psr\Log\NullLogger,
+			$this->getServiceContainer()->getCentralIdLookup(),
+			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getObjectFactory(),
+			$this->getServiceContainer()->getProxyLookup(),
+			$this->getServiceContainer()->getUrlUtils(),
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getSessionStore()
+		);
+		$this->setService( 'SessionManager', $manager );
 		$this->assertNull(
 			$manager->getProvider( MediaWiki\Session\BotPasswordSessionProvider::class )
 		);
 		$status = BotPassword::login( "{$this->testUserName}@BotPassword", 'foobaz', new FauxRequest );
 		$this->assertEquals( Status::newFatal( 'botpasswords-no-provider' ), $status );
-		ScopedCallback::consume( $reset );
+	}
 
-		// Now configure BotPasswordSessionProvider for further tests...
+	public function testLogin() {
 		$mainConfig = $this->getServiceContainer()->getMainConfig();
 		$config = new HashConfig( [
 			MainConfigNames::SessionProviders => $mainConfig->get( MainConfigNames::SessionProviders ) + [
@@ -292,12 +295,19 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 				]
 			],
 		] );
-		$manager = new SessionManager( [
-			'config' => new MultiConfig( [ $config, $mainConfig ] ),
-			'logger' => new Psr\Log\NullLogger,
-			'store' => new EmptyBagOStuff,
-		] );
-		$reset = TestUtils::setSessionManagerSingleton( $manager );
+
+		$manager = new SessionManager(
+			new MultiConfig( [ $config, $mainConfig ] ),
+			new Psr\Log\NullLogger,
+			$this->getServiceContainer()->getCentralIdLookup(),
+			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getObjectFactory(),
+			$this->getServiceContainer()->getProxyLookup(),
+			$this->getServiceContainer()->getUrlUtils(),
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getSessionStore()
+		);
+		$this->setService( 'SessionManager', $manager );
 
 		// No "@"-thing in the username
 		$status = BotPassword::login( $this->testUserName, 'foobaz', new FauxRequest );
@@ -312,11 +322,8 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 		$this->assertStatusError( 'botpasswords-not-exist', $status );
 
 		// Failed restriction
-		$request = $this->getMockBuilder( FauxRequest::class )
-			->onlyMethods( [ 'getIP' ] )
-			->getMock();
-		$request->method( 'getIP' )
-			->willReturn( '10.0.0.1' );
+		$request = new FauxRequest();
+		$request->setIP( '10.0.0.1' );
 		$status = BotPassword::login( "{$this->testUserName}@BotPassword", 'foobaz', $request );
 		$this->assertStatusError( 'botpasswords-restriction-failed', $status );
 
@@ -340,8 +347,6 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 			MediaWiki\Session\BotPasswordSessionProvider::class, $session->getProvider()
 		);
 		$this->assertSame( $session->getId(), $request->getSession()->getId() );
-
-		ScopedCallback::consume( $reset );
 	}
 
 	/**

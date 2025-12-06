@@ -39,13 +39,11 @@ use Wikimedia\Rdbms\LikeValue;
  * @copyright 2015 Niharika Kohli
  */
 class SpecialGadgetUsage extends QueryPage {
-	private GadgetRepo $gadgetRepo;
-	private IConnectionProvider $dbProvider;
-
-	public function __construct( GadgetRepo $gadgetRepo, IConnectionProvider $dbProvider ) {
+	public function __construct(
+		private readonly GadgetRepo $gadgetRepo,
+		private readonly IConnectionProvider $dbProvider,
+	) {
 		parent::__construct( 'GadgetUsage' );
-		$this->gadgetRepo = $gadgetRepo;
-		$this->dbProvider = $dbProvider;
 		// Show all gadgets
 		$this->limit = 1000;
 		$this->shownavigation = false;
@@ -59,15 +57,6 @@ class SpecialGadgetUsage extends QueryPage {
 		$this->addHelpLink( 'Extension:Gadgets' );
 	}
 
-	/**
-	 * Get value of config variable SpecialGadgetUsageActiveUsers
-	 *
-	 * @return bool
-	 */
-	private function isActiveUsersEnabled() {
-		return $this->getConfig()->get( 'SpecialGadgetUsageActiveUsers' );
-	}
-
 	/** @inheritDoc */
 	public function isExpensive() {
 		return true;
@@ -75,47 +64,19 @@ class SpecialGadgetUsage extends QueryPage {
 
 	/**
 	 * Define the database query that is used to generate the stats table.
-	 * This uses 1 of 2 possible queries, depending on $wgSpecialGadgetUsageActiveUsers.
+	 * The query is essentially:
 	 *
-	 * The simple query is essentially:
-	 * SELECT up_property, COUNT(*)
-	 * FROM user_properties
-	 * WHERE up_property LIKE 'gadget-%' AND up_value NOT IN ('0','')
-	 * GROUP BY up_property;
-	 *
-	 * The more expensive query is:
 	 * SELECT up_property, COUNT(*), count(qcc_title)
 	 * FROM user_properties
 	 * LEFT JOIN user ON up_user = user_id
-	 * LEFT JOIN querycachetwo ON user_name = qcc_title AND qcc_type = 'activeusers'
+	 * LEFT JOIN querycachetwo ON user_name = qcc_title AND qcc_namespace = 2 AND qcc_type = 'activeusers'
 	 * WHERE up_property LIKE 'gadget-%' AND up_value NOT IN ('0','')
 	 * GROUP BY up_property;
+	 *
 	 * @return array
 	 */
 	public function getQueryInfo() {
 		$dbr = $this->dbProvider->getReplicaDatabase();
-
-		$conds = [
-			$dbr->expr( 'up_property', IExpression::LIKE, new LikeValue( 'gadget-', $dbr->anyString() ) ),
-			// Simulate php falsy condition to ignore disabled user preferences
-			$dbr->expr( 'up_value', '!=', [ '0', '' ] ),
-		];
-
-		if ( !$this->isActiveUsersEnabled() ) {
-			return [
-				'tables' => [ 'user_properties' ],
-				'fields' => [
-					'title' => 'up_property',
-					'value' => 'COUNT(*)',
-					// Required field, but unused
-					'namespace' => NS_MEDIAWIKI
-				],
-				'conds' => $conds,
-				'options' => [
-					'GROUP BY' => [ 'up_property' ]
-				]
-			];
-		}
 
 		return [
 			'tables' => [ 'user_properties', 'user', 'querycachetwo' ],
@@ -125,7 +86,11 @@ class SpecialGadgetUsage extends QueryPage {
 				// Need to pick fields existing in the querycache table so that the results are cachable
 				'namespace' => 'COUNT( qcc_title )'
 			],
-			'conds' => $conds,
+			'conds' => [
+				$dbr->expr( 'up_property', IExpression::LIKE, new LikeValue( 'gadget-', $dbr->anyString() ) ),
+				// Simulate php falsy condition to ignore disabled user preferences
+				$dbr->expr( 'up_value', '!=', [ '0', '' ] ),
+			],
 			'options' => [
 				'GROUP BY' => [ 'up_property' ]
 			],
@@ -138,6 +103,7 @@ class SpecialGadgetUsage extends QueryPage {
 				'querycachetwo' => [
 					'LEFT JOIN', [
 						'user_name = qcc_title',
+						'qcc_namespace' => NS_USER,
 						'qcc_type' => 'activeusers',
 					]
 				]
@@ -157,10 +123,7 @@ class SpecialGadgetUsage extends QueryPage {
 	 */
 	protected function outputTableStart() {
 		$html = '';
-		$headers = [ 'gadgetusage-gadget', 'gadgetusage-usercount' ];
-		if ( $this->isActiveUsersEnabled() ) {
-			$headers[] = 'gadgetusage-activeusers';
-		}
+		$headers = [ 'gadgetusage-gadget', 'gadgetusage-usercount', 'gadgetusage-activeusers' ];
 		foreach ( $headers as $h ) {
 			if ( $h === 'gadgetusage-gadget' ) {
 				$html .= Html::element( 'th', [], $this->msg( $h )->text() );
@@ -209,10 +172,8 @@ class SpecialGadgetUsage extends QueryPage {
 			// "Number of users" column
 			$html .= Html::element( 'td', [], $gadgetUserCount );
 			// "Active users" column
-			if ( $this->getConfig()->get( 'SpecialGadgetUsageActiveUsers' ) ) {
-				$activeUserCount = $this->getLanguage()->formatNum( $result->namespace );
-				$html .= Html::element( 'td', [], $activeUserCount );
-			}
+			$activeUserCount = $this->getLanguage()->formatNum( $result->namespace );
+			$html .= Html::element( 'td', [], $activeUserCount );
 			return Html::rawElement( 'tr', [], $html );
 		}
 		return false;
@@ -249,16 +210,10 @@ class SpecialGadgetUsage extends QueryPage {
 	protected function outputResults( $out, $skin, $dbr, $res, $num, $offset ) {
 		$gadgetIds = $this->gadgetRepo->getGadgetIds();
 		$defaultGadgets = $this->getDefaultGadgets( $gadgetIds );
-		if ( $this->isActiveUsersEnabled() ) {
-			$out->addHtml(
-				$this->msg( 'gadgetusage-intro' )
-					->numParams( $this->getConfig()->get( 'ActiveUserDays' ) )->parseAsBlock()
-			);
-		} else {
-			$out->addHtml(
-				$this->msg( 'gadgetusage-intro-noactive' )->parseAsBlock()
-			);
-		}
+		$out->addHtml(
+			$this->msg( 'gadgetusage-intro' )
+				->numParams( $this->getConfig()->get( 'ActiveUserDays' ) )->parseAsBlock()
+		);
 		if ( $num > 0 ) {
 			$this->outputTableStart();
 			// Append default gadgets to the table with 'default' in the total and active user fields
@@ -274,10 +229,9 @@ class SpecialGadgetUsage extends QueryPage {
 				$html .= Html::element( 'td', [ 'data-sort-value' => 'Infinity' ],
 					$this->msg( 'gadgetusage-default' )->text() );
 				// "Active users" column
-				if ( $this->isActiveUsersEnabled() ) {
-					$html .= Html::element( 'td', [ 'data-sort-value' => 'Infinity' ],
-						$this->msg( 'gadgetusage-default' )->text() );
-				}
+				// @phan-suppress-next-line PhanPluginDuplicateAdjacentStatement
+				$html .= Html::element( 'td', [ 'data-sort-value' => 'Infinity' ],
+					$this->msg( 'gadgetusage-default' )->text() );
 				$out->addHTML( Html::rawElement( 'tr', [], $html ) );
 			}
 			foreach ( $res as $row ) {

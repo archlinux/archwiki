@@ -65,27 +65,27 @@ class TemporaryAccountIPHandlerTest extends MediaWikiIntegrationTestCase {
 				[
 					'~check-user-test-2024-1',
 					UserFactory::RIGOR_VALID,
-					$this->createActor( $users[ '~check-user-test-2024-1' ] )
+					$this->createActor( $users[ '~check-user-test-2024-1' ] ),
 				],
 				[
 					'~check-user-test-2024-2',
 					UserFactory::RIGOR_VALID,
-					$this->createActor( $users[ '~check-user-test-2024-2' ] )
+					$this->createActor( $users[ '~check-user-test-2024-2' ] ),
 				],
 				[
 					'~check-user-test-2024-20',
 					UserFactory::RIGOR_VALID,
-					$this->createActor( $users[ '~check-user-test-2024-20' ] )
+					$this->createActor( $users[ '~check-user-test-2024-20' ] ),
 				],
 				[
 					'~check-user-test-2024-3',
 					UserFactory::RIGOR_VALID,
-					$this->createActor( $users[ '~check-user-test-2024-3' ] )
+					$this->createActor( $users[ '~check-user-test-2024-3' ] ),
 				],
 				[
 					'~check-user-test-2024-30',
 					UserFactory::RIGOR_VALID,
-					$this->createActor( $users[ '~check-user-test-2024-30' ] )
+					$this->createActor( $users[ '~check-user-test-2024-30' ] ),
 				],
 			] );
 		$this->setService( 'UserFactory', $userFactory );
@@ -199,7 +199,7 @@ class TemporaryAccountIPHandlerTest extends MediaWikiIntegrationTestCase {
 				],
 				[
 					'ip' => '1.2.3.3',
-				]
+				],
 			],
 			'Hidden temporary account without view permission' => [
 				[
@@ -208,8 +208,8 @@ class TemporaryAccountIPHandlerTest extends MediaWikiIntegrationTestCase {
 				[
 					'ip' => '1.2.3.3',
 					'hideuser' => false,
-				]
-			]
+				],
+			],
 		];
 	}
 
@@ -226,7 +226,7 @@ class TemporaryAccountIPHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->executeHandlerAndGetBodyData(
 			$this->getTemporaryAccountIPHandler(),
 			$this->getRequestData( [
-				'ip' => 'foo'
+				'ip' => 'foo',
 			] ),
 			[],
 			[],
@@ -320,28 +320,28 @@ class TemporaryAccountIPHandlerTest extends MediaWikiIntegrationTestCase {
 			[
 				'actor_id' => 1,
 				'actor_user' => 1,
-				'actor_name' => '~check-user-test-2024-1'
+				'actor_name' => '~check-user-test-2024-1',
 			],
 			[
 				'actor_id' => 2,
 				'actor_user' => 2,
-				'actor_name' => '~check-user-test-2024-2'
+				'actor_name' => '~check-user-test-2024-2',
 			],
 			[
 				'actor_id' => 20,
 				'actor_user' => 20,
-				'actor_name' => '~check-user-test-2024-20'
+				'actor_name' => '~check-user-test-2024-20',
 			],
 			[
 				'actor_id' => 3,
 				'actor_user' => 3,
-				'actor_name' => '~check-user-test-2024-3'
+				'actor_name' => '~check-user-test-2024-3',
 			],
 			[
 				'actor_id' => 30,
 				'actor_user' => 30,
-				'actor_name' => '~check-user-test-2024-30'
-			]
+				'actor_name' => '~check-user-test-2024-30',
+			],
 		];
 		$this->getDb()->newInsertQueryBuilder()
 			->insertInto( 'actor' )

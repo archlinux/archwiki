@@ -10,7 +10,7 @@
  * @class
  * @extends ve.dm.Document
  * @constructor
- * @param {HTMLDocument|Array|ve.dm.ElementLinearData} data
+ * @param {HTMLDocument|Array|ve.dm.LinearData} data
  * @param {HTMLDocument} [htmlDocument]
  * @param {ve.dm.Document} [parentDocument]
  * @param {ve.dm.InternalList} [internalList]
@@ -32,10 +32,16 @@ OO.inheritClass( ve.dm.DocumentSlice, ve.dm.Document );
 
 /* Methods */
 
+/**
+ * @return {Array}
+ */
 ve.dm.DocumentSlice.prototype.getOriginalData = function () {
 	return this.getData( this.originalRange );
 };
 
+/**
+ * @return {Array}
+ */
 ve.dm.DocumentSlice.prototype.getBalancedData = function () {
 	return this.getData( this.balancedRange );
 };

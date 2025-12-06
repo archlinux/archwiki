@@ -124,9 +124,12 @@ ve.ce.MWImageNode.prototype.generateContents = function () {
 		iiurlheight: height,
 		iiurlparam: params,
 		titles: this.getModel().getFilename()
-	} )
-		.done( this.onParseSuccess.bind( this, deferred ) )
-		.fail( this.onParseError.bind( this, deferred ) );
+	} );
+
+	xhr.then(
+		this.onParseSuccess.bind( this, deferred ),
+		this.onParseError.bind( this, deferred )
+	);
 
 	return deferred.promise( { abort: xhr.abort } );
 };

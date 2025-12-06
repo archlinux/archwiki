@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ant176",
+			"Omotecho",
+			"Waki285",
+			"Kokage si"
+		]
+	},
+	"hcaptcha-desc": "Confirm Edit 用の [https://www.hcaptcha.com/ hCaptcha] モジュール",
+	"hcaptcha-edit": "ウィキを自動編集スパムから保護するために、下のhCaptchaを解決してください。",
+	"hcaptcha-addurl": "あなたの編集には新しい外部リンクが含まれています。\nウィキを自動投稿スパムから保護するために、以下のhCapthaを解いてください。",
+	"hcaptcha-badlogin": "ウィキをパスワードクラッキングから保護するために、下のhCaptchaを解決してください。",
+	"hcaptcha-createaccount": "ウィキをアカウント自動作成から保護するために、下のhCaptchaを解決してください。",
+	"hcaptcha-createaccount-fail": "hCaptchaをまだ解決していないようです。",
+	"hcaptcha-create": "ウィキを記事の自動作成から保護するために、下のhCaptchaを解決してください。",
+	"hcaptcha-help": "hCaptchaチャレンジを解いて、応答値をcaptchaWordとして返してください。",
+	"hcaptcha-privacy-policy": "当サイトの保護は hCaptcha を採用しており、当該の[https://www.hcaptcha.com/privacy プライバシー ポリシー] と [https://www.hcaptcha.com/terms 利用規約]を適用します。",
+	"hcaptcha-challenge-closed": "続けるにはキャプチャを完了させてください。",
+	"hcaptcha-challenge-expired": "キャプチャに解答する制限時間が切れました。もう一度お試しください。",
+	"hcaptcha-generic-error": "フォームの読み込み中にエラーが発生しました。続行するには、ページを再読み込みしてください。",
+	"hcaptcha-loading-indicator-label": "フォーム読み込みが終わるまでお待ちください……",
+	"hcaptcha-missing-token": "このフォーム読み込みがまだ終わっていません。あと数秒、お待ちのうえ、もう一度お願いします。",
+	"hcaptcha-noscript": "続けるには JavaScript が必要です。 ブラウザの設定で JavaScript をオンにしてから、ページを更新してください。"
+}

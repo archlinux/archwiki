@@ -81,7 +81,7 @@ mw.echo.dm.NotificationGroupsList.prototype.addGroup = function ( groupSource, s
 		name: groupSource,
 		source: groupSource,
 		sourceURL: sourceData.base,
-		timestamp: sourceData.ts
+		timestamp: sourceData.ts,
 	} );
 
 	if ( Array.isArray( groupItems ) && groupItems.length > 0 ) {

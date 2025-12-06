@@ -276,11 +276,6 @@ class ApiBlockTest extends ApiTestCase {
 	}
 
 	public function testBlockWithRestrictionsAction() {
-		$this->overrideConfigValue(
-			MainConfigNames::EnablePartialActionBlocks,
-			true
-		);
-
 		$blockActionInfo = $this->getServiceContainer()->getBlockActionInfo();
 		$action = 'upload';
 
@@ -435,6 +430,11 @@ class ApiBlockTest extends ApiTestCase {
 	public function testIdConflictsWithReblock() {
 		$this->expectApiErrorCode( 'invalidparammix' );
 		$this->doBlock( [ 'reblock' => '', 'id' => '1' ] );
+	}
+
+	public function testNewblockConflictsWithReblock() {
+		$this->expectApiErrorCode( 'invalidparammix' );
+		$this->doBlock( [ 'newblock' => '', 'reblock' => '' ] );
 	}
 
 	public function testIdMulti() {

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Brooke Vibber
  * @author <mail@tgries.de>
@@ -22,12 +8,14 @@
  * @author Luke Welling lwelling@wikimedia.org
  */
 
-use MediaWiki\Mail\UserEmailContact;
+namespace MediaWiki\Mail;
+
+use Stringable;
 
 /**
  * Represent and format a single name and email address pair for SMTP.
  *
- * Used by Emailer, e.g. via EmailUser or EmailNotification.
+ * Used by Emailer, e.g. via EmailUser.
  *
  * @newable
  * @since 1.6.0
@@ -105,3 +93,6 @@ class MailAddress implements Stringable {
 		return $this->toString();
 	}
 }
+
+/** @deprecated class alias since 1.45 */
+class_alias( MailAddress::class, 'MailAddress' );

@@ -22,14 +22,11 @@ class SkinVectorLegacy extends SkinMustache {
 	private const MENU_TYPE_DROPDOWN = 2;
 	private const MENU_TYPE_PORTAL = 3;
 
-	private LanguageConverterFactory $languageConverterFactory;
-
 	public function __construct(
-		LanguageConverterFactory $languageConverterFactory,
+		private readonly LanguageConverterFactory $languageConverterFactory,
 		array $options
 	) {
 		parent::__construct( $options );
-		$this->languageConverterFactory = $languageConverterFactory;
 	}
 
 	/**

@@ -1,19 +1,24 @@
 # Release History
 
+## 4.0.0 (2025-08-04)
+* Add `Hint::ONLY_FOR_DECODE` to support forward-compatibility of
+  serialized data.
+* Drop support for PHP < 8.1.
+
 ## 3.0.3 (2024-11-09)
-* Make Hint a Stringable class for easier debugging.
-* Improve InvalidArgumentException messages for easier debugging.
+* Make `Hint` a `Stringable` class for easier debugging.
+* Improve `InvalidArgumentException` messages for easier debugging.
 
 ## 3.0.2 (2024-07-22)
-* Add generic template types to the Hint object.
-* Fix behavior of ALLOW_OBJECT hint for non-empty lists.
+* Add generic template types to the `Hint` object.
+* Fix behavior of `Hint::ALLOW_OBJECT` for non-empty lists.
 
 ## 3.0.1 (2024-06-14)
-* Refactor JsonCodec::codecFor() to be non-recursive.  This simplifies
+* Refactor `JsonCodec::codecFor()` to be non-recursive.  This simplifies
   the implementation of extensions without worrying about recursive
   calls to the subclass method.
-* Gracefully handle embedded stdClass objects passed to
-  ::newFromJsonArray().
+* Gracefully handle embedded `stdClass` objects passed to
+  `::newFromJsonArray()`.
 
 ## 3.0.0 (2024-06-12)
 * Add new class hint mechanism to generalize the method added in 2.1.0

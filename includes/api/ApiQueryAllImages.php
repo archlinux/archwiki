@@ -6,21 +6,7 @@
  * Copyright © 2008 Vasiliev Victor vasilvv@gmail.com,
  * based on ApiQueryAllPages.php
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -80,6 +66,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
@@ -308,8 +295,8 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 			if ( $resultPageSet === null ) {
 				$file = $repo->newFileFromRow( $row );
-				$info = array_merge( [ 'name' => $row->img_name ],
-					ApiQueryImageInfo::getInfo( $file, $prop, $result ) );
+				$info = ApiQueryImageInfo::getInfo( $file, $prop, $result ) +
+					[ 'name' => $row->img_name ];
 				self::addTitleInfo( $info, $file->getTitle() );
 
 				$fit = $result->addValue( [ 'query', $this->getModuleName() ], null, $info );
@@ -333,6 +320,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$ret = [
 			'sort' => [
@@ -414,6 +402,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 	private const PROPERTY_FILTER = [ 'archivename', 'thumbmime', 'uploadwarning' ];
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=allimages&aifrom=B'
@@ -429,6 +418,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Allimages';
 	}

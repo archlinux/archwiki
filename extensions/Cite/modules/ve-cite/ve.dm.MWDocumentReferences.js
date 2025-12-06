@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+const MWGroupReferences = require( './ve.dm.MWGroupReferences.js' );
+
 /**
  * A facade providing a simplified and safe interface to Cite `ref` and
  * `references` tags in a document.
@@ -22,12 +24,12 @@ ve.dm.MWDocumentReferences = function VeDmMWDocumentReferences( doc ) {
 	/**
 	 * Holds the information calculated for each group.
 	 *
-	 * @member {Object.<string, ve.dm.MWGroupReferences>}
+	 * @member {Object.<string, MWGroupReferences>}
 	 */
 	this.cachedByGroup = {};
 
 	doc.getInternalList().connect( this, { update: 'updateGroups' } );
-	this.updateAllGroups();
+	this.updateGroups( this.getAllGroupNames() );
 };
 
 /* Inheritance */
@@ -62,45 +64,38 @@ ve.dm.MWDocumentReferences.static.refsForDoc = function ( doc ) {
 
 /**
  * @private
- */
-ve.dm.MWDocumentReferences.prototype.updateAllGroups = function () {
-	this.updateGroups( this.getAllGroupNames() );
-};
-
-/**
- * @private
  * @param {string[]} groupsChanged A list of group names which have changed in
  *  this transaction
  */
 ve.dm.MWDocumentReferences.prototype.updateGroups = function ( groupsChanged ) {
-	groupsChanged.forEach( ( groupName ) => this.updateGroup( groupName ) );
-};
-
-/**
- * @private
- * @param {string[]} groupName Name of the reference group which needs to be
- *  updated, with prefix
- */
-ve.dm.MWDocumentReferences.prototype.updateGroup = function ( groupName ) {
-	const nodeGroup = this.doc.getInternalList().getNodeGroup( groupName );
-	this.cachedByGroup[ groupName ] = ve.dm.MWGroupReferences.static.makeGroupRefs( nodeGroup );
+	groupsChanged.forEach( ( groupName ) => {
+		const nodeGroup = this.doc.getInternalList().getNodeGroup( groupName );
+		this.cachedByGroup[ groupName ] = MWGroupReferences.static.makeGroupRefs( nodeGroup );
+	} );
 };
 
 /**
  * @param {string} groupName with or without prefix
- * @return {ve.dm.MWGroupReferences}
+ * @return {MWGroupReferences}
  */
 ve.dm.MWDocumentReferences.prototype.getGroupRefs = function ( groupName ) {
 	return this.cachedByGroup[ groupName.startsWith( 'mwReference/' ) ? groupName : 'mwReference/' + groupName ] ||
-		new ve.dm.MWGroupReferences();
+		new MWGroupReferences();
 };
 
+/**
+ * @return {string[]}
+ */
 ve.dm.MWDocumentReferences.prototype.getAllGroupNames = function () {
 	return Object.keys( this.doc.getInternalList().getNodeGroups() );
 };
 
+/**
+ * @return {boolean}
+ */
 ve.dm.MWDocumentReferences.prototype.hasRefs = function () {
-	return this.getAllGroupNames().some( ( groupName ) => !this.getGroupRefs( groupName ).isEmpty() );
+	return Object.values( this.doc.getInternalList().getNodeGroups() )
+		.some( ( group ) => !group.isEmpty() );
 };
 
 /**
@@ -133,3 +128,5 @@ ve.dm.MWDocumentReferences.static.contentLangDigits = function ( num ) {
 ve.dm.MWDocumentReferences.prototype.getIndexLabel = function ( groupName, listKey ) {
 	return this.getGroupRefs( groupName ).getIndexLabel( listKey );
 };
+
+module.exports = ve.dm.MWDocumentReferences;

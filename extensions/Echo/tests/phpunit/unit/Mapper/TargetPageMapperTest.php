@@ -20,12 +20,12 @@ class TargetPageMapperTest extends MediaWikiUnitTestCase {
 			[
 				'successful insert with next sequence = 1',
 				[ 'insert' => true, 'insertId' => 2 ],
-				1
+				1,
 			],
 			[
 				'successful insert with insert id = 2',
 				[ 'insert' => true, 'insertId' => 2 ],
-				2
+				2,
 			],
 		];
 	}
@@ -78,7 +78,7 @@ class TargetPageMapperTest extends MediaWikiUnitTestCase {
 			'insert' => '',
 			'insertId' => '',
 			'select' => [],
-			'delete' => ''
+			'delete' => '',
 		];
 		$db = $this->createMock( IDatabase::class );
 		$db->method( 'insert' )

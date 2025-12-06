@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -49,6 +35,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\BadRevisionException;
 use MediaWiki\Revision\RevisionRecord;
@@ -127,9 +114,9 @@ class Article implements Page {
 	private WikiPageFactory $wikiPageFactory;
 	private JobQueueGroup $jobQueueGroup;
 	private ArchivedRevisionLookup $archivedRevisionLookup;
+	private RecentChangeLookup $recentChangeLookup;
 	protected IConnectionProvider $dbProvider;
 	protected DatabaseBlockStore $blockStore;
-
 	protected RestrictionStore $restrictionStore;
 
 	/**
@@ -157,6 +144,7 @@ class Article implements Page {
 		$this->wikiPageFactory = $services->getWikiPageFactory();
 		$this->jobQueueGroup = $services->getJobQueueGroup();
 		$this->archivedRevisionLookup = $services->getArchivedRevisionLookup();
+		$this->recentChangeLookup = $services->getRecentChangeLookup();
 		$this->dbProvider = $services->getConnectionProvider();
 		$this->blockStore = $services->getDatabaseBlockStore();
 		$this->restrictionStore = $services->getRestrictionStore();
@@ -173,9 +161,8 @@ class Article implements Page {
 	/**
 	 * Constructor from a page id
 	 * @param int $id Article ID to load
-	 * @return Article|null
 	 */
-	public static function newFromID( $id ) {
+	public static function newFromID( $id ): ?static {
 		$t = Title::newFromID( $id );
 		return $t === null ? null : new static( $t );
 	}
@@ -185,9 +172,8 @@ class Article implements Page {
 	 *
 	 * @param Title $title
 	 * @param IContextSource $context
-	 * @return Article
 	 */
-	public static function newFromTitle( $title, IContextSource $context ): self {
+	public static function newFromTitle( $title, IContextSource $context ): static {
 		if ( $title->getNamespace() === NS_MEDIA ) {
 			// XXX: This should not be here, but where should it go?
 			$title = Title::makeTitle( NS_FILE, $title->getDBkey() );
@@ -549,7 +535,7 @@ class Article implements Page {
 		try {
 			$continue =
 				$this->generateContentOutput( $authority, $parserOptions, $oldid, $outputPage, $poOptions );
-		} catch ( BadRevisionException $e ) {
+		} catch ( BadRevisionException ) {
 			$continue = false;
 			$this->showViewError( wfMessage( 'badrevision' )->text() );
 		}
@@ -810,25 +796,29 @@ class Article implements Page {
 		# Run the parse, protected by a pool counter
 		wfDebug( __METHOD__ . ": doing uncached parse" );
 
-		$opt = 0;
+		$opt = [];
 
 		// we already checked the cache in case 2, don't check again.
-		$opt |= ParserOutputAccess::OPT_NO_CHECK_CACHE;
+		$opt[ ParserOutputAccess::OPT_NO_CHECK_CACHE ] = true;
 
 		// we already checked in fetchRevisionRecord()
-		$opt |= ParserOutputAccess::OPT_NO_AUDIENCE_CHECK;
+		$opt[ ParserOutputAccess::OPT_NO_AUDIENCE_CHECK ] = true;
 
-		// enable stampede protection and allow stale content
-		$opt |= ParserOutputAccess::OPT_FOR_ARTICLE_VIEW;
+		// enable stampede protection
+		$opt[ ParserOutputAccess::OPT_POOL_COUNTER ]
+			= ParserOutputAccess::POOL_COUNTER_ARTICLE_VIEW;
+
+		// allow stale cached content to be served
+		$opt[ ParserOutputAccess::OPT_POOL_COUNTER_FALLBACK ] = true;
 
 		// Attempt to trigger WikiPage::triggerOpportunisticLinksUpdate
 		// Ideally this should not be the responsibility of the ParserCache to control this.
 		// See https://phabricator.wikimedia.org/T329842#8816557 for more context.
-		$opt |= ParserOutputAccess::OPT_LINKS_UPDATE;
+		$opt[ ParserOutputAccess::OPT_LINKS_UPDATE ] = true;
 
 		if ( !$rev->getId() || !$useParserCache ) {
 			// fake revision or uncacheable options
-			$opt |= ParserOutputAccess::OPT_NO_CACHE;
+			$opt[ ParserOutputAccess::OPT_NO_CACHE ] = true;
 		}
 
 		$renderStatus = $parserOutputAccess->getParserOutput(
@@ -971,7 +961,7 @@ class Article implements Page {
 			$cachedId = $pOutput->getCacheRevisionId();
 			if ( $cachedId !== null ) {
 				$outputPage->setRevisionId( $cachedId );
-				$outputPage->getMetadata()->setRevisionTimestamp( $pOutput->getTimestamp() );
+				$outputPage->getMetadata()->setRevisionTimestamp( $pOutput->getRevisionTimestamp() );
 			}
 		}
 
@@ -1003,7 +993,7 @@ class Article implements Page {
 
 		# Adjust the title if it was set by displaytitle, -{T|}- or language conversion
 		$titleText = $pOutput->getTitleText();
-		if ( strval( $titleText ) !== '' ) {
+		if ( $titleText !== '' ) {
 			$out->setPageTitle( $titleText );
 			$out->setDisplayTitle( $titleText );
 		}
@@ -1087,7 +1077,7 @@ class Article implements Page {
 		$context->getOutput()->addHelpLink( 'Help:Diff' );
 	}
 
-	protected function isDiffOnlyView() {
+	protected function isDiffOnlyView(): bool {
 		return $this->getContext()->getRequest()->getBool(
 			'diffonly',
 			$this->userOptionsLookup->getBoolOption( $this->getContext()->getUser(), 'diffonly' )
@@ -1163,10 +1153,7 @@ class Article implements Page {
 		if ( $title->canUseNoindex() && $pOutput && $pOutput->getIndexPolicy() ) {
 			# __INDEX__ and __NOINDEX__ magic words, if allowed. Incorporates
 			# a final check that we have really got the parser output.
-			$policy = array_merge(
-				$policy,
-				[ 'index' => $pOutput->getIndexPolicy() ]
-			);
+			$policy['index'] = $pOutput->getIndexPolicy();
 		}
 
 		if ( isset( $articleRobotPolicies[$title->getPrefixedText()] ) ) {
@@ -1284,11 +1271,30 @@ class Article implements Page {
 	}
 
 	/**
-	 * Show a header specific to the namespace currently being viewed, like
-	 * [[MediaWiki:Talkpagetext]]. For Article::view().
+	 * Show a header specific to the namespace currently being viewed, such as
+	 * [[MediaWiki:Subjectpageheader]] on subject pages or
+	 * [[MediaWiki:Talkpageheader]] on talk pages.
+	 *
+	 * This function is used in Article::view().
+	 *
+	 * For the addition of subject page headers, see T151682.
 	 */
 	public function showNamespaceHeader() {
-		if ( $this->getTitle()->isTalkPage() && !$this->getContext()->msg( 'talkpageheader' )->isDisabled() ) {
+		if (
+			!$this->getTitle()->isTalkPage() &&
+			$this->getTitle()->exists() &&
+			!$this->getContext()->msg( 'subjectpageheader' )->isDisabled()
+		) {
+			$this->getContext()->getOutput()->wrapWikiMsg(
+				"<div class=\"mw-subjectpageheader\">\n$1\n</div>",
+				[ 'subjectpageheader' ]
+			);
+		}
+
+		if (
+			$this->getTitle()->isTalkPage() &&
+			!$this->getContext()->msg( 'talkpageheader' )->isDisabled()
+		) {
 			$this->getContext()->getOutput()->wrapWikiMsg(
 				"<div class=\"mw-talkpageheader\">\n$1\n</div>",
 				[ 'talkpageheader' ]
@@ -1382,11 +1388,11 @@ class Article implements Page {
 		) {
 			// 6h tolerance because the RC might not be cleaned out regularly
 			$recentPageCreation = true;
-			$rc = RecentChange::newFromConds(
+			$rc = $this->recentChangeLookup->getRecentChangeByConds(
 				[
 					'rc_this_oldid' => intval( $oldestRevisionRow->rev_id ),
 					// Avoid selecting a categorization entry
-					'rc_type' => RC_NEW,
+					'rc_source' => RecentChange::SRC_NEW,
 				],
 				__METHOD__
 			);
@@ -1424,9 +1430,9 @@ class Article implements Page {
 			) {
 				// 6h tolerance because the RC might not be cleaned out regularly
 				$recentFileUpload = true;
-				$rc = RecentChange::newFromConds(
+				$rc = $this->recentChangeLookup->getRecentChangeByConds(
 					[
-						'rc_type' => RC_LOG,
+						'rc_source' => RecentChange::SRC_LOG,
 						'rc_log_type' => 'upload',
 						'rc_timestamp' => $newestUploadTimestamp,
 						'rc_namespace' => NS_FILE,
@@ -1987,7 +1993,7 @@ class Article implements Page {
 				return true;
 			} else {
 				wfDebug( "Article::tryFileCache(): starting buffer" );
-				ob_start( [ &$cache, 'saveToFileCache' ] );
+				ob_start( [ $cache, 'saveToFileCache' ] );
 			}
 		} else {
 			wfDebug( "Article::tryFileCache(): not cacheable" );
@@ -2032,7 +2038,7 @@ class Article implements Page {
 			$parserOptions = $this->getParserOptions();
 		} else {
 			$parserOptions = $this->mPage->makeParserOptions( $user );
-			$parserOptions->setRenderReason( 'page-view' );
+			$parserOptions->setRenderReason( $this->getOldID() ? 'page_view_oldid' : 'page_view' );
 		}
 
 		return $this->mPage->getParserOutput( $parserOptions, $oldid );
@@ -2044,7 +2050,7 @@ class Article implements Page {
 	 */
 	public function getParserOptions() {
 		$parserOptions = $this->mPage->makeParserOptions( $this->getContext() );
-		$parserOptions->setRenderReason( 'page-view' );
+		$parserOptions->setRenderReason( $this->getOldID() ? 'page_view_oldid' : 'page_view' );
 		return $parserOptions;
 	}
 

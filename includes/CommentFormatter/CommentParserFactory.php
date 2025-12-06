@@ -16,57 +16,20 @@ use MediaWiki\Title\TitleParser;
  * @internal
  */
 class CommentParserFactory {
-	/** @var LinkRenderer */
-	private $linkRenderer;
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-	/** @var LinkCache */
-	private $linkCache;
-	/** @var RepoGroup */
-	private $repoGroup;
-	/** @var Language */
-	private $contLang;
-	/** @var TitleParser */
-	private $titleParser;
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-	/** @var HookContainer */
-	private $hookContainer;
 
-	/**
-	 * @param LinkRenderer $linkRenderer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param LinkCache $linkCache
-	 * @param RepoGroup $repoGroup
-	 * @param Language $contLang
-	 * @param TitleParser $titleParser
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct(
-		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory,
-		LinkCache $linkCache,
-		RepoGroup $repoGroup,
-		Language $contLang,
-		TitleParser $titleParser,
-		NamespaceInfo $namespaceInfo,
-		HookContainer $hookContainer
+		private readonly LinkRenderer $linkRenderer,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly LinkCache $linkCache,
+		private readonly RepoGroup $repoGroup,
+		private readonly Language $contLang,
+		private readonly TitleParser $titleParser,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly HookContainer $hookContainer
 	) {
-		$this->linkRenderer = $linkRenderer;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->linkCache = $linkCache;
-		$this->repoGroup = $repoGroup;
-		$this->contLang = $contLang;
-		$this->titleParser = $titleParser;
-		$this->namespaceInfo = $namespaceInfo;
-		$this->hookContainer = $hookContainer;
 	}
 
-	/**
-	 * @return CommentParser
-	 */
-	public function create() {
+	public function create(): CommentParser {
 		return new CommentParser(
 			$this->linkRenderer,
 			$this->linkBatchFactory,

@@ -9,13 +9,13 @@ use Wikimedia\Parsoid\Utils\Utils;
 
 class SrConverter extends LanguageConverter {
 
-	public function loadDefaultTables() {
+	public function loadDefaultTables(): void {
 		# T320662: should be converted from mediawiki-internal codes
 		$this->setMachine( new FstReplacementMachine( 'sr', [ 'sr-ec', 'sr-el' ] ) );
 	}
 
-	// phpcs:ignore MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
-	public function findVariantLink( $link, $nt, $ignoreOtherCond ) {
+	/** @inheritDoc */
+	public function findVariantLink( $link, $nt, $ignoreOtherCond ): array {
 		$ns = $nt->getNamespace();
 		// do not try to find variants for usernames
 		if ( $ns->isUser() || $ns->isUserTalk ) {
@@ -37,8 +37,8 @@ class SrConverter extends LanguageConverter {
 		$r = [];
 		$machine = $this->getMachine();
 		'@phan-var FstReplacementMachine $machine'; /* @var FstReplacementMachine $machine */
-		foreach ( $machine->getCodes() as $code => $ignore1 ) {
-			foreach ( $machine->getCodes() as $othercode => $ignore2 ) {
+		foreach ( $machine->getCodes() as $code => $_ignore1 ) {
+			foreach ( $machine->getCodes() as $othercode => $_ignore2 ) {
 				if ( $code === $othercode ) {
 					return false;
 				}

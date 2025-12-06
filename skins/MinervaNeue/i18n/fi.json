@@ -19,12 +19,13 @@
 			"Stryn",
 			"Syreeni",
 			"Valtlai",
-			"Valtlait"
+			"Valtlait",
+			"Yupik"
 		]
 	},
 	"minerva-last-modified-date": "Viimeksi muokattu $1 kello $2",
 	"minerva-watchlist-cta": "Seuraa tätä sivua sekä kaikkia siihen tehtäviä muutoksia.",
-	"mobile-frontend-cookies-required": "Näkymien vaihtaminen vaatii evästeitä. Ota evästeet selaimessa käyttöön ja yritä uudestaan.",
+	"mobile-frontend-cookies-required": "Näkymien vaihtaminen vaatii evästeitä. Ota evästeet selaimessa käyttöön ja yritä uudelleen.",
 	"mobile-frontend-editor-edit": "Muokkaa",
 	"minerva-download": "Lataa PDF",
 	"mobile-frontend-editor-redlink-create": "Luo sivu",
@@ -45,7 +46,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Tietoa tästä luokasta",
 	"mobile-frontend-meta-data-issues-header": "Sivun ongelmat",
 	"minerva-meta-data-issues-section-header": "Osion ongelmat",
-	"mobile-frontend-pageaction-edit-tooltip": "Muokkaa tämän sivun johdantoa",
 	"mobile-frontend-placeholder": "Hae {{GRAMMAR:elative|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Satunnainen",
 	"mobile-frontend-redirected-from": "Ohjattu sivulta ”[[$1]]”",
@@ -67,16 +67,10 @@
 	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Keskustelu]",
 	"minerva-skin-desc": "Responsiivinen mobiililaitteille suunniteltu ulkoasu",
 	"skin-minerva-issue-learn-more": "Lisätietoja",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekunti|$1 sekuntia}} sitten",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minuutti|$1 minuuttia}} sitten",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 tunti|$1 tuntia}} sitten",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 päivä|$1 päivää}} sitten",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 kuukausi|$1 kuukautta}} sitten",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 vuosi|$1 vuotta}} sitten",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Luokat",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Näytä sivun luokat",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Valitettavasti tulosten ryhmittely sivun mukaan ei ole käytettävissä mobiilisivustolla. Jos haluat käyttää ryhmittele sivun mukaan -ominaisuutta, siirry työpöytäsivustolle.",
-	"skin-minerva-night-mode-unavailable": "Sivu saatavilla vain vaaleasssa väriteemassa.",
+	"skin-minerva-night-mode-unavailable": "Sivu saatavilla vain vaaleassa väriteemassa.",
 	"minerva.css": "/* Tämä sivu sisältää MinervaNeue-ulkoasua muuttavia tyylejä. */",
 	"minerva.js": "/* Tämän sivun JavaScript-koodi liitetään MinervaNeue-tyyliin */"
 }

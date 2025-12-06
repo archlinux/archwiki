@@ -80,6 +80,11 @@ $specialPageAliases['ur'] = [
 	'LintErrors' => [ 'نحوی_نقائص' ],
 ];
 
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'LintErrors' => [ 'LintErrors' ],
+];
+
 /** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'LintErrors' => [ 'Lint错误' ],

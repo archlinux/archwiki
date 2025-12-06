@@ -17,7 +17,7 @@ use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\DomPageBundle;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
@@ -29,6 +29,7 @@ use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\Histogram;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\DOM\Processors\AddRedLinks;
@@ -52,12 +53,14 @@ class Parsoid {
 
 	/** @var DataAccess */
 	private $dataAccess;
+	private Histogram $histogram;
 
 	public function __construct(
 		SiteConfig $siteConfig, DataAccess $dataAccess
 	) {
 		$this->siteConfig = $siteConfig;
 		$this->dataAccess = $dataAccess;
+		$this->histogram = new Histogram( $this->siteConfig );
 	}
 
 	/**
@@ -73,7 +76,7 @@ class Parsoid {
 				// handle the null return value as gracefully as
 				// possible for safety."
 				'null';
-		} catch ( \Throwable $t ) {
+		} catch ( \Throwable ) {
 			// Belt-and-suspenders protection against parts of the composer
 			// runtime API being absent in production.
 			return 'error';
@@ -93,12 +96,9 @@ class Parsoid {
 	 * the supplied version, when interpreted with semver caret semantics.
 	 * This will allow us to make backwards compatible changes, without the need
 	 * for clients to bump the version in their headers all the time.
-	 *
-	 * @param string $version
-	 * @return string|null
 	 */
-	public static function resolveContentVersion( string $version ) {
-		foreach ( self::AVAILABLE_VERSIONS as $i => $a ) {
+	public static function resolveContentVersion( string $version ): ?string {
+		foreach ( self::AVAILABLE_VERSIONS as $a ) {
 			if ( Semver::satisfies( $a, "^{$version}" ) &&
 				// The section wrapping in 1.6.x should have induced a major
 				// version bump, since it requires upgrading clients to
@@ -154,7 +154,7 @@ class Parsoid {
 	 * @param ContentMetadataCollector $metadata
 	 * @param array $options See wikitext2html.
 	 * @param ?SelectiveUpdateData $selparData See wikitext2html.
-	 * @return array{0:Env,1:Document,2:?string}
+	 * @return list{Env,Document,?string}
 	 *  The returned document is in "prepared and loaded" form.
 	 */
 	private function parseWikitext(
@@ -181,12 +181,17 @@ class Parsoid {
 		}
 		$envOptions['skipLanguageConversionPass'] =
 			$options['skipLanguageConversionPass'] ?? false;
+		$envOptions['nativeTemplateExpansion'] =
+			$options['nativeTemplateExpansion'] ?? false;
 
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
+		// XXX: T405759 Frame::getSource() is deprecated; this resource bump
+		// should probably be done elsewhere, like at the start of the parser
+		// pipeline where we have a $wikitext string.
 		if ( !$env->compareWt2HtmlLimit(
-			'wikitextSize', strlen( $env->topFrame->getSrcText() )
+			'wikitextSize', strlen( $env->topFrame->getSource()->getSrcText() )
 		) ) {
 			throw new ResourceLimitExceededException(
 				"wt2html: wikitextSize limit exceeded"
@@ -243,14 +248,14 @@ class Parsoid {
 	 *                             update, and could even be from a "newer"
 	 *                             revision (if this is a render of an old
 	 *                             revision).
-	 *   'previousOutput'       => (?PageBundle) output of the prior parse of
+	 *   'previousOutput'       => (?HtmlPageBundle) output of the prior parse of
 	 *                             'previousInput'
 	 * ]
 	 * @param ?array &$headers
 	 * @param ?ContentMetadataCollector $metadata Pass in a CMC in order to
 	 *  collect and retrieve metadata about the parse.
 	 * @param ?SelectiveUpdateData $selparData
-	 * @return PageBundle|string
+	 * @return HtmlPageBundle|string
 	 */
 	public function wikitext2html(
 		PageConfig $pageConfig, array $options = [], ?array &$headers = null,
@@ -267,7 +272,7 @@ class Parsoid {
 			'outputContentVersion' => $env->getOutputContentVersion(),
 			'useFragmentBank' => $options['useFragmentBank'] ?? false,
 			'idIndex' => $env->pageBundle ?
-				DOMDataUtils::usedIdIndex( $env, $doc ) : null,
+				DOMDataUtils::usedIdIndex( $env->getSiteConfig(), $doc ) : null,
 		] );
 		$parseTimeMs = $parseTiming->end();
 
@@ -285,7 +290,7 @@ class Parsoid {
 
 		if ( $env->pageBundle ) {
 			$out = [
-				'pb' => PageBundle::fromDomPageBundle( $env->pageBundle, [
+				'pb' => HtmlPageBundle::fromDomPageBundle( $env->pageBundle, [
 					'body_only' => $body_only,
 					'contentversion' => $env->getOutputContentVersion(),
 					'headers' => $headers,
@@ -313,14 +318,11 @@ class Parsoid {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private function recordParseMetrics(
 		Env $env, float $parseTimeMs,
 		array $out, ?array $headers, string $contentmodel,
 		array $options
-	) {
+	): void {
 		$metrics = $this->siteConfig->metrics();
 
 		$pageConfig = $env->getPageConfig();
@@ -352,17 +354,26 @@ class Parsoid {
 			'version' => $version
 		] );
 
+		// TODO: Remove fake timing after migration to histogram is complete
 		// @phan-suppress-next-line PhanDeprecatedFunction
-		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $pageConfig->getPageMainContent() ), false );
+		$inSize = $pageConfig->getPageMainContent();
+		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $inSize ), false );
 		$timing->end(
 			"entry.wt2html.{$mstr}.size.input",
+			"legacy_wt2html_size_input_bytes",
+			[ "type" => $mstr ]
+		);
+		$this->histogram->observe(
 			"wt2html_size_input_bytes",
+			strlen( $inSize ),
 			[ "type" => $mstr ]
 		);
 
 		$outSize = strlen( $out['html'] );
+		// TODO: Remove fake timing after migration to histogram is complete
 		$timing = Timing::fakeTiming( $this->siteConfig, $outSize, false );
-		$timing->end( "entry.wt2html.{$mstr}.size.output", "wt2html_size_output_bytes", [ "type" => $mstr ] );
+		$timing->end( "entry.wt2html.{$mstr}.size.output", "legacy_wt2html_size_output_bytes", [ "type" => $mstr ] );
+		$this->histogram->observe( "wt2html_size_output_bytes", $outSize, [ "type" => $mstr ] );
 
 		if ( $parseTimeMs > 10 && $outSize > 100 ) {
 			// * Don't bother with this metric for really small parse times
@@ -375,13 +386,16 @@ class Parsoid {
 			// NOTE: This is slightly misleading since there are fixed costs
 			// for generating output like the <head> section and should be factored in,
 			// but this is good enough for now as a useful first degree of approxmation.
+
+			// TODO: Remove fake timing after migration to histogram is complete
 			$msPerKB = $parseTimeMs * 1024 / $outSize;
 			$timing = Timing::fakeTiming( $this->siteConfig, $msPerKB );
 			$timing->end(
 				'entry.wt2html.timePerKB',
-				'wt2html_msPerKB',
+				'legacy_wt2html_msPerKB',
 				[]
 			);
+			$this->histogram->observe( 'wt2html_msPerKB', $msPerKB );
 		}
 
 		// Expensive analyses: sampleStats is randomly sampled will not be
@@ -394,7 +408,7 @@ class Parsoid {
 		try {
 			// create new page bundle for this computation to ensure we
 			// don't inadvertently corrupt the main document result.
-			$newPb = new PageBundle(
+			$newPb = new HtmlPageBundle(
 				$out['html'],
 				$out['pb']->parsoid ?? null, $out['pb']->mw ?? null,
 				$env->getOutputContentVersion(),
@@ -446,7 +460,7 @@ class Parsoid {
 	 * Serialize DOM to wikitext.
 	 *
 	 * @param PageConfig $pageConfig
-	 * @param Document|PageBundle|DomPageBundle $doc This is either a page
+	 * @param Document|HtmlPageBundle|DomPageBundle $doc This is either a page
 	 *   bundle or a "naive" DOM without special handling of
 	 *   data-parsoid/data-mw etc.  A naive DOM can either be in "single
 	 *   document" form (data attributes in an element in the <head>) or in
@@ -500,18 +514,17 @@ class Parsoid {
 		return $wikitext;
 	}
 
-	/**
-	 *
-	 */
 	private function recordSerializationMetrics(
 		array $options, float $serialTime, string $wikitext
-	) {
+	): void {
 		$siteConfig = $this->siteConfig;
 		$metrics = $siteConfig->metrics();
 
 		$htmlSize = $options['htmlSize'] ?? 0;
 		$timing = Timing::fakeTiming( $this->siteConfig, $htmlSize, false );
-		$timing->end( 'entry.html2wt.size.input', 'html2wt_size_input_bytes' );
+		// TODO: Remove fake timing after migration to histogram is complete
+		$timing->end( 'entry.html2wt.size.input', 'legacy_html2wt_size_input_bytes' );
+		$this->histogram->observe( 'html2wt_size_input_bytes', $htmlSize );
 
 		if ( isset( $options['inputContentVersion'] ) ) {
 			if ( $metrics ) {
@@ -529,18 +542,22 @@ class Parsoid {
 		$timing->end( 'entry.html2wt.total', 'html2wt_total_seconds', [] );
 
 		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $wikitext ), false );
-		$timing->end( 'entry.html2wt.size.output', 'html2wt_size_output_bytes', [] );
+		// TODO: Remove fake timing after migration to histogram is complete
+		$timing->end( 'entry.html2wt.size.output', 'legacy_html2wt_size_output_bytes', [] );
+		$this->histogram->observe( 'html2wt_size_output_bytes', strlen( $wikitext ) );
 
 		if ( $htmlSize ) {  // Avoid division by zero
 			// NOTE: the name timePerInputKB is misleading, since $htmlSize is
 			//       in characters, not bytes.
 			$msPerKB = $serialTime * 1024 / $htmlSize;
+			// TODO: Remove fake timing after migration to histogram is complete
 			$timing = Timing::fakeTiming( $this->siteConfig, $msPerKB );
 			$timing->end(
 				'entry.html2wt.timePerInputKB',
-				'html2wt_msPerKB',
+				'legacy_html2wt_msPerKB',
 				[]
 			);
+			$this->histogram->observe( 'html2wt_msPerKB', $msPerKB );
 		}
 	}
 
@@ -563,7 +580,7 @@ class Parsoid {
 	}
 
 	/**
-	 * Update the supplied PageBundle based on the `$update` type.
+	 * Update the supplied HtmlPageBundle based on the `$update` type.
 	 *
 	 *   'convertoffsets': Convert offsets between formats (byte, char, ucs2)
 	 *   'redlinks': Refreshes the classes of known, missing, etc. links.
@@ -573,14 +590,14 @@ class Parsoid {
 	 *
 	 * @param PageConfig $pageConfig
 	 * @param string $update 'redlinks'|'variant'
-	 * @param PageBundle|DomPageBundle $pb
+	 * @param HtmlPageBundle|DomPageBundle $pb
 	 * @param array $options
-	 * @return PageBundle
+	 * @return HtmlPageBundle
 	 */
 	public function pb2pb(
 		PageConfig $pageConfig, string $update, $pb,
 		array $options = []
-	): PageBundle {
+	): HtmlPageBundle {
 		$envOptions = [
 			'pageBundle' => true,
 			'topLevelDoc' => self::prepareAndLoadDocOrBundle( $pb ),
@@ -594,7 +611,7 @@ class Parsoid {
 		switch ( $update ) {
 			case 'convertoffsets':
 				// This method also calls Env::setCurrentOffsetType, which
-				// is used by PageBundle::fromDomPageBundle() below to set
+				// is used by HtmlPageBundle::fromDomPageBundle() below to set
 				// 'offsetType' in the 'parsoid' property of the page bundle
 				ContentUtils::convertOffsets(
 					$env, $doc, $options['inputOffsetType'], $options['outputOffsetType']
@@ -662,10 +679,10 @@ class Parsoid {
 				'storeInPageBundle' => $env->pageBundle,
 				'outputContentVersion' => $env->getOutputContentVersion(),
 				'idIndex' => $env->pageBundle ?
-					DOMDataUtils::usedIdIndex( $env, $doc ) : null,
+					DOMDataUtils::usedIdIndex( $env->getSiteConfig(), $doc ) : null,
 			]
 		);
-		return PageBundle::fromDomPageBundle( $env->pageBundle, [
+		return HtmlPageBundle::fromDomPageBundle( $env->pageBundle, [
 			'body_only' => !empty( $options['body_only'] ),
 			// Prefer the passed in version, since this was just a transformation
 			'contentversion' => $pb->version ?? $env->getOutputContentVersion(),
@@ -703,10 +720,10 @@ class Parsoid {
 	 * Downgrade a document to an older content version.
 	 *
 	 * @param string[] $dg Value returned by findDowngrade().
-	 * @param PageBundle $pageBundle
+	 * @param HtmlPageBundle $pageBundle
 	 */
 	public static function downgrade(
-		array $dg, PageBundle $pageBundle
+		array $dg, HtmlPageBundle $pageBundle
 	): void {
 		foreach ( self::DOWNGRADES as [ 'from' => $dgFrom, 'to' => $dgTo, 'func' => $dgFunc ] ) {
 			if ( $dg['from'] === $dgFrom && $dg['to'] === $dgTo ) {
@@ -756,19 +773,19 @@ class Parsoid {
 	/**
 	 * Downgrade the given document and pagebundle from 999.x to 2.x.
 	 *
-	 * @param PageBundle $pageBundle
+	 * @param HtmlPageBundle $pageBundle
 	 */
-	private static function downgrade999to2( PageBundle $pageBundle ) {
+	private static function downgrade999to2( HtmlPageBundle $pageBundle ): void {
 		// Effectively, skip applying data-parsoid.  Note that if we were to
 		// support a pb2html downgrade, we'd need to apply the full thing,
 		// but that would create complications where ids would be left behind.
-		// See the comment in around `DOMDataUtils::applyPageBundle`
-		$newPageBundle = new PageBundle(
+		// See the doc comment for `DomPageBundle::apply()`
+		$newHtmlPageBundle = new HtmlPageBundle(
 			$pageBundle->html,
 			null,
 			$pageBundle->mw
 		);
-		$pageBundle->html = $newPageBundle->toInlineAttributeHtml();
+		$pageBundle->html = $newHtmlPageBundle->toInlineAttributeHtml();
 
 		// Now, modify the pagebundle to the expected form.  This is important
 		// since, at least in the serialization path, the original pb will be
@@ -781,7 +798,7 @@ class Parsoid {
 	 * Convert an input document in a variety of formats (page bundle, etc)
 	 * to a "prepared and loaded" document suitable to be given to
 	 * Env::setupTopLevelDoc()
-	 * @param Document|PageBundle|DomPageBundle $topLevelDoc
+	 * @param Document|HtmlPageBundle|DomPageBundle $topLevelDoc
 	 * @return Document
 	 */
 	private static function prepareAndLoadDocOrBundle( $topLevelDoc ): Document {
@@ -793,9 +810,9 @@ class Parsoid {
 		) {
 			$topLevelDoc = DomPageBundle::fromSingleDocument( $topLevelDoc );
 		}
-		// Convert a PageBundle (string html) to a DomPageBundle (DOM)
-		if ( $topLevelDoc instanceof PageBundle ) {
-			$topLevelDoc = DomPageBundle::fromPageBundle( $topLevelDoc );
+		// Convert a HtmlPageBundle (string html) to a DomPageBundle (DOM)
+		if ( $topLevelDoc instanceof HtmlPageBundle ) {
+			$topLevelDoc = DomPageBundle::fromHtmlPageBundle( $topLevelDoc );
 		}
 		// Use DomPageBundle::toDom() to efficiently apply and load
 		// (without necessarily having to add attributes to the DOM)

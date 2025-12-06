@@ -8,7 +8,9 @@ mw.libs.confirmEdit = {};
  * @param {Object} [captchaData] Value of 'captcha' property returned from action=edit API
  * @param {Object} [config] Configuration options
  */
-mw.libs.confirmEdit.CaptchaInputWidget = function MwWidgetsCaptchaInputWidget( captchaData, config ) {
+mw.libs.confirmEdit.CaptchaInputWidget = function MwWidgetsCaptchaInputWidget(
+	captchaData, config
+) {
 	config = config || {};
 
 	// Parent constructor

@@ -65,7 +65,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 	ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl(), '#' );
 
 	// Style based on link cache information
-	ve.init.platform.linkCache.styleElement( lookupTitle, $link, fragment );
+	ve.init.platform.linkCache.styleElement( lookupTitle, $link, fragment, false );
 	// Don't style as a self-link in the context menu (but do elsewhere)
 	$link.removeClass( 'mw-selflink' );
 
@@ -127,6 +127,15 @@ ve.ui.MWInternalLinkContextItem.prototype.renderBody = function () {
 		this.context
 	);
 	this.$body.empty().append( $body );
+	if ( this.model.getAttribute( 'hasGeneratedHref' ) ) {
+		const warning = new OO.ui.MessageWidget( {
+			type: 'warning',
+			inline: true,
+			classes: [ 've-ui-mwInternalLinkContextItem-hasGeneratedHref' ],
+			label: ve.msg( 'visualeditor-linkcontext-uneditable' )
+		} );
+		this.$body.prepend( warning.$element );
+	}
 	if ( !this.context.isMobile() ) {
 		this.$body.append( this.$labelLayout );
 	}

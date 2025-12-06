@@ -61,18 +61,16 @@ class RendererFactory {
 	}
 
 	/**
-	 * Factory method for getting a renderer based on mode
+	 * Determine mode used for rendering of math equation, based on current configuration and tag received
 	 *
-	 * @param string $tex LaTeX markup
-	 * @param array $params HTML attributes
-	 * @param string $mode indicating rendering mode, one of MathConfig::MODE_*
-	 * @return MathRenderer appropriate renderer for mode
+	 * @param string $mode
+	 * @param array $params
+	 * @return array Returns one of the predefined MathConfig::MODE_* constants and params changed according to rules
 	 */
-	public function getRenderer(
-		string $tex,
-		array $params = [],
-		string $mode = MathConfig::MODE_MATHML
-	): MathRenderer {
+	public function determineMode(
+		string $mode = MathConfig::MODE_MATHML,
+		array $params = []
+	): array {
 		if ( isset( $params['forcemathmode'] ) ) {
 			$mode = $params['forcemathmode'];
 		}
@@ -93,6 +91,23 @@ class RendererFactory {
 			$mode = ( $mode == MathConfig::MODE_NATIVE_MML ) ? MathConfig::MODE_NATIVE_MML : MathConfig::MODE_MATHML;
 			$params['type'] = 'chem';
 		}
+		return [ $mode, $params ];
+	}
+
+	/**
+	 * Factory method for getting a renderer based on mode
+	 *
+	 * @param string $tex LaTeX markup
+	 * @param array $params HTML attributes
+	 * @param string $mode indicating rendering mode, one of MathConfig::MODE_*
+	 * @return MathRenderer appropriate renderer for mode
+	 */
+	public function getRenderer(
+		string $tex,
+		array $params = [],
+		string $mode = MathConfig::MODE_MATHML
+	): MathRenderer {
+		[ $mode, $params ] = $this->determineMode( $mode, $params );
 		switch ( $mode ) {
 			case MathConfig::MODE_SOURCE:
 				$renderer = new MathSource( $tex, $params );

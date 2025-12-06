@@ -29,7 +29,7 @@ class HTMLFieldsetCheckUser extends OOUIHTMLForm {
 				'collapsed' => $this->mCollapsed,
 				'items' => [
 					new Widget( [
-						'content' => new HtmlSnippet( $html )
+						'content' => new HtmlSnippet( $html ),
 					] ),
 				],
 			] + Element::configFromHtmlAttributes( $this->mWrapperAttributes ) );

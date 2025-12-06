@@ -1,5 +1,7 @@
 <?php
 
+// @phan-file-suppress PhanPluginNeverReturnMethod
+
 namespace MediaWiki\ResourceLoader;
 
 use LogicException;
@@ -13,7 +15,6 @@ use Wikimedia\Minify\MinifierState;
  * without building the same module twice.
  *
  * @internal
- * @phan-file-suppress PhanPluginNeverReturnMethod
  */
 class ReplayMinifierState extends MinifierState {
 
@@ -28,38 +29,46 @@ class ReplayMinifierState extends MinifierState {
 		}
 	}
 
+	/** @inheritDoc */
 	public function outputFile( string $file ) {
 		$this->calls[] = [ __FUNCTION__, func_get_args() ];
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function sourceRoot( string $url ) {
 		throw new LogicException( "Not implemented" );
 	}
 
+	/** @inheritDoc */
 	public function addSourceFile( string $url, string $source, bool $bundle = false ) {
 		$this->calls[] = [ __FUNCTION__, func_get_args() ];
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function setErrorHandler( $onError ) {
 		throw new LogicException( "Not implemented" );
 	}
 
+	/** @inheritDoc */
 	protected function minify( string $source ): string {
 		throw new LogicException( "Not implemented" );
 	}
 
+	/** @inheritDoc */
 	public function addOutput( string $output ) {
 		$this->calls[] = [ __FUNCTION__, func_get_args() ];
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function ensureNewline() {
 		$this->calls[] = [ __FUNCTION__, func_get_args() ];
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function getMinifiedOutput() {
 		throw new LogicException( "Not implemented" );
 	}

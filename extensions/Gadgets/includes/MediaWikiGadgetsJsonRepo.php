@@ -29,18 +29,11 @@ class MediaWikiGadgetsJsonRepo extends GadgetRepo {
 	public const DEF_PREFIX = 'Gadgets/';
 	public const DEF_SUFFIX = '.json';
 
-	private IConnectionProvider $dbProvider;
-	private WANObjectCache $wanCache;
-	private RevisionLookup $revLookup;
-
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		WANObjectCache $wanCache,
-		RevisionLookup $revLookup
+		private readonly IConnectionProvider $dbProvider,
+		private readonly WANObjectCache $wanCache,
+		private readonly RevisionLookup $revLookup,
 	) {
-		$this->dbProvider = $dbProvider;
-		$this->wanCache = $wanCache;
-		$this->revLookup = $revLookup;
 	}
 
 	/**
@@ -129,7 +122,7 @@ class MediaWikiGadgetsJsonRepo extends GadgetRepo {
 		try {
 			self::getGadgetId( $title );
 			return true;
-		} catch ( InvalidArgumentException $e ) {
+		} catch ( InvalidArgumentException ) {
 			return false;
 		}
 	}

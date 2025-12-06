@@ -12,8 +12,9 @@
 			<form action="{{form-action}}" id="{{form-id}}" class="cdx-search-input cdx-search-input--has-end-button">
 				<div {{#is-primary}}id="simpleSearch"{{/is-primary}} class="cdx-search-input__input-wrapper" {{#input-location}} data-search-loc="{{.}}"{{/input-location}}>
 					<div class="cdx-text-input cdx-text-input--has-start-icon">
+						{{! mw-searchInput is needed to make sure that core loads the search code on focus}}
 						<input
-							class="cdx-text-input__input"
+							class="cdx-text-input__input mw-searchInput" autocomplete="off"
 							{{#is-primary}}{{{html-input-attributes}}} id="searchInput"{{/is-primary}}
 							{{^is-primary}}type="search" name="search" placeholder="{{msg-searchsuggest-search}}"{{/is-primary}}>
 						<span class="cdx-text-input__icon cdx-text-input__start-icon"></span>

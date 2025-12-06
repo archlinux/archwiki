@@ -23,37 +23,39 @@ SELECT
   cuc_agent_id,
   cuc_private
 FROM /*_*/cu_changes;
+
 DROP TABLE /*_*/cu_changes;
 
 
 CREATE TABLE /*_*/cu_changes (
-    cuc_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    cuc_namespace INTEGER DEFAULT 0 NOT NULL,
-    cuc_title BLOB DEFAULT '' NOT NULL,
-    cuc_actor BIGINT UNSIGNED NOT NULL,
-    cuc_comment_id BIGINT UNSIGNED NOT NULL,
-    cuc_minor SMALLINT DEFAULT 0 NOT NULL,
-    cuc_page_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-    cuc_this_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-    cuc_last_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-    cuc_type SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
-    cuc_timestamp BLOB NOT NULL,
-    cuc_ip VARCHAR(255) DEFAULT '',
-    cuc_ip_hex VARCHAR(255) DEFAULT NULL,
-    cuc_xff BLOB DEFAULT '',
-    cuc_xff_hex VARCHAR(255) DEFAULT NULL,
-    cuc_agent BLOB DEFAULT NULL,
-    cuc_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-    cuc_private BLOB DEFAULT NULL
-  );
+  cuc_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  cuc_namespace INTEGER DEFAULT 0 NOT NULL,
+  cuc_title BLOB DEFAULT '' NOT NULL,
+  cuc_actor BIGINT UNSIGNED NOT NULL,
+  cuc_comment_id BIGINT UNSIGNED NOT NULL,
+  cuc_minor SMALLINT DEFAULT 0 NOT NULL,
+  cuc_page_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
+  cuc_this_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
+  cuc_last_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
+  cuc_type SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
+  cuc_timestamp BLOB NOT NULL,
+  cuc_ip VARCHAR(255) DEFAULT '',
+  cuc_ip_hex VARCHAR(255) DEFAULT NULL,
+  cuc_xff BLOB DEFAULT '',
+  cuc_xff_hex VARCHAR(255) DEFAULT NULL,
+  cuc_agent BLOB DEFAULT NULL,
+  cuc_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  cuc_private BLOB DEFAULT NULL
+);
+
 INSERT INTO /*_*/cu_changes (
-    cuc_id, cuc_namespace, cuc_title,
-    cuc_actor, cuc_comment_id, cuc_minor,
-    cuc_page_id, cuc_this_oldid, cuc_last_oldid,
-    cuc_type, cuc_timestamp, cuc_ip,
-    cuc_ip_hex, cuc_xff, cuc_xff_hex,
-    cuc_agent, cuc_agent_id, cuc_private
-  )
+  cuc_id, cuc_namespace, cuc_title,
+  cuc_actor, cuc_comment_id, cuc_minor,
+  cuc_page_id, cuc_this_oldid, cuc_last_oldid,
+  cuc_type, cuc_timestamp, cuc_ip,
+  cuc_ip_hex, cuc_xff, cuc_xff_hex,
+  cuc_agent, cuc_agent_id, cuc_private
+)
 SELECT
   cuc_id,
   cuc_namespace,
@@ -75,6 +77,7 @@ SELECT
   cuc_private
 FROM
   /*_*/__temp__cu_changes;
+
 DROP TABLE /*_*/__temp__cu_changes;
 
 CREATE INDEX cuc_ip_hex_time ON /*_*/cu_changes (cuc_ip_hex, cuc_timestamp);

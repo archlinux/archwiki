@@ -26,16 +26,12 @@ use MediaWiki\Title\Title;
 
 class EnablePresentationModel extends EchoEventPresentationModel {
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getIconType() {
 		return 'site';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getPrimaryLink() {
 		return [
 			'url' => SpecialPage::getTitleFor( 'OATHManage' )->getLocalURL(),
@@ -43,9 +39,7 @@ class EnablePresentationModel extends EchoEventPresentationModel {
 		];
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getSecondaryLinks() {
 		$link = $this->msg( 'oathauth-notifications-enable-helplink' )->inContentLanguage();
 		$title = Title::newFromText( $link->plain() );
@@ -60,9 +54,7 @@ class EnablePresentationModel extends EchoEventPresentationModel {
 		] ];
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getBodyMessage() {
 		return $this->getMessageWithAgent( 'notification-body-oathauth-enable' );
 	}

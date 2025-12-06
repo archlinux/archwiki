@@ -61,14 +61,12 @@
 	"userlogin-loggedin": "汝已作為{{GENDER:$1|$1}}登錄。\n利用以下表單以作為另一賬戶登錄。",
 	"createacct-reason-ph": "汝做麽嘅愛創建另一隻帳號",
 	"userexists": "汝所填入嘅用戶名稱已經存在。\n請另選一隻名稱。",
-	"nocookiesnew": "本用戶賬號已分建立，但係汝登入失敗。{{SITENAME}}使用cookie登入。汝已停用cookie。請啓用cookie，之後使用汝嘅新用戶名和密碼登入。",
 	"nocookiesfornew": "邇隻用戶嘅賬戶未建立，亻厓兜無法度確認其嘅來源。\n請確定汝已經開啟cookies，重新載入後再試一擺。",
 	"noname": "汝還吂輸入一隻有效嘅用戶名。",
 	"nosuchusershort": "無有喊做“$1”嘅用戶。請檢查汝輸入嘅文字係毋係有差錯。",
 	"nouserspecified": "汝愛指定一隻用戶名。",
 	"login-userblocked": "邇隻用戶已分封鎖。毋做得登入。",
 	"passwordremindertext": "有人（可能係汝本人，來自IP地址$1）已請求{{SITENAME}}嘅新密碼 （$4）。\n用戶\"$2\"嘅一隻新臨時密碼今下已分設定好為\"$3\"。\n係話邇隻動作係汝所指示嘅，汝就愛立即登入並選擇一隻新嘅密碼。\n汝嘅臨時密碼將於{{PLURAL:$5|一|$5}}日之內過期。\n\n假使係其他人發出邇隻請求，或者汝已經回想起汝嘅密碼，故所毋準備改變其，\n汝可以忽略略邇條消息並且繼續使用汝嘅舊密碼。",
-	"noemail": "用戶“$1”無登記電子郵件地址。",
 	"passwordsent": "用戶“$1”嘅新密碼已經寄到所登記嘅電子郵件地址。\n請在收到後再登入。",
 	"mailerror": "發送郵件出差錯:$1",
 	"invalidemailaddress": "郵箱地址格式不正確，請輸入正確个郵箱位址或清空該輸入框。",
@@ -218,7 +216,7 @@
 	"importlogpagetext": "管理性導入在其他Wiki上有編寫歷史嘅頁面",
 	"svg-long-desc": "SVG文件，尺寸：$1×$2像素，文件大細：$3",
 	"metadata-help": "邇文件肚包含有擴展嘅信息。邇兜信息可能係由數碼相機或掃描儀在創建或數字化過程肚所加入嘅。\n\n係講邇文件嘅源文件已經分修改，一兜信息在修改後嘅文件肚將毋做得完全反映出來。",
-	"metadata-fields": "在本信息肚所列出嘅EXIF元數據域將包含在圖片顯示頁面，當元數據表損壞時單淨顯示下背信息。\n其他嘅元數據默認做隱藏。\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
+	"metadata-fields": "在本信息肚所列出嘅EXIF元數據域將包含在圖片顯示頁面，當元數據表損壞時單淨顯示下背信息。\n其他嘅元數據默認做隱藏。\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname\n* digitalsourcetype",
 	"duplicate-defaultsort": "'''警告：'''默認排序關鍵字“$2”蓋過矣先前嘅默認排序關鍵字“$1”。",
 	"external_image_whitelist": " #留下撈邇行一樣嘅文字<pre>\n#在下背（//中間部份）輸入正則表達式\n#邇兜將會撈外部（已超鏈接嘅）圖片配合\n#遐兜配合上嘅會顯示成圖片，否則就單淨會顯示成鏈接\n#有#開頭嘅行會當成意見\n#大小寫並無區分\n\n#在邇行上片輸入全部正則表達式。留下撈邇行一樣嘅文字</pre>"
 }

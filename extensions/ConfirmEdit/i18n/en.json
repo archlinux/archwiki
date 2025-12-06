@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
+	"captcha-name": "SimpleCaptcha",
 	"captcha-edit": "To edit this page, please solve the following task below and enter the answer in the box ([[Special:Captcha/help|more info]]):",
 	"captcha-edit-fail": "Incorrect or missing CAPTCHA.",
 	"captcha-desc": "Provides CAPTCHA techniques to protect against spam and password-guessing",

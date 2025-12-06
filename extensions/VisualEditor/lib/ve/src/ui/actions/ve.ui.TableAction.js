@@ -47,9 +47,7 @@ ve.ui.TableAction.static.methods = [
  * @param {Object} [options.attributes] Attributes to give the table
  * @return {boolean} Action was executed
  */
-ve.ui.TableAction.prototype.create = function ( options ) {
-	options = options || {};
-
+ve.ui.TableAction.prototype.create = function ( options = {} ) {
 	const type = options.type || 'table';
 	const tableElement = { type: type };
 	const surfaceModel = this.surface.getModel();
@@ -466,7 +464,7 @@ ve.ui.TableAction.prototype.mergeCells = function () {
 		let contentData;
 		// Find first cell with content
 		for ( i = 0, l = cells.length; i < l; i++ ) {
-			contentData = new ve.dm.ElementLinearData(
+			contentData = new ve.dm.LinearData(
 				documentModel.getStore(),
 				documentModel.getData( cells[ i ].node.getRange() )
 			);

@@ -52,8 +52,6 @@ class TagHooks implements
 		$tags = array_merge( $tags, static::TAGS );
 	}
 
-	// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
-
 	/**
 	 * Implements the RecentChange_save hook, to add an allowed set of changetags
 	 * to edits.

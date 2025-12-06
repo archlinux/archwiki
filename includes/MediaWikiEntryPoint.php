@@ -1,32 +1,14 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki;
 
-use Exception;
-use Liuggio\StatsdClient\Sender\SocketSender;
-use Liuggio\StatsdClient\StatsdClient;
 use LogicException;
 use MediaWiki\Block\BlockManager;
 use MediaWiki\Config\Config;
-use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\TransactionRoundDefiningUpdate;
@@ -70,7 +52,7 @@ use Wikimedia\Telemetry\TracerState;
 /**
  * Base class for entry point handlers.
  *
- * @note: This is not stable to extend by extensions, because MediaWiki does not
+ * @note This is not stable to extend by extensions, because MediaWiki does not
  * allow extensions to define new entry points.
  *
  * @ingroup entrypoint
@@ -151,7 +133,7 @@ abstract class MediaWikiEntryPoint {
 		// TODO: move ob_start( [ MediaWiki\Output\OutputHandler::class, 'handle' ] ) here
 		// TODO: move MW_NO_OUTPUT_COMPRESSION handling here.
 		// TODO: move HeaderCallback::register() here
-		// TODO: move SessionManager::getGlobalSession() here (from Setup.php)
+		// TODO: move RequestContext::getMain()->getRequest()->getSession() here (from Setup.php)
 		// TODO: move AuthManager::autoCreateUser here (from Setup.php)
 		// TODO: move pingback here (from Setup.php)
 	}
@@ -350,8 +332,8 @@ abstract class MediaWikiEntryPoint {
 				if ( $output->getRedirect() ) {
 					$url = $output->getRedirect();
 					if ( $lbFactory->hasStreamingReplicaServers() ) {
-						$url = strpos( $url, '?' ) === false
-							? "$url?cpPosIndex=$cpIndex" : "$url&cpPosIndex=$cpIndex";
+						$url .= str_contains( $url, '?' ) ? '&' : '?';
+						$url .= 'cpPosIndex=' . $cpIndex;
 					}
 					$output->redirect( $url );
 				} else {
@@ -677,11 +659,7 @@ abstract class MediaWikiEntryPoint {
 		// Any embedded profiler outputs were already processed in outputResponsePayload().
 		$profiler->logData();
 
-		self::emitBufferedStats(
-			$this->getStatsFactory(),
-			$this->getStatsdDataFactory(),
-			$this->config
-		);
+		self::emitBufferedStats( $this->getStatsFactory() );
 
 		// Commit and close up!
 		$lbFactory->commitPrimaryChanges( __METHOD__ );
@@ -709,46 +687,24 @@ abstract class MediaWikiEntryPoint {
 	 * following heuristics:
 	 *
 	 * - Long-running scripts that involve database writes often use transactions
-	 *   to commit chunks of work. We flush from IDatabase::setTransactionListener,
-	 *   as wired up by MWLBFactory::applyGlobalState.
+	 *   to commit chunks of work. We flush from Maintenance::commitTransaction and
+	 *   Maintenance::commitTransactionRound().
 	 *
 	 * - Long-running scripts that involve database writes but don't need any
 	 *   transactions will still periodically wait for replication to be
-	 *   graceful to the databases. We flush from ILBFactory::setWaitForReplicationListener
-	 *   as wired up by MWLBFactory::applyGlobalState.
+	 *   graceful to the databases. We flush from Maintenance::waitForReplication().
 	 *
 	 * - Any other long-running scripts will probably report progress to stdout
 	 *   in some way. We also flush from Maintenance::output().
 	 *
 	 * @param StatsFactory $statsFactory
-	 * @param IBufferingStatsdDataFactory $stats
-	 * @param Config $config
-	 * @throws ConfigException
 	 * @since 1.31 (formerly one the MediaWiki class)
 	 */
 	public static function emitBufferedStats(
-		StatsFactory $statsFactory,
-		IBufferingStatsdDataFactory $stats,
-		Config $config
+		StatsFactory $statsFactory
 	) {
 		// Send metrics gathered by StatsFactory
 		$statsFactory->flush();
-
-		if ( $config->get( MainConfigNames::StatsdServer ) && $stats->hasData() ) {
-			try {
-				$stats->updateCount( 'stats.statsdclient.buffered', $stats->getDataCount() );
-				$statsdServer = explode( ':', $config->get( MainConfigNames::StatsdServer ), 2 );
-				$statsdHost = $statsdServer[0];
-				$statsdPort = $statsdServer[1] ?? 8125;
-				$statsdSender = new SocketSender( $statsdHost, $statsdPort );
-				$statsdClient = new StatsdClient( $statsdSender, true, false );
-				$statsdClient->send( $stats->getData() );
-			} catch ( Exception $e ) {
-				MWExceptionHandler::logException( $e, MWExceptionHandler::CAUGHT_BY_ENTRYPOINT );
-			}
-		}
-		// empty buffer for the next round
-		$stats->clearData();
 	}
 
 	/**
@@ -896,6 +852,9 @@ abstract class MediaWikiEntryPoint {
 		return $this->getRequest()->response();
 	}
 
+	/**
+	 * @return mixed
+	 */
 	protected function getConfig( string $key ) {
 		return $this->config->get( $key );
 	}
@@ -908,11 +867,16 @@ abstract class MediaWikiEntryPoint {
 		return $this->environment->hasFastCgi();
 	}
 
+	/**
+	 * @param string $key
+	 * @param mixed|null $default
+	 * @return mixed|null
+	 */
 	protected function getServerInfo( string $key, $default = null ) {
 		return $this->environment->getServerInfo( $key, $default );
 	}
 
-	protected function print( $data ) {
+	protected function print( string $data ) {
 		if ( $this->inPostSendMode() ) {
 			throw new RuntimeException( 'Output already sent!' );
 		}
@@ -925,7 +889,7 @@ abstract class MediaWikiEntryPoint {
 	 *
 	 * @return never
 	 */
-	protected function exit( int $code = 0 ) {
+	protected function exit( int $code = 0 ): never {
 		$this->environment->exit( $code );
 	}
 

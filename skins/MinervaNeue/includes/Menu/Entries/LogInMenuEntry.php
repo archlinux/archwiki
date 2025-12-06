@@ -21,10 +21,6 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MessageLocalizer;
 
 final class LogInMenuEntry extends SingleMenuEntry {
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param array $authLinksQuery
-	 */
 	public function __construct( MessageLocalizer $messageLocalizer, array $authLinksQuery ) {
 		$text = $messageLocalizer->msg( 'mobile-frontend-main-menu-login' )->escaped();
 		$url = SpecialPage::getTitleFor( 'Userlogin' )->getLocalURL( $authLinksQuery );

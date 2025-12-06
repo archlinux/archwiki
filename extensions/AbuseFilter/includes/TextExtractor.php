@@ -20,9 +20,6 @@ class TextExtractor {
 	/** @var AbuseFilterHookRunner */
 	private $hookRunner;
 
-	/**
-	 * @param AbuseFilterHookRunner $hookRunner
-	 */
 	public function __construct( AbuseFilterHookRunner $hookRunner ) {
 		$this->hookRunner = $hookRunner;
 	}

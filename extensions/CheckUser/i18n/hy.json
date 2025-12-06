@@ -32,5 +32,6 @@
 	"checkuser-investigate-compare-copy-button-label-hide": "Թաքցնել վիքիտեքստը",
 	"checkuser-investigate-compare-table-header-username": "Մասնակցային անուն",
 	"checkuser-tempaccount-reveal-ip-button-label": "Ցույց տալ IP-ն",
-	"checkuser-tempaccount-reveal-ip-missing": "անհասանելի"
+	"checkuser-tempaccount-reveal-ip-missing": "անհասանելի",
+	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "Փակել"
 }

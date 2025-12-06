@@ -9,7 +9,7 @@
 	"checkuser-query": "ਹਾਲ ਹੀ ਵਿੱਚ ਹੋਈਆਂ ਤਬਦੀਲੀਆਂ ਬਾਰੇ ਪੁੱਛਗਿੱਛ",
 	"checkuser-search-submit": "ਲੱਭੋ",
 	"checkuser-helper-user": "ਵਰਤੋਂਕਾਰ",
-	"checkuser-temporary-accounts-onboarding-dialog-ip-info-save-preference": "ਤਰਜੀਹਾਂ ਸੰਭਾਲੋ",
+	"checkuser-temporary-accounts-onboarding-dialog-save-preference": "ਤਰਜੀਹਾਂ ਸੰਭਾਲੋ",
 	"checkuser-investigateblock": "ਵਰਤੋਂਕਾਰਾਂ 'ਤੇ ਪਾਬੰਦੀ ਲਾਓ",
 	"checkuser-investigate-subtitle-cancel-button-label": "ਰੱਦ ਕਰੋ",
 	"checkuser-investigate-tab-preliminary-check": "ਖਾਤਾ ਜਾਣਕਾਰੀ",
@@ -28,5 +28,15 @@
 	"checkuser-global-contributions-search-form-wrapper": "ਵਿਸ਼ਵ ਪੱਧਰੀ ਯੋਗਦਾਨਾਂ ਦੀ ਖੋਜ",
 	"checkuser-global-contributions-results-title": "$1 ਲਈ ਵਿਸ਼ਵ-ਪੱਧਰੀ ਯੋਗਦਾਨ",
 	"log-action-filter-checkuser-temporary-account-change-access": "ਪਹੁੰਚ ਬਦਲੋ",
-	"ext-ipinfo-global-contributions-url-text": "ਵਿਸ਼ਵ ਪੱਧਰੀ ਯੋਗਦਾਨ ਵੇਖੋ"
+	"checkuser-ipinfo-global-contributions-url-text": "ਵਿਸ਼ਵ ਪੱਧਰੀ ਯੋਗਦਾਨ ਵੇਖੋ",
+	"checkuser-userinfocard-close-button-aria-label": "ਬੰਦ ਕਰੋ",
+	"checkuser-userinfocard-active-wikis-label": "ਸਰਗਰਮ ਵਿਕੀਆਂ",
+	"checkuser-userinfocard-menu-view-contributions": "{{GENDER:$1|ਵਰਤੋਂਕਾਰ}} ਯੋਗਦਾਨ ਦੇਖੋ",
+	"checkuser-userinfocard-menu-view-global-account": "{{GENDER:$1|ਗਲੋਬਲ ਖ਼ਾਤਾ}} ਜਾਣਕਾਰੀ ਵੇਖੋ।",
+	"checkuser-userinfocard-menu-check-ip": "{{GENDER:$1|ਵਰਤੋਂਕਾਰ}} ਆਈਪੀ ਪਤਿਆਂ ਦੀ ਜਾਂਚ ਕਰੋ।",
+	"checkuser-userinfocard-menu-block-user": "{{GENDER:$1|ਵਰਤੋਂਕਾਰ}} 'ਤੇ ਰੋਕ ਲਾਉ",
+	"checkuser-userinfocard-menu-turn-off": "ਇਸ ਵਿਸ਼ੇਸ਼ਤਾ ਨੂੰ ਬੰਦ ਕਰੋ",
+	"checkuser-userinfocard-error-title": "ਇੱਕ ਗਲਤੀ ਆਈ ਐ",
+	"checkuser-userinfocard-error-generic": "ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਬਾਅਦ ਵਿੱਚ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+	"checkuser-ipinfo-global-contributions-label": "ਵਿਸ਼ਵ ਪੱਧਰੀ ਯੋਗਦਾਨ"
 }

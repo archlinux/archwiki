@@ -2,20 +2,7 @@
 /**
  * File reversion user interface
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Actions
  * @ingroup Media
@@ -76,15 +63,18 @@ class RevertAction extends FormAction {
 	 */
 	protected $oldFile;
 
+	/** @inheritDoc */
 	public function getName() {
 		return 'revert';
 	}
 
+	/** @inheritDoc */
 	public function getRestriction() {
 		// Required permissions of revert are complicated, will be checked below.
 		return 'upload';
 	}
 
+	/** @inheritDoc */
 	protected function checkCanExecute( User $user ) {
 		if ( $this->getTitle()->getNamespace() !== NS_FILE ) {
 			throw new ErrorPageError( $this->msg( 'nosuchaction' ), $this->msg( 'nosuchactiontext' ) );
@@ -103,8 +93,8 @@ class RevertAction extends FormAction {
 
 		$oldimage = $this->getRequest()->getText( 'oldimage' );
 		if ( strlen( $oldimage ) < 16
-			|| strpos( $oldimage, '/' ) !== false
-			|| strpos( $oldimage, '\\' ) !== false
+			|| str_contains( $oldimage, '/' )
+			|| str_contains( $oldimage, '\\' )
 		) {
 			throw new ErrorPageError( 'internalerror', 'unexpected', [ 'oldimage', $oldimage ] );
 		}
@@ -117,6 +107,7 @@ class RevertAction extends FormAction {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function usesOOUI() {
 		return true;
 	}
@@ -128,6 +119,7 @@ class RevertAction extends FormAction {
 		$form->setTokenSalt( [ 'revert', $this->getTitle()->getPrefixedDBkey() ] );
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		$timestamp = $this->oldFile->getTimestamp();
 
@@ -165,6 +157,7 @@ class RevertAction extends FormAction {
 		];
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( $data ) {
 		$this->useTransactionalTimeLimit();
 
@@ -196,6 +189,7 @@ class RevertAction extends FormAction {
 		);
 	}
 
+	/** @inheritDoc */
 	public function onSuccess() {
 		$timestamp = $this->oldFile->getTimestamp();
 		$user = $this->getUser();
@@ -215,14 +209,17 @@ class RevertAction extends FormAction {
 		$this->getOutput()->returnToMain( false, $this->getTitle() );
 	}
 
+	/** @inheritDoc */
 	protected function getPageTitle() {
 		return $this->msg( 'filerevert' )->plaintextParams( $this->getTitle()->getText() );
 	}
 
+	/** @inheritDoc */
 	protected function getDescription() {
 		return OutputPage::buildBacklinkSubtitle( $this->getTitle() )->escaped();
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}

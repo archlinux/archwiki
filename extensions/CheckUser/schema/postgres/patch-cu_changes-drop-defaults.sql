@@ -5,6 +5,7 @@
 ALTER TABLE cu_changes
   ALTER cuc_actor
   DROP DEFAULT;
+
 ALTER TABLE cu_changes
   ALTER cuc_comment_id
   DROP DEFAULT;

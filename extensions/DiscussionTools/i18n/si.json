@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"BuddhikaW88"
+		]
+	},
+	"discussiontools-replywidget-advanced": "උසස්",
+	"discussiontools-replywidget-preview": "පෙර දසුන",
+	"discussiontools-replywidget-summary": "සාරාංශය",
+	"discussiontools-topicheader-authorcount": "සාකච්ඡාවේ සිටින $1 {{PLURAL:$1|පුද්ගලයා|පුද්ගලයින්}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|අදහස|අදහස්}}",
+	"discussiontools-topicheader-latestcomment": "නවතම අදහස: $1"
+}

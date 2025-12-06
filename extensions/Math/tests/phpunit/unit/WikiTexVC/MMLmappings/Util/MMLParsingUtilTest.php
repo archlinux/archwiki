@@ -29,23 +29,4 @@ class MMLParsingUtilTest extends MediaWikiUnitTestCase {
 		$this->assertNull( $result );
 	}
 
-	public function testUnicode_afr() {
-		$result = MMLParsingUtil::mapToFrakturUnicode( 'a' );
-		$this->assertEquals( '&#x1D51E;', $result );
-	}
-
-	public function testUnicode_bfr() {
-		$result = MMLParsingUtil::mapToFrakturUnicode( 'B' );
-		$this->assertEquals( '&#x1D505;', $result );
-	}
-
-	public function testUnicode_Cfr() {
-		$result = MMLParsingUtil::mapToFrakturUnicode( 'C' );
-		$this->assertEquals( '&#x0212D;', $result );
-	}
-
-	public function testUnicodeUtf8Input() {
-		$result = MMLParsingUtil::mapToFrakturUnicode( '𝔄' );
-		$this->assertEquals( '𝔄', $result );
-	}
 }

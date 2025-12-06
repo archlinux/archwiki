@@ -1,13 +1,8 @@
 <?php
 
-namespace Wikimedia\Zest;
+// @phan-file-suppress PhanUnusedClosureParameter
 
-use DOMDocument;
-use DOMDocumentFragment;
-use DOMElement;
-use DOMNode;
-use InvalidArgumentException;
-use Throwable;
+namespace Wikimedia\Zest;
 
 /**
  * Zest.php (https://github.com/wikimedia/zest.php)
@@ -20,10 +15,17 @@ use Throwable;
  * Domino version based on Zest v0.1.3 with bugfixes applied.
  */
 
+use DOMDocument;
+use DOMDocumentFragment;
+use DOMElement;
+use DOMNode;
+use InvalidArgumentException;
+use Throwable;
+
 class ZestInst {
 
 	/** @var ZestFunc[] */
-	private $compileCache = [];
+	private array $compileCache = [];
 
 	/**
 	 * Helpers
@@ -148,7 +150,7 @@ class ZestInst {
 		self::initRules();
 		$ch = $str[ 0 ];
 		if ( $ch === '"' || $ch === "'" ) {
-			if ( substr( $str, -1 ) === $ch ) {
+			if ( str_ends_with( $str, $ch ) ) {
 				$str = substr( $str, 1, -1 );
 			} else {
 				// bad string.
@@ -308,11 +310,11 @@ class ZestInst {
 			// shadowing a later-added element, so we can't return
 			// null here directly; fallback to a full search.
 		}
-		if ( $this->isStandardsMode( $context, $opts ) ) {
+		if ( $this->isStandardsMode( $context, $opts, false ) ) {
 			// The workaround below only works (and is only necessary!)
-			// when this is a PHP-provided \DOMDocument.  For 3rd-party
-			// DOM implementations, we assume that getElementById() was
-			// reliable.
+			// when this is a PHP-provided \DOMDocument or \Dom\Document.
+			// For 3rd-party DOM implementations, we assume that
+			// getElementById() was reliable.
 			// @phan-suppress-next-line PhanUndeclaredProperty
 			if ( $context->isConnected || $id === '' ) {
 				return [];
@@ -337,7 +339,7 @@ class ZestInst {
 		}
 		// Do an xpath search, which is still a full traversal of the tree
 		// (sigh) but 25% faster than traversing it wholly in PHP.
-		$xpath = new \DOMXPath( $doc );
+		$xpath = self::newXPath( $doc );
 		$query = './/*[@id=' . self::xpathQuote( $id ) . ']';
 		if ( $context->nodeType === 11 ) {
 			// ugh, PHP dom extension workaround: nodes which are direct
@@ -348,7 +350,14 @@ class ZestInst {
 		return iterator_to_array( $xpath->query( $query, $context ) );
 	}
 
-	private function docFragHelper( $docFrag, string $sel, array $opts, callable $collectFunc ) {
+	/**
+	 * @param DOMDocument|DOMDocumentFragment|DOMElement $docFrag
+	 * @param string $sel
+	 * @param array $opts Additional match-context options (optional)
+	 * @param callable $collectFunc
+	 * @return array<DOMElement>
+	 */
+	private function docFragHelper( $docFrag, string $sel, array $opts, callable $collectFunc ): array {
 		$result = [];
 		for ( $n = $docFrag->firstChild; $n; $n = $n->nextSibling ) {
 			if ( $n->nodeType !== 1 ) {
@@ -393,8 +402,10 @@ class ZestInst {
 				}
 			);
 		}
-		if ( $this->isStandardsMode( $context, $opts ) ) {
+		if ( $this->isStandardsMode( $context, $opts, false ) ) {
 			// For third-party DOM implementations, just use native func.
+			// (This method is defined by \Dom\Document but we expect
+			// the XPath version below is faster.)
 			return iterator_to_array(
 				$context->getElementsByTagName( $tagName )
 			);
@@ -410,13 +421,18 @@ class ZestInst {
 
 		$doc = self::nodeIsDocument( $context ) ?
 			$context : $context->ownerDocument;
-		$xpath = new \DOMXPath( $doc );
-		$ns = $doc->documentElement === null ? 'force use of local-name' :
-			$doc->documentElement->namespaceURI;
+		$xpath = self::newXPath( $doc );
 		if ( $tagName === '*' ) {
 			$query = ".//*";
-		} elseif ( $ns || !preg_match( '/^[_a-z][-.0-9_a-z]*$/S', $tagName ) ) {
+		} elseif (
+			$doc->documentElement === null ||
+			!preg_match( '/^[_a-z][-.0-9_a-z]*$/S', $tagName )
+		) {
 			$query = './/*[local-name()=' . self::xpathQuote( $tagName ) . ']';
+		} elseif ( $doc->documentElement->namespaceURI !== null ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
+			$xpath->registerNamespace( 'ns', $doc->documentElement->namespaceURI );
+			$query = ".//ns:$tagName";
 		} else {
 			$query = ".//$tagName";
 		}
@@ -451,8 +467,9 @@ class ZestInst {
 				}
 			);
 		}
-		if ( $this->isStandardsMode( $context, $opts ) ) {
+		if ( $this->isStandardsMode( $context, $opts, false ) ) {
 			// For third-party DOM implementations, just use native func.
+			// (PHP8.4 doesn't have this method)
 			return iterator_to_array(
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				$context->getElementsByClassName( $className )
@@ -465,7 +482,7 @@ class ZestInst {
 		// tree traversal all in PHP.)
 		$doc = self::nodeIsDocument( $context ) ?
 			$context : $context->ownerDocument;
-		$xpath = new \DOMXPath( $doc );
+		$xpath = self::newXPath( $doc );
 		$quotedClassName = self::xpathQuote( " $className " );
 		$query = ".//*[contains(concat(' ', normalize-space(@class), ' '), $quotedClassName)]";
 		return iterator_to_array( $xpath->query( $query, $context ) );
@@ -481,7 +498,7 @@ class ZestInst {
 			$param = '2n+0';
 		} elseif ( $param === 'odd' ) {
 			$param = '2n+1';
-		} elseif ( strpos( $param, 'n' ) === false ) {
+		} elseif ( !str_contains( $param, 'n' ) ) {
 			$param = '0n' . $param;
 		}
 
@@ -512,11 +529,11 @@ class ZestInst {
 				return false;
 			}
 
-			$rel = call_user_func( $find, $el->parentNode );
+			$rel = $find( $el->parentNode );
 			$pos = 0;
 
 			while ( $rel ) {
-				if ( call_user_func( $test, $rel, $el, $opts ) ) {
+				if ( $test( $rel, $el, $opts ) ) {
 					$pos++;
 				}
 				if ( $rel === $el ) {
@@ -525,7 +542,7 @@ class ZestInst {
 						? ( $pos % $group ) === 0 && ( ( $pos < 0 ) === ( $group < 0 ) )
 						: !$pos;
 				}
-				$rel = call_user_func( $advance, $rel );
+				$rel = $advance( $rel );
 			}
 			return false;
 		};
@@ -617,7 +634,7 @@ class ZestInst {
 		$this->addSelector1( ':not', static function ( string $sel, ZestInst $self ) {
 			$test = $self->compileGroup( $sel );
 			return static function ( $el, $opts ) use ( $test ): bool {
-				return !call_user_func( $test, $el, $opts );
+				return !$test( $el, $opts );
 			};
 		} );
 		$this->addSelector0( ':first-of-type', function ( $el, $opts ): bool {
@@ -662,7 +679,7 @@ class ZestInst {
 		$this->addSelector0( ':checked', static function ( $el, $opts ): bool {
 			'@phan-var DOMElement $el';
 			$self = $opts['this'];
-			if ( $self->isStandardsMode( $el, $opts ) ) {
+			if ( $self->isStandardsMode( $el, $opts, false ) ) {
 				// These properties don't exist in the PHP DOM, and in fact
 				// they are supposed to reflect the *dynamic* state of the
 				// widget, not the 'default' state (which is given by the
@@ -716,7 +733,7 @@ class ZestInst {
 				$test = $self->compileGroup( implode( ',', $args ) );
 
 				return self::nth( $arg, static function ( $rel, $el, $opts ) use ( $test ): bool {
-					return call_user_func( $test, $el, $opts );
+					return $test( $el, $opts );
 				}, $last );
 			};
 		};
@@ -735,7 +752,7 @@ class ZestInst {
 						// PHP DOM doesn't have 'lang' property
 						$lang = $el->getAttribute( 'lang' );
 						if ( $lang ) {
-							return strpos( $lang, $param ) === 0;
+							return str_starts_with( $lang, $param );
 						}
 					}
 					$el = $el->parentNode;
@@ -853,6 +870,7 @@ class ZestInst {
 				 */
 				static function ( $el, $opts ) use ( $selector ): bool {
 					$self = $opts['this'];
+					// @phan-suppress-next-line PhanThrowTypeAbsent
 					throw $self->newBadSelectorException( $selector . ' is not supported.' );
 				}
 			);
@@ -861,7 +879,7 @@ class ZestInst {
 		$this->addSelector1( ':contains', static function ( string $param ): callable {
 			return static function ( $el ) use ( $param ): bool {
 				$text = $el->textContent;
-				return strpos( $text, $param ) !== false;
+				return str_contains( $text, $param );
 			};
 		} );
 		$this->addSelector1( ':has', static function ( string $param ): callable {
@@ -942,7 +960,7 @@ class ZestInst {
 				$attr = strtolower( $attr );
 				$val = strtolower( $val );
 			}
-			return call_user_func( $op, $attr, $val );
+			return $op( $attr, $val );
 		};
 	}
 
@@ -971,7 +989,7 @@ class ZestInst {
 			return $attr === $val;
 		} );
 		$this->addOperator( '*=', static function ( string $attr, string $val ): bool {
-			return strpos( $attr, $val ) !== false;
+			return str_contains( $attr, $val );
 		} );
 		$this->addOperator( '~=', static function ( string $attr, string $val ): bool {
 			// https://drafts.csswg.org/selectors-4/#attribute-representation
@@ -1016,7 +1034,7 @@ class ZestInst {
 			return $l === '-';
 		} );
 		$this->addOperator( '^=', static function ( string $attr, string $val ): bool {
-			return strpos( $attr, $val ) === 0;
+			return str_starts_with( $attr, $val );
 		} );
 		$this->addOperator( '$=', static function ( string $attr, string $val ): bool {
 			$i = strrpos( $attr, $val );
@@ -1049,7 +1067,7 @@ class ZestInst {
 		$this->addCombinator( ' ', static function ( callable $test ): callable {
 			return static function ( $el, $opts ) use ( $test ) {
 				while ( $el = $el->parentNode ) {
-					if ( $el->nodeType === 1 && call_user_func( $test, $el, $opts ) ) {
+					if ( $el->nodeType === 1 && $test( $el, $opts ) ) {
 						return $el;
 					}
 				}
@@ -1059,7 +1077,7 @@ class ZestInst {
 		$this->addCombinator( '>', static function ( callable $test ): callable {
 			return static function ( $el, $opts ) use ( $test ) {
 				if ( $el = $el->parentNode ) {
-					if ( $el->nodeType === 1 && call_user_func( $test, $el, $opts ) ) {
+					if ( $el->nodeType === 1 && $test( $el, $opts ) ) {
 						return $el;
 					}
 				}
@@ -1069,7 +1087,7 @@ class ZestInst {
 		$this->addCombinator( '+', function ( callable $test ): callable {
 			return function ( $el, $opts ) use ( $test ) {
 				if ( $el = self::prev( $el ) ) {
-					if ( call_user_func( $test, $el, $opts ) ) {
+					if ( $test( $el, $opts ) ) {
 						return $el;
 					}
 				}
@@ -1079,7 +1097,7 @@ class ZestInst {
 		$this->addCombinator( '~', function ( callable $test ): callable {
 			return function ( $el, $opts ) use ( $test ) {
 				while ( $el = self::prev( $el ) ) {
-					if ( call_user_func( $test, $el, $opts ) ) {
+					if ( $test( $el, $opts ) ) {
 						return $el;
 					}
 				}
@@ -1088,7 +1106,7 @@ class ZestInst {
 		} );
 		$this->addCombinator( 'noop', static function ( callable $test ): callable {
 			return static function ( $el, $opts ) use ( $test ) {
-				if ( call_user_func( $test, $el, $opts ) ) {
+				if ( $test( $el, $opts ) ) {
 					return $el;
 				}
 				return null;
@@ -1110,7 +1128,7 @@ class ZestInst {
 
 			while ( $i-- ) {
 				$node = $nodes[$i];
-				if ( call_user_func( $ref->test->func, $el, $opts ) ) {
+				if ( ( $ref->test->func )( $el, $opts ) ) {
 					$node = null;
 					return true;
 				}
@@ -1131,7 +1149,7 @@ class ZestInst {
 			}
 
 			$id = $node->getAttribute( 'id' ) ?? '';
-			if ( $attr === $id && call_user_func( $test, $node, $opts ) ) {
+			if ( $attr === $id && $test( $node, $opts ) ) {
 				return $node;
 			}
 			return null;
@@ -1178,10 +1196,6 @@ class ZestInst {
 		self::$rules->str_escape = self::replace( self::$rules->str_escape, 'escape', self::$rules->escape );
 	}
 
-	/**
-	 * Compiling
-	 */
-
 	private function compile( string $sel ): ZestFunc {
 		if ( !isset( $this->compileCache[$sel] ) ) {
 			$this->compileCache[$sel] = $this->doCompile( $sel );
@@ -1191,7 +1205,6 @@ class ZestInst {
 
 	private function doCompile( string $sel ): ZestFunc {
 		$sel = preg_replace( '/^\s+|\s+$/', '', $sel );
-		$test = null;
 		$filter = [];
 		$buff = [];
 		$subject = null;
@@ -1206,9 +1219,9 @@ class ZestInst {
 				$qname = self::decodeid( $cap[ 1 ] );
 				$buff[] = $this->tokQname( $qname );
 				// strip off *| or | prefix
-				if ( substr( $qname, 0, 1 ) === '|' ) {
+				if ( str_starts_with( $qname, '|' ) ) {
 					$qname = substr( $qname, 1 );
-				} elseif ( substr( $qname, 0, 2 ) === '*|' ) {
+				} elseif ( str_starts_with( $qname, '*|' ) ) {
 					$qname = substr( $qname, 2 );
 				}
 			} elseif ( preg_match( self::$rules->simple, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
@@ -1287,10 +1300,10 @@ class ZestInst {
 		// qname
 		if ( $cap === '*' ) {
 			return $this->selectors0['*'];
-		} elseif ( substr( $cap, 0, 1 ) === '|' ) {
+		} elseif ( str_starts_with( $cap, '|' ) ) {
 			// no namespace
 			return $this->selectors1['typeNoNS']( substr( $cap, 1 ), $this );
-		} elseif ( substr( $cap, 0, 2 ) === '*|' ) {
+		} elseif ( str_starts_with( $cap, '*|' ) ) {
 			// any namespace including no namespace
 			return $this->selectors1['type']( substr( $cap, 2 ), $this );
 		} else {
@@ -1356,7 +1369,7 @@ class ZestInst {
 
 		return static function ( $el, $opts ) use ( $l, $func ): bool {
 			for ( $i = 0;  $i < $l;  $i++ ) {
-				if ( !call_user_func( $func[ $i ], $el, $opts ) ) {
+				if ( !$func[ $i ]( $el, $opts ) ) {
 					return false;
 				}
 			}
@@ -1372,13 +1385,13 @@ class ZestInst {
 	private static function makeTest( array $func ): ZestFunc {
 		if ( count( $func ) < 2 ) {
 			return new ZestFunc( static function ( $el, $opts ) use ( $func ): bool {
-				return (bool)call_user_func( $func[ 0 ], $el, $opts );
+				return (bool)$func[ 0 ]( $el, $opts );
 			} );
 		}
 		return new ZestFunc( static function ( $el, $opts ) use ( $func ): bool {
 			$i = count( $func );
 			while ( $i-- ) {
-				if ( !( $el = call_user_func( $func[ $i ], $el, $opts ) ) ) {
+				if ( !( $el = $func[ $i ]( $el, $opts ) ) ) {
 					return false;
 				}
 			}
@@ -1399,7 +1412,7 @@ class ZestInst {
 			$i = count( $scope );
 
 			while ( $i-- ) {
-				if ( call_user_func( $subject->test->func, $scope[$i], $opts ) && $target === $el ) {
+				if ( ( $subject->test->func )( $scope[$i], $opts ) && $target === $el ) {
 					$target = null;
 					return true;
 				}
@@ -1435,7 +1448,7 @@ class ZestInst {
 
 		return static function ( $el, $opts ) use ( $tests ): bool {
 			for ( $i = 0, $l = count( $tests );  $i < $l;  $i++ ) {
-				if ( call_user_func( $tests[ $i ]->func, $el, $opts ) ) {
+				if ( ( $tests[ $i ]->func )( $el, $opts ) ) {
 					return true;
 				}
 			}
@@ -1460,12 +1473,11 @@ class ZestInst {
 		$results = [];
 		$test = $this->compile( $sel );
 		$scope = $this->getElementsByTagName( $node, $test->qname, $opts );
-		$i = 0;
 		$el = null;
 		$needsSort = false;
 
 		foreach ( $scope as $el ) {
-			if ( call_user_func( $test->func, $el, $opts ) ) {
+			if ( ( $test->func )( $el, $opts ) ) {
 				$results[spl_object_id( $el )] = $el;
 			}
 		}
@@ -1476,7 +1488,7 @@ class ZestInst {
 				$test = $this->compile( $test->sel );
 				$scope = $this->getElementsByTagName( $node, $test->qname, $opts );
 				foreach ( $scope as $el ) {
-					if ( call_user_func( $test->func, $el, $opts ) ) {
+					if ( ( $test->func )( $el, $opts ) ) {
 						$results[spl_object_id( $el )] = $el;
 					}
 				}
@@ -1507,7 +1519,7 @@ class ZestInst {
 		$opts['scope'] = $context;
 
 		/* when context isn't a DocumentFragment and the selector is simple: */
-		if ( $context->nodeType !== 11 && strpos( $sel, ' ' ) === false ) {
+		if ( $context->nodeType !== 11 && !str_contains( $sel, ' ' ) ) {
 			// https://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
 			// Valid identifiers starting with a hyphen or with escape
 			// sequences will be handled correctly by the fall-through case.
@@ -1554,7 +1566,7 @@ class ZestInst {
 		$test->sel = $sel;
 		do {
 			$test = $this->compile( $test->sel );
-			if ( call_user_func( $test->func, $el, $opts ) ) {
+			if ( ( $test->func )( $el, $opts ) ) {
 				return true;
 			}
 		} while ( $test->sel );
@@ -1565,6 +1577,7 @@ class ZestInst {
 	 * Allow customization of the exception thrown for a bad selector.
 	 * @param string $msg Description of the failure
 	 * @return Throwable
+	 * @phan-return InvalidArgumentException
 	 */
 	protected function newBadSelectorException( string $msg ): Throwable {
 		return new InvalidArgumentException( $msg );
@@ -1577,9 +1590,11 @@ class ZestInst {
 	 * the ownerDocument of the given node is not a \DOMDocument.
 	 * @param DOMNode $context a context node
 	 * @param array $opts The zest options array pased to ::find, ::matches, etc
+	 * @param bool $php84IsStandard Whether the \Dom\Document class introduced
+	 *  in PHP 8.4 should be considered "standard" or not.  Defaults to true.
 	 * @return bool True for standards mode, otherwise false.
 	 */
-	protected function isStandardsMode( $context, array $opts ): bool {
+	protected function isStandardsMode( $context, array $opts, bool $php84IsStandard = true ): bool {
 		// The $opts array can force a specific mode, if key is present
 		if ( array_key_exists( 'standardsMode', $opts ) ) {
 			return (bool)$opts['standardsMode'];
@@ -1588,7 +1603,24 @@ class ZestInst {
 		// \DOMDocument, otherwise use standards mode.
 		$doc = self::nodeIsDocument( $context ) ?
 			 $context : $context->ownerDocument;
+		if ( is_a( $doc, '\Dom\Document', false ) ) {
+			return $php84IsStandard;
+		}
 		return !( $doc instanceof DOMDocument );
+	}
+
+	/**
+	 * Helper function to convince phan that \Dom\XPath is really a
+	 * \DOMXPath.
+	 * @param DOMDocument $doc
+	 * @return \DOMXPath
+	 * @suppress PhanUndeclaredClassMethod,PhanTypeMismatchReturnProbablyReal,UnusedSuppression
+	 */
+	private static function newXPath( $doc ) {
+		if ( is_a( $doc, '\Dom\Document' ) ) {
+			return new \Dom\XPath( $doc );
+		}
+		return new \DOMXPath( $doc );
 	}
 
 	/** @var ?ZestInst */

@@ -40,6 +40,10 @@ class ModuleSpecHandler extends SimpleHandler {
 		$this->options = $options;
 	}
 
+	/**
+	 * @param string $moduleName
+	 * @param string $version
+	 */
 	public function run( $moduleName, $version = '' ): array {
 		// TODO: implement caching, get cache key from Router.
 
@@ -61,13 +65,17 @@ class ModuleSpecHandler extends SimpleHandler {
 			);
 		}
 
-		return [
+		$spec = [
 			'openapi' => '3.0.0',
 			'info' => $this->getInfoSpec( $module ),
 			'servers' => $this->getServerSpec( $module ),
 			'paths' => $this->getPathsSpec( $module ),
 			'components' => $this->getComponentsSpec( $module ),
 		];
+
+		unset( $spec['info']['deprecationSettings'] );
+
+		return $spec;
 	}
 
 	/**
@@ -124,6 +132,9 @@ class ModuleSpecHandler extends SimpleHandler {
 	private function getPathsSpec( Module $module ): array {
 		$specs = [];
 
+		// XXX: We currently don't support meta-data on OpenAPI path objects
+		//      (summary, description).
+
 		foreach ( $module->getDefinedPaths() as $path => $methods ) {
 			foreach ( $methods as $mth ) {
 				$key = strtolower( $mth );
@@ -167,6 +178,12 @@ class ModuleSpecHandler extends SimpleHandler {
 		return 'includes/Rest/Handler/Schema/ModuleSpec.json';
 	}
 
+	/** @inheritDoc */
+	public function needsWriteAccess() {
+		return false;
+	}
+
+	/** @inheritDoc */
 	public function getParamSettings() {
 		return [
 			'module' => [

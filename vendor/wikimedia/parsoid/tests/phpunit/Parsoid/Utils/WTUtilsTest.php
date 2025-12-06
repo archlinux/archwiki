@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Test\Parsoid\Utils;
 
@@ -30,7 +31,7 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 			"<html><body><!--$html--></body></html>"
 		);
 		$body = $doc->getElementsByTagName( "body" )->item( 0 );
-		$node = $body->childNodes->item( 0 );
+		$node = $body->firstChild;
 		$actualLen = WTUtils::decodedCommentLength( $node );
 		$this->assertEquals( $length, $actualLen );
 	}
@@ -155,7 +156,7 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		$newDoc = ContentUtils::createAndLoadDocument(
 			'<html><body>' . DOMUtils::getFragmentInnerHTML( $fragment ) . '</body></html>' );
 		$span = DOMCompat::getBody( $newDoc )->firstChild;
-		$typeof = DOMUtils::attributes( $span )['typeof'];
+		$typeof = DOMCompat::attributes( $span )['typeof'];
 		self::assertEquals( 'mw:I18n mw:LocalizedAttrs', $typeof );
 		$spanI18n = DOMDataUtils::getDataNodeI18n( $span );
 		self::assertNotNull( $spanI18n );

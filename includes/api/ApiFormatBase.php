@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,7 @@ use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\Http\HttpStatus;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -228,6 +215,9 @@ abstract class ApiFormatBase extends ApiBase {
 			return; // skip any initialization
 		}
 
+		if ( $mime !== 'text/html' ) {
+			ContentSecurityPolicy::sendRestrictiveHeader();
+		}
 		$this->getMain()->getRequest()->response()->header( "Content-Type: $mime; charset=utf-8" );
 
 		// Set X-Frame-Options API results (T41180)
@@ -375,6 +365,7 @@ abstract class ApiFormatBase extends ApiBase {
 		return $this->mBuffer;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$ret = [];
 		if ( $this->getIsHtml() ) {
@@ -386,6 +377,7 @@ abstract class ApiFormatBase extends ApiBase {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&meta=siteinfo&siprop=namespaces&format=' . $this->getModuleName()
@@ -393,6 +385,7 @@ abstract class ApiFormatBase extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Data_formats';
 	}

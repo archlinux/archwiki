@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -66,10 +52,12 @@ class SpecialPagesWithProp extends QueryPage {
 		$this->setDatabaseProvider( $dbProvider );
 	}
 
+	/** @inheritDoc */
 	public function isCacheable() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -118,7 +106,7 @@ class SpecialPagesWithProp extends QueryPage {
 		$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() )
 			->setMethod( 'get' )
 			->setTitle( $this->getPageTitle() ) // Remove subpage
-			->setSubmitCallback( [ $this, 'onSubmit' ] )
+			->setSubmitCallback( $this->onSubmit( ... ) )
 			->setWrapperLegendMsg( 'pageswithprop-legend' )
 			->addHeaderHtml( $this->msg( 'pageswithprop-text' )->parseAsBlock() )
 			->setSubmitTextMsg( 'pageswithprop-submit' )
@@ -129,7 +117,11 @@ class SpecialPagesWithProp extends QueryPage {
 		}
 	}
 
-	public function onSubmit( $data, $form ) {
+	/**
+	 * @param array $data
+	 * @param HTMLForm $form
+	 */
+	private function onSubmit( $data, $form ) {
 		$this->propName = $data['propname'];
 		parent::execute( $data['propname'] );
 	}
@@ -170,6 +162,7 @@ class SpecialPagesWithProp extends QueryPage {
 		return $params;
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$query = [
 			'tables' => [ 'page_props', 'page' ],
@@ -198,6 +191,7 @@ class SpecialPagesWithProp extends QueryPage {
 		return $query;
 	}
 
+	/** @inheritDoc */
 	protected function getOrderFields() {
 		$sort = [ 'page_id' ];
 		if ( $this->sortByValue ) {
@@ -243,14 +237,14 @@ class SpecialPagesWithProp extends QueryPage {
 		return $ret;
 	}
 
-	public function getExistingPropNames() {
+	public function getExistingPropNames(): array {
 		if ( $this->existingPropNames === null ) {
 			$this->existingPropNames = $this->queryExistingProps();
 		}
 		return $this->existingPropNames;
 	}
 
-	protected function queryExistingProps( $limit = null, $offset = 0 ) {
+	protected function queryExistingProps( ?int $limit = null, int $offset = 0 ): array {
 		$queryBuilder = $this->getDatabaseProvider()
 			->getReplicaDatabase()
 			->newSelectQueryBuilder()
@@ -275,6 +269,7 @@ class SpecialPagesWithProp extends QueryPage {
 		return $propnames;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pages';
 	}

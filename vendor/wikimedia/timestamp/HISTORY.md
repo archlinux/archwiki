@@ -1,5 +1,13 @@
 # Release History
 
+## v5.0.0
+* [BREAKING CHANGE] Drop support for PHP < 8.1 (James D. Forrester)
+* [BREAKING CHANGE] Drop ConvertibleTimestamp::microtime() (James D. Forrester)
+* Add adapter for PSR-20 ClockInterface (Gergő Tisza)
+* Change getTimestamp() to throw InvalidArgumentException on bad format (Daimona Eaytoy)
+* Fix PHPDoc return type for ConvertibleTimestamp::diff() (Gergő Tisza)
+* Make setTimestamp() faster by moving TS_UNIX up in the list of regexes (Thiemo Kreuz)
+
 ## v4.2.0
 * Add `ConvertibleTimestamp::hrtime()`, as mockable version of hrtime() built-in.
 * Deprecate ConvertibleTimestamp::microtime() in favor of hrtime(). [T245464](https://phabricator.wikimedia.org/T245464)
@@ -17,7 +25,7 @@
 * Add support for 2-digit years, per RFC 2626.
 
 ## v3.0.0
-* BREAKING CHANGE: the library is now stricter about rejecting some invalid
+* [BREAKING CHANGE] The library is now stricter about rejecting some invalid
   formats such as "Wed, 22 May 2019 12:00:00 +1 day" (which is a valid date
   spec in some tools but not in ConvertibleTimestamp which does not accept
   relative date modifiers) or "Wed, 22 May 2019 12:00:00 A potato" (where
@@ -42,7 +50,7 @@
 * Introduce a mock clock for unit testing.
 
 ## v2.0.0
-* BREAKING CHANGE: drop PHP 5 support (HHVM in PHP 5 mode is still supported).
+* [BREAKING CHANGE] Drop PHP 5 support (HHVM in PHP 5 mode is still supported).
 * Support microtime for Unix and Oracle formats.
 
 ## v1.0.0

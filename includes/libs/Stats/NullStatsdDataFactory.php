@@ -7,6 +7,7 @@ use Liuggio\StatsdClient\Entity\StatsdDataInterface;
 
 /**
  * @author Addshore
+ * @deprecated since 1.45, use StatsFactory::newNull() instead
  * @since 1.27
  */
 class NullStatsdDataFactory implements IBufferingStatsdDataFactory {
@@ -107,10 +108,12 @@ class NullStatsdDataFactory implements IBufferingStatsdDataFactory {
 		return $data;
 	}
 
+	/** @inheritDoc */
 	public function hasData() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getData() {
 		return [];
 	}
@@ -119,10 +122,12 @@ class NullStatsdDataFactory implements IBufferingStatsdDataFactory {
 		// Nothing to do, always empty
 	}
 
+	/** @inheritDoc */
 	public function getDataCount() {
 		return 0;
 	}
 
+	/** @inheritDoc */
 	public function setEnabled( $enabled ) {
 		// Nothing to do, null factory is always disabled.
 	}

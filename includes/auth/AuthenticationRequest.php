@@ -1,24 +1,7 @@
 <?php
 /**
- * Authentication request value object
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Auth
  */
 
 namespace MediaWiki\Auth;
@@ -293,15 +276,13 @@ abstract class AuthenticationRequest {
 	/**
 	 * Select a request by class name.
 	 *
-	 * @phan-template T
+	 * @template T of AuthenticationRequest
 	 * @param AuthenticationRequest[] $reqs
-	 * @param string $class Class name
-	 * @phan-param class-string<T> $class
+	 * @param class-string<T> $class Class name
 	 * @param bool $allowSubclasses If true, also returns any request that's a subclass of the given
 	 *   class.
-	 * @return AuthenticationRequest|null Returns null if there is not exactly
+	 * @return T|null Returns null if there is not exactly
 	 *  one matching request.
-	 * @phan-return T|null
 	 */
 	public static function getRequestByClass( array $reqs, $class, $allowSubclasses = false ) {
 		$requests = array_filter( $reqs, static function ( $req ) use ( $class, $allowSubclasses ) {

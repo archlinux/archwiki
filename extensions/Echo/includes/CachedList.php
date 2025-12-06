@@ -12,14 +12,6 @@ use Wikimedia\ObjectCache\WANObjectCache;
 class CachedList implements ContainmentList {
 	private const ONE_WEEK = 4233600;
 
-	/** @var WANObjectCache */
-	protected $cache;
-	/** @var string */
-	protected $partialCacheKey;
-	/** @var ContainmentList */
-	protected $nestedList;
-	/** @var int */
-	protected $timeout;
 	/** @var string[]|null */
 	private $result;
 
@@ -31,15 +23,11 @@ class CachedList implements ContainmentList {
 	 * @param int $timeout How long in seconds to cache the nested list, defaults to 1 week.
 	 */
 	public function __construct(
-		WANObjectCache $cache,
-		$partialCacheKey,
-		ContainmentList $nestedList,
-		$timeout = self::ONE_WEEK
+		protected WANObjectCache $cache,
+		protected string $partialCacheKey,
+		protected ContainmentList $nestedList,
+		protected int $timeout = self::ONE_WEEK,
 	) {
-		$this->cache = $cache;
-		$this->partialCacheKey = $partialCacheKey;
-		$this->nestedList = $nestedList;
-		$this->timeout = $timeout;
 	}
 
 	/**

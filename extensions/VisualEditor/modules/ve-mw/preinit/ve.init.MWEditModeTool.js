@@ -1,5 +1,13 @@
 /*!
- * VisualEditor MediaWiki edit mode tool classes.
+ * MediaWiki edit mode tool classes.
+ *
+ * These versions of the tools should only be used when building
+ * a toolbar **outside** of VE, e.g. the toolbar built in
+ * ve.init.mw.DesktopArticleTarget.init.js that is appended to the
+ * WikiEditor toolbar.
+ *
+ * When using a toolbar in VE, always use the ve.ui.MWEditModeTool
+ * classes.
  *
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
@@ -118,18 +126,17 @@ mw.libs.ve.MWEditModeVisualTool.static.unavailableTooltip =
 /**
  * @inheritdoc
  */
-mw.libs.ve.MWEditModeVisualTool.prototype.isModeAvailable = function ( mode ) {
-	// Adding a new section is not supported in visual mode
-	if ( mode === 'visual' ) {
-		// eslint-disable-next-line no-jquery/no-global-selector
-		if ( $( 'input[name=wpSection]' ).val() === 'new' ) {
-			return false;
-		}
-		if ( !mw.config.get( 'wgVisualEditorConfig' ).namespaces.includes( new mw.Title( mw.config.get( 'wgRelevantPageName' ) ).getNamespaceId() ) ) {
-			return false;
-		}
+mw.libs.ve.MWEditModeVisualTool.prototype.isModeAvailable = function () {
+	// eslint-disable-next-line no-jquery/no-global-selector
+	if ( $( 'input[name=wpSection]' ).val() === 'new' ) {
+		// Adding a new section is not supported in visual mode
+		return false;
 	}
-	return mw.libs.ve.MWEditModeVisualTool.super.prototype.isModeAvailable( mode );
+	if ( !mw.config.get( 'wgVisualEditorConfig' ).namespaces.includes( new mw.Title( mw.config.get( 'wgRelevantPageName' ) ).getNamespaceId() ) ) {
+		return false;
+	}
+	// Parent method
+	return mw.libs.ve.MWEditModeVisualTool.super.prototype.isModeAvailable.apply( this, arguments );
 };
 
 /**

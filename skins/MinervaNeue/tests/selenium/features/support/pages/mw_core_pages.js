@@ -3,10 +3,13 @@
  * To simplify imports in world.js.
  */
 
-'use strict';
+import Page from 'wdio-mediawiki/Page';
+import UserLoginPage from 'wdio-mediawiki/LoginPage';
 
-module.exports = {
+export { Page };
+
+export default {
 	// Page is a constructor, all other pageObjects are instances.
-	Page: require( 'wdio-mediawiki/Page' ),
-	UserLoginPage: require( 'wdio-mediawiki/LoginPage' )
+	Page,
+	UserLoginPage
 };

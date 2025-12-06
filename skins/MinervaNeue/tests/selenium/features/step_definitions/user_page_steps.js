@@ -1,5 +1,3 @@
-'use strict';
-
 const { iAmOnPage } = require( './common_steps' );
 
 const username = browser.config.mwUser.replace( /_/g, ' ' );

@@ -388,9 +388,9 @@
 	"abusefilter-edit-builder-vars-user-emailconfirm": "az e-mail-cím megerősítésének ideje ($1)",
 	"abusefilter-edit-builder-vars-old-wikitext": "A korábbi oldal wikiszövege a szerkesztés előtt ($1)",
 	"abusefilter-edit-builder-vars-new-wikitext": "Az új oldal wikiszövege szerkesztés után ($1)",
-	"abusefilter-edit-builder-vars-added-links": "A szerkesztésben hozzáadott összes külső hivatkozás ($1)",
-	"abusefilter-edit-builder-vars-removed-links": "A szerkesztésben eltávolított összes külső hivatkozás ($1)",
-	"abusefilter-edit-builder-vars-all-links": "Az új szövegben lévő összes külső hivatkozás ($1)",
+	"abusefilter-edit-builder-vars-added-links": "A szerkesztésben hozzáadott külső hivatkozások ($1)",
+	"abusefilter-edit-builder-vars-removed-links": "A szerkesztésben eltávolított külső hivatkozások ($1)",
+	"abusefilter-edit-builder-vars-old-links": "A lapon található külső hivatkozások a szerkesztés előtt ($1)",
 	"abusefilter-edit-builder-vars-new-pst": "Az új oldal wikiszövege, mentés előtti állapotba alakítva ($1)",
 	"abusefilter-edit-builder-vars-diff-pst": "A szerkesztés során történt változások unified diffje, mentés előtti állapotba alakítva ($1)",
 	"abusefilter-edit-builder-vars-addedlines-pst": "A szerkesztés során hozzáadott sorok, mentés előtti állapotba alakítva ($1)",
@@ -414,7 +414,6 @@
 	"abusefilter-edit-builder-vars-movedto-restrictions-upload": "Átnevezésnél a célfájl feltöltés elleni védelmi szintje ($1)",
 	"abusefilter-edit-builder-vars-movedto-recent-contributors": "Átnevezésnél a céllap utolsó tíz közreműködője ($1)",
 	"abusefilter-edit-builder-vars-movedto-first-contributor": "Átnevezésnél a céllap első közreműködője ($1)",
-	"abusefilter-edit-builder-vars-old-links": "A lapon található hivatkozások a szerkesztés előtt ($1)",
 	"abusefilter-edit-builder-vars-file-sha1": "A fájl tartalmának SHA1 hash-e ($1)",
 	"abusefilter-edit-builder-vars-file-size": "A fájl mérete bájtban ($1)",
 	"abusefilter-edit-builder-vars-file-mime": "A fájl MIME-típusa ($1)",
@@ -594,5 +593,7 @@
 	"abusefilter-tag-reserved": "Az <code>abusefilter-condition-limit</code> címke a Vandálszűrő belső használatára van fenntartva.",
 	"tag-abusefilter-condition-limit": "feltételhatár elérve",
 	"tag-abusefilter-condition-limit-description": "Szerkesztések vagy egyéb események, amelyeket nem sikerült ellenőrizni az összes aktív [[Special:AbuseFilter|vandálszűrővel]] ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions súgó]).",
-	"notification-link-text-show-filter": "Szűrő megjelenítése"
+	"notification-link-text-show-filter": "Szűrő megjelenítése",
+	"communityconfiguration-blockeddomain-title": "Blokkolt külső domainek",
+	"communityconfiguration-blockeddomain-description": "Olyan külső domainek listája, amikre nem lehet hivatkozni."
 }

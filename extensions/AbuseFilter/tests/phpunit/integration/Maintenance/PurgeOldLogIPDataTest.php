@@ -2,22 +2,22 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
-use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\AbuseFilter\Maintenance\PurgeOldLogData;
 use MediaWiki\Extension\AbuseFilter\Maintenance\PurgeOldLogIPData;
-use MediaWiki\MainConfigSchema;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
-use Wikimedia\Timestamp\ConvertibleTimestamp;
+use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Test
  * @group AbuseFilter
- * @group Database
  * @covers \MediaWiki\Extension\AbuseFilter\Maintenance\PurgeOldLogIPData
  */
 class PurgeOldLogIPDataTest extends MaintenanceBaseTestCase {
 
-	private const FAKE_TIME = '20200115000000';
-	private const MAX_AGE = 3600;
+	/** @var MockObject|Maintenance|TestingAccessWrapper */
+	protected $maintenance;
 
 	/**
 	 * @inheritDoc
@@ -26,50 +26,30 @@ class PurgeOldLogIPDataTest extends MaintenanceBaseTestCase {
 		return PurgeOldLogIPData::class;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function addDBData() {
-		$defaultRow = [
-			'afl_ip' => '1.1.1.1',
-			'afl_global' => 0,
-			'afl_filter_id' => 1,
-			'afl_user' => 1,
-			'afl_user_text' => 'User',
-			'afl_action' => 'edit',
-			'afl_actions' => '',
-			'afl_var_dump' => 'xxx',
-			'afl_namespace' => 0,
-			'afl_title' => 'Title',
-			'afl_wiki' => null,
-			'afl_deleted' => 0,
-			'afl_rev_id' => 42,
-		];
-		$oldTS = ConvertibleTimestamp::convert(
-			TS_MW,
-			ConvertibleTimestamp::convert( TS_UNIX, self::FAKE_TIME ) - 2 * self::MAX_AGE
-		);
-		$rows = [
-			[ 'afl_id' => 1, 'afl_timestamp' => $this->getDb()->timestamp( $oldTS ) ] + $defaultRow,
-			[ 'afl_id' => 2, 'afl_timestamp' => $this->getDb()->timestamp( $oldTS ), 'afl_ip' => '' ] + $defaultRow,
-			[ 'afl_id' => 3, 'afl_timestamp' => $this->getDb()->timestamp( self::FAKE_TIME ) ] + $defaultRow,
-			[ 'afl_id' => 4, 'afl_timestamp' => $this->getDb()
-				->timestamp( self::FAKE_TIME ), 'afl_ip' => '' ] + $defaultRow,
-		];
-		$this->getDb()->newInsertQueryBuilder()
-			->insertInto( 'abuse_filter_log' )
-			->rows( $rows )
-			->caller( __METHOD__ )
-			->execute();
+	protected function createMaintenance() {
+		$maintenanceScript = $this->getMockBuilder( PurgeOldLogIPData::class )
+			->onlyMethods( [ 'createChild' ] )
+			->getMock();
+		return TestingAccessWrapper::newFromObject( $maintenanceScript );
 	}
 
-	public function testExecute() {
-		ConvertibleTimestamp::setFakeTime( self::FAKE_TIME );
-		$this->maintenance->setConfig( new HashConfig( [
-			'AbuseFilterLogIPMaxAge' => self::MAX_AGE,
-			'StatsdServer' => MainConfigSchema::getDefaultValue( 'StatsdServer' )
-		] ) );
-		$this->expectOutputRegex( '/1 rows/' );
+	public function testExecuteCallsNewMaintenanceScript() {
+		// Create a mock child maintenance class that expects to be executed.
+		$mockMaintenance = $this->getMockBuilder( PurgeOldLogData::class )
+			->onlyMethods( [ 'execute' ] )
+			->getMock();
+		$mockMaintenance->expects( $this->once() )
+			->method( 'execute' );
+		$this->maintenance->method( 'createChild' )
+			->with( PurgeOldLogData::class )
+			->willReturn( $mockMaintenance );
+
+		// Run the deprecated alias script
+		$this->maintenance->loadWithArgv( [ '--batch-size', 12345 ] );
 		$this->maintenance->execute();
+
+		// Expect that the batch-size was copied over successfully.
+		$mockMaintenance = TestingAccessWrapper::newFromObject( $mockMaintenance );
+		$this->assertSame( 12345, $mockMaintenance->getBatchSize() );
 	}
 }

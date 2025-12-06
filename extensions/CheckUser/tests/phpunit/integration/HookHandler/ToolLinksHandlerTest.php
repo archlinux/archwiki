@@ -80,11 +80,11 @@ class ToolLinksHandlerTest extends MediaWikiIntegrationTestCase {
 	public static function provideOnUserToolLinksEditForValidSpecialPage() {
 		return [
 			'Current title is Special:CheckUser' => [
-				'Special:CheckUser', [ 'CheckUser mocked link' ]
+				'Special:CheckUser', [ 'CheckUser mocked link' ],
 			],
 			'Current title is Special:CheckUserLog' => [
-				'Special:CheckUserLog', [ 'CheckUserLog mocked link' ]
-			]
+				'Special:CheckUserLog', [ 'CheckUserLog mocked link' ],
+			],
 		];
 	}
 
@@ -131,7 +131,7 @@ class ToolLinksHandlerTest extends MediaWikiIntegrationTestCase {
 				[ $user, 'checkuser-temporary-account-no-preference', $hasNoPreferenceRight ],
 				[ $user, 'checkuser-temporary-account', $hasBasicRight ],
 				[ $user, 'checkuser', false ],
-				[ $user, 'checkuser-log', false ]
+				[ $user, 'checkuser-log', false ],
 			] );
 
 		$mockUserOptionsLookup = $this->createMock( UserOptionsLookup::class );
@@ -266,7 +266,7 @@ class ToolLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		$mockPermissionManager->method( 'userHasRight' )
 			->willReturnMap( [
 				[ $mockPerformingUser, 'checkuser-temporary-account-no-preference', true ],
-				[ $mockPerformingUser, 'deletedhistory', $canSeeDeleted ]
+				[ $mockPerformingUser, 'deletedhistory', $canSeeDeleted ],
 			] );
 
 		$services = $this->getServiceContainer();
@@ -496,22 +496,22 @@ class ToolLinksHandlerTest extends MediaWikiIntegrationTestCase {
 			'Link is added on Special:GlobalContributions' => [
 				'pageName' => 'Contributions',
 				'accessIsAllowed' => true,
-				'expectLink' => true
+				'expectLink' => true,
 			],
 			'Link is added on Special:DeletedContributions' => [
 				'pageName' => 'DeletedContributions',
 				'accessIsAllowed' => true,
-				'expectLink' => true
+				'expectLink' => true,
 			],
 			'Link is added on Special:IPContributions' => [
 				'pageName' => 'IPContributions',
 				'accessIsAllowed' => true,
-				'expectLink' => true
+				'expectLink' => true,
 			],
 			'Link is not added on Special:Contributions if access is not allowed' => [
 				'pageName' => 'Contributions',
 				'accessIsAllowed' => false,
-				'expectLink' => false
+				'expectLink' => false,
 			],
 		];
 	}
@@ -598,7 +598,7 @@ class ToolLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		$mockPermissionManager->method( 'userHasRight' )
 			->willReturnMap( [
 				[ $mockPerformingUser, 'checkuser', $hasCheckUserRight ],
-				[ $mockPerformingUser, 'checkuser-log', $hasCheckUserLogRight ]
+				[ $mockPerformingUser, 'checkuser-log', $hasCheckUserLogRight ],
 			] );
 		$userIdentityLookup = $this->createMock( UserIdentityLookup::class );
 		$userIdentityLookup->method( 'getUserIdentityByUserId' )
@@ -658,15 +658,15 @@ class ToolLinksHandlerTest extends MediaWikiIntegrationTestCase {
 				wfMessage( 'checkuser-contribs-log' )->text(),
 				[ 'class' => 'mw-contributions-link-check-user-log' ],
 				[ 'cuSearch' => $userPageTitle ],
-				'CheckUserLog mocked link'
+				'CheckUserLog mocked link',
 			],
 			[
 				SpecialPage::getTitleFor( 'CheckUserLog' ),
 				wfMessage( 'checkuser-contribs-log-initiator' )->text(),
 				[ 'class' => 'mw-contributions-link-check-user-initiator' ],
 				[ 'cuInitiator' => $userPageTitle ],
-				'CheckUserLog initiator mocked link'
-			]
+				'CheckUserLog initiator mocked link',
+			],
 		];
 		$mockLinkRenderer->method( 'makeKnownLink' )
 			->willReturnCallback( function ( $target, $text, $extraAttribs, $query ) use ( &$expectedReturnMap ) {

@@ -1,32 +1,20 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
 use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\User\TempUser\TempUserConfig;
+use OOUI\HtmlSnippet;
+use OOUI\MessageWidget;
 
 /**
  * Implements Special:Userlogout
@@ -47,26 +35,32 @@ class SpecialUserLogout extends FormSpecialPage {
 		$this->tempUserConfig = $tempUserConfig;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isListed() {
 		return $this->getAuthManager()->canAuthenticateNow();
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'login';
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		return [];
 	}
 
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$user = $this->getUser();
 		if ( $user->isAnon() ) {
@@ -81,9 +75,29 @@ class SpecialUserLogout extends FormSpecialPage {
 
 	public function alterForm( HTMLForm $form ) {
 		$form->setTokenSalt( 'logoutToken' );
-		$form->addHeaderHtml( $this->msg(
-			$this->getUser()->isTemp() ? 'userlogout-temp' : 'userlogout-continue'
-		) );
+		$form->setSubmitTextMsg( 'userlogout-submit' );
+		if ( $this->getUser()->isTemp() ) {
+			$form->addHeaderHtml(
+				Html::rawElement( 'p', [], $this->msg( 'userlogout-temp' ) ) .
+				Html::rawElement( 'p', [], $this->msg( 'userlogout-temp-moreinfo' ) ) .
+				new MessageWidget( [
+					'type' => 'notice',
+					'label' => new HtmlSnippet(
+						Html::rawElement(
+							'strong',
+							[],
+							$this->msg( 'userlogout-temp-messagebox-title' )
+						) .
+						Html::element( 'br' ) .
+						$this->msg( 'userlogout-temp-messagebox-body' )
+					),
+				] )
+			);
+		} else {
+			$form->addHeaderHtml(
+				Html::rawElement( 'p', [], $this->msg( 'userlogout-continue' ) )
+			);
+		}
 
 		$form->addHiddenFields( $this->getRequest()->getValues( 'returnto', 'returntoquery' ) );
 	}
@@ -97,7 +111,7 @@ class SpecialUserLogout extends FormSpecialPage {
 	 */
 	public function onSubmit( array $data ) {
 		// Make sure it's possible to log out
-		$session = SessionManager::getGlobalSession();
+		$session = $this->getRequest()->getSession();
 		if ( !$session->canSetUser() ) {
 			throw new ErrorPageError(
 				'cannotlogoutnow-title',
@@ -152,6 +166,7 @@ class SpecialUserLogout extends FormSpecialPage {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getDescription() {
 		// Set the page title as "templogout" if the user is (or just was) logged in to a temporary account
 		if (

@@ -10,16 +10,11 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * @xxx Like TitleLocalCache, this class shouldn't need to exist.
  */
 class RevisionLocalCache extends LocalCache {
-	private IConnectionProvider $dbProvider;
-	private RevisionStore $revisionStore;
-
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		RevisionStore $revisionStore
+		private readonly IConnectionProvider $dbProvider,
+		private readonly RevisionStore $revisionStore,
 	) {
 		parent::__construct();
-		$this->dbProvider = $dbProvider;
-		$this->revisionStore = $revisionStore;
 	}
 
 	/**

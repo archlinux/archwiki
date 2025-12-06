@@ -2,21 +2,7 @@
 /**
  * Implements the Password class for the MediaWiki software.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -25,8 +11,6 @@ declare( strict_types = 1 );
 namespace MediaWiki\Password;
 
 use InvalidArgumentException;
-use MediaWiki\Config\Config;
-use MediaWiki\MainConfigNames;
 use MWCryptRand;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
@@ -109,23 +93,6 @@ final class PasswordFactory {
 	 */
 	public function getDefaultType(): string {
 		return $this->default;
-	}
-
-	/**
-	 * @deprecated since 1.32 Initialize settings using the constructor
-	 *   Emitting deprecation warnings since 1.41.
-	 *
-	 * Initialize the internal static variables using the global variables
-	 *
-	 * @param Config $config Configuration object to load data from
-	 */
-	public function init( Config $config ): void {
-		wfDeprecated( __METHOD__, '1.32' );
-		foreach ( $config->get( MainConfigNames::PasswordConfig ) as $type => $options ) {
-			$this->register( $type, $options );
-		}
-
-		$this->setDefaultType( $config->get( MainConfigNames::PasswordDefault ) );
 	}
 
 	/**

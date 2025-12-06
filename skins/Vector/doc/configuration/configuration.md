@@ -92,17 +92,11 @@ Do not rely on any of the feature flags documented here. They should not be cons
 
   - Removal ticket: [https://phabricator.wikimedia.org/T106463](https://phabricator.wikimedia.org/T106463)
 
-- wgVectorWebABTestEnrollment
-
-  - Configures web A/B test enrollment for the Vector skin. This is intended to only be used by developers, as it requires writing associated code.
-
-  - Specifies experiment details and sampling rates.
-
-  - Note: The assumption is that A/B testing will always be occurring in this skin so would never be removed unlike the other flags.
-
 - wgVectorWrapTablesTemporary
-   - When enabled, certain tables will be wrapped in a div to make them horizontally scrollable when no
+
+  - When enabled, certain tables will be wrapped in a div to make them horizontally scrollable when no
      space is available.
+
   - Removal ticket: [https://phabricator.wikimedia.org/T361737](https://phabricator.wikimedia.org/T361737)
 
 ## Site-level Configuration
@@ -127,15 +121,23 @@ Different projects have different needs, so some configuration on the site level
 
   - Configurable for different wikis. This is currently used on projects like Wikimedia Commons, MediaWiki and Wikidata which do not have separate language sites.
 
-- wgVectorWvuiSearchOptions
+- wgVectorTypeahead
 
-  - Configures search options for the Vector skin.
+  - Configures Typeahead Search APIs including an alternative API for search queries and search recommendations. The alternative search queries API is mostly used for development purposes, as if it's not set, it uses default MediaWiki search. The recommendations API is disabled by default.
 
-  - Includes thumbnail and description display.
+  - Configures Typeahead Search options, including thumbnail and description display.
 
-- wgVectorSearchApiUrl
-
-  - Allows site to specify an alternative API for search queries. If not set uses default MediaWiki search. Mostly used for development purposes.
+Example:
+  ```
+  $wgVectorTypeahead = [
+    "apiUrl" => 'https://en.wikipedia.org/w/rest.php',
+    "recommendationApiUrl" => 'https://en.wikipedia.org/w/rest.php/v1/search/page?q=morelike:$1&limit=20',
+    "options" => [
+      "showThumbnail" => true,
+      "showDescription" => true
+    ]
+  ]
+  ```
 
 ## User Preference Options Glossary
 

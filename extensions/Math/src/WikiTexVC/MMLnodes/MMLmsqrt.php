@@ -10,7 +10,8 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  */
 class MMLmsqrt extends MMLbase {
 
-	public function __construct( string $texclass = "", array $attributes = [], MMLbase ...$base ) {
+	/** @inheritDoc */
+	public function __construct( string $texclass = "", array $attributes = [], ...$base ) {
 		parent::__construct( "msqrt", $texclass, $attributes, ...$base );
 	}
 }

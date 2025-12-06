@@ -16,7 +16,6 @@
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Tumia Legacy Vector",
-	"vector-opt-out": "Badilisha kwa mandhari ya zamani",
 	"vector-action-toggle-sidebar": "Geuza mwambaa upande",
 	"vector-languages": "Lugha",
 	"vector-language-button-aria-label": "Nenda kwenye makala kwa lugha nyingine. Lugha {{PLURAL:$1|$1 inapatikana|$1 zinapatikana}}",
@@ -53,7 +52,6 @@
 	"skin-theme-night-label": "Giza",
 	"skin-theme-os-label": "Otomatiki",
 	"skin-theme-exclusion-notice": "Ukurasa huu daima huwa na hali mwanga.",
-	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Yaliyomo",
 	"vector-toc-beginning": "Mwanzo",
 	"vector-anon-user-menu-pages": "Kurasa za wahariri walioondoka",

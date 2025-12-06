@@ -133,18 +133,5 @@
 	"checkuser-investigate-compare-table-header-username": "Nome utende",
 	"checkuser-investigate-compare-table-header-activity": "Indervalle de date",
 	"checkuser-investigate-compare-table-header-ip": "IP",
-	"checkuser-investigate-compare-table-header-useragent": "Utende agente",
-	"checkuser-investigate-subtitle-link-restart-tour": "Accuminze arrete 'u gire",
-	"checkuser-investigate-tour-targets-title": "Condrolle cchiù utinde e IP?",
-	"checkuser-investigate-tour-targets-desc": "Aggiunge 'nzigne a $1 {{PLURAL:$1|nome}} utende o IP e 'ndruhce tutte le 'mbormaziune 'nzieme. No te preoccupà: ccrejame 'na vôsce de reggistre separate pe ognune de lore.",
-	"checkuser-investigate-tour-useragents-title": "User Agent uguale?",
-	"checkuser-investigate-tour-useragents-desc": "Vèje cu 'u sciorge sus a 'na celle pe evidenzià tutte le righe cu le stesse date. Cazze sus a l'icone d'u spille pe mandenè fisse l'evidenziazione mendre analizze le otre date.",
-	"checkuser-investigate-tour-addusertargets-title": "Abbesogne de maggiore condeste?",
-	"checkuser-investigate-tour-addusertargets-desc": "Cazze pe 'ndrucà tutte le otre utinde cu stu IP. Puè farle pure cu le utinde e 'ndrucà le IP ca onne ausate. Ccrejame 'na vôsce de reggistre pe ogne richieste.",
-	"checkuser-investigate-tour-filterip-title": "Accoricame 'a recerche?",
-	"checkuser-investigate-tour-filterip-desc": "Live 'a 'mbormazione de cchiù filtranne le nome de l'utinde, l'IP o User Agent. Puè 'ndrucà arrete le date luanne filtre da l'elenghe de sus.",
-	"checkuser-investigate-tour-block-title": "Appleche 'u blocche?",
-	"checkuser-investigate-tour-block-desc": "Permette de scacchià le utinde da bloccà e pò iapre 'u module de blocche pe scacchià 'u blocche satte.",
-	"checkuser-investigate-tour-copywikitext-title": "Vuè ccu copie le date?",
-	"checkuser-investigate-tour-copywikitext-desc": "Recopie 'a tabbelle de combronde cazzanne e carresciannele sus a CUUicchi. Ue, ca ste copie sulamende quidde ca jè 'ndrucabbele e none tutte le pàggene d'a recerche."
+	"checkuser-investigate-compare-table-header-useragent": "Utende agente"
 }

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ibrahim"
+			"Ibrahim",
+			"ZulfiqorF"
 		]
 	},
 	"citethispage": "Ёд кардани ин мақола",
 	"citethispage-desc": "Саҳифаи вижае барои [[Special:Cite|ёдкард]] изофа мекунад ва пайванде ба ҷаъбаи абзор меафзояд",
-	"citethispage-link": "Ёд кардани пайванди ин мақола",
+	"citethispage-link": "Ёдкарди ин саҳифа",
 	"citethispage-change-submit": "Ёд кардан",
 	"citethispage-change-target": "Саҳифа:"
 }

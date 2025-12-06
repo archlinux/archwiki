@@ -6,6 +6,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\Filter;
 use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
+use MediaWiki\User\UserIdentityValue;
 use TestUser;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -56,8 +57,7 @@ trait FilterFromSpecsTestTrait {
 			),
 			$filterSpecs['actions'],
 			new LastEditInfo(
-				$filterSpecs['lastEditor']->getId(),
-				$filterSpecs['lastEditor']->getName(),
+				new UserIdentityValue( $filterSpecs['lastEditor']->getId(), $filterSpecs['lastEditor']->getName() ),
 				$this->getDb()->timestamp( $filterSpecs['lastEditTimestamp'] )
 			),
 			$filterSpecs['id'],

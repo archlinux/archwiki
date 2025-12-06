@@ -1,22 +1,7 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Auth
  */
 
 namespace MediaWiki\Auth;
@@ -34,6 +19,7 @@ use Wikimedia\Rdbms\IDBAccessObject;
  *
  * @note For proper operation, this should generally come before any other
  *  password-based authentication providers.
+ *
  * @ingroup Auth
  * @since 1.27
  */
@@ -41,6 +27,7 @@ class TemporaryPasswordPrimaryAuthenticationProvider
 	extends AbstractTemporaryPasswordPrimaryAuthenticationProvider
 {
 
+	/** @inheritDoc */
 	public function testUserExists( $username, $flags = IDBAccessObject::READ_NORMAL ) {
 		$username = $this->userNameUtils->getCanonical( $username, UserRigorOptions::RIGOR_USABLE );
 		if ( $username === false ) {
@@ -54,6 +41,7 @@ class TemporaryPasswordPrimaryAuthenticationProvider
 			->caller( __METHOD__ )->fetchField();
 	}
 
+	/** @inheritDoc */
 	protected function getTemporaryPassword( string $username, $flags = IDBAccessObject::READ_NORMAL ): array {
 		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		$row = $db->newSelectQueryBuilder()
@@ -71,6 +59,7 @@ class TemporaryPasswordPrimaryAuthenticationProvider
 		];
 	}
 
+	/** @inheritDoc */
 	protected function setTemporaryPassword( string $username, Password $tempPassHash, $tempPassTime ): void {
 		$db = $this->dbProvider->getPrimaryDatabase();
 		$db->newUpdateQueryBuilder()

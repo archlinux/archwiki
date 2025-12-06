@@ -3,21 +3,7 @@
 /**
  * AutoLoader for the testing suite.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Testing
  */
@@ -51,7 +37,6 @@ $wgAutoloadClasses += [
 	'TestRecorder' => "$testDir/parser/TestRecorder.php",
 
 	# tests/phpunit
-	'DynamicPropertyTestHelper' => "$testDir/phpunit/DynamicPropertyTestHelper.php",
 	'EmptyResourceLoader' => "$testDir/phpunit/ResourceLoaderTestCase.php",
 	'JsonSchemaAssertionTrait' => "$testDir/phpunit/JsonSchemaAssertionTrait.php",
 	'MediaWiki\\Tests\\ResourceLoader\\EmptyResourceLoader' => "$testDir/phpunit/ResourceLoaderTestCase.php",
@@ -109,12 +94,9 @@ $wgAutoloadClasses += [
 	# tests/phpunit/includes/block
 	'MediaWiki\\Tests\\Block\\Restriction\\RestrictionTestCase' => "$testDir/phpunit/includes/block/Restriction/RestrictionTestCase.php",
 
-	# tests/phpunit/includes/cache
-	'LinkCacheTestTrait' => "$testDir/phpunit/includes/cache/LinkCacheTestTrait.php",
-
 	# tests/phpunit/includes/recentchanges
 	'TestRecentChangesHelper' => "$testDir/phpunit/includes/recentchanges/TestRecentChangesHelper.php",
-	'MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait' => "$testDir/phpunit/includes/recentchanges/ChangeTrackingUpdateSpyTrait.php",
+	'MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait' => "$testDir/phpunit/includes/recentchanges/ChangeTrackingUpdateSpyTrait.php",
 
 	# tests/phpunit/includes/config
 	'TestAllServiceOptionsUsed' => "$testDir/phpunit/includes/config/TestAllServiceOptionsUsed.php",
@@ -158,6 +140,10 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\OutputTransform\\DummyDOMTransformStage' => "$testDir/phpunit/includes/OutputTransform/DummyDOMTransformStage.php",
 	'MediaWiki\\Tests\\OutputTransform\\TestUtils' => "$testDir/phpunit/includes/OutputTransform/TestUtils.php",
 	'MediaWiki\\Tests\\OutputTransform\\OutputTransformStageTestBase' => "$testDir/phpunit/includes/OutputTransform/OutputTransformStageTestBase.php",
+	'MediaWiki\\Tests\\OutputTransform\\Stages\\HandleTOCMarkersTestCommon' => "$testDir/phpunit/includes/OutputTransform/Stages/HandleTOCMarkersTestCommon.php",
+
+	# tests/phpunit/includes/page
+	'LinkCacheTestTrait' => "$testDir/phpunit/includes/page/LinkCacheTestTrait.php",
 
 	# tests/phpunit/includes/parser
 	'MediaWiki\\Tests\\Parser\\CacheTimeTest' => "$testDir/phpunit/includes/parser/CacheTimeTest.php",
@@ -169,10 +155,6 @@ $wgAutoloadClasses += [
 		"$testDir/phpunit/includes/libs/serialization/SerializationTestTrait.php",
 	'Wikimedia\\Tests\\SerializationTestUtils' =>
 		"$testDir/phpunit/includes/libs/serialization/SerializationTestUtils.php",
-
-	# tests/phpunit/includes/poolcounter
-	'PoolWorkArticleViewTest' =>
-		"$testDir/phpunit/includes/poolcounter/PoolWorkArticleViewTest.php",
 
 	# tests/phpunit/includes/ResourceLoader
 	'MediaWiki\\Tests\\ResourceLoader\\ImageModuleTest' =>
@@ -201,6 +183,9 @@ $wgAutoloadClasses += [
 	'SpecialPageTestBase' => "$testDir/phpunit/includes/specials/SpecialPageTestBase.php",
 	'SpecialPageExecutor' => "$testDir/phpunit/includes/specials/SpecialPageExecutor.php",
 	'SpecialSearchTestMockResultSet' => "$testDir/phpunit/includes/specials/SpecialSearchTestMockResultSet.php",
+
+	# tests/phpunit/includes/Storage
+	'MediaWiki\\Tests\\Storage\\PageEditStashContentsTest' => "$testDir/phpunit/includes/Storage/PageEditStashContentsTest.php",
 
 	# tests/phpunit/includes/title
 	'TitleCodecTestBase' => "$testDir/phpunit/includes/title/TitleCodecTestBase.php",
@@ -276,10 +261,6 @@ $wgAutoloadClasses += [
 	'MediaWiki\Tests\FileRepo\TestRepoTrait' => "$testDir/phpunit/mocks/filerepo/TestRepoTrait.php",
 	'MediaWiki\\Tests\\MockEnvironment' => "$testDir/phpunit/mocks/MockEnvironment.php",
 
-	# tests/phpunit/unit/includes
-	'Wikimedia\\Reflection\\GhostFieldTestClass' => "$testDir/phpunit/mocks/GhostFieldTestClass.php",
-	'Wikimedia\\Tests\\Reflection\\GhostFieldTestClass' => "$testDir/phpunit/mocks/GhostFieldTestClass.php",
-
 	# tests/phpunit/unit/includes/auth
 	'MediaWiki\\Tests\\Unit\\Auth\\AuthenticationProviderTestTrait' => "$testDir/phpunit/unit/includes/auth/AuthenticationProviderTestTrait.php",
 
@@ -302,6 +283,7 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\Json\\JsonDeserializableSuperClass' => "$testDir/phpunit/mocks/json/JsonDeserializableSuperClass.php",
 	'MediaWiki\\Tests\\Json\\ManagedObject' => "$testDir/phpunit/mocks/json/ManagedObject.php",
 	'MediaWiki\\Tests\\Json\\ManagedObjectFactory' => "$testDir/phpunit/mocks/json/ManagedObjectFactory.php",
+	'MediaWiki\\Tests\\Json\\PlainJsonJwtCodec' => "$testDir/phpunit/mocks/json/PlainJsonJwtCodec.php",
 	'MediaWiki\\Tests\\Json\\SampleContainerObject' => "$testDir/phpunit/mocks/json/SampleContainerObject.php",
 	'MediaWiki\\Tests\\Json\\SampleObject' => "$testDir/phpunit/mocks/json/SampleObject.php",
 	'MediaWiki\\Tests\\Json\\SampleObjectAlias' => "$testDir/phpunit/mocks/json/SampleObject.php",
@@ -348,6 +330,9 @@ $wgAutoloadClasses += [
 	# tests/phpunit/integration/includes/libs
 	'LockManagerIntegrationTestBase' => "$testDir/phpunit/integration/includes/libs/lockmanager/LockManagerIntegrationTestBase.php",
 
+	# tests/phpunit/integration/includes/Rest/Handler
+	'MediaWiki\\Tests\\Rest\\Handler\\HandlerIntegrationTestTrait' => "$testDir/phpunit/integration/includes/Rest/Handler/HandlerIntegrationTestTrait.php",
+
 	# tests/phpunit/integration/includes/user
 	'MediaWiki\\Tests\\User\\ActorStoreTestBase' => "$testDir/phpunit/integration/includes/user/ActorStoreTestBase.php",
 
@@ -370,6 +355,7 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\Unit\\Permissions\\MockAuthorityTrait' => "$testDir/phpunit/mocks/permissions/MockAuthorityTrait.php",
 	'MediaWiki\\Tests\\Rest\\Handler\\ActionModuleBasedHandlerTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/ActionModuleBasedHandlerTestTrait.php",
 	'MediaWiki\\Tests\\Rest\\Handler\\HTMLHandlerTestTrait' => "$testDir/phpunit/integration/includes/Rest/Handler/HTMLHandlerTestTrait.php",
+	'MediaWiki\\Tests\\Rest\\Handler\\LintHandlerTestTrait' => "$testDir/phpunit/integration/includes/Rest/Handler/LintHandlerTestTrait.php",
 	'MediaWiki\\Tests\\Rest\\Handler\\HandlerTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/HandlerTestTrait.php",
 	'MediaWiki\\Tests\\Rest\\Handler\\PageHandlerTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/PageHandlerTestTrait.php",
 	'MediaWiki\\Tests\\Rest\\Handler\\HelloHandler' => "$testDir/phpunit/unit/includes/Rest/Handler/HelloHandler.php",
@@ -389,6 +375,7 @@ $wgAutoloadClasses += [
 
 	# tests/phpunit/unit/includes/session
 	'MediaWiki\\Tests\\Session\\SessionProviderTestTrait' => "$testDir/phpunit/unit/includes/session/SessionProviderTestTrait.php",
+	'MediaWiki\\Tests\\Session\\SessionStoreTestTrait' => "$testDir/phpunit/unit/includes/session/SessionStoreTestTrait.php",
 
 	# tests/suites
 	'ParserTestFileSuite' => "$testDir/phpunit/suites/ParserTestFileSuite.php",
@@ -396,4 +383,3 @@ $wgAutoloadClasses += [
 	'ParserTestTopLevelSuite' => "$testDir/phpunit/suites/ParserTestTopLevelSuite.php",
 	'SuiteEventsTrait' => "$testDir/phpunit/suites/SuiteEventsTrait.php",
 ];
-// phpcs:enable

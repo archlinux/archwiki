@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -23,6 +10,7 @@ namespace Wikimedia\Stats\Metrics;
 
 use Wikimedia\Stats\Exceptions\IllegalOperationException;
 use Wikimedia\Stats\Sample;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Timing Metric Implementation
@@ -58,11 +46,11 @@ class TimingMetric implements MetricInterface {
 	 * $timer->stop();
 	 * ```
 	 *
-	 * @return $this
+	 * @return RunningTimer
 	 */
 	public function start() {
-		$this->startTime = hrtime( true );
-		return $this;
+		$this->startTime = ConvertibleTimestamp::hrtime();
+		return new RunningTimer( $this->startTime, $this );
 	}
 
 	/**
@@ -70,10 +58,10 @@ class TimingMetric implements MetricInterface {
 	 */
 	public function stop(): void {
 		if ( $this->startTime === null ) {
-			trigger_error( "Stats: stop() called before start() for metric '{$this->getName()}'", E_USER_WARNING );
+			trigger_error( "Stats: ({$this->getName()}) stop() called before start()", E_USER_WARNING );
 			return;
 		}
-		$this->observeNanoseconds( hrtime( true ) - $this->startTime );
+		$this->observeNanoseconds( ConvertibleTimestamp::hrtime() - $this->startTime );
 		$this->startTime = null;
 	}
 
@@ -147,7 +135,7 @@ class TimingMetric implements MetricInterface {
 			$this->baseMetric->addSample( new Sample( $this->baseMetric->getLabelValues(), $milliseconds ) );
 		} catch ( IllegalOperationException $ex ) {
 			// Log the condition and give the caller something that will absorb calls.
-			trigger_error( $ex->getMessage(), E_USER_WARNING );
+			trigger_error( "Stats: ({$this->getName()}): {$ex->getMessage()}", E_USER_WARNING );
 		}
 	}
 

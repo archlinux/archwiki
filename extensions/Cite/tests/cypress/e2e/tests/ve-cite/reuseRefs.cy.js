@@ -63,8 +63,8 @@ describe( 'Re-using refs in Visual Editor', () => {
 
 		// The context dialog on one of the references shows it's being used twice
 		cy.get( '.mw-reflink-text' ).contains( '[2]' ).click();
-		cy.get( '.oo-ui-popupWidget-popup .ve-ui-mwReferenceContextItem-muted' )
-			.should( 'have.text', 'This reference is used twice on this page.' );
+		cy.get( '.oo-ui-popupWidget-popup .ve-ui-mwReferenceContextItem-reuse' )
+			.should( 'have.text', 'Used twice' );
 
 		veHelper.saveEdits();
 

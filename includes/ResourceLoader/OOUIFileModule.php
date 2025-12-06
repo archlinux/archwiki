@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -95,21 +81,18 @@ class OOUIFileModule extends FileModule {
 	 */
 	private function extendSkinSpecific( array $skinSpecific, array $themeSpecific ): array {
 		// If the module or skin already set skinStyles/skinScripts, prepend ours
-		foreach ( $skinSpecific as $skin => $files ) {
-			if ( !is_array( $files ) ) {
-				$files = [ $files ];
-			}
-			if ( isset( $themeSpecific[$skin] ) ) {
-				$skinSpecific[$skin] = array_merge( [ $themeSpecific[$skin] ], $files );
-			} elseif ( isset( $themeSpecific['default'] ) ) {
-				$skinSpecific[$skin] = array_merge( [ $themeSpecific['default'] ], $files );
+		foreach ( $skinSpecific as $skin => &$files ) {
+			$prepend = $themeSpecific[$skin] ?? $themeSpecific['default'] ?? null;
+			if ( $prepend !== null ) {
+				if ( !is_array( $files ) ) {
+					$files = [ $files ];
+				}
+				array_unshift( $files, $prepend );
 			}
 		}
 		// If the module has no skinStyles/skinScripts for a skin, then set ours
 		foreach ( $themeSpecific as $skin => $file ) {
-			if ( !isset( $skinSpecific[$skin] ) ) {
-				$skinSpecific[$skin] = [ $file ];
-			}
+			$skinSpecific[$skin] ??= [ $file ];
 		}
 		return $skinSpecific;
 	}

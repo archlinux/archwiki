@@ -74,7 +74,7 @@ class ClientHintsBatchFormatterResultsTest extends MediaWikiUnitTestCase {
 			[
 				'Brand: Not.A/Brand 99.0.0.0, Brand: Google Chrome 115.0.5790.171, Brand: Chromium 115.0.5790.171, ' .
 				'Platform: Windows 15.0.0 and Mobile: No',
-				''
+				'',
 			],
 			123,
 			UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT,

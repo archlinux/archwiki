@@ -14,14 +14,12 @@ use MediaWiki\User\User;
  */
 class BetaPreferenceHooks implements GetBetaFeaturePreferencesHook {
 
-	private Config $coreConfig;
-	private Config $config;
+	private readonly Config $config;
 
 	public function __construct(
-		Config $coreConfig,
+		private readonly Config $coreConfig,
 		ConfigFactory $configFactory
 	) {
-		$this->coreConfig = $coreConfig;
 		$this->config = $configFactory->makeConfig( 'visualeditor' );
 	}
 

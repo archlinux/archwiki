@@ -9,6 +9,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
 use MediaWiki\Extension\AbuseFilter\FilterCompare;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
 /**
@@ -68,8 +69,7 @@ class FilterCompareTest extends MediaWikiUnitTestCase {
 				),
 				$specs['actions'],
 				new LastEditInfo(
-					$specs['user'],
-					$specs['user_text'],
+					UserIdentityValue::newRegistered( $specs['user'], $specs['user_text'] ),
 					$specs['timestamp']
 				),
 				$specs['id']

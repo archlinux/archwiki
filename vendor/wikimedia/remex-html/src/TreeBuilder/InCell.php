@@ -8,6 +8,11 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  * The "in cell" insertion mode
  */
 class InCell extends InsertionMode {
+	private const EXPLICT_CLOSE_TAG = [
+		'td' => true,
+		'th' => true,
+	];
+
 	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->dispatcher->inBody->characters( $text, $start, $length,
@@ -100,11 +105,10 @@ class InCell extends InsertionMode {
 	}
 
 	private function closeTheCell( int $sourceStart ): InsertionMode {
-		$tdth = [ 'td' => true, 'th' => true ];
 		$builder = $this->builder;
 		$stack = $builder->stack;
 		$builder->generateImpliedEndTags( false, $sourceStart );
-		if ( !isset( $tdth[$stack->current->htmlName] ) ) {
+		if ( !isset( self::EXPLICT_CLOSE_TAG[$stack->current->htmlName] ) ) {
 			$builder->error( "closing the cell but there are tags open " .
 				"which can't be closed automatically", $sourceStart );
 		}

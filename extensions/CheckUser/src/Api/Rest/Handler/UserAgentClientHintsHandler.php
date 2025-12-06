@@ -93,7 +93,7 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 			// ::newFromJsApi with the $data may raise a TypeError as the $data
 			// does not have its type validated (T305973).
 			$clientHints = ClientHintsData::newFromJsApi( $data );
-		} catch ( TypeError $e ) {
+		} catch ( TypeError ) {
 			throw new LocalizedHttpException( new MessageValue( 'rest-bad-json-body' ), 400 );
 		}
 		$type = $this->getValidatedParams()['type'];
@@ -121,7 +121,7 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		return $this->getResponseFactory()->createJson( [
 			'value' => $this->getResponseFactory()->formatMessage(
 				new MessageValue( 'checkuser-api-useragent-clienthints-explanation' )
-			)
+			),
 		] );
 	}
 
@@ -210,8 +210,8 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 	 * Validate that the API was not called over wgCheckUserClientHintsRestApiMaxTimeLag
 	 * seconds ago.
 	 *
-	 * @param ?string $associatedEntryTimestamp The timestamp associated with the $identifier in TS_MW form.
-	 *   If null, the validation will always fail.
+	 * @param ?string $associatedEntryTimestamp The timestamp associated with the $identifier in any format
+	 *   accepted by {@link ConvertibleTimestamp}. If null, the validation will always fail.
 	 * @param string $type The type of the $identifier (e.g. revision)
 	 * @param int $identifier The ID of the entry of type $type
 	 * @return void
@@ -221,15 +221,11 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		?string $associatedEntryTimestamp, string $type, int $identifier
 	): void {
 		// Check that the API was not called too long after the edit
-		$cutoff = ConvertibleTimestamp::convert(
-			TS_MW,
-			ConvertibleTimestamp::time() - $this->config->get( 'CheckUserClientHintsRestApiMaxTimeLag' )
-		);
-		// If there is no timestamp associated with this action, then
-		// this method cannot perform the timestamp check. This should
-		// rarely happen and is likely to occur for actions that are
-		// already too old, so just don't store data in this case.
-		if ( $associatedEntryTimestamp < $cutoff ) {
+		$cutoff = ConvertibleTimestamp::time() - $this->config->get( 'CheckUserClientHintsRestApiMaxTimeLag' );
+		if (
+			$associatedEntryTimestamp === null ||
+			ConvertibleTimestamp::convert( TS_UNIX, $associatedEntryTimestamp ) < $cutoff
+		) {
 			throw new LocalizedHttpException(
 				new MessageValue(
 					'checkuser-api-useragent-clienthints-called-too-late',
@@ -266,7 +262,7 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		return [
 			'brands' => [
 				self::PARAM_SOURCE => 'body',
-				ParamValidator::PARAM_TYPE => 'array'
+				ParamValidator::PARAM_TYPE => 'array',
 			],
 			'mobile' => [
 				self::PARAM_SOURCE => 'body',
@@ -278,15 +274,15 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 			],
 			'architecture' => [
 				self::PARAM_SOURCE => 'body',
-				ParamValidator::PARAM_TYPE => 'string'
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 			'bitness' => [
 				self::PARAM_SOURCE => 'body',
-				ParamValidator::PARAM_TYPE => 'string'
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 			'fullVersionList' => [
 				self::PARAM_SOURCE => 'body',
-				ParamValidator::PARAM_TYPE => 'array'
+				ParamValidator::PARAM_TYPE => 'array',
 			],
 			'model' => [
 				self::PARAM_SOURCE => 'body',

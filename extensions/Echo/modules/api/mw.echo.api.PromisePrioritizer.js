@@ -32,7 +32,7 @@ mw.echo.api.PromisePrioritizer.prototype.prioritize = function ( promise ) {
 	promise
 		.then(
 			this.setSuccess.bind( this, promise ),
-			this.setFailure.bind( this, promise )
+			this.setFailure.bind( this, promise ),
 		);
 	this.promise = promise;
 
@@ -53,7 +53,7 @@ mw.echo.api.PromisePrioritizer.prototype.prioritize = function ( promise ) {
  */
 mw.echo.api.PromisePrioritizer.prototype.setSuccess = function ( promise ) {
 	if ( this.promise === promise ) {
-		this.promise.done( ( ...args ) => {
+		this.promise.then( ( ...args ) => {
 			this.deferred.resolve( ...args );
 
 			this.promise = null;
@@ -72,7 +72,7 @@ mw.echo.api.PromisePrioritizer.prototype.setSuccess = function ( promise ) {
  */
 mw.echo.api.PromisePrioritizer.prototype.setFailure = function ( promise ) {
 	if ( this.promise === promise ) {
-		this.promise.fail( ( ...args ) => {
+		this.promise.catch( ( ...args ) => {
 			this.deferred.reject( ...args );
 
 			this.promise = null;

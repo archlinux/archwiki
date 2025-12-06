@@ -178,9 +178,9 @@
 	"createacct-submit": "съꙁижди си мѣсто",
 	"createacct-another-submit": "съꙁижди мѣсто",
 	"createacct-benefit-heading": "{{SITENAME}} съꙁьдаѥтъ сѧ чьловѣкꙑ · ижє ꙗко тꙑ сѫтъ",
-	"createacct-benefit-body1": "{{PLURAL:$1|мѣна|мѣнꙑ|мѣнъ}}",
-	"createacct-benefit-body2": "{{PLURAL:$1|страница|страници|страницѧ}}",
-	"createacct-benefit-body3": "{{PLURAL:$1|послѣдьн҄ь дѣтєл҄ь|послѣдьнꙗ дѣтєлꙗ|послѣдьни дѣтєлє}}",
+	"createacct-benefit-text1": "$2 {{PLURAL:$1|мѣна|мѣнꙑ|мѣнъ}}",
+	"createacct-benefit-text2": "$2 {{PLURAL:$1|страница|страници|страницѧ}}",
+	"createacct-benefit-text3": "$2 {{PLURAL:$1|послѣдьн҄ь дѣтєл҄ь|послѣдьнꙗ дѣтєлꙗ|послѣдьни дѣтєлє}}",
 	"userexists": "сѫщє польꙃєватєлꙗ имѧ пьса ⁙\nбѫди добръ · ино сѥ иꙁобрѧщи",
 	"loginerror": "въхода блаꙁна",
 	"createacct-error": "мѣста сътворѥниꙗ блаꙁна",
@@ -198,9 +198,6 @@
 	"oldpassword": "старо таино слово :",
 	"newpassword": "ново таино слово :",
 	"retypenew": "опакꙑ ново таиноѥ слово напиши :",
-	"botpasswords-label-create": "сътворѥниѥ",
-	"botpasswords-label-cancel": "отъмѣтаниѥ",
-	"botpasswords-label-delete": "поничьжєниѥ",
 	"resetpass-submit-loggedin": "таина словєсє иꙁмѣнѥниѥ",
 	"resetpass-submit-cancel": "отъмѣтаниѥ",
 	"passwordreset": "нова таина слова оуставлѥниѥ",
@@ -726,8 +723,5 @@
 	"renameusererrorinvalid": "имѧ ⁖ <nowiki>$1</nowiki> ⁖ нѣстъ годѣ",
 	"log-name-renameuser": "польꙃєватєлъ прѣимєнованиꙗ їсторїꙗ",
 	"log-description-renameuser": "сѥ ѥстъ їсторїꙗ польꙃєватєльскъ имєнъ иꙁмѣнѥниꙗ",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|нарєчє}} польꙃєватєл҄ь ⁖ $4 ⁖ ({{PLURAL:$6|$6 мѣна|$6 мѣноу|$6 мѣнъ}}) имєньмь ⁖ {{GENDER:$7|$5}} ⁖",
-	"interwiki_1": "да",
-	"interwiki_0": "нѣтъ",
-	"interwiki_edit": "исправлѥниѥ"
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|нарєчє}} польꙃєватєл҄ь ⁖ $4 ⁖ ({{PLURAL:$6|$6 мѣна|$6 мѣноу|$6 мѣнъ}}) имєньмь ⁖ {{GENDER:$7|$5}} ⁖"
 }

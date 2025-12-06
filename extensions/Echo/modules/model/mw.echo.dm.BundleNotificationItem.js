@@ -98,7 +98,7 @@ mw.echo.dm.BundleNotificationItem.prototype.hasUnseen = function () {
 mw.echo.dm.BundleNotificationItem.prototype.updateSeenState = function ( timestamp ) {
 	this.list.getItems().forEach( ( notification ) => {
 		notification.toggleSeen(
-			notification.isRead() || notification.getTimestamp() < timestamp
+			notification.isRead() || notification.getTimestamp() < timestamp,
 		);
 	} );
 };

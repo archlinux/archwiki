@@ -6,17 +6,12 @@ use MediaWiki\Api\Hook\ApiQuery__moduleManagerHook;
 use MediaWiki\CheckUser\Api\GlobalContributions\ApiQueryGlobalContributions;
 use MediaWiki\CheckUser\GlobalContributions\SpecialGlobalContributions;
 use MediaWiki\CheckUser\IPContributions\SpecialIPContributions;
+use MediaWiki\CheckUser\SuggestedInvestigations\SpecialSuggestedInvestigations;
 use MediaWiki\Config\Config;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\Hook\SpecialPage_initListHook;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\WikiMap\WikiMap;
-
-// The name of onSpecialPage_initList raises the following phpcs error. As the
-// name is defined in core, this is an unavoidable issue and therefore the check
-// is disabled.
-//
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
 
 /**
  * Conditionally register special pages and API modules that have additional dependencies
@@ -53,6 +48,7 @@ class ConditionalRegistrationHandler implements SpecialPage_initListHook, ApiQue
 					'UserFactory',
 					'UserIdentityLookup',
 					'DatabaseBlockStore',
+					'UserGroupAssignmentService',
 					'CheckUserIPContributionsPagerFactory',
 					'CheckUserPermissionManager',
 				],
@@ -83,9 +79,25 @@ class ConditionalRegistrationHandler implements SpecialPage_initListHook, ApiQue
 					'UserFactory',
 					'UserIdentityLookup',
 					'DatabaseBlockStore',
+					'UserGroupAssignmentService',
 					'CentralIdLookup',
 					'CheckUserGlobalContributionsPagerFactory',
 					'StatsFactory',
+				],
+			];
+		}
+
+		if (
+			$this->config->get( 'CheckUserSuggestedInvestigationsEnabled' ) &&
+			!$this->config->get( 'CheckUserSuggestedInvestigationsHidden' )
+		) {
+			$list['SuggestedInvestigations'] = [
+				'class' => SpecialSuggestedInvestigations::class,
+				'services' => [
+					'ConnectionProvider',
+					'UserLinkRenderer',
+					'CheckUserHookRunner',
+					'CheckUserSuggestedInvestigationsInstrumentationClient',
 				],
 			];
 		}

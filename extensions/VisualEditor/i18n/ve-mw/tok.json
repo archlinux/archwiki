@@ -1,13 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"Juwan~backup",
 			"LesVisages",
+			"Ne",
 			"Robin van der Vliet",
 			"Tamzin",
-			"Tbodt",
-			"Juwan~backup"
+			"Tbodt"
 		]
 	},
+	"tooltip-ca-ve-create": "o pali e lipu ni",
+	"tooltip-ca-editsource": "o ante e toki ilo pi lipu ni",
+	"tooltip-ca-createsource": "o pali e toki ilo pi lipu ni",
 	"visualeditor-autosave-modified-prompt-accept": "o awen e ante pini",
 	"visualeditor-autosave-modified-prompt-message": "sina kama ala lukin e lipu ni la, jan ante li ante e ona. {{GENDER:|sina}} wile ala wile awen e ante pini sina?",
 	"visualeditor-autosave-modified-prompt-reject": "o open e ante sin",
@@ -16,9 +20,35 @@
 	"visualeditor-autosave-not-recovered-title": "ante li kama sin la pakala",
 	"visualeditor-autosave-recovered-text": "sina pana ala e ante la, mi kama e ona lon tenpo sin.",
 	"visualeditor-autosave-recovered-title": "ante li kama sin",
+	"visualeditor-backbutton-tooltip": "o pini",
 	"visualeditor-ca-createlocaldescriptionsource": "lipu ni la o pana e lipu sona kepeken toki ilo",
 	"visualeditor-ca-createsource": "o pali e toki ilo",
 	"visualeditor-ca-editsource": "o ante e toki ilo",
 	"visualeditor-ca-editsource-section": "o ante e toki ilo",
-	"visualeditor-dialog-meta-languages-name-label": "toki"
+	"visualeditor-categories-tool": "kulupu",
+	"visualeditor-dialog-media-change-image": "o ante e sitelen",
+	"visualeditor-dialog-media-choose-image": "o kepeken sitelen ni",
+	"visualeditor-dialog-media-save": "o awen",
+	"visualeditor-dialog-media-search-tab-search": "o alasa",
+	"visualeditor-dialog-media-search-tab-upload": "o pana",
+	"visualeditor-dialog-media-size-section": "suli sitelen",
+	"visualeditor-dialog-meta-categories-category": "kulupu",
+	"visualeditor-dialog-meta-categories-data-label": "kulupu",
+	"visualeditor-dialog-meta-categories-input-newcategorylabel": "kulupu sin",
+	"visualeditor-dialog-meta-categories-input-placeholder": "o pana e kulupu sin",
+	"visualeditor-dialog-meta-languages-label": "toki",
+	"visualeditor-dialog-meta-languages-name-label": "toki",
+	"visualeditor-dialog-meta-languages-section": "toki",
+	"visualeditor-dialog-transclusion-action-save": "o awen",
+	"visualeditor-mweditmodesource-progress": "o ante e toki ilo…",
+	"visualeditor-mweditmodesource-tool-current": "ante pi toki ilo",
+	"visualeditor-mweditmodesource-tool-unavailable": "sina ken ala ante e toki ilo lon ni",
+	"visualeditor-mweditmodeve-popup-title": "tenpo ni la sina ante e toki ilo",
+	"visualeditor-mweditmodeve-tool-current": "ante pi lukin lipu",
+	"visualeditor-mweditmodewt-popup-body": "sina wile ante e toki ilo la o luka e sitelen ni.",
+	"visualeditor-savedialog-label-review": "o lukin e ante sina",
+	"visualeditor-savedialog-label-save-short": "o awen",
+	"visualeditor-savedialog-label-save-short-start": "o awen…",
+	"visualeditor-savedialog-title-review": "o lukin e ante sina",
+	"visualeditor-savedialog-title-save": "o awen e ante sina"
 }

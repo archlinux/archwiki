@@ -1,15 +1,12 @@
-'use strict';
-
-const { ArticlePage } = require( '../support/world' ),
-	RunJobs = require( 'wdio-mediawiki/RunJobs' ),
-	Api = require( 'wdio-mediawiki/Api' ),
-	Page = require( 'wdio-mediawiki/Page' ),
-	MWBot = require( 'mwbot' ),
-	{
-		iAmOnPage,
-		createPages,
-		createPage
-	} = require( './common_steps' );
+import { ArticlePage } from '../support/world.js';
+import RunJobs from 'wdio-mediawiki/RunJobs.js';
+import { mwbot } from 'wdio-mediawiki/Api.js';
+import Page from 'wdio-mediawiki/Page.js';
+import MWBot from 'mwbot';
+import {
+	iAmOnPage,
+	createPages,
+	createPage } from './common_steps.js';
 
 const iAmInAWikiThatHasCategories = async ( title ) => {
 	const msg = 'This page is used by Selenium to test category related features.',
@@ -27,7 +24,7 @@ const iAmInAWikiThatHasCategories = async ( title ) => {
 		[ 'create', 'Category:Selenium hidden category', '__HIDDENCAT__' ]
 	] );
 
-	const bot = await Api.bot();
+	const bot = await mwbot();
 	await bot.edit( title, wikitext );
 
 	// The category overlay uses the category API
@@ -97,7 +94,7 @@ const iAmOnATalkPageWithNoTalkTopics = async () => {
 	await iAmOnPage( `Talk:${ title }` );
 };
 
-module.exports = {
+export {
 	iAmOnAPageThatHasTheFollowingEdits,
 	iAmOnATalkPageWithNoTalkTopics,
 	iAmViewingAWatchedPage,

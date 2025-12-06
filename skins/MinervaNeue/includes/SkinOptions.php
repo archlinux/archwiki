@@ -36,7 +36,6 @@ final class SkinOptions {
 	public const MOBILE_OPTIONS = 'mobileOptionsLink';
 	public const CATEGORIES = 'categories';
 	public const PAGE_ISSUES = 'pageIssues';
-	public const BETA_MODE = 'beta';
 	public const TALK_AT_TOP = 'talkAtTop';
 	public const SHOW_DONATE = 'donate';
 	public const SHOW_DONATE_BANNER = 'donateBanner';
@@ -45,7 +44,6 @@ final class SkinOptions {
 	public const TABS_ON_SPECIALS = 'tabsOnSpecials';
 	public const MAIN_MENU_EXPANDED = 'mainMenuExpanded';
 	public const PERSONAL_MENU = 'personalMenu';
-	public const SINGLE_ECHO_BUTTON = 'echo';
 	public const NIGHT_MODE = 'nightMode';
 
 	/**
@@ -54,7 +52,6 @@ final class SkinOptions {
 	 * @var array skin specific options, initialized with default values
 	 */
 	private array $skinOptions = [
-		self::BETA_MODE => false,
 		self::SHOW_DONATE_BANNER => false,
 		self::SHOW_DONATE => true,
 		/**
@@ -78,8 +75,6 @@ final class SkinOptions {
 		self::PERSONAL_MENU => true,
 		/** whether to show a main menu with additional items */
 		self::MAIN_MENU_EXPANDED => true,
-		/** whether Echo should be replaced with a single button */
-		self::SINGLE_ECHO_BUTTON => false,
 		/** whether night mode is available to the user */
 		self::NIGHT_MODE => false,
 	];
@@ -97,7 +92,6 @@ final class SkinOptions {
 
 	/**
 	 * override an existing option or options with new values
-	 * @param array $options
 	 */
 	public function setMultiple( array $options ): void {
 		foreach ( $options as $option => $value ) {
@@ -122,7 +116,6 @@ final class SkinOptions {
 
 	/**
 	 * Get all skin options
-	 * @return array
 	 */
 	public function getAll(): array {
 		return $this->skinOptions;
@@ -130,7 +123,6 @@ final class SkinOptions {
 
 	/**
 	 * Return whether any of the skin options have been set
-	 * @return bool
 	 */
 	public function hasSkinOptions(): bool {
 		foreach ( $this->skinOptions as $key => $val ) {
@@ -181,14 +173,11 @@ final class SkinOptions {
 				$requiresHistoryLink = false;
 			}
 
-			$isBeta = $mobileContext->isBetaGroupMember();
 			$this->setMultiple( [
 				self::SHOW_DONATE_BANNER => $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaDonateBanner' ),
 				self::SHOW_DONATE => $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaDonateLink' ),
 				self::TALK_AT_TOP => $isUserPageOrUserTalkPage ?
 					true : $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaTalkAtTop' ),
-				self::BETA_MODE
-					=> $isBeta,
 				self::CATEGORIES
 					=> $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaShowCategories' ),
 				self::PAGE_ISSUES
@@ -200,8 +189,6 @@ final class SkinOptions {
 				self::MAIN_MENU_EXPANDED => $featuresManager->isFeatureAvailableForCurrentUser(
 					'MinervaAdvancedMainMenu'
 				),
-				// In mobile, always resort to single icon.
-				self::SINGLE_ECHO_BUTTON => true,
 				self::HISTORY_IN_PAGE_ACTIONS => $requiresHistoryLink ?
 					true : $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaHistoryInPageActions' ),
 				self::TOOLBAR_SUBMENU => $isUserPageOrUserTalkPage ?

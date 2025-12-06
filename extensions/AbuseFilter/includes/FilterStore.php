@@ -112,9 +112,8 @@ class FilterStore {
 		}
 
 		// Everything went fine, so let's save the filter
-		$wasGlobal = $originalFilter->isGlobal();
 		[ $newID, $historyID ] = $this->doSaveFilter(
-			$performer->getUser(), $newFilter, $originalFilter, $differences, $filterId, $wasGlobal );
+			$performer->getUser(), $newFilter, $originalFilter, $differences, $filterId );
 		return Status::newGood( [ $newID, $historyID ] );
 	}
 
@@ -126,7 +125,6 @@ class FilterStore {
 	 * @param Filter $originalFilter
 	 * @param array $differences
 	 * @param int|null $filterId
-	 * @param bool $wasGlobal
 	 * @return int[] first element is new ID, second is history ID
 	 */
 	private function doSaveFilter(
@@ -134,8 +132,7 @@ class FilterStore {
 		Filter $newFilter,
 		Filter $originalFilter,
 		array $differences,
-		?int $filterId,
-		bool $wasGlobal
+		?int $filterId
 	): array {
 		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$newRow = $this->filterToDatabaseRow( $newFilter, $originalFilter );
@@ -253,7 +250,7 @@ class FilterStore {
 		$dbw->endAtomic( __METHOD__ );
 
 		// Invalidate cache if this was a global rule
-		if ( $wasGlobal || $newRow['af_global'] ) {
+		if ( $originalFilter->isGlobal() || $newRow['af_global'] ) {
 			$this->filterLookup->purgeGroupWANCache( $newRow['af_group'] );
 		}
 
@@ -291,6 +288,9 @@ class FilterStore {
 
 		// If the filter is already protected, it must remain protected even if
 		// the current filter doesn't use a protected variable anymore
+		// FIXME: Resposibility for this is currently unclear. It should be
+		// enforced prior to the FilterCompare::compareVersions call to avoid
+		// dummy filter versions.
 		$privacyLevel = $filter->getPrivacyLevel();
 		if ( $originalFilter->isProtected() ) {
 			$privacyLevel |= Flags::FILTER_USES_PROTECTED_VARS;

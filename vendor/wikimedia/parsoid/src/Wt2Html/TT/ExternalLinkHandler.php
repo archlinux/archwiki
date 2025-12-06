@@ -10,11 +10,13 @@ use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
 
-class ExternalLinkHandler extends TokenHandler {
+class ExternalLinkHandler extends XMLTagBasedHandler {
 	/** @var PegTokenizer */
 	private $urlParser;
 
@@ -71,7 +73,7 @@ class ExternalLinkHandler extends TokenHandler {
 		return $hasImageExtension &&
 			// true if some prefix in the list matches href
 			self::arraySome( $allowedPrefixes, static function ( string $prefix ) use ( &$href ) {
-				return $prefix === "" || strpos( $href, $prefix ) === 0;
+				return $prefix === "" || str_starts_with( $href, $prefix );
 			} );
 	}
 
@@ -79,8 +81,6 @@ class ExternalLinkHandler extends TokenHandler {
 	 * @return ?array<string|Token>
 	 */
 	private function onUrlLink( Token $token ): ?array {
-		$tagAttrs = null;
-		$builtTag = null;
 		$env = $this->env;
 		$origHref = $token->getAttributeV( 'href' );
 		$href = TokenUtils::tokensToString( $origHref );
@@ -115,7 +115,7 @@ class ExternalLinkHandler extends TokenHandler {
 				// Since we messed with the text of the link, we need
 				// to preserve the original in the RT data. Or else.
 				$builtTag->addNormalizedAttribute(
-					'href', $href, $token->getWTSource( $this->manager->getFrame() )
+					'href', $href, $token->getWTSource( $this->manager->getFrame()->getSource() )
 				);
 			} else {
 				$builtTag->addAttribute( 'href', $href );
@@ -143,8 +143,6 @@ class ExternalLinkHandler extends TokenHandler {
 	 * @return ?array<string|Token>
 	 */
 	private function onExtLink( Token $token ): ?array {
-		$newAttrs = null;
-		$aStart = null;
 		$env = $this->env;
 		$origHref = $token->getAttributeV( 'href' );
 		$hasExpandedAttrs = TokenUtils::hasTypeOf( $token, 'mw:ExpandedAttrs' );
@@ -159,7 +157,6 @@ class ExternalLinkHandler extends TokenHandler {
 		$magLinkType = TokenUtils::matchTypeOf(
 			$token, '#^mw:(Ext|Wiki)Link/(ISBN|RFC|PMID)$#'
 		);
-		$tokens = null;
 
 		if ( $magLinkType ) {
 			$newHref = $href;
@@ -226,8 +223,9 @@ class ExternalLinkHandler extends TokenHandler {
 				$tsr1a = $dataParsoid->tmp->extLinkContentOffsets->start -
 					strlen( $token->getAttributeV( 'spaces' ) ?? '' );
 				$length = $tsr1a - $tsr0a;
+				$source = $dataParsoid->tsr->source ?? $this->manager->getFrame()->getSource();
 				$aStart->addNormalizedAttribute( 'href', $href,
-					substr( $this->manager->getFrame()->getSrcText(), $tsr0a, $length ) );
+					PHPUtils::safeSubstr( $source->getSrcText(), $tsr0a, $length ) );
 			} else {
 				$aStart->addAttribute( 'href', $href );
 			}
@@ -246,7 +244,7 @@ class ExternalLinkHandler extends TokenHandler {
 	}
 
 	/** @inheritDoc */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		switch ( $token->getName() ) {
 			case 'urllink':
 				return $this->onUrlLink( $token );

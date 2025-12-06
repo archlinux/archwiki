@@ -8,6 +8,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Check which IP addresses are used by a given username or which usernames are used by a given IP address.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''This API has been disabled by the site administrators. Querying the API will return no data.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Type of CheckUser request:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Get IP address of target user.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Get actions performed by target IP address or range.",
@@ -39,6 +40,7 @@
 	"apierror-checkuser-timelimit": "You need use correct time limit (like \"-2 weeks\" or \"2 weeks ago\").",
 	"apierror-checkuser-invalidmode": "Invalid request mode",
 	"apierror-checkuser-nosuchuser": "No such user for this username",
+	"apierror-checkuser-disabled": "The 'checkuser' query API has been disabled by the site administrators.",
 	"checkuser-api-help-param-direction": "In which direction to enumerate:",
 	"checkuser-api-help-paramvalue-direction-newer": "List oldest first. Note: $1from has to be before $1to.",
 	"checkuser-api-help-paramvalue-direction-older": "List newest first (default). Note: $1from has to be later than $1to.",
@@ -49,5 +51,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} collects user-agent client hint data to assist in moderating vandalism and abuse. See https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints for more details.",
 	"apihelp-logout-param-checkuserclienthints": "Client hints data supplied alongside requests to ApiLogout. For internal use only.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "The provided auto-reveal expiry is invalid.",
-	"checkuser-ip-auto-reveal-missing-permission": "You do not have the permission needed to use IP auto-reveal."
+	"checkuser-ip-auto-reveal-missing-permission": "You do not have the permission needed to use IP auto-reveal.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "The provided case ID does not exist",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "The suggested investigations feature is not enabled"
 }

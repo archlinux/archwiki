@@ -13,10 +13,10 @@
 			"Nuevo Paso",
 			"SeoJeongHo",
 			"Suleiman the Magnificent Television",
+			"Whatback11",
 			"Ykhwong",
 			"관인생략",
-			"아라",
-			"Whatback11"
+			"아라"
 		]
 	},
 	"minerva-last-modified-date": "$1 $2에 마지막으로 편집됨",
@@ -42,7 +42,6 @@
 	"mobile-frontend-meta-data-issues-categories": "이 분류에 대해",
 	"mobile-frontend-meta-data-issues-header": "문서 이슈",
 	"minerva-meta-data-issues-section-header": "문단 문제",
-	"mobile-frontend-pageaction-edit-tooltip": "이 문서의 선두 문단을 편집합니다",
 	"mobile-frontend-placeholder": "{{SITENAME}} 검색",
 	"mobile-frontend-random-button": "임의의 문서로",
 	"mobile-frontend-redirected-from": "\"[[$1]]\"에서 넘어옴",
@@ -65,12 +64,6 @@
 	"skinname-minerva": "미네르바 노이에",
 	"minerva-skin-desc": "반응형 모바일 우선 스킨",
 	"skin-minerva-issue-learn-more": "더 알아보기",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1초}} 전",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|1분|$1분}} 전",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1시간}} 전",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1일}} 전",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1개월}} 전",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1년}} 전",
 	"skin-minerva-mobile-option-MinervaShowCategories": "분류",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "문서 분류 보기",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "유감스럽지만, 문서별 그룹화는 모바일에서는 가능하지 않습니다. 페이지별 그룹화를 원하신다면 데스크탑 사이트를 방문해 주세요.",

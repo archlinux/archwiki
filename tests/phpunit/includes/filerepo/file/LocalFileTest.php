@@ -12,9 +12,10 @@ use MediaWiki\FileRepo\File\OldLocalFile;
 use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageCreatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Tests\ExpectCallbackTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
@@ -953,8 +954,8 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 
 		// Event emitted by PageUpdater::saveRevision
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			static function ( PageRevisionUpdatedEvent $event ) use ( &$calls, $file ) {
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( &$calls, $file ) {
 				Assert::assertSame( $file->getName(), $event->getPage()->getDBkey() );
 
 				Assert::assertTrue( $event->isCreation(), 'isCreation' );
@@ -963,12 +964,23 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				Assert::assertTrue( $event->isNominalContentChange(), 'isNominalContentChange' );
 
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_UPLOAD ),
-					PageRevisionUpdatedEvent::CAUSE_UPLOAD
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UPLOAD ),
+					PageLatestRevisionChangedEvent::CAUSE_UPLOAD
 				);
 
 				Assert::assertTrue( $event->isSilent(), 'isSilent' );
 				Assert::assertFalse( $event->isImplicit(), 'isImplicit' );
+			}
+		);
+
+		$this->expectDomainEvent(
+			PageCreatedEvent::TYPE, 1,
+			static function ( PageCreatedEvent $event ) {
+				Assert::assertSame(
+					PageLatestRevisionChangedEvent::CAUSE_UPLOAD,
+					$event->getCause(),
+					'getCause'
+				);
 			}
 		);
 
@@ -1014,8 +1026,8 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 		$this->runDeferredUpdates();
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			static function ( PageRevisionUpdatedEvent $event ) use ( &$calls, $file ) {
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( &$calls, $file ) {
 				Assert::assertSame( $file->getName(), $event->getPage()->getDBkey() );
 
 				Assert::assertFalse( $event->isCreation(), 'isCreation' );
@@ -1024,8 +1036,8 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				Assert::assertFalse( $event->isNominalContentChange(), 'isNominalContentChange' );
 
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_UPLOAD ),
-					PageRevisionUpdatedEvent::CAUSE_UPLOAD
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UPLOAD ),
+					PageLatestRevisionChangedEvent::CAUSE_UPLOAD
 				);
 
 				Assert::assertTrue( $event->isSilent(), 'isSilent' );
@@ -1037,6 +1049,8 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				);
 			}
 		);
+
+		$this->expectDomainEvent( PageCreatedEvent::TYPE, 0 );
 
 		// Hooks fired by PageUpdater
 		$this->expectHook( 'RevisionFromEditComplete' );

@@ -60,6 +60,7 @@ class HTMLCheckMatrix extends HTMLFormField implements HTMLNestedFilterable {
 		parent::__construct( $params );
 	}
 
+	/** @inheritDoc */
 	public function validate( $value, $alldata ) {
 		$rows = $this->mParams['rows'];
 		$columns = $this->mParams['columns'];
@@ -171,6 +172,7 @@ class HTMLCheckMatrix extends HTMLFormField implements HTMLNestedFilterable {
 		return $html;
 	}
 
+	/** @inheritDoc */
 	public function getInputOOUI( $value ) {
 		$attribs = $this->getAttributes( [ 'disabled', 'tabindex' ] );
 
@@ -190,15 +192,28 @@ class HTMLCheckMatrix extends HTMLFormField implements HTMLNestedFilterable {
 		);
 	}
 
+	/**
+	 * @param bool $checked
+	 * @param array $attribs
+	 * @return string
+	 */
 	protected function getOneCheckboxHTML( $checked, $attribs ) {
 		return Html::check( "{$this->mName}[]", $checked, $attribs );
 	}
 
+	/**
+	 * @param string $tag
+	 * @return bool
+	 */
 	protected function isTagForcedOff( $tag ) {
 		return isset( $this->mParams['force-options-off'] )
 			&& in_array( $tag, $this->mParams['force-options-off'] );
 	}
 
+	/**
+	 * @param string $tag
+	 * @return bool
+	 */
 	protected function isTagForcedOn( $tag ) {
 		return isset( $this->mParams['force-options-on'] )
 			&& in_array( $tag, $this->mParams['force-options-on'] );
@@ -220,10 +235,12 @@ class HTMLCheckMatrix extends HTMLFormField implements HTMLNestedFilterable {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getDefault() {
 		return $this->mDefault ?? [];
 	}
 
+	/** @inheritDoc */
 	public function filterDataForSubmit( $data ) {
 		$columns = HTMLFormField::flattenOptions( $this->mParams['columns'] );
 		$rows = HTMLFormField::flattenOptions( $this->mParams['rows'] );
@@ -245,10 +262,12 @@ class HTMLCheckMatrix extends HTMLFormField implements HTMLNestedFilterable {
 		return $res;
 	}
 
+	/** @inheritDoc */
 	protected function getOOUIModules() {
 		return [ 'mediawiki.widgets.CheckMatrixWidget' ];
 	}
 
+	/** @inheritDoc */
 	protected function shouldInfuseOOUI() {
 		return true;
 	}

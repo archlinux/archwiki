@@ -5,6 +5,8 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseParsing;
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmsubsup;
@@ -27,23 +29,14 @@ class FQ extends TexNode {
 		$this->down = $down;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getBase(): TexNode {
 		return $this->base;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getUp(): TexNode {
 		return $this->up;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getDown(): TexNode {
 		return $this->down;
 	}
@@ -54,20 +47,18 @@ class FQ extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function renderMML( $arguments = [], &$state = [] ) {
+	public function toMMLTree( $arguments = [], &$state = [] ) {
 		if ( array_key_exists( "limits", $state ) ) {
 			// A specific FQ case with preceding limits, just invoke the limits parsing manually.
 			return BaseParsing::limits( $this, $arguments, $state, "" );
 		}
 		$base = $this->getBase();
-
-		if ( $base->getLength() == 0 && !$base->isCurly() ) {
-			// this happens when FQ is located in Sideset (is this a common parsing way?)
-			$mrow = new MMLmrow();
-			return $mrow->encapsulateRaw( $this->getDown()->renderMML( [], $state ) ) .
-				$mrow->encapsulateRaw( $this->getUp()->renderMML( [], $state ) );
+		if ( isset( $state['sideset'] ) &&
+			$base->getLength() == 0 && !$base->isCurly() ) {
+			// this happens when FQ is located in sideset Testcase 132
+			return new MMLarray( new MMLmrow( TexClass::ORD, [], $this->getDown()->toMMLTree( [], $state ) ),
+				new MMLmrow( TexClass::ORD, [], $this->getUp()->toMMLTree( [], $state ) ) );
 		}
-
 		$melement = new MMLmsubsup();
 		// tbd check for more such cases like TexUtilTest 317
 		if ( $base instanceof Literal ) {
@@ -83,23 +74,21 @@ class FQ extends TexNode {
 			}
 		}
 
-		$mrow = new MMLmrow();
 		$emptyMrow = "";
 		// In cases with empty curly preceding like: "{}_1^2\!\Omega_3^4"
-		if ( $base->isCurly() && $base->isEmpty() ) {
-			$emptyMrow = $mrow->getEmpty();
+		if ( $base->isEmpty() ) {
+			$emptyMrow = new MMLmrow();
 		}
 		// This seems to be the common case
-		$inner = $melement->encapsulateRaw(
-			$emptyMrow .
-			$base->renderMML( [], $state ) .
-			$mrow->encapsulateRaw( $this->getDown()->renderMML( $arguments, $state ) ) .
-			$mrow->encapsulateRaw( $this->getUp()->renderMML( $arguments, $state ) ) );
+		$inner = $melement::newSubtree(
+			new MMLarray( $emptyMrow,
+			$base->toMMLTree( [], $state ) ),
+			new MMLmrow( TexClass::ORD, [], $this->getDown()->toMMLTree( $arguments, $state ) ),
+			new MMLmrow( TexClass::ORD, [], $this->getUp()->toMMLTree( $arguments, $state ) ) );
 
 		if ( $melement instanceof MMLmunderover ) {
 			$args = $state['styleargs'] ?? [ "displaystyle" => "true", "scriptlevel" => 0 ];
-			$style = new MMLmstyle( "", $args );
-			return $style->encapsulateRaw( $inner );
+			return new MMLmstyle( "", $args, $inner );
 		}
 
 		return $inner;

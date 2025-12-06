@@ -7,14 +7,15 @@ use MediaWiki\Content\WikitextContent;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Event\PageCreatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\Event\PageMovedEvent;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
 use MediaWiki\Page\MovePage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Rest\Handler\MediaTestTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
@@ -623,12 +624,13 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 
 		$mover = $this->getTestSysop()->getUser();
 
+		$reason = 'testEventEmission';
 		// clear the queue
 		$this->runJobs();
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 2,
-			static function ( PageRevisionUpdatedEvent $event ) use ( $old, $oldPageId, $new, $oldRev, $mover ) {
+			PageLatestRevisionChangedEvent::TYPE, 2,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( $old, $oldPageId, $new, $oldRev, $mover ) {
 				// for the existing page under the new title
 				if ( $event->getPage()->isSamePageAs( $new ) ) {
 					Assert::assertFalse( $event->isCreation(), 'isCreation' );
@@ -658,8 +660,8 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 					);
 
 					Assert::assertTrue(
-						$event->hasCause( PageRevisionUpdatedEvent::CAUSE_MOVE ),
-						PageRevisionUpdatedEvent::CAUSE_MOVE
+						$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_MOVE ),
+						PageLatestRevisionChangedEvent::CAUSE_MOVE
 					);
 
 					Assert::assertTrue( $event->isSilent(), 'isSilent' );
@@ -696,20 +698,70 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$this->expectDomainEvent(
+			PageCreatedEvent::TYPE, 1,
+			static function ( PageCreatedEvent $event ) use ( $old, $oldPageId ) {
+				// for the redirect page
+				Assert::assertTrue( $event->getPageRecordAfter()->isSamePageAs( $old ) );
+				Assert::assertNotSame( $oldPageId, $event->getPageRecordAfter()->getId() );
+			}
+		);
+
+		$this->expectDomainEvent(
 			PageMovedEvent::TYPE, 1,
 			static function ( PageMovedEvent $event )
-				use ( $old, $oldPageId, $new, $mover )
+				use ( $old, $oldPageId, $new, $mover, $reason )
 			{
 				Assert::assertTrue( $event->getPageRecordAfter()->isSamePageAs( $new ) );
 				Assert::assertTrue( $event->getPageRecordBefore()->isSamePageAs( $old ) );
 
 				Assert::assertSame( $oldPageId, $event->getPageId() );
+				Assert::assertSame( $oldPageId, $event->getPageRecordBefore()->getId() );
+				Assert::assertSame( $oldPageId, $event->getPageRecordAfter()->getId() );
+
+				Assert::assertSame( $reason, $event->getReason(), 'getReason()' );
+
+				// Default settings: Move is expected to create a redirect.
+				Assert::assertTrue( $event->wasRedirectCreated() );
+				Assert::assertNotNull( $event->getRedirectPage() );
+				Assert::assertSame( $old->getDBkey(), $event->getRedirectPage()->getDBkey(), "getRedirectArticle()" );
+				Assert::assertNotSame( $oldPageId, $event->getRedirectPage()->getId() );
 			}
 		);
 
 		// Now move the page
 		$obj = $this->newMovePageWithMocks( $old, $new, [ 'db' => $this->getDb() ] );
-		$obj->move( $mover );
+		$obj->move( $mover, $reason );
+	}
+
+	/**
+	 * Test case for T394049
+	 */
+	public function testEventEmissionWithoutCreatingRedirect() {
+		$old = Title::makeTitle( NS_MEDIAWIKI, 'Foo' );
+
+		$this->getExistingTestPage( $old );
+
+		$new = Title::makeTitle( NS_MEDIAWIKI, 'Bar' );
+		$this->getNonexistingTestPage( $new );
+
+		$mover = $this->getTestSysop()->getUser();
+
+		// clear the queue
+		$this->runJobs();
+
+		$this->expectDomainEvent(
+			PageMovedEvent::TYPE, 1,
+			static function ( PageMovedEvent $event )
+			use ( $old, $new, $mover )
+			{
+				Assert::assertFalse( $event->wasRedirectCreated() );
+				Assert::assertNull( $event->getRedirectPage() );
+			}
+		);
+
+		// Now move the page without creating a redirect
+		$obj = $this->newMovePageWithMocks( $old, $new, [ 'db' => $this->getDb() ] );
+		$obj->move( $mover, null, false );
 	}
 
 	public static function provideUpdatePropagation() {

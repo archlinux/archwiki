@@ -63,17 +63,31 @@ class TimestampDef extends TypeDef {
 		$this->defaultFormat = $options['defaultFormat'] ?? 'ConvertibleTimestamp';
 		$this->stringifyFormat = $options['stringifyFormat'] ?? TS_ISO_8601;
 
-		// Check values by trying to convert 0
-		if ( $this->defaultFormat !== 'ConvertibleTimestamp' && $this->defaultFormat !== 'DateTime' &&
-			ConvertibleTimestamp::convert( $this->defaultFormat, 0 ) === false
-		) {
+		if ( !$this->isSpecialFormat( $this->defaultFormat ) && !$this->isValidFormat( $this->defaultFormat ) ) {
 			throw new InvalidArgumentException( 'Invalid value for $options[\'defaultFormat\']' );
 		}
-		if ( ConvertibleTimestamp::convert( $this->stringifyFormat, 0 ) === false ) {
+		if ( !$this->isValidFormat( $this->stringifyFormat ) ) {
 			throw new InvalidArgumentException( 'Invalid value for $options[\'stringifyFormat\']' );
 		}
 	}
 
+	private function isSpecialFormat( mixed $format ): bool {
+		return $format === 'ConvertibleTimestamp' || $format === 'DateTime';
+	}
+
+	private function isValidFormat( mixed $format ): bool {
+		// Leave validation up to the wikimedia/timestamp library.
+		$ts = new ConvertibleTimestamp();
+		try {
+			$ts->getTimestamp( $format );
+		} catch ( TimestampException | InvalidArgumentException ) {
+			// Throws on invalid format. TimestampException up to 4.x, InvalidArgumentException from 5.x
+			return false;
+		}
+		return true;
+	}
+
+	/** @inheritDoc */
 	public function validate( $name, $value, array $settings, array $options ) {
 		// Confusing synonyms for the current time accepted by ConvertibleTimestamp
 		if ( !$value ) {
@@ -86,9 +100,7 @@ class TimestampDef extends TypeDef {
 		try {
 			$timestampObj = new ConvertibleTimestamp( $value === 'now' ? false : $value );
 
-			$timestamp = ( $format !== 'ConvertibleTimestamp' && $format !== 'DateTime' )
-				? $timestampObj->getTimestamp( $format )
-				: null;
+			$timestamp = $this->isSpecialFormat( $format ) ? null : $timestampObj->getTimestamp( $format );
 		} catch ( TimestampException $ex ) {
 			// $this->failure() doesn't handle passing a previous exception
 			throw new ValidationException(
@@ -110,23 +122,21 @@ class TimestampDef extends TypeDef {
 		}
 	}
 
+	/** @inheritDoc */
 	public function checkSettings( string $name, $settings, array $options, array $ret ): array {
 		$ret = parent::checkSettings( $name, $settings, $options, $ret );
 
-		$ret['allowedKeys'] = array_merge( $ret['allowedKeys'], [
-			self::PARAM_TIMESTAMP_FORMAT,
-		] );
+		$ret['allowedKeys'][] = self::PARAM_TIMESTAMP_FORMAT;
 
 		$f = $settings[self::PARAM_TIMESTAMP_FORMAT] ?? $this->defaultFormat;
-		if ( $f !== 'ConvertibleTimestamp' && $f !== 'DateTime' &&
-			ConvertibleTimestamp::convert( $f, 0 ) === false
-		) {
+		if ( !$this->isSpecialFormat( $f ) && !$this->isValidFormat( $f ) ) {
 			$ret['issues'][self::PARAM_TIMESTAMP_FORMAT] = 'Value for PARAM_TIMESTAMP_FORMAT is not valid';
 		}
 
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function stringifyValue( $name, $value, array $settings, array $options ) {
 		if ( !$value instanceof ConvertibleTimestamp ) {
 			$value = new ConvertibleTimestamp( $value );
@@ -134,6 +144,7 @@ class TimestampDef extends TypeDef {
 		return $value->getTimestamp( $this->stringifyFormat );
 	}
 
+	/** @inheritDoc */
 	public function getHelpInfo( $name, array $settings, array $options ) {
 		$info = parent::getHelpInfo( $name, $settings, $options );
 

@@ -33,11 +33,11 @@ use MediaWiki\Title\Title;
 use StatusValue;
 
 class GadgetDefinitionContentHandler extends JsonContentHandler {
-	private GadgetRepo $gadgetRepo;
-
-	public function __construct( string $modelId, GadgetRepo $gadgetRepo ) {
+	public function __construct(
+		string $modelId,
+		private readonly GadgetRepo $gadgetRepo,
+	) {
 		parent::__construct( $modelId );
-		$this->gadgetRepo = $gadgetRepo;
 	}
 
 	/**
@@ -112,6 +112,7 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 				'peers' => [],
 				'dependencies' => [],
 				'messages' => [],
+				'codexIcons' => [],
 				'type' => '',
 			],
 		];
@@ -172,9 +173,9 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 		}
 
 		if ( !$cpoParams->getGenerateHtml() || !$content->isValid() ) {
-			$parserOutput->setText( '' );
+			$parserOutput->setContentHolderText( '' );
 		} else {
-			$parserOutput->setText( $content->rootValueTable( $data ) );
+			$parserOutput->setContentHolderText( $content->rootValueTable( $data ) );
 			$parserOutput->addModuleStyles( [ 'mediawiki.content.json' ] );
 		}
 	}

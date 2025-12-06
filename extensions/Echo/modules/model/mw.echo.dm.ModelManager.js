@@ -42,11 +42,11 @@ mw.echo.dm.ModelManager = function MwEchoDmModelManager( counter, config ) {
 
 	this.notificationModels = {};
 	this.paginationModel = new mw.echo.dm.PaginationModel( {
-		itemsPerPage: config.itemsPerPage || 25
+		itemsPerPage: config.itemsPerPage || 25,
 	} );
 	this.filtersModel = new mw.echo.dm.FiltersModel( {
 		selectedSource: 'local',
-		readState: config.readState
+		readState: config.readState,
 	} );
 
 	// Events
@@ -162,7 +162,7 @@ mw.echo.dm.ModelManager.prototype.setNotificationModels = function ( modelDefini
 		this.notificationModels[ modelId ] = modelDefinitions[ modelId ];
 		this.notificationModels[ modelId ].connect( this, {
 			discard: [ 'onModelDiscardItems', modelId ],
-			itemUpdate: [ 'onModelItemUpdate', modelId ]
+			itemUpdate: [ 'onModelItemUpdate', modelId ],
 		} );
 	}
 
@@ -308,7 +308,7 @@ mw.echo.dm.ModelManager.prototype.checkLocalUnreadTalk = function () {
  */
 mw.echo.dm.ModelManager.prototype.hasLocalUnreadTalk = function () {
 	return this.getLocalNotifications().some(
-		( item ) => !item.isRead() && item.getCategory() === 'edit-user-talk'
+		( item ) => !item.isRead() && item.getCategory() === 'edit-user-talk',
 	);
 };
 

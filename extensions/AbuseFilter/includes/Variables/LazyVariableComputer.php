@@ -241,7 +241,7 @@ class LazyVariableComputer {
 				// this inference is ugly, but the name isn't accessible from here
 				// and we only want this for debugging
 				$textVar = $parameters['text-var'];
-				$varName = str_starts_with( $textVar, 'old_' ) ? 'old_links' : 'all_links';
+				$varName = str_starts_with( $textVar, 'old_' ) ? 'old_links' : 'new_links';
 				if ( $parameters['forFilter'] ?? false ) {
 					$this->logger->debug( "Loading $varName from DB" );
 					$links = $this->getLinksFromDB( $article );
@@ -438,7 +438,7 @@ class LazyVariableComputer {
 				$title = $parameters['title'];
 
 				$firstRev = $this->revisionLookup->getFirstRevision( $title );
-				$firstRevisionTime = $firstRev ? $firstRev->getTimestamp() : null;
+				$firstRevisionTime = $firstRev?->getTimestamp();
 				if ( !$firstRevisionTime ) {
 					$result = 0;
 					break;
@@ -503,9 +503,9 @@ class LazyVariableComputer {
 			return [];
 		}
 
-		return ExternalLinksLookup::getExternalLinksForPage(
+		return ExternalLinksLookup::getExtLinksForPage(
 			$id,
-			$this->lbFactory->getReplicaDatabase(),
+			$this->lbFactory,
 			__METHOD__
 		);
 	}
@@ -582,10 +582,6 @@ class LazyVariableComputer {
 		return $revision;
 	}
 
-	/**
-	 * @param ?RevisionRecord $revision
-	 * @return string
-	 */
 	private function getContentModelFromRevision( ?RevisionRecord $revision ): string {
 		// this is consistent with what is done on various places in RunVariableGenerator
 		// and RCVariableGenerator

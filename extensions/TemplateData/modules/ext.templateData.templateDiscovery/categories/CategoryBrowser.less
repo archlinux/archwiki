@@ -1,0 +1,52 @@
+@import 'mediawiki.skin.variables.less';
+
+@templatedata-column-width: 17em;
+
+.ext-templatedata-CategoryBrowser .oo-ui-fieldLayout:first-child {
+	margin: @spacing-75 0;
+}
+
+.ext-templatedata-ColumnGroup {
+	display: flex;
+	height: 22em;
+	overflow: auto;
+}
+
+.ext-templatedata-ColumnGroup-Column {
+	border-width: 0 1px 0 0;
+	min-width: @templatedata-column-width;
+	overflow: auto;
+}
+
+// There is no 'next' indicator in OOUI, so we emulate it by rotating the down arrow.
+.oo-ui-menuOptionWidget.oo-ui-optionWidget.ext-templatedata-ColumnItem > .oo-ui-indicatorElement-indicator.oo-ui-indicator-down {
+	display: block;
+	transform: rotate( 270deg );
+}
+
+[ dir='rtl' ] .oo-ui-menuOptionWidget.oo-ui-optionWidget.ext-templatedata-ColumnItem > .oo-ui-indicatorElement-indicator.oo-ui-indicator-down {
+	transform: rotate( 90deg );
+}
+
+.ext-templatedata-column-info {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	background-color: @background-color-neutral-subtle;
+	height: 100%;
+	width: @templatedata-column-width;
+	text-align: center;
+
+	& > * {
+		max-width: 268px;
+		margin: 6px;
+	}
+
+	.ext-templatedata-column-info-title {
+		font-size: @font-size-large;
+	}
+}
+
+.ext-templatedata-column-error {
+	background-color: @background-color-error-subtle;
+}

@@ -138,11 +138,11 @@
 @padding-horizontal-page-container: unit( ( 24px / @font-size-browser ), rem );
 @padding-horizontal-page-container-desktop: unit( ( 44px / @font-size-browser ), rem );
 @padding-horizontal-page-container-desktop-wide: unit( ( 52px / @font-size-browser ), rem );
-// T314419 - Scroll padding is modified primarily to bring section headings into a position that is
-// easier to read, which is slightly lower than the very top of the page. The primary use-case is when
-// navigating sections via the table of contents. When changing this value, also change the value in
-// resources/skins.vector.scripts/setupIntersectionObservers.js
-@scroll-padding-top: 75px;
+// T314419 - When a section is clicked in the table of contents, bring its heading into a position
+// that is easier to read, which is slightly lower than the very top of the page. Do not apply this
+// to less prominent elements, as it makes them difficult to spot (T384777). When changing this
+// value, also change the value in resources/skins.vector.scripts/setupIntersectionObservers.js
+@scroll-margin-heading: 75px;
 
 // Grid
 @grid-row-gap: 24px;

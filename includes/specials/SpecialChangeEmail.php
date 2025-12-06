@@ -1,25 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use LogicException;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
@@ -31,6 +18,7 @@ use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Let users change their email address.
@@ -49,6 +37,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		$this->setAuthManager( $authManager );
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -71,6 +60,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		parent::execute( $par );
 	}
 
+	/** @inheritDoc */
 	protected function getLoginSecurityLevel() {
 		return $this->getName();
 	}
@@ -91,6 +81,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		parent::checkExecutePermissions( $user );
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		$user = $this->getUser();
 
@@ -115,6 +106,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
@@ -129,6 +121,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		$form->setSubmitID( 'change_email_submit' );
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( array $data ) {
 		$this->status = $this->attemptChange( $this->getUser(), $data['NewEmail'] );
 
@@ -191,7 +184,16 @@ class SpecialChangeEmail extends FormSpecialPage {
 			}
 		}
 
-		$userLatest = $user->getInstanceForUpdate();
+		$userLatest = $user->getInstanceFromPrimary( IDBAccessObject::READ_EXCLUSIVE )
+			?? throw new LogicException( 'No user' );
+		$changeStatus = Status::newGood();
+		if (
+			!$this->getHookRunner()->onUserCanChangeEmail( $userLatest, $oldAddr, $newAddr, $changeStatus )
+			&& !$changeStatus->isGood()
+		) {
+			return $changeStatus;
+		}
+
 		$status = $userLatest->setEmailWithConfirmation( $newAddr );
 		if ( !$status->isGood() ) {
 			return $status;
@@ -212,10 +214,12 @@ class SpecialChangeEmail extends FormSpecialPage {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	public function requiresUnblock() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'login';
 	}

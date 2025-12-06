@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Beginneruser",
+			"Darafsh",
 			"Huji",
-			"Jeeputer",
-			"Darafsh"
+			"Jeeputer"
 		]
 	},
 	"apihelp-query+oath-param-user": "کاربری که در موردش اطلاعات می‌گیرید. پیش‌فرض، حساب کاربری جاری است.",

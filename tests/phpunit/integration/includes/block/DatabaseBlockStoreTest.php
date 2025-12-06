@@ -22,7 +22,6 @@ use Wikimedia\ScopedCallback;
  * @group Blocking
  * @group Database
  * @covers \MediaWiki\Block\DatabaseBlockStore
- * @coversDefaultClass \MediaWiki\Block\DatabaseBlockStore
  */
 class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;
@@ -77,6 +76,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 			'tempUserConfig' => $services->getTempUserConfig(),
 			'blockTargetFactory' => $services->getBlockTargetFactory(),
 			'autoblockExemptionList' => $services->getAutoblockExemptionList(),
+			'sessionManager' => $services->getSessionManager()
 		];
 		$constructorArgs = array_merge( $defaultConstructorArgs, $overrideConstructorArgs );
 
@@ -145,11 +145,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::newFromID
-	 * @covers ::newListFromTarget
-	 * @covers ::newFromRow
-	 */
 	public function testNewFromID_exists() {
 		$store = $this->getStore();
 		$block = $store->insertBlockWithParams( [
@@ -183,10 +178,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::newFromID
-	 * @covers ::newListFromTarget
-	 */
 	public function testNewFromID_missing() {
 		$store = $this->getStore();
 		$missingBlockId = 9998;
@@ -215,9 +206,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::newFromRow
-	 */
 	public function testNewFromRow() {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
@@ -248,9 +236,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $block->getTargetUserIdentity()->getId(), $badActor->getId() );
 	}
 
-	/**
-	 * @covers ::getQueryInfo
-	 */
 	public function testGetQueryInfo() {
 		// We don't list all of the fields that should be included, because that just
 		// duplicates the function itself. Instead, check the structure and the field
@@ -268,10 +253,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'block_by_actor.actor_name', $queryInfo['fields']['bl_by_text'] );
 	}
 
-	/**
-	 * @covers ::newListFromIPs
-	 * @covers ::newFromRow
-	 */
 	public function testNewListFromIPs() {
 		$store = $this->getStore();
 		$inserted = $store->insertBlockWithParams( [
@@ -317,10 +298,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::newListFromTarget
-	 * @covers ::newLoad
-	 */
 	public function testNewListFromTargetAuto() {
 		// Set up once and do multiple tests, faster than a provider
 		$store = $this->getStore();
@@ -413,8 +390,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetConditionForRanges
-	 * @covers ::getConditionForRanges
-	 * @covers ::getIpFragment
 	 */
 	public function testGetConditionForRanges( array $ranges, array $expect ) {
 		$this->assertSame(
@@ -463,8 +438,6 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetRangeCond
-	 * @covers ::getRangeCond
-	 * @covers ::getIpFragment
 	 */
 	public function testGetRangeCond( $start, $end, $expect ) {
 		$this->assertSame(

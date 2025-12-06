@@ -43,7 +43,6 @@
 	"cite_references_link_many_accessibility_label": "ঝাঁপ দিন:",
 	"cite_references_link_accessibility_back_label": "উপরে ফিরে যাওয়া হল",
 	"cite_section_preview_references": "তথ্যসূত্রের প্রাকদর্শন",
-	"cite_warning": "উদ্ধৃতি সতর্কবার্তা: $1",
 	"cite_warning_sectionpreview_no_text": "<code>$1</code> নামসহ <code>&lt;ref&gt;</code> ট্যাগের প্রাকদর্শন দেখা যাবে না কারণ এটি বর্তমান অনুচ্ছেদের বাইরে সংজ্ঞায়িত করা হয়েছে বা একেবারেই সংজ্ঞায়িত করা হয়নি।",
 	"cite-wikieditor-tool-reference": "তথ্যসূত্র",
 	"cite-wikieditor-help-page-references": "তথ্যসূত্র",

@@ -18,6 +18,5 @@
 	"oathauth-disable-page-title": "Disabbilite $1",
 	"oathauth-enable-page-title": "Abbilite $1",
 	"oathauth-ui-available-modules": "Metode disponibbele",
-	"oathauth-disable-method-warning-button-label": "Conferme e condinue",
 	"oathauth-invalidrequest": "Richieste invalide"
 }

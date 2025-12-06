@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -244,9 +230,9 @@ class MWDebug {
 	 * @since 1.36
 	 * @see deprecatedMsg()
 	 *
-	 * phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
+	 * @phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
 	 * @param object $instance Object on which to detect deprecated overrides (typically $this).
-	 * @param string $class Class declaring the deprecated method (typically __CLASS__ )
+	 * @param class-string $class Class declaring the deprecated method (typically __CLASS__ )
 	 * @param string $method The name of the deprecated method.
 	 * @param string|false $version Version in which the method was deprecated.
 	 *   Does not issue deprecation warnings if false.
@@ -397,7 +383,7 @@ class MWDebug {
 	public static function filterDeprecationForTest(
 		string $regex, ?callable $callback = null
 	): void {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new LogicException( __METHOD__ . ' can only be used in tests' );
 		}
 		self::$deprecationFilters[$regex] = $callback;

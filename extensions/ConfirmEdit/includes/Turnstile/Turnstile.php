@@ -12,6 +12,7 @@ use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentity;
@@ -21,17 +22,13 @@ class Turnstile extends SimpleCaptcha {
 	 * @var string used for turnstile-edit, turnstile-addurl, turnstile-badlogin, turnstile-createaccount,
 	 * turnstile-create, turnstile-sendemail via getMessage()
 	 */
-	protected static $messagePrefix = 'turnstile-';
+	protected static $messagePrefix = 'turnstile';
 
 	/** @var string|null */
 	private $error = null;
 
-	/**
-	 * Get the captcha form.
-	 * @param int $tabIndex
-	 * @return array
-	 */
-	public function getFormInformation( $tabIndex = 1 ) {
+	/** @inheritDoc */
+	public function getFormInformation( $tabIndex = 1, ?OutputPage $out = null ) {
 		global $wgTurnstileSiteKey, $wgLang;
 		$lang = htmlspecialchars( urlencode( $wgLang->getCode() ) );
 
@@ -142,12 +139,12 @@ class Turnstile extends SimpleCaptcha {
 
 	/** @inheritDoc */
 	protected function addCaptchaAPI( &$resultArr ) {
-		$resultArr['captcha'] = $this->describeCaptchaType();
+		$resultArr['captcha'] = $this->describeCaptchaType( $this->action );
 		$resultArr['captcha']['error'] = $this->error;
 	}
 
 	/** @inheritDoc */
-	public function describeCaptchaType() {
+	public function describeCaptchaType( ?string $action = null ) {
 		global $wgTurnstileSiteKey;
 		return [
 			'type' => 'turnstile',
@@ -227,14 +224,18 @@ class Turnstile extends SimpleCaptcha {
 	) {
 		global $wgTurnstileSiteKey;
 
-		$req = AuthenticationRequest::getRequestByClass( $requests,
-			CaptchaAuthenticationRequest::class, true );
+		/** @var CaptchaAuthenticationRequest $req */
+		$req = AuthenticationRequest::getRequestByClass(
+			$requests,
+			CaptchaAuthenticationRequest::class,
+			true
+		);
 		if ( !$req ) {
 			return;
 		}
 
 		// ugly way to retrieve error information
-		$captcha = Hooks::getInstance();
+		$captcha = Hooks::getInstance( $req->getAction() );
 
 		$formDescriptor['captchaWord'] = [
 			'class' => HTMLTurnstileField::class,

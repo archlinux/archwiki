@@ -76,9 +76,11 @@ ve.ce.MWExtensionNode.prototype.generateContents = function ( config ) {
 	const wikitext = mw.html.element( tagName, attrs, new mw.html.Raw( extsrc ) );
 
 	if ( this.constructor.static.rendersEmpty || extsrc.trim() !== '' ) {
-		const xhr = ve.init.target.parseWikitextFragment( wikitext, false, this.getModel().getDocument() )
-			.done( this.onParseSuccess.bind( this, deferred ) )
-			.fail( this.onParseError.bind( this, deferred ) );
+		const xhr = ve.init.target.parseWikitextFragment( wikitext, false, this.getModel().getDocument() );
+		xhr.then(
+			this.onParseSuccess.bind( this, deferred ),
+			this.onParseError.bind( this, deferred )
+		);
 		return deferred.promise( { abort: xhr.abort } );
 	} else {
 		deferred.resolve( $( '<span>' ).text( '\u00a0' ).get() );

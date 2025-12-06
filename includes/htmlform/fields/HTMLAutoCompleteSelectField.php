@@ -77,6 +77,7 @@ class HTMLAutoCompleteSelectField extends HTMLTextField {
 		}
 	}
 
+	/** @inheritDoc */
 	public function loadDataFromRequest( $request ) {
 		if ( $request->getCheck( $this->mName ) ) {
 			$val = $request->getText( $this->mName . '-select', 'other' );
@@ -94,6 +95,7 @@ class HTMLAutoCompleteSelectField extends HTMLTextField {
 		}
 	}
 
+	/** @inheritDoc */
 	public function validate( $value, $alldata ) {
 		$p = parent::validate( $value, $alldata );
 
@@ -115,8 +117,9 @@ class HTMLAutoCompleteSelectField extends HTMLTextField {
 		return true;
 	}
 
-	// FIXME Ewww, this shouldn't be adding any attributes not requested in $list :(
+	/** @inheritDoc */
 	public function getAttributes( array $list ) {
+		// FIXME Ewww, this shouldn't be adding any attributes not requested in $list :(
 		$attribs = [
 			'type' => 'text',
 			'data-autocomplete' => FormatJson::encode( array_keys( $this->autocompleteData ) ),
@@ -131,6 +134,7 @@ class HTMLAutoCompleteSelectField extends HTMLTextField {
 		return $attribs;
 	}
 
+	/** @inheritDoc */
 	public function getInputHTML( $value ) {
 		$oldClass = $this->mClass;
 		$classes = (array)$this->mClass;

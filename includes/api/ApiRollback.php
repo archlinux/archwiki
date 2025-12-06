@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -30,6 +16,7 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use Profiler;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -48,6 +35,7 @@ class ApiRollback extends ApiBase {
 		string $moduleName,
 		RollbackPageFactory $rollbackPageFactory,
 		WatchlistManager $watchlistManager,
+		WatchedItemStoreInterface $watchedItemStore,
 		UserOptionsLookup $userOptionsLookup
 	) {
 		parent::__construct( $mainModule, $moduleName );
@@ -58,6 +46,7 @@ class ApiRollback extends ApiBase {
 		$this->watchlistMaxDuration =
 			$this->getConfig()->get( MainConfigNames::WatchlistExpiryMaxDuration );
 		$this->watchlistManager = $watchlistManager;
+		$this->watchedItemStore = $watchedItemStore;
 		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
@@ -109,7 +98,7 @@ class ApiRollback extends ApiBase {
 		}
 
 		$watch = $params['watchlist'] ?? 'preferences';
-		$watchlistExpiry = $this->getExpiryFromParams( $params );
+		$watchlistExpiry = $this->getExpiryFromParams( $params, $titleObj, $user, 'watchrollback-expiry' );
 
 		// Watch pages
 		$this->setWatch( $watch, $titleObj, $user, 'watchrollback', $watchlistExpiry );
@@ -132,14 +121,17 @@ class ApiRollback extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $info );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$params = [
 			'title' => null,
@@ -172,6 +164,7 @@ class ApiRollback extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'rollback';
 	}
@@ -217,6 +210,7 @@ class ApiRollback extends ApiBase {
 		return $this->mTitleObj;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -230,6 +224,7 @@ class ApiRollback extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Rollback';
 	}

@@ -10,7 +10,7 @@
 	"type": "antispam",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"GroupPermissions": {
 		"user": {

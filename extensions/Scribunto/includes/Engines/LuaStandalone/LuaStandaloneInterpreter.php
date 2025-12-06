@@ -67,6 +67,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	 * @param array $options
 	 * @throws LuaInterpreterNotFoundError
 	 * @throws ScribuntoException
+	 * @throws LuaInterpreterNotExecutableError
 	 */
 	public function __construct( $engine, array $options ) {
 		$this->id = self::$nextInterpreterId++;

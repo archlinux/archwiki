@@ -12,49 +12,90 @@ use StatusValue;
  */
 class Validator {
 
-	private ?string $inReferencesGroup;
-	private bool $isKnownName;
-	private bool $isSectionPreview;
-
 	/**
 	 * @param string|null $inReferencesGroup Group name of the <references> context to consider
 	 *  during validation. Null if we are currently not in a <references> context.
-	 * @param bool $isKnownName
-	 * @param bool $isSectionPreview Validation is relaxed when previewing parts of a page
 	 */
 	public function __construct(
-		?string $inReferencesGroup,
-		bool $isKnownName,
-		bool $isSectionPreview
+		private readonly ?string $inReferencesGroup,
 	) {
-		$this->inReferencesGroup = $inReferencesGroup;
-		$this->isKnownName = $isKnownName;
-		$this->isSectionPreview = $isSectionPreview;
 	}
 
 	/**
 	 * @param array<string|int,?string> $argv The original arguments from the <ref …> tag
 	 * @param string[] $allowedArguments
-	 * @return StatusValue Always returns the complete dictionary of allowed argument names and
-	 *  values. Missing arguments are present, but null. Invalid arguments are stripped.
+	 * @return StatusValue<array<string,mixed>> Always returns the complete dictionary of allowed
+	 *  argument names and values. Missing arguments are present, but null. Invalid arguments are
+	 *  stripped.
 	 */
 	private static function filterArguments( array $argv, array $allowedArguments ): StatusValue {
 		$expected = count( $allowedArguments );
+		// Constructs a map of all expected arguments, followed by invalid arguments
 		$allValues = array_merge( array_fill_keys( $allowedArguments, null ), $argv );
 
 		$status = StatusValue::newGood( array_slice( $allValues, 0, $expected ) );
 
+		// Unexpected arguments after the expected ones, hence the message "too many"
 		if ( count( $allValues ) > $expected ) {
+			$badArguments = array_keys( array_slice( $allValues, $expected ) );
+			$firstBadArgument = $badArguments[0];
+			$closestMatch = self::closestMatch( $firstBadArgument, $allowedArguments );
+
 			// Use different error messages for <ref> vs. <references> (cannot have a name)
-			$isReferencesTag = !in_array( 'name', $allowedArguments, true );
-			// TODO: Show at least the first invalid argument name!
-			$status->fatal( $isReferencesTag ?
-				'cite_error_references_invalid_parameters' :
-				'cite_error_ref_too_many_keys'
-			);
+			$forReferenceList = !in_array( 'name', $allowedArguments, true );
+			if ( $closestMatch && !$forReferenceList ) {
+				$status->warning( 'cite_error_ref_parameter_suggestion',
+					$firstBadArgument,
+					$closestMatch
+				);
+			} else {
+				sort( $allowedArguments );
+				$status->warning( $forReferenceList ?
+					'cite_error_references_invalid_parameters' :
+					'cite_error_ref_too_many_keys',
+					$firstBadArgument,
+					implode( ', ', $allowedArguments )
+				);
+			}
 		}
 
 		return $status;
+	}
+
+	/**
+	 * Tries to find a word that is as close as possible to the user input, from a list of
+	 * possibilities. The minimum Levenshtein distance is used to find the closest match, see
+	 * https://en.wikipedia.org/wiki/Levenshtein_distance. This is expensive but reasonable here
+	 * because the strings and arrays are all very short.
+	 *
+	 * @param string $badArgument The user input
+	 * @param string[] $suggestions Possible suggestions
+	 * @return string|null Null when no meaningful suggestion can be made
+	 */
+	private static function closestMatch( string $badArgument, array $suggestions ): ?string {
+		$badArgument = strtolower( trim( $badArgument ) );
+
+		// Stop early when character-by-character comparisons are going to be pointless. The
+		// longest possible answer is "responsive" (10 characters).
+		if ( strlen( $badArgument ) > 20 ) {
+			return null;
+		}
+
+		$bestMatch = '';
+		$bestDistance = 0;
+		foreach ( $suggestions as $suggestion ) {
+			$distance = levenshtein( $badArgument, $suggestion );
+			// It's not going to become better
+			if ( $distance <= 1 ) {
+				return $suggestion;
+			}
+			if ( !$bestMatch || $distance < $bestDistance ) {
+				$bestMatch = $suggestion;
+				$bestDistance = $distance;
+			}
+		}
+		// It's probably not a useful suggestion if not even half of it is the same
+		return $bestDistance <= strlen( $bestMatch ) / 2 ? $bestMatch : null;
 	}
 
 	/**
@@ -63,8 +104,9 @@ class Validator {
 	 *
 	 * @param array<string|int,?string> $argv The original arguments from the <references …> tag
 	 * @param bool $isSubreferenceSupported Temporary feature flag
-	 * @return StatusValue Always returns the complete dictionary of allowed argument names and
-	 *  values. Missing arguments are present, but null. Invalid arguments are stripped.
+	 * @return StatusValue<array<string,mixed>> Always returns the complete dictionary of allowed
+	 *  argument names and values. Missing arguments are present, but null. Invalid arguments are
+	 *  stripped.
 	 */
 	public static function filterRefArguments(
 		array $argv,
@@ -82,11 +124,19 @@ class Validator {
 	 * elements guaranteed to be present.
 	 *
 	 * @param array<string|int,?string> $argv The original arguments from the <references …> tag
-	 * @return StatusValue Always returns the complete dictionary of allowed argument names and
-	 *  values. Missing arguments are present, but null. Invalid arguments are stripped.
+	 * @return StatusValue<array<string,mixed>> Always returns the complete dictionary of
+	 *  allowed argument names and values. Missing arguments are present, but null. Invalid
+	 *  arguments are stripped.
 	 */
 	public static function filterReferenceListArguments( array $argv ): StatusValue {
-		return self::filterArguments( $argv, [ 'group', 'responsive' ] );
+		$status = self::filterArguments( $argv, [ 'group', 'responsive' ] );
+		/** @var array<string,string|null> $arguments */
+		$arguments = $status->getValue();
+		if ( $arguments['responsive'] !== null ) {
+			// All strings including the empty string mean enabled, only "0" means disabled
+			$status->value['responsive'] = $arguments['responsive'] !== '0';
+		}
+		return $status;
 	}
 
 	/**
@@ -96,8 +146,9 @@ class Validator {
 	 *
 	 * @param string|null $text
 	 * @param array{group: ?string, name: ?string, follow: ?string, dir: ?string, details: ?string} $arguments
-	 * @return StatusValue Returns a sanitized version of the dictionary of argument names and
-	 *  values. Some errors are fatals, meaning the <ref> tag shouldn't be used. Some are warnings.
+	 * @return StatusValue<array<string,mixed>> Returns a sanitized version of the dictionary of
+	 *  argument names and values. Some errors are fatals, meaning the <ref> tag shouldn't be used.
+	 *  Some are warnings.
 	 */
 	public function validateRef( ?string $text, array $arguments ): StatusValue {
 		$status = StatusValue::newGood();
@@ -109,11 +160,11 @@ class Validator {
 		$name = (string)$arguments['name'];
 		$follow = (string)$arguments['follow'];
 
-		if ( ctype_digit( $name ) || ctype_digit( $follow ) ) {
-			// Numeric names mess up the resulting id's, potentially producing
-			// duplicate id's in the XHTML.  The Right Thing To Do
-			// would be to mangle them, but it's not really high-priority
-			// (and would produce weird id's anyway).
+		// Disallow numeric names to avoid confusion with global ids
+		if ( ctype_digit( $name ) ) {
+			$arguments['name'] = null;
+			$status->warning( 'cite_error_ref_numeric_key' );
+		} elseif ( ctype_digit( $follow ) ) {
 			$status->fatal( 'cite_error_ref_numeric_key' );
 		}
 
@@ -140,6 +191,8 @@ class Validator {
 	/**
 	 * Validation steps specific to <ref> tags outside of (more specifically *before*) a
 	 * <references> tag.
+	 *
+	 * @return StatusValue<array<string,mixed>> Sanitized arguments
 	 */
 	private function validateRefBeforeReferenceList( ?string $text, array $arguments ): StatusValue {
 		$status = StatusValue::newGood();
@@ -152,6 +205,10 @@ class Validator {
 			// The details attribute is a marker and shouldn't be ignored, even if empty
 			if ( isset( $arguments['details'] ) && !$containsText ) {
 				$status->fatal( 'cite_error_details_missing_parent' );
+			} elseif ( ( $arguments['details'] ?? '' ) !== '' ) {
+				// References with details must have a name.
+				$status->warning( 'cite_error_ref_with_details_no_name' );
+				$arguments['details'] = null;
 			} elseif ( $isSelfClosingTag ) {
 				// Completely empty ref like <ref /> is forbidden.
 				$status->fatal( 'cite_error_ref_no_key' );
@@ -185,6 +242,8 @@ class Validator {
 
 	/**
 	 * Validation steps specific to <ref> tags inside of a <references> tag.
+	 *
+	 * @return StatusValue<array<string,mixed>> Sanitized arguments
 	 */
 	private function validateRefInReferenceList( ?string $text, array $arguments ): StatusValue {
 		$status = StatusValue::newGood();
@@ -202,7 +261,8 @@ class Validator {
 
 		if ( $group !== $this->inReferencesGroup ) {
 			// <ref> and <references> have conflicting group attributes.
-			$status->fatal( 'cite_error_references_group_mismatch',
+			$arguments['group'] = $this->inReferencesGroup;
+			$status->warning( 'cite_error_references_group_mismatch',
 				Sanitizer::safeEncodeAttribute( $group )
 			);
 		}
@@ -220,18 +280,21 @@ class Validator {
 			);
 		}
 
-		// Section previews are exempt from some rules.
-		if ( !$this->isSectionPreview ) {
-			if ( !$this->isKnownName ) {
-				// No such named ref exists in this group.
-				$status->fatal( 'cite_error_references_missing_key',
-					Sanitizer::safeEncodeAttribute( $name )
-				);
-			}
-		}
-
 		// Return the sanitized set of <ref …> arguments
 		$status->value = $arguments;
+		return $status;
+	}
+
+	public function validateListDefinedRefUsage( ?string $name, bool $isKnownName ): StatusValue {
+		$status = StatusValue::newGood();
+
+		if ( $this->inReferencesGroup !== null && $name && !$isKnownName ) {
+			// No such named ref exists in this group.
+			$status->fatal( 'cite_error_references_missing_key',
+				Sanitizer::safeEncodeAttribute( $name )
+			);
+		}
+
 		return $status;
 	}
 

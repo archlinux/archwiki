@@ -177,36 +177,34 @@ function watchstarCallback( $link, isWatched ) {
  * @param {Element|null} talk
  * @param {Element|null} subject
  * @param {Element|null} watch
+ * @param {Element|null} bookmark
  */
-function prepareIcons( header, history, talk, subject, watch ) {
+function prepareIcons( header, history, talk, subject, watch, bookmark ) {
 	const historySticky = header.querySelector( '#ca-history-sticky-header' ),
 		talkSticky = header.querySelector( '#ca-talk-sticky-header' ),
 		subjectSticky = header.querySelector( '#ca-subject-sticky-header' ),
-		watchSticky = header.querySelector( '#ca-watchstar-sticky-header' );
+		watchSticky = header.querySelector( '#ca-watchstar-sticky-header' ),
+		bookmarkSticky = header.querySelector( '#ca-bookmark-sticky-header' );
 
-	if ( !historySticky || !talkSticky || !subjectSticky || !watchSticky ) {
-		throw new Error( 'Sticky header has unexpected HTML' );
-	}
-
-	if ( history ) {
+	if ( historySticky && history ) {
 		copyButtonAttributes( history, historySticky );
-	} else {
+	} else if ( historySticky ) {
 		removeNode( historySticky );
 	}
 
-	if ( talk ) {
+	if ( talkSticky && talk ) {
 		copyButtonAttributes( talk, talkSticky );
-	} else {
+	} else if ( talkSticky ) {
 		removeNode( talkSticky );
 	}
 
-	if ( subject ) {
+	if ( subjectSticky && subject ) {
 		copyButtonAttributes( subject, subjectSticky );
-	} else {
+	} else if ( subjectSticky ) {
 		removeNode( subjectSticky );
 	}
 
-	if ( watch && watch.parentNode instanceof Element ) {
+	if ( watchSticky && watch && watch.parentNode instanceof Element ) {
 		const watchContainer = watch.parentNode;
 		const isTemporaryWatch = watchContainer.classList.contains( 'mw-watchlink-temp' );
 		const isWatched = isTemporaryWatch || watchContainer.getAttribute( 'id' ) === 'ca-unwatch';
@@ -221,8 +219,22 @@ function prepareIcons( header, history, talk, subject, watch ) {
 		// jQuery required as parameter for external API:
 		// eslint-disable-next-line no-jquery/no-jquery-constructor
 		watchLib.watchstar( $( watchSticky ), mw.config.get( 'wgRelevantPageName' ), watchstarCallback );
-	} else {
+	} else if ( watchSticky ) {
 		removeNode( watchSticky );
+	}
+
+	if ( bookmarkSticky && bookmark ) {
+		const icon = bookmark.querySelector( '.vector-icon' );
+		if ( icon ) {
+			copyButtonAttributes( bookmark, bookmarkSticky );
+			const bookmarkIcon = /** @type {HTMLElement} */ ( bookmark.querySelector( '.vector-icon' ) );
+			const bookmarkStickyIcon = /** @type {HTMLElement} */ ( bookmarkSticky.querySelector( '.vector-icon' ) );
+			bookmarkStickyIcon.className = bookmarkIcon.className;
+			/** @type {HTMLElement} */( bookmarkSticky ).dataset.mwListId = /** @type {HTMLElement} */( bookmark ).dataset.mwListId || '';
+			/** @type {HTMLElement} */( bookmarkSticky ).dataset.mwEntryId = /** @type {HTMLElement} */( bookmark ).dataset.mwEntryId || '';
+		}
+	} else if ( bookmarkSticky ) {
+		removeNode( bookmarkSticky );
 	}
 }
 
@@ -473,7 +485,8 @@ function makeStickyHeaderFunctional(
 		document.querySelector( '#ca-history a' ),
 		document.querySelector( '#ca-talk:not( .selected ) a' ),
 		document.querySelector( '#' + namespaceTabId + ':not( .selected ) a' ),
-		document.querySelector( '#ca-watch a, #ca-unwatch a' )
+		document.querySelector( '#ca-watch a, #ca-unwatch a' ),
+		document.querySelector( '#ca-bookmark a' )
 	);
 
 	const veEdit = document.querySelector( '#ca-ve-edit a' );

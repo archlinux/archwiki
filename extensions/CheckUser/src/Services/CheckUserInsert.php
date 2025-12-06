@@ -16,6 +16,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\TempUser\TempUserConfig;
@@ -40,6 +41,16 @@ class CheckUserInsert {
 		'CheckUserClientHintsEnabled',
 	];
 
+	/**
+	 * Map of known recentchanges sources to legacy types.
+	 */
+	private const CHANGE_TYPES = [
+		RecentChange::SRC_EDIT => 0,
+		RecentChange::SRC_NEW => 1,
+		RecentChange::SRC_LOG => 3,
+		'flow' => 142,
+	];
+
 	private ActorStore $actorStore;
 	private CheckUserUtilityService $checkUserUtilityService;
 	private CommentStore $commentStore;
@@ -50,6 +61,7 @@ class CheckUserInsert {
 	private CheckUserCentralIndexManager $checkUserCentralIndexManager;
 	private UserAgentClientHintsManager $userAgentClientHintsManager;
 	private JobQueueGroup $jobQueueGroup;
+	private RecentChangeLookup $recentChangeLookup;
 	private ServiceOptions $options;
 	private LoggerInterface $logger;
 
@@ -71,6 +83,7 @@ class CheckUserInsert {
 		CheckUserCentralIndexManager $checkUserCentralIndexManager,
 		UserAgentClientHintsManager $userAgentClientHintsManager,
 		JobQueueGroup $jobQueueGroup,
+		RecentChangeLookup $recentChangeLookup,
 		LoggerInterface $logger
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
@@ -85,6 +98,7 @@ class CheckUserInsert {
 		$this->checkUserCentralIndexManager = $checkUserCentralIndexManager;
 		$this->userAgentClientHintsManager = $userAgentClientHintsManager;
 		$this->jobQueueGroup = $jobQueueGroup;
+		$this->recentChangeLookup = $recentChangeLookup;
 		$this->logger = $logger;
 	}
 
@@ -99,22 +113,22 @@ class CheckUserInsert {
 	 * @param RecentChange $rc
 	 */
 	public function updateCheckUserData( RecentChange $rc ) {
-		// RC_CATEGORIZE recent changes are generally triggered by other edits, so there is no reason to store
-		// checkuser data about them (T125209).
-		if ( $rc->getAttribute( 'rc_type' ) == RC_CATEGORIZE ) {
-			return;
-		}
-
-		// RC_EXTERNAL recent changes are not triggered by actions on the local wiki, so there is no reason to store
-		// checkuser data about them (T125664).
-		if ( $rc->getAttribute( 'rc_type' ) == RC_EXTERNAL ) {
+		// Exclude recent changes with secondary sources like Wikidata edits,
+		// which are triggered by actions outside the local wiki (T125664),
+		// and categorization, for which we already store the original edit data
+		// (T125209).
+		if ( !in_array(
+			$rc->getAttribute( 'rc_source' ),
+			$this->recentChangeLookup->getPrimarySources(),
+			true
+		) ) {
 			return;
 		}
 
 		$attribs = $rc->getAttributes();
 		$dbw = $this->connectionProvider->getPrimaryDatabase();
 
-		if ( $rc->getAttribute( 'rc_type' ) == RC_LOG ) {
+		if ( $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_LOG ) {
 			// Write to either cu_log_event or cu_private_event if this is a log event
 			$logId = $rc->getAttribute( 'rc_logid' );
 			$logEntry = null;
@@ -126,7 +140,7 @@ class CheckUserInsert {
 						[
 							'rc_id' => $rc->getAttribute( 'rc_id' ),
 							'rc_logid' => $rc->getAttribute( 'rc_logid' ),
-							'exception' => new \RuntimeException()
+							'exception' => new \RuntimeException(),
 						]
 					);
 				}
@@ -188,7 +202,7 @@ class CheckUserInsert {
 				'cuc_comment'    => $rc->getAttribute( 'rc_comment' ),
 				'cuc_this_oldid' => $attribs['rc_this_oldid'],
 				'cuc_last_oldid' => $attribs['rc_last_oldid'],
-				'cuc_type'       => $attribs['rc_type'],
+				'cuc_type'       => self::getTypeFromRCSource( $attribs['rc_source'] ),
 				'cuc_timestamp'  => $dbw->timestamp( $attribs['rc_timestamp'] ),
 			];
 
@@ -259,7 +273,7 @@ class CheckUserInsert {
 		$xff = $request->getHeader( 'X-Forwarded-For' );
 
 		$row = [
-			'cule_log_id' => $logEntry->getId()
+			'cule_log_id' => $logEntry->getId(),
 		];
 
 		// Provide the ip, xff and row to code that hooks onto this so that they can modify the row before
@@ -502,5 +516,21 @@ class CheckUserInsert {
 			}
 		}
 		return $this->actorStore->acquireActorId( $user, $dbw );
+	}
+
+	/**
+	 * Converts a recentchange source to a cuc_type.
+	 *
+	 * @param string $source one of the recentchanges SRC_* constants
+	 * @return int the corresponding type
+	 * @throws \RuntimeException if the source is not recognized
+	 * @internal Only for use by the CheckUser extension
+	 */
+	public static function getTypeFromRCSource( string $source ): int {
+		if ( !isset( self::CHANGE_TYPES[$source] ) ) {
+			throw new \RuntimeException( "Unknown recentchanges source: $source" );
+		}
+
+		return self::CHANGE_TYPES[$source];
 	}
 }

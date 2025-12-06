@@ -42,7 +42,7 @@ class MWCallableUpdate
 		$dependeeDbws = is_array( $dependeeDbws ) ? $dependeeDbws : [ $dependeeDbws ];
 		foreach ( $dependeeDbws as $dbw ) {
 			if ( $dbw->trxLevel() ) {
-				$dbw->onTransactionResolution( [ $this, 'cancelOnRollback' ], $fname );
+				$dbw->onTransactionResolution( $this->cancelOnRollback( ... ), $fname );
 			}
 		}
 	}
@@ -67,6 +67,7 @@ class MWCallableUpdate
 		}
 	}
 
+	/** @inheritDoc */
 	public function getOrigin() {
 		return $this->fname;
 	}
@@ -78,6 +79,7 @@ class MWCallableUpdate
 		$this->trxRoundRequirement = $mode;
 	}
 
+	/** @inheritDoc */
 	public function getTransactionRoundRequirement() {
 		return $this->trxRoundRequirement;
 	}

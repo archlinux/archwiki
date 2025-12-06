@@ -45,7 +45,7 @@ const toolbarConfig = {
 									post: "'''"
 								}
 							},
-							hotkey: 66 // B
+							hotkey: 'b'
 						},
 						italic: {
 							section: 'main',
@@ -62,7 +62,7 @@ const toolbarConfig = {
 									post: "''"
 								}
 							},
-							hotkey: 73 // I
+							hotkey: 'i'
 						}
 					}
 				},
@@ -225,7 +225,7 @@ const toolbarConfig = {
 									post: '</nowiki>'
 								}
 							},
-							hotkey: 220 // Backslash (\)
+							hotkey: '\\'
 						},
 						newline: {
 							label: mw.msg( 'wikieditor-toolbar-tool-newline' ),
@@ -280,7 +280,7 @@ const toolbarConfig = {
 									post: '</sup>'
 								}
 							},
-							hotkey: 190 // Period (.)
+							hotkey: '.'
 						},
 						subscript: {
 							label: mw.msg( 'wikieditor-toolbar-tool-subscript' ),
@@ -294,7 +294,7 @@ const toolbarConfig = {
 									post: '</sub>'
 								}
 							},
-							hotkey: 188 // Comma (,)
+							hotkey: ','
 						}
 					}
 				},

@@ -8,16 +8,18 @@
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
 	: __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that changes the usernames to ids.
  *
  * @ingroup Maintenance
  */
-class EchoUpdatePerUserBlacklist extends LoggedUpdateMaintenance {
+class UpdatePerUserBlacklist extends LoggedUpdateMaintenance {
 
 	public function __construct() {
 		parent::__construct();
@@ -44,10 +46,10 @@ class EchoUpdatePerUserBlacklist extends LoggedUpdateMaintenance {
 		);
 		$iterator->setFetchColumns( [
 			'up_user',
-			'up_value'
+			'up_value',
 		] );
 		$iterator->addConditions( [
-			'up_property' => 'echo-notifications-blacklist'
+			'up_property' => 'echo-notifications-blacklist',
 		] );
 
 		$iterator->setCaller( __METHOD__ );
@@ -98,5 +100,7 @@ class EchoUpdatePerUserBlacklist extends LoggedUpdateMaintenance {
 	}
 }
 
-$maintClass = EchoUpdatePerUserBlacklist::class;
+// @codeCoverageIgnoreStart
+$maintClass = UpdatePerUserBlacklist::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

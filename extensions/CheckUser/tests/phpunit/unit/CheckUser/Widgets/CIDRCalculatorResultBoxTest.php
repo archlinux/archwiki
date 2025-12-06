@@ -25,11 +25,11 @@ class CIDRCalculatorResultBoxTest extends MediaWikiUnitTestCase {
 	public static function provideIsAlwaysDisabled() {
 		return [
 			'Disabled is not set in the caller\'s config' => [
-				[]
+				[],
 			],
 			'Disabled is set in the caller\'s config' => [
-				[ 'disabled' => true ]
-			]
+				[ 'disabled' => true ],
+			],
 		];
 	}
 

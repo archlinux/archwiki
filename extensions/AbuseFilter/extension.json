@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"AvailableRights": [
 		"abusefilter-modify",
@@ -30,6 +30,7 @@
 		"abusefilter-modify-global",
 		"abusefilter-modify-blocked-external-domains",
 		"abusefilter-bypass-blocked-external-domains",
+		"abusefilter-blocked-external-domains-log",
 		"abusefilter-access-protected-vars",
 		"abusefilter-protected-vars-log"
 	],
@@ -37,6 +38,9 @@
 		"*": {
 			"abusefilter-view": true,
 			"abusefilter-log": true
+		},
+		"user": {
+			"abusefilter-blocked-external-domains-log": true
 		},
 		"sysop": {
 			"abusefilter-log-detail": true,
@@ -90,7 +94,9 @@
 				"AbuseFilterVariablesFormatter",
 				"AbuseFilterVariablesManager",
 				"AbuseFilterAbuseLoggerFactory",
-				"AbuseFilterFilterLookup"
+				"AbuseFilterFilterLookup",
+				"TempUserConfig",
+				"ExtensionRegistry"
 			]
 		},
 		"AbuseFilter": {
@@ -104,6 +110,7 @@
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Special\\BlockedExternalDomains",
 			"services": [
 				"AbuseFilterBlockedDomainStorage",
+				"AbuseFilterBlockedDomainValidator",
 				"MainWANObjectCache"
 			]
 		}
@@ -174,14 +181,14 @@
 				"change-access-disable"
 			],
 			"view-protected-variable-value": [
-				"view-protected-variable-value"
+				"view-protected-var-value"
 			]
 		}
 	},
 	"LogRestrictions": {
 		"abusefilter": "abusefilter-view",
 		"abusefilterprivatedetails": "abusefilter-privatedetails-log",
-		"abusefilterblockeddomainhit": "abusefilter-view",
+		"abusefilterblockeddomainhit": "abusefilter-blocked-external-domains-log",
 		"abusefilter-protected-vars": "abusefilter-protected-vars-log"
 	},
 	"AuthManagerAutoConfig": {
@@ -228,13 +235,17 @@
 				"AbuseFilterVariablesBlobStore",
 				"AbuseFilterVariableGeneratorFactory",
 				"AbuseFilterFilterLookup",
-				"AbuseFilterAbuseLoggerFactory"
+				"AbuseFilterAbuseLoggerFactory",
+				"RecentChangeLookup"
 			]
 		},
 		"abuselogprivatedetails": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Api\\AbuseLogPrivateDetails",
 			"services": [
-				"AbuseFilterPermissionManager"
+				"AbuseFilterPermissionManager",
+				"DBLoadBalancerFactory",
+				"AbuseFilterLogDetailsLookup",
+				"AbuseFilterFilterLookup"
 			]
 		}
 	},
@@ -267,10 +278,6 @@
 	},
 	"ExtensionMessagesFiles": {
 		"AbuseFilterAliases": "AbuseFilter.alias.php"
-	},
-	"AutoloadClasses": {
-		"AbuseFilterVariableHolder": "includes/Variables/VariableHolder.php",
-		"MediaWiki\\Extension\\AbuseFilter\\Variables\\VariableHolder": "includes/Variables/VariableHolder.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\AbuseFilter\\": "includes/",
@@ -348,6 +355,52 @@
 		}
 	},
 	"attributes": {
+		"CommunityConfiguration": {
+			"EditorCapabilities": {
+				"BlockedDomain": {
+					"class": "MediaWiki\\Extension\\AbuseFilter\\BlockedDomains\\EditorCapability",
+					"services": [
+						"MainWANObjectCache",
+						"LinkRenderer",
+						"AbuseFilterBlockedDomainValidator"
+					]
+				}
+			},
+			"ProviderClasses": {
+				"BlockedDomain": {
+					"class": "MediaWiki\\Extension\\AbuseFilter\\BlockedDomains\\BlockedDomainConfigProvider",
+					"services": [
+						"LocalServerObjectCache",
+						"AbuseFilterBlockedDomainValidator"
+					]
+				}
+			},
+			"Providers": {
+				"BlockedDomain": {
+					"store": {
+						"type": "wikipage",
+						"args": [ "MediaWiki:BlockedExternalDomains.json" ]
+					},
+					"validator": {
+						"type": "noop"
+					},
+					"type": "BlockedDomain",
+					"options": {
+						"editorCapability": "BlockedDomain"
+					}
+				}
+			}
+		},
+		"Echo": {
+			"Notifications": {
+				"throttled-filter": {
+					"category": "system",
+					"section": "alert",
+					"group": "negative",
+					"presentation-model": "MediaWiki\\Extension\\AbuseFilter\\ThrottleFilterPresentationModel"
+				}
+			}
+		},
 		"VisualEditor": {
 			"PluginModules": [
 				"ext.abuseFilter.visualEditor"
@@ -386,12 +439,6 @@
 		"EditPermission": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\EditPermissionHandler"
 		},
-		"PageSave": {
-			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\PageSaveHandler",
-			"services": [
-				"AbuseFilterEditRevUpdater"
-			]
-		},
 		"RecentChangeSave": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\RecentChangeSaveHandler",
 			"services": [
@@ -408,7 +455,8 @@
 				"AbuseFilterBlockedDomainFilter",
 				"PermissionManager",
 				"TitleFactory",
-				"UserFactory"
+				"UserFactory",
+				"TempUserConfig"
 			]
 		},
 		"CheckUser": {
@@ -420,9 +468,6 @@
 		},
 		"ConfirmEdit": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\ConfirmEditHandler"
-		},
-		"Echo": {
-			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\EchoHandler"
 		},
 		"UserMerge": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\UserMergeHandler"
@@ -448,22 +493,27 @@
 		"UndeletePageToolLinks": "ToolLinks",
 		"UploadVerifyUpload": "FilteredActions",
 		"UploadStashFile": "FilteredActions",
-		"PageSaveComplete": "PageSave",
 		"getUserPermissionsErrors": "EditPermission",
 		"CheckUserInsertChangesRow": "CheckUser",
 		"CheckUserInsertPrivateEventRow": "CheckUser",
 		"CheckUserInsertLogEventRow": "CheckUser",
 		"UserMergeAccountFields": "UserMerge",
-		"BeforeCreateEchoEvent": "Echo",
 		"ParserOutputStashForEdit": "FilteredActions",
 		"JsonValidateSave": "EditPermission",
 		"ResourceLoaderRegisterModules": "ResourceLoader"
 	},
-	"DeprecatedHooks": {
-		"AbuseFilter-filterAction": {
-			"deprecatedVersion": "1.34"
+	"DomainEventIngresses": [
+		{
+			"events": [
+				"PageRevisionUpdated"
+			],
+			"class": "MediaWiki\\Extension\\AbuseFilter\\MediaWikiEventIngress\\PageEventIngress",
+			"services": [
+				"AbuseFilterEditRevUpdater",
+				"WikiPageFactory"
+			]
 		}
-	},
+	],
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],
@@ -577,7 +627,11 @@
 		},
 		"AbuseFilterLogIPMaxAge": {
 			"value": 7776000,
-			"description": "Age used as cutoff when purging old IP log data, defaults to 3 months. Used by maintenance script purgeOldLogIPData.php"
+			"description": "Age used as cutoff when purging old IP log data, defaults to 3 months. Used by maintenance script PurgeOldLogData.php"
+		},
+		"AbuseFilterLogProtectedVariablesMaxAge": {
+			"value": 7776000,
+			"description": "Age used as a cutoff when purging old protected variable values from the variables dump. Defaults to 3 months. Note that the user_unnamed_ip protected variable is purged after $wgAbuseFilterLogIPMaxAge seconds instead. Used by maintenance script PurgeOldLogData.php. If set to 0, then protected variables are never purged."
 		},
 		"AbuseFilterSlowFilterRuntimeLimit": {
 			"value": 500,

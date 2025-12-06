@@ -6,6 +6,7 @@ use HtmlArmor;
 use LogicException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilderFactory;
 use MediaWiki\Extension\AbuseFilter\Filter\Filter;
@@ -278,17 +279,40 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		}
 
 		// Filters that use protected variables should always be hidden from public view
-		$lacksPermissionDueToProtectedVariables = $filterObj->isProtected() &&
-			!$this->afPermManager->canViewProtectedVariablesInFilter( $authority, $filterObj )->isGood();
-
-		if ( $filter !== null && !$lacksPermissionDueToProtectedVariables ) {
-			$currentFilterObj = $this->filterLookup->getFilter( $filter, false );
-			$lacksPermissionDueToProtectedVariables = $currentFilterObj->isProtected() &&
-				!$this->afPermManager->canViewProtectedVariablesInFilter( $authority, $currentFilterObj )->isGood();
+		$protectedVarsPermStatus = AbuseFilterPermissionStatus::newGood();
+		if ( $filterObj->isProtected() ) {
+			$protectedVarsPermStatus = $this->afPermManager
+				->canViewProtectedVariablesInFilter( $authority, $filterObj );
 		}
 
-		if ( $lacksPermissionDueToProtectedVariables ) {
-			$out->addHTML( $this->msg( 'abusefilter-edit-denied-protected-vars' )->escaped() );
+		if ( $filter !== null && $protectedVarsPermStatus->isGood() ) {
+			$currentFilterObj = $this->filterLookup->getFilter( $filter, false );
+			if ( $currentFilterObj->isProtected() ) {
+				$protectedVarsPermStatus = $this->afPermManager
+					->canViewProtectedVariablesInFilter( $authority, $currentFilterObj );
+			}
+		}
+
+		if ( !$protectedVarsPermStatus->isGood() ) {
+			if ( $protectedVarsPermStatus->getPermission() ) {
+				$out->addWikiMsg(
+					$this->msg(
+						'abusefilter-edit-denied-protected-vars-because-of-permission',
+						$this->msg( "action-{$protectedVarsPermStatus->getPermission()}" )->plain()
+					)
+				);
+				return;
+			}
+
+			// Add any messages in the status after a generic error message.
+			$additional = '';
+			foreach ( $protectedVarsPermStatus->getMessages() as $message ) {
+				$additional .= $this->msg( $message )->parseAsBlock();
+			}
+
+			$out->addWikiMsg(
+				$this->msg( 'abusefilter-edit-denied-protected-vars' )->rawParams( $additional )
+			);
 			return;
 		}
 
@@ -1269,8 +1293,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			$newFilter->setHitCount( $origFilter->getHitCount() );
 			// These are needed if the save fails and the filter is not new
 			$newFilter->setID( $origFilter->getID() );
-			$newFilter->setUserID( $origFilter->getUserID() );
-			$newFilter->setUserName( $origFilter->getUserName() );
+			$newFilter->setUserIdentity( $origFilter->getUserIdentity() );
 			$newFilter->setTimestamp( $origFilter->getTimestamp() );
 		}
 
@@ -1283,7 +1306,8 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$newFilter->setDeleted( $request->getCheck( 'wpFilterDeleted' ) );
 		$newFilter->setEnabled( $request->getCheck( 'wpFilterEnabled' ) );
 		$newFilter->setHidden( $request->getCheck( 'wpFilterHidden' ) );
-		$newFilter->setProtected( $request->getCheck( 'wpFilterProtected' ) );
+		$newFilter->setProtected( $request->getCheck( 'wpFilterProtected' )
+			|| $origFilter->isProtected() );
 		$newFilter->setGlobal( $request->getCheck( 'wpFilterGlobal' )
 			&& $this->getConfig()->get( 'AbuseFilterIsCentral' ) );
 
@@ -1294,9 +1318,6 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		return [ $newFilter, $origFilter ];
 	}
 
-	/**
-	 * @return Filter|null
-	 */
 	private function loadImportRequest(): ?Filter {
 		$request = $this->getRequest();
 		if ( !$request->wasPosted() ) {
@@ -1336,17 +1357,17 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 					// Trim any space, both as an actual group and inside subgroups
 					$throttleGroups = [];
 					foreach ( $rawGroups as $group ) {
-						if ( str_contains( $group, ',' ) ) {
-							$subGroups = explode( ',', $group );
-							$throttleGroups[] = implode( ',', array_map( 'trim', $subGroups ) );
-						} elseif ( trim( $group ) !== '' ) {
-							$throttleGroups[] = trim( $group );
+						$group = preg_replace( '/\s*,\s*/', ',', trim( $group ) );
+						if ( $group !== '' ) {
+							$throttleGroups[] = $group;
 						}
 					}
 
-					$parameters[0] = $this->filter;
-					$parameters[1] = "$throttleCount,$throttlePeriod";
-					$parameters = array_merge( $parameters, $throttleGroups );
+					$parameters = [
+						$this->filter,
+						"$throttleCount,$throttlePeriod",
+						...$throttleGroups,
+					];
 				} elseif ( $action === 'warn' ) {
 					$specMsg = $request->getVal( 'wpFilterWarnMessage' );
 
@@ -1354,13 +1375,15 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 						$specMsg = $request->getVal( 'wpFilterWarnMessageOther' );
 					}
 
-					$parameters[0] = $specMsg;
+					$parameters = [ $specMsg ];
 				} elseif ( $action === 'block' ) {
-					// TODO: Should save a boolean
-					$parameters[0] = $request->getCheck( 'wpFilterBlockTalk' ) ?
-						'blocktalk' : 'noTalkBlockSet';
-					$parameters[1] = $request->getVal( 'wpBlockAnonDuration' );
-					$parameters[2] = $request->getVal( 'wpBlockUserDuration' );
+					$parameters = [
+						// TODO: Should save a boolean
+						$request->getCheck( 'wpFilterBlockTalk' )
+							? 'blocktalk' : 'noTalkBlockSet',
+						$request->getVal( 'wpBlockAnonDuration' ),
+						$request->getVal( 'wpBlockUserDuration' ),
+					];
 				} elseif ( $action === 'disallow' ) {
 					$specMsg = $request->getVal( 'wpFilterDisallowMessage' );
 
@@ -1368,14 +1391,14 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 						$specMsg = $request->getVal( 'wpFilterDisallowMessageOther' );
 					}
 
-					$parameters[0] = $specMsg;
+					$parameters = [ $specMsg ];
 				} elseif ( $action === 'tag' ) {
-					$parameters = explode( ',', trim( $request->getText( 'wpFilterTags' ) ) );
-					if ( $parameters === [ '' ] ) {
-						// Since it's not possible to manually add an empty tag, this only happens
-						// if the form is submitted without touching the tag input field.
-						// We pass an empty array so that the widget won't show an empty tag in the topbar
-						$parameters = [];
+					$tags = trim( $request->getText( 'wpFilterTags' ) );
+					// Since it's not possible to manually add an empty tag, this only happens
+					// if the form is submitted without touching the tag input field.
+					// We pass an empty array so that the widget won't show an empty tag in the topbar
+					if ( $tags !== '' ) {
+						$parameters = explode( ',', $tags );
 					}
 				}
 

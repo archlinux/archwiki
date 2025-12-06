@@ -28,6 +28,7 @@
 			"MaxBioHazard",
 			"Megakott",
 			"MirandaBlack",
+			"Mitte27",
 			"Mouse21",
 			"Movses",
 			"Okras",
@@ -48,8 +49,7 @@
 			"Лилиә",
 			"ЛосЯш",
 			"Умар",
-			"Чаховіч Уладзіслаў",
-			"Mitte27"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"echo-desc": "Система уведомления участников о событиях и сообщениях",
@@ -100,15 +100,11 @@
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|Веха|Вехи}} в редактировании",
 	"echo-category-title-watchlist": "Правка в наблюдаемой странице",
 	"echo-category-title-minor-watchlist": "Малая правка в наблюдаемой странице",
-	"echo-pref-tooltip-edit-user-talk": "Сообщать мне, когда кто-то редактирует мою страницу обсуждения.",
-	"echo-pref-tooltip-edit-user-page": "Уведомлять меня, когда кто-то редактирует мою личную страницу.",
 	"echo-pref-tooltip-article-linked": "Сообщать мне, когда на созданную мной страницу кто-то ссылается с другой страницы.",
 	"echo-pref-tooltip-reverted": "Сообщать мне, когда кто-то отменил мою правку, используя функцию отмены или отката.",
 	"echo-pref-tooltip-mention": "Сообщать мне, когда кто-то ссылается на мою страницу участника.",
 	"echo-pref-tooltip-mention-failure": "Уведомлять меня, когда я не могу отправить упоминание кому-либо.",
 	"echo-pref-tooltip-mention-success": "Уведомлять меня, когда я отправляю упоминание кому-либо.",
-	"echo-pref-tooltip-user-rights": "Сообщать мне, когда кто-то изменяет мои права участника.",
-	"echo-pref-tooltip-emailuser": "Сообщать мне, когда кто-то присылает мне письмо по электронной почте.",
 	"echo-pref-tooltip-article-reminder": "Сообщать мне об этой странице, когда я попрошу.",
 	"echo-pref-tooltip-thank-you-edit": "Уведомлять меня когда я достигаю моих 1-й, 10-й, 100-й... правок.",
 	"echo-pref-tooltip-watchlist": "Уведомлять меня когда кто-либо совершает (не малую) правку на странице из моего списка наблюдения.",
@@ -125,8 +121,6 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "Разрешённые способы уведомления",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "Какие способы уведомления поддерживаются в каждой категории",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Включено по умолчанию",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Существующие участники",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Новые участники",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Требуемые способы уведомления",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Какие способы уведомления обязательны для каждой категории",
 	"echo-specialpage": "Уведомления",
@@ -280,5 +274,6 @@
 	"action-manage-all-push-subscriptions": "управление всеми подписками push-уведомлений",
 	"group-push-subscription-manager": "Управляющие подписками push-уведомлений",
 	"group-push-subscription-manager-member": "{{GENDER:$1|управляющий подписками push-уведомлений|управляющая подписками push-уведомлений}}",
-	"grouppage-push-subscription-manager": "{{ns:project}}:Управляющие подписками push-уведомлений"
+	"grouppage-push-subscription-manager": "{{ns:project}}:Управляющие подписками push-уведомлений",
+	"notification-verify-email-reminder-link-label": "Подтвердите эл. почту"
 }

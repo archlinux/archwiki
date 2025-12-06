@@ -31,7 +31,7 @@ class AutoCommitUpdate implements DeferrableUpdate, DeferrableCallback {
 		$conns[] = $dbw;
 		foreach ( $conns as $conn ) {
 			if ( $conn->trxLevel() ) {
-				$conn->onTransactionResolution( [ $this, 'cancelOnRollback' ], $fname );
+				$conn->onTransactionResolution( $this->cancelOnRollback( ... ), $fname );
 			}
 		}
 	}
@@ -62,6 +62,7 @@ class AutoCommitUpdate implements DeferrableUpdate, DeferrableCallback {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getOrigin() {
 		return $this->fname;
 	}

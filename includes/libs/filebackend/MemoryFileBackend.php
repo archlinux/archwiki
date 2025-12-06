@@ -2,21 +2,7 @@
 /**
  * Simulation of a backend storage in memory.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
@@ -39,14 +25,17 @@ class MemoryFileBackend extends FileBackendStore {
 	/** @var array Map of (file path => (data,mtime) */
 	protected $files = [];
 
+	/** @inheritDoc */
 	public function getFeatures() {
 		return self::ATTR_UNICODE_PATHS;
 	}
 
+	/** @inheritDoc */
 	public function isPathUsableInternal( $storagePath ) {
 		return ( $this->resolveHashKey( $storagePath ) !== null );
 	}
 
+	/** @inheritDoc */
 	protected function doCreateInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -65,6 +54,7 @@ class MemoryFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doStoreInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -92,7 +82,22 @@ class MemoryFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doCopyInternal( array $params ) {
+		return $this->copyInMemory( $params, 'copy' );
+	}
+
+	/** @inheritDoc */
+	protected function doMoveInternal( array $params ) {
+		return $this->copyInMemory( $params, 'move' );
+	}
+
+	/**
+	 * @param array $params
+	 * @param string $action whether it's 'copy' or 'move'
+	 * @return \StatusValue
+	 */
+	private function copyInMemory( array $params, string $action ) {
 		$status = $this->newStatus();
 
 		$src = $this->resolveHashKey( $params['src'] );
@@ -111,7 +116,8 @@ class MemoryFileBackend extends FileBackendStore {
 
 		if ( !isset( $this->files[$src] ) ) {
 			if ( empty( $params['ignoreMissingSource'] ) ) {
-				$status->fatal( 'backend-fail-copy', $params['src'], $params['dst'] );
+				// Error codes: backend-fail-copy, backend-fail-move
+				$status->fatal( 'backend-fail-' . $action, $params['src'], $params['dst'] );
 			}
 
 			return $status;
@@ -122,41 +128,13 @@ class MemoryFileBackend extends FileBackendStore {
 			'mtime' => ConvertibleTimestamp::convert( TS_MW, time() )
 		];
 
+		if ( $action === 'move' ) {
+			unset( $this->files[$src] );
+		}
 		return $status;
 	}
 
-	protected function doMoveInternal( array $params ) {
-		$status = $this->newStatus();
-
-		$src = $this->resolveHashKey( $params['src'] );
-		if ( $src === null ) {
-			$status->fatal( 'backend-fail-invalidpath', $params['src'] );
-
-			return $status;
-		}
-
-		$dst = $this->resolveHashKey( $params['dst'] );
-		if ( $dst === null ) {
-			$status->fatal( 'backend-fail-invalidpath', $params['dst'] );
-
-			return $status;
-		}
-
-		if ( !isset( $this->files[$src] ) ) {
-			if ( empty( $params['ignoreMissingSource'] ) ) {
-				$status->fatal( 'backend-fail-move', $params['src'], $params['dst'] );
-			}
-
-			return $status;
-		}
-
-		$this->files[$dst] = $this->files[$src];
-		unset( $this->files[$src] );
-		$this->files[$dst]['mtime'] = ConvertibleTimestamp::convert( TS_MW, time() );
-
-		return $status;
-	}
-
+	/** @inheritDoc */
 	protected function doDeleteInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -180,6 +158,7 @@ class MemoryFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doGetFileStat( array $params ) {
 		$src = $this->resolveHashKey( $params['src'] );
 		if ( $src === null ) {
@@ -196,6 +175,7 @@ class MemoryFileBackend extends FileBackendStore {
 		return self::RES_ABSENT;
 	}
 
+	/** @inheritDoc */
 	protected function doGetLocalCopyMulti( array $params ) {
 		$tmpFiles = []; // (path => TempFSFile)
 		foreach ( $params['srcs'] as $srcPath ) {
@@ -221,10 +201,11 @@ class MemoryFileBackend extends FileBackendStore {
 		return $tmpFiles;
 	}
 
-	protected function doDirectoryExists( $container, $dir, array $params ) {
-		$prefix = rtrim( "$container/$dir", '/' ) . '/';
+	/** @inheritDoc */
+	protected function doDirectoryExists( $fullCont, $dirRel, array $params ) {
+		$prefix = rtrim( "$fullCont/$dirRel", '/' ) . '/';
 		foreach ( $this->files as $path => $data ) {
-			if ( strpos( $path, $prefix ) === 0 ) {
+			if ( str_starts_with( $path, $prefix ) ) {
 				return true;
 			}
 		}
@@ -232,14 +213,15 @@ class MemoryFileBackend extends FileBackendStore {
 		return false;
 	}
 
-	public function getDirectoryListInternal( $container, $dir, array $params ) {
+	/** @inheritDoc */
+	public function getDirectoryListInternal( $fullCont, $dirRel, array $params ) {
 		$dirs = [];
-		$prefix = rtrim( "$container/$dir", '/' ) . '/';
+		$prefix = rtrim( "$fullCont/$dirRel", '/' ) . '/';
 		$prefixLen = strlen( $prefix );
 		foreach ( $this->files as $path => $data ) {
-			if ( strpos( $path, $prefix ) === 0 ) {
+			if ( str_starts_with( $path, $prefix ) ) {
 				$relPath = substr( $path, $prefixLen );
-				if ( strpos( $relPath, '/' ) === false ) {
+				if ( !str_contains( $relPath, '/' ) ) {
 					continue; // just a file
 				}
 				$parts = array_slice( explode( '/', $relPath ), 0, -1 ); // last part is file name
@@ -248,9 +230,9 @@ class MemoryFileBackend extends FileBackendStore {
 				} else {
 					$current = '';
 					foreach ( $parts as $part ) { // all directories
-						$dir = ( $current === '' ) ? $part : "$current/$part";
-						$dirs[$dir] = 1;
-						$current = $dir;
+						$dirRel = ( $current === '' ) ? $part : "$current/$part";
+						$dirs[$dirRel] = 1;
+						$current = $dirRel;
 					}
 				}
 			}
@@ -259,16 +241,17 @@ class MemoryFileBackend extends FileBackendStore {
 		return array_keys( $dirs );
 	}
 
-	public function getFileListInternal( $container, $dir, array $params ) {
+	/** @inheritDoc */
+	public function getFileListInternal( $fullCont, $dirRel, array $params ) {
 		$files = [];
-		$prefix = rtrim( "$container/$dir", '/' ) . '/';
+		$prefix = rtrim( "$fullCont/$dirRel", '/' ) . '/';
 		$prefixLen = strlen( $prefix );
 		foreach ( $this->files as $path => $data ) {
-			if ( strpos( $path, $prefix ) === 0 ) {
+			if ( str_starts_with( $path, $prefix ) ) {
 				$relPath = substr( $path, $prefixLen );
 				if (
 					$relPath === '' ||
-					( !empty( $params['topOnly'] ) && strpos( $relPath, '/' ) !== false )
+					( !empty( $params['topOnly'] ) && str_contains( $relPath, '/' ) )
 				) {
 					continue;
 				}
@@ -279,6 +262,7 @@ class MemoryFileBackend extends FileBackendStore {
 		return $files;
 	}
 
+	/** @inheritDoc */
 	protected function directoriesAreVirtual() {
 		return true;
 	}

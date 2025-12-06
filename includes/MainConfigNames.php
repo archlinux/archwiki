@@ -468,6 +468,12 @@ class MainConfigNames {
 	public const HashedUploadDirectory = 'HashedUploadDirectory';
 
 	/**
+	 * Name constant for the CSPUploadEntryPoint setting, for use with Config::get()
+	 * @see MainConfigSchema::CSPUploadEntryPoint
+	 */
+	public const CSPUploadEntryPoint = 'CSPUploadEntryPoint';
+
+	/**
 	 * Name constant for the FileExtensions setting, for use with Config::get()
 	 * @see MainConfigSchema::FileExtensions
 	 */
@@ -1038,18 +1044,6 @@ class MainConfigNames {
 	public const EnotifMinorEdits = 'EnotifMinorEdits';
 
 	/**
-	 * Name constant for the EnotifImpersonal setting, for use with Config::get()
-	 * @see MainConfigSchema::EnotifImpersonal
-	 */
-	public const EnotifImpersonal = 'EnotifImpersonal';
-
-	/**
-	 * Name constant for the EnotifMaxRecips setting, for use with Config::get()
-	 * @see MainConfigSchema::EnotifMaxRecips
-	 */
-	public const EnotifMaxRecips = 'EnotifMaxRecips';
-
-	/**
 	 * Name constant for the EnotifUseRealName setting, for use with Config::get()
 	 * @see MainConfigSchema::EnotifUseRealName
 	 */
@@ -1164,12 +1158,6 @@ class MainConfigNames {
 	public const SQLMode = 'SQLMode';
 
 	/**
-	 * Name constant for the DBDefaultGroup setting, for use with Config::get()
-	 * @see MainConfigSchema::DBDefaultGroup
-	 */
-	public const DBDefaultGroup = 'DBDefaultGroup';
-
-	/**
 	 * Name constant for the SQLiteDataDir setting, for use with Config::get()
 	 * @see MainConfigSchema::SQLiteDataDir
 	 */
@@ -1260,22 +1248,10 @@ class MainConfigNames {
 	public const VirtualDomainsMapping = 'VirtualDomainsMapping';
 
 	/**
-	 * Name constant for the PageLinksSchemaMigrationStage setting, for use with Config::get()
-	 * @see MainConfigSchema::PageLinksSchemaMigrationStage
-	 */
-	public const PageLinksSchemaMigrationStage = 'PageLinksSchemaMigrationStage';
-
-	/**
 	 * Name constant for the FileSchemaMigrationStage setting, for use with Config::get()
 	 * @see MainConfigSchema::FileSchemaMigrationStage
 	 */
 	public const FileSchemaMigrationStage = 'FileSchemaMigrationStage';
-
-	/**
-	 * Name constant for the CategoryLinksSchemaMigrationStage setting, for use with Config::get()
-	 * @see MainConfigSchema::CategoryLinksSchemaMigrationStage
-	 */
-	public const CategoryLinksSchemaMigrationStage = 'CategoryLinksSchemaMigrationStage';
 
 	/**
 	 * Name constant for the ExternalLinksDomainGaps setting, for use with Config::get()
@@ -1330,12 +1306,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RevisionCacheExpiry
 	 */
 	public const RevisionCacheExpiry = 'RevisionCacheExpiry';
-
-	/**
-	 * Name constant for the RevisionSlotsCacheExpiry setting, for use with Config::get()
-	 * @see MainConfigSchema::RevisionSlotsCacheExpiry
-	 */
-	public const RevisionSlotsCacheExpiry = 'RevisionSlotsCacheExpiry';
 
 	/**
 	 * Name constant for the PageLanguageUseDB setting, for use with Config::get()
@@ -1506,6 +1476,12 @@ class MainConfigNames {
 	public const SessionCacheType = 'SessionCacheType';
 
 	/**
+	 * Name constant for the AnonSessionCacheType setting, for use with Config::get()
+	 * @see MainConfigSchema::AnonSessionCacheType
+	 */
+	public const AnonSessionCacheType = 'AnonSessionCacheType';
+
+	/**
 	 * Name constant for the LanguageConverterCacheType setting, for use with Config::get()
 	 * @see MainConfigSchema::LanguageConverterCacheType
 	 */
@@ -1592,6 +1568,8 @@ class MainConfigNames {
 	/**
 	 * Name constant for the PHPSessionHandling setting, for use with Config::get()
 	 * @see MainConfigSchema::PHPSessionHandling
+	 * @deprecated since 1.45 Integration with PHP session handling will be removed in the
+	 *    future
 	 */
 	public const PHPSessionHandling = 'PHPSessionHandling';
 
@@ -1606,6 +1584,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::SessionPbkdf2Iterations
 	 */
 	public const SessionPbkdf2Iterations = 'SessionPbkdf2Iterations';
+
+	/**
+	 * Name constant for the UseSessionCookieJwt setting, for use with Config::get()
+	 * @see MainConfigSchema::UseSessionCookieJwt
+	 */
+	public const UseSessionCookieJwt = 'UseSessionCookieJwt';
 
 	/**
 	 * Name constant for the MemCachedServers setting, for use with Config::get()
@@ -1954,13 +1938,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RawHtmlMessages
 	 */
 	public const RawHtmlMessages = 'RawHtmlMessages';
-
-	/**
-	 * Name constant for the AllowRawHtmlCopyrightMessages setting, for use with Config::get()
-	 * @see MainConfigSchema::AllowRawHtmlCopyrightMessages
-	 * @deprecated since 1.44
-	 */
-	public const AllowRawHtmlCopyrightMessages = 'AllowRawHtmlCopyrightMessages';
 
 	/**
 	 * Name constant for the Localtimezone setting, for use with Config::get()
@@ -2402,27 +2379,6 @@ class MainConfigNames {
 	public const ParsoidExperimentalParserFunctionOutput = 'ParsoidExperimentalParserFunctionOutput';
 
 	/**
-	 * Name constant for the ParserEnableLegacyMediaDOM setting, for use with Config::get()
-	 * @see MainConfigSchema::ParserEnableLegacyMediaDOM
-	 * @deprecated since 1.41
-	 */
-	public const ParserEnableLegacyMediaDOM = 'ParserEnableLegacyMediaDOM';
-
-	/**
-	 * Name constant for the ParserEnableLegacyHeadingDOM setting, for use with Config::get()
-	 * @see MainConfigSchema::ParserEnableLegacyHeadingDOM
-	 * @deprecated since 1.44
-	 */
-	public const ParserEnableLegacyHeadingDOM = 'ParserEnableLegacyHeadingDOM';
-
-	/**
-	 * Name constant for the UseContentMediaStyles setting, for use with Config::get()
-	 * @see MainConfigSchema::UseContentMediaStyles
-	 * @deprecated since 1.41
-	 */
-	public const UseContentMediaStyles = 'UseContentMediaStyles';
-
-	/**
 	 * Name constant for the UseLegacyMediaStyles setting, for use with Config::get()
 	 * @see MainConfigSchema::UseLegacyMediaStyles
 	 */
@@ -2765,12 +2721,6 @@ class MainConfigNames {
 	public const BlockDisablesLogin = 'BlockDisablesLogin';
 
 	/**
-	 * Name constant for the EnablePartialActionBlocks setting, for use with Config::get()
-	 * @see MainConfigSchema::EnablePartialActionBlocks
-	 */
-	public const EnablePartialActionBlocks = 'EnablePartialActionBlocks';
-
-	/**
 	 * Name constant for the EnableMultiBlocks setting, for use with Config::get()
 	 * @see MainConfigSchema::EnableMultiBlocks
 	 */
@@ -3053,6 +3003,12 @@ class MainConfigNames {
 	public const QueryPageDefaultLimit = 'QueryPageDefaultLimit';
 
 	/**
+	 * Name constant for the ExternalQuerySources setting, for use with Config::get()
+	 * @see MainConfigSchema::ExternalQuerySources
+	 */
+	public const ExternalQuerySources = 'ExternalQuerySources';
+
+	/**
 	 * Name constant for the PasswordAttemptThrottle setting, for use with Config::get()
 	 * @see MainConfigSchema::PasswordAttemptThrottle
 	 */
@@ -3099,6 +3055,18 @@ class MainConfigNames {
 	 * @see MainConfigSchema::SecretKey
 	 */
 	public const SecretKey = 'SecretKey';
+
+	/**
+	 * Name constant for the JwtPrivateKey setting, for use with Config::get()
+	 * @see MainConfigSchema::JwtPrivateKey
+	 */
+	public const JwtPrivateKey = 'JwtPrivateKey';
+
+	/**
+	 * Name constant for the JwtPublicKey setting, for use with Config::get()
+	 * @see MainConfigSchema::JwtPublicKey
+	 */
+	public const JwtPublicKey = 'JwtPublicKey';
 
 	/**
 	 * Name constant for the AllowUserJs setting, for use with Config::get()
@@ -3185,6 +3153,12 @@ class MainConfigNames {
 	public const SessionSecret = 'SessionSecret';
 
 	/**
+	 * Name constant for the EnableUnsafeXsltOption setting, for use with Config::get()
+	 * @see MainConfigSchema::EnableUnsafeXsltOption
+	 */
+	public const EnableUnsafeXsltOption = 'EnableUnsafeXsltOption';
+
+	/**
 	 * Name constant for the CookieExpiration setting, for use with Config::get()
 	 * @see MainConfigSchema::CookieExpiration
 	 */
@@ -3195,6 +3169,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::ExtendedLoginCookieExpiration
 	 */
 	public const ExtendedLoginCookieExpiration = 'ExtendedLoginCookieExpiration';
+
+	/**
+	 * Name constant for the SessionCookieJwtExpiration setting, for use with Config::get()
+	 * @see MainConfigSchema::SessionCookieJwtExpiration
+	 */
+	public const SessionCookieJwtExpiration = 'SessionCookieJwtExpiration';
 
 	/**
 	 * Name constant for the CookieDomain setting, for use with Config::get()
@@ -3505,14 +3485,15 @@ class MainConfigNames {
 	/**
 	 * Name constant for the SitemapNamespacesPriorities setting, for use with Config::get()
 	 * @see MainConfigSchema::SitemapNamespacesPriorities
+	 * @deprecated since 1.45 and ignored
 	 */
 	public const SitemapNamespacesPriorities = 'SitemapNamespacesPriorities';
 
 	/**
-	 * Name constant for the EnableSearchContributorsByIP setting, for use with Config::get()
-	 * @see MainConfigSchema::EnableSearchContributorsByIP
+	 * Name constant for the SitemapApiConfig setting, for use with Config::get()
+	 * @see MainConfigSchema::SitemapApiConfig
 	 */
-	public const EnableSearchContributorsByIP = 'EnableSearchContributorsByIP';
+	public const SitemapApiConfig = 'SitemapApiConfig';
 
 	/**
 	 * Name constant for the SpecialSearchFormOptions setting, for use with Config::get()
@@ -3801,6 +3782,18 @@ class MainConfigNames {
 	 * @see MainConfigSchema::WatchlistExpiryMaxDuration
 	 */
 	public const WatchlistExpiryMaxDuration = 'WatchlistExpiryMaxDuration';
+
+	/**
+	 * Name constant for the EditWatchlistPaginate setting, for use with Config::get()
+	 * @see MainConfigSchema::EditWatchlistPaginate
+	 */
+	public const EditWatchlistPaginate = 'EditWatchlistPaginate';
+
+	/**
+	 * Name constant for the EnableChangesListQueryPartitioning setting, for use with Config::get()
+	 * @see MainConfigSchema::EnableChangesListQueryPartitioning
+	 */
+	public const EnableChangesListQueryPartitioning = 'EnableChangesListQueryPartitioning';
 
 	/**
 	 * Name constant for the RightsPage setting, for use with Config::get()
@@ -4496,6 +4489,12 @@ class MainConfigNames {
 	public const SpecialContributeSkinsEnabled = 'SpecialContributeSkinsEnabled';
 
 	/**
+	 * Name constant for the SpecialContributeNewPageTarget setting, for use with Config::get()
+	 * @see MainConfigSchema::SpecialContributeNewPageTarget
+	 */
+	public const SpecialContributeNewPageTarget = 'SpecialContributeNewPageTarget';
+
+	/**
 	 * Name constant for the EnableEditRecovery setting, for use with Config::get()
 	 * @see MainConfigSchema::EnableEditRecovery
 	 */
@@ -4536,5 +4535,11 @@ class MainConfigNames {
 	 * @see MainConfigSchema::FeatureShutdown
 	 */
 	public const FeatureShutdown = 'FeatureShutdown';
+
+	/**
+	 * Name constant for the UseLeximorph setting, for use with Config::get()
+	 * @see MainConfigSchema::UseLeximorph
+	 */
+	public const UseLeximorph = 'UseLeximorph';
 
 }

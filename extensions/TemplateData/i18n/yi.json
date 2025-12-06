@@ -92,5 +92,9 @@
 	"templatedata-modal-title-templateparam-details": "פאראמעטער איינצלהייטן: $1",
 	"templatedata-modal-title-templateparams": "מוסטער־פאראמעטערס",
 	"templatedata-search-list-empty": "מוסטערן וואָס איר האט מאַרקירט ווי פֿאַוואריטן וועלן דערשיינען דאָ",
-	"templatedata-favorite-maximum-reached": "איר האָט דערגרייכט די מאַקסימום צאָל ($1) פון פֿאַוואריטע מוסטערן. זייט אזוי גוט און נעמט אַראָפּ עטלעכע פון אייער ליסטע איידער איר לייגט צו נאך."
+	"templatedata-search-list-empty-anon": "זייט אזוי גוט זיך אריינלאגירן כדי צו מאַרקירן מוסטערן ווי פֿאַוואריטן",
+	"templatedata-favorite-maximum-reached": "איר האָט דערגרייכט די מאַקסימום צאָל ($1) פון פֿאַוואריטע מוסטערן. זייט אזוי גוט און נעמט אַראָפּ עטלעכע פון אייער ליסטע איידער איר לייגט צו נאך.",
+	"templatedata-category-rootcat": "מוסטערן",
+	"templatedata-category-column-empty": "קיין מוסטערן אדער אונטער־קאַטעגאריעס נישט געפֿונען אין [[$1]]",
+	"templatedata-favorite-count": "איר האט $1 / $2 פֿאוואריטע מוסטערן"
 }

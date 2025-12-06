@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Engineer56",
 			"Ivan Pozdeev",
 			"Okras",
-			"Putnik",
-			"Engineer56"
+			"Putnik"
 		]
 	},
 	"apihelp-templatedata-summary": "Получить данные, сохранённые расширением TemplateData.",

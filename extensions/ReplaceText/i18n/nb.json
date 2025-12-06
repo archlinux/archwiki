@@ -49,5 +49,7 @@
 	"replacetext_no_external_stores": "Wikien din vil ikke fungere med ReplaceText: Teksterstatninger kan ikke kjøres hvis ikke $wgExternalStores er tom.",
 	"right-replacetext": "Gjennomfør teksterstatninger på hele wikien",
 	"action-replacetext": "gjennomføre strengerstatninger på hele wikien",
-	"replacetext-summary-label": "Redigeringsforklaring for erstatningene (la denne være tom for å bruke standardforklaringen)"
+	"replacetext-summary-label": "Redigeringsforklaring for erstatningene (la denne være tom for å bruke standardforklaringen)",
+	"tag-replacetext": "[[Special:ReplaceText|ReplaceText]]",
+	"tag-replacetext-description": "Automatiske redigeringer gjort med [[{{#Special:ReplaceText}}]]."
 }

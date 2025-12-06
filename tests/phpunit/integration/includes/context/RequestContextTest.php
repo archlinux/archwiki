@@ -9,7 +9,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\PHPSessionHandler;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinFallback;
 use MediaWiki\Title\Title;
@@ -97,7 +96,7 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		// Make sure session handling is started
 		if ( !PHPSessionHandler::isInstalled() ) {
 			PHPSessionHandler::install(
-				SessionManager::singleton()
+				$this->getServiceContainer()->getSessionManager()
 			);
 		}
 		$oldSessionId = session_id();
@@ -107,7 +106,7 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		$oInfo = $context->exportSession();
 		$this->assertEquals( '127.0.0.1', $oInfo['ip'], "Correct initial IP address." );
 		$this->assertSame( 0, $oInfo['userId'], "Correct initial user ID." );
-		$this->assertFalse( SessionManager::getGlobalSession()->isPersistent(),
+		$this->assertFalse( $context->getRequest()->getSession()->isPersistent(),
 			'Global session isn\'t persistent to start' );
 
 		$user = User::newFromName( 'UnitTestContextUser' );
@@ -127,6 +126,7 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		] );
 		$sc = RequestContext::importScopedSession( $sinfo ); // load new context
 
+		$context->getRequest()->getSession()->persist();
 		$info = $context->exportSession();
 		$this->assertEquals( $sinfo['ip'], $info['ip'], "Correct IP address." );
 		$this->assertEquals( $sinfo['headers'], $info['headers'], "Correct headers." );
@@ -144,7 +144,7 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertEquals(
 			$sinfo['sessionId'],
-			SessionManager::getGlobalSession()->getId(),
+			$context->getRequest()->getSession()->getId(),
 			"Correct context session ID."
 		);
 		if ( \MediaWiki\Session\PHPSessionHandler::isEnabled() ) {
@@ -167,7 +167,7 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $oInfo['headers'], $info['headers'], "Correct restored headers." );
 		$this->assertEquals( $oInfo['sessionId'], $info['sessionId'], "Correct restored session ID." );
 		$this->assertEquals( $oInfo['userId'], $info['userId'], "Correct restored user ID." );
-		$this->assertFalse( SessionManager::getGlobalSession()->isPersistent(),
+		$this->assertFalse( $context->getRequest()->getSession()->isPersistent(),
 			'Global session isn\'t persistent after restoring the context' );
 	}
 

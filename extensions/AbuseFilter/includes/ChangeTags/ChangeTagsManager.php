@@ -139,17 +139,12 @@ class ChangeTagsManager {
 		);
 	}
 
-	/**
-	 * @param bool $enabled
-	 * @return string
-	 */
 	private function getCacheKeyForStatus( bool $enabled ): string {
 		return $this->cache->makeKey( 'abusefilter-fetch-all-tags', (int)$enabled );
 	}
 
 	/**
 	 * Get the tag identifier used to indicate a change has exceeded the condition limit
-	 * @return string
 	 */
 	public function getCondsLimitTag(): string {
 		return self::CONDS_LIMIT_TAG;

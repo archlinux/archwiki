@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
+	"fancycaptcha-name": "Fancy CAPTCHA",
 	"fancycaptcha-desc": "Fancy CAPTCHA generator for Confirm Edit",
 	"fancycaptcha-addurl": "Your edit includes new external links.\nTo protect the wiki against automated spam, we kindly ask you to enter the words that appear below in the box ([[Special:Captcha/help|more info]]):",
 	"fancycaptcha-badlogin": "To protect the wiki against automated password cracking, we kindly ask you to enter the words that appear below in the box ([[Special:Captcha/help|more info]]):",

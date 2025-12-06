@@ -4,21 +4,7 @@
  *
  * See Title.md
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -30,6 +16,10 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\Deferred\AutoCommitUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Exception\MWException;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -269,7 +259,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 		try {
 			$t->secureAndSplit( $key );
 			return $t;
-		} catch ( MalformedTitleException $ex ) {
+		} catch ( MalformedTitleException ) {
 			return null;
 		}
 	}
@@ -405,7 +395,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 
 		try {
 			return self::newFromTextThrow( (string)$text, (int)$defaultNamespace );
-		} catch ( MalformedTitleException $ex ) {
+		} catch ( MalformedTitleException ) {
 			return null;
 		}
 	}
@@ -506,7 +496,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 		try {
 			$t->secureAndSplit( $dbKeyForm );
 			return $t;
-		} catch ( MalformedTitleException $ex ) {
+		} catch ( MalformedTitleException ) {
 			return null;
 		}
 	}
@@ -660,7 +650,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 		try {
 			$t->secureAndSplit( $dbKeyForm );
 			return $t;
-		} catch ( MalformedTitleException $ex ) {
+		} catch ( MalformedTitleException ) {
 			return null;
 		}
 	}
@@ -782,7 +772,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 				$r0 = sprintf( '\x%02x', $ord0 );
 				$allowUnicode = true;
 				// @phan-suppress-next-line PhanParamSuspiciousOrder false positive
-			} elseif ( strpos( '-\\[]^', $d0 ) !== false ) {
+			} elseif ( str_contains( '-\\[]^', $d0 ) ) {
 				$r0 = '\\' . $d0;
 			} else {
 				$r0 = $d0;
@@ -911,7 +901,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 				$this->mIsValid = false;
 				return $this->mIsValid;
 			}
-		} catch ( MalformedTitleException $ex ) {
+		} catch ( MalformedTitleException ) {
 			$this->mIsValid = false;
 			return $this->mIsValid;
 		}
@@ -1427,7 +1417,7 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	/**
 	 * Could this MediaWiki namespace page contain custom CSS, JSON, or JavaScript for the
 	 * global UI. This is generally true for pages in the MediaWiki namespace having
-	 * CONTENT_MODEL_CSS, CONTENT_MODEL_JSON, or CONTENT_MODEL_JAVASCRIPT.
+	 * CONTENT_MODEL_CSS, CONTENT_MODEL_JSON, CONTENT_MODEL_JAVASCRIPT or CONTENT_MODEL_VUE.
 	 *
 	 * This method does *not* return true for per-user JS/JSON/CSS. Use isUserConfigPage()
 	 * for that!
@@ -1519,7 +1509,9 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 		return (
 			$this->mNamespace === NS_USER
 			&& $this->isSubpage()
-			&& $this->hasContentModel( CONTENT_MODEL_JAVASCRIPT )
+			&& ( $this->hasContentModel( CONTENT_MODEL_JAVASCRIPT ) ||
+				$this->hasContentModel( CONTENT_MODEL_VUE )
+			)
 		);
 	}
 
@@ -1569,10 +1561,15 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 		return (
 			$this->mNamespace === NS_MEDIAWIKI
 			&& (
-				$this->hasContentModel( CONTENT_MODEL_JAVASCRIPT )
-				// paranoia - a MediaWiki: namespace page with mismatching extension and content
-				// model is probably by mistake and might get handled incorrectly (see e.g. T112937)
-				|| str_ends_with( $this->mDbkeyform, '.js' )
+				(
+					$this->hasContentModel( CONTENT_MODEL_JAVASCRIPT )
+					// paranoia - a MediaWiki: namespace page with mismatching extension and content
+					// model is probably by mistake and might get handled incorrectly (see e.g. T112937)
+					|| str_ends_with( $this->mDbkeyform, '.js' )
+				) || (
+					$this->hasContentModel( CONTENT_MODEL_VUE )
+					|| str_ends_with( $this->mDbkeyform, '.vue' )
+				)
 			)
 		);
 	}
@@ -2364,57 +2361,6 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	}
 
 	/**
-	 * Is this title subject to title protection?
-	 * Title protection is the one applied against creation of such title.
-	 *
-	 * @deprecated since 1.37, use RestrictionStore::getCreateProtection() instead;
-	 *   hard-deprecated since 1.43
-	 *
-	 * @return array|bool An associative array representing any existent title
-	 *   protection, or false if there's none.
-	 */
-	public function getTitleProtection() {
-		wfDeprecated( __METHOD__, '1.37' );
-		return MediaWikiServices::getInstance()->getRestrictionStore()->getCreateProtection( $this )
-			?: false;
-	}
-
-	/**
-	 * Remove any title protection due to page existing
-	 *
-	 * @deprecated since 1.37, do not use (this is only for WikiPage::onArticleCreate)
-	 *   hard-deprecated since 1.44
-	 */
-	public function deleteTitleProtection() {
-		wfDeprecated( __METHOD__, '1.37' );
-		MediaWikiServices::getInstance()->getRestrictionStore()->deleteCreateProtection( $this );
-	}
-
-	/**
-	 * Load restrictions from the page_restrictions table
-	 *
-	 * @deprecated since 1.37, no public replacement; hard-deprecated since 1.43
-	 *
-	 * @param int $flags A bit field. If IDBAccessObject::READ_LATEST is set, skip replicas and read
-	 *  from the primary DB.
-	 */
-	public function loadRestrictions( $flags = 0 ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		MediaWikiServices::getInstance()->getRestrictionStore()->loadRestrictions( $this, $flags );
-	}
-
-	/**
-	 * Flush the protection cache in this object and force reload from the database.
-	 * This is used when updating protection from WikiPage::doUpdateRestrictions().
-	 *
-	 * @deprecated since 1.37, now internal; hard-deprecated since 1.43
-	 */
-	public function flushRestrictions() {
-		wfDeprecated( __METHOD__, '1.37' );
-		MediaWikiServices::getInstance()->getRestrictionStore()->flushRestrictions( $this );
-	}
-
-	/**
 	 * Purge expired restrictions from the page_restrictions table
 	 *
 	 * This will purge no more than $wgUpdateRowsPerQuery page_restrictions rows
@@ -2779,10 +2725,18 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 	 * @return Title[]
 	 */
 	public function getLinksTo( $options = [], $table = 'pagelinks', $prefix = 'pl' ) {
+		$domainMap = [
+			'categorylinks' => CategoryLinksTable::VIRTUAL_DOMAIN,
+			'imagelinks' => ImageLinksTable::VIRTUAL_DOMAIN,
+			'pagelinks' => PageLinksTable::VIRTUAL_DOMAIN,
+			'templatelinks' => TemplateLinksTable::VIRTUAL_DOMAIN,
+		];
+		$domain = $domainMap[$table] ?? false;
+
 		if ( count( $options ) > 0 ) {
-			$db = $this->getDbProvider()->getPrimaryDatabase();
+			$db = $this->getDbProvider()->getPrimaryDatabase( $domain );
 		} else {
-			$db = $this->getDbProvider()->getReplicaDatabase();
+			$db = $this->getDbProvider()->getReplicaDatabase( $domain );
 		}
 
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
@@ -2852,7 +2806,15 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 			return [];
 		}
 
-		$db = $this->getDbProvider()->getReplicaDatabase();
+		$domainMap = [
+			'categorylinks' => CategoryLinksTable::VIRTUAL_DOMAIN,
+			'imagelinks' => ImageLinksTable::VIRTUAL_DOMAIN,
+			'pagelinks' => PageLinksTable::VIRTUAL_DOMAIN,
+			'templatelinks' => TemplateLinksTable::VIRTUAL_DOMAIN,
+		];
+		$domain = $domainMap[$table] ?? false;
+
+		$db = $this->getDbProvider()->getReplicaDatabase( $domain );
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 
 		$queryBuilder = $db->newSelectQueryBuilder();
@@ -2957,29 +2919,20 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 			return $data;
 		}
 
-		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
-			MainConfigNames::CategoryLinksSchemaMigrationStage
-		);
-
-		$dbr = $this->getDbProvider()->getReplicaDatabase();
-		$queryBuilder = $dbr->newSelectQueryBuilder()
+		$dbr = $this->getDbProvider()->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
+		$res = $dbr->newSelectQueryBuilder()
+			->select( 'lt_title' )
 			->from( 'categorylinks' )
-			->where( [ 'cl_from' => $titleKey ] );
-
-		if ( $migrationStage & SCHEMA_COMPAT_READ_OLD ) {
-			$queryBuilder->select( 'cl_to' );
-		} else {
-			$queryBuilder->field( 'lt_title', 'cl_to' )
-				->join( 'linktarget', null, 'cl_target_id = lt_id' )
-				->where( [ 'lt_namespace' => NS_CATEGORY ] );
-		}
-		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
+			->join( 'linktarget', null, 'cl_target_id = lt_id' )
+			->where( [ 'cl_from' => $titleKey, 'lt_namespace' => NS_CATEGORY ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		if ( $res->numRows() > 0 ) {
 			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 			foreach ( $res as $row ) {
-				// $data[] = Title::newFromText( $contLang->getNsText ( NS_CATEGORY ).':'.$row->cl_to);
-				$data[$contLang->getNsText( NS_CATEGORY ) . ':' . $row->cl_to] =
+				// $data[] = Title::newFromText( $contLang->getNsText ( NS_CATEGORY ).':'.$row->lt_title);
+				$data[$contLang->getNsText( NS_CATEGORY ) . ':' . $row->lt_title] =
 					$this->getFullText();
 			}
 		}
@@ -3376,6 +3329,11 @@ class Title implements Stringable, LinkTarget, PageIdentity {
 			$this,
 			'pagelinks',
 			[ 'causeAction' => 'page-touch' ]
+		);
+		$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
+			$this,
+			'existencelinks',
+			[ 'causeAction' => 'existence-touch' ]
 		);
 		if ( $this->mNamespace === NS_CATEGORY ) {
 			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
+	"questycaptcha-name": "Questy CAPTCHA",
 	"questycaptcha-desc": "Questy CAPTCHA generator for Confirm Edit",
 	"questycaptcha-addurl": "Your edit includes new external links.\nTo protect the wiki against automated edit spam, we kindly ask you to answer the question that appears below ([[Special:Captcha/help|more info]]):",
 	"questycaptcha-badlogin": "To protect the wiki against automated password cracking, we kindly ask you to answer the question that appears below ([[Special:Captcha/help|more info]]):",

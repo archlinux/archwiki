@@ -13,16 +13,18 @@ use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
-use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageStore;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\DerivativeContext;
 use MediaWiki\ResourceLoader\WikiModule;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\Options\UserOptionsLookup;
 use ReflectionMethod;
 use RuntimeException;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -70,7 +72,6 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 
 		// Because getPages is protected..
 		$getPages = new ReflectionMethod( $module, 'getPages' );
-		$getPages->setAccessible( true );
 		$out = $getPages->invoke( $module, Context::newDummyContext() );
 		$this->assertSame( $expected, $out );
 	}
@@ -233,12 +234,35 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 		];
 	}
 
+	private function setFakeTime( $time ) {
+		ConvertibleTimestamp::setFakeTime( $time );
+		$now = ConvertibleTimestamp::now( TS_UNIX );
+		$wanCache = $this->getServiceContainer()->getMainWANObjectCache();
+		$wanCache->setMockTime( $now );
+	}
+
 	public function testGetPreloadedTitleInfo() {
-		// Set up
-		ConvertibleTimestamp::setFakeTime( '20110401090000' );
-		$this->editPage( 'MediaWiki:TestA.css', '.mw-first {}', 'First' );
+		// Scenario 1: Preload avoids on-demand fetch
+		//
+		// Validate that WikiModule->getTitleInfo() utilizes the preloaded batch data.
+		// If preload data is not available or not applicable, the fetchTitleInfo()
+		// method would be called to fetch it on-demand. Our test objects,
+		// TestResourceLoaderWikiModule, disable this method. So, if we get data,
+		// that means the batched preload worked.
+
+		// Arrange
+		$cache1 = $this->getServiceContainer()->getObjectCacheFactory()->getLocalClusterInstance();
+		$this->setFakeTime( '20110401090000' );
+		$this->editPage( 'MediaWiki:TestA.css', '.mw-a-first {}', 'First' );
 		$this->editPage( 'MediaWiki:TestEmpty.css', '', 'Empty' );
-		$this->editPage( 'MediaWiki:TestB.css', '.mw-second {}', 'Second' );
+		$this->editPage( 'MediaWiki:TestB.css', '.mw-b-first {}', 'First' );
+		$expectOneFirst = [
+			'8:TestA.css' => [ 'page_len' => '14', 'page_touched' => '20110401090000' ],
+			'8:TestEmpty.css' => [ 'page_len' => '0', 'page_touched' => '20110401090000' ],
+		];
+		$expectTwoFirst = [
+			'8:TestB.css' => [ 'page_len' => '14', 'page_touched' => '20110401090000' ],
+		];
 		$rl = new EmptyResourceLoader();
 		$rl->getConfig()->set( MainConfigNames::UseSiteJs, true );
 		$rl->getConfig()->set( MainConfigNames::UseSiteCss, true );
@@ -261,22 +285,94 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 		] );
 		$context = new Context( $rl, new FauxRequest() );
 
-		// Warm up the cache
-		WikiModule::preloadTitleInfo(
-			$context,
-			[ 'testmodule1', 'testmodule2' ]
-		);
-		// The module uses TestResourceLoaderWikiModule, which disables fetchTitleInfo() by default.
-		// If getTitleInfo() returns the data here, it means preloadTitleInfo succeeded.
+		// Act
+		WikiModule::preloadTitleInfo( $context, [ 'testmodule1', 'testmodule2' ] );
+
+		// Assert
+		$this->setFakeTime( '20110401090100' );
 		$module1 = TestingAccessWrapper::newFromObject( $rl->getModule( 'testmodule1' ) );
-		$this->assertArrayContains( [
-			'8:TestA.css' => [ 'page_len' => '12', 'page_touched' => '20110401090000' ],
-			'8:TestEmpty.css' => [ 'page_len' => '0', 'page_touched' => '20110401090000' ],
-		], $module1->getTitleInfo( $context ), 'Title info' );
 		$module2 = TestingAccessWrapper::newFromObject( $rl->getModule( 'testmodule2' ) );
-		$this->assertArrayContains( [
-			'8:TestB.css' => [ 'page_len' => '13', 'page_touched' => '20110401090000' ],
-		], $module2->getTitleInfo( $context ), 'Title info' );
+		$this->assertArrayContains(
+			$expectOneFirst,
+			$module1->getTitleInfo( $context ),
+			'module1'
+		);
+		$this->assertArrayContains(
+			$expectTwoFirst,
+			$module2->getTitleInfo( $context ),
+			'module2'
+		);
+
+		// Scenario 2: WANCache hits work and prevent database queries
+		//
+		// * 1 minute later, do another preload. Unlike the first one, this one will
+		//   warm up the cache WANObjectCache (because the first was during checkKeys hold-off).
+		//
+		// * 15 minutes later, well within the 1h cache duration, edit a relevant page.
+		//
+		//   This edit should purge the cache. However, simply asserting that we see new data,
+		//   does not tell us whether the cache is effective. (That would pass even if cache hits
+		//   were broken, or no purges made, or some mistake in the test wiring causing a new
+		//   cache instance to be used). So, restore the previous cache after the edit.
+		//   With this cache, unaware of any purge, if the same old data is returned,
+		//   it tells us confidently that the cache is effective a new fresh database queries
+		//   were made.
+
+		// Arrange: Warm up
+		$this->setFakeTime( '20110401090200' );
+		WikiModule::preloadTitleInfo( $context, [ 'testmodule1', 'testmodule2' ] );
+		// Arrange: Edit without with a temp cache (discard purge)
+		$this->setMainCache( new HashBagOStuff() );
+		$this->setFakeTime( '20110401091500' );
+		$this->editPage( 'MediaWiki:TestA.css', '.mw-a-second {}', 'Second' );
+		// Arrange: Reinstate the cache
+		$this->setMainCache( $cache1 );
+		$this->setFakeTime( '20110401090200' );
+
+		// Act
+		WikiModule::preloadTitleInfo( $context, [ 'testmodule1', 'testmodule2' ] );
+
+		// Assert
+		$module1 = TestingAccessWrapper::newFromObject( $rl->getModule( 'testmodule1' ) );
+		$module2 = TestingAccessWrapper::newFromObject( $rl->getModule( 'testmodule2' ) );
+		$this->assertArrayContains(
+			$expectOneFirst,
+			$module1->getTitleInfo( $context ),
+			'cached module1'
+		);
+		$this->assertArrayContains(
+			$expectTwoFirst,
+			$module2->getTitleInfo( $context ),
+			'cached module2'
+		);
+
+		// Scenario 3: Post-edit purge works
+		//
+		// After saving an edit, fresh data is returned.
+		$this->setFakeTime( '20110401090300' );
+		$this->editPage( 'MediaWiki:TestA.css', '.mw-a-third-thunder {}', 'Third' );
+		$expectOneThird = [
+			'8:TestA.css' => [ 'page_len' => '22', 'page_touched' => '20110401090300' ],
+			'8:TestEmpty.css' => [ 'page_len' => '0', 'page_touched' => '20110401090000' ],
+		];
+		$expectTwoThird = $expectTwoFirst;
+
+		// Act
+		WikiModule::preloadTitleInfo( $context, [ 'testmodule1', 'testmodule2' ] );
+
+		// Assert
+		$module1 = TestingAccessWrapper::newFromObject( $rl->getModule( 'testmodule1' ) );
+		$module2 = TestingAccessWrapper::newFromObject( $rl->getModule( 'testmodule2' ) );
+		$this->assertArrayContains(
+			$expectOneThird,
+			$module1->getTitleInfo( $context ),
+			'fresh module1'
+		);
+		$this->assertArrayContains(
+			$expectTwoThird,
+			$module2->getTitleInfo( $context ),
+			'fresh module2'
+		);
 	}
 
 	public function testGetPreloadedBadTitle() {
@@ -359,9 +455,7 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 			// Mock page table access via PageStore
 			$pageStore = $this->createNoOpMock( PageStore::class, [ 'getPageByText' ] );
 			$pageStore->method( 'getPageByText' )->willReturn(
-				new PageIdentityValue(
-					$title['id'], $title['ns'], $title['text'], PageRecord::LOCAL
-				)
+				PageIdentityValue::localIdentity( $title['id'], $title['ns'], $title['text'] )
 			);
 		} else {
 			$titleText = $title;
@@ -426,9 +520,14 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 				'MediaWiki:Redirect.js' => [ 'type' => 'script' ]
 			] );
 		$module->setConfig( $context->getResourceLoader()->getConfig() );
-		$context->setContentOverrideCallback( static function ( PageIdentity $title ) {
+		$context->setContentOverrideCallback( function ( PageIdentity $title ) {
 			if ( $title->getDBkey() === 'Redirect.js' ) {
-				$handler = new JavaScriptContentHandler();
+				$handler = new JavaScriptContentHandler(
+					CONTENT_MODEL_JAVASCRIPT,
+					$this->createMock( Config::class ),
+					$this->createMock( ParserFactory::class ),
+					$this->createMock( UserOptionsLookup::class )
+				);
 				return $handler->makeRedirectContent(
 					Title::makeTitle( NS_MEDIAWIKI, 'Target.js' )
 				);

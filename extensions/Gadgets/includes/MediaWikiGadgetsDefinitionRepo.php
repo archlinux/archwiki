@@ -41,21 +41,12 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	/** @var array|null */
 	private $definitions;
 
-	private IConnectionProvider $dbProvider;
-	private WANObjectCache $wanCache;
-	private RevisionLookup $revLookup;
-	private BagOStuff $srvCache;
-
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		WANObjectCache $wanCache,
-		RevisionLookup $revLookup,
-		BagOStuff $srvCache
+		private readonly IConnectionProvider $dbProvider,
+		private readonly WANObjectCache $wanCache,
+		private readonly RevisionLookup $revLookup,
+		private readonly BagOStuff $srvCache,
 	) {
-		$this->dbProvider = $dbProvider;
-		$this->wanCache = $wanCache;
-		$this->revLookup = $revLookup;
-		$this->srvCache = $srvCache;
 	}
 
 	/**
@@ -266,6 +257,9 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 					break;
 				case 'peers':
 					$info['peers'] = $params;
+					break;
+				case 'codexIcons':
+					$info['codexIcons'] = $params;
 					break;
 				case 'rights':
 					$info['requiredRights'] = $params;

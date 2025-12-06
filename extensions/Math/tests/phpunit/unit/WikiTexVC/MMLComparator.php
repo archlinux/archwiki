@@ -209,7 +209,7 @@ class MMLComparator {
 		$overallAttrs = 0;
 		foreach ( $arr as $element ) {
 			foreach ( $element as $attrs ) {
-				$overallSize += 1;
+				$overallSize++;
 				$overallAttrs += count( $attrs );
 			}
 		}
@@ -255,15 +255,9 @@ class MMLComparator {
 
 	private function compareTwoBaseElements( array $compEl, array $baseEl ): bool {
 		// Most basic comparison, this works for elements without attributes
-		if ( $compEl === $baseEl ) {
-			return true;
-		}
-		// The array and sub-elements are exactly the same
-		if ( array_diff( $compEl, $baseEl ) == [] && array_diff( $baseEl, $compEl ) == [] ) {
-			return true;
-		}
-
-		return false;
+		return $compEl === $baseEl ||
+			// The array and sub-elements are exactly the same
+			( !array_diff( $compEl, $baseEl ) && !array_diff( $baseEl, $compEl ) );
 	}
 
 	private function createComparisonArray( \SimpleXMLElement $xml ): array {
@@ -306,7 +300,6 @@ class MMLComparator {
 		$ignoredAttrs = self::IGNOREDATTRIBUTES[$elementKey] ?? [];
 		$finalAttributes = [];
 		foreach ( $attributes as $akey => $aval ) {
-
 			if ( in_array( $akey, $ignoredAttrs, true ) ) {
 				continue;
 			}

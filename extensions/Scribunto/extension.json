@@ -10,19 +10,25 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"APIModules": {
 		"scribunto-console": {
 			"class": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole",
 			"services": [
 				"ObjectCacheFactory",
-				"ParserFactory"
+				"ParserFactory",
+				"Scribunto.EngineFactory"
 			]
 		}
 	},
 	"ContentHandlers": {
-		"Scribunto": "MediaWiki\\Extension\\Scribunto\\ScribuntoContentHandler"
+		"Scribunto": {
+			"class": "MediaWiki\\Extension\\Scribunto\\ScribuntoContentHandler",
+			"services": [
+				"Scribunto.EngineFactory"
+			]
+		}
 	},
 	"TrackingCategories": [
 		"scribunto-common-error-category",
@@ -58,6 +64,9 @@
 	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\Scribunto\\Tests\\": "tests/phpunit/"
 	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"ResourceModules": {
 		"ext.scribunto.errors": {
 			"scripts": "ext.scribunto.errors.js",
@@ -98,8 +107,8 @@
 		"ParserLimitReportPrepare": "main",
 		"ParserLimitReportFormat": "main",
 		"ParserClearState": "main",
-		"ParserCloned": "main",
 		"CodeEditorGetPageLanguage": "codeeditor",
+		"CodeMirrorGetMode": "codemirror",
 		"EditPage::showStandardInputs:options": "main",
 		"EditPage::showReadOnlyForm:initial": "main",
 		"EditPageBeforeEditButtons": "main",
@@ -114,13 +123,22 @@
 				"MainConfig",
 				"ContentHandlerFactory",
 				"ObjectCacheFactory",
-				"StatsFactory"
+				"StatsFactory",
+				"Scribunto.EngineFactory"
 			]
 		},
 		"codeeditor": {
 			"class": "MediaWiki\\Extension\\Scribunto\\CodeEditorHooks",
 			"services": [
-				"MainConfig"
+				"MainConfig",
+				"Scribunto.EngineFactory"
+			]
+		},
+		"codemirror": {
+			"class": "MediaWiki\\Extension\\Scribunto\\CodeMirrorHooks",
+			"services": [
+				"MainConfig",
+				"Scribunto.EngineFactory"
 			]
 		}
 	},
@@ -172,7 +190,7 @@
 					"maxLangCacheSize": 30
 				},
 				"luaautodetect": {
-					"factory": "MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LuaEngine::newAutodetectEngine"
+					"implementation": "autodetect"
 				}
 			},
 			"merge_strategy": "array_plus_2d"
@@ -185,6 +203,10 @@
 			"description": "Set to true to enable the CodeEditor extension integration",
 			"value": true
 		},
+		"ScribuntoUseCodeMirror": {
+			"description": "Set to true to enable the CodeMirror extension integration",
+			"value": false
+		},
 		"ScribuntoGatherFunctionStats": {
 			"description": "Set to true to enable gathering and reporting of performance data for slow function invocations.",
 			"value": false
@@ -192,6 +214,10 @@
 		"ScribuntoSlowFunctionThreshold": {
 			"description": "If $wgScribuntoGatherFunctionStats is true, this variable specifies the percentile threshold for slow function invocations. Should be a value between 0 and 1 (exclusive).",
 			"value": 0.9
+		},
+		"ScribuntoLuaExtraTitleAttributes": {
+			"description": "Extra attributes added to Lua mw.title objects. Keys are the name of the attributes, and values are the ObjectFactory specification for resolving the attribute.",
+			"value": {}
 		}
 	},
 	"attributes": {

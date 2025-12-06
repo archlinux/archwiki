@@ -34,7 +34,7 @@ class ParserFuzzTest extends Maintenance {
 
 	public function finalSetup( SettingsBuilder $settingsBuilder ) {
 		// Make RequestContext::resetMain() happy
-		define( 'MW_PARSER_TEST', 1 );
+		define( 'MW_PHPUNIT_TEST', true );
 
 		TestSetup::applyInitialConfig();
 	}
@@ -169,7 +169,7 @@ class ParserFuzzTest extends Maintenance {
 		$length = 0;
 		try {
 			$length = strlen( @serialize( $var ) );
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 		}
 		return $length;
 	}

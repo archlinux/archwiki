@@ -3,21 +3,7 @@
  * Provides of semaphore semantics for restricting the number
  * of workers that may be concurrently performing the same task.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -31,7 +17,7 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Concurrency
- * @coversDefaultClass \MediaWiki\PoolCounter\PoolCounterWork
+ * @covers \MediaWiki\PoolCounter\PoolCounterWork
  */
 class PoolCounterWorkTest extends MediaWikiIntegrationTestCase {
 
@@ -207,7 +193,6 @@ class PoolCounterWorkTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideExecuteFlow
-	 * @covers ::execute
 	 */
 	public function testExecuteFlow(
 		bool $cacheable,
@@ -227,9 +212,6 @@ class PoolCounterWorkTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expectedResult, $worker->execute( $skipCache ) );
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testDoWorkRaiseException() {
 		$expectedException = new RuntimeException( __METHOD__ );
 		$worker = $this->configureFixture(
@@ -245,12 +227,6 @@ class PoolCounterWorkTest extends MediaWikiIntegrationTestCase {
 		$worker->execute();
 	}
 
-	/**
-	 * @covers ::getCachedWork
-	 * @covers ::error
-	 * @covers ::fallback
-	 * @covers ::__construct
-	 */
 	public function testDefaults() {
 		$worker = $this->configureFixture( [], [], [] );
 		$this->assertFalse( $worker->cacheable );

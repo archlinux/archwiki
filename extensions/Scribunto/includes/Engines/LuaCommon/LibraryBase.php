@@ -36,9 +36,6 @@ abstract class LibraryBase {
 	 */
 	private $engine;
 
-	/**
-	 * @param LuaEngine $engine
-	 */
 	public function __construct( LuaEngine $engine ) {
 		$this->engine = $engine;
 	}

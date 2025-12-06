@@ -28,7 +28,6 @@ use MediaWiki\User\UserIdentity;
 
 /**
  * @license GPL-2.0-or-later
- * phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName
  */
 class Hooks implements
 	ParserFirstCallInitHook,
@@ -41,10 +40,7 @@ class Hooks implements
 	SaveUserOptionsHook
 {
 
-	private Config $config;
-
-	public function __construct( Config $mainConfig ) {
-		$this->config = $mainConfig;
+	public function __construct( private readonly Config $config ) {
 	}
 
 	/**
@@ -68,8 +64,8 @@ class Hooks implements
 					'localBasePath' => dirname( __DIR__ ),
 					'remoteExtPath' => 'TemplateData',
 					'scripts' => [
-						'lib/jquery.uls/src/jquery.uls.data.js',
-						'lib/jquery.uls/src/jquery.uls.data.utils.js',
+						'modules/lib/jquery.uls/jquery.uls.data.js',
+						'modules/lib/jquery.uls/jquery.uls.data.utils.js',
 					],
 				]
 			] );

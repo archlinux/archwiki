@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Stjn",
+			"Kareyac",
 			"Okras",
-			"Kareyac"
+			"Stjn"
 		]
 	},
 	"editcheck-dialog-action-no": "Нет",
 	"editcheck-dialog-action-yes": "Да",
+	"editcheck-dialog-action-back": "Назад",
 	"editcheck-dialog-addref-description": "Добавьте источник, чтобы помочь читателям понять, откуда взята эта информация.",
 	"editcheck-dialog-addref-reject-question": "Почему вы не добавили источник?",
 	"editcheck-dialog-addref-reject-description": "Другим редакторам будет полезно узнать, почему вы решили не добавлять источник.",
@@ -18,6 +19,9 @@
 	"editcheck-dialog-addref-success-notify": "Спасибо за добавление источника!",
 	"editcheck-dialog-addref-title": "Добавить источник",
 	"editcheck-dialog-title": "До публикации",
+	"editcheck-copyvio-action-keep": "Да, сохранить",
+	"editcheck-copyvio-action-remove": "Нет, удалить",
+	"editcheck-tone-reject-other": "Другое",
 	"tag-editcheck-reference-decline-common-knowledge": "Проверка правок (источники) отклонена (общеизвестно)",
 	"tag-editcheck-reference-decline-irrelevant": "Проверка правок (источники) отклонена (неуместно)",
 	"tag-editcheck-reference-decline-other": "Проверка правок (источники) отклонена (другое)",

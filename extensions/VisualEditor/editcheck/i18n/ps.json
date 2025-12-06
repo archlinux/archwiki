@@ -3,5 +3,13 @@
 		"authors": [
 			"شاه زمان پټان"
 		]
-	}
+	},
+	"editcheck-dialog-action-recheck": "بياځلي‌سم‌کتنه",
+	"editcheck-dialog-action-back": "پر شا کېدل",
+	"editcheck-dialog-action-submit": "سپارل",
+	"editcheck-copyvio-action-remove": "نه، لرې يې کړه",
+	"editcheck-tone-reject-uncertain": "زه ډاډه نه يم چې څنگه وينگ کره کړم",
+	"editcheck-tone-reject-other": "نور",
+	"editcheck-tone-thank": "د وينگ په پام‌ کې نيولو لپاره مننه!",
+	"editcheck-reject-description": "نور سمونگر به دې ته ارزښت ورکړي چې ولې تاسو دا خوښ کړی."
 }

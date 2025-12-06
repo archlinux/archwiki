@@ -5,8 +5,9 @@
 			"Fitoschido",
 			"Hamilton Abreu",
 			"Mansil",
+			"Mansil alfalb",
 			"Vitorvicentevalente",
-			"Mansil alfalb"
+			"Maria Manuela Silva"
 		]
 	},
 	"oathauth-desc": "Fornece suporte à autenticação usando palavras-passe de uso único baseadas em códigos HMAC",
@@ -18,19 +19,19 @@
 	"oathauth-recoverycodes": "A seguinte é uma lista de códigos de recuperação de uso único. Estes códigos só podem ser usados uma vez e são para casos de emergência quando não tem acesso ao seu dispositivo. Anote-os, por favor, e guarde-os num local seguro. É recomendado que marque cada código como usado quando tiver iniciado uma sessão usando-o. Se perder o seu dispositivo, os códigos são a única forma de recuperar a sua conta. '''Estes códigos não voltarão a ser mostrados'''.",
 	"oathauth-recoverycodes-important": "Este passo é importante! Não salte este passo!",
 	"oathauth-recoverycodes-download": "Descarregar códigos de recuperação",
+	"oathauth-failedtovalidateoath": "A validação das credenciais de dois fatores falhou",
 	"oathauth-disable": "Desativar a autenticação de dois fatores",
 	"oathauth-validatedoath": "As credenciais de dois fatores foram validadas. A autenticação de dois fatores será agora aplicada.",
 	"oathauth-noscratchforvalidation": "Não pode usar um código de recuperação para confirmar a autenticação de dois fatores. Os códigos de recuperação só servem como reserva para uso ocasional. Use um código da sua aplicação de autenticação de dois fatores (como o Google Authenticator), por favor.",
-	"oathauth-failedtovalidateoath": "A validação das credenciais de dois fatores falhou",
 	"oathauth-disabledoath": "A autenticação de dois fatores foi desativada.",
 	"oathauth-prefs-label": "Autenticação de dois fatores:",
 	"oathauth-step1": "Passo 1: Descarregue um programa de autenticação de dois fatores",
 	"oathauth-step1-test": "Descarregue um programa para autenticação de dois fatores. Tanto pode ser uma aplicação móvel ou de ambiente de trabalho, como [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator] ou [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator], uma extensão de ''browser'' ou um gestor de palavras-passe como [https://1password.com/ 1Password].",
-	"oathauth-step2": "Passo 2: Faça o ''scan'' do código QR",
+	"oathauth-step2": "Passo 3: Digitalizar o código QR",
 	"oathauth-step2-qrcode": "Leia o código QR usando a aplicação ou extensão do ''browser'' que descarregou no passo 1 para a autenticação de dois fatores.",
 	"oathauth-step2alt": "Se não conseguir ler o código QR, introduza a chave secreta e o nome da conta manualmente:",
-	"oathauth-step3": "Passo 3: Anote os códigos de recuperação",
-	"oathauth-step4": "Passo 4: Verificação",
+	"oathauth-step3": "Passo 4: Anotar os códigos de recuperação",
+	"oathauth-step4": "Passo 5: Verificação",
 	"oathauth-entertoken": "Introduza um código do seu dispositivo de autenticação para verificação:",
 	"oathauth-disable-for-user": "Desativar a autenticação de dois fatores para um utilizador",
 	"oathauth-verify-for-user": "Verificar se um utilizador tem a autenticação de dois fatores ativada",
@@ -80,8 +81,6 @@
 	"oathauth-ui-available-modules": "Métodos disponíveis",
 	"oathauth-ui-general-help": "A '''autenticação de vários fatores''' ('''MFA''') é um método de autenticação no qual o acesso é permitido ao utilizador de um computador apenas após este apresentar com êxito duas ou mais provas (ou fatores) a um mecanismo de autenticação: conhecimento (algo que o utilizador, e só ele, sabe), posse (algo que o utilizador, e sé ele, possui) e inerência (algo de que o utilizador, e só ele, está investido). [https://en.wikipedia.org/wiki/Multi-factor_authentication Ler mais]",
 	"oathauth-totp-description": "O algoritmo TOTP (Palavra-Passe de Uso Único com Base no Tempo) é uma extensão do algoritmo HOTP (Palavra-Passe de Uso Único com Base no HMAC), que gera uma palavra-passe de uso único adquirindo a sua unicidade na hora atual.",
-	"oathauth-disable-method-warning-header": "Confirmar a desativação de um método de autenticação",
-	"oathauth-disable-method-warning-button-label": "Confirmar e continuar",
 	"oathauth-disable-method-warning": "Se desativar o método de autenticação de dois fatores $1, deixará de poder usá-lo ao entrar e todos os dados associados a este método de autenticação serão eliminados.",
 	"oathauth-totp-disable-warning": "Deixará de poder usar o dispositivo de autenticação registado nesta conta. Todas os códigos de recuperação associados à conta serão invalidados.",
 	"oathauth-invalidrequest": "Pedido inválido",
@@ -101,5 +100,8 @@
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desativado|Grupos desativados}}:",
 	"oathauth-prefs-disabledgroups-help": "A sua inclusão {{PLURAL:$1|neste grupo|nestes grupos}} está desativada até ter ativado a [[Special:Manage Two-factor authentication|autenticação de dois fatores]].{{GENDER:$2|}}",
 	"oathauth-qrcode-alt": "Código QR que representa a chave secreta.",
-	"oathauth-hint": "Não tem acesso ao seu dispositivo ou aplicação? Pode introduzir neste campo chaves de recuperação (apresentadas quando ativou a A2F)."
+	"oathauth-hint": "Não tem acesso ao seu dispositivo ou aplicação? Pode introduzir neste campo chaves de recuperação (apresentadas quando ativou a A2F).",
+	"oathauth-authenticator-delete-text": "remover",
+	"oathauth-delete-confirm-box": "Digite \"{{int:oathauth-authenticator-delete-text}}\" para continuar",
+	"oathauth-delete-warning-final": "Se remover este método irá desativar completamente a autenticação de dois fatores."
 }

@@ -13,6 +13,7 @@
 			"Qwrop"
 		]
 	},
+	"content-model-scribunto": "Módulo Scribunto",
 	"scribunto-desc": "Estrutura para incorporar linguagens de script em páginas do MediaWiki",
 	"scribunto-line": "na linha $1",
 	"scribunto-module-line": "em $1 na linha $2",

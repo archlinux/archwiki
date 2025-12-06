@@ -45,7 +45,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 		return [
 			'Revision type' => [ 'revision', 0 ],
 			'Log type' => [ 'log', 1 ],
-			'Private log type' => [ 'privatelog', 2 ]
+			'Private log type' => [ 'privatelog', 2 ],
 		];
 	}
 
@@ -60,7 +60,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 
 	public static function provideInvalidTypes() {
 		return [
-			'Invalid string type' => [ 'invalidtype1234' ]
+			'Invalid string type' => [ 'invalidtype1234' ],
 		];
 	}
 
@@ -95,7 +95,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 				'*',
 				[
 					'uachm_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
-					'uachm_reference_id' => 1
+					'uachm_reference_id' => 1,
 				],
 				'MediaWiki\CheckUser\Services\UserAgentClientHintsManager::insertClientHintValues',
 				[],
@@ -127,7 +127,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 		$this->assertArrayEquals(
 			[
 				'revision',
-				1
+				1,
 			],
 			$errors[0]['params'][0],
 			'Fatal error message parameters not as expected.'
@@ -161,7 +161,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 				[ 'uach_id', 'uach_name', 'uach_value' ],
 				[
 					// Condition is: [ 'uach_name' => 'mobile', 'uach_value' => false ]
-					$dbrMock->orExpr( [] )
+					$dbrMock->orExpr( [] ),
 				],
 				'MediaWiki\CheckUser\Services\UserAgentClientHintsManager::selectClientHintMappings',
 				[],
@@ -200,7 +200,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 				[ 'uach_id', 'uach_name', 'uach_value' ],
 				[
 					// Condition is: [ 'uach_name' => 'mobile', 'uach_value' => false ]
-					$dbrMock->orExpr( [] )
+					$dbrMock->orExpr( [] ),
 				],
 				'MediaWiki\CheckUser\Services\UserAgentClientHintsManager::selectClientHintMappings',
 				[],
@@ -217,7 +217,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiUnitTestCase {
 			->with(
 				'cu_useragent_clienthints_map',
 				[
-					[ 'uachm_uach_id' => 2, 'uachm_reference_type' => 0, 'uachm_reference_id' => 1 ]
+					[ 'uachm_uach_id' => 2, 'uachm_reference_type' => 0, 'uachm_reference_id' => 1 ],
 				],
 				'MediaWiki\CheckUser\Services\UserAgentClientHintsManager::insertMappingRows',
 				[ 'IGNORE' ]

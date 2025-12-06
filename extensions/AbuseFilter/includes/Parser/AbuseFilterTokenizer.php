@@ -77,9 +77,6 @@ class AbuseFilterTokenizer {
 	 */
 	private $cache;
 
-	/**
-	 * @param BagOStuff $cache
-	 */
 	public function __construct( BagOStuff $cache ) {
 		$this->cache = $cache;
 	}
@@ -92,7 +89,9 @@ class AbuseFilterTokenizer {
 	 * @internal
 	 */
 	public function getCacheKey( $code ) {
-		return $this->cache->makeGlobalKey( __CLASS__, self::CACHE_VERSION, crc32( $code ) );
+		return $this->cache->makeGlobalKey( 'abusefilter-tokens',
+			__CLASS__, self::CACHE_VERSION, crc32( $code )
+		);
 	}
 
 	/**

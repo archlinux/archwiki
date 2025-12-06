@@ -5,7 +5,6 @@ namespace MediaWiki\Tests\Auth;
 use Closure;
 use DomainException;
 use DummySessionProvider;
-use DynamicPropertyTestHelper;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
@@ -47,13 +46,13 @@ use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Notification\NotificationService;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\SessionInfo;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Session\UserInfo;
 use MediaWiki\Status\Status;
-use MediaWiki\Tests\Session\TestUtils;
 use MediaWiki\User\BotPasswordStore;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
@@ -78,7 +77,6 @@ use TestLogger;
 use TestUser;
 use UnexpectedValueException;
 use Wikimedia\Message\MessageSpecifier;
-use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\ReadOnlyMode;
@@ -120,6 +118,8 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	private UserIdentityLookup $userIdentityLookup;
 	private UserOptionsManager $userOptionsManager;
 	private ObjectCacheFactory $objectCacheFactory;
+	private NotificationService $notificationService;
+	private SessionManager $sessionManager;
 
 	/**
 	 * Registers a mock hook.
@@ -271,6 +271,8 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->userOptionsManager ??= $this->getServiceContainer()->getUserOptionsManager();
 		$this->objectCacheFactory ??= $this->getServiceContainer()->getObjectCacheFactory();
 		$this->logger ??= new TestLogger();
+		$this->notificationService ??= $this->getServiceContainer()->getNotificationService();
+		$this->sessionManager ??= $this->getServiceContainer()->getSessionManager();
 
 		if ( $regen || !$this->config->has( MainConfigNames::AuthManagerConfig ) ) {
 			$this->initializeConfig();
@@ -291,7 +293,9 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			$this->botPasswordStore,
 			$this->userFactory,
 			$this->userIdentityLookup,
-			$this->userOptionsManager
+			$this->userOptionsManager,
+			$this->notificationService,
+			$this->sessionManager
 		);
 		$this->manager->setLogger( $this->logger );
 		$this->managerPriv = TestingAccessWrapper::newFromObject( $this->manager );
@@ -301,7 +305,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 	 * Setup SessionManager with a mock session provider
 	 * @param bool|null $canChangeUser If non-null, canChangeUser will be mocked to return this
 	 * @param array $methods Additional methods to mock
-	 * @return array (MediaWiki\Session\SessionProvider, ScopedCallback)
+	 * @return MediaWiki\Session\SessionProvider
 	 */
 	protected function getMockSessionProvider( $canChangeUser = null, array $methods = [] ) {
 		if ( !isset( $this->config ) ) {
@@ -332,32 +336,38 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			} ],
 		] );
 
-		$manager = new SessionManager( [
-			'config' => $this->config,
-			'logger' => new NullLogger(),
-			'store' => new HashBagOStuff(),
-		] );
+		$manager = new SessionManager(
+			$this->config,
+			new NullLogger(),
+			$this->getServiceContainer()->getCentralIdLookup(),
+			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getObjectFactory(),
+			$this->getServiceContainer()->getProxyLookup(),
+			$this->getServiceContainer()->getUrlUtils(),
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getSessionStore()
+		);
 		TestingAccessWrapper::newFromObject( $manager )->getProvider( (string)$provider );
 
-		$reset = TestUtils::setSessionManagerSingleton( $manager );
+		$this->setService( 'SessionManager', $manager );
 
 		if ( isset( $this->request ) ) {
 			$manager->getSessionForRequest( $this->request );
 		}
 
-		return [ $provider, $reset ];
+		return $provider;
 	}
 
-	public function testCanAuthenticateNow() {
+	public function testCanAuthenticateNow_False() {
 		$this->initializeManager();
-
-		[ $provider, $reset ] = $this->getMockSessionProvider( false );
+		$provider = $this->getMockSessionProvider( false );
 		$this->assertFalse( $this->manager->canAuthenticateNow() );
-		ScopedCallback::consume( $reset );
+	}
 
-		[ $provider, $reset ] = $this->getMockSessionProvider( true );
+	public function testCanAuthenticateNow_True() {
+		$this->initializeManager();
+		$provider = $this->getMockSessionProvider( true );
 		$this->assertTrue( $this->manager->canAuthenticateNow() );
-		ScopedCallback::consume( $reset );
 	}
 
 	public function testNormalizeUsername() {
@@ -400,7 +410,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$provideUser = null;
 		$reauth = $mutableSession ? AuthManager::SEC_REAUTH : AuthManager::SEC_FAIL;
 
-		[ $provider, $reset ] = $this->getMockSessionProvider(
+		$provider = $this->getMockSessionProvider(
 			$mutableSession, [ 'provideSessionInfo' ]
 		);
 		$provider->method( 'provideSessionInfo' )
@@ -540,8 +550,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			);
 			$this->unhook( 'SecuritySensitiveOperationStatus' );
 		}
-
-		ScopedCallback::consume( $reset );
 	}
 
 	public static function provideSecuritySensitiveOperationStatus() {
@@ -804,91 +812,11 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function testForcePrimaryAuthenticationProviders() {
-		$mockA = $this->createMock( AbstractPrimaryAuthenticationProvider::class );
-		$mockB = $this->createMock( AbstractPrimaryAuthenticationProvider::class );
-		$mockB2 = $this->createMock( AbstractPrimaryAuthenticationProvider::class );
-		$mockA->method( 'getUniqueId' )->willReturn( 'A' );
-		$mockB->method( 'getUniqueId' )->willReturn( 'B' );
-		$mockB2->method( 'getUniqueId' )->willReturn( 'B' );
-		$this->primaryauthMocks = [ $mockA ];
-
-		$this->logger = new TestLogger( true );
-
-		// Test without first initializing the configured providers
-		$this->initializeManager();
-		$this->expectDeprecationAndContinue( '/AuthManager::forcePrimaryAuthenticationProviders/' );
-		$this->manager->forcePrimaryAuthenticationProviders( [ $mockB ], 'testing' );
-		$this->assertSame(
-			[ 'B' => $mockB ], $this->managerPriv->getPrimaryAuthenticationProviders()
-		);
-		$this->assertSame( null, $this->managerPriv->getAuthenticationProvider( 'A' ) );
-		$this->assertSame( $mockB, $this->managerPriv->getAuthenticationProvider( 'B' ) );
-		$this->assertSame( [
-			[ LogLevel::WARNING, 'Overriding AuthManager primary authn because testing' ],
-		], $this->logger->getBuffer() );
-		$this->logger->clearBuffer();
-
-		// Test with first initializing the configured providers
-		$this->initializeManager();
-		$this->assertSame( $mockA, $this->managerPriv->getAuthenticationProvider( 'A' ) );
-		$this->assertSame( null, $this->managerPriv->getAuthenticationProvider( 'B' ) );
-		$this->request->getSession()->setSecret( AuthManager::AUTHN_STATE, 'test' );
-		$this->request->getSession()->setSecret( AuthManager::ACCOUNT_CREATION_STATE, 'test' );
-		$this->expectDeprecationAndContinue( '/AuthManager::forcePrimaryAuthenticationProviders/' );
-		$this->manager->forcePrimaryAuthenticationProviders( [ $mockB ], 'testing' );
-		$this->assertSame(
-			[ 'B' => $mockB ], $this->managerPriv->getPrimaryAuthenticationProviders()
-		);
-		$this->assertSame( null, $this->managerPriv->getAuthenticationProvider( 'A' ) );
-		$this->assertSame( $mockB, $this->managerPriv->getAuthenticationProvider( 'B' ) );
-		$this->assertNull( $this->request->getSession()->getSecret( AuthManager::AUTHN_STATE ) );
-		$this->assertNull(
-			$this->request->getSession()->getSecret( AuthManager::ACCOUNT_CREATION_STATE )
-		);
-		$this->assertSame( [
-			[ LogLevel::WARNING, 'Overriding AuthManager primary authn because testing' ],
-			[
-				LogLevel::WARNING,
-				'PrimaryAuthenticationProviders have already been accessed! I hope nothing breaks.'
-			],
-		], $this->logger->getBuffer() );
-		$this->logger->clearBuffer();
-
-		// Test duplicate IDs
-		$this->initializeManager();
-		try {
-			$this->expectDeprecationAndContinue( '/AuthManager::forcePrimaryAuthenticationProviders/' );
-			$this->manager->forcePrimaryAuthenticationProviders( [ $mockB, $mockB2 ], 'testing' );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( RuntimeException $ex ) {
-			$class1 = get_class( $mockB );
-			$class2 = get_class( $mockB2 );
-			$this->assertSame(
-				"Duplicate specifications for id B (classes $class2 and $class1)", $ex->getMessage()
-			);
-		}
-
-		// Wrong classes
-		$mock = $this->getMockForAbstractClass( AuthenticationProvider::class );
-		$mock->method( 'getUniqueId' )->willReturn( 'X' );
-		$class = get_class( $mock );
-		try {
-			$this->manager->forcePrimaryAuthenticationProviders( [ $mock ], 'testing' );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( RuntimeException $ex ) {
-			$this->assertSame(
-				"Expected instance of MediaWiki\\Auth\\AbstractPrimaryAuthenticationProvider, got $class",
-				$ex->getMessage()
-			);
-		}
-	}
-
-	public function testBeginAuthentication() {
+	public function testBeginAuthentication_Immutable() {
 		$this->initializeManager();
 
 		// Immutable session
-		[ $provider, $reset ] = $this->getMockSessionProvider( false );
+		$provider = $this->getMockSessionProvider( false );
 		$this->hook( 'UserLoggedIn', UserLoggedInHook::class, $this->never() );
 		$this->request->getSession()->setSecret( AuthManager::AUTHN_STATE, 'test' );
 		try {
@@ -899,10 +827,10 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		}
 		$this->unhook( 'UserLoggedIn' );
 		$this->assertNull( $this->request->getSession()->getSecret( AuthManager::AUTHN_STATE ) );
-		ScopedCallback::consume( $reset );
-		$this->initializeManager( true );
+	}
 
-		// CreatedAccountAuthenticationRequest
+	public function testBeginAuthentication_CreatedAccountAuthenticationRequest() {
+		$this->initializeManager( true );
 		$user = $this->getTestSysop()->getUser();
 		$reqs = [
 			new CreatedAccountAuthenticationRequest( $user->getId(), $user->getName() )
@@ -1138,18 +1066,29 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 				return is_callable( [ $p, 'expects' ] );
 			}
 		);
+		$shouldInvokePostCalled = array_any(
+			$managerResponses,
+			static function ( $r ) {
+				return $r instanceof AuthenticationResponse &&
+					( $r->status === AuthenticationResponse::PASS ||
+						$r->status === AuthenticationResponse::FAIL );
+			}
+		);
 		foreach ( $providers as $p ) {
-			DynamicPropertyTestHelper::setDynamicProperty( $p, 'postCalled', false );
-			$p->expects( $this->atMost( 1 ) )->method( 'postAuthentication' )
-				->willReturnCallback( function ( $userArg, $response ) use ( $user, $constraint, $p ) {
-					if ( $userArg !== null ) {
-						$this->assertInstanceOf( User::class, $userArg );
-						$this->assertSame( $user->getName(), $userArg->getName() );
-					}
-					$this->assertInstanceOf( AuthenticationResponse::class, $response );
-					$this->assertThat( $response->status, $constraint );
-					DynamicPropertyTestHelper::setDynamicProperty( $p, 'postCalled', $response->status );
-				} );
+			if ( $shouldInvokePostCalled ) {
+				$p->expects( $this->once() )->method( 'postAuthentication' )
+					->willReturnCallback( function ( $userArg, $response ) use ( $user, $constraint, $p ) {
+						if ( $userArg !== null ) {
+							$this->assertInstanceOf( User::class, $userArg );
+							$this->assertSame( $user->getName(), $userArg->getName() );
+						}
+						$this->assertInstanceOf( AuthenticationResponse::class, $response );
+						$this->assertThat( $response->status, $constraint );
+					} );
+			} else {
+				$p->expects( $this->never() )
+					->method( 'postAuthentication' );
+			}
 		}
 
 		$session = $this->request->getSession();
@@ -1218,10 +1157,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			if ( $success || $response->status === AuthenticationResponse::FAIL ) {
 				$this->assertNull( $session->getSecret( AuthManager::AUTHN_STATE ),
 					"Response $i, session state" );
-				foreach ( $providers as $p ) {
-					$this->assertSame( $response->status, DynamicPropertyTestHelper::getDynamicProperty( $p, 'postCalled' ),
-						"Response $i, post-auth callback called" );
-				}
 			} else {
 				$this->assertNotNull( $session->getSecret( AuthManager::AUTHN_STATE ),
 					"Response $i, session state" );
@@ -1234,9 +1169,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 					$this->manager->getAuthenticationRequests( AuthManager::ACTION_LOGIN_CONTINUE ),
 					"Response $i, continuation check"
 				);
-				foreach ( $providers as $p ) {
-					$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $p, 'postCalled' ), "Response $i, post-auth callback not called" );
-				}
 			}
 
 			$state = $session->getSecret( AuthManager::AUTHN_STATE );
@@ -2423,19 +2355,30 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$providers = array_merge(
 			$this->preauthMocks, $this->primaryauthMocks, $this->secondaryauthMocks
 		);
+		$shouldInvokePostCalled = array_any(
+			$managerResponses,
+			static function ( $r ) {
+				return $r instanceof AuthenticationResponse &&
+					( $r->status === AuthenticationResponse::PASS ||
+						$r->status === AuthenticationResponse::FAIL );
+			}
+		);
 		foreach ( $providers as $p ) {
-			DynamicPropertyTestHelper::setDynamicProperty( $p, 'postCalled', false );
-			$p->expects( $this->atMost( 1 ) )->method( 'postAccountCreation' )
-				->willReturnCallback( function ( $user, $creatorArg, $response )
-					use ( $creator, $constraint, $p, $username )
-				{
-					$this->assertInstanceOf( User::class, $user );
-					$this->assertSame( $username, $user->getName() );
-					$this->assertSame( $creator->getName(), $creatorArg->getName() );
-					$this->assertInstanceOf( AuthenticationResponse::class, $response );
-					$this->assertThat( $response->status, $constraint );
-					DynamicPropertyTestHelper::setDynamicProperty( $p, 'postCalled', $response->status );
-				} );
+			if ( $shouldInvokePostCalled ) {
+				$p->expects( $this->once() )->method( 'postAccountCreation' )
+					->willReturnCallback( function ( $user, $creatorArg, $response )
+						use ( $creator, $constraint, $p, $username )
+					{
+						$this->assertInstanceOf( User::class, $user );
+						$this->assertSame( $username, $user->getName() );
+						$this->assertSame( $creator->getName(), $creatorArg->getName() );
+						$this->assertInstanceOf( AuthenticationResponse::class, $response );
+						$this->assertThat( $response->status, $constraint );
+					} );
+			} else {
+				$p->expects( $this->never() )
+					->method( 'postAccountCreation' );
+			}
 		}
 
 		// We're testing with $wgNewUserLog = false, so assert that it worked
@@ -2523,10 +2466,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 					$this->request->getSession()->getSecret( AuthManager::ACCOUNT_CREATION_STATE ),
 					"Response $i, session state"
 				);
-				foreach ( $providers as $p ) {
-					$this->assertSame( $response->status, DynamicPropertyTestHelper::getDynamicProperty( $p, 'postCalled' ),
-						"Response $i, post-auth callback called" );
-				}
 			} else {
 				$this->assertNotNull(
 					$this->request->getSession()->getSecret( AuthManager::ACCOUNT_CREATION_STATE ),
@@ -2541,9 +2480,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 					$this->manager->getAuthenticationRequests( AuthManager::ACTION_CREATE_CONTINUE ),
 					"Response $i, continuation check"
 				);
-				foreach ( $providers as $p ) {
-					$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $p, 'postCalled' ), "Response $i, post-auth callback not called" );
-				}
 			}
 
 			$userIdentity = $this->userIdentityLookup->getUserIdentityByName( $username );
@@ -3481,11 +3417,8 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			return $req;
 		};
 		$cmpReqs = static function ( $a, $b ) {
-			$ret = strcmp( get_class( $a ), get_class( $b ) );
-			if ( !$ret ) {
-				$ret = strcmp( $a->getUniqueId(), $b->getUniqueId() );
-			}
-			return $ret;
+			return ( get_class( $a ) <=> get_class( $b ) )
+				?: ( $a->getUniqueId() <=> $b->getUniqueId() );
 		};
 
 		$good = StatusValue::newGood();
@@ -3683,11 +3616,8 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			return $req;
 		};
 		$cmpReqs = static function ( $a, $b ) {
-			$ret = strcmp( get_class( $a ), get_class( $b ) );
-			if ( !$ret ) {
-				$ret = strcmp( $a->getUniqueId(), $b->getUniqueId() );
-			}
-			return $ret;
+			return ( get_class( $a ) <=> get_class( $b ) )
+				?: ( $a->getUniqueId() <=> $b->getUniqueId() );
 		};
 
 		$primary1 = $this->createMock( AbstractPrimaryAuthenticationProvider::class );
@@ -3880,11 +3810,30 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 0, $session->getUser()->getId() );
 		$this->assertSame( 0, User::newFromName( $username )->getId() );
 
+		// Check that the AuthManagerLoginAuthenticateAudit hook is called with the correct arguments (T390051)
+		$authenticateAuditHookCalled = false;
+		$this->hookContainer->register(
+			'AuthManagerLoginAuthenticateAudit',
+			function ( AuthenticationResponse $response, $actualUser, $actualUsername ) use (
+				&$authenticateAuditHookCalled, $username
+			) {
+				$authenticateAuditHookCalled = true;
+
+				$this->assertSame( AuthenticationResponse::FAIL, $response->status );
+				$this->assertSame( 'authmanager-authn-autocreate-failed', $response->message->getKey() );
+
+				$this->assertSame( $username, $actualUsername );
+				$this->assertSame( $username, $actualUser->getName() );
+			}
+		);
+
 		$this->hook( 'UserLoggedIn', UserLoggedInHook::class, $this->never() );
 		$this->hook( 'LocalUserCreated', LocalUserCreatedHook::class, $this->never() );
 		$ret = $this->manager->beginAuthentication( [], 'http://localhost/' );
 		$this->unhook( 'LocalUserCreated' );
 		$this->unhook( 'UserLoggedIn' );
+		$this->assertTrue( $authenticateAuditHookCalled );
+
 		$this->assertSame( AuthenticationResponse::FAIL, $ret->status );
 		$this->assertSame( 'authmanager-authn-autocreate-failed', $ret->message->getKey() );
 
@@ -4106,16 +4055,28 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			$this->equalTo( AuthenticationResponse::FAIL )
 		);
 		$providers = array_merge( $this->preauthMocks, $this->primaryauthMocks );
+		$shouldInvokePostCalled = array_any(
+			$managerResponses,
+			static function ( $r ) {
+				return $r instanceof AuthenticationResponse &&
+					( $r->status === AuthenticationResponse::PASS ||
+						$r->status === AuthenticationResponse::FAIL );
+			}
+		);
 		foreach ( $providers as $p ) {
-			DynamicPropertyTestHelper::setDynamicProperty( $p, 'postCalled', false );
-			$p->expects( $this->atMost( 1 ) )->method( 'postAccountLink' )
-				->willReturnCallback( function ( $userArg, $response ) use ( $user, $constraint, $p ) {
-					$this->assertInstanceOf( User::class, $userArg );
-					$this->assertSame( $user->getName(), $userArg->getName() );
-					$this->assertInstanceOf( AuthenticationResponse::class, $response );
-					$this->assertThat( $response->status, $constraint );
-					DynamicPropertyTestHelper::setDynamicProperty( $p, 'postCalled', $response->status );
-				} );
+			if ( $shouldInvokePostCalled ) {
+				$p->expects( $this->once() )
+					->method( 'postAccountLink' )
+					->willReturnCallback( function ( $userArg, $response ) use ( $user, $constraint, $p ) {
+						$this->assertInstanceOf( User::class, $userArg );
+						$this->assertSame( $user->getName(), $userArg->getName() );
+						$this->assertInstanceOf( AuthenticationResponse::class, $response );
+						$this->assertThat( $response->status, $constraint );
+					} );
+			} else {
+				$p->expects( $this->never() )
+					->method( 'postAccountLink' );
+			}
 		}
 
 		$first = true;
@@ -4124,7 +4085,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			if ( $response instanceof AuthenticationResponse &&
 				$response->status === AuthenticationResponse::PASS
 			) {
-				$expectLog[] = [ LogLevel::INFO, 'Account linked to {user} by primary' ];
+				$expectLog[] = [ LogLevel::INFO, 'Account linked to {user} by {id}' ];
 			}
 
 			try {
@@ -4155,10 +4116,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			) {
 				$this->assertNull( $this->request->getSession()->getSecret( AuthManager::ACCOUNT_LINK_STATE ),
 					"Response $i, session state" );
-				foreach ( $providers as $p ) {
-					$this->assertSame( $response->status, DynamicPropertyTestHelper::getDynamicProperty( $p, 'postCalled' ),
-						"Response $i, post-auth callback called" );
-				}
 			} else {
 				$this->assertNotNull(
 					$this->request->getSession()->getSecret( AuthManager::ACCOUNT_LINK_STATE ),
@@ -4173,9 +4130,6 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 					$this->manager->getAuthenticationRequests( AuthManager::ACTION_LINK_CONTINUE ),
 					"Response $i, continuation check"
 				);
-				foreach ( $providers as $p ) {
-					$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $p, 'postCalled' ), "Response $i, post-auth callback not called" );
-				}
 			}
 
 			$first = false;
@@ -4423,6 +4377,7 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 		$this->initializeManager();
 		$this->logger->setCollectContext( true );
 		$this->logger->setCollect( true );
+		$initialToken = $tempAccount->getToken();
 
 		$usernameAuthRequest = new UsernameAuthenticationRequest();
 		$usernameAuthRequest->username = ucfirst( wfRandomString() );
@@ -4443,6 +4398,68 @@ class AuthManagerTest extends MediaWikiIntegrationTestCase {
 			// Check the context variables on the last message passed to the logger
 			$this->logger->getBuffer()[0][2]
 		);
+		$this->assertNotEquals( $initialToken, $tempAccount->getToken() );
 		$this->assertSame( null, $this->request->getSession()->get( 'TempUser:name' ) );
+	}
+
+	public function testTemporaryAccountLoginToNamedAccount() {
+		$this->overrideConfigValue( MainConfigNames::SessionProviders, [ [ 'class' => DummySessionProvider::class ] ] );
+		$tempAccount = $this->getServiceContainer()->getTempUserCreator()->create( null, new FauxRequest() )->getUser();
+		$username = self::usernameForCreation();
+		$req = $this->createMock( AuthenticationRequest::class );
+
+		$mock = $this->createMock( AbstractPrimaryAuthenticationProvider::class );
+		$mock->method( 'getUniqueId' )->willReturn( 'primary' );
+		$mock->method( 'beginPrimaryAuthentication' )
+			->willReturn( AuthenticationResponse::newPass( $username ) );
+		$mock->method( 'accountCreationType' )
+			->willReturn( PrimaryAuthenticationProvider::TYPE_CREATE );
+		$mock->method( 'testUserExists' )->willReturn( true );
+		$mock->method( 'testUserForCreation' )
+			->willReturn( StatusValue::newGood() );
+
+		$mock2 = $this->createMock( AbstractSecondaryAuthenticationProvider::class );
+		$mock2->method( 'getUniqueId' )
+			->willReturn( 'secondary' );
+		$mock2->method( 'beginSecondaryAuthentication' )
+			->willReturn( AuthenticationResponse::newUI( [ $req ], $this->message( '...' ) ) );
+		$mock2->method( 'continueSecondaryAuthentication' )
+			->willReturn( AuthenticationResponse::newAbstain() );
+		$mock2->method( 'testUserForCreation' )
+			->willReturn( StatusValue::newGood() );
+
+		$this->primaryauthMocks = [ $mock ];
+		$this->secondaryauthMocks = [ $mock2 ];
+		$this->initializeManager();
+		$this->manager->setLogger( new NullLogger() );
+		$session = $this->request->getSession();
+		$session->setUser( $tempAccount );
+		$this->manager->setRequestContextUserFromSessionUser();
+		$session->set( 'TempUser:name', $tempAccount->getName() );
+		$this->assertTrue( $this->request->getSession()->getUser()->isTemp() );
+		$this->assertEquals( $tempAccount->getName(), $session->get( 'TempUser:name' ) );
+		$this->assertTrue( RequestContext::getMain()->getUser()->isTemp() );
+
+		$callback = $this->callback( static function ( $user ) use ( $username ) {
+			return $user->getName() === $username;
+		} );
+
+		$this->hook( 'UserLoggedIn', UserLoggedInHook::class, $this->never() );
+
+		$ret = $this->manager->beginAuthentication( [], 'http://localhost/' );
+		$this->unhook( 'UserLoggedIn' );
+		$this->assertSame( AuthenticationResponse::UI, $ret->status );
+
+		$this->hook( 'UserLoggedIn', UserLoggedInHook::class, $this->once() )
+			->with( $callback );
+		$ret = $this->manager->continueAuthentication( [] );
+		$this->unhook( 'UserLoggedIn' );
+		$this->assertSame( AuthenticationResponse::PASS, $ret->status );
+		$this->assertSame( $username, $ret->username );
+		$session = $this->manager->getRequest()->getSession();
+		$this->assertFalse( $session->getUser()->isTemp() );
+		$this->assertTrue( $session->getUser()->isNamed() );
+		$this->assertEquals( $username, $session->getUser()->getName() );
+		$this->assertNull( $session->get( 'TempUser:name' ) );
 	}
 }

@@ -9,6 +9,8 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\Source;
+use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
@@ -19,6 +21,7 @@ use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
 class TokenizerUtils {
@@ -71,8 +74,8 @@ class TokenizerUtils {
 
 	/**
 	 * FIXME: document
-	 * @param mixed $c
-	 * @return mixed
+	 * @param array $c
+	 * @return non-empty-string|list<non-empty-string|Token>
 	 */
 	public static function flattenString( $c ) {
 		$out = self::flattenStringlist( $c );
@@ -85,8 +88,10 @@ class TokenizerUtils {
 
 	/**
 	 * FIXME: document
+	 *
 	 * @param array $c
-	 * @return array
+	 *
+	 * @return list<non-empty-string|Token>
 	 */
 	public static function flattenStringlist( array $c ): array {
 		$out = [];
@@ -113,13 +118,15 @@ class TokenizerUtils {
 	}
 
 	/**
-	 * @param mixed $value
+	 * @template T
+	 * @param T $value
 	 * @param int $start start of TSR range
 	 * @param int $end end of TSR range
-	 * @return array
+	 * @param ?Source $source The Source for the TSR range
+	 * @return array{value: T, srcOffsets: SourceRange}
 	 */
-	public static function getAttrVal( $value, int $start, int $end ): array {
-		return [ 'value' => $value, 'srcOffsets' => new SourceRange( $start, $end ) ];
+	public static function getAttrVal( $value, int $start, int $end, ?Source $source ): array {
+		return [ 'value' => $value, 'srcOffsets' => new SourceRange( $start, $end, $source ) ];
 	}
 
 	/**
@@ -177,11 +184,9 @@ class TokenizerUtils {
 
 		$a = [];
 		if ( $attrInfo ) {
-			if ( $tagName !== 'caption' ) {
-				$dp->getTemp()->attrSrc = substr(
-					$pegSource, $tsr->start, $tsr->end - $tsr->start - strlen( $attrInfo[2] )
-				);
-			}
+			$dp->getTemp()->attrSrc = substr(
+				$pegSource, $tsr->start, $tsr->end - $tsr->start - strlen( $attrInfo[2] )
+			);
 			$a = $attrInfo[0];
 			if ( !$a ) {
 				$dp->startTagSrc = $wtChar . $attrInfo[1];
@@ -192,17 +197,20 @@ class TokenizerUtils {
 				// 2. Not "|"
 				$dp->attrSepSrc = $attrInfo[2];
 			}
-		} elseif ( $tagName !== 'caption' ) {
+		} else {
 			$dp->getTemp()->attrSrc = '';
 		}
 
-		// We consider 1 the start because the table_data_tag and table_heading_tag
-		// rules don't include the pipe so it isn't accounted for in the tsr passed
+		// We consider 1 (or 5) the start because the table_data_tag and table_heading_tag
+		// rules don't include the pipe (or `{{!}}`) so it isn't accounted for in the tsr passed
 		// to this function.  The rules making use of those rules do some extra
 		// bookkeeping to adjust for that on the start token returned from this
 		// function.  Of course, table_caption_tag doesn't follow that same pattern
 		// but that isn't a concern here.
-		if ( $tagName !== 'caption' && $tsr->start === 1 ) {
+		$atSrcStart = preg_match(
+			'/^\s*([|!]|\{\{!\}\})$/', substr( $pegSource, 0, $tsr->start )
+		);
+		if ( $tagName !== 'caption' && $atSrcStart ) {
 			$dp->setTempFlag( TempData::AT_SRC_START );
 		}
 
@@ -211,7 +219,7 @@ class TokenizerUtils {
 
 		if ( $addEndTag ) {
 			$dataParsoid = new DataParsoid;
-			$dataParsoid->tsr = new SourceRange( $endPos, $endPos );
+			$dataParsoid->tsr = new SourceRange( $endPos, $endPos, $tsr->source );
 			$tokens[] = new EndTagTk( $tagName, [], $dataParsoid );
 		} else {
 			// We rely on our tree builder to close the table cell (td/th) as needed.
@@ -243,7 +251,6 @@ class TokenizerUtils {
 	public static function buildXMLTag( string $name, string $lcName, array $attribs, $endTag,
 		bool $selfClose, SourceRange $tsr
 	): Token {
-		$tok = null;
 		$da = new DataParsoid;
 		$da->tsr = $tsr;
 		$da->stx = 'html';
@@ -285,7 +292,8 @@ class TokenizerUtils {
 				if ( $stops['arrow'] && $c2 === '>' ) {
 					return true;
 				}
-				if ( $stops['equal'] ) {
+				$htmlOrEmpty = ( $stops['tagType'] === 'html' || $stops['tagType'] === '' );
+				if ( $stops['equal'] && $htmlOrEmpty ) {
 					return true;
 				}
 				if ( $stops['h'] ) {
@@ -305,28 +313,33 @@ class TokenizerUtils {
 				return false;
 
 			case '|':
-				return !$stops['annOrExtTag'] && (
+				$htmlOrEmpty = ( $stops['tagType'] === 'html' || $stops['tagType'] === '' );
+				return $htmlOrEmpty && (
 					$stops['templateArg']
 					|| $stops['tableCellArg']
 					|| $stops['linkdesc']
 					|| ( $stops['table']
 						&& $pos < strlen( $input ) - 1
-						&& preg_match( '/[}|]/', $input[$pos + 1] ) )
+						&& preg_match( '/[}|]/', $c2 ) )
+					|| ( $stops['table']
+						&& substr( $input, $pos, 6 ) === '|{{!}}' )
 				);
 
 			case '!':
 				return $stops['th']
-					&& !$stops['intemplate']
+					&& $stops['preproc'] !== '}}'
+					&& !$stops['linkdesc']
 					&& $c2 === '!';
 
 			case '{':
 				// {{!}} pipe templates..
 				// FIXME: Presumably these should mix with and match | above.
-				// phpcs:ignore Squiz.WhiteSpace.LanguageConstructSpacing.IncorrectSingle
 				return ( $stops['tableCellArg']
 						&& substr( $input, $pos, 5 ) === '{{!}}' )
 					|| ( $stops['table']
-						&& substr( $input, $pos, 10 ) === '{{!}}{{!}}' );
+						&& substr( $input, $pos, 10 ) === '{{!}}{{!}}' )
+					|| ( $stops['table']
+						&& substr( $input, $pos, 6 ) === '{{!}}|' );
 
 			case '}':
 				$preproc = $stops['preproc'];
@@ -336,9 +349,11 @@ class TokenizerUtils {
 			case ':':
 				return $stops['colon']
 					&& !$stops['extlink']
-					&& !$stops['intemplate']
 					&& !$stops['linkdesc']
-					&& !( $stops['preproc'] === '}-' );
+					// ':' inside -{ .. }- or {{ .. }} should
+					// not trigger the colon break
+					&& $stops['preproc'] !== '}-'
+					&& $stops['preproc'] !== '}}';
 
 			case ';':
 				return $stops['semicolon'];
@@ -356,7 +371,7 @@ class TokenizerUtils {
 				// It eliminates a substr on the string and eliminates
 				// a potential perf problem since "\n" and the inline_breaks
 				// test is common during tokenization.
-				if ( !$stops['table'] ) {
+				if ( !$stops['table'] || $stops['linkdesc'] ) {
 					return false;
 				}
 
@@ -402,8 +417,9 @@ class TokenizerUtils {
 
 	/**
 	 * Pop off the end comments, if any.
+	 *
 	 * @param array &$attrs
-	 * @return array|null
+	 * @return ?array{buf: array, commentStartPos: int}
 	 */
 	public static function popComments( array &$attrs ): ?array {
 		$buf = [];
@@ -454,9 +470,9 @@ class TokenizerUtils {
 
 	/**
 	 * @param Env $env
-	 * @param mixed $token
+	 * @param Token|string $token
 	 */
-	public static function enforceParserResourceLimits( Env $env, $token ) {
+	public static function enforceParserResourceLimits( Env $env, $token ): void {
 		if ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) {
 			$resource = null;
 			switch ( $token->getName() ) {
@@ -505,4 +521,38 @@ class TokenizerUtils {
 		self::$inclAnnRegExp = null;
 	}
 
+	/**
+	 * Expands a parsoid fragment marker to a token array
+	 */
+	public static function parsoidFragmentMarkerToTokens(
+		Env $env, Frame $frame, string $marker, SourceRange $tsr
+	): array {
+		// See PipelineUtils::pFragmentToParsoidFragmentMarkers()
+		// This is an atomic DOM subtree/forest, and so we're going
+		// to process it all the way to DOM.  Contrast with our
+		// handling of a PFragment return value from a parser
+		// function in TemplateHandler, which is processed to tokens only.
+		$pFragment = $env->getPFragment( $marker );
+		$domFragment = $pFragment->asDom(
+			new ParsoidExtensionAPI(
+				$env, [
+					'wt2html' => [
+						'frame' => $frame,
+						'parseOpts' => [
+							// This fragment comes from a template and it is important to set
+							// the 'inTemplate' parse option for it.
+							'inTemplate' => true,
+							// There might be transclusions within this fragment and we want
+							// to expand them. Ex: {{1x|<ref>{{my-tpl}}foo</ref>}}
+							'expandTemplates' => true
+						]
+					]
+				]
+			)
+		);
+		$dp = new DataParsoid;
+		$dp->tsr = $tsr;
+		$token = new SelfclosingTagTk( 'template', [], $dp );
+		return PipelineUtils::tunnelDOMThroughTokens( $env, $token, $domFragment, [] );
+	}
 }

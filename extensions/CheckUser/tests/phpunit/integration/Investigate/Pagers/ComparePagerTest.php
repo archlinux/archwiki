@@ -74,7 +74,7 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				// The $name argument to ::formatValue
 				'activity',
 				// The expected formatted value
-				'5 (april) 2024 - 6 (april) 2024'
+				'5 (april) 2024 - 6 (april) 2024',
 			],
 			'user agent is not null' => [ [ 'agent' => 'test' ], 'agent', 'test' ],
 			'user agent is null' => [ [ 'agent' => null ], 'agent', '' ],
@@ -295,11 +295,11 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 		$userIdentityLookup->method( 'getUserIdentityByName' )
 			->willReturnMap(
 				[
-					[ 'User1', 0, $user, ],
-					[ 'User2', 0, $user2, ],
-					[ 'InvalidUser', 0, $user3, ],
-					[ '', 0, $user3, ],
-					[ '1.2.3.9/120', 0, $user3, ]
+					[ 'User1', 0, $user ],
+					[ 'User2', 0, $user2 ],
+					[ 'InvalidUser', 0, $user3 ],
+					[ '', 0, $user3 ],
+					[ '1.2.3.9/120', 0, $user3 ],
 				]
 			);
 
@@ -311,7 +311,8 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 			),
 			$services->getDBLoadBalancerFactory(),
 			$userIdentityLookup,
-			$services->get( 'CheckUserLookupUtils' )
+			$services->get( 'CheckUserLookupUtils' ),
+			$services->getTempUserConfig()
 		);
 
 		$durationManager = $this->createMock( DurationManager::class );

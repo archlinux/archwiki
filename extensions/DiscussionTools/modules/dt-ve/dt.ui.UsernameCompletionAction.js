@@ -136,7 +136,7 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 				displayNames: []
 			} ) );
 
-			this.remoteUsers.push.apply( this.remoteUsers, suggestions );
+			this.remoteUsers.push( ...suggestions );
 			this.remoteUsers.sort( sortAuthors );
 
 			this.searchedPrefixes[ input ] = true;

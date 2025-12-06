@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -38,6 +24,7 @@ use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\Subquery;
 
 /**
  * Query module to enumerate all deleted revisions.
@@ -151,6 +138,33 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			] );
 		}
 
+		if ( $fld_sha1 ) {
+			$pairExpr = $db->buildGroupConcat(
+				$db->buildConcat( [ 'sr.role_name', $db->addQuotes( ':' ), 'c.content_sha1' ] ),
+				','
+			);
+			$sha1Subquery = $db->newSelectQueryBuilder()
+				->select( [
+					'ar_rev_id',
+					'ar_deleted',
+					'ar_slot_pairs' => $pairExpr,
+				] )
+				->from( 'archive' )
+				->join( 'slots', 's', [ 'ar_rev_id = s.slot_revision_id' ] )
+				->join( 'content', 'c', [ 's.slot_content_id = c.content_id' ] )
+				->join( 'slot_roles', 'sr', [ 's.slot_role_id = sr.role_id' ] )
+				->groupBy( [ 'ar_rev_id', 'ar_deleted' ] )
+				->caller( __METHOD__ )
+				->getSQL();
+
+			$this->addTables( [ 'arsha1' => new Subquery( $sha1Subquery ) ] );
+			$this->addFields( [
+				'ar_deleted' => 'arsha1.ar_deleted',
+				'ar_slot_pairs' => 'arsha1.ar_slot_pairs'
+			] );
+			$this->addJoinConds( [ 'arsha1' => [ 'LEFT JOIN', [ 'ar_rev_id = arsha1.ar_rev_id' ] ] ] );
+		}
+
 		if ( $params['tag'] !== null ) {
 			$this->addTables( 'change_tag' );
 			$this->addJoinConds(
@@ -158,7 +172,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			);
 			try {
 				$this->addWhereFld( 'ct_tag_id', $this->changeTagDefStore->getId( $params['tag'] ) );
-			} catch ( NameTableAccessException $exception ) {
+			} catch ( NameTableAccessException ) {
 				// Return nothing.
 				$this->addWhere( '1=0' );
 			}
@@ -385,10 +399,29 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 					RevisionRecord::DELETED_TEXT,
 					$user
 				) ) {
-					if ( $row->ar_sha1 != '' ) {
-						$rev['sha1'] = \Wikimedia\base_convert( $row->ar_sha1, 36, 16, 40 );
-					} else {
-						$rev['sha1'] = '';
+					if ( $row->ar_slot_pairs !== null ) {
+						$combinedBase36 = '';
+						if ( $row->ar_slot_pairs !== '' ) {
+							$items = explode( ',', $row->ar_slot_pairs );
+							$slotHashes = [];
+							foreach ( $items as $item ) {
+								$parts = explode( ':', $item );
+								$slotHashes[$parts[0]] = $parts[1];
+							}
+							ksort( $slotHashes );
+
+							$accu = null;
+							foreach ( $slotHashes as $slotHash ) {
+								$accu = $accu === null
+									? $slotHash
+									: SlotRecord::base36Sha1( $accu . $slotHash );
+							}
+							$combinedBase36 = $accu ?? SlotRecord::base36Sha1( '' );
+						}
+
+						$rev['sha1'] = $combinedBase36 !== ''
+							? \Wikimedia\base_convert( $combinedBase36, 36, 16, 40 )
+							: '';
 					}
 				}
 			}
@@ -454,10 +487,12 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		$result->addIndexedTagName( [ 'query', $this->getModuleName() ], 'page' );
 	}
 
+	/** @inheritDoc */
 	public function isDeprecated() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$smallLimit = $this->getMain()->canApiHighLimits() ? ApiBase::LIMIT_SML2 : ApiBase::LIMIT_SML1;
 		return [
@@ -547,6 +582,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage();
 		$talkTitle = $title->getTalkPageIfDefined();
@@ -572,6 +608,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Deletedrevs';
 	}

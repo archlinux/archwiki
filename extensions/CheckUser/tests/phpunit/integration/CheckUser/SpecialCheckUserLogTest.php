@@ -4,7 +4,9 @@ namespace MediaWiki\CheckUser\Tests\Integration\CheckUser;
 
 use MediaWiki\CheckUser\CheckUser\SpecialCheckUserLog;
 use MediaWiki\CheckUser\Services\CheckUserLogService;
+use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\User;
@@ -25,6 +27,8 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserLogPager
  */
 class SpecialCheckUserLogTest extends SpecialPageTestBase {
+
+	use SuggestedInvestigationsTestTrait;
 
 	private static User $testCheckUser;
 	private static User $blockedCheckUser;
@@ -88,6 +92,11 @@ class SpecialCheckUserLogTest extends SpecialPageTestBase {
 			'No user groups' => [ '', false ],
 			'checkuser-log right only' => [ 'checkuser-log', true ],
 		];
+	}
+
+	public function testLoadSpecialPageWhenMissingRequiredRight() {
+		$this->expectException( PermissionsError::class );
+		$this->executeSpecialPage();
 	}
 
 	/**
@@ -205,6 +214,55 @@ class SpecialCheckUserLogTest extends SpecialPageTestBase {
 		[ $html ] = $this->executeSpecialPage( '', $request, null, $this->getTestCheckUser(), true );
 		// Verify that one log entry has the highlight class
 		$this->assertStringContainsString( 'mw-checkuser-log-highlight-entry', $html );
+	}
+
+	/** @dataProvider provideLinkToSuggestedInvestigationsPresent */
+	public function testLinkToSuggestedInvestigationsPresent(
+		bool $enabled, bool $hidden, bool $linkExpected
+	) {
+		if ( $enabled ) {
+			$this->enableSuggestedInvestigations();
+		} else {
+			$this->disableSuggestedInvestigations();
+		}
+		if ( $hidden ) {
+			$this->hideSuggestedInvestigations();
+		} else {
+			$this->unhideSuggestedInvestigations();
+		}
+
+		[ $html ] = $this->executeSpecialPage( '', new FauxRequest(), null, $this->getTestCheckUser(), true );
+
+		if ( $linkExpected ) {
+			$this->assertStringContainsString( '(checkuser-show-suggestedinvestigations', $html );
+		} else {
+			$this->assertStringNotContainsString( '(checkuser-show-suggestedinvestigations', $html );
+		}
+	}
+
+	public static function provideLinkToSuggestedInvestigationsPresent() {
+		return [
+			'Feature disabled, not hidden' => [
+				'enabled' => false,
+				'hidden' => false,
+				'linkExpected' => false,
+			],
+			'Feature enabled, not hidden' => [
+				'enabled' => true,
+				'hidden' => false,
+				'linkExpected' => true,
+			],
+			'Feature disabled, hidden' => [
+				'enabled' => false,
+				'hidden' => true,
+				'linkExpected' => false,
+			],
+			'Feature enabled, hidden' => [
+				'enabled' => true,
+				'hidden' => true,
+				'linkExpected' => false,
+			],
+		];
 	}
 
 	public function addDBDataOnce() {

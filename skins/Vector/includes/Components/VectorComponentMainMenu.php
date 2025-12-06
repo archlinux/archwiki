@@ -11,8 +11,6 @@ use MessageLocalizer;
  * VectorComponentMainMenu component
  */
 class VectorComponentMainMenu implements VectorComponent {
-	/** @var VectorComponent|null */
-	private $optOut;
 	/** @var array */
 	private $sidebarData;
 	/** @var array */
@@ -53,17 +51,12 @@ class VectorComponentMainMenu implements VectorComponent {
 			self::ID,
 			'main-menu-pinned'
 		);
-
-		if ( $user->isRegistered() ) {
-			$this->optOut = new VectorComponentMainMenuActionOptOut( $skin );
-		}
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getTemplateData(): array {
-		$action = $this->optOut;
 		$pinnableHeader = $this->pinnableHeader;
 
 		$portletsRest = [];
@@ -79,7 +72,6 @@ class VectorComponentMainMenu implements VectorComponent {
 		return $pinnableElement->getTemplateData() + $pinnableContainer->getTemplateData() + [
 			'data-portlets-first' => $firstPortlet->getTemplateData(),
 			'array-portlets-rest' => $portletsRest,
-			'data-main-menu-action' => $action ? $action->getTemplateData() : null,
 			'data-pinnable-header' => $pinnableHeader ? $pinnableHeader->getTemplateData() : null,
 			'data-languages' => $languageMenu->getTemplateData(),
 		];

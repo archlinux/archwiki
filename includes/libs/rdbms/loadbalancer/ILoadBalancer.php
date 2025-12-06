@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms;
@@ -270,16 +256,6 @@ interface ILoadBalancer {
 	 * @throws DBError If no DB handle could be obtained and CONN_SILENCE_ERRORS is not set
 	 */
 	public function getServerConnection( $i, $domain, $flags = 0 );
-
-	/**
-	 * @deprecated since 1.39, use ILoadBalancer::getConnection() instead.
-	 * @param int $i Specific or virtual (DB_PRIMARY/DB_REPLICA) server index
-	 * @param string[]|string $groups Query group(s) in preference order; [] for the default group
-	 * @param string|false $domain DB domain ID or false for the local domain
-	 * @param int $flags Bitfield of CONN_* class constants (e.g. CONN_TRX_AUTOCOMMIT)
-	 * @return DBConnRef
-	 */
-	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef;
 
 	/**
 	 * @internal Only to be used by DBConnRef

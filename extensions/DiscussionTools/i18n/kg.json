@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"BOKOBA VEROLY",
 			"Cgmbo",
-			"Woytecr",
-			"BOKOBA VEROLY"
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Bisadilu ya kusolula",
@@ -31,7 +31,6 @@
 	"discussiontools-newtopic-placeholder-title": "Ntu-diambu",
 	"discussiontools-notification-subscribed-new-comment-header": "$1{{GENDER:$2|}} pesaka mvutu na “<strong>$4</strong>”.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Mvutu mosi ya mpa|$1 bamvutu ya mpa|100=99+ bamvutu ya mpa}} na \"<strong>$3</strong>\".",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Tala komantere",
 	"discussiontools-postedit-confirmation-published": "Bo me basisa komantere na nge.",
 	"discussiontools-postedit-confirmation-topicadded": "Bo me yika disolo na nge.",
@@ -77,16 +76,11 @@
 	"discussiontools-replywidget-terms-click": "Kana nge bweta na \"$1\", nge me ndima kusadila mambu ya kuzitisa na ntwala ya kusadila wiki yai.",
 	"discussiontools-replywidget-transcluded": "Bo ta buma komantere na nge na [[$1]].",
 	"discussiontools-signature-prefix": "&#32;",
-	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|person|people}} in discussion",
-	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comment|comments}}{{PLURAL:$1|}}",
-	"discussiontools-topicheader-latestcomment": "Komantere ya nsuka: $1",
 	"discussiontools-topicsubscription-action-unsubscribe-button": "Katula zina",
 	"discussiontools-topicsubscription-action-unsubscribe-prompt": "Katula zina na disolo yai?",
 	"discussiontools-topicsubscription-button-subscribe": "sonikisa zina",
-	"discussiontools-topicsubscription-button-subscribe-label": "Subscribe",
 	"discussiontools-topicsubscription-button-subscribe-tooltip": "Sonikisa zina sambu na kubaka bansangu ya me tala bakomantere ya mpa.",
 	"discussiontools-topicsubscription-button-unsubscribe": "katula zina",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Kukonda kusonika",
 	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "Katula zina sambu na kubaka diaka ve bansangu.",
 	"discussiontools-topicsubscription-error-not-found-body": "Beto me mona ve zina na nge sonikisaka na URL yai.",
 	"discussiontools-topicsubscription-error-not-found-title": "Beto me mona ve zina ya sonikisaka",

@@ -19,7 +19,9 @@ class SpecialTemplateDiscovery extends SpecialPage {
 	public function execute( $par ) {
 		$output = $this->getOutput();
 		$this->setHeaders();
-		if ( $this->getConfig()->get( 'TemplateDataEnableDiscovery' ) ) {
+		if ( $this->getConfig()->get( 'TemplateDataEnableDiscovery' )
+			|| $output->getRequest()->getBool( 'enablediscovery' )
+		) {
 			$output->addHTML(
 				Html::element( 'div', [ 'id' => 'ext-TemplateData-SpecialTemplateSearch-widget' ] )
 			);

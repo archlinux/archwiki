@@ -28,7 +28,6 @@
 	"gadgetusage-usercount": "Número de usuários",
 	"gadgetusage-noresults": "Nenhum gadget encontrado.",
 	"gadgetusage-intro": "Esta tabela indica o número de usuários que habilitaram cada gadget nesta wiki. Um usuário ativo é contado como alguém que fez uma edição {{PLURAL:$1|no último dia|nos últimos $1 dias}}. Esta lista exclui as estatísticas de gadgets habilitadas para todos por padrão e podem incluir gadgets que não estão mais disponíveis.",
-	"gadgetusage-intro-noactive": "Esta tabela indica o número de usuários que ativaram cada gadget nesta wiki. Esta lista exclui estatísticas para gadgets ativados para todos por padrão e pode incluir gadgets que não estão mais disponíveis.",
 	"gadgetusage-activeusers": "Usuários ativos",
 	"gadgetusage-default": "Padrão",
 	"gadgets-title": "Gadgets",

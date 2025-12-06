@@ -33,6 +33,7 @@
 			"Megakott",
 			"Merrahtar",
 			"Meshkov.a",
+			"MidnightLG",
 			"Movses",
 			"NBS",
 			"Niklem",
@@ -60,8 +61,7 @@
 			"Синкретик",
 			"Туллук",
 			"Умар",
-			"Ядерный Трамвай",
-			"MidnightLG"
+			"Ядерный Трамвай"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -303,6 +303,7 @@
 	"visualeditor-includes-includeonly-description": "Когда содержание этой страницы используется на другой странице, то следующее дополнительное содержание будет внесено сюда:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Узнать больше о частичном включении]",
 	"visualeditor-languages-tool": "Языки",
+	"visualeditor-linkcontext-uneditable": "К сожалению, в настоящее время эта ссылка может быть изменена только в режиме правки кода.",
 	"visualeditor-linkinspector-button-link-external": "Внешний веб-сайт",
 	"visualeditor-linkinspector-button-link-internal": "Поиск внутренних страниц",
 	"visualeditor-linkinspector-convert-link-isbn": "Превратить в ISBN-ссылку",
@@ -407,7 +408,7 @@
 	"visualeditor-special-characters-group-other": "Часто используемые",
 	"visualeditor-templatesused-tool": "Использованные шаблоны",
 	"visualeditor-title-error": "Ошибочное название.",
-	"visualeditor-toload": "Редактор сейчас загрузится. Если через несколько секунд вы будете по-прежнему видеть это сообщение, пожалуйста, [$1 перезагрузите страницу].",
+	"visualeditor-toload": "Редактор сейчас загрузится. Если через несколько секунд вы будете по-прежнему видеть это сообщение, [$1 обновите страницу].",
 	"visualeditor-tooltip-non-breaking-space": "Неразрывный пробел",
 	"visualeditor-version-label": "Версия",
 	"visualeditor-wikitext-progress": "Преобразование вики-текста",

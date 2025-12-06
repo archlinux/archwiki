@@ -2,26 +2,13 @@
 /**
  * Copyright © 2006 Rob Church
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\QueryPage;
@@ -50,22 +37,27 @@ class SpecialUnusedTemplates extends QueryPage {
 		$this->linksMigration = $linksMigration;
 	}
 
+	/** @inheritDoc */
 	public function isExpensive() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isSyndicated() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function sortDescending() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getOrderFields() {
 		return [ 'title' ];
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$queryInfo = $this->linksMigration->getQueryInfo(
 			'templatelinks',
@@ -99,6 +91,7 @@ class SpecialUnusedTemplates extends QueryPage {
 		];
 	}
 
+	/** @inheritDoc */
 	public function preprocessResults( $db, $res ) {
 		$this->executeLBFromResultWrapper( $res );
 	}
@@ -120,12 +113,22 @@ class SpecialUnusedTemplates extends QueryPage {
 		return $this->getLanguage()->specialList( $pageLink, $wlhLink );
 	}
 
+	/** @inheritDoc */
 	protected function getPageHeader() {
 		return $this->msg( 'unusedtemplatestext' )->parseAsBlock();
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'maintenance';
+	}
+
+	/** @inheritDoc */
+	protected function getRecacheDB() {
+		return $this->getDatabaseProvider()->getReplicaDatabase(
+			TemplateLinksTable::VIRTUAL_DOMAIN,
+			'vslow'
+		);
 	}
 }
 

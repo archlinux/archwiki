@@ -41,7 +41,7 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$notif = Notification::newFromRow( (object)$row, [
-			TargetPage::newFromRow( (object)$this->mockTargetPageRow() )
+			TargetPage::newFromRow( (object)$this->mockTargetPageRow() ),
 		] );
 		$this->assertNotEmpty( $notif->getTargetPages() );
 		foreach ( $notif->getTargetPages() as $targetPage ) {
@@ -102,7 +102,7 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 	protected function mockTargetPageRow(): array {
 		return [
 			'etp_page' => 2,
-			'etp_event' => 1
+			'etp_event' => 1,
 		];
 	}
 

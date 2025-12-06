@@ -32,44 +32,26 @@ class Specs {
 		$this->group = $group;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getRules(): string {
 		return $this->rules;
 	}
 
-	/**
-	 * @param string $rules
-	 */
 	public function setRules( string $rules ): void {
 		$this->rules = $rules;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getComments(): string {
 		return $this->comments;
 	}
 
-	/**
-	 * @param string $comments
-	 */
 	public function setComments( string $comments ): void {
 		$this->comments = $comments;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getName(): string {
 		return $this->name;
 	}
 
-	/**
-	 * @param string $name
-	 */
 	public function setName( string $name ): void {
 		$this->name = $name;
 	}
@@ -88,16 +70,10 @@ class Specs {
 		$this->actionsNames = $actionsNames;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getGroup(): string {
 		return $this->group;
 	}
 
-	/**
-	 * @param string $group
-	 */
 	public function setGroup( string $group ): void {
 		$this->group = $group;
 	}

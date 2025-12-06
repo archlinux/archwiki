@@ -1,0 +1,339 @@
+!! options
+version=2
+parsoid-compatible=html2wt
+!! end
+
+# VE does emit output that's not for Paroid round-tripping but just for converting back to Wikitext
+# These tests should cover cases regarding that
+
+# See T396017 and T400038
+!! test
+VE: List defined references convert back to valid Wikitext
+!! wikitext
+<ref>Default</ref>
+<ref name="ldrOne" />
+<ref name="ldrTwo" />
+<references>
+<ref name="ldrOne">FooNew</ref>
+<ref name="ldrTwo">Bar</ref>
+</references>
+!! html/parsoid
+<p><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;}}"></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrOne&quot;}}"></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrTwo&quot;}}"></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrOne&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrOne-2&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;FooNew&amp;quot;}}\&quot; class=\&quot;mw-ref reference\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrTwo&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrTwo-3&amp;quot;}}\&quot;&gt;&lt;/sup&gt;\n&quot;}}">
+<ol>
+	<li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-1">Default</span></li>
+	<li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrOne-2">FooNew</span></li>
+	<li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrTwo-3">Bar</span></li>
+</ol></div>
+!! end
+
+# See T396017
+!! test
+VE: Neither wrapping nor order matter in VEs references HTML output
+!! wikitext
+<ref>Default</ref>
+<ref name="ldrOne" />
+<ref name="ldrTwo" />
+<references>
+<ref name="ldrOne">FooNew</ref>
+<ref name="ldrTwo">Bar</ref>
+</references>
+!! html/parsoid
+<p><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;}}"></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrOne&quot;}}"></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrTwo&quot;}}"></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrOne&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrOne-2&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;FooNew&amp;quot;}}\&quot; class=\&quot;mw-ref reference\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrTwo&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrTwo-3&amp;quot;}}\&quot;&gt;&lt;/sup&gt;\n&quot;}}">
+<span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrTwo-3">Bar</span></li>
+<span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrOne-2">FooNew</span></li>
+<span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-1">Default</span></li>
+</div>
+!! end
+
+!! test
+VE Converter: mw:Reference with comment
+!! wikitext
+<ref>Foo<!-- bar --></ref>
+!! html/parsoid
+<p><sup data-mw='{"name":"ref","body":{"html":"Foo<!-- bar -->"},"attrs":{}}' typeof="mw:Extension/ref"></sup></p>
+!! end
+
+!! test
+VE Converter: mw:Reference: Simple reference re-use (T296044)
+!! wikitext
+Foo<ref name="bar">[[Bar]]</ref>Baz<ref name="bar" />
+!! html/parsoid
+<p>Foo<sup data-mw='{"name":"ref","body":{"html":"<a rel=\"mw:WikiLink\" href=\"./Bar\">Bar</a>"},"attrs":{"name":"bar"}}' typeof="mw:Extension/ref"></sup>Baz<sup data-mw='{"name":"ref","attrs":{"name":"bar"}}' typeof="mw:Extension/ref"></sup></p>
+!! end
+
+# FIXME: I guess the empty <references /> will be cleaned up by Parsoid later?
+!! test
+VE Converter: Simple ref reuse
+!! wikitext
+<ref name="bar">Body</ref>
+Text
+<ref name="bar" />
+<references />
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-bar_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-bar-1&quot;}}"><a href="./Example/DeleteReuse#cite_note-bar-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+Text
+<sup about="#mwt2" class="mw-ref reference" id="cite_ref-bar_1-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}"><a href="./Example/DeleteReuse#cite_note-bar-1" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt3" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true}" id="mwCw"><ol class="mw-references references" id="mwDA"><li about="#cite_note-bar-1" id="cite_note-bar-1" data-mw-footnote-number="1"><span rel="mw:referencedBy" class="mw-cite-backlink" id="mwDQ"><a href="./Example/DeleteReuse#cite_ref-bar_1-0" id="mwDg"><span class="mw-linkback-text" id="mwDw">1 </span></a><a href="./Example/DeleteReuse#cite_ref-bar_1-1" id="mwEA"><span class="mw-linkback-text" id="mwEQ">2 </span></a></span> <span id="mw-reference-text-cite_note-bar-1" class="mw-reference-text reference-text">Body</span></li>
+</ol></div>
+!! end
+
+# FIXME: I guess the empty <references /> will be cleaned up by Parsoid later?
+!! test
+VE Converter: Simple ref reuse ( delete ref )
+!! wikitext
+Text
+<ref name="bar">Body</ref>
+<references />
+!! html/parsoid
+<p id="mwAg">Text
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;},&quot;body&quot;:{&quot;html&quot;:&quot;Body&quot;}}" class="mw-ref reference" about="#mwt2" id="cite_ref-bar_1-1" rel="dc:references"><a href="./Example/DeleteReuse#cite_note-bar-1" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt3" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true}" id="mwCw"><ol class="mw-references references" id="mwDA"><li about="#cite_note-bar-1" id="cite_note-bar-1" data-mw-footnote-number="1"><span rel="mw:referencedBy" class="mw-cite-backlink" id="mwDQ"><a href="./Example/DeleteReuse#cite_ref-bar_1-0" id="mwDg"><span class="mw-linkback-text" id="mwDw">1 </span></a><a href="./Example/DeleteReuse#cite_ref-bar_1-1" id="mwEA"><span class="mw-linkback-text" id="mwEQ">2 </span></a></span> <span id="mw-reference-text-cite_note-bar-1" class="mw-reference-text reference-text">Body</span></li>
+</ol></div>
+!! end
+
+!! test
+VE Converter: Simple main ref including details
+!! wikitext
+<ref details="page. 123" name="book">Miller</ref>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page. 123&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference" about="#mwt1" id="cite_ref-2" rel="dc:references"><a href="./Example/MainPlusDetails#cite_note-2" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1.1<span class="cite-bracket" id="mwBg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page. 123</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Simple main ref including details ( edits on main and details )
+!! wikitext
+<ref details="page. 123 NEW" name="book">Miller NEW</ref>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page. 123&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;,&quot;html&quot;:&quot;page. 123 NEW&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference" about="#mwt1" id="cite_ref-2" rel="dc:references"><a href="./Example/MainPlusDetails#cite_note-2" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1.1<span class="cite-bracket" id="mwBg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;Miller NEW&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller NEW</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page. 123 NEW</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Simple template in refs
+!! wikitext
+<ref>{{Cite|author=Miller|title=Foo}}</ref>
+<ref name="ldrTpl" />
+<references>
+<ref name="ldrTpl">{{Cite|author=Smith|title=Bar}}</ref>
+</references>
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt2" class="mw-ref reference" id="cite_ref-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;}}"><a href="./Example/CiteTemplates#cite_note-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+<sup about="#mwt3" class="mw-ref reference" id="cite_ref-ldrTpl_2-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrTpl&quot;}}"><a href="./Example/CiteTemplates#cite_note-ldrTpl-2" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>2<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt6" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup about=\&quot;#mwt5\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid='{\&quot;dsr\&quot;:[79,135,19,6]}' data-mw='{\&quot;name\&quot;:\&quot;ref\&quot;,\&quot;attrs\&quot;:{\&quot;name\&quot;:\&quot;ldrTpl\&quot;},\&quot;body\&quot;:{\&quot;id\&quot;:\&quot;mw-reference-text-cite_note-ldrTpl-2\&quot;}}'&gt;&lt;a href=\&quot;./Example/CiteTemplates#cite_note-ldrTpl-2\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&quot;}}" id="mwCw"><ol class="mw-references references" id="mwDA"><li about="#cite_note-1" id="cite_note-1"><span class="mw-cite-backlink" id="mwDQ"><a href="./Example/CiteTemplates#cite_ref-1" rel="mw:referencedBy" id="mwDg"><span class="mw-linkback-text" id="mwDw">↑ </span></a></span> <span id="mw-reference-text-cite_note-1" class="mw-reference-text reference-text"><a rel="mw:WikiLink" href="./Template:Cite?action=edit&amp;redlink=1" title="Template:Cite" about="#mwt1" typeof="mw:Transclusion mw:LocalizedAttrs" class="new" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Cite&quot;,&quot;href&quot;:&quot;./Template:Cite&quot;},&quot;params&quot;:{&quot;author&quot;:{&quot;wt&quot;:&quot;Miller&quot;},&quot;title&quot;:{&quot;wt&quot;:&quot;Foo&quot;}},&quot;i&quot;:0}}]}" data-mw-i18n="{&quot;title&quot;:{&quot;lang&quot;:&quot;x-page&quot;,&quot;key&quot;:&quot;red-link-title&quot;,&quot;params&quot;:[&quot;Template:Cite&quot;]}}" id="mwEA">Template:Cite</a></span></li>
+<li about="#cite_note-ldrTpl-2" id="cite_note-ldrTpl-2"><span class="mw-cite-backlink" id="mwEQ"><a href="./Example/CiteTemplates#cite_ref-ldrTpl_2-0" rel="mw:referencedBy" id="mwEg"><span class="mw-linkback-text" id="mwEw">↑ </span></a></span> <span id="mw-reference-text-cite_note-ldrTpl-2" class="mw-reference-text reference-text"><a rel="mw:WikiLink" href="./Template:Cite?action=edit&amp;redlink=1" title="Template:Cite" about="#mwt4" typeof="mw:Transclusion mw:LocalizedAttrs" class="new" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Cite&quot;,&quot;href&quot;:&quot;./Template:Cite&quot;},&quot;params&quot;:{&quot;author&quot;:{&quot;wt&quot;:&quot;Smith&quot;},&quot;title&quot;:{&quot;wt&quot;:&quot;Bar&quot;}},&quot;i&quot;:0}}]}" data-mw-i18n="{&quot;title&quot;:{&quot;lang&quot;:&quot;x-page&quot;,&quot;key&quot;:&quot;red-link-title&quot;,&quot;params&quot;:[&quot;Template:Cite&quot;]}}" id="mwFA">Template:Cite</a></span></li>
+</ol></div>
+!! end
+
+!! test
+VE Converter: Simple template in refs ( edits on template parameters )
+!! wikitext
+<ref>{{Cite|author=Miller|title=Foo New}}</ref>
+<ref name="ldrTpl" />
+<references>
+<ref name="ldrTpl">{{Cite|author=Smith|title=Bar New}}</ref>
+</references>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;,&quot;html&quot;:&quot;&lt;a typeof=\&quot;mw:Transclusion\&quot; data-mw=\&quot;{&amp;quot;parts&amp;quot;:[{&amp;quot;template&amp;quot;:{&amp;quot;target&amp;quot;:{&amp;quot;wt&amp;quot;:&amp;quot;Cite&amp;quot;,&amp;quot;href&amp;quot;:&amp;quot;./Template:Cite&amp;quot;},&amp;quot;params&amp;quot;:{&amp;quot;author&amp;quot;:{&amp;quot;wt&amp;quot;:&amp;quot;Miller&amp;quot;},&amp;quot;title&amp;quot;:{&amp;quot;wt&amp;quot;:&amp;quot;Foo New&amp;quot;}},&amp;quot;i&amp;quot;:0}}]}\&quot; id=\&quot;mwEA\&quot;&gt;&lt;/a&gt;&quot;}}" class="mw-ref reference" about="#mwt2" id="cite_ref-1" rel="dc:references"><a href="./Example/CiteTemplates#cite_note-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+<sup about="#mwt3" class="mw-ref reference" id="cite_ref-ldrTpl_2-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrTpl&quot;}}"><a href="./Example/CiteTemplates#cite_note-ldrTpl-2" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>2<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrTpl&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrTpl-2&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;&amp;lt;a typeof=\\&amp;quot;mw:Transclusion\\&amp;quot; data-mw=\\&amp;quot;{&amp;amp;quot;parts&amp;amp;quot;:[{&amp;amp;quot;template&amp;amp;quot;:{&amp;amp;quot;target&amp;amp;quot;:{&amp;amp;quot;wt&amp;amp;quot;:&amp;amp;quot;Cite&amp;amp;quot;,&amp;amp;quot;href&amp;amp;quot;:&amp;amp;quot;./Template:Cite&amp;amp;quot;},&amp;amp;quot;params&amp;amp;quot;:{&amp;amp;quot;author&amp;amp;quot;:{&amp;amp;quot;wt&amp;amp;quot;:&amp;amp;quot;Smith&amp;amp;quot;},&amp;amp;quot;title&amp;amp;quot;:{&amp;amp;quot;wt&amp;amp;quot;:&amp;amp;quot;Bar New&amp;amp;quot;}},&amp;amp;quot;i&amp;amp;quot;:0}}]}\\&amp;quot; id=\\&amp;quot;mwFA\\&amp;quot;&amp;gt;&amp;lt;/a&amp;gt;&amp;quot;}}\&quot; class=\&quot;mw-ref reference\&quot; about=\&quot;#mwt5\&quot; rel=\&quot;dc:references\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[79,135,19,6]}\&quot;&gt;&lt;a href=\&quot;./Example/CiteTemplates#cite_note-ldrTpl-2\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-1"><a typeof="mw:Transclusion" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Cite&quot;,&quot;href&quot;:&quot;./Template:Cite&quot;},&quot;params&quot;:{&quot;author&quot;:{&quot;wt&quot;:&quot;Miller&quot;},&quot;title&quot;:{&quot;wt&quot;:&quot;Foo New&quot;}},&quot;i&quot;:0}}]}" id="mwEA"></a></span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrTpl-2"><a typeof="mw:Transclusion" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Cite&quot;,&quot;href&quot;:&quot;./Template:Cite&quot;},&quot;params&quot;:{&quot;author&quot;:{&quot;wt&quot;:&quot;Smith&quot;},&quot;title&quot;:{&quot;wt&quot;:&quot;Bar New&quot;}},&quot;i&quot;:0}}]}" id="mwFA"></a></span></li></ol></div>
+!! end
+
+!! test
+VE Converter: Moving main content from subref
+!! wikitext
+<ref details="page 1" name="book" />
+<ref details="page 2" name="book">Miller</ref>
+<ref name="book" />
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-2" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;}}"><a href="./Example/MainPlusDetails#cite_note-2" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1.1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+<sup about="#mwt2" class="mw-ref reference" id="cite_ref-3" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 2&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-3&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}"><a href="./Example/MainPlusDetails#cite_note-3" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1.2<span class="cite-bracket" id="mwCg">]</span></span></a></sup>
+<sup about="#mwt3" class="mw-ref reference" id="cite_ref-book_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;}}"><a href="./Example/MainPlusDetails#cite_note-book-1" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>1<span class="cite-bracket" id="mwDg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page 1</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-3">page 2</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Moving main content from subref ( delete subref providing the main )
+!! wikitext
+<ref details="page 1" name="book" />
+
+<ref name="book">Miller</ref>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;}}" class="mw-ref reference" about="#mwt1" id="cite_ref-2" rel="dc:references"><a href="./Example/MainPlusDetails#cite_note-2" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1.1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+
+<sup about="#mwt3" class="mw-ref reference" id="cite_ref-book_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;html&quot;:&quot;Miller&quot;}}"><a href="./Example/MainPlusDetails#cite_note-book-1" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>1<span class="cite-bracket" id="mwDg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page 1</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Moving main content from subref ( delete all subrefs )
+!! wikitext
+<ref name="book">Miller</ref>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;html&quot;:&quot;Miller&quot;}}" class="mw-ref reference" about="#mwt3" id="cite_ref-book_1-0" rel="dc:references"><a href="./Example/MainPlusDetails#cite_note-book-1" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>1<span class="cite-bracket" id="mwDg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span></li></ol></div>
+!! end
+
+!! test
+VE Converter: Moving main content from subref ( delete subref providing the main and other reuse )
+!! wikitext
+<ref details="page 1" name="book">Miller</ref>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;},&quot;isSubRefWithMainBody&quot;:&quot;1&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;}" class="mw-ref reference" about="#mwt1" id="cite_ref-2" rel="dc:references"><a href="./Example/MainPlusDetails#cite_note-2" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1.1<span class="cite-bracket" id="mwBg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page 1</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Delete main used by sub
+!! wikitext
+<ref name="book">Miller</ref>
+<ref details="page 1" name="book" />
+<references />
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-book_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-book-1&quot;}}"><a href="./Example/MainPlusDetails#cite_note-book-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+<sup about="#mwt2" class="mw-ref reference" id="cite_ref-2" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;}}"><a href="./Example/MainPlusDetails#cite_note-2" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1.1<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true}" id="mwCw"><ol class="mw-references references" id="mwDA"><li about="#cite_note-book-1" id="cite_note-book-1"><span class="mw-cite-backlink" id="mwDQ"><a href="./Example/MainPlusDetails#cite_ref-book_1-0" rel="mw:referencedBy" id="mwDg"><span class="mw-linkback-text" id="mwDw">↑ </span></a></span> <span id="mw-reference-text-cite_note-book-1" class="mw-reference-text reference-text">Miller</span><ol class="mw-subreference-list" id="mwEA"><li about="#cite_note-2" id="cite_note-2"><span class="mw-cite-backlink" id="mwEQ"><a href="./Example/MainPlusDetails#cite_ref-2" rel="mw:referencedBy" id="mwEg"><span class="mw-linkback-text" id="mwEw">↑ </span></a></span> <span id="mw-reference-text-cite_note-2" class="mw-reference-text reference-text">page 1</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Delete main used by sub ( delete main ref )
+!! wikitext
+<ref details="page 1" name="book">Miller</ref>
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;},&quot;isSubRefWithMainBody&quot;:&quot;1&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;}" class="mw-ref reference" about="#mwt2" id="cite_ref-2" rel="dc:references"><a href="./Example/MainPlusDetails#cite_note-2" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1.1<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page 1</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Main plus details with duplicate main content
+!! wikitext
+<ref details="page 1" name="book">Miller</ref>
+<ref details="page 2" name="book">Miller</ref>
+!! html/parsoid
+<p><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1.1<span class="cite-bracket">]</span></span></a></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 2&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-3&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1.2<span class="cite-bracket">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page 1</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-3">page 2</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Main plus details with duplicate main content ( edit main )
+!! wikitext
+<ref details="page 1" name="book">Miller NEW</ref>
+<ref details="page 2" name="book">Miller NEW</ref>
+!! html/parsoid
+<p><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 1&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-2&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1.1<span class="cite-bracket">]</span></span></a></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 2&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-3&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1.2<span class="cite-bracket">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;Miller NEW&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller NEW</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-2">page 1</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-3">page 2</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: List-defined references with default and custom group
+!! wikitext
+<ref name="a" /> <ref name="a" group="g" /> <ref name="b" group="g" />
+<references>
+<ref name="a">Default group content</ref>
+</references>
+<references group="g">
+<ref name="a">Custom group content</ref>
+<ref name="b">Custom group content other</ref>
+</references>
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-a_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;a&quot;}}"><a href="./TestPage#cite_note-a-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup> <sup about="#mwt2" class="mw-ref reference" id="cite_ref-a_2-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;a&quot;,&quot;group&quot;:&quot;g&quot;}}"><a href="./TestPage#cite_note-a-2" data-mw-group="g" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>g 1<span class="cite-bracket" id="mwCg">]</span></span></a></sup> <sup about="#mwt3" class="mw-ref reference" id="cite_ref-b_3-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;b&quot;,&quot;group&quot;:&quot;g&quot;}}"><a href="./TestPage#cite_note-b-3" data-mw-group="g" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>g 2<span class="cite-bracket" id="mwDg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt5" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup about=\&quot;#mwt4\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid='{\&quot;dsr\&quot;:[84,125,14,6]}' data-mw='{\&quot;name\&quot;:\&quot;ref\&quot;,\&quot;attrs\&quot;:{\&quot;name\&quot;:\&quot;a\&quot;},\&quot;body\&quot;:{\&quot;id\&quot;:\&quot;mw-reference-text-cite_note-a-1\&quot;}}'&gt;&lt;a href=\&quot;./TestPage#cite_note-a-1\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&quot;}}" id="mwDw"><ol class="mw-references references" id="mwEA"><li about="#cite_note-a-1" id="cite_note-a-1"><span class="mw-cite-backlink" id="mwEQ"><a href="./TestPage#cite_ref-a_1-0" rel="mw:referencedBy" id="mwEg"><span class="mw-linkback-text" id="mwEw">↑ </span></a></span> <span id="mw-reference-text-cite_note-a-1" class="mw-reference-text reference-text">Default group content</span></li>
+</ol></div>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt8" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g&quot;},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup about=\&quot;#mwt6\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid='{\&quot;dsr\&quot;:[163,203,14,6]}' data-mw='{\&quot;name\&quot;:\&quot;ref\&quot;,\&quot;attrs\&quot;:{\&quot;name\&quot;:\&quot;a\&quot;},\&quot;body\&quot;:{\&quot;id\&quot;:\&quot;mw-reference-text-cite_note-a-2\&quot;}}'&gt;&lt;a href=\&quot;./TestPage#cite_note-a-2\&quot; data-mw-group=\&quot;g\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;g 1&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup about=\&quot;#mwt7\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid='{\&quot;dsr\&quot;:[204,250,14,6]}' data-mw='{\&quot;name\&quot;:\&quot;ref\&quot;,\&quot;attrs\&quot;:{\&quot;name\&quot;:\&quot;b\&quot;},\&quot;body\&quot;:{\&quot;id\&quot;:\&quot;mw-reference-text-cite_note-b-3\&quot;}}'&gt;&lt;a href=\&quot;./TestPage#cite_note-b-3\&quot; data-mw-group=\&quot;g\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;g 2&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&quot;}}" id="mwFA"><ol class="mw-references references" data-mw-group="g" id="mwFQ"><li about="#cite_note-a-2" id="cite_note-a-2"><span class="mw-cite-backlink" id="mwFg"><a href="./TestPage#cite_ref-a_2-0" data-mw-group="g" rel="mw:referencedBy" id="mwFw"><span class="mw-linkback-text" id="mwGA">↑ </span></a></span> <span id="mw-reference-text-cite_note-a-2" class="mw-reference-text reference-text" data-mw-group="g">Custom group content</span></li>
+<li about="#cite_note-b-3" id="cite_note-b-3"><span class="mw-cite-backlink" id="mwGQ"><a href="./TestPage#cite_ref-b_3-0" data-mw-group="g" rel="mw:referencedBy" id="mwGg"><span class="mw-linkback-text" id="mwGw">↑ </span></a></span> <span id="mw-reference-text-cite_note-b-3" class="mw-reference-text reference-text" data-mw-group="g">Custom group content other</span></li>
+</ol></div>
+!! end
+
+!! test
+VE Converter: List-defined references with default and custom group ( edit custom ldr )
+!! wikitext
+<ref name="a" /> <ref name="a" group="g" /> <ref name="b" group="g" />
+<references>
+<ref name="a">Default group content</ref>
+</references>
+<references group="g">
+<ref name="a">Custom group content NEW</ref>
+<ref name="b">Custom group content other</ref>
+</references>
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-a_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;a&quot;}}"><a href="./TestPage#cite_note-a-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup> <sup about="#mwt2" class="mw-ref reference" id="cite_ref-a_2-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;a&quot;,&quot;group&quot;:&quot;g&quot;}}"><a href="./TestPage#cite_note-a-2" data-mw-group="g" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>g 1<span class="cite-bracket" id="mwCg">]</span></span></a></sup> <sup about="#mwt3" class="mw-ref reference" id="cite_ref-b_3-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;b&quot;,&quot;group&quot;:&quot;g&quot;}}"><a href="./TestPage#cite_note-b-3" data-mw-group="g" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>g 2<span class="cite-bracket" id="mwDg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt5" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup about=\&quot;#mwt4\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid='{\&quot;dsr\&quot;:[84,125,14,6]}' data-mw='{\&quot;name\&quot;:\&quot;ref\&quot;,\&quot;attrs\&quot;:{\&quot;name\&quot;:\&quot;a\&quot;},\&quot;body\&quot;:{\&quot;id\&quot;:\&quot;mw-reference-text-cite_note-a-1\&quot;}}'&gt;&lt;a href=\&quot;./TestPage#cite_note-a-1\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&quot;}}" id="mwDw"><ol class="mw-references references" id="mwEA"><li about="#cite_note-a-1" id="cite_note-a-1"><span class="mw-cite-backlink" id="mwEQ"><a href="./TestPage#cite_ref-a_1-0" rel="mw:referencedBy" id="mwEg"><span class="mw-linkback-text" id="mwEw">↑ </span></a></span> <span id="mw-reference-text-cite_note-a-1" class="mw-reference-text reference-text">Default group content</span></li>
+</ol></div>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g&quot;},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;a&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-a-2&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;Custom group content NEW&amp;quot;}}\&quot; class=\&quot;mw-ref reference\&quot; about=\&quot;#mwt6\&quot; rel=\&quot;dc:references\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[163,203,14,6]}\&quot;&gt;&lt;a data-mw-group=\&quot;g\&quot; href=\&quot;./TestPage#cite_note-a-2\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;g 1&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup about=\&quot;#mwt7\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[204,250,14,6]}\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;b&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-b-3&amp;quot;}}\&quot;&gt;&lt;a href=\&quot;./TestPage#cite_note-b-3\&quot; data-mw-group=\&quot;g\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;g 2&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-a-2">Custom group content NEW</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-b-3">Custom group content other</span></li></ol></div>
+!! end
+
+!! test
+VE Converter: Two main refs with content
+!! wikitext
+<ref name="book" /><ref name="book">Miller</ref>
+<references />
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-book_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;}}"><a href="./Example/CiteMainPlusDetails#cite_note-book-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup><sup about="#mwt2" class="mw-ref reference" id="cite_ref-book_1-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-book-1&quot;}}"><a href="./Example/CiteMainPlusDetails#cite_note-book-1" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1<span class="cite-bracket" id="mwCg">]</span></span></a></sup></p>
+<div class="mw-references-wrap" typeof="mw:Extension/references" about="#mwt3" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true}" id="mwCw"><ol class="mw-references references" id="mwDA"><li about="#cite_note-book-1" id="cite_note-book-1"><span rel="mw:referencedBy" class="mw-cite-backlink" id="mwDQ"><a href="./Example/CiteMainPlusDetails#cite_ref-book_1-0" id="mwDg"><span class="mw-linkback-text" id="mwDw">1 </span></a><a href="./Example/CiteMainPlusDetails#cite_ref-book_1-1" id="mwEA"><span class="mw-linkback-text" id="mwEQ">2 </span></a></span> <span id="mw-reference-text-cite_note-book-1" class="mw-reference-text reference-text">Miller</span></li>
+</ol></div>
+!! end
+
+#FIXME ideally the main content does not move around here T404089
+!! test
+VE Converter: Two main refs with content ( convert both to sub-refs )
+!! wikitext
+<ref name="book" details="page 1">Miller</ref><ref name="book" details="page 2" />
+!! html/parsoid
+<p id="mwAg"><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;,&quot;details&quot;:&quot;1&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;isSubRefWithMainBody&quot;:&quot;1&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-1&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;page 1&quot;}}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1.1<span class="cite-bracket">]</span></span></a></sup><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;,&quot;details&quot;:&quot;1&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;page 2&quot;}}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1.2<span class="cite-bracket">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-1&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:true}\&quot; class=\&quot;mw-ref reference\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;1&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span><ol><li><span typeof="mw:Extension/ref">page 1</span></li><li><span typeof="mw:Extension/ref">page 2</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter: Two main refs with content ( adding two fresh sub-refs )
+!! wikitext
+<ref name="book" /><ref name="book">Miller</ref><ref name=":0" details="page 3">Smith</ref><ref name=":0" details="page 4" />
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-book_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;}}"><a href="./Example/MainPlusDetails#cite_note-book-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup><sup about="#mwt2" class="mw-ref reference" id="cite_ref-book_1-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-book-1&quot;}}"><a href="./Example/MainPlusDetails#cite_note-book-1" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>1<span class="cite-bracket" id="mwCg">]</span></span></a></sup><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;:0&quot;,&quot;details&quot;:&quot;1&quot;},&quot;mainRef&quot;:&quot;:0&quot;,&quot;isSubRefWithMainBody&quot;:&quot;1&quot;,&quot;mainBody&quot;:&quot;cite_note-mwReference/-auto/1-1&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;page 3&quot;}}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>2.1<span class="cite-bracket">]</span></span></a></sup><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;:0&quot;,&quot;details&quot;:&quot;1&quot;},&quot;mainRef&quot;:&quot;:0&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;page 4&quot;}}" class="mw-ref reference"><a><span class="mw-reflink-text"><span class="cite-bracket">[</span>2.2<span class="cite-bracket">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;autoGenerated&quot;:true,&quot;body&quot;:{&quot;html&quot;:&quot;&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;isSyntheticMainRef&amp;quot;:true,&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;:0&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;html&amp;quot;:&amp;quot;Smith&amp;quot;}}\&quot; class=\&quot;mw-ref reference\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-1">Miller</span></li><li><span typeof="mw:Extension/ref" id="cite_note-mwReference/-auto/1-1">Smith</span><ol><li><span typeof="mw:Extension/ref">page 3</span></li><li><span typeof="mw:Extension/ref">page 4</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter with store: List defined references and details
+!! wikitext
+<ref>Default</ref>
+<ref name="ldrOne" />
+<ref name="ldrTwo" />
+<ref details="page 123" name="book">Main</ref>
+<references>
+<ref name="ldrOne">Foo</ref>
+<ref name="ldrTwo">Bar</ref>
+</references>
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;}}"><a href="./Example/CiteDetailsReferencesLoss#cite_note-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+<sup about="#mwt2" class="mw-ref reference" id="cite_ref-ldrOne_2-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrOne&quot;}}"><a href="./Example/CiteDetailsReferencesLoss#cite_note-ldrOne-2" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>2<span class="cite-bracket" id="mwCg">]</span></span></a></sup>
+<sup about="#mwt3" class="mw-ref reference" id="cite_ref-ldrTwo_3-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrTwo&quot;}}"><a href="./Example/CiteDetailsReferencesLoss#cite_note-ldrTwo-3" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>3<span class="cite-bracket" id="mwDg">]</span></span></a></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 123&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-5&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-4&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference" about="#mwt4" id="cite_ref-5" rel="dc:references"><a href="./Example/CiteDetailsReferencesLoss#cite_note-5" id="mwDw"><span class="mw-reflink-text" id="mwEA"><span class="cite-bracket" id="mwEQ">[</span>4.1<span class="cite-bracket" id="mwEg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup about=\&quot;#mwt5\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[123,151,19,6]}\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrOne&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrOne-2&amp;quot;}}\&quot;&gt;&lt;a href=\&quot;./Example/CiteDetailsReferencesLoss#cite_note-ldrOne-2\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup about=\&quot;#mwt6\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[152,180,19,6]}\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrTwo&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrTwo-3&amp;quot;}}\&quot;&gt;&lt;a href=\&quot;./Example/CiteDetailsReferencesLoss#cite_note-ldrTwo-3\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;3&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-4&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;4&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-1">Default</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrOne-2">Foo</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrTwo-3">Bar</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-4">Main</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-5">page 123</span></li></ol></li></ol></div>
+!! end
+
+!! test
+VE Converter with store: List defined references and details ( editing main and details )
+!! wikitext
+<ref>Default</ref>
+<ref name="ldrOne" />
+<ref name="ldrTwo" />
+<ref details="page 123 NEW" name="book">Main NEW</ref>
+<references>
+<ref name="ldrOne">Foo</ref>
+<ref name="ldrTwo">Bar</ref>
+</references>
+!! html/parsoid
+<p id="mwAg"><sup about="#mwt1" class="mw-ref reference" id="cite_ref-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;}}"><a href="./Example/CiteDetailsReferencesLoss#cite_note-1" id="mwAw"><span class="mw-reflink-text" id="mwBA"><span class="cite-bracket" id="mwBQ">[</span>1<span class="cite-bracket" id="mwBg">]</span></span></a></sup>
+<sup about="#mwt2" class="mw-ref reference" id="cite_ref-ldrOne_2-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrOne&quot;}}"><a href="./Example/CiteDetailsReferencesLoss#cite_note-ldrOne-2" id="mwBw"><span class="mw-reflink-text" id="mwCA"><span class="cite-bracket" id="mwCQ">[</span>2<span class="cite-bracket" id="mwCg">]</span></span></a></sup>
+<sup about="#mwt3" class="mw-ref reference" id="cite_ref-ldrTwo_3-0" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;ldrTwo&quot;}}"><a href="./Example/CiteDetailsReferencesLoss#cite_note-ldrTwo-3" id="mwCw"><span class="mw-reflink-text" id="mwDA"><span class="cite-bracket" id="mwDQ">[</span>3<span class="cite-bracket" id="mwDg">]</span></span></a></sup>
+<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;details&quot;:&quot;page 123&quot;,&quot;name&quot;:&quot;book&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-5&quot;,&quot;html&quot;:&quot;page 123 NEW&quot;},&quot;mainRef&quot;:&quot;book&quot;,&quot;mainBody&quot;:&quot;mw-reference-text-cite_note-book-4&quot;,&quot;isSubRefWithMainBody&quot;:1}" class="mw-ref reference" about="#mwt4" id="cite_ref-5" rel="dc:references"><a href="./Example/CiteDetailsReferencesLoss#cite_note-5" id="mwDw"><span class="mw-reflink-text" id="mwEA"><span class="cite-bracket" id="mwEQ">[</span>4.1<span class="cite-bracket" id="mwEg">]</span></span></a></sup></p>
+<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;html&quot;:&quot;\n&lt;sup about=\&quot;#mwt5\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[123,151,19,6]}\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrOne&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrOne-2&amp;quot;}}\&quot;&gt;&lt;a href=\&quot;./Example/CiteDetailsReferencesLoss#cite_note-ldrOne-2\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;2&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup about=\&quot;#mwt6\&quot; class=\&quot;mw-ref reference\&quot; rel=\&quot;dc:references\&quot; typeof=\&quot;mw:Extension/ref\&quot; data-parsoid=\&quot;{&amp;quot;dsr&amp;quot;:[152,180,19,6]}\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;ldrTwo&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-ldrTwo-3&amp;quot;}}\&quot;&gt;&lt;a href=\&quot;./Example/CiteDetailsReferencesLoss#cite_note-ldrTwo-3\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;mw-reflink-text\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;[&lt;/span&gt;3&lt;span class=\&quot;cite-bracket\&quot; data-parsoid=\&quot;{}\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;\n&lt;sup typeof=\&quot;mw:Extension/ref\&quot; data-mw=\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;book&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;id&amp;quot;:&amp;quot;mw-reference-text-cite_note-book-4&amp;quot;,&amp;quot;html&amp;quot;:&amp;quot;Main NEW&amp;quot;},&amp;quot;isSyntheticMainRef&amp;quot;:1}\&quot; class=\&quot;mw-ref reference\&quot; data-parsoid=\&quot;{}\&quot;&gt;&lt;a&gt;&lt;span class=\&quot;mw-reflink-text\&quot;&gt;&lt;span class=\&quot;cite-bracket\&quot;&gt;[&lt;/span&gt;4&lt;span class=\&quot;cite-bracket\&quot;&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/sup&gt;&quot;}}"><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-1">Default</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrOne-2">Foo</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-ldrTwo-3">Bar</span></li><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-book-4">Main NEW</span><ol><li><span typeof="mw:Extension/ref" id="mw-reference-text-cite_note-5">page 123 NEW</span></li></ol></li></ol></div>
+!! end

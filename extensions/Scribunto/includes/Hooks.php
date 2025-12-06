@@ -20,8 +20,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
-
 namespace MediaWiki\Extension\Scribunto;
 
 use MediaWiki\Config\Config;
@@ -34,7 +32,6 @@ use MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook;
 use MediaWiki\Hook\EditPage__showStandardInputs_optionsHook;
 use MediaWiki\Hook\EditPageBeforeEditButtonsHook;
 use MediaWiki\Hook\ParserClearStateHook;
-use MediaWiki\Hook\ParserClonedHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\ParserLimitReportFormatHook;
 use MediaWiki\Hook\ParserLimitReportPrepareHook;
@@ -67,7 +64,6 @@ class Hooks implements
 	ParserLimitReportPrepareHook,
 	ParserLimitReportFormatHook,
 	ParserClearStateHook,
-	ParserClonedHook,
 	EditPage__showStandardInputs_optionsHook,
 	EditPage__showReadOnlyForm_initialHook,
 	EditPageBeforeEditButtonsHook,
@@ -75,21 +71,13 @@ class Hooks implements
 	ArticleViewHeaderHook,
 	ContentHandlerDefaultModelForHook
 {
-	private Config $config;
-	private IContentHandlerFactory $contentHandlerFactory;
-	private ObjectCacheFactory $objectCacheFactory;
-	private StatsFactory $statsFactory;
-
 	public function __construct(
-		Config $config,
-		IContentHandlerFactory $contentHandlerFactory,
-		ObjectCacheFactory $objectCacheFactory,
-		StatsFactory $statsFactory
+		private readonly Config $config,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
+		private readonly ObjectCacheFactory $objectCacheFactory,
+		private readonly StatsFactory $statsFactory,
+		private readonly EngineFactory $engineFactory,
 	) {
-		$this->config = $config;
-		$this->contentHandlerFactory = $contentHandlerFactory;
-		$this->objectCacheFactory = $objectCacheFactory;
-		$this->statsFactory = $statsFactory;
 	}
 
 	/**
@@ -106,8 +94,9 @@ class Hooks implements
 	 * @return bool
 	 */
 	public function onSoftwareInfo( &$software ) {
-		$engine = Scribunto::newDefaultEngine();
-		$engine->setTitle( Title::makeTitle( NS_SPECIAL, 'Version' ) );
+		$engine = $this->engineFactory->getDefaultEngine( [
+			'title' => Title::makeTitle( NS_SPECIAL, 'Version' ),
+		] );
 		$engine->getSoftwareInfo( $software );
 		return true;
 	}
@@ -129,17 +118,7 @@ class Hooks implements
 	 * @return void
 	 */
 	public function onParserClearState( $parser ) {
-		Scribunto::resetParserEngine( $parser );
-	}
-
-	/**
-	 * Called when the parser is cloned
-	 *
-	 * @param Parser $parser
-	 * @return void
-	 */
-	public function onParserCloned( $parser ) {
-		$parser->scribunto_engine = null;
+		$this->engineFactory->destroyEngineForParser( $parser );
 	}
 
 	/**
@@ -156,7 +135,7 @@ class Hooks implements
 				throw new ScribuntoException( 'scribunto-common-nofunction' );
 			}
 			$moduleName = trim( $frame->expand( $args[0] ) );
-			$engine = Scribunto::getParserEngine( $parser );
+			$engine = $this->engineFactory->getEngineForParser( $parser );
 
 			$title = Title::makeTitleSafe( NS_MODULE, $moduleName );
 			if ( !$title || !$title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
@@ -285,12 +264,8 @@ class Hooks implements
 			return;
 		}
 
-		static $stats;
-		if ( !$stats ) {
-			$stats = $this->statsFactory;
-		}
 		$statAction = WikiMap::getCurrentWikiId() . '__' . $moduleName . '__' . $functionName;
-		$stats->getTiming( 'scribunto_traces_seconds' )
+		$this->statsFactory->getTiming( 'scribunto_traces_seconds' )
 			->setLabel( 'action', $statAction )
 			->copyToStatsdAt( 'scribunto.traces.' . $statAction )
 			->observe( $timing );
@@ -325,10 +300,8 @@ class Hooks implements
 	 * @return void
 	 */
 	public function onParserLimitReportPrepare( $parser, $parserOutput ) {
-		if ( Scribunto::isParserEnginePresent( $parser ) ) {
-			$engine = Scribunto::getParserEngine( $parser );
-			$engine->reportLimitData( $parserOutput );
-		}
+		$this->engineFactory->peekEngineForParser( $parser )
+			?->reportLimitData( $parserOutput );
 	}
 
 	/**
@@ -342,7 +315,7 @@ class Hooks implements
 	 * @return bool
 	 */
 	public function onParserLimitReportFormat( $key, &$value, &$report, $isHTML, $localize ) {
-		$engine = Scribunto::newDefaultEngine();
+		$engine = $this->engineFactory->getDefaultEngine();
 		return $engine->formatLimitData( $key, $value, $report, $isHTML, $localize );
 	}
 

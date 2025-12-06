@@ -5,6 +5,7 @@ namespace MediaWiki\CheckUser\Investigate\Services;
 use LogicException;
 use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityLookup;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -27,9 +28,15 @@ class CompareService extends ChangeService {
 		ServiceOptions $options,
 		IConnectionProvider $dbProvider,
 		UserIdentityLookup $userIdentityLookup,
-		CheckUserLookupUtils $checkUserLookupUtils
+		CheckUserLookupUtils $checkUserLookupUtils,
+		TempUserConfig $tempUserConfig
 	) {
-		parent::__construct( $dbProvider, $userIdentityLookup, $checkUserLookupUtils );
+		parent::__construct(
+			$dbProvider,
+			$userIdentityLookup,
+			$checkUserLookupUtils,
+			$tempUserConfig
+		);
 
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->limit = $options->get( 'CheckUserInvestigateMaximumRowCount' );
@@ -63,10 +70,16 @@ class CompareService extends ChangeService {
 	 *
 	 * @param string[] $targets
 	 * @param string[] $excludeTargets
+	 * @param bool $excludeTempAccounts Whether to remove log entries associated with temp accounts
 	 * @param string $start
 	 * @return array
 	 */
-	public function getQueryInfo( array $targets, array $excludeTargets, string $start ): array {
+	public function getQueryInfo(
+		array $targets,
+		array $excludeTargets,
+		bool $excludeTempAccounts,
+		string $start
+	): array {
 		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		if ( $targets === [] ) {
@@ -87,6 +100,14 @@ class CompareService extends ChangeService {
 					throw new LogicException( "Invalid table: $table" );
 				}
 				if ( $queryBuilder !== null ) {
+					if ( $excludeTempAccounts ) {
+						$queryBuilder = $this->excludeTempAccountsFromQuery(
+							$dbr,
+							$queryBuilder,
+							$table
+						);
+					}
+
 					if ( $dbr->unionSupportsOrderAndLimit() ) {
 						// Add the limit to the query (if using LIMIT is supported in a UNION for this DB type).
 						$queryBuilder->limit( $limit );

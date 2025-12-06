@@ -77,13 +77,6 @@ final class Constants {
 	public const REQUIREMENT_LANGUAGE_IN_HEADER = 'LanguageInHeader';
 
 	/**
-	 * Defines whether an A/B test is running.
-	 *
-	 * @var string
-	 */
-	public const CONFIG_WEB_AB_TEST_ENROLLMENT = 'VectorWebABTestEnrollment';
-
-	/**
 	 * The `mediawiki.searchSuggest` protocol piece of the SearchSatisfaction instrumention reads
 	 * the value of an element with the "data-search-loc" attribute and set the event's
 	 * `inputLocation` property accordingly.

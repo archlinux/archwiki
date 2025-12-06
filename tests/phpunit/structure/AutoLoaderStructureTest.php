@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @group Autoload
  * @coversNothing
  */
 class AutoLoaderStructureTest extends MediaWikiIntegrationTestCase {
@@ -133,7 +134,6 @@ class AutoLoaderStructureTest extends MediaWikiIntegrationTestCase {
 		$path = __DIR__ . '/../../..';
 		$oldAutoload = file_get_contents( $path . '/autoload.php' );
 		$generator = new AutoloadGenerator( $path, 'local' );
-		$generator->setPsr4Namespaces( AutoLoader::CORE_NAMESPACES );
 		$generator->initMediaWikiDefault();
 		$newAutoload = $generator->getAutoload( 'maintenance/generateLocalAutoload.php' );
 

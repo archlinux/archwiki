@@ -11,7 +11,7 @@
 	"pdf-file-page-warning": "PDF ist ein komplexes Dateiformat, das in bestimmten Fällen private Informationen preisgeben kann. Es muss darauf geachtet werden, dass der PDF-Betrachter entsprechend sicher konfiguriert ist.",
 	"pdf-file-page-warning-header": "Hinweise zum Datenschutz",
 	"pdf-file-page-warning-footer": "Dieses Problem ist nicht auf diese Datei beschränkt, sondern ist ein generelles Problem mit dem PDF-Dateiformat.",
-	"pdf-file-page-warning-info": "Erfahre mehr über dieses Problem.",
+	"pdf-file-page-warning-info": "{{#FORMAL:Erfahre|Erfahren Sie}} mehr über dieses Problem.",
 	"pdf_no_metadata": "Es können keine Metadaten aus der PDF-Datei abgerufen werden.",
 	"pdf_page_error": "Die Seitenzahl ist höher als die Anzahl der Seiten der PDF-Datei.",
 	"exif-pdf-producer": "Umwandlungsprogramm",

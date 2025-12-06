@@ -2,21 +2,7 @@
 /**
  * Page history pager
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Actions
  */
@@ -35,6 +21,7 @@ use MediaWiki\Html\ListToggle;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Article;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\RecentChanges\ChangesList;
 use MediaWiki\Revision\RevisionRecord;
@@ -46,6 +33,7 @@ use stdClass;
 use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Rdbms\IDBAccessObject;
+use Wikimedia\Timestamp\TimestampException;
 
 /**
  * @ingroup Pager
@@ -149,13 +137,39 @@ class HistoryPager extends ReverseChronologicalPager {
 			? $this->watchlistManager->getTitleNotificationTimestamp( $this->getUser(), $this->getTitle() )
 			: false;
 		$this->changeTagsStore = $changeTagsStore ?? $services->getChangeTagsStore();
+
+		$this->fixQueryOffset();
 	}
 
-	// For hook compatibility…
+	/**
+	 * Fix request offset to use current database time style for query offset
+	 * See T345793, T409831
+	 */
+	private function fixQueryOffset() {
+		if ( !$this->mOffset ) {
+			return;
+		}
+
+		[ $timestamp, $otherIndex ] = array_pad( explode( '|', $this->mOffset, 2 ), 2, null );
+
+		try {
+			$timestamp = $this->mDb->timestamp( $timestamp );
+			$this->mOffset = $otherIndex !== null ? "$timestamp|$otherIndex" : $timestamp;
+		} catch ( TimestampException ) {
+			// Ignore invalid offsets
+			$this->mOffset = '';
+		}
+	}
+
+	/**
+	 * For hook compatibility…
+	 * @return Article
+	 */
 	public function getArticle() {
 		return $this->historyPage->getArticle();
 	}
 
+	/** @inheritDoc */
 	protected function getSqlComment() {
 		if ( $this->conds ) {
 			return 'history page filtered'; // potentially slow, see CR r58153
@@ -164,6 +178,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$queryBuilder = $this->revisionStore->newSelectQueryBuilder( $this->mDb )
 			->joinComment()
@@ -188,6 +203,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		return $queryInfo;
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ [ 'rev_timestamp', 'rev_id' ] ];
 	}
@@ -325,6 +341,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		return $element;
 	}
 
+	/** @inheritDoc */
 	protected function getEndBody() {
 		if ( $this->getNumRows() == 0 ) {
 			return '';

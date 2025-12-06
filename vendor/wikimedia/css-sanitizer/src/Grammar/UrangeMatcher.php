@@ -16,7 +16,7 @@ use Wikimedia\CSS\Objects\Token;
  * "start" and "end" holding T_NUMBER tokens representing the starting and
  * ending codepoints in the range.
  *
- * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#urange
+ * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#urange
  */
 class UrangeMatcher extends Matcher {
 	/** @var Matcher Syntax matcher */

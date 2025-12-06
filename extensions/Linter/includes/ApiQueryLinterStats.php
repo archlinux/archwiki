@@ -27,11 +27,6 @@ class ApiQueryLinterStats extends ApiQueryBase {
 
 	private TotalsLookup $totalsLookup;
 
-	/**
-	 * @param ApiQuery $queryModule
-	 * @param string $moduleName
-	 * @param TotalsLookup $totalsLookup
-	 */
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,

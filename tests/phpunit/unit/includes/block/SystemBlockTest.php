@@ -4,12 +4,11 @@ use MediaWiki\Block\SystemBlock;
 
 /**
  * @group Blocking
- * @coversDefaultClass \MediaWiki\Block\SystemBlock
+ * @covers \MediaWiki\Block\SystemBlock
+ * @covers \MediaWiki\Block\AbstractBlock
  */
 class SystemBlockTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::getSystemBlockType
-	 */
+
 	public function testSystemBlockType() {
 		$block = new SystemBlock( [
 			'systemBlock' => 'proxy',

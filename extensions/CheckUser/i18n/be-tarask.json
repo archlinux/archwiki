@@ -70,6 +70,7 @@
 	"checkuser-showmain": "Пераключыцца на {{#special:CheckUser}}",
 	"logentry-checkuser-private-event-autocreate-account": "быў створаны аўтаматычна",
 	"logentry-checkuser-private-event-create-account": "створаны",
+	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-content": "Дзеля абароны прыватнасьці карыстальнікаў {{SITENAME}} больш не паказвае IP-адрасы незарэгістраваных рэдактараў публічна.\n\nЗамест гэтага незарэгістраваныя рэдактары атрымліваюць аўтаматычна згенэраваныя імёны, зьвязаныя з <strong>[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Temporary_accounts часовымі ўліковымі запісамі]</strong>, і іхнія IP-адрасы будуць бачыць толькі давераныя ўдзельнікі супольнасьці, якім гэта патрэбна дзеля барацьбы з вандалізмам ды злоўжываньнямі.\n\nКалі для незарэгістраванага рэдактара ствараецца часовы ўліковы запіс, то ў ягоным броўзэры зьберагаецца файл біркі. Аўтарства ўсіх далейшых рэдагаваньняў будзе прыпісвацца гэтаму часоваму ўліковаму запісу, нават калі IP-адрас гэтага рэдактара зьменіцца.",
 	"checkuser-investigateblock": "Заблякаваць удзельнікаў",
 	"checkuser-investigateblock-reason": "Прычына",
 	"checkuser-investigateblock-options": "Дадатковыя опцыі",
@@ -112,5 +113,6 @@
 	"checkuser-investigate-compare-table-header-useragent": "Агент удзельніка",
 	"checkuser-global-contributions-link": "глябальны ўнёсак",
 	"checkuser-global-contributions-link-sidebar": "Глябальны ўнёсак",
+	"checkuser-userinfocard-enable-preference-description": "Уключыць [[mw:Trust_and_Safety_Product/Anti-abuse_signals/User_Info|картку з інфармацыяй пра карыстальніка]]",
 	"checkuser-userinfocard-enable-preference-help": "Паказваць побач зь імёнамі карыстальнікаў кнопку, якая адкрые выплыўнае вакенца з інфармацыяй пра ўліковы запіс."
 }

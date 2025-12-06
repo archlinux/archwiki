@@ -2,8 +2,7 @@
 
 namespace Cite\Hooks;
 
-use Cite\Cite;
-use MediaWiki\Config\Config;
+use Cite\CiteFactory;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 
@@ -12,12 +11,9 @@ use MediaWiki\Parser\PPFrame;
  */
 class CiteParserTagHooks {
 
-	private Config $config;
-
 	public function __construct(
-		Config $config
+		private readonly CiteFactory $citeFactory,
 	) {
-		$this->config = $config;
 	}
 
 	/**
@@ -44,7 +40,7 @@ class CiteParserTagHooks {
 		Parser $parser,
 		PPFrame $frame
 	): string {
-		$cite = $this->citeForParser( $parser );
+		$cite = $this->citeFactory->getCiteForParser( $parser );
 		$result = $cite->ref( $parser, $text, $argv );
 
 		if ( $result === null ) {
@@ -75,7 +71,7 @@ class CiteParserTagHooks {
 		Parser $parser,
 		PPFrame $frame
 	): string {
-		$cite = $this->citeForParser( $parser );
+		$cite = $this->citeFactory->getCiteForParser( $parser );
 		$result = $cite->references( $parser, $text, $argv );
 
 		if ( $result === null ) {
@@ -88,13 +84,4 @@ class CiteParserTagHooks {
 		$frame->setVolatile();
 		return $result;
 	}
-
-	/**
-	 * Get or create Cite state for this parser.
-	 */
-	private function citeForParser( Parser $parser ): Cite {
-		$parser->extCite ??= new Cite( $parser, $this->config );
-		return $parser->extCite;
-	}
-
 }

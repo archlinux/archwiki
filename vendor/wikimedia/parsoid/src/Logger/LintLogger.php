@@ -41,6 +41,9 @@ class LintLogger {
 		if ( $metrics ) {
 			$timer = Timing::start( $metrics );
 		}
+		// Note that Env::recordLint() validates that all of our DSRs use
+		// this source.
+		$source = $env->topFrame->getSource();
 
 		// Accumulate offsets + convert widths to pseudo-offsets
 		$offsets = [];
@@ -62,7 +65,7 @@ class LintLogger {
 			}
 		}
 
-		TokenUtils::convertOffsets( $env->topFrame->getSrcText(), $from, $to, $offsets );
+		TokenUtils::convertOffsets( $source->getSrcText(), $from, $to, $offsets );
 
 		// Undo the conversions of dsr[2], dsr[3]
 		foreach ( $lints as &$lint ) {
@@ -80,10 +83,7 @@ class LintLogger {
 		}
 	}
 
-	/**
-	 *
-	 */
-	public function logLintOutput() {
+	public function logLintOutput(): void {
 		$env = $this->env;
 
 		// We only want to send to the MW API if this was a request to parse

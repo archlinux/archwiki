@@ -171,8 +171,7 @@
 		 * @param {Object} [options]
 		 * @return {jQuery.Promise} Promise which resolves with API save data, or rejects with error details
 		 */
-		postHtml: function ( html, cacheKey, extraData, options ) {
-			options = options || {};
+		postHtml: function ( html, cacheKey, extraData = {}, options = {} ) {
 			let data;
 			if ( cacheKey ) {
 				data = $.extend( { cachekey: cacheKey }, extraData );
@@ -215,8 +214,7 @@
 		 * @param {string} [options.eventName] Event name for tracking
 		 * @return {jQuery.Promise} Promise which resolves with API save data, or rejects with error details
 		 */
-		postContent: function ( data, options ) {
-			options = options || {};
+		postContent: function ( data, options = {} ) {
 			const api = options.api || new mw.Api();
 
 			let start;

@@ -8,7 +8,9 @@
 	"mobile-frontend-home-button": "Pulian",
 	"mobile-frontend-language-article-heading": "Sarita",
 	"mobile-frontend-main-menu-login": "Lumoog",
+	"mobile-frontend-main-menu-nearby": "Kaabay",
 	"mobile-frontend-main-menu-settings": "Mga kagustuhan",
 	"mobile-frontend-placeholder": "Pag-anapon a {{SITENAME}}",
-	"mobile-frontend-random-button": "Dawa arin"
+	"mobile-frontend-random-button": "Dawa arin",
+	"minerva-page-actions-overflow": "Dakul pa"
 }

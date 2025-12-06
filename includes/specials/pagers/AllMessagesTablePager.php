@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -244,6 +230,7 @@ class AllMessagesTablePager extends TablePager {
 		return new FakeResultWrapper( $rows );
 	}
 
+	/** @inheritDoc */
 	protected function getStartBody() {
 		return Html::openElement( 'table', [
 			'class' => $this->getTableClass(),
@@ -265,6 +252,7 @@ class AllMessagesTablePager extends TablePager {
 			</tr></thead>\n";
 	}
 
+	/** @inheritDoc */
 	protected function getEndBody() {
 		return Html::closeElement( 'table' );
 	}
@@ -347,6 +335,7 @@ class AllMessagesTablePager extends TablePager {
 		return Html::rawElement( 'tbody', [], $s );
 	}
 
+	/** @inheritDoc */
 	protected function getRowAttrs( $row ) {
 		return [];
 	}
@@ -375,26 +364,31 @@ class AllMessagesTablePager extends TablePager {
 		return $attr;
 	}
 
-	// This is not actually used, as getStartBody is overridden above
+	/** @inheritDoc */
 	protected function getFieldNames() {
+		// This is not actually used, as getStartBody is overridden above
 		return [
 			'am_title' => $this->msg( 'allmessagesname' )->text(),
 			'am_default' => $this->msg( 'allmessagesdefault' )->text()
 		];
 	}
 
+	/** @inheritDoc */
 	public function getTitle() {
 		return SpecialPage::getTitleFor( 'Allmessages', false );
 	}
 
+	/** @inheritDoc */
 	protected function isFieldSortable( $x ) {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getDefaultSort() {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		return [];
 	}

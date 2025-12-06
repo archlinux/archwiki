@@ -23,7 +23,7 @@ class RemexCompatFormatter extends HtmlFormatter {
 	/** @var ?callable */
 	private $textProcessor;
 
-	public function __construct( $options = [] ) {
+	public function __construct( array $options = [] ) {
 		parent::__construct( $options );
 		// Escape non-breaking space
 		$this->attributeEscapes["\u{00A0}"] = '&#160;';
@@ -36,6 +36,7 @@ class RemexCompatFormatter extends HtmlFormatter {
 		$this->textProcessor = $options['textProcessor'] ?? null;
 	}
 
+	/** @inheritDoc */
 	public function startDocument( $fragmentNamespace, $fragmentName ) {
 		return '';
 	}
@@ -56,13 +57,15 @@ class RemexCompatFormatter extends HtmlFormatter {
 			if ( $this->textProcessor !== null ) {
 				$text = ( $this->textProcessor )( $text );
 			}
+
+			// Ensure a consistent representation for all entities
+			$text = Sanitizer::normalizeCharReferences( $text );
 		}
 
-		// Ensure a consistent representation for all entities
-		$text = Sanitizer::normalizeCharReferences( $text );
 		return $text;
 	}
 
+	/** @inheritDoc */
 	public function element( SerializerNode $parent, SerializerNode $node, $contents ) {
 		$data = $node->snData;
 		if ( $data && $data->isPWrapper ) {

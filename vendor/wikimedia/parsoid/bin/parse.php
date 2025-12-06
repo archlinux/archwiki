@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 /**
  * At present, this script is just used for testing the library and uses a
@@ -8,9 +9,11 @@
 require_once __DIR__ . '/../tools/Maintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title as MWTitle;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Config\Api\ApiHelper;
 use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
@@ -74,6 +77,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 		$this->addOption( 'profile', 'Proxy for --trace time' );
 		$this->addOption( 'benchmark', 'Suppress output and show timing summary' );
+		$this->addOption( 'debug-oom',
+			'Show peak memory usage at different points in code execution. ' .
+			'This enables --profile as well.'
+		);
 		$this->addOption( 'count',
 			'Repeat the operation this many times',
 			false, true );
@@ -173,6 +180,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->addOption(
 			'addHTMLTemplateParameters',
 			'Parse template parameters to HTML and add them to template data'
+		);
+		$this->addOption(
+			'nativeTemplateExpansion',
+			'Use native template expansion mode'
 		);
 		$this->addOption(
 			'domain',
@@ -276,7 +287,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			'metrics',
 			'Dump a log of the metrics methods that were called from a MockMetrics.'
 		);
-		$this->addOption( 'v3pf', 'Generate Experimental Parsoid HTML v3 parser function output' );
+		$this->addOption( 'v3pf', 'Generate Parsoid v3 parser function output for all parser functions' );
 		$this->addOption(
 			'record',
 			'Record HTTP requests for later replay'
@@ -299,7 +310,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$services = MediaWikiServices::getInstance();
 		$siteConfig = $services->getParsoidSiteConfig();
 		// Overwriting logger so that it logs to console/file
-		$logFilePath = null;
+		$logFilePath = 'php://stderr';
 		if ( $this->hasOption( 'logFile' ) ) {
 			$logFilePath = $this->getOption( 'logFile' );
 		}
@@ -335,11 +346,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 
 		$this->siteConfig = $siteConfig;
-		$this->pageConfig = $pcFactory->create(
+		$this->pageConfig = $pcFactory->createFromParserOptions(
+			ParserOptions::newFromAnon(),
 			$title,
-			null, // UserIdentity
 			$revisionRecord ?? $revision,
-			null,
 			null,
 			$configOpts['ensureAccessibleContent']
 		);
@@ -351,10 +361,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$api = new ApiHelper( $configOpts );
 
 		$siteConfig = new SiteConfig( $api, $configOpts );
+		$logFilePath = 'php://stderr';
 		if ( $this->hasOption( 'logFile' ) ) {
-			// Overwrite logger so that it logs to file
-			$siteConfig->setLogger( SiteConfig::createLogger( $this->getOption( 'logFile' ) ) );
+			$logFilePath = $this->getOption( 'logFile' );
 		}
+		$siteConfig->setLogger( SiteConfig::createLogger( $logFilePath ) );
 		$dataAccess = new DataAccess( $api, $siteConfig, $configOpts );
 		$this->siteConfig = $siteConfig;
 		$configOpts['title'] = isset( $configOpts['title'] )
@@ -620,15 +631,21 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			"logLinterData" => $this->hasOption( 'logLinterData' ),
 			"pageBundle" =>
 			$this->hasOption( 'pageBundle' ) || $this->hasOption( 'pboutfile' ),
+			"nativeTemplateExpansion" => $this->hasOption( 'nativeTemplateExpansion' ),
 		];
 		if ( $this->hasOption( 'fragmentbank' ) ) {
 			$parsoidOpts['useFragmentBank'] = true;
 			$parsoidOpts['body_only'] = false;
 		}
+
+		foreach ( [ 'htmlVariantLanguage', 'wtVariantLanguage' ] as $opt ) {
+			if ( $this->hasOption( $opt ) ) {
+				$parsoidOpts[$opt] = new Bcp47CodeValue( $this->getOption( $opt ) );
+			}
+		}
+
 		foreach ( [
-			'offsetType', 'outputContentVersion',
-			'wtVariantLanguage', 'htmlVariantLanguage',
-			'contentmodel'
+			'offsetType', 'outputContentVersion', 'contentmodel'
 		] as $opt ) {
 			if ( $this->hasOption( $opt ) ) {
 				$parsoidOpts[$opt] = $this->getOption( $opt );
@@ -641,6 +658,13 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		if ( $this->hasOption( 'profile' ) ) {
 			$parsoidOpts['traceFlags'] ??= [];
 			$parsoidOpts['traceFlags']['time'] = true;
+		}
+		if ( $this->hasOption( 'debug-oom' ) ) {
+			// Enable --profile
+			$parsoidOpts['traceFlags'] ??= [];
+			$parsoidOpts['traceFlags']['time'] = true;
+			$parsoidOpts['debugFlags']['oom'] = true;
+			$parsoidOpts['dumpFlags']['oom'] = true; // HACK
 		}
 
 		$startsAtHtml = $this->hasOption( 'html2wt' ) ||

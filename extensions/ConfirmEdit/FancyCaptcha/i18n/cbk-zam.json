@@ -5,5 +5,8 @@
 			"Noooote"
 		]
 	},
-	"fancycaptcha-imgcaptcha-ph": "Escribi con el texto ta puede tu mira na retrato"
+	"fancycaptcha-captcha": "Chequeada de suguridad",
+	"fancycaptcha-accountcreate": "Para protege con el wiki contra na automatic account creation, enbuenamente kame ta manda que escribi el maga palabra ta aparece debajo lang del cajon ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-imgcaptcha-ph": "Escribi con el texto ta puede tu mira na retrato",
+	"fancycaptcha-reload-text": "Refresca"
 }

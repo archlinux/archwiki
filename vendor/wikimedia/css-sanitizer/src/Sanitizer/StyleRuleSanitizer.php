@@ -21,7 +21,7 @@ use Wikimedia\CSS\Util;
 
 /**
  * Sanitizes a CSS style rule
- * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#style-rules
+ * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#style-rules
  */
 class StyleRuleSanitizer extends RuleSanitizer {
 

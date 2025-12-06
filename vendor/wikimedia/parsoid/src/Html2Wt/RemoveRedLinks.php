@@ -11,10 +11,8 @@ use Wikimedia\Parsoid\Utils\UrlUtils;
 
 class RemoveRedLinks {
 
-	private Env $env;
-
+	/** @suppress PhanEmptyPublicMethod */
 	public function __construct( Env $env ) {
-		$this->env = $env;
 	}
 
 	/**
@@ -44,7 +42,6 @@ class RemoveRedLinks {
 					// believe that the order of the parameters should not be modified here.
 					// There is however no guarantee whatsoever in the documentation or spec
 					// of these methods.
-					$newQueryParams = http_build_query( $queryElts );
 
 					if ( count( $queryElts ) === 0 ) {
 						// avoids the insertion of ? on empty query string

@@ -1,20 +1,5 @@
 @import 'mediawiki.skin.variables.less';
 
-// Make sure label vertically aligns with icon
-.cdx-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-
-// Apply spacing between icons and text in buttons and menu items
-.toggle-list-item__anchor,
-.cdx-button {
-	.minerva-icon + span:not( :empty ) {
-		margin-left: 8px;
-	}
-}
-
 // Never reveal the labels of icon only buttons in the header,
 // article content (parser-output), IP masking banner,
 // or MobileFrontend overlays / drawers.

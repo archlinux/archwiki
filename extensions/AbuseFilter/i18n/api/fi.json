@@ -22,5 +22,6 @@
 	"apierror-abusefilter-canttest": "Sinulla ei ole oikeutta testata väärinkäyttösuodattimia.",
 	"apierror-abusefilter-cantcheck": "Sinulla ei ole oikeutta tarkastella syntaksia väärinkäyttösuodattimissa.",
 	"apierror-abusefilter-nosuchlogid": "Väärinkäyttösuodattimessa ei ole lokimerkintää tunnisteella $1.",
+	"apierror-abusefilter-incompatible": "Väärinkäyttösuodatin ei tue pyydettyä muutosta.",
 	"apierror-abusefilter-badsyntax": "Suodattimella on virheellinen syntaksi."
 }

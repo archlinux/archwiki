@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\SpamBlacklist;
 
 use MediaWiki\CheckUser\Hooks as CUHooks;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
@@ -191,11 +192,13 @@ class SpamBlacklist extends BaseBlacklist {
 			$cache->makeKey( 'external-link-list', $title->getLatestRevID() ),
 			$cache::TTL_MINUTE,
 			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $title, $fname ) {
-				$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
-				$setOpts += Database::getCacheSetOptions( $dbr );
-				return ExternalLinksLookup::getExternalLinksForPage(
+				$dbProvider = MediaWikiServices::getInstance()->getConnectionProvider();
+				$setOpts += Database::getCacheSetOptions(
+					$dbProvider->getReplicaDatabase( ExternalLinksTable::VIRTUAL_DOMAIN )
+				);
+				return ExternalLinksLookup::getExtLinksForPage(
 					$title->getArticleID(),
-					$dbr,
+					$dbProvider,
 					$fname
 				);
 			}

@@ -33,8 +33,6 @@
 	"tooltip-pt-notifications-alert": "{{GENDER:|Ձեր}} յայտարարութիւնները",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Ձեր}} նշումները",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Լռելեայն միացած",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Գործօն մասնակիցներ",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Նոր մասնակիցներ",
 	"echo-specialpage": "Ծանուցումներ",
 	"echo-specialpage-section-markread": "Ցանկը ընթերցուած համարել",
 	"echo-specialpage-markasread": "Ծանուցում. ընթերցուած համարել",

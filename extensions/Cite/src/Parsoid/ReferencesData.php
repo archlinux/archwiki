@@ -21,6 +21,14 @@ class ReferencesData {
 	public array $embeddedErrors = [];
 	/** @var array<?string> */
 	private array $embeddedContentStack = [];
+
+	/**
+	 * Ideally we would track this on the RefGroupItem, but that would require
+	 * creating one before processing nested references and it would change the
+	 * sequence numbers.
+	 */
+	public array $refLocks = [];
+
 	/**
 	 * The current group name while we are in <references>, no matter how deeply nested. Null when
 	 * parsing <ref> outside of <references>. Warning, an empty string is a valid group name!
@@ -58,8 +66,9 @@ class ReferencesData {
 		array_pop( $this->embeddedContentStack );
 	}
 
-	public function inIndicatorContext(): bool {
-		return in_array( 'indicator', $this->embeddedContentStack, true );
+	public function peekForIndicatorContext(): bool {
+		$last = array_key_last( $this->embeddedContentStack );
+		return $last !== null && $this->embeddedContentStack[$last] === 'indicator';
 	}
 
 	public function incrementRefDepth(): void {
@@ -84,10 +93,22 @@ class ReferencesData {
 		unset( $this->refGroups[$groupName] );
 	}
 
+	public function isKnown( ?string $group, ?string $name ): bool {
+		$refGroup = $this->lookupRefGroup( $group ?? '' );
+		return $refGroup && $name && $refGroup->lookupRefByName( $name );
+	}
+
+	/**
+	 * @param RefGroup $group Group to add the new reference to
+	 * @param string $name
+	 * @param string $dir Direction "ltr" or "rtl", or an empty string when not specified
+	 * @param string|null $details Contents of the details="…" attribute, or null when not used
+	 * @return RefGroupItem
+	 */
 	public function addRef(
 		RefGroup $group,
-		string $refName,
-		string $refDir,
+		string $name,
+		string $dir,
 		?string $details = null
 	): RefGroupItem {
 		$ref = new RefGroupItem();
@@ -95,24 +116,21 @@ class ReferencesData {
 		if ( $details === null ) {
 			// FIXME: This doesn't count correctly when <ref follow=…> is used on the page
 			$ref->numberInGroup = $group->getNextIndex();
-			$ref->name = $refName ?: null;
+			$ref->name = $name ?: null;
 		} else {
-			$mainRef = $group->lookupRefByName( $refName ) ??
+			$mainRef = $group->lookupRefByName( $name ) ??
 				// TODO: dir could be different for the main
-				$this->addRef( $group, $refName, $refDir );
+				$this->addRef( $group, $name, $dir );
 
 			$ref->numberInGroup = $mainRef->numberInGroup;
-			$ref->subrefIndex = $group->getNextSubrefSequence( $refName );
+			$ref->subrefIndex = $group->getNextSubrefSequence( $name );
 		}
 
-		$ref->dir = $refDir;
+		$ref->dir = $dir;
 		$ref->group = $group->name;
 		$ref->globalId = ++$this->refSequence;
 
-		$group->refs[] = $ref;
-		if ( $ref->name ) {
-			$group->indexByName[$ref->name] = $ref;
-		}
+		$group->push( $ref );
 
 		return $ref;
 	}

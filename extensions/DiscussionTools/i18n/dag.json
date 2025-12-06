@@ -15,7 +15,8 @@
 			"Musahfm",
 			"Naporo",
 			"Ruky Wunpini",
-			"Woytecr"
+			"Woytecr",
+			"SIR SUCCESS (NAA JAHINFO)"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} ni nya buɣisigu so yi niŋ tɔɣino zaŋ chaŋ saawara ŋɔ polo. A ni tooi baŋsi a ni bɔri ni nyari buɣisigu ŋɔ shɛm.",
@@ -83,6 +84,7 @@
 	"discussiontools-preference-topicsubscription": "Yɛltɔɣa zuɣu piibu",
 	"discussiontools-preference-topicsubscription-help": "Dimbɔŋɔ nyɛla din yɛn ti a soli ka a tooi deeri satara zaŋ chaŋ niriba ni yɛri shɛli zaŋ chaŋ yɛlikpana kam polo.",
 	"discussiontools-preference-visualenhancements": "Yihimi sawara ŋɔ yɛltɔɣa polo",
+	"discussiontools-replylink": "{{GENDER:|labsigu}}",
 	"discussiontools-replywidget-abandon": "Ban {{GENDER#}} a dihitabili ni bɔri ni a ŋmaai a tɔɣino sabbu n-ŋɔ n-Labi?",
 	"discussiontools-replywidget-abandon-discard": "Ŋmmai tɔɣino",
 	"discussiontools-replywidget-abandon-keep": "Tuɣimi Sabbu",
@@ -102,6 +104,7 @@
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} zaŋ ti {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Suhuyurilim",
 	"discussiontools-replywidget-preview": "N-nya pɔi",
+	"discussiontools-replywidget-reply": "{{GENDER:|Labisima}}",
 	"discussiontools-replywidget-return-to-newtopic": "Labimi yɛlikpani palli maa ni",
 	"discussiontools-replywidget-return-to-reply": "Labimi ti labisi",
 	"discussiontools-replywidget-summary": "Kɔlivaai",

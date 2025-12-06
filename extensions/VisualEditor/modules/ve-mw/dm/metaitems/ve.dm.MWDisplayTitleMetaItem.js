@@ -28,25 +28,60 @@ ve.dm.MWDisplayTitleMetaItem.static.name = 'mwDisplayTitle';
 
 ve.dm.MWDisplayTitleMetaItem.static.group = 'mwDisplayTitle';
 
-ve.dm.MWDisplayTitleMetaItem.static.matchTagNames = [ 'meta' ];
+ve.dm.MWDisplayTitleMetaItem.static.matchTagNames = [ 'span' ];
 
-ve.dm.MWDisplayTitleMetaItem.static.matchRdfaTypes = [ 'mw:PageProp/displaytitle' ];
+ve.dm.MWDisplayTitleMetaItem.static.matchRdfaTypes = [ 'mw:Transclusion' ];
+
+ve.dm.MWDisplayTitleMetaItem.static.matchFunction = function ( domElement ) {
+	const mwDataJSON = domElement.getAttribute( 'data-mw' ),
+		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
+	return ve.getProp( mwData, 'parts', '0', 'template', 'target', 'function' ) === 'displaytitle' ||
+		ve.getProp( mwData, 'parts', '0', 'parserfunction', 'target', 'key' ) === 'displaytitle';
+};
 
 ve.dm.MWDisplayTitleMetaItem.static.toDataElement = function ( domElements ) {
-	const content = domElements[ 0 ].getAttribute( 'content' );
+	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
+	const wt = ( ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' ) || '' ) ||
+		ve.getProp( mwData, 'parts', '0', 'parserfunction', 'params', '1', 'wt' );
+	const localizedPrefix = wt.split( ':' )[ 0 ];
+	const content = wt.slice( localizedPrefix.length + 1 );
 	return {
 		type: this.name,
 		attributes: {
+			localizedPrefix: localizedPrefix,
 			content: content
 		}
 	};
 };
 
 ve.dm.MWDisplayTitleMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	const meta = doc.createElement( 'meta' );
-	meta.setAttribute( 'property', 'mw:PageProp/displaytitle' );
-	meta.setAttribute( 'content', dataElement.attributes.content );
-	return [ meta ];
+	const prefix = dataElement.attributes.localizedPrefix ||
+			mw.config.get( 'wgVisualEditorConfig' ).displayTitlePrefix,
+		displayTitle = dataElement.attributes.content,
+		mwData = {
+			parts: [
+				{
+					template: {
+						target: {
+							wt: prefix + ':' + displayTitle,
+							function: 'displaytitle'
+						}
+					}
+				}
+			]
+		};
+
+	if ( !dataElement.originalDomElementsHash ) {
+		// If this is a new addition to the page, we need to enforce a newline:
+		mwData.parts.push( '\n' );
+	}
+
+	const span = doc.createElement( 'span' );
+	span.setAttribute( 'typeof', 'mw:Transclusion' );
+	span.setAttribute( 'data-mw', JSON.stringify( mwData ) );
+	span.setAttribute( 'about', '#mwt-ve-' + Math.floor( 1000000000 * Math.random() ) );
+	return [ span ];
 };
 
 /* Registration */

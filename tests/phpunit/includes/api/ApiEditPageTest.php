@@ -14,10 +14,12 @@ use MediaWiki\Status\Status;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use RevisionDeleter;
 use Wikimedia\Rdbms\IDBAccessObject;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Tests for MediaWiki api.php?action=edit.
@@ -718,7 +720,6 @@ class ApiEditPageTest extends ApiTestCase {
 	public function testUndoAfterContentModelChange() {
 		$name = 'Help:' . __FUNCTION__;
 		$sysop = $this->getTestSysop()->getUser();
-		$otherUser = $this->getTestUser()->getUser();
 
 		$apiResult = $this->doApiRequestWithToken( [
 			'action' => 'edit',
@@ -740,7 +741,7 @@ class ApiEditPageTest extends ApiTestCase {
 			'title' => $name,
 			'text' => '{}',
 			'contentmodel' => 'json',
-		], null, $otherUser )[0];
+		], null, $sysop )[0];
 
 		// Check success
 		$this->assertArrayHasKey( 'edit', $apiResult );
@@ -1495,7 +1496,7 @@ class ApiEditPageTest extends ApiTestCase {
 			'title' => $title->getPrefixedText(),
 			'text' => 'Some text',
 			'watch' => '',
-			'watchlistexpiry' => '99990123000000',
+			'watchlistexpiry' => '1 week',
 		] );
 
 		$this->assertTrue( $title->exists( IDBAccessObject::READ_LATEST ) );
@@ -1781,5 +1782,89 @@ class ApiEditPageTest extends ApiTestCase {
 		} catch ( ApiUsageException $e ) {
 			$this->assertApiErrorCode( 'contentmodel-mismatch', $e );
 		}
+	}
+
+	public function testEditWithWatchlistExpiry(): void {
+		ConvertibleTimestamp::setFakeTime( '20240201000000' );
+		$user = $this->getTestUser()->getUser();
+		$mockUserOptionsLookup = new StaticUserOptionsLookup( [
+			$user->getName() => [
+				'watchdefault' => '1',
+				'watchdefault-expiry' => '1 week',
+				'watchcreations' => '1',
+				'watchcreations-expiry' => '1 month'
+			],
+		] );
+		$this->setService( 'UserOptionsLookup', $mockUserOptionsLookup );
+		$watchlistManager = $this->getServiceContainer()->getWatchlistManager();
+
+		$title = Title::makeTitle( NS_HELP, 'TestEditWithWatchlistExpiry' );
+		$apiResult = $this->doApiRequestWithToken( [
+			'action' => 'edit',
+			'title' => $title,
+			'text' => 'some text'
+		], null, $user );
+
+		$this->assertSame(
+			'2024-03-01T00:00:00Z',
+			$apiResult[0]['edit']['watchlistexpiry'],
+			'Watchlist expiry is 1 month for new pages'
+		);
+		$this->assertTrue( $title->exists( IDBAccessObject::READ_LATEST ) );
+		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
+		$this->assertTrue( $watchlistManager->isTempWatched( $user, $title ) );
+
+		// Edit again. Watchlist expiry should be unchanged.
+		$apiResult = $this->doApiRequestWithToken( [
+			'action' => 'edit',
+			'title' => $title,
+			'appendtext' => 'some more text'
+		], null, $user );
+
+		$this->assertSame(
+			'2024-03-01T00:00:00Z',
+			$apiResult[0]['edit']['watchlistexpiry'],
+			'Watchlist expiry is unchanged when already watched with expiry'
+		);
+		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
+		$this->assertTrue( $watchlistManager->isTempWatched( $user, $title ) );
+
+		// Watch without expiry, then edit again. Watchlist expiry should be unchanged.
+		$watchlistManager->removeWatch( $user, $title );
+		$watchlistManager->addWatch( $user, $title );
+		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
+		$this->assertFalse( $watchlistManager->isTempWatched( $user, $title ) );
+
+		$apiResult = $this->doApiRequestWithToken( [
+			'action' => 'edit',
+			'title' => $title,
+			'appendtext' => 'some more text'
+		], null, $user );
+
+		$this->assertSame(
+			null,
+			$apiResult[0]['edit']['watchlistexpiry'] ?? null,
+			'Watchlist expiry is unchanged when already watched without expiry'
+		);
+		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
+		$this->assertFalse( $watchlistManager->isTempWatched( $user, $title ) );
+
+		// Unwatch, then edit again. Watchlist expiry should be just 1 week.
+		$watchlistManager->removeWatch( $user, $title );
+		$this->assertFalse( $watchlistManager->isWatched( $user, $title ) );
+
+		$apiResult = $this->doApiRequestWithToken( [
+			'action' => 'edit',
+			'title' => $title,
+			'appendtext' => 'some more text'
+		], null, $user );
+
+		$this->assertSame(
+			'2024-02-08T00:00:00Z',
+			$apiResult[0]['edit']['watchlistexpiry'],
+			'Watchlist expiry is 1 week for existing pages'
+		);
+		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
+		$this->assertTrue( $watchlistManager->isTempWatched( $user, $title ) );
 	}
 }

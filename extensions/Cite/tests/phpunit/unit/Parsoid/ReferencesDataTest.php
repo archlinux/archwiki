@@ -66,8 +66,8 @@ class ReferencesDataTest extends MediaWikiUnitTestCase {
 		$expected->globalId = 1;
 		$this->assertEquals( $expected, $ref );
 
-		$this->assertEquals( [ $expected ], $group->refs );
-		$this->assertSame( [], $group->indexByName );
+		$this->assertSame( 1, $group->count() );
+		$this->assertNull( $group->lookupRefByName( '' ) );
 	}
 
 	public function testAddNamedRef() {
@@ -86,8 +86,8 @@ class ReferencesDataTest extends MediaWikiUnitTestCase {
 		$expected->name = 'wales';
 		$this->assertEquals( $expected, $ref );
 
-		$this->assertEquals( [ $expected ], $group->refs );
-		$this->assertEquals( [ 'wales' => $expected ], $group->indexByName );
+		$this->assertSame( 1, $group->count() );
+		$this->assertEquals( $expected, $group->lookupRefByName( 'wales' ) );
 	}
 
 	public function testSubref() {
@@ -113,8 +113,17 @@ class ReferencesDataTest extends MediaWikiUnitTestCase {
 		$expected->subrefIndex = 1;
 		$this->assertEquals( $expected, $ref );
 
-		$this->assertEquals( [ $expectedParent, $expected ], $group->refs );
-		$this->assertEquals( [ 'wales' => $expectedParent ], $group->indexByName );
+		$this->assertSame( 2, $group->count() );
+		$this->assertEquals( $expectedParent, $group->lookupRefByName( 'wales' ) );
+	}
+
+	public function testIndicatorContext() {
+		$data = new ReferencesData();
+		$this->assertFalse( $data->peekForIndicatorContext() );
+		$data->pushEmbeddedContentFlag( 'indicator' );
+		$this->assertTrue( $data->peekForIndicatorContext() );
+		$data->pushEmbeddedContentFlag();
+		$this->assertFalse( $data->peekForIndicatorContext() );
 	}
 
 }

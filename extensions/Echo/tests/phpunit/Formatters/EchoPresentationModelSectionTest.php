@@ -12,10 +12,16 @@ use MediaWikiIntegrationTestCase;
  */
 class EchoPresentationModelSectionTest extends MediaWikiIntegrationTestCase {
 
+	private function serializeExtra( array $extra ) {
+		return $this->getServiceContainer()
+			->getJsonCodec()
+			->serialize( $extra );
+	}
+
 	public function testGetTruncatedSectionTitle_short() {
 		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$section = new EchoPresentationModelSection(
-			$this->makeEvent( [ 'event_extra' => serialize( [ 'section-title' => 'asdf' ] ) ] ),
+			$this->makeEvent( [ 'event_extra' => $this->serializeExtra( [ 'section-title' => 'asdf' ] ) ] ),
 			$this->getTestUser()->getUser(),
 			$lang
 		);
@@ -26,7 +32,9 @@ class EchoPresentationModelSectionTest extends MediaWikiIntegrationTestCase {
 	public function testGetTruncatedSectionTitle_long() {
 		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$section = new EchoPresentationModelSection(
-			$this->makeEvent( [ 'event_extra' => serialize( [ 'section-title' => str_repeat( 'a', 100 ) ] ) ] ),
+			$this->makeEvent( [ 'event_extra' => $this->serializeExtra( [
+				'section-title' => str_repeat( 'a', 100 ) ] ),
+			] ),
 			$this->getTestUser()->getUser(),
 			$lang
 		);
@@ -42,7 +50,7 @@ class EchoPresentationModelSectionTest extends MediaWikiIntegrationTestCase {
 		$section = new EchoPresentationModelSection(
 			$this->makeEvent( [
 				'event_page_id' => $page->getId(),
-				'event_extra' => serialize( [ 'section-title' => 'asdf' ] ),
+				'event_extra' => $this->serializeExtra( [ 'section-title' => 'asdf' ] ),
 			] ),
 			$this->getTestUser()->getUser(),
 			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' )
@@ -66,7 +74,7 @@ class EchoPresentationModelSectionTest extends MediaWikiIntegrationTestCase {
 
 	public function testExists_yes() {
 		$section = new EchoPresentationModelSection(
-			$this->makeEvent( [ 'event_extra' => serialize( [ 'section-title' => 'asdf' ] ) ] ),
+			$this->makeEvent( [ 'event_extra' => $this->serializeExtra( [ 'section-title' => 'asdf' ] ) ] ),
 			$this->getTestUser()->getUser(),
 			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' )
 		);

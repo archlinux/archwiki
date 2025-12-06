@@ -13,8 +13,8 @@
 			"Pginer",
 			"QuimGil",
 			"Skurz0",
-			"Vriullop",
-			"Sma1997"
+			"Sma1997",
+			"Vriullop"
 		]
 	},
 	"minerva-last-modified-date": "Darrera modificació: $1 a les $2",
@@ -39,7 +39,6 @@
 	"mobile-frontend-meta-data-issues": "Problemes de la pàgina",
 	"mobile-frontend-meta-data-issues-categories": "Sobre aquesta categoria",
 	"mobile-frontend-meta-data-issues-header": "Problemes de la pàgina",
-	"mobile-frontend-pageaction-edit-tooltip": "Edició de la secció principal de d'aquesta pàgina.",
 	"mobile-frontend-placeholder": "Cercar a {{SITENAME}}",
 	"mobile-frontend-random-button": "Aleatori",
 	"mobile-frontend-talk-back-to-filepage": "Torna al fitxer \"$1\".",

@@ -9,7 +9,7 @@ Self-closing tag: <categorytree />
 <categorytree />
 !! html/php
 !! html/parsoid
-<p><link typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{}}'/></p>
+<p class="mw-empty-elt"><link typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{}}'/></p>
 !! end
 
 !! test
@@ -18,7 +18,7 @@ Empty tag: <categorytree></categorytree>
 <categorytree></categorytree>
 !! html/php
 !! html/parsoid
-<p><link typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""}}'/></p>
+<p class="mw-empty-elt"><link typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""}}'/></p>
 !! end
 
 !! test
@@ -27,7 +27,7 @@ Empty function: {{#categorytree:}}
 {{#categorytree:}}
 !! html/php
 !! html/parsoid
-<p><link typeof="mw:Extension/categorytree mw:Transclusion" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""},"parts":[{"template":{"target":{"wt":"#categorytree:","function":"categorytree"},"params":{},"i":0}}]}'/></p>
+<p class="mw-empty-elt"><link typeof="mw:Extension/categorytree mw:Transclusion" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""},"parts":[{"template":{"target":{"wt":"#categorytree:","function":"categorytree"},"params":{},"i":0}}]}'/></p>
 !! end
 
 !! test
@@ -132,6 +132,45 @@ Tag with CategoryTree root and two subcategories
 <div class="CategoryTreeChildren" style="display:none"></div>
 </div>
 </div>
+</div>
+</div>
+!! end
+
+!! test
+Tag with CategoryTree root and two subcategories and showcount=on
+!! wikitext
+<categorytree showcount=on>CategoryTree root</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:true,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeBullet"><a class="CategoryTreeToggle" data-ct-title="CategoryTree_root" data-ct-loaded="1" aria-expanded="true"></a> </span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_root" title="Category:CategoryTree root">CategoryTree root</a></bdi> <span title="Contains 2 subcategories, 0 pages, and 0 files" dir="ltr">(2 C)</span></div><div class="CategoryTreeChildren"><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_1" title="Category:CategoryTree 1">CategoryTree 1</a></bdi> <span title="Contains 0 subcategories, 0 pages, and 0 files" dir="ltr">(empty)</span></div><div class="CategoryTreeChildren" style="display:none"></div></div><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_2" title="Category:CategoryTree 2">CategoryTree 2</a></bdi> <span title="Contains 0 subcategories, 0 pages, and 0 files" dir="ltr">(empty)</span></div><div class="CategoryTreeChildren" style="display:none"></div></div></div></div></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":true,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{"showcount":"on"},"body":{"extsrc":"CategoryTree root"}}'>
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeBullet"><a class="CategoryTreeToggle" data-ct-title="CategoryTree_root" data-ct-loaded="1" aria-expanded="true"></a> </span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_root" title="Category:CategoryTree root">CategoryTree root</a></bdi> <span title="Contains 2 subcategories, 0 pages, and 0 files" dir="ltr">(2 C)</span></div>
+<div class="CategoryTreeChildren">
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_1" title="Category:CategoryTree 1">CategoryTree 1</a></bdi> <span title="Contains 0 subcategories, 0 pages, and 0 files" dir="ltr">(empty)</span></div>
+<div class="CategoryTreeChildren" style="display:none"></div>
+</div>
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeEmptyBullet"></span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_2" title="Category:CategoryTree 2">CategoryTree 2</a></bdi> <span title="Contains 0 subcategories, 0 pages, and 0 files" dir="ltr">(empty)</span></div>
+<div class="CategoryTreeChildren" style="display:none"></div>
+</div>
+</div>
+</div>
+</div>
+!! end
+
+!! test
+Tag with CategoryTree root and two subcategories and depth=0
+!! wikitext
+<categorytree depth=0>CategoryTree root</categorytree>
+!! html/php
+<div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><div class="CategoryTreeSection"><div class="CategoryTreeItem"><span class="CategoryTreeBullet"><a class="CategoryTreeToggle" data-ct-title="CategoryTree_root" aria-expanded="false"></a> </span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_root" title="Category:CategoryTree root">CategoryTree root</a></bdi></div><div class="CategoryTreeChildren" style="display:none"></div></div></div>
+!! html/parsoid
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree" data-mw='{"name":"categorytree","attrs":{"depth":"0"},"body":{"extsrc":"CategoryTree root"}}'>
+<div class="CategoryTreeSection">
+<div class="CategoryTreeItem"><span class="CategoryTreeBullet"><a class="CategoryTreeToggle" data-ct-title="CategoryTree_root" aria-expanded="false"></a> </span> <bdi dir="ltr"><a href="/wiki/Category:CategoryTree_root" title="Category:CategoryTree root">CategoryTree root</a></bdi></div>
+<div class="CategoryTreeChildren" style="display:none"></div>
 </div>
 </div>
 !! end

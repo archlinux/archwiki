@@ -108,8 +108,12 @@ h6 {
 }
 
 .ext-discussiontools-init-timestamplink {
+	unicode-bidi: isolate;
+
 	&,
+	&:hover,
 	&:visited,
+	&:visited:hover,
 	&:active {
 		color: @color-placeholder;
 	}
@@ -512,8 +516,7 @@ h6 {
 		}
 
 		/* Legacy parser */
-		// stylelint-disable-next-line selector-class-pattern
-		> .indicator,
+		> .indicator, /* stylelint-disable-line selector-class-pattern */
 		/* Parsoid */
 		.mf-collapsible-icon {
 			margin-top: 4px;
@@ -555,31 +558,31 @@ h6 {
 				// Replaced by the overflow menu
 				display: none !important;
 			}
+
+			/* stylelint-disable selector-class-pattern */
+			/* Legacy parser */
+			&.section-heading:not( .open-block ),
+			/* Parsoid */
+			&[ aria-expanded='false' ],
+			/* Parsoid - Section toggle code hasn't loaded yet, but sections are always collapsed by default */
+			&:not( [ aria-expanded ] ) {
+				.ext-discussiontools-init-section-actions {
+					// Hidden until expanded
+					display: none;
+				}
+			}
+
+			/* Legacy parser */
+			&.section-heading.open-block,
+			/* Parsoid */
+			&[ aria-expanded='true' ] {
+				margin-bottom: 12px !important;
+			}
+			/* stylelint-enable selector-class-pattern */
 		}
 
 		&-authorCountLabel,
 		&-commentCountLabel {
-			display: none;
-		}
-
-		/* Legacy parser */
-		// stylelint-disable-next-line selector-class-pattern
-		&.section-heading .ext-discussiontools-init-section-actions {
-			// Hidden until expanded
-			display: none;
-		}
-
-		// stylelint-disable-next-line selector-class-pattern
-		&.open-block {
-			margin-bottom: 12px;
-
-			.ext-discussiontools-init-section-actions {
-				display: block;
-			}
-		}
-
-		/* Parsoid */
-		&.mf-collapsible-heading:has( .mf-collapsible-icon.mf-icon-expand ) .ext-discussiontools-init-section-actions {
 			display: none;
 		}
 	}
@@ -609,6 +612,10 @@ h6 {
 	// or page-actions-menu in Minerva for non-existing pages
 	margin-top: 1em;
 	clear: both;
+
+	&-text {
+		min-width: 0;
+	}
 
 	&-logo {
 		flex-shrink: 0;

@@ -3,15 +3,15 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aviator",
+			"Hakimi97",
 			"Izington",
-			"Pizza1016",
-			"Hakimi97"
+			"Pizza1016"
 		]
 	},
 	"skinname-monobook": "MonoBook",
 	"monobook-desc": "Rupa MediaWiki yang klasik sejak tahun 2004, dinamakan bersempena gambar buku hitam putih pada latar belakang laman.",
-	"monobook.css": "/* CSS yang terletak di sini akan mempengaruhi pengguna kulit Monobook */",
-	"monobook.js": "/* Sebarang kod JavaScript di sini akan dimuat bagi sesiapa yang memakai rupa MonoBook */",
+	"monobook.css": "/* Semua CSS di sini akan dimuatkan untuk pengguna kulit MonoBook */",
+	"monobook.js": "/* Semua JavaScript di sini akan dimuatkan untuk pengguna kulit MonoBook */",
 	"monobook-jumptotop": "kembali ke atas",
 	"monobook-jumptopersonal": "Alat pengguna",
 	"monobook-jumptonavigation": "Pergi ke navigasi",

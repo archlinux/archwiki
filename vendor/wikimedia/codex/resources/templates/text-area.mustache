@@ -1,0 +1,9 @@
+<div class="cdx-text-area cdx-text-area--status-{{status}}{{#hasStartIcon}}cdx-text-area--has-start-icon{{/hasStartIcon}}{{#hasEndIcon}} cdx-text-area--has-end-icon{{/hasEndIcon}}{{#renderClasses}}{{wrapperAttributes}}{{/renderClasses}}"{{#renderAttributes}} {{{ wrapperAttributes }}}{{/renderAttributes}}>
+  <textarea class="cdx-text-area__textarea{{#renderClasses}}{{textAreaAttributes}}{{/renderClasses}}" name="{{name}}"{{#id}} id="{{ id }}"{{/id}} placeholder="{{placeholder}}" {{#isDisabled}}disabled{{/isDisabled}}{{#isReadonly}}readonly{{/isReadonly}}{{#renderAttributes}}{{{textAreaAttributes}}}{{/renderAttributes}}>{{value}}</textarea>
+  {{#hasStartIcon}}
+    <span class="cdx-text-area__icon cdx-text-area__start-icon {{startIconClass}}"></span>
+  {{/hasStartIcon}}
+  {{#hasEndIcon}}
+    <span class="cdx-text-area__icon cdx-text-area__end-icon {{endIconClass}}"></span>
+  {{/hasEndIcon}}
+</div>

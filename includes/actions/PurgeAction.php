@@ -2,20 +2,7 @@
 /**
  * User-requested page cache purging.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Actions
  */
@@ -36,14 +23,17 @@ class PurgeAction extends FormAction {
 	/** @var string */
 	private $redirectParams;
 
+	/** @inheritDoc */
 	public function getName() {
 		return 'purge';
 	}
 
+	/** @inheritDoc */
 	public function getDescription() {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( $data ) {
 		$authority = $this->getAuthority();
 		$page = $this->getWikiPage();
@@ -56,6 +46,7 @@ class PurgeAction extends FormAction {
 		return $page->doPurge();
 	}
 
+	/** @inheritDoc */
 	public function show() {
 		$this->setHeaders();
 
@@ -87,10 +78,12 @@ class PurgeAction extends FormAction {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function usesOOUI() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		return [
 			'intro' => [
@@ -106,6 +99,7 @@ class PurgeAction extends FormAction {
 		$form->setSubmitTextMsg( 'confirm_purge_button' );
 	}
 
+	/** @inheritDoc */
 	protected function postText() {
 		return $this->msg( 'confirm-purge-bottom' )->parse();
 	}
@@ -114,6 +108,7 @@ class PurgeAction extends FormAction {
 		$this->getOutput()->redirect( $this->getTitle()->getFullURL( $this->redirectParams ) );
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}

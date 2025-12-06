@@ -6,15 +6,14 @@
 			"Jayarathina",
 			"Kaartic",
 			"Kanags",
+			"Matrix",
 			"Mayooranathan",
 			"Shanmugamp7",
 			"Siddhan",
 			"Surya Prakash.S.A.",
-			"TRYPPN",
-			"Matrix"
+			"TRYPPN"
 		]
 	},
-	"vector-opt-out": "பழைய பார்வைக்கு மாறு",
 	"vector-languages": "மொழிகள்",
 	"vector-language-button-label": "{{PLURAL:$1|$1 மொழி|$1 மொழிகள்}}",
 	"vector-no-language-button-label": "மொழிகளைச் சேர்",
@@ -45,7 +44,6 @@
 	"skin-theme-night-label": "இருட்டான",
 	"skin-theme-os-label": "தன்னியக்கம்",
 	"skin-theme-exclusion-notice": "இந்தப் பக்கம் எப்போதும் வெளிச்சம்ப்  பயன்முறையிலேயே இருக்கும்.",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> உள்ளடக்கிய பக்கங்களை தேடு",
 	"vector-toc-label": "உள்ளடக்கம்",
 	"vector-toc-beginning": "தொடக்கம்",
 	"vector-anon-user-menu-pages": "பதிவு நீக்கப்பட்ட பதிப்பாசிரியர்களுக்கான பக்கங்கள்",

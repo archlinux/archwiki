@@ -7,7 +7,7 @@ use MediaWiki\MediaWikiServices;
 use UnexpectedValueException;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\Core\SelserData;
 
 /**
@@ -22,7 +22,7 @@ class SelserContext implements JsonCodecable {
 	use JsonCodecableTrait;
 
 	public function __construct(
-		private PageBundle $pageBundle,
+		private HtmlPageBundle $pageBundle,
 		private int $revId,
 		private ?Content $content = null
 	) {
@@ -34,7 +34,7 @@ class SelserContext implements JsonCodecable {
 		}
 	}
 
-	public function getPageBundle(): PageBundle {
+	public function getPageBundle(): HtmlPageBundle {
 		return $this->pageBundle;
 	}
 
@@ -50,18 +50,13 @@ class SelserContext implements JsonCodecable {
 		return [
 			'revId' => $this->revId,
 			'pb' => $this->pageBundle,
-			// After I544625136088164561b9169a63aed7450cce82f5 this can be:
-			// 'c' => $this->content,
-			'content' => $this->content ? [
-				'model' => $this->content->getModel(),
-				'data' => $this->content->serialize(),
-			] : null,
+			'c' => $this->content,
 		];
 	}
 
 	public static function jsonClassHintFor( string $keyName ): ?string {
 		if ( $keyName === 'pb' ) {
-			return PageBundle::class;
+			return HtmlPageBundle::class;
 		}
 		return null;
 	}
@@ -70,12 +65,14 @@ class SelserContext implements JsonCodecable {
 		$revId = (int)$json['revId'];
 		$pb = $json['pb'];
 		if ( is_array( $pb ) ) {
-			// Backward compatibility with old serialization format
-			$pb = PageBundle::newFromJsonArray( $pb );
+			// Backward compatibility with old MW 1.44 serialization format
+			$pb = HtmlPageBundle::newFromJsonArray( $pb );
 		}
 		$content = $json['c'] ?? $json['content'] ?? null;
 		if ( is_array( $content ) ) {
-			// Backward compatibility with old serialization format
+			// Backward compatibility with MW 1.43/1.44 serialization format.
+			// Can be removed when back-compatibility with MW 1.43 is no longer
+			// required.
 			$contentHandler = MediaWikiServices::getInstance()
 				->getContentHandlerFactory()
 				->getContentHandler( $content['model'] );

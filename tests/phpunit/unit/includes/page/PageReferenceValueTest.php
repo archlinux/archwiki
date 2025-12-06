@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Daniel Kinzler
  */
@@ -67,11 +53,11 @@ class PageReferenceValueTest extends MediaWikiUnitTestCase {
 
 	public static function provideToString() {
 		yield [
-			new PageReferenceValue( 0, 'Foo', PageReference::LOCAL ),
+			PageReferenceValue::localReference( 0, 'Foo' ),
 			'[0:Foo]'
 		];
 		yield [
-			new PageReferenceValue( 1, 'Bar_Baz', PageReference::LOCAL ),
+			PageReferenceValue::localReference( 1, 'Bar_Baz' ),
 			'[1:Bar_Baz]'
 		];
 		yield [
@@ -92,23 +78,23 @@ class PageReferenceValueTest extends MediaWikiUnitTestCase {
 
 	public static function provideIsSamePageAs() {
 		yield [
-			new PageReferenceValue( 0, 'Foo', PageReference::LOCAL ),
-			new PageReferenceValue( 0, 'Foo', PageReference::LOCAL ),
+			PageReferenceValue::localReference( 0, 'Foo' ),
+			PageReferenceValue::localReference( 0, 'Foo' ),
 			true
 		];
 		yield [
-			new PageReferenceValue( 1, 'Bar_Baz', PageReference::LOCAL ),
-			new PageReferenceValue( 1, 'Bar_Baz', PageReference::LOCAL ),
+			PageReferenceValue::localReference( 1, 'Bar_Baz' ),
+			PageReferenceValue::localReference( 1, 'Bar_Baz' ),
 			true
 		];
 		yield [
-			new PageReferenceValue( 0, 'Foo', PageReference::LOCAL ),
-			new PageReferenceValue( 0, 'Foozz', PageReference::LOCAL ),
+			PageReferenceValue::localReference( 0, 'Foo' ),
+			PageReferenceValue::localReference( 0, 'Foozz' ),
 			false
 		];
 		yield [
-			new PageReferenceValue( 0, 'Foo', PageReference::LOCAL ),
-			new PageReferenceValue( 1, 'Foo', PageReference::LOCAL ),
+			PageReferenceValue::localReference( 0, 'Foo' ),
+			PageReferenceValue::localReference( 1, 'Foo' ),
 			false
 		];
 		yield [

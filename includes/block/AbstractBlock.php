@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -68,16 +54,14 @@ abstract class AbstractBlock implements Block {
 	/** @var bool */
 	protected $isSitewide = true;
 
-	/** @var string|false */
-	protected $wikiId;
+	protected string|false $wikiId;
 
 	/**
 	 * Create a new block with specified parameters on a user, IP or IP range.
 	 *
 	 * @param array $options Parameters of the block, with supported options:
 	 *  - target: (BlockTarget) The target object (since 1.44)
-	 *  - address: (string|UserIdentity) Target user name, user identity object,
-	 *     IP address or IP range.
+	 *  - address: (string|UserIdentity) Deprecated since 1.45, use 'target'.
 	 *  - wiki: (string|false) The wiki the block has been issued in,
 	 *    self::LOCAL for the local wiki (since 1.38)
 	 *  - reason: (string|Message|CommentStoreComment) Reason for the block
@@ -107,6 +91,9 @@ abstract class AbstractBlock implements Block {
 			}
 			$this->setTarget( $options['target'] );
 		} elseif ( isset( $options['address'] ) ) {
+			wfDeprecatedMsg(
+				'The address parameter to AbstractBlock::__construct is deprecated since 1.45',
+				'1.45' );
 			$this->setTarget( $options['address'] );
 		} else {
 			$this->setTarget( null );
@@ -407,7 +394,8 @@ abstract class AbstractBlock implements Block {
 
 	/**
 	 * Set the target for this block
-	 * @param BlockTarget|string|UserIdentity|null $target
+	 * @param BlockTarget|string|UserIdentity|null $target Passing UserIdentity|string is deprecated
+	 *   since 1.45. Set the target by passing BlockTarget|null.
 	 */
 	public function setTarget( $target ) {
 		// Small optimization to make this code testable, this is what would happen anyway
@@ -417,6 +405,10 @@ abstract class AbstractBlock implements Block {
 			$this->assertWiki( $target->getWikiId() );
 			$this->target = $target;
 		} else {
+			wfDeprecatedMsg(
+				'Passing UserIdentity|string to AbstractBlock::setTarget is deprecated since 1.45',
+				'1.45'
+			);
 			$parsedTarget = MediaWikiServices::getInstance()
 				->getCrossWikiBlockTargetFactory()
 				->getFactory( $this->wikiId )

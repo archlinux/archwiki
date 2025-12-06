@@ -34,17 +34,10 @@ class VariablesFormatter {
 		$this->messageLocalizer = $messageLocalizer;
 	}
 
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 */
 	public function setMessageLocalizer( MessageLocalizer $messageLocalizer ): void {
 		$this->messageLocalizer = $messageLocalizer;
 	}
 
-	/**
-	 * @param VariableHolder $varHolder
-	 * @return string
-	 */
 	public function buildVarDumpTable( VariableHolder $varHolder ): string {
 		$vars = $this->varManager->exportAllVars( $varHolder );
 

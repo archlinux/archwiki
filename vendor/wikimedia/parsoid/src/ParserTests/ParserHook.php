@@ -90,7 +90,7 @@ class ParserHook extends ExtensionTagHandler implements ExtensionModule {
 					],
 				] );
 				$dataMw->body->extsrc = null; // clear wt representation
-				$dataMw->body->html = $extApi->domToHtml( $domFragment, true );
+				$dataMw->body->setHtml( $extApi, $domFragment );
 				$span = $domFragment->ownerDocument->createElement( 'span' );
 				DOMDataUtils::setDataMw( $span, $dataMw );
 				DOMCompat::replaceChildren( $domFragment, $span );
@@ -110,10 +110,10 @@ class ParserHook extends ExtensionTagHandler implements ExtensionModule {
 	): void {
 		$dataMw = DOMDataUtils::getDataMw( $elt );
 		if ( isset( $dataMw->body->html ) ) {
-			$dom = $extApi->htmlToDom( $dataMw->body->html );
+			$dom = $dataMw->body->getHtml( $extApi );
 			$ret = $proc( $dom );
 			if ( $ret ) {
-				$dataMw->body->html = $extApi->domToHtml( $dom, true, true );
+				$dataMw->body->setHtml( $extApi, $dom );
 			}
 		}
 	}
@@ -137,7 +137,6 @@ class ParserHook extends ExtensionTagHandler implements ExtensionModule {
 			// FIXME: One-off PHP parser state leak. This needs a better solution.
 			'inPHPBlock' => true
 		];
-		$src = '';
 		if ( $wrapperUnmodified && isset( $dataMw->body->extsrc ) ) {
 			$src = $dataMw->body->extsrc;
 		} elseif ( $extName === 'embedtag' && isset( $dataMw->body->html ) ) {
@@ -197,7 +196,7 @@ class ParserHook extends ExtensionTagHandler implements ExtensionModule {
 			'domProcessors' => [
 				ParserHookProcessor::class
 			],
-			'fragmentHandlers' =>
+			'pFragmentHandlers' =>
 				ParserTestPFragmentHandlers::getPFragmentHandlersConfig(),
 		];
 	}

@@ -58,8 +58,6 @@ class ContentHeadingItem extends ContentThreadItem implements HeadingItem {
 	 * In Parsoid HTML, it is stored in the `<hN id>` attribute.
 	 * In legacy parser HTML, it is stored in the `<hN data-mw-anchor>` attribute.
 	 * In integration tests and in JS, things are a little bit wilder than that.
-	 *
-	 * @return string
 	 */
 	public function getLinkableId(): string {
 		$headline = $this->getHeadlineNode();

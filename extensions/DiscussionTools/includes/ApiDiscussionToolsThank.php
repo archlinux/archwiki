@@ -23,7 +23,6 @@ use Wikimedia\ParamValidator\ParamValidator;
  * @ingroup API
  * @ingroup Extensions
  */
-
 class ApiDiscussionToolsThank extends ApiThank {
 
 	use ApiDiscussionToolsTrait;

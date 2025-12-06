@@ -7,12 +7,16 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Tokens\CommentTk;
+use Wikimedia\Parsoid\Tokens\EmptyLineTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
-use Wikimedia\Parsoid\Tokens\SelfClosingTagTk;
+use Wikimedia\Parsoid\Tokens\NlTk;
+use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -50,7 +54,7 @@ class WikitextEscapeHandlers {
 	 * @return bool
 	 */
 	private static function startsOnANewLine( Node $node ): bool {
-		$name = DOMCompat::nodeName( $node );
+		$name = DOMUtils::nodeName( $node );
 		return TokenUtils::tagOpensBlockScope( $name ) &&
 			!WTUtils::isLiteralHTMLNode( $node );
 	}
@@ -109,7 +113,7 @@ class WikitextEscapeHandlers {
 		// Those newline separators can prevent unnecessary <nowiki/> protection
 		// if the string begins with one or more newlines before a leading quote.
 		$origText = $node->textContent;
-		if ( substr( $origText, 0, 1 ) === "'" ) {
+		if ( str_starts_with( $origText, "'" ) ) {
 			$prev = DiffDOMUtils::previousNonDeletedSibling( $node );
 			if ( !$prev ) {
 				$prev = $node->parentNode;
@@ -136,7 +140,7 @@ class WikitextEscapeHandlers {
 		// Those newline separators can prevent unnecessary <nowiki/> protection
 		// if the string ends with a trailing quote and then one or more newlines.
 		$origText = $node->textContent;
-		if ( substr( $origText, -1 ) === "'" ) {
+		if ( str_ends_with( $origText, "'" ) ) {
 			$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 			if ( !$next ) {
 				$next = $node->parentNode;
@@ -220,7 +224,7 @@ class WikitextEscapeHandlers {
 
 		// For <dt> nodes, ":" trigger nowiki outside of elements
 		// For first nodes of <li>'s, bullets in sol posn trigger escaping
-		if ( DOMCompat::nodeName( $liNode ) === 'dt' && str_contains( $text, ':' ) ) {
+		if ( DOMUtils::nodeName( $liNode ) === 'dt' && str_contains( $text, ':' ) ) {
 			return true;
 		} elseif ( preg_match( '/^[#*:;]*$/D', $state->currLine->text ) &&
 			$this->isFirstContentNode( $node )
@@ -330,22 +334,6 @@ class WikitextEscapeHandlers {
 		return false;
 	}
 
-	/**
-	 * Tokenize string and pop EOFTk
-	 *
-	 * @param string $str
-	 * @param bool $sol
-	 * @return array
-	 */
-	public function tokenizeStr( string $str, bool $sol ): array {
-		$tokens = $this->tokenizer->tokenizeSync( $str, [ 'sol' => $sol ] );
-		Assert::invariant(
-			array_pop( $tokens ) instanceof EOFTk,
-			'Expected EOF token!'
-		);
-		return $tokens;
-	}
-
 	public function textCanParseAsLink( Node $node, SerializerState $state, string $text ): bool {
 		$env = $state->getEnv();
 		$env->trace(
@@ -369,7 +357,9 @@ class WikitextEscapeHandlers {
 		}
 
 		$str = $state->currLine->text . $text;
-		$tokens = $this->tokenizeStr( $str, false ); // sol state is irrelevant here
+		$tokens = $this->tokenizer->tokenizeAs(
+			$str, 'start', sol: false, // sol state is irrelevant here
+		);
 		$n = count( $tokens );
 		$lastToken = $tokens[$n - 1];
 
@@ -391,7 +381,9 @@ class WikitextEscapeHandlers {
 			$t = $tokens[$i];
 			if ( is_string( $t ) ) {
 				$buf = $t . $buf;
-			} elseif ( $t->getName() === 'wikilink' ) {
+			} elseif ( $t instanceof CommentTk ) {
+				$buf = WTSUtils::commentWT( $t->value ) . $buf;
+			} elseif ( $t instanceof XMLTagTk && $t->getName() === 'wikilink' ) {
 				$target = $t->getAttributeV( 'href' );
 				if ( is_array( $target ) ) {
 					// FIXME: Can lead to false negatives.
@@ -407,7 +399,7 @@ class WikitextEscapeHandlers {
 				// Assumes 'src' will always be present which it seems to be.
 				// Tests will fail if anything changes in the tokenizer.
 				$buf = $t->dataParsoid->src . $buf;
-			} elseif ( $t->getName() === 'extlink' ) {
+			} elseif ( $t instanceof XMLTagTk && $t->getName() === 'extlink' ) {
 				// Check if the extlink came from a template which in the end
 				// would not really parse as an extlink.
 
@@ -435,7 +427,7 @@ class WikitextEscapeHandlers {
 						}
 					}
 
-					if ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'a' &&
+					if ( $node instanceof Element && DOMUtils::nodeName( $node ) === 'a' &&
 						$node->textContent === DOMCompat::getAttribute( $node, 'href' )
 					) {
 						// The template expands to an url link => needs nowiking
@@ -483,9 +475,9 @@ class WikitextEscapeHandlers {
 			$text = str_replace( "\n", "\n ", $text );
 		}
 
-		$tokens = $this->tokenizeStr( $text, $sol );
+		$tokens = $this->tokenizer->tokenizeAs( $text, 'start', sol: $sol );
 
-		// If the token stream has a TagTk, SelfclosingTagTk, EndTagTk or CommentTk
+		// If the token stream has a XmlTagTk or CommentTk
 		// then this text needs escaping!
 		$numEntities = 0;
 		foreach ( $tokens as $t ) {
@@ -674,7 +666,7 @@ class WikitextEscapeHandlers {
 		// instead of entity enclosed text
 		$text = preg_replace( '#&lt;(/?nowiki\s*/?\s*)&gt;#i', '<$1>', $text );
 
-		$tokens = $this->tokenizeStr( $text, $sol );
+		$tokens = $this->tokenizer->tokenizeAs( $text, 'start', sol: $sol );
 
 		foreach ( $tokens as $t ) {
 			if ( is_string( $t ) ) {
@@ -720,16 +712,19 @@ class WikitextEscapeHandlers {
 
 			// Now put back the escaping we removed above
 			$tSrc = WTSUtils::escapeNowikiTags( $tsr->substr( $text ) );
-			switch ( $t->getType() ) {
-				case 'NlTk':
-					$buf .= $tSrc;
-					$sol = true;
-					break;
-				case 'CommentTk':
+			switch ( true ) {
+				case $t instanceof CommentTk:
 					// Comments are sol-transparent
 					$buf .= $tSrc;
 					break;
-				case 'TagTk':
+				case $t instanceof EmptyLineTk:
+					$sol = true;
+					break;
+				case $t instanceof NlTk:
+					$buf .= $tSrc;
+					$sol = true;
+					break;
+				case $t instanceof TagTk:
 					// Treat tokens with missing tags as self-closing tokens
 					// for the purpose of minimal nowiki escaping
 					self::nowikiWrap(
@@ -741,17 +736,13 @@ class WikitextEscapeHandlers {
 					);
 					$sol = false;
 					break;
-				case 'EndTagTk':
+				case $t instanceof EndTagTk:
 					self::nowikiWrap( $tSrc, true, $inNowiki, $nowikisAdded, $buf );
 					$sol = false;
 					break;
-				case 'SelfclosingTagTk':
-					if ( $t->getName() !== 'meta' ||
-						!TokenUtils::hasTypeOf( $t, 'mw:EmptyLine' )
-					) {
-						// Don't bother with marker or empty-line metas
-						self::nowikiWrap( $tSrc, true, $inNowiki, $nowikisAdded, $buf );
-					}
+				case $t instanceof SelfclosingTagTk:
+					// Don't bother with marker metas
+					self::nowikiWrap( $tSrc, true, $inNowiki, $nowikisAdded, $buf );
 					$sol = false;
 					break;
 			}
@@ -964,11 +955,11 @@ class WikitextEscapeHandlers {
 			// - the text will get parsed as a link in
 			$env->trace( 'wt-escape', '---Links: complex single-line test---' );
 			return $this->escapedText( $state, $sol, $text );
-		} elseif ( !empty( $opts['isLastChild'] ) && substr( $text, -1 ) === '=' ) {
+		} elseif ( !empty( $opts['isLastChild'] ) && str_ends_with( $text, '=' ) ) {
 			// 1. we have an open heading char, and
 			// - text ends in a '='
 			// - text comes from the last child
-			preg_match( '/^h(\d)/', DOMCompat::nodeName( $state->currLine->firstNode ), $headingMatch );
+			preg_match( '/^h(\d)/', DOMUtils::nodeName( $state->currLine->firstNode ), $headingMatch );
 			if ( $headingMatch ) {
 				$n = intval( $headingMatch[1] );
 				if ( ( $state->currLine->text . $text )[$n] === '=' ) {
@@ -1001,24 +992,42 @@ class WikitextEscapeHandlers {
 	 * @param bool &$serializeAsNamed
 	 * @param array $opts [ 'numPositionalArgs' => int, 'argPositionalIndex' => int, 'type' => string,
 	 * 'numArgs' => int, 'argIndex' => int ]
+	 * @param bool $isHTMLTag
 	 */
 	private static function appendStr(
 		string $str, bool $isLast, bool $checkNowiki, string &$buf, bool &$openNowiki,
-		bool $isTemplate, bool &$serializeAsNamed, array $opts
+		bool $isTemplate, bool &$serializeAsNamed, array $opts, bool $isHTMLTag
 	): void {
+		if ( $openNowiki && ( !$checkNowiki || $isHTMLTag ) ) {
+			$buf .= '</nowiki>';
+			$openNowiki = false;
+		}
+
 		if ( !$checkNowiki ) {
-			if ( $openNowiki ) {
-				$buf .= '</nowiki>';
-				$openNowiki = false;
-			}
 			$buf .= $str;
 			return;
 		}
 
+		// Count how many reasons for nowiki
+		$needNowikiCount = 0;
+		$neededSubstitution = null;
+
+		// Protect against unmatched pairs of braces and brackets, as they
+		// should never appear in template arguments.
+		// FIXME: What about tplargs?
+		$bracketPairStrippedStr = preg_replace(
+			'/\[\[([^\[\]]*)\]\]|\{\{([^\{\}]*)\}\}|-\{([^\{\}]*)\}-/',
+			'',
+			$str
+		);
+
 		// '=' is not allowed in positional parameters.  We can either
 		// nowiki escape it or convert the named parameter into a
 		// positional param to avoid the escaping.
-		if ( $isTemplate && !$serializeAsNamed && str_contains( $str, '=' ) ) {
+		if (
+			$isTemplate && !$serializeAsNamed &&
+			str_contains( $bracketPairStrippedStr, '=' )
+		) {
 			// In certain situations, it is better to add a nowiki escape
 			// rather than convert this to a named param.
 			//
@@ -1038,36 +1047,46 @@ class WikitextEscapeHandlers {
 			//
 			// 1. Either there were no original positional args
 			// 2. Or, only the last positional arg uses '='
-			if ( $opts['numPositionalArgs'] === 0 ||
-				$opts['numPositionalArgs'] === $opts['argPositionalIndex']
+			// 3. Or, = is potentially part of an html tag attribute
+			if (
+				$opts['numPositionalArgs'] === 0 ||
+				$opts['numPositionalArgs'] === $opts['argPositionalIndex'] ||
+				$isHTMLTag
 			) {
 				$serializeAsNamed = true;
+			} else {
+				$needNowikiCount++;
 			}
 		}
 
-		// Count how many reasons for nowiki
-		$needNowikiCount = 0;
-		$neededSubstitution = null;
-		// Protect against unmatched pairs of braces and brackets, as they
-		// should never appear in template arguments.
-		$bracketPairStrippedStr = preg_replace(
-			'/\[\[([^\[\]]*)\]\]|\{\{([^\{\}]*)\}\}|-\{([^\{\}]*)\}-/',
-			'_$1_',
-			$str
-		);
+		// Template arg parsing has higher precendence than xml
+		// tag attributes, so the '=' would need protection.
+		// However, extensions are an exception.
+		//
+		// Note that if we nowiki escape the tag src as a string,
+		// we're breaking the semantics so we force serializing
+		// as a named argument.
+		//
+		// Also, xml tags can hide content (like extension tags)
+		// in attributes that the naive checks here in appendStr
+		// won't realize don't need escaping so return early.
+		if ( $isHTMLTag ) {
+			$buf .= $str;
+			return;
+		}
+
 		if ( preg_match( '/\{\{|\}\}|\[\[|\]\]|-\{/', $bracketPairStrippedStr ) ) {
 			$needNowikiCount++;
 		}
-		if ( $opts['type'] !== 'templatearg' && !$serializeAsNamed && str_contains( $str, '=' ) ) {
-			$needNowikiCount++;
-		}
+		// FIXME: Ideally, $bracketPairStrippedStr should be used but the last char
+		// might not be the last char
 		if ( $opts['argIndex'] === $opts['numArgs'] && $isLast && str_ends_with( $str, '}' ) ) {
 			// If this is the last part of the last argument, we need to protect
 			// against an ending }, as it would get confused with the template ending }}.
 			$needNowikiCount++;
 			$neededSubstitution = [ '/(\})$/D', '<nowiki>}</nowiki>' ];
 		}
-		if ( str_contains( $str, '|' ) ) {
+		if ( str_contains( $bracketPairStrippedStr, '|' ) ) {
 			// If there's an unprotected |, guard it so it doesn't get confused
 			// with the beginning of a different parameter.
 			$needNowikiCount++;
@@ -1108,9 +1127,9 @@ class WikitextEscapeHandlers {
 	 *    the entire DOM range they span in the end.
 	 *
 	 * @param string $arg
-	 * @param array $opts [ 'serializeAsNamed' => bool,  'numPositionalArgs' => int,
-	 * 'argPositionalIndex' => int, 'type' => string, 'numArgs' => int, 'argIndex' => int ]
-	 * @return array
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @param array{serializeAsNamed:bool,numPositionalArgs:int,argPositionalIndex:int,type:string,numArgs:int,argIndex:int} $opts
+	 * @return array{serializeAsNamed: bool, v: string}
 	 */
 	public function escapeTplArgWT( string $arg, array $opts ): array {
 		$env = $this->env;
@@ -1119,7 +1138,7 @@ class WikitextEscapeHandlers {
 		$openNowiki = false;
 		$isTemplate = $opts['type'] === 'template';
 
-		$tokens = $this->tokenizeStr( $arg, false );
+		$tokens = $this->tokenizer->tokenizeAs( $arg, 'start', sol: false );
 
 		for ( $i = 0, $n = count( $tokens ); $i < $n; $i++ ) {
 			$t = $tokens[$i];
@@ -1141,7 +1160,8 @@ class WikitextEscapeHandlers {
 						$openNowiki,
 						$isTemplate,
 						$serializeAsNamed,
-						$opts
+						$opts,
+						false
 					);
 					continue;
 				} elseif ( TokenUtils::hasTypeOf( $t, 'mw:Nowiki' ) ) {
@@ -1172,7 +1192,8 @@ class WikitextEscapeHandlers {
 							$openNowiki,
 							$isTemplate,
 							$serializeAsNamed,
-							$opts
+							$opts,
+							false
 						);
 					}
 					continue;
@@ -1188,16 +1209,18 @@ class WikitextEscapeHandlers {
 					$openNowiki,
 					$isTemplate,
 					$serializeAsNamed,
-					$opts
+					$opts,
+					false
 				);
 				continue;
 			}
 
-			switch ( $t->getType() ) {
-				case 'TagTk':
-				case 'EndTagTk':
-				case 'NlTk':
-				case 'CommentTk':
+			switch ( true ) {
+				case $t instanceof TagTk:
+				case $t instanceof EmptyLineTk:
+				case $t instanceof EndTagTk:
+				case $t instanceof NlTk:
+				case $t instanceof CommentTk:
 					$da = $t->dataParsoid;
 					if ( empty( $da->tsr ) ) {
 						$errors = [ 'Missing tsr for: ' . PHPUtils::jsonEncode( $t ) ];
@@ -1207,18 +1230,22 @@ class WikitextEscapeHandlers {
 						// FIXME $da->tsr will be undefined below.
 						// Should we throw an explicit exception here?
 					}
+					$isHTMLTag = $t instanceof XMLTagTk &&
+						WTUtils::hasLiteralHTMLMarker( $da ) &&
+						$t->getName() !== 'extension';
 					self::appendStr(
 						$da->tsr->substr( $arg ),
 						$last,
-						false,
+						$isHTMLTag,
 						$buf,
 						$openNowiki,
 						$isTemplate,
 						$serializeAsNamed,
-						$opts
+						$opts,
+						$isHTMLTag
 					);
 					break;
-				case 'SelfclosingTagTk':
+				case $t instanceof SelfclosingTagTk:
 					$da = $t->dataParsoid;
 					if ( empty( $da->tsr ) ) {
 						$errors = [ 'Missing tsr for: ' . PHPUtils::jsonEncode( $t ) ];
@@ -1231,10 +1258,11 @@ class WikitextEscapeHandlers {
 					$tkSrc = $da->tsr->substr( $arg );
 					// Replace pipe by an entity. This is not completely safe.
 					if ( $t->getName() === 'extlink' || $t->getName() === 'urllink' ) {
-						$tkBits = $this->tokenizer->tokenizeSync( $tkSrc, [
-							'startRule' => 'tplarg_or_template_or_bust',
-							'sol' => true,
-						] );
+						$tkBits = $this->tokenizer->tokenizeAs(
+							$tkSrc,
+							'tplarg_or_template_or_bust',
+							sol: true,
+						);
 						foreach ( $tkBits as $bit ) {
 							if ( $bit instanceof Token ) {
 								self::appendStr(
@@ -1245,7 +1273,8 @@ class WikitextEscapeHandlers {
 									$openNowiki,
 									$isTemplate,
 									$serializeAsNamed,
-									$opts
+									$opts,
+									false
 								);
 							} else {
 								// Convert to a named param w/ the same reasoning
@@ -1265,19 +1294,22 @@ class WikitextEscapeHandlers {
 							}
 						}
 					} else {
+						$isHTMLTag = WTUtils::hasLiteralHTMLMarker( $da ) &&
+							$t->getName() !== 'extension';
 						self::appendStr(
 							$tkSrc,
 							$last,
-							false,
+							$isHTMLTag,
 							$buf,
 							$openNowiki,
 							$isTemplate,
 							$serializeAsNamed,
-							$opts
+							$opts,
+							$isHTMLTag
 						);
 					}
 					break;
-				case 'EOFTk':
+				case $t instanceof EOFTk:
 					break;
 			}
 		}

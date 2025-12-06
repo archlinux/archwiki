@@ -44,7 +44,6 @@ const ThumbnailWidthCalculator = require( './mmv.ThumbnailWidthCalculator.js' );
 const { extensions, useThumbnailGuessing } = require( './config.json' );
 
 const router = require( 'mediawiki.router' );
-let comingFromHashChange = false;
 
 /**
  * Analyses the page, looks for image content and sets up the hooks
@@ -95,8 +94,7 @@ class MultimediaViewer {
 		 * @property {OO.Router} router
 		 */
 		this.router = router;
-		this.setupRouter();
-		comingFromHashChange = false;
+		this.comingFromHashChange = false;
 
 		/**
 		 * UI object used to display the pictures in the page.
@@ -686,8 +684,8 @@ class MultimediaViewer {
 		this.viewLogger.recordViewDuration();
 		this.viewLogger.unattach();
 
-		if ( comingFromHashChange ) {
-			comingFromHashChange = false;
+		if ( this.comingFromHashChange ) {
+			this.comingFromHashChange = false;
 		} else {
 			this.router.back();
 		}
@@ -698,25 +696,6 @@ class MultimediaViewer {
 		$( document ).trigger( $.Event( 'mmv-cleanup-overlay' ) );
 
 		this.isOpen = false;
-	}
-
-	/**
-	 * Sets up the route handlers
-	 */
-	setupRouter() {
-		// handle empty hashes, and anchor links (page sections, possibly including /)
-		this.router.addRoute( /.*$/, () => {
-			if ( this.isOpen ) {
-				comingFromHashChange = true;
-				document.title = this.createDocumentTitle( null );
-				if ( this.ui ) {
-					// FIXME triggers mmv-close event, which calls viewer.close()
-					this.ui.unattach();
-				} else {
-					this.close();
-				}
-			}
-		} );
 	}
 
 	/**

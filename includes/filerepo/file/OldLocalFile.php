@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -57,9 +43,8 @@ class OldLocalFile extends LocalFile {
 	 * @param Title $title
 	 * @param LocalRepo $repo
 	 * @param string|int|null $time
-	 * @return static
 	 */
-	public static function newFromTitle( $title, $repo, $time = null ) {
+	public static function newFromTitle( $title, $repo, $time = null ): static {
 		# The null default value is only here to avoid an E_STRICT
 		if ( $time === null ) {
 			throw new InvalidArgumentException( __METHOD__ . ' got null for $time parameter' );
@@ -74,9 +59,8 @@ class OldLocalFile extends LocalFile {
 	 * @param Title $title
 	 * @param LocalRepo $repo
 	 * @param string $archiveName
-	 * @return static
 	 */
-	public static function newFromArchiveName( $title, $repo, $archiveName ) {
+	public static function newFromArchiveName( $title, $repo, $archiveName ): static {
 		return new static( $title, $repo, null, $archiveName );
 	}
 
@@ -85,9 +69,8 @@ class OldLocalFile extends LocalFile {
 	 *
 	 * @param stdClass $row
 	 * @param LocalRepo $repo
-	 * @return static
 	 */
-	public static function newFromRow( $row, $repo ) {
+	public static function newFromRow( $row, $repo ): static {
 		$title = Title::makeTitle( NS_FILE, $row->oi_name );
 		$file = new static( $title, $repo, null, $row->oi_archive_name );
 		$file->loadFromRow( $row, 'oi_' );
@@ -104,10 +87,8 @@ class OldLocalFile extends LocalFile {
 	 * @param string $sha1 Base-36 SHA-1
 	 * @param LocalRepo $repo
 	 * @param string|false $timestamp MW_timestamp (optional)
-	 *
-	 * @return static|false
 	 */
-	public static function newFromKey( $sha1, $repo, $timestamp = false ) {
+	public static function newFromKey( $sha1, $repo, $timestamp = false ): static|false {
 		$dbr = $repo->getReplicaDB();
 		$queryBuilder = FileSelectQueryBuilder::newForOldFile( $dbr );
 
@@ -172,6 +153,7 @@ class OldLocalFile extends LocalFile {
 		}
 	}
 
+	/** @inheritDoc */
 	public function loadFromRow( $row, $prefix = 'img_' ) {
 		$this->archive_name = $row->{"{$prefix}archive_name"};
 		$this->deleted = $row->{"{$prefix}deleted"};

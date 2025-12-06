@@ -8,11 +8,11 @@
 			"Kwj2772",
 			"MemphisA5",
 			"Tensama0415",
+			"YeBoy371",
 			"Ykhwong",
 			"렌즈",
 			"밝은소년",
-			"아라",
-			"YeBoy371"
+			"아라"
 		]
 	},
 	"discussiontools": "토론 도구",
@@ -28,6 +28,7 @@
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|토론 문서]]는 {{SITENAME}}에서 내용을 어떻게 가능한 좋게 만들지 논의하는 곳입니다. 이 문서를 사용하여 [[:{{SUBJECTPAGENAME}}]] 문서를 어떻게 발전시킬지에 관해 다른 사람들과 토론을 시작할 수 있습니다.",
 	"discussiontools-emptystate-desc-self": "{{SITENAME}}의 사람들은 이 [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|토론 문서]]를 사용하여 당신에게 공개 메시지를 게시할 수 있으며 그렇게 하면 알림을 받게 됩니다.",
 	"discussiontools-emptystate-desc-self-anon": "{{SITENAME}}의 사람들은 이 [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|토론 문서]]를 사용하여 현재 사용 중인 IP 주소에서 편집한 내용에 대한 공개 메시지를 게시할 수 있습니다.\n\n많은 IP 주소는 주기적으로 변경되며 종종 여러 사람이 공유합니다. 로그아웃한 다른 사용자와 향후 혼동을 피하기 위해 [$1 계정을 만들거나] [$2 로그인]할 수 있습니다. 계정을 만들면 IP 주소도 숨겨집니다.",
+	"discussiontools-emptystate-desc-self-temp": "{{SITENAME}} 사용자는 이 [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|토론 문서]]를 사용하여 {{GENDER:|본인}}에게 공개 메시지를 게시할 수 있습니다.\n\n결국 [[{{MediaWiki:tempuser-helppage}}|이 문서는 만료됩니다]]. 알림을 계속 받고 다른 기능을 이용하려면 [$1 계정을 생성]하거나 [$2 로그인]하세요.",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|토론 문서]]는 {{SITENAME}}에서 내용을 어떻게 가능한 좋게 만들지 논의하는 곳입니다. [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]{{GENDER:{{PAGENAME}}|님과}} 연락하고 협업하려면 새 토론을 시작하세요. 여기서 언급하는 내용은 다른 사용자들에게 공개됩니다.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|토론 문서]]는 {{SITENAME}}에서 내용을 어떻게 가능한 좋게 만들지 논의하는 곳입니다. 이 문서를 사용하여 이 IP 주소를 통해 이루어진 편집에 관해 토론을 시작할 수 있습니다. 여기서 언급하는 내용은 다른 사용자들에게 공개됩니다. 수많은 IP 주소는 정기적으로 변경되며 여러 사람들이 공유하는 경우가 있습니다.",
 	"discussiontools-emptystate-desc-user-temp": "이 [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|토론 문서]]를 사용하여 {{SITENAME}}를 개선하는 방법에 대해 [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]{{GENDER:{{PAGENAME}}|님과의}} 토론을 시작하세요. {{GENDER:|귀하}}의 의견은 다른 사람이 볼 수 있도록 공개적으로 표시됩니다. [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]님은 [[{{MediaWiki:tempuser-helppage}}|임시 계정]]이므로 이 토론 문서는 결국 만료됩니다. [[{{MediaWiki:tempuser-helppage}}|자세히 알아보기]].",

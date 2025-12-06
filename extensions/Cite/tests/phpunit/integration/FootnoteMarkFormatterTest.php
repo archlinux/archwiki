@@ -20,10 +20,10 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 	 */
 	public function testLinkRef( array $ref, string $expectedOutput ) {
 		$anchorFormatter = $this->createMock( AnchorFormatter::class );
-		$anchorFormatter->method( 'jumpLink' )->willReturnCallback(
+		$anchorFormatter->method( 'wikitextSafeNoteLink' )->willReturnCallback(
 			static fn ( ...$args ) => implode( '+', $args )
 		);
-		$anchorFormatter->method( 'backLinkTarget' )->willReturnCallback(
+		$anchorFormatter->method( 'backlinkTarget' )->willReturnCallback(
 			static fn ( ...$args ) => implode( '+', $args )
 		);
 		$messageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );

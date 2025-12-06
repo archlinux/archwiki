@@ -3,11 +3,12 @@
 		"authors": [
 			"Diki Ananta",
 			"NoiX180",
-			"Sumbukompor"
+			"Sumbukompor",
+			"Bennylin"
 		]
 	},
 	"thanks-desc": "Nambah pranala atur panuwun marang naraguna awit besutané, tanggapané, lsp.",
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|matur nuwun}}}}",
+	"thanks-thank": "matur nuwun",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|wis matur nuwun}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Matur nuwun}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Wis matur nuwun}}}}",

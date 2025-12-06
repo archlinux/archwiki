@@ -246,17 +246,10 @@ class ConsequencesFactory {
 		return new Tag( $params, $tags, $this->changeTagger );
 	}
 
-	/**
-	 * @param Session $session
-	 * @return void
-	 */
 	public function setSession( Session $session ): void {
 		$this->session = $session;
 	}
 
-	/**
-	 * @return Session
-	 */
 	private function getSession(): Session {
 		if ( $this->session === null ) {
 			$this->session = SessionManager::getGlobalSession();

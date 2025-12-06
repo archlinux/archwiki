@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dolbaeb",
 			"Okras",
-			"Yurina Tatiana",
-			"Dolbaeb"
+			"Yurina Tatiana"
 		]
 	},
+	"cdx-breadcrumb-navigation-label": "Навигационная цепочка",
+	"cdx-breadcrumb-overflow-label": "Дополнительные настройки навигации",
 	"cdx-chip-input-chip-added": "Донат $1 был добавлен",
 	"cdx-chip-input-chip-removed": "\"Чип\" $1 был удален.",
 	"cdx-input-chip-aria-description": "Нажмите Enter, чтобы отредактировать, или Delete, чтобы удалить.",

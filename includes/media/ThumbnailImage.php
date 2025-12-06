@@ -3,21 +3,7 @@
 /**
  * Base class for the output of file transformation methods.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -122,7 +108,6 @@ class ThumbnailImage extends MediaTransformOutput {
 		$services = MediaWikiServices::getInstance();
 		$mainConfig = $services->getMainConfig();
 		$nativeImageLazyLoading = $mainConfig->get( MainConfigNames::NativeImageLazyLoading );
-		$enableLegacyMediaDOM = $mainConfig->get( MainConfigNames::ParserEnableLegacyMediaDOM );
 
 		if ( func_num_args() === 2 ) {
 			throw new InvalidArgumentException( __METHOD__ . ' called in the old style' );
@@ -142,7 +127,6 @@ class ThumbnailImage extends MediaTransformOutput {
 		// Description links get the mw-file-description class and link
 		// to the file description page, making the resource redundant
 		if (
-			!$enableLegacyMediaDOM &&
 			isset( $options['magnify-resource'] ) &&
 			!( $options['desc-link'] ?? false )
 		) {
@@ -188,11 +172,7 @@ class ThumbnailImage extends MediaTransformOutput {
 		} else {
 			$linkAttribs = false;
 			if ( !empty( $options['title'] ) ) {
-				if ( $enableLegacyMediaDOM ) {
-					$attribs['title'] = $options['title'];
-				} else {
-					$linkAttribs = [ 'title' => $options['title'] ];
-				}
+				$linkAttribs = [ 'title' => $options['title'] ];
 			}
 		}
 

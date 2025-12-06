@@ -18,10 +18,8 @@ ve.dm.SourceConverter = function VeDmSourceConverter() {
  * @param {string} [options.dir] Document directionality (ltr/rtl)
  * @return {ve.dm.Document} Document model
  */
-ve.dm.SourceConverter.prototype.getModelFromSourceText = function ( sourceText, options ) {
+ve.dm.SourceConverter.prototype.getModelFromSourceText = function ( sourceText, options = {} ) {
 	const data = this.getDataFromSourceText( sourceText );
-
-	options = options || {};
 
 	// TODO: Internal lists are completely unused in source mode
 	data.push( { type: 'internalList' }, { type: '/internalList' } );
@@ -34,7 +32,7 @@ ve.dm.SourceConverter.prototype.getModelFromSourceText = function ( sourceText, 
  *
  * @param {string} sourceText Source text
  * @param {boolean} [inline] Convert text for inline insertion, so skip opening and closing paragraph elements
- * @return {Array} Linear data
+ * @return {ve.dm.LinearData.Item[]} Linear data
  */
 ve.dm.SourceConverter.prototype.getDataFromSourceText = function ( sourceText, inline ) {
 	const lines = sourceText.split( /\r\n|\r|\n/ ),
@@ -67,7 +65,7 @@ ve.dm.SourceConverter.prototype.getSourceTextFromModel = function ( model ) {
 /**
  * Convert from linear data to source text, optionally with a specified range
  *
- * @param {Array} data Linear data
+ * @param {ve.dm.LinearData.Item[]} data Linear data
  * @param {ve.Range} [range] Range, defaults to full data set.
  * @return {string} Source text
  */
@@ -76,7 +74,7 @@ ve.dm.SourceConverter.prototype.getSourceTextFromDataRange = function ( data, ra
 
 	range = range || new ve.Range( 0, data.length );
 
-	for ( let i = range.start; i < range.end; i++ ) {
+	range.forEach( ( i ) => {
 		// Check for the most common case first for best performance
 		if ( !data[ i ].type ) {
 			text += data[ i ];
@@ -86,7 +84,7 @@ ve.dm.SourceConverter.prototype.getSourceTextFromDataRange = function ( data, ra
 			// (T243606) Append a newline after each full paragraph, including the last one in the range
 			text += '\n';
 		}
-	}
+	} );
 
 	return text;
 };

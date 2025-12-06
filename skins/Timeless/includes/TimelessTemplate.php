@@ -44,7 +44,9 @@ class TimelessTemplate extends BaseTemplate {
 		$this->languages = $this->sidebar['LANGUAGES'];
 
 		// WikiBase sidebar thing
-		if ( isset( $this->sidebar['wikibase-otherprojects'] ) ) {
+		// The hook will set it even if it's empty, but we don't care about
+		// other projects if it's empty.
+		if ( !empty( $this->sidebar['wikibase-otherprojects'] ) ) {
 			$this->otherProjects = $this->sidebar['wikibase-otherprojects'];
 			unset( $this->sidebar['wikibase-otherprojects'] );
 		}
@@ -707,10 +709,12 @@ class TimelessTemplate extends BaseTemplate {
 
 		// Re-label some messages
 		if ( isset( $personalTools['userpage'] ) ) {
-			$personalTools['userpage']['links'][0]['text'] = $this->getMsg( 'timeless-userpage' )->text();
+			$personalTools['userpage']['links'][0]['text'] =
+				$this->getMsg( 'timeless-userpage', $userName )->text();
 		}
 		if ( isset( $personalTools['mytalk'] ) ) {
-			$personalTools['mytalk']['links'][0]['text'] = $this->getMsg( 'timeless-talkpage' )->text();
+			$personalTools['mytalk']['links'][0]['text'] =
+				$this->getMsg( 'timeless-talkpage', $userName )->text();
 		}
 
 		// Labels
@@ -1232,7 +1236,6 @@ class TimelessTemplate extends BaseTemplate {
 		} else {
 			// Okay, we really do want a 1x otherwise. If this throws an error or
 			// something because there's nothing here, GOOD.
-			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			$attribs['src'] = $logoData['1x'];
 
 			// Throw the rest in a srcset

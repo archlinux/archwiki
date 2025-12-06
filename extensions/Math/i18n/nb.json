@@ -76,6 +76,7 @@
 	"math_invalidresponse": "$1: Ugyldig respons («$3») fra tjeneren «$2»:",
 	"math_invalidxml": " MathML eller SVG er ugyldig XML.",
 	"math_mathoid_error": "Konverteringsfeil. Tjeneren («$1») rapporterte: «$2»",
+	"math_other_error": "Annen feil: $1",
 	"math-status-introduction": "Denne siden viser informasjon om {{PLURAL:$1|aktivert modus|aktiverte modi}} for rendering av matematiske uttrykk.\n\nFølgende {{PLURAL:$1|modus|moduser}} er aktivert:",
 	"math_syntax_error": "syntaksfeil",
 	"math_timeout": "$1-tidsavbrudd fra «$2»",

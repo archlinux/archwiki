@@ -20,7 +20,7 @@ class AutoBlockTarget extends BlockTarget {
 	 * @param int $id The block ID
 	 * @param string|false $wikiId
 	 */
-	public function __construct( int $id, $wikiId = WikiAwareEntity::LOCAL ) {
+	public function __construct( int $id, string|false $wikiId = WikiAwareEntity::LOCAL ) {
 		parent::__construct( $wikiId );
 		$this->id = $id;
 	}
@@ -37,6 +37,7 @@ class AutoBlockTarget extends BlockTarget {
 		return new PageReferenceValue( NS_USER, $this->toString(), $this->wikiId );
 	}
 
+	/** @inheritDoc */
 	public function getSpecificity() {
 		return 2;
 	}
@@ -55,6 +56,7 @@ class AutoBlockTarget extends BlockTarget {
 		return $this->id;
 	}
 
+	/** @inheritDoc */
 	protected function getLegacyUnion() {
 		return (string)$this->id;
 	}

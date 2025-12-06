@@ -1,0 +1,36 @@
+{
+	"before": {},
+	"after": {
+		"name": "cusi_signal",
+		"comment": "A table that represents a distinct signal-value pair. A signal is used to determine that an account may need investigation and the value is used to group users with the same value. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "sis_sic_id",
+				"comment": "Foreign key to the cusi_case row. Used in the composite primary key.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "sis_name",
+				"comment": "The name of the signal. Used in the composite primary key.",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "sis_value",
+				"comment": "The value associated with the signal. Used in the composite primary key.",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "sis_sic_id",
+				"columns": [ "sis_sic_id" ],
+				"unique": false,
+				"comment": "Used to find cusi_signal rows for a given cusi_case row, when displaying cusi_case rows in the UI."
+			}
+		],
+		"pk": [ "sis_name", "sis_value", "sis_sic_id" ]
+	}
+}

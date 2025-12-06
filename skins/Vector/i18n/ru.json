@@ -14,6 +14,7 @@
 			"Kareyac",
 			"Megakott",
 			"Mehman (WMF)",
+			"MidnightLG",
 			"Nemo bis",
 			"Okras",
 			"Ole Yves",
@@ -30,8 +31,7 @@
 			"Vlad5250",
 			"Yurina Tatiana",
 			"Александр Сигачёв",
-			"З. ӘЙЛЕ",
-			"MidnightLG"
+			"З. ӘЙЛЕ"
 		]
 	},
 	"skinname-vector": "Вектор, устаревшая (2010)",
@@ -40,8 +40,6 @@
 	"vector-skin-desc": "Предоставляет две векторные темы оформления:\n* 2011: ''Современная'' — версия MonoBook с обновлённым оформлением и многими улучшениями пользовательского опыта.\n* 2022: ''Векторная'' — созданная в рамках проекта Фонда Викимедиа «[https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Улучшения интерфейса настольной версии]».",
 	"prefs-vector-enable-vector-1-label": "Использовать Векторную тему оформления прежней версии",
 	"prefs-vector-enable-vector-1-help": "В течение следующих нескольких лет мы постепенно будем обновлять «Векторную» тему оформления. Прежняя версия темы оформления «Векторная» позволит вам видеть старую версию «Векторной» (по состоянию на декабрь 2019 года). Чтобы узнать больше об обновлениях, перейдите на [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements страницу нашего проекта].",
-	"vector-opt-out": "Переключиться на старый вид",
-	"vector-opt-out-tooltip": "Измените настройки, чтобы вернуться к старому виду темы оформления (Устаревшая Векторная)",
 	"vector.css": "/* Весь CSS будет отсюда будет загружен пользователям темы оформления «Векторная» */",
 	"vector.js": "/* Любой код JavaScript отсюда будет загружаться пользователям темы оформления «Векторная» */",
 	"vector-action-toggle-sidebar": "Переключить боковую панель",
@@ -82,8 +80,6 @@
 	"skin-theme-night-label": "Тёмная",
 	"skin-theme-os-label": "Автоматически",
 	"skin-theme-exclusion-notice": "Эта страница всегда находится в светлом режиме.",
-	"vector-search-loader": "Загружаются поисковые предложения",
-	"vector-searchsuggest-containing": "Поиск страниц, содержащих <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Введение",
 	"vector-toc-label": "Содержание",
 	"vector-toc-beginning": "Начало",

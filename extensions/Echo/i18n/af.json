@@ -4,8 +4,8 @@
 			"Biggs ZA",
 			"Fwolff",
 			"Naudefj",
-			"Servien",
-			"Pkeciy"
+			"Pkeciy",
+			"Servien"
 		]
 	},
 	"echo-desc": "Kennisgewing-stelsel",
@@ -36,7 +36,6 @@
 	"tooltip-pt-notifications-alert": "{{GENDER:|U}} kennisgewings",
 	"tooltip-pt-notifications-notice": "{{GENDER:|U}} boodskappe",
 	"tooltip-pt-notifications": "U kennisgewings",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Nuwe gebruikers",
 	"echo-specialpage": "Kennisgewings",
 	"echo-specialpage-section-markread": "Merk groep as gelees",
 	"echo-specialpage-markasread": "Kennisgewing: Merk as gelees",

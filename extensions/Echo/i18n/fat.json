@@ -48,6 +48,5 @@
 	"echo-category-title-article-reminder": "Page {{PLURAL:$1|nkaakaadze}}",
 	"echo-category-title-thank-you-edit": "Nsesa {{PLURAL:$1|milestone|milestones}}",
 	"echo-category-title-watchlist": "Yɛ nsesa kɔ kratafa a wɔahwɛ do",
-	"echo-category-title-minor-watchlist": "Yɛ nsesa kumaa kɔ kratafa a wɔahwɛ do",
-	"echo-pref-tooltip-edit-user-talk": "Bɔ me nkaa sɛ obi yɛ nsesa wɔ me mkɔmbɔdzibea hɔ"
+	"echo-category-title-minor-watchlist": "Yɛ nsesa kumaa kɔ kratafa a wɔahwɛ do"
 }

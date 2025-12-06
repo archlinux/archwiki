@@ -2,21 +2,7 @@
 /**
  * Formatting of image metadata values into human readable form.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @ingroup Media
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason, 2009 Brent Garber, 2010 Brian Wolff
@@ -867,7 +853,7 @@ class FormatMetadata extends ContextSource {
 						break;
 
 					case 'MaxApertureValue':
-						if ( strpos( $val, '/' ) !== false ) {
+						if ( str_contains( $val, '/' ) ) {
 							// need to expand this earlier to calculate fNumber
 							[ $n, $d ] = explode( '/', $val, 2 );
 							if ( is_numeric( $n ) && is_numeric( $d ) ) {
@@ -947,7 +933,19 @@ class FormatMetadata extends ContextSource {
 							$val = $this->literal( $val );
 						}
 						break;
-
+					case 'DigitalSourceType':
+						// Should be a url starting with
+						// http://cv.iptc.org/newscodes/digitalsourcetype/
+						if ( str_starts_with( $val, 'http://cv.iptc.org/newscodes/digitalsourcetype/' ) ) {
+							$code = substr( $val, 47 );
+							$msg = $this->msg( 'exif-digitalsourcetype-' . strtolower( $code ) );
+							if ( !$msg->isDisabled() ) {
+								$val = $msg->text();
+								break;
+							}
+						}
+						$val = $this->literal( $val );
+						break;
 					// Things that have a unit of pixels.
 					case 'OriginalImageHeight':
 					case 'OriginalImageWidth':
@@ -1623,7 +1621,7 @@ class FormatMetadata extends ContextSource {
 					if ( $finalEmail === ',' || $finalEmail === '' ) {
 						continue;
 					}
-					if ( strpos( $finalEmail, '<' ) !== false ) {
+					if ( str_contains( $finalEmail, '<' ) ) {
 						// Don't do fancy formatting to
 						// "My name" <foo@bar.com> style stuff
 						$emails[] = $this->literal( $finalEmail );

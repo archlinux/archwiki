@@ -15,7 +15,6 @@
 	"echo-pref-email": "အီးမေး",
 	"echo-pref-push": "အဲပ်ဖိုင်ႏ",
 	"echo-pref-email-frequency-never": "ပသာမွုန်းတဝ်းဒုမ် အီးမေးဖေႏသေချက်ဖိုင်ႏမုဲင်ꩻမုဲင်ꩻ",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "ကေားသုင်ꩻသား လိုꩻတသာဖိုင်ႏ",
 	"echo-specialpage-markasread": "ဖေႏသေချက်: ဟော်ꩻထွူလဲဥ်းအကျောင်ꩻ ဒင်ႏမုဲင်တာႏ",
 	"notification-link-text-what-links-here": "ကဆွိုက်ခါꩻဒါႏ လိတ်မဲ့ငါယို လိဥ့်ဖုံႏကားကအဝ်ႏ",
 	"notification-header-welcome": "အဝ်ႏ{{SITENAME}}ယို{{GENDER:$2|ကျိုႏဆွုမ်ႏဒျာႏသြ}}၊ $1! နာꩻတွိုႏလွဥ်ဒါႏယိုကိုနဝ်ꩻ နီသွဥ်းသီး သꩻရေꩻငါႏသွူ။",

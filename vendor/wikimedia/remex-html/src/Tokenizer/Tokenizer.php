@@ -87,6 +87,27 @@ class Tokenizer {
 		'&nbsp;' => "\u{00A0}",
 	];
 
+	private const DISALLOWED_CODEPOINTS = [
+		0x000B => true,
+		0xFFFE => true, 0xFFFF => true,
+		0x1FFFE => true, 0x1FFFF => true,
+		0x2FFFE => true, 0x2FFFF => true,
+		0x3FFFE => true, 0x3FFFF => true,
+		0x4FFFE => true, 0x4FFFF => true,
+		0x5FFFE => true, 0x5FFFF => true,
+		0x6FFFE => true, 0x6FFFF => true,
+		0x7FFFE => true, 0x7FFFF => true,
+		0x8FFFE => true, 0x8FFFF => true,
+		0x9FFFE => true, 0x9FFFF => true,
+		0xAFFFE => true, 0xAFFFF => true,
+		0xBFFFE => true, 0xBFFFF => true,
+		0xCFFFE => true, 0xCFFFF => true,
+		0xDFFFE => true, 0xDFFFF => true,
+		0xEFFFE => true, 0xEFFFF => true,
+		0xFFFFE => true, 0xFFFFF => true,
+		0x10FFFE => true, 0x10FFFF => true,
+	];
+
 	protected bool $ignoreErrors;
 	protected bool $ignoreCharRefs;
 	protected bool $ignoreNulls;
@@ -378,6 +399,7 @@ class Tokenizer {
 	protected function executeInternal( $loop ) {
 		$eof = false;
 
+		// @phan-suppress-next-line PhanPossiblyInfiniteLoop
 		do {
 			switch ( $this->state ) {
 				case self::STATE_DATA:
@@ -1002,7 +1024,7 @@ class Tokenizer {
 
 			$haveSemicolon =
 				( isset( $m[self::MC_SEMICOLON] ) && strlen( $m[self::MC_SEMICOLON] ) )
-				|| ( strlen( $knownNamed ) && $knownNamed[ strlen( $knownNamed ) - 1 ] === ';' )
+				|| str_ends_with( $knownNamed, ';' )
 				|| ( isset( $m[self::MC_INVALID] ) && strlen( $m[self::MC_INVALID] ) );
 
 			if ( $inAttr && !$haveSemicolon ) {
@@ -1066,31 +1088,12 @@ class Tokenizer {
 				$out .= HTMLData::LEGACY_NUMERIC_ENTITIES[$codepoint];
 			} else {
 				if ( !$this->ignoreErrors ) {
-					$disallowedCodepoints = [
-						0x000B => true,
-						0xFFFE => true, 0xFFFF => true,
-						0x1FFFE => true, 0x1FFFF => true,
-						0x2FFFE => true, 0x2FFFF => true,
-						0x3FFFE => true, 0x3FFFF => true,
-						0x4FFFE => true, 0x4FFFF => true,
-						0x5FFFE => true, 0x5FFFF => true,
-						0x6FFFE => true, 0x6FFFF => true,
-						0x7FFFE => true, 0x7FFFF => true,
-						0x8FFFE => true, 0x8FFFF => true,
-						0x9FFFE => true, 0x9FFFF => true,
-						0xAFFFE => true, 0xAFFFF => true,
-						0xBFFFE => true, 0xBFFFF => true,
-						0xCFFFE => true, 0xCFFFF => true,
-						0xDFFFE => true, 0xDFFFF => true,
-						0xEFFFE => true, 0xEFFFF => true,
-						0xFFFFE => true, 0xFFFFF => true,
-						0x10FFFE => true, 0x10FFFF => true ];
 					if (
 						( $codepoint >= 1 && $codepoint <= 8 ) ||
 						( $codepoint >= 0x0d && $codepoint <= 0x1f ) ||
 						( $codepoint >= 0x7f && $codepoint <= 0x9f ) ||
 						( $codepoint >= 0xfdd0 && $codepoint <= 0xfdef ) ||
-						isset( $disallowedCodepoints[$codepoint] )
+						isset( self::DISALLOWED_CODEPOINTS[$codepoint] )
 					) {
 						$this->error( 'invalid numeric reference to control character',
 							$errorPos );

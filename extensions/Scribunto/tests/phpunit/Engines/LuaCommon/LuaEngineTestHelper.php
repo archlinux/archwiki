@@ -71,10 +71,8 @@ trait LuaEngineTestHelper {
 				);
 				$engineClass = $opts['class'];
 				$engine = new $engineClass(
-					self::$engineConfigurations[$engineName] + [ 'parser' => $parser ]
+					self::$engineConfigurations[$engineName] + [ 'parser' => $parser, 'title' => $parser->getTitle() ]
 				);
-				$parser->scribunto_engine = $engine;
-				$engine->setTitle( $parser->getTitle() );
 				$engine->getInterpreter();
 			} catch ( LuaInterpreterNotFoundError $e ) {
 				$suite->addTest(
@@ -160,10 +158,8 @@ trait LuaEngineTestHelper {
 			}
 
 			$this->engine = new $class(
-				self::$engineConfigurations[$this->engineName] + [ 'parser' => $parser ]
+				self::$engineConfigurations[$this->engineName] + [ 'parser' => $parser, 'title' => $parser->getTitle() ]
 			);
-			$parser->scribunto_engine = $this->engine;
-			$this->engine->setTitle( $parser->getTitle() );
 		}
 		return $this->engine;
 	}

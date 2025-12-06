@@ -23,6 +23,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Skins\Vector\ConfigHelper;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManagerFactory;
 
 // PHP unit does not understand code coverage for this file
@@ -30,12 +31,19 @@ use MediaWiki\Skins\Vector\FeatureManagement\FeatureManagerFactory;
 // This is partly tested in ServiceWiringTest.php
 // @codeCoverageIgnoreStart
 
+/** @phpcs-require-sorted-array */
 return [
+	'Vector.ConfigHelper' => static function ( MediaWikiServices $services ): ConfigHelper {
+		return new ConfigHelper(
+			$services->getSpecialPageFactory()
+		);
+	},
 	'Vector.FeatureManagerFactory' => static function ( MediaWikiServices $services ): FeatureManagerFactory {
 		return new FeatureManagerFactory(
+			$services->getService( 'Vector.ConfigHelper' ),
 			$services->getUserOptionsLookup()
 		);
-	}
+	},
 ];
 
 // @codeCoverageIgnoreEnd

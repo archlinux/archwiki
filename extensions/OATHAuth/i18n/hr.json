@@ -16,10 +16,10 @@
 	"oathauth-secret": "Tajni ključ za dvofaktorsku autentifikaciju:",
 	"oathauth-enable": "Omogućavanje dvofaktorske autentifikacije",
 	"oathauth-recoverycodes": "Sljedeći popis je popis jednokratnih kôdova. Mogu se uporabiti jednom, i to u nepredviđenim slučajevima. Zapišite ih i čuvajte na sigurnom mjestu. Ako izgubite telefon, ovi kôdovi su jedini način da spasite suradnički račun. '''Ovi kôdovi više nikada neće biti prikazani'''.",
+	"oathauth-failedtovalidateoath": "Nije uspjelo potvrđivanje Vaše dvofaktorske autentifikacije",
 	"oathauth-disable": "Onemogući dvofaktorsku autentifikaciju",
 	"oathauth-validatedoath": "Ovjereno je dvofaktorsko punomoćje. Dvofaktorska autentifikacija odsad će biti provođena.",
 	"oathauth-noscratchforvalidation": "Ne možete upotrijebiti jednokratni kôd za potvrđivanje dvofaktorske autentifikacije. Jednokratni kôdovi služe za sigurnosno potvrđivanje i  imaju isključivo namjensku upotrebu u izvanrednim slučajevima. Molimo Vas, poslužite se s redovnim potvrđivajućim kôdom iz Vašega generatora kôdova.",
-	"oathauth-failedtovalidateoath": "Nije uspjelo potvrđivanje Vaše dvofaktorske autentifikacije",
 	"oathauth-disabledoath": "Onemogućena je Vaša dvofaktorska autentifikacija",
 	"oathauth-prefs-label": "Dvofaktorska autentifikacija:",
 	"oathauth-step1": "Prvi korak: preuzmite program za dvofaktorsku autentifikaciju",
@@ -72,8 +72,7 @@
 	"oathauth-ui-available-modules": "Dostupne metode",
 	"oathauth-ui-general-help": "'''Multifaktorska autentifikacija''' ('''MFA''') autentifikacijska je metoda kojom se korisniku računala omogućava pristup tek nakon uspješnog unosa dva ili više potvrdnih dijelova (ili faktora) u autentifikacijski mehanizam: saznanje (ono što zna samo korisnik i nitko drugi), vlasništvo (ono što posjeduje samo korisnik i nitko drugi), te osobina (ono što je svojstveno korisniku i nikom drugom). [https://en.wikipedia.org/wiki/Multi-factor_authentication Pročitajte više]",
 	"oathauth-totp-description": "Jednokratna zaporka/kôd (TOTP) bazirana na vremenu kreiranja, proširenje je mogućnosti algoritma jednokratne zaporke zasnovane na HMAC-u (HOTP), koja uključuje generiranje jednokratne zaporke bez preuzimanja jedinstvenosti kôda iz trenutačnog vremena kad je zaporka kreirana.",
-	"oathauth-disable-method-warning-header": "Potvrđivanje onemogućavanja autentifikacijske metode",
-	"oathauth-disable-method-warning-button-label": "Potvrdi i nastavi",
 	"oathauth-disable-method-warning": "Ako onemogućite dvofaktorsku autentifikacijsku metodu naziva $1, više nećete biti u mogućnosti rabiti tu metodu pri prijavljivanju, a svi će podatci povezani s tom autentifikacijskom metodom biti izbrisani.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nema omogućenu dvofaktorsku autentifikaciju."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nema omogućenu dvofaktorsku autentifikaciju.",
+	"group-oathauth-twofactorauth-member": "{{GENDER:$1|Suradnik kojemu|Suradnica kojoj}} je dopuštena uporaba dvofaktorske autentifikacije"
 }

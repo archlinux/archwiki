@@ -35,7 +35,6 @@ use Wikimedia\Telemetry\NoopTracer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @dataProvider provideAddQuotes
  * @covers \Wikimedia\Rdbms\Database
  * @covers \Wikimedia\Rdbms\Database\DatabaseFlags
  * @covers \Wikimedia\Rdbms\Platform\SQLPlatform
@@ -43,12 +42,6 @@ use Wikimedia\TestingAccessWrapper;
 class DatabaseTest extends TestCase {
 
 	use MediaWikiCoversValidator;
-
-	private DatabaseTestHelper $db;
-
-	protected function setUp(): void {
-		$this->db = new DatabaseTestHelper( __CLASS__ . '::' . $this->getName() );
-	}
 
 	public static function provideAddQuotes() {
 		return [
@@ -64,7 +57,8 @@ class DatabaseTest extends TestCase {
 	 * @dataProvider provideAddQuotes
 	 */
 	public function testAddQuotes( $input, $expected ) {
-		$this->assertEquals( $expected, $this->db->addQuotes( $input ) );
+		$db = new DatabaseTestHelper( __METHOD__ );
+		$this->assertEquals( $expected, $db->addQuotes( $input ) );
 	}
 
 	public static function provideTableName() {
@@ -214,7 +208,7 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testTransactionIdle() {
-		$db = $this->db;
+		$db = new DatabaseTestHelper( __METHOD__ );
 
 		$db->clearFlag( DBO_TRX );
 		$called = false;
@@ -300,7 +294,7 @@ class DatabaseTest extends TestCase {
 				throw new RuntimeException( 'test' );
 			} );
 			$this->fail( "Exception not thrown" );
-		} catch ( RuntimeException $e ) {
+		} catch ( RuntimeException ) {
 			$this->assertTrue( $db->getFlag( DBO_TRX ) );
 		}
 
@@ -385,7 +379,7 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testTransactionResolution() {
-		$db = $this->db;
+		$db = new DatabaseTestHelper( __METHOD__ );
 
 		$db->clearFlag( DBO_TRX );
 		$db->begin( __METHOD__ );
@@ -411,7 +405,7 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testTransactionListener() {
-		$db = $this->db;
+		$db = new DatabaseTestHelper( __METHOD__ );
 
 		$db->setTransactionListener( 'ping', static function () use ( &$called ) {
 			$called = true;
@@ -459,6 +453,7 @@ class DatabaseTest extends TestCase {
 			'getServerVersion',
 			'getType',
 			'indexInfo',
+			'getPrimaryKeyColumns',
 			'insertId',
 			'lastError',
 			'lastErrno',
@@ -546,7 +541,7 @@ class DatabaseTest extends TestCase {
 		try {
 			$lock = $db->getScopedLockAndFlush( 'meow', __METHOD__, 1 );
 			$this->fail( "Exception not reached" );
-		} catch ( DBUnexpectedError $e ) {
+		} catch ( DBUnexpectedError ) {
 			$this->assertSame( 1, $db->trxLevel(), "Transaction not committed." );
 			$this->assertTrue( $db->lockIsFree( 'meow', __METHOD__ ), 'Lock not acquired' );
 		}
@@ -560,7 +555,7 @@ class DatabaseTest extends TestCase {
 		try {
 			$lock = $db->getScopedLockAndFlush( 'meow2', __METHOD__, 1 );
 			$this->fail( "Exception not reached" );
-		} catch ( DBUnexpectedError $e ) {
+		} catch ( DBUnexpectedError ) {
 			$this->assertSame( 1, $db->trxLevel(), "Transaction not committed." );
 			$this->assertTrue( $db->lockIsFree( 'meow2', __METHOD__ ), 'Lock not acquired' );
 		}
@@ -583,7 +578,7 @@ class DatabaseTest extends TestCase {
 		try {
 			$lock = $db->getScopedLockAndFlush( 'wuff2', __METHOD__, 1 );
 			$this->fail( "Exception not reached" );
-		} catch ( DBUnexpectedError $e ) {
+		} catch ( DBUnexpectedError ) {
 			$this->assertSame( 1, $db->trxLevel(), "Transaction not committed." );
 			$this->assertFalse( $db->lockIsFree( 'wuff2', __METHOD__ ), 'Lock not acquired' );
 		}
@@ -591,7 +586,7 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testFlagSetting() {
-		$db = $this->db;
+		$db = new DatabaseTestHelper( __METHOD__ );
 		$origTrx = $db->getFlag( DBO_TRX );
 		$origNoBuffer = $db->getFlag( DBO_NOBUFFER );
 
@@ -656,28 +651,29 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testSchemaAndPrefixMutators() {
+		$db = new DatabaseTestHelper( __METHOD__ );
 		$ud = DatabaseDomain::newUnspecified();
 
-		$this->assertEquals( $ud->getId(), $this->db->getDomainID() );
+		$this->assertEquals( $ud->getId(), $db->getDomainID() );
 
-		$oldDomain = $this->db->getDomainID();
-		$oldSchema = $this->db->dbSchema();
-		$oldPrefix = $this->db->tablePrefix();
+		$oldDomain = $db->getDomainID();
+		$oldSchema = $db->dbSchema();
+		$oldPrefix = $db->tablePrefix();
 		$this->assertIsString( $oldDomain, 'DB domain is string' );
 		$this->assertIsString( $oldSchema, 'DB schema is string' );
 		$this->assertIsString( $oldPrefix, 'Prefix is string' );
-		$this->assertSame( $oldSchema, $this->db->dbSchema(), "Schema unchanged" );
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix(), "Prefix unchanged" );
+		$this->assertSame( $oldSchema, $db->dbSchema(), "Schema unchanged" );
+		$this->assertSame( $oldPrefix, $db->tablePrefix(), "Prefix unchanged" );
 
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix( 'xxx_' ), "Prior prefix upon set" );
-		$this->assertSame( 'xxx_', $this->db->tablePrefix(), "Prefix set" );
-		$this->assertSame( $oldSchema, $this->db->dbSchema(), "Schema unchanged" );
+		$this->assertSame( $oldPrefix, $db->tablePrefix( 'xxx_' ), "Prior prefix upon set" );
+		$this->assertSame( 'xxx_', $db->tablePrefix(), "Prefix set" );
+		$this->assertSame( $oldSchema, $db->dbSchema(), "Schema unchanged" );
 
-		$this->db->tablePrefix( $oldPrefix );
-		$this->assertNotEquals( 'xxx_', $this->db->tablePrefix(), "Prior prefix upon set" );
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix(), "Prefix restored" );
-		$this->assertSame( $oldSchema, $this->db->dbSchema(), "Schema unchanged" );
-		$this->assertSame( $oldDomain, $this->db->getDomainID(), "DB domain restored" );
+		$db->tablePrefix( $oldPrefix );
+		$this->assertNotEquals( 'xxx_', $db->tablePrefix(), "Prior prefix upon set" );
+		$this->assertSame( $oldPrefix, $db->tablePrefix(), "Prefix restored" );
+		$this->assertSame( $oldSchema, $db->dbSchema(), "Schema unchanged" );
+		$this->assertSame( $oldDomain, $db->getDomainID(), "DB domain restored" );
 
 		$newDbDomain = new DatabaseDomain(
 			'y',
@@ -685,65 +681,67 @@ class DatabaseTest extends TestCase {
 			$oldPrefix
 		);
 
-		$this->db->selectDomain( $newDbDomain );
-		$this->assertSame( 'y', $this->db->getDBname(), "DB name set" );
-		$this->assertSame( $oldSchema, $this->db->dbSchema(), "Schema unchanged" );
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix(), "Prefix unchanged" );
+		$db->selectDomain( $newDbDomain );
+		$this->assertSame( 'y', $db->getDBname(), "DB name set" );
+		$this->assertSame( $oldSchema, $db->dbSchema(), "Schema unchanged" );
+		$this->assertSame( $oldPrefix, $db->tablePrefix(), "Prefix unchanged" );
 
-		$this->assertSame( $oldSchema, $this->db->dbSchema( 'xxx' ), "Prior schema upon set" );
-		$this->assertSame( 'xxx', $this->db->dbSchema(), "Schema set" );
-		$this->assertSame( 'y', $this->db->getDBname(), "DB name unchanged" );
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix(), "Prefix unchanged" );
+		$this->assertSame( $oldSchema, $db->dbSchema( 'xxx' ), "Prior schema upon set" );
+		$this->assertSame( 'xxx', $db->dbSchema(), "Schema set" );
+		$this->assertSame( 'y', $db->getDBname(), "DB name unchanged" );
+		$this->assertSame( $oldPrefix, $db->tablePrefix(), "Prefix unchanged" );
 
-		$this->assertSame( 'xxx', $this->db->dbSchema( $oldSchema ), "Prior schema upon set" );
-		$this->assertEquals( $oldSchema, $this->db->dbSchema(), 'Schema restored' );
+		$this->assertSame( 'xxx', $db->dbSchema( $oldSchema ), "Prior schema upon set" );
+		$this->assertEquals( $oldSchema, $db->dbSchema(), 'Schema restored' );
 	}
 
 	public function testSchemaWithNoDB() {
+		$db = new DatabaseTestHelper( __METHOD__ );
 		$ud = DatabaseDomain::newUnspecified();
 
-		$this->assertEquals( $ud->getId(), $this->db->getDomainID() );
-		$this->assertSame( '', $this->db->dbSchema() );
+		$this->assertEquals( $ud->getId(), $db->getDomainID() );
+		$this->assertSame( '', $db->dbSchema() );
 
 		$this->expectException( DBUnexpectedError::class );
-		$this->db->dbSchema( 'xxx' );
+		$db->dbSchema( 'xxx' );
 	}
 
 	public function testSelectDomain() {
-		$oldDomain = $this->db->getDomainID();
-		$oldDatabase = $this->db->getDBname();
-		$oldSchema = $this->db->dbSchema();
-		$oldPrefix = $this->db->tablePrefix();
+		$db = new DatabaseTestHelper( __METHOD__ );
+		$oldDomain = $db->getDomainID();
+		$oldDatabase = $db->getDBname();
+		$oldSchema = $db->dbSchema();
+		$oldPrefix = $db->tablePrefix();
 
 		/** @var SQLPlatform $platform */
-		$platform = TestingAccessWrapper::newFromObject( $this->db )->platform;
+		$platform = TestingAccessWrapper::newFromObject( $db )->platform;
 
-		$this->db->selectDomain( 'testselectdb-xxx_' );
-		$this->assertSame( 'testselectdb', $this->db->getDBname() );
-		$this->assertSame( '', $this->db->dbSchema() );
-		$this->assertSame( 'xxx_', $this->db->tablePrefix() );
+		$db->selectDomain( 'testselectdb-xxx_' );
+		$this->assertSame( 'testselectdb', $db->getDBname() );
+		$this->assertSame( '', $db->dbSchema() );
+		$this->assertSame( 'xxx_', $db->tablePrefix() );
 		$this->assertSame( 'testselectdb', $platform->getCurrentDomain()->getDatabase() );
 		$this->assertSame( 'xxx_', $platform->getCurrentDomain()->getTablePrefix() );
 
-		$this->db->selectDomain( $oldDomain );
-		$this->assertSame( $oldDatabase, $this->db->getDBname() );
-		$this->assertSame( $oldSchema, $this->db->dbSchema() );
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix() );
-		$this->assertSame( $oldDomain, $this->db->getDomainID() );
+		$db->selectDomain( $oldDomain );
+		$this->assertSame( $oldDatabase, $db->getDBname() );
+		$this->assertSame( $oldSchema, $db->dbSchema() );
+		$this->assertSame( $oldPrefix, $db->tablePrefix() );
+		$this->assertSame( $oldDomain, $db->getDomainID() );
 		$this->assertSame( $oldDatabase, $platform->getCurrentDomain()->getDatabase() );
 		$this->assertSame( $oldPrefix, $platform->getCurrentDomain()->getTablePrefix() );
 		$this->assertSame( $oldDomain, $platform->getCurrentDomain()->getId() );
 
-		$this->db->selectDomain( 'testselectdb-schema-xxx_' );
-		$this->assertSame( 'testselectdb', $this->db->getDBname() );
-		$this->assertSame( 'schema', $this->db->dbSchema() );
-		$this->assertSame( 'xxx_', $this->db->tablePrefix() );
+		$db->selectDomain( 'testselectdb-schema-xxx_' );
+		$this->assertSame( 'testselectdb', $db->getDBname() );
+		$this->assertSame( 'schema', $db->dbSchema() );
+		$this->assertSame( 'xxx_', $db->tablePrefix() );
 
-		$this->db->selectDomain( $oldDomain );
-		$this->assertSame( $oldDatabase, $this->db->getDBname() );
-		$this->assertSame( $oldSchema, $this->db->dbSchema() );
-		$this->assertSame( $oldPrefix, $this->db->tablePrefix() );
-		$this->assertSame( $oldDomain, $this->db->getDomainID() );
+		$db->selectDomain( $oldDomain );
+		$this->assertSame( $oldDatabase, $db->getDBname() );
+		$this->assertSame( $oldSchema, $db->dbSchema() );
+		$this->assertSame( $oldPrefix, $db->tablePrefix() );
+		$this->assertSame( $oldDomain, $db->getDomainID() );
 	}
 
 	public function testGetSetLBInfo() {
@@ -775,7 +773,7 @@ class DatabaseTest extends TestCase {
 		$this->expectExceptionMessage( 'Server is configured as a read-only replica database.' );
 
 		$dbr = new DatabaseTestHelper(
-			__CLASS__ . '::' . $this->getName(),
+			__METHOD__,
 			[ 'topologyRole' => Database::ROLE_STREAMING_REPLICA ]
 		);
 
@@ -785,7 +783,7 @@ class DatabaseTest extends TestCase {
 
 	public function testShouldAcceptTemporaryTableOperationsOnReplicaDatabaseConnection() {
 		$dbr = new DatabaseTestHelper(
-			__CLASS__ . '::' . $this->getName(),
+			__METHOD__,
 			[ 'topologyRole' => Database::ROLE_STREAMING_REPLICA ]
 		);
 
@@ -807,7 +805,7 @@ class DatabaseTest extends TestCase {
 
 	public function testShouldRejectPseudoPermanentTemporaryTableOperationsOnReplicaDatabaseConnection() {
 		$dbr = new DatabaseTestHelper(
-			__CLASS__ . '::' . $this->getName(),
+			__METHOD__,
 			[ 'topologyRole' => Database::ROLE_STREAMING_REPLICA ]
 		);
 
@@ -829,7 +827,7 @@ class DatabaseTest extends TestCase {
 
 	public function testShouldAcceptWriteQueryOnPrimaryDatabaseConnection() {
 		$dbr = new DatabaseTestHelper(
-			__CLASS__ . '::' . $this->getName(),
+			__METHOD__,
 			[ 'topologyRole' => Database::ROLE_STREAMING_MASTER ]
 		);
 
@@ -844,7 +842,7 @@ class DatabaseTest extends TestCase {
 		$this->expectExceptionMessage( 'Cannot write; target role is DB_REPLICA' );
 
 		$dbr = new DatabaseTestHelper(
-			__CLASS__ . '::' . $this->getName(),
+			__METHOD__,
 			[ 'topologyRole' => Database::ROLE_STREAMING_MASTER ]
 		);
 
@@ -859,7 +857,7 @@ class DatabaseTest extends TestCase {
 	public function testCriticalSectionErrorSelect() {
 		$this->expectException( DBTransactionStateError::class );
 
-		$db = TestingAccessWrapper::newFromObject( $this->db );
+		$db = TestingAccessWrapper::newFromObject( new DatabaseTestHelper( __METHOD__ ) );
 		try {
 			$this->corruptDbState( $db );
 		} catch ( RuntimeException $e ) {
@@ -870,7 +868,7 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testCriticalSectionErrorRollback() {
-		$db = TestingAccessWrapper::newFromObject( $this->db );
+		$db = TestingAccessWrapper::newFromObject( new DatabaseTestHelper( __METHOD__ ) );
 		try {
 			$this->corruptDbState( $db );
 		} catch ( RuntimeException $e ) {
@@ -889,7 +887,7 @@ class DatabaseTest extends TestCase {
 
 	public function testCriticalSectionErrorWithTrxRollback() {
 		$hits = 0;
-		$db = TestingAccessWrapper::newFromObject( $this->db );
+		$db = TestingAccessWrapper::newFromObject( new DatabaseTestHelper( __METHOD__ ) );
 		$db->begin( __METHOD__, IDatabase::TRANSACTION_INTERNAL );
 		$db->onTransactionResolution( static function () use ( &$hits ) {
 			++$hits;
@@ -912,9 +910,10 @@ class DatabaseTest extends TestCase {
 	}
 
 	public function testExpr() {
-		$this->assertInstanceOf( Expression::class, $this->db->expr( 'key', '=', null ) );
-		$this->assertInstanceOf( AndExpressionGroup::class, $this->db->andExpr( [ 'key' => null, $this->db->expr( 'key', '=', null ) ] ) );
-		$this->assertInstanceOf( OrExpressionGroup::class, $this->db->orExpr( [ 'key' => null, $this->db->expr( 'key', '=', null ) ] ) );
+		$db = new DatabaseTestHelper( __METHOD__ );
+		$this->assertInstanceOf( Expression::class, $db->expr( 'key', '=', null ) );
+		$this->assertInstanceOf( AndExpressionGroup::class, $db->andExpr( [ 'key' => null, $db->expr( 'key', '=', null ) ] ) );
+		$this->assertInstanceOf( OrExpressionGroup::class, $db->orExpr( [ 'key' => null, $db->expr( 'key', '=', null ) ] ) );
 	}
 
 	private function corruptDbState( $db ) {

@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"H78c67c",
-			"Winston Sung",
-			"Ktchankt",
 			"JeffreyKim",
+			"Ktchankt",
+			"Winston Sung",
 			"Yueman"
 		]
 	},
@@ -24,9 +24,11 @@
 	"nuke-deleted": "版「'''$1'''」經已刪咗。",
 	"nuke-not-deleted": "版「[[:$1]]」'''刪唔到'''。",
 	"nuke-delete-more": "[[Special:Nuke|刪多啲版]]",
+	"nuke-deletemore": "刪除多啲版面",
 	"nuke-pattern": "版名嘅 SQL LIKE 花款（例如 %）：",
 	"nuke-nopages-global": "冇符合搜尋條件嘅版。",
 	"nuke-viewchanges": "歷史",
+	"nuke-namespace-invalid": "呢個空間名無效。請喺選單入面揀選項。",
 	"nuke-linkoncontribs": "大量刪除",
 	"tag-nuke": "Nuke",
 	"tag-nuke-description": "用Nuke擴充功能執行嘅刪版"

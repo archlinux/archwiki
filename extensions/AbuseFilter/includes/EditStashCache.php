@@ -126,8 +126,7 @@ class EditStashCache {
 		$hash = md5( serialize( $inputVars ) );
 
 		return $this->cache->makeKey(
-			'abusefilter',
-			'check-stash',
+			'abusefilter-checkstash',
 			$this->group,
 			$hash,
 			self::CACHE_VERSION

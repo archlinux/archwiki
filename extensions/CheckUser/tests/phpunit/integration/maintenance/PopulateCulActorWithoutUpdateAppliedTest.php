@@ -17,6 +17,12 @@ class PopulateCulActorWithoutUpdateAppliedTest extends MaintenanceBaseTestCase {
 
 	use CheckUserCommonTraitTest;
 
+	protected function setUp(): void {
+		parent::setUp();
+
+		$this->markTestSkippedIfDbType( 'postgres' );
+	}
+
 	/** @inheritDoc */
 	protected function getMaintenanceClass() {
 		return PopulateCulActor::class;
@@ -36,7 +42,7 @@ class PopulateCulActorWithoutUpdateAppliedTest extends MaintenanceBaseTestCase {
 				'cul_target_id' => $testTarget->getId(),
 				'cul_target_text' => $testTarget->getName(),
 				'cul_reason_id' => 0,
-				'cul_reason_plaintext_id' => 0
+				'cul_reason_plaintext_id' => 0,
 			] )
 			->caller( __METHOD__ )
 			->execute();
@@ -51,6 +57,10 @@ class PopulateCulActorWithoutUpdateAppliedTest extends MaintenanceBaseTestCase {
 	}
 
 	protected function getSchemaOverrides( IMaintainableDatabase $db ) {
+		if ( $db->getType() === 'postgres' ) {
+			// Not supported when running tests using postgres, so just return early.
+			return [];
+		}
 		// Create the cul_user column in cu_log using the SQL patch file associated with the current
 		// DB type.
 		return [

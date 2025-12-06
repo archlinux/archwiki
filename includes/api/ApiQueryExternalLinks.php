@@ -2,26 +2,13 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
@@ -40,7 +27,11 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 
 	private UrlUtils $urlUtils;
 
-	public function __construct( ApiQuery $query, string $moduleName, UrlUtils $urlUtils ) {
+	public function __construct(
+		ApiQuery $query,
+		string $moduleName,
+		UrlUtils $urlUtils
+	) {
 		parent::__construct( $query, $moduleName, 'el' );
 
 		$this->urlUtils = $urlUtils;
@@ -102,7 +93,9 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 			$this->addWhere( $db->buildComparison( '>=', $conds ) );
 		}
 
+		$this->setVirtualDomain( ExternalLinksTable::VIRTUAL_DOMAIN );
 		$res = $this->select( __METHOD__ );
+		$this->resetVirtualDomain();
 
 		$count = 0;
 		foreach ( $res as $row ) {
@@ -135,10 +128,12 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		$this->setContinueEnumParameter( 'continue', implode( '|', $fields ) );
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'limit' => [
@@ -164,6 +159,7 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -174,6 +170,7 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Extlinks';
 	}

@@ -16,8 +16,8 @@ use Wikimedia\Rdbms\IReadableDatabase;
  */
 class TemplateDataBlob {
 
-	protected string $json;
-	protected Status $status;
+	protected readonly string $json;
+	protected readonly Status $status;
 
 	/**
 	 * Parse and validate passed JSON and create a blob handling

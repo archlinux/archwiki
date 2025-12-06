@@ -49,9 +49,5 @@
 			}
 		],
 		"pk": [ "lsn_id" ]
-	},
-	{
-		"name": "loginnotify_purge_claim",
-		"comment": ""
 	}
 ]

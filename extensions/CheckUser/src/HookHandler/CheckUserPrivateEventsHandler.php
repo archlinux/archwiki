@@ -29,6 +29,7 @@ use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserRigorOptions;
 use Psr\Log\LoggerInterface;
 use TypeError;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -164,7 +165,7 @@ class CheckUserPrivateEventsHandler implements
 				// The following messages are generated here:
 				// * logentry-checkuser-private-event-autocreate-account
 				// * logentry-checkuser-private-event-create-account
-				'cupe_log_action' => $autocreated ? 'autocreate-account' : 'create-account'
+				'cupe_log_action' => $autocreated ? 'autocreate-account' : 'create-account',
 			],
 			__METHOD__,
 			$user
@@ -213,7 +214,7 @@ class CheckUserPrivateEventsHandler implements
 				'cupe_namespace'  => NS_USER,
 				'cupe_log_action' => 'password-reset-email-sent',
 				'cupe_title'      => $account->getName(),
-				'cupe_params'     => LogEntryBase::makeParamBlob( [ '4::receiver' => $account->getName() ] )
+				'cupe_params'     => LogEntryBase::makeParamBlob( [ '4::receiver' => $account->getName() ] ),
 			],
 			__METHOD__,
 			$user
@@ -350,6 +351,20 @@ class CheckUserPrivateEventsHandler implements
 		} else {
 			// Abstain, Redirect, etc.
 			return;
+		}
+
+		if ( IPUtils::isValid( $user->getName() ) ) {
+			$this->logger->warning(
+				'T390051: Storing login event where the user being logged into is an IP address',
+				[
+					'username_from_object' => $user->getName(),
+					'username_from_arguments' => $username,
+					'username_from_authentication_response' => $ret->username,
+					'status' => $ret->status,
+					'error_message' => $ret->message->text(),
+					'exception' => new \RuntimeException(),
+				]
+			);
 		}
 
 		$insertedId = $this->checkUserInsert->insertIntoCuPrivateEventTable(

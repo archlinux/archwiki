@@ -38,7 +38,7 @@ ve.DiffMatchPatch.static.DIFF_CHANGE_INSERT = 2;
 /* Methods */
 
 ve.DiffMatchPatch.prototype.isEqualChar = function ( a, b ) {
-	return a === b || ve.dm.ElementLinearData.static.compareElements( a, b, this.store, this.store );
+	return a === b || ve.dm.LinearData.static.compareElements( a, b, this.store, this.store );
 };
 
 ve.DiffMatchPatch.prototype.isEqualString = function ( a, b ) {
@@ -133,8 +133,8 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 	 * Warning: this step assumes that, within a content branch node, an element
 	 * is always immediately followed by its close element.
 	 *
-	 * @param {Array} data Linear data
-	 * @return {Array} Linear data without close elements
+	 * @param {ve.dm.LinearData.Item[]} data Linear data
+	 * @return {ve.dm.LinearData.Item[]} Linear data without close elements
 	 */
 	function removeCloseElements( data ) {
 		for ( let i = 0, ilen = data.length; i < ilen; i++ ) {
@@ -150,7 +150,7 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 	/**
 	 * Get the index of the first or last wordbreak in a data array
 	 *
-	 * @param {Array} data Linear data
+	 * @param {ve.dm.LinearData.Item[]} data Linear data
 	 * @param {boolean} reversed Get the index of the last wordbreak
 	 * @return {number|null} Index of the first or last wordbreak, or null if no
 	 *  wordbreak was found
@@ -174,7 +174,7 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 	/**
 	 * Determine whether there is a wordbreak at an offset
 	 *
-	 * @param {Array} data Linear data
+	 * @param {ve.dm.LinearData.Item[]} data Linear data
 	 * @param {number} offset
 	 * @return {boolean} There is a wordbreak at the offset
 	 */
@@ -205,7 +205,7 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 		const cleanDiff = [];
 
 		function equalUnannotated( other, element, index ) {
-			return ve.dm.ElementLinearData.static.compareElementsUnannotated( element, other[ index ] );
+			return ve.dm.LinearData.static.compareElementsUnannotated( element, other[ index ] );
 		}
 
 		function equalElements( other, element, index ) {
@@ -364,8 +364,8 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 				( ( aAction === DIFF_DELETE && bAction === DIFF_INSERT ) || ( aAction === DIFF_INSERT && bAction === DIFF_DELETE ) )
 			) {
 				if ( aData.every( equalUnannotated.bind( this, bData ) ) ) {
-					const aAnnotations = new ve.dm.ElementLinearData( store, aData ).getAnnotationsFromRange( new ve.Range( 0, aData.length ), true );
-					const bAnnotations = new ve.dm.ElementLinearData( store, bData ).getAnnotationsFromRange( new ve.Range( 0, bData.length ), true );
+					const aAnnotations = new ve.dm.LinearData( store, aData ).getAnnotationsFromRange( undefined, true );
+					const bAnnotations = new ve.dm.LinearData( store, bData ).getAnnotationsFromRange( undefined, true );
 
 					const annotationChanges = [];
 					bAnnotations.get().forEach( ( b ) => {

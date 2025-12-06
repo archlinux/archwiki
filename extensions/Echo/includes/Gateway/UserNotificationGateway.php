@@ -16,16 +16,6 @@ use Wikimedia\Rdbms\IDatabase;
 class UserNotificationGateway {
 
 	/**
-	 * @var DbFactory
-	 */
-	protected $dbFactory;
-
-	/**
-	 * @var UserIdentity
-	 */
-	protected $user;
-
-	/**
 	 * The tables for this gateway.
 	 *
 	 * @var string
@@ -39,15 +29,11 @@ class UserNotificationGateway {
 	 */
 	protected static $notificationTable = 'echo_notification';
 
-	/**
-	 * @var Config
-	 */
-	private $config;
-
-	public function __construct( UserIdentity $user, DbFactory $dbFactory, Config $config ) {
-		$this->user = $user;
-		$this->dbFactory = $dbFactory;
-		$this->config = $config;
+	public function __construct(
+		protected UserIdentity $user,
+		protected DbFactory $dbFactory,
+		private readonly Config $config,
+	) {
 	}
 
 	/**

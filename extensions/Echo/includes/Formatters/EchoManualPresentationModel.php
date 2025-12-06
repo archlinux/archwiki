@@ -47,7 +47,7 @@ class EchoManualPresentationModel extends EchoEventPresentationModel {
 		$agentLink['tooltip'] = $this->msg( 'notification-tooltip-api-triggered',
 			$this->event->getAgent()->getName() );
 		return [
-			$agentLink
+			$agentLink,
 		];
 	}
 }

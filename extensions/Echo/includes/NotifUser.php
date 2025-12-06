@@ -25,36 +25,6 @@ use Wikimedia\Rdbms\ReadOnlyMode;
 class NotifUser {
 
 	/**
-	 * Notification target user
-	 * @var UserIdentity
-	 */
-	private $mUser;
-
-	/**
-	 * Object cache
-	 * @var WANObjectCache
-	 */
-	private $cache;
-
-	/**
-	 * Database access gateway
-	 * @var UserNotificationGateway
-	 */
-	private $userNotifGateway;
-
-	/**
-	 * Notification mapper
-	 * @var NotificationMapper
-	 */
-	private $notifMapper;
-
-	/**
-	 * Target page mapper
-	 * @var TargetPageMapper
-	 */
-	private $targetPageMapper;
-
-	/**
 	 * @var ForeignNotifications|null
 	 */
 	private $foreignNotifications;
@@ -68,21 +38,6 @@ class NotifUser {
 	 * @var array[]|null
 	 */
 	private $globalCountsAndTimestamps;
-
-	/**
-	 * @var UserOptionsLookup
-	 */
-	private $userOptionsLookup;
-
-	/**
-	 * @var UserFactory
-	 */
-	private $userFactory;
-
-	/**
-	 * @var ReadOnlyMode
-	 */
-	private $readOnlyMode;
 
 	// The max notification count shown in badge
 
@@ -100,25 +55,25 @@ class NotifUser {
 	/**
 	 * Usually client code doesn't need to initialize the object directly
 	 * because it could be obtained from factory method newFromUser()
+	 * @param UserIdentity $user Notification target user
+	 * @param WANObjectCache $cache Object cache
+	 * @param UserNotificationGateway $userNotifGateway Database access gateway
+	 * @param NotificationMapper $notifMapper Notification mapper
+	 * @param TargetPageMapper $targetPageMapper Target page mapper
+	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param UserFactory $userFactory
+	 * @param ReadOnlyMode $readOnlyMode
 	 */
 	public function __construct(
-		UserIdentity $user,
-		WANObjectCache $cache,
-		UserNotificationGateway $userNotifGateway,
-		NotificationMapper $notifMapper,
-		TargetPageMapper $targetPageMapper,
-		UserOptionsLookup $userOptionsLookup,
-		UserFactory $userFactory,
-		ReadOnlyMode $readOnlyMode
+		private readonly UserIdentity $user,
+		private readonly WANObjectCache $cache,
+		private readonly UserNotificationGateway $userNotifGateway,
+		private readonly NotificationMapper $notifMapper,
+		private readonly TargetPageMapper $targetPageMapper,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly UserFactory $userFactory,
+		private readonly ReadOnlyMode $readOnlyMode,
 	) {
-		$this->mUser = $user;
-		$this->userNotifGateway = $userNotifGateway;
-		$this->cache = $cache;
-		$this->notifMapper = $notifMapper;
-		$this->targetPageMapper = $targetPageMapper;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->userFactory = $userFactory;
-		$this->readOnlyMode = $readOnlyMode;
 	}
 
 	/**
@@ -199,7 +154,7 @@ class NotifUser {
 	 * @return int
 	 */
 	public function getNotificationCount( $section = AttributeManager::ALL, $global = 'preference' ) {
-		if ( !$this->mUser->isRegistered() ) {
+		if ( !$this->user->isRegistered() ) {
 			return 0;
 		}
 
@@ -238,7 +193,7 @@ class NotifUser {
 	 * @return bool|MWTimestamp Timestamp of latest unread message, or false if there are no unread messages.
 	 */
 	public function getLastUnreadNotificationTime( $section = AttributeManager::ALL, $global = 'preference' ) {
-		if ( !$this->mUser->isRegistered() ) {
+		if ( !$this->user->isRegistered() ) {
 			return false;
 		}
 
@@ -285,12 +240,12 @@ class NotifUser {
 			// remaining?  If not, we should clear the newtalk flag.
 			$talkPageNotificationManager = MediaWikiServices::getInstance()
 				->getTalkPageNotificationManager();
-			if ( $talkPageNotificationManager->userHasNewMessages( $this->mUser ) ) {
+			if ( $talkPageNotificationManager->userHasNewMessages( $this->user ) ) {
 				$attributeManager = Services::getInstance()->getAttributeManager();
 				$categoryMap = $attributeManager->getEventsByCategory();
 				$usertalkTypes = $categoryMap['edit-user-talk'];
 				$unreadEditUserTalk = $this->notifMapper->fetchUnreadByUser(
-					$this->mUser,
+					$this->user,
 					1,
 					null,
 					$usertalkTypes,
@@ -298,7 +253,7 @@ class NotifUser {
 					DB_PRIMARY
 				);
 				if ( $unreadEditUserTalk === [] ) {
-					$talkPageNotificationManager->removeUserHasNewMessages( $this->mUser );
+					$talkPageNotificationManager->removeUserHasNewMessages( $this->user );
 				}
 			}
 		}
@@ -327,12 +282,12 @@ class NotifUser {
 			// If so, we should add the edit-user-talk flag
 			$talkPageNotificationManager = MediaWikiServices::getInstance()
 				->getTalkPageNotificationManager();
-			if ( !$talkPageNotificationManager->userHasNewMessages( $this->mUser ) ) {
+			if ( !$talkPageNotificationManager->userHasNewMessages( $this->user ) ) {
 				$attributeManager = Services::getInstance()->getAttributeManager();
 				$categoryMap = $attributeManager->getEventsByCategory();
 				$usertalkTypes = $categoryMap['edit-user-talk'];
 				$unreadEditUserTalk = $this->notifMapper->fetchUnreadByUser(
-					$this->mUser,
+					$this->user,
 					1,
 					null,
 					$usertalkTypes,
@@ -340,7 +295,7 @@ class NotifUser {
 					DB_PRIMARY
 				);
 				if ( $unreadEditUserTalk !== [] ) {
-					$talkPageNotificationManager->setUserHasNewMessages( $this->mUser );
+					$talkPageNotificationManager->setUserHasNewMessages( $this->user );
 				}
 			}
 		}
@@ -371,9 +326,9 @@ class NotifUser {
 		}
 
 		$attributeManager = Services::getInstance()->getAttributeManager();
-		$eventTypes = $attributeManager->getUserEnabledEventsBySections( $this->mUser, 'web', $sections );
+		$eventTypes = $attributeManager->getUserEnabledEventsBySections( $this->user, 'web', $sections );
 
-		$notifs = $this->notifMapper->fetchUnreadByUser( $this->mUser, $wgEchoMaxUpdateCount, null, $eventTypes );
+		$notifs = $this->notifMapper->fetchUnreadByUser( $this->user, $wgEchoMaxUpdateCount, null, $eventTypes );
 
 		$eventIds = array_filter(
 			array_map( static function ( Notification $notif ) {
@@ -392,7 +347,7 @@ class NotifUser {
 			/**
 			 * Keep the 'echo_target_page' records so they can be used for moderation.
 			 */
-			// $this->targetPageMapper->deleteByUserEvents( $this->mUser, $eventIds );
+			// $this->targetPageMapper->deleteByUserEvents( $this->user, $eventIds );
 		}
 
 		return $updated;
@@ -407,7 +362,7 @@ class NotifUser {
 	 */
 	public function markReadForeign( array $eventIds, $wiki, ?WebRequest $originalRequest = null ) {
 		$foreignReq = new ForeignWikiRequest(
-			$this->userFactory->newFromUserIdentity( $this->mUser ),
+			$this->userFactory->newFromUserIdentity( $this->user ),
 			[
 				'action' => 'echomarkread',
 				'list' => implode( '|', $eventIds ),
@@ -429,13 +384,13 @@ class NotifUser {
 	 */
 	public function getForeignNotificationInfo( array $eventIds, $wiki, ?WebRequest $originalRequest = null ) {
 		$foreignReq = new ForeignWikiRequest(
-			$this->userFactory->newFromUserIdentity( $this->mUser ),
+			$this->userFactory->newFromUserIdentity( $this->user ),
 			[
 				'action' => 'query',
 				'meta' => 'notifications',
 				'notprop' => 'list',
 				'notfilter' => '!read',
-				'notlimit' => 'max'
+				'notlimit' => 'max',
 			],
 			[ $wiki ],
 			'notwikis'
@@ -468,7 +423,7 @@ class NotifUser {
 		$this->cache->delete( $localMemcKey );
 
 		// Update the user touched timestamp for the local user
-		$this->userFactory->newFromUserIdentity( $this->mUser )->invalidateCache();
+		$this->userFactory->newFromUserIdentity( $this->user )->invalidateCache();
 
 		if ( $wgEchoCrossWikiNotifications ) {
 			// Delete cached global counts and timestamps
@@ -477,7 +432,7 @@ class NotifUser {
 				$this->cache->delete( $globalMemcKey );
 			}
 
-			$uw = UnreadWikis::newFromUser( $this->mUser );
+			$uw = UnreadWikis::newFromUser( $this->user );
 			if ( $uw ) {
 				// Immediately compute new local counts and timestamps
 				$newLocalData = $this->computeLocalCountsAndTimestamps( DB_PRIMARY );
@@ -592,7 +547,7 @@ class NotifUser {
 
 		foreach ( AttributeManager::$sections as $section ) {
 			$eventTypesToLoad = $attributeManager->getUserEnabledEventsBySections(
-				$this->mUser,
+				$this->user,
 				'web',
 				[ $section ]
 			);
@@ -606,7 +561,7 @@ class NotifUser {
 			$totals['count'] += $count;
 
 			$notifications = $this->notifMapper->fetchUnreadByUser(
-				$this->mUser,
+				$this->user,
 				1,
 				null,
 				$eventTypesToLoad,
@@ -666,7 +621,7 @@ class NotifUser {
 		global $wgAllowHTMLEmail;
 
 		if ( $wgAllowHTMLEmail ) {
-			return $this->userOptionsLookup->getOption( $this->mUser, 'echo-email-format' );
+			return $this->userOptionsLookup->getOption( $this->user, 'echo-email-format' );
 		}
 
 		return EmailFormat::PLAIN_TEXT;
@@ -680,7 +635,7 @@ class NotifUser {
 	 */
 	protected function getMemcKey( $key ) {
 		global $wgEchoCacheVersion;
-		return $this->cache->makeKey( $key, $this->mUser->getId(), $wgEchoCacheVersion );
+		return $this->cache->makeKey( $key, $this->user->getId(), $wgEchoCacheVersion );
 	}
 
 	/**
@@ -693,7 +648,7 @@ class NotifUser {
 		global $wgEchoCacheVersion;
 		$globalId = MediaWikiServices::getInstance()
 			->getCentralIdLookup()
-			->centralIdFromLocalUser( $this->mUser, CentralIdLookup::AUDIENCE_RAW );
+			->centralIdFromLocalUser( $this->user, CentralIdLookup::AUDIENCE_RAW );
 		if ( !$globalId ) {
 			return false;
 		}
@@ -707,7 +662,7 @@ class NotifUser {
 	 */
 	protected function getForeignNotifications() {
 		if ( !$this->foreignNotifications ) {
-			$this->foreignNotifications = new ForeignNotifications( $this->mUser, true );
+			$this->foreignNotifications = new ForeignNotifications( $this->user, true );
 		}
 		return $this->foreignNotifications;
 	}

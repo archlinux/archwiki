@@ -1,7 +1,9 @@
 {
 	"opts": {
 		"destination": "docs/js",
+		"package": "package.json",
 		"pedantic": false,
+		"readme": "README.md",
 		"recurse": true,
 		"template": "node_modules/jsdoc-wmf-theme"
 	},
@@ -9,7 +11,7 @@
 		"node_modules/jsdoc-wmf-theme/plugins/default"
 	],
 	"source": {
-		"include": [ "modules", "package.json", "README.md" ]
+		"include": [ "modules" ]
 	},
 	"templates": {
 		"cleverLinks": true,

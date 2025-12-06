@@ -13,7 +13,6 @@
 	"gadgetusage-usercount": "Numer de utent",
 	"gadgetusage-noresults": "Nissun acessori trovad",
 	"gadgetusage-intro": "Questa tabella chì l'indica el numer de utent ch'a ha ativad un acessori in su questa wiki chì. Un utent ativ l'è considerad come un quaidun che l'hà fad una modifega {{PLURAL:$1|in del'ultima sgiornada|in di ultim $1 dì}}. Questa lista chì la esclud i statistiche per i accessori ativad per tucc in manera predefinida e la po includ anca di acessori ch'a inn pu disponibil.",
-	"gadgetusage-intro-noactive": "Questa tabella chì l'indica el numer de utent ch'i hann ativad un accessori in su questa wiki chì. Questa lista chì la esclud i statisteghe per i accessori ativad per tucc in manera predefinida e la po includ anca di acessori ch'a inn pu disponibil.",
 	"gadgetusage-activeusers": "Utent ativ",
 	"gadgetusage-default": "Predefinid",
 	"gadgets-title": "Acessori",

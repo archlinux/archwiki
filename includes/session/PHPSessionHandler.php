@@ -1,24 +1,7 @@
 <?php
 /**
- * Session storage in object cache.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
@@ -29,13 +12,14 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SessionHandlerInterface;
 use Wikimedia\AtEase\AtEase;
-use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\PhpSessionSerializer;
 
 /**
  * Adapter for PHP's session handling
- * @ingroup Session
+ *
  * @since 1.27
+ * @deprecated since 1.45 Integration with PHP session handling will be removed in the future
+ * @ingroup Session
  */
 class PHPSessionHandler implements SessionHandlerInterface {
 	/** @var PHPSessionHandler */
@@ -48,17 +32,18 @@ class PHPSessionHandler implements SessionHandlerInterface {
 	protected $warn = true;
 
 	protected ?SessionManagerInterface $manager = null;
-	protected ?BagOStuff $store = null;
 	protected LoggerInterface $logger;
 
 	/** @var array Track original session fields for later modification check */
 	protected $sessionFieldCache = [];
 
-	protected function __construct( SessionManager $manager ) {
+	protected function __construct( SessionManagerInterface $manager ) {
 		$this->setEnableFlags(
 			MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::PHPSessionHandling )
 		);
-		$manager->setupPHPSessionHandler( $this );
+		if ( $manager instanceof SessionManager ) {
+			$manager->setupPHPSessionHandler( $this );
+		}
 	}
 
 	/**
@@ -107,7 +92,8 @@ class PHPSessionHandler implements SessionHandlerInterface {
 	/**
 	 * Install a session handler for the current web request
 	 */
-	public static function install( SessionManager $manager ) {
+	public static function install( SessionManagerInterface $manager ) {
+		/* @var SessionManager $manager*/'@phan-var SessionManager $manager';
 		if ( self::$instance ) {
 			$manager->setupPHPSessionHandler( self::$instance );
 			return;
@@ -147,15 +133,27 @@ class PHPSessionHandler implements SessionHandlerInterface {
 		}
 	}
 
+	private function getSessionManager(): SessionManagerInterface {
+		// NOTE: PHPUnit tests also run in CLI mode, so we need to ignore them
+		// otherwise tests will break in CI.
+		if ( wfIsCLI() && !defined( 'MW_PHPUNIT_TEST' ) ) {
+			// T405450: Don't reuse a reference of the cached session manager
+			// object in command-line mode when spawning child processes. Always
+			// get a fresh instance. This is because during service reset, there
+			// could be references to services container that is disabled.
+			return MediaWikiServices::getInstance()->getSessionManager();
+		}
+
+		return $this->manager;
+	}
+
 	/**
-	 * Set the manager, store, and logger
 	 * @internal Use self::install().
 	 * @param SessionManagerInterface $manager
-	 * @param BagOStuff $store
 	 * @param LoggerInterface $logger
 	 */
 	public function setManager(
-		SessionManagerInterface $manager, BagOStuff $store, LoggerInterface $logger
+		SessionManagerInterface $manager, LoggerInterface $logger
 	) {
 		if ( $this->manager !== $manager ) {
 			// Close any existing session before we change stores
@@ -163,7 +161,6 @@ class PHPSessionHandler implements SessionHandlerInterface {
 				session_write_close();
 			}
 			$this->manager = $manager;
-			$this->store = $store;
 			$this->logger = $logger;
 			PhpSessionSerializer::setLogger( $this->logger );
 		}
@@ -216,7 +213,8 @@ class PHPSessionHandler implements SessionHandlerInterface {
 			throw new \BadMethodCallException( 'Attempt to use PHP session management' );
 		}
 
-		$session = $this->manager->getSessionById( $id, false );
+		$session = $this->getSessionManager()->getSessionById( $id, false );
+
 		if ( !$session ) {
 			return '';
 		}
@@ -225,6 +223,25 @@ class PHPSessionHandler implements SessionHandlerInterface {
 		$data = iterator_to_array( $session );
 		$this->sessionFieldCache[$id] = $data;
 		return (string)PhpSessionSerializer::encode( $data );
+	}
+
+	/**
+	 * Check if the value is an object, or is an array that contains an object somewhere inside.
+	 */
+	private function valueContainsAnyObject( mixed $value ): bool {
+		if ( is_object( $value ) ) {
+			return true;
+		}
+		if ( is_array( $value ) ) {
+			$result = false;
+			array_walk_recursive( $value, static function ( $val ) use ( &$result ) {
+				if ( is_object( $val ) ) {
+					$result = true;
+				}
+			} );
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -245,7 +262,7 @@ class PHPSessionHandler implements SessionHandlerInterface {
 			throw new \BadMethodCallException( 'Attempt to use PHP session management' );
 		}
 
-		$session = $this->manager->getSessionById( $id, true );
+		$session = $this->getSessionManager()->getSessionById( $id, true );
 		if ( !$session ) {
 			// This can happen under normal circumstances, if the session exists but is
 			// invalid. Let's emit a log warning instead of a PHP warning.
@@ -266,7 +283,7 @@ class PHPSessionHandler implements SessionHandlerInterface {
 		}
 
 		// Now merge the data into the Session object.
-		$changed = false;
+		$changed = [];
 		$cache = $this->sessionFieldCache[$id] ?? [];
 		foreach ( $data as $key => $value ) {
 			if ( !array_key_exists( $key, $cache ) ) {
@@ -278,21 +295,31 @@ class PHPSessionHandler implements SessionHandlerInterface {
 				} else {
 					// New in $_SESSION, keep it
 					$session->set( $key, $value );
-					$changed = true;
+					$changed[] = $key;
 				}
 			} elseif ( $cache[$key] === $value ) {
 				// Unchanged in $_SESSION, so ignore it
+			} elseif (
+				$this->valueContainsAnyObject( $cache[$key] ) &&
+				$this->valueContainsAnyObject( $value ) &&
+				PhpSessionSerializer::encode( [ $key => $cache[$key] ] ) ===
+					PhpSessionSerializer::encode( [ $key => $value ] )
+			) {
+				// Also unchanged in $_SESSION. The values go through a serialize-and-deserialize
+				// operation before they get here, so if anyone stored any objects in session data,
+				// they will not compare as equal with `===`. Compare their serialized representation
+				// in that case to avoid unnecessary session writes and spurious warnings. (T402602)
 			} elseif ( !$session->exists( $key ) ) {
 				// Deleted in Session, keep but log
 				$this->logger->warning(
 					__METHOD__ . ": Key \"$key\" deleted in Session and changed in \$_SESSION!"
 				);
 				$session->set( $key, $value );
-				$changed = true;
+				$changed[] = $key;
 			} elseif ( $cache[$key] === $session->get( $key ) ) {
 				// Unchanged in Session, so keep it
 				$session->set( $key, $value );
-				$changed = true;
+				$changed[] = $key;
 			} else {
 				// Changed in both, so ignore and log
 				$this->logger->warning(
@@ -310,7 +337,7 @@ class PHPSessionHandler implements SessionHandlerInterface {
 				if ( $value === $session->get( $key ) ) {
 					// Unchanged in Session, delete it
 					$session->remove( $key );
-					$changed = true;
+					$changed[] = $key;
 				} else {
 					// Changed in Session, ignore deletion and log
 					$this->logger->warning(
@@ -325,7 +352,9 @@ class PHPSessionHandler implements SessionHandlerInterface {
 		if ( $changed ) {
 			if ( $this->warn ) {
 				wfDeprecated( '$_SESSION', '1.27' );
-				$this->logger->warning( 'Something wrote to $_SESSION!' );
+				foreach ( $changed as $key ) {
+					$this->logger->warning( "Something wrote to \$_SESSION['$key']!" );
+				}
 			}
 
 			$session->save();
@@ -351,7 +380,7 @@ class PHPSessionHandler implements SessionHandlerInterface {
 		if ( !$this->enable ) {
 			throw new \BadMethodCallException( 'Attempt to use PHP session management' );
 		}
-		$session = $this->manager->getSessionById( $id, false );
+		$session = $this->getSessionManager()->getSessionById( $id, false );
 		if ( $session ) {
 			$session->clear();
 		}
@@ -370,7 +399,6 @@ class PHPSessionHandler implements SessionHandlerInterface {
 		if ( self::$instance !== $this ) {
 			throw new \UnexpectedValueException( __METHOD__ . ': Wrong instance called!' );
 		}
-		$this->store->deleteObjectsExpiringBefore( wfTimestampNow() );
 		return true;
 	}
 }

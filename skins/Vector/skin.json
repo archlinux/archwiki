@@ -21,7 +21,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"attributes": {
 		"DarkMode": {
@@ -40,7 +40,6 @@
 			"args": [
 				{
 					"name": "vector-2022",
-					"supportsMwHeading": true,
 					"wrapSiteNotice": true,
 					"templateDirectory": "includes/templates",
 					"template": "skin",
@@ -78,8 +77,6 @@
 					],
 					"messages": [
 						"tooltip-p-logo",
-						"vector-opt-out-tooltip",
-						"vector-opt-out",
 						"vector-action-toggle-sidebar",
 						"vector-main-menu-tooltip",
 						"vector-jumptosearch",
@@ -116,7 +113,6 @@
 			"args": [
 				{
 					"name": "vector",
-					"supportsMwHeading": true,
 					"wrapSiteNotice": true,
 					"template": "skin-legacy",
 					"clientPrefEnabled": true,
@@ -138,8 +134,6 @@
 					],
 					"messages": [
 						"tooltip-p-logo",
-						"vector-opt-out-tooltip",
-						"vector-opt-out",
 						"navigation-heading",
 						"vector-action-toggle-sidebar",
 						"vector-main-menu-tooltip",
@@ -194,7 +188,8 @@
 			"class": "MediaWiki\\Skins\\Vector\\Hooks",
 			"services": [
 				"MainConfig",
-				"UserOptionsManager"
+				"UserOptionsManager",
+				"Vector.FeatureManagerFactory"
 			]
 		}
 	},
@@ -217,37 +212,21 @@
 				"CdxMessage"
 			]
 		},
-		"skins.vector.search.codex.scripts": {
-			"dependencies": [
-				"skins.vector.search.codex.styles"
-			],
-			"class": "MediaWiki\\ResourceLoader\\CodexModule",
-			"codexComponents": [
-				"CdxTypeaheadSearch"
-			]
-		},
 		"skins.vector.search": {
 			"dependencies": [
 				"web2017-polyfills",
 				"mediawiki.util",
-				"skins.vector.search.codex.scripts"
+				"mediawiki.skinning.typeaheadSearch"
 			],
 			"packageFiles": [
 				"resources/skins.vector.search/skins.vector.search.js",
-				"resources/skins.vector.search/instrumentation.js",
-				"resources/skins.vector.search/fetch.js",
-				"resources/skins.vector.search/restSearchClient.js",
-				"resources/skins.vector.search/urlGenerator.js",
-				"resources/skins.vector.search/App.vue",
 				{
-					"name": "resources/skins.vector.search/config.json",
-					"callback": "MediaWiki\\Skins\\Vector\\Hooks::getVectorSearchResourceLoaderConfig"
+					"name": "resources/skins.vector.search/searchConfig.json",
+					"config": [
+						"ContentNamespaces",
+						"VectorTypeahead"
+					]
 				}
-			],
-			"messages": [
-				"searchbutton",
-				"searchresults",
-				"vector-searchsuggest-containing"
 			]
 		},
 		"skins.vector.styles.legacy": {
@@ -401,7 +380,6 @@
 				"resources/skins.vector.js/searchToggle.js",
 				"resources/skins.vector.js/stickyHeader.js",
 				"resources/skins.vector.js/scrollObserver.js",
-				"resources/skins.vector.js/AB.js",
 				"resources/skins.vector.js/tableOfContents.js",
 				"resources/skins.vector.js/sectionObserver.js",
 				"resources/skins.vector.js/deferUntilFrame.js",
@@ -411,13 +389,8 @@
 				"resources/skins.vector.js/popupNotification.js",
 				"resources/skins.vector.js/clientPreferences.json",
 				{
-					"name": "resources/skins.vector.js/activeABTest.json",
-					"callback": "MediaWiki\\Skins\\Vector\\Hooks::getActiveABTest"
-				},
-				{
 					"name": "resources/skins.vector.js/config.json",
 					"config": [
-						"VectorSearchApiUrl",
 						"VectorWrapTablesTemporary"
 					]
 				},
@@ -442,8 +415,6 @@
 				"resources/skins.vector.js/dropdownMenus.js",
 				"resources/skins.vector.js/tables.js",
 				"resources/skins.vector.js/languageButton.js",
-				"resources/skins.vector.js/echo.js",
-				"resources/skins.vector.js/searchLoader.js",
 				"resources/skins.vector.js/menuTabs.js",
 				"resources/skins.vector.js/disableNightModeIfGadget.js"
 			],
@@ -460,7 +431,6 @@
 				"web2017-polyfills"
 			],
 			"messages": [
-				"vector-search-loader",
 				"vector-toc-beginning",
 				"vector-toc-label",
 				"vector-pin-element-label",
@@ -605,9 +575,16 @@
 			},
 			"description": "@var array determines which pages are compatible with night mode"
 		},
-		"VectorSearchApiUrl": {
-			"value": "",
-			"description": "To override the default search API, set this to the URL to rest.php on another wiki. Can be used with $wgDisableTextSearch and $wgSearchForwardUrl to mimic user experience on production."
+		"VectorTypeahead": {
+			"value": {
+				"apiUrl": null,
+				"recommendationApiUrl": null,
+				"options": {
+					"showThumbnail": true,
+					"showDescription": true
+				}
+			},
+			"description": "apiUrl - To override the default search API, set this to the URL to rest.php on another wiki. Can be used with $wgDisableTextSearch and $wgSearchForwardUrl to mimic user experience on production. recommendationApi - Provides a recommendation service. $1 will be substituted with pagetitle e.g. '/w/rest.php/v1/search/page?q=$1&limit=20'"
 		},
 		"VectorUseIconWatch": {
 			"value": true
@@ -642,12 +619,6 @@
 		"VectorDefaultSkinVersionForNewAccounts": {
 			"value": null,
 			"description": "@var string|null The version ('2' for latest, '1' for legacy) of the Vector skin to **set** for newly created user accounts. **The value is persisted as a user preference.** This configuration is not used for preexisting accounts (see VectorDefaultSkinVersionForExistingAccounts) and only ever executed once at new account creation time. If it is null, no user preference will be set."
-		},
-		"VectorWvuiSearchOptions": {
-			"value": {
-				"showThumbnail": true,
-				"showDescription": true
-			}
 		},
 		"VectorLanguageInHeader": {
 			"value": {

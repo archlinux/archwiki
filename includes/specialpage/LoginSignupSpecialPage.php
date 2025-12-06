@@ -2,21 +2,7 @@
 /**
  * Holds shared logic for login and account creation pages.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  */
@@ -39,13 +25,11 @@ use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\ReadOnlyError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
@@ -123,6 +107,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	/** @var HTMLForm|null */
 	protected $authForm;
 
+	/**
+	 * @return bool
+	 */
 	abstract protected function isSignup();
 
 	/**
@@ -141,6 +128,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 */
 	abstract protected function logAuthResult( $success, UserIdentity $performer, $status = null );
 
+	/** @inheritDoc */
 	protected function setRequest( array $data, $wasPosted = null ) {
 		parent::setRequest( $data, $wasPosted );
 		$this->mLoadedRequest = false;
@@ -274,6 +262,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		return array_filter( $params, static fn ( $val ) => $val !== null );
 	}
 
+	/** @inheritDoc */
 	protected function beforeExecute( $subPage ) {
 		// finish initializing the class before processing the request - T135924
 		$this->loadRequestParameters();
@@ -285,19 +274,18 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 */
 	public function execute( $subPage ) {
 		if ( $this->mPosted ) {
-			$time = microtime( true );
-			$profilingScope = new ScopedCallback( function () use ( $time ) {
-				$time = microtime( true ) - $time;
-				$stats = MediaWikiServices::getInstance()->getStatsFactory();
-				$stats->getTiming( 'auth_specialpage_executeTiming_seconds' )
+			$timer = MediaWikiServices::getInstance()->getStatsFactory()
+				->getTiming( 'auth_specialpage_executeTiming_seconds' )
+				->start();
+			$profilingScope = new ScopedCallback( function () use ( $timer ) {
+				$timer
 					->setLabel( 'action', $this->authAction )
-					->copyToStatsdAt( "timing.login.ui.{$this->authAction}" )
-					->observe( $time * 1000 );
+					->stop();
 			} );
 		}
 
 		$authManager = MediaWikiServices::getInstance()->getAuthManager();
-		$session = SessionManager::getGlobalSession();
+		$session = $this->getRequest()->getSession();
 
 		// Before persisting, set the login token to avoid double writes
 		$this->getToken();
@@ -526,7 +514,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 * Show the success page.
 	 *
 	 * @param string $type Condition of return to; see `executeReturnTo`
-	 * @param string|Message $title Page's title
+	 * @param Message $title Page's title
 	 * @param string $msgname
 	 * @param string $injected_html
 	 * @param StatusValue|null $extraMessages
@@ -535,10 +523,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$type, $title, $msgname, $injected_html, $extraMessages
 	) {
 		$out = $this->getOutput();
-		if ( is_string( $title ) ) {
-			wfDeprecated( __METHOD__ . ' with string title', '1.41' ); // T343849
-			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
-		}
 		$out->setPageTitleMsg( $title );
 		if ( $msgname ) {
 			$out->addWikiMsg( $msgname, wfEscapeWikiText( $this->getUser()->getName() ) );
@@ -558,7 +542,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	}
 
 	/**
-	 * @param AuthenticationRequest[] $requests A list of AuthorizationRequest objects,
+	 * @param AuthenticationRequest[] $requests A list of AuthenticationRequest objects,
 	 *   used to generate the form fields. An empty array means a fatal error
 	 *   (authentication cannot continue).
 	 * @param string|Message $msg
@@ -694,20 +678,21 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		if ( $this->isSignup() && $this->showExtraInformation() ) {
 			if ( !$this->getUser()->isTemp() ) {
 				// The following messages are used here:
-				// * createacct-benefit-icon1 createacct-benefit-head1 createacct-benefit-body1
-				// * createacct-benefit-icon2 createacct-benefit-head2 createacct-benefit-body2
-				// * createacct-benefit-icon3 createacct-benefit-head3 createacct-benefit-body3
+				// * createacct-benefit-icon1 createacct-benefit-head1 createacct-benefit-text1
+				// * createacct-benefit-icon2 createacct-benefit-head2 createacct-benefit-text2
+				// * createacct-benefit-icon3 createacct-benefit-head3 createacct-benefit-text3
 				$benefitCount = 3;
 				$benefitList = '';
 				for ( $benefitIdx = 1; $benefitIdx <= $benefitCount; $benefitIdx++ ) {
-					$headUnescaped = $this->msg( "createacct-benefit-head$benefitIdx" )->text();
+					$numberUnescaped = $this->msg( "createacct-benefit-head$benefitIdx" )->text();
+					$numberHtml = Html::rawElement( 'strong', [], $numberUnescaped );
 					$iconClass = $this->msg( "createacct-benefit-icon$benefitIdx" )->text();
 					$benefitList .= Html::rawElement( 'div', [ 'class' => "mw-number-text $iconClass" ],
-						Html::rawElement( 'span', [],
-							$this->msg( "createacct-benefit-head$benefitIdx" )->escaped()
-						)
-						. Html::rawElement( 'p', [],
-							$this->msg( "createacct-benefit-body$benefitIdx" )->params( $headUnescaped )->escaped()
+						Html::rawElement( 'p', [],
+							$this->msg( "createacct-benefit-text$benefitIdx" )->params(
+								$numberUnescaped,
+								$numberHtml
+							)->parse()
 						)
 					);
 				}
@@ -842,7 +827,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 */
 	protected function showExtraInformation() {
 		return $this->authAction !== $this->getContinueAction( $this->authAction )
-			&& !$this->securityLevel;
+			&& ( !$this->securityLevel || !$this->getUser()->isNamed() );
 	}
 
 	/**
@@ -1120,7 +1105,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			} elseif ( $this->mEntryErrorType === 'warning' ) {
 				$defaultHtml = Html::warningBox( $this->mEntryError );
 			} elseif ( $this->mEntryErrorType === 'notice' ) {
-				$defaultHtml = Html::noticeBox( $this->mEntryError, '' );
+				$defaultHtml = Html::noticeBox( $this->mEntryError );
 			}
 			$fieldDefinitions['entryError'] = [
 				'type' => 'info',
@@ -1152,7 +1137,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		}
 		if ( !$this->isSignup() && $this->showExtraInformation() ) {
 			$passwordReset = MediaWikiServices::getInstance()->getPasswordReset();
-			if ( $passwordReset->isAllowed( $this->getUser() )->isGood() ) {
+			if ( $passwordReset->isEnabled()->isGood() ) {
 				$fieldDefinitions['passwordReset'] = [
 					'type' => 'info',
 					'raw' => true,
@@ -1185,7 +1170,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 							// The following element IDs are used here:
 							// mw-createaccount, mw-createaccount-cta
 							[ 'id' => 'mw-createaccount' . ( !$isLoggedIn ? '-cta' : '' ),
-								'class' => ( $isLoggedIn ? 'mw-form-related-link-container' : 'mw-ui-vform-field' ) ],
+								'class' => ( $isLoggedIn ? 'mw-form-related-link-container' : '' ) ],
 							( $isLoggedIn ? '' : $this->msg( 'userlogin-noaccount' )->escaped() )
 							. Html::element( 'a',
 								[
@@ -1212,22 +1197,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	}
 
 	/**
-	 * Check if a session cookie is present.
-	 *
-	 * This will not pick up a cookie set during _this_ request, but is meant
-	 * to ensure that the client is returning the cookie which was set on a
-	 * previous pass through the system.
-	 *
-	 * @return bool
-	 */
-	protected function hasSessionCookie() {
-		global $wgInitialSessionId;
-
-		return $wgInitialSessionId &&
-			$this->getRequest()->getSession()->getId() === (string)$wgInitialSessionId;
-	}
-
-	/**
 	 * Whether the login/create account form should display a link to the
 	 * other form (in addition to whatever the skin provides).
 	 * @return bool
@@ -1237,6 +1206,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			$this->getContext()->getAuthority()->isAllowed( 'createaccount' );
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function getTokenName() {
 		return $this->isSignup() ? 'wpCreateaccountToken' : 'wpLoginToken';
 	}
@@ -1302,6 +1274,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'login';
 	}

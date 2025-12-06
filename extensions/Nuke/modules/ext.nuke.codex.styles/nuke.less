@@ -1,0 +1,59 @@
+.ext-nuke-italicize {
+	font-style: italic;
+}
+
+.ext-nuke-form {
+	margin-bottom: 12px;
+
+	&-hidden {
+		display: none;
+	}
+
+	.cdx-field + .cdx-button {
+		margin-top: 12px;
+	}
+
+	> .cdx-field__control > .cdx-button {
+		margin-right: 4px;
+	}
+
+	&-dateRange,
+	&-pageSizeRange {
+		margin-top: 12px;
+		display: flex;
+	}
+
+	&-dateFrom.cdx-field,
+	&-minPageSize.cdx-field {
+		flex: 1;
+	}
+
+	&-dateTo.cdx-field,
+	&-maxPageSize.cdx-field {
+		flex: 1;
+		margin-top: 0;
+
+		[ dir='ltr' ] & {
+			margin-left: 12px;
+		}
+
+		[ dir='rtl' ] & {
+			margin-right: 12px;
+		}
+	}
+
+	&-namespace-raw {
+		min-height: 32px;
+		height: 22px;
+	}
+
+	&-dateHelperText {
+		font-size: 0.85em;
+		color: #54595d;
+		margin-top: 4px;
+	}
+}
+
+.ext-nuke-form-error {
+	margin-top: 16px;
+}

@@ -10,7 +10,6 @@ use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
-use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 
@@ -262,7 +261,6 @@ class ConstrainedText {
 			DOMDataUtils::getDataParsoid( $lastChild ) : null;
 		$prefixChunks = [];
 		$suffixChunks = [];
-		$len = null;
 		$ignorePrefix = $opts['ignorePrefix'] ?? false;
 		$ignoreSuffix = $opts['ignoreSuffix'] ?? false;
 		// check to see if first child's DSR start is the same as this node's
@@ -274,7 +272,7 @@ class ConstrainedText {
 			$firstChildDp && Utils::isValidDSR( $firstChildDp->dsr ?? null ) &&
 			$dataParsoid->dsr->start === $firstChildDp->dsr->start
 		) {
-			DOMUtils::assertElt( $firstChild ); // implied by $firstChildDp
+			'@phan-var Element $firstChild'; // @var Element $firstChild - implied by $firstChildDp
 			$len = $firstChildDp->dsr->length();
 			if ( $len < 0 ) { // T254412: Bad DSR
 				$env->log( "error/html2wt/dsr",
@@ -304,7 +302,7 @@ class ConstrainedText {
 			$lastChildDp && Utils::isValidDSR( $lastChildDp->dsr ?? null ) &&
 			$dataParsoid->dsr->end === $lastChildDp->dsr->end
 		) {
-			DOMUtils::assertElt( $lastChild ); // implied by $lastChildDp
+			'@phan-var Element $lastChild'; // @var Element $lastChild - implied by $lastChildDp
 			$len = $lastChildDp->dsr->length();
 			if ( $len < 0 ) { // T254412: Bad DSR
 				$env->log( "error/html2wt/dsr",

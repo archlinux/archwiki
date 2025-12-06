@@ -1,18 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"BHARATHESHA ALASANDEMAJALU",
-			"Pragathi. BH",
-			"Vinoda mamatharai"
+			"ChiK",
+			"Pragathi. BH"
 		]
 	},
+	"visualeditor-cite-tool-name-book": "ಬೂಕು",
 	"cite-ve-dialog-reference-contextitem-extends": "ಈ ಉಲ್ಲೇಖೊನು ಹೆಚ್ಚುವರಿ ವಿವರೊಲೆನೊಟ್ಟುಗು ಪುನರ್ಬಳಕೆ ಮಲ್ಪುನವು.",
 	"cite-ve-dialog-reference-editing-add-details": "ಈ ಉಲ್ಲೇಖೊಗು ಈರ್ ಹೆಚ್ಚುವರಿ ವಿವರೊಲೆನ್ ಸೇರಾವೊಂದುಲ್ಲರ್:",
 	"cite-ve-dialog-reference-editing-add-details-placeholder": "ಈ ಉಲ್ಲೇಖೊಗು ಸೇರಾವೊಡು ಪನ್ಪಿನ ಮಾಹಿತಿನ್ ಬರೆಲೆ ಅತ್ತ್ಂಡ ಅಂಟಿಸಾಲೆ.",
-	"cite-ve-dialog-reference-extend-long-tool": "ಎಚ್ಚಿನ ವಿವರೊಲೆನೊಟ್ಟುಗು ಈ ಉಲ್ಲೇಕೊನು ಪಿರ ಗಳಸ್‌ಲೆ",
-	"cite-ve-dialog-reference-editing-extends": "ಈ ಉಲ್ಲೇಖೊನು ಹೆಚ್ಚುವರಿ ವಿವರೊಲೆನೊಟ್ಟುಗು ಪುನರ್ಬಳಕೆ ಮಲ್ಪುನವು. ಮುಲ್ಪ, ಈರ್ ವಿವರೊಲೆನ್ ಮಾತ್ರ ಸಂಪಾದಿಸವೊಲಿ.",
 	"cite-ve-dialog-reference-missing-parent-ref": "ಈ ವಿವರೊಲು ಲಿಂಕ್ ಆಯಿನ ಉಲ್ಲೇಖ, ಇಜ್ಜಿ. ದಯಮಲ್ತ್ ಈ ವಿವರೊಲೆನ್ ಪುಟೊಡ್ದ್ ದೆತ್ತ್  ಪಾಡ್ಲೆ ಅತ್ತ್ಂಡ ಮೂಲ ಮೋಡ್ ಡ್ ಸಮಸ್ಯೆನ್ ಸರಿ ಮಲ್ಪುಲೆ.",
-	"cite-ve-dialog-reference-title-add-details": "ಉಲ್ಲೇಖೊಗು ವಿವರೊಲೆನ್ ಸೇರಾವೊಡು",
-	"cite-ve-dialog-reference-title-edit-details": "ಹೆಚ್ಚಿನ ವಿವರೊಲೆನ್ ಸಂಪಾದಿಸಲೆ",
 	"cite-ve-referenceslist-missing-parent": "ತಿರ್ತ್ ಉಪ್ಪುನ ವಿವರೊಲು ಲಿಂಕ್ ಆಯಿನ ಉಲ್ಲೇಖ ಕಮ್ಮಿ ಆತ್ಂಡ್. ದಯಮಲ್ತ್ ಈ ವಿವರೊಲೆನ್ ಪುಟೊಡ್ದ್ ದೆತ್ತ್  ಪಾಡ್ಲೆ ಅತ್ತಂಡ ಮೂಲ ಮೋಡ್ ಡ್ ಈ ಸಮಸ್ಯೆನ್ ಸರಿ ಮಲ್ಪುಲೆ."
 }

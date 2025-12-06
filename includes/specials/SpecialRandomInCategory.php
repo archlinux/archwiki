@@ -1,29 +1,14 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
 use BadMethodCallException;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
 use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
@@ -84,6 +69,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 		$this->minTimestamp = null;
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		$this->addHelpLink( 'Help:RandomInCategory' );
 
@@ -98,10 +84,12 @@ class SpecialRandomInCategory extends FormSpecialPage {
 		];
 	}
 
+	/** @inheritDoc */
 	public function requiresPost() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
@@ -110,10 +98,12 @@ class SpecialRandomInCategory extends FormSpecialPage {
 		$form->setSubmitTextMsg( 'randomincategory-submit' );
 	}
 
+	/** @inheritDoc */
 	protected function getSubpageField() {
 		return 'category';
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( array $data ) {
 		$cat = false;
 
@@ -213,25 +203,17 @@ class SpecialRandomInCategory extends FormSpecialPage {
 		if ( !$this->category instanceof Title ) {
 			throw new BadMethodCallException( 'No category set' );
 		}
-		$dbr = $this->dbProvider->getReplicaDatabase();
-		$categoryLinksMigrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
-			MainConfigNames::CategoryLinksSchemaMigrationStage
-		);
+		$dbr = $this->dbProvider->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_title', 'page_namespace' ] )
 			->from( 'categorylinks' )
+			->join( 'linktarget', null, 'cl_target_id = lt_id' )
 			->join( 'page', null, 'cl_from = page_id' )
-
+			->where( [ 'lt_title' => $this->category->getDBkey(), 'lt_namespace' => NS_CATEGORY ] )
 			->andWhere( $this->extra )
 			->orderBy( 'cl_timestamp', $up ? SelectQueryBuilder::SORT_ASC : SelectQueryBuilder::SORT_DESC )
 			->limit( 1 )
 			->offset( $offset );
-		if ( $categoryLinksMigrationStage & SCHEMA_COMPAT_READ_OLD ) {
-			$queryBuilder->where( [ 'cl_to' => $this->category->getDBkey() ] );
-		} else {
-			$queryBuilder->join( 'linktarget', null, 'cl_target_id = lt_id' )
-				->where( [ 'lt_title' => $this->category->getDBkey(), 'lt_namespace' => NS_CATEGORY ] );
-		}
 
 		$minClTime = $this->getTimestampOffset( $rand );
 		if ( $minClTime ) {
@@ -272,20 +254,15 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	 * @return array|null The lowest and highest timestamp, or null if the category has no entries.
 	 */
 	protected function getMinAndMaxForCat() {
-		$dbr = $this->dbProvider->getReplicaDatabase();
-		$categoryLinksMigrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
-			MainConfigNames::CategoryLinksSchemaMigrationStage
-		);
-		$queryBuilder = $dbr->newSelectQueryBuilder()
+		$dbr = $this->dbProvider->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
+		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'low' => 'MIN( cl_timestamp )', 'high' => 'MAX( cl_timestamp )' ] )
-			->from( 'categorylinks' );
-		if ( $categoryLinksMigrationStage & SCHEMA_COMPAT_READ_OLD ) {
-			$queryBuilder->where( [ 'cl_to' => $this->category->getDBkey(), ] );
-		} else {
-			$queryBuilder->join( 'linktarget', null, 'cl_target_id = lt_id' )
-				->where( [ 'lt_title' => $this->category->getDBkey(), 'lt_namespace' => NS_CATEGORY ] );
-		}
-		$res = $queryBuilder->caller( __METHOD__ )->fetchRow();
+			->from( 'categorylinks' )
+			->join( 'linktarget', null, 'cl_target_id = lt_id' )
+			->where( [ 'lt_title' => $this->category->getDBkey(), 'lt_namespace' => NS_CATEGORY ] )
+			->caller( __METHOD__ )
+			->fetchRow();
+
 		if ( !$res ) {
 			return null;
 		}
@@ -304,6 +281,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 		return $this->getQueryBuilder( $rand, $offset, $up )->caller( $fname )->fetchRow();
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'redirects';
 	}

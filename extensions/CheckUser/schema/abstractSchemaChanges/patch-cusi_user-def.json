@@ -1,0 +1,30 @@
+{
+	"before": {},
+	"after": {
+		"name": "cusi_user",
+		"comment": "A table which represents the accounts in each suggested investigation (a suggested investigation is a row in the cusi_case table). A user can be associated with more than one cusi_case row. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "siu_user_id",
+				"comment": "Part of composite primary key. The user ID of the suspicious account this row represents.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "siu_sic_id",
+				"comment": "Part of composite primary key. The cusi_case row (suggested investigation) that this user is associated with.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "siu_user_id",
+				"columns": [ "siu_user_id" ],
+				"unique": false,
+				"comment": "Used to find which cusi_case rows that a given user ID is associated with"
+			}
+		],
+		"pk": [ "siu_sic_id", "siu_user_id" ]
+	}
+}

@@ -34,7 +34,7 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 	this.markAsReadButton = new mw.echo.ui.ToggleReadCircleButtonWidget( {
 		framed: false,
 		classes: [ 'mw-echo-ui-notificationItemWidget-markAsReadButton' ],
-		markAsRead: !this.model.isRead()
+		markAsRead: !this.model.isRead(),
 	} );
 
 	let $icon;
@@ -53,7 +53,7 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 			.append( $( '<img>' ).attr( {
 				src: this.model.getIconUrl(),
 				role: 'presentation',
-				alt: ' '
+				alt: ' ',
 			} ) );
 	}
 
@@ -65,8 +65,8 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 			.append(
 				$( '<div>' )
 					.addClass( 'mw-echo-ui-notificationItemWidget-content-message-header' )
-					.append( this.model.getContentHeader() )
-			)
+					.append( this.model.getContentHeader() ),
+			),
 	);
 	if ( !this.bundle && this.model.getContentBody() ) {
 		$message.append(
@@ -75,14 +75,14 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 				.append( this.model.getContentBody() )
 				// dir=auto has a similar effect to wrapping the content in <bdi>, but
 				// makes text-overflow: ellipsis; behave less strangely
-				.attr( 'dir', 'auto' )
+				.attr( 'dir', 'auto' ),
 		);
 	}
 
 	// Actions menu
 	this.actionsButtonSelectWidget = new OO.ui.ButtonSelectWidget( {
 		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-buttons' ],
-		tabIndex: -1
+		tabIndex: -1,
 	} );
 
 	// Popup menu
@@ -92,7 +92,7 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 		$overlay: this.$overlay,
 		horizontalPosition: this.bundle ? 'end' : 'auto',
 		title: mw.msg( 'echo-notification-more-options-tooltip' ),
-		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-menu' ]
+		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-menu' ],
 	} );
 
 	// Timestamp
@@ -105,7 +105,7 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 	this.timestampWidget = new OO.ui.LabelWidget( {
 		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-timestamp' ],
 		// Get the time 'fromNow' without the suffix 'ago'
-		label: echoMoment.fromNow( true )
+		label: echoMoment.fromNow( true ),
 	} );
 
 	// Build the actions line
@@ -119,14 +119,14 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 				.append(
 					this.actionsButtonSelectWidget.$element,
 					this.timestampWidget.$element,
-					this.menuPopupButtonWidget.$element
-				)
+					this.menuPopupButtonWidget.$element,
+				),
 		);
 	} else {
 		this.$actions.append(
 			this.actionsButtonSelectWidget.$element,
 			this.menuPopupButtonWidget.$element,
-			this.timestampWidget.$element
+			this.timestampWidget.$element,
 		);
 	}
 
@@ -161,7 +161,7 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 			tooltip: urlObj.tooltip,
 			description: urlObj.description,
 			url: urlObj.url,
-			prioritized: isOutsideMenu
+			prioritized: isOutsideMenu,
 		} );
 
 		// Limit to 2 items outside the menu
@@ -182,14 +182,14 @@ mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( con
 			$icon,
 			$message,
 			this.$actions,
-			this.markAsReadButton.$element
+			this.markAsReadButton.$element,
 		);
 		this.$element.append( this.$content );
 	} else {
 		this.$content.append(
 			this.markAsReadButton.$element,
 			$message,
-			this.$actions
+			this.$actions,
 		);
 		this.$element.append( $icon, this.$content );
 	}

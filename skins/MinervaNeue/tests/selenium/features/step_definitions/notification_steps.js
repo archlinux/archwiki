@@ -1,5 +1,3 @@
-'use strict';
-
 const ArticlePage = require( '../support/pages/article_page' );
 const Util = require( 'wdio-mediawiki/Util' );
 const { iClickTheOverlayCloseButton } = require( './common_steps' );

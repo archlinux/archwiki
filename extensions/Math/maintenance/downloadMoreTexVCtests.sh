@@ -6,8 +6,8 @@
 # - EnWikiFormulaeTest.php
 # - ChemRegressionTest.php
 
-# Downloads the file containing all english  wikipedia formula to the testfolder
-FILEPATH=../tests/phpunit/unit/WikiTexVC/en-wiki-formulae-good.json
+# Downloads the file containing all english wikipedia formula to the testfolder
+FILEPATH=../tests/phpunit/integration/WikiTexVC/en-wiki-formulae-good.json
 URL=https://raw.githubusercontent.com/wikimedia/mediawiki-services-texvcjs/ca9b33d3b5081ae78829af4c65322becb4f4a216/test/en-wiki-formulae-good.json
 curl $URL -o $FILEPATH
 
@@ -17,6 +17,11 @@ URL=https://raw.githubusercontent.com/wikimedia/mediawiki-services-texvcjs/fb569
 curl $URL -o $FILEPATH
 
 # Downloads the file containing reference renderings for all english wikipedia chem-regression tests to the testfolder
-FILEPATH=../tests/phpunit/unit/WikiTexVC/en-wiki-formulae-good-reference.json
+FILEPATH=../tests/phpunit/integration/WikiTexVC/en-wiki-formulae-good-reference.json
 URL=https://zenodo.org/records/14209690/files/normalized.json
+curl $URL -o $FILEPATH
+
+# Download relaxng into the test folder
+FILEPATH=../tests/phpunit/integration/WikiTexVC/mathml4-core.rng
+URL=https://www.w3.org/Math/RelaxNG/mathml4/mathml4-core.rng
 curl $URL -o $FILEPATH

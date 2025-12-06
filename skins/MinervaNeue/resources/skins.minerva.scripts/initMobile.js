@@ -9,9 +9,9 @@ module.exports = function () {
 		permissions = mw.config.get( 'wgMinervaPermissions' ) || {},
 		notifyOnPageReload = ms.notifyOnPageReload,
 		time = ms.time,
+		DateFormatter = require( 'mediawiki.DateFormatter' ),
 		preInit = require( './preInit.js' ),
 		mobileRedirect = require( './mobileRedirect.js' ),
-		search = require( './search.js' ),
 		references = require( './references.js' ),
 		TitleUtil = require( './TitleUtil.js' ),
 		issues = require( './page-issues/index.js' ),
@@ -234,23 +234,7 @@ module.exports = function () {
 		Array.prototype.forEach.call( document.querySelectorAll( '.mw-diff-timestamp' ), ( tsNode ) => {
 			const ts = tsNode.dataset.timestamp;
 			if ( ts ) {
-				const ago = time.getTimeAgoDelta(
-					parseInt(
-						( new Date( ts ) ).getTime() / 1000,
-						10
-					)
-				);
-				// Supported messages:
-				// * skin-minerva-time-ago-seconds
-				// * skin-minerva-time-ago-minutes
-				// * skin-minerva-time-ago-hours
-				// * skin-minerva-time-ago-days
-				// * skin-minerva-time-ago-months
-				// * skin-minerva-time-ago-years
-				tsNode.textContent = mw.msg(
-					`skin-minerva-time-ago-${ ago.unit }`,
-					mw.language.convertNumber( ago.value )
-				);
+				tsNode.textContent = DateFormatter.formatRelativeTimeOrDate( new Date( ts ) );
 			}
 		} );
 	}
@@ -391,8 +375,6 @@ module.exports = function () {
 		preInit();
 		// - references
 		references();
-		// - search
-		search();
 		// - mobile redirect
 		mobileRedirect( ms.amcOutreach, currentPage );
 

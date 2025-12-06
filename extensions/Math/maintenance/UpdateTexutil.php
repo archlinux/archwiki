@@ -1,56 +1,13 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
+use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 use MediaWiki\Maintenance\Maintenance;
 
 class UpdateTexutil extends Maintenance {
-
-	private const LEGACY_CONCEPTS = [ // Implemented elements have [something, true] for custom parsing
-		'!' => [ "1, 0, TEXCLASS.CLOSE, null" ], // exclamation mark
-		'!=' => [ " exports.MO.BIN4" ],
-		'#' => [ " exports.MO.ORD" ],
-		'$' => [ " exports.MO.ORD" ],
-		'%' => [ " [3, 3, MmlNode_js_1.TEXCLASS.ORD], null]" ],
-		'&&' => [ " exports.MO.BIN4" ],
-		'' => [ " exports.MO.ORD" ],
-		'*' => [ " exports.MO.BIN3" ],
-		'**' => [ " OPDEF(1\"], 1)" ],
-		'*=' => [ " exports.MO.BIN4" ],
-		'+' => [ " exports.MO.BIN4" ],
-		'+=' => [ " exports.MO.BIN4" ],
-		',' => [ " [0, 3], MmlNode_js_1.TEXCLASS.PUNCT\"]," .
-			"{ linebreakstyle=> [\" 'after'\"], separator=> [\" true }]", true ],
-		'-' => [ " exports.MO.BIN4" ],
-		'-=' => [ " exports.MO.BIN4" ],
-		'->' => [ " exports.MO.BIN5" ],
-		'.' => [ " [0, 3], MmlNode_js_1.TEXCLASS.PUNCT\"], { separator=> [ true }]" ],
-		':' => [ " [1, 2], MmlNode_js_1.TEXCLASS.REL\"], null]" ],
-		'/' => [ " exports.MO.ORD11", true ],
-		'//' => [ " OPDEF(1\"], 1)" ],
-		'/=' => [ " exports.MO.BIN4" ],
-		'=>' => [ " [1, 2], MmlNode_js_1.TEXCLASS.REL\"], null]" ],
-		'=>=' => [ " exports.MO.BIN4" ],
-		';' => [ " [0, 3], MmlNode_js_1.TEXCLASS.PUNCT]," .
-			"{ linebreakstyle=> ['after'], separator=> [ true }]", true ],
-		'<' => [ " exports.MO.REL", true ],
-		'<=' => [ " exports.MO.BIN5" ],
-		'<>' => [ " OPDEF(1, 1)" ],
-		'=' => [ " exports.MO.REL" ],
-		'==' => [ " exports.MO.BIN4" ],
-		'>' => [ " exports.MO.REL", true ],
-		'>=' => [ " exports.MO.BIN5" ],
-		'?' => [ " [1, 1], MmlNode_js_1.TEXCLASS.CLOSE], null]" ],
-		'@' => [ " exports.MO.ORD11" ],
-		'\\' => [ " exports.MO.ORD", true ],
-		'^' => [ " exports.MO.ORD11" ],
-		'_' => [ " exports.MO.ORD11" ],
-		'|' => [ " [2, 2], MmlNode_js_1.TEXCLASS.ORD]," .
-			"{ fence=> [\"true\"], stretchy=> [\"true\"], symmetric=> [\" true }]" ],
-		'||' => [ " [2, 2], MmlNode_js_1.TEXCLASS.ORD]," .
-			"{ fence=> [\"true\"], stretchy=> [\"true\"], symmetric=> [\" true }]" ],
-		'|||' => [ " [2, 2], MmlNode_js_1.TEXCLASS.ORD]," .
-			"{ fence=> [\"true\"], stretchy=> [\"true\"], symmetric=> [\" true }]" ]
-	];
+	private const GROUP = 'callback';
 
 	public function execute() {
 		$jsonFilePath = './src/WikiTexVC/texutil.json';
@@ -60,17 +17,12 @@ class UpdateTexutil extends Maintenance {
 		if ( $jsonContent === null ) {
 			die( "Failed to decode texutil.json. Please check the file format.\n" );
 		}
-
-		foreach ( self::LEGACY_CONCEPTS as $key => $value ) {
-			if ( isset( $jsonContent["$key"] ) ) {
-				// Preserve existing attributes and only add or update the identifier
-				$jsonContent["$key"]['operator_infix'] = $value;
-			} else {
-				// Create a new entry if it doesn't exist
-				$jsonContent["$key"] = [
-					'operator_infix' => $value
-				];
+		$tu = TexUtil::getInstance();
+		foreach ( $tu->getBaseElements()[self::GROUP] as $key => $value ) {
+			if ( $value[0] !== 'underOver' ) {
+				continue;
 			}
+			$jsonContent["$key"][self::GROUP][1] = mb_chr( hexdec( $value[1] ), 'UTF-8' );
 
 			// Sort the entry alphabetically
 			ksort( $jsonContent["$key"] );
@@ -91,5 +43,7 @@ class UpdateTexutil extends Maintenance {
 		echo "texutil.json successfully updated.\n";
 	}
 }
+// @codeCoverageIgnoreStart
 $maintClass = UpdateTexutil::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

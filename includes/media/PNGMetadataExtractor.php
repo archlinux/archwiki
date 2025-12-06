@@ -6,21 +6,7 @@
  * Deliberately not using MWExceptions to avoid external dependencies, encouraging
  * redistribution.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -45,6 +31,10 @@ class PNGMetadataExtractor {
 	public const VERSION = 1;
 	private const MAX_CHUNK_SIZE = 3_145_728; // 3 mebibytes
 
+	/**
+	 * @param string $filename
+	 * @return array
+	 */
 	public static function getMetadata( $filename ) {
 		self::$pngSig = pack( "C8", 137, 80, 78, 71, 13, 10, 26, 10 );
 		self::$crcSize = 4;
@@ -84,6 +74,7 @@ class PNGMetadataExtractor {
 		$height = 0;
 		$bitDepth = 0;
 		$colorType = 'unknown';
+		$exif = null;
 
 		if ( !$filename ) {
 			throw new InvalidArgumentException( __METHOD__ . ": No file name specified" );
@@ -229,7 +220,7 @@ class PNGMetadataExtractor {
 				}
 			} elseif ( $chunk_type === 'tEXt' ) {
 				// In case there is no \x00 which will make explode fail.
-				if ( strpos( $buf, "\x00" ) === false ) {
+				if ( !str_contains( $buf, "\x00" ) ) {
 					wfDebug( __METHOD__ . ": Invalid tEXt chunk: no null byte" );
 					continue;
 				}
@@ -261,7 +252,7 @@ class PNGMetadataExtractor {
 			} elseif ( $chunk_type === 'zTXt' ) {
 				if ( function_exists( 'gzuncompress' ) ) {
 					// In case there is no \x00 which will make explode fail.
-					if ( strpos( $buf, "\x00" ) === false ) {
+					if ( !str_contains( $buf, "\x00" ) ) {
 						wfDebug( __METHOD__ . ": No null byte in zTXt chunk" );
 						continue;
 					}
@@ -350,6 +341,18 @@ class PNGMetadataExtractor {
 						// 3 = dots per cm (from Exif).
 					}
 				}
+			} elseif ( $chunk_type === "eXIf" ) {
+				// There are 4 competing ways to store Exif
+				// in a PNG file. This is the official one.
+				if (
+					$chunk_size < 4 || (
+						substr( $buf, 0, 4 ) !== "II\x2A\x00" &&
+						substr( $buf, 0, 4 ) !== "MM\x00\x2A"
+					)
+				) {
+					wfDebug( __METHOD__ . ": Invalid eXIf tag" );
+				}
+				$exif = $buf;
 			} elseif ( $chunk_type === "IEND" ) {
 				break;
 			}
@@ -396,6 +399,7 @@ class PNGMetadataExtractor {
 			'text' => $text,
 			'bitDepth' => $bitDepth,
 			'colorType' => $colorType,
+			'exif' => $exif,
 		];
 	}
 

@@ -1,14 +1,3 @@
-.cdx-button:not( .cdx-button--icon-only ) .vector-icon {
-	// Add spacing between icon and text
-	margin-right: @spacing-35;
-}
-
-.cdx-button {
-	// Needed to horizontaly center icon buttons (floating TOC button, watchstar button)
-	// Can be seen on small viewports due to the fact that we arent using `.cdx-button--size-large`
-	justify-content: center;
-}
-
 // These rules are scoped to Vector headers due to T342190 as otherwise where buttons are used alongside
 // input elements the display can look "off".
 // Any other instances outside headers should be targeted directly by a rule on the element itself.

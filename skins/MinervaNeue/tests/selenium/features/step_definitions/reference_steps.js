@@ -1,6 +1,4 @@
-'use strict';
-
-const { ArticlePage } = require( './../support/world' );
+import { ArticlePage } from './../support/world.js';
 
 const iClickOnTheMask = async () => {
 	await ArticlePage.drawer_mask_element.waitForDisplayed();
@@ -29,7 +27,7 @@ const iShouldSeeDrawerWithText = async ( text ) => {
 	await browser.waitUntil( async () => ( await ArticlePage.drawer_element.getText() ).includes( text ) );
 };
 
-module.exports = {
+export {
 	iClickOnAReference,
 	iClickOnTheMask,
 	iShouldSeeNotTheReferenceDrawer,

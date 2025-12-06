@@ -194,6 +194,8 @@
 	"rcfilters-watchlist-preference-label": "Yuuz naan-JaavaSkrip intafies",
 	"rcfilters-watchlist-preference-help": "Luod [[{{#special:Watchlist}}|wachlis]] wid no filta dem sarch a hailaitin funxhanalitee.",
 	"prefs-changeswatchlist": "Chienj dem min shuo",
+	"tog-watchstar-expiry": "Naam'l taim friem een wachlis fu yuuman-mek piej dem:",
+	"tog-watch-expiry": "Naam'l taim friem:",
 	"tog-watchlisthideminor": "Haid likl chienj dem fram de wachlis",
 	"tog-watchlisthidebots": "Haid baat chienj dem fram de wachlis",
 	"tog-watchlisthideown": "Haid mi chienj dem fram de wachlis",

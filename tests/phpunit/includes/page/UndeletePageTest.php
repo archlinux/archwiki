@@ -4,14 +4,16 @@ use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\JavaScriptContent;
 use MediaWiki\Content\WikitextContent;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageCreatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Page\UndeletePage;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -23,7 +25,7 @@ use Wikimedia\IPUtils;
 
 /**
  * @group Database
- * @coversDefaultClass \MediaWiki\Page\UndeletePage
+ * @covers \MediaWiki\Page\UndeletePage
  */
 class UndeletePageTest extends MediaWikiIntegrationTestCase {
 
@@ -80,8 +82,6 @@ class UndeletePageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::undeleteUnsafe
-	 * @covers ::undeleteRevisions
 	 * @covers \MediaWiki\Revision\RevisionStoreFactory::getRevisionStoreForUndelete
 	 * @covers \MediaWiki\User\ActorStoreFactory::getActorStoreForUndelete
 	 */
@@ -166,11 +166,11 @@ class UndeletePageTest extends MediaWikiIntegrationTestCase {
 		$this->runJobs();
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			static function ( PageRevisionUpdatedEvent $event ) use ( $sysop ) {
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( $sysop ) {
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_UNDELETE ),
-					PageRevisionUpdatedEvent::CAUSE_UNDELETE
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UNDELETE ),
+					PageLatestRevisionChangedEvent::CAUSE_UNDELETE
 				);
 
 				Assert::assertTrue( $event->isSilent(), 'isSilent' );
@@ -197,13 +197,31 @@ class UndeletePageTest extends MediaWikiIntegrationTestCase {
 			}
 		);
 
+		$this->expectDomainEvent(
+			PageCreatedEvent::TYPE, 1,
+			static function ( PageCreatedEvent $event ) use ( $sysop ) {
+				Assert::assertTrue(
+					$event->hasCause( PageUpdateCauses::CAUSE_UNDELETE ),
+					PageUpdateCauses::CAUSE_UNDELETE
+				);
+
+				Assert::assertSame( $sysop, $event->getPerformer(), 'getPerformer' );
+				Assert::assertSame( 'just some reason', $event->getReason(), 'getReason' );
+
+				Assert::assertSame(
+					'Lorem Ipsum',
+					$event->getLatestRevisionAfter()->getMainContentRaw()->getText()
+				);
+			}
+		);
+
 		// Now undelete the page
 		$undeletePage = $this->getServiceContainer()->getUndeletePageFactory()->newUndeletePage(
 			$page,
 			$sysop
 		);
 
-		$undeletePage->undeleteUnsafe( 'just a test' );
+		$undeletePage->undeleteUnsafe( 'just some reason' );
 	}
 
 	public static function provideEventEmission_existing() {
@@ -258,11 +276,11 @@ class UndeletePageTest extends MediaWikiIntegrationTestCase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, $expectEvent ? 1 : 0,
-			static function ( PageRevisionUpdatedEvent $event ) use ( $expectCreation, $revId ) {
+			PageLatestRevisionChangedEvent::TYPE, $expectEvent ? 1 : 0,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( $expectCreation, $revId ) {
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_UNDELETE ),
-					PageRevisionUpdatedEvent::CAUSE_UNDELETE
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UNDELETE ),
+					PageLatestRevisionChangedEvent::CAUSE_UNDELETE
 				);
 
 				Assert::assertTrue( $event->isSilent(), 'isSilent' );

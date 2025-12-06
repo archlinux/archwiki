@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms;
@@ -116,6 +102,7 @@ class DatabaseMySQL extends Database {
 		return 'mysql';
 	}
 
+	/** @inheritDoc */
 	protected function open( $server, $user, $password, $db, $schema, $tablePrefix ) {
 		$this->close( __METHOD__ );
 
@@ -175,6 +162,7 @@ class DatabaseMySQL extends Database {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function doSelectDomain( DatabaseDomain $domain ) {
 		if ( $domain->getSchema() !== null ) {
 			throw new DBExpectedError(
@@ -230,6 +218,7 @@ class DatabaseMySQL extends Database {
 		return $error;
 	}
 
+	/** @inheritDoc */
 	protected function isInsertSelectSafe( array $insertOptions, array $selectOptions, $fname ) {
 		$row = $this->replicationReporter->getReplicationSafetyInfo( $this, $fname );
 		// For row-based-replication, the resulting changes will be relayed, not the query
@@ -253,6 +242,7 @@ class DatabaseMySQL extends Database {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function checkInsertWarnings( Query $query, $fname ) {
 		if ( $this->conn && $this->conn->warning_count ) {
 			// Yeah it's weird. It's not iterable.
@@ -282,6 +272,7 @@ class DatabaseMySQL extends Database {
 		}
 	}
 
+	/** @inheritDoc */
 	public function estimateRowCount(
 		$tables,
 		$var = '*',
@@ -313,6 +304,7 @@ class DatabaseMySQL extends Database {
 		return (int)$rows;
 	}
 
+	/** @inheritDoc */
 	public function tableExists( $table, $fname = __METHOD__ ) {
 		[ $db, $pt ] = $this->platform->getDatabaseAndTableIdentifier( $table );
 		if ( isset( $this->sessionTempTables[$db][$pt] ) ) {
@@ -350,9 +342,9 @@ class DatabaseMySQL extends Database {
 		return $res->getInternalFieldInfo( $field );
 	}
 
+	/** @inheritDoc */
 	public function indexInfo( $table, $index, $fname = __METHOD__ ) {
 		# https://dev.mysql.com/doc/mysql/en/SHOW_INDEX.html
-		$index = $this->platform->indexName( $index );
 		$query = new Query(
 			'SHOW INDEX FROM ' . $this->tableName( $table ),
 			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
@@ -369,6 +361,27 @@ class DatabaseMySQL extends Database {
 		return false;
 	}
 
+	/** @inheritDoc */
+	public function getPrimaryKeyColumns( $table, $fname = __METHOD__ ) {
+		$query = new Query(
+			'SHOW INDEX FROM ' . $this->tableName( $table ),
+			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
+			'SHOW'
+		);
+		$res = $this->query( $query, $fname );
+
+		$bySeq = [];
+		foreach ( $res as $row ) {
+			if ( $row->Key_name === 'PRIMARY' ) {
+				$bySeq[(int)$row->Seq_in_index] = (string)$row->Column_name;
+			}
+		}
+
+		ksort( $bySeq );
+
+		return array_values( $bySeq );
+	}
+
 	/**
 	 * @param string $s
 	 * @return string
@@ -377,6 +390,7 @@ class DatabaseMySQL extends Database {
 		return $this->mysqlRealEscapeString( $s );
 	}
 
+	/** @inheritDoc */
 	public function serverIsReadOnly() {
 		// Avoid SHOW to avoid internal temporary tables
 		$flags = self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE;
@@ -412,7 +426,7 @@ class DatabaseMySQL extends Database {
 		$parts = explode( '-', $version, 2 );
 		$number = $parts[0];
 		$suffix = $parts[1] ?? '';
-		if ( strpos( $suffix, 'MariaDB' ) !== false || strpos( $suffix, '-maria-' ) !== false ) {
+		if ( str_contains( $suffix, 'MariaDB' ) || str_contains( $suffix, '-maria-' ) ) {
 			$vendor = 'MariaDB';
 		} else {
 			$vendor = 'MySQL';
@@ -474,6 +488,7 @@ class DatabaseMySQL extends Database {
 		return parent::streamStatementEnd( $sql, $newLine );
 	}
 
+	/** @inheritDoc */
 	public function doLockIsFree( string $lockName, string $method ) {
 		$query = new Query( $this->platform->lockIsFreeSQLText( $lockName ), self::QUERY_CHANGE_LOCKS, 'SELECT' );
 		$res = $this->query( $query, $method );
@@ -482,6 +497,7 @@ class DatabaseMySQL extends Database {
 		return ( $row->unlocked == 1 );
 	}
 
+	/** @inheritDoc */
 	public function doLock( string $lockName, string $method, int $timeout ) {
 		$query = new Query( $this->platform->lockSQLText( $lockName, $timeout ), self::QUERY_CHANGE_LOCKS, 'SELECT' );
 		$res = $this->query( $query, $method );
@@ -490,6 +506,7 @@ class DatabaseMySQL extends Database {
 		return ( $row->acquired !== null ) ? (float)$row->acquired : null;
 	}
 
+	/** @inheritDoc */
 	public function doUnlock( string $lockName, string $method ) {
 		$query = new Query( $this->platform->unlockSQLText( $lockName ), self::QUERY_CHANGE_LOCKS, 'SELECT' );
 		$res = $this->query( $query, $method );
@@ -498,6 +515,7 @@ class DatabaseMySQL extends Database {
 		return ( $row->released == 1 );
 	}
 
+	/** @inheritDoc */
 	protected function doFlushSession( $fname ) {
 		// Note that RELEASE_ALL_LOCKS() is not supported well enough to use here.
 		// https://mariadb.com/kb/en/release_all_locks/
@@ -517,6 +535,7 @@ class DatabaseMySQL extends Database {
 		}
 	}
 
+	/** @inheritDoc */
 	public function upsert( $table, array $rows, $uniqueKeys, array $set, $fname = __METHOD__ ) {
 		$identityKey = $this->platform->normalizeUpsertParams( $uniqueKeys, $rows );
 		if ( !$rows ) {
@@ -541,6 +560,7 @@ class DatabaseMySQL extends Database {
 		$this->lastQueryAffectedRows = min( $this->lastQueryAffectedRows, count( $rows ) );
 	}
 
+	/** @inheritDoc */
 	public function replace( $table, $uniqueKeys, $rows, $fname = __METHOD__ ) {
 		$this->platform->normalizeUpsertParams( $uniqueKeys, $rows );
 		if ( !$rows ) {
@@ -558,6 +578,7 @@ class DatabaseMySQL extends Database {
 		$this->lastQueryAffectedRows = min( $this->lastQueryAffectedRows, count( $rows ) );
 	}
 
+	/** @inheritDoc */
 	protected function isConnectionError( $errno ) {
 		// https://mariadb.com/kb/en/mariadb-error-codes/
 		// https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
@@ -565,13 +586,16 @@ class DatabaseMySQL extends Database {
 		return in_array( $errno, [ 2013, 2006, 2003, 1927, 1053 ], true );
 	}
 
+	/** @inheritDoc */
 	protected function isQueryTimeoutError( $errno ) {
 		// https://mariadb.com/kb/en/mariadb-error-codes/
 		// https://dev.mysql.com/doc/refman/8.0/en/client-error-reference.html
 		// https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
-		return in_array( $errno, [ 3024, 2062, 1969, 1028 ], true );
+		// Note that 1969 is MariaDB specific and unused in MySQL.
+		return in_array( $errno, [ 3024, 1969, 1028 ], true );
 	}
 
+	/** @inheritDoc */
 	protected function isKnownStatementRollbackError( $errno ) {
 		// https://mariadb.com/kb/en/mariadb-error-codes/
 		// https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
@@ -630,6 +654,7 @@ class DatabaseMySQL extends Database {
 		return $qb->fetchFieldValues();
 	}
 
+	/** @inheritDoc */
 	public function selectSQLText(
 		$tables,
 		$vars,
@@ -762,10 +787,12 @@ class DatabaseMySQL extends Database {
 		return $ok ? $mysqli : null;
 	}
 
+	/** @inheritDoc */
 	protected function closeConnection() {
 		return ( $this->conn instanceof mysqli ) ? mysqli_close( $this->conn ) : true;
 	}
 
+	/** @inheritDoc */
 	protected function lastInsertId() {
 		return $this->sessionLastAutoRowId;
 	}
@@ -775,6 +802,7 @@ class DatabaseMySQL extends Database {
 		$this->sessionLastAutoRowId = 0;
 	}
 
+	/** @inheritDoc */
 	public function insertId() {
 		if ( $this->lastEmulatedInsertId === null ) {
 			$conn = $this->getBindingHandle();

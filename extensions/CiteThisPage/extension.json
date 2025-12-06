@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"ExtensionMessagesFiles": {
 		"CiteThisPageAliases": "CiteThisPage.alias.php"
@@ -29,7 +29,7 @@
 	},
 	"ResourceModules": {
 		"ext.citeThisPage": {
-			"styles": "ext.citeThisPage.css"
+			"styles": "ext.citeThisPage.less"
 		}
 	},
 	"ResourceFileModulePaths": {

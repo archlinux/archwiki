@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jeeputer"
+			"Jeeputer",
+			"LordProfo"
 		]
 	},
 	"editcheck-dialog-action-no": "خیر",
 	"editcheck-dialog-action-yes": "بله",
+	"editcheck-dialog-action-recheck": "بررسی دوباره",
 	"editcheck-dialog-addref-description": "با افزودن یک یادکرد، به مخاطبان در یافتن مبدأ این اطلاعات کمک کنید.",
 	"editcheck-dialog-addref-reject-question": "چرا نمی‌خواهید یادکرد اضافه کنید؟",
 	"editcheck-dialog-addref-reject-description": "سایر ویرایشگران ممکن است بخواهند از دلیل تصمیم شما برای رد کردن یادکرد آگاه شوند.",
@@ -18,6 +20,16 @@
 	"editcheck-dialog-title": "پیش از انتشار",
 	"editcheck-copyvio-title": "متن چسبانده‌شده",
 	"editcheck-copyvio-description": "به‌عنوان یک قاعدهٔ کلی، متن را از سایر منابع کپی نکنید. چنین کاری معمولاً ترکیبی است از نقض حق تکثیر و سرقت ادبی.",
+	"editcheck-copyvio-action-keep": "بله، نگهش دار",
+	"editcheck-copyvio-action-remove": "خیر، حذفش کن",
+	"editcheck-copyvio-keep-description": "برای سایر ویرایشگران مهم است که دربارهٔ دلیل شما برای نگه داشتن این متن چسبانده‌شده بیشتر بدانند.",
+	"editcheck-copyvio-keep-wrote": "خودم این متن را نوشته‌ام و جای دیگری منتشر نشده است",
+	"editcheck-copyvio-keep-permission": "این محتوا اجازه‌نامهٔ آزاد دارد",
+	"editcheck-copyvio-keep-other": "سایر",
+	"editcheck-copyvio-keep-notify": "از این که دلیل نگه داشتن متن چسبانده‌شده را به اشتراک گذاشتید ممنونیم!",
+	"editcheck-copyvio-remove-notify": "از این که این متن را حذف کردید ممنونیم!",
+	"editcheck-tone-description": "کاربران دیگر معمولاً چنین جمله‌بندی‌هایی را اصلاح می‌کنند، زیرا معتقدند که لحن آن نامتعادل است. [$1 بیشتر بدانید]",
+	"editcheck-tone-thank": "از این که این لحن را بازبینی کردید ممنونیم!",
 	"editcheck-review-title": "بازبینی تغییرات",
 	"tag-editcheck-reference-decline-common-knowledge": "بررسی ویرایش (ارجاعات) رد شد (دانش عمومی)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "ارجاع بررسی ویرایش تحت عنوان دانش عمومی رد شد",

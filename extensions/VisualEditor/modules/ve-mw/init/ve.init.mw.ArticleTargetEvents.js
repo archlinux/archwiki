@@ -52,7 +52,7 @@ ve.init.mw.ArticleTargetEvents.prototype.track = function ( topic, data ) {
  * @param {Object} data Additional data describing the event, encoded as an object
  */
 ve.init.mw.ArticleTargetEvents.prototype.trackTiming = function ( topic, data ) {
-	if ( topic.indexOf( 'performance.system.serializeforcache' ) === 0 ) {
+	if ( topic.startsWith( 'performance.system.serializeforcache' ) ) {
 		// HACK: track serializeForCache duration here, because there's no event for that
 		this.timings.serializeForCache = data.duration;
 	}

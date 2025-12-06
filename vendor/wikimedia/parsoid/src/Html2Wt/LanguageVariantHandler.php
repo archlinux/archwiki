@@ -6,8 +6,8 @@ namespace Wikimedia\Parsoid\Html2Wt;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\LanguageVariantText;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
@@ -16,6 +16,12 @@ use Wikimedia\Parsoid\Wikitext\Consts;
  */
 class LanguageVariantHandler {
 
+	/**
+	 * Expand a whitespace sequence.
+	 * @see \Wikimedia\Parsoid\Wt2Html\TT\LanguageVariantHandler::compressSpArray
+	 * @param list<int|string> $a
+	 * @return list<string>
+	 */
 	private static function expandSpArray( array $a ): array {
 		$result = [];
 		foreach ( $a as $el ) {
@@ -66,7 +72,7 @@ class LanguageVariantHandler {
 	 * @return string
 	 */
 	private static function combine( string $flagStr, string $bodyStr, $useTrailingSemi ): string {
-		if ( !empty( $flagStr ) || str_contains( $bodyStr, '|' ) ) {
+		if ( $flagStr !== '' || str_contains( $bodyStr, '|' ) ) {
 			$flagStr .= '|';
 		}
 		if ( $useTrailingSemi !== false ) {
@@ -79,9 +85,9 @@ class LanguageVariantHandler {
 	/**
 	 * Canonicalize combinations of flags.
 	 * $originalFlags should be [ 'flag' => <integer position>, ... ]
-	 * @param array $originalFlags
-	 * @param array $flSp
-	 * @param array $flags
+	 * @param array<string,int> $originalFlags
+	 * @param list<string> $flSp
+	 * @param list<string> $flags
 	 * @param bool $noFilter
 	 * @param ?string $protectFunc
 	 * @return string
@@ -90,7 +96,7 @@ class LanguageVariantHandler {
 		array $originalFlags, array $flSp, array $flags, bool $noFilter,
 		?string $protectFunc
 	): string {
-		$filterInternal = static function ( $f ) use ( $noFilter ) {
+		$filterInternal = static function ( string $f ) use ( $noFilter ): bool {
 			// Filter out internal-use-only flags
 			if ( $noFilter ) {
 				return true;
@@ -99,23 +105,23 @@ class LanguageVariantHandler {
 		};
 		$flags = array_filter( $flags, $filterInternal );
 
-		$sortByOriginalPosition = static function ( $a, $b ) use ( $originalFlags ) {
+		$sortByOriginalPosition = static function ( string $a, string $b ) use ( $originalFlags ): int {
 			$ai = $originalFlags[$a] ?? -1;
 			$bi = $originalFlags[$b] ?? -1;
 			return $ai - $bi;
 		};
 		usort( $flags, $sortByOriginalPosition );
 
-		$insertOriginalWhitespace = static function ( $f ) use ( $originalFlags, $protectFunc, $flSp ) {
+		$insertOriginalWhitespace = static function ( string $f ) use ( $originalFlags, $protectFunc, $flSp ): string {
 			// Reinsert the original whitespace around the flag (if any)
 			$i = $originalFlags[$f] ?? null;
-			if ( !empty( $protectFunc ) ) {
+			if ( $protectFunc !== null ) {
 				$p = self::$protectFunc( $f );
 			} else {
 				$p = $f;
 			}
 			if ( $i !== null && ( 2 * $i + 1 ) < count( $flSp ) ) {
-				return $flSp[2 * $i] + $p + $flSp[2 * $i + 1];
+				return $flSp[2 * $i] . $p . $flSp[2 * $i + 1];
 			}
 			return $p;
 		};
@@ -148,7 +154,6 @@ class LanguageVariantHandler {
 		$flSp = self::expandSpArray( $dp->flSp ?? [] );
 		$textSp = self::expandSpArray( $dp->tSp ?? [] );
 		$trailingSemi = false;
-		$text = null;
 		$flags = [];
 		$originalFlags = [];
 		if ( isset( $dp->fl ) ) {
@@ -171,14 +176,14 @@ class LanguageVariantHandler {
 			unset( $dataMWV->unidir );
 		}
 
-		foreach ( get_object_vars( $dataMWV ) as $key => $val ) {
+		foreach ( get_object_vars( $dataMWV ) as $key => $_val ) {
 			if ( isset( Consts::$LCNameMap[$key] ) ) {
 				$flags[Consts::$LCNameMap[$key]] = true;
 			}
 		}
 
 		// Tweak flag set to account for implicitly-enabled flags.
-		if ( DOMCompat::nodeName( $node ) !== 'meta' ) {
+		if ( DOMUtils::nodeName( $node ) !== 'meta' ) {
 			$flags['$S'] = true;
 		}
 		if ( !isset( $flags['$S'] ) && !isset( $flags['T'] ) && !isset( $dataMWV->filter ) ) {
@@ -249,7 +254,7 @@ class LanguageVariantHandler {
 					$dataMWV->twoway ?? [];
 				$text = implode( ';',
 					array_map(
-						function ( $rule, $idx ) use ( $state, $textSp ) {
+						function ( $rule, $idx ) use ( $state, $textSp, &$trailingSemi ) {
 							$text = self::ser( $state, $rule->t, [ 'protect' => '/;|\}-/' ] );
 							if ( $rule->l === '*' ) {
 								$trailingSemi = false;

@@ -303,6 +303,11 @@ $specialPageAliases['vi'] = [
 	'Nuke' => [ 'Xóa_hàng_loạt', 'Xoá_hàng_loạt' ],
 ];
 
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'Nuke' => [ 'Nuke' ],
+];
+
 /** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'Nuke' => [ '大量删除' ],

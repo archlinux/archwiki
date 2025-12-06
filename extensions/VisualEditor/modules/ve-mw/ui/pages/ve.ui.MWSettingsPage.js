@@ -325,9 +325,7 @@ ve.ui.MWSettingsPage.prototype.setup = function ( fragment, config ) {
  *
  * @param {Object} [data] Dialog tear down data
  */
-ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
-	// Data initialisation
-	data = data || {};
+ve.ui.MWSettingsPage.prototype.teardown = function ( data = {} ) {
 	if ( data.action !== 'done' ) {
 		return;
 	}

@@ -80,4 +80,28 @@ interface IModule {
 	 * @return Message|null if no additional text is needed
 	 */
 	public function getDisableWarningMessage();
+
+	/**
+	 * Module-specific text for the label of the button to add a new key in this module.
+	 *
+	 * @return ?Message Message object, or null if an add key button should not be shown
+	 */
+	public function getAddKeyMessage(): ?Message;
+
+	/**
+	 * Return Message object for button text to be displayed on login page
+	 *
+	 * @return Message
+	 */
+	public function getLoginSwitchButtonMessage();
+
+	/**
+	 * ext:OATHAuth makes a lot of assumptions in different portions of its
+	 * code about standard modules - things like totp and webauthn. Certain
+	 * basic actions (enable, disable) and user workflows fit neatly into this
+	 * paradigm.  But there will exist modules (such as recovery codes) which
+	 * will need to accommodate display logic, workflows and use cases.  This
+	 * method provides a conditional divide for these special modules.
+	 */
+	public function isSpecial(): bool;
 }

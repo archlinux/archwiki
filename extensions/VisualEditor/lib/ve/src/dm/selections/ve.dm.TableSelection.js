@@ -15,13 +15,6 @@
  * @param {number} [toRow] End row
  */
 ve.dm.TableSelection = function VeDmTableSelection( tableRange, fromCol, fromRow, toCol, toRow ) {
-	if ( ve.dm.Document && arguments[ 0 ] instanceof ve.dm.Document ) {
-		throw new Error( 'Got obsolete ve.dm.Document argument' );
-	}
-	if ( arguments.length > 5 ) {
-		throw new Error( 'Got obsolete argument (probably `expand`)' );
-	}
-
 	// Parent constructor
 	ve.dm.TableSelection.super.call( this );
 
@@ -224,6 +217,8 @@ ve.dm.TableSelection.prototype.getCoveringRange = function () {
 
 /**
  * Get all the ranges required to build a table slice from the selection
+ *
+ * Used when copying table selections.
  *
  * In addition to the outer ranges of the cells, this also includes the start and
  * end tags of table rows, sections and the table itself.

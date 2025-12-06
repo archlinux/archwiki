@@ -6,6 +6,7 @@ use DateTime;
 use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Extension\Nuke\Form\SpecialNukeCodexUIRenderer;
 use MediaWiki\Extension\Nuke\Form\SpecialNukeHTMLFormUIRenderer;
 use MediaWiki\Extension\Nuke\Form\SpecialNukeUIRenderer;
 use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
@@ -25,6 +26,7 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
+use Wikimedia\Codex\Utility\Codex;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -32,19 +34,6 @@ class SpecialNuke extends SpecialPage {
 
 	/** @var NukeHookRunner|null */
 	private $hookRunner;
-
-	private JobQueueGroup $jobQueueGroup;
-	private IConnectionProvider $dbProvider;
-	private PermissionManager $permissionManager;
-	private RepoGroup $repoGroup;
-	private UserOptionsLookup $userOptionsLookup;
-	private UserNamePrefixSearch $userNamePrefixSearch;
-	private UserNameUtils $userNameUtils;
-	private NamespaceInfo $namespaceInfo;
-	private Language $contentLanguage;
-	private RedirectLookup $redirectLookup;
-	/** @var CheckUserTemporaryAccountsByIPLookup|null */
-	private $checkUserTemporaryAccountsByIPLookup = null;
 
 	/**
 	 * Action keyword for the "prompt" step.
@@ -74,34 +63,20 @@ class SpecialNuke extends SpecialPage {
 	 */
 	public const NAMESPACE_LIST_SEPARATOR = "\n";
 
-	/**
-	 * @inheritDoc
-	 */
 	public function __construct(
-		JobQueueGroup $jobQueueGroup,
-		IConnectionProvider $dbProvider,
-		PermissionManager $permissionManager,
-		RepoGroup $repoGroup,
-		UserOptionsLookup $userOptionsLookup,
-		UserNamePrefixSearch $userNamePrefixSearch,
-		UserNameUtils $userNameUtils,
-		NamespaceInfo $namespaceInfo,
-		Language $contentLanguage,
-		RedirectLookup $redirectLookup,
-		$checkUserTemporaryAccountsByIPLookup = null
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly PermissionManager $permissionManager,
+		private readonly RepoGroup $repoGroup,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly UserNamePrefixSearch $userNamePrefixSearch,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly Language $contentLanguage,
+		private readonly RedirectLookup $redirectLookup,
+		private readonly ?CheckUserTemporaryAccountsByIPLookup $checkUserTemporaryAccountsByIPLookup,
 	) {
 		parent::__construct( 'Nuke' );
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->dbProvider = $dbProvider;
-		$this->permissionManager = $permissionManager;
-		$this->repoGroup = $repoGroup;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->userNamePrefixSearch = $userNamePrefixSearch;
-		$this->userNameUtils = $userNameUtils;
-		$this->namespaceInfo = $namespaceInfo;
-		$this->contentLanguage = $contentLanguage;
-		$this->redirectLookup = $redirectLookup;
-		$this->checkUserTemporaryAccountsByIPLookup = $checkUserTemporaryAccountsByIPLookup;
 	}
 
 	/**
@@ -271,8 +246,8 @@ class SpecialNuke extends SpecialPage {
 			'limit' => $req->getInt( 'limit', 500 ),
 			'namespaces' => $namespaces,
 
-			'dateFrom' => $req->getText( 'wpdateFrom' ),
-			'dateTo' => $req->getText( 'wpdateTo' ),
+			'dateFrom' => $req->getText( 'wpdateFrom', $req->getText( 'dateFrom' ) ),
+			'dateTo' => $req->getText( 'wpdateTo', $req->getText( 'dateTo' ) ),
 
 			'includeTalkPages' => $req->getBool( 'includeTalkPages' ),
 			'includeRedirects' => $req->getBool( 'includeRedirects' ),
@@ -304,7 +279,17 @@ class SpecialNuke extends SpecialPage {
 
 		// Possible values: 'codex', 'htmlform'
 		switch ( $formType ) {
-			// case 'codex': to be implemented (T153988)
+			case 'codex':
+				$codex = new Codex();
+				return new SpecialNukeCodexUIRenderer(
+					$context,
+					$this,
+					$codex,
+					$this->repoGroup,
+					$this->getLinkRenderer(),
+					$this->namespaceInfo,
+					$this->redirectLookup
+				);
 			case 'htmlform':
 			default:
 				return new SpecialNukeHTMLFormUIRenderer(
@@ -323,7 +308,7 @@ class SpecialNuke extends SpecialPage {
 	 * validation, ensuring that only valid namespaces are returned.
 	 *
 	 * @param WebRequest $req The request
-	 * @return array An array of namespace IDs
+	 * @return int[] An array of namespace IDs
 	 */
 	private function loadNamespacesFromRequest( WebRequest $req ): array {
 		$validNamespaces = $this->namespaceInfo->getValidNamespaces();
@@ -728,7 +713,7 @@ class SpecialNuke extends SpecialPage {
 				$statuses[$title->getPrefixedDBkey()] = $deletionResult ?
 					Status::newGood() :
 					Status::newFatal(
-						$this->msg( 'nuke-not-deleted' )
+						$this->msg( 'nuke-not-deleted', wfEscapeWikiText( $title->getPrefixedText() ) )
 					);
 				continue;
 			}

@@ -68,6 +68,8 @@ ve.ui.MWHelpListToolGroup.prototype.setActive = function () {
 				$version
 					.removeClass( 'oo-ui-pendingElement-pending' )
 					.empty()
+					// API response 'vcs-url' is trusted to be safe
+					// eslint-disable-next-line local/no-unsanitized-href
 					.append( $( '<a>' )
 						.addClass( 've-ui-mwHelpListToolGroup-version-link' )
 						.attr( 'target', '_blank' )
@@ -193,7 +195,7 @@ ve.ui.MWFeedbackDialogTool.prototype.onSelect = function () {
 			return new mw.Feedback( feedbackConfig );
 		} );
 	}
-	this.feedbackPromise.done( ( feedback ) => {
+	this.feedbackPromise.then( ( feedback ) => {
 		feedback.launch( {
 			message: ve.msg( 'visualeditor-feedback-defaultmessage', location.toString() )
 		} );

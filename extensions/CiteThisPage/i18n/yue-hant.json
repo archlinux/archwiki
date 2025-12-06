@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
 			"JeffreyKim",
 			"Ktchankt",
+			"Winston Sung",
 			"Yueman"
 		]
 	},
@@ -13,5 +13,6 @@
 	"tooltip-citethispage": "點樣引用呢頁嘅資訊",
 	"citethispage-change-submit": "引用",
 	"citethispage-change-target": "版：",
-	"citethispage-badrevision": "出錯：搵唔到頁面「$1」入面任何修訂ID係$2嘅版本。"
+	"citethispage-badrevision": "出錯：搵唔到頁面「$1」入面任何修訂ID係$2嘅版本。",
+	"citethispage-content": "__TOC__\n<div class=\"mw-specialCiteThisPage-bibliographic\">\n\n=={{FULLPAGENAME}}嘅參考文獻詳情==\n\n* 版名：{{FULLPAGENAME}}\n* 作者：{{SITENAME}}貢獻者\n* 發佈者：''{{SITENAME}}''。\n* 上次修訂日期：{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC\n* 攞資料日期：<citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>\n* 永久網址：{{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}}\n* 頁面版本ID：{{REVISIONID}}\n\n</div>\n<div class=\"plainlinks mw-specialCiteThisPage-styles\">\n\n=={{FULLPAGENAME}}嘅引文樣式==\n\n=== [https://en.wikipedia.org/wiki/APA_style APA風格] ===\n{{FULLPAGENAME}}。({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}})。''{{SITENAME}}''。攞咗<citation>{{CURRENTMONTHNAME}}{{CURRENTDAY}}, {{CURRENTYEAR}}</citation>, 嚟自{{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}}。\n\n== [https://en.wikipedia.org/wiki/MLA_Handbook#MLA_Style_Manual MLA風格] ===\n\"{{FULLPAGENAME}}。\" ''{{SITENAME}}''。 {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC。 &lt;{{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}}&gt; <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation>。\n\n=== [https://en.wikipedia.org/wiki/MHRA_Style_Guide MHRA風格] ===\n{{SITENAME}} 貢獻者, '{{FULLPAGENAME}}', ''{{SITENAME}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}}&gt; [存取咗 <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation>]\n\n=== [https://en.wikipedia.org/wiki/The_Chicago_Manual_of_Style 芝加哥風格] ===\n{{SITENAME}} 貢獻者, \"{{FULLPAGENAME}},\" ''{{SITENAME}},'' {{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}} (存取咗 <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>)。\n\n=== [https://en.wikipedia.org/wiki/Council_of_Science_Editors CBE/CSE風格] ===\n{{SITENAME}} 貢獻者。 {{FULLPAGENAME}} [互聯網]。 {{SITENAME}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [引用咗 <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>]。可以喺：{{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}}。\n\n=== [https://en.wikipedia.org/wiki/Bluebook 藍本風格] ===\n{{FULLPAGENAME}}, {{canonicalurl:{{FULLPAGENAME}}|舊嘅ID={{REVISIONID}}}} (上次去過<citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>)。\n\n=== [https://en.wikipedia.org/wiki/BibTeX BibTeX] 文章 ===\n\n  @misc{ wiki:xxx,\n    作者 = \"{{SITENAME}}\",\n    標題 = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",\n    年份 = \"{{CURRENTYEAR}}\",\n    url = \"{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}\",\n    註 = \"[線上; 存取咗 <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"\n  }\n\n當使用[https://en.wikipedia.org/wiki/LaTeX LaTeX]嘅包網址（<code>\\usepackage{url}</code>喺序言入面嘅某個位置）嗰陣，往往會提供格式化得更好嘅網址，以下可能會係首選：\n\n  @misc{ wiki:xxx,\n    作者 = \"{{SITENAME}}\",\n    標題 = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",\n    年份 = \"{{CURRENTYEAR}}\",\n    url = \"'''\\url{'''{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''\",\n    註 = \"[線上; 存取咗 <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"\n  }\n\n\n</div> <!--closing div for \"plainlinks\"-->"
 }

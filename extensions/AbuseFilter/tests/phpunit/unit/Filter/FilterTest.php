@@ -6,6 +6,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\Filter;
 use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
 /**
@@ -25,18 +26,41 @@ class FilterTest extends MediaWikiUnitTestCase {
 			$this->createMock( Specs::class ),
 			$this->createMock( Flags::class ),
 			[],
-			new LastEditInfo( $userID, $userName, $timestamp ),
+			new LastEditInfo( UserIdentityValue::newRegistered( $userID, $userName ), $timestamp ),
 			$id,
 			$hitCount,
 			$throttled
 		);
+		$userIdentity = $filter->getUserIdentity();
 
+		$this->assertSame( $userID, $userIdentity->getId() );
+		$this->assertSame( $userName, $userIdentity->getName() );
+		$this->assertTrue( $userIdentity->isRegistered() );
 		$this->assertSame( $userID, $filter->getUserID(), 'user ID' );
 		$this->assertSame( $userName, $filter->getUserName(), 'username' );
 		$this->assertSame( $timestamp, $filter->getTimestamp(), 'timestamp' );
 		$this->assertSame( $id, $filter->getID(), 'ID' );
 		$this->assertSame( $hitCount, $filter->getHitCount(), 'hit count' );
 		$this->assertSame( $throttled, $filter->isThrottled(), 'throttled' );
+	}
+
+	public function getUserIdentityForAnon() {
+		$userName = 'Anon user';
+
+		$filter = new Filter(
+			$this->createMock( Specs::class ),
+			$this->createMock( Flags::class ),
+			[],
+			new LastEditInfo( UserIdentityValue::newAnonymous( $userName ), 123 ),
+			164,
+			1000,
+			false
+		);
+
+		$identity = $filter->getUserIdentity();
+		$this->assertSame( $userName, $identity->getId() );
+		$this->assertSame( 0, $identity->getId() );
+		$this->assertNotTrue( $identity->isRegistered() );
 	}
 
 	public function testGetObjects() {
@@ -51,7 +75,7 @@ class FilterTest extends MediaWikiUnitTestCase {
 
 	public function testNoWriteableReferences() {
 		$oldUsername = 'User1';
-		$lastEditInfo = new LastEditInfo( 1, $oldUsername, '123' );
+		$lastEditInfo = new LastEditInfo( UserIdentityValue::newRegistered( 1, $oldUsername ), '123' );
 		$filter = new Filter(
 			$this->createMock( Specs::class ),
 			$this->createMock( Flags::class ),
@@ -60,8 +84,8 @@ class FilterTest extends MediaWikiUnitTestCase {
 		);
 		$copy = clone $filter;
 
-		$lastEditInfo->setUserName( 'new username' );
-		$this->assertSame( $oldUsername, $filter->getUserName(), 'original' );
-		$this->assertSame( $oldUsername, $copy->getUserName(), 'copy' );
+		$lastEditInfo->setUserIdentity( UserIdentityValue::newAnonymous( "y" ) );
+		$this->assertSame( $oldUsername, $filter->getUserIdentity()->getName(), 'original' );
+		$this->assertSame( $oldUsername, $copy->getUserIdentity()->getName(), 'copy' );
 	}
 }

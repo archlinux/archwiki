@@ -15,15 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  * @method assertStringMatchesFormat($fmt,$str,$msg='')
  */
 trait ConsequenceGetMessageTestTrait {
-	/**
-	 * @param UserIdentity|string|null $user Test name when used as data provider, a UserIdentity can be passed when
-	 * called explicitly
-	 * @return Generator
-	 */
-	public function provideGetMessageParameters( $user = null ): Generator {
-		$user = $user instanceof UserIdentity
-			? $user
-			: new UserIdentityValue( 1, 'getMessage test user' );
+	public function getLocalFilterParams( UserIdentity $user ): Parameters {
 		$localFilter = $this->createMock( ExistingFilter::class );
 		$localFilter->method( 'getID' )->willReturn( 1 );
 		$localFilter->method( 'getName' )->willReturn( 'Local filter' );
@@ -38,23 +30,45 @@ trait ConsequenceGetMessageTestTrait {
 				null
 			)
 		);
-		yield 'local filter' => [ $localParams ];
+		return $localParams;
+	}
 
-		$globalFilter = $this->createMock( ExistingFilter::class );
-		$globalFilter->method( 'getID' )->willReturn( 3 );
-		$globalFilter->method( 'getName' )->willReturn( 'Global filter' );
-		$globalParams = new Parameters(
-			$globalFilter,
-			true,
-			new ActionSpecifier(
-				'edit',
-				$this->createMock( LinkTarget::class ),
-				$user,
-				'1.2.3.4',
-				null
-			)
-		);
-		yield 'global filter' => [ $globalParams ];
+	public static function provideGetMessageParameters(): Generator {
+		yield 'local filter' => [ static function ( $testCase ) {
+			$localFilter = $testCase->createMock( ExistingFilter::class );
+			$localFilter->method( 'getID' )->willReturn( 1 );
+			$localFilter->method( 'getName' )->willReturn( 'Local filter' );
+			$localParams = new Parameters(
+				$localFilter,
+				false,
+				new ActionSpecifier(
+					'edit',
+					$testCase->createMock( LinkTarget::class ),
+					new UserIdentityValue( 1, 'getMessage test user' ),
+					'1.2.3.4',
+					null
+				)
+			);
+			return $localParams;
+		} ];
+
+		yield 'global filter' => [ static function ( $testCase ) {
+			$globalFilter = $testCase->createMock( ExistingFilter::class );
+			$globalFilter->method( 'getID' )->willReturn( 3 );
+			$globalFilter->method( 'getName' )->willReturn( 'Global filter' );
+			$globalParams = new Parameters(
+				$globalFilter,
+				true,
+				new ActionSpecifier(
+					'edit',
+					$testCase->createMock( LinkTarget::class ),
+					new UserIdentityValue( 1, 'getMessage test user' ),
+					'1.2.3.4',
+					null
+				)
+			);
+			return $globalParams;
+		} ];
 	}
 
 	/**

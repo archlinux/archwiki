@@ -10,7 +10,7 @@
 	"descriptionmsg": "replacetext-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"type": "specialpage",
 	"GroupPermissions": {
@@ -28,6 +28,7 @@
 				"HookContainer",
 				"DBLoadBalancerFactory",
 				"ContentLanguage",
+				"JobFactory",
 				"JobQueueGroup",
 				"LinkRenderer",
 				"MovePageFactory",
@@ -37,9 +38,7 @@
 				"SearchEngineConfig",
 				"SlotRoleStore",
 				"UserFactory",
-				"UserOptionsLookup",
-				"WatchlistManager",
-				"WikiPageFactory"
+				"UserOptionsLookup"
 			]
 		}
 	},
@@ -87,6 +86,8 @@
 	},
 	"Hooks": {
 		"AdminLinks": "adminlinks",
+		"ChangeTagsListActive": "main",
+		"ListDefinedTags": "main",
 		"SpecialMovepageAfterMove": "main",
 		"UserGetReservedNames": "main"
 	},

@@ -4,11 +4,13 @@ namespace MediaWiki\CheckUser\Maintenance;
 
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Delete entries in cu_changes where the cuc_only_for_read_old column is set to 1.
@@ -124,5 +126,7 @@ class DeleteReadOldRowsInCuChanges extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DeleteReadOldRowsInCuChanges::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

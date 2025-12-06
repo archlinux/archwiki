@@ -66,15 +66,10 @@ class Hooks implements
 	DeleteUnknownPreferencesHook,
 	GetUserPermissionsErrorsHook
 {
-	private GadgetRepo $gadgetRepo;
-	private UserOptionsLookup $userOptionsLookup;
-
 	public function __construct(
-		GadgetRepo $gadgetRepo,
-		UserOptionsLookup $userOptionsLookup
+		private readonly GadgetRepo $gadgetRepo,
+		private readonly UserOptionsLookup $userOptionsLookup,
 	) {
-		$this->gadgetRepo = $gadgetRepo;
-		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -134,9 +129,9 @@ class Hooks implements
 		$skin = RequestContext::getMain()->getSkin();
 		foreach ( $gadgets as $section => $thisSection ) {
 			if ( $section !== '' ) {
-				$sectionInfoMsg = wfMessage( "gadgets-section-info-$section" );
+				$sectionInfoMsg = wfMessage( "gadget-section-info-$section" );
 				if ( !$sectionInfoMsg->isDisabled() ) {
-					$preferences['gadgets-section-info-' . $section] = [
+					$preferences['gadget-section-info-' . $section] = [
 						'type' => 'info',
 						'default' => $sectionInfoMsg->parse(),
 						'section' => "gadgets/gadget-section-$section",
@@ -228,7 +223,7 @@ class Hooks implements
 		foreach ( $ids as $id ) {
 			try {
 				$gadget = $repo->getGadget( $id );
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 				continue;
 			}
 
@@ -243,7 +238,7 @@ class Hooks implements
 						foreach ( $gadget->getPeers() as $peerName ) {
 							try {
 								$peers[] = $repo->getGadget( $peerName );
-							} catch ( InvalidArgumentException $e ) {
+							} catch ( InvalidArgumentException ) {
 								// Ignore, warning is emitted on Special:Gadgets
 							}
 						}

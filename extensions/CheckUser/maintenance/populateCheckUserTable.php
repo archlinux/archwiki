@@ -2,16 +2,19 @@
 
 namespace MediaWiki\CheckUser\Maintenance;
 
+use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\RecentChanges\RecentChange;
 use Wikimedia\IPUtils;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Populate the CheckUser result tables needed for CheckUser queries with
@@ -109,8 +112,21 @@ class PopulateCheckUserTable extends LoggedUpdateMaintenance {
 			$cuPrivateEventBatch = [];
 			$cuLogEventBatch = [];
 			foreach ( $res as $row ) {
+				// RC_CATEGORIZE recent changes are generally triggered by other edits, so there is no reason to store
+				// checkuser data about them (T125209). Also excluded by the CheckUserInsert service.
+				if ( $row->rc_source === RecentChange::SRC_CATEGORIZE ) {
+					continue;
+				}
+
+				// Exclude RecentChanges with sources other than flow edits and MediaWiki core sources,
+				// as usually these events are not specific to the local wiki (T125664).
+				// Also excluded by the CheckUserInsert service.
+				if ( $row->rc_source !== 'flow' && !in_array( $row->rc_source, RecentChange::INTERNAL_SOURCES ) ) {
+					continue;
+				}
+
 				$comment = $commentStore->getComment( 'rc_comment', $row );
-				if ( $row->rc_type == RC_LOG ) {
+				if ( $row->rc_source == RecentChange::SRC_LOG ) {
 					$logEntry = null;
 					if ( $row->rc_logid != 0 ) {
 						$logEntry = DatabaseLogEntry::newFromId( $row->rc_logid, $db );
@@ -149,7 +165,7 @@ class PopulateCheckUserTable extends LoggedUpdateMaintenance {
 						'cuc_page_id' => $row->rc_cur_id,
 						'cuc_this_oldid' => $row->rc_this_oldid,
 						'cuc_last_oldid' => $row->rc_last_oldid,
-						'cuc_type' => $row->rc_type,
+						'cuc_type' => CheckUserInsert::getTypeFromRCSource( $row->rc_source ),
 						'cuc_ip' => $row->rc_ip,
 						'cuc_ip_hex' => IPUtils::toHex( $row->rc_ip ),
 					];
@@ -192,5 +208,7 @@ class PopulateCheckUserTable extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PopulateCheckUserTable::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -26,7 +26,7 @@ class RangeBlockTarget extends BlockTarget implements BlockTargetWithIp {
 	 * @param array $limits The minimum prefix lengths indexed by protocol (IPv4 or IPv6)
 	 * @param string|false $wikiId The wiki ID
 	 */
-	public function __construct( string $cidr, array $limits, $wikiId = WikiAwareEntity::LOCAL ) {
+	public function __construct( string $cidr, array $limits, string|false $wikiId = WikiAwareEntity::LOCAL ) {
 		parent::__construct( $wikiId );
 		$this->cidr = $cidr;
 		$this->limits = $limits;
@@ -44,6 +44,7 @@ class RangeBlockTarget extends BlockTarget implements BlockTargetWithIp {
 		return new PageReferenceValue( NS_USER, $this->cidr, $this->wikiId );
 	}
 
+	/** @inheritDoc */
 	public function getSpecificity() {
 		// This is the number of bits that are allowed to vary in the block, give
 		// or take some floating point errors
@@ -83,6 +84,7 @@ class RangeBlockTarget extends BlockTarget implements BlockTargetWithIp {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	public function toHexRange() {
 		$range = IPUtils::parseRange( $this->cidr );
 		if ( count( $range ) !== 2 || !is_string( $range[0] ) || !is_string( $range[1] ) ) {
@@ -110,6 +112,7 @@ class RangeBlockTarget extends BlockTarget implements BlockTargetWithIp {
 		return $this->toHexRange()[1];
 	}
 
+	/** @inheritDoc */
 	protected function getLegacyUnion() {
 		return $this->cidr;
 	}

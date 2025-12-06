@@ -8,6 +8,7 @@ use MediaWiki\Config\MultiConfig;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\BotPasswordSessionProvider;
+use MediaWiki\Session\CookieSessionProvider;
 use MediaWiki\Session\Session;
 use MediaWiki\Session\SessionInfo;
 use MediaWiki\Session\SessionManager;
@@ -45,26 +46,41 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 			$params['sessionCookieOptions']['prefix'] = $prefix;
 		}
 
+		$emptySessionProvider = array_filter(
+			$wgSessionProviders,
+			static fn ( $spec ) => $spec['class'] === CookieSessionProvider::class
+		);
+		$sessionProviders = [
+			BotPasswordSessionProvider::class => [
+				'class' => BotPasswordSessionProvider::class,
+				'args' => [ $params ],
+				'services' => [ 'GrantsInfo' ],
+			],
+		] + $emptySessionProvider;
+
 		$configHash = json_encode( [ $name, $prefix, $isApiRequest ] );
 		if ( !$this->config || $this->configHash !== $configHash ) {
 			$this->config = new HashConfig( [
 				MainConfigNames::CookiePrefix => 'wgCookiePrefix',
 				MainConfigNames::EnableBotPasswords => true,
-				MainConfigNames::SessionProviders => $wgSessionProviders + [
-					BotPasswordSessionProvider::class => [
-						'class' => BotPasswordSessionProvider::class,
-						'args' => [ $params ],
-						'services' => [ 'GrantsInfo' ],
-					]
-				],
+				MainConfigNames::SessionProviders => $sessionProviders,
 			] );
 			$this->configHash = $configHash;
 		}
-		$manager = new SessionManager( [
-			'config' => new MultiConfig( [ $this->config, $this->getServiceContainer()->getMainConfig() ] ),
-			'logger' => new NullLogger,
-			'store' => new TestBagOStuff,
-		] );
+
+		$manager = new SessionManager(
+			new MultiConfig( [ $this->config, $this->getServiceContainer()->getMainConfig() ] ),
+			new NullLogger,
+			$this->getServiceContainer()->getCentralIdLookup(),
+			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getObjectFactory(),
+			$this->getServiceContainer()->getProxyLookup(),
+			$this->getServiceContainer()->getUrlUtils(),
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getSessionStore()
+		);
+
+		$this->setService( 'SessionManager', $manager );
 
 		return $manager->getProvider( BotPasswordSessionProvider::class );
 	}
@@ -218,10 +234,8 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 	public function testNewSessionInfoForRequest() {
 		$provider = $this->getProvider();
 		$user = static::getTestSysop()->getUser();
-		$request = $this->getMockBuilder( FauxRequest::class )
-			->onlyMethods( [ 'getIP' ] )->getMock();
-		$request->method( 'getIP' )
-			->willReturn( '127.0.0.1' );
+		$request = new FauxRequest();
+		$request->setIP( '127.0.0.1' );
 		$bp = BotPassword::newFromUser( $user, 'BotPasswordSessionProvider' );
 
 		$session = $provider->newSessionForRequest( $user, $bp, $request );
@@ -244,13 +258,11 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 	public function testCheckSessionInfo() {
 		$logger = new TestLogger( true );
 		$provider = $this->getProvider();
-		$this->initProvider( $provider, $logger );
+		$this->initProvider( $provider, $logger, $this->config );
 
 		$user = static::getTestSysop()->getUser();
-		$request = $this->getMockBuilder( FauxRequest::class )
-			->onlyMethods( [ 'getIP' ] )->getMock();
-		$request->method( 'getIP' )
-			->willReturn( '127.0.0.1' );
+		$request = new FauxRequest();
+		$request->setIP( '127.0.0.1' );
 		$bp = BotPassword::newFromUser( $user, 'BotPasswordSessionProvider' );
 
 		$data = [
@@ -299,10 +311,8 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		], $logger->getBuffer() );
 		$logger->clearBuffer();
 
-		$request2 = $this->getMockBuilder( FauxRequest::class )
-			->onlyMethods( [ 'getIP' ] )->getMock();
-		$request2->method( 'getIP' )
-			->willReturn( '10.0.0.1' );
+		$request2 = new FauxRequest();
+		$request2->setIP( '10.0.0.1' );
 		$data['metadata'] = $dataMD;
 		$info = new SessionInfo( SessionInfo::MIN_PRIORITY, $data );
 		$metadata = $info->getProviderMetadata();

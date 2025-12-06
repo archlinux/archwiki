@@ -3,11 +3,12 @@
 		"authors": [
 			"20kdc",
 			"Juwan",
+			"Juwan~backup",
 			"Keenan Pepper",
 			"Tamzin",
+			"Tbodt",
 			"物灵",
-			"Juwan~backup",
-			"Tbodt"
+			"Tymewalk"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "toki sin",
@@ -32,6 +33,7 @@
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|jan}} $1 li toki",
 	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|toki}} $1",
 	"discussiontools-topicheader-latestcomment": "toki sin poka: $1",
+	"discussiontools-topicsubscription-action-subscribe-button": "o kute e toki sin",
 	"discussiontools-topicsubscription-button-subscribe": "o kute e toki sin",
 	"discussiontools-topicsubscription-button-subscribe-label": "o kute e toki sin",
 	"discussiontools-topicsubscription-button-unsubscribe": "o sona ala e toki sin",

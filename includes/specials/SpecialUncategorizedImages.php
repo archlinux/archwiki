@@ -1,25 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
 use MediaWiki\SpecialPage\ImageQueryPage;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -38,27 +25,33 @@ class SpecialUncategorizedImages extends ImageQueryPage {
 		$this->setDatabaseProvider( $dbProvider );
 	}
 
+	/** @inheritDoc */
 	protected function sortDescending() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function isExpensive() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isSyndicated() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getOrderFields() {
 		return [ 'title' ];
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->addHelpLink( 'Help:Categories' );
 		parent::execute( $par );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		return [
 			'tables' => [ 'page', 'categorylinks' ],
@@ -80,6 +73,15 @@ class SpecialUncategorizedImages extends ImageQueryPage {
 		];
 	}
 
+	/** @inheritDoc */
+	protected function getRecacheDB() {
+		return $this->getDatabaseProvider()->getReplicaDatabase(
+			CategoryLinksTable::VIRTUAL_DOMAIN,
+			'vslow'
+		);
+	}
+
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'maintenance';
 	}

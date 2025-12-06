@@ -21,7 +21,7 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
  */
 class RefTagHandler extends ExtensionTagHandler {
 
-	private bool $isSubreferenceSupported;
+	private readonly bool $isSubreferenceSupported;
 
 	public function __construct( Config $mainConfig ) {
 		$this->isSubreferenceSupported = $mainConfig->get( 'CiteSubReferencing' );
@@ -78,17 +78,51 @@ class RefTagHandler extends ExtensionTagHandler {
 		ParsoidExtensionAPI $extApi, Element $ref, callable $defaultHandler
 	): bool {
 		$dataMw = DOMDataUtils::getDataMw( $ref );
-		if ( isset( $dataMw->body->html ) ) {
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-			$fragment = $extApi->htmlToDom( $dataMw->body->html );
-			$defaultHandler( $fragment );
-		} elseif ( isset( $dataMw->body->id ) ) {
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-			$refNode = DOMCompat::getElementById( $extApi->getTopLevelDoc(), $dataMw->body->id );
-			if ( $refNode ) {
-				$defaultHandler( $refNode );
-			}
+
+		// Only lint content pointed at by the id.  Content embedded in
+		// data-mw will be traversed by linter when
+		// processAttributeEmbeddedHTML is called
+		if ( !isset( $dataMw->body->id ) ) {
+			return true;
 		}
+
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
+		$bodyElt = DOMCompat::getElementById( $extApi->getTopLevelDoc(), $dataMw->body->id );
+		if ( !$bodyElt ) {
+			return true;
+		}
+
+		$hasRefName = (bool)$dataMw->getExtAttrib( 'name' );
+		$hasFollow = (bool)$dataMw->getExtAttrib( 'follow' );
+
+		if ( $hasFollow ) {
+			$about = DOMCompat::getAttribute( $ref, 'about' );
+			$followNode = $about !== null ? DOMCompat::querySelector(
+				$bodyElt, "span[typeof~='mw:Cite/Follow'][about='{$about}']"
+			) : null;
+			if ( $followNode ) {
+				$defaultHandler( $followNode );
+			}
+		} elseif (
+			$hasRefName &&
+			DOMCompat::querySelector( $bodyElt, "span[typeof~='mw:Cite/Follow']" )
+		) {
+			// Follow content may have been added as spans, so temporarily
+			// move them out to avoid linting them redundantly
+			// domToWikitext clones $bodyElt and removes the spans, which
+			// works here, but is maybe less performant
+			$tmpFrag = $bodyElt->ownerDocument->createDocumentFragment();
+			foreach ( DOMUtils::childNodes( $bodyElt ) as $child ) {
+				if ( DOMUtils::hasTypeOf( $child, 'mw:Cite/Follow' ) ) {
+					$tmpFrag->appendChild( $child );
+				}
+			}
+			$defaultHandler( $bodyElt );
+			DOMUtils::migrateChildren( $tmpFrag, $bodyElt );
+		} else {
+			$defaultHandler( $bodyElt );
+		}
+
 		return true;
 	}
 
@@ -96,8 +130,14 @@ class RefTagHandler extends ExtensionTagHandler {
 	public function domToWikitext(
 		ParsoidExtensionAPI $extApi, Element $node, bool $wrapperUnmodified
 	) {
-		$startTagSrc = $extApi->extStartTagToWikitext( $node );
 		$dataMw = DOMDataUtils::getDataMw( $node );
+		// Drop the conversion of synthetic main refs. The content of these will be retrived
+		// by the corresponding subrefs with the `details` attribute.
+		if ( isset( $dataMw->isSyntheticMainRef ) ) {
+			return '';
+		}
+
+		$startTagSrc = $extApi->extStartTagToWikitext( $node );
 		if ( !isset( $dataMw->body ) ) {
 			return $startTagSrc; // We self-closed this already.
 		}
@@ -151,47 +191,43 @@ class RefTagHandler extends ExtensionTagHandler {
 					$src = $extApi->domToWikitext( $html2wtOpts, $followNode, true );
 					$src = ltrim( $src, ' ' );
 				} else {
+					// This means the incoming HTML is mangled, still we try to recover what we can
 					$src = '';
 				}
 			} else {
-				if ( $hasRefName ) {
-					// Follow content may have been added as spans, so drop it
-					if ( DOMCompat::querySelector( $bodyElt, "span[typeof~='mw:Cite/Follow']" ) ) {
-						$bodyElt = DOMDataUtils::cloneNode( $bodyElt, true );
-						foreach ( $bodyElt->childNodes as $child ) {
-							if ( DOMUtils::hasTypeOf( $child, 'mw:Cite/Follow' ) ) {
-								// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
-								DOMCompat::remove( $child );
-							}
+				// Follow content may have been added as spans, so drop it
+				if (
+					$hasRefName &&
+					DOMCompat::querySelector( $bodyElt, "span[typeof~='mw:Cite/Follow']" )
+				) {
+					$bodyElt = DOMDataUtils::cloneNode( $bodyElt, true );
+					foreach ( DOMUtils::childNodes( $bodyElt ) as $child ) {
+						if ( DOMUtils::hasTypeOf( $child, 'mw:Cite/Follow' ) ) {
+							// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
+							DOMCompat::remove( $child );
 						}
 					}
 				}
-
 				$src = $extApi->domToWikitext( $html2wtOpts, $bodyElt, true );
 			}
 		} else {
-			$extApi->log( 'error', 'Ref body unavailable for: ' . DOMCompat::getOuterHTML( $node ) );
-			return ''; // Drop it!
+			// This means the incoming HTML is mangled, still we try to recover what we can
+			$src = '';
 		}
 
 		if ( $this->isSubreferenceSupported &&
 			 $dataMw->getExtAttrib( 'details' ) !== null &&
-			 // @phan-suppress-next-line PhanUndeclaredProperty
 			 isset( $dataMw->mainRef )
 		) {
 			// TODO: maintain original order of attributes
-			// @phan-suppress-next-line PhanUndeclaredProperty
 			$dataMw->setExtAttrib( 'name', $dataMw->mainRef );
 			// TODO: escape wikitext for attribute
 			$dataMw->setExtAttrib( 'details', $src );
 
-			// @phan-suppress-next-line PhanUndeclaredProperty
-			if ( isset( $dataMw->isMainRefBodyWithDetails ) && isset( $dataMw->mainBody ) ) {
-				// @phan-suppress-next-line PhanUndeclaredProperty
+			if ( isset( $dataMw->isSubRefWithMainBody ) ) {
 				$mainElt = DOMCompat::getElementById( $extApi->getTopLevelDoc(), $dataMw->mainBody );
 				if ( $mainElt ) {
 					$src = $extApi->domToWikitext( $html2wtOpts, $mainElt, true );
-					DOMCompat::remove( $mainElt );
 				}
 			} else {
 				$src = '';
@@ -213,6 +249,19 @@ class RefTagHandler extends ExtensionTagHandler {
 	): bool {
 		$origDataMw = DOMDataUtils::getDataMw( $origNode );
 		$editedDataMw = DOMDataUtils::getDataMw( $editedNode );
+
+		// FIXME: This compares the rendered bodies, the source elements should be
+		// compared instead.
+		if ( isset( $origDataMw->mainBody ) && isset( $editedDataMw->mainBody ) &&
+			isset( $origDataMw->isSubRefWithMainBody ) && isset( $editedDataMw->isSubRefWithMainBody )
+		) {
+			$origMainHtml = DOMCompat::getElementById( $origNode->ownerDocument, $origDataMw->mainBody );
+			$editedMainHtml = DOMCompat::getElementById( $editedNode->ownerDocument, $editedDataMw->mainBody );
+
+			if ( $origMainHtml && $editedMainHtml && $domDiff( $origMainHtml, $editedMainHtml ) ) {
+				return true;
+			}
+		}
 
 		if ( isset( $origDataMw->body->html ) && isset( $editedDataMw->body->html ) ) {
 			$origFragment = $extApi->htmlToDom(
@@ -281,7 +330,7 @@ class RefTagHandler extends ExtensionTagHandler {
 				if ( $ref ) {
 					return ' [doc: ' . DOMCompat::getOuterHTML( $ref ) . ']';
 				}
-			} catch ( Exception $e ) {
+			} catch ( Exception ) {
 				// We are just providing VE with debugging info.
 				// So, ignore all exceptions / errors in this code.
 			}

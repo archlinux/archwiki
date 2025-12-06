@@ -32,7 +32,7 @@ class EchoEditThresholdPresentationModel extends EchoEventPresentationModel {
 		if ( $this->event->getExtraParam( 'revid' ) ) {
 			$params = [
 				'oldid' => 'prev',
-				'diff' => $this->event->getExtraParam( 'revid' )
+				'diff' => $this->event->getExtraParam( 'revid' ),
 			];
 		} else {
 			$params = [];
@@ -41,7 +41,7 @@ class EchoEditThresholdPresentationModel extends EchoEventPresentationModel {
 
 		return [
 			'url' => $url,
-			'label' => $this->msg( 'notification-link-thank-you-edit', $this->getViewingUserForGender() )->text()
+			'label' => $this->msg( 'notification-link-thank-you-edit', $this->getViewingUserForGender() )->text(),
 		];
 	}
 }

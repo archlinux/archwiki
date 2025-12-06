@@ -24,29 +24,12 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	 */
 	protected $title = false;
 
-	/** @var SearchEngineFactory */
-	private $searchEngineFactory;
-
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var ParserFactory */
-	private $parserFactory;
-
-	/**
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param RevisionLookup $revisionLookup
-	 * @param ParserFactory $parserFactory
-	 */
 	public function __construct(
-		SearchEngineFactory $searchEngineFactory,
-		RevisionLookup $revisionLookup,
-		ParserFactory $parserFactory
+		private readonly SearchEngineFactory $searchEngineFactory,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly ParserFactory $parserFactory,
 	) {
 		parent::__construct( 'CiteThisPage' );
-		$this->searchEngineFactory = $searchEngineFactory;
-		$this->revisionLookup = $revisionLookup;
-		$this->parserFactory = $parserFactory;
 	}
 
 	/**
@@ -56,6 +39,9 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		$this->setHeaders();
 		$this->addHelpLink( 'Extension:CiteThisPage' );
 		parent::execute( $par );
+		if ( $par ) {
+			$this->title = Title::newFromText( $par );
+		}
 		if ( $this->title instanceof Title ) {
 			$id = $this->getRequest()->getInt( 'id' );
 			$this->showCitations( $this->title, $id );
@@ -163,6 +149,10 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		$this->getOutput()->addParserOutputContent( $ret, $parserOptions, [
 			'enableSectionEditLinks' => false,
 		] );
+		$tocData = $ret->getTOCData();
+		if ( $tocData !== null ) {
+			$this->getOutput()->setTOCData( $tocData );
+		}
 	}
 
 	/**
@@ -199,6 +189,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		$parserOptions = ParserOptions::newFromContext( $this->getContext() );
 		$parserOptions->setDateFormat( 'default' );
 		$parserOptions->setInterfaceMessage( true );
+		$parserOptions->setIsMessage( true );
 		return $parserOptions;
 	}
 

@@ -1,17 +1,15 @@
-'use strict';
-
-const {
-		pageExistsWithText,
-		iAmUsingTheMobileSite,
-		iAmOnPage
-	} = require( '../features/step_definitions/common_steps' ),
-	{
-		iClickOnAReference,
-		iClickOnTheMask,
-		iShouldSeeNotTheReferenceDrawer,
-		iClickOnANestedReference,
-		iShouldSeeDrawerWithText
-	} = require( '../features/step_definitions/reference_steps' );
+import {
+	pageExistsWithText,
+	iAmUsingTheMobileSite,
+	iAmOnPage
+} from '../features/step_definitions/common_steps.js';
+import {
+	iClickOnAReference,
+	iClickOnTheMask,
+	iShouldSeeNotTheReferenceDrawer,
+	iClickOnANestedReference,
+	iShouldSeeDrawerWithText
+} from '../features/step_definitions/reference_steps.js';
 
 // @chrome @en.m.wikipedia.beta.wmflabs.org @firefox @test2.m.wikipedia.org @vagrant
 describe( 'Opening and closing the reference drawer', () => {

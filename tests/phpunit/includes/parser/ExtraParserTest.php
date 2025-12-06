@@ -3,6 +3,7 @@
 namespace MediaWiki\Tests\Parser;
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parser;
@@ -40,7 +41,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 
 		// FIXME: This test should pass without setting global content language
 		$this->options = ParserOptions::newFromUserAndLang( new User, $contLang );
-		$this->options->setTemplateCallback( [ __CLASS__, 'statelessFetchTemplate' ] );
+		$this->options->setTemplateCallback( [ self::class, 'statelessFetchTemplate' ] );
 
 		$this->parser = $services->getParserFactory()->create();
 	}
@@ -254,6 +255,8 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideParseLinkParameter
 	 */
 	public function testParseLinkParameter( $input, $expected, $expectedLinks, $desc ) {
+		MWDebug::filterDeprecationForTest( '/::getInterwikiLinks was deprecated/' );
+		MWDebug::filterDeprecationForTest( '/::getLinks was deprecated/' );
 		static $testInterwikis = [
 			[
 				'iw_prefix' => 'local',

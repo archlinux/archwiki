@@ -83,6 +83,7 @@ class UserDef extends TypeDef {
 		$this->userNameUtils = $userNameUtils;
 	}
 
+	/** @inheritDoc */
 	public function validate( $name, $value, array $settings, array $options ) {
 		$this->failIfNotString( $name, $value, $settings, $options );
 
@@ -96,6 +97,7 @@ class UserDef extends TypeDef {
 		return empty( $settings[self::PARAM_RETURN_OBJECT] ) ? $user->getName() : $user;
 	}
 
+	/** @inheritDoc */
 	public function normalizeSettings( array $settings ) {
 		if ( isset( $settings[self::PARAM_ALLOWED_USER_TYPES] ) ) {
 			$settings[self::PARAM_ALLOWED_USER_TYPES] = array_values( array_intersect(
@@ -110,12 +112,12 @@ class UserDef extends TypeDef {
 		return parent::normalizeSettings( $settings );
 	}
 
+	/** @inheritDoc */
 	public function checkSettings( string $name, $settings, array $options, array $ret ): array {
 		$ret = parent::checkSettings( $name, $settings, $options, $ret );
 
-		$ret['allowedKeys'] = array_merge( $ret['allowedKeys'], [
-			self::PARAM_ALLOWED_USER_TYPES, self::PARAM_RETURN_OBJECT,
-		] );
+		$ret['allowedKeys'][] = self::PARAM_ALLOWED_USER_TYPES;
+		$ret['allowedKeys'][] = self::PARAM_RETURN_OBJECT;
 
 		if ( !is_bool( $settings[self::PARAM_RETURN_OBJECT] ?? false ) ) {
 			$ret['issues'][self::PARAM_RETURN_OBJECT] = 'PARAM_RETURN_OBJECT must be boolean, got '
@@ -226,19 +228,19 @@ class UserDef extends TypeDef {
 
 		// (T232672) Reproduce the normalization applied in UserNameUtils::getCanonical() when
 		// performing the checks below.
-		if ( strpos( $value, '#' ) !== false ) {
+		if ( str_contains( $value, '#' ) ) {
 			return [ '', null ];
 		}
 
 		try {
 			$t = $this->titleParser->parseTitle( $value );
-		} catch ( MalformedTitleException $_ ) {
+		} catch ( MalformedTitleException ) {
 			$t = null;
 		}
 		if ( !$t || $t->getNamespace() !== NS_USER || $t->isExternal() ) { // likely
 			try {
 				$t = $this->titleParser->parseTitle( "User:$value" );
-			} catch ( MalformedTitleException $_ ) {
+			} catch ( MalformedTitleException ) {
 				$t = null;
 			}
 		}
@@ -279,6 +281,7 @@ class UserDef extends TypeDef {
 		return [ '', null ];
 	}
 
+	/** @inheritDoc */
 	public function getParamInfo( $name, array $settings, array $options ) {
 		$info = parent::getParamInfo( $name, $settings, $options );
 
@@ -287,6 +290,7 @@ class UserDef extends TypeDef {
 		return $info;
 	}
 
+	/** @inheritDoc */
 	public function getHelpInfo( $name, array $settings, array $options ) {
 		$info = parent::getParamInfo( $name, $settings, $options );
 

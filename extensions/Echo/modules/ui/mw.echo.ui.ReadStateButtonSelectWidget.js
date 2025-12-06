@@ -13,17 +13,17 @@ mw.echo.ui.ReadStateButtonSelectWidget = function MwEchoUiReadStateButtonSelectW
 		items: [
 			new OO.ui.ButtonOptionWidget( {
 				data: 'all',
-				label: mw.msg( 'notification-inbox-filter-all' )
+				label: mw.msg( 'notification-inbox-filter-all' ),
 			} ),
 			new OO.ui.ButtonOptionWidget( {
 				data: 'read',
-				label: mw.msg( 'notification-inbox-filter-read' )
+				label: mw.msg( 'notification-inbox-filter-read' ),
 			} ),
 			new OO.ui.ButtonOptionWidget( {
 				data: 'unread',
-				label: mw.msg( 'notification-inbox-filter-unread' )
-			} )
-		]
+				label: mw.msg( 'notification-inbox-filter-unread' ),
+			} ),
+		],
 	} ) );
 
 	this.connect( this, { choose: 'onChoose' } );

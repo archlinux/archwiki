@@ -15,7 +15,7 @@ use MediaWiki\Language\Language;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
-use MediaWiki\Request\WebRequest;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -129,16 +129,13 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param LazyLoadedVariable $var
-	 * @param mixed $expected
-	 * @param array $services
 	 * @dataProvider provideUserRelatedVars
 	 */
 	public function testUserRelatedVars(
-		LazyLoadedVariable $var,
 		$expected,
-		array $services = []
+		callable $getMocks
 	) {
+		[ $var, $services ] = $getMocks( $this );
 		$computer = $this->getComputer( $services );
 		$this->assertSame(
 			$expected,
@@ -146,8 +143,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideUserRelatedVars(): Generator {
-		$user = $this->createMock( User::class );
+	public static function provideUserRelatedVars(): Generator {
 		$getUserVar = static function ( $user, $method ): LazyLoadedVariable {
 			return new LazyLoadedVariable(
 				$method,
@@ -156,128 +152,175 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		};
 
 		$editCount = 7;
-
-		$userEditTracker = $this->createMock( UserEditTracker::class );
-
-		$userEditTracker->method( 'getUserEditCount' )->with( $user )->willReturn( $editCount );
-		$var = $getUserVar( $user, 'user-editcount' );
-		yield 'user_editcount' => [ $var, $editCount, [ 'UserEditTracker' => $userEditTracker ] ];
+		$getMocks = static function ( $testCase ) use ( $editCount, $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$userEditTracker = $testCase->createMock( UserEditTracker::class );
+			$userEditTracker->method( 'getUserEditCount' )->with( $user )->willReturn( $editCount );
+			$var = $getUserVar( $user, 'user-editcount' );
+			return [ $var, [ 'UserEditTracker' => $userEditTracker ] ];
+		};
+		yield 'user_editcount' => [ $editCount, $getMocks ];
 
 		$emailConfirm = '20000101000000';
-		$user->method( 'getEmailAuthenticationTimestamp' )->willReturn( $emailConfirm );
-		$var = $getUserVar( $user, 'user-emailconfirm' );
-		yield 'user_emailconfirm' => [ $var, $emailConfirm ];
+		$getMocks = static function ( $testCase ) use ( $emailConfirm, $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getEmailAuthenticationTimestamp' )->willReturn( $emailConfirm );
+			$var = $getUserVar( $user, 'user-emailconfirm' );
+			return [ $var, [] ];
+		};
+		yield 'user_emailconfirm' => [ $emailConfirm, $getMocks ];
 
-		$mockUserIdentityUtils = $this->createMock( UserIdentityUtils::class );
-		$mockUserIdentityUtils->method( 'isNamed' )->with( $user )->willReturn( true );
-		$var = $getUserVar( $user, 'user-type' );
-		yield 'user_type for named user' => [ $var, 'named', [ 'UserIdentityUtils' => $mockUserIdentityUtils ] ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$mockUserIdentityUtils = $testCase->createMock( UserIdentityUtils::class );
+			$mockUserIdentityUtils->method( 'isNamed' )->with( $user )->willReturn( true );
+			$var = $getUserVar( $user, 'user-type' );
+			return [ $var, [ 'UserIdentityUtils' => $mockUserIdentityUtils ] ];
+		};
+		yield 'user_type for named user' => [ 'named', $getMocks ];
 
-		$mockUserIdentityUtils = $this->createMock( UserIdentityUtils::class );
-		$mockUserIdentityUtils->method( 'isNamed' )->with( $user )->willReturn( false );
-		$mockUserIdentityUtils->method( 'isTemp' )->with( $user )->willReturn( true );
-		$var = $getUserVar( $user, 'user-type' );
-		yield 'user_type for named temporary user' => [
-			$var, 'temp', [ 'UserIdentityUtils' => $mockUserIdentityUtils ]
-		];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$mockUserIdentityUtils = $testCase->createMock( UserIdentityUtils::class );
+			$mockUserIdentityUtils->method( 'isNamed' )->with( $user )->willReturn( false );
+			$mockUserIdentityUtils->method( 'isTemp' )->with( $user )->willReturn( true );
+			$var = $getUserVar( $user, 'user-type' );
+			return [ $var, [ 'UserIdentityUtils' => $mockUserIdentityUtils ] ];
+		};
+		yield 'user_type for named temporary user' => [ 'temp', $getMocks ];
 
-		$user = $this->createMock( User::class );
-		$user->method( 'getName' )->willReturn( '127.0.0.1' );
-		$var = $getUserVar( $user, 'user-type' );
-		yield 'user_type for logged-out user' => [ $var, 'ip' ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getName' )->willReturn( '127.0.0.1' );
+			$var = $getUserVar( $user, 'user-type' );
+			return [ $var, [] ];
+		};
+		yield 'user_type for logged-out user' => [ 'ip', $getMocks ];
 
-		$user = $this->createMock( User::class );
-		$user->method( 'getName' )->willReturn( 'mediawiki>testing' );
-		$var = $getUserVar( $user, 'user-type' );
-		yield 'user_type for an external username' => [ $var, 'external' ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getName' )->willReturn( 'mediawiki>testing' );
+			$var = $getUserVar( $user, 'user-type' );
+			return [ $var, [] ];
+		};
+		yield 'user_type for an external username' => [ 'external', $getMocks ];
 
-		$user = $this->createMock( User::class );
-		$user->method( 'getName' )->willReturn( 'Non-existing user 1234' );
-		$var = $getUserVar( $user, 'user-type' );
-		yield 'user_type for unregistered username' => [ $var, 'unknown' ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getName' )->willReturn( 'Non-existing user 1234' );
+			$var = $getUserVar( $user, 'user-type' );
+			return [ $var, [] ];
+		};
+		yield 'user_type for unregistered username' => [ 'unknown', $getMocks ];
 
-		$request = $this->createMock( WebRequest::class );
-		$request->method( 'getIP' )->willReturn( '127.0.0.1' );
-		$user = $this->createMock( User::class );
-		$user->method( 'getRequest' )->willReturn( $request );
-		$user->method( 'getName' )->willReturn( '127.0.0.1' );
-		$var = $getUserVar( $user, 'user-unnamed-ip' );
-		yield 'user_unnamed_ip for an anonymous user' => [ $var, '127.0.0.1' ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$request = new FauxRequest();
+			$request->setIP( '127.0.0.1' );
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getRequest' )->willReturn( $request );
+			$user->method( 'getName' )->willReturn( '127.0.0.1' );
+			$var = $getUserVar( $user, 'user-unnamed-ip' );
+			return [ $var, [] ];
+		};
+		yield 'user_unnamed_ip for an anonymous user' => [ '127.0.0.1', $getMocks ];
 
-		$user = $this->createMock( User::class );
-		$user->method( 'getName' )->willReturn( 'Test User' );
-		$var = $getUserVar( $user, 'user-unnamed-ip' );
-		yield 'user_unnamed_ip for a user' => [ $var, null ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getName' )->willReturn( 'Test User' );
+			$var = $getUserVar( $user, 'user-unnamed-ip' );
+			return [ $var, [] ];
+		};
+		yield 'user_unnamed_ip for a user' => [ null, $getMocks ];
 
-		$mockUserIdentityUtils = $this->createMock( UserIdentityUtils::class );
-		$mockUserIdentityUtils->method( 'isTemp' )->with( $user )->willReturn( true );
-		$request = $this->createMock( WebRequest::class );
-		$request->method( 'getIP' )->willReturn( '127.0.0.1' );
-		$user = $this->createMock( User::class );
-		$user->method( 'getRequest' )->willReturn( $request );
-		$var = $getUserVar( $user, 'user-unnamed-ip' );
-		yield 'user_unnamed_ip for a temp user' => [
-			$var, '127.0.0.1', [ 'UserIdentityUtils' => $mockUserIdentityUtils ]
-		];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$mockUserIdentityUtils = $testCase->createMock( UserIdentityUtils::class );
+			$mockUserIdentityUtils->method( 'isTemp' )->with( $user )->willReturn( true );
+			$request = new FauxRequest();
+			$request->setIP( '127.0.0.1' );
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getRequest' )->willReturn( $request );
+			$var = $getUserVar( $user, 'user-unnamed-ip' );
+			return [ $var, [ 'UserIdentityUtils' => $mockUserIdentityUtils ] ];
+		};
+		yield 'user_unnamed_ip for a temp user' => [ '127.0.0.1', $getMocks ];
 
-		$user = $this->createMock( User::class );
 		$groups = [ '*', 'group1', 'group2' ];
-		$userGroupManager = $this->createMock( UserGroupManager::class );
-		$userGroupManager->method( 'getUserEffectiveGroups' )->with( $user )->willReturn( $groups );
-		$var = $getUserVar( $user, 'user-groups' );
-		yield 'user_groups' => [ $var, $groups, [ 'UserGroupManager' => $userGroupManager ] ];
+		$getMocks = static function ( $testCase ) use ( $groups, $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$userGroupManager = $testCase->createMock( UserGroupManager::class );
+			$userGroupManager->method( 'getUserEffectiveGroups' )->with( $user )->willReturn( $groups );
+			$var = $getUserVar( $user, 'user-groups' );
+			return [ $var, [ 'UserGroupManager' => $userGroupManager ] ];
+		};
+		yield 'user_groups' => [ $groups, $getMocks ];
 
 		$rights = [ 'abusefilter-foo', 'abusefilter-bar' ];
-		$permissionManager = $this->createMock( PermissionManager::class );
-		$permissionManager->method( 'getUserPermissions' )->with( $user )->willReturn( $rights );
-		$var = $getUserVar( $user, 'user-rights' );
-		yield 'user_rights' => [ $var, $rights, [ 'PermissionManager' => $permissionManager ] ];
+		$getMocks = static function ( $testCase ) use ( $rights, $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$permissionManager = $testCase->createMock( PermissionManager::class );
+			$permissionManager->method( 'getUserPermissions' )->with( $user )->willReturn( $rights );
+			$var = $getUserVar( $user, 'user-rights' );
+			return [ $var, [ 'PermissionManager' => $permissionManager ] ];
+		};
+		yield 'user_rights' => [ $rights, $getMocks ];
 
-		$block = new SystemBlock( [] );
-		$user->method( 'getBlock' )->willReturn( $block );
-		$var = $getUserVar( $user, 'user-block' );
-		yield 'user_blocked' => [ $var, (bool)$block ];
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$user = $testCase->createMock( User::class );
+			$block = new SystemBlock( [] );
+			$user->method( 'getBlock' )->willReturn( $block );
+			$var = $getUserVar( $user, 'user-block' );
+			return [ $var, [] ];
+		};
+		yield 'user_blocked' => [ true, $getMocks ];
 
 		$fakeTime = 1514700000;
 
-		$anonUser = $this->createMock( User::class );
 		$anonymousAge = 0;
-		$var = new LazyLoadedVariable(
-			'user-age',
-			[ 'user' => $anonUser, 'asof' => $fakeTime ]
-		);
-		yield 'user_age, anonymous' => [ $var, $anonymousAge ];
+		$getMocks = static function ( $testCase ) use ( $anonymousAge, $fakeTime ) {
+			$anonUser = $testCase->createMock( User::class );
+			$var = new LazyLoadedVariable(
+				'user-age',
+				[ 'user' => $anonUser, 'asof' => $fakeTime ]
+			);
+			return [ $var, [] ];
+		};
+		yield 'user_age, anonymous' => [ $anonymousAge, $getMocks ];
 
-		$user->method( 'isRegistered' )->willReturn( true );
-
-		$missingRegistrationUser = clone $user;
-		$var = new LazyLoadedVariable(
-			'user-age',
-			[ 'user' => $missingRegistrationUser, 'asof' => $fakeTime ]
-		);
 		$expected = (int)wfTimestamp( TS_UNIX, $fakeTime ) - (int)wfTimestamp( TS_UNIX, '20080115000000' );
-		yield 'user_age, registered but not available' => [ $var, $expected ];
+		$getMocks = static function ( $testCase ) use ( $fakeTime ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'isRegistered' )->willReturn( true );
+			$var = new LazyLoadedVariable(
+				'user-age',
+				[ 'user' => $user, 'asof' => $fakeTime ]
+			);
+			return [ $var, [] ];
+		};
+		yield 'user_age, registered but not available' => [ $expected, $getMocks ];
 
 		$age = 163;
-		$user->method( 'getRegistration' )->willReturn( $fakeTime - $age );
-		$var = new LazyLoadedVariable(
-			'user-age',
-			[ 'user' => $user, 'asof' => $fakeTime ]
-		);
-		yield 'user_age, registered' => [ $var, $age ];
+		$getMocks = static function ( $testCase ) use ( $fakeTime, $age ) {
+			$user = $testCase->createMock( User::class );
+			$user->method( 'isRegistered' )->willReturn( true );
+			$user->method( 'getRegistration' )->willReturn( $fakeTime - $age );
+			$var = new LazyLoadedVariable(
+				'user-age',
+				[ 'user' => $user, 'asof' => $fakeTime ]
+			);
+			return [ $var, [] ];
+		};
+		yield 'user_age, registered' => [ $age, $getMocks ];
 	}
 
 	/**
-	 * @param LazyLoadedVariable $var
-	 * @param mixed $expected
-	 * @param array $services
 	 * @dataProvider provideTitleRelatedVars
 	 */
 	public function testTitleRelatedVars(
-		LazyLoadedVariable $var,
 		$expected,
-		array $services = []
+		callable $getMocks
 	) {
+		[ $var, $services ] = $getMocks( $this );
 		$computer = $this->getComputer( $services );
 		$this->assertSame(
 			$expected,
@@ -285,76 +328,84 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideTitleRelatedVars(): Generator {
+	public static function provideTitleRelatedVars(): Generator {
 		$restrictions = [ 'create', 'edit', 'move', 'upload' ];
 		foreach ( $restrictions as $restriction ) {
 			$appliedRestrictions = [ 'sysop' ];
-			$restrictedTitle = $this->createMock( Title::class );
-			$restrictionStore = $this->createMock( RestrictionStore::class );
-			$restrictionStore->expects( $this->once() )
-				->method( 'getRestrictions' )
-				->with( $restrictedTitle, $restriction )
-				->willReturn( $appliedRestrictions );
-			$var = new LazyLoadedVariable(
-				'get-page-restrictions',
-				[ 'title' => $restrictedTitle, 'action' => $restriction ]
-			);
-			yield "*_restrictions_{$restriction}, restricted" => [
-				$var, $appliedRestrictions, [ 'RestrictionStore' => $restrictionStore ]
-			];
+			$getMocks = static function ( $testCase ) use ( $restriction, $appliedRestrictions ) {
+				$restrictedTitle = $testCase->createMock( Title::class );
+				$restrictionStore = $testCase->createMock( RestrictionStore::class );
+				$restrictionStore->expects( $testCase->once() )
+					->method( 'getRestrictions' )
+					->with( $restrictedTitle, $restriction )
+					->willReturn( $appliedRestrictions );
+				$var = new LazyLoadedVariable(
+					'get-page-restrictions',
+					[ 'title' => $restrictedTitle, 'action' => $restriction ]
+				);
+				return [ $var, [ 'RestrictionStore' => $restrictionStore ] ];
+			};
+			yield "*_restrictions_{$restriction}, restricted" => [ $appliedRestrictions, $getMocks ];
 
-			$unrestrictedTitle = $this->createMock( Title::class );
-			$restrictionStore = $this->createMock( RestrictionStore::class );
-			$restrictionStore->expects( $this->once() )
-				->method( 'getRestrictions' )
-				->with( $unrestrictedTitle, $restriction )
-				->willReturn( [] );
-			$var = new LazyLoadedVariable(
-				'get-page-restrictions',
-				[ 'title' => $unrestrictedTitle, 'action' => $restriction ]
-			);
-			yield "*_restrictions_{$restriction}, unrestricted" => [
-				$var, [], [ 'RestrictionStore' => $restrictionStore ]
-			];
+			$getMocks = static function ( $testCase ) use ( $restriction ) {
+				$unrestrictedTitle = $testCase->createMock( Title::class );
+				$restrictionStore = $testCase->createMock( RestrictionStore::class );
+				$restrictionStore->expects( $testCase->once() )
+					->method( 'getRestrictions' )
+					->with( $unrestrictedTitle, $restriction )
+					->willReturn( [] );
+				$var = new LazyLoadedVariable(
+					'get-page-restrictions',
+					[ 'title' => $unrestrictedTitle, 'action' => $restriction ]
+				);
+				return [ $var, [ 'RestrictionStore' => $restrictionStore ] ];
+			};
+			yield "*_restrictions_{$restriction}, unrestricted" => [ [], $getMocks ];
 		}
 
 		$fakeTime = 1514700000;
-
 		$age = 163;
-		$title = $this->createMock( Title::class );
-		$revision = $this->createMock( RevisionRecord::class );
-		$revision->method( 'getTimestamp' )->willReturn( $fakeTime - $age );
-		$revLookup = $this->createMock( RevisionLookup::class );
-		$revLookup->method( 'getFirstRevision' )->with( $title )->willReturn( $revision );
-		$var = new LazyLoadedVariable(
-			'page-age',
-			[ 'title' => $title, 'asof' => $fakeTime ]
-		);
-		yield "*_age" => [ $var, $age, [ 'RevisionLookup' => $revLookup ] ];
+		$getMocks = static function ( $testCase ) use ( $fakeTime, $age ) {
+			$title = $testCase->createMock( Title::class );
+			$revision = $testCase->createMock( RevisionRecord::class );
+			$revision->method( 'getTimestamp' )->willReturn( $fakeTime - $age );
+			$revLookup = $testCase->createMock( RevisionLookup::class );
+			$revLookup->method( 'getFirstRevision' )->with( $title )->willReturn( $revision );
+			$var = new LazyLoadedVariable(
+				'page-age',
+				[ 'title' => $title, 'asof' => $fakeTime ]
+			);
+			return [ $var, [ 'RevisionLookup' => $revLookup ] ];
+		};
+		yield "*_age" => [ $age, $getMocks ];
 
-		$title = $this->createMock( Title::class );
-		$firstRev = $this->createMock( RevisionRecord::class );
 		$firstUserName = 'First author';
-		$firstUser = new UserIdentityValue( 1, $firstUserName );
-		$firstRev->expects( $this->once() )->method( 'getUser' )->willReturn( $firstUser );
-		$revLookup = $this->createMock( RevisionLookup::class );
-		$revLookup->method( 'getFirstRevision' )->with( $title )->willReturn( $firstRev );
-		$var = new LazyLoadedVariable(
-			'load-first-author',
-			[ 'title' => $title ]
-		);
-		yield '*_first_contributor, with rev' => [
-			$var, $firstUserName, [ 'RevisionLookup' => $revLookup ]
-		];
+		$getMocks = static function ( $testCase ) use ( $firstUserName ) {
+			$title = $testCase->createMock( Title::class );
+			$firstRev = $testCase->createMock( RevisionRecord::class );
+			$firstUser = new UserIdentityValue( 1, $firstUserName );
+			$firstRev->expects( $testCase->once() )->method( 'getUser' )->willReturn( $firstUser );
+			$revLookup = $testCase->createMock( RevisionLookup::class );
+			$revLookup->method( 'getFirstRevision' )->with( $title )->willReturn( $firstRev );
+			$var = new LazyLoadedVariable(
+				'load-first-author',
+				[ 'title' => $title ]
+			);
+			return [ $var, [ 'RevisionLookup' => $revLookup ] ];
+		};
+		yield '*_first_contributor, with rev' => [ $firstUserName, $getMocks ];
 
-		$title = $this->createMock( Title::class );
-		$revLookup = $this->createMock( RevisionLookup::class );
-		$revLookup->method( 'getFirstRevision' )->with( $title )->willReturn( null );
-		$var = new LazyLoadedVariable(
-			'load-first-author',
-			[ 'title' => $title ]
-		);
-		yield '*_first_contributor, no rev' => [ $var, '', [ 'RevisionLookup' => $revLookup ] ];
+		$getMocks = static function ( $testCase ) {
+			$title = $testCase->createMock( Title::class );
+			$revLookup = $testCase->createMock( RevisionLookup::class );
+			$revLookup->method( 'getFirstRevision' )->with( $title )->willReturn( null );
+			$var = new LazyLoadedVariable(
+				'load-first-author',
+				[ 'title' => $title ]
+			);
+			return [ $var, [ 'RevisionLookup' => $revLookup ] ];
+		};
+		yield '*_first_contributor, no rev' => [ '', $getMocks ];
 
 		// TODO _recent_contributors is tested in LazyVariableComputerDBTest
 	}

@@ -11,7 +11,7 @@ use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
- * @coversDefaultClass \MediaWiki\FileBackend\FileBackendGroup
+ * @covers \MediaWiki\FileBackend\FileBackendGroup
  */
 class FileBackendGroupTest extends MediaWikiUnitTestCase {
 	use DummyServicesTrait;
@@ -37,13 +37,6 @@ class FileBackendGroupTest extends MediaWikiUnitTestCase {
 			$this->srvCache = new EmptyBagOStuff;
 		}
 		return $this->srvCache;
-	}
-
-	private function getWANObjectCache(): WANObjectCache {
-		if ( !$this->wanCache ) {
-			$this->wanCache = $this->createNoOpMock( WANObjectCache::class );
-		}
-		return $this->wanCache;
 	}
 
 	/**
@@ -86,7 +79,7 @@ class FileBackendGroupTest extends MediaWikiUnitTestCase {
 				FileBackendGroup::CONSTRUCTOR_OPTIONS, $options, self::getDefaultOptions() ),
 			$this->getDummyReadOnlyMode( $options['readOnlyMode'] ?? false ),
 			$this->getLocalServerCache(),
-			$this->getWANObjectCache(),
+			WANObjectCache::newEmpty(),
 			$options['mimeAnalyzer'] ?? $this->createNoOpMock( MimeAnalyzer::class ),
 			$options['lmgFactory'] ?? $this->getLockManagerGroupFactory(),
 			$options['tmpFileFactory'] ?? $this->getTempFSFileFactory(),

@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Krol111"
+		]
+	},
+	"apierror-discussiontools-commentid-notfound": "Niy ôdnaleziōno kōmyntŏrza ze ID '$1'.",
+	"apierror-discussiontools-commentname-ambiguous": "Ôdnaleziōno wiyncyj jak jedyn kōmyntŏrz ze mianym '$1', paramyjter <var>commentid</var> je wymŏgany.",
+	"apierror-discussiontools-commentname-notfound": "Niy ôdnaleziōno kōmyntŏrza ze mianym '$1'.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Ta zajta nigdy niy mioła żŏdnych dyskusyji.",
+	"apierror-discussiontools-formtoken-used": "Kōmyntŏrz już zaladowany. Przeladuj zajta, coby go widzieć.",
+	"apierror-discussiontools-subscription-failed-add": "Niy udało sie zasubskrybować tego tymatu.",
+	"apierror-discussiontools-subscription-failed-remove": "Niy udało sie wycŏfać subskrypcyje tego tymatu.",
+	"apihelp-discussiontoolscompare-summary": "Ôbejrzij informacyje ô pōmianach we kōmyntarzach miyndzy dwōma wersyjōma zajty.",
+	"apihelp-discussiontoolsedit-param-commentid": "ID ôd kōmyntŏrza, na ftory mŏ być ôdpowiedziane. Używane ino, kedy wert <var>paction</var> je <var>addcomment</var>. Nadpisuje <var>commentname</var>.",
+	"apihelp-discussiontoolsedit-param-commentname": "Miano ôd kōmyntŏrza, na ftory mŏ być ôdpowiedziane. Używane ino, kedy wert <var>paction</var> je <var>addcomment</var>.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "Ze automatu przisubskrybować używacza do tymatu we dyskusyji?",
+	"apihelp-discussiontoolsedit-param-formtoken": "Ôpcjōnalne unikalne ID wygenerowane ôd klienta do unikaniŏ wciepowaniŏ zdublowanych kōmyntarzy.",
+	"apihelp-discussiontoolsedit-param-html": "Inhalt do ôpublikowaniŏ, jako HTML. Niy może być użyte cuzamyn ze <var>wikitext</var>.",
+	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Paramyjter używany ino wônczas, kedy wert <var>paction</var> to je <var>addtopic</var>.",
+	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Przizwolej na ôpublikowanie nowyj sekcyje bez tytułu.",
+	"apihelp-discussiontoolsedit-param-wikitext": "Inhalt do ôpublikowaniŏ, jako wikitekst. Niy może być użyte cuzamyn ze <var>html</var>.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Przidej nowy kōmyntŏrz za ôdpowiydź do aktywnego kōmyntarza.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Przidej nowŏ sekcyjŏ dyskusyje i ôd razu piyrszy kōmyntŏrz w nij.",
+	"apihelp-discussiontoolsedit-summary": "Poślij wiadomość na zajta dyskusyje."
+}

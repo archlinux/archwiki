@@ -29,7 +29,6 @@
 	"echo-category-title-mention": "{{PLURAL:$1|उल्लेखः|उल्लेखाः}}",
 	"echo-category-title-other": "{{PLURAL:$1|अन्यत्}}",
 	"echo-category-title-system": "{{PLURAL:$1|व्यवस्था}}",
-	"echo-pref-tooltip-edit-user-talk": "केनापि मह्यं सन्देशः प्रेषितः चेत्, मम चर्चापुटे उत्तरितं चेत् मां सूचयन्तु",
 	"echo-pref-tooltip-article-linked": "मया निर्मितेन पुटेन सह यदि अन्येन सम्पर्कतन्तुः योज्यते तर्हि मां सूचयन्तु |",
 	"echo-pref-tooltip-reverted": "मया कृतं सम्पादनं यदि अन्यः पूर्ववत् परिवर्तयेत् तर्हि सूच्यताम् |",
 	"echo-pref-tooltip-mention": "कस्यचित् चर्चापुटस्य सम्पर्कतन्तुः मम योजकपुटेन सह योज्यते चेत् सूच्यताम् |",

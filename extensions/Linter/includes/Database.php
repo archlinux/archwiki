@@ -53,11 +53,6 @@ class Database {
 	private CategoryManager $categoryManager;
 	private LBFactory $dbLoadBalancerFactory;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param CategoryManager $categoryManager
-	 * @param LBFactory $dbLoadBalancerFactory
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		CategoryManager $categoryManager,
@@ -77,9 +72,6 @@ class Database {
 		return $this->dbLoadBalancerFactory->getMainLB()->getConnection( $mode );
 	}
 
-	/**
-	 * @return IReadableDatabase
-	 */
 	public function getReplicaDBConnection(): IReadableDatabase {
 		return $this->dbLoadBalancerFactory->getReplicaDatabase();
 	}
@@ -116,7 +108,7 @@ class Database {
 	public static function makeLintError( CategoryManager $categoryManager, $row ) {
 		try {
 			$name = $categoryManager->getCategoryName( $row->linter_cat );
-		} catch ( MissingCategoryException $e ) {
+		} catch ( MissingCategoryException ) {
 			LoggerFactory::getInstance( 'Linter' )->error(
 				'Could not find name for id: {linter_cat}',
 				[ 'linter_cat' => $row->linter_cat ]
@@ -346,7 +338,7 @@ class Database {
 		foreach ( $rows as $row ) {
 			try {
 				$catName = $this->categoryManager->getCategoryName( $row->linter_cat );
-			} catch ( MissingCategoryException $e ) {
+			} catch ( MissingCategoryException ) {
 				continue;
 			}
 			// Only set visible categories.  Alternatively, we could add another
@@ -359,10 +351,8 @@ class Database {
 		return $ret;
 	}
 
-	/**
-	 * @return int[]
-	 */
-	public function getTotals() {
+	/** @return array<string,int> */
+	public function getTotals(): array {
 		$ret = [];
 		foreach ( $this->categoryManager->getVisibleCategories() as $cat ) {
 			$id = $this->categoryManager->getCategoryId( $cat );

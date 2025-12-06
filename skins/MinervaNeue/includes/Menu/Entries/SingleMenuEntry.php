@@ -25,6 +25,7 @@ use MediaWiki\Message\Message;
 class SingleMenuEntry implements IMenuEntry {
 	private string $name;
 	private array $attributes;
+	private array $customAttributes;
 	private bool $isJSOnly = false;
 
 	/**
@@ -37,8 +38,16 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param bool $isInterface If true, the menu element is provided with data-mw='interface'
 	 * and is treated as a standard part of the interface (ie. MediaWiki Core might bind to
 	 * the menu element)
+	 * @param array $customAttributes attributes an array of objects with key and value (optional)
 	 */
-	public function __construct( string $name, string $text, string $url, $className = '', bool $isInterface = true ) {
+	public function __construct(
+		string $name,
+		string $text,
+		string $url,
+		$className = '',
+		bool $isInterface = true,
+		array $customAttributes = []
+	) {
 		$this->name = $name;
 		$menuClass = 'menu__item--' . $name;
 
@@ -56,6 +65,7 @@ class SingleMenuEntry implements IMenuEntry {
 				implode( ' ', $className + [ $menuClass ] ) :
 					ltrim( $className . ' ' . $menuClass ),
 		];
+		$this->customAttributes = $customAttributes;
 		if ( $isInterface ) {
 			// This is needed when Minerva uses a standard MediaWiki button (such as the
 			// watchstar) for a different purpose than MediaWiki usually uses it for. Not setting
@@ -103,10 +113,7 @@ class SingleMenuEntry implements IMenuEntry {
 		if ( $trackable ) {
 			$entry->trackClicks( $name );
 		}
-		if ( $icon === null ) {
-			$icon = $name;
-		}
-		$entry->setIcon( $icon );
+		$entry->setIcon( $icon ?? $name );
 		return $entry;
 	}
 
@@ -129,13 +136,21 @@ class SingleMenuEntry implements IMenuEntry {
 	 */
 	public function getComponents(): array {
 		$attrs = [];
-		foreach ( [ 'id', 'href', 'data-event-name', 'data-mw', 'role' ] as $key ) {
+		$primaryAttributes = [ 'id', 'href', 'data-event-name', 'data-mw', 'role' ];
+		$forbiddenAttributes = array_merge( $primaryAttributes, [ 'class' ] );
+		foreach ( $primaryAttributes as $key ) {
 			$value = $this->attributes[$key] ?? null;
 			if ( $value ) {
 				$attrs[] = [
 					'key' => $key,
 					'value' => $value,
 				];
+			}
+		}
+		foreach ( $this->customAttributes as $attributeDefinition ) {
+			$key = $attributeDefinition[ 'key' ];
+			if ( !in_array( $key, $forbiddenAttributes ) ) {
+				$attrs[] = $attributeDefinition;
 			}
 		}
 

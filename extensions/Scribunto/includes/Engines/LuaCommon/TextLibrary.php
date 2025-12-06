@@ -63,10 +63,6 @@ class TextLibrary extends LibraryBase {
 		return [ $stripState->killMarkers( $stripState->unstripNoWiki( $s ) ) ];
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
 	public function processNoWikis( string $text ): string {
 		$content = preg_replace( "#</?nowiki[^>]*>#i", '', $text );
 		return $content ? CoreTagHooks::nowiki( $content, [], $this->getParser() )[0] : '';

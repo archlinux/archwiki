@@ -15,8 +15,8 @@ class RefGroupTest extends MediaWikiUnitTestCase {
 	public function testMinimalSetup() {
 		$group = new RefGroup();
 		$this->assertSame( Cite::DEFAULT_GROUP, $group->name );
-		$this->assertSame( [], $group->refs );
-		$this->assertSame( [], $group->indexByName );
+		$this->assertSame( [], $group->toArray() );
+		$this->assertSame( 0, $group->count() );
 	}
 
 	// TODO: Incomplete, at least the renderLine method should be covered

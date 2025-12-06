@@ -43,6 +43,19 @@ function getAutoRevealStatusPreferenceName() {
 }
 
 /**
+ * Check whether the expiry time for auto-reveal mode is valid. A valid expiry is in the future
+ * and less than the maximum allowed expiry.
+ *
+ * @param {number} expiry
+ * @return {boolean}
+ */
+function isExpiryValid( expiry ) {
+	const nowInSeconds = Date.now() / 1000;
+	const maxExpiry = mw.config.get( 'wgCheckUserAutoRevealMaximumExpiry' );
+	return ( expiry > nowInSeconds ) && ( expiry <= ( nowInSeconds + maxExpiry ) );
+}
+
+/**
  * Get the auto-reveal status from the global preference.
  *
  * @return {Promise}
@@ -63,17 +76,19 @@ function getAutoRevealStatus() {
 				preferences = {};
 			}
 
-			if ( !Object.prototype.hasOwnProperty.call( preferences, getAutoRevealStatusPreferenceName() ) ) {
+			if ( !Object.prototype.hasOwnProperty.call(
+				preferences,
+				getAutoRevealStatusPreferenceName()
+			) ) {
 				deferred.resolve( false );
 				return;
 			}
 
 			const autoRevealPreference = preferences[ getAutoRevealStatusPreferenceName() ] || 0;
 			const expiry = Number( autoRevealPreference );
-			if ( expiry > ( Date.now() / 1000 ) ) {
+			if ( isExpiryValid( expiry ) ) {
 				deferred.resolve( expiry );
 			} else {
-				// The expiry time has passed, so remove the row from the database table
 				setAutoRevealStatus().then(
 					() => deferred.resolve( false ),
 					() => deferred.resolve( false )
@@ -100,14 +115,14 @@ function getAutoRevealStatus() {
  * @return {Promise}
  */
 function setAutoRevealStatus( relativeExpiry ) {
-	const nowInSeconds = Math.round( Date.now() / 1000 );
-	const oneDayInSeconds = 86400;
+	// Err on the low side to avoid going over the maximum allowed expiry by a fraction of a second
+	const nowInSeconds = Math.floor( Date.now() / 1000 );
 	const absoluteExpiry = relativeExpiry ?
 		nowInSeconds + relativeExpiry :
 		undefined;
 
-	if ( absoluteExpiry > nowInSeconds + oneDayInSeconds ) {
-		return $.Deferred().reject().promise();
+	if ( absoluteExpiry && !isExpiryValid( absoluteExpiry ) ) {
+		return $.Deferred().reject( 'Expiry is invalid' ).promise();
 	}
 
 	const api = new mw.Api();

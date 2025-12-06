@@ -2,27 +2,15 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\Title\Title;
@@ -43,6 +31,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 	private string $prefix;
 	private string $titlesParam;
 	private string $helpUrl;
+	private ?string $virtualdomain;
 
 	private LinkBatchFactory $linkBatchFactory;
 	private LinksMigration $linksMigration;
@@ -59,12 +48,14 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 				$this->prefix = 'pl';
 				$this->titlesParam = 'titles';
 				$this->helpUrl = 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Links';
+				$this->virtualdomain = PageLinksTable::VIRTUAL_DOMAIN;
 				break;
 			case self::TEMPLATES:
 				$this->table = 'templatelinks';
 				$this->prefix = 'tl';
 				$this->titlesParam = 'templates';
 				$this->helpUrl = 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Templates';
+				$this->virtualdomain = TemplateLinksTable::VIRTUAL_DOMAIN;
 				break;
 			default:
 				ApiBase::dieDebug( __METHOD__, 'Unknown module name' );
@@ -79,10 +70,12 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -97,6 +90,8 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		}
 
 		$params = $this->extractRequestParams();
+
+		$this->setVirtualDomain( $this->virtualdomain );
 
 		if ( isset( $this->linksMigration::$mapping[$this->table] ) ) {
 			[ $nsField, $titleField ] = $this->linksMigration->getTitleFields( $this->table );
@@ -146,10 +141,9 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		}
 
 		if ( $params['continue'] !== null ) {
-			$db = $this->getDB();
 			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'int', 'string' ] );
 			$op = $params['dir'] == 'descending' ? '<=' : '>=';
-			$this->addWhere( $db->buildComparison( $op, [
+			$this->addWhere( $this->getDB()->buildComparison( $op, [
 				"{$this->prefix}_from" => $cont[0],
 				$nsField => $cont[1],
 				$titleField => $cont[2],
@@ -217,6 +211,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'namespace' => [
@@ -247,6 +242,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$name = $this->getModuleName();
 		$path = $this->getModulePath();
@@ -263,6 +259,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return $this->helpUrl;
 	}

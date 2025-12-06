@@ -16,9 +16,7 @@
  * @param {Object} [config] Configuration options
  * @param {number} [config.limit=6] Number of suggestions to show
  */
-ve.ui.MWEditSummaryWidget = function VeUiMWEditSummaryWidget( config ) {
-	config = config || {};
-
+ve.ui.MWEditSummaryWidget = function VeUiMWEditSummaryWidget( config = {} ) {
 	// Parent method
 	ve.ui.MWEditSummaryWidget.super.call( this, ve.extendObject( {
 		autosize: true,

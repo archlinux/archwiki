@@ -3,21 +3,7 @@
 /**
  * Testing password-policy check functions
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -31,7 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Split from \PasswordPolicyChecksTest integration tests
  *
- * @coversDefaultClass \MediaWiki\Password\PasswordPolicyChecks
+ * @covers \MediaWiki\Password\PasswordPolicyChecks
  */
 class PasswordPolicyChecksTest extends MediaWikiUnitTestCase {
 
@@ -45,87 +31,74 @@ class PasswordPolicyChecksTest extends MediaWikiUnitTestCase {
 		return $user;
 	}
 
-	/**
-	 * @covers ::checkMinimalPasswordLength
-	 */
 	public function testCheckMinimalPasswordLength() {
 		$statusOK = PasswordPolicyChecks::checkMinimalPasswordLength(
-			3, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			3,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusGood( $statusOK, 'Password is longer than minimal policy' );
 		$statusShort = PasswordPolicyChecks::checkMinimalPasswordLength(
-			10, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			10,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusWarning( 'passwordtooshort', $statusShort,
 			'Password is shorter than minimal policy, not fatal'
 		);
 	}
 
-	/**
-	 * @covers ::checkMinimumPasswordLengthToLogin
-	 */
 	public function testCheckMinimumPasswordLengthToLogin() {
 		$statusOK = PasswordPolicyChecks::checkMinimumPasswordLengthToLogin(
-			3, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			3,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusGood( $statusOK, 'Password is longer than minimal policy' );
 		$statusShort = PasswordPolicyChecks::checkMinimumPasswordLengthToLogin(
-			10, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			10,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusError( 'passwordtooshort', $statusShort,
 			'Password is shorter than minimum login policy, fatal'
 		);
 	}
 
-	/**
-	 * @covers ::checkMaximalPasswordLength
-	 */
 	public function testCheckMaximalPasswordLength() {
 		$statusOK = PasswordPolicyChecks::checkMaximalPasswordLength(
-			100, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			100,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusGood( $statusOK, 'Password is shorter than maximal policy' );
 		$statusLong = PasswordPolicyChecks::checkMaximalPasswordLength(
-			4, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			4,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusError( 'passwordtoolong', $statusLong,
 			'Password is longer than maximal policy, fatal'
 		);
 	}
 
-	/**
-	 * @covers ::checkPasswordCannotBeSubstringInUsername
-	 */
 	public function testCheckPasswordCannotBeSubstringInUsername() {
 		$statusOK = PasswordPolicyChecks::checkPasswordCannotBeSubstringInUsername(
-			1, // policy value
-			$this->getUser(), // User
-			'password'  // password
+			1,
+			$this->getUser(),
+			'password'
 		);
 		$this->assertStatusGood( $statusOK, 'Password is not a substring of username' );
 		$statusLong = PasswordPolicyChecks::checkPasswordCannotBeSubstringInUsername(
-			1, // policy value
-			$this->getUser( '123user123' ), // User
-			'user'  // password
+			1,
+			$this->getUser( '123user123' ),
+			'user'
 		);
 		$this->assertStatusWarning( 'password-substring-username-match', $statusLong,
 			'Password is a substring of username, not fatal' );
 	}
 
 	/**
-	 * @covers ::checkPasswordCannotMatchDefaults
 	 * @dataProvider provideCheckPasswordCannotMatchDefaults
 	 */
 	public function testCheckPasswordCannotMatchDefaults(
@@ -159,7 +132,6 @@ class PasswordPolicyChecksTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::checkPasswordNotInCommonList
 	 * @dataProvider provideCommonList
 	 */
 	public function testCheckNotInCommonList( $expected, $password ) {

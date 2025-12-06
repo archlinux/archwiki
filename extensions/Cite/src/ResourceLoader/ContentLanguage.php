@@ -12,18 +12,17 @@ use MediaWiki\ResourceLoader as RL;
  * @license MIT
  */
 class ContentLanguage {
-	public static function makeScript( RL\Context $context ): string {
+
+	public static function getJsData( RL\Context $context ): array {
 		$contentLang = MediaWikiServices::getInstance()->getContentLanguage();
 		$contentLangCode = $contentLang->getCode();
 		$interfaceLangCode = $context->getLanguage();
 
 		if ( $contentLangCode === $interfaceLangCode ) {
-			return '';
+			return [];
 		}
 
-		return 'mw.language.setData('
-			. $context->encodeJson( $contentLangCode ) . ','
-			. $context->encodeJson( $contentLang->getJsData() )
-			. ');';
+		return [ $contentLangCode => $contentLang->getJsData() ];
 	}
+
 }

@@ -19,9 +19,7 @@
  * @param {Object} [config.minDimensions={}] Minimum dimensions, width & height
  * @param {boolean} [config.isDefaultSize=false] Object is using its default size dimensions
  */
-ve.dm.MWImageModel = function VeDmMWImageModel( parentDoc, config ) {
-	config = config || {};
-
+ve.dm.MWImageModel = function VeDmMWImageModel( parentDoc, config = {} ) {
 	// Mixin constructors
 	OO.EventEmitter.call( this );
 
@@ -338,7 +336,7 @@ ve.dm.MWImageModel.prototype.changeImageSource = function ( attrs, APIinfo ) {
 		// Call for updated scalable if we don't have dimensions from the API info
 		if ( this.getFilename() ) {
 			// Update anyway
-			ve.dm.MWImageNode.static.getScalablePromise( this.getFilename() ).done( ( info ) => {
+			ve.dm.MWImageNode.static.getScalablePromise( this.getFilename() ).then( ( info ) => {
 				this.scalable.setOriginalDimensions( {
 					width: info.width,
 					height: info.height
@@ -1196,7 +1194,7 @@ ve.dm.MWImageModel.prototype.attachScalable = function ( scalable ) {
 
 	// Call for updated scalable
 	if ( imageName ) {
-		ve.dm.MWImageNode.static.getScalablePromise( imageName ).done( ( info ) => {
+		ve.dm.MWImageNode.static.getScalablePromise( imageName ).then( ( info ) => {
 			this.scalable.setOriginalDimensions( {
 				width: info.width,
 				height: info.height

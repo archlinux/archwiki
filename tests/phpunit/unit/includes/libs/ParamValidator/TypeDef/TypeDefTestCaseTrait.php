@@ -97,7 +97,7 @@ trait TypeDefTestCaseTrait {
 	/**
 	 * @return array|Iterable
 	 */
-	abstract public function provideValidate();
+	abstract public static function provideValidate();
 
 	/**
 	 * @param array $settings
@@ -113,7 +113,7 @@ trait TypeDefTestCaseTrait {
 	/**
 	 * @return array|Iterable
 	 */
-	public function provideNormalizeSettings() {
+	public static function provideNormalizeSettings() {
 		return [
 			'Basic test' => [ [ 'param-foo' => 'bar' ], [ 'param-foo' => 'bar' ] ],
 		];
@@ -139,7 +139,7 @@ trait TypeDefTestCaseTrait {
 	/**
 	 * @return array|Iterable
 	 */
-	public function provideCheckSettings() {
+	public static function provideCheckSettings() {
 		return [
 			'Basic test' => [ [], self::STDRET, self::STDRET ],
 		];
@@ -161,7 +161,7 @@ trait TypeDefTestCaseTrait {
 	/**
 	 * @return array|Iterable
 	 */
-	public function provideGetEnumValues() {
+	public static function provideGetEnumValues() {
 		return [
 			'Basic test' => [ [], null ],
 		];
@@ -173,7 +173,6 @@ trait TypeDefTestCaseTrait {
 	 * @param array $settings
 	 * @param array $options
 	 * @dataProvider provideStringifyValue
-	 *
 	 */
 	public function testStringifyValue( $value, $expect, array $settings = [], array $options = [] ) {
 		$typeDef = $this->getInstance( new SimpleCallbacks( [] ), $options );
@@ -185,7 +184,7 @@ trait TypeDefTestCaseTrait {
 	/**
 	 * @return array|Iterable
 	 */
-	public function provideStringifyValue() {
+	public static function provideStringifyValue() {
 		return [
 			'Basic test' => [ 123, '123' ],
 		];
@@ -224,7 +223,7 @@ trait TypeDefTestCaseTrait {
 	/**
 	 * @return array|Iterable
 	 */
-	public function provideGetInfo() {
+	public static function provideGetInfo() {
 		return [
 			'Basic test' => [ [], [], [] ],
 		];
@@ -237,7 +236,7 @@ trait TypeDefTestCaseTrait {
 	 * @param array $settings Settings object (ie. third argument to TypeDef::validate()).
 	 * @return ValidationException
 	 */
-	protected function getValidationException(
+	protected static function getValidationException(
 		string $code, $value, array $settings = []
 	): ValidationException {
 		return new ValidationException(

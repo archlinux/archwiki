@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
@@ -22,24 +8,12 @@
 /**
  * File system based backend.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
+
+// @phan-file-suppress UnusedPluginSuppression,UnusedPluginFileSuppression False positive on Windows only
 
 namespace Wikimedia\FileBackend;
 
@@ -128,8 +102,8 @@ class FSFileBackend extends FileBackendStore {
 			$this->containerPaths[$container] = rtrim( $fsPath, '/' ); // remove trailing slash
 		}
 
-		$this->fileMode = $config['fileMode'] ?? 0644;
-		$this->dirMode = $config['directoryMode'] ?? 0777;
+		$this->fileMode = $config['fileMode'] ?? 0o644;
+		$this->dirMode = $config['directoryMode'] ?? 0o777;
 		if ( isset( $config['fileOwner'] ) && function_exists( 'posix_getuid' ) ) {
 			$this->fileOwner = $config['fileOwner'];
 			// Cache this, assuming it doesn't change
@@ -139,10 +113,12 @@ class FSFileBackend extends FileBackendStore {
 		$this->usableDirCache = new MapCacheLRU( self::CACHE_CHEAP_SIZE );
 	}
 
+	/** @inheritDoc */
 	public function getFeatures() {
 		return self::ATTR_UNICODE_PATHS;
 	}
 
+	/** @inheritDoc */
 	protected function resolveContainerPath( $container, $relStoragePath ) {
 		// Check that container has a root directory
 		if ( isset( $this->containerPaths[$container] ) || $this->basePath !== null ) {
@@ -211,6 +187,7 @@ class FSFileBackend extends FileBackendStore {
 		return $fsPath;
 	}
 
+	/** @inheritDoc */
 	public function isPathUsableInternal( $storagePath ) {
 		$fsPath = $this->resolveToFSPath( $storagePath );
 		if ( $fsPath === null ) {
@@ -234,6 +211,7 @@ class FSFileBackend extends FileBackendStore {
 		return $usable;
 	}
 
+	/** @inheritDoc */
 	protected function doCreateInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -286,6 +264,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doStoreInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -342,6 +321,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doCopyInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -406,6 +386,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doMoveInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -455,6 +436,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doDeleteInternal( array $params ) {
 		$status = $this->newStatus();
 
@@ -529,6 +511,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doSecureInternal( $fullCont, $dirRel, array $params ) {
 		$status = $this->newStatus();
 		[ , $shortCont, ] = FileBackend::splitStoragePath( $params['dir'] );
@@ -557,6 +540,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doPublishInternal( $fullCont, $dirRel, array $params ) {
 		$status = $this->newStatus();
 		[ , $shortCont, ] = FileBackend::splitStoragePath( $params['dir'] );
@@ -581,6 +565,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doCleanInternal( $fullCont, $dirRel, array $params ) {
 		$status = $this->newStatus();
 		[ , $shortCont, ] = FileBackend::splitStoragePath( $params['dir'] );
@@ -592,6 +577,7 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
+	/** @inheritDoc */
 	protected function doGetFileStat( array $params ) {
 		$fsSrcPath = $this->resolveToFSPath( $params['src'] );
 		if ( $fsSrcPath === null ) {
@@ -614,6 +600,7 @@ class FSFileBackend extends FileBackendStore {
 		return $hadError ? self::RES_ERROR : self::RES_ABSENT;
 	}
 
+	/** @inheritDoc */
 	protected function doClearCache( ?array $paths = null ) {
 		if ( is_array( $paths ) ) {
 			foreach ( $paths as $path ) {
@@ -629,6 +616,7 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function doDirectoryExists( $fullCont, $dirRel, array $params ) {
 		[ , $shortCont, ] = FileBackend::splitStoragePath( $params['dir'] );
 		$contRoot = $this->containerFSRoot( $shortCont, $fullCont ); // must be valid
@@ -709,6 +697,7 @@ class FSFileBackend extends FileBackendStore {
 		return $list;
 	}
 
+	/** @inheritDoc */
 	protected function doGetLocalReferenceMulti( array $params ) {
 		$fsFiles = []; // (path => FSFile)
 
@@ -735,6 +724,7 @@ class FSFileBackend extends FileBackendStore {
 		return $fsFiles;
 	}
 
+	/** @inheritDoc */
 	protected function doGetLocalCopyMulti( array $params ) {
 		$tmpFiles = []; // (path => TempFSFile)
 
@@ -772,6 +762,7 @@ class FSFileBackend extends FileBackendStore {
 		return $tmpFiles;
 	}
 
+	/** @inheritDoc */
 	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
 		array $params
 	) {
@@ -783,6 +774,7 @@ class FSFileBackend extends FileBackendStore {
 		return $this->newStatus();
 	}
 
+	/** @inheritDoc */
 	protected function directoriesAreVirtual() {
 		return false;
 	}
@@ -1053,6 +1045,7 @@ class FSFileBackend extends FileBackendStore {
 			if ( function_exists( 'pcntl_strerror' ) ) {
 				$alternatives[] = preg_quote( ': ' . pcntl_strerror( 2 ), '/' );
 			} elseif ( function_exists( 'socket_strerror' ) && defined( 'SOCKET_ENOENT' ) ) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal False positive on Windows only
 				$alternatives[] = preg_quote( ': ' . socket_strerror( SOCKET_ENOENT ), '/' );
 			}
 			$regex = '/(' . implode( '|', $alternatives ) . ')$/';

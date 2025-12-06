@@ -541,10 +541,10 @@ parsoid={ "modes": ["wt2html","wt2wt"] }
 !! wikitext
 {{NUMBEROFFILES}}
 !! html/php
-<p>8
+<p>10
 </p>
 !! html/parsoid+integrated
-<p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"NUMBEROFFILES","function":"numberoffiles"},"params":{},"i":0}}]}'>8</span></p>
+<p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"NUMBEROFFILES","function":"numberoffiles"},"params":{},"i":0}}]}'>10</span></p>
 !! end
 
 !! test
@@ -1259,7 +1259,7 @@ __NEWSECTIONLINK__ __NONEWSECTIONLINK__
 !! metadata
 flags=mw-HideNewSection, mw-NewSection
 !! html/parsoid
-<section data-mw-section-id="0"><meta property="mw:PageProp/newsectionlink" data-parsoid='{"src":"__NEWSECTIONLINK__","magicSrc":"__NEWSECTIONLINK__","dsr":[0,18,null,null]}'/> <meta property="mw:PageProp/nonewsectionlink" data-parsoid='{"src":"__NONEWSECTIONLINK__","magicSrc":"__NONEWSECTIONLINK__"}'/></section>
+<section data-mw-section-id="0"><meta property="mw:PageProp/newsectionlink" data-parsoid='{"src":"__NEWSECTIONLINK__","magicSrc":"__NEWSECTIONLINK__"}'/> <meta property="mw:PageProp/nonewsectionlink" data-parsoid='{"src":"__NONEWSECTIONLINK__","magicSrc":"__NONEWSECTIONLINK__"}'/></section>
 !! end
 
 !! article
@@ -1283,3 +1283,14 @@ flags=mw-NewSection
 <section data-mw-section-id="0"><meta property="mw:PageProp/newsectionlink" about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"magicSrc":"__NEWSECTIONLINK__","pi":[[]]}' data-mw='{"parts":[{"template":{"target":{"wt":"NewSectionLink","href":"./Template:NewSectionLink"},"params":{},"i":0}}]}'/></section>
 !! end
 
+# html2wt disabled because it uses a different preferred localization
+!! test
+Japanese magic words with U+FF3F (T407289)
+!! options
+language=ja
+parsoid=wt2html,wt2wt,html2html
+!! wikitext
+＿＿目次非表示＿＿
+!! html/parsoid
+<meta property="mw:PageProp/notoc"/>
+!! end

@@ -10,6 +10,7 @@
 			"Umherirrender"
 		]
 	},
+	"fancycaptcha-name": "{{notranslate}}",
 	"fancycaptcha-desc": "{{desc|name=FancyCaptcha|url=https://www.mediawiki.org/wiki/Extension:ConfirmEdit}}",
 	"fancycaptcha-addurl": "{{Related|ConfirmEdit-addurl}}",
 	"fancycaptcha-badlogin": "{{Related|ConfirmEdit-badlogin}}",

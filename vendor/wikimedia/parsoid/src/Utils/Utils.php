@@ -12,6 +12,7 @@ use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwBody;
+use Wikimedia\Parsoid\NodeData\DataMwExtAttribs;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
@@ -99,9 +100,10 @@ class Utils {
 	 * @param bool $deepClone
 	 * @param bool $debug
 	 * @return object|array
-	 * @deprecated Use native PHP cloning and Utils::cloneArray when needed
+	 * @deprecated since 0.21; use native PHP cloning and Utils::cloneArray when needed
 	 */
 	public static function clone( $obj, $deepClone = true, $debug = false ) {
+		PHPUtils::deprecated( __METHOD__, "0.21" );
 		if ( $debug ) {
 			if ( $obj instanceof \DOMNode ) {
 				return $obj->cloneNode( $deepClone );
@@ -160,16 +162,6 @@ class Utils {
 	 */
 	public static function isUniWord( string $s ): bool {
 		return preg_match( '#^\w#u', $s ) === 1;
-	}
-
-	/**
-	 * This should not be used.
-	 * @param string $txt URL to encode using PHP encoding
-	 * @return string
-	 */
-	public static function phpURLEncode( $txt ) {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new \BadMethodCallException( 'Use urlencode( $txt ) instead' );
 	}
 
 	/**
@@ -474,9 +466,9 @@ class Utils {
 		$options = $extToken->getAttributeV( 'options' );
 		$defaultDataMw = new DataMw( [
 			'name' => $name,
-			// Back-compat w/ existing DOM spec output: ensure 'attrs'
+			// Back-compat w/ existing DOM spec output: ensure 'extAttribs'
 			// exists even if there are no attributes.
-			'attrs' => (object)[],
+			'extAttribs' => new DataMwExtAttribs,
 		] );
 		foreach ( TokenUtils::kvToHash( $options ) as $name => $value ) {
 			// Explicit cast to string is needed here, since a numeric

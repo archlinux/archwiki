@@ -35,44 +35,26 @@ class Parameters {
 		$this->specifier = $specifier;
 	}
 
-	/**
-	 * @return ExistingFilter
-	 */
 	public function getFilter(): ExistingFilter {
 		return $this->filter;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getIsGlobalFilter(): bool {
 		return $this->isGlobalFilter;
 	}
 
-	/**
-	 * @return ActionSpecifier
-	 */
 	public function getActionSpecifier(): ActionSpecifier {
 		return $this->specifier;
 	}
 
-	/**
-	 * @return UserIdentity
-	 */
 	public function getUser(): UserIdentity {
 		return $this->specifier->getUser();
 	}
 
-	/**
-	 * @return LinkTarget
-	 */
 	public function getTarget(): LinkTarget {
 		return $this->specifier->getTitle();
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getAction(): string {
 		return $this->specifier->getAction();
 	}

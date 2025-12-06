@@ -108,7 +108,7 @@ class DataOutputFormatter {
 				'unix' => self::getUserLocalTime( $user, $timestamp, TS_UNIX ),
 				'utcmw' => $utcTimestampMW,
 				'mw' => $timestampMw,
-				'date' => $date
+				'date' => $date,
 			],
 		];
 

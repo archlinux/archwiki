@@ -14,16 +14,6 @@ use stdClass;
 class Notification extends AbstractEntity implements Bundleable {
 
 	/**
-	 * @var User
-	 */
-	protected $user;
-
-	/**
-	 * @var Event
-	 */
-	protected $event;
-
-	/**
 	 * The target page object for the notification if there is one. Null means
 	 * the information has not been loaded.
 	 *
@@ -31,10 +21,7 @@ class Notification extends AbstractEntity implements Bundleable {
 	 */
 	protected $targetPages;
 
-	/**
-	 * @var string
-	 */
-	protected $timestamp;
+	protected string $timestamp;
 
 	/**
 	 * @var string|null
@@ -55,9 +42,10 @@ class Notification extends AbstractEntity implements Bundleable {
 	/**
 	 * Creates an Notification object based on event and user
 	 */
-	public function __construct( User $user, Event $event ) {
-		$this->user = $user;
-		$this->event = $event;
+	public function __construct(
+		protected User $user,
+		protected Event $event,
+	) {
 		// Notification timestamp should be the same as event timestamp
 		// Otherwise use safe fallback
 		$this->timestamp = $this->event->getTimestamp() ?: wfTimestampNow();

@@ -382,7 +382,6 @@ class AFPData {
 
 	/**
 	 * Check whether this instance contains the DUNDEFINED type, recursively
-	 * @return bool
 	 */
 	public function hasUndefined(): bool {
 		if ( $this->type === self::DUNDEFINED ) {

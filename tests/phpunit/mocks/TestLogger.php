@@ -2,21 +2,7 @@
 /**
  * Copyright (C) 2015 Wikimedia Foundation and contributors
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -37,11 +23,11 @@ class TestLogger extends \Psr\Log\AbstractLogger {
 	private $filter;
 
 	/**
-	 * @param bool $collect Whether to collect logs. @see setCollect()
+	 * @param bool $collect Whether to collect logs, also see {@link setCollect}
 	 * @param callable|null $filter Filter logs before collecting/printing. Signature is
 	 *  string|null function ( string $message, string $level, array $context );
 	 * @param bool $collectContext Whether to keep the context passed to log
-	 *             (since 1.29, @see setCollectContext()).
+	 *  (since 1.29), also see {@link setCollectContext}
 	 */
 	public function __construct( $collect = false, $filter = null, $collectContext = false ) {
 		$this->collect = $collect;
@@ -87,6 +73,7 @@ class TestLogger extends \Psr\Log\AbstractLogger {
 		$this->buffer = [];
 	}
 
+	/** @inheritDoc */
 	public function log( $level, $message, array $context = [] ): void {
 		$message = trim( $message );
 

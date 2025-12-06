@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\OATHAuth\Notifications;
 
 use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
-use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
+use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
@@ -41,7 +41,12 @@ class RecoveryCodeCountPresentationModel extends EchoEventPresentationModel {
 	public function getBodyMessage() {
 		$msg = $this->getMessageWithAgent( 'notification-body-oathauth-recoverycodesleft' );
 		$msg->params( $this->event->getExtraParam( 'codeCount', 0 ) );
-		$msg->params( $this->event->getExtraParam( 'generatedCount', TOTPKey::RECOVERY_CODES_COUNT ) );
+		$msg->params(
+			$this->event->getExtraParam(
+				'generatedCount',
+				OATHAuthServices::getInstance()->getConfig()->get( 'OATHRecoveryCodesCount' )
+			)
+		);
 		return $msg;
 	}
 

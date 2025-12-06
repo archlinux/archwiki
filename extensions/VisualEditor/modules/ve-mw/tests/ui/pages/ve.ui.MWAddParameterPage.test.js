@@ -9,20 +9,20 @@ QUnit.test( 'Input event handlers', ( assert ) => {
 	page.togglePlaceholder( true );
 
 	page.paramInputField.setValue( ' ' );
-	assert.strictEqual( page.saveButton.isDisabled(), true, 'cannot click' );
+	assert.true( page.saveButton.isDisabled(), 'cannot click' );
 	page.onParameterNameSubmitted();
 	assert.deepEqual( template.getParameters(), {}, 'empty input is ignored' );
 	assert.strictEqual( page.paramInputField.getValue(), ' ', 'bad input is not cleared' );
 
 	page.paramInputField.setValue( ' p1 ' );
-	assert.strictEqual( page.saveButton.isDisabled(), false, 'can click' );
+	assert.false( page.saveButton.isDisabled(), 'can click' );
 	page.onParameterNameSubmitted();
 	assert.true( template.hasParameter( 'p1' ), 'input is trimmed and parameter added' );
 	assert.strictEqual( page.paramInputField.getValue(), '', 'accepted input is cleared' );
 
 	template.getParameter( 'p1' ).setValue( 'not empty' );
 	page.paramInputField.setValue( 'p1' );
-	assert.strictEqual( page.saveButton.isDisabled(), true, 'cannot click' );
+	assert.true( page.saveButton.isDisabled(), 'cannot click' );
 	page.onParameterNameSubmitted();
 	assert.strictEqual( template.getParameter( 'p1' ).getValue(), 'not empty',
 		'existing parameter is not replaced' );

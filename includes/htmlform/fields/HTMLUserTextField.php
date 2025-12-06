@@ -3,6 +3,7 @@
 namespace MediaWiki\HTMLForm\Field;
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\Widget\UserInputWidget;
 use Wikimedia\IPUtils;
@@ -49,6 +50,7 @@ class HTMLUserTextField extends HTMLTextField {
 		parent::__construct( $params );
 	}
 
+	/** @inheritDoc */
 	public function validate( $value, $alldata ) {
 		// If the value is null, reset it to an empty string which is what is expected by the parent.
 		$value ??= '';
@@ -109,6 +111,10 @@ class HTMLUserTextField extends HTMLTextField {
 		return parent::validate( $value, $alldata );
 	}
 
+	/**
+	 * @param string $value
+	 * @return bool|Message
+	 */
 	protected function isValidIPRange( $value ) {
 		$cidrIPRanges = $this->mParams['iprangelimits'];
 
@@ -145,6 +151,7 @@ class HTMLUserTextField extends HTMLTextField {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getInputWidget( $params ) {
 		if ( isset( $this->mParams['excludenamed'] ) ) {
 			$params['excludenamed'] = $this->mParams['excludenamed'];
@@ -157,14 +164,17 @@ class HTMLUserTextField extends HTMLTextField {
 		return new UserInputWidget( $params );
 	}
 
+	/** @inheritDoc */
 	protected function shouldInfuseOOUI() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getOOUIModules() {
 		return [ 'mediawiki.widgets.UserInputWidget' ];
 	}
 
+	/** @inheritDoc */
 	public function getInputHtml( $value ) {
 		// add the required module and css class for user suggestions in non-OOUI mode
 		$this->mParent->getOutput()->addModules( 'mediawiki.userSuggest' );

@@ -41,14 +41,14 @@ mw.echo.ui.DatedNotificationsWidget = function MwEchoUiDatedNotificationsListWid
 		{
 			classes: [ 'mw-echo-ui-datedNotificationsWidget-group' ],
 			$overlay: this.$overlay,
-			animated: false
-		}
+			animated: false,
+		},
 	);
 
 	// Events
 	this.manager.connect( this, {
 		update: 'populateFromModel',
-		discard: 'onManagerDiscardModel'
+		discard: 'onManagerDiscardModel',
 	} );
 
 	this.$element
@@ -108,8 +108,8 @@ mw.echo.ui.DatedNotificationsWidget.prototype.populateFromModel = function ( mod
 				showTitle: true,
 				showMarkAllRead: true,
 				$overlay: this.$overlay,
-				animated: this.animateSorting
-			}
+				animated: this.animateSorting,
+			},
 		);
 		this.attachModel( model, models[ model ] );
 

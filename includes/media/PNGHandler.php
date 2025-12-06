@@ -2,21 +2,7 @@
 /**
  * Handler for PNG images.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -110,10 +96,12 @@ class PNGHandler extends BitmapHandler {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getMetadataType( $image ) {
 		return 'parsed-png';
 	}
 
+	/** @inheritDoc */
 	public function isFileMetadataValid( $image ) {
 		$data = $image->getMetadataArray();
 		if ( $data === [ '_error' => self::BROKEN_FILE ] ) {
@@ -166,7 +154,7 @@ class PNGHandler extends BitmapHandler {
 		}
 
 		if ( $metadata['duration'] ) {
-			$info[] = $wgLang->formatTimePeriod( $metadata['duration'] );
+			$info[] = htmlspecialchars( $wgLang->formatTimePeriod( $metadata['duration'] ), ENT_QUOTES );
 		}
 
 		return $wgLang->commaList( $info );
@@ -190,8 +178,11 @@ class PNGHandler extends BitmapHandler {
 		return (float)$metadata['duration'];
 	}
 
-	// PNGs should be easy to support, but it will need some sharpening applied
-	// and another user test to check if the perceived quality change is noticeable
+	/**
+	 * PNGs should be easy to support, but it will need some sharpening applied
+	 * and another user test to check if the perceived quality change is noticeable
+	 * @inheritDoc
+	 */
 	public function supportsBucketing() {
 		return false;
 	}

@@ -45,7 +45,9 @@ Additional maintenance work was done by Yaron Koren.
 ### Configuration comments
 ```php
 /**
- * Needs to be explicitly set to the Captcha implementation you want to use, otherwise it will use a demo captcha.
+ * Needs to be explicitly set to the default Captcha implementation you want to use. Otherwise, it will use a demo captcha, which will likely be ineffective.
+ *
+ * Can be overridden on an action-by-action basis using $wgCaptchaTriggers.
  *
  * For example, to use FancyCaptcha:
  * ```
@@ -68,23 +70,58 @@ $wgCaptchaBypassIPs = false;
  * Actions which can trigger a captcha
  *
  * If the 'edit' trigger is on, *every* edit will trigger the captcha.
- * This may be useful for protecting against vandalbot attacks.
+ * This may be useful for protecting against vandal bot attacks.
  *
  * If using the default 'addurl' trigger, the captcha will trigger on
  * edits that include URLs that aren't in the current version of the page.
- * This should catch automated linkspammers without annoying people when
+ * This should catch automated link spammers without annoying people when
  * they make more typical edits.
  *
- * The captcha code should not use $wgCaptchaTriggers, but CaptchaTriggers()
+ * The captcha code should not use $wgCaptchaTriggers, but SimpleCaptcha::triggersCaptcha()
  * which also takes into account per namespace triggering.
  */
-$wgCaptchaTriggers = [];
-$wgCaptchaTriggers['edit']          = false; // Would check on every edit
-$wgCaptchaTriggers['create']        = false; // Check on page creation.
-$wgCaptchaTriggers['sendemail']     = false; // Special:Emailuser
-$wgCaptchaTriggers['addurl']        = true;  // Check on edits that add URLs
-$wgCaptchaTriggers['createaccount'] = true;  // Special:Userlogin&type=signup
-$wgCaptchaTriggers['badlogin']      = true;  // Special:Userlogin after failure
+$wgCaptchaTriggers = [
+    // Show a captcha on every edit
+    'edit' => false,
+    // Show a captcha on page creation
+    'create' => false,
+    // Show a captcha on Special:Emailuser
+    'sendemail' => false,
+    // Show a captcha on edits that add URLs
+    'addurl' => true,
+    // Show a captcha on Special:CreateAccount
+    'createaccount' => true,
+    // Special:Userlogin after failure
+    'badlogin' => true,
+];
+
+/**
+ * You can also override the captcha type (by default $wgCaptchaClass) for a specific trigger.
+ *
+ * If you set 'trigger' to false, you can turn off showing a captcha for that action but still leave the desired
+ * Captcha type in place to turn it on quickly in the future.
+ *
+ * Please note that you still need to enable the captcha implementation using wLoadExtension() like normal.
+ *
+ * For example, to use QuestyCaptcha on the 'createaccount' action:
+ */
+ $wgCaptchaTriggers = [
+    // Show a captcha on every edit
+    'edit' => false,
+    // Show a captcha on page creation
+    'create' => false,
+    // Show a captcha on Special:Emailuser
+    'sendemail' => false,
+    // Show a captcha on edits that add URLs
+    'addurl' => true,
+    // Show a captcha on Special:CreateAccount
+    'createaccount' => [
+        'trigger' => true,
+        'class' => 'QuestyCaptcha',
+    ],
+    // Special:Userlogin after failure
+    'badlogin' => true,
+];
 
 /**
  * You may wish to apply special rules for captcha triggering on some namespaces.
@@ -97,8 +134,8 @@ $wgCaptchaTriggers['badlogin']      = true;  // Special:Userlogin after failure
 $wgCaptchaTriggersOnNamespace = [];
 
 # Example:
-# $wgCaptchaTriggersOnNamespace[NS_TALK]['create'] = false; //Allow creation of talk pages without captchas.
-# $wgCaptchaTriggersOnNamespace[NS_PROJECT]['edit'] = true; //Show captcha whenever editing Project pages.
+# $wgCaptchaTriggersOnNamespace[NS_TALK]['create'] = false; // Allow creation of talk pages without captchas.
+# $wgCaptchaTriggersOnNamespace[NS_PROJECT]['edit'] = true; // Show captcha whenever editing Project pages.
 
 /**
  * Indicate how to store per-session data required to match up the
@@ -110,7 +147,7 @@ $wgCaptchaTriggersOnNamespace = [];
  * 'CaptchaCacheStore' uses MediaWiki core's MicroStash,
  * for storing captch data with a TTL eviction strategy.
  */
-$wgCaptchaStorageClass = 'MediaWiki\Extension\ConfirmEdit\Store\CaptchaSessionStore';
+$wgCaptchaStorageClass = MediaWiki\Extension\ConfirmEdit\Store\CaptchaSessionStore::class;
 
 /**
  * Number of seconds a captcha session should last in the data cache
@@ -149,16 +186,14 @@ $wgCaptchaBadLoginExpiration = 5 * 60;
 $wgCaptchaBadLoginPerUserExpiration = 10 * 60;
 
 /**
- * Allow users who have confirmed their email addresses to post
- * URL links without being shown a captcha.
+ * Allow users who have confirmed their email addresses to skip being shown a captcha.
  *
- * @deprecated since 1.36
- * $wgGroupPermissions['emailconfirmed']['skipcaptcha'] = true; should be used instead.
+ * $wgAllowConfirmedEmail was deprecated in 1.36, and removed in 1.45. Use this config instead.
  */
-$wgAllowConfirmedEmail = false;
+$wgGroupPermissions['emailconfirmed']['skipcaptcha'] = true;
 
 /**
- * Number of bad login attempts (from a specific IP address) before triggering the captcha. 0 means the
+ * Number of bad login attempts (from a specific IP address) before triggering the captcha. 0 means that the
  * captcha is presented on the first login.
  *
  * A captcha will also be triggered if the number of failed logins exceeds $wgCaptchaBadLoginAttempts * 30
@@ -195,7 +230,7 @@ $wgCaptchaIgnoredUrls = false;
 $wgCaptchaRegexes = [];
 
 /**
- * Feature flag to toggle list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions
+ * Feature flag to toggle the list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions
  */
 $wgConfirmEditEnabledAbuseFilterCustomActions = [];
 ```

@@ -5,6 +5,7 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Title\Title;
+use Wikimedia\Parsoid\Utils\ContentUtils;
 
 /**
  * Parse some wikitext.
@@ -35,21 +36,7 @@ use MediaWiki\Title\Title;
  * </p>$
  * @endcode
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  * @author Antoine Musso <hashar at free dot fr>
@@ -80,6 +67,7 @@ class CLIParser extends Maintenance {
 		);
 		$this->addArg( 'file', 'File containing wikitext (Default: stdin)', false );
 		$this->addOption( 'parsoid', 'Whether to use Parsoid', false, false, 'p' );
+		$this->addOption( 'show-rich-attributes', 'Show rich attributes', false );
 	}
 
 	public function execute() {
@@ -101,7 +89,13 @@ class CLIParser extends Maintenance {
 		);
 		// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
 		$pipeline = $this->getServiceContainer()->getDefaultOutputPipeline();
-		return $pipeline->run( $po, $options, [ 'wrapperDivClass' => '' ] )->getContentHolderText();
+		$po = $pipeline->run( $po, $options, [ 'wrapperDivClass' => '' ] );
+		if ( $this->getOption( 'show-rich-attributes' ) ) {
+			$df = $po->getContentHolder()->getAsDom();
+			$df ??= $po->getContentHolder()->createFragment();
+			return ContentUtils::dumpDOM( $df, '', [ 'quiet' => true ] );
+		}
+		return $po->getContentHolderText();
 	}
 
 	/**

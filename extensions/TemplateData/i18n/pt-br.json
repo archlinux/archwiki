@@ -3,6 +3,7 @@
 		"authors": [
 			"555",
 			"Araceletorres",
+			"BraunOBruno",
 			"Cainamarques",
 			"Dr03ramos",
 			"Eduardo Addad de Oliveira",
@@ -14,8 +15,7 @@
 			"Jefersonmoraes",
 			"Luckas",
 			"Luk3",
-			"Opraco",
-			"BraunOBruno"
+			"Opraco"
 		]
 	},
 	"templatedata-desc": "Implementa o armazenamento de dados para os parâmetros das predefinições (em JSON)",
@@ -125,7 +125,9 @@
 	"templatedata-modal-title-templateformatstring": "String de formato personalizado",
 	"templatedata-modal-title-templateparam-details": "Detalhes do parâmetro: $1",
 	"templatedata-modal-title-templateparams": "Parâmetros da predefinição",
-	"templatedata-search-title": "Pesquisa de predefinição",
+	"templatedata-search-description": "Procurar por uma predefinição:",
+	"templatedata-search-placeholder": "Digite o nome da predefinição",
+	"templatedata-search-placeholder-cirrussearch": "Insira o nome da predefinição ou palavras-chave",
 	"templatedata-search-list-header": "Favoritos",
 	"templatedata-search-list-empty": "Predefinições que você marcar como favoritas aparecerão aqui",
 	"templatedata-template-discovery-disabled": "A descoberta de predefinições está desativada nesta wiki.",
@@ -136,5 +138,20 @@
 	"templatedata-favorite-remove": "Remover predefinição dos favoritos",
 	"templatedata-favorite-removed": "Predefinição removida dos favoritos",
 	"templatedata-favorite-error": "Não é possível salvar favoritos",
-	"templatedata-favorite-maximum-reached": "Você atingiu o número máximo ($1) de predefinições favoritos. Remova alguns da sua lista antes de adicionar mais."
+	"templatedata-favorite-maximum-reached": "Você atingiu o número máximo ($1) de predefinições favoritos. Remova alguns da sua lista antes de adicionar mais.",
+	"templatedata-category-browser-header": "Categorias",
+	"templatedata-category-switch-label": "Categoria de nível superior:",
+	"templatedata-category-rootcat": "Predefinições",
+	"templatedata-category-switch-button": "Explorar",
+	"templatedata-category-column-empty": "Não foram encontradas predefinições ou subcategorias em [[$1]]",
+	"templatedata-category-browser-loadmore": "…carregar mais",
+	"templatedata-category-column-error": "Ocorreu um erro",
+	"templatedata-category-use-template": "Usar essa predefinição",
+	"templatedata-category-categories": "Outras categorias",
+	"templatedata-category-no-cats": "Nenhum.",
+	"templatedata-featured-list-header": "Destacado",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Predefinições em destaque",
+	"templatedata-featured-list-config-link": "Editar lista em destaque",
+	"templatedata-featured-list-help": "As predefinições em destaque são aquelas que foram marcados como úteis pela comunidade.",
+	"templatedata-favorite-count": "Você tem $1 de $2 predefinições favoritas"
 }

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Engineer56",
 			"Kaganer",
-			"Okras",
-			"Engineer56"
+			"Okras"
 		]
 	},
 	"apihelp-categorytree-summary": "Внутренний модуль для расширения CategoryTree.",

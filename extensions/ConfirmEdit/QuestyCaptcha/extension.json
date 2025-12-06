@@ -12,9 +12,6 @@
 			"i18n"
 		]
 	},
-	"AutoloadClasses": {
-		"QuestyCaptcha": "../includes/QuestyCaptcha/QuestyCaptcha.php"
-	},
 	"config": {
 		"CaptchaQuestions": {
 			"value": []

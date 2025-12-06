@@ -52,7 +52,7 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 			$rc->setAttribs( array_merge(
 				self::getDefaultRecentChangeAttribs(),
 				[
-					'rc_type' => RC_LOG, 'rc_log_type' => '',
+					'rc_source' => RecentChange::SRC_LOG, 'rc_log_type' => '',
 					'rc_user' => $target->getId(), 'rc_user_text' => $target->getName(),
 				]
 			) );
@@ -69,7 +69,7 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 			$rc->setAttribs( array_merge(
 				self::getDefaultRecentChangeAttribs(),
 				[
-					'rc_type' => RC_LOG, 'rc_logid' => $logId,
+					'rc_source' => RecentChange::SRC_LOG, 'rc_logid' => $logId,
 					'rc_user' => $target->getId(), 'rc_user_text' => $target->getName(),
 				]
 			) );
@@ -85,7 +85,7 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 		$block = $blockStore->newUnsaved( [
 			'targetUser' => $target,
 			'enableAutoblock' => true,
-			'by' => $this->getTestSysop()->getUserIdentity()
+			'by' => $this->getTestSysop()->getUserIdentity(),
 		] );
 		$blockResult = $blockStore->insertBlock( $block );
 		$this->assertIsArray( $blockResult, 'The block on the target could not be performed' );

@@ -13,21 +13,11 @@ use Psr\Container\ContainerInterface;
  * @license GPL-2.0-or-later
  */
 final class Math {
-	private static ?ContainerInterface $serviceContainer = null;
-
 	/**
 	 * @codeCoverageIgnore
 	 */
 	private function __construct() {
 		// should not be instantiated
-	}
-
-	/**
-	 * Set a service container to override default service access.
-	 * Only used in tests to avoid MediaWikiServices::getInstance().
-	 */
-	public static function setServiceContainer( ContainerInterface $container ): void {
-		self::$serviceContainer = $container;
 	}
 
 	public static function getMathConfig( ?ContainerInterface $services = null ): MathConfig {
@@ -49,10 +39,6 @@ final class Math {
 	 * @return mixed Service instance
 	 */
 	private static function getService( string $serviceName, ?ContainerInterface $services = null ) {
-		$container = $services ?? self::$serviceContainer;
-		if ( $container ) {
-			return $container->get( $serviceName );
-		}
-		return MediaWikiServices::getInstance()->get( $serviceName );
+		return ( $services ?? MediaWikiServices::getInstance() )->getService( $serviceName );
 	}
 }

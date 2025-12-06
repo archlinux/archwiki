@@ -16,7 +16,7 @@
  * @param {ve.ui.Surface} ui Surface user interface
  * @param {Object} [config] Configuration options
  */
-ve.ce.Surface = function VeCeSurface( model, ui, config ) {
+ve.ce.Surface = function VeCeSurface( model, ui, config = {} ) {
 	// Parent constructor
 	ve.ce.Surface.super.call( this, config );
 
@@ -54,6 +54,7 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	this.lastNonCollapsedDocumentSelection = new ve.dm.NullSelection();
 	this.renderLocks = 0;
 	this.dragging = false;
+	this.noScrollSelecting = false;
 	this.resizing = false;
 	this.focused = false;
 	this.deactivated = false;
@@ -101,10 +102,7 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 
 	const synchronizer = this.getModel().synchronizer;
 	if ( synchronizer ) {
-		synchronizer.connect( this, {
-			wrongDoc: 'onSynchronizerWrongDoc',
-			pause: 'onSynchronizerPause'
-		} );
+		this.synchronizer = new ve.ce.SurfaceSynchronizer( this, synchronizer );
 	}
 
 	this.onDocumentMouseUpHandler = this.onDocumentMouseUp.bind( this );
@@ -178,7 +176,7 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	// Add elements to the DOM
 	this.$highlights.append( this.getDragDropHandler().$dropMarker );
 	this.$element.append( this.$attachedRootNode, this.clipboardHandler.$element );
-	this.surface.$blockers.append( this.$highlights );
+	this.surface.$blockers.append( this.$highlights, this.selectionManager.$overlay );
 	this.surface.$selections.append( this.selectionManager.$element );
 };
 
@@ -207,8 +205,9 @@ OO.mixinClass( ve.ce.Surface, OO.EventEmitter );
  * (only after initialize has already been called).
  *
  * @event ve.ce.Surface#position
- * @param {boolean} [wasSynchronizing=false] The surface was positioned due to
- *  synchronization (ve.dm.SurfaceSynchronizer)
+ * @param {boolean} [passive=false] Passive position events will
+ *  not try to keep the selection in view, e.g. when triggered
+ *  by ve.dm.SurfaceSynchronizer, or the toolbar unfloating.
  */
 
 /**
@@ -231,6 +230,18 @@ OO.mixinClass( ve.ce.Surface, OO.EventEmitter );
  * Surface activation state has changed (i.e. on activate or deactivate)
  *
  * @event ve.ce.Surface#activation
+ */
+
+/**
+ * When the surface or its contents changes position
+ * (only after initialize has already been called).
+ *
+ * @event ve.ce.Surface#paste
+ * @param {Object} details
+ * @param {string|null} details.source Paste source if known, per
+ *  ve.ce.ClipboardHandler.static.pasteSourceDetectors
+ * @param {ve.dm.SurfaceFragment} details.fragment Fragment covering the
+ *  pasted content
  */
 
 /* Static properties */
@@ -717,7 +728,7 @@ ve.ce.Surface.prototype.isShownAsDeactivated = function () {
  * @param {boolean} [hideSelection=false] Completely hide the selection
  * @fires ve.ce.Surface#activation
  */
-ve.ce.Surface.prototype.deactivate = function ( showAsActivated, noSelectionChange, hideSelection ) {
+ve.ce.Surface.prototype.deactivate = function ( showAsActivated = true, noSelectionChange = false, hideSelection = false ) {
 	if ( !this.deactivated ) {
 		// Disable the surface observer, there can be no observable changes
 		// until the surface is activated
@@ -778,7 +789,7 @@ ve.ce.Surface.prototype.activate = function ( useModelSelection ) {
 			this.surfaceObserver.pollOnce();
 		} else {
 			// Clear focused node so onModelSelect re-selects it if necessary
-			this.focusedNode = null;
+			this.clearFocusedNode();
 			this.onModelSelect();
 		}
 
@@ -860,10 +871,7 @@ ve.ce.Surface.prototype.onDocumentBlur = function () {
 	this.setDragging( false );
 	this.focused = false;
 	if ( nullSelectionOnBlur ) {
-		if ( this.focusedNode ) {
-			this.focusedNode.setFocused( false );
-			this.focusedNode = null;
-		}
+		this.clearFocusedNode();
 		this.getModel().setNullSelection();
 	}
 	this.$element.removeClass( 've-ce-surface-focused' );
@@ -1711,7 +1719,7 @@ ve.ce.Surface.prototype.handleDataTransfer = function ( dataTransfer, isPaste, t
 		for ( let i = 0, l = dataTransfer.items.length; i < l; i++ ) {
 			if (
 				dataTransfer.items[ i ].kind === 'string' &&
-				dataTransfer.items[ i ].type.slice( 0, 5 ) === 'text/'
+				dataTransfer.items[ i ].type.startsWith( 'text/' )
 			) {
 				items.push( ve.ui.DataTransferItem.static.newFromString(
 					dataTransfer.getData( dataTransfer.items[ i ].type ),
@@ -1814,7 +1822,11 @@ ve.ce.Surface.prototype.selectAll = function () {
 				dmDoc.getNearestCursorOffset( documentRange.end, -1 )
 			);
 		}
+		this.noScrollSelecting = true;
 		this.getModel().setLinearSelection( range );
+		setTimeout( () => {
+			this.noScrollSelecting = false;
+		} );
 	} else if ( selection instanceof ve.dm.TableSelection ) {
 		const matrix = selection.getTableNode( dmDoc ).getMatrix();
 		this.getModel().setSelection(
@@ -1839,7 +1851,7 @@ ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 		// Handle IMEs that emit text fragments with a trailing newline on Enter keypress (T312558)
 		if (
 			( inputType === 'insertText' || inputType === 'insertCompositionText' ) &&
-			e.originalEvent.data && e.originalEvent.data.slice( -1 ) === '\n'
+			e.originalEvent.data && e.originalEvent.data.endsWith( '\n' )
 		) {
 			// The event will have inserted a newline into the CE view,
 			// so fix up the DM accordingly depending on the context.
@@ -2003,6 +2015,16 @@ ve.ce.Surface.prototype.onDocumentCompositionStart = function () {
 	this.handleInsertion();
 };
 
+/**
+ * Clear the currently set focused node
+ */
+ve.ce.Surface.prototype.clearFocusedNode = function () {
+	if ( this.focusedNode ) {
+		this.focusedNode.setFocused( false );
+		this.focusedNode = null;
+	}
+};
+
 /* Custom Events */
 
 /**
@@ -2053,10 +2075,7 @@ ve.ce.Surface.prototype.onModelSelect = function () {
 
 		// If focus has changed, update nodes and this.focusedNode
 		if ( focusedNode !== this.focusedNode ) {
-			if ( this.focusedNode ) {
-				this.focusedNode.setFocused( false );
-				this.focusedNode = null;
-			}
+			this.clearFocusedNode();
 			if ( focusedNode ) {
 				focusedNode.setFocused( true );
 				this.focusedNode = focusedNode;
@@ -2075,10 +2094,7 @@ ve.ce.Surface.prototype.onModelSelect = function () {
 		if ( selection instanceof ve.dm.TableSelection ) {
 			this.prepareClipboardHandlerForCopy();
 		}
-		if ( this.focusedNode ) {
-			this.focusedNode.setFocused( false );
-		}
-		this.focusedNode = null;
+		this.clearFocusedNode();
 	}
 
 	// Deactivate immediately if mobile and read-only to avoid showing keyboard (T281771)
@@ -3111,7 +3127,7 @@ ve.ce.Surface.prototype.selectLastSelectableContentOffset = function () {
  * @param {number} [padding=0] Increase computed size of viewport by this amount at the top and bottom
  * @return {ve.Range|null} Range covering data visible in the viewport, null if the surface is not attached
  */
-ve.ce.Surface.prototype.getViewportRange = function ( covering, padding ) {
+ve.ce.Surface.prototype.getViewportRange = function ( covering, padding = 0 ) {
 	const documentModel = this.getModel().getDocument(),
 		data = documentModel.data,
 		dimensions = this.surface.getViewportDimensions();
@@ -3121,7 +3137,6 @@ ve.ce.Surface.prototype.getViewportRange = function ( covering, padding ) {
 		return null;
 	}
 
-	padding = padding || 0;
 	const top = Math.max( 0, dimensions.top - padding );
 	const bottom = dimensions.bottom + ( padding * 2 );
 	const documentRange = this.attachedRoot === this.getDocument().getDocumentNode() ?
@@ -3871,10 +3886,8 @@ ve.ce.Surface.prototype.getSelectedModels = function () {
 				this.model.selection.range.start + 1
 			)
 		);
-		models = OO.unique( [].concat(
-			models,
-			fragmentAfter.getSelectedModels()
-		) );
+		models.push( ...fragmentAfter.getSelectedModels() );
+		models = OO.unique( models );
 	}
 
 	const activeModels = this.activeAnnotations.map( ( view ) => view.getModel() );
@@ -3900,26 +3913,6 @@ ve.ce.Surface.prototype.getSelectedModels = function () {
 ve.ce.Surface.prototype.selectionSplitsNailedAnnotation = function () {
 	return ve.ce.nailedAnnotationAt( this.nativeSelection.anchorNode ) !==
 		ve.ce.nailedAnnotationAt( this.nativeSelection.focusNode );
-};
-
-/**
- * Called when the synchronizer reconnects and their is a server doc ID mismatch
- */
-ve.ce.Surface.prototype.onSynchronizerWrongDoc = function () {
-	OO.ui.alert(
-		ve.msg( 'visualeditor-rebase-missing-document-error' ),
-		{ title: ve.msg( 'visualeditor-rebase-missing-document-title' ) }
-	);
-};
-
-/**
- * Handle pause events from the synchronizer
- *
- * Drops the opacity of the surface to indicate that no updates are
- * being received from other users.
- */
-ve.ce.Surface.prototype.onSynchronizerPause = function () {
-	this.$element.toggleClass( 've-ce-surface-paused', !!this.model.synchronizer.paused );
 };
 
 /**

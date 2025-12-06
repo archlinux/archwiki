@@ -54,6 +54,65 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 				</p>
 			`,
 			msg: 'VE references not stripped'
+		},
+		{
+			documentHtml: ve.dm.example.singleLine`
+				<p>
+					a
+						<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"html":"...original reference HTML..."},"attrs":{"name":"foo"}}' class="mw-ref reference">
+							<a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1<span class="cite-bracket">]</span></span></a>
+						</sup>
+				</p>
+			`,
+			rangeOrSelection: new ve.Range( 4 ),
+			pasteHtml: ve.dm.example.singleLine`
+				b
+					<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"html":"...another reference HTML..."},"attrs":{"name":"foo"}}' class="mw-ref reference" about="#mwt1" id="cite_ref-foo-0" rel="dc:references">
+						<a href="./Article#cite_note-foo-0"><span class="mw-reflink-text ve-pasteProtect">[1]</span></a>
+					</sup>
+			`,
+			expectedRangeOrSelection: new ve.Range( 7 ),
+			expectedHtml: ve.dm.example.singleLine`
+				<p>
+					a
+					<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"html":"...original reference HTML..."},"attrs":{"name":"foo"}}' class="mw-ref reference">
+						<a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1<span class="cite-bracket">]</span></span></a>
+					</sup>
+					b
+					<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"html":"...another reference HTML..."},"attrs":{"name":"foo2"}}' class="mw-ref reference">
+						<a><span class="mw-reflink-text"><span class="cite-bracket">[</span>2<span class="cite-bracket">]</span></span></a>
+					</sup>
+				</p>
+			`,
+			msg: 'VE external reference with conflicting name disambiguated'
+		},
+		{
+			documentHtml: ve.dm.example.singleLine`
+				<p>
+					a
+						<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"html":"...original reference HTML..."},"attrs":{"name":"foo"}}' class="mw-ref reference">
+							<a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1<span class="cite-bracket">]</span></span></a>
+						</sup>
+				</p>
+			`,
+			internalSourceRangeOrSelection: new ve.Range( 0, 6 ),
+			rangeOrSelection: new ve.Range( 6 ),
+			expectedRangeOrSelection: new ve.Range( 10 ),
+			expectedHtml: ve.dm.example.singleLine`
+				<p>
+					a
+					<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"html":"...original reference HTML..."},"attrs":{"name":"foo"}}' class="mw-ref reference">
+						<a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1<span class="cite-bracket">]</span></span></a>
+					</sup>
+				</p>
+				<p>
+					a
+					<sup typeof="mw:Extension/ref" data-mw='{"name":"ref","attrs":{"name":"foo"}}' class="mw-ref reference">
+						<a><span class="mw-reflink-text"><span class="cite-bracket">[</span>1<span class="cite-bracket">]</span></span></a>
+					</sup>
+				</p>
+			`,
+			msg: 'VE internal reference with same name deduplicated'
 		}
 	];
 

@@ -11,10 +11,7 @@ use MediaWiki\HookContainer\HookContainer;
 class HookRunner implements
 	\MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook
 {
-	private HookContainer $hookContainer;
-
-	public function __construct( HookContainer $hookContainer ) {
-		$this->hookContainer = $hookContainer;
+	public function __construct( private readonly HookContainer $hookContainer ) {
 	}
 
 	/**

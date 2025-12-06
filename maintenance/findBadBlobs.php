@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
@@ -170,11 +156,16 @@ class FindBadBlobs extends Maintenance {
 		$fromTimestamp = $this->getStartTimestamp();
 		if ( $this->getOption( 'scan-to' ) ) {
 			$toTimestamp = $this->getEndTimestamp();
+			$total = INF;
+			$msg = "Scanning revisions table, "
+				. "starting at rev_timestamp $fromTimestamp until $toTimestamp\n";
 		} else {
 			$toTimestamp = null;
+			$total = $this->getOption( 'limit', 1000 );
+			$msg = "Scanning revisions table, "
+				. "$total rows starting at rev_timestamp $fromTimestamp\n";
 		}
 
-		$total = $this->getOption( 'limit', 1000 );
 		$count = 0;
 		$lastRevId = 0;
 		$firstRevId = 0;
@@ -182,10 +173,9 @@ class FindBadBlobs extends Maintenance {
 		$revisionRowsScanned = 0;
 		$archiveRowsScanned = 0;
 
-		$this->output( "Scanning revisions table, "
-			. "$total rows starting at rev_timestamp $fromTimestamp\n" );
+		$this->output( $msg );
 
-		while ( $toTimestamp === null ? $revisionRowsScanned < $total : true ) {
+		while ( $revisionRowsScanned < $total ) {
 			$batchSize = min( $total - $revisionRowsScanned, $this->getBatchSize() );
 			$revisions = $this->loadRevisionsByTimestamp( $lastRevId, $lastTimestamp, $batchSize, $toTimestamp );
 			if ( !$revisions ) {

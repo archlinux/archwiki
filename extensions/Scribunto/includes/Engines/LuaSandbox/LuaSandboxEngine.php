@@ -35,12 +35,12 @@ class LuaSandboxEngine extends LuaEngine {
 	public function getSoftwareInfo( array &$software ) {
 		try {
 			LuaSandboxInterpreter::checkLuaSandboxVersion();
-		} catch ( LuaInterpreterNotFoundError $e ) {
+		} catch ( LuaInterpreterNotFoundError ) {
 			// They shouldn't be using this engine if the extension isn't
 			// loaded. But in case they do for some reason, let's not have
 			// Special:Version fatal.
 			return;
-		} catch ( LuaInterpreterBadVersionError $e ) {
+		} catch ( LuaInterpreterBadVersionError ) {
 			// @phan-suppress-previous-line PhanPluginDuplicateCatchStatementBody
 			// Same for if the extension is too old.
 			return;

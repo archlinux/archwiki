@@ -31,9 +31,6 @@ class LanguagesHelper {
 
 	private LanguageConverterFactory $languageConverterFactory;
 
-	/**
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 */
 	public function __construct(
 		LanguageConverterFactory $languageConverterFactory
 	) {

@@ -39,10 +39,12 @@ use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RenderedRevision;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\Hook\RevisionDataUpdatesHook;
 use MediaWiki\Title\Title;
+use Wikimedia\Stats\StatsFactory;
 
 class Hooks implements
 	APIQuerySiteInfoGeneralInfoHook,
@@ -54,6 +56,7 @@ class Hooks implements
 {
 	private LinkRenderer $linkRenderer;
 	private JobQueueGroup $jobQueueGroup;
+	private StatsFactory $statsFactory;
 	private WikiPageFactory $wikiPageFactory;
 	private ParserOutputAccess $parserOutputAccess;
 	private CategoryManager $categoryManager;
@@ -66,18 +69,10 @@ class Hooks implements
 	 */
 	public const LINTABLE_CONTENT_MODELS = [ CONTENT_MODEL_WIKITEXT, 'proofread-page' ];
 
-	/**
-	 * @param LinkRenderer $linkRenderer
-	 * @param JobQueueGroup $jobQueueGroup
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param ParserOutputAccess $parserOutputAccess
-	 * @param CategoryManager $categoryManager
-	 * @param TotalsLookup $totalsLookup
-	 * @param Database $database
-	 */
 	public function __construct(
 		LinkRenderer $linkRenderer,
 		JobQueueGroup $jobQueueGroup,
+		StatsFactory $statsFactory,
 		WikiPageFactory $wikiPageFactory,
 		ParserOutputAccess $parserOutputAccess,
 		CategoryManager $categoryManager,
@@ -87,6 +82,7 @@ class Hooks implements
 	) {
 		$this->linkRenderer = $linkRenderer;
 		$this->jobQueueGroup = $jobQueueGroup;
+		$this->statsFactory = $statsFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->parserOutputAccess = $parserOutputAccess;
 		$this->categoryManager = $categoryManager;
@@ -312,7 +308,14 @@ class Hooks implements
 			return;
 		}
 
+		LintUpdate::updateParserPerformanceStats(
+			$this->statsFactory,
+			$renderedRevision->getSlotParserOutput( SlotRecord::MAIN, [] ),
+			 /* this is legacy output: */
+			false
+		);
 		$updates[] = new LintUpdate(
+			$this->statsFactory,
 			$this->wikiPageFactory,
 			$this->parserOutputAccess,
 			$renderedRevision,

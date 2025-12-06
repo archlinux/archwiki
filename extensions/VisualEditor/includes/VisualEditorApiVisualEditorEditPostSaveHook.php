@@ -1,18 +1,15 @@
 <?php
-
-namespace MediaWiki\Extension\VisualEditor;
-
-use MediaWiki\Page\ProperPageIdentity;
-use MediaWiki\User\UserIdentity;
-
 /**
- * VisualEditorApiVisualEditorEditPostSaveHook
- *
  * @file
  * @ingroup Extensions
  * @copyright 2011-2021 VisualEditor Team and others; see AUTHORS.txt
  * @license MIT
  */
+
+namespace MediaWiki\Extension\VisualEditor;
+
+use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\User\UserIdentity;
 
 interface VisualEditorApiVisualEditorEditPostSaveHook {
 

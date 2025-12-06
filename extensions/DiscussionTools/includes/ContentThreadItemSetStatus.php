@@ -6,6 +6,9 @@ use MediaWiki\Status\Status;
 use StatusValue;
 use Wikimedia\NormalizedException\NormalizedException;
 
+/**
+ * @inherits StatusValue<ContentThreadItemSet>
+ */
 class ContentThreadItemSetStatus extends StatusValue {
 
 	/**

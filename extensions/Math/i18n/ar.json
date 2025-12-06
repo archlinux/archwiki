@@ -18,7 +18,8 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Mohammed Qays"
 		]
 	},
 	"math-desc": "حوِّل الصيغ الرياضية بين وسمي <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -86,6 +87,7 @@
 	"math_invalidresponse": "$1: رد غير صحيح (\"$3\") من الخادم \"$2\":",
 	"math_invalidxml": "MathML أو SVG هو XML غير صحيح.",
 	"math_mathoid_error": "خطأ في التحويل. أبلغ الخادوم («$1») عن: «$2»",
+	"math_other_error": "خطأ آخر: $1",
 	"math-status-introduction": "هذه الصفحة تعرض المعلومات حول {{PLURAL:$1|نمط|أنماط}} عرض الرياضيات.\n\n{{PLURAL:$1|نمط|أنماط}} العرض التالية مفعلة:",
 	"math_syntax_error": "خطأ في الصياغة",
 	"math_timeout": "$1 انتهاء الوقت من \"$2\".",

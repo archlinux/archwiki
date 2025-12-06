@@ -1,20 +1,24 @@
-'use strict';
+import { config as wdioDefaults } from 'wdio-mediawiki/wdio-defaults.conf.js';
 
-require( 'dotenv' ).config();
-const { config } = require( 'wdio-mediawiki/wdio-defaults.conf.js' );
-
-exports.config = { ...config,
+export const config = { ...wdioDefaults,
 	// Override, or add to, the setting from wdio-mediawiki.
 	// Learn more at https://webdriver.io/docs/configurationfile
 	//
 	// Example:
 	// logLevel: 'info',
-
-	maxInstances: 4,
-
 	specs: [
-		'tests/selenium/docs/**/specs/*.js',
-		'tests/selenium/specs/**/*.js',
-		'tests/selenium/wdio-mediawiki/specs/*.js'
-	]
+		'docs/**/specs/*.js',
+		'specs/**/*.js',
+		'wdio-mediawiki/specs/*.js'
+	],
+	suites: {
+		daily: [
+			'specs/page.js',
+			'wdio-mediawiki/specs/BlankPage.js'
+		]
+	},
+	mochaOpts: {
+		...wdioDefaults.mochaOpts,
+		retries: 1
+	}
 };

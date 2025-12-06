@@ -44,5 +44,6 @@
 	"replacetext_no_compress": "Vikiniz TestDeğiştir ile çalışmayacak: $wgCompressRevisions doğru olarak ayarlanırsa metin değiştirmeleri çalışmaz.",
 	"replacetext_no_external_stores": "Vikiniz TestDeğiştir ile çalışmayacak: $wgExternalStores boş değilse metin değiştirmeleri çalışmaz.",
 	"right-replacetext": "Tüm vikide dize değiştirme işlemleri yap",
-	"action-replacetext": "tüm vikide dize değiştirme işlemleri yap"
+	"action-replacetext": "tüm vikide dize değiştirme işlemleri yap",
+	"tag-replacetext-description": "[[{{#Special:ReplaceText}}]] aracılığıyla yapılan otomatik düzenlemeler."
 }

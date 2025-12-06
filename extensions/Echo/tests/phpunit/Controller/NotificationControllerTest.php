@@ -33,7 +33,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 						->method( 'getExtraParam' )
 						->with( Event::RECIPIENTS_IDX )
 						->willReturn( [ 987, 123 ] );
-				}
+				},
 			],
 
 			[
@@ -51,7 +51,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 				// event user locator config
 				static function () {
 					return [ 123 => 123 ];
-				}
+				},
 			],
 
 			[
@@ -68,7 +68,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 						->method( 'getExtraParam' )
 						->withConsecutive( [ 'other-user' ], [ Event::RECIPIENTS_IDX ] )
 						->willReturnOnConsecutiveCalls( 123, [ 256 ] );
-				}
+				},
 			],
 		];
 	}
@@ -79,7 +79,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 	public function testEvaluateUserLocators( $message, $expect, $locatorConfigForEventType, $setup = null ) {
 		$this->overrideConfigValue( 'EchoNotifications', [
 			'unit-test' => [
-				AttributeManager::ATTR_LOCATORS => $locatorConfigForEventType
+				AttributeManager::ATTR_LOCATORS => $locatorConfigForEventType,
 			],
 		] );
 
@@ -191,7 +191,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 				[ 'web' => true ],
 				// per-category notification type availability
 				[
-					'f' => [ 'email' => true ]
+					'f' => [ 'email' => true ],
 				],
 				// event types
 				[
@@ -200,7 +200,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 					],
 					'bar' => [
 						'category' => 'b',
-					]
+					],
 				],
 			],
 
@@ -226,7 +226,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 						'category' => 'b',
 					],
 				],
-			]
+			],
 		];
 	}
 
@@ -266,7 +266,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			->willReturn( [
 				'event_type' => 'test',
 				'event_extra' => [
-					'extra-key' => 'extra'
+					'extra-key' => 'extra',
 				],
 			] );
 		NotificationController::enqueueEvent( $event );
@@ -280,7 +280,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			[
 				'event_type' => 'test',
 				'event_extra' => [
-					'extra-key' => 'extra'
+					'extra-key' => 'extra',
 				],
 			],
 			$job->params[ 'eventData' ]
@@ -296,7 +296,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			->willReturnMap( [
 				[ 'delay', null, 120 ],
 				[ 'rootJobSignature', null, 'test-signature' ],
-				[ 'rootJobTimestamp', null, wfTimestamp() ]
+				[ 'rootJobTimestamp', null, wfTimestamp() ],
 			] );
 		$event->expects( $this->once() )
 			->method( 'getTitle' )
@@ -317,7 +317,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			->willReturnMap( [
 				[ 'delay', null, 10 ],
 				[ 'rootJobSignature', null, 'test-signature' ],
-				[ 'rootJobTimestamp', null, $rootJobTimestamp ]
+				[ 'rootJobTimestamp', null, $rootJobTimestamp ],
 			] );
 		$event->expects( $this->once() )
 			->method( 'toDbArray' )
@@ -342,7 +342,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			],
 			'rootJobSignature' => 'test-signature',
 			'rootJobTimestamp' => $rootJobTimestamp,
-			'jobReleaseTimestamp' => 10
+			'jobReleaseTimestamp' => 10,
 		];
 		$this->assertArrayEquals( $expectedParams, $params );
 	}
@@ -372,18 +372,18 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			[
 				123,
 				[],
-				false
+				false,
 			],
 			[
 				123,
 				[ 123, 456, 789 ],
-				true
+				true,
 			],
 			[
 				456,
 				[ 489 ],
-				false
-			]
+				false,
+			],
 
 		];
 	}

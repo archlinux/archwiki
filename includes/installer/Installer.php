@@ -5,21 +5,7 @@
  * DO NOT PATCH THIS FILE IF YOU NEED TO CHANGE INSTALLER BEHAVIOR IN YOUR PACKAGE!
  * See mw-config/overrides/README for details.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Installer
  */
@@ -91,14 +77,14 @@ abstract class Installer {
 	/**
 	 * List of detected DBs, access using getCompiledDBs().
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	protected $compiledDBs;
 
 	/**
 	 * Cached DB installer instances, access using getDBInstaller().
 	 *
-	 * @var array
+	 * @var array<string,DatabaseInstaller>
 	 */
 	protected $dbInstallers = [];
 
@@ -621,7 +607,7 @@ abstract class Installer {
 	/**
 	 * Get a list of DBs supported by current PHP setup
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function getCompiledDBs() {
 		return $this->compiledDBs;
@@ -631,7 +617,7 @@ abstract class Installer {
 	 * Get the DatabaseInstaller class name for this type
 	 *
 	 * @param string $type database type ($wgDBtype)
-	 * @return string Class name
+	 * @return class-string<DatabaseInstaller> Class name
 	 * @since 1.30
 	 */
 	public static function getDBInstallerClass( $type ) {
@@ -641,7 +627,7 @@ abstract class Installer {
 	/**
 	 * Get an instance of DatabaseInstaller for the specified DB type.
 	 *
-	 * @param mixed $type DB installer for which is needed, false to use default.
+	 * @param string|false $type DB installer for which is needed, false to use default.
 	 *
 	 * @return DatabaseInstaller
 	 */
@@ -705,6 +691,13 @@ abstract class Installer {
 
 		$wgExtensionDirectory = "$IP/extensions";
 		$wgStyleDirectory = "$IP/skins";
+
+		// Non-config globals available to LocalSettings
+		//
+		// NOTE: Keep in sync with LocalSettingsLoader, normally called from Setup.php
+		//
+		// phpcs:ignore MediaWiki.VariableAnalysis.UnusedGlobalVariables, MediaWiki.Usage.DeprecatedGlobalVariables
+		global $wgCommandLineMode, $wgConf;
 
 		// NOTE: To support YAML settings files, this needs to start using SettingsBuilder.
 		//       However, as of 1.38, YAML settings files are still experimental and
@@ -776,7 +769,7 @@ abstract class Installer {
 				'unwrap' => true,
 			] )->getContentHolderText();
 			$html = Parser::stripOuterParagraph( $html );
-		} catch ( ServiceDisabledException $e ) {
+		} catch ( ServiceDisabledException ) {
 			$html = '<!--DB access attempted during parse-->  ' . htmlspecialchars( $text );
 		}
 
@@ -1036,7 +1029,7 @@ abstract class Installer {
 		return true;
 	}
 
-	protected function envCheckUploadsServerResponse() {
+	protected function envCheckUploadsServerResponse(): bool {
 		$url = $this->getVar( 'wgServer' ) . $this->getVar( 'wgScriptPath' ) . '/images/README';
 		$httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
 		$status = null;
@@ -1052,7 +1045,7 @@ abstract class Installer {
 		);
 		try {
 			$status = $req->execute();
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			// HttpRequestFactory::get can throw with allow_url_fopen = false and no curl
 			// extension.
 		}
@@ -1136,7 +1129,7 @@ abstract class Installer {
 						[ 'timeout' => 3 ],
 						__METHOD__
 					);
-				} catch ( Exception $e ) {
+				} catch ( Exception ) {
 					// HttpRequestFactory::get can throw with allow_url_fopen = false and no curl
 					// extension.
 					$text = null;
@@ -1171,7 +1164,7 @@ abstract class Installer {
 		phpinfo( INFO_MODULES );
 		$info = ob_get_clean();
 
-		return strpos( $info, $moduleName ) !== false;
+		return str_contains( $info, $moduleName );
 	}
 
 	/**
@@ -1449,7 +1442,7 @@ abstract class Installer {
 		return $taskList;
 	}
 
-	protected function getTaskFactory() {
+	protected function getTaskFactory(): TaskFactory {
 		if ( $this->taskFactory === null ) {
 			$this->taskFactory = new TaskFactory(
 				MediaWikiServices::getInstance()->getObjectFactory(),

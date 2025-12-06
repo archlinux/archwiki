@@ -13,22 +13,18 @@ QUnit.test.each( 'paste', [
 		msg: 'External link converts to internal link',
 		pasteString: location.origin + mw.Title.newFromText( 'Main Page' ).getUrl(),
 		pasteType: 'text/plain',
-		expectedData: () => {
+		expectedData: () => ve.dm.example.annotateText(
+			'Main Page',
 			// Explicitly create an internal link so we can assert this behaviour is working
-			const a = ve.dm.MWInternalLinkAnnotation.static.newFromTitle( mw.Title.newFromText( 'Main Page' ) ).element;
-			return [
-				[ 'M', [ a ] ],
-				[ 'a', [ a ] ],
-				[ 'i', [ a ] ],
-				[ 'n', [ a ] ],
-				[ ' ', [ a ] ],
-				[ 'P', [ a ] ],
-				[ 'a', [ a ] ],
-				[ 'g', [ a ] ],
-				[ 'e', [ a ] ]
-			];
-		}
+			ve.dm.MWInternalLinkAnnotation.static.newFromTitle( mw.Title.newFromText( 'Main Page' ) ).element
+		)
 	}
 ], ( assert, caseItem ) => {
-	ve.test.utils.runUrlStringHandlerTest( assert, caseItem.pasteString, caseItem.pasteHtml, caseItem.pasteType, caseItem.expectedData, location.origin, caseItem.msg );
+	ve.test.utils.runUrlStringHandlerTest(
+		assert,
+		{
+			base: location.origin,
+			...caseItem
+		}
+	);
 } );

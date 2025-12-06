@@ -6,7 +6,6 @@
 			"Zolgoyo"
 		]
 	},
-	"vector-opt-out": "Köne görnüşe geçiň",
 	"vector-languages": "Diller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 Dil}}",
 	"vector-no-language-button-label": "Dil goşuň",
@@ -27,7 +26,6 @@
 	"vector-jumptosearch": "Gözleg geçiň",
 	"vector-jumptocontent": "Mazmuna geçiň",
 	"vector-more-actions": "Has köp",
-	"vector-searchsuggest-containing": "Içindäki sahypalary gözläň <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Mazmuny",
 	"vector-toc-beginning": "Başlangyç",
 	"vector-anon-user-menu-pages-learn": "köpräk oka",

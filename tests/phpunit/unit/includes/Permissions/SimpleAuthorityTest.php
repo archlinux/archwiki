@@ -1,27 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Tests\Unit\Permissions;
 
 use InvalidArgumentException;
-use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\SimpleAuthority;
@@ -56,7 +41,7 @@ class SimpleAuthorityTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testProbablyCan() {
-		$target = new PageIdentityValue( 321, NS_MAIN, __METHOD__, PageIdentity::LOCAL );
+		$target = PageIdentityValue::localIdentity( 321, NS_MAIN, __METHOD__ );
 		$actor = new UserIdentityValue( 12, 'Test' );
 		$authority = new SimpleAuthority( $actor, [ 'foo', 'bar' ] );
 
@@ -73,7 +58,7 @@ class SimpleAuthorityTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testDefinitelyCan() {
-		$target = new PageIdentityValue( 321, NS_MAIN, __METHOD__, PageIdentity::LOCAL );
+		$target = PageIdentityValue::localIdentity( 321, NS_MAIN, __METHOD__ );
 		$actor = new UserIdentityValue( 12, 'Test' );
 		$authority = new SimpleAuthority( $actor, [ 'foo', 'bar' ] );
 
@@ -106,7 +91,7 @@ class SimpleAuthorityTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testAuthorizeRead() {
-		$target = new PageIdentityValue( 321, NS_MAIN, __METHOD__, PageIdentity::LOCAL );
+		$target = PageIdentityValue::localIdentity( 321, NS_MAIN, __METHOD__ );
 		$actor = new UserIdentityValue( 12, 'Test' );
 		$authority = new SimpleAuthority( $actor, [ 'foo', 'bar' ] );
 
@@ -123,7 +108,7 @@ class SimpleAuthorityTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testAuthorizeWrite() {
-		$target = new PageIdentityValue( 321, NS_MAIN, __METHOD__, PageIdentity::LOCAL );
+		$target = PageIdentityValue::localIdentity( 321, NS_MAIN, __METHOD__ );
 		$actor = new UserIdentityValue( 12, 'Test' );
 		$authority = new SimpleAuthority( $actor, [ 'foo', 'bar' ] );
 

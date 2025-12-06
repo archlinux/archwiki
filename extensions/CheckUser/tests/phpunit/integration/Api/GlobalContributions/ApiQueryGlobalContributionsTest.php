@@ -136,19 +136,19 @@ class ApiQueryGlobalContributionsTest extends ApiTestCase {
 
 	public static function provideContributionsData(): iterable {
 		yield 'default limit and offset, no API error, no continuation' => [
-			null, null, null, false
+			null, null, null, false,
 		];
 		yield 'custom limit and offset, no API error, with continuation' => [
-			10, '20210101000000', '20210101010000', false
+			10, '20210101000000', '20210101010000', false,
 		];
 		yield 'default limit and offset, with API error, no continuation' => [
-			null, null, null, true
+			null, null, null, true,
 		];
 		yield 'custom limit and offset, with API error, with continuation' => [
-			10, '20210101000000', '20210101010000', true
+			10, '20210101000000', '20210101010000', true,
 		];
 		yield 'default limit, custom offset, no API error, no continuation' => [
-			null, '20210101000000', null, false
+			null, '20210101000000', null, false,
 		];
 	}
 }

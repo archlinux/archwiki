@@ -45,7 +45,7 @@ class AddMetaData implements Wt2HtmlDOMProcessor {
 			],
 			'rev_timestamp' => [
 				'property' => 'dc:modified',
-				'content' => static function ( $m ) {
+				'content' => static function ( $m ): string {
 					# Convert from TS_MW ("mediawiki timestamp") format
 					$dt = DateTime::createFromFormat( 'YmdHis', $m['rev_timestamp'] );
 					# Note that DateTime::ISO8601 is not actually ISO8601, alas.
@@ -115,7 +115,7 @@ class AddMetaData implements Wt2HtmlDOMProcessor {
 		// It's so bad that the easiest way to handle them is to just prepend
 		// 'https:' and strip the protocol out later.
 		$baseURI = $env->getSiteConfig()->baseURI();
-		$wasRelative = substr( $baseURI, 0, 2 ) == '//';
+		$wasRelative = str_starts_with( $baseURI, '//' );
 		if ( $wasRelative ) {
 			$baseURI = "https:$baseURI";
 		}
@@ -156,7 +156,7 @@ class AddMetaData implements Wt2HtmlDOMProcessor {
 				// use string directly, depending on value in metadataMap
 				if ( $v instanceof Closure ) {
 					$v = $v( $revProps );
-				} elseif ( strpos( $v, '%' ) !== false ) {
+				} elseif ( str_contains( $v, '%' ) ) {
 					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$v = sprintf( $v, $value );
 				}

@@ -16,7 +16,7 @@ class UrlUtils {
 	 * Note no percent-decoding is performed, and only minimal syntax validation.
 	 *
 	 * @param string $url
-	 * @return (string|null)[]
+	 * @return array{scheme: ?string, authority: ?string, path: string, query: ?string, fragment: ?string}
 	 *  - 'scheme': Scheme of the url, if any.
 	 *  - 'authority': Authority part of the url, if any.
 	 *    This is the part in between the "//" and the path. For http, this is the "user@host:port".
@@ -54,7 +54,7 @@ class UrlUtils {
 		}
 
 		// Split authority and path
-		if ( substr( $url, 0, 2 ) === '//' ) {
+		if ( str_starts_with( $url, '//' ) ) {
 			$i = strpos( $url, '/', 2 );
 			if ( $i === false ) {
 				$ret['authority'] = substr( $url, 2 );

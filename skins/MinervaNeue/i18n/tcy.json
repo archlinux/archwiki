@@ -18,12 +18,16 @@
 	"mobile-frontend-home-button": "ಇಲ್ಲಗ್",
 	"mobile-frontend-language-article-heading": "ಬಾಸೆ",
 	"mobile-frontend-main-menu-button-tooltip": "ಮುಕ್ಯೊ ಪರಿವಿಡಿ ತೋಜಾಲೆ",
+	"mobile-frontend-main-menu-contributions": "ಕಾನಿಕೆಲು",
 	"mobile-frontend-main-menu-login": "ಲಾಗಿನ್ ಆಲೆ",
+	"mobile-frontend-main-menu-logout": "ಲಾಗ್ ಔಟ್",
 	"mobile-frontend-main-menu-nearby": "ಕೈತಲ್‍ದ",
 	"mobile-frontend-main-menu-settings": "ಸಂಯೋಜನೆಲು",
 	"mobile-frontend-main-menu-watchlist": "ವೀಕ್ಷಣಾಪಟ್ಟಿ",
-	"mobile-frontend-pageaction-edit-tooltip": "ಈ ಪುಟೊದ ಪ್ರಮುಕೊ ವಿಬಾಗೊನು ಸಂಪೊಲಿಪುಲೆ.",
 	"mobile-frontend-placeholder": "{{SITENAME}}ನ್ ನಾಡ್‍ಲೆ",
 	"mobile-frontend-random-button": "ಒವ್ವಾಂಡಲ",
-	"minerva-page-actions-overflow": "ನನಾತ್"
+	"mobile-frontend-user-page-talk": "ಪಾತೆರ",
+	"minerva-page-actions-overflow": "ನನಾತ್",
+	"minerva-page-actions-language-switcher": "ಬಾಸೆಲು",
+	"skin-minerva-issue-learn-more": "ಜಾಸ್ತಿ ತೆರಿಯೊನೊಡು"
 }

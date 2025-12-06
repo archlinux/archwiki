@@ -8,13 +8,7 @@ namespace MediaWiki\Extension\Notifications;
  * wiki config.
  */
 class ArrayList implements ContainmentList {
-	/**
-	 * @var array
-	 */
-	protected $list;
-
-	public function __construct( array $list ) {
-		$this->list = $list;
+	public function __construct( protected array $list ) {
 	}
 
 	/**

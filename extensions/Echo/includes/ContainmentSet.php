@@ -29,13 +29,7 @@ class ContainmentSet {
 	 */
 	protected $lists = [];
 
-	/**
-	 * @var User
-	 */
-	protected $recipient;
-
-	public function __construct( User $recipient ) {
-		$this->recipient = $recipient;
+	public function __construct( protected User $recipient ) {
 	}
 
 	/**

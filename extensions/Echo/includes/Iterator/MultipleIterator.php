@@ -18,13 +18,10 @@ use RecursiveIterator;
 class MultipleIterator implements RecursiveIterator {
 	/** @var Iterator[] */
 	protected $active = [];
-	/** @var array */
-	protected $children;
 	/** @var int */
 	protected $key = 0;
 
-	public function __construct( array $children ) {
-		$this->children = $children;
+	public function __construct( protected array $children ) {
 	}
 
 	public function rewind(): void {

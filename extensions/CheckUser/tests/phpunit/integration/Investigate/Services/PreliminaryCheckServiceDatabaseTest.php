@@ -39,7 +39,7 @@ class PreliminaryCheckServiceDatabaseTest extends MediaWikiIntegrationTestCase {
 	public static function provideIsUserBlocked() {
 		return [
 			'User is blocked' => [ true ],
-			'User is not blocked' => [ false ]
+			'User is not blocked' => [ false ],
 		];
 	}
 }

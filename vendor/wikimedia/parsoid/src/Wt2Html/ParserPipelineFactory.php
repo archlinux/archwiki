@@ -8,6 +8,7 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\InternalException;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\DOM\Handlers\AddAnnotationIds;
@@ -130,8 +131,7 @@ class ParserPipelineFactory {
 		'displayspace' => [
 			'name' => 'DisplaySpace',
 			'handlers' => [
-				[ 'nodeName' => null, 'action' => [ DisplaySpace::class, 'leftHandler' ] ],
-				[ 'nodeName' => null, 'action' => [ DisplaySpace::class, 'rightHandler' ] ],
+				[ 'nodeName' => null, 'action' => [ DisplaySpace::class, 'textHandler' ] ],
 			]
 		],
 		'linkclasses' => [
@@ -235,7 +235,7 @@ class ParserPipelineFactory {
 
 	// Skipping sections, addmetadata from the above pipeline
 	//
-	// FIXME: Skip extpp, linter, lang-converter, redlinks, gen-anchors, dedupe-heading-ids, convertoffsets for now.
+	// FIXME: Skip extpp, lang-converter, redlinks, gen-anchors, dedupe-heading-ids, convertoffsets for now.
 	// This replicates behavior prior to this refactor.
 	public const FULL_PARSE_EMBEDDED_DOC_DOM_TRANSFORMS = [
 		// Even though displayspace *could* be run in the nested pipeline,
@@ -243,7 +243,9 @@ class ParserPipelineFactory {
 		// with french spacing, we should run it once on the full DOM including
 		// content of all extensions (wikitext-produced or not).
 		'displayspace',
-		'dedupe-styles', 'strip-metas',
+		'dedupe-styles',
+		'linter',
+		'strip-metas',
 		'cleanup',
 		'embedded-docs', // Need to run this recursively
 		'markDiscardableDP'
@@ -283,6 +285,7 @@ class ParserPipelineFactory {
 		"Tokenizer" => [
 			"class" => PegTokenizer::class,
 		],
+		/* Except for OnlyInclude & AttributeExpander, these are all tag-based handlers */
 		"TokenTransform2" => [
 			"class" => TokenHandlerPipeline::class,
 			"token-handlers" => [
@@ -296,6 +299,10 @@ class ParserPipelineFactory {
 				// as with the legacy parser - up to end of TokenTransform2.
 				AttributeExpander::class,
 
+				// add before transforms that depend on behavior switches
+				// examples: toc generation, edit sections
+				BehaviorSwitchHandler::class,
+
 				// now all attributes expanded to tokens or string
 				// more convenient after attribute expansion
 				WikiLinkHandler::class,
@@ -308,6 +315,9 @@ class ParserPipelineFactory {
 				DOMFragmentBuilder::class
 			],
 		],
+		/**
+		 * Except for SanitizerHandler, these are all line-based handlers.
+		 */
 		"TokenTransform3" => [
 			"class" => TokenHandlerPipeline::class,
 			"token-handlers" => [
@@ -315,9 +325,6 @@ class ParserPipelineFactory {
 				// add <pre>s
 				PreHandler::class,
 				QuoteTransformer::class,
-				// add before transforms that depend on behavior switches
-				// examples: toc generation, edit sections
-				BehaviorSwitchHandler::class,
 
 				ListHandler::class,
 				SanitizerHandler::class,
@@ -481,7 +488,9 @@ class ParserPipelineFactory {
 	 * Default options processing
 	 *
 	 * @param array $options
-	 * @return array
+	 *
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @return array{expandTemplates:bool, inTemplate:bool, extTag?:bool, extTagOpts?:bool, inlineContext?:bool, attrExpansion?:bool}
 	 */
 	private function defaultOptions( array $options ): array {
 		// default: not in a template
@@ -491,7 +500,7 @@ class ParserPipelineFactory {
 		$options['expandTemplates'] ??= true;
 
 		// Catch pipeline option typos
-		foreach ( $options as $k => $v ) {
+		foreach ( $options as $k => $_v ) {
 			Assert::invariant(
 				in_array( $k, self::SUPPORTED_OPTIONS, true ),
 				'Invalid cacheKey option: ' . $k
@@ -501,6 +510,10 @@ class ParserPipelineFactory {
 		return $options;
 	}
 
+	/**
+	 * @param list<string> $procNames
+	 * @return list<array{name:string,shortcut:string,Processor:class-string}>
+	 */
 	public static function procNamesToProcs( array $procNames ): array {
 		$processors = [];
 		foreach ( $procNames as $name ) {
@@ -538,7 +551,7 @@ class ParserPipelineFactory {
 
 		foreach ( $recipeStages as $stageId ) {
 			$stageData = self::STAGES[$stageId];
-			$stage = new $stageData["class"]( $this->env, $options, $stageId, $prevStage );
+			$stage = new $stageData["class"]( $this->env, $options, $stageId );
 			if ( isset( $stageData["token-handlers"] ) ) {
 				foreach ( $stageData["token-handlers"] as $tName ) {
 					$stage->addTransformer( new $tName( $stage, $options ) );
@@ -601,7 +614,9 @@ class ParserPipelineFactory {
 			'toFragment' => false,
 		] );
 		// Top-level doc parsing always start in SOL state
-		return $pipe->parseChunkily( $src, [ 'sol' => true ] )->ownerDocument;
+		$body = $pipe->parseChunkily( $src, [ 'sol' => true ] );
+		'@phan-var Element $body'; // @var Element $body
+		return $body->ownerDocument;
 	}
 
 	/**

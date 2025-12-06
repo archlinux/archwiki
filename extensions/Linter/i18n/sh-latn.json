@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"Aca"
 		]
 	},
 	"linterrors": "Pročišćivač grešaka",
@@ -38,5 +39,5 @@
 	"linter-pager-title-header": "Naslov stranice",
 	"linterrors-subpage": "Pročišćivač grešaka: $1",
 	"multi-part-template-block": "Proizlazi iz više od jednog šablona",
-	"pageinfo-linter": "Pročišćivač grešaka"
+	"pageinfo-linter": "Linterske greške"
 }

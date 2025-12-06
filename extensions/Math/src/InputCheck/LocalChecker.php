@@ -60,7 +60,7 @@ class LocalChecker extends BaseChecker {
 				[ $this, 'runCheck' ],
 				[ 'version' => self::VERSION ],
 			);
-		} catch ( Exception $e ) { // @codeCoverageIgnoreStart
+		} catch ( Exception ) { // @codeCoverageIgnoreStart
 			// This is impossible since errors are thrown only if the option debug would be set.
 			$this->error = Message::newFromKey( 'math_failure' );
 			return;
@@ -80,7 +80,6 @@ class LocalChecker extends BaseChecker {
 
 	/**
 	 * Returns the string of the last error.
-	 * @return ?Message
 	 */
 	public function getError(): ?Message {
 		$this->run();
@@ -111,7 +110,7 @@ class LocalChecker extends BaseChecker {
 		try {
 			$warnings = [];
 			$result = ( new TexVC() )->check( $this->inputTeX, $options, $warnings, $texifyMhchem );
-		} catch ( Exception $e ) { // @codeCoverageIgnoreStart
+		} catch ( Exception ) { // @codeCoverageIgnoreStart
 			// This is impossible since errors are thrown only if the option debug would be set.
 			$this->error = Message::newFromKey( 'math_failure' );
 
@@ -119,7 +118,7 @@ class LocalChecker extends BaseChecker {
 			// @codeCoverageIgnoreEnd
 		}
 		if ( $result['status'] === '+' ) {
-			$result['mathml'] = $result['input']->renderMML();
+			$result['mathml'] = (string)$result['input']->toMMLtree();
 			$out = [
 				'status' => '+',
 				'output' => $result['output'],
@@ -128,7 +127,7 @@ class LocalChecker extends BaseChecker {
 		} else {
 			$out = [
 				'status' => $result['status'],
-				'error' => $result['error'],
+				'error' => $result['error'] ?? [ 'details' => $result['details'] ],
 			];
 		}
 		if ( $this->context !== null && $this->hookContainer !== null ) {

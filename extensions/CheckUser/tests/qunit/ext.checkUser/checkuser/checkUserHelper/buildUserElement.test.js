@@ -1,6 +1,6 @@
 'use strict';
 
-const buildUserElement = require( '../../../../../modules/ext.checkUser/checkuser/checkUserHelper/buildUserElement.js' );
+const buildUserElement = require( 'ext.checkUser/checkuser/checkUserHelper/buildUserElement.js' );
 
 QUnit.module( 'ext.checkUser.checkuser.checkUserHelper.buildUserElement', QUnit.newMwEnvironment( {
 	beforeEach: function () {

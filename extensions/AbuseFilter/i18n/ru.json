@@ -28,6 +28,7 @@
 			"Ice bulldog",
 			"Ignatus",
 			"Iniquity",
+			"Ivan-r",
 			"Jack who built the house",
 			"KPu3uC B Poccuu",
 			"Kaganer",
@@ -43,6 +44,7 @@
 			"MaxBioHazard",
 			"MaxSem",
 			"Megakott",
+			"Megitsune-chan",
 			"Meshkov.a",
 			"Mitte27",
 			"Mouse21",
@@ -74,8 +76,7 @@
 			"ЛингвоЧел",
 			"Сrower",
 			"Туллук",
-			"Умар",
-			"Megitsune-chan"
+			"Умар"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять автоматические эвристические фильтры к правкам",
@@ -473,9 +474,9 @@
 	"abusefilter-edit-builder-vars-user-emailconfirm": "Время подтверждения адреса эл. почты ($1)",
 	"abusefilter-edit-builder-vars-old-wikitext": "Вики-текст старой страницы до правки ($1)",
 	"abusefilter-edit-builder-vars-new-wikitext": "Вики-текст новой страницы после правки ($1)",
-	"abusefilter-edit-builder-vars-added-links": "Все внешние ссылки, добавленные в правке ($1)",
-	"abusefilter-edit-builder-vars-removed-links": "Все внешние ссылки, удалённые в правке ($1)",
-	"abusefilter-edit-builder-vars-all-links": "Все внешние ссылки в новом тексте ($1)",
+	"abusefilter-edit-builder-vars-added-links": "Внешние ссылки, добавленные в правке ($1)",
+	"abusefilter-edit-builder-vars-removed-links": "Внешние ссылки, удалённые в правке ($1)",
+	"abusefilter-edit-builder-vars-old-links": "Внешние ссылки на странице до правки ($1)",
 	"abusefilter-edit-builder-vars-new-pst": "Вики-текст новой страницы, преобразованный перед сохранением ($1)",
 	"abusefilter-edit-builder-vars-diff-pst": "Унифицированный diff изменений в процессе редактирования, преобразованных перед сохранением ($1)",
 	"abusefilter-edit-builder-vars-addedlines-pst": "Строчки, добавленные при редактировании, преобразованные перед сохранением ($1)",
@@ -499,7 +500,6 @@
 	"abusefilter-edit-builder-vars-movedto-restrictions-upload": "Защита от загрузки целевой страницы ($1)",
 	"abusefilter-edit-builder-vars-movedto-recent-contributors": "Последние десять участников, редактировавших целевую страницу ($1)",
 	"abusefilter-edit-builder-vars-movedto-first-contributor": "Первый участник в целевой странице ($1)",
-	"abusefilter-edit-builder-vars-old-links": "Ссылки на странице до правки ($1)",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA1-хэш содержания файла ($1)",
 	"abusefilter-edit-builder-vars-file-size": "Размер файла в байтах ($1)",
 	"abusefilter-edit-builder-vars-file-mime": "MIME-тип файла ($1)",
@@ -630,7 +630,7 @@
 	"abusefilter-topnav-tools": "Средства отладки",
 	"abusefilter-log-name": "Журнал фильтра злоупотреблений",
 	"abusefilter-log-header": "В этот журнал записываются описания изменений, произведённых в фильтрах.\nПодробности можно найти в [[Special:AbuseFilter/history|списке]] последних изменений фильтров.",
-	"abusefilter-logentry-create": "$1 {{GENDER:$2|создано}} $4 ($5)",
+	"abusefilter-logentry-create": "$1 создал{{GENDER:$2||а}} $4 ($5)",
 	"abusefilter-logentry-modify": "$1 {{GENDER:$2|изменил|изменила}} $4 ($5)",
 	"abusefilter-log-invalid-filter": "Некоторые из указанных идентификаторов фильтров являются недопустимыми.",
 	"abusefilter-log-noresults": "Ничего не найдено",
@@ -698,5 +698,7 @@
 	"abusefilter-protected-vars-log-name": "Журнал защищённых переменных фильтра злоупотреблений",
 	"log-action-filter-abusefilter-protected-vars": "Тип действия:",
 	"log-action-filter-abusefilter-protected-vars-change-access": "Изменить доступ",
-	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "Просмотр значений защищённых переменных"
+	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "Просмотр значений защищённых переменных",
+	"communityconfiguration-blockeddomain-title": "Заблокированный внешние домены",
+	"communityconfiguration-blockeddomain-description": "Список внешних доменов, ссылку на которые нельзя установить."
 }

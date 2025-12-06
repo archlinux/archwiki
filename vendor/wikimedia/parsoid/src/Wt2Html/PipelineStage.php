@@ -5,50 +5,33 @@ namespace Wikimedia\Parsoid\Wt2Html;
 
 use Generator;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\SourceRange;
+use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Wt2Html\TT\TokenHandler;
 
 /**
  * This represents the abstract interface for a wt2html parsing pipeline stage
- * Currently there are 4 known pipeline stages:
- * - PEG Tokenizer
- * - Token Transform Manager
- * - HTML5 Tree Builder
- * - DOM Post Processor
- *
- * The Token Transform Manager could eventually go away and be directly replaced by
- * the very many token transformers that are represented by the abstract TokenHandler class.
+ * Currently there are four known pipeline stages:
+ * - PEGTokenizer
+ * - TokenHandlerPipeline
+ * - TreeBuilder/TreeBuilderStage ( Remex-based HTML5 Tree Builder )
+ * - DOMProcessorPipeline
  */
-
 abstract class PipelineStage {
-	/**
-	 * Previous pipeline stage that generates input for this stage.
-	 * Will be null for the first pipeline stage.
-	 * @var ?PipelineStage
-	 */
-	protected $prevStage;
-
-	/**
-	 * This is primarily a debugging aid.
-	 * @var int
-	 */
-	protected $pipelineId = -1;
-
-	/** @var Env */
-	protected $env = null;
-
+	/** This is primarily a debugging aid. */
+	protected ?int $pipelineId = -1;
+	protected ?Env $env = null;
 	/** Defaults to false and resetState initializes it */
 	protected bool $atTopLevel = false;
-
 	protected bool $toFragment = true;
+	/** Both these default to null and are set by helper methods */
+	protected ?Frame $frame = null;
+	protected ?SourceRange $srcOffsets = null;
 
-	/** @var Frame */
-	protected $frame;
-
-	public function __construct( Env $env, ?PipelineStage $prevStage = null ) {
+	public function __construct( Env $env ) {
 		$this->env = $env;
-		$this->prevStage = $prevStage;
 	}
 
 	public function setPipelineId( int $id ): void {
@@ -65,7 +48,6 @@ abstract class PipelineStage {
 
 	/**
 	 * Register a token transformer
-	 * @param TokenHandler $t
 	 */
 	public function addTransformer( TokenHandler $t ): void {
 		throw new \BadMethodCallException( "This pipeline stage doesn't accept token transformers." );
@@ -74,8 +56,6 @@ abstract class PipelineStage {
 	/**
 	 * Resets any internal state for this pipeline stage.
 	 * This is usually called so a cached pipeline can be reused.
-	 *
-	 * @param array $options
 	 */
 	public function resetState( array $options ): void {
 		/* Default implementation */
@@ -85,22 +65,23 @@ abstract class PipelineStage {
 
 	/**
 	 * Set frame on this pipeline stage
-	 * @param Frame $frame Pipeline frame
 	 */
 	public function setFrame( Frame $frame ): void {
 		$this->frame = $frame;
 	}
 
 	/**
-	 * Set the source offsets for the content being processing by this pipeline
+	 * Set the source offsets for the content being processed by this pipeline.
 	 * This matters for when a substring of the top-level page is being processed
 	 * in its own pipeline. This ensures that all source offsets assigned to tokens
 	 * and DOM nodes in this stage are relative to the top-level page.
-	 *
-	 * @param SourceRange $so
 	 */
-	public function setSourceOffsets( SourceRange $so ): void {
-		/* Default implementation: Do nothing */
+	public function setSrcOffsets( SourceRange $srcOffsets ): void {
+		$this->srcOffsets = $srcOffsets;
+	}
+
+	public function getSrcOffsets(): ?SourceRange {
+		return $this->srcOffsets;
 	}
 
 	/**
@@ -109,14 +90,17 @@ abstract class PipelineStage {
 	 * will be processed by this pipeline stage and no further input or an EOF
 	 * signal will follow.
 	 *
-	 * @param string|array|Document $input
-	 * @param array{sol:bool} $options
+	 * @param string|array|DocumentFragment|Element $input
+	 * @param array{atTopLevel:bool,sol:bool} $options
 	 *  - atTopLevel: (bool) Whether we are processing the top-level document
 	 *  - sol: (bool) Whether input should be processed in start-of-line context
 	 *  - chunky (bool) Whether we are processing the input chunkily.
-	 * @return array|Document
+	 * @return list<Token|string>|DocumentFragment|Element
 	 */
-	abstract public function process( $input, array $options );
+	abstract public function process(
+		string|array|DocumentFragment|Element $input,
+		array $options
+	): array|Element|DocumentFragment;
 
 	/**
 	 * Process wikitext, an array of tokens, or a DOM document depending on
@@ -127,13 +111,20 @@ abstract class PipelineStage {
 	 * Implementations that don't consume tokens (ex: Tokenizer, DOMProcessorPipeline)
 	 * will provide specialized implementations that handle their input type.
 	 *
-	 * @param string|array|Document $input
-	 * @param array{sol:bool} $options
+	 * @param string|array|DocumentFragment|Element $input
+	 * @param array{atTopLevel:bool,sol:bool} $options
 	 *  - atTopLevel: (bool) Whether we are processing the top-level document
 	 *  - sol: (bool) Whether input should be processed in start-of-line context
-	 * @return Generator
+	 * @return Generator<list<Token|string>|DocumentFragment|Element>
 	 */
 	abstract public function processChunkily(
-		$input, array $options
+		string|array|DocumentFragment|Element $input,
+		array $options
 	): Generator;
+
+	/**
+	 * Finalize stage. This lets us not worry about tracking EOFTk but
+	 * still ensures that we always exit the pipeline no matter the error.
+	 */
+	abstract public function finalize(): Generator;
 }

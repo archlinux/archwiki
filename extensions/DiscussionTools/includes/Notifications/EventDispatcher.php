@@ -46,9 +46,7 @@ class EventDispatcher {
 	public static function generateEventsForRevision( array &$events, RevisionRecord $newRevRecord ): void {
 		$services = MediaWikiServices::getInstance();
 
-		$title = Title::newFromLinkTarget(
-			$newRevRecord->getPageAsLinkTarget()
-		);
+		$title = Title::newFromPageIdentity( $newRevRecord->getPage() );
 		if ( !HookUtils::isAvailableForTitle( $title ) ) {
 			// Not a talk page
 			return;
@@ -388,10 +386,6 @@ class EventDispatcher {
 	 * Log stuff to EventLogging's Schema:TalkPageEvent
 	 * If you don't have EventLogging installed, does nothing.
 	 *
-	 * @param array $addedComments
-	 * @param RevisionRecord $newRevRecord
-	 * @param PageIdentity $title
-	 * @param UserIdentity $identity
 	 * @return bool Whether events were logged
 	 */
 	protected static function logAddedComments(
@@ -486,7 +480,6 @@ class EventDispatcher {
 	/**
 	 * Should the current session be sampled for EventLogging?
 	 *
-	 * @param string $sessionId
 	 * @return bool Whether to sample the session
 	 */
 	protected static function inEventSample( string $sessionId ): bool {

@@ -1,5 +1,4 @@
-'use strict';
-const Page = require( 'wdio-mediawiki/Page' );
+import Page from 'wdio-mediawiki/Page';
 
 class EditPage extends Page {
 
@@ -141,4 +140,5 @@ class EditPage extends Page {
 	}
 
 }
-module.exports = new EditPage();
+
+export default new EditPage();

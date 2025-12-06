@@ -3,9 +3,9 @@
 namespace MediaWiki\Tests\Parser;
 
 use LogicException;
-use MediaWiki\Debug\MWDebug;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ContentHolder;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
@@ -16,6 +16,8 @@ use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiLangTestCase;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
+use Wikimedia\Message\MessageValue;
+use Wikimedia\Parsoid\Core\MergeStrategy;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Tests\SerializationTestTrait;
@@ -113,12 +115,23 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 
 		$po->setJsConfigVar( 'c', '2' );
 		$po->appendJsConfigVar( 'b', 'b' );
-		$po->appendJsConfigVar( 'b', '1' );
+		$po->appendJsConfigVar( 'b', 1 );
 
 		$this->assertEqualsCanonicalizing( [
 			'a' => 1,
 			'b' => [ 'a' => true, 'b' => true, '0' => true, '1' => true ],
 			'c' => 2,
+		], $po->getJsConfigVars() );
+
+		$po->appendJsConfigVar( 'count', 1, MergeStrategy::SUM );
+		$po->appendJsConfigVar( 'count', 2, MergeStrategy::SUM );
+		$po->appendJsConfigVar( 'count', 3, MergeStrategy::SUM );
+
+		$this->assertEqualsCanonicalizing( [
+			'a' => 1,
+			'b' => [ 'a' => true, 'b' => true, '0' => true, '1' => true ],
+			'c' => 2,
+			'count' => 6,
 		], $po->getJsConfigVars() );
 	}
 
@@ -157,6 +170,11 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 			'abc' => true,
 			'xyz' => true,
 		], $po->getExtensionData( "three" ) );
+
+		$po->appendExtensionData( 'count', 1, MergeStrategy::SUM );
+		$po->appendExtensionData( 'count', 2, MergeStrategy::SUM );
+		$po->appendExtensionData( 'count', 3, MergeStrategy::SUM );
+		$this->assertSame( 6, $po->getExtensionData( 'count' ) );
 	}
 
 	/**
@@ -168,12 +186,8 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * @covers \MediaWiki\Parser\ParserOutput::getPageProperties
 	 * @dataProvider providePageProperties
 	 */
-	public function testPageProperties( string $setPageProperty, $value1, $value2, bool $expectDeprecation = false ) {
+	public function testPageProperties( string $setPageProperty, $value1, $value2 ) {
 		$po = new ParserOutput();
-		if ( $expectDeprecation ) {
-			MWDebug::filterDeprecationForTest( '/::setPageProperty with non-string value/' );
-		}
-
 		$po->$setPageProperty( 'foo', $value1 );
 
 		$properties = $po->getPageProperties();
@@ -197,7 +211,6 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		yield 'Unsorted' => [ 'setUnsortedPageProperty', 'val', 'second val' ];
 		yield 'Numeric' => [ 'setNumericPageProperty', 42, 3.14 ];
 		yield 'Unsorted (old style)' => [ 'setPageProperty', 'val', 'second val' ];
-		yield 'Numeric (old style)' => [ 'setPageProperty', 123, 456, true ];
 	}
 
 	/**
@@ -400,6 +413,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$a->setJsConfigVar( 'test-config-var-a', 'a' );
 		$a->appendJsConfigVar( 'test-config-var-c', 'abc' );
 		$a->appendJsConfigVar( 'test-config-var-c', 'def' );
+		$a->appendJsConfigVar( 'test-config-var-d', 2, MergeStrategy::SUM );
 		$a->addExtraCSPStyleSrc( 'css.com' );
 		$a->addExtraCSPStyleSrc( 'css2.com' );
 		$a->addExtraCSPScriptSrc( 'js.com' );
@@ -415,6 +429,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$b->setJsConfigVar( 'test-config-var-a', 'X' );
 		$a->appendJsConfigVar( 'test-config-var-c', 'xyz' );
 		$a->appendJsConfigVar( 'test-config-var-c', 'def' );
+		$a->appendJsConfigVar( 'test-config-var-d', 40, MergeStrategy::SUM );
 		$b->addExtraCSPStyleSrc( 'https://css.ca' );
 		$b->addExtraCSPScriptSrc( 'jscript.com' );
 		$b->addExtraCSPScriptSrc( 'vbscript.com' );
@@ -444,6 +459,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 				'test-config-var-c' => [ // merged safely
 					'abc' => true, 'def' => true, 'xyz' => true,
 				],
+				'test-config-var-d' => 42, // merged counters
 			],
 			'getExtraCSPStyleSrcs' => [
 				'css.com',
@@ -490,6 +506,8 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$a->setExtensionData( 'foo', 'Foo!' );
 		$a->setExtensionData( 'bar', 'Bar!' );
 		$a->appendExtensionData( 'bat', 'abc' );
+		$a->appendExtensionData( 'count1', 7, MergeStrategy::SUM );
+		$a->appendExtensionData( 'count2', 11, MergeStrategy::SUM );
 
 		$b = new ParserOutput();
 		$b->setNoGallery( true );
@@ -503,6 +521,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$b->setExtensionData( 'zoo', 'Zoo!' );
 		$b->setExtensionData( 'bar', 'Barrr!' );
 		$b->appendExtensionData( 'bat', 'xyz' );
+		$b->appendExtensionData( 'count2', 13, MergeStrategy::SUM );
 
 		// Note that overwriting extension data during the merge
 		// (as this test case does for 'bar') is deprecated and will eventually
@@ -527,6 +546,8 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 				// internal strategy key is exposed here because we're looking
 				// at the raw property value, not using getExtensionData()
 				'bat' => [ 'abc' => true, 'xyz' => true, '_mw-strategy' => 'union' ],
+				'count1' => [ 'value' => 7, '_mw-strategy' => 'sum' ],
+				'count2' => [ 'value' => 24, '_mw-strategy' => 'sum' ],
 			],
 		] ];
 	}
@@ -544,7 +565,10 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 
 		$this->assertFieldValues( $a, $expected );
 
-		// test twice, to make sure the operation is idempotent (except for the TOC, see below)
+		// test twice, to make sure the operation is idempotent
+		// (except for the TOC, see below)
+		// (and except for counter values)
+		$b->setExtensionData( 'count2', null );
 		$a->mergeHtmlMetaDataFrom( $b );
 
 		// XXX: TOC joining should get smarter. Can we make it idempotent as well?
@@ -596,29 +620,36 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$a->addLink( new TitleValue( NS_TALK, 'Puppies', 'Topic' ), 17 );
 
 		$expected = [
-			NS_MAIN => [ 'Kittens' => 6, 'Goats_786827346' => 0 ],
-			NS_TALK => [ 'Kittens' => 16, 'Puppies' => 17 ]
+			[ 'link' => '0:Kittens', 'pageid' => 6 ],
+			[ 'link' => '0:Goats_786827346', 'pageid' => 0 ],
+			[ 'link' => '1:Kittens', 'pageid' => 16 ],
+			[ 'link' => '1:Puppies', 'pageid' => 17 ],
 		];
-		$this->assertSame( $expected, $a->getLinks() );
+		$this->assertEqualsCanonicalizing( $expected, array_map(
+			static fn ( $item )=>[ 'link' => strval( $item['link'] ) ] + $item,
+			$a->getLinkList( ParserOutputLinkTypes::LOCAL ) ) );
 		$expected = [
 			[
-				'link' => new TitleValue( NS_MAIN, 'Kittens' ),
+				'link' => '0:Kittens',
 				'pageid' => 6,
 			],
 			[
-				'link' => new TitleValue( NS_MAIN, 'Goats_786827346' ),
+				'link' => '0:Goats_786827346',
 				'pageid' => 0,
 			],
 			[
-				'link' => new TitleValue( NS_TALK, 'Kittens' ),
+				'link' => '1:Kittens',
 				'pageid' => 16,
 			],
 			[
-				'link' => new TitleValue( NS_TALK, 'Puppies' ),
+				'link' => '1:Puppies',
 				'pageid' => 17,
 			],
 		];
-		$this->assertEquals( $expected, $a->getLinkList( ParserOutputLinkTypes::LOCAL ) );
+		$this->assertEqualsCanonicalizing( $expected, array_map(
+			static fn ( $item )=>[ 'link' => strval( $item['link'] ) ] + $item,
+			$a->getLinkList( ParserOutputLinkTypes::LOCAL )
+		) );
 	}
 
 	public static function provideMergeTrackingMetaDataFrom() {
@@ -761,7 +792,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 			],
 			'getInterwikiLinks' => [
 				'de' => [ 'Kittens_DE' => 1 ],
-				'ru' => [ 'Kittens_RU' => 1, 'Dragons_RU' => 1, ],
+				'ru' => [ 'Kittens RU' => 1, 'Dragons RU' => 1, ],
 				'fr' => [ 'Kittens_FR' => 1 ],
 			],
 			'getLinkList!INTERWIKI' => [
@@ -770,10 +801,10 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 					'link' => new TitleValue( NS_MAIN, 'Kittens_DE', '', 'de' ),
 				],
 				[
-					'link' => new TitleValue( NS_MAIN, 'Kittens_RU', '', 'ru' ),
+					'link' => new TitleValue( NS_MAIN, 'Kittens RU', '', 'ru' ),
 				],
 				[
-					'link' => new TitleValue( NS_MAIN, 'Dragons_RU', '', 'ru' ),
+					'link' => new TitleValue( NS_MAIN, 'Dragons RU', '', 'ru' ),
 				],
 				[
 					'link' => new TitleValue( NS_MAIN, 'Kittens_FR', '', 'fr' ),
@@ -831,6 +862,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$a->setExtensionData( 'foo', 'Foo!' );
 		$a->setExtensionData( 'bar', 'Bar!' );
 		$a->appendExtensionData( 'bat', 'abc' );
+		$a->appendExtensionData( 'counter', 3, MergeStrategy::SUM );
 
 		$b = new ParserOutput();
 
@@ -840,6 +872,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$b->setExtensionData( 'zoo', 'Zoo!' );
 		$b->setExtensionData( 'bar', 'Barrr!' );
 		$b->appendExtensionData( 'bat', 'xyz' );
+		$b->appendExtensionData( 'counter', 5, MergeStrategy::SUM );
 
 		// Note that overwriting extension data during the merge
 		// (as this test case does for 'bar') is deprecated and will eventually
@@ -858,6 +891,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 				// internal strategy key is exposed here because we're looking
 				// at the raw property value, not using getExtensionData()
 				'bat' => [ 'abc' => true, 'xyz' => true, '_mw-strategy' => 'union' ],
+				'counter' => [ 'value' => 8, '_mw-strategy' => 'sum' ],
 			],
 		] ];
 	}
@@ -871,11 +905,20 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * @param array $expected
 	 */
 	public function testMergeTrackingMetaDataFrom( ParserOutput $a, ParserOutput $b, $expected ) {
+		$this->filterDeprecated( '/ParserOutput::getFileSearchOptions was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getImages was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getInterwikiLinks was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getTemplates was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getTemplateIds was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getLinks was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getLanguageLinks was deprecated/' );
 		$a->mergeTrackingMetaDataFrom( $b );
 
 		$this->assertFieldValues( $a, $expected );
 
 		// test twice, to make sure the operation is idempotent
+		// (except for counters!)
+		$b->setExtensionData( 'counter', null );
 		$a->mergeTrackingMetaDataFrom( $b );
 
 		$this->assertFieldValues( $a, $expected );
@@ -890,6 +933,13 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * @param array $expected
 	 */
 	public function testCollectMetaData( ParserOutput $a, ParserOutput $b, $expected ) {
+		$this->filterDeprecated( '/ParserOutput::getFileSearchOptions was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getImages was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getInterwikiLinks was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getTemplates was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getTemplateIds was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getLinks was deprecated/' );
+		$this->filterDeprecated( '/ParserOutput::getLanguageLinks was deprecated/' );
 		$b->collectMetadata( $a );
 
 		$this->assertFieldValues( $a, $expected );
@@ -902,7 +952,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 				[ 'duplicate-args-warning', 'A', 'B', 'C' ],
 				[ 'template-loop-warning', 'D' ],
 			],
-			'outputFlag' => [ 'foo', 'bar' ],
+			'outputFlag' => [ ParserOutputFlags::USER_SIGNATURE, ParserOutputFlags::IS_PREVIEW ],
 			'recordOption' => [ 'Foo', 'Bar' ],
 		];
 
@@ -911,7 +961,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 				[ 'template-equals-warning' ],
 				[ 'template-loop-warning', 'D' ],
 			],
-			'outputFlag' => [ 'zoo', 'bar' ],
+			'outputFlag' => [ ParserOutputFlags::SHOW_TOC, ParserOutputFlags::IS_PREVIEW ],
 			'recordOption' => [ 'Zoo', 'Bar' ],
 		];
 
@@ -921,7 +971,12 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 				wfMessage( 'template-loop-warning', 'D' )->text(),
 				wfMessage( 'template-equals-warning' )->text(),
 			],
-			'$mFlags' => [ 'foo' => true, 'bar' => true, 'zoo' => true ],
+			'getWarningMsgs' => [
+				MessageValue::new( 'duplicate-args-warning', [ 'A', 'B', 'C' ] ),
+				MessageValue::new( 'template-loop-warning', [ 'D' ] ),
+				MessageValue::new( 'template-equals-warning' ),
+			],
+			'$mFlags' => [ 'user-signature' => true, 'is-preview' => true, 'show-toc' => true ],
 			'getUsedOptions' => [ 'Foo', 'Bar', 'Zoo' ],
 		] ];
 
@@ -977,13 +1032,13 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 			'revisionTimestamp' => '20180101000011',
 		];
 		$b = [];
-		yield 'only left timestamp' => [ $a, $b, [ 'getTimestamp' => '20180101000011' ] ];
+		yield 'only left timestamp' => [ $a, $b, [ 'getRevisionTimestamp' => '20180101000011' ] ];
 
 		$a = [];
 		$b = [
 			'revisionTimestamp' => '20180101000011',
 		];
-		yield 'only right timestamp' => [ $a, $b, [ 'getTimestamp' => '20180101000011' ] ];
+		yield 'only right timestamp' => [ $a, $b, [ 'getRevisionTimestamp' => '20180101000011' ] ];
 
 		$a = [
 			'revisionTimestamp' => '20180101000011',
@@ -991,7 +1046,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$b = [
 			'revisionTimestamp' => '20180101000001',
 		];
-		yield 'left timestamp wins' => [ $a, $b, [ 'getTimestamp' => '20180101000011' ] ];
+		yield 'left timestamp wins' => [ $a, $b, [ 'getRevisionTimestamp' => '20180101000011' ] ];
 
 		$a = [
 			'revisionTimestamp' => '20180101000001',
@@ -999,7 +1054,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$b = [
 			'revisionTimestamp' => '20180101000011',
 		];
-		yield 'right timestamp wins' => [ $a, $b, [ 'getTimestamp' => '20180101000011' ] ];
+		yield 'right timestamp wins' => [ $a, $b, [ 'getRevisionTimestamp' => '20180101000011' ] ];
 
 		// speculative rev id ------------
 		$a = [
@@ -1094,6 +1149,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 */
 	public function testMergeInternalMetaDataFrom( array $aSpec, array $bSpec, $expected ) {
 		$this->filterDeprecated( '/^.*CacheTime::setCacheTime called with -1 as an argument/' );
+		$this->filterDeprecated( '/ParserOutput::getWarnings was deprecated/' );
 		$a = $this->createParserOutput( $aSpec );
 		$b = $this->createParserOutput( $bSpec );
 		$a->mergeInternalMetaDataFrom( $b );
@@ -1442,5 +1498,11 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$this->assertFalse( $pOutput->isCacheable() );
 		$this->assertTrue( $pOutput->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS ) );
 		$this->assertTrue( $pOutput->getOutputFlag( ParserOutputFlags::COLLAPSIBLE_SECTIONS ) );
+	}
+
+	public function ignoreForObjectEquality(): array {
+		return [
+			[ ContentHolder::class, 'ownerDocument' ],
+		];
 	}
 }

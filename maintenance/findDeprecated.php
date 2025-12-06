@@ -3,21 +3,7 @@
  * Maintenance script that recursively scans MediaWiki's PHP source tree
  * for deprecated functions and methods and pretty-prints the results.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  * @phan-file-suppress PhanUndeclaredProperty Lots of custom properties
@@ -37,17 +23,18 @@ class FileAwareNodeVisitor extends PhpParser\NodeVisitorAbstract {
 	/** @var string|null */
 	private $currentFile = null;
 
+	/** @inheritDoc */
 	public function enterNode( PhpParser\Node $node ) {
 		$retVal = parent::enterNode( $node );
 		$node->filename = $this->currentFile;
 		return $retVal;
 	}
 
-	public function setCurrentFile( $filename ) {
+	public function setCurrentFile( ?string $filename ) {
 		$this->currentFile = $filename;
 	}
 
-	public function getCurrentFile() {
+	public function getCurrentFile(): ?string {
 		return $this->currentFile;
 	}
 }
@@ -63,7 +50,7 @@ class DeprecatedInterfaceFinder extends FileAwareNodeVisitor {
 	/** @var array[] */
 	private $foundNodes = [];
 
-	public function getFoundNodes() {
+	public function getFoundNodes(): array {
 		// Sort results by version, then by filename, then by name.
 		foreach ( $this->foundNodes as &$nodes ) {
 			uasort( $nodes, static function ( $a, $b ) {
@@ -99,6 +86,7 @@ class DeprecatedInterfaceFinder extends FileAwareNodeVisitor {
 		}
 	}
 
+	/** @inheritDoc */
 	public function enterNode( PhpParser\Node $node ) {
 		$retVal = parent::enterNode( $node );
 

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -211,10 +197,7 @@ class MWExceptionHandler {
 		// Make sure we don't claim success on exit for CLI scripts (T177414)
 		if ( wfIsCLI() ) {
 			register_shutdown_function(
-				/**
-				 * @return never
-				 */
-				static function () {
+				static function (): never {
 					exit( 255 );
 				}
 			);
@@ -331,9 +314,7 @@ class MWExceptionHandler {
 		self::logError( $e, $severity, self::CAUGHT_BY_HANDLER );
 
 		// If $propagateErrors is true return false so PHP shows/logs the error normally.
-		// Ignore $propagateErrors if track_errors is set
-		// (which means someone is counting on regular PHP error handling behavior).
-		return !( self::$propagateErrors || ini_get( 'track_errors' ) );
+		return !self::$propagateErrors;
 	}
 
 	/**
@@ -737,7 +718,7 @@ TXT;
 
 			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
 				->onLogException( $e, $suppressed );
-		} catch ( RecursiveServiceDependencyException $e ) {
+		} catch ( RecursiveServiceDependencyException ) {
 			// An error from the HookContainer wiring will lead here (T379125)
 		}
 	}

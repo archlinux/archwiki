@@ -13,5 +13,6 @@
 	"templatedata-favorite-remove": "Remove from favourites",
 	"templatedata-favorite-removed": "Template removed from favourites",
 	"templatedata-favorite-error": "Unable to save favourites",
-	"templatedata-favorite-maximum-reached": "You have reached the maximum number ($1) of favourite templates. Please remove some from your list before adding more."
+	"templatedata-favorite-maximum-reached": "You have reached the maximum number ($1) of favourite templates. Please remove some from your list before adding more.",
+	"templatedata-favorite-count": "You have $1/$2 favourited templates"
 }

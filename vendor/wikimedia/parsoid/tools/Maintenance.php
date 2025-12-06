@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 // phpcs:disable Generic.Files.LineLength.TooLong
 
 namespace Wikimedia\Parsoid\Tools;
@@ -49,7 +50,7 @@ if ( $parsoidMode === 'integrated' ) {
 	// @phan-suppress-next-line PhanUndeclaredClassStaticProperty
 	\AutoLoader::registerNamespaces( [
 		// Keep this in sync with the "autoload" clause in /composer.json!
-		'Wikimedia\\Parsoid\\' => __DIR__ . "/../src",
+		'Wikimedia\\Parsoid\\' => __DIR__ . "/../src/",
 		// And this is from autoload-dev
 		'Wikimedia\\Parsoid\\Tools\\' => __DIR__ . "/../tools/",
 	] );
@@ -130,6 +131,7 @@ if ( $parsoidMode === 'integrated' ) {
 } else {
 	/* Use Parsoid's stand-alone clone of the Maintenance framework */
 	require_once __DIR__ . '/../vendor/autoload.php';
+	error_reporting( E_ALL );
 
 	abstract class Maintenance extends OptsProcessor {
 		/** @var bool Whether to perform Parsoid-specific processing */

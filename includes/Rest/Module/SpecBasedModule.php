@@ -112,9 +112,9 @@ class SpecBasedModule extends MatcherBasedModule {
 			);
 		}
 
-		// Require OpenAPI version 3.1 or compatible.
-		if ( !version_compare( $moduleDef['mwapi'], '1.0.999', '<=' ) ||
-			!version_compare( $moduleDef['mwapi'], '1.0.0', '>=' )
+		// Require a supported version of mwapi
+		if ( version_compare( $moduleDef['mwapi'], '1.0.0', '<' ) ||
+			version_compare( $moduleDef['mwapi'], '1.1.999', '>' )
 		) {
 			throw new ModuleConfigurationException(
 				"Unsupported openapi version {$moduleDef['mwapi']} in "
@@ -191,6 +191,7 @@ class SpecBasedModule extends MatcherBasedModule {
 			'description',
 			'tags',
 			'externalDocs',
+			'deprecationSettings'
 		];
 
 		if ( isset( $opSpec['redirect'] ) ) {
@@ -210,13 +211,14 @@ class SpecBasedModule extends MatcherBasedModule {
 		$info = [
 			'spec' => array_intersect_key( $handlerSpec, array_flip( $objectSpecKeys ) ),
 			'config' => array_diff_key( $handlerSpec, array_flip( $objectSpecKeys ) ),
-			'OAS' => array_intersect_key( $opSpec, array_flip( $oasKeys ) ),
+			'openApiSpec' => array_intersect_key( $opSpec, array_flip( $oasKeys ) ),
 			'path' => $path,
 		];
 
 		return $info;
 	}
 
+	/** @inheritDoc */
 	public function getOpenApiInfo() {
 		$def = $this->getModuleDefinition();
 		return $def['info'] ?? [];

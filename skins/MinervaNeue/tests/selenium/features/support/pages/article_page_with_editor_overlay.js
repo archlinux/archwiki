@@ -7,9 +7,7 @@
  * https://en.m.wikipedia.org/wiki/Barack_Obama#/editor/0
  */
 
-'use strict';
-
-const MinervaPage = require( './minerva_page' );
+import MinervaPage from './minerva_page.js';
 
 class ArticlePageWithEditorOverlay extends MinervaPage {
 	get editor_overlay_element() {
@@ -34,4 +32,4 @@ class ArticlePageWithEditorOverlay extends MinervaPage {
 	}
 }
 
-module.exports = new ArticlePageWithEditorOverlay();
+export default new ArticlePageWithEditorOverlay();

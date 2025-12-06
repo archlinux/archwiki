@@ -37,7 +37,6 @@ class VectorComponentVariants implements VectorComponent {
 
 	/**
 	 * Use the selected variant for the dropdown label
-	 * @return string
 	 */
 	private function getDropdownLabel(): string {
 		$converter = $this->languageConverterFactory->getLanguageConverter( $this->pageLang );

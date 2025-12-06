@@ -18,25 +18,15 @@ use MediaWiki\Title\Title;
  */
 class CiteEditorCapability extends AbstractEditorCapability {
 
-	private AlphabetsProvider $alphabetsProvider;
-	private Config $config;
-	private Language $contentLanguage;
-	private LinkRenderer $linkRenderer;
-
 	public function __construct(
 		IContextSource $ctx,
 		Title $parentTitle,
-		AlphabetsProvider $alphabetsProvider,
-		Config $config,
-		Language $contentLanguage,
-		LinkRenderer $linkRenderer
+		private readonly AlphabetsProvider $alphabetsProvider,
+		private readonly Config $config,
+		private readonly Language $contentLanguage,
+		private readonly LinkRenderer $linkRenderer,
 	) {
 		parent::__construct( $ctx, $parentTitle );
-
-		$this->alphabetsProvider = $alphabetsProvider;
-		$this->config = $config;
-		$this->contentLanguage = $contentLanguage;
-		$this->linkRenderer = $linkRenderer;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 'use strict';
 
-( function () {
+{
 	let createReferencePreview;
 	const previewTypes = { TYPE_REFERENCE: 'reference' };
 
@@ -22,8 +22,8 @@
 			},
 			preview = createReferencePreview( model );
 
-		assert.strictEqual( preview.hasThumbnail, false );
-		assert.strictEqual( preview.isTall, false );
+		assert.false( preview.hasThumbnail );
+		assert.false( preview.isTall );
 
 		assert.strictEqual(
 			$( preview.el ).find( '.mwe-popups-title' ).text().trim(),
@@ -86,4 +86,4 @@
 			'(cite-reference-previews-collapsible-placeholder)'
 		);
 	} );
-}() );
+}

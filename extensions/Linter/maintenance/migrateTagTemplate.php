@@ -11,11 +11,13 @@ use MediaWiki\Maintenance\LoggedUpdateMaintenance;
  * in existing records to the new fields.
  */
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 class MigrateTagTemplate extends LoggedUpdateMaintenance {
 
@@ -73,5 +75,7 @@ class MigrateTagTemplate extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateTagTemplate::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

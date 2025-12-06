@@ -10,7 +10,6 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Html2Wt\WTSUtils;
-use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -72,13 +71,8 @@ class SpanHandler extends DOMHandler {
 		} elseif ( $node->hasAttribute( 'data-mw-selser-wrapper' ) ) {
 			$state->serializeChildren( $node );
 		} else {
-			$kvs = array_filter( WTSUtils::getAttributeKVArray( $node ), static function ( KV $kv ) {
-				return !preg_match( '/^data-parsoid/', $kv->k )
-					&& ( $kv->k !== DOMDataUtils::DATA_OBJECT_ATTR_NAME )
-					&& !( $kv->k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $kv->v ) );
-			} );
 			if ( !empty( $dp->misnested ) && ( $dp->stx ?? null ) !== 'html'
-				&& !count( $kvs )
+				&& !WTSUtils::hasNonIgnorableAttributes( $node )
 			) {
 				// Discard span wrappers added to flag misnested content.
 				// Warn since selser should have reused source.
@@ -103,5 +97,4 @@ class SpanHandler extends DOMHandler {
 				. ')$#'
 		);
 	}
-
 }

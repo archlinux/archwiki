@@ -57,7 +57,6 @@
 	"cite_references_link_many_accessibility_label": "Hop op til:",
 	"cite_references_link_accessibility_back_label": "Spring tilbage op",
 	"cite_section_preview_references": "Forhåndsvisning af referencer",
-	"cite_warning": "Referenceadvarsel: $1",
 	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-tag med navnet <code>$1</code> kan ikke forhåndsvises, fordi det er defineret uden for det aktuelle afsnit eller ikke defineret overhovedet.",
 	"cite-wikieditor-tool-reference": "Fodnote",
 	"cite-wikieditor-help-page-references": "Fodnoter",

@@ -13,6 +13,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "تحقق من عناوين الأيبي التي يستخدمها اسم مستخدم معين، أو من أسماء المستخدمين التي يستخدمها عنوان أيبي محدد.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''عُطلت واجهة برمجة التطبيقات هذه من مسؤولي الموقع. لن يؤدي الاستعلام عن واجهة برمجة التطبيقات إلى إرجاع أي بيانات.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "نوع طلب تدقيق المستخدم:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "احصل على عنوان الآيبي للمستخدم المستهدف.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "الحصول على إجراءات تنفذ عن طريق عنوان الآيبي المستهدف أو النطاق.",
@@ -44,6 +45,7 @@
 	"apierror-checkuser-timelimit": "تحتاج إلى استخدام الحد الزمني الصحيح (مثل \"-2 weeks\" أو \"2 weeks ago\").",
 	"apierror-checkuser-invalidmode": "وضع الطلب غير صالح",
 	"apierror-checkuser-nosuchuser": "لا يوجد مستخدم لهذا الاسم",
+	"apierror-checkuser-disabled": "لقد قام مسؤولو الموقع بتعطيل واجهة برمجة تطبيقات الاستعلام \"checkuser\".",
 	"checkuser-api-help-param-direction": "في أي اتجاه يتم الترقيم:",
 	"checkuser-api-help-paramvalue-direction-newer": "قم بإدراج الأقدم أولاً. ملاحظة: يجب أن يكون $1 من قبل $1 إلى.",
 	"checkuser-api-help-paramvalue-direction-older": "قائمة الأحدث أولاً (افتراضي). ملاحظة: يجب أن يكون $1from أحدث من $1to.",
@@ -54,5 +56,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "يجمع موقع {{SITENAME}} بيانات تلميحات عميل وكيل المستخدم للمساعدة في إدارة التخريب والإساءة. راجع https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints لمزيد من التفاصيل.",
 	"apihelp-logout-param-checkuserclienthints": "بيانات تلميحات العميل المقدمة مع الطلبات المقدمة إلى ApiLogout. للاستخدام الداخلي فقط.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "تاريخ انتهاء الصلاحية للكشف التلقائي المقدم غير صالح.",
-	"checkuser-ip-auto-reveal-missing-permission": "ليس لديك الإذن اللازم لاستخدام الكشف التلقائي عن عنوان IP."
+	"checkuser-ip-auto-reveal-missing-permission": "ليس لديك الإذن اللازم لاستخدام الكشف التلقائي عن عنوان IP.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "معرف الحالة المقدم غير موجود",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "لم يتم تفعيل ميزة التحقيقات المقترحة"
 }

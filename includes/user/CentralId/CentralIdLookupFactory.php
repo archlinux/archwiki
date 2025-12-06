@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -23,13 +9,19 @@ namespace MediaWiki\User\CentralId;
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MainConfigSchema;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityLookup;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
+ * Factory class for CentralIdLookup. Creates instances based on their definitions in
+ * the CentralIdLookupProviders extension.json field.
+ *
  * @since 1.37
  * @ingroup User
+ * @see CentralIdLookup
+ * @see MainConfigSchema::CentralIdLookupProviders
  */
 class CentralIdLookupFactory {
 
@@ -44,34 +36,27 @@ class CentralIdLookupFactory {
 	/** @var array ObjectFactory specs indexed by provider name */
 	private $providers;
 
-	/** @var string */
-	private $defaultProvider;
-
-	private ObjectFactory $objectFactory;
-	private UserIdentityLookup $userIdentityLookup;
-	private UserFactory $userFactory;
+	private string $defaultProvider;
 
 	/** @var CentralIdLookup[] */
 	private $instanceCache = [];
 
 	public function __construct(
 		ServiceOptions $options,
-		ObjectFactory $objectFactory,
-		UserIdentityLookup $userIdentityLookup,
-		UserFactory $userFactory
+		private readonly ObjectFactory $objectFactory,
+		private readonly UserIdentityLookup $userIdentityLookup,
+		private readonly UserFactory $userFactory
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->providers = $options->get( MainConfigNames::CentralIdLookupProviders );
 		$this->defaultProvider = $options->get( MainConfigNames::CentralIdLookupProvider );
-		$this->objectFactory = $objectFactory;
-		$this->userIdentityLookup = $userIdentityLookup;
-		$this->userFactory = $userFactory;
 	}
 
 	/**
 	 * Get the IDs of the registered central ID lookup providers.
 	 *
 	 * @return string[]
+	 * @see MainConfigSchema::CentralIdLookupProviders
 	 */
 	public function getProviderIds(): array {
 		return array_keys( $this->providers );
@@ -79,6 +64,7 @@ class CentralIdLookupFactory {
 
 	/**
 	 * Get the ID of the default central ID provider.
+	 * @see MainConfigSchema::CentralIdLookupProvider
 	 */
 	public function getDefaultProviderId(): string {
 		return $this->defaultProvider;

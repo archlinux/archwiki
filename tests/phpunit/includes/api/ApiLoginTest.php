@@ -6,9 +6,11 @@ use MediaWiki\Api\ApiErrorFormatter;
 use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\UsernameAuthenticationRequest;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\BotPasswordSessionProvider;
-use MediaWiki\Session\SessionManager;
+use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\Token;
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\User;
@@ -23,6 +25,15 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \MediaWiki\Api\ApiLogin
  */
 class ApiLoginTest extends ApiTestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+
+		$this->overrideConfigValue( MainConfigNames::PHPSessionHandling, 'enable' );
+		$handler = TestingAccessWrapper::newFromClass( PHPSessionHandler::class );
+		$handler->instance = null;
+		PHPSessionHandler::install( MediaWikiServices::getInstance()->getSessionManager() );
+	}
 
 	public static function provideEnableBotPasswords() {
 		return [
@@ -166,7 +177,7 @@ class ApiLoginTest extends ApiTestCase {
 		$this->assertArrayNotHasKey( 'warnings', $ret );
 
 		// Lose the session
-		SessionManager::getGlobalSession()->clear();
+		RequestContext::getMain()->getRequest()->getSession()->clear();
 		$ret[2] = [];
 
 		$ret = $this->doApiRequest( [
@@ -296,14 +307,9 @@ class ApiLoginTest extends ApiTestCase {
 		] );
 
 		// Make sure our session provider is present
-		$manager = TestingAccessWrapper::newFromObject( SessionManager::singleton() );
-		if ( !isset( $manager->sessionProviders[BotPasswordSessionProvider::class] ) ) {
-			$tmp = $manager->sessionProviders;
-			$manager->sessionProviders = null;
-			$manager->sessionProviders = $tmp + $manager->getProviders();
-		}
+		$this->getServiceContainer()->resetServiceForTesting( 'SessionManager' );
 		$this->assertNotNull(
-			SessionManager::singleton()->getProvider( BotPasswordSessionProvider::class )
+			$this->getServiceContainer()->getSessionManager()->getProvider( BotPasswordSessionProvider::class )
 		);
 
 		$user = $this->getTestSysop()->getUser();

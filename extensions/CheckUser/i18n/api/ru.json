@@ -8,7 +8,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Проверить, какие IP-адреса используются данным именем участника или какие имена участников используются заданным IP-адресом.",
-	"apihelp-query+checkuser-param-request": "Тип запроса чекюзера:\n;userips:Получить IP-адрес целевого пользователя.\n; edits:Получить изменения, сделанные с целевого IP-адреса или диапазона адресов.\n;ipusers:Получить пользователей по целевому IP-адресу или диапазону.",
+	"apihelp-query+checkuser-param-request": "Тип CheckUser-запроса:",
 	"apihelp-query+checkuser-param-target": "Имя участника, IP-адрес или CIDR-диапазон для проверки.",
 	"apihelp-query+checkuser-param-reason": "Причина проверки.",
 	"apihelp-query+checkuser-param-limit": "Ограничение количества строк.",

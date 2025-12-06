@@ -2,19 +2,7 @@
 /**
  * Copyright (C) 2011-2020 Wikimedia Foundation and others.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Rest\Handler;
@@ -31,6 +19,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -58,7 +47,7 @@ use Wikimedia\Parsoid\Config\DataAccess;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\PageConfigFactory;
 use Wikimedia\Parsoid\Core\ClientError;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Parsoid;
@@ -91,10 +80,7 @@ abstract class ParsoidHandler extends Handler {
 	/** @var array */
 	private $requestAttributes;
 
-	/**
-	 * @return static
-	 */
-	public static function factory(): ParsoidHandler {
+	public static function factory(): static {
 		$services = MediaWikiServices::getInstance();
 		// @phan-suppress-next-line PhanTypeInstantiateAbstractStatic
 		return new static(
@@ -295,19 +281,23 @@ abstract class ParsoidHandler extends Handler {
 		];
 
 		# Convert language codes in $opts['updates']['variant'] if present
-		$sourceVariant = $opts['updates']['variant']['source'] ?? null;
+		$sourceVariant = $opts['updates']['variant']['wikitext'] ??
+			$opts['updates']['variant']['source'] ?? null;
 		if ( $sourceVariant ) {
 			$sourceVariant = LanguageCode::normalizeNonstandardCodeAndWarn(
 				$sourceVariant
 			);
-			$opts['updates']['variant']['source'] = $sourceVariant;
+			unset( $opts['updates']['variant']['source'] );
+			$opts['updates']['variant']['wikitext'] = $sourceVariant;
 		}
-		$targetVariant = $opts['updates']['variant']['target'] ?? null;
+		$targetVariant = $opts['updates']['variant']['html'] ??
+			$opts['updates']['variant']['target'] ?? null;
 		if ( $targetVariant ) {
 			$targetVariant = LanguageCode::normalizeNonstandardCodeAndWarn(
 				$targetVariant
 			);
-			$opts['updates']['variant']['target'] = $targetVariant;
+			unset( $opts['updates']['variant']['target'] );
+			$opts['updates']['variant']['html'] = $targetVariant;
 		}
 		if ( isset( $opts['wikitext']['headers']['content-language'] ) ) {
 			$contentLanguage = $opts['wikitext']['headers']['content-language'];
@@ -512,8 +502,9 @@ abstract class ParsoidHandler extends Handler {
 
 		$title = ( $title !== '' ) ? Title::newFromText( $title ) : Title::newMainPage();
 		if ( !$title ) {
-			// TODO use proper validation
-			throw new LogicException( 'Title not found!' );
+			throw new LocalizedHttpException(
+				new MessageValue( "rest-invalid-title", [ 'pageName' ] ), 400
+			);
 		}
 		$user = RequestContext::getMain()->getUser();
 
@@ -545,8 +536,11 @@ abstract class ParsoidHandler extends Handler {
 			// User here, it only currently affects the output in obscure
 			// corner cases; see PageConfigFactory::create() for more.
 			// @phan-suppress-next-line PhanUndeclaredMethod method defined in subtype
-			$pageConfig = $this->pageConfigFactory->create(
-				$title, $user, $revisionRecord ?? $revId, null, $pagelanguageOverride,
+			$pageConfig = $this->pageConfigFactory->createFromParserOptions(
+				ParserOptions::newFromUser( $user ),
+				$title,
+				$revisionRecord ?? $revId,
+				$pagelanguageOverride,
 				$ensureAccessibleContent
 			);
 		} catch ( SuppressedDataException $e ) {
@@ -945,7 +939,7 @@ abstract class ParsoidHandler extends Handler {
 			$attribs['envOptions']['outputContentVersion']
 		);
 		if ( $downgrade ) {
-			$pb = new PageBundle(
+			$pb = new HtmlPageBundle(
 				$revision['html']['body'],
 				$revision['data-parsoid']['body'] ?? null,
 				$revision['data-mw']['body'] ?? null
@@ -987,7 +981,7 @@ abstract class ParsoidHandler extends Handler {
 	) {
 		$parsoid = $this->newParsoid();
 
-		$pb = new PageBundle(
+		$pb = new HtmlPageBundle(
 			$revision['html']['body'],
 			$revision['data-parsoid']['body'] ?? null,
 			$revision['data-mw']['body'] ?? null,
@@ -1020,9 +1014,11 @@ abstract class ParsoidHandler extends Handler {
 		PageConfig $pageConfig, array $attribs, array $revision
 	) {
 		$opts = $attribs['opts'];
-		$target = $opts['updates']['variant']['target'] ??
+		$target = $opts['updates']['variant']['html'] ??
+			$opts['updates']['variant']['target'] ??
 			$attribs['envOptions']['htmlVariantLanguage'];
-		$source = $opts['updates']['variant']['source'] ?? null;
+		$source = $opts['updates']['variant']['wikitext'] ??
+			$opts['updates']['variant']['source'] ?? null;
 
 		if ( !$target ) {
 			throw new LocalizedHttpException( new MessageValue( "rest-target-variant-required" ), 400 );
@@ -1030,7 +1026,7 @@ abstract class ParsoidHandler extends Handler {
 
 		$pageIdentity = $this->tryToCreatePageIdentity( $attribs );
 
-		$pb = new PageBundle(
+		$pb = new HtmlPageBundle(
 			$revision['html']['body'],
 			$revision['data-parsoid']['body'] ?? null,
 			$revision['data-mw']['body'] ?? null,
@@ -1070,13 +1066,13 @@ abstract class ParsoidHandler extends Handler {
 	abstract public function execute(): Response;
 
 	/**
-	 * Validate a PageBundle against the given contentVersion, and throw
+	 * Validate a HtmlPageBundle against the given contentVersion, and throw
 	 * an HttpException if it does not match.
-	 * @param PageBundle $pb
+	 * @param HtmlPageBundle $pb
 	 * @param string $contentVersion
 	 * @throws HttpException
 	 */
-	private function validatePb( PageBundle $pb, string $contentVersion ): void {
+	private function validatePb( HtmlPageBundle $pb, string $contentVersion ): void {
 		$errorMessage = '';
 		if ( !$pb->validate( $contentVersion, $errorMessage ) ) {
 			throw new LocalizedHttpException(
@@ -1098,7 +1094,7 @@ abstract class ParsoidHandler extends Handler {
 		$title = $page->getLinkTarget();
 		try {
 			$page = $services->getPageStore()->getPageForLink( $title );
-		} catch ( MalformedTitleException | InvalidArgumentException $e ) {
+		} catch ( MalformedTitleException | InvalidArgumentException ) {
 			// Note that even some well-formed links are still invalid
 			// parameters for getPageForLink(), e.g. interwiki links or special pages.
 			throw new HttpException(

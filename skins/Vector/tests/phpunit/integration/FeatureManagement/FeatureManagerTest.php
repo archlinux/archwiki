@@ -11,6 +11,7 @@ use MediaWiki\Title\Title;
 class FeatureManagerTest extends \MediaWikiIntegrationTestCase {
 	private function newFeatureManager(): FeatureManager {
 		return new FeatureManager(
+			$this->getServiceContainer()->getService( 'Vector.ConfigHelper' ),
 			$this->getServiceContainer()->getUserOptionsLookup(),
 			RequestContext::getMain()
 		);

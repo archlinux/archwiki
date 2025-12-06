@@ -199,6 +199,8 @@
 	"rcfilters-watchlist-preference-label": "Anggén antarmuka non-Javascript",
 	"rcfilters-watchlist-preference-help": "Muat [[{{#special:Watchlist}}|lis pangawasan]] tanpa saringan parerehan utawi piranti panyorotan",
 	"prefs-changeswatchlist": "Pauahan kacingakan",
+	"tog-watchstar-expiry": "Periode galah baku ring lis pangawasan antuk kaca sané kawewehin manual:",
+	"tog-watch-expiry": "Periode galah baku:",
 	"tog-watchlisthideminor": "Engkebang panguwahan alit ring kepahan pangiwasan",
 	"tog-watchlisthidebots": "Engkebang panguwahan bot ring kepahan pangiwasan",
 	"tog-watchlisthideown": "Engkebang panguwahan titiang saking kepahan pangiwasan",

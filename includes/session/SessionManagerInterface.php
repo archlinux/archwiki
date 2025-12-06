@@ -1,24 +1,7 @@
 <?php
 /**
- * MediaWiki\Session entry point interface
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
@@ -28,18 +11,20 @@ use MediaWiki\User\User;
 use Psr\Log\LoggerAwareInterface;
 
 /**
+ * MediaWiki\Session entry point interface
+ *
  * This exists to make IDEs happy, so they don't see the
  * internal-but-required-to-be-public methods on SessionManager.
  *
- * @ingroup Session
  * @since 1.27
+ * @ingroup Session
  */
 interface SessionManagerInterface extends LoggerAwareInterface {
 	/**
 	 * Fetch the session for a request (or a new empty session if none is
 	 * attached to it)
 	 *
-	 * @note You probably want to use $request->getSession() instead. It's more
+	 * @internal For WebRequest only. Use $request->getSession() instead. It's more
 	 *  efficient and doesn't break FauxRequests or sessions that were changed
 	 *  by $this->getSessionById() or $this->getEmptySession().
 	 * @param WebRequest $request Any existing associated session will be reset

@@ -15,8 +15,6 @@ use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleParser;
 use Wikimedia\Message\MessageValue;
-use Wikimedia\Message\ParamType;
-use Wikimedia\Message\ScalarParam;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -93,9 +91,7 @@ class LanguageLinksHandler extends SimpleHandler {
 
 		if ( !$page ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-nonexistent-title',
-					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ]
-				),
+				( new MessageValue( 'rest-nonexistent-title' ) )->plaintextParams( $title ),
 				404
 			);
 		}
@@ -112,8 +108,7 @@ class LanguageLinksHandler extends SimpleHandler {
 
 		if ( !$this->getAuthority()->authorizeRead( 'read', $page ) ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-permission-denied-title',
-					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ] ),
+				( new MessageValue( 'rest-permission-denied-title' ) )->plaintextParams( $title ),
 				403
 			);
 		}
@@ -139,17 +134,19 @@ class LanguageLinksHandler extends SimpleHandler {
 					'key' => $this->titleFormatter->getPrefixedDBkey( $targetTitle ),
 					'title' => $this->titleFormatter->getPrefixedText( $targetTitle )
 				];
-			} catch ( MalformedTitleException $e ) {
+			} catch ( MalformedTitleException ) {
 				// skip malformed titles
 			}
 		}
 		return $result;
 	}
 
+	/** @inheritDoc */
 	public function needsWriteAccess() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getParamSettings() {
 		return [
 			'title' => [
@@ -181,13 +178,6 @@ class LanguageLinksHandler extends SimpleHandler {
 	 */
 	protected function hasRepresentation() {
 		return (bool)$this->getPage();
-	}
-
-	protected function generateResponseSpec( string $method ): array {
-		$spec = parent::generateResponseSpec( $method );
-
-		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-		return $spec;
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {

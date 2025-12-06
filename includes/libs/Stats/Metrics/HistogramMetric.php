@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -46,24 +33,24 @@ class HistogramMetric {
 		$this->statsFactory = $statsFactory;
 		$this->name = $name;
 		if ( !$buckets ) {
-			throw new InvalidArgumentException( 'Stats: Histogram buckets cannot be an empty array.' );
+			throw new InvalidArgumentException( "Stats: ({$name}) Histogram buckets cannot be an empty array." );
 		}
 		$bucketCount = count( $buckets );
 		if ( $bucketCount > self::MAX_BUCKETS ) {
 			throw new InvalidArgumentException(
-				"Stats: Too many buckets defined. Got:{$bucketCount}, Max:" . self::MAX_BUCKETS
+				"Stats: ({$name}) Too many buckets defined. Got:{$bucketCount}, Max:" . self::MAX_BUCKETS
 			);
 		}
 		foreach ( $buckets as $bucket ) {
 			if ( !( is_float( $bucket ) || is_int( $bucket ) ) ) {
-				throw new InvalidArgumentException( 'Stats: Histogram buckets can only be float or int.' );
+				throw new InvalidArgumentException( "Stats: ({$name}) Histogram buckets can only be float or int." );
 			}
 		}
 		$normalizedBuckets = array_unique( $buckets );
 		sort( $normalizedBuckets, SORT_NUMERIC );
 		if ( $buckets !== $normalizedBuckets ) {
 			throw new InvalidArgumentException(
-				'Stats: Histogram buckets must be unique and in order of least to greatest.'
+				"Stats: ({$name}) Histogram buckets must be unique and in order of least to greatest."
 			);
 		}
 		$this->buckets = $buckets;

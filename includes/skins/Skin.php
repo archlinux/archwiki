@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -32,7 +18,6 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Specials\SpecialUserRights;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
@@ -311,13 +296,6 @@ abstract class Skin extends ContextSource {
 	 *
 	 *     Default: `false`
 	 *
-	 *  - `supportsMwHeading`: Whether the skin supports new HTML markup for headings, which uses
-	 *     `<div class="mw-heading">` tags (https://www.mediawiki.org/wiki/Heading_HTML_changes).
-	 *     If false, MediaWiki will output the legacy markup instead.
-	 *
-	 *     Since: MW 1.43
-	 *     Default: `false` (will become `true` in and then will be removed in the future)
-	 *
 	 *  - `link`: An array of link option overriddes. See Skin::makeLink for the available options.
 	 *
 	 *     Default: `[]`
@@ -444,8 +422,8 @@ abstract class Skin extends ContextSource {
 	 */
 	public function getDefaultModules() {
 		$out = $this->getOutput();
-		$user = $this->getUser();
 
+		$options = $this->getOptions();
 		// Modules declared in the $modules literal are loaded
 		// for ALL users, on ALL pages, in ALL skins.
 		// Keep this list as small as possible!
@@ -454,7 +432,7 @@ abstract class Skin extends ContextSource {
 			// Unlike other keys in $modules, this is an associative array
 			// where each key is its own group pointing to a list of modules
 			'styles' => [
-				'skin' => $this->getOptions()['styles'],
+				'skin' => $options['styles'],
 				'core' => [],
 				'content' => [],
 				'syndicate' => [],
@@ -469,7 +447,7 @@ abstract class Skin extends ContextSource {
 			// modules relating to search functionality
 			'search' => [],
 			// Skins can register their own scripts
-			'skin' => $this->getOptions()['scripts'],
+			'skin' => $options['scripts'],
 			// modules relating to functionality relating to watching an article
 			'watch' => [],
 			// modules which relate to the current users preferences
@@ -478,14 +456,15 @@ abstract class Skin extends ContextSource {
 			'syndicate' => [],
 		];
 
+		$bodyHtml = $out->getHTML();
 		// Preload jquery.tablesorter for mediawiki.page.ready
-		if ( strpos( $out->getHTML(), 'sortable' ) !== false ) {
+		if ( str_contains( $bodyHtml, 'sortable' ) ) {
 			$modules['content'][] = 'jquery.tablesorter';
 			$modules['styles']['content'][] = 'jquery.tablesorter.styles';
 		}
 
 		// Preload jquery.makeCollapsible for mediawiki.page.ready
-		if ( strpos( $out->getHTML(), 'mw-collapsible' ) !== false ) {
+		if ( str_contains( $bodyHtml, 'mw-collapsible' ) ) {
 			$modules['content'][] = 'jquery.makeCollapsible';
 			$modules['styles']['content'][] = 'jquery.makeCollapsible.styles';
 		}
@@ -493,18 +472,17 @@ abstract class Skin extends ContextSource {
 		// Load relevant styles on wiki pages that use mw-ui-button.
 		// Since 1.26, this no longer loads unconditionally. Special pages
 		// and extensions should load this via addModuleStyles() instead.
-		if ( strpos( $out->getHTML(), 'mw-ui-button' ) !== false ) {
+		if ( str_contains( $bodyHtml, 'mw-ui-button' ) ) {
 			$modules['styles']['content'][] = 'mediawiki.ui.button';
 		}
 		// Since 1.41, styling for mw-message-box is only required for
 		// messages that appear in article content.
 		// This should only be removed when a suitable alternative exists
 		// e.g. https://phabricator.wikimedia.org/T363607 is resolved.
-		if ( strpos( $out->getHTML(), 'mw-message-box' ) !== false ) {
+		if ( str_contains( $bodyHtml, 'mw-message-box' ) ) {
 			$modules['styles']['content'][] = 'mediawiki.legacy.messageBox';
 		}
 
-		$action = $this->getRequest()->getRawVal( 'action' ) ?? 'view';
 		$title = $this->getTitle();
 		$namespace = $title ? $title->getNamespace() : 0;
 		// If the page is using Codex message box markup load Codex styles.
@@ -512,8 +490,8 @@ abstract class Skin extends ContextSource {
 		// means.
 		// For content, this should not be considered stable, and will likely
 		// be removed when https://phabricator.wikimedia.org/T363607 is resolved.
-		$containsUserGeneratedContent = strpos( $out->getHTML(), 'mw-parser-output' ) !== false;
-		$containsCodexMessageBox = strpos( $out->getHTML(), 'cdx-message' ) !== false;
+		$containsUserGeneratedContent = str_contains( $bodyHtml, 'mw-parser-output' );
+		$containsCodexMessageBox = str_contains( $bodyHtml, 'cdx-message' );
 		if ( $containsCodexMessageBox && $containsUserGeneratedContent && $namespace !== NS_SPECIAL ) {
 			$modules['styles']['content'][] = 'mediawiki.codex.messagebox.styles';
 		}
@@ -524,7 +502,7 @@ abstract class Skin extends ContextSource {
 
 		$authority = $this->getAuthority();
 		$relevantTitle = $this->getRelevantTitle();
-		if ( $authority->getUser()->isRegistered()
+		if ( $authority->isRegistered()
 			&& $authority->isAllowedAll( 'viewmywatchlist', 'editmywatchlist' )
 			&& $relevantTitle && $relevantTitle->canExist()
 		) {
@@ -532,8 +510,9 @@ abstract class Skin extends ContextSource {
 		}
 
 		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
-		if ( $userOptionsLookup->getBoolOption( $user, 'editsectiononrightclick' )
-			|| ( $out->isArticle() && $userOptionsLookup->getOption( $user, 'editondblclick' ) )
+		$userIdentity = $authority->getUser();
+		if ( $userOptionsLookup->getBoolOption( $userIdentity, 'editsectiononrightclick' )
+			|| ( $out->isArticle() && $userOptionsLookup->getOption( $userIdentity, 'editondblclick' ) )
 		) {
 			$modules['user'][] = 'mediawiki.misc-authed-pref';
 		}
@@ -542,7 +521,7 @@ abstract class Skin extends ContextSource {
 			$modules['styles']['syndicate'][] = 'mediawiki.feedlink';
 		}
 
-		if ( $user->isTemp() ) {
+		if ( $authority->isTemp() ) {
 			$modules['user'][] = 'mediawiki.tempUserBanner';
 			$modules['styles']['user'][] = 'mediawiki.tempUserBanner.styles';
 		}
@@ -990,7 +969,7 @@ abstract class Skin extends ContextSource {
 		}
 
 		$ptext = $title->getPrefixedText();
-		if ( strpos( $ptext, '/' ) !== false ) {
+		if ( str_contains( $ptext, '/' ) ) {
 			$links = explode( '/', $ptext );
 			array_pop( $links );
 			$count = 0;
@@ -1149,35 +1128,6 @@ abstract class Skin extends ContextSource {
 		$title = Title::newMainPage();
 
 		return $title->getLinkURL( $urlaction );
-	}
-
-	/**
-	 * Make a URL for a Special Page using the given query and protocol.
-	 *
-	 * If $proto is set to null, make a local URL. Otherwise, make a full
-	 * URL with the protocol specified.
-	 *
-	 * @deprecated since 1.39 - Moved to SkinComponentUtils::makeSpecialUrl
-	 * @param string $name Name of the Special page
-	 * @param string|array $urlaction Query to append
-	 * @param string|null $proto Protocol to use or null for a local URL
-	 * @return string
-	 */
-	public static function makeSpecialUrl( $name, $urlaction = '', $proto = null ) {
-		wfDeprecated( __METHOD__, '1.39' );
-		return SkinComponentUtils::makeSpecialUrl( $name, $urlaction, $proto );
-	}
-
-	/**
-	 * @deprecated since 1.39 - Moved to SkinComponentUtils::makeSpecialUrlSubpage
-	 * @param string $name
-	 * @param string|bool $subpage false for no subpage
-	 * @param string|array $urlaction
-	 * @return string
-	 */
-	public static function makeSpecialUrlSubpage( $name, $subpage, $urlaction = '' ) {
-		wfDeprecated( __METHOD__, '1.39' );
-		return SkinComponentUtils::makeSpecialUrlSubpage( $name, $subpage, $urlaction );
 	}
 
 	/**
@@ -1352,6 +1302,7 @@ abstract class Skin extends ContextSource {
 	 * @return array
 	 */
 	protected function buildNavUrls() {
+		$services = MediaWikiServices::getInstance();
 		$out = $this->getOutput();
 		$title = $this->getTitle();
 		$thispage = $title->getPrefixedDBkey();
@@ -1438,7 +1389,7 @@ abstract class Skin extends ContextSource {
 
 			if ( $this->getAuthority()->isAllowed( 'block' ) ) {
 				// Check if the user is already blocked
-				$userBlock = MediaWikiServices::getInstance()
+				$userBlock = $services
 					->getBlockManager()
 					->getBlock( $user, null );
 				if ( $userBlock ) {
@@ -1481,11 +1432,13 @@ abstract class Skin extends ContextSource {
 				}
 
 				// Don't show links to Special:UserRights for temporary accounts (as they cannot have groups)
-				$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
+				$userNameUtils = $services->getUserNameUtils();
+				$userGroupsAssignmentService = $services->getUserGroupAssignmentService();
 				if ( !$userNameUtils->isTemp( $user->getName() ) ) {
-					$sur = new SpecialUserRights;
-					$sur->setContext( $this->getContext() );
-					$canChange = $sur->userCanChangeRights( $user );
+					$canChange = $userGroupsAssignmentService->userCanChangeRights(
+						$this->getAuthority(),
+						$user
+					);
 					$delimiter = $this->getConfig()->get(
 						MainConfigNames::UserrightsInterwikiDelimiter );
 					if ( str_contains( $rootUser, $delimiter ) ) {
@@ -1528,35 +1481,6 @@ abstract class Skin extends ContextSource {
 			}
 		}
 		return $feeds;
-	}
-
-	/**
-	 * Append link to SpecialPages into navigation sidebar if it doesn't already exist
-	 *
-	 * Created to help migrate sidebars after the SpecialPages link was removed from the toolbar.
-	 *
-	 * @since 1.44
-	 * @deprecated since 1.44 - will be hard deprecated in 1.45
-	 */
-	private function appendSpecialPagesLinkIfAbsent() {
-		if ( $this->sidebar === null ) {
-			return;
-		}
-
-		$isSpecialPagesPresent = false;
-		foreach ( $this->sidebar as $bar ) {
-			if ( in_array( 'n-specialpages', array_column( $bar, 'id' ) ) ) {
-				$isSpecialPagesPresent = true;
-				break;
-			}
-		}
-		if ( !$isSpecialPagesPresent ) {
-			$item = $this->createSidebarItem( 'specialpages-url', 'specialpages' );
-			if ( $item !== null ) {
-				wfDeprecated( __METHOD__, '1.44' );
-				$this->sidebar['navigation'][] = $item;
-			}
-		}
 	}
 
 	/**
@@ -1635,8 +1559,6 @@ abstract class Skin extends ContextSource {
 			$this->getHookRunner()->onSidebarBeforeOutput( $this, $sidebar );
 
 			$this->sidebar = $sidebar;
-
-			$this->appendSpecialPagesLinkIfAbsent();
 		}
 
 		return $this->sidebar;
@@ -1710,13 +1632,13 @@ abstract class Skin extends ContextSource {
 		}
 
 		$id = strtr( $text, ' ', '-' );
-		return array_merge( [
+		return $extraAttribs + [
 			'text' => $parsedText,
 			'href' => $href,
 			'icon' => $this->getSidebarIcon( $id ),
 			'id' => Sanitizer::escapeIdForAttribute( 'n-' . $id ),
 			'active' => false,
-		], $extraAttribs );
+		];
 	}
 
 	/**
@@ -1738,12 +1660,12 @@ abstract class Skin extends ContextSource {
 		$urlUtils = $services->getUrlUtils();
 
 		foreach ( $lines as $line ) {
-			if ( strpos( $line, '*' ) !== 0 ) {
+			if ( !str_starts_with( $line, '*' ) ) {
 				continue;
 			}
 			$line = rtrim( $line, "\r" ); // for Windows compat
 
-			if ( strpos( $line, '**' ) !== 0 ) {
+			if ( !str_starts_with( $line, '**' ) ) {
 				$heading = trim( $line, '* ' );
 				if ( !array_key_exists( $heading, $bar ) ) {
 					$bar[$heading] = [];
@@ -1751,7 +1673,7 @@ abstract class Skin extends ContextSource {
 			} else {
 				$line = trim( $line, '* ' );
 
-				if ( strpos( $line, '|' ) !== false ) {
+				if ( str_contains( $line, '|' ) ) {
 					$line = $messageParser->transform( $line, false, null, $messageTitle );
 					$line = array_map( 'trim', explode( '|', $line, 2 ) );
 					if ( count( $line ) !== 2 ) {
@@ -1788,6 +1710,8 @@ abstract class Skin extends ContextSource {
 			case 'help':
 			case 'help-mediawiki':
 				return 'help';
+			case 'specialpages':
+				return 'specialPages';
 			default:
 				return null;
 		}
@@ -2085,10 +2009,7 @@ abstract class Skin extends ContextSource {
 		$result = Html::openElement( 'span', [ 'class' => 'mw-editsection' ] );
 		$result .= Html::rawElement( 'span', [ 'class' => 'mw-editsection-bracket' ], '[' );
 
-		$linksHtml = [];
-		foreach ( $links as $linkDetails ) {
-			$linksHtml[] = $linkDetails['html'];
-		}
+		$linksHtml = array_column( $links, 'html' );
 
 		if ( count( $linksHtml ) === 1 ) {
 			$result .= $linksHtml[0];
@@ -2484,7 +2405,6 @@ abstract class Skin extends ContextSource {
 			'bodyClasses' => [],
 			'clientPrefEnabled' => false,
 			'responsive' => false,
-			'supportsMwHeading' => false,
 			'link' => [],
 			'tempUserBanner' => false,
 			'wrapSiteNotice' => false,

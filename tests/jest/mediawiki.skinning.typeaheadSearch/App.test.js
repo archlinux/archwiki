@@ -21,7 +21,7 @@ const defaultProps = {
 	searchQuery: ''
 };
 
-const mount = ( /** @type {Object} */ customProps ) => VueTestUtils.shallowMount( App, {
+const mount = ( /** @type {Object} */ customProps ) => VueTestUtils.mount( App, {
 	props: Object.assign( {}, defaultProps, customProps ),
 	global: {
 		mocks: {
@@ -37,9 +37,45 @@ const mount = ( /** @type {Object} */ customProps ) => VueTestUtils.shallowMount
 	}
 } );
 
+let matchMediaResult;
+
 describe( 'App', () => {
+	beforeEach( () => {
+		matchMediaResult = ( {
+			matches: false
+		} );
+		window.matchMedia = jest.fn( () => matchMedia );
+	} );
 	it( 'renders a typeahead search component', () => {
 		const wrapper = mount();
+		expect(
+			wrapper.element
+		).toMatchSnapshot();
+	} );
+} );
+
+describe( 'App (mobile mode)', () => {
+	beforeEach( () => {
+		matchMediaResult = ( {
+			matches: true
+		} );
+		window.matchMedia = jest.fn( () => matchMediaResult );
+	} );
+
+	it( 'renders a typeahead search component in a dialog for mobile mode', () => {
+		const wrapper = mount( {
+			supportsMobileExperience: true,
+			router: {
+				addRoute: jest.fn(),
+				on: jest.fn()
+			}
+		} );
+		expect(
+			wrapper.element
+		).toMatchSnapshot();
+
+		// resize the window (but keep as desktop)
+		matchMediaResult.onchange();
 		expect(
 			wrapper.element
 		).toMatchSnapshot();

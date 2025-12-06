@@ -22,7 +22,7 @@
 	"url": "https://www.mediawiki.org/wiki/Skin:MinervaNeue",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"config": {
 		"MinervaDonateBanner": {
@@ -30,6 +30,16 @@
 				"base": false,
 				"loggedin": false,
 				"amc": false
+			}
+		},
+		"MinervaTypeahead": {
+			"value": {
+				"apiUrl": null,
+				"recommendationApiUrl": null,
+				"options": {
+					"showThumbnail": true,
+					"showDescription": true
+				}
 			}
 		},
 		"MinervaDonateLink": {
@@ -51,35 +61,30 @@
 		"MinervaTalkAtTop": {
 			"value": {
 				"base": false,
-				"beta": false,
 				"loggedin": true
 			}
 		},
 		"MinervaAdvancedMainMenu": {
 			"value": {
 				"base": false,
-				"beta": false,
 				"amc": true
 			}
 		},
 		"MinervaPersonalMenu": {
 			"value": {
 				"base": false,
-				"beta": false,
 				"amc": true
 			}
 		},
 		"MinervaHistoryInPageActions": {
 			"value": {
 				"base": false,
-				"beta": false,
 				"loggedin": true
 			}
 		},
 		"MinervaOverflowInPageActions": {
 			"value": {
 				"base": false,
-				"beta": false,
 				"amc": true,
 				"loggedin": true
 			}
@@ -93,8 +98,7 @@
 		},
 		"MinervaPageIssuesNewTreatment": {
 			"value": {
-				"base": true,
-				"beta": true
+				"base": true
 			}
 		},
 		"MinervaABSamplingRate": {
@@ -136,10 +140,12 @@
 				"UserIdentityUtils",
 				"UserOptionsManager"
 			],
+			"optional_services": [
+				"Vector.ConfigHelper"
+			],
 			"args": [
 				{
 					"name": "minerva",
-					"supportsMwHeading": true,
 					"templateDirectory": "includes/Skins",
 					"templateSectionLinks": "SectionLinks",
 					"tempUserBanner": true,
@@ -188,7 +194,7 @@
 		"MediaWiki\\Minerva\\": "includes/"
 	},
 	"ConfigRegistry": {
-		"minerva": "GlobalVarConfig::newInstance"
+		"minerva": "MediaWiki\\Config\\GlobalVarConfig::newInstance"
 	},
 	"HookHandlers": {
 		"main": {
@@ -238,6 +244,9 @@
 	},
 	"ResourceModuleSkinStyles": {
 		"minerva": {
+			"mediawiki.tempUserBanner": [
+				"skinStyles/mediawiki.tempUserBanner.less"
+			],
 			"ext.echo.styles.badge": [
 				"skinStyles/ext.echo.styles.badge.less"
 			],
@@ -400,6 +409,7 @@
 				"userAvatarOutline",
 				"userTalk",
 				"userAvatar",
+				"userTemporaryLocation",
 				"userAdd",
 				"userGroup"
 			]
@@ -412,9 +422,11 @@
 			"variants": [],
 			"useMaskImage": true,
 			"icons": [
+				"speechBubbleAdd",
 				"edit",
 				"wikiText",
 				"editLock",
+				"eye",
 				"history",
 				"language",
 				"menu",
@@ -475,6 +487,28 @@
 				"resources/skins.minerva.loggedin.styles/styles.less"
 			]
 		},
+		"skins.minerva.search": {
+			"localBasePath": "resources/skins.minerva.search",
+			"remoteSkinPath": "MinervaNeue/resources/resources/skins.minerva.search",
+			"dependencies": [
+				"mediawiki.page.ready",
+				"mediawiki.router",
+				"mediawiki.skinning.typeaheadSearch"
+			],
+			"styles": [
+				"styles.less"
+			],
+			"packageFiles": [
+				"init.js",
+				{
+					"name": "searchConfig.json",
+					"config": [
+						"MinervaTypeahead"
+					]
+				},
+				"searchTypeahead.js"
+			]
+		},
 		"skins.minerva.scripts": {
 			"localBasePath": "resources/skins.minerva.scripts",
 			"remoteSkinPath": "MinervaNeue/resources/skins.minerva.scripts",
@@ -484,6 +518,7 @@
 				"mediawiki.cookie",
 				"mediawiki.util",
 				"mediawiki.router",
+				"mediawiki.DateFormatter",
 				"mediawiki.Title",
 				"mobile.startup",
 				"mediawiki.user",
@@ -493,12 +528,6 @@
 			],
 			"messages": [
 				"skin-minerva-night-mode-unavailable",
-				"skin-minerva-time-ago-seconds",
-				"skin-minerva-time-ago-minutes",
-				"skin-minerva-time-ago-hours",
-				"skin-minerva-time-ago-days",
-				"skin-minerva-time-ago-months",
-				"skin-minerva-time-ago-years",
 				"echo-badge-count",
 				"skin-minerva-issue-learn-more",
 				"mobile-frontend-meta-data-issues",
@@ -525,7 +554,6 @@
 				"reportIfNightModeWasDisabledOnPage.js",
 				"addPortletLink.js",
 				"initMobile.js",
-				"searchSuggestReveal.js",
 				"drawers.js",
 				"ctaDrawers.js",
 				"menu.js",
@@ -546,7 +574,6 @@
 				"TabScroll.js",
 				"Toolbar.js",
 				"mobileRedirect.js",
-				"search.js",
 				"references.js",
 				"watchstar.js"
 			]
@@ -561,7 +588,8 @@
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"codexStyleOnly": true,
 			"codexComponents": [
-				"CdxButton"
+				"CdxButton",
+				"CdxTypeaheadSearch"
 			]
 		}
 	},

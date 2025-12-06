@@ -36,8 +36,6 @@
 .mw-allpages-body,
 .mw-prefixindex-body {
 	columns: 22em 3;
-	-moz-columns: 22em 3;
-	-webkit-columns: 22em 3;
 	break-inside: avoid-column;
 	page-break-inside: avoid;
 	-webkit-column-break-inside: avoid;
@@ -111,6 +109,10 @@
 	margin-top: 0;
 }
 
+.mw-special-MergeHistory [ type='radio' ] {
+	margin: 2px 2px 0 2px;
+}
+
 /* Special:Undelete */
 .mw-undelete-editcomments,
 /* Special:MovePage */
@@ -137,8 +139,6 @@ th.mw-revdel-checkbox {
 }
 
 .mw-specialpages-list {
-	-webkit-columns: 16em 2;
-	-moz-columns: 16em 2;
 	columns: 16em 2;
 
 	ul {

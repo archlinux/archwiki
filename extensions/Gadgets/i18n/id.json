@@ -21,7 +21,6 @@
 	"gadgetusage-usercount": "Jumlah pengguna",
 	"gadgetusage-noresults": "Perkakas tidak ditemukan",
 	"gadgetusage-intro": "Tabel ini menunjukkan jumlah pengguna yang telah mengaktifkan perkakas pada wiki ini. Pengguna aktif adalah seseorang yang membuat suntingan selama {{PLURAL:$1|$1 hari}} terakhir. Daftar ini tidak memasukkan data perkakas yang telah diaktifkan secara baku, dan juga mungkin termasuk perkakas yang sudah tidak ada.",
-	"gadgetusage-intro-noactive": "Tabel ini menunjukkan jumlah pengguna yang telah mengaktifkan perkakas pada wiki ini. Daftar ini tidak memasukkan data perkakas yang telah diaktifkan secara baku, dan juga mungkin termasuk perkakas yang sudah tidak ada.",
 	"gadgetusage-activeusers": "Pengguna aktif",
 	"gadgetusage-default": "Baku",
 	"gadgets-title": "Perkakas",

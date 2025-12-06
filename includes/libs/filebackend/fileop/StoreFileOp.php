@@ -2,21 +2,7 @@
 /**
  * Helper class for representing operations with transaction support.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
@@ -31,6 +17,7 @@ use Wikimedia\AtEase\AtEase;
  * Parameters for this operation are outlined in FileBackend::doOperations().
  */
 class StoreFileOp extends FileOp {
+	/** @inheritDoc */
 	protected function allowedParams() {
 		return [
 			[ 'src', 'dst' ],
@@ -39,6 +26,7 @@ class StoreFileOp extends FileOp {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function doPrecheck(
 		FileStatePredicates $opPredicates,
 		FileStatePredicates $batchPredicates
@@ -76,6 +64,7 @@ class StoreFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
+	/** @inheritDoc */
 	protected function doAttempt() {
 		if ( $this->overwriteSameCase ) {
 			$status = StatusValue::newGood(); // nothing to do
@@ -87,7 +76,7 @@ class StoreFileOp extends FileOp {
 		return $status;
 	}
 
-	protected function getSourceSize() {
+	protected function getSourceSize(): int {
 		AtEase::suppressWarnings();
 		$size = filesize( $this->params['src'] );
 		AtEase::restoreWarnings();
@@ -95,7 +84,7 @@ class StoreFileOp extends FileOp {
 		return $size;
 	}
 
-	protected function getSourceSha1Base36() {
+	protected function getSourceSha1Base36(): string {
 		AtEase::suppressWarnings();
 		$hash = sha1_file( $this->params['src'] );
 		AtEase::restoreWarnings();
@@ -106,6 +95,7 @@ class StoreFileOp extends FileOp {
 		return $hash;
 	}
 
+	/** @inheritDoc */
 	public function storagePathsChanged() {
 		return [ $this->params['dst'] ];
 	}

@@ -3,21 +3,7 @@
 /**
  * ApiParse check functions
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -90,7 +76,7 @@ class ApiParseTest extends ApiTestCase {
 	 *   no warnings
 	 */
 	protected function assertParsedTo( $expected, array $res, $warnings = null ) {
-		$this->doAssertParsedTo( $expected, $res, $warnings, [ $this, 'assertSame' ] );
+		$this->doAssertParsedTo( $expected, $res, $warnings, $this->assertSame( ... ) );
 	}
 
 	/**
@@ -103,14 +89,14 @@ class ApiParseTest extends ApiTestCase {
 	 *   no warnings
 	 */
 	protected function assertParsedToRegExp( $expected, array $res, $warnings = null ) {
-		$this->doAssertParsedTo( $expected, $res, $warnings, [ $this, 'assertMatchesRegularExpression' ] );
+		$this->doAssertParsedTo( $expected, $res, $warnings, $this->assertMatchesRegularExpression( ... ) );
 	}
 
 	private function doAssertParsedTo( $expected, array $res, $warnings, callable $callback ) {
 		$html = $res[0]['parse']['text'];
 
 		$expectedStart = '<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"';
-		$this->assertSame( $expectedStart, substr( $html, 0, strlen( $expectedStart ) ) );
+		$this->assertStringStartsWith( $expectedStart, $html );
 
 		$html = substr( $html, strlen( $expectedStart ) );
 
@@ -124,13 +110,13 @@ class ApiParseTest extends ApiTestCase {
 
 		if ( $res[1]->getBool( 'disablelimitreport' ) ) {
 			$expectedEnd = "</div>";
-			$this->assertSame( $expectedEnd, substr( $html, -strlen( $expectedEnd ) ) );
+			$this->assertStringEndsWith( $expectedEnd, $html );
 
 			$unexpectedEnd = '#<!-- \nNewPP limit report|' .
 				'<!--\nTransclusion expansion time report#';
 			$this->assertDoesNotMatchRegularExpression( $unexpectedEnd, $html );
 
-			$html = substr( $html, 0, strlen( $html ) - strlen( $expectedEnd ) );
+			$html = substr( $html, 0, -strlen( $expectedEnd ) );
 		} else {
 			$expectedEnd = '#\n<!-- \nNewPP limit report\n(?>.+?\n-->)\n' .
 				'<!--\nTransclusion expansion time report \(%,ms,calls,template\)\n(?>.*?\n-->)\n' .
@@ -611,7 +597,26 @@ class ApiParseTest extends ApiTestCase {
 			'action' => 'parse',
 			'text' => "[[Foo]]",
 			'contentmodel' => 'wikitext',
-			'parsoid' => $parsoid ?: null,
+			'disablelimitreport' => true,
+		] + ( $parsoid ? [ 'parsoid' => true ] : [] ) );
+		$warnings = $parsoid ?
+			'The parameter "parsoid" has been deprecated.' : null;
+
+		$this->assertParsedToRegexp( $expected, $res, $warnings );
+	}
+
+	/** @dataProvider providerTestParsoid */
+	public function testParser( $parsoid, $existing, $expected ) {
+		# For simplicity, ensure that [[Foo]] isn't a redlink.
+		$this->editPage( "Foo", __FUNCTION__ );
+		$res = $this->doApiRequest( [
+			# check that we're using the contents of 'text' not the contents of
+			# [[<title>]] by using pre-existing title __CLASS__ sometimes
+			'title' => $existing ? __CLASS__ : 'Bar',
+			'action' => 'parse',
+			'text' => "[[Foo]]",
+			'contentmodel' => 'wikitext',
+			'parser' => $parsoid ? 'parsoid' : 'legacy',
 			'disablelimitreport' => true,
 		] );
 

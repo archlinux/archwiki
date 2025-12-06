@@ -156,7 +156,7 @@ class ToolLinksHandler implements
 					'label' => $sp->msg( 'checkuser-ip-contributions-special-contributions-button' )->text(),
 					'href' => $contributionsUrl,
 					'active' => in_array( $sp->getName(), [ 'Contributions', 'DeletedContributions' ] ),
-				] )
+				] ),
 			],
 		] );
 

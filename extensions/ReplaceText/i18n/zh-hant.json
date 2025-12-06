@@ -55,5 +55,7 @@
 	"replacetext_no_external_stores": "您的 wiki 無法運作 ReplaceText：若 $wgExternalStores 非空值，無法執行文字替換。",
 	"right-replacetext": "取代整個wiki的字串",
 	"action-replacetext": "取代整個wiki的字串。",
-	"replacetext-summary-label": "取代編輯的摘要（留空則使用預設摘要）"
+	"replacetext-summary-label": "取代編輯的摘要（留空則使用預設摘要）",
+	"tag-replacetext": "[[Special:ReplaceText|ReplaceText]]",
+	"tag-replacetext-description": "透過 [[{{#Special:ReplaceText}}]] 作出的自動編輯。"
 }

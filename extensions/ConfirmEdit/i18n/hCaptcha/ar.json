@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meno25",
+			"Mohammed Qays"
+		]
+	},
+	"hcaptcha-desc": "وحدة [https://www.hcaptcha.com/ hCaptcha] لتأكيد التحرير",
+	"hcaptcha-edit": "لحماية الويكي من التحرير الآلي للبريد العشوائي ، نطلب منك التفضل بحل hCaptcha التالي:",
+	"hcaptcha-addurl": "يتضمن تعديلك روابط خارجية جديدة. لحماية الويكي من الرسائل المزعجة الآلية، نرجو منك حل رمز التحقق الآلي التالي:",
+	"hcaptcha-badlogin": "لحماية الويكي من الاختراق الآلي لكلمات المرور ، نطلب منك التفضل بحل hCaptcha التالي:",
+	"hcaptcha-createaccount": "لحماية الويكي من الإنشاء الآلي للحساب ، نطلب منك التفضل بحل hCaptcha التالي:",
+	"hcaptcha-createaccount-fail": "يبدو أنك لم تحل hCaptcha.",
+	"hcaptcha-create": "لحماية الويكي من الإنشاء الآلي للصفحة ، نطلب منك التفضل بحل hCaptcha التالي:",
+	"hcaptcha-help": "يرجى حل تحدي hCaptcha وإرجاع قيمة الاستجابة كـ captchaWord.",
+	"hcaptcha-privacy-policy": "هذا الموقع محمي بواسطة hCaptcha وينطبق عليه [https://www.hcaptcha.com/privacy سياسة الخصوصية] و[https://www.hcaptcha.com/terms شروط الخدمة].",
+	"hcaptcha-challenge-closed": "للمتابعة يجب عليك إكمال الكابتشا.",
+	"hcaptcha-challenge-expired": "انتهت المدة المحددة لإكمال اختبار الكابتشا. يُرجى المحاولة مرة أخرى.",
+	"hcaptcha-generic-error": "حدث خطأ أثناء تحميل النموذج. للمتابعة، يجب إعادة تحميل الصفحة.",
+	"hcaptcha-loading-indicator-label": "يرجى الانتظار بينما ننتهي من تحميل النموذج...",
+	"hcaptcha-missing-token": "لم ننتهِ بعد من تحميل النموذج. يُرجى الانتظار بضع ثوانٍ، ثم المحاولة مرة أخرى.",
+	"hcaptcha-noscript": "يتطلب جافا سكريبت للمتابعة. فعّل جافا سكريبت في إعدادات متصفحك، ثم حدّث الصفحة."
+}

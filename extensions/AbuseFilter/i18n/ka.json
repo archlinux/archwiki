@@ -9,7 +9,8 @@
 			"Otogi",
 			"Temuri rajavi",
 			"გიორგიმელა",
-			"Გიო ოქრო"
+			"Გიო ოქრო",
+			"Mehman97"
 		]
 	},
 	"abusefilter-desc": "საშუალებას იძლევა რედაქტირებისას გამოიყენოს ევრისტიკული ფილტრები",
@@ -271,7 +272,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "ახალი ვიკიტექსტი, გვერდების შესწორებების შემდეგ",
 	"abusefilter-edit-builder-vars-added-links": "ყველა გარე ბმული, ჩამატებული რედაქტირებისას",
 	"abusefilter-edit-builder-vars-removed-links": "ყველა გარე ბმული, წაშლილი რედაქტირებისას",
-	"abusefilter-edit-builder-vars-all-links": "ყველა გარე ბმული, ახალ ტექსტში",
+	"abusefilter-edit-builder-vars-old-links": "ბმულები გვერდზე შესწორებამდე",
 	"abusefilter-edit-builder-vars-new-pst": "ახალი გვერდის ვიკიტექსტი, გარდაქმნილი შენახვამდე",
 	"abusefilter-edit-builder-vars-diff-pst": "უნიფიცირებული diff ცვლილებები რედაქტირების პროცესში, გარდაქმნილი შენახვამდე",
 	"abusefilter-edit-builder-vars-addedlines-pst": "სტრიქონები, დამატებული რედაქტირების დროს, გარდაქმნილი შენახვამდე",
@@ -283,7 +284,6 @@
 	"abusefilter-edit-builder-vars-restrictions-upload": "ფაილის ატვირთვის დაცვა",
 	"abusefilter-edit-builder-vars-recent-contributors": "გვერდის ბოლო ათი რედაქტორი",
 	"abusefilter-edit-builder-vars-first-contributor": "გვერდის პირველი რედაქტორი",
-	"abusefilter-edit-builder-vars-old-links": "ბმულები გვერდზე შესწორებამდე",
 	"abusefilter-edit-builder-vars-file-sha1": "ფაილის SHA1-ხეშ შინაარსი",
 	"abusefilter-edit-builder-vars-file-size": "ფაილის ზომა ბაიტებში",
 	"abusefilter-edit-builder-vars-old-text": "ძველი გვერდის ტექსტი ვიკიფიცირების გარეშე",
@@ -394,5 +394,6 @@
 	"abusefilter-import-intro": "თქვენ შეგიძლიათ გამოიყენოთეს ინტერფეისი სხვა ვიკებიდან ფილტრების იმპორტირებისათვის.\nვიკის წყაროში, დააჭირეთ „{{int:abusefilter-edit-export}}“ რედაქტირების ინტერფეისის „{{int:abusefilter-edit-tools}}“ განყოფილებაში.\nდააკოპირეთ ტექსტური ველის შიგთავსი, გადმოიტანეთ ამ გვერდზე და დააჭირეთ „{{int:abusefilter-import-submit}}“.",
 	"abusefilter-import-submit": "მონაცემების იმპორტირება",
 	"abusefilter-group-default": "სტანდარტული",
-	"abusefilter-http-error": "მოხდა HTTP-ის შეცდომა: $1."
+	"abusefilter-http-error": "მოხდა HTTP-ის შეცდომა: $1.",
+	"blockedexternaldomains": "გარე დომენის დაბლოკვა"
 }

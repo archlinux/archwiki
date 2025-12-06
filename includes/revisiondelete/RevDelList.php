@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup RevisionDelete
  */
@@ -179,6 +165,7 @@ abstract class RevDelList extends RevisionListBase {
 		$virtualOldBits = 0;
 		$virtualNewBits = 0;
 		$logType = 'delete';
+		$useSuppressLog = false;
 
 		// Will be filled with id => [old, new bits] information and
 		// passed to doPostCommitUpdates().
@@ -241,6 +228,7 @@ abstract class RevDelList extends RevisionListBase {
 				// If any item field was suppressed or unsuppressed
 				if ( ( $oldBits | $newBits ) & self::SUPPRESS_BIT ) {
 					$logType = 'suppress';
+					$useSuppressLog = true;
 				}
 				// Track which fields where (un)hidden for each item
 				$addedBits = ( $oldBits ^ $newBits ) & $newBits;
@@ -293,7 +281,10 @@ abstract class RevDelList extends RevisionListBase {
 		// Log it
 		$authorFields = [];
 		$authorFields['authorActors'] = $authorActors;
-		$this->updateLog(
+
+		$tags = $params['tags'] ?? [];
+
+		$logEntry = $this->updateLog(
 			$logType,
 			[
 				'page' => $this->page,
@@ -302,9 +293,11 @@ abstract class RevDelList extends RevisionListBase {
 				'oldBits' => $virtualOldBits,
 				'comment' => $comment,
 				'ids' => $idsForLog,
-				'tags' => $params['tags'] ?? [],
+				'tags' => $tags,
 			] + $authorFields
 		);
+
+		$this->emitEvents( $bitPars, $visibilityChangeMap, $tags, $logEntry, $useSuppressLog );
 
 		// Clear caches after commit
 		DeferredUpdates::addCallableUpdate(
@@ -320,7 +313,24 @@ abstract class RevDelList extends RevisionListBase {
 		return $status;
 	}
 
-	final protected function acquireItemLocks() {
+	/**
+	 * @param array $bitPars See RevisionDeleter::extractBitfield
+	 * @param array $visibilityChangeMap [id => ['oldBits' => $oldBits, 'newBits' => $newBits], ... ]
+	 * @param array $tags
+	 * @param LogEntry $logEntry
+	 * @param bool $suppressed
+	 */
+	protected function emitEvents(
+		array $bitPars,
+		array $visibilityChangeMap,
+		array $tags,
+		LogEntry $logEntry,
+		bool $suppressed
+	) {
+		// stub
+	}
+
+	final protected function acquireItemLocks(): Status {
 		$status = Status::newGood();
 		/** @var RevDelItem $item */
 		foreach ( $this as $item ) {
@@ -330,7 +340,7 @@ abstract class RevDelList extends RevisionListBase {
 		return $status;
 	}
 
-	final protected function releaseItemLocks() {
+	final protected function releaseItemLocks(): Status {
 		$status = Status::newGood();
 		/** @var RevDelItem $item */
 		foreach ( $this as $item ) {
@@ -362,7 +372,7 @@ abstract class RevDelList extends RevisionListBase {
 	 *     authorActors:    The array of the actor IDs of the offenders
 	 *     tags:            The array of change tags to apply to the log entry
 	 */
-	private function updateLog( $logType, $params ) {
+	private function updateLog( $logType, $params ): LogEntry {
 		// Get the URL param's corresponding DB field
 		$field = RevisionDeleter::getRelationType( $this->getType() );
 		if ( !$field ) {
@@ -390,6 +400,8 @@ abstract class RevDelList extends RevisionListBase {
 		$logEntry->addTags( $params['tags'] );
 		$logId = $logEntry->insert();
 		$logEntry->publish( $logId );
+
+		return $logEntry;
 	}
 
 	/**

@@ -16,7 +16,7 @@ use Wikimedia\CSS\Objects\Token;
  * other types (case-insensitively) too. For delimiter (or case-sensitive)
  * matching, use DelimMatcher.
  *
- * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#component-types
+ * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#component-types
  */
 class KeywordMatcher extends Matcher {
 	/** @var string One of the Token::T_* constants */

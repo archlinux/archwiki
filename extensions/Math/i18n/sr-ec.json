@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
@@ -11,8 +12,7 @@
 			"Srdjan m",
 			"Zenfiric",
 			"Zoranzoki21",
-			"Милан Јелисавчић",
-			"Aca"
+			"Милан Јелисавчић"
 		]
 	},
 	"math-desc": "Рендерује математичке формуле између ознака <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
@@ -69,7 +69,7 @@
 	"math_syntax_error": "грешка у синтакси",
 	"math-test-fail": "Тест ''$1'' није успео.",
 	"math-test-success": "Тест ''$1'' успешан.",
-	"math-tracking-category-error": "Стране са математичким грешкама",
+	"math-tracking-category-error": "Странице са матиш грешкама",
 	"math-tracking-category-mhchem-deprecation": "Странице које користе застарели формат хемијских ознака",
 	"math-tracking-category-mhchem-deprecation-desc": "Странице са застарелим форматом хемијских ознака",
 	"math-tracking-category-texvc-deprecation-desc": "Странице са застарелим форматом математичких ознака",

@@ -34,6 +34,8 @@ use Wikimedia\Parsoid\Utils\WTUtils;
 class TestUtils {
 	/** @var mixed */
 	private static $consoleColor;
+	/** @var 'auto'|bool Color mode. */
+	public static bool|string $colorMode = 'auto';
 
 	/**
 	 * Little helper function for encoding XML entities.
@@ -153,10 +155,6 @@ class TestUtils {
 			return $out;
 		}
 
-		// Normalize headings by stripping out Parsoid-added ids so that we don't
-		// have to add these ids to every parser test that uses headings.
-		// We will test the id generation scheme separately via mocha tests.
-		$out = preg_replace( '/(<h[1-6].*?) id="[^\"]*"([^>]*>)/u', '$1$2', $out );
 		// strip meta/link elements
 		$out = preg_replace(
 			'#</?(?:meta|link)(?: [^\0-\cZ\s"\'>/=]+(?:=(?:"[^"]*"|\'[^\']*\'))?)*/?>#u',
@@ -201,11 +199,9 @@ class TestUtils {
 			return;
 		}
 
-		$child = null;
-		$next = null;
 		for ( $child = $node->firstChild; $child; $child = $next ) {
 			$next = $child->nextSibling;
-			if ( $child instanceof Element && DOMCompat::nodeName( $child ) === 'span' &&
+			if ( $child instanceof Element && DOMUtils::nodeName( $child ) === 'span' &&
 				preg_match( $stripSpanTypeof, DOMCompat::getAttribute( $child, 'typeof' ) ?? '' )
 			) {
 				self::unwrapSpan( $node, $child, $stripSpanTypeof );
@@ -226,17 +222,14 @@ class TestUtils {
 	private static function newlineAround( ?Node $node ): bool {
 		return $node && preg_match(
 			'/^(body|caption|div|dd|dt|li|p|table|tr|td|th|tbody|dl|ol|ul|h[1-6])$/D',
-			DOMCompat::nodeName( $node )
+			DOMUtils::nodeName( $node )
 		);
 	}
 
 	private static function normalizeIEWVisitor(
 		Node $node, array $opts
 	): Node {
-		$child = null;
-		$next = null;
-		$prev = null;
-		if ( DOMCompat::nodeName( $node ) === 'pre' ) {
+		if ( DOMUtils::nodeName( $node ) === 'pre' ) {
 			// Preserve newlines in <pre> tags
 			$opts['inPRE'] = true;
 		}
@@ -267,12 +260,12 @@ class TestUtils {
 			DOMCompat::normalize( $node );
 		}
 		// now recurse.
-		if ( DOMCompat::nodeName( $node ) === 'pre' ) {
+		if ( DOMUtils::nodeName( $node ) === 'pre' ) {
 			// hack, since PHP adds a newline before </pre>
 			$opts['stripLeadingWS'] = false;
 			$opts['stripTrailingWS'] = true;
 		} elseif (
-			DOMCompat::nodeName( $node ) === 'span' &&
+			DOMUtils::nodeName( $node ) === 'span' &&
 			DOMUtils::matchTypeOf( $node, '/^mw:/' )
 		) {
 			// SPAN is transparent; pass the strip parameters down to kids
@@ -346,19 +339,32 @@ class TestUtils {
 
 	/**
 	 * Strip some php output we aren't generating.
-	 *
-	 * @param string $html
-	 * @return string
 	 */
-	public static function normalizePhpOutput( string $html ): string {
-		return preg_replace(
-			// do not expect section editing for now
-			'/<span[^>]+class="mw-headline"[^>]*>(.*?)<\/span> '
-			. '*(<span class="mw-editsection"><span class="mw-editsection-bracket">'
-			. '\[<\/span>.*?<span class="mw-editsection-bracket">\]<\/span><\/span>)?/u',
-			'$1',
-			$html
-		);
+	public static function normalizePhpOutput( Element $body ): void {
+		// Do not expect section editing for now
+		foreach ( DOMCompat::querySelectorAll( $body, '.mw-editsection' ) as $span ) {
+			DOMCompat::remove( $span );
+		}
+		// Parsoid adds heading wrappers in an OutputTransform stage
+		foreach ( DOMCompat::querySelectorAll( $body, '.mw-heading' ) as $div ) {
+			$nodes = DOMUtils::childNodes( $div );
+			foreach ( $nodes as $i => $child ) {
+				// Remove the nls
+				if ( $i === 0 && $child instanceof Text ) {
+					$child->data = preg_replace( "/^\n/uD", '', $child->data );
+				}
+				if ( $i === ( count( $nodes ) - 1 ) && $child instanceof Text ) {
+					$child->data = preg_replace( "/\n$/uD", '', $child->data );
+				}
+				$div->parentNode->insertBefore( $child, $div );
+			}
+			DOMCompat::remove( $div );
+		}
+		// Do not expect a toc for now
+		$toc = DOMCompat::querySelector( $body, '#toc' );
+		if ( $toc ) {
+			DOMCompat::remove( $toc );
+		}
 	}
 
 	/**
@@ -372,16 +378,12 @@ class TestUtils {
 	public static function normalizeHTML( string $source ): string {
 		try {
 			$body = self::unwrapSpansAndNormalizeIEW( DOMCompat::getBody( DOMUtils::parseHTML( $source ) ) );
+			self::normalizePhpOutput( $body );
 			$html = ContentUtils::toXML( $body, [ 'innerXML' => true ] );
 
 			// a few things we ignore for now..
 			//  .replace(/\/wiki\/Main_Page/g, 'Main Page')
-			// do not expect a toc for now
-			$html = preg_replace(
-				'/<div[^>]+?id="toc"[^>]*>\s*<div id="toctitle"[^>]*>[\s\S]+?<\/div>[\s\S]+?<\/div>\s*/u',
-				'',
-				$html );
-			$html = self::normalizePhpOutput( $html );
+
 			// remove empty span tags
 			$html = preg_replace( '/(\s)<span>\s*<\/span>\s*/u', '$1', $html );
 			$html = preg_replace( '/<span>\s*<\/span>/u', '', $html );
@@ -435,15 +437,52 @@ class TestUtils {
 			// (optional) php-console-color library is installed.
 			try {
 				self::$consoleColor = new \PHP_Parallel_Lint\PhpConsoleColor\ConsoleColor();
-			} catch ( Error $e ) {
+			} catch ( Error ) {
 				/* fall back to no-color mode */
 			}
 		}
 
-		if ( self::$consoleColor && self::$consoleColor->isSupported() ) {
+		$useColor = is_bool( self::$colorMode ) ? self::$colorMode :
+			// 'auto' color mode: use color if a tty.
+			( self::$consoleColor && self::$consoleColor->isSupported() );
+		if ( self::$consoleColor && $useColor ) {
+			self::$consoleColor->setForceStyle( true );
 			return self::$consoleColor->apply( $color, $string );
 		} else {
 			return $string;
+		}
+	}
+
+	/**
+	 * Removes DSR from data-parsoid for test normalization of a complete document. If
+	 * data-parsoid gets subsequently empty, removes it too.
+	 * @param string $raw
+	 * @return string
+	 */
+	public static function filterDsr( string $raw ): string {
+		$doc = ContentUtils::createAndLoadDocument( $raw );
+		foreach ( DOMUtils::childNodes( $doc ) as $child ) {
+			if ( $child instanceof Element ) {
+				self::filterNodeDsr( $child );
+			}
+		}
+		$ret = ContentUtils::ppToXML( DOMCompat::getBody( $doc ), [ 'innerXML' => true ] );
+		$ret = preg_replace( '/\sdata-parsoid="{}"/', '', $ret );
+		return $ret;
+	}
+
+	/**
+	 * Removes DSR from data-parsoid for test normalization of an element.
+	 */
+	public static function filterNodeDsr( Element $el ): void {
+		$dp = DOMDataUtils::getDataParsoid( $el );
+		unset( $dp->dsr );
+		// XXX: could also set TempData::IS_NEW if !$dp->isModified(),
+		// rather than using the preg_replace above.
+		foreach ( DOMUtils::childNodes( $el ) as $child ) {
+			if ( $child instanceof Element ) {
+				self::filterNodeDsr( $child );
+			}
 		}
 	}
 }

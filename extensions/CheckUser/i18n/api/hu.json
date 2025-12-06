@@ -3,16 +3,20 @@
 		"authors": [
 			"Bencemac",
 			"Dj",
+			"Tacsipacsi",
 			"Wolf Rex"
 		]
 	},
 	"apihelp-query+checkuser-summary": "A megadott felhasználónév által használt IP-címek vagy egy megadott IP-cím által használt felhasználónevek ellenőrzése.",
-	"apihelp-query+checkuser-param-request": "IP-ellenőri kérelemtípusok:\n;userips:Konkrét felhasználó IP-címeinek lekérdezése.\n;edits:Konkrét IP vagy tartomány közreműködéseinek lekérdezése.\n;ipusers:Konkrét IP-t vagy tartományt használó felhasználók lekérdezése.",
+	"apihelp-query+checkuser-param-request": "IP-ellenőri kérelemtípus:",
+	"apihelp-query+checkuser-paramvalue-request-userips": "Konkrét felhasználó IP-címeinek lekérdezése.",
+	"apihelp-query+checkuser-paramvalue-request-actions": "Konkrét IP vagy tartomány által végrehajtott műveletek lekérdezése.",
+	"apihelp-query+checkuser-paramvalue-request-ipusers": "Konkrét IP-t vagy tartományt használó felhasználók lekérdezése.",
 	"apihelp-query+checkuser-param-target": "Ellenőrizendő felhasználói név, IP-cím vagy CIDR tartomány.",
 	"apihelp-query+checkuser-param-reason": "Az ellenőrzés oka.",
 	"apihelp-query+checkuser-param-timecond": "Felhasználói adatok időlimitje (pl. „-2 weeks” vagy „2 weeks ago”).",
 	"apihelp-query+checkuser-param-xff": "XFF-adat használata IP-cím helyett.",
-	"apihelp-query+checkuser-example-1": "[[User:Example]] IP-címeinek ellenőrzése",
+	"apihelp-query+checkuser-example-1": "[[User:Example]] IP-címeinek lekérése",
 	"apihelp-query+checkuser-example-2": "192.0.2.0/24 tevékenységeinek ellenőrzése",
 	"apihelp-query+checkuserlog-summary": "Bejegyzések lekérése az IP-ellenőri naplóból",
 	"apihelp-query+checkuserlog-param-user": "Az IP-ellenőr neve.",

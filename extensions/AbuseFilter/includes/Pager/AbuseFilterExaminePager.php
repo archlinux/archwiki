@@ -6,6 +6,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Pager\ReverseChronologicalPager;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeFactory;
 use MediaWiki\Title\Title;
 use stdClass;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -28,9 +29,12 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	 */
 	private $rcCounter;
 
+	private RecentChangeFactory $recentChangeFactory;
+
 	/**
 	 * @param AbuseFilterChangesList $changesList
 	 * @param LinkRenderer $linkRenderer
+	 * @param RecentChangeFactory $recentChangeFactory
 	 * @param IReadableDatabase $dbr
 	 * @param Title $title
 	 * @param array $conds
@@ -38,6 +42,7 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	public function __construct(
 		AbuseFilterChangesList $changesList,
 		LinkRenderer $linkRenderer,
+		RecentChangeFactory $recentChangeFactory,
 		IReadableDatabase $dbr,
 		Title $title,
 		array $conds
@@ -45,6 +50,8 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbr;
 		parent::__construct( $changesList, $linkRenderer );
+
+		$this->recentChangeFactory = $recentChangeFactory;
 		$this->changesList = $changesList;
 		$this->title = $title;
 		$this->conds = $conds;
@@ -69,7 +76,7 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	 * @return string
 	 */
 	public function formatRow( $row ) {
-		$rc = RecentChange::newFromRow( $row );
+		$rc = $this->recentChangeFactory->newRecentChangeFromRow( $row );
 		$rc->counter = $this->rcCounter++;
 		return $this->changesList->recentChangesLine( $rc, false );
 	}

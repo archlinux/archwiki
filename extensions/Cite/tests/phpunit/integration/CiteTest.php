@@ -3,6 +3,7 @@
 namespace Cite\Tests\Integration;
 
 use Cite\Cite;
+use Cite\CiteFactory;
 use Cite\ErrorReporter;
 use Cite\FootnoteMarkFormatter;
 use Cite\ReferenceListFormatter;
@@ -16,6 +17,8 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\StripState;
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\Message\ParamType;
+use Wikimedia\Message\ScalarParam;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -38,7 +41,7 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 		$status = $validator->filterArguments( $attributes, [ 'dir', 'follow', 'group', 'name' ] );
 		$this->assertSame( $expectedValue, array_values( $status->getValue() ) );
 		if ( $expectedError ) {
-			$this->assertStatusError( $expectedError, $status );
+			$this->assertStatusWarning( $expectedError, $status );
 		} else {
 			$this->assertStatusGood( $status );
 		}
@@ -125,10 +128,10 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 		/** @var Cite $spy */
 		$spy = TestingAccessWrapper::newFromObject( $cite );
 		$spy->errorReporter = $this->createPartialMock( ErrorReporter::class, [ 'halfParsed' ] );
-		$spy->errorReporter->method( 'halfParsed' )->willReturnArgument( 1 );
+		$spy->errorReporter->method( 'halfParsed' )->willReturnArgument( 0 );
 		$spy->referenceListFormatter = $this->createMock( ReferenceListFormatter::class );
 		$spy->referenceListFormatter->method( 'formatReferences' )
-			->with( $parser, [], $expectedResponsive, false )
+			->with( $parser, [], $expectedResponsive )
 			->willReturn( 'references!' );
 		$spy->referenceStack = $this->createMock( ReferenceStack::class );
 		$spy->referenceStack->method( 'popGroup' )
@@ -220,7 +223,7 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 		$mockParser = $this->mockParser( $isSectionPreview );
 
 		$errorReporter = $this->createPartialMock( ErrorReporter::class, [ 'halfParsed' ] );
-		$errorReporter->method( 'halfParsed' )->willReturnArgument( 1 );
+		$errorReporter->method( 'halfParsed' )->willReturnArgument( 0 );
 
 		$referenceStack = new ReferenceStack();
 		/** @var ReferenceStack $stackSpy */
@@ -324,13 +327,29 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 				'text' => 'text',
 				'argv' => [
 					'name' => 'a',
-					'badkey' => 'b',
+					'grup' => 'b',
 				],
 				'inReferencesGroup' => null,
 				'initialRefs' => [],
-				'expectedOutput' => 'cite_error_ref_too_many_keys',
+				'expectedOutput' => '<foot />',
 				'expectedError' => null,
-				'expectedRefs' => []
+				'expectedRefs' => [
+					'' => [
+						'a' => [
+							'count' => 1,
+							'globalId' => 1,
+							'group' => '',
+							'name' => 'a',
+							'text' => 'text',
+							'numberInGroup' => 1,
+							'warnings' => [ [
+								'cite_error_ref_parameter_suggestion',
+								new ScalarParam( ParamType::TEXT, 'grup' ),
+								new ScalarParam( ParamType::TEXT, 'group' ),
+							] ],
+						],
+					],
+				]
 			],
 			'Successful references ref' => [
 				'text' => 'text',
@@ -408,7 +427,7 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 		$cite = $this->newCite( $mockParser );
 		/** @var Cite $cite */
 		$cite = TestingAccessWrapper::newFromObject( $cite );
-		$cite->guardedRef( $mockParser, 'text', [ 'details' => 'foo' ] );
+		$cite->guardedRef( $mockParser, 'text', [ 'name' => 'a', 'details' => 'foo' ] );
 	}
 
 	/**
@@ -471,7 +490,12 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 			'CiteResponsiveReferences' => false,
 			'CiteSubReferencing' => true,
 		] );
-		return new Cite( $parser, $config );
+		$citeFactory = new CiteFactory(
+			$config,
+			$this->getServiceContainer()->getService( 'Cite.AlphabetsProvider' ),
+			null,
+		);
+		return $citeFactory->newCite( $parser );
 	}
 
 }

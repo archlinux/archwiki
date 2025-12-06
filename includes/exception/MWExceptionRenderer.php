@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,7 @@ use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\WebRequest;
 use Throwable;
 use Wikimedia\AtEase;
@@ -120,6 +107,7 @@ class MWExceptionRenderer {
 		} else {
 			ob_start();
 			self::statusHeader( 500 );
+			self::cspHeader();
 			self::header( 'Content-Type: text/html; charset=UTF-8' );
 			if ( $eNew ) {
 				$message = "MediaWiki internal error.\n\n";
@@ -196,6 +184,7 @@ class MWExceptionRenderer {
 			// Content-Type is set by OutputPage::output
 			$out->output();
 		} else {
+			self::cspHeader();
 			self::header( 'Content-Type: text/html; charset=UTF-8' );
 			$pageTitle = self::msg( 'internalerror', 'Internal error' );
 			echo "<!DOCTYPE html>\n" .
@@ -279,7 +268,7 @@ class MWExceptionRenderer {
 		// NOTE: Keep logic in sync with MWException::msg.
 		try {
 			$res = wfMessage( $key, ...$params );
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			// Fallback to static message text and generic sitename.
 			// Avoid live config as this must work before Setup/MediaWikiServices finish.
 			$res = new RawMessage( $fallback, $params );
@@ -351,7 +340,7 @@ class MWExceptionRenderer {
 				return null;
 			}
 			$text = $msg->text();
-		} catch ( Exception $e2 ) {
+		} catch ( Exception ) {
 			return null;
 		}
 		return $text;
@@ -440,8 +429,15 @@ class MWExceptionRenderer {
 		}
 
 		$html .= '</body></html>';
+		self::cspHeader();
 		self::header( 'Content-Type: text/html; charset=UTF-8' );
 		echo $html;
+	}
+
+	private static function cspHeader(): void {
+		if ( !headers_sent() ) {
+			ContentSecurityPolicy::sendRestrictiveHeader();
+		}
 	}
 }
 

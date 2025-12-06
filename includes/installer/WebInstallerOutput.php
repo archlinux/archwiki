@@ -1,21 +1,7 @@
 <?php
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Installer
  */
@@ -203,6 +189,12 @@ class WebInstallerOutput {
 		$this->parent->request->response()->header( 'Content-Type: text/html; charset=utf-8' );
 		$this->parent->request->response()->header( 'X-Frame-Options: DENY' );
 
+		$cspPolicy = "default-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none';" .
+			" script-src 'self' 'nonce-" . $this->getCSPNonce() . "';" .
+			" img-src 'self'; frame-src 'self'; base-uri 'none'";
+
+		$this->parent->request->response()->header( 'Content-Security-Policy: ' . $cspPolicy );
+
 		if ( $this->redirectTarget ) {
 			$this->parent->request->response()->header( 'Location: ' . $this->redirectTarget );
 
@@ -289,4 +281,18 @@ class WebInstallerOutput {
 		return Html::linkedStyle( "../resources/lib/codex/codex.style.css" );
 	}
 
+	/**
+	 * Get the nonce for use with inline scripts
+	 *
+	 * @since 1.45
+	 * @return string
+	 */
+	public function getCSPNonce() {
+		static $nonce;
+		if ( $nonce === null ) {
+			// Spec says at least 16 bytes. Do 18 so it encodes evenly in base64
+			$nonce = base64_encode( random_bytes( 18 ) );
+		}
+		return $nonce;
+	}
 }

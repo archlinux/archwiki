@@ -13,15 +13,10 @@ use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserOptionsLookup;
 use StatusValue;
 
 class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
-
-	/** @var string */
-	public const INVESTIGATE_TOUR_SEEN = 'checkuser-investigate-tour-seen';
-
-	/** @var string */
-	public const INVESTIGATE_FORM_TOUR_SEEN = 'checkuser-investigate-form-tour-seen';
 
 	/**
 	 * @var string The name for the hidden preference used to note if a user has seen the
@@ -52,6 +47,7 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 	private PermissionManager $permissionManager;
 	private TemporaryAccountLoggerFactory $loggerFactory;
 	private Config $config;
+	private UserOptionsLookup $userOptionsLookup;
 	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
 	private CheckUserPermissionManager $checkUserPermissionManager;
 
@@ -59,12 +55,14 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 		PermissionManager $permissionManager,
 		TemporaryAccountLoggerFactory $loggerFactory,
 		Config $config,
+		UserOptionsLookup $userOptionsLookup,
 		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
 		CheckUserPermissionManager $checkUserPermissionManager
 	) {
 		$this->permissionManager = $permissionManager;
 		$this->loggerFactory = $loggerFactory;
 		$this->config = $config;
+		$this->userOptionsLookup = $userOptionsLookup;
 		$this->autoRevealLookup = $autoRevealLookup;
 		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
@@ -73,14 +71,6 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 	 * @inheritDoc
 	 */
 	public function onGetPreferences( $user, &$preferences ) {
-		$preferences[self::INVESTIGATE_TOUR_SEEN] = [
-			'type' => 'api',
-		];
-
-		$preferences[self::INVESTIGATE_FORM_TOUR_SEEN] = [
-			'type' => 'api',
-		];
-
 		$preferences[self::TEMPORARY_ACCOUNTS_ONBOARDING_DIALOG_SEEN] = [
 			'type' => 'api',
 		];
@@ -90,39 +80,50 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 				'type' => 'api',
 				'validation-callback' => function ( mixed $preferenceValue, array $alldata, HTMLForm $form ) {
 					return $this->validateAutoRevealPreferenceValue( $preferenceValue, $form->getAuthority() );
-				}
+				},
 			];
 		}
 
 		$messageLocalizer = RequestContext::getMain();
 
 		$preferences[self::ENABLE_USER_INFO_CARD] = [
-			'type' => 'toggle',
+			'type' => (int)$this->userOptionsLookup->getBoolOption(
+				RequestContext::getMain()->getUser(),
+				self::ENABLE_USER_INFO_CARD,
+			) || $this->config->get( 'CheckUserUserInfoCardFeatureVisible' ) ? 'toggle' : 'api',
 			'section' => 'rendering/advancedrendering',
 			'label-message' => 'checkuser-userinfocard-enable-preference-description',
 			'help-message' => 'checkuser-userinfocard-enable-preference-help',
 			'canglobal' => true,
 		];
 
-		if (
-			$this->permissionManager->userHasRight( $user, 'checkuser-temporary-account' ) &&
-			!$this->permissionManager->userHasRight( $user, 'checkuser-temporary-account-no-preference' )
-		) {
-			$preferences['checkuser-temporary-account-enable-description'] = [
-				'type' => 'info',
-				'default' => $messageLocalizer->msg( 'checkuser-tempaccount-enable-preference-description' )
-					->parse(),
-				// The following message is generated here:
-				// * prefs-checkuser-tempaccount
-				'section' => 'personal/checkuser-tempaccount',
-				'raw' => true,
-				// Forces the info text to be shown on Special:GlobalPreferences, as 'info' preference types are
-				// excluded by default. This needs to be shown as it contains important information about
-				// what checking the checkbox below this text means.
-				'canglobal' => true,
-			];
+		if ( $this->permissionManager->userHasAnyRight(
+			$user, 'checkuser-temporary-account', 'checkuser-temporary-account-no-preference'
+		) ) {
+			$needsToCheckIPRevealPreferenceToUseFeature =
+				$this->permissionManager->userHasRight( $user, 'checkuser-temporary-account' ) &&
+				!$this->permissionManager->userHasRight( $user, 'checkuser-temporary-account-no-preference' );
+
+			if ( $needsToCheckIPRevealPreferenceToUseFeature ) {
+				$preferences['checkuser-temporary-account-enable-description'] = [
+					'type' => 'info',
+					'default' => $messageLocalizer->msg( 'checkuser-tempaccount-enable-preference-description' )
+						->parse(),
+					// The following message is generated here:
+					// * prefs-checkuser-tempaccount
+					'section' => 'personal/checkuser-tempaccount',
+					'raw' => true,
+					// Forces the info text to be shown on Special:GlobalPreferences, as 'info' preference types are
+					// excluded by default. This needs to be shown as it contains important information about
+					// what checking the checkbox below this text means.
+					'canglobal' => true,
+				];
+			}
+
+			// Still define the IP reveal preference if the user doesn't need to check it as this is used by
+			// the temporary accounts onboarding dialog in this case.
 			$preferences[self::ENABLE_IP_REVEAL] = [
-				'type' => 'toggle',
+				'type' => $needsToCheckIPRevealPreferenceToUseFeature ? 'toggle' : 'api',
 				'label-message' => 'checkuser-tempaccount-enable-preference',
 				'section' => 'personal/checkuser-tempaccount',
 			];
@@ -214,7 +215,7 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 	/** @inheritDoc */
 	public function onUserGetDefaultOptions( &$defaultOptions ) {
 		$defaultOptions += [
-			self::ENABLE_USER_INFO_CARD => false
+			self::ENABLE_USER_INFO_CARD => false,
 		];
 	}
 

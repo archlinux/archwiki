@@ -1,34 +1,22 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Content;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\WikiPage;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use Wikimedia\Minify\CSSMin;
 
 /**
@@ -39,11 +27,20 @@ use Wikimedia\Minify\CSSMin;
  */
 class CssContentHandler extends CodeContentHandler {
 
-	/**
-	 * @param string $modelId
-	 */
-	public function __construct( $modelId = CONTENT_MODEL_CSS ) {
+	private array $textModelsToParse;
+	private ParserFactory $parserFactory;
+	private UserOptionsLookup $userOptionsLookup;
+
+	public function __construct(
+		string $modelId,
+		Config $config,
+		ParserFactory $parserFactory,
+		UserOptionsLookup $userOptionsLookup
+	) {
 		parent::__construct( $modelId, [ CONTENT_FORMAT_CSS ] );
+		$this->textModelsToParse = $config->get( MainConfigNames::TextModelsToParse ) ?? [];
+		$this->parserFactory = $parserFactory;
+		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -53,6 +50,7 @@ class CssContentHandler extends CodeContentHandler {
 		return CssContent::class;
 	}
 
+	/** @inheritDoc */
 	public function supportsRedirects() {
 		return true;
 	}
@@ -80,15 +78,14 @@ class CssContentHandler extends CodeContentHandler {
 		'@phan-var CssContent $content';
 
 		// @todo Make pre-save transformation optional for script pages (T34858)
-		$services = MediaWikiServices::getInstance();
-		if ( !$services->getUserOptionsLookup()->getBoolOption( $pstParams->getUser(), 'pst-cssjs' ) ) {
+		if ( !$this->userOptionsLookup->getBoolOption( $pstParams->getUser(), 'pst-cssjs' ) ) {
 			// Allow bot users to disable the pre-save transform for CSS/JS (T236828).
 			$popts = clone $pstParams->getParserOptions();
 			$popts->setPreSaveTransform( false );
 		}
 
 		$text = $content->getText();
-		$pst = $services->getParserFactory()->getInstance()->preSaveTransform(
+		$pst = $this->parserFactory->getInstance()->preSaveTransform(
 			$text,
 			$pstParams->getPage(),
 			$pstParams->getUser(),
@@ -107,12 +104,10 @@ class CssContentHandler extends CodeContentHandler {
 		ContentParseParams $cpoParams,
 		ParserOutput &$output
 	) {
-		$textModelsToParse = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::TextModelsToParse );
 		'@phan-var CssContent $content';
-		if ( in_array( $content->getModel(), $textModelsToParse ) ) {
+		if ( in_array( $content->getModel(), $this->textModelsToParse ) ) {
 			// parse just to get links etc into the database, HTML is replaced below.
-			$output = MediaWikiServices::getInstance()->getParserFactory()->getInstance()
+			$output = $this->parserFactory->getInstance()
 				->parse(
 					$content->getText(),
 					$cpoParams->getPage(),

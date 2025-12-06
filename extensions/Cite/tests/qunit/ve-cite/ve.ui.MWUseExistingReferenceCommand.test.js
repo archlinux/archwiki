@@ -3,14 +3,11 @@
 QUnit.module( 've.ui.MWUseExistingReferenceCommand (Cite)', ve.test.utils.newMwEnvironment() );
 
 function getFragmentMock( hasRefs ) {
-	const docRefsMock = {
-		hasRefs: () => hasRefs
-	};
-
 	return {
 		getDocument: () => ( {
-			extCiteDocumentReferences: docRefsMock,
-			getOriginalDocument: () => undefined
+			getInternalList: () => ( {
+				getItemNodeCount: () => hasRefs ? 1 : 0
+			} )
 		} ),
 		getSelection: () => ( {
 			getName: () => 'linear'

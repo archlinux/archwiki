@@ -1,4 +1,4 @@
-mw.editcheck.ExternalLinksEditCheck = function MWExternalLinksEditCheck( /* config */ ) {
+mw.editcheck.ExternalLinksEditCheck = function MWExternalLinksEditCheck() {
 	// Parent constructor
 	mw.editcheck.ExternalLinksEditCheck.super.apply( this, arguments );
 };

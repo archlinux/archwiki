@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Roan Kattouw
  * @author Trevor Parscal
@@ -92,8 +78,6 @@ use Wikimedia\WrappedString;
 class ResourceLoader implements LoggerAwareInterface {
 	/** @var int */
 	public const CACHE_VERSION = 9;
-	/** @var string Pragma to disable minification in JavaScript or CSS. */
-	public const FILTER_NOMIN = '/*@nomin*/';
 
 	/** @var int */
 	private const MAXAGE_RECOVER = 60;
@@ -212,7 +196,7 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @since 1.27
 	 * @return LoggerInterface
 	 */
-	public function getLogger() {
+	public function getLogger(): LoggerInterface {
 		return $this->logger;
 	}
 
@@ -303,7 +287,7 @@ class ResourceLoader implements LoggerAwareInterface {
 	 */
 	public function registerTestModules(): void {
 		$extRegistry = ExtensionRegistry::getInstance();
-		$testModules = $extRegistry->getAttribute( 'QUnitTestModules' );
+		$testModules = $extRegistry->getAttribute( 'QUnitTestModule' );
 
 		$testModuleNames = [];
 		foreach ( $testModules as $name => &$module ) {
@@ -662,8 +646,10 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * Output a response to a load request, including the content-type header.
 	 *
 	 * @param Context $context Context in which a response should be formed
+	 * @param string[] $extraHeaders HTTP response headers to send regardless of
+	 * status (200 OK, or 304 Not Modified) and content type (CSS, JS, Image, SourceMap)
 	 */
-	public function respond( Context $context ) {
+	public function respond( Context $context, array $extraHeaders = [] ) {
 		// Buffer output to catch warnings. Normally we'd use ob_clean() on the
 		// top-level output buffer to clear warnings, but that breaks when ob_gzhandler
 		// is used: ob_clean() will clear the GZIP header in that case and it won't come
@@ -674,6 +660,7 @@ class ResourceLoader implements LoggerAwareInterface {
 		ob_start();
 
 		$this->errors = [];
+		$this->extraHeaders = $extraHeaders;
 		$responseTime = $this->measureResponseTime();
 		ProfilingContext::singleton()->init( MW_ENTRY_POINT, 'respond' );
 
@@ -757,7 +744,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			}
 		}
 
-		$this->sendResponseHeaders( $context, $etag, (bool)$this->errors, $this->extraHeaders );
+		$this->sendResponseHeaders( $context, $etag, (bool)$this->errors );
 
 		// Remove the output buffer and output the response
 		ob_end_clean();
@@ -807,10 +794,9 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @param Context $context
 	 * @param string $etag ETag header value
 	 * @param bool $errors Whether there are errors in the response
-	 * @param string[] $extra Array of extra HTTP response headers
 	 */
 	protected function sendResponseHeaders(
-		Context $context, $etag, $errors, array $extra = []
+		Context $context, $etag, $errors
 	): void {
 		HeaderCallback::warnIfHeadersSent();
 
@@ -867,7 +853,8 @@ class ResourceLoader implements LoggerAwareInterface {
 			header( "Cache-Control: public, max-age=$maxage, s-maxage=$maxage" . $staleDirective );
 			header( 'Expires: ' . ConvertibleTimestamp::convert( TS_RFC2822, time() + $maxage ) );
 		}
-		foreach ( $extra as $header ) {
+
+		foreach ( $this->extraHeaders as $header ) {
 			header( $header );
 		}
 	}
@@ -900,7 +887,6 @@ class ResourceLoader implements LoggerAwareInterface {
 			wfResetOutputBuffers( /* $resetGzipEncoding = */ true );
 
 			HttpStatus::header( 304 );
-
 			$this->sendResponseHeaders( $context, $etag, false );
 			return true;
 		}
@@ -1077,9 +1063,8 @@ MESSAGE;
 
 		if ( $indexMap ) {
 			return $indexMap->getMap();
-		} else {
-			return $out;
 		}
+		return $out;
 	}
 
 	/**
@@ -1146,15 +1131,9 @@ MESSAGE;
 		};
 
 		// The below is based on ResourceLoader::filter. Keep together to ease review/maintenance:
-		// * Handle FILTER_NOMIN, skip minify entirely if set.
 		// * Handle $shouldCache, skip cache and minify directly if set.
 		// * Use minify cache, minify on-demand and populate cache as needed.
 		// * Emit resourceloader_cache_total stats.
-
-		if ( strpos( $plainContent, self::FILTER_NOMIN ) !== false ) {
-			// FILTER_NOMIN should work for JavaScript, too. T373990
-			return [ $plainContent, null ];
-		}
 
 		if ( $shouldCache ) {
 			[ $response, $offsetArray ] = $this->srvCache->getWithSetCallback(
@@ -1797,7 +1776,7 @@ MESSAGE;
 		$retval = [];
 		$exploded = explode( '|', $modules );
 		foreach ( $exploded as $group ) {
-			if ( strpos( $group, ',' ) === false ) {
+			if ( !str_contains( $group, ',' ) ) {
 				// This is not a set of modules in foo.bar,baz notation
 				// but a single module
 				$retval[] = $group;
@@ -2016,7 +1995,7 @@ MESSAGE;
 				'mediawiki.skin.codex-design-tokens/' => $codexDevDir !== null ?
 					"$codexDevDir/packages/codex-design-tokens/dist/" :
 					MW_INSTALL_PATH . '/resources/lib/codex-design-tokens/',
-				'@wikimedia/codex-design-tokens/' => /** @return never */ static function ( $unused_path ) {
+				'@wikimedia/codex-design-tokens/' => static function ( $unused_path ): never {
 					throw new RuntimeException(
 						'Importing from @wikimedia/codex-design-tokens is not supported. ' .
 						"To use the Codex tokens, use `@import 'mediawiki.skin.variables.less';` instead."
@@ -2075,10 +2054,6 @@ MESSAGE;
 	 * @return string Filtered data or unfiltered data
 	 */
 	public static function filter( $filter, $data, array $options = [] ) {
-		if ( strpos( $data, self::FILTER_NOMIN ) !== false ) {
-			return $data;
-		}
-
 		if ( isset( $options['cache'] ) && $options['cache'] === false ) {
 			return self::applyFilter( $filter, $data ) ?? $data;
 		}

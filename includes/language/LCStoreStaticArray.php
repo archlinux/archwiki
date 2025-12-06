@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -39,10 +25,11 @@ class LCStoreStaticArray implements LCStore {
 	/** @var string Directory for cache files. */
 	private $directory;
 
-	public function __construct( $conf = [] ) {
+	public function __construct( array $conf = [] ) {
 		$this->directory = $conf['directory'];
 	}
 
+	/** @inheritDoc */
 	public function startWrite( $code ) {
 		if ( !is_dir( $this->directory ) && !wfMkdirParents( $this->directory, null, __METHOD__ ) ) {
 			throw new RuntimeException( "Unable to create the localisation store " .
@@ -57,6 +44,7 @@ class LCStoreStaticArray implements LCStore {
 		}
 	}
 
+	/** @inheritDoc */
 	public function set( $key, $value ) {
 		$this->data[$this->currentLang][$key] = self::encode( $value );
 	}
@@ -130,7 +118,7 @@ class LCStoreStaticArray implements LCStore {
 				return unserialize( $data );
 			case 'a':
 				// Support: MediaWiki 1.34 and earlier (older file format)
-				return array_map( [ __CLASS__, 'decode' ], $data );
+				return array_map( [ self::class, 'decode' ], $data );
 			default:
 				throw new RuntimeException(
 					'Unable to decode ' . var_export( $encoded, true ) );
@@ -154,6 +142,7 @@ class LCStoreStaticArray implements LCStore {
 		$this->fname = null;
 	}
 
+	/** @inheritDoc */
 	public function get( $code, $key ) {
 		if ( !array_key_exists( $code, $this->data ) ) {
 			$fname = $this->directory . '/' . $code . '.l10n.php';

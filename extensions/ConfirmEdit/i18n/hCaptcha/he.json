@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80"
+		]
+	},
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] מודול ל־Confirm Edit",
+	"hcaptcha-edit": "כדי להגן על הוויקי מפני עריכות זבל אוטומטיות, אנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
+	"hcaptcha-addurl": "העריכה שלך כוללת קישורים חיצוניים חדשים. כדי להגן על הוויקי מפני ספאם אוטומטי, אנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
+	"hcaptcha-badlogin": "כדי להגן על הוויקי מפני פיצוח סיסמאות אוטומטי, אנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
+	"hcaptcha-createaccount": "כדי להגן על הוויקי מפני יצירת חשבון אוטומטית, אנחנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
+	"hcaptcha-createaccount-fail": "נראה שלא פתרת את ה־hCaptcha.",
+	"hcaptcha-create": "כדי להגן על הוויקי מפני יצירת דפים אוטומטית, אנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
+	"hcaptcha-help": "נא לפתור אתגר hCaptcha ולהחזיר את ערך התגובה כ־captchaWord.",
+	"hcaptcha-privacy-policy": "האתר הזה מוגן על־ידי hCaptcha וחלים עליו [https://www.hcaptcha.com/privacy מדיניות הפרטיות] ו[https://www.hcaptcha.com/terms תנאי השירות] שלה.",
+	"hcaptcha-challenge-closed": "כדי להמשיך, יש לפתור את ה־captcha.",
+	"hcaptcha-challenge-expired": "תם הזמן להשלמת ה־captcha. נא לנסות שוב.",
+	"hcaptcha-generic-error": "אירעה שגיאה בעת טעינת הטופס. כדי להמשיך, יש לרענן את הדף.",
+	"hcaptcha-loading-indicator-label": "נא להמתין עד טעינת הטופס...",
+	"hcaptcha-missing-token": "עדיין לא סיימנו לטעון את הטופס. נא להמתין כמה שניות ולאחר מכן לנסות שוב.",
+	"hcaptcha-noscript": "יש להשתמש ב־JavaScript כדי להמשיך. נא להפעיל את JavaScript בהגדרות הדפדפן שלך ולרענן את הדף."
+}

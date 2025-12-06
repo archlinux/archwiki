@@ -1,5 +1,7 @@
 <?php
 
+// @phan-file-suppress PhanTraitParentReference
+
 namespace MediaWiki\Html;
 
 use Wikimedia\Assert\Assert;
@@ -10,8 +12,6 @@ use Wikimedia\RemexHtml\Serializer\SerializerNode;
  * Internal helper trait for HtmlHelper::modifyHtml.
  *
  * This is designed to extend a HtmlFormatter.
- *
- * @phan-file-suppress PhanTraitParentReference
  */
 trait HtmlHelperTrait {
 	/** @var callable */
@@ -20,7 +20,7 @@ trait HtmlHelperTrait {
 	/** @var callable */
 	private $modifyCallback;
 
-	public function __construct( $options, callable $shouldModifyCallback, callable $modifyCallback ) {
+	public function __construct( array $options, callable $shouldModifyCallback, callable $modifyCallback ) {
 		parent::__construct( $options );
 		$this->shouldModifyCallback = $shouldModifyCallback;
 		$this->modifyCallback = $modifyCallback;
@@ -29,6 +29,12 @@ trait HtmlHelperTrait {
 		$this->textEscapes["\u{0338}"] = '&#x338;';
 	}
 
+	/**
+	 * @param SerializerNode $parent
+	 * @param SerializerNode $node
+	 * @param string|null $contents
+	 * @return string
+	 */
 	public function element( SerializerNode $parent, SerializerNode $node, $contents ) {
 		if ( ( $this->shouldModifyCallback )( $node ) ) {
 			$node = clone $node;
@@ -45,6 +51,11 @@ trait HtmlHelperTrait {
 		}
 	}
 
+	/**
+	 * @param string|null $fragmentNamespace
+	 * @param string|null $fragmentName
+	 * @return string
+	 */
 	public function startDocument( $fragmentNamespace, $fragmentName ) {
 		return '';
 	}

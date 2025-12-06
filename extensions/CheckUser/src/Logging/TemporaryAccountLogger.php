@@ -2,6 +2,7 @@
 
 namespace MediaWiki\CheckUser\Logging;
 
+use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
@@ -130,6 +131,24 @@ class TemporaryAccountLogger {
 	}
 
 	/**
+	 * Logs the user (the performer) viewing IP addresses for a temporary account, while
+	 * auto-reveal mode is enabled. These actions are logged temporarily rather than permanently,
+	 * to avoid flooding the on-wiki logs.
+	 *
+	 * @param string $username The name of the performer who viewed the IPs
+	 * @param string $tempUser
+	 */
+	public function logViewIPsWithAutoReveal( string $username, string $tempUser ): void {
+		$this->logger->info(
+			'{username} viewed IP addresses for {target}',
+			[
+				'username' => $username,
+				'target' => $tempUser,
+			]
+		);
+	}
+
+	/**
 	 * Log when the user enables their own access locally.
 	 *
 	 * @param UserIdentity $performer
@@ -233,9 +252,7 @@ class TemporaryAccountLogger {
 		}
 
 		$targetAsTitle = $this->titleFactory->makeTitle( NS_USER, $target );
-		$logline = $dbw->newSelectQueryBuilder()
-			->select( '1' )
-			->from( 'logging' )
+		$logRows = DatabaseLogEntry::newSelectQueryBuilder( $dbw )
 			->where( [
 				'log_type' => self::LOG_TYPE,
 				'log_action' => $action,
@@ -245,9 +262,21 @@ class TemporaryAccountLogger {
 				$dbw->expr( 'log_timestamp', '>', $dbw->timestamp( $timestampMinusDelay ) ),
 			] )
 			->caller( __METHOD__ )
-			->fetchRow();
+			->fetchResultSet();
 
-		if ( !$logline ) {
+		$shouldLog = true;
+
+		foreach ( $logRows as $logRow ) {
+			$logEntry = DatabaseLogEntry::newFromRow( $logRow );
+			$logParams = $logEntry->getParameters();
+
+			if ( $logParams == $params ) {
+				$shouldLog = false;
+				break;
+			}
+		}
+
+		if ( $shouldLog ) {
 			$this->log( $performer, $target, $action, $params, $timestamp );
 		}
 	}
@@ -277,7 +306,7 @@ class TemporaryAccountLogger {
 
 		try {
 			$logEntry->insert( $this->dbProvider->getPrimaryDatabase() );
-		} catch ( DBError $e ) {
+		} catch ( DBError ) {
 			$this->logger->critical(
 				'CheckUser temporary account log entry was not recorded. ' .
 				'This means checks can occur without being auditable. ' .

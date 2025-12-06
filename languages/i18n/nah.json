@@ -184,7 +184,6 @@
 	"ns-specialprotected": "In noncuahquizqui tlahcuilolamatl ahhuel impan nematiloz moquonyectlaliz.",
 	"titleprotected": "Inin tlahcuilolamatl omoquixti ic tlachihualiztli ic [[User:$1|$1]].\nOquihto: <em>$2</em>",
 	"exception-nologin": "Ahmo timocalac",
-	"virus-unknownscanner": "ahmatic antivirus:",
 	"welcomeuser": "Ximopanolti, $1!",
 	"yourname": "Tequitiuhcatocaitl:",
 	"userlogin-yourname": "Tequitiuhcatocaitl",
@@ -219,7 +218,6 @@
 	"wrongpassword": "Ahcualli motlahtōlichtacāyo.\nTimitztlātlauhtia xicchīhua occeppa.",
 	"wrongpasswordempty": "Ayāc motlahtōlichtacāyo.\nTimitztlātlauhtia xicchīhua occeppa.",
 	"mailmypassword": "Motlacuepilīz mochtacātlahtōl",
-	"noemail": "\"$1\" ahmo quipiya īe-mailcān.",
 	"passwordsent": "Ōmoihuah yancuīc motlahtōlichtacāyo īhuīc mo e-mail (\"$1\").\nOcceppa xicalaqui niman ticmatīz.",
 	"mailerror": "Ahcuallōtl e-mailcopa: $1",
 	"accountcreated": "Tlapōhualli ōmochīuh",
@@ -237,11 +235,6 @@
 	"retypenew": "Occeppa xiquihcuiloa yancuīc motlahtōlichtacayo:",
 	"resetpass_submit": "Xicpatlāz motlahtōlichtacāyo auh xicalaquīz",
 	"changepassword-success": "Moichtacātlahtōl ōmopatlac.",
-	"botpasswords-label-appid": "Bot itokah:",
-	"botpasswords-label-create": "Xikchiwa",
-	"botpasswords-label-update": "Xikyankwili",
-	"botpasswords-label-cancel": "Xikxolewa",
-	"botpasswords-label-delete": "Xikixpolo",
 	"resetpass_forbidden": "Tlahtōlichtacayōtl ahmo mohuelītih mopatlah",
 	"resetpass-submit-loggedin": "Ticpatlāz motlahtōlichtacāyo",
 	"resetpass-submit-cancel": "Xikxolewa",
@@ -981,8 +974,5 @@
 	"skin-action-undelete": "Xicmāquīxti",
 	"skin-action-delete": "Xikixpolo",
 	"skin-action-move": "Xiksaka",
-	"renameusersubmit": "Tiquihuāz",
-	"interwiki_edit": "Xikpatla",
-	"interwiki_reasonfield": "Īxtlamatiliztli:",
-	"interwiki_addbutton": "Ticcetiliz"
+	"renameusersubmit": "Tiquihuāz"
 }

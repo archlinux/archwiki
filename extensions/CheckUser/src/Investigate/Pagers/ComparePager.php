@@ -65,6 +65,11 @@ class ComparePager extends TablePager {
 	private $excludeTargets;
 
 	/**
+	 * If set, makes the pager to not show temporary accounts in the results.
+	 */
+	private bool $excludeTempAccounts;
+
+	/**
 	 * Targets that have been added to the investigation but that are not
 	 * present in $excludeTargets. These are the targets that will actually
 	 * be investigated.
@@ -93,7 +98,7 @@ class ComparePager extends TablePager {
 
 		$tokenData = $tokenQueryManager->getDataFromRequest( $context->getRequest() );
 		$this->mOffset = $tokenData['offset'] ?? '';
-
+		$this->excludeTempAccounts = $tokenData['FilterTempAccounts'] ?? false;
 		$this->excludeTargets = $tokenData['exclude-targets'] ?? [];
 		$this->filteredTargets = array_diff(
 			$tokenData['targets'] ?? [],
@@ -112,7 +117,7 @@ class ComparePager extends TablePager {
 			parent::getTableClass(),
 			$sortableClass,
 			'ext-checkuser-investigate-table',
-			'ext-checkuser-investigate-table-compare'
+			'ext-checkuser-investigate-table-compare',
 		] );
 	}
 
@@ -333,6 +338,7 @@ class ComparePager extends TablePager {
 		return $this->compareService->getQueryInfo(
 			$this->filteredTargets,
 			$this->excludeTargets,
+			$this->excludeTempAccounts,
 			$this->start
 		);
 	}

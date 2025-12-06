@@ -13,7 +13,6 @@ use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
@@ -27,7 +26,6 @@ use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
  * content".
  *
  * http://www.w3.org/TR/html5/syntax.html#foster-parent
- * @module
  */
 class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 	/**
@@ -53,7 +51,6 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 	 * @return bool
 	 */
 	private static function removeTransclusionShadows( Node $node ): bool {
-		$sibling = null;
 		$fosteredTransclusions = false;
 		if ( $node instanceof Element ) {
 			if ( DOMUtils::isMarkerMeta( $node, 'mw:TransclusionShadow' ) ) {
@@ -160,8 +157,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 			$tableParent->insertBefore( $e, $tableNextSibling );
 		} elseif ( $e instanceof Element && $e->hasChildNodes() ) {
 			// avoid iterating over a mutated DOMNodeList
-			$childNodeList = iterator_to_array( $e->childNodes );
-			foreach ( $childNodeList as $child ) {
+			foreach ( DOMUtils::childNodes( $e ) as $child ) {
 				self::moveFosteredAnnotations( $child, $firstFosteredNode, $tableParent, $tableNextSibling );
 			}
 		}
@@ -201,7 +197,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 				$fosteredElements = [];
 				// mark as fostered until we hit the table
 				while ( $sibling &&
-					( !( $sibling instanceof Element ) || DOMCompat::nodeName( $sibling ) !== 'table' )
+					( !( $sibling instanceof Element ) || DOMUtils::nodeName( $sibling ) !== 'table' )
 				) {
 					$fosteredElements[] = $sibling;
 					$next = $sibling->nextSibling;
@@ -240,7 +236,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 
 				// we should be able to reach the table from the fosterbox
 				Assert::invariant(
-					$table instanceof Element && DOMCompat::nodeName( $table ) === 'table',
+					$table instanceof Element && DOMUtils::nodeName( $table ) === 'table',
 					"Table isn't a sibling. Something's amiss!"
 				);
 

@@ -510,7 +510,7 @@ class NukeContext {
 					] )
 				)->text();
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Exception ) {
 			// FIXME: This should be changed to use DateMalformedStringException when MediaWiki
 			// begins using PHP 8.3 as a minimum.
 			return $this->requestContext->msg( 'htmlform-date-invalid' )->text();

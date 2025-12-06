@@ -29,7 +29,7 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'plain' )->willReturnCallback(
-			static fn ( $parser, ...$args ) => '(' . implode( '|', $args ) . ')'
+			static fn ( ...$args ) => '(' . implode( '|', $args ) . ')'
 		);
 
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
@@ -49,7 +49,7 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 		);
 
 		$refs = array_map( [ TestUtils::class, 'refFromArray' ], $refs );
-		$output = $formatter->formatReferences( $mockParser, $refs, true, false );
+		$output = $formatter->formatReferences( $mockParser, $refs, true );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
@@ -135,13 +135,13 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 		string $expectedOutput
 	) {
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
-		$mockErrorReporter->method( 'plain' )->willReturnArgument( 1 );
+		$mockErrorReporter->method( 'plain' )->willReturnArgument( 0 );
 
 		$anchorFormatter = $this->createMock( AnchorFormatter::class );
-		$anchorFormatter->method( 'backLink' )->willReturnCallback(
+		$anchorFormatter->method( 'wikitextSafeBacklink' )->willReturnCallback(
 			static fn ( ...$args ) => implode( '+', $args )
 		);
-		$anchorFormatter->method( 'jumpLinkTarget' )->willReturnCallback(
+		$anchorFormatter->method( 'noteLinkTarget' )->willReturnCallback(
 			static fn ( ...$args ) => implode( '+', $args )
 		);
 
@@ -156,14 +156,6 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 			}
 		);
 
-		$mockAlphabetsProvider = $this->createMock( AlphabetsProvider::class );
-		$mockAlphabetsProvider->method( 'getIndexCharacters' )->willReturn( [ 'z', 'y', 'x' ] );
-
-		$config = new HashConfig( [
-			'CiteDefaultBacklinkAlphabet' => null,
-			'CiteUseLegacyBacklinkLabels' => true,
-		] );
-
 		/** @var ReferenceListFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferenceListFormatter(
 			$mockErrorReporter,
@@ -171,16 +163,18 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 			new BacklinkMarkRenderer(
 				'en',
 				$mockMessageLocalizer,
-				$mockAlphabetsProvider,
+				$this->createMock( AlphabetsProvider::class ),
 				null,
-				$config
+				new HashConfig( [
+					'CiteDefaultBacklinkAlphabet' => null,
+					'CiteUseLegacyBacklinkLabels' => true,
+				] )
 			),
 			$mockMessageLocalizer
 		) );
 
-		$parser = $this->createNoOpMock( Parser::class );
 		$ref = TestUtils::refFromArray( $ref );
-		$output = $formatter->formatListItem( $parser, $ref, false );
+		$output = $formatter->formatListItem( $ref );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
@@ -254,12 +248,11 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 	 */
 	public function testReferenceText(
 		?string $text,
-		bool $isSectionPreview,
 		string $expectedOutput
 	) {
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'plain' )->willReturnCallback(
-			static fn ( $parser, ...$args ) => '(' . implode( '|', $args ) . ')'
+			static fn ( ...$args ) => '(' . implode( '|', $args ) . ')'
 		);
 
 		/** @var ReferenceListFormatter $formatter */
@@ -270,9 +263,8 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 			$this->createNoOpMock( ReferenceMessageLocalizer::class )
 		) );
 
-		$parser = $this->createNoOpMock( Parser::class );
 		$ref = TestUtils::refFromArray( [ 'text' => $text ] );
-		$output = $formatter->renderTextAndWarnings( $parser, $ref, $isSectionPreview );
+		$output = $formatter->renderTextAndWarnings( $ref );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
@@ -280,22 +272,14 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 		return [
 			'No text, not preview' => [
 				'text' => null,
-				'isSectionPreview' => false,
-				'expectedOutput' => '<span class="reference-text"> (cite_error_references_no_text|)</span>' . "\n"
-			],
-			'No text, is preview' => [
-				'text' => null,
-				'isSectionPreview' => true,
-				'expectedOutput' => '<span class="reference-text"> (cite_warning_sectionpreview_no_text|)</span>' . "\n"
+				'expectedOutput' => '<span class="reference-text"></span>' . "\n"
 			],
 			'Has text' => [
 				'text' => 'text',
-				'isSectionPreview' => true,
 				'expectedOutput' => '<span class="reference-text">text</span>' . "\n"
 			],
 			'Trims text' => [
 				'text' => "text\n\n",
-				'isSectionPreview' => true,
 				'expectedOutput' => '<span class="reference-text">text</span>' . "\n"
 			],
 		];

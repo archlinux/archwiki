@@ -2,21 +2,7 @@
 /**
  * Handler for DjVu images.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -300,6 +286,7 @@ class DjVuHandler extends ImageHandler {
 		return $metadata;
 	}
 
+	/** @inheritDoc */
 	public function getThumbType( $ext, $mime, $params = null ) {
 		$djvuOutputExtension = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::DjvuOutputExtension );
@@ -312,6 +299,7 @@ class DjVuHandler extends ImageHandler {
 		return [ $djvuOutputExtension, $djvuMime ];
 	}
 
+	/** @inheritDoc */
 	public function getSizeAndMetadata( $state, $path ) {
 		wfDebug( "Getting DjVu metadata for $path" );
 
@@ -324,21 +312,25 @@ class DjVuHandler extends ImageHandler {
 		return [ 'metadata' => $metadata ] + $djvuImage->getImageSize();
 	}
 
+	/** @inheritDoc */
 	public function getMetadataType( $image ) {
 		// historical reasons
 		return 'djvuxml';
 	}
 
+	/** @inheritDoc */
 	public function isFileMetadataValid( $image ) {
 		return $image->getMetadataArray() ? self::METADATA_GOOD : self::METADATA_BAD;
 	}
 
+	/** @inheritDoc */
 	public function pageCount( File $image ) {
 		$info = $this->getDimensionInfo( $image );
 
 		return $info ? $info['pageCount'] : false;
 	}
 
+	/** @inheritDoc */
 	public function getPageDimensions( File $image, $page ) {
 		$index = $page - 1; // MW starts pages at 1
 
@@ -350,6 +342,7 @@ class DjVuHandler extends ImageHandler {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getDimensionInfo( File $file ) {
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		return $cache->getWithSetCallback(
@@ -409,6 +402,7 @@ class DjVuHandler extends ImageHandler {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function useSplitMetadata() {
 		return true;
 	}

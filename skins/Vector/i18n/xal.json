@@ -7,8 +7,6 @@
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Хуучна Vector ашглх",
-	"vector-opt-out": "Хуучн хүвлврт шилҗх",
-	"vector-opt-out-tooltip": "Сайтын скиниг хуучн хүвлврт шилҗүлх (legacy Vector)",
 	"vector-action-toggle-sidebar": "Хаҗуһин цесиг нееҗ хаах",
 	"vector-languages": "Келмүд",
 	"vector-language-button-label": "{{PLURAL:$1|$1 келәр}}",
@@ -31,7 +29,6 @@
 	"vector-appearance-label": "Һазад бәәдл",
 	"vector-feature-custom-font-size-name": "Бичвр",
 	"vector-feature-custom-font-size-2-label": "Том",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> бичвриг аһулсн халхиг хәәх",
 	"vector-intro-page": "Help:Оршл",
 	"vector-toc-label": "Һарцг",
 	"vector-toc-beginning": "Эклц",

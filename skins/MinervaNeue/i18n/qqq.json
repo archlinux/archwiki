@@ -4,6 +4,7 @@
 			"A2093064",
 			"Amire80",
 			"BaRaN6161 TURK",
+			"Foomin10",
 			"JoostBotman",
 			"Liuxinyu970226",
 			"McDutchie",
@@ -14,8 +15,7 @@
 			"Shirayuki",
 			"Siebrand",
 			"Umherirrender",
-			"Xiplus",
-			"Foomin10"
+			"Xiplus"
 		]
 	},
 	"minerva-last-modified-date": "Text that displays the date the page was last modified. Parameters:\n* $1 - date\n* $2 - time\n{{Related|Mobile-frontend-last-modified}}",
@@ -41,7 +41,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Label to appear in button that opens issue overlay on categories.",
 	"mobile-frontend-meta-data-issues-header": "Heading for overlay listing all cleanup templates\n{{Identical|Issue}}",
 	"minerva-meta-data-issues-section-header": "Heading for overlay listing all cleanup templates in a section \n{{Identical|Issue}}",
-	"mobile-frontend-pageaction-edit-tooltip": "Tooltip that appears when you hover over the edit icon at the top of the page in the page action bar.",
 	"mobile-frontend-placeholder": "Phrase used to prompt user to use search interface for mobile full screen search\n{{Identical|Search}}",
 	"mobile-frontend-random-button": "This appears in the mobile web menu, which appears when tapping the three stripes at the top corner.\n\nThis button takes the user to a random page.\n{{Identical|Random}}",
 	"mobile-frontend-redirected-from": "Toast message informing the user that they were redirected from their original page. Parameters:\n* $1 - the original page title from which the user was redirected\n\nSimilar to {{msg-mw|Redirectedfrom}}",
@@ -64,12 +63,6 @@
 	"skinname-minerva": "{{name}}",
 	"minerva-skin-desc": "{{desc|name=Minerva Neue|url=https://www.mediawiki.org/wiki/Skin:Minerva_Neue|what=skin}}",
 	"skin-minerva-issue-learn-more": "Label for link that allows expanding of ambox issue templates.",
-	"skin-minerva-time-ago-seconds": "Text that displays the age of the diff. Parameters:\n* $1 - number of seconds",
-	"skin-minerva-time-ago-minutes": "Text that displays the age of the diff. Parameters:\n* $1 - number of minutes",
-	"skin-minerva-time-ago-hours": "Text that displays the age of the diff. Parameters:\n* $1 - number of hours",
-	"skin-minerva-time-ago-days": "Text that displays the age of the diff. Parameters:\n* $1 - number of days",
-	"skin-minerva-time-ago-months": "Text that displays the age of the diff. Parameters:\n* $1 - number of months",
-	"skin-minerva-time-ago-years": "Text that displays the age of the diff. Parameters:\n* $1 - number of years",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Label for categories mobile web beta feature.\n{{Identical|Category}}",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Description label for categories mobile web beta feature.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Warning message when informing about the lack of the '''group results by page''' feature availability on the mobile site. Message should recommend visiting desktop site to access grouping results by page.",

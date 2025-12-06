@@ -10,6 +10,7 @@ use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Article;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Title\Title;
 
 class SkinComponentFooter implements SkinComponent {
@@ -119,6 +120,9 @@ class SkinComponentFooter implements SkinComponent {
 			'numberofwatchingusers' => null,
 			'credits' => $useCredits && $action ?
 				$action->getCredits( $maxCredits, $showCreditsIfMax ) : null,
+			'renderedwith' => $this->renderedWith(),
+			// Copyright is often rendered as a block in skins and
+			// should thus be last, after the inline elements.
 			'copyright' => $titleExists &&
 			$out->showsCopyright() ? $this->getCopyright() : null,
 		];
@@ -398,5 +402,24 @@ class SkinComponentFooter implements SkinComponent {
 		);
 
 		return $lastModified->getTemplateData()['text'];
+	}
+
+	/**
+	 * Get the "rendered with" text, formatted in user language
+	 *
+	 * @internal for use in Skin.php only
+	 * @return string
+	 */
+	private function renderedWith() {
+		$skinContext = $this->skinContext;
+		$out = $skinContext->getOutput();
+		$useParsoid = $out->getOutputFlag( ParserOutputFlags::USE_PARSOID );
+
+		$renderedWith = new SkinComponentRenderedWith(
+			$skinContext,
+			$useParsoid
+		);
+
+		return $renderedWith->getTemplateData()['text'];
 	}
 }

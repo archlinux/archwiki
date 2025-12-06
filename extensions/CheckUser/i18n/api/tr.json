@@ -11,14 +11,14 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Belirli bir kullanıcı adı tarafından hangi IP adreslerinin kullanıldığını veya kullanıcı adlarının belirli bir IP adresi tarafından kullanıldığını kontrol edin.",
-	"apihelp-query+checkuser-param-request": "Denetçi isteğinin türü:\n;userips:Hedef kullanıcının IP adreslerini alın.\n;edits:Hedef IP adresleri veya IP aralığındaki değişiklikleri alın.\n;ipusers:Hedef IP adresleri veya IP aralığındaki kullanıcıları alın.",
+	"apihelp-query+checkuser-param-request": "Denetçi isteğinin türü:",
 	"apihelp-query+checkuser-param-target": "Kullanıcı adı, IP adresi veya CIDR aralığını kontrol edin.",
 	"apihelp-query+checkuser-param-reason": "Kontrol nedeni.",
 	"apihelp-query+checkuser-param-limit": "Satır sınırı.",
 	"apihelp-query+checkuser-param-timecond": "Kullanıcı verilerinin zaman sınırı (\"-2 weeks\" veya \"2 weeks ago\" gibi).",
 	"apihelp-query+checkuser-param-xff": "IP adresi yerine XFF veri kullanın.",
-	"apihelp-query+checkuser-example-1": "[[User:Example]] için IP adreslerini kontrol edin",
-	"apihelp-query+checkuser-example-2": "192.0.2.0/24 tarafından yapılan değişiklikleri kontrol edin",
+	"apihelp-query+checkuser-example-1": "[[User:Example]] için IP adreslerini alın",
+	"apihelp-query+checkuser-example-2": "192.0.2.0/24 tarafından gerçekleştirilen eylemleri alın",
 	"apihelp-query+checkuserlog-summary": "Denetçi günlüğünden girdileri alın.",
 	"apihelp-query+checkuserlog-param-user": "Denetçi olan kullanıcı adları.",
 	"apihelp-query+checkuserlog-param-target": "Kontrol edilen IP adresleri veya CIDR aralığı.",
@@ -31,5 +31,5 @@
 	"apierror-checkuser-missingsummary": "Kontrol için neden tanımlamanız gerekir.",
 	"apierror-checkuser-timelimit": "Doğru zaman sınırını kullanmanız gerekiyor (\"-2 weeks\" veya \"2 weeks ago\" gibi)",
 	"apierror-checkuser-invalidmode": "Geçersiz istek modu",
-	"checkuser-api-help-param-direction": "Hangi yönde numaralandırılacağı:\n;newer:Önce en eskisini listeleyin. Not: $1start, $1end önce olmalıdır.\n;older:Önce en yenisini listeleyin (varsayılan). Not: $1start, $1end geç olmalıdır."
+	"checkuser-api-help-param-direction": "Hangi yönde numaralandırılacağı:"
 }

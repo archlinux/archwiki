@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku",
-			"Hakimi97"
+			"Hakimi97",
+			"Tofeiku"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Semak untuk melihat sama ada AbuseFilter bersepadan dengan set pembolehubah, penyunting atau peristiwa AbuseFilter yang dilog.",

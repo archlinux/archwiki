@@ -16,7 +16,6 @@ use Wikibase\Lib\Formatters\SnakFormatter;
  * Formats can look like this: "text/html; disposition=diff"
  * or just "text/plain"
  */
-
 class MathFormatter implements ValueFormatter {
 
 	/**

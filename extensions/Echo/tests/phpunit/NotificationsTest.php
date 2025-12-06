@@ -48,11 +48,9 @@ class NotificationsTest extends MediaWikiIntegrationTestCase {
 
 		$context = new DerivativeContext( RequestContext::getMain() );
 		$context->setUser( $this->sysop );
-		$ur = $this->getServiceContainer()
-			->getSpecialPageFactory()
-			->getPage( 'Userrights' );
-		$ur->setContext( $context );
-		$ur->doSaveUserGroups( $user, [ 'sysop' ], [], 'reason' );
+		$userGroupsAssignmentService = $this->getServiceContainer()->getUserGroupAssignmentService();
+		$userGroupsAssignmentService->saveChangesToUserGroups( $context->getAuthority(), $user, [ 'sysop' ], [], [],
+			'reason' );
 		$event = self::getLatestNotification( $user );
 		$this->assertEquals( 'user-rights', $event->getType() );
 		$this->assertEquals( $this->sysop->getName(), $event->getAgent()->getName() );

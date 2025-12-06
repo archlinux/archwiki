@@ -22,10 +22,7 @@
  * @param {ve.ui.WindowManager} [config.dialogManager] Window manager to launch the language search dialog in
  * @param {string[]} [config.availableLanguages] Available language codes to show in search dialog
  */
-ve.ui.LanguageInputWidget = function VeUiLanguageInputWidget( config ) {
-	// Configuration initialization
-	config = config || {};
-
+ve.ui.LanguageInputWidget = function VeUiLanguageInputWidget( config = {} ) {
 	// Parent constructor
 	ve.ui.LanguageInputWidget.super.call( this, config );
 
@@ -127,8 +124,7 @@ ve.ui.LanguageInputWidget.prototype.onFindLanguageButtonClick = function () {
 	this.dialogs.openWindow( 'languageSearch', {
 		availableLanguages: this.availableLanguages,
 		$returnFocusTo: null
-	} ).closing.then( ( data ) => {
-		data = data || {};
+	} ).closing.then( ( data = {} ) => {
 		if ( data.action === 'done' ) {
 			this.setLangAndDir( data.lang, data.dir );
 		}

@@ -298,3 +298,10 @@ figure[ typeof~='mw:File/Thumb' ] {
 .nomobile {
 	display: none;
 }
+
+// Workaround until global awareness of outdenting occurs.
+// (Helps with deeply nested talk page convos, see T369397.)
+// (My UA has this as at 40 px or ≈ 40 em for our font size.)
+dd {
+	margin-inline-start: 1em;
+}

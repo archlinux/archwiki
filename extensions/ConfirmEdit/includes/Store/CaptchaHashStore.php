@@ -28,9 +28,4 @@ class CaptchaHashStore extends CaptchaStore {
 	public function cookiesNeeded() {
 		return false;
 	}
-
-	/** @inheritDoc */
-	public function clearAll() {
-		$this->data = [];
-	}
 }

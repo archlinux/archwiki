@@ -114,6 +114,12 @@ class ToolbarBuilderTest extends MediaWikiUnitTestCase {
 					'icon' => 'globe',
 					'text' => 'a view via a hook from an extension with an icon',
 					'class' => 'custom',
+					'array-attributes' => [
+						[
+							'key' => 'data-mw-foo',
+							'value' => '1'
+						]
+					]
 				],
 			]
 		);
@@ -130,5 +136,14 @@ class ToolbarBuilderTest extends MediaWikiUnitTestCase {
 			'page-actions-ext-view-icon',
 			$entries[6]['name'],
 			'check the view with an icon declaration got added and the one without got ignored' );
+
+		$viewAttributes = $entries[6]['components'][0]['array-attributes'];
+		$viewAttributeKeys = array_map( static function ( $attrValueDef ) {
+			return $attrValueDef[ 'key' ];
+		}, $viewAttributes );
+		$this->assertContains(
+			'data-mw-foo',
+			$viewAttributeKeys,
+			'check the data attributes got copied over (T394560)' );
 	}
 }

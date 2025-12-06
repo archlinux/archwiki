@@ -11,7 +11,8 @@
 			"列维劳德",
 			"羊羊32521",
 			"逆襲的天邪鬼",
-			"魔琴"
+			"魔琴",
+			"Davidzdh"
 		]
 	},
 	"mobile-frontend-editor-edit": "纂",
@@ -21,10 +22,9 @@
 	"mobile-frontend-main-menu-button-tooltip": "啟主列",
 	"mobile-frontend-main-menu-login": "登簿",
 	"mobile-frontend-main-menu-logout": "出籍",
-	"mobile-frontend-main-menu-nearby": "近郊",
+	"mobile-frontend-main-menu-nearby": "左近",
 	"mobile-frontend-main-menu-settings": "簿註",
 	"mobile-frontend-main-menu-watchlist": "哨站",
-	"mobile-frontend-pageaction-edit-tooltip": "纂頁首段",
 	"mobile-frontend-placeholder": "尋於{{SITENAME}}",
 	"mobile-frontend-random-button": "清風翻書",
 	"mobile-frontend-talk-back-to-page": "返「$1」。",

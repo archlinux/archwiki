@@ -3,12 +3,13 @@
 		"authors": [
 			"Minh Nguyen",
 			"NguyenHung",
+			"Nvdtn19",
 			"Pisceskaze",
-			"SongNgu.xyz",
-			"Nvdtn19"
+			"SongNgu.xyz"
 		]
 	},
 	"apihelp-query+checkuser-summary": "Kiểm tra các địa chỉ IP của một người dùng hoặc các tài khoản dùng chung một IP.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''API này đã bị quản trị viên trang web vô hiệu hóa. Truy vấn API sẽ không trả về dữ liệu nào.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Kiểu yêu cầu CheckUser:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Kiểm tra địa chỉ IP của người dùng.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Kiểm tra các hành động được thực hiện theo địa chỉ IP đích hoặc dải IP.",
@@ -39,6 +40,7 @@
 	"apierror-checkuser-timelimit": "Bạn cần sử dụng đúng giới hạn thời gian (như \"-2 tuần\" hoặc \"2 tuần trước\").",
 	"apierror-checkuser-invalidmode": "Yêu cầu không hợp lệ",
 	"apierror-checkuser-nosuchuser": "Không có người dùng nào như vậy cho tên người dùng này",
+	"apierror-checkuser-disabled": "API truy vấn 'checkuser' đã bị quản trị viên trang web vô hiệu hóa.",
 	"checkuser-api-useragent-clienthints-revision-user-mismatch": "Người dùng $1 không phải là tác giả của bản sửa đổi $2",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "ID $1 $2 không tồn tại",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} thu thập dữ liệu gợi ý trình khách (user-agent client hints) để hỗ trợ việc kiểm duyệt các hành vi phá hoại và lạm dụng. Để biết thêm chi tiết, hãy xem trang https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:CheckUser/Client_Hints.",

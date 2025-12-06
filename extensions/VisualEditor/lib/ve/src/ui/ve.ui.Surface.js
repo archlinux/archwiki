@@ -13,7 +13,7 @@
  *
  * @constructor
  * @param {ve.init.Target} target Target the surface belongs to
- * @param {HTMLDocument|Array|ve.dm.ElementLinearData|ve.dm.Document|ve.dm.Surface} dataOrDocOrSurface Document data, document model, or surface model to edit
+ * @param {HTMLDocument|Array|ve.dm.LinearData|ve.dm.Document|ve.dm.Surface} dataOrDocOrSurface Document data, document model, or surface model to edit
  * @param {Object} [config] Configuration options
  * @param {ve.dm.BranchNode} [config.attachedRoot] Node to surface, if ve.dm.Document passed in
  * @param {string} config.mode Editing mode, either "visual" or "source"
@@ -35,9 +35,7 @@
  * @param {boolean} [config.inTargetWidget=false] The surface is in a target widget
  * @param {boolean} [config.allowTabFocusChange=false] Allow changing focus from target surfaces with tab/shift+tab
  */
-ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
-	config = config || {};
-
+ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config = {} ) {
 	// Parent constructor
 	ve.ui.Surface.super.call( this, config );
 
@@ -76,7 +74,7 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 		if ( dataOrDocOrSurface instanceof ve.dm.Document ) {
 			// ve.dm.Document
 			documentModel = dataOrDocOrSurface;
-		} else if ( dataOrDocOrSurface instanceof ve.dm.ElementLinearData || Array.isArray( dataOrDocOrSurface ) ) {
+		} else if ( dataOrDocOrSurface instanceof ve.dm.LinearData || Array.isArray( dataOrDocOrSurface ) ) {
 			// LinearData or raw linear data
 			documentModel = new ve.dm.Document( dataOrDocOrSurface );
 		} else {
@@ -105,8 +103,6 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	this.nullSelectionOnBlur = config.nullSelectionOnBlur !== false;
 	this.completion = new ve.ui.CompletionWidget( this );
 
-	// Deprecated, use this.padding.top
-	this.toolbarHeight = 0;
 	this.padding = {
 		top: 0,
 		right: 0,
@@ -151,7 +147,7 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 		this.getView().$element.add( this.$placeholder )
 			.addClass( 've-ui-surface-source-font' );
 	}
-	this.view.$element.after( this.localOverlay.$element, this.localOverlaySelections.$element );
+	this.view.$element.after( this.localOverlaySelections.$element, this.localOverlay.$element );
 	this.localOverlay.$element.append( this.$blockers, this.$controls, this.$menus );
 	this.localOverlaySelections.$element.append( this.$selections );
 	this.globalOverlay.$element.append( this.dialogs.$element );
@@ -306,7 +302,7 @@ ve.ui.Surface.prototype.getMode = function () {
  * @param {Object} config Configuration options
  * @return {ve.ui.LinearContext}
  */
-ve.ui.Surface.prototype.createContext = function ( config ) {
+ve.ui.Surface.prototype.createContext = function ( config = {} ) {
 	return OO.ui.isMobile() ? new ve.ui.MobileContext( this, config ) : new ve.ui.DesktopContext( this, config );
 };
 
@@ -375,9 +371,9 @@ ve.ui.Surface.prototype.getBoundingClientRect = function () {
 };
 
 /**
- * Get vertical measurements of the visible area of the surface viewport
+ * Get measurements of the visible area of the surface viewport
  *
- * @return {Object|null} Object with top, left, bottom, and height properties. Null if the surface is not attached.
+ * @return {Object|null} Object with top, bottom, left, right, width and height properties. Null if the surface is not attached.
  */
 ve.ui.Surface.prototype.getViewportDimensions = function () {
 	const rect = this.getBoundingClientRect();
@@ -386,14 +382,21 @@ ve.ui.Surface.prototype.getViewportDimensions = function () {
 		return null;
 	}
 
-	const top = Math.max( this.getPadding().top - rect.top, 0 );
-	const bottom = $( this.getElementWindow() ).height() - rect.top;
+	const padding = this.getPadding();
+	const $window = $( this.getElementWindow() );
+
+	const top = Math.max( ( padding.top || 0 ) - rect.top, 0 );
+	const bottom = $window.height() - rect.top;
+	const left = Math.max( ( padding.left || 0 ) - rect.left, 0 );
+	const right = $window.width() - rect.left;
 
 	return {
-		top: top,
-		left: rect.left,
-		bottom: bottom,
-		height: bottom - top
+		top,
+		bottom,
+		left,
+		right,
+		height: bottom - top,
+		width: right - left
 	};
 };
 
@@ -439,8 +442,7 @@ ve.ui.Surface.prototype.getDialogs = function () {
  * @param {string} [position='side'] Get the toolbar dialogs window set for a specific position
  * @return {ve.ui.WindowManager} Toolbar dialogs window set
  */
-ve.ui.Surface.prototype.getToolbarDialogs = function ( position ) {
-	position = position || 'side';
+ve.ui.Surface.prototype.getToolbarDialogs = function ( position = 'side' ) {
 	this.toolbarDialogs[ position ] = this.toolbarDialogs[ position ] ||
 		new ve.ui.ToolbarDialogWindowManager( this, { factory: ve.ui.windowFactory } );
 	return this.toolbarDialogs[ position ];
@@ -530,8 +532,12 @@ ve.ui.Surface.prototype.onDocumentTransact = function () {
  * Handle select events from the model
  */
 ve.ui.Surface.prototype.onModelSelect = function () {
-	// eslint-disable-next-line no-bitwise
-	if ( this.getView().dragging ^ OO.ui.isMobile() ) {
+	if (
+		// Scroll is suppressed, e.g. by selectAll
+		this.getView().noScrollSelecting ||
+		// eslint-disable-next-line no-bitwise
+		( this.getView().dragging ^ OO.ui.isMobile() )
+	) {
 		// Allow native scroll behavior while dragging, as the start/end
 		// points are unreliable until we're finished. Without this, trying to
 		// drag a selection larger than a single screen will sometimes lock
@@ -692,21 +698,13 @@ ve.ui.Surface.prototype.updatePlaceholder = function () {
 /**
  * Handle position events from the view
  *
- * @param {boolean} [wasSynchronizing=false]
+ * @param {boolean} [passive=false]
  */
-ve.ui.Surface.prototype.onViewPosition = function ( wasSynchronizing ) {
-	const padding = {};
-	for ( const side in this.toolbarDialogs ) {
-		ve.extendObject( padding, this.toolbarDialogs[ side ].getSurfacePadding() );
-	}
-	if ( Object.keys( padding ).length ) {
-		this.setPadding( padding );
-		this.adjustVisiblePadding();
-		// Don't scroll to this user's cursor due to another user's changes being applied
-		if ( !wasSynchronizing ) {
-			this.scrollSelectionIntoView();
-		}
-	}
+ve.ui.Surface.prototype.onViewPosition = function ( passive ) {
+	this.recalculatePadding(
+		// Don't scroll to this user's cursor if event is marked as passive
+		!passive
+	);
 	if ( this.placeholderVisible ) {
 		this.getView().$element.css( 'min-height', this.$placeholder.outerHeight() );
 	}
@@ -777,11 +775,6 @@ ve.ui.Surface.prototype.executeCommand = function ( commandName ) {
 	return false;
 };
 
-// Deprecated, use #setPadding
-ve.ui.Surface.prototype.setToolbarHeight = function ( toolbarHeight ) {
-	this.setPadding( { top: toolbarHeight } );
-};
-
 /**
  * @typedef {Object} Padding
  * @memberof ve.ui.Surface
@@ -799,11 +792,10 @@ ve.ui.Surface.prototype.setToolbarHeight = function ( toolbarHeight ) {
  * scroll-into-view calculations can be adjusted.
  *
  * @param {ve.ui.Surface.Padding} padding Padding object. Omit properties to leave unchanged.
+ * @deprecated The surface should calculate its own padding in recalculatePadding
  */
 ve.ui.Surface.prototype.setPadding = function ( padding ) {
 	ve.extendObject( this.padding, padding );
-	// Deprecated, use this.padding.top
-	this.toolbarHeight = this.padding.top;
 };
 
 /**
@@ -823,14 +815,35 @@ ve.ui.Surface.prototype.getPadding = function () {
 	return this.padding;
 };
 
+ve.ui.Surface.prototype.recalculatePadding = function ( scrollSelection ) {
+	const oldPadding = this.padding;
+	this.padding = ve.extendObject(
+		{
+			top: 0,
+			right: 0,
+			bottom: 0,
+			left: 0
+		},
+		this.getTarget().getToolbarSurfacePadding(),
+		this.context.getSurfacePadding()
+	);
+	for ( const side in this.toolbarDialogs ) {
+		ve.extendObject( this.padding, this.toolbarDialogs[ side ].getSurfacePadding() );
+	}
+	// Scroll selection into view if padding changed
+	if ( scrollSelection && !OO.compare( oldPadding, this.padding ) ) {
+		this.scrollSelectionIntoView();
+	}
+	this.adjustVisiblePadding();
+};
+
 /**
  * Handle resize events from the context
  */
 ve.ui.Surface.prototype.onContextResize = function () {
-	const padding = this.context.getSurfacePadding();
-	if ( padding ) {
-		this.setPadding( padding );
-		this.adjustVisiblePadding();
+	// This listener is debounced, so check the surface hasn't been destroyed
+	if ( this.$element[ 0 ].parentNode ) {
+		this.recalculatePadding();
 		this.scrollSelectionIntoView();
 	}
 };

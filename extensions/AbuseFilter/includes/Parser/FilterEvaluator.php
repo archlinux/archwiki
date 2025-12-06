@@ -251,9 +251,6 @@ class FilterEvaluator {
 		}
 	}
 
-	/**
-	 * @param VariableHolder $vars
-	 */
 	public function setVariables( VariableHolder $vars ) {
 		$this->mVariables = $vars;
 	}
@@ -403,6 +400,7 @@ class FilterEvaluator {
 		$this->fromCache = true;
 		return $this->cache->getWithSetCallback(
 			$this->cache->makeGlobalKey(
+				'abusefilter-tree',
 				__CLASS__,
 				self::getCacheVersion(),
 				hash( 'sha256', $code )
@@ -427,10 +425,6 @@ class FilterEvaluator {
 		);
 	}
 
-	/**
-	 * @param AFPSyntaxTree $tree
-	 * @return AFPData
-	 */
 	private function evalTree( AFPSyntaxTree $tree ): AFPData {
 		$startTime = microtime( true );
 		$root = $tree->getRoot();
@@ -582,16 +576,13 @@ class FilterEvaluator {
 				[ $op, $leftOperand, $rightOperand ] = $node->children;
 				$leftOperand = $this->evalNode( $leftOperand );
 				$rightOperand = $this->evalNode( $rightOperand );
-				switch ( $op ) {
-					case '+':
-						return $leftOperand->sum( $rightOperand );
-					case '-':
-						return $leftOperand->sub( $rightOperand );
-					default:
-						// @codeCoverageIgnoreStart
-						throw new InternalException( "Unknown sum-related operator: {$op}" );
-						// @codeCoverageIgnoreEnd
-				}
+				return match ( $op ) {
+					'+' => $leftOperand->sum( $rightOperand ),
+					'-' => $leftOperand->sub( $rightOperand ),
+					// @codeCoverageIgnoreStart
+					default => throw new InternalException( "Unknown sum-related operator: {$op}" ),
+					// @codeCoverageIgnoreEnd
+				};
 				// Unreachable line
 			case AFPTreeNode::COMPARE:
 				[ $op, $leftOperand, $rightOperand ] = $node->children;
@@ -1540,8 +1531,6 @@ class FilterEvaluator {
 	 * Given a node that we don't need to evaluate, decide what to do with it.
 	 * The nodes passed in will usually be discarded by short-circuit
 	 * evaluation. If we don't allow it, we fully evaluate the node.
-	 *
-	 * @param AFPTreeNode $node
 	 */
 	private function maybeDiscardNode( AFPTreeNode $node ) {
 		if ( !$this->mAllowShort ) {

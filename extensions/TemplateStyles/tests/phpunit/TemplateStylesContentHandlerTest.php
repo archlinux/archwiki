@@ -15,8 +15,17 @@ use MediaWiki\Title\Title;
  */
 class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 
+	private function newHandler( string $modelId = 'sanitized-css' ): TemplateStylesContentHandler {
+		$serviceContainer = $this->getServiceContainer();
+		return new TemplateStylesContentHandler(
+			$modelId,
+			$serviceContainer->getTrackingCategories(),
+			$serviceContainer->getConfigFactory(),
+		);
+	}
+
 	public function testBasics() {
-		$handler = new TemplateStylesContentHandler();
+		$handler = $this->newHandler();
 
 		$this->assertSame( 'sanitized-css', $handler->getModelID() );
 		$this->assertSame( [ 'text/css' ], $handler->getSupportedFormats() );
@@ -30,7 +39,7 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 
 	public function testValidateSave() {
 		$content = new TemplateStylesContent( '.foo { bogus: bogus; }' );
-		$handler = new TemplateStylesContentHandler();
+		$handler = $this->newHandler();
 		$page = new PageIdentityValue( 0, 1, 'Foo', PageIdentity::LOCAL );
 		$validationParams = new ValidationParams( $page, 0, 123 );
 
@@ -116,7 +125,7 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 	 */
 	public function testSanitize( $text, $options, $expect ) {
 		$content = new TemplateStylesContent( $text );
-		$contentHandler = new TemplateStylesContentHandler( $content->getModel() );
+		$contentHandler = $this->newHandler( $content->getModel() );
 		$this->assertEquals( $expect, $contentHandler->sanitize( $content, $options ) );
 	}
 
@@ -124,7 +133,7 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Invalid value for $extraWrapper: .foo>.bar' );
 		$content = new TemplateStylesContent( '.foo { margin-left: 10px }' );
-		$contentHandler = new TemplateStylesContentHandler( $content->getModel() );
+		$contentHandler = $this->newHandler( $content->getModel() );
 		$contentHandler->sanitize(
 			$content,
 			[ 'extraWrapper' => '.foo>.bar' ]
@@ -154,7 +163,7 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 		);
 
 		$content = new TemplateStylesContent( '.foo {}' );
-		$contentHandler = new TemplateStylesContentHandler( $content->getModel() );
+		$contentHandler = $this->newHandler( $content->getModel() );
 		$this->assertEquals(
 			Status::newFatal( 'templatestyles-tag-injection' ),
 			$contentHandler->sanitize( $content, [ 'class' => 'testCrazyBrokenSanitizer' ] )
@@ -192,7 +201,7 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 	public function testSizeLimit( TemplateStylesContent $content, StatusValue $expectedStatus, $size = null ) {
 		$this->overrideConfigValue( 'TemplateStylesMaxStylesheetSize', $size );
 
-		$contentHandler = new TemplateStylesContentHandler( $content->getModel() );
+		$contentHandler = $this->newHandler( $content->getModel() );
 		$this->assertEquals(
 			$expectedStatus,
 			$contentHandler->sanitize( $content )

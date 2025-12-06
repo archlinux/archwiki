@@ -11,12 +11,14 @@
  * allowing us to use the dependencies across scenarios.
  */
 
-'use strict';
+import mwCorePages from '../support/pages/mw_core_pages.js';
+import minervaPages from '../support/pages/minerva_pages.js';
 
-const mwCorePages = require( '../support/pages/mw_core_pages' ),
-	minervaPages = require( '../support/pages/minerva_pages' );
-
-module.exports = {
+const world = {
 	...mwCorePages,
 	...minervaPages
 };
+
+export default world;
+
+export const { ArticlePage, UserLoginPage } = world;

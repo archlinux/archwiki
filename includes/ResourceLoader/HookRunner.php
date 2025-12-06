@@ -11,6 +11,7 @@ use MediaWiki\HookContainer\HookContainer;
  * @ingroup ResourceLoader
  */
 class HookRunner implements
+	\MediaWiki\ResourceLoader\Hook\ResourceLoaderBeforeResponseHook,
 	\MediaWiki\ResourceLoader\Hook\ResourceLoaderExcludeUserOptionsHook,
 	\MediaWiki\ResourceLoader\Hook\ResourceLoaderForeignApiModulesHook,
 	\MediaWiki\ResourceLoader\Hook\ResourceLoaderModifyEmbeddedSourceUrlsHook,
@@ -35,6 +36,7 @@ class HookRunner implements
 		);
 	}
 
+	/** @inheritDoc */
 	public function onResourceLoaderForeignApiModules( &$dependencies, $context ): void {
 		$this->container->run(
 			'ResourceLoaderForeignApiModules',
@@ -59,6 +61,7 @@ class HookRunner implements
 		);
 	}
 
+	/** @inheritDoc */
 	public function onResourceLoaderSiteModulePages( $skin, array &$pages ): void {
 		$this->container->run(
 			'ResourceLoaderSiteModulePages',
@@ -67,6 +70,7 @@ class HookRunner implements
 		);
 	}
 
+	/** @inheritDoc */
 	public function onResourceLoaderSiteStylesModulePages( $skin, array &$pages ): void {
 		$this->container->run(
 			'ResourceLoaderSiteStylesModulePages',
@@ -75,6 +79,7 @@ class HookRunner implements
 		);
 	}
 
+	/** @inheritDoc */
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
 		$this->container->run(
 			'ResourceLoaderGetConfigVars',
@@ -89,6 +94,14 @@ class HookRunner implements
 		$this->container->run(
 			'ResourceLoaderJqueryMsgModuleMagicWords',
 			[ $context, &$magicWords ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	public function onResourceLoaderBeforeResponse( Context $context, array &$extraHeaders ): void {
+		$this->container->run(
+			'ResourceLoaderBeforeResponse',
+			[ $context, &$extraHeaders ],
 			[ 'abortable' => false ]
 		);
 	}

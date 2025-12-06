@@ -11,12 +11,11 @@
  * @abstract
  *
  * @constructor
- * @param {Object} element Reference to plain object in linear model
+ * @param {Object} [element] Reference to plain object in linear model
  */
 ve.dm.Model = function VeDmModel( element ) {
 	// Properties
 	this.element = element || { type: this.constructor.static.name };
-	this.store = null;
 };
 
 /* Inheritance */
@@ -138,8 +137,8 @@ ve.dm.Model.static.matchFunction = null;
  * @static
  * @inheritable
  * @param {Node[]} domElements DOM elements to convert. Usually only one element
- * @param {ve.dm.Converter} converter
- * @return {Object|Array|null} Linear model element, or array with linear model data, or null to alienate
+ * @param {ve.dm.ModelFromDomConverter} converter
+ * @return {ve.dm.LinearData.Element|ve.dm.LinearData.Item[]|null} Linear model element, or array if linear model data, or null to alienate
  */
 ve.dm.Model.static.toDataElement = function () {
 	return { type: this.name };
@@ -160,9 +159,9 @@ ve.dm.Model.static.toDataElement = function () {
  *
  * @static
  * @inheritable
- * @param {Object|Array} dataElement Linear model element or array of linear model data
+ * @param {ve.dm.LinearData.Element|ve.dm.LinearData.Item[]} dataElement Linear model element or array of linear model data
  * @param {HTMLDocument} doc HTML document for creating elements
- * @param {ve.dm.Converter} converter Converter object to optionally call `getDomSubtreeFromData` on
+ * @param {ve.dm.DomFromModelConverter} converter Converter object to optionally call `getDomSubtreeFromData` on
  * @return {Node[]} DOM elements
  */
 ve.dm.Model.static.toDomElements = function ( dataElement, doc ) {
@@ -210,7 +209,7 @@ ve.dm.Model.static.preserveHtmlAttributes = true;
  * Get hash object of a linear model data element.
  *
  * @static
- * @param {Object} dataElement Data element
+ * @param {ve.dm.LinearData.Element} dataElement Data element
  * @return {Object} Hash object
  */
 ve.dm.Model.static.getHashObject = function ( dataElement ) {
@@ -317,13 +316,13 @@ ve.dm.Model.static.getAttributeDiff = function ( oldText, newText, allowRemoveIn
 
 	diff.forEach( ( part ) => {
 		switch ( part[ 0 ] ) {
-			case -1:
+			case ve.DiffMatchPatch.static.DIFF_DELETE:
 				span.appendChild( this.wrapText( 'del', part[ 1 ] ) );
 				break;
-			case 1:
+			case ve.DiffMatchPatch.static.DIFF_INSERT:
 				span.appendChild( this.wrapText( 'ins', part[ 1 ] ) );
 				break;
-			case 0:
+			case ve.DiffMatchPatch.static.DIFF_EQUAL:
 				isRemoveInsert = false;
 				span.appendChild( document.createTextNode( part[ 1 ] ) );
 				break;
@@ -398,11 +397,10 @@ ve.dm.Model.prototype.getElement = function () {
 /**
  * Get a reference to the hash-value store used by the element.
  *
- * @return {ve.dm.HashValueStore} Hash-value store
+ * @abstract
+ * @return {ve.dm.HashValueStore|null} Hash-value store, null if not available
  */
-ve.dm.Model.prototype.getStore = function () {
-	return this.store;
-};
+ve.dm.Model.prototype.getStore = null;
 
 /**
  * Get the symbolic name of this model's type.
@@ -438,7 +436,7 @@ ve.dm.Model.prototype.getAttributes = function ( prefix ) {
 	if ( prefix ) {
 		const filtered = {};
 		for ( const key in attributes ) {
-			if ( key.indexOf( prefix ) === 0 ) {
+			if ( key.startsWith( prefix ) ) {
 				filtered[ key.slice( prefix.length ) ] = attributes[ key ];
 			}
 		}
@@ -459,11 +457,11 @@ ve.dm.Model.prototype.getOriginalDomElementsHash = function () {
 /**
  * Get the DOM element(s) this model was originally converted from, if any.
  *
- * @param {ve.dm.HashValueStore} store Hash value store where the DOM elements are stored
  * @return {HTMLElement[]} DOM elements this model was converted from, empty if not applicable
  */
-ve.dm.Model.prototype.getOriginalDomElements = function ( store ) {
-	return store.value( this.getOriginalDomElementsHash() ) || [];
+ve.dm.Model.prototype.getOriginalDomElements = function () {
+	const store = this.getStore();
+	return ( store && store.value( this.getOriginalDomElementsHash() ) ) || [];
 };
 
 /**

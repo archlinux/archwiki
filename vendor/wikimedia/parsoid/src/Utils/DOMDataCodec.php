@@ -8,6 +8,7 @@ use Wikimedia\JsonCodec\JsonCodec;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
  * Customized subclass of JsonCodec for serialization of rich attributes.
@@ -27,6 +28,9 @@ class DOMDataCodec extends JsonCodec {
 		return $count === 0 ? $base : "$base-$count";
 	}
 
+	/**
+	 * @return list{string, int}
+	 */
 	private static function splitTID( string $tid ): array {
 		[ $base, $count ] = array_pad( explode( '-', $tid, 2 ), 2, '0' );
 		return [ $base, intval( $count ) ];
@@ -93,7 +97,7 @@ class DOMDataCodec extends JsonCodec {
 
 	/**
 	 * Return an appropriate default value for objects of the given type.
-	 * @phan-template T
+	 * @template T
 	 * @param class-string<T> $className
 	 * @return T
 	 */
@@ -150,10 +154,12 @@ class DOMDataCodec extends JsonCodec {
 				// Store rich attributes in the document fragment
 				// before serializing it; this should share this codec
 				// and so the fragment bank numbering won't conflict.
-				DOMDataUtils::visitAndStoreDataAttribs(
-					$df, $this->codec->options
-				);
 				if ( $this->codec->options['useFragmentBank'] ?? false ) {
+					// In theory we could wait to visit-and-store until the
+					// ownerDoc is serialized.
+					DOMDataUtils::visitAndStoreDataAttribs(
+						$df, $this->codec->options
+					);
 					$t = $this->codec->ownerDoc->createElement( 'template' );
 					DOMUtils::migrateChildrenBetweenDocs( $df, DOMCompat::getTemplateElementContent( $t ) );
 					DOMCompat::getHead( $this->codec->ownerDoc )->appendChild( $t );
@@ -168,7 +174,15 @@ class DOMDataCodec extends JsonCodec {
 					$tidBase = base64_encode( substr( $hash, 0, 6 ) );
 					$tid = $this->codec->setUniqueTID( $tidBase, $t );
 					return [ '_t' => $tid ];
+				} elseif ( $this->codec->options['noSideEffects'] ?? false ) {
+					return [ '_h' => XHtmlSerializer::serialize( $df, [
+						'innerXML' => true,
+						'noSideEffects' => true,
+					] )['html'] ];
 				} else {
+					DOMDataUtils::visitAndStoreDataAttribs(
+						$df, $this->codec->options
+					);
 					return [ '_h' => DOMUtils::getFragmentInnerHTML( $df ) ];
 				}
 			}

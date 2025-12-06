@@ -11,7 +11,6 @@ use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
  * Implements the php parser's `indicator` hook natively.
@@ -43,11 +42,7 @@ class Indicator extends ExtensionTagHandler implements ExtensionModule {
 	): void {
 		$dmw = DOMDataUtils::getDataMw( $elt );
 		if ( isset( $dmw->html ) ) {
-			$dom = $extApi->htmlToDom( $dmw->html );
-			$ret = $proc( $dom );
-			if ( $ret ) {
-				$dmw->html = $extApi->domToHtml( $dom, true, true );
-			}
+			$proc( $dmw->html );
 		}
 	}
 
@@ -72,7 +67,7 @@ class Indicator extends ExtensionTagHandler implements ExtensionModule {
 		// Strip an outer paragraph if it is the sole paragraph without additional attributes
 		$content = DiffDOMUtils::firstNonSepChild( $domFragment );
 		if ( $content &&
-			DOMCompat::nodeName( $content ) === 'p' &&
+			DOMUtils::nodeName( $content ) === 'p' &&
 			DiffDOMUtils::nextNonSepSibling( $content ) === null &&
 			$content instanceof Element && // Needed to mollify Phan
 			DOMDataUtils::noAttrs( $content )
@@ -81,18 +76,16 @@ class Indicator extends ExtensionTagHandler implements ExtensionModule {
 			$domFragment->removeChild( $content );
 		}
 
-		// We should embed this directly as a DocumentFragment once
-		// T348161 lands.
-		$dataMw->html = $extApi->domToHtml( $domFragment, true );
+		$dataMw->html = $domFragment;
 
 		// Use a meta tag whose data-mw we will stuff this HTML into later.
 		// NOTE: Till T214994 is resolved, this HTML will not get processed
 		// by all the top-level DOM passes that may need to process this (ex: linting)
 		$meta = $domFragment->ownerDocument->createElement( 'meta' );
-
 		DOMDataUtils::setDataMw( $meta, $dataMw );
 
-		DOMCompat::replaceChildren( $domFragment, $meta );
+		$domFragment = $meta->ownerDocument->createDocumentFragment();
+		$domFragment->appendChild( $meta );
 		return $domFragment;
 	}
 }

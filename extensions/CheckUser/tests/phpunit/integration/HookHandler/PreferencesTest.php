@@ -57,6 +57,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 			$this->permissionManager,
 			$this->loggerFactory,
 			$this->getServiceContainer()->getMainConfig(),
+			$this->getServiceContainer()->getUserOptionsLookup(),
 			$this->autoRevealLookup,
 			$this->checkUserPermissionManager
 		);
@@ -81,6 +82,18 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 				}
 				return true;
 			} );
+		$this->permissionManager->method( 'userHasAnyRight' )
+			->willReturnCallback( static function ( $user, ...$rights ) use ( $options ) {
+				foreach ( $rights as $right ) {
+					if ( $right === 'checkuser-temporary-account' && $options['hasRight'] ) {
+						return true;
+					}
+					if ( $right === 'checkuser-temporary-account-no-preference' && $options['hasNoPreferenceRight'] ) {
+						return true;
+					}
+				}
+				return false;
+			} );
 
 		$this->sut->onGetPreferences( $this->user, $prefs );
 
@@ -92,12 +105,19 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 			$prefs['checkuser-temporary-accounts-onboarding-dialog-seen'],
 		);
 
+		if ( $options['expectPreferenceToExist'] ) {
+			$this->assertArrayHasKey( 'checkuser-temporary-account-enable', $prefs );
+		} else {
+			$this->assertArrayNotHasKey( 'checkuser-temporary-account-enable', $prefs );
+		}
+		if ( array_key_exists( 'checkuser-temporary-account-enable', $prefs ) ) {
+			$this->assertSame(
+				$options['expectPreferenceToBeDisplayed'] ? 'toggle' : 'api',
+				$prefs['checkuser-temporary-account-enable']['type']
+			);
+		}
 		$this->assertSame(
-			$options['expected'],
-			isset( $prefs['checkuser-temporary-account-enable'] )
-		);
-		$this->assertSame(
-			$options['expected'],
+			$options['expectPreferenceToBeDisplayed'],
 			isset( $prefs['checkuser-temporary-account-enable-description'] )
 		);
 	}
@@ -106,21 +126,24 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 		return [
 			'User has right' => [
 				[
-					'expected' => true,
+					'expectPreferenceToBeDisplayed' => true,
+					'expectPreferenceToExist' => true,
 					'hasRight' => true,
 					'hasNoPreferenceRight' => false,
 				],
 			],
 			'User has no-preference right' => [
 				[
-					'expected' => false,
+					'expectPreferenceToBeDisplayed' => false,
+					'expectPreferenceToExist' => true,
 					'hasRight' => false,
 					'hasNoPreferenceRight' => true,
 				],
 			],
 			'User does not have right' => [
 				[
-					'expected' => false,
+					'expectPreferenceToBeDisplayed' => false,
+					'expectPreferenceToExist' => false,
 					'hasRight' => false,
 					'hasNoPreferenceRight' => false,
 				],
@@ -305,7 +328,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is kept disabled' => [
 				'modifiedOptions' => [
@@ -315,7 +338,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 0,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is not provided' => [
 				'modifiedOptions' => [
@@ -325,7 +348,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					'anotheroption' => 0,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is kept enabled while other is changed' => [
 				'modifiedOptions' => [
@@ -337,7 +360,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					'anotheroption' => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is kept disabled while other is changed' => [
 				'modifiedOptions' => [
@@ -349,7 +372,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					'anotheroption' => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is switched to enabled, single change' => [
 				'modifiedOptions' => [
@@ -359,7 +382,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 0,
 				],
 				'logAccessEnabled' => true,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is switched to disabled, single change' => [
 				'modifiedOptions' => [
@@ -369,7 +392,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => true
+				'logAccessDisabled' => true,
 			],
 			'When the option is switched to enabled, multiple changes' => [
 				'modifiedOptions' => [
@@ -381,7 +404,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					'anotheroption' => 1,
 				],
 				'logAccessEnabled' => true,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the option is switched to disabled, multiple changes' => [
 				'modifiedOptions' => [
@@ -393,7 +416,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					'anotheroption' => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => true
+				'logAccessDisabled' => true,
 			],
 			'When the new value is NULL and the option was previously set' => [
 				// T382010
@@ -404,7 +427,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => true
+				'logAccessDisabled' => true,
 			],
 			'When the new value is NULL and the option was previously unset' => [
 				// T382010
@@ -415,7 +438,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 0,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the new value is false and the option was previously set' => [
 				'modifiedOptions' => [
@@ -425,7 +448,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => true
+				'logAccessDisabled' => true,
 			],
 			'When the new value is false and the option was previously unset' => [
 				'modifiedOptions' => [
@@ -435,7 +458,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 0,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the new value is true and the option was previously set' => [
 				'modifiedOptions' => [
@@ -445,7 +468,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 1,
 				],
 				'logAccessEnabled' => false,
-				'logAccessDisabled' => false
+				'logAccessDisabled' => false,
 			],
 			'When the new value is true and the option was previously unset' => [
 				'modifiedOptions' => [
@@ -455,8 +478,8 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 					Preferences::ENABLE_IP_REVEAL => 0,
 				],
 				'logAccessEnabled' => true,
-				'logAccessDisabled' => false
-			]
+				'logAccessDisabled' => false,
+			],
 		];
 	}
 

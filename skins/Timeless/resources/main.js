@@ -84,7 +84,8 @@ mw.hook( 'wikipage.content' ).add( ( $content ) => {
 		$content.find( '.content-table > table' ).each( function () {
 			const $table = $( this ),
 				$wrapper = $table.parent().parent();
-			if ( $table.outerWidth() > $wrapper.outerWidth() ) {
+			// Use browser's native width to avoid off-by-0.5 errors (T402848)
+			if ( $table[ 0 ].offsetWidth > $wrapper[ 0 ].offsetWidth ) {
 				$wrapper.addClass( 'overflowed' );
 				setScrollClass( $table );
 			} else {

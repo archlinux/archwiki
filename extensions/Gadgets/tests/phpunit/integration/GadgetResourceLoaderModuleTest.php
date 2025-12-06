@@ -45,6 +45,17 @@ class GadgetResourceLoaderModuleTest extends MediaWikiIntegrationTestCase {
 			$nonPackageGadgetModule->getPages( $context ) );
 	}
 
+	public function testCodexIcons() {
+		$context = $this->createMock( RL\Context::class );
+		$g = $this->makeGadget( '*foo [ResourceLoader|package|codexIcons=cdxIconInfo]|foo.js|foo.vue' );
+		$this->assertEquals( [ 'cdxIconInfo' ], $g->getCodexIcons() );
+		$module = $this->makeGadgetModule( $g );
+		$module->setConfig( new HashConfig( [ MainConfigNames::CodexDevelopmentDir => null ] ) );
+		$content = $module->getScript( $context );
+		$this->assertArrayHasKey( 'icons.json', $content['files'] );
+		$this->assertArrayHasKey( 'cdxIconInfo', $content['files']['icons.json']['content'] );
+	}
+
 	public static function provideValidateScript() {
 		yield 'valid ES5' => [ true, '[ResourceLoader]', 'var quux = function() {};' ];
 		yield 'valid ES6' => [ true, '[ResourceLoader]', 'let quux = (() => {})();' ];

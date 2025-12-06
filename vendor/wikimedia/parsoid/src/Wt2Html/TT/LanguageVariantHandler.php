@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -20,7 +21,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 /**
  * Handler for language conversion markup, which looks like `-{ ... }-`.
  */
-class LanguageVariantHandler extends TokenHandler {
+class LanguageVariantHandler extends XMLTagBasedHandler {
 	/** @inheritDoc */
 	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
@@ -28,11 +29,13 @@ class LanguageVariantHandler extends TokenHandler {
 
 	/**
 	 * convert one variant text to dom.
+	 *
 	 * @param TokenHandlerPipeline $manager
 	 * @param array $options
 	 * @param string $t
 	 * @param array $attribs
-	 * @return array
+	 *
+	 * @return array{xmlstr: string, isBlock: bool}
 	 */
 	private function convertOne( TokenHandlerPipeline $manager, array $options, string $t,
 		array $attribs ): array {
@@ -63,9 +66,10 @@ class LanguageVariantHandler extends TokenHandler {
 	}
 
 	/**
-	 * compress a whitespace sequence
-	 * @param ?array $a
-	 * @return ?array
+	 * Compress a whitespace sequence.
+	 * @see \Wikimedia\Parsoid\Html2Wt\LanguageVariantHandler::expandSpArrary
+	 * @param ?list<string> $a
+	 * @return ?list<int|string>
 	 */
 	private function compressSpArray( ?array $a ): ?array {
 		$result = [];
@@ -104,7 +108,6 @@ class LanguageVariantHandler extends TokenHandler {
 		$tsr = $dataParsoid->tsr;
 		$flags = $dataParsoid->flags;
 		$flagSp = $dataParsoid->flagSp;
-		$isMeta = false;
 		$sawFlagA = false;
 
 		// remove trailing semicolon marker, if present
@@ -117,9 +120,6 @@ class LanguageVariantHandler extends TokenHandler {
 		// convert all variant texts to DOM
 		$isBlock = false;
 		$texts = array_map( function ( array $t ) use ( $manager, $options, $attribs, &$isBlock ) {
-			$text = null;
-			$from = null;
-			$to = null;
 			if ( isset( $t['twoway'] ) ) {
 				$text = $this->convertOne( $manager, $options, $t['text'], $attribs );
 				$isBlock = $isBlock || !empty( $text['isBlock'] );
@@ -159,7 +159,6 @@ class LanguageVariantHandler extends TokenHandler {
 		// To avoid too much data-mw bloat, only the top level keys in
 		// data-mw-variant are "human readable".  Nested keys are single-letter:
 		// `l` for `language`, `t` for `text` or `to`, `f` for `from`.
-		$dataMWV = null;
 		if ( count( $flags ) === 0 && count( $dataParsoid->variants ) > 0 ) {
 			// "Restrict possible variants to a limited set"
 			$dataMWV = [
@@ -187,7 +186,7 @@ class LanguageVariantHandler extends TokenHandler {
 			) {
 				if ( isset( $dataMWV['add'] ) || isset( $dataMWV['remove'] ) ) {
 					$variants = [ '*' ];
-					$twoway = array_map( static function ( string $code ) use ( $texts, &$sawTwoway ) {
+					$twoway = array_map( static function ( string $code ) use ( $texts ) {
 						return [ 'l' => $code, 't' => $texts[0]['text'] ];
 					}, $variants );
 					$sawTwoway = true;
@@ -263,7 +262,7 @@ class LanguageVariantHandler extends TokenHandler {
 		if ( $tSp !== null ) {
 			$das->tSp = $tSp;
 		}
-		$das->tsr = new SourceRange( $tsr->start, $isMeta ? $tsr->end : ( $tsr->end - 2 ) );
+		$das->tsr = new SourceRange( $tsr->start, $isMeta ? $tsr->end : ( $tsr->end - 2 ), $tsr->source );
 
 		PHPUtils::sortArray( $dataMWV );
 		$tokens = [
@@ -275,7 +274,7 @@ class LanguageVariantHandler extends TokenHandler {
 		];
 		if ( !$isMeta ) {
 			$metaDP = new DataParsoid;
-			$metaDP->tsr = new SourceRange( $tsr->end - 2, $tsr->end );
+			$metaDP->tsr = new SourceRange( $tsr->end - 2, $tsr->end, $tsr->source );
 			$tokens[] = new EndTagTk( $isBlock ? 'div' : 'span', [], $metaDP );
 		}
 
@@ -285,7 +284,7 @@ class LanguageVariantHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		return $token->getName() === 'language-variant' ? $this->onLanguageVariant( $token ) : null;
 	}
 }

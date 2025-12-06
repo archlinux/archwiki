@@ -124,7 +124,7 @@ mw.echo.dm.CrossWikiNotificationItem.prototype.updateSeenState = function ( time
 	this.getList().getItems().forEach( ( source ) => {
 		source.getItems().forEach( ( notification ) => {
 			notification.toggleSeen(
-				notification.isRead() || notification.getTimestamp() < timestamp
+				notification.isRead() || notification.getTimestamp() < timestamp,
 			);
 		} );
 	} );

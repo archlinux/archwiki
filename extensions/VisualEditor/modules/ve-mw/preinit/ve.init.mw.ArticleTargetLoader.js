@@ -19,6 +19,8 @@
  * @hideconstructor
  */
 ( function () {
+	mw.libs.ve = mw.libs.ve || {};
+
 	const conf = mw.config.get( 'wgVisualEditorConfig' ),
 		pluginCallbacks = [],
 		modules = [
@@ -28,6 +30,9 @@
 		];
 
 	const url = new URL( location.href );
+
+	mw.libs.ve.initialUrl = url;
+
 	// Provide the new wikitext editor
 	if (
 		mw.user.options.get( 'visualeditor-newwikitext' ) ||
@@ -36,7 +41,9 @@
 		modules.push( 'ext.visualEditor.mwwikitext' );
 	}
 
-	// A/B test enrollment for edit check (T384372)
+	// A/B test enrollment for edit check (T389231)
+	// Note: this happens here rather than inside editcheck so that the bucket will
+	// get logged for EditAttemptStep init events
 	if ( conf.editCheck && conf.editCheckABTest ) {
 		let inABTest;
 		if ( mw.user.isAnon() ) {
@@ -48,10 +55,12 @@
 		} else {
 			inABTest = mw.user.getId() % 2 === 1;
 		}
-		// Test group gets edit check in multiple-checks mode
-		conf.editCheckSingle = !inABTest;
+		conf.editCheckABTestGroup = inABTest ? 'test' : 'control';
 		// Communicate the bucket to instrumentation:
-		mw.config.set( 'wgVisualEditorEditCheckABTestBucket', '2025-03-editcheck-multicheck-reference-' + ( inABTest ? 'test' : 'control' ) );
+		mw.config.set(
+			'wgVisualEditorEditCheckABTestBucket',
+			'2025-09-editcheck-' + conf.editCheckABTest + '-' + ( inABTest ? 'test' : 'control' )
+		);
 	}
 
 	const editCheck = conf.editCheck || !!url.searchParams.get( 'ecenable' ) || !!window.MWVE_FORCE_EDIT_CHECK_ENABLED;
@@ -67,8 +76,6 @@
 	) {
 		modules.push( 'ext.visualEditor.mwsignature' );
 	}
-
-	mw.libs.ve = mw.libs.ve || {};
 
 	mw.libs.ve.targetLoader = {
 		/**
@@ -108,7 +115,7 @@
 					ve.track( 'trace.moduleLoad.exit', { mode: mode } );
 					pluginCallbacks.push( ve.init.platform.getInitializedPromise.bind( ve.init.platform ) );
 					// Execute plugin callbacks and collect promises
-					return $.when.apply( $, pluginCallbacks.map( ( callback ) => {
+					return $.when( ...pluginCallbacks.map( ( callback ) => {
 						try {
 							return callback();
 						} catch ( e ) {
@@ -223,8 +230,7 @@
 		 * @param {string[]} [options.preloadparams] Parameters to substitute into preload if it's used
 		 * @return {jQuery.Promise} Abortable promise resolved with a JSON object
 		 */
-		requestPageData: function ( mode, pageName, options ) {
-			options = options || {};
+		requestPageData: function ( mode, pageName, options = {} ) {
 			if ( mode === 'visual' && options.section === 'new' ) {
 				throw new Error( 'Adding new section is not supported in visual mode' );
 			}
@@ -304,11 +310,10 @@
 		 *  is not required for some use cases, e.g. diffing.
 		 * @return {jQuery.Promise} Abortable promise resolved with a JSON object
 		 */
-		requestParsoidData: function ( pageName, options, noRestbase, noMetadata ) {
+		requestParsoidData: function ( pageName, options = {}, noRestbase = false, noMetadata = false ) {
 			const section = options.section !== undefined ? options.section : null,
 				useRestbase = !noRestbase && ( conf.fullRestbaseUrl || conf.restbaseUrl ) && section === null;
 
-			options = options || {};
 			const data = {
 				action: 'visualeditor',
 				paction: useRestbase ? 'metadata' : 'parse',
@@ -499,8 +504,7 @@
 		 * @param {Object} [options] See #requestPageData
 		 * @return {jQuery.Promise} Abortable promise resolved with a JSON object
 		 */
-		requestWikitext: function ( pageName, options ) {
-			options = options || {};
+		requestWikitext: function ( pageName, options = {} ) {
 			const data = {
 				action: 'visualeditor',
 				paction: 'wikitext',

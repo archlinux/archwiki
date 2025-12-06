@@ -44,6 +44,13 @@ class MockApiHelper extends ApiHelper {
 			'bits' => 8,
 			'mime' => 'image/jpeg'
 		],
+		'File_%26_file.jpg' => [
+			'size' => 7881,
+			'width' => 1941,
+			'height' => 220,
+			'bits' => 8,
+			'mime' => 'image/jpeg'
+		],
 		'Thumb.png' => [
 			'size' => 22589,
 			'width' => 135,
@@ -122,6 +129,13 @@ class MockApiHelper extends ApiHelper {
 			'size' => 7881,
 			'width' => 1941,
 			'height' => 220,
+			'bits' => 8,
+			'mime' => 'image/jpeg'
+		],
+		'Tall.jpg' => [
+			'size' => 8888,
+			'width' => 400,
+			'height' => 600,
 			'bits' => 8,
 			'mime' => 'image/jpeg'
 		],
@@ -420,6 +434,7 @@ class MockApiHelper extends ApiHelper {
 		'Image:Foobar.jpg' => 'Foobar.jpg',
 		'Datei:Foobar.jpg' => 'Foobar.jpg',
 		'File:Foobar.jpg' => 'Foobar.jpg',
+		'File:File_&_file.jpg' => 'File_%26_file.jpg',
 		'Archivo:Foobar.jpg' => 'Foobar.jpg',
 		'Mynd:Foobar.jpg' => 'Foobar.jpg',
 		"Датотека:Foobar.jpg" => 'Foobar.jpg',
@@ -436,12 +451,17 @@ class MockApiHelper extends ApiHelper {
 		'File:Audio.oga' => 'Audio.oga',
 		'File:Bad.jpg' => 'Bad.jpg',
 		'File:Hi-ho.jpg' => 'Hi-ho.jpg',
+		'File:Tall.jpg' => 'Tall.jpg',
 	];
 
 	private const PNAMES = [
 		'Image:Foobar.jpg' => 'File:Foobar.jpg',
 		'Image:Foobar.svg' => 'File:Foobar.svg',
 		'Image:Thumb.png' => 'File:Thumb.png'
+	];
+
+	private const ENAMES = [
+		'File:File_&_file.jpg' => 'File_&_file.jpg',
 	];
 
 	// FIXME: Get this info from pagelanguage of a revision for these pages
@@ -508,11 +528,15 @@ class MockApiHelper extends ApiHelper {
 	/** @var callable(string):string A helper to normalize titles. */
 	private $normalizeTitle = null;
 
+	/**
+	 * @param ?string $prefix
+	 * @param ?callable(string):string $normalizeTitleFunc
+	 */
 	public function __construct( ?string $prefix = null, ?callable $normalizeTitleFunc = null ) {
 		$this->prefix = $prefix ?? $this->prefix;
 		$this->normalizeTitle = $normalizeTitleFunc ??
 			// poor man's normalization
-			( static fn ( $t ) => str_replace( ' ', '_', $t ) );
+			( static fn ( string $t ): string => str_replace( ' ', '_', $t ) );
 	}
 
 	/**
@@ -526,14 +550,15 @@ class MockApiHelper extends ApiHelper {
 	/**
 	 * Register an article defined in parsertests so that we can return
 	 * the proper known/missing information about that title.
+	 *
 	 * @param string $key The normalized title of the article
 	 * @param Article $article The contents of the article
-	 * @return callable
+	 * @return callable():void
 	 */
 	public function addArticle( string $key, Article $article ): callable {
 		$oldVal = $this->articleCache[$key] ?? null;
 		$this->articleCache[$key] = $article;
-		return function () use ( $key, $oldVal ) {
+		return function () use ( $key, $oldVal ): void {
 			$this->articleCache[$key] = $oldVal;
 		};
 	}
@@ -575,6 +600,7 @@ class MockApiHelper extends ApiHelper {
 	 * image may become 883px in 2x mode.  Resist the temptation to "optimize"
 	 * this by computing the transformed size once and then scaling that;
 	 * always scale the input dimensions instead.
+	 *
 	 * @see ImageHandler::normaliseParams, MediaHandler::fitBoxWidth,
 	 * File::scaleHeight, etc, in core.
 	 *
@@ -586,7 +612,7 @@ class MockApiHelper extends ApiHelper {
 	 * @param int|float|null &$twidth Thumbnail width (inout parameter)
 	 * @param int|float|null &$theight Thumbnail height (inout parameter)
 	 */
-	public static function transformHelper( $width, $height, &$twidth, &$theight ) {
+	public static function transformHelper( $width, $height, &$twidth, &$theight ): void {
 		if ( $theight === null ) {
 			// File::scaleHeight in PHP
 			$theight = round( $height * $twidth / $width );
@@ -627,13 +653,14 @@ class MockApiHelper extends ApiHelper {
 	): ?array {
 		$normPageName = self::PNAMES[$filename] ?? $filename;
 		$normFileName = self::FNAMES[$filename] ?? $filename;
+		$encodedFileName = self::ENAMES[$filename] ?? $normFileName;
 		$props = self::FILE_PROPS[$normFileName] ?? null;
 		if ( $props === null ) {
 			// We don't have info for this file
 			return null;
 		}
 
-		$md5 = md5( $normFileName );
+		$md5 = md5( $encodedFileName );
 		$md5prefix = $md5[0] . '/' . $md5[0] . $md5[1] . '/';
 		$baseurl = self::IMAGE_BASE_URL . '/' . $md5prefix . $normFileName;
 		$height = $props['height'];
@@ -918,7 +945,7 @@ class MockApiHelper extends ApiHelper {
 		if ( ( $params['prop'] ?? null ) === 'imageinfo' ) {
 			$response = [ 'query' => [] ];
 			$filename = $params['titles']; // assumes this is a single file
-			$tonum = static function ( $x ) {
+			$tonum = static function ( $x ): ?int {
 				return $x ? (int)$x : null;
 			};
 			$ii = self::imageInfo(
@@ -972,7 +999,6 @@ class MockApiHelper extends ApiHelper {
 			return [ 'text' => preg_replace( '/\{\{subst:1x\|([^}]+)\}\}/', '$1', $text, 1 ) ];
 		}
 
-		$res = null;
 		// Render to html the contents of known extension tags
 		// These are the only known extensions (besides native extensions)
 		// used in parser tests currently. This would need to be updated
@@ -1008,6 +1034,9 @@ class MockApiHelper extends ApiHelper {
 		return [ 'parse' => $parse ];
 	}
 
+	/**
+	 * @return ?array{wikitext: string}
+	 */
 	private function preProcess(
 		string $title, string $text, ?int $revid
 	): ?array {

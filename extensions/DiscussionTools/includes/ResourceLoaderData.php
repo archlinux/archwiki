@@ -60,8 +60,6 @@ class ResourceLoaderData {
 	/**
 	 * Return information about terms-of-use messages.
 	 *
-	 * @param MessageLocalizer $context
-	 * @param Config $config
 	 * @return array[] Map from internal name to array of parameters for MessageLocalizer::msg()
 	 * @phan-return non-empty-array[]
 	 */
@@ -115,14 +113,31 @@ class ResourceLoaderData {
 	}
 
 	/**
-	 * Add optional dependencies to a ResourceLoader module definition depending on loaded extensions.
+	 * Add optional array values to a ResourceLoader module definition depending on loaded extensions.
+	 *
+	 * "optional": {
+	 *   "MyExtension": {
+	 *     "dependencies": [ ... ],
+	 *     "messages": [ ... ],
+	 *     "packageFiles": [ ... ],
+	 *     ...
+	 *   }
+	 * }
 	 */
-	public static function addOptionalDependencies( array $info ): RL\Module {
+	public static function addOptional( array $info ): RL\Module {
 		$extensionRegistry = ExtensionRegistry::getInstance();
 
-		foreach ( $info['optionalDependencies'] as $ext => $deps ) {
-			if ( $extensionRegistry->isLoaded( $ext ) ) {
-				$info['dependencies'] = array_merge( $info['dependencies'], (array)$deps );
+		if ( isset( $info['optional'] ) ) {
+			foreach ( $info['optional'] as $ext => $extOptions ) {
+				if ( $extensionRegistry->isLoaded( $ext ) ) {
+					foreach ( $extOptions as $key => $values ) {
+						if ( !isset( $info[$key] ) ) {
+							$info[$key] = [];
+						}
+						// TODO: Support non-array properties
+						$info[$key] = array_merge( $info[$key], (array)$values );
+					}
+				}
 			}
 		}
 

@@ -10,6 +10,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Controleer welke IP-adressen gebruikt worden door een opgegeven gebruikersnaam of welke gebruikersnamen worden gebruikt door een opgegeven IP-adres.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''Deze API is uitgeschakeld door de sitebeheerders. Het raadplegen van de API levert geen gegevens op.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Type CheckUser-verzoek:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Het IP-adres van de doelgebruiker ophalen.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Laat handelingen verrichten op doel-IP-adres of -bereik.",
@@ -41,6 +42,7 @@
 	"apierror-checkuser-timelimit": "U moet een juiste tijdsbeperking invoeren (zoals \"-2 weeks\" of \"2 weeks ago\").",
 	"apierror-checkuser-invalidmode": "Ongeldige aanvraagmodus",
 	"apierror-checkuser-nosuchuser": "Er is geen gebruiker met deze gebruikersnaam",
+	"apierror-checkuser-disabled": "De API voor ‘checkuser’-aanvragen is uitgeschakeld door de sitebeheerders.",
 	"checkuser-api-help-param-direction": "In welke richting opsommen:",
 	"checkuser-api-help-paramvalue-direction-newer": "Oudste eerst vermelden. Let op: $1from moet vóór $1to liggen.",
 	"checkuser-api-help-paramvalue-direction-older": "Nieuwste eerst vermelden (standaard). Let op: $1from moet na $1to liggen.",
@@ -51,5 +53,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} verzamelt gegevens over client-hints van de browser om te helpen bij het modereren van vandalisme en misbruik. Zie https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints voor meer informatie.",
 	"apihelp-logout-param-checkuserclienthints": "“Client hints”-gegevens die worden meegestuurd met verzoeken aan ApiLogout. Alleen voor intern gebruik.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "De opgegeven vervaldatum voor automatisch onthullen is onjuist.",
-	"checkuser-ip-auto-reveal-missing-permission": "U beschikt niet over de benodigde toestemming om het automatisch onthullen van IP-adressen te gebruiken."
+	"checkuser-ip-auto-reveal-missing-permission": "U beschikt niet over de benodigde toestemming om het automatisch onthullen van IP-adressen te gebruiken.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "De opgegeven gevals-ID bestaat niet",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "De functie voor voorgestelde onderzoeken is niet ingeschakeld"
 }

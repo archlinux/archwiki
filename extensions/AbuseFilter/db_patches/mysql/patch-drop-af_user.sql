@@ -3,6 +3,7 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX af_user ON /*_*/abuse_filter;
+
 ALTER TABLE /*_*/abuse_filter
   DROP af_user,
   DROP af_user_text,

@@ -3,21 +3,7 @@
 /**
  * HTML form generation and submission handling.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -148,11 +134,11 @@ use Wikimedia\Message\MessageSpecifier;
  *    'size'                -- the length of text fields
  *    'filter-callback'     -- a function name to give you the chance to
  *                             massage the inputted value before it's processed.
- *                             @see HTMLFormField::filter()
+ *                             See {@link HTMLFormField::filter}
  *    'validation-callback' -- a function name to give you the chance
  *                             to impose extra validation on the field input. The signature should be
- *                             as documented in {@see HTMLFormField::$mValidationCallback}.
- *                             @see HTMLFormField::validate()
+ *                             as documented in {@link HTMLFormField::$mValidationCallback}.
+ *                             See {@link HTMLFormField::validate}
  *    'name'                -- By default, the 'name' attribute of the input field
  *                             is "wp{$fieldname}".  If you want a different name
  *                             (eg one without the "wp" prefix), specify it here and
@@ -425,7 +411,7 @@ class HTMLForm extends ContextSource {
 	 * @var array
 	 */
 	protected $availableSubclassDisplayFormats = [
-		'vform',
+		'vform', // deprecated since 1.45
 		'codex',
 		'ooui',
 	];
@@ -456,6 +442,7 @@ class HTMLForm extends ContextSource {
 			case 'codex':
 				return new CodexHTMLForm( $descriptor, $context, $messagePrefix );
 			case 'vform':
+				wfDeprecatedMsg( "'vform' HTMLForm display format is deprecated", '1.45' );
 				return new VFormHTMLForm( $descriptor, $context, $messagePrefix );
 			case 'ooui':
 				return new OOUIHTMLForm( $descriptor, $context, $messagePrefix );
@@ -600,7 +587,7 @@ class HTMLForm extends ContextSource {
 	 * @param array &$descriptor Input Descriptor, as described
 	 * 	in the class documentation
 	 *
-	 * @return string Name of a HTMLFormField subclass
+	 * @return class-string<HTMLFormField> Name of a HTMLFormField subclass
 	 */
 	public static function getClassFromDescriptor( $fieldname, &$descriptor ) {
 		if ( isset( $descriptor['class'] ) ) {

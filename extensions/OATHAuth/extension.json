@@ -1,6 +1,5 @@
 {
 	"name": "OATHAuth",
-	"version": "0.5.0",
 	"author": [
 		"Ryan Lane",
 		"Robert Vogel <vogel@hallowelt.com>",
@@ -11,12 +10,52 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
+		"Echo": {
+			"Notifications": {
+				"oathauth-disable": {
+					"category": "system",
+					"group": "negative",
+					"section": "alert",
+					"presentation-model": "MediaWiki\\Extension\\OATHAuth\\Notifications\\DisablePresentationModel",
+					"canNotifyAgent": true,
+					"user-locators": [
+						"MediaWiki\\Extension\\Notifications\\UserLocator::locateEventAgent"
+					]
+				},
+				"oathauth-enable": {
+					"category": "system",
+					"group": "positive",
+					"section": "alert",
+					"presentation-model": "MediaWiki\\Extension\\OATHAuth\\Notifications\\EnablePresentationModel",
+					"canNotifyAgent": true,
+					"user-locators": [
+						"MediaWiki\\Extension\\Notifications\\UserLocator::locateEventAgent"
+					]
+				},
+				"oathauth-recoverycodes-count": {
+					"category": "system",
+					"group": "negative",
+					"section": "alert",
+					"presentation-model": "MediaWiki\\Extension\\OATHAuth\\Notifications\\RecoveryCodeCountPresentationModel",
+					"canNotifyAgent": true,
+					"user-locators": [
+						"MediaWiki\\Extension\\Notifications\\UserLocator::locateEventAgent"
+					]
+				}
+			}
+		},
 		"OATHAuth": {
 			"Modules": {
+				"recoverycodes": {
+					"class": "\\MediaWiki\\Extension\\OATHAuth\\Module\\RecoveryCodes",
+					"services": [
+						"OATHUserRepository"
+					]
+				},
 				"totp": {
 					"class": "\\MediaWiki\\Extension\\OATHAuth\\Module\\TOTP",
 					"services": [
@@ -31,7 +70,8 @@
 		"MediaWiki\\Extension\\OATHAuth\\Maintenance\\": "maintenance/"
 	},
 	"TestAutoloadNamespaces": {
-		"MediaWiki\\Extension\\OATHAuth\\Tests\\Integration\\": "tests/phpunit/integration"
+		"MediaWiki\\Extension\\OATHAuth\\Tests\\Integration\\": "tests/phpunit/integration/",
+		"MediaWiki\\Extension\\OATHAuth\\Tests\\Unit\\": "tests/phpunit/unit/"
 	},
 	"AuthManagerAutoConfig": {
 		"secondaryauth": {
@@ -49,12 +89,13 @@
 	},
 	"Hooks": {
 		"AuthChangeFormFields": "main",
-		"LoadExtensionSchemaUpdates": "updater",
 		"GetPreferences": "main",
 		"getUserPermissionsErrors": "main",
+		"LoadExtensionSchemaUpdates": "updater",
 		"UserEffectiveGroups": "main",
 		"UserGetRights": "main",
-		"BeforeCreateEchoEvent": "echo"
+		"UnitTestsAfterDatabaseSetup": "test",
+		"UnitTestsBeforeDatabaseTeardown": "test"
 	},
 	"HookHandlers": {
 		"main": {
@@ -64,14 +105,18 @@
 				"OATHAuthModuleRegistry",
 				"PermissionManager",
 				"MainConfig",
-				"UserGroupManager"
+				"UserGroupManager",
+				"CentralIdLookupFactory"
 			]
 		},
 		"updater": {
 			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\UpdateTables"
 		},
-		"echo": {
-			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\EchoHandler"
+		"test": {
+			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\TestHandler",
+			"services": [
+				"DBLoadBalancer"
+			]
 		}
 	},
 	"MessagesDirs": {
@@ -96,27 +141,68 @@
 		"OATHRequiredForGroups": {
 			"value": [],
 			"description": "List of user groups that must use two-factor authentication."
+		},
+		"OATHRolloutPercent": {
+			"value": 0,
+			"description": "Percentage of users to add to 2FA rollout."
+		},
+		"OATHSecretKey": {
+			"value": false,
+			"description": "A secret key value for encrypting OATH-related data which should be SODIUM_CRYPTO_SECRETBOX_KEYBYTES hexadecimal bytes (64 chars) in length. This variable is currently considered immutable. Do not publicly set this value."
+		},
+		"OATHPrioritizedModules": {
+			"value": [ "webauthn", "totp", "recoverycodes" ],
+			"description": "List of authentication methods in the order that they should be prioritized."
+		},
+		"OATHRecoveryCodesCount": {
+			"value": 10,
+			"description": "The default amount of recovery codes to generate for a given user."
 		}
 	},
 	"ResourceModules": {
-		"ext.oath.styles": {
+		"ext.oath.totpenable.styles": {
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"styles": [
-				"totp/ext.oath.showqrcode.styles.less",
-				"recovery/ext.oauth.recovery.less"
+				"totp/ext.oath.showqrcode.styles.less"
 			],
-			"codexStyleOnly": "true",
+			"codexStyleOnly": true,
 			"codexComponents": [
 				"CdxButton",
 				"CdxIcon"
 			]
 		},
-		"ext.oath": {
+		"ext.oath.recovery.styles": {
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"styles": [
+				"recovery/ext.oath.recovery.less"
+			],
+			"codexStyleOnly": true,
+			"codexComponents": [
+				"CdxButton",
+				"CdxIcon"
+			]
+		},
+		"ext.oath.recovery": {
 			"packageFiles": [
 				"recovery/ext.oath.recovery.copy.js"
 			],
 			"messages": [
 				"oathauth-recoverycodes-copy-success"
+			]
+		},
+		"ext.oath.manage.styles": {
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"styles": [
+				"oathmanage/oathmanage.less"
+			],
+			"codexStyleOnly": true,
+			"codexComponents": [
+				"CdxMessage",
+				"CdxButton",
+				"CdxAccordion",
+				"CdxField",
+				"CdxLabel",
+				"CdxTextInput"
 			]
 		}
 	},
@@ -137,7 +223,8 @@
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\OATHManage",
 			"services": [
 				"OATHUserRepository",
-				"OATHAuthModuleRegistry"
+				"OATHAuthModuleRegistry",
+				"AuthManager"
 			]
 		},
 		"VerifyOATHForUser": {
@@ -167,6 +254,9 @@
 			"oathauth-disable-for-user": true,
 			"oathauth-verify-user": true,
 			"oathauth-view-log": true
+		},
+		"oathauth-twofactorauth": {
+			"oathauth-enable": true
 		}
 	},
 	"GrantPermissions": {

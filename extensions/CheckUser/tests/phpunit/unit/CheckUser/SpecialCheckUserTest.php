@@ -3,6 +3,7 @@
 namespace MediaWiki\CheckUser\Tests\Unit\CheckUser;
 
 use MediaWiki\CheckUser\CheckUser\SpecialCheckUser;
+use MediaWiki\CheckUser\Tests\SpecialCheckUserTestTrait;
 use MediaWiki\Config\Config;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
@@ -18,6 +19,7 @@ use Wikimedia\TestingAccessWrapper;
 class SpecialCheckUserTest extends MediaWikiUnitTestCase {
 
 	use MockServiceDependenciesTrait;
+	use SpecialCheckUserTestTrait;
 
 	private function setUpObjectInTestingAccessWrapper(): TestingAccessWrapper {
 		return TestingAccessWrapper::newFromObject( $this->setUpObject() );
@@ -94,7 +96,7 @@ class SpecialCheckUserTest extends MediaWikiUnitTestCase {
 			'Empty reason with wgCheckUserForceSummary as false' => [ false, '', true ],
 			'Non-empty reason with wgCheckUserForceSummary as false' => [ false, 'Test Reason', true ],
 			'Empty reason with wgCheckUserForceSummary as true' => [ true, '', false ],
-			'Non-empty reason with wgCheckUserForceSummary as true' => [ true, 'Test Reason', true ]
+			'Non-empty reason with wgCheckUserForceSummary as true' => [ true, 'Test Reason', true ],
 		];
 	}
 }

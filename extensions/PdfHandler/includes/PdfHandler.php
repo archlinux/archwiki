@@ -1,22 +1,6 @@
 <?php
-
-namespace MediaWiki\Extension\PdfHandler;
-
-use ImageHandler;
-use MediaTransformError;
-use MediaTransformOutput;
-use MediaWiki\Context\IContextSource;
-use MediaWiki\FileRepo\File\File;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
-use ThumbnailImage;
-use TransformParameterError;
-
 /**
  * Copyright © 2007 Martin Seidel (Xarax) <jodeldi@gmx.de>
- *
- * Inspired by djvuhandler from Tim Starling
- * Modified and written by Xarax
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +18,22 @@ use TransformParameterError;
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+namespace MediaWiki\Extension\PdfHandler;
+
+use ImageHandler;
+use MediaTransformError;
+use MediaTransformOutput;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
+use ThumbnailImage;
+use TransformParameterError;
+
+/**
+ * Inspired by djvuhandler from Tim Starling
+ * Modified and written by Xarax
+ */
 class PdfHandler extends ImageHandler {
 	/**
 	 * Keep in sync with pdfhandler.messages in extension.json

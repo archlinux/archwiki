@@ -2,21 +2,7 @@
 /**
  * Provide things related to namespaces.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -372,7 +358,7 @@ class NamespaceInfo {
 	 * Returns array of all defined namespaces with their canonical
 	 * (English) names.
 	 *
-	 * @return string[]
+	 * @return array<int,string>
 	 */
 	public function getCanonicalNamespaces() {
 		if ( $this->canonicalNamespaces === null ) {
@@ -504,10 +490,9 @@ class NamespaceInfo {
 			return [ NS_MAIN ];
 		} elseif ( !in_array( NS_MAIN, $contentNamespaces ) ) {
 			// always force NS_MAIN to be part of array (to match the algorithm used by isContent)
-			return array_merge( [ NS_MAIN ], $contentNamespaces );
-		} else {
-			return $contentNamespaces;
+			array_unshift( $contentNamespaces, NS_MAIN );
 		}
+		return $contentNamespaces;
 	}
 
 	/**
@@ -519,7 +504,7 @@ class NamespaceInfo {
 	public function getSubjectNamespaces() {
 		return array_filter(
 			$this->getValidNamespaces(),
-			[ $this, 'isSubject' ]
+			$this->isSubject( ... )
 		);
 	}
 
@@ -532,7 +517,7 @@ class NamespaceInfo {
 	public function getTalkNamespaces() {
 		return array_filter(
 			$this->getValidNamespaces(),
-			[ $this, 'isTalk' ]
+			$this->isTalk( ... )
 		);
 	}
 

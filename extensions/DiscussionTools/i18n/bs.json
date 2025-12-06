@@ -35,7 +35,7 @@
 	"discussiontools-findcomment-title": "Pronađi komentar",
 	"discussiontools-ledesection-button": "Više o stranici",
 	"discussiontools-ledesection-title": "O stranici za razgovor",
-	"discussiontools-newtopic-missing-title": "Dodajte naslov teme. Ako kliknete na \"{{int:discussiontools-replywidget-newtopic}}\", tema će biti dodana bez naslova.",
+	"discussiontools-newtopic-missing-title": "Dodajte naslov teme.",
 	"discussiontools-newtopic-placeholder-title": "Tema",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Prati",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Prestani pratiti",

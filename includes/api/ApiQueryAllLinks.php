@@ -2,27 +2,16 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
 use MediaWiki\Cache\GenderCache;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\Title\NamespaceInfo;
@@ -52,6 +41,8 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 	private $useIndex = null;
 	/** @var array */
 	private $props = [];
+	/** @var string|bool */
+	private $virtualDomain = false;
 
 	private NamespaceInfo $namespaceInfo;
 	private GenderCache $genderCache;
@@ -71,6 +62,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 				$this->tablePrefix = 'pl_';
 				$this->useIndex = 'pl_namespace';
 				$this->indexTag = 'l';
+				$this->virtualDomain = PageLinksTable::VIRTUAL_DOMAIN;
 				break;
 			case 'alltransclusions':
 				$prefix = 'at';
@@ -78,6 +70,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 				$this->tablePrefix = 'tl_';
 				$this->dfltNamespace = NS_TEMPLATE;
 				$this->indexTag = 't';
+				$this->virtualDomain = TemplateLinksTable::VIRTUAL_DOMAIN;
 				break;
 			case 'allfileusages':
 				$prefix = 'af';
@@ -87,6 +80,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 				$this->dfltNamespace = NS_FILE;
 				$this->hasNamespace = false;
 				$this->indexTag = 'f';
+				$this->virtualDomain = ImageLinksTable::VIRTUAL_DOMAIN;
 				break;
 			case 'allredirects':
 				$prefix = 'ar';
@@ -112,10 +106,12 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -125,6 +121,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
+		$this->setVirtualDomain( $this->virtualDomain );
 		$db = $this->getDB();
 		$params = $this->extractRequestParams();
 
@@ -314,6 +311,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$allowedParams = [
 			'continue' => [
@@ -326,9 +324,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 			'prop' => [
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_DEFAULT => 'title',
-				ParamValidator::PARAM_TYPE => array_merge(
-					[ 'ids', 'title' ], array_keys( $this->props )
-				),
+				ParamValidator::PARAM_TYPE => [ 'ids', 'title', ...array_keys( $this->props ) ],
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'namespace' => [
@@ -358,6 +354,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 		return $allowedParams;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$p = $this->getModulePrefix();
 		$name = $this->getModuleName();
@@ -375,6 +372,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		$name = ucfirst( $this->getModuleName() );
 

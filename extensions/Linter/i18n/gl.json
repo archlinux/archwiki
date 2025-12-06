@@ -81,7 +81,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|erro|erros}})",
 	"linter-page-edit": "editar",
 	"linter-page-history": "historial",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "ver o código fonte",
 	"linter-pager-bogus-image-options-details": "Opción de ficheiro inútil",
 	"linter-pager-category-header": "Categoría",

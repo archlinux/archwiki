@@ -9,14 +9,38 @@
 
 	.ext-checkuser-temp-account-onboarding-dialog-main-body {
 		padding: @spacing-100 @spacing-150;
+
+		// Needed because the MinervaNeue skin overrides this, but mobile design specs
+		// want this text to be in bold.
+		h5,
+		h6 {
+			font-weight: bold;
+		}
 	}
 
 	// Make the images appropriately tall so that they fully display.
 	.ext-checkuser-temp-account-onboarding-dialog-image {
-		background-color: #f4f9ff;
+		background-color: #dce3f9;
 		height: 250px;
 		background-position: center;
 		background-repeat: no-repeat;
+
+		// DST design specs say the image should be a maximum of 180px tall on mobile.
+		// Because this will cause the image to be cut off at the edges, we should
+		// scale the height of the image based on the width to avoid this.
+		@media all and ( max-width: @max-width-breakpoint-mobile ) {
+			& {
+				// A height of 50vw makes the image fit the best for the variety of widths
+				// provided. Choosing 50vw was largely based on experimentation.
+				height: 50vw;
+				max-height: 180px;
+				background-size: contain;
+			}
+		}
+	}
+
+	.ext-checkuser-temp-account-onboarding-dialog-preference-notice {
+		margin: 1em 0 0.5em 0;
 	}
 
 	// Format the heading of the dialog to match the design specs.
@@ -29,7 +53,6 @@
 
 			&__title {
 				padding-top: @spacing-35;
-				font-size: @font-size-medium;
 				line-height: @line-height-xx-small;
 				font-weight: @font-weight-bold;
 				padding-bottom: @spacing-35;
@@ -111,20 +134,24 @@
 	}
 
 	.ext-checkuser-temp-account-onboarding-right-enter-from {
+		/* @noflip */
 		transform: translateX( @size-full );
 	}
 
 	.ext-checkuser-temp-account-onboarding-right-leave-to {
 		// Use `calc()` for negative calculation to not rely on Less, but standard CSS.
+		/* @noflip */
 		transform: translateX( calc( -1 * @size-full ) );
 	}
 
 	.ext-checkuser-temp-account-onboarding-left-leave-to {
+		/* @noflip */
 		transform: translateX( @size-full );
 	}
 
 	.ext-checkuser-temp-account-onboarding-left-enter-from {
 		// Use `calc()` for negative calculation to not rely on Less, but standard CSS.
+		/* @noflip */
 		transform: translateX( calc( -1 * @size-full ) );
 	}
 

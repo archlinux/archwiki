@@ -18,11 +18,8 @@
 function createTableText( data, showCounts ) {
 	let text = '{| class="wikitable sortable"\n! ' + mw.message( 'checkuser-helper-user' ) +
 		' !! ' + mw.message( 'checkuser-helper-ips' ) +
-		' !! ' + mw.message( 'checkuser-helper-uas' );
-
-	if ( mw.config.get( 'wgCheckUserDisplayClientHints' ) ) {
-		text += ' !! ' + mw.message( 'checkuser-helper-client-hints' );
-	}
+		' !! ' + mw.message( 'checkuser-helper-uas' ) +
+		' !! ' + mw.message( 'checkuser-helper-client-hints' );
 
 	text += '\n|-\n';
 
@@ -63,14 +60,12 @@ function createTableText( data, showCounts ) {
 			}
 		}
 
-		if ( mw.config.get( 'wgCheckUserDisplayClientHints' ) ) {
-			text += '\n|';
-			for ( let i = 0, len = data[ user ].sorted.uach.length; i < len; i++ ) {
-				const clientHintsText = data[ user ].sorted.uach[ i ];
-				text += '\n*' + clientHintsText;
-				if ( showCounts ) {
-					text += " '''[" + data[ user ].uach[ clientHintsText ] + "]'''";
-				}
+		text += '\n|';
+		for ( let i = 0, len = data[ user ].sorted.uach.length; i < len; i++ ) {
+			const clientHintsText = data[ user ].sorted.uach[ i ];
+			text += '\n*' + clientHintsText;
+			if ( showCounts ) {
+				text += " '''[" + data[ user ].uach[ clientHintsText ] + "]'''";
 			}
 		}
 

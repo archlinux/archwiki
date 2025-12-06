@@ -125,7 +125,7 @@ mw.echo.dm.UnreadNotificationCounter.prototype.update = function () {
 	return this.prioritizer.prioritize( this.api.fetchUnreadCount(
 		this.source,
 		this.type,
-		this.localOnly
+		this.localOnly,
 	) ).then( ( actualCount ) => {
 		this.setCount( actualCount, false );
 

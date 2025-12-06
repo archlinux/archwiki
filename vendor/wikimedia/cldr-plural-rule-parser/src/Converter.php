@@ -58,7 +58,7 @@ class Converter {
 	 *
 	 * @var array
 	 */
-	private static $precedence = [
+	private const PRECEDENCE_LEVELS = [
 		'or' => 2,
 		'and' => 3,
 		'is' => 4,
@@ -99,7 +99,7 @@ class Converter {
 	 * @param string $rule The rule to convert
 	 * @return string The RPN representation of the rule
 	 */
-	public static function convert( $rule ) {
+	public static function convert( $rule ): string {
 		$parser = new self( $rule );
 
 		return $parser->doConvert();
@@ -109,7 +109,7 @@ class Converter {
 	 * Private constructor.
 	 * @param string $rule
 	 */
-	protected function __construct( $rule ) {
+	protected function __construct( string $rule ) {
 		$this->rule = $rule;
 		$this->pos = 0;
 		$this->end = strlen( $rule );
@@ -120,7 +120,7 @@ class Converter {
 	 *
 	 * @return string The RPN representation of the rule (e.g. "5 3 mod n is")
 	 */
-	protected function doConvert() {
+	protected function doConvert(): string {
 		$expectOperator = true;
 
 		// Iterate through all tokens, saving the operators and operands to a
@@ -146,8 +146,10 @@ class Converter {
 				// Resolve higher precedence levels
 				/** @var Operator $lastOp */
 				$lastOp = end( $this->operators );
-				// @phan-suppress-next-line PhanUndeclaredProperty
-				while ( $lastOp && self::$precedence[$token->name] <= self::$precedence[$lastOp->name] ) {
+				// @phan-suppress-next-next-line PhanUndeclaredProperty
+				while ( $lastOp &&
+					self::PRECEDENCE_LEVELS[$token->name] <= self::PRECEDENCE_LEVELS[$lastOp->name]
+				) {
 					$this->doOperation( $lastOp );
 					array_pop( $this->operators );
 					$lastOp = end( $this->operators );
@@ -163,7 +165,7 @@ class Converter {
 			$this->doOperation( array_pop( $this->operators ) );
 		}
 
-		// Make sure the result is sane. The first case is possible for an empty
+		// Make sure the result is sensible. The first case is possible for an empty
 		// string input, the second should be unreachable.
 		if ( !count( $this->operands ) ) {
 			$this->error( 'condition expected' );
@@ -245,7 +247,7 @@ class Converter {
 		// Two-word operators like "is not" take precedence over single-word operators like "is"
 		if ( $word2 !== '' ) {
 			$bothWords = "{$word1}-{$word2}";
-			if ( isset( self::$precedence[$bothWords] ) ) {
+			if ( isset( self::PRECEDENCE_LEVELS[$bothWords] ) ) {
 				$token = $this->newOperator( $bothWords, $this->pos, $nextTokenPos - $this->pos );
 				$this->pos = $nextTokenPos;
 
@@ -254,7 +256,7 @@ class Converter {
 		}
 
 		// Single-word operators
-		if ( isset( self::$precedence[$word1] ) ) {
+		if ( isset( self::PRECEDENCE_LEVELS[$word1] ) ) {
 			$token = $this->newOperator( $word1, $this->pos, strlen( $word1 ) );
 			$this->pos += strlen( $word1 );
 
@@ -306,7 +308,7 @@ class Converter {
 	 * @param int $pos
 	 * @return Expression The numerical expression
 	 */
-	protected function newNumber( $text, $pos ) {
+	protected function newNumber( string $text, int $pos ): Expression {
 		return new Expression( $this, 'number', $text, $pos, strlen( $text ) );
 	}
 
@@ -318,15 +320,17 @@ class Converter {
 	 * @param int $length
 	 * @return Operator The operator
 	 */
-	protected function newOperator( $type, $pos, $length ) {
+	protected function newOperator( string $type, int $pos, int $length ): Operator {
 		return new Operator( $this, $type, $pos, $length );
 	}
 
 	/**
 	 * Throw an error
 	 * @param string $message
+	 * @throws Error
+	 * @return never
 	 */
-	protected function error( $message ) {
+	protected function error( string $message ) {
 		throw new Error( $message );
 	}
 }

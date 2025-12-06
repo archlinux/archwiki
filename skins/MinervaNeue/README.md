@@ -43,7 +43,6 @@ See <https://www.mediawiki.org/wiki/Manual:$wgSiteNotice>.
 ```php
   [
     'base' => false,
-    'beta' => true,
   ]
 ```
 Controls whether the category button should be displayed.
@@ -78,7 +77,6 @@ When enabled and associated messages have been defined (skin-minerva-donate-bann
 * Default:
 ```php
   [
-    'beta' => false,
     'base' => false,
     'amc' => true,
   ]
@@ -92,7 +90,6 @@ This will work for all pages except the main page.
 * Default:
 ```php
   [
-    'beta' => false,
     'base' => false,
     'amc' => true,
   ]
@@ -104,7 +101,6 @@ Controls whether the history link appears in the page actions menu.
 * Default:
 ```php
   [
-    'beta' => false,
     'base' => false,
     'amc' => true,
   ]
@@ -117,7 +113,6 @@ that require login are removed. Note, should be enabled alongside `$wgMinervaPer
 * Default:
 ```php
   [
-    'beta' => false,
     'base' => false,
     'amc' => true,
   ]
@@ -130,7 +125,6 @@ Controls whether a personal menu appears in the header chrome. This menu contain
 * Default:
 ```php
   [
-    'beta' => false,
     'base' => false,
     'amc' => false,
   ]

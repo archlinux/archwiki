@@ -121,7 +121,8 @@
 	"templatedata-modal-title-templateformatstring": "Stringa in formato personalizzato",
 	"templatedata-modal-title-templateparam-details": "Dettagli del parametro: $1",
 	"templatedata-modal-title-templateparams": "Parametri template",
-	"templatedata-search-title": "Ricerca template",
+	"templatedata-search-description": "Cerca un template",
+	"templatedata-search-placeholder": "Inserisci il nome del template",
 	"templatedata-search-list-header": "Preferiti",
 	"templatedata-search-list-empty": "I template che contrassegni come favoriti appariranno qui",
 	"templatedata-template-discovery-disabled": "Template preferiti è disabilitato su questa wiki.",
@@ -132,5 +133,11 @@
 	"templatedata-favorite-remove": "Rimuovi il template dai preferiti",
 	"templatedata-favorite-removed": "Template rimosso dai preferiti",
 	"templatedata-favorite-error": "Impossibile salvare i preferiti",
-	"templatedata-favorite-maximum-reached": "Hai raggiunto il numero massimo ($1) di modelli preferiti. Per favore, rimuovine alcuni dall'elenco prima di aggiungerne altri."
+	"templatedata-favorite-maximum-reached": "Hai raggiunto il numero massimo ($1) di modelli preferiti. Per favore, rimuovine alcuni dall'elenco prima di aggiungerne altri.",
+	"templatedata-category-browser-header": "Categorie",
+	"templatedata-category-switch-label": "Categoria di primo livello:",
+	"templatedata-category-column-error": "Si è verificato un errore",
+	"templatedata-category-categories": "Altre categorie",
+	"templatedata-category-no-cats": "Nessuno.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Titoli"
 }

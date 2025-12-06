@@ -1,22 +1,6 @@
 <?php
 /**
- * Factory for handling the special page list and generating SpecialPage objects.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  * @defgroup SpecialPage SpecialPage
@@ -179,6 +163,7 @@ use MediaWiki\User\User;
 use Profiler;
 use Wikimedia\DebugInfo\DebugInfoTrait;
 use Wikimedia\ObjectFactory\ObjectFactory;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Factory for handling the special page list and generating SpecialPage objects.
@@ -377,6 +362,7 @@ class SpecialPageFactory {
 				'ConnectionProvider',
 				'LinkBatchFactory',
 				'LanguageConverterFactory',
+				'LinksMigration',
 			]
 		],
 		'Wantedfiles' => [
@@ -482,18 +468,21 @@ class SpecialPageFactory {
 			'class' => SpecialUnlinkAccounts::class,
 			'services' => [
 				'AuthManager',
+				'SessionManager',
 			]
 		],
 		'ChangeCredentials' => [
 			'class' => SpecialChangeCredentials::class,
 			'services' => [
 				'AuthManager',
+				'SessionManager',
 			]
 		],
 		'RemoveCredentials' => [
 			'class' => SpecialRemoveCredentials::class,
 			'services' => [
 				'AuthManager',
+				'SessionManager',
 			]
 		],
 		'AuthenticationPopupSuccess' => [
@@ -513,6 +502,7 @@ class SpecialPageFactory {
 				'UserIdentityLookup',
 				'HideUserUtils',
 				'TempUserConfig',
+				'RecentChangeLookup',
 			]
 		],
 		'Block' => [
@@ -604,6 +594,7 @@ class SpecialPageFactory {
 				'UserFactory',
 				'UserIdentityLookup',
 				'DatabaseBlockStore',
+				'UserGroupAssignmentService',
 				'TempUserConfig',
 			]
 		],
@@ -632,6 +623,7 @@ class SpecialPageFactory {
 				'UserFactory',
 				'UserIdentityLookup',
 				'DatabaseBlockStore',
+				'UserGroupAssignmentService',
 				'TempUserConfig',
 			]
 		],
@@ -674,9 +666,10 @@ class SpecialPageFactory {
 				'UserNameUtils',
 				'UserNamePrefixSearch',
 				'UserFactory',
-				'ActorStoreFactory',
 				'WatchlistManager',
-				'TempUserConfig',
+				'UserGroupAssignmentService',
+				'MultiFormatUserIdentityLookup',
+				'FormatterFactory',
 			]
 		],
 		'EditWatchlist' => [
@@ -717,6 +710,7 @@ class SpecialPageFactory {
 				'UserIdentityLookup',
 				'UserNameUtils',
 				'LogFormatterFactory',
+				'TempUserConfig',
 			]
 		],
 		'Watchlist' => [
@@ -725,9 +719,10 @@ class SpecialPageFactory {
 				'WatchedItemStore',
 				'WatchlistManager',
 				'UserOptionsLookup',
-				'ChangeTagsStore',
 				'UserIdentityUtils',
 				'TempUserConfig',
+				'RecentChangeFactory',
+				'ChangesListQueryFactory',
 			]
 		],
 		'Newpages' => [
@@ -750,9 +745,10 @@ class SpecialPageFactory {
 				'WatchedItemStore',
 				'MessageParser',
 				'UserOptionsLookup',
-				'ChangeTagsStore',
 				'UserIdentityUtils',
 				'TempUserConfig',
+				'RecentChangeFactory',
+				'ChangesListQueryFactory',
 			]
 		],
 		'Recentchangeslinked' => [
@@ -762,9 +758,10 @@ class SpecialPageFactory {
 				'MessageParser',
 				'UserOptionsLookup',
 				'SearchEngineFactory',
-				'ChangeTagsStore',
 				'UserIdentityUtils',
 				'TempUserConfig',
+				'RecentChangeFactory',
+				'ChangesListQueryFactory',
 			]
 		],
 		'Tags' => [
@@ -1144,6 +1141,7 @@ class SpecialPageFactory {
 				'WikiPageFactory',
 				'SearchEngineFactory',
 				'WatchlistManager',
+				'WatchedItemStore',
 				'RestrictionStore',
 				'TitleFactory',
 				'DeletePageFactory',
@@ -1178,6 +1176,8 @@ class SpecialPageFactory {
 			'class' => SpecialMytalk::class,
 			'services' => [
 				'TempUserConfig',
+				'TempUserCreator',
+				'AuthManager',
 			],
 		],
 		'PageHistory' => [
@@ -1212,6 +1212,9 @@ class SpecialPageFactory {
 		],
 		'AllMyUploads' => [
 			'class' => SpecialAllMyUploads::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'NewSection' => [
 			'class' => SpecialNewSection::class,
@@ -1302,6 +1305,13 @@ class SpecialPageFactory {
 	private $hookRunner;
 
 	/**
+	 * @var TitleFactory
+	 */
+	private $titleFactory;
+
+	private StatsFactory $statsFactory;
+
+	/**
 	 * @internal For use by ServiceWiring
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
@@ -1316,23 +1326,20 @@ class SpecialPageFactory {
 	];
 
 	/**
-	 * @var TitleFactory
-	 */
-	private $titleFactory;
-
-	/**
 	 * @param ServiceOptions $options
 	 * @param Language $contLang
 	 * @param ObjectFactory $objectFactory
 	 * @param TitleFactory $titleFactory
 	 * @param HookContainer $hookContainer
+	 * @param StatsFactory $statsFactory
 	 */
 	public function __construct(
 		ServiceOptions $options,
 		Language $contLang,
 		ObjectFactory $objectFactory,
 		TitleFactory $titleFactory,
-		HookContainer $hookContainer
+		HookContainer $hookContainer,
+		StatsFactory $statsFactory,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
@@ -1341,6 +1348,7 @@ class SpecialPageFactory {
 		$this->titleFactory = $titleFactory;
 		$this->hookContainer = $hookContainer;
 		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->statsFactory = $statsFactory;
 	}
 
 	/**
@@ -1459,7 +1467,7 @@ class SpecialPageFactory {
 	 * the key is an alias, and the value is the canonical name of the special page.
 	 * All registered special pages are guaranteed to map to themselves.
 	 */
-	private function getAliasList(): array {
+	public function getAliasList(): array {
 		if ( $this->aliases === null ) {
 			$aliases = $this->contLang->getSpecialPageAliases();
 			$pageList = $this->getPageList();
@@ -1593,36 +1601,21 @@ class SpecialPageFactory {
 	 * that the current user has the required permissions for.
 	 *
 	 * @param User $user User object to check permissions provided
+	 * @param IContextSource|null $context Context object, since 1.45
 	 * @return SpecialPage[]
 	 */
-	public function getUsablePages( User $user ): array {
+	public function getUsablePages( User $user, ?IContextSource $context = null ): array {
 		$pages = [];
+		$context ??= RequestContext::getMain();
 		foreach ( $this->getPageList() as $name => $rec ) {
 			$page = $this->getPage( $name );
 			if ( $page ) { // not null
-				$page->setContext( RequestContext::getMain() );
+				$page->setContext( $context );
 				if ( $page->isListed()
 					&& ( !$page->isRestricted() || $page->userCanExecute( $user ) )
 				) {
 					$pages[$name] = $page;
 				}
-			}
-		}
-
-		return $pages;
-	}
-
-	/**
-	 * Get listed special pages available to everyone by default.
-	 *
-	 * @return array<string,SpecialPage>
-	 */
-	public function getRegularPages(): array {
-		$pages = [];
-		foreach ( $this->getPageList() as $name => $rec ) {
-			$page = $this->getPage( $name );
-			if ( $page && $page->isListed() && !$page->isRestricted() ) {
-				$pages[$name] = $page;
 			}
 		}
 
@@ -1727,8 +1720,15 @@ class SpecialPageFactory {
 			$page->setLinkRenderer( $linkRenderer );
 		}
 
+		$timer = $including ? null : $this->statsFactory
+			->getTiming( 'special_executeTiming_seconds' )
+			->setLabel( 'special', $page->getName() )
+			->start();
+
 		// Execute special page
 		$page->run( $par );
+
+		$timer?->stop();
 
 		return true;
 	}

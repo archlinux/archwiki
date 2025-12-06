@@ -19,41 +19,27 @@ use MediaWiki\WikiMap\WikiMap;
 
 class ForeignWikiRequest {
 
-	/** @var User */
-	protected $user;
-
-	protected array $params;
-
-	/** @var string[] */
-	protected array $wikis;
-
-	/** @var string|null */
-	protected $wikiParam;
-
-	/** @var string */
-	protected $method;
-
-	/** @var string|null */
-	protected $tokenType;
+	protected string $method;
 
 	/** @var string[]|null */
-	protected $csrfTokens;
+	protected ?array $csrfTokens;
 
 	/**
 	 * @param User $user
 	 * @param array $params Request parameters
 	 * @param string[] $wikis Wikis to send the request to
 	 * @param string|null $wikiParam Parameter name to set to the name of the wiki
-	 * @param string|null $postToken If set, use POST requests and inject a token of this type;
+	 * @param string|null $tokenType If set, use POST requests and inject a token of this type;
 	 *  if null, use GET requests.
 	 */
-	public function __construct( User $user, array $params, array $wikis, $wikiParam = null, $postToken = null ) {
-		$this->user = $user;
-		$this->params = $params;
-		$this->wikis = $wikis;
-		$this->wikiParam = $wikiParam;
-		$this->method = $postToken === null ? 'GET' : 'POST';
-		$this->tokenType = $postToken;
+	public function __construct(
+		protected User $user,
+		protected array $params,
+		protected array $wikis,
+		protected ?string $wikiParam = null,
+		protected ?string $tokenType = null,
+	) {
+		$this->method = $tokenType === null ? 'GET' : 'POST';
 
 		$this->csrfTokens = null;
 	}
@@ -194,7 +180,7 @@ class ForeignWikiRequest {
 			$reqs[$wiki] = [
 				'method' => $method,
 				'url' => $api['url'],
-				$queryKey => $makeParams( $wiki )
+				$queryKey => $makeParams( $wiki ),
 			];
 
 			if ( $originalRequest ) {

@@ -48,9 +48,6 @@ class MathoidChecker extends BaseChecker {
 		$this->logger = $logger;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getCheckResponse(): array {
 		if ( $this->statusCode === null ) {
 			$cacheInputKey = $this->getCacheKey();
@@ -67,9 +64,6 @@ class MathoidChecker extends BaseChecker {
 		return [ $this->statusCode, $this->response ];
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getCacheKey(): string {
 		return $this->cache->makeGlobalKey(
 			self::class,
@@ -77,9 +71,6 @@ class MathoidChecker extends BaseChecker {
 		);
 	}
 
-	/**
-	 * @return array
-	 */
 	public function runCheck(): array {
 		$url = "{$this->url}/texvcinfo";
 		$q = rawurlencode( $this->inputTeX );
@@ -110,10 +101,7 @@ class MathoidChecker extends BaseChecker {
 
 	public function isValid(): bool {
 		[ $statusCode ] = $this->getCheckResponse();
-		if ( $statusCode === 200 ) {
-			return true;
-		}
-		return false;
+		return $statusCode === 200;
 	}
 
 	public function getError(): ?Message {

@@ -6,17 +6,16 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use Generator;
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLParsingUtil;
-use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLutil;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmsup;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 
-/**
- *
- */
 class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	protected bool $curly = false;
 	private ?LengthSpec $rowSpecs = null;
@@ -72,13 +71,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		if ( $node instanceof Literal ) {
 			$name = trim( $node->getArg() );
 			if ( str_contains( $name, "\\color" ) ) {
-				$foundOperatorContent = MMLutil::initalParseLiteralExpression( $node->getArg() );
-				if ( !$foundOperatorContent ) {
-					// discarding color elements which not specify color
-					return [ true, null ];
-				} else {
-					return [ true, $foundOperatorContent[2][0] ];
-				}
+				return [ true, $node->getArgFromCurlies() ];
 			} elseif ( str_contains( $name, "\\pagecolor" ) ) {
 				return [ true, null ];
 			}
@@ -164,17 +157,22 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return false;
 	}
 
-	public function checkForDerivatives( int $iStart, array $args ): int {
+	public function checkForDerivatives( int $start, array $args ): int {
 		$ctr = 0;
-		for ( $i = $iStart, $count = count( $this->args ); $i < $count; $i++ ) {
-			$followUp = $args[$i];
-			if ( $followUp instanceof Literal && $followUp->getArg() === "'" ) {
+		$started = false;
+		foreach ( $args as $key => $arg ) {
+			if ( !$started ) {
+				if ( $key == $start ) {
+					$started = true;
+				}
+				continue;
+			}
+			if ( $arg instanceof Literal && $arg->getArg() === "'" ) {
 				$ctr++;
 			} else {
 				break;
 			}
 		}
-
 		return $ctr;
 	}
 
@@ -221,30 +219,60 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		$this->curly = false;
 	}
 
+	private function squashNumbers(): void {
+		$lastNumber = false;
+		foreach ( $this->args as $key => $arg ) {
+			// Handle the special case of comma as a decimal separator
+			// e.g., 3{,}14}
+			if (
+				$lastNumber !== false &&
+				$arg instanceof TexArray &&
+				$arg->isCurly() &&
+				!$arg->isEmpty() &&
+				$arg->args[0] instanceof Literal &&
+				trim( $arg->args[0]->getArg() ) === ","
+			) {
+				$this->args[$lastNumber]->appendText( ',' );
+				unset( $this->args[$key] );
+				continue;
+			}
+			if ( !( $arg instanceof Literal ) || !preg_match( "/^[0-9.]$/", $arg->getArg() ) ) {
+				$lastNumber = false;
+				continue;
+			}
+			if ( $lastNumber !== false ) {
+				$this->args[$lastNumber]->appendText( $arg->getArg() );
+				unset( $this->args[$key] );
+			} else {
+				$lastNumber = $key;
+			}
+		}
+	}
+
 	/** @inheritDoc */
-	public function renderMML( $arguments = [], &$state = [] ) {
+	public function toMMLTree( $arguments = [], &$state = [] ) {
 		// Everything here is for parsing displaystyle, probably refactored to WikiTexVC grammar later
-		$fullRenderedArray = "";
-		$mmlStyles = [];
+		$mmlStyles = [ new MMLmrow() ]; // need root node to hold child nodes
 		$currentColor = null;
 
 		if ( array_key_exists( 'squashLiterals', $state ) ) {
 			$this->squashLiterals();
 		}
-
-		for ( $i = 0, $count = count( $this->args ); $i < $count; $i++ ) {
-			$current = $this->args[$i];
-			if ( isset( $this->args[$i + 1] ) ) {
-				$next = $this->args[$i + 1];
-			} else {
-				$next = null;
+		$this->squashNumbers();
+		$skip = 0;
+		foreach ( $this->args  as $key => $current ) {
+			if ( $skip > 0 ) {
+				$skip--;
+				continue;
 			}
+			$next = next( $this->args );
+			$next = $next === false ? null : $next;
 			// Check for sideset
 			$foundSideset = $this->checkForSideset( $current, $next );
 			if ( $foundSideset ) {
 				$state["sideset"] = $foundSideset;
 				// Skipping the succeeding Literal
-				$i++;
+				$skip++;
 			}
 
 			// Check for limits
@@ -264,10 +292,9 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 			}
 
 			// Check for derivatives
-			$foundDeriv = $this->checkForDerivatives( $i + 1, $this->args );
+			$foundDeriv = $this->checkForDerivatives( $key, $this->args );
 			if ( $foundDeriv > 0 ) {
-				// skip the next indices which are derivative characters
-				$i += $foundDeriv;
+				$skip += $foundDeriv;
 				$state["deriv"] = $foundDeriv;
 			}
 
@@ -293,22 +320,20 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 
 			if ( $styleArguments ) {
 				$state["styleargs"] = $styleArguments;
-				$mmlStyle = new MMLmstyle( "", $styleArguments );
-				$fullRenderedArray .= $mmlStyle->getStart();
+				$mmlStyles[] = new MMLmstyle( "", $styleArguments );
 				if ( $next instanceof TexNode && $next->isCurly() ) {
 					// Wrap with style-tags when the next element is a Curly which determines start and end tag.
-					$fullRenderedArray .= $this->createMMLwithContext( $currentColor, $next, $state, $arguments );
-					$fullRenderedArray .= $mmlStyle->getEnd();
-					$mmlStyle = null;
+					$content = $this->createMMLwithContext( $currentColor, $next, $state, $arguments );
+					$currentContainer = end( $mmlStyles );
+					$currentContainer->addChild( $content );
 					unset( $state["styleargs"] );
-					$i++;
-				} else {
-					// Start the style indicator in cases like \textstyle abc
-					$mmlStyles[] = $mmlStyle->getEnd();
-
+					$skip++;
 				}
 			} else {
-				$fullRenderedArray .= $this->createMMLwithContext( $currentColor, $current, $state, $arguments );
+				// Start the style indicator in cases like \textstyle abc
+				$currentContent = $this->createMMLwithContext( $currentColor, $current, $state, $arguments );
+				$currentContainer = end( $mmlStyles );
+				$currentContainer->addChild( $currentContent );
 			}
 
 			unset( $state['foundNamedFct'] );
@@ -318,39 +343,45 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 
 		}
 
-		foreach ( array_reverse( $mmlStyles ) as $mmlStyleEnd ) {
-			$fullRenderedArray .= $mmlStyleEnd;
+		while ( count( $mmlStyles ) > 1 ) {
+			$container = array_pop( $mmlStyles );
+			$parent = end( $mmlStyles );
+			$parent->addChild( $container );
 		}
+		$output = $mmlStyles[0]->getChildren();
 		if ( $this->curly && $this->getLength() > 1 ) {
-			$mmlRow = new MMLmrow();
-			return $mmlRow->encapsulateRaw( $fullRenderedArray );
+			return new MMLmrow( TexClass::ORD, [], ...$output );
 		}
-
-		return $fullRenderedArray;
+		return new MMLarray( ...$output );
 	}
 
-	private function createMMLwithContext(
-		?string $currentColor, TexNode $currentNode, array &$state, array $arguments
-	): string {
+	/**
+	 * @param string|null $currentColor
+	 * @param TexNode $currentNode
+	 * @param array &$state
+	 * @param array $arguments
+	 * @return MMLbase|string|null
+	 */
+	private function createMMLwithContext( ?string $currentColor, TexNode $currentNode, array &$state,
+										   array $arguments ) {
 		if ( $currentColor ) {
 			if ( array_key_exists( "colorDefinitions", $state )
 				&& is_array( $state["colorDefinitions"] )
 				&& array_key_exists( $currentColor, $state["colorDefinitions"] ?? [] )
 				&& is_array( $state["colorDefinitions"][$currentColor] )
 				&& array_key_exists( "hex", $state["colorDefinitions"][$currentColor] )
-			   ) {
+			) {
 				$displayedColor = $state["colorDefinitions"][$currentColor]["hex"];
 
 			} else {
 				$resColor = TexUtil::getInstance()->color( ucfirst( $currentColor ) );
 				$displayedColor = $resColor ?: $currentColor;
 			}
-			$mmlStyleColor = new MMLmstyle( "", [ "mathcolor" => $displayedColor ] );
-			$ret = $mmlStyleColor->encapsulateRaw( $currentNode->renderMML( $arguments, $state ) );
+			$ret = new MMLmstyle( "", [ "mathcolor" => $displayedColor ],
+				$currentNode->toMMLTree( $arguments, $state ) );
 		} else {
-			$ret = $currentNode->renderMML( $arguments, $state );
+			$ret = $currentNode->toMMLTree( $arguments, $state );
 		}
-
 		return $this->addDerivativesContext( $state, $ret );
 	}
 
@@ -358,13 +389,12 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	 * If derivative was recognized, add the corresponding derivative math operator
 	 * to the mml and wrap with msup element.
 	 * @param array &$state state indicator which indicates derivative
-	 * @param string $mml mathml input
-	 * @return string mml with additional mml-elements for derivatives
+	 * @param mixed $mml mathml input
+	 * @return MMLbase|string|null mml with additional mml-elements for derivatives
 	 */
-	public function addDerivativesContext( array &$state, string $mml ): string {
+	public function addDerivativesContext( array &$state, $mml ) {
+		$ret = null;
 		if ( array_key_exists( "deriv", $state ) && $state["deriv"] > 0 ) {
-			$msup = new MMLmsup();
-			$moDeriv = new MMLmo();
 
 			if ( $state["deriv"] == 1 ) {
 				$derInfo = "&#x2032;";
@@ -377,13 +407,12 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 			} else {
 				$derInfo = str_repeat( "&#x2032;", $state["deriv"] );
 			}
-
-			$mml = $msup->encapsulateRaw( $mml . $moDeriv->encapsulateRaw( $derInfo ) );
+			$ret = MMLmsup::newSubtree( $mml, new MMLmo( "", [], $derInfo ) );
 			if ( ( $state['foundNamedFct'][0] ?? false ) && !( $state['foundNamedFct'][1] ?? true ) ) {
-				$mml .= MMLParsingUtil::renderApplyFunction();
+				return new MMLarray( $ret, MMLParsingUtil::renderApplyFunction() );
 			}
 		}
-		return $mml;
+		return $ret ?? $mml;
 	}
 
 	/** @inheritDoc */

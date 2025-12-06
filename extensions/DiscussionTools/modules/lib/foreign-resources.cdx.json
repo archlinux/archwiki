@@ -1,0 +1,27 @@
+{
+	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.6",
+	"serialNumber": "urn:uuid:cacdac6a-6ece-4486-8f00-42ede7eec5fd",
+	"version": 1,
+	"components": [
+		{
+			"type": "library",
+			"name": "moment-timezone",
+			"version": "0.5.27",
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			],
+			"externalReferences": [
+				{
+					"url": "https://momentjs.com/timezone/",
+					"type": "website"
+				}
+			]
+		}
+	]
+}

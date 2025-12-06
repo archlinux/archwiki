@@ -19,10 +19,6 @@ class UpdateHitCountWatcher implements Watcher {
 	/** @var CentralDBManager */
 	private $centralDBManager;
 
-	/**
-	 * @param LBFactory $lbFactory
-	 * @param CentralDBManager $centralDBManager
-	 */
 	public function __construct(
 		LBFactory $lbFactory,
 		CentralDBManager $centralDBManager
@@ -48,10 +44,6 @@ class UpdateHitCountWatcher implements Watcher {
 		} );
 	}
 
-	/**
-	 * @param IDatabase $dbw
-	 * @param array $loggedFilters
-	 */
 	private function updateHitCounts( IDatabase $dbw, array $loggedFilters ): void {
 		$dbw->newUpdateQueryBuilder()
 			->update( 'abuse_filter' )

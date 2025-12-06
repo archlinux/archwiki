@@ -362,8 +362,8 @@ just a test"
 		// Note that WikitextContent::{get,set}PreSaveTransformFlags()
 		// is preserved over JSON serialization.
 		$pstFlags = [
-			ParserOutputFlags::SHOW_TOC,
-			ParserOutputFlags::VARY_REVISION,
+			ParserOutputFlags::SHOW_TOC->value,
+			ParserOutputFlags::VARY_REVISION->value,
 		];
 		$withPstFlags = new WikitextContent( 'with PST flags' );
 		$withPstFlags->setPreSaveTransformFlags( $pstFlags );

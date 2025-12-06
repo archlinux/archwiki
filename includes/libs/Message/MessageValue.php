@@ -2,6 +2,8 @@
 
 namespace Wikimedia\Message;
 
+use Wikimedia\Assert\Assert;
+use Wikimedia\JsonCodec\Hint;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
 
@@ -19,10 +21,10 @@ use Wikimedia\JsonCodec\JsonCodecableTrait;
 class MessageValue implements MessageSpecifier, JsonCodecable {
 	use JsonCodecableTrait;
 
-	private string $key;
+	private readonly string $key;
 
-	/** @var MessageParam[] */
-	private array $params;
+	/** @var list<MessageParam> */
+	private array $params = [];
 
 	/**
 	 * @stable to call
@@ -33,8 +35,8 @@ class MessageValue implements MessageSpecifier, JsonCodecable {
 	 */
 	public function __construct( string $key, array $params = [] ) {
 		$this->key = $key;
-		$this->params = [];
 		$this->params( ...$params );
+		Assert::invariant( array_is_list( $this->params ), "should be list" );
 	}
 
 	/**
@@ -99,11 +101,15 @@ class MessageValue implements MessageSpecifier, JsonCodecable {
 	/**
 	 * Chainable mutator which adds text parameters with a common type
 	 *
-	 * @param string $type One of the ParamType constants
+	 * @param string|ParamType $type One of the ParamType constants
 	 * @param MessageSpecifier|string|int|float ...$values Scalar values
 	 * @return $this
 	 */
-	public function textParamsOfType( string $type, ...$values ): MessageValue {
+	public function textParamsOfType( string|ParamType $type, ...$values ): MessageValue {
+		if ( is_string( $type ) ) {
+			wfDeprecated( __METHOD__ . ' with string type', '1.45' );
+			$type = ParamType::from( $type );
+		}
 		foreach ( $values as $value ) {
 			$this->params[] = new ScalarParam( $type, $value );
 		}
@@ -113,12 +119,16 @@ class MessageValue implements MessageSpecifier, JsonCodecable {
 	/**
 	 * Chainable mutator which adds list parameters with a common type
 	 *
-	 * @param string $listType One of the ListType constants
+	 * @param string|ListType $listType One of the ListType constants
 	 * @param (MessageParam|MessageSpecifier|string|int|float)[] ...$values Each value
 	 *  is an array of items suitable to pass as $params to ListParam::__construct()
 	 * @return $this
 	 */
-	public function listParamsOfType( string $listType, ...$values ): MessageValue {
+	public function listParamsOfType( string|ListType $listType, ...$values ): MessageValue {
+		if ( is_string( $listType ) ) {
+			wfDeprecated( __METHOD__ . ' with string listType', '1.45' );
+			$listType = ListType::from( $listType );
+		}
 		foreach ( $values as $value ) {
 			$this->params[] = new ListParam( $listType, $value );
 		}
@@ -347,18 +357,63 @@ class MessageValue implements MessageSpecifier, JsonCodecable {
 			$contents . '</message>';
 	}
 
+	public function isSameAs( MessageValue $mv ): bool {
+		return $this->key === $mv->key &&
+			count( $this->params ) === count( $mv->params ) &&
+			array_all(
+				$this->params,
+				static fn ( $v, $k ) => $v->isSameAs( $mv->params[$k] )
+			);
+	}
+
 	public function toJsonArray(): array {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 		return [
 			'key' => $this->key,
-			'params' => $this->params,
+			'params' => array_map(
+				/**
+				 * Serialize trivial parameters as scalar values to minimize the footprint. Full
+				 * round-trip compatibility is guaranteed via the constructor and {@see params}.
+				 */
+				static fn ( $p ) => (
+					$p->getType() === ParamType::TEXT &&
+					is_scalar( $p->getValue() )
+				) ? $p->getValue() : $p,
+				$this->params
+			),
 		];
+	}
+
+	/** @inheritDoc */
+	public static function jsonClassHintFor( string $keyName ) {
+		// Reduce serialization overhead by eliminating the type information
+		// when 'params' consists of MessageParam instances
+		if ( $keyName === 'params' ) {
+			return Hint::build(
+				MessageParam::class, Hint::INHERITED,
+				Hint::LIST, Hint::USE_SQUARE
+			);
+		}
+		return null;
 	}
 
 	public static function newFromJsonArray( array $json ): MessageValue {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
+		// Support use of [MessageValue::class, Hint::INHERITED] for
+		// DataMessageValue as well:
+		if ( isset( $json['code'] ) ) {
+			return DataMessageValue::newFromJsonArray( $json );
+		}
 		return new self( $json['key'], $json['params'] );
+	}
+
+	/**
+	 * If you are serializing a MessageValue (or a DataMessageValue), use
+	 * this JsonCodec hint to suppress unnecessary type information.
+	 */
+	public static function hint(): Hint {
+		return Hint::build( self::class, Hint::INHERITED );
 	}
 }

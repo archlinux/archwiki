@@ -26,25 +26,11 @@ class EchoPresentationModelSection {
 	 */
 	private $parsedSectionTitle = null;
 
-	/**
-	 * @var Event
-	 */
-	protected $event;
-
-	/**
-	 * @var User
-	 */
-	protected $user;
-
-	/**
-	 * @var Language
-	 */
-	protected $language;
-
-	public function __construct( Event $event, User $user, Language $language ) {
-		$this->event = $event;
-		$this->user = $user;
-		$this->language = $language;
+	public function __construct(
+		protected Event $event,
+		protected User $user,
+		protected Language $language,
+	) {
 	}
 
 	/**

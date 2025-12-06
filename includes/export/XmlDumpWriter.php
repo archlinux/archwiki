@@ -5,21 +5,7 @@
  * Copyright © 2003, 2005, 2006 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,7 @@ use MediaWiki\Content\Content;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Debug\MWDebug;
 use MediaWiki\Exception\MWException;
+use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\File\OldLocalFile;
 use MediaWiki\HookContainer\HookContainer;
@@ -335,7 +322,7 @@ class XmlDumpWriter {
 	private function invokeLenient( $callback, $warning ) {
 		try {
 			return $callback();
-		} catch ( SuppressedDataException $ex ) {
+		} catch ( SuppressedDataException ) {
 			return null;
 		} catch ( MWException | RuntimeException | InvalidArgumentException | ErrorException $ex ) {
 			MWDebug::warning( $warning . ': ' . $ex->getMessage() );
@@ -471,9 +458,22 @@ class XmlDumpWriter {
 		}
 
 		$contentModel = $slot->getModel();
-		$contentHandler = MediaWikiServices::getInstance()
-			->getContentHandlerFactory()
-			->getContentHandler( $contentModel );
+		$contentHandlerFactory = MediaWikiServices::getInstance()->getContentHandlerFactory();
+		$contentHandler = null;
+
+		try {
+			$contentHandler = $contentHandlerFactory->getContentHandler( $contentModel );
+
+		} catch ( MWUnknownContentModelException ) {
+			// A content model should not be removed, as this would cause old revisions
+			//   to fail to render.  If this does happen, let dumps keep going but warn.
+			//   To stop these warnings, register a fallback content model like so:
+			//     $wgContentHandlers['Your.Removed.Handler'] = 'FallbackContentHandler'
+			MWDebug::warning( 'Revision ' . $slot->getRevision() . ' is using an unknown '
+				. ' content model, falling back to FallbackContentHandler.' );
+			$contentModel = CONTENT_MODEL_UNKNOWN;
+			$contentHandler = $contentHandlerFactory->getContentHandler( $contentModel );
+		}
 		$contentFormat = $contentHandler->getDefaultFormat();
 
 		// XXX: The content format is only relevant when actually outputting serialized content.

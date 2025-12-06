@@ -3,6 +3,7 @@
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Message\Message;
 use MediaWiki\Permissions\PermissionStatus;
+use Wikimedia\Message\ListType;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -26,7 +27,8 @@ class PermissionsErrorTest extends MediaWikiIntegrationTestCase {
 		yield [ 'testpermission', $array, $status ];
 
 		yield [ 'testpermission', [],
-			PermissionStatus::newEmpty()->fatal( 'badaccess-groups', Message::listParam( [ '*' ], 'comma' ), 1 ) ];
+			PermissionStatus::newEmpty()->fatal( 'badaccess-groups', Message::listParam( [ '*' ], ListType::COMMA ), 1 )
+		];
 	}
 
 	/**
@@ -39,14 +41,6 @@ class PermissionsErrorTest extends MediaWikiIntegrationTestCase {
 		$this->expectDeprecationAndContinue( '/PermissionsError::\\$permission/' );
 		$this->assertEquals( $permission, $e->permission );
 
-		$this->assertStatusMessagesExactly( $expected, $et->status );
-
-		$this->expectDeprecationAndContinue( '/PermissionsError::\\$errors/' );
-		$this->expectDeprecationAndContinue( '/toLegacyErrorArray/' );
-		$this->assertArrayEquals( $expected->toLegacyErrorArray(), $e->errors );
-
-		// Test the deprecated public property setter
-		$e->errors = $e->errors;
 		$this->assertStatusMessagesExactly( $expected, $et->status );
 	}
 

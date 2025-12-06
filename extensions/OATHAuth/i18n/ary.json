@@ -6,5 +6,7 @@
 	},
 	"oathauth-account": "السمية د لكونط:",
 	"oathauth-enteruser": "السمية د لخدايمي:",
+	"oathauth-auth-token-label": "كوض مجاوجي",
+	"oathauth-auth-token-help-ui": "دخّل لكوض من لوطونتيفيكاتور ديالك.",
 	"oathauth-auth-ui": "عافاك دخّل الرشمة لي تصيفطات ليك ف لاپليكاصيون د لمصادقة الجاوجية (بحال Google Authenticator)."
 }

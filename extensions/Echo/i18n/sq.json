@@ -38,7 +38,6 @@
 	"echo-category-title-mention-success": "Përmendje {{PLURAL:$1|e suksesshme|të suksesshme}}",
 	"echo-category-title-other": "{{PLURAL:$1|Të tjera}}",
 	"echo-category-title-system": "{{PLURAL:$1|Sistemi}}",
-	"echo-pref-tooltip-edit-user-talk": "Më njofto kur dikush redakton faqen time të diskutimit.",
 	"echo-pref-tooltip-article-linked": "Më njofto kur dikush lidh një faqe me një faqe që kam krijuar unë.",
 	"echo-pref-tooltip-reverted": "Më njofto kur dikush kthen një ndryshim që kam bërë unë duke përdorur butonat e zhbërjes ose të rikthimit.",
 	"echo-pref-tooltip-mention": "Më njofto kur dikush lidh një faqe me faqen time të përdoruesit.",

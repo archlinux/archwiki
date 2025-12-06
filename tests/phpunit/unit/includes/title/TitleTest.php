@@ -1,21 +1,7 @@
 <?php
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace MediaWiki\Tests\Unit;
@@ -23,7 +9,6 @@ namespace MediaWiki\Tests\Unit;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
-use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
@@ -161,7 +146,7 @@ class TitleTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $unicodeClass, Title::convertByteClassToUnicodeClass( $byteClass ) );
 	}
 
-	public static function provideNewFromTitleValue() {
+	public static function provideTitleValues() {
 		return [
 			[ new TitleValue( NS_MAIN, 'Foo' ) ],
 			[ new TitleValue( NS_MAIN, 'Foo', 'bar' ) ],
@@ -171,7 +156,7 @@ class TitleTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @covers \MediaWiki\Title\Title::newFromLinkTarget
-	 * @dataProvider provideNewFromTitleValue
+	 * @dataProvider provideTitleValues
 	 */
 	public function testNewFromLinkTarget( LinkTarget $value ) {
 		$title = Title::newFromLinkTarget( $value );
@@ -196,7 +181,7 @@ class TitleTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideCastFromLinkTarget() {
-		return array_merge( [ [ null ] ], self::provideNewFromTitleValue() );
+		return [ [ null ], ...self::provideTitleValues() ];
 	}
 
 	/**
@@ -281,12 +266,12 @@ class TitleTest extends MediaWikiUnitTestCase {
 		];
 		yield 'LinkTarget == PageReference' => [
 			new TitleValue( NS_MAIN, 'Aa' ),
-			new PageReferenceValue( NS_MAIN, 'Aa', PageReference::LOCAL ),
+			PageReferenceValue::localReference( NS_MAIN, 'Aa' ),
 			0
 		];
 		yield 'Title > PageReference, name' => [
 			Title::makeTitle( NS_TALK, 'Aa' ),
-			new PageReferenceValue( NS_MAIN, 'Aa', PageReference::LOCAL ),
+			PageReferenceValue::localReference( NS_MAIN, 'Aa' ),
 			1
 		];
 		yield 'LinkTarget < Title, ns' => [
@@ -342,7 +327,7 @@ class TitleTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideCastFromPageReference() {
-		yield [ new PageReferenceValue( NS_MAIN, 'Test', PageReference::LOCAL ) ];
+		yield [ PageReferenceValue::localReference( NS_MAIN, 'Test' ) ];
 	}
 
 	/**
@@ -458,7 +443,7 @@ class TitleTest extends MediaWikiUnitTestCase {
 		// Wrong type
 		yield '(makeTitle vs PageIdentityValue) name text' => [
 			Title::makeTitle( NS_MAIN, 'Foo' ),
-			new PageIdentityValue( 0, NS_MAIN, 'Foo', PageIdentity::LOCAL ),
+			PageIdentityValue::localIdentity( 0, NS_MAIN, 'Foo' ),
 			false
 		];
 		yield '(makeTitle vs TitleValue) name text' => [

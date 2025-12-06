@@ -9,6 +9,9 @@ use StatusValue;
  * Type-safe StatusValue holding the result of a permission check performed in AbuseFilterPermissionManager.
  *
  * Modified copy of the CheckUserPermissionStatus from mediawiki/extensions/CheckUser.
+ *
+ * @template T
+ * @inherits StatusValue<T>
  */
 class AbuseFilterPermissionStatus extends StatusValue {
 	/** @var Block|null The user block, if any, that caused this permission check to fail. */
@@ -17,6 +20,9 @@ class AbuseFilterPermissionStatus extends StatusValue {
 	/** @var string|null The missing permission - if applicable - that caused this permission check to fail. */
 	private ?string $permission = null;
 
+	/**
+	 * @suppress PhanGenericConstructorTypes
+	 */
 	protected function __construct() {
 		// Use typed static factory methods.
 	}

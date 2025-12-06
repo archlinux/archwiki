@@ -10,7 +10,7 @@
 	"descriptionmsg": "linter-desc",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"AutoloadClasses": {
 		"MediaWiki\\Linter\\Maintenance\\MigrateNamespace": "maintenance/migrateNamespace.php",
@@ -34,6 +34,7 @@
 			"services": [
 				"LinkRenderer",
 				"JobQueueGroup",
+				"StatsFactory",
 				"WikiPageFactory",
 				"ParserOutputAccess",
 				"Linter.CategoryManager",

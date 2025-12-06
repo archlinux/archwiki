@@ -12,10 +12,10 @@
 	"oathauth-secret": "Tajný kľúč pre dvojfaktorovú autentifikáciu:",
 	"oathauth-enable": "Zapnutie dvojfaktorovej autentifikácie",
 	"oathauth-recoverycodes": "Nasledovný zoznam obsahuje jednorazové dočasné kódy. Tieto kódy možno použiť iba raz a slúžia pre prípad núdze. Opíšte si ich a uchovávajte ich na bezpečnom mieste. Ak stratíte svoj telefón, tieto kódy budú jediným spôsobom, ako zachrániť svoj účet. '''Tieto kódy sa už nikdy opätovne nezobrazia'''.",
+	"oathauth-failedtovalidateoath": "Nepodarilo se overiť dvojfaktorové prihlásenie.",
 	"oathauth-disable": "Vypnutie dvojfaktorovej autentifikácie",
 	"oathauth-validatedoath": "Dvojfaktorové prihlásenie overené. Odteraz bude vynucovaná dvojfaktorová autentifikácia.",
 	"oathauth-noscratchforvalidation": "Na potvrdenie dvojfaktorovej autentifikácie nemôžete použiť dočasné kódy. Dočasné kódy slúžia len ako záloha na výnimočné účely. Použite, prosím, overovací kód z vášho generátora kódov.",
-	"oathauth-failedtovalidateoath": "Nepodarilo se overiť dvojfaktorové prihlásenie.",
 	"oathauth-disabledoath": "Dvojfaktorová autentifikácia vypnutá.",
 	"oathauth-prefs-label": "Dvojfaktorová autentifikácia:",
 	"oathauth-step1": "Krok 1: Stiahnite si program pre dvojfaktorovú autentifikáciu",
@@ -60,6 +60,5 @@
 	"oathauth-enable-page-title": "Zapnúť $1",
 	"oathauth-ui-available-modules": "Dostupné metódy",
 	"oathauth-ui-general-help": "'''Viacfaktorové overenie''' je overovacia metóda, v ktorej je používateľovi počítačového systému udelený prístup až po tom, čo autentifikačnému mechanizmu úspešne predloží dva alebo viac dôkazov (alebo overení, faktorov): znalosť (niečo, čo daný používateľ pozná), vlastníctvo (niečo, čo vlastní len daný používateľ) a inherencia (niečo, čím je iba daný používateľ). [https://en.wikipedia.org/wiki/Multi-factor_authentication Viac informácií]",
-	"oathauth-totp-description": "Algoritmus jednorazového hesla založeného na čase (TOTP) je rozšírením algoritmu jednorazového hesla založeného na HMAC (HOTP), ktoré generuje jednorazové heslá, ktorých unikátnosť je odvodená z aktuálneho času.",
-	"oathauth-disable-method-warning-button-label": "Potvrdiť a pokračovať"
+	"oathauth-totp-description": "Algoritmus jednorazového hesla založeného na čase (TOTP) je rozšírením algoritmu jednorazového hesla založeného na HMAC (HOTP), ktoré generuje jednorazové heslá, ktorých unikátnosť je odvodená z aktuálneho času."
 }

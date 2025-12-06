@@ -48,8 +48,8 @@ mw.echo.ui.CrossWikiNotificationItemWidget = function MwEchoUiCrossWikiNotificat
 			classes: [ 'mw-echo-ui-crossWikiNotificationItemWidget-group' ],
 			timestamp: this.getTimestamp(),
 			$overlay: this.$overlay,
-			animated: config.animateSorting
-		}
+			animated: config.animateSorting,
+		},
 	);
 
 	this.listWidget.$element
@@ -71,7 +71,7 @@ mw.echo.ui.CrossWikiNotificationItemWidget = function MwEchoUiCrossWikiNotificat
 	this.toggleExpandButton = new OO.ui.ButtonOptionWidget( {
 		icon: 'expand',
 		framed: false,
-		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-button' ]
+		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-button' ],
 	} );
 	this.updateExpandButton();
 	this.actionsButtonSelectWidget.addItems( [ this.toggleExpandButton ] );
@@ -101,7 +101,7 @@ mw.echo.ui.CrossWikiNotificationItemWidget = function MwEchoUiCrossWikiNotificat
 			$( '<div>' )
 				.addClass( 'mw-echo-ui-crossWikiNotificationItemWidget-separator' ),
 			this.listWidget.$element,
-			this.errorWidget.$element
+			this.errorWidget.$element,
 		);
 };
 
@@ -153,9 +153,9 @@ mw.echo.ui.CrossWikiNotificationItemWidget.prototype.populateFromModel = functio
 				groups[ i ],
 				{
 					$overlay: this.$overlay,
-					showTitle: this.showTitles
-				}
-			)
+					showTitle: this.showTitles,
+				},
+			),
 		);
 	}
 	this.getList().addItems( groupWidgets );
@@ -239,13 +239,13 @@ mw.echo.ui.CrossWikiNotificationItemWidget.prototype.expand = function () {
 						this.showErrorMessage(
 							mw.msg( 'echo-notification-popup-loginrequired' ),
 							// Set the option link to the login page
-							loginPageTitle.getUrl()
+							loginPageTitle.getUrl(),
 						);
 					} else {
 						// General error
 						this.showErrorMessage( mw.msg( 'echo-api-failure' ) );
 					}
-				}
+				},
 			)
 			.always( this.popPending.bind( this ) );
 
@@ -290,13 +290,13 @@ mw.echo.ui.CrossWikiNotificationItemWidget.prototype.updateExpandButton = functi
 				'notification-link-text-expand-' +
 					( type === 'message' ? 'notice' : type ) +
 					'-count',
-				mw.language.convertNumber( this.model.getCount() )
-			)
+				mw.language.convertNumber( this.model.getCount() ),
+			),
 	);
 	this.toggleExpandButton.setIcon(
 		this.expanded ?
 			'collapse' :
-			'expand'
+			'expand',
 	);
 };
 

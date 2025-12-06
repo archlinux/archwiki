@@ -2,21 +2,7 @@
 /**
  * Basic search engine
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Search
  */
@@ -26,7 +12,6 @@
  */
 
 use MediaWiki\Config\Config;
-use MediaWiki\Content\Content;
 use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
@@ -79,8 +64,11 @@ abstract class SearchEngine {
 	/** Profile type for completionSearch */
 	public const COMPLETION_PROFILE_TYPE = 'completionSearchProfile';
 
-	/** Profile type for query independent ranking features */
+	/** Profile type for query independent ranking features (ex: article popularity) */
 	public const FT_QUERY_INDEP_PROFILE_TYPE = 'fulltextQueryIndepProfile';
+
+	/** Profile type for query dependent ranking features (ex: field weights) */
+	public const FT_QUERY_DEP_PROFILE_TYPE = 'fulltextQueryDepProfile';
 
 	/** Integer flag for legalSearchChars: includes all chars allowed in a search query */
 	protected const CHARS_ALL = 1;
@@ -96,7 +84,7 @@ abstract class SearchEngine {
 	 * be converted to final in 1.34. Override self::doSearchText().
 	 *
 	 * @param string $term Raw search term
-	 * @return ISearchResultSet|Status|null
+	 * @return ISearchResultSet|Status<ISearchResultSet>|null
 	 */
 	public function searchText( $term ) {
 		return $this->maybePaginate( function () use ( $term ) {
@@ -110,7 +98,7 @@ abstract class SearchEngine {
 	 * @stable to override
 	 *
 	 * @param string $term Raw search term
-	 * @return ISearchResultSet|Status|null
+	 * @return ISearchResultSet|Status<ISearchResultSet>|null
 	 * @since 1.32
 	 */
 	protected function doSearchText( $term ) {
@@ -316,9 +304,9 @@ abstract class SearchEngine {
 		if ( $namespaces ) {
 			// Filter namespaces to only keep valid ones
 			$validNs = MediaWikiServices::getInstance()->getSearchEngineConfig()->searchableNamespaces();
-			$namespaces = array_filter( $namespaces, static function ( $ns ) use( $validNs ) {
-				return $ns < 0 || isset( $validNs[$ns] );
-			} );
+			$namespaces = array_filter( $namespaces,
+				static fn ( $id ) => $id < 0 || isset( $validNs[$id] )
+			);
 		} else {
 			$namespaces = [];
 		}
@@ -376,19 +364,6 @@ abstract class SearchEngine {
 
 	/**
 	 * Parse some common prefixes: all (search everything)
-	 * or namespace names and set the list of namespaces
-	 * of this class accordingly.
-	 *
-	 * @deprecated since 1.32; should be handled internally by the search engine
-	 * @param string $query
-	 * @return string
-	 */
-	public function replacePrefixes( $query ) {
-		return $query;
-	}
-
-	/**
-	 * Parse some common prefixes: all (search everything)
 	 * or namespace names
 	 *
 	 * @param string $query
@@ -406,7 +381,7 @@ abstract class SearchEngine {
 		$withPrefixSearchExtractNamespaceHook = false
 	) {
 		$parsed = $query;
-		if ( strpos( $query, ':' ) === false ) { // nothing to do
+		if ( !str_contains( $query, ':' ) ) { // nothing to do
 			return false;
 		}
 		$extractedNamespace = null;
@@ -430,7 +405,7 @@ abstract class SearchEngine {
 			}
 		}
 
-		if ( !$allQuery && strpos( $query, ':' ) !== false ) {
+		if ( !$allQuery && str_contains( $query, ':' ) ) {
 			$prefix = str_replace( ' ', '_', substr( $query, 0, strpos( $query, ':' ) ) );
 			$services = MediaWikiServices::getInstance();
 			$index = $services->getContentLanguage()->getNsIndex( $prefix );
@@ -504,33 +479,6 @@ abstract class SearchEngine {
 	 */
 	public function delete( $id, $title ) {
 		// no-op
-	}
-
-	/**
-	 * Get the raw text for updating the index from a content object
-	 * Nicer search backends could possibly do something cooler than
-	 * just returning raw text
-	 *
-	 * @todo This isn't ideal, we'd really like to have content-specific handling here
-	 * @param Title $t Title we're indexing
-	 * @param Content|null $c Content of the page to index
-	 * @return string
-	 * @deprecated since 1.34 use Content::getTextForSearchIndex directly
-	 */
-	public function getTextFromContent( Title $t, ?Content $c = null ) {
-		return $c ? $c->getTextForSearchIndex() : '';
-	}
-
-	/**
-	 * If an implementation of SearchEngine handles all of its own text processing
-	 * in getTextFromContent() and doesn't require SearchUpdate::updateText()'s
-	 * rather silly handling, it should return true here instead.
-	 *
-	 * @return bool
-	 * @deprecated since 1.34 no longer needed since getTextFromContent is being deprecated
-	 */
-	public function textAlreadyUpdatedForIndex() {
-		return false;
 	}
 
 	/**
@@ -686,8 +634,9 @@ abstract class SearchEngine {
 			return $sugg->getSuggestedTitle()->isKnown();
 		} );
 		if ( $diff > 0 ) {
-			MediaWikiServices::getInstance()->getStatsdDataFactory()
-				->updateCount( 'search.completion.missing', $diff );
+			$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
+			$statsFactory->getCounter( 'search_completion_missing_total' )
+				->incrementBy( $diff );
 		}
 
 		// SearchExactMatchRescorer should probably be refactored to work directly on top of a SearchSuggestionSet
@@ -813,7 +762,7 @@ abstract class SearchEngine {
 				$handler = MediaWikiServices::getInstance()
 					->getContentHandlerFactory()
 					->getContentHandler( $model );
-			} catch ( MWUnknownContentModelException $e ) {
+			} catch ( MWUnknownContentModelException ) {
 				// If we can find no handler, ignore it
 				continue;
 			}

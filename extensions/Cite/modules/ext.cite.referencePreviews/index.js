@@ -1,4 +1,3 @@
-const { initReferencePreviewsInstrumentation, LOGGING_SCHEMA } = require( './referencePreviewsInstrumentation.js' );
 const createReferenceGateway = require( './createReferenceGateway.js' );
 const createReferencePreview = require( './createReferencePreview.js' );
 const TYPE_REFERENCE = 'reference';
@@ -32,17 +31,6 @@ const referencePreviewsState = isReferencePreviewsEnabled(
 	mw.config
 );
 
-// For tracking baseline stats in the Cite extension https://phabricator.wikimedia.org/T353798
-// FIXME: This might be obsolete when the code moves to the Cite extension and the tracking there
-//  can check that state differently.
-mw.config.set( 'wgCiteReferencePreviewsVisible', !!referencePreviewsState );
-
-mw.trackSubscribe( 'Popups.SettingChange', ( data ) => {
-	if ( data.previewType === TYPE_REFERENCE ) {
-		mw.track( LOGGING_SCHEMA, data );
-	}
-} );
-
 /**
  * Create the relevant config to register the preview type in the Popups extension.
  *
@@ -56,10 +44,7 @@ function createReferencePreviewsType() {
 		selector: '#mw-content-text .reference a[ href*="#" ]',
 		delay: 150,
 		gateway: createReferenceGateway(),
-		renderFn: createReferencePreview,
-		init: () => {
-			initReferencePreviewsInstrumentation();
-		}
+		renderFn: createReferencePreview
 	};
 }
 

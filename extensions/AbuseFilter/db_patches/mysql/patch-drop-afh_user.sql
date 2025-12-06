@@ -3,7 +3,9 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX afh_user ON /*_*/abuse_filter_history;
+
 DROP INDEX afh_user_text ON /*_*/abuse_filter_history;
+
 ALTER TABLE /*_*/abuse_filter_history
   DROP afh_user,
   DROP afh_user_text,

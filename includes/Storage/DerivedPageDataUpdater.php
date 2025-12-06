@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -42,7 +28,8 @@ use MediaWiki\JobQueue\Jobs\ParsoidCachePrewarmJob;
 use MediaWiki\Language\Language;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageCreatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\ProperPageIdentity;
@@ -184,8 +171,9 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		'rcPatrolStatus' => 0,
 		'tags' => [],
 		'cause' => 'edit',
+		'reason' => null,
 		'emitEvents' => true,
-	] + PageRevisionUpdatedEvent::DEFAULT_FLAGS;
+	] + PageLatestRevisionChangedEvent::DEFAULT_FLAGS;
 
 	/**
 	 * The state of the relevant row in page table before the edit.
@@ -230,8 +218,8 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 */
 	private $renderedRevision = null;
 
-	/** @var ?PageRevisionUpdatedEvent */
-	private $pageRevisionUpdatedEvent = null;
+	/** @var ?PageLatestRevisionChangedEvent */
+	private $pageLatestRevisionChangedEvent = null;
 
 	/**
 	 * @var RevisionRenderer
@@ -363,17 +351,17 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	}
 
 	/**
-	 * Set the cause of the update. Will be used for the PageRevisionUpdatedEvent
+	 * Set the cause of the update. Will be used for the PageLatestRevisionChangedEvent
 	 * and for tracing/logging in jobs, etc.
 	 *
-	 * @param string $cause See PageRevisionUpdatedEvent::CAUSE_XXX
+	 * @param string $cause See PageLatestRevisionChangedEvent::CAUSE_XXX
 	 *
 	 * @return void
 	 */
 	public function setCause( string $cause ) {
-		// 'cause' is for use in PageRevisionUpdatedEvent, 'causeAction' is for
+		// 'cause' is for use in PageLatestRevisionChangedEvent, 'causeAction' is for
 		// use in tracing in updates, jobs, and RevisionRenderer.
-		// Note that PageRevisionUpdatedEvent uses causes like "edit" and "move", but
+		// Note that PageLatestRevisionChangedEvent uses causes like "edit" and "move", but
 		// the convention for causeAction is to use "page-edit", etc.
 		$this->options['cause'] = $cause;
 		$this->options['causeAction'] = 'page-' . $cause;
@@ -1160,7 +1148,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 *
 	 * @param RevisionRecord $revision
 	 * @param array $options Array of options. Supports the flags defined by
-	 * PageRevisionUpdatedEvent. In addition, the following keys are supported used:
+	 * PageLatestRevisionChangedEvent. In addition, the following keys are supported used:
 	 * - oldtitle: PageIdentity, if the page was moved this is the source title (default null)
 	 * - oldrevision: RevisionRecord object for the pre-update revision (default null)
 	 * - triggeringUser: The user triggering the update (UserIdentity, defaults to the
@@ -1176,7 +1164,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 *      is true, do update the article count
 	 *    - 'no-change': don't update the article count, ever
 	 *    When set to null, pageState['oldCountable'] will be used instead if available.
-	 *  - cause: the reason for the update, see PageRevisionUpdatedEvent::CAUSE_XXX.
+	 *  - cause: the reason for the update, see PageLatestRevisionChangedEvent::CAUSE_XXX.
 	 *  - known-revision-output: a combined canonical ParserOutput for the revision, perhaps
 	 *    from some cache. The caller is responsible for ensuring that the ParserOutput indeed
 	 *    matched the $rev and $options. This mechanism is intended as a temporary stop-gap,
@@ -1381,7 +1369,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		$preparedEdit = new PreparedEdit();
 
 		$preparedEdit->popts = $this->getCanonicalParserOptions();
-		$preparedEdit->parserOutputCallback = [ $this, 'getCanonicalParserOutput' ];
+		$preparedEdit->parserOutputCallback = $this->getCanonicalParserOutput( ... );
 		$preparedEdit->pstContent = $this->revision->getContent( SlotRecord::MAIN );
 		$preparedEdit->newContent =
 			$slotsUpdate->isModifiedSlot( SlotRecord::MAIN )
@@ -1459,7 +1447,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			// (We can't check if it was definitely changed without additional queries.)
 			$this->isRedirect() || $this->wasRedirect()
 		);
-		if ( $this->options['cause'] === PageRevisionUpdatedEvent::CAUSE_MOVE ) {
+		if ( $this->options['cause'] === PageLatestRevisionChangedEvent::CAUSE_MOVE ) {
 			// @phan-suppress-next-line PhanTypeMismatchArgument Oldtitle is set along with moved
 			$linksUpdate->setMoveDetails( $this->options['oldtitle'] );
 		}
@@ -1538,8 +1526,8 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * With a 10% chance, triggers pruning the recent changes table.
 	 *
 	 * Further updates may be triggered by core components and extensions
-	 * that listen to the PageRevisionUpdated event. Search for method names
-	 * starting with "handlePageRevisionUpdatedEvent" to find listeners.
+	 * that listen to the PageLatestRevisionChanged event. Search for method names
+	 * starting with "handlePageLatestRevisionChangedEvent" to find listeners.
 	 *
 	 * @note prepareUpdate() must be called before calling this method!
 	 *
@@ -1548,12 +1536,10 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	public function doUpdates() {
 		$this->assertTransition( 'done' );
 
-		if ( $this->options['emitEvents'] ) {
-			$this->emitEvents();
-		}
+		$this->emitEventsIfNeeded();
 
-		// TODO: move more logic into ingress objects subscribed to PageRevisionUpdatedEvent!
-		$event = $this->getPageRevisionUpdatedEvent();
+		// TODO: move more logic into ingress objects subscribed to PageLatestRevisionChangedEvent!
+		$event = $this->getPageLatestRevisionChangedEvent();
 
 		if ( $this->shouldGenerateHTMLOnEdit() ) {
 			$this->triggerParserCacheUpdate();
@@ -1580,7 +1566,8 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		DeferredUpdates::addCallableUpdate( function () use ( $event ) {
 			if (
 				$this->options['oldcountable'] === 'no-change' ||
-				( !$event->isEffectiveContentChange() && !$event->hasCause( PageRevisionUpdatedEvent::CAUSE_MOVE ) )
+				( !$event->isEffectiveContentChange()
+					&& !$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_MOVE ) )
 			) {
 				$good = 0;
 			} elseif ( $event->isCreation() ) {
@@ -1607,7 +1594,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			// Deferred update that adds a mw-recreated tag to edits that create new pages
 			// which have an associated deletion log entry for the specific namespace/title combination
 			// and which are not undeletes
-			if ( !( $event->hasCause( PageRevisionUpdatedEvent::CAUSE_UNDELETE ) ) ) {
+			if ( !( $event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UNDELETE ) ) ) {
 				$revision = $this->revision;
 				DeferredUpdates::addCallableUpdate( function () use ( $revision, $wikiPage ) {
 					$this->maybeAddRecreateChangeTag( $wikiPage, $revision->getId() );
@@ -1629,7 +1616,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			);
 		}
 
-		if ( $event->hasCause( PageRevisionUpdatedEvent::CAUSE_UNDELETE ) ) {
+		if ( $event->hasCause( PageLatestRevisionChangedEvent::CAUSE_UNDELETE ) ) {
 			$this->mainWANObjectCache->touchCheckKey(
 				"DerivedPageDataUpdater:restore:page:$id"
 			);
@@ -1654,32 +1641,67 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		$this->doTransition( 'done' );
 	}
 
+	private function emitEventsIfNeeded(): void {
+		if ( !$this->options['emitEvents'] ) {
+			return;
+		}
+
+		$this->emitEvents();
+	}
+
 	/**
 	 * @internal
 	 */
 	public function emitEvents(): void {
-		if ( !$this->options['emitEvents'] ) {
-			throw new LogicException( 'emitEvents was disabled on this updater' );
+		if ( !( $this->options['allowEvents'] ?? true ) ) {
+			throw new LogicException( 'dispatchPageUpdatedEvent was disabled on this updater' );
 		}
-
-		$event = $this->getPageRevisionUpdatedEvent();
 
 		// don't dispatch again!
 		$this->options['emitEvents'] = false;
+		$this->options['allowEvents'] = false;
 
-		$this->eventDispatcher->dispatch( $event, $this->loadbalancerFactory );
+		$pageLatestRevisionChangedEvent = $this->getPageLatestRevisionChangedEvent();
+		$pageCreatedEvent = $this->getPageCreatedEvent();
+
+		if (
+			$pageLatestRevisionChangedEvent->getPageRecordBefore() === null &&
+			!$this->options['created']
+		) {
+			// if the page wasn't just created, we need the state before
+			throw new LogicException( 'Missing page state before update' );
+		}
+
+		$this->eventDispatcher->dispatch(
+			$pageLatestRevisionChangedEvent,
+			$this->loadbalancerFactory
+		);
+
+		if ( $pageCreatedEvent ) {
+			// NOTE: Emit PageCreated after PageLatestRevisionChanged, because the creation
+			// is only finished after the revision has been set.
+			$this->eventDispatcher->dispatch( $pageCreatedEvent, $this->loadbalancerFactory );
+		}
 	}
 
-	private function getPageRevisionUpdatedEvent(): PageRevisionUpdatedEvent {
-		if ( $this->pageRevisionUpdatedEvent ) {
-			return $this->pageRevisionUpdatedEvent;
+	private function getNominalPerformer(): UserIdentity {
+		/** @var UserIdentity $performer */
+		$performer = $this->options['triggeringUser'] ?? $this->user;
+		'@phan-var UserIdentity $performer';
+
+		return $performer;
+	}
+
+	private function getPageLatestRevisionChangedEvent(): PageLatestRevisionChangedEvent {
+		if ( $this->pageLatestRevisionChangedEvent ) {
+			return $this->pageLatestRevisionChangedEvent;
 		}
 
 		$this->assertHasRevision( __METHOD__ );
 
 		$flags = array_intersect_key(
 			$this->options,
-			PageRevisionUpdatedEvent::DEFAULT_FLAGS
+			PageLatestRevisionChangedEvent::DEFAULT_FLAGS
 		);
 
 		$pageRecordBefore = $this->pageState['oldRecord'] ?? null;
@@ -1705,7 +1727,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 		if ( $revisionBefore && $revisionAfter->getId() === $revisionBefore->getId() ) {
 			// This is a null edit, flag it as a reconciliation request.
-			$flags[ PageRevisionUpdatedEvent::FLAG_RECONCILIATION_REQUEST ] = true;
+			$flags[ PageLatestRevisionChangedEvent::FLAG_RECONCILIATION_REQUEST ] = true;
 		}
 
 		if ( $pageRecordBefore === null && !$this->options['created'] ) {
@@ -1718,11 +1740,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			}
 		}
 
-		/** @var UserIdentity $performer */
-		$performer = $this->options['triggeringUser'] ?? $this->user;
-		'@phan-var UserIdentity $performer';
-
-		$this->pageRevisionUpdatedEvent = new PageRevisionUpdatedEvent(
+		$this->pageLatestRevisionChangedEvent = new PageLatestRevisionChangedEvent(
 			$this->options['cause'] ?? PageUpdateCauses::CAUSE_EDIT,
 			$pageRecordBefore,
 			$pageRecordAfter,
@@ -1730,13 +1748,29 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			$revisionAfter,
 			$this->getRevisionSlotsUpdate(),
 			$this->options['editResult'] ?? null,
-			$performer,
+			$this->getNominalPerformer(),
 			$this->options['tags'] ?? [],
 			$flags,
 			$this->options['rcPatrolStatus'] ?? 0,
 		);
 
-		return $this->pageRevisionUpdatedEvent;
+		return $this->pageLatestRevisionChangedEvent;
+	}
+
+	private function getPageCreatedEvent(): ?PageCreatedEvent {
+		if ( !$this->options['created'] ) {
+			return null;
+		}
+
+		$pageRecordAfter = $this->getWikiPage()->toPageRecord();
+
+		return new PageCreatedEvent(
+			$this->options['cause'] ?? PageUpdateCauses::CAUSE_EDIT,
+			$pageRecordAfter,
+			$this->getRevision(),
+			$this->getNominalPerformer(),
+			$this->options['reason'] ?? $this->getRevision()->getComment()->text,
+		);
 	}
 
 	private function triggerParserCacheUpdate() {

@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Cenzontle25",
-			"ROJOVIVO",
 			"Fredy",
-			"Kuxtal"
+			"Kuxtal",
+			"ROJOVIVO"
 		]
 	},
+	"cdx-breadcrumb-navigation-label": "u yalab waaj",
+	"cdx-breadcrumb-overflow-label": "uláak' ba'alo'ob uti'al u kaxta'al",
 	"cdx-chip-input-chip-added": "Chip $1 ts'o'ok u ts'áabal.",
 	"cdx-chip-input-chip-removed": "Se quitó la pieza $1.",
 	"cdx-input-chip-aria-description": "pets' enter uti'al a editar wáa tselik wáa luk'ik",

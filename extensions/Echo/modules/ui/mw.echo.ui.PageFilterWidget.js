@@ -36,7 +36,7 @@ mw.echo.ui.PageFilterWidget = function MwEchoUiPageFilterWidget( filterModel, so
 		count: this.totalCount,
 		isCapped: true,
 		data: null,
-		classes: [ 'mw-echo-ui-pageFilterWidget-title' ]
+		classes: [ 'mw-echo-ui-pageFilterWidget-title' ],
 	} );
 
 	// Initialization
@@ -74,7 +74,7 @@ mw.echo.ui.PageFilterWidget.prototype.populateDataFromModel = function () {
 			icon: isUserPage ? 'userAvatar' : 'article',
 			count: sourcePages[ title ].count,
 			data: title,
-			classes: [ 'mw-echo-ui-pageFilterWidget-page' ]
+			classes: [ 'mw-echo-ui-pageFilterWidget-page' ],
 		} );
 		optionWidgets.push( widget );
 
@@ -131,7 +131,7 @@ mw.echo.ui.PageFilterWidget.prototype.findInsertionIndex = function ( item ) {
 	return OO.binarySearch(
 		this.items,
 		( otherItem ) => this.sortingFunction( item, otherItem ),
-		true
+		true,
 	);
 };
 

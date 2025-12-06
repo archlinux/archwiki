@@ -22,7 +22,6 @@
 	"echo-new-messages": "Misy hafatra vaovao",
 	"echo-category-title-edit-user-talk": "Hafatry ny {{PLURAL:$1|pejin-dresaka}}",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Rohim-pejy}}",
-	"echo-pref-tooltip-edit-user-talk": "Ilazao aho raha misy mamela hafatra na mamaly hafatra eo amin'ny pejin-dresaka.",
 	"echo-pref-tooltip-article-linked": "Ilazao aho raha misy manisy rohy mankany amina pejy noforiko avy amin'ny pejin-dahatsoratra",
 	"notifications": "Fampilazana",
 	"tooltip-pt-notifications-alert": "Fanairana anao",

@@ -13,7 +13,7 @@ use MediaWiki\Tests\ExtensionServicesTestBase;
 class AbuseFilterServicesTest extends ExtensionServicesTestBase {
 
 	/** @inheritDoc */
-	protected string $className = AbuseFilterServices::class;
+	protected static string $className = AbuseFilterServices::class;
 
 	/** @inheritDoc */
 	protected string $serviceNamePrefix = 'AbuseFilter';

@@ -6,7 +6,8 @@
 			"NGC 54",
 			"Paloi Sciurala",
 			"Strainu",
-			"XXN"
+			"XXN",
+			"Dimitrie569"
 		]
 	},
 	"echo-category-title-login-fail": "Încercări eșuate de autentificare",
@@ -16,6 +17,7 @@
 	"loginnotify-primary-link": "Ajutor",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Încercare eșuată|Multiple încercări eșuate}} de autentificare pe {{SITENAME}} ca $1",
 	"notification-loginnotify-login-success-email-subject": "Autentificare pe {{SITENAME}} ca $1 de pe un dispozitiv pe care nu l-{{GENDER:$1|ați folosit}} recent",
+	"notification-header-login-success": "Cineva (probabil dumneavoastră) s-a autentificat recent la contul dumneavoastră de pe un dispozitiv nou. Dacă ați fost dumneavoastră, putețu ignora acest mesaj. Dacă nu ați fost dumneavoastră, este recomandat să vă schimbați parola, și să verificați activitatea contului dumneavoastră.",
 	"notification-known-header-login-fail": "{{PLURAL:$1|A fost '''o încercare eșuată'''|Au fost '''$1 încercări eșuate'''}} de a se conecta cu contul dvs. de la ultima dată de când v-ați conectat. Dacă nu ați fost dvs., vă rugăm să vă asigurați că contul vostru are o parolă puternică.",
 	"notification-new-unbundled-header-login-fail": "{{PLURAL:$1|A fost '''o încercare eșuată'''|Au fost '''mai multe încercări eșuate'''}} de a se conecta cu contul dvs. de pe un dispozitiv nou de la ultima dată de când v-ați conectat. Vă rugăm să vă asigurați că contul vostru are o parolă puternică."
 }

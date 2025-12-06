@@ -13,34 +13,6 @@ use MediaWiki\User\UserIdentity;
  */
 class AttributeManager {
 	/**
-	 * @var UserGroupManager
-	 */
-	private $userGroupManager;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/**
-	 * @var array[]
-	 */
-	protected $notifications;
-
-	/**
-	 * @var array[]
-	 */
-	protected $categories;
-
-	/**
-	 * @var bool[]
-	 */
-	protected $defaultNotifyTypeAvailability;
-
-	/**
-	 * @var array[]
-	 */
-	protected $notifyTypeAvailabilityByCategory;
-
-	/**
 	 * Notification section constant
 	 */
 	public const ALERT = 'alert';
@@ -56,7 +28,7 @@ class AttributeManager {
 	 */
 	public static $sections = [
 		self::ALERT,
-		self::MESSAGE
+		self::MESSAGE,
 	];
 
 	/**
@@ -77,21 +49,14 @@ class AttributeManager {
 	 * @param UserOptionsLookup $userOptionsLookup
 	 */
 	public function __construct(
-		array $notifications,
-		array $categories,
-		array $defaultNotifyTypeAvailability,
-		array $notifyTypeAvailabilityByCategory,
-		UserGroupManager $userGroupManager,
-		UserOptionsLookup $userOptionsLookup
-	) {
 		// Extensions can define their own notifications and categories
-		$this->notifications = $notifications;
-		$this->categories = $categories;
-
-		$this->defaultNotifyTypeAvailability = $defaultNotifyTypeAvailability;
-		$this->notifyTypeAvailabilityByCategory = $notifyTypeAvailabilityByCategory;
-		$this->userGroupManager = $userGroupManager;
-		$this->userOptionsLookup = $userOptionsLookup;
+		protected array $notifications,
+		protected array $categories,
+		protected array $defaultNotifyTypeAvailability,
+		protected array $notifyTypeAvailabilityByCategory,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly UserOptionsLookup $userOptionsLookup,
+	) {
 	}
 
 	/**
@@ -113,7 +78,7 @@ class AttributeManager {
 			// additionally, inject our own default locator that uses extra['recipients'] key
 			$locators[] = [
 				[ UserLocator::class, 'locateFromEventExtra' ],
-				[ Event::RECIPIENTS_IDX ]
+				[ Event::RECIPIENTS_IDX ],
 			];
 		}
 		return $locators;
@@ -269,6 +234,26 @@ class AttributeManager {
 		}
 
 		return 10;
+	}
+
+	/**
+	 * Get category title (a description shown in preferences and in digest emails).
+	 *
+	 * @param string $category
+	 * @return string Message key
+	 */
+	public function getCategoryTitle( string $category ): string {
+		return $this->categories[$category]['title'] ?? 'echo-category-title-' . $category;
+	}
+
+	/**
+	 * Get category tooltip (additional description shown in preferences).
+	 *
+	 * @param string $category
+	 * @return ?string Message key, or null to show no tooltip
+	 */
+	public function getCategoryTooltip( string $category ): ?string {
+		return $this->categories[$category]['tooltip'] ?? null;
 	}
 
 	/**

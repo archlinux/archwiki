@@ -2,6 +2,7 @@
 
 namespace MediaWiki\HTMLForm\Field;
 
+use MediaWiki\Html\Html;
 use MediaWiki\Xml\XmlSelect;
 
 /**
@@ -21,8 +22,9 @@ use MediaWiki\Xml\XmlSelect;
  * @stable to extend
  */
 class HTMLComboboxField extends HTMLTextField {
-	// FIXME Ewww, this shouldn't be adding any attributes not requested in $list :(
+	/** @inheritDoc */
 	public function getAttributes( array $list ) {
+		// FIXME Ewww, this shouldn't be adding any attributes not requested in $list :(
 		$attribs = [
 			'type' => 'text',
 			'list' => $this->mName . '-datalist',
@@ -31,14 +33,16 @@ class HTMLComboboxField extends HTMLTextField {
 		return $attribs;
 	}
 
+	/** @inheritDoc */
 	public function getInputHTML( $value ) {
-		$datalist = new XmlSelect( false, $this->mName . '-datalist' );
-		$datalist->setTagName( 'datalist' );
-		$datalist->addOptions( $this->getOptions() );
-
-		return parent::getInputHTML( $value ) . $datalist->getHTML();
+		return parent::getInputHTML( $value ) .
+			Html::rawElement( 'datalist',
+				[ 'id' => $this->mName . '-datalist' ],
+				XmlSelect::formatOptions( $this->getOptions() )
+			);
 	}
 
+	/** @inheritDoc */
 	public function getInputOOUI( $value ) {
 		$disabled = false;
 		$allowedParams = [ 'tabindex' ];
@@ -67,6 +71,7 @@ class HTMLComboboxField extends HTMLTextField {
 		] + $attribs );
 	}
 
+	/** @inheritDoc */
 	protected function shouldInfuseOOUI() {
 		return true;
 	}

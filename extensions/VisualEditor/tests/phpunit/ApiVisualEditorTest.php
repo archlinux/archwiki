@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Extension\VisualEditor\Tests;
 
-use MediaWiki\Config\HashConfig;
-use MediaWiki\Extension\VisualEditor\ApiVisualEditor;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Tests\Api\ApiTestCase;
 use Wikimedia\ScopedCallback;
@@ -96,41 +94,6 @@ class ApiVisualEditorTest extends ApiTestCase {
 			'load with preload content' => [ false ],
 			'load with preload via Special:MyLanguage' => [ true ],
 		];
-	}
-
-	public function testIsAllowedNamespace() {
-		$config = new HashConfig( [ 'VisualEditorAvailableNamespaces' => [
-			0 => true,
-			1 => false,
-		] ] );
-		$this->assertTrue( ApiVisualEditor::isAllowedNamespace( $config, 0 ) );
-		$this->assertFalse( ApiVisualEditor::isAllowedNamespace( $config, 1 ) );
-	}
-
-	public function testGetAvailableNamespaceIds() {
-		$config = new HashConfig( [ 'VisualEditorAvailableNamespaces' => [
-			0 => true,
-			1 => false,
-			-1 => true,
-			999999 => true,
-			2 => false,
-			'Template' => true,
-			'Foobar' => true,
-		] ] );
-		$this->assertSame(
-			[ -1, 0, 10, 11 ],
-			ApiVisualEditor::getAvailableNamespaceIds( $config )
-		);
-	}
-
-	public function testIsAllowedContentType() {
-		$config = new HashConfig( [ 'VisualEditorAvailableContentModels' => [
-			'on' => true,
-			'off' => false,
-		] ] );
-		$this->assertTrue( ApiVisualEditor::isAllowedContentType( $config, 'on' ) );
-		$this->assertFalse( ApiVisualEditor::isAllowedContentType( $config, 'off' ) );
-		$this->assertFalse( ApiVisualEditor::isAllowedContentType( $config, 'unknown' ) );
 	}
 
 }

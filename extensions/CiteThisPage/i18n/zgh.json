@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Amara-Amaziɣ",
-			"Mdb897"
+			"Mdb897",
+			"Lhoussine AIT TAYFST"
 		]
 	},
+	"citethispage": "ⴱⴷⵔ ⵜⴰⵙⵏⴰ ⴰⴷ:",
 	"citethispage-link": "ⴱⴷⵔ ⵜⴰⵙⵏⴰ ⴰ",
-	"tooltip-citethispage": "ⵉⵏⵖⵎⵉⵙⵏ ⵖⴼ ⵎⴰⵎⴽ ⵙ ⵔⴰⴷ ⵜⴱⴷⴰⵔⴷ ⵜⴰⵙⵏⴰ ⴰⴷ"
+	"tooltip-citethispage": "ⵉⵏⵖⵎⵉⵙⵏ ⵖⴼ ⵎⴰⵎⴽ ⵙ ⵔⴰⴷ ⵜⴱⴷⴰⵔⴷ ⵜⴰⵙⵏⴰ ⴰⴷ",
+	"citethispage-change-submit": "ⴱⴷⵔ",
+	"citethispage-change-target": "ⵜⴰⵙⵏⴰ:"
 }

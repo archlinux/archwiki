@@ -1,24 +1,7 @@
 <?php
 /**
- * Session provider for bot passwords
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
@@ -33,7 +16,9 @@ use MWRestrictions;
 
 /**
  * Session provider for bot passwords
+ *
  * @since 1.27
+ * @ingroup Session
  */
 class BotPasswordSessionProvider extends ImmutableSessionProviderWithCookie {
 	private GrantsInfo $grantsInfo;
@@ -72,6 +57,7 @@ class BotPasswordSessionProvider extends ImmutableSessionProviderWithCookie {
 			?? ( defined( 'MW_API' ) || defined( 'MW_REST_API' ) );
 	}
 
+	/** @inheritDoc */
 	public function provideSessionInfo( WebRequest $request ) {
 		// Only relevant for the (Action or REST) API
 		if ( !$this->isApiRequest ) {
@@ -96,6 +82,7 @@ class BotPasswordSessionProvider extends ImmutableSessionProviderWithCookie {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function newSessionInfo( $id = null ) {
 		// We don't activate by default
 		return null;
@@ -193,6 +180,7 @@ class BotPasswordSessionProvider extends ImmutableSessionProviderWithCookie {
 		BotPassword::removeAllPasswordsForUser( $username );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedUserRights( SessionBackend $backend ) {
 		if ( $backend->getProvider() !== $this ) {
 			throw new InvalidArgumentException( 'Backend\'s provider isn\'t $this' );
@@ -211,7 +199,7 @@ class BotPasswordSessionProvider extends ImmutableSessionProviderWithCookie {
 		if ( $data && isset( $data['restrictions'] ) && is_string( $data['restrictions'] ) ) {
 			try {
 				return MWRestrictions::newFromJson( $data['restrictions'] );
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 				$this->logger->warning( __METHOD__ . ': Failed to parse restrictions: {restrictions}', [
 					'restrictions' => $data['restrictions']
 				] );

@@ -4,8 +4,5 @@
 			"BOKOBA VEROLY"
 		]
 	},
-	"fancycaptcha-captcha": "Security check",
-	"fancycaptcha-accountcreate": "To protect the wiki against automated account creation, we kindly ask you to enter the words that appear below\n in the box ([[Special:Captcha/help|more info]]):",
-	"fancycaptcha-imgcaptcha-ph": "Sonika bisono yina kele na zulu",
-	"fancycaptcha-reload-text": "Refresh"
+	"fancycaptcha-imgcaptcha-ph": "Sonika bisono yina kele na zulu"
 }

@@ -45,7 +45,7 @@ class UnpackDOMFragments {
 		// If ext-X generates an A-tag and ext-Y also generates an A-tag, then
 		// when we unpack ext-Y's dom fragment, the simple check below would
 		// miss the misnesting.
-		return DOMCompat::nodeName( $targetNode ) === 'a' &&
+		return DOMUtils::nodeName( $targetNode ) === 'a' &&
 			DOMUtils::treeHasElement( $fragment, 'a' );
 	}
 
@@ -72,7 +72,7 @@ class UnpackDOMFragments {
 	private static function makeChildrenEncapWrappers(
 		DocumentFragment $domFragment, string $about
 	): void {
-		PipelineUtils::addSpanWrappers( $domFragment->childNodes );
+		PipelineUtils::addSpanWrappers( DOMUtils::childNodes( $domFragment ) );
 
 		$c = $domFragment->firstChild;
 		while ( $c ) {
@@ -93,6 +93,8 @@ class UnpackDOMFragments {
 
 	private static function markMisnested( Env $env, Element $n, ?int &$newOffset ): void {
 		$dp = DOMDataUtils::getDataParsoid( $n );
+		// XXX T405759 "top frame source" doesn't seem right in the general case
+		$source = $dp->dsr->source ?? $env->topFrame->getSource();
 		if ( $newOffset === null ) {
 			// We end up here when $placeholderParent is part of encapsulated content.
 			// Till we add logic to prevent that from happening, we need this fallback.
@@ -104,19 +106,20 @@ class UnpackDOMFragments {
 			// than page size to avoid pointing to something in source.
 			// Trying to fetch outside page source returns "".
 			if ( $newOffset === null ) {
-				$newOffset = strlen( $env->topFrame->getSrcText() ) + 1;
+				$newOffset = strlen( $source->getSrcText() ) + 1;
 			}
 		}
-		$dp->dsr = new DomSourceRange( $newOffset, $newOffset, null, null );
+		$dp->dsr = new DomSourceRange( $newOffset, $newOffset, null, null, source: $source );
 		$dp->misnested = true;
 	}
 
 	/**
 	 * DOMTraverser handler that unpacks DOM fragments which were injected in the
 	 * token pipeline.
+	 *
 	 * @param Node $placeholder
 	 * @param DTState $state
-	 * @return bool|Node
+	 * @return bool|?Node
 	 */
 	public static function handler( Node $placeholder, DTState $state ) {
 		if ( !$placeholder instanceof Element ) {
@@ -130,8 +133,7 @@ class UnpackDOMFragments {
 
 		$env = $state->env;
 		$placeholderDP = DOMDataUtils::getDataParsoid( $placeholder );
-		Assert::invariant( str_starts_with( $placeholderDP->html, 'mwf' ), '' );
-		$fragmentDOM = $env->getDOMFragment( $placeholderDP->html );
+		$fragmentDOM = $placeholderDP->html;
 		$fragmentContent = $fragmentDOM->firstChild;
 		$placeholderParent = $placeholder->parentNode;
 
@@ -147,11 +149,11 @@ class UnpackDOMFragments {
 			//   [[Test|{{1x|[[Hmm|Something <sup>strange</sup>]]}}]]
 			// A new use of dom fragments is for parser functions returning html
 			// (special page transclusions) which don't do span wrapping.
-			PipelineUtils::addSpanWrappers( $fragmentDOM->childNodes );
+			PipelineUtils::addSpanWrappers( DOMUtils::childNodes( $fragmentDOM ) );
 			// Reset `fragmentContent`, since the `firstChild` may have changed in
 			// span wrapping.
 			$fragmentContent = $fragmentDOM->firstChild;
-			DOMUtils::assertElt( $fragmentContent );
+			'@phan-var Element $fragmentContent'; // @var Element $fragmentContent
 			// Transfer typeof, data-mw, and param info
 			// about attributes are transferred below.
 			DOMDataUtils::setDataMw( $fragmentContent, clone DOMDataUtils::getDataMw( $placeholder ) );
@@ -192,19 +194,25 @@ class UnpackDOMFragments {
 			!empty( $placeholderDP->fostered ) ||
 			$isTransclusion
 		) ) {
-			DOMUtils::assertElt( $fragmentContent );
+			'@phan-var Element $fragmentContent'; // @var Element $fragmentContent
 			$fragmentDP = DOMDataUtils::getDataParsoid( $fragmentContent );
 			if ( $isTransclusion ) {
 				// FIXME: An old comment from c28f137 said we just use dsr->start and
 				// dsr->end since tag-widths will be incorrect for reuse of template
 				// expansions.  The comment was removed in ca9e760.
-				$fragmentDP->dsr = new DomSourceRange( $placeholderDSR->start, $placeholderDSR->end, null, null );
+				$fragmentDP->dsr = new DomSourceRange(
+					$placeholderDSR->start, $placeholderDSR->end, null, null,
+					source: $placeholderDSR->source
+				);
 			} elseif (
 				DOMUtils::matchTypeOf( $fragmentContent, '/^mw:(Nowiki|Extension(\/\S+))$/' ) !== null
 			) {
 				$fragmentDP->dsr = $placeholderDSR;
 			} else { // non-transcluded images
-				$fragmentDP->dsr = new DomSourceRange( $placeholderDSR->start, $placeholderDSR->end, 2, 2 );
+				$fragmentDP->dsr = new DomSourceRange(
+					$placeholderDSR->start, $placeholderDSR->end, 2, 2,
+					source: $placeholderDSR->source
+				);
 			}
 		}
 
@@ -230,10 +238,10 @@ class UnpackDOMFragments {
 		if ( $about !== null ) {
 			// Span wrapping may not have happened for the transclusion above if
 			// the fragment is not the first encapsulation wrapper node.
-			PipelineUtils::addSpanWrappers( $fragmentDOM->childNodes );
+			PipelineUtils::addSpanWrappers( DOMUtils::childNodes( $fragmentDOM ) );
 			$c = $fragmentDOM->firstChild;
 			while ( $c ) {
-				DOMUtils::assertElt( $c );
+				'@phan-var Element $c'; // @var Element $c
 				$c->setAttribute( 'about', $about );
 				$c = $c->nextSibling;
 			}
@@ -242,7 +250,7 @@ class UnpackDOMFragments {
 		$nextNode = $placeholder->nextSibling;
 
 		if ( self::hasBadNesting( $placeholderParent, $fragmentDOM ) ) {
-			$nodeName = DOMCompat::nodeName( $placeholderParent );
+			$nodeName = DOMUtils::nodeName( $placeholderParent );
 			Assert::invariant( $nodeName === 'a', "Unsupported Bad Nesting scenario for $nodeName" );
 			/* -----------------------------------------------------------------------
 			 * If placeholderParent is an A element and fragmentDOM contains another
@@ -258,7 +266,7 @@ class UnpackDOMFragments {
 			// In this example, the <a> corresponding to Foo is placeholderParent and has an about.
 			// dummyNode is the DOM corresponding to "This is [[bad]], very bad". Post-fixup
 			// "[[bad]], very bad" are at encapsulation level and need about ids.
-			DOMUtils::assertElt( $placeholderParent ); // satisfy phan
+			'@phan-var Element $placeholderParent'; // @var Element $placeholderParent
 			$about = DOMCompat::getAttribute( $placeholderParent, 'about' );
 			if ( $about !== null ) {
 				self::makeChildrenEncapWrappers( $fragmentDOM, $about );
@@ -291,6 +299,9 @@ class UnpackDOMFragments {
 			// are misnested.  Check the data-object-ids of all the nodes we
 			// just created and renumber & clone the node data for any which
 			// got copied.
+			// XXX: annotation ranges and about ids will get merged, since we
+			// can't tell which nodes were copied from the active formatting
+			// list and which were 'original'.
 			DOMDataUtils::dedupeNodeData( $unpackedFragment );
 
 			DOMUtils::migrateChildren(
@@ -309,7 +320,7 @@ class UnpackDOMFragments {
 				$linkNode = $placeholderParent->parentNode->firstChild;
 			}
 			PipelineUtils::addSpanWrappers(
-				$linkNode->parentNode->childNodes, $linkNode->nextSibling, $placeholderParent );
+				DOMUtils::childNodes( $linkNode->parentNode ), $linkNode->nextSibling, $placeholderParent );
 
 			$newOffset = null;
 			$node = $linkNode;
@@ -340,10 +351,10 @@ class UnpackDOMFragments {
 		} else {
 			// Preserve fostered flag from DOM fragment
 			if ( !empty( $placeholderDP->fostered ) ) {
-				PipelineUtils::addSpanWrappers( $fragmentDOM->childNodes );
+				PipelineUtils::addSpanWrappers( DOMUtils::childNodes( $fragmentDOM ) );
 				$n = $fragmentDOM->firstChild;
 				while ( $n ) {
-					DOMUtils::assertElt( $n );
+					'@phan-var Element $n'; // @var Element $n
 					$dp = DOMDataUtils::getDataParsoid( $n );
 					$dp->fostered = true;
 					$n = $n->nextSibling;
@@ -358,7 +369,7 @@ class UnpackDOMFragments {
 
 		// Empty out $fragmentDOM since the call below asserts it
 		DOMCompat::replaceChildren( $fragmentDOM );
-		$env->removeDOMFragment( $placeholderDP->html );
+		unset( $placeholderDP->html );
 
 		return $nextNode;
 	}

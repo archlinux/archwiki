@@ -7,12 +7,14 @@
  * @license MIT
  */
 
+const MWReferenceDialogTool = require( './ve.ui.MWReferenceDialogTool.js' );
+
 /**
  * MediaWiki UserInterface citation dialog tool.
  *
  * @abstract
  * @constructor
- * @extends ve.ui.MWReferenceDialogTool
+ * @extends MWReferenceDialogTool
  * @param {OO.ui.Toolbar} toolbar
  * @param {Object} [config] Configuration options
  */
@@ -23,7 +25,7 @@ ve.ui.MWCitationDialogTool = function VeUiMWCitationDialogTool( toolbar, config 
 
 /* Inheritance */
 
-OO.inheritClass( ve.ui.MWCitationDialogTool, ve.ui.MWReferenceDialogTool );
+OO.inheritClass( ve.ui.MWCitationDialogTool, MWReferenceDialogTool );
 
 /* Static Properties */
 ve.ui.MWCitationDialogTool.static.group = 'cite';
@@ -61,3 +63,5 @@ ve.ui.MWCitationDialogTool.static.isCompatibleWith = function ( model ) {
 
 	return compatible;
 };
+
+module.exports = ve.ui.MWCitationDialogTool;

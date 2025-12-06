@@ -2,21 +2,7 @@
 /**
  * Backend for uploading files from previously stored file.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Upload
  */
@@ -69,6 +55,7 @@ class UploadFromStash extends UploadBase {
 
 			$this->stash = new UploadStash( $this->repo, $user );
 		}
+		parent::__construct();
 	}
 
 	/**
@@ -118,6 +105,7 @@ class UploadFromStash extends UploadBase {
 		$this->mVirtualTempPath = $metadata['us_path'];
 		$this->mFileProps = $this->stash->getFileProps( $key );
 		$this->mSourceType = $metadata['us_source_type'];
+		$this->mStashFile = $this->stash->getFile( $key );
 	}
 
 	/**
@@ -163,6 +151,7 @@ class UploadFromStash extends UploadBase {
 	 * @return bool Success
 	 */
 	public function unsaveUploadedFile() {
+		$this->mStashFile = null;
 		return $this->stash->removeFile( $this->mFileKey );
 	}
 

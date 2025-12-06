@@ -8,9 +8,7 @@
  * https://en.m.wikipedia.org/wiki/Barack_Obama
  */
 
-'use strict';
-
-const { Page } = require( './mw_core_pages' );
+import { Page } from './mw_core_pages.js';
 
 class MinervaPage extends Page {
 
@@ -69,4 +67,4 @@ class MinervaPage extends Page {
 	}
 }
 
-module.exports = MinervaPage;
+export default MinervaPage;

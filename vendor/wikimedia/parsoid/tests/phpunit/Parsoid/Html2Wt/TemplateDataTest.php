@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Test\Parsoid\Html2Wt;
 
@@ -39,7 +40,7 @@ class TemplateDataTest extends TestCase {
 		$this->assertEquals( $expectedWT, $wt, $description );
 	}
 
-	public function defineTestData(): array {
+	public static function provideTestData(): array {
 		return [
 			// 1. Transclusions without template data
 			[
@@ -440,7 +441,7 @@ class TemplateDataTest extends TestCase {
 	/**
 	 * @covers \Wikimedia\Parsoid\Parsoid::html2wikitext
 	 * @covers \Wikimedia\Parsoid\Wikitext\ContentModelHandler::fromDOM
-	 * @dataProvider defineTestData
+	 * @dataProvider provideTestData
 	 */
 	public function testTemplateData(
 		string $name, string $html, array $wt
@@ -467,7 +468,7 @@ class TemplateDataTest extends TestCase {
 		);
 	}
 
-	public function defineVersionTestData(): array {
+	public static function provideVersionTestData(): array {
 		return [
 			[
 				'contentVersion' => self::$defaultContentVersion,
@@ -487,7 +488,7 @@ class TemplateDataTest extends TestCase {
 	/**
 	 * @covers \Wikimedia\Parsoid\Parsoid::html2wikitext
 	 * @covers \Wikimedia\Parsoid\Wikitext\ContentModelHandler::fromDOM
-	 * @dataProvider defineVersionTestData
+	 * @dataProvider provideVersionTestData
 	 */
 	public function testTemplateDataVersion(
 		string $contentVersion, string $html, array $wt

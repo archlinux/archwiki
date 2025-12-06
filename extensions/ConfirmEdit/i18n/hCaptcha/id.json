@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"BAPerdana-WMF",
+			"Daud I.F. Argana",
+			"Rachmat04"
+		]
+	},
+	"hcaptcha-desc": "Modul [https://www.hcaptcha.com/ hCaptcha] untuk Confirm Edit",
+	"hcaptcha-edit": "Untuk melindungi wiki ini dari spam suntingan otomatis, kami memohon Anda menyelesaikan hCaptcha berikut:",
+	"hcaptcha-addurl": "Suntingan Anda menyertakan pranala eksternal baru. Untuk melindungi wiki ini dari spam otomatis, kami harap Anda menyelesaikan tantangan hCaptcha berikut:",
+	"hcaptcha-badlogin": "Untuk melindungi wiki ini dari peretasan kata sandi otomatis, kami memohon Anda menyelesaikan hCaptcha berikut:",
+	"hcaptcha-createaccount": "Untuk melindungi wiki ini dari pembuatan akun otomatis, kami memohon Anda menyelesaikan hCaptcha berikut:",
+	"hcaptcha-createaccount-fail": "Tampaknya Anda belum menyelesaikan hCaptchanya.",
+	"hcaptcha-create": "Untuk melindungi wiki ini dari pembuatan halaman otomatis, kami memohon Anda menyelesaikan hCaptcha berikut:",
+	"hcaptcha-help": "Tolong selesaikan sebuah tantangan hCaptcha dan kembalikan nilai respons sebagai captchaWord.",
+	"hcaptcha-privacy-policy": "Situs ini dilindungi oleh hCaptcha dan tunduk pada [https://www.hcaptcha.com/privacy Kebijakan Privasi] serta [https://www.hcaptcha.com/terms Ketentuan Layanan] dari hCaptcha.",
+	"hcaptcha-challenge-closed": "Harap selesaikan tantangan ini sebelum mengirimkan isiannya.",
+	"hcaptcha-challenge-expired": "Batas waktu untuk menyelesaikan tantangan tersebut telah habis. Silakan ulangi.",
+	"hcaptcha-loading-indicator-label": "Harap tunggu, perlindungan spam hCaptcha sedang dimuat",
+	"hcaptcha-missing-token": "Formulir ini dilindungi oleh tantangan hCaptcha. Harap tunggu hingga tantangannya muncul sebelum mengirim isiannya. Pastikan JavaScript Anda telah diaktifkan."
+}

@@ -55,10 +55,16 @@
 	"checkuser-temporary-accounts-onboarding-dialog-skip-all": "Izlaist visu",
 	"checkuser-temporary-accounts-onboarding-dialog-close-label": "Aizvērt",
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "Kas ir pagaidu konts?",
+	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-content": "Lai aizsargātu lietotāju privātumu, {{SITENAME}} vairs publiski neparāda nereģistrēto redaktoru IP adreses.\n\nTā vietā nereģistrētiem redaktoriem tiks piešķirti automātiski ģenerēti lietotājvārdi, kas saistīti ar <strong>[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Temporary_accounts pagaidu kontiem]</strong> un to IP adreses būs redzamas tikai uzticamiem kopienas locekļiem, kuriem tās ir nepieciešamas, lai risinātu vandālisma un aizskarošas uzvedības gadījumus.\n\nKad nereģistrētam redaktoram tiek izveidots pagaidu konts, šī redaktora pārlūkprogrammā tiek iestatīts sīkfails. Šis pagaidu konts tiks attiecināts uz visiem turpmākajiem labojumiem, pat ja šī redaktora IP adrese mainās.",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title": "IP informācijas skatīšana",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content": "[https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/IP_Info IP informācijas] (IP Info) rīks administratoriem, vandalismu apkarojošajiem un pieredzējušajiem lietotājiem atvieglo piekļuvi informācijai par IP adresēm, neparādot pašas IP adreses.\n\nLietotāji, kas atbilst piekļuves prasībām, var aktivizēt IP Info savos iestatījumos. Pēc aktivizēšanas blakus pagaidu kontiem un vecajām IP adresēm tiks parādīts IP Info lodziņš. IP informācija tiks parādīta arī dalībnieka devuma lapā.",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "Iespējot IP informāciju",
+	"checkuser-temporary-accounts-onboarding-dialog-save-global-preference": "Saglabāt globālo iestatījumu",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title": "IP adreses atklāšana",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-base": "IP atklāšanas funkcija ļauj administratoriem, vandalismu apkarojošajiem un pieredzējušajiem lietotājiem atklāt IP adresi, kas saistīta ar pagaidu kontu.",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-with-global-preferences": "{{int:checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-base}}\n\nLietotājiem, kuri atbilst piekļuves prasībām, var būt nepieciešams aktivizēt IP atklāšanu savās [[Special:Preferences#mw-prefsection-personal-checkuser-tempaccount|preferences]] vai  or [[Special:GlobalPreferences#mw-prefsection-personal-checkuser-tempaccount|globālajās preferencēs]]. Pēc aktivizēšanas blakus pagaidu kontiem tiks parādīta poga \"{{int:checkuser-tempaccount-reveal-ip-button-label}}\".",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-title-with-global-preferences": "Iespējot IP atklāšanu globāli",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-checkbox-text-with-global-preferences": "Iespējot IP adrešu atklāšanu pagaidu kontiem visās vikivietnēs, kurā tu atbilsti piekļuves prasībām",
 	"checkuser-investigateblock-reason": "Iemesls",
 	"checkuser-investigate-subtitle-cancel-button-label": "Atcelt",
 	"checkuser-investigate-subtitle-continue-button-label": "Turpināt",
@@ -81,5 +87,6 @@
 	"checkuser-investigate-compare-table-header-ip": "IP",
 	"checkuser-investigate-compare-table-header-useragent": "Lietotāja aģents",
 	"checkuser-tempaccount-enable-preference": "Iespējot IP adrešu atklāšanu pagaidu kontiem",
-	"checkuser-tempaccount-reveal-ip-button-label": "Rādīt IP"
+	"checkuser-tempaccount-reveal-ip-button-label": "Rādīt IP",
+	"checkuser-userinfocard-close-button-aria-label": "Aizvērt"
 }

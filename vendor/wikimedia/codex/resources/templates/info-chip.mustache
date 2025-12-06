@@ -1,0 +1,13 @@
+<div class="cdx-info-chip{{#status}} cdx-info-chip--{{ status }}{{/status}}{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{#id}} id="{{ id }}"{{/id}}{{#renderAttributes}}{{{attributes}}}{{/renderAttributes}}>
+  {{#status}}
+  {{#icon}}
+  <span class="{{ icon }}" aria-hidden="true"></span>
+  {{/icon}}
+  {{^icon}}
+  {{#showStatusIcon}}
+  <span class="cdx-info-chip__icon"></span>
+  {{/showStatusIcon}}
+  {{/icon}}
+  {{/status}}
+  <span class="cdx-info-chip--text">{{ text }}</span>
+</div>

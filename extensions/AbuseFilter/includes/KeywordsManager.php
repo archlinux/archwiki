@@ -224,8 +224,10 @@ class KeywordsManager {
 			'added_links' => 'added-links',
 			// Generates abusefilter-edit-builder-vars-removed-links
 			'removed_links' => 'removed-links',
-			// Generates abusefilter-edit-builder-vars-all-links
-			'all_links' => 'all-links',
+			// Generates abusefilter-edit-builder-vars-old-links
+			'old_links' => 'old-links',
+			// Generates abusefilter-edit-builder-vars-new-links
+			'new_links' => 'new-links',
 			// Generates abusefilter-edit-builder-vars-new-pst
 			'new_pst' => 'new-pst',
 			// Generates abusefilter-edit-builder-vars-diff-pst
@@ -272,8 +274,6 @@ class KeywordsManager {
 			'moved_to_recent_contributors' => 'movedto-recent-contributors',
 			// Generates abusefilter-edit-builder-vars-movedto-first-contributor
 			'moved_to_first_contributor' => 'movedto-first-contributor',
-			// Generates abusefilter-edit-builder-vars-old-links
-			'old_links' => 'old-links',
 			// Generates abusefilter-edit-builder-vars-file-sha1
 			'file_sha1' => 'file-sha1',
 			// Generates abusefilter-edit-builder-vars-file-size
@@ -331,6 +331,7 @@ class KeywordsManager {
 		'moved_to_text' => 'moved_to_title',
 		'moved_to_prefixedtext' => 'moved_to_prefixedtitle',
 		'moved_to_articleid' => 'moved_to_id',
+		'all_links' => 'new_links',
 	];
 
 	/** @var string[][] Final list of builder values */
@@ -342,23 +343,14 @@ class KeywordsManager {
 	/** @var AbuseFilterHookRunner */
 	private $hookRunner;
 
-	/**
-	 * @param AbuseFilterHookRunner $hookRunner
-	 */
 	public function __construct( AbuseFilterHookRunner $hookRunner ) {
 		$this->hookRunner = $hookRunner;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getDisabledVariables(): array {
 		return self::DISABLED_VARS;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getDeprecatedVariables(): array {
 		if ( $this->deprecatedVars === null ) {
 			$this->deprecatedVars = self::DEPRECATED_VARS;
@@ -367,9 +359,6 @@ class KeywordsManager {
 		return $this->deprecatedVars;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getBuilderValues(): array {
 		if ( $this->builderValues === null ) {
 			$this->builderValues = self::BUILDER_VALUES;
@@ -378,26 +367,14 @@ class KeywordsManager {
 		return $this->builderValues;
 	}
 
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
 	public function isVarDisabled( string $name ): bool {
 		return array_key_exists( $name, self::DISABLED_VARS );
 	}
 
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
 	public function isVarDeprecated( string $name ): bool {
 		return array_key_exists( $name, $this->getDeprecatedVariables() );
 	}
 
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
 	public function isVarInUse( string $name ): bool {
 		return array_key_exists( $name, $this->getVarsMappings() );
 	}
@@ -433,9 +410,6 @@ class KeywordsManager {
 		return "abusefilter-edit-builder-vars-$key";
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getVarsMappings(): array {
 		return $this->getBuilderValues()['vars'];
 	}

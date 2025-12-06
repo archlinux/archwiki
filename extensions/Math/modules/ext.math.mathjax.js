@@ -57,6 +57,17 @@ window.MathJax = {
 					}
 					parentElement.textContent = aTag.textContent;
 				} );
+				[].forEach.call( document.querySelectorAll( 'mtd' ), ( mtd ) => {
+					const classList = mtd.classList;
+					for ( const side of [ 'l', 'r' ] ) {
+						const key = 'mwe-math-columnalign-' + side;
+						if ( classList.contains( key ) ) {
+							mtd.setAttribute( 'columnalign', { l: 'left', r: 'right' }[ side ] );
+							classList.remove( key );
+							break;
+						}
+					}
+				} );
 				const div = adaptor.node( 'div', {}, [ adaptor.clone( node ) ] );
 				const dom = adaptor.parse( adaptor.serializeXML( div ), 'text/xml' );
 				const mml = processor.transformToDocument( dom );

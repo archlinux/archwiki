@@ -13,9 +13,6 @@ class ResourceLoaderConfigHandler implements
 	/** @var MathConfig */
 	private $mathConfig;
 
-	/**
-	 * @param MathConfig $mathConfig
-	 */
 	public function __construct(
 		MathConfig $mathConfig
 	) {

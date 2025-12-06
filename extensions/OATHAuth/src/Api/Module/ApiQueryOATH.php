@@ -37,15 +37,12 @@ use Wikimedia\ParamValidator\ParamValidator;
  * @ingroup Extensions
  */
 class ApiQueryOATH extends ApiQueryBase {
-	private OATHUserRepository $oathUserRepository;
-
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,
-		OATHUserRepository $oathUserRepository
+		private readonly OATHUserRepository $oathUserRepository,
 	) {
 		parent::__construct( $query, $moduleName, 'oath' );
-		$this->oathUserRepository = $oathUserRepository;
 	}
 
 	public function execute() {
@@ -84,7 +81,7 @@ class ApiQueryOATH extends ApiQueryBase {
 
 		if ( $user->isNamed() ) {
 			$authUser = $this->oathUserRepository->findByUser( $user );
-			$data['enabled'] = $authUser && $authUser->isTwoFactorAuthEnabled();
+			$data['enabled'] = $authUser->isTwoFactorAuthEnabled();
 
 			// Log if the user doesn't have oathauth-api-all or if a reason is provided
 			// messages used: logentry-oath-verify, log-action-oath-verify

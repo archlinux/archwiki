@@ -17,33 +17,19 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 
 class VerifyOATHForUser extends FormSpecialPage {
+	private bool $enabledStatus;
+	private string $targetUser;
 
-	private const OATHAUTH_IS_ENABLED = 'enabled';
-	private const OATHAUTH_NOT_ENABLED = 'disabled';
-	private OATHUserRepository $userRepo;
-	private UserFactory $userFactory;
-
-	/** @var string */
-	private $enabledStatus;
-
-	/** @var string */
-	private $targetUser;
-
-	/**
-	 * @param OATHUserRepository $userRepo
-	 * @param UserFactory $userFactory
-	 */
-	public function __construct( $userRepo, $userFactory ) {
+	public function __construct(
+		private readonly OATHUserRepository $userRepo,
+		private readonly UserFactory $userFactory,
+	) {
 		// messages used: verifyoathforuser (display "name" on Special:SpecialPages),
 		// right-oathauth-verify-user, action-oathauth-verify-user
 		parent::__construct( 'VerifyOATHForUser', 'oathauth-verify-user' );
-		$this->userRepo = $userRepo;
-		$this->userFactory = $userFactory;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'users';
 	}
@@ -53,37 +39,28 @@ class VerifyOATHForUser extends FormSpecialPage {
 		return true;
 	}
 
-	/**
-	 * @return string
-	 */
+	/** @inheritDoc */
 	protected function getLoginSecurityLevel() {
 		return $this->getName();
 	}
 
-	/**
-	 * @param HTMLForm $form
-	 */
+	/** @inheritDoc */
 	public function alterForm( HTMLForm $form ) {
 		$form->setMessagePrefix( 'oathauth' );
 		$form->getOutput()->setPageTitleMsg( $this->msg( 'oathauth-verify-for-user' ) );
 	}
 
-	/**
-	 * @return string
-	 */
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
 
-	/**
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function requiresUnblock() {
 		return true;
 	}
 
 	/**
-	 * @param User $user
 	 * @throws UserBlockedError
 	 * @throws UserNotLoggedIn
 	 */
@@ -93,17 +70,13 @@ class VerifyOATHForUser extends FormSpecialPage {
 		parent::checkExecutePermissions( $user );
 	}
 
-	/**
-	 * @param string $par
-	 */
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->getOutput()->disallowUserJs();
 		parent::execute( $par );
 	}
 
-	/**
-	 * @return array[]
-	 */
+	/** @inheritDoc */
 	protected function getFormFields() {
 		return [
 			'user' => [
@@ -138,9 +111,7 @@ class VerifyOATHForUser extends FormSpecialPage {
 		}
 		$oathUser = $this->userRepo->findByUser( $user );
 
-		$this->enabledStatus = $oathUser->isTwoFactorAuthEnabled()
-			? self::OATHAUTH_IS_ENABLED
-			: self::OATHAUTH_NOT_ENABLED;
+		$this->enabledStatus = $oathUser->isTwoFactorAuthEnabled();
 
 		// messages used: logentry-oath-verify, log-action-oath-verify
 		$logEntry = new ManualLogEntry( 'oath', 'verify' );
@@ -164,22 +135,8 @@ class VerifyOATHForUser extends FormSpecialPage {
 		return true;
 	}
 
-	/**
-	 * @throws MWException
-	 */
 	public function onSuccess() {
-		switch ( $this->enabledStatus ) {
-			case self::OATHAUTH_IS_ENABLED:
-				$msg = 'oathauth-verify-enabled';
-				break;
-			case self::OATHAUTH_NOT_ENABLED:
-				$msg = 'oathauth-verify-disabled';
-				break;
-			default:
-				throw new MWException(
-					'Verification was successful but status is unknown'
-				);
-		}
+		$msg = $this->enabledStatus ? 'oathauth-verify-enabled' : 'oathauth-verify-disabled';
 
 		$out = $this->getOutput();
 		$out->addBacklinkSubtitle( $this->getPageTitle() );

@@ -34,7 +34,6 @@
 	"echo-category-title-mention": "{{PLURAL:$1|Banggit|Mga banggit}}",
 	"echo-category-title-other": "{{PLURAL:$1|Iba}}",
 	"echo-category-title-system": "{{PLURAL:$1|Sistema}}",
-	"echo-pref-tooltip-edit-user-talk": "Ipabatid sa akin kung may nagpaskil ng mensahe o may tumugon sa aking pahinang usapan.",
 	"echo-pref-tooltip-article-linked": "Ipabatid sa akin kung may kumawing sa pahinang inilika ko mula sa isang pahina ng artikulo.",
 	"echo-pref-tooltip-mention": "Ipabatid sa aking kung may kumawing sa aking pahina ng tagagamit mula sa anumang pahinang usapan.",
 	"echo-pref-tooltip-article-reminder": "PakiTawag-Pansin mo ako kapag ito ay naitanong.",

@@ -1,5 +1,3 @@
-'use strict';
-
 const { ArticlePage } = require( '../support/world.js' );
 
 const iSeeALinkToAboutPage = async () => {

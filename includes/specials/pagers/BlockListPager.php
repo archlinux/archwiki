@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -106,6 +92,7 @@ class BlockListPager extends TablePager {
 		$this->mDefaultDirection = IndexPager::DIR_DESCENDING;
 	}
 
+	/** @inheritDoc */
 	protected function getFieldNames() {
 		static $headers = null;
 
@@ -416,9 +403,7 @@ class BlockListPager extends TablePager {
 					break;
 				case ActionRestriction::TYPE:
 					$actionName = $this->blockActionInfo->getActionFromId( $restriction->getValue() );
-					$enablePartialActionBlocks =
-						$this->getConfig()->get( MainConfigNames::EnablePartialActionBlocks );
-					if ( $actionName && $enablePartialActionBlocks ) {
+					if ( $actionName ) {
 						$items[$restriction->getType()][] = Html::rawElement(
 							'li',
 							[],
@@ -463,18 +448,17 @@ class BlockListPager extends TablePager {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$db = $this->getDatabase();
 		$commentQuery = $this->commentStore->getJoin( 'bl_reason' );
 		$info = [
-			'tables' => array_merge(
-				[
-					'block',
-					'block_by_actor' => 'actor',
-					'block_target',
-				],
-				$commentQuery['tables']
-			),
+			'tables' => [
+				'block',
+				'block_by_actor' => 'actor',
+				'block_target',
+				...$commentQuery['tables'],
+			],
 			'fields' => [
 				// The target fields should be those accepted by BlockTargetFactory::newFromRowRedacted()
 				'bt_address',
@@ -532,18 +516,22 @@ class BlockListPager extends TablePager {
 		return $info;
 	}
 
+	/** @inheritDoc */
 	protected function getTableClass() {
 		return parent::getTableClass() . ' mw-blocklist';
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ [ 'bl_timestamp', 'bl_id' ] ];
 	}
 
+	/** @inheritDoc */
 	public function getDefaultSort() {
 		return '';
 	}
 
+	/** @inheritDoc */
 	protected function isFieldSortable( $name ) {
 		return false;
 	}

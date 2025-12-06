@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006, 2010 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -721,7 +707,7 @@ abstract class ApiBase extends ContextSource {
 		if ( !$this->mReplicaDB ) {
 			$this->mReplicaDB = MediaWikiServices::getInstance()
 				->getConnectionProvider()
-				->getReplicaDatabase( false, 'api' );
+				->getReplicaDatabase();
 		}
 
 		return $this->mReplicaDB;
@@ -843,7 +829,6 @@ abstract class ApiBase extends ContextSource {
 			'safeMode' => false,
 		];
 
-		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 		$parseLimit = (bool)$options['parseLimit'];
 		$cacheKey = (int)$parseLimit;
 
@@ -974,8 +959,10 @@ abstract class ApiBase extends ContextSource {
 	 * @param string ...$required Names of parameters of which exactly one must be set
 	 */
 	public function requireOnlyOneParameter( $params, ...$required ) {
-		$intersection = array_intersect( array_keys( array_filter( $params,
-			[ $this, 'parameterNotEmpty' ] ) ), $required );
+		$intersection = array_intersect(
+			array_keys( array_filter( $params, $this->parameterNotEmpty( ... ) ) ),
+			$required
+		);
 
 		if ( count( $intersection ) > 1 ) {
 			$this->dieWithError( [
@@ -1009,8 +996,10 @@ abstract class ApiBase extends ContextSource {
 	 * @param string ...$required Parameter names that cannot have more than one set
 	 */
 	public function requireMaxOneParameter( $params, ...$required ) {
-		$intersection = array_intersect( array_keys( array_filter( $params,
-			[ $this, 'parameterNotEmpty' ] ) ), $required );
+		$intersection = array_intersect(
+			array_keys( array_filter( $params, $this->parameterNotEmpty( ... ) ) ),
+			$required
+		);
 
 		if ( count( $intersection ) > 1 ) {
 			$this->dieWithError( [
@@ -1035,7 +1024,7 @@ abstract class ApiBase extends ContextSource {
 	 */
 	public function requireAtLeastOneParameter( $params, ...$required ) {
 		$intersection = array_intersect(
-			array_keys( array_filter( $params, [ $this, 'parameterNotEmpty' ] ) ),
+			array_keys( array_filter( $params, $this->parameterNotEmpty( ... ) ) ),
 			$required
 		);
 
@@ -1070,7 +1059,7 @@ abstract class ApiBase extends ContextSource {
 			return;
 		}
 		$intersection = array_intersect(
-			array_keys( array_filter( $params, [ $this, 'parameterNotEmpty' ] ) ),
+			array_keys( array_filter( $params, $this->parameterNotEmpty( ... ) ) ),
 			(array)$conflicts
 		);
 		if ( count( $intersection ) ) {
@@ -1519,7 +1508,7 @@ abstract class ApiBase extends ContextSource {
 	 * @throws ApiUsageException always
 	 * @return never
 	 */
-	public function dieWithError( $msg, $code = null, $data = null, $httpCode = 0 ) {
+	public function dieWithError( $msg, $code = null, $data = null, $httpCode = 0 ): never {
 		throw ApiUsageException::newWithMessage( $this, $msg, $code, $data, $httpCode );
 	}
 
@@ -1532,7 +1521,7 @@ abstract class ApiBase extends ContextSource {
 	 * @throws ApiUsageException always
 	 * @return never
 	 */
-	public function dieWithException( Throwable $exception, array $options = [] ) {
+	public function dieWithException( Throwable $exception, array $options = [] ): never {
 		$this->dieWithError(
 			$this->getErrorFormatter()->getMessageFromException( $exception, $options )
 		);
@@ -1547,7 +1536,7 @@ abstract class ApiBase extends ContextSource {
 	 * @throws ApiUsageException always
 	 * @return never
 	 */
-	public function dieBlocked( Block $block ) {
+	public function dieBlocked( Block $block ): never {
 		$blockErrorFormatter = MediaWikiServices::getInstance()->getFormatterFactory()
 			->getBlockErrorFormatter( $this->getContext() );
 
@@ -1570,7 +1559,7 @@ abstract class ApiBase extends ContextSource {
 	 * @throws ApiUsageException always
 	 * @return never
 	 */
-	public function dieStatus( StatusValue $status ) {
+	public function dieStatus( StatusValue $status ): never {
 		if ( $status->isGood() ) {
 			throw new InvalidArgumentException( 'Successful status passed to ApiBase::dieStatus' );
 		}
@@ -1612,7 +1601,7 @@ abstract class ApiBase extends ContextSource {
 	 * @throws ApiUsageException always
 	 * @return never
 	 */
-	public function dieReadOnly() {
+	public function dieReadOnly(): never {
 		$this->dieWithError(
 			'apierror-readonly',
 			'readonly',
@@ -1720,7 +1709,7 @@ abstract class ApiBase extends ContextSource {
 				case 'timestamp':
 					try {
 						$dbTs = $this->getDB()->timestamp( $value );
-					} catch ( TimestampException $ex ) {
+					} catch ( TimestampException ) {
 						$dbTs = false;
 					}
 					$this->dieContinueUsageIf( $value !== $dbTs );
@@ -1756,7 +1745,7 @@ abstract class ApiBase extends ContextSource {
 	 * @param string $message Error message
 	 * @return never
 	 */
-	protected static function dieDebug( $method, $message ) {
+	protected static function dieDebug( $method, $message ): never {
 		throw new MWException( "Internal error in $method: $message" );
 	}
 
@@ -1979,7 +1968,7 @@ abstract class ApiBase extends ContextSource {
 							$isDeprecated = $submod->isDeprecated();
 							$isInternal = $submod->isInternal();
 						}
-					} catch ( ApiUsageException $ex ) {
+					} catch ( ApiUsageException ) {
 						// Ignore
 					}
 					if ( $summary ) {

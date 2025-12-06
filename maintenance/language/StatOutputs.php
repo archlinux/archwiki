@@ -2,21 +2,7 @@
 /**
  * Statistic output classes.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup MaintenanceLanguage
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
@@ -30,6 +16,13 @@ use Wikimedia\AtEase\AtEase;
  * A general output object. Need to be overridden
  */
 class StatsOutput {
+	/**
+	 * @param int|float $subset
+	 * @param int|float $total
+	 * @param bool $revert
+	 * @param int|float $accuracy
+	 * @return string
+	 */
 	public function formatPercent( $subset, $total, $revert = false, $accuracy = 2 ) {
 		AtEase::suppressWarnings();
 		$return = sprintf( '%.' . $accuracy . 'f%%', 100 * $subset / $total );
@@ -50,6 +43,10 @@ class StatsOutput {
 	public function blockend() {
 	}
 
+	/**
+	 * @param string|float|int $in
+	 * @param bool $heading
+	 */
 	public function element( $in, $heading = false ) {
 	}
 }
@@ -90,10 +87,12 @@ class WikiStatsOutput extends StatsOutput {
 		echo '';
 	}
 
+	/** @inheritDoc */
 	public function element( $in, $heading = false ) {
 		echo ( $heading ? '!' : '|' ) . "$in\n";
 	}
 
+	/** @inheritDoc */
 	public function formatPercent( $subset, $total, $revert = false, $accuracy = 2 ) {
 		AtEase::suppressWarnings();
 		$v = round( 255 * $subset / $total );
@@ -128,6 +127,7 @@ class WikiStatsOutput extends StatsOutput {
 
 /** Output text. To be used on a terminal for example. */
 class TextStatsOutput extends StatsOutput {
+	/** @inheritDoc */
 	public function element( $in, $heading = false ) {
 		echo $in . "\t";
 	}
@@ -139,6 +139,7 @@ class TextStatsOutput extends StatsOutput {
 
 /** csv output. Some people love excel */
 class CsvStatsOutput extends StatsOutput {
+	/** @inheritDoc */
 	public function element( $in, $heading = false ) {
 		echo $in . ";";
 	}

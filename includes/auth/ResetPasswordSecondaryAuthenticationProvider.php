@@ -1,22 +1,7 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Auth
  */
 
 namespace MediaWiki\Auth;
@@ -26,7 +11,7 @@ use MediaWiki\Message\Message;
 use MediaWiki\User\User;
 
 /**
- * Reset the local password, if signalled via $this->manager->setAuthenticationSessionData()
+ * Reset the local password, if signalled via `$this->manager->setAuthenticationSessionData()`
  *
  * The authentication data key is 'reset-pass'; the data is an object with the
  * following properties:
@@ -40,22 +25,27 @@ use MediaWiki\User\User;
  */
 class ResetPasswordSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationProvider {
 
+	/** @inheritDoc */
 	public function getAuthenticationRequests( $action, array $options ) {
 		return [];
 	}
 
+	/** @inheritDoc */
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
 		return $this->tryReset( $user, $reqs );
 	}
 
+	/** @inheritDoc */
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
 		return $this->tryReset( $user, $reqs );
 	}
 
+	/** @inheritDoc */
 	public function beginSecondaryAccountCreation( $user, $creator, array $reqs ) {
 		return $this->tryReset( $user, $reqs );
 	}
 
+	/** @inheritDoc */
 	public function continueSecondaryAccountCreation( $user, $creator, array $reqs ) {
 		return $this->tryReset( $user, $reqs );
 	}

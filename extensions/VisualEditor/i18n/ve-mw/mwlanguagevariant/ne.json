@@ -27,6 +27,8 @@
 	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "भाषाहरू",
 	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "भाषा कोड",
 	"visualeditor-mwlanguagevariantinspector-filter-text-label": "सामग्रीहरू",
+	"visualeditor-mwlanguagevariantinspector-oneway-from-text-placeholder": "स्रोत पाठ",
+	"visualeditor-mwlanguagevariantinspector-oneway-to-text-placeholder": "भिन्न पाठ",
 	"visualeditor-mwlanguagevariantinspector-title-name": "भाषा नाम",
 	"visualeditor-mwlanguagevariantinspector-title-oneway": "एकतर्फी परिवर्तन नियम",
 	"visualeditor-mwlanguagevariantinspector-title-twoway": "भाषा परिवर्तन नियम"

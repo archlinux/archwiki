@@ -229,17 +229,32 @@ QUnit.test( 'onCopy', ( assert ) => {
 			rangeOrSelection: new ve.Range( 0, 61 ),
 			expectedText: 'abc\n\nd\n\ne\n\nf\n\ng\n\nhi\n\nj\n\nk\n\nl\n\nm',
 			msg: 'Plain text of entire document'
+		},
+		{
+			doc: ve.dm.converter.getModelFromDom( ve.test.utils.createDocumentFromHtml( '<table><tbody><tr><th>H1</th><th>H2</th></tr><tr><td>C1</td><td>C2</td></tr></tbody></table>' ) ),
+			rangeOrSelection: {
+				type: 'table',
+				tableRange: new ve.Range( 0, 32 ),
+				fromCol: 0,
+				fromRow: 0,
+				toCol: 0,
+				toRow: 1
+			},
+			expectedOriginalRange: new ve.Range( 0, 20 ),
+			expectedBalancedRange: new ve.Range( 0, 20 ),
+			expectedHtml: '<table><tbody><tr><th>H1</th></tr><tr><td>C1</td></tr></tbody></table>',
+			msg: 'Partial table selection'
 		}
 	];
 
-	function testRunner( doc, rangeOrSelection, expectedData, expectedOriginalRange, expectedBalancedRange, expectedHtml, expectedText, noClipboardData, msg ) {
+	cases.forEach( ( caseItem ) => {
 		const clipboardData = new ve.test.utils.MockDataTransfer(),
 			testEvent = ve.test.utils.createTestEvent( { type: 'copy', clipboardData: clipboardData } ),
-			view = ve.test.utils.createSurfaceViewFromDocument( doc || ve.dm.example.createExampleDocument() ),
+			view = ve.test.utils.createSurfaceViewFromDocument( caseItem.doc || ve.dm.example.createExampleDocument() ),
 			model = view.getModel();
 
 		let isClipboardDataFormatsSupported;
-		if ( noClipboardData ) {
+		if ( caseItem.noClipboardData ) {
 			isClipboardDataFormatsSupported = ve.isClipboardDataFormatsSupported;
 			ve.isClipboardDataFormatsSupported = function () {
 				return false;
@@ -247,50 +262,45 @@ QUnit.test( 'onCopy', ( assert ) => {
 		}
 
 		// Paste sequence
-		model.setSelection( ve.test.utils.selectionFromRangeOrSelection( model.getDocument(), rangeOrSelection ) );
+		model.setSelection( ve.test.utils.selectionFromRangeOrSelection( model.getDocument(), caseItem.rangeOrSelection ) );
 		view.clipboardHandler.onCopy( testEvent );
 
-		if ( noClipboardData ) {
+		if ( caseItem.noClipboardData ) {
 			ve.isClipboardDataFormatsSupported = isClipboardDataFormatsSupported;
 		}
 
 		const slice = view.clipboardHandler.clipboard.slice;
 		const clipboardKey = view.clipboardHandler.clipboardId + '-' + view.clipboardHandler.clipboardIndex;
 
-		assert.equalRange( slice.originalRange, expectedOriginalRange || rangeOrSelection, msg + ': originalRange' );
-		assert.equalRange( slice.balancedRange, expectedBalancedRange || rangeOrSelection, msg + ': balancedRange' );
-		if ( expectedData ) {
-			assert.equalLinearData( slice.data.data, expectedData, msg + ': data' );
+		assert.equalRange( slice.originalRange, caseItem.expectedOriginalRange || caseItem.rangeOrSelection, caseItem.msg + ': originalRange' );
+		assert.equalRange( slice.balancedRange, caseItem.expectedBalancedRange || caseItem.rangeOrSelection, caseItem.msg + ': balancedRange' );
+		if ( caseItem.expectedData ) {
+			assert.equalLinearData( slice.data.data, caseItem.expectedData, caseItem.msg + ': data' );
 		}
-		if ( expectedHtml ) {
-			const $expected = $( '<div>' ).html( expectedHtml );
+		if ( caseItem.expectedHtml ) {
+			const $expected = $( '<div>' ).html( caseItem.expectedHtml );
 			// Clipboard key is random, so update it
 			$expected.find( '[data-ve-clipboard-key]' ).attr( 'data-ve-clipboard-key', clipboardKey );
 			assert.equalDomElement(
 				$( '<div>' ).html( clipboardData.getData( 'text/html' ) )[ 0 ],
 				$expected[ 0 ],
-				msg + ': html'
+				caseItem.msg + ': html'
 			);
 		}
-		if ( expectedText ) {
+		if ( caseItem.expectedText ) {
 			// Different browsers and browser versions will produce different trailing whitespace, so just trim.
-			assert.strictEqual( clipboardData.getData( 'text/plain' ).trim(), expectedText, msg + ': text' );
+			assert.strictEqual( clipboardData.getData( 'text/plain' ).trim(), caseItem.expectedText, caseItem.msg + ': text' );
 		}
-		if ( !noClipboardData ) {
-			assert.strictEqual( clipboardData.getData( view.clipboardHandler.constructor.static.clipboardKeyMimeType ), clipboardKey, msg + ': clipboardId set' );
+		if ( !caseItem.noClipboardData ) {
+			assert.strictEqual(
+				clipboardData.getData( view.clipboardHandler.constructor.static.clipboardKeyMimeType ),
+				clipboardKey,
+				caseItem.msg + ': clipboardId set'
+			);
 		}
 
 		view.destroy();
-	}
-
-	cases.forEach( ( caseItem ) => {
-		testRunner(
-			caseItem.doc, caseItem.rangeOrSelection, caseItem.expectedData,
-			caseItem.expectedOriginalRange, caseItem.expectedBalancedRange,
-			caseItem.expectedHtml, caseItem.expectedText, caseItem.noClipboardData, caseItem.msg
-		);
 	} );
-
 } );
 
 QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
@@ -298,8 +308,6 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 		bold = ve.dm.example.bold,
 		italic = ve.dm.example.italic,
 		link = ve.dm.example.link( 'Foo' ),
-		// generateUniqueId is deterministic on the DummyPlatform
-		imported = ( source ) => ( { type: 'meta/importedData', attributes: { source: source, eventId: ve.init.platform.generateUniqueId() } } ),
 		cases = [
 			{
 				rangeOrSelection: new ve.Range( 1 ),
@@ -1556,6 +1564,89 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 				msg: 'Paste paragraphs and a table into table cell'
 			},
 			{
+				documentHtml: '<table><tbody><tr><th>H1</th><th>H2</th></tr><tr><td>C1</td><td>C2</td></tr></tbody></table>',
+				rangeOrSelection: {
+					type: 'table',
+					tableRange: new ve.Range( 0, 32 ),
+					fromCol: 1,
+					fromRow: 0,
+					toCol: 1,
+					toRow: 0
+				},
+				internalSourceRangeOrSelection: {
+					type: 'table',
+					tableRange: new ve.Range( 0, 32 ),
+					fromCol: 0,
+					fromRow: 0,
+					toCol: 0,
+					toRow: 1
+				},
+				expectedRangeOrSelection: {
+					type: 'table',
+					tableRange: new ve.Range( 0, 32 ),
+					fromCol: 1,
+					fromRow: 0,
+					toCol: 1,
+					toRow: 1
+				},
+				expectedOps: [
+					[
+						{ type: 'retain', length: 24 },
+						{
+							insert: [],
+							remove: [
+								{ type: 'paragraph', internal: { generated: 'wrapper' } },
+								...'C2',
+								{ type: '/paragraph' }
+							],
+							type: 'replace'
+						},
+						{ type: 'retain', length: 6 }
+					],
+					[
+						{ type: 'retain', length: 24 },
+						{
+							insert: [
+								{ type: 'paragraph', internal: { generated: 'wrapper' } },
+								...'C1',
+								{ type: '/paragraph' }
+							],
+							remove: [],
+							type: 'replace'
+						},
+						{ type: 'retain', length: 6 }
+
+					],
+					[
+						{ type: 'retain', length: 10 },
+						{
+							insert: [],
+							remove: [
+								{ type: 'paragraph', internal: { generated: 'wrapper' } },
+								...'H2',
+								{ type: '/paragraph' }
+							],
+							type: 'replace'
+						},
+						{ type: 'retain', length: 20 }
+					],
+					[
+						{ type: 'retain', length: 10 },
+						{
+							insert: [
+								{ type: 'paragraph', internal: { generated: 'wrapper' } },
+								...'H1',
+								{ type: '/paragraph' }
+							],
+							remove: [],
+							type: 'replace'
+						},
+						{ type: 'retain', length: 20 }
+					]
+				],
+				msg: 'Internal table copy'
+			},
+			{
 				rangeOrSelection: new ve.Range( 2 ),
 				documentHtml: '<p>A</p><ul><li>B</li><li>C</li></ul>',
 				internalSourceRangeOrSelection: new ve.Range( 6, 12 ),
@@ -1832,7 +1923,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						},
 						{
 							type: 'replace',
-							insert: [ ...'image/gif:26' ],
+							insert: [ ...'image/gif:35' ],
 							remove: []
 						},
 						{ type: 'retain', length: docLen - 1 }
@@ -1942,7 +2033,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', imported( null ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation() )
 							],
 							remove: []
 						},
@@ -1950,6 +2041,66 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 					]
 				],
 				msg: 'Text into empty paragraph (annotateImportedData)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 3, 6 ),
+				pasteHtml: 'Foo',
+				expectedRangeOrSelection: new ve.Range( 6 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 3 },
+						{
+							type: 'replace',
+							insert: [],
+							remove: [ ...'Foo' ]
+						},
+						{ type: 'retain', length: docLen - 6 }
+					],
+					[
+						{ type: 'retain', length: 3 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation() )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 6 }
+					]
+				],
+				msg: 'Text over non-empty paragraph (annotateImportedData)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 23, 27 ),
+				pasteHtml: 'Foo',
+				expectedRangeOrSelection: new ve.Range( 26 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 23 },
+						{
+							type: 'replace',
+							insert: [],
+							remove: [
+								...ve.dm.example.annotateText( 'Quux', bold )
+							]
+						},
+						{ type: 'retain', length: docLen - 27 }
+					],
+					[
+						{ type: 'retain', length: 23 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', [ bold, ve.dm.example.getImportedAnnotation() ] )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 27 }
+					]
+				],
+				msg: 'Text over annotated paragraph (annotateImportedData)'
 			},
 			{
 				rangeOrSelection: new ve.Range( 1 ),
@@ -1962,7 +2113,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', imported( 'googleDocs' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'googleDocs' ) )
 							],
 							remove: []
 						},
@@ -1983,7 +2134,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', imported( 'visualEditor' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'visualEditor' ) )
 							],
 							remove: []
 						},
@@ -2003,7 +2154,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', imported( 'libreOffice' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'libreOffice' ) )
 							],
 							remove: []
 						},
@@ -2023,7 +2174,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', imported( 'microsoftOffice' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'microsoftOffice' ) )
 							],
 							remove: []
 						},
@@ -2043,7 +2194,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', imported( 'plainText' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'plainText' ) )
 							],
 							remove: []
 						},

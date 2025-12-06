@@ -3,20 +3,20 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html;
 
+use Generator;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 
 /**
  * Wrap some stages into a pipeline.
  */
-
 class ParserPipeline {
 	private bool $alwaysToplevel;
 	private bool $atTopLevel;
@@ -79,17 +79,17 @@ class ParserPipeline {
 	/**
 	 * Set source offsets for the source that this pipeline will process.
 	 *
-	 * This lets us use different pipelines to parse fragments of the same page
+	 * This lets us use different pipelines to parse fragments of the same page.
 	 * Ex: extension content (found on the same page) is parsed with a different
 	 * pipeline than the top-level page.
 	 *
 	 * Because of this, the source offsets are not [0, page.length) always
 	 * and needs to be explicitly initialized
 	 *
-	 * @param SourceRange $so
+	 * @param SourceRange $srcOffsets
 	 */
-	public function setSourceOffsets( SourceRange $so ): void {
-		$this->applyToStage( 'setSourceOffsets', $so );
+	public function setSrcOffsets( SourceRange $srcOffsets ): void {
+		$this->applyToStage( 'setSrcOffsets', $srcOffsets );
 	}
 
 	/**
@@ -106,25 +106,25 @@ class ParserPipeline {
 	 * in case that first stage is the source of input chunks we are processing
 	 * in the rest of the pipeline)
 	 *
-	 * @param string|Token|array<Token|string>|DocumentFragment $input
+	 * @param string|Token|array<Token|string>|DocumentFragment|Element $input
 	 * @param array{sol:bool} $opts
 	 *  - sol (bool) Whether tokens should be processed in start-of-line context.
 	 *  - chunky (bool) Whether we are processing the input chunkily.
 	 *                  If so, the first stage will be skipped
-	 * @return array|Document
+	 * @return array|DocumentFragment|Element
 	 */
-	public function parse( $input, array $opts ) {
+	public function parse(
+		string|Token|array|DocumentFragment|Element $input,
+		array $opts
+	): array|DocumentFragment|Element {
 		$profile = $this->env->profiling() ? $this->env->pushNewProfile() : null;
 		if ( $profile !== null ) {
 			$profile->start();
 		}
 
 		$output = $input;
-		foreach ( $this->stages as $stage ) {
+		foreach ( $this->stages as $i => $stage ) {
 			$output = $stage->process( $output, $opts );
-			if ( $output === null ) {
-				throw new \RuntimeException( 'Stage ' . get_class( $stage ) . ' generated null output.' );
-			}
 		}
 
 		$this->env->getPipelineFactory()->returnPipeline( $this );
@@ -145,13 +145,31 @@ class ParserPipeline {
 	}
 
 	/**
+	 * @param array<PipelineStage> $stages
+	 * @param string $input
+	 * @param array $opts
+	 */
+	private function processPipelineStages( array $stages, string $input, array $opts ): Generator {
+		$currStage = array_pop( $stages );
+		$prevStages = $stages;
+		if ( count( $prevStages ) === 0 ) {
+			yield from $currStage->processChunkily( $input, $opts );
+		} else {
+			foreach ( $this->processPipelineStages( $prevStages, $input, $opts ) as $prevStageOutput ) {
+				yield from $currStage->processChunkily( $prevStageOutput, $opts );
+			}
+		}
+		yield from $currStage->finalize();
+	}
+
+	/**
 	 * Parse input in chunks
 	 *
 	 * @param string $input Input wikitext
 	 * @param array{sol:bool} $opts
 	 *  - atTopLevel: (bool) Whether we are processing the top-level document
 	 *  - sol: (bool) Whether input should be processed in start-of-line context
-	 * @return Document|array final DOM or array of token chnks
+	 * @return Element|array final <body> element or array of token chnks
 	 */
 	public function parseChunkily( string $input, array $opts ) {
 		$profile = $this->env->profiling() ? $this->env->pushNewProfile() : null;
@@ -160,8 +178,7 @@ class ParserPipeline {
 		}
 
 		$ret = [];
-		$lastStage = PHPUtils::lastItem( $this->stages );
-		foreach ( $lastStage->processChunkily( $input, $opts ) as $output ) {
+		foreach ( $this->processPipelineStages( $this->stages, $input, $opts ) as $output ) {
 			$ret[] = $output;
 		}
 
@@ -201,7 +218,7 @@ class ParserPipeline {
 	 * @param array $initialState Once the pipeline is retrieved / constructed,
 	 * it will be initialized with this state.
 	 */
-	public function init( array $initialState = [] ) {
+	public function init( array $initialState = [] ): void {
 		// Reset pipeline state once per top-level doc.
 		// This clears state from any per-doc global state
 		// maintained across all pipelines used by the document.
@@ -210,13 +227,17 @@ class ParserPipeline {
 		$this->resetState( [
 			'toplevel' => $this->atTopLevel,
 			'toFragment' => $initialState['toFragment'] ?? true,
+			'tplInfo' => $initialState['tplInfo'] ?? null,
 		] );
 
-		// Set frame
 		$frame = $initialState['frame'];
-		if ( !$this->atTopLevel ) {
+		$newSource = $initialState['srcOffsets']->source ?? $frame->getSource();
+		// Eventually we will disentangle the Frame from the Source and
+		// we won't have to create a new Frame if the only difference is
+		// the $newSource -- but for now, lets ensure that Frame::getSrcText()
+		// matches $srcOffsets->source->getSrcText()
+		if ( !$this->atTopLevel || $newSource !== $frame->getSource() ) {
 			$tplArgs = $initialState['tplArgs'] ?? null;
-			$srcText = $initialState['srcText'] ?? null;
 			if ( isset( $tplArgs['title'] ) ) {
 				$title = $tplArgs['title'];
 				$args = $tplArgs['attribs']; // KV[]
@@ -224,14 +245,13 @@ class ParserPipeline {
 				$title = $frame->getTitle();
 				$args = $frame->getArgs()->args; // KV[]
 			}
-			$frame = $frame->newChild( $title, $args, $srcText );
+			$frame = $frame->newChild( $title, $args, $newSource );
 		}
-		$this->setFrame( $frame );
 
-		// Set source offsets for this pipeline's content
-		$srcOffsets = $initialState['srcOffsets'] ?? null;
-		if ( $srcOffsets ) {
-			$this->setSourceOffsets( $srcOffsets );
-		}
+		$this->setFrame( $frame );
+		$this->setSrcOffsets(
+			$initialState['srcOffsets'] ??
+				SourceRange::fromSource( $frame->getSource() )
+		);
 	}
 }

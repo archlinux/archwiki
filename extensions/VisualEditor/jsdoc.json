@@ -16,7 +16,7 @@
 		"node_modules/jsdoc-wmf-theme/plugins/default"
 	],
 	"source": {
-		"include": [ "modules/ve-mw", "modules/ve-mw-collab" ],
+		"include": [ "modules/ve-mw", "modules/ve-mw-collab", "editcheck/modules" ],
 		"exclude": [ "modules/ve-mw/tests" ]
 	},
 	"templates": {
@@ -34,7 +34,9 @@
 				"ve.dm.MW": true,
 				"ve.init.mw.": true,
 				"ve.ui.MW": true,
-				"mw.libs.ve.": true
+				"mw.libs.ve.": true,
+				"ve.ui.EditCheck": true,
+				"mw.editcheck.": true
 			},
 			"linkMap": {
 				"VisualEditorOverlay": "https://doc.wikimedia.org/MobileFrontend/master/js/js/VisualEditorOverlay.html"

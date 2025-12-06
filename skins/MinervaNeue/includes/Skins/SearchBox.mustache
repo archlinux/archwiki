@@ -1,9 +1,17 @@
-<form action="{{form-action}}" method="get" class="minerva-search-form">
-	<div class="search-box">
-		<input type="hidden" name="title" value="{{page-title}}"/>
-		<input class="search skin-minerva-search-trigger" id="searchInput"
-			{{{html-input-attributes}}}>
-		{{#data-btn.data-icon}}<span class="search-box-icon-overlay">{{>Icon}}</span>{{/data-btn.data-icon}}
+<form role="search" action="{{form-action}}" method="get" class="minerva-search-form">
+	<div class="search-box search-box--typeahead">
+		<div class="cdx-typeahead-search cdx-typeahead-search--show-thumbnail cdx-typeahead-search--auto-expand-width">
+			<div class="cdx-search-input">
+				<div class="cdx-search-input__input-wrapper">
+					<div class="cdx-text-input cdx-text-input--has-start-icon">
+						<input type="hidden" name="title" value="{{page-title}}"/>
+						<input class="search skin-minerva-search-trigger cdx-text-input__input" id="searchInput"
+						{{{html-input-attributes}}} autocomplete="off">
+						<span class="cdx-text-input__icon cdx-text-input__start-icon"></span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	{{!
 		A button when clicked will submit the form

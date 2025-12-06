@@ -10,7 +10,6 @@ const featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {
 	ReplyLinksController = require( './ReplyLinksController.js' ),
 	utils = require( './utils.js' ),
 	highlighter = require( './highlighter.js' ),
-	topicSubscriptions = require( './topicsubscriptions.js' ),
 	permalinks = require( './permalinks.js' ),
 	defaultEditMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' ),
 	defaultVisual = defaultEditMode === 'visual',
@@ -20,6 +19,7 @@ let
 	$pageContainer, linksController,
 	pageThreads,
 	lastControllerScrollOffset,
+	topicSubscriptions,
 	pageDataCache = {},
 	pageHandlersSetup = false;
 
@@ -27,9 +27,11 @@ let mobile = null;
 if ( OO.ui.isMobile() && mw.config.get( 'skin' ) === 'minerva' ) {
 	mobile = require( './mobile.js' );
 }
-require( './thanks.js' );
+if ( mw.loader.getState( 'ext.thanks' ) ) {
+	require( './thanks.js' );
+}
 
-mw.messages.set( require( './controller/contLangMessages.json' ) );
+mw.messages.set( require( './contLangMessages.json' ) );
 
 /**
  * Get an MW API instance
@@ -324,6 +326,7 @@ function init( $container, state ) {
 	pageThreads = ThreadItemSet.static.newFromJSON( mw.config.get( 'wgDiscussionToolsPageThreads' ) || [], $pageContainer[ 0 ], parser );
 
 	if ( featuresEnabled.topicsubscription ) {
+		topicSubscriptions = require( './topicsubscriptions.js' );
 		topicSubscriptions.initTopicSubscriptions( $container, pageThreads );
 	}
 
@@ -537,7 +540,7 @@ function init( $container, state ) {
 
 		// Check topic subscription states if the user has automatic subscriptions enabled
 		// and has recently edited this page.
-		if ( featuresEnabled.autotopicsub && mw.user.options.get( 'discussiontools-autotopicsub' ) ) {
+		if ( topicSubscriptions && featuresEnabled.autotopicsub && mw.user.options.get( 'discussiontools-autotopicsub' ) ) {
 			topicSubscriptions.updateAutoSubscriptionStates( $container, pageThreads, state.repliedTo );
 		}
 	} );
@@ -620,7 +623,7 @@ function init( $container, state ) {
 				findCommentQuery = {
 					idorname: mw.util.percentDecodeFragment( highlightResult.requested[ 0 ] )
 				};
-				isHeading = highlightResult.requested[ 0 ].slice( 0, 1 ) === 'h';
+				isHeading = highlightResult.requested[ 0 ].startsWith( 'h' );
 			}
 			if ( findCommentQuery ) {
 				// TODO: Support multiple commentIds being requested and not all being found

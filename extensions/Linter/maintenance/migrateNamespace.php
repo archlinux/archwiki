@@ -12,11 +12,13 @@ use MediaWiki\Maintenance\LoggedUpdateMaintenance;
  * in existing records to this new field.
  */
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 class MigrateNamespace extends LoggedUpdateMaintenance {
 
@@ -72,5 +74,7 @@ class MigrateNamespace extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateNamespace::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

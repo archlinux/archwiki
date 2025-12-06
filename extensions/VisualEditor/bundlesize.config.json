@@ -10,5 +10,33 @@
 	{
 		"resourceModule": "ext.visualEditor.targetLoader",
 		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.progressBarWidget",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.desktopArticleTarget.init",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.supportCheck",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.tempWikitextEditorWidget",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.core.utils.parsing",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.track",
+		"maxSize": null
+	},
+	{
+		"resourceModule": "ext.visualEditor.ve",
+		"maxSize": null
 	}
 ]

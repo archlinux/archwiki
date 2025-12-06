@@ -29,10 +29,6 @@ final class UserMenuDirector {
 	private IUserMenuBuilder $builder;
 	private MessageLocalizer $localizer;
 
-	/**
-	 * @param IUserMenuBuilder $builder
-	 * @param MessageLocalizer $localizer
-	 */
 	public function __construct( IUserMenuBuilder $builder, MessageLocalizer $localizer ) {
 		$this->builder = $builder;
 		$this->localizer = $localizer;

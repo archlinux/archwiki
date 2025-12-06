@@ -3,7 +3,6 @@
 namespace MediaWiki\SyntaxHighlight;
 
 use MediaWiki\Api\Hook\ApiFormatHighlightHook;
-use MediaWiki\Config\Config;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\Hook\ContentAlterParserOutputHook;
 use MediaWiki\Content\TextContent;
@@ -11,7 +10,6 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\SoftwareInfoHook;
 use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -33,18 +31,9 @@ class Hooks implements
 		'text/xml'         => 'xml',
 	];
 
-	private Config $config;
-	private ParserFactory $parserFactory;
-	private SyntaxHighlight $syntaxHighlight;
-
 	public function __construct(
-		Config $config,
-		ParserFactory $parserFactory,
-		SyntaxHighlight $syntaxHighlight
+		private readonly SyntaxHighlight $syntaxHighlight,
 	) {
-		$this->config = $config;
-		$this->parserFactory = $parserFactory;
-		$this->syntaxHighlight = $syntaxHighlight;
 	}
 
 	/**
@@ -77,6 +66,7 @@ class Hooks implements
 		$models = $extension->getAttribute( 'SyntaxHighlightModels' ) + [
 			CONTENT_MODEL_CSS => 'css',
 			CONTENT_MODEL_JAVASCRIPT => 'javascript',
+			CONTENT_MODEL_VUE => 'vue',
 		];
 		$model = $content->getModel();
 		if ( !isset( $models[$model] ) ) {
@@ -142,7 +132,7 @@ class Hooks implements
 	public function onSoftwareInfo( &$software ) {
 		try {
 			$software['[https://pygments.org/ Pygments]'] = Pygmentize::getVersion();
-		} catch ( PygmentsException $e ) {
+		} catch ( PygmentsException ) {
 			// pass
 		}
 	}

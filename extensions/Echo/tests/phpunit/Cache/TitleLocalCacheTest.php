@@ -86,7 +86,7 @@ class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {
 		return $this->getMockBuilder( TitleLocalCache::class )
 			->setConstructorArgs( [
 				$services->getPageStore(),
-				$services->getTitleFactory()
+				$services->getTitleFactory(),
 			] )
 			->onlyMethods( [ 'resolve' ] )->getMock();
 	}

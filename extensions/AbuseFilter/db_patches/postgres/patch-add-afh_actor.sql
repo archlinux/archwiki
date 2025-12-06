@@ -4,10 +4,12 @@
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 ALTER TABLE abuse_filter_history
   ADD afh_actor BIGINT DEFAULT 0 NOT NULL;
+
 ALTER TABLE abuse_filter_history
   ALTER afh_user
 SET
   DEFAULT 0;
+
 ALTER TABLE abuse_filter_history
   ALTER afh_user_text
 SET

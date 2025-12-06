@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -58,7 +45,7 @@ class CounterMetric implements MetricInterface {
 	 */
 	public function incrementBy( float $value ): void {
 		if ( $value < 0 ) {
-			trigger_error( "Stats: got negative value for counter \"{$this->getName()}\"", E_USER_WARNING );
+			trigger_error( "Stats: ({$this->getName()}) Counter got negative value", E_USER_WARNING );
 			return;
 		}
 
@@ -74,7 +61,7 @@ class CounterMetric implements MetricInterface {
 			$this->baseMetric->addSample( new Sample( $labelValues, $value ) );
 		} catch ( IllegalOperationException $ex ) {
 			// Log the condition and give the caller something that will absorb calls.
-			trigger_error( $ex->getMessage(), E_USER_WARNING );
+			trigger_error( "Stats: ({$this->getName()}): {$ex->getMessage()}", E_USER_WARNING );
 		}
 	}
 
@@ -94,7 +81,9 @@ class CounterMetric implements MetricInterface {
 			$this->bucket = "{$value}";
 			return $this;
 		}
-		throw new InvalidArgumentException( "Stats: Got illegal bucket value '{$value}' - must be float or '+Inf'" );
+		throw new InvalidArgumentException(
+			"Stats: ({$this->getName()}) Got illegal bucket value '{$value}' - must be float or '+Inf'"
+		);
 	}
 
 	/** @inheritDoc */

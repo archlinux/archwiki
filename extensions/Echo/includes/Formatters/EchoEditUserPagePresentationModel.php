@@ -20,7 +20,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 	public function getPrimaryLink() {
 		return [
 			'url' => $this->getDiffLinkUrl(),
-			'label' => $this->msg( 'notification-link-text-view-edit' )->text()
+			'label' => $this->msg( 'notification-link-text-view-edit' )->text(),
 		];
 	}
 

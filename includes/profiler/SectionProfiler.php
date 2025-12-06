@@ -1,26 +1,11 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 use MediaWiki\Logger\LoggerFactory;
 use Psr\Log\LoggerInterface;
-use Wikimedia\ScopedCallback;
 
 /**
  * Arbitrary section name based PHP profiling.
@@ -61,15 +46,14 @@ class SectionProfiler {
 
 	/**
 	 * @param string $section
-	 * @return SectionProfileCallback
 	 */
-	public function scopedProfileIn( $section ) {
+	public function scopedProfileIn( $section ): ?SectionProfileCallback {
 		$this->profileInInternal( $section );
 
 		return new SectionProfileCallback( $this, $section );
 	}
 
-	public function scopedProfileOut( ScopedCallback &$section ) {
+	public function scopedProfileOut( ?SectionProfileCallback &$section ) {
 		$section = null;
 	}
 

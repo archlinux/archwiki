@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
+	"turnstile-name": "Cloudflare Turnstile",
 	"turnstile-desc": "Adds support for Cloudflare Turnstile to ConfirmEdit",
 	"turnstile-edit": "To protect the wiki against automated edit spam, please solve the following captcha:",
 	"turnstile-addurl": "Your edit includes new external links. To protect the wiki against automated spam, please solve the following captcha:",

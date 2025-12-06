@@ -5,6 +5,7 @@ const urlGeneratorFn = require( '../../../resources/src/mediawiki.skinning.typea
 const scriptPath = '/w/index.php';
 const urlGenerator = urlGeneratorFn( scriptPath );
 const searchApiUrl = 'https://en.wikipedia.org/w/rest.php';
+const recommendationApiUrl = 'https://en.wikipedia.org/w/api.php';
 const mockedRequests = !process.env.TEST_LIVE_REQUESTS;
 
 describe( 'restApiSearchClient', () => {
@@ -55,7 +56,7 @@ describe( 'restApiSearchClient', () => {
 		};
 		fetchMock.mockOnce( JSON.stringify( restResponse ) );
 
-		const searchResult = await restSearchClient( searchApiUrl, urlGenerator ).fetchByTitle(
+		const searchResult = await restSearchClient( searchApiUrl, urlGenerator, recommendationApiUrl ).fetchByTitle(
 			'media',
 			2
 		).fetch;
@@ -86,7 +87,7 @@ describe( 'restApiSearchClient', () => {
 		const restResponse = { pages: [] };
 		fetchMock.mockOnce( JSON.stringify( restResponse ) );
 
-		const searchResult = await restSearchClient( searchApiUrl, urlGenerator ).fetchByTitle(
+		const searchResult = await restSearchClient( searchApiUrl, urlGenerator, recommendationApiUrl ).fetchByTitle(
 			'thereIsNothingLikeThis'
 		).fetch;
 
@@ -104,11 +105,36 @@ describe( 'restApiSearchClient', () => {
 		}
 	} );
 
+	test( 'no recommendations service', async () => {
+		const client = await restSearchClient( searchApiUrl, urlGenerator );
+		expect( client.fetchRecommendationByTitle ).toBe( undefined );
+	} );
+
+	test( 'recommendations service', async () => {
+		fetchMock.mockOnce( JSON.stringify( {
+			pages: [
+				{
+					id: 1,
+					title: 'R'
+				}
+			]
+		} ) );
+		const searchResult = await restSearchClient( searchApiUrl, urlGenerator, recommendationApiUrl )
+			.fetchRecommendationByTitle(
+				'recommendMe'
+			).fetch;
+		expect( searchResult.query ).toStrictEqual( '' );
+		expect( searchResult.results ).toBeTruthy();
+		expect( searchResult.results.length ).toBe( 1 );
+		expect( searchResult.results[ 0 ].title ).toBe( 'R' );
+
+	} );
+
 	if ( mockedRequests ) {
 		test( 'network error', async () => {
 			fetchMock.mockRejectOnce( new Error( 'failed' ) );
 
-			await expect( restSearchClient( searchApiUrl, urlGenerator ).fetchByTitle(
+			await expect( restSearchClient( searchApiUrl, urlGenerator, recommendationApiUrl ).fetchByTitle(
 				'anything'
 			).fetch ).rejects.toThrow( 'failed' );
 		} );

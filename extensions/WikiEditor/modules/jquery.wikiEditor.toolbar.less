@@ -10,7 +10,8 @@
 	display: block;
 	z-index: 7;
 
-	.empty {
+	.empty,
+	.group.empty {
 		display: none;
 	}
 
@@ -114,8 +115,8 @@
 
 		.group {
 			padding-right: 0;
-			margin-left: 6px;
 			border-left: @border-subtle;
+			border-right: 0;
 		}
 	}
 
@@ -235,7 +236,6 @@
 	.group-search {
 		float: right;
 		border-right: 0;
-		border-left: @border-subtle;
 	}
 
 	/* Booklet */

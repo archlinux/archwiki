@@ -95,63 +95,6 @@ parsoid=wt2html
 </tbody></table>
 !! end
 
-## FIXME:Same as "6. table-fixups td-td cell-combining: prev=single_pipe,attrs,no_content; cell=attrs"
-## This test fails in standalone mode and hence marked +integrated only
-!! test
-Templated cell with attributes merging with previous cell
-!! options
-parsoid=wt2html
-!! wikitext
-{|
-|class="foo"{{1x|1={{!}}title="foo"{{!}}foo}}
-|}
-!! html/php
-<table>
-<tbody><tr>
-<td class="foo">title="foo"|foo
-</td></tr></tbody></table>
-!! html/parsoid+integrated
-<table>
-<tbody><tr><td about="#mwt1" typeof="mw:Transclusion" class="foo" data-mw='{"parts":["|class=\"foo\"",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}}title=\"foo\"{{!}}foo"}},"i":0}}]}'>title="foo"|foo</td></tr>
-</tbody></table>
-!! end
-
-## FIXME:Same as "7. table-fixups td-td cell-combining: prev=single_pipe,attrs,content; cell=no_attrs"
-!! test
-Templated cell merging with previous cell with attributes
-!! wikitext
-{|
-|class="foo"|title="foo"{{1x|{{!}}foo}}
-|}
-!! html/php
-<table>
-<tbody><tr>
-<td class="foo">title="foo"|foo
-</td></tr></tbody></table>
-!! html/parsoid
-<table>
-<tbody><tr><td about="#mwt1" typeof="mw:Transclusion" class="foo" data-mw='{"parts":["|class=\"foo\"|title=\"foo\"",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}}foo"}},"i":0}}]}'>title="foo"|foo</td></tr>
-</tbody></table>
-!! end
-
-## FIXME:Same as "1. table-fixups td-td cell-combining: prev=single_pipe,no_attrs,no_content; cell=no_attrs"
-!! test
-Merge tds (T52603)
-!! wikitext
-{|
-|{{1x|{{!}} foo}}
-|}
-!! html/php
-<table>
-<tbody><tr>
-<td>foo
-</td></tr></tbody></table>
-!! html/parsoid
-<table><tbody>
-<tr><td about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":["|",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}} foo"}},"i":0}}]}'> foo</td></tr>
-</tbody></table>
-!! end
-
 !! test
 Merge tds in nested transclusion content (T52603)
 !! wikitext
@@ -197,8 +140,6 @@ Table cell attributes and content from multiple templates
 
 !! test
 Table cell attribute merging edge cases
-!! config
-wgParserEnableLegacyMediaDOM=false
 !! wikitext
 {|
 | {{td_attrs_and_content|1=<div>foo</div> class="foo"}} baz
@@ -211,7 +152,7 @@ wgParserEnableLegacyMediaDOM=false
 |-
 |{{td_attrs_and_content|1=[[Category:No Merging Here]] class="foo"}} baz
 |-
-|{{td_attrs_and_content|1=[[File:Foo.jpg]] class="foo"}} baz
+|{{td_attrs_and_content|1=[[File:Foobar.jpg]] class="foo"}} baz
 |}
 !! html/php
 <table>
@@ -231,7 +172,7 @@ wgParserEnableLegacyMediaDOM=false
 <td> class="foo" | foobar baz
 </td></tr>
 <tr>
-<td><span class="mw-default-size" typeof="mw:Error mw:File"><a href="/index.php?title=Special:Upload&amp;wpDestFile=Foo.jpg" class="new" title="File:Foo.jpg"><span class="mw-file-element mw-broken-media">File:Foo.jpg</span></a></span> class="foo" | foobar baz
+<td><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description"><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" /></a></span> class="foo" | foobar baz
 </td></tr></tbody></table>
 !! html/parsoid
 <table>
@@ -245,44 +186,7 @@ wgParserEnableLegacyMediaDOM=false
 <tr data-parsoid='{"startTagSrc":"|-"}'>
 <td><link rel="mw:PageProp/Category" href="./Category:No_Merging_Here" about="#mwt5" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"[[Category:No Merging Here]] class=\"foo\""}},"i":0}}]}'/><span about="#mwt5"> class="foo" | foobar</span> baz</td></tr>
 <tr data-parsoid='{"startTagSrc":"|-"}'>
-<td><span class="mw-default-size" typeof="mw:Transclusion mw:Error mw:File" about="#mwt3" data-parsoid='{"optList":[],"pi":[[{"k":"1","named":true}]]}' data-mw='{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}],"parts":[{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"[[File:Foo.jpg]] class=\"foo\""}},"i":0}}]}'><a href="./Special:FilePath/Foo.jpg"><span class="mw-file-element mw-broken-media" resource="./File:Foo.jpg">File:Foo.jpg</span></a></span><span about="#mwt3"> class="foo" | foobar</span> baz</td></tr>
-</tbody></table>
-!! end
-
-!! test
-Fixup of interrupted table-cell parsing because of multi-line transclusion
-!! wikitext
-{|
-! class="c1" |Col 1.1!! class="c2" |{{1x|
-1=Col 1.2}}!! class="c3" |Col 1.3!! class="c4" |Col 1.4
-! class="d1" |Col 2.1!! class="d2" |{{1x|
-1=Col 2.2}}!! class="d3" |Col 2.3! abcd!! class="d4" |Col 2.4
-| class="e1" |Col 3.1|| class="e2" |{{1x|
-1=Col 3.2}}|| class="e3" |Col 3.3| abcd|| class="e4" |Col 3.4
-|}
-!! html/php
-<table>
-<tbody><tr>
-<th class="c1">Col 1.1</th>
-<th class="c2">Col 1.2</th>
-<th class="c3">Col 1.3</th>
-<th class="c4">Col 1.4
-</th>
-<th class="d1">Col 2.1</th>
-<th class="d2">Col 2.2</th>
-<th class="d3">Col 2.3! abcd</th>
-<th class="d4">Col 2.4
-</th>
-<td class="e1">Col 3.1</td>
-<td class="e2">Col 3.2</td>
-<td class="e3">Col 3.3| abcd</td>
-<td class="e4">Col 3.4
-</td></tr></tbody></table>
-!! html/parsoid
-<table>
-<tbody><tr><th class="c1">Col 1.1</th><th class="c2" data-parsoid='{"stx":"row"}'><span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1","named":true,"spc":["\n","","",""]}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"Col 1.2"}},"i":0}}]}'>Col 1.2</span></th><th class="c3" data-parsoid='{"stx":"row"}'>Col 1.3</th><th class="c4" data-parsoid='{"stx":"row"}'>Col 1.4</th>
-<th class="d1">Col 2.1</th><th class="d2" data-parsoid='{"stx":"row"}'><span about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1","named":true,"spc":["\n","","",""]}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"Col 2.2"}},"i":0}}]}'>Col 2.2</span></th><th class="d3" data-parsoid='{"stx":"row"}'>Col 2.3! abcd</th><th class="d4" data-parsoid='{"stx":"row"}'>Col 2.4</th>
-<td class="e1">Col 3.1</td><td class="e2" data-parsoid='{"stx":"row"}'><span about="#mwt3" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1","named":true,"spc":["\n","","",""]}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"Col 3.2"}},"i":0}}]}'>Col 3.2</span></td><td class="e3" data-parsoid='{"stx":"row"}'>Col 3.3| abcd</td><td class="e4" data-parsoid='{"stx":"row"}'>Col 3.4</td></tr>
+<td><span class="mw-default-size" typeof="mw:Transclusion mw:File" about="#mwt6" data-parsoid='{"optList":[],"pi":[[{"k":"1","named":true}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"[[File:Foobar.jpg]] class=\"foo\""}},"i":0}}]}'><a href="./File:Foobar.jpg" class="mw-file-description"><img resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a></span><span about="#mwt6"> class="foo" | foobar</span> baz</td></tr>
 </tbody></table>
 !! end
 
@@ -629,9 +533,13 @@ Ensure td-cell-type is switched to th when the first cell in a row is a <th>
 <tbody><tr>
 <th>!y
 </th></tr></tbody></table>
-!! html/parsoid
+!! html/parsoid+integrated
 <table>
 <tbody><tr><th about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":["!",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"!y"}},"i":0}}]}'>!y</th></tr>
+</tbody></table>
+!! html/parsoid+standalone
+<table>
+<tbody><tr><th><span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"!y"}},"i":0}}]}'>!y</span></th></tr>
 </tbody></table>
 !! end
 
@@ -811,5 +719,30 @@ parsoid=wt2html
 <td><span typeof="mw:Nowiki">foo||</span></td><td>bar</td></tr>
 <tr>
 <td><span typeof="mw:Nowiki mw:Transclusion" about="#mwt5" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;nowiki>foo||&lt;/nowiki>"}},"i":0}}]}'>foo||</span></td><td>bar</td></tr>
+</tbody></table>
+!! end
+
+!! article
+Template:Multi cell output
+!! text
+n<sup>2</sup> || n<sup>3</sup> || style="background:#9F9;" class="table-yes" | Yes
+!! endarticle
+
+!! test
+Template emitting multi-cell output as plain content should be reparsed as multiple cells
+!! wikitext
+{|
+| {{multi cell output}}
+|}
+!! html/php
+<table>
+<tbody><tr>
+<td>n<sup>2</sup></td>
+<td>n<sup>3</sup></td>
+<td style="background:#9F9;" class="table-yes">Yes
+</td></tr></tbody></table>
+!! html/parsoid
+<table>
+<tbody><tr><td typeof="mw:Transclusion" about="#mwt1" data-mw='{"parts":["| ",{"template":{"target":{"wt":"multi cell output","href":"./Template:Multi_cell_output"},"params":{},"i":0}}]}'>n<sup>2</sup></td><td about="#mwt1">n<sup>3</sup></td><td about="#mwt1" style="background:#9F9;" class="table-yes" data-parsoid='{"stx":"row"}'>Yes</td></tr>
 </tbody></table>
 !! end

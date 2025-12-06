@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ерней",
-			"Ильнар",
-			"Ильгиз"
+			"Ильгиз",
+			"Ильнар"
 		]
 	},
 	"prefs-gadgets": "Гаджетлар",
@@ -18,6 +18,8 @@
 	"gadgets-title": "Гаджетлар",
 	"gadgets-editdescription": "Тасвирламаны үзгәрт",
 	"gadgets-viewdescription": "Тасвирламаны күрсәт",
+	"gadgets-editsectiontitle": "Бүлек башлыгын үзгәрт",
+	"gadgets-viewsectiontitle": "Бүлек башлыгын күрсәт",
 	"gadgets-uses": "Кулланыла",
 	"gadgets-required-rights": "{{PLURAL:$2|Хокук|Хокуклар}} кирәк:\n\n$1.",
 	"gadgets-default": "Стандартлыча һәркем өчен кабызылган.",

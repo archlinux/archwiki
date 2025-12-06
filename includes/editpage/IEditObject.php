@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -118,9 +104,15 @@ interface IEditObject {
 	/** Status: edit rejected because server was unable to acquire a temporary account name for this user */
 	public const AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT = 243;
 
-	/** Status: user tried to create a redirect to a nonexistent page and wpIgnoreBrokenRedirects is false */
+	/** Status: user tried to create a redirect to a nonexistent page */
 	public const AS_BROKEN_REDIRECT = 244;
 
-	/** Status: user tried to create a redirect to another redirect and wpIgnoreDoubleRedirects is false */
+	/** Status: user tried to create a redirect to another redirect */
 	public const AS_DOUBLE_REDIRECT = 245;
+
+	/** Status: user tried to create a redirect to another redirect that is pointing to the current page */
+	public const AS_DOUBLE_REDIRECT_LOOP = 246;
+
+	/** Status: user tried to create a redirect to an invalid redirect target */
+	public const AS_INVALID_REDIRECT_TARGET = 247;
 }

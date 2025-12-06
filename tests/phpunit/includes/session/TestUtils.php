@@ -2,56 +2,18 @@
 
 namespace MediaWiki\Tests\Session;
 
-use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\Session;
 use MediaWiki\Session\SessionBackend;
-use MediaWiki\Session\SessionManager;
 use PHPUnit\Framework\Assert;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use TestLogger;
-use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * Utility functions for Session unit tests
  */
 class TestUtils {
-
-	/**
-	 * Override the singleton for unit testing
-	 * @param SessionManager|null $manager
-	 * @return ScopedCallback|null
-	 */
-	public static function setSessionManagerSingleton( ?SessionManager $manager = null ) {
-		session_write_close();
-
-		$staticAccess = TestingAccessWrapper::newFromClass( SessionManager::class );
-
-		$oldInstance = $staticAccess->instance;
-
-		$reset = [
-			[ 'instance', $oldInstance ],
-			[ 'globalSession', $staticAccess->globalSession ],
-			[ 'globalSessionRequest', $staticAccess->globalSessionRequest ],
-		];
-
-		$staticAccess->instance = $manager;
-		$staticAccess->globalSession = null;
-		$staticAccess->globalSessionRequest = null;
-		if ( $manager && PHPSessionHandler::isInstalled() ) {
-			PHPSessionHandler::install( $manager );
-		}
-
-		return new ScopedCallback( static function () use ( $reset, $staticAccess, $oldInstance ) {
-			foreach ( $reset as [ $property, $oldValue ] ) {
-				$staticAccess->$property = $oldValue;
-			}
-			if ( $oldInstance && PHPSessionHandler::isInstalled() ) {
-				PHPSessionHandler::install( $oldInstance );
-			}
-		} );
-	}
 
 	/**
 	 * If you need a SessionBackend for testing but don't want to create a real

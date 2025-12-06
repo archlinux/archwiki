@@ -16,6 +16,5 @@
 	"vector-view-edit": "Kohentele",
 	"vector-view-history": "Näytä istorija",
 	"vector-view-view": "Luve",
-	"vector-more-actions": "Vielä",
-	"vector-searchsuggest-containing": "Eči šivuja, kumpašissa on <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-more-actions": "Vielä"
 }

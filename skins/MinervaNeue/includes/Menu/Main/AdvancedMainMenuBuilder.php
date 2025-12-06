@@ -48,9 +48,6 @@ final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
 		$this->definitions = $definitions;
 	}
 
-	/**
-	 * @return Group
-	 */
 	public function getSettingsGroup(): Group {
 		return new Group( 'pt-preferences' );
 	}
@@ -85,7 +82,6 @@ final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
 
 	/**
 	 * Prepares a list of links that have the purpose of discovery in the main navigation menu
-	 * @return Group
 	 */
 	public function getInteractionToolsGroup(): Group {
 		$group = new Group( 'p-interaction' );

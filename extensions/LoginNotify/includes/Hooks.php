@@ -4,8 +4,6 @@
  * @ingroup Extensions
  */
 
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName
-
 namespace LoginNotify;
 
 use MediaWiki\Auth\AuthenticationResponse;
@@ -21,10 +19,10 @@ class Hooks implements
 	LocalUserCreatedHook,
 	RecentChange_saveHook
 {
-	private UserFactory $userFactory;
-
-	public function __construct( UserFactory $userFactory ) {
-		$this->userFactory = $userFactory;
+	public function __construct(
+		private readonly UserFactory $userFactory,
+		private readonly LoginNotify $loginNotify,
+	) {
 	}
 
 	/**
@@ -47,12 +45,12 @@ class Hooks implements
 		}
 
 		if ( $ret->status === AuthenticationResponse::PASS ) {
-			self::doSuccessfulLogin( $user );
+			$this->doSuccessfulLogin( $user );
 		} elseif (
 			$ret->status === AuthenticationResponse::FAIL
 			&& $ret->message->getKey() !== 'login-throttled'
 		) {
-			self::doFailedLogin( $user );
+			$this->doFailedLogin( $user );
 		}
 		// Other statuses include Abstain, Redirect, or UI. We ignore such
 		// statuses.
@@ -64,11 +62,10 @@ class Hooks implements
 	 *
 	 * @param User $user The user who logged in.
 	 */
-	public static function doSuccessfulLogin( User $user ) {
-		$loginNotify = LoginNotify::getInstance();
-		$loginNotify->clearCounters( $user );
-		$loginNotify->sendSuccessNotice( $user );
-		$loginNotify->recordKnownWithCookie( $user );
+	public function doSuccessfulLogin( User $user ) {
+		$this->loginNotify->clearCounters( $user );
+		$this->loginNotify->sendSuccessNotice( $user );
+		$this->loginNotify->recordKnownWithCookie( $user );
 	}
 
 	/**
@@ -76,9 +73,8 @@ class Hooks implements
 	 *
 	 * @param User $user The user that failed to log in.
 	 */
-	public static function doFailedLogin( User $user ) {
-		$loginNotify = LoginNotify::getInstance();
-		$loginNotify->recordFailure( $user );
+	public function doFailedLogin( User $user ) {
+		$this->loginNotify->recordFailure( $user );
 	}
 
 	/**
@@ -92,8 +88,7 @@ class Hooks implements
 	 */
 	public function onLocalUserCreated( $user, $autocreated ) {
 		if ( !$autocreated ) {
-			$loginNotify = LoginNotify::getInstance();
-			$loginNotify->recordKnownWithCookie( $user );
+			$this->loginNotify->recordKnownWithCookie( $user );
 		}
 	}
 
@@ -101,8 +96,7 @@ class Hooks implements
 	 * @param RecentChange $recentChange
 	 */
 	public function onRecentChange_save( $recentChange ) {
-		$loginNotify = LoginNotify::getInstance();
 		$user = $this->userFactory->newFromUserIdentity( $recentChange->getPerformerIdentity() );
-		$loginNotify->recordKnown( $user );
+		$this->loginNotify->recordKnown( $user );
 	}
 }

@@ -27,7 +27,7 @@ class ReferenceStackItem {
 	 * @var string Name of the group (or empty for the default group) which this ref
 	 * belongs to.
 	 */
-	public string $group;
+	public string $group = Cite::DEFAULT_GROUP;
 	/**
 	 * Global, unique sequence number for each <ref>, no matter which group, starting from 1.
 	 * 0 is invalid. Used to generate ids and anchors.

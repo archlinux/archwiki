@@ -40,6 +40,11 @@ class TimelinePager extends ReverseChronologicalPager {
 	private $excludeTargets;
 
 	/**
+	 * If set, makes the pager to not show temporary accounts in the results.
+	 */
+	private bool $excludeTempAccounts;
+
+	/**
 	 * Targets that have been added to the investigation but that are not
 	 * present in $excludeTargets. These are the targets that will actually
 	 * be investigated.
@@ -71,6 +76,7 @@ class TimelinePager extends ReverseChronologicalPager {
 
 		$tokenData = $tokenQueryManager->getDataFromRequest( $context->getRequest() );
 		$this->mOffset = $tokenData['offset'] ?? '';
+		$this->excludeTempAccounts = $tokenData['FilterTempAccounts'] ?? false;
 		$this->excludeTargets = $tokenData['exclude-targets'] ?? [];
 		$this->filteredTargets = array_diff(
 			$tokenData['targets'] ?? [],
@@ -99,6 +105,7 @@ class TimelinePager extends ReverseChronologicalPager {
 		return $this->timelineService->getQueryInfo(
 			$this->filteredTargets,
 			$this->excludeTargets,
+			$this->excludeTempAccounts,
 			$this->start,
 			$this->mLimit
 		);

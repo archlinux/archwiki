@@ -19,10 +19,6 @@ class VectorComponentAppearance implements VectorComponent {
 	/** @var string */
 	public const ID = 'vector-appearance';
 
-	/**
-	 * @param MessageLocalizer $localizer
-	 * @param FeatureManager $featureManager
-	 */
 	public function __construct(
 		MessageLocalizer $localizer,
 		FeatureManager $featureManager

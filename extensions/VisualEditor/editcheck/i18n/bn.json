@@ -1,12 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"আফতাবুজ্জামান",
-			"Asked42"
+			"Asked42",
+			"আফতাবুজ্জামান"
 		]
 	},
 	"editcheck-dialog-action-no": "না",
 	"editcheck-dialog-action-yes": "হ্যাঁ",
+	"editcheck-dialog-action-decline": "প্রত্যাখ্যান করুন",
+	"editcheck-dialog-action-back": "পিছনে যান",
+	"editcheck-dialog-action-submit": "জমা দিন",
 	"editcheck-dialog-addref-description": "একটি উদ্ধৃতি যুক্ত করে পাঠকদের এই তথ্যটি কোথা থেকে আসছে তা বুঝতে সহায়তা করুন।",
 	"editcheck-dialog-addref-reject-question": "আপনি কেন একটি উদ্ধৃতি যোগ করতে চান না?",
 	"editcheck-dialog-addref-reject-description": "উদ্ধৃতিটি খারিজ করার কারণ জানিয়ে অন্যান্য সম্পাদকদের এটি নিয়ে বুঝতে সহায়তা করুন।",
@@ -17,6 +20,8 @@
 	"editcheck-dialog-addref-success-notify": "একটি উদ্ধৃতি যোগ করার জন্য আপনাকে ধন্যবাদ!",
 	"editcheck-dialog-addref-title": "উদ্ধৃতি যোগ করুন",
 	"editcheck-dialog-title": "প্রকাশের আগে",
+	"editcheck-copyvio-prompt": "আপনি কি এই লেখাটি লিখেছেন?",
+	"editcheck-tone-reject-other": "অন্যান্য",
 	"editcheck-review-title": "পরিবর্তন পর্যালোচনা করুন",
 	"tag-editcheck-reference-decline-common-knowledge": "সম্পাদনা পরীক্ষা (তথ্যসূত্র) প্রত্যাখ্যান (সাধারণ জ্ঞান)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "সম্পাদনা পরীক্ষা তথ্যসূত্র সাধারণ জ্ঞান হিসেবে প্রত্যাখ্যান করা হয়েছে",

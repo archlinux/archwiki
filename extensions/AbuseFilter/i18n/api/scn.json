@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
+			"GianAntonucci",
 			"Pippinu",
-			"Sarvaturi",
-			"GianAntonucci"
+			"Sarvaturi"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Cuntrolla si nu filtru anti-abbusi veni attivatu d'unu nzemi di variàbbili, nu canciamentu o n'eventu dû riggistru abbusi.",

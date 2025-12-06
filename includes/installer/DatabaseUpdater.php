@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -97,7 +83,7 @@ abstract class DatabaseUpdater {
 	protected $autoExtensionHookContainer;
 
 	/**
-	 * @var string[] Scripts to run after database update
+	 * @var class-string<Maintenance>[] Scripts to run after database update
 	 * Should be a subclass of LoggedUpdateMaintenance
 	 */
 	protected $postDatabaseUpdateMaintenance = [
@@ -432,25 +418,16 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.19
 	 *
-	 * @param string $class Name of a Maintenance subclass
+	 * @param class-string<Maintenance> $class Name of a Maintenance subclass
 	 */
 	public function addPostDatabaseUpdateMaintenance( $class ) {
 		$this->postDatabaseUpdateMaintenance[] = $class;
 	}
 
 	/**
-	 * Get the list of extension-defined updates
-	 *
-	 * @return array
-	 */
-	protected function getExtensionUpdates() {
-		return $this->extensionUpdates;
-	}
-
-	/**
 	 * @since 1.17
 	 *
-	 * @return string[]
+	 * @return class-string<Maintenance>[]
 	 */
 	public function getPostDatabaseUpdateMaintenance() {
 		return $this->postDatabaseUpdateMaintenance;
@@ -503,12 +480,12 @@ abstract class DatabaseUpdater {
 			$this->output( "done.\n" );
 		}
 		if ( isset( $what['core'] ) ) {
-			$this->doCollationUpdate();
 			$this->runUpdates( $this->getCoreUpdateList(), false );
+			$this->doCollationUpdate();
 		}
 		if ( isset( $what['extensions'] ) ) {
 			$this->loadExtensionSchemaUpdates();
-			$this->runUpdates( $this->getExtensionUpdates(), true );
+			$this->runUpdates( $this->extensionUpdates, true );
 			$this->runUpdates( $this->extensionUpdatesWithVirtualDomains, true, true );
 		}
 
@@ -1037,6 +1014,39 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
+	 * Modify or set a PRIMARY KEY on a table.
+	 *
+	 * This checks the current table schema via the database layer to determine the existing
+	 * PRIMARY KEY columns. If they already match the requested set, the patch is skipped;
+	 * otherwise the supplied patch is applied.
+	 *
+	 * @param string $table Table name
+	 * @param string[] $columns Desired PRIMARY KEY columns in order
+	 * @param string $patch SQL patch path
+	 * @param bool $fullpath Whether $patch is a full path
+	 * @return bool False if the patch was skipped because schema changes are skipped
+	 */
+	protected function modifyPrimaryKey( $table, array $columns, $patch, $fullpath = false ) {
+		if ( !$this->doTable( $table ) ) {
+			return true;
+		}
+
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->output( "...skipping: '$table' table doesn't exist yet.\n" );
+			return true;
+		}
+
+		// Compare desired PK to current PK columns from the DB layer
+		$current = $this->db->getPrimaryKeyColumns( $table, __METHOD__ );
+		if ( $current === array_values( $columns ) ) {
+			$this->output( "...primary key already set on $table table.\n" );
+			return true;
+		}
+
+		return $this->applyPatch( $patch, $fullpath, "Modifying primary key on table $table" );
+	}
+
+	/**
 	 * Modify an existing table, similar to modifyField. Intended for changes that
 	 *  touch more than one column on a table.
 	 *
@@ -1391,6 +1401,48 @@ abstract class DatabaseUpdater {
 		] );
 		$this->output( "Running migrateLinksTable.php on pagelinks...\n" );
 		$task->execute();
+		$this->output( "done.\n" );
+	}
+
+	protected function migrateCategorylinks() {
+		if ( $this->updateRowExists( MigrateLinksTable::class . 'categorylinks' ) ) {
+			$this->output( "...categorylinks table has already been migrated.\n" );
+			return;
+		}
+		/**
+		 * @var MigrateLinksTable $task
+		 */
+		$task = $this->maintenance->runChild(
+			MigrateLinksTable::class, 'migrateLinksTable.php'
+		);
+		'@phan-var MigrateLinksTable $task';
+		$task->loadParamsAndArgs( MigrateLinksTable::class, [
+			'force' => true,
+			'table' => 'categorylinks'
+		] );
+		$this->output( "Running migrateLinksTable.php on categorylinks...\n" );
+		$task->execute();
+		$this->output( "done.\n" );
+	}
+
+	protected function normalizeCollation() {
+		if ( $this->updateRowExists( 'normalizeCollation' ) ) {
+			$this->output( "...collation table has already been normalized.\n" );
+			return;
+		}
+		/**
+		 * @var UpdateCollation $task
+		 */
+		$task = $this->maintenance->runChild(
+			UpdateCollation::class, 'updateCollation.php'
+		);
+		'@phan-var UpdateCollation $task';
+		$task->loadParamsAndArgs( UpdateCollation::class, [
+			'only-migrate-normalization' => true,
+		] );
+		$this->output( "Running updateCollation.php --only-migrate-normalization...\n" );
+		$task->execute();
+		$this->insertUpdateRow( 'normalizeCollation' );
 		$this->output( "done.\n" );
 	}
 

@@ -1,27 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\SpecialPage;
 
 use MediaWiki\ChangeTags\ChangeTags;
-use MediaWiki\Context\IContextSource;
 use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
@@ -29,24 +14,28 @@ use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
-use MediaWiki\RecentChanges\ChangesListBooleanFilter;
 use MediaWiki\RecentChanges\ChangesListBooleanFilterGroup;
+use MediaWiki\RecentChanges\ChangesListFilterFactory;
 use MediaWiki\RecentChanges\ChangesListFilterGroup;
+use MediaWiki\RecentChanges\ChangesListFilterGroupContainer;
+use MediaWiki\RecentChanges\ChangesListQuery\ChangesListQuery;
+use MediaWiki\RecentChanges\ChangesListQuery\ChangesListQueryFactory;
+use MediaWiki\RecentChanges\ChangesListQuery\ChangesListResult;
 use MediaWiki\RecentChanges\ChangesListStringOptionsFilterGroup;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeFactory;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserArray;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserIdentityValue;
 use OOUI\IconWidget;
+use stdClass;
 use Wikimedia\Rdbms\DBQueryTimeoutError;
-use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
-use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -68,65 +57,54 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	protected UserIdentityUtils $userIdentityUtils;
 	protected TempUserConfig $tempUserConfig;
 
-	// Order of both groups and filters is significant; first is top-most priority,
-	// descending from there.
-	// 'showHideSuffix' is a shortcut to and avoid spelling out
-	// details specific to subclasses here.
-	/**
-	 * Definition information for the filters and their groups
-	 *
-	 * The value is $groupDefinition, a parameter to the ChangesListFilterGroup constructor.
-	 * However, priority is dynamically added for the core groups, to ease maintenance.
-	 *
-	 * Groups are displayed to the user in the structured UI.  However, if necessary,
-	 * all of the filters in a group can be configured to only display on the
-	 * unstuctured UI, in which case you don't need a group title.
-	 *
-	 * @var array
-	 */
-	private $filterGroupDefinitions;
+	protected ChangesListFilterGroupContainer $filterGroups;
+	protected RecentChangeFactory $recentChangeFactory;
+	protected ChangesListQueryFactory $changesListQueryFactory;
 
-	/**
-	 * @var array Same format as filterGroupDefinitions, but for a single group (reviewStatus)
-	 * that is registered conditionally.
-	 */
-	private $legacyReviewStatusFilterGroupDefinition;
+	private ?ChangesListResult $queryResult = null;
 
-	/** @var array Single filter group registered conditionally */
-	private $reviewStatusFilterGroupDefinition;
-
-	/** @var array Single filter group registered conditionally */
-	private $hideCategorizationFilterDefinition;
-
-	/**
-	 * Filter groups, and their contained filters
-	 * This is an associative array (with group name as key) of ChangesListFilterGroup objects.
-	 *
-	 * @var ChangesListFilterGroup[]
-	 */
-	protected $filterGroups = [];
+	/** @var bool */
+	private $mainQueryHookRegistered = false;
+	/** @var bool */
+	private $mainQueryHookCalled = false;
 
 	/**
 	 * @param string $name
 	 * @param string $restriction
 	 * @param UserIdentityUtils $userIdentityUtils
 	 * @param TempUserConfig $tempUserConfig
+	 * @param RecentChangeFactory $recentChangeFactory
+	 * @param ChangesListQueryFactory $changesListQueryFactory
 	 */
 	public function __construct(
 		$name,
 		$restriction,
 		UserIdentityUtils $userIdentityUtils,
-		TempUserConfig $tempUserConfig
+		TempUserConfig $tempUserConfig,
+		RecentChangeFactory $recentChangeFactory,
+		ChangesListQueryFactory $changesListQueryFactory,
 	) {
 		parent::__construct( $name, $restriction );
 
 		$this->userIdentityUtils = $userIdentityUtils;
 		$this->tempUserConfig = $tempUserConfig;
+		$this->recentChangeFactory = $recentChangeFactory;
+		$this->changesListQueryFactory = $changesListQueryFactory;
+		$this->filterGroups = new ChangesListFilterGroupContainer();
+	}
 
-		$nonRevisionTypes = [ RC_LOG ];
-		$this->getHookRunner()->onSpecialWatchlistGetNonRevisionTypes( $nonRevisionTypes );
-
-		$this->filterGroupDefinitions = [
+	/**
+	 * Definitions for the filters and their groups.
+	 *
+	 * This is extended by overriding getExtraFilterGroupDefinitions() in
+	 * subclasses.
+	 *
+	 * @see ChangesListFilterFactory::registerFiltersFromDefinitions()
+	 *
+	 * @return array
+	 */
+	private function getBaseFilterGroupDefinitions() {
+		return [
 			[
 				'name' => 'registration',
 				'title' => 'rcfilters-filtergroup-registration',
@@ -138,14 +116,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhideliu
 						'showHideSuffix' => 'showhideliu',
 						'default' => false,
-						'queryCallable' => function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $this->getRegisteredExpr( false, $dbr );
-							$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
-						},
+						'action' => [ 'require', 'named' ],
 						'isReplacedInStructuredUi' => true,
-
 					],
 					[
 						'name' => 'hideanons',
@@ -153,12 +125,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhideanons
 						'showHideSuffix' => 'showhideanons',
 						'default' => false,
-						'queryCallable' => function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $this->getRegisteredExpr( true, $dbr );
-							$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
-						},
+						'action' => [ 'exclude', 'named' ],
 						'isReplacedInStructuredUi' => true,
 					]
 				],
@@ -172,69 +139,46 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 				'filters' => [
 					[
 						'name' => 'unregistered',
+						'requireConfig' => [ 'isRegistrationRequiredToEdit' => false ],
 						'label' => 'rcfilters-filter-user-experience-level-unregistered-label',
 						'description' => $this->tempUserConfig->isKnown() ?
 							'rcfilters-filter-user-experience-level-unregistered-description-temp' :
 							'rcfilters-filter-user-experience-level-unregistered-description',
 						'cssClassSuffix' => 'user-unregistered',
-						'isRowApplicableCallable' => function ( IContextSource $ctx, RecentChange $rc ) {
-							return !$this->userIdentityUtils->isNamed( $rc->getPerformerIdentity() );
-						}
+						'action' => [ 'require', 'experience', 'unregistered' ],
 					],
 					[
 						'name' => 'registered',
+						'requireConfig' => [ 'isRegistrationRequiredToEdit' => false ],
 						'label' => 'rcfilters-filter-user-experience-level-registered-label',
 						'description' => 'rcfilters-filter-user-experience-level-registered-description',
 						'cssClassSuffix' => 'user-registered',
-						'isRowApplicableCallable' => function ( IContextSource $ctx, RecentChange $rc ) {
-							return $this->userIdentityUtils->isNamed( $rc->getPerformerIdentity() );
-						}
+						'action' => [ 'require', 'experience', 'registered' ],
+						'subsets' => [ 'newcomer', 'learner', 'experienced' ],
 					],
 					[
 						'name' => 'newcomer',
 						'label' => 'rcfilters-filter-user-experience-level-newcomer-label',
 						'description' => 'rcfilters-filter-user-experience-level-newcomer-description',
 						'cssClassSuffix' => 'user-newcomer',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							$performer = $rc->getPerformerIdentity();
-							return $performer->isRegistered() &&
-								MediaWikiServices::getInstance()
-									->getUserFactory()
-									->newFromUserIdentity( $performer )
-									->getExperienceLevel() === 'newcomer';
-						}
+						'action' => [ 'require', 'experience', 'newcomer' ],
 					],
 					[
 						'name' => 'learner',
 						'label' => 'rcfilters-filter-user-experience-level-learner-label',
 						'description' => 'rcfilters-filter-user-experience-level-learner-description',
 						'cssClassSuffix' => 'user-learner',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							$performer = $rc->getPerformerIdentity();
-							return $performer->isRegistered() &&
-								MediaWikiServices::getInstance()
-									->getUserFactory()
-									->newFromUserIdentity( $performer )
-									->getExperienceLevel() === 'learner';
-						},
+						'action' => [ 'require', 'experience', 'learner' ],
 					],
 					[
 						'name' => 'experienced',
 						'label' => 'rcfilters-filter-user-experience-level-experienced-label',
 						'description' => 'rcfilters-filter-user-experience-level-experienced-description',
 						'cssClassSuffix' => 'user-experienced',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							$performer = $rc->getPerformerIdentity();
-							return $performer->isRegistered() &&
-								MediaWikiServices::getInstance()
-									->getUserFactory()
-									->newFromUserIdentity( $performer )
-									->getExperienceLevel() === 'experienced';
-						},
+						'action' => [ 'require', 'experience', 'experienced' ],
 					]
 				],
 				'default' => ChangesListStringOptionsFilterGroup::NONE,
-				'queryCallable' => [ $this, 'filterOnUserExperienceLevel' ],
 			],
 
 			[
@@ -250,38 +194,18 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhidemine
 						'showHideSuffix' => 'showhidemine',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$user = $ctx->getUser();
-							$conds[] = $dbr->expr( 'actor_name', '!=', $user->getName() );
-							$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
-						},
+						'action' => [ 'exclude', 'user', $this->getUser() ],
+						'highlight' => [ 'require', 'user', $this->getUser() ],
 						'cssClassSuffix' => 'self',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $ctx->getUser()->equals( $rc->getPerformerIdentity() );
-						},
 					],
 					[
 						'name' => 'hidebyothers',
 						'label' => 'rcfilters-filter-editsbyother-label',
 						'description' => 'rcfilters-filter-editsbyother-description',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$user = $ctx->getUser();
-							if ( $user->isAnon() ) {
-								$conds['actor_name'] = $user->getName();
-							} else {
-								$conds['actor_user'] = $user->getId();
-							}
-							$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
-						},
+						'action' => [ 'require', 'user', $this->getUser() ],
+						'highlight' => [ 'exclude', 'user', $this->getUser() ],
 						'cssClassSuffix' => 'others',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return !$ctx->getUser()->equals( $rc->getPerformerIdentity() );
-						},
 					]
 				]
 			],
@@ -299,30 +223,18 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhidebots
 						'showHideSuffix' => 'showhidebots',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds['rc_bot'] = 0;
-						},
+						'action' => [ 'exclude', 'bot' ],
+						'highlight' => [ 'require', 'bot' ],
 						'cssClassSuffix' => 'bot',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_bot' );
-						},
 					],
 					[
 						'name' => 'hidehumans',
 						'label' => 'rcfilters-filter-humans-label',
 						'description' => 'rcfilters-filter-humans-description',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds['rc_bot'] = 1;
-						},
+						'action' => [ 'require', 'bot' ],
+						'highlight' => [ 'exclude', 'bot' ],
 						'cssClassSuffix' => 'human',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return !$rc->getAttribute( 'rc_bot' );
-						},
 					]
 				]
 			],
@@ -343,30 +255,31 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhideminor
 						'showHideSuffix' => 'showhideminor',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_minor', '=', 0 );
-						},
+						'action' => [ 'exclude', 'minor' ],
+						'highlight' => [ 'require', 'minor' ],
 						'cssClassSuffix' => 'minor',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_minor' );
-						}
+						'conflictOptions' => [
+							'globalKey' => 'rcfilters-hideminor-conflicts-typeofchange-global',
+							'forwardKey' => 'rcfilters-hideminor-conflicts-typeofchange',
+							'backwardKey' => 'rcfilters-typeofchange-conflicts-hideminor',
+						],
+						'conflictsWith' => [
+							'changeType' => [
+								'hidecategorization' => [],
+								'hidelog' => [],
+								'hidenewuserlog' => [],
+								'hidenewpages' => []
+							],
+						],
 					],
 					[
 						'name' => 'hidemajor',
 						'label' => 'rcfilters-filter-major-label',
 						'description' => 'rcfilters-filter-major-description',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_minor', '=', 1 );
-						},
+						'action' => [ 'require', 'minor' ],
+						'highlight' => [ 'exclude', 'minor' ],
 						'cssClassSuffix' => 'major',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return !$rc->getAttribute( 'rc_minor' );
-						}
 					]
 				]
 			],
@@ -382,32 +295,24 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-lastrevision-label',
 						'description' => 'rcfilters-filter-lastrevision-description',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) use ( $nonRevisionTypes ) {
-							$conds[] = $dbr->expr( 'rc_this_oldid', '!=', new RawSQLValue( 'page_latest' ) )
-								->or( 'rc_type', '=', $nonRevisionTypes );
-						},
+						'action' => [
+							[ 'require', 'revisionType', 'old' ],
+							[ 'require', 'revisionType', 'none' ],
+						],
+						'highlight' => [ 'require', 'revisionType', 'latest' ],
 						'cssClassSuffix' => 'last',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_this_oldid' ) === $rc->getAttribute( 'page_latest' );
-						}
 					],
 					[
 						'name' => 'hidepreviousrevisions',
 						'label' => 'rcfilters-filter-previousrevision-label',
 						'description' => 'rcfilters-filter-previousrevision-description',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) use ( $nonRevisionTypes ) {
-							$conds[] = $dbr->expr( 'rc_this_oldid', '=', new RawSQLValue( 'page_latest' ) )
-								->or( 'rc_type', '=', $nonRevisionTypes );
-						},
+						'action' => [
+							[ 'require', 'revisionType', 'latest' ],
+							[ 'require', 'revisionType', 'none' ],
+						],
+						'highlight' => [ 'require', 'revisionType', 'old' ],
 						'cssClassSuffix' => 'previous',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_this_oldid' ) !== $rc->getAttribute( 'page_latest' );
-						}
 					]
 				]
 			],
@@ -425,15 +330,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-pageedits-description',
 						'default' => false,
 						'priority' => -2,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_type', '!=', RC_EDIT );
-						},
+						'action' => [ 'exclude', 'source', RecentChange::SRC_EDIT ],
+						'highlight' => [ 'require', 'source', RecentChange::SRC_EDIT ],
 						'cssClassSuffix' => 'src-mw-edit',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_EDIT;
-						},
 					],
 					[
 						'name' => 'hidenewpages',
@@ -441,34 +340,44 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-newpages-description',
 						'default' => false,
 						'priority' => -3,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_type', '!=', RC_NEW );
-						},
+						'action' => [ 'exclude', 'source', RecentChange::SRC_NEW ],
+						'highlight' => [ 'require', 'source', RecentChange::SRC_NEW ],
 						'cssClassSuffix' => 'src-mw-new',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_NEW;
-						},
 					],
-
-					// hidecategorization
-
+					[
+						'name' => 'hidecategorization',
+						'label' => 'rcfilters-filter-categorization-label',
+						'description' => 'rcfilters-filter-categorization-description',
+						// rcshowhidecategorization-show, rcshowhidecategorization-hide.
+						// wlshowhidecategorization
+						'showHideSuffix' => 'showhidecategorization',
+						'default' => false,
+						'priority' => -4,
+						'requireConfig' => [ 'RCWatchCategoryMembership' => true ],
+						'action' => [ 'exclude', 'source', RecentChange::SRC_CATEGORIZE ],
+						'highlight' => [ 'require', 'source', RecentChange::SRC_CATEGORIZE ],
+						'cssClassSuffix' => 'src-mw-categorize',
+						'conflictOptions' => [
+							'globalKey' => 'rcfilters-hidecategorization-conflicts-reviewstatus-global',
+							'forwardKey' => 'rcfilters-hidecategorization-conflicts-reviewstatus',
+							'backwardKey' => 'rcfilters-reviewstatus-conflicts-reviewstatus',
+						],
+						'conflictsWith' => [
+							'reviewStatus' => [
+								'unpatrolled' => [],
+								'manual' => [],
+							],
+						],
+					],
 					[
 						'name' => 'hidelog',
 						'label' => 'rcfilters-filter-logactions-label',
 						'description' => 'rcfilters-filter-logactions-description',
 						'default' => false,
 						'priority' => -5,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_type', '!=', RC_LOG );
-						},
+						'action' => [ 'exclude', 'source', RecentChange::SRC_LOG ],
+						'highlight' => [ 'require', 'source', RecentChange::SRC_LOG ],
 						'cssClassSuffix' => 'src-mw-log',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_LOG;
-						}
 					],
 					[
 						'name' => 'hidenewuserlog',
@@ -476,27 +385,18 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-accountcreations-description',
 						'default' => false,
 						'priority' => -6,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_log_type', '!=', 'newusers' )
-								->or( 'rc_log_type', '=', null );
-						},
+						'action' => [ 'exclude', 'logType', 'newusers' ],
+						'highlight' => [ 'require', 'logType', 'newusers' ],
 						'cssClassSuffix' => 'src-mw-newuserlog',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_log_type' ) === "newusers";
-						},
 					],
 				],
 			],
 
-		];
-
-		$this->legacyReviewStatusFilterGroupDefinition = [
 			[
 				'name' => 'legacyReviewStatus',
 				'title' => 'rcfilters-filtergroup-reviewstatus',
 				'class' => ChangesListBooleanFilterGroup::class,
+				'requireConfig' => [ 'useRCPatrol' => true ],
 				'filters' => [
 					[
 						'name' => 'hidepatrolled',
@@ -504,154 +404,61 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhidepatr
 						'showHideSuffix' => 'showhidepatr',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds['rc_patrolled'] = RecentChange::PRC_UNPATROLLED;
-						},
+						'action' => [ 'require', 'patrolled', RecentChange::PRC_UNPATROLLED ],
 						'isReplacedInStructuredUi' => true,
 					],
 					[
 						'name' => 'hideunpatrolled',
 						'default' => false,
-						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-						) {
-							$conds[] = $dbr->expr( 'rc_patrolled', '!=', RecentChange::PRC_UNPATROLLED );
-						},
+						'action' => [ 'exclude', 'patrolled', RecentChange::PRC_UNPATROLLED ],
 						'isReplacedInStructuredUi' => true,
 					],
 				],
-			]
-		];
+			],
 
-		$this->reviewStatusFilterGroupDefinition = [
 			[
 				'name' => 'reviewStatus',
 				'title' => 'rcfilters-filtergroup-reviewstatus',
 				'class' => ChangesListStringOptionsFilterGroup::class,
 				'isFullCoverage' => true,
 				'priority' => -5,
+				'requireConfig' => [ 'useRCPatrol' => true ],
 				'filters' => [
 					[
 						'name' => 'unpatrolled',
 						'label' => 'rcfilters-filter-reviewstatus-unpatrolled-label',
 						'description' => 'rcfilters-filter-reviewstatus-unpatrolled-description',
 						'cssClassSuffix' => 'reviewstatus-unpatrolled',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_patrolled' ) == RecentChange::PRC_UNPATROLLED;
-						},
+						'action' => [ 'require', 'patrolled', RecentChange::PRC_UNPATROLLED ],
 					],
 					[
 						'name' => 'manual',
 						'label' => 'rcfilters-filter-reviewstatus-manual-label',
 						'description' => 'rcfilters-filter-reviewstatus-manual-description',
 						'cssClassSuffix' => 'reviewstatus-manual',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_patrolled' ) == RecentChange::PRC_PATROLLED;
-						},
+						'action' => [ 'require', 'patrolled', RecentChange::PRC_PATROLLED ],
 					],
 					[
 						'name' => 'auto',
 						'label' => 'rcfilters-filter-reviewstatus-auto-label',
 						'description' => 'rcfilters-filter-reviewstatus-auto-description',
 						'cssClassSuffix' => 'reviewstatus-auto',
-						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-							return $rc->getAttribute( 'rc_patrolled' ) == RecentChange::PRC_AUTOPATROLLED;
-						},
+						'action' => [ 'require', 'patrolled', RecentChange::PRC_AUTOPATROLLED ],
 					],
 				],
 				'default' => ChangesListStringOptionsFilterGroup::NONE,
-				'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-					IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds, $selected
-				) {
-					if ( $selected === [] ) {
-						return;
-					}
-					$rcPatrolledValues = [
-						'unpatrolled' => RecentChange::PRC_UNPATROLLED,
-						'manual' => RecentChange::PRC_PATROLLED,
-						'auto' => RecentChange::PRC_AUTOPATROLLED,
-					];
-					// e.g. rc_patrolled IN (0, 2)
-					$conds['rc_patrolled'] = array_map( static function ( $s ) use ( $rcPatrolledValues ) {
-						return $rcPatrolledValues[ $s ];
-					}, $selected );
-				}
-			]
-		];
-
-		$this->hideCategorizationFilterDefinition = [
-			'name' => 'hidecategorization',
-			'label' => 'rcfilters-filter-categorization-label',
-			'description' => 'rcfilters-filter-categorization-description',
-			// rcshowhidecategorization-show, rcshowhidecategorization-hide.
-			// wlshowhidecategorization
-			'showHideSuffix' => 'showhidecategorization',
-			'default' => false,
-			'priority' => -4,
-			'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-				IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
-			) {
-				$conds[] = $dbr->expr( 'rc_type', '!=', RC_CATEGORIZE );
-			},
-			'cssClassSuffix' => 'src-mw-categorize',
-			'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
-				return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_CATEGORIZE;
-			},
+			],
 		];
 	}
 
 	/**
-	 * Removes registration filters from filterGroupDefinitions
-	 */
-	private function removeRegistrationFilterDefinitions(): void {
-		foreach ( $this->filterGroupDefinitions as $key => $value ) {
-			if ( $value['name'] == "userExpLevel" ) {
-				$this->filterGroupDefinitions[ $key ][ 'filters' ] = array_filter(
-					$this->filterGroupDefinitions[ $key ][ 'filters' ],
-					static fn ( $val, $key ) => $val[ 'name' ] != 'registered'
-						&& $val[ 'name' ] != 'unregistered', ARRAY_FILTER_USE_BOTH );
-			}
-		}
-	}
-
-	/**
-	 * Check if filters are in conflict and guaranteed to return no results.
+	 * This may be overridden by subclasses to add more filter groups.
 	 *
-	 * @return bool
+	 * @see ChangesListFilterFactory::registerFiltersFromDefinitions()
+	 * @return array
 	 */
-	protected function areFiltersInConflict() {
-		$opts = $this->getOptions();
-		foreach ( $this->getFilterGroups() as $group ) {
-			if ( $group->getConflictingGroups() ) {
-				wfLogWarning(
-					$group->getName() .
-					" specifies conflicts with other groups but these are not supported yet."
-				);
-			}
-
-			foreach ( $group->getConflictingFilters() as $conflictingFilter ) {
-				if ( $conflictingFilter->activelyInConflictWithGroup( $group, $opts ) ) {
-					return true;
-				}
-			}
-
-			foreach ( $group->getFilters() as $filter ) {
-				foreach ( $filter->getConflictingFilters() as $conflictingFilter ) {
-					if (
-						$conflictingFilter->activelyInConflictWithFilter( $filter, $opts ) &&
-						$filter->activelyInConflictWithFilter( $conflictingFilter, $opts )
-					) {
-						return true;
-					}
-				}
-
-			}
-
-		}
-
-		return false;
+	protected function getExtraFilterGroupDefinitions(): array {
+		return [];
 	}
 
 	/**
@@ -673,10 +480,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 		$opts = $this->getOptions();
 		try {
-			$rows = $this->getRows();
-			if ( $rows === false ) {
-				$rows = new FakeResultWrapper( [] );
-			}
+			$result = $this->getQueryResult();
+			$rows = $result->getResultWrapper();
 
 			// Used by Structured UI app to get results without MW chrome
 			if ( $this->getRequest()->getRawVal( 'action' ) === 'render' ) {
@@ -727,8 +532,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$this->outputHeader();
 			$this->addModules();
 			$this->webOutput( $rows, $opts );
-
-			$rows->free();
 		} catch ( DBQueryTimeoutError $timeoutException ) {
 			MWExceptionHandler::logException( $timeoutException );
 
@@ -753,6 +556,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 */
 	public function setTempUserConfig( TempUserConfig $tempUserConfig ) {
 		$this->tempUserConfig = $tempUserConfig;
+		$this->changesListQueryFactory->setTempUserConfig( $tempUserConfig );
 	}
 
 	/**
@@ -870,7 +674,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	protected function includeRcFiltersApp() {
 		$out = $this->getOutput();
 		if ( $this->isStructuredFilterUiEnabled() && !$this->including() ) {
-			$jsData = $this->getStructuredFilterJsData();
+			$jsData = $this->filterGroups->getJsData();
 			$messages = [];
 			foreach ( $jsData['messageKeys'] as $key ) {
 				$messages[$key] = $this->msg( $key )->plain();
@@ -984,19 +788,50 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	/**
 	 * Get the database result for this special page instance. Used by ApiFeedRecentChanges.
 	 *
-	 * @return IResultWrapper|false
+	 * @return IResultWrapper
 	 */
 	public function getRows() {
-		$opts = $this->getOptions();
+		return $this->getQueryResult()->getResultWrapper();
+	}
 
-		$tables = [];
-		$fields = [];
-		$conds = [];
-		$query_options = [];
-		$join_conds = [];
-		$this->buildQuery( $tables, $fields, $conds, $query_options, $join_conds, $opts );
+	/**
+	 * Perform and cache the main query.
+	 *
+	 * @return ChangesListResult
+	 */
+	protected function getQueryResult(): ChangesListResult {
+		if ( !$this->queryResult ) {
+			$opts = $this->getOptions();
+			$query = $this->buildQuery( $opts );
+			$this->modifyQuery( $query, $opts );
+			$this->queryResult = $query->fetchResult();
 
-		return $this->doMainQuery( $tables, $fields, $conds, $query_options, $join_conds, $opts );
+			if ( $this->mainQueryHookRegistered && !$this->mainQueryHookCalled ) {
+				// When an empty result set is forced, ChangesListQuery doesn't run
+				// the hook, but some extensions need us to run it anyway to register
+				// form options.
+				// FIXME: risky to pass empty arrays here, and inefficient to
+				//  call this hook when most of what it does is not needed.
+				//  We need to deprecate it.
+				$tables = $fields = $conds = $options = $joins = [];
+				$this->runMainQueryHook( $tables, $fields, $conds, $options,
+					$joins, $opts );
+			}
+		}
+		return $this->queryResult;
+	}
+
+	/**
+	 * Create a RecentChange object from a row, injecting highlights from the
+	 * current ChangesListQuery.
+	 *
+	 * @param stdClass $row
+	 * @return RecentChange
+	 */
+	protected function newRecentChangeFromRow( $row ) {
+		$rc = $this->recentChangeFactory->newRecentChangeFromRow( $row );
+		$rc->setHighlights( $this->getQueryResult()->getHighlightsFromRow( $row ) );
+		return $rc;
 	}
 
 	/**
@@ -1013,104 +848,65 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * Register all filters and their groups (including those from hooks), plus handle
-	 * conflicts and defaults.
+	 * Get configuration to be passed to the filter factory. The values here
+	 * are matched against the "requireConfig" values in the filter group
+	 * definitions.
 	 *
-	 * You might want to customize these in the same method, in subclasses.  You can
-	 * call getFilterGroup to access a group, and (on the group) getFilter to access a
-	 * filter, then make necessary modfications to the filter or group (e.g. with
-	 * setDefault).
+	 * @return array
 	 */
-	protected function registerFilters() {
-		$isRegistrationRequiredToEdit = !MediaWikiServices::getInstance()
-			->getPermissionManager()
-			->isEveryoneAllowed( "edit" );
-		if ( $isRegistrationRequiredToEdit ) {
-			$this->removeRegistrationFilterDefinitions();
-		}
-		$this->registerFiltersFromDefinitions( $this->filterGroupDefinitions );
+	private function getBaseFilterFactoryConfig() {
+		return [
+			'showHidePrefix' => '',
+			'isRegistrationRequiredToEdit' => !MediaWikiServices::getInstance()
+				->getPermissionManager()
+				->isEveryoneAllowed( "edit" ),
+			'useRCPatrol' => !$this->including() && $this->getUser()->useRCPatrol(),
+			'RCWatchCategoryMembership' =>
+				$this->getConfig()->get( MainConfigNames::RCWatchCategoryMembership ),
+		];
+	}
 
-		// Make sure this is not being transcluded (we don't want to show this
-		// information to all users just because the user that saves the edit can
-		// patrol or is logged in)
-		if ( !$this->including() && $this->getUser()->useRCPatrol() ) {
-			$this->registerFiltersFromDefinitions( $this->legacyReviewStatusFilterGroupDefinition );
-			$this->registerFiltersFromDefinitions( $this->reviewStatusFilterGroupDefinition );
-		}
+	/**
+	 * Subclasses may override this to add configuration to the filter factory.
+	 *
+	 * @return array
+	 */
+	protected function getExtraFilterFactoryConfig(): array {
+		return [];
+	}
 
-		$changeTypeGroup = $this->getFilterGroup( 'changeType' );
+	/**
+	 * Subclasses may override this to provide an array of filter group defaults,
+	 * overriding the defaults in the filter definitions.
+	 *
+	 * @return array<string,string|array<string,bool>>
+	 */
+	protected function getFilterDefaultOverrides(): array {
+		return [];
+	}
 
-		$categoryFilter = null;
-		if ( $this->getConfig()->get( MainConfigNames::RCWatchCategoryMembership ) ) {
-			$transformedHideCategorizationDef = $this->transformFilterDefinition(
-				$this->hideCategorizationFilterDefinition
-			);
-
-			$transformedHideCategorizationDef['group'] = $changeTypeGroup;
-
-			$categoryFilter = new ChangesListBooleanFilter(
-				$transformedHideCategorizationDef
-			);
-		}
-
-		$this->getHookRunner()->onChangesListSpecialPageStructuredFilters( $this );
-
-		$this->registerFiltersFromDefinitions( [] );
-
-		$userExperienceLevel = $this->getFilterGroup( 'userExpLevel' );
-		if ( !$isRegistrationRequiredToEdit ) {
-			$registered = $userExperienceLevel->getFilter( 'registered' );
-			$registered->setAsSupersetOf( $userExperienceLevel->getFilter( 'newcomer' ) );
-			$registered->setAsSupersetOf( $userExperienceLevel->getFilter( 'learner' ) );
-			$registered->setAsSupersetOf( $userExperienceLevel->getFilter( 'experienced' ) );
-		}
-
-		$logactionsFilter = $changeTypeGroup->getFilter( 'hidelog' );
-		$lognewuserFilter = $changeTypeGroup->getFilter( 'hidenewuserlog' );
-		$pagecreationFilter = $changeTypeGroup->getFilter( 'hidenewpages' );
-
-		$significanceTypeGroup = $this->getFilterGroup( 'significance' );
-		$hideMinorFilter = $significanceTypeGroup->getFilter( 'hideminor' );
-
-		if ( $categoryFilter !== null ) {
-			$hideMinorFilter->conflictsWith(
-				$categoryFilter,
-				'rcfilters-hideminor-conflicts-typeofchange-global',
-				'rcfilters-hideminor-conflicts-typeofchange',
-				'rcfilters-typeofchange-conflicts-hideminor'
-			);
-		}
-		$hideMinorFilter->conflictsWith(
-			$logactionsFilter,
-			'rcfilters-hideminor-conflicts-typeofchange-global',
-			'rcfilters-hideminor-conflicts-typeofchange',
-			'rcfilters-typeofchange-conflicts-hideminor'
-		);
-		$hideMinorFilter->conflictsWith(
-			$lognewuserFilter,
-			'rcfilters-hideminor-conflicts-typeofchange-global',
-			'rcfilters-hideminor-conflicts-typeofchange',
-			'rcfilters-typeofchange-conflicts-hideminor'
-		);
-		$hideMinorFilter->conflictsWith(
-			$pagecreationFilter,
-			'rcfilters-hideminor-conflicts-typeofchange-global',
-			'rcfilters-hideminor-conflicts-typeofchange',
-			'rcfilters-typeofchange-conflicts-hideminor'
+	protected function getFilterFactory(): ChangesListFilterFactory {
+		return new ChangesListFilterFactory(
+			$this->getExtraFilterFactoryConfig() + $this->getBaseFilterFactoryConfig()
 		);
 	}
 
 	/**
-	 * Transforms filter definition to prepare it for constructor.
-	 *
-	 * See overrides of this method as well.
-	 *
-	 * @param array $filterDefinition Original filter definition
-	 *
-	 * @return array Transformed definition
+	 * Register all filters and their groups (including those from hooks), plus handle
+	 * conflicts and defaults.
 	 */
-	protected function transformFilterDefinition( array $filterDefinition ) {
-		return $filterDefinition;
+	protected function registerFilters() {
+		$filterFactory = $this->getFilterFactory();
+		$filterFactory->registerFiltersFromDefinitions(
+			$this->filterGroups,
+			$this->getBaseFilterGroupDefinitions()
+		);
+		$filterFactory->registerFiltersFromDefinitions(
+			$this->filterGroups,
+			$this->getExtraFilterGroupDefinitions()
+		);
+		$this->getHookRunner()->onChangesListSpecialPageStructuredFilters( $this );
+		$this->filterGroups->setDefaults( $this->getFilterDefaultOverrides() );
 	}
 
 	/**
@@ -1124,43 +920,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * @phan-param array<int,array{class:class-string<ChangesListFilterGroup>,filters:array}> $definition
 	 */
 	protected function registerFiltersFromDefinitions( array $definition ) {
-		$autoFillPriority = -1;
-		foreach ( $definition as $groupDefinition ) {
-			if ( !isset( $groupDefinition['priority'] ) ) {
-				$groupDefinition['priority'] = $autoFillPriority;
-			} else {
-				// If it's explicitly specified, start over the auto-fill
-				$autoFillPriority = $groupDefinition['priority'];
-			}
-
-			$autoFillPriority--;
-
-			$className = $groupDefinition['class'];
-			unset( $groupDefinition['class'] );
-
-			foreach ( $groupDefinition['filters'] as &$filterDefinition ) {
-				$filterDefinition = $this->transformFilterDefinition( $filterDefinition );
-			}
-
-			$this->registerFilterGroup( new $className( $groupDefinition ) );
-		}
-	}
-
-	/**
-	 * @return ChangesListBooleanFilter[] The legacy show/hide toggle filters
-	 */
-	protected function getLegacyShowHideFilters() {
-		$filters = [];
-		foreach ( $this->filterGroups as $group ) {
-			if ( $group instanceof ChangesListBooleanFilterGroup ) {
-				foreach ( $group->getFilters() as $key => $filter ) {
-					if ( $filter->displaysOnUnstructuredUi() ) {
-						$filters[ $key ] = $filter;
-					}
-				}
-			}
-		}
-		return $filters;
+		$this->getFilterFactory()->registerFiltersFromDefinitions( $this->filterGroups, $definition );
 	}
 
 	/**
@@ -1192,7 +952,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * Get a FormOptions object containing the default options. By default, returns
 	 * some basic options.  The filters listed explicitly here are overridden in this
 	 * method, in subclasses, but most filters (e.g. hideminor, userExpLevel filters,
-	 * and more) are structured.  Structured filters are overridden in registerFilters.
+	 * and more) are structured.  Structured filters are overridden in registerFilters,
 	 * not here.
 	 *
 	 * @return FormOptions
@@ -1203,12 +963,10 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		// If urlversion=2 is set, ignore the filter defaults and set them all to false/empty
 		$useDefaults = $this->getRequest()->getInt( 'urlversion' ) !== 2;
 
-		/** @var ChangesListFilterGroup $filterGroup */
-		foreach ( $this->filterGroups as $filterGroup ) {
-			$filterGroup->addOptions( $opts, $useDefaults, $structuredUI );
-		}
+		$this->filterGroups->addOptions( $opts, $useDefaults, $structuredUI );
 
 		$opts->add( 'namespace', '', FormOptions::STRING );
+		$opts->add( 'subpageof', '', FormOptions::STRING );
 		// TODO: Rename this option to 'invertnamespaces'?
 		$opts->add( 'invert', false );
 		$opts->add( 'associated', false );
@@ -1228,68 +986,32 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * Register a structured changes list filter group
 	 */
 	public function registerFilterGroup( ChangesListFilterGroup $group ) {
-		$groupName = $group->getName();
-
-		$this->filterGroups[$groupName] = $group;
+		$this->filterGroups->registerGroup( $group );
 	}
 
 	/**
-	 * Gets the currently registered filters groups
+	 * Gets a specified ChangesListFilterGroup by name.
 	 *
-	 * @return ChangesListFilterGroup[] Associative array of ChangesListFilterGroup objects, with group name as key
-	 */
-	protected function getFilterGroups() {
-		return $this->filterGroups;
-	}
-
-	/**
-	 * Gets a specified ChangesListFilterGroup by name
+	 * In core you can usually use a typed accessor in $this->filterGroups instead.
 	 *
 	 * @param string $groupName Name of group
 	 *
 	 * @return ChangesListFilterGroup|null Group, or null if not registered
 	 */
 	public function getFilterGroup( $groupName ) {
-		return $this->filterGroups[$groupName] ?? null;
+		return $this->filterGroups->getGroup( $groupName );
 	}
-
-	// Currently, this intentionally only includes filters that display
-	// in the structured UI.  This can be changed easily, though, if we want
-	// to include data on filters that use the unstructured UI.  messageKeys is a
-	// special top-level value, with the value being an array of the message keys to
-	// send to the client.
 
 	/**
 	 * Gets structured filter information needed by JS
 	 *
+	 * @internal for test
 	 * @return array Associative array
 	 * * array $return['groups'] Group data
 	 * * array $return['messageKeys'] Array of message keys
 	 */
-	public function getStructuredFilterJsData() {
-		$output = [
-			'groups' => [],
-			'messageKeys' => [],
-		];
-
-		usort( $this->filterGroups, static function ( ChangesListFilterGroup $a, ChangesListFilterGroup $b ) {
-			return $b->getPriority() <=> $a->getPriority();
-		} );
-
-		foreach ( $this->filterGroups as $group ) {
-			$groupOutput = $group->getJsData();
-			if ( $groupOutput !== null ) {
-				$output['messageKeys'] = array_merge(
-					$output['messageKeys'],
-					$groupOutput['messageKeys']
-				);
-
-				unset( $groupOutput['messageKeys'] );
-				$output['groups'][] = $groupOutput;
-			}
-		}
-
-		return $output;
+	protected function getStructuredFilterJsData() {
+		return $this->filterGroups->getJsData();
 	}
 
 	/**
@@ -1309,37 +1031,25 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	/**
 	 * Process $par and put options found in $opts. Used when including the page.
 	 *
+	 * See the comment on SpecialRecentChanges::parseParameters about why this exists.
+	 *
 	 * @param string $par
 	 * @param FormOptions $opts
 	 */
 	public function parseParameters( $par, FormOptions $opts ) {
-		$stringParameterNameSet = [];
-		$hideParameterNameSet = [];
-
-		// URL parameters can be per-group, like 'userExpLevel',
-		// or per-filter, like 'hideminor'.
-
-		foreach ( $this->filterGroups as $filterGroup ) {
-			if ( $filterGroup instanceof ChangesListStringOptionsFilterGroup ) {
-				$stringParameterNameSet[$filterGroup->getName()] = true;
-			} elseif ( $filterGroup instanceof ChangesListBooleanFilterGroup ) {
-				foreach ( $filterGroup->getFilters() as $filter ) {
-					$hideParameterNameSet[$filter->getName()] = true;
-				}
-			}
-		}
+		$params = $this->filterGroups->getSubpageParams();
 
 		$bits = preg_split( '/\s*,\s*/', trim( $par ) );
 		foreach ( $bits as $bit ) {
 			$m = [];
-			if ( isset( $hideParameterNameSet[$bit] ) ) {
+			if ( ( $params[$bit] ?? '' ) === 'bool' ) {
 				// hidefoo => hidefoo=true
 				$opts[$bit] = true;
-			} elseif ( isset( $hideParameterNameSet["hide$bit"] ) ) {
+			} elseif ( ( $params["hide$bit"] ?? '' ) === 'bool' ) {
 				// foo => hidefoo=false
 				$opts["hide$bit"] = false;
 			} elseif ( preg_match( '/^(.*)=(.*)$/', $bit, $m ) ) {
-				if ( isset( $stringParameterNameSet[$m[1]] ) ) {
+				if ( ( $params[$m[1]] ?? '' ) === 'string' ) {
 					$opts[$m[1]] = $m[2];
 				}
 			}
@@ -1371,32 +1081,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 */
 	private function fixContradictoryOptions( FormOptions $opts ) {
 		$fixed = $this->fixBackwardsCompatibilityOptions( $opts );
+		$fixed = $this->filterGroups->fixContradictoryOptions( $opts ) || $fixed;
 
-		foreach ( $this->filterGroups as $filterGroup ) {
-			if ( $filterGroup instanceof ChangesListBooleanFilterGroup ) {
-				$filters = $filterGroup->getFilters();
-
-				if ( count( $filters ) === 1 ) {
-					// legacy boolean filters should not be considered
-					continue;
-				}
-
-				$allInGroupEnabled = array_reduce(
-					$filters,
-					static function ( bool $carry, ChangesListBooleanFilter $filter ) use ( $opts ) {
-						return $carry && $opts[ $filter->getName() ];
-					},
-					/* initialValue */ count( $filters ) > 0
-				);
-
-				if ( $allInGroupEnabled ) {
-					foreach ( $filters as $filter ) {
-						$opts[ $filter->getName() ] = false;
-					}
-
-					$fixed = true;
-				}
-			}
+		// Namespace conflicts with subpageof
+		if ( $opts['namespace'] !== '' && $opts['subpageof'] !== '' ) {
+			$opts['namespace'] = '';
+			$fixed = true;
 		}
 
 		return $fixed;
@@ -1452,7 +1142,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$changed = true;
 		}
 
-		if ( $this->getFilterGroup( 'legacyReviewStatus' ) ) {
+		if ( $this->filterGroups->hasGroup( 'legacyReviewStatus' ) ) {
 			if ( $opts[ 'hidepatrolled' ] ) {
 				$opts->reset( 'hidepatrolled' );
 				$opts[ 'reviewStatus' ] = 'unpatrolled';
@@ -1494,24 +1184,51 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * Sets appropriate tables, fields, conditions, etc. depending on which filters
 	 * the user requested.
 	 *
-	 * @param array &$tables Array of tables; see IReadableDatabase::select $table
-	 * @param array &$fields Array of fields; see IReadableDatabase::select $vars
-	 * @param array &$conds Array of conditions; see IReadableDatabase::select $conds
-	 * @param array &$query_options Array of query options; see IReadableDatabase::select $options
-	 * @param array &$join_conds Array of join conditions; see IReadableDatabase::select $join_conds
 	 * @param FormOptions $opts
+	 * @return ChangesListQuery
 	 */
-	protected function buildQuery( &$tables, &$fields, &$conds, &$query_options,
-		&$join_conds, FormOptions $opts
-	) {
+	protected function buildQuery( FormOptions $opts ) {
 		$dbr = $this->getDB();
 		$isStructuredUI = $this->isStructuredFilterUiEnabled();
 
-		/** @var ChangesListFilterGroup $filterGroup */
-		foreach ( $this->filterGroups as $filterGroup ) {
-			$filterGroup->modifyQuery( $dbr, $this, $tables, $fields, $conds,
-				$query_options, $join_conds, $opts, $isStructuredUI );
-		}
+		$query = $this->changesListQueryFactory->newQuery()
+			->recentChangeFields()
+			->watchlistUser( $this->getUser() )
+			->audience( $this->getAuthority() )
+			->excludeDeletedLogAction()
+			->limit( $opts['limit'] )
+			->maxExecutionTime( $this->getConfig()->get(
+				MainConfigNames::MaxExecutionTimeForExpensiveQueries ) )
+			->caller( static::class . '::buildQuery' );
+
+		// Main query hook
+		$this->addMainQueryHook( $query, $opts );
+
+		// Old filter groups interface
+		$query->legacyMutator(
+			function (
+				&$tables,
+				&$fields,
+				&$conds,
+				&$query_options,
+				&$join_conds,
+			) use ( $dbr, $opts, $isStructuredUI ) {
+				$this->filterGroups->modifyLegacyQuery(
+					$dbr,
+					$this,
+					$tables,
+					$fields,
+					$conds,
+					$query_options,
+					$join_conds,
+					$opts,
+					$isStructuredUI
+				);
+			}
+		);
+
+		// New filter groups interface
+		$this->filterGroups->modifyChangesListQuery( $query, $opts, $isStructuredUI );
 
 		// Namespace filtering
 		if ( $opts[ 'namespace' ] !== '' ) {
@@ -1534,11 +1251,41 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 					$namespaces = array_unique( array_merge( $namespaces, $associatedNamespaces ) );
 				}
 
-				$operator = $opts[ 'invert' ] ? '!=' : '=';
-				sort( $namespaces );
-				$conds[] = $dbr->expr( 'rc_namespace', $operator, $namespaces );
+				if ( $opts['invert'] ) {
+					$query->excludeNamespaces( $namespaces );
+				} else {
+					$query->requireNamespaces( $namespaces );
+				}
 			}
 		}
+
+		// Filtering for subpages of a given set of pages
+		if ( $opts['subpageof'] !== '' ) {
+			$titleParser = MediaWikiServices::getInstance()->getTitleParser();
+			$basePages = explode( '|', $opts['subpageof'] );
+			foreach ( $basePages as $basePageText ) {
+				// Strip any trailing slash
+				$basePageText = rtrim( $basePageText, '/' );
+				try {
+					$basePage = $titleParser->parseTitle( $basePageText );
+				} catch ( MalformedTitleException ) {
+					// Ignore invalid titles
+					continue;
+				}
+				$query->requireSubpageOf( $basePage );
+			}
+		}
+
+		// Change tags
+		if ( $this->getConfig()->get( MainConfigNames::UseTagFilter ) ) {
+			$tagFilter = $opts['tagfilter'] !== '' ? explode( '|', $opts['tagfilter'] ) : [];
+			if ( $opts['inverttags'] ) {
+				$query->excludeChangeTags( $tagFilter );
+			} else {
+				$query->requireChangeTags( $tagFilter );
+			}
+		}
+		$query->addChangeTagSummaryField();
 
 		// Calculate cutoff
 		$cutoff_unixtime = ConvertibleTimestamp::time() - $opts['days'] * 3600 * 24;
@@ -1551,61 +1298,56 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$opts->reset( 'from' );
 		}
 
-		$conds[] = $dbr->expr( 'rc_timestamp', '>=', $cutoff );
+		$query->minTimestamp( $cutoff );
+
+		// Feature flag
+		if ( $this->getRequest()->getBool( 'enable_partitioning' ) ) {
+			$query->enablePartitioning();
+		}
+		return $query;
 	}
 
 	/**
-	 * Process the query
+	 * Allow subclasses to modify the main query
 	 *
-	 * @param array $tables Array of tables; see IReadableDatabase::select $table
-	 * @param array $fields Array of fields; see IReadableDatabase::select $vars
-	 * @param array $conds Array of conditions; see IReadableDatabase::select $conds
-	 * @param array $query_options Array of query options; see IReadableDatabase::select $options
-	 * @param array $join_conds Array of join conditions; see IReadableDatabase::select $join_conds
+	 * @param ChangesListQuery $query
 	 * @param FormOptions $opts
-	 * @return bool|IResultWrapper Result or false
 	 */
-	protected function doMainQuery( $tables, $fields, $conds,
-		$query_options, $join_conds, FormOptions $opts
-	) {
-		$rcQuery = RecentChange::getQueryInfo();
-		$tables = array_merge( $tables, $rcQuery['tables'] );
-		$fields = array_merge( $rcQuery['fields'], $fields );
-		$join_conds = array_merge( $join_conds, $rcQuery['joins'] );
-
-		MediaWikiServices::getInstance()->getChangeTagsStore()->modifyDisplayQuery(
-			$tables,
-			$fields,
-			$conds,
-			$join_conds,
-			$query_options,
-			'',
-			$opts[ 'inverttags' ]
-		);
-
-		if (
-			!$this->runMainQueryHook( $tables, $fields, $conds, $query_options, $join_conds, $opts )
-		) {
-			return false;
-		}
-
-		$dbr = $this->getDB();
-
-		return $dbr->newSelectQueryBuilder()
-			->tables( $tables )
-			->fields( $fields )
-			->conds( $conds )
-			->caller( __METHOD__ )
-			->options( $query_options )
-			->joinConds( $join_conds )
-			->fetchResultSet();
+	protected function modifyQuery( ChangesListQuery $query, FormOptions $opts ) {
 	}
 
+	/**
+	 * @param array &$tables Array of tables to be queried
+	 * @param array &$fields Array of columns to select
+	 * @param array &$conds Array of WHERE conditionals for query
+	 * @param array &$query_options Array of options for the database request
+	 * @param array &$join_conds Join conditions for the tables
+	 * @param FormOptions $opts FormOptions for this request
+	 * @return bool|void True or no return value to continue or false to abort
+	 */
 	protected function runMainQueryHook( &$tables, &$fields, &$conds,
 		&$query_options, &$join_conds, $opts
 	) {
 		return $this->getHookRunner()->onChangesListSpecialPageQuery(
 			$this->getName(), $tables, $fields, $conds, $query_options, $join_conds, $opts );
+	}
+
+	/**
+	 * @param ChangesListQuery $query
+	 * @param FormOptions $opts FormOptions for this request
+	 */
+	protected function addMainQueryHook( $query, $opts ) {
+		if ( $this->getHookContainer()->isRegistered( 'ChangesListSpecialPageQuery' ) ) {
+			$this->mainQueryHookRegistered = true;
+			$query->legacyMutator(
+				function ( &$tables, &$fields, &$conds, &$query_options, &$join_conds )
+				use ( $opts ) {
+					$this->mainQueryHookCalled = true;
+					return $this->runMainQueryHook( $tables, $fields, $conds,
+						$query_options, $join_conds, $opts );
+				}
+			);
+		}
 	}
 
 	/**
@@ -1797,140 +1539,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'changes';
-	}
-
-	/**
-	 * Return expression that is true when the user is or isn't registered.
-	 * @param bool $isRegistered
-	 * @param IReadableDatabase $dbr
-	 * @return IExpression
-	 */
-	private function getRegisteredExpr( $isRegistered, $dbr ): IExpression {
-		$expr = $dbr->expr( 'actor_user', $isRegistered ? '!=' : '=', null );
-		if ( !$this->tempUserConfig->isKnown() ) {
-			return $expr;
-		}
-		if ( $isRegistered ) {
-			return $expr->andExpr( $this->tempUserConfig->getMatchCondition( $dbr,
-				'actor_name', IExpression::NOT_LIKE ) );
-		} else {
-			return $expr->orExpr( $this->tempUserConfig->getMatchCondition( $dbr,
-				'actor_name', IExpression::LIKE ) );
-		}
-	}
-
-	/**
-	 * Return expression that is true when the user has reached the given experience level.
-	 * @param string $level 'learner' or 'experienced'
-	 * @param int $now Current time as UNIX timestamp (if 0, uses actual time)
-	 * @param IReadableDatabase $dbr
-	 * @param bool $asNotCondition
-	 * @return IExpression
-	 */
-	private function getExperienceExpr( $level, $now, IReadableDatabase $dbr, $asNotCondition = false ): IExpression {
-		$config = $this->getConfig();
-
-		$configSince = [
-			'learner' => $config->get( MainConfigNames::LearnerMemberSince ),
-			'experienced' => $config->get( MainConfigNames::ExperiencedUserMemberSince ),
-		][$level];
-		if ( $now === 0 ) {
-			$now = ConvertibleTimestamp::time();
-		}
-		$secondsPerDay = 86400;
-		$timeCutoff = $now - $configSince * $secondsPerDay;
-
-		$editCutoff = [
-			'learner' => $config->get( MainConfigNames::LearnerEdits ),
-			'experienced' => $config->get( MainConfigNames::ExperiencedUserEdits ),
-		][$level];
-
-		if ( $asNotCondition ) {
-			return $dbr->expr( 'user_editcount', '<', intval( $editCutoff ) )
-				->or( 'user_registration', '>', $dbr->timestamp( $timeCutoff ) );
-		}
-		return $dbr->expr( 'user_editcount', '>=', intval( $editCutoff ) )->andExpr(
-			// Users who don't have user_registration set are very old, so we assume they're above any cutoff
-			$dbr->expr( 'user_registration', '=', null )
-				->or( 'user_registration', '<=', $dbr->timestamp( $timeCutoff ) )
-		);
-	}
-
-	/**
-	 * Filter on users' experience levels; this will not be called if nothing is
-	 * selected.
-	 *
-	 * @param string $specialPageClassName Class name of current special page
-	 * @param IContextSource $context Context, for e.g. user
-	 * @param IReadableDatabase $dbr Database, for addQuotes, makeList, and similar
-	 * @param array &$tables Array of tables; see IReadableDatabase::select $table
-	 * @param array &$fields Array of fields; see IReadableDatabase::select $vars
-	 * @param array &$conds Array of conditions; see IReadableDatabase::select $conds
-	 * @param array &$query_options Array of query options; see IReadableDatabase::select $options
-	 * @param array &$join_conds Array of join conditions; see IReadableDatabase::select $join_conds
-	 * @param array $selectedExpLevels The allowed active values, sorted
-	 * @param int $now Current time as UNIX timestamp (if 0, uses actual time)
-	 */
-	public function filterOnUserExperienceLevel( $specialPageClassName, $context, $dbr,
-		&$tables, &$fields, &$conds, &$query_options, &$join_conds, $selectedExpLevels, $now = 0
-	) {
-		$selected = array_fill_keys( $selectedExpLevels, true );
-
-		$isUnregistered = $this->getRegisteredExpr( false, $dbr );
-		$isRegistered = $this->getRegisteredExpr( true, $dbr );
-		$aboveNewcomer = $this->getExperienceExpr( 'learner', $now, $dbr );
-		$notAboveNewcomer = $this->getExperienceExpr( 'learner', $now, $dbr, true );
-		$aboveLearner = $this->getExperienceExpr( 'experienced', $now, $dbr );
-		$notAboveLearner = $this->getExperienceExpr( 'experienced', $now, $dbr, true );
-
-		// We need to select some range of user experience levels, from the following table:
-		// | Unregistered |     --------- Registered ---------     |
-		// |              |  Newcomers  |  Learners  | Experienced |
-		// |<------------>|<----------->|<---------->|<----------->|
-		// We just need to define a condition for each of the columns, figure out which are selected,
-		// and then OR them together.
-		$columnConds = [
-			'unregistered' => $isUnregistered,
-			'registered' => $isRegistered,
-			'newcomer' => $dbr->andExpr( [ $isRegistered, $notAboveNewcomer ] ),
-			'learner' => $dbr->andExpr( [ $isRegistered, $aboveNewcomer, $notAboveLearner ] ),
-			'experienced' => $dbr->andExpr( [ $isRegistered, $aboveLearner ] ),
-		];
-
-		// There are some cases where we can easily optimize away some queries:
-		// | Unregistered |     --------- Registered ---------     |
-		// |              |  Newcomers  |  Learners  | Experienced |
-		// |              |<-------------------------------------->| (1)
-		// |<----------------------------------------------------->| (2)
-
-		// (1) Selecting all of "Newcomers", "Learners" and "Experienced users" is the same as "Registered".
-		if (
-			isset( $selected['registered'] ) ||
-			( isset( $selected['newcomer'] ) && isset( $selected['learner'] ) && isset( $selected['experienced'] ) )
-		) {
-			unset( $selected['newcomer'], $selected['learner'], $selected['experienced'] );
-			$selected['registered'] = true;
-		}
-		// (2) Selecting "Unregistered" and "Registered" covers all users.
-		if ( isset( $selected['registered'] ) && isset( $selected['unregistered'] ) ) {
-			unset( $selected['registered'], $selected['unregistered'] );
-		}
-
-		// Combine the conditions for the selected columns.
-		if ( !$selected ) {
-			return;
-		}
-		$selectedColumnConds = array_values( array_intersect_key( $columnConds, $selected ) );
-		$conds[] = $dbr->orExpr( $selectedColumnConds );
-
-		// Add necessary tables to the queries.
-		$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
-		if ( isset( $selected['newcomer'] ) || isset( $selected['learner'] ) || isset( $selected['experienced'] ) ) {
-			$tables[] = 'user';
-			$join_conds['user'] = [ 'LEFT JOIN', 'actor_user=user_id' ];
-		}
 	}
 
 	/**

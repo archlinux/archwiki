@@ -111,7 +111,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		self::$checkuser = static::getTestUser( [ 'checkuser' ] )->getUser();
 		self::$sysop = static::getTestUser( [
 			'sysop',
-			'temporary-account-viewer'
+			'temporary-account-viewer',
 		] )->getUser();
 		self::$checkuserAndSysop = static::getTestUser( [ 'checkuser', 'sysop' ] )->getUser();
 		self::$tempUser1 = $this->getServiceContainer()
@@ -347,7 +347,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// Add unique namespaces to the wiki
 		$this->overrideConfigValue( MainConfigNames::ExtraNamespaces, [
 			3000 => 'Foo',
-			3001 => 'Foo_talk'
+			3001 => 'Foo_talk',
 		] );
 
 		// Assert that the namespace exists on-wiki
@@ -440,7 +440,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 				'infinity',
 				'test hideuser',
 				[
-					'isHideUser' => true
+					'isHideUser' => true,
 				]
 			)->placeBlock();
 		$this->assertStatusGood( $status );
@@ -501,7 +501,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 			'Start timestamp is set after the last contribution' => [ [ 'start' => '2026-02-01' ] ],
 			'End timestamp is set before the first contribution' => [ [ 'end' => '1999-01-01' ] ],
 			'Start and end timestamp are set to not show any contributions' => [
-				[ 'end' => '2025-03-05', 'start' => '2025-03-05' ]
+				[ 'end' => '2025-03-05', 'start' => '2025-03-05' ],
 			],
 			'Namespace set to NS_TEMPLATE' => [ [ 'namespace' => NS_TEMPLATE ] ],
 			'Tag filter set to "mw-new-redirect"' => [ [ 'tagfilter' => 'mw-new-redirect' ] ],

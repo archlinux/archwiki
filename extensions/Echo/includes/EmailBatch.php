@@ -3,18 +3,18 @@
 namespace MediaWiki\Extension\Notifications;
 
 use BatchRowIterator;
-use MailAddress;
 use MediaWiki\Extension\Notifications\Formatters\EchoHtmlDigestEmailFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoPlainTextDigestEmailFormatter;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Mail\MailAddress;
+use MediaWiki\Mail\UserMailer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use stdClass;
-use UserMailer;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -22,20 +22,7 @@ use Wikimedia\Rdbms\IResultWrapper;
  */
 class EmailBatch {
 
-	/**
-	 * @var User the user to be notified
-	 */
-	protected $mUser;
-
-	/**
-	 * @var Language
-	 */
-	protected $language;
-
-	/**
-	 * @var UserOptionsManager
-	 */
-	protected $userOptionsManager;
+	protected Language $language;
 
 	/**
 	 * @var Event[] events included in this email
@@ -59,15 +46,13 @@ class EmailBatch {
 	protected static $displaySize = 20;
 
 	public function __construct(
-		User $user,
-		UserOptionsManager $userOptionsManager,
-		LanguageFactory $languageFactory
+		protected User $mUser,
+		protected UserOptionsManager $userOptionsManager,
+		LanguageFactory $languageFactory,
 	) {
-		$this->mUser = $user;
 		$this->language = $languageFactory->getLanguage(
-			$userOptionsManager->getOption( $user, 'language' )
+			$userOptionsManager->getOption( $mUser, 'language' )
 		);
-		$this->userOptionsManager = $userOptionsManager;
 	}
 
 	/**
@@ -234,7 +219,7 @@ class EmailBatch {
 				->join( 'echo_event', null, 'event_id = eeb_event_id' )
 				->where( [
 					'eeb_user_id' => $this->mUser->getId(),
-					'event_type' => $validEvents
+					'event_type' => $validEvents,
 				] )
 				->orderBy( 'eeb_event_priority' )
 				->limit( self::$displaySize + 1 )
@@ -298,7 +283,7 @@ class EmailBatch {
 				->deleteFrom( 'echo_email_batch' )
 				->where( [
 					'eeb_user_id' => $this->mUser->getId(),
-					'eeb_event_id' => $eventIds
+					'eeb_event_id' => $eventIds,
 				] )
 				->caller( __METHOD__ )
 				->execute();
@@ -377,7 +362,7 @@ class EmailBatch {
 			'eeb_user_id' => $userId,
 			'eeb_event_id' => $eventId,
 			'eeb_event_priority' => $priority,
-			'eeb_event_hash' => $hash
+			'eeb_event_hash' => $hash,
 		];
 
 		$dbw->newInsertQueryBuilder()

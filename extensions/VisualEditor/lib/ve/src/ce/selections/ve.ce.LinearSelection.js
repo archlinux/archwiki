@@ -16,8 +16,6 @@ ve.ce.LinearSelection = function VeCeLinearSelection() {
 	ve.ce.LinearSelection.super.apply( this, arguments );
 
 	// Properties
-	// The focused node in the view when this selection was created, if one exists
-	this.focusedNode = this.getSurface().getFocusedNode( this.getModel().getRange() );
 	this.directionality = null;
 };
 
@@ -37,13 +35,13 @@ ve.ce.LinearSelection.static.name = 'linear';
 ve.ce.LinearSelection.prototype.getSelectionRects = function () {
 	const surface = this.getSurface();
 
-	const range = this.getModel().getRange();
-	const focusedNode = surface.getFocusedNode( range );
+	const focusedNode = this.getFocusedNode();
 
 	if ( focusedNode ) {
 		return focusedNode.getRects();
 	}
 
+	const range = this.getModel().getRange();
 	const nativeRange = surface.getNativeRange( range );
 	if ( !nativeRange ) {
 		return null;
@@ -84,10 +82,7 @@ ve.ce.LinearSelection.prototype.getSelectionRects = function () {
  * @inheritdoc
  */
 ve.ce.LinearSelection.prototype.getSelectionStartAndEndRects = function () {
-	const surface = this.getSurface();
-
-	const range = this.getModel().getRange();
-	const focusedNode = surface.getFocusedNode( range );
+	const focusedNode = this.getFocusedNode();
 
 	if ( focusedNode ) {
 		return focusedNode.getStartAndEndRects();
@@ -102,13 +97,13 @@ ve.ce.LinearSelection.prototype.getSelectionStartAndEndRects = function () {
 ve.ce.LinearSelection.prototype.getSelectionBoundingRect = function () {
 	const surface = this.getSurface();
 
-	const range = this.getModel().getRange();
-	const focusedNode = surface.getFocusedNode( range );
+	const focusedNode = this.getFocusedNode();
 
 	if ( focusedNode ) {
 		return focusedNode.getBoundingRect();
 	}
 
+	const range = this.getModel().getRange();
 	const nativeRange = surface.getNativeRange( range );
 	if ( !nativeRange ) {
 		return null;
@@ -227,24 +222,39 @@ ve.ce.LinearSelection.prototype.getNodeClientRectFromRange = function ( range ) 
  * @inheritdoc
  */
 ve.ce.LinearSelection.prototype.getSelectionFocusRect = function () {
-	return !this.isNativeCursor() ?
+	if ( this.isNativeCursor() ) {
+		const toSelection = new this.constructor( this.getModel().collapseToTo(), this.surface );
+		// Don't using bounding rects as these break at the end of a line for
+		// collapsed native rects.
+		const startAndEndRects = toSelection.getSelectionStartAndEndRects();
+		return startAndEndRects ? startAndEndRects.end : null;
+	} else {
 		// Don't collapse selection for focus rect if we are on a focusable node.
-		this.getSelectionBoundingRect() :
-		ve.ce.LinearSelection.super.prototype.getSelectionFocusRect.call( this );
+		return this.getSelectionBoundingRect();
+	}
+};
+
+/**
+ * Get the focusable node at the selection
+ *
+ * @return {ve.ce.Node|null} Focused node
+ */
+ve.ce.LinearSelection.prototype.getFocusedNode = function () {
+	return this.getSurface().getFocusedNode( this.getModel().getRange() );
 };
 
 /**
  * @inheritdoc
  */
 ve.ce.LinearSelection.prototype.isFocusedNode = function () {
-	return !!this.focusedNode;
+	return !!this.getFocusedNode();
 };
 
 /**
  * @inheritdoc
  */
 ve.ce.LinearSelection.prototype.isNativeCursor = function () {
-	return !this.focusedNode;
+	return !this.getFocusedNode();
 };
 
 /**

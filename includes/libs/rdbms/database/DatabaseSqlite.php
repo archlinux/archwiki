@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms;
@@ -109,6 +95,7 @@ class DatabaseSqlite extends Database {
 		);
 	}
 
+	/** @inheritDoc */
 	public static function getAttributes() {
 		return [
 			self::ATTR_DB_IS_FILE => true,
@@ -143,6 +130,7 @@ class DatabaseSqlite extends Database {
 		return 'sqlite';
 	}
 
+	/** @inheritDoc */
 	protected function open( $server, $user, $password, $db, $schema, $tablePrefix ) {
 		$this->close( __METHOD__ );
 
@@ -400,6 +388,7 @@ class DatabaseSqlite extends Database {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function doSelectDomain( DatabaseDomain $domain ) {
 		if ( $domain->getSchema() !== null ) {
 			throw new DBExpectedError(
@@ -435,6 +424,7 @@ class DatabaseSqlite extends Database {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function lastInsertId() {
 		// PDO::lastInsertId yields a string :(
 		return (int)$this->getBindingHandle()->lastInsertId();
@@ -468,6 +458,7 @@ class DatabaseSqlite extends Database {
 		return 0;
 	}
 
+	/** @inheritDoc */
 	public function tableExists( $table, $fname = __METHOD__ ) {
 		[ $db, $pt ] = $this->platform->getDatabaseAndTableIdentifier( $table );
 		if ( isset( $this->sessionTempTables[$db][$pt] ) ) {
@@ -485,8 +476,8 @@ class DatabaseSqlite extends Database {
 		return (bool)$res->numRows();
 	}
 
+	/** @inheritDoc */
 	public function indexInfo( $table, $index, $fname = __METHOD__ ) {
-		$indexName = $this->platform->indexName( $index );
 		$components = $this->platform->qualifiedTableComponents( $table );
 		$tableRaw = end( $components );
 		$query = new Query(
@@ -497,7 +488,7 @@ class DatabaseSqlite extends Database {
 		$res = $this->query( $query, $fname );
 
 		foreach ( $res as $row ) {
-			if ( $row->name === $indexName ) {
+			if ( $row->name === $index ) {
 				return [ 'unique' => (bool)$row->unique ];
 			}
 		}
@@ -505,6 +496,30 @@ class DatabaseSqlite extends Database {
 		return false;
 	}
 
+	/** @inheritDoc */
+	public function getPrimaryKeyColumns( $table, $fname = __METHOD__ ) {
+		$components = $this->platform->qualifiedTableComponents( $table );
+		$tableRaw = end( $components );
+		$query = new Query(
+			'PRAGMA table_info(' . $this->addQuotes( $tableRaw ) . ')',
+			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
+			'PRAGMA'
+		);
+		$res = $this->query( $query, $fname );
+
+		$pkBySeq = [];
+		foreach ( $res as $row ) {
+			if ( isset( $row->pk ) && (int)$row->pk > 0 ) {
+				$pkBySeq[(int)$row->pk] = (string)$row->name;
+			}
+		}
+
+		ksort( $pkBySeq );
+
+		return array_values( $pkBySeq );
+	}
+
+	/** @inheritDoc */
 	public function replace( $table, $uniqueKeys, $rows, $fname = __METHOD__ ) {
 		$this->platform->normalizeUpsertParams( $uniqueKeys, $rows );
 		if ( !$rows ) {
@@ -524,10 +539,12 @@ class DatabaseSqlite extends Database {
 		$this->query( $query, $fname );
 	}
 
+	/** @inheritDoc */
 	protected function isConnectionError( $errno ) {
 		return $errno == 17; // SQLITE_SCHEMA;
 	}
 
+	/** @inheritDoc */
 	protected function isKnownStatementRollbackError( $errno ) {
 		// ON CONFLICT ROLLBACK clauses make it so that SQLITE_CONSTRAINT error is
 		// ambiguous with regard to whether it implies a ROLLBACK or an ABORT happened.
@@ -536,6 +553,7 @@ class DatabaseSqlite extends Database {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function serverIsReadOnly() {
 		$this->assertHasConnectionHandle();
 
@@ -588,6 +606,7 @@ class DatabaseSqlite extends Database {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function doBegin( $fname = '' ) {
 		if ( $this->trxMode != '' ) {
 			$sql = "BEGIN {$this->trxMode}";
@@ -631,6 +650,7 @@ class DatabaseSqlite extends Database {
 		return $b;
 	}
 
+	/** @inheritDoc */
 	public function addQuotes( $s ) {
 		if ( $s instanceof RawSQLValue ) {
 			return $s->toSql();
@@ -641,7 +661,7 @@ class DatabaseSqlite extends Database {
 			return (string)(int)$s;
 		} elseif ( is_int( $s ) ) {
 			return (string)$s;
-		} elseif ( strpos( (string)$s, "\0" ) !== false ) {
+		} elseif ( str_contains( (string)$s, "\0" ) ) {
 			// SQLite doesn't support \0 in strings, so use the hex representation as a workaround.
 			// This is a known limitation of SQLite's mprintf function which PDO
 			// should work around, but doesn't. I have reported this to php.net as bug #63419:
@@ -663,11 +683,13 @@ class DatabaseSqlite extends Database {
 		}
 	}
 
+	/** @inheritDoc */
 	public function doLockIsFree( string $lockName, string $method ) {
 		// Only locks by this thread will be checked
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function doLock( string $lockName, string $method, int $timeout ) {
 		$status = $this->lockMgr->lock( [ $lockName ], LockManager::LOCK_EX, $timeout );
 		if (
@@ -680,6 +702,7 @@ class DatabaseSqlite extends Database {
 		return $status->isOK() ? microtime( true ) : null;
 	}
 
+	/** @inheritDoc */
 	public function doUnlock( string $lockName, string $method ) {
 		return $this->lockMgr->unlock( [ $lockName ], LockManager::LOCK_EX )->isGood();
 	}
@@ -746,7 +769,7 @@ class DatabaseSqlite extends Database {
 		// Take over indexes
 		$indexList = $this->query( $query, $fname );
 		foreach ( $indexList as $index ) {
-			if ( strpos( $index->name, 'sqlite_autoindex' ) === 0 ) {
+			if ( str_starts_with( $index->name, 'sqlite_autoindex' ) ) {
 				continue;
 			}
 
@@ -807,8 +830,8 @@ class DatabaseSqlite extends Database {
 			$vars = get_object_vars( $table );
 			$table = array_pop( $vars );
 
-			if ( !$prefix || strpos( $table, $prefix ) === 0 ) {
-				if ( strpos( $table, 'sqlite_' ) !== 0 ) {
+			if ( !$prefix || str_starts_with( $table, $prefix ) ) {
+				if ( !str_starts_with( $table, 'sqlite_' ) ) {
 					$endArray[] = $table;
 				}
 			}
@@ -817,6 +840,7 @@ class DatabaseSqlite extends Database {
 		return $endArray;
 	}
 
+	/** @inheritDoc */
 	public function truncateTable( $table, $fname = __METHOD__ ) {
 		$this->startAtomic( $fname );
 		// Use "truncate" optimization; https://www.sqlite.org/lang_delete.html
@@ -863,6 +887,7 @@ class DatabaseSqlite extends Database {
 		}
 	}
 
+	/** @inheritDoc */
 	public function databasesAreIndependent() {
 		return true;
 	}
@@ -875,6 +900,7 @@ class DatabaseSqlite extends Database {
 		$this->lockMgr = $this->makeLockManager();
 	}
 
+	/** @inheritDoc */
 	protected function doFlushSession( $fname ) {
 		// Release all locks, via FSLockManager::__destruct, as the base class expects
 		$this->lockMgr = null;
@@ -889,6 +915,7 @@ class DatabaseSqlite extends Database {
 		return parent::getBindingHandle();
 	}
 
+	/** @inheritDoc */
 	protected function getInsertIdColumnForUpsert( $table ) {
 		$components = $this->platform->qualifiedTableComponents( $table );
 		$tableRaw = end( $components );

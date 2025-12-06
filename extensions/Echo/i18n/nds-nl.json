@@ -31,7 +31,6 @@
 	"echo-category-title-mention": "{{PLURAL:$1|Eneumd}}",
 	"echo-category-title-other": "{{PLURAL:$1|Overige}}",
 	"echo-category-title-system": "{{PLURAL:$1|Systeem}}",
-	"echo-pref-tooltip-edit-user-talk": "Stuur m'n n melding as der ene n niej bericht op mien overlegzied zet of as e antwoordt.",
 	"echo-pref-tooltip-article-linked": "Stuur m'n n melding as der ene n verwiezing maakt naor n zied die'k an-emaakt hebbe.",
 	"echo-pref-tooltip-reverted": "Stuur m'n n melding as der ene n bewarking die'k an-ebröcht hebbe weerummedreit mit de funksie ongedaonmaken of weerummedreien.",
 	"echo-pref-tooltip-mention": "Stuur m'n n melding as der ene n verwiezing maakt naor mien gebrukerszied vanaof n overlegzied.",

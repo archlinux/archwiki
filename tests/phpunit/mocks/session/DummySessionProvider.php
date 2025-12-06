@@ -15,6 +15,7 @@ class DummySessionProvider extends SessionProvider {
 
 	public const ID = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
+	/** @inheritDoc */
 	public function provideSessionInfo( WebRequest $request ) {
 		return new SessionInfo( SessionInfo::MIN_PRIORITY, [
 			'provider' => $this,
@@ -24,6 +25,7 @@ class DummySessionProvider extends SessionProvider {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function newSessionInfo( $id = null ) {
 		return new SessionInfo( SessionInfo::MIN_PRIORITY, [
 			'id' => $id,
@@ -34,27 +36,28 @@ class DummySessionProvider extends SessionProvider {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function persistsSessionId() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function canChangeUser() {
 		return $this->persistsSessionId();
 	}
 
+	/** @inheritDoc */
 	public function persistSession( SessionBackend $session, WebRequest $request ) {
 	}
 
 	public function unpersistSession( WebRequest $request ) {
 	}
 
-	public function immutableSessionCouldExistForUser( $user ) {
-		return false;
+	/** @inheritDoc */
+	public function preventSessionsForUser( $user ) {
 	}
 
-	public function preventImmutableSessionsForUser( $user ) {
-	}
-
+	/** @inheritDoc */
 	public function suggestLoginUsername( WebRequest $request ) {
 		return $request->getCookie( 'UserName' );
 	}

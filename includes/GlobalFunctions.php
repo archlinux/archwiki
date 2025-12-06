@@ -2,21 +2,7 @@
 /**
  * Global functions used everywhere.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Shell\Shell;
 use MediaWiki\Title\Title;
@@ -401,7 +388,7 @@ function wfCgiToArray( $query ) {
 		if ( $bit === '' ) {
 			continue;
 		}
-		if ( strpos( $bit, '=' ) === false ) {
+		if ( !str_contains( $bit, '=' ) ) {
 			// Pieces like &qwerty become 'qwerty' => '' (at least this is what php does)
 			$key = $bit;
 			$value = '';
@@ -410,7 +397,7 @@ function wfCgiToArray( $query ) {
 		}
 		$key = urldecode( $key );
 		$value = urldecode( $value );
-		if ( strpos( $key, '[' ) !== false ) {
+		if ( str_contains( $key, '[' ) ) {
 			$keys = array_reverse( explode( '[', $key ) );
 			$key = array_pop( $keys );
 			$temp = $value;
@@ -452,7 +439,7 @@ function wfAppendQuery( $url, $query ) {
 		}
 
 		// Add parameter
-		if ( strpos( $url, '?' ) === false ) {
+		if ( !str_contains( $url, '?' ) ) {
 			$url .= '?';
 		} else {
 			$url .= '&';
@@ -517,7 +504,7 @@ function wfGetUrlUtils(): UrlUtils {
  *
  * Parent references (/../) in the path are resolved (as in UrlUtils::removeDotSegments()).
  *
- * @deprecated since 1.39, use UrlUtils::expand()
+ * @deprecated since 1.39, use UrlUtils::expand(); hard-deprecated since 1.45
  * @param string $url An URL; can be absolute (e.g. http://example.com/foo/bar),
  *    protocol-relative (//example.com/foo/bar) or domain-relative (/foo/bar).
  * @param string|int|null $defaultProto One of the PROTO_* constants, as described above.
@@ -525,22 +512,9 @@ function wfGetUrlUtils(): UrlUtils {
  *    no valid URL can be constructed
  */
 function wfExpandUrl( $url, $defaultProto = PROTO_CURRENT ) {
-	return wfGetUrlUtils()->expand( (string)$url, $defaultProto ) ?? false;
-}
-
-/**
- * Get the wiki's "server", i.e. the protocol and host part of the URL, with a
- * protocol specified using a PROTO_* constant as in wfExpandUrl()
- *
- * @deprecated since 1.39, use UrlUtils::getServer(); hard-deprecated since 1.43
- * @since 1.32
- * @param string|int|null $proto One of the PROTO_* constants.
- * @return string The URL
- */
-function wfGetServerUrl( $proto ) {
 	wfDeprecated( __FUNCTION__, '1.39' );
 
-	return wfGetUrlUtils()->getServer( $proto ) ?? '';
+	return wfGetUrlUtils()->expand( (string)$url, $defaultProto ) ?? false;
 }
 
 /**
@@ -550,7 +524,7 @@ function wfGetServerUrl( $proto ) {
  * This is the basic structure used (brackets contain keys for $urlParts):
  * [scheme][delimiter][user]:[pass]@[host]:[port][path]?[query]#[fragment]
  *
- * @deprecated since 1.39, use UrlUtils::assemble(); hard-deprecated since 1.44
+ * @deprecated since 1.39, use UrlUtils::assemble(); hard-deprecated since 1.45
  * @since 1.19
  * @param array $urlParts URL parts, as output from wfParseUrl
  * @return string URL assembled from its component parts
@@ -599,7 +573,7 @@ function wfUrlProtocolsWithoutProtRel() {
  * 4) Rejects some invalid URLs that parse_url doesn't, e.g. the empty string or URLs starting with
  *    a line feed character.
  *
- * @deprecated since 1.39, use UrlUtils::parse()
+ * @deprecated since 1.39, use UrlUtils::parse(); hard-deprecated since 1.45
  * @param string $url A URL to parse
  * @return string[]|false Bits of the URL in an associative array, or false on failure.
  *   Possible fields:
@@ -616,22 +590,9 @@ function wfUrlProtocolsWithoutProtRel() {
  *   - fragment: the part after #, can be missing.
  */
 function wfParseUrl( $url ) {
-	return wfGetUrlUtils()->parse( (string)$url ) ?? false;
-}
-
-/**
- * Take a URL, make sure it's expanded to fully qualified, and replace any
- * encoded non-ASCII Unicode characters with their UTF-8 original forms
- * for more compact display and legibility for local audiences.
- *
- * @deprecated since 1.39, use UrlUtils::expandIRI(); hard-deprecated since 1.43
- * @param string $url
- * @return string
- */
-function wfExpandIRI( $url ) {
 	wfDeprecated( __FUNCTION__, '1.39' );
 
-	return wfGetUrlUtils()->expandIRI( (string)$url ) ?? '';
+	return wfGetUrlUtils()->parse( (string)$url ) ?? false;
 }
 
 /**
@@ -1097,7 +1058,7 @@ function wfClientAcceptsGzip( $force = false ) {
 function wfEscapeWikiText( $input ): string {
 	global $wgEnableMagicLinks;
 	static $repl = null, $repl2 = null, $repl3 = null, $repl4 = null;
-	if ( $repl === null || defined( 'MW_PARSER_TEST' ) || defined( 'MW_PHPUNIT_TEST' ) ) {
+	if ( $repl === null || defined( 'MW_PHPUNIT_TEST' ) ) {
 		// Tests depend upon being able to change $wgEnableMagicLinks, so don't cache
 		// in those situations
 		$repl = [
@@ -1116,6 +1077,8 @@ function wfEscapeWikiText( $input ): string {
 			"\n\t" => "\n&#9;", "\r\t" => "\r&#9;", // "\n\t\n" is treated like "\n\n"
 			"\n----" => "\n&#45;---", "\r----" => "\r&#45;---",
 			'__' => '_&#95;', '://' => '&#58;//',
+			// Japanese magic words start w/ wide underscore
+			'＿' => '&#xFF3F;',
 			'~~~' => '~~&#126;', // protect from PST, just to be safe(r)
 		];
 
@@ -1133,6 +1096,8 @@ function wfEscapeWikiText( $input ): string {
 		// string.  Tokens like -{ {{ [[ {| etc are already escaped because
 		// the second character is escaped above, but the following tokens
 		// are handled here: |+ |- __FOO__ ~~~
+		// (Only single-byte characters can go here; multibyte characters
+		// like 'wide underscore' must go into $repl above.)
 		$repl3 = [
 			'+' => '&#43;', '-' => '&#45;', '_' => '&#95;', '~' => '&#126;',
 		];
@@ -1140,7 +1105,8 @@ function wfEscapeWikiText( $input ): string {
 		// string, which could turn form the start of `__FOO__` or `~~~~`
 		// A trailing newline could also form the unintended start of a
 		// paragraph break if it is glued to a newline in the following
-		// context.
+		// context.  Again, only single-byte characters can be protected
+		// here; 'wide underscore' is protected by $repl above.
 		$repl4 = [
 			'_' => '&#95;', '~' => '&#126;',
 			"\n" => "&#10;", "\r" => "&#13;",
@@ -1250,6 +1216,7 @@ function wfHttpError( $code, $label, $desc ) {
 
 	\MediaWiki\Request\HeaderCallback::warnIfHeadersSent();
 	header( 'Content-type: text/html; charset=utf-8' );
+	ContentSecurityPolicy::sendRestrictiveHeader();
 	ob_start();
 	print '<!DOCTYPE html>' .
 		'<html><head><title>' .
@@ -1570,7 +1537,7 @@ function wfShellExec( $cmd, &$retval = null, $environ = [],
 			// For b/c
 			->restrict( Shell::RESTRICT_NONE )
 			->execute();
-	} catch ( ProcOpenError $ex ) {
+	} catch ( ProcOpenError ) {
 		$retval = -1;
 		return '';
 	}
@@ -1925,7 +1892,7 @@ function wfShorthandToInteger( ?string $string = '', int $default = -1 ): int {
 	if ( $string === '' ) {
 		return $default;
 	}
-	$last = $string[strlen( $string ) - 1];
+	$last = substr( $string, -1 );
 	$val = intval( $string );
 	switch ( $last ) {
 		case 'g':

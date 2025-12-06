@@ -35,18 +35,13 @@ use Wikimedia\ParamValidator\ParamValidator;
  * @ingroup Extensions
  */
 class ApiOATHValidate extends ApiBase {
-	private OATHUserRepository $oathUserRepository;
-	private UserFactory $userFactory;
-
 	public function __construct(
 		ApiMain $mainModule,
 		string $moduleName,
-		OATHUserRepository $oathUserRepository,
-		UserFactory $userFactory
+		private readonly OATHUserRepository $oathUserRepository,
+		private readonly UserFactory $userFactory,
 	) {
 		parent::__construct( $mainModule, $moduleName );
-		$this->oathUserRepository = $oathUserRepository;
-		$this->userFactory = $userFactory;
 	}
 
 	public function execute() {

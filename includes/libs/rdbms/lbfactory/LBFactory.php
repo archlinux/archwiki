@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms;
@@ -75,8 +61,6 @@ abstract class LBFactory implements ILBFactory {
 
 	/** @var array[] $aliases Map of (table => (dbname, schema, prefix) map) */
 	private $tableAliases = [];
-	/** @var string[] Map of (index alias => index) */
-	private $indexAliases = [];
 	/** @var DatabaseDomain[]|string[] Map of (domain alias => DB domain) */
 	protected $domainAliases = [];
 	/** @var array[] Map of virtual domain to array of cluster and domain */
@@ -100,6 +84,8 @@ abstract class LBFactory implements ILBFactory {
 
 	/** @var string|null */
 	private $defaultGroup = null;
+	private bool $shuffleSharding = false;
+	private ?string $uniqueIdentifier = null;
 
 	private const ROUND_CURSORY = 'cursory';
 	private const ROUND_BEGINNING = 'within-begin';
@@ -152,10 +138,12 @@ abstract class LBFactory implements ILBFactory {
 
 		$this->cliMode = $conf['cliMode'] ?? ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' );
 		$this->agent = $conf['agent'] ?? '';
-		$this->defaultGroup = $conf['defaultGroup'] ?? null;
 		$this->replicationWaitTimeout = $this->cliMode ? 60 : 1;
 		$this->virtualDomainsMapping = $conf['virtualDomainsMapping'] ?? [];
 		$this->virtualDomains = $conf['virtualDomains'] ?? [];
+
+		$this->shuffleSharding = $conf['shuffleSharding'] ?? false;
+		$this->uniqueIdentifier = $conf['uniqueIdentifier'] ?? null;
 
 		static $nextTicket;
 		$this->ticket = $nextTicket = ( is_int( $nextTicket ) ? $nextTicket++ : mt_rand() );
@@ -226,6 +214,7 @@ abstract class LBFactory implements ILBFactory {
 		return $this->localDomain->getId();
 	}
 
+	/** @inheritDoc */
 	public function shutdown(
 		$flags = self::SHUTDOWN_NORMAL,
 		?callable $workCallback = null,
@@ -253,6 +242,7 @@ abstract class LBFactory implements ILBFactory {
 		$this->logger->debug( 'LBFactory shutdown completed' );
 	}
 
+	/** @inheritDoc */
 	public function getAllLBs() {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			yield $lb;
@@ -266,6 +256,7 @@ abstract class LBFactory implements ILBFactory {
 	 */
 	abstract protected function getLBsForOwner();
 
+	/** @inheritDoc */
 	public function flushReplicaSnapshots( $fname = __METHOD__ ) {
 		if ( $this->trxRoundFname !== null && $this->trxRoundFname !== $fname ) {
 			$this->logger->warning(
@@ -278,6 +269,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	final public function beginPrimaryChanges( $fname = __METHOD__ ) {
 		$this->assertTransactionRoundStage( self::ROUND_CURSORY );
 		/** @noinspection PhpUnusedLocalVariableInspection */
@@ -302,6 +294,7 @@ abstract class LBFactory implements ILBFactory {
 		$this->trxRoundStage = self::ROUND_CURSORY;
 	}
 
+	/** @inheritDoc */
 	final public function commitPrimaryChanges( $fname = __METHOD__, int $maxWriteDuration = 0 ) {
 		$this->assertTransactionRoundStage( self::ROUND_CURSORY );
 		/** @noinspection PhpUnusedLocalVariableInspection */
@@ -346,6 +339,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	final public function rollbackPrimaryChanges( $fname = __METHOD__ ) {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = ScopedCallback::newScopedIgnoreUserAbort();
@@ -366,6 +360,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	final public function flushPrimarySessions( $fname = __METHOD__ ) {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = ScopedCallback::newScopedIgnoreUserAbort();
@@ -385,10 +380,19 @@ abstract class LBFactory implements ILBFactory {
 		$fname = __METHOD__;
 		// Run all post-commit callbacks until new ones stop getting added
 		$e = null; // first callback exception
+		$iterations = 0;
 		do {
+			// Run any callbacks on tracked load balancers
 			foreach ( $this->getLBsForOwner() as $lb ) {
 				$ex = $lb->runPrimaryTransactionIdleCallbacks( $fname );
 				$e = $e ?: $ex;
+			}
+			// T392913: log and break when this method seems to be in an obviously broken loop
+			if ( ++$iterations >= 32 ) {
+				throw new DBTransactionError(
+					null,
+					"Aborting likely infinite callback loop due to unresolvable pending writes"
+				);
 			}
 		} while ( $this->hasPrimaryChanges() );
 		// Run all listener callbacks once
@@ -400,11 +404,13 @@ abstract class LBFactory implements ILBFactory {
 		return $e;
 	}
 
+	/** @inheritDoc */
 	public function hasTransactionRound() {
 		// TODO: check for implicit rounds or rename and check for implicit rounds with writes?
 		return ( $this->trxRoundFname !== null );
 	}
 
+	/** @inheritDoc */
 	public function isReadyForRoundOperations() {
 		return ( $this->trxRoundStage === self::ROUND_CURSORY );
 	}
@@ -432,6 +438,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	public function hasPrimaryChanges() {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			if ( $lb->hasPrimaryChanges() ) {
@@ -441,6 +448,7 @@ abstract class LBFactory implements ILBFactory {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function laggedReplicaUsed() {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			if ( $lb->laggedReplicaUsed() ) {
@@ -450,6 +458,7 @@ abstract class LBFactory implements ILBFactory {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function hasOrMadeRecentPrimaryChanges( $age = null ) {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			if ( $lb->hasOrMadeRecentPrimaryChanges( $age ) ) {
@@ -459,6 +468,7 @@ abstract class LBFactory implements ILBFactory {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function waitForReplication( array $opts = [] ) {
 		$opts += [
 			'timeout' => $this->replicationWaitTimeout,
@@ -511,6 +521,7 @@ abstract class LBFactory implements ILBFactory {
 		return !$failed;
 	}
 
+	/** @inheritDoc */
 	public function setWaitForReplicationListener( $name, ?callable $callback = null ) {
 		if ( $callback ) {
 			$this->replicationWaitCallbacks[$name] = $callback;
@@ -519,6 +530,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getEmptyTransactionTicket( $fname ) {
 		if ( $this->hasPrimaryChanges() ) {
 			$this->logger->error(
@@ -532,15 +544,18 @@ abstract class LBFactory implements ILBFactory {
 		return $this->ticket;
 	}
 
+	/** @inheritDoc */
 	public function getPrimaryDatabase( $domain = false ): IDatabase {
 		return $this->getMappedDatabase( DB_PRIMARY, [], $domain );
 	}
 
+	/** @inheritDoc */
 	public function getAutoCommitPrimaryConnection( $domain = false ): IDatabase {
 		return $this->getLoadBalancer( $domain )
 			->getConnection( DB_PRIMARY, [], $this->getMappedDomain( $domain ), ILoadBalancer::CONN_TRX_AUTOCOMMIT );
 	}
 
+	/** @inheritDoc */
 	public function getReplicaDatabase( $domain = false, $group = null ): IReadableDatabase {
 		if ( $group === null ) {
 			$groups = [];
@@ -550,6 +565,7 @@ abstract class LBFactory implements ILBFactory {
 		return $this->getMappedDatabase( DB_REPLICA, $groups, $domain );
 	}
 
+	/** @inheritDoc */
 	public function getLoadBalancer( $domain = false ): ILoadBalancer {
 		if ( $domain !== false && in_array( $domain, $this->virtualDomains ) ) {
 			if ( isset( $this->virtualDomainsMapping[$domain] ) ) {
@@ -635,6 +651,7 @@ abstract class LBFactory implements ILBFactory {
 		return false;
 	}
 
+	/** @inheritDoc */
 	final public function commitAndWaitForReplication( $fname, $ticket, array $opts = [] ) {
 		if ( $ticket !== $this->ticket ) {
 			$this->logger->error(
@@ -669,6 +686,16 @@ abstract class LBFactory implements ILBFactory {
 		$this->chronologyProtector->setEnabled( false );
 	}
 
+	public function setDefaultGroupName( string $defaultGroup ): void {
+		// for future LBs
+		$this->defaultGroup = $defaultGroup;
+
+		// For existing LBs
+		foreach ( $this->getLBsForOwner() as $lb ) {
+			$lb->setDefaultGroupName( $defaultGroup );
+		}
+	}
+
 	/**
 	 * Get parameters to ILoadBalancer::__construct()
 	 *
@@ -700,7 +727,9 @@ abstract class LBFactory implements ILBFactory {
 			'defaultGroup' => $this->defaultGroup,
 			'chronologyProtector' => $this->chronologyProtector,
 			'roundStage' => $initStage,
-			'criticalSectionProvider' => $this->csProvider
+			'criticalSectionProvider' => $this->csProvider,
+			'shuffleSharding' => $this->shuffleSharding,
+			'uniqueIdentifier' => $this->uniqueIdentifier,
 		];
 	}
 
@@ -710,26 +739,25 @@ abstract class LBFactory implements ILBFactory {
 		}
 
 		$lb->setTableAliases( $this->tableAliases );
-		$lb->setIndexAliases( $this->indexAliases );
 		$lb->setDomainAliases( $this->domainAliases );
 	}
 
+	/** @inheritDoc */
 	public function setTableAliases( array $aliases ) {
 		$this->tableAliases = $aliases;
 	}
 
-	public function setIndexAliases( array $aliases ) {
-		$this->indexAliases = $aliases;
-	}
-
+	/** @inheritDoc */
 	public function setDomainAliases( array $aliases ) {
 		$this->domainAliases = $aliases;
 	}
 
+	/** @inheritDoc */
 	public function getTransactionProfiler(): TransactionProfiler {
 		return $this->trxProfiler;
 	}
 
+	/** @inheritDoc */
 	public function setLocalDomainPrefix( $prefix ) {
 		$this->localDomain = new DatabaseDomain(
 			$this->localDomain->getDatabase(),
@@ -742,6 +770,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	public function redefineLocalDomain( $domain ) {
 		$this->closeAll( __METHOD__ );
 
@@ -752,6 +781,7 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	public function closeAll( $fname = __METHOD__ ) {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = ScopedCallback::newScopedIgnoreUserAbort();
@@ -761,10 +791,12 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
+	/** @inheritDoc */
 	public function setAgentName( $agent ) {
 		$this->agent = $agent;
 	}
 
+	/** @inheritDoc */
 	public function hasStreamingReplicaServers() {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			if ( $lb->hasStreamingReplicaServers() ) {
@@ -774,6 +806,7 @@ abstract class LBFactory implements ILBFactory {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function setDefaultReplicationWaitTimeout( $seconds ) {
 		$old = $this->replicationWaitTimeout;
 		$this->replicationWaitTimeout = max( 1, (int)$seconds );

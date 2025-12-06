@@ -32,10 +32,32 @@ ve.dm.MWInternalLinkAnnotation.static.name = 'link/mwInternal';
 
 ve.dm.MWInternalLinkAnnotation.static.matchRdfaTypes = [ 'mw:WikiLink', 'mw:MediaLink' ];
 
-// mw:MediaLink to non-existent files come with typeof="mw:Error"
-ve.dm.MWInternalLinkAnnotation.static.allowedRdfaTypes = [ 'mw:Error', 'mw:LocalizedAttrs' ];
+ve.dm.MWInternalLinkAnnotation.static.allowedRdfaTypes = [
+	// mw:MediaLink to non-existent files come with typeof="mw:Error"
+	'mw:Error',
+	// Present on red links
+	'mw:LocalizedAttrs',
+	// Present on any link where the target is template- or extension-generated
+	'mw:ExpandedAttrs',
+	// (particularly generated from the Translate extension markup)
+	/^mw:Annotation\//
+];
 
 ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, converter ) {
+	let hasGeneratedHref = false;
+	const types = domElements[ 0 ].getAttribute( 'typeof' ) || '';
+	if ( types.split( /\s+/ ).includes( 'mw:ExpandedAttrs' ) ) {
+		const dataMw = JSON.parse( domElements[ 0 ].getAttribute( 'data-mw' ) );
+		for ( const [ attrName /* , attrValue */ ] of dataMw.attribs ) {
+			// Check that mw:ExpandedAttrs only contains 'href' - otherwise alienate
+			if ( attrName.txt === 'href' ) {
+				hasGeneratedHref = true;
+			} else {
+				return null;
+			}
+		}
+	}
+
 	const resource = domElements[ 0 ].getAttribute( 'resource' );
 
 	let targetData;
@@ -48,11 +70,14 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
 		);
 
 		if ( !targetData.isInternal ) {
+			if ( hasGeneratedHref ) {
+				return null;
+			}
 			return ve.dm.MWExternalLinkAnnotation.static.toDataElement( domElements, converter );
 		}
 	}
 
-	return {
+	const data = {
 		type: this.name,
 		attributes: {
 			title: targetData.title,
@@ -60,6 +85,14 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
 			lookupTitle: this.getLookupTitle( targetData.title )
 		}
 	};
+	if ( hasGeneratedHref ) {
+		data.attributes.hasGeneratedHref = true;
+	}
+	return data;
+};
+
+ve.dm.MWInternalLinkAnnotation.prototype.isEditable = function () {
+	return !this.getAttribute( 'hasGeneratedHref' );
 };
 
 /**
@@ -109,7 +142,7 @@ ve.dm.MWInternalLinkAnnotation.static.toDomElements = function () {
 ve.dm.MWInternalLinkAnnotation.static.getHref = function ( dataElement ) {
 	let title = dataElement.attributes.title;
 
-	if ( title.slice( 0, 1 ) === '#' ) {
+	if ( title.startsWith( '#' ) ) {
 		// Special case: For a newly created link to a #fragment with
 		// no explicit title use the current title as prefix (T218581)
 		// TODO: Pass a 'doc' param to getPageName

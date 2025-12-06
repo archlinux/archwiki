@@ -24,10 +24,6 @@ class VariablesManager {
 	/** @var LazyVariableComputer */
 	private $lazyComputer;
 
-	/**
-	 * @param KeywordsManager $keywordsManager
-	 * @param LazyVariableComputer $lazyComputer
-	 */
 	public function __construct(
 		KeywordsManager $keywordsManager,
 		LazyVariableComputer $lazyComputer
@@ -39,8 +35,6 @@ class VariablesManager {
 	/**
 	 * Checks whether any deprecated variable is stored with the old name, and replaces it with
 	 * the new name. This should normally only happen when a DB dump is retrieved from the DB.
-	 *
-	 * @param VariableHolder $holder
 	 */
 	public function translateDeprecatedVars( VariableHolder $holder ): void {
 		$deprecatedVars = $this->keywordsManager->getDeprecatedVariables();
@@ -153,8 +147,6 @@ class VariablesManager {
 	/**
 	 * Compute all vars which need DB access. Useful for vars which are going to be saved
 	 * cross-wiki or used for offline analysis.
-	 *
-	 * @param VariableHolder $holder
 	 */
 	public function computeDBVars( VariableHolder $holder ): void {
 		static $dbTypes = [

@@ -5,21 +5,7 @@
  * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -38,6 +24,7 @@ use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
  * @ingroup Pager
@@ -49,7 +36,10 @@ class LogPager extends ReverseChronologicalPager {
 	/** @var string Events limited to those by performer when set */
 	private $performer = '';
 
-	/** @var string Events limited to those about this page when set */
+	/**
+	 * @var string Events limited to those about this page when set.
+	 *  Only exists to support deprecated method getPage().
+	 */
 	private $page = '';
 
 	/** @var bool */
@@ -90,7 +80,7 @@ class LogPager extends ReverseChronologicalPager {
 	 * @param LogEventsList $list
 	 * @param string|array $types Log types to show
 	 * @param string $performer The user who made the log entries
-	 * @param string|PageReference $page The page the log entries are for
+	 * @param string|PageReference|(string|PageReference)[] $pages The page(s) the log entries are for
 	 * @param bool $pattern Do a prefix search rather than an exact title match
 	 * @param array $conds Extra conditions for the query
 	 * @param int|bool $year The year to start from. Default: false
@@ -104,7 +94,7 @@ class LogPager extends ReverseChronologicalPager {
 	 * @param LogFormatterFactory|null $logFormatterFactory
 	 * @param bool $tagInvert whether tags are filtered for (false) or out (true)
 	 */
-	public function __construct( $list, $types = [], $performer = '', $page = '',
+	public function __construct( $list, $types = [], $performer = '', $pages = '',
 		$pattern = false, $conds = [], $year = false, $month = false, $day = false,
 		$tagFilter = '', $action = '', $logId = 0,
 		?LinkBatchFactory $linkBatchFactory = null,
@@ -127,13 +117,14 @@ class LogPager extends ReverseChronologicalPager {
 		$this->limitType( $types ); // also excludes hidden types
 		$this->limitFilterTypes();
 		$this->limitPerformer( $performer );
-		$this->limitTitle( $page, $pattern );
+		$this->limitTitles( $pages, $pattern );
 		$this->limitAction( $action );
 		$this->getDateCond( $year, $month, $day );
 		$this->mTagFilter = (string)$tagFilter;
 		$this->mTagInvert = (bool)$tagInvert;
 	}
 
+	/** @inheritDoc */
 	public function getDefaultQuery() {
 		$query = parent::getDefaultQuery();
 		$query['type'] = $this->typeCGI; // arrays won't work here
@@ -161,7 +152,7 @@ class LogPager extends ReverseChronologicalPager {
 		}
 	}
 
-	public function getFilterParams() {
+	public function getFilterParams(): array {
 		$filters = [];
 		if ( count( $this->types ) ) {
 			return $filters;
@@ -258,24 +249,53 @@ class LogPager extends ReverseChronologicalPager {
 	}
 
 	/**
-	 * Set the log reader to return only entries affecting the given page.
-	 * (For the block and rights logs, this is a user page.)
+	 * Set the log reader to return only entries affecting the given pages.
+	 * (For the block and rights logs, these are user pages.)
 	 *
-	 * @param string|PageReference $page
+	 * @param string|PageReference|(string|PageReference)[] $pages
 	 * @param bool $pattern
 	 * @return void
 	 */
-	private function limitTitle( $page, $pattern ) {
-		if ( !$page instanceof PageReference ) {
-			// NOTE: For some types of logs, the title may be something strange, like "User:#12345"!
-			$page = Title::newFromText( $page );
-			if ( !$page ) {
-				return;
-			}
+	private function limitTitles( $pages, $pattern ) {
+		if ( !is_array( $pages ) ) {
+			$pages = [ $pages ];
 		}
+		$orConds = [];
+		$pattern = $pattern && !$this->getConfig()->get( MainConfigNames::MiserMode );
+		foreach ( $pages as $page ) {
+			if ( (string)$page === '' ) {
+				continue;
+			}
+			if ( !$page instanceof PageReference ) {
+				// NOTE: For some types of logs, the title may be something strange, like "User:#12345"!
+				$page = Title::newFromText( $page );
+				if ( !$page ) {
+					continue;
+				}
+			}
+			$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
+			$this->page = $titleFormatter->getPrefixedDBkey( $page );
+			$orConds[] = $this->mDb->makeList(
+				$this->getTitleConds( $page, $pattern ),
+				ISQLPlatform::LIST_AND
+			);
+		}
+		if ( $orConds ) {
+			$this->mConds[] = $this->mDb->makeList( $orConds, ISQLPlatform::LIST_OR );
+			$this->pattern = $pattern;
+			$this->enforceActionRestrictions();
+		}
+	}
 
-		$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
-		$this->page = $titleFormatter->getPrefixedDBkey( $page );
+	/**
+	 * Get conditions applying to a given page
+	 *
+	 * @param PageReference $page
+	 * @param bool $pattern Whether to use a prefix search (pre-validated)
+	 * @return array
+	 */
+	private function getTitleConds( $page, $pattern ) {
+		$conds = [];
 		$ns = $page->getNamespace();
 		$db = $this->mDb;
 
@@ -305,7 +325,7 @@ class LogPager extends ReverseChronologicalPager {
 		 * log entries for even the busiest pages, so it can be safely scanned
 		 * in full to satisfy an impossible condition on user or similar.
 		 */
-		$this->mConds['log_namespace'] = $ns;
+		$conds['log_namespace'] = $ns;
 		if ( $doUserRightsLogLike ) {
 			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable $name is set when reached here
 			$params = [ $name . $interwikiDelimiter ];
@@ -319,18 +339,17 @@ class LogPager extends ReverseChronologicalPager {
 					$params[] = $db->anyString();
 				}
 			}
-			$this->mConds[] = $db->expr( 'log_title', IExpression::LIKE, new LikeValue( ...$params ) );
-		} elseif ( $pattern && !$this->getConfig()->get( MainConfigNames::MiserMode ) ) {
-			$this->mConds[] = $db->expr(
+			$conds[] = $db->expr( 'log_title', IExpression::LIKE, new LikeValue( ...$params ) );
+		} elseif ( $pattern ) {
+			$conds[] = $db->expr(
 				'log_title',
 				IExpression::LIKE,
 				new LikeValue( $page->getDBkey(), $db->anyString() )
 			);
-			$this->pattern = $pattern;
 		} else {
-			$this->mConds['log_title'] = $page->getDBkey();
+			$conds['log_title'] = $page->getDBkey();
 		}
-		$this->enforceActionRestrictions();
+		return $conds;
 	}
 
 	/**
@@ -439,6 +458,7 @@ class LogPager extends ReverseChronologicalPager {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ [ 'log_timestamp', 'log_id' ] ];
 	}
@@ -456,11 +476,17 @@ class LogPager extends ReverseChronologicalPager {
 		$lb->execute();
 	}
 
+	/** @inheritDoc */
 	public function formatRow( $row ) {
 		return $this->mLogEventsList->logLine( $row );
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return array
+	 */
 	public function getType() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->types;
 	}
 
@@ -474,40 +500,73 @@ class LogPager extends ReverseChronologicalPager {
 	}
 
 	/**
+	 * @deprecated since 1.45
 	 * @return string
 	 */
 	public function getPage() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->page;
 	}
 
 	/**
+	 * @deprecated since 1.45
 	 * @return bool
 	 */
 	public function getPattern() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->pattern;
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return int
+	 */
 	public function getYear() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->mYear;
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return int
+	 */
 	public function getMonth() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->mMonth;
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return int
+	 */
 	public function getDay() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->mDay;
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return string
+	 */
 	public function getTagFilter() {
 		return $this->mTagFilter;
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return bool
+	 */
 	public function getTagInvert() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->mTagInvert;
 	}
 
+	/**
+	 * @deprecated since 1.45
+	 * @return string
+	 */
 	public function getAction() {
+		wfDeprecated( __METHOD__, '1.45' );
 		return $this->action;
 	}
 

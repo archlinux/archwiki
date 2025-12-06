@@ -31,12 +31,12 @@ class UserAgentClientHintsFormatterTest extends MediaWikiIntegrationTestCase {
 				"architecture",
 				"mobile",
 				"bitness",
-				"woW64"
+				"woW64",
 			],
 			'CheckUserClientHintsValuesToHide' => [
 				"architecture" => [ "x86" ],
 				"bitness" => [ "64" ],
-				"woW64" => [ false ]
+				"woW64" => [ false ],
 			],
 		] );
 		/** @var UserAgentClientHintsFormatter $objectUnderTest */
@@ -52,7 +52,7 @@ class UserAgentClientHintsFormatterTest extends MediaWikiIntegrationTestCase {
 		return [
 			'Empty Client Hints data object' => [
 				ClientHintsData::newFromJsApi( [] ),
-				''
+				'',
 			],
 			'Example Client Hints data object for Windows PC using Chrome' => [
 				new ClientHintsData(
@@ -76,7 +76,7 @@ class UserAgentClientHintsFormatterTest extends MediaWikiIntegrationTestCase {
 					false
 				),
 				'Brand: Not.A/Brand 99.0.0.0, Brand: Google Chrome 115.0.5790.171, Brand: Chromium 115.0.5790.171, ' .
-				'Platform: Windows 15.0.0, Mobile: No'
+				'Platform: Windows 15.0.0, Mobile: No',
 			],
 			'Example Client Hints data object for Mobile using Chrome' => [
 				new ClientHintsData(
@@ -100,7 +100,7 @@ class UserAgentClientHintsFormatterTest extends MediaWikiIntegrationTestCase {
 					false
 				),
 				'Model: SM-G965U, Brand: Not/A)Brand 99.0.0.0, Brand: Google Chrome 115.0.5790.171, Brand: ' .
-				'Chromium 115.0.5790.171, Platform: Android 10.0.0, Mobile: Yes, Bitness: 32'
+				'Chromium 115.0.5790.171, Platform: Android 10.0.0, Mobile: Yes, Bitness: 32',
 			],
 		];
 	}
@@ -131,8 +131,8 @@ class UserAgentClientHintsFormatterTest extends MediaWikiIntegrationTestCase {
 		return [
 			'All message keys to be cached' => [ [
 				'checkuser-clienthints-value-yes', 'checkuser-clienthints-value-no',
-				...array_unique( array_values( UserAgentClientHintsFormatter::NAME_TO_MESSAGE_KEY ) )
-			] ]
+				...array_unique( array_values( UserAgentClientHintsFormatter::NAME_TO_MESSAGE_KEY ) ),
+			] ],
 		];
 	}
 }

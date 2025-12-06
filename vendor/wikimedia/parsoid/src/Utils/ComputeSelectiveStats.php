@@ -6,7 +6,7 @@ namespace Wikimedia\Parsoid\Utils;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Core\DomPageBundle;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Html2Wt\DiffUtils;
 use Wikimedia\Parsoid\Html2Wt\DOMDiff;
@@ -19,20 +19,25 @@ use Wikimedia\Parsoid\NodeData\TemplateInfo;
  */
 class ComputeSelectiveStats {
 
-	/** @return array<string,string> */
+	/**
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @return array{type: string, same_wt: string, rev_diff: string, changed_sections: string, changed_template_sites: string, changed_template_names: string}
+	 */
 	public static function classify(
 		Env $env,
-		?PageConfig $oldPage, ?PageBundle $oldPb,
-		PageConfig $newPage, PageBundle $newPb
+		?PageConfig $oldPage, ?HtmlPageBundle $oldPb,
+		PageConfig $newPage, HtmlPageBundle $newPb
 	): array {
-		// Default labels (ensure keys are consistent & in consistent order)
+		// Default labels (ensure keys are consistent & in consistent order).
+		// Each label key should be a valid label name accepted by StatsLib,
+		// i.e. an alphanumeric string that does not include dashes (T394053).
 		$labels = [
 			'type' => 'missing-prev',
-			'same-wt' => 'unknown',
-			'rev-diff' => 'unknown',
-			'changed-sections' => 'unknown',
-			'changed-template-sites' => 'unknown',
-			'changed-template-names' => 'unknown',
+			'same_wt' => 'unknown',
+			'rev_diff' => 'unknown',
+			'changed_sections' => 'unknown',
+			'changed_template_sites' => 'unknown',
+			'changed_template_names' => 'unknown',
 		];
 		if ( $oldPage === null || $oldPb === null ) {
 			return $labels;
@@ -41,29 +46,29 @@ class ComputeSelectiveStats {
 		$newWt = self::pc2wt( $newPage );
 
 		// Compare wikitext in both revisions
-		$labels['same-wt'] = self::bool2str( $oldWt == $newWt );
+		$labels['same_wt'] = self::bool2str( $oldWt == $newWt );
 
 		// Compare revision IDs
 		$oldRev = $oldPage->getRevisionId();
 		$newRev = $newPage->getRevisionId();
 		if ( $oldRev === $newRev ) {
 			// same revision (template update, most likely)
-			$labels['rev-diff'] = '0';
+			$labels['rev_diff'] = '0';
 		} elseif ( $oldRev === $newPage->getParentRevisionId() ) {
 			// "normal edit": new revision is the one after old revision
-			$labels['rev-diff'] = '1';
+			$labels['rev_diff'] = '1';
 		} elseif ( $newRev === $oldPage->getParentRevisionId() ) {
 			// new revision is the one *before* old revision
 			// This is probably a render triggered from RevisionOutputCache
 			// of the previous revision where the "oldRev" is coming from
 			// the parser cache and is thus the latest.  This may happen
 			// during races, vandalism patrol, HTML diffing, etc.
-			$labels['rev-diff'] = 'minus1';
+			$labels['rev_diff'] = 'minus1';
 		}
 
 		// Parse to DOM and diff
-		$oldDoc = DomPageBundle::fromPageBundle( $oldPb )->toDom();
-		$newDoc = DomPageBundle::fromPageBundle( $newPb )->toDom();
+		$oldDoc = DomPageBundle::fromHtmlPageBundle( $oldPb )->toDom();
+		$newDoc = DomPageBundle::fromHtmlPageBundle( $newPb )->toDom();
 		$dd = new DOMDiff( $env );
 		// Don't skip over template content!
 		$dd->skipEncapsulatedContent = false;
@@ -75,7 +80,9 @@ class ComputeSelectiveStats {
 			}
 			return $dp;
 		};
-		$dd->specializedAttribHandlers['data-parsoid'] = static function ( $nA, $vA, $nB, $vB ) use ( $cleanDP ) {
+		$dd->specializedAttribHandlers['data-parsoid'] = static function (
+			Element $nA, DataParsoid $vA, Element $nB, DataParsoid $vB
+		) use ( $cleanDP ): bool {
 			// This is deliberately a not-strict equality comparisong between
 			// two DataParsoid objects.
 			// @phan-suppress-next-line PhanPluginComparisonObjectEqualityNotStrict
@@ -83,7 +90,9 @@ class ComputeSelectiveStats {
 		};
 		// Ignore differences in 'id' attributes, since these are a side-effect
 		// of data-parsoid/page bundle encapsulation.
-		$dd->specializedAttribHandlers['id'] = static function ( $nA, $vA, $nB, $vB ) {
+		$dd->specializedAttribHandlers['id'] = static function (
+			Element $nA, string $vA, Element $nB, string $vB
+		): bool {
 			// XXX we can't really tell synthethic ID attributes created by
 			// DOMDataUtils::storeInPageBundle() from "real" ID attributes
 			// in user wikitext.  Hackishly ignore differences in any ID
@@ -164,11 +173,11 @@ class ComputeSelectiveStats {
 		$dt->traverse( null, DOMCompat::getBody( $newDoc ), new DTState( $env ) );
 
 		# report changed sections as '0', '1', or '2+'
-		$labels['changed-sections'] = self::int2str( $sectionsModified, 2 );
+		$labels['changed_sections'] = self::int2str( $sectionsModified, 2 );
 		# report changed templates as '0', '1', or '2+'
-		$labels['changed-template-sites'] = self::int2str( $templatesModified, 2 );
+		$labels['changed_template_sites'] = self::int2str( $templatesModified, 2 );
 		# report the count of the *names* of the templates that were updated.
-		$labels['changed-template-names'] = self::int2str( count( $namedTemplates ), 2 );
+		$labels['changed_template_names'] = self::int2str( count( $namedTemplates ), 2 );
 
 		// TODO: sum up the time spent on modified (vs unmodified) templates
 
@@ -223,7 +232,11 @@ class ComputeSelectiveStats {
 		return 'other';
 	}
 
-	/** Convert a boolean to a string for labelling purposes. */
+	/**
+	 * Convert a boolean to a string for labelling purposes.
+	 *
+	 * @phan-return 'false'|'true'|'unknown'
+	 */
 	private static function bool2str( ?bool $val ): string {
 		return ( $val === true ) ? 'true' : (
 			( $val === false ) ? 'false' : 'unknown'

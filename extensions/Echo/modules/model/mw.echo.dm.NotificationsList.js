@@ -243,7 +243,7 @@ mw.echo.dm.NotificationsList.prototype.hasUnseen = function () {
 mw.echo.dm.NotificationsList.prototype.updateSeenState = function ( timestamp ) {
 	this.getItems().forEach( ( notification ) => {
 		notification.toggleSeen(
-			notification.isRead() || notification.getTimestamp() < timestamp
+			notification.isRead() || notification.getTimestamp() < timestamp,
 		);
 	} );
 };

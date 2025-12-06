@@ -2,21 +2,17 @@
 
 namespace MediaWiki\Tests\Auth;
 
-use DynamicPropertyTestHelper;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\ButtonAuthenticationRequest;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
 use MediaWiki\Auth\ResetPasswordSecondaryAuthenticationProvider;
-use MediaWiki\Config\HashConfig;
-use MediaWiki\MainConfigNames;
-use MediaWiki\Request\FauxRequest;
+use MediaWiki\Language\RawMessage;
+use MediaWiki\Message\Message;
+use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
-use MediaWiki\Tests\Unit\DummyServicesTrait;
-use MediaWiki\User\BotPasswordStore;
 use MediaWiki\User\User;
-use MediaWiki\User\UserNameUtils;
 use MediaWikiIntegrationTestCase;
 use StatusValue;
 use stdClass;
@@ -29,7 +25,6 @@ use Wikimedia\TestingAccessWrapper;
  */
 class ResetPasswordSecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 	use AuthenticationProviderTestTrait;
-	use DummyServicesTrait;
 
 	/**
 	 * @dataProvider provideGetAuthenticationRequests
@@ -76,60 +71,359 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends MediaWikiIntegrat
 		}
 	}
 
-	public function testTryReset() {
-		$username = 'TestTryReset';
-		$user = User::newFromName( $username );
+	public function testTryResetShouldAbstainIfNoSessionData(): void {
+		$user = $this->createNoOpMock( User::class );
 
-		$provider = $this->getMockBuilder(
-			ResetPasswordSecondaryAuthenticationProvider::class
-		)
-			->onlyMethods( [
-				'providerAllowsAuthenticationDataChange', 'providerChangeAuthenticationData'
-			] )
-			->getMock();
-		$provider->method( 'providerAllowsAuthenticationDataChange' )
-			->willReturnCallback( function ( $req ) use ( $username ) {
-				$this->assertSame( $username, $req->username );
-				return DynamicPropertyTestHelper::getDynamicProperty( $req, 'allow' );
-			} );
-		$provider->method( 'providerChangeAuthenticationData' )
-			->willReturnCallback( function ( $req ) use ( $username ) {
-				$this->assertSame( $username, $req->username );
-				DynamicPropertyTestHelper::setDynamicProperty( $req, 'done', true );
-			} );
-		$config = new HashConfig( [
-			MainConfigNames::AuthManagerConfig => [
-				'preauth' => [],
-				'primaryauth' => [],
-				'secondaryauth' => [
-					[ 'factory' => static function () use ( $provider ) {
-						return $provider;
-					} ],
-				],
-			],
-		] );
-		$mwServices = $this->getServiceContainer();
-		$manager = new AuthManager(
-			new FauxRequest,
-			$config,
-			$this->getDummyObjectFactory(),
-			$this->createHookContainer(),
-			$mwServices->getReadOnlyMode(),
-			$this->createNoOpMock( UserNameUtils::class ),
-			$mwServices->getBlockManager(),
-			$mwServices->getWatchlistManager(),
-			$mwServices->getDBLoadBalancer(),
-			$mwServices->getContentLanguage(),
-			$mwServices->getLanguageConverterFactory(),
-			$this->createMock( BotPasswordStore::class ),
-			$mwServices->getUserFactory(),
-			$mwServices->getUserIdentityLookup(),
-			$mwServices->getUserOptionsManager()
-		);
-		$this->initProvider( $provider, null, null, $manager );
+		$authManager = $this->createMock( AuthManager::class );
+		$authManager->method( 'getAuthenticationSessionData' )
+			->with( 'reset-pass' )
+			->willReturn( null );
+
+		$authManager->expects( $this->never() )
+			->method( $this->logicalNot( $this->equalTo( 'getAuthenticationSessionData' ) ) );
+
+		$provider = new ResetPasswordSecondaryAuthenticationProvider();
+		$this->initProvider( $provider, null, null, $authManager );
+
 		$provider = TestingAccessWrapper::newFromObject( $provider );
 
-		$msg = wfMessage( 'foo' );
+		$res = $provider->tryReset( $user, [] );
+
+		$this->assertEquals( AuthenticationResponse::newAbstain(), $res );
+	}
+
+	/**
+	 * @dataProvider provideInvalidResetSessionData
+	 */
+	public function testTryResetShouldThrowOnInvalidSessionData(
+		array|stdClass|string $sessionData,
+		string $expectedExceptionMessage
+	): void {
+		$this->expectException( UnexpectedValueException::class );
+		$this->expectExceptionMessage( $expectedExceptionMessage );
+
+		$user = $this->createNoOpMock( User::class );
+
+		$authManager = $this->createMock( AuthManager::class );
+		$authManager->method( 'getAuthenticationSessionData' )
+			->with( 'reset-pass' )
+			->willReturn( $sessionData );
+
+		$authManager->expects( $this->never() )
+			->method( $this->logicalNot( $this->equalTo( 'getAuthenticationSessionData' ) ) );
+
+		$provider = new ResetPasswordSecondaryAuthenticationProvider();
+		$this->initProvider( $provider, null, null, $authManager );
+
+		$provider = TestingAccessWrapper::newFromObject( $provider );
+
+		$provider->tryReset( $user, [] );
+	}
+
+	public static function provideInvalidResetSessionData(): iterable {
+		yield 'malformed string' => [
+			'foo',
+			'reset-pass is not valid'
+		];
+
+		yield 'empty object' => [
+			(object)[],
+			'reset-pass msg is missing'
+		];
+
+		yield 'missing msg' => [
+			[
+				'hard' => true,
+				'req' => new PasswordAuthenticationRequest(),
+			],
+			'reset-pass msg is missing'
+		];
+
+		yield 'invalid msg type' => [
+			[
+				'msg' => 'foo',
+				'hard' => true,
+				'req' => new PasswordAuthenticationRequest(),
+			],
+			'reset-pass msg is not valid'
+		];
+
+		yield 'missing hard flag' => [
+			[
+				'msg' => new RawMessage( 'foo' ),
+				'req' => new PasswordAuthenticationRequest(),
+			],
+			'reset-pass hard is missing'
+		];
+
+		yield 'invalid req type' => [
+			[
+				'msg' => new RawMessage( 'foo' ),
+				'hard' => true,
+				'req' => 'foo',
+			],
+			'reset-pass req is not valid'
+		];
+
+		$loginReq = new PasswordAuthenticationRequest();
+		$loginReq->action = AuthManager::ACTION_LOGIN;
+		$loginReq->password = 'Foo';
+		$loginReq->retype = 'Foo';
+
+		yield 'invalid request action' => [
+			[
+				'msg' => new RawMessage( 'foo' ),
+				'hard' => false,
+				'req' => $loginReq,
+			],
+			'reset-pass req is not valid'
+		];
+	}
+
+	/**
+	 * @dataProvider provideTryResetUnmetRequirements
+	 */
+	public function testTryResetShouldNotChangeDataIfRequirementsNotMet(
+		array $sessionData,
+		array $authReqs,
+		AuthenticationResponse $expectedResponse
+	): void {
+		$user = $this->createNoOpMock( User::class );
+
+		$authManager = $this->createMock( AuthManager::class );
+		$authManager->method( 'getAuthenticationSessionData' )
+			->with( 'reset-pass' )
+			->willReturn( $sessionData );
+
+		$authManager->expects( $this->never() )
+			->method( $this->logicalNot( $this->equalTo( 'getAuthenticationSessionData' ) ) );
+
+		$provider = new ResetPasswordSecondaryAuthenticationProvider();
+		$this->initProvider( $provider, null, null, $authManager );
+
+		$provider = TestingAccessWrapper::newFromObject( $provider );
+
+		$res = $provider->tryReset( $user, $authReqs );
+
+		$this->assertEquals( $expectedResponse, $res );
+	}
+
+	public static function provideTryResetUnmetRequirements(): iterable {
+		$msg = new RawMessage( 'foo' );
+
+		$requiredPassReq = new PasswordAuthenticationRequest();
+		$requiredPassReq->action = AuthManager::ACTION_CHANGE;
+
+		yield 'missing required request with hard flag' => [
+			[
+				'msg' => $msg,
+				'hard' => true,
+			],
+			[],
+			AuthenticationResponse::newUI( [ $requiredPassReq ], $msg )
+		];
+
+		$skipReq = new ButtonAuthenticationRequest(
+			'skipReset',
+			wfMessage( 'authprovider-resetpass-skip-label' ),
+			wfMessage( 'authprovider-resetpass-skip-help' )
+		);
+
+		$wrongActionReq = new PasswordAuthenticationRequest();
+		$wrongActionReq->action = AuthManager::ACTION_LOGIN;
+		$wrongActionReq->password = 'Foo';
+		$wrongActionReq->retype = 'Foo';
+
+		yield 'wrong action type' => [
+			[
+				'msg' => $msg,
+				'hard' => true,
+			],
+			[ $skipReq, $wrongActionReq ],
+			AuthenticationResponse::newUI( [ $requiredPassReq ], $msg )
+		];
+
+		$badRetypeReq = new PasswordAuthenticationRequest();
+		$badRetypeReq->action = AuthManager::ACTION_CHANGE;
+		$badRetypeReq->password = 'Foo';
+		$badRetypeReq->retype = 'Bar';
+
+		yield 'bad retype value' => [
+			[
+				'msg' => $msg,
+				'hard' => true,
+			],
+			[ $skipReq, $badRetypeReq ],
+			AuthenticationResponse::newUI( [ $requiredPassReq ], new Message( 'badretype' ), 'error' )
+		];
+
+		$passReq = new PasswordAuthenticationRequest();
+		$passReq->action = AuthManager::ACTION_CHANGE;
+		$passReq->password = 'Foo';
+		$passReq->retype = 'Foo';
+
+		$optionalPassReq = clone $passReq;
+		$optionalPassReq->required = AuthenticationRequest::OPTIONAL;
+
+		yield 'missing required request without hard flag' => [
+			[
+				'msg' => $msg,
+				'hard' => false,
+				'req' => $passReq,
+			],
+			[],
+			AuthenticationResponse::newUI( [ $optionalPassReq, $skipReq ], $msg )
+		];
+
+		$customPassReq = new class extends PasswordAuthenticationRequest {
+		};
+		$customPassReq->action = AuthManager::ACTION_CHANGE;
+		$customPassReq->password = 'Foo';
+		$customPassReq->retype = 'Foo';
+
+		$optionalPassReq = clone $customPassReq;
+		$optionalPassReq->required = AuthenticationRequest::OPTIONAL;
+
+		yield 'mismatched request type' => [
+			[
+				'msg' => $msg,
+				'hard' => false,
+				'req' => $customPassReq,
+			],
+			[ $passReq ],
+			AuthenticationResponse::newUI( [ $optionalPassReq, $skipReq ], $msg )
+		];
+	}
+
+	/**
+	 * @dataProvider provideTryResetShouldSucceedOnValidInput
+	 *
+	 * @param array $sessionData
+	 * @param array $authReqs
+	 * @param AuthenticationRequest $expectedAuthManagerReq
+	 * @return void
+	 */
+	public function testTryResetShouldSucceedOnValidInputIfAuthManagerAllows(
+		array $sessionData,
+		array $authReqs,
+		AuthenticationRequest $expectedAuthManagerReq
+	): void {
+		$user = $this->createMock( User::class );
+		$user->method( 'getName' )
+			->willReturn( 'TestUser' );
+
+		$expectedAuthManagerReq->username = $user->getName();
+
+		$authManager = $this->createMock( AuthManager::class );
+		$authManager->method( 'getAuthenticationSessionData' )
+			->with( 'reset-pass' )
+			->willReturn( $sessionData );
+
+		$authManager->method( 'allowsAuthenticationDataChange' )
+			->with( $expectedAuthManagerReq )
+			->willReturn( StatusValue::newGood() );
+
+		$authManager->expects( $this->once() )
+			->method( 'changeAuthenticationData' );
+
+		$authManager->expects( $this->once() )
+			->method( 'removeAuthenticationSessionData' )
+			->with( 'reset-pass' );
+
+		$provider = new ResetPasswordSecondaryAuthenticationProvider();
+		$this->initProvider( $provider, null, null, $authManager );
+
+		$provider = TestingAccessWrapper::newFromObject( $provider );
+
+		$res = $provider->tryReset( $user, $authReqs );
+
+		$this->assertEquals( AuthenticationResponse::newPass(), $res );
+	}
+
+	public static function provideTryResetShouldSucceedOnValidInput(): iterable {
+		$msg = new RawMessage( 'foo' );
+
+		$skipReq = new ButtonAuthenticationRequest(
+			'skipReset',
+			wfMessage( 'authprovider-resetpass-skip-label' ),
+			wfMessage( 'authprovider-resetpass-skip-help' )
+		);
+
+		$passReq = new PasswordAuthenticationRequest();
+		$passReq->action = AuthManager::ACTION_CHANGE;
+		$passReq->password = 'Foo';
+		$passReq->retype = 'Foo';
+
+		yield 'valid input with hard flag' => [
+			[
+				'msg' => $msg,
+				'hard' => true,
+			],
+			[ $skipReq, $passReq ],
+			$passReq
+		];
+
+		yield 'valid input without hard flag' => [
+			[
+				'msg' => $msg,
+				'hard' => false,
+				'req' => $passReq,
+			],
+			[ $passReq ],
+			$passReq
+		];
+	}
+
+	public function testTryResetShouldPassWithBadRetypeWhenNotInHardMode(): void {
+		$user = $this->createNoOpMock( User::class );
+
+		$skipReq = new ButtonAuthenticationRequest(
+			'skipReset',
+			wfMessage( 'authprovider-resetpass-skip-label' ),
+			wfMessage( 'authprovider-resetpass-skip-help' )
+		);
+
+		$badRetypeReq = new PasswordAuthenticationRequest();
+		$badRetypeReq->action = AuthManager::ACTION_CHANGE;
+		$badRetypeReq->password = 'Foo';
+		$badRetypeReq->retype = 'Bar';
+
+		$authManager = $this->createMock( AuthManager::class );
+		$authManager->method( 'getAuthenticationSessionData' )
+			->with( 'reset-pass' )
+			->willReturn( [
+				'msg' => wfMessage( 'foo' ),
+				'hard' => false,
+				'req' => $badRetypeReq,
+			] );
+
+		$authManager->expects( $this->once() )
+			->method( 'removeAuthenticationSessionData' )
+			->with( 'reset-pass' );
+
+		$authManager->expects( $this->never() )
+			->method( $this->logicalNot(
+				$this->logicalOr(
+					$this->equalTo( 'getAuthenticationSessionData' ),
+					$this->equalTo( 'removeAuthenticationSessionData' )
+				)
+			) );
+
+		$provider = new ResetPasswordSecondaryAuthenticationProvider();
+		$this->initProvider( $provider, null, null, $authManager );
+
+		$provider = TestingAccessWrapper::newFromObject( $provider );
+
+		$res = $provider->tryReset( $user, [ $skipReq, $badRetypeReq ] );
+
+		$this->assertEquals( AuthenticationResponse::newPass(), $res );
+	}
+
+	public function testTryResetShouldFailIfRejectedByAuthManager(): void {
+		$user = $this->createMock( User::class );
+		$user->method( 'getName' )
+			->willReturn( 'TestUser' );
+
 		$skipReq = new ButtonAuthenticationRequest(
 			'skipReset',
 			wfMessage( 'authprovider-resetpass-skip-label' ),
@@ -138,213 +432,39 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends MediaWikiIntegrat
 		$passReq = new PasswordAuthenticationRequest();
 		$passReq->action = AuthManager::ACTION_CHANGE;
 		$passReq->password = 'Foo';
-		$passReq->retype = 'Bar';
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq, 'allow', StatusValue::newGood() );
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq, 'done', false );
+		$passReq->retype = 'Foo';
 
-		$passReq2 = $this->getMockBuilder( PasswordAuthenticationRequest::class )
-			->enableProxyingToOriginalMethods()
-			->getMock();
-		$passReq2->action = AuthManager::ACTION_CHANGE;
-		$passReq2->password = 'Foo';
-		$passReq2->retype = 'Foo';
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq2, 'allow', StatusValue::newGood() );
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq2, 'done', false );
+		$authManager = $this->createMock( AuthManager::class );
+		$authManager->method( 'getAuthenticationSessionData' )
+			->with( 'reset-pass' )
+			->willReturn( [
+				'msg' => wfMessage( 'foo' ),
+				'hard' => true,
+			] );
 
-		$passReq3 = new PasswordAuthenticationRequest();
-		$passReq3->action = AuthManager::ACTION_LOGIN;
-		$passReq3->password = 'Foo';
-		$passReq3->retype = 'Foo';
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq3, 'allow', StatusValue::newGood() );
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq3, 'done', false );
+		$authManager->method( 'allowsAuthenticationDataChange' )
+			->with( $passReq )
+			->willReturn( Status::newFatal( 'arbitrary-fail' ) );
 
-		$this->assertEquals(
-			AuthenticationResponse::newAbstain(),
-			$provider->tryReset( $user, [] )
-		);
+		$authManager->expects( $this->never() )
+			->method( $this->logicalOr(
+				$this->equalTo( 'changeAuthenticationData' ),
+				$this->equalTo( 'removeAuthenticationSessionData' )
+			) );
 
-		$manager->setAuthenticationSessionData( 'reset-pass', 'foo' );
-		try {
-			$provider->tryReset( $user, [] );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( UnexpectedValueException $ex ) {
-			$this->assertSame( 'reset-pass is not valid', $ex->getMessage() );
-		}
+		$provider = new ResetPasswordSecondaryAuthenticationProvider();
+		$this->initProvider( $provider, null, null, $authManager );
 
-		$manager->setAuthenticationSessionData( 'reset-pass', (object)[] );
-		try {
-			$provider->tryReset( $user, [] );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( UnexpectedValueException $ex ) {
-			$this->assertSame( 'reset-pass msg is missing', $ex->getMessage() );
-		}
+		$provider = TestingAccessWrapper::newFromObject( $provider );
 
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => 'foo',
-		] );
-		try {
-			$provider->tryReset( $user, [] );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( UnexpectedValueException $ex ) {
-			$this->assertSame( 'reset-pass msg is not valid', $ex->getMessage() );
-		}
-
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-		] );
-		try {
-			$provider->tryReset( $user, [] );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( UnexpectedValueException $ex ) {
-			$this->assertSame( 'reset-pass hard is missing', $ex->getMessage() );
-		}
-
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => true,
-			'req' => 'foo',
-		] );
-		try {
-			$provider->tryReset( $user, [] );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( UnexpectedValueException $ex ) {
-			$this->assertSame( 'reset-pass req is not valid', $ex->getMessage() );
-		}
-
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => false,
-			'req' => $passReq3,
-		] );
-		try {
-			$provider->tryReset( $user, [ $passReq ] );
-			$this->fail( 'Expected exception not thrown' );
-		} catch ( UnexpectedValueException $ex ) {
-			$this->assertSame( 'reset-pass req is not valid', $ex->getMessage() );
-		}
-
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => true,
-		] );
-		$res = $provider->tryReset( $user, [] );
-		$this->assertInstanceOf( AuthenticationResponse::class, $res );
-		$this->assertSame( AuthenticationResponse::UI, $res->status );
-		$this->assertEquals( $msg, $res->message );
-		$this->assertCount( 1, $res->neededRequests );
-		$this->assertInstanceOf(
-			PasswordAuthenticationRequest::class,
-			$res->neededRequests[0]
-		);
-		$this->assertNotNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
-
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => false,
-			'req' => $passReq,
-		] );
-		$res = $provider->tryReset( $user, [] );
-		$this->assertInstanceOf( AuthenticationResponse::class, $res );
-		$this->assertSame( AuthenticationResponse::UI, $res->status );
-		$this->assertEquals( $msg, $res->message );
-		$this->assertCount( 2, $res->neededRequests );
-		$expectedPassReq = clone $passReq;
-		$expectedPassReq->required = AuthenticationRequest::OPTIONAL;
-		$this->assertEquals( $expectedPassReq, $res->neededRequests[0] );
-		$this->assertEquals( $skipReq, $res->neededRequests[1] );
-		$this->assertNotNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
-
-		$passReq->retype = 'Bad';
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => false,
-			'req' => $passReq,
-		] );
 		$res = $provider->tryReset( $user, [ $skipReq, $passReq ] );
-		$this->assertEquals( AuthenticationResponse::newPass(), $res );
-		$this->assertNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
 
-		$passReq->retype = 'Bad';
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => true,
-		] );
-		$res = $provider->tryReset( $user, [ $skipReq, $passReq ] );
-		$this->assertSame( AuthenticationResponse::UI, $res->status );
-		$this->assertSame( 'badretype', $res->message->getKey() );
-		$this->assertCount( 1, $res->neededRequests );
-		$this->assertInstanceOf(
-			PasswordAuthenticationRequest::class,
-			$res->neededRequests[0]
-		);
-		$this->assertNotNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
+		$expectedAuthReq = new PasswordAuthenticationRequest();
+		$expectedAuthReq->action = AuthManager::ACTION_CHANGE;
 
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => true,
-		] );
-		$res = $provider->tryReset( $user, [ $skipReq, $passReq3 ] );
 		$this->assertSame( AuthenticationResponse::UI, $res->status );
-		$this->assertEquals( $msg, $res->message );
-		$this->assertCount( 1, $res->neededRequests );
-		$this->assertInstanceOf(
-			PasswordAuthenticationRequest::class,
-			$res->neededRequests[0]
-		);
-		$this->assertNotNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
-
-		$passReq->retype = $passReq->password;
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq, 'allow', StatusValue::newFatal( 'arbitrary-fail' ) );
-		$res = $provider->tryReset( $user, [ $skipReq, $passReq ] );
-		$this->assertSame( AuthenticationResponse::UI, $res->status );
+		$this->assertEquals( [ $expectedAuthReq ], $res->neededRequests );
 		$this->assertSame( 'arbitrary-fail', $res->message->getKey() );
-		$this->assertCount( 1, $res->neededRequests );
-		$this->assertInstanceOf(
-			PasswordAuthenticationRequest::class,
-			$res->neededRequests[0]
-		);
-		$this->assertNotNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
-
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq, 'allow', StatusValue::newGood() );
-		$res = $provider->tryReset( $user, [ $skipReq, $passReq ] );
-		$this->assertEquals( AuthenticationResponse::newPass(), $res );
-		$this->assertNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertTrue( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
-
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => false,
-			'req' => $passReq2,
-		] );
-		$res = $provider->tryReset( $user, [ $passReq2 ] );
-		$this->assertEquals( AuthenticationResponse::newPass(), $res );
-		$this->assertNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertTrue( DynamicPropertyTestHelper::getDynamicProperty( $passReq2, 'done' ) );
-
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq, 'done', false );
-		DynamicPropertyTestHelper::setDynamicProperty( $passReq2, 'done', false );
-		$manager->setAuthenticationSessionData( 'reset-pass', [
-			'msg' => $msg,
-			'hard' => false,
-			'req' => $passReq2,
-		] );
-		$res = $provider->tryReset( $user, [ $passReq ] );
-		$this->assertInstanceOf( AuthenticationResponse::class, $res );
-		$this->assertSame( AuthenticationResponse::UI, $res->status );
-		$this->assertEquals( $msg, $res->message );
-		$this->assertCount( 2, $res->neededRequests );
-		$expectedPassReq = clone $passReq2;
-		$expectedPassReq->required = AuthenticationRequest::OPTIONAL;
-		$this->assertEquals( $expectedPassReq, $res->neededRequests[0] );
-		$this->assertEquals( $skipReq, $res->neededRequests[1] );
-		$this->assertNotNull( $manager->getAuthenticationSessionData( 'reset-pass' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq, 'done' ) );
-		$this->assertFalse( DynamicPropertyTestHelper::getDynamicProperty( $passReq2, 'done' ) );
 	}
+
 }

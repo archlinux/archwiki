@@ -5,7 +5,8 @@
 			"MaGa",
 			"Neptune, the Mystic",
 			"Ponor",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Aca"
 		]
 	},
 	"linterrors": "Sintaksne pogreške",
@@ -44,5 +45,5 @@
 	"linterrors-summary": "<strong>Napomena:</strong> Brojevi pogrešaka po kategorijama samo su procijenjeni i nisu potpuno točni.",
 	"multi-part-template-block": "Proizlazi iz više od jednog predloška",
 	"pageinfo-linter": "Pročišćivač pogrješčica",
-	"pageinfo-linter-moreinfo": "Detaljne informacije o sintaksnim greškama."
+	"pageinfo-linter-moreinfo": "Detaljnije o linterskim greškama"
 }

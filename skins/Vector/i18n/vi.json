@@ -14,6 +14,7 @@
 			"NguyenHung",
 			"Nguyenphutrong2",
 			"Nguyễn Mạnh An",
+			"Nvdtn19",
 			"Prenn",
 			"Tar Lócesilion",
 			"Thienhau2003",
@@ -21,8 +22,7 @@
 			"Tryvix1509",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"Withoutaname",
-			"Nvdtn19"
+			"Withoutaname"
 		]
 	},
 	"skinname-vector": "Vectơ cũ (2010)",
@@ -31,8 +31,6 @@
 	"vector-skin-desc": "Cung cấp 2 giao diện Vector:\n* 2011 - Phiên bản MonoBook hiện đại với giao diện mới và nhiều cải tiến về khả năng sử dụng.\n* 2022 - Vector được xây dựng như một phần của dự án WMF [https://www.mediawiki.org/wiki/Desktop_Improvements Cải thiện phiên bản máy tính].",
 	"prefs-vector-enable-vector-1-label": "Chế độ Vectơ cũ",
 	"prefs-vector-enable-vector-1-help": "Giao diện Vector cũ sẽ cho phép bạn xem phiên bản Vector cũ (tính đến tháng 12 năm 2019). Trong vài năm tới, chúng tôi sẽ dần dần cập nhật giao diện Vector mới. Để tìm hiểu thêm về các bản cập nhật, hãy truy cập [https://www.mediawiki.org/wiki/Special:MyLanguage/Reading/Web/Desktop_Improvements trang dự án] của chúng tôi.",
-	"vector-opt-out": "Chuyển sang giao diện cũ",
-	"vector-opt-out-tooltip": "Thay đổi tùy chọn để quay lại kiểu giao diện cũ (Vectơ cũ)",
 	"vector.css": "/* Tất cả mã CSS tại đây sẽ được tải khi người dùng sử dụng giao diện Vectơ */",
 	"vector.js": "/* Tất cả mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện Vectơ */",
 	"vector-action-toggle-sidebar": "Bật/tắt thanh bên",
@@ -73,8 +71,6 @@
 	"skin-theme-night-label": "Tối",
 	"skin-theme-os-label": "Tự động",
 	"skin-theme-exclusion-notice": "Trang này mặc định luôn ở chế độ sáng.",
-	"vector-search-loader": "Đang tải gợi ý tìm kiếm",
-	"vector-searchsuggest-containing": "Tìm trang có <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Giới thiệu",
 	"vector-toc-label": "Nội dung",
 	"vector-toc-beginning": "Đầu",

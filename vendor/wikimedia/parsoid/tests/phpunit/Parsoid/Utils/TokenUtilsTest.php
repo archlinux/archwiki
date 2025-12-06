@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Test\Parsoid\Utils;
 
@@ -8,6 +9,7 @@ use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 
 /**
@@ -18,12 +20,10 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 	private const TOKEN_TEST_DATA = [
 		[
 			'token' => 'string',
-			'getTokenType' => 'string',
 			'tokensToString' => 'string',
 		],
 		[
 			'token' => [ 'type' => 'NlTk' ],
-			'getTokenType' => 'NlTk',
 			'tokenTrimTransparent' => true,
 		],
 		[
@@ -33,7 +33,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'name' => 'div',
 				'attribs' => [],
 			],
-			'getTokenType' => 'TagTk',
 			'tagClosesBlockScope' => true,
 		],
 		[
@@ -43,7 +42,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'name' => 'p',
 				'attribs' => [],
 			],
-			'getTokenType' => 'TagTk',
 			'tagOpensBlockScope' => true,
 		],
 		[
@@ -53,7 +51,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'name' => 'td',
 				'attribs' => [],
 			],
-			'getTokenType' => 'TagTk',
 			'tagClosesBlockScope' => true,
 			'isTableTag' => true,
 		],
@@ -64,7 +61,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'name' => 'template',
 				'attribs' => [],
 			],
-			'getTokenType' => 'SelfclosingTagTk',
 			'isTemplateToken' => true,
 		],
 		[
@@ -80,7 +76,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 					'stx' => 'html',
 				],
 			],
-			'getTokenType' => 'TagTk',
 			'tagClosesBlockScope' => true,
 			'isHTMLTag' => true,
 		],
@@ -99,7 +94,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 					'tagWidths' => [ 8, 9 ]
 				],
 			],
-			'getTokenType' => 'TagTk',
 			'hasDOMFragmentType' => true,
 		],
 		[
@@ -121,7 +115,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 					],
 				],
 			],
-			'getTokenType' => 'SelfclosingTagTk',
 			'isSolTransparentLinkTag' => true,
 		],
 		[
@@ -133,24 +126,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 					'tsr' => [ 2104, 2147 ],
 				],
 			],
-			'getTokenType' => 'CommentTk',
-		],
-		[
-			'name' => 'empty line meta token',
-			'token' => [
-				'type' => 'SelfclosingTagTk',
-				'name' => 'meta',
-				'attribs' => [
-					[ 'k' => 'typeof', 'v' => 'mw:EmptyLine' ],
-				],
-				'dataParsoid' => [
-					'tokens' => [
-						[ 'type' => 'NlTk' ],
-					],
-				],
-			],
-			'getTokenType' => 'SelfclosingTagTk',
-			'isEmptyLineMetaToken' => true,
 		],
 	];
 
@@ -163,17 +138,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers ::getTokenType
-	 * @dataProvider provideTokens
-	 */
-	public function testGetTokenType( array $testCase ) {
-		$this->assertEquals(
-			$testCase['getTokenType'] ?? 'unknown',
-			TokenUtils::getTokenType( $testCase['token'] )
-		);
-	}
-
-	/**
 	 * @covers ::tagOpensBlockScope
 	 * @dataProvider provideTokens
 	 */
@@ -181,8 +145,8 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 		$token = $testCase['token'];
 		$this->assertEquals(
 			$testCase['tagOpensBlockScope'] ?? false,
-			is_string( $token ) ? false :
-			TokenUtils::tagOpensBlockScope( $token->getName() )
+			$token instanceof XMLTagTk ?
+				TokenUtils::tagOpensBlockScope( $token->getName() ) : false
 		);
 	}
 
@@ -194,8 +158,8 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 		$token = $testCase['token'];
 		$this->assertEquals(
 			$testCase['tagClosesBlockScope'] ?? false,
-			is_string( $token ) ? false :
-			TokenUtils::tagClosesBlockScope( $token->getName() )
+			$token instanceof XMLTagTk ?
+				TokenUtils::tagClosesBlockScope( $token->getName() ) : false
 		);
 	}
 
@@ -271,18 +235,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(
 			$testCase['isEntitySpanToken'] ?? false,
 			TokenUtils::isEntitySpanToken( $token )
-		);
-	}
-
-	/**
-	 * @covers ::isEmptyLineMetaToken
-	 * @dataProvider provideTokens
-	 */
-	public function testIsEmptyLineMetaToken( array $testCase ) {
-		$token = $testCase['token'];
-		$this->assertEquals(
-			$testCase['isEmptyLineMetaToken'] ?? false,
-			TokenUtils::isEmptyLineMetaToken( $token )
 		);
 	}
 

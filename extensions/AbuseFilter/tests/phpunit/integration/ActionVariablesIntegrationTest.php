@@ -27,7 +27,11 @@ use MediaWiki\Extension\AbuseFilter\Watcher\UpdateHitCountWatcher;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Stats\NullStatsdDataFactory;
 
@@ -39,8 +43,9 @@ use Wikimedia\Stats\NullStatsdDataFactory;
  */
 class ActionVariablesIntegrationTest extends ApiTestCase {
 	use AbuseFilterCreateAccountTestTrait;
+	use TempUserTestTrait;
 
-	private function prepareServices(): void {
+	private function prepareServices( string $rules = '1 === 1' ): void {
 		$this->setService(
 			FilterProfiler::SERVICE_NAME,
 			$this->createMock( FilterProfiler::class )
@@ -68,10 +73,10 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		] );
 
 		$filter = new ExistingFilter(
-			new Specs( '1 === 1', '', 'Test Filter', [ 'disallow' ], 'default' ),
-			new Flags( true, false, false, false ),
+			new Specs( $rules, '', 'Test Filter', [ 'disallow' ], 'default' ),
+			new Flags( true, false, Flags::FILTER_USES_PROTECTED_VARS, false ),
 			[ 'disallow' => [ 'abusefilter-disallow' ] ],
-			new LastEditInfo( 1, 'Filter User', '20220713000000' ),
+			new LastEditInfo( UserIdentityValue::newRegistered( 1, 'Filter User' ), '20220713000000' ),
 			1,
 			0,
 			false
@@ -147,7 +152,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'added_lines' => [ $new ],
 				'removed_lines' => [],
 				'added_lines_pst' => [ $new ],
-				'all_links' => [ 'https://a.com/' ],
+				'new_links' => [ 'https://a.com/' ],
 				'old_links' => [],
 				'added_links' => [ 'https://a.com/' ],
 				'removed_links' => [],
@@ -179,7 +184,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'removed_lines' => [ $old ],
 				'added_lines_pst' => [ "'''Random'''.", "Some ''special'' chars: àèìòù 名探偵コナン.", '[[Help:PST|PST]] test, [//www.b.com link]' ],
 				'old_links' => [ 'https://a.com/' ],
-				'all_links' => [ 'https://www.b.com/' ],
+				'new_links' => [ 'https://www.b.com/' ],
 				'removed_links' => [ 'https://a.com/' ],
 				'added_links' => [ 'https://www.b.com/' ],
 				'page_last_edit_age' => 10,
@@ -211,7 +216,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'removed_lines' => explode( "\n", $old ),
 				'added_lines_pst' => [ $new ],
 				'old_links' => [ 'https://www.b.com/' ],
-				'all_links' => [ 'https://a.com/' ],
+				'new_links' => [ 'https://a.com/' ],
 				'removed_links' => [ 'https://www.b.com/' ],
 				'added_links' => [ 'https://a.com/' ],
 				'page_last_edit_age' => 10,
@@ -244,7 +249,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'added_lines' => [ $new ],
 				'added_lines_pst' => [ $new ],
 				'old_links' => [],
-				'all_links' => [],
+				'new_links' => [],
 				'removed_links' => [],
 				'added_links' => [],
 				'page_last_edit_age' => 10,
@@ -261,7 +266,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'new_wikitext' => 'new test https://en.wikipedia.org',
 				'new_content_model' => 'wikitext',
 				'old_links' => [],
-				'all_links' => [ 'https://en.wikipedia.org/' ],
+				'new_links' => [ 'https://en.wikipedia.org/' ],
 				'page_last_edit_age' => 10,
 			],
 			'params' => [
@@ -279,7 +284,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'new_wikitext' => '{"key": "value"}',
 				'new_content_model' => 'json',
 				'old_links' => [ 'https://en.wikipedia.org/' ],
-				'all_links' => [],
+				'new_links' => [],
 				'page_last_edit_age' => 10,
 			],
 			'params' => [
@@ -322,7 +327,8 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 			AbuseFilterServices::getBlockedDomainFilter(),
 			MediaWikiServices::getInstance()->getPermissionManager(),
 			MediaWikiServices::getInstance()->getTitleFactory(),
-			MediaWikiServices::getInstance()->getUserFactory()
+			MediaWikiServices::getInstance()->getUserFactory(),
+			MediaWikiServices::getInstance()->getTempUserConfig()
 		);
 		$this->setTemporaryHook(
 			'EditFilterMergedContent',
@@ -352,7 +358,8 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 			'expected' => [
 				'action' => 'createaccount',
 				'accountname' => 'New account',
-			]
+			],
+			'accountName' => 'New account',
 		];
 
 		yield 'create account by an existing user' => [
@@ -375,6 +382,15 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 			'accountName' => 'New account',
 			'autocreate' => true,
 		];
+
+		yield 'autocreate a temporary account' => [
+			'expected' => [
+				'action' => 'autocreateaccount',
+				'user_unnamed_ip' => '127.0.0.1',
+			],
+			'accountName' => null,
+			'autocreate' => true,
+		];
 	}
 
 	/**
@@ -386,19 +402,61 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 	 */
 	public function testAccountCreationVars(
 		array $expected,
-		string $accountName = 'New account',
+		?string $accountName,
 		bool $autocreate = false,
 		?string $creatorName = null
 	) {
+		if ( $accountName === null ) {
+			// $accountName being null indicates a temporary user
+			$this->enableAutoCreateTempUser();
+		}
 		$varHolder = null;
-		$this->prepareServices();
+		$this->prepareServices( 'user_unnamed_ip !== "foo"' );
 		$this->setAbuseLoggerFactoryWithEavesdrop( $varHolder );
 
 		$creator = null;
+		$services = $this->getServiceContainer();
 		if ( $creatorName !== null ) {
-			$creator = $this->getServiceContainer()->getUserFactory()->newFromName( $creatorName );
+			$creator = $services->getUserFactory()->newFromName( $creatorName );
 			$creator->addToDatabase();
 		}
+
+		// Verify that the AbuseFilterGenerateAccountCreationVars hook is called and provides the expected
+		// data to the handlers.
+		$hookCalled = false;
+		$this->setTemporaryHook(
+			'AbuseFilterGenerateAccountCreationVars',
+			function (
+				$actualVars, UserIdentity $actualCreator, UserIdentity $actualCreatedUser, bool $autocreated,
+				?RecentChange $rc
+			) use ( $services, &$hookCalled, $creator, $accountName, $autocreate ) {
+				$this->assertNull( $rc );
+
+				if ( $accountName === null ) {
+					// Lazy-assign the autocreated temporary username
+					if ( $services->getTempUserConfig()->isTempName( $actualCreatedUser->getName() ) ) {
+						$accountName = $actualCreatedUser->getName();
+					} else {
+						$this->fail( 'Expected temporary user creation when $accountName is null' );
+					}
+				}
+
+				if ( $creator !== null ) {
+					$this->assertTrue( $creator->equals( $actualCreator ) );
+				} elseif ( !$autocreated ) {
+					// When not performed by another user, if the account is not autocreated then the
+					// performer is $accountName otherwise it's the IP.
+					$this->assertSame( $accountName, $actualCreator->getName() );
+				} else {
+					$this->assertSame( '127.0.0.1', $actualCreator->getName() );
+				}
+				$this->assertSame( $accountName, $actualCreatedUser->getName() );
+				$this->assertSame( $autocreate, $autocreated );
+
+				$hookCalled = true;
+			}
+		);
+
 		$status = $this->createAccount( $accountName, $autocreate, $creator );
 		$this->assertStatusNotOK( $status );
 		$this->assertNotNull( $varHolder, 'Variables should be set' );
@@ -407,6 +465,10 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 			array_keys( $expected )
 		);
 		$this->assertVariables( $expected, $export );
+		if ( $accountName !== null && !empty( $export['user_unnamed_ip'] ) ) {
+			$this->fail( 'user_unnamed_ip incorrectly exposed' );
+		}
+		$this->assertTrue( $hookCalled );
 	}
 
 }

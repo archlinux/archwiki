@@ -32,46 +32,28 @@ use MediaWiki\User\UserFactory;
  * @author DannyS712
  */
 class ContentModelChange {
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-	/** @var HookRunner */
-	private $hookRunner;
-	/** @var RevisionLookup */
-	private $revLookup;
-	/** @var UserFactory */
-	private $userFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private HookRunner $hookRunner;
+	private RevisionLookup $revLookup;
+	private UserFactory $userFactory;
 	private LogFormatterFactory $logFormatterFactory;
 	/** @var Authority making the change */
-	private $performer;
-	/** @var WikiPage */
-	private $page;
-	/** @var PageIdentity */
-	private $pageIdentity;
-	/** @var string */
-	private $newModel;
+	private Authority $performer;
+	private WikiPage $page;
+	private PageIdentity $pageIdentity;
+	private string $newModel;
 	/** @var string[] tags to add */
-	private $tags;
-	/** @var Content */
-	private $newContent;
+	private array $tags;
+	private Content $newContent;
 	/** @var int|false latest revision id, or false if creating */
 	private $latestRevId;
 	/** @var string 'new' or 'change' */
-	private $logAction;
+	private string $logAction;
 	/** @var string 'apierror-' or empty string, for status messages */
-	private $msgPrefix;
+	private string $msgPrefix;
 
 	/**
 	 * @internal Create via the ContentModelChangeFactory service.
-	 *
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param HookContainer $hookContainer
-	 * @param RevisionLookup $revLookup
-	 * @param UserFactory $userFactory
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param LogFormatterFactory $logFormatterFactory
-	 * @param Authority $performer
-	 * @param PageIdentity $page
-	 * @param string $newModel
 	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
@@ -168,21 +150,6 @@ class ContentModelChange {
 	}
 
 	/**
-	 * Check user can edit and editcontentmodel before and after
-	 *
-	 * @deprecated since 1.36. Use ::probablyCanChange or ::authorizeChange instead.
-	 * @return array Errors in legacy error array format
-	 */
-	public function checkPermissions() {
-		wfDeprecated( __METHOD__, '1.36' );
-		$status = $this->authorizeInternal(
-			function ( string $action, PageIdentity $target, PermissionStatus $status ) {
-				return $this->performer->definitelyCan( $action, $target, $status );
-			} );
-		return $status->toLegacyErrorArray();
-	}
-
-	/**
 	 * Specify the tags the user wants to add, and check permissions
 	 *
 	 * @param string[] $tags
@@ -240,7 +207,7 @@ class ContentModelChange {
 				$newContent = $newHandler->unserializeContent(
 					$latestContent->serialize()
 				);
-			} catch ( MWException $e ) {
+			} catch ( MWException ) {
 				// Messages: changecontentmodel-cannot-convert,
 				// apierror-changecontentmodel-cannot-convert
 				return Status::newFatal(

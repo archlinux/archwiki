@@ -3,6 +3,7 @@
 		"authors": [
 			"Autokrator",
 			"Chorobek",
+			"GilPe",
 			"Les Meloures",
 			"McDutchie",
 			"Robby",
@@ -11,8 +12,7 @@
 			"Tynchtyk Chorotegin",
 			"UV",
 			"Volvox",
-			"Викиней",
-			"GilPe"
+			"Викиней"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -322,7 +322,7 @@
 	"visualeditor-special-characters-group-other": "Dacks benotzt",
 	"visualeditor-templatesused-tool": "Benotzt Schablounen",
 	"visualeditor-title-error": "Net valabelen Titel.",
-	"visualeditor-toload": "Den Editeur gëtt elo gelueden. Wann Dir dëse Message no e puer Sekonnen nach gesitt, da [$1 luet d'Säit wgl. nach eng Kéier].",
+	"visualeditor-toload": "Den Editeur gëtt elo gelueden. Wann Dir dëse Message no e puer Sekonnen nach gesitt, da [$1 luet d'Säit wgl. nei].",
 	"visualeditor-tooltip-non-breaking-space": "Espace ouni Zeilenëmbroch",
 	"visualeditor-version-label": "Versioun",
 	"visualeditor-wikitext-progress": "Wikitext ëmwandelen",

@@ -9,5 +9,9 @@
 	"mobile-frontend-home-button": "मुख पन्नु",
 	"mobile-frontend-language-article-heading": "भासा",
 	"mobile-frontend-main-menu-login": "बैंग्बुट्टो",
-	"mobile-frontend-random-button": "यादृच्छिक"
+	"mobile-frontend-main-menu-nearby": "नजदीक",
+	"mobile-frontend-main-menu-settings": "सेटिंग्स",
+	"mobile-frontend-placeholder": "{{SITENAME}} खोजा",
+	"mobile-frontend-random-button": "यादृच्छिक",
+	"minerva-page-actions-overflow": "खार्युं"
 }

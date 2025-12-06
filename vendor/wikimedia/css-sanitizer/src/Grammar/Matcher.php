@@ -15,14 +15,14 @@ use Wikimedia\CSS\Objects\Token;
 /**
  * Base class for grammar matchers.
  *
- * The [CSS Syntax Level 3][SYN3] and [Values Level 3][VAL3] specifications use
+ * The [CSS Syntax Level 3][SYN3] and [Values Level 4][VAL4] specifications use
  * a mostly context-free grammar to define what things like selectors and
  * property values look like. The Matcher classes allow for constructing an
  * object that will determine whether a ComponentValueList actually matches
  * this grammar.
  *
- * [SYN3]: https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/
- * [VAL3]: https://www.w3.org/TR/2019/CR-css-values-3-20190606/
+ * [SYN3]: https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/
+ * [VAL4]: https://www.w3.org/TR/2024/WD-css-values-4-20240312/
  */
 abstract class Matcher {
 

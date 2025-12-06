@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"AnakngAraw",
+			"GinawaSaHapon"
+		]
+	},
+	"converter-manual-rule-error": "May na-detect na error sa isang tuntunin sa mano-manong pagbabago sa wika",
+	"language-converter-depth-warning": "Lumampas sa ($1) ang hangganan ng lalim ng pampalit ng wika"
+}

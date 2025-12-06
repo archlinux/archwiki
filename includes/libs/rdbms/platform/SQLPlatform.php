@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms\Platform;
@@ -47,8 +33,6 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 class SQLPlatform implements ISQLPlatform {
 	/** @var array[] Current map of (table => (dbname, schema, prefix) map) */
 	protected $tableAliases = [];
-	/** @var string[] Current map of (index alias => index) */
-	protected $indexAliases = [];
 	protected DatabaseDomain $currentDomain;
 	/** @var array|null Current variables use for schema element placeholders */
 	protected $schemaVars;
@@ -57,6 +41,12 @@ class SQLPlatform implements ISQLPlatform {
 	/** @var callable Error logging callback */
 	protected $errorLogger;
 
+	/**
+	 * @param DbQuoter $quoter
+	 * @param ?LoggerInterface $logger
+	 * @param ?DatabaseDomain $currentDomain
+	 * @param callable|null $errorLogger
+	 */
 	public function __construct(
 		DbQuoter $quoter,
 		?LoggerInterface $logger = null,
@@ -71,18 +61,22 @@ class SQLPlatform implements ISQLPlatform {
 		};
 	}
 
+	/** @inheritDoc */
 	public function bitNot( $field ) {
 		return "(~$field)";
 	}
 
+	/** @inheritDoc */
 	public function bitAnd( $fieldLeft, $fieldRight ) {
 		return "($fieldLeft & $fieldRight)";
 	}
 
+	/** @inheritDoc */
 	public function bitOr( $fieldLeft, $fieldRight ) {
 		return "($fieldLeft | $fieldRight)";
 	}
 
+	/** @inheritDoc */
 	public function addIdentifierQuotes( $s ) {
 		if ( strcspn( $s, "\0\"`'." ) !== strlen( $s ) ) {
 			throw new DBLanguageError(
@@ -204,6 +198,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $sql;
 	}
 
+	/** @inheritDoc */
 	public function makeList( array $a, $mode = self::LIST_COMMA ) {
 		$first = true;
 		$list = '';
@@ -321,6 +316,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $list;
 	}
 
+	/** @inheritDoc */
 	public function makeWhereFrom2d( $data, $baseKey, $subKey ) {
 		$conds = [];
 		foreach ( $data as $base => $sub ) {
@@ -339,6 +335,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $this->makeList( $conds, self::LIST_OR );
 	}
 
+	/** @inheritDoc */
 	public function factorConds( $condsArray ) {
 		if ( count( $condsArray ) === 0 ) {
 			throw new InvalidArgumentException(
@@ -428,6 +425,12 @@ class SQLPlatform implements ISQLPlatform {
 		return 'CONCAT(' . implode( ',', $stringList ) . ')';
 	}
 
+	/** @inheritDoc */
+	public function buildGroupConcat( $field, $delim ): string {
+		return 'GROUP_CONCAT(' . $field . ' SEPARATOR ' . $this->quoter->addQuotes( $delim ) . ')';
+	}
+
+	/** @inheritDoc */
 	public function limitResult( $sql, $limit, $offset = false ) {
 		if ( !is_numeric( $limit ) ) {
 			throw new DBLanguageError(
@@ -454,6 +457,7 @@ class SQLPlatform implements ISQLPlatform {
 		);
 	}
 
+	/** @inheritDoc */
 	public function buildLike( $param, ...$params ) {
 		if ( is_array( $param ) ) {
 			$params = $param;
@@ -464,10 +468,12 @@ class SQLPlatform implements ISQLPlatform {
 		return ' LIKE ' . $likeValue->toSql( $this->quoter );
 	}
 
+	/** @inheritDoc */
 	public function anyChar() {
 		return new LikeMatch( '_' );
 	}
 
+	/** @inheritDoc */
 	public function anyString() {
 		return new LikeMatch( '%' );
 	}
@@ -479,6 +485,7 @@ class SQLPlatform implements ISQLPlatform {
 		return true; // True for almost every DB supported
 	}
 
+	/** @inheritDoc */
 	public function unionQueries( $sqls, $all, $options = [] ) {
 		$glue = $all ? ') UNION ALL (' : ') UNION (';
 
@@ -496,6 +503,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $sql;
 	}
 
+	/** @inheritDoc */
 	public function conditional( $cond, $caseTrueExpression, $caseFalseExpression ) {
 		if ( is_array( $cond ) ) {
 			$cond = $this->makeList( $cond, self::LIST_AND );
@@ -507,16 +515,19 @@ class SQLPlatform implements ISQLPlatform {
 		return "(CASE WHEN $cond THEN $caseTrueExpression ELSE $caseFalseExpression END)";
 	}
 
+	/** @inheritDoc */
 	public function strreplace( $orig, $old, $new ) {
 		return "REPLACE({$orig}, {$old}, {$new})";
 	}
 
+	/** @inheritDoc */
 	public function timestamp( $ts = 0 ) {
 		$t = new ConvertibleTimestamp( $ts );
 		// Let errors bubble up to avoid putting garbage in the DB
 		return $t->getTimestamp( TS_MW );
 	}
 
+	/** @inheritDoc */
 	public function timestampOrNull( $ts = null ) {
 		if ( $ts === null ) {
 			return null;
@@ -525,16 +536,19 @@ class SQLPlatform implements ISQLPlatform {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getInfinity() {
 		return 'infinity';
 	}
 
+	/** @inheritDoc */
 	public function encodeExpiry( $expiry ) {
 		return ( $expiry == '' || $expiry == 'infinity' || $expiry == $this->getInfinity() )
 			? $this->getInfinity()
 			: $this->timestamp( $expiry );
 	}
 
+	/** @inheritDoc */
 	public function decodeExpiry( $expiry, $format = TS_MW ) {
 		if ( $expiry == '' || $expiry == 'infinity' || $expiry == $this->getInfinity() ) {
 			return 'infinity';
@@ -584,38 +598,25 @@ class SQLPlatform implements ISQLPlatform {
 		}
 	}
 
+	/** @inheritDoc */
 	public function buildStringCast( $field ) {
 		// In theory this should work for any standards-compliant
 		// SQL implementation, although it may not be the best way to do it.
 		return "CAST( $field AS CHARACTER )";
 	}
 
+	/** @inheritDoc */
 	public function buildIntegerCast( $field ) {
 		return 'CAST( ' . $field . ' AS INTEGER )';
 	}
 
+	/** @inheritDoc */
 	public function implicitOrderby() {
 		return true;
 	}
 
-	/**
-	 * Allows for index remapping in queries where this is not consistent across DBMS
-	 *
-	 * TODO: Make it protected once all the code is moved over.
-	 *
-	 * @param string $index
-	 * @return string
-	 */
-	public function indexName( $index ) {
-		return $this->indexAliases[$index] ?? $index;
-	}
-
 	public function setTableAliases( array $aliases ) {
 		$this->tableAliases = $aliases;
-	}
-
-	public function setIndexAliases( array $aliases ) {
-		$this->indexAliases = $aliases;
 	}
 
 	/**
@@ -625,7 +626,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $this->tableAliases;
 	}
 
-	public function setPrefix( $prefix ) {
+	public function setPrefix( string $prefix ) {
 		$this->currentDomain = new DatabaseDomain(
 			$this->currentDomain->getDatabase(),
 			$this->currentDomain->getSchema(),
@@ -645,6 +646,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $this->currentDomain;
 	}
 
+	/** @inheritDoc */
 	public function selectSQLText(
 		$tables, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
@@ -1036,6 +1038,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $quotedTableWithAnyAlias;
 	}
 
+	/** @inheritDoc */
 	public function tableName( string $name, $format = 'quoted' ) {
 		$prefix = $this->currentDomain->getTablePrefix();
 
@@ -1201,6 +1204,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $this->currentDomain->getSchema();
 	}
 
+	/** @inheritDoc */
 	public function tableNamesN( ...$tables ) {
 		$retVal = [];
 
@@ -1332,9 +1336,14 @@ class SQLPlatform implements ISQLPlatform {
 			$sql .= ' GROUP BY ' . $gb;
 		}
 		if ( isset( $options['HAVING'] ) ) {
-			$having = is_array( $options['HAVING'] )
-				? $this->makeList( $options['HAVING'], self::LIST_AND )
-				: $options['HAVING'];
+			if ( $options['HAVING'] instanceof IExpression ) {
+				$having = $options['HAVING']->toSql( $this->quoter );
+			} elseif ( is_array( $options['HAVING'] ) ) {
+				$having = $this->makeList( $options['HAVING'], self::LIST_AND );
+			} else {
+				$having = $options['HAVING'];
+			}
+
 			$sql .= ' HAVING ' . $having;
 		}
 
@@ -1361,14 +1370,16 @@ class SQLPlatform implements ISQLPlatform {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function buildGroupConcatField(
 		$delim, $tables, $field, $conds = '', $join_conds = []
 	) {
-		$fld = "GROUP_CONCAT($field SEPARATOR " . $this->quoter->addQuotes( $delim ) . ')';
+		$fld = $this->buildGroupConcat( $field, $delim );
 
 		return '(' . $this->selectSQLText( $tables, $fld, $conds, static::CALLER_SUBQUERY, [], $join_conds ) . ')';
 	}
 
+	/** @inheritDoc */
 	public function buildSelectSubquery(
 		$tables, $vars, $conds = '', $fname = __METHOD__,
 		$options = [], $join_conds = []
@@ -1378,6 +1389,11 @@ class SQLPlatform implements ISQLPlatform {
 		);
 	}
 
+	/**
+	 * @param string $table
+	 * @param array $rows
+	 * @return string[]
+	 */
 	public function insertSqlText( $table, array $rows ) {
 		$encTable = $this->tableName( $table );
 		[ $sqlColumns, $sqlTuples ] = $this->makeInsertLists( $rows );
@@ -1414,8 +1430,9 @@ class SQLPlatform implements ISQLPlatform {
 			// VALUES(...) requires a uniform correspondence of (column => value)
 			if ( $rowColumns !== $tupleColumns ) {
 				throw new DBLanguageError(
-					'Got row columns (' . implode( ', ', $rowColumns ) . ') ' .
-					'instead of expected (' . implode( ', ', $tupleColumns ) . ')'
+					'All rows must specify the same columns in multi-row inserts. Found a row with (' .
+					implode( ', ', $rowColumns ) . ') ' .
+					'instead of expected (' . implode( ', ', $tupleColumns ) . ') as in the first row'
 				);
 			}
 			// Make the value tuple that defines this row
@@ -1434,6 +1451,11 @@ class SQLPlatform implements ISQLPlatform {
 		];
 	}
 
+	/**
+	 * @param string $table
+	 * @param array $rows
+	 * @return string[]
+	 */
 	public function insertNonConflictingSqlText( $table, array $rows ) {
 		$encTable = $this->tableName( $table );
 		[ $sqlColumns, $sqlTuples ] = $this->makeInsertLists( $rows );
@@ -1453,6 +1475,17 @@ class SQLPlatform implements ISQLPlatform {
 		return [ 'INSERT IGNORE INTO', '' ];
 	}
 
+	/**
+	 * @param string $destTable
+	 * @param string $srcTable
+	 * @param array $varMap
+	 * @param array $conds
+	 * @param string $fname
+	 * @param array $insertOptions
+	 * @param array $selectOptions
+	 * @param array $selectJoinConds
+	 * @return string
+	 */
 	public function insertSelectNativeSqlText(
 		$destTable,
 		$srcTable,
@@ -1539,6 +1572,14 @@ class SQLPlatform implements ISQLPlatform {
 			: $orConds[0];
 	}
 
+	/**
+	 * @param string $delTable
+	 * @param string $joinTable
+	 * @param string $delVar
+	 * @param string $joinVar
+	 * @param array|string $conds
+	 * @return string
+	 */
 	public function deleteJoinSqlText( $delTable, $joinTable, $delVar, $joinVar, $conds ) {
 		if ( !$conds ) {
 			throw new DBLanguageError( __METHOD__ . ' called with empty $conds' );
@@ -1606,6 +1647,13 @@ class SQLPlatform implements ISQLPlatform {
 		return '?';
 	}
 
+	/**
+	 * @param string $table
+	 * @param array $set
+	 * @param string|IExpression|array $conds
+	 * @param string|array $options
+	 * @return Query
+	 */
 	public function updateSqlText( $table, $set, $conds, $options ) {
 		$isCondValid = ( is_string( $conds ) || is_array( $conds ) ) && $conds;
 		if ( !$isCondValid ) {
@@ -1678,6 +1726,10 @@ class SQLPlatform implements ISQLPlatform {
 		}
 	}
 
+	/**
+	 * @param string $table
+	 * @return string
+	 */
 	public function dropTableSqlText( $table ) {
 		// https://mariadb.com/kb/en/drop-table/
 		// https://dev.mysql.com/doc/refman/8.0/en/drop-table.html
@@ -1726,28 +1778,53 @@ class SQLPlatform implements ISQLPlatform {
 		);
 	}
 
+	/**
+	 * @param string $column
+	 * @return string
+	 */
 	public function buildExcludedValue( $column ) {
 		/* @see Database::upsert() */
 		// This can be treated like a single value since __VALS is a single row table
 		return "(SELECT __$column FROM __VALS)";
 	}
 
+	/**
+	 * @param string $identifier
+	 * @return string
+	 */
 	public function savepointSqlText( $identifier ) {
 		return 'SAVEPOINT ' . $this->addIdentifierQuotes( $identifier );
 	}
 
+	/**
+	 * @param string $identifier
+	 * @return string
+	 */
 	public function releaseSavepointSqlText( $identifier ) {
 		return 'RELEASE SAVEPOINT ' . $this->addIdentifierQuotes( $identifier );
 	}
 
+	/**
+	 * @param string $identifier
+	 * @return string
+	 */
 	public function rollbackToSavepointSqlText( $identifier ) {
 		return 'ROLLBACK TO SAVEPOINT ' . $this->addIdentifierQuotes( $identifier );
 	}
 
+	/**
+	 * @return string
+	 */
 	public function rollbackSqlText() {
 		return 'ROLLBACK';
 	}
 
+	/**
+	 * @param string $table
+	 * @param array $rows
+	 * @param array $options
+	 * @return Query|false
+	 */
 	public function dispatchingInsertSqlText( $table, $rows, $options ) {
 		$rows = $this->normalizeRowArray( $rows );
 		if ( !$rows ) {
@@ -1953,6 +2030,7 @@ class SQLPlatform implements ISQLPlatform {
 		return $column;
 	}
 
+	/** @inheritDoc */
 	public function setSchemaVars( $vars ) {
 		$this->schemaVars = is_array( $vars ) ? $vars : null;
 	}
@@ -2013,7 +2091,7 @@ class SQLPlatform implements ISQLPlatform {
 				// check for both nonexistent keys *and* the empty string.
 				if ( isset( $m[1] ) && $m[1] !== '' ) {
 					if ( $m[1] === 'i' ) {
-						return $this->indexName( $m[2] );
+						return $m[2];
 					} else {
 						return $this->tableName( $m[2] );
 					}
@@ -2031,14 +2109,27 @@ class SQLPlatform implements ISQLPlatform {
 		);
 	}
 
+	/**
+	 * @param string $lockName
+	 * @param float $timeout
+	 * @return string
+	 */
 	public function lockSQLText( $lockName, $timeout ) {
 		throw new RuntimeException( 'locking must be implemented in subclasses' );
 	}
 
+	/**
+	 * @param string $lockName
+	 * @return string
+	 */
 	public function lockIsFreeSQLText( $lockName ) {
 		throw new RuntimeException( 'locking must be implemented in subclasses' );
 	}
 
+	/**
+	 * @param string $lockName
+	 * @return string
+	 */
 	public function unlockSQLText( $lockName ) {
 		throw new RuntimeException( 'locking must be implemented in subclasses' );
 	}

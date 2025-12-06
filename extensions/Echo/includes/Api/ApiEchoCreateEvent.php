@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Notifications\Api;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Notification\RecipientSet;
 use MediaWiki\ParamValidator\TypeDef\TitleDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Title\Title;
@@ -15,15 +16,12 @@ use Wikimedia\ParamValidator\TypeDef\StringDef;
 
 class ApiEchoCreateEvent extends ApiBase {
 
-	private UserNameUtils $userNameUtils;
-
 	public function __construct(
 		ApiMain $mainModule,
 		string $moduleName,
-		UserNameUtils $userNameUtils
+		private readonly UserNameUtils $userNameUtils,
 	) {
 		parent::__construct( $mainModule, $moduleName );
-		$this->userNameUtils = $userNameUtils;
 	}
 
 	/**
@@ -61,20 +59,19 @@ class ApiEchoCreateEvent extends ApiBase {
 			'agent' => $user,
 			'title' => $params['page'] ? Title::newFromLinkTarget( $params['page'] ) : null,
 			'extra' => [
-				Event::RECIPIENTS_IDX => [ $userToNotify->getId() ],
 				'header' => $params['header'],
 				'content' => $params['content'],
 				// Send email only if specified
 				'noemail' => !$params['email'],
-			]
-		] );
+			],
+		], new RecipientSet( $userToNotify ) );
 
 		// Return a success message
 		$this->getResult()->addValue(
 			null,
 			$this->getModuleName(),
 			[
-				'result' => 'success'
+				'result' => 'success',
 			]
 		);
 	}

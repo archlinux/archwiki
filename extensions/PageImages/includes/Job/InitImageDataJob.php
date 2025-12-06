@@ -6,25 +6,21 @@ use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\JobQueue\Job;
 use MediaWiki\Title\Title;
 use RefreshLinks;
-use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\ILBFactory;
 
 class InitImageDataJob extends Job {
-	/** @var LBFactory */
-	private $lbFactory;
-
 	/**
 	 * @param Title $title Title object associated with this job
 	 * @param array $params Parameters to the job, containing an array of
 	 * page ids representing which pages to process
-	 * @param LBFactory $lbFactory
+	 * @param ILBFactory $lbFactory
 	 */
 	public function __construct(
 		Title $title,
 		array $params,
-		LBFactory $lbFactory
+		private readonly ILBFactory $lbFactory,
 	) {
 		parent::__construct( 'InitImageDataJob', $title, $params );
-		$this->lbFactory = $lbFactory;
 	}
 
 	/**

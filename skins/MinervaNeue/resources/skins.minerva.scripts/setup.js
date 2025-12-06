@@ -5,17 +5,28 @@
  * @ignore
  */
 const ms = require( 'mobile.startup' );
+const watchstar = require( './watchstar.js' );
 const reportIfNightModeWasDisabledOnPage = require( './reportIfNightModeWasDisabledOnPage.js' );
 const addPortletLink = require( './addPortletLink.js' );
-const teleportTarget = require( 'mediawiki.page.ready' ).teleportTarget;
+const { teleportTarget, enableSearchDialog } = require( 'mediawiki.page.ready' );
 
 function init() {
 	const permissions = mw.config.get( 'wgMinervaPermissions' ) || {};
+	const searchIcon = document.querySelector( '#searchIcon' );
+	enableSearchDialog( searchIcon );
+
 	// eslint-disable-next-line no-jquery/no-global-selector
 	const $watch = $( '#page-actions-watch' );
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $watchInToolsMenu = $( '.page-actions-overflow-list .mw-watchlink' );
 
 	if ( permissions.watch ) {
-		require( './watchstar.js' ).init( $watch );
+		if ( $watch.length ) {
+			watchstar.init( $watch );
+		}
+		if ( $watchInToolsMenu.length ) {
+			watchstar.init( $watchInToolsMenu.parent() );
+		}
 	}
 
 	addPortletLink.init();
@@ -26,10 +37,6 @@ function init() {
 	// Setup Minerva with MobileFrontend
 	if ( ms && !ms.stub ) {
 		require( './initMobile.js' )();
-	} else {
-		// MOBILEFRONTEND IS NOT INSTALLED.
-		// setup search for desktop Minerva at mobile resolution without MobileFrontend.
-		require( './searchSuggestReveal.js' )();
 	}
 
 	// This hot fix should be reviewed and possibly removed circa January 2021.

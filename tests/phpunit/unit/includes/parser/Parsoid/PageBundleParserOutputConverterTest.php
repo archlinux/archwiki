@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\Tests\Parser\Parsoid;
 
@@ -7,33 +8,23 @@ use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWikiUnitTestCase;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 
 /**
  * @covers \MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter
  */
 class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 	/** @dataProvider provideParserOutputFromPageBundle */
-	public function testParserOutputFromPageBundle( PageBundle $pageBundle ) {
+	public function testParserOutputFromPageBundle( HtmlPageBundle $pageBundle ) {
 		$output = PageBundleParserOutputConverter::parserOutputFromPageBundle( $pageBundle );
 		$this->assertSame( $pageBundle->html, $output->getRawText() );
 
-		$extensionData = $output->getExtensionData( PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY );
-		$this->assertSame( $pageBundle->mw, $extensionData['mw'] );
-		$this->assertSame( $pageBundle->parsoid, $extensionData['parsoid'] );
-		$this->assertSame( $pageBundle->headers, $extensionData['headers'] );
-
-		if ( isset( $pageBundle->headers['content-language'] ) ) {
-			$this->assertSame( $pageBundle->headers['content-language'], $extensionData['headers']['content-language'] );
-			$this->assertSame( $pageBundle->headers['content-language'], (string)$output->getLanguage() );
-		}
-
-		$this->assertSame( $pageBundle->version, $extensionData['version'] );
-		$this->assertSame( $pageBundle->contentmodel, $extensionData['contentmodel'] );
+		$outputPageBundle = $output->getContentHolder()->getBasePageBundle();
+		$this->assertEquals( $pageBundle->toBasePageBundle(), $outputPageBundle );
 	}
 
 	/** @dataProvider provideParserOutputFromPageBundle */
-	public function testParserOutputFromPageBundleShouldPreserveMetadata( PageBundle $pageBundle ) {
+	public function testParserOutputFromPageBundleShouldPreserveMetadata( HtmlPageBundle $pageBundle ) {
 		// Create a ParserOutput with some metadata properties already set.
 		$original = new ParserOutput();
 		$original->setExtensionData( 'test-key', 'test-data' );
@@ -48,13 +39,8 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $pageBundle->html, $output->getRawText() );
 
 		// Check the page bundle data
-		$extensionData = $output->getExtensionData( PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY );
-		$this->assertSame( $pageBundle->mw, $extensionData['mw'] );
-		$this->assertSame( $pageBundle->parsoid, $extensionData['parsoid'] );
-		$this->assertSame( $pageBundle->headers, $extensionData['headers'] );
-		$this->assertSame( $pageBundle->headers['content-language'], $extensionData['headers']['content-language'] );
-		$this->assertSame( $pageBundle->version, $extensionData['version'] );
-		$this->assertSame( $pageBundle->contentmodel, $extensionData['contentmodel'] );
+		$outputPageBundle = $output->getContentHolder()->getBasePageBundle();
+		$this->assertEquals( $pageBundle->toBasePageBundle(), $outputPageBundle );
 
 		// Check our additional metadata properties
 		$this->assertSame( 'test-data', $output->getExtensionData( 'test-key' ) );
@@ -78,8 +64,8 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideParserOutputFromPageBundle() {
-		yield 'should convert PageBundle containing data-parsoid and data-mw' => [
-			new PageBundle(
+		yield 'should convert HtmlPageBundle containing data-parsoid and data-mw' => [
+			new HtmlPageBundle(
 				'html content',
 				[ 'ids' => '1.33' ],
 				[ 'ids' => '1.33' ],
@@ -89,8 +75,8 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 			)
 		];
 
-		yield 'should convert PageBundle that contains no data-parsoid or data-mw' => [
-			new PageBundle(
+		yield 'should convert HtmlPageBundle that contains no data-parsoid or data-mw' => [
+			new HtmlPageBundle(
 				'html content',
 				[],
 				[],
@@ -102,34 +88,16 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 
 	/** @dataProvider providePageBundleFromParserOutput */
 	public function testPageBundleFromParserOutput( ParserOutput $parserOutput ) {
-		$pageBundle = PageBundleParserOutputConverter::pageBundleFromParserOutput( $parserOutput );
+		$pageBundle = PageBundleParserOutputConverter::htmlPageBundleFromParserOutput( $parserOutput );
 
 		$this->assertSame( $parserOutput->getRawText(), $pageBundle->html );
 
-		$extensionData = $parserOutput->getExtensionData(
-			PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY
-		);
-
-		$this->assertSame( $extensionData['parsoid'] ?? [ 'ids' => [] ], $pageBundle->parsoid );
-		$this->assertSame( $extensionData['mw'] ?? null, $pageBundle->mw );
-
-		// NOTE: We default to "0.0.0" as a fix for T325137. We can go back to null
-		//       once PageBundle::responseData is more robust.
-		$this->assertSame( $extensionData['version'] ?? '0.0.0', $pageBundle->version );
-
-		$this->assertSame( $extensionData['headers'] ?? [], $pageBundle->headers );
-		$this->assertSame( $extensionData['contentmodel'] ?? null, $pageBundle->contentmodel );
-
-		if ( isset( $extensionData['headers']['content-language'] ) ) {
-			$this->assertSame(
-				$extensionData['headers']['content-language'],
-				$pageBundle->headers['content-language']
-			);
-		}
+		$outputPageBundle = $parserOutput->getContentHolder()->getBasePageBundle();
+		$this->assertEquals( $pageBundle->toBasePageBundle(), $outputPageBundle );
 
 		if ( $parserOutput->getLanguage() ) {
 			$this->assertSame(
-				$parserOutput->getLanguage(),
+				$parserOutput->getLanguage()->toBcp47Code(),
 				$pageBundle->headers['content-language']
 			);
 		}
@@ -138,47 +106,34 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 	public static function providePageBundleFromParserOutput() {
 		yield 'should convert ParsoidOutput containing data-parsoid and data-mw' => [
 			self::getParsoidOutput(
-				'hello world',
-				[
-					'parsoid' => [ 'ids' => '1.22' ],
-					'mw' => [],
-					'version' => '2.x',
-					'headers' => [ 'content-language' => 'xyz' ],
-					'testing'
-				]
+				new HtmlPageBundle(
+					html: 'hello world',
+					parsoid: [ 'ids' => '1.22' ],
+					mw: [],
+					version: '2.x',
+					headers: [ 'content-language' => 'xyz' ]
+				)
 			)
 		];
 
 		yield 'should convert ParsoidOutput that does not contain data-parsoid or data-mw' => [
 			self::getParsoidOutput(
-				'hello world',
-				[
-					'parsoid' => null,
-					'mw' => null,
-					'version' => null,
-					'headers' => [ 'content-language' => null ]
-				]
+				HtmlPageBundle::newEmpty( html: 'hello world' )
 			)
 		];
 	}
 
 	public function testLanguageTransfer() {
-		$parserOutput = new ParserOutput( '' );
+		$parserOutput = self::getParsoidOutput( HtmlPageBundle::newEmpty( '' ) );
 		$parserOutput->setLanguage( new Bcp47CodeValue( 'de' ) );
-		$pb = PageBundleParserOutputConverter::pageBundleFromParserOutput( $parserOutput );
+		$pb = PageBundleParserOutputConverter::htmlPageBundleFromParserOutput( $parserOutput );
 		$this->assertIsString( $pb->headers['content-language'] );
 		$this->assertEquals( 'de', $pb->headers['content-language'] );
 	}
 
 	private static function getParsoidOutput(
-		string $rawText,
-		?array $pageBundleData
+		HtmlPageBundle $pb
 	): ParserOutput {
-		$parserOutput = new ParserOutput( $rawText );
-		$parserOutput->setExtensionData(
-			PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY, $pageBundleData
-		);
-
-		return $parserOutput;
+		return PageBundleParserOutputConverter::parserOutputFromPageBundle( $pb );
 	}
 }

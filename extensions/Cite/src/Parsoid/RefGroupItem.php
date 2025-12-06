@@ -7,7 +7,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 
 /**
- * Individual item in a {@see RefGroup}.
+ * Individual item in a {@link RefGroup}.
  *
  * @license GPL-2.0-or-later
  */
@@ -15,22 +15,28 @@ class RefGroupItem {
 
 	/**
 	 * Pointer to the contents of the ref, accessible with the
-	 * {@see ParsoidExtensionAPI::getContentDOM}, to be used when serializing the references group.
+	 * {@link ParsoidExtensionAPI::getContentDOM}, to be used when serializing the references group.
 	 * It gets set when extracting the ref from a node and not $missingContent.  Note that that
 	 * might not be the first one for named refs.  Also, for named refs, it's used to detect
 	 * multiple conflicting definitions.
 	 */
 	public ?string $contentId = null;
+
 	/**
 	 * Used when the content comes from an attribute eg. subreference details.
 	 */
 	public ?Node $externalFragment = null;
 
+	/**
+	 * Direction "ltr" or "rtl", or an empty string when not specified.
+	 */
 	public string $dir = '';
+
 	/**
 	 * Name of the group (or empty for the default group) which this <ref> belongs to.
 	 */
 	public string $group = '';
+
 	/**
 	 * The original name="…" attribute of a <ref>, or null for anonymous, unnamed references.
 	 * Guaranteed to never be empty or "0". These are not valid names.
@@ -38,7 +44,7 @@ class RefGroupItem {
 	public ?string $name = null;
 
 	/**
-	 * Sequence number per {@see $group}, starting from 1. To be used in the footnote marker,
+	 * Sequence number per {@link $group}, starting from 1. To be used in the footnote marker,
 	 * e.g. "[1]".
 	 */
 	public int $numberInGroup = 1;
@@ -58,7 +64,7 @@ class RefGroupItem {
 	/**
 	 * True if this was a main ref artificially split from a main+details in the article.
 	 */
-	public bool $isMainWithDetails = false;
+	public bool $isSyntheticMainRef = false;
 
 	/**
 	 * @var Element[] Collection of footnote markers that have been generated so far for the same
@@ -71,6 +77,12 @@ class RefGroupItem {
 	/** @var string[] */
 	public array $embeddedNodes = [];
 
+	/**
+	 * Total numbes of footnote marker (nodes) in the text that point to the same footnote, i.e. the
+	 * total number of re-uses of this reference. Typically 1 when not reused.
+	 *
+	 * Can be bigger than the number of {@link $nodes}!
+	 */
 	public int $visibleNodes = 0;
 
 }

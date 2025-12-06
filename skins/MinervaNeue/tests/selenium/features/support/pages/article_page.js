@@ -6,9 +6,7 @@
  * https://en.m.wikipedia.org/wiki/Barack_Obama
  */
 
-'use strict';
-
-const MinervaPage = require( './minerva_page' );
+import MinervaPage from './minerva_page.js';
 
 class ArticlePage extends MinervaPage {
 	get contributions_link_element() {
@@ -100,4 +98,4 @@ class ArticlePage extends MinervaPage {
 	}
 }
 
-module.exports = new ArticlePage();
+export default new ArticlePage();

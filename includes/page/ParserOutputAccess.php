@@ -1,51 +1,34 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace MediaWiki\Page;
 
 use InvalidArgumentException;
-use MediaWiki\Logger\Spi as LoggerSpi;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\PoolCounter\PoolCounterFactory;
 use MediaWiki\PoolCounter\PoolCounterWork;
-use MediaWiki\PoolCounter\PoolWorkArticleView;
-use MediaWiki\PoolCounter\PoolWorkArticleViewCurrent;
-use MediaWiki\PoolCounter\PoolWorkArticleViewOld;
+use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
-use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\WikiMap\WikiMap;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Wikimedia\Assert\Assert;
 use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Rdbms\ChronologyProtector;
-use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Telemetry\SpanInterface;
 use Wikimedia\Telemetry\TracerInterface;
@@ -59,7 +42,7 @@ use Wikimedia\Telemetry\TracerInterface;
  * @since 1.36
  * @ingroup Page
  */
-class ParserOutputAccess {
+class ParserOutputAccess implements LoggerAwareInterface {
 
 	/** @internal */
 	public const PARSOID_PCACHE_NAME = 'parsoid-' . ParserCacheFactory::DEFAULT_NAME;
@@ -110,6 +93,8 @@ class ParserOutputAccess {
 	 *
 	 * @see Bug T352837
 	 * @since 1.42
+	 * @deprecated since 1.45, instead use OPT_POOL_COUNTER => POOL_COUNTER_ARTICLE_VIEW
+	 *             and OPT_POOL_COUNTER_FALLBACK => true.
 	 */
 	public const OPT_FOR_ARTICLE_VIEW = 16;
 
@@ -118,6 +103,36 @@ class ParserOutputAccess {
 	 *      Otherwise, if it's not Parsoid's default, it will be invalidated.
 	 */
 	public const OPT_IGNORE_PROFILE_VERSION = 128;
+
+	/**
+	 * Whether to fall back to using stale content when failing to
+	 * get a poolcounter lock.
+	 */
+	public const OPT_POOL_COUNTER_FALLBACK = 'poolcounter-fallback';
+
+	/**
+	 * @see MainConfigSchema::PoolCounterConf
+	 */
+	public const OPT_POOL_COUNTER = 'poolcounter-type';
+
+	/**
+	 * @see MainConfigSchema::PoolCounterConf
+	 */
+	public const POOL_COUNTER_ARTICLE_VIEW = 'ArticleView';
+
+	/**
+	 * @see MainConfigSchema::PoolCounterConf
+	 */
+	public const POOL_COUNTER_REST_API = 'HtmlRestApi';
+
+	/**
+	 * Defaults for options that are not covered by initializing
+	 * bit-based keys to zero.
+	 */
+	private const DEFAULT_OPTIONS = [
+		self::OPT_POOL_COUNTER => null,
+		self::OPT_POOL_COUNTER_FALLBACK => false
+	];
 
 	/** @var string Do not read or write any cache */
 	private const CACHE_NONE = 'none';
@@ -139,22 +154,19 @@ class ParserOutputAccess {
 	private RevisionLookup $revisionLookup;
 	private RevisionRenderer $revisionRenderer;
 	private StatsFactory $statsFactory;
-	private ILBFactory $lbFactory;
 	private ChronologyProtector $chronologyProtector;
-	private LoggerSpi $loggerSpi;
 	private WikiPageFactory $wikiPageFactory;
 	private TitleFormatter $titleFormatter;
 	private TracerInterface $tracer;
 	private PoolCounterFactory $poolCounterFactory;
+	private LoggerInterface $logger;
 
 	public function __construct(
 		ParserCacheFactory $parserCacheFactory,
 		RevisionLookup $revisionLookup,
 		RevisionRenderer $revisionRenderer,
 		StatsFactory $statsFactory,
-		ILBFactory $lbFactory,
 		ChronologyProtector $chronologyProtector,
-		LoggerSpi $loggerSpi,
 		WikiPageFactory $wikiPageFactory,
 		TitleFormatter $titleFormatter,
 		TracerInterface $tracer,
@@ -164,15 +176,71 @@ class ParserOutputAccess {
 		$this->revisionLookup = $revisionLookup;
 		$this->revisionRenderer = $revisionRenderer;
 		$this->statsFactory = $statsFactory;
-		$this->lbFactory = $lbFactory;
 		$this->chronologyProtector = $chronologyProtector;
-		$this->loggerSpi = $loggerSpi;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->titleFormatter = $titleFormatter;
 		$this->tracer = $tracer;
 		$this->poolCounterFactory = $poolCounterFactory;
 
 		$this->localCache = new MapCacheLRU( 10 );
+		$this->logger = new NullLogger();
+	}
+
+	public function setLogger( LoggerInterface $logger ): void {
+		$this->logger = $logger;
+	}
+
+	/**
+	 * Converts bitfield options to an associative array.
+	 *
+	 * If the input is an array, any integer key that has multiple bits set will
+	 * be split into separate keys for each bit. String keys remain unchanged.
+	 *
+	 * This method supports up to 32 bits.
+	 *
+	 * @param int|array $options
+	 *
+	 * @return array An associative array with one key for each bit,
+	 *         plus any keys already present in the input.
+	 */
+	private static function normalizeOptions( $options ): array {
+		$bits = 0;
+
+		// TODO: Starting in 1.46, emit deprecation warnings when getting an int.
+
+		if ( is_array( $options ) ) {
+			if ( $options['_normalized_'] ?? false ) {
+				// already normalized.
+				return $options;
+			}
+
+			// Collect all bits from array keys, in case one of the keys
+			// sets multiple bits.
+			foreach ( $options as $key => $value ) {
+				if ( is_int( $key ) ) {
+					$bits |= $key;
+				}
+			}
+		} else {
+			$bits = $options;
+			$options = [];
+		}
+
+		$b = 1;
+		for ( $i = 0; $i < 32; $i++ ) {
+			$options[$b] = ( $bits & $b ) > 0;
+			$b <<= 1;
+		}
+
+		if ( $options[ self::OPT_FOR_ARTICLE_VIEW ] ) {
+			$options[ self::OPT_POOL_COUNTER ] = self::POOL_COUNTER_ARTICLE_VIEW;
+			$options[ self::OPT_POOL_COUNTER_FALLBACK ] = true;
+		}
+
+		$options += self::DEFAULT_OPTIONS;
+
+		$options['_normalized_'] = true;
+		return $options;
 	}
 
 	/**
@@ -220,15 +288,19 @@ class ParserOutputAccess {
 	 * @param PageRecord $page
 	 * @param ParserOptions $parserOptions
 	 * @param RevisionRecord|null $revision
-	 * @param int $options Bitfield using the OPT_XXX constants
+	 * @param int|array $options Bitfield or associative array using the OPT_XXX constants.
+	 *        Passing an int is deprecated and will trigger deprecation warnings
+	 *        in the future.
 	 * @return ParserOutput|null
 	 */
 	public function getCachedParserOutput(
 		PageRecord $page,
 		ParserOptions $parserOptions,
 		?RevisionRecord $revision = null,
-		int $options = 0
+		$options = []
 	): ?ParserOutput {
+		$options = self::normalizeOptions( $options );
+
 		$span = $this->startOperationSpan( __FUNCTION__, $page, $revision );
 		$isOld = $revision && $revision->getId() !== $page->getLatest();
 		$useCache = $this->shouldUseCache( $page, $revision );
@@ -250,14 +322,12 @@ class ParserOutputAccess {
 		$statType = $statReason = $output ? 'hit' : 'miss';
 
 		if (
-			$output && !( $options & self::OPT_IGNORE_PROFILE_VERSION ) &&
-			$parserOptions->getUseParsoid()
+			$output && !$options[ self::OPT_IGNORE_PROFILE_VERSION ] &&
+			$output->getContentHolder()->isParsoidContent()
 		) {
-			$pageBundleData = $output->getExtensionData(
-				PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY
-			);
+			$pageBundle = $output->getContentHolder()->getBasePageBundle();
 			// T333606: Force a reparse if the version coming from cache is not the default
-			$cachedVersion = $pageBundleData['version'] ?? null;
+			$cachedVersion = $pageBundle->version ?? null;
 			if (
 				$cachedVersion !== null && // T325137: BadContentModel, no sense in reparsing
 				$cachedVersion !== Parsoid::defaultHTMLVersion()
@@ -284,16 +354,69 @@ class ParserOutputAccess {
 	}
 
 	/**
+	 * Fallback for use with PoolCounterWork.
+	 * Returns stale cached output if appropriate.
+	 *
+	 * @return Status<ParserOutput>|false
+	 */
+	private function getFallbackOutputForLatest(
+		PageRecord $page,
+		ParserOptions $parserOptions,
+		string $workKey,
+		bool $fast
+	) {
+		$parserOutput = $this->getPrimaryCache( $parserOptions )
+			->getDirty( $page, $parserOptions );
+
+		if ( !$parserOutput ) {
+			$this->logger->info( 'dirty missing' );
+			return false;
+		}
+
+		if ( $fast ) {
+			// If this user recently made DB changes, then don't eagerly serve stale output,
+			// so that users generally see their own edits after page save.
+			//
+			// If PoolCounter is overloaded, we may end up here a second time (with fast=false),
+			// in which case we will serve a stale fallback then.
+			//
+			// Note that CP reports anything in the last 10 seconds from the same client,
+			// including to other pages and other databases, so we bias towards avoiding
+			// fast-stale responses for several seconds after saving an edit.
+			if ( $this->chronologyProtector->getTouched() ) {
+				$this->logger->info(
+					'declining fast-fallback to stale output since ChronologyProtector ' .
+					'reports the client recently made changes',
+					[ 'workKey' => $workKey ]
+				);
+				// Forget this ParserOutput -- we will request it again if
+				// necessary in slow mode. There might be a newer entry
+				// available by that time.
+				return false;
+			}
+		}
+
+		$this->logger->info( $fast ? 'fast dirty output' : 'dirty output', [ 'workKey' => $workKey ] );
+
+		$status = Status::newGood( $parserOutput );
+		$status->warning( 'view-pool-dirty-output' );
+		$status->warning( $fast ? 'view-pool-contention' : 'view-pool-overload' );
+		return $status;
+	}
+
+	/**
 	 * Returns the rendered output for the given page.
 	 * Caching and concurrency control is applied.
 	 *
 	 * @param PageRecord $page
 	 * @param ParserOptions $parserOptions
 	 * @param RevisionRecord|null $revision
-	 * @param int $options Bitfield using the OPT_XXX constants
+	 * @param int|array $options Bitfield or associative array using the OPT_XXX constants.
+	 *        Passing an int is deprecated and will trigger deprecation warnings
+	 *        in the future.
 	 *
-	 * @return Status containing a ParserOutput if no error occurred.
-	 *         Well known errors and warnings include the following messages:
+	 * @return Status<ParserOutput> containing a ParserOutput if no error occurred.
+	 *         Well-known errors and warnings include the following messages:
 	 *         - 'view-pool-dirty-output' (warning) The output is dirty (from a stale cache entry).
 	 *         - 'view-pool-contention' (warning) Dirty output was returned immediately instead of
 	 *           waiting to acquire a work lock (when "fast stale" mode is enabled in PoolCounter).
@@ -309,8 +432,10 @@ class ParserOutputAccess {
 		PageRecord $page,
 		ParserOptions $parserOptions,
 		?RevisionRecord $revision = null,
-		int $options = 0
+		$options = []
 	): Status {
+		$options = self::normalizeOptions( $options );
+
 		$span = $this->startOperationSpan( __FUNCTION__, $page, $revision );
 		$error = $this->checkPreconditions( $page, $revision, $options );
 		if ( $error ) {
@@ -337,7 +462,7 @@ class ParserOutputAccess {
 				->increment();
 		}
 
-		if ( !( $options & self::OPT_NO_CHECK_CACHE ) ) {
+		if ( !$options[ self::OPT_NO_CHECK_CACHE ] ) {
 			$output = $this->getCachedParserOutput( $page, $parserOptions, $revision );
 			if ( $output ) {
 				return Status::newGood( $output );
@@ -358,13 +483,19 @@ class ParserOutputAccess {
 			}
 		}
 
-		if ( $options & self::OPT_FOR_ARTICLE_VIEW ) {
-			$work = $this->newPoolWorkArticleView( $page, $parserOptions, $revision, $options );
+		if ( $options[ self::OPT_POOL_COUNTER ] ) {
+			$work = $this->newPoolWork( $page, $parserOptions, $revision, $options );
 			/** @var Status $status */
 			$status = $work->execute();
 		} else {
 			// XXX: we could try harder to reuse a cache lookup above to
 			// provide the $previous argument here
+			$this->statsFactory->getCounter( 'parseroutputaccess_render_total' )
+				->setLabel( 'pool', 'none' )
+				->setLabel( 'cache', self::CACHE_NONE )
+				->copyToStatsdAt( 'ParserOutputAccess.PoolWork.None' )
+				->increment();
+
 			$status = $this->renderRevision( $page, $parserOptions, $revision, $options, null );
 		}
 
@@ -410,21 +541,18 @@ class ParserOutputAccess {
 	 * unnecessary double-lookup in the cache.
 	 *
 	 * @see PoolWorkArticleView::renderRevision
+	 * @return Status<ParserOutput>
 	 */
 	private function renderRevision(
 		PageRecord $page,
 		ParserOptions $parserOptions,
 		RevisionRecord $revision,
-		int $options,
+		array $options,
 		?ParserOutput $previousOutput = null
 	): Status {
 		$span = $this->startOperationSpan( __FUNCTION__, $page, $revision );
-		$this->statsFactory->getCounter( 'parseroutputaccess_render_total' )
-			->setLabel( 'pool', 'none' )
-			->setLabel( 'cache', self::CACHE_NONE )
-			->copyToStatsdAt( 'ParserOutputAccess.PoolWork.None' )
-			->increment();
 
+		$isCurrent = $revision->getId() === $page->getLatest();
 		$useCache = $this->shouldUseCache( $page, $revision );
 
 		// T371713: Temporary statistics collection code to determine
@@ -440,7 +568,7 @@ class ParserOutputAccess {
 			// but it is likely those template transclusions are out of date.
 			// Try to reuse the template transclusions from the most recent
 			// parse, which are more likely to reflect the current template.
-			if ( !( $options & self::OPT_NO_CHECK_CACHE ) ) {
+			if ( !$options[ self::OPT_NO_CHECK_CACHE ] ) {
 				$previousOutput = $this->getPrimaryCache( $parserOptions )->getDirty( $page, $parserOptions ) ?: null;
 			}
 		}
@@ -458,7 +586,6 @@ class ParserOutputAccess {
 		$output = $renderedRev->getRevisionParserOutput();
 
 		if ( $doSample ) {
-			$content = $revision->getContent( SlotRecord::MAIN );
 			$labels = [
 				'source' => 'ParserOutputAccess',
 				'type' => $previousOutput === null ? 'full' : 'selective',
@@ -466,7 +593,7 @@ class ParserOutputAccess {
 				'parser' => $parserOptions->getUseParsoid() ? 'parsoid' : 'legacy',
 				'opportunistic' => 'false',
 				'wiki' => WikiMap::getCurrentWikiId(),
-				'model' => $content ? $content->getModel() : 'unknown',
+				'model' => $revision->getMainContentModel(),
 			];
 			$this->statsFactory
 				->getCounter( 'ParserCache_selective_total' )
@@ -478,7 +605,7 @@ class ParserOutputAccess {
 				->incrementBy( $output->getTimeProfile( 'cpu' ) );
 		}
 
-		if ( !( $options & self::OPT_NO_UPDATE_CACHE ) && $output->isCacheable() ) {
+		if ( !$options[ self::OPT_NO_UPDATE_CACHE ] && $output->isCacheable() ) {
 			if ( $useCache === self::CACHE_PRIMARY ) {
 				$primaryCache = $this->getPrimaryCache( $parserOptions );
 				$primaryCache->save( $output, $page, $parserOptions );
@@ -488,7 +615,7 @@ class ParserOutputAccess {
 			}
 		}
 
-		if ( $options & self::OPT_LINKS_UPDATE ) {
+		if ( $options[ self::OPT_LINKS_UPDATE ] ) {
 			$this->wikiPageFactory->newFromTitle( $page )
 				->triggerOpportunisticLinksUpdate( $output );
 		}
@@ -496,23 +623,16 @@ class ParserOutputAccess {
 		return Status::newGood( $output );
 	}
 
-	/**
-	 * @param PageRecord $page
-	 * @param RevisionRecord|null $revision
-	 * @param int $options
-	 *
-	 * @return Status|null
-	 */
 	private function checkPreconditions(
 		PageRecord $page,
 		?RevisionRecord $revision = null,
-		int $options = 0
+		array $options = []
 	): ?Status {
 		if ( !$page->exists() ) {
 			return Status::newFatal( 'nopagetext' );
 		}
 
-		if ( !( $options & self::OPT_NO_UPDATE_CACHE ) && $revision && !$revision->getId() ) {
+		if ( !$options[ self::OPT_NO_UPDATE_CACHE ] && $revision && !$revision->getId() ) {
 			throw new InvalidArgumentException(
 				'The revision does not have a known ID. Use OPT_NO_CACHE.'
 			);
@@ -524,7 +644,7 @@ class ParserOutputAccess {
 			);
 		}
 
-		if ( $revision && !( $options & self::OPT_NO_AUDIENCE_CHECK ) ) {
+		if ( $revision && !$options[ self::OPT_NO_AUDIENCE_CHECK ] ) {
 			// NOTE: If per-user checks are desired, the caller should perform them and
 			//       then set OPT_NO_AUDIENCE_CHECK if they passed.
 			if ( !$revision->audienceCan( RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_PUBLIC ) ) {
@@ -540,20 +660,35 @@ class ParserOutputAccess {
 		return null;
 	}
 
-	/**
-	 * @param PageRecord $page
-	 * @param ParserOptions $parserOptions
-	 * @param RevisionRecord $revision
-	 * @param int $options
-	 *
-	 * @return PoolCounterWork
-	 */
-	protected function newPoolWorkArticleView(
+	protected function newPoolWork(
 		PageRecord $page,
 		ParserOptions $parserOptions,
 		RevisionRecord $revision,
-		int $options
+		array $options
 	): PoolCounterWork {
+		// Default behavior (no caching)
+		$callbacks = [
+			'doWork' => function () use ( $page, $parserOptions, $revision, $options ) {
+				return $this->renderRevision(
+					$page,
+					$parserOptions,
+					$revision,
+					$options
+				);
+			},
+			'doCachedWork' => static function () {
+				// uncached
+				return false;
+			},
+			'fallback' => static function ( $fast ) {
+				// no fallback
+				return false;
+			},
+			'error' => static function ( $status ) {
+				return $status;
+			}
+		];
+
 		$useCache = $this->shouldUseCache( $page, $revision );
 
 		$statCacheLabelLegacy = [
@@ -577,51 +712,50 @@ class ParserOutputAccess {
 
 				$workKey = $cacheKey . ':revid:' . $revision->getId();
 
-				$pool = $this->poolCounterFactory->create( 'ArticleView', $workKey );
-				return new PoolWorkArticleViewCurrent(
-					$pool,
-					$page,
-					$revision,
-					$parserOptions,
-					$this->revisionRenderer,
-					$primaryCache,
-					$this->lbFactory,
-					$this->chronologyProtector,
-					$this->loggerSpi,
-					$this->wikiPageFactory,
-					!( $options & self::OPT_NO_UPDATE_CACHE ),
-					(bool)( $options & self::OPT_LINKS_UPDATE )
-				);
+				$callbacks['doCachedWork'] =
+					static function () use ( $primaryCache, $page, $parserOptions ) {
+						$parserOutput = $primaryCache->get( $page, $parserOptions );
+						return $parserOutput ? Status::newGood( $parserOutput ) : false;
+					};
+
+				$callbacks['fallback'] =
+					function ( $fast ) use ( $page, $parserOptions, $workKey, $options ) {
+						if ( $options[ self::OPT_POOL_COUNTER_FALLBACK ] ) {
+							return $this->getFallbackOutputForLatest(
+								$page, $parserOptions, $workKey, $fast
+							);
+						} else {
+							return false;
+						}
+					};
+
+				break;
 
 			case self::CACHE_SECONDARY:
 				$secondaryCache = $this->getSecondaryCache( $parserOptions );
 				$workKey = $secondaryCache->makeParserOutputKey( $revision, $parserOptions );
-				$pool = $this->poolCounterFactory->create( 'ArticleView', $workKey );
-				return new PoolWorkArticleViewOld(
-					$pool,
-					$secondaryCache,
-					$revision,
-					$parserOptions,
-					$this->revisionRenderer,
-					$this->loggerSpi
-				);
+
+				$callbacks['doCachedWork'] =
+					static function () use ( $secondaryCache, $revision, $parserOptions ) {
+						$parserOutput = $secondaryCache->get( $revision, $parserOptions );
+
+						return $parserOutput ? Status::newGood( $parserOutput ) : false;
+					};
+
+				break;
 
 			default:
-				// Without caching, using poolcounter is pointless
-				// The name of the metric is a bit confusing now
 				$secondaryCache = $this->getSecondaryCache( $parserOptions );
 				$workKey = $secondaryCache->makeParserOutputKeyOptionalRevId( $revision, $parserOptions );
-				$pool = $this->poolCounterFactory->create( 'ArticleView', $workKey );
-				return new PoolWorkArticleView(
-					$pool,
-					$revision,
-					$parserOptions,
-					$this->revisionRenderer,
-					$this->loggerSpi
-				);
 		}
 
-		// unreachable
+		$profile = $options[ self::OPT_POOL_COUNTER ];
+		$pool = $this->poolCounterFactory->create( $profile, $workKey );
+		return new PoolCounterWorkViaCallback(
+			$pool,
+			$workKey,
+			$callbacks
+		);
 	}
 
 	private function getPrimaryCache( ParserOptions $pOpts ): ParserCache {
@@ -668,5 +802,13 @@ class ParserOutputAccess {
 			}
 		}
 		return $span->start()->activate();
+	}
+
+	/**
+	 * Clear the local cache
+	 * @since 1.45
+	 */
+	public function clearLocalCache() {
+		$this->localCache->clear();
 	}
 }

@@ -57,11 +57,11 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 	public function getPrimaryLink() {
 		$url = $this->event->getTitle()->getLocalURL( [
 			'oldid' => 'prev',
-			'diff' => $this->event->getExtraParam( 'revid' )
+			'diff' => $this->event->getExtraParam( 'revid' ),
 		] );
 		return [
 			'url' => $url,
-			'label' => $this->msg( 'notification-link-text-view-changes', $this->getViewingUserForGender() )->text()
+			'label' => $this->msg( 'notification-link-text-view-changes', $this->getViewingUserForGender() )->text(),
 		];
 	}
 

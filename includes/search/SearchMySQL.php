@@ -5,21 +5,7 @@
  * Copyright (C) 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Search
  */
@@ -111,7 +97,7 @@ class SearchMySQL extends SearchDatabase {
 				}
 				foreach ( $strippedVariants as $stripped ) {
 					$stripped = $this->normalizeText( $stripped );
-					if ( $nonQuoted && strpos( $stripped, ' ' ) !== false ) {
+					if ( $nonQuoted && str_contains( $stripped, ' ' ) ) {
 						// Hack for Chinese: we need to toss in quotes for
 						// multiple-character phrases since normalizeForSearch()
 						// added spaces between them to make word breaks.
@@ -160,6 +146,7 @@ class SearchMySQL extends SearchDatabase {
 		return $regex;
 	}
 
+	/** @inheritDoc */
 	public function legalSearchChars( $type = self::CHARS_ALL ) {
 		$searchChars = parent::legalSearchChars( $type );
 
@@ -200,7 +187,7 @@ class SearchMySQL extends SearchDatabase {
 		return $this->searchInternal( $term, false );
 	}
 
-	protected function searchInternal( $term, $fulltext ) {
+	protected function searchInternal( string $term, bool $fulltext ): ?SqlSearchResultSet {
 		// This seems out of place, why is this called with empty term?
 		if ( trim( $term ) === '' ) {
 			return null;
@@ -210,19 +197,13 @@ class SearchMySQL extends SearchDatabase {
 		$queryBuilder = $this->getQueryBuilder( $filteredTerm, $fulltext );
 		$resultSet = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
-		$total = null;
 		$queryBuilder = $this->getCountQueryBuilder( $filteredTerm, $fulltext );
-		$totalResult = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
-
-		$row = $totalResult->fetchObject();
-		if ( $row ) {
-			$total = intval( $row->c );
-		}
-		$totalResult->free();
+		$total = (int)$queryBuilder->caller( __METHOD__ )->fetchField();
 
 		return new SqlSearchResultSet( $resultSet, $this->searchTerms, $total );
 	}
 
+	/** @inheritDoc */
 	public function supports( $feature ) {
 		switch ( $feature ) {
 			case 'title-suffix-filter':
@@ -316,7 +297,7 @@ class SearchMySQL extends SearchDatabase {
 	private function getCountQueryBuilder( $filteredTerm, $fulltext ): SelectQueryBuilder {
 		$match = $this->parseQuery( $filteredTerm, $fulltext );
 		$queryBuilder = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
-			->select( [ 'c' => 'COUNT(*)' ] )
+			->select( 'COUNT(*)' )
 			->from( 'page' )
 			->join( 'searchindex', null, 'page_id=si_page' )
 			->where( $match[0] );
@@ -389,7 +370,7 @@ class SearchMySQL extends SearchDatabase {
 		// need to fold cases and convert to hex
 		$out = preg_replace_callback(
 			"/([\\xc0-\\xff][\\x80-\\xbf]*)/",
-			[ $this, 'stripForSearchCallback' ],
+			$this->stripForSearchCallback( ... ),
 			MediaWikiServices::getInstance()->getContentLanguage()->lc( $out ) );
 
 		// And to add insult to injury, the default indexing

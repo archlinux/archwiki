@@ -2,11 +2,8 @@
 
 namespace Wikimedia\Tests\Stats;
 
-use MediaWikiCoversValidator;
-use PHPUnit\Framework\TestCase;
+use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
-use Wikimedia\Stats\Metrics\BaseMetric;
 use Wikimedia\Stats\Metrics\CounterMetric;
 use Wikimedia\Stats\Metrics\NullMetric;
 use Wikimedia\Stats\OutputFormats;
@@ -14,6 +11,7 @@ use Wikimedia\Stats\StatsCache;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Stats\StatsUtils;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @covers \Wikimedia\Stats\Metrics\NullMetric
@@ -22,146 +20,121 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \Wikimedia\Stats\Metrics\TimingMetric
  * @covers \Wikimedia\Stats\StatsUtils
  */
-class MetricTest extends TestCase {
-	use MediaWikiCoversValidator;
-
-	public const FORMATS = [ 'statsd', 'dogstatsd' ];
-
-	public const TYPES = [ 'counter', 'gauge', 'timing' ];
-
-	public const TESTS = [
-		'basic' => [
-			'config' => [
-				'name' => 'test.unit',
-				'component' => 'testComponent',
+class MetricTest extends MediaWikiUnitTestCase {
+	public static function provideMetrics() {
+		$dataset = [
+			'basic' => [
+				'call' => [
+					'component' => 'testComponent',
+					'name' => 'test.unit',
+					'labels' => [],
+					'value' => 2,
+				],
+				'expected' => [
+					'counter' => 'mediawiki.testComponent.test_unit:2|c',
+					'gauge' => 'mediawiki.testComponent.test_unit:2|g',
+					'timing' => 'mediawiki.testComponent.test_unit:2|ms',
+				],
 			],
-			'value' => 2,
-			'labels' => [],
-		],
-		'invalidLabel' => [
-			'config' => [
-				'name' => 'test.unit',
-				'component' => 'testComponent',
+			'oneLabel' => [
+				'call' => [
+					'component' => 'testComponent',
+					'name' => 'test.unit',
+					'labels' => [ 'x' => 'labelOne' ],
+					'value' => 2,
+				],
+				'expected' => [
+					'counter' => [
+						'statsd' => 'mediawiki.testComponent.test_unit.labelOne:2|c',
+						'dogstatsd' => 'mediawiki.testComponent.test_unit:2|c|#x:labelOne',
+					],
+					'gauge' => [
+						'statsd' => 'mediawiki.testComponent.test_unit.labelOne:2|g',
+						'dogstatsd' => 'mediawiki.testComponent.test_unit:2|g|#x:labelOne',
+					],
+					'timing' => [
+						'statsd' => 'mediawiki.testComponent.test_unit.labelOne:2|ms',
+						'dogstatsd' => 'mediawiki.testComponent.test_unit:2|ms|#x:labelOne',
+					],
+				],
 			],
-			'value' => 2,
-			'labels' => [ ': x' => 'labelOne' ],
-		],
-		'oneLabel' => [
-			'config' => [
-				'name' => 'test.unit',
-				'component' => 'testComponent',
+			'multiLabel' => [
+				'call' => [
+					'component' => 'testComponent',
+					'name' => 'test.unit',
+					'labels' => [ 'x' => 'labelOne', 'y' => 'labelTwo' ],
+					'value' => 2,
+				],
+				'expected' => [
+					'counter' => [
+						'dogstatsd' => 'mediawiki.testComponent.test_unit:2|c|#x:labelOne,y:labelTwo',
+						'statsd' => 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|c',
+					],
+					'gauge' => [
+						'statsd' => 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|g',
+						'dogstatsd' => 'mediawiki.testComponent.test_unit:2|g|#x:labelOne,y:labelTwo',
+					],
+					'timing' => [
+						'statsd' => 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|ms',
+						'dogstatsd' => 'mediawiki.testComponent.test_unit:2|ms|#x:labelOne,y:labelTwo',
+					],
+				],
 			],
-			'value' => 2,
-			'labels' => [ 'x' => 'labelOne' ],
-		],
-		'multiLabel' => [
-			'config' => [
-				'name' => 'test.unit',
-				'component' => 'testComponent',
-			],
-			'value' => 2,
-			'labels' => [ 'x' => 'labelOne', 'y' => 'labelTwo' ],
-		],
-		'noComponent' => [
-			'config' => [
-				'name' => 'test.unit',
-				'component' => null,
-			],
-			'value' => 2,
-			'labels' => [],
-		]
-	];
+			'noComponent' => [
+				'call' => [
+					'component' => null,
+					'name' => 'test.unit',
+					'labels' => [],
+					'value' => 2,
+				],
+				'expected' => [
+					'counter' => 'mediawiki.test_unit:2|c',
+					'gauge' => 'mediawiki.test_unit:2|g',
+					'timing' => 'mediawiki.test_unit:2|ms',
+				],
+			]
+		];
+		foreach ( $dataset as $name => $data ) {
+			foreach ( $data['expected'] as $type => $formatted ) {
+				foreach ( [ 'statsd', 'dogstatsd' ] as $format ) {
+					yield "$name $type in $format" => [
+						$data['call'], $type, $format,
+						(array)( is_string( $formatted ) ? $formatted : $formatted[$format] )
+					];
+				}
+			}
+		}
+	}
 
-	public const RESULTS = [
-		'statsd.counter.basic' => [ 'mediawiki.testComponent.test_unit:2|c' ],
-		'statsd.counter.invalidLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|c' ],
-		'statsd.counter.oneLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|c' ],
-		'statsd.counter.multiLabel' => [ 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|c' ],
-		'statsd.counter.noComponent' => [ 'mediawiki.test_unit:2|c' ],
-		'statsd.gauge.basic' => [ 'mediawiki.testComponent.test_unit:2|g' ],
-		'statsd.gauge.invalidLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|g' ],
-		'statsd.gauge.oneLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|g' ],
-		'statsd.gauge.multiLabel' => [ 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|g' ],
-		'statsd.gauge.noComponent' => [ 'mediawiki.test_unit:2|g' ],
-		'statsd.timing.basic' => [ 'mediawiki.testComponent.test_unit:2|ms' ],
-		'statsd.timing.invalidLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|ms' ],
-		'statsd.timing.oneLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|ms' ],
-		'statsd.timing.multiLabel' => [ 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|ms' ],
-		'statsd.timing.noComponent' => [ 'mediawiki.test_unit:2|ms' ],
-
-		'dogstatsd.counter.basic' => [ 'mediawiki.testComponent.test_unit:2|c' ],
-		'dogstatsd.counter.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|c|#x:labelOne' ],
-		'dogstatsd.counter.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|c|#x:labelOne' ],
-		'dogstatsd.counter.multiLabel' => [
-			'mediawiki.testComponent.test_unit:2|c|#x:labelOne,y:labelTwo' ],
-		'dogstatsd.counter.noComponent' => [ 'mediawiki.test_unit:2|c' ],
-		'dogstatsd.gauge.basic' => [ 'mediawiki.testComponent.test_unit:2|g' ],
-		'dogstatsd.gauge.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|g|#x:labelOne' ],
-		'dogstatsd.gauge.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|g|#x:labelOne' ],
-		'dogstatsd.gauge.multiLabel' => [
-			'mediawiki.testComponent.test_unit:2|g|#x:labelOne,y:labelTwo' ],
-		'dogstatsd.gauge.noComponent' => [ 'mediawiki.test_unit:2|g' ],
-		'dogstatsd.timing.basic' => [ 'mediawiki.testComponent.test_unit:2|ms' ],
-		'dogstatsd.timing.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|ms|#x:labelOne' ],
-		'dogstatsd.timing.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|ms|#x:labelOne' ],
-		'dogstatsd.timing.multiLabel' => [
-			'mediawiki.testComponent.test_unit:2|ms|#x:labelOne,y:labelTwo' ],
-		'dogstatsd.timing.noComponent' => [ 'mediawiki.test_unit:2|ms' ],
-	];
-
-	/** @var StatsCache */
-	private $cache;
-
-	public function handleTest( $test, $type, $format ) {
-		$config = self::TESTS[$test];
-		$name = implode( '.', [ $format, $type, $test ] );
-		$this->setName( $name );
-		$this->cache->clear();
+	/**
+	 * @dataProvider provideMetrics
+	 */
+	public function testMetrics( array $call, string $type, string $format, array $expected ) {
+		$cache = new StatsCache();
 		$formatter = OutputFormats::getNewFormatter( OutputFormats::getFormatFromString( $format ) );
-		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $this->cache, $formatter );
-		$statsFactory = new StatsFactory( $this->cache, $emitter, new NullLogger );
-		if ( $config['config']['component'] !== null ) {
-			$statsFactory = $statsFactory->withComponent( $config['config']['component'] );
+		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $cache, $formatter );
+		$statsFactory = new StatsFactory( $cache, $emitter, new NullLogger );
+		if ( $call['component'] !== null ) {
+			$statsFactory = $statsFactory->withComponent( $call['component'] );
 		}
 		switch ( $type ) {
 			case 'counter':
-				$metric = $statsFactory->getCounter( $config['config']['name'] );
-				$metric->setLabels( $config['labels'] );
-				$metric->incrementBy( $config['value'] );
+				$metric = $statsFactory->getCounter( $call['name'] );
+				$metric->setLabels( $call['labels'] );
+				$metric->incrementBy( $call['value'] );
 				break;
 			case 'gauge':
-				$metric = $statsFactory->getGauge( $config['config']['name'] );
-				$metric->setLabels( $config['labels'] );
-				$metric->set( $config['value'] );
+				$metric = $statsFactory->getGauge( $call['name'] );
+				$metric->setLabels( $call['labels'] );
+				$metric->set( $call['value'] );
 				break;
 			case 'timing':
-				$metric = $statsFactory->getTiming( $config['config']['name'] );
-				$metric->setLabels( $config['labels'] );
-				$metric->observe( $config['value'] );
-				break;
-			case 'default':
+				$metric = $statsFactory->getTiming( $call['name'] );
+				$metric->setLabels( $call['labels'] );
+				$metric->observe( $call['value'] );
 				break;
 		}
-		$this->assertEquals( self::RESULTS[$name], TestingAccessWrapper::newFromObject( $emitter )->render() );
-	}
-
-	public function handleType( $type, $format ) {
-		foreach ( self::TESTS as $test => $_ ) {
-			$this->handleTest( $test, $type, $format );
-		}
-	}
-
-	public function handleFormat( $format ) {
-		$this->cache = new StatsCache();
-		foreach ( self::TYPES as $type ) {
-			$this->handleType( $type, $format );
-		}
-	}
-
-	public function testMetrics() {
-		foreach ( self::FORMATS as $format ) {
-			$this->handleFormat( $format );
-		}
+		$this->assertEquals( $expected, TestingAccessWrapper::newFromObject( $emitter )->render() );
 	}
 
 	public function testSampledMetrics() {
@@ -190,31 +163,58 @@ class MetricTest extends TestCase {
 	public function testTimerNotStarted() {
 		$m = StatsFactory::newNull();
 		$this->expectPHPWarning(
-			'Stats: stop() called before start() for metric \'test\'',
+			'Stats: (metricName) stop() called before start()',
 			static function () use ( $m ) {
-				$m->getTiming( 'test' )->stop();
+				$m->getTiming( 'metricName' )->stop();
 			}
 		);
 	}
 
 	public function testChangingLabelsToUsedMetric() {
 		$m = StatsFactory::newNull();
-		$m->getCounter( 'testMetricCounter' )->setLabel( 'labelOne', 'a' )->increment();
+		$counter = $m->getCounter( 'testMetricCounter' )->setLabel( 'labelOne', 'a' );
+		$counter->increment();
+		$callable = static function () use ( $counter ) {
+			$counter->setLabel( 'labelTwo', 'b' );
+		};
+		$this->expectPHPWarning(
+			'Stats: (testMetricCounter) Cannot add labels to a metric containing samples',
+			$callable,
+			true
+		);
 		$counter = @$m->getCounter( 'testMetricCounter' )->setLabel( 'labelTwo', 'b' );
 		$this->assertInstanceOf( NullMetric::class, $counter );
-		$m->getGauge( 'testMetricGauge' )->setLabel( 'labelOne', 'a' )->set( 1 );
+		$gauge = $m->getGauge( 'testMetricGauge' )->setLabel( 'labelOne', 'a' );
+		$gauge->set( 1 );
+		$callable = static function () use ( $gauge ) {
+			$gauge->setLabel( 'labelTwo', 'b' );
+		};
+		$this->expectPHPWarning(
+			'Stats: (testMetricGauge) Cannot add labels to a metric containing samples',
+			$callable,
+			true
+		);
 		$gauge = @$m->getGauge( 'testMetricGauge' )->setLabel( 'labelTwo', 'b' );
 		$this->assertInstanceOf( NullMetric::class, $gauge );
-		$m->getTiming( 'testMetricTiming' )->setLabel( 'labelOne', 'a' )->observe( 1 );
-		$timer = @$m->getTiming( 'testMetricTiming' )->setLabel( 'labelTwo', 'b' );
-		$this->assertInstanceOf( NullMetric::class, $timer );
+		$timing = $m->getTiming( 'testMetricTiming' )->setLabel( 'labelOne', 'a' );
+		$timing->observe( 1 );
+		$callable = static function () use ( $timing ) {
+			$timing->setLabel( 'labelTwo', 'b' );
+		};
+		$this->expectPHPWarning(
+			'Stats: (testMetricTiming) Cannot add labels to a metric containing samples',
+			$callable,
+			true
+		);
+		$timing = @$m->getTiming( 'testMetricTiming' )->setLabel( 'labelTwo', 'b' );
+		$this->assertInstanceOf( NullMetric::class, $timing );
 	}
 
 	public function testCounterHandleNotAllLabelsHaveValues() {
 		$m = StatsFactory::newNull();
 		$m->getCounter( 'testMetricCounter' )->setLabel( 'labelOne', 'a' )->increment();
 		$this->expectPHPWarning(
-			'Stats: Cannot associate label keys with label values: Not all initialized labels have an assigned value.',
+			'Stats: (testMetricCounter) Cannot associate label keys with label values - Not all initialized labels have an assigned value.',
 			static function () use ( $m ) {
 				$m->getCounter( 'testMetricCounter' )->increment();
 			}
@@ -225,7 +225,7 @@ class MetricTest extends TestCase {
 		$m = StatsFactory::newNull();
 		$m->getGauge( 'testMetricGauge' )->setLabel( 'labelOne', 'a' )->set( 1 );
 		$this->expectPHPWarning(
-			'Stats: Cannot associate label keys with label values: Not all initialized labels have an assigned value.',
+			'Stats: (testMetricGauge) Cannot associate label keys with label values - Not all initialized labels have an assigned value.',
 			static function () use ( $m ) {
 				$m->getGauge( 'testMetricGauge' )->set( 1 );
 			}
@@ -236,7 +236,8 @@ class MetricTest extends TestCase {
 		$m = StatsFactory::newNull();
 		$m->getTiming( 'testMetricTiming' )->setLabel( 'labelOne', 'a' )->observe( 1 );
 		$this->expectPHPWarning(
-			'Stats: Cannot associate label keys with label values: Not all initialized labels have an assigned value.',
+			'Stats: (testMetricTiming) Cannot associate label keys with label values - '
+			. 'Not all initialized labels have an assigned value.',
 			static function () use ( $m ) {
 				$m->getTiming( 'testMetricTiming' )->observe( 1 );
 			}
@@ -245,154 +246,64 @@ class MetricTest extends TestCase {
 
 	public function testSampleRateOOB() {
 		$m = StatsFactory::newNull();
-		$metric = @$m->getCounter( 'testMetricCounter' )->setSampleRate( 1.1 );
+		$counter = $m->getCounter( 'CounterMetricName' );
+		$gauge = $m->getCounter( 'GaugeMetricName' );
+		$timing = $m->getCounter( 'TimingMetricName' );
+		$callable = static function () use ( $counter ) {
+			$counter->setSampleRate( 1.1 );
+		};
+		$this->expectPHPWarning( 'Stats: (CounterMetricName) Sample rate can only be between 0.0 and 1.0. Got: 1.1', $callable, true );
+		$callable = static function () use ( $gauge ) {
+			$gauge->setSampleRate( -1 );
+		};
+		$this->expectPHPWarning( 'Stats: (GaugeMetricName) Sample rate can only be between 0.0 and 1.0. Got: -1', $callable, true );
+		$callable = static function () use ( $timing ) {
+			$timing->setSampleRate( 20 );
+		};
+		$this->expectPHPWarning( 'Stats: (TimingMetricName) Sample rate can only be between 0.0 and 1.0. Got: 20', $callable, true );
+		$metric = @$counter->setSampleRate( 1.1 );
 		$this->assertInstanceOf( NullMetric::class, $metric );
-		$metric = @$m->getGauge( 'testMetricGauge' )->setSampleRate( -1 );
+		$metric = @$gauge->setSampleRate( -1 );
 		$this->assertInstanceOf( NullMetric::class, $metric );
-		$metric = @$m->getTiming( 'testMetricTimer' )->setSampleRate( 20 );
+		$metric = @$timing->setSampleRate( 20 );
 		$this->assertInstanceOf( NullMetric::class, $metric );
 	}
 
 	public function testSampleRateDisallowed() {
 		$m = StatsFactory::newNull();
-		$m->getCounter( 'testMetric' )->increment();
-		$metric = @$m->getCounter( 'testMetric' )->setSampleRate( 0.5 );
-		$this->assertInstanceOf( NullMetric::class, $metric );
-		$m->getGauge( 'testMetricGauge' )->set( 1 );
-		$metric = @$m->getGauge( 'testMetricGauge' )->setSampleRate( 0.5 );
-		$this->assertInstanceOf( NullMetric::class, $metric );
-		$m->getTiming( 'testMetricTiming' )->observe( 1 );
-		$metric = @$m->getTiming( 'testMetricTiming' )->setSampleRate( 0.5 );
-		$this->assertInstanceOf( NullMetric::class, $metric );
-	}
-
-	public function testCopyToStatsdAtEmptyArrayResetsValue() {
-		$baseMetric = new BaseMetric( '', 'testMetric' );
-		$metric = new CounterMetric(
-			$baseMetric->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) ),
-			new NullLogger
-		);
-		$metric->copyToStatsdAt( 'test' );
-		$this->assertEquals( [ 'test' ], $baseMetric->getStatsdNamespaces() );
-		$metric->copyToStatsdAt( [] );
-		$this->assertEquals( [], $baseMetric->getStatsdNamespaces() );
-	}
-
-	public function testStatsdDataFactoryCopyToStatsdAtWithGauge() {
-		$statsFactory = StatsFactory::newNull();
-
-		$gaugeArgs = [ 'test.gauge.1', 'test.gauge.2' ];
-		$statsdMock = $this->createMock( IBufferingStatsdDataFactory::class );
-		$statsdMock->expects( $this->exactly( 2 ) )
-			->method( 'gauge' )
-			->with( $this->callback( static function ( $key ) use ( &$gaugeArgs ) {
-				$nextKey = array_shift( $gaugeArgs );
-				return $nextKey === $key;
-			} ) );
-
-		$statsFactory = $statsFactory->withStatsdDataFactory( $statsdMock );
-		$statsFactory->getGauge( 'testMetricGauge' )
-			->copyToStatsdAt( [ 'test.gauge.1', 'test.gauge.2' ] )
-			->set( 1 );
-	}
-
-	public function testHandleInvalidStatsdNamespace() {
-		$m = StatsFactory::newNull();
-		$m = $m->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
+		$m->getCounter( 'CounterMetricName' )->increment();
+		$callable = static function () use ( $m ) {
+			$m->getCounter( 'CounterMetricName' )->setSampleRate( 0.5 );
+		};
 		$this->expectPHPWarning(
-			'Stats: StatsD namespace must be a string.',
-			function () use ( $m ) {
-				$metric = $m->getCounter( 'testMetricCounter' )->copyToStatsdAt( null );
-				$this->assertInstanceOf( NullMetric::class, $metric );
-			}
+			'Stats: (CounterMetricName) Cannot change sample rate on metric with recorded samples.',
+			$callable,
+			true
 		);
-	}
-
-	public function testHandleEmptyStatsdNamespace() {
-		$m = StatsFactory::newNull();
-		$m = $m->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
-		$this->expectPHPWarning(
-			'Stats: StatsD namespace cannot be empty.',
-			function () use ( $m ) {
-				$metric = $m->getCounter( 'testMetricCounter' )->copyToStatsdAt( '' );
-				$this->assertInstanceOf( NullMetric::class, $metric );
-			}
-		);
-	}
-
-	public function testHandleNonStringStatsdNamespaceInArray() {
-		$m = StatsFactory::newNull();
-		$m = $m->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
-		$this->expectPHPWarning(
-			'Stats: StatsD namespace must be a string.',
-			function () use ( $m ) {
-				$metric = $m->getCounter( 'testMetricCounter' )->copyToStatsdAt( [ null ] );
-				$this->assertInstanceOf( NullMetric::class, $metric );
-			}
-		);
+		$metric = @$m->getCounter( 'CounterMetricName' )->setSampleRate( 0.5 );
+		$this->assertInstanceOf( NullMetric::class, $metric );
+		$m->getGauge( 'GaugeMetricName' )->set( 1 );
+		$metric = @$m->getGauge( 'GaugeMetricName' )->setSampleRate( 0.5 );
+		$this->assertInstanceOf( NullMetric::class, $metric );
+		$m->getTiming( 'TimingMetricName' )->observe( 1 );
+		$metric = @$m->getTiming( 'TimingMetricName' )->setSampleRate( 0.5 );
+		$this->assertInstanceOf( NullMetric::class, $metric );
 	}
 
 	public function testCanChangeLabelsWhileTimerIsStarted() {
-		$cache = new StatsCache;
-		$formatter = OutputFormats::getNewFormatter( OutputFormats::getFormatFromString( 'dogstatsd' ) );
-		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $cache, $formatter );
-		$statsFactory = new StatsFactory( $cache, $emitter, new NullLogger );
+		ConvertibleTimestamp::setFakeTime( '20110401090000' );
+		$statsHelper = StatsFactory::newUnitTestingHelper();
+		$statsFactory = $statsHelper->getStatsFactory();
 
-		// start() and stop() called so close together here should be fractions of a millisecond
-		$timer = $statsFactory->getTiming( 'test' )
-			->setLabel( 'foo', 'bar' )
-			->start();
+		$timer = $statsFactory->getTiming( 'test' )->setLabel( 'foo', 'bar' );
+		$timer->start();
 		$timer->setLabel( 'foo', 'baz' );
 		$timer->stop();
 
-		$this->assertMatchesRegularExpression(
-			'/^mediawiki\.test:(0\.[0-9]+)\|ms\|#foo:baz$/',
-			TestingAccessWrapper::newFromObject( $emitter )->render()[0]
+		$this->assertSame(
+			[ 'mediawiki.test:1|ms|#foo:baz' ],
+			$statsHelper->consumeAllFormatted()
 		);
-	}
-
-	public function testStatsdDataFactoryPersistsWithComponent() {
-		$statsFactory = StatsFactory::newNull();
-
-		$timingArgs = [ 'test.timing.1', 'test.timing.2' ];
-		$statsdMock = $this->createMock( IBufferingStatsdDataFactory::class );
-		$statsdMock->expects( $this->exactly( 2 ) )
-			->method( 'timing' )
-			->with( $this->callback( static function ( $key ) use ( &$timingArgs ) {
-				$nextKey = array_shift( $timingArgs );
-				return $nextKey === $key;
-			}, 1.0 ) );
-
-		$statsFactory = $statsFactory->withStatsdDataFactory( $statsdMock );
-
-		// withComponent() returns a whole new StatsFactory instance
-		$componentStatsFactory = $statsFactory->withComponent( 'TestComponent' );
-
-		$componentStatsFactory->getTiming( 'testMetricTiming' )
-			->copyToStatsdAt( [ 'test.timing.1', 'test.timing.2' ] )
-			->observe( 1 );
-	}
-
-	public function testWithComponentStatsdFactoryChanges() {
-		$statsFactory = StatsFactory::newNull();
-
-		// statsdDataFactory should be null if withComponent called prior to calling withStatsdDataFactory()
-		$noStatsd = TestingAccessWrapper::newFromObject( $statsFactory->withComponent( 'foo' ) );
-		$this->assertNull( $noStatsd->statsdDataFactory );
-
-		// call withStatsdDataFactory
-		$statsFactory = $statsFactory->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
-
-		// statsdDataFactory should be an instance of IBufferingStatsdDataFactory
-		$yesStatsd = TestingAccessWrapper::newFromObject( $statsFactory->withComponent( 'foo' ) );
-		$this->assertInstanceOf( IBufferingStatsdDataFactory::class, $yesStatsd->statsdDataFactory );
-
-		// disable statsdDataFactory
-		$statsFactory = $statsFactory->withStatsdDataFactory( null );
-
-		// statsdDataFactory should be null again
-		$noStatsdAgain = TestingAccessWrapper::newFromObject( $statsFactory->withComponent( 'foo' ) );
-		$this->assertNull( $noStatsdAgain->statsdDataFactory );
 	}
 
 	/**
@@ -447,17 +358,87 @@ class MetricTest extends TestCase {
 	}
 
 	public function testSetLabelReserved() {
-		$metric = @StatsFactory::newNull()->getCounter( 'test' )->setLabel( 'Le', 'foo' );
-		$this->assertInstanceOf( NullMetric::class, $metric );
+		$metric = StatsFactory::newNull()->getCounter( 'metricName' );
+		$callable = static function () use ( $metric ) {
+			$metric->setLabel( 'Le', 'foo' );
+		};
+		$this->expectPHPWarning( 'Stats: (metricName) \'le\' cannot be used as a label key', $callable, true );
+		$this->assertInstanceOf( NullMetric::class, @$metric->setLabel( 'le', 'foo' ) );
 	}
 
 	public function testSetLabelsReserved() {
-		$metric = @StatsFactory::newNull()->getCounter( 'test' )->setLabels( [ 'foo' => 'a', 'lE' => '1', 'bar' => 'c' ] );
+		$metric = @StatsFactory::newNull()->getCounter( 'test' )
+			->setLabels( [ 'foo' => 'a', 'lE' => '1', 'bar' => 'c' ] );
 		$this->assertInstanceOf( NullMetric::class, $metric );
 	}
 
 	public function testInvalidBucketValue() {
 		$this->expectException( 'InvalidArgumentException' );
-		StatsFactory::newNull()->getCounter( 'test' )->setBucket( 'foo' );
+		$this->expectExceptionMessage( 'Stats: (metricName) Got illegal bucket value \'foo\' - must be float or \'+Inf\'' );
+		StatsFactory::newNull()->getCounter( 'metricName' )->setBucket( 'foo' );
+	}
+
+	public function testInvalidLabel() {
+		$statsHelper = StatsFactory::newUnitTestingHelper();
+		$statsFactory = $statsHelper->getStatsFactory();
+
+		$metric = $statsFactory->getCounter( 'metricName' );
+		$callable = static function () use ( $metric ) {
+			$metric->setLabel( ': x', 'labelOne' );
+		};
+		$this->expectPHPWarning( 'Stats: (metricName) Non-normalized label keys are deprecated, found \': x\'', $callable, true );
+
+		// While deprecated, the metric should not be dropped in favor of NullMetric
+		$this->assertInstanceOf( CounterMetric::class, @$metric->setLabel( ': y', 'labelTwo' ) );
+
+		$metric->increment();
+
+		$this->assertSame(
+			[ 'mediawiki.metricName:1|c|#x:labelOne,y:labelTwo' ],
+			$statsHelper->consumeAllFormatted()
+		);
+	}
+
+	public int $recursions = 0;
+	public int $maxRecursions = 2;
+
+	public function recur( $statsFactory ) {
+		$timing = $statsFactory->getTiming( 'metricName' )->start();
+		if ( $this->recursions > $this->maxRecursions ) {
+			return;
+		} else {
+			$this->recursions += 1;
+			$this->recur( $statsFactory );
+		}
+		$timing->stop();
+	}
+
+	public function testTimingRecursion() {
+		$statsHelper = StatsFactory::newUnitTestingHelper();
+		$this->recur( $statsHelper->getStatsFactory() );
+		$this->assertSame( 3, $statsHelper->count( 'metricName' ) );
+	}
+
+	public function testStopRunningTimerWarning() {
+		$statsFactory = StatsFactory::newNull();
+		$timing = $statsFactory->getTiming( 'metricName' )->start();
+		$callable = static function () use ( $timing ) {
+			$timing->stop();
+		};
+		$callable();
+		$this->expectPHPWarning( 'Stats: (metricName) cannot call stop() more than once on a RunningTimer.', $callable, true );
+	}
+
+	public function testRunningTimerNullMetric() {
+		$statsHelper = StatsFactory::newUnitTestingHelper();
+		$statsFactory = $statsHelper->getStatsFactory();
+
+		// put one good metric in the cache
+		$statsFactory->getTiming( 'metricName' )->start()->stop();
+
+		// try setting the label to something invalid making RunningTimer::metric = NullMetric()
+		@$timing = $statsFactory->getTiming( 'metricName' )->start()->setLabel( 'foo', '' )->stop();
+
+		$this->assertSame( 1, $statsHelper->count( 'metricName' ) );
 	}
 }

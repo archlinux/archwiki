@@ -1,17 +1,15 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\OutputTransform;
 
+use MediaWiki\Parser\ContentHolder;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
-use Wikimedia\Parsoid\Core\DomPageBundle;
-use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\DOM\Node;
 
 /**
  * OutputTransformStages that modify the content as a HTML DOM tree.
@@ -29,71 +27,48 @@ abstract class ContentDOMTransformStage extends OutputTransformStage {
 	public function transform(
 		ParserOutput $po, ?ParserOptions $popts, array &$options
 	): ParserOutput {
-		if ( $options['isParsoidContent'] ?? false ) {
-			return $this->parsoidTransform( $po, $popts, $options );
-		} else {
-			return $this->legacyTransform( $po, $popts, $options );
-		}
-	}
+		$contentHolder = $po->getContentHolder();
+		$df = $contentHolder->getAsDom( ContentHolder::BODY_FRAGMENT ) ??
+			$contentHolder->createFragment();
 
-	private function legacyTransform(
-		ParserOutput $po, ?ParserOptions $popts, array &$options
-	): ParserOutput {
-		$text = $po->getContentHolderText();
-		$doc = DOMUtils::parseHTML( $text );
+		$df = $this->transformDOM( $df, $po, $popts, $options );
 
-		$doc = $this->transformDOM( $doc, $po, $popts, $options );
-
-		$body = DOMCompat::getBody( $doc );
-		$text = ContentUtils::toXML( $body, [
-			'innerXML' => true,
-		] );
-		$po->setContentHolderText( $text );
-		return $po;
-	}
-
-	private function parsoidTransform(
-		ParserOutput $po, ?ParserOptions $popts, array &$options
-	): ParserOutput {
-		// TODO will use HTMLHolder in the future
-		$doc = null;
-		$hasPageBundle = PageBundleParserOutputConverter::hasPageBundle( $po );
-		$origPb = null;
-		if ( $hasPageBundle ) {
-			$origPb = PageBundleParserOutputConverter::pageBundleFromParserOutput( $po );
-			// TODO: pageBundleFromParserOutput should be able to create a
-			// DomPageBundle when the HTMLHolder has a DOM already.
-			$doc = DomPageBundle::fromPageBundle( $origPb )->toDom( true );
-		} else {
-			$doc = ContentUtils::createAndLoadDocument(
-				$po->getContentHolderText(), [ 'markNew' => true, 'validateXMLNames' => true, ]
-			);
-		}
-
-		$doc = $this->transformDOM( $doc, $po, $popts, $options );
-
-		// TODO will use HTMLHolder/DomPageBundle in the future
-		if ( $hasPageBundle ) {
-			$dpb = DomPageBundle::fromLoadedDocument( $doc, [
-				'pageBundle' => $origPb,
-			] );
-			$pb = PageBundle::fromDomPageBundle( $dpb, [ 'body_only' => true ] );
-			PageBundleParserOutputConverter::applyPageBundleDataToParserOutput( $pb, $po );
-			$text = $pb->html;
-		} else {
-			$body = DOMCompat::getBody( $doc );
-			'@phan-var Element $body'; // assert non-null
-			$text = ContentUtils::ppToXML( $body, [
-				'innerXML' => true,
-			] );
-		}
-		$po->setContentHolderText( $text );
+		$contentHolder->setAsDom( ContentHolder::BODY_FRAGMENT, $df );
 		return $po;
 	}
 
 	/** Applies the transformation to a DOM document */
 	abstract public function transformDOM(
-		Document $dom, ParserOutput $po, ?ParserOptions $popts, array &$options
-	): Document;
+		DocumentFragment $df, ParserOutput $po, ?ParserOptions $popts, array &$options
+	): DocumentFragment;
 
+	/**
+	 * Helper method for DOM transforms to easily create DOM Elements with
+	 * the given attributes and children.
+	 *
+	 * @param Document $doc Document holding the new element
+	 * @param string $name Lowercase tag name of the new element
+	 * @param array<string,string> $attribs Associative array between the
+	 *   name and (unescaped) value of the attributes of the new element
+	 * @param Node|string ...$children List of child nodes for the new element.
+	 *   Unescaped strings are converted to new Text Nodes before their
+	 *   insertion in the tree.
+	 * @return Element
+	 * @throws \DOMException
+	 */
+	public function createElement(
+		Document $doc, string $name, array $attribs = [], Node|string ...$children
+	): Element {
+		$el = $doc->createElement( $name );
+		foreach ( $attribs as $key => $value ) {
+			$el->setAttribute( $key, $value );
+		}
+		foreach ( $children as $c ) {
+			if ( is_string( $c ) ) {
+				$c = $doc->createTextNode( $c );
+			}
+			$el->appendChild( $c );
+		}
+		return $el;
+	}
 }

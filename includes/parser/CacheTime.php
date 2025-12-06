@@ -2,66 +2,49 @@
 /**
  * Parser cache specific expiry check.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Parser
  */
 
 namespace MediaWiki\Parser;
 
-use MediaWiki\Json\JsonDeserializable;
-use MediaWiki\Json\JsonDeserializableTrait;
-use MediaWiki\Json\JsonDeserializer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Utils\MWTimestamp;
-use Wikimedia\Reflection\GhostFieldAccessTrait;
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
 
 /**
  * Parser cache specific expiry check.
  *
  * @ingroup Parser
  */
-class CacheTime implements ParserCacheMetadata, JsonDeserializable {
-	use GhostFieldAccessTrait;
-	use JsonDeserializableTrait;
+class CacheTime implements ParserCacheMetadata, JsonCodecable {
+	use JsonCodecableTrait;
 
 	/**
-	 * @var true[] ParserOptions which have been taken into account
+	 * @var array<string,true> ParserOptions which have been taken into account
 	 * to produce output, option names stored in array keys.
 	 */
-	protected $mParseUsedOptions = [];
+	protected array $mParseUsedOptions = [];
 
 	/**
 	 * @var string|int TS_MW timestamp when this object was generated, or -1 for not cacheable. Used
 	 * in ParserCache.
 	 */
-	protected $mCacheTime = '';
+	protected string|int $mCacheTime = '';
 
 	/**
 	 * @var int|null Seconds after which the object should expire, use 0 for not cacheable. Used in
 	 * ParserCache.
 	 */
-	protected $mCacheExpiry = null;
+	protected ?int $mCacheExpiry = null;
 
 	/**
 	 * @var int|null Revision ID that was parsed
 	 */
-	protected $mCacheRevisionId = null;
+	protected ?int $mCacheRevisionId = null;
 
 	/**
 	 * @return string|int TS_MW timestamp
@@ -246,11 +229,11 @@ class CacheTime implements ParserCacheMetadata, JsonDeserializable {
 
 	/**
 	 * Returns a JSON serializable structure representing this CacheTime instance.
-	 * @see newFromJson()
+	 * @see ::newFromJsonArray()
 	 *
 	 * @return array
 	 */
-	protected function toJsonArray(): array {
+	public function toJsonArray(): array {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 
@@ -262,68 +245,24 @@ class CacheTime implements ParserCacheMetadata, JsonDeserializable {
 		];
 	}
 
-	public static function newFromJsonArray( JsonDeserializer $deserializer, array $json ) {
+	public static function newFromJsonArray( array $json ): self {
 		$cacheTime = new CacheTime();
-		$cacheTime->initFromJson( $deserializer, $json );
+		$cacheTime->initFromJson( $json );
 		return $cacheTime;
 	}
 
 	/**
-	 * Initialize member fields from an array returned by jsonSerialize().
-	 * @param JsonDeserializer $deserializer Unused
+	 * Initialize member fields from an array returned by toJsonArray().
 	 * @param array $jsonData
 	 */
-	protected function initFromJson( JsonDeserializer $deserializer, array $jsonData ) {
+	protected function initFromJson( array $jsonData ) {
 		// WARNING: When changing how this class is serialized, follow the instructions
 		// at <https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility>!
 
-		if ( array_key_exists( 'AccessedOptions', $jsonData ) ) {
-			// Backwards compatibility for ParserOutput
-			$this->mParseUsedOptions = $jsonData['AccessedOptions'] ?: [];
-		} elseif ( array_key_exists( 'UsedOptions', $jsonData ) ) {
-			// Backwards compatibility
-			$this->recordOptions( $jsonData['UsedOptions'] ?: [] );
-		} else {
-			$this->mParseUsedOptions = $jsonData['ParseUsedOptions'] ?: [];
-		}
-		$this->mCacheExpiry = $jsonData['CacheExpiry'];
-		$this->mCacheTime = $jsonData['CacheTime'];
-		$this->mCacheRevisionId = $jsonData['CacheRevisionId'];
-	}
-
-	public function __wakeup() {
-		// Backwards compatibility, pre 1.36
-		$priorOptions = $this->getGhostFieldValue( 'mUsedOptions' );
-		if ( $priorOptions ) {
-			$this->recordOptions( $priorOptions );
-		}
-	}
-
-	public function __get( $name ) {
-		if ( property_exists( get_called_class(), $name ) ) {
-			// Direct access to a public property, deprecated.
-			wfDeprecatedMsg( "CacheTime::{$name} public read access deprecated", '1.38' );
-			return $this->$name;
-		} elseif ( property_exists( $this, $name ) ) {
-			// Dynamic property access, deprecated.
-			wfDeprecatedMsg( "CacheTime::{$name} dynamic property read access deprecated", '1.38' );
-			return $this->$name;
-		} else {
-			trigger_error( "Inaccessible property via __set(): $name" );
-			return null;
-		}
-	}
-
-	public function __set( $name, $value ) {
-		if ( property_exists( get_called_class(), $name ) ) {
-			// Direct access to a public property, deprecated.
-			wfDeprecatedMsg( "CacheTime::$name public write access deprecated", '1.38' );
-			$this->$name = $value;
-		} else {
-			// Dynamic property access, deprecated.
-			wfDeprecatedMsg( "CacheTime::$name dynamic property write access deprecated", '1.38' );
-			$this->$name = $value;
-		}
+		$this->mParseUsedOptions = $jsonData['ParseUsedOptions'] ?? [];
+		$this->mCacheExpiry = $jsonData['CacheExpiry'] ?? null;
+		$this->mCacheTime = $jsonData['CacheTime'] ?? '';
+		$this->mCacheRevisionId = $jsonData['CacheRevisionId'] ?? null;
 	}
 }
 

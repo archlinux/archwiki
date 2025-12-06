@@ -4,8 +4,7 @@ namespace MediaWiki\Notification;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
- * @since 1.44
- * @unstable
+ * @since 1.45
  */
 class MiddlewareChain {
 	/**
@@ -19,7 +18,7 @@ class MiddlewareChain {
 
 	private bool $isProcessing = false;
 
-	public function __construct( ObjectFactory $objectFactory, $specs ) {
+	public function __construct( ObjectFactory $objectFactory, array $specs ) {
 		$this->objectFactory = $objectFactory;
 		$this->middlewareSpecs = $specs;
 	}

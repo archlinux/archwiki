@@ -44,34 +44,12 @@ class Hooks implements
 	UserCanSendEmailHook
 {
 
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var PageEditStash */
-	private $pageEditStash;
-
-	/** @var ContentRenderer */
-	private $contentRenderer;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/**
-	 * @param PermissionManager $permissionManager
-	 * @param PageEditStash $pageEditStash
-	 * @param ContentRenderer $contentRenderer
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 */
 	public function __construct(
-		PermissionManager $permissionManager,
-		PageEditStash $pageEditStash,
-		ContentRenderer $contentRenderer,
-		IContentHandlerFactory $contentHandlerFactory
+		private readonly PermissionManager $permissionManager,
+		private readonly PageEditStash $pageEditStash,
+		private readonly ContentRenderer $contentRenderer,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
 	) {
-		$this->permissionManager = $permissionManager;
-		$this->pageEditStash = $pageEditStash;
-		$this->contentRenderer = $contentRenderer;
-		$this->contentHandlerFactory = $contentHandlerFactory;
 	}
 
 	/**
@@ -103,7 +81,7 @@ class Hooks implements
 			// Try getting the update directly
 			$updater = $context->getWikiPage()->getCurrentUpdate();
 			$pout = $updater->getParserOutputForMetaData();
-		} catch ( PreconditionException | LogicException $exception ) {
+		} catch ( PreconditionException | LogicException ) {
 			$stashedEdit = $this->pageEditStash->checkCache(
 				$title,
 				$content,

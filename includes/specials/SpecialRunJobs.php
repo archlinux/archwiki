@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -25,6 +11,7 @@ use MediaWiki\Deferred\TransactionRoundDefiningUpdate;
 use MediaWiki\JobQueue\JobRunner;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use Wikimedia\Http\HttpStatus;
 use Wikimedia\Rdbms\ReadOnlyMode;
@@ -50,12 +37,15 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 		$this->readOnlyMode = $readOnlyMode;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->getOutput()->disable();
+		ContentSecurityPolicy::sendRestrictiveHeader();
 
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			wfHttpError( 423, 'Locked', 'Wiki is in read-only mode.' );
@@ -69,9 +59,16 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 		}
 
 		// Validate request parameters
-		$optional = [ 'maxjobs' => 0, 'maxtime' => 30, 'type' => false,
-			'async' => true, 'stats' => false ];
-		$required = array_fill_keys( [ 'title', 'tasks', 'signature', 'sigexpiry' ], true );
+		$optional = [
+			'maxjobs' => 0,
+			'maxtime' => 30,
+			'type' => false,
+			'async' => true,
+			'stats' => false,
+			// Ignored, only for signature calculation
+			'tasks' => 'jobs'
+		];
+		$required = array_fill_keys( [ 'title', 'signature', 'sigexpiry' ], true );
 		$params = array_intersect_key( $this->getRequest()->getValues(), $required + $optional );
 		$missing = array_diff_key( $required, $params );
 		if ( count( $missing ) ) {
@@ -125,7 +122,7 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 		}
 	}
 
-	protected function doRun( array $params ) {
+	protected function doRun( array $params ): array {
 		return $this->jobRunner->run( [
 			'type'     => $params['type'],
 			'maxJobs'  => $params['maxjobs'] ?: 1,

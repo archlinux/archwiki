@@ -40,8 +40,6 @@ final class Group {
 
 	/**
 	 * Get the identifier for the group
-	 *
-	 * @return string
 	 */
 	public function getId(): string {
 		return $this->id;
@@ -49,8 +47,6 @@ final class Group {
 
 	/**
 	 * Return entries count
-	 *
-	 * @return bool
 	 */
 	public function hasEntries(): bool {
 		return count( $this->entries ) > 0;
@@ -58,8 +54,6 @@ final class Group {
 
 	/**
 	 * Get all entries represented as plain old PHP arrays.
-	 *
-	 * @return array
 	 */
 	public function getEntries(): array {
 		$entryPresenter = static function ( IMenuEntry $entry ) {
@@ -87,7 +81,7 @@ final class Group {
 	private function throwIfNotUnique( string $name ): void {
 		try {
 			$this->search( $name );
-		} catch ( DomainException $exception ) {
+		} catch ( DomainException ) {
 			return;
 		}
 		throw new DomainException( "The \"{$name}\" entry already exists." );

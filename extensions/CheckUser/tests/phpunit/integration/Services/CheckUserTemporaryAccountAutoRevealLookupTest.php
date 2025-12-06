@@ -6,6 +6,7 @@ use GlobalPreferences\GlobalPreferencesFactory;
 use MediaWiki\CheckUser\HookHandler\Preferences;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\UserIdentity;
@@ -27,8 +28,15 @@ class CheckUserTemporaryAccountAutoRevealLookupTest extends MediaWikiIntegration
 			$mockPreferencesFactory = $this->createMock( PreferencesFactory::class );
 		}
 
+		$serviceOptions = new ServiceOptions(
+			CheckUserTemporaryAccountAutoRevealLookup::CONSTRUCTOR_OPTIONS,
+			$this->getServiceContainer()->getMainConfig()
+		);
+
 		$objectUnderTest = new CheckUserTemporaryAccountAutoRevealLookup(
-			$mockPreferencesFactory, $this->createMock( CheckUserPermissionManager::class )
+			$serviceOptions,
+			$mockPreferencesFactory,
+			$this->createMock( CheckUserPermissionManager::class )
 		);
 		$this->assertSame( $usesGlobalPreferencesFactory, $objectUnderTest->isAutoRevealAvailable() );
 	}
@@ -54,8 +62,8 @@ class CheckUserTemporaryAccountAutoRevealLookupTest extends MediaWikiIntegration
 			'String which is not numeric' => [ 'abc', false ],
 			'Unix timestamp before current time' => [ 1234, false ],
 			'Float timestamp before current time' => [ 5678.23, false ],
-			'Unix timestamp more than a day in the future' => [ 12345678, false ],
-			'Float timestamp more than a day in the future' => [ 12345678.56, false ],
+			'Unix timestamp more than the maximum allowed' => [ 12345678, false ],
+			'Float timestamp more than the maximum allowed' => [ 12345678.56, false ],
 			'Unix timestamp equal to the current time' => [ 1234567, false ],
 			'Valid unix timestamp expiry' => [ 1234569, true ],
 			'Valid unix timestamp expiry in string format' => [ '1234669', true ],
@@ -69,6 +77,11 @@ class CheckUserTemporaryAccountAutoRevealLookupTest extends MediaWikiIntegration
 		bool $expectedReturnValue
 	) {
 		ConvertibleTimestamp::setFakeTime( 1234567 );
+
+		$serviceOptions = new ServiceOptions(
+			CheckUserTemporaryAccountAutoRevealLookup::CONSTRUCTOR_OPTIONS,
+			$this->getServiceContainer()->getMainConfig()
+		);
 
 		if ( $userHasAutoRevealRight ) {
 			$authority = $this->mockRegisteredAuthorityWithPermissions( [
@@ -99,7 +112,9 @@ class CheckUserTemporaryAccountAutoRevealLookupTest extends MediaWikiIntegration
 		}
 
 		$objectUnderTest = new CheckUserTemporaryAccountAutoRevealLookup(
-			$mockPreferencesFactory, $this->getServiceContainer()->get( 'CheckUserPermissionManager' )
+			$serviceOptions,
+			$mockPreferencesFactory,
+			$this->getServiceContainer()->get( 'CheckUserPermissionManager' )
 		);
 		$this->assertSame( $expectedReturnValue, $objectUnderTest->isAutoRevealOn( $authority ) );
 	}

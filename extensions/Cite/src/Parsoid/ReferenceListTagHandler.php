@@ -6,7 +6,6 @@ namespace Cite\Parsoid;
 use Cite\Validator;
 use Closure;
 use MediaWiki\Config\Config;
-use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
@@ -18,10 +17,9 @@ use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
  */
 class ReferenceListTagHandler extends ExtensionTagHandler {
 
-	private Config $mainConfig;
-
-	public function __construct( Config $mainConfig ) {
-		$this->mainConfig = $mainConfig;
+	public function __construct(
+		private readonly Config $mainConfig,
+	) {
 	}
 
 	/** @inheritDoc */
@@ -39,9 +37,9 @@ class ReferenceListTagHandler extends ExtensionTagHandler {
 		// Detect invalid parameters on the references tag
 		$status = Validator::filterReferenceListArguments( $extApi->extArgsToArray( $extArgs ) );
 		$refsOpts = $status->getValue();
-		if ( !$status->isGood() ) {
-			$extApi->pushError( 'cite_error_references_invalid_parameters' );
-			$error = new MessageValue( 'cite_error_references_invalid_parameters' );
+		foreach ( $status->getMessages() as $msg ) {
+			$error = ErrorUtils::fromMessageSpecifier( $msg );
+			$extApi->pushError( $error->key, ...$error->params );
 		}
 
 		$referenceList = new References( $this->mainConfig );
@@ -117,12 +115,8 @@ class ReferenceListTagHandler extends ExtensionTagHandler {
 	public function lintHandler(
 		ParsoidExtensionAPI $extApi, Element $refs, callable $defaultHandler
 	): bool {
-		$dataMw = DOMDataUtils::getDataMw( $refs );
-		if ( isset( $dataMw->body->html ) ) {
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-			$fragment = $extApi->htmlToDom( $dataMw->body->html );
-			$defaultHandler( $fragment );
-		}
+		// Skip the tree.  Content embedded in data-mw will be traversed by linter
+		// when processAttributeEmbeddedHTML is called
 		return true;
 	}
 

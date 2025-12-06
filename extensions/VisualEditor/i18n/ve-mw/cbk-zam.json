@@ -6,6 +6,7 @@
 			"WikiEditor50"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "Aumenta source de descripcion local",
 	"visualeditor-ca-createsource": "Hace source",
 	"visualeditor-ca-editsource": "Hace edit con el source",
 	"visualeditor-ca-editsource-section": "hace edit con el source"

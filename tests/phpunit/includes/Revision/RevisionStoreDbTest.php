@@ -218,6 +218,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getPageStore(),
 			$this->getServiceContainer()->getTitleFactory(),
 			$this->getServiceContainer()->getHookContainer(),
+			$this->getServiceContainer()->getRecentChangeLookup(),
 			$dbDomain
 		);
 
@@ -898,6 +899,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$services->getPageStoreFactory()->getPageStore( $dbDomain ),
 			$services->getTitleFactory(),
 			$services->getHookContainer(),
+			$services->getRecentChangeLookup(),
 			$dbDomain
 		);
 
@@ -2664,7 +2666,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetFirstRevision() {
-		$pageIdentity = PageIdentityValue::localIdentity( 13, NS_MAIN, 'Test_Get_First_Revision' );
+		$pageIdentity = Title::newFromText( __FUNCTION__ );
 		$editStatus = $this->editPage( $pageIdentity, 'First Revision' );
 		$this->assertStatusGood( $editStatus, 'must create first revision' );
 		$firstRevId = $editStatus->getNewRevision()->getId();

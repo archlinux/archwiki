@@ -1,24 +1,7 @@
 <?php
 /**
- * MediaWiki session
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
@@ -48,8 +31,8 @@ use RuntimeException;
  * The Session object also serves as a replacement for PHP's $_SESSION,
  * managing access to per-session data.
  *
- * @ingroup Session
  * @since 1.27
+ * @ingroup Session
  */
 class Session implements \Countable, \Iterator, \ArrayAccess {
 	/** @var null|string[] Encryption algorithm to use */
@@ -60,6 +43,9 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/** @var int Session index */
 	private $index;
+
+	/** @var array<string,string> Token secrets that were created during current request */
+	private array $newTokenSecrets = [];
 
 	private LoggerInterface $logger;
 
@@ -163,7 +149,8 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Returns the request associated with this session
+	 * Return the request associated with this session
+	 *
 	 * @return WebRequest
 	 */
 	public function getRequest() {
@@ -171,14 +158,14 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Returns the authenticated user for this session
+	 * Return the authenticated user for this session
 	 */
 	public function getUser(): User {
 		return $this->backend->getUser();
 	}
 
 	/**
-	 * Fetch the rights allowed the user when this session is active.
+	 * @see SessionProvider::getAllowedUserRights
 	 * @return null|string[] Allowed user rights, or null to allow all.
 	 */
 	public function getAllowedUserRights() {
@@ -186,8 +173,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Fetch any restrictions imposed on logins or actions when this
-	 * session is active.
+	 * @see SessionProvider::getRestrictions
 	 * @return MWRestrictions|null
 	 */
 	public function getRestrictions(): ?MWRestrictions {
@@ -204,17 +190,19 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Set a new user for this session
+	 *
 	 * @note This should only be called when the user has been authenticated
+	 *
+	 * TODO: Consider changing this to a "UserIdentity" instead.
+	 *
 	 * @param User $user User to set on the session.
-	 *   This may become a "UserValue" in the future, or User may be refactored
-	 *   into such.
 	 */
 	public function setUser( $user ) {
 		$this->backend->setUser( $user );
 	}
 
 	/**
-	 * Get a suggested username for the login form
+	 * @see SessionProvider::suggestLoginUsername
 	 * @return string|null
 	 */
 	public function suggestLoginUsername() {
@@ -222,9 +210,10 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Get the expected value of the forceHTTPS cookie. This reflects whether
-	 * session cookies were sent with the Secure attribute. If $wgForceHTTPS
-	 * is true, the forceHTTPS cookie is not sent and this value is ignored.
+	 * Get the expected value of the forceHTTPS cookie.
+	 *
+	 * This reflects whether session cookies were sent with the Secure attribute.
+	 * If $wgForceHTTPS is true, the 'forceHTTPS' cookie is not sent and this value is ignored.
 	 *
 	 * @return bool
 	 */
@@ -233,9 +222,10 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Set the value of the forceHTTPS cookie. This reflects whether session
-	 * cookies were sent with the Secure attribute. If $wgForceHTTPS is true,
-	 * the forceHTTPS cookie is not sent, and this value is ignored.
+	 * Set the value of the forceHTTPS cookie.
+	 *
+	 * This reflects whether session cookies were sent with the Secure attribute.
+	 * If $wgForceHTTPS is true, the forceHTTPS cookie is not sent, and this value is ignored.
 	 *
 	 * @param bool $force
 	 */
@@ -245,6 +235,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Fetch the "logged out" timestamp
+	 *
 	 * @return int
 	 */
 	public function getLoggedOutTimestamp() {
@@ -260,7 +251,9 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Fetch provider metadata
+	 *
 	 * @note For use by SessionProvider subclasses only
+	 *
 	 * @return mixed
 	 */
 	public function getProviderMetadata() {
@@ -283,8 +276,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Resets the TTL in the backend store if the session is near expiring, and
-	 * re-persists the session to any active WebRequests if persistent.
+	 * @see SessionBackend::renew
 	 */
 	public function renew() {
 		$this->backend->renew();
@@ -306,8 +298,9 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Fetch a value from the session
+	 *
 	 * @param string|int $key
-	 * @param mixed|null $default Returned if $this->exists( $key ) would be false
+	 * @param mixed|null $default Returned if `$this->exists( $key )` would be false
 	 * @return mixed
 	 */
 	public function get( $key, $default = null ) {
@@ -317,7 +310,9 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Test if a value exists in the session
+	 *
 	 * @note Unlike isset(), null values are considered to exist.
+	 *
 	 * @param string|int $key
 	 * @return bool
 	 */
@@ -327,7 +322,6 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Set a value in the session
 	 * @param string|int $key
 	 * @param mixed $value
 	 */
@@ -340,7 +334,6 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Remove a value from the session
 	 * @param string|int $key
 	 */
 	public function remove( $key ) {
@@ -377,17 +370,18 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @return Token
 	 */
 	public function getToken( $salt = '', $key = 'default' ) {
-		$new = false;
 		$secrets = $this->get( 'wsTokenSecrets' );
 		if ( !is_array( $secrets ) ) {
 			$secrets = [];
 		}
 		if ( isset( $secrets[$key] ) && is_string( $secrets[$key] ) ) {
 			$secret = $secrets[$key];
+			$new = ( $this->newTokenSecrets[$key] ?? null ) === $secret;
 		} else {
 			$secret = \MWCryptRand::generateHex( 32 );
 			$secrets[$key] = $secret;
 			$this->set( 'wsTokenSecrets', $secrets );
+			$this->newTokenSecrets[$key] = $secret;
 			$new = true;
 		}
 		if ( is_array( $salt ) ) {
@@ -404,6 +398,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @param string $key Token key
 	 */
 	public function resetToken( $key = 'default' ) {
+		unset( $this->newTokenSecrets[$key] );
 		$secrets = $this->get( 'wsTokenSecrets' );
 		if ( is_array( $secrets ) && isset( $secrets[$key] ) ) {
 			unset( $secrets[$key] );
@@ -415,6 +410,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * Remove all CSRF tokens from the session
 	 */
 	public function resetAllTokens() {
+		$this->newTokenSecrets = [];
 		$this->remove( 'wsTokenSecrets' );
 	}
 

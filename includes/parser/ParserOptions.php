@@ -2,21 +2,7 @@
 /**
  * Options for the PHP parser
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Parser
  */
@@ -80,9 +66,9 @@ class ParserOptions {
 	 * @var callable[]
 	 */
 	private static $initialLazyOptions = [
-		'dateformat' => [ __CLASS__, 'initDateFormat' ],
-		'speculativeRevId' => [ __CLASS__, 'initSpeculativeRevId' ],
-		'speculativePageId' => [ __CLASS__, 'initSpeculativePageId' ],
+		'dateformat' => [ self::class, 'initDateFormat' ],
+		'speculativeRevId' => [ self::class, 'initSpeculativeRevId' ],
+		'speculativePageId' => [ self::class, 'initSpeculativePageId' ],
 	];
 
 	/**
@@ -334,7 +320,10 @@ class ParserOptions {
 	}
 
 	/**
-	 * Parsing an interface message?
+	 * Parsing an interface message in the user language?
+	 *
+	 * Note: use isMessage() to determine if we are parsing a message in any language.
+	 *
 	 * @return bool
 	 */
 	public function getInterfaceMessage() {
@@ -342,12 +331,33 @@ class ParserOptions {
 	}
 
 	/**
-	 * Parsing an interface message?
+	 * Parsing an interface message in the user language?
 	 * @param bool|null $x New value (null is no change)
 	 * @return bool Old value
 	 */
 	public function setInterfaceMessage( $x ) {
 		return $this->setOptionLegacy( 'interfaceMessage', $x );
+	}
+
+	/**
+	 * Parsing a message?
+	 *
+	 * @since 1.45
+	 * @return bool
+	 */
+	public function isMessage() {
+		return $this->getOption( 'isMessage' );
+	}
+
+	/**
+	 * Set whether we are parsing a message
+	 *
+	 * @since 1.45
+	 * @param bool $x
+	 * @return bool
+	 */
+	public function setIsMessage( $x ) {
+		return $this->setOption( 'isMessage', $x );
 	}
 
 	/**
@@ -663,8 +673,8 @@ class ParserOptions {
 	 * @unstable
 	 * @since 1.41
 	 */
-	public function setUseParsoid() {
-		$this->setOption( 'useParsoid', true );
+	public function setUseParsoid( bool $value = true ) {
+		$this->setOption( 'useParsoid', $value );
 	}
 
 	/**
@@ -1186,7 +1196,7 @@ class ParserOptions {
 	 * @internal For testing
 	 */
 	public static function clearStaticCache() {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new LogicException( __METHOD__ . ' is just for testing' );
 		}
 		self::$defaults = null;
@@ -1227,6 +1237,7 @@ class ParserOptions {
 			self::$defaults = [
 				'dateformat' => null,
 				'interfaceMessage' => false,
+				'isMessage' => false,
 				'targetLanguage' => null,
 				'removeComments' => true,
 				'suppressTOC' => false,
@@ -1384,10 +1395,13 @@ class ParserOptions {
 	 * Registers a callback for tracking which ParserOptions which are used.
 	 *
 	 * @since 1.16
-	 * @param callable|null $callback
+	 * @param callable|null $callback New callback
+	 * @return callable|null The old callback, if any
 	 */
 	public function registerWatcher( $callback ) {
+		$oldCallback = $this->onAccessCallback;
 		$this->onAccessCallback = $callback;
+		return $oldCallback;
 	}
 
 	/**
@@ -1429,7 +1443,7 @@ class ParserOptions {
 		} elseif ( $value instanceof Language ) {
 			return $value->getCode();
 		} elseif ( is_array( $value ) ) {
-			return '[' . implode( ',', array_map( [ $this, 'optionToString' ], $value ) ) . ']';
+			return '[' . implode( ',', array_map( $this->optionToString( ... ), $value ) ) . ']';
 		} else {
 			return (string)$value;
 		}

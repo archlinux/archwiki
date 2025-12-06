@@ -112,14 +112,14 @@ class DiffParser {
 				'lhs-length' => 1,
 				'rhs-length' => count( $rightLines ),
 				'lhs' => [ '' ],
-				'rhs' => $rightLines
+				'rhs' => $rightLines,
 			],
 			[
 				'right-pos' => 1,
 				'left-pos' => 1,
 				'action' => 'add',
 				'content' => $right,
-			]
+			],
 		];
 	}
 

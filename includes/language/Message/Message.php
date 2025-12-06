@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Niklas Laxström
  */
@@ -25,6 +11,7 @@ use InvalidArgumentException;
 use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\MessageInfo;
 use MediaWiki\Language\RawMessage;
@@ -155,6 +142,8 @@ use Wikimedia\Message\ScalarParam;
  * @ingroup Language
  */
 class Message implements Stringable, MessageSpecifier, Serializable {
+	use ProtectedHookAccessorTrait;
+
 	/** Use message text as-is */
 	public const FORMAT_PLAIN = 'plain';
 	/** Use normal wikitext -> HTML parsing (the result will be wrapped in a block-level HTML tag) */
@@ -165,17 +154,6 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 	public const FORMAT_TEXT = 'text';
 	/** Transform {{..}} constructs, HTML-escape the result */
 	public const FORMAT_ESCAPED = 'escaped';
-
-	/**
-	 * Mapping from Message::listParam() types to Language methods.
-	 * @var array
-	 */
-	protected static $listTypeMap = [
-		ListType::COMMA => 'commaList',
-		ListType::SEMICOLON => 'semicolonList',
-		ListType::PIPE => 'pipeList',
-		ListType::AND => 'listToText',
-	];
 
 	/**
 	 * In which language to get this message. True, which is the default,
@@ -362,19 +340,17 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 
 		// Since 1.35, the key 'titlevalue' is set, instead of 'titlestr'.
 		if ( isset( $data['titlevalue'] ) ) {
-			$this->contextPage = new PageReferenceValue(
+			$this->contextPage = PageReferenceValue::localReference(
 				$data['titlevalue'][0],
-				$data['titlevalue'][1],
-				PageReference::LOCAL
+				$data['titlevalue'][1]
 			);
 		} elseif ( isset( $data['titlestr'] ) ) {
 			$titleParser = MediaWikiServices::getInstance()->getTitleParser();
 			$title = $titleParser->parseTitle( $data['titlestr'] );
 			// The title should not have any fragment or interwiki parts
-			$this->contextPage = new PageReferenceValue(
+			$this->contextPage = PageReferenceValue::localReference(
 				$title->getNamespace(),
-				$title->getDBkey(),
-				PageReference::LOCAL
+				$title->getDBkey()
 			);
 		} else {
 			$this->contextPage = null;
@@ -1079,7 +1055,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 				$string = "($keylist$*)";
 			}
 			# Replace $* with a list of parameters for &uselang=qqx.
-			if ( strpos( $string, '$*' ) !== false ) {
+			if ( str_contains( $string, '$*' ) ) {
 				$paramlist = '';
 				if ( $this->parameters !== [] ) {
 					$paramlist = ': $' . implode( ', $', range( 1, count( $this->parameters ) ) );
@@ -1109,6 +1085,16 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		# Raw parameter replacement
 		$string = $this->replaceParameters( $string, 'after', $format );
 
+		// XXX: Sometimes messages are created prior to MediaWikiServices being
+		// constructed which causes problems when we try to run the hook.
+		// Skip the hook for very early calls.
+		if ( MediaWikiServices::hasInstance() ) {
+			if ( $format === self::FORMAT_TEXT || $format === self::FORMAT_PLAIN ) {
+				$this->getHookRunner()->onMessagePostProcessText( $string, $format, $this->key );
+			} else {
+				$this->getHookRunner()->onMessagePostProcessHtml( $string, $format, $this->key );
+			}
+		}
 		return $string;
 	}
 
@@ -1360,11 +1346,15 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 	/**
 	 * @since 1.29
 	 *
-	 * @param array $list
-	 * @param string $type One of the ListType constants
+	 * @param (MessageParam|MessageSpecifier|string|int|float)[] $list
+	 * @param ListType|string $type One of the ListType constants
 	 * @return ListParam
 	 */
 	public static function listParam( array $list, $type = ListType::AND ): ListParam {
+		if ( is_string( $type ) ) {
+			wfDeprecated( __METHOD__ . ' with string type', '1.45' );
+			$type = ListType::from( $type );
+		}
 		return new ListParam( $type, $list );
 	}
 
@@ -1418,37 +1408,37 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 	 */
 	protected function extractParam( $param, $format ) {
 		if ( $param instanceof ScalarParam ) {
-			switch ( $param->getType() ) {
-				case ParamType::RAW:
-					return [ 'after', $this->extractParam( $param->getValue(), self::FORMAT_PARSE )[1] ];
-				case ParamType::NUM:
+			return match ( $param->getType() ) {
+				ParamType::RAW =>
+					[ 'after', $this->extractParam( $param->getValue(), self::FORMAT_PARSE )[1] ],
+				ParamType::NUM =>
 					// Replace number params always in before step for now.
 					// No support for combined raw and num params
-					return [ 'before', $this->getLanguage()->formatNum( $param->getValue() ) ];
-				case ParamType::DURATION_LONG:
-					return [ 'before', $this->getLanguage()->formatDuration( $param->getValue() ) ];
-				case ParamType::EXPIRY:
-					return [ 'before', $this->getLanguage()->formatExpiry( $param->getValue() ) ];
-				case ParamType::DATETIME:
-					return [ 'before', $this->getLanguage()->timeanddate( $param->getValue() ) ];
-				case ParamType::DATE:
-					return [ 'before', $this->getLanguage()->date( $param->getValue() ) ];
-				case ParamType::TIME:
-					return [ 'before', $this->getLanguage()->time( $param->getValue() ) ];
-				case ParamType::GROUP:
-					return [ 'before', $this->getLanguage()->getGroupName( $param->getValue() ) ];
-				case ParamType::DURATION_SHORT:
-					return [ 'before', $this->getLanguage()->formatTimePeriod( $param->getValue() ) ];
-				case ParamType::SIZE:
-					return [ 'before', $this->getLanguage()->formatSize( $param->getValue() ) ];
-				case ParamType::BITRATE:
-					return [ 'before', $this->getLanguage()->formatBitrate( $param->getValue() ) ];
-				case ParamType::PLAINTEXT:
-					return [ 'after', $this->formatPlaintext( $param->getValue(), $format ) ];
-				case ParamType::TEXT: // impossible because we unwrapped it in params()
-				default:
-					throw new \LogicException( "Invalid ScalarParam type: {$param->getType()}" );
-			}
+					[ 'before', $this->getLanguage()->formatNum( $param->getValue() ) ],
+				ParamType::DURATION_LONG =>
+					[ 'before', $this->getLanguage()->formatDuration( $param->getValue() ) ],
+				ParamType::EXPIRY =>
+					[ 'before', $this->getLanguage()->formatExpiry( $param->getValue() ) ],
+				ParamType::DATETIME =>
+					[ 'before', $this->getLanguage()->timeanddate( $param->getValue() ) ],
+				ParamType::DATE =>
+					[ 'before', $this->getLanguage()->date( $param->getValue() ) ],
+				ParamType::TIME =>
+					[ 'before', $this->getLanguage()->time( $param->getValue() ) ],
+				ParamType::GROUP =>
+					[ 'before', $this->getLanguage()->getGroupName( $param->getValue() ) ],
+				ParamType::DURATION_SHORT =>
+					[ 'before', $this->getLanguage()->formatTimePeriod( $param->getValue() ) ],
+				ParamType::SIZE =>
+					[ 'before', $this->getLanguage()->formatSize( $param->getValue() ) ],
+				ParamType::BITRATE =>
+					[ 'before', $this->getLanguage()->formatBitrate( $param->getValue() ) ],
+				ParamType::PLAINTEXT =>
+					[ 'after', $this->formatPlaintext( $param->getValue(), $format ) ],
+				// ParamType::TEXT is impossible because we unwrapped it in params()
+				default =>
+					throw new \LogicException( "Invalid ScalarParam type: {$param->getType()->value}" ),
+			};
 		} elseif ( $param instanceof ListParam ) {
 			return $this->formatListParam( $param->getValue(), $param->getListType(), $format );
 		} elseif ( is_array( $param ) ) {
@@ -1592,28 +1582,47 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 	}
 
 	/**
+	 * Mapping from Message::listParam() types to Language methods.
+	 * @param Language $lang
+	 * @param ListType $listType
+	 * @return callable(array):string
+	 */
+	protected static function listTypeMap( Language $lang, ListType $listType ): callable {
+		return match ( $listType ) {
+			ListType::COMMA => $lang->commaList( ... ),
+			ListType::SEMICOLON => $lang->semicolonList( ... ),
+			ListType::PIPE => $lang->pipeList( ... ),
+			ListType::AND => $lang->listToText( ... ),
+		};
+	}
+
+	/**
 	 * Formats a list of parameters as a concatenated string.
 	 * @since 1.29
 	 * @param array $params
-	 * @param string $listType
+	 * @param string|ListType $listType
 	 * @param string $format One of the FORMAT_* constants.
 	 * @return array Array with the parameter type (either "before" or "after") and the value.
 	 */
 	protected function formatListParam( array $params, $listType, $format ) {
-		if ( !isset( self::$listTypeMap[$listType] ) ) {
-			$warning = 'Invalid list type for message "' . $this->key . '": '
-				. htmlspecialchars( $listType )
-				. ' (params are ' . htmlspecialchars( serialize( $params ) ) . ')';
-			trigger_error( $warning, E_USER_WARNING );
-			$e = new InvalidArgumentException;
-			wfDebugLog( 'Bug58676', $warning . "\n" . $e->getTraceAsString() );
-			return [ 'before', '[INVALID]' ];
+		if ( is_string( $listType ) ) {
+			$originalListType = $listType;
+			$listType = ListType::tryFrom( $listType );
+			if ( $listType === null ) {
+				$warning = 'Invalid list type for message "' . $this->key . '": '
+					. htmlspecialchars( $originalListType )
+					. ' (params are ' . htmlspecialchars( serialize( $params ) ) . ')';
+				trigger_error( $warning, E_USER_WARNING );
+				$e = new InvalidArgumentException;
+				wfDebugLog( 'Bug58676', $warning . "\n" . $e->getTraceAsString() );
+				return [ 'before', '[INVALID]' ];
+			}
 		}
-		$func = self::$listTypeMap[$listType];
+		$func = self::listTypeMap( $this->getLanguage(), $listType );
 
 		// Handle an empty list sensibly
 		if ( !$params ) {
-			return [ 'before', $this->getLanguage()->$func( [] ) ];
+			return [ 'before', $func( [] ) ];
 		}
 
 		// First, determine what kinds of list items we have
@@ -1634,13 +1643,13 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		// Easy case: all are 'before' or 'after', so just join the
 		// values and use the same type.
 		if ( count( $types ) === 1 ) {
-			return [ key( $types ), $this->getLanguage()->$func( $list ) ];
+			return [ key( $types ), $func( $list ) ];
 		}
 
 		// Hard case: We need to process each value per its type, then
 		// return the concatenated values as 'after'. We handle this by turning
 		// the list into a RawMessage and processing that as a parameter.
-		$vars = $this->getLanguage()->$func( $vars );
+		$vars = $func( $vars );
 		return $this->extractParam( new RawMessage( $vars, $params ), $format );
 	}
 }

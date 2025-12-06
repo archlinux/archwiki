@@ -12,10 +12,6 @@ use Wikimedia\NormalizedException\NormalizedExceptionTrait;
 class FilterNotFoundException extends Exception implements INormalizedException {
 	use NormalizedExceptionTrait;
 
-	/**
-	 * @param int $filter
-	 * @param bool $global
-	 */
 	public function __construct( int $filter, bool $global ) {
 		$this->normalizedMessage = $global
 			? "Global filter {filter} does not exist"

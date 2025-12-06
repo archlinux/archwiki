@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -22,6 +8,7 @@ namespace MediaWiki\RecentChanges;
 
 use InvalidArgumentException;
 use MediaWiki\Html\FormOptions;
+use MediaWiki\RecentChanges\ChangesListQuery\ChangesListQuery;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
 use Wikimedia\Rdbms\IReadableDatabase;
 
@@ -158,7 +145,7 @@ abstract class ChangesListFilterGroup {
 	 *     "What's This" popup (optional).
 	 */
 	public function __construct( array $groupDefinition ) {
-		if ( strpos( $groupDefinition['name'], self::RESERVED_NAME_CHAR ) !== false ) {
+		if ( str_contains( $groupDefinition['name'], self::RESERVED_NAME_CHAR ) ) {
 			throw new InvalidArgumentException( 'Group names may not contain \'' .
 				self::RESERVED_NAME_CHAR .
 				'\'.  Use the naming convention: \'camelCase\''
@@ -215,6 +202,14 @@ abstract class ChangesListFilterGroup {
 	 * @return ChangesListFilter Filter
 	 */
 	abstract protected function createFilter( array $filterDefinition );
+
+	/**
+	 * Set the default for this filter group.
+	 *
+	 * @since 1.45
+	 * @param bool[]|string $defaultValue
+	 */
+	abstract public function setDefault( $defaultValue );
 
 	/**
 	 * Marks that the given ChangesListFilterGroup or ChangesListFilter conflicts with this object.
@@ -431,7 +426,7 @@ abstract class ChangesListFilterGroup {
 	}
 
 	/**
-	 * Modifies the query to include the filter group.
+	 * Modifies the query to include the filter group (legacy interface).
 	 *
 	 * The modification is only done if the filter group is in effect.  This means that
 	 * one or more valid and allowed filters were selected.
@@ -446,12 +441,57 @@ abstract class ChangesListFilterGroup {
 	 * @param FormOptions $opts Wrapper for the current request options and their defaults
 	 * @param bool $isStructuredFiltersEnabled True if the Structured UI is currently enabled
 	 */
-	abstract public function modifyQuery( IReadableDatabase $dbr, ChangesListSpecialPage $specialPage,
+	public function modifyQuery( IReadableDatabase $dbr, ChangesListSpecialPage $specialPage,
 		&$tables, &$fields, &$conds, &$query_options, &$join_conds,
-		FormOptions $opts, $isStructuredFiltersEnabled );
+		FormOptions $opts, $isStructuredFiltersEnabled
+	) {
+	}
 
 	/**
-	 * All the options represented by this filter group to $opts
+	 * Modifies the query to include the filter group.
+	 *
+	 * @param ChangesListQuery $query
+	 * @param FormOptions $opts
+	 * @param bool $isStructuredFiltersEnabled
+	 */
+	public function modifyChangesListQuery(
+		ChangesListQuery $query,
+		FormOptions $opts,
+		$isStructuredFiltersEnabled
+	) {
+		foreach ( $this->getFilters() as $filter ) {
+			$action = $filter->getAction();
+			if ( $action !== null ) {
+				if ( $filter->isActive( $opts, $isStructuredFiltersEnabled ) ) {
+					if ( is_array( $action[0] ) ) {
+						foreach ( $action as $singleAction ) {
+							// @phan-suppress-next-line PhanParamTooFewUnpack
+							$query->applyAction( ...$singleAction );
+						}
+					} else {
+						// @phan-suppress-next-line PhanParamTooFewUnpack
+						$query->applyAction( ...$action );
+					}
+				}
+				$highlightAction = $filter->getHighlightAction();
+				if ( $filter->getCssClass() !== null && $highlightAction ) {
+					$name = $this->getName() . '/' . $filter->getName();
+					if ( is_array( $highlightAction[0] ) ) {
+						foreach ( $highlightAction as $singleAction ) {
+							// @phan-suppress-next-line PhanParamTooFewUnpack
+							$query->highlight( $name, ...$singleAction );
+						}
+					} else {
+						// @phan-suppress-next-line PhanParamTooFewUnpack
+						$query->highlight( $name, ...$highlightAction );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add all the options represented by this filter group to $opts
 	 *
 	 * @param FormOptions $opts
 	 * @param bool $allowDefaults

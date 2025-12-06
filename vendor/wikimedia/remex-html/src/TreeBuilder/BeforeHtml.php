@@ -9,6 +9,13 @@ use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
  * The "before html" insertion mode
  */
 class BeforeHtml extends InsertionMode {
+	private const TAG_ALLOWED = [
+		'head' => true,
+		'body' => true,
+		'html' => true,
+		'br' => true,
+	];
+
 	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		// Ignore whitespace
@@ -40,8 +47,7 @@ class BeforeHtml extends InsertionMode {
 
 	/** @inheritDoc */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
-		$allowed = [ "head" => true, "body" => true, "html" => true, "br" => true ];
-		if ( !isset( $allowed[$name] ) ) {
+		if ( !isset( self::TAG_ALLOWED[$name] ) ) {
 			$this->builder->error( 'end tag not allowed before html', $sourceStart );
 			return;
 		}

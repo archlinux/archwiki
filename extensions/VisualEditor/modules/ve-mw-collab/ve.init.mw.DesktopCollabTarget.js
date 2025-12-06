@@ -43,12 +43,14 @@ ve.init.mw.DesktopCollabTarget.prototype.transformPage = function () {
 	this.$originalContent.append( this.$element.siblings() );
 	let title;
 	if ( ( title = this.getImportTitle() ) ) {
+		const $link = $( '<a>' ).text( title.getMainText() );
+		ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl() );
 		// ve.htmlMsg returns `Node[]`
 		// eslint-disable-next-line no-jquery/no-html
 		$( '#contentSub' ).html(
 			ve.htmlMsg(
 				'collabpad-import-subtitle',
-				$( '<a>' ).attr( 'href', title.getUrl() ).text( title.getMainText() )
+				$link
 			)
 		);
 		ve.targetLinksToNewWindow( $( '#contentSub' )[ 0 ] );

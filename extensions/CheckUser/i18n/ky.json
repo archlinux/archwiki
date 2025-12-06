@@ -6,9 +6,19 @@
 		]
 	},
 	"checkuser-reason": "Себеп:",
+	"checkuser-week-2": "соңку эки апта",
+	"checkuser-month": "соңку 30 күн",
+	"checkuser-month-2": "соңку 60 күн",
+	"checkuser-filter-title": "Чыпкалар",
+	"checkuser-check": "Текшерүү",
+	"checkuser-toollink-check": "текшерүү",
+	"checkuser-check-this-user": "Бул колдонуучуну текшерүү",
+	"checkuser-investigate-this-user": "Бул колдонуучуну изилдөө",
 	"checkuser-blocked": "Бөгөттөлгөн",
 	"checkuser-search-submit": "Издөө",
+	"checkuser-log-search-reason": "Себеп:",
 	"checkuser-temporary-accounts-onboarding-dialog-close-label": "Жабуу",
 	"checkuser-investigate-subtitle-cancel-button-label": "Жокко чыгаруу",
-	"checkuser-investigate-subtitle-continue-button-label": "Улантуу"
+	"checkuser-investigate-subtitle-continue-button-label": "Улантуу",
+	"checkuser-global-contributions": "Глобалдуу салымды издөө"
 }

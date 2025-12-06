@@ -8,7 +8,7 @@ use MediaWiki\Extension\Notifications\Model\Event;
  * This is a hook handler interface, see docs/Hooks.md in core.
  * Use the hook name "EventInsertComplete" to register handlers implementing this interface.
  *
- * @stable to implement
+ * @deprecated since 1.45
  * @ingroup Hooks
  */
 interface EventInsertCompleteHook {

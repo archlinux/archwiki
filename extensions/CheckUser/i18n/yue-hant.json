@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"H78c67c",
-			"Winston Sung",
-			"Ktchankt",
 			"JeffreyKim",
+			"Ktchankt",
+			"Winston Sung",
 			"Yueman"
 		]
 	},
@@ -57,6 +57,14 @@
 	"checkuser-temporary-accounts-onboarding-dialog-next-label": "之後",
 	"checkuser-temporary-accounts-onboarding-dialog-close-label": "閂",
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "乜嘢係臨時戶口？",
+	"checkuser-temporary-accounts-onboarding-dialog-preference-warning": "唔該撳「$1」先至繼續",
+	"checkuser-temporary-accounts-onboarding-dialog-save-preference": "儲存喜好設定",
+	"checkuser-temporary-accounts-onboarding-dialog-save-global-preference": "儲存全域喜好設定",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-title-with-global-preferences": "喺全球啟用IP透露",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-title": "啟用IP透露",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-checkbox-text-with-global-preferences": "喺所有符合存取要求嘅維基上面啟用顯示臨時戶口嘅IP位址",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-locally-enabled": "喺而家嘅維基上面已經啟用咗IP顯示功能。",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-globally-enabled": "所有符合存取要求嘅維基都已經喺全球啟用咗IP顯示功能。",
 	"checkuser-investigateblock-target": "用戶名同IP地址",
 	"checkuser-investigate-subtitle-cancel-button-label": "取消",
 	"checkuser-investigate-subtitle-continue-button-label": "繼續",
@@ -86,5 +94,21 @@
 	"logentry-checkuser-temporary-account-view-temp-accounts-on-ip-global": "$1 全域{{GENDER:$2|睇咗}} $3 嘅臨時戶口",
 	"log-action-filter-checkuser-temporary-account": "行動類型：",
 	"logentry-checkuser-temporary-account-af-view-protected-var-value": "$1 {{GENDER:$2|睇咗}} 同 $3 相關嘅受保護變數",
-	"checkuser-userinfocard-enable-preference-help": "喺用戶名隔籬顯示一個掣，可以彈出戶口資料。"
+	"logentry-checkuser-temporary-account-af-view-protected-var-value-varnames": "$1 {{GENDER:$2|睇咗}} 同 $3 相關嘅受保護{{PLURAL:$4|變數}}：$5",
+	"checkuser-ipinfo-global-contributions-url-text": "睇全域貢獻",
+	"checkuser-userinfocard-toggle-button-aria-label": "打開{{GENDER:$1|用戶}}嘅資訊卡",
+	"checkuser-userinfocard-close-button-aria-label": "閂",
+	"checkuser-userinfocard-open-menu-aria-label": "打開{{GENDER:$1|用戶}}資訊卡嘅選單",
+	"checkuser-userinfocard-menu-view-contributions": "睇吓{{GENDER:$1|用戶}}嘅貢獻",
+	"checkuser-userinfocard-menu-view-global-account": "睇下{{GENDER:$1|全域戶口}}資料",
+	"checkuser-userinfocard-menu-add-to-watchlist": "加{{GENDER:$1|用戶版}}去監視清單",
+	"checkuser-userinfocard-menu-remove-from-watchlist": "喺監視清單入面刪除{{GENDER:$1|用戶版}}",
+	"checkuser-userinfocard-menu-check-ip": "檢查{{GENDER:$1|用戶}}嘅IP地址",
+	"checkuser-userinfocard-menu-block-user": "封鎖{{GENDER:$1|用戶}}",
+	"checkuser-userinfocard-loading-label": "載入緊用戶資料",
+	"checkuser-userinfocard-error-no-data": "攞唔到呢個用戶嘅資料。請遲啲再試過。",
+	"checkuser-userinfocard-enable-preference-description": "啟用[[mw:Trust_and_Safety_Product/Anti-abuse_signals/User_Info|用戶資料咭]]",
+	"checkuser-userinfocard-enable-preference-help": "喺用戶名隔籬顯示一個掣，可以彈出戶口資料。",
+	"checkuser-ipinfo-global-contributions-label": "全域貢獻",
+	"tooltip-t-global-contributions": "睇{{GENDER:$1|呢個用戶}}嘅全域貢獻清單"
 }
